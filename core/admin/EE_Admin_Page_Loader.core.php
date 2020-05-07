@@ -314,7 +314,7 @@ class EE_Admin_Page_Loader
         $hooks_ref = [];
         foreach ($installed_refs as $page => $path) {
             // set autoloaders for our admin page classes based on included path information
-            EEH_Autoloader::instance()->register_autoloaders_for_each_file_in_folder($path);
+            EEH_Autoloader::register_autoloaders_for_each_file_in_folder($path);
             // build list of installed pages
             $this->_installed_pages[ $page ] = $this->_load_admin_page($page, $path);
             // verify returned object
@@ -635,7 +635,7 @@ class EE_Admin_Page_Loader
                     // these folders represent the different NEW EE admin pages
                     $installed_refs[ $admin_screen_name ] = $admin_screen;
                     // set autoloaders for our admin page classes based on included path information
-                    EEH_Autoloader::instance()->register_autoloaders_for_each_file_in_folder($admin_screen);
+                    EEH_Autoloader::register_autoloaders_for_each_file_in_folder($admin_screen);
                 }
             }
         }
@@ -670,7 +670,7 @@ class EE_Admin_Page_Loader
                     );
                     $this->_caffeinated_extends[ $extend_ref ]['admin_page'] = $filename;
                     // set autoloaders for our admin page classes based on included path information
-                    EEH_Autoloader::instance()->register_autoloaders_for_each_file_in_folder($extend);
+                    EEH_Autoloader::register_autoloaders_for_each_file_in_folder($extend);
                 }
             }
         }
