@@ -75,7 +75,7 @@ class RequestTypeContextDetector
     public function detectRequestTypeContext()
     {
         // Detect error scrapes
-        if (defined('EE_TESTS_DIR')) {
+        if ($this->getGlobalRouteCondition('EE_TESTS_DIR', false)) {
             return $this->factory->create(RequestTypeContext::UNIT_TEST);
         }
         // Detect error scrapes
