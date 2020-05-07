@@ -107,6 +107,9 @@
 	.no-assignments {
 		button {
 			background-color: var(--ee-color-accent) !important;
+			svg {
+				color: white;
+			}
 		}
 	}
 	.new-assignment {
