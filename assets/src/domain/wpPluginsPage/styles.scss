@@ -1,3 +1,9 @@
 .ee-exit-modal {
-	max-width: 50rem !important;
+	&__body {
+		min-width: 50%;
+		min-height: 80%;
+	}
+	iframe {
+		min-height: 40rem;
+	}
 }

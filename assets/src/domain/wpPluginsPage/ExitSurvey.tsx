@@ -1,5 +1,5 @@
-import React, { useCallback } from 'react';
-import { useDisclosure } from '@chakra-ui/core';
+import React, { useCallback, useState } from 'react';
+
 import Popup from './Popup';
 import ExitModal from './ExitModal';
 
@@ -8,7 +8,9 @@ type ExitSurveyProps = {
 };
 
 const ExitSurvey: React.FC<ExitSurveyProps> = ({ deactivationUrl }) => {
-	const { isOpen, onClose, onOpen } = useDisclosure();
+	const [isOpen, setIsOpen] = useState(false);
+	const onOpen: VoidFunction = () => setIsOpen(true);
+	const onClose: VoidFunction = () => setIsOpen(false);
 
 	const deactivatePlugin = useCallback(() => {
 		window.location.href = deactivationUrl;
