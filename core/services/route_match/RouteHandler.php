@@ -328,6 +328,7 @@ class RouteHandler
                     'EventEspresso\core\domain\Domain'                   => EE_Dependency_Map::load_from_cache,
                     'EventEspresso\core\services\assets\AssetCollection' => EE_Dependency_Map::load_from_cache,
                     'EventEspresso\core\services\assets\Registry'        => EE_Dependency_Map::load_from_cache,
+                    'EventEspresso\core\domain\services\admin\ExitModal' => EE_Dependency_Map::load_from_cache,
                 ]
             );
             $this->loader->getShared('EventEspresso\core\domain\services\assets\WordpressPluginsPageAssetManager');
