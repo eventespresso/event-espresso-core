@@ -31,7 +31,7 @@ class PriceConnectionQueriesTest extends BaseQueriesTest
                         id
                         dbId
                         name
-                        desc
+                        description
                         amount
                     }
                 }
@@ -79,7 +79,7 @@ class PriceConnectionQueriesTest extends BaseQueriesTest
         // fields
         $this->assertEquals($first_entity_id, $first_edge['node']['dbId']);
         $this->assertEquals($first_entity->name(), $first_edge['node']['name']);
-        $this->assertEquals($first_entity->desc(), $first_edge['node']['desc']);
+        $this->assertEquals($first_entity->desc(), $first_edge['node']['description']);
         $this->assertEquals($first_entity->amount(), $first_edge['node']['amount']);
     }
 
@@ -118,7 +118,7 @@ class PriceConnectionQueriesTest extends BaseQueriesTest
         // fields
         $this->assertEquals($first_entity_id, $first_edge['node']['dbId']);
         $this->assertEquals($first_entity->name(), $first_edge['node']['name']);
-        $this->assertEquals($first_entity->desc(), $first_edge['node']['desc']);
+        $this->assertEquals($first_entity->desc(), $first_edge['node']['description']);
         $this->assertEquals($first_entity->amount(), $first_edge['node']['amount']);
     }
 
@@ -157,7 +157,7 @@ class PriceConnectionQueriesTest extends BaseQueriesTest
         // fields
         $this->assertEquals($first_entity_id, $first_edge['node']['dbId']);
         $this->assertEquals($first_entity->name(), $first_edge['node']['name']);
-        $this->assertEquals($first_entity->desc(), $first_edge['node']['desc']);
+        $this->assertEquals($first_entity->desc(), $first_edge['node']['description']);
         $this->assertEquals($first_entity->amount(), $first_edge['node']['amount']);
     }
 }

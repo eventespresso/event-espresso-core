@@ -98,14 +98,14 @@ describe('TPC:data.updatePrice', () => {
 		act(() =>
 			result.current.updatePrice({
 				id: firstPrice.id,
-				fieldValues: { name: 'New Name', desc: 'New Desc' },
+				fieldValues: { name: 'New Name', description: 'New Desc' },
 			})
 		);
 
 		const updatedFirstPrice = head(result.current.getData().prices);
 
 		expect(updatedFirstPrice.name).toBe('New Name');
-		expect(updatedFirstPrice.desc).toBe('New Desc');
+		expect(updatedFirstPrice.description).toBe('New Desc');
 	});
 
 	it('updates the priceType of a price', async () => {
