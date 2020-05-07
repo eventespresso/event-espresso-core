@@ -53,8 +53,8 @@ class RouteHandler
         LoaderInterface $loader,
         EE_Maintenance_Mode $maintenance_mode,
         RequestInterface $request,
-        RouteMatchSpecificationManager $route_manager)
-    {
+        RouteMatchSpecificationManager $route_manager
+    ) {
         $this->loader = $loader;
         $this->maintenance_mode = $maintenance_mode;
         $this->request = $request;
@@ -315,9 +315,11 @@ class RouteHandler
     public function handleWordPressPluginsPage()
     {
         try {
-            if (! $this->request->isAdmin() || ! $this->route_manager->routeMatchesCurrentRequest(
+            if (! $this->request->isAdmin()
+                || ! $this->route_manager->routeMatchesCurrentRequest(
                     'EventEspresso\core\domain\entities\route_match\specifications\admin\WordPressPluginsPage'
-                )) {
+                )
+            ) {
                 return;
             }
             EE_Dependency_Map::register_dependencies(
