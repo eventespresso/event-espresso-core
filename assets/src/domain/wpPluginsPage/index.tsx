@@ -18,7 +18,7 @@ const handleDeactivationClick = (e: JQuery.ClickEvent<HTMLElement>, el: any): vo
 
 	render(<ExitSurvey deactivationUrl={url} />, container);
 };
-
+// TODO Remove this when `eejsdata` is wired up
 const ok = true;
 /**
  * EE caffeinated click capture but only if feature is active
