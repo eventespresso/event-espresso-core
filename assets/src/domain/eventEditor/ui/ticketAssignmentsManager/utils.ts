@@ -1,7 +1,7 @@
 import { equals, filter, isEmpty, pathOr } from 'ramda';
 import { parseISO } from 'date-fns';
 
-import { EntityId } from '@appServices/apollo/types';
+import { EntityId } from '@dataServices/types';
 import { AnyObject } from '@appServices/utilities/types';
 import { TAMPossibleRelation, TAMRelationEntity, TAMRelationalData, TAMRelationalEntity } from './types';
 import { Datetime } from '@edtrServices/apollo';

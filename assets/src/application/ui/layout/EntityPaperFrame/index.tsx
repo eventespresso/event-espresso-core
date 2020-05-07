@@ -3,7 +3,7 @@ import classNames from 'classnames';
 
 import EntityIDs from '@appDisplay/EntityIDs';
 import { getPropsAreEqual } from '@appServices/utilities';
-import { Entity } from '@appServices/apollo/types';
+import { Entity } from '@dataServices/types';
 import './style.css';
 
 interface EntityPaperFrameProps {

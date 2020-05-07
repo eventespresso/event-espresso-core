@@ -5,7 +5,7 @@ import { clone } from 'ramda';
 import { useDebouncedCallback } from 'use-debounce';
 import { MutationResult } from '@apollo/react-common';
 
-import { EntityId } from '@appServices/apollo/types';
+import { EntityId } from '@dataServices/types';
 import { getGuids } from '@appServices/predicates';
 import { Datetime, Ticket } from '../types';
 

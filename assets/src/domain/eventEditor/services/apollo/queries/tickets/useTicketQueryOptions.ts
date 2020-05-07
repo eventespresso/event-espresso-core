@@ -2,10 +2,13 @@ import { identity, sortBy } from 'ramda';
 
 import useDatetimeIds from '../datetimes/useDatetimeIds';
 import { GET_TICKETS } from '../tickets';
-import { ReadQueryOptions } from '../types';
-import { EntityId } from '@appServices/apollo/types';
+import { EntityId } from '@dataServices/types';
+import { TicketsList, TicketsQueryArgs, ReadQueryOptions } from '@dataServices/apollo/queries';
+import { TicketEdge } from '@edtrServices/apollo/types';
 
-const useTicketQueryOptions = (datetimeIn: EntityId[] = []): ReadQueryOptions => {
+type DatetimesQueryOptions = ReadQueryOptions<TicketsList<TicketEdge>, TicketsQueryArgs>;
+
+const useTicketQueryOptions = (datetimeIn: EntityId[] = []): DatetimesQueryOptions => {
 	const datetimeIds = useDatetimeIds();
 
 	let newDatetimeIn = datetimeIn.length ? datetimeIn : datetimeIds;
@@ -14,7 +17,7 @@ const useTicketQueryOptions = (datetimeIn: EntityId[] = []): ReadQueryOptions =>
 	// thus changing the key used to access Apollo Cache
 	newDatetimeIn = sortBy(identity, newDatetimeIn);
 
-	const options: ReadQueryOptions = {
+	const options: DatetimesQueryOptions = {
 		query: GET_TICKETS,
 		variables: {
 			where: {

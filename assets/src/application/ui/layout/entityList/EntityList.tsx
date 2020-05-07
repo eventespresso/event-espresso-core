@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n';
 import { EmptyState, ErrorIndicator, LoadingNotice } from '@appDisplay/index';
 import { EntityListFilterStateManager } from './filterBar';
 import EntityListFilterBar from './withValidFilterState';
-import { Entity } from '@appServices/apollo/types';
+import { Entity } from '@dataServices/types';
 import { Divider, Heading } from '@infraUI/display';
 import { useStatus } from '@appServices/apollo/status';
 

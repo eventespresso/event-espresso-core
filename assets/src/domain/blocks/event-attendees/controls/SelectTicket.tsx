@@ -3,7 +3,7 @@ import { SelectControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 import { AttendeesEditProps } from '../types';
-import useTickets from '../hooks/useTickets';
+import useTickets from '../../services/apollo/queries/useTickets';
 import { buildEntitySelectOptions } from '@sharedServices/utils/entityList';
 import { SelectControlProps } from '../../components/types';
 

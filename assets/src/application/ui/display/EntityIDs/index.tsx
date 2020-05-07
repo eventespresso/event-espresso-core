@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import shortenGuid from '@appServices/utilities/text/shortenGuid';
-import { EntityId, EntityDbId } from '@appServices/apollo/types';
+import { EntityId, EntityDbId } from '@dataServices/types';
 
 import './style.css';
 

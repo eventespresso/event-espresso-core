@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Entity } from '@appServices/apollo/types';
+import { Entity } from '@dataServices/types';
 import { useEntityActionsSubscription, useEntityActionsMenuRegistry } from '@appLayout/entityActionsMenu';
 import { domain } from '@edtrServices/constants';
 

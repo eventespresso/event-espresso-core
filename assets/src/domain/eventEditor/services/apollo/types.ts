@@ -1,4 +1,5 @@
-import { Entity, EntityEdge, Trashable } from '@appServices/apollo/types';
+import { Entity, EntityEdge, Trashable } from '@dataServices/types';
+import { DatetimesList as DatetimeList, TicketsList as TicketList } from '@dataServices/apollo/queries';
 
 export interface Event extends Entity {
 	desc: string;
@@ -9,6 +10,7 @@ export interface Event extends Entity {
 	isPostponed: boolean;
 	isSoldOut: boolean;
 	isUpcoming: boolean;
+	name: string;
 	order: number;
 	shortDesc: string;
 }
@@ -37,6 +39,7 @@ export interface Datetime extends Entity, Trashable {
 	isSoldOut: boolean;
 	isUpcoming: boolean;
 	length: number;
+	name: string;
 	order: number;
 	reserved: number;
 	sold: number;
@@ -50,9 +53,7 @@ export interface DatetimeItem {
 
 export type DatetimeEdge<Connection = 'EspressoRootQueryDatetimesConnection'> = EntityEdge<Datetime, Connection>;
 
-export interface DatetimesList {
-	espressoDatetimes: DatetimeEdge;
-}
+export type DatetimesList = DatetimeList<DatetimeEdge>;
 
 export interface Price extends Entity, Trashable {
 	amount: number;
@@ -62,6 +63,7 @@ export interface Price extends Entity, Trashable {
 	isDiscount: boolean;
 	isPercent: boolean;
 	isTax: boolean;
+	name: string;
 	order: number;
 	overrides: number;
 }
@@ -85,6 +87,7 @@ export interface Ticket extends Entity, Trashable {
 	isTaxable: boolean;
 	max: number;
 	min: number;
+	name: string;
 	order: number;
 	price: number;
 	prices?: PriceEdge; // for create and update ticket mutation
@@ -103,9 +106,7 @@ export interface TicketItem {
 
 export type TicketEdge = EntityEdge<Ticket, 'EspressoRootQueryTicketsConnection'>;
 
-export interface TicketsList {
-	espressoTickets: TicketEdge;
-}
+export type TicketsList = TicketList<TicketEdge>;
 
 export enum PriceBasetype {
 	BASE_PRICE = 'BASE_PRICE',
@@ -120,6 +121,7 @@ export interface PriceType extends Entity, Trashable {
 	isDiscount: boolean;
 	isPercent: boolean;
 	isTax: boolean;
+	name: string;
 	order: number;
 }
 

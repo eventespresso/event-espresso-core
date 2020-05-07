@@ -1,4 +1,4 @@
-import { Entity, EntityId } from '@appServices/apollo/types';
+import { Entity, EntityId } from '@dataServices/types';
 import { RelationsManager, RelationalData, PossibleRelation } from '@appServices/apollo/relations';
 import { Datetime, Ticket } from '@edtrServices/apollo/types';
 
@@ -16,7 +16,7 @@ export type AssignmentType = 'forDate' | 'forTicket' | 'forAll';
 
 export type AssignmentStatus = 'OLD' | 'NEW' | 'REMOVED';
 
-export interface BaseProps<E extends Entity = Entity> {
+export interface BaseProps<E extends Entity = Datetime | Ticket> {
 	assignmentType: AssignmentType;
 	entity?: E;
 	title?: string;

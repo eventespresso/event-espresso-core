@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { EntityCardListProps } from './types';
-import { Entity } from '@appServices/apollo/types';
+import { Entity } from '@dataServices/types';
 import entitiesUnchanged from '@appServices/utilities/memo/entitiesUnchanged';
 
 const EntityCardList = <E extends Entity>({ EntityCard, entities }: EntityCardListProps<E>) => {

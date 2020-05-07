@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { pathOr } from 'ramda';
 
 import { useRelations } from '@appServices/apollo/relations';
-import { EntityId } from '@appServices/apollo/types';
+import { EntityId } from '@dataServices/types';
 import { useDatetimeMutator, useTicketMutator } from '@edtrServices/apollo/mutations';
 import { prepareEntitiesForUpdate } from '../utils';
 import { TAMRelationalData } from '../types';

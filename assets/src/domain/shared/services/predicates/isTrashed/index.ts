@@ -1,4 +1,4 @@
-import { Trashable } from '@appServices/apollo/types';
+import { Trashable } from '@dataServices/types';
 
 /**
  * @function

@@ -1,6 +1,6 @@
 import { pick } from 'ramda';
 
-import { Entity } from '@appServices/apollo/types';
+import { Entity } from '@dataServices/types';
 import { EntityListSearchProps } from './types';
 
 const entityListSearch = <E extends Entity>({

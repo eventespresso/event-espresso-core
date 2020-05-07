@@ -1,6 +1,8 @@
-import { useQuery } from '@apollo/react-hooks';
 import { QueryResult } from '@apollo/react-common';
 import gql from 'graphql-tag';
+
+import { useEventsQuery } from '@dataServices/apollo/queries';
+import { EventsList } from '../types';
 
 export const GET_EVENTS: any = gql`
 	query GET_EVENTS($first: Int) {
@@ -14,11 +16,13 @@ export const GET_EVENTS: any = gql`
 	}
 `;
 
-const useEvents = (): QueryResult<any> => {
-	return useQuery(GET_EVENTS, {
+const useEvents = (): QueryResult<EventsList> => {
+	return useEventsQuery({
+		query: GET_EVENTS,
 		variables: {
 			first: 100,
 		},
+		fetchPolicy: 'cache-first',
 	});
 };
 

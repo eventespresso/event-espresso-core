@@ -3,16 +3,25 @@ import { Placeholder, Spinner } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 import { AttendeesEditProps } from './types';
-import useAttendees from './hooks/useAttendees';
+import useAttendees from '../services/apollo/queries/useAttendees';
 import AttendeesList from './AttendeesList';
 import { CSS_CLASS_CORE_BLOCKS } from '../constants';
+import { getAttendeesOrderBy } from '@blocksServices/utils';
 
 const isNewBlock = ({ event, datetime, ticket }: AttendeesEditProps['attributes']): boolean => {
 	return !(event || datetime || ticket);
 };
 
 const AttendeesDisplay: React.FC<AttendeesEditProps> = ({ attributes }) => {
-	const { data, loading, error } = useAttendees(attributes);
+	const { ticket, status, limit, orderBy, order } = attributes;
+	const { data, loading, error } = useAttendees(
+		{
+			orderby: getAttendeesOrderBy(orderBy, order),
+			regTicket: ticket,
+			regStatus: status,
+		},
+		limit
+	);
 
 	if (loading) {
 		return (

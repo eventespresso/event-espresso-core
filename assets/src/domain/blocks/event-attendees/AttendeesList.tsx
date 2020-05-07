@@ -1,9 +1,10 @@
 import React from 'react';
 
 import AttendeeListItem from './AttendeeListItem';
+import { Attendee } from '@blocksServices/apollo/types';
 
 interface AttendeesListProps {
-	attendees: Array<any>; // TODO add types for attendee
+	attendees: Array<Attendee>;
 	avatarSize?: number;
 	showGravatar?: boolean;
 	containerClassName?: string;

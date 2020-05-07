@@ -6,7 +6,7 @@ import { CalendarOutlined, ControlOutlined, ProfileOutlined } from '@appDisplay/
 import { EspressoFormProps } from '@application/ui/forms/espressoForm';
 import useDatetimeItem from '@edtrServices/apollo/queries/datetimes/useDatetimeItem';
 import { Datetime } from '@edtrServices/apollo/types';
-import { EntityId } from '@appServices/apollo/types';
+import { EntityId } from '@dataServices/types';
 import { processDateAndTime } from '@sharedServices/utils/dateAndTime';
 import { validate } from './formValidation';
 import { DateFormShape } from './types';

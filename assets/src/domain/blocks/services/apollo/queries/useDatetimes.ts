@@ -1,6 +1,7 @@
-import { useQuery } from '@apollo/react-hooks';
 import { QueryResult } from '@apollo/react-common';
 import gql from 'graphql-tag';
+import { useDatetimesQuery } from '@dataServices/apollo/queries';
+import { DatetimesList } from '../types';
 
 export const GET_DATETIMES: any = gql`
 	query GET_DATETIMES($first: Int, $where: EspressoRootQueryDatetimesConnectionWhereArgs) {
@@ -14,12 +15,15 @@ export const GET_DATETIMES: any = gql`
 	}
 `;
 
-const useDatetimes = (event?: string): QueryResult<any> => {
-	return useQuery(GET_DATETIMES, {
+const useDatetimes = (event?: string): QueryResult<DatetimesList> => {
+	return useDatetimesQuery({
+		query: GET_DATETIMES,
 		variables: {
-			first: 100,
-			where: { event },
+			where: {
+				event,
+			},
 		},
+		fetchPolicy: 'cache-first',
 	});
 };
 

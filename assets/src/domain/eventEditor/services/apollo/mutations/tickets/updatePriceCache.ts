@@ -3,8 +3,9 @@ import { assocPath, pathOr, uniqBy, sortBy, identity } from 'ramda';
 import { CacheUpdaterFnArgs } from '../types';
 import { DEFAULT_PRICE_LIST_DATA, GET_PRICES } from '@edtrServices/apollo/queries';
 import { Price, PricesList } from '@edtrServices/apollo/types';
-import { ReadQueryOptions, WriteQueryOptions } from '@edtrServices/apollo/queries/types';
+import { WriteQueryOptions } from '@edtrServices/apollo/queries/types';
 import { entityDbId } from '@sharedServices/predicates/selectionById';
+import { ReadQueryOptions } from '@dataServices/apollo/queries';
 
 const updatePriceCache = ({ proxy, prices = null, ticketIn, ticketId, action }: CacheUpdaterFnArgs): void => {
 	const queryOptions: ReadQueryOptions = {

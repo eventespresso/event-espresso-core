@@ -3,10 +3,11 @@ import { SelectControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 import { SelectControlProps } from './types';
+import { Order } from '@dataServices/apollo/queries';
 
 interface SortOrderControlProps extends SelectControlProps {
-	setOrder?: (order: string) => void;
-	order: string;
+	setOrder?: (order: Order) => void;
+	order: Order;
 }
 
 const defaultOptions: React.ComponentProps<typeof SelectControl>['options'] = [

@@ -1,5 +1,5 @@
 import { GET_GENERAL_SETTINGS } from './';
-import { ReadQueryOptions, useCacheQuery } from '@edtrServices/apollo/queries';
+import { useCacheQuery, ReadQueryOptions } from '@dataServices/apollo/queries';
 import { GeneralSettings, GeneralSettingsData } from '@application/valueObjects/config/types';
 /**
  * A custom react hook for retrieving GeneralSettings

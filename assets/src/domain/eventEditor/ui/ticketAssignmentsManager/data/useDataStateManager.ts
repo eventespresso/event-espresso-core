@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { EntityId } from '@appServices/apollo/types';
+import { EntityId } from '@dataServices/types';
 import { useRelations } from '@appServices/apollo/relations';
 import { useAssignmentManager, useValidation } from './';
 import { AssignmentStatus, BaseProps, DataStateManager } from '../types';

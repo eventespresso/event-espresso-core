@@ -1,6 +1,6 @@
 import { pick } from 'ramda';
 
-import { EntityId } from '@appServices/apollo/types';
+import { EntityId } from '@dataServices/types';
 import { RelationsManager } from '@appServices/apollo/relations';
 import { Ticket } from '@edtrServices/apollo';
 import { ticketFieldsToUse } from './constants';

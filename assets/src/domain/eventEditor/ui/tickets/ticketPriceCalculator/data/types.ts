@@ -1,6 +1,6 @@
 import { Reducer, ReducerState } from 'react';
 
-import { EntityId } from '@appServices/apollo/types';
+import { EntityId } from '@dataServices/types';
 import { Ticket } from '@edtrServices/apollo';
 import { BaseProps, TpcPriceModifier } from '../types';
 

@@ -3,12 +3,21 @@ import { TextControl } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 
 import { AttendeesEditProps } from '../types';
+import useAttendees from '@blocksServices/apollo/queries/useAttendees';
+import { getAttendeesOrderBy } from '@blocksServices/utils';
 
 const AttendeeLimit: React.FC<AttendeesEditProps> = ({ attributes, setAttributes }) => {
-	const { limit } = attributes;
+	const { ticket, status, limit, orderBy, order } = attributes;
+	const { data } = useAttendees(
+		{
+			orderby: getAttendeesOrderBy(orderBy, order),
+			regTicket: ticket,
+			regStatus: status,
+		},
+		limit
+	);
 
-	// TODO get value
-	const attendeesCount = 0;
+	const attendeesCount = data?.espressoAttendees?.nodes?.length || 0;
 	return (
 		<TextControl
 			type='number'

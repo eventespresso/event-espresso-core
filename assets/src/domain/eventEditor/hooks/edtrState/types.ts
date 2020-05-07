@@ -1,6 +1,6 @@
 import type { Reducer } from 'react';
 
-import type { EntityId } from '@appServices/apollo/types';
+import type { EntityId } from '@dataServices/types';
 
 export type BasicSortBy = 'name' | 'id';
 

@@ -1,6 +1,6 @@
 import { pluck } from 'ramda';
 
-import { Cacheable, Entity } from '@appServices/apollo/types';
+import { Cacheable, Entity } from '@dataServices/types';
 
 export const getGuids = pluck<keyof Pick<Entity, 'id'>>('id');
 

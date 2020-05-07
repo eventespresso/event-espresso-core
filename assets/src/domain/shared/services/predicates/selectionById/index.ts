@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { filter, find, includes, prop, propEq } from 'ramda';
 
-import { Entity, EntityDbId, EntityId } from '@appServices/apollo/types';
+import { Entity, EntityDbId, EntityId } from '@dataServices/types';
 
 // the following return specified entity prop
 export const entityDbId = <T extends Entity>(entity: T): EntityDbId => prop('dbId', entity);

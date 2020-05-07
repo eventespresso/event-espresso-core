@@ -1,5 +1,5 @@
 import { GET_CURRENT_USER } from './';
-import { ReadQueryOptions, useCacheQuery } from '@edtrServices/apollo/queries';
+import { useCacheQuery, ReadQueryOptions } from '@dataServices/apollo/queries';
 import { CurrentUserProps, Viewer } from '@application/valueObjects/config/types';
 
 /**

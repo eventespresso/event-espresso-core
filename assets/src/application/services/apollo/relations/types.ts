@@ -1,4 +1,4 @@
-import { EntityId } from '@appServices/apollo/types';
+import { EntityId } from '@dataServices/types';
 
 export type RelationEntity = 'datetimes' | 'tickets' | 'prices' | 'priceTypes';
 

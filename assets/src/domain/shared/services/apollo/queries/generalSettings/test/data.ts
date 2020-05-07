@@ -1,6 +1,6 @@
 import { GraphQLError } from 'graphql';
 
-import { ReadQueryOptions } from '../../../../../../eventEditor/services/apollo/queries/types';
+import { ReadQueryOptions } from '@dataServices/apollo/queries';
 import { GeneralSettingsData } from '../../../../../../../application/valueObjects/config/types';
 import { GET_GENERAL_SETTINGS } from '..';
 

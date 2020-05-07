@@ -2,11 +2,11 @@ import { pickBy, omit } from 'ramda';
 import { ExecutionResult } from 'graphql';
 
 import { nodes as prices } from '../../../queries/prices/test/data';
-import { ReadQueryOptions } from '../../../queries/types';
 import { MutationInput, MutationType } from '../../../../../../../application/services/apollo/mutations/types';
 import { ucFirst } from '../../../../../../../application/services/utilities/text/changeCase';
 import { mutations } from '../..';
 import { MockedResponse } from '../../../../context/TestContext/types';
+import { ReadQueryOptions } from '@dataServices/apollo/queries';
 
 export const mockedPrices = {
 	[MutationType.Create]: { ...prices[0], id: prices[0].id + '-alpha' }, // make sure to change the ID to make it different}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { EntityId } from '@appServices/apollo/types';
+import { EntityId } from '@dataServices/types';
 import { Price } from '@edtrServices/apollo';
 
 export interface BaseProps {

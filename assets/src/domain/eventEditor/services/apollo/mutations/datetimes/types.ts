@@ -1,4 +1,4 @@
-import { EntityId } from '@appServices/apollo/types';
+import { EntityId } from '@dataServices/types';
 
 export interface DatetimeBaseInput {
 	capacity?: number;

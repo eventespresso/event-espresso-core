@@ -1,5 +1,5 @@
 import useTickets from './useTickets';
-import { EntityId } from '@appServices/apollo/types';
+import { EntityId } from '@dataServices/types';
 import { getGuids } from '@appServices/predicates';
 
 const useTicketIds = (): EntityId[] => {

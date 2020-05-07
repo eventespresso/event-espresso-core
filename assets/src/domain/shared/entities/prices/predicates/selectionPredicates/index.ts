@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { filter, find, includes, propEq } from 'ramda';
 
-import { EntityId, EntityDbId } from '@appServices/apollo/types';
+import { EntityId, EntityDbId } from '@dataServices/types';
 import { Price } from '@edtrServices/apollo/types';
 import { PRICE_FIELDS, PRICE_INPUT_FIELDS } from '../priceFields';
 import { findEntityByDbId, findEntityByGuid } from '../../../../services/predicates';

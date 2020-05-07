@@ -8,7 +8,7 @@ import useOnUpdateDatetime from './useOnUpdateDatetime';
 import useOptimisticResponse from './useOptimisticResponse';
 import { DEFAULT_DATETIME_LIST_DATA as DEFAULT_LIST_DATA } from '@edtrServices/apollo/queries';
 import { Datetime, DatetimeEdge, DatetimesList } from '@edtrServices/apollo/types';
-import { EntityId } from '@appServices/apollo/types';
+import { EntityId } from '@dataServices/types';
 import { MutationType } from '@appServices/apollo/mutations';
 import { OnUpdateFnOptions, MutationHandler } from '../types';
 import { useDatetimeQueryOptions } from '@edtrServices/apollo/queries/datetimes';

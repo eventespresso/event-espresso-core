@@ -1,7 +1,8 @@
 import { CacheUpdaterFnArgs } from '../types';
-import { GET_TICKETS, ReadQueryOptions, WriteQueryOptions } from '@edtrServices/apollo/queries';
+import { GET_TICKETS, WriteQueryOptions } from '@edtrServices/apollo/queries';
 import { TicketsList } from '@edtrServices/apollo/types';
 import { sortBy, identity } from 'ramda';
+import { ReadQueryOptions } from '@dataServices/apollo/queries';
 
 const updateTicketCache = ({ proxy, datetimeIn, datetimeId, action }: CacheUpdaterFnArgs): void => {
 	const queryOptions: ReadQueryOptions = {
