@@ -61,7 +61,6 @@
 		td {
 			background-color: var(--ee-background-color);
 			height: 80px;
-			width: 130px;
 
 			&.date-cell {
 				border-right: 5px solid var(--ee-color-white);
@@ -121,6 +120,7 @@
 	.no-assignments {
 		button {
 			background-color: var(--ee-color-accent) !important;
+			border-color: var(--ee-color-accent) !important;
 			svg {
 				color: white;
 			}
@@ -129,16 +129,19 @@
 	.new-assignment {
 		button {
 			background-color: var(--ee-color-secondary) !important;
+			border-color: var(--ee-color-secondary) !important;
 		}
 	}
 	.old-assignment {
 		button {
 			background-color: var(--ee-color-primary) !important;
+			border-color: var(--ee-color-primary) !important;
 		}
 	}
 	.removed-assignment {
 		button {
 			background-color: var(--ee-color-accent) !important;
+			border-color: var(--ee-color-accent) !important;
 		}
 	}
 }
