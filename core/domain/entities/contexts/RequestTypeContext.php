@@ -124,6 +124,7 @@ class RequestTypeContext extends Context
                         'The RequestTypeContext slug must be one of the following values: %1$s %2$s',
                         'event_espresso'
                     ),
+                    '<br />',
                     var_export($this->validRequestTypes(), true)
                 )
             );
@@ -153,6 +154,7 @@ class RequestTypeContext extends Context
                     RequestTypeContext::FRONTEND,
                     RequestTypeContext::GQL,
                     RequestTypeContext::IFRAME,
+                    RequestTypeContext::UNIT_TEST,
                     RequestTypeContext::WP_API,
                     RequestTypeContext::WP_SCRAPE,
                 )
