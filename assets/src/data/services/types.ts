@@ -20,3 +20,12 @@ export interface EntityEdge<E = Entity, ConnectionTypeName = string> {
 	nodes: E[];
 	__typename: ConnectionTypeName;
 }
+
+export interface Address {
+	address?: string;
+	address2?: string;
+	city?: string;
+	country?: string;
+	state?: string;
+	zip?: string;
+}

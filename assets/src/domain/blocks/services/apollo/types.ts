@@ -1,4 +1,4 @@
-import { Entity, EntityEdge } from '@dataServices/types';
+import { Address, Entity, EntityEdge } from '@dataServices/types';
 import {
 	AttendeesList as AttendeeList,
 	EventsList as EventList,
@@ -6,21 +6,15 @@ import {
 	TicketsList as TicketList,
 } from '@dataServices/apollo/queries';
 
-export interface Attendee extends Entity {
-	address?: string;
-	address2?: string;
+export interface Attendee extends Entity, Address {
 	avatar?: string;
 	bio?: string;
-	city?: string;
-	country?: string;
 	email?: string;
 	firstName: string;
 	fullName: string;
 	lastName: string;
 	phone?: string;
 	shortBio?: string;
-	state?: string;
-	zip?: string;
 }
 
 export type AttendeeEdge<Connection = 'EspressoRootQueryAttendeesConnection'> = EntityEdge<Attendee, Connection>;

@@ -1,5 +1,5 @@
 import { MutationOptions } from 'apollo-client';
-import { Entity as BaseType } from '../../../../data/services/types';
+import { Entity as BaseType } from '@dataServices/types';
 
 export type MutationOptionsCb = <Type extends BaseType, MI = MutationInput>(
 	mutationType: MutationType,
