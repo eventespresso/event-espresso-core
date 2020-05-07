@@ -5,7 +5,7 @@ const defaultPriceModifier: Price = {
 	dbId: 0,
 	cacheId: '',
 	amount: null,
-	desc: '',
+	description: '',
 	isBasePrice: false,
 	isDefault: false,
 	isDiscount: false,

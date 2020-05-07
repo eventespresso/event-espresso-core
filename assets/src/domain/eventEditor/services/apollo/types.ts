@@ -2,7 +2,7 @@ import { Entity, EntityEdge, Trashable } from '@dataServices/types';
 import { DatetimesList as DatetimeList, TicketsList as TicketList } from '@dataServices/apollo/queries';
 
 export interface Event extends Entity {
-	desc: string;
+	description: string;
 	isActive: boolean;
 	isCancelled: boolean;
 	isExpired: boolean;
@@ -12,7 +12,7 @@ export interface Event extends Entity {
 	isUpcoming: boolean;
 	name: string;
 	order: number;
-	shortDesc: string;
+	shortDescription: string;
 }
 
 export interface EventData {
@@ -57,7 +57,7 @@ export type DatetimesList = DatetimeList<DatetimeEdge>;
 
 export interface Price extends Entity, Trashable {
 	amount: number;
-	desc: string;
+	description: string;
 	isBasePrice: boolean;
 	isDefault: boolean;
 	isDiscount: boolean;

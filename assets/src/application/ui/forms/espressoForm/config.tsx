@@ -248,7 +248,7 @@ export const formConfig: EspressoFormProps = {
 			label: 'Password',
 			fieldType: 'text',
 			htmlType: 'password',
-			desc: 'Please enter a strong password',
+			description: 'Please enter a strong password',
 		},
 		{
 			name: 'country',

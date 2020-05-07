@@ -41,7 +41,7 @@ const useFooterRowGenerator = (): FooterRowGenerator => {
 				value: '',
 			},
 			{
-				key: 'desc',
+				key: 'description',
 				type: 'cell',
 				className: 'ee-ticket-price-calculator-total-label' + ' ee-number-column',
 				value: __('Total'),

@@ -8,7 +8,7 @@ import { MappedField } from '../adapters';
 import { Tooltip } from '@infraUI/display';
 
 const FieldRenderer: React.FC<FieldRendererProps> = (props) => {
-	const { after, before, desc, formControlProps, info, label, required, ...rest } = props;
+	const { after, before, description, formControlProps, info, label, required, ...rest } = props;
 
 	const { meta } = props;
 
@@ -39,7 +39,7 @@ const FieldRenderer: React.FC<FieldRendererProps> = (props) => {
 			<MappedField aria-label={label} aria-describedby={tooltipKey} {...rest} />
 			{after}
 			{errorMessage ? <FormErrorMessage>{errorMessage}</FormErrorMessage> : null}
-			<FormHelperText>{desc}</FormHelperText>
+			<FormHelperText>{description}</FormHelperText>
 		</FormControl>
 	);
 };

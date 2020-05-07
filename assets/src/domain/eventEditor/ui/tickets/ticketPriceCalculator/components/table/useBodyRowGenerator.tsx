@@ -38,7 +38,7 @@ const useBodyRowGenerator = (): BodyRowGenerator => {
 				value: <PriceNameInput price={price} />,
 			},
 			{
-				key: 'desc',
+				key: 'description',
 				type: 'cell',
 				className: 'ee-ticket-price-calculator-price-desc',
 				value: <PriceDescriptionInput price={price} />,

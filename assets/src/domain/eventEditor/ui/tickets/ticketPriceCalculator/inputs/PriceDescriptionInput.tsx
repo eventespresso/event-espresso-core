@@ -6,7 +6,7 @@ import { PriceField } from '../fields';
 
 const PriceDescriptionInput: React.FC<PriceModifierProps> = ({ price }) => {
 	return (
-		<PriceField field='desc' price={price} type={'text'} component={'input'} placeholder={__('description...')} />
+		<PriceField field='description' price={price} type={'text'} component={'input'} placeholder={__('description...')} />
 	);
 };
 
