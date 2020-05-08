@@ -17,7 +17,7 @@
 	.ee-rspnsv-table-header {
 		visibility: visible;
 
-		.ee-rspnsv-table-header-row {
+		&-row {
 			box-sizing: border-box;
 		}
 	}

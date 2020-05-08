@@ -5,26 +5,37 @@
 		th {
 			padding: 0;
 			text-align: center;
+
 			.header-cell-content {
 				padding: var(--ee-padding-nano) var(--ee-padding-tiny);
+
+				&__wrapper {
+					align-items: center;
+					display: flex;
+					flex-flow: column nowrap;
+					height: 130px;
+					justify-content: flex-end;
+				}
+
+				&__after {
+					font-size: var(--ee-font-size-small);
+					font-weight: bold;
+					line-height: var(--ee-line-height-modifier);
+					padding: var(--ee-padding-micro);
+					text-transform: uppercase;
+					width: 100%;
+				}
+
 				&__name {
 					font-weight: bold;
 					line-height: 1.1;
 					margin: 0 0 var(--ee-margin-micro);
-					max-height: calc(var(--ee-font-size-default) * 8);
+					max-height: 60px;
 					overflow: hidden;
 					padding: var(--ee-padding-tiny) 0;
 					text-align: center;
 					width: calc(100px - (var(--ee-padding-smaller) * 2));
 				}
-			}
-			.header-cell-after-content {
-				font-size: var(--ee-font-size-small);
-				font-weight: bold;
-				line-height: var(--ee-line-height-modifier);
-				padding: var(--ee-padding-micro);
-				text-transform: uppercase;
-				width: 100%;
 			}
 		}
 	}
@@ -48,10 +59,11 @@
 			}
 		}
 		td {
+			background-color: var(--ee-background-color);
+
 			&.date-cell {
 				border-right: 5px solid var(--ee-color-white);
-				padding: var(--ee-padding-small) var(--ee-padding-small) var(--ee-padding-small)
-					var(--ee-padding-default);
+				padding: var(--ee-padding-tiny) var(--ee-padding-small) var(--ee-padding-tiny) var(--ee-padding-default);
 				position: relative;
 				width: 300px;
 				.date-stripe {
@@ -72,6 +84,7 @@
 					}
 				}
 			}
+
 			&.relation-cell {
 				height: 100px;
 				padding: var(--ee-padding-nano);
@@ -90,6 +103,11 @@
 					}
 				}
 			}
+
+			&.ee-rspnsv-table-body-td {
+				height: 80px;
+				width: 130px;
+			}
 		}
 	}
 	td,
@@ -107,21 +125,28 @@
 	.no-assignments {
 		button {
 			background-color: var(--ee-color-accent) !important;
+			border-color: var(--ee-color-accent) !important;
+			svg {
+				color: white;
+			}
 		}
 	}
 	.new-assignment {
 		button {
 			background-color: var(--ee-color-secondary) !important;
+			border-color: var(--ee-color-secondary) !important;
 		}
 	}
 	.old-assignment {
 		button {
 			background-color: var(--ee-color-primary) !important;
+			border-color: var(--ee-color-primary) !important;
 		}
 	}
 	.removed-assignment {
 		button {
 			background-color: var(--ee-color-accent) !important;
+			border-color: var(--ee-color-accent) !important;
 		}
 	}
 }
