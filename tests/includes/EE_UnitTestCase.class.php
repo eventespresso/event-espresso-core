@@ -828,7 +828,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
      * @param string $error_message
      * @return void
      */
-    public function assertHTMLEquals($expected, $actual, $error_message = null)
+    public function assertHTMLEquals($expected, $actual, $error_message = '')
     {
         $expected_standardized_whitespace = preg_replace('~(\\s)+~', PHP_EOL, $expected);
         $actual_standardized_whitespace = preg_replace('~(\\s)+~', PHP_EOL, $actual);
@@ -1393,4 +1393,85 @@ class EE_UnitTestCase extends WP_UnitTestCase
         require_once EE_PUBLIC . 'template_tags.php';
     }
 
+
+    /**
+     * @param string   $hook_name
+     * @param callable $callback
+     * @param bool|int $equals
+     * @param bool     $is_action
+     * @since $VID:$
+     */
+    protected function assertHookIsSet($hook_name, callable $callback, $equals, $is_action = true) {
+        $has_hook = $is_action ? 'has_action' : 'has_filter';
+        $actual = $has_hook($hook_name, $callback);
+        if ($actual === false) {
+            // produces error message like:
+            // The `EE_Admin::filter_plugin_actions()` callback is NOT registered to the "plugin_action_links" action when it should be.
+            $message = sprintf(
+                'The `%1$s` callback is NOT registered to the "%2$s" %3$s when it should be.',
+                is_array($callback) ? get_class($callback[0]) . "::{$callback[1]}()" : $callback,
+                $hook_name,
+                $is_action ? 'action' : 'filter'
+            );
+        } else {
+            // produces error message like:
+            // The `EE_Admin::admin_init()` callback is registered to the "admin_init" action
+            // at priority 100 when it should be registered at priority 10.
+            $message = sprintf(
+                'The `%1$s` callback is registered to the "%2$s" %3$s at priority %4$s when it should be registered at priority %5$s.',
+                is_array($callback) ? get_class($callback[0]) . "::{$callback[1]}()" : $callback,
+                $hook_name,
+                $is_action ? 'action' : 'filter',
+                $actual,
+                $equals
+            );
+        }
+        $this->assertEquals( $equals, $actual, $message );
+    }
+
+
+    /**
+     * @param string   $action
+     * @param callable $callback
+     * @param bool|int $priority
+     * @since $VID:$
+     */
+    protected function assertActionSet($action, Callable $callback, $priority = true)
+    {
+        $this->assertHookIsSet($action, $callback, $priority);
+    }
+
+
+    /**
+     * @param string   $action
+     * @param callable $callback
+     * @since $VID:$
+     */
+    protected function assertActionNotSet($action, callable $callback)
+    {
+        $this->assertHookIsSet($action, $callback, false);
+    }
+
+
+    /**
+     * @param string   $filter
+     * @param callable $callback
+     * @param bool|int $priority
+     * @since $VID:$
+     */
+    protected function assertFilterSet($filter, Callable $callback, $priority = true)
+    {
+        $this->assertHookIsSet($filter, $callback, $priority, false);
+    }
+
+
+    /**
+     * @param string   $filter
+     * @param callable $callback
+     * @since $VID:$
+     */
+    protected function assertFilterNotSet($filter, callable $callback)
+    {
+        $this->assertHookIsSet($filter, $callback, false, false);
+    }
 }
