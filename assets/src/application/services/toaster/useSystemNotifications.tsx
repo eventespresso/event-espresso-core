@@ -1,15 +1,24 @@
 import React, { useCallback } from 'react';
 import { toast } from 'react-toastify';
 
-// import useLoadingToast from './useLoadingToast';
+import Loading from './Loading';
+
 import useToaster from './useToaster';
 import { DissmissToast, SystemNotificationsManager } from './types';
 
 // const position = toast.POSITION.BOTTOM_RIGHT; // got TS error because of this
 const position = 'bottom-right';
 
+const Msg = ({ closeToast, message = 'loading...' }) => (
+	<div>
+		{message}
+		<button>Retry</button>
+		<button onClick={closeToast}>Close</button>
+	</div>
+);
+
 const useSystemNotifications: SystemNotificationsManager = (options?) => {
-	const { addToast, dissmiss: dissmissToast, dissmissAll, exists, generateKey, getToasts } = useToaster(options);
+	const { dissmiss: dissmissToast, dissmissAll, generateKey, getToasts } = useToaster(options);
 
 	const dismiss: DissmissToast = useCallback((toastId) => toast.dismiss(toastId), [dissmissToast]);
 
@@ -18,14 +27,6 @@ const useSystemNotifications: SystemNotificationsManager = (options?) => {
 			position,
 		});
 	}, []);
-
-	const Msg = ({ closeToast, message }) => (
-		<div>
-			{message}
-			<button>Retry</button>
-			<button onClick={closeToast}>Close</button>
-		</div>
-	);
 
 	const info = useCallback(({ message }): void => {
 		toast(<Msg message={message} />, {
@@ -47,9 +48,10 @@ const useSystemNotifications: SystemNotificationsManager = (options?) => {
 	// 	[addToast, dissmissToast]
 	// );
 
-	const loading = useCallback(({ message }): void => {
-		toast.info(message, {
+	const loading = useCallback(({ key: toastId, loading, message }): void => {
+		toast(<Loading loading={loading} message={message} toastId={toastId} />, {
 			position,
+			toastId,
 		});
 	}, []);
 
