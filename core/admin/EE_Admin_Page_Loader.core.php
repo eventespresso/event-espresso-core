@@ -88,27 +88,36 @@ class EE_Admin_Page_Loader
 
 
     /**
-     * constructor
-     *
-     * @access public
-     * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
-     * @throws ReflectionException
      * @throws InvalidInterfaceException
      */
     public function __construct()
     {
         $this->loader = LoaderFactory::getLoader();
+    }
+
+
+    /**
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since $VID:$
+     */
+    public function init()
+    {
         // load menu_map classes
-        EE_Registry::instance()->load_file(EE_ADMIN, 'EE_Admin_Page_Menu_Map', 'core');
-        // define the default "groups" for the admin_pages
-        $this->_set_menu_groups();
-        // let's do a scan and see what installed pages we have
-        $this->_get_installed_pages();
-        // set menus (has to be done on every load - we're not actually loading the page just setting the menus and where they point to).
-        add_action('admin_menu', array($this, 'set_menus'));
-        add_action('network_admin_menu', array($this, 'set_network_menus'));
+        if (! class_exists('EE_Admin_Page_Menu_Map', false)) {
+            $map = require EE_ADMIN . 'EE_Admin_Page_Menu_Map.core.php';
+            if ($map) {
+                // define the default "groups" for the admin_pages
+                $this->_set_menu_groups();
+                // let's do a scan and see what installed pages we have
+                $this->_get_installed_pages();
+                // set menus (has to be done on every load - we're not actually loading the page just setting the menus and where they point to).
+                add_action('admin_menu', [$this, 'set_menus']);
+                add_action('network_admin_menu', [$this, 'set_network_menus']);
+            }
+        }
     }
 
 
@@ -313,6 +322,12 @@ class EE_Admin_Page_Loader
         // loop through admin pages and setup the $_installed_pages array.
         $hooks_ref = [];
         foreach ($installed_refs as $page => $path) {
+            // don't load the page init class IF IT's ALREADY LOADED !!!
+            if (isset($this->_installed_pages[ $page ])
+                && $this->_installed_pages[ $page ] instanceof EE_Admin_Page_Init
+            ) {
+                continue;
+            }
             // set autoloaders for our admin page classes based on included path information
             EEH_Autoloader::register_autoloaders_for_each_file_in_folder($path);
             // build list of installed pages
@@ -434,14 +449,13 @@ class EE_Admin_Page_Loader
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
-     * @throws ReflectionException
      * @throws InvalidInterfaceException
      */
     private function _load_admin_page($page = '', $path = '')
     {
         $class_name = $this->_get_classname_for_admin_init_page($page);
-        EE_Registry::instance()->load_file($path, $class_name, 'core');
-        if (! class_exists($class_name)) {
+        $admin_page = $this->loader->getShared($class_name);
+        if (! $admin_page || ! class_exists($class_name, false)) {
             $inner_error_msg = '<br />'
                                . sprintf(
                                    esc_html__(
@@ -466,7 +480,7 @@ class EE_Admin_Page_Loader
                            . $inner_error_msg;
             throw new EE_Error(implode('||', $error_msg));
         }
-        return $this->loader->getShared($class_name);
+        return $admin_page;
     }
 
 
@@ -615,7 +629,6 @@ class EE_Admin_Page_Loader
      *                              loaded.
      * @return array
      * @throws EE_Error
-     * @throws ReflectionException
      */
     private function _set_caffeinated($installed_refs)
     {

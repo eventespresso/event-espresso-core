@@ -196,7 +196,8 @@ final class EE_Admin implements InterminableInterface
         if (! defined('DOING_AJAX') || EE_ADMIN_AJAX) {
             try {
                 // this loads the controller for the admin pages which will setup routing etc
-                $this->loader->getShared('EE_Admin_Page_Loader');
+                $admin_page_loader = $this->loader->getShared('EE_Admin_Page_Loader');
+                $admin_page_loader->init();
             } catch (EE_Error $e) {
                 $e->get_error();
             }
@@ -1011,6 +1012,7 @@ final class EE_Admin implements InterminableInterface
 
 
     /**
+     * @return RequestInterface
      * @deprecated $VID:$
      */
     public function get_request()
@@ -1023,7 +1025,7 @@ final class EE_Admin implements InterminableInterface
             ),
             '$VID:$'
         );
-        EE_Registry::instance()->load_core('Request_Handler');
+        return $this->request;
     }
 
     /**
