@@ -60,7 +60,6 @@
 		}
 		td {
 			background-color: var(--ee-background-color);
-			height: 80px;
 
 			&.date-cell {
 				border-right: 5px solid var(--ee-color-white);
@@ -85,6 +84,7 @@
 					}
 				}
 			}
+
 			&.relation-cell {
 				height: 100px;
 				padding: var(--ee-padding-nano);
@@ -102,6 +102,11 @@
 						width: var(--ee-icon-button-size);
 					}
 				}
+			}
+
+			&.ee-rspnsv-table-body-td {
+				height: 80px;
+				width: 130px;
 			}
 		}
 	}
