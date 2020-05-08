@@ -175,10 +175,10 @@ class RouteHandler
      */
     private function isGQLRequest()
     {
-        return PHP_VERSION_ID < 70000
+        return PHP_VERSION_ID > 70000
                && (
                    $this->request->isGQL()
-                   || $this->request->isUnitTest()
+                   || $this->request->isUnitTesting()
                    || $this->route_manager->routeMatchesCurrentRequest(
                        'EventEspresso\core\domain\entities\route_match\specifications\admin\EspressoEventEditor'
                    )
