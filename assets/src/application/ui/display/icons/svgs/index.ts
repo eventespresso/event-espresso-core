@@ -6,6 +6,8 @@ export { ReactComponent as CalendarOutlined } from './calendarOutlined.svg';
 
 export { ReactComponent as Check } from './check.svg';
 
+export { ReactComponent as CloseCircleOutlined } from './closeCircleOutlined.svg';
+
 export { ReactComponent as CloseOutlined } from './closeOutlined.svg';
 
 export { ReactComponent as CompassFilled } from './compassFilled.svg';

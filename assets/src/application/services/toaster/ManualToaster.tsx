@@ -26,7 +26,6 @@ const ManualToaster = (): JSX.Element => {
 	};
 
 	const warningNotice = (event: React.MouseEvent): void => {
-		event.preventDefault();
 		warning({ message: 'warning!!!' });
 	};
 

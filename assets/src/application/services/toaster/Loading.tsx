@@ -13,6 +13,7 @@ const Loading: React.FC<ToastIconProps> = ({ closeToast, loading, message = 'loa
 
 	return (
 		<div>
+			<Spinner color='green' />
 			{message}
 			<button onClick={closeToast}>Close</button>
 		</div>
