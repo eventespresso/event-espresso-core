@@ -24,19 +24,15 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 	 * @since 4.3.0
 	 */
 	public function test_loading_admin() {
-        $admin_instance = EE_Registry::instance()->load_core('EE_Admin');
-        $this->assertInstanceOf('EE_Admin', $admin_instance);
+        $admin = EE_Registry::instance()->load_core('EE_Admin');
+        $this->assertInstanceOf('EE_Admin', $admin);
 
-		//tests filters have been added that are expected here.  Remember the has_{filter/action} returns the priority set by the caller.
-		$this->assertEquals( has_filter('plugin_action_links', array($admin_instance, 'filter_plugin_actions') ), 10 );
-		$this->assertEquals( has_action('AHEE__EE_System__core_loaded_and_ready', array($admin_instance, 'get_request') ), 10 );
-		$this->assertEquals( has_action('AHEE__EE_System__initialize_last', array($admin_instance, 'init') ), 10 );
-		$this->assertEquals( has_action('AHEE__EE_Admin_Page__route_admin_request', array($admin_instance, 'route_admin_request') ), 100 );
-		$this->assertEquals( has_action('wp_loaded', array($admin_instance, 'wp_loaded') ), 100 );
-		$this->assertEquals( has_action('admin_init', array($admin_instance, 'admin_init') ), 100 );
-		$this->assertEquals( has_action('admin_enqueue_scripts', array($admin_instance, 'enqueue_admin_scripts') ), 20 );
-		$this->assertEquals( has_action('admin_notices', array($admin_instance, 'display_admin_notices') ), 10 );
-		$this->assertEquals( has_filter('admin_footer_text', array($admin_instance, 'espresso_admin_footer') ), 10 );
+		//tests filters have been added that are expected here.
+        $this->assertFilterSet('plugin_action_links', [$admin, 'filter_plugin_actions'], 10);
+        $this->assertActionSet('AHEE__EE_System__initialize_last', [$admin, 'init'], 10);
+        $this->assertActionSet('admin_init', [$admin, 'admin_init'], 100);
+        $this->assertActionSet('admin_notices', [$admin, 'display_admin_notices'], 10);
+        $this->assertFilterSet('admin_footer_text', [$admin, 'espresso_admin_footer'], 10);
 	}
 
 	/**
@@ -68,7 +64,11 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 		$this->setMaintenanceMode();
 		$main_file = EE_PLUGIN_BASENAME;
 		$original_link = array('link');
-		$expected = array('<a href="admin.php?page=espresso_general_settings">' . __( 'Settings', 'event_espresso' ) . '</a>', '<a href="admin.php?page=espresso_events">' . __( 'Events', 'event_espresso' ) . '</a>', 'link');
+		$expected = array(
+		    '<a href="admin.php?page=espresso_general_settings">' . __( 'Settings', 'event_espresso' ) . '</a>',
+            '<a href="admin.php?page=espresso_events">' . __( 'Events', 'event_espresso' ) . '</a>',
+            'link'
+        );
 
 		//first test if plugin does NOT equal main file.
 		$filtered = EE_Admin::instance()->filter_plugin_actions( $original_link, 'fail' );
@@ -94,46 +94,27 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 	}
 
 
-
-
-	/**
-	 * ensure that Request Handler and CPT_Strategy classes are loaded by the get_request method
-	 * as expected.
-	 *
-	 * @since 4.3.0
-	 *
-	 * @depends test_loading_admin
-	 */
-	public function test_get_request() {
-		EE_Admin::instance()->get_request();
-		$this->assertTrue( class_exists('EE_Request_Handler') );
-		$this->assertTrue( class_exists('EE_CPT_Strategy') );
-	}
-
-
-
-
-
-	/**
-	 * This tests the init callback in EE_Admin.
-	 *
-	 * @since 4.3.0
-	 *
-	 * @depends test_loading_admin
-	 */
+    /**
+     * This tests the init callback in EE_Admin.
+     *
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @depends test_loading_admin
+     * @since   4.3.0
+     */
 	public function test_init() {
 		$admin = EE_Admin::instance();
 
 		//test when maintenance mode is set at level 2
 		$this->setMaintenanceMode(2);
 		$admin->init();
-		$this->assertFalse( has_action('dashboard_glance_items', array( $admin, 'dashboard_glance_items' ) ) );
-		$this->assertFalse( has_filter( 'get_edit_post_link', array( $admin, 'modify_edit_post_link') ) );
+		$this->assertActionNotSet('dashboard_glance_items', [$admin, 'dashboard_glance_items']);
+		$this->assertFilterNotSet('get_edit_post_link', [$admin, 'modify_edit_post_link']);
 		//should happen with both conditions
-		$this->assertEquals( has_filter( 'content_save_pre', array( $admin, 'its_eSpresso' ) ), 10 );
-		$this->assertEquals( has_action('admin_head', array( $admin, 'enable_hidden_ee_nav_menu_metaboxes' ) ), 10 );
-		$this->assertEquals( has_action('admin_head', array( $admin, 'register_custom_nav_menu_boxes' ) ), 10 );
-		$this->assertEquals( has_filter('nav_menu_meta_box_object', array( $admin, 'remove_pages_from_nav_menu' ) ), 10 );
+        $this->assertFilterSet('content_save_pre', [$admin, 'its_eSpresso'], 10);
+        $this->assertActionSet('admin_head', [$admin, 'enable_hidden_ee_nav_menu_metaboxes'], 10);
+        $this->assertActionSet('admin_head', [$admin, 'register_custom_nav_menu_boxes'], 10);
+        $this->assertFilterSet('nav_menu_meta_box_object', [$admin, 'remove_pages_from_nav_menu'], 10);
 
 		//test when maintenance mode is set to something other than 2
 		$this->setMaintenanceMode();
@@ -142,14 +123,16 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 
 		$admin->init();
 
-		$this->assertFalse( has_filter('FHEE__EE_Admin_Page_Loader___get_installed_pages__installed_refs', array( $admin, 'hide_admin_pages_except_maintenance_mode' ) ) );
-		$this->assertEquals( has_filter('content_save_pre', array( $admin, 'its_eSpresso' ) ), 10 );
-		$this->assertEquals( has_action('dashboard_glance_items', array( $admin, 'dashboard_glance_items' ) ), 10 );
-		//should happen with both conditions
-		$this->assertEquals( has_action('admin_head', array( $admin, 'enable_hidden_ee_nav_menu_metaboxes' ) ), 10 );
-		$this->assertEquals( has_action('admin_head', array( $admin, 'register_custom_nav_menu_boxes' ) ), 10 );
-		$this->assertEquals( has_filter('nav_menu_meta_box_object', array( $admin, 'remove_pages_from_nav_menu' ) ), 10 );
-		$this->assertEquals( has_filter( 'get_edit_post_link', array( $admin, 'modify_edit_post_link') ), 10 );
+        $this->assertFilterNotSet(
+            'FHEE__EE_Admin_Page_Loader___get_installed_pages__installed_refs',
+            [$admin, 'hide_admin_pages_except_maintenance_mode']
+        );
+        $this->assertFilterSet('content_save_pre', [$admin, 'its_eSpresso'], 10);
+        $this->assertActionSet('dashboard_glance_items', [$admin, 'dashboard_glance_items'], 10);
+        $this->assertActionSet('admin_head', [$admin, 'enable_hidden_ee_nav_menu_metaboxes'], 10);
+        $this->assertActionSet('admin_head', [$admin, 'register_custom_nav_menu_boxes'], 10);
+        $this->assertFilterSet('nav_menu_meta_box_object', [$admin, 'remove_pages_from_nav_menu'], 10);
+        $this->assertFilterSet('get_edit_post_link', [$admin, 'modify_edit_post_link'], 10);
 
 		//default should have Admin Page Loader loaded up.
 		$this->assertTrue( class_exists( 'EE_Admin_Page_Loader' ) );
@@ -172,7 +155,7 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 		$result = EE_Admin::instance()->remove_pages_from_nav_menu( $posttypeStub );
 		$this->assertEquals( $expected, $result->name );
 
-		//test when posttype DOES equal page
+		//test when post type DOES equal page
 		$posttypeStub->name = 'page';
 		$this->setCoreConfig();
 		$expected = EE_Registry::instance()->CFG->core->get_critical_pages_array();
@@ -330,6 +313,4 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 
 		$this->assertEquals( $expected_link, $ismodified );
 	}
-
 }
-// Location: testcases/core/admin/EE_Admin_Tests.php
