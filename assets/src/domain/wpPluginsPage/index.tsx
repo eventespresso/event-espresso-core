@@ -4,9 +4,9 @@ import { pathOr } from 'ramda';
 import $ from 'jquery';
 
 import ExitSurvey from './ExitSurvey';
-import { ExitModalInfo } from './types';
+import { ExitSurveyInfo } from './types';
 
-const info = pathOr<ExitModalInfo>(null, ['eejsdata', 'data', 'exitModalInfo'], window);
+const info = pathOr<ExitSurveyInfo>(null, ['eejsdata', 'data', 'exitModalInfo'], window);
 
 /**
  * Handler for deactivation trigger
@@ -18,12 +18,10 @@ const handleDeactivationClick = (e: JQuery.ClickEvent<HTMLElement>, el: any): vo
 
 	render(<ExitSurvey deactivationUrl={url} />, container);
 };
-// TODO Remove this when `eejsdata` is wired up
-const ok = true;
 /**
  * EE caffeinated click capture but only if feature is active
  */
-if (info?.isModalActive || ok) {
+if (info?.isModalActive) {
 	// register event handlers on document ready
 	$(() => {
 		$('tr[data-slug="event-espresso"]').on('click', 'span.deactivate > a', function (e) {

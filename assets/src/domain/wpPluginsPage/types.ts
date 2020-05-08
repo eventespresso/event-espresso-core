@@ -1,6 +1,4 @@
-export interface ExitModalInfo {
-	firstname: string;
-	emailaddress: string;
-	website: string;
+export interface ExitSurveyInfo {
+	typeFormUrl: string;
 	isModalActive: boolean;
 }

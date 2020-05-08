@@ -1,30 +1,19 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 
 import Popup from './Popup';
-import ExitModal from './ExitModal';
+import ExitSurveyModal from './ExitSurveyModal';
+import { useDisclosure } from '@chakra-ui/core';
 
 type ExitSurveyProps = {
 	deactivationUrl: string;
 };
 
 const ExitSurvey: React.FC<ExitSurveyProps> = ({ deactivationUrl }) => {
-	const [isOpen, setIsOpen] = useState(false);
-	const onOpen: VoidFunction = () => setIsOpen(true);
-	const onClose: VoidFunction = () => setIsOpen(false);
+	const { isOpen, onClose, onOpen } = useDisclosure();
 
 	const deactivatePlugin = useCallback(() => {
 		window.location.href = deactivationUrl;
 	}, [deactivationUrl]);
-
-	const onOk = useCallback<VoidFunction>(() => {
-		// open survey modal
-		onOpen();
-	}, [onOpen]);
-
-	const onSkip = useCallback<VoidFunction>(() => {
-		// deactivate the plugin
-		deactivatePlugin();
-	}, [deactivatePlugin]);
 
 	const onSubmit = useCallback<VoidFunction>(() => {
 		// close modal
@@ -35,8 +24,8 @@ const ExitSurvey: React.FC<ExitSurveyProps> = ({ deactivationUrl }) => {
 
 	return (
 		<>
-			<Popup onOk={onOk} onSkip={onSkip} />
-			<ExitModal isOpen={isOpen} onSubmit={onSubmit} />
+			<Popup onOk={onOpen} onSkip={deactivatePlugin} />
+			<ExitSurveyModal isOpen={isOpen} onSubmit={onSubmit} />
 		</>
 	);
 };

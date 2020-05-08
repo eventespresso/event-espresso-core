@@ -1,5 +1,6 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import { Button, Modal } from '@wordpress/components';
+import { useDisclosure } from '@chakra-ui/core';
 import { __ } from '@wordpress/i18n';
 
 type PopupProps = {
@@ -8,21 +9,20 @@ type PopupProps = {
 };
 
 const Popup: React.FC<PopupProps> = ({ onOk, onSkip }) => {
-	const [isOpen, setIsOpen] = useState(true);
-	const closePopup: VoidFunction = () => setIsOpen(false);
+	const { isOpen, onClose } = useDisclosure(true);
 
 	const onOkHandler = useCallback(() => {
 		if (typeof onOk === 'function') {
 			onOk();
 		}
-		closePopup();
+		onClose();
 	}, [onOk]);
 
 	const onSkipHandler = useCallback(() => {
 		if (typeof onSkip === 'function') {
 			onSkip();
 		}
-		closePopup();
+		onClose();
 	}, [onOk]);
 
 	const title = __('Do you have a moment to share why you are deactivating Event Espresso?');
@@ -31,7 +31,7 @@ const Popup: React.FC<PopupProps> = ({ onOk, onSkip }) => {
 		isOpen && (
 			<Modal
 				isDismissible={false}
-				onRequestClose={closePopup}
+				onRequestClose={onClose}
 				shouldCloseOnClickOutside={false}
 				shouldCloseOnEsc={false}
 				title={title}
