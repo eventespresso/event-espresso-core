@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useQuery } from '@apollo/react-hooks';
-import { useToaster, useLoadingToast } from '../../../../../../application/services/toaster';
-import { useStatus, TypeName } from '../../../../../../application/services/apollo/status';
+import { useSystemNotifications } from '@appServices/toaster';
+import { useStatus, TypeName } from '@appServices/apollo/status';
 import useTicketQueryOptions from './useTicketQueryOptions';
 import { FetchEntitiesResult } from '../types';
 import { TicketsList } from '../../types';
@@ -15,8 +15,8 @@ const useFetchTickets = (skipFetch: boolean = null): FetchEntitiesResult<Tickets
 	// or tickets have already been fetched
 	const skip = skipFetch !== null ? skipFetch : !datetimeIn.length || isLoaded(TypeName.tickets);
 
-	const toaster = useToaster();
-	const loadingToastKey = useRef(toaster.generateKey());
+	const toaster = useSystemNotifications();
+	const loadingToastKey = useRef('');
 
 	const dismissLoading = (): void => toaster.dismiss(loadingToastKey.current);
 
@@ -35,9 +35,13 @@ const useFetchTickets = (skipFetch: boolean = null): FetchEntitiesResult<Tickets
 		},
 	});
 
-	useLoadingToast({ loading, message: 'initializing tickets', toastKey: loadingToastKey.current });
-
 	useEffect(() => {
+		if (loadingToastKey.current === '') {
+			loadingToastKey.current = toaster.generateKey(null, `loading-${TypeName.tickets}`);
+		}
+		// if (loading) {
+		toaster.loading({ loading, message: 'initializing tickets', key: loadingToastKey.current });
+		// }
 		setIsLoading(TypeName.tickets, loading);
 	}, [loading]);
 
