@@ -13,7 +13,7 @@ const info = pathOr<ExitSurveyInfo>(null, ['eejsdata', 'data', 'exitModalInfo'],
 
 const ExitSurveyContent: React.FC<SurveyContentProps> = ({ onSubmit }) => {
 	const typeFormEl = useRef();
-	const typeFormUrl = info?.typeFormUrl;
+	const typeFormUrl = info?.typeFormUrl || 'https://eventespresso.typeform.com/to/O1DDym';
 
 	useEffect(() => {
 		typeformEmbed.makeWidget(typeFormEl.current, typeFormUrl, {

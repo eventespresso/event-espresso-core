@@ -21,7 +21,8 @@ const handleDeactivationClick = (e: JQuery.ClickEvent<HTMLElement>, el: any): vo
 /**
  * EE caffeinated click capture but only if feature is active
  */
-if (info?.isModalActive) {
+const ok = true;
+if (info?.isModalActive || ok) {
 	// register event handlers on document ready
 	$(() => {
 		$('tr[data-slug="event-espresso"]').on('click', 'span.deactivate > a', function (e) {
