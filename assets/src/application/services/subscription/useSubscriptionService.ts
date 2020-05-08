@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { assocPath, omit } from 'ramda';
 import { v4 as uuidv4 } from 'uuid';
 import invariant from 'invariant';
@@ -8,55 +9,83 @@ const NAMESPACE = 'espresso';
 
 type SS = SubscriptionService;
 const useSubscriptionService: SubscriptionServiceHook = ({ domain, service }) => {
-	const subscribe: SS['subscribe'] = (callback, options) => {
-		invariant(typeof callback === 'function', 'subscribe `callback` must be a function');
+	/**
+	 * Since we store our subscriptions in a global variable (registry) to allow
+	 * external addons to be able to use the service, its change does not trigger state updates.
+	 * So, we will create a hash (like a cacheId) to store the current state of subscriptions.
+	 * When we add or remove a subscription, this hash will change, resulting notification to
+	 * all the subscribers.
+	 */
+	const subscriptions = window[NAMESPACE]?.[domain]?.[service]?.subscriptions || {};
+	const subscriptionsHash = Object.keys(subscriptions).join(':');
 
-		const subscriptionId = uuidv4();
-
-		updateSubscription({ id: subscriptionId, callback, options, action: 'add' });
-
-		// to unsubscribe
-		return (): void => {
-			updateSubscription({ id: subscriptionId, action: 'remove' });
-		};
-	};
-
-	const getSubscriptions: SS['getSubscriptions'] = () => {
+	const getSubscriptions = useCallback<SS['getSubscriptions']>(() => {
 		return window[NAMESPACE]?.[domain]?.[service]?.subscriptions || {};
-	};
-
-	const getServiceRegistryItem: SS['getServiceRegistryItem'] = (key, defaultValue) => {
-		return window[NAMESPACE]?.[domain]?.[service]?.[key] || defaultValue;
-	};
-
-	const addToServiceRegistry: SS['addToServiceRegistry'] = (key, value) => {
-		updateServiceRegistry(key, value);
-	};
+	}, [subscriptionsHash]);
 
 	/**
 	 * Updates/Sets/Exposes the value globally
 	 */
-	const updateServiceRegistry: SS['addToServiceRegistry'] = (key, value) => {
-		window[NAMESPACE] = assocPath([domain, service, key], value, window[NAMESPACE]);
-	};
+	const updateServiceRegistry = useCallback<SS['addToServiceRegistry']>(
+		(key, value) => {
+			window[NAMESPACE] = assocPath([domain, service, key], value, window[NAMESPACE]);
+		},
+		[subscriptionsHash]
+	);
 
-	const updateSubscription = ({ id, callback, options, action }: UpdateSubscriptionProps): void => {
-		const subscriptions = getSubscriptions();
+	const setSubscriptions = useCallback(
+		(subscriptions: Subscriptions): void => {
+			updateServiceRegistry('subscriptions', subscriptions);
+		},
+		[updateServiceRegistry]
+	);
 
-		const newSubscriptions =
-			action === 'add'
-				? {
-						...subscriptions,
-						[id]: { callback, options },
-				  }
-				: omit([id], subscriptions);
+	const updateSubscription = useCallback(
+		({ id, callback, options, action }: UpdateSubscriptionProps): void => {
+			const subscriptions = getSubscriptions();
 
-		setSubscriptions(newSubscriptions);
-	};
+			const newSubscriptions =
+				action === 'add'
+					? {
+							...subscriptions,
+							[id]: { callback, options },
+					  }
+					: omit([id], subscriptions);
 
-	const setSubscriptions = (subscriptions: Subscriptions): void => {
-		updateServiceRegistry('subscriptions', subscriptions);
-	};
+			setSubscriptions(newSubscriptions);
+		},
+		[getSubscriptions, setSubscriptions]
+	);
+
+	const subscribe = useCallback<SS['subscribe']>(
+		(callback, options) => {
+			invariant(typeof callback === 'function', 'subscribe `callback` must be a function');
+
+			const subscriptionId = uuidv4();
+
+			updateSubscription({ id: subscriptionId, callback, options, action: 'add' });
+
+			// to unsubscribe
+			return (): void => {
+				updateSubscription({ id: subscriptionId, action: 'remove' });
+			};
+		},
+		[updateSubscription]
+	);
+
+	const getServiceRegistryItem = useCallback<SS['getServiceRegistryItem']>(
+		(key, defaultValue) => {
+			return window[NAMESPACE]?.[domain]?.[service]?.[key] || defaultValue;
+		},
+		[subscriptionsHash]
+	);
+
+	const addToServiceRegistry = useCallback<SS['addToServiceRegistry']>(
+		(key, value) => {
+			updateServiceRegistry(key, value);
+		},
+		[updateServiceRegistry]
+	);
 
 	const subscribeFn = getServiceRegistryItem('subscribe');
 

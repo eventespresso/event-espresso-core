@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { Entity } from '@dataServices/types';
 import { EntityFilterService, EntityListFilterStateManager } from './types';
 import { useFilterBarService, FilterBarServiceCbArgs } from '../subscription';
@@ -15,55 +15,63 @@ const useEntityFilterService = <D extends string, L extends string, E extends En
 
 	const { getFilters, getSearches, getSorters } = useFilterBarService<D, L, E, ELFSM>(domain, listId);
 
-	const getCallbackList = (
-		mappedCallbackList: ReturnType<typeof getFilters>
-	): Array<SubscriptionCallback<FilterBarServiceCbArgs<E, ELFSM>, E[]>> => {
+	const getCallbackList = useCallback((mappedCallbackList: ReturnType<typeof getFilters>): Array<
+		SubscriptionCallback<FilterBarServiceCbArgs<E, ELFSM>, E[]>
+	> => {
 		const subscriptions = sortBy(pathOr(10, ['options', 'priority']), Object.values(mappedCallbackList));
 		return subscriptions.map(({ callback }) => callback);
-	};
+	}, []);
 
-	const applyCallbacks = (
-		entityList: Array<E>,
-		filterState: FS,
-		mappedCallbackList: ReturnType<typeof getFilters>
-	): Array<E> => {
-		let filteredEntities = entityList;
+	const applyCallbacks = useCallback(
+		(entityList: Array<E>, filterState: FS, mappedCallbackList: ReturnType<typeof getFilters>): Array<E> => {
+			let filteredEntities = entityList;
 
-		const callbacks = getCallbackList(mappedCallbackList);
+			const callbacks = getCallbackList(mappedCallbackList);
 
-		callbacks.forEach((callback) => {
-			filteredEntities = callback({ entityList: filteredEntities, filterState });
-		});
+			callbacks.forEach((callback) => {
+				filteredEntities = callback({ entityList: filteredEntities, filterState });
+			});
 
-		return filteredEntities;
-	};
+			return filteredEntities;
+		},
+		[getCallbackList]
+	);
 
-	const applyFilters: EFS['applyFilters'] = useCallback(
+	// avoid the callback being affected by change in other callbacks
+	const filterIdsStr = Object.keys(getFilters()).join(':');
+	const applyFilters = useCallback<EFS['applyFilters']>(
 		(entityList, filterState) => {
 			return applyCallbacks(entityList, filterState, getFilters());
 		},
-		[domain, listId]
+		[applyCallbacks, filterIdsStr]
 	);
 
-	const applySearches: EFS['applySearches'] = useCallback(
+	// avoid the callback being affected by change in other callbacks
+	const searchIdsStr = Object.keys(getSearches()).join(':');
+	const applySearches = useCallback<EFS['applySearches']>(
 		(entityList, filterState) => {
 			return applyCallbacks(entityList, filterState, getSearches());
 		},
-		[domain, listId]
+		[applyCallbacks, searchIdsStr]
 	);
 
-	const applySorters: EFS['applySorters'] = useCallback(
+	// avoid the callback being affected by change in other callbacks
+	const sorterIdsStr = Object.keys(getSorters()).join(':');
+	const applySorters = useCallback<EFS['applySorters']>(
 		(entityList, filterState) => {
 			return applyCallbacks(entityList, filterState, getSorters());
 		},
-		[domain, listId]
+		[applyCallbacks, sorterIdsStr]
 	);
 
-	return {
-		applyFilters,
-		applySearches,
-		applySorters,
-	};
+	return useMemo(
+		() => ({
+			applyFilters,
+			applySearches,
+			applySorters,
+		}),
+		[applyFilters, applySearches, applySorters]
+	);
 };
 
 export default useEntityFilterService;

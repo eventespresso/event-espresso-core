@@ -25,7 +25,7 @@ const useFilteredEntities = <D extends string, L extends string, E extends Entit
 			return entityList;
 		}
 		return applyFilters(entityList, filterState);
-	}, [cacheIds, filterState]);
+	}, [applyFilters, cacheIds, filterState]);
 
 	// search entities
 	cacheIds = entityListCacheIdString(filteredEntities);
@@ -34,13 +34,13 @@ const useFilteredEntities = <D extends string, L extends string, E extends Entit
 			return filteredEntities;
 		}
 		return applySearches(filteredEntities, filterState);
-	}, [cacheIds, searchText]);
+	}, [applySearches, cacheIds, searchText]);
 
 	// sort it
 	cacheIds = entityListCacheIdString(searchResults);
 	const sortedEntities = useMemo<Array<E>>(() => {
 		return applySorters(searchResults, filterState);
-	}, [cacheIds, sortBy]);
+	}, [applySorters, cacheIds, sortBy]);
 
 	// paginate it
 	cacheIds = entityListCacheIdString(sortedEntities);
