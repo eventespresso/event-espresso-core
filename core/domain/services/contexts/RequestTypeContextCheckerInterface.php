@@ -23,7 +23,6 @@ interface RequestTypeContextCheckerInterface
 
     /**
      * @param $is_activation
-     * @return bool
      */
     public function setIsActivation($is_activation);
 
@@ -131,7 +130,7 @@ interface RequestTypeContextCheckerInterface
      *
      * @return bool
      */
-    public function isUnitTest();
+    public function isUnitTesting();
 
     /**
      * true if the current request is for the WP REST API

@@ -50,11 +50,10 @@ class RequestTypeContextChecker extends ContextChecker implements RequestTypeCon
 
     /**
      * @param $is_activation
-     * @return bool
      */
     public function setIsActivation($is_activation)
     {
-        return $this->request_type->setIsActivation($is_activation);
+        $this->request_type->setIsActivation($is_activation);
     }
 
 
@@ -205,9 +204,9 @@ class RequestTypeContextChecker extends ContextChecker implements RequestTypeCon
      *
      * @return bool
      */
-    public function isUnitTest()
+    public function isUnitTesting()
     {
-        return $this->request_type->slug() === RequestTypeContext::UNIT_TEST;
+        return $this->request_type->isUnitTesting();
     }
 
 

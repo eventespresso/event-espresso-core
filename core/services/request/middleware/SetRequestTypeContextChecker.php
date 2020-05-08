@@ -41,14 +41,14 @@ class SetRequestTypeContextChecker extends Middleware
                 ),
                 array(
                     'DOING_AJAX' => defined('DOING_AJAX') && DOING_AJAX,
-                    'EE_TESTS_DIR' => defined('EE_TESTS_DIR'),
                     'WP_CLI'     => defined('WP_CLI') && WP_CLI,
                     'is_admin'   => is_admin(),
                 )
             )
         );
-        $request_type_context          = $request_type_context_detector->detectRequestTypeContext();
-        $request_type_context_checker  = $this->loader->getShared(
+        $request_type_context = $request_type_context_detector->detectRequestTypeContext();
+        $request_type_context->setIsUnitTesting(defined('EE_TESTS_DIR'));
+        $request_type_context_checker = $this->loader->getShared(
             'EventEspresso\core\domain\services\contexts\RequestTypeContextChecker',
             array($request_type_context)
         );

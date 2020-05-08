@@ -82,11 +82,6 @@ class RequestTypeContext extends Context
     const GQL = 'graphql';
 
     /**
-     * indicates that the current request is occurring while unit testing
-     */
-    const UNIT_TEST = 'ee-unit-tests';
-
-    /**
      * indicates that the current request is for the WP REST API
      */
     const WP_API = 'wp-rest-api';
@@ -100,6 +95,11 @@ class RequestTypeContext extends Context
      * @var boolean $is_activation
      */
     private $is_activation = false;
+
+    /**
+     * @var boolean $is_unit_testing
+     */
+    private $is_unit_testing = false;
 
     /**
      * @var array $valid_request_types
@@ -154,7 +154,6 @@ class RequestTypeContext extends Context
                     RequestTypeContext::FRONTEND,
                     RequestTypeContext::GQL,
                     RequestTypeContext::IFRAME,
-                    RequestTypeContext::UNIT_TEST,
                     RequestTypeContext::WP_API,
                     RequestTypeContext::WP_SCRAPE,
                 )
@@ -179,5 +178,23 @@ class RequestTypeContext extends Context
     public function setIsActivation($is_activation)
     {
         $this->is_activation = filter_var($is_activation, FILTER_VALIDATE_BOOLEAN);
+    }
+
+
+    /**
+     * @return bool
+     */
+    public function isUnitTesting()
+    {
+        return $this->is_unit_testing;
+    }
+
+
+    /**
+     * @param bool $is_unit_testing
+     */
+    public function setIsUnitTesting($is_unit_testing)
+    {
+        $this->is_unit_testing = filter_var($is_unit_testing, FILTER_VALIDATE_BOOLEAN);;
     }
 }
