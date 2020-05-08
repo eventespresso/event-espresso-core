@@ -141,6 +141,7 @@ module.exports = function (webpackEnv) {
 	const externals = {
 		react: 'React',
 		'react-dom': 'ReactDOM',
+		jquery: 'jQuery'
 	};
 
 	// Define WordPress dependencies

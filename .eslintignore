@@ -22,3 +22,5 @@ tests
 ui
 widgets
 wp-assets
+*.css
+*.scss

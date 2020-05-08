@@ -1,0 +1,19 @@
+.block-editor {
+	#ee-block-event-attendees.event-attendees ul {
+		list-style-type: none;
+	}
+
+	#ee-block-event-attendees .contact-image-wrap-div {
+		display: inline-block;
+	}
+
+	/** account for this current problem in WP 5.0 beta: https://core.trac.wordpress.org/ticket/45290 **/
+	#ee-block-event-attendees p {
+		display: inline-block;
+	}
+
+	#ee-block-event-attendees .contact-avatar-img {
+		margin: 0.25em 1em 0.25em 0;
+		vertical-align: middle;
+	}
+}
