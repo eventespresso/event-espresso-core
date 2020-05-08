@@ -102,8 +102,8 @@ class EE_Post_Content_Field extends EE_Text_Field_Base
         add_filter('the_content_wp_core_only', 'wpautop', 10);
         add_filter('the_content_wp_core_only', 'shortcode_unautop', 10);
         add_filter('the_content_wp_core_only', 'prepend_attachment', 10);
-        if (function_exists('wp_make_content_images_responsive')) {
-            add_filter('the_content_wp_core_only', 'wp_make_content_images_responsive', 10);
+        if (function_exists('wp_filter_content_tags')) {
+            add_filter('the_content_wp_core_only', 'wp_filter_content_tags', 10);
         }
         add_filter('the_content_wp_core_only', 'do_shortcode', 11);
         add_filter('the_content_wp_core_only', 'convert_smilies', 20);
