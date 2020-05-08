@@ -195,6 +195,6 @@ class RequestTypeContext extends Context
      */
     public function setIsUnitTesting($is_unit_testing)
     {
-        $this->is_unit_testing = filter_var($is_unit_testing, FILTER_VALIDATE_BOOLEAN);;
+        $this->is_unit_testing = filter_var($is_unit_testing, FILTER_VALIDATE_BOOLEAN);
     }
 }
