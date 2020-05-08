@@ -1,0 +1,8 @@
+.ee-steps {
+	display: flex;
+	align-items: center;
+	justify-content: space-evenly;
+	&__step.active {
+		font-weight: bold;
+	}
+}
