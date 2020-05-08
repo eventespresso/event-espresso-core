@@ -1,3 +1,4 @@
+import { useCallback, useEffect } from 'react';
 import { allPass, filter, pathEq } from 'ramda';
 import invariant from 'invariant';
 
@@ -18,52 +19,79 @@ const useFilterBarService: FBShook = (domain, entityListId) => {
 		service: FilterBarServiceType.FILTER,
 	});
 
-	const registerCallback = ({ callback, listId, priority, type }) => {
-		invariant(listId, 'No `listId` provided');
-		return subscribe(callback, { listId, priority, type });
-	};
+	const registerCallback = useCallback(
+		({ callback, listId, priority, type }) => {
+			invariant(listId, 'No `listId` provided');
+			return subscribe(callback, { listId, priority, type });
+		},
+		[subscribe]
+	);
 
-	const getCallbacks = ({ listId = entityListId, type }) => {
-		invariant(listId, 'No `listId` provided');
-		const allSubscriptions = getSubscriptions();
+	const getCallbacks = useCallback(
+		({ listId = entityListId, type }) => {
+			invariant(listId, 'No `listId` provided');
+			const allSubscriptions = getSubscriptions();
 
-		const isForList = pathEq(['options', 'listId'], listId);
-		const isOfType = pathEq(['options', 'type'], type);
-		const isOfTypeAndForList = allPass([isForList, isOfType]);
+			const isForList = pathEq(['options', 'listId'], listId);
+			const isOfType = pathEq(['options', 'type'], type);
+			const isOfTypeAndForList = allPass([isForList, isOfType]);
 
-		return filter(isOfTypeAndForList, allSubscriptions);
-	};
+			return filter(isOfTypeAndForList, allSubscriptions);
+		},
+		[entityListId, getSubscriptions]
+	);
 
-	const exposeToRegistry: ExposeToRegistry = (key, value) => {
-		const existingValue = getServiceRegistryItem(key);
-		if (typeof existingValue !== 'function') {
-			addToServiceRegistry(key, value);
-		}
-	};
+	const exposeToRegistry: ExposeToRegistry = useCallback(
+		(key, value) => {
+			const existingValue = getServiceRegistryItem(key);
+			if (typeof existingValue !== 'function') {
+				addToServiceRegistry(key, value);
+			}
+		},
+		[getServiceRegistryItem, addToServiceRegistry]
+	);
 
-	const getFilters = (listId = entityListId) => {
-		return getCallbacks({ listId, type: 'filter' });
-	};
+	const getFilters = useCallback(
+		(listId = entityListId) => {
+			return getCallbacks({ listId, type: 'filter' });
+		},
+		[entityListId, getCallbacks]
+	);
 
-	const getSorters = (listId = entityListId) => {
-		return getCallbacks({ listId, type: 'sort' });
-	};
+	const getSorters = useCallback(
+		(listId = entityListId) => {
+			return getCallbacks({ listId, type: 'sort' });
+		},
+		[entityListId, getCallbacks]
+	);
 
-	const getSearches = (listId = entityListId) => {
-		return getCallbacks({ listId, type: 'search' });
-	};
+	const getSearches = useCallback(
+		(listId = entityListId) => {
+			return getCallbacks({ listId, type: 'search' });
+		},
+		[entityListId, getCallbacks]
+	);
 
-	const registerFilter: FBSRegistry['registerFilter'] = (callback, priority = 10, listId = entityListId) => {
-		return registerCallback({ callback, listId, priority, type: 'filter' });
-	};
+	const registerFilter = useCallback<FBSRegistry['registerFilter']>(
+		(callback, priority = 10, listId = entityListId) => {
+			return registerCallback({ callback, listId, priority, type: 'filter' });
+		},
+		[entityListId, registerCallback]
+	);
 
-	const registerSorter: FBSRegistry['registerSorter'] = (callback, priority = 10, listId = entityListId) => {
-		return registerCallback({ callback, listId, priority, type: 'sort' });
-	};
+	const registerSorter = useCallback<FBSRegistry['registerSorter']>(
+		(callback, priority = 10, listId = entityListId) => {
+			return registerCallback({ callback, listId, priority, type: 'sort' });
+		},
+		[entityListId, registerCallback]
+	);
 
-	const registerSearch: FBSRegistry['registerSearch'] = (callback, priority = 10, listId = entityListId) => {
-		return registerCallback({ callback, listId, priority, type: 'search' });
-	};
+	const registerSearch = useCallback<FBSRegistry['registerSearch']>(
+		(callback, priority = 10, listId = entityListId) => {
+			return registerCallback({ callback, listId, priority, type: 'search' });
+		},
+		[entityListId, registerCallback]
+	);
 
 	// Expose the regsitry functions globally
 	exposeToRegistry('registerFilter', registerFilter);
