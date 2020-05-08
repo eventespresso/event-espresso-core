@@ -21,7 +21,9 @@
 class EEH_TemplateTest extends PHPUnit_Framework_TestCase {
 
 	public function test() {
-
+        $this->markTestIncomplete(
+            'This test has not been implemented yet.'
+        );
 	}
 }
 

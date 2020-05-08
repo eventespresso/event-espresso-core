@@ -176,7 +176,9 @@ class Transactions_Admin_Page_Test extends EE_UnitTestCase
     protected function _generate_payment($payment_details)
     {
         // make sure refunds have a negative amount
-        $payment_details['PAY_amount'] = $payment_details['type'] < 0 ? $payment_details['PAY_amount'] * -1 : $payment_details['PAY_amount'];
+        $payment_details['PAY_amount'] = isset($payment_details['type']) && $payment_details['type'] < 0
+            ? $payment_details['PAY_amount'] * -1
+            : $payment_details['PAY_amount'];
         // then remove 'type' from the payment details since it's not an EEM_Payment field
         unset($payment_details['type']);
         return EE_Payment::new_instance($payment_details, '', array('Y-m-d', 'H:i a'));
@@ -283,10 +285,9 @@ class Transactions_Admin_Page_Test extends EE_UnitTestCase
     public function test_create_new_payment_or_refund_from_request_data()
     {
         $this->_admin_page = new Transactions_Admin_Page_Mock();
-        //echo "\n\n " . __METHOD__ . "() \n";
         $transaction  = $this->_generate_transaction_and_registrations();
         $request_data = $this->_generate_request_data_for_new_payment_or_refund($transaction);
-        $payment      = $this->_admin_page->create_payment_from_request_data($request_data['txn_admin_payment']['PAY_ID']);
+        $payment      = $this->_admin_page->create_payment_from_request_data($request_data['txn_admin_payment']);
         $this->assertInstanceOf('EE_Payment', $payment);
     }
 

@@ -100,7 +100,7 @@ class EE_Dependency_Map_Test extends EE_UnitTestCase {
 			if ( isset( $skip[ $class ] ) || strpos( $class, 'Command' ) !== false ) {
 				continue;
 			}
-			$dependency = $loader instanceof Closure ? $loader() : EE_Registry::instance()->$loader( $class );
+            $dependency = $loader instanceof Closure ? $loader() : EE_Registry::instance()->$loader( $class );
 			// helpers are simply loaded and do not return an instance
 			if ( $loader === 'load_helper' ) {
 				$this->assertTrue( $dependency );

@@ -27,16 +27,17 @@ class EE_Plaintext_Validation_Strategy_Test extends EE_UnitTestCase{
 		$this->_validator->_construct_finalize( $input );
 	}
 	function test_validate__fail(){
-		try{
-			$this->_validator->validate( '<img src=x onerror=prompt(document.cookie)> <img src=x onerror=prompt(/XSS/)> <img src=x onerror=prompt(1)>' );
-			$this->assertTrue( false );
-		}catch( EE_Validation_Error $e ) {
-			$this->assertTrue( true );
-		}
+
+        $this->expectException('Exception');
+        $this->expectExceptionCode(500);
+        $this->_validator->validate(
+            '<img src=x onerror=prompt(document.cookie)> <img src=x onerror=prompt(/XSS/)> <img src=x onerror=prompt(1)>'
+        );
 	}
 
 	function test_validate__pass(){
 		$this->_validator->validate( 'just some text; no html anywhere' );
+        $this->assertTrue(true);
 	}
 }
 

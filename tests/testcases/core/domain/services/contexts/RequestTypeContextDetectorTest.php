@@ -217,19 +217,6 @@ class RequestTypeContextDetectorTest extends PHPUnit_Framework_TestCase
                 ),
                 RequestTypeContext::FRONTEND,
             ],
-            'Detect Unit Tests Request' => [
-                new RequestTypeContextDetector(
-                    new RequestMock(
-                        array('param' => 'value'),
-                        array(),
-                        array(),
-                        array()
-                    ),
-                    $factory,
-                    ['EE_TESTS_DIR' => true]
-                ),
-                RequestTypeContext::UNIT_TEST,
-            ],
         ];
     }
 }
