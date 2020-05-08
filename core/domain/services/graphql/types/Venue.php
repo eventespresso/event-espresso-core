@@ -61,13 +61,13 @@ class Venue extends TypeBase
                 esc_html__('Venue Name', 'event_espresso')
             ),
             new GraphQLField(
-                'desc',
+                'description',
                 'String',
                 'description',
                 esc_html__('Venue Description', 'event_espresso')
             ),
             new GraphQLField(
-                'shortDesc',
+                'shortDescription',
                 'String',
                 'excerpt',
                 esc_html__('Short Description of Venue', 'event_espresso')

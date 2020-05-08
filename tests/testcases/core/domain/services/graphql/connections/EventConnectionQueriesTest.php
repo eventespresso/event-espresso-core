@@ -115,7 +115,7 @@ class EventConnectionQueriesTest extends BaseQueriesTest
                         id
                         dbId
                         name
-                        desc
+                        description
                     }
                 }
                 nodes {
@@ -139,7 +139,7 @@ class EventConnectionQueriesTest extends BaseQueriesTest
             espressoEvent(id: $id, idType: DATABASE_ID) {
                 id
                 dbId
-                desc
+                description
                 name
             }
         }';
@@ -189,7 +189,7 @@ class EventConnectionQueriesTest extends BaseQueriesTest
         // fields
         $this->assertEquals($first_event_id, $first_edge['node']['dbId']);
         $this->assertEquals($first_event->name(), $first_edge['node']['name']);
-        $this->assertEquals($first_event->description(), $first_edge['node']['desc']);
+        $this->assertEquals($first_event->description(), $first_edge['node']['description']);
 
         // pagination
         $this->assertEquals($expected_cursor, $first_edge['cursor']);
@@ -216,6 +216,6 @@ class EventConnectionQueriesTest extends BaseQueriesTest
         // fields
         $this->assertEquals($randomEventId, $result['data']['espressoEvent']['dbId']);
         $this->assertEquals($event->name(), $result['data']['espressoEvent']['name']);
-        $this->assertEquals($event->description(), $result['data']['espressoEvent']['desc']);
+        $this->assertEquals($event->description(), $result['data']['espressoEvent']['description']);
     }
 }

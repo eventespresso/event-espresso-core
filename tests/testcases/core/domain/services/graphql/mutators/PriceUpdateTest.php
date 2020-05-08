@@ -28,7 +28,7 @@ class PriceUpdateTest extends BaseMutationTest
                     id
                     dbId
                     name
-                    desc
+                    description
                 }
             }
         }
@@ -48,7 +48,7 @@ class PriceUpdateTest extends BaseMutationTest
         $input = [
             'id'   => $guid,
             'name' => $this->name,
-            'desc' => $this->description,
+            'description' => $this->description,
         ];
 
 
@@ -79,7 +79,7 @@ class PriceUpdateTest extends BaseMutationTest
         $input = [
             'id'   => $guid,
             'name' => $this->name,
-            'desc' => $this->description,
+            'description' => $this->description,
         ];
 
         /**
@@ -91,7 +91,7 @@ class PriceUpdateTest extends BaseMutationTest
         $this->assertNotEmpty($updated);
         $this->assertEquals($dbId, $updated['dbId']);
         $this->assertEquals($this->name, $updated['name']);
-        $this->assertEquals($this->description, $updated['desc']);
+        $this->assertEquals($this->description, $updated['description']);
     }
 
     /**
@@ -107,7 +107,7 @@ class PriceUpdateTest extends BaseMutationTest
         $input = [
             'id'   => 'fake-entity-id',
             'name' => $this->name,
-            'desc' => $this->description,
+            'description' => $this->description,
         ];
 
         /**

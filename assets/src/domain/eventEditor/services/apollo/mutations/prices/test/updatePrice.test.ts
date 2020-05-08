@@ -12,7 +12,7 @@ import { usePriceMutator } from '../';
 
 const timeout = 5000; // milliseconds
 describe('updatePrice', () => {
-	let testInput: MutationInput = { name: 'New Test Price', desc: 'New Test Desc' };
+	let testInput: MutationInput = { name: 'New Test Price', description: 'New Test Desc' };
 	const mockedPrice = mockedPrices.UPDATE;
 
 	const priceTypeId = priceTypes[0].id;

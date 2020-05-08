@@ -4,7 +4,7 @@ export const EVENT_ATTRIBUTES: any = gql`
 	fragment eventAttributes on EspressoEvent {
 		id
 		dbId
-		desc
+		description
 		name
 		isActive
 		isCancelled
@@ -14,7 +14,7 @@ export const EVENT_ATTRIBUTES: any = gql`
 		isSoldOut
 		isUpcoming
 		order
-		shortDesc
+		shortDescription
 	}
 `;
 

@@ -27,8 +27,8 @@ class PriceMutation
             $args['PRC_amount'] = (float) $input['amount'];
         }
 
-        if (! empty($input['desc'])) {
-            $args['PRC_desc'] = sanitize_text_field($input['desc']);
+        if (! empty($input['description'])) {
+            $args['PRC_desc'] = sanitize_text_field($input['description']);
         }
 
         if (array_key_exists('isDefault', $input)) {

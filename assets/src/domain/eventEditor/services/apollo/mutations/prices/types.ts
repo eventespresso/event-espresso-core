@@ -2,7 +2,7 @@ import { EntityId } from '@dataServices/types';
 
 export interface PriceBaseInput {
 	amount?: number;
-	desc?: string;
+	description?: string;
 	isDefault?: boolean;
 	isTrashed?: boolean;
 	name?: string;

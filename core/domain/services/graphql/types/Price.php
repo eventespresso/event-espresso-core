@@ -72,7 +72,7 @@ class Price extends TypeBase
                 esc_html__('The cache ID of the object.', 'event_espresso')
             ),
             new GraphQLField(
-                'desc',
+                'description',
                 'String',
                 'desc',
                 esc_html__('Price description', 'event_espresso')

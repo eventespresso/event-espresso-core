@@ -39,7 +39,7 @@ export interface AdditionalFieldProps<FormValues = AnyObject> {
 	htmlType?: string;
 	before?: React.ReactNode | string;
 	after?: React.ReactNode | string;
-	desc?: React.ReactNode | string;
+	description?: React.ReactNode | string;
 	subFields?: FieldList<FormValues>;
 	options?: OptionsType;
 	isRepeatable?: boolean;

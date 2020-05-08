@@ -27,7 +27,7 @@ class PriceCreateTest extends BaseMutationTest
                 clientMutationId
                 espressoPrice {
                     name
-                    desc
+                    description
                 }
             }
         }
@@ -51,7 +51,7 @@ class PriceCreateTest extends BaseMutationTest
 
         $input = [
             'name' => $this->name,
-            'desc' => $this->description,
+            'description' => $this->description,
         ];
 
         /**
@@ -81,7 +81,7 @@ class PriceCreateTest extends BaseMutationTest
 
         $input = [
             'name' => $this->name,
-            'desc' => $this->description,
+            'description' => $this->description,
         ];
 
         /**
@@ -111,7 +111,7 @@ class PriceCreateTest extends BaseMutationTest
 
         $input = [
             'name'      => $this->name,
-            'desc'      => $this->description,
+            'description'      => $this->description,
             'priceType' => Relay::toGlobalId('Price_Type', $priceType->ID()),
         ];
 
@@ -122,7 +122,7 @@ class PriceCreateTest extends BaseMutationTest
 
         /**
          * We're expecting to have createEntity returned with a nested clientMutationId matching the
-         * clientMutationId we sent through, as well as the name and desc we passed through in the mutation
+         * clientMutationId we sent through, as well as the name and description we passed through in the mutation
          */
         $expected = [
             'data' => [
@@ -130,7 +130,7 @@ class PriceCreateTest extends BaseMutationTest
                     'clientMutationId' => $this->client_mutation_id,
                     'espressoPrice' => [
                         'name' => $this->name,
-                        'desc' => $this->description,
+                        'description' => $this->description,
                     ],
                 ],
             ],

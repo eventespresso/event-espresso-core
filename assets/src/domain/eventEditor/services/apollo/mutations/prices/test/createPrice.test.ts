@@ -18,7 +18,11 @@ describe('createPrice', () => {
 
 	const ticketId = tickets[0].id;
 	const priceTypeId = priceTypes[0].id;
-	const testInput: CreatePriceInput = { name: 'New Test Price', desc: 'New Test Desc', priceType: priceTypeId };
+	const testInput: CreatePriceInput = {
+		name: 'New Test Price',
+		description: 'New Test Desc',
+		priceType: priceTypeId,
+	};
 
 	let mutationMocks = getMutationMocks(testInput, MutationType.Create);
 

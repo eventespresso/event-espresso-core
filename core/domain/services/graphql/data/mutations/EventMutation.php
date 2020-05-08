@@ -24,7 +24,6 @@ class EventMutation
      */
     public static function prepareFields(array $input, $mutation_name)
     {
-
         $args = [];
 
         if (! empty($input['additionalLimit'])) {
@@ -35,8 +34,8 @@ class EventMutation
             $args['EVT_allow_overflow'] = (bool) ($input['allowOverflow']);
         }
 
-        if (! empty($input['desc'])) {
-            $args['EVT_desc'] = sanitize_post_field('post_content', $input['desc'], null, $context = 'db');
+        if (! empty($input['description'])) {
+            $args['EVT_desc'] = sanitize_post_field('post_content', $input['description'], null, $context = 'db');
         }
 
         if (array_key_exists('displayDesc', $input)) {
@@ -71,8 +70,8 @@ class EventMutation
             $args['EVT_phone'] = sanitize_text_field($input['phone']);
         }
 
-        if (! empty($input['shortDesc'])) {
-            $args['EVT_short_desc'] = sanitize_post_field('post_excerpt', $input['shortDesc'], null, $context = 'db');
+        if (! empty($input['shortDescription'])) {
+            $args['EVT_short_desc'] = sanitize_post_field('post_excerpt', $input['shortDescription'], null, $context = 'db');
         }
 
         if (! empty($input['timezoneString'])) {
