@@ -12,6 +12,8 @@ class CoreLoader
 {
     public function init()
     {
+        echo "\n INITIALIZING EVENT ESPRESSO UNIT TESTS";
+        echo "\n----------------------------------------";
         $this->setConstants();
         $this->preLoadWPandEE();
         $this->loadWP();
@@ -24,6 +26,26 @@ class CoreLoader
         );
     }
 
+
+    /**
+     * @param string $folder
+     * @return string|null
+     * @since $VID:$
+     */
+    private function findWordpressTests($folder='')
+    {
+        static $depth = 10;
+        echo ".";
+        if (file_exists($folder . '/includes/functions.php')) {
+            return $folder;
+        }
+        if ($depth > 0) {
+            $depth--;
+            return $this->findWordpressTests(dirname($folder));
+        }
+        return null;
+    }
+
     protected function setConstants()
     {
         if (! defined('EE_TESTS_DIR')) {
@@ -34,6 +56,7 @@ class CoreLoader
                 define('EE_PLUGIN_DIR', dirname(dirname(dirname(__FILE__))) . '/');
                 define('EE_TESTS_DIR', EE_PLUGIN_DIR . 'tests/');
             }
+            echo "\nEE_TESTS_DIR: " . EE_TESTS_DIR;
 
             define('EE_MOCKS_DIR', EE_TESTS_DIR . 'mocks/');
             $_tests_dir = getenv('WP_TESTS_DIR');
@@ -43,23 +66,11 @@ class CoreLoader
             if (file_exists($_tests_dir . '/includes/functions.php')) {
                 define('WP_TESTS_DIR', $_tests_dir);
             } else {
-                define(
-                    'WP_TESTS_DIR',
-                    dirname(
-                        dirname(
-                            dirname(
-                                dirname(
-                                    dirname(
-                                        dirname(
-                                            __DIR__
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                    ) . '/tests/phpunit'
-                );
+                echo "\n\n Attempting to find WP_TESTS_DIR ";
+                $folder = $this->findWordpressTests(__DIR__);
+                define('WP_TESTS_DIR', $folder);
             }
+            echo "\nWP_TESTS_DIR: " . WP_TESTS_DIR . "\n\n";
             // define('EE_REST_API_DEBUG_MODE', true);
         }
     }
@@ -69,7 +80,7 @@ class CoreLoader
     {
         //if WordPress test suite isn't found then we can't do anything.
         if (! is_readable(WP_TESTS_DIR . '/includes/functions.php')) {
-            die("The WordPress PHPUnit test suite could not be found.\n");
+            die("The WordPress PHPUnit test suite could not be found at: ". WP_TESTS_DIR);
         }
         require_once WP_TESTS_DIR . '/includes/functions.php';
         require_once EE_PLUGIN_DIR . 'core/Psr4Autoloader.php';
