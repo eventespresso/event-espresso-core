@@ -5,7 +5,7 @@ namespace EventEspresso\tests\testcases\core\services\route_match;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\route_match\RouteMatchSpecificationFactory;
-use PHPUnit_Framework_TestCase;
+use EventEspresso\tests\includes\EspressoPHPUnitFrameworkTestCase;
 
 /**
  * Class RouteMatchSpecificationFactoryTest
@@ -15,7 +15,7 @@ use PHPUnit_Framework_TestCase;
  * @author  Brent Christensen
  * @since   4.9.71.p
  */
-class RouteMatchSpecificationFactoryTest extends PHPUnit_Framework_TestCase
+class RouteMatchSpecificationFactoryTest extends EspressoPHPUnitFrameworkTestCase
 {
 
     /**

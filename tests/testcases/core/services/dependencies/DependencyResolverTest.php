@@ -12,7 +12,7 @@ use EventEspresso\tests\mocks\core\services\dependencies\composites\Oof;
 use EventEspresso\tests\mocks\core\services\dependencies\composites\Ouch;
 use EventEspresso\tests\mocks\core\services\dependencies\composites\Owie;
 use EventEspresso\tests\mocks\core\services\dependencies\DependencyResolverMock;
-use PHPUnit_Framework_TestCase;
+use EventEspresso\tests\includes\EspressoPHPUnitFrameworkTestCase;
 
 /**
  * Class DependencyResolverTest
@@ -22,7 +22,7 @@ use PHPUnit_Framework_TestCase;
  * @author  Brent Christensen
  * @since   4.9.71.p
  */
-class DependencyResolverTest extends PHPUnit_Framework_TestCase
+class DependencyResolverTest extends EspressoPHPUnitFrameworkTestCase
 {
 
     /**

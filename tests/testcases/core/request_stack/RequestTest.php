@@ -4,9 +4,7 @@ namespace EventEspresso\tests\testcases\core\request_stack;
 
 use EE_Request;
 use EventEspresso\core\services\request\Request;
-use PHPUnit_Framework_TestCase;
-
-defined('EVENT_ESPRESSO_VERSION') || exit;
+use EventEspresso\tests\includes\EspressoPHPUnitFrameworkTestCase;
 
 
 /**
@@ -17,7 +15,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * @author  Brent Christensen
  *
  */
-class RequestTest extends PHPUnit_Framework_TestCase
+class RequestTest extends EspressoPHPUnitFrameworkTestCase
 {
 
     public function getParams(array $params = array())

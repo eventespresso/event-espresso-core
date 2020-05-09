@@ -6,7 +6,7 @@ use EE_Dependency_Map;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\route_match\RouteMatchSpecificationDependencyResolver;
-use PHPUnit_Framework_TestCase;
+use EventEspresso\tests\includes\EspressoPHPUnitFrameworkTestCase;
 use ReflectionClass;
 
 /**
@@ -17,7 +17,7 @@ use ReflectionClass;
  * @author  Brent Christensen
  * @since   4.9.71.p
  */
-class RouteMatchSpecificationDependencyResolverTest extends PHPUnit_Framework_TestCase
+class RouteMatchSpecificationDependencyResolverTest extends EspressoPHPUnitFrameworkTestCase
 {
 
     /**

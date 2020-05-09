@@ -8,9 +8,9 @@ use EventEspresso\core\domain\services\contexts\RequestTypeContextDetector;
 use EventEspresso\tests\mocks\core\domain\services\contexts\RequestTypeContextFactoryMock;
 use EventEspresso\tests\mocks\core\services\request\RequestMock;
 use InvalidArgumentException;
-use PHPUnit_Framework_TestCase;
+use EventEspresso\tests\includes\EspressoPHPUnitFrameworkTestCase;
 
-class RequestTypeContextDetectorTest extends PHPUnit_Framework_TestCase
+class RequestTypeContextDetectorTest extends EspressoPHPUnitFrameworkTestCase
 {
 
     /**
