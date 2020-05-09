@@ -378,8 +378,7 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase
         $addressee->registrations = array();
 
         // Expecting an exception for invalid EE_Attendee Object
-        $this->expectException('Exception');
-        $this->expectExceptionCode(0);
+        $this->setExceptionExpected('Exception', 0);
         $parsed_content = $this->_get_parsed_content(
             'email',
             'registration',

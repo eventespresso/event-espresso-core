@@ -28,8 +28,7 @@ class EE_Plaintext_Validation_Strategy_Test extends EE_UnitTestCase{
 	}
 	function test_validate__fail(){
 
-        $this->expectException('Exception');
-        $this->expectExceptionCode(500);
+        $this->setExceptionExpected('Exception', 500);
         $this->_validator->validate(
             '<img src=x onerror=prompt(document.cookie)> <img src=x onerror=prompt(/XSS/)> <img src=x onerror=prompt(1)>'
         );

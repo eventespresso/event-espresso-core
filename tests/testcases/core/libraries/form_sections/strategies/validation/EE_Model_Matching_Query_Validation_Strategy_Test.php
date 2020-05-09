@@ -20,13 +20,11 @@ class EE_Model_Matching_Query_Validation_Strategy_Test extends EE_UnitTestCase {
 		$ev = $this->new_model_obj_with_dependencies( 'Event', array( 'EVT_name' => 'bobit' ) );
 
         // this one doesn't match because there is no event with this ID
-        $this->expectException('EE_Validation_Error');
-        $this->expectExceptionCode(500);
+        $this->setExceptionExpected('EE_Validation_Error', 500);
         $validator->validate($ev->ID() + 1);
 
         // this one doesn't match because the validator only looks for events with EVT_name like '%bar'"
-        $this->expectException('EE_Validation_Error');
-        $this->expectExceptionCode(500);
+        $this->setExceptionExpected('EE_Validation_Error', 500);
         $this->assertfalse($validator->validate($ev->ID()));
 
 		$ev->set( 'EVT_name', 'foobar' );
@@ -46,8 +44,7 @@ class EE_Model_Matching_Query_Validation_Strategy_Test extends EE_UnitTestCase {
 		$this->new_model_obj_with_dependencies( 'Event', array( 'EVT_name' => 'bobit' ) );
 
 		// There is no event with this name so it shouldn't pass validation
-        $this->expectException('EE_Validation_Error');
-        $this->expectExceptionCode(500);
+        $this->setExceptionExpected('EE_Validation_Error', 500);
         $validator->validate('non-existent-event-name');
 
 		$validator->validate('bobit');
