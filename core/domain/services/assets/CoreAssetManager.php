@@ -33,26 +33,24 @@ class CoreAssetManager extends AssetManager
 {
 
     // WordPress core / Third party JS asset handles
-    const JS_HANDLE_JQUERY = 'jquery';
+    public const JS_HANDLE_JQUERY = 'jquery';
 
-    const JS_HANDLE_JQUERY_VALIDATE = 'jquery-validate';
+    public const JS_HANDLE_JQUERY_VALIDATE = 'jquery-validate';
 
-    const JS_HANDLE_JQUERY_VALIDATE_EXTRA = 'jquery-validate-extra-methods';
+    public const JS_HANDLE_JQUERY_VALIDATE_EXTRA = 'jquery-validate-extra-methods';
 
-    const JS_HANDLE_JS_CORE = 'eejs-core';
+    public const JS_HANDLE_JS_CORE = 'eejs-core';
 
-    const JS_HANDLE_CORE = 'espresso_core';
+    public const JS_HANDLE_CORE = 'espresso_core';
 
-    const JS_HANDLE_I18N = 'eei18n';
+    public const JS_HANDLE_I18N = 'eei18n';
 
-    const JS_HANDLE_VENDOR = 'eventespresso-vendor';
-
-    const JS_HANDLE_WP_PLUGINS_PAGE = 'ee-wp-plugins-page';
+    public const JS_HANDLE_VENDOR = 'eventespresso-vendor';
 
     // EE CSS assets handles
-    const CSS_HANDLE_DEFAULT = 'espresso_default';
+    public const CSS_HANDLE_DEFAULT = 'espresso_default';
 
-    const CSS_HANDLE_CUSTOM = 'espresso_custom_css';
+    public const CSS_HANDLE_CUSTOM = 'espresso_custom_css';
 
     /**
      * @var EE_Currency_Config $currency_config
@@ -120,7 +118,6 @@ class CoreAssetManager extends AssetManager
             'AHEE__EventEspresso_core_services_assets_Registry__registerScripts__before_script',
             array($this, 'loadQtipJs')
         );
-        $this->registerAdminAssets();
     }
 
 
@@ -301,28 +298,9 @@ class CoreAssetManager extends AssetManager
     {
         // qtip is turned OFF by default, but prior to the wp_enqueue_scripts hook,
         // can be turned back on again via: add_filter('FHEE_load_qtip', '__return_true' );
-        if (
-            $script->handle() === CoreAssetManager::JS_HANDLE_WP_PLUGINS_PAGE
-            && apply_filters('FHEE_load_qtip', false)
+        if (apply_filters('FHEE_load_qtip', false)
         ) {
             EEH_Qtip_Loader::instance()->register_and_enqueue();
         }
-    }
-
-
-    /**
-     * assets that are used in the WordPress admin
-     *
-     * @throws DuplicateCollectionIdentifierException
-     * @throws InvalidDataTypeException
-     * @throws InvalidEntityException
-     * @throws DomainException
-     * @since 4.9.62.p
-     */
-    private function registerAdminAssets()
-    {
-        $this->addJs(CoreAssetManager::JS_HANDLE_WP_PLUGINS_PAGE)->setRequiresTranslation();
-        // note usage of the "JS_HANDLE.." constant is intentional here because css uses the same handle.
-        $this->addCss(CoreAssetManager::JS_HANDLE_WP_PLUGINS_PAGE);
     }
 }

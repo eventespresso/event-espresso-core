@@ -26,7 +26,7 @@ use InvalidArgumentException;
 class Registry
 {
 
-    const FILE_NAME_BUILD_MANIFEST = 'build-manifest.json';
+    public const FILE_NAME_BUILD_MANIFEST = 'build-manifest.json';
 
     /**
      * @var AssetCollection $assets
@@ -512,8 +512,7 @@ class Registry
                 ? $this->getDetailsForAssetType($namespace, $asset_type, $file_path, $chunk_name)
                 : [];
         }
-        $details = $this->dependencies_data[ $namespace ][ $asset_index ];
-        return $details;
+        return $this->dependencies_data[ $namespace ][ $asset_index ];
     }
 
 
