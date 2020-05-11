@@ -3,10 +3,14 @@ import React from 'react';
 import { ContextProvider } from './ContextProvider';
 import { WithContextProps } from './types';
 
-const withContext = (Component: React.ComponentType, props: WithContextProps) => {
+const withContext = <P extends {}>(
+	Component: React.ComponentType<P>,
+	contextProps: WithContextProps,
+	componentProps?: P
+) => {
 	return (
-		<ContextProvider {...props}>
-			<Component />
+		<ContextProvider {...contextProps}>
+			<Component {...componentProps} />
 		</ContextProvider>
 	);
 };

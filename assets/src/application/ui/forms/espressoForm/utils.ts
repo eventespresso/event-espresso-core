@@ -1,5 +1,5 @@
 import { FieldMetaState } from 'react-final-form';
-import { setIn, getIn, AnyObject } from 'final-form';
+import { setIn, getIn, AnyObject, Mutator } from 'final-form';
 import { ObjectSchema, ValidationError } from 'yup';
 
 import { FieldConditions } from './types';
@@ -132,4 +132,9 @@ export const yupToFinalFormErrors = async <T>(validationSchema: ObjectSchema, va
 			return setIn(formError, innerError.path, innerError.message);
 		}, {});
 	}
+};
+
+/* React Final Form mutator function */
+export const updateFieldValue: Mutator = ([name, value], state, { changeValue }) => {
+	changeValue(state, name, () => value);
 };

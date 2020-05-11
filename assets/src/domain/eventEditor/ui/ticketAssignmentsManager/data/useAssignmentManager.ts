@@ -1,4 +1,4 @@
-import { pick, map, mapObjIndexed } from 'ramda';
+import { pick, map, mapObjIndexed, isEmpty } from 'ramda';
 
 import { useRelationsManager, RelationFunctionProps } from '@appServices/apollo/relations';
 import { AssignmentManager, TAMRelationalData } from '../types';
@@ -93,6 +93,14 @@ const useAssignmentManager = (): AM => {
 				(assignmentType === 'forTicket' && entityType === 'tickets')
 			) {
 				relationalEntityToUse = pick([entity.id], relationalEntity);
+				// if it's for a new date or ticket
+				if (isEmpty(relationalEntityToUse)) {
+					const newRelationKey = entityType === 'datetimes' ? 'tickets' : 'datetimes';
+					// init to empty relations
+					relationalEntityToUse[entity.id] = {
+						[newRelationKey]: [],
+					};
+				}
 			}
 
 			return map((relation) => {

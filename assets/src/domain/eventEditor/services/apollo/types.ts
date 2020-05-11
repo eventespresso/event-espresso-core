@@ -16,7 +16,7 @@ export interface Event extends Entity {
 }
 
 export interface EventData {
-	espressoEventBy: Event;
+	espressoEvent: Event;
 }
 
 export enum DatetimeStatus {

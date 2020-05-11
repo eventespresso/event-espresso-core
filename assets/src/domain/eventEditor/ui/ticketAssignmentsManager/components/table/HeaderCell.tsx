@@ -11,7 +11,7 @@ const HeaderCell: React.FC<RenderCellProps> = ({ ticket }) => {
 	const bgClassName = getBackgroundColorClassName(ticket);
 	const { currency } = useMoneyDisplay();
 	const { formatForSite: format } = useTimeZoneTime();
-	const startDate = format(parseISO(ticket.startDate), 'MMM dd yyyy');
+	const startDate = ticket.startDate && format(parseISO(ticket.startDate), 'MMM dd yyyy');
 	const startDateClassName = classNames(bgClassName, 'header-cell-content__after');
 
 	return (
