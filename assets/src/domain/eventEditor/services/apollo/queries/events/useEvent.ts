@@ -13,7 +13,7 @@ const useEvent = (): Event => {
 	};
 	const { data } = useCacheQuery<EventData>({ ...options, fetchPolicy: 'cache-first' });
 
-	return data?.espressoEventBy;
+	return data?.espressoEvent;
 };
 
 export default useEvent;

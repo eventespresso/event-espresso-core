@@ -5,13 +5,13 @@ import { FormProps } from 'react-final-form';
 import useDateFormConfig from '../dateForm/useDateFormConfig';
 import { useFormModal, FormModal, ModalClose } from '@appLayout/formModal';
 import { useDatetimeMutator, CreateDatetimeInput } from '@edtrServices/apollo/mutations';
-import useEvent from '@edtrServices/apollo/queries/events/useEvent';
+import { useEvent } from '@edtrServices/apollo/queries/events';
 
 const useAddDatetimeModal: FormModal = () => {
 	const { createEntity } = useDatetimeMutator();
 	const { closeEditor } = useFormModal();
 
-	const { name: eventName = '' } = useEvent() || {};
+	const event = useEvent();
 
 	const onClose = useCallback<ModalClose>((): void => {
 		closeEditor('addDatetime');
@@ -25,7 +25,7 @@ const useAddDatetimeModal: FormModal = () => {
 	);
 
 	const formConfig = useDateFormConfig(null, { onSubmit });
-	const title = eventName ? `${eventName}: ${__('New Datetime')}` : __('New Datetime');
+	const title = event?.name ? `${event.name}: ${__('New Datetime')}` : __('New Datetime');
 
 	return {
 		formConfig,
