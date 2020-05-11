@@ -18,7 +18,7 @@ const handleDeactivationClick = (e: JQuery.ClickEvent<HTMLElement>, el: any): vo
 	renderDomElement({
 		appendToTarget: false,
 		domElementToRender: <ExitSurvey deactivationUrl={url} />,
-		containerID: 'ee-exit-survey-modalo',
+		containerID: 'ee-exit-survey-modal',
 		targetElementID: 'wpfooter',
 	});
 };
