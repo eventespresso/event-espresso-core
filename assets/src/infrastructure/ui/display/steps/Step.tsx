@@ -12,7 +12,7 @@ const Step: React.FC<StepProps> = ({ active, className, disabled, icon: Icon, sh
 		<div className={newClassName}>
 			{Icon && <Icon />}
 			{showStepNumber && stepNumber}{' '}
-			{title || stepNumber}
+			{title}
 		</div>
 	);
 };
