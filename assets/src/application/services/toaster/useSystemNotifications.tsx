@@ -39,7 +39,7 @@ const useSystemNotifications = (): SystemNotificationsToaster => {
 	}, []);
 
 	const loading = useCallback(({ key: toastId, message }: ToastProps): void => {
-		const icon = <Spinner className='ee-loading-spinner' color={colors.cyan['500']} />;
+		const icon = <Spinner className='ee-loading-spinner' color={colors.cyan['500']} fontSize={fontSize} />;
 
 		toast(<Toaster icon={icon} message={message} />, {
 			className,

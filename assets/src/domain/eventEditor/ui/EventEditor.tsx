@@ -2,7 +2,6 @@ import React from 'react';
 
 import { DatesList } from './datetimes/datesList';
 import { FormModal } from '../../shared/ui/formModal';
-import ManualToaster from '@appServices/toaster/ManualToaster';
 import { TicketsList } from './tickets/ticketsList';
 import { toast } from 'react-toastify';
 
@@ -16,7 +15,6 @@ toast.configure({
 	autoClose: 3000,
 	className: 'ee-toaster-notice__container',
 	hideProgressBar: true,
-	//etc you get the idea
 });
 
 const EventEditor: React.FC = () => {
@@ -25,7 +23,6 @@ const EventEditor: React.FC = () => {
 	return (
 		<>
 			{isLoaded(TypeName.datetimes) && <FormModal />}
-			<ManualToaster />
 			<DatesList />
 			<TicketsList />
 		</>
