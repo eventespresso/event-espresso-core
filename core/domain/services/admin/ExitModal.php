@@ -16,7 +16,7 @@ use WP_User;
 class ExitModal
 {
 
-    public const TYPE_FORM_URL = 'https://eventespresso.typeform.com/to/O1DDym';
+    const TYPE_FORM_URL = 'https://eventespresso.typeform.com/to/O1DDym';
 
     /**
      * ExitModal constructor.
@@ -39,7 +39,7 @@ class ExitModal
             ];
         // add user's first name if one exists
         $first_name = $current_user->user_firstname;
-        if ( $first_name) {
+        if ($first_name) {
             $query_args['firstName'] = htmlspecialchars($first_name);
         }
         return [

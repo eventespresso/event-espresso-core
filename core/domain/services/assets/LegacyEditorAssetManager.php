@@ -24,11 +24,11 @@ use EventEspresso\core\services\collections\DuplicateCollectionIdentifierExcepti
 class LegacyEditorAssetManager extends AssetManager
 {
 
-    public const JS_HANDLE_UNDERSCORE = 'underscore';
+    const JS_HANDLE_UNDERSCORE = 'underscore';
 
-    public const JS_HANDLE_ACCOUNTING_CORE = 'ee-accounting-core';
+    const JS_HANDLE_ACCOUNTING_CORE = 'ee-accounting-core';
 
-    public const JS_HANDLE_ACCOUNTING = 'ee-accounting';
+    const JS_HANDLE_ACCOUNTING = 'ee-accounting';
 
 
     /**

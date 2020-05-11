@@ -15,17 +15,17 @@ use EventEspresso\core\services\assets\AssetManager;
 class EspressoAdminAssetManager extends AssetManager
 {
 
-    public const JS_HANDLE_INJECT_WP = 'ee-inject-wp';
+    const JS_HANDLE_INJECT_WP = 'ee-inject-wp';
 
-    public const JS_HANDLE_JQUERY_COOKIE = 'jquery-cookie';
+    const JS_HANDLE_JQUERY_COOKIE = 'jquery-cookie';
 
-    public const JS_HANDLE_JOYRIDE_MODERNIZR = 'joyride-modernizr';
+    const JS_HANDLE_JOYRIDE_MODERNIZR = 'joyride-modernizr';
 
-    public const JS_HANDLE_JQUERY_JOYRIDE = 'jquery-joyride';
+    const JS_HANDLE_JQUERY_JOYRIDE = 'jquery-joyride';
 
-    public const CSS_HANDLE_EE_JOYRIDE = 'ee-joyride-css';
+    const CSS_HANDLE_EE_JOYRIDE = 'ee-joyride-css';
 
-    public const CSS_HANDLE_JOYRIDE = 'joyride-css';
+    const CSS_HANDLE_JOYRIDE = 'joyride-css';
 
 
     /**

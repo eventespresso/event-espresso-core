@@ -26,7 +26,7 @@ use InvalidArgumentException;
 class Registry
 {
 
-    public const FILE_NAME_BUILD_MANIFEST = 'build-manifest.json';
+    const FILE_NAME_BUILD_MANIFEST = 'build-manifest.json';
 
     /**
      * @var AssetCollection $assets

@@ -33,24 +33,24 @@ class CoreAssetManager extends AssetManager
 {
 
     // WordPress core / Third party JS asset handles
-    public const JS_HANDLE_JQUERY = 'jquery';
+    const JS_HANDLE_JQUERY = 'jquery';
 
-    public const JS_HANDLE_JQUERY_VALIDATE = 'jquery-validate';
+    const JS_HANDLE_JQUERY_VALIDATE = 'jquery-validate';
 
-    public const JS_HANDLE_JQUERY_VALIDATE_EXTRA = 'jquery-validate-extra-methods';
+    const JS_HANDLE_JQUERY_VALIDATE_EXTRA = 'jquery-validate-extra-methods';
 
-    public const JS_HANDLE_JS_CORE = 'eejs-core';
+    const JS_HANDLE_JS_CORE = 'eejs-core';
 
-    public const JS_HANDLE_CORE = 'espresso_core';
+    const JS_HANDLE_CORE = 'espresso_core';
 
-    public const JS_HANDLE_I18N = 'eei18n';
+    const JS_HANDLE_I18N = 'eei18n';
 
-    public const JS_HANDLE_VENDOR = 'eventespresso-vendor';
+    const JS_HANDLE_VENDOR = 'eventespresso-vendor';
 
     // EE CSS assets handles
-    public const CSS_HANDLE_DEFAULT = 'espresso_default';
+    const CSS_HANDLE_DEFAULT = 'espresso_default';
 
-    public const CSS_HANDLE_CUSTOM = 'espresso_custom_css';
+    const CSS_HANDLE_CUSTOM = 'espresso_custom_css';
 
     /**
      * @var EE_Currency_Config $currency_config
