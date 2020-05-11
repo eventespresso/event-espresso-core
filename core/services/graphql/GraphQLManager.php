@@ -13,18 +13,18 @@ use EventEspresso\core\services\collections\CollectionLoaderException;
  * @author  Brent Christensen
  * @since   $VID:$
  */
-class GraphQLManager
+class GraphQLManager implements GQLManagerInterface
 {
 
     /**
-     * @var TypesManager $types_manager
+     * @var ConnectionsManager $connections_manager
      */
-    protected $types_manager;
+    protected $connections_manager;
 
     /**
-     * @var InputsManager $inputs_manager
+     * @var DataLoaderManager $data_loader_manager
      */
-    protected $inputs_manager;
+    protected $data_loader_manager;
 
     /**
      * @var EnumsManager $enums_manager
@@ -32,29 +32,37 @@ class GraphQLManager
     protected $enums_manager;
 
     /**
-     * @var ConnectionsManager $connections_manager
+     * @var InputsManager $inputs_manager
      */
-    protected $connections_manager;
+    protected $inputs_manager;
+
+    /**
+     * @var TypesManager $types_manager
+     */
+    protected $types_manager;
 
 
     /**
      * GraphQLManager constructor.
      *
-     * @param TypesManager $types_manager
-     * @param InputsManager $inputs_manager
-     * @param EnumsManager $enums_manager
      * @param ConnectionsManager $connections_manager
+     * @param DataLoaderManager $data_loader_manager
+     * @param EnumsManager $enums_manager
+     * @param InputsManager $inputs_manager
+     * @param TypesManager $types_manager
      */
     public function __construct(
-        TypesManager $types_manager,
-        InputsManager $inputs_manager,
+        ConnectionsManager $connections_manager,
+        DataLoaderManager $data_loader_manager,
         EnumsManager $enums_manager,
-        ConnectionsManager $connections_manager
+        InputsManager $inputs_manager,
+        TypesManager $types_manager
     ) {
-        $this->types_manager = $types_manager;
-        $this->inputs_manager = $inputs_manager;
-        $this->enums_manager = $enums_manager;
         $this->connections_manager = $connections_manager;
+        $this->data_loader_manager = $data_loader_manager;
+        $this->enums_manager = $enums_manager;
+        $this->inputs_manager = $inputs_manager;
+        $this->types_manager = $types_manager;
     }
 
 
@@ -65,9 +73,10 @@ class GraphQLManager
      */
     public function init()
     {
-        $this->types_manager->init();
-        $this->inputs_manager->init();
-        $this->enums_manager->init();
         $this->connections_manager->init();
+        $this->data_loader_manager->init();
+        $this->enums_manager->init();
+        $this->inputs_manager->init();
+        $this->types_manager->init();
     }
 }
