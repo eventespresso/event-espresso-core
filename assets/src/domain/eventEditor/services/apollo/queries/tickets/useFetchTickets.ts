@@ -1,7 +1,9 @@
 import { useEffect, useRef } from 'react';
 import { useQuery } from '@apollo/react-hooks';
-import { useToaster, useLoadingToast } from '../../../../../../application/services/toaster';
-import { useStatus, TypeName } from '../../../../../../application/services/apollo/status';
+import { __ } from '@wordpress/i18n';
+
+import { useSystemNotifications } from '@appServices/toaster';
+import { useStatus, TypeName } from '@appServices/apollo/status';
 import useTicketQueryOptions from './useTicketQueryOptions';
 import { FetchEntitiesResult } from '../types';
 import { TicketsList } from '../../types';
@@ -15,10 +17,10 @@ const useFetchTickets = (skipFetch: boolean = null): FetchEntitiesResult<Tickets
 	// or tickets have already been fetched
 	const skip = skipFetch !== null ? skipFetch : !datetimeIn.length || isLoaded(TypeName.tickets);
 
-	const toaster = useToaster();
-	const loadingToastKey = useRef(toaster.generateKey());
+	const toaster = useSystemNotifications();
+	const toastId = useRef(null);
 
-	const dismissLoading = (): void => toaster.dismiss(loadingToastKey.current);
+	const dismissLoading: VoidFunction = () => toaster.dismiss(toastId.current);
 
 	const { data, error, loading } = useQuery<TicketsList>(query, {
 		...options,
@@ -26,7 +28,7 @@ const useFetchTickets = (skipFetch: boolean = null): FetchEntitiesResult<Tickets
 		onCompleted: (): void => {
 			setIsLoaded(TypeName.tickets, true);
 			dismissLoading();
-			toaster.success({ message: `tickets initialized` });
+			toaster.success({ message: __('tickets initialized') });
 		},
 		onError: (error): void => {
 			setIsError(TypeName.tickets, true);
@@ -35,9 +37,11 @@ const useFetchTickets = (skipFetch: boolean = null): FetchEntitiesResult<Tickets
 		},
 	});
 
-	useLoadingToast({ loading, message: 'initializing tickets', toastKey: loadingToastKey.current });
-
 	useEffect(() => {
+		if (loading) {
+			toastId.current = toaster.loading({ message: __('initializing tickets') });
+		}
+
 		setIsLoading(TypeName.tickets, loading);
 	}, [loading]);
 

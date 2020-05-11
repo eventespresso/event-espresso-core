@@ -1,7 +1,5 @@
-export { default as useToaster } from './useToaster';
+import './style.scss';
 
-export { default as useToastManager } from './useToastManager';
+export { default as initToaster } from './initToaster';
 
-export { default as useLoadingToast } from './useLoadingToast';
-
-export * from './types';
+export { default as useSystemNotifications } from './useSystemNotifications';

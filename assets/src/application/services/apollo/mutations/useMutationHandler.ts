@@ -4,7 +4,7 @@ import { ApolloError, MutationOptions } from 'apollo-client';
 import { FetchResult } from 'apollo-link';
 
 import useIfMounted from '../../hooks/useIfMounted';
-import useToaster from '../../toaster/useToaster';
+import { useSystemNotifications } from '../../toaster';
 import { Entity as BaseType } from '@dataServices/types';
 import {
 	OnMutationCompletedFn,
@@ -25,7 +25,7 @@ const useMutationHandler: MutationHandler = (getMutationOptions) => {
 	const client = useApolloClient();
 	const [result, setResult] = useState(DEFAULT_RESULT);
 	const ifMounted = useIfMounted();
-	const toaster = useToaster();
+	const toaster = useSystemNotifications();
 
 	return useCallback(
 		<Name extends string>(typeName: Name, id?: string) => {
@@ -65,15 +65,16 @@ const useMutationHandler: MutationHandler = (getMutationOptions) => {
 			 * @param {string} mutationType Type of mutation - CREATE|UPDATE|DELETE
 			 */
 			const getToasterKey = (mutationType: MutationType): string => {
-				return `${mutationType}:${id}`;
+				return `${mutationType}:${typeName}:${id}`;
 			};
 
 			/**
 			 *
 			 */
 			const onMutationStart = (mutationType: MutationType): void => {
-				const message = getToasterMessage(mutationType);
 				const key = getToasterKey(mutationType);
+				const message = getToasterMessage(mutationType);
+
 				toaster.loading({ key, message });
 
 				updateResult({
@@ -144,7 +145,9 @@ const useMutationHandler: MutationHandler = (getMutationOptions) => {
 			 */
 			const mutate = (options: CustomMutationOptions, mutationType: MutationType): MutationResult => {
 				const { onCompleted, onError, ...mutationOptions } = options;
+
 				onMutationStart(mutationType);
+
 				client
 					.mutate(mutationOptions)
 					.then((response: FetchResult) => {

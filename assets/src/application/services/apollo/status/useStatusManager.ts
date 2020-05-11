@@ -122,6 +122,7 @@ const statusReducer = (state: StatusState, action: StatusAction): StatusState =>
 	 *     },
 	 * }
 	 */
+
 	return {
 		...state,
 		[statusKey]: {

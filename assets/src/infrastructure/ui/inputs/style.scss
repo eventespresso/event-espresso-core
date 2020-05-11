@@ -79,6 +79,7 @@
 			input[type='time']#{&},
 			input[type='url']#{&},
 			input[type='week']#{&} {
+				padding: 0 0.5rem;
 				@extend .base-inputs-styles;
 			}
 		}
@@ -93,6 +94,7 @@
 		}
 	}
 	&.ee-textarea {
+		padding: 0.25rem 0.5rem;
 		&:hover {
 			@extend .input-select-textarea-hover;
 		}
