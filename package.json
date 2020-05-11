@@ -64,7 +64,6 @@
 		"@wordpress/keycodes": "^2.10.0",
 		"@wordpress/url": "^2.12.0",
 		"@wordpress/viewport": "^2.14.0",
-		"antd": "^4.1.1",
 		"apollo-cache-inmemory": "^1.6.5",
 		"apollo-client": "^2.6.8",
 		"apollo-link-batch-http": "^1.2.13",

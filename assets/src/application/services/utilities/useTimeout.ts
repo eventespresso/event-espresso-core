@@ -1,18 +1,18 @@
-import * as React from 'react';
+import { useEffect, useRef } from 'react';
 
 /**
  * @link https://github.com/bmcmahen/toasted-notes/blob/master/src/Alert/useTimeout.ts
  */
 const useTimeout = (callback: VoidFunction, delay: number | null): void => {
-	const savedCallback = React.useRef<VoidFunction | null>();
+	const savedCallback = useRef<VoidFunction | null>();
 
 	// Remember the latest callback.
-	React.useEffect((): void => {
+	useEffect((): void => {
 		savedCallback.current = callback;
 	}, [callback]);
 
 	// Set up the interval.
-	React.useEffect(() => {
+	useEffect(() => {
 		const tick = (): void => {
 			if (savedCallback.current) {
 				savedCallback.current();

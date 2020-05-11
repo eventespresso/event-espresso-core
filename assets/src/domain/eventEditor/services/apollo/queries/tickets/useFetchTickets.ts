@@ -20,7 +20,7 @@ const useFetchTickets = (skipFetch: boolean = null): FetchEntitiesResult<Tickets
 	const toaster = useSystemNotifications();
 	const toastId = useRef(null);
 
-	const dismissLoading = (): void => toaster.dismiss(toastId.current);
+	const dismissLoading: VoidFunction = () => toaster.dismiss(toastId.current);
 
 	const { data, error, loading } = useQuery<TicketsList>(query, {
 		...options,
