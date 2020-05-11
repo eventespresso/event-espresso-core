@@ -16,6 +16,8 @@ use WP_User;
 class ExitModal
 {
 
+    public const TYPE_FORM_URL = 'https://eventespresso.typeform.com/to/O1DDym';
+
     /**
      * ExitModal constructor.
      */
@@ -31,11 +33,18 @@ class ExitModal
     public function getExitSurveyInfo()
     {
         $current_user = new WP_User(get_current_user_id());
+        $query_args = [
+            'emailAddress' => htmlspecialchars($current_user->user_email),
+            'website' => htmlspecialchars(site_url()),
+            ];
+        // add user's first name if one exists
+        $first_name = $current_user->user_firstname;
+        if ( $first_name) {
+            $query_args['firstName'] = htmlspecialchars($first_name);
+        }
         return [
-            'firstName'     => htmlspecialchars($current_user->user_firstname),
-            'emailAddress'  => htmlspecialchars($current_user->user_email),
-            'website'       => htmlspecialchars(site_url()),
-            'isModalActive' => $this->isModalActive()
+            'isModalActive' => $this->isModalActive(),
+            'typeFormUrl' => add_query_arg($query_args, ExitModal::TYPE_FORM_URL)
         ];
     }
 
