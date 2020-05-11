@@ -1,10 +1,10 @@
 import React from 'react';
-import { render } from 'react-dom';
 import { pathOr } from 'ramda';
 import $ from 'jquery';
 
 import ExitSurvey from './ExitSurvey';
 import { ExitSurveyInfo } from './types';
+import { renderDomElement } from '@appServices/utilities';
 
 const info = pathOr<ExitSurveyInfo>(null, ['eejsdata', 'data', 'exitModalInfo'], window);
 
@@ -14,9 +14,13 @@ const info = pathOr<ExitSurveyInfo>(null, ['eejsdata', 'data', 'exitModalInfo'],
 const handleDeactivationClick = (e: JQuery.ClickEvent<HTMLElement>, el: any): void => {
 	e.preventDefault();
 	const url = $(el).attr('href');
-	const container = document.getElementById('ee-exit-survey-modal');
 
-	render(<ExitSurvey deactivationUrl={url} />, container);
+	renderDomElement({
+		appendToTarget: false,
+		domElementToRender: <ExitSurvey deactivationUrl={url} />,
+		containerID: 'ee-exit-survey-modal',
+		targetElementID: 'wpfooter',
+	});
 };
 /**
  * EE caffeinated click capture but only if feature is active
