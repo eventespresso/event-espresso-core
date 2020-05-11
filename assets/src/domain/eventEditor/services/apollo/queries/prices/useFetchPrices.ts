@@ -16,9 +16,9 @@ const useFetchPrices = (skipFetch: boolean = null): FetchEntitiesResult<PricesLi
 	const skip = skipFetch !== null ? skipFetch : !ticketIn.length || isLoaded(TypeName.prices);
 
 	const toaster = useSystemNotifications();
-	const loadingToastKey = useRef('');
+	const toastId = useRef(null);
 
-	const dismissLoading = (): void => toaster.dismiss(loadingToastKey.current);
+	const dismissLoading = (): void => toaster.dismiss(toastId.current);
 
 	const { data, error, loading } = useQuery<PricesList>(query, {
 		...options,
@@ -36,10 +36,10 @@ const useFetchPrices = (skipFetch: boolean = null): FetchEntitiesResult<PricesLi
 	});
 
 	useEffect(() => {
-		if (loadingToastKey.current === '') {
-			loadingToastKey.current = toaster.generateKey(null, `loading-${TypeName.prices}`);
+		if (loading) {
+			toastId.current = toaster.loading({ message: 'initializing prices' });
 		}
-		toaster.loading({ loading, message: 'initializing prices', key: loadingToastKey.current });
+
 		setIsLoading(TypeName.prices, loading);
 	}, [loading]);
 

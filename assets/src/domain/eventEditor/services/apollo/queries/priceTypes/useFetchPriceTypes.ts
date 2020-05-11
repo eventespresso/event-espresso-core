@@ -11,9 +11,9 @@ const useFetchPriceTypes = (): FetchEntitiesResult<PriceTypesList> => {
 	const { query, ...options } = usePriceTypeQueryOptions();
 
 	const toaster = useSystemNotifications();
-	const loadingToastKey = useRef('');
+	const toastId = useRef(null);
 
-	const dismissLoading = (): void => toaster.dismiss(loadingToastKey.current);
+	const dismissLoading = (): void => toaster.dismiss(toastId.current);
 
 	const { data, error, loading } = useQuery<PriceTypesList>(query, {
 		...options,
@@ -30,10 +30,10 @@ const useFetchPriceTypes = (): FetchEntitiesResult<PriceTypesList> => {
 	});
 
 	useEffect(() => {
-		if (loadingToastKey.current === '') {
-			loadingToastKey.current = toaster.generateKey(null, `loading-${TypeName.priceTypes}`);
+		if (loading) {
+			toastId.current = toaster.loading({ message: 'initializing  price types' });
 		}
-		toaster.loading({ loading, message: 'initializing price types', key: loadingToastKey.current });
+
 		setIsLoading(TypeName.priceTypes, loading);
 	}, [loading]);
 

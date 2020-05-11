@@ -1,19 +1,13 @@
 import React from 'react';
 
-import ToasterPosition from './ToasterPosition';
-import { PositionsType } from './types';
-import './style.scss';
+import { ToasterProps } from './types';
 
-const Toaster = ({ toastPositions }): JSX.Element => {
+const Toaster: React.FC<ToasterProps> = ({ icon, message = 'loading...' }) => {
 	return (
-		<>
-			{Object.keys(toastPositions).map((position: PositionsType, index) => {
-				const toasts = toastPositions[position];
-				return toasts && toasts.length ? (
-					<ToasterPosition key={index} position={position} toasts={toasts} />
-				) : null;
-			})}
-		</>
+		<div className='ee-toaster-notice__toast-body'>
+			{icon && icon}
+			{message}
+		</div>
 	);
 };
 export default Toaster;

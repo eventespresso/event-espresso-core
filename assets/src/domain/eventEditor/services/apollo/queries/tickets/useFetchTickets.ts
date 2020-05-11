@@ -16,9 +16,9 @@ const useFetchTickets = (skipFetch: boolean = null): FetchEntitiesResult<Tickets
 	const skip = skipFetch !== null ? skipFetch : !datetimeIn.length || isLoaded(TypeName.tickets);
 
 	const toaster = useSystemNotifications();
-	const loadingToastKey = useRef('');
+	const toastId = useRef(null);
 
-	const dismissLoading = (): void => toaster.dismiss(loadingToastKey.current);
+	const dismissLoading = (): void => toaster.dismiss(toastId.current);
 
 	const { data, error, loading } = useQuery<TicketsList>(query, {
 		...options,
@@ -36,10 +36,10 @@ const useFetchTickets = (skipFetch: boolean = null): FetchEntitiesResult<Tickets
 	});
 
 	useEffect(() => {
-		if (loadingToastKey.current === '') {
-			loadingToastKey.current = toaster.generateKey(null, `loading-${TypeName.tickets}`);
+		if (loading) {
+			toastId.current = toaster.loading({ message: 'initializing tickets' });
 		}
-		toaster.loading({ loading, message: 'initializing tickets', key: loadingToastKey.current });
+
 		setIsLoading(TypeName.tickets, loading);
 	}, [loading]);
 

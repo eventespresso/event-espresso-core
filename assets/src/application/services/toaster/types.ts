@@ -1,11 +1,8 @@
 import { BoxProps } from '@infraUI/display';
 
 type AddToastProps = Omit<ToastProps, 'timestamp' | 'loading'>;
-export type LoadingToastProps = Partial<Omit<ToastProps, 'timestamp'>>;
-export type AddToast = (props: Partial<AddToastProps>) => ToastKey;
+export type Toast = (props: Partial<AddToastProps>) => void;
 export type DissmissToast = (key: ToastKey) => void;
-export type LoadingToast = (props: LoadingToastProps) => ToastKey;
-export type GetToasts = () => ToastPositions;
 export type KeyGenerator = (key?: number | string, prefix?: string) => string;
 export type onCloseFn = (event: React.MouseEvent) => void;
 
@@ -20,18 +17,14 @@ export const POSITIONS = {
 
 export type PositionsType = keyof typeof POSITIONS;
 
-export type SystemNotificationsManager = (options?: UseToasterProps) => SystemNotificationsToaster;
-
 export type SystemNotificationsToaster = {
 	dismiss: DissmissToast;
-	dissmissAll: VoidFunction;
-	error: AddToast;
-	generateKey: KeyGenerator;
-	info: AddToast;
-	loading: LoadingToast;
-	getToasts: GetToasts;
-	success: AddToast;
-	warning: AddToast;
+	dissmissAll: void | false;
+	error: Toast;
+	info: Toast;
+	loading: Toast;
+	success: Toast;
+	warning: Toast;
 };
 
 export interface ToastAlertButtonProps {
@@ -49,25 +42,22 @@ export enum TOAST_STATUS {
 }
 
 export type Toaster = {
-	addToast: AddToast;
 	dissmiss: DissmissToast;
 	dissmissAll: VoidFunction;
 	exists: (key: ToastKey) => boolean;
-	generateKey: KeyGenerator;
-	getToasts: GetToasts;
 };
 
 export type Toasters = {
 	systemNotifications: SystemNotificationsToaster;
 };
 
-export type ToastKey = string;
+export type ToastKey = string | number;
 
 export interface ToastProps {
 	className?: string;
 	duration?: number;
 	isClosable: boolean;
-	key: ToastKey;
+	key?: ToastKey;
 	loading?: boolean;
 	message: string;
 	messageProps?: BoxProps;
@@ -75,9 +65,14 @@ export interface ToastProps {
 	position: PositionsType;
 	style?: Partial<React.CSSProperties>;
 	timestamp: number;
-	title?: string;
 	titleProps?: BoxProps;
+	toastId?: string | number;
 	type: ToastStatus;
+}
+
+export interface ToasterProps {
+	icon?: React.ReactNode;
+	message?: string;
 }
 
 export interface ToastIconProps {
@@ -92,15 +87,6 @@ export interface ToasterPositionProps {
 }
 
 export type ToasterState = Array<WithAnimationProps>;
-
-export type ToastPositions = {
-	'top-left': Array<WithAnimationProps>;
-	top: Array<WithAnimationProps>;
-	'top-right': Array<WithAnimationProps>;
-	'bottom-left': Array<WithAnimationProps>;
-	bottom: Array<WithAnimationProps>;
-	'bottom-right': Array<WithAnimationProps>;
-};
 
 export enum ToasterActionType {
 	ADD = 'add',
@@ -124,12 +110,6 @@ export interface UseLoadingToastProps {
 	exists: (key: ToastKey) => boolean;
 }
 
-export interface UseToasterProps {
-	duration?: number;
-	isClosable?: boolean;
-	position?: keyof typeof POSITIONS;
-	toastKeyPrefix?: string;
-}
 export type UseToaster = (props?: UseToasterProps) => Toaster;
 
 export type UseToasterStateManager = () => UseToasterStateManagerAPI;
