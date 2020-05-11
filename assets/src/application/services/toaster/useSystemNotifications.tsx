@@ -9,10 +9,9 @@ import Toaster from './Toaster';
 
 const { colors } = theme;
 
-// const position = toast.POSITION.BOTTOM_RIGHT; // got TS error because of this
+const position = toast.POSITION.BOTTOM_RIGHT as 'bottom-right';
 const className = 'ee-toaster-notice__toast';
 const fontSize = '1.2rem';
-const position = 'bottom-right';
 
 const useSystemNotifications = (): SystemNotificationsToaster => {
 	const dismiss: DissmissToast = useCallback((toastId) => toast.dismiss(toastId), []);

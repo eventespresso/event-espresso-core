@@ -8,22 +8,22 @@ const useInitQueries = (): void => {
 	// initiate datetime fetching.
 	useFetchDatetimes();
 
-	// // initiate ticket fetching.
+	// initiate ticket fetching.
 	useFetchTickets();
 
-	// // initiate price type fetching.
+	// initiate price type fetching.
 	useFetchPriceTypes();
 
-	// // initiate price fetching.
+	// initiate price fetching.
 	useFetchPrices();
 
-	// // initiate current user fetching.
+	// initiate current user fetching.
 	useFetchCurrentUser();
 
-	// // initiate general settings fetching.
+	// initiate general settings fetching.
 	useFetchGeneralSettings();
 
-	// // pre-fetch event data
+	// pre-fetch event data
 	useEvent();
 };
 

@@ -6,17 +6,6 @@ export type DissmissToast = (key: ToastKey) => void;
 export type KeyGenerator = (key?: number | string, prefix?: string) => string;
 export type onCloseFn = (event: React.MouseEvent) => void;
 
-export const POSITIONS = {
-	top: 'top',
-	'top-left': 'top-left',
-	'top-right': 'top-right',
-	bottom: 'bottom',
-	'bottom-left': 'bottom-left',
-	'bottom-right': 'bottom-right',
-};
-
-export type PositionsType = keyof typeof POSITIONS;
-
 export type SystemNotificationsToaster = {
 	dismiss: DissmissToast;
 	dissmissAll: () => void;
@@ -62,7 +51,6 @@ export interface ToastProps {
 	message: string;
 	messageProps?: BoxProps;
 	onClose: onCloseFn;
-	position: PositionsType;
 	style?: Partial<React.CSSProperties>;
 	timestamp: number;
 	titleProps?: BoxProps;
@@ -81,13 +69,6 @@ export interface ToastIconProps {
 
 export type ToastStatus = keyof typeof TOAST_STATUS;
 
-export interface ToasterPositionProps {
-	position: PositionsType;
-	toasts: WithAnimationProps[];
-}
-
-export type ToasterState = Array<WithAnimationProps>;
-
 export enum ToasterActionType {
 	ADD = 'add',
 	DISMISS = 'dismiss',
@@ -96,32 +77,7 @@ export enum ToasterActionType {
 	REMOVE_ALL = 'remove_all',
 }
 
-export interface ToasterStateAction {
-	key?: ToastKey;
-	toast?: WithAnimationProps;
-	type: ToasterActionType;
-}
-
-export type ToasterStateReducer = (state: ToasterState, action: ToasterStateAction) => ToasterState;
-
 export interface UseLoadingToastProps {
 	dissmissToast: DissmissToast;
 	exists: (key: ToastKey) => boolean;
-}
-
-export type UseToasterStateManager = () => UseToasterStateManagerAPI;
-
-export type UseToasterStateManagerAPI = {
-	add: (toast: ToastProps) => void;
-	dissmiss: (key: ToastKey) => void;
-	dissmissAll: VoidFunction;
-	exists: (key: ToastKey) => boolean;
-	remove: (key: ToastKey) => void;
-	removeAll: VoidFunction;
-	toasterState: ToasterState;
-};
-
-export interface WithAnimationProps extends Omit<ToastProps, 'loading'> {
-	onRequestRemove: VoidFunction;
-	requestClose: boolean;
 }
