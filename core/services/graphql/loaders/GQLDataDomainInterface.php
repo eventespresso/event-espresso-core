@@ -2,7 +2,6 @@
 
 namespace EventEspresso\core\services\graphql\loaders;
 
-
 use WPGraphQL\AppContext;
 
 /**

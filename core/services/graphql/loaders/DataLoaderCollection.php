@@ -21,9 +21,9 @@ use EventEspresso\core\services\collections\CollectionLoaderException;
 class DataLoaderCollection extends Collection
 {
 
-    const NAME = 'espresso_graphql_data_loaders';
+    const COLLECTION_NAME = 'espresso_graphql_data_loaders';
 
-    const INTERFACE = 'EventEspresso\core\services\graphql\loaders\GQLDataDomainInterface';
+    const COLLECTION_INTERFACE = 'EventEspresso\core\services\graphql\loaders\GQLDataDomainInterface';
 
     /**
      * @var CollectionLoader $loader
@@ -39,8 +39,8 @@ class DataLoaderCollection extends Collection
     public function __construct()
     {
         parent::__construct(
-            DataLoaderCollection::INTERFACE,
-            DataLoaderCollection::NAME
+            DataLoaderCollection::COLLECTION_INTERFACE,
+            DataLoaderCollection::COLLECTION_NAME
         );
     }
 
@@ -56,9 +56,9 @@ class DataLoaderCollection extends Collection
             $this->loader = new CollectionLoader(
                 new CollectionDetails(
                     // collection name
-                    DataLoaderCollection::NAME,
+                    DataLoaderCollection::COLLECTION_NAME,
                     // collection interface
-                    DataLoaderCollection::INTERFACE,
+                    DataLoaderCollection::COLLECTION_INTERFACE,
                     // FQCNs for classes to add (all classes within each namespace will be loaded)
                     apply_filters(
                         'FHEE__EventEspresso_core_services_graphql_DataLoaderCollection__loadCollection__collection_FQCNs',

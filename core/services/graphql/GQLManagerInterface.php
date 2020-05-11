@@ -2,7 +2,6 @@
 
 namespace EventEspresso\core\services\graphql;
 
-
 use EventEspresso\core\services\collections\CollectionDetailsException;
 use EventEspresso\core\services\collections\CollectionLoaderException;
 

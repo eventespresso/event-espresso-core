@@ -44,7 +44,6 @@ class TypesManager implements GQLManagerInterface
     {
         $this->types->loadTypes();
         add_action('graphql_register_types', [$this, 'configureTypes'], 10);
-
     }
 
 
