@@ -14,7 +14,6 @@ const FormRenderer: React.FC<FormRendererProps> = (props) => {
 		fields = [],
 		submitButton,
 		resetButton,
-		layout,
 		formWrapper: FormWrapper,
 		debugFields,
 		hasValidationErrors,
