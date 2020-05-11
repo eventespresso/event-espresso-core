@@ -1,5 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useQuery } from '@apollo/react-hooks';
+import { __ } from '@wordpress/i18n';
+
 import { useSystemNotifications } from '@appServices/toaster';
 import { useStatus, TypeName } from '@appServices/apollo/status';
 import useTicketQueryOptions from './useTicketQueryOptions';
@@ -26,7 +28,7 @@ const useFetchTickets = (skipFetch: boolean = null): FetchEntitiesResult<Tickets
 		onCompleted: (): void => {
 			setIsLoaded(TypeName.tickets, true);
 			dismissLoading();
-			toaster.success({ message: 'tickets initialized' });
+			toaster.success({ message: __('tickets initialized') });
 		},
 		onError: (error): void => {
 			setIsError(TypeName.tickets, true);
@@ -37,7 +39,7 @@ const useFetchTickets = (skipFetch: boolean = null): FetchEntitiesResult<Tickets
 
 	useEffect(() => {
 		if (loading) {
-			toastId.current = toaster.loading({ message: 'initializing tickets' });
+			toastId.current = toaster.loading({ message: __('initializing tickets') });
 		}
 
 		setIsLoading(TypeName.tickets, loading);

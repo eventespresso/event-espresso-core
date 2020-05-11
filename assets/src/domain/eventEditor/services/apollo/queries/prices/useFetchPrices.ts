@@ -1,5 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useQuery } from '@apollo/react-hooks';
+import { __ } from '@wordpress/i18n';
+
 import { useSystemNotifications } from '@appServices/toaster';
 import { useStatus, TypeName } from '@appServices/apollo/status';
 import usePriceQueryOptions from './usePriceQueryOptions';
@@ -26,7 +28,7 @@ const useFetchPrices = (skipFetch: boolean = null): FetchEntitiesResult<PricesLi
 		onCompleted: (): void => {
 			setIsLoaded(TypeName.prices, true);
 			dismissLoading();
-			toaster.success({ message: 'prices initialized' });
+			toaster.success({ message: __('prices initialized') });
 		},
 		onError: (error): void => {
 			setIsError(TypeName.prices, true);
@@ -37,7 +39,7 @@ const useFetchPrices = (skipFetch: boolean = null): FetchEntitiesResult<PricesLi
 
 	useEffect(() => {
 		if (loading) {
-			toastId.current = toaster.loading({ message: 'initializing prices' });
+			toastId.current = toaster.loading({ message: __('initializing prices') });
 		}
 
 		setIsLoading(TypeName.prices, loading);
