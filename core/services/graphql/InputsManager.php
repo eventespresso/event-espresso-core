@@ -15,7 +15,7 @@ use EventEspresso\core\services\graphql\inputs\InputInterface;
  * @author  Manzoor Wani
  * @since   $VID:$
  */
-class InputsManager
+class InputsManager implements GQLManagerInterface
 {
 
     /**
