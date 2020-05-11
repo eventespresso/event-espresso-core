@@ -6,7 +6,7 @@ import HeaderCell from './HeaderCell';
 import { Ticket } from '@edtrServices/apollo/types';
 import useColClassName from './useColClassName';
 
-const getHeaderRows = (tickets: Ticket[]) => {
+const useGetHeaderRows = (tickets: Ticket[]) => {
 	const getColClass = useColClassName();
 
 	const emptyCell: Cell = {
@@ -34,4 +34,4 @@ const getHeaderRows = (tickets: Ticket[]) => {
 	];
 };
 
-export default getHeaderRows;
+export default useGetHeaderRows;

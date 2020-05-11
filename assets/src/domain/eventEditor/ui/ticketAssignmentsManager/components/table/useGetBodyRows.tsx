@@ -10,7 +10,7 @@ import { DatesAndTickets } from '../../types';
 import useRowClassName from './useRowClassName';
 import useColClassName from './useColClassName';
 
-const getBodyRows = ({ datetimes, tickets }: DatesAndTickets) => {
+const useGetBodyRows = ({ datetimes, tickets }: DatesAndTickets) => {
 	const { getAssignmentStatus } = useDataState();
 
 	const getRowClass = useRowClassName();
@@ -54,4 +54,4 @@ const getBodyRows = ({ datetimes, tickets }: DatesAndTickets) => {
 	return formRows;
 };
 
-export default getBodyRows;
+export default useGetBodyRows;
