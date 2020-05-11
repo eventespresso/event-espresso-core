@@ -1,6 +1,6 @@
 export { default as useIfMounted } from './useIfMounted';
 
-export { default as useIterator } from './useIterator';
+export { default as usePrevNext } from './usePrevNext';
 
 export { default as useRect } from './useRect';
 

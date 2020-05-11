@@ -1,12 +1,12 @@
 import { useCallback, useMemo, useState } from 'react';
 
-export interface Iterator {
+export interface PrevNext {
 	current: number;
 	next: VoidFunction;
 	prev: VoidFunction;
 }
 
-const useIterator = (initialIndex = 0): Iterator => {
+const usePrevNext = (initialIndex = 0): PrevNext => {
 	const [currentIndex, setCurrentIndex] = useState(initialIndex);
 
 	const next = useCallback<VoidFunction>(() => setCurrentIndex((v) => v + 1), [setCurrentIndex]);
@@ -16,4 +16,4 @@ const useIterator = (initialIndex = 0): Iterator => {
 	return useMemo(() => ({ current: currentIndex, next, prev }), [currentIndex, next, prev]);
 };
 
-export default useIterator;
+export default usePrevNext;

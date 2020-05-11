@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { FormRenderProps } from 'react-final-form';
 
 import Steps from './Steps';
-import { useIterator } from '@appServices/hooks';
+import { usePrevNext } from '@appServices/hooks';
 import { Button } from '@infraUI/inputs';
 import { TicketAssignmentsManager } from '@edtrUI/ticketAssignmentsManager/components';
 import { useDataState } from '@edtrUI/ticketAssignmentsManager/data';
@@ -22,7 +22,7 @@ const ModalBody: React.FC<FormRenderProps> = ({
 	submitting,
 	form: { mutators, submit },
 }) => {
-	const { current, prev, next } = useIterator();
+	const { current, prev, next } = usePrevNext();
 
 	const { getData, hasOrphanEntities } = useDataState();
 
