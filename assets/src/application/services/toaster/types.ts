@@ -19,7 +19,7 @@ export type PositionsType = keyof typeof POSITIONS;
 
 export type SystemNotificationsToaster = {
 	dismiss: DissmissToast;
-	dissmissAll: void | false;
+	dissmissAll: () => void;
 	error: Toast;
 	info: Toast;
 	loading: Toast;
@@ -105,12 +105,9 @@ export interface ToasterStateAction {
 export type ToasterStateReducer = (state: ToasterState, action: ToasterStateAction) => ToasterState;
 
 export interface UseLoadingToastProps {
-	addToast: AddToast;
 	dissmissToast: DissmissToast;
 	exists: (key: ToastKey) => boolean;
 }
-
-export type UseToaster = (props?: UseToasterProps) => Toaster;
 
 export type UseToasterStateManager = () => UseToasterStateManagerAPI;
 

@@ -8,7 +8,7 @@ const ManualToaster = (): JSX.Element => {
 	const { error, info, loading, success, warning } = useSystemNotifications();
 
 	const loadingNotice = (): void => {
-		loading({ key: uuidv4(), loading: true });
+		loading({ key: uuidv4() });
 	};
 
 	const errorNotice = (): void => {

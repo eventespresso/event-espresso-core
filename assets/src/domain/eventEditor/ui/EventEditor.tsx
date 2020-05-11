@@ -13,7 +13,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import './styles.scss';
 
 toast.configure({
-	autoClose: 20000,
+	autoClose: 3000,
 	className: 'ee-toaster-notice__container',
 	hideProgressBar: true,
 	//etc you get the idea

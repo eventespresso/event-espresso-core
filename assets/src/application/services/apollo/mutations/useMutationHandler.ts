@@ -72,8 +72,9 @@ const useMutationHandler: MutationHandler = (getMutationOptions) => {
 			 *
 			 */
 			const onMutationStart = (mutationType: MutationType): void => {
-				const message = getToasterMessage(mutationType);
 				const key = getToasterKey(mutationType);
+				const message = getToasterMessage(mutationType);
+
 				toaster.loading({ key, message });
 
 				updateResult({
@@ -144,7 +145,9 @@ const useMutationHandler: MutationHandler = (getMutationOptions) => {
 			 */
 			const mutate = (options: CustomMutationOptions, mutationType: MutationType): MutationResult => {
 				const { onCompleted, onError, ...mutationOptions } = options;
+
 				onMutationStart(mutationType);
+
 				client
 					.mutate(mutationOptions)
 					.then((response: FetchResult) => {

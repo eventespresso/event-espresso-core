@@ -16,7 +16,9 @@ const position = 'bottom-right';
 
 const useSystemNotifications = (): SystemNotificationsToaster => {
 	const dismiss: DissmissToast = useCallback((toastId) => toast.dismiss(toastId), []);
-	const dissmissAll = toast.dismiss();
+	const dissmissAll = (): void => {
+		toast.dismiss();
+	};
 
 	const error = useCallback(({ message }) => {
 		const icon = <CloseCircleOutlined color='rgb(255, 77, 79)' fontSize={fontSize} />;
