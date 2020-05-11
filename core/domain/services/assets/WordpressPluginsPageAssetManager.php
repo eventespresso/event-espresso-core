@@ -22,9 +22,9 @@ use EventEspresso\core\services\collections\DuplicateCollectionIdentifierExcepti
 class WordpressPluginsPageAssetManager extends ReactAssetManager
 {
 
-    const JS_HANDLE_WP_PLUGINS_PAGE = 'eventespresso-wp-plugins-page';
+    public const JS_HANDLE_WP_PLUGINS_PAGE = 'eventespresso-wp-plugins-page';
 
-    const CSS_HANDLE_WP_PLUGINS_PAGE = 'eventespresso-wp-plugins-page';
+    public const CSS_HANDLE_WP_PLUGINS_PAGE = 'eventespresso-wp-plugins-page';
 
     /**
      * @var ExitModal $exit_modal
@@ -59,6 +59,7 @@ class WordpressPluginsPageAssetManager extends ReactAssetManager
         parent::addAssets();
         $this->registerJavascript();
         $this->registerStyleSheets();
+        add_action('admin_enqueue_scripts', [$this, 'enqueueBrowserAssets'], 10);
     }
 
 
@@ -75,20 +76,23 @@ class WordpressPluginsPageAssetManager extends ReactAssetManager
         $this->addJs(
             WordpressPluginsPageAssetManager::JS_HANDLE_WP_PLUGINS_PAGE,
             [
+                CoreAssetManager::JS_HANDLE_JS_CORE,
                 ReactAssetManager::JS_HANDLE_REACT,
                 ReactAssetManager::JS_HANDLE_REACT_DOM,
-                CoreAssetManager::JS_HANDLE_JS_CORE,
                 'wp-components',
                 'wp-i18n',
                 'wp-url'
             ]
         )
         ->setRequiresTranslation()
-        ->enqueueAsset();
-
-        $this->registry->addData(
-            'exitModalInfo',
-            $this->exit_modal->getExitSurveyInfo()
+        ->setInlineDataCallback(
+            function () {
+                wp_localize_script(
+                    WordpressPluginsPageAssetManager::JS_HANDLE_WP_PLUGINS_PAGE,
+                    'exitModalInfo',
+                    $this->exit_modal->getExitSurveyInfo()
+                );
+            }
         );
     }
 
@@ -106,7 +110,6 @@ class WordpressPluginsPageAssetManager extends ReactAssetManager
         $this->addCss(
             WordpressPluginsPageAssetManager::CSS_HANDLE_WP_PLUGINS_PAGE,
             ['wp-components']
-        )
-        ->enqueueAsset();
+        );
     }
 }
