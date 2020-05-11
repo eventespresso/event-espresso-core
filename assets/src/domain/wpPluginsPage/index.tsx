@@ -14,9 +14,14 @@ const info = pathOr<ExitSurveyInfo>(null, ['eejsdata', 'data', 'exitModalInfo'],
 const handleDeactivationClick = (e: JQuery.ClickEvent<HTMLElement>, el: any): void => {
 	e.preventDefault();
 	const url = $(el).attr('href');
-	const container = document.getElementById('ee-exit-survey-modal');
+	const container = document.getElementById('wpfooter');
 
-	render(<ExitSurvey deactivationUrl={url} />, container);
+	const root = document.createElement('div');
+	root.id = 'ee-exit-survey-modal';
+
+	container.prepend(root);
+
+	render(<ExitSurvey deactivationUrl={url} />, root);
 };
 /**
  * EE caffeinated click capture but only if feature is active
