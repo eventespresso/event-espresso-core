@@ -21,7 +21,9 @@ use EventEspresso\core\services\collections\CollectionLoaderException;
 class TypeCollection extends Collection
 {
 
-    const COLLECTION_NAME = 'espresso_graphql_types';
+    const NAME = 'espresso_graphql_types';
+
+    const INTERFACE = 'EventEspresso\core\services\graphql\types\TypeInterface';
 
     /**
      * @var CollectionLoader $loader
@@ -37,8 +39,8 @@ class TypeCollection extends Collection
     public function __construct()
     {
         parent::__construct(
-            'EventEspresso\core\services\graphql\types\TypeInterface',
-            TypeCollection::COLLECTION_NAME
+            TypeCollection::INTERFACE,
+            TypeCollection::NAME
         );
     }
 
@@ -54,9 +56,9 @@ class TypeCollection extends Collection
             $this->loader = new CollectionLoader(
                 new CollectionDetails(
                     // collection name
-                    TypeCollection::COLLECTION_NAME,
+                    TypeCollection::NAME,
                     // collection interface
-                    'EventEspresso\core\services\graphql\types\TypeInterface',
+                    TypeCollection::INTERFACE,
                     // FQCNs for classes to add (all classes within each namespace will be loaded)
                     apply_filters(
                         'FHEE__EventEspresso_core_services_graphql_TypeCollection__loadCollection__collection_FQCNs',
