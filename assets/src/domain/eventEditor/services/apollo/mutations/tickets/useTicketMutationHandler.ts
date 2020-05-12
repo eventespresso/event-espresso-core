@@ -1,5 +1,4 @@
 import { useCallback } from 'react';
-import { pathOr } from 'ramda';
 
 import useMutationVariables from './useMutationVariables';
 import useOnCreateTicket from './useOnCreateTicket';
@@ -7,10 +6,9 @@ import useOnDeleteTicket from './useOnDeleteTicket';
 import useOnUpdateTicket from './useOnUpdateTicket';
 import useOptimisticResponse from './useOptimisticResponse';
 import { DEFAULT_TICKET_LIST_DATA as DEFAULT_LIST_DATA } from '@edtrServices/apollo/queries';
-import { EntityId } from '@dataServices/types';
 import { MutationHandler, OnUpdateFnOptions } from '../types';
 import { MutationType } from '@appServices/apollo/mutations';
-import { Ticket, TicketEdge, Price, TicketsList } from '@edtrServices/apollo/types';
+import { Ticket, TicketsList } from '@edtrServices/apollo/types';
 import { useTicketQueryOptions } from '@edtrServices/apollo/queries/tickets';
 import { getGuids } from '@appServices/predicates';
 
@@ -41,10 +39,10 @@ const useTicketMutationHandler = (): MutationHandler => {
 				} catch (error) {
 					data = null;
 				}
-				const tickets = pathOr<TicketEdge>(DEFAULT_LIST_DATA, ['espressoTickets'], data);
-				const datetimeIds = pathOr<Array<EntityId>>([], ['datetimes'], input);
+				const tickets = data?.espressoTickets || DEFAULT_LIST_DATA;
+				const datetimeIds = input?.datetimes || [];
 
-				const priceIds = getGuids(pathOr<Price[]>([], ['nodes'], prices));
+				const priceIds = getGuids(prices?.nodes || []);
 
 				switch (mutationType) {
 					case MutationType.Create:

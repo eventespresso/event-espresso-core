@@ -1,5 +1,4 @@
 import { useCallback } from 'react';
-import { pathOr } from 'ramda';
 
 import useMutationVariables from './useMutationVariables';
 import useOnCreateDatetime from './useOnCreateDatetime';
@@ -7,8 +6,7 @@ import useOnDeleteDatetime from './useOnDeleteDatetime';
 import useOnUpdateDatetime from './useOnUpdateDatetime';
 import useOptimisticResponse from './useOptimisticResponse';
 import { DEFAULT_DATETIME_LIST_DATA as DEFAULT_LIST_DATA } from '@edtrServices/apollo/queries';
-import { Datetime, DatetimeEdge, DatetimesList } from '@edtrServices/apollo/types';
-import { EntityId } from '@dataServices/types';
+import { Datetime, DatetimesList } from '@edtrServices/apollo/types';
 import { MutationType } from '@appServices/apollo/mutations';
 import { OnUpdateFnOptions, MutationHandler } from '../types';
 import { useDatetimeQueryOptions } from '@edtrServices/apollo/queries/datetimes';
@@ -36,8 +34,8 @@ const useDatetimeMutationHandler = (): MutationHandler => {
 				} catch (error) {
 					data = null;
 				}
-				const datetimes = pathOr<DatetimeEdge>(DEFAULT_LIST_DATA, ['espressoDatetimes'], data);
-				const tickets = pathOr<Array<EntityId>>([], ['tickets'], input);
+				const datetimes = data?.espressoDatetimes || DEFAULT_LIST_DATA;
+				const tickets = input?.tickets || [];
 
 				switch (mutationType) {
 					case MutationType.Create:

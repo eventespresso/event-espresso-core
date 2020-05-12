@@ -1,6 +1,5 @@
 import { useCallback } from 'react';
 import { OperationVariables } from 'apollo-client';
-import { pathOr } from 'ramda';
 
 import useOnCreatePrice from './useOnCreatePrice';
 import useOnDeletePrice from './useOnDeletePrice';
@@ -8,7 +7,7 @@ import useOnUpdatePrice from './useOnUpdatePrice';
 import { DEFAULT_PRICE_LIST_DATA as DEFAULT_LIST_DATA } from '@edtrServices/apollo/queries';
 import { MutationHandler, OnUpdateFnOptions } from '../types';
 import { MutationType, MutationInput } from '@appServices/apollo/mutations';
-import { Price, PriceEdge, PricesList } from '@edtrServices/apollo/types';
+import { Price, PricesList } from '@edtrServices/apollo/types';
 import { usePriceQueryOptions } from '@edtrServices/apollo/queries/prices';
 
 /**
@@ -48,7 +47,7 @@ const usePriceMutationHandler = (): MutationHandler => {
 				} catch (error) {
 					data = null;
 				}
-				const prices = pathOr<PriceEdge>(DEFAULT_LIST_DATA, ['espressoPrices'], data);
+				const prices = data?.espressoPrices || DEFAULT_LIST_DATA;
 
 				switch (mutationType) {
 					case MutationType.Create:

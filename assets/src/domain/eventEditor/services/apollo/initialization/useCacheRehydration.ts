@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import { pathOr } from 'ramda';
 
 import useCacheRehydrationData from './useCacheRehydrationData';
 import { useRelations } from '@appServices/apollo/relations';
@@ -16,7 +15,6 @@ import {
 	usePriceTypeQueryOptions,
 	useTicketQueryOptions,
 } from '../queries';
-import { Datetime, Ticket } from '../types';
 import { useUpdateDatetimeList, useUpdatePriceTypeList, useUpdateTicketList, useUpdatePriceList } from '../../../hooks';
 import { useCurrentUserQueryOptions, useUpdateCurrentUserCache } from '@sharedServices/apollo/queries/currentUser';
 import {
@@ -40,8 +38,8 @@ const useCacheRehydration = (): void => {
 	} = useCacheRehydrationData();
 	const { isLoaded } = useStatus();
 
-	const datetimeIn = getGuids(pathOr<Datetime[]>([], ['nodes'], espressoDatetimes));
-	const ticketIn = getGuids(pathOr<Ticket[]>([], ['nodes'], espressoTickets));
+	const datetimeIn = getGuids(espressoDatetimes?.nodes || []);
+	const ticketIn = getGuids(espressoTickets?.nodes || []);
 
 	const priceTypeQueryOptions = usePriceTypeQueryOptions();
 	const updatePriceTypeList = useUpdatePriceTypeList();

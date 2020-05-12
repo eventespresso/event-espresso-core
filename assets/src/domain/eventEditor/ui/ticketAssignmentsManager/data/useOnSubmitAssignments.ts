@@ -1,8 +1,6 @@
 import { useCallback } from 'react';
-import { pathOr } from 'ramda';
 
 import { useRelations } from '@appServices/apollo/relations';
-import { EntityId } from '@dataServices/types';
 import { useDatetimeMutator, useTicketMutator } from '@edtrServices/apollo/mutations';
 import { prepareEntitiesForUpdate } from '../utils';
 import { TAMRelationalData } from '../types';
@@ -43,12 +41,12 @@ const useOnSubmitAssignments = () => {
 			 */
 			if (ticketsToUpdate.length < datesToUpdate.length) {
 				ticketsToUpdate.forEach(([id, possibleRelation]) => {
-					const datetimes = pathOr<EntityId[]>([], ['datetimes'], possibleRelation);
+					const datetimes = possibleRelation?.datetimes || [];
 					updateTicket({ id, datetimes });
 				});
 			} else {
 				datesToUpdate.forEach(([id, possibleRelation]) => {
-					const tickets = pathOr<EntityId[]>([], ['tickets'], possibleRelation);
+					const tickets = possibleRelation?.tickets || [];
 					updateDatetime({ id, tickets });
 				});
 			}

@@ -1,17 +1,15 @@
-import { pathOr, reduce } from 'ramda';
+import { reduce } from 'ramda';
 
 import ticketTotalCalculator from './ticketTotalCalculator';
 import { DataState } from '../data';
-import { TpcPriceModifier } from '../types';
-import { Ticket } from '@edtrServices/apollo';
 import { sortByPriceOrderIdAsc } from '@sharedEntities/prices/predicates/sortingPredicates';
 
 const calculateTicketTotal = (state: DataState): DataState['ticket']['price'] => {
-	const ticket = pathOr<Ticket>(null, ['ticket'], state);
+	const ticket = state?.ticket;
 	if (!ticket) {
 		return null;
 	}
-	const allPrices = pathOr<TpcPriceModifier[]>(null, ['prices'], state);
+	const allPrices = state?.prices;
 	if (!allPrices.length) {
 		return ticket.price;
 	}

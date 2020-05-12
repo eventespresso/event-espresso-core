@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { mapObjIndexed, pickBy, pathOr, isEmpty } from 'ramda';
+import { mapObjIndexed, pickBy, isEmpty } from 'ramda';
 
 import { AssignmentManager, TAMPossibleRelation, TAMRelationalData, TAMRelationalEntity } from '../types';
 
@@ -23,7 +23,7 @@ const useValidation = (assignmentManager: AssignmentManager): TAMPossibleRelatio
 			const relation: keyof TAMPossibleRelation = entity === 'datetimes' ? 'tickets' : 'datetimes';
 			const emptyRelationalEntities = pickBy<TAMRelationalEntity, TAMRelationalEntity>(
 				(relations: TAMPossibleRelation) => {
-					const relatedIds = pathOr<Array<string>>([], [relation], relations);
+					const relatedIds = relations?.[relation] || [];
 					return relatedIds.length === 0;
 				},
 				relationalEntity

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { assocPath, pathOr } from 'ramda';
+import { assocPath } from 'ramda';
 
 import { AnyObject } from '@appServices/utilities/types';
 import { useDataState } from '../data';
@@ -39,7 +39,7 @@ const usePriceTypeChangeListener: StateChangeListenerHook = () => {
 		// loop through all the new priceType mappings to
 		// get the id of the price whose price type changed
 		for (const [priceId, newPriceType] of Object.entries<string>(newPriceTypeMapping)) {
-			const prevPriceType = pathOr('', ['current', priceId], priceTypeMapping);
+			const prevPriceType = priceTypeMapping?.current?.[priceId] || '';
 			if (prevPriceType && prevPriceType !== newPriceType) {
 				priceTypeChangedForPriceId = priceId;
 				break;

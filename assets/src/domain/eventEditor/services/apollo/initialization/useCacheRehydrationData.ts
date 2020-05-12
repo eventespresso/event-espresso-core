@@ -1,12 +1,7 @@
-import { pathOr } from 'ramda';
-import { EventData } from '../../../interfaces/types';
-import { CurrentUserProps, GeneralSettings } from '@application/valueObjects/config/types';
 import { EEEditorData } from '@edtrInterfaces/types';
 
 const useCacheRehydrationData = (): EEEditorData => {
-	const event = pathOr<EventData>(null, ['eeEditorData', 'event'], window);
-	const currentUser = pathOr<CurrentUserProps>(null, ['eeEditorData', 'currentUser'], window);
-	const generalSettings = pathOr<GeneralSettings>(null, ['eeEditorData', 'generalSettings'], window);
+	const { event, currentUser, generalSettings } = window?.eeEditorData || {};
 
 	return { event, currentUser, generalSettings };
 };
