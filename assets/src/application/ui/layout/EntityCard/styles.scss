@@ -18,6 +18,20 @@
 		box-sizing: border-box;
 		padding: 0;
 		min-width: var(--ee-sidebar-width);
+
+		.ee-biggie-calendar-date__footer {
+			font-size: var(--ee-font-size-default);
+			font-weight: bolder;
+			letter-spacing: 1px;
+			text-transform: uppercase;
+		}
+
+		.ee-calendar-date-range {
+			.ee-mcd__year,
+			.ee-mcd__time {
+				font-size: var(--ee-font-size-micro);
+			}
+		}
 	}
 
 	&__details-wrapper {
