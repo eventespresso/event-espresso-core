@@ -30,7 +30,7 @@ const useInitialState = ({ ticketId }: BaseProps): StateInitializer => {
 
 	// get the full ticket object
 	const wholeTicket = useTicketItem({ id: ticketId });
-	const ticket = pick(ticketFieldsToUse, wholeTicket);
+	const ticket = wholeTicket && pick(ticketFieldsToUse, wholeTicket);
 
 	// get all related prices
 	const unSortedPrices = useTicketPrices(ticketId);

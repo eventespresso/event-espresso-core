@@ -19,8 +19,8 @@ const useRecalculateBasePrice = (ticketId: EntityId): VoidFunction => {
 
 		// if we are lucky
 		if (basePrice?.id) {
-            const { id, amount } = basePrice;
-            // update the base price
+			const { id, amount } = basePrice;
+			// update the base price
 			updateEntity({ id, amount });
 		}
 	}, [getDataState, updateEntity]);

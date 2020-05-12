@@ -5,7 +5,7 @@ import type { TicketItemProps } from '../types';
 import { useTicketMutator } from '@edtrServices/apollo/mutations';
 import { getPropsAreEqual } from '@appServices/utilities';
 import CurrencyInput from '@appInputs/CurrencyInput';
-import useRecalculateBasePrice from '@edtrUI/tickets/hooks/useRecalculateBasePrice';
+import useRecalculateBasePrice from '../../hooks/useRecalculateBasePrice';
 
 interface EditablePriceProps extends TicketItemProps {
 	className?: string;
