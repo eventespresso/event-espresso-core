@@ -15,7 +15,7 @@ use EventEspresso\core\services\graphql\connections\ConnectionInterface;
  * @author  Brent Christensen
  * @since   $VID:$
  */
-class ConnectionsManager
+class ConnectionsManager implements GQLManagerInterface
 {
 
     /**

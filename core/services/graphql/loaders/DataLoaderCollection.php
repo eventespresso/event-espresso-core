@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\core\services\graphql\types;
+namespace EventEspresso\core\services\graphql\loaders;
 
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\collections\Collection;
@@ -11,19 +11,19 @@ use EventEspresso\core\services\collections\CollectionLoader;
 use EventEspresso\core\services\collections\CollectionLoaderException;
 
 /**
- * Class TypeCollection
- * SplObjectStorage Collection of EventEspresso\core\services\graphql\TypeInterface objects
+ * Class DataLoaderCollection
+ * SplObjectStorage Collection of EventEspresso\core\services\graphql\GQLDataDomainInterface objects
  *
  * @package EventEspresso\core\services\graphql
  * @author  Brent Christensen
  * @since   $VID:$
  */
-class TypeCollection extends Collection
+class DataLoaderCollection extends Collection
 {
 
-    const COLLECTION_NAME = 'espresso_graphql_types';
+    const COLLECTION_NAME = 'espresso_graphql_data_loaders';
 
-    const COLLECTION_INTERFACE = 'EventEspresso\core\services\graphql\types\TypeInterface';
+    const COLLECTION_INTERFACE = 'EventEspresso\core\services\graphql\loaders\GQLDataDomainInterface';
 
     /**
      * @var CollectionLoader $loader
@@ -32,15 +32,15 @@ class TypeCollection extends Collection
 
 
     /**
-     * TypeCollection constructor
+     * DataLoaderCollection constructor
      *
      * @throws InvalidInterfaceException
      */
     public function __construct()
     {
         parent::__construct(
-            TypeCollection::COLLECTION_INTERFACE,
-            TypeCollection::COLLECTION_NAME
+            DataLoaderCollection::COLLECTION_INTERFACE,
+            DataLoaderCollection::COLLECTION_NAME
         );
     }
 
@@ -56,13 +56,13 @@ class TypeCollection extends Collection
             $this->loader = new CollectionLoader(
                 new CollectionDetails(
                     // collection name
-                    TypeCollection::COLLECTION_NAME,
+                    DataLoaderCollection::COLLECTION_NAME,
                     // collection interface
-                    TypeCollection::COLLECTION_INTERFACE,
+                    DataLoaderCollection::COLLECTION_INTERFACE,
                     // FQCNs for classes to add (all classes within each namespace will be loaded)
                     apply_filters(
-                        'FHEE__EventEspresso_core_services_graphql_TypeCollection__loadCollection__collection_FQCNs',
-                        ['EventEspresso\core\domain\services\graphql\types']
+                        'FHEE__EventEspresso_core_services_graphql_DataLoaderCollection__loadCollection__collection_FQCNs',
+                        ['EventEspresso\core\domain\services\graphql\data\domains']
                     ),
                     // filepaths to classes to add
                     array(),
@@ -84,26 +84,9 @@ class TypeCollection extends Collection
      * @throws CollectionLoaderException
      * @since $VID:$
      */
-    public function loadTypes()
+    public function getDataLoaders()
     {
         $this->loadCollection();
         return $this->loader->getCollection();
-    }
-
-
-    /**
-     * getIdentifier
-     * Overrides EventEspresso\core\services\collections\Collection::getIdentifier()
-     * If no $identifier is supplied, then the  fully qualified class name is used
-     *
-     * @param        $object
-     * @param mixed  $identifier
-     * @return bool
-     */
-    public function getIdentifier($object, $identifier = null)
-    {
-        return ! empty($identifier)
-            ? $identifier
-            : get_class($object);
     }
 }

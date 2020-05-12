@@ -911,10 +911,11 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\assets\JedLocaleData' => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\services\graphql\GraphQLManager' => [
-                'EventEspresso\core\services\graphql\TypesManager'  => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\graphql\InputsManager'  => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\graphql\EnumsManager'  => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\graphql\ConnectionsManager'  => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\graphql\ConnectionsManager' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\graphql\DataLoaderManager'  => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\graphql\EnumsManager'       => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\graphql\InputsManager'      => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\graphql\TypesManager'       => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\services\graphql\TypesManager' => [
                 'EventEspresso\core\services\graphql\types\TypeCollection' => EE_Dependency_Map::load_from_cache,
@@ -1004,6 +1005,9 @@ class EE_Dependency_Map
                 'EEM_Price' => EE_Dependency_Map::load_from_cache,
                 'EEM_Price_Type' => EE_Dependency_Map::load_from_cache,
                 'EEM_Ticket' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\services\graphql\DataLoaderManager' => [
+                'EventEspresso\core\services\graphql\loaders\DataLoaderCollection' => EE_Dependency_Map::load_from_cache,
             ],
         );
     }
