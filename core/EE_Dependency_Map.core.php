@@ -995,22 +995,29 @@ class EE_Dependency_Map
                 'EventEspresso\core\domain\services\admin\events\editor\EventEntityRelations' => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\domain\services\admin\events\editor\EventEntityRelations' => [
-                'EEM_Datetime' => EE_Dependency_Map::load_from_cache,
-                'EEM_Price' => EE_Dependency_Map::load_from_cache,
+                'EEM_Datetime'   => EE_Dependency_Map::load_from_cache,
+                'EEM_Event'      => EE_Dependency_Map::load_from_cache,
+                'EEM_Price'      => EE_Dependency_Map::load_from_cache,
                 'EEM_Price_Type' => EE_Dependency_Map::load_from_cache,
-                'EEM_Ticket' => EE_Dependency_Map::load_from_cache,
+                'EEM_Ticket'     => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\domain\services\admin\events\editor\NewEventDefaultEntities' => [
-                'EEM_Datetime' => EE_Dependency_Map::load_from_cache,
-                'EEM_Price' => EE_Dependency_Map::load_from_cache,
-                'EEM_Price_Type' => EE_Dependency_Map::load_from_cache,
-                'EEM_Ticket' => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\domain\services\admin\events\editor\DefaultTickets' => EE_Dependency_Map::load_from_cache,
+                'EEM_Datetime'                                                       => EE_Dependency_Map::load_from_cache,
+                'EEM_Event'                                                          => EE_Dependency_Map::load_from_cache,
+                'EEM_Price'                                                          => EE_Dependency_Map::load_from_cache,
+                'EEM_Price_Type'                                                     => EE_Dependency_Map::load_from_cache,
+                'EEM_Ticket'                                                         => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\services\admin\entities\DefaultDatetimes' => EE_Dependency_Map::load_from_cache,
             ],
-            'EventEspresso\core\domain\services\admin\events\editor\DefaultTickets' => [
-                'EEM_Ticket' => EE_Dependency_Map::load_from_cache,
+            'EventEspresso\core\domain\services\admin\entities\DefaultDatetimes' => [
+                'EventEspresso\core\domain\services\admin\entities\DefaultTickets' => EE_Dependency_Map::load_from_cache,
+                'EEM_Datetime'                                                     => EE_Dependency_Map::load_from_cache,
             ],
-            'EventEspresso\core\domain\services\admin\events\editor\DefaultPrices' => [
+            'EventEspresso\core\domain\services\admin\entities\DefaultTickets' => [
+                'EventEspresso\core\domain\services\admin\entities\DefaultPrices' => EE_Dependency_Map::load_from_cache,
+                'EEM_Ticket'                                                      => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\domain\services\admin\entities\DefaultPrices' => [
                 'EEM_Price' => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\services\graphql\DataLoaderManager' => [
