@@ -1005,6 +1005,13 @@ class EE_Dependency_Map
                 'EEM_Price' => EE_Dependency_Map::load_from_cache,
                 'EEM_Price_Type' => EE_Dependency_Map::load_from_cache,
                 'EEM_Ticket' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\services\admin\events\editor\DefaultTickets' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\domain\services\admin\events\editor\DefaultTickets' => [
+                'EEM_Ticket' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\domain\services\admin\events\editor\DefaultPrices' => [
+                'EEM_Price' => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\services\graphql\DataLoaderManager' => [
                 'EventEspresso\core\services\graphql\loaders\DataLoaderCollection' => EE_Dependency_Map::load_from_cache,

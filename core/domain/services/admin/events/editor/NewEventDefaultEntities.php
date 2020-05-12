@@ -5,6 +5,10 @@ namespace EventEspresso\core\domain\services\admin\events\editor;
 use DomainException;
 use EE_Datetime;
 use EE_Error;
+use EEM_Datetime;
+use EEM_Price;
+use EEM_Price_Type;
+use EEM_Ticket;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\ModelConfigurationException;
@@ -22,6 +26,33 @@ use ReflectionException;
  */
 class NewEventDefaultEntities extends EventEditorData
 {
+
+    /**
+     * @var DefaultTickets $default_tickets
+     */
+    protected $default_tickets;
+
+
+    /**
+     * NewEventDefaultEntities constructor.
+     *
+     * @param EEM_Datetime   $datetime_model
+     * @param EEM_Price      $price_model
+     * @param EEM_Price_Type $price_type_model
+     * @param EEM_Ticket     $ticket_model
+     * @param DefaultTickets $default_tickets
+     */
+    public function __construct(
+        EEM_Datetime $datetime_model,
+        EEM_Price $price_model,
+        EEM_Price_Type $price_type_model,
+        EEM_Ticket $ticket_model,
+        DefaultTickets $default_tickets
+    ) {
+        $this->default_tickets = $default_tickets;
+        parent::__construct($datetime_model, $price_model, $price_type_model, $ticket_model);
+    }
+
 
     /**
      * @param int $eventId
@@ -45,22 +76,7 @@ class NewEventDefaultEntities extends EventEditorData
             $default_date->set('DTT_ID', null);
             $default_date->save();
             $default_date->_add_relation_to($eventId, 'Event');
-            $default_tickets = $this->ticket_model->get_all_default_tickets();
-            $default_prices = $this->price_model->get_all_default_prices();
-            foreach ($default_tickets as $default_ticket) {
-                // clone ticket, strip out ID, then save to get a new ID
-                $default_ticket_clone = clone $default_ticket;
-                $default_ticket_clone->set('TKT_ID', null);
-                $default_ticket_clone->save();
-                $default_ticket_clone->_add_relation_to($default_date, 'Datetime');
-                foreach ($default_prices as $default_price) {
-                    // clone price, strip out ID, then save to get a new ID
-                    $default_price_clone = clone $default_price;
-                    $default_price_clone->set('PRC_ID', null);
-                    $default_price_clone->save();
-                    $default_price_clone->_add_relation_to($default_ticket_clone, 'Ticket');
-                }
-            }
+            $this->default_tickets->create($default_date);
         }
         return $default_dates;
     }
