@@ -2,6 +2,8 @@
 
 namespace EventEspresso\core\domain\services\assets;
 
+use EEH_Qtip_Loader;
+use EventEspresso\core\domain\values\assets\JavascriptAsset;
 use EventEspresso\core\services\assets\AssetManager;
 
 /**
@@ -36,6 +38,10 @@ class EspressoAdminAssetManager extends AssetManager
         $joyride = filter_var(apply_filters('FHEE_load_joyride', false), FILTER_VALIDATE_BOOLEAN);
         $this->registerJavascript($joyride);
         $this->registerStyleSheets($joyride);
+        add_action(
+            'AHEE__EventEspresso_core_services_assets_Registry__registerScripts__before_script',
+            [$this, 'loadQtipJs']
+        );
     }
 
 
@@ -114,5 +120,24 @@ class EspressoAdminAssetManager extends AssetManager
             'all',
             EVENT_ESPRESSO_VERSION
         )->enqueueAsset();
+    }
+
+
+    /**
+     * registers assets for cleaning your ears
+     *
+     * @param JavascriptAsset $script
+     */
+    public function loadQtipJs(JavascriptAsset $script)
+    {
+        // qtip is turned OFF by default, but prior to the wp_enqueue_scripts hook,
+        // can be turned back on again via: add_filter('FHEE_load_qtip', '__return_true' );
+        if (apply_filters('FHEE_load_qtip', false)
+        ) {
+            $qtip_loader = EEH_Qtip_Loader::instance();
+            if ($qtip_loader instanceof EEH_Qtip_Loader) {
+                $qtip_loader->register_and_enqueue();
+            }
+        }
     }
 }

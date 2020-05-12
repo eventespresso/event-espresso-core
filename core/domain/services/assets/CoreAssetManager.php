@@ -114,10 +114,6 @@ class CoreAssetManager extends AssetManager
     {
         $this->loadCoreJs();
         $this->loadJqueryValidate();
-        add_action(
-            'AHEE__EventEspresso_core_services_assets_Registry__registerScripts__before_script',
-            array($this, 'loadQtipJs')
-        );
     }
 
 
@@ -290,17 +286,12 @@ class CoreAssetManager extends AssetManager
 
 
     /**
-     * registers assets for cleaning your ears
-     *
      * @param JavascriptAsset $script
+     * @deprecated $VID:$
      */
     public function loadQtipJs(JavascriptAsset $script)
     {
-        // qtip is turned OFF by default, but prior to the wp_enqueue_scripts hook,
-        // can be turned back on again via: add_filter('FHEE_load_qtip', '__return_true' );
-        if (apply_filters('FHEE_load_qtip', false)
-        ) {
-            EEH_Qtip_Loader::instance()->register_and_enqueue();
-        }
+        // replacement:
+        // \EventEspresso\core\domain\services\assets\EspressoAdminAssetManager::loadQtipJs
     }
 }
