@@ -1,16 +1,10 @@
-import { GET_EVENT } from './';
 import { Event, EventData } from '../../types';
-import { useCacheQuery, ReadQueryOptions } from '@dataServices/apollo/queries';
-import useEventId from './useEventId';
+import { useCacheQuery } from '@dataServices/apollo/queries';
+import useEventQueryOptions from './useEventQueryOptions';
 
 const useEvent = (): Event => {
-	const id = useEventId();
-	const options: ReadQueryOptions = {
-		query: GET_EVENT,
-		variables: {
-			id,
-		},
-	};
+	const options = useEventQueryOptions();
+
 	const { data } = useCacheQuery<EventData>({ ...options, fetchPolicy: 'cache-first' });
 
 	return data?.espressoEvent;
