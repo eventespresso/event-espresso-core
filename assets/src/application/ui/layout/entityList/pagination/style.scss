@@ -7,14 +7,7 @@
 	display: flex;
 	flex-flow: row nowrap;
 	justify-content: flex-end;
-
-	&.hidePagination {
-		.ant-pagination-prev,
-		.ant-pagination-item,
-		.ant-pagination-next {
-			display: none;
-		}
-	}
+	padding: var(--ee-padding-huge) var(--ee-padding-default);
 
 	.ant-pagination {
 		display: inline-block;

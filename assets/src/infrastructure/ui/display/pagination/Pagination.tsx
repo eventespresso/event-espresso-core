@@ -1,18 +1,14 @@
 import React, { CSSProperties } from 'react';
 import RcPagination from 'rc-pagination';
+
 import 'rc-pagination/assets/index.css';
 import defaultLocale from 'rc-pagination/lib/locale/en_US';
+import './style.scss';
 
+import defaultItemRender from './ItemRender';
 import { PaginationProps } from './types';
 import PerPage from './PerPage';
-import defaultItemRender from './ItemRender';
 
-/* Temporary */
-const wrapperStyle: CSSProperties = {
-	display: 'flex',
-	flexDirection: 'row',
-	padding: '1em',
-};
 const paginationStyle: CSSProperties = {
 	display: 'flex',
 	marginRight: '1em',
@@ -33,7 +29,7 @@ const Pagination: React.FC<PaginationProps> = ({
 	...rest
 }) => {
 	return (
-		<div style={wrapperStyle}>
+		<div className='ee-pagination'>
 			<RcPagination
 				{...rest}
 				current={pageNumber}
