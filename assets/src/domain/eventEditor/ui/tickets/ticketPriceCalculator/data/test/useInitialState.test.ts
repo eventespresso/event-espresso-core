@@ -8,19 +8,6 @@ const mockTicket = tickets[0];
 
 const timeout = 5000; // milliseconds
 describe('TPC:useInitialState', () => {
-	it('throws an error when a non-existent ticket id is passed', () => {
-		const { result } = renderHook(
-			() => {
-				return useInitialState({ ticketId: 'fake-id' });
-			},
-			{
-				wrapper: TestWrapper,
-			}
-		);
-
-		expect(() => result.current(null)).toThrow();
-	});
-
 	it('returns the computed initial state for the passed ticketId', async () => {
 		const { result, waitForNextUpdate } = renderHook(
 			() => {
