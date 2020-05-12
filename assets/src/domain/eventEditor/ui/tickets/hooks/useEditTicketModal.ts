@@ -6,10 +6,15 @@ import useTicketFormConfig from '../ticketForm/useTicketFormConfig';
 import { useFormModal, FormModal, ModalClose } from '@appLayout/formModal';
 import { useTicketMutator, UpdateTicketInput } from '@edtrServices/apollo/mutations';
 import useEvent from '@edtrServices/apollo/queries/events/useEvent';
+import useRecalculateBasePrice from './useRecalculateBasePrice';
+import { useTicketItem } from '@edtrServices/apollo/queries';
 
 const useEditTicketModal: FormModal = ({ entityId, entityDbId }) => {
 	const { updateEntity } = useTicketMutator(entityId);
 	const { closeEditor } = useFormModal();
+	const recalculateBasePrice = useRecalculateBasePrice(entityId);
+
+	const ticket = useTicketItem({ id: entityId });
 
 	const { name: eventName = '' } = useEvent() || {};
 
@@ -19,7 +24,13 @@ const useEditTicketModal: FormModal = ({ entityId, entityDbId }) => {
 
 	const onSubmit = useCallback<FormProps<UpdateTicketInput>['onSubmit']>(
 		(fields): void => {
-			updateEntity(fields);
+			const priceHasChanged = fields.price !== ticket?.price;
+			// if price has changed, reverseCalculate must be enabled
+			const reverseCalculate = priceHasChanged ? true : fields?.reverseCalculate;
+			updateEntity({ ...fields, reverseCalculate });
+			if (priceHasChanged) {
+				recalculateBasePrice();
+			}
 		},
 		[updateEntity]
 	);
