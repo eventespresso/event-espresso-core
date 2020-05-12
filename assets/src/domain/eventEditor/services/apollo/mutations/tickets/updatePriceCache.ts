@@ -40,7 +40,7 @@ const updatePriceCache = ({ proxy, prices = null, ticketIn, ticketId, action }: 
 			break;
 	}
 
-	const priceNodes = pathOr<Price[]>([], ['nodes'], prices);
+	const priceNodes = prices?.nodes || [];
 	const pathToNodes = ['espressoPrices', 'nodes'];
 
 	if (action === 'add' && priceNodes.length) {

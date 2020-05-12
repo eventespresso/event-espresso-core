@@ -1,4 +1,3 @@
-import { pathOr } from 'ramda';
 import ApolloClient from 'apollo-client';
 import {
 	CacheResolver,
@@ -9,8 +8,8 @@ import {
 } from 'apollo-cache-inmemory';
 import { BatchHttpLink } from 'apollo-link-batch-http';
 
-const graphqlEndpoint = pathOr<string>('', ['eeEditorData', 'graphqlEndpoint'], window);
-const nonce = pathOr<string>('', ['eejsdata', 'data', 'eejs_api_nonce'], window);
+const graphqlEndpoint = window?.eeEditorData?.graphqlEndpoint || '';
+const nonce = window?.eejsdata?.data?.eejs_api_nonce || '';
 
 const getResolver = (type: string): CacheResolver => {
 	const resolver: CacheResolver = (_, args, { getCacheKey }) => getCacheKey({ __typename: type, id: args.id });

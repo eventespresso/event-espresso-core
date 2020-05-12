@@ -1,4 +1,3 @@
-import { pathOr } from 'ramda';
 import {
 	Currency,
 	CurrencyProps,
@@ -13,10 +12,10 @@ import {
 	Timezone,
 	TimezoneProps,
 } from '../../valueObjects/config';
-import { JsDataProps, ConfigDataProps } from './types';
+import { ConfigDataProps } from './types';
 
 export const useConfigData = (): ConfigDataProps => {
-	const data = pathOr<JsDataProps>(null, ['eejsdata', 'data'], window);
+	const data = window?.eejsdata?.data;
 
 	return {
 		brandName: data?.brandName || 'Event Espresso',
