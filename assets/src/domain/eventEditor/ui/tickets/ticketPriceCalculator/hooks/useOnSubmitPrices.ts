@@ -29,7 +29,8 @@ const useOnSubmitPrices = (): VoidFunction => {
 			// convert the price mutatons into promises
 			prices.map(({ isNew, isModified, ...price }) => {
 				// if it's not new or modified, no need to do anything
-				if (!(isNew || isModified)) {
+				// but base price needs to be updated anyway which may been modified by revCalc
+				if (!(isNew || isModified) && !price.isBasePrice) {
 					// retain the existing relation
 					relatedPriceIds.push(price.id);
 					return Promise.resolve(price);
