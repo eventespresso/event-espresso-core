@@ -16,7 +16,7 @@ const useEditTicketModal: FormModal = ({ entityId, entityDbId }) => {
 
 	const ticket = useTicketItem({ id: entityId });
 
-	const { name: eventName = '' } = useEvent() || {};
+	const event = useEvent();
 
 	const onClose = useCallback<ModalClose>((): void => {
 		closeEditor('editTicket');
@@ -37,8 +37,11 @@ const useEditTicketModal: FormModal = ({ entityId, entityDbId }) => {
 
 	const formConfig = useTicketFormConfig(entityId, { onSubmit });
 
+	let title = sprintf(__('Edit ticket %s'), `#${entityDbId}`);
+	title = event?.name ? `${event.name}: ${title}` : title;
+
 	return {
-		title: `${eventName}: ${sprintf(__('Edit ticket %s'), `#${entityDbId}`)}`,
+		title,
 		formConfig,
 		onClose,
 	};
