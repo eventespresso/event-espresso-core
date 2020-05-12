@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n';
 import { EspressoForm } from '@application/ui/forms/espressoForm';
 import useDateFormConfig from '../../dateForm/useDateFormConfig';
 import ContentWrapper from './ContentWrapper';
-import { useDatetimeMutator } from '@edtrServices/apollo';
+import { useDatetimeMutator } from '@edtrServices/apollo/mutations';
 
 type ModalContentProps = {
 	onClose: VoidFunction;

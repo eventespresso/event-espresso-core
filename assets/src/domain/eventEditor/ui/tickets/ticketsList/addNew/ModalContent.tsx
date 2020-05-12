@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n';
 import { EspressoForm } from '@application/ui/forms/espressoForm';
 import useTicketFormConfig from '../../ticketForm/useTicketFormConfig';
 import ContentWrapper from './ContentWrapper';
-import { useTicketMutator } from '@edtrServices/apollo';
+import { useTicketMutator } from '@edtrServices/apollo/mutations';
 
 type ModalContentProps = {
 	onClose: VoidFunction;
