@@ -10,7 +10,7 @@ const calculateTicketTotal = (state: DataState): DataState['ticket']['price'] =>
 		return null;
 	}
 	const allPrices = state?.prices;
-	if (!allPrices.length) {
+	if (!allPrices?.length) {
 		return ticket.price;
 	}
 

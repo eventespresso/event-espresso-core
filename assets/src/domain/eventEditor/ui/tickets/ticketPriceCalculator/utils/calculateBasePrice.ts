@@ -14,7 +14,7 @@ const calculateBasePrice = (state: DataState): DataState['prices'] => {
 	}
 
 	const allPrices = state?.prices;
-	if (!allPrices.length) {
+	if (!allPrices?.length) {
 		return state.prices;
 	}
 	// we're calculating the base price so we don't want to include it in the calculations
