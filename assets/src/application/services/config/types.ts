@@ -8,6 +8,11 @@ import {
 	TimezoneProps,
 } from '../../valueObjects/config/types';
 
+export interface ExitSurveyInfo {
+	typeFormUrl: string;
+	isModalActive: boolean;
+}
+
 export type JsDataProps = {
 	brandName: string;
 	currency_config: CurrencyProps;
@@ -15,6 +20,7 @@ export type JsDataProps = {
 	locale: JsDataLocaleProps;
 	paths: JsDataPathsProps;
 	default_timezone: JsDataTimezoneProps;
+	exitModalInfo?: ExitSurveyInfo;
 };
 
 type JsDataLocaleProps = {

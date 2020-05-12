@@ -1,19 +1,17 @@
 import React, { useEffect, useRef } from 'react';
-import { pathOr } from 'ramda';
 import * as typeformEmbed from '@typeform/embed';
 
-import { ExitSurveyInfo } from './types';
 import './styles.scss';
 
 type SurveyContentProps = {
 	onSubmit: VoidFunction;
 };
 
-const info = pathOr<ExitSurveyInfo>(null, ['eejsdata', 'data', 'exitModalInfo'], window);
+const info = window?.eejsdata?.data?.exitModalInfo;
 
 const ExitSurveyContent: React.FC<SurveyContentProps> = ({ onSubmit }) => {
 	const typeFormEl = useRef();
-	const typeFormUrl = info?.typeFormUrl || 'https://eventespresso.typeform.com/to/O1DDym';
+	const typeFormUrl = info?.typeFormUrl;
 
 	useEffect(() => {
 		typeformEmbed.makeWidget(typeFormEl.current, typeFormUrl, {
