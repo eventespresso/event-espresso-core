@@ -20,7 +20,7 @@ const useEditDatetimeModal: FormModal = ({ entityId, entityDbId }) => {
 	const updateRelatedTickets = useUpdateRelatedTickets(entityId);
 	const ticketQuantityForCapacity = useTicketQuantityForCapacity();
 
-	const { name: eventName = '' } = useEvent() || {};
+	const event = useEvent();
 
 	const datetime = useDatetimeItem({ id: entityId });
 
@@ -44,8 +44,11 @@ const useEditDatetimeModal: FormModal = ({ entityId, entityDbId }) => {
 
 	const formConfig = useDateFormConfig(entityId, { onSubmit });
 
+	let title = sprintf(__('Edit datetime %s'), `#${entityDbId}`);
+	title = event?.name ? `${event.name}: ${title}` : title;
+
 	return {
-		title: `${eventName}: ${sprintf(__('Edit datetime %s'), `#${entityDbId}`)}`,
+		title,
 		formConfig,
 		onClose,
 	};
