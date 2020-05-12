@@ -34,12 +34,13 @@ export const BiggieCalendarDate: React.FC<BiggieCalendarDateProps> = ({
 	...props
 }) => {
 	const { formatForSite: format } = useTimeZoneTime();
-
 	const onEditHandler = useCallback((event) => onEdit(event), [onEdit]);
 	const dateObject = date instanceof Date ? date : parseISO(date);
+
 	if (!isValid(dateObject)) {
 		return null;
 	}
+
 	const className = classNames(props.className, 'ee-biggie-calendar-date__wrapper');
 
 	const editDateButton = typeof onEdit === 'function' && (
@@ -62,8 +63,8 @@ export const BiggieCalendarDate: React.FC<BiggieCalendarDateProps> = ({
 				<div className='ee-bcd__month-day-sep'></div>
 				<div className='ee-bcd__day'>{format(dateObject, DAY_ONLY_SHORT_FORMAT)}</div>
 				<div className='ee-bcd__year'>{format(dateObject, YEAR_ONLY_LONG_FORMAT)}</div>
-				<TimezoneTimeInfo date={dateObject} />
 				{showTime && <div className='ee-bcd__time'>{format(dateObject, TIME_ONLY_12H_SHORT_FORMAT)}</div>}
+				<TimezoneTimeInfo date={dateObject} />
 			</div>
 			{footerText && <div className='ee-biggie-calendar-date__footer'>{footerText}</div>}
 			{editDateButton}

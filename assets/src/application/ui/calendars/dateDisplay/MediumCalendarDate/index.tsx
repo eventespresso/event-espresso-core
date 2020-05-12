@@ -29,17 +29,19 @@ export const MediumCalendarDate: React.FC<MediumCalendarDateProps> = ({
 	date,
 	headerText,
 	footerText,
-	className = '',
 	addWrapper = false,
 	showTime = false,
+	...props
 }) => {
 	const { formatForSite: format } = useTimeZoneTime();
-
 	const dateObject: Date = date instanceof Date ? date : parseISO(date);
+
 	if (!isValid(dateObject)) {
 		return null;
 	}
-	const htmlClassName = classNames(className, 'ee-medium-calendar-date__wrapper');
+
+	const className = classNames(props.className, 'ee-medium-calendar-date__wrapper');
+
 	const mediumDate = (
 		<>
 			{headerText && <div className='ee-medium-calendar-date__header'>{headerText}</div>}
@@ -51,12 +53,12 @@ export const MediumCalendarDate: React.FC<MediumCalendarDateProps> = ({
 				</div>
 				<div className='ee-mcd__year'>
 					{format(dateObject, YEAR_ONLY_LONG_FORMAT)}
-					<TimezoneTimeInfo date={dateObject} />
 					{showTime && <span className='ee-mcd__time'>{format(dateObject, TIME_ONLY_12H_SHORT_FORMAT)}</span>}
+					<TimezoneTimeInfo date={dateObject} />
 				</div>
 			</div>
 			{footerText && <div className='ee-medium-calendar-date__footer'>{footerText}</div>}
 		</>
 	);
-	return addWrapper ? <div className={htmlClassName}>{mediumDate}</div> : mediumDate;
+	return addWrapper ? <div className={className}>{mediumDate}</div> : mediumDate;
 };

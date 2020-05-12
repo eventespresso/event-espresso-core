@@ -1,11 +1,15 @@
-.ee-timezone-info {
+.ee-timezone-info.ee-timezone-info {
 	display: inline-block;
 	margin: 0 auto;
 	position: relative;
+
 	[role='dialog'] {
+		border: 0;
+		box-shadow: var(--ee-box-shadow-big);
 		left: 0;
 		min-width: 260px;
 		position: absolute;
+
 		[x-arrow] {
 			display: none;
 		}
