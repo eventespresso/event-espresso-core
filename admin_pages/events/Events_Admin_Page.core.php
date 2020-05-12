@@ -241,269 +241,271 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      */
     protected function _set_page_config()
     {
-        $this->_page_config = array(
-            'default'                => array(
-                'nav'           => array(
+        $this->_page_config = [
+            'default'                => [
+                'nav'           => [
                     'label' => esc_html__('Overview', 'event_espresso'),
                     'order' => 10,
-                ),
+                ],
                 'list_table'    => 'Events_Admin_List_Table',
-                'help_tabs'     => array(
-                    'events_overview_help_tab'                       => array(
+                'help_tabs'     => [
+                    'events_overview_help_tab'                       => [
                         'title'    => esc_html__('Events Overview', 'event_espresso'),
                         'filename' => 'events_overview',
-                    ),
-                    'events_overview_table_column_headings_help_tab' => array(
+                    ],
+                    'events_overview_table_column_headings_help_tab' => [
                         'title'    => esc_html__('Events Overview Table Column Headings', 'event_espresso'),
                         'filename' => 'events_overview_table_column_headings',
-                    ),
-                    'events_overview_filters_help_tab'               => array(
+                    ],
+                    'events_overview_filters_help_tab'               => [
                         'title'    => esc_html__('Events Overview Filters', 'event_espresso'),
                         'filename' => 'events_overview_filters',
-                    ),
-                    'events_overview_view_help_tab'                  => array(
+                    ],
+                    'events_overview_view_help_tab'                  => [
                         'title'    => esc_html__('Events Overview Views', 'event_espresso'),
                         'filename' => 'events_overview_views',
-                    ),
-                    'events_overview_other_help_tab'                 => array(
+                    ],
+                    'events_overview_other_help_tab'                 => [
                         'title'    => esc_html__('Events Overview Other', 'event_espresso'),
                         'filename' => 'events_overview_other',
-                    ),
-                ),
-                'help_tour'     => array(
+                    ],
+                ],
+                'help_tour'     => [
                     'Event_Overview_Help_Tour',
                     // 'New_Features_Test_Help_Tour' for testing multiple help tour
-                ),
-                'qtips'         => array(
-                    'EE_Event_List_Table_Tips',
-                ),
+                ],
                 'require_nonce' => false,
-            ),
-            'create_new'             => array(
-                'nav'           => array(
+                'qtips' => ['EE_Event_List_Table_Tips'],
+            ],
+            'create_new'             => [
+                'nav'           => [
                     'label'      => esc_html__('Add Event', 'event_espresso'),
                     'order'      => 5,
                     'persistent' => false,
-                ),
-                'metaboxes'     => array('_register_event_editor_meta_boxes'),
-                'help_tabs'     => array(
-                    'event_editor_help_tab'                            => array(
+                ],
+                'metaboxes'     => ['_register_event_editor_meta_boxes'],
+                'help_tabs'     => [
+                    'event_editor_help_tab'                            => [
                         'title'    => esc_html__('Event Editor', 'event_espresso'),
                         'filename' => 'event_editor',
-                    ),
-                    'event_editor_title_richtexteditor_help_tab'       => array(
+                    ],
+                    'event_editor_title_richtexteditor_help_tab'       => [
                         'title'    => esc_html__('Event Title & Rich Text Editor', 'event_espresso'),
                         'filename' => 'event_editor_title_richtexteditor',
-                    ),
-                    'event_editor_venue_details_help_tab'              => array(
+                    ],
+                    'event_editor_venue_details_help_tab'              => [
                         'title'    => esc_html__('Event Venue Details', 'event_espresso'),
                         'filename' => 'event_editor_venue_details',
-                    ),
-                    'event_editor_event_datetimes_help_tab'            => array(
+                    ],
+                    'event_editor_event_datetimes_help_tab'            => [
                         'title'    => esc_html__('Event Datetimes', 'event_espresso'),
                         'filename' => 'event_editor_event_datetimes',
-                    ),
-                    'event_editor_event_tickets_help_tab'              => array(
+                    ],
+                    'event_editor_event_tickets_help_tab'              => [
                         'title'    => esc_html__('Event Tickets', 'event_espresso'),
                         'filename' => 'event_editor_event_tickets',
-                    ),
-                    'event_editor_event_registration_options_help_tab' => array(
+                    ],
+                    'event_editor_event_registration_options_help_tab' => [
                         'title'    => esc_html__('Event Registration Options', 'event_espresso'),
                         'filename' => 'event_editor_event_registration_options',
-                    ),
-                    'event_editor_tags_categories_help_tab'            => array(
+                    ],
+                    'event_editor_tags_categories_help_tab'            => [
                         'title'    => esc_html__('Event Tags & Categories', 'event_espresso'),
                         'filename' => 'event_editor_tags_categories',
-                    ),
-                    'event_editor_questions_registrants_help_tab'      => array(
+                    ],
+                    'event_editor_questions_registrants_help_tab'      => [
                         'title'    => esc_html__('Questions for Registrants', 'event_espresso'),
                         'filename' => 'event_editor_questions_registrants',
-                    ),
-                    'event_editor_save_new_event_help_tab'             => array(
+                    ],
+                    'event_editor_save_new_event_help_tab'             => [
                         'title'    => esc_html__('Save New Event', 'event_espresso'),
                         'filename' => 'event_editor_save_new_event',
-                    ),
-                    'event_editor_other_help_tab'                      => array(
+                    ],
+                    'event_editor_other_help_tab'                      => [
                         'title'    => esc_html__('Event Other', 'event_espresso'),
                         'filename' => 'event_editor_other',
-                    ),
-                ),
-                'help_tour'     => array(
+                    ],
+                ],
+                'help_tour'     => [
                     'Event_Editor_Help_Tour',
-                ),
-                'qtips'         => array('EE_Event_Editor_Decaf_Tips'),
+                ],
                 'require_nonce' => false,
-            ),
-            'edit'                   => array(
-                'nav'           => array(
+            ],
+            'edit'                   => [
+                'nav'           => [
                     'label'      => esc_html__('Edit Event', 'event_espresso'),
                     'order'      => 5,
                     'persistent' => false,
                     'url'        => isset($this->_req_data['post'])
                         ? EE_Admin_Page::add_query_args_and_nonce(
-                            array('post' => $this->_req_data['post'], 'action' => 'edit'),
+                            ['post' => $this->_req_data['post'], 'action' => 'edit'],
                             $this->_current_page_view_url
                         )
                         : $this->_admin_base_url,
-                ),
-                'metaboxes'     => array('_register_event_editor_meta_boxes'),
-                'help_tabs'     => array(
-                    'event_editor_help_tab'                            => array(
+                ],
+                'metaboxes'     => ['_register_event_editor_meta_boxes'],
+                'help_tabs'     => [
+                    'event_editor_help_tab'                            => [
                         'title'    => esc_html__('Event Editor', 'event_espresso'),
                         'filename' => 'event_editor',
-                    ),
-                    'event_editor_title_richtexteditor_help_tab'       => array(
+                    ],
+                    'event_editor_title_richtexteditor_help_tab'       => [
                         'title'    => esc_html__('Event Title & Rich Text Editor', 'event_espresso'),
                         'filename' => 'event_editor_title_richtexteditor',
-                    ),
-                    'event_editor_venue_details_help_tab'              => array(
+                    ],
+                    'event_editor_venue_details_help_tab'              => [
                         'title'    => esc_html__('Event Venue Details', 'event_espresso'),
                         'filename' => 'event_editor_venue_details',
-                    ),
-                    'event_editor_event_datetimes_help_tab'            => array(
+                    ],
+                    'event_editor_event_datetimes_help_tab'            => [
                         'title'    => esc_html__('Event Datetimes', 'event_espresso'),
                         'filename' => 'event_editor_event_datetimes',
-                    ),
-                    'event_editor_event_tickets_help_tab'              => array(
+                    ],
+                    'event_editor_event_tickets_help_tab'              => [
                         'title'    => esc_html__('Event Tickets', 'event_espresso'),
                         'filename' => 'event_editor_event_tickets',
-                    ),
-                    'event_editor_event_registration_options_help_tab' => array(
+                    ],
+                    'event_editor_event_registration_options_help_tab' => [
                         'title'    => esc_html__('Event Registration Options', 'event_espresso'),
                         'filename' => 'event_editor_event_registration_options',
-                    ),
-                    'event_editor_tags_categories_help_tab'            => array(
+                    ],
+                    'event_editor_tags_categories_help_tab'            => [
                         'title'    => esc_html__('Event Tags & Categories', 'event_espresso'),
                         'filename' => 'event_editor_tags_categories',
-                    ),
-                    'event_editor_questions_registrants_help_tab'      => array(
+                    ],
+                    'event_editor_questions_registrants_help_tab'      => [
                         'title'    => esc_html__('Questions for Registrants', 'event_espresso'),
                         'filename' => 'event_editor_questions_registrants',
-                    ),
-                    'event_editor_save_new_event_help_tab'             => array(
+                    ],
+                    'event_editor_save_new_event_help_tab'             => [
                         'title'    => esc_html__('Save New Event', 'event_espresso'),
                         'filename' => 'event_editor_save_new_event',
-                    ),
-                    'event_editor_other_help_tab'                      => array(
+                    ],
+                    'event_editor_other_help_tab'                      => [
                         'title'    => esc_html__('Event Other', 'event_espresso'),
                         'filename' => 'event_editor_other',
-                    ),
-                ),
-                'qtips'         => array('EE_Event_Editor_Decaf_Tips'),
+                    ],
+                ],
                 'require_nonce' => false,
-            ),
-            'default_event_settings' => array(
-                'nav'           => array(
+            ],
+            'default_event_settings' => [
+                'nav'           => [
                     'label' => esc_html__('Default Settings', 'event_espresso'),
                     'order' => 40,
-                ),
-                'metaboxes'     => array_merge($this->_default_espresso_metaboxes, array('_publish_post_box')),
-                'labels'        => array(
+                ],
+                'metaboxes'     => array_merge($this->_default_espresso_metaboxes, ['_publish_post_box']),
+                'labels'        => [
                     'publishbox' => esc_html__('Update Settings', 'event_espresso'),
-                ),
-                'help_tabs'     => array(
-                    'default_settings_help_tab'        => array(
+                ],
+                'help_tabs'     => [
+                    'default_settings_help_tab'        => [
                         'title'    => esc_html__('Default Event Settings', 'event_espresso'),
                         'filename' => 'events_default_settings',
-                    ),
-                    'default_settings_status_help_tab' => array(
+                    ],
+                    'default_settings_status_help_tab' => [
                         'title'    => esc_html__('Default Registration Status', 'event_espresso'),
                         'filename' => 'events_default_settings_status',
-                    ),
-                    'default_maximum_tickets_help_tab' => array(
+                    ],
+                    'default_maximum_tickets_help_tab' => [
                         'title'    => esc_html__('Default Maximum Tickets Per Order', 'event_espresso'),
                         'filename' => 'events_default_settings_max_tickets',
-                    ),
-                ),
-                'help_tour'     => array('Event_Default_Settings_Help_Tour'),
+                    ],
+                ],
+                'help_tour'     => ['Event_Default_Settings_Help_Tour'],
                 'require_nonce' => false,
-            ),
+            ],
             // template settings
-            'template_settings'      => array(
-                'nav'           => array(
+            'template_settings'      => [
+                'nav'           => [
                     'label' => esc_html__('Templates', 'event_espresso'),
                     'order' => 30,
-                ),
+                ],
                 'metaboxes'     => $this->_default_espresso_metaboxes,
-                'help_tabs'     => array(
-                    'general_settings_templates_help_tab' => array(
+                'help_tabs'     => [
+                    'general_settings_templates_help_tab' => [
                         'title'    => esc_html__('Templates', 'event_espresso'),
                         'filename' => 'general_settings_templates',
-                    ),
-                ),
-                'help_tour'     => array('Templates_Help_Tour'),
+                    ],
+                ],
+                'help_tour'     => ['Templates_Help_Tour'],
                 'require_nonce' => false,
-            ),
+            ],
             // event category stuff
-            'add_category'           => array(
-                'nav'           => array(
+            'add_category'           => [
+                'nav'           => [
                     'label'      => esc_html__('Add Category', 'event_espresso'),
                     'order'      => 15,
                     'persistent' => false,
-                ),
-                'help_tabs'     => array(
-                    'add_category_help_tab' => array(
+                ],
+                'help_tabs'     => [
+                    'add_category_help_tab' => [
                         'title'    => esc_html__('Add New Event Category', 'event_espresso'),
                         'filename' => 'events_add_category',
-                    ),
-                ),
-                'help_tour'     => array('Event_Add_Category_Help_Tour'),
-                'metaboxes'     => array('_publish_post_box'),
+                    ],
+                ],
+                'help_tour'     => ['Event_Add_Category_Help_Tour'],
+                'metaboxes'     => ['_publish_post_box'],
                 'require_nonce' => false,
-            ),
-            'edit_category'          => array(
-                'nav'           => array(
+            ],
+            'edit_category'          => [
+                'nav'           => [
                     'label'      => esc_html__('Edit Category', 'event_espresso'),
                     'order'      => 15,
                     'persistent' => false,
                     'url'        => isset($this->_req_data['EVT_CAT_ID'])
                         ? add_query_arg(
-                            array('EVT_CAT_ID' => $this->_req_data['EVT_CAT_ID']),
+                            ['EVT_CAT_ID' => $this->_req_data['EVT_CAT_ID']],
                             $this->_current_page_view_url
                         )
                         : $this->_admin_base_url,
-                ),
-                'help_tabs'     => array(
-                    'edit_category_help_tab' => array(
+                ],
+                'help_tabs'     => [
+                    'edit_category_help_tab' => [
                         'title'    => esc_html__('Edit Event Category', 'event_espresso'),
                         'filename' => 'events_edit_category',
-                    ),
-                ),
+                    ],
+                ],
                 /*'help_tour' => array('Event_Edit_Category_Help_Tour'),*/
-                'metaboxes'     => array('_publish_post_box'),
+                'metaboxes'     => ['_publish_post_box'],
                 'require_nonce' => false,
-            ),
-            'category_list'          => array(
-                'nav'           => array(
+            ],
+            'category_list'          => [
+                'nav'           => [
                     'label' => esc_html__('Categories', 'event_espresso'),
                     'order' => 20,
-                ),
+                ],
                 'list_table'    => 'Event_Categories_Admin_List_Table',
-                'help_tabs'     => array(
-                    'events_categories_help_tab'                       => array(
+                'help_tabs'     => [
+                    'events_categories_help_tab'                       => [
                         'title'    => esc_html__('Event Categories', 'event_espresso'),
                         'filename' => 'events_categories',
-                    ),
-                    'events_categories_table_column_headings_help_tab' => array(
+                    ],
+                    'events_categories_table_column_headings_help_tab' => [
                         'title'    => esc_html__('Event Categories Table Column Headings', 'event_espresso'),
                         'filename' => 'events_categories_table_column_headings',
-                    ),
-                    'events_categories_view_help_tab'                  => array(
+                    ],
+                    'events_categories_view_help_tab'                  => [
                         'title'    => esc_html__('Event Categories Views', 'event_espresso'),
                         'filename' => 'events_categories_views',
-                    ),
-                    'events_categories_other_help_tab'                 => array(
+                    ],
+                    'events_categories_other_help_tab'                 => [
                         'title'    => esc_html__('Event Categories Other', 'event_espresso'),
                         'filename' => 'events_categories_other',
-                    ),
-                ),
-                'help_tour'     => array(
+                    ],
+                ],
+                'help_tour'     => [
                     'Event_Categories_Help_Tour',
-                ),
+                ],
                 'metaboxes'     => $this->_default_espresso_metaboxes,
                 'require_nonce' => false,
-            ),
-        );
+            ],
+        ];
+        // only load EE_Event_Editor_Decaf_Tips if domain is not caffeinated
+        $domain = $this->loader->getShared('EventEspresso\core\domain\Domain');
+        if (! $domain->isCaffeinated()) {
+            $this->_page_config['create_new']['qtips'] = ['EE_Event_Editor_Decaf_Tips'];
+            $this->_page_config['edit']['qtips'] = ['EE_Event_Editor_Decaf_Tips' ];
+        }
     }
 
 
