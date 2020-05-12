@@ -53,7 +53,7 @@ class DefaultDatetimes implements DefaultEntityGeneratorInterface
     public function create(EE_Base_Class $entity)
     {
         if (! $entity instanceof EE_Event) {
-            throw new InvalidEntityException( $entity, 'EE_Event');
+            throw new InvalidEntityException($entity, 'EE_Event');
         }
         $default_dates = [];
         $blank_dates = $this->datetime_model->create_new_blank_datetime();

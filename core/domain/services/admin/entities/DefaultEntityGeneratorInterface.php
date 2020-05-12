@@ -2,7 +2,6 @@
 
 namespace EventEspresso\core\domain\services\admin\entities;
 
-
 use EE_Base_Class;
 use EE_Error;
 use ReflectionException;

@@ -34,7 +34,8 @@ class DefaultPrices implements DefaultEntityGeneratorInterface
     /**
      * @param EEM_Price      $price_model
      */
-    public function __construct(EEM_Price $price_model) {
+    public function __construct(EEM_Price $price_model)
+    {
         $this->price_model = $price_model;
     }
 
