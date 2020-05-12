@@ -163,7 +163,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         $this->_page_config['import_events']['metaboxes'] = $this->_default_espresso_metaboxes;
         $this->_page_config['create_new']['metaboxes'][] = '_premium_event_editor_meta_boxes';
         // load handler for GraphQL requests and EventEditor
-        if (!$this->admin_config->useAdvancedEditor() ) {
+        if (! $this->admin_config->useAdvancedEditor()) {
             $this->_page_config['create_new']['qtips'][] = 'EE_Event_Editor_Tips';
             $this->_page_config['edit']['qtips'][] = 'EE_Event_Editor_Tips';
         }

@@ -200,16 +200,16 @@ class EEH_Qtip_Loader extends EEH_Base
         }
 
         // does class exist at this point?  If it does then let's instantiate.  If it doesn't then let's continue with other paths.
-        if (!class_exists($qtip)) {
+        if (! class_exists($qtip)) {
             $path = EE_LIBRARIES . 'qtips/' . $qtip . '.lib.php';
-            if (!is_readable($path)) {
+            if (! is_readable($path)) {
                 throw new DomainException(
                     sprintf(
                         __(
                             'Unable to load the Qtip Config registered for this page (%s) because none of the file paths attempted are readable.  Please check the spelling of the paths you\'ve used in the registration',
                             'event_espresso'
                         ),
-                    $qtip
+                        $qtip
                     )
                 );
             }
@@ -217,14 +217,14 @@ class EEH_Qtip_Loader extends EEH_Base
         }
 
         // now we attempt a class_exists one more time.
-        if (!class_exists($qtip)) {
+        if (! class_exists($qtip)) {
             throw new DomainException(
                 sprintf(
                     __(
                         'The Qtip_Config class being registered (%s) does not exist, please check the spelling.',
                         'event_espresso'
                     ),
-                $qtip
+                    $qtip
                 )
             );
         }
@@ -240,7 +240,7 @@ class EEH_Qtip_Loader extends EEH_Base
                         'The class given for the Qtip loader (%1$s) is not a child of the %2$sEE_Qtip_Config%3$s class. Please make sure you are extending EE_Qtip_Config.',
                         'event_espresso'
                     ),
-                $qtip,
+                    $qtip,
                     '<strong>',
                     '</strong>'
                 )
