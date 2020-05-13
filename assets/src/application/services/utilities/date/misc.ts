@@ -12,5 +12,10 @@ export const setTimeToZeroHour = (date: Date): Date => pipe(setHours(0), setMinu
 export const setDateToToday = (date: Date): Date => {
 	const today = new Date();
 
-	return pipe(setDate(today.getDate()), setMonth(today.getMonth()), setYear(today.getFullYear()))(date);
+	// prettier-ignore
+	return pipe(
+        setDate(today.getDate()),
+        setMonth(today.getMonth()),
+        setYear(today.getFullYear()
+    ))(date);
 };
