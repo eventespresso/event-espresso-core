@@ -1177,6 +1177,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      */
     protected function _default_tickets_update(EE_Event $evtobj, $data)
     {
+        if (EE_Registry::instance()->CFG->admin->useAdvancedEditor()) {
+            return [];
+        }
         $success = true;
         $saved_dtt = null;
         $saved_tickets = array();
