@@ -31,7 +31,7 @@ const TicketRegistrationsLink: React.FC<Props> = ({ ticket }) => {
 	const countTitle = __('total registrations.');
 
 	return (
-		<ItemCount count={ticket.registrationCount} title={countTitle}>
+		<ItemCount count={ticket.registrationCount} title={countTitle} zeroCountChar='!'>
 			<RegistrationsLink href={regListUrl} title={buttonTitle} />
 		</ItemCount>
 	);

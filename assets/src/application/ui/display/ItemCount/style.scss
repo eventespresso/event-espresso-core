@@ -8,14 +8,18 @@
 		position: relative;
 		min-width: 55px;
 	}
+
 	&.ee-item-count {
+		align-items: center;
 		border-radius: var(--ee-border-radius-full);
 		box-sizing: border-box;
 		box-shadow: var(--ee-box-shadow-tiny);
 		color: var(--ee-color-white);
+		display: flex;
 		font-size: var(--ee-font-size-tiny);
 		font-weight: normal;
 		height: calc(var(--ee-font-size-default) + 1px);
+		justify-content: center;
 		line-height: var(--ee-font-size-micro);
 		min-width: calc(var(--ee-font-size-default) + 1px);
 		padding: var(--ee-padding-micro);
@@ -26,9 +30,11 @@
 		top: 0;
 		vertical-align: top;
 		z-index: 1;
+
 		&--has-items {
 			background: var(--ee-color-bright-blue);
 		}
+
 		&--no-items {
 			background: var(--ee-color-hot-pink);
 			font-size: var(--ee-font-size-tiny);
