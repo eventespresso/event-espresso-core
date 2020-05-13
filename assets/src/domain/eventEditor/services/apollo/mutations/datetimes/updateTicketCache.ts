@@ -9,7 +9,7 @@ const updateTicketCache = ({ proxy, datetimeIn, datetimeId, action }: CacheUpdat
 		query: GET_TICKETS,
 		variables: {
 			where: {
-				datetimeIn,
+				datetimeIn: sortBy(identity, datetimeIn),
 			},
 		},
 	};
@@ -22,7 +22,7 @@ const updateTicketCache = ({ proxy, datetimeIn, datetimeId, action }: CacheUpdat
 	}
 
 	// if there are no tickets
-	if (!data) {
+	if (!data?.espressoTickets) {
 		return;
 	}
 

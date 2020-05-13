@@ -12,7 +12,7 @@ const updatePriceCache = ({ proxy, prices = null, ticketIn, ticketId, action }: 
 		query: GET_PRICES,
 		variables: {
 			where: {
-				ticketIn,
+				ticketIn: sortBy(identity, ticketIn),
 			},
 		},
 	};
@@ -21,6 +21,11 @@ const updatePriceCache = ({ proxy, prices = null, ticketIn, ticketId, action }: 
 	try {
 		data = proxy.readQuery<PricesList>(queryOptions);
 	} catch (error) {
+		// do nothing with the error
+	}
+
+	// if there is no data, make sure GQL type is properly set.
+	if (!data?.espressoPrices) {
 		data = {
 			espressoPrices: DEFAULT_PRICE_LIST_DATA,
 		};
