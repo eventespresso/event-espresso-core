@@ -7,7 +7,7 @@ type SurveyContentProps = {
 	onSubmit: VoidFunction;
 };
 
-const info = window?.eejsdata?.data?.exitModalInfo;
+const info = window?.eeExitSurveyInfo;
 
 const ExitSurveyContent: React.FC<SurveyContentProps> = ({ onSubmit }) => {
 	const typeFormEl = useRef();

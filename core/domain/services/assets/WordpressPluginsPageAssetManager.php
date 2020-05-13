@@ -21,7 +21,6 @@ use EventEspresso\core\services\collections\DuplicateCollectionIdentifierExcepti
  */
 class WordpressPluginsPageAssetManager extends ReactAssetManager
 {
-
     const JS_HANDLE_WP_PLUGINS_PAGE = 'eventespresso-wp-plugins-page';
 
     const CSS_HANDLE_WP_PLUGINS_PAGE = 'eventespresso-wp-plugins-page';
@@ -89,7 +88,7 @@ class WordpressPluginsPageAssetManager extends ReactAssetManager
             function () {
                 wp_localize_script(
                     WordpressPluginsPageAssetManager::JS_HANDLE_WP_PLUGINS_PAGE,
-                    'exitModalInfo',
+                    'eeExitSurveyInfo',
                     $this->exit_modal->getExitSurveyInfo()
                 );
             }
