@@ -1019,6 +1019,7 @@ class EE_Dependency_Map
             ],
             'EventEspresso\core\domain\services\admin\entities\DefaultPrices' => [
                 'EEM_Price' => EE_Dependency_Map::load_from_cache,
+                'EEM_Price_Type' => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\services\graphql\DataLoaderManager' => [
                 'EventEspresso\core\services\graphql\loaders\DataLoaderCollection' => EE_Dependency_Map::load_from_cache,
