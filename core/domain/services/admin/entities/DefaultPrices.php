@@ -89,18 +89,20 @@ class DefaultPrices implements DefaultEntityGeneratorInterface
     protected function createNewBasePrice(EE_Ticket $ticket)
     {
         $new_base_price = $this->price_model->get_new_price();
-        $base_price_type = $this->price_model->get_one([
-            'PRT_ID' => EEM_Price_Type::base_type_base_price
+        $base_price = $this->price_model->get_one([
+            [
+                'PRT_ID' => EEM_Price_Type::base_type_base_price
+            ]
         ]);
-        if (! $base_price_type instanceof EE_Price_Type) {
+        if (! $base_price instanceof EE_Price) {
             throw new RuntimeException(
                 esc_html__(
-                    'A valid base price type could not be retrieved from the database.',
+                    'A valid base price could not be retrieved from the database.',
                     'event_espresso'
                 )
             );
         }
-        $new_base_price->set('PRT_ID', $base_price_type->ID());
+        $new_base_price->set('PRT_ID', EEM_Price_Type::base_type_base_price);
         $new_base_price->set('PRC_is_default', false);
         $new_base_price->save();
         $new_base_price->_add_relation_to($ticket, 'Ticket');
