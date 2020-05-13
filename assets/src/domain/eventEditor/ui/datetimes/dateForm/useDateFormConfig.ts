@@ -12,6 +12,7 @@ import { validate } from './formValidation';
 import { DateFormShape } from './types';
 import { useTimeZoneTime } from '@appServices/hooks';
 import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '@sharedConstants/defaultDates';
+import { setDateToToday, setTimeToZeroHour } from '@appServices/utilities/date';
 
 type DateFormConfig = EspressoFormProps<DateFormShape>;
 
@@ -39,10 +40,16 @@ const useDateFormConfig = (id: EntityId, config?: EspressoFormProps): DateFormCo
 	const initialValues: DateFormShape = {
 		...pick<Partial<Datetime>, keyof Datetime>(FIELD_NAMES, restProps),
 		dateTime: {
-			startDate: startDate,
-			startTime: startDate,
-			endDate: endDate,
-			endTime: endDate,
+			/**
+			 * for validations, we need to make
+			 * - time same for dates
+			 * - date same for times
+			 * ¯\_(ツ)_/¯
+			 */
+			startDate: setTimeToZeroHour(startDate),
+			startTime: setDateToToday(startDate),
+			endDate: setTimeToZeroHour(endDate),
+			endTime: setDateToToday(endDate),
 		},
 	};
 
