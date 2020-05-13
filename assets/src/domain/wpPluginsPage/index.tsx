@@ -3,8 +3,9 @@ import $ from 'jquery';
 
 import ExitSurvey from './ExitSurvey';
 import { renderDomElement } from '@appServices/utilities';
+import './types';
 
-const info = window?.eejsdata?.data?.exitModalInfo;
+const info = window?.eeExitSurveyInfo;
 
 /**
  * Handler for deactivation trigger
