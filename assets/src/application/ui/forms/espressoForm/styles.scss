@@ -23,6 +23,9 @@
 	.section-heading {
 		position: relative;
 		h3 {
+			color: var(--ee-default-text-color);
+			font-size: var(--ee-font-size-big);
+			font-weight: bold;
 			margin: 0;
 		}
 	}
@@ -100,7 +103,7 @@
 
 	@media only screen and (min-width: 782px) {
 		.section-heading {
-			flex: 0 15%;
+			flex: 0 20%;
 		}
 		.section-body {
 			flex: 0 80%;
