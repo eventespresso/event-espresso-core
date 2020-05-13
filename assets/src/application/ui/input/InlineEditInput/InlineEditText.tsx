@@ -11,12 +11,10 @@ const Preview: React.FC<InlineEditPreviewProps> = ({ fitText, isEditing, onReque
 		return null;
 	}
 
+	const textInput = <span onClick={onRequestEdit}>{value}</span>;
+
 	if (value.length > 30) {
-		return (
-			<Dotdotdot clamp={2}>
-				<span onClick={onRequestEdit}>{value}</span>
-			</Dotdotdot>
-		);
+		return <Dotdotdot clamp={2}>{textInput}</Dotdotdot>;
 	}
 
 	if (fitText) {
@@ -26,12 +24,12 @@ const Preview: React.FC<InlineEditPreviewProps> = ({ fitText, isEditing, onReque
 				min={18}
 				mode='single'
 			>
-				<span onClick={onRequestEdit}>{value}</span>
+				{textInput}
 			</Textfit>
 		);
 	}
 
-	return <span onClick={onRequestEdit}>{value}</span>;
+	return textInput;
 };
 
 const InlineEditText: React.FC<TextProps> = ({ fitText = true, placeholder = '', tag: as, ...props }) => {

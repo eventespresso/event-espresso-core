@@ -2164,9 +2164,9 @@
     "@types/istanbul-lib-report" "*"
 
 "@types/jest@*", "@types/jest@^25.2.1":
-  version "25.2.1"
-  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-25.2.1.tgz#9544cd438607955381c1bdbdb97767a249297db5"
-  integrity sha512-msra1bCaAeEdkSyA0CZ6gW1ukMIvZ5YoJkdXw/qhQdsuuDlFTcEUrUw8CLCPt2rVRUfXlClVvK2gvPs9IokZaA==
+  version "25.2.2"
+  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-25.2.2.tgz#6a752e7a00f69c3e790ea00c345029d5cefa92bf"
+  integrity sha512-aRctFbG8Pb7DSLzUt/fEtL3q/GKb9mretFuYhRub2J0q6NhzBYbx9HTQzHrWgBNIxYOlxGNVe6Z54cpbUt+Few==
   dependencies:
     jest-diff "^25.2.1"
     pretty-format "^25.2.1"
@@ -2352,9 +2352,9 @@
     pretty-format "^25.1.0"
 
 "@types/uglify-js@*":
-  version "3.9.0"
-  resolved "https://registry.yarnpkg.com/@types/uglify-js/-/uglify-js-3.9.0.tgz#4490a140ca82aa855ad68093829e7fd6ae94ea87"
-  integrity sha512-3ZcoyPYHVOCcLpnfZwD47KFLr8W/mpUcgjpf1M4Q78TMJIw7KMAHSjiCLJp1z3ZrBR9pTLbe191O0TldFK5zcw==
+  version "3.9.1"
+  resolved "https://registry.yarnpkg.com/@types/uglify-js/-/uglify-js-3.9.1.tgz#0ad39d6a72979593f669acdfc7e980d590d3fb94"
+  integrity sha512-rdBIeMQyRBOXogop/EYBvSkYFn9D9yGxUa5hagBVG55KIdSUbp22EACJSHCs6kmmfunojAhf7zJH+Ds06/qLaQ==
   dependencies:
     source-map "^0.6.1"
 
@@ -4136,9 +4136,9 @@ base@^0.11.1:
     pascalcase "^0.1.1"
 
 baseui@^9.71.0:
-  version "9.75.1"
-  resolved "https://registry.yarnpkg.com/baseui/-/baseui-9.75.1.tgz#fa042e5d161b4e1e84142fa9b8f2e7f027547740"
-  integrity sha512-aNbhnA6BA8+nKp+aWCaVYqO4qJF506AipvjEmVonZRX2/cvUFENY/tuJ6hfKJFmjwSp+/KYDPUt021dzKrCr7Q==
+  version "9.76.0"
+  resolved "https://registry.yarnpkg.com/baseui/-/baseui-9.76.0.tgz#85b176464bdd7950661379cef68c562b950837ba"
+  integrity sha512-NCP3npkli6foO3Npdi2M+NLIUDB8JegT5Tvrkqfsw0s1IeSwJ/S3Z+P22Wj4PB5TDQJcZPibu9xoJ9piw5Q1Nw==
   dependencies:
     "@date-io/date-fns" "^2.4.0"
     card-validator "^6.2.0"
@@ -4154,7 +4154,7 @@ baseui@^9.71.0:
     react-is "^16.8.6"
     react-movable "^2.4.0"
     react-multi-ref "^1.0.0"
-    react-range "^1.6.2"
+    react-range "^1.6.3"
     react-virtualized "^9.21.1"
     react-virtualized-auto-sizer "^1.0.2"
     react-window "^1.8.5"
@@ -10121,9 +10121,9 @@ minipass-flush@^1.0.5:
     minipass "^3.0.0"
 
 minipass-pipeline@^1.2.2:
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/minipass-pipeline/-/minipass-pipeline-1.2.2.tgz#3dcb6bb4a546e32969c7ad710f2c79a86abba93a"
-  integrity sha512-3JS5A2DKhD2g0Gg8x3yamO0pj7YeKGwVlDS90pF++kxptwx/F+B//roxf9SqYil5tQo65bijy+dAuAFZmYOouA==
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/minipass-pipeline/-/minipass-pipeline-1.2.3.tgz#55f7839307d74859d6e8ada9c3ebe72cec216a34"
+  integrity sha512-cFOknTvng5vqnwOpDsZTWhNll6Jf8o2x+/diplafmxpuIymAjzoOolZG0VvQf3V2HgqzJNhnuKHYp2BqDgz8IQ==
   dependencies:
     minipass "^3.0.0"
 
@@ -12281,9 +12281,9 @@ re-resizable@^4.7.1:
   integrity sha512-dye+7rERqNf/6mDT1iwps+4Gf42420xuZgygF33uX178DxffqcyeuHbBuJ382FIcB5iP6mMZOhfW7kI0uXwb/Q==
 
 re-resizable@^6.0.0:
-  version "6.3.2"
-  resolved "https://registry.yarnpkg.com/re-resizable/-/re-resizable-6.3.2.tgz#27cc984af6ea5dbafd2b79f64c5224a6e1722fbe"
-  integrity sha512-ngxe4XBSb46vfwXjAwpURacVDig/pPt1kHRhcKlRRIoGICmo4aQHr725jurezepp1pm5jSC6iQhyLYfx3zOC3w==
+  version "6.4.0"
+  resolved "https://registry.yarnpkg.com/re-resizable/-/re-resizable-6.4.0.tgz#4c862f021a913ec519bb053c34af45559e8c1b26"
+  integrity sha512-E8WOtM8RfcGv4kOdasdR10jw8IU45j5jVift/rSA6AZMnaBRxJdt6YAkPHFv/04vsMNNvNu3G8vlyNOsVwqPpA==
   dependencies:
     fast-memoize "^2.5.1"
 
@@ -12534,10 +12534,10 @@ react-portal@^4.1.5:
   dependencies:
     prop-types "^15.5.8"
 
-react-range@^1.6.2:
-  version "1.6.2"
-  resolved "https://registry.yarnpkg.com/react-range/-/react-range-1.6.2.tgz#bcfcb3024e6b37d094fda2bcb81f14e7cbba91d5"
-  integrity sha512-8WBzsk0SRv1YD2Xjx+CQT3g7bIKu17xWAg9KwSpBmMoRCP93HZ+VNq/4q2rz92m7SncfGXeVYCNgDWpa4bo5jQ==
+react-range@^1.6.3:
+  version "1.6.3"
+  resolved "https://registry.yarnpkg.com/react-range/-/react-range-1.6.3.tgz#b92aafbd6178db9822d92e05820fd5a3b1ed167d"
+  integrity sha512-uPK13KEwDcs2OTJPptD393O8yq9qutJRi06TgGH3M10v3kSJmk8UDzNlq/CPOJ1mxUurmLgsLv2Cz5/GvyV3gQ==
 
 react-redux@^7.1.1:
   version "7.2.0"
@@ -13915,9 +13915,9 @@ spdx-exceptions@^2.1.0:
   integrity sha512-/tTrYOC7PPI1nUAgx34hUpqXuyJG+DTHJTnIULG4rDygi4xu/tfgmq1e1cIRwRzwZgo4NLySi+ricLkZkw4i5A==
 
 spdx-expression-parse@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/spdx-expression-parse/-/spdx-expression-parse-3.0.0.tgz#99e119b7a5da00e05491c9fa338b7904823b41d0"
-  integrity sha512-Yg6D3XpRD4kkOmTpdgbUiEJFKghJH03fiC1OPll5h/0sO6neh2jqRDVHOQ4o/LMea0tgCkbMgea5ip/e+MkWyg==
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/spdx-expression-parse/-/spdx-expression-parse-3.0.1.tgz#cf70f50482eefdc98e3ce0a6833e4a53ceeba679"
+  integrity sha512-cbqHunsQWnJNE6KhVSMsMeH5H/L9EpymbzqTQ3uLwNCLZ1Q481oWaofqH7nO6V07xlXwY6PhQdQ2IedWx/ZK4Q==
   dependencies:
     spdx-exceptions "^2.1.0"
     spdx-license-ids "^3.0.0"
@@ -14799,9 +14799,9 @@ trim-newlines@^1.0.0:
     glob "^7.1.2"
 
 ts-essentials@^6.0.3:
-  version "6.0.4"
-  resolved "https://registry.yarnpkg.com/ts-essentials/-/ts-essentials-6.0.4.tgz#d36055bf0a7620b1338da6aafd2268787e208aab"
-  integrity sha512-ZtU9zgSnn8DcAxDZY1DJF8rnxsen8M0IVkO7dVB5fTEOVs7o/0RA4V6i99PIg99bpX81Sgb0FCLjQqD5Ufz3rQ==
+  version "6.0.5"
+  resolved "https://registry.yarnpkg.com/ts-essentials/-/ts-essentials-6.0.5.tgz#dd5b98f73bd56dc94d15dfbc0fbf01da3163eb42"
+  integrity sha512-RSAKlpu+E0DCGY8FsbG92EveRLw2Y+UgK3ksX01w1VaHeG01dKkYo/KtAV4q0qPT6nPbLfyerb2YPVSediP+8g==
 
 ts-invariant@^0.4.0, ts-invariant@^0.4.4:
   version "0.4.4"
