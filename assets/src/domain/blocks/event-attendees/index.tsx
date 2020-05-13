@@ -6,8 +6,8 @@ import EventAttendeesEdit from './edit';
 import type { EventAttendeesAttributes } from './types';
 import './style.scss';
 
-registerBlockType<EventAttendeesAttributes>('eventespresso/event-attendees-new', {
-	title: __('Event Attendees New', 'event_espresso'),
+registerBlockType<EventAttendeesAttributes>('eventespresso/event-attendees', {
+	title: __('Event Attendees', 'event_espresso'),
 
 	description: __('Displays a list of people that have registered for the specified event', 'event_espresso'),
 
