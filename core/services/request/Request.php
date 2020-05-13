@@ -642,6 +642,16 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
     }
 
 
+
+    /**
+     * @return bool
+     */
+    public function isUnitTesting()
+    {
+        return $this->request_type->isUnitTesting();
+    }
+
+
     /**
      * @return bool
      */

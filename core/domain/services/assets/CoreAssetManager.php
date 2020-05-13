@@ -47,8 +47,6 @@ class CoreAssetManager extends AssetManager
 
     const JS_HANDLE_VENDOR = 'eventespresso-vendor';
 
-    const JS_HANDLE_WP_PLUGINS_PAGE = 'ee-wp-plugins-page';
-
     // EE CSS assets handles
     const CSS_HANDLE_DEFAULT = 'espresso_default';
 
@@ -116,11 +114,6 @@ class CoreAssetManager extends AssetManager
     {
         $this->loadCoreJs();
         $this->loadJqueryValidate();
-        add_action(
-            'AHEE__EventEspresso_core_services_assets_Registry__registerScripts__before_script',
-            array($this, 'loadQtipJs')
-        );
-        $this->registerAdminAssets();
     }
 
 
@@ -293,36 +286,12 @@ class CoreAssetManager extends AssetManager
 
 
     /**
-     * registers assets for cleaning your ears
-     *
      * @param JavascriptAsset $script
+     * @deprecated $VID:$
      */
     public function loadQtipJs(JavascriptAsset $script)
     {
-        // qtip is turned OFF by default, but prior to the wp_enqueue_scripts hook,
-        // can be turned back on again via: add_filter('FHEE_load_qtip', '__return_true' );
-        if (
-            $script->handle() === CoreAssetManager::JS_HANDLE_WP_PLUGINS_PAGE
-            && apply_filters('FHEE_load_qtip', false)
-        ) {
-            EEH_Qtip_Loader::instance()->register_and_enqueue();
-        }
-    }
-
-
-    /**
-     * assets that are used in the WordPress admin
-     *
-     * @throws DuplicateCollectionIdentifierException
-     * @throws InvalidDataTypeException
-     * @throws InvalidEntityException
-     * @throws DomainException
-     * @since 4.9.62.p
-     */
-    private function registerAdminAssets()
-    {
-        $this->addJs(CoreAssetManager::JS_HANDLE_WP_PLUGINS_PAGE)->setRequiresTranslation();
-        // note usage of the "JS_HANDLE.." constant is intentional here because css uses the same handle.
-        $this->addCss(CoreAssetManager::JS_HANDLE_WP_PLUGINS_PAGE);
+        // replacement:
+        // \EventEspresso\core\domain\services\assets\EspressoAdminAssetManager::loadQtipJs
     }
 }

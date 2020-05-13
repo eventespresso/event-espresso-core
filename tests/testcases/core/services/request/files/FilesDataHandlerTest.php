@@ -4,7 +4,7 @@ namespace EventEspresso\tests\testcases\core\services\request\files;
 
 use EventEspresso\core\services\request\files\FilesDataHandler;
 use EventEspresso\core\services\request\Request;
-use PHPUnit_Framework_TestCase;
+use EventEspresso\tests\includes\EspressoPHPUnitFrameworkTestCase;
 
 /**
  * Class FilesDataHandlerTest
@@ -18,7 +18,7 @@ use PHPUnit_Framework_TestCase;
  * @group current
  *
  */
-class FilesDataHandlerTest extends PHPUnit_Framework_TestCase
+class FilesDataHandlerTest extends EspressoPHPUnitFrameworkTestCase
 {
     /**
      * @since 4.9.80.p

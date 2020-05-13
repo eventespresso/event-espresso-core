@@ -8,9 +8,9 @@ use EventEspresso\core\domain\services\contexts\RequestTypeContextDetector;
 use EventEspresso\tests\mocks\core\domain\services\contexts\RequestTypeContextFactoryMock;
 use EventEspresso\tests\mocks\core\services\request\RequestMock;
 use InvalidArgumentException;
-use PHPUnit_Framework_TestCase;
+use EventEspresso\tests\includes\EspressoPHPUnitFrameworkTestCase;
 
-class RequestTypeContextDetectorTest extends PHPUnit_Framework_TestCase
+class RequestTypeContextDetectorTest extends EspressoPHPUnitFrameworkTestCase
 {
 
     /**
@@ -43,7 +43,8 @@ class RequestTypeContextDetectorTest extends PHPUnit_Framework_TestCase
                         array(),
                         array()
                     ),
-                    $factory
+                    $factory,
+                    ['EE_TESTS_DIR' => false]
                 ),
                 RequestTypeContext::WP_SCRAPE,
             ],
@@ -55,7 +56,8 @@ class RequestTypeContextDetectorTest extends PHPUnit_Framework_TestCase
                         array(),
                         array('REQUEST_URI' => '/wp-json/' . Domain::API_NAMESPACE . '/')
                     ),
-                    $factory
+                    $factory,
+                    ['EE_TESTS_DIR' => false]
                 ),
                 RequestTypeContext::API,
             ],
@@ -67,7 +69,8 @@ class RequestTypeContextDetectorTest extends PHPUnit_Framework_TestCase
                         array(),
                         array('REQUEST_URI' => '/wp-json/')
                     ),
-                    $factory
+                    $factory,
+                    ['EE_TESTS_DIR' => false]
                 ),
                 RequestTypeContext::WP_API,
             ],
@@ -80,7 +83,7 @@ class RequestTypeContextDetectorTest extends PHPUnit_Framework_TestCase
                         array()
                     ),
                     $factory,
-                    array('DOING_AJAX' => true)
+                    ['DOING_AJAX' => true, 'EE_TESTS_DIR' => false]
                 ),
                 RequestTypeContext::AJAX_FRONT,
             ],
@@ -93,7 +96,7 @@ class RequestTypeContextDetectorTest extends PHPUnit_Framework_TestCase
                         array()
                     ),
                     $factory,
-                    array('DOING_AJAX' => true)
+                    ['DOING_AJAX' => true, 'EE_TESTS_DIR' => false]
                 ),
                 RequestTypeContext::AJAX_ADMIN,
             ],
@@ -106,7 +109,7 @@ class RequestTypeContextDetectorTest extends PHPUnit_Framework_TestCase
                         array()
                     ),
                     $factory,
-                    array('DOING_AJAX' => true)
+                    ['DOING_AJAX' => true, 'EE_TESTS_DIR' => false]
                 ),
                 RequestTypeContext::AJAX_OTHER,
             ],
@@ -118,7 +121,8 @@ class RequestTypeContextDetectorTest extends PHPUnit_Framework_TestCase
                         array(),
                         array('REQUEST_URI' => '/wp-cron.php')
                     ),
-                    $factory
+                    $factory,
+                    ['EE_TESTS_DIR' => false]
                 ),
                 RequestTypeContext::CRON,
             ],
@@ -131,7 +135,7 @@ class RequestTypeContextDetectorTest extends PHPUnit_Framework_TestCase
                         array()
                     ),
                     $factory,
-                    array('WP_CLI' => true)
+                    ['WP_CLI' => true, 'EE_TESTS_DIR' => false]
                 ),
                 RequestTypeContext::CLI,
             ],
@@ -144,7 +148,7 @@ class RequestTypeContextDetectorTest extends PHPUnit_Framework_TestCase
                         array()
                     ),
                     $factory,
-                    array('is_admin' => true)
+                    array('is_admin' => true, 'EE_TESTS_DIR' => false)
                 ),
                 RequestTypeContext::ADMIN,
             ],
@@ -156,7 +160,8 @@ class RequestTypeContextDetectorTest extends PHPUnit_Framework_TestCase
                         array(),
                         array()
                     ),
-                    $factory
+                    $factory,
+                    ['EE_TESTS_DIR' => false]
                 ),
                 RequestTypeContext::IFRAME,
             ],
@@ -168,7 +173,8 @@ class RequestTypeContextDetectorTest extends PHPUnit_Framework_TestCase
                         array(),
                         array()
                     ),
-                    $factory
+                    $factory,
+                    ['EE_TESTS_DIR' => false]
                 ),
                 RequestTypeContext::IFRAME,
             ],
@@ -180,7 +186,8 @@ class RequestTypeContextDetectorTest extends PHPUnit_Framework_TestCase
                         array(),
                         array()
                     ),
-                    $factory
+                    $factory,
+                    ['EE_TESTS_DIR' => false]
                 ),
                 RequestTypeContext::IFRAME,
             ],
@@ -192,7 +199,8 @@ class RequestTypeContextDetectorTest extends PHPUnit_Framework_TestCase
                         array(),
                         array('REQUEST_URI' => '/feed/')
                     ),
-                    $factory
+                    $factory,
+                    ['EE_TESTS_DIR' => false]
                 ),
                 RequestTypeContext::FEED,
             ],
@@ -204,7 +212,8 @@ class RequestTypeContextDetectorTest extends PHPUnit_Framework_TestCase
                         array(),
                         array()
                     ),
-                    $factory
+                    $factory,
+                    ['EE_TESTS_DIR' => false]
                 ),
                 RequestTypeContext::FRONTEND,
             ],

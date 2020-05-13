@@ -25,7 +25,9 @@ class LegacyEditorAssetManager extends AssetManager
 {
 
     const JS_HANDLE_UNDERSCORE = 'underscore';
+
     const JS_HANDLE_ACCOUNTING_CORE = 'ee-accounting-core';
+
     const JS_HANDLE_ACCOUNTING = 'ee-accounting';
 
 

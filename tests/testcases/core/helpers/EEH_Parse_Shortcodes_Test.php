@@ -171,6 +171,8 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase
      *                                               to use the default one generated.  This is
      *                                               useful for simulating exceptions and failures.
      * @return string The parsed content.
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _get_parsed_content($messenger, $message_type, $field, $context, $append = '', $addressee = null)
     {
@@ -269,6 +271,9 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase
      * type.
      *
      * @group 7585
+     * @throws EE_Error
+     * @throws EE_Error
+     * @throws EE_Error
      * @since 4.6
      */
     public function test_parsing_email_payment_received()
@@ -372,12 +377,17 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase
         //manipulate to remove data
         $addressee->registrations = array();
 
-        try {
-            $parsed_content = $this->_get_parsed_content('email', 'registration', 'content', 'admin', '', $addressee);
-        } catch (EE_Error $e) {
-            return;
-        }
-        $this->fail('Expected an exception for invalid EE_Attendee Object');
+        // Expecting an exception for invalid EE_Attendee Object
+        $this->setExceptionExpected('Exception', 0);
+        $parsed_content = $this->_get_parsed_content(
+            'email',
+            'registration',
+            'content',
+            'admin',
+            '',
+            $addressee
+        );
+        $this->assertNotEmpty($parsed_content);
     }
 
 

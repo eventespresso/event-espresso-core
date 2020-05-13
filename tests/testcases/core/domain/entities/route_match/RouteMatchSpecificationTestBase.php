@@ -3,7 +3,7 @@ namespace EventEspresso\tests\testcases\core\domain\entities\route_match;
 
 use EventEspresso\core\services\request\Request;
 use EventEspresso\tests\mocks\core\domain\entities\route_match\RouteMatchSpecificationMock;
-use PHPUnit_Framework_TestCase;
+use EventEspresso\tests\includes\EspressoPHPUnitFrameworkTestCase;
 
 /**
  * RouteMatchSpecificationTestBase
@@ -12,7 +12,7 @@ use PHPUnit_Framework_TestCase;
  * @author  Brent Christensen
  * @since   4.9.71.p
  */
-class RouteMatchSpecificationTestBase extends PHPUnit_Framework_TestCase
+class RouteMatchSpecificationTestBase extends EspressoPHPUnitFrameworkTestCase
 {
     /**
      * @since 4.9.71.p
@@ -56,4 +56,3 @@ class RouteMatchSpecificationTestBase extends PHPUnit_Framework_TestCase
         );
     }
 }
-// location:  /testcases/core/domain/entities/route_match/RouteMatchSpecificationTest.php

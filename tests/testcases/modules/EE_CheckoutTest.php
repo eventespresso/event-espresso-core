@@ -1,4 +1,4 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
+<?php
 /**
  * Event Espresso
  *
@@ -9,7 +9,7 @@
  * @ copyright		(c) 2008-2014 Event Espresso  All Rights Reserved.
  * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
  * @ link					http://www.eventespresso.com
- * 
+ *
  *
  * ------------------------------------------------------------------------
  */
@@ -28,6 +28,9 @@ class EE_CheckoutTest extends EE_UnitTestCase {
 
 
 	public function test_add_reg_step() {
+        $this->markTestIncomplete(
+            'This test has not been implemented yet.'
+        );
 	}
 
 }

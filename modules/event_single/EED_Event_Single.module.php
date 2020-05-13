@@ -106,12 +106,13 @@ class EED_Event_Single extends EED_Module
      *
      * @param EE_Config_Base|EE_Event_Single_Config $config
      * @return EE_Template_Part_Manager
+     * @throws EE_Error
      */
     public function initialize_template_parts(EE_Event_Single_Config $config = null)
     {
         /** @type EE_Event_Single_Config $config */
         $config = $config instanceof EE_Event_Single_Config ? $config : $this->config();
-        EEH_Autoloader::instance()->register_template_part_autoloaders();
+        EEH_Autoloader::register_template_part_autoloaders();
         $template_parts = new EE_Template_Part_Manager();
         $template_parts->add_template_part(
             'tickets',

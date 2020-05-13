@@ -512,8 +512,7 @@ class Registry
                 ? $this->getDetailsForAssetType($namespace, $asset_type, $file_path, $chunk_name)
                 : [];
         }
-        $details = $this->dependencies_data[ $namespace ][ $asset_index ];
-        return $details;
+        return $this->dependencies_data[ $namespace ][ $asset_index ];
     }
 
 

@@ -9,6 +9,7 @@ use EventEspresso\core\services\container\exceptions\ServiceNotFoundException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\notifications\PersistentAdminNoticeManager;
 use EventEspresso\core\services\loaders\LoaderInterface;
+use EventEspresso\core\services\request\RequestInterface;
 
 /**
  * EE_Admin
@@ -36,28 +37,32 @@ final class EE_Admin implements InterminableInterface
     protected $loader;
 
     /**
+     * @var RequestInterface $request
+     */
+    protected $request;
+
+
+    /**
      * @singleton method used to instantiate class object
      * @return EE_Admin
-     * @throws EE_Error
      */
     public static function instance()
     {
         // check if class object is instantiated
-        if (! self::$_instance instanceof EE_Admin) {
-            self::$_instance = new self();
+        if (! EE_Admin::$_instance instanceof EE_Admin) {
+            EE_Admin::$_instance = new EE_Admin();
         }
-        return self::$_instance;
+        return EE_Admin::$_instance;
     }
 
 
     /**
      * @return EE_Admin
-     * @throws EE_Error
      */
     public static function reset()
     {
-        self::$_instance = null;
-        return self::instance();
+        EE_Admin::$_instance = null;
+        return EE_Admin::instance();
     }
 
 
@@ -71,28 +76,28 @@ final class EE_Admin implements InterminableInterface
      */
     protected function __construct()
     {
+        /** @var EventEspresso\core\services\request\Request $request */
+        $this->request = $this->getLoader()->getShared('EventEspresso\core\services\request\Request');
         // define global EE_Admin constants
         $this->_define_all_constants();
         // set autoloaders for our admin page classes based on included path information
-        EEH_Autoloader::instance()->register_autoloaders_for_each_file_in_folder(EE_ADMIN);
-        // admin hooks
-        add_filter('plugin_action_links', array($this, 'filter_plugin_actions'), 10, 2);
+        EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_ADMIN);
+        // reset Environment config (we only do this on admin page loads);
+        EE_Registry::instance()->CFG->environment->recheck_values();
         // load EE_Request_Handler early
-        add_action('AHEE__EE_System__core_loaded_and_ready', array($this, 'get_request'));
         add_action('AHEE__EE_System__initialize_last', array($this, 'init'));
-        add_action('AHEE__EE_Admin_Page__route_admin_request', array($this, 'route_admin_request'), 100, 2);
-        add_action('wp_loaded', array($this, 'wp_loaded'), 100);
         add_action('admin_init', array($this, 'admin_init'), 100);
-        add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'), 20);
         add_action('admin_notices', array($this, 'display_admin_notices'), 10);
         add_action('network_admin_notices', array($this, 'display_admin_notices'), 10);
         add_filter('pre_update_option', array($this, 'check_for_invalid_datetime_formats'), 100, 2);
-        add_filter('admin_footer_text', array($this, 'espresso_admin_footer'));
-        add_action('load-plugins.php', array($this, 'hookIntoWpPluginsPage'));
-        add_action('display_post_states', array($this, 'displayStateForCriticalPages'), 10, 2);
-        add_filter('plugin_row_meta', array($this, 'addLinksToPluginRowMeta'), 10, 2);
-        // reset Environment config (we only do this on admin page loads);
-        EE_Registry::instance()->CFG->environment->recheck_values();
+        if (! $this->request->isAjax()) {
+            // admin hooks
+            add_filter('plugin_action_links', [$this, 'filter_plugin_actions'], 10, 2);
+            add_filter('admin_footer_text', [$this, 'espresso_admin_footer']);
+            add_action('load-plugins.php', [$this, 'hookIntoWpPluginsPage']);
+            add_action('display_post_states', [$this, 'displayStateForCriticalPages'], 10, 2);
+            add_filter('plugin_row_meta', [$this, 'addLinksToPluginRowMeta'], 10, 2);
+        }
         do_action('AHEE__EE_Admin__loaded');
     }
 
@@ -154,22 +159,6 @@ final class EE_Admin implements InterminableInterface
 
 
     /**
-     * _get_request
-     *
-     * @return void
-     * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws ReflectionException
-     */
-    public function get_request()
-    {
-        EE_Registry::instance()->load_core('Request_Handler');
-    }
-
-
-    /**
      * hide_admin_pages_except_maintenance_mode
      *
      * @param array $admin_page_folder_names
@@ -207,17 +196,20 @@ final class EE_Admin implements InterminableInterface
         if (! defined('DOING_AJAX') || EE_ADMIN_AJAX) {
             try {
                 // this loads the controller for the admin pages which will setup routing etc
-                EE_Registry::instance()->load_core('Admin_Page_Loader');
+                $admin_page_loader = $this->loader->getShared('EE_Admin_Page_Loader');
+                $admin_page_loader->init();
             } catch (EE_Error $e) {
                 $e->get_error();
             }
         }
         add_filter('content_save_pre', array($this, 'its_eSpresso'), 10, 1);
-        // make sure our CPTs and custom taxonomy metaboxes get shown for first time users
-        add_action('admin_head', array($this, 'enable_hidden_ee_nav_menu_metaboxes'), 10);
-        add_action('admin_head', array($this, 'register_custom_nav_menu_boxes'), 10);
-        // exclude EE critical pages from all nav menus and wp_list_pages
-        add_filter('nav_menu_meta_box_object', array($this, 'remove_pages_from_nav_menu'), 10);
+        if (! $this->request->isAjax()) {
+            // make sure our CPTs and custom taxonomy metaboxes get shown for first time users
+            add_action('admin_head', [$this, 'enable_hidden_ee_nav_menu_metaboxes'], 10);
+            add_action('admin_head', [$this, 'register_custom_nav_menu_boxes'], 10);
+            // exclude EE critical pages from all nav menus and wp_list_pages
+            add_filter('nav_menu_meta_box_object', [$this, 'remove_pages_from_nav_menu'], 10);
+        }
     }
 
 
@@ -240,20 +232,23 @@ final class EE_Admin implements InterminableInterface
     /**
      * Method that's fired on admin requests (including admin ajax) but only when the models are usable
      * (ie, the site isn't in maintenance mode)
-     * @since 4.9.63.p
+     *
      * @return void
+     * @throws EE_Error
+     * @throws EE_Error
+     * @since 4.9.63.p
      */
     protected function initModelsReady()
     {
         // ok so we want to enable the entire admin
-        $this->persistent_admin_notice_manager = $this->getLoader()->getShared(
+        $this->persistent_admin_notice_manager = $this->loader->getShared(
             'EventEspresso\core\services\notifications\PersistentAdminNoticeManager'
         );
         $this->persistent_admin_notice_manager->setReturnUrl(
             EE_Admin_Page::add_query_args_and_nonce(
                 array(
-                    'page'   => EE_Registry::instance()->REQ->get('page', ''),
-                    'action' => EE_Registry::instance()->REQ->get('action', ''),
+                    'page'   => $this->request->getRequestParam('page', ''),
+                    'action' => $this->request->getRequestParam('action', ''),
                 ),
                 EE_ADMIN_URL
             )
@@ -572,35 +567,12 @@ final class EE_Admin implements InterminableInterface
 
 
     /**
-     * This is the action hook for the AHEE__EE_Admin_Page__route_admin_request hook that fires off right before an
-     * EE_Admin_Page route is called.
-     *
-     * @return void
-     */
-    public function route_admin_request()
-    {
-    }
-
-
-    /**
-     * wp_loaded should fire on the WordPress wp_loaded hook.  This fires on a VERY late priority.
-     *
-     * @return void
-     */
-    public function wp_loaded()
-    {
-    }
-
-
-    /**
      * admin_init
      *
      * @return void
-     * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @throws ReflectionException
      */
     public function admin_init()
     {
@@ -613,33 +585,34 @@ final class EE_Admin implements InterminableInterface
          */
         if (isset($_POST['action'], $_POST['post_type']) && $_POST['action'] === 'editpost') {
             /** @var EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions $custom_post_types */
-            $custom_post_types = $this->getLoader()->getShared(
+            $custom_post_types = $this->loader->getShared(
                 'EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions'
             );
             $custom_post_types->getCustomPostTypeModels($_POST['post_type']);
         }
 
-
-        /**
-         * This code excludes EE critical pages anywhere `wp_dropdown_pages` is used to create a dropdown for selecting
-         * critical pages.  The only place critical pages need included in a generated dropdown is on the "Critical
-         * Pages" tab in the EE General Settings Admin page.
-         * This is for user-proofing.
-         */
-        add_filter('wp_dropdown_pages', array($this, 'modify_dropdown_pages'));
-        if (EE_Maintenance_Mode::instance()->models_can_query()) {
-            $this->adminInitModelsReady();
+        if (! $this->request->isAjax()) {
+            /**
+             * This code excludes EE critical pages anywhere `wp_dropdown_pages` is used to create a dropdown for selecting
+             * critical pages.  The only place critical pages need included in a generated dropdown is on the "Critical
+             * Pages" tab in the EE General Settings Admin page.
+             * This is for user-proofing.
+             */
+            add_filter('wp_dropdown_pages', array($this, 'modify_dropdown_pages'));
+            if (EE_Maintenance_Mode::instance()->models_can_query()) {
+                $this->adminInitModelsReady();
+            }
         }
     }
 
 
     /**
-     * Runs on admin_init but only if models are usable (ie, we're not in maintenanc emode)
+     * Runs on admin_init but only if models are usable (ie, we're not in maintenance mode)
      */
     protected function adminInitModelsReady()
     {
         if (function_exists('wp_add_privacy_policy_content')) {
-            $this->getLoader()->getShared('EventEspresso\core\services\privacy\policy\PrivacyPolicyManager');
+            $this->loader->getShared('EventEspresso\core\services\privacy\policy\PrivacyPolicyManager');
         }
     }
 
@@ -672,64 +645,6 @@ final class EE_Admin implements InterminableInterface
         }
         // replace output with the new contents
         return implode("\n", $split_output);
-    }
-
-
-    /**
-     * enqueue all admin scripts that need loaded for admin pages
-     *
-     * @return void
-     */
-    public function enqueue_admin_scripts()
-    {
-        // this javascript is loaded on every admin page to catch any injections ee needs to add to wp run js.
-        // Note: the intention of this script is to only do TARGETED injections.  I.E, only injecting on certain script
-        // calls.
-        wp_enqueue_script(
-            'ee-inject-wp',
-            EE_ADMIN_URL . 'assets/ee-cpt-wp-injects.js',
-            array('jquery'),
-            EVENT_ESPRESSO_VERSION,
-            true
-        );
-        // register cookie script for future dependencies
-        wp_register_script(
-            'jquery-cookie',
-            EE_THIRD_PARTY_URL . 'joyride/jquery.cookie.js',
-            array('jquery'),
-            '2.1',
-            true
-        );
-        // joyride is turned OFF by default, but prior to the admin_enqueue_scripts hook, can be turned back on again
-        // via: add_filter('FHEE_load_joyride', '__return_true' );
-        if (apply_filters('FHEE_load_joyride', false)) {
-            // joyride style
-            wp_register_style('joyride-css', EE_THIRD_PARTY_URL . 'joyride/joyride-2.1.css', array(), '2.1');
-            wp_register_style(
-                'ee-joyride-css',
-                EE_GLOBAL_ASSETS_URL . 'css/ee-joyride-styles.css',
-                array('joyride-css'),
-                EVENT_ESPRESSO_VERSION
-            );
-            wp_register_script(
-                'joyride-modernizr',
-                EE_THIRD_PARTY_URL . 'joyride/modernizr.mq.js',
-                array(),
-                '2.1',
-                true
-            );
-            // joyride JS
-            wp_register_script(
-                'jquery-joyride',
-                EE_THIRD_PARTY_URL . 'joyride/jquery.joyride-2.1.js',
-                array('jquery-cookie', 'joyride-modernizr'),
-                '2.1',
-                true
-            );
-            // wanna go for a joyride?
-            wp_enqueue_style('ee-joyride-css');
-            wp_enqueue_script('jquery-joyride');
-        }
     }
 
 
@@ -807,7 +722,6 @@ final class EE_Admin implements InterminableInterface
      *
      * @param    $value
      * @param    $option
-     * @throws EE_Error
      * @return    string
      */
     public function check_for_invalid_datetime_formats($value, $option)
@@ -901,125 +815,6 @@ final class EE_Admin implements InterminableInterface
 
 
     /**
-     * static method for registering ee admin page.
-     * This method is deprecated in favor of the new location in EE_Register_Admin_Page::register.
-     *
-     * @since      4.3.0
-     * @deprecated 4.3.0    Use EE_Register_Admin_Page::register() instead
-     * @see        EE_Register_Admin_Page::register()
-     * @param       $page_basename
-     * @param       $page_path
-     * @param array $config
-     * @return void
-     * @throws EE_Error
-     */
-    public static function register_ee_admin_page($page_basename, $page_path, $config = array())
-    {
-        EE_Error::doing_it_wrong(
-            __METHOD__,
-            sprintf(
-                esc_html__(
-                    'Usage is deprecated.  Use EE_Register_Admin_Page::register() for registering the %s admin page.',
-                    'event_espresso'
-                ),
-                $page_basename
-            ),
-            '4.3'
-        );
-        if (class_exists('EE_Register_Admin_Page')) {
-            $config['page_path'] = $page_path;
-        }
-        EE_Register_Admin_Page::register($page_basename, $config);
-    }
-
-
-    /**
-     * @deprecated 4.8.41
-     * @param  int      $post_ID
-     * @param  \WP_Post $post
-     * @return void
-     */
-    public static function parse_post_content_on_save($post_ID, $post)
-    {
-        EE_Error::doing_it_wrong(
-            __METHOD__,
-            esc_html__('Usage is deprecated', 'event_espresso'),
-            '4.8.41'
-        );
-    }
-
-
-    /**
-     * @deprecated 4.8.41
-     * @param  $option
-     * @param  $old_value
-     * @param  $value
-     * @return void
-     */
-    public function reset_page_for_posts_on_change($option, $old_value, $value)
-    {
-        EE_Error::doing_it_wrong(
-            __METHOD__,
-            esc_html__('Usage is deprecated', 'event_espresso'),
-            '4.8.41'
-        );
-    }
-
-
-    /**
-     * @deprecated 4.9.27
-     * @return void
-     */
-    public function get_persistent_admin_notices()
-    {
-        EE_Error::doing_it_wrong(
-            __METHOD__,
-            sprintf(
-                esc_html__('Usage is deprecated. Use "%1$s" instead.', 'event_espresso'),
-                '\EventEspresso\core\services\notifications\PersistentAdminNoticeManager'
-            ),
-            '4.9.27'
-        );
-    }
-
-
-    /**
-     * @deprecated 4.9.27
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
-     * @throws DomainException
-     */
-    public function dismiss_ee_nag_notice_callback()
-    {
-        EE_Error::doing_it_wrong(
-            __METHOD__,
-            sprintf(
-                esc_html__('Usage is deprecated. Use "%1$s" instead.', 'event_espresso'),
-                '\EventEspresso\core\services\notifications\PersistentAdminNoticeManager'
-            ),
-            '4.9.27'
-        );
-        $this->persistent_admin_notice_manager->dismissNotice();
-    }
-
-
-    /**
-     * Callback on load-plugins.php hook for setting up anything hooking into the wp plugins page.
-     *
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     */
-    public function hookIntoWpPluginsPage()
-    {
-        $this->getLoader()->getShared('EventEspresso\core\domain\services\admin\ExitModal');
-        $this->getLoader()
-                     ->getShared('EventEspresso\core\domain\services\admin\PluginUpsells')
-                     ->decafUpsells();
-    }
-
-
-    /**
      * Hooks into the "post states" filter in a wp post type list table.
      *
      * @param array   $post_states
@@ -1036,7 +831,7 @@ final class EE_Admin implements InterminableInterface
             return $post_states;
         }
         /** @var EE_Core_Config $config */
-        $config = $this->getLoader()->getShared('EE_Config')->core;
+        $config = $this->loader->getShared('EE_Config')->core;
         if (in_array($post->ID, $config->get_critical_pages_array(), true)) {
             $post_states[] = sprintf(
                 /* Translators: Using company name - Event Espresso Critical Page */
@@ -1075,5 +870,168 @@ final class EE_Admin implements InterminableInterface
             return array_merge($meta, $row_meta);
         }
         return (array) $meta;
+    }
+
+     /**************************************************************************************/
+     /************************************* DEPRECATED *************************************/
+     /**************************************************************************************/
+
+
+    /**
+     * This is the action hook for the AHEE__EE_Admin_Page__route_admin_request hook that fires off right before an
+     * EE_Admin_Page route is called.
+     *
+     * @return void
+     */
+    public function route_admin_request()
+    {
+    }
+
+
+    /**
+     * wp_loaded should fire on the WordPress wp_loaded hook.  This fires on a VERY late priority.
+     *
+     * @return void
+     */
+    public function wp_loaded()
+    {
+    }
+
+
+    /**
+     * static method for registering ee admin page.
+     * This method is deprecated in favor of the new location in EE_Register_Admin_Page::register.
+     *
+     * @param       $page_basename
+     * @param       $page_path
+     * @param array $config
+     * @return void
+     * @throws EE_Error
+     * @see        EE_Register_Admin_Page::register()
+     * @since      4.3.0
+     * @deprecated 4.3.0    Use EE_Register_Admin_Page::register() instead
+     */
+    public static function register_ee_admin_page($page_basename, $page_path, $config = [])
+    {
+        EE_Error::doing_it_wrong(
+            __METHOD__,
+            sprintf(
+                esc_html__(
+                    'Usage is deprecated.  Use EE_Register_Admin_Page::register() for registering the %s admin page.',
+                    'event_espresso'
+                ),
+                $page_basename
+            ),
+            '4.3'
+        );
+        if (class_exists('EE_Register_Admin_Page')) {
+            $config['page_path'] = $page_path;
+        }
+        EE_Register_Admin_Page::register($page_basename, $config);
+    }
+
+
+    /**
+     * @param int      $post_ID
+     * @param \WP_Post $post
+     * @return void
+     * @deprecated 4.8.41
+     */
+    public static function parse_post_content_on_save($post_ID, $post)
+    {
+        EE_Error::doing_it_wrong(
+            __METHOD__,
+            esc_html__('Usage is deprecated', 'event_espresso'),
+            '4.8.41'
+        );
+    }
+
+
+    /**
+     * @param  $option
+     * @param  $old_value
+     * @param  $value
+     * @return void
+     * @deprecated 4.8.41
+     */
+    public function reset_page_for_posts_on_change($option, $old_value, $value)
+    {
+        EE_Error::doing_it_wrong(
+            __METHOD__,
+            esc_html__('Usage is deprecated', 'event_espresso'),
+            '4.8.41'
+        );
+    }
+
+
+    /**
+     * @return void
+     * @deprecated 4.9.27
+     */
+    public function get_persistent_admin_notices()
+    {
+        EE_Error::doing_it_wrong(
+            __METHOD__,
+            sprintf(
+                esc_html__('Usage is deprecated. Use "%1$s" instead.', 'event_espresso'),
+                '\EventEspresso\core\services\notifications\PersistentAdminNoticeManager'
+            ),
+            '4.9.27'
+        );
+    }
+
+
+    /**
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws DomainException
+     * @deprecated 4.9.27
+     */
+    public function dismiss_ee_nag_notice_callback()
+    {
+        EE_Error::doing_it_wrong(
+            __METHOD__,
+            sprintf(
+                esc_html__('Usage is deprecated. Use "%1$s" instead.', 'event_espresso'),
+                '\EventEspresso\core\services\notifications\PersistentAdminNoticeManager'
+            ),
+            '4.9.27'
+        );
+        $this->persistent_admin_notice_manager->dismissNotice();
+    }
+
+
+    /**
+     * @return void
+     * @deprecated $VID:$
+     */
+    public function enqueue_admin_scripts()
+    {
+    }
+
+
+
+    /**
+     * @return RequestInterface
+     * @deprecated $VID:$
+     */
+    public function get_request()
+    {
+        EE_Error::doing_it_wrong(
+            __METHOD__,
+            sprintf(
+                esc_html__('Usage is deprecated. Use "%1$s" instead.', 'event_espresso'),
+                'EventEspresso\core\services\request\Request'
+            ),
+            '$VID:$'
+        );
+        return $this->request;
+    }
+
+    /**
+     * @deprecated $VID:$
+     */
+    public function hookIntoWpPluginsPage()
+    {
     }
 }

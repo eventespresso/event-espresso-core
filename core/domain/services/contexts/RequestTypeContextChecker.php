@@ -50,11 +50,10 @@ class RequestTypeContextChecker extends ContextChecker implements RequestTypeCon
 
     /**
      * @param $is_activation
-     * @return bool
      */
     public function setIsActivation($is_activation)
     {
-        return $this->request_type->setIsActivation($is_activation);
+        $this->request_type->setIsActivation($is_activation);
     }
 
 
@@ -197,6 +196,17 @@ class RequestTypeContextChecker extends ContextChecker implements RequestTypeCon
     public function isIframe()
     {
         return $this->request_type->slug() === RequestTypeContext::IFRAME;
+    }
+
+
+    /**
+     * true if the current request is occurring while unit testing
+     *
+     * @return bool
+     */
+    public function isUnitTesting()
+    {
+        return $this->request_type->isUnitTesting();
     }
 
 

@@ -97,6 +97,11 @@ class RequestTypeContext extends Context
     private $is_activation = false;
 
     /**
+     * @var boolean $is_unit_testing
+     */
+    private $is_unit_testing = false;
+
+    /**
      * @var array $valid_request_types
      */
     private $valid_request_types = array();
@@ -119,6 +124,7 @@ class RequestTypeContext extends Context
                         'The RequestTypeContext slug must be one of the following values: %1$s %2$s',
                         'event_espresso'
                     ),
+                    '<br />',
                     var_export($this->validRequestTypes(), true)
                 )
             );
@@ -172,5 +178,23 @@ class RequestTypeContext extends Context
     public function setIsActivation($is_activation)
     {
         $this->is_activation = filter_var($is_activation, FILTER_VALIDATE_BOOLEAN);
+    }
+
+
+    /**
+     * @return bool
+     */
+    public function isUnitTesting()
+    {
+        return $this->is_unit_testing;
+    }
+
+
+    /**
+     * @param bool $is_unit_testing
+     */
+    public function setIsUnitTesting($is_unit_testing)
+    {
+        $this->is_unit_testing = filter_var($is_unit_testing, FILTER_VALIDATE_BOOLEAN);
     }
 }

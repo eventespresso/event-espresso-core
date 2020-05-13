@@ -19,6 +19,11 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
 {
 
     /**
+     * @var EE_Admin_Config
+     */
+    protected $admin_config;
+
+    /**
      * @var AdvancedEditorAdminFormSection
      */
     protected $advanced_editor_admin_form;
@@ -47,6 +52,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             define('EVENTS_CAF_ASSETS_URL', EE_CORE_CAF_ADMIN_EXTEND_URL . 'events/assets/');
         }
         parent::__construct($routing);
+        $this->admin_config = $this->loader->getShared('EE_Admin_Config');
     }
 
 
@@ -156,8 +162,11 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         // partial route/config override
         $this->_page_config['import_events']['metaboxes'] = $this->_default_espresso_metaboxes;
         $this->_page_config['create_new']['metaboxes'][] = '_premium_event_editor_meta_boxes';
-        $this->_page_config['create_new']['qtips'][] = 'EE_Event_Editor_Tips';
-        $this->_page_config['edit']['qtips'][] = 'EE_Event_Editor_Tips';
+        // load handler for GraphQL requests and EventEditor
+        if (! $this->admin_config->useAdvancedEditor()) {
+            $this->_page_config['create_new']['qtips'][] = 'EE_Event_Editor_Tips';
+            $this->_page_config['edit']['qtips'][] = 'EE_Event_Editor_Tips';
+        }
         $this->_page_config['edit']['metaboxes'][] = '_premium_event_editor_meta_boxes';
         $this->_page_config['default']['list_table'] = 'Extend_Events_Admin_List_Table';
         // add tickets tab but only if there are more than one default ticket!
@@ -250,12 +259,11 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
                     'EventEspresso\core\domain\services\admin\events\default_settings\AdvancedEditorAdminFormSection'
                 );
             }
-            $admin_config = $this->loader->getShared('EE_Admin_Config');
             // load handler for GraphQL requests and EventEditor
             if (($action === 'edit' || $action === 'create_new')
-                && $admin_config instanceof EE_Admin_Config
+                && $this->admin_config instanceof EE_Admin_Config
                 && class_exists('WPGraphQL')
-                && $admin_config->useAdvancedEditor()
+                && $this->admin_config->useAdvancedEditor()
             ) {
                 try {
                     /** @var EventEspresso\core\services\graphql\GraphQLManager $graphQL_manager */

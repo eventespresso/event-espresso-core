@@ -180,6 +180,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function __construct($routing = true)
     {
@@ -688,6 +689,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     protected function _load_page_dependencies()
     {
@@ -1182,6 +1184,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @return void
      * @throws DomainException
      * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _add_help_tabs()
     {
@@ -1353,6 +1356,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     protected function _add_help_tour()
     {
@@ -1439,7 +1443,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         /**
          * Allow extending the help tours variable.
          *
-         * @param Array $_help_tour The array containing all help tour information to be displayed.
+         * @param array $_help_tour The array containing all help tour information to be displayed.
          */
         $this->_help_tour = apply_filters('FHEE__EE_Admin_Page___add_help_tour___help_tour', $this->_help_tour);
     }
@@ -1449,6 +1453,8 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * This simply sets up any qtips that have been defined in the page config
      *
      * @return void
+     * @throws ReflectionException
+     * @throws EE_Error
      */
     protected function _add_qtips()
     {
@@ -1459,7 +1465,10 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                 $this->_get_dir() . '/qtips/',
                 EE_ADMIN_PAGES . basename($this->_get_dir()) . '/qtips/',
             );
-            EEH_Qtip_Loader::instance()->register($qtips, $path);
+            $qtip_loader = EEH_Qtip_Loader::instance();
+            if ($qtip_loader instanceof EEH_Qtip_Loader) {
+                $qtip_loader->register($qtips, $path);
+            }
         }
     }
 

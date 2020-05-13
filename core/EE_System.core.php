@@ -15,6 +15,7 @@ use EventEspresso\core\interfaces\ResettableInterface;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\request\RequestInterface;
+use EventEspresso\core\services\route_match\RouteHandler;
 use EventEspresso\core\services\route_match\RouteMatchSpecificationManager;
 
 /**
@@ -95,19 +96,14 @@ final class EE_System implements ResettableInterface
     private $capabilities;
 
     /**
-     * @var RequestInterface $request
-     */
-    private $request;
-
-    /**
-     * @var RouteMatchSpecificationManager $route_manager
-     */
-    private $route_manager;
-
-    /**
      * @var EE_Maintenance_Mode $maintenance_mode
      */
     private $maintenance_mode;
+
+    /**
+     * @var RequestInterface $request
+     */
+    private $request;
 
     /**
      * Stores which type of request this is, options being one of the constants on EE_System starting with req_type_*.
@@ -116,6 +112,12 @@ final class EE_System implements ResettableInterface
      * @var int $_req_type
      */
     private $_req_type;
+
+
+    /**
+     * @var RouteHandler $router
+     */
+    private $router;
 
     /**
      * Whether or not there was a non-micro version change in EE core version during this request
@@ -262,7 +264,6 @@ final class EE_System implements ResettableInterface
      * load and setup EE_Capabilities
      *
      * @return void
-     * @throws EE_Error
      */
     public function loadCapabilities()
     {
@@ -282,7 +283,6 @@ final class EE_System implements ResettableInterface
      * which is why we need to load the CommandBus after Caps are set up
      *
      * @return void
-     * @throws EE_Error
      */
     public function loadCommandBus()
     {
@@ -310,7 +310,7 @@ final class EE_System implements ResettableInterface
     {
         // set autoloaders for all of the classes implementing EEI_Plugin_API
         // which provide helpers for EE plugin authors to more easily register certain components with EE.
-        EEH_Autoloader::instance()->register_autoloaders_for_each_file_in_folder(EE_LIBRARIES . 'plugin_api');
+        EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_LIBRARIES . 'plugin_api');
         $this->loader->getShared('EE_Request_Handler');
     }
 
@@ -948,9 +948,7 @@ final class EE_System implements ResettableInterface
     public function loadRouteMatchSpecifications()
     {
         try {
-            $this->route_manager = $this->loader->getShared(
-                'EventEspresso\core\services\route_match\RouteMatchSpecificationManager'
-            );
+            $this->router = $this->loader->getShared('EventEspresso\core\services\route_match\RouteHandler');
         } catch (Exception $exception) {
             new ExceptionStackTraceDisplay($exception);
         }
@@ -970,20 +968,7 @@ final class EE_System implements ResettableInterface
      */
     public function register_shortcodes_modules_and_widgets()
     {
-        if ($this->request->isFrontend() || $this->request->isIframe() || $this->request->isAjax()) {
-            try {
-                // load, register, and add shortcodes the new way
-                $this->loader->getShared(
-                    'EventEspresso\core\services\shortcodes\ShortcodesManager',
-                    array(
-                        // and the old way, but we'll put it under control of the new system
-                        EE_Config::getLegacyShortcodesManager(),
-                    )
-                );
-            } catch (Exception $exception) {
-                new ExceptionStackTraceDisplay($exception);
-            }
-        }
+        $this->router->handleShortcodesRequest();
         do_action('AHEE__EE_System__register_shortcodes_modules_and_widgets');
         // check for addons using old hook point
         if (has_action('AHEE__EE_System__register_shortcodes_modules_and_addons')) {
@@ -1052,49 +1037,9 @@ final class EE_System implements ResettableInterface
         add_action('init', array($this, 'core_loaded_and_ready'), 9);
         add_action('init', array($this, 'initialize'), 10);
         add_action('init', array($this, 'initialize_last'), 100);
-        if (is_admin() && apply_filters('FHEE__EE_System__brew_espresso__load_pue', true)) {
-            // pew pew pew
-            $this->loader->getShared('EventEspresso\core\services\licensing\LicenseService');
-            do_action('AHEE__EE_System__brew_espresso__after_pue_init');
-        }
-        $this->loadWpGraphql();
+        $this->router->handlePueRequest();
+        $this->router->handleGQLRequest();
         do_action('AHEE__EE_System__brew_espresso__complete', $this);
-    }
-
-
-    /**
-     * @return void
-     * @throws Exception
-     */
-    public function loadWpGraphql()
-    {
-        if (PHP_VERSION_ID < 70000) {
-            return;
-        }
-        // @todo get rid of this.
-        $thisIsTemporarilyHereForTests = true;
-        try {
-            if ($this->request->isGQL()
-                || (
-                    $this->route_manager instanceof RouteMatchSpecificationManager
-                    && $this->route_manager->routeMatchesCurrentRequest(
-                        'EventEspresso\core\domain\entities\route_match\specifications\admin\EspressoEventEditor'
-                    )
-                )
-                || $thisIsTemporarilyHereForTests
-            ) {
-                if (! class_exists('WPGraphQL')) {
-                    require_once EE_THIRD_PARTY . 'wp-graphql/wp-graphql.php';
-                }
-                // load handler for EE GraphQL requests
-                $graphQL_manager = $this->loader->getShared(
-                    'EventEspresso\core\services\graphql\GraphQLManager'
-                );
-                $graphQL_manager->init();
-            }
-        } catch (Exception $exception) {
-            new ExceptionStackTraceDisplay($exception);
-        }
     }
 
 
@@ -1185,22 +1130,13 @@ final class EE_System implements ResettableInterface
      *
      * @access public
      * @return void
+     * @throws Exception
      */
     public function load_controllers()
     {
         do_action('AHEE__EE_System__load_controllers__start');
         // let's get it started
-        if (! $this->maintenance_mode->level()
-            && ($this->request->isFrontend() || $this->request->isFrontAjax())
-        ) {
-            do_action('AHEE__EE_System__load_controllers__load_front_controllers');
-            $this->loader->getShared('EE_Front_Controller');
-        } elseif ($this->request->isAdmin() || $this->request->isAdminAjax()) {
-            do_action('AHEE__EE_System__load_controllers__load_admin_controllers');
-            $this->loader->getShared('EE_Admin');
-        } elseif ($this->request->isWordPressHeartbeat()) {
-            $this->loader->getShared('EventEspresso\core\domain\services\admin\ajax\WordpressHeartbeat');
-        }
+        $this->router->handleControllerRequest();
         do_action('AHEE__EE_System__load_controllers__complete');
     }
 
@@ -1215,29 +1151,8 @@ final class EE_System implements ResettableInterface
      */
     public function core_loaded_and_ready()
     {
-        if ($this->request->isAdmin()
-            || $this->request->isFrontend()
-            || $this->request->isIframe()
-            || $this->request->isWordPressApi()
-        ) {
-            try {
-                $this->loader->getShared('EventEspresso\core\services\assets\Registry');
-                $this->loader->getShared('EventEspresso\core\domain\services\assets\CoreAssetManager');
-                if ($this->canLoadBlocks()) {
-                    $this->loader->getShared(
-                        'EventEspresso\core\services\editor\BlockRegistrationManager'
-                    );
-                }
-            } catch (Exception $exception) {
-                new ExceptionStackTraceDisplay($exception);
-            }
-        }
-        if ($this->request->isAdmin()
-            || $this->request->isEeAjax()
-            || $this->request->isFrontend()
-        ) {
-            $this->loader->getShared('EE_Session');
-        }
+        $this->router->handleAssetManagerRequest();
+        $this->router->handleSessionRequest();
         // integrate WP_Query with the EE models
         $this->loader->getShared('EE_CPT_Strategy');
         do_action('AHEE__EE_System__core_loaded_and_ready');
@@ -1268,6 +1183,7 @@ final class EE_System implements ResettableInterface
      *
      * @access public
      * @return void
+     * @throws Exception
      */
     public function initialize_last()
     {
@@ -1278,17 +1194,12 @@ final class EE_System implements ResettableInterface
         );
         $rewrite_rules->flushRewriteRules();
         add_action('admin_bar_init', array($this, 'addEspressoToolbar'));
-        if (($this->request->isAjax() || $this->request->isAdmin())
-            && $this->maintenance_mode->models_can_query()) {
-            $this->loader->getShared('EventEspresso\core\services\privacy\export\PersonalDataExporterManager');
-            $this->loader->getShared('EventEspresso\core\services\privacy\erasure\PersonalDataEraserManager');
-        }
+        $this->router->handlePersonalDataRequest();
     }
 
 
     /**
      * @return void
-     * @throws EE_Error
      */
     public function addEspressoToolbar()
     {
@@ -1366,19 +1277,5 @@ final class EE_System implements ResettableInterface
     public function remove_pages_from_wp_list_pages($exclude_array)
     {
         return array_merge($exclude_array, $this->registry->CFG->core->get_critical_pages_array());
-    }
-
-
-    /**
-     * Return whether blocks can be registered/loaded or not.
-     * @return bool
-     */
-    private function canLoadBlocks()
-    {
-        return apply_filters('FHEE__EE_System__canLoadBlocks', true)
-               && function_exists('register_block_type')
-               // don't load blocks if in the Divi page builder editor context
-               // @see https://github.com/eventespresso/event-espresso-core/issues/814
-               && ! $this->request->getRequestParam('et_fb', false);
     }
 }

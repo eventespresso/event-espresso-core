@@ -148,9 +148,10 @@ abstract class AssetManager implements AssetManagerInterface
             $handle,
             $extra_dependencies
         );
+        $source = $this->registry->getJsUrl($this->domain->assetNamespace(), $handle);
         return $this->addJavascript(
             $handle,
-            $this->registry->getJsUrl($this->domain->assetNamespace(), $handle),
+            $source,
             $details['dependencies'],
             true,
             $details['version']
@@ -274,7 +275,7 @@ abstract class AssetManager implements AssetManagerInterface
     public function enqueueBrowserAssets()
     {
         foreach ($this->assets as $asset) {
-            if ($asset instanceof BrowserAsset) {
+            if ($asset instanceof BrowserAsset && $asset->isRegistered()) {
                 $asset->enqueueAsset();
             }
         }

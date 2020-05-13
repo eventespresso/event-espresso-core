@@ -1,11 +1,7 @@
 <?php
-/**
- * Contains test class for /core/helpers/EEH_Template.helper.php
- *
- *
- * @package 			Event Espresso
- * @subpackage 	tests
- */
+
+use EventEspresso\tests\includes\EspressoPHPUnitFrameworkTestCase;
+
 /**
  *
  * Class EEH_TemplateTest
@@ -18,10 +14,12 @@
  *
  *
  */
-class EEH_TemplateTest extends PHPUnit_Framework_TestCase {
+class EEH_TemplateTest extends EspressoPHPUnitFrameworkTestCase {
 
 	public function test() {
-
+        $this->markTestIncomplete(
+            'This test has not been implemented yet.'
+        );
 	}
 }
 

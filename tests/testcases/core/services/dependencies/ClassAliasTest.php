@@ -3,7 +3,7 @@
 namespace EventEspresso\tests\testcases\core\services\dependencies;
 
 use EventEspresso\core\services\dependencies\ClassAlias;
-use PHPUnit_Framework_TestCase;
+use EventEspresso\tests\includes\EspressoPHPUnitFrameworkTestCase;
 
 /**
  * Class ClassAliasTest
@@ -12,7 +12,7 @@ use PHPUnit_Framework_TestCase;
  * @author  Brent Christensen
  * @since   4.9.71.p
  */
-class ClassAliasTest extends PHPUnit_Framework_TestCase
+class ClassAliasTest extends EspressoPHPUnitFrameworkTestCase
 {
 
     /**
@@ -62,12 +62,7 @@ class ClassAliasTest extends PHPUnit_Framework_TestCase
      */
     public function test__constructWithBadParameters()
     {
-        $exception = 'EventEspresso\core\exceptions\InvalidAliasException';
-        if (method_exists($this, 'expectException')) {
-            $this->expectException($exception);
-        } elseif (method_exists($this, 'setExpectedException')) {
-            $this->setExpectedException($exception);
-        }
+        $this->setExceptionExpected('EventEspresso\core\exceptions\InvalidAliasException');
         $this->getClassAlias($this->base_class, $this->interface);
     }
 
@@ -105,12 +100,7 @@ class ClassAliasTest extends PHPUnit_Framework_TestCase
      */
     public function test__constructWithNonSubClass()
     {
-        $exception = 'EventEspresso\core\exceptions\InvalidAliasException';
-        if (method_exists($this, 'expectException')) {
-            $this->expectException($exception);
-        } elseif (method_exists($this, 'setExpectedException')) {
-            $this->setExpectedException($exception);
-        }
+        $this->setExceptionExpected('EventEspresso\core\exceptions\InvalidAliasException');
         $this->getClassAlias(
             $this->child_class_fqcn,
             'EventEspresso\core\domain\entities\route_match\specifications\admin\EspressoEventEditorEdit'

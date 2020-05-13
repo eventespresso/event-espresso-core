@@ -1,8 +1,6 @@
 <?php
 namespace EventEspresso\core\domain\services\admin;
 
-use EventEspresso\core\services\assets\Registry;
-use InvalidArgumentException;
 use WP_User;
 
 /**
@@ -18,79 +16,36 @@ use WP_User;
 class ExitModal
 {
 
-    /**
-     * @var Registry
-     */
-    private $assets_registry;
+    const TYPE_FORM_URL = 'https://eventespresso.typeform.com/to/O1DDym';
 
     /**
      * ExitModal constructor.
-     *
-     * @param Registry $assets_registry
      */
-    public function __construct(Registry $assets_registry)
+    public function __construct()
     {
-        $this->assets_registry = $assets_registry;
-        add_action('in_admin_footer', array($this, 'modalContainer'));
-        add_action('admin_enqueue_scripts', array($this, 'enqueues'));
     }
 
 
     /**
-     * Callback on in_admin_footer that is used to output the exit modal container.
+     * @return array
+     * @since $VID:$
      */
-    public function modalContainer()
-    {
-        echo '<div id="ee-exit-survey-modal"></div>';
-    }
-
-
-    /**
-     * Callback for `admin_enqueue_scripts` to take care of enqueueing scripts and styles specific to the modal.
-     *
-     * @throws InvalidArgumentException
-     */
-    public function enqueues()
+    public function getExitSurveyInfo()
     {
         $current_user = new WP_User(get_current_user_id());
-        $this->assets_registry->addData(
-            'exitModali18n',
-            array(
-                'introText' => htmlspecialchars(
-                    __(
-                        'Do you have a moment to share why you are deactivating Event Espresso?',
-                        'event_espresso'
-                    ),
-                    ENT_NOQUOTES
-                ),
-                'doSurveyButtonText' => htmlspecialchars(
-                    __(
-                        'Sure I\'ll help',
-                        'event_espresso'
-                    ),
-                    ENT_NOQUOTES
-                ),
-                'skipButtonText' => htmlspecialchars(
-                    __(
-                        'Skip',
-                        'event_espresso'
-                    ),
-                    ENT_NOQUOTES
-                )
-            )
-        );
-        $this->assets_registry->addData(
-            'exitModalInfo',
-            array(
-                'firstname' => htmlspecialchars($current_user->user_firstname),
-                'emailaddress' => htmlspecialchars($current_user->user_email),
-                'website' => htmlspecialchars(site_url()),
-                'isModalActive' => $this->isModalActive()
-            )
-        );
-
-        wp_enqueue_script('ee-wp-plugins-page');
-        wp_enqueue_style('ee-wp-plugins-page');
+        $query_args = [
+            'emailAddress' => htmlspecialchars($current_user->user_email),
+            'website' => htmlspecialchars(site_url()),
+            ];
+        // add user's first name if one exists
+        $first_name = $current_user->user_firstname;
+        if ($first_name) {
+            $query_args['firstName'] = htmlspecialchars($first_name);
+        }
+        return [
+            'isModalActive' => $this->isModalActive(),
+            'typeFormUrl' => add_query_arg($query_args, ExitModal::TYPE_FORM_URL)
+        ];
     }
 
 
@@ -107,5 +62,20 @@ class ExitModal
             ),
             FILTER_VALIDATE_BOOLEAN
         );
+    }
+
+
+    /**
+     * @deprecated $VID:$
+     */
+    public function modalContainer()
+    {
+    }
+
+    /**
+     * @deprecated $VID:$
+     */
+    public function enqueues()
+    {
     }
 }

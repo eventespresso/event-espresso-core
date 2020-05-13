@@ -18,7 +18,9 @@ use EventEspresso\core\services\collections\DuplicateCollectionIdentifierExcepti
  */
 class EspressoEditorAssetManager extends ReactAssetManager
 {
+
     const JS_HANDLE_EDITOR = 'eventespresso-editor';
+
     const CSS_HANDLE_EDITOR = 'eventespresso-editor';
 
     /**
@@ -50,8 +52,8 @@ class EspressoEditorAssetManager extends ReactAssetManager
             [
                 ReactAssetManager::JS_HANDLE_REACT,
                 ReactAssetManager::JS_HANDLE_REACT_DOM,
-                'wp-i18n',
                 CoreAssetManager::JS_HANDLE_JS_CORE,
+                'wp-i18n',
             ]
             )->setRequiresTranslation();
         }

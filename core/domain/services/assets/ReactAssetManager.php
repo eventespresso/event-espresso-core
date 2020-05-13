@@ -19,6 +19,7 @@ use EventEspresso\core\services\collections\DuplicateCollectionIdentifierExcepti
  */
 class ReactAssetManager extends AssetManager
 {
+
     const REACT_VERSION = '16.13.1';
 
     const JS_HANDLE_REACT = 'react';

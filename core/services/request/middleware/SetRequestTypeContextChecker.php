@@ -46,8 +46,9 @@ class SetRequestTypeContextChecker extends Middleware
                 )
             )
         );
-        $request_type_context          = $request_type_context_detector->detectRequestTypeContext();
-        $request_type_context_checker  = $this->loader->getShared(
+        $request_type_context = $request_type_context_detector->detectRequestTypeContext();
+        $request_type_context->setIsUnitTesting(defined('EE_TESTS_DIR'));
+        $request_type_context_checker = $this->loader->getShared(
             'EventEspresso\core\domain\services\contexts\RequestTypeContextChecker',
             array($request_type_context)
         );

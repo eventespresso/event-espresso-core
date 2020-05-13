@@ -3,7 +3,7 @@
 namespace EventEspresso\tests\testcases\core\services\request\files;
 
 use EventEspresso\core\services\request\files\FileSubmission;
-use PHPUnit_Framework_TestCase;
+use EventEspresso\tests\includes\EspressoPHPUnitFrameworkTestCase;
 
 /**
  * Class FileSubmissionTest
@@ -16,7 +16,7 @@ use PHPUnit_Framework_TestCase;
  * @group current
  *
  */
-class FileSubmissionTest extends PHPUnit_Framework_TestCase
+class FileSubmissionTest extends EspressoPHPUnitFrameworkTestCase
 {
     public function testEverythingOk()
     {

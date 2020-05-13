@@ -1,5 +1,4 @@
 <?php
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
 
 use EventEspresso\tests\includes\EeAddonTestCase;
 

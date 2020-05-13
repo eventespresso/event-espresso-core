@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\tests;
+namespace EventEspresso\tests\testcases\core\domain\values\assets;
 
 use EventEspresso\core\domain\DomainInterface;
 use EventEspresso\core\domain\values\assets\JavascriptAsset;
@@ -8,7 +8,7 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidFilePathException;
 use EventEspresso\tests\mocks\core\domain\DomainMock;
 use InvalidArgumentException;
-use PHPUnit_Framework_TestCase;
+use EventEspresso\tests\includes\EspressoPHPUnitFrameworkTestCase;
 
 /**
  * JavascriptAssetTest
@@ -18,7 +18,7 @@ use PHPUnit_Framework_TestCase;
  * @author  Darren Ethier
  * @since   4.9.70.p
  */
-class JavascriptAssetTest extends PHPUnit_Framework_TestCase
+class JavascriptAssetTest extends EspressoPHPUnitFrameworkTestCase
 {
 
     /**

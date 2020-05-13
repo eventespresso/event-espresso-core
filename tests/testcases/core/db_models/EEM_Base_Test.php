@@ -68,6 +68,7 @@ class EEM_Base_Test extends EE_UnitTestCase
     {
         foreach (EE_Registry::instance()->non_abstract_db_models as $model) {
             $model_instance = EE_Registry::instance()->load_model($model);
+            $this->assertInstanceOf('EEM_Base', $model_instance);
             foreach ($model_instance->get_tables() as $table_alias => $table_obj) {
                 $this->assertTableExists($table_obj->get_table_name(), $model);
             }

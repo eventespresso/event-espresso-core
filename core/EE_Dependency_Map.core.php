@@ -1009,6 +1009,12 @@ class EE_Dependency_Map
             'EventEspresso\core\services\graphql\DataLoaderManager' => [
                 'EventEspresso\core\services\graphql\loaders\DataLoaderCollection' => EE_Dependency_Map::load_from_cache,
             ],
+            'EventEspresso\core\services\route_match\RouteHandler' => [
+                'EventEspresso\core\services\loaders\Loader'                             => EE_Dependency_Map::load_from_cache,
+                'EE_Maintenance_Mode'                                                    => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\request\Request'                            => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\route_match\RouteMatchSpecificationManager' => EE_Dependency_Map::load_from_cache,
+            ],
         );
     }
 
