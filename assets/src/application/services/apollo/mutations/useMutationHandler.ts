@@ -75,7 +75,7 @@ const useMutationHandler: MutationHandler = (getMutationOptions) => {
 				const key = getToasterKey(mutationType);
 				const message = getToasterMessage(mutationType);
 
-				toaster.loading({ key, message });
+				toaster.loading({ autoClose: false, key, message });
 
 				updateResult({
 					loading: true,
@@ -93,9 +93,11 @@ const useMutationHandler: MutationHandler = (getMutationOptions) => {
 				onCompleted: OnMutationCompletedFn,
 				mutationType: MutationType
 			): void => {
-				toaster.dismiss(getToasterKey(mutationType));
+				const key = getToasterKey(mutationType);
+
 				const successMessage = `successfully ${getToasterMessage(mutationType, 'ed')}`;
-				toaster.success({ message: successMessage });
+				toaster.update({ key, message: successMessage, type: 'success' });
+
 				const { data, errors } = response;
 				const error = errors && errors.length > 0 ? new ApolloError({ graphQLErrors: errors }) : undefined;
 

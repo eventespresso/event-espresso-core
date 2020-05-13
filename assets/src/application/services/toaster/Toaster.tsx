@@ -1,11 +1,12 @@
 import React from 'react';
 
+import toasterIcons from './toasterIcons';
 import { ToasterProps } from './types';
 
-const Toaster: React.FC<ToasterProps> = ({ icon, message = 'loading...' }) => {
+const Toaster: React.FC<ToasterProps> = ({ message = 'loading...', type }) => {
 	return (
 		<div className='ee-toaster-notice__toast-body'>
-			{icon && icon}
+			{toasterIcons[type]}
 			{message}
 		</div>
 	);

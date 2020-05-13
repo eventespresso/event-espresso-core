@@ -26,6 +26,7 @@
 			&__toast-body {
 				display: flex;
 				align-items: center;
+
 				svg {
 					display: inline-flex;
 					margin: 0 var(--ee-margin-smaller) 0 0;
@@ -34,6 +35,10 @@
 					}
 				}
 			}
+		}
+
+		.Toastify__close-button {
+			color: var(--ee-default-text-color);
 		}
 	}
 
