@@ -2,6 +2,7 @@ import React from 'react';
 
 import { Select, SelectProps } from '@infraUI/inputs';
 import { PerPageProps } from './types';
+import './style.scss';
 
 const calculatePageNumber = (newPerPage: number, prevPerPage: number, total: number): number => {
 	const perPage = typeof newPerPage === 'undefined' ? prevPerPage : newPerPage;
@@ -27,7 +28,7 @@ const PerPage: React.FC<PerPageProps> = ({ locale, onChangePerPage, pageNumber, 
 	};
 
 	return (
-		<Select onChangeValue={changePerPage} value={perPage} variant='unstyled'>
+		<Select className='ee-pagination__per-page' onChangeValue={changePerPage} value={perPage} variant='unstyled'>
 			{perPageOptions.map((opt, i) => (
 				<option key={i} value={opt}>
 					{buildOptionText(opt)}

@@ -31,7 +31,7 @@ const AssignTicketsButton: React.FC<EntityListItemProps<Datetime>> = React.memo(
 
 	return (
 		<>
-			<ItemCount count={count} title={title} zeroCountChar='!' emphasizeZero>
+			<ItemCount count={count} emphasizeZero title={title} zeroCountChar='!'>
 				<IconButton icon={Ticket} tooltip={__('assign tickets')} tooltipProps={tooltipProps} onClick={onOpen} />
 			</ItemCount>
 			<ModalContainer assignmentType='forDate' entity={entity} {...disclosure} />

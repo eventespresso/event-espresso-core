@@ -21,13 +21,11 @@ export const isTicketField = (_, field): boolean => includes(field, TICKET_FIELD
 
 export const isTicketInputField = (_, field): boolean => includes(field, TICKET_INPUT_FIELDS);
 
-export const updateTicketPrice = (amount: number): ((obj: Ticket) => Record<keyof Ticket, number> & Ticket) => {
+export const updateTicketPrice = (amount: number): ((obj: Ticket) => Ticket) => {
 	return assoc<number, keyof Ticket>('price', amount);
 };
 
-export const updateReverseCalculate = (
-	reverseCalculate: boolean
-): ((obj: Ticket) => Record<keyof Ticket, boolean> & Ticket) => {
+export const updateReverseCalculate = (reverseCalculate: boolean): ((obj: Ticket) => Ticket) => {
 	return assoc<boolean, keyof Ticket>('reverseCalculate', reverseCalculate);
 };
 

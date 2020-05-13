@@ -32,7 +32,7 @@ const AssignDatesButton: React.FC<EntityListItemProps<Ticket>> = React.memo(({ e
 
 	return (
 		<>
-			<ItemCount count={count} title={title} zeroCountChar='!' emphasizeZero>
+			<ItemCount count={count} emphasizeZero title={title} zeroCountChar='!'>
 				<IconButton
 					icon={Calendar}
 					tooltip={__('assign dates')}

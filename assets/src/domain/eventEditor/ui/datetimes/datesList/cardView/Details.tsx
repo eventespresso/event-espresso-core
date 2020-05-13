@@ -2,11 +2,12 @@ import React from 'react';
 import { __ } from '@wordpress/i18n';
 
 import DateDetailsPanel from './DateDetailsPanel';
-import { getPropsAreEqual } from '@appServices/utilities';
 import { EditableDesc, EditableName } from '../editable';
+import { getPropsAreEqual } from '@appServices/utilities';
+
 import type { DateItemProps } from '../types';
 
-const Details: React.FC<DateItemProps> = ({entity: datetime }) => {
+const Details: React.FC<DateItemProps> = ({ entity: datetime }) => {
 	return (
 		<>
 			<EditableName className={'entity-card-details__name'} entity={datetime} />

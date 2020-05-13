@@ -18,6 +18,20 @@
 		box-sizing: border-box;
 		padding: 0;
 		min-width: var(--ee-sidebar-width);
+
+		.ee-biggie-calendar-date__footer {
+			font-size: var(--ee-font-size-default);
+			font-weight: bolder;
+			letter-spacing: 1px;
+			text-transform: uppercase;
+		}
+
+		.ee-calendar-date-range {
+			.ee-mcd__year,
+			.ee-mcd__time {
+				font-size: var(--ee-font-size-micro);
+			}
+		}
 	}
 
 	&__details-wrapper {
@@ -78,14 +92,21 @@
 			}
 
 			&__price {
-				text-align: center;
+				align-items: center;
+				display: flex;
+				justify-content: center;
 				margin: 0 0 var(--ee-margin-smaller);
+				text-align: center;
 				width: 100%;
 
-				> span {
+				span {
 					color: var(--ee-default-text-color-super-low-contrast);
 					font-size: var(--ee-font-size-bigger);
 					font-weight: bolder;
+
+					&.ee-currency-input__before-amount {
+						padding-bottom: 2px; // added for vertical alignment
+					}
 				}
 			}
 		}

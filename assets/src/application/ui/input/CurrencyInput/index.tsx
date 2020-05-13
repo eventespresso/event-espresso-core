@@ -40,7 +40,13 @@ const CurrencyInput: React.FC<CurrencyInputProps> = ({
 	return (
 		<Wrapper className={'ee-currency-input'} {...wrapperProps}>
 			{before}
-			<InlineEditText as='span' key={id} onChangeValue={onChangeHandler} value={formattedAmount} />
+			<InlineEditText
+				as='span'
+				fitText={false}
+				key={id}
+				onChangeValue={onChangeHandler}
+				value={formattedAmount}
+			/>
 			{after}
 		</Wrapper>
 	);
