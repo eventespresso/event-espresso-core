@@ -1,5 +1,7 @@
 // Format patterns
-
+/**
+ * @link https://date-fns.org/v2.9.0/docs/format#description
+ */
 export const DAY_ONLY_FORMAT = 'd'; // 1 - 31
 export const DAY_ONLY_SHORT_FORMAT = 'dd'; // 01 - 31
 
@@ -15,11 +17,13 @@ export const YEAR_ONLY_SHORT_FORMAT = 'yy'; // 20
 export const YEAR_ONLY_LONG_FORMAT = 'yyyy'; // 2020
 
 // Full date format
+/**
+ * @link https://momentjs.com/docs/#/displaying/format/
+ */
+export const MOMENT_DATE_FORMAT = 'YYYY-MM-DD'; // 2020-12-31
+export const MOMENT_TIME_FORMAT = 'HH:mm:ss'; // 23:59:59
 
-export const CONVERT_TO_MOMENT_DATE_FORMAT = 'yyyy-MM-dd';
-export const CONVERT_TO_MOMENT_TIME_FORMAT = 'HH:mm:ss';
-
-export const DEFAULT_DATE_FORMAT = 'yyyy-MM-ee'; // 2020-12-31
+export const DEFAULT_DATE_FORMAT = 'yyyy-MM-dd'; // 2020-12-31
 export const DEFAULT_TIME_FORMAT = 'HH:mm:ss'; // 23:59:59
 
 export const ENTITY_LIST_DATE_TIME_FORMAT = 'EEE MMM yy h:mm a'; // Fri Feb 21 9:00 AM
