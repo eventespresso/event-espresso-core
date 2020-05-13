@@ -30,13 +30,20 @@ class DefaultPrices implements DefaultEntityGeneratorInterface
      */
     protected $price_model;
 
+    /**
+     * @var EEM_Price_Type $price_type_model
+     */
+    protected $price_type_model;
+
 
     /**
      * @param EEM_Price      $price_model
+     * @param EEM_Price_Type $price_type_model
      */
-    public function __construct(EEM_Price $price_model)
+    public function __construct(EEM_Price $price_model, EEM_Price_Type $price_type_model)
     {
         $this->price_model = $price_model;
+        $this->price_type_model = $price_type_model;
     }
 
 
@@ -89,20 +96,20 @@ class DefaultPrices implements DefaultEntityGeneratorInterface
     protected function createNewBasePrice(EE_Ticket $ticket)
     {
         $new_base_price = $this->price_model->get_new_price();
-        $base_price = $this->price_model->get_one([
+        $base_price_type = $this->price_type_model->get_one([
             [
-                'PRT_ID' => EEM_Price_Type::base_type_base_price
+                'PBT_ID' => EEM_Price_Type::base_type_base_price
             ]
         ]);
-        if (! $base_price instanceof EE_Price) {
+        if (! $base_price_type instanceof EE_Price_Type) {
             throw new RuntimeException(
                 esc_html__(
-                    'A valid base price could not be retrieved from the database.',
+                    'A valid base price type could not be retrieved from the database.',
                     'event_espresso'
                 )
             );
         }
-        $new_base_price->set('PRT_ID', EEM_Price_Type::base_type_base_price);
+        $new_base_price->set('PRT_ID', $base_price_type->ID());
         $new_base_price->set('PRC_is_default', false);
         $new_base_price->save();
         $new_base_price->_add_relation_to($ticket, 'Ticket');
