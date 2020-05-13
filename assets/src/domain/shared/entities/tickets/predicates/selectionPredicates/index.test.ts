@@ -1,7 +1,5 @@
 import { last, omit } from 'ramda';
 
-import { Ticket } from '@edtrServices/apollo';
-
 import {
 	isTicketField,
 	updateTicketPrice,
@@ -34,7 +32,7 @@ describe('updateTicketPrice', () => {
 	it('should return ticket with updated price based on provided amount', () => {
 		[Infinity, -100, 0, 100].forEach((amount) => {
 			tickets.forEach((ticket) => {
-				const updatedTicket: Ticket = updateTicketPrice(amount)(ticket);
+				const updatedTicket = updateTicketPrice(amount)(ticket);
 				expect(updatedTicket.price).toBe(amount);
 			});
 		});
@@ -45,7 +43,7 @@ describe('updateReverseCalculate', () => {
 	it('should return ticket with updated reverseCalculate based on provided boolean', () => {
 		[true, false].forEach((reverseCalculate) => {
 			tickets.forEach((ticket) => {
-				const updatedTicket: Ticket = updateReverseCalculate(reverseCalculate)(ticket);
+				const updatedTicket = updateReverseCalculate(reverseCalculate)(ticket);
 				expect(updatedTicket.reverseCalculate).toBe(reverseCalculate);
 			});
 		});
