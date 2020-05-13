@@ -75,6 +75,8 @@ const useMutationHandler: MutationHandler = (getMutationOptions) => {
 				const key = getToasterKey(mutationType);
 				const message = getToasterMessage(mutationType);
 
+				console.log({ key });
+
 				toaster.loading({ key, message });
 
 				updateResult({

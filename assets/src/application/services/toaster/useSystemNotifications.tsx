@@ -42,6 +42,7 @@ const useSystemNotifications = (): SystemNotificationsToaster => {
 		const icon = <Spinner className='ee-loading-spinner' color={colors.cyan['500']} fontSize={fontSize} />;
 
 		toast(<Toaster icon={icon} message={message} />, {
+			autoClose: false,
 			className,
 			position,
 			toastId,
@@ -60,7 +61,7 @@ const useSystemNotifications = (): SystemNotificationsToaster => {
 
 	const update: UpdateToast = useCallback(({ message, toastId, type }) => {
 		const icon = <Check color={colors.green['500']} fontSize={fontSize} />;
-
+		console.log(toastId);
 		const render = (): JSX.Element => <Toaster icon={icon} message={message} />;
 		// const render = 'New content';
 
