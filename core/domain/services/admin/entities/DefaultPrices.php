@@ -82,6 +82,11 @@ class DefaultPrices implements DefaultEntityGeneratorInterface
             $new_base_price = $this->createNewBasePrice($entity);
             $new_prices[ $new_base_price->ID() ] = $new_base_price;
         }
+        $ticket_total = $entity->get_ticket_total_with_taxes(true);
+        if ($ticket_total !== $entity->ticket_price()) {
+            $entity->set_price($ticket_total);
+            $entity->save();
+        }
         return $new_prices;
     }
 
