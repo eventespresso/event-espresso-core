@@ -42,7 +42,8 @@ const useDataReducer = (initializer: StateInitializer): DataStateReducer => {
 				newPrices = newPrices.map((newPrice, index) => {
 					// order of base price is <= 1
 					if (!newPrice.isBasePrice) {
-						newPrice.order = (index + 1) * 10; // steps of 10, +1 to avoid 0 order
+						const order = (index + 1) * 10; // steps of 10, +1 to avoid 0 order
+						return { ...newPrice, order };
 					}
 					return newPrice;
 				});
