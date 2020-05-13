@@ -52,7 +52,8 @@ describe('TPC:data.addPrice', () => {
 
 		const lastPrice = last(result.current.dataState.getData().prices);
 
-		expect(newPrice).toEqual(lastPrice);
+		// use the updated order from added price
+		expect({ ...newPrice, order: lastPrice.order }).toEqual(lastPrice);
 	});
 
 	it('adds a price at a specific index of the price list', async () => {
@@ -94,6 +95,7 @@ describe('TPC:data.addPrice', () => {
 
 		const priceAtIndex1 = result.current.dataState.getData().prices[1];
 
-		expect(newPrice).toEqual(priceAtIndex1);
+		// use the updated order from added price
+		expect({ ...newPrice, order: priceAtIndex1.order }).toEqual(priceAtIndex1);
 	});
 });
