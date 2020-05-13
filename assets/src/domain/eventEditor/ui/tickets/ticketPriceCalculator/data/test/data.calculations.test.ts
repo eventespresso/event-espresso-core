@@ -9,6 +9,7 @@ import defaultPrice from '../../defaultPriceModifier';
 import TestWrapper from './TestWrapper';
 import { getBasePrice } from '@sharedEntities/prices/predicates/selectionPredicates';
 import { calculateBasePrice, calculateTicketTotal } from '../../utils';
+import { useMoneyDisplay } from '@application/services';
 
 const timeout = 5000; // milliseconds
 describe('TPC:data.calculations', () => {
@@ -80,6 +81,7 @@ describe('TPC:data.calculations', () => {
 				return {
 					dataState: useDataState(),
 					baseType: usePriceTypeForPrice(defaultPriceModifier.id),
+					moneyDisplay: useMoneyDisplay(),
 					defaultPriceModifier,
 				};
 			},
@@ -132,7 +134,7 @@ describe('TPC:data.calculations', () => {
 		expect(basePriceBefore.amount).not.toEqual(basePriceAfter.amount);
 
 		// calculate the expected base price
-		const newPrices = calculateBasePrice(result.current.dataState.getData());
+		const newPrices = calculateBasePrice(result.current.dataState.getData(), result.current.moneyDisplay.formatAmount);
 		const calculatedBasePrice = getBasePrice(newPrices);
 
 		expect(calculatedBasePrice.amount).toEqual(basePriceAfter.amount);
@@ -186,7 +188,10 @@ describe('TPC:data.calculations', () => {
 	it('updates the amount of an existing price to reflect the change in base price when reverseCalculate is true', async () => {
 		const { result, waitForNextUpdate } = renderHook(
 			() => {
-				return useDataState();
+				return {
+					dataState: useDataState(),
+					moneyDisplay: useMoneyDisplay(),
+				};
 			},
 			{
 				wrapper: TestWrapper,
@@ -196,32 +201,32 @@ describe('TPC:data.calculations', () => {
 		await waitForNextUpdate({ timeout });
 
 		// Make sure the state is properly set before moving ahead
-		act(() => result.current.reset());
+		act(() => result.current.dataState.reset());
 
 		// Make sure reverseCalculate is true
-		if (!result.current.reverseCalculate) {
-			act(() => result.current.toggleCalcDir());
+		if (!result.current.dataState.reverseCalculate) {
+			act(() => result.current.dataState.toggleCalcDir());
 		}
 
-		const lastPrice = last(result.current.getData().prices);
+		const lastPrice = last(result.current.dataState.getData().prices);
 
-		const basePriceBefore = getBasePrice(result.current.getData().prices);
-		const ticketTotalBefore = result.current.getData().ticket.price;
+		const basePriceBefore = getBasePrice(result.current.dataState.getData().prices);
+		const ticketTotalBefore = result.current.dataState.getData().ticket.price;
 
 		act(() => {
 			// Update the price amount of last price (non-base)
-			result.current.updatePrice({ id: lastPrice.id, fieldValues: { amount: 6.5 } });
+			result.current.dataState.updatePrice({ id: lastPrice.id, fieldValues: { amount: 6.5 } });
 		});
 
-		const basePriceAfter = getBasePrice(result.current.getData().prices);
-		const ticketTotalAfter = result.current.getData().ticket.price;
+		const basePriceAfter = getBasePrice(result.current.dataState.getData().prices);
+		const ticketTotalAfter = result.current.dataState.getData().ticket.price;
 
 		expect(ticketTotalBefore).toEqual(ticketTotalAfter);
 		// base price must have changed
 		expect(basePriceBefore.amount).not.toEqual(basePriceAfter.amount);
 
 		// calculate the expected base price
-		const newPrices = calculateBasePrice(result.current.getData());
+		const newPrices = calculateBasePrice(result.current.dataState.getData(), result.current.moneyDisplay.formatAmount);
 		const calculatedBasePrice = getBasePrice(newPrices);
 
 		expect(calculatedBasePrice.amount).toEqual(basePriceAfter.amount);
@@ -230,7 +235,10 @@ describe('TPC:data.calculations', () => {
 	it('updates the ticket total to reflect the change in base price when reverseCalculate is true', async () => {
 		const { result, waitForNextUpdate } = renderHook(
 			() => {
-				return useDataState();
+				return {
+					dataState: useDataState(),
+					moneyDisplay: useMoneyDisplay(),
+				};
 			},
 			{
 				wrapper: TestWrapper,
@@ -240,33 +248,33 @@ describe('TPC:data.calculations', () => {
 		await waitForNextUpdate({ timeout });
 
 		// Make sure the state is properly set before moving ahead
-		act(() => result.current.reset());
+		act(() => result.current.dataState.reset());
 
 		// Make sure reverseCalculate is true
-		if (!result.current.reverseCalculate) {
-			act(() => result.current.toggleCalcDir());
+		if (!result.current.dataState.reverseCalculate) {
+			act(() => result.current.dataState.toggleCalcDir());
 		}
 
-		const lastPrice = last(result.current.getData().prices);
+		const lastPrice = last(result.current.dataState.getData().prices);
 
-		const basePriceBefore = getBasePrice(result.current.getData().prices);
+		const basePriceBefore = getBasePrice(result.current.dataState.getData().prices);
 
 		act(() => {
 			// Update the price amount of last price (non-base)
-			result.current.updatePrice({ id: lastPrice.id, fieldValues: { amount: 6.5 } });
+			result.current.dataState.updatePrice({ id: lastPrice.id, fieldValues: { amount: 6.5 } });
 			// Also change the ticket total
-			result.current.updateTicketPrice(52);
+			result.current.dataState.updateTicketPrice(52);
 		});
 
-		const basePriceAfter = getBasePrice(result.current.getData().prices);
-		const ticketTotalAfter = result.current.getData().ticket.price;
+		const basePriceAfter = getBasePrice(result.current.dataState.getData().prices);
+		const ticketTotalAfter = result.current.dataState.getData().ticket.price;
 
 		expect(ticketTotalAfter).toEqual(52);
 		// base price must have changed
 		expect(basePriceBefore.amount).not.toEqual(basePriceAfter.amount);
 
 		// calculate the expected base price
-		const newPrices = calculateBasePrice(result.current.getData());
+		const newPrices = calculateBasePrice(result.current.dataState.getData(), result.current.moneyDisplay.formatAmount);
 		const calculatedBasePrice = getBasePrice(newPrices);
 
 		expect(calculatedBasePrice.amount).toEqual(basePriceAfter.amount);
@@ -319,7 +327,10 @@ describe('TPC:data.calculations', () => {
 	it('updates the priceType of an existing price to reflect the change in base price when reverseCalculate is true', async () => {
 		const { result, waitForNextUpdate } = renderHook(
 			() => {
-				return useDataState();
+				return {
+					dataState: useDataState(),
+					moneyDisplay: useMoneyDisplay(),
+				};
 			},
 			{
 				wrapper: TestWrapper,
@@ -329,25 +340,25 @@ describe('TPC:data.calculations', () => {
 		await waitForNextUpdate({ timeout });
 
 		// Make sure the state is properly set before moving ahead
-		act(() => result.current.reset());
+		act(() => result.current.dataState.reset());
 
 		// Make sure reverseCalculate is true
-		if (!result.current.reverseCalculate) {
-			act(() => result.current.toggleCalcDir());
+		if (!result.current.dataState.reverseCalculate) {
+			act(() => result.current.dataState.toggleCalcDir());
 		}
 
-		const lastPrice = last(result.current.getData().prices);
+		const lastPrice = last(result.current.dataState.getData().prices);
 
-		const basePriceBefore = getBasePrice(result.current.getData().prices);
-		const ticketTotalBefore = result.current.getData().ticket.price;
+		const basePriceBefore = getBasePrice(result.current.dataState.getData().prices);
+		const ticketTotalBefore = result.current.dataState.getData().ticket.price;
 
 		act(() => {
 			// Update the priceType
-			result.current.updatePrice({ id: lastPrice.id, fieldValues: { priceType: 'abc' } });
+			result.current.dataState.updatePrice({ id: lastPrice.id, fieldValues: { priceType: 'abc' } });
 		});
 
-		const basePriceAfter = getBasePrice(result.current.getData().prices);
-		const ticketTotalAfter = result.current.getData().ticket.price;
+		const basePriceAfter = getBasePrice(result.current.dataState.getData().prices);
+		const ticketTotalAfter = result.current.dataState.getData().ticket.price;
 
 		// No change in ticket total
 		expect(ticketTotalBefore).toEqual(ticketTotalAfter);
@@ -355,7 +366,7 @@ describe('TPC:data.calculations', () => {
 		expect(basePriceBefore.amount).not.toEqual(basePriceAfter.amount);
 
 		// calculate the expected base price
-		const newPrices = calculateBasePrice(result.current.getData());
+		const newPrices = calculateBasePrice(result.current.dataState.getData(), result.current.moneyDisplay.formatAmount);
 		const calculatedBasePrice = getBasePrice(newPrices);
 
 		expect(calculatedBasePrice.amount).toEqual(basePriceAfter.amount);
