@@ -2,7 +2,7 @@ import React, { CSSProperties, useEffect } from 'react';
 import { __ } from '@wordpress/i18n';
 import { FormRenderProps } from 'react-final-form';
 
-import Steps from './Steps';
+import AddNewTicketSteps from './AddNewTicketSteps';
 import { usePrevNext } from '@appServices/hooks';
 import { Button } from '@infraUI/inputs';
 import { TicketAssignmentsManager } from '@edtrUI/ticketAssignmentsManager/components';
@@ -38,20 +38,20 @@ const ModalBody: React.FC<FormRenderProps> = ({
 
 	return (
 		<div>
-			<Steps current={current} />
-			{/* RFF fields */}
-			{current === 0 && children}
-			{current === 1 && <TicketAssignmentsManager />}
-			<div style={buttonRowStyle}>
-				{current === 0 && (
-					<Button buttonText={__('Save and assign dates')} onClick={next} isDisabled={isSaveDisabled} />
-				)}
-				{current === 1 && (
+			<AddNewTicketSteps current={ current } />
+			{/* RFF fields */ }
+			{ current === 0 && children }
+			{ current === 1 && <TicketAssignmentsManager /> }
+			<div style={ buttonRowStyle }>
+				{ current === 0 && (
+					<Button buttonText={ __('Save and assign dates') } onClick={ next } isDisabled={ isSaveDisabled } />
+				) }
+				{ current === 1 && (
 					<>
-						<Button buttonText={__('Previous')} onClick={prev} />
-						<Button buttonText={__('Submit')} onClick={submit} isDisabled={isSubmitDisabled} />
+						<Button buttonText={ __('Previous') } onClick={ prev } />
+						<Button buttonText={ __('Submit') } onClick={ submit } isDisabled={ isSubmitDisabled } />
 					</>
-				)}
+				) }
 			</div>
 		</div>
 	);
