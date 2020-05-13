@@ -2,7 +2,7 @@ import React from 'react';
 import { __ } from '@wordpress/i18n';
 import { useDisclosure } from '@chakra-ui/core';
 
-import { Calendar } from '@appDisplay/icons';
+import { Ticket } from '@appDisplay/icons';
 import { Button } from '@appInputs/index';
 import AddNewDateModal from './addNew/Modal';
 
@@ -11,8 +11,8 @@ const AddNewTicketButton: React.FC = () => {
 
 	return (
 		<>
-			<Button buttonText={__('Add New Ticket')} icon={Calendar} onClick={onAddNew} />
-			<AddNewDateModal isOpen={isOpen} onClose={onClose} />
+			<Button buttonText={ __('Add New Ticket') } icon={ Ticket } onClick={ onAddNew } />
+			<AddNewDateModal isOpen={ isOpen } onClose={ onClose } />
 		</>
 	);
 };
