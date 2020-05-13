@@ -11,7 +11,7 @@ const Preview: React.FC<InlineEditPreviewProps> = ({ fitText, isEditing, onReque
 		return null;
 	}
 
-	if (value.length > 40) {
+	if (value.length > 30) {
 		return (
 			<Dotdotdot clamp={2}>
 				<span onClick={onRequestEdit}>{value}</span>
@@ -23,7 +23,7 @@ const Preview: React.FC<InlineEditPreviewProps> = ({ fitText, isEditing, onReque
 		return (
 			<Textfit
 				max={24} // based on --ee-font-size-bigger: 1.5rem;
-				min={12}
+				min={18}
 				mode='single'
 			>
 				<span onClick={onRequestEdit}>{value}</span>
