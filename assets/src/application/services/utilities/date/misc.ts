@@ -1,7 +1,7 @@
 import { setHours, setMinutes, setSeconds, setYear, setMonth, setDate } from 'date-fns';
 
 /**
- * Sets the time of the date oject to zero hour
+ * Sets the time of the date object to zero hour
  */
 export const setTimeToZeroHour = (date: Date): Date => setSeconds(setMinutes(setHours(date, 0), 0), 0);
 
