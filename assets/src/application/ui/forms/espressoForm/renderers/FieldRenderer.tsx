@@ -19,7 +19,11 @@ const FieldRenderer: React.FC<FieldRendererProps> = (props) => {
 
 	const tooltipKey = info ? props.input.name + '-tooltip' : null;
 
-	const errorMessage = meta.touched && (meta.error || meta.submitError);
+	const isDateOrTimePicker = ['datepicker', 'timepicker'].includes(props.fieldType);
+
+	// since we don't have access to focus event of pickers' input, it will never be touched
+	// we still need to be able to show validation error message
+	const errorMessage = (meta.touched || isDateOrTimePicker) && (meta.error || meta.submitError);
 
 	return (
 		<FormControl

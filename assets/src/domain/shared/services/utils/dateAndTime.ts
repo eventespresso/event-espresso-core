@@ -1,6 +1,6 @@
 import {
-	CONVERT_TO_MOMENT_DATE_FORMAT,
-	CONVERT_TO_MOMENT_TIME_FORMAT,
+	MOMENT_DATE_FORMAT,
+	MOMENT_TIME_FORMAT,
 	DEFAULT_DATE_FORMAT,
 	DEFAULT_TIME_FORMAT,
 } from '@appConstants/dateFnsFormats';
@@ -26,7 +26,7 @@ type ProcessDateAndTime = (
 
 export const processDateAndTime: ProcessDateAndTime = (dateTime, siteTimeToUtc, backupDate = new Date()) => {
 	let startDate: string, endDate: string;
-	const formatStr = `${CONVERT_TO_MOMENT_DATE_FORMAT} ${CONVERT_TO_MOMENT_TIME_FORMAT}`;
+	const formatStr = `${DEFAULT_DATE_FORMAT} ${DEFAULT_TIME_FORMAT}`;
 
 	if (dateTime.startDate && dateTime.startTime) {
 		const startDateStr = `${format(dateTime.startDate as Date, DEFAULT_DATE_FORMAT)} ${format(
@@ -54,10 +54,10 @@ const transformDateTime = (value: any, originalValue: any, format: string): Date
 	return validValue instanceof Date ? validValue : parse(validValue, format, new Date());
 };
 const transformDate = (value: any, originalValue: any): Date => {
-	return transformDateTime(value, originalValue, CONVERT_TO_MOMENT_DATE_FORMAT);
+	return transformDateTime(value, originalValue, MOMENT_DATE_FORMAT);
 };
 const transformTime = (value: any, originalValue: any): Date => {
-	return transformDateTime(value, originalValue, CONVERT_TO_MOMENT_TIME_FORMAT);
+	return transformDateTime(value, originalValue, MOMENT_TIME_FORMAT);
 };
 
 export const dateAndTimeSchema = yup.object({

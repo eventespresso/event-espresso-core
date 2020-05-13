@@ -14,6 +14,7 @@ import { validate } from './formValidation';
 import { TicketFormShape } from './types';
 import { useTimeZoneTime } from '@appServices/hooks';
 import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '@sharedConstants/defaultDates';
+import { setDateToToday, setTimeToZeroHour } from '@appServices/utilities/date';
 
 type TicketFormConfig = EspressoFormProps<TicketFormShape>;
 
@@ -60,10 +61,16 @@ const useTicketFormConfig = (id: EntityId, config?: EspressoFormProps): TicketFo
 	const initialValues: TicketFormShape = {
 		...pick<Omit<Partial<Ticket>, 'prices'>, keyof Ticket>(FIELD_NAMES, restProps),
 		dateTime: {
-			startDate: startDate,
-			startTime: startDate,
-			endDate: endDate,
-			endTime: endDate,
+			/**
+			 * for validations, we need to make
+			 * - time same for dates
+			 * - date same for times
+			 * ¯\_(ツ)_/¯
+			 */
+			startDate: setTimeToZeroHour(startDate),
+			startTime: setDateToToday(startDate),
+			endDate: setTimeToZeroHour(endDate),
+			endTime: setDateToToday(endDate),
 		},
 	};
 
