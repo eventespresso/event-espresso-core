@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 
 import { Check, CloseCircleOutlined, InfoCircleOutlined, Spinner } from '@appDisplay/icons/svgs';
 
-import { DissmissToast, SystemNotificationsToaster, ToastProps } from './types';
+import { DissmissToast, SystemNotificationsToaster, ToastProps, UpdateToast } from './types';
 import Toaster from './Toaster';
 
 const { colors } = theme;
@@ -15,6 +15,7 @@ const fontSize = '1.2rem';
 
 const useSystemNotifications = (): SystemNotificationsToaster => {
 	const dismiss: DissmissToast = useCallback((toastId) => toast.dismiss(toastId), []);
+
 	const dissmissAll = (): void => {
 		toast.dismiss();
 	};
@@ -57,6 +58,15 @@ const useSystemNotifications = (): SystemNotificationsToaster => {
 		});
 	}, []);
 
+	const update: UpdateToast = useCallback(({ message, toastId, type }) => {
+		const icon = <Check color={colors.green['500']} fontSize={fontSize} />;
+
+		const render = (): JSX.Element => <Toaster icon={icon} message={message} />;
+		// const render = 'New content';
+
+		toast.update(toastId, { autoClose: 5000, render, type });
+	}, []);
+
 	const warning = useCallback(({ message }): void => {
 		const icon = <InfoCircleOutlined color={colors.orange[500]} fontSize={fontSize} />;
 
@@ -73,6 +83,7 @@ const useSystemNotifications = (): SystemNotificationsToaster => {
 		info,
 		loading,
 		success,
+		update,
 		warning,
 	};
 };

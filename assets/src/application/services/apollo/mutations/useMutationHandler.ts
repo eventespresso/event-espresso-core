@@ -93,9 +93,13 @@ const useMutationHandler: MutationHandler = (getMutationOptions) => {
 				onCompleted: OnMutationCompletedFn,
 				mutationType: MutationType
 			): void => {
-				toaster.dismiss(getToasterKey(mutationType));
+				const toastId = getToasterKey(mutationType);
+
+				// toaster.dismiss(getToasterKey(mutationType));
+
 				const successMessage = `successfully ${getToasterMessage(mutationType, 'ed')}`;
-				toaster.success({ message: successMessage });
+				toaster.update({ message: successMessage, toastId, type: 'success' });
+
 				const { data, errors } = response;
 				const error = errors && errors.length > 0 ? new ApolloError({ graphQLErrors: errors }) : undefined;
 
