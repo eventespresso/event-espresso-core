@@ -13,7 +13,7 @@ export type onCloseFn = (event: React.MouseEvent) => void;
 
 interface UpdateToastProps {
 	message?: string;
-	toastId: string | number;
+	key: string | number;
 	type: TypeOptions;
 }
 
@@ -57,6 +57,7 @@ export type Toasters = {
 export type ToastKey = string | number;
 
 export interface ToastProps {
+	autoClose?: number | false;
 	className?: string;
 	duration?: number;
 	isClosable: boolean;
@@ -69,12 +70,13 @@ export interface ToastProps {
 	timestamp: number;
 	titleProps?: BoxProps;
 	toastId?: string | number;
-	type: ToastStatus;
+	type: TypeOptions;
 }
 
 export interface ToasterProps {
 	icon?: React.ReactNode;
 	message?: string;
+	type: TypeOptions | 'loading';
 }
 
 export interface ToastIconProps {
