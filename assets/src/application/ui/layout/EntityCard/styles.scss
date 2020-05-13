@@ -92,11 +92,14 @@
 			}
 
 			&__price {
-				text-align: center;
+				align-items: center;
+				display: flex;
+				justify-content: center;
 				margin: 0 0 var(--ee-margin-smaller);
+				text-align: center;
 				width: 100%;
 
-				> span {
+				span {
 					color: var(--ee-default-text-color-super-low-contrast);
 					font-size: var(--ee-font-size-bigger);
 					font-weight: bolder;
