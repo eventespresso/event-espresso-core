@@ -2,19 +2,16 @@
 
 namespace EventEspresso\core\domain\services\graphql\data\mutations;
 
-use DomainException;
 use EE_Error;
+use EventEspresso\core\domain\services\admin\entities\DefaultPrices;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use Exception;
 use GraphQLRelay\Relay;
 use DateTime;
-use EEM_Price;
 use EEM_Ticket;
 use EE_Ticket;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
-use EventEspresso\core\exceptions\ModelConfigurationException;
-use EventEspresso\core\exceptions\UnexpectedEntityException;
-use EventEspresso\core\libraries\rest_api\RestException;
 use InvalidArgumentException;
 use ReflectionException;
 
@@ -204,11 +201,10 @@ class TicketMutation
      */
     public static function addDefaultPrices(EE_Ticket $ticket_entity, EEM_Ticket $ticket_model)
     {
-        $price_model = EEM_Price::instance();
-        $default_prices = $price_model->get_all_default_prices();
-        foreach ($default_prices as $default_price) {
-            $default_price->save();
-            $default_price->_add_relation_to($ticket_entity, 'Ticket');
-        }
+        /** @var DefaultPrices $default_prices */
+        $default_prices = LoaderFactory::getLoader()->getShared(
+            'EventEspresso\core\domain\services\admin\entities\DefaultPrices'
+        );
+        $default_prices->create($ticket_entity);
     }
 }
