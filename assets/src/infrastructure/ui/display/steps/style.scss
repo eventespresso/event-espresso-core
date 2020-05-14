@@ -10,9 +10,9 @@
   		max-width: 900px;
 
 		h3 {
-			color: var(--ee-color-grey-10);
+			color: var(--ee-color-grey-11);
 			flex: 0 1 20%;
-			font-size: var(--ee-font-size-huge);
+			font-size: 2.5rem;
 			font-weight: bolder;
 			letter-spacing: var(--ee-letter-spacing-font-size-extreme);
 			line-height: calc(var(--ee-line-height-modifier) * 0.75);
@@ -41,7 +41,7 @@
 		position: relative;
 
 		&--active {
-			background-color: var(--ee-color-grey-15);
+			background-color: var(--ee-color-grey-14);
 		}
 
 		&:first-child {
@@ -57,8 +57,7 @@
 		}
 
 		&:hover {
-			background-color: var(--ee-color-grey-14);
-			cursor: pointer;
+			background-color: var(--ee-color-grey-13);
 		}
 
 		&--inline {
