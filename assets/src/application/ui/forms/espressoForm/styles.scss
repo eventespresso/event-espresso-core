@@ -23,6 +23,11 @@
 	.section-heading {
 		position: relative;
 		h3 {
+			color: var(--ee-default-text-color);
+			font-size: 1.4rem;
+			font-weight: bold;
+			color: var(--ee-default-text-color);
+			font-size: 1.4rem;
 			margin: 0;
 		}
 	}
@@ -58,8 +63,20 @@
 	}
 
 	.section-body {
+		padding: var(--ee-padding-smaller) 0;
+
 		.form-item {
+			padding: var(--ee-padding-smaller) 0;
 			margin: var(--ee-margin-default) 0;
+
+			&-switch {
+				padding: var(--ee-padding-small) 0;
+			}
+
+			&-pair {
+				width: 50%;
+				display: inline-flex;
+			}
 		}
 		.form-item-pair {
 			width: 50%;
@@ -100,7 +117,7 @@
 
 	@media only screen and (min-width: 782px) {
 		.section-heading {
-			flex: 0 15%;
+			flex: 0 20%;
 		}
 		.section-body {
 			flex: 0 80%;

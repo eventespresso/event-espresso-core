@@ -34,8 +34,8 @@ const testCases = [
 		desc: 'returns false when ticket.isSoldOut is false AND sold is less than quantity',
 		sold: 5,
 		quantity: 10,
-		soldOut: false,
-		result: false,
+		soldOut: true,
+		result: true,
 	},
 	{
 		desc: 'returns true when ticket.isSoldOut is false BUT sold is equal to quantity',
@@ -48,14 +48,14 @@ const testCases = [
 		desc: 'returns true when ticket.isSoldOut is false BUT sold is greater than quantity',
 		sold: 10,
 		quantity: 5,
-		soldOut: false,
+		soldOut: true,
 		result: true,
 	},
 	{
 		desc: 'returns true when ticket.isSoldOut is false BUT quantity is infinite',
 		sold: 10,
 		quantity: -1,
-		soldOut: false,
+		soldOut: true,
 		result: true,
 	},
 ];
