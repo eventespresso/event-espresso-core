@@ -42,7 +42,7 @@ class EE_Taxes extends EE_Base
         $tax = 0;
         $total_tax = 0;
         // This first checks to see if the given ticket is taxable.
-        if (! $ticket->get('TKT_taxable')) {
+        if (! $ticket->taxable()) {
             return $tax;
         }
         // get subtotal (notice we're only retrieving a subtotal if there isn't one given)
@@ -52,7 +52,7 @@ class EE_Taxes extends EE_Base
         // apply taxes to subtotal
         foreach ($taxes as $tax) {
             // assuming taxes are not cumulative
-            $total_tax += $subtotal * $tax->get('PRC_amount') / 100;
+            $total_tax += $subtotal * $tax->amount() / 100;
         }
         return $total_tax;
     }
@@ -132,7 +132,7 @@ class EE_Taxes extends EE_Base
             }
         }
         $TKT_ID = $ticket->ID();
-        EE_Taxes::$_subtotal = [$TKT_ID => $subtotal];
+        EE_Taxes::$_subtotal[ $TKT_ID ] = $subtotal;
         return $subtotal;
     }
 
