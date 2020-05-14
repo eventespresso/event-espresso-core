@@ -27,6 +27,7 @@ const EditableName: React.FC<EditableNameProps> = ({ className, entity: datetime
 
 	return (
 		<InlineEditText
+			fitText={view === 'card'}
 			tag={view === 'table' ? 'p' : 'h4'}
 			className={className}
 			onChangeValue={onChangeName}
