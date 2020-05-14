@@ -1,3 +1,8 @@
+/** -------------------------------------------------------------------------
+ * Event Espresso Form Steps Stylesheet
+ * © 2020 Event Espresso
+ * ------------------------------------------------------------------------- */
+
 .ee-form-steps {
 	display: flex;
 	flex: 0 1 80%;
@@ -134,6 +139,7 @@
 		}
 
 		&:after {
+			// credit for this styles belongs to: https://semantic-ui.com/elements/step.html
 			display: block;
 			position: absolute;
 			content: '';
