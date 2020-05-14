@@ -13,7 +13,7 @@ const Steps: React.FC<StepsProps> = ({
 	vertical = false,
 	...props
 }) => {
-	const wrapperClassName = classNames('ee-form-steps__wrapper', props.className);
+	const wrapperClassName = classNames(props.className, 'ee-form-steps__wrapper');
 	const listClassName = classNames('ee-form-steps', {
 		'ee-form-steps--vertical': vertical,
 		'ee-form-steps--inline': !vertical,
@@ -29,7 +29,8 @@ const Steps: React.FC<StepsProps> = ({
 						stepNumber: `${stepNumber + 1}`,
 						stepIndex: stepNumber,
 						active: stepNumber === current,
-						showStepNumber
+						showStepNumber,
+						...props
 					};
 					return cloneElement(child, childProps);
 				}) }
