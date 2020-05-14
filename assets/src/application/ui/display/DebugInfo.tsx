@@ -13,10 +13,6 @@ const Pre = styled.pre`
 	background-color: #26203d;
 `;
 
-const Div = styled.div`
-	margin-top: 3em;
-`;
-
 interface DebugInfoProps {
 	data: any;
 	asJson?: boolean;
@@ -42,10 +38,10 @@ const DebugInfo: React.FC<DebugInfoProps> = ({ data, asJson = true, asCollapse =
 	const handleToggle = useCallback(() => setShow(!show), [show]);
 
 	return (
-		<Div>
+		<>
 			<Button buttonText={buttonText} onClick={handleToggle} size="md" />
 			<Collapse isOpen={show}>{output}</Collapse>
-		</Div>
+		</>
 	);
 };
 
