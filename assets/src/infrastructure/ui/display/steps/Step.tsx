@@ -5,18 +5,18 @@ import { StepProps } from './types';
 
 const Step: React.FC<StepProps> = ({
 	active,
-	className,
 	description = '',
 	disabled,
 	icon: Icon,
 	showStepNumber,
 	stepNumber,
 	title,
-	vertical = false
+	vertical = false,
+	...props
 }) => {
-	const newClassName = classNames(
+	const className = classNames(
+		props.className,
 		'ee-form-step',
-		className,
 		{
 			'ee-form-step--active': active,
 			'ee-form-step--disabled': disabled,
@@ -26,7 +26,7 @@ const Step: React.FC<StepProps> = ({
 		}
 	);
 	return (
-		<li className={ newClassName }>
+		<li className={ className }>
 			{ showStepNumber && <div className={ 'ee-form-step__number' }>{ stepNumber }</div> }
 			{ Icon && <div className={ 'ee-form-step__icon' }><Icon /></div> }
 			<div className={ 'ee-form-step__content' }>
