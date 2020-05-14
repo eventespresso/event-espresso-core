@@ -10,7 +10,8 @@ const useFilteredDatetimes = () => {
 
 	const allDates = useDatetimes();
 
-	const datetimes = datesInYearAndMonth(allDates);
+	// If the year i.e. datesByMonth[0] is set, then filter
+	const datetimes = datesByMonth[0] ? datesInYearAndMonth(allDates) : allDates;
 
 	if (showTrashedDates) {
 		return datetimes;

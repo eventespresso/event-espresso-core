@@ -37,11 +37,14 @@ const DatesByMonthControl: React.FC<DatesByMonthControlProps> = React.memo(({ da
 		}
 	}, []);
 
+	// Add all dates option at the top, "0:0" to match the "year:month" format
+	const monthsListWithAllDates = [{ value: '0:0', label: __('All Dates') }, ...monthsList];
+
 	return (
 		<SelectInput
 			label={__('dates by month')}
 			value={yearMonth}
-			options={monthsList}
+			options={monthsListWithAllDates}
 			onChangeValue={setDatesByMonth}
 		/>
 	);

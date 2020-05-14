@@ -1,7 +1,8 @@
-import { append, findIndex, insert, update } from 'ramda';
+import { any, append, findIndex, insert, update } from 'ramda';
 
 import { DataStateReducer, StateInitializer, DataState } from './types';
 import { entityHasGuid } from '@sharedServices/predicates/selectionById';
+import { isTax } from '@sharedEntities/prices/predicates/selectionPredicates';
 
 export const initialState: DataState = {
 	ticket: null,
@@ -19,15 +20,23 @@ const useDataReducer = (initializer: StateInitializer): DataStateReducer => {
 					...state,
 					ticket: {
 						...state.ticket,
-						reverseCalculate: !state.ticket.reverseCalculate,
+						reverseCalculate: !state.ticket?.reverseCalculate,
 					},
 				};
 			case 'UPDATE_TICKET_PRICE':
+				/**
+				 * Ticket price update can be triggered when:
+				 * - A price is added or removed
+				 * - Price type is changed for a price
+				 * So, this is the best and safest place to check for isTaxable
+				 */
+				const isTaxable = any(isTax, state.prices);
 				return {
 					...state,
 					ticket: {
 						...state.ticket,
 						price: ticketPrice,
+						isTaxable,
 					},
 				};
 			case 'SET_PRICES':

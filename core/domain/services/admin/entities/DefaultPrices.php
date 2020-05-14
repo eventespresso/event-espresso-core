@@ -69,7 +69,7 @@ class DefaultPrices implements DefaultEntityGeneratorInterface
                     throw new InvalidEntityException($default_price, 'EE_Price');
                 }
                 // assign taxes but don't duplicate them because they operate globally
-                if($default_price->is_tax()) {
+                if ($default_price->is_tax()) {
                     $entity->set_taxable(true);
                     $default_price->_add_relation_to($entity, 'Ticket');
                     continue;
