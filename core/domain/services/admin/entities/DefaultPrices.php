@@ -62,11 +62,17 @@ class DefaultPrices implements DefaultEntityGeneratorInterface
         }
         $new_prices = [];
         $has_base_price = false;
-        $default_prices = $this->price_model->get_all_default_prices();
+        $default_prices = $this->price_model->get_all_default_prices(false, true);
         if (is_array($default_prices)) {
             foreach ($default_prices as $default_price) {
                 if (! $default_price instanceof EE_Price) {
                     throw new InvalidEntityException($default_price, 'EE_Price');
+                }
+                // assign taxes but don't duplicate them because they operate globally
+                if($default_price->is_tax()) {
+                    $entity->set_taxable(true);
+                    $default_price->_add_relation_to($entity, 'Ticket');
+                    continue;
                 }
                 $default_price_clone = clone $default_price;
                 $default_price_clone->set('PRC_ID', null);
