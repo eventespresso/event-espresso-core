@@ -188,16 +188,19 @@ class EEM_Price extends EEM_Soft_Delete_Base
      * retrieve all active global prices (that are not taxes (PBT_ID=4)) for a particular event
      *
      * @param boolean $count return count
+     * @param bool    $include_taxes
      * @return bool|EE_Base_Class[]|EE_PRice[]
      * @throws EE_Error
      */
-    public function get_all_default_prices($count = false)
+    public function get_all_default_prices($count = false, $include_taxes = false)
     {
         $_where = array(
-            'Price_Type.PBT_ID' => array('!=', 4),
             'PRC_deleted'       => 0,
             'PRC_is_default'    => 1,
         );
+        if (!$include_taxes) {
+            $_where['Price_Type.PBT_ID']  = ['!=', 4];
+        }
         $_query_params = array(
             $_where,
             'order_by' => $this->_order_by_array_for_get_all_method(),
