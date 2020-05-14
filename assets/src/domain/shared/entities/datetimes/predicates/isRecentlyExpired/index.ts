@@ -3,7 +3,7 @@ import { parseISO } from 'date-fns';
 import { Datetime } from '@edtrServices/apollo/types';
 import { diff } from '@appServices/utilities';
 import { now } from '@sharedServices/utils/dateAndTime';
-import TIME from '../../../../../../application/constants/time';
+import TIME from '@appConstants/time';
 
 /**
  * @function

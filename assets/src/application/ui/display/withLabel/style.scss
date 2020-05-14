@@ -62,9 +62,3 @@
 .ee-base-input + .ee-base-input {
 	margin-bottom: var(--ee-margin-micro);
 }
-
-.ant-select-item.ant-select-item-option {
-	line-height: var(--ee-font-size-extreme) !important;
-	min-height: var(--ee-icon-button-size) !important;
-	padding: 0 var(--ee-padding-small) !important;
-}
