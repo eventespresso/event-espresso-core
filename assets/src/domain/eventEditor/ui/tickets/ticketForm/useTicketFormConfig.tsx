@@ -53,9 +53,6 @@ const useTicketFormConfig = (id: EntityId, config?: EspressoFormProps): TicketFo
 
 	const adjacentFormItemProps = {
 		className: 'form-item-pair',
-		labelCol: { span: 10 },
-		wrapperCol: { span: 12 },
-		labelAlign: 'right' as 'right',
 	};
 
 	const initialValues: TicketFormShape = {
@@ -107,19 +104,11 @@ const useTicketFormConfig = (id: EntityId, config?: EspressoFormProps): TicketFo
 							),
 							' \n'
 						),
-						fieldType: 'text',
+						fieldType: 'number',
+						formControlProps: adjacentFormItemProps,
 						addonAfter: id ? (
 							<TicketPriceCalculatorButton ticketId={id} style={{ margin: 0, height: 'auto' }} />
 						) : null,
-						formItemProps: adjacentFormItemProps,
-					},
-					{
-						name: 'isTaxable',
-						label: __('Taxable'),
-						fieldType: 'switch',
-						info: __(
-							'If enabled, all configured taxes will be applied to the price of this ticket upon purchase.'
-						),
 					},
 				],
 			},
@@ -166,8 +155,8 @@ const useTicketFormConfig = (id: EntityId, config?: EspressoFormProps): TicketFo
 						name: 'quantity',
 						label: __('Quantity For Sale'),
 						fieldType: 'number',
+						formControlProps: adjacentFormItemProps,
 						parseAsInfinity: true,
-						formItemProps: adjacentFormItemProps,
 						min: -1,
 						info: sprintf(
 							__(
@@ -181,7 +170,7 @@ const useTicketFormConfig = (id: EntityId, config?: EspressoFormProps): TicketFo
 						label: __('Number of Uses'),
 						fieldType: 'number',
 						parseAsInfinity: true,
-						formItemProps: adjacentFormItemProps,
+						formControlProps: adjacentFormItemProps,
 						min: 0,
 						info: sprintf(
 							__(
@@ -194,7 +183,7 @@ const useTicketFormConfig = (id: EntityId, config?: EspressoFormProps): TicketFo
 						name: 'min',
 						label: __('Minimum Quantity'),
 						fieldType: 'number',
-						formItemProps: adjacentFormItemProps,
+						formControlProps: adjacentFormItemProps,
 						min: 0,
 						info: sprintf(
 							__(
@@ -208,7 +197,7 @@ const useTicketFormConfig = (id: EntityId, config?: EspressoFormProps): TicketFo
 						label: __('Maximum Quantity'),
 						fieldType: 'number',
 						parseAsInfinity: true,
-						formItemProps: adjacentFormItemProps,
+						formControlProps: adjacentFormItemProps,
 						min: -1,
 						info: sprintf(
 							__(
@@ -221,21 +210,21 @@ const useTicketFormConfig = (id: EntityId, config?: EspressoFormProps): TicketFo
 						name: 'isRequired',
 						label: __('Required Ticket'),
 						fieldType: 'switch',
-						formItemProps: adjacentFormItemProps,
+						formControlProps: adjacentFormItemProps,
 						info: __('If enabled, the ticket will appear first in frontend ticket lists.'),
 					},
 					{
 						name: 'isDefault',
 						label: __('Default Ticket'),
 						fieldType: 'switch',
-						formItemProps: adjacentFormItemProps,
+						formControlProps: adjacentFormItemProps,
 						info: __('If enabled, the ticket will appear on all new events.'),
 					},
 					{
 						name: 'isTrashed',
 						label: __('Trash'),
 						fieldType: 'switch',
-						formItemProps: adjacentFormItemProps,
+						formControlProps: adjacentFormItemProps,
 					},
 				],
 			},

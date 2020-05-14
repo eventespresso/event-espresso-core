@@ -53,6 +53,10 @@ const useDateFormConfig = (id: EntityId, config?: EspressoFormProps): DateFormCo
 		},
 	};
 
+	const adjacentFormItemProps = {
+		className: 'form-item-pair',
+	};
+
 	return {
 		...config,
 		onSubmit: onSubmitFrom,
@@ -135,11 +139,13 @@ const useDateFormConfig = (id: EntityId, config?: EspressoFormProps): DateFormCo
 							),
 							'\n'
 						),
+						formControlProps: adjacentFormItemProps,
 					},
 					{
 						name: 'isTrashed',
 						label: __('Trash'),
 						fieldType: 'switch',
+						formControlProps: adjacentFormItemProps,
 					},
 				],
 			},
