@@ -2710,7 +2710,8 @@ class EE_Admin_Config extends EE_Config_Base
      */
     public function useAdvancedEditor()
     {
-        return $this->useAdvancedEditor;
+        $domain = LoaderFactory::getLoader()->getShared('EventEspresso\core\domain\Domain');
+        return $this->useAdvancedEditor && $domain->isCaffeinated();
     }
 
     /**
