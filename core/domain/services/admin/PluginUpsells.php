@@ -40,7 +40,7 @@ class PluginUpsells
     public function decafUpsells()
     {
         if ($this->domain instanceof CaffeinatedInterface && ! $this->domain->isCaffeinated()) {
-            add_action('after_plugin_row', array($this, 'doPremiumUpsell'), 10, 3);
+            add_action('after_plugin_row', array($this, 'doPremiumUpsell'), 10);
         }
     }
 
@@ -49,52 +49,38 @@ class PluginUpsells
      * Callback for `after_plugin_row` to add upsell info
      *
      * @param string $plugin_file
-     * @param array  $plugin_data
-     * @param string $status
      * @throws DomainException
      */
-    public function doPremiumUpsell($plugin_file, $plugin_data, $status)
+    public function doPremiumUpsell($plugin_file)
     {
         if ($plugin_file === $this->domain->pluginBasename()) {
-            list($button_text, $button_url, $upsell_text) = $this->getAfterPluginRowDetails();
-            echo '<tr class="plugin-update-tr ee-upsell-plugin-list-table active">
-                <td colspan="3" class="plugin-update colspanchange">
-                    <div class="notice inline notice-alt">
-                        <div class="ee-upsell-container">
-                            <div class="ee-upsell-inner-container">
-                                <a href="' . $button_url . '">
-                                    ' . $button_text . '
-                                </a>
-                            </div>
-                            <div class="ee-upsell-inner-container">
-                                <p>' . $upsell_text . '</p>
-                            </div>
-                            <div style="clear:both"></div>
-                        </div>
-                    </div>
-                </td>
-              </tr>';
+            echo '
+    <tr class="ee-upsell-plugin-list-table active">
+        <th scope="row" class="check-column"></th>
+        <td class="column-primary">
+            <div class="ee-upsell-col" style="padding:10px 0;">
+                <a href="https://eventespresso.com/purchase/?slug=ee4-license-personal&utm_source=wp_admin_plugins_screen&utm_medium=link&utm_campaign=plugins_screen_upgrade_link"">
+                    <button class="button button-secondary" style="background:#008dcb; border:1px solid #008dcb; color:#fff; ">'
+                     . esc_html__('Upgrade for Support', 'event_espresso')
+                     . '</button>
+                </a>
+            </div>                 
+        </td>
+        <td class="column-description"> 
+            <div class="ee-upsell-col plugin-description" style="font-size: .85rem; line-height: 1.2rem; padding:5px 0;">'
+                 . sprintf(
+                     esc_html__(
+                         'You\'re missing out on %1$sexpert support%2$s and %1$sone-click updates%2$s!%3$sDon\'t have an Event Espresso support license key? Support the project and buy one today!',
+                         'event_espresso'
+                     ),
+                     '<strong>',
+                     '</strong>',
+                     '<br />'
+                 ) .
+            '</div>
+        </td>
+    </tr>
+';
         }
-    }
-
-    /**
-     * Provide the details used for the upsell container.
-     *
-     * @return array
-     */
-    protected function getAfterPluginRowDetails()
-    {
-        return array(
-            esc_html__('Upgrade for Support', 'event_espresso'),
-            'https://eventespresso.com/purchase/?slug=ee4-license-personal&utm_source=wp_admin_plugins_screen&utm_medium=link&utm_campaign=plugins_screen_upgrade_link" class="button button-primary',
-            sprintf(
-                esc_html__(
-                    'You\'re missing out on %1$sexpert support%2$s and %1$sone-click updates%2$s! Don\'t have an Event Espresso support license key? Support the project and buy one today!',
-                    'event_espresso'
-                ),
-                '<strong>',
-                '</strong>'
-            ),
-        );
     }
 }

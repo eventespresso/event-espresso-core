@@ -5,6 +5,7 @@ namespace EventEspresso\core\services\route_match;
 use EE_Config;
 use EE_Dependency_Map;
 use EE_Maintenance_Mode;
+use EventEspresso\core\domain\services\admin\PluginUpsells;
 use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\request\RequestInterface;
@@ -332,6 +333,9 @@ class RouteHandler
                 ]
             );
             $this->loader->getShared('EventEspresso\core\domain\services\assets\WordpressPluginsPageAssetManager');
+            /** @var PluginUpsells $plugin_upsells */
+            $plugin_upsells = $this->loader->getShared('EventEspresso\core\domain\services\admin\PluginUpsells');
+            $plugin_upsells->decafUpsells();
         } catch (Exception $exception) {
             new ExceptionStackTraceDisplay($exception);
         }
