@@ -85,7 +85,7 @@ const useBodyRowGenerator = (): DatesTableBodyRowGen => {
 			{
 				key: 'actions',
 				type: 'cell',
-				className: 'ee-date-list-cell ee-date-list-col-actions ee-actions-column ee-rspnsv-table-column-big',
+				className: 'ee-date-list-cell ee-actions-column ee-rspnsv-table-column-big',
 				value: sortingEnabled ? '-' : <DateActionsMenu entity={datetime} />,
 			},
 		];

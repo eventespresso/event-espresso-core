@@ -23,6 +23,16 @@
 	}
 
 	.ee-rspnsv-table-body {
+		&-row {
+			&:nth-child(even) {
+				background: var(--ee-color-grey-15);
+			}
+
+			&:hover {
+				background: var(--ee-color-grey-13);
+			}
+		}
+
 		.ee-centered-column {
 			.ee-rspnsv-table-mobile-only-column-value {
 				display: inline-flex;
@@ -41,16 +51,6 @@
 	.ee-rspnsv-table-body .ee-rspnsv-table-body-row,
 	.ee-rspnsv-table-footer .ee-rspnsv-table-footer-row {
 		box-sizing: border-box;
-	}
-
-	.ee-rspnsv-table-body .ee-rspnsv-table-body-row {
-		&:nth-child(even) {
-			background: var(--ee-color-grey-15);
-		}
-
-		&:hover {
-			background: var(--ee-color-grey-14);
-		}
 	}
 
 	.ee-rspnsv-table-header .ee-rspnsv-table-header-th,

@@ -1,4 +1,9 @@
 .ee-entity-actions-menu {
+	&--horizontal {
+		display: flex;
+		justify-content: space-evenly;
+	}
+
 	.ee-btn-default.ee-btn:not([disabled]),
 	.ee-btn-primary.ee-btn:not([disabled]),
 	.ee-btn-secondary.ee-btn:not([disabled]),
