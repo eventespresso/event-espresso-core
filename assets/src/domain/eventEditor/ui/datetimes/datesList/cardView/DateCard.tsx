@@ -3,6 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { CalendarDateSwitcher } from '@appCalendars/dateDisplay';
 
 import DateActionsMenu from '../actionsMenu/DateActionsMenu';
+import { EntityActionsMenuLayout } from '@appLayout/entityActionsMenu';
 
 import { DatetimeProvider } from '@edtrServices/context/DatetimeContext';
 import { getStatusTextLabel, statusBgColorClassName } from '@sharedEntities/datetimes/helpers';
@@ -23,7 +24,7 @@ const DateCard: React.FC<DateItemProps> = ({ entity: date }) => {
 			<EntityCard
 				entity={date}
 				cacheId={date.cacheId + displayStartOrEndDate}
-				actionsMenu={<DateActionsMenu entity={date} />}
+				actionsMenu={<DateActionsMenu entity={date} layout={EntityActionsMenuLayout.Vertical} />}
 				sidebar={
 					<CalendarDateSwitcher
 						className={bgClassName}

@@ -1,7 +1,13 @@
 .ee-entity-actions-menu {
+	display: flex;
+
 	&--horizontal {
-		display: flex;
+		flex-direction: row;
 		justify-content: space-evenly;
+	}
+
+	&--vertical {
+		flex-direction: column;
 	}
 
 	.ee-btn-default.ee-btn:not([disabled]),

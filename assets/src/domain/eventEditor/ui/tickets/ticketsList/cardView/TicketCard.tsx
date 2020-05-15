@@ -2,8 +2,11 @@ import React from 'react';
 import { __ } from '@wordpress/i18n';
 
 import { CalendarDateSwitcher } from '@appCalendars/dateDisplay';
-import TicketActionsMenu from '../actionsMenu/TicketActionsMenu';
 import Details from './Details';
+
+import TicketActionsMenu from '../actionsMenu/TicketActionsMenu';
+import { EntityActionsMenuLayout } from '@appLayout/entityActionsMenu';
+
 import TicketProvider from '@edtrServices/context/TicketContext';
 import EntityCard from '@appLayout/EntityCard';
 import { getStatusTextLabel, statusBgColorClassName } from '@sharedEntities/tickets/helpers';
@@ -21,7 +24,7 @@ const TicketCard: React.FC<TicketItemProps> = ({ entity: ticket }) => {
 			<EntityCard
 				entity={ticket}
 				cacheId={ticket.cacheId + displayStartOrEndDate}
-				actionsMenu={<TicketActionsMenu entity={ticket} />}
+				actionsMenu={<TicketActionsMenu entity={ticket} layout={EntityActionsMenuLayout.Vertical} />}
 				sidebar={
 					<CalendarDateSwitcher
 						className={bgClassName}
