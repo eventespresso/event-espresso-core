@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n';
 
 import { PriceModifierProps } from '../types';
 import { PriceField } from '../fields';
-import { useMoneyDisplay, parsedAmount } from '@appServices/utilities/money';
+import { useMoneyDisplay, parsedAmount, formatAmount } from '@appServices/utilities/money';
 import { useDataState } from '../data';
 
 import './styles.scss';
@@ -13,7 +13,7 @@ const percentSign = '%';
 
 const PriceAmountInput: React.FC<PriceModifierProps> = ({ price }) => {
 	const { reverseCalculate } = useDataState();
-	const { currency, formatAmount } = useMoneyDisplay();
+	const { currency } = useMoneyDisplay();
 	const sign = price.isPercent ? percentSign : currency.sign;
 	let b4Price = '';
 	let afterPrice = sign;
@@ -30,6 +30,11 @@ const PriceAmountInput: React.FC<PriceModifierProps> = ({ price }) => {
 		'ee-input__price-field--has-error': Number(price?.amount ?? 0) === 0,
 	});
 
+	const formatParse = (defaultValue = null) => (amount: any) => {
+		const parsedValue = parsedAmount(amount);
+		return isNaN(parsedValue) ? defaultValue : parsedValue;
+	};
+
 	return (
 		<div className='ee-ticket-price-field'>
 			<div className='ee-ticket-price-field__before'>{b4Price}</div>
@@ -42,11 +47,8 @@ const PriceAmountInput: React.FC<PriceModifierProps> = ({ price }) => {
 					component={'input'}
 					placeholder={__('amount...')}
 					disabled={reverseCalculate && price.isBasePrice}
-					format={(amount) => formatAmount(amount) || ''}
-					parse={(amount) => {
-						const parsedValue = parsedAmount(amount);
-						return isNaN(parsedValue) ? null : parsedValue;
-					}}
+					format={formatParse('')}
+					parse={formatParse()}
 					formatOnBlur
 				/>
 			</div>
