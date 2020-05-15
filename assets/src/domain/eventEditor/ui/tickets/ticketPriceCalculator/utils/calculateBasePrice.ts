@@ -6,9 +6,9 @@ import { DataState } from '../data';
 import { isNotBasePrice } from '@sharedEntities/prices/predicates/selectionPredicates';
 import { sortByPriceOrderIdDesc } from '@sharedEntities/prices/predicates/sortingPredicates';
 import { updateBasePriceAmount } from '@sharedEntities/prices/predicates/updatePredicates';
-import { FormatAmountFunction } from '@application/services/utilities/money/formatAmount';
+import { parsedAmount } from '@application/services/utilities/money';
 
-const calculateBasePrice = (state: DataState, formatAmount: FormatAmountFunction): DataState['prices'] => {
+const calculateBasePrice = (state: DataState): DataState['prices'] => {
 	const ticket = state?.ticket;
 	if (!ticket) {
 		return state.prices;
@@ -24,9 +24,11 @@ const calculateBasePrice = (state: DataState, formatAmount: FormatAmountFunction
 	// now extract the value for "total" or set to 0
 	const ticketTotal = ticket?.price || 0;
 	const newBasePrice = reduce<TpcPriceModifier, number>(basePriceCalculator, ticketTotal, sortedModifiers);
+	// Save the price upto 6 decimals places
+	const amount = parsedAmount(newBasePrice).toFixed(6);
 	const newPrices = updateBasePriceAmount<TpcPriceModifier>({
 		prices: state.prices,
-		amount: parseFloat(formatAmount(newBasePrice)),
+		amount: parsedAmount(amount),
 	});
 	return newPrices;
 };
