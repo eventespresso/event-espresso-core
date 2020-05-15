@@ -60,7 +60,7 @@ const useInitialState = ({ ticketId }: BaseProps): StateInitializer => {
 
 	return useCallback<StateInitializer>(
 		(initialState) => {
-			return { ...initialState, ticket, prices };
+			return { ...initialState, ticket: ticket ?? {}, prices };
 		},
 		[ticket, prices]
 	);
