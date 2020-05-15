@@ -50,7 +50,7 @@ const useFilteredEntities = <D extends string, L extends string, E extends Entit
 		}
 		// entities for current page
 		return sortedEntities.slice(perPage * (pageNumber - 1), perPage * pageNumber);
-	}, [cacheIds, perPage, pageNumber]);
+	}, [cacheIds, perPage, pageNumber, sortingEnabled]);
 
 	// Avoid synchronous state update
 	useEffect(() => {

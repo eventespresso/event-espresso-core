@@ -28,7 +28,7 @@ const useTicketsListFilterStateManager = (): FSM => {
 		if (state.isChained) {
 			setVisibleDatesStr(visibleDatetimeIds.join(':'));
 		}
-	}, [visibleDatetimeIds]);
+	}, [state.isChained, visibleDatetimeIds]);
 
 	const resetPageNumber = (filter: TicketsSales | TicketsStatus): void => {
 		if (filter !== state[filter]) {
