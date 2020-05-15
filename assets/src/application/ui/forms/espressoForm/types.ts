@@ -18,7 +18,7 @@ interface AdditionalFormProps<FormValues = AnyObject> extends FormContextProps {
 	fields?: FieldList<FormValues>;
 	submitButton?: FormButtonProps;
 	resetButton?: FormButtonProps;
-	formWrapper?: React.ComponentType;
+	formWrapper?: React.ComponentType<FormRenderProps>;
 	debugFields?: Array<keyof FormState<any>>; // The fields from RFF form state to display in debug
 }
 
