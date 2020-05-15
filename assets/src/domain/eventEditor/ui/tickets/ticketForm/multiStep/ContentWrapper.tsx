@@ -23,11 +23,11 @@ const WithTPC: React.FC<ContentWrapperProps> = (props) => {
 const ContentWrapper: React.FC<ContentWrapperProps> = (props) => {
 	const { values } = props.form.getState();
 
-	const ticket = { ...values } as Ticket;
-	if (!ticket?.id) {
-		ticket.id = 'NEW_TICKET';
-		ticket.dbId = 0;
-	}
+	const ticket = {
+		...values,
+		id: values.id ?? 'NEW_TICKET',
+		dbId: values.dbId ?? 0,
+	} as Ticket;
 
 	return withTAMContext(
 		WithTPC,

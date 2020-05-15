@@ -12,11 +12,11 @@ import { ContentWrapperProps } from './types';
 const ContentWrapper: React.FC<ContentWrapperProps> = (props) => {
 	const { values } = props.form.getState();
 
-	const datetime = { ...values } as Datetime;
-	if (!datetime?.id) {
-		datetime.id = 'NEW_DATE';
-		datetime.dbId = 0;
-	}
+	const datetime = {
+		...values,
+		id: values.id ?? 'NEW_DATE',
+		dbId: values.dbId ?? 0,
+	} as Datetime;
 
 	return withTAMContext(
 		ContentBody,
