@@ -9,7 +9,6 @@ import defaultPrice from '../../defaultPriceModifier';
 import TestWrapper from './TestWrapper';
 import { getBasePrice } from '@sharedEntities/prices/predicates/selectionPredicates';
 import { calculateBasePrice, calculateTicketTotal } from '../../utils';
-import { useMoneyDisplay } from '@application/services';
 
 const timeout = 5000; // milliseconds
 describe('TPC:data.calculations', () => {
@@ -81,7 +80,6 @@ describe('TPC:data.calculations', () => {
 				return {
 					dataState: useDataState(),
 					baseType: usePriceTypeForPrice(defaultPriceModifier.id),
-					moneyDisplay: useMoneyDisplay(),
 					defaultPriceModifier,
 				};
 			},
@@ -134,7 +132,7 @@ describe('TPC:data.calculations', () => {
 		expect(basePriceBefore.amount).not.toEqual(basePriceAfter.amount);
 
 		// calculate the expected base price
-		const newPrices = calculateBasePrice(result.current.dataState.getData(), result.current.moneyDisplay.formatAmount);
+		const newPrices = calculateBasePrice(result.current.dataState.getData());
 		const calculatedBasePrice = getBasePrice(newPrices);
 
 		expect(calculatedBasePrice.amount).toEqual(basePriceAfter.amount);
@@ -190,7 +188,6 @@ describe('TPC:data.calculations', () => {
 			() => {
 				return {
 					dataState: useDataState(),
-					moneyDisplay: useMoneyDisplay(),
 				};
 			},
 			{
@@ -226,7 +223,7 @@ describe('TPC:data.calculations', () => {
 		expect(basePriceBefore.amount).not.toEqual(basePriceAfter.amount);
 
 		// calculate the expected base price
-		const newPrices = calculateBasePrice(result.current.dataState.getData(), result.current.moneyDisplay.formatAmount);
+		const newPrices = calculateBasePrice(result.current.dataState.getData());
 		const calculatedBasePrice = getBasePrice(newPrices);
 
 		expect(calculatedBasePrice.amount).toEqual(basePriceAfter.amount);
@@ -237,7 +234,6 @@ describe('TPC:data.calculations', () => {
 			() => {
 				return {
 					dataState: useDataState(),
-					moneyDisplay: useMoneyDisplay(),
 				};
 			},
 			{
@@ -274,7 +270,7 @@ describe('TPC:data.calculations', () => {
 		expect(basePriceBefore.amount).not.toEqual(basePriceAfter.amount);
 
 		// calculate the expected base price
-		const newPrices = calculateBasePrice(result.current.dataState.getData(), result.current.moneyDisplay.formatAmount);
+		const newPrices = calculateBasePrice(result.current.dataState.getData());
 		const calculatedBasePrice = getBasePrice(newPrices);
 
 		expect(calculatedBasePrice.amount).toEqual(basePriceAfter.amount);
@@ -329,7 +325,6 @@ describe('TPC:data.calculations', () => {
 			() => {
 				return {
 					dataState: useDataState(),
-					moneyDisplay: useMoneyDisplay(),
 				};
 			},
 			{
@@ -366,7 +361,7 @@ describe('TPC:data.calculations', () => {
 		expect(basePriceBefore.amount).not.toEqual(basePriceAfter.amount);
 
 		// calculate the expected base price
-		const newPrices = calculateBasePrice(result.current.dataState.getData(), result.current.moneyDisplay.formatAmount);
+		const newPrices = calculateBasePrice(result.current.dataState.getData());
 		const calculatedBasePrice = getBasePrice(newPrices);
 
 		expect(calculatedBasePrice.amount).toEqual(basePriceAfter.amount);
