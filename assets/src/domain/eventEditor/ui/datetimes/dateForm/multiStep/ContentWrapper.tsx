@@ -1,24 +1,28 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
-import { FormRenderProps } from 'react-final-form';
 
 import { withContext as withTAMContext } from '@edtrUI/ticketAssignmentsManager/context';
-import ModalBody from './ModalBody';
+import ContentBody from './ContentBody';
 import { Datetime } from '@edtrServices/apollo';
+import { ContentWrapperProps } from './types';
 
 /**
  * This component is inside RFF context, so we can use all of RFF features.
  */
-const ContentWrapper: React.FC<FormRenderProps> = (props) => {
+const ContentWrapper: React.FC<ContentWrapperProps> = (props) => {
 	const { values } = props.form.getState();
 
-	const entity = { ...values, id: 'NEW_DATE', dbId: 0 } as Datetime;
+	const datetime = {
+		...values,
+		id: values.id ?? 'NEW_DATE',
+		dbId: values.dbId ?? 0,
+	} as Datetime;
 
 	return withTAMContext(
-		ModalBody,
+		ContentBody,
 		{
 			assignmentType: 'forDate',
-			entity,
+			entity: datetime,
 		},
 		props
 	);

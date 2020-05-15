@@ -5,7 +5,6 @@ import { __ } from '@wordpress/i18n';
 import { copyTicketFields } from '@sharedEntities/tickets/predicates/updatePredicates';
 import { isTicketInputField } from '@sharedEntities/tickets/predicates/selectionPredicates';
 import { isTrashed } from '@sharedServices/predicates';
-import { useFormModal } from '@appLayout/formModal';
 import { useRelations } from '@appServices/apollo/relations';
 import { useTicketItem } from '@edtrServices/apollo';
 import { useTicketMutator } from '@edtrServices/apollo/mutations';
@@ -16,8 +15,6 @@ const useActions = ({ ticketId }) => {
 	const ticket = useTicketItem({ id: ticketId });
 
 	if (!ticket) return {};
-
-	const { openEditor } = useFormModal();
 
 	const { id, cacheId } = ticket;
 
@@ -39,23 +36,12 @@ const useActions = ({ ticketId }) => {
 		return createEntity({ ...newTicket, datetimes });
 	}, [ticket]);
 
-	const editTicket = useCallback(
-		() =>
-			openEditor({
-				editorId: 'editTicket',
-				entityId: ticket.id,
-				entityDbId: ticket.dbId,
-			}),
-		[ticket.id]
-	);
-
 	const trashed = isTrashed(ticket);
 
 	const trashTicket = useCallback(() => deleteEntity({ id, deletePermanently: trashed }), [cacheId, trashed]);
 
 	return {
 		copyTicket,
-		editTicket,
 		trashTicket,
 		trashed,
 	};

@@ -16,7 +16,7 @@ import { setDateToToday, setTimeToZeroHour } from '@appServices/utilities/date';
 
 type DateFormConfig = EspressoFormProps<DateFormShape>;
 
-const FIELD_NAMES: Array<keyof Datetime> = ['name', 'description', 'capacity', 'isTrashed'];
+const FIELD_NAMES: Array<keyof Datetime> = ['id', 'name', 'description', 'capacity', 'isTrashed'];
 
 const useDateFormConfig = (id: EntityId, config?: EspressoFormProps): DateFormConfig => {
 	const { startDate: start, endDate: end, ...restProps } = useDatetimeItem({ id }) || {};

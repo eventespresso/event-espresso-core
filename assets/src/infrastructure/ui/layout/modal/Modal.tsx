@@ -19,13 +19,18 @@ const Modal: React.FC<ModalProps> = ({
 	className,
 	closeButton,
 	content,
+	destroyOnClose = true,
 	footerContent,
 	isClosable = true,
+	isOpen,
 	scrollBehavior = 'inside',
 	submitButtonProps,
 	title,
 	...props
 }) => {
+	if (destroyOnClose && !isOpen) {
+		return null;
+	}
 	let footerNode = footerContent;
 
 	if (!footerNode) {
@@ -44,6 +49,7 @@ const Modal: React.FC<ModalProps> = ({
 			// closeOnEsc={isClosable}
 			closeOnOverlayClick={isClosable}
 			isCentered
+			isOpen={isOpen}
 			scrollBehavior={scrollBehavior}
 			{...props}
 		>

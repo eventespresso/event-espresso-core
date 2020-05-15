@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { CSSProperties, useCallback } from 'react';
 import styled from '@emotion/styled';
 import { __ } from '@wordpress/i18n';
 
@@ -11,10 +11,6 @@ const Pre = styled.pre`
 	padding: 1em 2em;
 	color: #a9ce47;
 	background-color: #26203d;
-`;
-
-const Div = styled.div`
-	margin-top: 3em;
 `;
 
 interface DebugInfoProps {
@@ -40,12 +36,15 @@ const DebugInfo: React.FC<DebugInfoProps> = ({ data, asJson = true, asCollapse =
 	}
 	const buttonText = show ? __('Hide Debug Info') : __('Show Debug Info');
 	const handleToggle = useCallback(() => setShow(!show), [show]);
+	const buttonStyle: CSSProperties = show
+		? {}
+		: { position: 'relative', bottom: '-2rem', margin: '0 0 -2.5rem var(--ee-padding-micro)' };
 
 	return (
-		<Div>
-			<Button buttonText={buttonText} onClick={handleToggle} size="md" />
+		<>
+			<Button buttonText={buttonText} onClick={handleToggle} size="md" style={buttonStyle} />
 			<Collapse isOpen={show}>{output}</Collapse>
-		</Div>
+		</>
 	);
 };
 

@@ -9,3 +9,10 @@ export type Merge<A, B> = Omit<A, keyof B> & B extends infer O ? { [K in keyof O
 export interface AnyObject<T = any> {
 	[key: string]: T;
 }
+
+export interface Disclosure {
+	isOpen: boolean;
+	onOpen: VoidFunction;
+	onClose: VoidFunction;
+	onToggle?: VoidFunction;
+}
