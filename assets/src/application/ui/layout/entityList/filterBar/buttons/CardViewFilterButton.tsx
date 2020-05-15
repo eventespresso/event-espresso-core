@@ -14,16 +14,15 @@ const CardViewFilterButton: React.FC<CardViewFilterButtonProps> = ({ listId, set
 
 	return (
 		<IconButton
-			className={className}
-			icon={AppstoreFilled}
-			id={filterId}
-			label={__('card view')}
-			onClick={view !== 'card' ? setCardView : null}
-			tooltip={__('card view')}
-			labelClassName={'ee-filter-bar__btn-wrap'}
-			labelPosition={LabelPosition.BOTTOM_CENTER}
+			className={ className }
+			icon={ AppstoreFilled }
+			id={ filterId }
+			label={ __('card view') }
+			onClick={ view !== 'card' ? setCardView : null }
+			labelClassName={ 'ee-filter-bar__btn-wrap' }
+			labelPosition={ LabelPosition.BOTTOM_CENTER }
 			variant='outline'
-			{...rest}
+			{ ...rest }
 		/>
 	);
 };

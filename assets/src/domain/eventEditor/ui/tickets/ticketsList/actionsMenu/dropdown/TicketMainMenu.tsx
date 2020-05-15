@@ -21,18 +21,19 @@ const TicketMainMenu: React.FC<TicketMainMenuProps> = ({ ticket }) => {
 
 	const toggleProps: DropdownToggleProps = {
 		tooltip: __('ticket main menu'),
+		tooltipProps: { placement: 'left' }
 	};
 
 	const trashTicketTitle = trashed ? __('delete permanently') : __('trash ticket');
 
 	return (
 		<>
-			<DropdownMenu toggleProps={toggleProps}>
-				<Edit onClick={editTicket} title={__('edit ticket')} />
-				<Copy onClick={copyTicket} title={__('copy ticket')} />
-				<Trash onClick={onOpen} title={trashTicketTitle} />
+			<DropdownMenu toggleProps={ toggleProps }>
+				<Edit onClick={ editTicket } title={ __('edit ticket') } />
+				<Copy onClick={ copyTicket } title={ __('copy ticket') } />
+				<Trash onClick={ onOpen } title={ trashTicketTitle } />
 			</DropdownMenu>
-			{confirmationDialog}
+			{ confirmationDialog }
 		</>
 	);
 };

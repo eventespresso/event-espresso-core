@@ -15,16 +15,17 @@ const ToggleFiltersButton: React.FC<ToggleFiltersButtonProps> = ({ listId, showF
 
 	return (
 		<IconButton
-			className={className}
-			icon={Filter}
-			id={filterId}
-			label={__('filters')}
-			onClick={toggleFilters}
-			tooltip={tooltip}
-			labelClassName={'ee-filter-bar__btn-wrap'}
-			labelPosition={LabelPosition.BOTTOM_CENTER}
+			className={ className }
+			icon={ Filter }
+			id={ filterId }
+			label={ __('filters') }
+			onClick={ toggleFilters }
+			tooltip={ tooltip }
+			tooltipProps={ { placement: 'top' } }
+			labelClassName={ 'ee-filter-bar__btn-wrap' }
+			labelPosition={ LabelPosition.BOTTOM_CENTER }
 			variant='outline'
-			{...rest}
+			{ ...rest }
 		/>
 	);
 };

@@ -27,20 +27,20 @@ const ItemCount: React.FC<ItemCountProps> = ({
 		'ee-item-count--has-items': count > 0,
 		'ee-item-count--no-items': count === 0 && emphasizeZero,
 	});
-	const offset = props.offset || [7, 7];
+	const offset = props.offset || [8, -4];
 	const value = count === 0 && typeof zeroCountChar !== 'undefined' ? zeroCountChar : count;
 	const countNode = (
-		<Tooltip placement='top' title={title}>
-			<span>{value}</span>
+		<Tooltip placement='top' tooltip={ title }>
+			<span>{ value }</span>
 		</Tooltip>
 	);
 
 	return (
 		<div className='ee-item-count__wrapper'>
-			<Badge {...props} className={className} style={{ right: `${offset[0]}px`, top: `${offset[1]}px` }}>
-				{countNode}
+			<Badge { ...props } className={ className } style={ { right: `${offset[0]}px`, top: `${offset[1]}px` } }>
+				{ countNode }
 			</Badge>
-			{children}
+			{ children }
 		</div>
 	);
 };

@@ -24,3 +24,10 @@ export interface ButtonProps extends ButtonAdapterProps, Partial<withLabelProps>
 	buttonType?: ButtonType;
 	buttonSize?: ButtonSize;
 }
+
+export interface LinkProps extends Partial<withTooltipProps> {
+	className?: string;
+	external?: boolean;
+	href?: string;
+	icon?: React.ReactNode;
+}

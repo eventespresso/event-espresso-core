@@ -31,15 +31,21 @@ const AssignTicketsButton: React.FC<EntityListItemProps<Datetime>> = React.memo(
 
 	return (
 		<>
-			<ItemCount count={count} emphasizeZero title={title} zeroCountChar='!'>
-				<IconButton icon={Ticket} tooltip={__('assign tickets')} tooltipProps={tooltipProps} onClick={onOpen} />
+			<ItemCount count={ count } emphasizeZero title={ title } zeroCountChar='!'>
+				<IconButton
+					icon={ Ticket }
+					onClick={ onOpen }
+					tooltip={ __('assign tickets') }
+					tooltipProps={ tooltipProps }
+					variant='ghost'
+				/>
 			</ItemCount>
-			<ModalContainer assignmentType='forDate' entity={entity} {...disclosure} />
+			<ModalContainer assignmentType='forDate' entity={ entity } { ...disclosure } />
 		</>
 	);
 });
 
 export default withIsLoaded<EntityListItemProps<Datetime>>(TypeName.tickets, ({ entity, loaded }) => {
 	/* Hide TAM unless tickets are loaded */
-	return loaded && <AssignTicketsButton entity={entity} />;
+	return loaded && <AssignTicketsButton entity={ entity } />;
 });

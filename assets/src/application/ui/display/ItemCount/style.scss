@@ -11,6 +11,7 @@
 
 	&.ee-item-count {
 		align-items: center;
+		background: var(--ee-color-bright-blue);
 		border-radius: var(--ee-border-radius-full);
 		box-sizing: border-box;
 		box-shadow: var(--ee-box-shadow-tiny);
@@ -31,12 +32,9 @@
 		vertical-align: top;
 		z-index: 1;
 
-		&--has-items {
-			background: var(--ee-color-bright-blue);
-		}
-
 		&--no-items {
 			background: var(--ee-color-hot-pink);
+			color: var(--ee-color-white);
 			font-size: var(--ee-font-size-tiny);
 			font-weight: bold;
 			line-height: 1;

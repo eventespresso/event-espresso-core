@@ -50,7 +50,7 @@ export const CalendarPageDate: React.FC<CalendarPageDateProps> = ({
 		return (
 			startDate && (
 				<div className='ee-calendar-page-date-wrapper-start'>
-					{renderCalendarPage(startDate, statusClassName)}
+					{ renderCalendarPage(startDate, statusClassName) }
 				</div>
 			)
 		);
@@ -60,24 +60,24 @@ export const CalendarPageDate: React.FC<CalendarPageDateProps> = ({
 		return (
 			endDate && (
 				<div className='ee-calendar-page-date-wrapper-end'>
-					{renderCalendarPage(endDate, statusClassName, 'end')}
+					{ renderCalendarPage(endDate, statusClassName, 'end') }
 				</div>
 			)
 		);
 	};
 
 	const getDivider = (startDate: Date, endDate: Date) => {
-		return startDate && endDate && <div className='ee-calendar-page-date-to'>{__('TO')}</div>;
+		return startDate && endDate && <div className='ee-calendar-page-date-to'>{ __('TO') }</div>;
 	};
 
 	const renderCalendarPage = (date: Date, statusClassName: string, startOrEnd = 'start') => {
 		let className = `ee-calendar-page-date-page ee-calendar-page-date-${startOrEnd}`;
 		className += statusClassName ? ` ${statusClassName}` : '';
 		return (
-			<Tooltip title={format(date, LOCALIZED_DATE_AND_TIME_FULL_FORMAT)}>
-				<div className={className}>
-					<div className={'ee-calendar-page-date-month'}>{format(date, MONTH_ONLY_LONG_FORMAT)}</div>
-					<div className={'ee-calendar-page-date-day'}>{format(date, DAY_ONLY_SHORT_FORMAT)}</div>
+			<Tooltip tooltip={ format(date, LOCALIZED_DATE_AND_TIME_FULL_FORMAT) }>
+				<div className={ className }>
+					<div className={ 'ee-calendar-page-date-month' }>{ format(date, MONTH_ONLY_LONG_FORMAT) }</div>
+					<div className={ 'ee-calendar-page-date-day' }>{ format(date, DAY_ONLY_SHORT_FORMAT) }</div>
 				</div>
 			</Tooltip>
 		);
@@ -85,10 +85,10 @@ export const CalendarPageDate: React.FC<CalendarPageDateProps> = ({
 
 	const className = `ee-calendar-page-date-wrapper ee-calendar-page-date-${size}`;
 	return (
-		<div className={className} {...otherProps}>
-			{getStartDate(startDateObject, statusClassName)}
-			{getDivider(startDateObject, endDateObject)}
-			{getEndDate(endDateObject, statusClassName)}
+		<div className={ className } { ...otherProps }>
+			{ getStartDate(startDateObject, statusClassName) }
+			{ getDivider(startDateObject, endDateObject) }
+			{ getEndDate(endDateObject, statusClassName) }
 		</div>
 	);
 };

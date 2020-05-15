@@ -27,12 +27,13 @@ const TicketRegistrationsLink: React.FC<Props> = ({ ticket }) => {
 		ticket_id: ticket.dbId,
 		return: 'edit',
 	});
-	const buttonTitle = __('view registrations for this ticket.');
 	const countTitle = __('total registrations.');
+	const tooltip = __('view registrations for this ticket.');
+	const tooltipProps = { placement: 'top' as 'top' };
 
 	return (
-		<ItemCount count={ticket.registrationCount} title={countTitle} zeroCountChar='!'>
-			<RegistrationsLink href={regListUrl} title={buttonTitle} />
+		<ItemCount count={ ticket.registrationCount } title={ countTitle } emphasizeZero={ false } offset={ [12, -4] }>
+			<RegistrationsLink href={ regListUrl } tooltip={ tooltip } tooltipProps={ tooltipProps } />
 		</ItemCount>
 	);
 };

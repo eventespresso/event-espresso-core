@@ -1,27 +1,26 @@
 import React, { forwardRef } from 'react';
 
-import { Tooltip } from '@infraUI/display';
 import { GlobalOutlined } from '@appDisplay/icons/svgs';
 import { IconButton } from '@application/ui/input';
 
-interface Props {
-	label: string;
+interface TriggerProps {
+	tooltip: string;
 	onClick?: VoidFunction;
 }
 
-const Trigger = forwardRef<typeof IconButton, Props>(({ label, onClick }, ref) => {
-	return (
-		<Tooltip onClick={onClick} title={label}>
-			<IconButton
-				aria-label={label}
-				borderless
-				color='white'
-				icon={() => <GlobalOutlined />}
-				onClick={onClick}
-				ref={ref}
-			/>
-		</Tooltip>
-	);
-});
+const Trigger = forwardRef<typeof IconButton, TriggerProps>(
+	({ tooltip, ...props }, ref) => (
+		<IconButton
+			borderless
+			color='white'
+			className='ee-timezone-info-btn'
+			icon={ () => <GlobalOutlined /> }
+			tooltip={ tooltip }
+			tooltipProps={ { placement: 'top' } }
+			{ ...props }
+			ref={ ref }
+		/>
+	)
+);
 
 export default Trigger;

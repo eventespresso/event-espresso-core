@@ -17,7 +17,7 @@ const ToggleLegendButton: React.FC<ToggleLegendButtonProps> = ({ listId, showLeg
 		transform: `rotate(${showLegend ? 0 : 180}deg)`,
 	});
 	const icon = () => (
-		<animated.div style={iconProps}>
+		<animated.div style={ iconProps }>
 			<CompassFilled />
 		</animated.div>
 	);
@@ -26,16 +26,17 @@ const ToggleLegendButton: React.FC<ToggleLegendButtonProps> = ({ listId, showLeg
 
 	return (
 		<IconButton
-			className={className}
-			icon={icon}
-			id={filterId}
-			label={__('legend')}
-			onClick={toggleLegend}
-			tooltip={tooltip}
-			labelClassName={'ee-filter-bar__btn-wrap'}
-			labelPosition={LabelPosition.BOTTOM_CENTER}
+			className={ className }
+			icon={ icon }
+			id={ filterId }
+			label={ __('legend') }
+			onClick={ toggleLegend }
+			tooltip={ tooltip }
+			tooltipProps={ { placement: 'top' } }
+			labelClassName={ 'ee-filter-bar__btn-wrap' }
+			labelPosition={ LabelPosition.BOTTOM_CENTER }
 			variant='outline'
-			{...rest}
+			{ ...rest }
 		/>
 	);
 };

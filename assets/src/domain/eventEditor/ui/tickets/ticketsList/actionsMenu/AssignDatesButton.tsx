@@ -25,28 +25,28 @@ const AssignDatesButton: React.FC<EntityListItemProps<Ticket>> = React.memo(({ e
 	const title = count
 		? `${__('Related Dates:')} ${relatedDatetimeDbIds.join(', ')}`
 		: __(
-				'There are no event dates assigned to this ticket. Please click the calendar icon to update the assignments.'
-		  );
+			'There are no event dates assigned to this ticket. Please click the calendar icon to update the assignments.'
+		);
 
-	const tooltipProps = { placement: 'right' as 'right' };
+	const tooltipProps = { placement: 'left' as 'left' };
 
 	return (
 		<>
-			<ItemCount count={count} emphasizeZero title={title} zeroCountChar='!'>
+			<ItemCount count={ count } emphasizeZero title={ title } zeroCountChar='!'>
 				<IconButton
-					icon={Calendar}
-					tooltip={__('assign dates')}
-					tooltipProps={tooltipProps}
-					onClick={onOpen}
+					icon={ Calendar }
+					onClick={ onOpen }
+					tooltip={ __('assign dates') }
+					tooltipProps={ tooltipProps }
 					variant='ghost'
 				/>
 			</ItemCount>
-			<ModalContainer assignmentType='forTicket' entity={entity} {...disclosure} />
+			<ModalContainer assignmentType='forTicket' entity={ entity } { ...disclosure } />
 		</>
 	);
 });
 
 export default withIsLoaded<EntityListItemProps<Ticket>>(TypeName.datetimes, ({ entity, loaded }) => {
 	/* Hide TAM unless dates are loaded */
-	return loaded && <AssignDatesButton entity={entity} />;
+	return loaded && <AssignDatesButton entity={ entity } />;
 });
