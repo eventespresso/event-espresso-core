@@ -1,7 +1,7 @@
 import React from 'react';
 import Dotdotdot from 'react-dotdotdot';
 
-import { Textfit } from 'react-textfit';
+import { TextFit } from '@infraUI/layout/textfit';
 
 import { TextProps } from './types';
 import { InlineEdit, InlineEditPreviewProps } from '@infraUI/inputs';
@@ -19,13 +19,13 @@ const Preview: React.FC<InlineEditPreviewProps> = ({ fitText, isEditing, onReque
 
 	if (fitText) {
 		return (
-			<Textfit
+			<TextFit
 				max={24} // based on --ee-font-size-bigger: 1.5rem;
 				min={18}
 				mode='single'
 			>
 				{textInput}
-			</Textfit>
+			</TextFit>
 		);
 	}
 
