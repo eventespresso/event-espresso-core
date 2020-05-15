@@ -34,12 +34,11 @@ const useBodyRowGenerator = (): DatesTableBodyRowGen => {
 		const name = {
 			key: 'name',
 			type: 'cell',
-			className:
-				'ee-date-list-cell ee-date-list-col-name ee-rspnsv-table-column-bigger ee-rspnsv-table-hide-on-mobile',
+			className: 'ee-date-list-cell ee-col-name ee-rspnsv-table-column-bigger ee-rspnsv-table-hide-on-mobile',
 			value: sortingEnabled ? (
 				datetime.name
 			) : (
-				<EditableName className={'ee-focus-priority-5'} entity={datetime} view={'table'} />
+				<EditableName className='ee-focus-priority-5' entity={datetime} view={'table'} />
 			),
 		};
 
@@ -86,7 +85,7 @@ const useBodyRowGenerator = (): DatesTableBodyRowGen => {
 			{
 				key: 'actions',
 				type: 'cell',
-				className: 'ee-date-list-cell ee-date-list-col-actions ee-actions-column ee-rspnsv-table-column-big',
+				className: 'ee-date-list-cell ee-actions-column ee-rspnsv-table-column-big',
 				value: sortingEnabled ? '-' : <DateActionsMenu entity={datetime} />,
 			},
 		];

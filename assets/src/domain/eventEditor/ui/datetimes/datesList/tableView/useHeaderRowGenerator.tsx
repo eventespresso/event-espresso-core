@@ -86,9 +86,13 @@ const useHeaderRowGenerator = (): DatesTableHeaderRowGen => {
 			{
 				key: 'actions',
 				type: 'cell',
-				className:
-					'ee-date-list-col-hdr ee-date-list-col-actions ee-rspnsv-table-column-big ee-centered-column',
-				value: <span className={'ee-rspnsv-table-long-label'}>{__('Actions')}</span>,
+				className: 'ee-date-list-col-hdr ee-actions-column ee-rspnsv-table-column-big ee-centered-column',
+				value: (
+					<>
+						<span className={'ee-rspnsv-table-long-label'}>{__('Actions')}</span>
+						<span className={'ee-rspnsv-table-short-label'}>{__('Actions')}</span>
+					</>
+				),
 			},
 		];
 

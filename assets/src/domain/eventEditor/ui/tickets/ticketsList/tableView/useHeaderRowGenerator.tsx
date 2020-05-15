@@ -89,8 +89,7 @@ const useHeaderRowGenerator = (): TicketsTableHeaderRowGen => {
 			{
 				key: 'actions',
 				type: 'cell',
-				className:
-					'ee-ticket-list-col-hdr ee-ticket-list-col-actions ee-rspnsv-table-column-big ee-centered-column',
+				className: 'ee-ticket-list-col-hdr ee-actions-column ee-rspnsv-table-column-big ee-centered-column',
 				value: <span className={'ee-rspnsv-table-long-label'}>{__('Actions')}</span>,
 			},
 		];

@@ -40,7 +40,18 @@ export type EntityActionsMenuRegistryHook = <D extends string, ET extends string
 	options: EntityActionsMenuOptions<D, ET>
 ) => EntityActionsMenuRegistry;
 
+export enum EntityActionsMenuLayout {
+	Horizontal = 'horizontal',
+	Vertical = 'vertical',
+}
+
 export type EntityActionsMenuRegistry = UIRegistry;
+
+export interface EntityActionsMenuProps {
+	className?: string;
+	layout?: EntityActionsMenuLayout;
+	menuItems: Array<React.ReactNode>;
+}
 
 export interface ActionsMenuComponentProps<E extends Entity> {
 	entity: E;

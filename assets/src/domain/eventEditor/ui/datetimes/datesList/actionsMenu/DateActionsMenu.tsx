@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { ActionsMenuComponentProps, EntityActionsMenu } from '@appLayout/entityActionsMenu';
+import { ActionsMenuComponentProps, EntityActionsMenu, EntityActionsMenuLayout } from '@appLayout/entityActionsMenu';
 import useDatesActionMenuItems from '../../hooks/useDatesActionMenuItems';
 import { Datetime } from '@edtrServices/apollo/types';
 import { getPropsAreEqual } from '@appServices/utilities';

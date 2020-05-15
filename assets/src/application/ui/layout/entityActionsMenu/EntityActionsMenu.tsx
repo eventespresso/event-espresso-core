@@ -3,16 +3,7 @@ import classNames from 'classnames';
 
 import './style.scss';
 
-export enum EntityActionsMenuLayout {
-	Horizontal = 'horizontal',
-	Vertical = 'vertical',
-}
-
-export interface EntityActionsMenuProps {
-	className?: string;
-	layout?: EntityActionsMenuLayout;
-	menuItems: Array<React.ReactNode>;
-}
+import { EntityActionsMenuProps, EntityActionsMenuLayout } from './types';
 
 const EntityActionsMenu: React.FC<EntityActionsMenuProps> = ({
 	layout = EntityActionsMenuLayout.Horizontal,
@@ -23,6 +14,7 @@ const EntityActionsMenu: React.FC<EntityActionsMenuProps> = ({
 		'ee-entity-actions-menu--horizontal': layout === EntityActionsMenuLayout.Horizontal,
 		'ee-entity-actions-menu--vertical': layout === EntityActionsMenuLayout.Vertical,
 	});
+
 	return (
 		<div className={className} {...props}>
 			{menuItems}

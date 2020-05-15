@@ -1,4 +1,15 @@
 .ee-entity-actions-menu {
+	display: flex;
+
+	&--horizontal {
+		flex-direction: row;
+		justify-content: space-evenly;
+	}
+
+	&--vertical {
+		flex-direction: column;
+	}
+
 	.ee-btn-default.ee-btn:not([disabled]),
 	.ee-btn-primary.ee-btn:not([disabled]),
 	.ee-btn-secondary.ee-btn:not([disabled]),
