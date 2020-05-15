@@ -6,7 +6,7 @@ import { Calendar, Ticket } from '@appDisplay/icons';
 import { Button } from '@application/ui/input';
 import { ButtonGroup } from '@infraUI/inputs';
 import useTicketAssignmentsManager from '../../ticketAssignmentsManager/useTicketAssignmentsManager';
-import AddNewDateModal from './addNew/Modal';
+import { Container as FormContainer } from '@edtrUI/datetimes/dateForm/multiStep';
 
 const AddNewDateButton: React.FC = () => {
 	const { ModalContainer, onOpen, ...disclosure } = useTicketAssignmentsManager();
@@ -19,7 +19,7 @@ const AddNewDateButton: React.FC = () => {
 				<Button buttonText={__('Ticket Assignments')} icon={Ticket} onClick={onOpen} />
 			</ButtonGroup>
 			<ModalContainer assignmentType='forAll' {...disclosure} />
-			<AddNewDateModal isOpen={isOpen} onClose={onClose} />
+			<FormContainer isOpen={isOpen} onClose={onClose} />
 		</>
 	);
 };

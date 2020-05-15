@@ -6,7 +6,6 @@ import { isTrashed } from '@sharedServices/predicates';
 import { useDatetimeItem } from '@edtrServices/apollo';
 import { useDatetimeMutator } from '@edtrServices/apollo/mutations';
 import { useEventId } from '@edtrServices/apollo/queries/events';
-import { useFormModal } from '@appLayout/formModal';
 import { useRelations } from '@appServices/apollo/relations';
 
 const useActions = ({ datetimeId }) => {
@@ -17,7 +16,6 @@ const useActions = ({ datetimeId }) => {
 	if (!datetime) return {};
 
 	const eventId = useEventId();
-	const { openEditor } = useFormModal();
 
 	const { id, cacheId } = datetime;
 
@@ -40,23 +38,12 @@ const useActions = ({ datetimeId }) => {
 		return createEntity({ ...newDatetime, eventId, tickets });
 	}, [datetime, tickets]);
 
-	const editDate = useCallback(
-		() =>
-			openEditor({
-				editorId: 'editDatetime',
-				entityId: datetime.id,
-				entityDbId: datetime.dbId,
-			}),
-		[datetime.id]
-	);
-
 	const trashed = isTrashed(datetime);
 
 	const trashDate = useCallback(() => deleteEntity({ id, deletePermanently: trashed }), [cacheId, trashed]);
 
 	return {
 		copyDate,
-		editDate,
 		trashDate,
 		trashed,
 	};
