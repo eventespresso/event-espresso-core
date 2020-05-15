@@ -10,6 +10,8 @@ import TableBody from './TableBody';
 import TableFooter from './TableFooter';
 import './style.scss';
 
+import './tablet-style.scss';
+
 import { ResponsiveTableProps } from './types';
 
 const ResponsiveTable: React.FC<ResponsiveTableProps> = ({

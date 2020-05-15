@@ -1,10 +1,9 @@
 import React from 'react';
 import Dotdotdot from 'react-dotdotdot';
 
-import { TextFit } from '@infraUI/layout/textfit';
-
-import { TextProps } from './types';
 import { InlineEdit, InlineEditPreviewProps } from '@infraUI/inputs';
+import { TextFit } from '@infraUI/layout/textfit';
+import { TextProps } from './types';
 
 const Preview: React.FC<InlineEditPreviewProps> = ({ fitText, isEditing, onRequestEdit, value }) => {
 	if (isEditing) {
