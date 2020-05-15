@@ -9,11 +9,7 @@ const DatetimeFormSteps: React.FC<Pick<PrevNext, 'current'>> = ({ current }) => 
 	return (
 		<Steps current={current} showStepNumber>
 			<Step title={__('Date Details')} description={__('primary information about the date')} icon={Calendar} />
-			<Step
-				title={__('Assign Tickets')}
-				description={__('which tickets will be available for this date')}
-				icon={Ticket}
-			/>
+			<Step title={__('Assign Tickets')} description={__('relations between tickets and dates')} icon={Ticket} />
 		</Steps>
 	);
 };

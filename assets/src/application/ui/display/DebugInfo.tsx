@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { CSSProperties, useCallback } from 'react';
 import styled from '@emotion/styled';
 import { __ } from '@wordpress/i18n';
 
@@ -36,10 +36,13 @@ const DebugInfo: React.FC<DebugInfoProps> = ({ data, asJson = true, asCollapse =
 	}
 	const buttonText = show ? __('Hide Debug Info') : __('Show Debug Info');
 	const handleToggle = useCallback(() => setShow(!show), [show]);
+	const buttonStyle: CSSProperties = show
+		? {}
+		: { position: 'relative', bottom: '-2rem', margin: '0 0 -2.5rem var(--ee-padding-micro)' };
 
 	return (
 		<>
-			<Button buttonText={buttonText} onClick={handleToggle} size="md" />
+			<Button buttonText={buttonText} onClick={handleToggle} size="md" style={buttonStyle} />
 			<Collapse isOpen={show}>{output}</Collapse>
 		</>
 	);

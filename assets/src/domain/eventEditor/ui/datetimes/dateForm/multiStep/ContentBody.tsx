@@ -10,7 +10,7 @@ import { useDataState as useTAMDataState } from '@edtrUI/ticketAssignmentsManage
 import useDataListener from './useDataListener';
 
 // temporary
-const buttonRowStyle: CSSProperties = { display: 'flex', justifyContent: 'center', marginTop: '2em' };
+const buttonRowStyle: CSSProperties = { display: 'flex', justifyContent: 'flex-end', padding: '1rem 2rem' };
 
 /**
  * This component is inside both RFF and TAM contexts, so we can use all of their features
