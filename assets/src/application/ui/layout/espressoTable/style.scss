@@ -29,6 +29,7 @@
 				justify-content: center;
 			}
 		}
+
 		.ee-actions-column {
 			.ee-entity-menu {
 				display: flex;
@@ -91,6 +92,13 @@
 
 	.ee-rspnsv-table-body-td {
 		display: table-cell;
+
+		&.ee-col-name {
+			span {
+				font-size: var(--ee-font-size-small);
+				font-weight: bold;
+			}
+		}
 
 		.ee-rspnsv-table-mobile-only-column-value {
 			display: block;
