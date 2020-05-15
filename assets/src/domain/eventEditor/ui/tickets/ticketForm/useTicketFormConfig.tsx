@@ -19,6 +19,7 @@ import { setDateToToday, setTimeToZeroHour } from '@appServices/utilities/date';
 type TicketFormConfig = EspressoFormProps<TicketFormShape>;
 
 const FIELD_NAMES: Array<keyof Ticket> = [
+	'id',
 	'description',
 	'isDefault',
 	'isRequired',
@@ -94,21 +95,6 @@ const useTicketFormConfig = (id: EntityId, config?: EspressoFormProps): TicketFo
 						name: 'description',
 						label: __('Description'),
 						fieldType: 'textarea',
-					},
-					{
-						name: 'price',
-						label: __('Price'),
-						info: sprintf(
-							__(
-								'The total amount of money charged for this ticket. Leave blank to make this ticket selection free.%sClick the button after the input to use the Ticket Price Calculator'
-							),
-							' \n'
-						),
-						fieldType: 'number',
-						formControlProps: adjacentFormItemProps,
-						addonAfter: id ? (
-							<TicketPriceCalculatorButton ticketId={id} style={{ margin: 0, height: 'auto' }} />
-						) : null,
 					},
 				],
 			},
