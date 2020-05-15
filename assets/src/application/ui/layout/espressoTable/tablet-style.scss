@@ -11,11 +11,24 @@
 			justify-content: space-between;
 			padding: 0 var(--ee-padding-tiny);
 
-			.ee-entity-list-status-stripe {
-				max-width: 10px;
+			td {
+				&.ee-entity-list-status-stripe.ee-entity-list-status-stripe {
+					text-align: center;
 
-				.ee-rspnsv-table-mobile-only-column-value {
-					padding-left: var(--ee-padding-small);
+					.ee-rspnsv-table-mobile-only-column-value {
+						padding-left: 0;
+					}
+
+					.ee-rspnsv-table-show-on-mobile {
+						color: white;
+					}
+				}
+
+				&.ee-ticket-list-col-registrations,
+				&.ee-actions-column {
+					.ee-rspnsv-table-mobile-only-column-value {
+						justify-content: start;
+					}
 				}
 			}
 		}

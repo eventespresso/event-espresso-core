@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import { Children } from 'react';
 import { castArray, filter, first, isArray, isEmpty, isFunction, last, reject } from 'lodash';
 
@@ -79,34 +80,23 @@ export const isTableDataCell = (element) => {
 /**
  * adds 'ee-zebra-stripe-on-mobile' css class to every other table cell
  * except those whose table row cell "key" is in the exclude array
- *
- * @function
- * @param {Object[]} formRows
- * @param {Array} exclude
- * @return {Array} columns
  */
-export const addZebraStripesOnMobile = (formRows, exclude) => {
-	return Array.isArray(formRows)
-		? formRows.map((formRow) => {
-				let x = 0;
-				formRow.cells =
-					formRow.cells && Array.isArray(formRow.cells)
-						? formRow.cells.map((cell) => {
-								if (!cell.key || exclude.indexOf(cell.key) > -1) {
-									return cell;
-								}
-								x++;
-								if (x % 2 === 0) {
-									cell.className = cell.className
-										? cell.className + ' ee-zebra-stripe-on-mobile'
-										: 'ee-zebra-stripe-on-mobile';
-								}
-								return cell;
-						  })
-						: [];
-				return formRow;
-		  })
-		: [];
+export const addZebraStripesOnMobile = (exclude) => (cells) => {
+	let x = 0;
+
+	return cells.map((cell) => {
+		if (!cell.key || exclude.indexOf(cell.key) > -1) {
+			return cell;
+		}
+
+		x++;
+
+		if (x % 2 === 0) {
+			cell.className = classNames(cell.className, 'ee-zebra-stripe-on-mobile');
+		}
+
+		return cell;
+	});
 };
 
 /**
