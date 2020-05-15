@@ -21,18 +21,19 @@ const DateMainMenu: React.FC<DateMainMenuProps> = ({ datetime }) => {
 
 	const toggleProps: DropdownToggleProps = {
 		tooltip: __('event date main menu'),
+		tooltipProps: { placement: 'right' }
 	};
 
 	const trashDateTitle = trashed ? __('delete permanently') : __('trash datetime');
 
 	return (
 		<>
-			<DropdownMenu toggleProps={toggleProps}>
-				<Edit onClick={editDate} title={__('edit datetime')} />
-				<Copy onClick={copyDate} title={__('copy datetime')} />
-				<Trash onClick={onOpen} title={trashDateTitle} />
+			<DropdownMenu toggleProps={ toggleProps }>
+				<Edit onClick={ editDate } title={ __('edit datetime') } />
+				<Copy onClick={ copyDate } title={ __('copy datetime') } />
+				<Trash onClick={ onOpen } title={ trashDateTitle } />
 			</DropdownMenu>
-			{confirmationDialog}
+			{ confirmationDialog }
 		</>
 	);
 };

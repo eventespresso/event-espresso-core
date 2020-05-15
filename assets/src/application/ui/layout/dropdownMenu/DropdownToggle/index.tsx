@@ -5,29 +5,29 @@ import { More } from '@appDisplay/icons';
 import { DropdownToggleProps } from '../types';
 import { IconButton } from '@application/ui/input';
 import { MenuToggle } from '@infraUI/layout/menu';
-import { Tooltip } from '@infraUI/display';
+import { withTooltip } from '../../../display';
 
 import './style.scss';
 
 const DropdownToggle = React.forwardRef<typeof MenuToggle, DropdownToggleProps>(
-	({ icon = More, isOpen, tooltip, ...toggleProps }, ref) => {
-		const className = classNames('ee-dropdown-menu__toggle', toggleProps.className, {
-			'ee-dropdown-menu__toggle--open': isOpen,
-		});
+	({ icon = More, isOpen, ...toggleProps }, ref) => {
+		const className = classNames(
+			toggleProps.className,
+			'ee-dropdown-menu__toggle',
+			isOpen && 'ee-dropdown-menu__toggle--open',
+		);
 
 		return (
-			<Tooltip title={tooltip}>
-				<MenuToggle
-					as={IconButton}
-					// @ts-ignore
-					icon={More}
-					{...toggleProps}
-					className={className}
-					ref={ref}
-				/>
-			</Tooltip>
+			<MenuToggle
+				as={ IconButton }
+				// @ts-ignore
+				icon={ More }
+				{ ...toggleProps }
+				className={ className }
+				ref={ ref }
+			/>
 		);
 	}
 );
 
-export default DropdownToggle;
+export default withTooltip(DropdownToggle);

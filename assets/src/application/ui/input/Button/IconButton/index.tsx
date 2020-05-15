@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import classNames from 'classnames';
 
 import { IconButton as IconButtonAdapter } from '@infraUI/inputs';
@@ -9,7 +9,7 @@ import './style.scss';
 
 type BtnType = React.ComponentType<IconButtonProps>;
 
-const IconButton = React.forwardRef<typeof IconButtonAdapter, IconButtonProps>(
+const IconButton = forwardRef<typeof IconButtonAdapter, IconButtonProps>(
 	({ borderless, color, icon, onClick, ...props }, ref) => {
 		const ariaLabel = props['aria-label'] || props.label;
 		const className = classNames(
@@ -23,12 +23,13 @@ const IconButton = React.forwardRef<typeof IconButtonAdapter, IconButtonProps>(
 
 		return (
 			<IconButtonAdapter
-				aria-label={ariaLabel}
-				className={className}
-				icon={icon}
-				onClick={onClick}
-				tabIndex={0}
-				ref={ref}
+				aria-label={ ariaLabel }
+				className={ className }
+				icon={ icon }
+				onClick={ onClick }
+				tabIndex={ 0 }
+				ref={ ref }
+				{ ...props }
 			/>
 		);
 	}

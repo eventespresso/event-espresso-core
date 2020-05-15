@@ -20,17 +20,18 @@ const ToggleSortingButton: React.FC<ToggleSortingButtonProps> = ({
 
 	return (
 		<IconButton
-			className={className}
-			icon={() => <Sort color={sortingEnabled ? '#fff' : null} />}
-			id={id}
-			label={__('sorting')}
-			onClick={toggleSorting}
-			tooltip={tooltip}
-			labelClassName={'ee-filter-bar__btn-wrap'}
-			labelPosition={LabelPosition.BOTTOM_CENTER}
-			variantColor={sortingEnabled ? 'blue' : 'gray'}
-			variant={sortingEnabled ? 'solid' : 'outline'}
-			{...rest}
+			className={ className }
+			icon={ () => <Sort color={ sortingEnabled ? '#fff' : null } /> }
+			id={ id }
+			label={ __('sorting') }
+			onClick={ toggleSorting }
+			tooltip={ tooltip }
+			tooltipProps={ { placement: 'top' } }
+			labelClassName={ 'ee-filter-bar__btn-wrap' }
+			labelPosition={ LabelPosition.BOTTOM_CENTER }
+			variantColor={ sortingEnabled ? 'blue' : 'gray' }
+			variant={ sortingEnabled ? 'solid' : 'outline' }
+			{ ...rest }
 		/>
 	);
 };

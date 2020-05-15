@@ -14,18 +14,18 @@ export interface AlertDialogProps extends Omit<IAlertDialog, 'children'> {
 	title?: string;
 }
 
-export interface BadgeProps extends ChakraBadgeProps {}
+export interface BadgeProps extends ChakraBadgeProps { }
 
 export interface DividerProps extends Omit<BoxProps, 'aria-orientation'> {
 	dashed?: boolean;
 	orientation?: BoxProps['aria-orientation'];
 }
 
-export interface HeadingProps extends ChakraHeadingProps {}
+export interface HeadingProps extends ChakraHeadingProps { }
 
-export interface SpinnerProps extends ISpinnerProps {}
+export interface SpinnerProps extends ISpinnerProps { }
 
-export interface TooltipProps extends Omit<ChakraTooltipProps, 'aria-label' | 'children'> {
+export interface TooltipProps extends Omit<ChakraTooltipProps, 'aria-label' | 'children' | 'title'> {
 	['aria-label']?: string;
-	title?: string;
+	tooltip?: string;
 }

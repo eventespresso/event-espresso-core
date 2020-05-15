@@ -25,9 +25,10 @@ const DateRegistrationsLink: React.FC<Props> = ({ datetime }) => {
 		datetime_id: datetime.dbId,
 		return: 'edit',
 	});
-	const title = __('view registrations for this date.');
+	const tooltip = __('view registrations for this date.');
+	const tooltipProps = { placement: 'top' as 'top' };
 
-	return <RegistrationsLink href={regListUrl} title={title} />;
+	return <RegistrationsLink href={ regListUrl } tooltip={ tooltip } tooltipProps={ tooltipProps } />;
 };
 
 export default React.memo(DateRegistrationsLink, getPropsAreEqual(['datetime', 'cacheId']));

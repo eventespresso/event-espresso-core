@@ -10,14 +10,14 @@ import { DropdownMenuProps } from './types';
 const DropdownMenu: React.FC<DropdownMenuProps> = ({ children, className, menuListProps, toggleProps }) => {
 	return (
 		<Menu>
-			{({ isOpen, onClose }) => (
+			{ ({ isOpen, onClose }) => (
 				<div className='ee-dropdown-menu'>
-					<DropdownToggle isOpen={isOpen} onClose={onClose} {...toggleProps} />
-					<DropdownMenuList className={className} {...menuListProps}>
-						{children}
+					<DropdownToggle isOpen={ isOpen } onClose={ onClose } { ...toggleProps } />
+					<DropdownMenuList className={ className } { ...menuListProps }>
+						{ children }
 					</DropdownMenuList>
 				</div>
-			)}
+			) }
 		</Menu>
 	);
 };

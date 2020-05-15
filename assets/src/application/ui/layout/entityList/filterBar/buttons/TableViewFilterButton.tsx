@@ -14,15 +14,14 @@ const TableViewFilterButton: React.FC<TableViewFilterButtonProps> = ({ listId, s
 
 	return (
 		<IconButton
-			className={className}
-			icon={TableView}
-			id={filterId}
-			label={__('table view')}
-			onClick={view !== 'table' ? setTableView : null}
-			tooltip={__('table view')}
-			labelClassName={'ee-filter-bar__btn-wrap'}
-			labelPosition={LabelPosition.BOTTOM_CENTER}
-			{...rest}
+			className={ className }
+			icon={ TableView }
+			id={ filterId }
+			label={ __('table view') }
+			onClick={ view !== 'table' ? setTableView : null }
+			labelClassName={ 'ee-filter-bar__btn-wrap' }
+			labelPosition={ LabelPosition.BOTTOM_CENTER }
+			{ ...rest }
 		/>
 	);
 };

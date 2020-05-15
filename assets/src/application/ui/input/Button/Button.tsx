@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import classNames from 'classnames';
 
 import { Button as ButtonAdapter } from '@infraUI/inputs';
@@ -15,7 +15,7 @@ type BtnType = React.ComponentType<ButtonProps>;
  * forwardRef to be able to accept
  * onMouseEnter, onMouseLeave, onFocus, onClick events from parent
  */
-const Button = React.forwardRef<typeof ButtonAdapter, ButtonProps>(
+const Button = forwardRef<typeof ButtonAdapter, ButtonProps>(
 	(
 		{ buttonSize = ButtonSize.DEFAULT, buttonText, buttonType = ButtonType.DEFAULT, icon, onClick, ...props },
 		ref
@@ -28,13 +28,13 @@ const Button = React.forwardRef<typeof ButtonAdapter, ButtonProps>(
 
 		return (
 			<ButtonAdapter
-				{...props}
-				buttonText={buttonText}
-				className={className}
-				icon={icon}
-				onClick={onClick}
-				ref={ref}
-				tabIndex={0}
+				{ ...props }
+				buttonText={ buttonText }
+				className={ className }
+				icon={ icon }
+				onClick={ onClick }
+				ref={ ref }
+				tabIndex={ 0 }
 			/>
 		);
 	}

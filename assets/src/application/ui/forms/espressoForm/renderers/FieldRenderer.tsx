@@ -14,7 +14,7 @@ const FieldRenderer: React.FC<FieldRendererProps> = (props) => {
 
 	// no layout stuff needed for hidden field
 	if (props.fieldType === 'hidden') {
-		return <MappedField {...rest} />;
+		return <MappedField { ...rest } />;
 	}
 
 	const tooltipKey = info ? props.input.name + '-tooltip' : null;
@@ -27,23 +27,23 @@ const FieldRenderer: React.FC<FieldRendererProps> = (props) => {
 
 	return (
 		<FormControl
-			isInvalid={Boolean(errorMessage)}
-			isRequired={required}
-			className={classNames('form-item', `form-item-${rest.fieldType}`, formControlProps?.className)}
+			isInvalid={ Boolean(errorMessage) }
+			isRequired={ required }
+			className={ classNames('form-item', `form-item-${rest.fieldType}`, formControlProps?.className) }
 		>
-			<FormLabel htmlFor={props.input.name}>
-				{label}
-				{info && (
-					<Tooltip placement='right' title={info}>
+			<FormLabel htmlFor={ props.input.name }>
+				{ label }
+				{ info && (
+					<Tooltip placement='right' tooltip={ info }>
 						<InfoCircleOutlined />
 					</Tooltip>
-				)}
+				) }
 			</FormLabel>
-			{before}
-			<MappedField aria-label={label} aria-describedby={tooltipKey} {...rest} />
-			{after}
-			{errorMessage ? <FormErrorMessage>{errorMessage}</FormErrorMessage> : null}
-			<FormHelperText>{description}</FormHelperText>
+			{ before }
+			<MappedField aria-label={ label } aria-describedby={ tooltipKey } { ...rest } />
+			{ after }
+			{ errorMessage ? <FormErrorMessage>{ errorMessage }</FormErrorMessage> : null }
+			<FormHelperText>{ description }</FormHelperText>
 		</FormControl>
 	);
 };
