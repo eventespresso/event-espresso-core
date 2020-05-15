@@ -16,7 +16,7 @@ const useDataListener = ({ mutators, getState }: FormApi<any>) => {
 	useEffect(() => {
 		// update value of `datetimes` field in RFF state
 		mutators.updateFieldValue('datetimes', data?.tickets?.[id]?.datetimes);
-	}, [data?.tickets]);
+	}, [data?.tickets, id]);
 
 	const { deletedPrices, prices, ticket } = useTPCDataState();
 	useEffect(() => {

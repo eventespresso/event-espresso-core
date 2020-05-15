@@ -1,5 +1,6 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
+import { useDisclosure } from '@chakra-ui/core';
 
 import { Copy } from '@application/ui/layout/entityActionsMenu/entityMenuItems';
 import { DropdownMenu, DropdownToggleProps } from '@application/ui/layout';
@@ -10,7 +11,6 @@ import { useConfirmationDialog } from '@application/ui/display/confirm';
 import { Container as FormContainer } from '@edtrUI/tickets/ticketForm/multiStep';
 import { TicketMainMenuProps } from './types';
 import useActions from './useActions';
-import { useDisclosure } from '@chakra-ui/core';
 
 const TicketMainMenu: React.FC<TicketMainMenuProps> = ({ ticket }) => {
 	const { copyTicket, trashTicket, trashed } = useActions({ ticketId: ticket.id });

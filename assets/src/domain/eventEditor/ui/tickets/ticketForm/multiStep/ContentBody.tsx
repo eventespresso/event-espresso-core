@@ -1,6 +1,7 @@
 import React, { CSSProperties } from 'react';
 import { __ } from '@wordpress/i18n';
 import { FormRenderProps } from 'react-final-form';
+import { anyPass, isNil, isEmpty } from 'ramda';
 
 import TicketFormSteps from './TicketFormSteps';
 import { usePrevNext } from '@appServices/hooks';
@@ -31,6 +32,9 @@ const ContentBody: React.FC<FormRenderProps> = ({
 	const isSaveDisabled = submitting || hasValidationErrors || hasSubmitErrors;
 	const isSubmitDisabled = hasOrphanEntities();
 
+	const prices = form.getState().values.prices || [];
+	const isTPCSubmitDisabled = prices.length && prices.some(({ amount }) => anyPass([isNil, isEmpty])(amount));
+
 	return (
 		<div>
 			<TicketFormSteps current={current} />
@@ -49,7 +53,7 @@ const ContentBody: React.FC<FormRenderProps> = ({
 						<Button
 							buttonText={__('Save and assign dates')}
 							onClick={next}
-							// isDisabled={isSubmitDisabled}
+							isDisabled={isTPCSubmitDisabled}
 						/>
 					</>
 				)}

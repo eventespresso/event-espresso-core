@@ -1,6 +1,6 @@
 import { Disclosure } from '@application/services/utilities/types';
 import { EntityId } from '@dataServices/types';
-import { Ticket } from '@blocksServices/apollo/types';
+import { Ticket } from '@edtrServices/apollo/types';
 import { FormRenderProps } from 'react-final-form';
 
 export interface ContainerProps extends Omit<Disclosure, 'onOpen'> {
