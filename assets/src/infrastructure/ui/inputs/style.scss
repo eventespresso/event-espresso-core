@@ -70,6 +70,10 @@
 			}
 		}
 
+		&.ee-select {
+			padding: var(--ee-padding-micro) var(--ee-padding-default) var(--ee-padding-micro) var(--ee-padding-smaller);
+		}
+
 		&:focus {
 			@extend .ee-input-base-focus;
 		}

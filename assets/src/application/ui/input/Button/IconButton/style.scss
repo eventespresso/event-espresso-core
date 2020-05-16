@@ -24,7 +24,7 @@
 		color: var(--ee-default-text-color);
 		display: inline-flex;
 		height: var(--ee-icon-button-size);
-		margin: 0 0 var(--ee-margin-micro);
+		margin: 0;
 		min-height: var(--ee-icon-button-size);
 		min-width: var(--ee-icon-button-size);
 		padding: var(--ee-padding-micro);
@@ -36,11 +36,13 @@
 				transition: fill 0.1s ease 0.1s, color 0.1s ease 0.1s !important;
 			}
 		}
+		path {
+			fill: currentColor;
+		}
+
 		&--active {
 			border-color: var(--ee-color-primary-low-contrast);
-			path {
-				fill: var(--ee-color-primary);
-			}
+			color: var(--ee-color-primary);
 		}
 
 		&:focus {
@@ -48,9 +50,6 @@
 		}
 
 		&:hover {
-			// background: transparent;
-			// box-shadow: none !important;
-			// color: var(--ee-color-primary) !important;
 			@extend .btn-hover;
 		}
 
@@ -65,10 +64,10 @@
 				}
 				&:active,
 				&:focus {
-					border-color: var(--ee-color-primary-super-low-contrast);
+					border-color: var(--ee-color-white);
 				}
 				&:hover {
-					border-color: var(--ee-color-white);
+					border-color: var(--ee-color-primary-super-low-contrast);
 				}
 			}
 		}
