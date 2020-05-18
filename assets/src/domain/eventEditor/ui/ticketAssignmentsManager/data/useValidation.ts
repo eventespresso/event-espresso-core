@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { mapObjIndexed, pickBy, isEmpty } from 'ramda';
 
 import { AssignmentManager, TAMPossibleRelation, TAMRelationalData, TAMRelationalEntity } from '../types';
@@ -33,7 +33,7 @@ const useValidation = (assignmentManager: AssignmentManager): TAMPossibleRelatio
 		setValidationData(newTAMData);
 	}, [TAMData]);
 
-	return validationData;
+	return useMemo(() => validationData, [validationData]);
 };
 
 export default useValidation;
