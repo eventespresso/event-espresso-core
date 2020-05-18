@@ -1,5 +1,5 @@
 import { WriteQueryOptions } from '@edtrServices/apollo/queries';
-import { CacheUpdaterFn, useUpdateCache } from '@sharedServices/apollo/queries';
+import { CacheUpdaterFn, useUpdateCache } from '@dataServices/apollo/queries';
 
 /**
  * Updates entity list Apollo cache

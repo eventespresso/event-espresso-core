@@ -2,8 +2,8 @@ import React, { createContext } from 'react';
 
 import { useConfigData, ConfigDataProps } from '../config';
 import { CurrentUser, DateTimeFormats } from '../../valueObjects/config';
-import { useCurrentUser } from '../../../domain/shared/services/apollo/queries/currentUser';
-import { useGeneralSettings } from '../../../domain/shared/services/apollo/queries/generalSettings';
+import { useCurrentUser } from '@dataServices/apollo/queries/currentUser';
+import { useGeneralSettings } from '@dataServices/apollo/queries/generalSettings';
 
 const ConfigContext = createContext<ConfigDataProps | null>(null);
 

@@ -1,7 +1,7 @@
 import { GraphQLError } from 'graphql';
 
 import { ReadQueryOptions } from '@dataServices/apollo/queries';
-import { GeneralSettingsData } from '../../../../../../../application/valueObjects/config/types';
+import { GeneralSettingsData } from '@application/valueObjects/config/types';
 import { GET_GENERAL_SETTINGS } from '..';
 
 export const request: ReadQueryOptions = {

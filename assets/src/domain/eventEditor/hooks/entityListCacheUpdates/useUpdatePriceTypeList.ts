@@ -1,6 +1,6 @@
 import useUpdateEntityList from './useUpdateEntityList';
 import { PriceTypesList, usePriceTypeQueryOptions, WriteQueryOptions } from '@edtrServices/apollo';
-import { CacheUpdaterFn } from '@sharedServices/apollo/queries';
+import { CacheUpdaterFn } from '@dataServices/apollo/queries';
 
 const useUpdatePriceTypeList = (
 	writeQueryOptions: WriteQueryOptions<PriceTypesList> = undefined

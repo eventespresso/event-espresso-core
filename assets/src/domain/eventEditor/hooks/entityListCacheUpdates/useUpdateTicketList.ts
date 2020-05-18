@@ -1,6 +1,6 @@
 import useUpdateEntityList from './useUpdateEntityList';
 import { TicketsList, useTicketQueryOptions, WriteQueryOptions } from '@edtrServices/apollo';
-import { CacheUpdaterFn } from '@sharedServices/apollo/queries';
+import { CacheUpdaterFn } from '@dataServices/apollo/queries';
 
 const useUpdateTicketList = (
 	writeQueryOptions: WriteQueryOptions<TicketsList> = undefined

@@ -1,8 +1,8 @@
 import { useApolloClient } from '@apollo/react-hooks';
 import { renderHook, act } from '@testing-library/react-hooks';
 
-import useCacheRehydration from '../../../../../../eventEditor/services/apollo/initialization/useCacheRehydration';
-import { ApolloMockedProvider } from '../../../../../../eventEditor/services/context/TestContext';
+import useCacheRehydration from '@edtrServices/apollo/initialization/useCacheRehydration';
+import { ApolloMockedProvider } from '@edtrServices/context/TestContext';
 import useUpdateGeneralSettingsCache from '../useUpdateGeneralSettingsCache';
 import { useGeneralSettings } from '..';
 import { request } from './data';

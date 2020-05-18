@@ -1,5 +1,5 @@
 import { useEvent, useFetchDatetimes, useFetchPriceTypes, useFetchPrices, useFetchTickets } from '../queries/';
-import { useFetchCurrentUser, useFetchGeneralSettings } from '@sharedServices/apollo/queries';
+import { useFetchCurrentUser, useFetchGeneralSettings } from '@dataServices/apollo/queries';
 import useCacheRehydration from './useCacheRehydration';
 
 const useInitQueries = (): void => {
