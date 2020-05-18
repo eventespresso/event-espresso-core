@@ -1,7 +1,7 @@
 import { pick, map, mapObjIndexed, isEmpty } from 'ramda';
 
-import { useRelationsManager, RelationFunctionProps, RelationalData } from '@appServices/apollo/relations';
-import { AssignmentManager, InitializeProps, TAMRelationalData } from '../types';
+import { useRelationsManager, RelationFunctionProps } from '@appServices/apollo/relations';
+import { AssignmentManager, TAMRelationalData } from '../types';
 import { useCallback, useMemo } from 'react';
 
 type AM = AssignmentManager;
@@ -99,40 +99,56 @@ const useAssignmentManager = (): AM => {
 		[updateAssignment]
 	);
 
-	const prepareRelationsForInit = useCallback(({ data, assignmentType, entity }: InitializeProps): RelationalData => {
-		// pick only datetimes and tickets from relational data
-		let newData = pick(relationsToPick, data);
+	/**
+	 * Removes other relations from the given relational entity
+	 * like ticket to price relations
+	 */
+	const removeNonTAMRelations = useCallback(({ assignmentType, entity, entityType, relationalEntity }) => {
+		// by default all entities (dates/tickets) will be used for relations
+		// e.g. TAM for all dates and tickets
+		let relationalEntityToUse = relationalEntity;
 
-		// Remove other relations from newData
-		// like ticket to price relations
-		return mapObjIndexed((relationalEntity, entityType) => {
-			let relationalEntityToUse = relationalEntity;
-			// If TAM is only for a single datetime/ticket
-			// limit relations to that datetime/ticket
-			if (
-				(assignmentType === 'forDate' && entityType === 'datetimes') ||
-				(assignmentType === 'forTicket' && entityType === 'tickets')
-			) {
-				relationalEntityToUse = pick([entity.id], relationalEntity);
-				// if it's for a new date or ticket
-				if (isEmpty(relationalEntityToUse)) {
-					const newRelationKey = entityType === 'datetimes' ? 'tickets' : 'datetimes';
-					// init to empty relations
-					relationalEntityToUse[entity.id] = {
-						[newRelationKey]: [],
-					};
-				}
+		// But if TAM is only for a single datetime/ticket
+		// limit relations to that datetime/ticket
+		if (
+			(assignmentType === 'forDate' && entityType === 'datetimes') ||
+			(assignmentType === 'forTicket' && entityType === 'tickets')
+		) {
+			// only the realtions for the given single entity
+			// for which TAM has been opened
+			relationalEntityToUse = pick([entity.id], relationalEntity);
+			// if it's for a new date or ticket,
+			// there will obviously be no entry of it in existing relations
+			if (isEmpty(relationalEntityToUse)) {
+				const newRelationKey = entityType === 'datetimes' ? 'tickets' : 'datetimes';
+				// initialize to empty relations
+				relationalEntityToUse[entity.id] = {
+					[newRelationKey]: [],
+				};
 			}
+		}
 
-			return map((relation) => {
-				return pick(relationsToPick, relation);
-			}, relationalEntityToUse);
-		}, newData);
+		// Now loop through all the relational entities
+		return map((relation) => {
+			// pick only TAM relations, i.e. filter out tickets to prices relations
+			return pick(relationsToPick, relation);
+		}, relationalEntityToUse);
 	}, []);
 
+	/**
+	 * Inilializes the relations for TAM.
+	 */
 	const initialize = useCallback<AM['initialize']>(
-		(props) => {
-			const newData = prepareRelationsForInit(props);
+		({ data, assignmentType, entity }) => {
+			// pick only datetimes and tickets from relational data
+			let newData = pick(relationsToPick, data);
+
+			// Remove other relations from newData
+			newData = mapObjIndexed((relationalEntity, entityType) => {
+				return removeNonTAMRelations({ assignmentType, entity, entityType, relationalEntity });
+			}, newData);
+
+			// fire up the relations manager
 			initializeRelations(newData);
 		},
 		[initializeRelations]
