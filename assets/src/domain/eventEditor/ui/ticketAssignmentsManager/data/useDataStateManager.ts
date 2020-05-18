@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useCallback, useMemo } from 'react';
 
 import { EntityId } from '@dataServices/types';
 import { useRelations } from '@appServices/apollo/relations';
@@ -22,52 +22,76 @@ const useDataStateManager = (props: BaseProps): DataStateManager => {
 		}
 	}, [initialized]);
 
-	const hasNoAssignedDates = ({ ticketId }) => orphanEntities.tickets.includes(ticketId);
+	const hasNoAssignedDates = useCallback(({ ticketId }) => orphanEntities.tickets.includes(ticketId), [
+		orphanEntities,
+	]);
 
-	const hasNoAssignedTickets = ({ datetimeId }) => orphanEntities.datetimes.includes(datetimeId);
+	const hasNoAssignedTickets = useCallback(({ datetimeId }) => orphanEntities.datetimes.includes(datetimeId), [
+		orphanEntities,
+	]);
 
-	const hasOrphanTickets = () => orphanEntities.tickets.length > 0;
+	const hasOrphanTickets = useCallback(() => orphanEntities.tickets.length > 0, [orphanEntities]);
 
-	const hasOrphanDates = () => orphanEntities.datetimes.length > 0;
+	const hasOrphanDates = useCallback(() => orphanEntities.datetimes.length > 0, [orphanEntities]);
 
-	const hasOrphanEntities = () => hasOrphanTickets() || hasOrphanDates();
-
-	const getOldRelation = ({ datetimeId }): EntityId[] => {
-		return relations.getRelations({
-			entity: 'datetimes',
-			entityId: datetimeId,
-			relation: 'tickets',
-		});
-	};
-
-	const getAssignmentStatus = ({ datetimeId, ticketId }): AssignmentStatus => {
-		const oldRelatedTickets = getOldRelation({ datetimeId });
-		const newRelatedTickets = assignmentManager.getAssignedTickets({ datetimeId });
-
-		const isInOld = oldRelatedTickets.includes(ticketId);
-		const isInNew = newRelatedTickets.includes(ticketId);
-
-		switch (true) {
-			case isInOld && isInNew:
-				return 'OLD';
-			case !isInOld && isInNew:
-				return 'NEW';
-			case isInOld && !isInNew:
-				return 'REMOVED';
-			case !isInOld && !isInNew:
-				return null;
-		}
-	};
-
-	return {
-		...assignmentManager,
-		getAssignmentStatus,
-		hasNoAssignedDates,
-		hasNoAssignedTickets,
+	const hasOrphanEntities = useCallback(() => hasOrphanTickets() || hasOrphanDates(), [
 		hasOrphanDates,
-		hasOrphanEntities,
 		hasOrphanTickets,
-	};
+	]);
+
+	const getOldRelation = useCallback(
+		({ datetimeId }): EntityId[] => {
+			return relations.getRelations({
+				entity: 'datetimes',
+				entityId: datetimeId,
+				relation: 'tickets',
+			});
+		},
+		[relations.getRelations]
+	);
+
+	const getAssignmentStatus = useCallback(
+		({ datetimeId, ticketId }): AssignmentStatus => {
+			const oldRelatedTickets = getOldRelation({ datetimeId });
+			const newRelatedTickets = assignmentManager.getAssignedTickets({ datetimeId });
+
+			const isInOld = oldRelatedTickets.includes(ticketId);
+			const isInNew = newRelatedTickets.includes(ticketId);
+
+			switch (true) {
+				case isInOld && isInNew:
+					return 'OLD';
+				case !isInOld && isInNew:
+					return 'NEW';
+				case isInOld && !isInNew:
+					return 'REMOVED';
+				case !isInOld && !isInNew:
+					return null;
+			}
+		},
+		[assignmentManager.getAssignedTickets, getOldRelation]
+	);
+
+	return useMemo(
+		() => ({
+			...assignmentManager,
+			getAssignmentStatus,
+			hasNoAssignedDates,
+			hasNoAssignedTickets,
+			hasOrphanDates,
+			hasOrphanEntities,
+			hasOrphanTickets,
+		}),
+		[
+			assignmentManager,
+			getAssignmentStatus,
+			hasNoAssignedDates,
+			hasNoAssignedTickets,
+			hasOrphanDates,
+			hasOrphanEntities,
+			hasOrphanTickets,
+		]
+	);
 };
 
 export default useDataStateManager;
