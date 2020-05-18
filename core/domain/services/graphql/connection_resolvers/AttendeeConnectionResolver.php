@@ -148,7 +148,7 @@ class AttendeeConnectionResolver extends AbstractConnectionResolver
         return $this->sanitizeWhereArgsForInputFields(
             $where_args,
             $arg_mapping,
-            ['event', 'regTicket', 'regTicketIn']
+            ['event', 'eventIn', 'regTicket', 'regTicketIn']
         );
     }
 }
