@@ -13,6 +13,7 @@ export const initialState: DataState = {
 const useDataReducer = (initializer: StateInitializer): DataStateReducer => {
 	const dataReducer: DataStateReducer = (state, action) => {
 		const { type, id, index, fieldValues, ticketPrice, price, prices } = action;
+		let isTaxable: boolean;
 
 		switch (type) {
 			case 'TOGGLE_CALC_DIR':
@@ -24,13 +25,7 @@ const useDataReducer = (initializer: StateInitializer): DataStateReducer => {
 					},
 				};
 			case 'UPDATE_TICKET_PRICE':
-				/**
-				 * Ticket price update can be triggered when:
-				 * - A price is added or removed
-				 * - Price type is changed for a price
-				 * So, this is the best and safest place to check for isTaxable
-				 */
-				const isTaxable = any(isTax, state.prices);
+				isTaxable = any(isTax, state.prices);
 				return {
 					...state,
 					ticket: {
@@ -76,17 +71,28 @@ const useDataReducer = (initializer: StateInitializer): DataStateReducer => {
 
 				// update the prices list
 				const updatedPrices = update<typeof state.prices[0]>(priceIndex, updatedPrice, state.prices);
+				isTaxable = any(isTax, updatedPrices);
 				return priceIndex > -1
 					? {
 							...state,
 							prices: updatedPrices,
+							ticket: {
+								...state.ticket,
+								isTaxable,
+							}
 					  }
 					: state;
 
 			case 'DELETE_PRICE':
+				const retainedPrices = state.prices.filter(({ id: priceId }) => id !== priceId);
+				isTaxable = any(isTax, retainedPrices);
 				return {
 					...state,
-					prices: state.prices.filter(({ id: priceId }) => id !== priceId),
+					prices: retainedPrices,
+					ticket: {
+						...state.ticket,
+						isTaxable,
+					}
 				};
 
 			case 'ADD_PRICE_TO_DELETED':
