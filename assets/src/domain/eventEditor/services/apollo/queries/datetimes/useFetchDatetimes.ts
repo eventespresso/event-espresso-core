@@ -5,10 +5,10 @@ import { __ } from '@wordpress/i18n';
 import { useSystemNotifications } from '@appServices/toaster';
 import { useStatus, TypeName } from '@appServices/apollo/status';
 import useDatetimeQueryOptions from './useDatetimeQueryOptions';
-import { FetchEntitiesResult } from '../types';
+import { FetchQueryResult } from '@dataServices/apollo/queries/types';
 import { DatetimesList } from '../../types';
 
-const useFetchDatetimes = (): FetchEntitiesResult<DatetimesList> => {
+const useFetchDatetimes = (): FetchQueryResult<DatetimesList> => {
 	const { setIsLoading, setIsLoaded, setIsError } = useStatus();
 	const { query, ...options } = useDatetimeQueryOptions();
 

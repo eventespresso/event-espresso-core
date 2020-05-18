@@ -25,7 +25,7 @@ type EntityQueryOrderByItem<Field> = {
 
 export type EntityQueryOrderBy<Field> = Array<EntityQueryOrderByItem<Field>>;
 
-export interface FetchEntitiesResult<Data> {
+export interface FetchQueryResult<Data> {
 	data: Data;
 	error: Error;
 	loading: boolean;

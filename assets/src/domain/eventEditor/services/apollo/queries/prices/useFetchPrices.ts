@@ -5,10 +5,10 @@ import { __ } from '@wordpress/i18n';
 import { useSystemNotifications } from '@appServices/toaster';
 import { useStatus, TypeName } from '@appServices/apollo/status';
 import usePriceQueryOptions from './usePriceQueryOptions';
-import { FetchEntitiesResult } from '../types';
+import { FetchQueryResult } from '@dataServices/apollo/queries/types';
 import { PricesList } from '../../types';
 
-const useFetchPrices = (skipFetch: boolean = null): FetchEntitiesResult<PricesList> => {
+const useFetchPrices = (skipFetch: boolean = null): FetchQueryResult<PricesList> => {
 	const { setIsLoading, setIsLoaded, setIsError, isLoaded } = useStatus();
 	const { query, ...options } = usePriceQueryOptions();
 

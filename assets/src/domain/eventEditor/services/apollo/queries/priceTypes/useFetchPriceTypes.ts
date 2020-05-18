@@ -5,10 +5,10 @@ import { __ } from '@wordpress/i18n';
 import { useSystemNotifications } from '@appServices/toaster';
 import usePriceTypeQueryOptions from './usePriceTypeQueryOptions';
 import { useStatus, TypeName } from '@appServices/apollo/status';
-import { FetchEntitiesResult } from '../types';
+import { FetchQueryResult } from '@dataServices/apollo/queries/types';
 import { PriceTypesList } from '../../types';
 
-const useFetchPriceTypes = (): FetchEntitiesResult<PriceTypesList> => {
+const useFetchPriceTypes = (): FetchQueryResult<PriceTypesList> => {
 	const { setIsLoading, setIsLoaded, setIsError } = useStatus();
 	const { query, ...options } = usePriceTypeQueryOptions();
 

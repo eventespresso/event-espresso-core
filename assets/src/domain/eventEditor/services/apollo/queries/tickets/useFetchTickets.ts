@@ -5,10 +5,10 @@ import { __ } from '@wordpress/i18n';
 import { useSystemNotifications } from '@appServices/toaster';
 import { useStatus, TypeName } from '@appServices/apollo/status';
 import useTicketQueryOptions from './useTicketQueryOptions';
-import { FetchEntitiesResult } from '../types';
+import { FetchQueryResult } from '@dataServices/apollo/queries/types';
 import { TicketsList } from '../../types';
 
-const useFetchTickets = (skipFetch: boolean = null): FetchEntitiesResult<TicketsList> => {
+const useFetchTickets = (skipFetch: boolean = null): FetchQueryResult<TicketsList> => {
 	const { setIsLoading, setIsLoaded, setIsError, isLoaded } = useStatus();
 	const { query, ...options } = useTicketQueryOptions();
 
