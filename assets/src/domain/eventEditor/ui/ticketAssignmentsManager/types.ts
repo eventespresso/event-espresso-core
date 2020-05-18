@@ -31,7 +31,7 @@ export interface SetAssignmentFnArgs extends AssignmentFnArgs {
 	remove?: boolean;
 }
 
-interface InitializeProps extends BaseProps {
+export interface InitializeProps extends BaseProps {
 	data: TAMRelationalData;
 }
 

@@ -23,16 +23,16 @@ const useDataStateManager = (props: BaseProps): DataStateManager => {
 	}, [initialized]);
 
 	const hasNoAssignedDates = useCallback(({ ticketId }) => orphanEntities.tickets.includes(ticketId), [
-		orphanEntities,
+		orphanEntities.tickets,
 	]);
 
 	const hasNoAssignedTickets = useCallback(({ datetimeId }) => orphanEntities.datetimes.includes(datetimeId), [
-		orphanEntities,
+		orphanEntities.datetimes,
 	]);
 
-	const hasOrphanTickets = useCallback(() => orphanEntities.tickets.length > 0, [orphanEntities]);
+	const hasOrphanTickets = useCallback(() => orphanEntities.tickets.length > 0, [orphanEntities.tickets]);
 
-	const hasOrphanDates = useCallback(() => orphanEntities.datetimes.length > 0, [orphanEntities]);
+	const hasOrphanDates = useCallback(() => orphanEntities.datetimes.length > 0, [orphanEntities.datetimes]);
 
 	const hasOrphanEntities = useCallback(() => hasOrphanTickets() || hasOrphanDates(), [
 		hasOrphanDates,
