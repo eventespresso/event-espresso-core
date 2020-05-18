@@ -103,6 +103,10 @@ class AttendeeConnectionResolver extends AbstractConnectionResolver
             if (! empty($input_fields['Registration.Ticket.TKT_ID']) && is_array($input_fields['Registration.Ticket.TKT_ID'])) {
                 $input_fields['Registration.Ticket.TKT_ID'] = ['in', $input_fields['Registration.Ticket.TKT_ID']];
             }
+            // Use the proper operator.
+            if (! empty($input_fields['Registration.Event.EVT_ID']) && is_array($input_fields['Registration.Event.EVT_ID'])) {
+                $input_fields['Registration.Event.EVT_ID'] = ['in', $input_fields['Registration.Event.EVT_ID']];
+            }
         }
 
         /**
@@ -133,6 +137,8 @@ class AttendeeConnectionResolver extends AbstractConnectionResolver
     public function sanitizeInputFields(array $where_args)
     {
         $arg_mapping = [
+            'event'         => 'Registration.Event.EVT_ID',
+            'eventIn'       => 'Registration.Event.EVT_ID',
             'regTicket'     => 'Registration.Ticket.TKT_ID',
             'regTicketIn'   => 'Registration.Ticket.TKT_ID',
             'regTicketIdIn' => 'Registration.Ticket.TKT_ID',
@@ -142,7 +148,7 @@ class AttendeeConnectionResolver extends AbstractConnectionResolver
         return $this->sanitizeWhereArgsForInputFields(
             $where_args,
             $arg_mapping,
-            ['regTicket', 'regTicketIn']
+            ['event', 'regTicket', 'regTicketIn']
         );
     }
 }
