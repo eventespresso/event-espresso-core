@@ -107,11 +107,8 @@ const useBodyRowGenerator = (): TicketsTableBodyRowGen => {
 		const exclude = ['row', 'stripe', 'name', 'actions'];
 
 		const cells = pipe(
-			// @ts-ignore
 			filter(filterCellByStartOrEndDate(displayStartOrEndDate)),
-			// @ts-ignore
 			addZebraStripesOnMobile(exclude)
-			// @ts-ignore
 		)(cellsData);
 
 		return {

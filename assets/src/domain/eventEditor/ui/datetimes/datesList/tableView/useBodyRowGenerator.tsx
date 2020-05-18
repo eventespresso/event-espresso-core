@@ -19,6 +19,9 @@ import '@application/ui/styles/root/entity-status.css';
 
 type DatesTableBodyRowGen = BodyRowGeneratorFn<Datetime, DatetimesFilterStateManager>;
 
+const exclude = ['row', 'stripe', 'name', 'actions'];
+const addZebraStripes = addZebraStripesOnMobile(exclude);
+
 const useBodyRowGenerator = (): DatesTableBodyRowGen => {
 	return useCallback<DatesTableBodyRowGen>(({ entity: datetime, filterState }) => {
 		const { displayStartOrEndDate, sortingEnabled } = filterState;
@@ -93,15 +96,9 @@ const useBodyRowGenerator = (): DatesTableBodyRowGen => {
 			},
 		];
 
-		const exclude = ['row', 'stripe', 'name', 'actions'];
+		const filterCells = filter(filterCellByStartOrEndDate(displayStartOrEndDate));
 
-		const cells = pipe(
-			// @ts-ignore
-			filter(filterCellByStartOrEndDate(displayStartOrEndDate)),
-			// @ts-ignore
-			addZebraStripesOnMobile(exclude)
-			// @ts-ignore
-		)(cellsData);
+		const cells = pipe(filterCells, addZebraStripes)(cellsData);
 
 		return {
 			cells,
