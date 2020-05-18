@@ -4,7 +4,6 @@ export { default as Close } from './Close';
 export { default as Copy } from './Copy';
 export { default as Edit } from './Edit';
 export { default as Filter } from './Filter';
-export { default as GlobalOutlined } from './GlobalOutlined';
 export { default as Groups } from './Groups';
 export { default as Link } from './Link';
 export { default as More } from './More';

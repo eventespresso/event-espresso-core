@@ -14,7 +14,7 @@ const FieldRenderer: React.FC<FieldRendererProps> = (props) => {
 
 	// no layout stuff needed for hidden field
 	if (props.fieldType === 'hidden') {
-		return <MappedField { ...rest } />;
+		return <MappedField {...rest} />;
 	}
 
 	const tooltipKey = info ? props.input.name + '-tooltip' : null;
@@ -39,7 +39,7 @@ const FieldRenderer: React.FC<FieldRendererProps> = (props) => {
 				{label}
 				{info && (
 					<Tooltip placement='right' tooltip={info}>
-						<InfoCircleOutlined className='ee-form-item__help-info' />
+						<InfoCircleOutlined />
 					</Tooltip>
 				)}
 			</FormLabel>

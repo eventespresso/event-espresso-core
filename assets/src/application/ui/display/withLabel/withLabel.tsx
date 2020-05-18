@@ -4,9 +4,8 @@ import { LabelPosition, withLabelProps } from './types';
 import './style.scss';
 
 const withLabel = <P extends withLabelProps>(WrappedComponent: React.ComponentType<P>) => {
-
 	type Ref = React.Ref<typeof WrappedComponent>;
-	type refProps = { forwardedRef: Ref; };
+	type refProps = { forwardedRef: Ref };
 
 	const WithLabel: React.FC<P & refProps> = ({
 		forwardedRef,
@@ -18,7 +17,7 @@ const withLabel = <P extends withLabelProps>(WrappedComponent: React.ComponentTy
 	}) => {
 		const className = classNames(
 			'ee-input__wrapper',
-			label && labelClassName,
+			labelClassName,
 			label && 'ee-input-label__wrapper',
 			label && labelPosition && `ee-input-label__wrapper--${labelPosition}`
 		);
@@ -35,7 +34,7 @@ const withLabel = <P extends withLabelProps>(WrappedComponent: React.ComponentTy
 	};
 
 	const ForwardedComponentWithLabel = (props: P, ref: Ref) => {
-		return <WithLabel { ...props } forwardedRef={ ref } />;
+		return <WithLabel {...props} forwardedRef={ref} />;
 	};
 
 	return React.forwardRef(ForwardedComponentWithLabel);
