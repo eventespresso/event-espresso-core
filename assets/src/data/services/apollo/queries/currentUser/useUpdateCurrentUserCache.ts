@@ -1,7 +1,6 @@
-import { WriteQueryOptions } from '../../../../../eventEditor/services/apollo/queries/types';
-import { CacheUpdaterFn } from '../types';
+import { CacheUpdaterFn, WriteQueryOptions } from '../types';
 import useUpdateCache from '../useUpdateCache';
-import { Viewer } from '../../../../../../application/valueObjects/config/types';
+import { Viewer } from '@application/valueObjects/config/types';
 
 const useUpdateCurrentUserCache = (
 	writeQueryOptions: WriteQueryOptions<Viewer> = undefined

@@ -2,7 +2,7 @@ import { findIndex, update } from 'ramda';
 
 import { CacheUpdaterFn, CacheUpdaterFnArgs } from '../types';
 import { Price, PricesList } from '@edtrServices/apollo/types';
-import { WriteQueryOptions } from '@edtrServices/apollo/queries/types';
+import { WriteQueryOptions } from '@dataServices/apollo/queries/types';
 import { entityHasGuid } from '@sharedServices/predicates/selectionById';
 import { usePriceQueryOptions } from '@edtrServices/apollo/queries/prices';
 

@@ -1,8 +1,7 @@
 import { useCallback } from 'react';
 import { useApolloClient } from '@apollo/react-hooks';
 
-import { WriteQueryOptions } from '@edtrServices/apollo/queries/types';
-import { CacheUpdaterFn } from './types';
+import { WriteQueryOptions, CacheUpdaterFn } from './types';
 
 const useUpdateCache = <Data = any>(writeQueryOptions: WriteQueryOptions<Data>): CacheUpdaterFn<Data> => {
 	const client = useApolloClient();

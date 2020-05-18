@@ -16,11 +16,11 @@ import {
 	useTicketQueryOptions,
 } from '../queries';
 import { useUpdateDatetimeList, useUpdatePriceTypeList, useUpdateTicketList, useUpdatePriceList } from '../../../hooks';
-import { useCurrentUserQueryOptions, useUpdateCurrentUserCache } from '@sharedServices/apollo/queries/currentUser';
+import { useCurrentUserQueryOptions, useUpdateCurrentUserCache } from '@dataServices/apollo/queries/currentUser';
 import {
 	useGeneralSettingsQueryOptions,
 	useUpdateGeneralSettingsCache,
-} from '@sharedServices/apollo/queries/generalSettings';
+} from '@dataServices/apollo/queries/generalSettings';
 import { getGuids } from '@appServices/predicates';
 
 const useCacheRehydration = (): void => {

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { useFilterBarUISubscription, useFilterBarUIRegistry } from '.';
+import { useFilterBarUISubscription, useFilterBarUIRegistry } from './';
 import { FilterBarUIElementsHook } from './types';
 
 const useFilterBarUIElements: FilterBarUIElementsHook = ({ domain, listId, filterState }) => {
