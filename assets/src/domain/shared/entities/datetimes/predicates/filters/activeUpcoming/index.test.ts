@@ -1,5 +1,5 @@
-import activeUpcoming from '.';
-import { nodes as dates } from '../../../../../../eventEditor/services/apollo/queries/datetimes/test/data';
+import activeUpcoming from './';
+import { nodes as dates } from '@edtrServices/apollo/queries/datetimes/test/data';
 
 describe('activeUpcoming', () => {
 	it('Should return an array of dates which are active OR upcoming', () => {

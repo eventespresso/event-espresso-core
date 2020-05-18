@@ -1,7 +1,7 @@
 import { useQuery } from '@apollo/react-hooks';
 
 import { useSystemNotifications } from '@appServices/toaster';
-import { GET_CURRENT_USER } from '.';
+import { GET_CURRENT_USER } from './';
 import { FetchQueryResult } from '../types';
 import { Viewer } from '@application/valueObjects/config/types';
 

@@ -1,4 +1,4 @@
-import { GET_GENERAL_SETTINGS } from '.';
+import { GET_GENERAL_SETTINGS } from './';
 import { useCacheQuery, ReadQueryOptions } from '@dataServices/apollo/queries';
 import { GeneralSettings, GeneralSettingsData } from '@application/valueObjects/config/types';
 /**

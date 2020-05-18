@@ -1,7 +1,7 @@
 import { useQuery } from '@apollo/react-hooks';
 
 import { useSystemNotifications } from '@appServices/toaster';
-import { GET_GENERAL_SETTINGS } from '.';
+import { GET_GENERAL_SETTINGS } from './';
 import { FetchQueryResult } from '@dataServices/apollo/queries/types';
 import { GeneralSettingsData } from '@application/valueObjects/config/types';
 
