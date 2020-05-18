@@ -6,8 +6,12 @@ import { MenuToggleProps } from './types';
 const MenuToggle = React.forwardRef<typeof ChakraMenuButton, MenuToggleProps>(
 	({ children, variant = 'unstyled', ...props }, ref) => {
 		return (
-			// @ts-ignore
-			<ChakraMenuButton {...props} variant={variant} ref={ref}>
+			<ChakraMenuButton
+				{...props}
+				// @ts-ignore
+				variant={variant}
+				ref={ref}
+			>
 				{children}
 			</ChakraMenuButton>
 		);
