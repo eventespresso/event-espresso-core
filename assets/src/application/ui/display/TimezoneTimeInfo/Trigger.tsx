@@ -13,8 +13,8 @@ const Trigger = forwardRef<typeof IconButton, TriggerProps>(({ tooltip, ...props
 		{...props}
 		borderless
 		color='white'
-		className='ee-timezone-info-btn'
-		icon={() => <GlobalOutlined />}
+		className='ee-timezone-info__button'
+		icon={() => <GlobalOutlined size='small' />}
 		tooltip={tooltip}
 		tooltipProps={{ placement: 'top' }}
 		ref={ref}

@@ -1,3 +1,4 @@
+import withSize from './withSize';
 import './style.scss';
 
 export { ReactComponent as AppstoreFilled } from './appstoreFilled.svg';
@@ -16,7 +17,7 @@ export { ReactComponent as ControlOutlined } from './controlOutlined.svg';
 
 export { ReactComponent as DownCircleFilled } from './downCircleFilled.svg';
 
-export { ReactComponent as GlobalOutlined } from './globalOutlined.svg';
+import { ReactComponent as GlobalOutlinedSVG } from './globalOutlined.svg';
 
 export { ReactComponent as InfoCircleOutlined } from './infoCircleOutlined.svg';
 
@@ -39,3 +40,5 @@ export { ReactComponent as UpCircleFilled } from './upCircleFilled.svg';
 export { ReactComponent as Warning } from './warning.svg';
 
 export { ReactComponent as WarningTriangle } from './warningTriangle.svg';
+
+export const GlobalOutlined = withSize(GlobalOutlinedSVG);
