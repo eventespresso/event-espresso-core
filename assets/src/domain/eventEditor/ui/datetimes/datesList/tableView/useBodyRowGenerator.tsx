@@ -1,6 +1,8 @@
 import React, { useCallback } from 'react';
 import { format } from 'date-fns';
+import { filter, pipe } from 'ramda';
 
+import { addZebraStripesOnMobile } from '@appLayout/espressoTable/utils';
 import DateRegistrationsLink from '@edtrUI/datetimes/DateRegistrationsLink';
 import DateActionsMenu from '@edtrUI/datetimes/datesList/actionsMenu/DateActionsMenu';
 import { Datetime } from '@edtrServices/apollo/types';
@@ -16,6 +18,9 @@ import { EditableName } from '../editable';
 import '@application/ui/styles/root/entity-status.css';
 
 type DatesTableBodyRowGen = BodyRowGeneratorFn<Datetime, DatetimesFilterStateManager>;
+
+const exclude = ['row', 'stripe', 'name', 'actions'];
+const addZebraStripes = addZebraStripesOnMobile(exclude);
 
 const useBodyRowGenerator = (): DatesTableBodyRowGen => {
 	return useCallback<DatesTableBodyRowGen>(({ entity: datetime, filterState }) => {
@@ -34,11 +39,12 @@ const useBodyRowGenerator = (): DatesTableBodyRowGen => {
 		const name = {
 			key: 'name',
 			type: 'cell',
-			className: 'ee-date-list-cell ee-col-name ee-rspnsv-table-column-bigger ee-rspnsv-table-hide-on-mobile',
+			className:
+				'ee-date-list-cell ee-date-list-col-name ee-rspnsv-table-column-bigger ee-rspnsv-table-hide-on-mobile',
 			value: sortingEnabled ? (
 				datetime.name
 			) : (
-				<EditableName className='ee-focus-priority-5' entity={datetime} view={'table'} />
+				<EditableName className={'ee-focus-priority-5'} entity={datetime} view={'table'} />
 			),
 		};
 
@@ -85,12 +91,14 @@ const useBodyRowGenerator = (): DatesTableBodyRowGen => {
 			{
 				key: 'actions',
 				type: 'cell',
-				className: 'ee-date-list-cell ee-actions-column ee-rspnsv-table-column-big',
+				className: 'ee-date-list-cell ee-date-list-col-actions ee-actions-column ee-rspnsv-table-column-big',
 				value: sortingEnabled ? '-' : <DateActionsMenu entity={datetime} />,
 			},
 		];
 
-		const cells = cellsData.filter(filterCellByStartOrEndDate(displayStartOrEndDate));
+		const filterCells = filter(filterCellByStartOrEndDate(displayStartOrEndDate));
+
+		const cells = pipe(filterCells, addZebraStripes)(cellsData);
 
 		return {
 			cells,

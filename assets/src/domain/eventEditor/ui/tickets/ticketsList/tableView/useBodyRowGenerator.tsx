@@ -1,6 +1,8 @@
 import React, { useCallback } from 'react';
 import { format } from 'date-fns';
+import { filter, pipe } from 'ramda';
 
+import { addZebraStripesOnMobile } from '@appLayout/espressoTable/utils';
 import { Cell } from '@appLayout/espressoTable';
 import { filterCellByStartOrEndDate } from '@sharedServices/filterState';
 import { ENTITY_LIST_DATE_TIME_FORMAT } from '@appConstants/dateFnsFormats';
@@ -102,7 +104,12 @@ const useBodyRowGenerator = (): TicketsTableBodyRowGen => {
 			},
 		];
 
-		const cells = cellsData.filter(filterCellByStartOrEndDate(displayStartOrEndDate));
+		const exclude = ['row', 'stripe', 'name', 'actions'];
+
+		const cells = pipe(
+			filter(filterCellByStartOrEndDate(displayStartOrEndDate)),
+			addZebraStripesOnMobile(exclude)
+		)(cellsData);
 
 		return {
 			cells,

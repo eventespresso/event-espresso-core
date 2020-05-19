@@ -1,6 +1,8 @@
 .ee-dropdown-menu {
-	position: relative;
-	z-index: 2;
+	&__list-wrapper {
+		position: relative;
+		z-index: 2;
+	}
 
 	&__list {
 		border: 1px solid var(--ee-border-color);

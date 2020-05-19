@@ -1,14 +1,14 @@
 import { DisplayStartOrEndDate } from './types';
 import { Cell } from '@appLayout/espressoTable';
 
-export const filterCellByStartOrEndDate = (displayStartOrEndDate: DisplayStartOrEndDate) => (cell: Cell): Cell => {
+export const filterCellByStartOrEndDate = (displayStartOrEndDate: DisplayStartOrEndDate) => (cell: Cell): boolean => {
 	if (displayStartOrEndDate === DisplayStartOrEndDate.start && cell.key === 'end') {
-		return null;
+		return false;
 	}
 
 	if (displayStartOrEndDate === DisplayStartOrEndDate.end && cell.key === 'start') {
-		return null;
+		return false;
 	}
 
-	return cell;
+	return true;
 };
