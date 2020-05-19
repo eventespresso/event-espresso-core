@@ -114,8 +114,9 @@ class AttendeeConnectionResolver extends AbstractConnectionResolver
             // If Ticket param is passed, it will have preference over Datetime param
             // So, use Datetime param only if a Ticket param is not passed
             if (! empty($input_fields['Datetime.DTT_ID']) && empty($input_fields['Registration.Ticket.TKT_ID'])) {
-                $datetimeIds = is_array($input_fields['Datetime.DTT_ID'])
-                ? $input_fields['Datetime.DTT_ID'] : [$input_fields['Datetime.DTT_ID']];
+                $datetimeIds = $input_fields['Datetime.DTT_ID'];
+                // Make sure it's an array, ready for "IN" operator
+                $datetimeIds = is_array($datetimeIds) ? $datetimeIds : [$datetimeIds];
 
                 try {
                     // Get related ticket IDs for the given dates
