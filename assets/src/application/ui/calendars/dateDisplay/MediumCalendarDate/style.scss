@@ -41,11 +41,11 @@
 		}
 
 		&__year {
-			font-size: var(--ee-font-size-tiny);
+			font-size: var(--ee-font-size-small);
 			letter-spacing: var(--ee-letter-spacing-font-size-micro);
-			line-height: var(--ee-font-size-default);
+			line-height: var(--ee-font-size-smaller);
 			left: var(--ee-padding-nano);
-			margin: var(--ee-margin-nano) 0;
+			margin: 0 var(--ee-margin-nano) var(--ee-margin-tiny);
 			position: relative;
 			top: var(--ee-padding-micro);
 		}
@@ -53,6 +53,7 @@
 		&__time {
 			font-size: var(--ee-font-size-tiny);
 			line-height: var(--ee-font-size-default);
+			margin: var(--ee-margin-nano);
 		}
 	}
 

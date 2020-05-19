@@ -1,11 +1,30 @@
-.ee-timezone-info.ee-timezone-info {
+.ee-timezone-info {
 	display: inline-block;
 	margin: 0 auto;
 	position: relative;
 
+	&__button.ee-btn-base {
+		border: none;
+		font-size: 16px;
+		height: 30px;
+		margin: var(--ee-margin-micro);
+		min-width: 30px;
+		padding: 4px;
+		width: 30px;
+	}
+
+	&__icon {
+		height: 16px;
+		margin: 0;
+		width: 16px;
+	}
+
 	[role='dialog'] {
-		border: 0;
-		box-shadow: var(--ee-box-shadow-big);
+		background-color: var(--ee-background-color);
+		border: 2px solid var(--ee-color-primary-super-low-contrast);
+		border-radius: var(--ee-border-radius-small);
+		color: var(--ee-default-text-color-high-contrast);
+		font-weight: normal;
 		left: 0;
 		min-width: 260px;
 		position: absolute;

@@ -19,6 +19,7 @@ import { Calendar } from '@appDisplay/icons';
 
 export interface BiggieCalendarDateProps extends CalendarDateProps {
 	date: Date | string;
+	timeRange?: string;
 }
 
 /**
@@ -31,6 +32,7 @@ export const BiggieCalendarDate: React.FC<BiggieCalendarDateProps> = ({
 	headerText,
 	onEdit = null,
 	showTime = false,
+	timeRange,
 	...props
 }) => {
 	const { formatForSite: format } = useTimeZoneTime();
@@ -63,7 +65,10 @@ export const BiggieCalendarDate: React.FC<BiggieCalendarDateProps> = ({
 				<div className='ee-bcd__month-day-sep'></div>
 				<div className='ee-bcd__day'>{format(dateObject, DAY_ONLY_SHORT_FORMAT)}</div>
 				<div className='ee-bcd__year'>{format(dateObject, YEAR_ONLY_LONG_FORMAT)}</div>
-				{showTime && <div className='ee-bcd__time'>{format(dateObject, TIME_ONLY_12H_SHORT_FORMAT)}</div>}
+				{showTime && !timeRange && (
+					<div className='ee-bcd__time'>{format(dateObject, TIME_ONLY_12H_SHORT_FORMAT)}</div>
+				)}
+				{timeRange && <div className='ee-bcd__time'>{timeRange}</div>}
 				<TimezoneTimeInfo date={dateObject} />
 			</div>
 			{footerText && <div className='ee-biggie-calendar-date__footer'>{footerText}</div>}

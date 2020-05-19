@@ -6,7 +6,7 @@ import { LinkProps } from './types';
 import './style.scss';
 
 const Link: React.FC<LinkProps> = ({ external, href, icon, tooltip, tooltipProps, ...props }) => {
-	const className = classNames('ee-btn-base ee-icon-button', props.className);
+	const className = classNames('ee-btn-base ee-icon-button ee-icon-button--borderless', props.className);
 
 	if (external && icon) {
 		return (

@@ -4,16 +4,16 @@
  * ------------------------------------------------------------------------- */
 
 :root {
-	--ee-icon-button-size: 36px;
+	--ee-icon-button-size: 40px;
 }
 
 .btn-focus {
-	border-color: var(--ee-color-primary);
+	border: 2px solid var(--ee-color-primary);
 	box-shadow: 0 0 0 1px var(--ee-color-primary);
 }
 
 .btn-hover {
-	border-color: var(--ee-color-primary-low-contrast);
+	border: 2px solid var(--ee-color-primary-low-contrast);
 	color: var(--ee-color-primary-high-contrast);
 	box-shadow: 0 0 0 1px var(--ee-color-primary-low-contrast);
 }
@@ -23,6 +23,8 @@
 	border-width: 2px;
 	cursor: pointer;
 	display: inline-flex;
+	height: calc(var(--ee-icon-button-size));
+	margin: var(--ee-margin-nano);
 
 	&:focus {
 		@extend .btn-focus;
@@ -44,7 +46,7 @@
 		font-size: var(--ee-font-size-default);
 		font-weight: bold;
 		line-height: var(--ee-font-size-default);
-		margin: 0 0 var(--ee-margin-smaller);
+		margin: var(--ee-margin-nano) var(--ee-margin-nano) var(--ee-margin-smaller);
 		outline: none !important;
 		padding: var(--ee-padding-tiny) var(--ee-padding-small);
 		position: relative;
@@ -64,22 +66,6 @@
 
 		&:hover {
 			@extend .btn-hover;
-		}
-
-		&-icon-only {
-			height: var(--ee-icon-button-size);
-			min-height: var(--ee-icon-button-size);
-			min-width: var(--ee-icon-button-size);
-			width: var(--ee-icon-button-size);
-
-			&:active,
-			&:focus,
-			&:visited {
-				height: var(--ee-icon-button-size);
-				min-height: var(--ee-icon-button-size);
-				min-width: var(--ee-icon-button-size);
-				width: var(--ee-icon-button-size);
-			}
 		}
 
 		+ .ee-btn {
@@ -107,10 +93,6 @@
 
 		.img-wrap span {
 			line-height: 24px;
-		}
-
-		&-icon-only:not([disabled]) path {
-			transition: fill 0.1s ease 0.1s, color 0.1s ease 0.1s !important;
 		}
 	}
 
@@ -141,12 +123,13 @@
 	&.ee-btn--primary {
 		&:not([disabled]) {
 			background: var(--ee-color-primary);
-			border-color: var(--ee-color-primary) var(--ee-color-primary) var(--ee-color-primary-low-contrast);
+			border-color: var(--ee-color-primary-low-contrast) var(--ee-color-primary)
+				var(--ee-color-primary-high-contrast);
 			color: var(--ee-text-on-primary);
 		}
 
 		&:hover:not([disabled]) {
-			background: var(--ee-color-primary-low-contrast);
+			background: var(--ee-color-primary-high-contrast);
 		}
 	}
 
@@ -155,11 +138,12 @@
 	&.ee-btn--secondary {
 		&:not([disabled]) {
 			background: var(--ee-color-secondary);
-			border-color: var(--ee-color-secondary) var(--ee-color-secondary) var(--ee-color-secondary-low-contrast);
+			border-color: var(--ee-color-secondary-low-contrast) var(--ee-color-secondary)
+				var(--ee-color-secondary-high-contrast);
 			color: var(--ee-text-on-secondary);
 		}
 		&:hover:not([disabled]) {
-			background: var(--ee-color-secondary-low-contrast);
+			background: var(--ee-color-secondary-high-contrast);
 		}
 	}
 
@@ -168,7 +152,8 @@
 	&.ee-btn--accent {
 		&:not([disabled]) {
 			background: var(--ee-color-accent);
-			border-color: var(--ee-color-accent) var(--ee-color-accent) var(--ee-color-accent-low-contrast);
+			border-color: var(--ee-color-accent-low-contrast) var(--ee-color-accent)
+				var(--ee-color-accent-high-contrast);
 			color: var(--ee-text-on-accent);
 		}
 
@@ -185,7 +170,7 @@
 		&.ee-btn--secondary:disabled,
 		&.ee-btn--accent:disabled {
 			background: var(--ee-color-grey-11);
-			border-color: var(--ee-color-grey-11) var(--ee-color-grey-11) var(--ee-color-grey-12);
+			border-color: var(--ee-color-grey-10) var(--ee-color-grey-11) var(--ee-color-grey-12);
 			color: var(--ee-text-on-grey-11);
 			cursor: unset;
 		}

@@ -35,7 +35,6 @@ const ToggleLegendButton: React.FC<ToggleLegendButtonProps> = ({ listId, showLeg
 			tooltipProps={ { placement: 'top' } }
 			labelClassName={ 'ee-filter-bar__btn-wrap' }
 			labelPosition={ LabelPosition.BOTTOM_CENTER }
-			variant='outline'
 			{ ...rest }
 		/>
 	);

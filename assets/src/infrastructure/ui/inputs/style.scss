@@ -1,10 +1,10 @@
-.input-select-textarea-hover {
+.ee-input-base-hover {
 	border-color: var(--ee-color-primary-low-contrast);
 	color: var(--ee-color-primary-high-contrast);
 	box-shadow: 0 0 0 1px var(--ee-color-primary-low-contrast);
 }
 
-.input-select-textarea-focus {
+.ee-input-base-focus {
 	border-color: var(--ee-color-primary);
 	box-shadow: 0 0 0 1px var(--ee-color-primary);
 	/* Visible in Windows high-contrast themes */
@@ -13,19 +13,14 @@
 	outline-style: solid;
 }
 
-.base-inputs-styles {
+.ee-base-inputs-styles {
 	border-color: var(--ee-border-color);
-	border-radius: 0.25rem;
+	border-radius: var(--ee-border-radius-small);
 	border-style: solid;
 	border-width: 2px;
 	line-height: inherit;
 	min-height: 2.5rem;
-	&:hover {
-		@extend .input-select-textarea-hover;
-	}
-	&:focus {
-		@extend .input-select-textarea-focus;
-	}
+	padding: var(--ee-padding-micro) var(--ee-padding-tiny);
 }
 
 // this approach is needed in cases when classname cannot be applied directly on input
@@ -45,25 +40,17 @@
 	input[type='time'],
 	input[type='url'],
 	input[type='week'] {
-		@extend .base-inputs-styles;
+		@extend .ee-base-inputs-styles;
 	}
 }
 
-.ee-input-base.ee-input-base {
-	@extend .base-inputs-styles;
+.ee-input-base.ee-input-base,
+.ee-input__wrapper .ee-input-base {
+	@extend .ee-base-inputs-styles;
 
-	&.ee-date-picker.ee-date-picker {
-		input[type='text'] {
-			&:hover {
-				@extend .input-select-textarea-hover;
-			}
-			&:focus {
-				@extend .input-select-textarea-focus;
-			}
-		}
-	}
-
-	&.ee-input {
+	&.ee-input,
+	&.ee-select,
+	&.ee-textarea {
 		@at-root {
 			input[type='text']#{&},
 			input[type='password']#{&},
@@ -79,27 +66,15 @@
 			input[type='time']#{&},
 			input[type='url']#{&},
 			input[type='week']#{&} {
-				padding: 0 0.5rem;
-				@extend .base-inputs-styles;
+				@extend .ee-base-inputs-styles;
 			}
 		}
-	}
 
-	&.ee-select {
-		&:hover {
-			@extend .input-select-textarea-hover;
-		}
 		&:focus {
-			@extend .input-select-textarea-focus;
+			@extend .ee-input-base-focus;
 		}
-	}
-	&.ee-textarea {
-		padding: 0.25rem 0.5rem;
 		&:hover {
-			@extend .input-select-textarea-hover;
-		}
-		&:focus {
-			@extend .input-select-textarea-focus;
+			@extend .ee-input-base-hover;
 		}
 	}
 }

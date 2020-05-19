@@ -13,12 +13,10 @@ const IconButton = forwardRef<typeof IconButtonAdapter, IconButtonProps>(
 	({ borderless, color, icon, onClick, ...props }, ref) => {
 		const ariaLabel = props['aria-label'] || props.label;
 		const className = classNames(
+			props.className,
 			'ee-btn-base ee-icon-button',
 			color && `ee-icon-button-color--${color}`,
-			{
-				'ee-icon-button--borderless': borderless,
-			},
-			props.className
+			borderless && 'ee-icon-button--borderless'
 		);
 
 		return (

@@ -10,12 +10,12 @@
 			background-color: transparent;
 			padding: 0 0.5rem;
 
-			@extend .base-inputs-styles;
+			@extend .ee-base-inputs-styles;
 			&:hover {
-				@extend .input-select-textarea-hover;
+				@extend .ee-input-base-hover;
 			}
 			&:focus {
-				@extend .input-select-textarea-focus;
+				@extend .ee-input-base-focus;
 			}
 			> div {
 				padding: 0;

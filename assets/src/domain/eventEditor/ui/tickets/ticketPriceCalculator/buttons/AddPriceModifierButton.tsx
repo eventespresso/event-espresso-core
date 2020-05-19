@@ -13,7 +13,6 @@ const AddPriceModifierButton: React.FC<AddPriceModifierButtonProps> = ({ addPric
 		icon={PlusCircleFilled}
 		onClick={addPriceModifier}
 		tooltip={__('add new price modifier after this row')}
-		variant='outline'
 	/>
 );
 

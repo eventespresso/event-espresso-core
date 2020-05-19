@@ -27,23 +27,27 @@ const FieldRenderer: React.FC<FieldRendererProps> = (props) => {
 
 	return (
 		<FormControl
-			isInvalid={ Boolean(errorMessage) }
-			isRequired={ required }
-			className={ classNames('form-item', `form-item-${rest.fieldType}`, formControlProps?.className) }
+			isInvalid={Boolean(errorMessage)}
+			isRequired={required}
+			className={classNames(
+				'ee-input__wrapper ee-form-item',
+				`form-item__${rest.fieldType}`,
+				formControlProps?.className
+			)}
 		>
-			<FormLabel htmlFor={ props.input.name }>
-				{ label }
-				{ info && (
-					<Tooltip placement='right' tooltip={ info }>
-						<InfoCircleOutlined />
+			<FormLabel htmlFor={props.input.name}>
+				{label}
+				{info && (
+					<Tooltip placement='right' tooltip={info}>
+						<InfoCircleOutlined className='ee-form-item__help-info' />
 					</Tooltip>
-				) }
+				)}
 			</FormLabel>
-			{ before }
-			<MappedField aria-label={ label } aria-describedby={ tooltipKey } { ...rest } />
-			{ after }
-			{ errorMessage ? <FormErrorMessage>{ errorMessage }</FormErrorMessage> : null }
-			<FormHelperText>{ description }</FormHelperText>
+			{before}
+			<MappedField aria-label={label} aria-describedby={tooltipKey} {...rest} />
+			{after}
+			{errorMessage ? <FormErrorMessage>{errorMessage}</FormErrorMessage> : null}
+			<FormHelperText>{description}</FormHelperText>
 		</FormControl>
 	);
 };

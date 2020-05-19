@@ -8,7 +8,7 @@ import withBaseProvider from '../withBaseProvider';
 import './style.scss';
 
 const Timepicker: React.FC<TimepickerProps> = ({ onChange, onChangeValue, ...props }) => {
-	const className = classNames('ee-time-picker', props.className);
+	const className = classNames('ee-input-base-wrapper ee-time-picker', props.className);
 	const onChangeHandler: TimepickerProps['onChange'] = useCallback(
 		(date) => {
 			if (typeof onChangeValue === 'function') {

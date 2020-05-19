@@ -1,5 +1,20 @@
 @import '../../styles/mixins/breakpoints.scss';
 
+.ee-tooltip.ee-tooltip {
+	background-color: var(--ee-background-color);
+	border: 2px solid var(--ee-color-primary-super-low-contrast);
+	border-radius: var(--ee-border-radius-small);
+	box-shadow: var(--ee-box-shadow-tiny);
+	color: var(--ee-default-text-color-super-high-contrast);
+	font-weight: normal;
+	letter-spacing: 1px;
+	padding: var(--ee-padding-tiny) var(--ee-padding-smaller);
+	position: relative;
+	width: auto;
+	word-spacing: 0.125rem;
+	z-index: 1401;
+}
+
 .ee-mobile-help-text {
 	display: none;
 

@@ -53,7 +53,7 @@ const useTicketFormConfig = (id: EntityId, config?: EspressoFormProps): TicketFo
 	};
 
 	const adjacentFormItemProps = {
-		className: 'form-item-pair',
+		className: 'ee-form-item-pair',
 	};
 
 	const initialValues: TicketFormShape = {
@@ -146,7 +146,7 @@ const useTicketFormConfig = (id: EntityId, config?: EspressoFormProps): TicketFo
 						min: -1,
 						info: sprintf(
 							__(
-								'The maximum number of this ticket available for sale.%sSet to 0 stop sales or leave blank for no limit.'
+								'The maximum number of this ticket available for sale.%sSet to 0 to stop sales, or leave blank for no limit.'
 							),
 							'\n'
 						),

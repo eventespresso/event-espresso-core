@@ -24,7 +24,6 @@ const ToggleFiltersButton: React.FC<ToggleFiltersButtonProps> = ({ listId, showF
 			tooltipProps={ { placement: 'top' } }
 			labelClassName={ 'ee-filter-bar__btn-wrap' }
 			labelPosition={ LabelPosition.BOTTOM_CENTER }
-			variant='outline'
 			{ ...rest }
 		/>
 	);

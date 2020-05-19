@@ -4,12 +4,12 @@
  * ------------------------------------------------------------------------- */
 
 .btn-focus {
-	border-color: var(--ee-color-primary);
+	border: 2px solid var(--ee-color-primary);
 	box-shadow: 0 0 0 1px var(--ee-color-primary);
 }
 
 .btn-hover {
-	border-color: var(--ee-color-primary-low-contrast);
+	border: 2px solid var(--ee-color-primary-low-contrast);
 	color: var(--ee-color-primary-high-contrast);
 	box-shadow: 0 0 0 1px var(--ee-color-primary-low-contrast);
 }
@@ -17,24 +17,29 @@
 .ee-btn-base {
 	&.ee-icon-button {
 		background: none;
-		border-color: var(--ee-background-color);
+		border-color: var(--ee-border-color);
 		border-style: solid;
 		border-width: 2px;
 		box-shadow: none;
 		color: var(--ee-default-text-color);
 		display: inline-flex;
-		height: calc(var(--ee-icon-button-size));
+		height: var(--ee-icon-button-size);
 		margin: 0 0 var(--ee-margin-micro);
+		min-height: var(--ee-icon-button-size);
+		min-width: var(--ee-icon-button-size);
 		padding: var(--ee-padding-micro);
 		top: 0;
-		width: calc(var(--ee-icon-button-size));
+		width: var(--ee-icon-button-size);
 		svg {
 			display: inline-block;
+			path {
+				transition: fill 0.1s ease 0.1s, color 0.1s ease 0.1s !important;
+			}
 		}
 		&--active {
 			border-color: var(--ee-color-primary-low-contrast);
 			path {
-				fill: var(--ee-text-on-primary);
+				fill: var(--ee-color-primary);
 			}
 		}
 
@@ -43,9 +48,9 @@
 		}
 
 		&:hover {
-			background: transparent;
-			box-shadow: none !important;
-			color: var(--ee-color-primary) !important;
+			// background: transparent;
+			// box-shadow: none !important;
+			// color: var(--ee-color-primary) !important;
 			@extend .btn-hover;
 		}
 

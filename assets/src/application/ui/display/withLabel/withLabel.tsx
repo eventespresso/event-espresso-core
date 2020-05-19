@@ -17,20 +17,21 @@ const withLabel = <P extends withLabelProps>(WrappedComponent: React.ComponentTy
 		...props
 	}) => {
 		const className = classNames(
-			labelClassName,
-			'ee-input-label__wrapper',
-			labelPosition && `ee-input-label__wrapper--${labelPosition}`
+			'ee-input__wrapper',
+			label && labelClassName,
+			label && 'ee-input-label__wrapper',
+			label && labelPosition && `ee-input-label__wrapper--${labelPosition}`
 		);
 		return label ? (
-			<div className={ className }>
-				<label className='ee-input-label' htmlFor={ id }>
-					{ label }
+			<div className={className}>
+				<label className='ee-input-label' htmlFor={id}>
+					{label}
 				</label>
-				<WrappedComponent { ...(props as P) } ref={ forwardedRef } />
+				<WrappedComponent {...(props as P)} ref={forwardedRef} id={id} />
 			</div>
 		) : (
-				<WrappedComponent { ...(props as P) } ref={ forwardedRef } />
-			);
+			<WrappedComponent {...(props as P)} ref={forwardedRef} id={id} />
+		);
 	};
 
 	const ForwardedComponentWithLabel = (props: P, ref: Ref) => {

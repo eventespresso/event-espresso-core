@@ -22,6 +22,8 @@ export type MenuListProps = ChakraMenuListProps & {};
 
 export interface MenuOptionGroupProps extends ChakraMenuOptionGroupProps {}
 
-export interface MenuToggleProps extends ChakraMenuButtonProps {}
+export interface MenuToggleProps extends ChakraMenuButtonProps {
+	variant?: string;
+}
 
 export type MenuProps = ChakraMenuProps & {};

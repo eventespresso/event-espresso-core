@@ -21,7 +21,6 @@ const CardViewFilterButton: React.FC<CardViewFilterButtonProps> = ({ listId, set
 			onClick={ view !== 'card' ? setCardView : null }
 			labelClassName={ 'ee-filter-bar__btn-wrap' }
 			labelPosition={ LabelPosition.BOTTOM_CENTER }
-			variant='outline'
 			{ ...rest }
 		/>
 	);

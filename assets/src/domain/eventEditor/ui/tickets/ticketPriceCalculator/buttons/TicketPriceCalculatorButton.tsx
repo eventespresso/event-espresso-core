@@ -19,11 +19,11 @@ const TicketPriceCalculatorButton: React.FC<TPCButtonProps> = ({ ticketId, ...bu
 	return (
 		<>
 			<IconButton
+				borderless
 				icon={Calculator}
 				onClick={onOpen}
 				tooltip={__('ticket price calculator')}
 				tooltipProps={tooltipProps}
-				variant='ghost'
 				{...buttonProps}
 			/>
 			<ModalContainer ticketId={ticketId} {...disclosure} />

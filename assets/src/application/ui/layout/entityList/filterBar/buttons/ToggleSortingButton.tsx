@@ -29,8 +29,6 @@ const ToggleSortingButton: React.FC<ToggleSortingButtonProps> = ({
 			tooltipProps={ { placement: 'top' } }
 			labelClassName={ 'ee-filter-bar__btn-wrap' }
 			labelPosition={ LabelPosition.BOTTOM_CENTER }
-			variantColor={ sortingEnabled ? 'blue' : 'gray' }
-			variant={ sortingEnabled ? 'solid' : 'outline' }
 			{ ...rest }
 		/>
 	);
