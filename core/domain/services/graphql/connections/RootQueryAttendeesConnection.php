@@ -74,6 +74,20 @@ class RootQueryAttendeesConnection extends AbstractRootQueryConnection
     {
         return array_merge(
             [
+                'datetime' => [
+                    'type'        => 'ID',
+                    'description' => esc_html__(
+                        'Globally unique datetime ID to get the attendees for.',
+                        'event_espresso'
+                    ),
+                ],
+                'datetimeIn' => [
+                    'type'        => ['list_of' => 'ID'],
+                    'description' => esc_html__(
+                        'Globally unique datetime IDs to get the attendees for.',
+                        'event_espresso'
+                    ),
+                ],
                 'event' => [
                     'type'        => 'ID',
                     'description' => esc_html__(

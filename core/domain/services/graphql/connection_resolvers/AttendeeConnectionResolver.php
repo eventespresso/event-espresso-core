@@ -4,6 +4,7 @@ namespace EventEspresso\core\domain\services\graphql\connection_resolvers;
 
 use EE_Error;
 use EEM_Attendee;
+use EEM_Ticket;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use InvalidArgumentException;
@@ -99,14 +100,42 @@ class AttendeeConnectionResolver extends AbstractConnectionResolver
         if (! empty($this->args['where'])) {
             $input_fields = $this->sanitizeInputFields($this->args['where']);
 
-            // Use the proper operator.
-            if (! empty($input_fields['Registration.Ticket.TKT_ID']) && is_array($input_fields['Registration.Ticket.TKT_ID'])) {
-                $input_fields['Registration.Ticket.TKT_ID'] = ['in', $input_fields['Registration.Ticket.TKT_ID']];
-            }
+            // Since we do not have any falsy values in query params
+            // Lets get rid of empty values
+            $input_fields = array_filter($input_fields);
+
             // Use the proper operator.
             if (! empty($input_fields['Registration.Event.EVT_ID']) && is_array($input_fields['Registration.Event.EVT_ID'])) {
                 $input_fields['Registration.Event.EVT_ID'] = ['in', $input_fields['Registration.Event.EVT_ID']];
             }
+            if (! empty($input_fields['Registration.Ticket.TKT_ID']) && is_array($input_fields['Registration.Ticket.TKT_ID'])) {
+                $input_fields['Registration.Ticket.TKT_ID'] = ['IN', $input_fields['Registration.Ticket.TKT_ID']];
+            }
+            // If Ticket param is passed, it will have preference over Datetime param
+            // So, use Datetime param only if a Ticket param is not passed
+            if (! empty($input_fields['Datetime.DTT_ID']) && empty($input_fields['Registration.Ticket.TKT_ID'])) {
+                $datetimeIds = is_array($input_fields['Datetime.DTT_ID'])
+                ? $input_fields['Datetime.DTT_ID'] : [$input_fields['Datetime.DTT_ID']];
+
+                try {
+                    // Get related ticket IDs for the given dates
+                    $ticketIds = EEM_Ticket::instance()->get_col([
+                        [
+                            'Datetime.DTT_ID' => ['IN', $datetimeIds],
+                            'TKT_deleted'     => ['IN', [true, false]],
+                        ],
+                        'default_where_conditions' => 'minimum',
+                    ]);
+                } catch (\Throwable $th) {
+                    $ticketIds = [];
+                }
+
+                if (!empty($ticketIds)) {
+                    $input_fields['Registration.Ticket.TKT_ID'] = ['IN', $ticketIds];
+                }
+            }
+            // Since there is no relation between Attendee and Datetime, we need to remove it
+            unset($input_fields['Datetime.DTT_ID']);
         }
 
         /**
@@ -137,6 +166,10 @@ class AttendeeConnectionResolver extends AbstractConnectionResolver
     public function sanitizeInputFields(array $where_args)
     {
         $arg_mapping = [
+            // There is no direct relation between Attendee and Datetime
+            // But we will handle it via Tickets related to given dates
+            'datetime'      => 'Datetime.DTT_ID',
+            'datetimeIn'    => 'Datetime.DTT_ID',
             'event'         => 'Registration.Event.EVT_ID',
             'eventIn'       => 'Registration.Event.EVT_ID',
             'regTicket'     => 'Registration.Ticket.TKT_ID',
@@ -148,7 +181,7 @@ class AttendeeConnectionResolver extends AbstractConnectionResolver
         return $this->sanitizeWhereArgsForInputFields(
             $where_args,
             $arg_mapping,
-            ['event', 'eventIn', 'regTicket', 'regTicketIn']
+            ['datetime', 'datetimeIn', 'event', 'eventIn', 'regTicket', 'regTicketIn']
         );
     }
 }
