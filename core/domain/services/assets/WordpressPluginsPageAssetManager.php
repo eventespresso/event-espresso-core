@@ -21,7 +21,7 @@ use EventEspresso\core\services\collections\DuplicateCollectionIdentifierExcepti
  */
 class WordpressPluginsPageAssetManager extends ReactAssetManager
 {
-    const JS_HANDLE_WP_PLUGINS_PAGE = 'eventespresso-main';
+    const JS_HANDLE_WP_PLUGINS_PAGE = 'eventespresso-core-app';
 
     /**
      * @var ExitModal $exit_modal
