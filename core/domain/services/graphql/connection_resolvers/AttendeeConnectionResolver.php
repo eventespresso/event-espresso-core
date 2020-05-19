@@ -106,7 +106,7 @@ class AttendeeConnectionResolver extends AbstractConnectionResolver
 
             // Use the proper operator.
             if (! empty($input_fields['Registration.Event.EVT_ID']) && is_array($input_fields['Registration.Event.EVT_ID'])) {
-                $input_fields['Registration.Event.EVT_ID'] = ['in', $input_fields['Registration.Event.EVT_ID']];
+                $input_fields['Registration.Event.EVT_ID'] = ['IN', $input_fields['Registration.Event.EVT_ID']];
             }
             if (! empty($input_fields['Registration.Ticket.TKT_ID']) && is_array($input_fields['Registration.Ticket.TKT_ID'])) {
                 $input_fields['Registration.Ticket.TKT_ID'] = ['IN', $input_fields['Registration.Ticket.TKT_ID']];
