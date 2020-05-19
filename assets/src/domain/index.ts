@@ -12,7 +12,6 @@ if (domain) {
 			console.log('domain', domain);
 		})
 		.catch(console.error);
-	console.log('domain', domain);
 } else {
 	console.error('No domain supplied');
 }
