@@ -9,7 +9,7 @@ import { useDataState } from '../data';
 const DeletePriceModifierButton: React.FC<PriceModifierProps> = ({ price }) => {
 	const { deletePrice } = useDataState();
 
-	const buttonProps = { icon: Trash, tooltip: __('delete price modifier'), variant: 'outline' as 'outline' };
+	const buttonProps = { icon: Trash, tooltip: __('delete price modifier') };
 	const onConfirm = useCallback(() => deletePrice(price.id, price.isNew), [price.id, price.isNew]);
 
 	return <ConfirmDelete buttonProps={buttonProps} onConfirm={onConfirm} />;

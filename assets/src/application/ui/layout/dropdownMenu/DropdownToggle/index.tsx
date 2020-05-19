@@ -10,11 +10,12 @@ import { withTooltip } from '../../../display';
 import './style.scss';
 
 const DropdownToggle = React.forwardRef<typeof MenuToggle, DropdownToggleProps>(
-	({ icon = More, isOpen, ...toggleProps }, ref) => {
+	({ borderless = true, icon = More, isOpen, ...toggleProps }, ref) => {
 		const className = classNames(
 			toggleProps.className,
 			'ee-dropdown-menu__toggle',
-			isOpen && 'ee-dropdown-menu__toggle--open'
+			isOpen && 'ee-dropdown-menu__toggle--open',			
+			borderless && 'ee-icon-button--borderless'
 		);
 
 		return (

@@ -10,7 +10,6 @@ interface Props extends AlertProps {
 const Alert: React.FC<Props> = ({ children, description, iconProps, title, ...props }) => (
 	<ChakraAlert
 		{...props}
-		variant='subtle'
 		flexDirection='column'
 		justifyContent='center'
 		textAlign='center'

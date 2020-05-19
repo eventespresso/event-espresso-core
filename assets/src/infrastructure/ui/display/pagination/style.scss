@@ -1,4 +1,4 @@
-$border-style: 2px solid var(--ee-color-grey-10);
+$border-style: 2px solid var(--ee-border-color);
 $border-radius: var(--ee-border-radius-default);
 
 .ee-pagination {
@@ -16,9 +16,12 @@ $border-radius: var(--ee-border-radius-default);
 		font-family: 'Segoe UI', Candara, 'Bitstream Vera Sans', 'DejaVu Sans', 'Bitstream Vera Sans', 'Trebuchet MS',
 			Verdana, 'Verdana Ref', sans-serif;
 		font-size: var(--ee-font-size-default);
-		height: 3rem;
+		height: 2.75rem;
+		margin: 0;
+		min-height: 2.75rem;
+		min-width: 2.75rem;
 		justify-content: center;
-		width: 3rem;
+		width: 2.75rem;
 
 		a {
 			color: var(--ee-text-on-grey-14) !important;
@@ -38,11 +41,11 @@ $border-radius: var(--ee-border-radius-default);
 	}
 
 	&__per-page {
-		height: 3rem;
+		height: 2.75rem;
 
 		&.ee-select {
 			border: $border-style;
-			border-radius: $border-radius;
+			border-radius: $border-radius !important;
 		}
 	}
 
@@ -66,6 +69,11 @@ $border-radius: var(--ee-border-radius-default);
 					border-left: $border-style;
 					border-top-left-radius: $border-radius;
 					border-bottom-left-radius: $border-radius;
+					.rc-pagination-item-link {
+						font-size: var(--ee-font-size-huge);
+						position: relative;
+						top: -0.2rem;
+					}
 				}
 			}
 
@@ -76,6 +84,11 @@ $border-radius: var(--ee-border-radius-default);
 					border-right: $border-style;
 					border-top-right-radius: $border-radius;
 					border-bottom-right-radius: $border-radius;
+					.rc-pagination-item-link {
+						font-size: var(--ee-font-size-huge);
+						position: relative;
+						top: -0.2rem;
+					}
 				}
 			}
 		}

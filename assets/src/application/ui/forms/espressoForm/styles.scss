@@ -65,7 +65,7 @@
 	.section-body {
 		padding: var(--ee-padding-smaller) 0;
 
-		.form-item {
+		.ee-form-item {
 			padding: var(--ee-padding-smaller) 0;
 
 			&-switch {
@@ -75,16 +75,17 @@
 			&-pair {
 				width: 50%;
 				display: inline-flex;
+				padding-right: var(--ee-margin-default);
+				margin: var(--ee-margin-default) 0;
+				label {
+					display: flex;
+					align-items: center;
+				}
 			}
-		}
-		.form-item-pair {
-			width: 50%;
-			display: inline-flex;
-			padding-right: var(--ee-margin-default);
-			margin: var(--ee-margin-default) 0;
-			label {
-				display: flex;
-				align-items: center;
+
+			.ee-icon--info-circle-outlined {
+				color: var(--ee-color-primary-low-contrast);
+				margin: 0 var(--ee-margin-tiny);
 			}
 		}
 	}
@@ -105,7 +106,7 @@
 		.section-body {
 			flex: 0 100%;
 
-			.form-item-pair {
+			.ee-form-item-pair {
 				width: 100%;
 			}
 			.field-group-item {

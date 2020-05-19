@@ -1,4 +1,4 @@
-export { lcFirst, ucFirst } from './changeCase';
+export * from './changeCase';
 
 export { default as shortenGuid } from './shortenGuid';
 

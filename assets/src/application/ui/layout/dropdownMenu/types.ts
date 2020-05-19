@@ -14,6 +14,7 @@ export interface DropdownMenuItemProps extends MenuItemProps {
 }
 
 export interface DropdownToggleProps extends MenuToggleProps, withTooltipProps {
+	borderless?: boolean;
 	icon?: IconName;
 	isOpen?: boolean;
 	onClose?: VoidFunction;

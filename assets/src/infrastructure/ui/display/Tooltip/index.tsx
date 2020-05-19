@@ -3,7 +3,6 @@ import classNames from 'classnames';
 import { Tooltip as ChakraTooltip } from '@chakra-ui/core';
 
 import type { TooltipProps } from '../types';
-import './style.scss';
 
 const Tooltip: React.FC<TooltipProps> = ({ children, tooltip, ...props }) => {
 	const ariaLabel = tooltip || props['aria-label'];
@@ -11,12 +10,15 @@ const Tooltip: React.FC<TooltipProps> = ({ children, tooltip, ...props }) => {
 
 	return (
 		<ChakraTooltip
-			{ ...props }
-			aria-label={ ariaLabel }
-			className={ className }
-			label={ tooltip }
+			{...props}
+			aria-label={ariaLabel}
+			className={className}
+			label={tooltip}
+			closeOnClick
+			showDelay={250}
+			hideDelay={250}
 		>
-			{ children && children }
+			{children && children}
 		</ChakraTooltip>
 	);
 };

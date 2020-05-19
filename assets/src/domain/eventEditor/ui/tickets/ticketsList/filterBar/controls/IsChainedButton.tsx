@@ -33,7 +33,6 @@ const IsChainedButton: React.FC<IsChainedButtonProps> = ({ isChained, toggleIsCh
 			onClick={toggleIsChained}
 			tooltip={tooltip}
 			showTooltipOnMobile
-			variant='outline'
 		/>
 	);
 };

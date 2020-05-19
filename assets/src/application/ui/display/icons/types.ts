@@ -15,7 +15,6 @@ export enum IconName {
 	COPY = 'copy',
 	EDIT = 'edit',
 	FILTER = 'filter',
-	GLOBALOUTLINED = 'globalOutlined',
 	GROUPS = 'groups',
 	LINK = 'admin-links',
 	MORE = 'more',

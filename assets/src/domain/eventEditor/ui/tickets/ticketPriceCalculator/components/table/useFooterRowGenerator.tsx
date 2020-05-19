@@ -65,7 +65,7 @@ const useFooterRowGenerator = (): FooterRowGenerator => {
 				key: 'actions',
 				type: 'cell',
 				className: 'ee-ticket-price-calculator__actions',
-				value: <IconButton icon={calcDirIcon} onClick={toggleCalcDir} variant='outline' />,
+				value: <IconButton icon={calcDirIcon} onClick={toggleCalcDir}/*  variant='outline' */ />,
 			},
 		];
 

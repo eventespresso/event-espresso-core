@@ -54,7 +54,7 @@ const useDateFormConfig = (id: EntityId, config?: EspressoFormProps): DateFormCo
 	};
 
 	const adjacentFormItemProps = {
-		className: 'form-item-pair',
+		className: 'ee-form-item-pair',
 	};
 
 	return {

@@ -66,7 +66,8 @@ const EntityListFilterBar = <FS extends ELFSM>({
 				{filerBarItems}
 				<div className='ee-filter-bar__filter'>
 					<SearchInput
-						id={listId}
+						className='ee-entity-list-filter-bar-search'
+						searchId={listId}
 						label={__('search')}
 						searchText={searchText}
 						setSearchText={setSearchText}

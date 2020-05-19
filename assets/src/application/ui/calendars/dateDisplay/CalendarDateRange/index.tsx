@@ -55,7 +55,8 @@ export const CalendarDateRange: React.FC<CalendarDateRangeProps> = ({
 			date={startDateObject}
 			className={className}
 			headerText={headerTxt}
-			footerText={[time, footerText]}
+			footerText={footerText}
+			timeRange={time}
 		/>
 	);
 };
