@@ -7,7 +7,6 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\services\collections\DuplicateCollectionIdentifierException;
 
-
 /**
  * EspressoEditorAssetManager
  * assets for EE admin editors
@@ -18,10 +17,7 @@ use EventEspresso\core\services\collections\DuplicateCollectionIdentifierExcepti
  */
 class EspressoEditorAssetManager extends ReactAssetManager
 {
-
-    const JS_HANDLE_EDITOR = 'eventespresso-editor';
-
-    const CSS_HANDLE_EDITOR = 'eventespresso-editor';
+    const JS_HANDLE_EDITOR = 'eventespresso-main';
 
     /**
      * @throws InvalidDataTypeException
@@ -33,7 +29,6 @@ class EspressoEditorAssetManager extends ReactAssetManager
     {
         parent::addAssets();
         $this->registerJavascript();
-        $this->registerStyleSheets();
     }
 
 
@@ -55,20 +50,6 @@ class EspressoEditorAssetManager extends ReactAssetManager
                 CoreAssetManager::JS_HANDLE_JS_CORE,
                 'wp-i18n',
             ]
-            )->setRequiresTranslation();
-        }
-
-
-    /**
-     * Register CSS assets.
-     *
-     * @throws DuplicateCollectionIdentifierException
-     * @throws InvalidDataTypeException
-     * @throws InvalidEntityException
-     * @throws DomainException
-     */
-    private function registerStyleSheets()
-    {
-        $this->addCss(EspressoEditorAssetManager::CSS_HANDLE_EDITOR);
+        )->setRequiresTranslation();
     }
 }

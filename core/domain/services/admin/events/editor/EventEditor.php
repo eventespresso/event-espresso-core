@@ -121,6 +121,7 @@ class EventEditor
                             EspressoEditorAssetManager::JS_HANDLE_EDITOR,
                             "
 var eeEditorData={$data};
+var eeDomain='eventEditor';
 ",
                             'before'
                         );

@@ -21,9 +21,7 @@ use EventEspresso\core\services\collections\DuplicateCollectionIdentifierExcepti
  */
 class WordpressPluginsPageAssetManager extends ReactAssetManager
 {
-    const JS_HANDLE_WP_PLUGINS_PAGE = 'eventespresso-wp-plugins-page';
-
-    const CSS_HANDLE_WP_PLUGINS_PAGE = 'eventespresso-wp-plugins-page';
+    const JS_HANDLE_WP_PLUGINS_PAGE = 'eventespresso-main';
 
     /**
      * @var ExitModal $exit_modal
@@ -91,6 +89,13 @@ class WordpressPluginsPageAssetManager extends ReactAssetManager
                     'eeExitSurveyInfo',
                     $this->exit_modal->getExitSurveyInfo()
                 );
+                wp_add_inline_script(
+                    WordpressPluginsPageAssetManager::JS_HANDLE_WP_PLUGINS_PAGE,
+                    "
+var eeDomain='wpPluginsPage';
+        ",
+                    'before'
+                );
             }
         );
     }
@@ -106,9 +111,6 @@ class WordpressPluginsPageAssetManager extends ReactAssetManager
      */
     private function registerStyleSheets()
     {
-        $this->addCss(
-            WordpressPluginsPageAssetManager::CSS_HANDLE_WP_PLUGINS_PAGE,
-            ['wp-components']
-        );
+        wp_enqueue_style('wp-components');
     }
 }
