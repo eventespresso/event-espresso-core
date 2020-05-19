@@ -27,6 +27,9 @@ const useAttendees: UseAttendees = (where, limit) => {
 			where,
 		},
 		fetchPolicy: 'cache-first',
+		// do not fetch until an event has been selected
+		// otherwise, we will end up fetching unrelated attendees
+		skip: !where.event,
 	});
 };
 

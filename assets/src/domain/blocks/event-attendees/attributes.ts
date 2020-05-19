@@ -17,7 +17,7 @@ const attributes: Block<EventAttendeesAttributes>['attributes'] = {
 	},
 	status: {
 		type: 'string',
-		default: 'RAP',
+		default: 'APPROVED',
 	},
 	limit: {
 		type: 'number',
@@ -29,7 +29,7 @@ const attributes: Block<EventAttendeesAttributes>['attributes'] = {
 	},
 	orderBy: {
 		type: 'string',
-		default: 'lastThenFirstName',
+		default: 'LAST_THEN_FIRST_NAME',
 	},
 	showGravatar: {
 		type: 'boolean',

@@ -13,9 +13,11 @@ const isNewBlock = ({ event, datetime, ticket }: AttendeesEditProps['attributes'
 };
 
 const AttendeesDisplay: React.FC<AttendeesEditProps> = ({ attributes }) => {
-	const { ticket, status, limit, orderBy, order } = attributes;
+	const { datetime, event, ticket, status, limit, orderBy, order } = attributes;
 	const { data, loading, error } = useAttendees(
 		{
+			datetime,
+			event,
 			orderby: getAttendeesOrderBy(orderBy, order),
 			regTicket: ticket,
 			regStatus: status,

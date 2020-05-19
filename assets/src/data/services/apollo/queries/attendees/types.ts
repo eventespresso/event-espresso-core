@@ -1,14 +1,18 @@
 import { EntityQueryArgs, EntityQueryOrderBy } from '../types';
-import { EntityEdge } from '@dataServices/types';
+import { EntityEdge, EntityId, EntityDbId } from '@dataServices/types';
 import { RegistrationStatus } from '../registrations/types';
 
 export interface AttendeesQueryWhereArgs {
+	event?: EntityId;
+	eventIn?: Array<EntityId>;
+	datetime?: EntityId;
+	datetimeIn?: Array<EntityId>;
 	orderby?: EntityQueryOrderBy<AttendeesOrderByFields>;
 	regStatus?: RegistrationStatus;
-	regTicket?: string;
-	regTicketId?: number;
-	regTicketIdIn?: Array<number>;
-	regTicketIn?: Array<string>;
+	regTicket?: EntityId;
+	regTicketId?: EntityDbId;
+	regTicketIdIn?: Array<EntityDbId>;
+	regTicketIn?: Array<EntityId>;
 }
 
 export type AttendeesOrderByFields = 'ID' | 'FIRST_NAME' | 'LAST_NAME';
