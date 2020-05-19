@@ -31,7 +31,6 @@ const getClientEnvironment = require('./env');
 const resolveTsconfigPathsToAlias = require('./resolve-tsconfig-path-to-webpack-alias');
 
 const appPackageJson = require(paths.appPackageJson);
-const { entries } = paths;
 
 // Source maps are resource heavy and can cause out of memory issue for large source files.
 const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false';
@@ -132,20 +131,14 @@ module.exports = function (webpackEnv) {
 		return loaders;
 	};
 
-	const entry = Object.entries(entries).reduce((newObj, [entry, path]) => {
-		newObj[entry] = [path].filter(Boolean);
-
-		return newObj;
-	}, {});
-
 	const externals = {
 		react: 'React',
 		'react-dom': 'ReactDOM',
-		jquery: 'jQuery'
+		jquery: 'jQuery',
 	};
 
 	// Define WordPress dependencies
-	const wpPackages = ['components', 'element', 'blocks', 'i18n',  'block-editor'];
+	const wpPackages = ['components', 'element', 'blocks', 'i18n', 'block-editor'];
 	// Setup externals for all WordPress dependencies
 	wpPackages.forEach((wpPackage) => {
 		externals['@wordpress/' + wpPackage] = {
@@ -164,7 +157,9 @@ module.exports = function (webpackEnv) {
 			: isEnvDevelopment && 'cheap-module-source-map',
 		// These are the "entry points" to our application.
 		// This means they will be the "root" imports that are included in JS bundle.
-		entry,
+		entry: {
+			'eventespresso-main': [paths.appIndexJs],
+		},
 
 		output: {
 			// The build folder.
