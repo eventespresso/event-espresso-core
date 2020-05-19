@@ -8,7 +8,7 @@ type ButtonType = React.ComponentType<IconButtonProps>;
 
 const IconButton: React.FC<IconButtonProps> = React.forwardRef<ButtonType, IconButtonProps>(
 	({ variant = 'unstyled', ...props }, ref) => {
-		const className = classNames('ee-btn-base', props.className);
+		const className = classNames('ee-btn-base ee-icon-button', props.className);
 		return <ChakraIconButton {...props} className={className} ref={ref} variant={variant} />;
 	}
 );

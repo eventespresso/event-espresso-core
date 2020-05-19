@@ -8,19 +8,17 @@ interface TriggerProps {
 	onClick?: VoidFunction;
 }
 
-const Trigger = forwardRef<typeof IconButton, TriggerProps>(
-	({ tooltip, ...props }, ref) => (
-		<IconButton
-			borderless
-			color='white'
-			className='ee-timezone-info-btn'
-			icon={ () => <GlobalOutlined /> }
-			tooltip={ tooltip }
-			tooltipProps={ { placement: 'top' } }
-			{ ...props }
-			ref={ ref }
-		/>
-	)
-);
+const Trigger = forwardRef<typeof IconButton, TriggerProps>(({ tooltip, ...props }, ref) => (
+	<IconButton
+		{...props}
+		borderless
+		color='white'
+		className='ee-timezone-info-btn'
+		icon={() => <GlobalOutlined />}
+		tooltip={tooltip}
+		tooltipProps={{ placement: 'top' }}
+		ref={ref}
+	/>
+));
 
 export default Trigger;

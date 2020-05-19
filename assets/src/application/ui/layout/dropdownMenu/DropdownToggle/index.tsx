@@ -1,10 +1,10 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import { More } from '@appDisplay/icons';
 import { DropdownToggleProps } from '../types';
-import { IconButton } from '@application/ui/input';
+import { IconButton } from '@infraUI/inputs';
 import { MenuToggle } from '@infraUI/layout/menu';
+import { More } from '@appDisplay/icons';
 import { withTooltip } from '../../../display';
 
 import './style.scss';
@@ -14,17 +14,17 @@ const DropdownToggle = React.forwardRef<typeof MenuToggle, DropdownToggleProps>(
 		const className = classNames(
 			toggleProps.className,
 			'ee-dropdown-menu__toggle',
-			isOpen && 'ee-dropdown-menu__toggle--open',
+			isOpen && 'ee-dropdown-menu__toggle--open'
 		);
 
 		return (
 			<MenuToggle
-				as={ IconButton }
+				as={IconButton}
 				// @ts-ignore
-				icon={ More }
-				{ ...toggleProps }
-				className={ className }
-				ref={ ref }
+				icon={More}
+				{...toggleProps}
+				className={className}
+				ref={ref}
 			/>
 		);
 	}
