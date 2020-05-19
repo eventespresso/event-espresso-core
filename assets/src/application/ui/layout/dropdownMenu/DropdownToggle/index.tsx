@@ -14,7 +14,7 @@ const DropdownToggle = React.forwardRef<typeof MenuToggle, DropdownToggleProps>(
 		const className = classNames(
 			toggleProps.className,
 			'ee-dropdown-menu__toggle',
-			isOpen && 'ee-dropdown-menu__toggle--open',			
+			isOpen && 'ee-dropdown-menu__toggle--open',
 			borderless && 'ee-icon-button--borderless'
 		);
 
