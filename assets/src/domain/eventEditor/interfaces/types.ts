@@ -29,5 +29,6 @@ declare global {
 	interface Window {
 		eeEditorData: EEEditorData;
 		eejsdata: EEJSData;
+		eeDomain: string;
 	}
 }
