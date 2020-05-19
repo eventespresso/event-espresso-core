@@ -9,6 +9,7 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use InvalidArgumentException;
 use ReflectionException;
+use Throwable;
 
 /**
  * Class DatetimeConnectionResolver
@@ -127,7 +128,7 @@ class AttendeeConnectionResolver extends AbstractConnectionResolver
                         ],
                         'default_where_conditions' => 'minimum',
                     ]);
-                } catch (\Throwable $th) {
+                } catch (Throwable $th) {
                     $ticketIds = [];
                 }
 
