@@ -107,25 +107,16 @@ $filter-btn: '.ee-filter-bar__btn';
 	}
 
 	&__btn {
-		// &#{$filter-btn} {
-		// border: 2px solid var(--ee-border-color);
-		// box-shadow: none;
-		// display: flex;
-		// margin: 0;
 		&--active {
-			// &#{$filter-btn} {
 			border-color: var(--ee-color-primary-low-contrast) !important;
 			path {
 				fill: var(--ee-color-primary);
 			}
-			// }
 		}
-		// }
 	}
 
 	&__btn-wrap {
 		width: 100px;
-		// #{$filter-btn} {
 		&--active {
 			&#{$filter-btn} {
 				border-color: var(--ee-color-primary-low-contrast) !important;
@@ -136,7 +127,6 @@ $filter-btn: '.ee-filter-bar__btn';
 				}
 			}
 		}
-		// }
 
 		@include max480px {
 			width: 25%;
