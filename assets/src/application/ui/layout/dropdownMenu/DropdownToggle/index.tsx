@@ -1,10 +1,10 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import { More } from '@appDisplay/icons';
 import { DropdownToggleProps } from '../types';
-import { IconButton } from '@application/ui/input';
+import { IconButton } from '@infraUI/inputs';
 import { MenuToggle } from '@infraUI/layout/menu';
+import { More } from '@appDisplay/icons';
 import { withTooltip } from '../../../display';
 
 import './style.scss';
@@ -30,4 +30,4 @@ const DropdownToggle = React.forwardRef<typeof MenuToggle, DropdownToggleProps>(
 	}
 );
 
-export default DropdownToggle;
+export default withTooltip(DropdownToggle);
