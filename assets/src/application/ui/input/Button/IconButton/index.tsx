@@ -23,13 +23,13 @@ const IconButton = forwardRef<typeof IconButtonAdapter, IconButtonProps>(
 
 		return (
 			<IconButtonAdapter
-				aria-label={ ariaLabel }
-				className={ className }
-				icon={ icon }
-				onClick={ onClick }
-				tabIndex={ 0 }
-				ref={ ref }
-				{ ...props }
+				{...props}
+				aria-label={ariaLabel}
+				className={className}
+				icon={icon}
+				onClick={onClick}
+				tabIndex={0}
+				ref={ref}
 			/>
 		);
 	}
