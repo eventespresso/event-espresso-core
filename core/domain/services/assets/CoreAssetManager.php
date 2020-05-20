@@ -8,7 +8,6 @@ use EE_Registry;
 use EE_Template_Config;
 use EED_Core_Rest_Api;
 use EEH_DTT_Helper;
-use EEH_Qtip_Loader;
 use EventEspresso\core\domain\Domain;
 use EventEspresso\core\domain\DomainInterface;
 use EventEspresso\core\domain\values\assets\JavascriptAsset;
