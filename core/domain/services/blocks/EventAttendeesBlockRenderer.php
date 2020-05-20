@@ -43,6 +43,7 @@ class EventAttendeesBlockRenderer extends BlockRenderer
      */
     public function render(array $attributes)
     {
+        $attributes = $this->parseGlobalIDs($attributes);
         $template_args['attributes'] = $attributes;
         $template_args['attendees'] = $this->attendee_model->get_all($this->getQueryParams($attributes));
         return EEH_Template::display_template(
@@ -50,6 +51,34 @@ class EventAttendeesBlockRenderer extends BlockRenderer
             $template_args,
             true
         );
+    }
+
+
+    /**
+     * Get query parameters for model query.
+     *
+     * @param array $attributes
+     * @return array
+     */
+    private function parseGlobalIDs(array $attributes)
+    {
+        // if ticket ID is set, then that's all we need to run the query
+        $ticket = isset($attributes['ticket']) ? $attributes['ticket'] : '';
+        $datetime = isset($attributes['datetime']) ? $attributes['datetime'] : '';
+        $event = isset($attributes['event']) ? $attributes['event'] : '';
+        if ($ticket !== '') {
+            $ticketId = $this->parseGUID($ticket);
+            $attributes['ticketId'] = $ticketId;
+        } elseif ($datetime !== '') {
+            $datetimeId = $this->parseGUID($datetime);
+            $attributes['datetimeId'] = $datetimeId;
+        } elseif ($event !== '') {
+            $eventId = $this->parseGUID($event);
+            $attributes['eventId'] = $eventId;
+        }
+        // remove unnecessary data so it doesn't get added to the query vars
+        unset($attributes['ticket'], $attributes['datetime'], $attributes['event']);
+        return $attributes;
     }
 
 

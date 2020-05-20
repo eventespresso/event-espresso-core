@@ -2,6 +2,7 @@
 namespace EventEspresso\core\services\blocks;
 
 use EventEspresso\core\domain\DomainInterface;
+use GraphQLRelay\Relay;
 
 /**
  * BlockRenderer
@@ -53,5 +54,18 @@ abstract class BlockRenderer implements BlockRendererInterface
     public function templateRootPath()
     {
         return $this->template_root_path;
+    }
+
+
+    /**
+     * converts GraphQL GUID into EE DB ID
+     *
+     * @param string $GUID
+     * @return int
+     */
+    protected function parseGUID($GUID)
+    {
+        $parts = Relay::fromGlobalId($GUID);
+        return ! empty($parts['id']) ? $parts['id'] : 0;
     }
 }

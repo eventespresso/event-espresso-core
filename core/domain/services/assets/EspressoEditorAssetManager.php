@@ -17,7 +17,7 @@ use EventEspresso\core\services\collections\DuplicateCollectionIdentifierExcepti
  */
 class EspressoEditorAssetManager extends ReactAssetManager
 {
-    const JS_HANDLE_EDITOR = 'eventespresso-main';
+    const JS_HANDLE_EDITOR = 'eventespresso-core-app';
 
     /**
      * @throws InvalidDataTypeException

@@ -134,9 +134,9 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
     public function addAssets()
     {
         $this->addEditorScript($this->getEditorScriptHandle());
-        $this->addEditorStyle($this->getEditorStyleHandle());
+        // $this->addEditorStyle($this->getEditorStyleHandle());
         $this->addScript($this->getScriptHandle());
-        $this->addStyle($this->getStyleHandle());
+        // $this->addStyle($this->getStyleHandle());
     }
 
 
@@ -154,7 +154,21 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
         if ($this->assets->hasJavascriptAsset($handle)){
             return $this->assets->getJavascriptAsset($handle);
         }
-        return $this->addJs($handle, $dependencies)->setRequiresTranslation();
+        $dependencies = array_merge(
+            $dependencies,
+            ['wp-blocks']
+        );
+        return $this
+            ->addJs($handle, $dependencies)->setRequiresTranslation()
+            ->setInlineDataCallback(
+                static function () {
+                    wp_add_inline_script(
+                        'eventespresso-core-app',
+                        "var eeDomain='blocks';",
+                        'before'
+                    );
+                }
+            );
     }
 
 

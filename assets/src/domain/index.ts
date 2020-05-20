@@ -3,15 +3,13 @@ import './shared/services/publicPath';
 const domain = window?.eeDomain;
 
 if (domain) {
+	// todo remove this at some point in the future
+	console.log(`%c importing: /domain/${domain}/entryPoint.ts`, 'color: SkyBlue;');
 	import(
 		/* webpackExclude: /(shared)/ */
 		/* webpackChunkName: "[request]" */
 		`./${domain}/entryPoint.ts`
-	)
-		.then(() => {
-			console.log('domain', domain);
-		})
-		.catch(console.error);
+	).catch(console.error);
 } else {
 	console.error('No domain supplied');
 }
