@@ -17,6 +17,7 @@ const ToggleSortingButton: React.FC<ToggleSortingButtonProps> = ({
 	const className = classNames('ee-filter-bar__btn', { 'ee-filter-bar__btn--active': sortingEnabled });
 	const id = `ee-toggle-sorting-btn-${listId}`;
 	const tooltip = sortingEnabled ? __('disable sorting') : __('enable sorting');
+	const tooltipProps = { placement: 'top' as 'top' };
 
 	return (
 		<IconButton
@@ -26,8 +27,8 @@ const ToggleSortingButton: React.FC<ToggleSortingButtonProps> = ({
 			label={__('sorting')}
 			onClick={toggleSorting}
 			tooltip={tooltip}
-			tooltipProps={{ placement: 'top' }}
-			labelClassName={'ee-filter-bar__btn-wrap'}
+			tooltipProps={tooltipProps}
+			labelClassName='ee-filter-bar__btn-wrap'
 			labelPosition={LabelPosition.BOTTOM_CENTER}
 			{...rest}
 		/>
