@@ -18,7 +18,11 @@ const BaseField: React.FC<BaseFieldProps> = ({
 	value,
 	...props
 }) => {
-	const className = classNames('ee-input-base ee-input', { 'ee-select': component === 'select' }, props.className);
+	const className = classNames(
+		props.className,
+		'ee-input-base ee-input',
+		component === 'select' && 'ee-select',
+	);
 
 	const handlers: InputProps = {
 		onBlur: useCallback(() => {
