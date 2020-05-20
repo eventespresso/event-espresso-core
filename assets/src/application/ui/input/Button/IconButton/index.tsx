@@ -9,12 +9,14 @@ import './style.scss';
 
 type BtnType = React.ComponentType<IconButtonProps>;
 
+export const iconBtnClassName = 'ee-btn-base ee-icon-button';
+
 const IconButton = forwardRef<typeof IconButtonAdapter, IconButtonProps>(
 	({ borderless, color, icon, onClick, ...props }, ref) => {
 		const ariaLabel = props['aria-label'] || props.label;
 		const className = classNames(
+			iconBtnClassName,
 			props.className,
-			'ee-btn-base ee-icon-button',
 			color && `ee-icon-button-color--${color}`,
 			borderless && 'ee-icon-button--borderless'
 		);
