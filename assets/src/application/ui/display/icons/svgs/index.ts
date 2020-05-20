@@ -36,6 +36,8 @@ import { ReactComponent as SpinnerSVG } from './spinner.svg';
 
 import { ReactComponent as TableViewSVG } from './tableView.svg';
 
+import { ReactComponent as TrashSVG } from './trash.svg';
+
 import { ReactComponent as UpCircleFilledSVG } from './upCircleFilled.svg';
 
 import { ReactComponent as WarningSVG } from './warning.svg';
@@ -77,6 +79,8 @@ export const Sort = withEnhance(SortSVG);
 export const Spinner = withEnhance(SpinnerSVG);
 
 export const TableView = withEnhance(TableViewSVG);
+
+export const Trash = withEnhance(TrashSVG);
 
 export const UpCircleFilled = withEnhance(UpCircleFilledSVG);
 

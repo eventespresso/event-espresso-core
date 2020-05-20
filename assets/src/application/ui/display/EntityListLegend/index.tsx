@@ -1,4 +1,5 @@
 import React from 'react';
+import { is } from 'ramda';
 
 import ColorSwatch from '@appDisplay/ColorSwatch';
 import { Icon, IconName } from '@appDisplay/icons';
@@ -9,10 +10,15 @@ const EntityListLegend: React.FC<EntityListLegendProps> = ({ legendConfig }) => 
 	const { icons, swatches } = legendConfig;
 
 	const iconsSource = icons.map(({ icon, description }) => {
+		// @ts-ignore
+		const term = (!is(String)(icon) && React.createElement(icon)) || (
+			<Icon aria-label={description} name={icon as IconName} svgSize={18} />
+		);
+
 		return {
 			className: 'ee-entity-list-legend-item',
 			description,
-			term: <Icon aria-label={description} name={icon as IconName} svgSize={18} />,
+			term,
 		};
 	});
 

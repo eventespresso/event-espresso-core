@@ -5,10 +5,10 @@ export interface EntityListLegendProps {
 	legendConfig: LegendConfig;
 }
 
-type IconType = {
-	icon: IconName;
+interface IconType {
+	icon: IconName | React.ReactNode;
 	description: string;
-};
+}
 
 export interface LegendConfig {
 	icons: IconType[];
