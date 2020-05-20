@@ -154,6 +154,10 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
         if ($this->assets->hasJavascriptAsset($handle)){
             return $this->assets->getJavascriptAsset($handle);
         }
+        $dependencies = array_merge(
+            $dependencies,
+            ['wp-blocks']
+        );
         return $this
             ->addJs($handle, $dependencies)->setRequiresTranslation()
             ->setInlineDataCallback(
