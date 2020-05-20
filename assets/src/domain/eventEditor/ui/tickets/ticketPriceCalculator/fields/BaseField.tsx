@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react';
+import classNames from 'classnames';
 
 import { BaseFieldProps, FieldValue, InputProps } from './types';
 
@@ -15,8 +16,14 @@ const BaseField: React.FC<BaseFieldProps> = ({
 	getValue,
 	setValue,
 	value,
-	...rest
+	...props
 }) => {
+	const className = classNames(
+		props.className,
+		'ee-input-base ee-input',
+		component === 'select' && 'ee-select',
+	);
+
 	const handlers: InputProps = {
 		onBlur: useCallback(() => {
 			if (formatOnBlur) {
@@ -33,6 +40,7 @@ const BaseField: React.FC<BaseFieldProps> = ({
 	};
 
 	let fieldValue = (value || getValue()) as FieldValue;
+
 	if (formatOnBlur) {
 		if (component === 'input') {
 			fieldValue = defaultFormat(fieldValue, name);
@@ -40,13 +48,15 @@ const BaseField: React.FC<BaseFieldProps> = ({
 	} else {
 		fieldValue = format(fieldValue, name);
 	}
+
 	if (fieldValue === null) {
 		fieldValue = '';
 	}
 
 	if (typeof component === 'string') {
-		return React.createElement(component, { ...handlers, ...rest, children, value: fieldValue });
+		return React.createElement(component, { ...handlers, ...props, className, children, value: fieldValue });
 	}
+
 	return null;
 };
 
