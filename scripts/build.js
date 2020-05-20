@@ -1,6 +1,3 @@
-/* eslint-disable */
-'use strict';
-
 // Do this as the first thing so that any code reading it knows the right env.
 process.env.BABEL_ENV = 'production';
 process.env.NODE_ENV = 'production';
@@ -21,7 +18,6 @@ const fs = require('fs-extra');
 const webpack = require('webpack');
 const configFactory = require('../config/webpack.config');
 const paths = require('../config/paths');
-const checkRequiredFiles = require('react-dev-utils/checkRequiredFiles');
 const formatWebpackMessages = require('react-dev-utils/formatWebpackMessages');
 const printHostingInstructions = require('react-dev-utils/printHostingInstructions');
 const FileSizeReporter = require('react-dev-utils/FileSizeReporter');
@@ -36,11 +32,6 @@ const WARN_AFTER_BUNDLE_GZIP_SIZE = 512 * 1024;
 const WARN_AFTER_CHUNK_GZIP_SIZE = 1024 * 1024;
 
 const isInteractive = process.stdout.isTTY;
-
-// Warn and crash if required files are missing
-if (!checkRequiredFiles([paths.appHtml, paths.appIndexJs])) {
-	process.exit(1);
-}
 
 // Generate configuration
 const config = configFactory('production');
@@ -88,7 +79,7 @@ checkBrowsers(paths.appPath, isInteractive)
 			console.log();
 
 			const appPackage = require(paths.appPackageJson);
-			const publicUrl = paths.publicUrl;
+			const publicUrl = paths.publicUrlOrPath;
 			const publicPath = config.output.publicPath;
 			const buildFolder = path.relative(process.cwd(), paths.appBuild);
 			printHostingInstructions(appPackage, publicUrl, publicPath, buildFolder, useYarn);
