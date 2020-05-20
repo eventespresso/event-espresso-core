@@ -14,8 +14,8 @@ use EventEspresso\core\services\assets\BlockAssetManager;
  */
 class CoreBlocksAssetManager extends BlockAssetManager
 {
-    const JS_HANDLE_CORE_BLOCKS_EDITOR = 'eventespresso-core-app';
-    const JS_HANDLE_CORE_BLOCKS = 'eventespresso-core-app';
+    const JS_HANDLE_CORE_BLOCKS_EDITOR = 'eventespresso-blocks';
+    const JS_HANDLE_CORE_BLOCKS = 'eventespresso-blocks';
 
 
     /**
