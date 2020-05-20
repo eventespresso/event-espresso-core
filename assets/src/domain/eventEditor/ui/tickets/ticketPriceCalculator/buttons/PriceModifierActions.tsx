@@ -1,21 +1,19 @@
-import React, { CSSProperties } from 'react';
+import React from 'react';
 
+import { Box, Divider } from '@infraUI/display';
 import AddPriceModifierButton from './AddPriceModifierButtonData';
 import DeletePriceModifierButton from './DeletePriceModifierButton';
 import { PriceModifierProps } from '../types';
 
-// just temporary
-const style: CSSProperties = {
-	display: 'flex',
-	flexDirection: 'row',
-};
-
 const PriceModifierActions: React.FC<PriceModifierProps> = ({ index, price }) => {
 	return (
-		<div className='ee-price-modifier-actions' style={style}>
-			<AddPriceModifierButton key={'add'} index={index} />
-			{!price.isBasePrice && <DeletePriceModifierButton key={'delete'} price={price} />}
-		</div>
+		<Box className='ee-price-modifier-actions' display='flex'>
+			<AddPriceModifierButton index={index} key='add' />
+
+			<Divider orientation='vertical' borderColor='transparent' />
+
+			{!price.isBasePrice && <DeletePriceModifierButton key='delete' price={price} />}
+		</Box>
 	);
 };
 

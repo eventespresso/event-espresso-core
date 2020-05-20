@@ -22,7 +22,6 @@ export enum IconName {
 	ROTATE = 'rotate',
 	SAVE = 'save',
 	TICKET = 'ticket-alt',
-	TRASH = 'trash',
 	UNLINK = 'editor-unlink',
 }
 

@@ -11,5 +11,4 @@ export { default as Rem } from './Rem';
 export { default as Rotate } from './Rotate';
 export { default as Save } from './Save';
 export { default as Ticket } from './Ticket';
-export { default as Trash } from './Trash';
 export { default as Unlink } from './Unlink';
