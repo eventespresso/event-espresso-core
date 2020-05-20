@@ -60,6 +60,10 @@
 		dt {
 			margin: 0 var(--ee-margin-smaller) 0 0;
 			vertical-align: middle;
+
+			svg {
+				margin: 0;
+			}
 		}
 
 		dd {

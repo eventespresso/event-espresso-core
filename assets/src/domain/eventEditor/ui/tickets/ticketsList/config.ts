@@ -1,4 +1,5 @@
 import { IconName } from '@appDisplay/icons';
+import { Trash } from '@appDisplay/icons/svgs';
 import { LegendConfig } from '@application/ui/display/EntityListLegend/types';
 import { __ } from '@wordpress/i18n';
 
@@ -7,7 +8,7 @@ export const legendConfig: LegendConfig = {
 		{ icon: IconName.EDIT, description: 'Edit Ticket Details' },
 		{ icon: IconName.CALENDAR, description: 'Manage Date Assignments' },
 		{ icon: IconName.CALCULATOR, description: 'Ticket Price Calculator' },
-		{ icon: IconName.TRASH, description: 'Move Ticket to Trash' },
+		{ icon: Trash, description: 'Move Ticket to Trash' },
 	],
 	swatches: {
 		TKA: __('Trashed'),
