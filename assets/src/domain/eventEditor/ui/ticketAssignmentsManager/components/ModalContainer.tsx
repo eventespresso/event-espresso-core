@@ -15,7 +15,14 @@ const ModalContainer: React.FC<ModalContainerProps> = ({ isOpen, onClose, ...pro
 		title = sprintf(__('Ticket Assignment Manager for Ticket: %s - %s'), `${entity.dbId}`, entity.name);
 	}
 
-	return isOpen && withContext(TicketAssignmentsManagerModal, { ...props, title, onCloseModal: onClose });
+	return (
+		isOpen &&
+		withContext(
+			TicketAssignmentsManagerModal,
+			{ ...props, title, onCloseModal: onClose },
+			{ title, onCloseModal: onClose }
+		)
+	);
 };
 
 export default ModalContainer;

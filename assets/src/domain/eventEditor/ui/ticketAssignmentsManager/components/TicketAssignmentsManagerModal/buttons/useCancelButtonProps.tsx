@@ -2,12 +2,10 @@ import { useCallback, useMemo } from 'react';
 import { __ } from '@wordpress/i18n';
 
 import { ButtonProps } from '@infraUI/inputs';
-import { useTAMContext } from '../../../context';
+import { useDataState } from '../../../data';
 
-const useCancelButtonProps = (): ButtonProps => {
-	const { dataState, onCloseModal } = useTAMContext();
-
-	const { hasOrphanEntities } = dataState;
+const useCancelButtonProps = (onCloseModal: VoidFunction): ButtonProps => {
+	const { hasOrphanEntities } = useDataState();
 
 	const hasErrors = hasOrphanEntities();
 
