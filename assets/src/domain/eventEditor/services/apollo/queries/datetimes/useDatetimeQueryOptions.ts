@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 import useEventId from '../events/useEventId';
 import { GET_DATETIMES } from '../datetimes';
 import { DatetimesList, DatetimesQueryArgs, ReadQueryOptions } from '@dataServices/apollo/queries';
@@ -17,7 +19,7 @@ const useDatetimeQueryOptions = (): DatetimesQueryOptions => {
 		},
 	};
 
-	return options;
+	return useMemo(() => options, [eventId]);
 };
 
 export default useDatetimeQueryOptions;

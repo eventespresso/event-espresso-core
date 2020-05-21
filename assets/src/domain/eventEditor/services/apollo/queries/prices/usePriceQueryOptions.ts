@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { identity, sortBy } from 'ramda';
 
 import useTicketIds from '../tickets/useTicketIds';
@@ -23,7 +24,8 @@ const usePriceQueryOptions = (ticketIn: EntityId[] = []): ReadQueryOptions => {
 		},
 	};
 
-	return options;
+	const ticketInStr = ticketIn.join(':');
+	return useMemo(() => options, [ticketInStr]);
 };
 
 export default usePriceQueryOptions;
