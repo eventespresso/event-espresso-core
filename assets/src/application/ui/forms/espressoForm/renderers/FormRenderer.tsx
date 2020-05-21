@@ -6,6 +6,7 @@ import Submit from '../Submit';
 import RenderFields from '../RenderFields';
 import RenderSections from '../RenderSections';
 import { DebugInfo } from '@appDisplay/index';
+import { reactFinalFormState } from '@application/services/utilities/memo';
 
 const FormRenderer: React.FC<FormRendererProps> = (props) => {
 	const {
@@ -50,4 +51,4 @@ const FormRenderer: React.FC<FormRendererProps> = (props) => {
 
 	return formOutput;
 };
-export default FormRenderer;
+export default React.memo(FormRenderer, reactFinalFormState);
