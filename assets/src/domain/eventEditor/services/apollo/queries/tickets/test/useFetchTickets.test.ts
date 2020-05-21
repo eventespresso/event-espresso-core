@@ -10,7 +10,7 @@ const timeout = 5000; // milliseconds
 describe('useFetchTickets', () => {
 	it('checks for the error state', async () => {
 		/* Set query options and the wrapper */
-		const { result: queryResult, waitForValueToChange } = renderHook(
+		const { result: queryResult, waitForNextUpdate: waitForUpdate } = renderHook(
 			() => {
 				useInitDatetimeTestCache();
 				return useTicketQueryOptions();
@@ -20,7 +20,7 @@ describe('useFetchTickets', () => {
 			}
 		);
 
-		await waitForValueToChange(() => queryResult.current, { timeout });
+		await waitForUpdate({ timeout });
 		const wrapper = ApolloMockedProvider(errorMocks.map((mock) => ({ ...mock, request: queryResult.current })));
 		/* Set query options and the wrapper */
 
@@ -44,7 +44,7 @@ describe('useFetchTickets', () => {
 
 	it('checks for the loading state', async () => {
 		/* Set query options and the wrapper */
-		const { result: queryResult, waitForValueToChange } = renderHook(
+		const { result: queryResult, waitForNextUpdate: waitForUpdate } = renderHook(
 			() => {
 				useInitDatetimeTestCache();
 				return useTicketQueryOptions();
@@ -53,7 +53,7 @@ describe('useFetchTickets', () => {
 				wrapper: ApolloMockedProvider(),
 			}
 		);
-		await waitForValueToChange(() => queryResult.current, { timeout });
+		await waitForUpdate({ timeout });
 		const wrapper = ApolloMockedProvider(successMocks.map((mock) => ({ ...mock, request: queryResult.current })));
 		/* Set query options and the wrapper */
 
@@ -75,7 +75,7 @@ describe('useFetchTickets', () => {
 
 	it('checks for the response data', async () => {
 		/* Set query options and the wrapper */
-		const { result: queryResult, waitForValueToChange } = renderHook(
+		const { result: queryResult, waitForNextUpdate: waitForUpdate } = renderHook(
 			() => {
 				useInitDatetimeTestCache();
 				return useTicketQueryOptions();
@@ -84,7 +84,7 @@ describe('useFetchTickets', () => {
 				wrapper: ApolloMockedProvider(),
 			}
 		);
-		await waitForValueToChange(() => queryResult.current, { timeout });
+		await waitForUpdate({ timeout });
 		const wrapper = ApolloMockedProvider(successMocks.map((mock) => ({ ...mock, request: queryResult.current })));
 		/* Set query options and the wrapper */
 
@@ -110,7 +110,7 @@ describe('useFetchTickets', () => {
 
 	it('checks for the entries in response data', async () => {
 		/* Set query options and the wrapper */
-		const { result: queryResult, waitForValueToChange } = renderHook(
+		const { result: queryResult, waitForNextUpdate: waitForUpdate } = renderHook(
 			() => {
 				useInitDatetimeTestCache();
 				return useTicketQueryOptions();
@@ -119,7 +119,7 @@ describe('useFetchTickets', () => {
 				wrapper: ApolloMockedProvider(),
 			}
 		);
-		await waitForValueToChange(() => queryResult.current, { timeout });
+		await waitForUpdate({ timeout });
 		const wrapper = ApolloMockedProvider(successMocks.map((mock) => ({ ...mock, request: queryResult.current })));
 		/* Set query options and the wrapper */
 
