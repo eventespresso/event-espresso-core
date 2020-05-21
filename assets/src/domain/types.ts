@@ -27,9 +27,9 @@ export interface AssetsData {
 }
 
 export interface ConfigData {
-	// Better to name the type as "CurrencyConfig" instead of "CurrencyProps"
-	currencyConfig?: CurrencyProps;
-	// Better to name the type as "CurrentUser" instead of "CurrentUserProps"
+	// Better to name the type as "Currency" instead of "CurrencyProps"
+	currency?: CurrencyProps;
+	// Better to name the type as "CurrentUser" or just "User" instead of "CurrentUserProps"
 	currentUser?: CurrentUserProps;
 	generalSettings?: GeneralSettings;
 	locale?: LocaleProps;
@@ -78,7 +78,7 @@ window.eventEspressoData = {
 	},
 	blocks: null,
 	config: {
-		currencyConfig: null,
+		currency: null,
 		currentUser: null,
 		generalSettings: {
 			dateFormat: 'F j, Y',
