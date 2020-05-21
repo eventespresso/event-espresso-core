@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import classNames from 'classnames';
 
 import { camelToSnakeCase } from '@appServices/utilities/text';
@@ -7,14 +7,15 @@ import { IconProps, IconSize } from './types';
 import './style.scss';
 
 const withEnhance = <P extends IconProps>(WrappedComponent: React.ComponentType<P>) => {
-	type EnhanceProps = { noMargin?: boolean; size?: IconSize };
+	type Ref = React.Ref<typeof WrappedComponent>;
+	type EnhanceProps = { forwardedRef: Ref; noMargin?: boolean; size?: IconSize };
 
 	// @ts-ignore
 	const displayName = WrappedComponent?.render?.name;
 
 	const generatedIconClassName = displayName && 'ee-icon--' + camelToSnakeCase(displayName.replace('Svg', ''));
 
-	const WithEnhance: React.FC<P & EnhanceProps> = ({ noMargin, size, ...props }) => {
+	const WithEnhance: React.FC<P & EnhanceProps> = ({ forwardedRef, noMargin, size, ...props }) => {
 		const className = classNames(
 			'ee-svg',
 			size && `ee__icon--${size}`,
@@ -23,10 +24,14 @@ const withEnhance = <P extends IconProps>(WrappedComponent: React.ComponentType<
 			props.className
 		);
 
-		return <WrappedComponent {...(props as P)} className={className} />;
+		return <WrappedComponent {...(props as P)} className={className} ref={forwardedRef} />;
 	};
 
-	return WithEnhance;
+	const ForwardedComponentWithEnhance = (props: P, ref: Ref) => {
+		return <WithEnhance {...props} forwardedRef={ref} />;
+	};
+
+	return forwardRef(ForwardedComponentWithEnhance);
 };
 
 export default withEnhance;
