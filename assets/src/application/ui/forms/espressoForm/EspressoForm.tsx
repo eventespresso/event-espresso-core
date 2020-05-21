@@ -18,12 +18,7 @@ const EspressoForm: React.FC<EspressoFormProps> = ({ onSubmit, mutators, layout,
 
 	return (
 		<FormProvider value={context}>
-			<ReactFinalForm
-				onSubmit={onSubmit}
-				render={(props) => <FormRenderer {...props} />}
-				mutators={formMutators}
-				{...rest}
-			/>
+			<ReactFinalForm component={FormRenderer} onSubmit={onSubmit} mutators={formMutators} {...rest} />
 		</FormProvider>
 	);
 };

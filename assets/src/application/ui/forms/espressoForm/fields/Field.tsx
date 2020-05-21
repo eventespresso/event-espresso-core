@@ -22,7 +22,7 @@ const Field: React.FC<FieldProps> = ({ conditions, parseAsInfinity, ...rest }) =
 		  }
 		: {};
 
-	return visible && <RFFField render={FieldRenderer} {...extraProps} {...rest} type={rest.fieldType} />;
+	return visible && <RFFField component={FieldRenderer} {...extraProps} {...rest} type={rest.fieldType} />;
 };
 
 export default Field;

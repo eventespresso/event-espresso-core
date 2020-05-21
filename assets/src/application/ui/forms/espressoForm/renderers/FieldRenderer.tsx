@@ -6,6 +6,7 @@ import { FormControl, FormErrorMessage, FormHelperText, FormLabel } from '@infra
 import { InfoCircleOutlined } from '@appDisplay/icons/svgs';
 import { MappedField } from '../adapters';
 import { Tooltip } from '@infraUI/display';
+import { reactFinalFormField } from '@application/services/utilities/memo';
 
 const FieldRenderer: React.FC<FieldRendererProps> = (props) => {
 	const { after, before, description, formControlProps, info, label, required, ...rest } = props;
@@ -51,4 +52,4 @@ const FieldRenderer: React.FC<FieldRendererProps> = (props) => {
 		</FormControl>
 	);
 };
-export default FieldRenderer;
+export default React.memo(FieldRenderer, reactFinalFormField);
