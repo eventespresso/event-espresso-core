@@ -1,7 +1,7 @@
 export interface CommonProps {
 	className?: string;
+	orientation?: 'inline' | 'vertical';
 	showStepNumber?: boolean;
-	vertical?: boolean;
 }
 
 export interface StepsProps extends CommonProps {
@@ -13,9 +13,9 @@ export interface StepsProps extends CommonProps {
 export interface StepProps extends CommonProps {
 	active?: boolean;
 	description?: string;
-	disabled?: boolean;
 	icon?: React.ComponentType;
 	stepIndex?: number; // 0, 1, 2, 3
 	stepNumber?: string; // '1', '2', '3'
+	stepState?: 'active' | 'disabled';
 	title?: React.ReactNode;
 }

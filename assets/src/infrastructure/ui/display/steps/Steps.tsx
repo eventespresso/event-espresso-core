@@ -10,16 +10,13 @@ const Steps: React.FC<StepsProps> = ({
 	children,
 	current = 0,
 	initial = 0,
+	orientation = 'inline',
 	showStepNumber,
-	vertical = false,
 	...props
 }) => {
 	const wrapperClassName = classNames(props.className, 'ee-form-steps__wrapper');
 
-	const listClassName = classNames('ee-form-steps', {
-		'ee-form-steps--vertical': vertical,
-		'ee-form-steps--inline': !vertical,
-	});
+	const listClassName = classNames('ee-form-steps', `ee-form-steps--${orientation}`);
 
 	const heading = props.heading ?? __('Steps');
 

@@ -8,7 +8,7 @@ import './style.scss';
 
 const withEnhance = <P extends IconProps>(WrappedComponent: React.ComponentType<P>) => {
 	type Ref = React.Ref<typeof WrappedComponent>;
-	type EnhanceProps = { forwardedRef: Ref; noMargin?: boolean; size?: IconSize };
+	type EnhanceProps = { forwardedRef?: Ref; noMargin?: boolean; size?: IconSize };
 
 	// @ts-ignore
 	const displayName = WrappedComponent?.render?.name;
@@ -27,7 +27,7 @@ const withEnhance = <P extends IconProps>(WrappedComponent: React.ComponentType<
 		return <WrappedComponent {...(props as P)} className={className} ref={forwardedRef} />;
 	};
 
-	const ForwardedComponentWithEnhance = (props: P, ref: Ref) => {
+	const ForwardedComponentWithEnhance = (props: P & EnhanceProps, ref: Ref) => {
 		return <WithEnhance {...props} forwardedRef={ref} />;
 	};
 
