@@ -9,7 +9,7 @@ interface Props extends AlertProps {
 
 const Banner: React.FC<Props> = ({ children, description, iconProps, title, ...props }) => (
 	<ChakraAlert flexDirection='column' justifyContent='center' textAlign='center' height='200px' {...props}>
-		<AlertIcon size='40px' mr={0} {...iconProps} />
+		<AlertIcon size='2.5rem' mr={0} {...iconProps} />
 		<AlertTitle mt={4} mb={1} fontSize='lg'>
 			{title}
 		</AlertTitle>
