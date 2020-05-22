@@ -26,8 +26,7 @@ const DateCapacity: React.FC<DateItemProps> = ({ entity: datetime }) => {
 				updateRelatedTickets(inputGenerator);
 			}
 		},
-
-		[datetime.cacheId, updateRelatedTickets]
+		[datetime.cacheId, ticketQuantityForCapacity, updateRelatedTickets, updateEntity]
 	);
 
 	return <InlineEditInfinity onChangeValue={onChange} value={`${datetime.capacity}`} />;

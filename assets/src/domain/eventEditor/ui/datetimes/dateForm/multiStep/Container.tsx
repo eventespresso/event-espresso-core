@@ -18,4 +18,4 @@ const Container: React.FC<ContainerProps> = ({ datetimeId, ...props }) => {
 	return <EditModalContainer component={Content} entity={datetime} title={title} {...props} />;
 };
 
-export default Container;
+export default React.memo(Container);
