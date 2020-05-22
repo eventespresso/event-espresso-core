@@ -101,6 +101,9 @@ class PriceConnectionResolver extends AbstractConnectionResolver
             $input_fields = $this->sanitizeInputFields($this->args['where']);
 
             // Use the proper operator.
+            if (! empty($input_fields['PRC_ID']) && is_array($input_fields['PRC_ID'])) {
+                $input_fields['PRC_ID'] = ['in', $input_fields['PRC_ID']];
+            }
             if (! empty($input_fields['Ticket.TKT_ID']) && is_array($input_fields['Ticket.TKT_ID'])) {
                 $input_fields['Ticket.TKT_ID'] = ['in', $input_fields['Ticket.TKT_ID']];
             }
@@ -147,6 +150,8 @@ class PriceConnectionResolver extends AbstractConnectionResolver
     public function sanitizeInputFields(array $where_args)
     {
         $arg_mapping = [
+            'in'              => 'PRC_ID',
+            'idIn'            => 'PRC_ID',
             'ticket'          => 'Ticket.TKT_ID',
             'ticketIn'        => 'Ticket.TKT_ID',
             'ticketIdIn'      => 'Ticket.TKT_ID',
@@ -161,7 +166,7 @@ class PriceConnectionResolver extends AbstractConnectionResolver
         return $this->sanitizeWhereArgsForInputFields(
             $where_args,
             $arg_mapping,
-            ['ticket', 'ticketIn', 'priceType', 'priceTypeIn']
+            ['in', 'ticket', 'ticketIn', 'priceType', 'priceTypeIn']
         );
     }
 }

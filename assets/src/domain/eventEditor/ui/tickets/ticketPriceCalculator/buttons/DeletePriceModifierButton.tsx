@@ -10,7 +10,9 @@ const DeletePriceModifierButton: React.FC<PriceModifierProps> = ({ price }) => {
 	const { deletePrice } = useDataState();
 
 	const buttonProps = { icon: () => <Trash noMargin />, tooltip: __('delete price modifier') };
-	const onConfirm = useCallback(() => deletePrice(price.id, price.isNew), [price.id, price.isNew]);
+	// new or default prices should not be deleted server-side
+	const isNewOrDefault = price.isNew || price.isDefault;
+	const onConfirm = useCallback(() => deletePrice(price.id, isNewOrDefault), [price.id, isNewOrDefault]);
 
 	return <ConfirmDelete buttonProps={buttonProps} onConfirm={onConfirm} />;
 };

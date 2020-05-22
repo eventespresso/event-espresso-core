@@ -41,15 +41,17 @@ const PriceAmountInput: React.FC<PriceModifierProps> = ({ price }) => {
 			<div>
 				<PriceField
 					className={className}
+					component={'input'}
+					// because it can affect other tickets that have this price
+					// default price amount should not be changeable
+					disabled={(reverseCalculate && price.isBasePrice) || price.isDefault}
 					field='amount'
+					format={formatParse('')}
+					formatOnBlur
+					parse={formatParse()}
+					placeholder={__('amount...')}
 					price={price}
 					type={'number'}
-					component={'input'}
-					placeholder={__('amount...')}
-					disabled={reverseCalculate && price.isBasePrice}
-					format={formatParse('')}
-					parse={formatParse()}
-					formatOnBlur
 				/>
 			</div>
 			<div className='ee-ticket-price-field__after'>{afterPrice}</div>

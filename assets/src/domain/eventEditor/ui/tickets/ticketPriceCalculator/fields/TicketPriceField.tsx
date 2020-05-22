@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import { useDataState } from '../data';
 import BaseField from './BaseField';
@@ -11,11 +11,9 @@ const TicketPriceField: React.FC<TicketPriceFieldProps> = (props) => {
 	const { ticket, updateTicketPrice } = useDataState();
 	const { afterAmount, beforeAmount } = useMoneyDisplay();
 
-	const getValue: BFP['getValue'] = (): number => ticket.price;
+	const getValue: BFP['getValue'] = useCallback(() => ticket?.price || 0, [ticket?.price]);
 
-	const setValue: BFP['setValue'] = (value) => {
-		updateTicketPrice(value);
-	};
+	const setValue: BFP['setValue'] = useCallback((value) => updateTicketPrice(value), [updateTicketPrice]);
 
 	return (
 		<div className='ee-ticket-price-field'>

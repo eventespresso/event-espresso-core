@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { FormApi } from 'final-form';
+import { useForm } from 'react-final-form';
 
 import { useDataState as useTAMDataState } from '@edtrUI/ticketAssignmentsManager/data';
 import { useDataState as useTPCDataState } from '@edtrUI/tickets/ticketPriceCalculator/data';
@@ -8,8 +8,9 @@ import { useDataState as useTPCDataState } from '@edtrUI/tickets/ticketPriceCalc
  * A custom hook which subscribes to TAM and TPC data and updates
  * RFF data when needed.
  */
-const useDataListener = ({ mutators, getState }: FormApi<any>) => {
+const useDataListener = () => {
 	const { getData } = useTAMDataState();
+	const { mutators, getState } = useForm();
 	const data = getData();
 
 	const id = getState().values.id || 'NEW_TICKET';

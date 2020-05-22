@@ -1,5 +1,6 @@
 import React from 'react';
 import { pick } from 'ramda';
+import { FormSpy } from 'react-final-form';
 
 import { FormRendererProps } from '../types';
 import Submit from '../Submit';
@@ -19,7 +20,6 @@ const FormRenderer: React.FC<FormRendererProps> = (props) => {
 		debugFields,
 		hasValidationErrors,
 		hasSubmitErrors,
-		form,
 	} = props;
 
 	const formOutput = (
@@ -40,7 +40,9 @@ const FormRenderer: React.FC<FormRendererProps> = (props) => {
 						/>
 					) : null}
 				</form>
-				{debugFields.length && <DebugInfo data={pick(debugFields, form.getState())} />}
+				{debugFields.length && (
+					<FormSpy>{({ form }) => <DebugInfo data={pick(debugFields, form.getState())} />}</FormSpy>
+				)}
 			</div>
 		</div>
 	);

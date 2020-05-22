@@ -79,7 +79,7 @@ const useDataReducer = (initializer: StateInitializer): DataStateReducer => {
 							ticket: {
 								...state.ticket,
 								isTaxable,
-							}
+							},
 					  }
 					: state;
 
@@ -92,7 +92,7 @@ const useDataReducer = (initializer: StateInitializer): DataStateReducer => {
 					ticket: {
 						...state.ticket,
 						isTaxable,
-					}
+					},
 				};
 
 			case 'ADD_PRICE_TO_DELETED':

@@ -1,6 +1,6 @@
 import React, { CSSProperties } from 'react';
 import { __ } from '@wordpress/i18n';
-import { FormRenderProps } from 'react-final-form';
+import { FormSpy } from 'react-final-form';
 
 import DateFormSteps from './DateFormSteps';
 import { usePrevNext } from '@appServices/hooks';
@@ -15,40 +15,51 @@ const buttonRowStyle: CSSProperties = { display: 'flex', justifyContent: 'flex-e
 /**
  * This component is inside both RFF and TAM contexts, so we can use all of their features
  */
-const ContentBody: React.FC<FormRenderProps> = ({
-	children,
-	hasSubmitErrors,
-	hasValidationErrors,
-	submitting,
-	form,
-}) => {
+const ContentBody: React.FC = ({ children }) => {
 	// init data listener to update RFF data
-	useDataListener(form);
+	useDataListener();
 	const { current, prev, next } = usePrevNext();
 	const { hasOrphanEntities } = useTAMDataState();
 
-	const isSaveDisabled = submitting || hasValidationErrors || hasSubmitErrors;
 	const isSubmitDisabled = hasOrphanEntities();
 
+	const subscription = { submitting: true, hasValidationErrors: true, hasSubmitErrors: true };
 	return (
-		<div>
-			<DateFormSteps current={current} />
-			{/* RFF fields */}
-			{current === 0 && children}
+		<FormSpy subscription={subscription}>
+			{({ form, hasSubmitErrors, hasValidationErrors, submitting }) => {
+				const isSaveDisabled = submitting || hasValidationErrors || hasSubmitErrors;
 
-			{current === 1 && <TicketAssignmentsManager />}
-			<div style={buttonRowStyle}>
-				{current === 0 && (
-					<Button buttonText={__('Save and assign tickets')} onClick={next} isDisabled={isSaveDisabled} />
-				)}
-				{current === 1 && (
-					<>
-						<Button buttonText={__('Previous')} onClick={prev} />
-						<Button buttonText={__('Submit')} onClick={form.submit} isDisabled={isSubmitDisabled} />
-					</>
-				)}
-			</div>
-		</div>
+				return (
+					<div>
+						<DateFormSteps current={current} />
+						{/* RFF fields */}
+						{current === 0 && children}
+
+						{current === 1 && <TicketAssignmentsManager />}
+						<div style={buttonRowStyle}>
+							{current === 0 && (
+								<Button
+									buttonText={__('Save and assign tickets')}
+									onClick={next}
+									isDisabled={isSaveDisabled}
+									rightIcon='chevron-right'
+								/>
+							)}
+							{current === 1 && (
+								<>
+									<Button buttonText={__('Previous')} onClick={prev} leftIcon='chevron-left' />
+									<Button
+										buttonText={__('Submit')}
+										onClick={form.submit}
+										isDisabled={isSubmitDisabled}
+									/>
+								</>
+							)}
+						</div>
+					</div>
+				);
+			}}
+		</FormSpy>
 	);
 };
 

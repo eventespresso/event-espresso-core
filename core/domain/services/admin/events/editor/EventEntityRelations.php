@@ -84,7 +84,6 @@ class EventEntityRelations extends EventEditorData
      */
     private function processTickets(array $datetimeIds)
     {
-
         $related_models = [
             'datetimes' => $this->datetime_model,
             'prices'    => $this->price_model,
@@ -123,8 +122,22 @@ class EventEntityRelations extends EventEditorData
             'tickets'    => $this->ticket_model,
             'priceTypes' => $this->price_type_model,
         ];
-        // Get the IDs of all ticket prices.
-        $priceIds = $this->price_model->get_col([['Ticket.TKT_ID' => ['IN', $ticketIds]]]);
+        // Get the IDs of all ticket prices and default prices
+        $priceIds = $this->price_model->get_col([
+            [
+                'OR' => [
+                    // either the price is related to any of these tickets
+                    'Ticket.TKT_ID' => ['IN', $ticketIds],
+                    // or it's a default price and not trashed
+                    'AND' => [
+                        'PRC_deleted'    => 0,
+                        'PRC_is_default' => 1,
+                    ],
+                ],
+            ],
+            'group_by'                 => 'PRC_ID',
+            'default_where_conditions' => 'minimum',
+        ]);
         foreach ($priceIds as $priceId) {
             $GID = $this->convertToGlobalId($this->price_model->item_name(), $priceId);
 

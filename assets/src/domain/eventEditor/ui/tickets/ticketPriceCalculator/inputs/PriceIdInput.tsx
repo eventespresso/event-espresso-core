@@ -4,7 +4,7 @@ import { PriceModifierProps } from '../types';
 import { PriceField } from '../fields';
 
 const PriceIdInput: React.FC<PriceModifierProps> = ({ price }) => {
-	return <PriceField field='dbId' price={price} type={'text'} component={'input'} disabled />;
+	return <PriceField component={'input'} disabled field='dbId' price={price} type={'text'} />;
 };
 
 export default PriceIdInput;

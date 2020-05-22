@@ -6,7 +6,15 @@ import { PriceField } from '../fields';
 
 const PriceDescriptionInput: React.FC<PriceModifierProps> = ({ price }) => {
 	return (
-		<PriceField field='description' price={price} type={'text'} component={'input'} placeholder={__('description...')} />
+		<PriceField
+			component={'input'}
+			// default prices cannot be changed in TPC
+			disabled={price.isDefault}
+			field='description'
+			placeholder={__('description...')}
+			price={price}
+			type={'text'}
+		/>
 	);
 };
 

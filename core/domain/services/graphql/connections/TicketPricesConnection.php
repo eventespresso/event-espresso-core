@@ -2,7 +2,6 @@
 
 namespace EventEspresso\core\domain\services\graphql\connections;
 
-use EE_Base_Class;
 use EEM_Price;
 use EventEspresso\core\domain\services\graphql\connection_resolvers\PriceConnectionResolver;
 use EventEspresso\core\services\graphql\connections\ConnectionBase;
@@ -42,7 +41,7 @@ class TicketPricesConnection extends ConnectionBase
             'toType'             => $this->namespace . 'Price',
             'fromFieldName'      => 'prices',
             'connectionTypeName' => "{$this->namespace}TicketPricesConnection",
-            'connectionArgs'     => self::get_connection_args(),
+            'connectionArgs'     => TicketPricesConnection::get_connection_args(),
             'resolve'            => [$this, 'resolveConnection'],
         ];
     }
@@ -76,39 +75,47 @@ class TicketPricesConnection extends ConnectionBase
     {
         return array_merge(
             [
-                'ticket' => [
+                'in'              => [
+                    'type'        => ['list_of' => 'ID'],
+                    'description' => esc_html__('Limit prices to the given globally unique IDs', 'event_espresso'),
+                ],
+                'idIn'            => [
+                    'type'        => ['list_of' => 'ID'],
+                    'description' => esc_html__('Limit prices to the given IDs', 'event_espresso'),
+                ],
+                'ticket'          => [
                     'type'        => 'ID',
                     'description' => esc_html__('Globally unique ticket ID to get the prices for.', 'event_espresso'),
                 ],
-                'ticketIn' => [
+                'ticketIn'        => [
                     'type'        => ['list_of' => 'ID'],
                     'description' => esc_html__('Globally unique ticket IDs to get the prices for.', 'event_espresso'),
                 ],
-                'ticketId' => [
+                'ticketId'        => [
                     'type'        => 'Int',
                     'description' => esc_html__('Ticket ID to get the prices for.', 'event_espresso'),
                 ],
-                'ticketIdIn' => [
+                'ticketIdIn'      => [
                     'type'        => ['list_of' => 'Int'],
                     'description' => esc_html__('Ticket IDs to get the prices for.', 'event_espresso'),
                 ],
-                'priceType' => [
+                'priceType'       => [
                     'type'        => 'ID',
                     'description' => esc_html__('Globally unique price type ID to get the prices for.', 'event_espresso'),
                 ],
-                'priceTypeIn' => [
+                'priceTypeIn'     => [
                     'type'        => ['list_of' => 'ID'],
                     'description' => esc_html__('Globally unique price type IDs to get the prices for.', 'event_espresso'),
                 ],
-                'priceTypeId' => [
+                'priceTypeId'     => [
                     'type'        => 'Int',
                     'description' => esc_html__('Price type ID to get the prices for.', 'event_espresso'),
                 ],
-                'priceTypeIdIn' => [
+                'priceTypeIdIn'   => [
                     'type'        => ['list_of' => 'Int'],
                     'description' => esc_html__('Price type IDs to get the prices for.', 'event_espresso'),
                 ],
-                'priceBaseType' => [
+                'priceBaseType'   => [
                     'type'        => 'PriceBaseTypeEnum',
                     'description' => esc_html__('Price Base type.', 'event_espresso'),
                 ],
