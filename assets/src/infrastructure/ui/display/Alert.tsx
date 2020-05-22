@@ -1,27 +1,16 @@
 import React from 'react';
-import { Alert as ChakraAlert, AlertIcon, AlertTitle, AlertDescription, AlertProps, IconProps } from '@chakra-ui/core';
+import { Alert as ChakraAlert, AlertProps, AlertIcon, IconProps } from '@chakra-ui/core';
 
 interface Props extends AlertProps {
 	description: string;
 	iconProps?: IconProps;
-	title: string;
 }
 
-const Alert: React.FC<Props> = ({ children, description, iconProps, title, ...props }) => (
-	<ChakraAlert
-		{...props}
-		flexDirection='column'
-		justifyContent='center'
-		textAlign='center'
-		height='200px'
-	>
-		<AlertIcon size='40px' mr={0} {...iconProps} />
-		<AlertTitle mt={4} mb={1} fontSize='lg'>
-			{title}
-		</AlertTitle>
-		{description && <AlertDescription maxWidth='sm'>{description}</AlertDescription>}
-		{children && children}
+const Banner: React.FC<Props> = ({ description, iconProps, ...props }) => (
+	<ChakraAlert {...props}>
+		<AlertIcon />
+		{description}
 	</ChakraAlert>
 );
 
-export default Alert;
+export default Banner;
