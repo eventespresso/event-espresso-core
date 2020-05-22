@@ -2,7 +2,6 @@
 
 namespace EventEspresso\core\domain\services\graphql\connections;
 
-use EE_Base_Class;
 use EEM_Price;
 use EventEspresso\core\domain\services\graphql\connection_resolvers\PriceConnectionResolver;
 use EventEspresso\core\services\graphql\connections\ConnectionBase;
@@ -42,7 +41,7 @@ class TicketPricesConnection extends ConnectionBase
             'toType'             => $this->namespace . 'Price',
             'fromFieldName'      => 'prices',
             'connectionTypeName' => "{$this->namespace}TicketPricesConnection",
-            'connectionArgs'     => self::get_connection_args(),
+            'connectionArgs'     => TicketPricesConnection::get_connection_args(),
             'resolve'            => [$this, 'resolveConnection'],
         ];
     }
@@ -78,11 +77,11 @@ class TicketPricesConnection extends ConnectionBase
             [
                 'in'              => [
                     'type'        => ['list_of' => 'ID'],
-                    'description' => esc_html__('Limit pices to the given globally unique IDs', 'event_espresso'),
+                    'description' => esc_html__('Limit prices to the given globally unique IDs', 'event_espresso'),
                 ],
                 'idIn'            => [
                     'type'        => ['list_of' => 'ID'],
-                    'description' => esc_html__('Limit pices to the given IDs', 'event_espresso'),
+                    'description' => esc_html__('Limit prices to the given IDs', 'event_espresso'),
                 ],
                 'ticket'          => [
                     'type'        => 'ID',
