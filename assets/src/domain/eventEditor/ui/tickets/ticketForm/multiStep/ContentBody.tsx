@@ -51,7 +51,7 @@ const ContentBody: React.FC = ({ children }) => {
 										rightIcon='chevron-right'
 									/>
 									<Button
-										buttonText={__('Free ticket - assign dates')}
+										buttonText={__('Skip prices - assign dates')}
 										onClick={() => goto(2)}
 										isDisabled={isSaveDisabled}
 										rightIcon='chevron-right'
