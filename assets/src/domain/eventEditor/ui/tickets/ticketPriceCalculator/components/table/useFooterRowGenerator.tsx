@@ -9,6 +9,7 @@ import { TicketPriceField } from '../../fields';
 import { FormatAmountFunction } from '@appServices/utilities/money/formatAmount';
 import { FooterRow } from '@appLayout/espressoTable';
 import AddDefaultTaxesButton from '../../buttons/AddDefaultTaxesButton';
+import DeleteAllPricesButton from '../../buttons/DeleteAllPricesButton';
 
 interface Props {
 	formatAmount: FormatAmountFunction;
@@ -27,13 +28,13 @@ const useFooterRowGenerator = (): FooterRowGenerator => {
 				key: 'id',
 				type: 'cell',
 				className: '',
-				value: <AddDefaultTaxesButton />,
+				value: <DeleteAllPricesButton />,
 			},
 			{
 				key: 'type',
 				type: 'cell',
 				className: '',
-				value: '',
+				value: <AddDefaultTaxesButton />,
 			},
 			{
 				key: 'name',
