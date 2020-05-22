@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { filter, find, includes, propEq } from 'ramda';
+import { allPass, filter, find, includes, propEq } from 'ramda';
 
 import { EntityId, EntityDbId } from '@dataServices/types';
 import { Price } from '@edtrServices/apollo/types';
@@ -40,3 +40,4 @@ export const getPriceByGuid = (prices: Price[], guid: EntityId): Price => findEn
 // returns array of prices that satisfy predicate
 export const getPriceModifiers = (prices: Price[]): Price[] => filter(isNotBasePrice, prices);
 export const getTaxes = (prices: Price[]): Price[] => filter(isTax, prices);
+export const getDefaultTaxes = (prices: Price[]): Price[] => filter(allPass([isDefault, isTax]), prices);
