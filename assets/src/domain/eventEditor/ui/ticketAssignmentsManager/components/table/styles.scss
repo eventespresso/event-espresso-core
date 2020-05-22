@@ -39,6 +39,7 @@
 			}
 		}
 	}
+
 	tbody {
 		tr,
 		td {
@@ -147,6 +148,36 @@
 		button {
 			background-color: var(--ee-color-accent) !important;
 			border-color: var(--ee-color-accent) !important;
+		}
+	}
+
+	/* WordPress Admin Media Query Breakpoint: Tablet */
+	@media screen and (max-width: 782px) {
+		&.ee-rspnsv-table {
+			tbody {
+				tr {
+					&.ee-rspnsv-table-body-row {
+						height: auto;
+					}
+
+					td {
+						border-bottom: 1px solid var(--ee-color-grey-14);
+						height: auto;
+						width: 100%;
+
+						&.relation-cell {
+							button {
+								margin-bottom: 0;
+							}
+						}
+
+						&:not(:first-child) {
+							display: flex;
+							align-items: center;
+						}
+					}
+				}
+			}
 		}
 	}
 }

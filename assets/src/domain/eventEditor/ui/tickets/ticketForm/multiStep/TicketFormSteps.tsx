@@ -8,21 +8,13 @@ import { Calculator, Calendar, Ticket } from '@appDisplay/icons';
 const TicketFormSteps: React.FC<Pick<PrevNext, 'current'>> = ({ current }) => {
 	return (
 		<Steps current={current} showStepNumber>
+			<Step description={__('primary information about the ticket')} icon={Ticket} title={__('Ticket Details')} />
 			<Step
-				title={ __('Ticket Details') }
-				description={ __('primary information about the ticket') }
-				icon={ Ticket }
+				description={__('apply ticket price modifiers and taxes')}
+				icon={Calculator}
+				title={__('Price Calculator')}
 			/>
-			<Step
-				title={ __('Price Calculator') }
-				description={ __('apply ticket price modifiers and taxes') }
-				icon={ Calculator }
-			/>
-			<Step
-				title={ __('Assign Dates') }
-				description={ __('relations between tickets and dates') }
-				icon={ Calendar }
-			/>
+			<Step description={__('relations between tickets and dates')} icon={Calendar} title={__('Assign Dates')} />
 		</Steps>
 	);
 };

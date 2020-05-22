@@ -12,7 +12,7 @@
 	&__wrapper {
 		display: flex;
 		margin: var(--ee-margin-small) auto var(--ee-margin-bigger);
-  		max-width: 900px;
+		max-width: 900px;
 
 		h3 {
 			color: var(--ee-color-grey-11);
@@ -151,10 +151,12 @@
 			border-style: solid;
 			border-color: var(--ee-color-grey-10);
 			border-width: 0 1px 1px 0;
-			-webkit-transition: background-color .1s ease,opacity .1s ease,color .1s ease,-webkit-box-shadow .1s ease;
-			transition: background-color .1s ease,opacity .1s ease,color .1s ease,-webkit-box-shadow .1s ease;
-			transition: background-color .1s ease,opacity .1s ease,color .1s ease,box-shadow .1s ease;
-			transition: background-color .1s ease,opacity .1s ease,color .1s ease,box-shadow .1s ease,-webkit-box-shadow .1s ease;
+			-webkit-transition: background-color 0.1s ease, opacity 0.1s ease, color 0.1s ease,
+				-webkit-box-shadow 0.1s ease;
+			transition: background-color 0.1s ease, opacity 0.1s ease, color 0.1s ease, -webkit-box-shadow 0.1s ease;
+			transition: background-color 0.1s ease, opacity 0.1s ease, color 0.1s ease, box-shadow 0.1s ease;
+			transition: background-color 0.1s ease, opacity 0.1s ease, color 0.1s ease, box-shadow 0.1s ease,
+				-webkit-box-shadow 0.1s ease;
 			-webkit-transform: translateY(-50%) translateX(50%) rotate(-45deg);
 			transform: translateY(-50%) translateX(50%) rotate(-45deg);
 			z-index: 2;
@@ -173,16 +175,17 @@
 		}
 	}
 
-
 	@media only screen and (max-width: 782px) {
 		&__wrapper {
 			flex-flow: column nowrap;
 		}
+
 		&--inline {
 			flex: 1 1 auto;
 			flex-flow: column nowrap;
 			align-items: flex-start;
 		}
+
 		.ee-form-step {
 			border-right-width: 1px;
 			padding-left: var(--ee-padding-small);
@@ -193,5 +196,4 @@
 			}
 		}
 	}
-
 }
