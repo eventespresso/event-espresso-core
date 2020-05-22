@@ -4,13 +4,12 @@ import { __ } from '@wordpress/i18n';
 import { ButtonProps } from '@infraUI/inputs';
 import { SaveOutlined } from '@appDisplay/icons/svgs';
 import { useOnSubmitAssignments } from '../../../data';
-import { useTAMContext } from '../../../context';
+import { useDataState } from '../../../data';
 
-const useSubmitButtonProps = (): ButtonProps => {
-	const { dataState, onCloseModal } = useTAMContext();
+const useSubmitButtonProps = (onCloseModal: VoidFunction): ButtonProps => {
 	const submitAssignments = useOnSubmitAssignments();
 
-	const { hasOrphanEntities, getData } = dataState;
+	const { hasOrphanEntities, getData } = useDataState();
 
 	const hasErrors = hasOrphanEntities();
 	const data = getData();
@@ -21,7 +20,7 @@ const useSubmitButtonProps = (): ButtonProps => {
 			submitAssignments(data);
 			onCloseModal();
 		},
-		[data]
+		[data, submitAssignments]
 	);
 
 	return useMemo<ButtonProps>(

@@ -10,7 +10,7 @@ const timeout = 5000; // milliseconds
 describe('useFetchPrices', () => {
 	it('checks for the error state', async () => {
 		/* Set query options and the wrapper */
-		const { result: queryResult, waitForValueToChange } = renderHook(
+		const { result: queryResult, waitForNextUpdate: waitForUpdate } = renderHook(
 			() => {
 				useInitTicketTestCache();
 				return usePriceQueryOptions();
@@ -19,7 +19,7 @@ describe('useFetchPrices', () => {
 				wrapper: ApolloMockedProvider(),
 			}
 		);
-		await waitForValueToChange(() => queryResult.current, { timeout });
+		await waitForUpdate({ timeout });
 		const wrapper = ApolloMockedProvider(errorMocks.map((mock) => ({ ...mock, request: queryResult.current })));
 		/* Set query options and the wrapper */
 
@@ -43,7 +43,7 @@ describe('useFetchPrices', () => {
 
 	it('checks for the loading state', async () => {
 		/* Set query options and the wrapper */
-		const { result: queryResult, waitForValueToChange } = renderHook(
+		const { result: queryResult, waitForNextUpdate: waitForUpdate } = renderHook(
 			() => {
 				useInitTicketTestCache();
 				return usePriceQueryOptions();
@@ -52,7 +52,7 @@ describe('useFetchPrices', () => {
 				wrapper: ApolloMockedProvider(),
 			}
 		);
-		await waitForValueToChange(() => queryResult.current, { timeout });
+		await waitForUpdate({ timeout });
 		const wrapper = ApolloMockedProvider(successMocks.map((mock) => ({ ...mock, request: queryResult.current })));
 		/* Set query options and the wrapper */
 
@@ -74,7 +74,7 @@ describe('useFetchPrices', () => {
 
 	it('checks for the response data', async () => {
 		/* Set query options and the wrapper */
-		const { result: queryResult, waitForValueToChange } = renderHook(
+		const { result: queryResult, waitForNextUpdate: waitforUpdate } = renderHook(
 			() => {
 				useInitTicketTestCache();
 				return usePriceQueryOptions();
@@ -83,7 +83,7 @@ describe('useFetchPrices', () => {
 				wrapper: ApolloMockedProvider(),
 			}
 		);
-		await waitForValueToChange(() => queryResult.current, { timeout });
+		await waitforUpdate({ timeout });
 		const wrapper = ApolloMockedProvider(successMocks.map((mock) => ({ ...mock, request: queryResult.current })));
 		/* Set query options and the wrapper */
 
@@ -108,7 +108,7 @@ describe('useFetchPrices', () => {
 
 	it('checks for the entries in response data', async () => {
 		/* Set query options and the wrapper */
-		const { result: queryResult, waitForValueToChange } = renderHook(
+		const { result: queryResult, waitForNextUpdate: waitForUpdate } = renderHook(
 			() => {
 				useInitTicketTestCache();
 				return usePriceQueryOptions();
@@ -117,7 +117,7 @@ describe('useFetchPrices', () => {
 				wrapper: ApolloMockedProvider(),
 			}
 		);
-		await waitForValueToChange(() => queryResult.current, { timeout });
+		await waitForUpdate({ timeout });
 		const wrapper = ApolloMockedProvider(successMocks.map((mock) => ({ ...mock, request: queryResult.current })));
 		/* Set query options and the wrapper */
 

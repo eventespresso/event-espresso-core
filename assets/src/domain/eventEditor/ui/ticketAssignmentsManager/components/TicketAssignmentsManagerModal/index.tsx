@@ -7,27 +7,25 @@ import CloseModalButton from './buttons/CloseModal';
 import TicketAssignmentsManager from '../TicketAssignmentsManager';
 import useCancelButtonProps from './buttons/useCancelButtonProps';
 import useSubmitButtonProps from './buttons/useSubmitButtonProps';
-import { useTAMContext } from '../../context';
+import { useDataState } from '../../data';
+import { WithContextProps } from '../../context/types';
 
 import '../styles.scss';
 
-const TicketAssignmentsManagerModal: React.FC = () => {
-	const {
-		dataState: { hasOrphanEntities },
-		onCloseModal,
-		title,
-	} = useTAMContext();
-	const cancelButtonProps = useCancelButtonProps();
-	const submitButtonProps = useSubmitButtonProps();
+const TicketAssignmentsManagerModal: React.FC<Partial<WithContextProps>> = ({ onCloseModal, title }) => {
+	const { hasOrphanEntities } = useDataState();
+	const cancelButtonProps = useCancelButtonProps(onCloseModal);
+	const submitButtonProps = useSubmitButtonProps(onCloseModal);
 
 	const hasErrors = hasOrphanEntities();
+	const closeButton = <CloseModalButton />;
 
 	return (
 		<ModalWithAlert
 			bodyClassName='ee-ticket-assignments-manager__body'
 			cancelButtonProps={cancelButtonProps}
 			className='ee-ticket-assignments-manager'
-			closeButton={<CloseModalButton />}
+			closeButton={closeButton}
 			isOpen={true}
 			onClose={onCloseModal}
 			showAlertOnEscape={hasErrors}

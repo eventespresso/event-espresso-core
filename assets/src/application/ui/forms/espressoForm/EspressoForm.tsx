@@ -10,18 +10,15 @@ import './styles.scss';
 
 const EspressoForm: React.FC<EspressoFormProps> = ({ onSubmit, mutators, layout, ...rest }) => {
 	const context = { layout };
+	const formMutators = {
+		...arrayMutators,
+		...mutators,
+		updateFieldValue,
+	};
+
 	return (
 		<FormProvider value={context}>
-			<ReactFinalForm
-				onSubmit={onSubmit}
-				render={FormRenderer}
-				mutators={{
-					...arrayMutators,
-					...mutators,
-					updateFieldValue,
-				}}
-				{...rest}
-			/>
+			<ReactFinalForm component={FormRenderer} onSubmit={onSubmit} mutators={formMutators} {...rest} />
 		</FormProvider>
 	);
 };

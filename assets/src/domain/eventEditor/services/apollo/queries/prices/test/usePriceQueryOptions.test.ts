@@ -10,14 +10,14 @@ const timeout = 5000; // milliseconds
 describe('usePriceQueryOptions()', () => {
 	it('checks if the query operation variables are correct', async () => {
 		const wrapper = ApolloMockedProvider();
-		const { result, waitForValueToChange } = renderHook(
+		const { result, waitForNextUpdate: waitForUpdate } = renderHook(
 			() => {
 				useInitTicketTestCache();
 				return usePriceQueryOptions();
 			},
 			{ wrapper }
 		);
-		await waitForValueToChange(() => result.current, { timeout });
+		await waitForUpdate({ timeout });
 
 		expect(result.current.variables.where.ticketIn).toEqual(getGuids(nodes).sort());
 	});

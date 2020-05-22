@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { identity, sortBy } from 'ramda';
 
 import useDatetimeIds from '../datetimes/useDatetimeIds';
@@ -26,7 +27,8 @@ const useTicketQueryOptions = (datetimeIn: EntityId[] = []): DatetimesQueryOptio
 		},
 	};
 
-	return options;
+	const datetimeInStr = datetimeIn.join(':');
+	return useMemo(() => options, [datetimeInStr]);
 };
 
 export default useTicketQueryOptions;
