@@ -12,20 +12,22 @@ const Content: React.FC<ContentProps> = ({ entity, onClose }) => {
 	const { createEntity, updateEntity } = useTicketMutator();
 	const mutatePrices = useMutatePrices();
 
+	const mutateTicket = useCallback(
+		(input) => {
+			return entity?.id ? updateEntity(input) : createEntity(input);
+		},
+		[createEntity, entity?.id, updateEntity]
+	);
+
 	const onSubmit = useCallback(
 		({ prices, deletedPrices, ...fields }) => {
 			mutatePrices(prices, deletedPrices).then((relatedPriceIds) => {
 				const input = { ...fields, prices: relatedPriceIds };
-
-				if (entity?.id) {
-					updateEntity(input);
-				} else {
-					createEntity(input);
-				}
+				mutateTicket(input);
 			});
 			onClose();
 		},
-		[createEntity, entity?.id, mutatePrices, updateEntity]
+		[entity?.id, mutatePrices, mutateTicket]
 	);
 	const formConfig = useTicketFormConfig(entity?.id, { onSubmit });
 
