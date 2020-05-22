@@ -5,6 +5,16 @@ import { PriceModifierProps } from '../types';
 import { PriceField } from '../fields';
 
 const PriceNameInput: React.FC<PriceModifierProps> = ({ price }) => {
-	return <PriceField field='name' price={price} type={'text'} component={'input'} placeholder={__('label...')} />;
+	return (
+		<PriceField
+			component={'input'}
+			// default prices cannot be changed in TPC
+			disabled={price.isDefault}
+			field='name'
+			placeholder={__('label...')}
+			price={price}
+			type={'text'}
+		/>
+	);
 };
 export default PriceNameInput;

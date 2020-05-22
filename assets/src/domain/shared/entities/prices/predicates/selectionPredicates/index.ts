@@ -28,6 +28,10 @@ export const isNotPercent = propEq('isPercent', false);
 export const isTax = propEq('isTax', true);
 export const isNotTax = propEq('isTax', false);
 
+// is a default price ?
+export const isDefault = propEq('isDefault', true);
+export const isNotDefault = propEq('isDefault', false);
+
 // returns price if found in array of prices
 export const getBasePrice = (prices: Price[]): Price => find(isBasePrice)(prices);
 export const getPriceByDbId = (prices: Price[], dbId: EntityDbId): Price => findEntityByDbId(prices)(dbId);

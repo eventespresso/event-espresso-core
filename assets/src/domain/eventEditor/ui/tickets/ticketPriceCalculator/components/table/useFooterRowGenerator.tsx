@@ -8,6 +8,7 @@ import { parsedAmount } from '@appServices/utilities/money';
 import { TicketPriceField } from '../../fields';
 import { FormatAmountFunction } from '@appServices/utilities/money/formatAmount';
 import { FooterRow } from '@appLayout/espressoTable';
+import AddDefaultTaxesButton from '../../buttons/AddDefaultTaxesButton';
 
 interface Props {
 	formatAmount: FormatAmountFunction;
@@ -26,7 +27,7 @@ const useFooterRowGenerator = (): FooterRowGenerator => {
 				key: 'id',
 				type: 'cell',
 				className: '',
-				value: '',
+				value: <AddDefaultTaxesButton />,
 			},
 			{
 				key: 'type',
@@ -65,7 +66,7 @@ const useFooterRowGenerator = (): FooterRowGenerator => {
 				key: 'actions',
 				type: 'cell',
 				className: 'ee-ticket-price-calculator__actions',
-				value: <IconButton icon={calcDirIcon} onClick={toggleCalcDir}/*  variant='outline' */ />,
+				value: <IconButton icon={calcDirIcon} onClick={toggleCalcDir} /*  variant='outline' */ />,
 			},
 		];
 

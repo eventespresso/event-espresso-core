@@ -59,7 +59,8 @@ class TicketCreate extends EntityMutator
                 if (! empty($prices)) {
                     TicketMutation::setRelatedPrices($entity, $prices);
                 } else {
-                    TicketMutation::addDefaultPrices($entity, $model);
+                    // we do this client-side
+                    // TicketMutation::addDefaultPrices($entity, $model);
                 }
             } catch (Exception $exception) {
                 EntityMutator::handleExceptions(

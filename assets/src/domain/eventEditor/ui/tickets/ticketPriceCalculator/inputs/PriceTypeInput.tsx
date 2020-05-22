@@ -11,7 +11,13 @@ const PriceTypeInput: React.FC<PriceModifierProps> = ({ price }) => {
 	const options = price.isBasePrice ? priceTypes : modifierOptions;
 
 	return (
-		<PriceField field='priceType' price={price} component={'select'} disabled={price.isBasePrice}>
+		<PriceField
+			component={'select'}
+			// price type cannot be changed for base/default price
+			disabled={price.isBasePrice || price.isDefault}
+			field='priceType'
+			price={price}
+		>
 			{options.map((option) => (
 				<option key={option.id} value={option.id}>
 					{option.name}

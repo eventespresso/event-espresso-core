@@ -49,8 +49,8 @@ const useDataStateManager: DataStateManagerHook = (props) => {
 		});
 	}, []);
 
-	const deletePrice: DSM['deletePrice'] = useCallback((id, isNew) => {
-		if (!isNew) {
+	const deletePrice: DSM['deletePrice'] = useCallback((id, isNewOrDefault) => {
+		if (!isNewOrDefault) {
 			dispatch({
 				type: 'ADD_PRICE_TO_DELETED',
 				id,

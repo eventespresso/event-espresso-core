@@ -35,7 +35,7 @@ interface UpdatePriceArgs {
 
 export interface DataStateManager extends DataState {
 	addPrice: (price: TpcPriceModifier, index?: number) => void;
-	deletePrice: (id: EntityId, isNew?: boolean) => void;
+	deletePrice: (id: EntityId, isNewOrDefault?: boolean) => void;
 	getData: () => DataState;
 	reset: VoidFunction;
 	reverseCalculate: boolean;
