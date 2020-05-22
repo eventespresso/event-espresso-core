@@ -35,6 +35,8 @@ const useIsChainedFilter = (): IsChainedFilterTuple => {
 
 			return entitiesWithGuIdInArray(tickets, relatedTicketIds);
 		},
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[relatedTicketIdsStr]
 	);
 

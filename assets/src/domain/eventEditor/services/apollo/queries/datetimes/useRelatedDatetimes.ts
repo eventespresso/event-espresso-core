@@ -18,6 +18,7 @@ const useRelatedDatetimes: RelatedEntitiesHook<Datetime, 'datetimes'> = ({ entit
 	const cacheIds = entityListCacheIdString(datetimes);
 	const relatedDatetimeIdsStr = JSON.stringify(relatedDatetimeIds);
 
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	return useMemo(() => entitiesWithGuIdInArray(datetimes, relatedDatetimeIds), [relatedDatetimeIdsStr, cacheIds]);
 };
 

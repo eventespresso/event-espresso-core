@@ -1,11 +1,11 @@
-import { useMemo } from 'react';
 import { identity, sortBy } from 'ramda';
 
-import useDatetimeIds from '../datetimes/useDatetimeIds';
 import { GET_TICKETS } from '../tickets';
 import { EntityId } from '@dataServices/types';
 import { TicketsList, TicketsQueryArgs, ReadQueryOptions } from '@dataServices/apollo/queries';
 import { TicketEdge } from '@edtrServices/apollo/types';
+import useDatetimeIds from '../datetimes/useDatetimeIds';
+import { useMemoStringify } from '@appServices/hooks';
 
 type DatetimesQueryOptions = ReadQueryOptions<TicketsList<TicketEdge>, TicketsQueryArgs>;
 
@@ -27,8 +27,7 @@ const useTicketQueryOptions = (datetimeIn: EntityId[] = []): DatetimesQueryOptio
 		},
 	};
 
-	const datetimeInStr = datetimeIn.join(':');
-	return useMemo(() => options, [datetimeInStr]);
+	return useMemoStringify(options, datetimeIn);
 };
 
 export default useTicketQueryOptions;

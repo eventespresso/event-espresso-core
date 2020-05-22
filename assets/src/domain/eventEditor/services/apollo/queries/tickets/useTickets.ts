@@ -1,9 +1,8 @@
-import { useMemo } from 'react';
-
-import useTicketQueryOptions from './useTicketQueryOptions';
 import { Ticket, TicketEdge } from '../../types';
-import { useTicketsQuery } from '@dataServices/apollo/queries';
 import { getCacheIds } from '@appServices/predicates';
+import { useMemoStringify } from '@appServices/hooks';
+import { useTicketsQuery } from '@dataServices/apollo/queries';
+import useTicketQueryOptions from './useTicketQueryOptions';
 
 const useTickets = (): Array<Ticket> => {
 	const options = useTicketQueryOptions();
@@ -12,9 +11,9 @@ const useTickets = (): Array<Ticket> => {
 
 	const nodes = data?.espressoTickets?.nodes || [];
 
-	const cacheIds = getCacheIds(nodes).join(':');
+	const cacheIds = getCacheIds(nodes);
 
-	return useMemo(() => nodes, [cacheIds]);
+	return useMemoStringify(nodes, cacheIds);
 };
 
 export default useTickets;

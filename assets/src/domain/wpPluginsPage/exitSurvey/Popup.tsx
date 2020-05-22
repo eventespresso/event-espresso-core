@@ -16,14 +16,14 @@ const Popup: React.FC<PopupProps> = ({ onOk, onSkip }) => {
 			onOk();
 		}
 		onClose();
-	}, [onOk]);
+	}, [onOk, onClose]);
 
 	const onSkipHandler = useCallback(() => {
 		if (typeof onSkip === 'function') {
 			onSkip();
 		}
 		onClose();
-	}, [onOk]);
+	}, [onClose, onSkip]);
 
 	const title = __('Do you have a moment to share why you are deactivating Event Espresso?');
 

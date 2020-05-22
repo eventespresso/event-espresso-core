@@ -19,7 +19,7 @@ const useUpdateRelatedTickets = (datetimeId: EntityId): UpdateCallback => {
 				updateEntity({ id: ticket.id, ...input });
 			});
 		},
-		[datetimeId, relatedTickets]
+		[relatedTickets, updateEntity]
 	);
 };
 

@@ -20,7 +20,7 @@ const ExitSurveyContent: React.FC<SurveyContentProps> = ({ onSubmit }) => {
 			},
 			hideScrollbars: true,
 		});
-	}, []);
+	}, [onSubmit, typeFormUrl]);
 
 	return <div ref={typeFormEl}></div>;
 };

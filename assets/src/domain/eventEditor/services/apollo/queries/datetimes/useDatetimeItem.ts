@@ -12,8 +12,9 @@ const useDatetimeItem = ({ id }: EntityItemProps): Datetime => {
 		},
 	};
 	const { data } = useCacheQuery<DatetimeItem>(options);
+	const datetime = data?.datetime;
 
-	return useMemo(() => data?.datetime, [data?.datetime?.cacheId]);
+	return useMemo(() => datetime, [datetime]);
 };
 
 export default useDatetimeItem;

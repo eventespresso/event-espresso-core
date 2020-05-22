@@ -17,12 +17,16 @@ const useDatesListFilterStateManager = (): FSM => {
 	const [state, dispatch] = useReducer(reducer, initialState);
 
 	const entityFilterState = useEntityListFilterStateManager<SortBy>('date');
+	const { setPageNumber } = entityFilterState;
 
-	const resetPageNumber = (filter: DatetimeSales | DatetimeStatus): void => {
-		if (filter !== state[filter]) {
-			entityFilterState.setPageNumber(1);
-		}
-	};
+	const resetPageNumber = useCallback(
+		(filter: DatetimeSales | DatetimeStatus): void => {
+			if (filter !== state[filter]) {
+				setPageNumber(1);
+			}
+		},
+		[setPageNumber, state]
+	);
 
 	const setDisplayStartOrEndDate: FSM['setDisplayStartOrEndDate'] = useCallback((displayStartOrEndDate) => {
 		dispatch({
@@ -31,24 +35,29 @@ const useDatesListFilterStateManager = (): FSM => {
 		});
 	}, []);
 
-	const setSales: FSM['setSales'] = useCallback((sales) => {
-		resetPageNumber(sales);
-		dispatch({
-			type: 'SET_SALES',
-			sales,
-		});
-	}, []);
+	const setSales: FSM['setSales'] = useCallback(
+		(sales) => {
+			resetPageNumber(sales);
 
-	const setStatus: FSM['setStatus'] = useCallback((status) => {
-		resetPageNumber(status);
-		dispatch({
-			type: 'SET_STATUS',
-			status,
-		});
-	}, []);
+			dispatch({
+				type: 'SET_SALES',
+				sales,
+			});
+		},
+		[resetPageNumber]
+	);
 
-	const datesFSValues = Object.values(state);
-	const entityFSValues = Object.values(entityFilterState.getState());
+	const setStatus: FSM['setStatus'] = useCallback(
+		(status) => {
+			resetPageNumber(status);
+
+			dispatch({
+				type: 'SET_STATUS',
+				status,
+			});
+		},
+		[resetPageNumber]
+	);
 
 	return useMemo(
 		() => ({
@@ -58,7 +67,7 @@ const useDatesListFilterStateManager = (): FSM => {
 			setSales,
 			setStatus,
 		}),
-		[...datesFSValues, ...entityFSValues]
+		[state, setStatus, setSales, setDisplayStartOrEndDate, entityFilterState]
 	);
 };
 

@@ -43,6 +43,8 @@ const useRect = (ref: React.RefObject<HTMLElement>): ClientRect => {
 		return (): void => {
 			removeEventListener('resize', handleResize);
 		};
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ref.current]);
 
 	return rect;

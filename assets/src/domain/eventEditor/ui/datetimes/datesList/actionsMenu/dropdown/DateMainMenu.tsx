@@ -45,4 +45,4 @@ const DateMainMenu: React.FC<DateMainMenuProps> = ({ datetime }) => {
 	);
 };
 
-export default DateMainMenu;
+export default React.memo(DateMainMenu);

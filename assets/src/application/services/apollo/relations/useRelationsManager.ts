@@ -139,7 +139,7 @@ const useRelationsManager = (data: RelationalData = INITIAL_STATE): RM => {
 			updateRelations,
 			dropRelations,
 		}),
-		[state]
+		[addRelation, dropRelations, getData, getRelations, initialize, isInitialized, removeRelation, updateRelations]
 	);
 };
 

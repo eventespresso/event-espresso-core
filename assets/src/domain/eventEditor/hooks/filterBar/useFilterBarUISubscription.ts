@@ -18,6 +18,8 @@ const useFilterBarUISubscription = (): void => {
 			unsubscribeDatesListFilterBar();
 			unsubscribeTicketsListFilterBar();
 		};
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 };
 

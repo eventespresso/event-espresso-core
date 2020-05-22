@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useMemo } from 'react';
+import React, { createContext, useEffect } from 'react';
 
 import type { EntityListContextProps } from '../types';
 import { DatetimesFilterStateManager, useDatesListFilterStateManager } from '../../filterState';
@@ -10,6 +10,7 @@ import { useEdtrState } from '@edtrHooks/edtrState';
 import { getGuids } from '@appServices/predicates';
 import notTrashed from '@sharedServices/predicates/filters/notTrashed';
 import { entityListCacheIdString } from '@application/services';
+import { useMemoStringify } from '@appServices/hooks';
 
 export type DatetimesListContextProps = EntityListContextProps<DatetimesFilterStateManager, Datetime>;
 
@@ -19,9 +20,8 @@ export const DatetimesListProvider: React.FC = ({ children }) => {
 	const datetimes = useDatetimes();
 	const filters = useDatesListFilterStateManager();
 
-	const filtersStr = JSON.stringify(filters);
 	// memoize filter state
-	const filterState = useMemo(() => filters, [filtersStr]);
+	const filterState = useMemoStringify(filters);
 
 	const { setSortBy, sortingEnabled } = filterState;
 
@@ -39,6 +39,8 @@ export const DatetimesListProvider: React.FC = ({ children }) => {
 		if (!sortingEnabled) {
 			setVisibleDatetimeIds(getGuids(filteredEntities));
 		}
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [cacheIdStr, sortingEnabled]);
 
 	// set sortBy to 'order' when sorting is enabled
@@ -46,6 +48,8 @@ export const DatetimesListProvider: React.FC = ({ children }) => {
 		if (sortingEnabled) {
 			setSortBy('order');
 		}
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [sortingEnabled]);
 
 	const value: DatetimesListContextProps = { filterState, filteredEntities };

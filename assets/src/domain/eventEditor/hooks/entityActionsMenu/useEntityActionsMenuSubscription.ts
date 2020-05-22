@@ -18,6 +18,8 @@ const useEntityActionsMenuSubscription = (): void => {
 			unsubscribeDatesAction();
 			unsubscribeTicketsAction();
 		};
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 };
 

@@ -105,7 +105,8 @@ const useMutator: Mutator = (getMutationOptions) => {
 				deleteEntity,
 			};
 		},
-		[getMutationOptions]
+
+		[handleMutation]
 	);
 };
 

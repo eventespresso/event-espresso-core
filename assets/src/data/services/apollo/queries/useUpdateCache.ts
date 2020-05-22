@@ -10,7 +10,7 @@ const useUpdateCache = <Data = any>(writeQueryOptions: WriteQueryOptions<Data>):
 		(writeOptions?: WriteQueryOptions<Data>): void => {
 			client.writeQuery<Data>({ ...writeQueryOptions, ...writeOptions });
 		},
-		[writeQueryOptions]
+		[client, writeQueryOptions]
 	);
 };
 

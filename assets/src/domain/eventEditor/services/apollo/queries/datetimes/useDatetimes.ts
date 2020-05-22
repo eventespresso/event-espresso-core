@@ -1,9 +1,8 @@
-import { useMemo } from 'react';
-
 import useDatetimeQueryOptions from './useDatetimeQueryOptions';
 import { Datetime, DatetimeEdge } from '../../types';
-import { useDatetimesQuery } from '@dataServices/apollo/queries';
 import { getCacheIds } from '@appServices/predicates';
+import { useMemoStringify } from '@appServices/hooks';
+import { useDatetimesQuery } from '@dataServices/apollo/queries';
 
 const useDatetimes = (): Array<Datetime> => {
 	const options = useDatetimeQueryOptions();
@@ -11,9 +10,9 @@ const useDatetimes = (): Array<Datetime> => {
 
 	const nodes = data?.espressoDatetimes?.nodes || [];
 
-	const cacheIds = getCacheIds(nodes).join(':');
+	const cacheIds = getCacheIds(nodes);
 
-	return useMemo(() => nodes, [cacheIds]);
+	return useMemoStringify(nodes, cacheIds);
 };
 
 export default useDatetimes;

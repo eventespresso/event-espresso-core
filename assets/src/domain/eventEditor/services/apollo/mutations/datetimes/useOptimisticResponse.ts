@@ -36,66 +36,69 @@ type OptimisticResCb = (mutationType: MutationType, input: MutationInput) => any
 const useOptimisticResponse = (): OptimisticResCb => {
 	const client = useApolloClient();
 
-	return useCallback<OptimisticResCb>((mutationType, input) => {
-		let espressoDatetime: Partial<Datetime> = {
-			__typename: 'EspressoDatetime',
-		};
-		// Get rid of null or undefined values
-		const filteredInput = removeNullAndUndefined(input);
-		let data: DatetimeItem;
-		try {
-			data = client.readQuery<DatetimeItem>({
-				query: GET_DATETIME,
-				variables: {
-					id: input.id,
+	return useCallback<OptimisticResCb>(
+		(mutationType, input) => {
+			let espressoDatetime: Partial<Datetime> = {
+				__typename: 'EspressoDatetime',
+			};
+			// Get rid of null or undefined values
+			const filteredInput = removeNullAndUndefined(input);
+			let data: DatetimeItem;
+			try {
+				data = client.readQuery<DatetimeItem>({
+					query: GET_DATETIME,
+					variables: {
+						id: input.id,
+					},
+				});
+			} catch (error) {
+				// do nothing
+			}
+			const datetime = data?.datetime;
+
+			switch (mutationType) {
+				case MutationType.Create:
+					espressoDatetime = {
+						...espressoDatetime,
+						...DATETIME_DEFAULTS,
+						...filteredInput,
+					};
+					break;
+				case MutationType.Delete:
+					espressoDatetime = {
+						...espressoDatetime,
+						...datetime,
+						...filteredInput,
+						isTrashed: true,
+						cacheId: uuidv4(),
+					};
+					break;
+				case MutationType.Update:
+					espressoDatetime = {
+						...espressoDatetime,
+						...datetime,
+						...filteredInput,
+						cacheId: uuidv4(),
+					};
+					break;
+			}
+
+			const lcMutationtype = mutationType.toLowerCase();
+			const ucFirstMutationtype = ucFirst(lcMutationtype);
+
+			// e.g. "deleteEspressoDatetime", "createEspressoDatetime"
+			const mutation = `${lcMutationtype}EspressoDatetime`;
+
+			return {
+				__typename: 'RootMutation',
+				[mutation]: {
+					__typename: `${ucFirstMutationtype}EspressoDatetimePayload`,
+					espressoDatetime,
 				},
-			});
-		} catch (error) {
-			// do nothing
-		}
-		const datetime = data?.datetime;
-
-		switch (mutationType) {
-			case MutationType.Create:
-				espressoDatetime = {
-					...espressoDatetime,
-					...DATETIME_DEFAULTS,
-					...filteredInput,
-				};
-				break;
-			case MutationType.Delete:
-				espressoDatetime = {
-					...espressoDatetime,
-					...datetime,
-					...filteredInput,
-					isTrashed: true,
-					cacheId: uuidv4(),
-				};
-				break;
-			case MutationType.Update:
-				espressoDatetime = {
-					...espressoDatetime,
-					...datetime,
-					...filteredInput,
-					cacheId: uuidv4(),
-				};
-				break;
-		}
-
-		const lcMutationtype = mutationType.toLowerCase();
-		const ucFirstMutationtype = ucFirst(lcMutationtype);
-
-		// e.g. "deleteEspressoDatetime", "createEspressoDatetime"
-		const mutation = `${lcMutationtype}EspressoDatetime`;
-
-		return {
-			__typename: 'RootMutation',
-			[mutation]: {
-				__typename: `${ucFirstMutationtype}EspressoDatetimePayload`,
-				espressoDatetime,
-			},
-		};
-	}, []);
+			};
+		},
+		[client]
+	);
 };
 
 export default useOptimisticResponse;

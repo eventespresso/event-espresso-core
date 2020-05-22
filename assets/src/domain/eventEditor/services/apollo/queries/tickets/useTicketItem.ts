@@ -13,8 +13,9 @@ const useTicketItem = ({ id }: EntityItemProps): Ticket => {
 		},
 	};
 	const { data } = useCacheQuery<TicketItem>(options);
+	const ticket = data?.ticket;
 
-	return useMemo(() => data?.ticket, [data?.ticket?.cacheId]);
+	return useMemo(() => ticket, [ticket]);
 };
 
 export default useTicketItem;

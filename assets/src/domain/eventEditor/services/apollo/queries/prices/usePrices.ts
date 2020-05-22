@@ -1,9 +1,9 @@
-import { useMemo } from 'react';
-
-import usePriceQueryOptions from './usePriceQueryOptions';
 import { Price, PricesList } from '../../types';
 import { useCacheQuery } from '@dataServices/apollo/queries';
 import { getCacheIds } from '@appServices/predicates';
+import { useMemoStringify } from '@appServices/hooks';
+import usePriceQueryOptions from './usePriceQueryOptions';
+
 /**
  * A custom react hook for retrieving all the prices from cache
  * limited to the ids passed in `include`
@@ -14,9 +14,9 @@ const usePrices = (): Price[] => {
 
 	const nodes = data?.espressoPrices?.nodes || [];
 
-	const cacheIds = getCacheIds(nodes).join(':');
+	const cacheIds = getCacheIds(nodes);
 
-	return useMemo(() => nodes, [cacheIds]);
+	return useMemoStringify(nodes, cacheIds);
 };
 
 export default usePrices;
