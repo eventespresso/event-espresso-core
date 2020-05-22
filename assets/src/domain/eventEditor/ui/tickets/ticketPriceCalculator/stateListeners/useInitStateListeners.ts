@@ -17,8 +17,9 @@ const useStateListeners = (): void => {
 	}, [getData, setPrices]);
 
 	const updateTicketTotal = useCallback(() => {
-		const ticketTotal = calculateTicketTotal(getData());
-		updateTicketPrice(parsedAmount(formatAmount(ticketTotal)));
+		let ticketTotal = calculateTicketTotal(getData());
+		ticketTotal = parsedAmount(formatAmount(ticketTotal));
+		updateTicketPrice(isNaN(ticketTotal) ? 0 : ticketTotal);
 	}, [getData, updateTicketPrice]);
 
 	const calculatePrice = useCallback(() => {
