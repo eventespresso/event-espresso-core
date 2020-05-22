@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Alert } from '@infraUI/display';
+import { Banner } from '@infraUI/display';
 
 interface ErrorIndicatorProps {
 	description?: string;
@@ -15,7 +15,7 @@ const ErrorIndicator: React.FC<ErrorIndicatorProps> = ({ description, title }) =
 	};
 
 	return (
-		<Alert
+		<Banner
 			description={description}
 			flexDirection='column'
 			justifyContent='center'

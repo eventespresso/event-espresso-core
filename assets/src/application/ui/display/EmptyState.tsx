@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import { Alert } from '@infraUI/display';
+import { Banner } from '@infraUI/display';
 
 interface EmptyStateProps {
 	children?: React.ReactNode;
@@ -19,7 +19,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({ children, description, title, .
 	};
 
 	return (
-		<Alert
+		<Banner
 			backgroundColor='var(--ee-color-grey-15)'
 			className={className}
 			description={description}
@@ -32,7 +32,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({ children, description, title, .
 			variant='subtle'
 		>
 			{children && children}
-		</Alert>
+		</Banner>
 	);
 };
 

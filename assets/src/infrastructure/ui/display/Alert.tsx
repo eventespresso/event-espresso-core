@@ -6,11 +6,11 @@ interface Props extends AlertProps {
 	iconProps?: IconProps;
 }
 
-const Banner: React.FC<Props> = ({ description, iconProps, ...props }) => (
+const Alert: React.FC<Props> = ({ description, iconProps, ...props }) => (
 	<ChakraAlert {...props}>
 		<AlertIcon />
 		{description}
 	</ChakraAlert>
 );
 
-export default Banner;
+export default Alert;
