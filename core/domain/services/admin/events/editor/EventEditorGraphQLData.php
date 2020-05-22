@@ -3,6 +3,7 @@
 namespace EventEspresso\core\domain\services\admin\events\editor;
 
 use EE_Error;
+use EEM_Price;
 use EventEspresso\core\domain\entities\admin\GraphQLData\Datetimes;
 use EventEspresso\core\domain\entities\admin\GraphQLData\Prices;
 use EventEspresso\core\domain\entities\admin\GraphQLData\PriceTypes;
@@ -107,11 +108,37 @@ class EventEditorGraphQLData
         }
 
         if (! empty($tickets['nodes'])) {
-            $ticketIn = wp_list_pluck($tickets['nodes'], 'id');
+            $ticketIds = wp_list_pluck($tickets['nodes'], 'dbId');
+        }
 
-            if (! empty($ticketIn)) {
-                $prices = $this->prices->getData(['ticketIn' => $ticketIn]);
-            }
+        /**
+         * We need to get the prices that are related to the given tickets
+         * Or are defalut prices.
+         * We will first query for such prices and then limit our GQL query
+         * to those price IDs.
+         */
+        $where_params = [
+            'AND' => [
+                'PRC_deleted'    => 0,
+                'PRC_is_default' => 1,
+            ],
+        ];
+        if (! empty($ticketIds)) {
+            $where_params['Ticket.TKT_ID'] = ['IN', $ticketIds];
+        }
+        $priceIds = EEM_Price::instance()->get_col([
+            [
+            // If the price is related to any of these tickets
+            // OR
+            // it's a default price and not trashed
+                'OR' => $where_params,
+            ],
+            'group_by'                 => 'PRC_ID',
+            'default_where_conditions' => 'minimum',
+        ]);
+
+        if (! empty($priceIds)) {
+            $prices = $this->prices->getData(['idIn' => $priceIds]);
         }
 
         $priceTypes = $this->price_types->getData();
