@@ -84,7 +84,8 @@ class TicketMutation
             $args['TKT_parent'] = (! empty($parts['id']) && is_int($parts['id'])) ? $parts['id'] : null;
         }
 
-        if (! empty($input['price'])) {
+        // price can be 0
+        if (array_key_exists('price', $input)) {
             $args['TKT_price'] = (float) $input['price'];
         }
 
