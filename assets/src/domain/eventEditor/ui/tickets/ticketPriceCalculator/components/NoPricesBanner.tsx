@@ -1,16 +1,16 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
 
-import { Alert } from '@infraUI/display';
+import { Banner } from '@infraUI/display';
 import AddDefaultPricesButton from '../buttons/AddDefaultPricesButton';
 
 const NoPricesBanner = () => {
-	const description = __('This ticket has no prices');
-	const title = __('Free ticket');
+	const description = __('Click the button below to load your default prices into the calculator. Additional ticket price modifiers can be added or removed. Click the save button below to assign which dates this ticket will be available for purchase on.');
+	const title = __('This Ticket is Currently Free');
 	return (
-		<Alert description={description} status='info' title={title}>
+		<Banner description={description} status='info' title={title}>
 			<AddDefaultPricesButton />
-		</Alert>
+		</Banner>
 	);
 };
 
