@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import { StepProps } from './types';
 
 const Step: React.FC<StepProps> = ({
+	active,
 	description = '',
 	icon: Icon,
 	orientation = 'inline',
@@ -18,7 +19,8 @@ const Step: React.FC<StepProps> = ({
 		'ee-form-step',
 		`ee-form-step--${orientation}`,
 		stepState && `ee-form-step--${stepState}`,
-		!Icon && 'ee-form-step--no-icon'
+		!Icon && 'ee-form-step--no-icon',
+		active && 'ee-form-step--active'
 	);
 
 	return (

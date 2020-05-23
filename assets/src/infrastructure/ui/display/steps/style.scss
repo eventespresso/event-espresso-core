@@ -61,10 +61,6 @@
 			border-top-right-radius: var(--ee-border-radius-small);
 		}
 
-		&:hover {
-			background-color: var(--ee-color-grey-13);
-		}
-
 		&--inline {
 			flex-flow: row nowrap;
 			align-items: center;
