@@ -1,5 +1,4 @@
 import React from 'react';
-import classNames from 'classnames';
 import { __ } from '@wordpress/i18n';
 
 import { Button } from '@application/ui/input';
@@ -14,14 +13,14 @@ const ToggleSortingButton: React.FC<ToggleSortingButtonProps> = ({
 	toggleSorting,
 	...rest
 }) => {
-	const className = classNames('ee-filter-bar__btn', { 'ee-filter-bar__btn--active': sortingEnabled });
 	const id = `ee-toggle-sorting-btn-${listId}`;
 	const tooltip = sortingEnabled ? __('disable sorting') : __('enable sorting');
 	const tooltipProps = { placement: 'top' as 'top' };
 
 	return (
 		<Button
-			className={className}
+			active={sortingEnabled}
+			className='ee-filter-bar__btn'
 			icon={Sort}
 			id={id}
 			onClick={toggleSorting}

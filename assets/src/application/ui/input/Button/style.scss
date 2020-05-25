@@ -54,8 +54,13 @@
 		transition: border-color 0.1s ease 0.1s, color 0.1s ease 0.1s !important;
 		vertical-align: middle;
 
+		svg {
+			transition: color 200ms linear, fill 200ms linear;
+		}
+
 		span {
 			margin: 0 var(--ee-margin-micro) 0 var(--ee-margin-smaller);
+			transition: color 200ms linear;
 		}
 
 		&:active {
@@ -151,14 +156,24 @@
 
 	&.ee-btn--accent {
 		&:not([disabled]) {
-			background: var(--ee-color-accent);
-			border-color: var(--ee-color-accent-low-contrast) var(--ee-color-accent)
-				var(--ee-color-accent-high-contrast);
-			color: var(--ee-text-on-accent);
+			background: #40a9ff;
+			border-color: #1890ff;
+			color: white;
+			text-shadow: none;
+		}
+
+		svg {
+			fill: white;
 		}
 
 		&:hover:not([disabled]) {
-			background: var(--ee-color-accent-low-contrast);
+			background: #1890ff;
+			color: white;
+			box-shadow: 0 0 0 1px #1890ff;
+		}
+
+		&:focus:not([disabled]) {
+			border-color: #0050b3;
 		}
 	}
 
@@ -168,6 +183,15 @@
 		background: var(--ee-color-blue);
 		border-color: var(--ee-color-blue);
 		color: white;
+
+		svg {
+			fill: white;
+			font-size: unset;
+		}
+
+		&:active {
+			color: white;
+		}
 
 		&:hover {
 			background: var(--ee-color-blue);
@@ -201,10 +225,13 @@
 		&:active,
 		&:focus,
 		&:visited {
-			font-size: var(--ee-font-size-tiny);
 			min-height: var(--ee-font-size-smaller);
 			line-height: var(--ee-font-size-tiny);
 			padding: var(--ee-padding-nano) var(--ee-padding-tiny) var(--ee-padding-micro);
+
+			span {
+				font-size: var(--ee-font-size-tiny);
+			}
 		}
 
 		.img-wrap span {
@@ -213,19 +240,23 @@
 	}
 
 	&.ee-btn--small {
-		font-size: var(--ee-font-size-small);
 		min-height: var(--ee-font-size-small);
 		line-height: var(--ee-font-size-tiny);
-		padding: var(--ee-padding-nano) var(--ee-padding-smaller);
 		letter-spacing: 1px;
+
+		span {
+			font-size: var(--ee-font-size-small);
+		}
 
 		&:active,
 		&:focus,
 		&:visited {
-			font-size: var(--ee-font-size-smaller);
 			min-height: var(--ee-font-size-small);
 			line-height: var(--ee-font-size-smaller);
-			padding: var(--ee-padding-micro) var(--ee-padding-smaller) var(--ee-padding-tiny);
+
+			span {
+				font-size: var(--ee-font-size-small);
+			}
 		}
 
 		&:not(.ee-noIcon) .text-wrap {
@@ -242,18 +273,25 @@
 	}
 
 	&.ee-btn--big {
-		font-size: var(--ee-font-size-big);
 		min-height: var(--ee-font-size-bigger);
+		height: auto;
 		line-height: var(--ee-font-size-big);
-		padding: var(--ee-padding-smaller) var(--ee-padding-default) var(--ee-padding-small);
+		padding: var(--ee-padding-smaller) var(--ee-padding-default);
+
+		span {
+			font-size: var(--ee-font-size-big);
+		}
 
 		&:active,
 		&:focus,
 		&:visited {
-			font-size: var(--ee-font-size-big);
 			min-height: var(--ee-font-size-bigger);
 			line-height: var(--ee-font-size-big);
 			padding: var(--ee-padding-smaller) var(--ee-padding-default) var(--ee-padding-small);
+
+			span {
+				font-size: var(--ee-font-size-big);
+			}
 		}
 
 		.img-wrap span {

@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { useDisclosure } from '@chakra-ui/core';
 
 import { Calendar, Ticket } from '@appDisplay/icons';
-import { Button } from '@application/ui/input';
+import { Button, ButtonSize, ButtonType } from '@application/ui/input';
 import { ButtonGroup } from '@infraUI/inputs';
 import useTicketAssignmentsManager from '../../ticketAssignmentsManager/useTicketAssignmentsManager';
 import { Container as FormContainer } from '@edtrUI/datetimes/dateForm/multiStep';
@@ -15,8 +15,21 @@ const AddNewDateButton: React.FC = () => {
 	return (
 		<>
 			<ButtonGroup marginBottom='2rem'>
-				<Button buttonText={__('Add New Date')} icon={Calendar} mr={2} onClick={onAddNew} />
-				<Button buttonText={__('Ticket Assignments')} icon={Ticket} onClick={onOpen} />
+				<Button
+					buttonSize={ButtonSize.BIG}
+					buttonText={__('Add New Date')}
+					buttonType={ButtonType.ACCENT}
+					icon={Calendar}
+					mr={2}
+					onClick={onAddNew}
+				/>
+				<Button
+					buttonSize={ButtonSize.BIG}
+					buttonText={__('Ticket Assignments')}
+					buttonType={ButtonType.ACCENT}
+					icon={Ticket}
+					onClick={onOpen}
+				/>
 			</ButtonGroup>
 			<ModalContainer assignmentType='forAll' {...disclosure} />
 			<FormContainer isOpen={isOpen} onClose={onClose} />

@@ -62,6 +62,7 @@ $filter-btn: '.ee-filter-bar__btn';
 		&--auto {
 			width: auto;
 		}
+
 		&--nano {
 			min-width: calc(var(--ee-font-size-default) * 2);
 		}
@@ -96,6 +97,14 @@ $filter-btn: '.ee-filter-bar__btn';
 
 		&--extreme {
 			min-width: calc(var(--ee-font-size-default) * 48);
+		}
+	}
+
+	&__btn {
+		&.ee-btn {
+			svg {
+				margin: 0;
+			}
 		}
 	}
 
