@@ -2,10 +2,10 @@ import React from 'react';
 import classNames from 'classnames';
 import { __ } from '@wordpress/i18n';
 
+import { Button } from '@application/ui/input';
 import { Sort } from '@appDisplay/icons/svgs';
-import { IconButton } from '@appInputs/Button';
-import { LabelPosition } from '@application/ui/display';
 import { ToggleSortingButtonProps } from '../types';
+
 import { getPropsAreEqual } from '@appServices/utilities';
 
 const ToggleSortingButton: React.FC<ToggleSortingButtonProps> = ({
@@ -20,18 +20,18 @@ const ToggleSortingButton: React.FC<ToggleSortingButtonProps> = ({
 	const tooltipProps = { placement: 'top' as 'top' };
 
 	return (
-		<IconButton
+		<Button
 			className={className}
 			icon={Sort}
 			id={id}
-			label={__('sorting')}
 			onClick={toggleSorting}
 			tooltip={tooltip}
 			tooltipProps={tooltipProps}
 			labelClassName='ee-filter-bar__btn-wrap'
-			labelPosition={LabelPosition.BOTTOM_CENTER}
 			{...rest}
-		/>
+		>
+			{__('sorting')}
+		</Button>
 	);
 };
 

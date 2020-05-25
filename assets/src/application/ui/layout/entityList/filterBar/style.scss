@@ -3,27 +3,20 @@
  * © 2018 Event Espresso
  * ------------------------------------------------------------------------- */
 
-@import '../../../styles/mixins/breakpoints.scss';
+@import 'application/ui/styles/mixins/breakpoints.scss';
 
 $filter-btn: '.ee-filter-bar__btn';
 
 .ee-filter-bar {
-	background: var(--ee-background-color);
-	border-bottom-color: var(--ee-color-grey-12);
-	border-bottom-style: solid;
-	border-bottom-width: 1px;
-	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 	color: var(--ee-default-text-color);
 	margin: 0 0 var(--ee-margin-small);
-	padding: 0 0 var(--ee-padding-tiny);
+	padding: var(--ee-padding-tiny) 0;
 
 	&__main {
 		display: flex;
 		flex-flow: row wrap;
 		align-items: flex-start;
-		margin-left: calc(var(--ee-padding-tiny) * -1);
 	}
 
 	&__collapsible {
@@ -106,17 +99,11 @@ $filter-btn: '.ee-filter-bar__btn';
 		}
 	}
 
-	&__btn {
-		&--active {
-			border-color: var(--ee-color-primary-low-contrast) !important;
-			path {
-				fill: var(--ee-color-primary);
-			}
-		}
-	}
-
 	&__btn-wrap {
-		width: 100px;
+		& + .ee-filter-bar__btn-wrap {
+			margin-left: var(--ee-margin-default);
+		}
+
 		&--active {
 			&#{$filter-btn} {
 				border-color: var(--ee-color-primary-low-contrast) !important;

@@ -17,10 +17,18 @@ type BtnType = React.ComponentType<ButtonProps>;
  */
 const Button = forwardRef<typeof ButtonAdapter, ButtonProps>(
 	(
-		{ buttonSize = ButtonSize.DEFAULT, buttonText, buttonType = ButtonType.DEFAULT, icon, onClick, ...props },
+		{
+			active,
+			buttonSize = ButtonSize.DEFAULT,
+			buttonText,
+			buttonType = ButtonType.DEFAULT,
+			icon,
+			onClick,
+			...props
+		},
 		ref
 	) => {
-		const className = classNames(props.className, {
+		const className = classNames(props.className, active && 'ee-btn--is-active', {
 			[`ee-btn--${buttonType}`]: buttonType !== ButtonType.DEFAULT,
 			[`ee-btn--${buttonSize}`]: buttonSize !== ButtonSize.DEFAULT,
 			'ee-noIcon': !icon,
@@ -28,13 +36,13 @@ const Button = forwardRef<typeof ButtonAdapter, ButtonProps>(
 
 		return (
 			<ButtonAdapter
-				{ ...props }
-				buttonText={ buttonText }
-				className={ className }
-				icon={ icon }
-				onClick={ onClick }
-				ref={ ref }
-				tabIndex={ 0 }
+				{...props}
+				buttonText={buttonText}
+				className={className}
+				icon={icon}
+				onClick={onClick}
+				ref={ref}
+				tabIndex={0}
 			/>
 		);
 	}
