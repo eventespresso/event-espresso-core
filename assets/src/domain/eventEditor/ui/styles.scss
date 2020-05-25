@@ -4,6 +4,8 @@
 }
 
 .post-type-espresso_events {
+	overflow-y: overlay;
+
 	#adminmenuwrap {
 		z-index: 2;
 	}

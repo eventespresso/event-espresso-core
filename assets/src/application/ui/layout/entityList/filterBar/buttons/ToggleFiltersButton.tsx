@@ -2,10 +2,10 @@ import React from 'react';
 import classNames from 'classnames';
 import { __ } from '@wordpress/i18n';
 
+import { Button } from '@application/ui/input';
 import { Filter } from '@appDisplay/icons';
-import { IconButton } from '@appInputs/Button';
-import { LabelPosition } from '@application/ui/display';
 import { ToggleFiltersButtonProps } from '../types';
+
 import { getPropsAreEqual } from '@appServices/utilities';
 
 const ToggleFiltersButton: React.FC<ToggleFiltersButtonProps> = ({ listId, showFilters, toggleFilters, ...rest }) => {
@@ -14,18 +14,18 @@ const ToggleFiltersButton: React.FC<ToggleFiltersButtonProps> = ({ listId, showF
 	const tooltip = showFilters ? __('hide filters') : __('show filters');
 
 	return (
-		<IconButton
-			className={ className }
-			icon={ Filter }
-			id={ filterId }
-			label={ __('filters') }
-			onClick={ toggleFilters }
-			tooltip={ tooltip }
-			tooltipProps={ { placement: 'top' } }
-			labelClassName={ 'ee-filter-bar__btn-wrap' }
-			labelPosition={ LabelPosition.BOTTOM_CENTER }
-			{ ...rest }
-		/>
+		<Button
+			className={className}
+			icon={Filter}
+			id={filterId}
+			onClick={toggleFilters}
+			tooltip={tooltip}
+			tooltipProps={{ placement: 'top' }}
+			labelClassName={'ee-filter-bar__btn-wrap'}
+			{...rest}
+		>
+			{__('filters')}
+		</Button>
 	);
 };
 
