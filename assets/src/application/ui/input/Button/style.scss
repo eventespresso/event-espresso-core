@@ -159,7 +159,7 @@
 	&.ee-btn--accent {
 		&:not([disabled]) {
 			background: $blue-5;
-			border-color: $blue-6;
+			border-color: $blue-4;
 			color: white;
 			text-shadow: none;
 		}
@@ -171,11 +171,11 @@
 		&:hover:not([disabled]) {
 			background: $blue-5;
 			color: white;
-			box-shadow: 0 0 0 1px $blue-5;
+			box-shadow: 0 0 0 1px $blue-4;
 		}
 
 		&:focus:not([disabled]) {
-			border-color: #0050b3;
+			border-color: $blue-6;
 		}
 	}
 
@@ -289,7 +289,7 @@
 		&:visited {
 			min-height: var(--ee-font-size-bigger);
 			line-height: var(--ee-font-size-big);
-			padding: var(--ee-padding-smaller) var(--ee-padding-default) var(--ee-padding-small);
+			padding: var(--ee-padding-smaller) var(--ee-padding-default);
 
 			span {
 				font-size: var(--ee-font-size-big);
