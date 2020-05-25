@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { Ticket, TicketEdge } from '../../types';
 import useReorderEntities from '../useReorderEntities';
@@ -55,7 +55,7 @@ const useReorderTickets = (filteredEntities: Array<Ticket>): ReorderTickets => {
 		[filteredEntities, allEntities, sortEntities, updateEntityList]
 	);
 
-	return { sortResponder };
+	return useMemo(() => ({ sortResponder }), [sortResponder]);
 };
 
 export default useReorderTickets;

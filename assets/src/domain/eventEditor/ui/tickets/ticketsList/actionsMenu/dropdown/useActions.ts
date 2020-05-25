@@ -18,8 +18,7 @@ const useActions = ({ ticketId }) => {
 
 	const { id, cacheId } = ticket;
 
-	const { createEntity } = useTicketMutator();
-	const { deleteEntity } = useTicketMutator(id);
+	const { createEntity, deleteEntity } = useTicketMutator(id);
 	const { getRelations } = useRelations();
 
 	const datetimes = getRelations({

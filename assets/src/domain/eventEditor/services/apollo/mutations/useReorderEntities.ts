@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useMemo } from 'react';
 import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 import { clone } from 'ramda';
@@ -113,11 +113,10 @@ const useReorderEntities = <E extends Entity>({ entityType }: ReorderEntitiesPro
 
 			setAllEntityGuids(getGuids(allEntities));
 		},
-
 		[cancel]
 	);
 
-	return { cancel, done, result, sortEntities };
+	return useMemo(() => ({ cancel, done, result, sortEntities }), [cancel, done, result, sortEntities]);
 };
 
 export default useReorderEntities;

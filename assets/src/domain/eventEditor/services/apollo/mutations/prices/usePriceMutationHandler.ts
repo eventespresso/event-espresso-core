@@ -20,7 +20,7 @@ const usePriceMutationHandler = (): MutationHandler => {
 	const onUpdatePrice = useOnUpdatePrice();
 	const onDeletePrice = useOnDeletePrice();
 
-	const createVariables = (mutationType: MutationType, input: MutationInput): OperationVariables => {
+	const createVariables = useCallback((mutationType: MutationType, input: MutationInput): OperationVariables => {
 		const mutationInput: MutationInput = {
 			clientMutationId: `${mutationType}_PRICE`,
 			...input,
@@ -29,7 +29,7 @@ const usePriceMutationHandler = (): MutationHandler => {
 		return {
 			input: mutationInput,
 		};
-	};
+	}, []);
 
 	const mutator = useCallback<MutationHandler>(
 		(mutationType, input) => {
@@ -64,7 +64,7 @@ const usePriceMutationHandler = (): MutationHandler => {
 
 			return { variables, onUpdate };
 		},
-		[onCreatePrice, onDeletePrice, onUpdatePrice, options]
+		[createVariables, onCreatePrice, onDeletePrice, onUpdatePrice, options]
 	);
 
 	return mutator;

@@ -1,11 +1,10 @@
 import { useCallback } from 'react';
-import { MutationUpdaterFn, MutationOptions, OperationVariables } from 'apollo-client';
+import { MutationUpdaterFn, OperationVariables } from 'apollo-client';
 import { DataProxy } from 'apollo-cache';
 import { FetchResult } from 'apollo-link';
 import { pathOr } from 'ramda';
 
-import { Entity as BaseType } from '@dataServices/types';
-import { MutationType, MutationOptionsCb } from '@appServices/apollo/mutations';
+import { MutationType, MutationOptionsCb, MutationInput } from '@appServices/apollo/mutations';
 import { OnUpdateFn, TypeName } from './types';
 import { useMutationHandler, mutations } from './';
 
@@ -13,67 +12,76 @@ import { useMutationHandler, mutations } from './';
  * @param {string} typeName Entity type name
  * @param {string} id       Entity id
  */
-const useMutationOptions = <Name extends TypeName>(typeName: Name): MutationOptionsCb => {
+const useMutationOptions = (typeName: TypeName): MutationOptionsCb => {
 	const getMutationHandler = useMutationHandler();
 
-	return useCallback(
-		<Type extends BaseType, MI>(mutationType: MutationType, input: MI): MutationOptions<Type> => {
-			const getMutation = (): any => {
-				// For example "CREATE_DATETIME"
-				const mutation = `${mutationType}_${typeName.toUpperCase()}`;
-				return mutations[mutation];
-			};
+	const getMutation = useCallback(
+		(mutationType: MutationType): any => {
+			// For example "CREATE_DATETIME"
+			const mutation = `${mutationType}_${typeName.toUpperCase()}`;
+			return mutations[mutation];
+		},
+		[typeName]
+	);
 
+	const getUpdateCallback = useCallback(
+		(onUpdate: OnUpdateFn, mutationType: MutationType): MutationUpdaterFn => {
 			/**
-			 * @param {string} mutationType Type of mutation
-			 * @param {object} input     Mutation input
+			 * Since every mutation update callback is interested
+			 * in the updated entity data in response, we will
+			 * pass just that entity to onUpdate.
 			 */
-			const getMutationOptions = (): OperationVariables => {
-				const mutationHandler = getMutationHandler(typeName);
-				/**
-				 * options = {
-				 *     variables,
-				 *     optimisticResponse,
-				 * 	   onUpdate,
-				 *     onCompleted,
-				 * 	   onError,
-				 * }
-				 */
-				const { onUpdate, ...mutationOptions } = mutationHandler(mutationType, input);
+			return (proxy: DataProxy, result: FetchResult): void => {
+				// e.g. "createDatetime", "updateTicket"
+				const mutationName = `${mutationType.toLowerCase()}Espresso${typeName}`;
+				// Example result: { data: { deletePrice: { price : {...} } } }
+				const path = ['data', mutationName, `espresso${typeName}`];
+				const entity = pathOr<any>({}, path, result);
 
-				let update: MutationUpdaterFn;
-
-				if (typeof onUpdate === 'function') {
-					update = getUpdateCallback(onUpdate);
-				}
-
-				return { ...mutationOptions, update };
+				onUpdate({ proxy, entity });
 			};
+		},
+		[typeName]
+	);
 
-			const getUpdateCallback = (onUpdate: OnUpdateFn): MutationUpdaterFn => {
-				/**
-				 * Since every mutation update callback is interested
-				 * in the updated entity data in response, we will
-				 * pass just that entity to onUpdate.
-				 */
-				return (proxy: DataProxy, result: FetchResult): void => {
-					// e.g. "createDatetime", "updateTicket"
-					const mutationName = `${mutationType.toLowerCase()}Espresso${typeName}`;
-					// Example result: { data: { deletePrice: { price : {...} } } }
-					const path = ['data', mutationName, `espresso${typeName}`];
-					const entity = pathOr<any>({}, path, result);
+	/**
+	 * @param {string} mutationType Type of mutation
+	 * @param {object} input     Mutation input
+	 */
+	const getMutationOptions = useCallback(
+		(mutationType: MutationType, input: MutationInput): OperationVariables => {
+			const mutationHandler = getMutationHandler(typeName);
+			/**
+			 * options = {
+			 *     variables,
+			 *     optimisticResponse,
+			 * 	   onUpdate,
+			 *     onCompleted,
+			 * 	   onError,
+			 * }
+			 */
+			const { onUpdate, ...mutationOptions } = mutationHandler(mutationType, input);
 
-					onUpdate({ proxy, entity });
-				};
-			};
+			let update: MutationUpdaterFn;
 
-			const options = getMutationOptions();
+			if (typeof onUpdate === 'function') {
+				update = getUpdateCallback(onUpdate, mutationType);
+			}
+
+			return { ...mutationOptions, update };
+		},
+		[getMutationHandler, getUpdateCallback, typeName]
+	);
+
+	return useCallback(
+		(mutationType, input) => {
+			const options = getMutationOptions(mutationType, input);
 			return {
-				mutation: getMutation(),
+				mutation: getMutation(mutationType),
 				...options,
 			};
 		},
-		[getMutationHandler, typeName]
+		[getMutationOptions, getMutation]
 	);
 };
 

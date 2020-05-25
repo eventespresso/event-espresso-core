@@ -19,8 +19,8 @@ const useActions = ({ datetimeId }) => {
 
 	const { id, cacheId } = datetime;
 
-	const { createEntity } = useDatetimeMutator();
-	const { deleteEntity } = useDatetimeMutator(id);
+	const { createEntity, deleteEntity } = useDatetimeMutator(id);
+
 	const { getRelations } = useRelations();
 
 	const tickets = getRelations({
