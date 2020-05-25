@@ -1,5 +1,4 @@
 import React from 'react';
-import classNames from 'classnames';
 import { useSpring, animated } from 'react-spring';
 import { __ } from '@wordpress/i18n';
 
@@ -10,7 +9,6 @@ import { ToggleLegendButtonProps } from '../types';
 import { getPropsAreEqual } from '@appServices/utilities';
 
 const ToggleLegendButton: React.FC<ToggleLegendButtonProps> = ({ listId, showLegend, toggleLegend, ...rest }) => {
-	const className = classNames('ee-filter-bar__btn', { 'ee-filter-bar__btn--active': showLegend });
 	const iconProps = useSpring({
 		display: 'inline-flex',
 		transform: `rotate(${showLegend ? 0 : 180}deg)`,
@@ -27,7 +25,8 @@ const ToggleLegendButton: React.FC<ToggleLegendButtonProps> = ({ listId, showLeg
 
 	return (
 		<Button
-			className={className}
+			active={showLegend}
+			className='ee-filter-bar__btn'
 			icon={icon}
 			id={filterId}
 			onClick={toggleLegend}

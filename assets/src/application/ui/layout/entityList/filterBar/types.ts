@@ -24,6 +24,8 @@ export interface TableViewFilterButtonProps extends View, CommonProps, IconButto
 	setTableView: () => void;
 }
 
+export interface ViewSwitchBtnGroupProps extends CardViewFilterButtonProps, TableViewFilterButtonProps {}
+
 export interface ToggleFiltersButtonProps extends CommonProps, IconButtonProps {
 	showFilters?: boolean;
 	toggleFilters: VoidFunction;

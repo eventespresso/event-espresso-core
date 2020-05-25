@@ -1,5 +1,4 @@
 import React from 'react';
-import classNames from 'classnames';
 import { __ } from '@wordpress/i18n';
 
 import { Button } from '@application/ui/input';
@@ -9,13 +8,12 @@ import { TableViewFilterButtonProps } from '../types';
 import { getPropsAreEqual } from '@appServices/utilities';
 
 const TableViewFilterButton: React.FC<TableViewFilterButtonProps> = ({ listId, setTableView, view, ...rest }) => {
-	const className = classNames('ee-filter-bar__btn');
 	const filterId = `ee-table-view-btn-${listId}`;
 
 	return (
 		<Button
 			active={view === 'table'}
-			className={className}
+			className='ee-filter-bar__btn'
 			icon={TableView}
 			id={filterId}
 			onClick={view !== 'table' ? setTableView : null}
