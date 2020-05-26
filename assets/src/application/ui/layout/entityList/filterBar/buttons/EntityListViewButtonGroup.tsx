@@ -4,11 +4,16 @@ import { __ } from '@wordpress/i18n';
 import { ButtonGroup } from '@application/ui/input';
 import CardViewFilterButton from './CardViewFilterButton';
 import TableViewFilterButton from './TableViewFilterButton';
-import { ViewSwitchBtnGroupProps } from '../types';
+import { EntityListViewButtonGroupProps } from '../types';
 
 import { getPropsAreEqual } from '@appServices/utilities';
 
-const ViewSwitchBtnGroup: React.FC<ViewSwitchBtnGroupProps> = ({ listId, setCardView, setTableView, view }) => {
+const EntityListViewButtonGroup: React.FC<EntityListViewButtonGroupProps> = ({
+	listId,
+	setCardView,
+	setTableView,
+	view,
+}) => {
 	return (
 		<ButtonGroup>
 			<TableViewFilterButton listId={listId} setTableView={setTableView} view={view} />
@@ -17,4 +22,4 @@ const ViewSwitchBtnGroup: React.FC<ViewSwitchBtnGroupProps> = ({ listId, setCard
 	);
 };
 
-export default React.memo(ViewSwitchBtnGroup, getPropsAreEqual(['listId'], ['view']));
+export default React.memo(EntityListViewButtonGroup, getPropsAreEqual(['listId'], ['view']));
