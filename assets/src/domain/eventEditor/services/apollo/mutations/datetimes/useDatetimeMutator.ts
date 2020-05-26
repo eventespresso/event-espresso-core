@@ -38,7 +38,7 @@ const useDatetimeMutator = (id = ''): DatetimeMutator => {
 		(input) => {
 			const { onUpdate, ...options } = mutationHandler(MutationType.Update, { id, ...input });
 
-			const update = getUpdateCallback({ onUpdate, mutationType: MutationType.Create, input });
+			const update = getUpdateCallback({ onUpdate, mutationType: MutationType.Update, input });
 
 			return updateDatetime({ ...options, update });
 		},
@@ -49,7 +49,7 @@ const useDatetimeMutator = (id = ''): DatetimeMutator => {
 		(input) => {
 			const { onUpdate, ...options } = mutationHandler(MutationType.Delete, { id, ...input });
 
-			const update = getUpdateCallback({ onUpdate, mutationType: MutationType.Create, input });
+			const update = getUpdateCallback({ onUpdate, mutationType: MutationType.Delete, input });
 
 			return deleteDatetime({ ...options, update });
 		},

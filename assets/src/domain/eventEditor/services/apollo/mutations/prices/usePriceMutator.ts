@@ -38,7 +38,7 @@ const usePriceMutator = (id = ''): PriceMutator => {
 		(input) => {
 			const { onUpdate, ...options } = mutationHandler(MutationType.Update, { id, ...input });
 
-			const update = getUpdateCallback({ onUpdate, mutationType: MutationType.Create, input });
+			const update = getUpdateCallback({ onUpdate, mutationType: MutationType.Update, input });
 
 			return updatePrice({ ...options, update });
 		},
@@ -49,7 +49,7 @@ const usePriceMutator = (id = ''): PriceMutator => {
 		(input) => {
 			const { onUpdate, ...options } = mutationHandler(MutationType.Delete, { id, ...input });
 
-			const update = getUpdateCallback({ onUpdate, mutationType: MutationType.Create, input });
+			const update = getUpdateCallback({ onUpdate, mutationType: MutationType.Delete, input });
 
 			return deletePrice({ ...options, update });
 		},
