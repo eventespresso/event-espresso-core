@@ -43,6 +43,8 @@ const useFetchPrices = (skipFetch: boolean = null): FetchQueryResult<PricesList>
 		}
 
 		setIsLoading(TypeName.prices, loading);
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [loading]);
 
 	return {

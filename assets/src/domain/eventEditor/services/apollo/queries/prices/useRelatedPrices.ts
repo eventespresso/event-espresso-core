@@ -18,6 +18,7 @@ const useRelatedPrices: RelatedEntitiesHook<Price, 'prices'> = ({ entity, entity
 	const cacheIds = entityListCacheIdString(prices);
 	const relatedPriceIdsStr = JSON.stringify(relatedPriceIds);
 
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	return useMemo(() => entitiesWithGuIdInArray(prices, relatedPriceIds), [relatedPriceIdsStr, cacheIds]);
 };
 

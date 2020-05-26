@@ -39,6 +39,8 @@ const useFetchDatetimes = (): FetchQueryResult<DatetimesList> => {
 		}
 
 		setIsLoading(TypeName.datetimes, loading);
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [loading]);
 
 	return {

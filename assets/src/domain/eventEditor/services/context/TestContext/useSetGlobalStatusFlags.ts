@@ -11,6 +11,7 @@ const useSetGlobalStatusFlags = (): void => {
 				setIsLoaded(TypeName[entity], true);
 			}
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 };
 

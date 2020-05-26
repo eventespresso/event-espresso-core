@@ -37,6 +37,7 @@ const useFetchPriceTypes = (): FetchQueryResult<PriceTypesList> => {
 		}
 
 		setIsLoading(TypeName.priceTypes, loading);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [loading]);
 
 	return {

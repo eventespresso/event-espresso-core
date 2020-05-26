@@ -43,11 +43,6 @@ interface ReorderEntities<E extends Entity> {
 const useReorderEntities = <E extends Entity>({ entityType }: ReorderEntitiesProps): ReorderEntities<E> => {
 	const [allEntityGuids, setAllEntityGuids] = useState<Array<EntityId>>([]);
 	const allEntityGuidsStr = allEntityGuids.join(':');
-	useEffect(() => {
-		if (allEntityGuids.length) {
-			done();
-		}
-	}, [allEntityGuidsStr]);
 
 	const [mutate, result] = useMutation(REORDER_ENTITIES);
 
@@ -63,7 +58,15 @@ const useReorderEntities = <E extends Entity>({ entityType }: ReorderEntitiesPro
 				},
 			},
 		});
-	}, [allEntityGuidsStr, entityType, runMutation]);
+	}, [allEntityGuids, entityType, runMutation]);
+
+	useEffect(() => {
+		if (allEntityGuids.length) {
+			done();
+		}
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [allEntityGuidsStr]);
 
 	const cancel = useCallback(() => {
 		cancelDebounce();
@@ -110,7 +113,8 @@ const useReorderEntities = <E extends Entity>({ entityType }: ReorderEntitiesPro
 
 			setAllEntityGuids(getGuids(allEntities));
 		},
-		[entityType]
+
+		[cancel]
 	);
 
 	return { cancel, done, result, sortEntities };

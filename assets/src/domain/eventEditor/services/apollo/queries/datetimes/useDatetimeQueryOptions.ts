@@ -19,7 +19,7 @@ const useDatetimeQueryOptions = (): DatetimesQueryOptions => {
 		},
 	};
 
-	return useMemo(() => options, [eventId]);
+	return useMemo(() => options, [options]);
 };
 
 export default useDatetimeQueryOptions;

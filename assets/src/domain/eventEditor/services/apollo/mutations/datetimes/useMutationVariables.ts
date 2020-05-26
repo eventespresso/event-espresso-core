@@ -9,20 +9,23 @@ type MutationVariablesCb = (mutationType: MutationType, input: MutationInput) =>
 const useMutationVariables = (): MutationVariablesCb => {
 	const eventId = useEventId();
 
-	return useCallback<MutationVariablesCb>((mutationType, input) => {
-		const mutationInput: MutationInput = {
-			clientMutationId: `${mutationType}_DATETIME`,
-			...input,
-		};
+	return useCallback<MutationVariablesCb>(
+		(mutationType, input) => {
+			const mutationInput: MutationInput = {
+				clientMutationId: `${mutationType}_DATETIME`,
+				...input,
+			};
 
-		if (mutationType === 'CREATE') {
-			mutationInput.eventId = eventId; // required for createDatetime
-		}
+			if (mutationType === 'CREATE') {
+				mutationInput.eventId = eventId; // required for createDatetime
+			}
 
-		return {
-			input: mutationInput,
-		};
-	}, []);
+			return {
+				input: mutationInput,
+			};
+		},
+		[eventId]
+	);
 };
 
 export default useMutationVariables;

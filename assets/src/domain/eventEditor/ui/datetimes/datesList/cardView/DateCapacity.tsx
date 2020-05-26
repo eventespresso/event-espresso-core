@@ -23,14 +23,13 @@ const DateCapacity: React.FC<DateItemProps> = ({ entity: datetime }) => {
 				updateEntity({ capacity });
 
 				const inputGenerator = ticketQuantityForCapacity(capacity);
-
 				updateRelatedTickets(inputGenerator);
 			}
 		},
-		[datetime.cacheId, updateRelatedTickets]
+		[datetime.cacheId, ticketQuantityForCapacity, updateRelatedTickets, updateEntity]
 	);
 
 	return <InlineEditInfinity onChangeValue={onChange} value={`${datetime.capacity}`} />;
 };
 
-export default React.memo(DateCapacity, getPropsAreEqual(['entity', 'cacheId']));
+export default React.memo(DateCapacity, getPropsAreEqual(['entity']));

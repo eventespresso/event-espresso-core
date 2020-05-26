@@ -18,6 +18,7 @@ const useRelatedTickets: RelatedEntitiesHook<Ticket, 'tickets'> = ({ entity, ent
 	const cacheIds = entityListCacheIdString(tickets);
 	const relatedTicketIdsStr = JSON.stringify(relatedTicketIds);
 
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	return useMemo(() => entitiesWithGuIdInArray(tickets, relatedTicketIds), [relatedTicketIdsStr, cacheIds]);
 };
 

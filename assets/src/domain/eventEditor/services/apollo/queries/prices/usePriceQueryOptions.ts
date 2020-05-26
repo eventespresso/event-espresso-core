@@ -1,10 +1,10 @@
-import { useMemo } from 'react';
 import { identity, sortBy } from 'ramda';
 
 import useTicketIds from '../tickets/useTicketIds';
 import { GET_PRICES } from '../prices';
 import { EntityId } from '@dataServices/types';
 import { ReadQueryOptions } from '@dataServices/apollo/queries';
+import { useMemoStringify } from '@appServices/hooks';
 
 const usePriceQueryOptions = (ticketIn: EntityId[] = []): ReadQueryOptions => {
 	const ticketIds = useTicketIds();
@@ -24,8 +24,7 @@ const usePriceQueryOptions = (ticketIn: EntityId[] = []): ReadQueryOptions => {
 		},
 	};
 
-	const ticketInStr = ticketIn.join(':');
-	return useMemo(() => options, [ticketInStr]);
+	return useMemoStringify(options, ticketIn);
 };
 
 export default usePriceQueryOptions;

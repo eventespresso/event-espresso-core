@@ -2,6 +2,8 @@ export { default as useIfMounted } from './useIfMounted';
 
 export { default as useLogIfChanged } from './useLogIfChanged';
 
+export { default as useMemoStringify } from './useMemoStringify';
+
 export { default as usePrevNext } from './usePrevNext';
 
 export { default as useRect } from './useRect';

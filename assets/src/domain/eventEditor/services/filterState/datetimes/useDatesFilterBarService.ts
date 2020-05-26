@@ -50,7 +50,7 @@ const useDatesFilterBarService = (): void => {
 			unsubscribeSalesFilter();
 			unsubscribeStatusFilter();
 		};
-	}, []);
+	}, [registerDatesFilter, registerDatesSearch, registerDatesSorter]);
 };
 
 export default useDatesFilterBarService;

@@ -8,6 +8,7 @@ import { SubscriptionService, SubscriptionServiceHook, Subscriptions, UpdateSubs
 const NAMESPACE = 'espresso';
 
 type SS = SubscriptionService;
+
 const useSubscriptionService: SubscriptionServiceHook = ({ domain, service }) => {
 	/**
 	 * Since we store our subscriptions in a global variable (registry) to allow
@@ -21,6 +22,8 @@ const useSubscriptionService: SubscriptionServiceHook = ({ domain, service }) =>
 
 	const getSubscriptions = useCallback<SS['getSubscriptions']>(() => {
 		return window[NAMESPACE]?.[domain]?.[service]?.subscriptions || {};
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [subscriptionsHash]);
 
 	/**
@@ -30,6 +33,8 @@ const useSubscriptionService: SubscriptionServiceHook = ({ domain, service }) =>
 		(key, value) => {
 			window[NAMESPACE] = assocPath([domain, service, key], value, window[NAMESPACE]);
 		},
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[subscriptionsHash]
 	);
 
@@ -77,6 +82,8 @@ const useSubscriptionService: SubscriptionServiceHook = ({ domain, service }) =>
 		(key, defaultValue) => {
 			return window[NAMESPACE]?.[domain]?.[service]?.[key] || defaultValue;
 		},
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[subscriptionsHash]
 	);
 

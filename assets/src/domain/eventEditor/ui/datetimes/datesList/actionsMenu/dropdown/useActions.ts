@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { pick } from 'ramda';
 import { __ } from '@wordpress/i18n';
 
@@ -36,9 +36,9 @@ const useActions = ({ datetimeId }) => {
 		);
 
 		return createEntity({ ...newDatetime, eventId, tickets });
-	}, [datetime, tickets]);
+	}, [createEntity, datetime, eventId, tickets]);
 
-	const trashed = isTrashed(datetime);
+	const trashed = useMemo(() => isTrashed(datetime), [datetime]);
 
 	const trashDate = useCallback(() => deleteEntity({ id, deletePermanently: trashed }), [cacheId, trashed]);
 

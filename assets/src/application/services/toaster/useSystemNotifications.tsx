@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { toast } from 'react-toastify';
 
 import { DissmissToast, SystemNotificationsToaster, ToastProps, UpdateToast } from './types';
@@ -10,9 +10,9 @@ const className = 'ee-toaster-notice__toast';
 const useSystemNotifications = (): SystemNotificationsToaster => {
 	const dismiss: DissmissToast = useCallback((toastId) => toast.dismiss(toastId), []);
 
-	const dissmissAll = (): void => {
+	const dissmissAll = useCallback((): void => {
 		toast.dismiss();
-	};
+	}, []);
 
 	const error = useCallback(({ message }) => {
 		toast(<Toaster message={message} type='error' />, {
@@ -58,16 +58,19 @@ const useSystemNotifications = (): SystemNotificationsToaster => {
 		});
 	}, []);
 
-	return {
-		dismiss,
-		dissmissAll,
-		error,
-		info,
-		loading,
-		success,
-		update,
-		warning,
-	};
+	return useMemo(
+		() => ({
+			dismiss,
+			dissmissAll,
+			error,
+			info,
+			loading,
+			success,
+			update,
+			warning,
+		}),
+		[dismiss, dissmissAll, error, info, loading, success, update, warning]
+	);
 };
 
 export default useSystemNotifications;

@@ -90,7 +90,7 @@ const useStatusManager = (): StatusManager => {
 			isError,
 			setIsError,
 		}),
-		[state]
+		[isError, isLoaded, isLoading, setIsError, setIsLoaded, setIsLoading]
 	);
 };
 

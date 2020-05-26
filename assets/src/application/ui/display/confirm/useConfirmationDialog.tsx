@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useDisclosure } from '@chakra-ui/core';
 import { __ } from '@wordpress/i18n';
 
@@ -14,7 +14,7 @@ const useConfirmationDialog = ({ confirmText, onConfirm, title, ...props }: Conf
 			onConfirm();
 		}
 		onClose();
-	}, [onConfirm]);
+	}, [onClose, onConfirm]);
 
 	const noButtonText = props.noButtonText || __('No');
 	const yesButtonText = props.yesButtonText || __('Yes');
@@ -36,10 +36,13 @@ const useConfirmationDialog = ({ confirmText, onConfirm, title, ...props }: Conf
 		/>
 	);
 
-	return {
-		confirmationDialog,
-		onOpen,
-	};
+	return useMemo(
+		() => ({
+			confirmationDialog,
+			onOpen,
+		}),
+		[confirmationDialog, onOpen]
+	);
 };
 
 export default useConfirmationDialog;

@@ -1,5 +1,6 @@
-import React, { createContext, useEffect, useMemo } from 'react';
+import React, { createContext, useEffect } from 'react';
 
+import { useMemoStringify } from '@appServices/hooks';
 import type { EntityListContextProps } from '../types';
 import { TicketsFilterStateManager, useTicketsListFilterStateManager } from '../../filterState';
 import { useFilteredEntities } from '@appLayout/entityList';
@@ -16,9 +17,8 @@ export const TicketsListProvider: React.FC = ({ children }) => {
 	const tickets = useTickets();
 	const filters = useTicketsListFilterStateManager();
 
-	const filtersStr = JSON.stringify(filters);
 	// memoize filter state
-	const filterState = useMemo(() => filters, [filtersStr]);
+	const filterState = useMemoStringify(filters);
 
 	const { setSortBy, sortingEnabled } = filterState;
 
@@ -33,6 +33,8 @@ export const TicketsListProvider: React.FC = ({ children }) => {
 		if (sortingEnabled) {
 			setSortBy('order');
 		}
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [sortingEnabled]);
 
 	const value: TicketsListContextProps = { filterState, filteredEntities };

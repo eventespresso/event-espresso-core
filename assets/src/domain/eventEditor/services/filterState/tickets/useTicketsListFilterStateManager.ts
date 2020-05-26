@@ -22,6 +22,7 @@ const useTicketsListFilterStateManager = (): FSM => {
 	const { visibleDatetimeIds } = useEdtrState();
 
 	const entityFilterState = useEntityListFilterStateManager<SortBy>('date');
+	const { setPageNumber } = entityFilterState;
 
 	// subscribe to visible dates for isChained
 	useEffect(() => {
@@ -30,11 +31,14 @@ const useTicketsListFilterStateManager = (): FSM => {
 		}
 	}, [state.isChained, visibleDatetimeIds]);
 
-	const resetPageNumber = (filter: TicketsSales | TicketsStatus): void => {
-		if (filter !== state[filter]) {
-			entityFilterState.setPageNumber(1);
-		}
-	};
+	const resetPageNumber = useCallback(
+		(filter: TicketsSales | TicketsStatus): void => {
+			if (filter !== state[filter]) {
+				setPageNumber(1);
+			}
+		},
+		[setPageNumber, state]
+	);
 
 	const setDisplayStartOrEndDate: FSM['setDisplayStartOrEndDate'] = useCallback((displayStartOrEndDate) => {
 		dispatch({
@@ -43,30 +47,34 @@ const useTicketsListFilterStateManager = (): FSM => {
 		});
 	}, []);
 
-	const setSales: FSM['setSales'] = (sales) => {
-		resetPageNumber(sales);
-		dispatch({
-			type: 'SET_SALES',
-			sales,
-		});
-	};
+	const setSales: FSM['setSales'] = useCallback(
+		(sales) => {
+			resetPageNumber(sales);
 
-	const setStatus: FSM['setStatus'] = useCallback((status) => {
-		resetPageNumber(status);
-		dispatch({
-			type: 'SET_STATUS',
-			status,
-		});
-	}, []);
+			dispatch({
+				type: 'SET_SALES',
+				sales,
+			});
+		},
+		[resetPageNumber]
+	);
+
+	const setStatus: FSM['setStatus'] = useCallback(
+		(status) => {
+			resetPageNumber(status);
+			dispatch({
+				type: 'SET_STATUS',
+				status,
+			});
+		},
+		[resetPageNumber]
+	);
 
 	const toggleIsChained: FSM['toggleIsChained'] = useCallback(() => {
 		dispatch({
 			type: 'TOGGLE_IS_CHAINED',
 		});
 	}, []);
-
-	const ticketFSValues = Object.values(state);
-	const entityFSValues = Object.values(entityFilterState.getState());
 
 	return useMemo(
 		() => ({
@@ -78,7 +86,7 @@ const useTicketsListFilterStateManager = (): FSM => {
 			toggleIsChained,
 			visibleDatesStr,
 		}),
-		[...ticketFSValues, ...entityFSValues, visibleDatesStr]
+		[entityFilterState, visibleDatesStr, setDisplayStartOrEndDate, setSales, toggleIsChained, state, setStatus]
 	);
 };
 

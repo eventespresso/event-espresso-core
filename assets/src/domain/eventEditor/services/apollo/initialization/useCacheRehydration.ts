@@ -64,6 +64,8 @@ const useCacheRehydration = (): void => {
 			/* Rehydrate relations */
 			initializeRelations(relations);
 		}
+
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [relations]);
 
 	if (isLoaded(TypeName.priceTypes)) {

@@ -30,6 +30,7 @@ const useTicketsFilterBarService = (): void => {
 	// To avoid multiple filter registrations, we will store the aleady registered
 	// filter unSubscribe callback in ref to use it to remove the existing filter.
 	const unSubIsChainedFilterRef = useRef<VoidFunction>();
+
 	useEffect(() => {
 		// If already register
 		if (typeof unSubIsChainedFilterRef.current === 'function') {
@@ -48,7 +49,7 @@ const useTicketsFilterBarService = (): void => {
 		return (): void => {
 			unSubscribeIsChainedFilter();
 		};
-	}, [isChainedDeps]);
+	}, [isChainedFilter, isChainedDeps, registerTicketsFilter]);
 
 	useEffect(() => {
 		// Register sales filter
@@ -82,7 +83,7 @@ const useTicketsFilterBarService = (): void => {
 			unSubscribeTicketsSearch();
 			unSubscribeTicketsSorter();
 		};
-	}, []);
+	}, [registerTicketsFilter, registerTicketsSearch, registerTicketsSorter]);
 };
 
 export default useTicketsFilterBarService;

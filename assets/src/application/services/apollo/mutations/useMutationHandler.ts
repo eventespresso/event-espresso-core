@@ -171,7 +171,8 @@ const useMutationHandler: MutationHandler = (getMutationOptions) => {
 				mutate,
 			};
 		},
-		[getMutationOptions]
+
+		[client, getMutationOptions, ifMounted, result, toaster]
 	);
 };
 

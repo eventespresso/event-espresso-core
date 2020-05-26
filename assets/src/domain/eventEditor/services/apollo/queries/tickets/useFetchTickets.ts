@@ -43,6 +43,7 @@ const useFetchTickets = (skipFetch: boolean = null): FetchQueryResult<TicketsLis
 		}
 
 		setIsLoading(TypeName.tickets, loading);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [loading]);
 
 	return {

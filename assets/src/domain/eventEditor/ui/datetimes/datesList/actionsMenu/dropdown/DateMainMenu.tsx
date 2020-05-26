@@ -20,6 +20,7 @@ const DateMainMenu: React.FC<DateMainMenuProps> = ({ datetime }) => {
 	const confirmText = trashed
 		? __('Are you sure you want to permanently delete this?')
 		: __('Are you sure you want to delete this?');
+
 	const { confirmationDialog, onOpen } = useConfirmationDialog({
 		confirmText,
 		onConfirm: trashDate,
@@ -45,4 +46,4 @@ const DateMainMenu: React.FC<DateMainMenuProps> = ({ datetime }) => {
 	);
 };
 
-export default DateMainMenu;
+export default React.memo(DateMainMenu);
