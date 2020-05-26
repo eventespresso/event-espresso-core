@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { __ } from '@wordpress/i18n';
 
 import { PriceModifierProps } from '../types';
-import { PriceField } from '../fields';
+import { PriceField, TicketPriceField } from '../fields';
 import { useMoneyDisplay, parsedAmount, formatAmount } from '@appServices/utilities/money';
 import { useDataState } from '../data';
 
@@ -35,28 +35,24 @@ const PriceAmountInput: React.FC<PriceModifierProps> = ({ price }) => {
 		return isNaN(parsedValue) ? defaultValue : parsedValue;
 	};
 
-	return (
-		<div className='ee-ticket-price-field'>
-			<div className='ee-ticket-price-field__before'>{b4Price}</div>
-			<div>
-				<PriceField
-					className={className}
-					component={'input'}
-					// because it can affect other tickets that have this price
-					// default price amount should not be changeable
-					disabled={(reverseCalculate && price.isBasePrice) || price.isDefault}
-					field='amount'
-					format={formatParse('')}
-					formatOnBlur
-					parse={formatParse()}
-					placeholder={__('amount...')}
-					price={price}
-					type={'number'}
-				/>
-			</div>
-			<div className='ee-ticket-price-field__after'>{afterPrice}</div>
-		</div>
+	const field = (
+		<PriceField
+			className={className}
+			component={'input'}
+			// because it can affect other tickets that have this price
+			// default price amount should not be changeable
+			disabled={(reverseCalculate && price.isBasePrice) || price.isDefault}
+			field='amount'
+			format={formatParse('')}
+			formatOnBlur
+			parse={formatParse()}
+			placeholder={__('amount...')}
+			price={price}
+			type={'number'}
+		/>
 	);
+
+	return <TicketPriceField after={afterPrice} before={b4Price} field={field} />;
 };
 
 export default PriceAmountInput;

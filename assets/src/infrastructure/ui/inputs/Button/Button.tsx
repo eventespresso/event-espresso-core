@@ -11,8 +11,8 @@ const Button = React.forwardRef<ButtonType, ButtonProps>(({ children, buttonText
 	const text = children || buttonText;
 
 	return (
-		<ChakraButton  leftIcon={icon} {...props} className={className} ref={ref}>
-			<span>{text}</span>
+		<ChakraButton leftIcon={icon} {...props} className={className} ref={ref}>
+			{text && <span>{text}</span>}
 		</ChakraButton>
 	);
 });
