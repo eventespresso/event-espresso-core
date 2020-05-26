@@ -3,8 +3,6 @@
  * © 2020 Event Espresso
  * ------------------------------------------------------------------------- */
 
-@import 'application/ui/styles/variables.scss';
-
 :root {
 	--ee-icon-button-size: 40px;
 }
@@ -57,7 +55,7 @@
 		vertical-align: middle;
 
 		svg {
-			transition: color 200ms linear, fill 200ms linear;
+			transition: color 0.1s linear, fill 0.1s linear;
 		}
 
 		&:not(.ee-noIcon) {
@@ -67,7 +65,7 @@
 		}
 
 		span {
-			transition: color 200ms linear;
+			transition: color 0.1s linear;
 		}
 
 		&:active {
@@ -163,41 +161,33 @@
 
 	&.ee-btn--accent {
 		&:not([disabled]) {
-			background: $blue-5;
-			border-color: $blue-4;
-			color: white;
-			text-shadow: none;
+			background: var(--ee-color-accent);
+			border-color: var(--ee-color-accent-low-contrast) var(--ee-color-accent)
+				var(--ee-color-accent-high-contrast);
+			color: var(--ee-text-on-accent);
 		}
 
 		svg {
-			fill: white;
+			fill: var(--ee-color-white);
 		}
 
 		&:hover:not([disabled]) {
-			background: $blue-5;
-			color: white;
-			box-shadow: 0 0 0 1px $blue-4;
-		}
-
-		&:focus:not([disabled]) {
-			border-color: $blue-6;
+			background: var(--ee-color-accent-low-contrast);
 		}
 	}
-
-	/* ACTIVE */
 
 	&.ee-btn--is-active {
 		background: var(--ee-color-blue);
 		border-color: var(--ee-color-blue);
-		color: white;
+		color: var(--ee-color-white);
 
 		svg {
-			fill: white;
+			fill: var(--ee-color-white);
 			font-size: unset;
 		}
 
 		&:active {
-			color: white;
+			color: var(--ee-color-white);
 		}
 
 		&:hover {
