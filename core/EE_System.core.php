@@ -947,7 +947,7 @@ final class EE_System implements ResettableInterface
     public function loadRouteMatchSpecifications()
     {
         try {
-            $this->router = $this->loader->getShared('EventEspresso\core\services\route_match\RouteHandler');
+            $this->router = $this->loader->getShared('EventEspresso\core\services\routing\RouteHandler');
         } catch (Exception $exception) {
             new ExceptionStackTraceDisplay($exception);
         }

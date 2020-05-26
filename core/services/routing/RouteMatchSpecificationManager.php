@@ -78,13 +78,13 @@ class RouteMatchSpecificationManager
                 // collection name
                 RouteMatchSpecificationCollection::COLLECTION_NAME,
                 // collection interface
-                'EventEspresso\core\domain\entities\route_match\RouteMatchSpecificationInterface',
+                'EventEspresso\core\domain\entities\routing\specifications\RouteMatchSpecificationInterface',
                 // FQCNs for classes to add (all classes within each namespace will be loaded)
                 apply_filters(
                     'FHEE__EventEspresso_core_services_route_match_RouteMatchSpecificationManager__populateSpecificationCollection__collection_FQCNs',
                     array(
-                        'EventEspresso\core\domain\entities\route_match\specifications\admin',
-                        'EventEspresso\core\domain\entities\route_match\specifications\frontend',
+                        'EventEspresso\core\domain\entities\routing\specifications\admin',
+                        'EventEspresso\core\domain\entities\routing\specifications\frontend',
                     )
                 ),
                 // filepaths to classes to add

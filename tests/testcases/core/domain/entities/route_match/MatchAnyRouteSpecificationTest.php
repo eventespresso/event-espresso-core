@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\tests\testcases\core\domain\entities\route_match;
+namespace EventEspresso\tests\testcases\core\domain\entities\routing;
 
 use EventEspresso\core\domain\entities\routing\specifications\MatchAnyRouteSpecification;
 

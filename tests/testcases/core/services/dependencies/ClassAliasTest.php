@@ -18,17 +18,17 @@ class ClassAliasTest extends EspressoPHPUnitFrameworkTestCase
     /**
      * @var string $interface
      */
-    private $interface = 'EventEspresso\core\domain\entities\route_match\RouteMatchSpecificationInterface';
+    private $interface = 'EventEspresso\core\domain\entities\routing\specifications\RouteMatchSpecificationInterface';
 
     /**
      * @var string $base_class
      */
-    private $base_class = 'EventEspresso\core\domain\entities\route_match\RouteMatchSpecification';
+    private $base_class = 'EventEspresso\core\domain\entities\routing\specifications\RouteMatchSpecification';
 
     /**
      * @var string $child_class_fqcn
      */
-    private $child_class_fqcn = 'EventEspresso\core\domain\entities\route_match\specifications\admin\EspressoEventEditorAddNew';
+    private $child_class_fqcn = 'EventEspresso\core\domain\entities\routing\specifications\admin\EspressoEventEditorAddNew';
 
     /**
      * @param $alias
@@ -103,7 +103,7 @@ class ClassAliasTest extends EspressoPHPUnitFrameworkTestCase
         $this->setExceptionExpected('EventEspresso\core\exceptions\InvalidAliasException');
         $this->getClassAlias(
             $this->child_class_fqcn,
-            'EventEspresso\core\domain\entities\route_match\specifications\admin\EspressoEventEditorEdit'
+            'EventEspresso\core\domain\entities\routing\specifications\admin\EspressoEventEditorEdit'
         );
     }
 }

@@ -34,7 +34,7 @@ abstract class MultiRouteSpecification extends RouteMatchSpecification
             if (! $specification instanceof RouteMatchSpecificationInterface) {
                 throw new InvalidEntityException(
                     $specification,
-                    'EventEspresso\core\domain\entities\route_match\RouteMatchSpecificationInterface'
+                    'EventEspresso\core\domain\entities\routing\specifications\RouteMatchSpecificationInterface'
                 );
             }
         }

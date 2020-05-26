@@ -1,5 +1,5 @@
 <?php
-namespace EventEspresso\tests\testcases\core\domain\entities\route_match;
+namespace EventEspresso\tests\testcases\core\domain\entities\routing;
 
 /**
  * RouteMatchSpecificationTest

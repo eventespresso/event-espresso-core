@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\tests\testcases\core\domain\entities\route_match;
+namespace EventEspresso\tests\testcases\core\domain\entities\routing;
 
 use EventEspresso\core\domain\entities\routing\specifications\DoesNotMatchRouteSpecification;
 use EventEspresso\core\domain\entities\routing\specifications\RouteMatchSpecificationInterface;
@@ -36,7 +36,7 @@ class DoesNotMatchRouteSpecificationTest extends RouteMatchSpecificationDecorato
     {
         // useless test but need to override parent constructor
         $this->assertInstanceOf(
-            'EventEspresso\core\domain\entities\route_match\DoesNotMatchRouteSpecification',
+            'EventEspresso\core\domain\entities\routing\DoesNotMatchRouteSpecification',
             $this->getDecorator()
         );
 

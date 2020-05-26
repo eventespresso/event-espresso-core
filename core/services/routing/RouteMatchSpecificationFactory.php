@@ -62,7 +62,7 @@ class RouteMatchSpecificationFactory extends FactoryWithDependencyResolver
     {
         /** @var RouteMatchSpecificationFactory $specification_factory */
         $specification_factory = LoaderFactory::getLoader()->getShared(
-            'EventEspresso\core\services\route_match\RouteMatchSpecificationFactory'
+            'EventEspresso\core\services\routing\RouteMatchSpecificationFactory'
         );
         return $specification_factory->createNewRouteMatchSpecification($fqcn);
     }

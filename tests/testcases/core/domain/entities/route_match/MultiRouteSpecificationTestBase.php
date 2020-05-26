@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\tests\testcases\core\domain\entities\route_match;
+namespace EventEspresso\tests\testcases\core\domain\entities\routing;
 
 /**
  * MultiRouteSpecificationTestBase
@@ -19,7 +19,7 @@ class MultiRouteSpecificationTestBase extends RouteMatchSpecificationTestBase
 
     /**
      * @since 4.9.71.p
-     * @return \EventEspresso\tests\mocks\core\domain\entities\route_match\RouteMatchSpecificationMock
+     * @return \EventEspresso\tests\mocks\core\domain\entities\routing\specifications\RouteMatchSpecificationMock
      */
     public function getRouteMatchOne()
     {
@@ -31,7 +31,7 @@ class MultiRouteSpecificationTestBase extends RouteMatchSpecificationTestBase
 
     /**
      * @since 4.9.71.p
-     * @return \EventEspresso\tests\mocks\core\domain\entities\route_match\RouteMatchSpecificationMock
+     * @return \EventEspresso\tests\mocks\core\domain\entities\routing\specifications\RouteMatchSpecificationMock
      */
     public function getRouteMatchTwo()
     {
@@ -43,7 +43,7 @@ class MultiRouteSpecificationTestBase extends RouteMatchSpecificationTestBase
 
     /**
      * @since 4.9.71.p
-     * @return \EventEspresso\tests\mocks\core\domain\entities\route_match\RouteMatchSpecificationMock
+     * @return \EventEspresso\tests\mocks\core\domain\entities\routing\specifications\RouteMatchSpecificationMock
      */
     public function getRouteMatchThree()
     {
@@ -61,15 +61,15 @@ class MultiRouteSpecificationTestBase extends RouteMatchSpecificationTestBase
     public function testRouteConstructors()
     {
         $this->assertInstanceOf(
-            'EventEspresso\tests\mocks\core\domain\entities\route_match\RouteMatchSpecificationMock',
+            'EventEspresso\tests\mocks\core\domain\entities\routing\specifications\RouteMatchSpecificationMock',
             $this->getRouteMatchOne()
         );
         $this->assertInstanceOf(
-            'EventEspresso\tests\mocks\core\domain\entities\route_match\RouteMatchSpecificationMock',
+            'EventEspresso\tests\mocks\core\domain\entities\routing\specifications\RouteMatchSpecificationMock',
             $this->getRouteMatchTwo()
         );
         $this->assertInstanceOf(
-            'EventEspresso\tests\mocks\core\domain\entities\route_match\RouteMatchSpecificationMock',
+            'EventEspresso\tests\mocks\core\domain\entities\routing\specifications\RouteMatchSpecificationMock',
             $this->getRouteMatchThree()
         );
     }

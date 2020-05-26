@@ -1,11 +1,11 @@
 <?php
 
-namespace EventEspresso\tests\testcases\core\domain\entities\route_match\specifications\admin;
+namespace EventEspresso\tests\testcases\core\domain\entities\routing\specifications\admin;
 
 use EventEspresso\core\domain\entities\routing\specifications\admin\WordPressPostsEditor;
 use EventEspresso\core\domain\entities\routing\specifications\admin\WordPressPostsEditorAddNew;
 use EventEspresso\core\domain\entities\routing\specifications\admin\WordPressPostsEditorEdit;
-use EventEspresso\tests\testcases\core\domain\entities\route_match\MultiRouteSpecificationTestBase;
+use EventEspresso\tests\testcases\core\domain\entities\routing\MultiRouteSpecificationTestBase;
 
 /**
  * WordPressPostsEditorTest

@@ -1,9 +1,9 @@
 <?php
 
-namespace EventEspresso\tests\testcases\core\domain\entities\route_match;
+namespace EventEspresso\tests\testcases\core\domain\entities\routing;
 
 use EventEspresso\core\domain\entities\routing\specifications\RouteMatchSpecificationInterface;
-use EventEspresso\tests\mocks\core\domain\entities\route_match\RouteMatchSpecificationDecoratorMock;
+use EventEspresso\tests\mocks\core\domain\entities\routing\specifications\RouteMatchSpecificationDecoratorMock;
 
 /**
  * Class RouteMatchSpecificationDecoratorTest
@@ -35,7 +35,7 @@ class RouteMatchSpecificationDecoratorTest extends RouteMatchSpecificationTestBa
     public function test__construct()
     {
         $this->assertInstanceOf(
-            'EventEspresso\tests\mocks\core\domain\entities\route_match\RouteMatchSpecificationMock',
+            'EventEspresso\tests\mocks\core\domain\entities\routing\specifications\RouteMatchSpecificationMock',
             $this->getDecorator()->getSpecification()
         );
 

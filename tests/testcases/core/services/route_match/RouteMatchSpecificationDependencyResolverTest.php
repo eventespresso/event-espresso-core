@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\tests\testcases\core\services\route_match;
+namespace EventEspresso\tests\testcases\core\services\routing;
 
 use EE_Dependency_Map;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -46,7 +46,7 @@ class RouteMatchSpecificationDependencyResolverTest extends EspressoPHPUnitFrame
         $property = $class->getProperty('_dependency_map');
         $property->setAccessible(true);
         $registered_dependencies = $property->getValue($this->dependency_map);
-        $fqcn = 'EventEspresso\core\domain\entities\route_match\specifications\admin\EspressoEventEditorEdit';
+        $fqcn = 'EventEspresso\core\domain\entities\routing\specifications\admin\EspressoEventEditorEdit';
         unset($registered_dependencies[ $fqcn ]);
         $property->setValue($this->dependency_map, $registered_dependencies);
         $this->assertFalse($this->dependency_map->has($fqcn));
@@ -73,7 +73,7 @@ class RouteMatchSpecificationDependencyResolverTest extends EspressoPHPUnitFrame
      */
     public function testResolveDependenciesForClass()
     {
-        $fqcn = 'EventEspresso\core\domain\entities\route_match\specifications\admin\EspressoEventEditorEdit';
+        $fqcn = 'EventEspresso\core\domain\entities\routing\specifications\admin\EspressoEventEditorEdit';
         $this->assertFalse($this->dependency_map->has($fqcn));
         $DependencyResolver = $this->getDependencyResolver();
         $DependencyResolver->resolveDependenciesForClass($fqcn);

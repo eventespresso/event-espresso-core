@@ -1,9 +1,9 @@
 <?php
 
-namespace EventEspresso\tests\testcases\core\domain\entities\route_match\specifications\admin;
+namespace EventEspresso\tests\testcases\core\domain\entities\routing\specifications\admin;
 
 use EventEspresso\core\domain\entities\routing\specifications\admin\WordPressPostsEditorEdit;
-use EventEspresso\tests\testcases\core\domain\entities\route_match\RouteMatchSpecificationTestBase;
+use EventEspresso\tests\testcases\core\domain\entities\routing\specifications\RouteMatchSpecificationTestBase;
 
 /**
  * WordPressPostsEditorEditTest

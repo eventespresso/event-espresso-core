@@ -181,7 +181,7 @@ class RouteHandler
                    $this->request->isGQL()
                    || $this->request->isUnitTesting()
                    || $this->route_manager->routeMatchesCurrentRequest(
-                       'EventEspresso\core\domain\entities\route_match\specifications\admin\EspressoEventEditor'
+                       'EventEspresso\core\domain\entities\routing\specifications\admin\EspressoEventEditor'
                    )
                );
     }
@@ -318,7 +318,7 @@ class RouteHandler
         try {
             if (! $this->request->isAdmin()
                 || ! $this->route_manager->routeMatchesCurrentRequest(
-                    'EventEspresso\core\domain\entities\route_match\specifications\admin\WordPressPluginsPage'
+                    'EventEspresso\core\domain\entities\routing\specifications\admin\WordPressPluginsPage'
                 )
             ) {
                 return;

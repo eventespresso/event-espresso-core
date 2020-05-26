@@ -1,8 +1,8 @@
 <?php
-namespace EventEspresso\tests\testcases\core\domain\entities\route_match;
+namespace EventEspresso\tests\testcases\core\domain\entities\routing;
 
 use EventEspresso\core\services\request\Request;
-use EventEspresso\tests\mocks\core\domain\entities\route_match\RouteMatchSpecificationMock;
+use EventEspresso\tests\mocks\core\domain\entities\routing\specifications\RouteMatchSpecificationMock;
 use EventEspresso\tests\includes\EspressoPHPUnitFrameworkTestCase;
 
 /**
@@ -51,7 +51,7 @@ class RouteMatchSpecificationTestBase extends EspressoPHPUnitFrameworkTestCase
     public function test__construct()
     {
         $this->assertInstanceOf(
-            'EventEspresso\tests\mocks\core\domain\entities\route_match\RouteMatchSpecificationMock',
+            'EventEspresso\tests\mocks\core\domain\entities\routing\specifications\RouteMatchSpecificationMock',
             $this->getRouteMatchSpecification()
         );
     }

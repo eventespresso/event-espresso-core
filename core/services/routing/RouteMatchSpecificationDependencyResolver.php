@@ -36,6 +36,6 @@ class RouteMatchSpecificationDependencyResolver extends DependencyResolver
                 'EventEspresso\core\services\request\Request'
             )
         );
-        $this->addNamespaceRoot('EventEspresso\core\domain\entities\route_match\specifications');
+        $this->addNamespaceRoot('EventEspresso\core\domain\entities\routing\specifications');
     }
 }

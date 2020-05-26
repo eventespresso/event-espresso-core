@@ -27,7 +27,7 @@ class RouteMatchSpecificationCollection extends Collection
     public function __construct()
     {
         parent::__construct(
-            'EventEspresso\core\domain\entities\route_match\RouteMatchSpecificationInterface',
+            'EventEspresso\core\domain\entities\routing\specifications\RouteMatchSpecificationInterface',
             RouteMatchSpecificationCollection::COLLECTION_NAME
         );
     }

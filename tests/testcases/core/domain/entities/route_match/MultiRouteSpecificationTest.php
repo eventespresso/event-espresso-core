@@ -1,8 +1,8 @@
 <?php
 
-namespace EventEspresso\tests\testcases\core\domain\entities\route_match;
+namespace EventEspresso\tests\testcases\core\domain\entities\routing;
 
-use EventEspresso\tests\mocks\core\domain\entities\route_match\MultiRouteSpecificationMock;
+use EventEspresso\tests\mocks\core\domain\entities\routing\MultiRouteSpecificationMock;
 use stdClass;
 
 /**
@@ -37,7 +37,7 @@ class MultiRouteSpecificationTest extends MultiRouteSpecificationTestBase
     public function test__construct()
     {
         $this->assertInstanceOf(
-            'EventEspresso\tests\mocks\core\domain\entities\route_match\MultiRouteSpecificationMock',
+            'EventEspresso\tests\mocks\core\domain\entities\routing\MultiRouteSpecificationMock',
             $this->getMultiRouteSpecification(
                 array(
                     $this->getRouteMatchOne(),
@@ -56,7 +56,7 @@ class MultiRouteSpecificationTest extends MultiRouteSpecificationTestBase
     {
         $this->setExceptionExpected('EventEspresso\core\exceptions\InvalidEntityException');
         $this->assertInstanceOf(
-            'EventEspresso\tests\mocks\core\domain\entities\route_match\MultiRouteSpecificationMock',
+            'EventEspresso\tests\mocks\core\domain\entities\routing\MultiRouteSpecificationMock',
             $this->getMultiRouteSpecification(
                 array(
                     new stdClass(),
