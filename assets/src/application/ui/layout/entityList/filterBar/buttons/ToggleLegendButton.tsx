@@ -30,12 +30,10 @@ const ToggleLegendButton: React.FC<ToggleLegendButtonProps> = ({ listId, showLeg
 			icon={icon}
 			id={filterId}
 			onClick={toggleLegend}
-			tooltip={tooltip}
-			tooltipProps={{ placement: 'top' }}
 			labelClassName={'ee-filter-bar__btn-wrap'}
 			{...rest}
 		>
-			{__('legend')}
+			{showLegend ? __('hide legend') : __('show legend')}
 		</Button>
 	);
 };
