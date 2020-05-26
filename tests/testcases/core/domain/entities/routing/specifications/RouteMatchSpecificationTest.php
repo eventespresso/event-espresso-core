@@ -1,5 +1,7 @@
 <?php
-namespace EventEspresso\tests\testcases\core\domain\entities\routing;
+namespace EventEspresso\tests\testcases\core\domain\entities\routing\specifications;
+
+use PHPUnit\Framework\AssertionFailedError;
 
 /**
  * RouteMatchSpecificationTest
@@ -13,7 +15,7 @@ class RouteMatchSpecificationTest extends RouteMatchSpecificationTestBase
 
     /**
      * @since 4.9.71.p
-     * @throws \PHPUnit\Framework\AssertionFailedError
+     * @throws AssertionFailedError
      */
     public function testIsMatchingRoute()
     {

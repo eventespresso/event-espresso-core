@@ -1,8 +1,11 @@
 <?php
 
-namespace EventEspresso\tests\testcases\core\domain\entities\routing;
+namespace EventEspresso\tests\testcases\core\domain\entities\routing\specifications;
 
-use EventEspresso\tests\mocks\core\domain\entities\routing\MultiRouteSpecificationMock;
+use EventEspresso\core\exceptions\InvalidEntityException;
+use EventEspresso\tests\mocks\core\domain\entities\routing\specifications\MultiRouteSpecificationMock;
+use PHPUnit\Framework\AssertionFailedError;
+use PHPUnit\Framework\Exception;
 use stdClass;
 
 /**
@@ -19,7 +22,7 @@ class MultiRouteSpecificationTest extends MultiRouteSpecificationTestBase
      * @param array $specifications
      * @since 4.9.71.p
      * @return MultiRouteSpecificationMock
-     * @throws \EventEspresso\core\exceptions\InvalidEntityException
+     * @throws InvalidEntityException
      */
     public function getMultiRouteSpecification(array $specifications)
     {
@@ -31,13 +34,13 @@ class MultiRouteSpecificationTest extends MultiRouteSpecificationTestBase
 
     /**
      * @since 4.9.71.p
-     * @throws \PHPUnit\Framework\Exception
-     * @throws \EventEspresso\core\exceptions\InvalidEntityException
+     * @throws Exception
+     * @throws InvalidEntityException
      */
     public function test__construct()
     {
         $this->assertInstanceOf(
-            'EventEspresso\tests\mocks\core\domain\entities\routing\MultiRouteSpecificationMock',
+            'EventEspresso\tests\mocks\core\domain\entities\routing\specifications\MultiRouteSpecificationMock',
             $this->getMultiRouteSpecification(
                 array(
                     $this->getRouteMatchOne(),
@@ -49,14 +52,14 @@ class MultiRouteSpecificationTest extends MultiRouteSpecificationTestBase
 
     /**
      * @since 4.9.71.p
-     * @throws \PHPUnit\Framework\Exception
-     * @throws \EventEspresso\core\exceptions\InvalidEntityException
+     * @throws Exception
+     * @throws InvalidEntityException
      */
     public function test__constructWithBadParameters()
     {
         $this->setExceptionExpected('EventEspresso\core\exceptions\InvalidEntityException');
         $this->assertInstanceOf(
-            'EventEspresso\tests\mocks\core\domain\entities\routing\MultiRouteSpecificationMock',
+            'EventEspresso\tests\mocks\core\domain\entities\routing\specifications\MultiRouteSpecificationMock',
             $this->getMultiRouteSpecification(
                 array(
                     new stdClass(),
@@ -68,8 +71,8 @@ class MultiRouteSpecificationTest extends MultiRouteSpecificationTestBase
 
     /**
      * @since 4.9.71.p
-     * @throws \PHPUnit\Framework\AssertionFailedError
-     * @throws \EventEspresso\core\exceptions\InvalidEntityException
+     * @throws AssertionFailedError
+     * @throws InvalidEntityException
      */
     public function testIsMatchingRoute()
     {

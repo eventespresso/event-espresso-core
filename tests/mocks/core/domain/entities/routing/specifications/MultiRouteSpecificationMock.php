@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\tests\mocks\core\domain\entities\routing;
+namespace EventEspresso\tests\mocks\core\domain\entities\routing\specifications;
 
 use EventEspresso\core\domain\entities\routing\specifications\MultiRouteSpecification;
 
@@ -16,7 +16,7 @@ class MultiRouteSpecificationMock extends MultiRouteSpecification
     private $results = array();
 
     /**
-     * @param bool $param
+     * @param bool $result
      */
     public function addResults($result)
     {

@@ -1,6 +1,10 @@
 <?php
 
-namespace EventEspresso\tests\testcases\core\domain\entities\routing;
+namespace EventEspresso\tests\testcases\core\domain\entities\routing\specifications;
+
+use EventEspresso\core\exceptions\InvalidEntityException;
+use EventEspresso\tests\mocks\core\domain\entities\routing\specifications\RouteMatchSpecificationMock;
+use PHPUnit\Framework\Exception;
 
 /**
  * MultiRouteSpecificationTestBase
@@ -19,7 +23,7 @@ class MultiRouteSpecificationTestBase extends RouteMatchSpecificationTestBase
 
     /**
      * @since 4.9.71.p
-     * @return \EventEspresso\tests\mocks\core\domain\entities\routing\specifications\RouteMatchSpecificationMock
+     * @return RouteMatchSpecificationMock
      */
     public function getRouteMatchOne()
     {
@@ -31,7 +35,7 @@ class MultiRouteSpecificationTestBase extends RouteMatchSpecificationTestBase
 
     /**
      * @since 4.9.71.p
-     * @return \EventEspresso\tests\mocks\core\domain\entities\routing\specifications\RouteMatchSpecificationMock
+     * @return RouteMatchSpecificationMock
      */
     public function getRouteMatchTwo()
     {
@@ -43,7 +47,7 @@ class MultiRouteSpecificationTestBase extends RouteMatchSpecificationTestBase
 
     /**
      * @since 4.9.71.p
-     * @return \EventEspresso\tests\mocks\core\domain\entities\routing\specifications\RouteMatchSpecificationMock
+     * @return RouteMatchSpecificationMock
      */
     public function getRouteMatchThree()
     {
@@ -55,8 +59,8 @@ class MultiRouteSpecificationTestBase extends RouteMatchSpecificationTestBase
 
     /**
      * @since 4.9.71.p
-     * @throws \PHPUnit\Framework\Exception
-     * @throws \EventEspresso\core\exceptions\InvalidEntityException
+     * @throws Exception
+     * @throws InvalidEntityException
      */
     public function testRouteConstructors()
     {

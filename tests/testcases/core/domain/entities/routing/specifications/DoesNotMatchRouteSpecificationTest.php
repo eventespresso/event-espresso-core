@@ -1,49 +1,51 @@
 <?php
 
-namespace EventEspresso\tests\testcases\core\domain\entities\routing;
+namespace EventEspresso\tests\testcases\core\domain\entities\routing\specifications;
 
+use EventEspresso\core\domain\entities\routing\specifications\DoesNotMatchRouteSpecification;
 use EventEspresso\core\domain\entities\routing\specifications\RouteMatchSpecificationInterface;
-use EventEspresso\tests\mocks\core\domain\entities\routing\specifications\RouteMatchSpecificationDecoratorMock;
+use PHPUnit\Framework\AssertionFailedError;
+use PHPUnit\Framework\Exception;
 
 /**
- * Class RouteMatchSpecificationDecoratorTest
+ * Class DoesNotMatchRouteSpecificationTest
  * Description
  *
  * @package EventEspresso\tests\testcases\core\domain\entities\routing
  * @author  Brent Christensen
  * @since   4.9.71.p
  */
-class RouteMatchSpecificationDecoratorTest extends RouteMatchSpecificationTestBase
+class DoesNotMatchRouteSpecificationTest extends RouteMatchSpecificationDecoratorTest
 {
     /**
-     * @since 4.9.71.p
      * @param RouteMatchSpecificationInterface|null $route_match_specification
-     * @return RouteMatchSpecificationDecoratorMock
+     * @return DoesNotMatchRouteSpecification
+     *@since 4.9.71.p
      */
     public function getDecorator(RouteMatchSpecificationInterface $route_match_specification = null)
     {
         $route_match_specification = $route_match_specification instanceof RouteMatchSpecificationInterface
             ? $route_match_specification
             : $this->getRouteMatchSpecification();
-        return new RouteMatchSpecificationDecoratorMock($route_match_specification);
+        return new DoesNotMatchRouteSpecification($route_match_specification);
     }
 
     /**
      * @since 4.9.71.p
-     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      */
     public function test__construct()
     {
+        // useless test but need to override parent constructor
         $this->assertInstanceOf(
-            'EventEspresso\tests\mocks\core\domain\entities\routing\specifications\RouteMatchSpecificationMock',
-            $this->getDecorator()->getSpecification()
+            'EventEspresso\core\domain\entities\routing\specifications\DoesNotMatchRouteSpecification',
+            $this->getDecorator()
         );
 
     }
-
     /**
      * @since 4.9.71.p
-     * @throws \PHPUnit\Framework\AssertionFailedError
+     * @throws AssertionFailedError
      */
     public function testIsMatchingRoute()
     {
@@ -52,18 +54,21 @@ class RouteMatchSpecificationDecoratorTest extends RouteMatchSpecificationTestBa
         $route_match_specification->setParam('testing');
         $route_match_specification->setValue('one-two-one-two');
         $decorator = $this->getDecorator($route_match_specification);
-        $this->assertFalse($decorator->isMatchingRoute());
+        // IT'S OPPOSITE DAY!!!
+        $this->assertTrue($decorator->isMatchingRoute());
         //  testing 1-2-1-2 request but checking for other route
         $route_match_specification = $this->getRouteMatchSpecification(array('testing' => 'one-two-one-two'));
         $route_match_specification->setParam('testing');
         $route_match_specification->setValue('one-two-three');
         $decorator = $this->getDecorator($route_match_specification);
-        $this->assertFalse($decorator->isMatchingRoute());
+        // IT'S OPPOSITE DAY!!!
+        $this->assertTrue($decorator->isMatchingRoute());
         //  testing 1-2-1-2 request and route
         $route_match_specification = $this->getRouteMatchSpecification(array('testing' => 'one-two-one-two'));
         $route_match_specification->setParam('testing');
         $route_match_specification->setValue('one-two-one-two');
         $decorator = $this->getDecorator($route_match_specification);
-        $this->assertTrue($decorator->isMatchingRoute());
+        // IT'S OPPOSITE DAY!!!
+        $this->assertFalse($decorator->isMatchingRoute());
     }
 }

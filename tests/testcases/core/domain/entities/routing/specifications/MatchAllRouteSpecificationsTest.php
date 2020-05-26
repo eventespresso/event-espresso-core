@@ -1,28 +1,29 @@
 <?php
 
-namespace EventEspresso\tests\testcases\core\domain\entities\routing;
+namespace EventEspresso\tests\testcases\core\domain\entities\routing\specifications;
 
-use EventEspresso\core\domain\entities\routing\specifications\MatchAnyRouteSpecification;
+use EventEspresso\core\domain\entities\routing\specifications\MatchAllRouteSpecifications;
+use EventEspresso\core\exceptions\InvalidEntityException;
+use PHPUnit\Framework\AssertionFailedError;
 
 /**
- * Class MultiRouteSpecificationTEst
- * Description
+ * MatchAllRouteSpecificationsTest
  *
  * @package EventEspresso\tests\testcases\core\domain\entities\routing
  * @author  Brent Christensen
  * @since   4.9.71.p
  */
-class MatchAnyRouteSpecificationTest extends MultiRouteSpecificationTestBase
+class MatchAllRouteSpecificationsTest extends MultiRouteSpecificationTestBase
 {
     /**
      * @param array $specifications
-     * @since 4.9.71.p
-     * @return MatchAnyRouteSpecification
-     * @throws \EventEspresso\core\exceptions\InvalidEntityException
+     * @return MatchAllRouteSpecifications
+     * @throws InvalidEntityException
+     *@since 4.9.71.p
      */
     public function getMultiRouteSpecification(array $specifications)
     {
-        return new MatchAnyRouteSpecification(
+        return new MatchAllRouteSpecifications(
             $specifications,
             $this->getRequest($this->request_params)
         );
@@ -30,8 +31,8 @@ class MatchAnyRouteSpecificationTest extends MultiRouteSpecificationTestBase
 
     /**
      * @since 4.9.71.p
-     * @throws \PHPUnit\Framework\AssertionFailedError
-     * @throws \EventEspresso\core\exceptions\InvalidEntityException
+     * @throws AssertionFailedError
+     * @throws InvalidEntityException
      */
     public function testIsMatchingRoute()
     {
@@ -44,12 +45,12 @@ class MatchAnyRouteSpecificationTest extends MultiRouteSpecificationTestBase
         $this->assertTrue($route_match_specification->isMatchingRoute());
         $route_match_specification = $this->getMultiRouteSpecification(
             array(
-                // will not match but test will pass after hitting the next spec
-                $this->getRouteMatchThree(),
                 $this->getRouteMatchOne(),
                 $this->getRouteMatchTwo(),
+                // will not match
+                $this->getRouteMatchThree(),
             )
         );
-        $this->assertTrue($route_match_specification->isMatchingRoute());
+        $this->assertFalse($route_match_specification->isMatchingRoute());
     }
 }

@@ -2,55 +2,47 @@
 
 namespace EventEspresso\tests\testcases\core\domain\entities\routing\specifications\admin;
 
-use EventEspresso\core\domain\entities\routing\specifications\admin\EspressoEventEditor;
-use EventEspresso\core\domain\entities\routing\specifications\admin\EspressoEventEditorAddNew;
-use EventEspresso\core\domain\entities\routing\specifications\admin\EspressoEventEditorEdit;
-use EventEspresso\tests\testcases\core\domain\entities\routing\MultiRouteSpecificationTestBase;
+use EventEspresso\core\domain\entities\routing\specifications\admin\EspressoEventsListTable;
+use EventEspresso\core\exceptions\InvalidEntityException;
+use EventEspresso\tests\testcases\core\domain\entities\routing\specifications\RouteMatchSpecificationTestBase;
+use PHPUnit\Framework\AssertionFailedError;
 
 /**
- * EspressoEventEditorTest
+ * EspressoEventsListTableTest
  *
  * @package EventEspresso\core\domain\entities\routing\specifications
  * @author  Brent Christensen
  * @since   4.9.71.p
  */
-class EspressoEventEditorTest extends MultiRouteSpecificationTestBase
+class EspressoEventsListTableTest extends RouteMatchSpecificationTestBase
 {
 
     /**
      * @param array $request_params
      * @since 4.9.71.p
-     * @return EspressoEventEditor
-     * @throws \EventEspresso\core\exceptions\InvalidEntityException
+     * @return EspressoEventsListTable
+     * @throws InvalidEntityException
      */
     public function getMultiRouteSpecification(array $request_params)
     {
-        $request = $this->getRequest($request_params);
-        return new EspressoEventEditor(
-            new EspressoEventEditorEdit($request),
-            new EspressoEventEditorAddNew($request),
-            $request
-        );
+        return new EspressoEventsListTable($this->getRequest($request_params));
     }
 
     /**
      * @since 4.9.71.p
-     * @throws \PHPUnit\Framework\AssertionFailedError
-     * @throws \EventEspresso\core\exceptions\InvalidEntityException
+     * @throws AssertionFailedError
+     * @throws InvalidEntityException
      */
     public function testIsMatchingRoute()
     {
         $route_match_specification = $this->getMultiRouteSpecification(
-            array(
-                'page' => 'espresso_events',
-                'action'=> 'edit',
-            )
+            array('page' => 'espresso_events')
         );
         $this->assertTrue($route_match_specification->isMatchingRoute());
         $route_match_specification = $this->getMultiRouteSpecification(
             array(
                 'page' => 'espresso_events',
-                'action'=> 'create_new',
+                'action' => 'default',
             )
         );
         $this->assertTrue($route_match_specification->isMatchingRoute());

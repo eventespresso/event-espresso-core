@@ -5,7 +5,9 @@ namespace EventEspresso\tests\testcases\core\domain\entities\routing\specificati
 use EventEspresso\core\domain\entities\routing\specifications\admin\WordPressPostsEditor;
 use EventEspresso\core\domain\entities\routing\specifications\admin\WordPressPostsEditorAddNew;
 use EventEspresso\core\domain\entities\routing\specifications\admin\WordPressPostsEditorEdit;
-use EventEspresso\tests\testcases\core\domain\entities\routing\MultiRouteSpecificationTestBase;
+use EventEspresso\core\exceptions\InvalidEntityException;
+use EventEspresso\tests\testcases\core\domain\entities\routing\specifications\MultiRouteSpecificationTestBase;
+use PHPUnit\Framework\AssertionFailedError;
 
 /**
  * WordPressPostsEditorTest
@@ -22,7 +24,7 @@ class WordPressPostsEditorTest extends MultiRouteSpecificationTestBase
      * @param array $server
      * @since 4.9.71.p
      * @return WordPressPostsEditor
-     * @throws \EventEspresso\core\exceptions\InvalidEntityException
+     * @throws InvalidEntityException
      */
     public function getMultiRouteSpecification(array $request_params, array $server)
     {
@@ -36,8 +38,8 @@ class WordPressPostsEditorTest extends MultiRouteSpecificationTestBase
 
     /**
      * @since 4.9.71.p
-     * @throws \PHPUnit\Framework\AssertionFailedError
-     * @throws \EventEspresso\core\exceptions\InvalidEntityException
+     * @throws AssertionFailedError
+     * @throws InvalidEntityException
      */
     public function testIsMatchingRoute()
     {

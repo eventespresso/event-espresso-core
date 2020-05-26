@@ -1,9 +1,10 @@
 <?php
-namespace EventEspresso\tests\testcases\core\domain\entities\routing;
+namespace EventEspresso\tests\testcases\core\domain\entities\routing\specifications;
 
 use EventEspresso\core\services\request\Request;
 use EventEspresso\tests\mocks\core\domain\entities\routing\specifications\RouteMatchSpecificationMock;
 use EventEspresso\tests\includes\EspressoPHPUnitFrameworkTestCase;
+use PHPUnit\Framework\Exception;
 
 /**
  * RouteMatchSpecificationTestBase
@@ -14,9 +15,15 @@ use EventEspresso\tests\includes\EspressoPHPUnitFrameworkTestCase;
  */
 class RouteMatchSpecificationTestBase extends EspressoPHPUnitFrameworkTestCase
 {
+
     /**
-     * @since 4.9.71.p
+     * @param array $get
+     * @param array $post
+     * @param array $cookie
+     * @param array $server
+     * @param array $files
      * @return RouteMatchSpecificationMock
+     * @since 4.9.71.p
      */
     protected function getRouteMatchSpecification(
         array $get = array(),
@@ -30,9 +37,15 @@ class RouteMatchSpecificationTestBase extends EspressoPHPUnitFrameworkTestCase
         );
     }
 
+
     /**
-     * @since 4.9.71.p
+     * @param array $get
+     * @param array $post
+     * @param array $cookie
+     * @param array $server
+     * @param array $files
      * @return Request
+     * @since 4.9.71.p
      */
     protected function getRequest(
         array $get = array(),
@@ -46,7 +59,7 @@ class RouteMatchSpecificationTestBase extends EspressoPHPUnitFrameworkTestCase
 
     /**
      * @since 4.9.71.p
-     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      */
     public function test__construct()
     {

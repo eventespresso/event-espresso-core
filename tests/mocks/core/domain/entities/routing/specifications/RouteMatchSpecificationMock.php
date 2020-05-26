@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\tests\mocks\core\domain\entities\routing;
+namespace EventEspresso\tests\mocks\core\domain\entities\routing\specifications;
 
 use EventEspresso\core\domain\entities\routing\specifications\RouteMatchSpecification;
 use EventEspresso\core\services\request\RequestInterface;
