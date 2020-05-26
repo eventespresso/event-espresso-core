@@ -46,7 +46,11 @@ const useMutatePrices = (): Callback => {
 						}
 						// it's surely an existing price that's been modified
 						return new Promise((resolve, onError) => {
-							const onCompleted = ({ updateEspressoPrice: { espressoPrice: price } }: any): void => {
+							const onCompleted = ({
+								data: {
+									updateEspressoPrice: { espressoPrice: price },
+								},
+							}: any): void => {
 								relatedPriceIds.push(price.id);
 								resolve(price);
 							};
