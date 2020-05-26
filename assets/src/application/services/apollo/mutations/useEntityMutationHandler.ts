@@ -76,7 +76,7 @@ const useEntityMutationHandler = (getMutationOptions, typeName: string, id?: str
 				called: true,
 			});
 		},
-		[getToasterKey, getToasterMessage, /* toaster, */ updateResult]
+		[getToasterKey, getToasterMessage, toaster, updateResult]
 	);
 
 	const onMutationComplete = useCallback(
@@ -100,7 +100,7 @@ const useEntityMutationHandler = (getMutationOptions, typeName: string, id?: str
 				onCompleted(data);
 			}
 		},
-		[getToasterKey, getToasterMessage, /* toaster, */ updateResult]
+		[getToasterKey, getToasterMessage, toaster, updateResult]
 	);
 
 	const onMutationError = useCallback(
@@ -120,7 +120,7 @@ const useEntityMutationHandler = (getMutationOptions, typeName: string, id?: str
 				onError(error);
 			}
 		},
-		[getToasterKey, getToasterMessage, /* toaster, */ updateResult]
+		[getToasterKey, getToasterMessage, toaster, updateResult]
 	);
 
 	const mutate = useCallback(
