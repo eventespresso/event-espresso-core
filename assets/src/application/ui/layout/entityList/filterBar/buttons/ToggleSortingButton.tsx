@@ -14,8 +14,6 @@ const ToggleSortingButton: React.FC<ToggleSortingButtonProps> = ({
 	...rest
 }) => {
 	const id = `ee-toggle-sorting-btn-${listId}`;
-	const tooltip = sortingEnabled ? __('disable sorting') : __('enable sorting');
-	const tooltipProps = { placement: 'top' as 'top' };
 
 	return (
 		<Button
@@ -24,12 +22,10 @@ const ToggleSortingButton: React.FC<ToggleSortingButtonProps> = ({
 			icon={Sort}
 			id={id}
 			onClick={toggleSorting}
-			tooltip={tooltip}
-			tooltipProps={tooltipProps}
 			labelClassName='ee-filter-bar__btn-wrap'
 			{...rest}
 		>
-			{__('sorting')}
+			{sortingEnabled ? __('disable sorting') : __('enable sorting')}
 		</Button>
 	);
 };
