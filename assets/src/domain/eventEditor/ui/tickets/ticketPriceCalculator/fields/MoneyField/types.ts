@@ -3,6 +3,7 @@ import { CurrencyProps } from '@application/valueObjects/config/types';
 export interface MoneyFieldProps {
 	after: string;
 	before: string;
-	currency: CurrencyProps;
+	children: React.ReactNode;
+	currency?: CurrencyProps;
 	isPercent?: boolean;
 }
