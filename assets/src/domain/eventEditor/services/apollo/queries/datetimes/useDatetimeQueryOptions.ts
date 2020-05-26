@@ -1,9 +1,8 @@
-import { useMemo } from 'react';
-
 import useEventId from '../events/useEventId';
 import { GET_DATETIMES } from '../datetimes';
 import { DatetimesList, DatetimesQueryArgs, ReadQueryOptions } from '@dataServices/apollo/queries';
 import { DatetimeEdge } from '@edtrServices/apollo/types';
+import { useMemoStringify } from '@appServices/hooks';
 
 type DatetimesQueryOptions = ReadQueryOptions<DatetimesList<DatetimeEdge>, DatetimesQueryArgs>;
 
@@ -19,7 +18,7 @@ const useDatetimeQueryOptions = (): DatetimesQueryOptions => {
 		},
 	};
 
-	return useMemo(() => options, [options]);
+	return useMemoStringify(options, [eventId]);
 };
 
 export default useDatetimeQueryOptions;
