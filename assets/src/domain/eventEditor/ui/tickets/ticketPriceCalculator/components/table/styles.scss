@@ -16,12 +16,4 @@
 			}
 		}
 	}
-
-	&-field {
-		display: flex;
-		&__before {
-			line-height: var(--ee-icon-button-size);
-			margin: 0 var(--ee-margin-smaller) 0 var(--ee-margin-small);
-		}
-	}
 }

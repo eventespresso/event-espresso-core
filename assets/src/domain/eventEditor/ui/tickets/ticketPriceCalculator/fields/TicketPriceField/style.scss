@@ -1,0 +1,16 @@
+.ee-ticket-price-field {
+	display: flex;
+
+	&__after,
+	&__before {
+		line-height: var(--ee-icon-button-size);
+	}
+
+	&__after {
+		margin: 0 var(--ee-margin-small) 0 var(--ee-margin-smaller);
+	}
+
+	&__before {
+		margin: 0 var(--ee-margin-smaller) 0 var(--ee-margin-small);
+	}
+}

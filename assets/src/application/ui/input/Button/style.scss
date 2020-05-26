@@ -60,8 +60,13 @@
 			transition: color 200ms linear, fill 200ms linear;
 		}
 
+		&:not(.ee-noIcon) {
+			span {
+				margin: 0 var(--ee-margin-micro) 0 var(--ee-margin-smaller);
+			}
+		}
+
 		span {
-			margin: 0 var(--ee-margin-micro) 0 var(--ee-margin-smaller);
 			transition: color 200ms linear;
 		}
 
