@@ -5,7 +5,7 @@ import { Cell } from '@appLayout/espressoTable';
 import { DownCircleFilled, UpCircleFilled } from '@appDisplay/icons/svgs';
 import { IconButton } from '@application/ui/input';
 import { parsedAmount } from '@appServices/utilities/money';
-import { TicketPrice } from '../../fields';
+import { TicketPriceField } from '../../fields';
 import { FormatAmountFunction } from '@appServices/utilities/money/formatAmount';
 import { FooterRow } from '@appLayout/espressoTable';
 import AddDefaultTaxesButton from '../../buttons/AddDefaultTaxesButton';
@@ -53,7 +53,7 @@ const useFooterRowGenerator = (): FooterRowGenerator => {
 				type: 'cell',
 				className: 'ee-ticket-price-calculator-total ee-number-column',
 				value: (
-					<TicketPrice
+					<TicketPriceField
 						component='input'
 						type={'number'}
 						disabled={!reverseCalculate}
