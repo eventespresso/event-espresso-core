@@ -4,14 +4,14 @@ namespace EventEspresso\tests\testcases\core\services\route_match;
 
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
-use EventEspresso\core\services\route_match\RouteMatchSpecificationFactory;
+use EventEspresso\core\services\routing\RouteMatchSpecificationFactory;
 use EventEspresso\tests\includes\EspressoPHPUnitFrameworkTestCase;
 
 /**
  * Class RouteMatchSpecificationFactoryTest
  * Description
  *
- * @package EventEspresso\tests\testcases\core\services\route_match
+ * @package EventEspresso\tests\testcases\core\services\routing
  * @author  Brent Christensen
  * @since   4.9.71.p
  */
@@ -92,4 +92,4 @@ class RouteMatchSpecificationFactoryTest extends EspressoPHPUnitFrameworkTestCas
         );
     }
 }
-// location: /tests/testcases/core/services/route_match/RouteMatchSpecificationFactoryTest.php
+// location: /tests/testcases/core/services/routing/RouteMatchSpecificationFactoryTest.php

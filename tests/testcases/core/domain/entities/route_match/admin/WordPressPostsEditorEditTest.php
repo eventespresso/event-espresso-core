@@ -2,13 +2,13 @@
 
 namespace EventEspresso\tests\testcases\core\domain\entities\route_match\specifications\admin;
 
-use EventEspresso\core\domain\entities\route_match\specifications\admin\WordPressPostsEditorEdit;
+use EventEspresso\core\domain\entities\routing\specifications\admin\WordPressPostsEditorEdit;
 use EventEspresso\tests\testcases\core\domain\entities\route_match\RouteMatchSpecificationTestBase;
 
 /**
  * WordPressPostsEditorEditTest
  *
- * @package EventEspresso\core\domain\entities\route_match\specifications
+ * @package EventEspresso\core\domain\entities\routing\specifications
  * @author  Brent Christensen
  * @since   4.9.71.p
  */
@@ -139,4 +139,4 @@ class WordPressPostsEditorEditTest extends RouteMatchSpecificationTestBase
         $this->assertFalse($route_match_specification->isMatchingRoute());
     }
 }
-// location: testcases/core/domain/entities/route_match/admin/WordPressPostsEditorEditTest.php
+// location: testcases/core/domain/entities/routing/admin/WordPressPostsEditorEditTest.php

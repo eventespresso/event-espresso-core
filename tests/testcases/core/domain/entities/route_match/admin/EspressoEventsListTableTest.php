@@ -2,13 +2,13 @@
 
 namespace EventEspresso\tests\testcases\core\domain\entities\route_match\specifications\admin;
 
-use EventEspresso\core\domain\entities\route_match\specifications\admin\EspressoEventsListTable;
+use EventEspresso\core\domain\entities\routing\specifications\admin\EspressoEventsListTable;
 use EventEspresso\tests\testcases\core\domain\entities\route_match\RouteMatchSpecificationTestBase;
 
 /**
  * EspressoEventsListTableTest
  *
- * @package EventEspresso\core\domain\entities\route_match\specifications
+ * @package EventEspresso\core\domain\entities\routing\specifications
  * @author  Brent Christensen
  * @since   4.9.71.p
  */

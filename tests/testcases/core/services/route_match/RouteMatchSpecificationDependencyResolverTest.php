@@ -5,7 +5,7 @@ namespace EventEspresso\tests\testcases\core\services\route_match;
 use EE_Dependency_Map;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
-use EventEspresso\core\services\route_match\RouteMatchSpecificationDependencyResolver;
+use EventEspresso\core\services\routing\RouteMatchSpecificationDependencyResolver;
 use EventEspresso\tests\includes\EspressoPHPUnitFrameworkTestCase;
 use ReflectionClass;
 
@@ -13,7 +13,7 @@ use ReflectionClass;
  * Class RouteMatchSpecificationDependencyResolverTest
  * Description
  *
- * @package EventEspresso\tests\testcases\core\services\route_match
+ * @package EventEspresso\tests\testcases\core\services\routing
  * @author  Brent Christensen
  * @since   4.9.71.p
  */
@@ -81,4 +81,4 @@ class RouteMatchSpecificationDependencyResolverTest extends EspressoPHPUnitFrame
     }
 }
 
-// location: /tests/testcases/core/services/route_match/RouteMatchSpecificationDependencyResolverTest.php
+// location: /tests/testcases/core/services/routing/RouteMatchSpecificationDependencyResolverTest.php

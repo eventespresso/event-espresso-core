@@ -2,15 +2,15 @@
 
 namespace EventEspresso\tests\testcases\core\domain\entities\route_match\specifications\admin;
 
-use EventEspresso\core\domain\entities\route_match\specifications\admin\EspressoEventEditor;
-use EventEspresso\core\domain\entities\route_match\specifications\admin\EspressoEventEditorAddNew;
-use EventEspresso\core\domain\entities\route_match\specifications\admin\EspressoEventEditorEdit;
+use EventEspresso\core\domain\entities\routing\specifications\admin\EspressoEventEditor;
+use EventEspresso\core\domain\entities\routing\specifications\admin\EspressoEventEditorAddNew;
+use EventEspresso\core\domain\entities\routing\specifications\admin\EspressoEventEditorEdit;
 use EventEspresso\tests\testcases\core\domain\entities\route_match\MultiRouteSpecificationTestBase;
 
 /**
  * EspressoEventEditorTest
  *
- * @package EventEspresso\core\domain\entities\route_match\specifications
+ * @package EventEspresso\core\domain\entities\routing\specifications
  * @author  Brent Christensen
  * @since   4.9.71.p
  */

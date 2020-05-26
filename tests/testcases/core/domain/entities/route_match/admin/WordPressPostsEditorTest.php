@@ -2,15 +2,15 @@
 
 namespace EventEspresso\tests\testcases\core\domain\entities\route_match\specifications\admin;
 
-use EventEspresso\core\domain\entities\route_match\specifications\admin\WordPressPostsEditor;
-use EventEspresso\core\domain\entities\route_match\specifications\admin\WordPressPostsEditorAddNew;
-use EventEspresso\core\domain\entities\route_match\specifications\admin\WordPressPostsEditorEdit;
+use EventEspresso\core\domain\entities\routing\specifications\admin\WordPressPostsEditor;
+use EventEspresso\core\domain\entities\routing\specifications\admin\WordPressPostsEditorAddNew;
+use EventEspresso\core\domain\entities\routing\specifications\admin\WordPressPostsEditorEdit;
 use EventEspresso\tests\testcases\core\domain\entities\route_match\MultiRouteSpecificationTestBase;
 
 /**
  * WordPressPostsEditorTest
  *
- * @package EventEspresso\core\domain\entities\route_match\specifications
+ * @package EventEspresso\core\domain\entities\routing\specifications
  * @author  Brent Christensen
  * @since   4.9.71.p
  */

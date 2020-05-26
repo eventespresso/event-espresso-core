@@ -2,14 +2,14 @@
 
 namespace EventEspresso\tests\mocks\core\domain\entities\route_match;
 
-use EventEspresso\core\domain\entities\route_match\RouteMatchSpecificationDecorator;
-use EventEspresso\core\domain\entities\route_match\RouteMatchSpecificationInterface;
+use EventEspresso\core\domain\entities\routing\specifications\RouteMatchSpecificationDecorator;
+use EventEspresso\core\domain\entities\routing\specifications\RouteMatchSpecificationInterface;
 
 /**
  * Class RouteMatchSpecificationDecoratorMock
  * Description
  *
- * @package EventEspresso\tests\mocks\core\domain\entities\route_match
+ * @package EventEspresso\tests\mocks\core\domain\entities\routing
  * @author  Brent Christensen
  * @since   4.9.71.p
  */

@@ -15,8 +15,7 @@ use EventEspresso\core\interfaces\ResettableInterface;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\request\RequestInterface;
-use EventEspresso\core\services\route_match\RouteHandler;
-use EventEspresso\core\services\route_match\RouteMatchSpecificationManager;
+use EventEspresso\core\services\routing\RouteHandler;
 
 /**
  * EE_System

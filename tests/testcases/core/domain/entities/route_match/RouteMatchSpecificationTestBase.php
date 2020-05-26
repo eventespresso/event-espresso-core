@@ -8,7 +8,7 @@ use EventEspresso\tests\includes\EspressoPHPUnitFrameworkTestCase;
 /**
  * RouteMatchSpecificationTestBase
  *
- * @package EventEspresso\tests\testcases\core\domain\entities\route_match
+ * @package EventEspresso\tests\testcases\core\domain\entities\routing
  * @author  Brent Christensen
  * @since   4.9.71.p
  */

@@ -2,12 +2,12 @@
 
 namespace EventEspresso\tests\testcases\core\domain\entities\route_match;
 
-use EventEspresso\core\domain\entities\route_match\MatchAllRouteSpecifications;
+use EventEspresso\core\domain\entities\routing\specifications\MatchAllRouteSpecifications;
 
 /**
  * MatchAllRouteSpecificationsTest
  *
- * @package EventEspresso\tests\testcases\core\domain\entities\route_match
+ * @package EventEspresso\tests\testcases\core\domain\entities\routing
  * @author  Brent Christensen
  * @since   4.9.71.p
  */
@@ -15,9 +15,9 @@ class MatchAllRouteSpecificationsTest extends MultiRouteSpecificationTestBase
 {
     /**
      * @param array $specifications
-     * @since 4.9.71.p
-     * @return MatchAllRouteSpecifications
+     * @return \EventEspresso\core\domain\entities\routing\specifications\MatchAllRouteSpecifications
      * @throws \EventEspresso\core\exceptions\InvalidEntityException
+     *@since 4.9.71.p
      */
     public function getMultiRouteSpecification(array $specifications)
     {

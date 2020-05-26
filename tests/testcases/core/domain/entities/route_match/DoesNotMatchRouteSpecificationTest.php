@@ -2,23 +2,23 @@
 
 namespace EventEspresso\tests\testcases\core\domain\entities\route_match;
 
-use EventEspresso\core\domain\entities\route_match\DoesNotMatchRouteSpecification;
-use EventEspresso\core\domain\entities\route_match\RouteMatchSpecificationInterface;
+use EventEspresso\core\domain\entities\routing\specifications\DoesNotMatchRouteSpecification;
+use EventEspresso\core\domain\entities\routing\specifications\RouteMatchSpecificationInterface;
 
 /**
  * Class DoesNotMatchRouteSpecificationTest
  * Description
  *
- * @package EventEspresso\tests\testcases\core\domain\entities\route_match
+ * @package EventEspresso\tests\testcases\core\domain\entities\routing
  * @author  Brent Christensen
  * @since   4.9.71.p
  */
 class DoesNotMatchRouteSpecificationTest extends RouteMatchSpecificationDecoratorTest
 {
     /**
-     * @since 4.9.71.p
-     * @param RouteMatchSpecificationInterface|null $route_match_specification
+     * @param \EventEspresso\core\domain\entities\routing\specifications\RouteMatchSpecificationInterface|null $route_match_specification
      * @return DoesNotMatchRouteSpecification
+     *@since 4.9.71.p
      */
     public function getDecorator(RouteMatchSpecificationInterface $route_match_specification = null)
     {

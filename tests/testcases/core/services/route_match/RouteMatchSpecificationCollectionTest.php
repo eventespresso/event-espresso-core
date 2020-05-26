@@ -2,17 +2,17 @@
 
 namespace EventEspresso\tests\testcases\core\services\route_match;
 
-use EventEspresso\core\domain\entities\route_match\specifications\admin\EspressoEventEditorEdit;
+use EventEspresso\core\domain\entities\routing\specifications\admin\EspressoEventEditorEdit;
 use EventEspresso\core\services\request\Request;
 use EventEspresso\core\services\request\RequestInterface;
-use EventEspresso\core\services\route_match\RouteMatchSpecificationCollection;
+use EventEspresso\core\services\routing\RouteMatchSpecificationCollection;
 use EventEspresso\tests\mocks\core\services\dependencies\composites\Oof;
 use EventEspresso\tests\includes\EspressoPHPUnitFrameworkTestCase;
 
 /**
  * Class RouteMatchSpecificationCollectionTest
  *
- * @package EventEspresso\tests\testcases\core\services\route_match
+ * @package EventEspresso\tests\testcases\core\services\routing
  * @author  Brent Christensen
  * @since   4.9.71.p
  */
@@ -110,4 +110,4 @@ class RouteMatchSpecificationCollectionTest extends EspressoPHPUnitFrameworkTest
     }
 }
 
-// location: /tests/testcases/core/services/route_match/RouteMatchSpecificationCollectionTest.php
+// location: /tests/testcases/core/services/routing/RouteMatchSpecificationCollectionTest.php

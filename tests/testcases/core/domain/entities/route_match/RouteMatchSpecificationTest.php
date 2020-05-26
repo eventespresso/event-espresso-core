@@ -4,7 +4,7 @@ namespace EventEspresso\tests\testcases\core\domain\entities\route_match;
 /**
  * RouteMatchSpecificationTest
  *
- * @package EventEspresso\tests\testcases\core\domain\entities\route_match
+ * @package EventEspresso\tests\testcases\core\domain\entities\routing
  * @author  Brent Christensen
  * @since   4.9.71.p
  */
@@ -41,4 +41,4 @@ class RouteMatchSpecificationTest extends RouteMatchSpecificationTestBase
     }
 }
 
-// location:  /testcases/core/domain/entities/route_match/RouteMatchSpecificationTest.php
+// location:  /testcases/core/domain/entities/routing/RouteMatchSpecificationTest.php

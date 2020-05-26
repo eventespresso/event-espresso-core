@@ -2,12 +2,12 @@
 
 namespace EventEspresso\tests\mocks\core\domain\entities\route_match;
 
-use EventEspresso\core\domain\entities\route_match\MultiRouteSpecification;
+use EventEspresso\core\domain\entities\routing\specifications\MultiRouteSpecification;
 
 /**
  * MultiRouteSpecificationMock
  *
- * @package EventEspresso\tests\mocks\core\domain\entities\route_match
+ * @package EventEspresso\tests\mocks\core\domain\entities\routing
  * @author  Brent Christensen
  * @since   4.9.71.p
  */
