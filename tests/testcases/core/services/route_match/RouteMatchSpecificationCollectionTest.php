@@ -1,18 +1,18 @@
 <?php
 
-namespace EventEspresso\tests\testcases\core\services\route_match;
+namespace EventEspresso\tests\testcases\core\services\routing;
 
-use EventEspresso\core\domain\entities\route_match\specifications\admin\EspressoEventEditorEdit;
+use EventEspresso\core\domain\entities\routing\specifications\admin\EspressoEventEditorEdit;
 use EventEspresso\core\services\request\Request;
 use EventEspresso\core\services\request\RequestInterface;
-use EventEspresso\core\services\route_match\RouteMatchSpecificationCollection;
+use EventEspresso\core\services\routing\RouteMatchSpecificationCollection;
 use EventEspresso\tests\mocks\core\services\dependencies\composites\Oof;
 use EventEspresso\tests\includes\EspressoPHPUnitFrameworkTestCase;
 
 /**
  * Class RouteMatchSpecificationCollectionTest
  *
- * @package EventEspresso\tests\testcases\core\services\route_match
+ * @package EventEspresso\tests\testcases\core\services\routing
  * @author  Brent Christensen
  * @since   4.9.71.p
  */
@@ -55,7 +55,7 @@ class RouteMatchSpecificationCollectionTest extends EspressoPHPUnitFrameworkTest
     public function test__construct()
     {
         $this->assertInstanceOf(
-            'EventEspresso\core\services\route_match\RouteMatchSpecificationCollection',
+            'EventEspresso\core\services\routing\RouteMatchSpecificationCollection',
             $this->getCollection()
         );
     }
@@ -71,7 +71,7 @@ class RouteMatchSpecificationCollectionTest extends EspressoPHPUnitFrameworkTest
     public function testAdd()
     {
         $request = $this->getRequest();
-        $route_fqcn = 'EventEspresso\core\domain\entities\route_match\specifications\admin\EspressoEventEditorEdit';
+        $route_fqcn = 'EventEspresso\core\domain\entities\routing\specifications\admin\EspressoEventEditorEdit';
         $collection = $this->getCollection();
         $this->assertFalse($collection->has($route_fqcn));
         $route = $this->getRoute($request);
@@ -100,7 +100,7 @@ class RouteMatchSpecificationCollectionTest extends EspressoPHPUnitFrameworkTest
         $route = $this->getRoute($request);
         $this->assertTrue($collection->add($route));
         $this->assertEquals(
-            'EventEspresso\core\domain\entities\route_match\specifications\admin\EspressoEventEditorEdit',
+            'EventEspresso\core\domain\entities\routing\specifications\admin\EspressoEventEditorEdit',
             $collection->getIdentifier($route)
         );
         $this->assertEquals(
@@ -110,4 +110,4 @@ class RouteMatchSpecificationCollectionTest extends EspressoPHPUnitFrameworkTest
     }
 }
 
-// location: /tests/testcases/core/services/route_match/RouteMatchSpecificationCollectionTest.php
+// location: /tests/testcases/core/services/routing/RouteMatchSpecificationCollectionTest.php

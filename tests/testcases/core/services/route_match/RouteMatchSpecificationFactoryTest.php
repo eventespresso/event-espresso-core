@@ -1,17 +1,17 @@
 <?php
 
-namespace EventEspresso\tests\testcases\core\services\route_match;
+namespace EventEspresso\tests\testcases\core\services\routing;
 
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
-use EventEspresso\core\services\route_match\RouteMatchSpecificationFactory;
+use EventEspresso\core\services\routing\RouteMatchSpecificationFactory;
 use EventEspresso\tests\includes\EspressoPHPUnitFrameworkTestCase;
 
 /**
  * Class RouteMatchSpecificationFactoryTest
  * Description
  *
- * @package EventEspresso\tests\testcases\core\services\route_match
+ * @package EventEspresso\tests\testcases\core\services\routing
  * @author  Brent Christensen
  * @since   4.9.71.p
  */
@@ -42,7 +42,7 @@ class RouteMatchSpecificationFactoryTest extends EspressoPHPUnitFrameworkTestCas
     {
         return new RouteMatchSpecificationFactory(
             $this->loader->getShared(
-                'EventEspresso\core\services\route_match\RouteMatchSpecificationDependencyResolver'
+                'EventEspresso\core\services\routing\RouteMatchSpecificationDependencyResolver'
             ),
             $this->loader
         );
@@ -55,7 +55,7 @@ class RouteMatchSpecificationFactoryTest extends EspressoPHPUnitFrameworkTestCas
     public function test__construct()
     {
         $this->assertInstanceOf(
-            'EventEspresso\core\services\route_match\RouteMatchSpecificationFactory',
+            'EventEspresso\core\services\routing\RouteMatchSpecificationFactory',
             $this->getFactory()
         );
     }
@@ -68,7 +68,7 @@ class RouteMatchSpecificationFactoryTest extends EspressoPHPUnitFrameworkTestCas
      */
     public function testCreateNewRouteMatchSpecification()
     {
-        $fqcn = 'EventEspresso\core\domain\entities\route_match\specifications\admin\EspressoEventEditorEdit';
+        $fqcn = 'EventEspresso\core\domain\entities\routing\specifications\admin\EspressoEventEditorEdit';
         $this->assertInstanceOf(
             $fqcn,
             $this->getFactory()->createNewRouteMatchSpecification($fqcn)
@@ -85,11 +85,11 @@ class RouteMatchSpecificationFactoryTest extends EspressoPHPUnitFrameworkTestCas
      */
     public function testCreate()
     {
-        $fqcn = 'EventEspresso\core\domain\entities\route_match\specifications\admin\EspressoEventEditorEdit';
+        $fqcn = 'EventEspresso\core\domain\entities\routing\specifications\admin\EspressoEventEditorEdit';
         $this->assertInstanceOf(
             $fqcn,
             RouteMatchSpecificationFactory::create($fqcn)
         );
     }
 }
-// location: /tests/testcases/core/services/route_match/RouteMatchSpecificationFactoryTest.php
+// location: /tests/testcases/core/services/routing/RouteMatchSpecificationFactoryTest.php

@@ -14,7 +14,7 @@ use EventEspresso\core\services\collections\CollectionInterface;
 use EventEspresso\core\services\collections\CollectionLoader;
 use EventEspresso\core\services\collections\CollectionLoaderException;
 use EventEspresso\core\services\request\RequestInterface;
-use EventEspresso\core\services\route_match\RouteMatchSpecificationManager;
+use EventEspresso\core\services\routing\RouteMatchSpecificationManager;
 use Exception;
 use WP_Block_Type;
 
