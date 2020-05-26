@@ -18,12 +18,10 @@ const ToggleFiltersButton: React.FC<ToggleFiltersButtonProps> = ({ listId, showF
 			icon={Filter}
 			id={filterId}
 			onClick={toggleFilters}
-			tooltip={tooltip}
-			tooltipProps={{ placement: 'top' }}
 			labelClassName={'ee-filter-bar__btn-wrap'}
 			{...rest}
 		>
-			{__('filters')}
+			{showFilters ? __('hide filters') : __('show filters')}
 		</Button>
 	);
 };
