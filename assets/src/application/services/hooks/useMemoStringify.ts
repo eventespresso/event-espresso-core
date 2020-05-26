@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
-import { is } from 'ramda';
+import { is, toString } from 'ramda';
 
 const useMemoStringify = (data: any, deps?: any[]): any => {
 	let dataStringified: string;
 
 	if (deps && Array.isArray(deps)) {
-		dataStringified = deps.join(':');
+		dataStringified = deps.map(toString).join(':');
 	}
 
 	if (is(Object, data)) {
