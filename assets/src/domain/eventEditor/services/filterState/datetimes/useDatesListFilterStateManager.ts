@@ -3,7 +3,7 @@ import { useCallback, useMemo, useReducer } from 'react';
 import reducer from './reducer';
 import { DatetimesFilterState, DatetimesFilterStateManager, DatetimeSales, DatetimeStatus } from './types';
 import { DisplayStartOrEndDate, SortBy } from '@sharedServices/filterState';
-import { useEntityListFilterStateManager } from '@appLayout/entityList/filterBar';
+import useEntityListFilterStateManager from '@appLayout/entityList/filterBar/filterState/useEntityListFilterStateManager';
 
 type FSM = DatetimesFilterStateManager;
 
