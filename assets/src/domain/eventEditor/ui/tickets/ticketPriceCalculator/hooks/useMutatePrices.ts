@@ -31,20 +31,20 @@ const useMutatePrices = (): Callback => {
 						// if it's a newly added price
 						if (isNew) {
 							return new Promise((resolve, onError) => {
-								const onCompleted = ({ createEspressoPrice: { espressoPrice: price } }): void => {
+								const onCompleted = ({ createEspressoPrice: { espressoPrice: price } }: any): void => {
 									relatedPriceIds.push(price.id);
 									resolve(price);
 								};
-								createPrice({ ...normalizedPriceFields }, { onCompleted, onError });
+								createPrice({ ...normalizedPriceFields }).then(onCompleted).catch(onError);
 							});
 						}
 						// it's surely an existing price that's been modified
 						return new Promise((resolve, onError) => {
-							const onCompleted = ({ updateEspressoPrice: { espressoPrice: price } }): void => {
+							const onCompleted = ({ updateEspressoPrice: { espressoPrice: price } }: any): void => {
 								relatedPriceIds.push(price.id);
 								resolve(price);
 							};
-							updatePrice({ id: price.id, ...normalizedPriceFields }, { onCompleted, onError });
+							updatePrice({ id: price.id, ...normalizedPriceFields }).then(onCompleted).catch(onError);
 						});
 					})
 				);
@@ -53,11 +53,7 @@ const useMutatePrices = (): Callback => {
 			if (deletedPriceIds?.length) {
 				// Delete all unlucky ones
 				await Promise.all(
-					deletedPriceIds.map((id) => {
-						return new Promise((onCompleted, onError) =>
-							deletePrice({ id, deletePermanently: true }, { onCompleted, onError })
-						);
-					})
+					deletedPriceIds.map((id) => deletePrice({ id, deletePermanently: true }))
 				);
 			}
 

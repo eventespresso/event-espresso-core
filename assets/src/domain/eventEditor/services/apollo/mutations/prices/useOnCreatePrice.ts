@@ -12,13 +12,15 @@ const useOnCreatePrice = (): PriceMutationCallbackFn => {
 	const onCreatePrice = useCallback(
 		({ proxy, price, prices, ticketId, priceTypeId }: PriceMutationCallbackFnArgs): void => {
 			const { id: priceId } = price;
-			if (priceId) {
+			if (priceId && ticketId) {
 				updateRelations({
 					entity: 'prices',
 					entityId: priceId,
 					relation: 'tickets',
 					relationIds: [ticketId],
 				});
+			}
+			if (priceId && priceTypeId) {
 				updateRelations({
 					entity: 'prices',
 					entityId: priceId,

@@ -1,5 +1,6 @@
 import { DataProxy } from 'apollo-cache';
 import { OperationVariables } from 'apollo-client';
+import { ExecutionResult } from '@apollo/react-common';
 
 import { MutationInput, MutationType } from '@appServices/apollo/mutations/types';
 import { Entity as BaseEntity } from '@dataServices/types';
@@ -96,3 +97,7 @@ export interface MutationInputWithId {
 export interface MutationVariables<MI = MutationInput> {
 	input: Merge<MI, MutationInputWithId>;
 }
+
+export type MutationFunction<TData = any, TVariables = OperationVariables> = (
+	input?: TVariables
+) => Promise<ExecutionResult<TData>>;
