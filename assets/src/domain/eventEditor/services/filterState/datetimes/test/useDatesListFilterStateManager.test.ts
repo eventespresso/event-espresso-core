@@ -1,7 +1,7 @@
 import { act, renderHook } from '@testing-library/react-hooks';
 
 import { DisplayStartOrEndDate } from '@sharedServices/filterState';
-import { useDatesListFilterStateManager } from '../';
+import useDatesListFilterStateManager from '../useDatesListFilterStateManager';
 import { DatetimeSales, DatetimeStatus } from '../types';
 
 describe('useDatesListFilterStateManager', () => {
