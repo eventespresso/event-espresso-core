@@ -71,7 +71,7 @@ const useMutationWithFeedback: MutationWithFeedback = ({ typeName, mutation, mut
 	});
 
 	/**
-	 * Just insert the laoding indicator call into mutation function
+	 * Just insert the loading indicator call into mutation function
 	 */
 	const doMutation = useCallback<typeof mutate>(
 		(...args) => {
