@@ -1,7 +1,7 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
 
-import { ButtonGroup } from '@application/ui/input';
+import { ButtonGroup, ButtonSize } from '@application/ui/input';
 import CardViewFilterButton from './CardViewFilterButton';
 import TableViewFilterButton from './TableViewFilterButton';
 import { EntityListViewButtonGroupProps } from '../types';
@@ -15,7 +15,7 @@ const EntityListViewButtonGroup: React.FC<EntityListViewButtonGroupProps> = ({
 	view,
 }) => {
 	return (
-		<ButtonGroup>
+		<ButtonGroup buttonSize={ButtonSize.SMALL}>
 			<TableViewFilterButton listId={listId} setTableView={setTableView} view={view} />
 			<CardViewFilterButton listId={listId} setCardView={setCardView} view={view} />
 		</ButtonGroup>
