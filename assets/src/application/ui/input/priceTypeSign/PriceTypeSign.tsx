@@ -15,16 +15,12 @@ const PriceTypeSign: React.FC<Props> = ({ priceType }) => {
 	const config = useConfig();
 	const sign = config?.currency?.sign;
 	const signB4 = config?.currency?.signB4;
-	const currencySignCharacterCountClassName = getCurrencySignCharacterCountClassName(sign);
+
 	const currencySignPositionClassName = getCurrencySignPositionClassName(signB4);
 
-	const className = classNames(currencySignCharacterCountClassName, currencySignPositionClassName);
+	const className = classNames(currencySignPositionClassName);
 
-	return priceType.isPercent ? (
-		<PercentSign className={className} />
-	) : (
-		<CurrencySign className={className} sign={sign} />
-	);
+	return priceType.isPercent ? <PercentSign className={className} /> : <CurrencySign sign={sign} />;
 };
 
 export default PriceTypeSign;
