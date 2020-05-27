@@ -38,6 +38,8 @@ class WordPressPostsEditorEditTest extends RouteMatchSpecificationTestBase
      */
     public function testIsMatchingRoute()
     {
+        global $pagenow;
+        $pagenow = 'post.php';
         // with $_GET params
         $route_match_specification = $this->getMultiRouteSpecification(
             array(
@@ -48,91 +50,103 @@ class WordPressPostsEditorEditTest extends RouteMatchSpecificationTestBase
             array('REQUEST_URI' => 'wp-admin/post.php')
         );
         $this->assertTrue($route_match_specification->isMatchingRoute());
+
         $route_match_specification = $this->getMultiRouteSpecification(
             array('post_type' => 'post'),
             array(),
             array('REQUEST_URI' => 'wp-admin/post.php')
         );
         $this->assertFalse($route_match_specification->isMatchingRoute());
+
         $route_match_specification = $this->getMultiRouteSpecification(
-            array('action' => 'edit'),
-            array(),
-            array('REQUEST_URI' => 'wp-admin/post-new.php')
-        );
-        $this->assertFalse($route_match_specification->isMatchingRoute());
-        $route_match_specification = $this->getMultiRouteSpecification(
-            array(
+            [
                 'post_type' => 'custom-post-type',
-                'action' => 'edit',
-            ),
-            array(),
-            array('REQUEST_URI' => 'wp-admin/post.php')
-        );
-        $this->assertFalse($route_match_specification->isMatchingRoute());
-        $route_match_specification = $this->getMultiRouteSpecification(
-            array(
-                'post_type' => 'post',
-                'action' => 'edit',
-            ),
-            array(),
-            array('REQUEST_URI' => 'wp-admin/telephone-post.php')
+                'action'    => 'edit',
+            ],
+            [],
+            ['REQUEST_URI' => 'wp-admin/post.php']
         );
         $this->assertFalse($route_match_specification->isMatchingRoute());
 
         // with $_POST params
         $route_match_specification = $this->getMultiRouteSpecification(
-            array(),
-            array(
+            [],
+            [
                 'post_type' => 'post',
-                'action' => 'edit',
-            ),
-            array('REQUEST_URI' => 'wp-admin/post.php')
+                'action'    => 'edit',
+            ],
+            ['REQUEST_URI' => 'wp-admin/post.php']
         );
         $this->assertTrue($route_match_specification->isMatchingRoute());
+
         $route_match_specification = $this->getMultiRouteSpecification(
-            array(),
-            array('post_type' => 'post'),
-            array('REQUEST_URI' => 'wp-admin/post.php')
+            [],
+            ['post_type' => 'post'],
+            ['REQUEST_URI' => 'wp-admin/post.php']
         );
         $this->assertFalse($route_match_specification->isMatchingRoute());
+
+        $route_match_specification = $this->getMultiRouteSpecification(
+            [],
+            [
+                'post_type' => 'custom-post-type',
+                'action'    => 'edit',
+            ],
+            ['REQUEST_URI' => 'wp-admin/post.php']
+        );
+        $this->assertFalse($route_match_specification->isMatchingRoute());
+
+        // with $_GET && $_POST params
+        $route_match_specification = $this->getMultiRouteSpecification(
+            ['action' => 'edit'],
+            ['post_type' => 'post'],
+            ['REQUEST_URI' => 'wp-admin/post.php']
+        );
+        $this->assertTrue($route_match_specification->isMatchingRoute());
+
+        $route_match_specification = $this->getMultiRouteSpecification(
+            ['action' => 'edit'],
+            ['post_type' => 'custom-post-type'],
+            ['REQUEST_URI' => 'wp-admin/post.php']
+        );
+        $this->assertFalse($route_match_specification->isMatchingRoute());
+
+        $pagenow = 'post-new.php';
+        $route_match_specification = $this->getMultiRouteSpecification(
+            array('action' => 'edit'),
+            array(),
+            array('REQUEST_URI' => 'wp-admin/post-new.php')
+        );
+        $this->assertFalse($route_match_specification->isMatchingRoute());
+
         $route_match_specification = $this->getMultiRouteSpecification(
             array(),
             array('action' => 'edit'),
             array('REQUEST_URI' => 'wp-admin/post-new.php')
         );
         $this->assertFalse($route_match_specification->isMatchingRoute());
+
+        $pagenow = 'telephone-post';
         $route_match_specification = $this->getMultiRouteSpecification(
-            array(),
-            array(
-                'post_type' => 'custom-post-type',
-                'action' => 'edit',
-            ),
-            array('REQUEST_URI' => 'wp-admin/post.php')
-        );
-        $this->assertFalse($route_match_specification->isMatchingRoute());
-        $route_match_specification = $this->getMultiRouteSpecification(
-            array(),
-            array(
+            [
                 'post_type' => 'post',
-                'action' => 'edit',
-            ),
-            array('REQUEST_URI' => 'wp-admin/telephone-post.php')
+                'action'    => 'edit',
+            ],
+            [],
+            ['REQUEST_URI' => 'wp-admin/telephone-post.php']
         );
         $this->assertFalse($route_match_specification->isMatchingRoute());
 
-        // with $_GET && $_POST params
         $route_match_specification = $this->getMultiRouteSpecification(
-            array('action' => 'edit'),
-            array('post_type' => 'post'),
-            array('REQUEST_URI' => 'wp-admin/post.php')
-        );
-        $this->assertTrue($route_match_specification->isMatchingRoute());
-        $route_match_specification = $this->getMultiRouteSpecification(
-            array('action' => 'edit'),
-            array('post_type' => 'custom-post-type'),
-            array('REQUEST_URI' => 'wp-admin/post.php')
+            [],
+            [
+                'post_type' => 'post',
+                'action'    => 'edit',
+            ],
+            ['REQUEST_URI' => 'wp-admin/telephone-post.php']
         );
         $this->assertFalse($route_match_specification->isMatchingRoute());
+
         $route_match_specification = $this->getMultiRouteSpecification(
             array('action' => 'edit'),
             array('post_type' => 'post'),

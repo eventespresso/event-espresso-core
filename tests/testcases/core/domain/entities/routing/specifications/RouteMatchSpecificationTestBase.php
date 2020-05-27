@@ -16,6 +16,27 @@ use PHPUnit\Framework\Exception;
 class RouteMatchSpecificationTestBase extends EspressoPHPUnitFrameworkTestCase
 {
 
+    private $pagenow;
+
+
+    /**
+     * @param string $page_now
+     * @since $VID:$
+     */
+    public function setUp($page_now = 'admin.php')
+    {
+        global $pagenow;
+        $this->pagenow = $pagenow;
+        $pagenow = $page_now;
+    }
+
+
+    public function tearDown()
+    {
+        global $pagenow;
+        $pagenow = $this->pagenow;
+    }
+
     /**
      * @param array $get
      * @param array $post
