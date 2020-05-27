@@ -5,7 +5,9 @@ import { EntityListItemProps } from '@appLayout/entityList';
 import { useTicketMutator, usePriceMutator } from '@edtrServices/apollo/mutations';
 import { getGuids } from '@appServices/predicates';
 
-const useDeleteTicketHandler = ({ id }: EntityListItemProps): VoidFunction => {
+type Callback = (deletePermanently?: boolean) => Promise<void>;
+
+const useDeleteTicketHandler = ({ id }: EntityListItemProps): Callback => {
 	const { deleteEntity: deleteTicket } = useTicketMutator();
 	const relatedPrices = useTicketPrices(id);
 	const { deleteEntity: deletePrice } = usePriceMutator();
@@ -19,9 +21,12 @@ const useDeleteTicketHandler = ({ id }: EntityListItemProps): VoidFunction => {
 		});
 	}, [deletePrice, relatedPrices]);
 
-	return useCallback<VoidFunction>((): void => {
-		deleteTicket({ id }).then(onDeleteTicket).catch(console.error);
-	}, [deleteTicket, id, onDeleteTicket]);
+	return useCallback<Callback>(
+		(deletePermanently) => {
+			return deleteTicket({ id, deletePermanently }).then(onDeleteTicket).catch(console.error);
+		},
+		[deleteTicket, id, onDeleteTicket]
+	);
 };
 
 export default useDeleteTicketHandler;

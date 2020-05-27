@@ -52,6 +52,7 @@ export interface CacheUpdaterFnArgs extends MutationCallbackFnArgs {
 	price?: Price;
 	prices?: PriceEdge;
 	ticket?: Ticket;
+	ticketId?: string;
 	ticketIn?: string[];
 	tickets?: TicketEdge;
 }

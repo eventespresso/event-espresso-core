@@ -8,6 +8,7 @@ import { isTrashed } from '@sharedServices/predicates';
 import { useRelations } from '@appServices/apollo/relations';
 import { useTicketItem } from '@edtrServices/apollo';
 import { useTicketMutator } from '@edtrServices/apollo/mutations';
+import useDeleteTicketHandler from '@edtrUI/tickets/hooks/useDeleteTicketHandler';
 
 const useActions = ({ ticketId }) => {
 	// Make sure to subscribe to Apollo cache
@@ -18,7 +19,8 @@ const useActions = ({ ticketId }) => {
 
 	const { id, cacheId } = ticket;
 
-	const { createEntity, deleteEntity } = useTicketMutator(id);
+	const { createEntity } = useTicketMutator(id);
+	const deleteTicket = useDeleteTicketHandler(ticketId);
 	const { getRelations } = useRelations();
 
 	const datetimes = getRelations({
@@ -37,7 +39,7 @@ const useActions = ({ ticketId }) => {
 
 	const trashed = isTrashed(ticket);
 
-	const trashTicket = useCallback(() => deleteEntity({ id, deletePermanently: trashed }), [cacheId, trashed]);
+	const trashTicket = useCallback(() => deleteTicket(trashed), [cacheId, trashed]);
 
 	return {
 		copyTicket,
