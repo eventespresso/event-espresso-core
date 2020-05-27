@@ -1,15 +1,18 @@
 import React from 'react';
 import classNames from 'classnames';
 
-type Props = {
-	className: string;
+import { getCurrencySignCharacterCountClassName } from './utils';
+
+interface Props {
+	className?: string;
 	sign: string;
-};
+}
 
-const CurrencySign: React.FC<Props> = (props) => {
-	const className = classNames('ee-currency-sign', props.className);
+const CurrencySign: React.FC<Props> = ({ sign, ...props }) => {
+	const currencySignCharacterCountClassName = getCurrencySignCharacterCountClassName(sign);
+	const className = classNames(props.className, currencySignCharacterCountClassName, 'ee-currency-sign');
 
-	return <div className={className}>{props.sign}</div>;
+	return <div className={className}>{sign}</div>;
 };
 
 export default CurrencySign;

@@ -1,17 +1,38 @@
 import React from 'react';
 
 import { MoneyFieldProps } from './types';
+
+import { CurrencySign, PercentSign } from '@appInputs/priceTypeSign';
+
 import useConfig from '@appServices/config/useConfig';
 import './style.scss';
 
-const MoneyField: React.FC<MoneyFieldProps> = ({ after, before, children, isPercent = false }) => {
-	const { currency } = useConfig();
+const MoneyField: React.FC<MoneyFieldProps> = ({ children, isPercent = false, ...props }) => {
+	const config = useConfig();
+	const currency = props.currency ?? config?.currency;
+
+	const sign = currency?.sign;
+	const signB4 = currency?.signB4;
+
+	const beforeClassName = 'ee-money-field__before';
+	const beforeContent = signB4 && !isPercent && (
+		<div className={beforeClassName}>
+			<CurrencySign sign={sign} />
+		</div>
+	);
+
+	const afterClassName = 'ee-money-field__after';
+	const afterContent = isPercent ? (
+		<PercentSign className={afterClassName} />
+	) : (
+		!signB4 && <CurrencySign className={afterClassName} sign={sign} />
+	);
 
 	return (
-		<div className='ee-ticket-price-field'>
-			<div className='ee-ticket-price-field__before'>{before}</div>
+		<div className='ee-money-field'>
+			{beforeContent}
 			{children}
-			<div className='ee-ticket-price-field__after'>{after}</div>
+			{afterContent}
 		</div>
 	);
 };

@@ -1,4 +1,4 @@
-.ee-ticket-price-field {
+.ee-money-field {
 	display: flex;
 
 	&__after,
@@ -7,10 +7,10 @@
 	}
 
 	&__after {
-		margin: 0 var(--ee-margin-small) 0 var(--ee-margin-smaller);
+		margin: 0 var(--ee-margin-smaller) 0 var(--ee-margin-tiny);
 	}
 
 	&__before {
-		margin: 0 var(--ee-margin-smaller) 0 var(--ee-margin-small);
+		margin: 0 var(--ee-margin-tiny) 0 var(--ee-margin-smaller);
 	}
 }

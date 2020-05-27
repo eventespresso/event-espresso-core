@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { __ } from '@wordpress/i18n';
 
 type Props = {
-	className: string;
+	className?: string;
 };
 
 const PercentSign: React.FC<Props> = (props) => {
