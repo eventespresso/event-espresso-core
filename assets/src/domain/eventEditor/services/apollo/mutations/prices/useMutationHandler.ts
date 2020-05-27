@@ -33,7 +33,7 @@ const useMutationHandler = (): MH => {
 
 	const onUpdate = useCallback<MutationUpdater<Price, PriceCommonInput>>(
 		({ proxy, entity: price, input, mutationType }) => {
-			const { priceType: priceTypeId } = input;
+			const priceTypeId = input?.priceType;
 			// Read the existing data from cache.
 			let data: PricesList;
 			try {

@@ -13,7 +13,8 @@ const useUpdateDatetimeCache = (): CacheUpdaterFn => {
 	const updateDatetimeCache = useCallback(
 		({ proxy, datetimes, datetime, action }: CacheUpdaterFnArgs): void => {
 			const { nodes = [] } = datetimes;
-			let newNodes: Array<Datetime>, datetimeIndex: number;
+			let newNodes: Array<Datetime> = [],
+				datetimeIndex: number;
 			switch (action) {
 				case 'add':
 					newNodes = [...nodes, datetime];
