@@ -1,13 +1,13 @@
 import { useCallback, useMemo } from 'react';
-import { useMutation } from '@apollo/react-hooks';
 
 import { CreateTicketInput, UpdateTicketInput, DeleteTicketInput } from './types';
-import { MutationType } from '@appServices/apollo/mutations';
+import { MutationType, useMutationWithFeedback } from '@appServices/apollo/mutations';
 import { CREATE_TICKET, UPDATE_TICKET, DELETE_TICKET } from './';
 import useMutationHandler from './useMutationHandler';
 import useUpdateCallback from '../useUpdateCallback';
 import { MutationFunction, TypeName } from '../types';
 import { CreateTicketResult, UpdateTicketResult, DeleteTicketResult } from './types';
+import { useSystemNotifications } from '@application/services';
 
 interface TicketMutator {
 	createEntity: MutationFunction<CreateTicketResult, CreateTicketInput>;
@@ -18,9 +18,29 @@ interface TicketMutator {
 type TM = TicketMutator;
 
 const useTicketMutator = (id = ''): TM => {
-	const [createTicket] = useMutation(CREATE_TICKET);
-	const [updateTicket] = useMutation(UPDATE_TICKET);
-	const [deleteTicket] = useMutation(DELETE_TICKET);
+	// create a single toaster instance to share between all mutations
+	const toaster = useSystemNotifications();
+
+	const createTicket = useMutationWithFeedback({
+		typeName: TypeName.Ticket,
+		mutationType: MutationType.Create,
+		mutation: CREATE_TICKET,
+		toaster,
+	});
+
+	const updateTicket = useMutationWithFeedback({
+		typeName: TypeName.Ticket,
+		mutationType: MutationType.Update,
+		mutation: UPDATE_TICKET,
+		toaster,
+	});
+
+	const deleteTicket = useMutationWithFeedback({
+		typeName: TypeName.Ticket,
+		mutationType: MutationType.Delete,
+		mutation: DELETE_TICKET,
+		toaster,
+	});
 
 	const mutationHandler = useMutationHandler();
 

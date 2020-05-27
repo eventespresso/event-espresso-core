@@ -1,13 +1,13 @@
 import { useCallback, useMemo } from 'react';
-import { useMutation } from '@apollo/react-hooks';
 
 import { CreatePriceInput, UpdatePriceInput, DeletePriceInput } from './types';
-import { MutationType } from '@appServices/apollo/mutations';
+import { MutationType, useMutationWithFeedback } from '@appServices/apollo/mutations';
 import { CREATE_PRICE, UPDATE_PRICE, DELETE_PRICE } from './';
 import useMutationHandler from './useMutationHandler';
 import useUpdateCallback from '../useUpdateCallback';
 import { MutationFunction, TypeName } from '../types';
 import { CreatePriceResult, UpdatePriceResult, DeletePriceResult } from './types';
+import { useSystemNotifications } from '@application/services';
 
 interface PriceMutator {
 	createEntity: MutationFunction<CreatePriceResult, CreatePriceInput>;
@@ -18,9 +18,29 @@ interface PriceMutator {
 type PM = PriceMutator;
 
 const usePriceMutator = (id = ''): PM => {
-	const [createPrice] = useMutation(CREATE_PRICE);
-	const [updatePrice] = useMutation(UPDATE_PRICE);
-	const [deletePrice] = useMutation(DELETE_PRICE);
+	// create a single toaster instance to share between all mutations
+	const toaster = useSystemNotifications();
+
+	const createPrice = useMutationWithFeedback({
+		typeName: TypeName.Price,
+		mutationType: MutationType.Create,
+		mutation: CREATE_PRICE,
+		toaster,
+	});
+
+	const updatePrice = useMutationWithFeedback({
+		typeName: TypeName.Price,
+		mutationType: MutationType.Update,
+		mutation: UPDATE_PRICE,
+		toaster,
+	});
+
+	const deletePrice = useMutationWithFeedback({
+		typeName: TypeName.Price,
+		mutationType: MutationType.Delete,
+		mutation: DELETE_PRICE,
+		toaster,
+	});
 
 	const mutationHandler = useMutationHandler();
 

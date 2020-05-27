@@ -1,13 +1,13 @@
 import { useCallback, useMemo } from 'react';
-import { useMutation } from '@apollo/react-hooks';
 
 import { CreateDatetimeInput, UpdateDatetimeInput, DeleteDatetimeInput } from './types';
-import { MutationType } from '@appServices/apollo/mutations';
+import { MutationType, useMutationWithFeedback } from '@appServices/apollo/mutations';
 import { CREATE_DATETIME, UPDATE_DATETIME, DELETE_DATETIME } from './';
 import useMutationHandler from './useMutationHandler';
 import useUpdateCallback from '../useUpdateCallback';
 import { MutationFunction, TypeName } from '../types';
 import { CreateDatetimeResult, UpdateDatetimeResult, DeleteDatetimeResult } from './types';
+import { useSystemNotifications } from '@application/services';
 
 interface DatetimeMutator {
 	createEntity: MutationFunction<CreateDatetimeResult, CreateDatetimeInput>;
@@ -18,9 +18,29 @@ interface DatetimeMutator {
 type DM = DatetimeMutator;
 
 const useDatetimeMutator = (id = ''): DM => {
-	const [createDatetime] = useMutation(CREATE_DATETIME);
-	const [updateDatetime] = useMutation(UPDATE_DATETIME);
-	const [deleteDatetime] = useMutation(DELETE_DATETIME);
+	// create a single toaster instance to share between all mutations
+	const toaster = useSystemNotifications();
+
+	const createDatetime = useMutationWithFeedback({
+		typeName: TypeName.Datetime,
+		mutationType: MutationType.Create,
+		mutation: CREATE_DATETIME,
+		toaster,
+	});
+
+	const updateDatetime = useMutationWithFeedback({
+		typeName: TypeName.Datetime,
+		mutationType: MutationType.Update,
+		mutation: UPDATE_DATETIME,
+		toaster,
+	});
+
+	const deleteDatetime = useMutationWithFeedback({
+		typeName: TypeName.Datetime,
+		mutationType: MutationType.Delete,
+		mutation: DELETE_DATETIME,
+		toaster,
+	});
 
 	const mutationHandler = useMutationHandler();
 
