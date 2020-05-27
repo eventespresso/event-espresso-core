@@ -44,5 +44,5 @@ export type UpdateDatetimeResult = {
 };
 
 export type DeleteDatetimeResult = {
-	createEspressoDatetime: DatetimeMutationResult;
+	deleteEspressoDatetime: DatetimeMutationResult;
 };
