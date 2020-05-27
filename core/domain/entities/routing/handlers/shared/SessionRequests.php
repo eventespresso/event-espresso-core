@@ -6,7 +6,7 @@ use EE_Dependency_Map;
 use EventEspresso\core\domain\entities\routing\handlers\Route;
 
 /**
- * Class Shortcodes
+ * Class SessionRequests
  * registers dependencies and loads resources for requests where EE_Session may be required
  *
  * @package EventEspresso\core\domain\entities\routing\handlers\shared
