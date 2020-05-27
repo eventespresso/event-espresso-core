@@ -42,5 +42,5 @@ export type UpdatePriceResult = {
 };
 
 export type DeletePriceResult = {
-	createEspressoPrice: PriceMutationResult;
+	deleteEspressoPrice: PriceMutationResult;
 };

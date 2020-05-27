@@ -52,5 +52,5 @@ export type UpdateTicketResult = {
 };
 
 export type DeleteTicketResult = {
-	createEspressoTicket: TicketMutationResult;
+	deleteEspressoTicket: TicketMutationResult;
 };
