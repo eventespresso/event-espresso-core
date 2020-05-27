@@ -15,23 +15,19 @@ use WP_Post;
  */
 class WordPressPostsEditorEdit extends RouteMatchSpecification
 {
+
     /**
      * returns true if current request matches specification
      *
-     * @since 4.9.71.p
      * @return boolean
+     * @since 4.9.71.p
      */
     public function isMatchingRoute()
     {
-        global $post;
-        return strpos($this->request->requestUri(), 'wp-admin/post.php') !== false
-            && (
-                $this->request->getRequestParam('post_type', 'post') === 'post'
-                || (
-                    $post instanceof WP_Post
-                    && $post->post_type === 'post'
-                )
-            )
-            && $this->request->getRequestParam('action') === 'edit';
+        global $pagenow;
+        return $pagenow
+               && $pagenow === 'post.php'
+               && $this->request->getRequestParam('post_type', 'post') === 'post'
+               && $this->request->getRequestParam('action') === 'edit';
     }
 }

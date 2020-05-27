@@ -18,13 +18,13 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 class WordPressPageEditor extends MatchAnyRouteSpecification
 {
+
     /**
      * WordPressPostsEditor constructor.
      *
-     * @param WordPressPostsEditorEdit $edit_page_route_match
-     * @param WordPressPostsEditorAddNew $create_page_route_match
-     * @param RequestInterface           $request
-     * @throws \EventEspresso\core\exceptions\InvalidEntityException
+     * @param WordPressPageEditorEdit   $edit_page_route_match
+     * @param WordPressPageEditorAddNew $create_page_route_match
+     * @param RequestInterface          $request
      */
     public function __construct(
         WordPressPageEditorEdit $edit_page_route_match,

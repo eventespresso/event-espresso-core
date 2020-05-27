@@ -22,7 +22,10 @@ class EspressoAttendeePostTypeEditor extends RouteMatchSpecification
      */
     public function isMatchingRoute()
     {
-        return $this->request->getRequestParam('page') === 'espresso_registrations'
+        global $pagenow;
+        return $pagenow
+               && $pagenow === 'admin.php'
+               && $this->request->getRequestParam('page') === 'espresso_registrations'
                && $this->request->getRequestParam('action') === 'edit_attendee';
     }
 }

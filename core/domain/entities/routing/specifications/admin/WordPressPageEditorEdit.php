@@ -4,6 +4,7 @@ namespace EventEspresso\core\domain\entities\routing\specifications\admin;
 
 use EventEspresso\core\domain\entities\routing\specifications\RouteMatchSpecification;
 use WP_Post;
+use WP_Screen;
 
 /**
  * Class WordPressPageEditorEdit
@@ -23,15 +24,10 @@ class WordPressPageEditorEdit extends RouteMatchSpecification
      */
     public function isMatchingRoute()
     {
-        global $post;
-        return strpos($this->request->requestUri(), 'wp-admin/post.php') !== false
-            && (
-                $this->request->getRequestParam('post_type', 'post') === 'page'
-                || (
-                    $post instanceof WP_Post
-                    && $post->post_type === 'page'
-                )
-            )
-            && $this->request->getRequestParam('action') === 'edit';
+        global $pagenow;
+        return $pagenow
+               && $pagenow === 'plugins.php'
+               && $this->request->getRequestParam('post_type', 'post') === 'page'
+               && $this->request->getRequestParam('action') === 'edit';
     }
 }

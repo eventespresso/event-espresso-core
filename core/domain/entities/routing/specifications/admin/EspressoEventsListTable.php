@@ -22,10 +22,10 @@ class EspressoEventsListTable extends RouteMatchSpecification
      */
     public function isMatchingRoute()
     {
-        return $this->request->getRequestParam('page') === 'espresso_events'
-            && (
-                $this->request->getRequestParam('action') === 'default'
-                || $this->request->requestParamIsSet('action') === false
-            );
+        global $pagenow;
+        return $pagenow
+               && $pagenow === 'admin.php'
+               && $this->request->getRequestParam('page') === 'espresso_events'
+               && $this->request->getRequestParam('action', 'default') === 'default';
     }
 }
