@@ -14,9 +14,8 @@ const MoneyField: React.FC<MoneyFieldProps> = ({ children, isPercent = false, ..
 	const sign = currency?.sign;
 	const signB4 = currency?.signB4;
 
-	const beforeClassName = 'ee-money-field__before';
 	const beforeContent = signB4 && !isPercent && (
-		<div className={beforeClassName}>
+		<div className='ee-money-field__before'>
 			<CurrencySign sign={sign} />
 		</div>
 	);
