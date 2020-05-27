@@ -10,13 +10,8 @@ import './style.scss';
 const ButtonGroup: React.FC<ButtonGroupProps> = ({ buttonSize, children, ...props }) => {
 	const className = classNames(props.className, 'ee-btn-group');
 	const validChildren = cleanChildren(children);
-	const clones = validChildren.map((child, index) => {
-		const isFirst = index === 0;
-		const isLast = index === validChildren.length - 1;
-
-		// @ts-ignore
+	const clones = validChildren.map((child: any) => {
 		return cloneElement(child, {
-			// @ts-ignore
 			buttonSize: buttonSize || child.props.buttonSize,
 		});
 	});
