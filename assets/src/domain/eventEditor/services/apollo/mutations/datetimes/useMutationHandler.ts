@@ -6,12 +6,15 @@ import useOnDeleteDatetime from './useOnDeleteDatetime';
 import useOnUpdateDatetime from './useOnUpdateDatetime';
 import useOptimisticResponse from './useOptimisticResponse';
 import { DEFAULT_DATETIME_LIST_DATA as DEFAULT_LIST_DATA } from '@edtrServices/apollo/queries';
-import { DatetimesList } from '@edtrServices/apollo/types';
+import { DatetimesList, Datetime } from '@edtrServices/apollo/types';
 import { MutationType } from '@appServices/apollo/mutations';
-import { MutationHandler } from '../types';
+import { MutationHandler, MutationUpdater } from '../types';
 import { useDatetimeQueryOptions } from '@edtrServices/apollo/queries/datetimes';
+import { DatetimeCommonInput } from './types';
 
-const useMutationHandler = (): MutationHandler => {
+type MH = MutationHandler<Datetime, DatetimeCommonInput>;
+
+const useMutationHandler = (): MH => {
 	const options = useDatetimeQueryOptions();
 
 	const onCreateDatetime = useOnCreateDatetime();
@@ -21,8 +24,8 @@ const useMutationHandler = (): MutationHandler => {
 	const getMutationVariables = useMutationVariables();
 	const getOptimisticResponse = useOptimisticResponse();
 
-	const onUpdate = useCallback(
-		({ proxy, entity: datetime, input, mutationType }: any) => {
+	const onUpdate = useCallback<MutationUpdater<Datetime, DatetimeCommonInput>>(
+		({ proxy, entity: datetime, input, mutationType }) => {
 			// Read the existing data from cache.
 			let data: DatetimesList;
 			try {
@@ -48,7 +51,7 @@ const useMutationHandler = (): MutationHandler => {
 		[onCreateDatetime, onDeleteDatetime, onUpdateDatetime, options]
 	);
 
-	const mutationHandler = useCallback<MutationHandler>(
+	const mutationHandler = useCallback<MH>(
 		(mutationType, input) => {
 			const variables = getMutationVariables(mutationType, input);
 			const optimisticResponse = getOptimisticResponse(mutationType, input);

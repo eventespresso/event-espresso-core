@@ -1,4 +1,5 @@
 import { EntityId } from '@dataServices/types';
+import { Ticket } from '@edtrServices/apollo/types';
 
 export interface TicketBaseInput {
 	datetimes?: Array<EntityId>;
@@ -35,3 +36,21 @@ export interface DeleteTicketInput {
 	id?: EntityId;
 	deletePermanently?: boolean;
 }
+
+export interface TicketCommonInput extends TicketBaseInput, DeleteTicketInput {}
+
+export type TicketMutationResult = {
+	espressoTicket: Ticket;
+};
+
+export type CreateTicketResult = {
+	createEspressoTicket: TicketMutationResult;
+};
+
+export type UpdateTicketResult = {
+	updateEspressoTicket: TicketMutationResult;
+};
+
+export type DeleteTicketResult = {
+	createEspressoTicket: TicketMutationResult;
+};

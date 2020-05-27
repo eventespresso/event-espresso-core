@@ -6,13 +6,16 @@ import useOnDeleteTicket from './useOnDeleteTicket';
 import useOnUpdateTicket from './useOnUpdateTicket';
 import useOptimisticResponse from './useOptimisticResponse';
 import { DEFAULT_TICKET_LIST_DATA as DEFAULT_LIST_DATA } from '@edtrServices/apollo/queries';
-import { MutationHandler } from '../types';
+import { MutationHandler, MutationUpdater } from '../types';
 import { MutationType } from '@appServices/apollo/mutations';
-import { TicketsList } from '@edtrServices/apollo/types';
+import { TicketsList, Ticket } from '@edtrServices/apollo/types';
 import { useTicketQueryOptions } from '@edtrServices/apollo/queries/tickets';
 import { getGuids } from '@appServices/predicates';
+import { TicketCommonInput } from './types';
 
-const useMutationHandler = (): MutationHandler => {
+type MH = MutationHandler<Ticket, TicketCommonInput>;
+
+const useMutationHandler = (): MH => {
 	const options = useTicketQueryOptions();
 
 	const onCreateTicket = useOnCreateTicket();
@@ -22,7 +25,7 @@ const useMutationHandler = (): MutationHandler => {
 	const getMutationVariables = useMutationVariables();
 	const getOptimisticResponse = useOptimisticResponse();
 
-	const onUpdate = useCallback(
+	const onUpdate = useCallback<MutationUpdater<Ticket, TicketCommonInput>>(
 		({ proxy, entity, input, mutationType }) => {
 			// extract prices data to avoid
 			// it going to tickets cache
@@ -54,7 +57,7 @@ const useMutationHandler = (): MutationHandler => {
 		},
 		[onCreateTicket, onDeleteTicket, onUpdateTicket, options]
 	);
-	const mutator = useCallback<MutationHandler>(
+	const mutator = useCallback<MH>(
 		(mutationType, input) => {
 			const variables = getMutationVariables(mutationType, input);
 			const optimisticResponse = getOptimisticResponse(mutationType, input);

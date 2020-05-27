@@ -1,8 +1,10 @@
 import { useCallback } from 'react';
+import { MutationUpdaterFn } from 'apollo-client';
 import { pathOr } from 'ramda';
-import { TypeName } from './types';
 
-const useUpdateCallback = (typeName: TypeName) => {
+import { TypeName, UpdaterCallback } from './types';
+
+const useUpdateCallback = (typeName: TypeName): UpdaterCallback => {
 	return useCallback(
 		({ onUpdate, mutationType, input }) => {
 			/**
@@ -10,7 +12,7 @@ const useUpdateCallback = (typeName: TypeName) => {
 			 * in the updated entity data in response, we will
 			 * pass just that entity to onUpdate.
 			 */
-			return (proxy, result) => {
+			const update: MutationUpdaterFn = (proxy, result) => {
 				// e.g. "createDatetime", "updateTicket"
 				const mutationName = `${mutationType.toLowerCase()}Espresso${typeName}`;
 				// Example result: { data: { deletePrice: { price : {...} } } }
@@ -19,6 +21,7 @@ const useUpdateCallback = (typeName: TypeName) => {
 
 				onUpdate({ proxy, entity, mutationType, input });
 			};
+			return update;
 		},
 		[typeName]
 	);

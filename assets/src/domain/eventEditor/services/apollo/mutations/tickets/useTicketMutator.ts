@@ -7,14 +7,17 @@ import { CREATE_TICKET, UPDATE_TICKET, DELETE_TICKET } from './';
 import useMutationHandler from './useMutationHandler';
 import useUpdateCallback from '../useUpdateCallback';
 import { MutationFunction, TypeName } from '../types';
+import { CreateTicketResult, UpdateTicketResult, DeleteTicketResult } from './types';
 
 interface TicketMutator {
-	createEntity: MutationFunction<any, CreateTicketInput>;
-	updateEntity: MutationFunction<any, UpdateTicketInput>;
-	deleteEntity: MutationFunction<any, DeleteTicketInput>;
+	createEntity: MutationFunction<CreateTicketResult, CreateTicketInput>;
+	updateEntity: MutationFunction<UpdateTicketResult, UpdateTicketInput>;
+	deleteEntity: MutationFunction<DeleteTicketResult, DeleteTicketInput>;
 }
 
-const useTicketMutator = (id = ''): TicketMutator => {
+type TM = TicketMutator;
+
+const useTicketMutator = (id = ''): TM => {
 	const [createTicket] = useMutation(CREATE_TICKET);
 	const [updateTicket] = useMutation(UPDATE_TICKET);
 	const [deleteTicket] = useMutation(DELETE_TICKET);
@@ -23,7 +26,7 @@ const useTicketMutator = (id = ''): TicketMutator => {
 
 	const getUpdateCallback = useUpdateCallback(TypeName.Ticket);
 
-	const createEntity = useCallback(
+	const createEntity = useCallback<TM['createEntity']>(
 		(input) => {
 			const { onUpdate, ...options } = mutationHandler(MutationType.Create, input);
 
@@ -34,7 +37,7 @@ const useTicketMutator = (id = ''): TicketMutator => {
 		[createTicket, getUpdateCallback, mutationHandler]
 	);
 
-	const updateEntity = useCallback(
+	const updateEntity = useCallback<TM['updateEntity']>(
 		(input) => {
 			const { onUpdate, ...options } = mutationHandler(MutationType.Update, { id, ...input });
 
@@ -45,7 +48,7 @@ const useTicketMutator = (id = ''): TicketMutator => {
 		[getUpdateCallback, id, mutationHandler, updateTicket]
 	);
 
-	const deleteEntity = useCallback(
+	const deleteEntity = useCallback<TM['deleteEntity']>(
 		(input) => {
 			const { onUpdate, ...options } = mutationHandler(MutationType.Delete, { id, ...input });
 

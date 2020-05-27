@@ -1,9 +1,9 @@
 import { DataProxy } from 'apollo-cache';
-import { OperationVariables } from 'apollo-client';
+import { OperationVariables, MutationUpdaterFn } from 'apollo-client';
 import { ExecutionResult } from '@apollo/react-common';
 
 import { MutationInput, MutationType } from '@appServices/apollo/mutations/types';
-import { Entity as BaseEntity } from '@dataServices/types';
+import { Entity as BaseEntity, Entity } from '@dataServices/types';
 import { Datetime, DatetimeEdge, Ticket, TicketEdge, Price, PriceEdge } from '../types';
 import { Merge } from '@application/services/utilities/types';
 
@@ -52,7 +52,6 @@ export interface CacheUpdaterFnArgs extends MutationCallbackFnArgs {
 	price?: Price;
 	prices?: PriceEdge;
 	ticket?: Ticket;
-	ticketId?: string;
 	ticketIn?: string[];
 	tickets?: TicketEdge;
 }
@@ -73,23 +72,6 @@ export type OnUpdateFnOptions<Entity = BaseEntity> = {
 
 export type OnUpdateFn = (options: OnUpdateFnOptions) => void;
 
-export interface MutationHandlers {
-	datetimeMutationHandler: MutationHandler;
-	ticketMutationHandler: MutationHandler;
-	priceMutationHandler: MutationHandler;
-}
-
-export interface MutatorGeneratedObject {
-	onUpdate?: OnUpdateFn;
-	optimisticResponse?: any;
-	variables: OperationVariables;
-}
-
-export type MutationHandler = <MI extends MutationInput = MutationInput>(
-	mutationType: MutationType,
-	input: MI
-) => MutatorGeneratedObject;
-
 export interface MutationInputWithId {
 	clientMutationId: string;
 }
@@ -97,7 +79,42 @@ export interface MutationInputWithId {
 export interface MutationVariables<MI = MutationInput> {
 	input: Merge<MI, MutationInputWithId>;
 }
-
+/*********************************/
 export type MutationFunction<TData = any, TVariables = OperationVariables> = (
 	input?: TVariables
 ) => Promise<ExecutionResult<TData>>;
+
+export interface MutationBaseProps<MI extends MutationInput = MutationInput> {
+	input: MI;
+	mutationType: MutationType;
+}
+
+export interface MutationUpdaterArgs<E extends Entity, MI extends MutationInput = MutationInput>
+	extends MutationBaseProps<MI> {
+	proxy: DataProxy;
+	entity: E;
+}
+
+export type MutationUpdater<E extends Entity, MI extends MutationInput = MutationInput> = (
+	args: MutationUpdaterArgs<E, MI>
+) => void;
+
+export type MutationHandler<E extends Entity, MI extends MutationInput = MutationInput> = (
+	mutationType: MutationType,
+	input: MI
+) => MutatorGeneratedObject<E, MI>;
+
+export interface MutatorGeneratedObject<E extends Entity, MI extends MutationInput = MutationInput> {
+	onUpdate?: MutationUpdater<E, MI>;
+	optimisticResponse?: any;
+	variables: OperationVariables;
+}
+
+export interface UpdaterCallbackArgs<E extends Entity, MI extends MutationInput = MutationInput>
+	extends MutationBaseProps<MI> {
+	onUpdate?: MutationUpdater<E, MI>;
+}
+
+export type UpdaterCallback = <E extends Entity, MI extends MutationInput = MutationInput>(
+	args: UpdaterCallbackArgs<E, MI>
+) => MutationUpdaterFn;

@@ -1,4 +1,5 @@
 import { EntityId } from '@dataServices/types';
+import { Datetime } from '@edtrServices/apollo/types';
 
 export interface DatetimeBaseInput {
 	capacity?: number;
@@ -27,3 +28,21 @@ export interface DeleteDatetimeInput {
 	id?: EntityId;
 	deletePermanently?: boolean;
 }
+
+export interface DatetimeCommonInput extends DatetimeBaseInput, DeleteDatetimeInput {}
+
+export type DatetimeMutationResult = {
+	espressoDatetime: Datetime;
+};
+
+export type CreateDatetimeResult = {
+	createEspressoDatetime: DatetimeMutationResult;
+};
+
+export type UpdateDatetimeResult = {
+	updateEspressoDatetime: DatetimeMutationResult;
+};
+
+export type DeleteDatetimeResult = {
+	createEspressoDatetime: DatetimeMutationResult;
+};

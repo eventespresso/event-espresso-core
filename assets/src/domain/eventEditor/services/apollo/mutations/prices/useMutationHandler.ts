@@ -5,15 +5,15 @@ import useOnCreatePrice from './useOnCreatePrice';
 import useOnDeletePrice from './useOnDeletePrice';
 import useOnUpdatePrice from './useOnUpdatePrice';
 import { DEFAULT_PRICE_LIST_DATA as DEFAULT_LIST_DATA } from '@edtrServices/apollo/queries';
-import { MutationHandler } from '../types';
+import { MutationHandler, MutationUpdater } from '../types';
 import { MutationType, MutationInput } from '@appServices/apollo/mutations';
-import { PricesList } from '@edtrServices/apollo/types';
+import { PricesList, Price } from '@edtrServices/apollo/types';
 import { usePriceQueryOptions } from '@edtrServices/apollo/queries/prices';
+import { PriceCommonInput } from './types';
 
-/**
- *
- */
-const useMutationHandler = (): MutationHandler => {
+type MH = MutationHandler<Price, PriceCommonInput>;
+
+const useMutationHandler = (): MH => {
 	const options = usePriceQueryOptions();
 
 	const onCreatePrice = useOnCreatePrice();
@@ -31,9 +31,9 @@ const useMutationHandler = (): MutationHandler => {
 		};
 	}, []);
 
-	const onUpdate = useCallback(
+	const onUpdate = useCallback<MutationUpdater<Price, PriceCommonInput>>(
 		({ proxy, entity: price, input, mutationType }) => {
-			const { priceType: priceTypeId, ticketId } = input;
+			const { priceType: priceTypeId } = input;
 			// Read the existing data from cache.
 			let data: PricesList;
 			try {
@@ -45,7 +45,7 @@ const useMutationHandler = (): MutationHandler => {
 
 			switch (mutationType) {
 				case MutationType.Create:
-					onCreatePrice({ proxy, prices, price, ticketId, priceTypeId });
+					onCreatePrice({ proxy, prices, price, priceTypeId });
 					break;
 				case MutationType.Update:
 					onUpdatePrice({ price, priceTypeId });
@@ -58,7 +58,7 @@ const useMutationHandler = (): MutationHandler => {
 		[onCreatePrice, onDeletePrice, onUpdatePrice, options]
 	);
 
-	const mutator = useCallback<MutationHandler>(
+	const mutator = useCallback<MH>(
 		(mutationType, input) => {
 			const variables = createVariables(mutationType, input);
 

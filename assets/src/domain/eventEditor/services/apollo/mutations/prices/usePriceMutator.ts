@@ -7,14 +7,17 @@ import { CREATE_PRICE, UPDATE_PRICE, DELETE_PRICE } from './';
 import useMutationHandler from './useMutationHandler';
 import useUpdateCallback from '../useUpdateCallback';
 import { MutationFunction, TypeName } from '../types';
+import { CreatePriceResult, UpdatePriceResult, DeletePriceResult } from './types';
 
 interface PriceMutator {
-	createEntity: MutationFunction<any, CreatePriceInput>;
-	updateEntity: MutationFunction<any, UpdatePriceInput>;
-	deleteEntity: MutationFunction<any, DeletePriceInput>;
+	createEntity: MutationFunction<CreatePriceResult, CreatePriceInput>;
+	updateEntity: MutationFunction<UpdatePriceResult, UpdatePriceInput>;
+	deleteEntity: MutationFunction<DeletePriceResult, DeletePriceInput>;
 }
 
-const usePriceMutator = (id = ''): PriceMutator => {
+type PM = PriceMutator;
+
+const usePriceMutator = (id = ''): PM => {
 	const [createPrice] = useMutation(CREATE_PRICE);
 	const [updatePrice] = useMutation(UPDATE_PRICE);
 	const [deletePrice] = useMutation(DELETE_PRICE);
@@ -23,7 +26,7 @@ const usePriceMutator = (id = ''): PriceMutator => {
 
 	const getUpdateCallback = useUpdateCallback(TypeName.Price);
 
-	const createEntity = useCallback(
+	const createEntity = useCallback<PM['createEntity']>(
 		(input) => {
 			const { onUpdate, ...options } = mutationHandler(MutationType.Create, input);
 
@@ -34,7 +37,7 @@ const usePriceMutator = (id = ''): PriceMutator => {
 		[createPrice, getUpdateCallback, mutationHandler]
 	);
 
-	const updateEntity = useCallback(
+	const updateEntity = useCallback<PM['updateEntity']>(
 		(input) => {
 			const { onUpdate, ...options } = mutationHandler(MutationType.Update, { id, ...input });
 
@@ -45,7 +48,7 @@ const usePriceMutator = (id = ''): PriceMutator => {
 		[getUpdateCallback, id, mutationHandler, updatePrice]
 	);
 
-	const deleteEntity = useCallback(
+	const deleteEntity = useCallback<PM['deleteEntity']>(
 		(input) => {
 			const { onUpdate, ...options } = mutationHandler(MutationType.Delete, { id, ...input });
 

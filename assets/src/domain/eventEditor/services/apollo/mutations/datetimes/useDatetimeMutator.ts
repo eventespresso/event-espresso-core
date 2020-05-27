@@ -7,14 +7,17 @@ import { CREATE_DATETIME, UPDATE_DATETIME, DELETE_DATETIME } from './';
 import useMutationHandler from './useMutationHandler';
 import useUpdateCallback from '../useUpdateCallback';
 import { MutationFunction, TypeName } from '../types';
+import { CreateDatetimeResult, UpdateDatetimeResult, DeleteDatetimeResult } from './types';
 
 interface DatetimeMutator {
-	createEntity: MutationFunction<any, CreateDatetimeInput>;
-	updateEntity: MutationFunction<any, UpdateDatetimeInput>;
-	deleteEntity: MutationFunction<any, DeleteDatetimeInput>;
+	createEntity: MutationFunction<CreateDatetimeResult, CreateDatetimeInput>;
+	updateEntity: MutationFunction<UpdateDatetimeResult, UpdateDatetimeInput>;
+	deleteEntity: MutationFunction<DeleteDatetimeResult, DeleteDatetimeInput>;
 }
 
-const useDatetimeMutator = (id = ''): DatetimeMutator => {
+type DM = DatetimeMutator;
+
+const useDatetimeMutator = (id = ''): DM => {
 	const [createDatetime] = useMutation(CREATE_DATETIME);
 	const [updateDatetime] = useMutation(UPDATE_DATETIME);
 	const [deleteDatetime] = useMutation(DELETE_DATETIME);
@@ -23,7 +26,7 @@ const useDatetimeMutator = (id = ''): DatetimeMutator => {
 
 	const getUpdateCallback = useUpdateCallback(TypeName.Datetime);
 
-	const createEntity = useCallback(
+	const createEntity = useCallback<DM['createEntity']>(
 		(input) => {
 			const { onUpdate, ...options } = mutationHandler(MutationType.Create, input);
 
@@ -34,7 +37,7 @@ const useDatetimeMutator = (id = ''): DatetimeMutator => {
 		[createDatetime, getUpdateCallback, mutationHandler]
 	);
 
-	const updateEntity = useCallback(
+	const updateEntity = useCallback<DM['updateEntity']>(
 		(input) => {
 			const { onUpdate, ...options } = mutationHandler(MutationType.Update, { id, ...input });
 
@@ -45,7 +48,7 @@ const useDatetimeMutator = (id = ''): DatetimeMutator => {
 		[getUpdateCallback, id, mutationHandler, updateDatetime]
 	);
 
-	const deleteEntity = useCallback(
+	const deleteEntity = useCallback<DM['deleteEntity']>(
 		(input) => {
 			const { onUpdate, ...options } = mutationHandler(MutationType.Delete, { id, ...input });
 

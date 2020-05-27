@@ -31,16 +31,12 @@ const useMutatePrices = (): Callback => {
 						// if it's a newly added price
 						if (isNew) {
 							return new Promise((resolve, onError) => {
-								const onCompleted = ({
-									data: {
-										createEspressoPrice: { espressoPrice: price },
-									},
-								}: any): void => {
-									relatedPriceIds.push(price.id);
-									resolve(price);
-								};
 								createPrice({ ...normalizedPriceFields })
-									.then(onCompleted)
+									.then(({ data }) => {
+										const price = data?.createEspressoPrice?.espressoPrice;
+										relatedPriceIds.push(price?.id);
+										resolve(price);
+									})
 									.catch(onError);
 							});
 						}
