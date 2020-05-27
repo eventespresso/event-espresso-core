@@ -40,10 +40,8 @@ describe('updateTicket', () => {
 		let mutationData: any;
 
 		act(() => {
-			result.current.updateEntity(testInput, {
-				onCompleted: (data: any) => {
-					mutationData = data;
-				},
+			result.current.updateEntity(testInput).then(({ data }) => {
+				mutationData = data;
 			});
 		});
 

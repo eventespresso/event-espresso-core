@@ -13,7 +13,8 @@ const useUpdatePriceCache = (): CacheUpdaterFn => {
 	const updatePriceCache = useCallback(
 		({ proxy, prices, price, action }: CacheUpdaterFnArgs): void => {
 			const { nodes = [] } = prices;
-			let newNodes: Array<Price>, priceIndex: number;
+			let newNodes: Array<Price> = [],
+				priceIndex: number;
 			switch (action) {
 				case 'add':
 					newNodes = [...nodes, price];

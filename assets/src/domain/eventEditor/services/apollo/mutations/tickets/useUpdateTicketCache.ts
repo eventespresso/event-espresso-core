@@ -13,7 +13,8 @@ const useUpdateTicketCache = (): CacheUpdaterFn => {
 	const updateTicketCache = useCallback(
 		({ proxy, tickets, ticket, action }: CacheUpdaterFnArgs): void => {
 			const { nodes = [] } = tickets;
-			let newNodes: Array<Ticket>, ticketIndex: number;
+			let newNodes: Array<Ticket> = [],
+				ticketIndex: number;
 			switch (action) {
 				case 'add':
 					newNodes = [...nodes, ticket];

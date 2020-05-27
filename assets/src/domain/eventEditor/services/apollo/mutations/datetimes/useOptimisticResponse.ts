@@ -67,6 +67,7 @@ const useOptimisticResponse = (): OptimisticResCb => {
 				case MutationType.Delete:
 					espressoDatetime = {
 						...espressoDatetime,
+						...DATETIME_DEFAULTS, // to avoid pollution of test console
 						...datetime,
 						...filteredInput,
 						isTrashed: true,

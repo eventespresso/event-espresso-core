@@ -24,7 +24,7 @@ const usePriceQueryOptions = (ticketIn: EntityId[] = []): ReadQueryOptions => {
 		},
 	};
 
-	return useMemoStringify(options, ticketIn);
+	return useMemoStringify(options, newTicketIn);
 };
 
 export default usePriceQueryOptions;

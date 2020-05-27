@@ -1,4 +1,5 @@
 import { EntityId } from '@dataServices/types';
+import { Price } from '@edtrServices/apollo/types';
 
 export interface PriceBaseInput {
 	amount?: number;
@@ -25,3 +26,21 @@ export interface DeletePriceInput {
 	id?: EntityId;
 	deletePermanently?: boolean;
 }
+
+export interface PriceCommonInput extends PriceBaseInput, DeletePriceInput {}
+
+export type PriceMutationResult = {
+	espressoPrice: Price;
+};
+
+export type CreatePriceResult = {
+	createEspressoPrice: PriceMutationResult;
+};
+
+export type UpdatePriceResult = {
+	updateEspressoPrice: PriceMutationResult;
+};
+
+export type DeletePriceResult = {
+	createEspressoPrice: PriceMutationResult;
+};

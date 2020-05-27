@@ -27,7 +27,7 @@ const useTicketQueryOptions = (datetimeIn: EntityId[] = []): DatetimesQueryOptio
 		},
 	};
 
-	return useMemoStringify(options, datetimeIn);
+	return useMemoStringify(options, newDatetimeIn);
 };
 
 export default useTicketQueryOptions;

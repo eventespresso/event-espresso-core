@@ -21,8 +21,4 @@ export * from './datetimes';
 export * from './tickets';
 export * from './prices';
 
-export { default as useMutationHandler } from './useMutationHandler';
-
-export { default as useMutator } from './useMutator';
-
 export * from './types';

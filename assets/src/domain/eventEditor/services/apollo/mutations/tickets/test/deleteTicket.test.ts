@@ -31,14 +31,9 @@ describe('deleteTicket', () => {
 		let mutationData: any;
 
 		act(() => {
-			result.current.deleteEntity(
-				{},
-				{
-					onCompleted: (data: any) => {
-						mutationData = data;
-					},
-				}
-			);
+			result.current.deleteEntity().then(({ data }) => {
+				mutationData = data;
+			});
 		});
 
 		// wait for mutation promise to resolve

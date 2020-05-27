@@ -6,6 +6,7 @@ import { useTicketMutator } from '@edtrServices/apollo/mutations';
 import { getPropsAreEqual } from '@appServices/utilities';
 import CurrencyInput from '@appInputs/CurrencyInput';
 import useRecalculateBasePrice from '../../hooks/useRecalculateBasePrice';
+import { useMemoStringify } from '@application/services/hooks';
 
 interface EditablePriceProps extends TicketItemProps {
 	className?: string;
@@ -25,7 +26,7 @@ const EditablePrice: React.FC<EditablePriceProps> = ({ entity: ticket, className
 		[ticket.cacheId]
 	);
 
-	const wrapperProps = { className };
+	const wrapperProps = useMemoStringify({ className });
 
 	return (
 		<CurrencyInput

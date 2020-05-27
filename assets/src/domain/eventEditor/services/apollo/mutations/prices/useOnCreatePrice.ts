@@ -1,24 +1,18 @@
 import { useCallback } from 'react';
 
 import useUpdatePriceCache from './useUpdatePriceCache';
-import { PriceMutationCallbackFn, PriceMutationCallbackFnArgs, CacheUpdaterFn } from '../types';
+import { PriceMutationCallbackFn, PriceMutationCallbackFnArgs } from '../types';
 import { useRelations } from '@appServices/apollo/relations';
 
 const useOnCreatePrice = (): PriceMutationCallbackFn => {
 	const { updateRelations } = useRelations();
 
-	const updatePriceCache: CacheUpdaterFn = useUpdatePriceCache();
+	const updatePriceCache = useUpdatePriceCache();
 
 	const onCreatePrice = useCallback(
-		({ proxy, price, prices, ticketId, priceTypeId }: PriceMutationCallbackFnArgs): void => {
+		({ proxy, price, prices, priceTypeId }: PriceMutationCallbackFnArgs): void => {
 			const { id: priceId } = price;
-			if (priceId) {
-				updateRelations({
-					entity: 'prices',
-					entityId: priceId,
-					relation: 'tickets',
-					relationIds: [ticketId],
-				});
+			if (priceId && priceTypeId) {
 				updateRelations({
 					entity: 'prices',
 					entityId: priceId,
