@@ -11,6 +11,13 @@
 		}
 
 		&__actions {
+			&.ee-rspnsv-table-header-th,
+			&.ee-rspnsv-table-body-td,
+			&.ee-rspnsv-table-footer-th {
+				min-width: 85px;
+				width: 85px;
+			}
+
 			.ee-icon-button {
 				margin-bottom: 0;
 			}
