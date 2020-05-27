@@ -2,7 +2,7 @@ import React from 'react';
 import { __ } from '@wordpress/i18n';
 
 import { AppstoreFilled } from '@appDisplay/icons/svgs';
-import { Button, ButtonSize } from '@application/ui/input';
+import { Button } from '@application/ui/input';
 import { CardViewFilterButtonProps } from '../types';
 
 import { getPropsAreEqual } from '@appServices/utilities';
@@ -13,7 +13,6 @@ const CardViewFilterButton: React.FC<CardViewFilterButtonProps> = ({ listId, set
 	return (
 		<Button
 			active={view === 'card'}
-			buttonSize={ButtonSize.SMALL}
 			className='ee-filter-bar__btn'
 			icon={AppstoreFilled}
 			id={filterId}

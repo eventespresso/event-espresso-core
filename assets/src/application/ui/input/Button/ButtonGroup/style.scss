@@ -1,20 +1,21 @@
 .ee-btn-group {
-	.ee-btn {
-		margin-right: 0;
+	margin-right: var(--ee-margin-default);
 
-		&:first-child {
+	.ee-btn.ee-btn {
+		margin: 0;
+
+		&--no-border-radius {
+			border-radius: 0;
+		}
+
+		&--first {
 			border-top-right-radius: 0;
 			border-bottom-right-radius: 0;
 		}
 
-		&:last-child {
+		&--last {
 			border-top-left-radius: 0;
 			border-bottom-left-radius: 0;
-		}
-
-		+ .ee-btn {
-			margin-left: 0;
-			margin-right: var(--ee-margin-default);
 		}
 	}
 }
