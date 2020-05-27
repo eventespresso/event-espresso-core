@@ -76,6 +76,7 @@ const useOptimisticResponse = (): OptimisticResCb => {
 				case MutationType.Delete:
 					espressoTicket = {
 						...espressoTicket,
+						...TICKET_DEFAULTS, // to avoid pollution of test console
 						...ticket,
 						...filteredInput,
 						isTrashed: true,
