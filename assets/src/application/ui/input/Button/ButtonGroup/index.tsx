@@ -18,13 +18,6 @@ const ButtonGroup: React.FC<ButtonGroupProps> = ({ buttonSize, children, ...prop
 		return cloneElement(child, {
 			// @ts-ignore
 			buttonSize: buttonSize || child.props.buttonSize,
-
-			// @ts-ignore
-			...(isFirst && { className: classNames(child.props.className, 'ee-btn--first') }),
-			// @ts-ignore
-			...(isLast && { className: classNames(child.props.className, 'ee-btn--last') }),
-			// @ts-ignore
-			...(!isFirst && !isLast && { className: classNames(child.props.className, 'ee-btn--no-border-radius') }),
 		});
 	});
 

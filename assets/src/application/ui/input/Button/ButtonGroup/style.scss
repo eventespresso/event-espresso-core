@@ -4,16 +4,16 @@
 	.ee-btn.ee-btn {
 		margin: 0;
 
-		&--no-border-radius {
+		&:not(:first-child):not(:last-child) {
 			border-radius: 0;
 		}
 
-		&--first {
+		&:first-child {
 			border-top-right-radius: 0;
 			border-bottom-right-radius: 0;
 		}
 
-		&--last {
+		&:last-child {
 			border-top-left-radius: 0;
 			border-bottom-left-radius: 0;
 		}
