@@ -144,7 +144,7 @@ abstract class Route implements RouteInterface
                 throw new DomainException(
                     esc_html__(
                         'Route::requestHandler() must return a boolean to indicate whether the request has been handled or not.',
-                        'eventespresso'
+                        'event_espresso'
                     )
                 );
             }

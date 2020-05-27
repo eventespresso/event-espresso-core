@@ -2,7 +2,6 @@
 
 namespace EventEspresso\core\domain\entities\routing\handlers;
 
-
 /**
  * Class Route
  * - class for detecting and matching with incoming requests
