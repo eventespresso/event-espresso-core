@@ -54,7 +54,7 @@ describe('deleteDatetime', () => {
 
 		const wrapper = ApolloMockedProvider(mutationMocks);
 
-		const { result: mutationResult, waitForNextUpdate, waitForValueToChange } = renderHook(
+		const { result: mutationResult, waitForNextUpdate } = renderHook(
 			() => ({
 				mutator: useDatetimeMutator(mockedDatetime.id),
 				relationsManager: useRelations(),
@@ -63,8 +63,6 @@ describe('deleteDatetime', () => {
 				wrapper,
 			}
 		);
-
-		await waitForValueToChange(() => mutationResult.current, { timeout });
 
 		act(() => {
 			mutationResult.current.mutator.deleteEntity({});
@@ -89,7 +87,7 @@ describe('deleteDatetime', () => {
 
 		const wrapper = ApolloMockedProvider(mutationMocks);
 
-		const { result: mutationResult, waitForNextUpdate, waitForValueToChange } = renderHook(
+		const { result: mutationResult, waitForNextUpdate } = renderHook(
 			() => ({
 				mutator: useDatetimeMutator(mockedDatetime.id),
 				relationsManager: useRelations(),
@@ -98,8 +96,6 @@ describe('deleteDatetime', () => {
 				wrapper,
 			}
 		);
-
-		await waitForValueToChange(() => mutationResult.current, { timeout });
 
 		act(() => {
 			mutationResult.current.mutator.deleteEntity(testInput);
