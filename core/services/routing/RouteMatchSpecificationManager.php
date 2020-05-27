@@ -66,7 +66,7 @@ class RouteMatchSpecificationManager
 
 
     /**
-     * @return CollectionInterface|\EventEspresso\core\domain\entities\routing\specifications\RouteMatchSpecificationInterface[]
+     * @return CollectionInterface|RouteMatchSpecificationInterface[]
      * @throws CollectionLoaderException
      * @throws CollectionDetailsException
      * @since 4.9.71.p
@@ -113,7 +113,7 @@ class RouteMatchSpecificationManager
      */
     public function routeMatchesCurrentRequest($routeMatchSpecificationFqcn)
     {
-        /** @var \EventEspresso\core\domain\entities\routing\specifications\RouteMatchSpecificationInterface $specification */
+        /** @var RouteMatchSpecificationInterface $specification */
         $specification = $this->specifications->get($routeMatchSpecificationFqcn);
         if (! $specification instanceof $routeMatchSpecificationFqcn) {
             throw new InvalidClassException($routeMatchSpecificationFqcn);
