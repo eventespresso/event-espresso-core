@@ -7,7 +7,6 @@ import { MutationType } from '../../../../../../../application/services/apollo/m
 import { ApolloMockedProvider } from '../../../../context/TestContext';
 import { getMutationMocks, mockedPrices } from './data';
 import usePrices from '../../../queries/prices/usePrices';
-import { nodes as tickets } from '../../../queries/tickets/test/data';
 import { nodes as priceTypes } from '../../../queries/priceTypes/test/data';
 import { usePriceMutator, CreatePriceInput } from '../';
 import { getGuids } from '@appServices/predicates';
@@ -16,7 +15,6 @@ const timeout = 5000; // milliseconds
 describe('createPrice', () => {
 	const mockedPrice = mockedPrices.CREATE;
 
-	const ticketId = tickets[0].id;
 	const priceTypeId = priceTypes[0].id;
 	const testInput: CreatePriceInput = {
 		name: 'New Test Price',
@@ -38,10 +36,8 @@ describe('createPrice', () => {
 		let mutationData: any;
 
 		act(() => {
-			result.current.createEntity(testInput, {
-				onCompleted: (data: any) => {
-					mutationData = data;
-				},
+			result.current.createEntity(testInput).then(({ data }) => {
+				mutationData = data;
 			});
 		});
 
@@ -60,7 +56,7 @@ describe('createPrice', () => {
 	it('checks for the mutation data to be same as that in the cache - usePrices', async () => {
 		const wrapper = ApolloMockedProvider(mutationMocks);
 
-		const { result: mutationResult, waitForNextUpdate, waitForValueToChange } = renderHook(
+		const { result: mutationResult, waitForNextUpdate } = renderHook(
 			() => ({
 				mutator: usePriceMutator(),
 				client: useApolloClient(),
@@ -69,8 +65,6 @@ describe('createPrice', () => {
 				wrapper,
 			}
 		);
-
-		await waitForValueToChange(() => mutationResult.current, { timeout });
 
 		act(() => {
 			mutationResult.current.mutator.createEntity(testInput);
@@ -101,14 +95,14 @@ describe('createPrice', () => {
 	});
 
 	it('checks for ticket and priceType relation update after mutation', async () => {
-		// Add related ticketId and priceTypeId to the mutation input
-		const newTestInput = { ...testInput, ticketId, priceType: priceTypeId };
+		// Add related to the mutation input
+		const newTestInput = { ...testInput, priceType: priceTypeId };
 
 		mutationMocks = getMutationMocks(newTestInput, MutationType.Create);
 
 		const wrapper = ApolloMockedProvider(mutationMocks);
 
-		const { result: mutationResult, waitForNextUpdate, waitForValueToChange } = renderHook(
+		const { result: mutationResult, waitForNextUpdate } = renderHook(
 			() => ({
 				mutator: usePriceMutator(),
 				relationsManager: useRelations(),
@@ -118,23 +112,12 @@ describe('createPrice', () => {
 			}
 		);
 
-		await waitForValueToChange(() => mutationResult.current, { timeout });
-
 		act(() => {
 			mutationResult.current.mutator.createEntity(newTestInput);
 		});
 
 		// wait for mutation promise to resolve
 		await waitForNextUpdate({ timeout });
-
-		// check if price is related to all the passed prices
-		const relatedTicketIds = mutationResult.current.relationsManager.getRelations({
-			entity: 'prices',
-			entityId: mockedPrice.id,
-			relation: 'tickets',
-		});
-
-		expect(relatedTicketIds).toContain(ticketId);
 
 		// check if price is related to all the passed prices
 		const relatedPriceTypeIds = mutationResult.current.relationsManager.getRelations({

@@ -37,10 +37,8 @@ describe('updateDatetime', () => {
 		let mutationData: any;
 
 		act(() => {
-			result.current.updateEntity(testInput, {
-				onCompleted: (data: any) => {
-					mutationData = data;
-				},
+			result.current.updateEntity(testInput).then(({ data }) => {
+				mutationData = data;
 			});
 		});
 
@@ -64,7 +62,7 @@ describe('updateDatetime', () => {
 
 		const wrapper = ApolloMockedProvider(mutationMocks);
 
-		const { result: mutationResult, waitForNextUpdate, waitForValueToChange } = renderHook(
+		const { result: mutationResult, waitForNextUpdate } = renderHook(
 			() => ({
 				mutator: useDatetimeMutator(mockedDatetime.id),
 				relationsManager: useRelations(),
@@ -73,8 +71,6 @@ describe('updateDatetime', () => {
 				wrapper,
 			}
 		);
-
-		await waitForValueToChange(() => mutationResult.current, { timeout });
 
 		act(() => {
 			mutationResult.current.mutator.updateEntity(testInput);
@@ -114,7 +110,7 @@ describe('updateDatetime', () => {
 
 		const wrapper = ApolloMockedProvider(mutationMocks);
 
-		const { result: mutationResult, waitForNextUpdate, waitForValueToChange } = renderHook(
+		const { result: mutationResult, waitForNextUpdate } = renderHook(
 			() => ({
 				mutator: useDatetimeMutator(mockedDatetime.id),
 				relationsManager: useRelations(),
@@ -125,8 +121,6 @@ describe('updateDatetime', () => {
 		);
 
 		const tempTicketId = 'temp-tkt-id';
-
-		await waitForValueToChange(() => mutationResult.current, { timeout });
 
 		act(() => {
 			// add relation between mockedDatetime and a random ticket id

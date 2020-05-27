@@ -38,10 +38,8 @@ describe('createDatetime', () => {
 		let mutationData: any;
 
 		act(() => {
-			result.current.createEntity(testInput, {
-				onCompleted: (data: any) => {
-					mutationData = data;
-				},
+			result.current.createEntity(testInput).then(({ data }) => {
+				mutationData = data;
 			});
 		});
 
@@ -100,7 +98,7 @@ describe('createDatetime', () => {
 	it('checks for the mutation data to be same as that in the cache - useDatetimeIds', async () => {
 		const wrapper = ApolloMockedProvider(mutationMocks);
 
-		const { result: mutationResult, waitForValueToChange, waitForNextUpdate } = renderHook(
+		const { result: mutationResult, waitForNextUpdate } = renderHook(
 			() => ({
 				mutator: useDatetimeMutator(),
 				client: useApolloClient(),
@@ -109,8 +107,6 @@ describe('createDatetime', () => {
 				wrapper,
 			}
 		);
-
-		await waitForValueToChange(() => mutationResult.current, { timeout });
 
 		act(() => {
 			mutationResult.current.mutator.createEntity(testInput);
@@ -147,7 +143,7 @@ describe('createDatetime', () => {
 
 		const wrapper = ApolloMockedProvider(mutationMocks);
 
-		const { result: mutationResult, waitForNextUpdate, waitForValueToChange } = renderHook(
+		const { result: mutationResult, waitForNextUpdate } = renderHook(
 			() => ({
 				mutator: useDatetimeMutator(),
 				relationsManager: useRelations(),
@@ -156,8 +152,6 @@ describe('createDatetime', () => {
 				wrapper,
 			}
 		);
-
-		await waitForValueToChange(() => mutationResult.current, { timeout });
 
 		act(() => {
 			mutationResult.current.mutator.createEntity(testInput);

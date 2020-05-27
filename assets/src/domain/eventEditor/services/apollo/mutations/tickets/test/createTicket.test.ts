@@ -36,10 +36,8 @@ describe('createTicket', () => {
 		let mutationData: any;
 
 		act(() => {
-			result.current.createEntity(testInput, {
-				onCompleted: (data: any) => {
-					mutationData = data;
-				},
+			result.current.createEntity(testInput).then(({ data }) => {
+				mutationData = data;
 			});
 		});
 
