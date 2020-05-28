@@ -1,20 +1,17 @@
-.ee-ticket-assignments-manager__body {
-	overflow-x: hidden !important;
-	padding-left: 1.5rem;
-	padding-right: 1.5rem;
-	position: relative;
-	max-width: calc(100% - 3rem);
-	width: calc(100% - 3rem);
+/** -------------------------------------------------------------------------
+ * Event Espresso Ticket Assignments Manager Stylesheet
+ * © 2020 Event Espresso
+ * ------------------------------------------------------------------------- */
 
-	.ee-rspnsv-table-wrapper {
-		margin: 0 0 var(--ee-margin-smaller) 300px;
-		overflow-x: scroll !important;
-		overflow-y: visible;
-		width: 100%;
-	}
-
-	#ticket-assignment-manager-table {
+.ticket-assignment-manager.ee-rspnsv-table__outer_wrapper {
+	.ee-rspnsv-table {
 		background: var(--ee-background-color);
+
+		&__inner-wrapper {
+			background: var(--ee-background-color);
+			margin: 0 0 var(--ee-margin-smaller) 300px;
+			width: calc(100% - 300px) !important;
+		}
 
 		thead {
 			th {
@@ -54,45 +51,49 @@
 				}
 
 				&:first-child {
-					background: var(--ee-color-grey-14);
-					content: '';
-					left: 1.5rem;
 					position: absolute !important;
-					top: auto;
-					width: 300px;
-					z-index: 999;
 				}
 			}
 		}
 
 		tbody {
 			tr,
-			td {
+			.ee-rspnsv-table-body-td {
 				padding: 1rem;
 				height: 80px;
 			}
 			tr {
-				background: var(--ee-color-grey-14);
+				background: var(--ee-background-color);
 				padding: 0;
 
 				&:hover {
-					background: var(--ee-color-grey-13);
+					background: var(--ee-text-on-dark-blue);
+
+					.ee-rspnsv-table-body-td.date-cell {
+						background: var(--ee-color-grey-13);
+					}
 				}
 
 				&:nth-child(even) {
-					background: var(--ee-color-grey-13);
+					background: var(--ee-background-color);
+					.ee-rspnsv-table-body-td.date-cell {
+						background: var(--ee-color-grey-13);
+					}
 					&:hover {
-						background: var(--ee-color-grey-12);
+						background: var(--ee-text-on-dark-blue);
+						.ee-rspnsv-table-body-td.date-cell {
+							background: var(--ee-color-grey-12);
+						}
 					}
 				}
 			}
-			td {
+			.ee-rspnsv-table-body-td {
 				&.date-cell {
 					background: var(--ee-color-grey-14);
 					border-right: 5px solid var(--ee-color-white);
 					padding: var(--ee-padding-tiny) var(--ee-padding-small) var(--ee-padding-tiny)
 						var(--ee-padding-default);
-					left: 1.5rem;
+					left: 0;
 					position: absolute !important;
 					top: auto;
 					width: 300px;
@@ -115,22 +116,11 @@
 							width: calc(300px - (var(--ee-padding-small) * 2));
 						}
 					}
-
-					&:hover {
-						background: var(--ee-color-grey-13);
-					}
-
-					&:nth-child(even) {
-						background: var(--ee-color-grey-13);
-						&:hover {
-							background: var(--ee-color-grey-12);
-						}
-					}
 				}
 
 				&.relation-cell {
 					height: 80px;
-					padding: var(--ee-padding-nano);
+					padding: var(--ee-padding-micro);
 					width: 130px;
 					.ee-rspnsv-table-mobile-only-column-value {
 						height: 100%;
@@ -148,7 +138,7 @@
 				}
 			}
 		}
-		td,
+		.ee-rspnsv-table-body-td,
 		th {
 			text-align: left;
 
@@ -162,34 +152,59 @@
 		}
 		.no-assignments {
 			button {
-				background-color: var(--ee-color-accent) !important;
-				border-color: var(--ee-color-accent) !important;
+				background-color: var(--ee-color-accent);
+				border-color: var(--ee-color-accent);
+
+				&:focus {
+					border-color: var(--ee-color-accent-high-contrast);
+				}
+				&:hover {
+					border-color: var(--ee-color-accent-low-contrast);
+				}
 			}
 		}
 		.new-assignment {
 			button {
-				background-color: var(--ee-color-secondary) !important;
-				border-color: var(--ee-color-secondary) !important;
+				background-color: var(--ee-color-secondary);
+				border-color: var(--ee-color-secondary);
 				svg {
 					fill: white !important;
+				}
+				&:focus {
+					border-color: var(--ee-color-secondary-high-contrast);
+				}
+				&:hover {
+					border-color: var(--ee-color-secondary-low-contrast);
 				}
 			}
 		}
 		.old-assignment {
 			button {
-				background-color: var(--ee-color-primary) !important;
-				border-color: var(--ee-color-primary) !important;
+				background-color: var(--ee-color-primary);
+				border-color: var(--ee-color-primary);
 				svg {
 					fill: white !important;
+				}
+				&:focus {
+					border-color: var(--ee-color-primary-high-contrast);
+				}
+				&:hover {
+					border-color: var(--ee-color-primary-low-contrast);
 				}
 			}
 		}
 		.removed-assignment {
 			button {
-				background-color: var(--ee-color-accent) !important;
-				border-color: var(--ee-color-accent) !important;
+				background-color: var(--ee-color-accent);
+				border-color: var(--ee-color-accent);
 				svg {
 					fill: white !important;
+				}
+				&:focus {
+					border-color: var(--ee-color-accent-high-contrast);
+				}
+				&:hover {
+					border-color: var(--ee-color-accent-low-contrast);
 				}
 			}
 		}
