@@ -14,7 +14,7 @@ const ToggleFiltersButton: React.FC<ToggleFiltersButtonProps> = ({ listId, showF
 	return (
 		<Button
 			active={showFilters}
-			className='ee-filter-bar__btn'
+			className='ee-filter-bar__btn ee-btn--small'
 			icon={Filter}
 			id={filterId}
 			onClick={toggleFilters}

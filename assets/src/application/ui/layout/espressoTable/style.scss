@@ -1,7 +1,8 @@
 .ee-rspnsv-table-wrapper {
 	margin: 0 auto var(--ee-margin-smaller);
+
+	table-layout: auto;
 	max-width: 100%;
-	overflow-y: visible;
 }
 
 .ee-rspnsv-table {
@@ -23,6 +24,9 @@
 
 	.ee-rspnsv-table-body {
 		&-row {
+			background: var(--ee-background-color);
+			height: 3.5rem;
+
 			&:nth-child(even) {
 				background: var(--ee-color-grey-15);
 			}

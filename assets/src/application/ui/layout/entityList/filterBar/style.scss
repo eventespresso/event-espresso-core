@@ -116,7 +116,7 @@ $filter-btn: '.ee-filter-bar__btn';
 		&--active {
 			&#{$filter-btn} {
 				border-color: var(--ee-color-primary-low-contrast) !important;
-				box-shadow: none;
+				// box-shadow: none;
 				color: var(--ee-color-primary);
 				path {
 					fill: var(--ee-color-primary);

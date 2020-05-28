@@ -26,7 +26,7 @@ const ToggleLegendButton: React.FC<ToggleLegendButtonProps> = ({ listId, showLeg
 	return (
 		<Button
 			active={showLegend}
-			className='ee-filter-bar__btn'
+			className='ee-filter-bar__btn ee-btn--small'
 			icon={icon}
 			id={filterId}
 			onClick={toggleLegend}

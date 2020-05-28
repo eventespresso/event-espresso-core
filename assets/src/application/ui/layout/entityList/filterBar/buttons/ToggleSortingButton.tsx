@@ -18,7 +18,7 @@ const ToggleSortingButton: React.FC<ToggleSortingButtonProps> = ({
 	return (
 		<Button
 			active={sortingEnabled}
-			className='ee-filter-bar__btn'
+			className='ee-filter-bar__btn ee-btn--small'
 			icon={Sort}
 			id={id}
 			onClick={toggleSorting}

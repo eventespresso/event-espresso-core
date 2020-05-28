@@ -1,179 +1,223 @@
-#ticket-assignment-manager-table {
-	table-layout: auto;
-	margin: auto;
-	thead {
-		th {
-			padding: 0;
-			text-align: center;
+.ee-ticket-assignments-manager__body {
+	overflow-x: hidden !important;
+	padding-left: 1.5rem;
+	padding-right: 1.5rem;
+	position: relative;
+	max-width: calc(100% - 3rem);
+	width: calc(100% - 3rem);
 
-			.header-cell-content {
-				padding: var(--ee-padding-nano) var(--ee-padding-tiny);
-
-				&__wrapper {
-					align-items: center;
-					display: flex;
-					flex-flow: column nowrap;
-					height: 130px;
-					justify-content: flex-end;
-				}
-
-				&__after {
-					font-size: var(--ee-font-size-small);
-					font-weight: bold;
-					line-height: var(--ee-line-height-modifier);
-					padding: var(--ee-padding-micro);
-					text-transform: uppercase;
-					width: 100%;
-				}
-
-				&__name {
-					font-weight: bold;
-					line-height: 1.1;
-					margin: 0 0 var(--ee-margin-micro);
-					max-height: 60px;
-					overflow: hidden;
-					padding: var(--ee-padding-tiny) 0;
-					text-align: center;
-					width: calc(100px - (var(--ee-padding-smaller) * 2));
-				}
-			}
-		}
+	.ee-rspnsv-table-wrapper {
+		margin: 0 0 var(--ee-margin-smaller) 300px;
+		overflow-x: scroll !important;
+		overflow-y: visible;
+		width: 100%;
 	}
 
-	tbody {
-		tr,
-		td {
-			padding: 1rem;
-			height: 100px;
-		}
-		tr {
-			background: var(--ee-color-grey-14);
-			padding: 0;
-			&:hover {
-				background: var(--ee-color-grey-13);
-			}
-			&:nth-child(even) {
-				background: var(--ee-color-grey-13);
-				&:hover {
-					background: var(--ee-color-grey-12);
-				}
-			}
-		}
-		td {
-			background-color: var(--ee-background-color);
+	#ticket-assignment-manager-table {
+		background: var(--ee-background-color);
 
-			&.date-cell {
-				border-right: 5px solid var(--ee-color-white);
-				padding: var(--ee-padding-tiny) var(--ee-padding-small) var(--ee-padding-tiny) var(--ee-padding-default);
-				position: relative;
-				width: 300px;
-				.date-stripe {
-					display: inline-block;
-					height: 100%;
-					width: var(--ee-padding-small);
-					position: absolute;
-					top: 0;
-					left: 0;
-				}
-				.date-cell-content {
+		thead {
+			th {
+				padding: 0;
+				text-align: center;
+
+				.header-cell-content {
+					padding: var(--ee-padding-nano) var(--ee-padding-tiny);
+
+					&__wrapper {
+						align-items: center;
+						display: flex;
+						flex-flow: column nowrap;
+						justify-content: flex-end;
+						height: 130px;
+					}
+
+					&__after {
+						font-size: var(--ee-font-size-small);
+						font-weight: bold;
+						line-height: var(--ee-line-height-modifier);
+						padding: var(--ee-padding-micro);
+						text-transform: uppercase;
+						width: 100%;
+					}
+
 					&__name {
 						font-weight: bold;
+						line-height: 1.1;
+						margin: 0 0 var(--ee-margin-micro);
+						max-height: 60px;
 						overflow: hidden;
-						text-overflow: ellipsis;
-						white-space: nowrap;
-						width: calc(300px - (var(--ee-padding-small) * 2));
+						padding: var(--ee-padding-tiny) 0;
+						text-align: center;
+						width: calc(130px - (var(--ee-padding-smaller) * 2));
 					}
 				}
-			}
 
-			&.relation-cell {
-				height: 100px;
-				padding: var(--ee-padding-nano);
-				width: 100px;
-				.ee-rspnsv-table-mobile-only-column-value {
-					height: 100%;
-				}
-				button {
-					height: 100%;
-					width: 100%;
-					span,
-					svg {
-						height: var(--ee-icon-button-size);
-						padding: 0;
-						width: var(--ee-icon-button-size);
-					}
+				&:first-child {
+					background: var(--ee-color-grey-14);
+					content: '';
+					left: 1.5rem;
+					position: absolute !important;
+					top: auto;
+					width: 300px;
+					z-index: 999;
 				}
 			}
+		}
 
-			&.ee-rspnsv-table-body-td {
+		tbody {
+			tr,
+			td {
+				padding: 1rem;
 				height: 80px;
-				width: 130px;
 			}
-		}
-	}
-	td,
-	th {
-		text-align: left;
+			tr {
+				background: var(--ee-color-grey-14);
+				padding: 0;
 
-		&:not(.title-col) {
-			width: 100px;
-		}
+				&:hover {
+					background: var(--ee-color-grey-13);
+				}
 
-		&.text-center {
-			text-align: center;
-		}
-	}
-	.no-assignments {
-		button {
-			background-color: var(--ee-color-accent) !important;
-			border-color: var(--ee-color-accent) !important;
-			svg {
-				color: white;
+				&:nth-child(even) {
+					background: var(--ee-color-grey-13);
+					&:hover {
+						background: var(--ee-color-grey-12);
+					}
+				}
 			}
-		}
-	}
-	.new-assignment {
-		button {
-			background-color: var(--ee-color-secondary) !important;
-			border-color: var(--ee-color-secondary) !important;
-		}
-	}
-	.old-assignment {
-		button {
-			background-color: var(--ee-color-primary) !important;
-			border-color: var(--ee-color-primary) !important;
-		}
-	}
-	.removed-assignment {
-		button {
-			background-color: var(--ee-color-accent) !important;
-			border-color: var(--ee-color-accent) !important;
-		}
-	}
+			td {
+				&.date-cell {
+					background: var(--ee-color-grey-14);
+					border-right: 5px solid var(--ee-color-white);
+					padding: var(--ee-padding-tiny) var(--ee-padding-small) var(--ee-padding-tiny)
+						var(--ee-padding-default);
+					left: 1.5rem;
+					position: absolute !important;
+					top: auto;
+					width: 300px;
+					z-index: 999;
 
-	/* WordPress Admin Media Query Breakpoint: Tablet */
-	@media screen and (max-width: 782px) {
-		&.ee-rspnsv-table {
-			tbody {
-				tr {
-					&.ee-rspnsv-table-body-row {
-						height: auto;
+					.date-stripe {
+						display: inline-block;
+						height: 100%;
+						width: var(--ee-padding-small);
+						position: absolute;
+						top: 0;
+						left: 0;
+					}
+					.date-cell-content {
+						&__name {
+							font-weight: bold;
+							overflow: hidden;
+							text-overflow: ellipsis;
+							white-space: nowrap;
+							width: calc(300px - (var(--ee-padding-small) * 2));
+						}
 					}
 
-					td {
-						border-bottom: 1px solid var(--ee-color-grey-14);
-						height: auto;
-						width: 100%;
+					&:hover {
+						background: var(--ee-color-grey-13);
+					}
 
-						&.relation-cell {
-							button {
-								margin-bottom: 0;
-							}
+					&:nth-child(even) {
+						background: var(--ee-color-grey-13);
+						&:hover {
+							background: var(--ee-color-grey-12);
+						}
+					}
+				}
+
+				&.relation-cell {
+					height: 80px;
+					padding: var(--ee-padding-nano);
+					width: 130px;
+					.ee-rspnsv-table-mobile-only-column-value {
+						height: 100%;
+					}
+					button {
+						height: 100%;
+						width: 100%;
+						span,
+						svg {
+							height: var(--ee-icon-button-size);
+							padding: 0;
+							width: var(--ee-icon-button-size);
+						}
+					}
+				}
+			}
+		}
+		td,
+		th {
+			text-align: left;
+
+			&:not(.title-col) {
+				width: 100px;
+			}
+
+			&.text-center {
+				text-align: center;
+			}
+		}
+		.no-assignments {
+			button {
+				background-color: var(--ee-color-accent) !important;
+				border-color: var(--ee-color-accent) !important;
+			}
+		}
+		.new-assignment {
+			button {
+				background-color: var(--ee-color-secondary) !important;
+				border-color: var(--ee-color-secondary) !important;
+				svg {
+					fill: white !important;
+				}
+			}
+		}
+		.old-assignment {
+			button {
+				background-color: var(--ee-color-primary) !important;
+				border-color: var(--ee-color-primary) !important;
+				svg {
+					fill: white !important;
+				}
+			}
+		}
+		.removed-assignment {
+			button {
+				background-color: var(--ee-color-accent) !important;
+				border-color: var(--ee-color-accent) !important;
+				svg {
+					fill: white !important;
+				}
+			}
+		}
+
+		/* WordPress Admin Media Query Breakpoint: Tablet */
+		@media screen and (max-width: 782px) {
+			&.ee-rspnsv-table {
+				tbody {
+					tr {
+						&.ee-rspnsv-table-body-row {
+							height: auto;
 						}
 
-						&:not(:first-child) {
-							display: flex;
-							align-items: center;
+						td {
+							border-bottom: 1px solid var(--ee-color-grey-14);
+							height: auto;
+							width: 100%;
+
+							&.relation-cell {
+								button {
+									margin-bottom: 0;
+								}
+							}
+
+							&:not(:first-child) {
+								display: flex;
+								align-items: center;
+							}
 						}
 					}
 				}
