@@ -31,7 +31,8 @@ class GraphQLUnitTestCase extends EE_UnitTestCase
     public function setUp()
     {
         parent::setUp();
-        if (PHP_VERSION_ID < 70000) {
+        $has_supported_php = PHP_VERSION_ID > 70000;
+        if (!$has_supported_php) {
             $this->markTestSkipped(
                 'WP GraphQL compatible with PHP 7+ only'
             );
