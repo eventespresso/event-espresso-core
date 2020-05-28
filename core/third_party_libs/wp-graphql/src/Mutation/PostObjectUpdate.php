@@ -77,7 +77,7 @@ class PostObjectUpdate {
 			/**
 			 * If there's no existing post, throw an exception
 			 */
-			if ( empty( $id_parts['id'] ) || false === $existing_post || $id_parts['type'] !== $post_type_object->name ) {
+			if ( empty( $id_parts['id'] ) || false === $existing_post ) {
 				// translators: the placeholder is the name of the type of post being updated
 				throw new UserError( sprintf( __( 'No %1$s could be found to update', 'wp-graphql' ), $post_type_object->graphql_single_name ) );
 			}
@@ -116,7 +116,7 @@ class PostObjectUpdate {
 			 */
 
 			/**
-			 * insert the post object and get the ID
+			 * Insert the post object and get the ID
 			 */
 			$post_args       = PostObjectMutation::prepare_post_object( $input, $post_type_object, $mutation_name );
 			$post_args['ID'] = absint( $id_parts['id'] );

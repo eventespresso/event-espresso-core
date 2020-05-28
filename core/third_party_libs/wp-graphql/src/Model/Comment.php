@@ -10,6 +10,8 @@ use GraphQLRelay\Relay;
  * @property string     $id
  * @property int        $commentId
  * @property string     $commentAuthorEmail
+ * @property string     $comment_author
+ * @property string     $comment_author_url
  * @property int        $comment_ID
  * @property int        $comment_parent_id
  * @property string     $authorIp
@@ -72,6 +74,7 @@ class Comment extends Model {
 	protected function is_private() {
 
 		// NOTE: Do a non-strict check here, as the return is a `1` or `0`.
+		// phpcs:disable WordPress.PHP.StrictComparisons.LooseComparison
 		if ( true != $this->data->comment_approved && ! current_user_can( 'moderate_comments' ) ) {
 			return true;
 		}
@@ -107,6 +110,12 @@ class Comment extends Model {
 				},
 				'comment_parent_id'  => function() {
 					return ! empty( $this->data->comment_parent ) ? absint( $this->data->comment_parent ) : 0;
+				},
+				'comment_author'     => function() {
+					return ! empty( $this->data->comment_author ) ? absint( $this->data->comment_author ) : null;
+				},
+				'comment_author_url' => function() {
+					return ! empty( $this->data->comment_author_url ) ? absint( $this->data->comment_author_url ) : null;
 				},
 				'authorIp'           => function() {
 					return ! empty( $this->data->comment_author_IP ) ? $this->data->comment_author_IP : null;
