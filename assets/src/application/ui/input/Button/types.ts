@@ -21,6 +21,7 @@ export enum ButtonType {
 }
 
 export interface ButtonProps extends ButtonAdapterProps, Partial<withLabelProps>, Partial<withTooltipProps> {
+	active?: boolean;
 	buttonType?: ButtonType;
 	buttonSize?: ButtonSize;
 }

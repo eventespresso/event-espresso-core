@@ -1,7 +1,7 @@
 import { act, renderHook } from '@testing-library/react-hooks';
 
 import { DisplayStartOrEndDate } from '@sharedServices/filterState';
-import { useTicketsListFilterStateManager } from '../';
+import useTicketsListFilterStateManager from '../useTicketsListFilterStateManager';
 import { TicketsSales, TicketsStatus } from '../types';
 import { ApolloMockedProvider } from '@edtrServices/context/TestContext';
 

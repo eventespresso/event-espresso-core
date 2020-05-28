@@ -1,11 +1,10 @@
 import React from 'react';
-import classNames from 'classnames';
 import { __ } from '@wordpress/i18n';
 
+import { Button } from '@application/ui/input';
 import { Sort } from '@appDisplay/icons/svgs';
-import { IconButton } from '@appInputs/Button';
-import { LabelPosition } from '@application/ui/display';
 import { ToggleSortingButtonProps } from '../types';
+
 import { getPropsAreEqual } from '@appServices/utilities';
 
 const ToggleSortingButton: React.FC<ToggleSortingButtonProps> = ({
@@ -14,24 +13,20 @@ const ToggleSortingButton: React.FC<ToggleSortingButtonProps> = ({
 	toggleSorting,
 	...rest
 }) => {
-	const className = classNames('ee-filter-bar__btn', { 'ee-filter-bar__btn--active': sortingEnabled });
 	const id = `ee-toggle-sorting-btn-${listId}`;
-	const tooltip = sortingEnabled ? __('disable sorting') : __('enable sorting');
-	const tooltipProps = { placement: 'top' as 'top' };
 
 	return (
-		<IconButton
-			className={className}
+		<Button
+			active={sortingEnabled}
+			className='ee-filter-bar__btn'
 			icon={Sort}
 			id={id}
-			label={__('sorting')}
 			onClick={toggleSorting}
-			tooltip={tooltip}
-			tooltipProps={tooltipProps}
 			labelClassName='ee-filter-bar__btn-wrap'
-			labelPosition={LabelPosition.BOTTOM_CENTER}
 			{...rest}
-		/>
+		>
+			{sortingEnabled ? __('disable sorting') : __('enable sorting')}
+		</Button>
 	);
 };
 

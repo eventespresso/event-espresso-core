@@ -1,7 +1,8 @@
 import React, { createContext, useEffect } from 'react';
 
 import type { EntityListContextProps } from '../types';
-import { DatetimesFilterStateManager, useDatesListFilterStateManager } from '../../filterState';
+import { DatetimesFilterStateManager } from '../../filterState';
+import useDatesListFilterStateManager from '../../filterState/datetimes/useDatesListFilterStateManager';
 import { useFilteredEntities } from '@appLayout/entityList';
 import { domain, datesList } from '@edtrServices/constants';
 import { useDatetimes } from '@edtrServices/apollo/queries';

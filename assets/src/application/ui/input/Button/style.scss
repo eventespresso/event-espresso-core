@@ -8,14 +8,15 @@
 }
 
 .btn-focus {
-	border: 2px solid var(--ee-color-primary);
-	box-shadow: 0 0 0 1px var(--ee-color-primary);
+	border: 2px solid var(--ee-color-grey-9);
+	box-shadow: 0 0 0 1px var(--ee-color-grey-9);
 }
 
 .btn-hover {
 	border: 2px solid var(--ee-color-primary-low-contrast);
-	color: var(--ee-color-primary-high-contrast);
+	color: var(--ee-text-on-grey-8);
 	box-shadow: 0 0 0 1px var(--ee-color-primary-low-contrast);
+	background: var(--ee-color-grey-12);
 }
 
 .ee-btn-base {
@@ -35,26 +36,37 @@
 	}
 
 	&.ee-btn {
-		background: var(--ee-color-grey-15);
-		border-color: var(--ee-color-grey-14) var(--ee-color-grey-14) var(--ee-color-grey-15);
+		background: var(--ee-color-grey-11);
+		border: 2px solid var(--ee-color-grey-11);
 		border-radius: var(--ee-border-radius-small);
-		box-shadow: var(--ee-box-shadow-tiny);
-		color: var(--ee-text-on-grey-14);
+		color: var(--ee-text-on-grey-10);
 		display: inline-flex;
 		font-family: 'Segoe UI', Candara, 'Bitstream Vera Sans', 'DejaVu Sans', 'Bitstream Vera Sans', 'Trebuchet MS',
 			Verdana, 'Verdana Ref', sans-serif;
 		font-size: var(--ee-font-size-default);
-		font-weight: bold;
 		line-height: var(--ee-font-size-default);
-		margin: var(--ee-margin-nano) var(--ee-margin-nano) var(--ee-margin-smaller);
 		outline: none !important;
-		padding: var(--ee-padding-tiny) var(--ee-padding-small);
+		padding: var(--ee-padding-tiny) var(--ee-padding-smaller);
 		position: relative;
 		text-decoration: none;
 		text-align: center;
 		text-shadow: var(--ee-text-shadow-inset-light);
 		transition: border-color 0.1s ease 0.1s, color 0.1s ease 0.1s !important;
 		vertical-align: middle;
+
+		svg {
+			transition: color 0.1s linear, fill 0.1s linear;
+		}
+
+		&:not(.ee-noIcon) {
+			span {
+				margin: 0 var(--ee-margin-micro) 0 var(--ee-margin-smaller);
+			}
+		}
+
+		span {
+			transition: color 0.1s linear;
+		}
 
 		&:active {
 			box-shadow: none;
@@ -99,8 +111,6 @@
 	.ee-btn-label + .ee-btn {
 		margin-right: var(--ee-margin-small) !important;
 	}
-
-	/* BUTTON COLORS */
 
 	/* MINIMAL */
 
@@ -157,8 +167,33 @@
 			color: var(--ee-text-on-accent);
 		}
 
+		svg {
+			fill: var(--ee-color-white);
+		}
+
 		&:hover:not([disabled]) {
 			background: var(--ee-color-accent-low-contrast);
+		}
+	}
+
+	&.ee-btn--is-active {
+		background: var(--ee-color-blue);
+		border-color: var(--ee-color-blue);
+		color: var(--ee-color-white);
+
+		svg {
+			fill: var(--ee-color-white);
+			font-size: unset;
+		}
+
+		&:active {
+			color: var(--ee-color-white);
+		}
+
+		&:hover {
+			background: var(--ee-color-blue);
+			border-color: white;
+			color: white;
 		}
 	}
 
@@ -187,10 +222,13 @@
 		&:active,
 		&:focus,
 		&:visited {
-			font-size: var(--ee-font-size-tiny);
 			min-height: var(--ee-font-size-smaller);
 			line-height: var(--ee-font-size-tiny);
 			padding: var(--ee-padding-nano) var(--ee-padding-tiny) var(--ee-padding-micro);
+
+			span {
+				font-size: var(--ee-font-size-tiny);
+			}
 		}
 
 		.img-wrap span {
@@ -199,18 +237,23 @@
 	}
 
 	&.ee-btn--small {
-		font-size: var(--ee-font-size-smaller);
 		min-height: var(--ee-font-size-small);
-		line-height: var(--ee-font-size-smaller);
-		padding: var(--ee-padding-micro) var(--ee-padding-smaller) var(--ee-padding-tiny);
+		line-height: var(--ee-font-size-tiny);
+		letter-spacing: 1px;
+
+		span {
+			font-size: var(--ee-font-size-small);
+		}
 
 		&:active,
 		&:focus,
 		&:visited {
-			font-size: var(--ee-font-size-smaller);
 			min-height: var(--ee-font-size-small);
 			line-height: var(--ee-font-size-smaller);
-			padding: var(--ee-padding-micro) var(--ee-padding-smaller) var(--ee-padding-tiny);
+
+			span {
+				font-size: var(--ee-font-size-small);
+			}
 		}
 
 		&:not(.ee-noIcon) .text-wrap {
@@ -227,18 +270,25 @@
 	}
 
 	&.ee-btn--big {
-		font-size: var(--ee-font-size-big);
 		min-height: var(--ee-font-size-bigger);
+		height: auto;
 		line-height: var(--ee-font-size-big);
-		padding: var(--ee-padding-smaller) var(--ee-padding-default) var(--ee-padding-small);
+		padding: var(--ee-padding-smaller) var(--ee-padding-default);
+
+		span {
+			font-size: var(--ee-font-size-big);
+		}
 
 		&:active,
 		&:focus,
 		&:visited {
-			font-size: var(--ee-font-size-big);
 			min-height: var(--ee-font-size-bigger);
 			line-height: var(--ee-font-size-big);
-			padding: var(--ee-padding-smaller) var(--ee-padding-default) var(--ee-padding-small);
+			padding: var(--ee-padding-smaller) var(--ee-padding-default);
+
+			span {
+				font-size: var(--ee-font-size-big);
+			}
 		}
 
 		.img-wrap span {

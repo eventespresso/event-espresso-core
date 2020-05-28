@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { __ } from '@wordpress/i18n';
 
-import CardViewFilterButton from './buttons/CardViewFilterButton';
 import Collapsible from './Collapsible';
 import { EntityListFilterBarProps } from './types';
 import { EntityListLegend } from '@application/ui/display';
-import TableViewFilterButton from './buttons/TableViewFilterButton';
 import ToggleLegendButton from './buttons/ToggleLegendButton';
 import ToggleFiltersButton from './buttons/ToggleFiltersButton';
 import ToggleSortingButton from './buttons/ToggleSortingButton';
+import EntityListViewButtonGroup from './buttons/EntityListViewButtonGroup';
 import { SearchInput } from '@application/ui/input';
 import { useFilterBarUIElements } from './subscription';
 import { EntityListFilterStateManager as ELFSM } from './filterState';
@@ -45,8 +44,12 @@ const EntityListFilterBar = <FS extends ELFSM>({
 	return (
 		<div className='ee-filter-bar'>
 			<div className='ee-filter-bar__main'>
-				<TableViewFilterButton listId={listId} setTableView={setTableView} view={view} />
-				<CardViewFilterButton listId={listId} setCardView={setCardView} view={view} />
+				<EntityListViewButtonGroup
+					listId={listId}
+					setCardView={setCardView}
+					setTableView={setTableView}
+					view={view}
+				/>
 				<ToggleFiltersButton
 					listId={listId}
 					showFilters={showEntityFilters}

@@ -2,7 +2,8 @@ import React, { createContext, useEffect } from 'react';
 
 import { useMemoStringify } from '@appServices/hooks';
 import type { EntityListContextProps } from '../types';
-import { TicketsFilterStateManager, useTicketsListFilterStateManager } from '../../filterState';
+import { TicketsFilterStateManager } from '../../filterState';
+import useTicketsListFilterStateManager from '../../filterState/tickets/useTicketsListFilterStateManager';
 import { useFilteredEntities } from '@appLayout/entityList';
 import { domain, ticketsList } from '@edtrServices/constants';
 import { useTickets } from '@edtrServices/apollo/queries';

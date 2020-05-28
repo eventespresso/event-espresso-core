@@ -2,6 +2,10 @@ import { EntityListFilterStateManager as ELFSM, View } from './filterState';
 import { LegendConfig } from '@application/ui/display/EntityListLegend/types';
 import { IconButtonProps } from '@appInputs/Button';
 
+export interface CardViewFilterButtonProps extends View, CommonProps, IconButtonProps {
+	setCardView: VoidFunction;
+}
+
 export interface CollapsibleProps {
 	show: boolean;
 }
@@ -16,9 +20,7 @@ export interface EntityListFilterBarProps<FS extends ELFSM> extends CommonProps 
 	legendConfig: LegendConfig;
 }
 
-export interface CardViewFilterButtonProps extends View, CommonProps, IconButtonProps {
-	setCardView: VoidFunction;
-}
+export interface EntityListViewButtonGroupProps extends CardViewFilterButtonProps, TableViewFilterButtonProps {}
 
 export interface TableViewFilterButtonProps extends View, CommonProps, IconButtonProps {
 	setTableView: () => void;

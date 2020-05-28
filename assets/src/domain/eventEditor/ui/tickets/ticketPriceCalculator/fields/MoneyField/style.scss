@@ -1,0 +1,16 @@
+.ee-money-field {
+	display: flex;
+
+	&__after,
+	&__before {
+		line-height: var(--ee-icon-button-size);
+	}
+
+	&__after {
+		margin: 0 var(--ee-margin-smaller) 0 var(--ee-margin-tiny);
+	}
+
+	&__before {
+		margin: 0 var(--ee-margin-tiny) 0 var(--ee-margin-smaller);
+	}
+}
