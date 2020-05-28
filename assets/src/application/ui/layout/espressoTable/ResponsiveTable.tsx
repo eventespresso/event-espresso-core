@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { isFunc } from '@appServices/utilities/function';
 import { isEmpty } from '@appServices/utilities/array';
+import { useMemoStringify } from '@appServices/hooks';
 import Table from './Table';
 import TableHeader from './TableHeader';
 import TableBody from './TableBody';
@@ -37,16 +38,21 @@ const ResponsiveTable: React.FC<ResponsiveTableProps> = ({
 	const hasRowHeaders = !!metaData.hasRowHeaders;
 	const headerRowCount = headerRows.length;
 	const tableRowCount = bodyRows.length;
+	const isScrollable = !!metaData.isScrollable;
 
 	const tableClassName = classNames(
 		className.tableClassName,
 		`ee-rspnsv-table-column-count-${primaryHeader.cells.length}`,
-		{
-			'ee-rspnsv-table-has-row-headers': hasRowHeaders,
-		}
+		hasRowHeaders && 'ee-rspnsv-table-has-row-headers'
 	);
 
-	const cssClasses = {
+	const wrapperClassName = classNames(
+		className.tableClassName,
+		'ee-rspnsv-table__outer_wrapper',
+		isScrollable && 'ee-rspnsv-table__is-scrollable'
+	);
+
+	const cssClasses = useMemoStringify({
 		headerClassName: className.headerClassName || '',
 		headerRowClassName: className.headerRowClassName || '',
 		headerThClassName: className.headerThClassName || '',
@@ -58,39 +64,46 @@ const ResponsiveTable: React.FC<ResponsiveTableProps> = ({
 		footerRowClassName: className.footerRowClassName || '',
 		footerThClassName: className.footerThClassName || '',
 		tableClassName,
-	};
+	});
 
 	const showDragHandle = props.showDragHandle && isFunc(onDragEnd);
 
 	return (
-		<Table captionID={captionID} captionText={tableCaption} className={cssClasses.tableClassName} tableId={tableId}>
-			<TableHeader
-				className={cssClasses}
-				headerRows={headerRows}
-				showDragHandle={showDragHandle}
+		<div className={wrapperClassName}>
+			<Table
+				captionID={captionID}
+				captionText={tableCaption}
+				className={cssClasses.tableClassName}
 				tableId={tableId}
-			/>
-			<TableBody
-				bodyRows={bodyRows}
-				className={cssClasses}
-				hasRowHeaders={hasRowHeaders}
-				headerRowCount={headerRowCount}
-				onBeforeDragStart={onBeforeDragStart}
-				onDragStart={onDragStart}
-				onDragUpdate={onDragUpdate}
-				onDragEnd={onDragEnd}
-				primaryHeader={primaryHeader}
-				showDragHandle={showDragHandle}
-				tableId={tableId}
-			/>
-			<TableFooter
-				className={cssClasses}
-				footerRows={footerRows}
-				tableId={tableId}
-				rowCount={headerRowCount + tableRowCount}
-				showDragHandle={showDragHandle}
-			/>
-		</Table>
+			>
+				<TableHeader
+					className={cssClasses}
+					headerRows={headerRows}
+					showDragHandle={showDragHandle}
+					tableId={tableId}
+				/>
+				<TableBody
+					bodyRows={bodyRows}
+					className={cssClasses}
+					hasRowHeaders={hasRowHeaders}
+					headerRowCount={headerRowCount}
+					onBeforeDragStart={onBeforeDragStart}
+					onDragStart={onDragStart}
+					onDragUpdate={onDragUpdate}
+					onDragEnd={onDragEnd}
+					primaryHeader={primaryHeader}
+					showDragHandle={showDragHandle}
+					tableId={tableId}
+				/>
+				<TableFooter
+					className={cssClasses}
+					footerRows={footerRows}
+					tableId={tableId}
+					rowCount={headerRowCount + tableRowCount}
+					showDragHandle={showDragHandle}
+				/>
+			</Table>
+		</div>
 	);
 };
 

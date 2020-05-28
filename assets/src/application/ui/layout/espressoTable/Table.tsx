@@ -5,7 +5,7 @@ import { Box } from '@infraUI/display';
 import { TableProps } from './types';
 
 const Table: React.FC<TableProps> = ({ captionID = '', captionText = '', children, tableId = '', ...props }) => {
-	const className = classNames('ee-rspnsv-table', props.className);
+	const className = classNames(props.className,'ee-rspnsv-table');
 	const tableProps: React.HTMLAttributes<HTMLElement> = {
 		...props,
 		className,
@@ -15,7 +15,7 @@ const Table: React.FC<TableProps> = ({ captionID = '', captionText = '', childre
 	return (
 		<Box
 			aria-labelledby={captionID}
-			className='ee-rspnsv-table-wrapper'
+			className='ee-rspnsv-table__inner-wrapper'
 			overflowX={{ sm: 'auto', md: 'visible' }}
 			role='region'
 			tabIndex={0}

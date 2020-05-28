@@ -1,9 +1,7 @@
-.ee-rspnsv-table-wrapper {
-	margin: 0 auto var(--ee-margin-smaller);
-
-	table-layout: auto;
-	max-width: 100%;
-}
+/** -------------------------------------------------------------------------
+ * Event Espresso Responsive Table Stylesheet
+ * © 2020 Event Espresso
+ * ------------------------------------------------------------------------- */
 
 .ee-rspnsv-table {
 	border-collapse: separate !important;
@@ -14,16 +12,34 @@
 	table-layout: fixed;
 	text-align: left;
 
+	&__outer_wrapper {
+		max-width: 100%;
+		position: relative;
+		width: 100%;
+	}
+
+	&__inner-wrapper {
+		margin: 0 auto var(--ee-margin-smaller);
+		max-width: 100%;
+		table-layout: auto;
+		width: 100%;
+	}
+
+	&__is-scrollable .ee-rspnsv-table__inner-wrapper {
+		overflow-x: scroll !important;
+		overflow-y: visible;
+	}
+
 	.ee-rspnsv-table-header {
 		visibility: visible;
 
-		&-row {
+		tr {
 			box-sizing: border-box;
 		}
 	}
 
 	.ee-rspnsv-table-body {
-		&-row {
+		tr {
 			background: var(--ee-background-color);
 			height: 3.5rem;
 
@@ -60,7 +76,7 @@
 	.ee-rspnsv-table-body .ee-rspnsv-table-body-td {
 		box-sizing: border-box;
 		font-size: var(--ee-font-size-small);
-		line-height: var(--ee-font-size-big);
+		// line-height: var(--ee-font-size-big);
 		text-align: left;
 	}
 
@@ -69,7 +85,7 @@
 		.ee-rspnsv-table-footer-td {
 			box-sizing: border-box;
 			font-size: var(--ee-font-size-small);
-			line-height: var(--ee-font-size-big);
+			// line-height: var(--ee-font-size-big);
 			text-align: left;
 		}
 	}
@@ -97,9 +113,11 @@
 		display: table-cell;
 
 		&.ee-col-name {
-			span {
+			span,
+			.ee-entity-list-text {
 				font-size: var(--ee-font-size-small);
 				font-weight: bold;
+				line-height: 1.1 !important;
 			}
 		}
 

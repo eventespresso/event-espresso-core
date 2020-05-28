@@ -66,6 +66,7 @@ export interface ResponsiveTableProps extends Responders, CommonProps {
 		tableCaption: string;
 		tableId?: string;
 		hasRowHeaders?: boolean;
+		isScrollable?: boolean;
 	};
 }
 
