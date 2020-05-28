@@ -23,7 +23,10 @@ class EspressoStandardPostTypeEditor extends RouteMatchSpecification
      */
     public function isMatchingRoute()
     {
-        return $this->request->getMatch('espresso_*') !== false
+        global $pagenow;
+        return $pagenow
+               && $pagenow === 'admin.php'
+               && $this->request->getMatch('espresso_*') !== false
                && (
                    $this->request->getRequestParam('action') === 'edit'
                    || $this->request->getRequestParam('action') === 'create_new'

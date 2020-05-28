@@ -20,6 +20,7 @@ class WordPressPluginsPage extends RouteMatchSpecification
      */
     public function isMatchingRoute()
     {
-        return strpos($this->request->requestUri(), 'wp-admin/plugins.php') !== false;
+        global $pagenow;
+        return $this->request->isAdmin() && $pagenow && $pagenow === 'plugins.php';
     }
 }

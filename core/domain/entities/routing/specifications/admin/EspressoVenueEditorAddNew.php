@@ -22,7 +22,10 @@ class EspressoVenueEditorAddNew extends RouteMatchSpecification
      */
     public function isMatchingRoute()
     {
-        return $this->request->getRequestParam('page') === 'espresso_venues'
-            && $this->request->getRequestParam('action') === 'create_new';
+        global $pagenow;
+        return $pagenow
+               && $pagenow === 'admin.php'
+               && $this->request->getRequestParam('page') === 'espresso_venues'
+               && $this->request->getRequestParam('action') === 'create_new';
     }
 }

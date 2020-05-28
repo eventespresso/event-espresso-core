@@ -22,7 +22,11 @@ class EspressoEventEditorEdit extends RouteMatchSpecification
      */
     public function isMatchingRoute()
     {
-        return $this->request->getRequestParam('page') === 'espresso_events'
-            && $this->request->getRequestParam('action') === 'edit';
+        global $pagenow;
+        return $pagenow
+               && $pagenow === 'admin.php'
+               && $this->request->isAdmin()
+               && $this->request->getRequestParam('page') === 'espresso_events'
+               && $this->request->getRequestParam('action', 'edit') === 'edit';
     }
 }

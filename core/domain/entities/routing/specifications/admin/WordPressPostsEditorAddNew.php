@@ -3,6 +3,7 @@
 namespace EventEspresso\core\domain\entities\routing\specifications\admin;
 
 use EventEspresso\core\domain\entities\routing\specifications\RouteMatchSpecification;
+use WP_Post;
 
 /**
  * Class WordPressPostsAddNew
@@ -22,7 +23,9 @@ class WordPressPostsEditorAddNew extends RouteMatchSpecification
      */
     public function isMatchingRoute()
     {
-        return strpos($this->request->requestUri(), 'wp-admin/post-new.php') !== false
-            && $this->request->getRequestParam('post_type', 'post') === 'post';
+        global $pagenow;
+        return $pagenow
+               && $pagenow === 'post-new.php'
+               && $this->request->getRequestParam('post_type', 'post') === 'post';
     }
 }
