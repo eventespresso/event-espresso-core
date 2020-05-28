@@ -10,7 +10,7 @@ $filter-btn: '.ee-filter-bar__btn';
 .ee-filter-bar {
 	box-sizing: border-box;
 	color: var(--ee-default-text-color);
-	margin: 0 0 var(--ee-margin-small);
+	margin: 0 0 var(--ee-margin-default);
 	padding: var(--ee-padding-tiny) 0;
 
 	&__main {
@@ -22,7 +22,7 @@ $filter-btn: '.ee-filter-bar__btn';
 	&__collapsible {
 		display: flex;
 		flex-flow: row wrap;
-		padding: 0 var(--ee-padding-small) var(--ee-padding-small);
+		padding: var(--ee-padding-small) var(--ee-padding-small) 0;
 
 		@include max782px {
 			padding: 0 0 var(--ee-padding-small);
@@ -104,6 +104,20 @@ $filter-btn: '.ee-filter-bar__btn';
 		&.ee-btn {
 			svg {
 				margin: 0;
+			}
+		}
+		&--active.ee-btn-base.ee-icon-button {
+			background: var(--ee-color-primary);
+			border-color: var(--ee-color-primary);
+			box-shadow: var(--ee-button-box-shadow);
+			color: var(--ee-text-on-primary);
+			text-shadow: var(--ee-text-shadow-inset);
+
+			&:hover {
+				border-color: var(--ee-color-primary-low-contrast);
+			}
+			&:focus {
+				border-color: var(--ee-color-primary-high-contrast);
 			}
 		}
 	}
