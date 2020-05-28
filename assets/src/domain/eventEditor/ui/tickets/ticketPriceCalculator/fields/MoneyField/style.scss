@@ -15,6 +15,7 @@
 		background-color: var(--ee-color-grey-11);
 		border: 2px solid var(--ee-border-color);
 		border-radius: 3px;
+		min-width: 35px;
 	}
 
 	&--label {
@@ -48,7 +49,7 @@
 	}
 
 	&--sign {
-		&-left {
+		&-before {
 			margin-right: 35px;
 		}
 	}
