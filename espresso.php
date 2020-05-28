@@ -113,7 +113,7 @@ if (function_exists('espresso_version')) {
             update_option('ee_espresso_activation', true);
 
             // Run WP GraphQL activation callback
-            if (PHP_VERSION_ID < 70000) {
+            if (PHP_VERSION_ID < 70100) {
                 return;
             }
             if (! class_exists('WPGraphQL')) {
@@ -130,7 +130,7 @@ if (function_exists('espresso_version')) {
         function espresso_plugin_deactivation()
         {
             // Run WP GraphQL deactivation callback
-            if (PHP_VERSION_ID < 70000) {
+            if (PHP_VERSION_ID < 70100) {
                 return;
             }
             if (! class_exists('WPGraphQL')) {

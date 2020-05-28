@@ -176,7 +176,7 @@ class RouteHandler
      */
     private function isGQLRequest()
     {
-        return PHP_VERSION_ID > 70000
+        return PHP_VERSION_ID > 70100
                && (
                    $this->request->isGQL()
                    || $this->request->isUnitTesting()
