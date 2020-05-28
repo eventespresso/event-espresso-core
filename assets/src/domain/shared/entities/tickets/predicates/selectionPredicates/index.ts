@@ -17,9 +17,9 @@ interface UpdateTicketReverseCalculateProps {
 	tickets: Ticket[];
 }
 
-export const isTicketField = (_, field): boolean => includes(field, TICKET_FIELDS);
+export const isTicketField = (_: unknown, field: string): boolean => includes(field, TICKET_FIELDS);
 
-export const isTicketInputField = (_, field): boolean => includes(field, TICKET_INPUT_FIELDS);
+export const isTicketInputField = (_: unknown, field: string): boolean => includes(field, TICKET_INPUT_FIELDS);
 
 export const updateTicketPrice = (amount: number): ((obj: Ticket) => Ticket) => {
 	return assoc<number, keyof Ticket>('price', amount);

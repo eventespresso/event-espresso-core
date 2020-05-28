@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { allPass, filter, find, propEq } from 'ramda';
 
 import { PriceType } from '@edtrServices/apollo/types';
@@ -20,7 +19,8 @@ export const isNotTax = propEq('isTax', false);
 // returns true if supplied price type is a flat fee (dollar) surcharge
 export const isFlatFeeSurcharge = allPass([isNotBasePrice, isNotDiscount, isNotPercent]);
 // returns array of price types that are NOT base price types
-export const getPriceModifiers = (priceTypes: PriceType[]): PriceType[] => filter(isNotBasePrice, priceTypes);
+export const getPriceModifiers = (priceTypes: PriceType[]): PriceType[] =>
+	filter<PriceType>(isNotBasePrice, priceTypes);
 
 export const getDefaultPriceModifierType = (priceTypes: PriceType[]): PriceType => {
 	return find<PriceType>(isFlatFeeSurcharge)(priceTypes);

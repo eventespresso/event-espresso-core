@@ -3,6 +3,7 @@
  * returns true if passed value is "true", "yes", "1", or any positive number.
  * otherwise returns false
  */
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 const toBoolean = (value: any): boolean => {
 	// if already a boolean, then just return it
 	if (typeof value === 'boolean') {
