@@ -12,7 +12,7 @@ import { processDateAndTime } from '@sharedServices/utils/dateAndTime';
 import TicketPriceCalculatorButton from '../ticketPriceCalculator/buttons/TicketPriceCalculatorButton';
 import { validate } from './formValidation';
 import { TicketFormShape } from './types';
-import { useTimeZoneTime } from '@appServices/hooks';
+import { useTimeZoneTime, useMemoStringify } from '@appServices/hooks';
 import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '@sharedConstants/defaultDates';
 import { setDateToToday, setTimeToZeroHour } from '@appServices/utilities/date';
 
@@ -52,9 +52,9 @@ const useTicketFormConfig = (id: EntityId, config?: EspressoFormProps): TicketFo
 		return onSubmit(values, form, ...restParams);
 	};
 
-	const adjacentFormItemProps = {
+	const adjacentFormItemProps = useMemoStringify({
 		className: 'ee-form-item-pair',
-	};
+	});
 
 	const initialValues: TicketFormShape = {
 		...pick<Omit<Partial<Ticket>, 'prices'>, keyof Ticket>(FIELD_NAMES, restProps),

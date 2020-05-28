@@ -13,11 +13,13 @@ import { getStatusTextLabel, statusBgColorClassName } from '@sharedEntities/tick
 import { useTicketsListFilterState } from '@edtrServices/filterState';
 import { getPropsAreEqual } from '@appServices/utilities';
 import type { TicketItemProps } from '../types';
+import { useMemoStringify } from '@application/services/hooks';
 
 const TicketCard: React.FC<TicketItemProps> = ({ entity: ticket }) => {
 	const { displayStartOrEndDate } = useTicketsListFilterState();
 	const bgClassName = statusBgColorClassName(ticket);
 	const footer = getStatusTextLabel(ticket);
+	const labels = useMemoStringify({ footer });
 
 	return ticket ? (
 		<TicketProvider id={ticket.id}>
@@ -30,7 +32,7 @@ const TicketCard: React.FC<TicketItemProps> = ({ entity: ticket }) => {
 						className={bgClassName}
 						displayDate={displayStartOrEndDate}
 						endDate={ticket.endDate}
-						labels={{ footer }}
+						labels={labels}
 						startDate={ticket.startDate}
 					/>
 				}

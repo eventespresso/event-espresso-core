@@ -13,11 +13,13 @@ import { useDatesListFilterState } from '@edtrServices/filterState';
 import { getPropsAreEqual } from '@appServices/utilities';
 import Details from './Details';
 import type { DateItemProps } from '../types';
+import { useMemoStringify } from '@application/services/hooks';
 
 const DateCard: React.FC<DateItemProps> = ({ entity: date }) => {
 	const bgClassName = statusBgColorClassName(date);
 	const { displayStartOrEndDate } = useDatesListFilterState();
 	const footer = getStatusTextLabel(date);
+	const labels = useMemoStringify({ footer });
 
 	return date ? (
 		<DatetimeProvider id={date.id}>
@@ -30,7 +32,7 @@ const DateCard: React.FC<DateItemProps> = ({ entity: date }) => {
 						className={bgClassName}
 						displayDate={displayStartOrEndDate}
 						endDate={date.endDate}
-						labels={{ footer }}
+						labels={labels}
 						startDate={date.startDate}
 					/>
 				}

@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { __ } from '@wordpress/i18n';
 
 import { ConfirmDelete } from '@appDisplay/confirm';
@@ -9,7 +9,7 @@ import { useDataState } from '../data';
 const DeletePriceModifierButton: React.FC<PriceModifierProps> = ({ price }) => {
 	const { deletePrice } = useDataState();
 
-	const buttonProps = { icon: () => <Trash noMargin />, tooltip: __('delete price modifier') };
+	const buttonProps = useMemo(() => ({ icon: () => <Trash noMargin />, tooltip: __('delete price modifier') }), []);
 	// new or default prices should not be deleted server-side
 	const isNewOrDefault = price.isNew || price.isDefault;
 	const onConfirm = useCallback(() => deletePrice(price.id, isNewOrDefault), [price.id, isNewOrDefault]);

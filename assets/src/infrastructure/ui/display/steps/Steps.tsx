@@ -4,6 +4,7 @@ import { __ } from '@wordpress/i18n';
 
 import { Heading } from '@infraUI/display';
 import { StepsProps } from './types';
+import { useMemoStringify } from '@application/services/hooks';
 import './style.scss';
 
 const Steps: React.FC<StepsProps> = ({
@@ -20,9 +21,11 @@ const Steps: React.FC<StepsProps> = ({
 
 	const heading = props.heading ?? __('Steps');
 
+	const headingMarginBottom = useMemoStringify({ base: 4, md: 0 });
+
 	return (
 		<div className={wrapperClassName}>
-			<Heading as='h3' mb={{ base: 4, md: 0 }}>
+			<Heading as='h3' mb={headingMarginBottom}>
 				{heading}
 			</Heading>
 			<ul className={listClassName}>

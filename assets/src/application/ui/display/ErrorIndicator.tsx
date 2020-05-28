@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { Banner } from '@infraUI/display';
+import { useMemoStringify } from '@application/services/hooks';
 
 interface ErrorIndicatorProps {
 	description?: string;
@@ -8,11 +9,11 @@ interface ErrorIndicatorProps {
 }
 
 const ErrorIndicator: React.FC<ErrorIndicatorProps> = ({ description, title }) => {
-	const iconProps = {
+	const iconProps = useMemoStringify({
 		color: 'red.500',
 		name: 'warning-2',
 		size: '96px',
-	};
+	});
 
 	return (
 		<Banner

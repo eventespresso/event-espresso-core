@@ -8,13 +8,15 @@ import withIsLoaded from '@sharedUI/hoc/withIsLoaded';
 
 import { BaseProps } from '../types';
 import { useTicketPriceCalculator } from '../hooks';
+import { TooltipProps } from '@infraUI/display';
+import { useMemoStringify } from '@application/services/hooks';
 
 interface TPCButtonProps extends BaseProps, IconButtonProps {}
 
 const TicketPriceCalculatorButton: React.FC<TPCButtonProps> = ({ ticketId, ...buttonProps }) => {
 	const { ModalContainer, onOpen, ...disclosure } = useTicketPriceCalculator();
 
-	const tooltipProps = { placement: 'left' as 'left' };
+	const tooltipProps = useMemoStringify<TooltipProps>({ placement: 'left' });
 
 	return (
 		<>

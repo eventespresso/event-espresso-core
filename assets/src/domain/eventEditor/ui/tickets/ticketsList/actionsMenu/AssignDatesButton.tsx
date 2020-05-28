@@ -10,6 +10,8 @@ import useTicketAssignmentsManager from '@edtrUI/ticketAssignmentsManager/useTic
 import { TypeName } from '@appServices/apollo/status';
 import withIsLoaded from '@sharedUI/hoc/withIsLoaded';
 import { Ticket } from '@edtrServices/apollo';
+import { TooltipProps } from '@infraUI/display';
+import { useMemoStringify } from '@application/services/hooks';
 
 const AssignDatesButton: React.FC<EntityListItemProps<Ticket>> = React.memo(({ entity }) => {
 	const { ModalContainer, onOpen, ...disclosure } = useTicketAssignmentsManager();
@@ -28,7 +30,7 @@ const AssignDatesButton: React.FC<EntityListItemProps<Ticket>> = React.memo(({ e
 			'There are no event dates assigned to this ticket. Please click the calendar icon to update the assignments.'
 		);
 
-	const tooltipProps = { placement: 'left' as 'left' };
+	const tooltipProps = useMemoStringify<TooltipProps>({ placement: 'left'});
 
 	return (
 		<>
