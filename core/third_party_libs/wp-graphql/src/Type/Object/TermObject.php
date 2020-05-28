@@ -2,6 +2,7 @@
 
 namespace WPGraphQL\Type\Object;
 
+use WPGraphQL\AppContext;
 use WPGraphQL\Data\DataSource;
 use WPGraphQL\Model\Term;
 
@@ -23,12 +24,11 @@ class TermObject {
 		register_graphql_object_type(
 			$single_name,
 			[
-				'description' => __( sprintf( 'The %s type', $single_name ), 'wp-graphql' ),
+				'description' => sprintf( __( 'The %s type', 'wp-graphql' ), $single_name ),
 				'interfaces'  => [ 'Node', 'TermNode', 'UniformResourceIdentifiable' ],
 				'fields'      => [
 					$single_name . 'Id' => [
 						'type'              => 'Int',
-						'isDeprecated'      => true,
 						'deprecationReason' => __( 'Deprecated in favor of databaseId', 'wp-graphql' ),
 						'description'       => __( 'The id field matches the WP_Post->ID field.', 'wp-graphql' ),
 						'resolve'           => function( Term $term, $args, $context, $info ) {
@@ -51,8 +51,8 @@ class TermObject {
 				[
 					'type'        => $taxonomy_object->graphql_single_name,
 					'description' => __( 'The parent object', 'wp-graphql' ),
-					'resolve'     => function( Term $term, $args, $context, $info ) {
-						return isset( $term->parentId ) ? DataSource::resolve_term_object( $term->parentId, $context ) : null;
+					'resolve'     => function( Term $term, $args, AppContext $context, $info ) {
+						return isset( $term->parentDatabaseId ) ? $context->get_loader( 'term' )->load_deferred( $term->parentDatabaseId ) : null;
 					},
 				]
 			);

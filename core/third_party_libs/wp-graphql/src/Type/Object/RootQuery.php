@@ -229,10 +229,9 @@ class RootQuery {
 								],
 							],
 						],
-						'resolve'     => function( $source, array $args, $context, $info ) {
+						'resolve'     => function( $source, array $args, AppContext $context, $info ) {
 							$id_components = Relay::fromGlobalId( $args['id'] );
-
-							return DataSource::resolve_plugin( $id_components['id'] );
+							return ! empty( $id_components['id'] ) ? $context->get_loader( 'plugin' )->load_deferred( $id_components['id'] ) : null;
 						},
 					],
 					'termNode'    => [
@@ -451,7 +450,7 @@ class RootQuery {
 								case 'uri':
 								case 'slug':
 									$slug        = esc_html( $args['id'] );
-									$post_object = DataSource::get_post_object_by_uri( $slug, 'OBJECT', $post_type_object->name );
+									$post_object = get_page_by_path( $slug, 'OBJECT', $post_type_object->name );
 									$post_id     = isset( $post_object->ID ) ? absint( $post_object->ID ) : null;
 									break;
 								case 'database_id':
@@ -504,7 +503,6 @@ class RootQuery {
 					$post_type_object->graphql_single_name . 'By',
 					[
 						'type'              => $post_type_object->graphql_single_name,
-						'isDeprecated'      => true,
 						'deprecationReason' => __( 'Deprecated in favor of using the single entry point for this type with ID and IDType fields. For example, instead of postBy( id: "" ), use post(id: "" idType: "")', 'wp-graphql' ),
 						'description'       => sprintf( __( 'A %s object', 'wp-graphql' ), $post_type_object->graphql_single_name ),
 						'args'              => $post_by_args,
@@ -522,11 +520,11 @@ class RootQuery {
 								$post_id = absint( $id );
 							} elseif ( ! empty( $args['uri'] ) ) {
 								$uri         = esc_html( $args['uri'] );
-								$post_object = DataSource::get_post_object_by_uri( $uri, 'OBJECT', $post_type_object->name );
+								$post_object = get_page_by_path( $uri, 'OBJECT', $post_type_object->name );
 								$post_id     = isset( $post_object->ID ) ? absint( $post_object->ID ) : null;
 							} elseif ( ! empty( $args['slug'] ) ) {
 								$slug        = esc_html( $args['slug'] );
-								$post_object = DataSource::get_post_object_by_uri( $slug, 'OBJECT', $post_type_object->name );
+								$post_object = get_page_by_path( $slug, 'OBJECT', $post_type_object->name );
 								$post_id     = isset( $post_object->ID ) ? absint( $post_object->ID ) : null;
 							}
 							$post = DataSource::resolve_post_object( $post_id, $context );
