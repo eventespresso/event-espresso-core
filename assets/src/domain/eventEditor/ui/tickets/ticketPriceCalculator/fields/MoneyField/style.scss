@@ -3,14 +3,59 @@
 
 	&__after,
 	&__before {
-		line-height: var(--ee-icon-button-size);
+		padding: var(--ee-padding-tiny);
+		text-align: center;
+
+		> div {
+			padding-top: var(--ee-padding-nano);
+		}
 	}
 
-	&__after {
-		margin: 0 var(--ee-margin-smaller) 0 var(--ee-margin-tiny);
+	&__label {
+		background-color: var(--ee-color-grey-11);
+		border: 2px solid var(--ee-border-color);
+		border-radius: 3px;
 	}
 
-	&__before {
-		margin: 0 var(--ee-margin-tiny) 0 var(--ee-margin-smaller);
+	&--label {
+		&-left {
+			.ee-money-field__label {
+				border-bottom-right-radius: 0;
+				border-right: none;
+				border-top-right-radius: 0;
+			}
+
+			.ee-input.ee-input.ee-input-base {
+				border-bottom-left-radius: 0;
+				border-left: none;
+				border-top-left-radius: 0;
+			}
+		}
+
+		&-right {
+			.ee-money-field__label {
+				border-bottom-left-radius: 0;
+				border-left: none;
+				border-top-left-radius: 0;
+			}
+
+			.ee-input.ee-input.ee-input-base {
+				border-bottom-right-radius: 0;
+				border-right: none;
+				border-top-right-radius: 0;
+			}
+		}
+	}
+
+	&--sign {
+		&-left {
+			margin-right: 35px;
+		}
+	}
+
+	&--with-percent-sign {
+		.ee-money-field__after {
+			width: 35px;
+		}
 	}
 }

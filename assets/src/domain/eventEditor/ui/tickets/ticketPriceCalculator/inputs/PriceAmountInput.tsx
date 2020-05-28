@@ -12,8 +12,9 @@ import './styles.scss';
 const PriceAmountInput: React.FC<PriceModifierProps> = ({ price }) => {
 	const { reverseCalculate } = useDataState();
 
+	const hasError = Number(price?.amount ?? 0) === 0;
 	const className = classNames('ee-input__price-field', {
-		'ee-input__price-field--has-error': Number(price?.amount ?? 0) === 0,
+		'ee-input__price-field--has-error': hasError,
 	});
 
 	const disabled = (reverseCalculate && price.isBasePrice) || price.isDefault;

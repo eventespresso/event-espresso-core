@@ -45,13 +45,13 @@ const useFooterRowGenerator = (): FooterRowGenerator => {
 			{
 				key: 'description',
 				type: 'cell',
-				className: 'ee-ticket-price-calculator-total-label' + ' ee-number-column',
+				className: 'ee-ticket-price-calculator-total-label ee-number-column',
 				value: __('Total'),
 			},
 			{
 				key: 'amount',
 				type: 'cell',
-				className: 'ee-ticket-price-calculator-total ee-number-column',
+				className: 'ee-ticket-price-calculator__amount ee-ticket-price-calculator__total ee-number-column',
 				value: (
 					<TicketPriceField
 						component='input'

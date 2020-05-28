@@ -20,7 +20,7 @@ const useHeaderRowGenerator = (): HeaderRowGenerator => {
 			{
 				key: 'id',
 				type: 'cell',
-				className: 'ee-ticket-price-calculator-id ee-number-column',
+				className: 'ee-ticket-price-calculator__price-id ee-number-column',
 				value: __('ID', 'event_espresso'),
 			},
 			{
@@ -44,7 +44,7 @@ const useHeaderRowGenerator = (): HeaderRowGenerator => {
 			{
 				key: 'amount',
 				type: 'cell',
-				className: classNames(position, 'ee-ticket-price-calculator-amount', 'ee-number-column'),
+				className: classNames(position, 'ee-ticket-price-calculator__amount', 'ee-number-column'),
 				value: __('Amount', 'event_espresso'),
 			},
 			{
