@@ -23,7 +23,7 @@ const DateMainMenu: React.FC<DateMainMenuProps> = ({ datetime }) => {
 				'Are you sure you want to permanently delete this datetime? This action is permanent and can not be undone.'
 		  )
 		: __(
-				'Are you sure you want to move this datetime to the trash?  This action is permanent and can not be undone.'
+				'Are you sure you want to move this datetime to the trash? You can "untrash" this datetime later if you need to.'
 		  );
 	const { confirmationDialog, onOpen } = useConfirmationDialog({
 		message,

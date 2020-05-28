@@ -21,7 +21,9 @@ const TicketMainMenu: React.FC<TicketMainMenuProps> = ({ ticket }) => {
 	const title = trashed ? __('Permanently delete Ticket?') : __('Move Ticket to Trash?');
 	const message = trashed
 		? __('Are you sure you want to permanently delete this ticket? This action is permanent and can not be undone.')
-		: __('Are you sure you want to move this ticket to the trash?  This action is permanent and can not be undone.');
+		: __(
+				'Are you sure you want to move this ticket to the trash? You can "untrash" this ticket later if you need to.'
+		  );
 	const { confirmationDialog, onOpen } = useConfirmationDialog({
 		message,
 		title,
