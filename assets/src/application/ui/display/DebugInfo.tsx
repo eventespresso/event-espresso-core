@@ -1,4 +1,4 @@
-import React, { CSSProperties, useCallback } from 'react';
+import React, { useCallback, useState, useMemo } from 'react';
 import styled from '@emotion/styled';
 import { __ } from '@wordpress/i18n';
 
@@ -19,9 +19,10 @@ interface DebugInfoProps {
 	asCollapse?: boolean;
 }
 
+const isDev = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
+
 const DebugInfo: React.FC<DebugInfoProps> = ({ data, asJson = true, asCollapse = true }) => {
-	const [show, setShow] = React.useState(false);
-	const isDev = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
+	const [show, setShow] = useState(false);
 
 	if (!isDev) {
 		return null;
@@ -31,18 +32,16 @@ const DebugInfo: React.FC<DebugInfoProps> = ({ data, asJson = true, asCollapse =
 
 	const output = <Pre>{dataToRender}</Pre>;
 
+	// define it here to avoid conditional call of hook
+	const handleToggle = useCallback(() => setShow((v) => !v), [setShow]);
 	if (!asCollapse) {
 		return output;
 	}
 	const buttonText = show ? __('Hide Debug Info') : __('Show Debug Info');
-	const handleToggle = useCallback(() => setShow(!show), [show]);
-	const buttonStyle: CSSProperties = show
-		? {}
-		: { position: 'relative', bottom: '-2rem', margin: '0 0 -2.5rem var(--ee-padding-micro)' };
 
 	return (
 		<>
-			<Button buttonText={buttonText} onClick={handleToggle} size="md" style={buttonStyle} />
+			<Button buttonText={buttonText} onClick={handleToggle} size='md' mt='2em' />
 			<Collapse isOpen={show}>{output}</Collapse>
 		</>
 	);

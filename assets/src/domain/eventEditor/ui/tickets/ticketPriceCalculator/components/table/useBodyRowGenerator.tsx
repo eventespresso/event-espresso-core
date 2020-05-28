@@ -61,7 +61,7 @@ const useBodyRowGenerator = (): BodyRowGenerator => {
 			cells,
 			className: `ee-editor-date-list-view-row`,
 			id: `ee-editor-date-list-view-row-${price.id}`,
-			key: `row-${index}`,
+			key: `row-${price.id}`,
 			type: 'row',
 		};
 	}, []);
