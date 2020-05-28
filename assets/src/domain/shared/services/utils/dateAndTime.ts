@@ -98,10 +98,3 @@ export const dateAndTimeSchema = yup.object({
 });
 
 export const now = parseISO(formatISO(new Date()));
-
-export const prepareDateForForm = (mayBeDate: any, defaultDate: Date): Date => {
-	if (mayBeDate) {
-		return mayBeDate instanceof Date ? mayBeDate : parseISO(mayBeDate);
-	}
-	return defaultDate;
-};

@@ -39,6 +39,7 @@
 		"@typescript-eslint/no-explicit-any": "off",
 		"@typescript-eslint/no-use-before-define": "off",
 		"@typescript-eslint/ban-ts-ignore": "off",
+		"@typescript-eslint/ban-ts-comment": "off",
 		"no-unused-vars": "error"
 	},
 	"overrides": [

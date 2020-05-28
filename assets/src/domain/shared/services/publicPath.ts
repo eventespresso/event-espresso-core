@@ -2,7 +2,6 @@
 no-unused-vars,
 no-native-reassign,
 no-global-assign,
-@typescript-eslint/camelcase,
 @typescript-eslint/no-unused-vars,
 no-var
 */

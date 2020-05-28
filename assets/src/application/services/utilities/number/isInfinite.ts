@@ -16,6 +16,7 @@ const defaultOptions: isInfiniteOptions = {
  * returns true for any possible value that could represent infinity
  * can be configured via an isInfiniteOptions object
  */
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 const isInfinite = (value: any, options: isInfiniteOptions = {}): boolean => {
 	const config = { ...defaultOptions, ...options };
 	return (

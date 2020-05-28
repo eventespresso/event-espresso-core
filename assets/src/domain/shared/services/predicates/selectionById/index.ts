@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { filter, find, includes, prop, propEq } from 'ramda';
 
 import { Entity, EntityDbId, EntityId } from '@dataServices/types';
@@ -10,10 +9,10 @@ export const entityGuId = <T extends Entity>(entity: T): EntityId => prop('id', 
 // the following return a function that:
 // recieves an entity and returns`true` if entity matches property supplied to predicate
 export const entityHasDbId = <T extends Entity>(dbId: EntityDbId): ((entity: T) => boolean) => {
-	return propEq<EntityDbId>('dbId', dbId);
+	return propEq('dbId', dbId);
 };
 export const entityHasGuid = <T extends Entity>(guid: EntityId): ((entity: T) => boolean) => {
-	return propEq<EntityId>('id', guid);
+	return propEq('id', guid);
 };
 
 // the following return a function that:

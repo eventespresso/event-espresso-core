@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { assoc, map, pickBy, when } from 'ramda';
 
 import { isBasePrice, isPriceField, isPriceInputField } from './selectionPredicates';
@@ -45,8 +44,10 @@ export const updatePriceType = <T extends Price>(type: string) => (price: T): T 
  * @param {number} amount
  * @return {Price[]}
  */
-export const updateBasePriceAmount = <T extends Price>({ prices, amount }: updatePriceArrayProps<T>): T[] =>
-	map(when(isBasePrice, updatePriceAmount(amount)), prices);
+export const updateBasePriceAmount = <T extends Price>({ prices, amount }: updatePriceArrayProps<T>): T[] => {
+	// @ts-ignore
+	return map<Price, Price>(when(isBasePrice, updatePriceAmount(amount)), prices);
+};
 
 /**
  * given an array of prices, finds and updates price type for price matching the supplied GUID
