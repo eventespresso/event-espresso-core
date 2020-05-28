@@ -2,6 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 
 import { Banner } from '@infraUI/display';
+import { useMemoStringify } from '@application/services/hooks';
 
 interface EmptyStateProps {
 	children?: React.ReactNode;
@@ -12,11 +13,11 @@ interface EmptyStateProps {
 
 const EmptyState: React.FC<EmptyStateProps> = ({ children, description, title, ...props }) => {
 	const className = classNames(props.className, 'ee-empty-state');
-	const iconProps = {
+	const iconProps = useMemoStringify({
 		color: 'gray.100',
 		name: 'question-outline',
 		size: '96px',
-	};
+	});
 
 	return (
 		<Banner

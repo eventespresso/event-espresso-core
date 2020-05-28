@@ -9,6 +9,8 @@ import { getPropsAreEqual } from '@appServices/utilities';
 import { RegistrationsLink } from '@appLayout/entityList';
 import useConfig from '@appServices/config/useConfig';
 import useEventId from '@edtrServices/apollo/queries/events/useEventId';
+import { useMemoStringify } from '@application/services/hooks';
+import { TooltipProps } from '@infraUI/display';
 
 interface Props {
 	datetime: Datetime;
@@ -26,7 +28,7 @@ const DateRegistrationsLink: React.FC<Props> = ({ datetime }) => {
 		return: 'edit',
 	});
 	const tooltip = __('view registrations for this date.');
-	const tooltipProps = { placement: 'top' as 'top' };
+	const tooltipProps = useMemoStringify<TooltipProps>({ placement: 'top' });
 
 	return <RegistrationsLink href={ regListUrl } tooltip={ tooltip } tooltipProps={ tooltipProps } />;
 };

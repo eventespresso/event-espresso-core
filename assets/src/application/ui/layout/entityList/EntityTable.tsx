@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import classNames from 'classnames';
 
 import { EntityTableProps } from './types';
 import { Entity } from '@dataServices/types';
 import { EntityListFilterStateManager } from './filterBar';
 import { ResponsiveTable } from '@appLayout/espressoTable';
+import { useMemoStringify } from '@application/services/hooks';
 
 type ELFSM = EntityListFilterStateManager<any>;
 
@@ -18,15 +19,21 @@ const EntityTable = <E extends Entity, FS extends ELFSM>({
 	tableId,
 	...rest
 }: EntityTableProps<E, FS>) => {
-	const bodyRows = entities.map((entity) => bodyRowGenerator({ entity, filterState }));
-	const headerRow = headerRowGenerator(filterState);
+	const bodyRows = useMemo(() => entities.map((entity) => bodyRowGenerator({ entity, filterState })), [
+		bodyRowGenerator,
+		entities,
+		filterState,
+	]);
+	const headerRow = useMemo(() => headerRowGenerator(filterState), [filterState]);
 
-	const className = { tableClassName: classNames(rest.className, 'ee-entity-table') };
-	const headerRows = [headerRow];
-	const metaData = {
+	const className = useMemoStringify({ tableClassName: classNames(rest.className, 'ee-entity-table') }, [
+		rest.className,
+	]);
+	const headerRows = useMemoStringify([headerRow]);
+	const metaData = useMemoStringify({
 		tableId,
 		tableCaption,
-	};
+	});
 	const onDragEnd = filterState.sortingEnabled ? onSort : null;
 
 	return (

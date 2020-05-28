@@ -6,6 +6,7 @@ import { withContext as withTPCContext } from '@edtrUI/tickets/ticketPriceCalcul
 import ContentBody from './ContentBody';
 import { Ticket } from '@edtrServices/apollo';
 import { ContentWrapperProps } from './types';
+import { useMemoStringify } from '@application/services/hooks';
 
 const WithTPC: React.FC<ContentWrapperProps> = (props) => {
 	const { values } = props.form.getState();
@@ -23,11 +24,11 @@ const WithTPC: React.FC<ContentWrapperProps> = (props) => {
 const ContentWrapper: React.FC<ContentWrapperProps> = (props) => {
 	const { values } = props.form.getState();
 
-	const ticket = {
+	const ticket = useMemoStringify({
 		...values,
 		id: values.id ?? 'NEW_TICKET',
 		dbId: values.dbId ?? 0,
-	} as Ticket;
+	}) as Ticket;
 
 	return withTAMContext(
 		WithTPC,

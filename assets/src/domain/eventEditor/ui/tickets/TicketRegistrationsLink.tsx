@@ -11,6 +11,7 @@ import useConfig from '@appServices/config/useConfig';
 import useEventId from '@edtrServices/apollo/queries/events/useEventId';
 
 import ItemCount from '@appDisplay/ItemCount';
+import { useMemoStringify } from '@application/services/hooks';
 
 interface Props {
 	ticket: Ticket;
@@ -29,11 +30,11 @@ const TicketRegistrationsLink: React.FC<Props> = ({ ticket }) => {
 	});
 	const countTitle = __('total registrations.');
 	const tooltip = __('view registrations for this ticket.');
-	const tooltipProps = { placement: 'top' as 'top' };
+	const tooltipProps = useMemoStringify({ placement: 'top' as 'top' });
 
 	return (
-		<ItemCount count={ ticket.registrationCount } title={ countTitle } emphasizeZero={ false } offset={ [12, -4] }>
-			<RegistrationsLink href={ regListUrl } tooltip={ tooltip } tooltipProps={ tooltipProps } />
+		<ItemCount count={ticket.registrationCount} title={countTitle} emphasizeZero={false} offset={[12, -4]}>
+			<RegistrationsLink href={regListUrl} tooltip={tooltip} tooltipProps={tooltipProps} />
 		</ItemCount>
 	);
 };

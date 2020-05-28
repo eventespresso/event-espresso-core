@@ -11,6 +11,8 @@ import { useRelatedTickets } from '@edtrServices/apollo/queries';
 import useTicketAssignmentsManager from '@edtrUI/ticketAssignmentsManager/useTicketAssignmentsManager';
 import withIsLoaded from '@sharedUI/hoc/withIsLoaded';
 import { Datetime } from '@edtrServices/apollo';
+import { useMemoStringify } from '@application/services/hooks';
+import { TooltipProps } from '@infraUI/display';
 
 const AssignTicketsButton: React.FC<EntityListItemProps<Datetime>> = React.memo(({ entity }) => {
 	const { ModalContainer, onOpen, ...disclosure } = useTicketAssignmentsManager();
@@ -27,7 +29,7 @@ const AssignTicketsButton: React.FC<EntityListItemProps<Datetime>> = React.memo(
 		? `${__('Related Tickets:')} ${relatedTicketDbIds.join(', ')}`
 		: __('There are no tickets assigned to this datetime. Please click the ticket icon to update the assignments.');
 
-	const tooltipProps = { placement: 'right' as 'right' };
+	const tooltipProps = useMemoStringify<TooltipProps>({ placement: 'right' });
 
 	return (
 		<>

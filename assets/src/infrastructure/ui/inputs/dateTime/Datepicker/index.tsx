@@ -4,6 +4,7 @@ import { Datepicker as BaseUIDatepicker } from 'baseui/datepicker';
 
 import { DatepickerProps } from '../types';
 import withBaseProvider from '../withBaseProvider';
+import { useMemoStringify } from '@application/services/hooks';
 
 import './style.scss';
 
@@ -22,9 +23,11 @@ const Datepicker: React.FC<DatepickerProps> = ({ value, onChange, onChangeValue,
 		[onChange, onChangeValue]
 	);
 
+	const dateValue = useMemoStringify([value]);
+
 	return (
 		<div className={className}>
-			<BaseUIDatepicker {...props} onChange={onChangeHandler} value={[value]} />
+			<BaseUIDatepicker {...props} onChange={onChangeHandler} value={dateValue} />
 		</div>
 	);
 };
