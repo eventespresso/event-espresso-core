@@ -1,6 +1,8 @@
 <?php
 namespace EventEspresso\tests\testcases\core\domain\entities\routing\specifications;
 
+use EventEspresso\core\domain\entities\contexts\RequestTypeContext;
+use EventEspresso\core\domain\services\contexts\RequestTypeContextChecker;
 use EventEspresso\core\services\request\Request;
 use EventEspresso\tests\mocks\core\domain\entities\routing\specifications\RouteMatchSpecificationMock;
 use EventEspresso\tests\includes\EspressoPHPUnitFrameworkTestCase;
@@ -60,11 +62,12 @@ class RouteMatchSpecificationTestBase extends EspressoPHPUnitFrameworkTestCase
 
 
     /**
-     * @param array $get
-     * @param array $post
-     * @param array $cookie
-     * @param array $server
-     * @param array $files
+     * @param array  $get
+     * @param array  $post
+     * @param array  $cookie
+     * @param array  $server
+     * @param array  $files
+     * @param string $request_type_slug
      * @return Request
      * @since 4.9.71.p
      */
@@ -73,9 +76,19 @@ class RouteMatchSpecificationTestBase extends EspressoPHPUnitFrameworkTestCase
         array $post = array(),
         array $cookie = array(),
         array $server = array(),
-        array $files = array()
+        array $files = array(),
+        $request_type_slug = RequestTypeContext::ADMIN
     ) {
-        return new Request($get, $post, $cookie, $server, $files);
+        $request = new Request($get, $post, $cookie, $server, $files);
+        $request->setRequestTypeContextChecker(
+            new RequestTypeContextChecker(
+                new RequestTypeContext(
+                    $request_type_slug,
+                    'mock request type'
+                )
+            )
+        );
+        return $request;
     }
 
     /**
