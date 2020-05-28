@@ -34,11 +34,11 @@ const useBodyRowGenerator = (): TicketsTableBodyRowGen => {
 		const name = {
 			key: 'name',
 			type: 'cell',
-			className: 'ee-ticket-list-cell ee-col-name ee-rspnsv-table-column-bigger ee-rspnsv-table-hide-on-mobile',
+			className: 'ee-ticket-list-cell ee-ticket-list-col-name ee-col-name ee-rspnsv-table-column-bigger ee-rspnsv-table-hide-on-mobile',
 			value: sortingEnabled ? (
 				ticket.name
 			) : (
-				<EditableName className={'ee-focus-priority-5'} entity={ticket} view={'table'} />
+				<EditableName className={'ee-entity-list-text ee-focus-priority-5'} entity={ticket} view={'table'} />
 			),
 		};
 
