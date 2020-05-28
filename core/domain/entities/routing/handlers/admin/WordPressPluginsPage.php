@@ -25,8 +25,8 @@ class WordPressPluginsPage extends Route
      */
     public function matchesCurrentRequest()
     {
-        return $this->request->isAdmin()
-               && strpos($this->request->requestUri(), 'wp-admin/plugins.php') !== false;
+        global $pagenow;
+        return $this->request->isAdmin() && $pagenow && $pagenow === 'plugins.php';
     }
 
 
