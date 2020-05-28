@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { CurrencySign, PercentSign } from '@appInputs/priceTypeSign';
 import { MoneyFieldProps } from './types';
 
-import updateInputsSizesAndAlign from './updateInputsSizes';
+import updateInputSizes from './updateInputSizes';
 import useConfig from '@appServices/config/useConfig';
 import './style.scss';
 
@@ -15,7 +15,7 @@ const MoneyField: React.FC<MoneyFieldProps> = ({ children, isPercent = false, ..
 	const sign = currency?.sign;
 	const signB4 = currency?.signB4;
 
-	updateInputsSizesAndAlign({ isPercent, signB4 });
+	updateInputSizes({ isPercent, signB4 });
 
 	const beforeContent = signB4 && !isPercent && (
 		<div className='ee-money-field__label ee-money-field__before'>

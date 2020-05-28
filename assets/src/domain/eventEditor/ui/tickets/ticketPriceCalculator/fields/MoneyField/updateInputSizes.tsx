@@ -21,7 +21,7 @@ interface updateInputsSizesProps {
 	signB4: boolean;
 }
 
-const updateInputsSizes = ({ isPercent, signB4 }: updateInputsSizesProps): void => {
+const updateInputSizes = ({ isPercent, signB4 }: updateInputsSizesProps): void => {
 	if (isPercent) {
 		const currency = document.getElementsByClassName('ee-money-field--with-currency-sign')[0];
 
@@ -36,4 +36,4 @@ const updateInputsSizes = ({ isPercent, signB4 }: updateInputsSizesProps): void 
 	}
 };
 
-export default updateInputsSizes;
+export default updateInputSizes;
