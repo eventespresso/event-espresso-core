@@ -25,6 +25,7 @@ class EspressoEventEditorAddNew extends RouteMatchSpecification
         global $pagenow;
         return $pagenow
                && $pagenow === 'admin.php'
+               && $this->request->isAdmin()
                && $this->request->getRequestParam('page') === 'espresso_events'
                && $this->request->getRequestParam('action') === 'create_new';
     }
