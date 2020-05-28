@@ -21,9 +21,10 @@ const DeleteAllPricesButton: React.FC = () => {
 		updateTicketPrice(0);
 	}, [prices, deletePrice]);
 
-	const title = __('Are you sure you want to delete all the prices? That will make the ticket free.');
+	const title = __('Delete all prices?');
+	const message = __('Are you sure you want to delete all of this ticket\'s prices and make it free? This action is permanent and can not be undone.');
 
-	return <ConfirmDelete buttonProps={buttonProps} onConfirm={onConfirm} title={title} />;
+	return <ConfirmDelete buttonProps={buttonProps} onConfirm={onConfirm} message={message} title={title} />;
 };
 
 export default DeleteAllPricesButton;

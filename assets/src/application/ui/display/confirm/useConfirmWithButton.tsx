@@ -8,8 +8,8 @@ import { ConfirmPropsWithButton } from './types';
 import useConfirmationDialog from './useConfirmationDialog';
 
 const useConfirmWithButton: React.FC<ConfirmPropsWithButton> = ({ buttonProps, ...props }) => {
-	const confirmText = (props.title || buttonProps?.tooltip) ?? __('Please confirm this action.');
-	const { confirmationDialog, onOpen } = useConfirmationDialog({ ...props, confirmText });
+	const title = (props.title || buttonProps?.tooltip) ?? __('Please confirm this action.');
+	const { confirmationDialog, onOpen } = useConfirmationDialog({ ...props, title });
 	const btnClassName = classNames(buttonProps.icon && iconBtnClassName, buttonProps.className);
 
 	return (

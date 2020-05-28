@@ -1,7 +1,7 @@
 import { ButtonProps } from '@application/ui/input';
 
 export interface ConfirmProps {
-	confirmText?: string;
+	message?: string;
 	noButtonText?: string;
 	onConfirm?: VoidFunction;
 	title?: string;

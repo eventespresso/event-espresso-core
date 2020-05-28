@@ -17,14 +17,16 @@ const TicketMainMenu: React.FC<TicketMainMenuProps> = ({ ticket }) => {
 
 	const { isOpen, onClose, onOpen: onOpenEditModal } = useDisclosure();
 
-	const confirmText = trashed
-		? __('Are you sure you want to permanently delete this?')
-		: __('Are you sure you want to delete this?');
+
+	const title = trashed ? __('Permanently delete Ticket?') : __('Move Ticket to Trash?');
+	const message = trashed
+		? __('Are you sure you want to permanently delete this ticket? This action is permanent and can not be undone.')
+		: __('Are you sure you want to move this ticket to the trash?  This action is permanent and can not be undone.');
 	const { confirmationDialog, onOpen } = useConfirmationDialog({
-		confirmText,
+		message,
+		title,
 		onConfirm: trashTicket,
 	});
-
 	const toggleProps: DropdownToggleProps = {
 		tooltip: __('ticket main menu'),
 		tooltipProps: { placement: 'left' },

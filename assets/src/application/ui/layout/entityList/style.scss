@@ -58,13 +58,13 @@
 		}
 	}
 
-	&--no-results {
-		background: var(--ee-color-grey-15);
-		color: var(--ee-text-on-grey-15);
-		font-size: var(--ee-font-size-default);
-		font-weight: normal;
-		padding: var(--ee-padding-extreme) var(--ee-padding-big);
-		text-align: center;
+	&--no-results.ee-banner[role='alert'] {
+		.ee-banner {
+			&__icon {
+				height: calc(var(--ee-font-size-extreme) * 2);
+				width: calc(var(--ee-font-size-extreme) * 2);
+			}
+		}
 	}
 
 	+ .ee-entity-list {

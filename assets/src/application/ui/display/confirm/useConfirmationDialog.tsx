@@ -6,7 +6,7 @@ import { AlertDialog } from '@infraUI/display';
 import { Button, ButtonType } from '@application/ui/input';
 import { ConfirmProps } from './types';
 
-const useConfirmationDialog = ({ confirmText, onConfirm, title, ...props }: ConfirmProps) => {
+const useConfirmationDialog = ({ message, onConfirm, title, ...props }: ConfirmProps) => {
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const cancelRef = React.useRef();
 	const onClickHandler = useCallback(() => {
@@ -28,7 +28,8 @@ const useConfirmationDialog = ({ confirmText, onConfirm, title, ...props }: Conf
 	const confirmationDialog = (
 		<AlertDialog
 			cancelButton={cancelButton}
-			header={confirmText}
+			header={title}
+			body={message}
 			isOpen={isOpen}
 			leastDestructiveRef={cancelRef}
 			okButton={okButton}

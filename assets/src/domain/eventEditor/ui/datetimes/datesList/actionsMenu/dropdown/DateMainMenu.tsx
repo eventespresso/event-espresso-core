@@ -17,12 +17,17 @@ const DateMainMenu: React.FC<DateMainMenuProps> = ({ datetime }) => {
 
 	const { isOpen, onClose, onOpen: onOpenEditModal } = useDisclosure();
 
-	const confirmText = trashed
-		? __('Are you sure you want to permanently delete this?')
-		: __('Are you sure you want to delete this?');
-
+	const title = trashed ? __('Permanently delete Datetime?') : __('Move Datetime to Trash?');
+	const message = trashed
+		? __(
+				'Are you sure you want to permanently delete this datetime? This action is permanent and can not be undone.'
+		  )
+		: __(
+				'Are you sure you want to move this datetime to the trash?  This action is permanent and can not be undone.'
+		  );
 	const { confirmationDialog, onOpen } = useConfirmationDialog({
-		confirmText,
+		message,
+		title,
 		onConfirm: trashDate,
 	});
 
