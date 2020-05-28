@@ -2,13 +2,10 @@
 	&-grid {
 		display: grid;
 		grid-template-columns: max-content;
-		grid-template-rows: repeat(2, var(--ee-font-size-huge));
 		grid-auto-flow: column;
 		justify-content: start;
 		line-height: var(--ee-font-size-default);
-		padding: var(--ee-padding-small);
 		place-items: center start;
-		margin-top: var(--ee-margin-small);
 		width: 100%;
 
 		/* Media Queries for specific screen sizes
@@ -55,10 +52,14 @@
 	&-item {
 		align-items: center;
 		display: flex;
-		padding: var(--ee-padding-smaller) var(--ee-padding-bigger) var(--ee-padding-smaller) 0;
+		padding: var(--ee-padding-tiny) var(--ee-padding-default) var(--ee-padding-tiny) 0;
 
 		dt {
+			background: var(--ee-background-color);
+			border-radius: var(--ee-border-radius-default);
+			display: flex;
 			margin: 0 var(--ee-margin-smaller) 0 0;
+			padding: 0.5rem;
 			vertical-align: middle;
 
 			svg {
