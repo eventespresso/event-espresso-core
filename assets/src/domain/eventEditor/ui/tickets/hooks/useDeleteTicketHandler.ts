@@ -1,13 +1,13 @@
 import { useCallback } from 'react';
 
 import useTicketPrices from '@edtrServices/apollo/queries/tickets/useTicketPrices';
-import { EntityListItemProps } from '@appLayout/entityList';
+import { EntityId } from '@dataServices/types';
 import { useTicketMutator, usePriceMutator } from '@edtrServices/apollo/mutations';
 import { getGuids } from '@appServices/predicates';
 
 type Callback = (deletePermanently?: boolean) => Promise<void>;
 
-const useDeleteTicketHandler = ({ id }: EntityListItemProps): Callback => {
+const useDeleteTicketHandler = (id: EntityId): Callback => {
 	const { deleteEntity: deleteTicket } = useTicketMutator();
 	const relatedPrices = useTicketPrices(id);
 	const { deleteEntity: deletePrice } = usePriceMutator();
