@@ -33,3 +33,7 @@ export const entitiesWithGuIdInArray = <T extends Entity>(entities: T[], guidArr
 	if (guidArray.length === 0) return [];
 	return filter((entity: T) => includes(entityGuId(entity), guidArray), entities);
 };
+export const entitiesWithGuIdNotInArray = <T extends Entity>(entities: T[], guidArray: EntityId[]): T[] => {
+	if (guidArray.length === 0) return [];
+	return filter((entity: T) => !includes(entityGuId(entity), guidArray), entities);
+};

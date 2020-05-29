@@ -8,6 +8,7 @@ import { getGuids } from '@appServices/predicates';
 import { usePriceQueryOptions } from '@edtrServices/apollo/queries';
 import type { PricesList } from '@edtrServices/apollo';
 import { useApolloClient } from '@apollo/react-hooks';
+import { entitiesWithGuIdNotInArray } from '@sharedServices/predicates';
 
 type Callback = (deletePermanently?: boolean) => Promise<void>;
 
@@ -32,7 +33,7 @@ const useDeleteTicketHandler = (id: EntityId): Callback => {
 		// read existing data from Apollo cache
 		const data = client.readQuery<PricesList>(priceQueryOptions);
 		// filter out the related prices from Apollo cache data
-		const pricesToRetain = data?.espressoPrices?.nodes?.filter(({ id }) => !priceIdsToDelete.includes(id)) || [];
+		const pricesToRetain = entitiesWithGuIdNotInArray(data?.espressoPrices?.nodes || [], priceIdsToDelete);
 		// avoid the dirty object creation using assocPath
 		const newData = assocPath(['espressoPrices', 'nodes'], pricesToRetain, data);
 
