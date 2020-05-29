@@ -4,7 +4,8 @@ namespace EventEspresso\tests\testcases\core\services\dependencies;
 
 use EE_Dependency_Map;
 use EventEspresso\core\exceptions\InvalidAliasException;
-use EventEspresso\core\services\dependencies\ClassAlias;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\request\Request;
@@ -13,6 +14,10 @@ use EventEspresso\tests\mocks\core\services\dependencies\composites\Ouch;
 use EventEspresso\tests\mocks\core\services\dependencies\composites\Owie;
 use EventEspresso\tests\mocks\core\services\dependencies\DependencyResolverMock;
 use EventEspresso\tests\includes\EspressoPHPUnitFrameworkTestCase;
+use InvalidArgumentException;
+use PHPUnit\Framework\AssertionFailedError;
+use PHPUnit\Framework\Exception;
+use ReflectionException;
 
 /**
  * Class DependencyResolverTest
@@ -33,27 +38,29 @@ class DependencyResolverTest extends EspressoPHPUnitFrameworkTestCase
     /**
      * @var array $request_params
      */
-    private $request_params = array();
+    private $request_params = [];
+
 
     /**
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
      * @since 4.9.71.p
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \InvalidArgumentException
      */
     protected function setUp()
     {
         $this->loader = LoaderFactory::getLoader();
-        $this->request_params = array(
-            'oof' => 'OOF!',
+        $this->request_params = [
+            'oof'  => 'OOF!',
             'ouch' => 'OUCH!',
             'owie' => 'OWIE!',
-        );
+        ];
     }
 
+
     /**
-     * @since 4.9.71.p
      * @return DependencyResolverMock
+     * @since 4.9.71.p
      */
     public function getDependencyResolver()
     {
@@ -64,9 +71,10 @@ class DependencyResolverTest extends EspressoPHPUnitFrameworkTestCase
         );
     }
 
+
     /**
+     * @throws Exception
      * @since 4.9.71.p
-     * @throws \PHPUnit\Framework\Exception
      */
     public function testMirror()
     {
@@ -76,9 +84,10 @@ class DependencyResolverTest extends EspressoPHPUnitFrameworkTestCase
         );
     }
 
+
     /**
+     * @throws Exception
      * @since 4.9.71.p
-     * @throws \PHPUnit\Framework\Exception
      */
     public function testClassInterfaceCache()
     {
@@ -88,9 +97,10 @@ class DependencyResolverTest extends EspressoPHPUnitFrameworkTestCase
         );
     }
 
+
     /**
+     * @throws Exception
      * @since 4.9.71.p
-     * @throws \PHPUnit\Framework\Exception
      */
     public function testDependencyMap()
     {
@@ -100,17 +110,17 @@ class DependencyResolverTest extends EspressoPHPUnitFrameworkTestCase
         );
     }
 
+
     /**
      * @throws InvalidAliasException
-     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      */
     public function testAddAlias()
     {
         $alias = 'EventEspresso\tests\mocks\core\services\dependencies\composites\OofOuchOwieInterface';
         $fqcn = 'EventEspresso\tests\mocks\core\services\dependencies\composites\OofOuchOwie';
         $DependencyResolver = $this->getDependencyResolver();
-        $DependencyResolver->addAlias(new ClassAlias($alias, $fqcn));
-        /** @var ClassAlias[] $aliases */
+        $DependencyResolver->addAlias($fqcn, $alias);
         $aliases = $DependencyResolver->getAliases();
         $this->assertArrayHasKey($alias, $aliases);
         $this->assertInstanceOf(
@@ -120,10 +130,11 @@ class DependencyResolverTest extends EspressoPHPUnitFrameworkTestCase
         $this->assertEquals($fqcn, $aliases[ $alias ]->fqcn());
     }
 
+
     /**
-     * @since 4.9.71.p
      * @throws InvalidAliasException
-     * @throws \PHPUnit\Framework\AssertionFailedError
+     * @throws AssertionFailedError
+     * @since 4.9.71.p
      */
     public function testResolveAlias()
     {
@@ -132,7 +143,7 @@ class DependencyResolverTest extends EspressoPHPUnitFrameworkTestCase
 
         $DependencyResolver = $this->getDependencyResolver();
         $this->assertFalse(EE_Dependency_Map::instance()->has($request_fqcn));
-        $DependencyResolver->addAlias(new ClassAlias($request_alias, $request_fqcn));
+        $DependencyResolver->addAlias($request_fqcn, $request_alias);
         $this->assertEquals(
             $request_fqcn,
             $DependencyResolver->resolveAlias($request_alias)
@@ -140,16 +151,17 @@ class DependencyResolverTest extends EspressoPHPUnitFrameworkTestCase
         // now add a custom alias and try to resolve it
         $alias = 'EventEspresso\tests\mocks\core\services\dependencies\composites\OofOuchOwieInterface';
         $fqcn = 'EventEspresso\tests\mocks\core\services\dependencies\composites\OofOuchOwie';
-        $DependencyResolver->addAlias(new ClassAlias($alias, $fqcn));
+        $DependencyResolver->addAlias($fqcn, $alias);
         $this->assertEquals(
             $fqcn,
             $DependencyResolver->resolveAlias($alias)
         );
     }
 
+
     /**
+     * @throws Exception
      * @since 4.9.71.p
-     * @throws \PHPUnit\Framework\Exception
      */
     public function testAddNamespaceRoot()
     {
@@ -162,9 +174,10 @@ class DependencyResolverTest extends EspressoPHPUnitFrameworkTestCase
         $this->assertEquals($namespace_root, $namespace_roots[ $key ]);
     }
 
+
     /**
+     * @throws AssertionFailedError
      * @since 4.9.71.p
-     * @throws \PHPUnit\Framework\AssertionFailedError
      */
     public function testDependencyRecursionExists()
     {
@@ -178,13 +191,14 @@ class DependencyResolverTest extends EspressoPHPUnitFrameworkTestCase
         );
     }
 
+
     /**
-     * @since 4.9.71.p
      * @return Owie
+     * @since 4.9.71.p
      */
     public function getBoneHurtingJuice()
     {
-        $request = new Request($this->request_params, array(), array(), array(), array());
+        $request = new Request($this->request_params, [], [], [], []);
         return new Owie(
             new Ouch(
                 new Oof($request),
@@ -193,6 +207,7 @@ class DependencyResolverTest extends EspressoPHPUnitFrameworkTestCase
             $request
         );
     }
+
 
     /**
      * @since 4.9.71.p
@@ -205,12 +220,12 @@ class DependencyResolverTest extends EspressoPHPUnitFrameworkTestCase
 
 
     /**
-     * @since 4.9.71.p
      * @throws InvalidAliasException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \PHPUnit\Framework\AssertionFailedError
-     * @throws \ReflectionException
-     * @throws \PHPUnit\Framework\Exception
+     * @throws InvalidDataTypeException
+     * @throws AssertionFailedError
+     * @throws ReflectionException
+     * @throws Exception
+     * @since 4.9.71.p
      */
     public function testResolveDependenciesForClass()
     {
@@ -220,11 +235,10 @@ class DependencyResolverTest extends EspressoPHPUnitFrameworkTestCase
         $this->assertFalse(EE_Dependency_Map::instance()->has($fqcn));
         $DependencyResolver = $this->getDependencyResolver();
         $DependencyResolver->addNamespaceRoot($namespace_root);
-        $DependencyResolver->addAlias(new ClassAlias($alias, $fqcn));
+        $DependencyResolver->addAlias($fqcn, $alias);
         $DependencyResolver->resolveDependenciesForClass($fqcn);
         $this->assertTrue(EE_Dependency_Map::instance()->has($fqcn));
     }
-
 }
 
 // location: /tests/testcases/core/services/dependencies/DependencyResolverTest.php
