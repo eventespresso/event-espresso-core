@@ -1,8 +1,7 @@
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 
 import { useDataState } from '../data';
-import BaseField from './BaseField';
-import { BaseFieldProps, PriceFieldProps } from './types';
+import { BaseFieldProps } from './types';
 
 type BFP = BaseFieldProps;
 

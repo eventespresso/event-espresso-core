@@ -20,27 +20,26 @@ const BaseNumberInputField: React.FC<BaseFieldProps> = ({
 	value,
 	...props
 }) => {
+	const [fieldValue, setFieldValue] = React.useState(Number(value ?? getValue()));
+
 	const className = classNames(props.className, 'ee-input-base ee-input');
-	const { fieldValue, handlers } = useBaseField({
-		component,
-		name,
-		format,
-		formatOnBlur,
-		parse,
-		getValue,
-		setValue,
-		value,
-	});
+	const onChange = useCallback(
+		(value) => {
+			setFieldValue(value);
+			setValue(parse(value, name));
+		},
+		[name, parse, setValue]
+	);
 
 	return (
 		<NumberInput
-			className={className}
 			// because it can affect other tickets that have this price
 			// default price amount should not be changeable
 			disabled={disabled}
+			showStepper={false}
+			onChange={onChange}
 			placeholder={placeholder}
 			value={fieldValue}
-			{...handlers}
 		/>
 	);
 };

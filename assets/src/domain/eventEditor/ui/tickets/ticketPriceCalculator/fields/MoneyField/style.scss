@@ -1,57 +1,9 @@
 .ee-money-field {
 	display: flex;
 
-	&__after,
-	&__before {
-		padding: var(--ee-padding-tiny);
-		text-align: center;
-
-		> div {
-			padding-top: var(--ee-padding-nano);
-		}
-	}
-
 	&__label {
-		background-color: var(--ee-color-grey-11);
-		border: 2px solid var(--ee-border-color);
-		border-radius: 3px;
 		min-width: 35px;
-	}
-
-	&--label {
-		&-left {
-			.ee-money-field__label {
-				border-bottom-right-radius: 0;
-				border-right: none;
-				border-top-right-radius: 0;
-			}
-
-			.ee-input.ee-input.ee-input-base {
-				border-bottom-left-radius: 0;
-				border-left: none;
-				border-top-left-radius: 0;
-			}
-		}
-
-		&-right {
-			.ee-money-field__label {
-				border-bottom-left-radius: 0;
-				border-left: none;
-				border-top-left-radius: 0;
-			}
-
-			.ee-input.ee-input.ee-input-base {
-				border-bottom-right-radius: 0;
-				border-right: none;
-				border-top-right-radius: 0;
-			}
-		}
-	}
-
-	&--sign {
-		&-before {
-			margin-right: 35px;
-		}
+		text-align: center;
 	}
 
 	&--with-percent-sign {
