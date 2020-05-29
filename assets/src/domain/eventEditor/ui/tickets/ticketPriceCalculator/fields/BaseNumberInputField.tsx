@@ -1,10 +1,7 @@
 import React, { useCallback } from 'react';
-import classNames from 'classnames';
 
 import { BaseFieldProps, FieldValue, InputProps } from './types';
 import { NumberInput } from '@infraUI/inputs';
-
-import useBaseField from './useBaseField';
 
 const BaseNumberInputField: React.FC<BaseFieldProps> = ({
 	children,
@@ -20,12 +17,10 @@ const BaseNumberInputField: React.FC<BaseFieldProps> = ({
 	value,
 	...props
 }) => {
-	const [fieldValue, setFieldValue] = React.useState(Number(value ?? getValue()));
+	const fieldValue = Number(value ?? getValue());
 
-	const className = classNames(props.className, 'ee-input-base ee-input');
 	const onChange = useCallback(
 		(value) => {
-			setFieldValue(value);
 			setValue(parse(value, name));
 		},
 		[name, parse, setValue]

@@ -1,11 +1,11 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { useDataState } from '../data';
-import { BaseFieldProps } from './types';
+import { BaseFieldProps, PriceFieldProps, UsePrice } from './types';
 
 type BFP = BaseFieldProps;
 
-const usePrice = ({ field, price }: any): any => {
+const usePrice = ({ field, price }: PriceFieldProps): UsePrice => {
 	const { updatePrice } = useDataState();
 
 	const getValue: BFP['getValue'] = useCallback(() => price[field], [price[field]]);
@@ -17,10 +17,13 @@ const usePrice = ({ field, price }: any): any => {
 		[updatePrice, field]
 	);
 
-	return {
-		getValue,
-		setValue,
-	};
+	return useMemo(
+		() => ({
+			getValue,
+			setValue,
+		}),
+		[getValue, setValue]
+	);
 };
 
 export default usePrice;
