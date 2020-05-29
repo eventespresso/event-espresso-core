@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { assocPath } from 'ramda';
 
 import useTicketPrices from '@edtrServices/apollo/queries/tickets/useTicketPrices';
 import type { EntityId } from '@dataServices/types';
@@ -7,7 +8,6 @@ import { getGuids } from '@appServices/predicates';
 import { usePriceQueryOptions } from '@edtrServices/apollo/queries';
 import type { PricesList } from '@edtrServices/apollo';
 import { useApolloClient } from '@apollo/react-hooks';
-import { assocPath } from 'ramda';
 
 type Callback = (deletePermanently?: boolean) => Promise<void>;
 
