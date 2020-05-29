@@ -14,9 +14,9 @@ interface Props extends ModalProps {
 }
 
 const ModalWithAlert: React.FC<Props> = ({ children, showAlertOnEscape, ...props }) => {
-	const confirmText = props.header || __('Are you sure you want to close this?');
+	const title = props.header || __('Are you sure you want to close this?');
 	const { confirmationDialog, onOpen } = useConfirmationDialog({
-		confirmText,
+		title,
 		onConfirm: props.onClose as VoidFunction,
 	});
 
