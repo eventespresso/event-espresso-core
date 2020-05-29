@@ -9,7 +9,8 @@ export type FieldValue = string | number | boolean;
 
 export interface BaseFieldProps<V = FieldValue> extends InputProps {
 	children?: ((props: {}) => React.ReactNode) | React.ReactNode;
-	component: React.ComponentType | SupportedInputs;
+	component?: React.ComponentType | SupportedInputs;
+	disabled?: boolean;
 	name: string;
 	format?: (value: V, name: string) => any;
 	formatOnBlur?: boolean;
