@@ -30,7 +30,7 @@ const BaseNumberInputField: React.FC<BaseFieldProps> = ({
 		<NumberInput
 			// because it can affect other tickets that have this price
 			// default price amount should not be changeable
-			disabled={disabled}
+			isDisabled={disabled}
 			showStepper={false}
 			onChange={onChange}
 			placeholder={placeholder}

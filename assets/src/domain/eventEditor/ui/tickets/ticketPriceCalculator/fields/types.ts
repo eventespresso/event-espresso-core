@@ -19,7 +19,10 @@ export interface BaseFieldProps<V = FieldValue> extends InputProps {
 	setValue: (value: V) => void;
 }
 
-export interface UsePrice extends Pick<BaseFieldProps<number | string>, 'getValue' | 'setValue'> {}
+export interface UsePrice {
+	getValue: () => FieldValue;
+	setValue: (value: FieldValue) => void;
+}
 
 export interface PriceFieldProps
 	extends PriceModifierProps,
