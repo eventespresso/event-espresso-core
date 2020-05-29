@@ -31,10 +31,8 @@ class RouteMatchSpecificationDependencyResolver extends DependencyResolver
     public function initialize()
     {
         $this->addAlias(
-            new ClassAlias(
-                'EventEspresso\core\services\request\RequestInterface',
-                'EventEspresso\core\services\request\Request'
-            )
+            'EventEspresso\core\services\request\Request',
+            'EventEspresso\core\services\request\RequestInterface'
         );
         $this->addNamespaceRoot('EventEspresso\core\domain\entities\routing\specifications');
     }

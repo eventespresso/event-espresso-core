@@ -9,7 +9,6 @@ use EventEspresso\core\services\factory\FactoryWithDependencyResolver;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use InvalidArgumentException;
-use ReflectionException;
 
 /**
  * Class RouteMatchSpecificationFactory
@@ -39,7 +38,6 @@ class RouteMatchSpecificationFactory extends FactoryWithDependencyResolver
      * @param $fqcn
      * @return RouteMatchSpecification
      * @throws InvalidDataTypeException
-     * @throws ReflectionException
      * @since 4.9.71.p
      */
     public function createNewRouteMatchSpecification($fqcn)
@@ -55,7 +53,6 @@ class RouteMatchSpecificationFactory extends FactoryWithDependencyResolver
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @throws ReflectionException
      * @since 4.9.71.p
      */
     public static function create($fqcn)
