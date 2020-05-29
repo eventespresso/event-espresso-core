@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import { CurrencySign, PercentSign } from '@appInputs/priceTypeSign';
+import { CurrencySign, PercentSign, getCurrencySignCharacterCountClassName } from '@appInputs/priceTypeSign';
 import InputWithLabel from '@appInputs/InputWithLabel';
 import { MoneyFieldProps } from './types';
 
@@ -15,6 +15,8 @@ const MoneyField: React.FC<MoneyFieldProps> = ({ children, isPercent = false, ..
 	const sign = currency?.sign;
 	const signB4 = currency?.signB4;
 
+	const characters = getCurrencySignCharacterCountClassName(sign);
+
 	const label = isPercent ? (
 		<PercentSign className='ee-money-field__label' />
 	) : (
@@ -24,8 +26,11 @@ const MoneyField: React.FC<MoneyFieldProps> = ({ children, isPercent = false, ..
 	const labelPosition = isLeftPositioned ? 'left' : 'right';
 
 	const className = classNames(
+		props.className,
+		characters,
 		isPercent && 'ee-money-field--with-percent-sign',
 		!isPercent && 'ee-money-field--with-currency-sign',
+		`ee-money-field-sign--${signB4 ? 'before' : 'after'}`,
 		'ee-money-field'
 	);
 

@@ -5,7 +5,7 @@ import { __ } from '@wordpress/i18n';
 import { parsedAmount } from '@appServices/utilities/money';
 
 import { PriceModifierProps } from '../types';
-import { BaseNumberInputField, MoneyField, PriceField, usePrice } from '../fields';
+import { BaseNumberInputField, MoneyField, usePrice } from '../fields';
 import { useDataState } from '../data';
 
 import './styles.scss';
@@ -26,8 +26,10 @@ const PriceAmountInput: React.FC<PriceModifierProps> = ({ price }) => {
 		return isNaN(parsedValue) ? defaultValue : parsedValue;
 	};
 
+	const moneyFieldClassName = disabled && 'ee-input--disabled';
+
 	return (
-		<MoneyField isPercent={price.isPercent}>
+		<MoneyField className={moneyFieldClassName} isPercent={price.isPercent}>
 			<BaseNumberInputField
 				className={className}
 				// because it can affect other tickets that have this price

@@ -9,6 +9,10 @@
 			margin: 0;
 			padding: 0;
 		}
+
+		.ee-input--disabled & {
+			opacity: 0.4;
+		}
 	}
 
 	&__left-addon {

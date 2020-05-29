@@ -3,12 +3,47 @@
 
 	&__label {
 		min-width: 35px;
+		padding: 0 var(--ee-padding-micro);
 		text-align: center;
 	}
 
+	&--with-currency-sign {
+		.ee-input-with-label__left-label {
+			margin-right: 35px;
+		}
+	}
+
 	&--with-percent-sign {
-		.ee-money-field__after {
-			width: 35px;
+		@mixin margin($side, $charLength) {
+			$signCharSize: 11.5px;
+
+			#{margin}-#{$side}: calc(#{$signCharSize * $charLength} + var(--ee-padding-micro) * 2);
+		}
+
+		&.ee-money-field-sign {
+			&--before {
+				margin-left: 35px;
+
+				&.ee-cur-sign-2 {
+					@include margin(left, 2);
+				}
+
+				&.ee-cur-sign-3 {
+					@include margin(left, 3);
+				}
+
+				&.ee-cur-sign-4 {
+					@include margin(left, 4);
+				}
+
+				&.ee-cur-sign-5 {
+					@include margin(left, 5);
+				}
+
+				&.ee-cur-sign-6 {
+					@include margin(left, 6);
+				}
+			}
 		}
 	}
 }

@@ -1,11 +1,9 @@
 import React, { useCallback } from 'react';
 
-import { BaseFieldProps, FieldValue, InputProps } from './types';
+import { BaseFieldProps } from './types';
 import { NumberInput } from '@infraUI/inputs';
 
 const BaseNumberInputField: React.FC<BaseFieldProps> = ({
-	children,
-	component,
 	disabled,
 	name,
 	format,
@@ -15,7 +13,6 @@ const BaseNumberInputField: React.FC<BaseFieldProps> = ({
 	getValue,
 	setValue,
 	value,
-	...props
 }) => {
 	const fieldValue = Number(value ?? getValue());
 
