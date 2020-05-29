@@ -8,7 +8,7 @@ interface InputWithLabel {
 	labelPosition: 'left' | 'right';
 }
 
-const InputWithLabel: React.FC<InputWithLabel> = ({ children, label, labelPosition, ...props }) => {
+const InputWithLabel: React.FC<InputWithLabel> = ({ children, label, labelPosition = 'right' }) => {
 	const leftLabel = labelPosition === 'left' && label;
 	const rightLabel = labelPosition === 'right' && label;
 
