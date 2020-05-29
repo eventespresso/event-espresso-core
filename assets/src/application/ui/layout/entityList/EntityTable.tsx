@@ -24,12 +24,15 @@ const EntityTable = <E extends Entity, FS extends ELFSM>({
 		entities,
 		filterState,
 	]);
-	const headerRow = useMemo(() => headerRowGenerator(filterState), [filterState]);
+	const headerRows = useMemo(() => {
+		const headerRow = headerRowGenerator(filterState);
+		return [headerRow];
+	}, [filterState]);
 
 	const className = useMemoStringify({ tableClassName: classNames(rest.className, 'ee-entity-table') }, [
 		rest.className,
 	]);
-	const headerRows = useMemoStringify([headerRow]);
+
 	const metaData = useMemoStringify({
 		tableId,
 		tableCaption,
