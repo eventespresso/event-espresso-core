@@ -17,13 +17,18 @@ const useDeleteTicketHandler = (id: EntityId): Callback => {
 		const pricesToDelete = relatedPrices.filter(({ isDefault, isTax }) => !isDefault && !isTax);
 		const priceIdsToDelete = getGuids(pricesToDelete);
 		priceIdsToDelete.forEach((id) => {
-			deletePrice({ id });
+			deletePrice({ id, deletePermanently: true });
 		});
 	}, [deletePrice, relatedPrices]);
 
 	return useCallback<Callback>(
 		(deletePermanently) => {
-			return deleteTicket({ id, deletePermanently }).then(onDeleteTicket).catch(console.error);
+			return (
+				deleteTicket({ id, deletePermanently })
+					// delete prices only if ticket is deleted permanently
+					.then(() => deletePermanently && onDeleteTicket())
+					.catch(console.error)
+			);
 		},
 		[deleteTicket, id, onDeleteTicket]
 	);
