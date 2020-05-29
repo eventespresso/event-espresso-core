@@ -21,7 +21,7 @@ use EventEspresso\core\services\collections\DuplicateCollectionIdentifierExcepti
  * @author  Brent Christensen
  * @since   $VID:$
  */
-class LegacyEditorAssetManager extends AssetManager
+class LegacyAccountingAssetManager extends AssetManager
 {
 
     const JS_HANDLE_UNDERSCORE = 'underscore';
@@ -82,22 +82,22 @@ class LegacyEditorAssetManager extends AssetManager
         //accounting.js library
         // @link http://josscrowcroft.github.io/accounting.js/
         $this->addJavascript(
-            LegacyEditorAssetManager::JS_HANDLE_ACCOUNTING_CORE,
+            LegacyAccountingAssetManager::JS_HANDLE_ACCOUNTING_CORE,
             EE_THIRD_PARTY_URL . 'accounting/accounting.js',
-            [LegacyEditorAssetManager::JS_HANDLE_UNDERSCORE],
+            [LegacyAccountingAssetManager::JS_HANDLE_UNDERSCORE],
             true,
             '0.3.2'
         );
 
         $this->addJavascript(
-            LegacyEditorAssetManager::JS_HANDLE_ACCOUNTING,
+            LegacyAccountingAssetManager::JS_HANDLE_ACCOUNTING,
             EE_GLOBAL_ASSETS_URL . 'scripts/ee-accounting-config.js',
-            [LegacyEditorAssetManager::JS_HANDLE_ACCOUNTING_CORE]
+            [LegacyAccountingAssetManager::JS_HANDLE_ACCOUNTING_CORE]
         )
              ->setInlineDataCallback(
                  function () {
                      wp_localize_script(
-                         LegacyEditorAssetManager::JS_HANDLE_ACCOUNTING,
+                         LegacyAccountingAssetManager::JS_HANDLE_ACCOUNTING,
                          'EE_ACCOUNTING_CFG',
                          $this->getAccountingSettings()
                      );
