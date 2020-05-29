@@ -3,18 +3,16 @@
 namespace EventEspresso\core\domain\services\assets;
 
 use EEH_Qtip_Loader;
-use EventEspresso\core\domain\values\assets\JavascriptAsset;
 use EventEspresso\core\services\assets\AssetManager;
 
 /**
- * Class EspressoAdminAssetManager
- * Description
+ * Class EspressoLegacyAdminAssetManager
  *
  * @package EventEspresso\core\domain\services\assets
  * @author  Brent Christensen
  * @since   $VID:$
  */
-class EspressoAdminAssetManager extends AssetManager
+class EspressoLegacyAdminAssetManager extends AssetManager
 {
 
     const JS_HANDLE_INJECT_WP = 'ee-inject-wp';
@@ -52,7 +50,7 @@ class EspressoAdminAssetManager extends AssetManager
         // Note: the intention of this script is to only do TARGETED injections.
         //ie: only injecting on certain script calls.
         $this->addJavascript(
-            EspressoAdminAssetManager::JS_HANDLE_INJECT_WP,
+            EspressoLegacyAdminAssetManager::JS_HANDLE_INJECT_WP,
             EE_ADMIN_URL . 'assets/ee-cpt-wp-injects.js',
             ['jquery'],
             true,
@@ -65,14 +63,14 @@ class EspressoAdminAssetManager extends AssetManager
         }
         // register cookie script for future dependencies
         $this->addJavascript(
-            EspressoAdminAssetManager::JS_HANDLE_JQUERY_COOKIE,
+            EspressoLegacyAdminAssetManager::JS_HANDLE_JQUERY_COOKIE,
             EE_THIRD_PARTY_URL . 'joyride/jquery.cookie.js',
             ['jquery'],
             true,
             '2.1'
         );
         $this->addJavascript(
-            EspressoAdminAssetManager::JS_HANDLE_JOYRIDE_MODERNIZR,
+            EspressoLegacyAdminAssetManager::JS_HANDLE_JOYRIDE_MODERNIZR,
             EE_THIRD_PARTY_URL . 'joyride/modernizr.mq.js',
             [],
             true,
@@ -80,11 +78,11 @@ class EspressoAdminAssetManager extends AssetManager
         );
         // wanna go for a joyride?
         $this->addJavascript(
-            EspressoAdminAssetManager::JS_HANDLE_JQUERY_JOYRIDE,
+            EspressoLegacyAdminAssetManager::JS_HANDLE_JQUERY_JOYRIDE,
             EE_THIRD_PARTY_URL . 'joyride/jquery.joyride-2.1.js',
             [
-                EspressoAdminAssetManager::JS_HANDLE_JQUERY_COOKIE,
-                EspressoAdminAssetManager::JS_HANDLE_JOYRIDE_MODERNIZR
+                EspressoLegacyAdminAssetManager::JS_HANDLE_JQUERY_COOKIE,
+                EspressoLegacyAdminAssetManager::JS_HANDLE_JOYRIDE_MODERNIZR
             ],
             '2.1',
             true
@@ -104,14 +102,14 @@ class EspressoAdminAssetManager extends AssetManager
             return;
         }       // joyride style
         $this->addStylesheet(
-            EspressoAdminAssetManager::CSS_HANDLE_JOYRIDE,
+            EspressoLegacyAdminAssetManager::CSS_HANDLE_JOYRIDE,
             EE_THIRD_PARTY_URL . 'joyride/joyride-2.1.css',
             [],
             'all',
             '2.1'
         );
         $this->addStylesheet(
-            EspressoAdminAssetManager::CSS_HANDLE_EE_JOYRIDE,
+            EspressoLegacyAdminAssetManager::CSS_HANDLE_EE_JOYRIDE,
             EE_GLOBAL_ASSETS_URL . 'css/ee-joyride-styles.css',
             ['joyride-css'],
             'all',
