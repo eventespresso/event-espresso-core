@@ -4,7 +4,6 @@ import withApollo from '@dataServices/apollo/withApollo';
 import { RelationsProvider } from '@appServices/context/RelationsProvider';
 import { StatusProvider } from '@appServices/context/StatusProvider';
 import { ConfigProvider } from '@appServices/context/ConfigProvider';
-import { FormModalProvider } from '@appServices/context/FormModalProvider';
 import { ThemeProvider } from '@appServices/theme';
 import { EventIdProvider } from '../EventContext';
 import { EdtrStateProvider } from '../EdtrStateContext';
@@ -22,9 +21,7 @@ export const CommonProviders: React.FC = ({ children }) => (
 			<ConfigProvider>
 				<EventIdProvider>
 					<RelationsProvider>
-						<FormModalProvider>
-							<EdtrStateProvider>{children}</EdtrStateProvider>
-						</FormModalProvider>
+						<EdtrStateProvider>{children}</EdtrStateProvider>
 					</RelationsProvider>
 				</EventIdProvider>
 			</ConfigProvider>
