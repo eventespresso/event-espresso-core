@@ -7,7 +7,10 @@
  * @subpackage    tests
  */
 
+use EventEspresso\core\domain\entities\contexts\RequestTypeContext;
+use EventEspresso\core\domain\services\contexts\RequestTypeContextChecker;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\RequestInterface;
 
 /**
  * This is used to override any existing WP_UnitTestCase methods that need specific handling in EE.  We
@@ -62,19 +65,28 @@ class EE_UnitTestCase extends WP_UnitTestCase
      */
     public $scenarios;
 
+    /**
+     * @type EE_Dependency_Map
+     */
+    protected $dependency_map;
 
     /**
-     * basically used for displaying the test case class while tests are running.
-     * this can be helpful if you are getting weird errors happening,
-     * but the test name is not being reported anywhere.
-     * Just uncomment this method as well as the first line of setUp() below.
-     *
-     * @throws \EE_Error
+     * @var RequestInterface $request
      */
+    protected $request;
+
+    // /**
+    //  * basically used for displaying the test case class while tests are running.
+    //  * this can be helpful if you are getting weird errors happening,
+    //  * but the test name is not being reported anywhere.
+    //  * Just uncomment this method as well as the first line of setUp() below.
+    //  *
+    //  * @throws \EE_Error
+    //  */
     // public static function setUpBeforeClass() {
     //     echo "\n\n\n" . get_called_class() . "\n\n";
     //     parent::setUpBeforeClass();
-    //     \EventEspresso\core\services\Benchmark::startTimer(get_called_class());
+    //     // \EventEspresso\core\services\Benchmark::startTimer(get_called_class());
     // }
 
     // public static function tearDownAfterClass() {
@@ -131,6 +143,8 @@ class EE_UnitTestCase extends WP_UnitTestCase
         do_action('AHEE__EventEspresso_core_services_loaders_CachingLoader__resetCache');
         // turn off caching for any loaders in use during tests
         add_filter('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache', '__return_true');
+        $this->dependency_map = LoaderFactory::getLoader()->getShared('EE_Dependency_Map');
+        $this->request = LoaderFactory::getLoader()->getShared('EventEspresso\core\services\request\RequestInterface');
     }
 
 
@@ -146,14 +160,24 @@ class EE_UnitTestCase extends WP_UnitTestCase
         if (in_array($table_name, $whitelisted_tables, true)) {
             //it's not altering. it's ok
             return FALSE;
-        } else {
-            return TRUE;
         }
+        return true;
     }
 
     public function tearDown()
     {
         parent::tearDown();
+        if ($this->request instanceof RequestInterface && ! $this->request->isFrontend()) {
+            $this->request->setRequestTypeContextChecker(
+                new RequestTypeContextChecker(
+                    new RequestTypeContext(
+                        RequestTypeContext::FRONTEND,
+                        'mock request type'
+                    )
+                )
+            );
+        }
+        $this->dependency_map->reset();
         global $wp_filter, $wp_actions, $merged_filters, $wp_current_filter, $current_user;
         $wp_filter = $this->wp_filters_saved['wp_filter'];
         $wp_actions = $this->wp_filters_saved['wp_actions'];
@@ -176,6 +200,50 @@ class EE_UnitTestCase extends WP_UnitTestCase
         }
         // turn caching back on for any loaders in use
         remove_all_filters('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache');
+    }
+
+
+    /**
+     * @param string $request_type_slug
+     * @since $VID:$
+     */
+    protected function setupRequest($request_type_slug = RequestTypeContext::ADMIN)
+    {
+        $this->request->setRequestTypeContextChecker(
+            new RequestTypeContextChecker(
+                new RequestTypeContext(
+                    $request_type_slug,
+                    'mock request type'
+                )
+            )
+        );
+        /** @var EventEspresso\core\services\routing\RouteHandler $router */
+        $router = LoaderFactory::getLoader()->getShared('EventEspresso\core\services\routing\RouteHandler');
+        $router->addRoute('EventEspresso\core\domain\entities\routing\handlers\shared\RoutingRequests');
+        switch($request_type_slug) {
+            case RequestTypeContext::ADMIN:
+                $router->addRoute('EventEspresso\core\domain\entities\routing\handlers\admin\EspressoLegacyAdmin');
+                $router->addRoute('EventEspresso\core\domain\entities\routing\handlers\admin\EspressoEventsAdmin');
+                $router->addRoute('EventEspresso\core\domain\entities\routing\handlers\admin\EspressoEventEditor');
+                $router->addRoute('EventEspresso\core\domain\entities\routing\handlers\admin\WordPressPluginsPage');
+                // $router->addRoute('EventEspresso\core\domain\entities\routing\handlers\admin\PueRequests');
+                $router->addRoute('EventEspresso\core\domain\entities\routing\handlers\shared\WordPressHeartbeat');
+                $router->addRoute('EventEspresso\core\domain\entities\routing\handlers\shared\GQLRequests');
+                $router->addRoute('EventEspresso\core\domain\entities\routing\handlers\shared\RestApiRequests');
+                $router->addRoute('EventEspresso\core\domain\entities\routing\handlers\shared\AssetRequests');
+                $router->addRoute('EventEspresso\core\domain\entities\routing\handlers\shared\SessionRequests');
+                $router->addRoute('EventEspresso\core\domain\entities\routing\handlers\admin\PersonalDataRequests');
+                break;
+            case RequestTypeContext::FRONTEND:
+                $router->addRoute('EventEspresso\core\domain\entities\routing\handlers\frontend\FrontendRequests');
+                $router->addRoute('EventEspresso\core\domain\entities\routing\handlers\frontend\ShortcodeRequests');
+                $router->addRoute('EventEspresso\core\domain\entities\routing\handlers\shared\WordPressHeartbeat');
+                $router->addRoute('EventEspresso\core\domain\entities\routing\handlers\shared\RestApiRequests');
+                $router->addRoute('EventEspresso\core\domain\entities\routing\handlers\shared\AssetRequests');
+                $router->addRoute('EventEspresso\core\domain\entities\routing\handlers\shared\SessionRequests');
+                break;
+        }
+        $router->handleRoutesForCurrentRequest();
     }
 
     protected function loadTestScenarios()

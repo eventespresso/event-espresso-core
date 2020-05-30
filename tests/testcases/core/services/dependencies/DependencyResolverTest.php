@@ -123,11 +123,7 @@ class DependencyResolverTest extends EspressoPHPUnitFrameworkTestCase
         $DependencyResolver->addAlias($fqcn, $alias);
         $aliases = $DependencyResolver->getAliases();
         $this->assertArrayHasKey($alias, $aliases);
-        $this->assertInstanceOf(
-            'EventEspresso\core\services\dependencies\ClassAlias',
-            $aliases[ $alias ]
-        );
-        $this->assertEquals($fqcn, $aliases[ $alias ]->fqcn());
+        $this->assertEquals($fqcn, $aliases[ $alias ]);
     }
 
 

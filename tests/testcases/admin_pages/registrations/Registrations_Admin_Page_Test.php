@@ -4,7 +4,6 @@ use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
-use EventEspresso\core\services\request\RequestInterface;
 use PHPUnit\Framework\AssertionFailedError;
 
 if ( ! defined('EVENT_ESPRESSO_VERSION')) {
@@ -38,10 +37,6 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
      */
     protected $original_timezone_string;
 
-    /**
-     * @var RequestInterface $request
-     */
-    protected $request;
 
     /**
      * @var DateTimeZone $Vancouver_TZ
@@ -64,6 +59,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
     public function setUp()
     {
         parent::setUp();
+        $this->setupRequest();
         $this->original_timezone_string = get_option('timezone_string');
         //set timezone of site to 'America/Vancouver' for tests.
         update_option('timezone_string', 'America/Vancouver');
@@ -75,9 +71,6 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
         $user = $this->factory->user->create_and_get();
         $user->add_role('administrator');
         wp_set_current_user( $user->ID );
-        $this->request = LoaderFactory::getLoader()->getShared(
-            'EventEspresso\core\services\request\RequestInterface'
-        );
     }
 
 

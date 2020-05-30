@@ -390,6 +390,14 @@ class EE_Registry_Test extends EE_UnitTestCase{
 	 * @author                Brent Christensen
 	 */
 	public function test_create_object_and_resolve_dependencies(){
+        $this->dependency_map->registerDependencies(
+            'EE_Front_Controller',
+            [
+                'EE_Registry'              => EE_Dependency_Map::load_from_cache,
+                'EE_Request_Handler'       => EE_Dependency_Map::load_from_cache,
+                'EE_Module_Request_Router' => EE_Dependency_Map::load_from_cache,
+            ]
+        );
 		// let's attempt to load the EE_Front_Controller class file
 		require_once( EE_CORE . 'EE_Front_Controller.core.php' );
 		$this->assertEquals( true, class_exists( 'EE_Front_Controller' ) );

@@ -3,7 +3,6 @@
 namespace EventEspresso\tests\mocks\core\services\dependencies;
 
 use EventEspresso\core\exceptions\InvalidAliasException;
-use EventEspresso\core\services\dependencies\ClassAlias;
 use EventEspresso\core\services\dependencies\DependencyResolver;
 
 /**
@@ -17,11 +16,11 @@ use EventEspresso\core\services\dependencies\DependencyResolver;
 class DependencyResolverMock extends DependencyResolver
 {
     /**
-     * @return ClassAlias[]
+     * @return string[][]
      */
     public function getAliases()
     {
-        return $this->aliases;
+        return $this->class_cache->getAliases();
     }
 
     /**
