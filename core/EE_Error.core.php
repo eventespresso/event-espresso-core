@@ -1250,7 +1250,7 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
 function espresso_error_enqueue_scripts()
 {
     // js for error handling
-    if ( ! wp_script_is('espresso_core', 'registered')) {
+    if (! wp_script_is('espresso_core', 'registered')) {
         wp_register_script(
             'espresso_core',
             EE_GLOBAL_ASSETS_URL . 'scripts/espresso_core.js',

@@ -49,5 +49,4 @@ abstract class AdminRoute extends Route
         $this->admin_config = $admin_config;
         parent::__construct($dependency_map, $loader, $request, $specification);
     }
-
 }
