@@ -564,8 +564,11 @@ class EED_Core_Rest_Api extends EED_Module
                         'callback_args'   => [$version, $model_name, $relation_name],
                         'methods'         => WP_REST_Server::EDITABLE,
                         'hidden_endpoint' => $hidden_endpoint,
-                        'args'            => $this->_get_add_relation_query_params($model,
-                            $relation_obj->get_other_model(), $version),
+                        'args'            => $this->_get_add_relation_query_params(
+                            $model,
+                            $relation_obj->get_other_model(),
+                            $version
+                        ),
                     ],
                     [
                         'callback'        => [
@@ -796,8 +799,11 @@ class EED_Core_Rest_Api extends EED_Module
                 /* @var $field EE_Model_Field_Base */
                 $params[ $field->get_name() ] = [
                     'required'          => ! $field->is_nullable(),
-                    'default'           => ModelDataTranslator::prepareFieldValueForJson($field,
-                        $field->get_default_value(), $version),
+                    'default'           => ModelDataTranslator::prepareFieldValueForJson(
+                        $field,
+                        $field->get_default_value(),
+                        $version
+                    ),
                     'type'              => $field->getSchemaType(),
                     'validate_callback' => null,
                     'sanitize_callback' => null,

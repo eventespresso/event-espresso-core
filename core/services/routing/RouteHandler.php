@@ -36,7 +36,8 @@ class RouteHandler
      * @param LoaderInterface  $loader
      * @param RouteCollection $routes
      */
-    public function __construct(LoaderInterface $loader, RouteCollection $routes) {
+    public function __construct(LoaderInterface $loader, RouteCollection $routes)
+    {
         $this->loader = $loader;
         $this->routes = $routes;
     }
@@ -57,7 +58,7 @@ class RouteHandler
                     sprintf(
                         esc_html__(
                             'The supplied FQCN (%1$s) must be an instance of RouteInterface.',
-                            'eventespresso'
+                            'event_espresso'
                         ),
                         $fqcn
                     )
