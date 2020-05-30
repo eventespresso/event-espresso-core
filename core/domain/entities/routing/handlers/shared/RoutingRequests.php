@@ -24,7 +24,7 @@ class RoutingRequests extends Route
      */
     public function matchesCurrentRequest()
     {
-        return ! $this->request->isActivation();
+        return ! $this->request->isActivation() || $this->request->isUnitTesting();
     }
 
 

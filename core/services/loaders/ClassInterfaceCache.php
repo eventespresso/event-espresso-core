@@ -31,6 +31,14 @@ class ClassInterfaceCache
 
 
     /**
+     * @return string[][]
+     */
+    public function getAliases()
+    {
+        return $this->aliases;
+    }
+
+    /**
      * @param string $fqn
      * @return string
      */

@@ -1,7 +1,6 @@
 <?php
 
 use EventEspresso\core\domain\entities\notifications\PersistentAdminNotice;
-use EventEspresso\core\domain\services\admin\ExitModal;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\InterminableInterface;

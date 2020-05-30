@@ -12,8 +12,8 @@ class CoreLoader
 {
     public function init()
     {
-        echo "\n INITIALIZING EVENT ESPRESSO UNIT TESTS";
-        echo "\n----------------------------------------";
+        echo "\nINITIALIZING EVENT ESPRESSO UNIT TESTS";
+        echo "\n--------------------------------------";
         $this->setConstants();
         $this->preLoadWPandEE();
         $this->loadWP();

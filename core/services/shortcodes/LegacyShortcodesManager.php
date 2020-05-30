@@ -209,7 +209,11 @@ class LegacyShortcodesManager
      */
     public function initializeShortcodes(WP_Query $wp_query)
     {
-        if (empty($this->registry->shortcodes) || ! $wp_query->is_main_query() || is_admin()) {
+        if (empty($this->registry->shortcodes)
+            || defined('EE_TESTS_DIR')
+            || ! $wp_query->is_main_query()
+            || is_admin()
+        ) {
             return;
         }
         global $wp;

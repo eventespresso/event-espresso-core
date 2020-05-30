@@ -31,7 +31,7 @@ class DependencyResolver implements DependencyResolverInterface
     /**
      * @var ClassInterfaceCache $class_cache
      */
-    private $class_cache;
+    protected $class_cache;
 
     /**
      * @var EE_Dependency_Map $dependency_map
