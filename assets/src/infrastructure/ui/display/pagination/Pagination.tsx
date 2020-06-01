@@ -9,11 +9,6 @@ import defaultItemRender from './ItemRender';
 import { PaginationProps } from './types';
 import PerPage from './PerPage';
 
-const paginationStyle: CSSProperties = {
-	display: 'flex',
-	marginRight: '1em',
-};
-
 const Pagination: React.FC<PaginationProps> = ({
 	defaultPageNumber = 1,
 	defaultPerPage,
@@ -26,12 +21,12 @@ const Pagination: React.FC<PaginationProps> = ({
 	perPageOptions = ['2', '6', '12', '24', '48'],
 	showPerPageChanger,
 	total,
-	...rest
+	...props
 }) => {
 	return (
 		<div className='ee-pagination'>
 			<RcPagination
-				{...rest}
+				{...props}
 				current={pageNumber}
 				defaultCurrent={defaultPageNumber}
 				hideOnSinglePage={hideOnSinglePage}
@@ -41,7 +36,6 @@ const Pagination: React.FC<PaginationProps> = ({
 				pageSize={perPage}
 				showSizeChanger={false}
 				total={total}
-				style={paginationStyle}
 			/>
 			{showPerPageChanger && (
 				<PerPage

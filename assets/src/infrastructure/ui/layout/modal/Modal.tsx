@@ -12,6 +12,8 @@ import {
 import { Button } from '@application/ui/input';
 import { ModalProps } from './types';
 
+import './styles.scss';
+
 const Modal: React.FC<ModalProps> = ({
 	bodyClassName,
 	cancelButtonProps,
@@ -46,7 +48,6 @@ const Modal: React.FC<ModalProps> = ({
 	}
 	return (
 		<ChakraModal
-			// closeOnEsc={isClosable}
 			closeOnOverlayClick={isClosable}
 			isCentered
 			isOpen={isOpen}
@@ -55,7 +56,7 @@ const Modal: React.FC<ModalProps> = ({
 		>
 			<ModalOverlay />
 			<ModalContent role='alertdialog' className={className}>
-				<ModalHeader>{title}</ModalHeader>
+				<ModalHeader className='ee-modal__header'>{title}</ModalHeader>
 
 				{closeButton ? closeButton : <ModalCloseButton isDisabled={!isClosable} />}
 

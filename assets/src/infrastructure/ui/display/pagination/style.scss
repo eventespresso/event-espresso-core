@@ -6,6 +6,16 @@ $border-radius: var(--ee-border-radius-default);
 	flex-direction: row;
 	padding: 1em;
 
+	ul {
+		display: flex;
+		margin-right: 1em;
+
+		[dir='rtl'] & {
+			margin-right: 0;
+			margin-left: 1em;
+		}
+	}
+
 	&__item {
 		align-items: center;
 		background: var(--ee-background-color);
@@ -22,6 +32,11 @@ $border-radius: var(--ee-border-radius-default);
 		min-width: 2.75rem;
 		justify-content: center;
 		width: 2.75rem;
+
+		[dir='rtl'] & {
+			border: $border-style;
+			border-right: 0;
+		}
 
 		a {
 			color: var(--ee-text-on-grey-14) !important;
@@ -43,9 +58,9 @@ $border-radius: var(--ee-border-radius-default);
 	&__per-page {
 		height: 2.75rem;
 
-		&.ee-select {
+		&.ee-select.ee-select {
 			border: $border-style;
-			border-radius: $border-radius !important;
+			border-radius: $border-radius;
 		}
 	}
 
@@ -69,6 +84,15 @@ $border-radius: var(--ee-border-radius-default);
 					border-left: $border-style;
 					border-top-left-radius: $border-radius;
 					border-bottom-left-radius: $border-radius;
+
+					[dir='rtl'] & {
+						border-right: $border-style;
+						border-top-left-radius: 0;
+						border-bottom-left-radius: 0;
+						border-top-right-radius: $border-radius;
+						border-bottom-right-radius: $border-radius;
+					}
+
 					.rc-pagination-item-link {
 						font-size: var(--ee-font-size-huge);
 						position: relative;
@@ -84,6 +108,16 @@ $border-radius: var(--ee-border-radius-default);
 					border-right: $border-style;
 					border-top-right-radius: $border-radius;
 					border-bottom-right-radius: $border-radius;
+
+					[dir='rtl'] & {
+						border-left: $border-style;
+						border-right: 0;
+						border-top-right-radius: 0;
+						border-bottom-right-radius: 0;
+						border-top-left-radius: $border-radius;
+						border-bottom-left-radius: $border-radius;
+					}
+
 					.rc-pagination-item-link {
 						font-size: var(--ee-font-size-huge);
 						position: relative;
