@@ -1,0 +1,7 @@
+.ee-modal {
+	&__header {
+		[dir='rtl'] & {
+			padding-right: var(--ee-padding-extreme);
+		}
+	}
+}
