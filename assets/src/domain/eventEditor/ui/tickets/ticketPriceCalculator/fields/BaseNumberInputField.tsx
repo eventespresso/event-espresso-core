@@ -7,15 +7,13 @@ const BaseNumberInputField: React.FC<BaseFieldProps> = ({
 	className,
 	disabled,
 	name,
-	format,
-	formatOnBlur,
 	parse,
 	placeholder,
 	getValue,
 	setValue,
-	value,
+	...props
 }) => {
-	const fieldValue = Number(value ?? getValue());
+	const fieldValue = Number(props?.value ?? getValue());
 
 	const onChange = useCallback(
 		(value) => {
