@@ -88,6 +88,10 @@
 		&:not(.ee-noIcon) {
 			span {
 				margin: 0 var(--ee-margin-micro) 0 var(--ee-margin-smaller);
+
+				[dir='rtl'] & {
+					margin: 0 var(--ee-margin-smaller) 0 var(--ee-margin-micro);
+				}
 			}
 		}
 
@@ -360,6 +364,11 @@
 			svg {
 				height: 1.5rem;
 				width: 1.5rem;
+
+				[dir='rtl'] & {
+					margin-right: 0;
+					margin-left: var(--ee-margin-tiny);
+				}
 			}
 
 			.img-wrap span {

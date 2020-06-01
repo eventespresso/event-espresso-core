@@ -79,6 +79,11 @@
 
 		&.ee-select {
 			padding: var(--ee-padding-micro) var(--ee-padding-default) var(--ee-padding-micro) var(--ee-padding-smaller);
+
+			[dir='rtl'] & {
+				padding: var(--ee-padding-micro) var(--ee-padding-smaller) var(--ee-padding-micro)
+					var(--ee-padding-default);
+			}
 		}
 
 		&:focus {
