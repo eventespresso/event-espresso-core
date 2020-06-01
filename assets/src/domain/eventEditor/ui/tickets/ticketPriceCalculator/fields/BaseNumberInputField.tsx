@@ -4,6 +4,7 @@ import { BaseFieldProps } from './types';
 import { NumberInput } from '@infraUI/inputs';
 
 const BaseNumberInputField: React.FC<BaseFieldProps> = ({
+	className,
 	disabled,
 	name,
 	format,
@@ -25,6 +26,7 @@ const BaseNumberInputField: React.FC<BaseFieldProps> = ({
 
 	return (
 		<NumberInput
+			className={className}
 			// because it can affect other tickets that have this price
 			// default price amount should not be changeable
 			isDisabled={disabled}

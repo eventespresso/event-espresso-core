@@ -44,38 +44,79 @@
 	}
 
 	&--with-percent-sign {
-		@mixin margin($side, $charLength) {
-			$signCharSize: 15px;
-			$signBorderWidth: 2px; // sign label has only one border applied, the other border is adjoined with input
-			$signPaddings: calc(var(--ee-padding-micro) * 2); // sign have paddings from both horizontal sides
-
-			#{margin}-#{$side}: calc(#{$signCharSize * $charLength} + #{$signBorderWidth} + #{$signPaddings});
-		}
-
 		&.ee-money-field-sign {
 			&--before {
 				margin-left: 35px;
+				@mixin marginLeft($charLength) {
+					$signCharSize: 15px;
+					$signBorderWidth: 2px; // sign label has only one border applied, the other border is adjoined with input
+					$signPaddings: calc(var(--ee-padding-micro) * 2); // sign have paddings from both horizontal sides
+
+					margin-left: calc(#{$signCharSize * $charLength} + #{$signBorderWidth} + #{$signPaddings});
+				}
 
 				&.ee-cur-sign-2 {
-					@include margin(left, 2);
+					@include marginLeft(2);
 				}
 
 				&.ee-cur-sign-3 {
-					@include margin(left, 3);
+					@include marginLeft(3);
 				}
 
 				&.ee-cur-sign-4 {
-					@include margin(left, 4);
+					@include marginLeft(4);
 				}
 
 				&.ee-cur-sign-5 {
-					@include margin(left, 5);
+					@include marginLeft(5);
 				}
 
 				&.ee-cur-sign-6 {
-					@include margin(left, 6);
+					@include marginLeft(6);
 				}
 			}
+
+			&--after {
+				@mixin marginRight($charLength) {
+					$percentSignWidth: 37px; // including borders
+					$signCharSize: 15px;
+					$signBorderWidth: 2px; // sign label has only one border applied, the other border is adjoined with input
+					$signPaddings: calc(var(--ee-padding-micro) * 2); // sign have paddings from both horizontal sides
+
+					margin-right: calc(
+						#{$signCharSize * $charLength} + #{$signBorderWidth} + #{$signPaddings} - #{$percentSignWidth}
+					);
+				}
+
+				&.ee-cur-sign-2 {
+					@include marginRight(2);
+				}
+
+				&.ee-cur-sign-3 {
+					@include marginRight(3);
+				}
+
+				&.ee-cur-sign-4 {
+					@include marginRight(4);
+				}
+
+				&.ee-cur-sign-5 {
+					@include marginRight(5);
+				}
+
+				&.ee-cur-sign-6 {
+					@include marginRight(6);
+				}
+			}
+		}
+	}
+
+	.ee-input-with-label__left-label,
+	.ee-input-with-label__right-label {
+		width: 100%;
+
+		.ee-input__price-field {
+			width: 100%;
 		}
 	}
 }
