@@ -3,7 +3,7 @@
 namespace EventEspresso\core\domain\entities\routing\handlers\admin;
 
 use EE_Dependency_Map;
-use EventEspresso\core\domain\entities\routing\handlers\Route;
+use EventEspresso\core\domain\services\assets\LegacyAccountingAssetManager;
 
 /**
  * Class EspressoLegacyAdmin
@@ -13,8 +13,13 @@ use EventEspresso\core\domain\entities\routing\handlers\Route;
  * @author  Brent Christensen
  * @since   \$VID:$
  */
-class EspressoLegacyAdmin extends Route
+class EspressoLegacyAdmin extends AdminRoute
 {
+
+    /**
+     * @var LegacyAccountingAssetManager $asset_manager
+     */
+    protected $asset_manager;
 
     /**
      * returns true if the current request matches this route
@@ -39,6 +44,15 @@ class EspressoLegacyAdmin extends Route
                 'EventEspresso\core\domain\Domain'                   => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\assets\AssetCollection' => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\assets\Registry'        => EE_Dependency_Map::load_from_cache,
+            ]
+        );
+        $this->dependency_map->registerDependencies(
+            'EventEspresso\core\domain\services\assets\LegacyAccountingAssetManager',
+            [
+                'EventEspresso\core\domain\Domain'                   => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\assets\AssetCollection' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\assets\Registry'        => EE_Dependency_Map::load_from_cache,
+                'EE_Currency_Config'                                 => EE_Dependency_Map::load_from_cache,
             ]
         );
         $this->dependency_map->registerDependencies(
@@ -118,7 +132,23 @@ class EspressoLegacyAdmin extends Route
     {
         do_action('AHEE__EE_System__load_controllers__load_admin_controllers');
         $this->loader->getShared('EventEspresso\core\domain\services\assets\EspressoLegacyAdminAssetManager');
+        $this->asset_manager = $this->loader->getShared(
+            'EventEspresso\core\domain\services\assets\LegacyAccountingAssetManager'
+        );
         $this->loader->getShared('EE_Admin');
+        add_action('admin_enqueue_scripts', [$this, 'enqueueLegacyAccountingAssets'], 100);
         return true;
+    }
+
+
+    /**
+     * enqueue_scripts - Load the scripts and css
+     *
+     * @return void
+     */
+    public function enqueueLegacyAccountingAssets()
+    {
+        $this->asset_manager->enqueueBrowserAssets();
+        wp_enqueue_script('ee-accounting');
     }
 }

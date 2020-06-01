@@ -20,7 +20,7 @@ use ReflectionException;
  * @author  Brent Christensen
  * @since   4.9.71.p
  */
-abstract class DependencyResolver implements DependencyResolverInterface
+class DependencyResolver implements DependencyResolverInterface
 {
 
     /**
@@ -31,7 +31,7 @@ abstract class DependencyResolver implements DependencyResolverInterface
     /**
      * @var ClassInterfaceCache $class_cache
      */
-    private $class_cache;
+    protected $class_cache;
 
     /**
      * @var EE_Dependency_Map $dependency_map
@@ -67,6 +67,19 @@ abstract class DependencyResolver implements DependencyResolverInterface
         $this->initialize();
     }
 
+
+    /**
+     * Used to configure and/or setup any aliases or namespace roots required by the DependencyResolver
+     *
+     * @throws InvalidAliasException
+     * @since 4.9.71.p
+     */
+    public function initialize()
+    {
+        // nothing to do here for default resolver
+    }
+
+
     /**
      * @return Mirror
      */
@@ -92,12 +105,14 @@ abstract class DependencyResolver implements DependencyResolverInterface
     }
 
     /**
-     * @param ClassAlias $alias
+     * @param string $fqcn      the class name that should be used (concrete class to replace interface)
+     * @param string $alias     the class name that would be type hinted for (abstract parent or interface)
+     * @param string $for_class the class that has the dependency (is type hinting for the interface)
      * @throws InvalidAliasException
      */
-    public function addAlias(ClassAlias $alias)
+    public function addAlias($fqcn, $alias, $for_class = '')
     {
-        $this->aliases[ $alias->alias() ] = $alias;
+        $this->class_cache->addAlias($fqcn, $alias, $for_class);
     }
 
     /**
@@ -106,9 +121,7 @@ abstract class DependencyResolver implements DependencyResolverInterface
      */
     public function resolveAlias($param_fqcn)
     {
-        return isset($this->aliases[ $param_fqcn ])
-            ? $this->aliases[ $param_fqcn ]->fqcn()
-            : $this->classCache()->getFqnForAlias($param_fqcn);
+        return $this->class_cache->getFqnForAlias($param_fqcn);
     }
 
     /**

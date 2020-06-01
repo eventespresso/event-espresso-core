@@ -3,7 +3,7 @@
 namespace EventEspresso\core\domain\entities\routing\handlers\admin;
 
 use EE_Dependency_Map;
-use EventEspresso\core\domain\entities\routing\handlers\Route;
+use EventEspresso\core\domain\services\assets\EspressoEditorAssetManager;
 
 /**
  * Class EspressoEventEditor
@@ -13,8 +13,14 @@ use EventEspresso\core\domain\entities\routing\handlers\Route;
  * @author  Brent Christensen
  * @since   $VID:$
  */
-class EspressoEventEditor extends Route
+class EspressoEventEditor extends EspressoEventsAdmin
 {
+
+    /**
+     * @var EspressoEditorAssetManager $asset_manager
+     */
+    protected $asset_manager;
+
 
     /**
      * returns true if the current request matches this route
@@ -24,15 +30,12 @@ class EspressoEventEditor extends Route
      */
     public function matchesCurrentRequest()
     {
-        global $pagenow;
-        return $pagenow
-               && $pagenow === 'admin.php'
-               && $this->request->isAdmin()
-               && $this->request->getRequestParam('page') === 'espresso_events'
+        return parent::matchesCurrentRequest()
+               && $this->admin_config->useAdvancedEditor()
                && (
-                   $this->request->getRequestParam('action') === 'create_new'
-                   || $this->request->getRequestParam('action') === 'edit'
-               );
+                $this->request->getRequestParam('action') === 'create_new'
+                || $this->request->getRequestParam('action') === 'edit'
+            );
     }
 
 
@@ -62,10 +65,6 @@ class EspressoEventEditor extends Route
                     EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\assets\JedLocaleData'                              => EE_Dependency_Map::load_from_cache,
             ]
-        );
-        $this->dependency_map->registerDependencies(
-            'EventEspresso\core\domain\services\admin\events\default_settings\AdvancedEditorAdminFormSection',
-            ['EE_Admin_Config' => EE_Dependency_Map::load_from_cache]
         );
         $this->dependency_map->registerDependencies(
             'EventEspresso\core\domain\services\admin\events\editor\EventEditorGraphQLData',
@@ -131,6 +130,21 @@ class EspressoEventEditor extends Route
      */
     protected function requestHandler()
     {
+        $this->asset_manager = $this->loader->getShared(
+            'EventEspresso\core\domain\services\assets\EspressoEditorAssetManager'
+        );
+        add_action('admin_enqueue_scripts', [$this, 'enqueueEspressoEditorAssets'], 100);
         return false;
+    }
+
+
+    /**
+     * enqueue_scripts - Load the scripts and css
+     *
+     * @return void
+     */
+    public function enqueueEspressoEditorAssets()
+    {
+        $this->asset_manager->enqueueBrowserAssets();
     }
 }

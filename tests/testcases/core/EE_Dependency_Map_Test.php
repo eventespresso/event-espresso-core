@@ -1,4 +1,7 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
+<?php
+
+use EventEspresso\core\domain\entities\contexts\RequestTypeContext;
+
 /**
  * Class EE_Dependency_Map_Test
  *
@@ -12,30 +15,12 @@
  */
 class EE_Dependency_Map_Test extends EE_UnitTestCase {
 
-	/**
-	 * @type EE_Dependency_Map
-	 */
-	protected $_dependency_map;
-
-
-	public function setUp() {
-		parent::setUp();
-		$this->_dependency_map = EE_Dependency_Map::instance();
-	}
-
-
-	public function tearDown() {
-		$this->_dependency_map->reset();
-		parent::tearDown();
-	}
-
-
     /**
      * @since 4.9.62.p
      * @throws PHPUnit_Framework_AssertionFailedError
      */
     public function test_core_dependencies() {
-		$this->validate_core_dependency_map( $this->_dependency_map->dependency_map() );
+		$this->validate_core_dependency_map( $this->dependency_map->dependency_map() );
 	}
 
 
@@ -53,24 +38,22 @@ class EE_Dependency_Map_Test extends EE_UnitTestCase {
 				}
 			}
 		} else {
-		    $classname = $this->_dependency_map->getFqnForAlias($classname);
+		    $classname = $this->dependency_map->getFqnForAlias($classname);
 			// verify that a valid class constant has been set for the value
-            $this->assertTrue(
-                in_array(
-                    $dependencies_or_load,
-                    [
-                        EE_Dependency_Map::not_registered,
-                        EE_Dependency_Map::load_new_object,
-                        EE_Dependency_Map::load_from_cache,
-                    ],
-                    true
-                ),
-				sprintf( 'The %s class has an invalid value in the EE_Dependency_Map.', $classname )
-			);
+            $valid_constants = [
+                EE_Dependency_Map::not_registered,
+                EE_Dependency_Map::load_new_object,
+                EE_Dependency_Map::load_from_cache,
+            ];
+            $this->assertContains(
+                $dependencies_or_load,
+                $valid_constants,
+                sprintf('The %s class has an invalid value in the EE_Dependency_Map.', $classname)
+            );
             // if class is not using PSR-4 compatible namespacing
             if ($dependencies_or_load && strpos($classname,'\\') === false) {
                 // verify that a loader exists for the class
-                $loader = $this->_dependency_map->class_loader($classname);
+                $loader = $this->dependency_map->class_loader($classname);
                 $this->assertNotEmpty(
                     $loader,
                     sprintf('A class loader should be set for "%s" but appears to be missing.', $classname)
@@ -86,7 +69,7 @@ class EE_Dependency_Map_Test extends EE_UnitTestCase {
      * @throws \PHPUnit\Framework\Exception
      */
     public function test_core_class_loaders() {
-		$skip = array(
+        $skip = [
             'EE_Admin'                      => 'messes with other unit tests',
             'EE_Session'                    => 'session doesn\'t load during unit tests',
             'EE_Messages_Template_Defaults' => 'Closure has required arguments',
@@ -94,12 +77,18 @@ class EE_Dependency_Map_Test extends EE_UnitTestCase {
             'EE_CPT_Attendee_Strategy'      => 'has required arguments',
             'EE_CPT_Event_Strategy'         => 'has required arguments',
             'EE_CPT_Venue_Strategy'         => 'has required arguments',
-		);
-		//loop through and verify the class loader can successfully load the class it is set for
-		foreach ( $this->_dependency_map->class_loaders() as $class => $loader ) {
+        ];
+        $request_types = [
+            'EE_Front_Controller' => RequestTypeContext::FRONTEND,
+        ];
+        //loop through and verify the class loader can successfully load the class it is set for
+		foreach ( $this->dependency_map->class_loaders() as $class => $loader ) {
 			if ( isset( $skip[ $class ] ) || strpos( $class, 'Command' ) !== false ) {
 				continue;
 			}
+			if (isset($request_types[ $class ])) {
+                $this->setupRequest($request_types[ $class ]);
+            }
             $dependency = $loader instanceof Closure ? $loader() : EE_Registry::instance()->$loader( $class );
 			// helpers are simply loaded and do not return an instance
 			if ( $loader === 'load_helper' ) {
@@ -132,7 +121,7 @@ class EE_Dependency_Map_Test extends EE_UnitTestCase {
     public function test_core_class_loader_for_EE_Messages_Template_Defaults() {
 		/** @type EE_Message_Resource_Manager $Message_Resource_Manager */
 		$Message_Resource_Manager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
-		$loader = $this->_dependency_map->class_loader('EE_Messages_Template_Defaults');
+		$loader = $this->dependency_map->class_loader('EE_Messages_Template_Defaults');
 		$this->assertInstanceOf( 'Closure', $loader );
 		$Messages_Template_Defaults = $loader(
 			array(
@@ -151,7 +140,7 @@ class EE_Dependency_Map_Test extends EE_UnitTestCase {
      */
     public function test_register_class_loader() {
         EE_Dependency_Map::register_class_loader( 'Dummy_Class', 'load_lib' );
-		$actual_class_loader = $this->_dependency_map->class_loader( 'Dummy_Class' );
+		$actual_class_loader = $this->dependency_map->class_loader( 'Dummy_Class' );
 		$this->assertNotEmpty( $actual_class_loader );
 		$this->assertEquals( 'load_lib', $actual_class_loader );
 
@@ -171,7 +160,7 @@ class EE_Dependency_Map_Test extends EE_UnitTestCase {
 		//test a successful registration.
 		$registered = EE_Dependency_Map::register_dependencies( 'Dummy_Class', array( 'EE_Something', 'EE_Something_Else' ) );
 		$this->assertTrue( $registered );
-		$actual_dependency_map = $this->_dependency_map->dependency_map();
+		$actual_dependency_map = $this->dependency_map->dependency_map();
 		$this->assertTrue( isset( $actual_dependency_map['Dummy_Class'] ) );
 		$this->assertEquals( array( 'EE_Something', 'EE_Something_Else' ), $actual_dependency_map['Dummy_Class'] );
 
@@ -192,12 +181,12 @@ class EE_Dependency_Map_Test extends EE_UnitTestCase {
     {
         $interface = 'Dummy_Interface';
         $class_name = 'Dummy_Class';
-        $this->assertFalse($this->_dependency_map->isAlias($interface));
-        $this->_dependency_map->add_alias($class_name, $interface);
-        $this->assertTrue($this->_dependency_map->isAlias($interface));
+        $this->assertFalse($this->dependency_map->isAlias($interface));
+        $this->dependency_map->add_alias($class_name, $interface);
+        $this->assertTrue($this->dependency_map->isAlias($interface));
         $this->assertEquals(
             $class_name,
-            $this->_dependency_map->getFqnForAlias($interface)
+            $this->dependency_map->getFqnForAlias($interface)
         );
     }
 
@@ -214,12 +203,12 @@ class EE_Dependency_Map_Test extends EE_UnitTestCase {
         $interface = 'Dummy_Interface_2';
         $class_name = 'Dummy_Class_2';
         $for_class = 'Other_Class';
-        $this->assertFalse($this->_dependency_map->isAlias($interface, $for_class));
-        $this->_dependency_map->add_alias($class_name, $interface, $for_class);
-        $this->assertTrue($this->_dependency_map->isAlias($interface, $for_class));
+        $this->assertFalse($this->dependency_map->isAlias($interface, $for_class));
+        $this->dependency_map->add_alias($class_name, $interface, $for_class);
+        $this->assertTrue($this->dependency_map->isAlias($interface, $for_class));
         $this->assertEquals(
             $class_name,
-            $this->_dependency_map->getFqnForAlias($interface, $for_class)
+            $this->dependency_map->getFqnForAlias($interface, $for_class)
         );
     }
 

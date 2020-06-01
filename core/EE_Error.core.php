@@ -1250,13 +1250,15 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
 function espresso_error_enqueue_scripts()
 {
     // js for error handling
-    wp_register_script(
-        'espresso_core',
-        EE_GLOBAL_ASSETS_URL . 'scripts/espresso_core.js',
-        array('jquery'),
-        EVENT_ESPRESSO_VERSION,
-        false
-    );
+    if (! wp_script_is('espresso_core', 'registered')) {
+        wp_register_script(
+            'espresso_core',
+            EE_GLOBAL_ASSETS_URL . 'scripts/espresso_core.js',
+            ['jquery'],
+            EVENT_ESPRESSO_VERSION,
+            false
+        );
+    }
     wp_register_script(
         'ee_error_js',
         EE_GLOBAL_ASSETS_URL . 'scripts/EE_Error.js',

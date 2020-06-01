@@ -7,7 +7,7 @@ use EE_UnitTestCase;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
-use EventEspresso\tests\mocks\core\services\request\RequestMock;
+use EventEspresso\tests\mocks\core\domain\entities\routing\handlers\shared\GQLRequestsMock;
 use InvalidArgumentException;
 
 /**
@@ -37,6 +37,7 @@ class GraphQLUnitTestCase extends EE_UnitTestCase
             );
             return;
         }
+        GQLRequestsMock::register();
         // load handler for EE GraphQL requests
         $graphQL_manager = LoaderFactory::getLoader()->getShared(
             'EventEspresso\core\services\graphql\GraphQLManager'

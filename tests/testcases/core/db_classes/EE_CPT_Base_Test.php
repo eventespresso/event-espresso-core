@@ -1,5 +1,8 @@
 <?php
 
+use EventEspresso\tests\mocks\core\domain\entities\routing\handlers\shared\RoutingRequestsMock;
+use EventEspresso\tests\mocks\core\domain\entities\routing\handlers\frontend\ShortcodeRequestsMock;
+
 if (!defined('EVENT_ESPRESSO_VERSION'))
 	exit('No direct script access allowed');
 
@@ -91,6 +94,8 @@ class EE_CPT_Base_Test extends EE_UnitTestCase{
      */
     public function testGetPrettyCurrentPostRemainingTheSame()
     {
+        RoutingRequestsMock::register();
+        ShortcodeRequestsMock::register();
         $this->loadShortcodesManagerAndShortcodes();
         $transaction = $this->new_typical_transaction();
         $event_with_registrations = $transaction->primary_registration()->event();

@@ -1,6 +1,5 @@
 <?php
 
-use EventEspresso\core\domain\services\assets\EspressoEditorAssetManager;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\request\middleware\RecommendedVersions;
@@ -103,11 +102,6 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
      * @var array
      */
     protected $_pagenow_map;
-
-    /**
-     * @var EspressoEditorAssetManager $asset_manager
-     */
-    protected $asset_manager;
 
 
 
@@ -891,12 +885,6 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
                 __LINE__
             );
         }
-        $admin_config = $this->loader->getShared('EE_Admin_Config');
-        if ($admin_config->useAdvancedEditor()) {
-            $this->loadEspressoEditorAssetManager();
-        } else {
-            $this->loadLegacyEditorAssetManager();
-        }
     }
 
 
@@ -941,76 +929,6 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
                 wp_localize_script('ee_admin_js', 'eeCPTstatuses', $ee_cpt_statuses);
             }
         }
-    }
-
-
-    /**
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     */
-    private function loadEspressoEditorAssetManager()
-    {
-        EE_Dependency_Map::register_dependencies(
-            'EventEspresso\core\domain\services\assets\EspressoEditorAssetManager',
-            array(
-                'EventEspresso\core\domain\Domain'                   => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\assets\AssetCollection' => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\assets\Registry'        => EE_Dependency_Map::load_from_cache,
-            )
-        );
-        $this->asset_manager = $this->loader->getShared(
-            'EventEspresso\core\domain\services\assets\EspressoEditorAssetManager'
-        );
-        add_action('admin_enqueue_scripts', [$this, 'enqueueEspressoEditorAssets'], 100);
-    }
-
-
-    /**
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     */
-    private function loadLegacyEditorAssetManager()
-    {
-        EE_Dependency_Map::register_dependencies(
-            'EventEspresso\core\domain\services\assets\LegacyEditorAssetManager',
-            array(
-                'EventEspresso\core\domain\Domain'                   => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\assets\AssetCollection' => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\assets\Registry'        => EE_Dependency_Map::load_from_cache,
-                'EE_Currency_Config'                                 => EE_Dependency_Map::load_from_cache,
-            )
-        );
-        $this->asset_manager = $this->loader->getShared(
-            'EventEspresso\core\domain\services\assets\LegacyEditorAssetManager'
-        );
-        add_action('admin_enqueue_scripts', [$this, 'enqueueLegacyEditorAssets'], 100);
-    }
-
-
-    /**
-     * enqueue_scripts - Load the scripts and css
-     *
-     * @return void
-     * @throws DomainException
-     */
-    public function enqueueEspressoEditorAssets()
-    {
-        $this->asset_manager->enqueueBrowserAssets();
-    }
-
-
-    /**
-     * enqueue_scripts - Load the scripts and css
-     *
-     * @return void
-     * @throws DomainException
-     */
-    public function enqueueLegacyEditorAssets()
-    {
-        $this->asset_manager->enqueueBrowserAssets();
-        wp_enqueue_script('ee-accounting');
     }
 
 

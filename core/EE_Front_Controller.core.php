@@ -278,7 +278,7 @@ final class EE_Front_Controller
         $load_assets = $load_assets ? $load_assets : $this->espresso_widgets_in_active_sidebars();
         if ($load_assets) {
             add_action('wp_enqueue_scripts', array($this, 'enqueueStyle'), 10);
-            add_action('wp_print_footer_scripts', array($this, 'enqueueScripts'), 10);
+            add_action('wp_enqueue_scripts', array($this, 'enqueueScripts'), 10);
         }
     }
 
