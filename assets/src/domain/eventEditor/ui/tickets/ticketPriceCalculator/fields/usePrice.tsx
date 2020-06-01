@@ -8,9 +8,9 @@ type BFP = BaseFieldProps;
 const usePrice = ({ field, price }: PriceFieldProps): UsePrice => {
 	const { updatePrice } = useDataState();
 
-	const getValue: BFP['getValue'] = useCallback(() => price[field], [price[field]]);
+	const getValue = useCallback<BFP['getValue']>(() => price[field], [price[field]]);
 
-	const setValue: BFP['setValue'] = useCallback(
+	const setValue = useCallback<BFP['setValue']>(
 		(value) => {
 			updatePrice({ id: price.id, fieldValues: { [field]: value } });
 		},
