@@ -22,31 +22,31 @@ const useBodyRowGenerator = (): BodyRowGenerator => {
 			{
 				key: 'id',
 				type: 'cell',
-				className: 'ee-ticket-price-calculator-price-id ee-number-column',
+				className: 'ee-ticket-price-calculator__price-id ee-number-column',
 				value: <PriceIdInput price={price} />,
 			},
 			{
 				key: 'type',
 				type: 'cell',
-				className: 'ee-ticket-price-calculator-price-type',
+				className: 'ee-ticket-price-calculator__price-type',
 				value: <PriceTypeInput price={price} />,
 			},
 			{
 				key: 'name',
 				type: 'cell',
-				className: 'ee-ticket-price-calculator-price-name',
+				className: 'ee-ticket-price-calculator__price-name',
 				value: <PriceNameInput price={price} />,
 			},
 			{
 				key: 'description',
 				type: 'cell',
-				className: 'ee-ticket-price-calculator-price-desc',
+				className: 'ee-ticket-price-calculator__price-desc',
 				value: <PriceDescriptionInput price={price} />,
 			},
 			{
 				key: 'amount',
 				type: 'cell',
-				className: 'ee-ticket-price-calculator-price-amount ee-number-column',
+				className: 'ee-ticket-price-calculator__amount ee-number-column',
 				value: <PriceAmountInput price={price} />,
 			},
 			{

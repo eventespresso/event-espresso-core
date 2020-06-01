@@ -1,8 +1,9 @@
 import React from 'react';
+import classNames from 'classnames';
 
+import { CurrencySign, PercentSign, getCurrencySignCharacterCountClassName } from '@appInputs/priceTypeSign';
+import InputWithLabel from '@appInputs/InputWithLabel';
 import { MoneyFieldProps } from './types';
-
-import { CurrencySign, PercentSign } from '@appInputs/priceTypeSign';
 
 import useConfig from '@appServices/config/useConfig';
 import './style.scss';
@@ -14,24 +15,30 @@ const MoneyField: React.FC<MoneyFieldProps> = ({ children, isPercent = false, ..
 	const sign = currency?.sign;
 	const signB4 = currency?.signB4;
 
-	const beforeContent = signB4 && !isPercent && (
-		<div className='ee-money-field__before'>
-			<CurrencySign sign={sign} />
-		</div>
-	);
+	const characters = getCurrencySignCharacterCountClassName(sign);
 
-	const afterClassName = 'ee-money-field__after';
-	const afterContent = isPercent ? (
-		<PercentSign className={afterClassName} />
+	const label = isPercent ? (
+		<PercentSign className='ee-money-field__label' />
 	) : (
-		!signB4 && <CurrencySign className={afterClassName} sign={sign} />
+		<CurrencySign className='ee-money-field__label' sign={sign} />
+	);
+	const isLeftPositioned = signB4 && !isPercent;
+	const labelPosition = isLeftPositioned ? 'left' : 'right';
+
+	const className = classNames(
+		props.className,
+		characters,
+		isPercent && 'ee-money-field--with-percent-sign',
+		!isPercent && 'ee-money-field--with-currency-sign',
+		`ee-money-field-sign--${signB4 ? 'before' : 'after'}`,
+		'ee-money-field'
 	);
 
 	return (
-		<div className='ee-money-field'>
-			{beforeContent}
-			{children}
-			{afterContent}
+		<div className={className}>
+			<InputWithLabel label={label} labelPosition={labelPosition}>
+				{children}
+			</InputWithLabel>
 		</div>
 	);
 };

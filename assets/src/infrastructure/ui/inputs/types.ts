@@ -24,6 +24,7 @@ export interface CheckboxGroupProps extends ChakraCheckboxGroupProps {}
 export interface NumberInputProps extends ChakraNumberInputProps {
 	inputFieldProps?: ChakraInputProps;
 	inputStepperProps?: ChakraFlexProps;
+	showStepper?: boolean;
 	incrementStepperProps?: ChakraPseudoBoxProps;
 	decrementStepperProps?: ChakraPseudoBoxProps;
 }

@@ -1,16 +1,122 @@
 .ee-money-field {
 	display: flex;
 
-	&__after,
-	&__before {
-		line-height: var(--ee-icon-button-size);
+	&__label {
+		min-width: 35px;
+		padding: 0 var(--ee-padding-micro);
+		text-align: center;
 	}
 
-	&__after {
-		margin: 0 var(--ee-margin-smaller) 0 var(--ee-margin-tiny);
+	&--with-currency-sign {
+		.ee-input-with-label__left-label {
+			margin-right: 35px;
+		}
+
+		.ee-currency-sign {
+			box-sizing: content-box; // added this because I needed to have separate control over width and paddings
+
+			@mixin width($charLength) {
+				$signCharSize: 15px; // this is the largest value for letter like M or W,
+
+				width: calc(#{$signCharSize * $charLength});
+			}
+
+			&.ee-cur-sign-2 {
+				@include width(2);
+			}
+
+			&.ee-cur-sign-3 {
+				@include width(3);
+			}
+
+			&.ee-cur-sign-4 {
+				@include width(4);
+			}
+
+			&.ee-cur-sign-5 {
+				@include width(5);
+			}
+
+			&.ee-cur-sign-6 {
+				@include width(6);
+			}
+		}
 	}
 
-	&__before {
-		margin: 0 var(--ee-margin-tiny) 0 var(--ee-margin-smaller);
+	&--with-percent-sign {
+		&.ee-money-field-sign {
+			&--before {
+				margin-left: 35px;
+				@mixin marginLeft($charLength) {
+					$signCharSize: 15px;
+					$signBorderWidth: 2px; // sign label has only one border applied, the other border is adjoined with input
+					$signPaddings: calc(var(--ee-padding-micro) * 2); // sign have paddings from both horizontal sides
+
+					margin-left: calc(#{$signCharSize * $charLength} + #{$signBorderWidth} + #{$signPaddings});
+				}
+
+				&.ee-cur-sign-2 {
+					@include marginLeft(2);
+				}
+
+				&.ee-cur-sign-3 {
+					@include marginLeft(3);
+				}
+
+				&.ee-cur-sign-4 {
+					@include marginLeft(4);
+				}
+
+				&.ee-cur-sign-5 {
+					@include marginLeft(5);
+				}
+
+				&.ee-cur-sign-6 {
+					@include marginLeft(6);
+				}
+			}
+
+			&--after {
+				@mixin marginRight($charLength) {
+					$percentSignWidth: 37px; // including borders
+					$signCharSize: 15px;
+					$signBorderWidth: 2px; // sign label has only one border applied, the other border is adjoined with input
+					$signPaddings: calc(var(--ee-padding-micro) * 2); // sign have paddings from both horizontal sides
+
+					margin-right: calc(
+						#{$signCharSize * $charLength} + #{$signBorderWidth} + #{$signPaddings} - #{$percentSignWidth}
+					);
+				}
+
+				&.ee-cur-sign-2 {
+					@include marginRight(2);
+				}
+
+				&.ee-cur-sign-3 {
+					@include marginRight(3);
+				}
+
+				&.ee-cur-sign-4 {
+					@include marginRight(4);
+				}
+
+				&.ee-cur-sign-5 {
+					@include marginRight(5);
+				}
+
+				&.ee-cur-sign-6 {
+					@include marginRight(6);
+				}
+			}
+		}
+	}
+
+	.ee-input-with-label__left-label,
+	.ee-input-with-label__right-label {
+		width: 100%;
+
+		.ee-input__price-field {
+			width: 100%;
+		}
 	}
 }
