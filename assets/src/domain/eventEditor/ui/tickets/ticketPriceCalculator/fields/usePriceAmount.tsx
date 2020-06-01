@@ -5,7 +5,7 @@ import { BaseFieldProps, PriceFieldProps, UsePrice } from './types';
 
 type BFP = BaseFieldProps;
 
-const usePrice = ({ field, price }: PriceFieldProps): UsePrice => {
+const usePriceAmount = ({ field, price }: PriceFieldProps): UsePrice => {
 	const { updatePrice } = useDataState();
 
 	const getValue = useCallback<BFP['getValue']>(() => price[field], [price[field]]);
@@ -26,4 +26,4 @@ const usePrice = ({ field, price }: PriceFieldProps): UsePrice => {
 	);
 };
 
-export default usePrice;
+export default usePriceAmount;

@@ -6,4 +6,4 @@ export { default as MoneyField } from './MoneyField';
 
 export { default as TicketPriceField } from './TicketPriceField';
 
-export { default as usePrice } from './usePrice';
+export { default as usePriceAmount } from './usePriceAmount';

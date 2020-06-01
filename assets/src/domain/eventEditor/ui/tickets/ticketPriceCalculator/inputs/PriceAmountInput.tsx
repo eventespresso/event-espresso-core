@@ -5,14 +5,14 @@ import { __ } from '@wordpress/i18n';
 import { parsedAmount } from '@appServices/utilities/money';
 
 import { PriceModifierProps } from '../types';
-import { BaseNumberInputField, MoneyField, usePrice } from '../fields';
+import { BaseNumberInputField, MoneyField, usePriceAmount } from '../fields';
 import { useDataState } from '../data';
 
 import './styles.scss';
 
 const PriceAmountInput: React.FC<PriceModifierProps> = ({ price }) => {
 	const { reverseCalculate } = useDataState();
-	const { getValue, setValue } = usePrice({ field: 'amount', price });
+	const { getValue, setValue } = usePriceAmount({ field: 'amount', price });
 
 	const hasError = Number(price?.amount ?? 0) === 0;
 	const className = classNames('ee-input__price-field', {
