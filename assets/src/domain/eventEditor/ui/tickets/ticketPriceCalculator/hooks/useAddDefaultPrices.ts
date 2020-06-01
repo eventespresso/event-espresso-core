@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 import defaultPrice from '../defaultPriceModifier';
 import { isBasePrice } from '@sharedEntities/priceTypes/predicates/selectionPredicates';
@@ -34,7 +35,7 @@ const useAddDefaultPrices = (): VoidFunction => {
 			return {
 				...priceModifier,
 				// clone it
-				id: '',
+				id: uuidv4(),
 				dbId: 0,
 				isNew: true,
 				// avoid default price getting duplicated
