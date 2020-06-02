@@ -10,16 +10,16 @@
 	--ee-icon-button-size-big: 48px;
 	--ee-icon-button-size-huge: 54px;
 	--ee-button-background: var(--ee-color-grey-12);
-	// --ee-button-background: var(--ee-color-dark-blue-super-low-contrast);
-	// --ee-button-background: #80aecf;
 	--ee-button-text-color: var(--ee-text-on-grey-12);
-	// --ee-button-text-color: var(--ee-text-on-blue-green);
-	// --ee-button-text-color: #fff;
 	--ee-button-box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.35), -1px -1px 2px rgba(255, 255, 255, 0.95);
 }
 
 .btn-focus {
 	border-color: var(--ee-color-primary);
+	/* Visible in Windows high-contrast themes */
+	outline-color: transparent;
+	outline-width: 3px;
+	outline-style: solid;
 
 	&.ee-btn--is-active {
 		border-color: var(--ee-color-primary-high-contrast);
@@ -61,7 +61,7 @@
 		height: var(--ee-icon-button-size);
 		line-height: var(--ee-font-size-default);
 		margin-bottom: var(--ee-margin-smaller);
-		outline: none !important;
+		outline: none;
 		padding: var(--ee-padding-tiny) var(--ee-padding-smaller);
 		position: relative;
 		text-decoration: none;
