@@ -6,7 +6,6 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\ModelConfigurationException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
 use EventEspresso\core\interfaces\ResettableInterface;
-use EventEspresso\core\services\orm\ModelFieldFactory;
 use EventEspresso\core\services\loaders\LoaderFactory;
 
 /**
@@ -272,6 +271,11 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     protected $_has_primary_key_field = null;
 
     /**
+     * @var array $foreign_key_aliases
+     */
+    protected $foreign_key_aliases = [];
+
+    /**
      * Whether or not this model is based off a table in WP core only (CPTs should set
      * this to FALSE, but if we were to make an EE_WP_Post model, it should set this to true).
      * This should be true for models that deal with data that should exist independent of EE.
@@ -288,7 +292,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * null until initialized by hasPasswordField()
      */
     protected $has_password_field;
-    
+
     /**
      * @var EE_Password_Field|null Automatically set when calling getPasswordField()
      */
@@ -5378,6 +5382,13 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                 $table_obj->get_fully_qualified_pk_column(),
                 $table_obj->get_pk_column()
             );
+            // no PK?  ok check if there is a foreign key alias set for this table
+            if ($table_pk_value === null && ! empty($this->foreign_key_aliases)) {
+                // then check if that alias exists in the incoming data
+                foreach ($this->foreign_key_aliases as $FK_alias) {
+                    $table_pk_value = isset($cols_n_values[ $FK_alias ]) ? $cols_n_values[ $FK_alias ] : null;
+                }
+            }
             // there is a primary key on this table and its not set. Use defaults for all its columns
             if ($table_pk_value === null && $table_obj->get_pk_column()) {
                 foreach ($this->_get_fields_for_table($table_alias) as $field_name => $field_obj) {

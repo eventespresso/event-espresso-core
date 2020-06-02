@@ -100,6 +100,16 @@ class EEM_WP_User extends EEM_Base
             'Venue'          => new EE_Has_Many_Relation(),
             'Message'        => new EE_Has_Many_Relation(),
         );
+        $this->foreign_key_aliases = [
+            'Event.EVT_wp_user',
+            'Payment_Method.PMD_wp_user',
+            'Price.PRC_wp_user',
+            'Price_Type.PRT_wp_user',
+            'Question.QST_wp_user',
+            'Question_Group.QSG_wp_user',
+            'Venue.TKT_wp_user',
+            'Ticket.VNU_wp_user',
+        ];
         $this->_wp_core_model = true;
         $this->_caps_slug = 'users';
         $this->_cap_contexts_to_cap_action_map[ EEM_Base::caps_read ] = 'list';
