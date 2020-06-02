@@ -1,4 +1,4 @@
-import React, { CSSProperties } from 'react';
+import React from 'react';
 import RcPagination from 'rc-pagination';
 
 import 'rc-pagination/assets/index.css';
