@@ -165,6 +165,10 @@ $filter-btn: '.ee-filter-bar__btn';
 		}
 	}
 
+	@media only screen and (max-width: 1280px) {
+		margin: 0 0 var(--ee-margin-default);
+	}
+
 	/* WordPress Admin Media Query Breakpoint: Smartphone */
 	@media screen and (max-width: 600px) {
 		flex-flow: column nowrap;
