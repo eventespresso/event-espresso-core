@@ -3,14 +3,21 @@
  * © 2020 Event Espresso
  * ------------------------------------------------------------------------- */
 
-.ticket-assignment-manager.ee-rspnsv-table__outer_wrapper {
-	.ee-rspnsv-table {
+@import 'application/ui/styles/mixins/breakpoints.scss';
+
+.ticket-assignment-manager.ticket-assignment-manager.ee-rspnsv-table__outer_wrapper {
+	.ee-rspnsv-table.ee-rspnsv-table {
 		background: var(--ee-background-color);
 
 		&__inner-wrapper {
 			background: var(--ee-background-color);
 			margin: 0 0 var(--ee-margin-smaller) 300px;
-			width: calc(100% - 300px) !important;
+			width: calc(100% - 300px);
+
+			@include max782px {
+				margin: 0;
+				width: 100%;
+			}
 		}
 
 		thead {
@@ -56,15 +63,24 @@
 			}
 		}
 
-		tbody {
+		tbody.ee-rspnsv-table-body.ee-rspnsv-table-body {
+			@include max782px {
+				padding: 0;
+			}
+
 			tr,
 			.ee-rspnsv-table-body-td {
 				padding: 1rem;
 				height: 80px;
 			}
+
 			tr {
 				background: var(--ee-background-color);
 				padding: 0;
+
+				@include max782px {
+					width: 100%;
+				}
 
 				&:hover {
 					background: var(--ee-text-on-dark-blue);
@@ -76,18 +92,22 @@
 
 				&:nth-child(even) {
 					background: var(--ee-background-color);
+
 					.ee-rspnsv-table-body-td.date-cell {
 						background: var(--ee-color-grey-13);
 					}
+
 					&:hover {
 						background: var(--ee-text-on-dark-blue);
+
 						.ee-rspnsv-table-body-td.date-cell {
 							background: var(--ee-color-grey-12);
 						}
 					}
 				}
 			}
-			.ee-rspnsv-table-body-td {
+
+			td.ee-rspnsv-table-body-td.ee-rspnsv-table-body-td {
 				&.date-cell {
 					background: var(--ee-color-grey-14);
 					border-right: 5px solid var(--ee-color-white);
@@ -99,6 +119,11 @@
 					width: 300px;
 					z-index: 999;
 
+					@include max782px {
+						margin-bottom: var(--ee-padding-tiny);
+						position: relative !important;
+					}
+
 					.date-stripe {
 						display: inline-block;
 						height: 100%;
@@ -107,6 +132,7 @@
 						top: 0;
 						left: 0;
 					}
+
 					.date-cell-content {
 						&__name {
 							font-weight: bold;
@@ -122,9 +148,16 @@
 					height: 80px;
 					padding: var(--ee-padding-micro);
 					width: 130px;
+
+					@include max782px {
+						height: auto;
+						width: 100%;
+					}
+
 					.ee-rspnsv-table-mobile-only-column-value {
 						height: 100%;
 					}
+
 					button {
 						height: 100%;
 						width: 100%;
@@ -136,8 +169,14 @@
 						}
 					}
 				}
+
+				@include max782px {
+					height: auto;
+					width: 100%;
+				}
 			}
 		}
+
 		.ee-rspnsv-table-body-td,
 		th {
 			text-align: left;

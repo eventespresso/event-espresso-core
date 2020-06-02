@@ -3,6 +3,8 @@
  * © 2020 Event Espresso
  * ------------------------------------------------------------------------- */
 
+@import 'application/ui/styles/mixins/breakpoints.scss';
+
 .ee-rspnsv-table {
 	border-collapse: separate !important;
 	border-spacing: 0 var(--ee-padding-nano) !important;
@@ -28,6 +30,10 @@
 	&__is-scrollable .ee-rspnsv-table__inner-wrapper {
 		overflow-x: scroll !important;
 		overflow-y: visible;
+
+		@include max782px {
+			overflow-x: unset !important;
+		}
 	}
 
 	.ee-rspnsv-table-header {

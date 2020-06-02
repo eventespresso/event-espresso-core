@@ -1,3 +1,5 @@
+@import 'application/ui/styles/mixins/breakpoints.scss';
+
 .ee-ticket-assignments-manager {
 	max-width: 85rem !important;
 
@@ -5,5 +7,14 @@
 		display: flex;
 		justify-content: space-evenly;
 		padding: 0.5em;
+		@include max782px {
+			display: block;
+		}
+
+		.ee-input-label__wrapper {
+			@include max782px {
+				display: block;
+			}
+		}
 	}
 }

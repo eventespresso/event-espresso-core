@@ -1,3 +1,5 @@
+@import 'application/ui/styles/mixins/breakpoints.scss';
+
 .ee-input-with-label {
 	&__left-addon,
 	&__right-addon {
@@ -8,6 +10,10 @@
 			height: 42px;
 			margin: 0;
 			padding: 0;
+
+			@include max782px {
+				height: 40px;
+			}
 		}
 
 		.ee-input--disabled & {
