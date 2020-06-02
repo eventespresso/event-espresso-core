@@ -10,7 +10,7 @@
 		display: flex;
 		flex-direction: row;
 		width: 100%;
-		margin-bottom: var(--ee-margin-default);
+		margin-bottom: var(--ee-margin-smaller);
 	}
 
 	.ee-btn.ee-btn {
@@ -42,11 +42,16 @@
 	}
 
 	+ .ee-btn {
+		// TODO: rethink this approach such that btn group margins shouldn't rely on nearby buttons
 		margin-left: var(--ee-margin-default);
 
 		[dir='rtl'] & {
 			margin-left: 0;
 			margin-right: var(--ee-margin-default);
+		}
+
+		@include max782px {
+			margin-left: 0;
 		}
 	}
 }
