@@ -12,14 +12,15 @@ import { MockedResponse } from './types';
  * @param {ReactElement} children The element that should be wrapped.
  * @returns {ReactElement} The wrapped element.
  */
-export const ApolloMockedProvider = (mocks: ReadonlyArray<MockedResponse> = []): React.FC => ({
-	children,
-}): JSX.Element => {
-	return (
-		<MockedProvider mocks={mocks} cache={cache}>
-			<ApolloAwareWrapper>{children}</ApolloAwareWrapper>
-		</MockedProvider>
-	);
+export const ApolloMockedProvider = (mocks: ReadonlyArray<MockedResponse> = []): React.FC => {
+	const Provider: React.FC = ({ children }) => {
+		return (
+			<MockedProvider mocks={mocks} cache={cache}>
+				<ApolloAwareWrapper>{children}</ApolloAwareWrapper>
+			</MockedProvider>
+		);
+	};
+	return Provider;
 };
 
 /**
