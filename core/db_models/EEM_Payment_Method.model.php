@@ -4,18 +4,15 @@ use EventEspresso\core\domain\entities\notifications\PersistentAdminNotice;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 
 /**
- *
  * Payment Method Model
- *
  * For storing all payment methods (things that interact between EE and gateways).
  * As of 4.3, payment methods are NOT singletons so there can be multiple instances of payment methods
  * of the same type, with different details. Eg, multiple paypal standard gateways so different
  * events can have their proceeds going to different paypal accounts
  *
  * @package             Event Espresso
- * @subpackage  includes/models/EEM_Checkin.model.php
- * @author             Mike Nelson
- *
+ * @subpackage          includes/models/EEM_Checkin.model.php
+ * @author              Mike Nelson
  */
 class EEM_Payment_Method extends EEM_Base
 {
@@ -27,82 +24,97 @@ class EEM_Payment_Method extends EEM_Base
     const scope_api = 'API';
 
     /**
-     *
      * @type EEM_Payment_Method
      */
     protected static $_instance = null;
 
 
-
     /**
      * private constructor to prevent direct creation
+     *
      * @Constructor
      * @access   protected
-     * @return EEM_Payment_Method
+     * @param null $timezone
+     * @throws EE_Error
      */
     protected function __construct($timezone = null)
     {
-        $this->singlular_item = __('Payment Method', 'event_espresso');
+        $this->singular_item = __('Payment Method', 'event_espresso');
         $this->plural_item = __('Payment Methods', 'event_espresso');
-        $this->_tables = array( 'Payment_Method' => new EE_Primary_Table('esp_payment_method', 'PMD_ID') );
-        $this->_fields = array(
-            'Payment_Method' => array(
-                'PMD_ID' => new EE_Primary_Key_Int_Field('PMD_ID', __("ID", 'event_espresso')),
-                'PMD_type' => new EE_Plain_Text_Field('PMD_type', __("Payment Method Type", 'event_espresso'), false, 'Admin_Only'),
-                'PMD_name' => new EE_Plain_Text_Field('PMD_name', __("Name", 'event_espresso'), false),
-                'PMD_desc' => new EE_Post_Content_Field('PMD_desc', __("Description", 'event_espresso'), false, ''),
-                'PMD_admin_name' => new EE_Plain_Text_Field('PMD_admin_name', __("Admin-Only Name", 'event_espresso'), true),
-                'PMD_admin_desc' => new EE_Post_Content_Field('PMD_admin_desc', __("Admin-Only Description", 'event_espresso'), true),
-                'PMD_slug' => new EE_Slug_Field('PMD_slug', __("Slug", 'event_espresso'), false),
-                'PMD_order' => new EE_Integer_Field('PMD_order', __("Order", 'event_espresso'), false, 0),
-                'PMD_debug_mode' => new EE_Boolean_Field('PMD_debug_mode', __("Debug Mode On?", 'event_espresso'), false, false),
-                'PMD_wp_user' => new EE_WP_User_Field('PMD_wp_user', __("Payment Method Creator ID", 'event_espresso'), false),
-                'PMD_open_by_default' => new EE_Boolean_Field('PMD_open_by_default', __("Open by Default?", 'event_espresso'), false, false), 'PMD_button_url' => new EE_Plain_Text_Field('PMD_button_url', __("Button URL", 'event_espresso'), true, ''),
-                'PMD_scope' => new EE_Serialized_Text_Field('PMD_scope', __("Usable From?", 'event_espresso'), false, array()), // possible values currently are 'CART','ADMIN','API'
-        ) );
-        $this->_model_relations = array(
-            'Payment' => new EE_Has_Many_Relation(),
-            'Currency' => new EE_HABTM_Relation('Currency_Payment_Method'),
+        $this->_tables = ['Payment_Method' => new EE_Primary_Table('esp_payment_method', 'PMD_ID')];
+        $this->_fields = [
+            'Payment_Method' => [
+                'PMD_ID'              => new EE_Primary_Key_Int_Field('PMD_ID', __("ID", 'event_espresso')),
+                'PMD_type'            => new EE_Plain_Text_Field('PMD_type',
+                    __("Payment Method Type", 'event_espresso'), false, 'Admin_Only'),
+                'PMD_name'            => new EE_Plain_Text_Field('PMD_name', __("Name", 'event_espresso'), false),
+                'PMD_desc'            => new EE_Post_Content_Field('PMD_desc', __("Description", 'event_espresso'),
+                    false, ''),
+                'PMD_admin_name'      => new EE_Plain_Text_Field('PMD_admin_name',
+                    __("Admin-Only Name", 'event_espresso'), true),
+                'PMD_admin_desc'      => new EE_Post_Content_Field('PMD_admin_desc',
+                    __("Admin-Only Description", 'event_espresso'), true),
+                'PMD_slug'            => new EE_Slug_Field('PMD_slug', __("Slug", 'event_espresso'), false),
+                'PMD_order'           => new EE_Integer_Field('PMD_order', __("Order", 'event_espresso'), false, 0),
+                'PMD_debug_mode'      => new EE_Boolean_Field('PMD_debug_mode', __("Debug Mode On?", 'event_espresso'),
+                    false, false),
+                'PMD_wp_user'         => new EE_WP_User_Field('PMD_wp_user',
+                    __("Payment Method Creator ID", 'event_espresso'), false),
+                'PMD_open_by_default' => new EE_Boolean_Field('PMD_open_by_default',
+                    __("Open by Default?", 'event_espresso'), false, false),
+                'PMD_button_url'      => new EE_Plain_Text_Field('PMD_button_url', __("Button URL", 'event_espresso'),
+                    true, ''),
+                'PMD_scope'           => new EE_Serialized_Text_Field('PMD_scope', __("Usable From?", 'event_espresso'),
+                    false, []), // possible values currently are 'CART','ADMIN','API'
+            ],
+        ];
+        $this->_model_relations = [
+            'Payment'     => new EE_Has_Many_Relation(),
+            'Currency'    => new EE_HABTM_Relation('Currency_Payment_Method'),
             'Transaction' => new EE_Has_Many_Relation(),
-            'WP_User' => new EE_Belongs_To_Relation(),
-        );
+            'WP_User'     => new EE_Belongs_To_Relation(),
+        ];
         parent::__construct($timezone);
     }
 
 
-
     /**
      * Gets one by the slug provided
+     *
      * @param string $slug
-     * @return EE_Payment_Method
+     * @return EE_Base_Class|EE_Payment_Method|EE_Soft_Delete_Base_Class|NULL
+     * @throws EE_Error
      */
     public function get_one_by_slug($slug)
     {
-        return $this->get_one(array( array( 'PMD_slug' => $slug ) ));
+        return $this->get_one([['PMD_slug' => $slug]]);
     }
-
 
 
     /**
      * Gets all the acceptable scopes for payment methods.
      * Keys are their names as store din the DB, and values are nice names for displaying them
+     *
      * @return array
      */
     public function scopes()
     {
         return apply_filters(
             'FHEE__EEM_Payment_Method__scopes',
-            array(
-                self::scope_cart        => __("Front-end Registration Page", 'event_espresso'),
-                self::scope_admin   => __("Admin Registration Page (no online processing)", 'event_espresso')
-            )
+            [
+                EEM_Payment_Method::scope_cart  => __('Front-end Registration Page', 'event_espresso'),
+                EEM_Payment_Method::scope_admin => __(
+                    'Admin Registration Page (no online processing)',
+                    'event_espresso'
+                ),
+            ]
         );
     }
 
 
-
     /**
      * Determines if this is an valid scope
+     *
      * @param string $scope like one of EEM_Payment_Method::instance()->scopes()
      * @return boolean
      */
@@ -111,75 +123,86 @@ class EEM_Payment_Method extends EEM_Base
         $scopes = $this->scopes();
         if (isset($scopes[ $scope ])) {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
-
 
 
     /**
      * Gets all active payment methods
+     *
      * @param string $scope one of
      * @param array  $query_params
+     * @return EE_Base_Class[]|EE_Payment_Method[]
      * @throws EE_Error
-     * @return EE_Payment_Method[]
      */
-    public function get_all_active($scope = null, $query_params = array())
+    public function get_all_active($scope = null, $query_params = [])
     {
         if (! isset($query_params['order_by']) && ! isset($query_params['order'])) {
-            $query_params['order_by'] = array( 'PMD_order' => 'ASC', 'PMD_ID' => 'ASC' );
+            $query_params['order_by'] = ['PMD_order' => 'ASC', 'PMD_ID' => 'ASC'];
         }
         return $this->get_all($this->_get_query_params_for_all_active($scope, $query_params));
     }
 
+
     /**
      * Counts all active gateways in the specified scope
+     *
      * @param string $scope one of EEM_Payment_Method::scope_*
-     * @param array $query_params
+     * @param array  $query_params
      * @return int
+     * @throws EE_Error
+     * @throws EE_Error
      */
-    public function count_active($scope = null, $query_params = array())
+    public function count_active($scope = null, $query_params = [])
     {
         return $this->count($this->_get_query_params_for_all_active($scope, $query_params));
     }
 
-    /**
-     * Creates the $query_params that can be passed into any EEM_Payment_Method as their $query_params
-     * argument to get all active for a given scope
-     * @param string $scope one of the constants EEM_Payment_Method::scope_*
-     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
-     * @return array @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
-     * @throws EE_Error
-     */
-    protected function _get_query_params_for_all_active($scope = null, $query_params = array())
-    {
-        if ($scope) {
-            if ($this->is_valid_scope($scope)) {
-                return array_replace_recursive(array( array( 'PMD_scope' => array( 'LIKE', "%$scope%" ) ) ), $query_params);
-            } else {
-                throw new EE_Error(sprintf(__("'%s' is not a valid scope for a payment method", "event_espresso"), $scope));
-            }
-        } else {
-            $acceptable_scopes = array();
-            $count = 0;
-            foreach ($this->scopes() as $scope_name => $desc) {
-                $count++;
-                $acceptable_scopes[ 'PMD_scope*' . $count ] = array( 'LIKE', '%' . $scope_name . '%' );
-            }
-            return array_replace_recursive(array( array( 'OR*active_scope' => $acceptable_scopes ) ), $query_params);
-        }
-    }
 
     /**
      * Creates the $query_params that can be passed into any EEM_Payment_Method as their $query_params
      * argument to get all active for a given scope
-     * @param string $scope one of the constants EEM_Payment_Method::scope_*
-     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
-     * @return array @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     *
+     * @param string $scope        one of the constants EEM_Payment_Method::scope_*
+     * @param array  $query_params @see
+     *                             https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @return array @see
+     *               https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @throws EE_Error
      */
-    public function get_query_params_for_all_active($scope = null, $query_params = array())
+    protected function _get_query_params_for_all_active($scope = null, $query_params = [])
+    {
+        if ($scope) {
+            if ($this->is_valid_scope($scope)) {
+                return array_replace_recursive([['PMD_scope' => ['LIKE', "%$scope%"]]], $query_params);
+            } else {
+                throw new EE_Error(sprintf(__("'%s' is not a valid scope for a payment method", "event_espresso"),
+                    $scope));
+            }
+        } else {
+            $acceptable_scopes = [];
+            $count = 0;
+            foreach ($this->scopes() as $scope_name => $desc) {
+                $count++;
+                $acceptable_scopes[ 'PMD_scope*' . $count ] = ['LIKE', '%' . $scope_name . '%'];
+            }
+            return array_replace_recursive([['OR*active_scope' => $acceptable_scopes]], $query_params);
+        }
+    }
+
+
+    /**
+     * Creates the $query_params that can be passed into any EEM_Payment_Method as their $query_params
+     * argument to get all active for a given scope
+     *
+     * @param string $scope        one of the constants EEM_Payment_Method::scope_*
+     * @param array  $query_params
+     * @return array
+     * @throws EE_Error
+     *@see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     */
+    public function get_query_params_for_all_active($scope = null, $query_params = [])
     {
         return $this->_get_query_params_for_all_active($scope, $query_params);
     }
@@ -187,36 +210,40 @@ class EEM_Payment_Method extends EEM_Base
 
     /**
      * Gets one active payment method. see @get_all_active for documentation
+     *
      * @param string $scope
      * @param array  $query_params
-     * @return EE_Payment_Method
+     * @return EE_Base_Class|EE_Payment_Method|EE_Soft_Delete_Base_Class|NULL
+     * @throws EE_Error
+     * @throws EE_Error
      */
-    public function get_one_active($scope = null, $query_params = array())
+    public function get_one_active($scope = null, $query_params = [])
     {
         return $this->get_one($this->_get_query_params_for_all_active($scope, $query_params));
     }
 
 
-
     /**
      * Gets one payment method of that type, regardless of whether its active or not
+     *
      * @param string $type
-     * @return EE_Payment_Method
+     * @return EE_Base_Class|EE_Payment_Method|EE_Soft_Delete_Base_Class|NULL
+     * @throws EE_Error
      */
     public function get_one_of_type($type)
     {
-        return $this->get_one(array( array( 'PMD_type' => $type ) ));
+        return $this->get_one([['PMD_type' => $type]]);
     }
-
 
 
     /**
      * Overrides parent ot also check by the slug
-     * @see EEM_Base::ensure_is_obj()
+     *
      * @param string|int|EE_Payment_Method $base_class_obj_or_id
      * @param boolean                      $ensure_is_in_db
-     * @return EE_Payment_Method
+     * @return EE_Base_Class|EE_Payment_Method|EE_Soft_Delete_Base_Class|int|string
      * @throws EE_Error
+     * @see EEM_Base::ensure_is_obj()
      */
     public function ensure_is_obj($base_class_obj_or_id, $ensure_is_in_db = false)
     {
@@ -233,16 +260,22 @@ class EEM_Payment_Method extends EEM_Base
         } catch (EE_Error $e) {
             // handle it outside the catch
         }
-        throw new EE_Error(sprintf(__("'%s' is neither a Payment Method ID, slug, nor object.", "event_espresso"), $base_class_obj_or_id));
+        throw new EE_Error(
+            sprintf(
+                __("'%s' is neither a Payment Method ID, slug, nor object.", 'event_espresso'),
+                $base_class_obj_or_id
+            )
+        );
     }
-
 
 
     /**
      * Gets the ID of this object, or if its a string finds the object's id
      * associated with that slug
+     *
      * @param mixed $base_obj_or_id_or_slug
      * @return int
+     * @throws EE_Error
      */
     public function ensure_is_ID($base_obj_or_id_or_slug)
     {
@@ -254,10 +287,14 @@ class EEM_Payment_Method extends EEM_Base
     }
 
 
-
     /**
-     * Verifies the button urls on all the passed payment methods have a valid button url. If not, resets them to their default.
-     * @param EE_Payment_Method[] $payment_methods. If NULL is provided defaults to all payment methods active in the cart
+     * Verifies the button urls on all the passed payment methods have a valid button url.
+     * If not, resets them to their default.
+     *
+     * @param EE_Payment_Method[] $payment_methods if NULL, defaults to all payment methods active in the cart
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @throws EE_Error
      */
     public function verify_button_urls($payment_methods = null)
     {
@@ -268,23 +305,22 @@ class EEM_Payment_Method extends EEM_Base
                 // though this is a caffeinated install, reset it to the default.
                 $current_button_url = $payment_method->button_url();
                 if (empty($current_button_url)
-                || (
+                    || (
                         strpos($current_button_url, 'decaf') !== false
                         && strpos($payment_method->type_obj()->default_button_url(), 'decaf') === false
                     )
                 ) {
                     $payment_method->save(
                         [
-                            'PMD_button_url' => $payment_method->type_obj()->default_button_url()
+                            'PMD_button_url' => $payment_method->type_obj()->default_button_url(),
                         ]
                     );
                 }
             } catch (EE_Error $e) {
-                $payment_method->set_active(false);
+                $payment_method->deactivate();
             }
         }
     }
-
 
 
     /**
@@ -295,13 +331,15 @@ class EEM_Payment_Method extends EEM_Base
      * @param array $rows
      * @return EE_Payment_Method[]
      * @throws InvalidDataTypeException
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    protected function _create_objects($rows = array())
+    protected function _create_objects($rows = [])
     {
         EE_Registry::instance()->load_lib('Payment_Method_Manager');
         $payment_methods = parent::_create_objects($rows);
         /* @var $payment_methods EE_Payment_Method[] */
-        $usable_payment_methods = array();
+        $usable_payment_methods = [];
         foreach ($payment_methods as $key => $payment_method) {
             if (EE_Payment_Method_Manager::instance()->payment_method_type_exists($payment_method->type())) {
                 $usable_payment_methods[ $key ] = $payment_method;
@@ -337,21 +375,22 @@ class EEM_Payment_Method extends EEM_Base
     }
 
 
-
     /**
      * Gets all the payment methods which can be used for transaction
      * (according to the relations between payment methods and events, and
      * the currencies used for the transaction and their relation to payment methods)
+     *
      * @param EE_Transaction $transaction
-     * @param string    $scope @see EEM_Payment_Method::get_all_for_events
+     * @param string         $scope @see EEM_Payment_Method::get_all_for_events
      * @return EE_Payment_Method[]
+     * @throws EE_Error
      */
     public function get_all_for_transaction($transaction, $scope)
     {
         // give addons a chance to override what payment methods are chosen based on the transaction
         return apply_filters(
             'FHEE__EEM_Payment_Method__get_all_for_transaction__payment_methods',
-            $this->get_all_active($scope, array( 'group_by' => 'PMD_type' )),
+            $this->get_all_active($scope, ['group_by' => 'PMD_type']),
             $transaction,
             $scope
         );
@@ -360,23 +399,26 @@ class EEM_Payment_Method extends EEM_Base
 
     /**
      * Returns the payment method used for the last payment made for a registration.
+     * Note: if an offline payment method was selected on the related transaction then this will have no payment
+     * methods returned. It will ONLY return a payment method for a PAYMENT recorded against the registration.
      *
-     * Note: if an offline payment method was selected on the related transaction then this will have no payment methods returned.
-     * It will ONLY return a payment method for a PAYMENT recorded against the registration.
-     *
-     * @param EE_Registration|int $registration_or_reg_id  Either the EE_Registration object or the id for the registration.
+     * @param EE_Registration|int $registration_or_reg_id Either the EE_Registration object or the id for the
+     *                                                    registration.
      * @return EE_Payment|null
+     * @throws EE_Error
+     * @throws EE_Error
+     * @throws EE_Error
      */
     public function get_last_used_for_registration($registration_or_reg_id)
     {
         $registration_id = EEM_Registration::instance()->ensure_is_ID($registration_or_reg_id);
 
-        $query_params = array(
-            0 => array(
+        $query_params = [
+            0          => [
                 'Payment.Registration.REG_ID' => $registration_id,
-            ),
-            'order_by' => array( 'Payment.PAY_ID' => 'DESC' )
-        );
+            ],
+            'order_by' => ['Payment.PAY_ID' => 'DESC'],
+        ];
         return $this->get_one($query_params);
     }
 }
