@@ -4,7 +4,6 @@ import { useDisclosure } from '@chakra-ui/core';
 
 import { Calendar, Ticket } from '@appDisplay/icons';
 import { Button, ButtonRow, ButtonSize } from '@application/ui/input';
-import { Box } from '@infraUI/display';
 import useTicketAssignmentsManager from '../../ticketAssignmentsManager/useTicketAssignmentsManager';
 import { Container as FormContainer } from '@edtrUI/datetimes/dateForm/multiStep';
 

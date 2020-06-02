@@ -1,3 +1,22 @@
+@import 'application/ui/styles/mixins/breakpoints.scss';
+
 .ee-btn-row {
 	margin-bottom: var(--ee-margin-big);
+
+	&--right-aligned {
+		display: flex;
+		justify-content: flex-end;
+
+		.ee-btn.ee-btn {
+			@include max782px {
+				display: block;
+				margin-left: 0;
+				width: 100%;
+			}
+		}
+	}
+
+	@include max782px {
+		display: block;
+	}
 }

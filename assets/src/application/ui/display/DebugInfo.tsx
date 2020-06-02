@@ -41,7 +41,7 @@ const DebugInfo: React.FC<DebugInfoProps> = ({ data, asJson = true, asCollapse =
 
 	return (
 		<>
-			<Button buttonText={buttonText} onClick={handleToggle} size='md' mt='2em' />
+			<Button className='ee-debug-info-btn' buttonText={buttonText} onClick={handleToggle} size='md' mt='2em' />
 			<Collapse isOpen={show}>{output}</Collapse>
 		</>
 	);
