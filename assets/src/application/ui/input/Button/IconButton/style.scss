@@ -3,6 +3,8 @@
  * © 2020 Event Espresso
  * ------------------------------------------------------------------------- */
 
+@import 'application/ui/styles/mixins/breakpoints.scss';
+
 .btn-focus {
 	border-color: var(--ee-color-primary);
 	box-shadow: none !important;
@@ -30,6 +32,12 @@
 		padding: var(--ee-padding-micro);
 		top: 0;
 		width: var(--ee-icon-button-size);
+
+		@include max782px {
+			margin-left: auto;
+			margin-right: auto;
+		}
+
 		svg {
 			display: inline-block;
 			path {
