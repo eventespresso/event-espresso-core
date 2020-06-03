@@ -1,15 +1,15 @@
 .ee-input-base-hover {
 	border-color: var(--ee-color-primary-low-contrast);
 	color: var(--ee-color-primary-high-contrast);
-	box-shadow: 0 0 0 1px var(--ee-color-primary-low-contrast);
+	box-shadow: none;
 }
 
 .ee-input-base-focus {
 	border-color: var(--ee-color-primary);
-	box-shadow: 0 0 0 1px var(--ee-color-primary);
+	box-shadow: none;
 	/* Visible in Windows high-contrast themes */
 	outline-color: transparent;
-	outline-width: 2px;
+	outline-width: 3px;
 	outline-style: solid;
 }
 
@@ -17,10 +17,13 @@
 	border-color: var(--ee-border-color);
 	border-radius: var(--ee-border-radius-small);
 	border-style: solid;
-	border-width: 2px;
+	border-width: 3px;
+	box-shadow: none;
 	line-height: inherit;
 	min-height: 2.5rem;
+	outline: none;
 	padding: var(--ee-padding-micro) var(--ee-padding-tiny);
+	transition: all ease 50ms;
 }
 
 // this approach is needed in cases when classname cannot be applied directly on input

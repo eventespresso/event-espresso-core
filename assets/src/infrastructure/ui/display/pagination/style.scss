@@ -1,37 +1,31 @@
-$border-style: 2px solid var(--ee-border-color);
+$border-style: 3px solid var(--ee-border-color);
 $border-radius: var(--ee-border-radius-default);
 
 .ee-pagination {
 	display: flex;
 	flex-direction: row;
-	padding: 1em;
+	margin: var(--ee-margin-small) 0;
+	padding: var(--ee-padding-small);
 
-	ul {
-		display: flex;
-		margin-right: 1em;
-
-		[dir='rtl'] & {
-			margin-right: 0;
-			margin-left: 1em;
-		}
+	.rc-pagination-item,
+	.rc-pagination-prev,
+	.rc-pagination-next {
+		background-color: transparent;
+		border: none;
+		border-radius: 0;
+		height: auto;
+		outline: none;
 	}
 
 	&__item {
 		align-items: center;
-		background: var(--ee-background-color);
-		border: $border-style;
-		border-left: 0;
-		color: var(--ee-text-on-grey-14);
 		display: flex;
 		font-family: 'Segoe UI', Candara, 'Bitstream Vera Sans', 'DejaVu Sans', 'Bitstream Vera Sans', 'Trebuchet MS',
 			Verdana, 'Verdana Ref', sans-serif;
 		font-size: var(--ee-font-size-default);
-		height: 2.75rem;
+		height: 100%;
 		margin: 0;
-		min-height: 2.75rem;
-		min-width: 2.75rem;
 		justify-content: center;
-		width: 2.75rem;
 
 		[dir='rtl'] & {
 			border: $border-style;
@@ -39,103 +33,160 @@ $border-radius: var(--ee-border-radius-default);
 		}
 
 		a {
-			color: var(--ee-text-on-grey-14) !important;
-		}
-
-		.rc-pagination-item-active & {
-			a {
-				font-weight: bold;
-			}
-		}
-
-		.rc-pagination-disabled & {
-			a {
-				color: var(--ee-text-on-grey-1) !important;
-			}
+			color: var(--ee-default-text-color);
+			font-weight: 400;
 		}
 	}
 
-	&__per-page {
-		height: 2.75rem;
+	ul.rc-pagination {
+		display: flex;
+		margin-right: var(--ee-margin-small);
 
-		&.ee-select.ee-select {
-			border: $border-style;
-			border-radius: $border-radius;
+		[dir='rtl'] & {
+			margin-right: 0;
+			margin-left: var(--ee-margin-small);
 		}
-	}
 
-	ul {
 		li {
-			&:hover {
-				.ee-pagination__item {
-					background: var(--ee-color-grey-14);
-				}
-			}
-
-			&:focus {
-				.ee-pagination__item {
-					background: var(--ee-color-grey-13);
-				}
-			}
+			background: var(--ee-background-color);
+			border: $border-style;
+			line-height: 0.9;
+			height: 2.8rem;
+			min-height: 2.8rem;
+			min-width: 2.8rem;
+			margin: 0 0 0 -3px;
+			width: 2.8rem;
+			z-index: 1;
 
 			// prev
 			&:first-child {
-				.ee-pagination__item {
-					border-left: $border-style;
-					border-top-left-radius: $border-radius;
-					border-bottom-left-radius: $border-radius;
+				border-left: $border-style;
+				border-top-left-radius: $border-radius;
+				border-bottom-left-radius: $border-radius;
 
-					[dir='rtl'] & {
-						border-right: $border-style;
-						border-top-left-radius: 0;
-						border-bottom-left-radius: 0;
-						border-top-right-radius: $border-radius;
-						border-bottom-right-radius: $border-radius;
-					}
+				[dir='rtl'] & {
+					border-right: $border-style;
+					border-top-left-radius: 0;
+					border-bottom-left-radius: 0;
+					border-top-right-radius: $border-radius;
+					border-bottom-right-radius: $border-radius;
+				}
 
-					.rc-pagination-item-link {
-						font-size: var(--ee-font-size-huge);
-						position: relative;
-						top: -0.2rem;
-					}
+				.rc-pagination-item-link {
+					color: var(--ee-default-text-color-super-low-contrast);
+					font-size: var(--ee-font-size-huge);
+					font-weight: 700;
+					line-height: 0.6;
+					position: relative;
+					top: -0.25rem;
+				}
+
+				&:hover:not([aria-disabled='true']) .rc-pagination-item-link {
+					color: var(--ee-color-primary);
 				}
 			}
 
 			// next
 			&:last-child {
-				.ee-pagination__item {
-					border-left: 0;
-					border-right: $border-style;
-					border-top-right-radius: $border-radius;
-					border-bottom-right-radius: $border-radius;
+				border-right: $border-style;
+				border-top-right-radius: $border-radius;
+				border-bottom-right-radius: $border-radius;
 
-					[dir='rtl'] & {
-						border-left: $border-style;
-						border-right: 0;
-						border-top-right-radius: 0;
-						border-bottom-right-radius: 0;
-						border-top-left-radius: $border-radius;
-						border-bottom-left-radius: $border-radius;
-					}
+				[dir='rtl'] & {
+					border-left: $border-style;
+					border-top-right-radius: 0;
+					border-bottom-right-radius: 0;
+					border-top-left-radius: $border-radius;
+					border-bottom-left-radius: $border-radius;
+				}
 
-					.rc-pagination-item-link {
-						font-size: var(--ee-font-size-huge);
-						position: relative;
-						top: -0.2rem;
+				.rc-pagination-item-link {
+					color: var(--ee-default-text-color-super-low-contrast);
+					font-size: var(--ee-font-size-huge);
+					font-weight: 700;
+					line-height: 0.6;
+					position: relative;
+					top: -0.25rem;
+				}
+
+				&:hover:not([aria-disabled='true']) .rc-pagination-item-link {
+					color: var(--ee-color-primary);
+				}
+			}
+
+			&:hover:not([aria-disabled='true']) {
+				border-color: var(--ee-color-primary-low-contrast);
+				box-shadow: none;
+				z-index: 2;
+
+				a {
+					color: var(--ee-color-primary);
+					font-weight: 500;
+				}
+			}
+
+			&:focus {
+				border-color: var(--ee-color-primary);
+				box-shadow: none;
+				z-index: 2;
+			}
+
+			&.rc-pagination-item-active {
+				background: var(--ee-color-primary);
+				border-color: var(--ee-color-primary);
+				box-shadow: none;
+				z-index: 2;
+
+				a {
+					color: var(--ee-text-on-primary);
+					font-weight: bold;
+				}
+
+				&:focus {
+					border-color: var(--ee-color-primary-high-contrast);
+				}
+
+				&:hover:not([aria-disabled='true']) {
+					border-color: var(--ee-color-primary-low-contrast);
+
+					a {
+						color: var(--ee-text-on-primary);
 					}
+				}
+			}
+
+			&.rc-pagination-disabled {
+				background: var(--ee-color-grey-14);
+				border-color: var(--ee-color-grey-11);
+
+				.rc-pagination-item-link {
+					color: var(--ee-color-grey-11);
 				}
 			}
 		}
 	}
 
-	.rc-pagination-item,
-	.rc-pagination-prev,
-	.rc-pagination-next {
-		background-color: transparent;
-		border: 0;
-		border-radius: 0;
-		height: auto;
-		margin: 0;
-		outline: none;
+	&__per-page {
+		height: 2.8rem;
+
+		&.ee-input-base.ee-select {
+			border: $border-style;
+			border-radius: $border-radius;
+
+			&:hover:not([aria-disabled='true']) {
+				border-color: var(--ee-color-primary-low-contrast);
+				box-shadow: none;
+
+				a {
+					color: var(--ee-default-text-color);
+				}
+			}
+
+			&:focus {
+				border-color: var(--ee-color-primary);
+				box-shadow: none;
+				z-index: 2;
+			}
+		}
 	}
 }
