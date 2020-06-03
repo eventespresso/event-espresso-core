@@ -6,7 +6,7 @@
 @import 'application/ui/styles/mixins/breakpoints.scss';
 
 .ticket-assignment-manager.ticket-assignment-manager.ee-rspnsv-table__outer_wrapper {
-	.ee-rspnsv-table.ee-rspnsv-table {
+	.ee-rspnsv-table {
 		background: var(--ee-background-color);
 
 		&__inner-wrapper {
@@ -178,6 +178,11 @@
 								text-overflow: ellipsis;
 								text-align: left;
 								white-space: nowrap;
+								max-width: 210px;
+							}
+
+							@include max480px {
+								max-width: 200px;
 							}
 						}
 
