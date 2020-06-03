@@ -227,19 +227,21 @@ class EEM_Payment_Method extends EEM_Base
         if ($scope) {
             if ($this->is_valid_scope($scope)) {
                 return array_replace_recursive([['PMD_scope' => ['LIKE', "%$scope%"]]], $query_params);
-            } else {
-                throw new EE_Error(sprintf(__("'%s' is not a valid scope for a payment method", "event_espresso"),
-                    $scope));
             }
-        } else {
-            $acceptable_scopes = [];
-            $count = 0;
-            foreach ($this->scopes() as $scope_name => $desc) {
-                $count++;
-                $acceptable_scopes[ 'PMD_scope*' . $count ] = ['LIKE', '%' . $scope_name . '%'];
-            }
-            return array_replace_recursive([['OR*active_scope' => $acceptable_scopes]], $query_params);
+            throw new EE_Error(
+                sprintf(
+                    __("'%s' is not a valid scope for a payment method", 'event_espresso'),
+                    $scope
+                )
+            );
         }
+        $acceptable_scopes = [];
+        $count = 0;
+        foreach ($this->scopes() as $scope_name => $desc) {
+            $count++;
+            $acceptable_scopes[ 'PMD_scope*' . $count ] = ['LIKE', '%' . $scope_name . '%'];
+        }
+        return array_replace_recursive([['OR*active_scope' => $acceptable_scopes]], $query_params);
     }
 
 
