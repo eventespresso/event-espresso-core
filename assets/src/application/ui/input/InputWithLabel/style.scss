@@ -4,16 +4,12 @@
 	&__left-addon,
 	&__right-addon {
 		.ee-input-with-label & {
-			border-width: 2px;
+			border-width: 3px;
 			border-color: var(--ee-border-color);
 			border-radius: 3px;
-			height: 42px;
+			height: 2.625rem;
 			margin: 0;
 			padding: 0;
-
-			@include max782px {
-				height: 40px;
-			}
 		}
 
 		.ee-input--disabled & {

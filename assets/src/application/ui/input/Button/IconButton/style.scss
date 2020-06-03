@@ -33,7 +33,7 @@
 		top: 0;
 		width: var(--ee-icon-button-size);
 
-		@include max782px {
+		@include max480px {
 			margin-left: auto;
 			margin-right: auto;
 		}
