@@ -271,6 +271,12 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     protected $_has_primary_key_field = null;
 
     /**
+     * array in the format:  [ FK alias => full PK ]
+     * where keys are local column name aliases for foreign keys
+     * and values are the fully qualified column name for the primary key they represent
+     *  ex:
+     *      [ 'Event.EVT_wp_user' => 'WP_User.ID' ]
+     *
      * @var array $foreign_key_aliases
      */
     protected $foreign_key_aliases = [];
@@ -5382,13 +5388,6 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                 $table_obj->get_fully_qualified_pk_column(),
                 $table_obj->get_pk_column()
             );
-            // no PK?  ok check if there is a foreign key alias set for this table
-            if ($table_pk_value === null && ! empty($this->foreign_key_aliases)) {
-                // then check if that alias exists in the incoming data
-                foreach ($this->foreign_key_aliases as $FK_alias) {
-                    $table_pk_value = isset($cols_n_values[ $FK_alias ]) ? $cols_n_values[ $FK_alias ] : null;
-                }
-            }
             // there is a primary key on this table and its not set. Use defaults for all its columns
             if ($table_pk_value === null && $table_obj->get_pk_column()) {
                 foreach ($this->_get_fields_for_table($table_alias) as $field_name => $field_obj) {
@@ -5432,6 +5431,16 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             $value = $cols_n_values[ $qualified_column ];
         } elseif (isset($cols_n_values[ $regular_column ])) {
             $value = $cols_n_values[ $regular_column ];
+        } elseif (! empty($this->foreign_key_aliases)) {
+            // no PK?  ok check if there is a foreign key alias set for this table
+            // then check if that alias exists in the incoming data
+            // AND that the actual PK the $FK_alias represents matches the $qualified_column (full PK)
+            foreach ($this->foreign_key_aliases as $FK_alias => $PK_column) {
+                if (isset($cols_n_values[ $FK_alias ]) && $PK_column === $qualified_column) {
+                    $value = $cols_n_values[ $FK_alias ];
+                    break;
+                }
+            }
         }
         return $value;
     }
