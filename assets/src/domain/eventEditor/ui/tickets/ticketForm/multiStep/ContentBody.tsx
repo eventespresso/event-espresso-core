@@ -1,18 +1,15 @@
-import React, { CSSProperties } from 'react';
+import React from 'react';
 import { __ } from '@wordpress/i18n';
 import { FormSpy } from 'react-final-form';
 import { anyPass, isNil, isEmpty } from 'ramda';
 
 import TicketFormSteps from './TicketFormSteps';
 import { usePrevNext } from '@appServices/hooks';
-import { Button } from '@infraUI/inputs';
+import { Button, ButtonRow } from '@application/ui/input';
 import { TicketAssignmentsManager } from '@edtrUI/ticketAssignmentsManager/components';
 import { useDataState as useTAMDataState } from '@edtrUI/ticketAssignmentsManager/data';
 import TicketPriceCalculator from '@edtrUI/tickets/ticketPriceCalculator/components/TicketPriceCalculator';
 import useDataListener from './useDataListener';
-
-// temporary
-const buttonRowStyle: CSSProperties = { display: 'flex', justifyContent: 'flex-end', padding: '1rem 2rem' };
 
 /**
  * This component is inside both RFF and TAM contexts, so we can use all of their features
@@ -20,11 +17,13 @@ const buttonRowStyle: CSSProperties = { display: 'flex', justifyContent: 'flex-e
 const ContentBody: React.FC = ({ children }) => {
 	// init data listener to update RFF data
 	useDataListener();
+
 	const { current, goto, prev, next } = usePrevNext();
 	const { hasOrphanEntities, getData } = useTAMDataState();
 	const isSubmitDisabled = hasOrphanEntities();
 
 	const subscription = { submitting: true, hasValidationErrors: true, hasSubmitErrors: true };
+
 	return (
 		<FormSpy subscription={subscription}>
 			{({ form, hasSubmitErrors, hasValidationErrors, submitting, values }) => {
@@ -33,17 +32,15 @@ const ContentBody: React.FC = ({ children }) => {
 				const prices = values?.prices || [];
 				const isTPCSubmitDisabled =
 					prices.length && prices.some(({ amount }) => anyPass([isNil, isEmpty])(amount));
+
 				return (
 					<div>
 						<TicketFormSteps current={current} />
 						{/* RFF fields */}
-						{current === 0 && children}
-
-						{current === 1 && <TicketPriceCalculator />}
-						{current === 2 && <TicketAssignmentsManager />}
-						<div style={buttonRowStyle}>
-							{current === 0 && (
-								<>
+						{current === 0 && (
+							<>
+								{children}
+								<ButtonRow rightAligned>
 									<Button
 										buttonText={__('Add ticket prices')}
 										onClick={next}
@@ -56,10 +53,14 @@ const ContentBody: React.FC = ({ children }) => {
 										isDisabled={isSaveDisabled}
 										rightIcon='chevron-right'
 									/>
-								</>
-							)}
-							{current === 1 && (
-								<>
+								</ButtonRow>
+							</>
+						)}
+
+						{current === 1 && (
+							<>
+								<TicketPriceCalculator />
+								<ButtonRow rightAligned>
 									<Button buttonText={__('Previous')} onClick={prev} leftIcon='chevron-left' />
 									<Button
 										buttonText={__('Save and assign dates')}
@@ -67,10 +68,14 @@ const ContentBody: React.FC = ({ children }) => {
 										isDisabled={isTPCSubmitDisabled}
 										rightIcon='chevron-right'
 									/>
-								</>
-							)}
-							{current === 2 && (
-								<>
+								</ButtonRow>
+							</>
+						)}
+
+						{current === 2 && (
+							<>
+								<TicketAssignmentsManager />
+								<ButtonRow rightAligned>
 									<Button
 										buttonText={__('Ticket details')}
 										onClick={() => goto(0)}
@@ -82,9 +87,9 @@ const ContentBody: React.FC = ({ children }) => {
 										onClick={form.submit}
 										isDisabled={isSubmitDisabled}
 									/>
-								</>
-							)}
-						</div>
+								</ButtonRow>
+							</>
+						)}
 					</div>
 				);
 			}}

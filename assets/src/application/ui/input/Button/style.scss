@@ -3,6 +3,8 @@
  * © 2020 Event Espresso
  * ------------------------------------------------------------------------- */
 
+@import 'application/ui/styles/mixins/breakpoints.scss';
+
 :root {
 	--ee-icon-button-size-tiny: 30px;
 	--ee-icon-button-size-small: 36px;
@@ -355,6 +357,10 @@
 			height: auto;
 			line-height: var(--ee-font-size-big);
 			padding: var(--ee-padding-smaller) var(--ee-padding-default);
+
+			@include max782px {
+				width: 100%;
+			}
 
 			span {
 				font-size: var(--ee-font-size-big);

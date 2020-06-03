@@ -3,10 +3,18 @@
  * © 2020 Event Espresso
  * ------------------------------------------------------------------------- */
 
+@import 'application/ui/styles/mixins/breakpoints.scss';
+
 .ee-item-count {
 	&__wrapper {
 		position: relative;
 		min-width: 55px;
+
+		@include max782px {
+			margin-left: auto;
+			margin-right: auto;
+			width: var(var(--ee-icon-button-size));
+		}
 	}
 
 	&.ee-item-count {

@@ -1,15 +1,17 @@
 .ee-money-field {
 	display: flex;
 
+	$percentSignWidth: 38px;
+
 	&__label {
-		min-width: 35px;
+		min-width: $percentSignWidth;
 		padding: 0 var(--ee-padding-micro);
 		text-align: center;
 	}
 
 	&--with-currency-sign {
 		.ee-input-with-label__left-label {
-			margin-right: 35px;
+			margin-right: $percentSignWidth;
 		}
 
 		.ee-currency-sign {
@@ -46,10 +48,11 @@
 	&--with-percent-sign {
 		&.ee-money-field-sign {
 			&--before {
-				margin-left: 35px;
+				margin-left: 46px;
+
 				@mixin marginLeft($charLength) {
 					$signCharSize: 15px;
-					$signBorderWidth: 2px; // sign label has only one border applied, the other border is adjoined with input
+					$signBorderWidth: 3px; // sign label has only one border applied, the other border is adjoined with input
 					$signPaddings: calc(var(--ee-padding-micro) * 2); // sign have paddings from both horizontal sides
 
 					margin-left: calc(#{$signCharSize * $charLength} + #{$signBorderWidth} + #{$signPaddings});

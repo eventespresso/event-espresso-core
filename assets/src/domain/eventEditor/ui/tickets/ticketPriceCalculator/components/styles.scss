@@ -4,12 +4,14 @@ $input-text: 'input[type=' text ']';
 
 .ee-tpc {
 	max-width: 75rem !important;
+
 	&__body {
 		#{$input-number},
 		#{$input-text},
 		select {
 			height: var(--ee-icon-button-size);
 		}
+
 		#{$btn} {
 			margin-bottom: 0;
 		}

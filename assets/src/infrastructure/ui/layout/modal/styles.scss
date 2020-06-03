@@ -1,7 +1,23 @@
-.ee-modal {
+@import 'application/ui/styles/mixins/breakpoints.scss';
+
+.ee-modal .ee-modal {
 	&__header {
-		[dir='rtl'] & {
-			padding-right: var(--ee-padding-extreme);
+		&.ee-modal__header {
+			[dir='rtl'] & {
+				padding-right: var(--ee-padding-extreme);
+			}
+
+			@include max782px {
+				padding-left: var(--ee-padding-smaller);
+				padding-right: var(--ee-padding-extreme);
+			}
+		}
+	}
+
+	&__body {
+		@include max782px {
+			padding-left: var(--ee-padding-smaller);
+			padding-right: var(--ee-padding-smaller);
 		}
 	}
 }

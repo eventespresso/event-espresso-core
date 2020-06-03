@@ -17,9 +17,9 @@ const HeaderCell: React.FC<RenderCellProps> = ({ ticket }) => {
 	return (
 		<div className='header-cell-content__wrapper'>
 			<div className='header-cell-content'>
-				<div className='ee-focus-priority-8'>ID: {ticket.dbId}</div>
+				<div className='ee-focus-priority-8 header-cell-content__id'>ID: {ticket.dbId}</div>
 				<div className='ee-focus-priority-5 header-cell-content__name'>{ticket.name}</div>
-				<div className='ee-focus-priority-8'>{`${currency.sign} ${ticket.price}`}</div>
+				<div className='ee-focus-priority-8 header-cell-content__price'>{`${currency.sign} ${ticket.price}`}</div>
 			</div>
 			<div className={startDateClassName}>{startDate}</div>
 		</div>

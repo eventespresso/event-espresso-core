@@ -1,10 +1,32 @@
+@import 'application/ui/styles/mixins/breakpoints.scss';
+
 .ee-ticket-price {
 	&-calculator {
 		width: 100%;
+
+		tbody.ee-rspnsv-table-body {
+			tr.ee-rspnsv-table-body-row {
+				@include max782px {
+					height: auto;
+					width: 100%;
+				}
+
+				.ee-rspnsv-table-body-td {
+					&:not(.ee-rspnsv-table-hide-on-mobile) {
+						@include max782px {
+							display: flex;
+							padding: var(--ee-padding-micro);
+						}
+					}
+				}
+			}
+		}
+
 		th,
 		td {
 			padding: var(--ee-padding-tiny) var(--ee-padding-micro);
 		}
+
 		input,
 		select {
 			width: 100%;

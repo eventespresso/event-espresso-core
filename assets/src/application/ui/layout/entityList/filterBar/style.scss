@@ -101,11 +101,18 @@ $filter-btn: '.ee-filter-bar__btn';
 	}
 
 	&__btn {
-		&.ee-btn {
+		&.ee-btn.ee-btn {
 			svg {
 				margin: 0;
 			}
+
+			@include max782px {
+				display: flex;
+				margin-left: 0;
+				width: 100%;
+			}
 		}
+
 		&--active.ee-btn-base.ee-icon-button {
 			background: var(--ee-color-primary);
 			border-color: var(--ee-color-primary);
@@ -158,35 +165,8 @@ $filter-btn: '.ee-filter-bar__btn';
 		}
 	}
 
-	/* Media Queries for specific screen sizes
- 	* -------------------------------------------------------------------------*/
-
-	@media only screen and (max-width: 1920px) {
-	}
-
-	@media only screen and (max-width: 1600px) {
-	}
-
-	@media only screen and (max-width: 1366px) {
-	}
-
 	@media only screen and (max-width: 1280px) {
 		margin: 0 0 var(--ee-margin-default);
-	}
-
-	@media only screen and (max-width: 1024px) {
-	}
-
-	/* WordPress Admin Media Query Breakpoint: Auto-folding of the admin menu */
-	@media only screen and (max-width: 960px) {
-	}
-
-	/* WordPress Admin Media Query Breakpoint: one column on the post write/edit screen */
-	@media only screen and (max-width: 850px) {
-	}
-
-	/* WordPress Admin Media Query Breakpoint: Tablet */
-	@media screen and (max-width: 782px) {
 	}
 
 	/* WordPress Admin Media Query Breakpoint: Smartphone */
@@ -199,8 +179,5 @@ $filter-btn: '.ee-filter-bar__btn';
 		.ee-filter-bar__filter {
 			margin: 0 0 var(--ee-margin-smaller);
 		}
-	}
-
-	@media only screen and (max-width: 360px) {
 	}
 }

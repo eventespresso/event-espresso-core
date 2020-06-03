@@ -1,4 +1,5 @@
 import React from 'react';
+import classNames from 'classnames';
 import {
 	Modal as ChakraModal,
 	ModalBody,
@@ -15,10 +16,8 @@ import { ModalProps } from './types';
 import './styles.scss';
 
 const Modal: React.FC<ModalProps> = ({
-	bodyClassName,
 	cancelButtonProps,
 	children,
-	className,
 	closeButton,
 	content,
 	destroyOnClose = true,
@@ -33,19 +32,21 @@ const Modal: React.FC<ModalProps> = ({
 	if (destroyOnClose && !isOpen) {
 		return null;
 	}
-	let footerNode = footerContent;
 
-	if (!footerNode) {
-		const cancelButton = cancelButtonProps && <Button mr={3} {...cancelButtonProps} />;
-		const submitButton = submitButtonProps && <Button variantColor='blue' {...submitButtonProps} />;
+	const className = classNames(props.className, 'ee-modal');
+	const bodyClassName = classNames(props.bodyClassName, 'ee-modal__body');
 
-		footerNode = (cancelButton || submitButton) && (
-			<>
-				{cancelButton}
-				{submitButton}
-			</>
-		);
-	}
+	const cancelButton = cancelButtonProps && <Button mr={3} {...cancelButtonProps} />;
+	const submitButton = submitButtonProps && <Button variantColor='blue' {...submitButtonProps} />;
+	const defaultFooterNode = (cancelButton || submitButton) && (
+		<>
+			{cancelButton}
+			{submitButton}
+		</>
+	);
+
+	const footerNode = footerContent ?? defaultFooterNode;
+
 	return (
 		<ChakraModal
 			closeOnOverlayClick={isClosable}

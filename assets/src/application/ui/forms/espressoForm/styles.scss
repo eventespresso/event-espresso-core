@@ -1,12 +1,22 @@
+@import 'application/ui/styles/mixins/breakpoints.scss';
+
 .ee-form {
 	.form-wrapper {
 		max-width: 900px;
 		padding: 0;
 		margin: 0 auto;
+
+		.ee-debug-info-btn {
+			@include max782px {
+				display: block;
+				margin-left: 0;
+				width: 100%;
+			}
+		}
 	}
 
 	.sections-wrapper {
-		padding: 0 0 1rem;
+		padding: 0 0 var(--ee-padding-big);
 		& > div:first-child {
 			padding: 1em 0;
 		}
