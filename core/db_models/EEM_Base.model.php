@@ -5436,7 +5436,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             // then check if that alias exists in the incoming data
             // AND that the actual PK the $FK_alias represents matches the $qualified_column (full PK)
             foreach ($this->foreign_key_aliases as $FK_alias => $PK_column) {
-                if (isset($cols_n_values[ $FK_alias ]) && $PK_column === $qualified_column) {
+                if ($PK_column === $qualified_column && isset($cols_n_values[ $FK_alias ])) {
                     $value = $cols_n_values[ $FK_alias ];
                     break;
                 }
