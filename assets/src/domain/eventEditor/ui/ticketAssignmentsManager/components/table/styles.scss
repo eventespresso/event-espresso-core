@@ -158,39 +158,34 @@
 
 					.header-cell-content {
 						@include max782px {
-							position: relative;
+							padding-left: var(--ee-padding-tiny);
+							text-align: left;
 							width: 100%;
 						}
 
 						&__id {
 							@include max782px {
 								color: var(--ee-default-text-color-super-low-contrast);
-								float: right;
-								width: 50px;
 							}
 						}
 
 						&__name {
 							@include max782px {
 								font-weight: bold;
-								padding: 20px 10px;
 								overflow: hidden;
 								text-overflow: ellipsis;
 								text-align: left;
 								white-space: nowrap;
-								max-width: 210px;
+								max-width: 430px;
 							}
 
 							@include max480px {
-								max-width: 200px;
+								max-width: 190px;
 							}
 						}
 
 						&__price {
 							@include max782px {
-								position: absolute;
-								right: 0;
-								bottom: 0;
 							}
 						}
 
