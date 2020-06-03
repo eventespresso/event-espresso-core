@@ -16,7 +16,7 @@
 	}
 
 	.sections-wrapper {
-		padding: 0 0 1rem;
+		padding: 0 0 var(--ee-padding-big);
 		& > div:first-child {
 			padding: 1em 0;
 		}
