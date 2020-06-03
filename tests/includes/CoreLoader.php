@@ -70,8 +70,8 @@ class CoreLoader
                 $folder = $this->findWordpressTests(__DIR__);
                 define('WP_TESTS_DIR', $folder);
             }
-            echo "\nWP_TESTS_DIR: " . WP_TESTS_DIR . "\n\n";
-            echo "\nEE_TESTS_DIR: " . EE_TESTS_DIR;
+            echo "\nWP_TESTS_DIR: " . WP_TESTS_DIR;
+            echo "\nEE_TESTS_DIR: " . EE_TESTS_DIR . "\n\n";
             // define('EE_REST_API_DEBUG_MODE', true);
         }
     }
