@@ -41,31 +41,82 @@ class EEM_Payment_Method extends EEM_Base
     {
         $this->singular_item = __('Payment Method', 'event_espresso');
         $this->plural_item = __('Payment Methods', 'event_espresso');
-        $this->_tables = ['Payment_Method' => new EE_Primary_Table('esp_payment_method', 'PMD_ID')];
+        $this->_tables = [
+            'Payment_Method' => new EE_Primary_Table('esp_payment_method', 'PMD_ID')
+        ];
         $this->_fields = [
             'Payment_Method' => [
-                'PMD_ID'              => new EE_Primary_Key_Int_Field('PMD_ID', __("ID", 'event_espresso')),
-                'PMD_type'            => new EE_Plain_Text_Field('PMD_type',
-                    __("Payment Method Type", 'event_espresso'), false, 'Admin_Only'),
-                'PMD_name'            => new EE_Plain_Text_Field('PMD_name', __("Name", 'event_espresso'), false),
-                'PMD_desc'            => new EE_Post_Content_Field('PMD_desc', __("Description", 'event_espresso'),
-                    false, ''),
-                'PMD_admin_name'      => new EE_Plain_Text_Field('PMD_admin_name',
-                    __("Admin-Only Name", 'event_espresso'), true),
-                'PMD_admin_desc'      => new EE_Post_Content_Field('PMD_admin_desc',
-                    __("Admin-Only Description", 'event_espresso'), true),
-                'PMD_slug'            => new EE_Slug_Field('PMD_slug', __("Slug", 'event_espresso'), false),
-                'PMD_order'           => new EE_Integer_Field('PMD_order', __("Order", 'event_espresso'), false, 0),
-                'PMD_debug_mode'      => new EE_Boolean_Field('PMD_debug_mode', __("Debug Mode On?", 'event_espresso'),
-                    false, false),
-                'PMD_wp_user'         => new EE_WP_User_Field('PMD_wp_user',
-                    __("Payment Method Creator ID", 'event_espresso'), false),
-                'PMD_open_by_default' => new EE_Boolean_Field('PMD_open_by_default',
-                    __("Open by Default?", 'event_espresso'), false, false),
-                'PMD_button_url'      => new EE_Plain_Text_Field('PMD_button_url', __("Button URL", 'event_espresso'),
-                    true, ''),
-                'PMD_scope'           => new EE_Serialized_Text_Field('PMD_scope', __("Usable From?", 'event_espresso'),
-                    false, []), // possible values currently are 'CART','ADMIN','API'
+                'PMD_ID'              => new EE_Primary_Key_Int_Field(
+                    'PMD_ID',
+                    __('ID', 'event_espresso')
+                ),
+                'PMD_type'            => new EE_Plain_Text_Field(
+                    'PMD_type',
+                    __('Payment Method Type', 'event_espresso'),
+                    false,
+                    'Admin_Only'
+                ),
+                'PMD_name'            => new EE_Plain_Text_Field(
+                    'PMD_name',
+                    __('Name', 'event_espresso'),
+                    false
+                ),
+                'PMD_desc'            => new EE_Post_Content_Field(
+                    'PMD_desc',
+                    __('Description', 'event_espresso'),
+                    false,
+                    ''
+                ),
+                'PMD_admin_name'      => new EE_Plain_Text_Field(
+                    'PMD_admin_name',
+                    __('Admin-Only Name', 'event_espresso'),
+                    true
+                ),
+                'PMD_admin_desc'      => new EE_Post_Content_Field(
+                    'PMD_admin_desc',
+                    __('Admin-Only Description', 'event_espresso'),
+                    true
+                ),
+                'PMD_slug'            => new EE_Slug_Field(
+                    'PMD_slug',
+                    __('Slug', 'event_espresso'),
+                    false
+                ),
+                'PMD_order'           => new EE_Integer_Field(
+                    'PMD_order',
+                    __('Order', 'event_espresso'),
+                    false,
+                    0
+                ),
+                'PMD_debug_mode'      => new EE_Boolean_Field(
+                    'PMD_debug_mode',
+                    __('Debug Mode On?', 'event_espresso'),
+                    false,
+                    false
+                ),
+                'PMD_wp_user'         => new EE_WP_User_Field(
+                    'PMD_wp_user',
+                    __('Payment Method Creator ID', 'event_espresso'),
+                    false
+                ),
+                'PMD_open_by_default' => new EE_Boolean_Field(
+                    'PMD_open_by_default',
+                    __('Open by Default?', 'event_espresso'),
+                    false,
+                    false
+                ),
+                'PMD_button_url'      => new EE_Plain_Text_Field(
+                    'PMD_button_url',
+                    __('Button URL', 'event_espresso'),
+                    true,
+                    ''
+                ),
+                'PMD_scope'           => new EE_Serialized_Text_Field(
+                    'PMD_scope',
+                    __('Usable From?', 'event_espresso'),
+                    false,
+                    []// possible values currently are 'CART','ADMIN','API'
+                ),
             ],
         ];
         $this->_model_relations = [
