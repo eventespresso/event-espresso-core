@@ -101,14 +101,14 @@ class EEM_WP_User extends EEM_Base
             'Message'        => new EE_Has_Many_Relation(),
         );
         $this->foreign_key_aliases = [
-            'Event.EVT_wp_user',
-            'Payment_Method.PMD_wp_user',
-            'Price.PRC_wp_user',
-            'Price_Type.PRT_wp_user',
-            'Question.QST_wp_user',
-            'Question_Group.QSG_wp_user',
-            'Venue.TKT_wp_user',
-            'Ticket.VNU_wp_user',
+            'Event.EVT_wp_user'          => 'WP_User.ID',
+            'Payment_Method.PMD_wp_user' => 'WP_User.ID',
+            'Price.PRC_wp_user'          => 'WP_User.ID',
+            'Price_Type.PRT_wp_user'     => 'WP_User.ID',
+            'Question.QST_wp_user'       => 'WP_User.ID',
+            'Question_Group.QSG_wp_user' => 'WP_User.ID',
+            'Venue.TKT_wp_user'          => 'WP_User.ID',
+            'Ticket.VNU_wp_user'         => 'WP_User.ID',
         ];
         $this->_wp_core_model = true;
         $this->_caps_slug = 'users';
