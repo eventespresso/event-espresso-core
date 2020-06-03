@@ -120,8 +120,10 @@
 					z-index: 999;
 
 					@include max782px {
+						border-right: none;
 						margin-bottom: var(--ee-padding-tiny);
 						position: relative !important;
+						width: 100%;
 					}
 
 					.date-stripe {
@@ -154,8 +156,18 @@
 						width: 100%;
 					}
 
+					.ee-rspnsv-table-mobile-only-column-header {
+						@include max782px {
+							width: 100%;
+						}
+					}
+
 					.ee-rspnsv-table-mobile-only-column-value {
 						height: 100%;
+
+						@include max782px {
+							width: 76px;
+						}
 					}
 
 					button {
