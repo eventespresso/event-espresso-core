@@ -41,7 +41,7 @@ exports[`EventAttendeesEditor Block block edit matches snapshot for no props 1`]
         onLimitChange={[Function]}
         withSlider={false}
       />
-      <WithInstanceId(SelectControl)
+      <SelectControl
         label="Order Attendees by:"
         onChange={[Function]}
         options={
@@ -70,7 +70,7 @@ exports[`EventAttendeesEditor Block block edit matches snapshot for no props 1`]
         }
         value="lastThenFirstName"
       />
-      <WithInstanceId(SelectControl)
+      <SelectControl
         label="Sort order:"
         onChange={[Function]}
         options={
@@ -97,7 +97,7 @@ exports[`EventAttendeesEditor Block block edit matches snapshot for no props 1`]
         label="Display Gravatar"
         onChange={[Function]}
       />
-      <WithInstanceId(WithState(RangeControl))
+      <WithInstanceId(Component)
         label="Size of Gravatar"
         max={128}
         min={10}
@@ -182,7 +182,7 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
         onLimitChange={[Function]}
         withSlider={false}
       />
-      <WithInstanceId(SelectControl)
+      <SelectControl
         label="Order Attendees by:"
         onChange={[Function]}
         options={
@@ -211,7 +211,7 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
         }
         value="lastThenFirstName"
       />
-      <WithInstanceId(SelectControl)
+      <SelectControl
         label="Sort order:"
         onChange={[Function]}
         options={
@@ -238,7 +238,7 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
         label="Display Gravatar"
         onChange={[Function]}
       />
-      <WithInstanceId(WithState(RangeControl))
+      <WithInstanceId(Component)
         label="Size of Gravatar"
         max={128}
         min={10}
@@ -305,7 +305,7 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
         onLimitChange={[Function]}
         withSlider={false}
       />
-      <WithInstanceId(SelectControl)
+      <SelectControl
         label="Order Attendees by:"
         onChange={[Function]}
         options={
@@ -334,7 +334,7 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
         }
         value="lastThenFirstName"
       />
-      <WithInstanceId(SelectControl)
+      <SelectControl
         label="Sort order:"
         onChange={[Function]}
         options={
@@ -361,7 +361,7 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
         label="Display Gravatar"
         onChange={[Function]}
       />
-      <WithInstanceId(WithState(RangeControl))
+      <WithInstanceId(Component)
         label="Size of Gravatar"
         max={128}
         min={10}
