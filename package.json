@@ -95,7 +95,7 @@
 		"@wordpress/plugins": "^2.12.0",
 		"@wordpress/scripts": "^10.0.0",
 		"@wordpress/server-side-render": "^1.3.4",
-		"@wordpress/url": "^2.8.2",
+		"@wordpress/url": "^2.15.0",
 		"@wordpress/viewport": "^2.8.2",
 		"autoprefixer": "^9.7.3",
 		"babel-plugin-dev-expression": "^0.2.2",
