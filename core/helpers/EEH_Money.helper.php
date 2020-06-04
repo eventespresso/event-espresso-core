@@ -7,7 +7,6 @@
  * @package        Event Espresso
  * @subpackage     helpers
  * @author         Darren Ethier
- * ------------------------------------------------------------------------
  */
 class EEH_Money extends EEH_Base
 {
@@ -25,15 +24,15 @@ class EEH_Money extends EEH_Base
     public static function strip_localized_money_formatting($money_value, $CNT_ISO = '')
     {
         $currency_config = EEH_Money::get_currency_config($CNT_ISO);
-        $money_value     = str_replace(
-            array(
+        $money_value = str_replace(
+            [
                 $currency_config->thsnds,
                 $currency_config->dec_mrk,
-            ),
-            array(
-                '', // remove thousands separator
+            ],
+            [
+                '',  // remove thousands separator
                 '.', // convert decimal mark to what PHP expects
-            ),
+            ],
             $money_value
         );
         $money_value     = filter_var(
@@ -106,7 +105,9 @@ class EEH_Money extends EEH_Base
             // less than or equal
             case "<=":
             case "lte":
-                if (self::compare_floats($float1, $float2, '<') || self::compare_floats($float1, $float2, '=')) {
+                if (EEH_Money::compare_floats($float1, $float2, '<')
+                    || EEH_Money::compare_floats($float1, $float2, '=')
+                ) {
                     return true;
                 }
                 break;
@@ -124,7 +125,9 @@ class EEH_Money extends EEH_Base
             // greater than or equal
             case ">=":
             case "gte":
-                if (self::compare_floats($float1, $float2, '>') || self::compare_floats($float1, $float2, '=')) {
+                if (EEH_Money::compare_floats($float1, $float2, '>')
+                    || EEH_Money::compare_floats($float1, $float2, '=')
+                ) {
                     return true;
                 }
                 break;
@@ -163,10 +166,12 @@ class EEH_Money extends EEH_Base
         // default format
         $format          = 'f';
         $currency_config = $currency_config = EEH_Money::get_currency_config($CNT_ISO);
-        // first get the decimal place and number of places
-        $format = "%'." . $currency_config->dec_plc . $format;
-        // currency symbol on right side.
-        $format = $currency_config->sign_b4 ? $currency_config->sign . $format : $format . $currency_config->sign;
+        if ($currency_config instanceof EE_Currency_Config) {
+            // first get the decimal place and number of places
+            $format = "%'." . $currency_config->dec_plc . $format;
+            // currency symbol on right side.
+            $format = $currency_config->sign_b4 ? $currency_config->sign . $format : $format . $currency_config->sign;
+        }
         return $format;
     }
 
@@ -178,7 +183,7 @@ class EEH_Money extends EEH_Base
      *                         Otherwise will use currency settings for current active country on site.
      *                         Note: GoogleCharts uses ICU pattern set
      *                         (@see http://icu-project.org/apiref/icu4c/classDecimalFormat.html#_details)
-     * @return string
+     * @return array
      * @throws EE_Error
      */
     public static function get_format_for_google_charts($CNT_ISO = '')
@@ -192,20 +197,20 @@ class EEH_Money extends EEH_Base
             ? $currency_config->sign . $format
             : $format
               . $currency_config->sign;
-        $formatterObject = array(
+        $formatterObject = [
             'decimalSymbol'  => $currency_config->dec_mrk,
             'groupingSymbol' => $currency_config->thsnds,
             'fractionDigits' => $currency_config->dec_plc,
-        );
+        ];
         if ($currency_config->sign_b4) {
             $formatterObject['prefix'] = $currency_config->sign;
         } else {
             $formatterObject['suffix'] = $currency_config->sign;
         }
-        return array(
+        return [
             'format'          => $format,
             'formatterObject' => $formatterObject,
-        );
+        ];
     }
 
 
@@ -229,21 +234,24 @@ class EEH_Money extends EEH_Base
         return $currency_config;
     }
 
-    /** 
-     * Rounds the number to a whole penny amount 
-     * @param float $amount 
-     * @param string $currency_code 
-     * @return float 
-     */ 
+
+    /**
+     * Rounds the number to a whole penny amount
+     *
+     * @param float  $amount
+     * @param string $currency_code
+     * @return float
+     * @throws EE_Error
+     */
     public static function round_for_currency($amount, $currency_code)
-    { 
+    {
         $dec_places = EEM_Currency::instance()->get_var(
-            array(array('CUR_code' => $currency_code), 'limit' => 1),
+            [['CUR_code' => $currency_code], 'limit' => 1],
             'CUR_dec_plc'
-        ); 
-        if($dec_places === false || $dec_places === null) { 
-            $dec_places = EE_Config::instance()->currency->dec_plc; 
-        } 
-        return round($amount, $dec_places); 
-    } 
+        );
+        if ($dec_places === false || $dec_places === null) {
+            $dec_places = EE_Config::instance()->currency->dec_plc;
+        }
+        return round($amount, $dec_places);
+    }
 }

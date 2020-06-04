@@ -39,7 +39,6 @@ if (! function_exists('espresso_get_object_css_class')) {
     }
 }
 
-
 /**
  * class EEH_Template
  * This is a helper utility class that provides different helpers related to template files.
@@ -72,10 +71,10 @@ class EEH_Template
      */
     public static function load_espresso_theme_functions()
     {
-        if (! defined('EE_THEME_FUNCTIONS_LOADED')) {
-            if (is_readable(EE_PUBLIC . EE_Config::get_current_theme() . '/functions.php')) {
-                require_once(EE_PUBLIC . EE_Config::get_current_theme() . '/functions.php');
-            }
+        if (! defined('EE_THEME_FUNCTIONS_LOADED')
+            && is_readable(EE_PUBLIC . EE_Config::get_current_theme() . '/functions.php')
+        ) {
+            require_once(EE_PUBLIC . EE_Config::get_current_theme() . '/functions.php');
         }
     }
 
@@ -92,7 +91,7 @@ class EEH_Template
             if (empty($espresso_themes)) {
                 return [];
             }
-            if (($key = array_search('global_assets', $espresso_themes)) !== false) {
+            if (($key = array_search('global_assets', $espresso_themes, true)) !== false) {
                 unset($espresso_themes[ $key ]);
             }
             EEH_Template::$_espresso_themes = [];
@@ -216,7 +215,7 @@ class EEH_Template
                 if (isset($EE_CPTs[ $post_type ])) {
                     $archive_or_single = is_archive() ? 'archive' : '';
                     $archive_or_single = is_single() ? 'single' : $archive_or_single;
-                    $templates         = $archive_or_single . '-' . $post_type . '.php';
+                    $templates = $archive_or_single . '-' . $post_type . '.php';
                 }
             }
             // currently active EE template theme
@@ -232,7 +231,7 @@ class EEH_Template
 
             // add core plugin folders for checking only if we're not $check_if_custom
             if (! $check_if_custom) {
-                $core_paths            = [
+                $core_paths = [
                     // in the  /wp-content/plugins/(EE4 folder)/public/(current EE theme)/ folder within the plugin
                     EE_PUBLIC . $current_theme,
                     // in the  /wp-content/plugins/(EE4 folder)/core/templates/(current EE theme)/ folder within the plugin
@@ -248,18 +247,18 @@ class EEH_Template
                 'FHEE__EEH_Template__locate_template__template_folder_paths',
                 $template_folder_paths
             );
-            $templates             = is_array($templates) ? $templates : [$templates];
-            $template_folder_paths =
-                is_array($template_folder_paths) ? $template_folder_paths : [$template_folder_paths];
+            $templates = is_array($templates) ? $templates : [$templates];
+            $template_folder_paths = is_array($template_folder_paths)
+                ? $template_folder_paths
+                : [$template_folder_paths];
             // array to hold all possible template paths
             $full_template_paths = [];
-            $file_name           = '';
-
+            $file_name = '';
             // loop through $templates
             foreach ($templates as $template) {
                 // normalize directory separators
-                $template                      = EEH_File::standardise_directory_separators($template);
-                $file_name                     = basename($template);
+                $template = EEH_File::standardise_directory_separators($template);
+                $file_name = basename($template);
                 $template_path_minus_file_name = substr($template, 0, (strlen($file_name) * -1));
                 // while looping through all template folder paths
                 foreach ($template_folder_paths as $template_folder_path) {
@@ -322,13 +321,13 @@ class EEH_Template
      */
     protected static function _find_common_base_path($paths)
     {
-        $last_offset      = 0;
+        $last_offset = 0;
         $common_base_path = '';
         while (($index = strpos($paths[0], '/', $last_offset)) !== false) {
             $dir_length = $index - $last_offset + 1;
-            $directory  = substr($paths[0], $last_offset, $dir_length);
+            $directory = substr($paths[0], $last_offset, $dir_length);
             foreach ($paths as $path) {
-                if (substr($path, $last_offset, $dir_length) != $directory) {
+                if (substr($path, $last_offset, $dir_length) !== $directory) {
                     return $common_base_path;
                 }
             }
@@ -385,6 +384,16 @@ class EEH_Template
             $template_args = [$template_args];
         }
         extract($template_args, EXTR_SKIP);
+        // ignore whether template is accessible ?
+        if ($throw_exceptions && ! is_readable($template_path)) {
+            throw new DomainException(
+                esc_html__(
+                    'Invalid, unreadable, or missing file.',
+                    'event_espresso'
+                )
+            );
+        }
+
 
         if ($return_string) {
             // because we want to return a string, we are going to capture the output
@@ -420,12 +429,8 @@ class EEH_Template
             // grab the exact type of object
             $obj_class = get_class($object);
             // depending on the type of object...
-            switch ($obj_class) {
-                // no specifics just yet...
-                default:
-                    $class = strtolower(str_replace('_', '-', $obj_class));
-                    $class .= method_exists($obj_class, 'name') ? '-' . sanitize_title($object->name()) : '';
-            }
+            $class = strtolower(str_replace('_', '-', $obj_class));
+            $class .= method_exists($obj_class, 'name') ? '-' . sanitize_title($object->name()) : '';
         }
         return $prefix . $class . $suffix;
     }
@@ -436,13 +441,15 @@ class EEH_Template
      * This helper takes a raw float value and formats it according to the default config country currency settings, or
      * the country currency settings from the supplied country ISO code
      *
-     * @param  float   $amount       raw money value
-     * @param  boolean $return_raw   whether to return the formatted float value only with no currency sign or code
-     * @param  boolean $display_code whether to display the country code (USD). Default = TRUE
-     * @param string   $CNT_ISO      2 letter ISO code for a country
-     * @param string   $cur_code_span_class
+     * @param float   $amount                raw money value
+     * @param boolean $return_raw            whether to return the formatted float value only with no currency sign or
+     *                                       code
+     * @param boolean $display_code          whether to display the country code (USD). Default = TRUE
+     * @param string  $CNT_ISO               2 letter ISO code for a country
+     * @param string  $cur_code_span_class
      * @param boolean $allow_partial_pennies whether to allow displaying partial penny amounts
      * @return string        the html output for the formatted money value
+     * @throws EE_Error
      */
     public static function format_currency(
         $amount = null,
@@ -482,13 +489,13 @@ class EEH_Template
             // format float
             $decimal_places_to_use = $mny->dec_plc;
             // If we're allowing showing partial penny amounts, determine how many decimal places to use.
-            if($allow_partial_pennies){
+            if ($allow_partial_pennies) {
                 $pos_of_period = strrpos($amount, '.');
-                if($pos_of_period !== false) {
+                if ($pos_of_period !== false) {
                     // Use a max of two extra decimal places (more than that and it starts
                     // to look silly), but at least the normal number of decimal places.
                     $decimal_places_to_use = min(
-                            max(
+                        max(
                             strlen($amount) - 1 - strpos($amount, '.'),
                             $decimal_places_to_use
                         ),
@@ -508,7 +515,7 @@ class EEH_Template
                         $amount_formatted = '-' . $mny->sign . str_replace('-', '', $amount_formatted);
                     }
                 } else {
-                    $amount_formatted = $amount_formatted . $mny->sign;
+                    $amount_formatted .= $mny->sign;
                 }
 
                 // filter to allow global setting of display_code
@@ -576,7 +583,7 @@ class EEH_Template
         if (! empty($icon)) {
             $dashicons = preg_split("(ee-icon |dashicons )", $icon);
             $dashicons = array_filter($dashicons);
-            $count     = count($dashicons);
+            $count = count($dashicons);
             $icon_html .= $count > 1 ? '<span class="ee-composite-dashicon">' : '';
             foreach ($dashicons as $dashicon) {
                 $type      = strpos($dashicon, 'ee-icon') !== false ? 'ee-icon ' : 'dashicons ';
@@ -710,7 +717,7 @@ class EEH_Template
                                 <?php echo esc_html($data_key); ?>
                             </td>
                             <td>
-                                <?php echo self::layout_array_as_table($data_values); ?>
+                                <?php echo EEH_Template::layout_array_as_table($data_values); ?>
                             </td>
                         </tr>
                     <?php } ?>
@@ -721,7 +728,7 @@ class EEH_Template
                     <?php
                     foreach ($data as $datum) {
                         echo "<li>";
-                        echo self::layout_array_as_table($datum);
+                        echo EEH_Template::layout_array_as_table($datum);
                         echo "</li>";
                     } ?>
                 </ul>
@@ -735,7 +742,7 @@ class EEH_Template
 
 
     /**
-     * wrapper for self::get_paging_html() that simply echos the generated paging html
+     * wrapper for EEH_Template::get_paging_html() that simply echos the generated paging html
      *
      * @param        $total_items
      * @param        $current
@@ -756,7 +763,7 @@ class EEH_Template
         $paged_arg_name = 'paged',
         $items_label = []
     ) {
-        echo self::get_paging_html(
+        echo EEH_Template::get_paging_html(
             $total_items,
             $current,
             $per_page,
@@ -811,8 +818,7 @@ class EEH_Template
         if (
             empty($items_label)
             || ! is_array($items_label)
-            || ! isset($items_label['single'])
-            || ! isset($items_label['plural'])
+            || ! isset($items_label['single'], $items_label['plural'])
         ) {
             $items_label = [
                 'single' => esc_html__('1 item', 'event_espresso'),
@@ -838,7 +844,7 @@ class EEH_Template
         if ($current === 1) {
             $disable_first = ' disabled';
         }
-        if ($current == $total_pages) {
+        if ($current === $total_pages) {
             $disable_last = ' disabled';
         }
 
@@ -873,7 +879,7 @@ class EEH_Template
             '<span class="total-pages">%s</span>',
             number_format_i18n($total_pages)
         );
-        $page_links[]     = sprintf(
+        $page_links[] = sprintf(
             _x('%3$s%1$s of %2$s%4$s', 'paging', 'event_espresso'),
             $html_current_page,
             $html_total_pages,
@@ -912,6 +918,7 @@ class EEH_Template
     /**
      * @param string $wrap_class
      * @param string $wrap_id
+     * @param array  $query_args
      * @return string
      */
     public static function powered_by_event_espresso($wrap_class = '', $wrap_id = '', array $query_args = [])
@@ -926,7 +933,7 @@ class EEH_Template
         ) {
             return '';
         }
-        $tag        = $admin ? 'span' : 'div';
+        $tag = $admin ? 'span' : 'div';
         $attributes = ! empty($wrap_id) ? " id=\"{$wrap_id}\"" : '';
         $wrap_class = $admin ? "{$wrap_class} float-left" : $wrap_class;
         $attributes .= ! empty($wrap_class)
@@ -945,8 +952,8 @@ class EEH_Template
             'FHEE__EEH_Template__powered_by_event_espresso_text',
             $admin ? 'Event Espresso - ' . EVENT_ESPRESSO_VERSION : 'Event Espresso'
         );
-        $url        = add_query_arg($query_args, 'https://eventespresso.com/');
-        $url        = apply_filters('FHEE__EEH_Template__powered_by_event_espresso__url', $url);
+        $url = add_query_arg($query_args, 'https://eventespresso.com/');
+        $url = apply_filters('FHEE__EEH_Template__powered_by_event_espresso__url', $url);
         return (string) apply_filters(
             'FHEE__EEH_Template__powered_by_event_espresso__html',
             sprintf(
@@ -987,7 +994,7 @@ if (! function_exists('espresso_pagination')) {
     function espresso_pagination()
     {
         global $wp_query;
-        $big        = 999999999; // need an unlikely integer
+        $big = 999999999; // need an unlikely integer
         $pagination = paginate_links(
             [
                 'base'         => str_replace($big, '%#%', esc_url(get_pagenum_link($big))),
