@@ -69,37 +69,46 @@ if ($display_ticket_price) { ?>
                             $new_sub_total = $price_mod->is_discount() ? $new_sub_total * -1 : $new_sub_total;
                             ?>
                         <?php } else { ?>
-                            <?php $new_sub_total = $price_mod->is_discount() ? $price_mod->amount() * -1
-                                : $price_mod->amount(); ?>
-                            <td data-th="<?php esc_html_e('Description', 'event_espresso'); ?>"
-                                class="small-text"><?php echo wp_kses($price_mod->desc(), AllowedTags::getAllowedTags()); ?></td>
-                            <?php $new_sub_total = $price_mod->is_discount() ? $price_mod->amount() * -1
-                                : $price_mod->amount(); ?>
+                            <?php
+                            $new_sub_total = $price_mod->is_discount()
+                                ? $price_mod->amount() * -1
+                                : $price_mod->amount();
+                            ?>
+                            <td data-th="<?php esc_html_e('Description', 'event_espresso'); ?>" class="small-text">
+                                <?php echo wp_kses($price_mod->desc(), AllowedTags::getAllowedTags()); ?>
+                            </td>
+                            <?php
+                            $new_sub_total = $price_mod->is_discount()
+                                ? $price_mod->amount() * -1
+                                : $price_mod->amount();
+                            ?>
                         <?php } ?>
                         <td data-th="<?php esc_html_e('Amount', 'event_espresso'); ?>"
                             class="jst-rght small-text">
                             <?php
-                                echo EEH_Template::format_currency(
-                                    $new_sub_total,
-                                    false,
-                                    true,
-                                    '',
-                                    'currency-code',
-                                    true
-                                );
-                             ?></td>
+                            echo EEH_Template::format_currency(
+                                $new_sub_total,
+                                false,
+                                true,
+                                '',
+                                'currency-code',
+                                true
+                            );
+                            ?></td>
                         <?php $running_total += $new_sub_total; ?>
                     </tr>
                 <?php } ?>
                 <?php if ($ticket->taxable()) { ?>
                     <?php // $ticket_subtotal =$ticket->get_ticket_subtotal(); ?>
                     <tr>
-                        <td colspan="2" class="jst-rght small-text sbttl"><b>
-                                <?php
+                        <td colspan="2" class="jst-rght small-text sbttl">
+                            <b><?php
                                 esc_html_e(
                                     'subtotal',
                                     'event_espresso'
-                                ); ?></b></td>
+                                );
+                                ?></b>
+                        </td>
                         <td data-th="<?php esc_html_e('subtotal', 'event_espresso'); ?>" class="jst-rght small-text">
                             <b><?php echo EEH_Template::format_currency($running_total); ?></b></td>
                     </tr>
@@ -112,16 +121,8 @@ if ($display_ticket_price) { ?>
                                 class="jst-rght small-text"><?php echo wp_kses($tax->amount(), AllowedTags::getAllowedTags()); ?>%
                             </td>
                             <?php $tax_amount = $running_total * ($tax->amount() / 100); ?>
-                            <td data-th="<?php esc_html_e('Amount', 'event_espresso'); ?>"
-                                class="jst-rght small-text">
-                                <?php
-                                if($price_mod->is_percent()) {
-                                    echo $new_sub_total;
-                                } else {
-                                    echo EEH_Template::format_currency(
-                                        $new_sub_total
-                                    );
-                                } ?></td>
+                            <td data-th="<?php esc_html_e('Amount', 'event_espresso'); ?>" class="jst-rght small-text">
+                                <?php echo EEH_Template::format_currency($tax_amount); ?></td>
                             <?php $running_total += $tax_amount; ?>
                         </tr>
                     <?php } ?>
@@ -134,10 +135,10 @@ if ($display_ticket_price) { ?>
                                 esc_html__('Total', 'event_espresso')
                             ); ?></b></td>
                     <td data-th="<?php
-                                    echo apply_filters(
-                                        'FHEE__ticket_selector_chart_template__ticket_details_total_price',
-                                        esc_html__('Total', 'event_espresso')
-                                    ); ?>" class="jst-rght small-text">
+                    echo apply_filters(
+                        'FHEE__ticket_selector_chart_template__ticket_details_total_price',
+                        esc_html__('Total', 'event_espresso')
+                    ); ?>" class="jst-rght small-text">
                         <b><?php echo EEH_Template::format_currency($running_total); ?></b></td>
                 </tr>
                 </tbody>
