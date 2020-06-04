@@ -2,14 +2,27 @@
 
 namespace EETests\bootstrap;
 
+use DomainException;
 use EE_Dependency_Map;
+use EE_Error;
 use EE_Registry;
 use EEH_Activation;
 use EE_Psr4AutoloaderInit;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\Benchmark;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use InvalidArgumentException;
+use ReflectionException;
 
 class CoreLoader
 {
+
+    /**
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since $VID:$
+     */
     public function init()
     {
         echo "\nINITIALIZING EVENT ESPRESSO UNIT TESTS";
@@ -21,8 +34,8 @@ class CoreLoader
         $this->requireTestCaseParents();
         $this->bootstrapMockAddon();
         $this->onShutdown();
-        \EventEspresso\core\services\Benchmark::writeResultsAtShutdown(
-            EVENT_ESPRESSO_UPLOAD_DIR . 'logs/benchmarking-master.html',  false
+        Benchmark::writeResultsAtShutdown(
+            EVENT_ESPRESSO_UPLOAD_DIR . 'logs/benchmarking-master.html', false
         );
     }
 
@@ -32,7 +45,7 @@ class CoreLoader
      * @return string|null
      * @since $VID:$
      */
-    private function findWordpressTests($folder='')
+    private function findWordpressTests($folder = '')
     {
         static $depth = 10;
         echo ".";
@@ -45,6 +58,7 @@ class CoreLoader
         }
         return null;
     }
+
 
     protected function setConstants()
     {
@@ -70,7 +84,8 @@ class CoreLoader
                 $folder = $this->findWordpressTests(__DIR__);
                 define('WP_TESTS_DIR', $folder);
             }
-            echo "\nWP_TESTS_DIR: " . WP_TESTS_DIR . "\n\n";
+            echo "\nWP_TESTS_DIR: " . WP_TESTS_DIR;
+            echo "\nEE_TESTS_DIR: " . EE_TESTS_DIR . "\n\n";
             // define('EE_REST_API_DEBUG_MODE', true);
         }
     }
@@ -80,12 +95,12 @@ class CoreLoader
     {
         //if WordPress test suite isn't found then we can't do anything.
         if (! is_readable(WP_TESTS_DIR . '/includes/functions.php')) {
-            die("The WordPress PHPUnit test suite could not be found at: ". WP_TESTS_DIR);
+            die("The WordPress PHPUnit test suite could not be found at: " . WP_TESTS_DIR);
         }
         require_once WP_TESTS_DIR . '/includes/functions.php';
         require_once EE_PLUGIN_DIR . 'core/Psr4Autoloader.php';
         //set filter for bootstrapping EE which needs to happen BEFORE loading WP.
-        tests_add_filter('muplugins_loaded', array($this, 'setupAndLoadEE'));
+        tests_add_filter('muplugins_loaded', [$this, 'setupAndLoadEE']);
     }
 
 
@@ -105,14 +120,14 @@ class CoreLoader
         // we need to add these filters BEFORE the Registry is instantiated
         tests_add_filter(
             'FHEE__EE_Registry____construct___class_abbreviations',
-            function ($class_abbreviations = array()) {
+            static function ($class_abbreviations = []) {
                 $class_abbreviations['EE_Session_Mock'] = 'SSN';
                 return $class_abbreviations;
             }
         );
         tests_add_filter(
             'FHEE__EE_Registry__load_core__core_paths',
-            function ($core_paths = array()) {
+            static function ($core_paths = []) {
                 $core_paths[] = EE_TESTS_DIR . 'mocks/core/';
                 return $core_paths;
             }
@@ -120,7 +135,7 @@ class CoreLoader
         // and this stuff needs to happen just AFTER the Registry initializes
         tests_add_filter(
             'EE_Load_Espresso_Core__handle_request__initialize_core_loading',
-            array($this, 'setupDependencyMap'),
+            [$this, 'setupDependencyMap'],
             15
         );
         // Bootstrap EE
@@ -131,8 +146,7 @@ class CoreLoader
         }
         add_action(
             'AHEE__EE_System__core_loaded_and_ready',
-            function ()
-            {
+            static function () {
                 LoaderFactory::getLoader()->getShared(
                     'EventEspresso\core\services\notifications\PersistentAdminNoticeManager'
                 );
@@ -142,43 +156,48 @@ class CoreLoader
 
 
     /**
-     * @throws \DomainException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \InvalidArgumentException
+     * @throws DomainException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
      */
     public function setupDependencyMap()
     {
         EE_Dependency_Map::register_class_loader('EE_Session_Mock');
         EE_Dependency_Map::register_dependencies(
             'EE_Session_Mock',
-            array(
+            [
                 'EventEspresso\core\services\cache\TransientCacheStorage'  => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\domain\values\session\SessionLifespan' => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\request\Request'              => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\session\SessionStartHandler'  => EE_Dependency_Map::load_from_cache,
                 'EE_Encryption'                                            => EE_Dependency_Map::load_from_cache,
-            )
+            ]
         );
         EE_Dependency_Map::register_dependencies(
             'EventEspresso\core\services\cache\BasicCacheManager',
-            array(
+            [
                 'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,
-                'EE_Session_Mock' => EE_Dependency_Map::load_from_cache
-            ),
+                'EE_Session_Mock'                                         => EE_Dependency_Map::load_from_cache,
+            ],
             true
         );
         EE_Dependency_Map::register_dependencies(
             'EventEspresso\core\services\cache\PostRelatedCacheManager',
-            array(
+            [
                 'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,
-                'EE_Session_Mock' => EE_Dependency_Map::load_from_cache
-            ),
+                'EE_Session_Mock'                                         => EE_Dependency_Map::load_from_cache,
+            ],
             true
         );
     }
 
 
+    /**
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since $VID:$
+     */
     public function postLoadWPandEE()
     {
         // ensure date and time formats are set
@@ -190,7 +209,6 @@ class CoreLoader
         }
         EE_Registry::instance()->SSN = EE_Registry::instance()->load_core('EE_Session_Mock');
     }
-
 
 
     protected function requireTestCaseParents()
@@ -208,12 +226,11 @@ class CoreLoader
     }
 
 
-
     protected function onShutdown()
     {
         //nuke all EE4 data once the tests are done, so that it doesn't carry over to the next time we run tests
         register_shutdown_function(
-            function () {
+            static function () {
                 EEH_Activation::delete_all_espresso_tables_and_data();
             }
         );

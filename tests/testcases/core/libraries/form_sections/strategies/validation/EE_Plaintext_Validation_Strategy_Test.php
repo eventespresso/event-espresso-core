@@ -34,6 +34,9 @@ class EE_Plaintext_Validation_Strategy_Test extends EE_UnitTestCase{
         );
 	}
 
+    /**
+     * @doesNotPerformAssertions
+     */
 	function test_validate__pass(){
 		$this->_validator->validate( 'just some text; no html anywhere' );
         $this->assertTrue(true);

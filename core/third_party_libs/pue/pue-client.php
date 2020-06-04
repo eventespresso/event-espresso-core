@@ -612,7 +612,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
 
 
             //the following is for install key inclusion (will apply later with PUE addons.)
-            $this->install_key_arr = get_site_option($this->pue_install_key);
+            $this->install_key_arr = get_site_option($this->pue_install_key, []);
             if (isset($this->install_key_arr['key'])) {
                 $this->install_key = $this->install_key_arr['key'];
 

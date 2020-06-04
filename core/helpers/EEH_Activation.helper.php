@@ -138,6 +138,7 @@ class EEH_Activation implements ResettableInterface
         EEH_Activation::insert_default_status_codes();
         EEH_Activation::generate_default_message_templates();
         EEH_Activation::create_no_ticket_prices_array();
+        EEH_Activation::removeEmailConfirmFromAddressGroup();
 
         EEH_Activation::validate_messages_system();
         EEH_Activation::insert_default_payment_methods();
@@ -898,18 +899,15 @@ class EEH_Activation implements ResettableInterface
         $SQL = "SELECT QST_system FROM $table_name WHERE QST_system != ''";
         // what we have
         $questions = $wpdb->get_col($SQL);
-        // what we should have
-        $QST_systems = array(
-            'fname',
-            'lname',
-            'email',
-            'address',
-            'address2',
-            'city',
-            'country',
-            'state',
-            'zip',
-            'phone',
+        // all system questions
+        $personal_system_group_questions = ['fname', 'lname', 'email'];
+        $address_system_group_questions = ['address', 'address2', 'city', 'country', 'state', 'zip', 'phone'];
+        $system_questions_not_in_group = ['email_confirm'];
+        // merge all of the system questions we should have
+        $QST_systems = array_merge(
+            $personal_system_group_questions,
+            $address_system_group_questions,
+            $system_questions_not_in_group
         );
         $order_for_group_1 = 1;
         $order_for_group_2 = 1;
@@ -966,6 +964,21 @@ class EEH_Activation implements ResettableInterface
                             'QST_deleted'       => 0,
                         );
                         break;
+                    case 'email_confirm':
+                        $QST_values = array(
+                            'QST_display_text'  => __('Confirm Email Address', 'event_espresso'),
+                            'QST_admin_label'   => __('Confirm Email Address - System Question', 'event_espresso'),
+                            'QST_system'        => 'email_confirm',
+                            'QST_type'          => 'EMAIL_CONFIRM',
+                            'QST_required'      => 1,
+                            'QST_required_text' => __('This field is required', 'event_espresso'),
+                            'QST_order'         => 4,
+                            'QST_admin_only'    => 0,
+                            'QST_max'           => EEM_Question::instance()->absolute_max_for_system_question($QST_system),
+                            'QST_wp_user'       => self::get_default_creator_id(),
+                            'QST_deleted'       => 0,
+                        );
+                        break;
                     case 'address':
                         $QST_values = array(
                             'QST_display_text'  => __('Address', 'event_espresso'),
@@ -974,7 +987,7 @@ class EEH_Activation implements ResettableInterface
                             'QST_type'          => 'TEXT',
                             'QST_required'      => 0,
                             'QST_required_text' => __('This field is required', 'event_espresso'),
-                            'QST_order'         => 4,
+                            'QST_order'         => 5,
                             'QST_admin_only'    => 0,
                             'QST_max'           => EEM_Question::instance()->absolute_max_for_system_question($QST_system),
                             'QST_wp_user'       => self::get_default_creator_id(),
@@ -989,7 +1002,7 @@ class EEH_Activation implements ResettableInterface
                             'QST_type'          => 'TEXT',
                             'QST_required'      => 0,
                             'QST_required_text' => __('This field is required', 'event_espresso'),
-                            'QST_order'         => 5,
+                            'QST_order'         => 6,
                             'QST_admin_only'    => 0,
                             'QST_max'           => EEM_Question::instance()->absolute_max_for_system_question($QST_system),
                             'QST_wp_user'       => self::get_default_creator_id(),
@@ -1004,7 +1017,7 @@ class EEH_Activation implements ResettableInterface
                             'QST_type'          => 'TEXT',
                             'QST_required'      => 0,
                             'QST_required_text' => __('This field is required', 'event_espresso'),
-                            'QST_order'         => 6,
+                            'QST_order'         => 7,
                             'QST_admin_only'    => 0,
                             'QST_max'           => EEM_Question::instance()->absolute_max_for_system_question($QST_system),
                             'QST_wp_user'       => self::get_default_creator_id(),
@@ -1019,7 +1032,7 @@ class EEH_Activation implements ResettableInterface
                             'QST_type'          => 'COUNTRY',
                             'QST_required'      => 0,
                             'QST_required_text' => __('This field is required', 'event_espresso'),
-                            'QST_order'         => 7,
+                            'QST_order'         => 8,
                             'QST_admin_only'    => 0,
                             'QST_wp_user'       => self::get_default_creator_id(),
                             'QST_deleted'       => 0,
@@ -1033,7 +1046,7 @@ class EEH_Activation implements ResettableInterface
                             'QST_type'          => 'STATE',
                             'QST_required'      => 0,
                             'QST_required_text' => __('This field is required', 'event_espresso'),
-                            'QST_order'         => 8,
+                            'QST_order'         => 9,
                             'QST_admin_only'    => 0,
                             'QST_wp_user'       => self::get_default_creator_id(),
                             'QST_deleted'       => 0,
@@ -1047,7 +1060,7 @@ class EEH_Activation implements ResettableInterface
                             'QST_type'          => 'TEXT',
                             'QST_required'      => 0,
                             'QST_required_text' => __('This field is required', 'event_espresso'),
-                            'QST_order'         => 9,
+                            'QST_order'         => 10,
                             'QST_admin_only'    => 0,
                             'QST_max'           => EEM_Question::instance()->absolute_max_for_system_question($QST_system),
                             'QST_wp_user'       => self::get_default_creator_id(),
@@ -1062,7 +1075,7 @@ class EEH_Activation implements ResettableInterface
                             'QST_type'          => 'TEXT',
                             'QST_required'      => 0,
                             'QST_required_text' => __('This field is required', 'event_espresso'),
-                            'QST_order'         => 10,
+                            'QST_order'         => 11,
                             'QST_admin_only'    => 0,
                             'QST_max'           => EEM_Question::instance()->absolute_max_for_system_question($QST_system),
                             'QST_wp_user'       => self::get_default_creator_id(),
@@ -1078,11 +1091,15 @@ class EEH_Activation implements ResettableInterface
                         array('%s', '%s', '%s', '%s', '%d', '%s', '%d', '%d', '%d', '%d')
                     );
                     $QST_ID = $wpdb->insert_id;
+
                     // QUESTION GROUP QUESTIONS
-                    if (in_array($QST_system, array('fname', 'lname', 'email'))) {
+                    if (in_array($QST_system, $personal_system_group_questions)) {
                         $system_question_we_want = EEM_Question_Group::system_personal;
-                    } else {
+                    } elseif (in_array($QST_system, $address_system_group_questions)) {
                         $system_question_we_want = EEM_Question_Group::system_address;
+                    } else {
+                        // QST_system should not be assigned to any group
+                        continue;
                     }
                     if (isset($QSG_IDs[ $system_question_we_want ])) {
                         $QSG_ID = $QSG_IDs[ $system_question_we_want ];
@@ -1651,5 +1668,27 @@ class EEH_Activation implements ResettableInterface
     {
         self::$_default_creator_id                             = null;
         self::$_initialized_db_content_already_in_this_request = false;
+    }
+
+    /**
+     * Removes 'email_confirm' from the Address info question group on activation
+     * @return void
+     */
+    public static function removeEmailConfirmFromAddressGroup()
+    {
+
+        // Pull the email_confirm question ID.
+        $email_confirm_question_id = EEM_Question::instance()->get_Question_ID_from_system_string(
+            EEM_Attendee::system_question_email_confirm
+        );
+        // Remove the email_confirm question group from the address group questions.
+        EEM_Question_Group_Question::instance()->delete(
+            array(
+                array(
+                    'QST_ID' => $email_confirm_question_id,
+                    'Question_Group.QSG_system' => EEM_Question_Group::system_address,
+                ),
+            )
+        );
     }
 }

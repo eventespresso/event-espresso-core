@@ -18,6 +18,7 @@
                 <directory>../eslint</directory>
                 <directory>../languages</directory>
                 <directory>../node_modules</directory>
+                <directory>../scripts</directory>
                 <directory>../public</directory>
                 <directory>../scripts</directory>
                 <directory>../tests</directory>
@@ -39,8 +40,8 @@
         </exclude>
     </groups>
 	<listeners>
-		<listener class="SpeedTrapListener" file="includes/listener-loader.php">
-			<arguments>
+        <listener class="SpeedTrapListener" file="includes/listener-loader.php">
+            <arguments>
 				<array>
 					<element key="slowThreshold">
 						<integer>2000</integer>

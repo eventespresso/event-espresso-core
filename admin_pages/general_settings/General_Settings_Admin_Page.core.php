@@ -60,7 +60,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
     {
         $this->_admin_page_title = GEN_SET_LABEL;
         $this->_labels = array(
-            'publishbox' => __('Update Settings', 'event_espresso'),
+            'publishbox' => esc_html__('Update Settings', 'event_espresso'),
         );
     }
 
@@ -153,13 +153,13 @@ class General_Settings_Admin_Page extends EE_Admin_Page
         $this->_page_config = array(
             'critical_pages'        => array(
                 'nav'           => array(
-                    'label' => __('Critical Pages', 'event_espresso'),
+                    'label' => esc_html__('Critical Pages', 'event_espresso'),
                     'order' => 50,
                 ),
                 'metaboxes'     => array_merge($this->_default_espresso_metaboxes, array('_publish_post_box')),
                 'help_tabs'     => array(
                     'general_settings_critical_pages_help_tab' => array(
-                        'title'    => __('Critical Pages', 'event_espresso'),
+                        'title'    => esc_html__('Critical Pages', 'event_espresso'),
                         'filename' => 'general_settings_critical_pages',
                     ),
                 ),
@@ -168,12 +168,12 @@ class General_Settings_Admin_Page extends EE_Admin_Page
             ),
             'default'               => array(
                 'nav'           => array(
-                    'label' => __('Your Organization', 'event_espresso'),
+                    'label' => esc_html__('Your Organization', 'event_espresso'),
                     'order' => 20,
                 ),
                 'help_tabs'     => array(
                     'general_settings_your_organization_help_tab' => array(
-                        'title'    => __('Your Organization', 'event_espresso'),
+                        'title'    => esc_html__('Your Organization', 'event_espresso'),
                         'filename' => 'general_settings_your_organization',
                     ),
                 ),
@@ -183,13 +183,13 @@ class General_Settings_Admin_Page extends EE_Admin_Page
             ),
             'admin_option_settings' => array(
                 'nav'           => array(
-                    'label' => __('Admin Options', 'event_espresso'),
+                    'label' => esc_html__('Admin Options', 'event_espresso'),
                     'order' => 60,
                 ),
                 'metaboxes'     => array_merge($this->_default_espresso_metaboxes, array('_publish_post_box')),
                 'help_tabs'     => array(
                     'general_settings_admin_options_help_tab' => array(
-                        'title'    => __('Admin Options', 'event_espresso'),
+                        'title'    => esc_html__('Admin Options', 'event_espresso'),
                         'filename' => 'general_settings_admin_options',
                     ),
                 ),
@@ -198,12 +198,12 @@ class General_Settings_Admin_Page extends EE_Admin_Page
             ),
             'country_settings'      => array(
                 'nav'           => array(
-                    'label' => __('Countries', 'event_espresso'),
+                    'label' => esc_html__('Countries', 'event_espresso'),
                     'order' => 70,
                 ),
                 'help_tabs'     => array(
                     'general_settings_countries_help_tab' => array(
-                        'title'    => __('Countries', 'event_espresso'),
+                        'title'    => esc_html__('Countries', 'event_espresso'),
                         'filename' => 'general_settings_countries',
                     ),
                 ),
@@ -249,18 +249,18 @@ class General_Settings_Admin_Page extends EE_Admin_Page
      */
     public function admin_init()
     {
-        EE_Registry::$i18n_js_strings['invalid_server_response'] = __(
+        EE_Registry::$i18n_js_strings['invalid_server_response'] = wp_strip_all_tags(__(
             'An error occurred! Your request may have been processed, but a valid response from the server was not received. Please refresh the page and try again.',
             'event_espresso'
-        );
-        EE_Registry::$i18n_js_strings['error_occurred'] = __(
+        ));
+        EE_Registry::$i18n_js_strings['error_occurred'] = wp_strip_all_tags(__(
             'An error occurred! Please refresh the page and try again.',
             'event_espresso'
-        );
-        EE_Registry::$i18n_js_strings['confirm_delete_state'] = __(
+        ));
+        EE_Registry::$i18n_js_strings['confirm_delete_state'] = wp_strip_all_tags(__(
             'Are you sure you want to delete this State / Province?',
             'event_espresso'
-        );
+        ));
         $protocol = isset($_SERVER['HTTPS']) ? 'https://' : 'http://';
         EE_Registry::$i18n_js_strings['ajax_url'] = admin_url(
             'admin-ajax.php?page=espresso_general_settings',
@@ -300,9 +300,11 @@ class General_Settings_Admin_Page extends EE_Admin_Page
         wp_enqueue_script('organization_settings');
         wp_enqueue_style('organization-css');
         $confirm_image_delete = array(
-            'text' => __(
-                'Do you really want to delete this image? Please remember to save your settings to complete the removal.',
-                'event_espresso'
+            'text' => wp_strip_all_tags(
+                __(
+                    'Do you really want to delete this image? Please remember to save your settings to complete the removal.',
+                    'event_espresso'
+                )
             ),
         );
         wp_localize_script('organization_settings', 'confirm_image_delete', $confirm_image_delete);
@@ -406,7 +408,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
             EE_Registry::instance()->CFG->core,
             $this->_req_data
         );
-        $what = __('Critical Pages & Shortcodes', 'event_espresso');
+        $what = esc_html__('Critical Pages & Shortcodes', 'event_espresso');
         $this->_redirect_after_action(
             $this->_update_espresso_configuration(
                 $what,
@@ -615,7 +617,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
             EE_Question::new_instance(
                 array(
                     'QST_ID'           => 0,
-                    'QST_display_text' => __('Select Country', 'event_espresso'),
+                    'QST_display_text' => esc_html__('Select Country', 'event_espresso'),
                     'QST_system'       => 'admin-country',
                 )
             ),
@@ -769,9 +771,9 @@ class General_Settings_Admin_Page extends EE_Admin_Page
                 'options'          => array(
                     array(
                         'id'   => ',',
-                        'text' => __(', (comma)', 'event_espresso'),
+                        'text' => esc_html__(', (comma)', 'event_espresso'),
                     ),
-                    array('id' => '.', 'text' => __('. (decimal)', 'event_espresso')),
+                    array('id' => '.', 'text' => esc_html__('. (decimal)', 'event_espresso')),
                 ),
                 'use_desc_4_label' => true,
                 'disabled'         => $CNT_cur_disabled,
@@ -783,9 +785,16 @@ class General_Settings_Admin_Page extends EE_Admin_Page
                 'options'          => array(
                     array(
                         'id'   => ',',
-                        'text' => __(', (comma)', 'event_espresso'),
+                        'text' => esc_html__(', (comma)', 'event_espresso'),
                     ),
-                    array('id' => '.', 'text' => __('. (decimal)', 'event_espresso')),
+                    array(
+                        'id' => '.',
+                        'text' => esc_html__('. (decimal)', 'event_espresso')
+                    ),
+                    array(
+                        'id' => '&nbsp;',
+                        'text' => esc_html__('(space)', 'event_espresso')
+                    )
                 ),
                 'use_desc_4_label' => true,
                 'disabled'         => $CNT_cur_disabled,
@@ -960,7 +969,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
             : false;
         if (! $CNT_ISO) {
             EE_Error::add_error(
-                __('No Country ISO code or an invalid Country ISO code was received.', 'event_espresso'),
+                esc_html__('No Country ISO code or an invalid Country ISO code was received.', 'event_espresso'),
                 __FILE__,
                 __FUNCTION__,
                 __LINE__
@@ -972,7 +981,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
             : false;
         if (! $STA_abbrev) {
             EE_Error::add_error(
-                __('No State ISO code or an invalid State ISO code was received.', 'event_espresso'),
+                esc_html__('No State ISO code or an invalid State ISO code was received.', 'event_espresso'),
                 __FILE__,
                 __FUNCTION__,
                 __LINE__
@@ -984,7 +993,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
             : false;
         if (! $STA_name) {
             EE_Error::add_error(
-                __('No State name or an invalid State name was received.', 'event_espresso'),
+                esc_html__('No State name or an invalid State name was received.', 'event_espresso'),
                 __FILE__,
                 __FUNCTION__,
                 __LINE__
@@ -1000,7 +1009,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
                 'STA_active' => true,
             );
             $success = EEM_State::instance()->insert($cols_n_values);
-            EE_Error::add_success(__('The State was added successfully.', 'event_espresso'));
+            EE_Error::add_success(esc_html__('The State was added successfully.', 'event_espresso'));
         }
 
         if (defined('DOING_AJAX')) {
@@ -1036,7 +1045,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
             : false;
         if (! $STA_ID) {
             EE_Error::add_error(
-                __('No State ID or an invalid State ID was received.', 'event_espresso'),
+                esc_html__('No State ID or an invalid State ID was received.', 'event_espresso'),
                 __FILE__,
                 __FUNCTION__,
                 __LINE__
@@ -1052,7 +1061,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
                 $STA_ID,
                 array('STA_abbrev' => $STA_abbrev)
             );
-            EE_Error::add_success(__('The State was deleted successfully.', 'event_espresso'));
+            EE_Error::add_success(esc_html__('The State was deleted successfully.', 'event_espresso'));
         }
         if (defined('DOING_AJAX')) {
             $notices = EE_Error::get_notices(false, false);
@@ -1088,7 +1097,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
             : false;
         if (! $CNT_ISO) {
             EE_Error::add_error(
-                __('No Country ISO code or an invalid Country ISO code was received.', 'event_espresso'),
+                esc_html__('No Country ISO code or an invalid Country ISO code was received.', 'event_espresso'),
                 __FILE__,
                 __FUNCTION__,
                 __LINE__
@@ -1300,10 +1309,10 @@ class General_Settings_Admin_Page extends EE_Admin_Page
                      admin_url('post.php')
                  )
                  . '" >'
-                 . __('Edit', 'event_espresso')
+                 . esc_html__('Edit', 'event_espresso')
                  . '</a>';
         $links .= ' &nbsp;|&nbsp; ';
-        $links .= '<a href="' . get_permalink($ee_page_id) . '" >' . __('View', 'event_espresso') . '</a>';
+        $links .= '<a href="' . get_permalink($ee_page_id) . '" >' . esc_html__('View', 'event_espresso') . '</a>';
 
         return $links;
     }
@@ -1321,19 +1330,19 @@ class General_Settings_Admin_Page extends EE_Admin_Page
         // page status
         if (isset($ee_page->post_status) && $ee_page->post_status == 'publish') {
             $pg_colour = 'green';
-            $pg_status = sprintf(__('Page%sStatus%sOK', 'event_espresso'), '&nbsp;', '&nbsp;');
+            $pg_status = sprintf(esc_html__('Page%sStatus%sOK', 'event_espresso'), '&nbsp;', '&nbsp;');
         } else {
             $pg_colour = 'red';
-            $pg_status = sprintf(__('Page%sVisibility%sProblem', 'event_espresso'), '&nbsp;', '&nbsp;');
+            $pg_status = sprintf(esc_html__('Page%sVisibility%sProblem', 'event_espresso'), '&nbsp;', '&nbsp;');
         }
 
         // shortcode status
         if (isset($ee_page->post_content) && strpos($ee_page->post_content, $shortcode) !== false) {
             $sc_colour = 'green';
-            $sc_status = sprintf(__('Shortcode%sOK', 'event_espresso'), '&nbsp;');
+            $sc_status = sprintf(esc_html__('Shortcode%sOK', 'event_espresso'), '&nbsp;');
         } else {
             $sc_colour = 'red';
-            $sc_status = sprintf(__('Shortcode%sProblem', 'event_espresso'), '&nbsp;');
+            $sc_status = sprintf(esc_html__('Shortcode%sProblem', 'event_espresso'), '&nbsp;');
         }
 
         return '<span style="color:' . $pg_colour . '; margin-right:2em;"><strong>'

@@ -1004,7 +1004,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
             ) {
                 $value = $auto_made_thing_seed;
             } elseif ($field instanceof EE_Primary_Key_String_Field) {
-                $value = "$auto_made_thing_seed";
+                $value = (string) $auto_made_thing_seed;
             } elseif ($field instanceof EE_Email_Field) {
                 $value = $auto_made_thing_seed . 'ee@ee' . $auto_made_thing_seed . '.dev';
             } elseif ($field instanceof EE_Text_Field_Base) {
@@ -1432,6 +1432,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
      * This should call the appropriate method regardless of version
      *
      * @param string $exception
+     * @param null   $code
      * @throws \PHPUnit\Framework\Exception
      */
     public function setExceptionExpected($exception, $code = null)
@@ -1472,7 +1473,8 @@ class EE_UnitTestCase extends WP_UnitTestCase
      * @param bool     $is_action
      * @since $VID:$
      */
-    protected function assertHookIsSet($hook_name, callable $callback, $equals, $is_action = true) {
+    protected function assertHookIsSet($hook_name, callable $callback, $equals, $is_action = true)
+    {
         $has_hook = $is_action ? 'has_action' : 'has_filter';
         $actual = $has_hook($hook_name, $callback);
         if ($actual === false) {
@@ -1497,7 +1499,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
                 $equals
             );
         }
-        $this->assertEquals( $equals, $actual, $message );
+        $this->assertEquals($equals, $actual, $message);
     }
 
 
@@ -1507,7 +1509,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
      * @param bool|int $priority
      * @since $VID:$
      */
-    protected function assertActionSet($action, Callable $callback, $priority = true)
+    protected function assertActionSet($action, callable $callback, $priority = true)
     {
         $this->assertHookIsSet($action, $callback, $priority);
     }
@@ -1530,7 +1532,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
      * @param bool|int $priority
      * @since $VID:$
      */
-    protected function assertFilterSet($filter, Callable $callback, $priority = true)
+    protected function assertFilterSet($filter, callable $callback, $priority = true)
     {
         $this->assertHookIsSet($filter, $callback, $priority, false);
     }

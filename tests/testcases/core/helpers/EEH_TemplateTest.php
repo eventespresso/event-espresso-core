@@ -16,6 +16,9 @@ use EventEspresso\tests\includes\EspressoPHPUnitFrameworkTestCase;
  */
 class EEH_TemplateTest extends EspressoPHPUnitFrameworkTestCase {
 
+    /**
+     * @doesNotPerformAssertions
+     */
 	public function test() {
         $this->markTestIncomplete(
             'This test has not been implemented yet.'

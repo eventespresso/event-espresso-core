@@ -2,6 +2,7 @@
 
 namespace EventEspresso\tests\includes;
 
+use PHPUnit\Framework\Exception;
 use PHPUnit_Framework_TestCase;
 
 /**
@@ -21,7 +22,8 @@ class EspressoPHPUnitFrameworkTestCase extends PHPUnit_Framework_TestCase
      * This should call the appropriate method regardless of version
      *
      * @param string $exception
-     * @throws \PHPUnit\Framework\Exception
+     * @param null   $code
+     * @throws Exception
      */
     public function setExceptionExpected($exception, $code = null)
     {
