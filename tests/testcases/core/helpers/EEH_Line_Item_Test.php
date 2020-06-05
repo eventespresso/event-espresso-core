@@ -77,9 +77,9 @@ class EEH_Line_Item_Test extends EE_UnitTestCase{
 		// confirm subtotal
 		$this->assertEquals( 49.5, $pre_tax_subtotal->total() );
 		// confirm taxes
-		$this->assertEquals( 7.43, $taxes_subtotal->total() );
+		$this->assertEquals( 7.425, $taxes_subtotal->total() );
 		// confirm totals
-		$this->assertEquals( 56.93, $total_line_item->total() );
+		$this->assertEquals( 56.925, $total_line_item->total() );
 		// total ticket line items count? should just be one ticket line item
 		$this->assertEquals( 1, count( EEH_Line_Item::get_ticket_line_items( $total_line_item ) ) );
 		// now add a different ticket
@@ -99,8 +99,8 @@ class EEH_Line_Item_Test extends EE_UnitTestCase{
 		$this->assertEquals( 20, $new_ticket_line_item->total() );
 		$this->assertEquals( 69.5, $pre_tax_subtotal->total() );
 		// should be same taxes as before
-		$this->assertEquals( 7.43, $taxes_subtotal->total() );
-		$this->assertEquals( 76.93, $total_line_item->total() );
+		$this->assertEquals( 7.425, $taxes_subtotal->total() );
+		$this->assertEquals( 76.925, $total_line_item->total() );
 		// total ticket ticket line items?
 		$this->assertEquals( 2, count( EEH_Line_Item::get_ticket_line_items( $total_line_item ) ) );
 
