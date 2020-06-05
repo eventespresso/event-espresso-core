@@ -16,4 +16,4 @@ node_modules
 .vscode
 
 # temporary
-/assets/dist/
+#/assets/dist/
