@@ -1848,9 +1848,9 @@ class Transactions_Admin_Page extends EE_Admin_Page
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    protected function _create_payment_from_request_data($valid_data)
+    protected function _create_payment_from_request_data(array $valid_data)
     {
-        $PAY_ID = $valid_data['PAY_ID'];
+        $PAY_ID = absint($valid_data['PAY_ID']);
         // get payment amount
         $amount = $valid_data['amount'] ? abs($valid_data['amount']) : 0;
         // payments have a type value of 1 and refunds have a type value of -1
