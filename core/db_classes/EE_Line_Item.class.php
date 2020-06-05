@@ -27,6 +27,13 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
      */
     protected $_parent;
 
+    /**
+     * number of decimal places to round numbers to when performing calculations
+     *
+     * @var integer $decimal_precision
+     */
+    protected $decimal_precision = 6;
+
 
     /**
      * @param array  $props_n_values          incoming values
@@ -45,13 +52,13 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
     {
         $has_object = parent::_check_for_object(
             $props_n_values,
-            __CLASS__,
+            EE_Line_Item::class,
             $timezone,
             $date_formats
         );
         return $has_object
             ? $has_object
-            : new self($props_n_values, false, $timezone);
+            : new EE_Line_Item($props_n_values, false, $timezone);
     }
 
 
@@ -68,7 +75,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
      */
     public static function new_instance_from_db($props_n_values = [], $timezone = null)
     {
-        return new self($props_n_values, true, $timezone);
+        return new EE_Line_Item($props_n_values, true, $timezone);
     }
 
 
@@ -90,6 +97,15 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
         if (! $this->get('LIN_code')) {
             $this->set_code($this->generate_code());
         }
+    }
+
+
+    /**
+     * @param int $decimal_precision
+     */
+    public function setDecimalPrecision($decimal_precision = 6)
+    {
+        $this->decimal_precision = absint($decimal_precision);
     }
 
 
@@ -372,13 +388,12 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
         } else {
             $quantity = $this->quantity();
         }
-        if ($this->is_percent()) {
+        if ($quantity !== 0 && $this->is_percent()) {
             return $this->get_model()
                         ->field_settings_for('LIN_unit_price')
                         ->prepare_for_pretty_echoing($this->total() / $quantity);
-        } else {
-            return $this->unit_price_no_code();
         }
+        return $this->unit_price_no_code();
     }
 
 
@@ -395,7 +410,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
     public function set_unit_price($unit_price)
     {
         if ($this->type() !== EEM_Line_Item::type_sub_line_item) {
-            $unit_price = EEH_Money::round_for_currency($unit_price, EE_Config::instance()->currency->code);
+            $unit_price = (float) round($unit_price, $this->decimal_precision);
         }
         $this->set('LIN_unit_price', $unit_price);
     }
@@ -487,7 +502,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
      */
     public function total()
     {
-        return $this->get('LIN_total');
+        return round($this->get('LIN_total'), $this->decimal_precision);
     }
 
 
@@ -504,7 +519,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
     public function set_total($total)
     {
         if ($this->type() !== EEM_Line_Item::type_sub_line_item) {
-            $total = EEH_Money::round_for_currency($total, EE_Config::instance()->currency->code);
+            $total = (float) round($total, $this->decimal_precision);
         }
         $this->set('LIN_total', $total);
     }
@@ -861,7 +876,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
      * Adds the line item as a child to this line item. If there is another child line
      * item with the same LIN_code, it is overwritten by this new one
      *
-     * @param EEI_Line_Item $line_item
+     * @param EEI_Line_Item|EE_Line_Item $line_item
      * @param bool          $set_order
      * @return bool success
      * @throws EE_Error
@@ -1220,10 +1235,9 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
         // only update the related transaction's total
         // if we intend to save this line item and its a grand total
         if (
-            $this->allow_persist() && $this->type() === EEM_Line_Item::type_total
-            && $this->transaction()
-               instanceof
-               EE_Transaction
+            $this->allow_persist()
+            && $this->type() === EEM_Line_Item::type_total
+            && $this->transaction() instanceof EE_Transaction
         ) {
             $this->transaction()->set_total($total);
             if ($update_txn_status) {
@@ -1259,7 +1273,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
         $my_children = $this->children();
         $has_children = ! empty($my_children);
         if ($has_children && $this->is_line_item()) {
-            $total = $this->_recalculate_pretax_total_for_line_item($total, $my_children);
+            $total = $this->_recalculate_pretax_total_for_line_item($my_children);
         } elseif (! $has_children && ($this->is_sub_line_item() || $this->is_line_item())) {
             $total = $this->unit_price() * $this->quantity();
         } elseif ($this->is_sub_total() || $this->is_total()) {
@@ -1280,7 +1294,6 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
             }
         }
         // we don't want to bother saving grand totals, because that needs to factor in taxes anyways
-        // so it ought to be
         if (! $this->is_total()) {
             $this->set_total($total);
             // if not a percent line item, make sure we keep the unit price in sync
@@ -1289,11 +1302,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
                 && $this->is_line_item()
                 && ! $this->is_percent()
             ) {
-                if ($this->quantity() === 0) {
-                    $new_unit_price = 0;
-                } else {
-                    $new_unit_price = $this->total() / $this->quantity();
-                }
+                $new_unit_price = $this->quantity() !== 0 ? $this->total() / $this->quantity() : 0;
                 $this->set_unit_price($new_unit_price);
             }
             $this->maybe_save();
@@ -1362,7 +1371,6 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
      * and the result is immediately rounded, rather than summing all the sub-line-items
      * then rounding, like we do when recalculating pretax totals on totals and subtotals).
      *
-     * @param float          $calculated_total_so_far
      * @param EE_Line_Item[] $my_children
      * @return float
      * @throws EE_Error
@@ -1371,7 +1379,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    protected function _recalculate_pretax_total_for_line_item($calculated_total_so_far, $my_children = null)
+    protected function _recalculate_pretax_total_for_line_item($my_children = null)
     {
         if ($my_children === null) {
             $my_children = $this->children();
@@ -1393,7 +1401,6 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
                     // (ie, no double percent discounts. Although that might be requested someday)
                     $child_line_item->set_quantity(1);
                     $child_line_item->maybe_save();
-                    $calculated_total_so_far += $percent_total;
                     $unit_price_for_total += $percent_unit_price;
                 } else {
                     // verify flat sub-line-item quantities match their parent
@@ -1401,15 +1408,12 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
                         $child_line_item->set_quantity($this->quantity());
                     }
                     $quantity_for_total = $child_line_item->quantity();
-                    $calculated_total_so_far += $child_line_item->recalculate_pre_tax_total();
+                    $child_line_item->recalculate_pre_tax_total();
                     $unit_price_for_total += $child_line_item->unit_price();
                 }
             }
         }
-        return round(
-                   $unit_price_for_total,
-                   EE_Registry::instance()->CFG->currency->dec_plc
-               ) * $quantity_for_total;
+        return $unit_price_for_total * $quantity_for_total;
     }
 
 
