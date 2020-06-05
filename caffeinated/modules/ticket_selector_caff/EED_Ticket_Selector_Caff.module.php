@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 
@@ -67,7 +68,7 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
 
 
     /**
-     * @param \WP $WP
+     * @param WP $WP
      */
     public function run($WP)
     {
@@ -90,8 +91,8 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
 
 
     /**
-     * @return \EE_Form_Section_Proper
-     * @throws \EE_Error
+     * @return EE_Form_Section_Proper
+     * @throws EE_Error
      */
     public static function _ticket_selector_settings_form()
     {
@@ -117,8 +118,8 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
 
 
     /**
-     * @return \EE_Form_Section_Proper
-     * @throws \EE_Error
+     * @return EE_Form_Section_Proper
+     * @throws EE_Error
      */
     public static function _ticket_selector_appearance_settings()
     {
@@ -321,12 +322,69 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
 
 
     /**
-     * @param \EE_Ticket $ticket
-     * @param int        $ticket_price
-     * @param bool       $display_ticket_price
+     * @param EE_Ticket $ticket
+     * @param int       $ticket_price
+     * @param bool      $display_ticket_price
+     * @throws Exception
      */
     public static function ticket_price_details(EE_Ticket $ticket, $ticket_price = 0, $display_ticket_price = false)
     {
+        // NOTE: the seemingly unused variables below are used within the template
+        try {
+            $is_valid_base_price = $ticket->base_price() instanceof EE_Price;
+            if ($is_valid_base_price) {
+                $ticket_base_price_name = $ticket->base_price()->name();
+                $ticket_base_price_pretty_price = $ticket->base_price()->pretty_price();
+                $running_total = $ticket->base_price()->amount();
+            } else {
+                $running_total = 0;
+            }
+            $ticket_price_modifiers = [];
+            foreach ($ticket->price_modifiers() as $price_modifier) {
+                $ticket_price_modifier = new stdClass();
+                $ticket_price_modifier->name = $price_modifier->name();
+                $ticket_price_modifier->desc = $price_modifier->desc();
+
+                if ($price_modifier->is_percent()) {
+                    $ticket_price_modifier->desc .= ' ' . $price_modifier->amount() . '%';
+                    $new_sub_total = $running_total * ($price_modifier->amount() / 100);
+                    $new_sub_total = $price_modifier->is_discount() ? $new_sub_total * -1 : $new_sub_total;
+                } else {
+                    $new_sub_total = $price_modifier->is_discount()
+                        ? $price_modifier->amount() * -1
+                        : $price_modifier->amount();
+                }
+                $ticket_price_modifier->sub_total = EEH_Template::format_currency(
+                    $new_sub_total,
+                    false,
+                    true,
+                    '',
+                    'currency-code',
+                    true
+                );
+                $ticket_price_modifiers[] = $ticket_price_modifier;
+                $running_total += $new_sub_total;
+            }
+            $pre_tax_subtotal = EEH_Template::format_currency($running_total);
+            // taxes
+            $taxes = [];
+            $display_taxes = $ticket->taxable();
+            if ($display_taxes) {
+                foreach ($ticket->get_ticket_taxes_for_admin() as $tax) {
+                    $ticket_tax = new stdClass();
+                    $ticket_tax->name = $tax->name();
+                    $ticket_tax->rate = $tax->amount() . '%';
+                    $taxes[] = $ticket_tax;
+                    $tax_amount = $running_total * ($tax->amount() / 100);
+                    $ticket_tax->amount = EEH_Template::format_currency($tax_amount);
+                    $running_total += $tax_amount;
+                }
+            }
+            $ticket_total = EEH_Template::format_currency($running_total);
+        } catch (Exception $exception) {
+            EE_Error::add_error($exception->getMessage(), __FILE__, __FUNCTION__, __LINE__);
+            new ExceptionStackTraceDisplay($exception);
+        }
         require str_replace('\\', '/', plugin_dir_path(__FILE__))
                 . 'templates/ticket_selector_price_details.template.php';
     }
