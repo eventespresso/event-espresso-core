@@ -58,7 +58,7 @@ class EEH_Money extends EEH_Base
     public static function convert_to_float_from_localized_money($money_value)
     {
         // float it! and round to three decimal places
-        return round((float) EEH_Money::strip_localized_money_formatting($money_value), 3);
+        return round((float) EEH_Money::strip_localized_money_formatting($money_value), 6);
     }
 
 
