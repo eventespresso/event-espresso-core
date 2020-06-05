@@ -8,14 +8,14 @@ class EE_Money_Field extends EE_Float_Field
 {
     protected $_whole_pennies_only;
 
-
     /**
      * @param string $table_column
      * @param string $nicename
      * @param bool   $nullable
      * @param null   $default_value
+     * @param bool   $whole_pennies_only
      */
-    public function __construct($table_column, $nicename, $nullable, $default_value = null, $whole_pennies_only = true)
+    public function __construct($table_column, $nicename, $nullable, $default_value = null, $whole_pennies_only = false)
     {
         $this->_whole_pennies_only = $whole_pennies_only;
         parent::__construct($table_column, $nicename, $nullable, $default_value);
@@ -32,20 +32,16 @@ class EE_Money_Field extends EE_Float_Field
      * @param string $value_on_field_to_be_outputted
      * @param string $schema
      * @return string
+     * @throws EE_Error
      */
     public function prepare_for_pretty_echoing($value_on_field_to_be_outputted, $schema = null)
     {
         $pretty_float = parent::prepare_for_pretty_echoing($value_on_field_to_be_outputted);
 
-        if ($schema == 'localized_float') {
+        if ($schema === 'localized_float') {
             return $pretty_float;
         }
-        if ($schema == 'no_currency_code') {
-//          echo "schema no currency!";
-            $display_code = false;
-        } else {
-            $display_code = true;
-        }
+        $display_code = $schema !== 'no_currency_code';
         // we don't use the $pretty_float because format_currency will take care of it.
         return EEH_Template::format_currency(
             $value_on_field_to_be_outputted,
@@ -57,6 +53,7 @@ class EE_Money_Field extends EE_Float_Field
         );
     }
 
+
     /**
      * If provided with a string, strips out money-related formatting to turn it into a proper float.
      * Rounds the float to the correct number of decimal places for this country's currency.
@@ -65,6 +62,7 @@ class EE_Money_Field extends EE_Float_Field
      *
      * @param string $value_inputted_for_field_on_model_object
      * @return float
+     * @throws EE_Error
      */
     public function prepare_for_set($value_inputted_for_field_on_model_object)
     {
@@ -74,9 +72,18 @@ class EE_Money_Field extends EE_Float_Field
         return $this->_round_if_no_partial_pennies( $float_val );
     }
 
+
+    /**
+     * @param mixed $value_of_field_on_model_object
+     * @return float|mixed
+     * @throws EE_Error
+     * @since $VID:$
+     */
     public function prepare_for_get($value_of_field_on_model_object)
     {
-        return $this->_round_if_no_partial_pennies(parent::prepare_for_get($value_of_field_on_model_object));
+        return $this->_round_if_no_partial_pennies(
+            parent::prepare_for_get($value_of_field_on_model_object)
+        );
     }
 
     public function getSchemaProperties()
@@ -109,18 +116,20 @@ class EE_Money_Field extends EE_Float_Field
         return $this->_whole_pennies_only;
     }
 
+
     /**
      * If partial pennies allowed, leaves the amount as-is; if not, rounds it according
      * to the site's currency
-     * @param type $amount
+     *
+     * @param float $amount
      * @return float
+     * @throws EE_Error
      */
     protected function _round_if_no_partial_pennies( $amount )
     {
         if($this->whole_pennies_only()) {
-            return EEH_Money::round_for_currency($amount, EE_Registry::instance()->CFG->currency->code);
-        } else {
-            return $amount;
+            return EEH_Money::round_for_currency($amount, $this->currency->code);
         }
+        return $amount;
     }
 }
