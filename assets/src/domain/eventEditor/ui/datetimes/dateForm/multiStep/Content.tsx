@@ -29,7 +29,7 @@ const Content: React.FC<ContentProps> = ({ entity, onClose }) => {
 				// if true, we need to update the quantity of all the related tickets
 				if (capacityChanged) {
 					const inputGenerator = ticketQuantityForCapacity(fields?.capacity);
-					updateRelatedTickets(inputGenerator);
+					updateRelatedTickets(inputGenerator, fields?.tickets);
 				}
 			} else {
 				// otherwise create it

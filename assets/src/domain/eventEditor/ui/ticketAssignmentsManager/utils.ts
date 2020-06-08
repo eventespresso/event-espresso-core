@@ -1,13 +1,14 @@
-import { equals, filter, isEmpty, pathOr } from 'ramda';
+import { equals, filter, isEmpty, pathOr, assocPath } from 'ramda';
 import { parseISO } from 'date-fns';
 
-import { EntityId } from '@dataServices/types';
-import { AnyObject } from '@appServices/utilities/types';
-import { TAMPossibleRelation, TAMRelationEntity, TAMRelationalData, TAMRelationalEntity } from './types';
-import { Datetime } from '@edtrServices/apollo';
-import { OptionsType } from '@infraUI/inputs';
+import type { EntityId } from '@dataServices/types';
+import type { AnyObject } from '@appServices/utilities/types';
+import type { TAMPossibleRelation, TAMRelationEntity, TAMRelationalData, TAMRelationalEntity } from './types';
+import type { Datetime, Ticket } from '@edtrServices/apollo';
+import type { OptionsType } from '@infraUI/inputs';
 import sortDates from '@sharedEntities/datetimes/predicates/sorters';
 import activeUpcoming from '@sharedEntities/datetimes/predicates/filters/activeUpcoming';
+import { parseInfinity, isInfinite } from '@application/services/utilities';
 
 type EntitiesToUpdate = Array<[EntityId, TAMPossibleRelation]>;
 
@@ -34,6 +35,76 @@ export const prepareEntitiesForUpdate = <Entity extends TAMRelationEntity>({
 		// to make sure that they are actually different
 		return !equals(newRelatedEntities.sort(), oldRelatedEntities.sort());
 	}, Object.entries(newEntities));
+};
+
+type TicketsWithQuantityArgs = {
+	ticketsToUpdate: EntitiesToUpdate;
+	existingData: TAMRelationalData;
+	allDates: Array<Datetime>;
+	allTickets: Array<Ticket>;
+};
+
+/**
+ * Returns the tickets to quantity map of the tickets that need update
+ */
+export const ticketsWithNewQuantity = ({
+	allDates,
+	allTickets,
+	existingData,
+	ticketsToUpdate,
+}: TicketsWithQuantityArgs): AnyObject<number> => {
+	// create a map of date ids to capacities
+	const dateIdToCapacityMap: AnyObject<number> = allDates.reduce(
+		(acc, date) => assocPath([date.id], date.capacity, acc),
+		{}
+	);
+	// create a map of ticket ids to quantities
+	const ticketIdToQuantityMap: AnyObject<number> = allTickets.reduce(
+		(acc, ticket) => assocPath([ticket.id], ticket.quantity, acc),
+		{}
+	);
+	/**
+	 * This becomes an object with key as ticket id and value as array of new date ids
+	 * {
+	 *     [ticket.id]: quantity
+	 * }
+	 */
+	return ticketsToUpdate.reduce<AnyObject<number>>((acc, [ticketId, possibleRelation]) => {
+		// These are the related date ids before TAM was launched
+		const existingRelatedDateIds = existingData?.tickets?.[ticketId]?.datetimes || [];
+		// These are the related date ids that have been assigned in TAM
+		// these contain old and newly assigned date ids
+		const allNewRelatedDateIds: Array<EntityId> = possibleRelation?.datetimes || [];
+
+		// lets filter out the existing ones
+		const newOnlyRelatedDateIds = allNewRelatedDateIds.filter(
+			// it's new only if it was not in existing relations
+			(dateId) => !existingRelatedDateIds.includes(dateId)
+		);
+
+		// lets convert the array of ids to array of corresponding capacities
+		const newDateCapacities = newOnlyRelatedDateIds
+			// get capacity from the above map and parse it as infinity
+			.map((dateId) => parseInfinity(dateIdToCapacityMap?.[dateId], Infinity))
+			// we don't need to update ticket quantity if date capacity is infinite
+			.filter((capacity) => !isInfinite(capacity));
+
+		// we need to set the ticket quantity to the minimum of all the capacities
+		const minimumCapacity = Math.min(...newDateCapacities); // it will be Infinity for empty array
+
+		// Make sure that the non negative ticket quantity value is compared with
+		// a non negative datetime capacity value in Math.min()
+		const nonNegativeTicketQuantity = parseInfinity(ticketIdToQuantityMap?.[ticketId], Infinity);
+
+		// if capacity is infinite or it's more than ticket quantity
+		if (isInfinite(minimumCapacity) || minimumCapacity > nonNegativeTicketQuantity) {
+			// no need to update the ticket quantity
+			return acc;
+		}
+
+		// set the quantity to minimum capacity
+		return assocPath([ticketId], minimumCapacity, acc);
+	}, {});
 };
 
 /**
