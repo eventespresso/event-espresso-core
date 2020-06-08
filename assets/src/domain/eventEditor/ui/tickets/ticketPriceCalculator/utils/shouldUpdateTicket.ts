@@ -3,7 +3,7 @@ import { pick } from 'ramda';
 import { EntityId } from '@dataServices/types';
 import { RelationsManager } from '@appServices/apollo/relations';
 import { Ticket } from '@edtrServices/apollo';
-import { ticketFieldsToUse } from './constants';
+import { TICKET_FIELDS_TO_USE } from './constants';
 
 interface ShouldUpdateTicketProps {
 	existingTicket: Ticket;
@@ -40,7 +40,7 @@ const shouldUpdateTicket = ({
 		return true;
 	}
 
-	const existingTicketJson = JSON.stringify(pick(ticketFieldsToUse, existingTicket));
+	const existingTicketJson = JSON.stringify(pick(TICKET_FIELDS_TO_USE, existingTicket));
 	const newTicketJson = JSON.stringify(newTicket);
 
 	// if ticket fields have changed

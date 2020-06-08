@@ -4,7 +4,7 @@ import { assocPath, pick } from 'ramda';
 import { StateInitializer } from './types';
 import { BaseProps, TpcPriceModifier } from '../types';
 import { sortByPriceOrderIdAsc } from '@sharedEntities/prices/predicates/sortingPredicates';
-import { ticketFieldsToUse } from '../utils/constants';
+import { TICKET_FIELDS_TO_USE } from '../utils/constants';
 import { useRelations } from '@appServices/apollo/relations';
 import { useTicketItem, useTicketPrices, usePriceTypes } from '@edtrServices/apollo/queries';
 import type { Ticket } from '@edtrServices/apollo/types';
@@ -27,7 +27,7 @@ const useInitialState = ({ ticketId }: BaseProps): StateInitializer => {
 
 	// get the full ticket object
 	const wholeTicket = useTicketItem({ id: ticketId });
-	const ticket: Partial<Ticket> = useMemoStringify(wholeTicket ? pick(ticketFieldsToUse, wholeTicket) : {});
+	const ticket: Partial<Ticket> = useMemoStringify(wholeTicket ? pick(TICKET_FIELDS_TO_USE, wholeTicket) : {});
 
 	// get all related prices
 	const unSortedPrices = useTicketPrices(ticketId);
