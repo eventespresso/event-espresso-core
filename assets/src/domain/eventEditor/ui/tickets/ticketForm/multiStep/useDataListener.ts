@@ -6,7 +6,7 @@ import { useDataState as useTAMDataState } from '@edtrUI/ticketAssignmentsManage
 import { useDataState as useTPCDataState } from '@edtrUI/tickets/ticketPriceCalculator/data';
 import { Ticket } from '@edtrServices/apollo';
 
-// The fields that need to be synced from TPC to tikcet edit form
+// The fields that need to be synced from TPC to ticket edit form
 // This is to avoid ticket.name being synced
 const TPC_TICKET_FIELDS_TO_SYNC: Array<keyof Ticket> = ['isTaxable', 'price', 'reverseCalculate'];
 
