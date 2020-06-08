@@ -22,8 +22,8 @@ const useUpdateRelatedTickets = (datetimeId: EntityId): UpdateCallback => {
 			 * `relatedTicketIds` is not empty, it means that related tickets were changed in TAM.
 			 * So, we will only update `quantity` for the assigned tickets if needed
 			 *
-			 * Otherwise if `relatedTicketIds` is empty, it means that ticket assignmenst were not
-			 * changed in multi-step or date capacity was changed using inline edit input
+			 * Otherwise if `relatedTicketIds` is empty, it means that ticket assignments remained
+			 * unchanged in multi-step or date capacity was changed using inline edit input
 			 */
 			const ticketsToUpdate = relatedTicketIds?.length
 				? entitiesWithGuIdInArray(tickets, relatedTicketIds)

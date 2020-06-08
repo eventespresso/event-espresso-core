@@ -61,7 +61,7 @@ const useOnSubmitAssignments = () => {
 
 					const changedQuantity = ticketsWithChangedQuantity?.[id];
 					// if an entry exists in changed quantity map
-					// lets use this oppurtunity to update the quantity here
+					// lets use this opportunity to update the quantity here
 					// to reduce the number of mutation requests
 					if (changedQuantity) {
 						input.quantity = changedQuantity;
