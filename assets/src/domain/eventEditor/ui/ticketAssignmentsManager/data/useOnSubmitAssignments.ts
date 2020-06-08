@@ -58,11 +58,13 @@ const useOnSubmitAssignments = () => {
 				ticketsToUpdate.forEach(([id, possibleRelation]) => {
 					const datetimes = possibleRelation?.datetimes || [];
 					const input: UpdateTicketInput = { id, datetimes };
+
+					const changedQuantity = ticketsWithChangedQuantity?.[id];
 					// if an entry exists in changed quantity map
 					// lets use this oppurtunity to update the quantity here
 					// to reduce the number of mutation requests
-					if (ticketsWithChangedQuantity?.[id]) {
-						input.quantity = ticketsWithChangedQuantity?.[id];
+					if (changedQuantity) {
+						input.quantity = changedQuantity;
 						// mark the ticket as already updated
 						updatedTickets.push(id);
 					}
@@ -77,6 +79,10 @@ const useOnSubmitAssignments = () => {
 
 			// now we finally update the ticket quantities
 			Object.entries(ticketsWithChangedQuantity).forEach(([id, quantity]) => {
+				// if it's already updated above
+				if (updatedTickets.includes(id)) {
+					return;
+				}
 				updateTicket({ id, quantity });
 			});
 		},
