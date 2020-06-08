@@ -1,14 +1,19 @@
 import { useCallback } from 'react';
 
 import { useRelations } from '@appServices/apollo/relations';
-import { useDatetimeMutator, useTicketMutator } from '@edtrServices/apollo/mutations';
-import { prepareEntitiesForUpdate } from '../utils';
+import { useDatetimeMutator, useTicketMutator, UpdateTicketInput } from '@edtrServices/apollo/mutations';
+import { prepareEntitiesForUpdate, ticketsWithNewQuantity } from '../utils';
 import { TAMRelationalData } from '../types';
+import { useDatetimes, useTickets } from '@edtrServices/apollo/queries';
+import { EntityId } from '@dataServices/types';
 
 const useOnSubmitAssignments = () => {
 	const { getData: getExistingData } = useRelations();
 	const { updateEntity: updateDatetime } = useDatetimeMutator();
 	const { updateEntity: updateTicket } = useTicketMutator();
+
+	const allDates = useDatetimes();
+	const allTickets = useTickets();
 
 	return useCallback(
 		async (data: TAMRelationalData): Promise<void> => {
@@ -31,6 +36,16 @@ const useOnSubmitAssignments = () => {
 				relation: 'datetimes',
 			});
 
+			const ticketsWithChangedQuantity = ticketsWithNewQuantity({
+				allDates,
+				allTickets,
+				existingData,
+				ticketsToUpdate,
+			});
+
+			// Tickets which will be updated in the below loop
+			const updatedTickets: Array<EntityId> = [];
+
 			/**
 			 * Now we have both dates and tickets list ready.
 			 * To reduce the number of mutation requests,
@@ -42,7 +57,16 @@ const useOnSubmitAssignments = () => {
 			if (ticketsToUpdate.length < datesToUpdate.length) {
 				ticketsToUpdate.forEach(([id, possibleRelation]) => {
 					const datetimes = possibleRelation?.datetimes || [];
-					updateTicket({ id, datetimes });
+					const input: UpdateTicketInput = { id, datetimes };
+					// if an entry exists in changed quantity map
+					// lets use this oppurtunity to update the quantity here
+					// to reduce the number of mutation requests
+					if (ticketsWithChangedQuantity?.[id]) {
+						input.quantity = ticketsWithChangedQuantity?.[id];
+						// mark the ticket as already updated
+						updatedTickets.push(id);
+					}
+					updateTicket(input);
 				});
 			} else {
 				datesToUpdate.forEach(([id, possibleRelation]) => {
@@ -50,8 +74,13 @@ const useOnSubmitAssignments = () => {
 					updateDatetime({ id, tickets });
 				});
 			}
+
+			// now we finally update the ticket quantities
+			Object.entries(ticketsWithChangedQuantity).forEach(([id, quantity]) => {
+				updateTicket({ id, quantity });
+			});
 		},
-		[getExistingData, updateDatetime, updateTicket]
+		[allDates, allTickets, getExistingData, updateDatetime, updateTicket]
 	);
 };
 
