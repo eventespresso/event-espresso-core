@@ -1,25 +1,40 @@
 import { useCallback } from 'react';
 
-import { EntityId } from '@dataServices/types';
-import { Ticket } from '@edtrServices/apollo';
-import { useRelatedTickets } from '@edtrServices/apollo/queries';
+import type { EntityId } from '@dataServices/types';
+import type { Ticket } from '@edtrServices/apollo';
+import { useRelatedTickets, useTickets } from '@edtrServices/apollo/queries';
 import { useTicketMutator, UpdateTicketInput } from '@edtrServices/apollo/mutations';
+import { entitiesWithGuIdInArray } from '@sharedServices/predicates';
 
 type InputGenerator = (ticket: Ticket) => UpdateTicketInput;
-type UpdateCallback = (inputGenerator: InputGenerator) => void;
+type UpdateCallback = (inputGenerator: InputGenerator, relatedTicketIds?: Array<EntityId>) => void;
 
 const useUpdateRelatedTickets = (datetimeId: EntityId): UpdateCallback => {
-	const relatedTickets = useRelatedTickets({ entity: 'datetimes', entityId: datetimeId });
+	const tickets = useTickets();
+	const prevRelatedTickets = useRelatedTickets({ entity: 'datetimes', entityId: datetimeId });
 	const { updateEntity } = useTicketMutator();
 
 	return useCallback<UpdateCallback>(
-		(generateInput) => {
-			relatedTickets.forEach((ticket) => {
+		(generateInput, relatedTicketIds = []) => {
+			/**
+			 * As of now, TAM can't be submitted without a date being related to a ticket
+			 * So, if this function is called after submission of multi-step and
+			 * `relatedTicketIds` is not empty, it means that related tickets were changed in TAM.
+			 * So, we will only update `quantity` for the assigned tickets if needed
+			 *
+			 * Otherwise if `relatedTicketIds` is empty, it means that ticket assignmenst were not
+			 * changed in multi-step or date capacity was changed using inline edit input
+			 */
+			const ticketsToUpdate = relatedTicketIds?.length
+				? entitiesWithGuIdInArray(tickets, relatedTicketIds)
+				: prevRelatedTickets;
+
+			ticketsToUpdate.forEach((ticket) => {
 				const input = generateInput(ticket);
 				updateEntity({ id: ticket.id, ...input });
 			});
 		},
-		[relatedTickets, updateEntity]
+		[prevRelatedTickets, tickets, updateEntity]
 	);
 };
 
