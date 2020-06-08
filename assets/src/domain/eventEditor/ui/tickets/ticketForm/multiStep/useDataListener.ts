@@ -1,8 +1,14 @@
 import { useEffect } from 'react';
 import { useForm } from 'react-final-form';
+import { pick } from 'ramda';
 
 import { useDataState as useTAMDataState } from '@edtrUI/ticketAssignmentsManager/data';
 import { useDataState as useTPCDataState } from '@edtrUI/tickets/ticketPriceCalculator/data';
+import { Ticket } from '@edtrServices/apollo';
+
+// The fields that need to be synced from TPC to tikcet edit form
+// This is to avoid ticket.name being synced
+const TPC_TICKET_FIELDS_TO_SYNC: Array<keyof Ticket> = ['isTaxable', 'price', 'reverseCalculate'];
 
 /**
  * A custom hook which subscribes to TAM and TPC data and updates
@@ -21,7 +27,8 @@ const useDataListener = () => {
 
 	const { deletedPrices, prices, ticket } = useTPCDataState();
 	useEffect(() => {
-		Object.entries(ticket).forEach(([key, value]) => {
+		const fieldsToSync = pick(TPC_TICKET_FIELDS_TO_SYNC, ticket);
+		Object.entries(fieldsToSync).forEach(([key, value]) => {
 			// update value of each field in RFF state
 			mutators.updateFieldValue(key, value);
 		});
