@@ -3,7 +3,7 @@ import { parseISO } from 'date-fns';
 
 import type { EntityId } from '@dataServices/types';
 import type { AnyObject } from '@appServices/utilities/types';
-import type { TAMPossibleRelation, TAMRelationEntity, TAMRelationalData, TAMRelationalEntity } from './types';
+import type { TAMPossibleRelation, TAMRelationEntity, TAMRelationalData, TAMRelationalEntity } from '../types';
 import type { Datetime, Ticket } from '@edtrServices/apollo';
 import type { OptionsType } from '@infraUI/inputs';
 import sortDates from '@sharedEntities/datetimes/predicates/sorters';
@@ -97,7 +97,7 @@ export const ticketsWithNewQuantity = ({
 		const nonNegativeTicketQuantity = parseInfinity(ticketIdToQuantityMap?.[ticketId], Infinity);
 
 		// if capacity is infinite or it's more than ticket quantity
-		if (isInfinite(minimumCapacity) || minimumCapacity > nonNegativeTicketQuantity) {
+		if (isInfinite(minimumCapacity) || minimumCapacity >= nonNegativeTicketQuantity) {
 			// no need to update the ticket quantity
 			return acc;
 		}
