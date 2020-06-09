@@ -9,7 +9,7 @@ interface Props {
 }
 
 const ErrorMessage: React.FC<Props> = ({ message }) => {
-	return message && <FormErrorMessage className='ee-form-error-message'>{message}</FormErrorMessage>;
+	return message ? <FormErrorMessage className='ee-form-error-message'>{message}</FormErrorMessage> : null;
 };
 
 export default React.memo(ErrorMessage);
