@@ -11,6 +11,7 @@ const EntityEditModal: React.FC<EntityEditModalProps> = ({ isOpen, onClose, titl
 		<Modal
 			bodyClassName='ee-entity-edit-modal__body'
 			className='ee-entity-edit-modal'
+			closeOnOverlayClick={false}
 			isOpen={isOpen}
 			onClose={onClose}
 			title={title}
