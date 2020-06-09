@@ -1,12 +1,14 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import { FieldRendererProps } from '../types';
-import { FormControl, FormErrorMessage, FormHelperText, FormLabel } from '@infraUI/forms';
+import { FormControl, FormHelperText, FormLabel } from '@infraUI/forms';
 import { InfoCircleOutlined } from '@appDisplay/icons/svgs';
-import { MappedField } from '../adapters';
-import { Tooltip } from '@infraUI/display';
 import { reactFinalFormField } from '@application/services/utilities/memo';
+import { Tooltip } from '@infraUI/display';
+
+import ErrorMessage from './ErrorMessage';
+import { FieldRendererProps } from '../types';
+import { MappedField } from '../adapters';
 
 const FieldRenderer: React.FC<FieldRendererProps> = (props) => {
 	const { after, before, description, formControlProps, info, label, required, ...rest } = props;
@@ -18,7 +20,11 @@ const FieldRenderer: React.FC<FieldRendererProps> = (props) => {
 		return <MappedField {...rest} />;
 	}
 
-	const tooltipKey = info ? props.input.name + '-tooltip' : null;
+	const className = classNames(
+		'ee-input__wrapper ee-form-item',
+		`form-item__${rest.fieldType}`,
+		formControlProps?.className
+	);
 
 	const isDateOrTimePicker = ['datepicker', 'timepicker'].includes(props.fieldType);
 
@@ -26,16 +32,10 @@ const FieldRenderer: React.FC<FieldRendererProps> = (props) => {
 	// we still need to be able to show validation error message
 	const errorMessage = (meta.touched || isDateOrTimePicker) && (meta.error || meta.submitError);
 
+	const tooltipKey = info ? props.input.name + '-tooltip' : null;
+
 	return (
-		<FormControl
-			isInvalid={Boolean(errorMessage)}
-			isRequired={required}
-			className={classNames(
-				'ee-input__wrapper ee-form-item',
-				`form-item__${rest.fieldType}`,
-				formControlProps?.className
-			)}
-		>
+		<FormControl className={className} isInvalid={Boolean(errorMessage)} isRequired={required}>
 			<FormLabel htmlFor={props.input.name}>
 				{label}
 				{info && (
@@ -47,7 +47,7 @@ const FieldRenderer: React.FC<FieldRendererProps> = (props) => {
 			{before}
 			<MappedField aria-label={label} aria-describedby={tooltipKey} {...rest} />
 			{after}
-			{errorMessage ? <FormErrorMessage>{errorMessage}</FormErrorMessage> : null}
+			<ErrorMessage message={errorMessage} />
 			<FormHelperText>{description}</FormHelperText>
 		</FormControl>
 	);
