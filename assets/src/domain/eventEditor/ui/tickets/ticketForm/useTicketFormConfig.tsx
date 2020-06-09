@@ -90,6 +90,7 @@ const useTicketFormConfig = (id: EntityId, config?: EspressoFormProps): TicketFo
 						label: __('Name'),
 						fieldType: 'text',
 						min: 3,
+						required: true,
 					},
 					{
 						name: 'description',
@@ -112,21 +113,25 @@ const useTicketFormConfig = (id: EntityId, config?: EspressoFormProps): TicketFo
 								name: 'startDate',
 								label: __('Start Date'),
 								fieldType: 'datepicker',
+								required: true,
 							},
 							{
 								name: 'startTime',
 								label: __('Start Time'),
 								fieldType: 'timepicker',
+								required: true,
 							},
 							{
 								name: 'endDate',
 								label: __('End Date'),
 								fieldType: 'datepicker',
+								required: true,
 							},
 							{
 								name: 'endTime',
 								label: __('End Time'),
 								fieldType: 'timepicker',
+								required: true,
 							},
 						],
 					},
