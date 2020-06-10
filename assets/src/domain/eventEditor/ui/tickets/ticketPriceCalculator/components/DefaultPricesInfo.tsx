@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React from 'react';
 import { any } from 'ramda';
 import { __ } from '@wordpress/i18n';
 
@@ -25,4 +25,4 @@ const DefaultPricesInfo = () => {
 	);
 };
 
-export default memo(DefaultPricesInfo);
+export default DefaultPricesInfo;
