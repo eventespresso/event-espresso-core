@@ -4,6 +4,11 @@
 	&-calculator {
 		width: 100%;
 
+		table {
+			border-bottom: 0.5px solid var(--ee-border-color);
+			padding-bottom: var(--ee-margin-small);
+		}
+
 		tbody.ee-rspnsv-table-body {
 			tr.ee-rspnsv-table-body-row {
 				@include max782px {

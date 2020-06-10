@@ -1,7 +1,8 @@
 import React from 'react';
 
-import { Banner } from '@infraUI/display';
 import { useMemoStringify } from '@application/services/hooks';
+
+import Banner from './Banner';
 
 interface ErrorIndicatorProps {
 	description?: string;

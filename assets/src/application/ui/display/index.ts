@@ -1,3 +1,4 @@
+export { default as Banner } from './Banner';
 export { default as ColorSwatch } from './ColorSwatch';
 export { default as DebugInfo } from './DebugInfo';
 export { default as EmptyState } from './EmptyState';

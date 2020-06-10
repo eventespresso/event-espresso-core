@@ -1,7 +1,7 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
 
-import { Banner } from '@infraUI/display';
+import { Banner } from '@application/ui/display';
 import { useDataState } from '../data';
 
 interface ErrorMessageProps {
