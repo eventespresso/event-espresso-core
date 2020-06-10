@@ -17,4 +17,4 @@ node_modules
 *.code-workspace
 
 # temporary
-/assets/dist/
+# /assets/dist/
