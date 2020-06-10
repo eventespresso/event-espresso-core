@@ -24,6 +24,9 @@ const isDev = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
 const DebugInfo: React.FC<DebugInfoProps> = ({ data, asJson = true, asCollapse = true }) => {
 	const [show, setShow] = useState(false);
 
+	// define it here to avoid conditional call of hook
+	const handleToggle = useCallback(() => setShow((v) => !v), [setShow]);
+
 	if (!isDev) {
 		return null;
 	}
@@ -31,9 +34,6 @@ const DebugInfo: React.FC<DebugInfoProps> = ({ data, asJson = true, asCollapse =
 	const dataToRender = asJson ? JSON.stringify(data, null, 2) : data;
 
 	const output = <Pre>{dataToRender}</Pre>;
-
-	// define it here to avoid conditional call of hook
-	const handleToggle = useCallback(() => setShow((v) => !v), [setShow]);
 	if (!asCollapse) {
 		return output;
 	}

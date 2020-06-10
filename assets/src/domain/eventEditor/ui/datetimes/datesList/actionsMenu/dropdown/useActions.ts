@@ -13,8 +13,6 @@ const useActions = ({ datetimeId }) => {
 	// to avoid stale data
 	const datetime = useDatetimeItem({ id: datetimeId });
 
-	if (!datetime) return {};
-
 	const eventId = useEventId();
 
 	const { id, cacheId } = datetime;
@@ -42,11 +40,14 @@ const useActions = ({ datetimeId }) => {
 
 	const trashDate = useCallback(() => deleteEntity({ id, deletePermanently: trashed }), [cacheId, trashed]);
 
-	return {
-		copyDate,
-		trashDate,
-		trashed,
-	};
+	return useMemo(
+		() => ({
+			copyDate,
+			trashDate,
+			trashed,
+		}),
+		[copyDate, trashDate, trashed]
+	);
 };
 
 export default useActions;

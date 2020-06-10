@@ -5,7 +5,7 @@ import { cloneAndNormalizePrice } from '@sharedEntities/prices/predicates/update
 import { usePriceMutator } from '@edtrServices/apollo/mutations';
 import { TpcPriceModifier } from '../types';
 
-type Callback = (prices: Array<TpcPriceModifier>, deletedPrices: Array<EntityId>) => Promise<Array<EntityId>>;
+type Callback = (prices: Array<TpcPriceModifier>, deletedPrices?: Array<EntityId>) => Promise<Array<EntityId>>;
 
 const useMutatePrices = (): Callback => {
 	const { createEntity: createPrice, deleteEntity: deletePrice, updateEntity: updatePrice } = usePriceMutator();
