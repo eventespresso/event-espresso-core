@@ -38,7 +38,7 @@ const TicketPriceCalculator: React.FC = () => {
 
 			<DefaultPricesInfo />
 
-			<Divider orientation='horizontal' />
+			<Divider borderColor='transparent' orientation='horizontal' />
 
 			<ButtonRow rightAligned>
 				<DeleteAllPricesButton />
