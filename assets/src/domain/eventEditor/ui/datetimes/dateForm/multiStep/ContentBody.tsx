@@ -2,8 +2,8 @@ import React from 'react';
 import { __ } from '@wordpress/i18n';
 import { FormSpy } from 'react-final-form';
 
-import { Button, ButtonRow, ButtonType } from '@application/ui/input';
-import { Submit } from '@application/ui/input/Stepper/buttons';
+import { ButtonRow } from '@application/ui/input';
+import { Next, Previous, Submit } from '@application/ui/input/Stepper/buttons';
 import { TicketAssignmentsManager } from '@edtrUI/ticketAssignmentsManager/components';
 import { useDataState as useTAMDataState } from '@edtrUI/ticketAssignmentsManager/data';
 import { usePrevNext } from '@appServices/hooks';
@@ -38,12 +38,10 @@ const ContentBody: React.FC = ({ children }) => {
 							<>
 								{children}
 								<ButtonRow rightAligned>
-									<Button
+									<Next
 										buttonText={__('Save and assign tickets')}
-										buttonType={ButtonType.PRIMARY}
 										onClick={next}
 										isDisabled={isSaveDisabled}
-										rightIcon='chevron-right'
 									/>
 								</ButtonRow>
 							</>
@@ -53,12 +51,7 @@ const ContentBody: React.FC = ({ children }) => {
 							<>
 								<TicketAssignmentsManager />
 								<ButtonRow rightAligned>
-									<Button
-										buttonText={__('Previous')}
-										buttonType={ButtonType.SECONDARY}
-										onClick={prev}
-										leftIcon='chevron-left'
-									/>
+									<Previous onClick={prev} />
 									<Submit onClick={form.submit} isDisabled={isSubmitDisabled} />
 								</ButtonRow>
 							</>

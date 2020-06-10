@@ -1,15 +1,17 @@
-.ee-svg {
-	display: inline-flex;
-	margin: 0 var(--ee-margin-micro);
-}
+svg {
+	&.ee-svg.ee-svg {
+		display: inline-flex;
+		margin: 0 var(--ee-margin-micro);
 
-.ee__icon {
-	&--small {
-		height: 1rem;
-		width: 1rem;
-	}
+		&.ee__icon {
+			&--small {
+				height: 1rem;
+				width: 1rem;
+			}
 
-	&--no-margin {
-		margin: 0;
+			&--no-margin {
+				margin: 0;
+			}
+		}
 	}
 }

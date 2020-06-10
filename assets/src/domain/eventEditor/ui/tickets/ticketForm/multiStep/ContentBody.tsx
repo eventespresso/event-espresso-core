@@ -5,8 +5,8 @@ import { anyPass, isNil, isEmpty } from 'ramda';
 
 import TicketFormSteps from './TicketFormSteps';
 import { usePrevNext } from '@appServices/hooks';
-import { Button, ButtonRow, ButtonType } from '@application/ui/input';
-import { Submit } from '@application/ui/input/Stepper/buttons';
+import { ButtonRow, ButtonType } from '@application/ui/input';
+import { Next, Previous, Submit } from '@application/ui/input/Stepper/buttons';
 import { TicketAssignmentsManager } from '@edtrUI/ticketAssignmentsManager/components';
 import { useDataState as useTAMDataState } from '@edtrUI/ticketAssignmentsManager/data';
 import TicketPriceCalculator from '@edtrUI/tickets/ticketPriceCalculator/components/TicketPriceCalculator';
@@ -42,19 +42,17 @@ const ContentBody: React.FC = ({ children }) => {
 							<>
 								{children}
 								<ButtonRow rightAligned>
-									<Button
+									<Next
 										buttonText={__('Add ticket prices')}
 										buttonType={ButtonType.SECONDARY}
 										isDisabled={isSaveDisabled}
 										onClick={next}
-										rightIcon='chevron-right'
 									/>
-									<Button
+									<Next
 										buttonText={__('Skip prices - assign dates')}
-										buttonType={ButtonType.PRIMARY}
 										isDisabled={isSaveDisabled}
 										onClick={() => goto(2)}
-										rightIcon='chevron-right'
+										skippable
 									/>
 								</ButtonRow>
 							</>
@@ -64,13 +62,11 @@ const ContentBody: React.FC = ({ children }) => {
 							<>
 								<TicketPriceCalculator />
 								<ButtonRow rightAligned>
-									<Button buttonText={__('Previous')} onClick={prev} leftIcon='chevron-left' />
-									<Button
+									<Previous onClick={prev} />
+									<Next
 										buttonText={__('Save and assign dates')}
-										buttonType={ButtonType.PRIMARY}
 										onClick={next}
 										isDisabled={isTPCSubmitDisabled}
-										rightIcon='chevron-right'
 									/>
 								</ButtonRow>
 							</>
@@ -80,13 +76,8 @@ const ContentBody: React.FC = ({ children }) => {
 							<>
 								<TicketAssignmentsManager />
 								<ButtonRow rightAligned>
-									<Button
-										buttonText={__('Ticket details')}
-										onClick={() => goto(0)}
-										leftIcon='chevron-left'
-									/>
-									<Button buttonText={__('Previous')} onClick={prev} leftIcon='chevron-left' />
-
+									<Previous buttonText={__('Ticket details')} onClick={() => goto(0)} skippable />
+									<Previous onClick={prev} />
 									<Submit onClick={form.submit} isDisabled={isSubmitDisabled} />
 								</ButtonRow>
 							</>
