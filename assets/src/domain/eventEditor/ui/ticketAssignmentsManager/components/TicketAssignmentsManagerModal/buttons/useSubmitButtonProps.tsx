@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { __ } from '@wordpress/i18n';
 
-import { ButtonProps } from '@infraUI/inputs';
+import { ButtonProps, ButtonType } from '@application/ui/input';
 import { SaveOutlined } from '@appDisplay/icons/svgs';
 import { useOnSubmitAssignments } from '../../../data';
 import { useDataState } from '../../../data';
@@ -26,6 +26,7 @@ const useSubmitButtonProps = (onCloseModal: VoidFunction): ButtonProps => {
 	return useMemo<ButtonProps>(
 		() => ({
 			buttonText: __('Submit'),
+			buttonType: ButtonType.PRIMARY,
 			icon: SaveOutlined,
 			isDisabled: hasErrors,
 			onClick: onSubmit,
