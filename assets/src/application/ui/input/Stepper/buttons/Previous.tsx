@@ -1,8 +1,8 @@
-import React, { useMemo } from 'react';
+import React, { memo } from 'react';
 import { __ } from '@wordpress/i18n';
 
-import { Button, ButtonProps, ButtonType } from '@application/ui/input';
-import { ChevronDoubleLeft, ChevronDoubleRight, ChevronLeft, ChevronRight } from '@appDisplay/icons/svgs';
+import { Button, ButtonProps } from '@application/ui/input';
+import { ChevronDoubleLeft, ChevronLeft } from '@appDisplay/icons/svgs';
 
 interface Props extends ButtonProps {
 	skippable?: boolean;
@@ -10,12 +10,9 @@ interface Props extends ButtonProps {
 
 const Previous: React.FC<Props> = ({ isDisabled, onClick, skippable, ...props }) => {
 	const buttonText = props.buttonText || __('Previous');
-	const leftIcon = useMemo(
-		() => (skippable ? () => <ChevronDoubleLeft size='small' /> : () => <ChevronLeft size='small' />),
-		[skippable]
-	);
+	const leftIcon = memo(skippable ? () => <ChevronDoubleLeft size='small' /> : () => <ChevronLeft size='small' />);
 
 	return <Button buttonText={buttonText} isDisabled={isDisabled} leftIcon={leftIcon} onClick={onClick} />;
 };
 
-export default Previous;
+export default memo(Previous);

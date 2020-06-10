@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { memo } from 'react';
 import { __ } from '@wordpress/i18n';
 
 import { Button, ButtonProps, ButtonType } from '@application/ui/input';
@@ -11,10 +11,7 @@ interface Props extends ButtonProps {
 const Next: React.FC<Props> = ({ isDisabled, onClick, skippable, ...props }) => {
 	const buttonText = props.buttonText || __('Next');
 	const buttonType = props.buttonType || ButtonType.PRIMARY;
-	const rightIcon = useMemo(
-		() => (skippable ? () => <ChevronDoubleRight size='small' /> : () => <ChevronRight size='small' />),
-		[skippable]
-	);
+	const rightIcon = memo(skippable ? () => <ChevronDoubleRight size='small' /> : () => <ChevronRight size='small' />);
 
 	return (
 		<Button
@@ -27,4 +24,4 @@ const Next: React.FC<Props> = ({ isDisabled, onClick, skippable, ...props }) => 
 	);
 };
 
-export default Next;
+export default memo(Next);

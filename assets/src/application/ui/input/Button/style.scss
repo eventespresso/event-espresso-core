@@ -87,13 +87,10 @@
 			width: 1.25rem;
 		}
 
+		&--has-icon,
 		&:not(.ee-noIcon) {
 			span {
-				margin: 0 var(--ee-margin-micro) 0 var(--ee-margin-smaller);
-
-				[dir='rtl'] & {
-					margin: 0 var(--ee-margin-smaller) 0 var(--ee-margin-micro);
-				}
+				margin: 0 var(--ee-margin-micro);
 			}
 		}
 
