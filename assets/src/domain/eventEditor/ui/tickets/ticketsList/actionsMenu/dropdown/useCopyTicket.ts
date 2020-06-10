@@ -32,9 +32,9 @@ const useCopyTicket = (ticket: Ticket): VoidFunction => {
 				// avoid default price getting duplicated
 				isDefault: false,
 			};
-        });
-        
-        // get the related datetime ids
+		});
+
+		// get the related datetime ids
 		const datetimes = getRelations({
 			entity: 'tickets',
 			entityId: ticket.id,
