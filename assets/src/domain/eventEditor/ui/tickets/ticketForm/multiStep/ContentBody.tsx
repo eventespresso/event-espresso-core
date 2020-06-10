@@ -5,7 +5,8 @@ import { anyPass, isNil, isEmpty } from 'ramda';
 
 import TicketFormSteps from './TicketFormSteps';
 import { usePrevNext } from '@appServices/hooks';
-import { Button, ButtonRow } from '@application/ui/input';
+import { Button, ButtonRow, ButtonType } from '@application/ui/input';
+import { Submit } from '@application/ui/input/Stepper/buttons';
 import { TicketAssignmentsManager } from '@edtrUI/ticketAssignmentsManager/components';
 import { useDataState as useTAMDataState } from '@edtrUI/ticketAssignmentsManager/data';
 import TicketPriceCalculator from '@edtrUI/tickets/ticketPriceCalculator/components/TicketPriceCalculator';
@@ -43,14 +44,16 @@ const ContentBody: React.FC = ({ children }) => {
 								<ButtonRow rightAligned>
 									<Button
 										buttonText={__('Add ticket prices')}
-										onClick={next}
+										buttonType={ButtonType.SECONDARY}
 										isDisabled={isSaveDisabled}
+										onClick={next}
 										rightIcon='chevron-right'
 									/>
 									<Button
 										buttonText={__('Skip prices - assign dates')}
-										onClick={() => goto(2)}
+										buttonType={ButtonType.PRIMARY}
 										isDisabled={isSaveDisabled}
+										onClick={() => goto(2)}
 										rightIcon='chevron-right'
 									/>
 								</ButtonRow>
@@ -64,6 +67,7 @@ const ContentBody: React.FC = ({ children }) => {
 									<Button buttonText={__('Previous')} onClick={prev} leftIcon='chevron-left' />
 									<Button
 										buttonText={__('Save and assign dates')}
+										buttonType={ButtonType.PRIMARY}
 										onClick={next}
 										isDisabled={isTPCSubmitDisabled}
 										rightIcon='chevron-right'
@@ -82,11 +86,8 @@ const ContentBody: React.FC = ({ children }) => {
 										leftIcon='chevron-left'
 									/>
 									<Button buttonText={__('Previous')} onClick={prev} leftIcon='chevron-left' />
-									<Button
-										buttonText={__('Submit')}
-										onClick={form.submit}
-										isDisabled={isSubmitDisabled}
-									/>
+
+									<Submit onClick={form.submit} isDisabled={isSubmitDisabled} />
 								</ButtonRow>
 							</>
 						)}

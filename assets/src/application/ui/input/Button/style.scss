@@ -222,6 +222,12 @@
 		/* SECONDARY */
 		&.ee-btn--secondary {
 			text-shadow: none !important;
+
+			span,
+			svg {
+				color: var(--ee-color-white);
+			}
+
 			&:not([disabled]) {
 				background: var(--ee-color-secondary);
 				border-color: var(--ee-color-secondary);
