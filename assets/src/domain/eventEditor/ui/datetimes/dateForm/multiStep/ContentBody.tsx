@@ -2,11 +2,13 @@ import React from 'react';
 import { __ } from '@wordpress/i18n';
 import { FormSpy } from 'react-final-form';
 
-import DateFormSteps from './DateFormSteps';
-import { usePrevNext } from '@appServices/hooks';
-import { Button, ButtonRow } from '@application/ui/input';
+import { ButtonRow } from '@application/ui/input';
+import { Next, Previous, Submit } from '@application/ui/input/Stepper/buttons';
 import { TicketAssignmentsManager } from '@edtrUI/ticketAssignmentsManager/components';
 import { useDataState as useTAMDataState } from '@edtrUI/ticketAssignmentsManager/data';
+import { usePrevNext } from '@appServices/hooks';
+
+import DateFormSteps from './DateFormSteps';
 import useDataListener from './useDataListener';
 
 /**
@@ -36,11 +38,10 @@ const ContentBody: React.FC = ({ children }) => {
 							<>
 								{children}
 								<ButtonRow rightAligned>
-									<Button
+									<Next
 										buttonText={__('Save and assign tickets')}
 										onClick={next}
 										isDisabled={isSaveDisabled}
-										rightIcon='chevron-right'
 									/>
 								</ButtonRow>
 							</>
@@ -50,12 +51,8 @@ const ContentBody: React.FC = ({ children }) => {
 							<>
 								<TicketAssignmentsManager />
 								<ButtonRow rightAligned>
-									<Button buttonText={__('Previous')} onClick={prev} leftIcon='chevron-left' />
-									<Button
-										buttonText={__('Submit')}
-										onClick={form.submit}
-										isDisabled={isSubmitDisabled}
-									/>
+									<Previous onClick={prev} />
+									<Submit onClick={form.submit} isDisabled={isSubmitDisabled} />
 								</ButtonRow>
 							</>
 						)}

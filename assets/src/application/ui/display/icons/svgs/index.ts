@@ -8,6 +8,14 @@ import { ReactComponent as CalendarOutlinedSVG } from './calendarOutlined.svg';
 
 import { ReactComponent as CheckSVG } from './check.svg';
 
+import { ReactComponent as ChevronDoubleLeftSVG } from './chevron-double-left.svg';
+
+import { ReactComponent as ChevronDoubleRightSVG } from './chevron-double-right.svg';
+
+import { ReactComponent as ChevronLeftSVG } from './chevron-left.svg';
+
+import { ReactComponent as ChevronRightSVG } from './chevron-right.svg';
+
 import { ReactComponent as CloseCircleOutlinedSVG } from './closeCircleOutlined.svg';
 
 import { ReactComponent as CloseOutlinedSVG } from './closeOutlined.svg';
@@ -51,6 +59,14 @@ export const AppstoreFilled = withEnhance(AppstoreFilledSVG);
 export const CalendarOutlined = withEnhance(CalendarOutlinedSVG);
 
 export const Check = withEnhance(CheckSVG);
+
+export const ChevronDoubleLeft = withEnhance(ChevronDoubleLeftSVG);
+
+export const ChevronDoubleRight = withEnhance(ChevronDoubleRightSVG);
+
+export const ChevronLeft = withEnhance(ChevronLeftSVG);
+
+export const ChevronRight = withEnhance(ChevronRightSVG);
 
 export const CloseCircleOutlined = withEnhance(CloseCircleOutlinedSVG);
 

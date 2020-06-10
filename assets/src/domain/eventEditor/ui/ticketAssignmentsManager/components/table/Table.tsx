@@ -18,6 +18,7 @@ const Table: React.FC<DatesAndTickets> = ({ datetimes, tickets }) => {
 		tableId: 'ticket-assignment-manager-table',
 		tableCaption: __('Ticket Assignment Manager'),
 	});
+
 	return <ResponsiveTable bodyRows={bodyRows} headerRows={headerRows} metaData={metaData} className={className} />;
 };
 
