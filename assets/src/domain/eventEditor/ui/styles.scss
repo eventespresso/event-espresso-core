@@ -15,6 +15,7 @@
 	box-shadow: var(--ee-box-shadow-big);
 	line-height: var(--ee-line-height-modifier);
 	margin-top: 10%;
+
 	.ee-alert-dialog {
 		&__header {
 			color: var(--ee-default-text-color-super-low-contrast);
@@ -28,52 +29,6 @@
 		&__body {
 			color: var(--ee-default-text-color);
 			font-size: var(--ee-font-size-default);
-		}
-
-		// &__footer {
-		// }
-	}
-}
-
-.ee-banner[role='alert'] {
-	align-items: center;
-	background: var(--ee-color-grey-15);
-	display: flex;
-	flex-flow: column nowrap;
-	line-height: var(--ee-line-height-modifier);
-	justify-content: center;
-	overflow: hidden;
-	padding: var(--ee-padding-huge) var(--ee-padding-big);
-	position: relative;
-	text-align: center;
-
-	.ee-banner {
-		&__icon {
-			color: var(--ee-color-grey-12);
-			height: var(--ee-font-size-extreme);
-			width: var(--ee-font-size-extreme);
-		}
-
-		&__title {
-			color: var(--ee-default-text-color-super-low-contrast);
-			font-size: var(--ee-font-size-huge);
-			font-weight: 800;
-			padding: var(--ee-padding-tiny);
-			position: relative;
-			text-transform: unset;
-		}
-
-		&__desc {
-			color: var(--ee-default-text-color);
-			font-size: var(--ee-font-size-default);
-		}
-	}
-
-	&.ee-banner--error {
-		.ee-banner {
-			&__icon {
-				color: var(--ee-color-accent);
-			}
 		}
 	}
 }
