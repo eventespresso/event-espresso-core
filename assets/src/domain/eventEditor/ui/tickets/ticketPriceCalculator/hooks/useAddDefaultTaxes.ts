@@ -30,8 +30,6 @@ const useAddDefaultTaxes = (): VoidFunction => {
 		//sort'em
 		const sortedPrices = sortByPriceOrderIdAsc(newPrices);
 
-		console.log({ sortedPrices, allPrices, prices });
-
 		setPrices(sortedPrices);
 	}, [convertPriceToTpcModifier, defaultTaxPrices, getRelations, prices, setPrices]);
 };
