@@ -6,6 +6,7 @@ use EE_Admin_Config;
 use EE_Dependency_Map;
 use EventEspresso\core\domain\entities\routing\handlers\Route;
 use EventEspresso\core\domain\entities\routing\specifications\RouteMatchSpecificationInterface;
+use EventEspresso\core\services\json\JsonDataNode;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\request\RequestInterface;
 
@@ -33,10 +34,11 @@ abstract class AdminRoute extends Route
     /**
      * Route constructor.
      *
-     * @param EE_Admin_Config $admin_config
+     * @param EE_Admin_Config                  $admin_config
      * @param EE_Dependency_Map                $dependency_map
      * @param LoaderInterface                  $loader
      * @param RequestInterface                 $request
+     * @param JsonDataNode                     $data_node
      * @param RouteMatchSpecificationInterface $specification
      */
     public function __construct(
@@ -44,9 +46,23 @@ abstract class AdminRoute extends Route
         EE_Dependency_Map $dependency_map,
         LoaderInterface $loader,
         RequestInterface $request,
+        JsonDataNode $data_node = null,
         RouteMatchSpecificationInterface $specification = null
     ) {
         $this->admin_config = $admin_config;
-        parent::__construct($dependency_map, $loader, $request, $specification);
+        parent::__construct($dependency_map, $loader, $request, $data_node, $specification);
+    }
+
+
+    /**
+     * returns true if the current request matches this route
+     *
+     * @return bool
+     * @since   $VID:$
+     */
+    public function matchesCurrentRequest()
+    {
+        global $pagenow;
+        return $pagenow && $pagenow === 'admin.php' && $this->request->isAdmin();
     }
 }
