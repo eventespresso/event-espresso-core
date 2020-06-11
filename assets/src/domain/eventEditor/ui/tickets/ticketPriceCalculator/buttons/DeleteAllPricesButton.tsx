@@ -15,6 +15,7 @@ const DeleteAllPricesButton: React.FC = () => {
 		buttonText: __('Delete all prices'),
 		buttonType: ButtonType.ACCENT,
 	});
+
 	const onConfirm = useCallback(() => {
 		prices.forEach((price) => {
 			// delete the price from TPC state
@@ -26,10 +27,11 @@ const DeleteAllPricesButton: React.FC = () => {
 		updateTicketPrice(0);
 	}, [prices, deletePrice, removeDefaultTax]);
 
-	const title = __('Delete all prices?');
 	const message = __(
 		"Are you sure you want to delete all of this ticket's prices and make it free? This action is permanent and can not be undone."
 	);
+
+	const title = __('Delete all prices?');
 
 	return <ConfirmDelete buttonProps={buttonProps} onConfirm={onConfirm} message={message} title={title} />;
 };
