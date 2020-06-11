@@ -14,7 +14,7 @@ const NoPricesBanner: React.FC<Props> = ({ context }) => {
 	);
 
 	if (context === 'futureUseCase') {
-		description += __(' Click the save button below to assign which dates this ticket will be available for purchase on.');
+		description += ' ' + __('Click the save button below to assign which dates this ticket will be available for purchase on.');
 	}
 
 	const title = __('This Ticket is Currently Free');
