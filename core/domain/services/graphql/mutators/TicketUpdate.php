@@ -36,7 +36,7 @@ class TicketUpdate extends EntityMutator
                 $entity = EntityMutator::getEntityFromInputData($model, $input);
 
                 $datetimes = [];
-                $prices = [];
+                $prices = null;
 
                 $args = TicketMutation::prepareFields($input);
 
@@ -44,7 +44,7 @@ class TicketUpdate extends EntityMutator
                     $datetimes = $args['datetimes'];
                     unset($args['datetimes']);
                 }
-                if (isset($args['prices'])) {
+                if (array_key_exists('prices', $args)) {
                     $prices = $args['prices'];
                     unset($args['prices']);
                 }
@@ -54,7 +54,8 @@ class TicketUpdate extends EntityMutator
                 if (! empty($datetimes)) {
                     TicketMutation::setRelatedDatetimes($entity, $datetimes);
                 }
-                if (! empty($prices)) {
+                // if prices array is passed.
+                if (is_array($prices)) {
                     TicketMutation::setRelatedPrices($entity, $prices);
                 }
             } catch (Exception $exception) {
