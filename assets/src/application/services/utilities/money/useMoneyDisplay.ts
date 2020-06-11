@@ -1,5 +1,5 @@
 import formatAmount, { FormatAmountFunction } from './formatAmount';
-import useConfig from '../../../services/config/useConfig';
+import useConfig from '@appServices/config/useConfig';
 import { CurrencyProps } from '../../../valueObjects/config/types';
 
 export type MoneyDisplay = {

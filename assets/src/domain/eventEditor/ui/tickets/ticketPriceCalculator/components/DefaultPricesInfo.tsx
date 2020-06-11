@@ -2,25 +2,25 @@ import React from 'react';
 import { any } from 'ramda';
 import { __ } from '@wordpress/i18n';
 
-import { Box } from '@infraUI/display';
 import { isDefault } from '@sharedEntities/prices/predicates/selectionPredicates';
-
+import useConfig from '@appServices/config/useConfig';
 import { useDataState } from '../data';
 
 const DefaultPricesInfo = () => {
+	const config = useConfig();
+	const adminUrl = config.siteUrl.admin;
+	const href = adminUrl + '/admin.php?page=pricing';
+
 	const { prices } = useDataState();
 	const hasDefaultPrice = any(isDefault, prices);
-	const link = (
-		<a href='/wp-admin/admin.php?page=pricing' target='_blank'>
-			{__('Modify default prices.')}
-		</a>
-	);
 
 	return (
 		hasDefaultPrice && (
-			<Box textAlign='right'>
-				{__('Note:')} {link}
-			</Box>
+			<div className='ee-tpc__default-prices-info'>
+				<a href={href} target='_blank' rel='noopener noreferrer'>
+					{__('Modify default prices.')}
+				</a>
+			</div>
 		)
 	);
 };

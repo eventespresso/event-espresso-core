@@ -4,11 +4,21 @@ import { __ } from '@wordpress/i18n';
 import { Banner } from '@application/ui/display';
 
 import AddDefaultPricesButton from '../buttons/AddDefaultPricesButton';
+import { TicketPriceCalculatorProps } from './TicketPriceCalculator';
 
-const NoPricesBanner = () => {
-	const description = __(
-		'Click the button below to load your default prices into the calculator. Additional ticket price modifiers can be added or removed. Click the save button below to assign which dates this ticket will be available for purchase on.'
+interface Props extends Pick<TicketPriceCalculatorProps, 'context'> {}
+
+const NoPricesBanner: React.FC<Props> = ({ context }) => {
+	let description = __(
+		'Click the button below to load your default prices into the calculator. Additional ticket price modifiers can be added or removed.'
 	);
+
+	if (context === 'editTicketForm') {
+		description +=
+			' ' +
+			__('Click the save button below to assign which dates this ticket will be available for purchase on.');
+	}
+
 	const title = __('This Ticket is Currently Free');
 
 	return (
