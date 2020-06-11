@@ -15,10 +15,10 @@ import { useInitStateListeners } from '../stateListeners';
 import './styles.scss';
 
 export interface TicketPriceCalculatorProps {
-	isWithinStepper?: boolean;
+	standalone?: boolean;
 }
 
-const TicketPriceCalculator: React.FC<TicketPriceCalculatorProps> = ({ isWithinStepper }) => {
+const TicketPriceCalculator: React.FC<TicketPriceCalculatorProps> = ({ standalone }) => {
 	// initialize state listeners
 	useInitStateListeners();
 
