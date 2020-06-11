@@ -1,13 +1,12 @@
 import { useCallback, useMemo, useReducer } from 'react';
 
 import { FilterState, FilterStateManager, FilterStateManagerHook } from './types';
-import { now } from '@sharedServices/utils/dateAndTime';
 import reducer from './reducer';
 
 type FSM = FilterStateManager;
 
 const initialState: FilterState = {
-	datesByMonth: [now.getFullYear(), now.getMonth()],
+	datesByMonth: [0, 0],
 	showExpiredTickets: false,
 	showTrashedDates: false,
 	showTrashedTickets: false,

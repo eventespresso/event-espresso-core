@@ -164,17 +164,3 @@ export const getMonthsListFromDatetimes = (dates: Array<Datetime>): OptionsType 
 
 	return list;
 };
-
-export const getYearMonthForNextDate = (dates: Array<Datetime>): string => {
-	const yearWiseMonths = getYearWiseMonthsFromDates(activeUpcoming(dates));
-
-	if (!isEmpty(yearWiseMonths)) {
-		const firstYear = Number(Object.keys(yearWiseMonths)[0]);
-		const firstYearMonths = yearWiseMonths[firstYear];
-		const firstMonth = Number(Object.keys(firstYearMonths)[0]);
-
-		return `${firstYear}:${firstMonth}`;
-	}
-
-	return '';
-};
