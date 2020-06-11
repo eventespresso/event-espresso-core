@@ -11,7 +11,7 @@ use EventEspresso\core\domain\entities\routing\handlers\Route;
  *
  * @package EventEspresso\core\domain\entities\routing\handlers\shared
  * @author  Brent Christensen
- * @since   \$VID:$
+ * @since   $VID:$
  */
 class RestApiRequests extends Route
 {
