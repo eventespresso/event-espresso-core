@@ -1,15 +1,15 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
 
-import { Divider } from '@infraUI/display';
 import { ButtonRow } from '@application/ui/input';
 import { DebugInfo } from '@appDisplay/index';
 
-import AddDefaultTaxesButton from '../buttons/AddDefaultTaxesButton';
+import AddDefaultTaxesButton from '../buttons/taxes/AddDefaultTaxesButton';
 import DefaultPricesInfo from './DefaultPricesInfo';
 import DeleteAllPricesButton from '../buttons/DeleteAllPricesButton';
 import NoPricesBanner from './NoPricesBanner';
 import Table from './table/Table';
+import TaxesButtons from '../buttons/taxes/TaxesButtons';
 import { useDataState } from '../data';
 import { useInitStateListeners } from '../stateListeners';
 
@@ -38,11 +38,9 @@ const TicketPriceCalculator: React.FC = () => {
 
 			<DefaultPricesInfo />
 
-			<Divider borderColor='transparent' orientation='horizontal' />
-
 			<ButtonRow rightAligned>
 				<DeleteAllPricesButton />
-				<AddDefaultTaxesButton />
+				<TaxesButtons />
 			</ButtonRow>
 
 			{debugInfo}

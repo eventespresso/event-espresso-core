@@ -18,7 +18,7 @@ const DefaultPricesInfo = () => {
 
 	return (
 		hasDefaultPrice && (
-			<Box textAlign='right'>
+			<Box marginBottom='0.5rem' textAlign='right'>
 				{__('Note:')} {link}
 			</Box>
 		)
