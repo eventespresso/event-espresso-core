@@ -60,7 +60,7 @@ const ContentBody: React.FC = ({ children }) => {
 
 						{current === 1 && (
 							<>
-								<TicketPriceCalculator />
+								<TicketPriceCalculator isWithinStepper />
 								<ButtonRow rightAligned>
 									<Previous onClick={prev} />
 									<Next

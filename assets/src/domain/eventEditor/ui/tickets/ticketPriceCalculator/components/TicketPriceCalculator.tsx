@@ -4,7 +4,6 @@ import { __ } from '@wordpress/i18n';
 import { ButtonRow } from '@application/ui/input';
 import { DebugInfo } from '@appDisplay/index';
 
-import AddDefaultTaxesButton from '../buttons/taxes/AddDefaultTaxesButton';
 import DefaultPricesInfo from './DefaultPricesInfo';
 import DeleteAllPricesButton from '../buttons/DeleteAllPricesButton';
 import NoPricesBanner from './NoPricesBanner';
@@ -15,7 +14,11 @@ import { useInitStateListeners } from '../stateListeners';
 
 import './styles.scss';
 
-const TicketPriceCalculator: React.FC = () => {
+export interface TicketPriceCalculatorProps {
+	isWithinStepper?: boolean;
+}
+
+const TicketPriceCalculator: React.FC<TicketPriceCalculatorProps> = ({ isWithinStepper }) => {
 	// initialize state listeners
 	useInitStateListeners();
 
@@ -26,7 +29,7 @@ const TicketPriceCalculator: React.FC = () => {
 	if (!dataState.prices?.length) {
 		return (
 			<>
-				<NoPricesBanner />
+				<NoPricesBanner isWithinStepper />
 				{debugInfo}
 			</>
 		);
