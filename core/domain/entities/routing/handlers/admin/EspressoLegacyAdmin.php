@@ -11,7 +11,7 @@ use EventEspresso\core\domain\services\assets\LegacyAccountingAssetManager;
  *
  * @package EventEspresso\core\domain\entities\routing\handlers\admin
  * @author  Brent Christensen
- * @since   \$VID:$
+ * @since   $VID:$
  */
 class EspressoLegacyAdmin extends AdminRoute
 {
@@ -21,6 +21,7 @@ class EspressoLegacyAdmin extends AdminRoute
      */
     protected $asset_manager;
 
+
     /**
      * returns true if the current request matches this route
      *
@@ -29,7 +30,7 @@ class EspressoLegacyAdmin extends AdminRoute
      */
     public function matchesCurrentRequest()
     {
-        return $this->request->isAdmin() || $this->request->isAdminAjax();
+        return parent::matchesCurrentRequest() || $this->request->isAdminAjax();
     }
 
 

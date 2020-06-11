@@ -23,11 +23,7 @@ class EspressoEventsAdmin extends AdminRoute
      */
     public function matchesCurrentRequest()
     {
-        global $pagenow;
-        return $pagenow
-               && $pagenow === 'admin.php'
-               && $this->request->isAdmin()
-               && $this->request->getRequestParam('page') === 'espresso_events';
+        return parent::matchesCurrentRequest() && $this->request->getRequestParam('page') === 'espresso_events';
     }
 
 
