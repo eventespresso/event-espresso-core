@@ -9,12 +9,12 @@ import { TicketPriceCalculatorProps } from './TicketPriceCalculator';
 interface Props extends Pick<TicketPriceCalculatorProps, 'isWithinStepper'> {}
 
 const NoPricesBanner: React.FC<Props> = ({ isWithinStepper }) => {
-	let descriptionText = 'Click the button below to load your default prices into the calculator.';
+	let descriptionText = 'Click the button below to load your default prices into the calculator. Additional ticket price modifiers can be added or removed.';
 
 	if (isWithinStepper) {
 		descriptionText =
 			descriptionText +
-			' Additional ticket price modifiers can be added or removed. Click the save button below to assign which dates this ticket will be available for purchase on.';
+			' Click the save button below to assign which dates this ticket will be available for purchase on.';
 	}
 
 	const description = __(descriptionText);
