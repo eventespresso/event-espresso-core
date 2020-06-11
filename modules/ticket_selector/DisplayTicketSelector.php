@@ -203,6 +203,11 @@ class DisplayTicketSelector
         if (! $this->setEvent($event)) {
             return false;
         }
+        // is the event expired ?
+        $template_args['event_is_expired'] = ! is_admin() ? $this->event->is_expired() : false;
+        if ($template_args['event_is_expired']) {
+            return $this->expiredEventMessage();
+        }
         // begin gathering template arguments by getting event status
         $template_args = array('event_status' => $this->event->get_active_status());
         if ($this->activeEventAndShowTicketSelector(
@@ -216,11 +221,6 @@ class DisplayTicketSelector
         $this->setMaxAttendees($this->event->additional_limit());
         if ($this->getMaxAttendees() < 1) {
             return $this->ticketSalesClosedMessage();
-        }
-        // is the event expired ?
-        $template_args['event_is_expired'] = ! is_admin() ? $this->event->is_expired() : false;
-        if ($template_args['event_is_expired']) {
-            return $this->expiredEventMessage();
         }
         // get all tickets for this event ordered by the datetime
         $tickets = $this->getTickets();
@@ -259,6 +259,33 @@ class DisplayTicketSelector
     protected function activeEventAndShowTicketSelector($event, $_event_active_status, $view_details)
     {
         $event_post = $this->event instanceof EE_Event ? $this->event->ID() : $event;
+        
+        d($this->display_full_ui());
+        d($this->event->display_ticket_selector());
+        d($view_details);
+        d($_event_active_status);
+        d(
+                   ! $this->event->display_ticket_selector()
+                   || $view_details
+                   || post_password_required($event_post)
+                   || (
+                       $_event_active_status !== EE_Datetime::active
+                       && $_event_active_status !== EE_Datetime::upcoming
+                       && $_event_active_status !== EE_Datetime::sold_out
+                       && ! (
+                           $_event_active_status === EE_Datetime::inactive
+                           && is_user_logged_in()
+                       )
+                   ));
+        d((
+                       $_event_active_status !== EE_Datetime::active
+                       && $_event_active_status !== EE_Datetime::upcoming
+                       && $_event_active_status !== EE_Datetime::sold_out
+                       && ! (
+                           $_event_active_status === EE_Datetime::inactive
+                           && is_user_logged_in()
+                       )));
+
         return $this->display_full_ui()
                && (
                    ! $this->event->display_ticket_selector()
