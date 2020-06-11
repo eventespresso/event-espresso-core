@@ -3,7 +3,7 @@
 	"type": "wordpress-plugin",
 	"license": "GPL-2.0-or-later",
 	"description": "Event Espresso 4 Core for WordPress: Build an Event Ticketing Website Today!",
-	"authors" : [
+	"authors": [
 		{
 			"name": "Event Espresso Teem",
 			"email": "developers@eventspresso.com",
@@ -12,7 +12,13 @@
 	],
 	"homepage": "https://eventespresso.com",
 	"keywords": [
-		"event-espresso", "wordpress", "events", "event-management", "event-tickets", "event-registration", "ticketing-system"
+		"event-espresso",
+		"wordpress",
+		"events",
+		"event-management",
+		"event-tickets",
+		"event-registration",
+		"ticketing-system"
 	],
 	"support": {
 		"issues": "https://github.com/eventespresso/event-espresso-core/issues",
@@ -35,10 +41,6 @@
 		"php": ">=5.5"
 	},
 	"scripts": {
-		"config-eventespressocs": [
-			"\"vendor/bin/phpcs\" --config-set installed_paths ../../../vendor/wp-coding-standards/wpcs,../../../vendor/wimg/php-compatibility,../../../vendor/eventespresso/ee-coding-standards",
-			"\"vendor/bin/phpcs\" --config-set default_standard EventEspresso"
-		],
 		"lint": "vendor/bin/phpcs",
 		"lint:skip-warnings": "vendor/bin/phpcs -n",
 		"lint:fix": "vendor/bin/phpcbf"
