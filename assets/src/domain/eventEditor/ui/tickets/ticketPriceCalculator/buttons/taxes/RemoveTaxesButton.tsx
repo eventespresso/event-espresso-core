@@ -9,11 +9,11 @@ const RemoveTaxesButton: React.FC = () => {
 		buttonText: __('Remove taxes'),
 	};
 
-	const message = __("Are you sure you want to delete all of this ticket's taxes?");
+	const message = __("Are you sure you want to remove all of this ticket's taxes?");
 
 	const removeAllTaxes = useRemoveAllTaxes();
 
-	const title = __('Delete all taxes?');
+	const title = __('Remove all taxes?');
 
 	return <ConfirmDelete buttonProps={buttonProps} onConfirm={removeAllTaxes} message={message} title={title} />;
 };

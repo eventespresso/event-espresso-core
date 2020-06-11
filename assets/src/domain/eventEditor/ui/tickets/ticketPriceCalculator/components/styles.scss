@@ -16,4 +16,13 @@ $input-text: 'input[type=' text ']';
 			margin-bottom: 0;
 		}
 	}
+
+	&__default-prices-info {
+		margin-bottom: var(--ee-margin-tiny);
+		text-align: right;
+
+		[dir='rtl'] & {
+			text-align: left;
+		}
+	}
 }
