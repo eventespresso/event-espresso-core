@@ -1364,7 +1364,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
             //need to correct the download url so it contains the custom user data (i.e. api and any other parameters)
             //oh let's generate the download_url otherwise it will be old news...
 
-            if (! empty($this->download_query)) {
+            if (! empty($this->download_query && isset($this->install_key_arr['key']))) {
                 $d_install_key = $this->install_key_arr['key'];
                 $this->download_query['pue_install_key'] = $d_install_key;
                 $this->download_query['new_pue_check'] = 1;
