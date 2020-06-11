@@ -15,7 +15,7 @@ import { useInitStateListeners } from '../stateListeners';
 import './styles.scss';
 
 export interface TicketPriceCalculatorProps {
-	context?: 'standalone' | 'futureUseCase';
+	context?: 'standalone' | 'editTicketForm';
 }
 
 const TicketPriceCalculator: React.FC<TicketPriceCalculatorProps> = ({ context }) => {

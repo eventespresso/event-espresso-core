@@ -13,8 +13,10 @@ const NoPricesBanner: React.FC<Props> = ({ context }) => {
 		'Click the button below to load your default prices into the calculator. Additional ticket price modifiers can be added or removed.'
 	);
 
-	if (context === 'futureUseCase') {
-		description += ' ' + __('Click the save button below to assign which dates this ticket will be available for purchase on.');
+	if (context === 'editTicketForm') {
+		description +=
+			' ' +
+			__('Click the save button below to assign which dates this ticket will be available for purchase on.');
 	}
 
 	const title = __('This Ticket is Currently Free');
