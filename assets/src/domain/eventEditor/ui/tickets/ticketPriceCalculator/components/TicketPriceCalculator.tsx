@@ -29,7 +29,7 @@ const TicketPriceCalculator: React.FC<TicketPriceCalculatorProps> = ({ standalon
 	if (!dataState.prices?.length) {
 		return (
 			<>
-				<NoPricesBanner isWithinStepper />
+				<NoPricesBanner standalone />
 				{debugInfo}
 			</>
 		);
