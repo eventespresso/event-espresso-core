@@ -17,7 +17,7 @@ const DefaultPricesInfo = () => {
 	return (
 		hasDefaultPrice && (
 			<div className='ee-tpc__default-prices-info'>
-				<a href={href} target='_blank'>
+				<a href={href} target='_blank' rel='noopener noreferrer'>
 					{__('Modify default prices.')}
 				</a>
 			</div>
