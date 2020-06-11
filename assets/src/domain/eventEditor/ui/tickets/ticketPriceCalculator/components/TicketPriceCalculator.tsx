@@ -15,10 +15,10 @@ import { useInitStateListeners } from '../stateListeners';
 import './styles.scss';
 
 export interface TicketPriceCalculatorProps {
-	standalone?: boolean;
+	context?: 'standalone' | 'futureUseCase';
 }
 
-const TicketPriceCalculator: React.FC<TicketPriceCalculatorProps> = ({ standalone }) => {
+const TicketPriceCalculator: React.FC<TicketPriceCalculatorProps> = ({ context }) => {
 	// initialize state listeners
 	useInitStateListeners();
 
@@ -29,7 +29,7 @@ const TicketPriceCalculator: React.FC<TicketPriceCalculatorProps> = ({ standalon
 	if (!dataState.prices?.length) {
 		return (
 			<>
-				<NoPricesBanner standalone />
+				<NoPricesBanner context={context} />
 				{debugInfo}
 			</>
 		);
