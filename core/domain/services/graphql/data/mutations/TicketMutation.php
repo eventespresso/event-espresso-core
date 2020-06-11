@@ -89,8 +89,9 @@ class TicketMutation
             $args['TKT_price'] = (float) $input['price'];
         }
 
-        if (! empty($input['prices'])) {
-            $args['prices'] = array_map('sanitize_text_field', (array) $input['prices']);
+        // prices can be an empty array when all prices are deleted
+        if (array_key_exists('prices', $input) && is_array($input['prices'])) {
+            $args['prices'] = array_map('sanitize_text_field', $input['prices']);
         }
 
         if (array_key_exists('quantity', $input)) {
