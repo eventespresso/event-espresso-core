@@ -45,7 +45,7 @@ const useCapQuantity = (ticketId?: EntityId): Callback => {
 				existingData,
 				ticketsToUpdate,
 			});
-			return ticketsWithChangedQuantity?.[id];
+			return ticketsWithChangedQuantity?.[id] || quantity;
 		},
 		[allDates, allTickets, getExistingData, ticketId]
 	);
