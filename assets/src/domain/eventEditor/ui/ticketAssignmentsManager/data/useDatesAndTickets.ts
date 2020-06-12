@@ -1,4 +1,3 @@
-import { useDatetimeItem, useTicketItem } from '@edtrServices/apollo/queries';
 import { DatesAndTickets } from '../types';
 import { useTAMContext } from '../context';
 import useFilteredDatetimes from './useFilteredDatetimes';
@@ -11,9 +10,6 @@ const useDatesAndTickets = (): DatesAndTickets => {
 	const filteredDatetimes = useFilteredDatetimes();
 	const filteredTickets = useFilteredTickets();
 
-	const singleDatetime = useDatetimeItem({ id: entity?.id }) || entity as Datetime;
-	const singleTicket = useTicketItem({ id: entity?.id }) || entity as Ticket;
-
 	switch (assignmentType) {
 		case 'forAll':
 			return {
@@ -22,13 +18,13 @@ const useDatesAndTickets = (): DatesAndTickets => {
 			};
 		case 'forDate':
 			return {
-				datetimes: [singleDatetime],
+				datetimes: [entity as Datetime],
 				tickets: filteredTickets,
 			};
 		case 'forTicket':
 			return {
 				datetimes: filteredDatetimes,
-				tickets: [singleTicket],
+				tickets: [entity as Ticket],
 			};
 	}
 };
