@@ -40,6 +40,7 @@ const BaseNumberInputField: React.FC<BaseFieldProps> = ({
 			{...handlers}
 			size={null} // TS doesn't like this prop to go
 			value={fieldValue as string}
+			type="number"
 		/>
 	);
 };
