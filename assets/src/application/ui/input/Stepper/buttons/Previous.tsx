@@ -10,11 +10,7 @@ interface Props extends ButtonProps {
 
 const Previous: React.FC<Props> = ({ isDisabled, onClick, skippable, ...props }) => {
 	const buttonText = props.buttonText || __('Previous');
-	const leftIcon = memo(
-		skippable
-			? () => <ChevronDoubleLeft size='smaller' />
-			: () => <ChevronLeft size='smaller' />
-	);
+	const leftIcon = memo(() => (skippable ? <ChevronDoubleLeft size='smaller' /> : <ChevronLeft size='smaller' />));
 
 	return <Button buttonText={buttonText} isDisabled={isDisabled} leftIcon={leftIcon} onClick={onClick} />;
 };
