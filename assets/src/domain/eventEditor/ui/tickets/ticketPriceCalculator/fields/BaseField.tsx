@@ -1,8 +1,8 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import classNames from 'classnames';
 
 import useBaseField from './useBaseField';
-import { BaseFieldProps, FieldValue, InputProps } from './types';
+import { BaseFieldProps } from './types';
 
 const BaseField: React.FC<BaseFieldProps> = ({
 	children,
