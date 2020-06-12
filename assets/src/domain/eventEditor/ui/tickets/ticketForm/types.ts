@@ -1,6 +1,6 @@
 import { DateAndTime } from '@sharedServices/utils/dateAndTime';
-import { TicketBaseInput } from '@edtrServices/apollo/mutations';
+import { UpdateTicketInput } from '@edtrServices/apollo/mutations';
 
-export interface TicketFormShape extends TicketBaseInput, DateAndTime {
+export interface TicketFormShape extends UpdateTicketInput, DateAndTime {
 	dateTime?: DateAndTime;
 }
