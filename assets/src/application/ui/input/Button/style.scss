@@ -62,14 +62,15 @@
 		display: inline-flex;
 		height: var(--ee-icon-button-size);
 		line-height: var(--ee-font-size-default);
-		margin-bottom: var(--ee-margin-smaller);
+		margin: var(--ee-margin-smaller);
 		outline: none;
 		padding: var(--ee-padding-tiny) var(--ee-padding-smaller);
 		position: relative;
 		text-decoration: none;
 		text-align: center;
 		text-shadow: var(--ee-text-shadow-inset-light);
-		transition: background-color 50ms border-color 50ms ease 50ms, color 50ms linear 50ms;
+		-webkit-transition: all linear 50ms;
+		transition: all linear 50ms;
 		vertical-align: middle;
 		width: auto;
 
@@ -82,15 +83,13 @@
 
 		svg {
 			fill: currentColor;
-			height: 1.25rem;
 			transition: color 50ms linear, fill 50ms linear;
-			width: 1.25rem;
 		}
 
 		&--has-icon,
 		&:not(.ee-noIcon) {
 			span {
-				margin: 0 var(--ee-margin-micro);
+				margin: 0 var(--ee-margin-tiny);
 			}
 		}
 
@@ -128,14 +127,14 @@
 			top: 1px;
 		}
 
-		+ .ee-btn {
-			margin-left: var(--ee-margin-default);
+		// + .ee-btn {
+		// 	margin-left: var(--ee-margin-default);
 
-			[dir='rtl'] & {
-				margin-left: 0;
-				margin-right: var(--ee-margin-default);
-			}
-		}
+		// 	[dir='rtl'] & {
+		// 		margin-left: 0;
+		// 		margin-right: var(--ee-margin-default);
+		// 	}
+		// }
 
 		.text-wrap {
 			font-weight: bold;
@@ -307,8 +306,8 @@
 			}
 
 			svg {
-				height: 1rem;
-				width: 1rem;
+				height: 0.6rem;
+				width: 0.6rem;
 			}
 
 			.img-wrap span {
@@ -316,7 +315,8 @@
 			}
 		}
 
-		&.ee-btn--small {
+		&.ee-btn--small,
+		&.ee-btn--smaller {
 			height: var(--ee-icon-button-size-small);
 			letter-spacing: 1px;
 			line-height: var(--ee-font-size-tiny);
@@ -328,9 +328,7 @@
 			}
 
 			svg {
-				height: 1.125rem;
 				margin-top: 2px;
-				width: 1.125rem;
 			}
 
 			> div {
@@ -354,7 +352,22 @@
 			}
 		}
 
-		&.ee-btn--big {
+		&.ee-btn--small {
+			svg {
+				height: 0.9rem;
+				width: 0.9rem;
+			}
+		}
+
+		&.ee-btn--smaller {
+			svg {
+				height: 0.8rem;
+				width: 0.8rem;
+			}
+		}
+
+		&.ee-btn--big,
+		&.ee-btn--bigger {
 			height: var(--ee-icon-button-size-big);
 			min-height: var(--ee-font-size-bigger);
 			height: auto;
@@ -371,9 +384,6 @@
 			}
 
 			svg {
-				height: 1.5rem;
-				width: 1.5rem;
-
 				[dir='rtl'] & {
 					margin-right: 0;
 					margin-left: var(--ee-margin-tiny);
@@ -382,6 +392,20 @@
 
 			.img-wrap span {
 				line-height: var(--ee-font-size-big);
+			}
+		}
+
+		&.ee-btn--big {
+			svg {
+				height: 1.5rem;
+				width: 1.5rem;
+			}
+		}
+
+		&.ee-btn--bigger {
+			svg {
+				height: 1.75rem;
+				width: 1.75rem;
 			}
 		}
 
