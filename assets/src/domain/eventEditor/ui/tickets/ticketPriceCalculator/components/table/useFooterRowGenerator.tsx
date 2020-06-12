@@ -53,11 +53,11 @@ const useFooterRowGenerator = (): FooterRowGenerator => {
 				value: (
 					<TicketPriceField
 						component='input'
-						type={'number'}
 						disabled={!reverseCalculate}
 						format={(price) => formatAmount(price) ?? ''}
-						parse={(price) => parsedAmount(price)}
 						formatOnBlur
+						parse={(price) => parsedAmount(price)}
+						type='number'
 					/>
 				),
 			},
