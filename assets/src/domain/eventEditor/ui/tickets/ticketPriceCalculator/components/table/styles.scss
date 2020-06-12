@@ -80,5 +80,10 @@
 				text-align: center;
 			}
 		}
+
+		&__total .ee-input-base.ee-input-base.ee-input:disabled {
+			background: var(--ee-color-grey-14);
+			border-color: var(--ee-color-grey-9);
+		}
 	}
 }

@@ -19,6 +19,7 @@
 	border-style: solid;
 	border-width: 3px;
 	box-shadow: none;
+	color: var(--ee-default-text-color);
 	line-height: inherit;
 	min-height: 2.625rem; // 42px
 	outline: none;
@@ -55,6 +56,7 @@
 	&.ee-select,
 	&.ee-textarea {
 		@at-root {
+			select#{&},
 			input[type='text']#{&},
 			input[type='password']#{&},
 			input[type='date']#{&},
@@ -94,6 +96,18 @@
 		}
 		&:hover {
 			@extend .ee-input-base-hover;
+		}
+		&:disabled {
+			background: var(--ee-color-grey-14);
+			border-color: var(--ee-color-grey-11);
+			color: var(--ee-default-text-color-low-contrast);
+			cursor: not-allowed;
+			opacity: 0.8;
+
+			&:hover {
+				border-color: var(--ee-color-grey-9);
+				color: var(--ee-default-text-color-low-contrast);
+			}
 		}
 	}
 }
