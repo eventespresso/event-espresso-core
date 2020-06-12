@@ -1,6 +1,7 @@
 import React from 'react';
 import { parseISO } from 'date-fns';
 import classNames from 'classnames';
+import { __ } from '@wordpress/i18n';
 
 import { getBackgroundColorClassName } from '@sharedEntities/tickets/helpers';
 import { RenderCellProps } from '../../types';
@@ -17,9 +18,9 @@ const HeaderCell: React.FC<RenderCellProps> = ({ ticket }) => {
 	return (
 		<div className='header-cell-content__wrapper'>
 			<div className='header-cell-content'>
-				<div className='ee-focus-priority-8 header-cell-content__id'>ID: {ticket.dbId}</div>
+				<div className='ee-focus-priority-8 header-cell-content__id'>{`${__('ID')}: ${ticket.dbId}`}</div>
 				<div className='ee-focus-priority-5 header-cell-content__name'>{ticket.name}</div>
-				<div className='ee-focus-priority-8 header-cell-content__price'>{`${currency.sign} ${ticket.price}`}</div>
+				<div className='ee-focus-priority-8 header-cell-content__price'>{`${currency.sign} ${ticket.price || 0}`}</div>
 			</div>
 			<div className={startDateClassName}>{startDate}</div>
 		</div>
