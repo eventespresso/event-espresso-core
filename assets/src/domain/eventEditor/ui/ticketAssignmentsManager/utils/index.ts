@@ -1,4 +1,4 @@
-import { equals, filter, isEmpty, pathOr, assocPath } from 'ramda';
+import { equals, filter, pathOr, assocPath } from 'ramda';
 import { parseISO } from 'date-fns';
 
 import type { EntityId } from '@dataServices/types';
@@ -7,10 +7,9 @@ import type { TAMPossibleRelation, TAMRelationEntity, TAMRelationalData, TAMRela
 import type { Datetime, Ticket } from '@edtrServices/apollo';
 import type { OptionsType } from '@infraUI/inputs';
 import sortDates from '@sharedEntities/datetimes/predicates/sorters';
-import activeUpcoming from '@sharedEntities/datetimes/predicates/filters/activeUpcoming';
 import { parseInfinity, isInfinite } from '@application/services/utilities';
 
-type EntitiesToUpdate = Array<[EntityId, TAMPossibleRelation]>;
+export type EntitiesToUpdate = Array<[EntityId, TAMPossibleRelation]>;
 
 interface EntitiesForUpdateOptions<Entity extends TAMRelationEntity> {
 	entity: Entity;
