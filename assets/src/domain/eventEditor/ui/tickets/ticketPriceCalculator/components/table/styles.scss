@@ -55,7 +55,16 @@
 			&.ee-rspnsv-table-body-td,
 			&.ee-rspnsv-table-footer-th {
 				min-width: 40px;
-				width: 40px;
+				width: 60px;
+			}
+		}
+
+		&__price-type {
+			&.ee-rspnsv-table-header-th,
+			&.ee-rspnsv-table-body-td,
+			&.ee-rspnsv-table-footer-th {
+				min-width: 120px;
+				width: 120px;
 			}
 		}
 
@@ -63,8 +72,8 @@
 			&.ee-rspnsv-table-header-th,
 			&.ee-rspnsv-table-body-td,
 			&.ee-rspnsv-table-footer-th {
-				min-width: 250px;
-				width: 250px;
+				min-width: 120px;
+				width: 160px;
 			}
 
 			&.ee-rspnsv-table-header-th.ee-rspnsv-table-header-th.ee-number-column {
