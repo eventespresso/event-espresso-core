@@ -19,15 +19,15 @@
 	&__header {
 		font-size: var(--ee-font-size-micro);
 		letter-spacing: var(--ee-letter-spacing-font-size-micro);
-		line-height: var(--ee-font-size-bigger);
-		margin: 0 0 var(--ee-margin-micro);
+		line-height: var(--ee-font-size-big);
+		margin: 0;
 	}
 
 	.ee-bcd {
 		&__weekday {
 			font-size: var(--ee-font-size-smaller);
 			font-weight: normal;
-			line-height: var(--ee-font-size-big);
+			line-height: var(--ee-font-size-huge);
 			letter-spacing: var(--ee-letter-spacing-font-size-tiny);
 		}
 
@@ -50,15 +50,17 @@
 		}
 
 		&__year {
-			font-size: var(--ee-font-size-tiny);
+			font-size: var(--ee-font-size-smaller);
+			font-weight: 600;
 			letter-spacing: calc(var(--ee-letter-spacing-font-size-micro) * 2);
-			line-height: var(--ee-font-size-default);
+			line-height: var(--ee-font-size-big);
 			left: var(--ee-padding-nano);
 			position: relative;
 		}
 
 		&__time {
 			font-size: var(--ee-font-size-smaller);
+			line-height: var(--ee-font-size-huge);
 		}
 	}
 
