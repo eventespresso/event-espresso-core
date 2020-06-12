@@ -15,7 +15,7 @@ const Tooltip: React.FC<TooltipProps> = ({ children, tooltip, ...props }) => {
 			className={className}
 			label={tooltip}
 			closeOnClick
-			showDelay={250}
+			showDelay={500}
 			hideDelay={250}
 		>
 			{children && children}
