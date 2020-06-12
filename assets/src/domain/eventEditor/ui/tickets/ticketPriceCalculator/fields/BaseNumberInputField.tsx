@@ -1,9 +1,13 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 
 import { BaseFieldProps } from './types';
-import { NumberInput } from '@infraUI/inputs';
+import { TextInput } from '@infraUI/inputs';
+import useBaseField from './useBaseField';
 
 const BaseNumberInputField: React.FC<BaseFieldProps> = ({
+	component,
+	format,
+	formatOnBlur,
 	className,
 	disabled,
 	name,
@@ -11,27 +15,32 @@ const BaseNumberInputField: React.FC<BaseFieldProps> = ({
 	placeholder,
 	getValue,
 	setValue,
+	value,
 	...props
 }) => {
-	const fieldValue = Number(props?.value ?? getValue());
-
-	const onChange = useCallback(
-		(value) => {
-			setValue(parse(value, name));
-		},
-		[name, parse, setValue]
-	);
+	const { fieldValue, handlers } = useBaseField({
+		component,
+		name,
+		format,
+		formatOnBlur,
+		parse,
+		getValue,
+		setValue,
+		value,
+	});
 
 	return (
-		<NumberInput
+		<TextInput
 			className={className}
 			// because it can affect other tickets that have this price
 			// default price amount should not be changeable
 			isDisabled={disabled}
-			showStepper={false}
-			onChange={onChange}
 			placeholder={placeholder}
-			value={fieldValue}
+			{...props}
+			{...handlers}
+			size={null} // TS doesn't like this prop to go
+			value={fieldValue as string}
+			type="number"
 		/>
 	);
 };

@@ -5,6 +5,11 @@ import { BaseFieldProps, FieldValue, InputProps } from './types';
 const defaultFormat: BaseFieldProps['format'] = (value, name) => (value === undefined ? '' : value);
 const defaultParse: BaseFieldProps['parse'] = (value, name) => (value === '' ? undefined : value);
 
+type BaseField = {
+	handlers: InputProps;
+	fieldValue: FieldValue;
+};
+
 const useBaseField = ({
 	component,
 	name,
@@ -14,7 +19,7 @@ const useBaseField = ({
 	getValue,
 	setValue,
 	value,
-}: BaseFieldProps) => {
+}: BaseFieldProps): BaseField => {
 	const handlers: InputProps = {
 		onBlur: useCallback(() => {
 			if (formatOnBlur) {
@@ -44,7 +49,7 @@ const useBaseField = ({
 		fieldValue = '';
 	}
 
-	return useMemo(() => ({ handlers, fieldValue }), [handlers, fieldValue]);
+	return useMemo<BaseField>(() => ({ handlers, fieldValue }), [handlers, fieldValue]);
 };
 
 export default useBaseField;
