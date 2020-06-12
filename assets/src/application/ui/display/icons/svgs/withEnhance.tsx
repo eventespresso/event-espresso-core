@@ -18,8 +18,8 @@ const withEnhance = <P extends IconProps>(WrappedComponent: React.ComponentType<
 	const WithEnhance: React.FC<P & EnhanceProps> = ({ forwardedRef, noMargin, size, ...props }) => {
 		const className = classNames(
 			'ee-svg',
-			size && `ee__icon--${size}`,
-			noMargin && 'ee__icon--no-margin',
+			size && `ee-icon--${size}`,
+			noMargin && 'ee-icon--no-margin',
 			generatedIconClassName,
 			props.className
 		);

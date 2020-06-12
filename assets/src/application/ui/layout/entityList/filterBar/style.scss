@@ -101,7 +101,9 @@ $filter-btn: '.ee-filter-bar__btn';
 	}
 
 	&__btn {
-		&.ee-btn.ee-btn {
+		&.ee-btn-base.ee-btn {
+			margin-top: var(--ee-margin-nano);
+
 			svg {
 				margin: 0;
 			}

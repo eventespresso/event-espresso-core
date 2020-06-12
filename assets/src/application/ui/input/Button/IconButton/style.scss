@@ -5,6 +5,14 @@
 
 @import 'application/ui/styles/mixins/breakpoints.scss';
 
+:root {
+	--ee-icon-button-size-tiny: 30px;
+	--ee-icon-button-size-small: 36px;
+	--ee-icon-button-size: 42px;
+	--ee-icon-button-size-big: 48px;
+	--ee-icon-button-size-huge: 54px;
+}
+
 .btn-focus {
 	border-color: var(--ee-color-primary);
 	box-shadow: none !important;
@@ -78,6 +86,43 @@
 					border-color: var(--ee-color-white);
 				}
 			}
+		}
+
+		&.ee-btn--tiny {
+			height: var(--ee-icon-button-size-tiny);
+			min-height: var(--ee-icon-button-size-tiny);
+			min-width: var(--ee-icon-button-size-tiny);
+			padding: var(--ee-padding-nano);
+			width: var(--ee-icon-button-size-tiny);
+		}
+
+		&.ee-btn--small {
+			height: var(--ee-icon-button-size-small);
+			min-height: var(--ee-icon-button-size-small);
+			min-width: var(--ee-icon-button-size-small);
+			width: var(--ee-icon-button-size-small);
+		}
+
+		&.ee-btn--smaller {
+			height: var(--ee-icon-button-size-small);
+			min-height: var(--ee-icon-button-size-small);
+			min-width: var(--ee-icon-button-size-small);
+			width: var(--ee-icon-button-size-small);
+		}
+
+		&.ee-btn--big {
+			height: var(--ee-icon-button-size-big);
+			min-height: var(--ee-icon-button-size-big);
+			min-width: var(--ee-icon-button-size-big);
+			width: var(--ee-icon-button-size-big);
+		}
+
+		&.ee-btn--bigger {
+			height: var(--ee-icon-button-size-huge);
+			min-height: var(--ee-icon-button-size-huge);
+			min-width: var(--ee-icon-button-size-huge);
+			padding: var(--ee-padding-smaller);
+			width: var(--ee-icon-button-size-huge);
 		}
 	}
 }

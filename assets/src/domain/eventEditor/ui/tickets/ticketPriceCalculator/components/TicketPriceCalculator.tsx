@@ -24,13 +24,11 @@ const TicketPriceCalculator: React.FC<TicketPriceCalculatorProps> = ({ context }
 
 	const dataState = useDataState();
 
-	const debugInfo = <DebugInfo data={dataState} />;
-
 	if (!dataState.prices?.length) {
 		return (
 			<>
 				<NoPricesBanner context={context} />
-				{debugInfo}
+				<DebugInfo data={dataState} />
 			</>
 		);
 	}
@@ -39,14 +37,12 @@ const TicketPriceCalculator: React.FC<TicketPriceCalculatorProps> = ({ context }
 		<>
 			<Table prices={dataState.prices} />
 
-			<DefaultPricesInfo />
-
 			<ButtonRow rightAligned>
-				<DeleteAllPricesButton />
+				<DebugInfo data={dataState} />
+				<DefaultPricesInfo />
 				<TaxesButtons />
+				<DeleteAllPricesButton />
 			</ButtonRow>
-
-			{debugInfo}
 		</>
 	);
 };

@@ -32,6 +32,7 @@ const PriceAmountInput: React.FC<PriceModifierProps> = ({ price }) => {
 		<MoneyField className={moneyFieldClassName} isPercent={price.isPercent}>
 			<BaseNumberInputField
 				className={className}
+				component='input'
 				// because it can affect other tickets that have this price
 				// default price amount should not be changeable
 				disabled={disabled}
@@ -42,6 +43,7 @@ const PriceAmountInput: React.FC<PriceModifierProps> = ({ price }) => {
 				parse={formatParse()}
 				placeholder={__('amount...')}
 				setValue={setValue}
+				type='number'
 			/>
 		</MoneyField>
 	);

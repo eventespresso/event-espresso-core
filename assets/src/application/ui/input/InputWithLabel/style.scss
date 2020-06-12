@@ -13,7 +13,10 @@
 		}
 
 		.ee-input--disabled & {
-			opacity: 0.4;
+			background: var(--ee-color-grey-14);
+			border-color: var(--ee-color-grey-11);
+			color: var(--ee-default-text-color-low-contrast);
+			opacity: 0.8;
 		}
 	}
 

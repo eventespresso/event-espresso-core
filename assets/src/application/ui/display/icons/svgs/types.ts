@@ -3,4 +3,4 @@ export interface IconProps {
 	color?: string;
 }
 
-export type IconSize = 'small' | 'big';
+export type IconSize = 'big' | 'bigger' | 'small' | 'smaller' | 'tiny';
