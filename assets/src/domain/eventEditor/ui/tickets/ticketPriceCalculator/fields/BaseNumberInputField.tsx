@@ -31,7 +31,10 @@ const BaseNumberInputField: React.FC<BaseFieldProps> = ({
 			showStepper={false}
 			onChange={onChange}
 			placeholder={placeholder}
-			value={fieldValue}
+			// lets leave the input uncontrolled and just pass the default value
+			// just to be avoid storing local state for formatting the decimal value
+			// and sync the value directly with TPC state
+			defaultValue={fieldValue}
 		/>
 	);
 };
