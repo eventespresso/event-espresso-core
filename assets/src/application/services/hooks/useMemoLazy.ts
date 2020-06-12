@@ -17,7 +17,7 @@ const useMemoLazy = <T>(value: T): ((v: T) => T) => {
 		const newStr = JSON.stringify(newValue);
 		// if the string value of new and old value is same,
 		if (prevStr === newStr) {
-			// return the exiting value
+			// return the existing value
 			return prevValue.current;
 		}
 		// otherwise update the existing value
