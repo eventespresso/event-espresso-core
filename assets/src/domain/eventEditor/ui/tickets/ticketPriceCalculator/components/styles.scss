@@ -18,7 +18,11 @@ $input-text: 'input[type=' text ']';
 	}
 
 	&__default-prices-info {
-		margin-bottom: var(--ee-margin-tiny);
+		display: flex;
+		flex-flow: column;
+		height: 42px;
+		justify-content: center;
+		margin: var(--ee-margin-smaller);
 		text-align: right;
 
 		[dir='rtl'] & {
