@@ -1,10 +1,11 @@
 <?php
 
-namespace EventEspresso\core\domain\entities\routing\handlers;
+namespace EventEspresso\core\services\routing;
 
 use DomainException;
 use EE_Dependency_Map;
 use EventEspresso\core\domain\entities\routing\specifications\RouteMatchSpecificationInterface;
+use EventEspresso\core\services\json\JsonDataNode;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\request\RequestInterface;
 
@@ -23,15 +24,15 @@ use EventEspresso\core\services\request\RequestInterface;
 abstract class Route implements RouteInterface
 {
 
-    // /** will most likely need this for routing so pencilled it in for now
-    //  * @type CommandBusInterface $command_bus
-    //  */
-    // protected $command_bus;
-
     /**
      * @var EE_Dependency_Map $dependency_map
      */
     protected $dependency_map;
+
+    /**
+     * @var JsonDataNode $data_node
+     */
+    protected $data_node;
 
     /**
      * @var LoaderInterface $loader
@@ -46,7 +47,7 @@ abstract class Route implements RouteInterface
     /**
      * @var RouteMatchSpecificationInterface $specification
      */
-    private $specification;
+    protected $specification;
 
     /**
      * @var boolean $handled
@@ -60,15 +61,18 @@ abstract class Route implements RouteInterface
      * @param EE_Dependency_Map                $dependency_map
      * @param LoaderInterface                  $loader
      * @param RequestInterface                 $request
+     * @param JsonDataNode                     $data_node
      * @param RouteMatchSpecificationInterface $specification
      */
     public function __construct(
         EE_Dependency_Map $dependency_map,
         LoaderInterface $loader,
         RequestInterface $request,
+        JsonDataNode $data_node = null,
         RouteMatchSpecificationInterface $specification = null
     ) {
         $this->dependency_map = $dependency_map;
+        $this->data_node = $data_node;
         $this->loader = $loader;
         $this->request = $request;
         $this->specification = $specification;
@@ -91,18 +95,73 @@ abstract class Route implements RouteInterface
 
 
     /**
-     * returns true if the current request matches this route
-     * child classes can override and use Request directly to match route with request
-     * or supply a RouteMatchSpecification class and just use the below
+     * @param JsonDataNode $data_node
+     */
+    protected function setDataNode($data_node)
+    {
+        $this->data_node = $data_node;
+    }
+
+
+    /**
+     * @param RouteMatchSpecificationInterface $specification
+     */
+    protected function setSpecification($specification)
+    {
+        $this->specification = $specification;
+    }
+
+
+    /**
+     * @return JsonDataNode
+     */
+    public function dataNode()
+    {
+        return $this->data_node;
+    }
+
+
+    /**
+     * runs route requestHandler() if
+     *      - route has not previously been handled
+     *      - route specification matches for current request
+     * sets route handled property based on results returned by requestHandler()
      *
      * @return bool
      * @since   $VID:$
      */
-    public function matchesCurrentRequest()
+    public function handleRequest()
     {
-        return $this->specification instanceof RouteMatchSpecificationInterface
-            ? $this->specification->isMatchingRoute()
-            : false;
+        if ($this->isNotHandled()) {
+            $this->initialize();
+            if ($this->matchesCurrentRequest()) {
+                do_action('AHEE__EventEspresso_core_domain_entities_routes_handlers_Route__handleRequest', $this);
+                $this->registerDependencies();
+                $handled = $this->requestHandler();
+                if (! is_bool($handled)) {
+                    throw new DomainException(
+                        esc_html__(
+                            'Route::requestHandler() must return a boolean to indicate whether the request has been handled or not.',
+                            'event_espresso'
+                        )
+                    );
+                }
+                $this->handled = filter_var($handled, FILTER_VALIDATE_BOOLEAN);
+            }
+        }
+        return $this->handled;
+    }
+
+
+    /**
+     * called just before matchesCurrentRequest()
+     * and allows Route to perform any setup required such as calling setSpecification()
+     *
+     * @since $VID:$
+     */
+    public function initialize()
+    {
+        // do nothing by default
     }
 
 
@@ -116,40 +175,26 @@ abstract class Route implements RouteInterface
 
 
     /**
-     * @param bool $handled
+     * @return bool
      */
-    private function setHandled($handled)
+    final public function isNotHandled()
     {
-        $this->handled = filter_var($handled, FILTER_VALIDATE_BOOLEAN);
+        return ! $this->handled;
     }
 
 
     /**
-     * runs route requestHandler() if
-     *      - route has not previously been handled
-     *      - route specification matches for current request
-     * sets route handled property based on results returned by requestHandler()
+     * returns true if the current request matches this route
+     * child classes can override and use Request directly to match route with request
+     * or supply a RouteMatchSpecification class and just use the below
      *
      * @return bool
-     * @throws DomainException
      * @since   $VID:$
      */
-    final public function handleRequest()
+    public function matchesCurrentRequest()
     {
-        if (! $this->isHandled() && $this->matchesCurrentRequest()) {
-            do_action('AHEE__EventEspresso_core_domain_entities_routes_handlers_Route__handleRequest', $this);
-            $this->registerDependencies();
-            $handled = $this->requestHandler();
-            if (! is_bool($handled)) {
-                throw new DomainException(
-                    esc_html__(
-                        'Route::requestHandler() must return a boolean to indicate whether the request has been handled or not.',
-                        'event_espresso'
-                    )
-                );
-            }
-            $this->setHandled($handled);
-        }
-        return $this->handled;
+        return $this->specification instanceof RouteMatchSpecificationInterface
+            ? $this->specification->isMatchingRoute()
+            : false;
     }
 }
