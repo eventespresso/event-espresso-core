@@ -1,6 +1,5 @@
 import React from 'react';
 import classNames from 'classnames';
-import { __ } from '@wordpress/i18n';
 
 import { Tooltip, TooltipProps } from '@infraUI/display';
 import { withTooltipProps } from './types';
