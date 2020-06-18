@@ -2,12 +2,11 @@ import React, { useCallback } from 'react';
 import { __ } from '@wordpress/i18n';
 
 import { Cell } from '@appLayout/espressoTable';
-import { DownCircleFilled, UpCircleFilled } from '@appDisplay/icons/svgs';
-import { IconButton } from '@application/ui/input';
+import { FooterRow } from '@appLayout/espressoTable';
+import { FormatAmountFunction } from '@appServices/utilities/money/formatAmount';
 import { parsedAmount } from '@appServices/utilities/money';
 import { TicketPriceField } from '../../fields';
-import { FormatAmountFunction } from '@appServices/utilities/money/formatAmount';
-import { FooterRow } from '@appLayout/espressoTable';
+import ReverseCalculateButton from '../../buttons/ReverseCalculateButton';
 
 interface Props {
 	formatAmount: FormatAmountFunction;
@@ -19,7 +18,6 @@ type FooterRowGenerator = (props: Props) => FooterRow;
 
 const useFooterRowGenerator = (): FooterRowGenerator => {
 	return useCallback<FooterRowGenerator>(({ formatAmount, reverseCalculate, toggleCalcDir }: Props) => {
-		const calcDirIcon = reverseCalculate ? UpCircleFilled : DownCircleFilled;
 
 		const cells: Array<Cell> = [
 			{
@@ -65,7 +63,7 @@ const useFooterRowGenerator = (): FooterRowGenerator => {
 				key: 'actions',
 				type: 'cell',
 				className: 'ee-ticket-price-calculator__actions',
-				value: <IconButton icon={calcDirIcon} onClick={toggleCalcDir} /*  variant='outline' */ />,
+				value: <ReverseCalculateButton reverseCalculate={reverseCalculate} toggleCalcDir={toggleCalcDir} />,
 			},
 		];
 
