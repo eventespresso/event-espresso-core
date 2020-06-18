@@ -33,7 +33,7 @@ const withTooltip = <P extends withTooltipProps>(WrappedComponent: React.Compone
 			});
 			tooltipProps = { ...tooltipProps, className: 'ee-mobile-help-text__tooltip' };
 			toolTipped = (
-				<div className='ee-mobile-help-text__btn-wrap'>
+				<div className='ee-mobile-help-text__wrap'>
 					<WrappedComponent
 						{ ...(props as P) }
 						ref={ forwardedRef }

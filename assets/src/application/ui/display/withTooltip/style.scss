@@ -1,8 +1,13 @@
 @import 'application/ui/styles/mixins/breakpoints.scss';
 
+:root {
+	--ee-tooltip-background-color: #cdeaff;
+	// --ee-text-on-blue-super-high-contrast
+}
+
 .ee-tooltip.ee-tooltip {
-	background-color: var(--ee-text-on-blue-super-high-contrast);
-	border: 2px solid var(--ee-text-on-blue-super-high-contrast);
+	background-color: var(--ee-tooltip-background-color);
+	border: 2px solid var(--ee-tooltip-background-color);
 	border-radius: var(--ee-border-radius-small);
 	box-shadow: var(--ee-box-shadow-tiny);
 	color: var(--ee-text-on-blue-low-contrast);
@@ -10,7 +15,6 @@
 	letter-spacing: 2px;
 	padding: var(--ee-padding-tiny) var(--ee-padding-smaller);
 	position: relative;
-	// text-shadow: var(--ee-text-shadow-inset);
 	width: auto;
 	word-spacing: 0.15rem;
 	z-index: 1401;
@@ -26,7 +30,7 @@
 		max-width: 75%;
 		white-space: normal;
 
-		&__btn-wrap {
+		&__wrap {
 			display: flex;
 			flex-flow: row nowrap;
 		}
