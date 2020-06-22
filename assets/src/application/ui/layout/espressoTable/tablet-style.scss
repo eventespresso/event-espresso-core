@@ -9,7 +9,6 @@
 			display: flex;
 			flex-flow: row wrap;
 			justify-content: space-between;
-			padding: 0 var(--ee-padding-tiny);
 
 			td {
 				&.ee-entity-list-status-stripe.ee-entity-list-status-stripe {
@@ -39,7 +38,8 @@
 			border: 1px dotted var(--ee-color-grey-12);
 			display: flex;
 			flex-flow: column nowrap;
-			margin: var(--ee-margin-tiny) 0;
+			margin: var(--ee-margin-micro) 0;
+			padding: var(--ee-margin-micro);
 			width: 49%;
 		}
 

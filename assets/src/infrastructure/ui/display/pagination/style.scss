@@ -1,3 +1,5 @@
+@import 'application/ui/styles/mixins/breakpoints.scss';
+
 $border-style: 3px solid var(--ee-border-color);
 $border-radius: var(--ee-border-radius-default);
 
@@ -6,6 +8,22 @@ $border-radius: var(--ee-border-radius-default);
 	flex-direction: row;
 	margin: var(--ee-margin-small) 0;
 	padding: var(--ee-padding-small);
+
+	@include max782px {
+		padding: var(--ee-padding-smaller);
+	}
+
+	@include max600px {
+		padding: var(--ee-padding-tiny);
+	}
+
+	@include max480px {
+		padding: var(--ee-padding-micro);
+	}
+
+	@include max360px {
+		padding: var(--ee-padding-nano);
+	}
 
 	.rc-pagination-item,
 	.rc-pagination-prev,

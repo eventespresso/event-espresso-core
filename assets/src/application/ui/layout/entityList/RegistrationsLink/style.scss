@@ -1,3 +1,5 @@
+@import 'application/ui/styles/mixins/breakpoints.scss';
+
 .ee-editor-details-reg-url-link {
 	align-items: center;
 	border-color: transparent;
@@ -21,6 +23,11 @@
 		margin: 0 0 -2rem -0.25rem;
 		position: relative;
 		top: 0.25rem;
+
+		@include max480px {
+			margin-bottom: 0;
+			top: -0.5rem;
+		}
 	}
 
 	path {

@@ -1,3 +1,5 @@
+@import 'application/ui/styles/mixins/breakpoints.scss';
+
 .ee-entity-actions-menu {
 	display: flex;
 
@@ -7,7 +9,14 @@
 	}
 
 	&--vertical {
+		align-items: center;
 		flex-direction: column;
+		text-align: center;
+
+		@include max480px {
+			flex-direction: row;
+			justify-content: center;
+		}
 	}
 
 	.ee-btn-default.ee-btn:not([disabled]),

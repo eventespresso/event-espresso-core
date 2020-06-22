@@ -1,3 +1,5 @@
+@import 'application/ui/styles/mixins/breakpoints.scss';
+
 .entity-card {
 	--ee-sidebar-width: 9rem;
 	--ee-menu-width: 4rem;
@@ -110,53 +112,16 @@
 		box-sizing: border-box;
 		flex: 0 0 var(--ee-menu-width);
 		padding: var(--ee-padding-micro);
+		text-align: center;
 	}
 
-	/* Media Queries for specific screen sizes
-	 * -------------------------------------------------------------------------*/
-	@media only screen and (max-width: 1920px) {
-	}
-	@media only screen and (max-width: 1766px) {
-	}
-	@media only screen and (max-width: 1366px) {
-	}
-	@media only screen and (max-width: 1280px) {
-		// :root {
-		// 	--ee-entity-card-width: calc(var(--ee-entity-paper-frame-base) * 2.4);
-		// }
-	}
-	@media only screen and (max-width: 1024px) {
-		// :root {
-		// 	--ee-entity-card-width: calc(var(--ee-entity-paper-frame-base) * 1.8);
-		// }
-	}
-	/* WordPress Admin Media Query Breakpoint: Auto-folding of the admin menu */
-	@media only screen and (max-width: 960px) {
-		// :root {
-		// 	--ee-entity-card-width: calc(var(--ee-entity-paper-frame-base) * 2);
-		// }
-	}
-	/* WordPress Admin Media Query Breakpoint: one column on the post write/edit screen */
-	@media only screen and (max-width: 850px) {
-		// :root {
-		// 	--ee-entity-card-width: calc(var(--ee-entity-paper-frame-base) * 2.25);
-		// }
-	}
-	/* WordPress Admin Media Query Breakpoint: Tablet */
-	@media screen and (max-width: 782px) {
-		// :root {
-		// 	--ee-entity-card-width: calc(var(--ee-entity-paper-frame-base) * 2);
-		// }
-	}
-	/* WordPress Admin Media Query Breakpoint: Smartphone */
-	@media screen and (max-width: 600px) {
-	}
-	@media only screen and (max-width: 480px) {
+	@include max480px {
 		flex-flow: column nowrap;
 
 		&__menu,
 		&__sidebar,
 		&__details-wrapper {
+			padding-bottom: 0;
 			width: 100%;
 		}
 
@@ -165,7 +130,5 @@
 			flex: unset;
 			text-align: center;
 		}
-	}
-	@media only screen and (max-width: 360px) {
 	}
 }

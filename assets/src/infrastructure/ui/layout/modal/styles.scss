@@ -21,3 +21,14 @@
 		}
 	}
 }
+
+// targets the div that wraps the modal window and controls how much screen space is taken
+// we want to go full screen on anything smaller than a big tablet in landscape (1024px)
+[data-focus-lock-disabled] > div:last-child {
+	@include max1024px {
+		height: 100vh;
+		max-height: 100vh;
+		top: 0;
+		z-index: 100000;
+	}
+}

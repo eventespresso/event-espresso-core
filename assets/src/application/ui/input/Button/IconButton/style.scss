@@ -41,11 +41,6 @@
 		top: 0;
 		width: var(--ee-icon-button-size);
 
-		@include max480px {
-			margin-left: auto;
-			margin-right: auto;
-		}
-
 		svg {
 			display: inline-block;
 			path {

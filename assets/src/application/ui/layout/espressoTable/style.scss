@@ -1544,7 +1544,8 @@
 			border: 1px dotted var(--ee-color-grey-12);
 			display: flex;
 			flex-flow: column nowrap;
-			margin: var(--ee-margin-tiny) 0;
+			margin: var(--ee-margin-micro) 0;
+			padding: var(--ee-margin-micro);
 			width: 49%;
 		}
 

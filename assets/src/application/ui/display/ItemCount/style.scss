@@ -10,11 +10,11 @@
 		position: relative;
 		min-width: 55px;
 
-		@include max782px {
-			margin-left: auto;
-			margin-right: auto;
-			width: var(var(--ee-icon-button-size));
-		}
+		// @include max782px {
+		// 	margin-left: auto;
+		// 	margin-right: auto;
+		// 	width: calc(var(--ee-icon-button-size));
+		// }
 	}
 
 	&.ee-item-count {
