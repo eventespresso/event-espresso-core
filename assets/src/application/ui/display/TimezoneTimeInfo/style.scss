@@ -1,3 +1,5 @@
+@import 'application/ui/styles/mixins/breakpoints.scss';
+
 .ee-timezone-info {
 	display: inline-block;
 	margin: 0 auto;
@@ -5,12 +7,8 @@
 
 	&__button.ee-btn-base {
 		border: none;
-		// font-size: 16px;
-		// height: 30px;
 		margin: var(--ee-margin-micro);
-		// min-width: 30px;
 		padding: 4px;
-		// width: 30px;
 	}
 
 	[role='dialog'] {
@@ -26,5 +24,9 @@
 		[x-arrow] {
 			display: none;
 		}
+	}
+
+	@include max600px {
+		display: none;
 	}
 }

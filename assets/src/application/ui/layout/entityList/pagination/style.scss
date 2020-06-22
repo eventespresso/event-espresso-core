@@ -12,6 +12,18 @@
 	padding: var(--ee-padding-default);
 
 	@include max782px {
-		justify-content: center;
+		padding: var(--ee-padding-small);
+	}
+
+	@include max600px {
+		padding: var(--ee-padding-smaller);
+	}
+
+	@include max480px {
+		padding: var(--ee-padding-tiny);
+	}
+
+	@include max360px {
+		padding: var(--ee-padding-micro);
 	}
 }

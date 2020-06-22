@@ -72,6 +72,12 @@ $breakpointsMapping: (
 	}
 }
 
+@mixin min782px {
+	@include breakpoint(782px, min) {
+		@content;
+	}
+}
+
 @mixin max850px {
 	@include breakpoint(850px, max) {
 		@content;

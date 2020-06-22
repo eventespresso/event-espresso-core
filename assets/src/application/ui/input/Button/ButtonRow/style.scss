@@ -1,24 +1,27 @@
 @import 'application/ui/styles/mixins/breakpoints.scss';
 
 .ee-btn-row {
+	display: flex;
+	justify-content: center;
 	margin: var(--ee-margin-big) 0;
+	padding: var(--ee-padding-nano);
 
 	.ee-debug-info-btn {
 		margin-left: auto;
 		margin-right: unset;
 	}
 
-	&--right-aligned {
-		display: flex;
-		justify-content: flex-end;
+	&--left-aligned {
+		justify-content: flex-start;
 
-		.ee-btn.ee-btn {
-			@include max782px {
-				display: block;
-				margin-left: 0;
-				width: 100%;
-			}
+		.ee-debug-info-btn {
+			margin-right: unset;
+			margin-right: auto;
 		}
+	}
+
+	&--right-aligned {
+		justify-content: flex-end;
 
 		.ee-debug-info-btn {
 			margin-left: unset;
@@ -27,6 +30,19 @@
 	}
 
 	@include max782px {
-		display: block;
+		margin: var(--ee-margin-defult) 0;
+	}
+
+	@include max600px {
+		margin: var(--ee-margin-small) 0;
+	}
+
+	@include max480px {
+		flex-flow: column;
+		margin: var(--ee-margin-smaller) 0;
+	}
+
+	@include max360px {
+		margin: var(--ee-margin-tiny) 0;
 	}
 }

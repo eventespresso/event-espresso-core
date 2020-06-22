@@ -19,6 +19,16 @@
 			line-height: calc(var(--ee-line-height-modifier) * 0.875);
 			margin: var(--ee-margin-default) 0 var(--ee-margin-micro);
 			text-shadow: var(--ee-text-shadow-inset-light);
+
+			@include max782px {
+				font-size: calc(var(--ee-font-size-huge) * 2);
+				line-height: calc(var(--ee-line-height-modifier) * 0.65);
+			}
+
+			@include max480px {
+				font-size: calc(var(--ee-font-size-huge) * 1.5);
+				text-align: center;
+			}
 		}
 	}
 

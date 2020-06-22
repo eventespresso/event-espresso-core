@@ -1,7 +1,13 @@
+@import 'application/ui/styles/mixins/breakpoints.scss';
+
 .ee-entity-edit-modal {
 	max-width: 85rem !important;
 
 	&__body {
 		padding: 1rem;
+	}
+
+	@include max782px {
+		width: 100% !important;
 	}
 }
