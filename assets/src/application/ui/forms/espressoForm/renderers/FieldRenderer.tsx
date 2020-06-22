@@ -22,7 +22,7 @@ const FieldRenderer: React.FC<FieldRendererProps> = (props) => {
 
 	const className = classNames(
 		'ee-input__wrapper ee-form-item',
-		`form-item__${rest.fieldType}`,
+		`ee-form-item__${rest.fieldType}`,
 		formControlProps?.className
 	);
 
