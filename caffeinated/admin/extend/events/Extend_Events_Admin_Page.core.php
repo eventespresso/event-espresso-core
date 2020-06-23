@@ -1,8 +1,6 @@
 <?php
 
 use EventEspresso\core\domain\services\admin\events\default_settings\AdvancedEditorAdminFormSection;
-use EventEspresso\core\domain\services\admin\events\editor\EventEditor;
-use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -28,20 +26,11 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
      */
     protected $advanced_editor_admin_form;
 
-    /**
-     * @var EventEditor
-     */
-    protected $advanced_editor_data;
-
 
     /**
      * Extend_Events_Admin_Page constructor.
      *
      * @param bool $routing
-     * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function __construct($routing = true)
@@ -162,7 +151,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         // partial route/config override
         $this->_page_config['import_events']['metaboxes'] = $this->_default_espresso_metaboxes;
         $this->_page_config['create_new']['metaboxes'][] = '_premium_event_editor_meta_boxes';
-        // load handler for GraphQL requests and EventEditor
+        // don't load qTips if using the advanced editor
         if (! $this->admin_config->useAdvancedEditor()) {
             $this->_page_config['create_new']['qtips'][] = 'EE_Event_Editor_Tips';
             $this->_page_config['edit']['qtips'][] = 'EE_Event_Editor_Tips';
@@ -258,26 +247,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
                 $this->advanced_editor_admin_form = $this->loader->getShared(
                     'EventEspresso\core\domain\services\admin\events\default_settings\AdvancedEditorAdminFormSection'
                 );
-            }
-            // load handler for GraphQL requests and EventEditor
-            if (($action === 'edit' || $action === 'create_new')
-                && $this->admin_config instanceof EE_Admin_Config
-                && class_exists('WPGraphQL')
-                && $this->admin_config->useAdvancedEditor()
-            ) {
-                try {
-                    /** @var EventEspresso\core\services\graphql\GraphQLManager $graphQL_manager */
-                    $graphQL_manager = $this->loader->getShared(
-                        'EventEspresso\core\services\graphql\GraphQLManager'
-                    );
-                    $graphQL_manager->init();
-                    $this->advanced_editor_data = $this->loader->getShared(
-                        'EventEspresso\core\domain\services\admin\events\editor\EventEditor',
-                        [$this->_cpt_model_obj]
-                    );
-                } catch (Exception $exception) {
-                    new ExceptionStackTraceDisplay($exception);
-                }
             }
         }
     }
@@ -450,6 +419,8 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
 
     /**
      * Sets the views for the default list table view.
+     *
+     * @throws EE_Error
      */
     protected function _set_list_table_views_default()
     {
@@ -853,7 +824,9 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         if (is_readable(EE_CLASSES . 'EE_Export.class.php')) {
             require_once(EE_CLASSES . 'EE_Export.class.php');
             $EE_Export = EE_Export::instance($this->_req_data);
-            $EE_Export->export();
+            if ($EE_Export instanceof EE_Export) {
+                $EE_Export->export();
+            }
         }
     }
 
@@ -875,7 +848,9 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         if (is_readable(EE_CLASSES . 'EE_Export.class.php')) {
             require_once(EE_CLASSES . 'EE_Export.class.php');
             $EE_Export = EE_Export::instance($this->_req_data);
-            $EE_Export->export();
+            if ($EE_Export instanceof EE_Export) {
+                $EE_Export->export();
+            }
         }
     }
 
@@ -885,8 +860,10 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
      */
     protected function _sample_export_file()
     {
-        // require_once(EE_CLASSES . 'EE_Export.class.php');
-        EE_Export::instance()->export_sample();
+        $EE_Export = EE_Export::instance();
+        if ($EE_Export instanceof EE_Export) {
+            $EE_Export->export();
+        }
     }
 
 
@@ -1203,8 +1180,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         $where = array(
             'Datetime.DTT_EVT_start' => array('BETWEEN', array($start, $end)),
         );
-        $count = EEM_Event::instance()->count(array($where, 'caps' => 'read_admin'), 'EVT_ID', true);
-        return $count;
+        return EEM_Event::instance()->count(array($where, 'caps' => 'read_admin'), 'EVT_ID', true);
     }
 
 
@@ -1239,8 +1215,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         $where = array(
             'Datetime.DTT_EVT_start' => array('BETWEEN', array($start, $end)),
         );
-        $count = EEM_Event::instance()->count(array($where, 'caps' => 'read_admin'), 'EVT_ID', true);
-        return $count;
+        return EEM_Event::instance()->count(array($where, 'caps' => 'read_admin'), 'EVT_ID', true);
     }
 
 
@@ -1323,9 +1298,8 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         );
         if ($count) {
             return EEM_Ticket::instance()->count_deleted_and_undeleted(array($_where));
-        } else {
-            return EEM_Ticket::instance()->get_all_deleted_and_undeleted($query_params);
         }
+        return EEM_Ticket::instance()->get_all_deleted_and_undeleted($query_params);
     }
 
 
@@ -1405,19 +1379,18 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             }
         }
         $action_desc = 'deleted';
-        $query_args = array(
-            'action' => 'ticket_list_table',
-            'status' => 'trashed',
-        );
         // fail safe.  If the default ticket count === 1 then we need to redirect to event overview.
-        if (EEM_Ticket::instance()->count_deleted_and_undeleted(
-            array(array('TKT_is_default' => 1)),
+        $ticket_count = EEM_Ticket::instance()->count_deleted_and_undeleted(
+            [['TKT_is_default' => 1]],
             'TKT_ID',
             true
-        )
-        ) {
-            $query_args = array();
-        }
+        );
+        $query_args = $ticket_count
+            ? []
+            : [
+                'action' => 'ticket_list_table',
+                'status' => 'trashed'
+            ];
         $this->_redirect_after_action($success, 'Tickets', $action_desc, $query_args);
     }
 
@@ -1433,10 +1406,13 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
      */
     protected function _delete_the_ticket($TKT_ID)
     {
-        $tkt = EEM_Ticket::instance()->get_one_by_ID($TKT_ID);
-        $tkt->_remove_relations('Datetime');
+        $ticket = EEM_Ticket::instance()->get_one_by_ID($TKT_ID);
+        if (! $ticket instanceof EE_Ticket) {
+            return false;
+        }
+        $ticket->_remove_relations('Datetime');
         // delete all related prices first
-        $tkt->delete_related_permanently('Price');
-        return $tkt->delete_permanently();
+        $ticket->delete_related_permanently('Price');
+        return $ticket->delete_permanently();
     }
 }
