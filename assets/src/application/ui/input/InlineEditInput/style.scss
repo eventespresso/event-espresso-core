@@ -18,6 +18,10 @@
 	border-width: 3px;
 	padding: var(--ee-padding-micro) var(--ee-padding-small);
 
+	&:hover {
+		color: var(--ee-input-secondary);
+	}
+
 	&:active,
 	&:focus {
 		border-width: 3px;
