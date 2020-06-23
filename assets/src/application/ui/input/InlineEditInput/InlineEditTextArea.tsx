@@ -13,7 +13,7 @@ const Preview: React.FC<InlineEditPreviewProps> = ({ isEditing, onRequestEdit, v
 
 	return (
 		<Dotdotdot clamp={3}>
-			<TabbableText onClick={onRequestEdit} text={value} />
+			<TabbableText onRequestEdit={onRequestEdit} text={value} />
 		</Dotdotdot>
 	);
 };

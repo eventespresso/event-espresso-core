@@ -12,7 +12,7 @@ const Preview: React.FC<InlineEditPreviewProps> = ({ fitText, isEditing, onReque
 		return null;
 	}
 
-	const textInput = <TabbableText onClick={onRequestEdit} text={value} />;
+	const textInput = <TabbableText onRequestEdit={onRequestEdit} text={value} />;
 
 	if (value.length > 30) {
 		return <Dotdotdot clamp={2}>{textInput}</Dotdotdot>;

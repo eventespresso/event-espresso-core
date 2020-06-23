@@ -8,6 +8,6 @@ export interface TextProps extends Omit<InlineEditProps, 'inputType'> {
 }
 
 export interface TabbableTextProps {
-	onClick: VoidFunction;
+	onRequestEdit: VoidFunction;
 	text: string;
 }
