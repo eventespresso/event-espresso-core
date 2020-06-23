@@ -4,7 +4,7 @@ namespace EventEspresso\core\domain\entities\routing\handlers\admin;
 
 use EE_Admin_Config;
 use EE_Dependency_Map;
-use EventEspresso\core\domain\entities\routing\handlers\Route;
+use EventEspresso\core\services\routing\Route;
 use EventEspresso\core\domain\entities\routing\specifications\RouteMatchSpecificationInterface;
 use EventEspresso\core\services\json\JsonDataNode;
 use EventEspresso\core\services\loaders\LoaderInterface;

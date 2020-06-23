@@ -4,7 +4,7 @@ namespace EventEspresso\core\domain\entities\routing\handlers\frontend;
 
 use EE_Config;
 use EE_Dependency_Map;
-use EventEspresso\core\domain\entities\routing\handlers\Route;
+use EventEspresso\core\services\routing\Route;
 
 /**
  * Class ShortcodeRequests

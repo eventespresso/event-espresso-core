@@ -5,6 +5,7 @@ namespace EventEspresso\core\services\routing;
 use DomainException;
 use EE_Dependency_Map;
 use EventEspresso\core\domain\entities\routing\specifications\RouteMatchSpecificationInterface;
+use EventEspresso\core\services\assets\AssetManagerInterface;
 use EventEspresso\core\services\json\JsonDataNode;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\request\RequestInterface;
@@ -23,6 +24,11 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 abstract class Route implements RouteInterface
 {
+
+    /**
+     * @var AssetManagerInterface $asset_manager
+     */
+    protected $asset_manager;
 
     /**
      * @var EE_Dependency_Map $dependency_map
