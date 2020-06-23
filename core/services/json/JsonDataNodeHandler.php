@@ -3,7 +3,7 @@
 namespace EventEspresso\core\services\json;
 
 use DomainException;
-use EventEspresso\core\services\json\PrimaryJsonDataNode;
+use EE_Registry;
 
 /**
  * Class JsonDataNodeHandler
@@ -46,30 +46,10 @@ class JsonDataNodeHandler
      */
     public function addDataNode(JsonDataNode $data_node)
     {
-        // set primary data node if that's what the incoming node is
-        if ($data_node instanceof PrimaryJsonDataNode) {
-            $this->setPrimaryDataNode($data_node);
+        if ($data_node->isNotInitialized()) {
+            $this->validatePrimaryDataNode($data_node);
+            $this->primary_data_node->addDataNode($data_node);
         }
-        // and don't allow other nodes to be set until a primary is set
-        if (! $this->primary_data_node instanceof PrimaryJsonDataNode) {
-            throw new DomainException(
-                esc_html__(
-                    'A PrimaryJsonDataNode needs to be set before data nodes can be added.',
-                    'event_espresso'
-                )
-            );
-        }
-        $this->primary_data_node->addDataNode($data_node);
-    }
-
-
-    /**
-     * @since $VID:$
-     */
-    public function initialize()
-    {
-        add_action('admin_footer', [$this, 'printDataNode']);
-        add_action('wp_footer', [$this, 'printDataNode']);
     }
 
 
@@ -83,18 +63,84 @@ class JsonDataNodeHandler
 
 
     /**
+     * @param JsonDataNode $data_node
+     * @param int                $depth
+     * @return mixed
+     * @since $VID:$
+     */
+    private function initializeDataNodes(JsonDataNode $data_node, $depth = 0)
+    {
+        $depth++;
+        $data = [];
+        // initialize the data node if not done already
+        if ($data_node->isNotInitialized()) {
+            $data_node->initialize();
+            // grab the data node's data array
+            $data_node_data = $data_node->data();
+            foreach ($data_node_data as $child_node_name => $child_node) {
+                // don't parse node if it's the primary, OR if depth has exceeded wp_json_encode() limit
+                if ($child_node instanceof PrimaryJsonDataNode || $depth > 512) {
+                    continue;
+                }
+                if ($child_node instanceof JsonDataNode) {
+                    // feed data node back into this function
+                    $data[ $child_node_name ] = $this->initializeDataNodes($child_node, $depth);
+                } else {
+                    // or assign data directly
+                    $data[ $child_node_name ] = $child_node;
+                }
+            }
+        }
+        return $data;
+    }
+
+
+    /**
      * @throws DomainException
      * @since $VID:$
      */
     public function printDataNode()
     {
+        // validate that the domain, node name, and target script are set
         $domain = $this->primary_data_node->domain();
-        $this->validator->validateCriticalProperty($domain, 'domain route');
         $node_name = $this->primary_data_node->nodeName();
-        $this->validator->validateCriticalProperty($node_name, 'node name');
         $target_script = $this->primary_data_node->targetScript();
-        $this->validator->validateCriticalProperty($target_script, 'target script');
-        $data = wp_json_encode($this->primary_data_node);
+        $data_valid =  $this->validator->validateCriticalProperty($domain, 'domain route', false)
+                       && $this->validator->validateCriticalProperty($node_name, 'node name', false)
+                       && $this->validator->validateCriticalProperty($target_script, 'target script', false);
+        if (! $data_valid) {
+            return;
+        }
+        // initialize and parse data from primary data node
+        $data = $this->initializeDataNodes($this->primary_data_node);
+        // this prepends the current domain "use case" to the front of the array
+        $data = ['domain' => $domain] + $data;
+        // add legacy i18n strings
+        $data['eei18n'] = EE_Registry::$i18n_js_strings;
+        // and finally JSON encode the data and attach to the target script
+        $data = json_encode($data);
         wp_add_inline_script($target_script, "var {$node_name}={$data};", 'before');
+    }
+
+
+    /**
+     * @param JsonDataNode $data_node
+     * @throws DomainException
+     */
+    private function validatePrimaryDataNode(JsonDataNode $data_node)
+    {
+        // set primary data node if that's what the incoming node is
+        if ($data_node instanceof PrimaryJsonDataNode) {
+            $this->setPrimaryDataNode($data_node);
+        }
+        // and don't allow other nodes to be set until a primary is set
+        if (! $this->primary_data_node instanceof PrimaryJsonDataNode) {
+            throw new DomainException(
+                esc_html__(
+                    'A PrimaryJsonDataNode needs to be set before data nodes can be added.',
+                    'event_espresso'
+                )
+            );
+        }
     }
 }
