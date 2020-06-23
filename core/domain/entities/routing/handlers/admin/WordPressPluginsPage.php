@@ -86,6 +86,13 @@ class WordPressPluginsPage extends Route
     }
 
 
+    /**
+     * EspressoCoreAppAssetManager sets 'wp-i18n' as the only dependency for its scripts,
+     * but the ExitSurvey uses additional WP core assets, so this method retrieves the
+     * 'eventespresso-core-app' script and updates its dependencies accordingly
+     *
+     * @since $VID:$
+     */
     public function addDependencies()
     {
         if (! $this->asset_manager instanceof EspressoCoreAppAssetManager) {
