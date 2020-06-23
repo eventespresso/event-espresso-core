@@ -1,26 +1,20 @@
 import React, { forwardRef } from 'react';
 import classNames from 'classnames';
 
-import { camelToSnakeCase } from '@appServices/utilities/text';
-import { IconProps, IconSize } from './types';
+import { HorizontalMargin, IconProps, IconSize } from './types';
 
 import './style.scss';
 
 const withEnhance = <P extends IconProps>(WrappedComponent: React.ComponentType<P>) => {
 	type Ref = React.Ref<typeof WrappedComponent>;
-	type EnhanceProps = { forwardedRef?: Ref; noMargin?: boolean; size?: IconSize };
+	type EnhanceProps = { forwardedRef?: Ref; horizontalMargin?: HorizontalMargin, noMargin?: boolean; size?: IconSize };
 
-	// @ts-ignore
-	const displayName = WrappedComponent?.render?.name;
-
-	const generatedIconClassName = displayName && 'ee-icon--' + camelToSnakeCase(displayName.replace('Svg', ''));
-
-	const WithEnhance: React.FC<P & EnhanceProps> = ({ forwardedRef, noMargin, size, ...props }) => {
+	const WithEnhance: React.FC<P & EnhanceProps> = ({ forwardedRef, horizontalMargin = "micro", noMargin, size, ...props }) => {
 		const className = classNames(
 			'ee-svg',
-			size && `ee-icon--${size}`,
+			!noMargin && horizontalMargin && `ee-horizontal-margin--${horizontalMargin}`,
 			noMargin && 'ee-icon--no-margin',
-			generatedIconClassName,
+			size && `ee-icon--${size}`,
 			props.className
 		);
 

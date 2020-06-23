@@ -1,7 +1,8 @@
+@import "application/ui/styles/margins.scss";
+
 svg {
 	&.ee-svg.ee-svg {
 		display: inline-flex;
-		margin: 0 var(--ee-margin-micro);
 
 		&.ee-icon {
 			height: 1.25rem;

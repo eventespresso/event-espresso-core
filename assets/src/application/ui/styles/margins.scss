@@ -1,0 +1,51 @@
+.ee-horizontal-margin {
+    &--nano {
+        margin-left: var(--ee-margin-nano);
+        margin-right: var(--ee-margin-nano);
+    }
+
+    &--micro {
+        margin-left: var(--ee-margin-micro);
+        margin-right: var(--ee-margin-micro);
+    }
+
+    &--tiny {
+        margin-left: var(--ee-margin-tiny);
+        margin-right: var(--ee-margin-tiny);
+    }
+
+    &--smaller {
+        margin-left: var(--ee-margin-smaller);
+        margin-right: var(--ee-margin-smaller);
+    }
+
+    &--small {
+        margin-left: var(--ee-margin-small);
+        margin-right: var(--ee-margin-small);
+    }
+
+    &--default {
+        margin-left: var(--ee-margin-default);
+        margin-right: var(--ee-margin-default);
+    }
+
+    &--big {
+        margin-left: var(--ee-margin-big);
+        margin-right: var(--ee-margin-big);
+    }
+
+    &--bigger {
+        margin-left: var(--ee-margin-bigger);
+        margin-right: var(--ee-margin-bigger);
+    }
+
+    &--huge {
+        margin-left: var(--ee-margin-huge);
+        margin-right: var(--ee-margin-huge);
+    }
+
+    &--extreme {
+        margin-left: var(--ee-margin-extreme);
+        margin-right: var(--ee-margin-extreme);
+    }
+}

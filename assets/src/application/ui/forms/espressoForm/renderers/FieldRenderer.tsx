@@ -40,7 +40,7 @@ const FieldRenderer: React.FC<FieldRendererProps> = (props) => {
 				{label}
 				{info && (
 					<Tooltip placement='right' tooltip={info}>
-						<InfoCircleOutlined />
+						<InfoCircleOutlined color="var(--ee-color-primary-low-contrast)" horizontalMargin="tiny" />
 					</Tooltip>
 				)}
 			</FormLabel>
