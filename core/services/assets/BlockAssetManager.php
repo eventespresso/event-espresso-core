@@ -3,6 +3,7 @@
 namespace EventEspresso\core\services\assets;
 
 use EventEspresso\core\domain\entities\editor\BlockInterface;
+use EventEspresso\core\domain\services\assets\EspressoCoreAppAssetManager;
 use EventEspresso\core\domain\values\assets\BrowserAsset;
 use EventEspresso\core\domain\values\assets\JavascriptAsset;
 use EventEspresso\core\domain\values\assets\StylesheetAsset;
@@ -20,6 +21,8 @@ use EventEspresso\core\services\collections\DuplicateCollectionIdentifierExcepti
  */
 abstract class BlockAssetManager extends AssetManager implements BlockAssetManagerInterface
 {
+
+    const JS_HANDLE_EDITOR = 'eventespresso-blocks';
 
     /**
      * @var string $editor_script_handle
@@ -158,17 +161,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
             $dependencies,
             ['wp-blocks']
         );
-        return $this
-            ->addJs($handle, $dependencies)->setRequiresTranslation()
-            ->setInlineDataCallback(
-                static function () {
-                    wp_add_inline_script(
-                        'eventespresso-core-app',
-                        "var eeDomain='blocks';",
-                        'before'
-                    );
-                }
-            );
+        return $this->addJs($handle, $dependencies)->setRequiresTranslation();
     }
 
 

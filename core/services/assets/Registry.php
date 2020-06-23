@@ -119,10 +119,10 @@ class Registry
         $this->i18n_registry = $i18n_registry;
         add_action('wp_enqueue_scripts', array($this, 'registerManifestFiles'), 1);
         add_action('admin_enqueue_scripts', array($this, 'registerManifestFiles'), 1);
-        add_action('wp_enqueue_scripts', array($this, 'registerScriptsAndStyles'), 3);
-        add_action('admin_enqueue_scripts', array($this, 'registerScriptsAndStyles'), 3);
-        add_action('wp_enqueue_scripts', array($this, 'enqueueData'), 4);
-        add_action('admin_enqueue_scripts', array($this, 'enqueueData'), 4);
+        add_action('wp_enqueue_scripts', array($this, 'registerScriptsAndStyles'), 4);
+        add_action('admin_enqueue_scripts', array($this, 'registerScriptsAndStyles'), 4);
+        add_action('wp_enqueue_scripts', array($this, 'enqueueData'), 5);
+        add_action('admin_enqueue_scripts', array($this, 'enqueueData'), 5);
         add_action('wp_print_footer_scripts', array($this, 'enqueueData'), 1);
         add_action('admin_print_footer_scripts', array($this, 'enqueueData'), 1);
     }
@@ -238,6 +238,7 @@ class Registry
      * Call back for the script print in frontend and backend.
      * Used to call wp_localize_scripts so that data can be added throughout the runtime until this later hook point.
      *
+     * @throws Exception
      * @since 4.9.31.rc.015
      */
     public function enqueueData()
@@ -609,9 +610,10 @@ class Registry
 
 
     /**
-     * @since 4.9.62.p
+     * @throws Exception
      * @throws InvalidArgumentException
      * @throws InvalidFilePathException
+     * @since 4.9.62.p
      */
     public function registerManifestFiles()
     {

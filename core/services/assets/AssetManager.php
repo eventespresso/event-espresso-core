@@ -60,6 +60,15 @@ abstract class AssetManager implements AssetManagerInterface
 
 
     /**
+     * @return AssetCollection
+     */
+    public function getAssets()
+    {
+        return $this->assets;
+    }
+
+
+    /**
      * @since 4.9.71.p
      * @return string
      */
