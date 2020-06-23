@@ -1,6 +1,5 @@
 import React from 'react';
 import Dotdotdot from 'react-dotdotdot';
-import { __ } from '@wordpress/i18n';
 
 import { InlineEdit, InlineEditPreviewProps } from '@infraUI/inputs';
 
@@ -14,7 +13,7 @@ const Preview: React.FC<InlineEditPreviewProps> = ({ isEditing, onRequestEdit, v
 
 	return (
 		<Dotdotdot clamp={3}>
-			<TabbableText onRequestEdit={onRequestEdit} text={value} />
+			<TabbableText onClick={onRequestEdit} text={value} />
 		</Dotdotdot>
 	);
 };

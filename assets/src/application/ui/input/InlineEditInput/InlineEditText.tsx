@@ -1,6 +1,5 @@
 import React from 'react';
 import Dotdotdot from 'react-dotdotdot';
-import { __ } from '@wordpress/i18n';
 
 import { InlineEdit, InlineEditPreviewProps } from '@infraUI/inputs';
 import { TextFit } from '@infraUI/layout/textfit';
@@ -13,7 +12,7 @@ const Preview: React.FC<InlineEditPreviewProps> = ({ fitText, isEditing, onReque
 		return null;
 	}
 
-	const textInput = <TabbableText onRequestEdit={onRequestEdit} text={value} />;
+	const textInput = <TabbableText onClick={onRequestEdit} text={value} />;
 
 	if (value.length > 30) {
 		return <Dotdotdot clamp={2}>{textInput}</Dotdotdot>;

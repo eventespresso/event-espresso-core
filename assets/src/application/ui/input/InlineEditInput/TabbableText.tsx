@@ -7,16 +7,16 @@ import { TabbableTextProps } from './types';
 
 import './style.scss'
 
-const TabbableText: React.FC<TabbableTextProps> = ({ onRequestEdit, text }) => {
+const TabbableText: React.FC<TabbableTextProps> = ({ onClick, text }) => {
     const onKeyDown = (e) => {
         if (e.keyCode === ENTER) {
-            onRequestEdit();
+            onClick();
         }
     };
 
     return (
         <Tooltip tooltip={__('Click to edit')}>
-            <span className="ee-tabbable-text" onClick={onRequestEdit} onKeyDown={onKeyDown} tabIndex={0}>{text}</span>
+            <span className="ee-tabbable-text" onClick={onClick} onKeyDown={onKeyDown} tabIndex={0}>{text}</span>
         </Tooltip>
     );
 };
