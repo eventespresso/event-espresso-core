@@ -1,4 +1,4 @@
-/* eslint-disable 
+/* eslint-disable
 no-unused-vars,
 no-native-reassign,
 no-global-assign,
@@ -7,7 +7,7 @@ no-var
 */
 /* global __webpack_public_path__ */
 declare var __webpack_public_path__: string;
-let assetsUrl = window?.eeEditorData?.assetsUrl;
+let assetsUrl = window?.eventEspressoData?.config?.coreDomain?.distributionAssetsUrl;
 
 // TODO add assetUrl to global data for all domains
 // temporary workaround

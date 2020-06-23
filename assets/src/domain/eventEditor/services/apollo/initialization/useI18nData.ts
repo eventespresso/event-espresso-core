@@ -1,5 +1,5 @@
 const useI18nData = (): any => {
-	return window?.eeEditorData?.i18n || {};
+	return window?.eventEspressoData?.i18n || {};
 };
 
 export default useI18nData;

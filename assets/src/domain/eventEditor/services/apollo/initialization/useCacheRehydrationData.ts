@@ -1,8 +1,8 @@
-import { EEEditorData } from '@edtrInterfaces/types';
+import { EditorData } from '@edtrInterfaces/types';
 
-const useCacheRehydrationData = (): EEEditorData => {
-	const { event, currentUser, generalSettings } = window?.eeEditorData || {};
-
+const useCacheRehydrationData = (): EditorData => {
+	const { currentUser, generalSettings } = window?.eventEspressoData?.config || {};
+	const { event } = window?.eventEspressoData?.eventEditor || {};
 	return { event, currentUser, generalSettings };
 };
 

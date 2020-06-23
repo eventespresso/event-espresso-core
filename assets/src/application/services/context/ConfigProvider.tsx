@@ -9,7 +9,7 @@ const ConfigContext = createContext<ConfigDataProps | null>(null);
 
 const { Provider, Consumer: ConfigConsumer } = ConfigContext;
 
-const ConfigProvider: React.FC = ({ children }) => {
+const ConfigProvider: React.FC = React.memo(({ children }) => {
 	const ConfigData = useConfigData();
 	const currentUser = useCurrentUser();
 	const generalSettings = useGeneralSettings();
@@ -21,6 +21,6 @@ const ConfigProvider: React.FC = ({ children }) => {
 	};
 
 	return <Provider value={config}>{children}</Provider>;
-};
+});
 
 export { ConfigProvider, ConfigConsumer, ConfigContext };

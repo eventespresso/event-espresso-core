@@ -5,7 +5,9 @@ import { mockEeJsData } from '../../../../../application/services/config/test/da
 
 const useDomTestData = (): void => {
 	// Set the DOM data
-	window.eeEditorData = { event, currentUser, generalSettings };
+	window.eventEspressoData.eventEditor.event = event;
+	window.eventEspressoData.config.currentUser = currentUser;
+	window.eventEspressoData.config.generalSettings = generalSettings;
 	window.eejsdata = { data: mockEeJsData };
 
 	// For Housekeeping
@@ -14,7 +16,7 @@ const useDomTestData = (): void => {
 		// when the context component is unmounted
 		// to avoid any unexpected results.
 		return (): void => {
-			delete window.eeEditorData;
+			delete window.eventEspressoData;
 			delete window.eejsdata;
 		};
 	}, []);

@@ -10,7 +10,6 @@ const useCurrentUser = (): CurrentUserProps => {
 		query: GET_CURRENT_USER,
 	};
 	const { data } = useCacheQuery<Viewer>(options);
-
 	return data?.viewer;
 };
 

@@ -1,4 +1,4 @@
-import type { EventEditorData } from '@edtrInterfaces/types';
+import type { EventEditorData } from './eventEditor/interfaces/types';
 import type { WpPluginsPageData } from './wpPluginsPage/types';
 import type {
 	CurrencyProps,
@@ -12,8 +12,9 @@ import type {
  * Contains the API related information
  */
 export interface ApiData {
-	nonce?: string;
-	restBaseUrl?: string;
+	restApiNonce?: string;
+	restApiBaseUrl?: string;
+	restApiRouteUrl?: string;
 	graphqlEndpoint?: string;
 }
 
@@ -55,9 +56,10 @@ export interface EventEspressoData {
 	assets: AssetsData;
 	blocks: null; // we don't need anything specific yet
 	config: ConfigData;
-	eventEditor: EventEditorData;
+	domain: string; // e.g. "eventEditor" || "wpPluginsPage"
+	eventEditor?: EventEditorData;
 	i18n: I18nData;
-	wpPluginsPage: WpPluginsPageData;
+	wpPluginsPage?: WpPluginsPageData;
 }
 
 declare global {
@@ -67,48 +69,48 @@ declare global {
 }
 
 // example data
-window.eventEspressoData = {
-	api: {
-		nonce: 'uyfrfyuk',
-		restBaseUrl: 'http://localhost/wp-json',
-		graphqlEndpoint: 'http://localhost/graphql',
-	},
-	assets: {
-		url: 'https://localhost/***/dist',
-	},
-	blocks: null,
-	config: {
-		currency: null,
-		currentUser: null,
-		generalSettings: {
-			dateFormat: 'F j, Y',
-			timeFormat: 'g:i a',
-			timezone: 'Asia/Dubai',
-		},
-		locale: {
-			user: 'en_US',
-			site: 'en_US',
-		},
-		siteUrl: {
-			admin: 'https://localhost/wp-admin',
-			home: 'https://localhost',
-		},
-	},
-	eventEditor: {
-		event: null,
-		datetimes: null,
-		relations: {},
-	},
-	i18n: {
-		'': {
-			domain: 'event_espresso',
-			lang: 'en_US',
-		},
-	},
-	wpPluginsPage: {
-		eeExitSurveyInfo: {
-			isModalActive: true,
-			typeFormUrl: 'https://...',
-		},
-	},
-};
+// window.eventEspressoData = {
+// 	api: {
+// 		nonce: 'uyfrfyuk',
+// 		restBaseUrl: 'http://localhost/wp-json',
+// 		graphqlEndpoint: 'http://localhost/graphql',
+// 	},
+// 	assets: {
+// 		url: 'https://localhost/***/dist',
+// 	},
+// 	blocks: null,
+// 	config: {
+// 		currency: null,
+// 		currentUser: null,
+// 		generalSettings: {
+// 			dateFormat: 'F j, Y',
+// 			timeFormat: 'g:i a',
+// 			timezone: 'Asia/Dubai',
+// 		},
+// 		locale: {
+// 			user: 'en_US',
+// 			site: 'en_US',
+// 		},
+// 		siteUrl: {
+// 			admin: 'https://localhost/wp-admin',
+// 			home: 'https://localhost',
+// 		},
+// 	},
+// 	eventEditor: {
+// 		event: null,
+// 		datetimes: null,
+// 		relations: {},
+// 	},
+// 	i18n: {
+// 		'': {
+// 			domain: 'event_espresso',
+// 			lang: 'en_US',
+// 		},
+// 	},
+// 	wpPluginsPage: {
+// 		eeExitSurveyInfo: {
+// 			isModalActive: true,
+// 			typeFormUrl: 'https://...',
+// 		},
+// 	},
+// };
