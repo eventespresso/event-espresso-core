@@ -27,8 +27,8 @@ class JsonWpOptionManager
     {
         $option = get_option($obj->getWpOptionName());
         if ($option) {
-            $json = json_decode($option);
-            if (is_array($json) || $json instanceof stdClass) {
+            $json = json_decode($option, false);
+            if ($json instanceof stdClass) {
                 return $obj->fromJsonSerializedData($json);
             }
         }
