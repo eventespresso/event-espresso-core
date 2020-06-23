@@ -14,5 +14,13 @@
 }
 
 .ee-tabbable-text {
+	border-radius: var(--ee-border-radius-small);
+	border-width: 3px;
 	padding: var(--ee-padding-micro) var(--ee-padding-small);
+
+	&:active,
+	&:focus {
+		border-width: 3px;
+		border-color: var(--ee-color-primary);
+	}
 }
