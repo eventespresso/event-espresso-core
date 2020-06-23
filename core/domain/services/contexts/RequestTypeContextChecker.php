@@ -108,7 +108,7 @@ class RequestTypeContextChecker extends ContextChecker implements RequestTypeCon
      */
     public function isOtherAjax()
     {
-        return $this->request_type->slug() === RequestTypeContext::AJAX_OTHER;
+        return $this->request_type->slug() === RequestTypeContext::AJAX_OTHER && ! $this->isActivation();
     }
 
     /**
@@ -118,7 +118,7 @@ class RequestTypeContextChecker extends ContextChecker implements RequestTypeCon
      */
     public function isApi()
     {
-        return $this->request_type->slug() === RequestTypeContext::API;
+        return $this->request_type->slug() === RequestTypeContext::API && ! $this->isActivation();
     }
 
 
@@ -129,7 +129,7 @@ class RequestTypeContextChecker extends ContextChecker implements RequestTypeCon
      */
     public function isCli()
     {
-        return $this->request_type->slug() === RequestTypeContext::CLI;
+        return $this->request_type->slug() === RequestTypeContext::CLI && ! $this->isActivation();
     }
 
 
@@ -140,7 +140,7 @@ class RequestTypeContextChecker extends ContextChecker implements RequestTypeCon
      */
     public function isCron()
     {
-        return $this->request_type->slug() === RequestTypeContext::CRON;
+        return $this->request_type->slug() === RequestTypeContext::CRON && ! $this->isActivation();
     }
 
 
@@ -151,7 +151,7 @@ class RequestTypeContextChecker extends ContextChecker implements RequestTypeCon
      */
     public function isFeed()
     {
-        return $this->request_type->slug() === RequestTypeContext::FEED;
+        return $this->request_type->slug() === RequestTypeContext::FEED && ! $this->isActivation();
     }
 
 
@@ -162,7 +162,7 @@ class RequestTypeContextChecker extends ContextChecker implements RequestTypeCon
      */
     public function isFrontend()
     {
-        return $this->request_type->slug() === RequestTypeContext::FRONTEND;
+        return $this->request_type->slug() === RequestTypeContext::FRONTEND && ! $this->isActivation();
     }
 
 
@@ -173,7 +173,7 @@ class RequestTypeContextChecker extends ContextChecker implements RequestTypeCon
      */
     public function isFrontAjax()
     {
-        return $this->request_type->slug() === RequestTypeContext::AJAX_FRONT;
+        return $this->request_type->slug() === RequestTypeContext::AJAX_FRONT && ! $this->isActivation();
     }
 
 
@@ -184,7 +184,7 @@ class RequestTypeContextChecker extends ContextChecker implements RequestTypeCon
      */
     public function isGQL()
     {
-        return $this->request_type->slug() === RequestTypeContext::GQL;
+        return $this->request_type->slug() === RequestTypeContext::GQL && ! $this->isActivation();
     }
 
 
@@ -195,7 +195,7 @@ class RequestTypeContextChecker extends ContextChecker implements RequestTypeCon
      */
     public function isIframe()
     {
-        return $this->request_type->slug() === RequestTypeContext::IFRAME;
+        return $this->request_type->slug() === RequestTypeContext::IFRAME && ! $this->isActivation();
     }
 
 
@@ -217,7 +217,7 @@ class RequestTypeContextChecker extends ContextChecker implements RequestTypeCon
      */
     public function isWordPressApi()
     {
-        return $this->request_type->slug() === RequestTypeContext::WP_API;
+        return $this->request_type->slug() === RequestTypeContext::WP_API && ! $this->isActivation();
     }
 
 
@@ -228,7 +228,7 @@ class RequestTypeContextChecker extends ContextChecker implements RequestTypeCon
      */
     public function isWordPressHeartbeat()
     {
-        return $this->request_type->slug() === RequestTypeContext::AJAX_HEARTBEAT;
+        return $this->request_type->slug() === RequestTypeContext::AJAX_HEARTBEAT && ! $this->isActivation();
     }
 
 

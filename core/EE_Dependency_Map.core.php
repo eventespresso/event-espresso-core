@@ -737,6 +737,11 @@ class EE_Dependency_Map
             'EventEspresso\core\services\json\JsonDataNodeHandler' => [
                 'EventEspresso\core\services\json\JsonDataNodeValidator' => EE_Dependency_Map::load_from_cache,
             ],
+            'EventEspresso\core\domain\services\assets\EspressoCoreAppAssetManager' => [
+                'EventEspresso\core\domain\Domain'                   => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\assets\AssetCollection' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\assets\Registry'        => EE_Dependency_Map::load_from_cache,
+            ],
         ];
     }
 
