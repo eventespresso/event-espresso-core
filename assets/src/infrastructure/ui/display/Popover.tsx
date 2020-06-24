@@ -8,7 +8,7 @@ import {
 	PopoverBody,
 	PopoverArrow,
 	PopoverCloseButton,
-} from '@chakra-ui/core';
+} from '@chakra-ui/popover';
 
 interface PopoverProps {
 	content: React.ReactNode;
