@@ -1,14 +1,17 @@
 import { useEffect } from 'react';
 import { event, currentUser, generalSettings } from './data';
+import type { EventEditorDomData } from '../../../interfaces/types';
 
-import { mockEeJsData } from '../../../../../application/services/config/test/data';
+import { mockEspressoDomData } from '../../../../../application/services/config/test/data';
 
 const useDomTestData = (): void => {
 	// Set the DOM data
-	window.eventEspressoData.eventEditor.event = event;
-	window.eventEspressoData.config.currentUser = currentUser;
-	window.eventEspressoData.config.generalSettings = generalSettings;
-	window.eejsdata = { data: mockEeJsData };
+	const eventEspressoData: EventEditorDomData = {
+		...mockEspressoDomData,
+		eventEditor: { event },
+	};
+	eventEspressoData.config.currentUser = currentUser;
+	eventEspressoData.config.generalSettings = generalSettings;
 
 	// For Housekeeping
 	useEffect(() => {
@@ -17,7 +20,6 @@ const useDomTestData = (): void => {
 		// to avoid any unexpected results.
 		return (): void => {
 			delete window.eventEspressoData;
-			delete window.eejsdata;
 		};
 	}, []);
 };
