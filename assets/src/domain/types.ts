@@ -1,64 +1,12 @@
 import type { EventEditorData } from './eventEditor/interfaces/types';
 import type { WpPluginsPageData } from './wpPluginsPage/types';
-import type {
-	CurrencyProps,
-	CurrentUserProps,
-	GeneralSettings,
-	LocaleProps,
-	SiteUrlProps,
-} from '@application/valueObjects/config/types';
-
-/**
- * Contains the API related information
- */
-export interface ApiData {
-	restApiNonce?: string;
-	restApiBaseUrl?: string;
-	restApiRouteUrl?: string;
-	graphqlEndpoint?: string;
-}
-
-/**
- * This can contain asset information like
- * - base URL to assets directory
- * - URLs to specific images like brand images etc.
- */
-export interface AssetsData {
-	url: string; // URL to assets directory
-}
-
-export interface ConfigData {
-	// Better to name the type as "Currency" instead of "CurrencyProps"
-	currency?: CurrencyProps;
-	// Better to name the type as "CurrentUser" or just "User" instead of "CurrentUserProps"
-	currentUser?: CurrentUserProps;
-	generalSettings?: GeneralSettings;
-	locale?: LocaleProps;
-	siteUrl?: SiteUrlProps;
-}
-
-export interface I18nInfo {
-	domain: string; // e.g. "event_espresso"
-	lang: string; // e.g. "en_US"
-	plural_forms?: string;
-}
-
-export type I18nData = {
-	'': I18nInfo;
-	[key: string]: any; // translation strings
-};
+import { EventEspressoDomData } from '@application/DomDataTypes';
 
 /**
  * This is the global object
  */
-export interface EventEspressoData {
-	api: ApiData;
-	assets: AssetsData;
-	blocks: null; // we don't need anything specific yet
-	config: ConfigData;
-	domain: string; // e.g. "eventEditor" || "wpPluginsPage"
+export interface EventEspressoData extends EventEspressoDomData {
 	eventEditor?: EventEditorData;
-	i18n: I18nData;
 	wpPluginsPage?: WpPluginsPageData;
 }
 

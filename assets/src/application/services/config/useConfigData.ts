@@ -11,7 +11,8 @@ import {
 	Timezone,
 	TimezoneProps,
 } from '../../valueObjects/config';
-import { ApiDomData, ConfigDataProps, ConfigDomData } from './types';
+import { ConfigDataProps } from './types';
+import { ApiDomData, ConfigDomData } from '../../DomDataTypes';
 
 export const useConfigData = (): ConfigDataProps => {
 	const api: ApiDomData = window?.eventEspressoData?.api;

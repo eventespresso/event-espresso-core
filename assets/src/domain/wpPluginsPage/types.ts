@@ -1,4 +1,4 @@
-import { EventEspressoDomData } from '../../application/services/config/types';
+import { EventEspressoDomData } from '../../application/DomDataTypes';
 
 export interface WpPluginsPageData {
 	eeExitSurveyInfo: ExitSurveyInfo;
