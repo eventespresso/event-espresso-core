@@ -52,10 +52,23 @@ export const relationalData: RelationalData = {
 
 // Add only what's needed
 export const event: EventData = {
+	cacheId: '',
 	dbId: eventId,
 	datetimes: datetimesEdge,
 	tickets: ticketsEdge,
 	prices: pricesEdge,
 	priceTypes: priceTypesEdge,
 	relations: relationalData,
+	description: '',
+	id: '',
+	isActive: true,
+	isCancelled: false,
+	isExpired: false,
+	isInactive: false,
+	isPostponed: false,
+	isSoldOut: false,
+	isUpcoming: false,
+	name: '',
+	order: 1,
+	shortDescription: '',
 };
