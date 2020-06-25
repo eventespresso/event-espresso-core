@@ -18,8 +18,9 @@ const Preview: React.FC<InlineEditPreviewProps> = ({ isEditing, onRequestEdit, v
 	);
 };
 
-const InlineEditTextArea: React.FC<TextAreaProps> = ({ ...props }) => {
-	return <InlineEdit placeholder='' {...props} inputType='textarea' Preview={Preview} />;
+const InlineEditTextArea: React.FC<TextAreaProps> = ({ tooltip, ...props }) => {
+	const preview = previewProps => <Preview {...previewProps} tooltip={tooltip} />
+	return <InlineEdit placeholder='' {...props} inputType='textarea' Preview={preview} />;
 };
 
 export default InlineEditTextArea;

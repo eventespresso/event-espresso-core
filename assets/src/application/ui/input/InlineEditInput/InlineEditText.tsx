@@ -7,12 +7,12 @@ import { TextFit } from '@infraUI/layout/textfit';
 import TabbableText from './TabbableText'
 import { TextProps } from './types';
 
-const Preview: React.FC<InlineEditPreviewProps> = ({ fitText, isEditing, onRequestEdit, value }) => {
+const Preview: React.FC<InlineEditPreviewProps> = ({ fitText, isEditing, onRequestEdit, tooltip, value }) => {
 	if (isEditing) {
 		return null;
 	}
 
-	const textInput = <TabbableText onRequestEdit={onRequestEdit} text={value} />;
+	const textInput = <TabbableText onRequestEdit={onRequestEdit} text={value} tooltip={tooltip} />;
 
 	if (value.length > 30) {
 		return <Dotdotdot clamp={2}>{textInput}</Dotdotdot>;
@@ -33,14 +33,14 @@ const Preview: React.FC<InlineEditPreviewProps> = ({ fitText, isEditing, onReque
 	return textInput;
 };
 
-const InlineEditText: React.FC<TextProps> = ({ fitText = true, placeholder = '', tag: as, ...props }) => {
+const InlineEditText: React.FC<TextProps> = ({ fitText = true, placeholder = '', tag: as, tooltip, ...props }) => {
 	return (
 		<InlineEdit
 			{...props}
 			as={as}
 			inputType='text'
 			placeholder={placeholder}
-			Preview={(previewProps) => <Preview {...previewProps} fitText={fitText} />}
+			Preview={(previewProps) => <Preview {...previewProps} fitText={fitText} tooltip={tooltip} />}
 		/>
 	);
 };

@@ -14,6 +14,7 @@ export interface InlineEditPreviewProps extends Partial<Omit<InlineEditProps, 'o
 	fitText?: boolean;
 	isEditing?: boolean;
 	onRequestEdit?: VoidFunction;
+	tooltip?: string;
 }
 
 export interface InlineEditInputProps extends Pick<InlineEditProps, 'inputType'> {
