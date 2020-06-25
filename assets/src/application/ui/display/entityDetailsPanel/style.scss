@@ -3,7 +3,7 @@
  * © 2018 Event Espresso
  * ------------------------------------------------------------------------- */
 
-@import 'application/ui/styles/mixins/breakpoints.scss';
+@import "application/ui/styles/mixins/breakpoints.scss";
 
 .ee-entity-details-panel-div {
 	align-self: flex-start;
@@ -37,13 +37,6 @@
 	.ee-inline-edit-text {
 		font-size: var(--ee-font-size-big);
 		line-height: var(--ee-font-size-big);
-
-		&.ee-infinity-sign {
-			color: var(--ee-default-text-color);
-			font-size: var(--ee-font-size-bigger);
-			line-height: 0.9;
-			vertical-align: middle;
-		}
 	}
 
 	.ee-entity-details-div {

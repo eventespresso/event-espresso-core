@@ -1,3 +1,5 @@
+import './style.scss'
+
 export { default as InlineEditText } from './InlineEditText';
 
 export { default as InlineEditTextArea } from './InlineEditTextArea';
