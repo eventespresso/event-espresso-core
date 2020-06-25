@@ -7,20 +7,25 @@ import { IconProps } from '../types';
 
 import './style.scss';
 
-const HelpIcon = forwardRef<IconProps, any>(({ clickable, tooltipText, ...props }, ref) => {
-	const className = classNames('ee-help-icon', props.className);
+interface HelpIconProps extends IconProps {
+    clickable?: boolean;
+    tooltipText?: string;
+}
 
-	if (clickable) {
-		return (
-			<ClickableIconWithTooltip
-				className={className}
-				icon={InfoCircleOutlined}
-				tooltipText={tooltipText}
-			/>
-		);
-	};
+const HelpIcon: React.FC<HelpIconProps> = ({ clickable, tooltipText, ...props }) => {
+    const className = classNames('ee-help-icon', props.className);
 
-	return <InfoCircleOutlined {...props} className={className} ref={ref} />;
-});
+    if (clickable) {
+        return (
+            <ClickableIconWithTooltip
+                className={className}
+                icon={InfoCircleOutlined}
+                tooltipText={tooltipText}
+            />
+        );
+    };
+
+    return <InfoCircleOutlined className={className} />;
+};
 
 export default HelpIcon;

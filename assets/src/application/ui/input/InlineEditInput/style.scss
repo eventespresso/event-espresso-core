@@ -8,14 +8,6 @@
 			outline: none;
 		}
 
-		&.ee-infinity-sign:hover {
-			svg {
-				path {
-					fill: var(--ee-color-primary);
-				}
-			}
-		}
-
 		&.ee-infinity-sign {
 			color: var(--ee-default-text-color);
 			font-size: var(--ee-font-size-bigger);
@@ -25,23 +17,45 @@
 			height: 2.625rem; // 42px
 			width: 2.625rem; // 42px
 
+			.ee-rspnsv-table & {
+				height: auto;
+				width: auto;
+				padding-bottom: 0;
+				padding-top: 0;
+			}
+
+			&:hover {
+				svg {
+					path {
+						fill: var(--ee-color-primary);
+					}
+				}
+			}
+
 			svg {
 				margin: 0;
+
+				.ee-rspnsv-table & {
+					max-width: 20px;
+				}
 			}
 		}
 	}
 }
 
 .ee-tabbable-text {
+	border-color: var(--ee-background-color); // essentially no border by default
 	border-radius: var(--ee-border-radius-small);
 	border-width: 3px;
+	box-shadow: none !important;
 	cursor: pointer;
 	display: inline-flex;
+	outline: none !important;
+	margin-top: calc(var(--ee-margin-tiny) * -1); // to offset border & padding of input
 	padding: var(--ee-padding-micro);
 
 	&:hover {
 		border-color: var(--ee-color-primary-low-contrast);
-		box-shadow: none !important;
 		color: var(--ee-color-primary-high-contrast);
 	}
 

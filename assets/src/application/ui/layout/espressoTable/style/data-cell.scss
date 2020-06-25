@@ -1,0 +1,17 @@
+.ee-rspnsv-table-body td {
+	.ee-date-list-col-capacity,
+	.ee-ticket-list-col-quantity {
+		height: 2.625rem; // 42px
+
+		.ee-rspnsv-table-long-label {
+			padding-top: 6px;
+		}
+	}
+
+	.ee-ticket-list-col-quantity {
+		// TODO: make consistent with datetime label structure
+		.ee-rspnsv-table-mobile-only-column-header {
+			padding-top: 6px;
+		}
+	}
+}
