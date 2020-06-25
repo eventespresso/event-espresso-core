@@ -10,10 +10,7 @@
 
 		&.ee-infinity-sign {
 			color: var(--ee-default-text-color);
-			font-size: var(--ee-font-size-bigger);
-			line-height: 0.9;
-			padding: var(--ee-padding-micro);
-
+			font-size: calc(var(--ee-font-size-default) * 1.75);
 			height: 2.625rem; // 42px
 			width: 2.625rem; // 42px
 
