@@ -1,6 +1,7 @@
-import HelpIcon from '@appDisplay/icons/HelpIcon';
+import { InfoCircleOutlined } from '@appDisplay/icons/svgs';
 
 export interface ClickableIconWithTooltipProps {
-	icon: typeof HelpIcon;
+	className?: string;
+	icon: typeof InfoCircleOutlined;
 	tooltipText: string;
 }
