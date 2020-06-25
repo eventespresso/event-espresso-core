@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import { useDisclosure } from '@chakra-ui/core';
+import { useDisclosure } from '@chakra-ui/hooks';
 import { __ } from '@wordpress/i18n';
 
 import { AlertDialog } from '@infraUI/display';

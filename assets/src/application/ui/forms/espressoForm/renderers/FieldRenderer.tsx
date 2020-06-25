@@ -2,9 +2,8 @@ import React from 'react';
 import classNames from 'classnames';
 
 import { FormControl, FormHelperText, FormLabel } from '@infraUI/forms';
-import { InfoCircleOutlined } from '@appDisplay/icons/svgs';
+import { HelpIcon } from '@appDisplay/icons';
 import { reactFinalFormField } from '@application/services/utilities/memo';
-import { Tooltip } from '@infraUI/display';
 
 import ErrorMessage from './ErrorMessage';
 import { FieldRendererProps } from '../types';
@@ -38,11 +37,7 @@ const FieldRenderer: React.FC<FieldRendererProps> = (props) => {
 		<FormControl className={className} isInvalid={Boolean(errorMessage)} isRequired={required}>
 			<FormLabel htmlFor={props.input.name}>
 				{label}
-				{info && (
-					<Tooltip placement='right' tooltip={info}>
-						<InfoCircleOutlined />
-					</Tooltip>
-				)}
+				{info && <HelpIcon clickable tooltipText={info} />}
 			</FormLabel>
 			{before}
 			<MappedField aria-label={label} aria-describedby={tooltipKey} {...rest} />

@@ -23,7 +23,9 @@ const EditableName: React.FC<EditableNameProps> = ({ className, entity: ticket, 
 		[ticket.cacheId]
 	);
 
-	const ticketName = ticket.name ? ticket.name : __('Edit title...');
+	const tooltip = __('Click to edit title...');
+
+	const ticketName = ticket.name || tooltip;
 
 	return (
 		<InlineEditText
@@ -31,6 +33,7 @@ const EditableName: React.FC<EditableNameProps> = ({ className, entity: ticket, 
 			tag={view === 'table' ? 'p' : 'h4'}
 			className={className}
 			onChangeValue={onChangeName}
+			tooltip={tooltip}
 			value={ticketName}
 		/>
 	);

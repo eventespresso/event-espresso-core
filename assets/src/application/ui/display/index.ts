@@ -12,5 +12,6 @@ export * from './entityDetailsPanel';
 export * from './icons';
 export * from './loadingNotice';
 export * from './EntityIDs';
+export * from './Tooltip';
 export * from './withLabel';
 export * from './withTooltip';

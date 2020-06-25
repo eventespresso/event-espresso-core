@@ -1,6 +1,6 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
-import { useDisclosure } from '@chakra-ui/core';
+import { useDisclosure } from '@chakra-ui/hooks';
 
 import { Copy } from '@application/ui/layout/entityActionsMenu/entityMenuItems';
 import { DropdownMenu, DropdownToggleProps } from '@application/ui/layout';
@@ -16,7 +16,6 @@ const TicketMainMenu: React.FC<TicketMainMenuProps> = ({ ticket }) => {
 	const { copyTicket, trashTicket, trashed } = useActions({ ticketId: ticket.id });
 
 	const { isOpen, onClose, onOpen: onOpenEditModal } = useDisclosure();
-
 
 	const title = trashed ? __('Permanently delete Ticket?') : __('Move Ticket to Trash?');
 	const message = trashed
