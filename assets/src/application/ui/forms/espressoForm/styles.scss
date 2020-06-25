@@ -1,4 +1,4 @@
-@import 'application/ui/styles/mixins/breakpoints.scss';
+@import "application/ui/styles/mixins/breakpoints.scss";
 
 .ee-form {
 	.form-wrapper {
@@ -139,11 +139,14 @@
 				padding-right: var(--ee-padding-big);
 				width: 50%;
 
-				label:first-child {
-					align-items: center;
-					display: flex;
-					padding: var(--ee-padding-nano) var(--ee-padding-smaller) 0 0;
-					min-width: 200px;
+				label {
+					cursor: default;
+					&:first-child {
+						align-items: center;
+						display: flex;
+						padding: var(--ee-padding-nano) var(--ee-padding-smaller) 0 0;
+						min-width: 200px;
+					}
 				}
 
 				> div {
@@ -212,11 +215,6 @@
 				@include max360px {
 					width: 100%;
 				}
-			}
-
-			.ee-icon--info-circle-outlined {
-				color: var(--ee-color-primary-low-contrast);
-				margin: 0 var(--ee-margin-tiny);
 			}
 		}
 
