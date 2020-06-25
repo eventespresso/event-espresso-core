@@ -1,0 +1,14 @@
+.ee-popover {
+	&__content {
+		padding: var(--ee-padding-small);
+
+		&:focus {
+			outline: 0;
+			box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.6);
+		}
+
+		.chakra-popover__arrow {
+			display: none;
+		}
+	}
+}

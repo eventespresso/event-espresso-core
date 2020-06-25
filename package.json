@@ -54,6 +54,8 @@
 	"dependencies": {
 		"@apollo/react-hooks": "^3.1.5",
 		"@chakra-ui/core": "^0.8.0",
+		"@chakra-ui/popover": "^1.0.0-next.2",
+		"@chakra-ui/system": "^1.0.0-next.2",
 		"@emotion/core": "^10.0.28",
 		"@emotion/styled": "^10.0.27",
 		"@typeform/embed": "^0.20.0",
