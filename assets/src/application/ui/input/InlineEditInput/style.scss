@@ -8,14 +8,6 @@
 			outline: none;
 		}
 
-		&.ee-infinity-sign:hover {
-			svg {
-				path {
-					fill: var(--ee-color-primary);
-				}
-			}
-		}
-
 		&.ee-infinity-sign {
 			color: var(--ee-default-text-color);
 			font-size: var(--ee-font-size-bigger);
@@ -25,8 +17,27 @@
 			height: 2.625rem; // 42px
 			width: 2.625rem; // 42px
 
+			.ee-rspnsv-table & {
+				height: auto;
+				width: auto;
+				padding-bottom: 0;
+				padding-top: 0;
+			}
+
+			&:hover {
+				svg {
+					path {
+						fill: var(--ee-color-primary);
+					}
+				}
+			}
+
 			svg {
 				margin: 0;
+
+				.ee-rspnsv-table & {
+					max-width: 20px;
+				}
 			}
 		}
 	}

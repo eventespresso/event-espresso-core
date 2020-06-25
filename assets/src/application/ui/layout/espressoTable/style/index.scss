@@ -3,7 +3,9 @@
  * © 2020 Event Espresso
  * ------------------------------------------------------------------------- */
 
-@import 'application/ui/styles/mixins/breakpoints.scss';
+@import "application/ui/styles/mixins/breakpoints.scss";
+@import "./row.scss";
+@import "./data-cell.scss";
 
 .ee-rspnsv-table {
 	border-collapse: separate !important;
@@ -45,19 +47,6 @@
 	}
 
 	.ee-rspnsv-table-body {
-		tr {
-			background: var(--ee-background-color);
-			height: 3.5rem;
-
-			&:nth-child(even) {
-				background: var(--ee-color-grey-15);
-			}
-
-			&:hover {
-				background: var(--ee-color-grey-13);
-			}
-		}
-
 		.ee-centered-column {
 			.ee-rspnsv-table-mobile-only-column-value {
 				display: inline-flex;
@@ -71,11 +60,6 @@
 				justify-content: center;
 			}
 		}
-	}
-
-	.ee-rspnsv-table-body .ee-rspnsv-table-body-row,
-	.ee-rspnsv-table-footer .ee-rspnsv-table-footer-row {
-		box-sizing: border-box;
 	}
 
 	.ee-rspnsv-table-header .ee-rspnsv-table-header-th,
@@ -144,38 +128,38 @@
 	.ee-rspnsv-table-header .ee-rspnsv-table-header-th.ee-number-column,
 	.ee-rspnsv-table-body .ee-rspnsv-table-body-td.ee-number-column,
 	.ee-rspnsv-table-footer .ee-rspnsv-table-footer-th.ee-number-column,
-	.ee-rspnsv-table-header .ee-rspnsv-table-header-th.ee-number-column input[type='text'] {
+	.ee-rspnsv-table-header .ee-rspnsv-table-header-th.ee-number-column input[type="text"] {
 		text-align: right;
 	}
 
 	.ee-rspnsv-table-body {
-		.ee-rspnsv-table-body-th.ee-number-column input[type='text'],
-		.ee-rspnsv-table-body-td.ee-number-column input[type='text'] {
+		.ee-rspnsv-table-body-th.ee-number-column input[type="text"],
+		.ee-rspnsv-table-body-td.ee-number-column input[type="text"] {
 			text-align: right;
 		}
 	}
 
 	.ee-rspnsv-table-footer {
-		.ee-rspnsv-table-footer-th.ee-number-column input[type='text'],
-		.ee-rspnsv-table-footer-td.ee-number-column input[type='text'] {
+		.ee-rspnsv-table-footer-th.ee-number-column input[type="text"],
+		.ee-rspnsv-table-footer-td.ee-number-column input[type="text"] {
 			text-align: right;
 		}
 	}
 
-	.ee-rspnsv-table-header .ee-rspnsv-table-header-th.ee-number-column input[type='number'] {
+	.ee-rspnsv-table-header .ee-rspnsv-table-header-th.ee-number-column input[type="number"] {
 		text-align: right;
 	}
 
 	.ee-rspnsv-table-body {
-		.ee-rspnsv-table-body-th.ee-number-column input[type='number'],
-		.ee-rspnsv-table-body-td.ee-number-column input[type='number'] {
+		.ee-rspnsv-table-body-th.ee-number-column input[type="number"],
+		.ee-rspnsv-table-body-td.ee-number-column input[type="number"] {
 			text-align: right;
 		}
 	}
 
 	.ee-rspnsv-table-footer {
-		.ee-rspnsv-table-footer-th.ee-number-column input[type='number'],
-		.ee-rspnsv-table-footer-td.ee-number-column input[type='number'] {
+		.ee-rspnsv-table-footer-th.ee-number-column input[type="number"],
+		.ee-rspnsv-table-footer-td.ee-number-column input[type="number"] {
 			text-align: right;
 		}
 	}
@@ -213,12 +197,6 @@
 
 	.ee-status-stripe-div {
 		width: 100%;
-	}
-
-	.ee-infinity-sign {
-		font-size: var(--ee-font-size-big);
-		line-height: var(--ee-font-size-small);
-		vertical-align: initial;
 	}
 
 	.ee-drop-down-menu,
