@@ -1,4 +1,5 @@
 import React from 'react';
+import classNames from 'classnames';
 import { ENTER } from '@wordpress/keycodes';
 import { __ } from '@wordpress/i18n';
 
@@ -7,7 +8,9 @@ import { TabbableTextProps } from './types';
 
 import './style.scss'
 
-const TabbableText: React.FC<TabbableTextProps> = ({ onRequestEdit, text }) => {
+const TabbableText: React.FC<TabbableTextProps> = ({ onRequestEdit, icon, text, ...props }) => {
+    const className = classNames('ee-tabbable-text', props.className);
+
     const onKeyDown = (e) => {
         if (e.keyCode === ENTER) {
             onRequestEdit();
@@ -16,7 +19,15 @@ const TabbableText: React.FC<TabbableTextProps> = ({ onRequestEdit, text }) => {
 
     return (
         <Tooltip tooltip={__('Click to edit')}>
-            <span className="ee-tabbable-text" onClick={onRequestEdit} onKeyDown={onKeyDown} tabIndex={0}>{text}</span>
+            <span
+                className={className}
+                onClick={onRequestEdit}
+                onKeyDown={onKeyDown}
+                tabIndex={0}
+            >
+                {icon && icon}
+                {text && text}
+            </span>
         </Tooltip>
     );
 };

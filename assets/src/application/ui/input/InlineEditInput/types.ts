@@ -8,6 +8,8 @@ export interface TextProps extends Omit<InlineEditProps, 'inputType'> {
 }
 
 export interface TabbableTextProps {
+	className?: string;
+	icon?: React.ReactNode;
 	onRequestEdit: VoidFunction;
-	text: string;
+	text?: string;
 }

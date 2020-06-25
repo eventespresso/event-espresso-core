@@ -2,13 +2,16 @@ import React, { useCallback } from 'react';
 import classNames from 'classnames';
 
 import parseInfinity from '@appServices/utilities/number/parseInfinity';
+import { Infinity } from '@appDisplay/icons/svgs';
 import { InlineEdit, InlineEditPreviewProps } from '@infraUI/inputs';
-import { TextProps } from './types';
 import { isInfinite } from '@application/services';
+
+import TabbableText from './TabbableText'
+import { TextProps } from './types';
 
 const Preview: React.FC<InlineEditPreviewProps> = ({ value, onRequestEdit, isEditing }) => {
 	const isInfinity = isInfinite(value);
-	const classeName = classNames({
+	const className = classNames('ee-inline-edit__infinity', {
 		'ee-infinity-sign': isInfinity,
 	});
 
@@ -16,13 +19,7 @@ const Preview: React.FC<InlineEditPreviewProps> = ({ value, onRequestEdit, isEdi
 		return null;
 	}
 
-	let output = isInfinity ? '∞' : value;
-
-	return (
-		<span className={classeName} onClick={onRequestEdit}>
-			{output}
-		</span>
-	);
+	return <TabbableText className={className} icon={isInfinity && <Infinity />} onRequestEdit={onRequestEdit} text={!isInfinity && value} />;
 };
 
 const InlineEditInfinity: React.FC<TextProps> = ({ onChangeValue, value, ...rest }) => {

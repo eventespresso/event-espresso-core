@@ -1,18 +1,53 @@
 .ee-inline-edit {
-	&:focus,
-	&.ee-infinity-sign:focus {
-		color: var(--ee-color-primary-low-contrast) !important;
-		outline: none;
-	}
+	&__infinity {
+		margin-bottom: -10px; // temp hack, to be fixed by rethinking entire entity details flow and positioning
 
-	&.ee-infinity-sign {
-		color: var(--ee-default-text-color);
-		font-size: var(--ee-font-size-bigger);
-		line-height: 0.9;
-		vertical-align: middle;
+		&:focus,
+		&.ee-infinity-sign:focus {
+			color: var(--ee-color-primary-low-contrast) !important;
+			outline: none;
+		}
+
+		&.ee-infinity-sign:hover {
+			svg {
+				path {
+					fill: var(--ee-color-primary);
+				}
+			}
+		}
+
+		&.ee-infinity-sign {
+			color: var(--ee-default-text-color);
+			font-size: var(--ee-font-size-bigger);
+			line-height: 0.9;
+			padding: var(--ee-padding-micro);
+
+			height: 2.625rem; // 42px
+			width: 2.625rem; // 42px
+
+			svg {
+				margin: 0;
+			}
+		}
 	}
 }
 
 .ee-tabbable-text {
-	padding: var(--ee-padding-micro) var(--ee-padding-small);
+	border-radius: var(--ee-border-radius-small);
+	border-width: 3px;
+	cursor: pointer;
+	display: inline-flex;
+	padding: var(--ee-padding-micro);
+
+	&:hover {
+		border-color: var(--ee-color-primary-low-contrast);
+		box-shadow: none !important;
+		color: var(--ee-color-primary-high-contrast);
+	}
+
+	&:active,
+	&:focus {
+		border-width: 3px;
+		border-color: var(--ee-color-primary);
+	}
 }
