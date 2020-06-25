@@ -4,7 +4,7 @@ import { ENTER } from '@wordpress/keycodes';
 import { __ } from '@wordpress/i18n';
 
 import { Tooltip } from '@infraUI/display';
-import { TabbableTextProps } from './types';
+import { TabbableTextProps } from '../types';
 
 import './style.scss'
 

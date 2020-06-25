@@ -1,0 +1,23 @@
+.ee-tabbable-text {
+	align-items: center;
+	border-color: var(--ee-background-color); // essentially no border by default
+	border-radius: var(--ee-border-radius-small);
+	border-width: 3px;
+	cursor: pointer;
+	display: inline-flex;
+	justify-content: center;
+	outline: none !important;
+	margin-top: calc(var(--ee-margin-tiny) * -1); // to offset border & padding of input
+	padding: var(--ee-padding-micro);
+
+	&:hover {
+		border-color: var(--ee-color-primary-low-contrast);
+		color: var(--ee-color-primary-high-contrast);
+	}
+
+	&:active,
+	&:focus {
+		border-width: 3px;
+		border-color: var(--ee-color-primary);
+	}
+}

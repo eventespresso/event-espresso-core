@@ -10,16 +10,11 @@
 
 		&.ee-infinity-sign {
 			color: var(--ee-default-text-color);
-			font-size: var(--ee-font-size-bigger);
-			line-height: 0.9;
-			padding: var(--ee-padding-micro);
-
+			font-size: calc(var(--ee-font-size-default) * 1.75);
 			height: 2.625rem; // 42px
 			width: 2.625rem; // 42px
 
 			.ee-rspnsv-table & {
-				height: auto;
-				width: auto;
 				padding-bottom: 0;
 				padding-top: 0;
 			}
@@ -40,28 +35,5 @@
 				}
 			}
 		}
-	}
-}
-
-.ee-tabbable-text {
-	border-color: var(--ee-background-color); // essentially no border by default
-	border-radius: var(--ee-border-radius-small);
-	border-width: 3px;
-	box-shadow: none !important;
-	cursor: pointer;
-	display: inline-flex;
-	outline: none !important;
-	margin-top: calc(var(--ee-margin-tiny) * -1); // to offset border & padding of input
-	padding: var(--ee-padding-micro);
-
-	&:hover {
-		border-color: var(--ee-color-primary-low-contrast);
-		color: var(--ee-color-primary-high-contrast);
-	}
-
-	&:active,
-	&:focus {
-		border-width: 3px;
-		border-color: var(--ee-color-primary);
 	}
 }

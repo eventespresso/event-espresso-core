@@ -58,6 +58,7 @@
 				color: var(--ee-default-text-color);
 				font-size: var(--ee-font-size-bigger);
 				font-weight: bold;
+				height: 2rem;
 				letter-spacing: var(--ee-letter-spacing-font-size-huge);
 				line-height: calc(var(--ee-line-height-modifier) * 0.75);
 				margin: var(--ee-margin-micro) 0 var(--ee-margin-smaller);
@@ -65,7 +66,7 @@
 				text-align: center;
 				width: 100%;
 				.ee-input-inline {
-					transform: translateY(-25%);
+					margin: calc(var(--ee-margin-tiny) * -1) 0 0;
 				}
 			}
 
@@ -79,7 +80,7 @@
 				z-index: 1;
 				textarea {
 					background-color: white;
-					margin: 0;
+					margin: calc(var(--ee-margin-tiny) * -1) 0 0;
 					position: absolute;
 					right: 0;
 					top: 0;

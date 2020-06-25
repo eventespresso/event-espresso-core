@@ -28,8 +28,6 @@ import { ReactComponent as DownCircleFilledSVG } from './downCircleFilled.svg';
 
 import { ReactComponent as GlobalOutlinedSVG } from './globalOutlined.svg';
 
-import { ReactComponent as InfinitySVG } from './infinity.svg';
-
 import { ReactComponent as InfoCircleOutlinedSVG } from './infoCircleOutlined.svg';
 
 import { ReactComponent as MinusOutlinedSVG } from './minusOutlined.svg';
@@ -81,8 +79,6 @@ export const ControlOutlined = withEnhance(ControlOutlinedSVG);
 export const DownCircleFilled = withEnhance(DownCircleFilledSVG);
 
 export const GlobalOutlined = withEnhance(GlobalOutlinedSVG);
-
-export const Infinity = withEnhance(InfinitySVG);
 
 export const InfoCircleOutlined = withEnhance(InfoCircleOutlinedSVG);
 
