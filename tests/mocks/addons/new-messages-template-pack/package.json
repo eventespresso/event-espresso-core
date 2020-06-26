@@ -67,7 +67,6 @@
 		"@wordpress/i18n": "^1.1.0",
 		"@wordpress/jest-preset-default": "^1.0.5",
 		"classnames": "^2.2.5",
-		"lodash": "4.17.4",
 		"querystringify": "^1.0.0",
 		"react": "^16.3.0",
 		"react-dom": "^16.3.0",
