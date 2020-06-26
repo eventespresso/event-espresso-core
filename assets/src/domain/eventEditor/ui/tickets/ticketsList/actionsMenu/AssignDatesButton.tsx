@@ -24,7 +24,7 @@ const AssignDatesButton: React.FC<EntityListItemProps<Ticket>> = React.memo(({ e
 	const count = relatedDatetimes.length;
 
 	const title = count
-		? `${__('Number of related dates:')} ${count}`
+		? __('Number of related dates:')
 		: __(
 				'There are no event dates assigned to this ticket. Please click the calendar icon to update the assignments.'
 		  );
