@@ -36,7 +36,7 @@ class DatetimeMutation
             $args['DTT_reg_limit'] = (int) $input['capacity'];
         }
 
-        if (! empty($input['description'])) {
+        if (isset($input['description'])) {
             $args['DTT_description'] = sanitize_text_field($input['description']);
         }
 
@@ -59,7 +59,7 @@ class DatetimeMutation
             $args['DTT_deleted'] = (bool) $input['isTrashed'];
         }
 
-        if (! empty($input['name'])) {
+        if (isset($input['name'])) {
             $args['DTT_name'] = sanitize_text_field($input['name']);
         }
 

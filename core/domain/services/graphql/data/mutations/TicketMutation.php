@@ -39,7 +39,7 @@ class TicketMutation
             $args['datetimes'] = array_map('sanitize_text_field', (array) $input['datetimes']);
         }
 
-        if (! empty($input['description'])) {
+        if (isset($input['description'])) {
             $args['TKT_description'] = sanitize_text_field($input['description']);
         }
 
@@ -71,7 +71,7 @@ class TicketMutation
             $args['TKT_min'] = (int) $input['min'];
         }
 
-        if (! empty($input['name'])) {
+        if (isset($input['name'])) {
             $args['TKT_name'] = sanitize_text_field($input['name']);
         }
 
