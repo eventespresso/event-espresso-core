@@ -13,6 +13,8 @@ const useDomTestData = (): void => {
 	eventEspressoData.config.currentUser = currentUser;
 	eventEspressoData.config.generalSettings = generalSettings;
 
+	window.eventEspressoData = eventEspressoData;
+
 	// For Housekeeping
 	useEffect(() => {
 		// Make sure to clean up the set data
