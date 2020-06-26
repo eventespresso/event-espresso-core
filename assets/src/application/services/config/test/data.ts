@@ -1,11 +1,5 @@
 import { EventEspressoDomData } from '../../../DomDataTypes';
 
-declare global {
-	interface Window {
-		eventEspressoData: EventEspressoDomData;
-	}
-}
-
 export const mockEspressoDomData: EventEspressoDomData = {
 	api: {
 		graphqlEndpoint: 'http://www.dev.test/graphql',

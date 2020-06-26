@@ -1,9 +1,4 @@
-import type {
-	CurrencyProps,
-	CurrentUserProps,
-	GeneralSettings,
-	SiteUrlProps,
-} from './valueObjects/config/types';
+import type { CurrencyProps, CurrentUserProps, GeneralSettings, SiteUrlProps } from './valueObjects/config/types';
 
 export interface EventEspressoDomData {
 	api: ApiDomData;

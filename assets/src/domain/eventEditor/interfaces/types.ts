@@ -1,3 +1,4 @@
+import '../../types';
 import { RelationalData } from '../../../application/services/apollo/relations/types';
 import { EventEspressoDomData } from '../../../application/DomDataTypes';
 import { CurrentUserProps, GeneralSettings } from '../../../application/valueObjects/config/types';
