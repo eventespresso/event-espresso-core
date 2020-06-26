@@ -13,7 +13,7 @@ const EventIdProvider: React.FC = ({ children }) => {
 	if (!eventId) {
 		toaster.error({ message: 'Event ID is empty or invalid.' });
 	}
-	return eventId ? <Provider value={eventId}>{children}</Provider> : null;
+	return <Provider value={eventId}>{children}</Provider>;
 };
 
 export { EventIdContext, EventIdProvider };
