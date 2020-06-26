@@ -2093,9 +2093,9 @@
   integrity sha512-oocsqY7g0cR+Gur5jRQLSrX2OtpMLMse1I10JQBm8CdGMrDkh1Mg2gjsiquMHRtBs4Qwu5wgEp5GgIYHk4SNPw==
 
 "@testing-library/dom@^7.17.1":
-  version "7.18.0"
-  resolved "https://registry.yarnpkg.com/@testing-library/dom/-/dom-7.18.0.tgz#fc883ba993f35cd00c863099cfcf314395f0a9eb"
-  integrity sha512-OD6jgGc4nwM4GNXZJlVcI6wwP5hcJ4T8g752wbtK/Ub7jdATvAdnVSauODdoBMsEZejb1VoWNQsTDc4C9bgrsw==
+  version "7.18.1"
+  resolved "https://registry.yarnpkg.com/@testing-library/dom/-/dom-7.18.1.tgz#c49530410fb184522b3b59c4f9cd6397dc5b462d"
+  integrity sha512-tGq4KAFjaI7j375sMM1RRVleWA0viJWs/w69B+nyDkqYLNkhdTHdV6mGkspJlkn3PUfyBDi3rERDv4PA/LrpVA==
   dependencies:
     "@babel/runtime" "^7.10.3"
     aria-query "^4.2.2"
@@ -2103,12 +2103,13 @@
     pretty-format "^25.5.0"
 
 "@testing-library/jest-dom@^5.9.0":
-  version "5.10.1"
-  resolved "https://registry.yarnpkg.com/@testing-library/jest-dom/-/jest-dom-5.10.1.tgz#6508a9f007bd74e5d3c0b3135b668027ab663989"
-  integrity sha512-uv9lLAnEFRzwUTN/y9lVVXVXlEzazDkelJtM5u92PsGkEasmdI+sfzhZHxSDzlhZVTrlLfuMh2safMr8YmzXLg==
+  version "5.11.0"
+  resolved "https://registry.yarnpkg.com/@testing-library/jest-dom/-/jest-dom-5.11.0.tgz#1439f08dc85ce7c6d3bbad0ee5d53b2206f55768"
+  integrity sha512-mhaCySy7dZlyfcxcYy+0jLllODHEiHkVdmwQ00wD0HrWiSx0fSVHz/0WmdlRkvhfSOuqsRsBUreXOtBvruWGQA==
   dependencies:
     "@babel/runtime" "^7.9.2"
     "@types/testing-library__jest-dom" "^5.9.1"
+    aria-query "^4.2.2"
     chalk "^3.0.0"
     css "^2.2.4"
     css.escape "^1.5.1"
@@ -2480,9 +2481,9 @@
     source-map "^0.7.3"
 
 "@types/webpack@^4.41.8":
-  version "4.41.17"
-  resolved "https://registry.yarnpkg.com/@types/webpack/-/webpack-4.41.17.tgz#0a69005e644d657c85b7d6ec1c826a71bebd1c93"
-  integrity sha512-6FfeCidTSHozwKI67gIVQQ5Mp0g4X96c2IXxX75hYEQJwST/i6NyZexP//zzMOBb+wG9jJ7oO8fk9yObP2HWAw==
+  version "4.41.18"
+  resolved "https://registry.yarnpkg.com/@types/webpack/-/webpack-4.41.18.tgz#2945202617866ecdffa582087f1b6de04a7eed55"
+  integrity sha512-mQm2R8vV2BZE/qIDVYqmBVLfX73a8muwjs74SpjEyJWJxeXBbsI9L65Pcia9XfYLYWzD1c1V8m+L0p30y2N7MA==
   dependencies:
     "@types/anymatch" "*"
     "@types/node" "*"
@@ -4314,9 +4315,9 @@ base@^0.11.1:
     pascalcase "^0.1.1"
 
 baseui@^9.81.1:
-  version "9.84.1"
-  resolved "https://registry.yarnpkg.com/baseui/-/baseui-9.84.1.tgz#2c5f06d89c31a4acb727af727943eb8ac88da0bd"
-  integrity sha512-I8F6lTSfQt74/Zi40q/P9U9fG5SbPoCbijP4P6KayqAYySbcfsPaXSxNfW4RGqYXmmW9eUSe681fjr88IGBR1w==
+  version "9.84.2"
+  resolved "https://registry.yarnpkg.com/baseui/-/baseui-9.84.2.tgz#ec45d6471e54542e3673f44d10b7668b7d9258ee"
+  integrity sha512-+wXKY3LKku5iBuxgpeR90LjS7jcH8P/uFoECZBb9EZktcS9Hzg+R5sMEesK8vXomfDZ76pur4kjyMFdgk69TQg==
   dependencies:
     "@date-io/date-fns" "^2.4.0"
     card-validator "^6.2.0"

@@ -1,18 +1,19 @@
 import classNames from 'classnames';
 import { Children } from 'react';
-import { castArray, filter, first, isArray, isEmpty, isFunction, last, reject } from 'lodash';
+import { head, isEmpty, last } from 'ramda';
 
 export const getChildren = (props) => {
 	return props.hasOwnProperty('children') && Children.count(props.children) ? Children.toArray(props.children) : [];
 };
 
 const filterChildren = (children, predicate) => {
-	children = isArray(children) && !isEmpty(children) ? children : getChildren(children);
-	return isFunction(predicate) ? filter(children, predicate) : children;
+	const newChildren = Array.isArray(children) && !isEmpty(children) ? [...children] : [...getChildren(children)];
+
+	return typeof predicate === 'function' ? newChildren.filter(predicate) : newChildren;
 };
 
 export const getFirstChild = (children) => {
-	return filterChildren(children, first);
+	return filterChildren(children, head);
 };
 
 export const getLastChild = (children) => {
@@ -21,12 +22,12 @@ export const getLastChild = (children) => {
 
 export const getTableHeader = (children) => {
 	children = filterChildren(children, isTableHeader);
-	return first(children);
+	return head(children);
 };
 
 export const getTableFooter = (children) => {
 	children = filterChildren(children, isTableFooter);
-	return first(children);
+	return head(children);
 };
 
 export const getTableRows = (children) => {
@@ -40,7 +41,7 @@ export const getTableRowCells = (children) => {
 };
 
 const isElement = (element, name) => {
-	element = isArray(element) && !isEmpty(element) ? first(element) : element;
+	element = Array.isArray(element) && !isEmpty(element) ? head(element) : element;
 	return element && element.type && element.type.name && element.type.name === name;
 };
 
@@ -58,15 +59,6 @@ export const isTableFooter = (element) => {
 
 export const isTableRow = (element) => {
 	return isElement(element, 'TableRow');
-};
-
-export const isArrayOfTableCells = (elements) => {
-	elements = castArray(elements);
-	let allAreCells = true;
-	elements.forEach((cell) => {
-		allAreCells = isTableHeaderCell(cell) || isTableDataCell(cell) ? allAreCells : false;
-	});
-	return allAreCells;
 };
 
 export const isTableHeaderCell = (element) => {
@@ -97,20 +89,4 @@ export const addZebraStripesOnMobile = (exclude) => (cells) => {
 
 		return cell;
 	});
-};
-
-/**
- * toggles display of start and end date columns
- * based on incoming value of showDate
- *
- * @function
- * @param {Array} columns
- * @param {string} exclude table row cell "key"
- * @return {Array} columns
- */
-export const filterColumnsByKey = (columns, exclude) => {
-	if (!Array.isArray(columns)) {
-		return columns;
-	}
-	return exclude ? reject(columns, ['key', exclude]) : columns;
 };

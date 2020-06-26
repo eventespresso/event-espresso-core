@@ -1,6 +1,5 @@
 import React from 'react';
 import classNames from 'classnames';
-import { isFunction } from 'lodash';
 import warning from 'warning';
 
 import TableRow from './TableRow';
@@ -30,7 +29,7 @@ const TableHeader: React.FC<TableHeaderProps> = ({ headerRows, showDragHandle, t
 					{headerRow.cells.map((column, col) => {
 						warning(column.hasOwnProperty('value'), `Missing "value" property for header column ${col}.`);
 
-						return isFunction(column.render) ? (
+						return typeof column?.render === 'function' ? (
 							column.render({ row, col, column })
 						) : (
 							<TableHeaderCell
