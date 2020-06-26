@@ -25,7 +25,7 @@ const AssignTicketsButton: React.FC<EntityListItemProps<Datetime>> = React.memo(
 	const count = relatedTickets.length;
 
 	const title = count
-		? `${__('Number of related tickets:')} ${count}`
+		? __('Number of related tickets')
 		: __('There are no tickets assigned to this datetime. Please click the ticket icon to update the assignments.');
 
 	const tooltipProps = useMemoStringify<TooltipProps>({ placement: 'right' });
