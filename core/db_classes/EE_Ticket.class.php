@@ -226,7 +226,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      */
     public function is_pending()
     {
-        return ($this->get_raw('TKT_start_date') > time());
+        return ($this->get_raw('TKT_start_date') >= time());
     }
 
 
@@ -238,7 +238,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      */
     public function is_on_sale()
     {
-        return ($this->get_raw('TKT_start_date') < time() && $this->get_raw('TKT_end_date') > time());
+        return ($this->get_raw('TKT_start_date') <= time() && $this->get_raw('TKT_end_date') >= time());
     }
 
 
