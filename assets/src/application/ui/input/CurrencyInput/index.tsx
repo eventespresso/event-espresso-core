@@ -11,6 +11,7 @@ interface CurrencyInputProps {
 	onChange?: (result?: { amount: string | number; id: string }) => void;
 	placeholder?: string;
 	tag?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p';
+	tooltip?: string;
 	wrapperProps?: React.HTMLAttributes<Element>;
 }
 
@@ -20,6 +21,7 @@ const CurrencyInput: React.FC<CurrencyInputProps> = ({
 	onChange = nullFunc,
 	tag = 'p',
 	wrapperProps = {},
+	...props
 }) => {
 	const { formatAmount, beforeAmount, afterAmount } = useMoneyDisplay();
 	const before = beforeAmount ? <span className={'ee-currency-input__before-amount'}>{beforeAmount} </span> : '';
@@ -41,6 +43,7 @@ const CurrencyInput: React.FC<CurrencyInputProps> = ({
 		<Wrapper className={'ee-currency-input'} {...wrapperProps}>
 			{before}
 			<InlineEditText
+				{...props}
 				as='span'
 				fitText={false}
 				key={id}

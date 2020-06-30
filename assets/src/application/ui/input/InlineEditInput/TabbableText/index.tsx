@@ -17,7 +17,7 @@ const TabbableText: React.FC<TabbableTextProps> = ({ onRequestEdit, icon, text, 
         }
     };
 
-    const tooltip = props.tooltip || __('Click to edit title...')
+    const tooltip = props.tooltip || __('Click to edit...')
 
     return (
         <Tooltip tooltip={tooltip}>

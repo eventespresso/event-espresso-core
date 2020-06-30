@@ -8,22 +8,22 @@ import { isInfinite } from '@application/services';
 import TabbableText from './TabbableText'
 import { TextProps } from './types';
 
-const Preview: React.FC<InlineEditPreviewProps> = ({ value, onRequestEdit, isEditing }) => {
-    const isInfinity = isInfinite(value);
-    const className = classNames('ee-inline-edit__infinity', {
-        'ee-infinity-sign': isInfinity,
-    });
+const Preview: React.FC<InlineEditPreviewProps> = ({ value, onRequestEdit, isEditing, ...props }) => {
+	const isInfinity = isInfinite(value);
+	const className = classNames('ee-inline-edit__infinity', {
+		'ee-infinity-sign': isInfinity,
+	});
 
-    if (isEditing) {
-        return null;
-    }
+	if (isEditing) {
+		return null;
+	}
 
-    const output = isInfinity ? '∞' : value;
+	const output = isInfinity ? '∞' : value;
 
-    return <TabbableText className={className} onRequestEdit={onRequestEdit} text={output} />;
+	return <TabbableText {...props} className={className} onRequestEdit={onRequestEdit} text={output} />;
 };
 
-const InlineEditInfinity: React.FC<TextProps> = ({ onChangeValue, value, ...rest }) => {
+const InlineEditInfinity: React.FC<TextProps> = ({ onChangeValue, value, ...props }) => {
     const isInfinity = isInfinite(value);
 
     const onChangeHandler = useCallback<TextProps['onChangeValue']>(
@@ -38,7 +38,7 @@ const InlineEditInfinity: React.FC<TextProps> = ({ onChangeValue, value, ...rest
 
     return (
         <InlineEdit
-            {...rest}
+            {...props}
             inputType='number'
             onChangeValue={onChangeHandler}
             Preview={Preview}
