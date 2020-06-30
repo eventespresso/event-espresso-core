@@ -29,15 +29,16 @@ class GeneralSettings extends JsonDataNode
         $this->setNodeName(GeneralSettings::NODE_NAME);
     }
 
+
     /**
      * @inheritDoc
      */
     public function initialize()
     {
-        $this->addData('dateFormat', get_option('date_format') );
-        $this->addData('timeFormat', get_option('time_format') );
-        $this->addData('timezone', get_option('timezone_string') );
-        $this->addData('__typename', 'GeneralSettings' );
+        $this->addData('dateFormat', get_option('date_format'));
+        $this->addData('timeFormat', get_option('time_format'));
+        $this->addData('timezone', get_option('timezone_string'));
+        $this->addData('__typename', 'GeneralSettings');
         $this->setInitialized(true);
     }
 }

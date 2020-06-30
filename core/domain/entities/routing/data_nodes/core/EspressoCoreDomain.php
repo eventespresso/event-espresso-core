@@ -31,7 +31,8 @@ class EspressoCoreDomain extends JsonDataNode
      * @param Domain                $domain
      * @param JsonDataNodeValidator $validator
      */
-    public function __construct(Domain $domain, JsonDataNodeValidator $validator) {
+    public function __construct(Domain $domain, JsonDataNodeValidator $validator)
+    {
         $this->domain = $domain;
         parent::__construct($validator);
         $this->setNodeName(EspressoCoreDomain::NODE_NAME);
