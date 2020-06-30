@@ -63,7 +63,6 @@ class EEM_Base_Test extends EE_UnitTestCase
 
     /**
      * Verifies that for each model, the tables it claims to require have been installed
-     * @doesNotPerformAssertions
      */
     public function test_model_tables_exist()
     {

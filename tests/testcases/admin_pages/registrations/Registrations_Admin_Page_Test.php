@@ -59,6 +59,14 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
     public function setUp()
     {
         parent::setUp();
+        EE_Dependency_Map::register_dependencies(
+            'EventEspresso\core\domain\services\admin\registrations\list_table\QueryBuilder',
+            [
+                null,
+                'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
+                'EEM_Registration'                            => EE_Dependency_Map::load_from_cache,
+            ]
+        );
         $this->setupRequest();
         $this->original_timezone_string = get_option('timezone_string');
         //set timezone of site to 'America/Vancouver' for tests.

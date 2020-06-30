@@ -70,7 +70,6 @@ class CoreLoader
                 define('EE_PLUGIN_DIR', dirname(dirname(dirname(__FILE__))) . '/');
                 define('EE_TESTS_DIR', EE_PLUGIN_DIR . 'tests/');
             }
-            echo "\nEE_TESTS_DIR: " . EE_TESTS_DIR;
 
             define('EE_MOCKS_DIR', EE_TESTS_DIR . 'mocks/');
             $_tests_dir = getenv('WP_TESTS_DIR');
@@ -164,6 +163,10 @@ class CoreLoader
     public function setupDependencyMap()
     {
         EE_Dependency_Map::register_class_loader('EE_Session_Mock');
+        EE_Dependency_Map::register_dependencies(
+            'EventEspresso\core\services\session\SessionStartHandler',
+            ['EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache]
+        );
         EE_Dependency_Map::register_dependencies(
             'EE_Session_Mock',
             [
