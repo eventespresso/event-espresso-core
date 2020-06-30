@@ -2,7 +2,6 @@
 
 namespace EventEspresso\core\services\json;
 
-
 use DomainException;
 use JsonSerializable;
 

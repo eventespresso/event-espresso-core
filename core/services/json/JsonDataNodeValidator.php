@@ -41,10 +41,10 @@ class JsonDataNodeValidator
         if (WP_DEBUG) {
             throw new DomainException(
                 sprintf(
-                /*
-                 * translators:
-                 * 'The "i18n" JsonDataNode key is already set and would be overwritten by the current action.'
-                 */
+                    /*
+                     * translators:
+                     * 'The "i18n" JsonDataNode key is already set and would be overwritten by the current action.'
+                     */
                     esc_html__(
                         'The "%1$s" JsonDataNode %2$s is already set and would be overwritten by the current action.',
                         'event_espresso'
@@ -70,10 +70,10 @@ class JsonDataNodeValidator
             if (WP_DEBUG && $throw) {
                 throw new DomainException(
                     sprintf(
-                    /*
-                     * translators:
-                     * 'The JsonDataNodeHandler domain route is a required property but has not been set.'
-                     */
+                        /*
+                         * translators:
+                         * 'The JsonDataNodeHandler domain route is a required property but has not been set.'
+                         */
                         esc_html__(
                             'The JsonDataNodeHandler %1$s is a required property but has not been set.',
                             'event_espresso'
