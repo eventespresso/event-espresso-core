@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react';
+import { __ } from '@wordpress/i18n';
 
 import parseInfinity from '@appServices/utilities/number/parseInfinity';
 import { InlineEditInfinity, TextProps } from '@appInputs/InlineEditInput';
@@ -19,7 +20,13 @@ const TicketQuantity: React.FC<TicketItemProps> = ({ entity: ticket }) => {
 		[ticket.cacheId]
 	);
 
-	return <InlineEditInfinity onChangeValue={onChange} value={`${ticket.quantity}`} />;
+	return (
+		<InlineEditInfinity
+			onChangeValue={onChange}
+			value={`${ticket.quantity}`}
+			tooltip={__('Click to edit quantity...')}
+		/>
+	);
 };
 
 export default React.memo(TicketQuantity, getPropsAreEqual(['entity', 'cacheId']));

@@ -14,28 +14,24 @@
 
 		.ee-dropdown-menu__list & {
 			font-size: var(--ee-font-size-default);
-			min-height: 2.25rem;
+			min-height: 2.5rem;
+			padding: var(--ee-padding-tiny);
 		}
 
 		&:last-child {
 			margin-bottom: 0;
 		}
 
-		// chakra dropdown is not tabbable, this was added in case this component will be tabbable in future versions
-		&:focus {
+		&:focus[role='menuitem'],
+		&:hover[role='menuitem'] {
 			background-color: var(--ee-color-grey-13);
 			box-shadow: none;
 			color: var(--ee-default-text-color-high-contrast);
-			outline-offset: -2px;
-			outline: 1px dotted var(--ee-color-grey-8);
 		}
 
-		&:hover {
-			background: var(--ee-color-grey-14);
-		}
-
-		svg {
-			margin-right: var(--ee-margin-smaller);
+		svg,
+		svg.ee-svg {
+			margin: 0 var(--ee-margin-small) 0 0;
 		}
 	}
 }

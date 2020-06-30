@@ -6,14 +6,14 @@ import { InlineEdit, InlineEditPreviewProps } from '@infraUI/inputs';
 import TabbableText from './TabbableText'
 import { TextAreaProps } from './types';
 
-const Preview: React.FC<InlineEditPreviewProps> = ({ isEditing, onRequestEdit, value, }) => {
+const Preview: React.FC<InlineEditPreviewProps> = ({ isEditing, onRequestEdit, value, ...props }) => {
 	if (isEditing) {
 		return null;
 	}
 
 	return (
 		<Dotdotdot clamp={3}>
-			<TabbableText onRequestEdit={onRequestEdit} text={value} />
+			<TabbableText {...props} onRequestEdit={onRequestEdit} text={value} />
 		</Dotdotdot>
 	);
 };
