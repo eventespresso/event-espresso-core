@@ -15,6 +15,7 @@
 		background-color: var(--ee-background-color);
 		border: 2px solid var(--ee-color-primary-super-low-contrast);
 		border-radius: var(--ee-border-radius-small);
+		box-shadow: var(--ee-box-shadow-small);
 		color: var(--ee-default-text-color-high-contrast);
 		font-weight: normal;
 		left: 0;
@@ -23,6 +24,10 @@
 
 		[x-arrow] {
 			display: none;
+		}
+
+		header {
+			margin: 0 0 var(--ee-margin-smaller);
 		}
 	}
 

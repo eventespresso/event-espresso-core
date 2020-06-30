@@ -10,7 +10,7 @@
 		height: 100%;
 		min-height: calc(var(--ee-padding-micro) * 45);
 		min-width: calc(var(--ee-padding-micro) * 34);
-		padding: var(--ee-padding-tiny) var(--ee-padding-micro);
+		padding: var(--ee-padding-micro);
 		text-align: center;
 		width: 100%;
 		vertical-align: bottom;
@@ -34,7 +34,7 @@
 		&__month {
 			font-size: calc(var(--ee-font-size-tiny) * 2);
 			font-weight: bold;
-			line-height: calc(var(--ee-font-size-tiny) * 2);
+			line-height: calc(var(--ee-font-size-tiny) * 2.5);
 		}
 
 		&__month-day-sep {
@@ -45,7 +45,7 @@
 			opacity: 0.8;
 			font-size: calc(var(--ee-font-size-big) * 2);
 			font-weight: bold;
-			line-height: calc(var(--ee-font-size-big) * 2);
+			line-height: calc(var(--ee-font-size-big) * 1.5);
 			text-shadow: var(--ee-text-shadow-inset);
 		}
 
