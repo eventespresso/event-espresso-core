@@ -22,7 +22,12 @@ const TaxesButtons: React.FC = () => {
 		return <RemoveTaxesButton />;
 	}
 
-	return <AddDefaultTaxesButton />;
+	// if we have default taxes in cache
+	if (defaultTaxPrices.length) {
+		return <AddDefaultTaxesButton />;
+	}
+
+	return null;
 };
 
 export default TaxesButtons;
