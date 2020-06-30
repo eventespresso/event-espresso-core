@@ -97,20 +97,20 @@ class WordPressPluginsPage extends Route
     {
         if (! $this->asset_manager instanceof EspressoCoreAppAssetManager) {
             throw new DomainException(
-                esc_html__('Invalid or missing EspressoCoreAppAssetManager!')
+                esc_html__('Invalid or missing EspressoCoreAppAssetManager!', 'event_espresso')
             );
         }
         $assets = $this->asset_manager->getAssets();
         if (! $assets instanceof AssetCollection) {
             throw new DomainException(
-                esc_html__('Invalid or missing AssetCollection!')
+                esc_html__('Invalid or missing AssetCollection!', 'event_espresso')
             );
         }
         $appJs = $assets->getJavascriptAsset(EspressoCoreAppAssetManager::JS_HANDLE_EDITOR);
         if (! $appJs instanceof JavascriptAsset) {
             throw new DomainException(
                 sprintf(
-                    esc_html__('Invalid or missing JavascriptAsset! Expected '),
+                    esc_html__('Invalid or missing JavascriptAsset! Expected', 'event_espresso'),
                     EspressoCoreAppAssetManager::JS_HANDLE_EDITOR
                 )
             );

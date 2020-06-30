@@ -125,10 +125,10 @@ class RouteHandler
         if (! $route instanceof RouteInterface) {
             throw new InvalidClassException(
                 sprintf(
-                /*
-                 * translators:
-                 * The supplied FQCN (Fully\Qualified\Class\Name) must be an instance of RouteInterface.
-                */
+                    /*
+                     * translators:
+                     * The supplied FQCN (Fully\Qualified\Class\Name) must be an instance of RouteInterface.
+                    */
                     esc_html__(
                         'The supplied FQCN (%1$s) must be an instance of RouteInterface.',
                         'event_espresso'
