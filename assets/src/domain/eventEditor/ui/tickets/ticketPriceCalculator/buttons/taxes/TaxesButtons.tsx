@@ -18,7 +18,7 @@ const TaxesButtons: React.FC = () => {
 	// since we load all the default prices in EDTR
 	// so if the the number of TPC taxes is equal to number of all default taxes
 	// It means that TPC has all the possible tax prices
-	if (defaultTaxPrices.length === tpcDefaultTaxPrices.length) {
+	if (tpcDefaultTaxPrices.length && defaultTaxPrices.length === tpcDefaultTaxPrices.length) {
 		return <RemoveTaxesButton />;
 	}
 

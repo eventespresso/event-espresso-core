@@ -8,6 +8,7 @@ import { useRelations } from '@appServices/apollo/relations';
 import { getGuids } from '@application/services/predicates';
 import { sortByPriceOrderIdAsc } from '@sharedEntities/prices/predicates/sortingPredicates';
 import usePriceToTpcModifier from './usePriceToTpcModifier';
+import { useEdtrState } from '@edtrHooks/edtrState';
 
 const useAddDefaultTaxes = (): VoidFunction => {
 	const allPrices = usePrices();
@@ -15,10 +16,13 @@ const useAddDefaultTaxes = (): VoidFunction => {
 
 	const { prices, setPrices } = useDataState();
 	const { getRelations } = useRelations();
+	const { setPricesPollInterval } = useEdtrState();
 
 	const convertPriceToTpcModifier = usePriceToTpcModifier();
 
 	return useCallback(() => {
+		// disable polling.
+		setPricesPollInterval(0);
 		const priceIds = getGuids(prices);
 
 		// Filter out the taxes that have already been added
