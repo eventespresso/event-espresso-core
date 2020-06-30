@@ -32,7 +32,7 @@ const DefaultTaxesInfo = () => {
 
 	return newTaxesFetched ? (
 		<div className='ee-tpc__default-taxes-info'>
-			{sprintf(__('New taxes have been fetched please click %s button to add them.'), __('Add default taxes'))}
+			{sprintf(__('New default taxes have been created. Click the "%s" button to add them now.'), __('Add default taxes'))}
 		</div>
 	) : null;
 };

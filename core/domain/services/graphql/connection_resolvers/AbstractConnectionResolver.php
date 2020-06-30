@@ -38,7 +38,7 @@ abstract class AbstractConnectionResolver extends WPGraphQLConnectionResolver
     /**
      * Get_amount_requested
      *
-     * This checks the $args to determine the amount requested, and if
+     * This checks the $args to determine the amount requested
      *
      * @return int|null
      * @throws \Exception
