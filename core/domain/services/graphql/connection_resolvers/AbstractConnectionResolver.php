@@ -36,6 +36,30 @@ abstract class AbstractConnectionResolver extends WPGraphQLConnectionResolver
     }
 
     /**
+     * Get_amount_requested
+     *
+     * This checks the $args to determine the amount requested
+     *
+     * @return int|null
+     * @throws \Exception
+     */
+    // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+    public function get_amount_requested()
+    {
+        $amount_requested = parent::get_amount_requested();
+
+        /**
+         * If both first & last are used in the input args, throw an exception as that won't
+         * work properly
+         */
+        if (empty($this->args['first']) && empty($this->args['last']) && $amount_requested === 10) {
+            return 100; // default.
+        }
+
+        return $amount_requested;
+    }
+
+    /**
      * Determine whether or not the the offset is valid, i.e the entity corresponding to the
      * offset exists. Offset is equivalent to entity ID. So this function is equivalent to
      * checking if the entity with the given ID exists.

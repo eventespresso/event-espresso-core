@@ -108,38 +108,15 @@ class EventEditorGraphQLData
         }
 
         if (! empty($tickets['nodes'])) {
-            $ticketIds = wp_list_pluck($tickets['nodes'], 'dbId');
+            $ticketIn = wp_list_pluck($tickets['nodes'], 'id');
         }
 
-        /**
-         * We need to get the prices that are related to the given tickets
-         * Or are defalut prices.
-         * We will first query for such prices and then limit our GQL query
-         * to those price IDs.
-         */
-        $where_params = [
-            'AND' => [
-                'PRC_deleted'    => 0,
-                'PRC_is_default' => 1,
-            ],
-        ];
-        if (! empty($ticketIds)) {
-            $where_params['Ticket.TKT_ID'] = ['IN', $ticketIds];
-        }
-        $priceIds = EEM_Price::instance()->get_col([
-            [
-            // If the price is related to any of these tickets
-            // OR
-            // it's a default price and not trashed
-                'OR' => $where_params,
-            ],
-            'group_by'                 => 'PRC_ID',
-            'default_where_conditions' => 'minimum',
-        ]);
+        $pricesArgs = ['includeDefaultPrices' => true];
 
-        if (! empty($priceIds)) {
-            $prices = $this->prices->getData(['idIn' => $priceIds]);
+        if (! empty($ticketIn)) {
+            $pricesArgs['ticketIn'] = $ticketIn;
         }
+        $prices = $this->prices->getData($pricesArgs);
 
         $priceTypes = $this->price_types->getData();
 

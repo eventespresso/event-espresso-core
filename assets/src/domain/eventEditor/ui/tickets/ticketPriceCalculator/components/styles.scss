@@ -29,4 +29,19 @@ $input-text: 'input[type=' text ']';
 			text-align: left;
 		}
 	}
+
+	&__default-taxes-info {
+		color: var(--ee-color-secondary-super-high-contrast);
+		font-weight: bold;
+		font-size: 1.3em;
+		animation: animate_color 2s infinite;
+	}
+	@keyframes animate_color {
+		from {
+			color: var(--ee-color-secondary-super-high-contrast);
+		}
+		to {
+			color: var(--ee-color-secondary-low-contrast);
+		}
+	}
 }

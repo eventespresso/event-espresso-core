@@ -1,27 +1,26 @@
-import React from 'react';
-import { any } from 'ramda';
+import React, { useCallback } from 'react';
 import { __ } from '@wordpress/i18n';
 
-import { isDefault } from '@sharedEntities/prices/predicates/selectionPredicates';
 import useConfig from '@appServices/config/useConfig';
-import { useDataState } from '../data';
+import { useEdtrState } from '@edtrHooks/edtrState';
 
 const DefaultPricesInfo = () => {
 	const config = useConfig();
-	const adminUrl = config.siteUrl.admin;
-	const href = adminUrl + '/admin.php?page=pricing';
+	const adminUrl = config?.siteUrl?.admin;
+	const href = adminUrl + 'admin.php?page=pricing';
 
-	const { prices } = useDataState();
-	const hasDefaultPrice = any(isDefault, prices);
+	const { setPricesPollInterval } = useEdtrState();
+
+	const onClickLink = useCallback(() => {
+		setPricesPollInterval(4000); // 4 seconds
+	}, [setPricesPollInterval]);
 
 	return (
-		hasDefaultPrice && (
-			<div className='ee-tpc__default-prices-info'>
-				<a href={href} target='_blank' rel='noopener noreferrer'>
-					{__('Modify default prices.')}
-				</a>
-			</div>
-		)
+		<div className='ee-tpc__default-prices-info'>
+			<a href={href} target='_blank' rel='noopener noreferrer' onClick={onClickLink}>
+				{__('Modify default prices.')}
+			</a>
+		</div>
 	);
 };
 
