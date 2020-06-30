@@ -131,6 +131,28 @@ class PriceConnectionResolver extends AbstractConnectionResolver
 
         list($query_args, $where_params) = $this->mapOrderbyInputArgs($query_args, $where_params, 'PRC_ID');
 
+        // If default prices should be included.
+        if (! empty($this->args['where']['includeDefaultPrices'])) {
+            /**
+             * We need to get each price that
+             * - satisfies $where_params above
+             * OR
+             * - it's a default non trashed price
+             */
+            $where_params = [
+                'OR' => [
+                    // use extra OR instead of AND to avoid it getting overridden
+                    'OR' => [
+                        'AND' => [
+                            'PRC_deleted'    => 0,
+                            'PRC_is_default' => 1,
+                        ]
+                    ],
+                    'AND' => $where_params,
+                ],
+            ];
+        }
+
         $query_args[] = $where_params;
 
         /**
