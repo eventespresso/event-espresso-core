@@ -26,13 +26,12 @@ class CachingLoaderTest extends EE_UnitTestCase
 
 
     /**
-     * @var CachingLoaderMock $loader
+     * @var CachingLoaderMock $caching_loader
      */
-    private static $loader;
+    private static $caching_loader;
 
 
     /**
-     * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
@@ -41,8 +40,8 @@ class CachingLoaderTest extends EE_UnitTestCase
     {
         //caching is turned off by default in the parent test case.  For tests in here where we're doing a number of
         //different persistence tests
-        if (! self::$loader instanceof LoaderDecorator) {
-            self::$loader = new CachingLoaderMock(
+        if (! CachingLoaderTest::$caching_loader instanceof LoaderDecorator) {
+            CachingLoaderTest::$caching_loader = new CachingLoaderMock(
                 new CoreLoader(EE_Registry::instance()),
                 new LooseCollection(''),
                 new ObjectIdentifier(new ClassInterfaceCache())
@@ -65,7 +64,7 @@ class CachingLoaderTest extends EE_UnitTestCase
      */
     public function testLoadCachingOff()
     {
-        $object = self::$loader->load($this->getFqcnForTest());
+        $object = CachingLoaderTest::$caching_loader->load($this->getFqcnForTest());
         $this->assertInstanceOf(
             $this->getFqcnForTest(),
             $object,
@@ -77,14 +76,14 @@ class CachingLoaderTest extends EE_UnitTestCase
         );
         $obj1ID = spl_object_hash($object);
         // none of these objects are getting cached because it is turned off for unit testing
-        $object2 = self::$loader->load($this->getFqcnForTest());
+        $object2 = CachingLoaderTest::$caching_loader->load($this->getFqcnForTest());
         $obj2ID = spl_object_hash($object2);
         $this->assertNotEquals($obj1ID, $obj2ID);
 
         //this time let's load the object with caching turned on so it gets in the cache and we'll send that objects
         //hash along for the persistence test.
         add_filter('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache', '__return_false', 10);
-        return spl_object_hash(self::$loader->load($this->getFqcnForTest()));
+        return spl_object_hash(CachingLoaderTest::$caching_loader->load($this->getFqcnForTest()));
     }
 
 
@@ -97,8 +96,8 @@ class CachingLoaderTest extends EE_UnitTestCase
         //turn caching on.
         remove_all_filters('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache');
         $this->assertEquals(
-            spl_object_hash(self::$loader->load($this->getFqcnForTest())),
-            spl_object_hash(self::$loader->load($this->getFqcnForTest()))
+            spl_object_hash(CachingLoaderTest::$caching_loader->load($this->getFqcnForTest())),
+            spl_object_hash(CachingLoaderTest::$caching_loader->load($this->getFqcnForTest()))
         );
     }
 
@@ -114,25 +113,25 @@ class CachingLoaderTest extends EE_UnitTestCase
         add_filter('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache', '__return_false', 10);
         // add a few different objects this time, but confirm that they are getting cached
         $fqcn7 = '\EventEspresso\core\services\address\formatters\AddressFormatter';
-        $object7 = self::$loader->load($fqcn7);
+        $object7 = CachingLoaderTest::$caching_loader->load($fqcn7);
         $this->assertInstanceOf($fqcn7, $object7);
-        $this->assertEquals(spl_object_hash($object7), spl_object_hash(self::$loader->load($fqcn7)));
+        $this->assertEquals(spl_object_hash($object7), spl_object_hash(CachingLoaderTest::$caching_loader->load($fqcn7)));
         $fqcn8 = '\EventEspresso\core\services\address\formatters\InlineAddressFormatter';
-        $object8 = self::$loader->load($fqcn8);
+        $object8 = CachingLoaderTest::$caching_loader->load($fqcn8);
         $this->assertInstanceOf($fqcn8, $object8);
-        $this->assertEquals(spl_object_hash($object8), spl_object_hash(self::$loader->load($fqcn8)));
+        $this->assertEquals(spl_object_hash($object8), spl_object_hash(CachingLoaderTest::$caching_loader->load($fqcn8)));
         $fqcn9 = '\EventEspresso\core\services\address\formatters\MultiLineAddressFormatter';
-        $object9 = self::$loader->load($fqcn9);
+        $object9 = CachingLoaderTest::$caching_loader->load($fqcn9);
         $this->assertInstanceOf($fqcn9, $object9);
-        $this->assertEquals(spl_object_hash($object9), spl_object_hash(self::$loader->load($fqcn9)));
-        $this->assertCount(3, self::$loader->getCache());
+        $this->assertEquals(spl_object_hash($object9), spl_object_hash(CachingLoaderTest::$caching_loader->load($fqcn9)));
+        $this->assertCount(3, CachingLoaderTest::$caching_loader->getCache());
         // now reset the cache using the do_action()
         do_action('AHEE__EventEspresso_core_services_loaders_CachingLoader__resetCache');
-        $this->assertCount(0, self::$loader->getCache());
+        $this->assertCount(0, CachingLoaderTest::$caching_loader->getCache());
         // confirm that reloading the same FCQNs as above results in new objects
-        $this->assertNotEquals(spl_object_hash($object7), spl_object_hash(self::$loader->load($fqcn7)));
-        $this->assertNotEquals(spl_object_hash($object8), spl_object_hash(self::$loader->load($fqcn8)));
-        $this->assertNotEquals(spl_object_hash($object9), spl_object_hash(self::$loader->load($fqcn9)));
+        $this->assertNotEquals(spl_object_hash($object7), spl_object_hash(CachingLoaderTest::$caching_loader->load($fqcn7)));
+        $this->assertNotEquals(spl_object_hash($object8), spl_object_hash(CachingLoaderTest::$caching_loader->load($fqcn8)));
+        $this->assertNotEquals(spl_object_hash($object9), spl_object_hash(CachingLoaderTest::$caching_loader->load($fqcn9)));
     }
 
     /**
@@ -151,9 +150,9 @@ class CachingLoaderTest extends EE_UnitTestCase
             'we are testing the share method'
         );
         // share it but don't pass any arguments
-        $added = self::$loader->share('EventEspresso\core\domain\entities\contexts\Context', $context1);
+        $added = CachingLoaderTest::$caching_loader->share('EventEspresso\core\domain\entities\contexts\Context', $context1);
         $this->assertTrue($added);
-        $object1 = self::$loader->load('EventEspresso\core\domain\entities\contexts\Context');
+        $object1 = CachingLoaderTest::$caching_loader->load('EventEspresso\core\domain\entities\contexts\Context');
         $this->assertEquals(spl_object_hash($object1), spl_object_hash($context1));
         // create another context object
         $context2 = new EventEspresso\core\domain\entities\contexts\Context(
@@ -161,19 +160,19 @@ class CachingLoaderTest extends EE_UnitTestCase
             'we are testing the share method again'
         );
         // share it but pass an array of its arguments
-        $added2 = self::$loader->share(
+        $added2 = CachingLoaderTest::$caching_loader->share(
             'EventEspresso\core\domain\entities\contexts\Context',
             $context2,
             array('testShare2', 'we are testing the share method again')
         );
         $this->assertTrue($added2);
         // just load using FQCN... should match object 1
-        $not_object2 = self::$loader->load('EventEspresso\core\domain\entities\contexts\Context');
+        $not_object2 = CachingLoaderTest::$caching_loader->load('EventEspresso\core\domain\entities\contexts\Context');
         $this->assertNotEquals(spl_object_hash($not_object2), spl_object_hash($context2));
         // because it's context 1
         $this->assertEquals(spl_object_hash($not_object2), spl_object_hash($context1));
         // now load using arguments
-        $object2 = self::$loader->load(
+        $object2 = CachingLoaderTest::$caching_loader->load(
             'EventEspresso\core\domain\entities\contexts\Context',
             array('testShare2', 'we are testing the share method again')
         );

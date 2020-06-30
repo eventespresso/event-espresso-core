@@ -10,6 +10,7 @@
 use EventEspresso\core\domain\entities\contexts\RequestTypeContext;
 use EventEspresso\core\domain\services\contexts\RequestTypeContextChecker;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\request\RequestInterface;
 
 /**
@@ -74,6 +75,11 @@ class EE_UnitTestCase extends WP_UnitTestCase
      * @var RequestInterface $request
      */
     protected $request;
+
+    /**
+     * @var LoaderInterface $loader
+     */
+    protected $loader;
 
     // /**
     //  * basically used for displaying the test case class while tests are running.
@@ -143,8 +149,9 @@ class EE_UnitTestCase extends WP_UnitTestCase
         do_action('AHEE__EventEspresso_core_services_loaders_CachingLoader__resetCache');
         // turn off caching for any loaders in use during tests
         add_filter('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache', '__return_true');
-        $this->dependency_map = LoaderFactory::getLoader()->getShared('EE_Dependency_Map');
-        $this->request = LoaderFactory::getLoader()->getShared('EventEspresso\core\services\request\RequestInterface');
+        $this->loader = LoaderFactory::getLoader();
+        $this->dependency_map = $this->loader->getShared('EE_Dependency_Map');
+        $this->request = $this->loader->getShared('EventEspresso\core\services\request\RequestInterface');
     }
 
 
@@ -218,7 +225,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
             )
         );
         /** @var EventEspresso\core\services\routing\RouteHandler $router */
-        $router = LoaderFactory::getLoader()->getShared('EventEspresso\core\services\routing\RouteHandler');
+        $router = $this->loader->getShared('EventEspresso\core\services\routing\RouteHandler');
         $router->addRoute('EventEspresso\core\domain\entities\routing\handlers\shared\RoutingRequests');
         switch($request_type_slug) {
             case RequestTypeContext::ADMIN:
@@ -1451,7 +1458,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
     protected function loadShortcodesManagerAndShortcodes()
     {
         // load, register, and add shortcodes the new way
-        LoaderFactory::getLoader()->getShared(
+        $this->loader->getShared(
             'EventEspresso\core\services\shortcodes\ShortcodesManager',
             array(
                 // and the old way, but we'll put it under control of the new system
