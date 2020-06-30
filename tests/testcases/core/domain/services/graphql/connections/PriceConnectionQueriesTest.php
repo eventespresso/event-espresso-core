@@ -2,12 +2,13 @@
 
 namespace EventEspresso\tests\testcases\core\domain\services\graphql\connections;
 
-use EE_Dependency_Map;
-use EE_Error;
 use EEM_Price;
 use EEM_Ticket;
 use GraphQLRelay\Relay;
 
+/**
+ * @group wpGraphQL
+ */
 class PriceConnectionQueriesTest extends BaseQueriesTest
 {
     public function setUp()
@@ -41,7 +42,7 @@ class PriceConnectionQueriesTest extends BaseQueriesTest
                 }
             }
         }';
-        
+
         /**
          * Set the current user as the subscriber so we can test
          */
@@ -59,6 +60,12 @@ class PriceConnectionQueriesTest extends BaseQueriesTest
             'first' => 1,
         ];
         $results   = $this->pricesQuery($variables);
+        $this->assertNotEmpty($results);
+
+        if (! isset($results['data'])) {
+            $this->markTestSkipped('WP GraphQL data results are empty');
+            return;
+        }
 
         /**
          * Let's query the entities in our data set so we can test against it
@@ -71,8 +78,7 @@ class PriceConnectionQueriesTest extends BaseQueriesTest
         $first_entity    = reset($entities);
         $first_entity_id = $first_entity->ID();
         $expected_cursor = \GraphQLRelay\Connection\ArrayConnection::offsetToCursor($first_entity_id);
-        $this->assertNotEmpty($results);
-        $this->assertEquals(1, count($results['data']['espressoPrices']['edges']));
+        $this->assertCount(1, $results['data']['espressoPrices']['edges']);
 
         $first_edge = $results['data']['espressoPrices']['edges'][0];
 
@@ -98,6 +104,12 @@ class PriceConnectionQueriesTest extends BaseQueriesTest
             ]
         ];
         $results   = $this->pricesQuery($variables);
+        $this->assertNotEmpty($results);
+
+        if (! isset($results['data'])) {
+            $this->markTestSkipped('WP GraphQL data results are empty');
+            return;
+        }
 
         /**
          * Let's query the entities in our data set so we can test against it
@@ -110,8 +122,8 @@ class PriceConnectionQueriesTest extends BaseQueriesTest
         $first_entity    = reset($entities);
         $first_entity_id = $first_entity->ID();
         $expected_cursor = \GraphQLRelay\Connection\ArrayConnection::offsetToCursor($first_entity_id);
-        $this->assertNotEmpty($results);
-        $this->assertEquals(1, count($results['data']['espressoPrices']['edges']));
+
+        $this->assertCount(1, $results['data']['espressoPrices']['edges']);
 
         $first_edge = $results['data']['espressoPrices']['edges'][0];
 
@@ -137,6 +149,12 @@ class PriceConnectionQueriesTest extends BaseQueriesTest
             ]
         ];
         $results   = $this->pricesQuery($variables);
+        $this->assertNotEmpty($results);
+
+        if (! isset($results['data'])) {
+            $this->markTestSkipped('WP GraphQL data results are empty');
+            return;
+        }
 
         /**
          * Let's query the entities in our data set so we can test against it
@@ -149,8 +167,8 @@ class PriceConnectionQueriesTest extends BaseQueriesTest
         $first_entity    = reset($entities);
         $first_entity_id = $first_entity->ID();
         $expected_cursor = \GraphQLRelay\Connection\ArrayConnection::offsetToCursor($first_entity_id);
-        $this->assertNotEmpty($results);
-        $this->assertEquals(1, count($results['data']['espressoPrices']['edges']));
+
+        $this->assertCount(1, $results['data']['espressoPrices']['edges']);
 
         $first_edge = $results['data']['espressoPrices']['edges'][0];
 

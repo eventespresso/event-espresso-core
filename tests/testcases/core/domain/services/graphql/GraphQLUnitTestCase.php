@@ -3,6 +3,7 @@
 namespace EventEspresso\tests\testcases\core\domain\services\graphql;
 
 use EE_Error;
+use EE_System;
 use EE_UnitTestCase;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -22,7 +23,6 @@ class GraphQLUnitTestCase extends EE_UnitTestCase
 {
 
     /**
-     * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
@@ -37,9 +37,22 @@ class GraphQLUnitTestCase extends EE_UnitTestCase
             );
             return;
         }
+        if (! class_exists('WPGraphQL')) {
+            require_once EE_THIRD_PARTY . 'wp-graphql/wp-graphql.php';
+        }
+        do_action('after_setup_theme');
+        $eeSystem = EE_System::instance();
+        remove_action('init', [$eeSystem, 'set_hooks_for_core'], 1);
+        remove_action('init', [$eeSystem, 'perform_activations_upgrades_and_migrations'], 3);
+        remove_action('init', [$eeSystem, 'load_CPTs_and_session'], 5);
+        remove_action('init', [$eeSystem, 'load_controllers'], 7);
+        remove_action('init', [$eeSystem, 'core_loaded_and_ready'], 9);
+        remove_action('init', [$eeSystem, 'initialize'], 10);
+        remove_action('init', [$eeSystem, 'initialize_last'], 100);
+        do_action('init');
         GQLRequestsMock::register();
         // load handler for EE GraphQL requests
-        $graphQL_manager = LoaderFactory::getLoader()->getShared(
+        $graphQL_manager = LoaderFactory::getLoader()->getNew(
             'EventEspresso\core\services\graphql\GraphQLManager'
         );
         $graphQL_manager->init();

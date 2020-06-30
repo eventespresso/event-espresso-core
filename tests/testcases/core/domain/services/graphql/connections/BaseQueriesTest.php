@@ -2,10 +2,8 @@
 
 namespace EventEspresso\tests\testcases\core\domain\services\graphql\connections;
 
-use EE_Dependency_Map;
-use EE_Error;
-use EEM_Event;
 use EventEspresso\tests\testcases\core\domain\services\graphql\GraphQLUnitTestCase;
+use WPGraphQL\AppContext;
 
 class BaseQueriesTest extends GraphQLUnitTestCase
 {
@@ -40,7 +38,7 @@ class BaseQueriesTest extends GraphQLUnitTestCase
 
         $this->created_entities = $this->skip_create_entities ? [] : $this->create_entities();
 
-        $this->app_context = new \WPGraphQL\AppContext();
+        $this->app_context = new AppContext();
     }
 
     /**

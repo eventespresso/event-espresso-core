@@ -4,6 +4,9 @@ namespace EventEspresso\tests\testcases\core\domain\services\graphql\mutators;
 
 use GraphQLRelay\Relay;
 
+/**
+ * @group wpGraphQL
+ */
 class TicketDeleteTest extends BaseMutationTest
 {
     public function setUp()
@@ -74,6 +77,12 @@ class TicketDeleteTest extends BaseMutationTest
          * Execute the request
          */
         $result = $this->deleteMutation($guid);
+        $this->assertNotEmpty($result);
+
+        if (! isset($result['data'])) {
+            $this->markTestSkipped('WP GraphQL data results are empty');
+            return;
+        }
 
         $deleted = $result['data']['deleteEspressoTicket']['espressoTicket'];
 
@@ -85,6 +94,12 @@ class TicketDeleteTest extends BaseMutationTest
          * Try to delete again, this time with forceDelete
          */
         $result = $this->deleteMutation($guid, true);
+        $this->assertNotEmpty($result);
+
+        if (! isset($result['data'])) {
+            $this->markTestSkipped('WP GraphQL data results are empty');
+            return;
+        }
 
         /**
          * This time, we used forceDelete so the mutation should have succeeded

@@ -5,6 +5,9 @@ namespace EventEspresso\tests\testcases\core\domain\services\graphql\mutators;
 use GraphQLRelay\Relay;
 use EEM_Price_Type;
 
+/**
+ * @group wpGraphQL
+ */
 class PriceCreateTest extends BaseMutationTest
 {
     public function setUp()
@@ -119,6 +122,12 @@ class PriceCreateTest extends BaseMutationTest
          * Run the mutation
          */
         $actual = $this->createMutation($input);
+        $this->assertNotEmpty($actual);
+
+        if (! isset($actual['data'])) {
+            $this->markTestSkipped('WP GraphQL data results are empty');
+            return;
+        }
 
         /**
          * We're expecting to have createEntity returned with a nested clientMutationId matching the
