@@ -91,11 +91,6 @@ class DatetimeUpdateTest extends BaseMutationTest
         $result = $this->updateMutation($input);
         $this->assertNotEmpty($result);
 
-        if (! isset($result['data'])) {
-            $this->markTestSkipped('WP GraphQL data results are empty');
-            return;
-        }
-
         $updated = $result['data']['updateEspressoDatetime']['espressoDatetime'];
         $this->assertNotEmpty($updated);
         $this->assertEquals($dbId, $updated['dbId']);

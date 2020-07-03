@@ -172,10 +172,6 @@ class EventConnectionQueriesTest extends BaseQueriesTest
         ];
         $results = $this->eventsQuery($variables);
         $this->assertNotEmpty($results);
-        if (! isset($results['data'])) {
-            $this->markTestSkipped('WP GraphQL data results are empty');
-            return;
-        }
 
         $events = $this->model->get_all(
             [
@@ -214,11 +210,6 @@ class EventConnectionQueriesTest extends BaseQueriesTest
         ];
         $results   = $this->eventByQuery($variables);
         $this->assertNotEmpty($results);
-
-        if (! isset($results['data'])) {
-            $this->markTestSkipped('WP GraphQL data results are empty');
-            return;
-        }
 
         $event = $this->model->get_one_by_ID($randomEventId);
 

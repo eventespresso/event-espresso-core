@@ -79,11 +79,6 @@ class PriceDeleteTest extends BaseMutationTest
         $result = $this->deleteMutation($guid);
         $this->assertNotEmpty($result);
 
-        if (! isset($result['data'])) {
-            $this->markTestSkipped('WP GraphQL data results are empty');
-            return;
-        }
-
         $deleted = $result['data']['deleteEspressoPrice']['espressoPrice'];
 
         $this->assertNotEmpty($deleted);
@@ -95,11 +90,6 @@ class PriceDeleteTest extends BaseMutationTest
          */
         $result = $this->deleteMutation($guid, true);
         $this->assertNotEmpty($result);
-
-        if (! isset($result['data'])) {
-            $this->markTestSkipped('WP GraphQL data results are empty');
-            return;
-        }
 
         /**
          * This time, we used forceDelete so the mutation should have succeeded

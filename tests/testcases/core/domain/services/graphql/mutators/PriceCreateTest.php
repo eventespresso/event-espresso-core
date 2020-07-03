@@ -124,11 +124,6 @@ class PriceCreateTest extends BaseMutationTest
         $actual = $this->createMutation($input);
         $this->assertNotEmpty($actual);
 
-        if (! isset($actual['data'])) {
-            $this->markTestSkipped('WP GraphQL data results are empty');
-            return;
-        }
-
         /**
          * We're expecting to have createEntity returned with a nested clientMutationId matching the
          * clientMutationId we sent through, as well as the name and description we passed through in the mutation

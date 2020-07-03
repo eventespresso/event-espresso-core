@@ -62,11 +62,6 @@ class PriceConnectionQueriesTest extends BaseQueriesTest
         $results   = $this->pricesQuery($variables);
         $this->assertNotEmpty($results);
 
-        if (! isset($results['data'])) {
-            $this->markTestSkipped('WP GraphQL data results are empty');
-            return;
-        }
-
         /**
          * Let's query the entities in our data set so we can test against it
          */
@@ -105,11 +100,6 @@ class PriceConnectionQueriesTest extends BaseQueriesTest
         ];
         $results   = $this->pricesQuery($variables);
         $this->assertNotEmpty($results);
-
-        if (! isset($results['data'])) {
-            $this->markTestSkipped('WP GraphQL data results are empty');
-            return;
-        }
 
         /**
          * Let's query the entities in our data set so we can test against it
@@ -150,11 +140,6 @@ class PriceConnectionQueriesTest extends BaseQueriesTest
         ];
         $results   = $this->pricesQuery($variables);
         $this->assertNotEmpty($results);
-
-        if (! isset($results['data'])) {
-            $this->markTestSkipped('WP GraphQL data results are empty');
-            return;
-        }
 
         /**
          * Let's query the entities in our data set so we can test against it

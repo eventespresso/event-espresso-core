@@ -106,11 +106,6 @@ class DatetimeDeleteTest extends BaseMutationTest
         $result = $this->deleteMutation($guid);
         $this->assertNotEmpty($result);
 
-        if (! isset($result['data'])) {
-            $this->markTestSkipped('WP GraphQL data results are empty');
-            return;
-        }
-
         $deleted = $result['data']['deleteEspressoDatetime']['espressoDatetime'];
 
         $this->assertNotEmpty($deleted);
