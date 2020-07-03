@@ -78,7 +78,8 @@ class WordpressPluginsPageAssetManager extends ReactAssetManager
                 ReactAssetManager::JS_HANDLE_REACT_DOM,
                 'wp-components',
                 'wp-i18n',
-                'wp-url'
+                'wp-keycodes',
+                'wp-url',
             ]
         )
         ->setRequiresTranslation()
