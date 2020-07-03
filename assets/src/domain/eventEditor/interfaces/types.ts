@@ -4,14 +4,12 @@ import { EventEspressoDomData } from '../../../application/DomDataTypes';
 import { CurrentUserProps, GeneralSettings } from '../../../application/valueObjects/config/types';
 import { DatetimeEdge, TicketEdge, PriceEdge, PriceTypeEdge, Event } from '../services/apollo/types';
 
-export interface EditorData {
-	event: EventData;
-	currentUser?: CurrentUserProps;
-	generalSettings?: GeneralSettings;
-}
-
 export interface EventData extends Event {
 	dbId: number;
+}
+
+export interface EventEditorData {
+	event?: EventData;
 	datetimes?: DatetimeEdge;
 	tickets?: TicketEdge;
 	prices?: PriceEdge;
@@ -19,8 +17,10 @@ export interface EventData extends Event {
 	relations?: RelationalData;
 }
 
-export interface EventEditorData {
-	event: EventData;
+export interface EditorData {
+	eventEditor: EventEditorData;
+	currentUser?: CurrentUserProps;
+	generalSettings?: GeneralSettings;
 }
 
 export interface EventEditorDomData extends EventEspressoDomData {

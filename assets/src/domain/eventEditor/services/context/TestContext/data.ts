@@ -1,4 +1,4 @@
-import { EventData } from '@edtrInterfaces/types';
+import { EventData, EventEditorData } from '@edtrInterfaces/types';
 import { RelationalData } from '@appServices/apollo/relations';
 import { nodes as datetimes, edge as datetimesEdge } from '../../apollo/queries/datetimes/test/data';
 
@@ -54,11 +54,6 @@ export const relationalData: RelationalData = {
 export const event: EventData = {
 	cacheId: '',
 	dbId: eventId,
-	datetimes: datetimesEdge,
-	tickets: ticketsEdge,
-	prices: pricesEdge,
-	priceTypes: priceTypesEdge,
-	relations: relationalData,
 	description: '',
 	id: '',
 	isActive: true,
@@ -71,4 +66,14 @@ export const event: EventData = {
 	name: '',
 	order: 1,
 	shortDescription: '',
+};
+
+// Add only what's needed
+export const eventEditor: EventEditorData = {
+	event,
+	datetimes: datetimesEdge,
+	tickets: ticketsEdge,
+	prices: pricesEdge,
+	priceTypes: priceTypesEdge,
+	relations: relationalData,
 };

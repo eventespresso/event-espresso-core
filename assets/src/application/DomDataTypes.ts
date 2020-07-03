@@ -1,3 +1,4 @@
+import type { AnyObject } from './services/utilities/types';
 import type { CurrencyProps, CurrentUserProps, GeneralSettings, SiteUrlProps } from './valueObjects/config/types';
 
 export interface EventEspressoDomData {
@@ -11,9 +12,9 @@ export interface EventEspressoDomData {
 export type ApiDomData = {
 	graphqlEndpoint: string;
 	restApiBaseUrl: string;
-	restApiCollectionEndpoints: { [key: string]: string };
+	restApiCollectionEndpoints: AnyObject<string>;
 	restApiNonce: string;
-	restApiPrimaryKeys: { [key: string]: string | [string] };
+	restApiPrimaryKeys: AnyObject<string | [string]>;
 	restApiRouteUrl: string;
 };
 

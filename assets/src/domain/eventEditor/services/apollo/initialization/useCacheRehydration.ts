@@ -25,18 +25,16 @@ import { getGuids } from '@appServices/predicates';
 
 const useCacheRehydration = (): void => {
 	const { initialize: initializeRelations, isInitialized: relationsInitialized } = useRelations();
-	const {
-		event: {
-			datetimes: espressoDatetimes = DEFAULT_DATETIME_LIST_DATA,
-			tickets: espressoTickets = DEFAULT_TICKET_LIST_DATA,
-			prices: espressoPrices = DEFAULT_PRICE_LIST_DATA,
-			priceTypes: espressoPriceTypes = DEFAULT_PRICE_TYPE_LIST_DATA,
-			relations,
-		},
-		currentUser,
-		generalSettings,
-	} = useCacheRehydrationData();
+	const { currentUser, eventEditor, generalSettings } = useCacheRehydrationData();
 	const { isLoaded } = useStatus();
+
+	const {
+		datetimes: espressoDatetimes = DEFAULT_DATETIME_LIST_DATA,
+		tickets: espressoTickets = DEFAULT_TICKET_LIST_DATA,
+		prices: espressoPrices = DEFAULT_PRICE_LIST_DATA,
+		priceTypes: espressoPriceTypes = DEFAULT_PRICE_TYPE_LIST_DATA,
+		relations,
+	} = eventEditor;
 
 	const datetimeIn = getGuids(espressoDatetimes?.nodes || []);
 	const ticketIn = getGuids(espressoTickets?.nodes || []);
