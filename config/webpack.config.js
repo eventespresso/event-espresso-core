@@ -129,10 +129,11 @@ module.exports = function (webpackEnv) {
 		react: 'React',
 		'react-dom': 'ReactDOM',
 		jquery: 'jQuery',
+		lodash: '_',
 	};
 
 	// Define WordPress dependencies
-	const wpPackages = ['components', 'element', 'blocks', 'i18n', 'block-editor'];
+	const wpPackages = ['components', 'element', 'blocks', 'i18n', 'block-editor', 'keycodes', 'url'];
 	// Setup externals for all WordPress dependencies
 	wpPackages.forEach((wpPackage) => {
 		externals['@wordpress/' + wpPackage] = {
