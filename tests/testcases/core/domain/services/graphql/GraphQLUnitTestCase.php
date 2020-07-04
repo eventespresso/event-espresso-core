@@ -35,27 +35,9 @@ class GraphQLUnitTestCase extends EE_UnitTestCase
     {
         parent::setUp();
         if (PHP_VERSION_ID < 70100) {
-            $this->markTestSkipped(
-                'WP GraphQL compatible with PHP 7+ only'
-            );
+            $this->markTestSkipped('WP GraphQL compatible with PHP 7+ only');
             return;
         }
-        if (! class_exists('WPGraphQL')) {
-            require_once EE_THIRD_PARTY . 'wp-graphql/wp-graphql.php';
-        }
-
-        new Config();
-        new Router();
-        $wp_gql = WPGraphQL::instance();
-        do_action('graphql_init', $wp_gql);
-        $wp_gql->setup_types();
-
-        GQLRequestsMock::register();
-        // load handler for EE GraphQL requests
-        $graphQL_manager = LoaderFactory::getLoader()->getNew(
-            'EventEspresso\core\services\graphql\GraphQLManager'
-        );
-        $graphQL_manager->init();
     }
 
     public function testDumb()

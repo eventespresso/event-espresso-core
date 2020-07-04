@@ -172,7 +172,6 @@ class GQLRequests extends Route
      */
     protected function requestHandler()
     {
-
         if (! class_exists('WPGraphQL')) {
             require_once EE_THIRD_PARTY . 'wp-graphql/wp-graphql.php';
         }
