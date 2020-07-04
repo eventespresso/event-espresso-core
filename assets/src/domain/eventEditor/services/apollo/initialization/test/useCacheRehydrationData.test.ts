@@ -11,13 +11,13 @@ describe('useCacheRehydrationData', () => {
 			wrapper: ApolloMockedProvider(),
 		});
 
-		expect(data.event).toHaveProperty('datetimes');
+		expect(data.eventEditor.event).toHaveProperty('datetimes');
 
-		expect(data.event).toHaveProperty('tickets');
+		expect(data.eventEditor.event).toHaveProperty('tickets');
 
-		expect(data.event.dbId).toBeGreaterThan(1);
+		expect(data.eventEditor.event.dbId).toBeGreaterThan(1);
 
-		expect(data.event).toHaveProperty('relations');
+		expect(data.eventEditor.event).toHaveProperty('relations');
 	});
 
 	it('checks for current user data', async () => {
