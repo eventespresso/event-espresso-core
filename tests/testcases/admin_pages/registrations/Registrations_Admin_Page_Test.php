@@ -3,7 +3,6 @@
 use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
-use EventEspresso\core\services\loaders\LoaderFactory;
 use PHPUnit\Framework\AssertionFailedError;
 
 if ( ! defined('EVENT_ESPRESSO_VERSION')) {

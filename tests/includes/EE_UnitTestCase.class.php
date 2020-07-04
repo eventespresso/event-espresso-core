@@ -175,14 +175,9 @@ class EE_UnitTestCase extends WP_UnitTestCase
     {
         parent::tearDown();
         if ($this->request instanceof RequestInterface && ! $this->request->isFrontend()) {
-            $this->request->setRequestTypeContextChecker(
-                new RequestTypeContextChecker(
-                    new RequestTypeContext(
-                        RequestTypeContext::FRONTEND,
-                        'mock request type'
-                    )
-                )
-            );
+            $request_type_context = new RequestTypeContext(RequestTypeContext::FRONTEND, 'mock request type');
+            $request_type_context->setIsUnitTesting(true);
+            $this->request->setRequestTypeContextChecker(new RequestTypeContextChecker($request_type_context));
         }
         $this->dependency_map->reset();
         global $wp_filter, $wp_actions, $merged_filters, $wp_current_filter, $current_user;
@@ -216,14 +211,9 @@ class EE_UnitTestCase extends WP_UnitTestCase
      */
     protected function setupRequest($request_type_slug = RequestTypeContext::ADMIN)
     {
-        $this->request->setRequestTypeContextChecker(
-            new RequestTypeContextChecker(
-                new RequestTypeContext(
-                    $request_type_slug,
-                    'mock request type'
-                )
-            )
-        );
+        $request_type_context = new RequestTypeContext($request_type_slug, 'mock request type');
+        $request_type_context->setIsUnitTesting(true);
+        $this->request->setRequestTypeContextChecker(new RequestTypeContextChecker($request_type_context));
         /** @var EventEspresso\core\services\routing\RouteHandler $router */
         $router = $this->loader->getShared('EventEspresso\core\services\routing\RouteHandler');
         $router->addRoute('EventEspresso\core\domain\entities\routing\handlers\shared\RoutingRequests');
