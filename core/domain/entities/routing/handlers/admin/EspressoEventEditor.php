@@ -25,7 +25,10 @@ class EspressoEventEditor extends EspressoEventsAdmin
      */
     public function matchesCurrentRequest()
     {
+        global $pagenow;
         return parent::matchesCurrentRequest()
+               && $pagenow
+               && $pagenow === 'admin.php'
                && $this->admin_config->useAdvancedEditor()
                && (
                 $this->request->getRequestParam('action') === 'create_new'
@@ -113,6 +116,7 @@ class EspressoEventEditor extends EspressoEventsAdmin
      */
     protected function requestHandler()
     {
+        parent::requestHandler();
         /** @var GraphQLManager $graphQL_manager */
         $graphQL_manager = $this->loader->getShared('EventEspresso\core\services\graphql\GraphQLManager');
         $graphQL_manager->init();

@@ -30,7 +30,10 @@ class EspressoLegacyAdmin extends AdminRoute
      */
     public function matchesCurrentRequest()
     {
-        return parent::matchesCurrentRequest() || $this->request->isAdminAjax();
+        global $pagenow;
+        return $this->request->isAdminAjax() || (
+            parent::matchesCurrentRequest() && $pagenow && $pagenow === 'admin.php'
+        );
     }
 
 
@@ -136,7 +139,7 @@ class EspressoLegacyAdmin extends AdminRoute
         $this->asset_manager = $this->loader->getShared(
             'EventEspresso\core\domain\services\assets\LegacyAccountingAssetManager'
         );
-        $this->loader->getShared('EE_Admin');
+        parent::requestHandler();
         add_action('admin_enqueue_scripts', [$this, 'enqueueLegacyAccountingAssets'], 100);
         return true;
     }
