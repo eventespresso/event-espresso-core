@@ -5,6 +5,7 @@ namespace EventEspresso\core\domain\entities\routing\data_nodes\core;
 use EventEspresso\core\services\json\JsonDataNode;
 use EventEspresso\core\services\json\JsonDataNodeValidator;
 use WP_User;
+use GraphQLRelay\Relay;
 
 /**
  * Class CurrentUser
@@ -15,7 +16,6 @@ use WP_User;
  */
 class CurrentUser extends JsonDataNode
 {
-
     const NODE_NAME = 'currentUser';
 
 
@@ -39,16 +39,18 @@ class CurrentUser extends JsonDataNode
         if (! $current_user instanceof WP_User) {
             $current_user = new WP_User();
         }
+
+        $this->addData('id', Relay::toGlobalId('user', $current_user->ID));
+        $this->addData('databaseId', $current_user->ID);
         $this->addData('description', $current_user->description);
-        $this->addData('email', $current_user->email);
-        $this->addData('firstName', $current_user->firstName);
-        $this->addData('name', $current_user->name);
-        $this->addData('nicename', $current_user->nicename);
+        $this->addData('email', $current_user->user_email);
+        $this->addData('firstName', $current_user->first_name);
+        $this->addData('lastName', $current_user->last_name);
+        $this->addData('locale', get_user_locale($current_user->ID));
+        $this->addData('name', $current_user->display_name);
+        $this->addData('nicename', $current_user->user_nicename);
         $this->addData('nickname', $current_user->nickname);
-        $this->addData('lastName', $current_user->lastName);
-        $this->addData('locale', $current_user->locale);
-        $this->addData('userId', $current_user->userId);
-        $this->addData('username', $current_user->username);
+        $this->addData('username', $current_user->user_login);
         $this->addData('__typename', 'User');
         $this->setInitialized(true);
     }
