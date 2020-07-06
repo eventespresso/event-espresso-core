@@ -87,7 +87,7 @@ class EventMutation
         }
 
         return apply_filters(
-            'FHEE__EventEspresso_core_domain_services_graphql_data__event_mutation_args',
+            'FHEE__EventEspresso_core_domain_services_graphql_data_mutations__event_args',
             $args,
             $input
         );

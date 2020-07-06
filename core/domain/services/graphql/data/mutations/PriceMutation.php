@@ -67,7 +67,7 @@ class PriceMutation
         }
 
         return apply_filters(
-            'FHEE__EventEspresso_core_domain_services_graphql_data__price_mutation_args',
+            'FHEE__EventEspresso_core_domain_services_graphql_data_mutations__price_args',
             $args,
             $input
         );

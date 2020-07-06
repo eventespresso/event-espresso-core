@@ -89,7 +89,7 @@ class DatetimeMutation
         }
 
         return apply_filters(
-            'FHEE__EventEspresso_core_domain_services_graphql_data__datetime_mutation_args',
+            'FHEE__EventEspresso_core_domain_services_graphql_data_mutations__datetime_args',
             $args,
             $input
         );
