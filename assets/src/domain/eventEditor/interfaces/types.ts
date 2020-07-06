@@ -4,12 +4,8 @@ import { EventEspressoDomData } from '../../../application/DomDataTypes';
 import { CurrentUserProps, GeneralSettings } from '../../../application/valueObjects/config/types';
 import { DatetimeEdge, TicketEdge, PriceEdge, PriceTypeEdge, Event } from '../services/apollo/types';
 
-export interface EventData extends Event {
-	dbId: number;
-}
-
 export interface EventEditorData {
-	event?: EventData;
+	event?: Event;
 	datetimes?: DatetimeEdge;
 	tickets?: TicketEdge;
 	prices?: PriceEdge;
