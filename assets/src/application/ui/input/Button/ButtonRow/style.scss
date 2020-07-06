@@ -28,7 +28,7 @@
 		}
 	}
 
-	ee-form + & {
+	.ee-form + & {
 		margin: var(--ee-margin-big) 0;
 
 		@include max782px {
