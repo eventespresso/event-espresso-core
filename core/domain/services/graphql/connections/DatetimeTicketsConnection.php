@@ -74,29 +74,36 @@ class DatetimeTicketsConnection extends ConnectionBase
     // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     public static function get_connection_args($args = [])
     {
-        return array_merge(
-            [
-                'orderby'      => [
-                    'type'        => ['list_of' => 'EspressoTicketsConnectionOrderbyInput'],
-                    'description' => esc_html__('What parameter to use to order the objects by.', 'event_espresso'),
-                ],
-                'datetime' => [
-                    'type'        => 'ID',
-                    'description' => esc_html__('Globally unique datetime ID to get the tickets for.', 'event_espresso'),
-                ],
-                'datetimeIn' => [
-                    'type'        => ['list_of' => 'ID'],
-                    'description' => esc_html__('Globally unique datetime IDs to get the tickets for.', 'event_espresso'),
-                ],
-                'datetimeId' => [
-                    'type'        => 'Int',
-                    'description' => esc_html__('Datetime ID to get the tickets for.', 'event_espresso'),
-                ],
-                'datetimeIdIn' => [
-                    'type'        => ['list_of' => 'Int'],
-                    'description' => esc_html__('Datetime IDs to get the tickets for.', 'event_espresso'),
-                ],
+        $newArgs = [
+            'orderby'      => [
+                'type'        => ['list_of' => 'EspressoTicketsConnectionOrderbyInput'],
+                'description' => esc_html__('What parameter to use to order the objects by.', 'event_espresso'),
             ],
+            'datetime' => [
+                'type'        => 'ID',
+                'description' => esc_html__('Globally unique datetime ID to get the tickets for.', 'event_espresso'),
+            ],
+            'datetimeIn' => [
+                'type'        => ['list_of' => 'ID'],
+                'description' => esc_html__('Globally unique datetime IDs to get the tickets for.', 'event_espresso'),
+            ],
+            'datetimeId' => [
+                'type'        => 'Int',
+                'description' => esc_html__('Datetime ID to get the tickets for.', 'event_espresso'),
+            ],
+            'datetimeIdIn' => [
+                'type'        => ['list_of' => 'Int'],
+                'description' => esc_html__('Datetime IDs to get the tickets for.', 'event_espresso'),
+            ],
+        ];
+
+        $newArgs = apply_filters(
+            'FHEE__EventEspresso_core_domain_services_graphql_connections__ticket_args',
+            $newArgs,
+            $args
+        );
+        return array_merge(
+            $newArgs,
             $args
         );
     }

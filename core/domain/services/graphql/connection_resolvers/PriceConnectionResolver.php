@@ -134,12 +134,24 @@ class PriceConnectionResolver extends AbstractConnectionResolver
             ];
         }
 
+        $where_params = apply_filters(
+            'FHEE__EventEspresso_core_domain_services_graphql_connection_resolvers__price_where_params',
+            $where_params,
+            $this->source,
+            $this->args
+        );
+
         $query_args[] = $where_params;
 
         /**
          * Return the $query_args
          */
-        return $query_args;
+        return apply_filters(
+            'FHEE__EventEspresso_core_domain_services_graphql_connection_resolvers__price_query_args',
+            $query_args,
+            $this->source,
+            $this->args
+        );
     }
 
 

@@ -71,9 +71,23 @@ class PriceTypeConnectionResolver extends AbstractConnectionResolver
         // Avoid multiple entries by join.
         $query_args['group_by'] = 'PRT_ID';
 
+        $where_params = apply_filters(
+            'FHEE__EventEspresso_core_domain_services_graphql_connection_resolvers__priceType_where_params',
+            $where_params,
+            $this->source,
+            $this->args
+        );
+
+        $query_args[] = $where_params;
+
         /**
          * Return the $query_args
          */
-        return $query_args;
+        return apply_filters(
+            'FHEE__EventEspresso_core_domain_services_graphql_connection_resolvers__priceType_query_args',
+            $query_args,
+            $this->source,
+            $this->args
+        );
     }
 }
