@@ -41,7 +41,7 @@ class Event extends TypeBase
      */
     public function getFields()
     {
-        return [
+        $fields = [
             new GraphQLOutputField(
                 'dbId',
                 ['non_null' => 'Int'],
@@ -202,6 +202,13 @@ class Event extends TypeBase
                 esc_html__('Flag indicating event is expired or not', 'event_espresso')
             ),
         ];
+
+        return apply_filters(
+            'FHEE__EventEspresso_core_domain_services_graphql_types__event_fields',
+            $fields,
+            $this->name,
+            $this->model
+        );
     }
 
 

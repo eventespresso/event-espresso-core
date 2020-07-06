@@ -40,7 +40,7 @@ class Country extends TypeBase
      */
     public function getFields()
     {
-        return [
+        $fields = [
             new GraphQLField(
                 'id',
                 ['non_null' => 'ID'],
@@ -129,5 +129,12 @@ class Country extends TypeBase
                 esc_html__('Currency Thousands Separator', 'event_espresso')
             ),
         ];
+
+        return apply_filters(
+            'FHEE__EventEspresso_core_domain_services_graphql_types__country_fields',
+            $fields,
+            $this->name,
+            $this->model
+        );
     }
 }

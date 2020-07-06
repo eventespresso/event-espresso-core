@@ -66,6 +66,10 @@ class PriceMutation
             $args['PRC_wp_user'] = (! empty($parts['id']) && is_int($parts['id'])) ? $parts['id'] : null;
         }
 
-        return $args;
+        return apply_filters(
+            'FHEE__EventEspresso_core_domain_services_graphql_data_mutations__price_args',
+            $args,
+            $input
+        );
     }
 }

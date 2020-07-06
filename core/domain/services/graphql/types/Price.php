@@ -46,7 +46,7 @@ class Price extends TypeBase
      */
     public function getFields()
     {
-        return [
+        $fields = [
             new GraphQLField(
                 'id',
                 ['non_null' => 'ID'],
@@ -168,6 +168,13 @@ class Price extends TypeBase
                 esc_html__('Price Creator ID', 'event_espresso')
             ),
         ];
+
+        return apply_filters(
+            'FHEE__EventEspresso_core_domain_services_graphql_types__price_fields',
+            $fields,
+            $this->name,
+            $this->model
+        );
     }
 
 

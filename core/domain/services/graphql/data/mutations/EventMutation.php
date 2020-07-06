@@ -86,6 +86,10 @@ class EventMutation
             $args['EVT_wp_user'] = absint($input['wpUser']);
         }
 
-        return $args;
+        return apply_filters(
+            'FHEE__EventEspresso_core_domain_services_graphql_data_mutations__event_args',
+            $args,
+            $input
+        );
     }
 }

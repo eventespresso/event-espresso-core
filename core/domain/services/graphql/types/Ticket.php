@@ -54,7 +54,7 @@ class Ticket extends TypeBase
      */
     public function getFields()
     {
-        return [
+        $fields = [
             new GraphQLField(
                 'id',
                 ['non_null' => 'ID'],
@@ -296,6 +296,13 @@ class Ticket extends TypeBase
                 esc_html__('Ticket Creator ID', 'event_espresso')
             ),
         ];
+
+        return apply_filters(
+            'FHEE__EventEspresso_core_domain_services_graphql_types__ticket_fields',
+            $fields,
+            $this->name,
+            $this->model
+        );
     }
 
 

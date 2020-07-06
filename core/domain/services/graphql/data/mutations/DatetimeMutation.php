@@ -88,7 +88,11 @@ class DatetimeMutation
             $args['tickets'] = array_map('sanitize_text_field', (array) $input['tickets']);
         }
 
-        return $args;
+        return apply_filters(
+            'FHEE__EventEspresso_core_domain_services_graphql_data_mutations__datetime_args',
+            $args,
+            $input
+        );
     }
 
 
