@@ -1141,6 +1141,7 @@ final class EE_System implements ResettableInterface
         do_action('AHEE__EE_System__load_controllers__start');
         // now start loading routes
         $this->router->addRoute('EventEspresso\core\domain\entities\routing\handlers\frontend\FrontendRequests');
+        $this->router->addRoute('EventEspresso\core\domain\entities\routing\handlers\admin\AdminRoute');
         $this->router->addRoute('EventEspresso\core\domain\entities\routing\handlers\admin\EspressoLegacyAdmin');
         $this->router->addRoute('EventEspresso\core\domain\entities\routing\handlers\admin\EspressoEventsAdmin');
         $this->router->addRoute('EventEspresso\core\domain\entities\routing\handlers\admin\EspressoEventEditor');

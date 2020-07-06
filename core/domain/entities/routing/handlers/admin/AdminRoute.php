@@ -22,7 +22,7 @@ use EventEspresso\core\services\request\RequestInterface;
  * @author  Brent Christensen
  * @since   $VID:$
  */
-abstract class AdminRoute extends Route
+class AdminRoute extends Route
 {
 
     /**
@@ -62,7 +62,27 @@ abstract class AdminRoute extends Route
      */
     public function matchesCurrentRequest()
     {
-        global $pagenow;
-        return $pagenow && $pagenow === 'admin.php' && $this->request->isAdmin();
+        return $this->request->isAdmin();
+    }
+
+
+    /**
+     * @since $VID:$
+     */
+    protected function registerDependencies()
+    {
+    }
+
+
+    /**
+     * implements logic required to run during request
+     *
+     * @return bool
+     * @since   $VID:$
+     */
+    protected function requestHandler()
+    {
+        $this->loader->getShared('EE_Admin');
+        return true;
     }
 }

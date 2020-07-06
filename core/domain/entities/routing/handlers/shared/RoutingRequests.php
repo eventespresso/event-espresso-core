@@ -113,6 +113,7 @@ class RoutingRequests extends Route
             'EventEspresso\core\domain\entities\routing\handlers\shared\SessionRequests'     => $default,
             'EventEspresso\core\domain\entities\routing\handlers\shared\WordPressHeartbeat'  => $default,
             // admin dependencies
+            'EventEspresso\core\domain\entities\routing\handlers\admin\AdminRoute'           => $admin,
             'EventEspresso\core\domain\entities\routing\handlers\admin\EspressoEventsAdmin'  => $admin,
             'EventEspresso\core\domain\entities\routing\handlers\admin\EspressoEventEditor'  => $admin,
             'EventEspresso\core\domain\entities\routing\handlers\admin\EspressoLegacyAdmin'  => $admin,
