@@ -41,7 +41,7 @@ class Venue extends TypeBase
      */
     public function getFields()
     {
-        return [
+        $fields = [
             new GraphQLOutputField(
                 'dbId',
                 ['non_null' => 'Int'],
@@ -194,6 +194,13 @@ class Venue extends TypeBase
                 esc_html__('Show Google Map?', 'event_espresso')
             ),
         ];
+
+        return apply_filters(
+            'FHEE__EventEspresso_core_domain_services_graphql_types__venue_fields',
+            $fields,
+            $this->name,
+            $this->model
+        );
     }
 
 

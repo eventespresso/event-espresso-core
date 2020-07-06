@@ -42,7 +42,7 @@ class State extends TypeBase
      */
     public function getFields()
     {
-        return [
+        $fields = [
             new GraphQLField(
                 'id',
                 ['non_null' => 'ID'],
@@ -92,5 +92,12 @@ class State extends TypeBase
                 esc_html__('Country ISO Code', 'event_espresso')
             ),
         ];
+
+        return apply_filters(
+            'FHEE__EventEspresso_core_domain_services_graphql_types__state_fields',
+            $fields,
+            $this->name,
+            $this->model
+        );
     }
 }

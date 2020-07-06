@@ -42,7 +42,7 @@ class Attendee extends TypeBase
      */
     public function getFields()
     {
-        return [
+        $fields = [
             new GraphQLField(
                 'id',
                 ['non_null' => 'ID'],
@@ -179,6 +179,13 @@ class Attendee extends TypeBase
                 ['ee_edit_contacts']
             ),
         ];
+
+        return apply_filters(
+            'FHEE__EventEspresso_core_domain_services_graphql_types__attendee_fields',
+            $fields,
+            $this->name,
+            $this->model
+        );
     }
 
 

@@ -55,7 +55,7 @@ class Datetime extends TypeBase
      */
     public function getFields()
     {
-        return [
+        $fields = [
             new GraphQLField(
                 'id',
                 ['non_null' => 'ID'],
@@ -219,6 +219,13 @@ class Datetime extends TypeBase
                 )
             ),
         ];
+
+        return apply_filters(
+            'FHEE__EventEspresso_core_domain_services_graphql_types__datetime_fields',
+            $fields,
+            $this->name,
+            $this->model
+        );
     }
 
 
