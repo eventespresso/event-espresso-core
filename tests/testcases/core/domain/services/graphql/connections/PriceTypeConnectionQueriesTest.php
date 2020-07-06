@@ -2,10 +2,11 @@
 
 namespace EventEspresso\tests\testcases\core\domain\services\graphql\connections;
 
-use EE_Dependency_Map;
-use EE_Error;
 use EEM_Price_Type;
 
+/**
+ * @group wpGraphQL
+ */
 class PriceTypeConnectionQueriesTest extends BaseQueriesTest
 {
     public function setUp()
@@ -39,7 +40,7 @@ class PriceTypeConnectionQueriesTest extends BaseQueriesTest
                 }
             }
         }';
-        
+
         /**
          * Set the current user as the subscriber so we can test
          */
@@ -58,6 +59,7 @@ class PriceTypeConnectionQueriesTest extends BaseQueriesTest
             'first' => 1,
         ];
         $results   = $this->priceTypesQuery($variables);
+        $this->assertNotEmpty($results);
 
         /**
          * Let's query the entities in our data set so we can test against it
@@ -70,8 +72,8 @@ class PriceTypeConnectionQueriesTest extends BaseQueriesTest
         $first_entity    = reset($entities);
         $first_entity_id = $first_entity->ID();
         $expected_cursor = \GraphQLRelay\Connection\ArrayConnection::offsetToCursor($first_entity_id);
-        $this->assertNotEmpty($results);
-        $this->assertEquals(1, count($results['data']['espressoPriceTypes']['edges']));
+
+        $this->assertCount(1, $results['data']['espressoPriceTypes']['edges']);
 
         $first_edge = $results['data']['espressoPriceTypes']['edges'][0];
 

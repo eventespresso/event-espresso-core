@@ -7,7 +7,7 @@ type SurveyContentProps = {
 	onSubmit: VoidFunction;
 };
 
-const info = window?.eeExitSurveyInfo;
+const info = window?.eventEspressoData?.wpPluginsPage?.eeExitSurveyInfo;
 
 const ExitSurveyContent: React.FC<SurveyContentProps> = ({ onSubmit }) => {
 	const typeFormEl = useRef();

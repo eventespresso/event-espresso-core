@@ -3,10 +3,7 @@
 namespace EventEspresso\core\domain\entities\routing\handlers\admin;
 
 use EE_Dependency_Map;
-use EE_Maintenance_Mode;
-use EventEspresso\core\domain\entities\routing\handlers\Route;
-use EventEspresso\core\services\loaders\LoaderInterface;
-use EventEspresso\core\services\request\RequestInterface;
+use EventEspresso\core\domain\entities\routing\handlers\frontend\PublicRoute;
 
 /**
  * Class PersonalDataRequests
@@ -14,35 +11,10 @@ use EventEspresso\core\services\request\RequestInterface;
  *
  * @package EventEspresso\core\domain\entities\routing\handlers\admin
  * @author  Brent Christensen
- * @since   \$VID:$
+ * @since   $VID:$
  */
-class PersonalDataRequests extends Route
+class PersonalDataRequests extends PublicRoute
 {
-
-    /**
-     * @var EE_Maintenance_Mode $maintenance_mode
-     */
-    private $maintenance_mode;
-
-
-    /**
-     * Route constructor.
-     *
-     * @param EE_Dependency_Map   $dependency_map
-     * @param EE_Maintenance_Mode $maintenance_mode
-     * @param LoaderInterface     $loader
-     * @param RequestInterface    $request
-     */
-    public function __construct(
-        EE_Dependency_Map $dependency_map,
-        EE_Maintenance_Mode $maintenance_mode,
-        LoaderInterface $loader,
-        RequestInterface $request
-    ) {
-        $this->maintenance_mode = $maintenance_mode;
-        parent::__construct($dependency_map, $loader, $request);
-    }
-
 
     /**
      * returns true if the current request matches this route

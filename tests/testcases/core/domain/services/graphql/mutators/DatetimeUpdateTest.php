@@ -4,6 +4,9 @@ namespace EventEspresso\tests\testcases\core\domain\services\graphql\mutators;
 
 use GraphQLRelay\Relay;
 
+/**
+ * @group wpGraphQL
+ */
 class DatetimeUpdateTest extends BaseMutationTest
 {
     public function setUp()
@@ -33,7 +36,7 @@ class DatetimeUpdateTest extends BaseMutationTest
             }
         }
         ';
-        
+
         return $this->runCreateMutation($mutation, $input);
     }
 
@@ -86,6 +89,7 @@ class DatetimeUpdateTest extends BaseMutationTest
          * Execute the request
          */
         $result = $this->updateMutation($input);
+        $this->assertNotEmpty($result);
 
         $updated = $result['data']['updateEspressoDatetime']['espressoDatetime'];
         $this->assertNotEmpty($updated);

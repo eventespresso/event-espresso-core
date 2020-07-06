@@ -11,6 +11,9 @@ use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\Exception;
 use ReflectionException;
 
+/**
+ * @group wpGraphQL
+ */
 class DatetimeDeleteTest extends BaseMutationTest
 {
     public function setUp()
@@ -101,6 +104,7 @@ class DatetimeDeleteTest extends BaseMutationTest
          * Execute the request
          */
         $result = $this->deleteMutation($guid);
+        $this->assertNotEmpty($result);
 
         $deleted = $result['data']['deleteEspressoDatetime']['espressoDatetime'];
 

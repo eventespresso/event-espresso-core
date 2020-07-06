@@ -1,9 +1,11 @@
 <?php
 
-namespace EventEspresso\core\domain\entities\routing\handlers;
+namespace EventEspresso\core\services\routing;
+
+use EventEspresso\core\services\json\JsonDataNode;
 
 /**
- * Class Route
+ * RouteInterface
  * - class for detecting and matching with incoming requests
  * (this can be done by directly examining the incoming Request
  * or via a Route Match Specification class for better SRP and sharing)
@@ -18,6 +20,12 @@ interface RouteInterface
 {
 
     /**
+     * @return JsonDataNode
+     */
+    public function dataNode();
+
+
+    /**
      * final method called by RouteHandler on Route which in turn calls requestHandler()
      *
      * @return bool
@@ -27,9 +35,27 @@ interface RouteInterface
 
 
     /**
+     * a place to run any setup required for matchesCurrentRequest() which runs immediately after
+     *
+     * @since $VID:$
+     */
+    public function initialize();
+
+
+    /**
+     * returns true if the route has already been handled
+     *
      * @return bool
      */
     public function isHandled();
+
+
+    /**
+     * returns true if the route has not yet been handled
+     *
+     * @return bool
+     */
+    public function isNotHandled();
 
 
     /**

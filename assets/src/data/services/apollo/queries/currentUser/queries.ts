@@ -3,16 +3,16 @@ import gql from 'graphql-tag';
 export const GET_CURRENT_USER: any = gql`
 	query GET_CURRENT_USER {
 		viewer {
+			id
+			databaseId
 			description
 			email
 			firstName
-			id
+			lastName
+			locale
 			name
 			nicename
 			nickname
-			lastName
-			locale
-			userId
 			username
 		}
 	}

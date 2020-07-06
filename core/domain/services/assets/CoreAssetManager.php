@@ -4,7 +4,6 @@ namespace EventEspresso\core\domain\services\assets;
 
 use DomainException;
 use EE_Currency_Config;
-use EE_Registry;
 use EE_Template_Config;
 use EED_Core_Rest_Api;
 use EEH_DTT_Helper;
@@ -144,6 +143,7 @@ class CoreAssetManager extends AssetManager
     {
         $this->addJs(CoreAssetManager::JS_HANDLE_VENDOR);
         $this->addJs(CoreAssetManager::JS_HANDLE_JS_CORE)->setHasInlineData();
+        // todo verify that the following data is no longer being used anywhere and remove
         $this->registry->addData('eejs_api_nonce', wp_create_nonce('wp_rest'));
         $this->registry->addData(
             'paths',
@@ -192,15 +192,6 @@ class CoreAssetManager extends AssetManager
             CoreAssetManager::JS_HANDLE_CORE,
             EE_GLOBAL_ASSETS_URL . 'scripts/espresso_core.js',
             array(CoreAssetManager::JS_HANDLE_JQUERY)
-        )
-        ->setInlineDataCallback(
-            static function () {
-                wp_localize_script(
-                    CoreAssetManager::JS_HANDLE_CORE,
-                    CoreAssetManager::JS_HANDLE_I18N,
-                    EE_Registry::$i18n_js_strings
-                );
-            }
         );
     }
 

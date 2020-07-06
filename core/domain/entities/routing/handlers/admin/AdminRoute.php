@@ -4,8 +4,9 @@ namespace EventEspresso\core\domain\entities\routing\handlers\admin;
 
 use EE_Admin_Config;
 use EE_Dependency_Map;
-use EventEspresso\core\domain\entities\routing\handlers\Route;
+use EventEspresso\core\services\routing\Route;
 use EventEspresso\core\domain\entities\routing\specifications\RouteMatchSpecificationInterface;
+use EventEspresso\core\services\json\JsonDataNode;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\request\RequestInterface;
 
@@ -21,7 +22,7 @@ use EventEspresso\core\services\request\RequestInterface;
  * @author  Brent Christensen
  * @since   $VID:$
  */
-abstract class AdminRoute extends Route
+class AdminRoute extends Route
 {
 
     /**
@@ -33,10 +34,11 @@ abstract class AdminRoute extends Route
     /**
      * Route constructor.
      *
-     * @param EE_Admin_Config $admin_config
+     * @param EE_Admin_Config                  $admin_config
      * @param EE_Dependency_Map                $dependency_map
      * @param LoaderInterface                  $loader
      * @param RequestInterface                 $request
+     * @param JsonDataNode                     $data_node
      * @param RouteMatchSpecificationInterface $specification
      */
     public function __construct(
@@ -44,9 +46,43 @@ abstract class AdminRoute extends Route
         EE_Dependency_Map $dependency_map,
         LoaderInterface $loader,
         RequestInterface $request,
+        JsonDataNode $data_node = null,
         RouteMatchSpecificationInterface $specification = null
     ) {
         $this->admin_config = $admin_config;
-        parent::__construct($dependency_map, $loader, $request, $specification);
+        parent::__construct($dependency_map, $loader, $request, $data_node, $specification);
+    }
+
+
+    /**
+     * returns true if the current request matches this route
+     *
+     * @return bool
+     * @since   $VID:$
+     */
+    public function matchesCurrentRequest()
+    {
+        return $this->request->isAdmin();
+    }
+
+
+    /**
+     * @since $VID:$
+     */
+    protected function registerDependencies()
+    {
+    }
+
+
+    /**
+     * implements logic required to run during request
+     *
+     * @return bool
+     * @since   $VID:$
+     */
+    protected function requestHandler()
+    {
+        $this->loader->getShared('EE_Admin');
+        return true;
     }
 }

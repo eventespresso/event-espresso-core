@@ -3,7 +3,8 @@
 namespace EventEspresso\core\domain\entities\routing\handlers\admin;
 
 use EE_Dependency_Map;
-use EventEspresso\core\domain\services\assets\EspressoEditorAssetManager;
+use EventEspresso\core\domain\entities\routing\data_nodes\domains\EventEditor;
+use EventEspresso\core\services\graphql\GraphQLManager;
 
 /**
  * Class EspressoEventEditor
@@ -17,12 +18,6 @@ class EspressoEventEditor extends EspressoEventsAdmin
 {
 
     /**
-     * @var EspressoEditorAssetManager $asset_manager
-     */
-    protected $asset_manager;
-
-
-    /**
      * returns true if the current request matches this route
      *
      * @return bool
@@ -30,8 +25,12 @@ class EspressoEventEditor extends EspressoEventsAdmin
      */
     public function matchesCurrentRequest()
     {
+        global $pagenow;
         return parent::matchesCurrentRequest()
+               && $pagenow
+               && $pagenow === 'admin.php'
                && $this->admin_config->useAdvancedEditor()
+               && $this->request->getRequestParam('page') === 'espresso_events'
                && (
                 $this->request->getRequestParam('action') === 'create_new'
                 || $this->request->getRequestParam('action') === 'edit'
@@ -44,28 +43,6 @@ class EspressoEventEditor extends EspressoEventsAdmin
      */
     protected function registerDependencies()
     {
-        $this->dependency_map->registerDependencies(
-            'EventEspresso\core\domain\services\assets\EspressoEditorAssetManager',
-            [
-                'EventEspresso\core\domain\Domain'                   => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\assets\AssetCollection' => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\assets\Registry'        => EE_Dependency_Map::load_from_cache,
-            ]
-        );
-        $this->dependency_map->registerDependencies(
-            'EventEspresso\core\domain\services\admin\events\editor\EventEditor',
-            [
-                'EE_Admin_Config'                                                               => EE_Dependency_Map::load_from_cache,
-                'EE_Event'                                                                      => EE_Dependency_Map::not_registered,
-                'EventEspresso\core\domain\entities\admin\GraphQLData\CurrentUser'              =>
-                    EE_Dependency_Map::not_registered,
-                'EventEspresso\core\domain\services\admin\events\editor\EventEditorGraphQLData' =>
-                    EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\domain\entities\admin\GraphQLData\GeneralSettings'          =>
-                    EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\assets\JedLocaleData'                              => EE_Dependency_Map::load_from_cache,
-            ]
-        );
         $this->dependency_map->registerDependencies(
             'EventEspresso\core\domain\services\admin\events\editor\EventEditorGraphQLData',
             [
@@ -119,6 +96,16 @@ class EspressoEventEditor extends EspressoEventsAdmin
                 'EEM_Price_Type' => EE_Dependency_Map::load_from_cache,
             ]
         );
+        $this->dependency_map->registerDependencies(
+            'EventEspresso\core\domain\entities\routing\data_nodes\domains\EventEditor',
+            [
+                'EventEspresso\core\domain\services\admin\events\editor\EventEditorGraphQLData' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\json\JsonDataNodeValidator'                        => EE_Dependency_Map::load_from_cache,
+            ]
+        );
+        /** @var EventEditor $data_node */
+        $data_node = $this->loader->getShared('EventEspresso\core\domain\entities\routing\data_nodes\domains\EventEditor');
+        $this->setDataNode($data_node);
     }
 
 
@@ -130,21 +117,13 @@ class EspressoEventEditor extends EspressoEventsAdmin
      */
     protected function requestHandler()
     {
+        /** @var GraphQLManager $graphQL_manager */
+        $graphQL_manager = $this->loader->getShared('EventEspresso\core\services\graphql\GraphQLManager');
+        $graphQL_manager->init();
         $this->asset_manager = $this->loader->getShared(
-            'EventEspresso\core\domain\services\assets\EspressoEditorAssetManager'
+            'EventEspresso\core\domain\services\assets\EspressoCoreAppAssetManager'
         );
-        add_action('admin_enqueue_scripts', [$this, 'enqueueEspressoEditorAssets'], 100);
-        return false;
-    }
-
-
-    /**
-     * enqueue_scripts - Load the scripts and css
-     *
-     * @return void
-     */
-    public function enqueueEspressoEditorAssets()
-    {
-        $this->asset_manager->enqueueBrowserAssets();
+        add_action('admin_enqueue_scripts', [$this->asset_manager, 'enqueueBrowserAssets'], 100);
+        return true;
     }
 }

@@ -4,6 +4,9 @@ namespace EventEspresso\tests\testcases\core\domain\services\graphql\mutators;
 
 use GraphQLRelay\Relay;
 
+/**
+ * @group wpGraphQL
+ */
 class PriceDeleteTest extends BaseMutationTest
 {
     public function setUp()
@@ -74,6 +77,7 @@ class PriceDeleteTest extends BaseMutationTest
          * Execute the request
          */
         $result = $this->deleteMutation($guid);
+        $this->assertNotEmpty($result);
 
         $deleted = $result['data']['deleteEspressoPrice']['espressoPrice'];
 
@@ -85,6 +89,7 @@ class PriceDeleteTest extends BaseMutationTest
          * Try to delete again, this time with forceDelete
          */
         $result = $this->deleteMutation($guid, true);
+        $this->assertNotEmpty($result);
 
         /**
          * This time, we used forceDelete so the mutation should have succeeded

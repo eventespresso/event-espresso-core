@@ -3,7 +3,6 @@
 namespace EventEspresso\core\domain\services\admin\events\editor;
 
 use EE_Error;
-use EEM_Price;
 use EventEspresso\core\domain\entities\admin\GraphQLData\Datetimes;
 use EventEspresso\core\domain\entities\admin\GraphQLData\Prices;
 use EventEspresso\core\domain\entities\admin\GraphQLData\PriceTypes;

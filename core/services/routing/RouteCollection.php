@@ -2,13 +2,13 @@
 
 namespace EventEspresso\core\services\routing;
 
-use EventEspresso\core\domain\entities\routing\handlers\RouteInterface;
+use EventEspresso\core\services\routing\RouteInterface;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\collections\Collection;
 
 /**
  * Class RouteCollection
- * SplObjectStorage Collection of \EventEspresso\core\domain\entities\routing\handlers\RouteInterface objects
+ * SplObjectStorage Collection of \EventEspresso\core\services\routing\RouteInterface objects
  *
  * @package EventEspresso\core\services\routing
  * @author  Brent Christensen
@@ -28,7 +28,7 @@ class RouteCollection extends Collection
     public function __construct()
     {
         parent::__construct(
-            'EventEspresso\core\domain\entities\routing\handlers\RouteInterface',
+            'EventEspresso\core\services\routing\RouteInterface',
             RouteCollection::COLLECTION_NAME
         );
     }

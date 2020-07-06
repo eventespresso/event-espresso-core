@@ -4,7 +4,7 @@ namespace EventEspresso\core\domain\entities\routing\handlers\frontend;
 
 use EE_Config;
 use EE_Dependency_Map;
-use EventEspresso\core\domain\entities\routing\handlers\Route;
+use EventEspresso\core\services\routing\Route;
 
 /**
  * Class ShortcodeRequests
@@ -12,7 +12,7 @@ use EventEspresso\core\domain\entities\routing\handlers\Route;
  *
  * @package EventEspresso\core\domain\entities\routing\handlers\shared
  * @author  Brent Christensen
- * @since   \$VID:$
+ * @since   $VID:$
  */
 class ShortcodeRequests extends Route
 {

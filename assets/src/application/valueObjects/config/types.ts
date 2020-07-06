@@ -16,6 +16,7 @@ export interface Viewer {
 
 export interface CurrentUserProps {
 	id: string;
+	databaseId: number;
 	description: string;
 	email: string;
 	firstName: string;
@@ -24,8 +25,8 @@ export interface CurrentUserProps {
 	nickname: string;
 	lastName: string;
 	locale: string;
-	userId: number;
 	username: string;
+	__typename?: string;
 }
 
 export interface GeneralSettingsData {

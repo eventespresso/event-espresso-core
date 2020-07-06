@@ -3,9 +3,9 @@ import $ from 'jquery';
 
 import ExitSurvey from './ExitSurvey';
 import { renderDomElement } from '@appServices/utilities';
-import './types';
+import '../types';
 
-const info = window?.eeExitSurveyInfo;
+const info = window?.eventEspressoData?.wpPluginsPage?.eeExitSurveyInfo;
 
 /**
  * Handler for deactivation trigger

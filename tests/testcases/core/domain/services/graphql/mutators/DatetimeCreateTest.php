@@ -2,6 +2,9 @@
 
 namespace EventEspresso\tests\testcases\core\domain\services\graphql\mutators;
 
+/**
+ * @group wpGraphQL
+ */
 class DatetimeCreateTest extends BaseMutationTest
 {
     public function setUp()
@@ -34,7 +37,7 @@ class DatetimeCreateTest extends BaseMutationTest
             'name'             => $this->name,
             'description'      => $this->description,
         ];
-        
+
         return $this->runCreateMutation($mutation, $input);
     }
 
@@ -80,6 +83,7 @@ class DatetimeCreateTest extends BaseMutationTest
          * Run the mutation
          */
         $actual = $this->createEntityMutation();
+        $this->assertNotEmpty($actual);
 
         /**
          * We're expecting to have createEntity returned with a nested clientMutationId matching the

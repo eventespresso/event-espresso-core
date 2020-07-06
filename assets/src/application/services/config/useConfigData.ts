@@ -1,7 +1,6 @@
 import {
 	Currency,
 	CurrencyProps,
-	CurrentUser,
 	CurrentUserProps,
 	DateTimeFormats,
 	DateTimeFormatsProps,
@@ -13,29 +12,36 @@ import {
 	TimezoneProps,
 } from '../../valueObjects/config';
 import { ConfigDataProps } from './types';
+import { ApiDomData, ConfigDomData } from '../../DomDataTypes';
 
 export const useConfigData = (): ConfigDataProps => {
-	const data = window?.eejsdata?.data;
+	const api: ApiDomData = window?.eventEspressoData?.api;
+	const config: ConfigDomData = window?.eventEspressoData?.config;
 
-	return {
-		brandName: data?.brandName || 'Event Espresso',
-		currency: Currency(data?.currency_config as CurrencyProps),
-		currentUser: CurrentUser({} as CurrentUserProps),
-		generalSettings: null,
-		dateTimeFormats: DateTimeFormats({} as DateTimeFormatsProps),
+	const configData = {
+		brandName: config?.coreDomain?.brandName || 'Event Espresso',
+		currency: Currency(config?.siteCurrency as CurrencyProps),
+		currentUser: config?.currentUser as CurrentUserProps,
+		generalSettings: config?.generalSettings,
+		dateTimeFormats: DateTimeFormats({
+			dateFormat: config?.generalSettings?.dateFormat,
+			timeFormat: config?.generalSettings?.timeFormat,
+		} as DateTimeFormatsProps),
 		locale: Locale({
-			user: data?.locale?.user || '',
-			site: data?.locale?.site || '',
+			site: config?.locale?.site || '',
+			siteTimezone: config?.locale?.siteTimezone || {},
+			user: config?.locale?.user || '',
 		} as LocaleProps),
-		nonce: data?.eejs_api_nonce || '',
+		nonce: api?.restApiNonce || '',
 		siteUrl: SiteUrl({
-			admin: data?.paths?.admin_url || '',
-			home: data?.paths?.site_url || '',
+			admin: config?.siteUrls?.admin || '',
+			home: config?.siteUrls?.home || '',
 		} as SiteUrlProps),
 		timezone: Timezone({
-			city: data?.default_timezone?.pretty || '',
-			name: data?.default_timezone?.string || '',
-			offset: data?.default_timezone?.offset || 0,
+			city: config?.locale?.siteTimezone?.city || '',
+			name: config?.locale?.siteTimezone?.name || '',
+			offset: config?.locale?.siteTimezone?.offset || 0,
 		} as TimezoneProps),
 	};
+	return configData;
 };

@@ -15,7 +15,7 @@ use EventEspresso\core\services\collections\DuplicateCollectionIdentifierExcepti
  * @author  Brent Christensen
  * @since   $VID:$
  */
-class EspressoEditorAssetManager extends ReactAssetManager
+class EspressoCoreAppAssetManager extends ReactAssetManager
 {
     const JS_HANDLE_EDITOR = 'eventespresso-core-app';
 
@@ -43,7 +43,7 @@ class EspressoEditorAssetManager extends ReactAssetManager
     private function registerJavascript()
     {
         $this->addJs(
-            EspressoEditorAssetManager::JS_HANDLE_EDITOR,
+            EspressoCoreAppAssetManager::JS_HANDLE_EDITOR,
             [
                 ReactAssetManager::JS_HANDLE_REACT,
                 ReactAssetManager::JS_HANDLE_REACT_DOM,

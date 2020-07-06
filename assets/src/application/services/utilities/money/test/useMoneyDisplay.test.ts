@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react-hooks';
 
 import useMoneyDisplay from '../useMoneyDisplay';
-import { mockEeJsData } from '../../../../services/config/test/data';
+import { mockEspressoDomData } from '../../../../services/config/test/data';
 import { ApolloMockedProvider } from '../../../../../domain/eventEditor/services/context/TestContext';
 
 describe('useMoneyDisplay', () => {
@@ -21,6 +21,6 @@ describe('useMoneyDisplay', () => {
 
 		expect(result.current.formatAmount).toBeInstanceOf(Function);
 
-		expect(result.current.currency).toEqual(mockEeJsData.currency_config);
+		expect(result.current.currency).toEqual(mockEspressoDomData.config.siteCurrency);
 	});
 });

@@ -1,10 +1,11 @@
+import '../../types';
 import { RelationalData } from '../../../application/services/apollo/relations/types';
-import { JsDataProps } from '../../../application/services/config/types';
+import { EventEspressoDomData } from '../../../application/DomDataTypes';
 import { CurrentUserProps, GeneralSettings } from '../../../application/valueObjects/config/types';
-import { DatetimeEdge, TicketEdge, PriceEdge, PriceTypeEdge } from '../services/apollo/types';
+import { DatetimeEdge, TicketEdge, PriceEdge, PriceTypeEdge, Event } from '../services/apollo/types';
 
-export interface EventData {
-	dbId: number;
+export interface EventEditorData {
+	event?: Event;
 	datetimes?: DatetimeEdge;
 	tickets?: TicketEdge;
 	prices?: PriceEdge;
@@ -12,23 +13,12 @@ export interface EventData {
 	relations?: RelationalData;
 }
 
-export interface EEEditorData {
-	assetsUrl?: string;
-	event: EventData;
-	graphqlEndpoint?: string;
+export interface EditorData {
+	eventEditor: EventEditorData;
 	currentUser?: CurrentUserProps;
 	generalSettings?: GeneralSettings;
-	i18n?: any;
 }
 
-export interface EEJSData {
-	data: JsDataProps;
-}
-
-declare global {
-	interface Window {
-		eeEditorData: EEEditorData;
-		eejsdata: EEJSData;
-		eeDomain: string;
-	}
+export interface EventEditorDomData extends EventEspressoDomData {
+	eventEditor: EventEditorData;
 }

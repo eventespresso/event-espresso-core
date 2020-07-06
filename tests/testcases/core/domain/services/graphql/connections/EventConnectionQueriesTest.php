@@ -2,10 +2,11 @@
 
 namespace EventEspresso\tests\testcases\core\domain\services\graphql\connections;
 
-use EE_Dependency_Map;
-use EE_Error;
 use EEM_Event;
 
+/**
+ * @group wpGraphQL
+ */
 class EventConnectionQueriesTest extends BaseQueriesTest
 {
     public $current_time;
@@ -124,7 +125,7 @@ class EventConnectionQueriesTest extends BaseQueriesTest
                 }
             }
         }';
-        
+
         /**
          * Set the current user as the subscriber so we can test
          */
@@ -143,7 +144,7 @@ class EventConnectionQueriesTest extends BaseQueriesTest
                 name
             }
         }';
-        
+
         /**
          * Set the current user as the subscriber so we can test
          */
@@ -170,6 +171,7 @@ class EventConnectionQueriesTest extends BaseQueriesTest
             ]
         ];
         $results = $this->eventsQuery($variables);
+        $this->assertNotEmpty($results);
 
         $events = $this->model->get_all(
             [
@@ -181,8 +183,7 @@ class EventConnectionQueriesTest extends BaseQueriesTest
         $first_event     = reset($events);
         $first_event_id  = $first_event->ID();
         $expected_cursor = \GraphQLRelay\Connection\ArrayConnection::offsetToCursor($first_event_id);
-        $this->assertNotEmpty($results);
-        $this->assertEquals(1, count($results['data']['espressoEvents']['edges']));
+        $this->assertCount(1, $results['data']['espressoEvents']['edges']);
 
         $first_edge = $results['data']['espressoEvents']['edges'][0];
 
@@ -207,15 +208,14 @@ class EventConnectionQueriesTest extends BaseQueriesTest
         $variables = [
             'id' => $randomEventId,
         ];
-        $result   = $this->eventByQuery($variables);
+        $results   = $this->eventByQuery($variables);
+        $this->assertNotEmpty($results);
 
         $event = $this->model->get_one_by_ID($randomEventId);
 
-        $this->assertNotEmpty($result);
-
         // fields
-        $this->assertEquals($randomEventId, $result['data']['espressoEvent']['dbId']);
-        $this->assertEquals($event->name(), $result['data']['espressoEvent']['name']);
-        $this->assertEquals($event->description(), $result['data']['espressoEvent']['description']);
+        $this->assertEquals($randomEventId, $results['data']['espressoEvent']['dbId']);
+        $this->assertEquals($event->name(), $results['data']['espressoEvent']['name']);
+        $this->assertEquals($event->description(), $results['data']['espressoEvent']['description']);
     }
 }

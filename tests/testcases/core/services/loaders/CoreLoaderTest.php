@@ -20,14 +20,14 @@ class CoreLoaderTest extends EE_UnitTestCase
     /**
      * @var LoaderInterface $loader
      */
-    private $loader;
+    private $test_loader;
 
 
 
     public function setUp()
     {
         parent::setUp();
-        $this->loader = new CoreLoader(EE_Registry::instance());
+        $this->test_loader = new CoreLoader(EE_Registry::instance());
     }
 
 
@@ -38,7 +38,7 @@ class CoreLoaderTest extends EE_UnitTestCase
     public function testBadConstruct()
     {
         try {
-            $this->loader = new CoreLoader(new stdClass());
+            $this->test_loader = new CoreLoader(new stdClass());
             $this->fail('EventEspresso\core\services\loaders\CoreLoader should have thrown an InvalidArgumentException');
         } catch (Exception $e) {
             $this->assertTrue(true);
@@ -53,7 +53,7 @@ class CoreLoaderTest extends EE_UnitTestCase
     public function testLoad()
     {
         $fqcn = '\EventEspresso\core\services\address\formatters\AddressFormatter';
-        $formatter = $this->loader->load($fqcn);
+        $formatter = $this->test_loader->load($fqcn);
         $this->assertInstanceOf(
             $fqcn,
             $formatter,

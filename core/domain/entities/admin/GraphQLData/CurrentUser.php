@@ -24,16 +24,16 @@ class CurrentUser extends GraphQLData
         $query = <<<QUERY
         query GET_CURRENT_USER {
             {$field_key} {
+                id
+                databaseId
                 description
                 email
                 firstName
-                id
+                lastName
+                locale
                 name
                 nicename
                 nickname
-                lastName
-                locale
-                userId
                 username
                 __typename
             }

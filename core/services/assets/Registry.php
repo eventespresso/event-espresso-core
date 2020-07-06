@@ -119,10 +119,10 @@ class Registry
         $this->i18n_registry = $i18n_registry;
         add_action('wp_enqueue_scripts', array($this, 'registerManifestFiles'), 1);
         add_action('admin_enqueue_scripts', array($this, 'registerManifestFiles'), 1);
-        add_action('wp_enqueue_scripts', array($this, 'registerScriptsAndStyles'), 3);
-        add_action('admin_enqueue_scripts', array($this, 'registerScriptsAndStyles'), 3);
-        add_action('wp_enqueue_scripts', array($this, 'enqueueData'), 4);
-        add_action('admin_enqueue_scripts', array($this, 'enqueueData'), 4);
+        add_action('wp_enqueue_scripts', array($this, 'registerScriptsAndStyles'), 4);
+        add_action('admin_enqueue_scripts', array($this, 'registerScriptsAndStyles'), 4);
+        add_action('wp_enqueue_scripts', array($this, 'enqueueData'), 5);
+        add_action('admin_enqueue_scripts', array($this, 'enqueueData'), 5);
         add_action('wp_print_footer_scripts', array($this, 'enqueueData'), 1);
         add_action('admin_print_footer_scripts', array($this, 'enqueueData'), 1);
     }
@@ -238,23 +238,29 @@ class Registry
      * Call back for the script print in frontend and backend.
      * Used to call wp_localize_scripts so that data can be added throughout the runtime until this later hook point.
      *
+     * @throws Exception
      * @since 4.9.31.rc.015
      */
     public function enqueueData()
     {
-        $this->removeAlreadyRegisteredDataForScriptHandles();
-        wp_add_inline_script(
-            'eejs-core',
-            'var eejsdata=' . wp_json_encode(array('data' => $this->jsdata)),
-            'before'
-        );
-        $scripts = $this->assets->getJavascriptAssetsWithData();
-        foreach ($scripts as $script) {
-            $this->addRegisteredScriptHandlesWithData($script->handle());
-            if ($script->hasInlineDataCallback()) {
-                $localize = $script->inlineDataCallback();
-                $localize();
+        try {
+            $this->removeAlreadyRegisteredDataForScriptHandles();
+            wp_add_inline_script(
+                'eejs-core',
+                'var eejsdata=' . wp_json_encode(['data' => $this->jsdata]),
+                'before'
+            );
+            $scripts = $this->assets->getJavascriptAssetsWithData();
+            foreach ($scripts as $script) {
+                $this->addRegisteredScriptHandlesWithData($script->handle());
+                if ($script->hasInlineDataCallback()) {
+                    $localize = $script->inlineDataCallback();
+                    $localize();
+                }
             }
+        } catch (Exception $exception) {
+            EE_Error::add_error($exception->getMessage(), __FILE__, __FUNCTION__, __LINE__);
+            new ExceptionStackTraceDisplay($exception);
         }
     }
 
@@ -604,20 +610,26 @@ class Registry
 
 
     /**
-     * @since 4.9.62.p
+     * @throws Exception
      * @throws InvalidArgumentException
      * @throws InvalidFilePathException
+     * @since 4.9.62.p
      */
     public function registerManifestFiles()
     {
-        $manifest_files = $this->assets->getManifestFiles();
-        foreach ($manifest_files as $manifest_file) {
-            $this->registerManifestFile(
-                $manifest_file->assetNamespace(),
-                $manifest_file->urlBase(),
-                $manifest_file->filepath() . Registry::FILE_NAME_BUILD_MANIFEST,
-                $manifest_file->filepath()
-            );
+        try {
+            $manifest_files = $this->assets->getManifestFiles();
+            foreach ($manifest_files as $manifest_file) {
+                $this->registerManifestFile(
+                    $manifest_file->assetNamespace(),
+                    $manifest_file->urlBase(),
+                    $manifest_file->filepath() . Registry::FILE_NAME_BUILD_MANIFEST,
+                    $manifest_file->filepath()
+                );
+            }
+        } catch (Exception $exception) {
+            EE_Error::add_error($exception->getMessage(), __FILE__, __FUNCTION__, __LINE__);
+            new ExceptionStackTraceDisplay($exception);
         }
     }
 

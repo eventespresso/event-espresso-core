@@ -24,9 +24,9 @@ class EspressoEventsAdmin extends AdminRoute
     public function matchesCurrentRequest()
     {
         global $pagenow;
-        return $pagenow
+        return parent::matchesCurrentRequest()
+               && $pagenow
                && $pagenow === 'admin.php'
-               && $this->request->isAdmin()
                && $this->request->getRequestParam('page') === 'espresso_events';
     }
 
@@ -40,17 +40,5 @@ class EspressoEventsAdmin extends AdminRoute
             'EventEspresso\core\domain\services\admin\events\default_settings\AdvancedEditorAdminFormSection',
             ['EE_Admin_Config' => EE_Dependency_Map::load_from_cache]
         );
-    }
-
-
-    /**
-     * implements logic required to run during request
-     *
-     * @return bool
-     * @since   $VID:$
-     */
-    protected function requestHandler()
-    {
-        return false;
     }
 }

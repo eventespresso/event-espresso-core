@@ -149,6 +149,15 @@ abstract class BrowserAsset extends Asset
     /**
      * @param array $dependencies
      */
+    public function addDependencies(array $dependencies)
+    {
+        $this->dependencies = array_merge($this->dependencies, $dependencies);
+    }
+
+
+    /**
+     * @param array $dependencies
+     */
     protected function setDependencies(array $dependencies)
     {
         $this->dependencies = $dependencies;

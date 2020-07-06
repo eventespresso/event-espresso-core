@@ -8,8 +8,8 @@ import {
 } from 'apollo-cache-inmemory';
 import { BatchHttpLink } from 'apollo-link-batch-http';
 
-const graphqlEndpoint = window?.eeEditorData?.graphqlEndpoint || '';
-const nonce = window?.eejsdata?.data?.eejs_api_nonce || '';
+const graphqlEndpoint = window?.eventEspressoData?.api?.graphqlEndpoint || '';
+const nonce = window?.eventEspressoData?.api?.restApiNonce || '';
 
 const getResolver = (type: string): CacheResolver => {
 	const resolver: CacheResolver = (_, args, { getCacheKey }) => getCacheKey({ __typename: type, id: args.id });

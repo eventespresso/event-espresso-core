@@ -41,6 +41,11 @@ class GraphQLManager implements GQLManagerInterface
      */
     protected $types_manager;
 
+    /**
+     * @var boolean $initialized
+     */
+    private $initialized = false;
+
 
     /**
      * GraphQLManager constructor.
@@ -73,10 +78,14 @@ class GraphQLManager implements GQLManagerInterface
      */
     public function init()
     {
+        if ($this->initialized) {
+            return;
+        }
         $this->connections_manager->init();
         $this->data_loader_manager->init();
         $this->enums_manager->init();
         $this->inputs_manager->init();
         $this->types_manager->init();
+        $this->initialized = true;
     }
 }

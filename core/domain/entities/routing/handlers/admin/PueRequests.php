@@ -3,7 +3,7 @@
 namespace EventEspresso\core\domain\entities\routing\handlers\admin;
 
 use EE_Dependency_Map;
-use EventEspresso\core\domain\entities\routing\handlers\Route;
+use EventEspresso\core\services\routing\Route;
 
 /**
  * Class PueRequests
@@ -11,7 +11,7 @@ use EventEspresso\core\domain\entities\routing\handlers\Route;
  *
  * @package EventEspresso\core\domain\entities\routing\handlers\admin
  * @author  Brent Christensen
- * @since   \$VID:$
+ * @since   $VID:$
  */
 class PueRequests extends Route
 {

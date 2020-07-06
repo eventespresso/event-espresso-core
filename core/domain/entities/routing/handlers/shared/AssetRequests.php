@@ -3,7 +3,7 @@
 namespace EventEspresso\core\domain\entities\routing\handlers\shared;
 
 use EE_Dependency_Map;
-use EventEspresso\core\domain\entities\routing\handlers\Route;
+use EventEspresso\core\services\routing\Route;
 
 /**
  * Class AssetRequests
@@ -11,7 +11,7 @@ use EventEspresso\core\domain\entities\routing\handlers\Route;
  *
  * @package EventEspresso\core\domain\entities\routing\handlers\shared
  * @author  Brent Christensen
- * @since   \$VID:$
+ * @since   $VID:$
  */
 class AssetRequests extends Route
 {

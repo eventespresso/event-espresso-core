@@ -8,12 +8,12 @@ const { Provider } = EventIdContext;
 
 const EventIdProvider: React.FC = ({ children }) => {
 	const toaster = useSystemNotifications();
-	const eventId = window?.eeEditorData?.event?.dbId || 0;
+	const eventId = window?.eventEspressoData?.eventEditor?.event?.dbId || 0;
 
 	if (!eventId) {
 		toaster.error({ message: 'Event ID is empty or invalid.' });
 	}
-	return eventId ? <Provider value={eventId}>{children}</Provider> : null;
+	return <Provider value={eventId}>{children}</Provider>;
 };
 
 export { EventIdContext, EventIdProvider };
