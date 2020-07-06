@@ -3,7 +3,6 @@
 .ee-btn-row {
 	display: flex;
 	justify-content: center;
-	margin: var(--ee-margin-big) 0;
 	padding: var(--ee-padding-nano);
 
 	.ee-debug-info-btn {
@@ -29,20 +28,27 @@
 		}
 	}
 
-	@include max782px {
-		margin: var(--ee-margin-defult) 0;
-	}
+	ee-form + & {
+		margin: var(--ee-margin-big) 0;
 
-	@include max600px {
-		margin: var(--ee-margin-small) 0;
+		@include max782px {
+			margin: var(--ee-margin-defult) 0;
+		}
+
+		@include max600px {
+			margin: var(--ee-margin-small) 0;
+		}
+
+		@include max480px {
+			margin: var(--ee-margin-smaller) 0;
+		}
+
+		@include max360px {
+			margin: var(--ee-margin-tiny) 0;
+		}
 	}
 
 	@include max480px {
 		flex-flow: column;
-		margin: var(--ee-margin-smaller) 0;
-	}
-
-	@include max360px {
-		margin: var(--ee-margin-tiny) 0;
 	}
 }
