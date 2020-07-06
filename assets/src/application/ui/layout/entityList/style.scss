@@ -11,23 +11,26 @@
 
 	&__header {
 		&.ee-heading {
-			color: var(--ee-color-grey-11);
+			color: var(--ee-color-grey-10);
 			font-family: 'Segoe UI', Candara, 'Bitstream Vera Sans', 'DejaVu Sans', 'Bitstream Vera Sans',
 				'Trebuchet MS', Verdana, 'Verdana Ref', sans-serif;
-			font-size: calc(var(--ee-font-size-huge) * 2.25);
+			font-size: calc(var(--ee-font-size-huge) * 1.45);
 			font-weight: 800;
 			line-height: calc(var(--ee-line-height-modifier) * 0.875);
 			margin: var(--ee-margin-smaller) 0 0;
 			text-shadow: var(--ee-text-shadow-inset-light);
 
 			@include max782px {
-				font-size: calc(var(--ee-font-size-huge) * 2);
 				line-height: calc(var(--ee-line-height-modifier) * 0.65);
 			}
 
 			@include max480px {
-				font-size: calc(var(--ee-font-size-huge) * 1.5);
+				font-size: calc(var(--ee-font-size-huge) * 1.25);
 				text-align: center;
+			}
+
+			@include max360px {
+				font-size: calc(var(--ee-font-size-huge) * 1.05);
 			}
 		}
 	}
@@ -78,6 +81,8 @@
 	}
 
 	+ .ee-entity-list {
-		margin-top: calc(var(--ee-margin-big) * -1);
+		@include min1600px {
+			margin-top: calc(var(--ee-margin-big) * -1);
+		}
 	}
 }
