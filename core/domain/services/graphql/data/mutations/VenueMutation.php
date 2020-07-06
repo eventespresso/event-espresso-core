@@ -37,6 +37,10 @@ class VenueMutation
 
         // Likewise the other fields...
 
-        return $args;
+        return apply_filters(
+            'FHEE__EventEspresso_core_domain_services_graphql_data__venue_mutation_args',
+            $args,
+            $input
+        );
     }
 }
