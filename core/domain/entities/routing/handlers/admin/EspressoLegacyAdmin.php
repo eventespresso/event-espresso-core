@@ -139,7 +139,6 @@ class EspressoLegacyAdmin extends AdminRoute
         $this->asset_manager = $this->loader->getShared(
             'EventEspresso\core\domain\services\assets\LegacyAccountingAssetManager'
         );
-        parent::requestHandler();
         add_action('admin_enqueue_scripts', [$this, 'enqueueLegacyAccountingAssets'], 100);
         return true;
     }
