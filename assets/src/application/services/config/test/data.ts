@@ -43,7 +43,7 @@ export const mockEspressoDomData: EventEspressoDomData = {
 			name: 'Chef Manzoor',
 			nicename: 'Chef Manzoor',
 			nickname: 'Chef Manzoor',
-			userId: 1,
+			databaseId: 1,
 			username: 'chef',
 		},
 		generalSettings: {
