@@ -3,9 +3,9 @@
  * © 2018 Event Espresso
  * ------------------------------------------------------------------------- */
 
-@import "application/ui/styles/mixins/breakpoints.scss";
+@import 'application/ui/styles/mixins/breakpoints.scss';
 
-.ee-entity-details-panel-div {
+.ee-entity-details-panel {
 	align-self: flex-start;
 	color: var(--ee-default-text-color);
 	display: flex;
@@ -39,7 +39,7 @@
 		line-height: var(--ee-font-size-big);
 	}
 
-	.ee-entity-details-div {
+	.ee-entity-details {
 		display: flex;
 		flex-direction: column-reverse;
 		max-width: calc(var(--ee-font-size-tiny) * 7);
@@ -57,47 +57,54 @@
 			text-align: center;
 			width: 100%;
 		}
-	}
 
-	.ee-entity-details-label-div {
-		color: var(--ee-default-text-color-super-high-contrast);
-		font-size: var(--ee-font-size-tiny);
-		letter-spacing: 1px;
+		&__label {
+			color: var(--ee-default-text-color-super-high-contrast);
+			font-size: var(--ee-font-size-tiny);
+			letter-spacing: 1px;
 
-		@include max480px {
-			color: var(--ee-default-text-color-high-contrast);
-			font-size: var(--ee-font-size-smaller);
-			letter-spacing: 0;
-			text-align: right;
-			vertical-align: middle;
-			width: 50%;
-		}
-	}
-
-	.ee-entity-details-value-div {
-		font-weight: bold;
-		margin-bottom: var(--ee-border-radius-default);
-
-		.dashicon {
-			margin: 0;
-			position: relative;
+			@include max480px {
+				color: var(--ee-default-text-color-high-contrast);
+				font-size: var(--ee-font-size-smaller);
+				letter-spacing: 0;
+				text-align: right;
+				vertical-align: middle;
+				width: 50%;
+			}
 		}
 
-		@include max480px {
-			padding-left: var(--ee-padding-tiny);
-			text-align: center;
-			vertical-align: middle;
-			width: 25%;
+		&__value {
+			font-weight: bold;
+			margin-bottom: var(--ee-border-radius-default);
+
+			.dashicon {
+				margin: 0;
+				position: relative;
+			}
+
+			@include max480px {
+				padding-left: var(--ee-padding-tiny);
+				text-align: center;
+				vertical-align: middle;
+				width: 25%;
+			}
+
+			.entity-sold {
+				align-items: center;
+				display: inline-flex;
+				justify-content: center;
+				margin-bottom: -10px;
+			}
 		}
-	}
 
-	.ee-entity-details-separator {
-		border: 0 solid rgba(0, 0, 0, 0);
-		border-left: 1px solid rgba(0, 0, 0, 0.25);
-		height: calc(var(--ee-font-size-big) + var(--ee-font-size-bigger));
+		&__separator {
+			border: 0 solid rgba(0, 0, 0, 0);
+			border-left: 1px solid rgba(0, 0, 0, 0.25);
+			height: calc(var(--ee-font-size-big) + var(--ee-font-size-bigger));
 
-		@include max480px {
-			display: none;
+			@include max480px {
+				display: none;
+			}
 		}
 	}
 
