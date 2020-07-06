@@ -8,21 +8,11 @@ import './style.scss';
 const Link: React.FC<LinkProps> = ({ children, external, href, icon, tooltip, tooltipProps, ...props }) => {
 	const className = classNames('ee-btn-base ee-icon-button ee-icon-button--borderless', props.className);
 
-	if (external && !icon && tooltip) {
+	if (external && tooltip) {
 		return (
 			<Tooltip tooltip={tooltip} {...tooltipProps}>
 				<a href={href} className={className} target='_blank' rel='noopener norefferer'>
-					{children}
-				</a>
-			</Tooltip>
-		);
-	}
-
-	if (external && icon && tooltip) {
-		return (
-			<Tooltip tooltip={tooltip} {...tooltipProps}>
-				<a href={href} className={className} target='_blank' rel='noopener norefferer'>
-					{icon}
+					{icon ? icon : children}
 				</a>
 			</Tooltip>
 		);
