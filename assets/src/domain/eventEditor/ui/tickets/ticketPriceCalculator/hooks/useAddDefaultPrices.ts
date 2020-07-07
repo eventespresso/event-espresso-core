@@ -1,24 +1,19 @@
 import { useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
-import defaultPrice from '../defaultPriceModifier';
 import { isBasePrice } from '@sharedEntities/priceTypes/predicates/selectionPredicates';
 import { sortByPriceOrderIdAsc } from '@sharedEntities/prices/predicates/sortingPredicates';
-import { updatePriceModifier } from '../utils';
-import { usePriceModifier } from '../hooks';
-import { usePriceTypes, usePrices } from '@edtrServices/apollo/queries';
+import { usePrices } from '@edtrServices/apollo/queries';
 import { isDefault } from '@sharedEntities/prices/predicates/selectionPredicates';
 import { useDataState } from '../data';
 import usePriceToTpcModifier from './usePriceToTpcModifier';
+import useDefaultBasePrice from './useDefaultBasePrice';
 
 const useAddDefaultPrices = (): VoidFunction => {
-	const allPriceTypes = usePriceTypes();
 	const allPrices = usePrices();
 	const defaultPrices = allPrices.filter(isDefault);
-	const [basePriceType] = allPriceTypes.filter(isBasePrice);
 
-	const defaultPriceModifier = usePriceModifier(defaultPrice);
-	const basePrice = updatePriceModifier(defaultPriceModifier, basePriceType);
+	const basePrice = useDefaultBasePrice();
 
 	const convertPriceToTpcModifier = usePriceToTpcModifier();
 
