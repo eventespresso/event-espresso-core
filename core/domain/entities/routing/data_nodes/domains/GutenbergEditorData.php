@@ -23,7 +23,8 @@ class GutenbergEditorData extends JsonDataNode
      *
      * @param JsonDataNodeValidator $validator
      */
-    public function __construct(JsonDataNodeValidator $validator) {
+    public function __construct(JsonDataNodeValidator $validator)
+    {
         parent::__construct($validator);
         $this->setDomain(GutenbergEditorData::NODE_NAME);
         $this->setNodeName(GutenbergEditorData::NODE_NAME);
