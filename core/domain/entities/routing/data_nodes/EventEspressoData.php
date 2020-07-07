@@ -54,7 +54,6 @@ class EventEspressoData extends PrimaryJsonDataNode
         $this->config = $config;
         $this->jed_locale = $jed_locale;
         $this->setNodeName(EventEspressoData::NODE_NAME);
-        $this->setTargetScript(EspressoCoreAppAssetManager::JS_HANDLE_EDITOR);
     }
 
 

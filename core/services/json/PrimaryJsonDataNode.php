@@ -32,7 +32,7 @@ abstract class PrimaryJsonDataNode extends JsonDataNode
      * @param string $target_script
      * @throws DomainException
      */
-    protected function setTargetScript($target_script)
+    public function setTargetScript($target_script)
     {
         if ($this->target_script !== null) {
             $this->validator->overwriteError($target_script, 'target script');
