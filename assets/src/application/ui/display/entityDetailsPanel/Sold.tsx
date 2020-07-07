@@ -36,7 +36,7 @@ const Sold: React.FC<Props> = ({ sold = 0, type, ...props }) => {
 	const tooltip = type === 'date' ? __('view sold for this date.') : __('view sold for this ticket.');
 
 	return (
-		<Link className='entity-sold' external href={regListUrl} tooltip={tooltip}>
+		<Link className='entity-sold' href={regListUrl} tooltip={tooltip}>
 			{sold}
 		</Link>
 	);
