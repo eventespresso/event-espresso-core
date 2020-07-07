@@ -28,6 +28,7 @@ const Sold: React.FC<Props> = ({ sold = 0, type, ...props }) => {
 
 	const regListUrl = addQueryArgs(adminUrl, {
 		event_id: eventId,
+		_reg_status: 'RAP',
 		return: 'edit',
 		...{ dbId },
 	});
