@@ -3,12 +3,14 @@ import React, { useCallback } from 'react';
 import Popup from './Popup';
 import ExitSurveyModal from './ExitSurveyModal';
 import { useDisclosure } from '@chakra-ui/hooks';
+import { useInitialization } from './hooks';
 
 type ExitSurveyProps = {
 	deactivationUrl: string;
 };
 
 const ExitSurvey: React.FC<ExitSurveyProps> = ({ deactivationUrl }) => {
+	useInitialization();
 	const { isOpen, onClose, onOpen } = useDisclosure();
 
 	const deactivatePlugin = useCallback(() => {
