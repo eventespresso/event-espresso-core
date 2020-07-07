@@ -1,7 +1,7 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
 
-import { EntityDetailsPanel } from '@application/ui/display/entityDetailsPanel';
+import { EntityDetailsPanel, Sold } from '@application/ui/display/entityDetailsPanel';
 import DateRegistrationsLink from '../../DateRegistrationsLink';
 import DateCapacity from './DateCapacity';
 import { getPropsAreEqual } from '@appServices/utilities';
@@ -12,7 +12,7 @@ const DateDetailsPanel: React.FC<DateItemProps> = ({ entity: datetime }) => {
 		{
 			id: 'ee-event-date-sold',
 			label: __('sold'),
-			value: datetime.sold || 0,
+			value: <Sold dbId={datetime.dbId} sold={datetime.sold} type='date' />,
 		},
 		{
 			id: 'ee-event-date-capacity',
