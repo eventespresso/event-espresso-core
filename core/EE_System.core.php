@@ -1145,6 +1145,7 @@ final class EE_System implements ResettableInterface
         $this->router->addRoute('EventEspresso\core\domain\entities\routing\handlers\admin\EspressoLegacyAdmin');
         $this->router->addRoute('EventEspresso\core\domain\entities\routing\handlers\admin\EspressoEventsAdmin');
         $this->router->addRoute('EventEspresso\core\domain\entities\routing\handlers\admin\EspressoEventEditor');
+        $this->router->addRoute('EventEspresso\core\domain\entities\routing\handlers\admin\GutenbergEditor');
         $this->router->addRoute('EventEspresso\core\domain\entities\routing\handlers\admin\WordPressPluginsPage');
         $this->router->addRoute('EventEspresso\core\domain\entities\routing\handlers\shared\WordPressHeartbeat');
         do_action('AHEE__EE_System__load_controllers__complete');

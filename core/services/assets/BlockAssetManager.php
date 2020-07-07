@@ -21,9 +21,6 @@ use EventEspresso\core\services\collections\DuplicateCollectionIdentifierExcepti
  */
 abstract class BlockAssetManager extends AssetManager implements BlockAssetManagerInterface
 {
-
-    const JS_HANDLE_EDITOR = 'eventespresso-blocks';
-
     /**
      * @var string $editor_script_handle
      */

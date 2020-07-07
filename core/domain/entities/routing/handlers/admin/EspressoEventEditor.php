@@ -4,6 +4,8 @@ namespace EventEspresso\core\domain\entities\routing\handlers\admin;
 
 use EE_Dependency_Map;
 use EventEspresso\core\domain\entities\routing\data_nodes\domains\EventEditor;
+use EventEspresso\core\domain\entities\routing\data_nodes\EventEspressoData;
+use EventEspresso\core\domain\services\assets\EspressoCoreAppAssetManager;
 use EventEspresso\core\services\graphql\GraphQLManager;
 
 /**
@@ -103,8 +105,15 @@ class EspressoEventEditor extends EspressoEventsAdmin
                 'EventEspresso\core\services\json\JsonDataNodeValidator'                        => EE_Dependency_Map::load_from_cache,
             ]
         );
+        /** @var EventEspressoData $primary_data_node */
+        $primary_data_node = $this->loader->getShared(
+            'EventEspresso\core\domain\entities\routing\data_nodes\EventEspressoData'
+        );
+        $primary_data_node->setTargetScript(EspressoCoreAppAssetManager::JS_HANDLE_EDITOR);
         /** @var EventEditor $data_node */
-        $data_node = $this->loader->getShared('EventEspresso\core\domain\entities\routing\data_nodes\domains\EventEditor');
+        $data_node = $this->loader->getShared(
+            'EventEspresso\core\domain\entities\routing\data_nodes\domains\EventEditor'
+        );
         $this->setDataNode($data_node);
     }
 
