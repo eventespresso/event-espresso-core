@@ -104,6 +104,154 @@
     </div> <!-- end #add-event-datetime -->
     <div style="clear:both"></div>
 
+
+    <div style="clear: both; padding: 2rem 0 1rem; margin: 0 0 -2rem;">
+
+        <script type="text/javascript">
+            function openStatusNotice() {
+                let link = document.getElementById( 'ee-open-notice-link' );
+                link.classList.remove( 'ee-show-link' );
+                let statusNotice = document.getElementById( 'ee-status-change-notice' );
+                statusNotice.classList.add( 'ee-open-notice' );
+            }
+
+            function closeStatusNotice() {
+                let link = document.getElementById( 'ee-open-notice-link' );
+                link.classList.add( 'ee-show-link' );
+                let statusNotice = document.getElementById( 'ee-status-change-notice' );
+                statusNotice.classList.remove( 'ee-open-notice' );
+            }
+        </script>
+
+        <style type="text/css">
+
+            #ee-open-notice-link {
+                box-shadow: none !important;
+                color: #e34052;
+                display: block;
+                font-weight: 700;
+                margin: .5rem 0;
+                outline: none !important;
+                text-decoration: none;
+            }
+
+            .ee-close-notice-btn {
+                position: absolute;
+                right: 20px;
+                top: 16px;
+                width: 20px;
+                height: 20px;
+                opacity: 0.4;
+            }
+
+            .ee-close-notice-btn:hover {
+                opacity: .8;
+            }
+
+            .ee-close-notice-btn:after,
+            .ee-close-notice-btn:before {
+                position: absolute;
+                left: 10px;
+                content: ' ';
+                height: 21px;
+                width: 4px;
+                background-color: #182e46;
+            }
+
+            .ee-close-notice-btn:after {
+                transform: rotate(-45deg);
+            }
+
+            .ee-close-notice-btn:before {
+                transform: rotate(45deg);
+            }
+
+            .ee-hide-container {
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.4s ease;
+            }
+
+            .ee-open-notice {
+                max-height: 16rem !important;
+            }
+
+            .ee-show-link {
+                max-height: 1rem !important;
+            }
+
+            .ee-status-change-notice-div {
+                background: #f1f1f1;
+                font-size: 1rem;
+                margin: 0 .25rem 1rem;
+                padding: 1rem 2rem;
+                position: relative;
+                transition: max-height 0.4s ease;
+            }
+
+            .ee-status-change-notice-div h3 {
+                color: #e34052;
+                font-weight: 700;
+                margin: .5rem 0 0;
+            }
+
+            .ee-status-change-notice-div p {
+                font-size: .9rem;
+            }
+
+            .ee-status-change-notice-div ul {
+                line-height: 2.5rem;
+                list-style: inside;
+            }
+
+            .ee-status-change-notice-div span.pill {
+                border-radius: 3px;
+                color: white;
+                padding: .2rem .6rem;
+            }
+
+            .ee-status-change-notice-div span.pill.yellow {
+                background: #fcb93c;
+            }
+
+            .ee-status-change-notice-div span.pill.purple {
+                background: #8a549a;
+            }
+
+            .ee-status-change-notice-div span.pill.charcoal {
+                background: #403a3a;
+            }
+        </style>
+        <a href="javascript:void();" onclick="openStatusNotice();" id="ee-open-notice-link" class="ee-hide-container
+        ee-show-link">
+            Click for an Important Notice regarding Status Color Codes
+        </a>
+        <div id="ee-status-change-notice" class="ee-hide-container ee-close-notice">
+            <div class="ee-status-change-notice-div">
+
+                <a href="javascript:void();" onclick="closeStatusNotice();" class="ee-close-notice-btn"></a>
+                <h3>Important Notice Regarding Status Color Codes</h3>
+                <p>In order to correct some inconsistencies in our ticket and datetime status color codes we have made
+                    the
+                    following changes:</p>
+                <ul>
+                    <li>
+                        The Datetime and Ticket "Sold Out" status color has changed from
+                        <span class="yellow pill">Yellow</span> to <span class="purple pill">Purple</span>
+                    </li>
+                    <li>
+                        The Datetime "Postponed" status color has changed from
+                        <span class="purple pill">Purple</span> to <span class="yellow pill">Yellow</span>
+                    </li>
+                    <li>
+                        The Ticket "Archived" status color has changed from
+                        <span class="purple pill">Purple</span> to <span class="charcoal pill">Charcoal</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
     <div class="available-tickets-container">
         <h3 class="event-tickets-datetimes-title"><span data-target=".event-tickets-container"
                                                         class="clickable ee-collapsible<?php echo $ee_collapsible_status; ?>"><span
