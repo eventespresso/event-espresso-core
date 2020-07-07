@@ -24,6 +24,7 @@ class GQLRequests extends Route
      */
     public function matchesCurrentRequest()
     {
+        global $pagenow;
         return PHP_VERSION_ID > 70000
                && (
                    $this->request->isGQL()
@@ -34,6 +35,16 @@ class GQLRequests extends Route
                        && (
                            $this->request->getRequestParam('action') === 'create_new'
                            || $this->request->getRequestParam('action') === 'edit'
+                       )
+                   )
+                   || (
+                       $pagenow
+                       && (
+                           $pagenow === 'post-new.php'
+                           || (
+                               $pagenow === 'post.php'
+                               && $this->request->getRequestParam('action') === 'edit'
+                           )
                        )
                    )
                );
