@@ -1,7 +1,5 @@
 .ee-inline-edit {
 	&__infinity {
-		margin-bottom: -10px; // temp hack, to be fixed by rethinking entire entity details flow and positioning
-
 		&:focus,
 		&.ee-infinity-sign:focus {
 			color: var(--ee-color-primary-low-contrast) !important;

@@ -20,7 +20,6 @@
 	vertical-align: bottom;
 	width: 100%;
 
-	/* WordPress Admin Media Query Breakpoint: Smartphone */
 	@include max600px {
 		font-size: var(--ee-font-size-default);
 		width: calc(var(--ee-font-size-default) * 10);
@@ -75,7 +74,11 @@
 
 		&__value {
 			font-weight: bold;
-			margin-bottom: var(--ee-border-radius-default);
+			margin-bottom: 0;
+
+			.ee-entity-list__card-view & {
+				margin-bottom: -0.4rem;
+			}
 
 			.dashicon {
 				margin: 0;
@@ -93,7 +96,6 @@
 				align-items: center;
 				display: inline-flex;
 				justify-content: center;
-				margin-bottom: -10px;
 			}
 		}
 
