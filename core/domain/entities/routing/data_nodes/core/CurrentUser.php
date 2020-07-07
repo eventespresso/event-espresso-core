@@ -26,6 +26,9 @@ class CurrentUser extends JsonDataNode
      */
     public function __construct(JsonDataNodeValidator $validator)
     {
+        if (! class_exists('WPGraphQL')) {
+            require_once EE_THIRD_PARTY . 'wp-graphql/wp-graphql.php';
+        }
         parent::__construct($validator);
         $this->setNodeName(CurrentUser::NODE_NAME);
     }
