@@ -35,6 +35,6 @@ class GutenbergEditorData extends JsonDataNode
      */
     public function initialize()
     {
-        // $this->addData('block-name', []);
+        $this->addData('BlockName', []);
     }
 }
