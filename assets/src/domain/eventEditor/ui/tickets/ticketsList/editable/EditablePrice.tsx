@@ -14,8 +14,8 @@ interface EditablePriceProps extends TicketItemProps {
 const EditablePrice: React.FC<EditablePriceProps> = ({ entity: ticket, className }) => {
 	const recalculateBasePrice = useRecalculateBasePrice(ticket.id);
 	const onChangePrice = useCallback(
-		({ amount: price }: any): void => {
-			price = parseFloat(price);
+		({ amount }: any): void => {
+			const price = parseFloat(amount);
 			if (price !== ticket.price) {
 				recalculateBasePrice(price);
 			}

@@ -23,11 +23,12 @@ class PriceMutation
     {
         $args = [];
 
-        if (! empty($input['amount'])) {
+        // amount can be 0
+        if (array_key_exists('amount', $input)) {
             $args['PRC_amount'] = (float) $input['amount'];
         }
 
-        if (! empty($input['description'])) {
+        if (isset($input['description'])) {
             $args['PRC_desc'] = sanitize_text_field($input['description']);
         }
 
@@ -39,7 +40,7 @@ class PriceMutation
             $args['PRC_deleted'] = (bool) $input['isTrashed'];
         }
 
-        if (! empty($input['name'])) {
+        if (isset($input['name'])) {
             $args['PRC_name'] = sanitize_text_field($input['name']);
         }
 
