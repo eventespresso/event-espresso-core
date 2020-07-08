@@ -20,6 +20,10 @@ const useRecalculateBasePrice = (ticketId: EntityId): Callback => {
 	return useCallback<Callback>(
 		(ticketPrice) => {
 			let tpcData = getDataState(null);
+			// Make sure the new ticket price is used
+			const updatedTicket = { ...tpcData?.ticket, price: ticketPrice };
+			tpcData = { ...tpcData, ticket: updatedTicket };
+
 			const exitingBasePrice = getBasePrice(tpcData?.prices);
 			// if the ticket does not have a base price,
 			// that means it was free and now a price has been added ¯\_(ツ)_/¯
