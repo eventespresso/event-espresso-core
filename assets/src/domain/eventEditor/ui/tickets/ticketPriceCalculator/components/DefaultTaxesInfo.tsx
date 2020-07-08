@@ -1,8 +1,7 @@
 import React, { useEffect } from 'react';
-import { any } from 'ramda';
 import { __, sprintf } from '@wordpress/i18n';
 
-import { isDefault, getDefaultTaxes } from '@sharedEntities/prices/predicates/selectionPredicates';
+import { getDefaultTaxes } from '@sharedEntities/prices/predicates/selectionPredicates';
 import { useDataState } from '../data';
 import { useEdtrState } from '@edtrHooks/edtrState';
 import { usePrices } from '@edtrServices/apollo';
@@ -15,24 +14,21 @@ const DefaultTaxesInfo = () => {
 	const tpcDefaultTaxPrices = getDefaultTaxes(prices);
 	const { pricesPollInterval, setPricesPollInterval } = useEdtrState();
 
-	const hasDefaultPrice = any(isDefault, prices);
-
 	useEffect(() => {
-		if (!hasDefaultPrice && pricesPollInterval) {
-			// disable long polling
-			setPricesPollInterval(0);
-		}
 		return () => {
 			// disable polling on unmount.
 			pricesPollInterval && setPricesPollInterval(0);
 		};
-	}, [hasDefaultPrice, pricesPollInterval, setPricesPollInterval]);
+	}, [pricesPollInterval, setPricesPollInterval]);
 
 	const newTaxesFetched = pricesPollInterval && defaultTaxPrices.length !== tpcDefaultTaxPrices.length;
 
 	return newTaxesFetched ? (
 		<div className='ee-tpc__default-taxes-info'>
-			{sprintf(__('New default taxes have been created. Click the "%s" button to add them now.'), __('Add default taxes'))}
+			{sprintf(
+				__('New default taxes are available. Click the "%s" button to add them now.'),
+				__('Add default taxes')
+			)}
 		</div>
 	) : null;
 };
