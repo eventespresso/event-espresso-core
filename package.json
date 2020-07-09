@@ -74,9 +74,7 @@
 		"apollo-cache-inmemory": "^1.6.6",
 		"apollo-client": "^2.6.10",
 		"apollo-link-batch-http": "^1.2.14",
-		"baseui": "^9.84.2",
 		"classnames": "^2.2.6",
-		"cuid": "^2.1.8",
 		"date-fns": "^2.14.0",
 		"date-fns-tz": "^1.0.10",
 		"emotion-theming": "^10.0.27",
@@ -98,11 +96,8 @@
 		"react-textfit": "^1.1.0",
 		"react-time-picker": "^4.0.1",
 		"react-toastify": "^6.0.6",
-		"styletron-engine-atomic": "^1.4.6",
-		"styletron-react": "^5.2.7",
 		"use-debounce": "^3.4.2",
 		"uuid": "^8.2.0",
-		"warning": "^4.0.3",
 		"yup": "^0.29.1"
 	},
 	"devDependencies": {
