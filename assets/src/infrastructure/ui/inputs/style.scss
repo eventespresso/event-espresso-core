@@ -14,12 +14,14 @@
 }
 
 .ee-base-inputs-styles {
+	background: var(--ee-background-color);
 	border-color: var(--ee-border-color);
 	border-radius: var(--ee-border-radius-small);
 	border-style: solid;
 	border-width: 3px;
 	box-shadow: none;
 	color: var(--ee-default-text-color);
+	font-size: var(--ee-font-size-default);
 	line-height: inherit;
 	min-height: 2.625rem; // 42px
 	outline: none;

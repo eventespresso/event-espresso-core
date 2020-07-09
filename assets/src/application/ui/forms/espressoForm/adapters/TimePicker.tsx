@@ -8,10 +8,7 @@ const TimePicker: React.FC<FieldRendererProps> = ({ input: { onChange, ...input 
 		<Timepicker
 			{...input}
 			{...rest}
-			format='12'
 			onChangeValue={onChange}
-			// 300 seconds(5 minutes)
-			step={300}
 		/>
 	);
 };
