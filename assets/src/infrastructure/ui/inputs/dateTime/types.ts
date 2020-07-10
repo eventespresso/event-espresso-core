@@ -30,7 +30,7 @@ interface ReactTimePickerProps {
 	closeClock?: boolean;
 	disableClock?: boolean;
 	disabled?: boolean;
-	format: string;
+	format?: string;
 	hourAriaLabel?: string;
 	hourPlaceholder?: string;
 	isOpen?: boolean;
@@ -42,7 +42,7 @@ interface ReactTimePickerProps {
 	minutePlaceholder?: string;
 	name?: string;
 	nativeInputAriaLabel?: string;
-	onChange: (time: string) => void;
+	onChange?: (time: string) => void;
 	onClockClose?: VoidFunction;
 	onClockOpen?: VoidFunction;
 	onFocus?: VoidFunction;

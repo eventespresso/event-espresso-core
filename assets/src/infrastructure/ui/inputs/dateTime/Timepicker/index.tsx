@@ -1,7 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import classNames from 'classnames';
 import { format, parse } from 'date-fns';
-// @ts-ignore
 import { default as ReactTimePicker } from 'react-time-picker';
 import { TimezoneTimeInfo } from '@application/ui/display';
 
