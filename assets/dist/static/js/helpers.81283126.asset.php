@@ -1,0 +1,1 @@
+<?php return array('dependencies' => array('eventespresso-predicates', 'wp-i18n'), 'version' => 'dd915e570b24fdb1c1eb879d036820b3');
