@@ -35,6 +35,18 @@ $border-radius: var(--ee-border-radius-default);
 		outline: none;
 	}
 
+	.rc-pagination-prev.rc-pagination-prev {
+		svg {
+			margin-right: 7px;
+		}
+	}
+
+	.rc-pagination-next.rc-pagination-next {
+		svg {
+			margin-left: 7px;
+		}
+	}
+
 	&__item {
 		align-items: center;
 		display: flex;
