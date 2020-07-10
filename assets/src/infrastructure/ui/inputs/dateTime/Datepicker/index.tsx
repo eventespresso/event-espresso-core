@@ -1,35 +1,57 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import classNames from 'classnames';
-import { Datepicker as BaseUIDatepicker } from 'baseui/datepicker';
+import { default as ReactDatepicker } from 'react-date-picker';
 
-import { DatepickerProps } from '../types';
-import withBaseProvider from '../withBaseProvider';
-import { useMemoStringify } from '@application/services/hooks';
+import { DatePickerProps } from '../types';
+import { CalendarOutlined, CloseOutlined } from '@appDisplay/icons/svgs';
+import useConfig from '@appServices/config/useConfig';
+import { convertWordPressDateFormat } from '../utilities';
 
 import './style.scss';
 
-const Datepicker: React.FC<DatepickerProps> = ({ value, onChange, onChangeValue, ...props }) => {
-	const className = classNames('ee-input-base-wrapper ee-date-picker', props.className);
-	const onChangeHandler: DatepickerProps['onChange'] = useCallback(
-		({ date }) => {
-			if (typeof onChangeValue === 'function') {
-				onChangeValue(date as Date);
+const Datepicker: React.FC<DatePickerProps> = ({ value, onChange, onChangeValue, ...props }) => {
+	const [date, setDate] = useState(value);
+	const {
+		dateTimeFormats: { dateFormat },
+		locale: { user },
+	} = useConfig();
+	const convertedDateFormat = convertWordPressDateFormat(dateFormat);
+	const className = classNames(
+		'ee-input-base-wrapper ee-date-picker',
+		props.className
+	);
+	const onChangeHandler: DatePickerProps['onChange'] = useCallback(
+		(newDate) => {
+			setDate(newDate);
+			if (!newDate || newDate === date) {
+				return;
 			}
 
-			if (typeof onChange === 'function') {
-				onChange({ date });
+			if (typeof onChangeValue === 'function') {
+				onChangeValue(newDate as Date);
+			}
+
+			if ( typeof onChange === 'function' ) {
+				onChange(newDate);
 			}
 		},
-		[onChange, onChangeValue]
+		[ onChange, onChangeValue, ]
 	);
-
-	const dateValue = useMemoStringify([value]);
 
 	return (
 		<div className={className}>
-			<BaseUIDatepicker {...props} onChange={onChangeHandler} value={dateValue} />
+			<ReactDatepicker
+				format={convertedDateFormat}
+				{...props}
+				calendarIcon={<CalendarOutlined />}
+				clearIcon={<CloseOutlined />}
+				locale={user}
+				onChange={onChangeHandler}
+				required
+				value={date}
+			/>
 		</div>
 	);
 };
 
-export default withBaseProvider(Datepicker);
+export default Datepicker;

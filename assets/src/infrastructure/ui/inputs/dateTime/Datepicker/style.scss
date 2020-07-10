@@ -1,32 +1,235 @@
-@import '../../style.scss';
+/** -------------------------------------------------------------------------
+ * Event Espresso Date Picker Stylesheet
+ * © 2020 Event Espresso
+ * ------------------------------------------------------------------------- */
 
-.ee-input-base-wrapper.ee-date-picker {
-	background: none !important;
-	border: 0 !important;
-	[data-baseweb='base-input'] {
-		background: none !important;
-		border: 0 !important;
-		input {
-			@extend .ee-base-inputs-styles;
+.ee-date-picker-active {
+	border-color: var(--ee-color-primary);
+}
 
-			&:hover {
-				@extend .ee-input-base-hover;
-			}
-			&:focus {
-				@extend .ee-input-base-focus;
-			}
-		}
+.ee-date-picker-focus {
+	border-color: var(--ee-color-primary);
+	/* Visible in Windows high-contrast themes */
+	outline-color: transparent;
+	outline-width: 3px;
+	outline-style: solid;
+
+	&:active {
+		border-color: var(--ee-color-primary-high-contrast);
 	}
 }
 
-.ee-form-item__datepicker {
-	[data-baseweb='popover'] {
-		.dj,
-		.f0::after {
-			background-color: var(--ee-color-primary) !important;
-		}
-		.f6::after {
-			box-shadow: 0 0 0 2px var(--ee-color-primary-low-contrast) !important;
+.ee-date-picker-hover {
+	border-color: var(--ee-color-primary-low-contrast);
+
+	&:active {
+		border-color: var(--ee-color-primary-high-contrast);
+	}
+}
+
+.ee-input-base-wrapper {
+	.react-date-picker {
+		.react-date-picker {
+			&__inputGroup {
+				border-color: var(--ee-border-color);
+				border-radius: var(--ee-border-radius-small);
+				border-style: solid;
+				border-width: 3px;
+				box-shadow: none;
+				box-sizing: border-box;
+				color: var(--ee-default-text-color);
+				line-height: inherit;
+				height: 2.625rem;
+				margin: 0 var(--ee-margin-nano) 0 0;
+				min-width: 9rem;
+				outline: none;
+				padding: var(--ee-padding-nano) var(--ee-padding-smaller);
+				transition: all ease 50ms;
+
+				&__input,
+				&__leadingZero {
+					border: none !important;
+					border-radius: unset !important;
+					box-shadow: none !important;
+					color: var(--ee-default-text-color);
+					display: inline-block;
+					font-size: var(--ee-font-size-default);
+					line-height: inherit;
+					min-height: unset !important;
+					outline: none !important;
+					margin: 0;
+					padding: unset !important;
+					transition: unset !important;
+				}
+
+				&__month {
+					-webkit-appearance: auto;
+					background: unset;
+					vertical-align: unset;
+
+					option {
+						background-color: var(--ee-background-color) !important;
+						color: var(--ee-default-text-color) !important;
+						height: var(--ee-icon-button-size) !important;
+					}
+
+					&:focus {
+						background-color: var(--ee-color-primary-low-contrast);
+						color: var(--ee-text-on-primary);
+						height: 22.5px;
+					}
+				}
+
+				&__divider {
+					color: var(--ee-color-grey-10);
+					font-size: var(--ee-font-size-big);
+					font-weight: 400;
+					margin: 0 var(--ee-margin-micro);
+					padding: 0;
+				}
+
+				// the following style rules do the same thing, but need to be kept separate, else they no workie
+				input[type='number']::selection {
+					background-color: var(--ee-color-primary-low-contrast);
+					color: var(--ee-text-on-primary);
+				}
+				input[type='number']::-moz-selection {
+					background-color: var(--ee-color-primary-low-contrast);
+					color: var(--ee-text-on-primary);
+				}
+
+				&:active {
+					@extend .ee-date-picker-active;
+				}
+
+				&:focus {
+					@extend .ee-date-picker-focus;
+				}
+
+				&:hover {
+					@extend .ee-date-picker-hover;
+				}
+			}
+
+			&__wrapper {
+				border: none !important;
+
+				button {
+					background: var(--ee-button-background);
+					border-color: var(--ee-button-background);
+					border-radius: var(--ee-border-radius-small);
+					border-style: solid;
+					border-width: 3px;
+					box-shadow: none;
+					color: var(--ee-button-text-color);
+					height: var(--ee-icon-button-size);
+					margin: 0 var(--ee-margin-nano);
+					padding: var(--ee-padding-micro);
+					outline: none;
+					width: var(--ee-icon-button-size);
+
+					&:active {
+						@extend .ee-date-picker-active;
+					}
+
+					&:focus {
+						@extend .ee-date-picker-focus;
+					}
+
+					&:hover {
+						@extend .ee-date-picker-hover;
+					}
+					svg {
+						margin: 0;
+						path {
+							fill: currentColor;
+						}
+					}
+				}
+			}
+
+			&__calendar {
+				z-index: 10;
+
+				.react-calendar {
+					background: var(--ee-background-color);
+					border: 5px solid var(--ee-background-color);
+					box-shadow: var(--ee-box-shadow-big);
+					font-family: Montserrat, 'Segoe UI', Tahoma, sans-serif;
+					font-size: var(--ee-font-size-default);
+
+					&__navigation {
+						height: var(--ee-icon-button-size);
+						line-height: var(--ee-icon-button-size);
+
+						&__arrow {
+							background: var(--ee-background-color);
+							box-sizing: border-box;
+							color: var(--ee-button-text-color);
+							font-size: var(--ee-font-size-bigger);
+							height: var(--ee-icon-button-size);
+							line-height: 18px;
+							padding: 9px 5px 15px;
+							width: var(--ee-icon-button-size);
+
+							&:hover {
+								background: var(--ee-button-background);
+								color: var(--ee-button-text-color);
+							}
+
+							&:focus {
+								background: var(--ee-button-background);
+								color: var(--ee-default-text-color-high-contrast);
+							}
+						}
+
+						&__label {
+							font-weight: 700;
+						}
+					}
+
+					abbr[title] {
+						text-decoration: none;
+					}
+
+					&__month-view {
+						&__days {
+							&__day {
+								height: var(--ee-icon-button-size);
+								margin: 0;
+								width: var(--ee-icon-button-size);
+
+								&--neighboringMonth {
+									color: var(--ee-default-text-color-low-contrast);
+								}
+
+								&--weekend {
+									color: var(--ee-color-primary-low-contrast);
+								}
+
+								&:hover {
+									background: var(--ee-button-background);
+									color: var(--ee-button-text-color);
+								}
+							}
+						}
+					}
+
+					&__tile--now {
+						background: var(--ee-tooltip-background-color);
+					}
+
+					&__tile--active {
+						background: var(--ee-color-primary-low-contrast);
+						color: var(--ee-text-on-primary);
+
+						&:hover {
+							background: var(--ee-color-primary);
+							color: var(--ee-text-on-primary);
+						}
+					}
+				}
+			}
 		}
 	}
 }
