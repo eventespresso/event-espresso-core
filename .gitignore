@@ -17,4 +17,4 @@ vendor/
 *.vscode
 
 # temporary
-/assets/dist/
+#/assets/dist/
