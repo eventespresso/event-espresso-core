@@ -2,8 +2,11 @@ import { DatePickerProps as ReactDatePickerProps } from 'react-date-picker';
 import { AnyObject } from '@appServices/utilities/types';
 import { CommonInputProps } from '../types';
 
-export interface DatePickerProps extends ReactDatePickerProps, CommonInputProps<HTMLInputElement, Date> {
+export interface DatePickerProps
+	extends Omit<ReactDatePickerProps, 'onChange' | 'value'>,
+		CommonInputProps<HTMLInputElement, Date> {
 	className?: string;
+	onChange?: (date: Date) => void;
 	value?: Date;
 }
 

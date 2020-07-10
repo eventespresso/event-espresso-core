@@ -1,24 +1,33 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import classNames from 'classnames';
+import { format, parse } from 'date-fns';
 // @ts-ignore
 import { default as ReactTimePicker } from 'react-time-picker';
+import { TimezoneTimeInfo } from '@application/ui/display';
 
-import { CloseOutlined, ClockOutlined } from '@appDisplay/icons/svgs';
+import { CloseOutlined } from '@appDisplay/icons/svgs';
 import { TimePickerProps } from '../types';
+import useConfig from '@appServices/config/useConfig';
+import { convertWordPressTimeFormat } from '../utilities';
 
 import './style.scss';
 
-const Timepicker: React.FC<TimePickerProps> = ({ onChange, onChangeValue, ...props }) => {
-	const newDate = props?.value;
+const Timepicker: React.FC<TimePickerProps> = ({ onChange, onChangeValue, value, ...props }) => {
+	const [time, setTime] = useState(format(value, 'HH:mm'));
+	const {
+		dateTimeFormats: { timeFormat },
+		locale: { user },
+	} = useConfig();
+	const convertedTimeFormat = convertWordPressTimeFormat(timeFormat);
 	const className = classNames('ee-input-base-wrapper ee-time-picker', props.className);
 	const onChangeHandler: TimePickerProps['onChange'] = useCallback(
-		(time) => {
+		(newTime) => {
 			// incoming value from timepicker is 24hr time like "17:00"
-			const timeParts: string[] = time.split(':');
-			const hours = parseInt(timeParts[0]);
-			const minutes = parseInt(timeParts[1]);
-			newDate.setHours(hours);
-			newDate.setMinutes(minutes);
+			setTime(newTime);
+			if (!newTime || newTime === time) {
+				return;
+			}
+			const newDate: Date = parse(newTime, 'HH:mm', value);
 			if (typeof onChangeValue === 'function') {
 				onChangeValue(newDate);
 			}
@@ -33,12 +42,16 @@ const Timepicker: React.FC<TimePickerProps> = ({ onChange, onChangeValue, ...pro
 	return (
 		<div className={className}>
 			<ReactTimePicker
-				format={'hh:mm a'}
+				format={convertedTimeFormat}
 				{...props}
 				clearIcon={<CloseOutlined />}
 				clockIcon={null}
+				locale={user}
 				onChange={onChangeHandler}
+				required
+				value={time}
 			/>
+			<TimezoneTimeInfo date={value} />
 		</div>
 	);
 };

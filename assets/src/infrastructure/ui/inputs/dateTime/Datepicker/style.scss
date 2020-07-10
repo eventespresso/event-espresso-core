@@ -41,6 +41,7 @@
 				line-height: inherit;
 				height: 2.625rem;
 				margin: 0 var(--ee-margin-nano) 0 0;
+				min-width: 9rem;
 				outline: none;
 				padding: var(--ee-padding-nano) var(--ee-padding-smaller);
 				transition: all ease 50ms;
@@ -59,6 +60,24 @@
 					margin: 0;
 					padding: unset !important;
 					transition: unset !important;
+				}
+
+				&__month {
+					-webkit-appearance: auto;
+					background: unset;
+					vertical-align: unset;
+
+					option {
+						background-color: var(--ee-background-color) !important;
+						color: var(--ee-default-text-color) !important;
+						height: var(--ee-icon-button-size) !important;
+					}
+
+					&:focus {
+						background-color: var(--ee-color-primary-low-contrast);
+						color: var(--ee-text-on-primary);
+						height: 22.5px;
+					}
 				}
 
 				&__divider {

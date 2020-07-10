@@ -27,7 +27,12 @@
 	}
 }
 
-.ee-input-base-wrapper {
+.ee-input-base-wrapper.ee-time-picker {
+	display: flex;
+	flex-flow: row;
+	justify-content: flex-start;
+	align-items: flex-start;
+
 	.react-time-picker {
 		.react-time-picker {
 			&__inputGroup {
@@ -41,6 +46,7 @@
 				line-height: inherit;
 				height: 2.625rem;
 				margin: 0 var(--ee-margin-nano) 0 0;
+				min-width: 9rem;
 				outline: none;
 				padding: var(--ee-padding-nano) var(--ee-padding-smaller);
 				transition: all ease 50ms;
@@ -153,6 +159,34 @@
 							fill: currentColor;
 						}
 					}
+				}
+			}
+		}
+	}
+
+	.ee-timezone-info {
+		margin: 0;
+		button {
+			margin: 0;
+			background: var(--ee-button-background);
+			border-color: var(--ee-button-background);
+
+			&:active {
+				@extend .ee-time-picker-active;
+			}
+
+			&:focus {
+				@extend .ee-time-picker-focus;
+			}
+
+			&:hover {
+				@extend .ee-time-picker-hover;
+			}
+
+			svg {
+				margin: 0;
+				path {
+					fill: currentColor;
 				}
 			}
 		}
