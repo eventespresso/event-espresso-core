@@ -8,8 +8,11 @@ import Trigger from './Trigger';
 import './style.scss';
 
 export interface Props {
+	borderless?: boolean;
 	className?: string;
+	color?: 'white' | 'black';
 	date: Date;
+	size?: 'big' | 'bigger' | 'small' | 'smaller' | 'tiny';
 }
 
 const TimezoneTimeInfo: React.FC<Props> = ({ date, ...props }) => {
@@ -38,10 +41,8 @@ const TimezoneTimeInfo: React.FC<Props> = ({ date, ...props }) => {
 		<div className={className}>
 			<Popover
 				content={content}
-				header={__('This Date Converted To:')}
-				trigger={
-					<Trigger tooltip={__('click for timezone\ninformation')} />
-				}
+				header={__('This Time Converted To:')}
+				trigger={<Trigger tooltip={__('click for timezone\ninformation')} {...props} />}
 			/>
 		</div>
 	);

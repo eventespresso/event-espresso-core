@@ -6,7 +6,6 @@ import { Button } from '@application/ui/input';
 import { Calendar } from '@appDisplay/icons';
 import { CalendarDateProps } from '../types';
 import { LabelPosition } from '@appDisplay/withLabel';
-import { TimezoneTimeInfo } from '@application/ui/display';
 import {
 	DAY_ONLY_SHORT_FORMAT,
 	MONTH_ONLY_FULL_FORMAT,
@@ -70,7 +69,6 @@ export const BiggieCalendarDate: React.FC<BiggieCalendarDateProps> = ({
 					<div className='ee-bcd__time'>{format(dateObject, TIME_ONLY_12H_SHORT_FORMAT)}</div>
 				)}
 				{timeRange && <div className='ee-bcd__time'>{timeRange}</div>}
-				<TimezoneTimeInfo date={dateObject} />
 			</div>
 			{footerText && <div className='ee-biggie-calendar-date__footer'>{footerText}</div>}
 			{editDateButton}
