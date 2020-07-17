@@ -2767,7 +2767,7 @@
   resolved "https://registry.yarnpkg.com/@wojtekmaj/date-utils/-/date-utils-1.0.2.tgz#31348c572606ac42aaf9b7bb22074fc0b163cc2b"
   integrity sha512-sOu+uH3jzsECLg3YGH++/pLWs8S4eKiXMwMIcotE62CO9AB/HRyhZ0ISwann/30DLnfCw4skvr8h9gF3aafhPA==
 
-"@wojtekmaj/react-datetimerange-picker@^3.0.0":
+"@wojtekmaj/react-datetimerange-picker@3.0.0":
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/@wojtekmaj/react-datetimerange-picker/-/react-datetimerange-picker-3.0.0.tgz#5f37d1174f3a7333c934e2e8a0cc92c59b281ae9"
   integrity sha512-so6udfX3GVWc0gUdLDQj6f7EG+hbJo+E74mBxAf5UdetQHzA9zJkAzO8gRf5rWFCqyFYmW01UwNg5dYBE5cz9w==
