@@ -12,14 +12,14 @@ export interface DatePickerProps
 
 export interface DateTimeRangePickerProps
 	extends ReactDateTimeRangePickerProps,
-		CommonInputProps<HTMLInputElement, Date[]> {
+		CommonInputProps<HTMLInputElement, string[]> {
 	className?: string;
-	endDate: Date;
+	endDate: string;
 	onChange: (dates: string[]) => void;
 	showCalendarIcon?: boolean;
 	showClearIcon?: boolean;
 	showClockIcon?: boolean;
-	startDate: Date;
+	startDate: string;
 }
 
 export interface TimePickerProps extends ReactTimePickerProps, CommonInputProps<HTMLInputElement, Date> {
