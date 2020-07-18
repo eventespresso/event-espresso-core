@@ -1,10 +1,27 @@
 .ee-popover {
-	&__content {
+	display: inline-block;
+	position: relative;
+
+	&__content[role='dialog'] {
+		background-color: var(--ee-background-color);
+		border: 2px solid var(--ee-background-color);
+		border-radius: var(--ee-border-radius-small);
+		box-shadow: var(--ee-box-shadow-small);
+		box-sizing: border-box;
+		color: var(--ee-default-text-color-high-contrast);
+		font-weight: normal;
+		left: -10rem;
+		min-width: 20rem;
 		padding: var(--ee-padding-small);
+		position: absolute;
+		width: max-content;
+
+		header {
+			margin: 0 0 var(--ee-margin-smaller);
+		}
 
 		&:focus {
 			outline: 0;
-			box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.6);
 		}
 
 		.chakra-popover__arrow {

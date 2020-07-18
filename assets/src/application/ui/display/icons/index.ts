@@ -4,4 +4,6 @@ export { default as HelpIcon } from './HelpIcon';
 
 export * from './collection';
 
+export * from './svgs';
+
 export * from './types';
