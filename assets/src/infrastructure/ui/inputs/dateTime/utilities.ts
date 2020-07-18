@@ -36,7 +36,6 @@ export const convertWordPressDateFormat = (dateFormat: string) => {
 		if (dateFormats.hasOwnProperty(find)) {
 			const replace = dateFormats[find];
 			newFormat = newFormat.replace(find, replace);
-			console.log('%c new date format', 'color: SkyBlue;', newFormat);
 		}
 	}
 	return newFormat;
@@ -52,7 +51,6 @@ export const convertWordPressTimeFormat = (timeFormat: string) => {
 		if (timeFormats.hasOwnProperty(find)) {
 			const replace = timeFormats[find];
 			newFormat = newFormat.replace(find, replace);
-			console.log('%c new time format', 'color: violet;', newFormat);
 		}
 	}
 	const hasAMPM = newFormat.indexOf('a') !== -1;
