@@ -15,7 +15,7 @@ export interface DateTimeRangePickerProps
 		CommonInputProps<HTMLInputElement, Date[]> {
 	className?: string;
 	endDate: Date;
-	onChange: (dates: Date[]) => void;
+	onChange: (dates: string[]) => void;
 	showCalendarIcon?: boolean;
 	showClearIcon?: boolean;
 	showClockIcon?: boolean;
