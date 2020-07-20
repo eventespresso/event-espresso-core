@@ -30,18 +30,18 @@ const DateTimeRangePicker: React.FC<DateTimeRangePickerProps> = ({
 
 	return (
 		<ReactDateTimeRangePicker
-			format={newDateTimeFormat}
 			calendarAriaLabel={__('show calendar')}
 			clearAriaLabel={__('clear values and reset')}
 			calendarIcon={showCalendarIcon && <CalendarOutlined />}
 			clearIcon={showClearIcon && <CloseOutlined />}
 			clockIcon={showClockIcon && <ClockOutlined />}
+			closeWidgets={false}
+			format={newDateTimeFormat}
 			locale={user}
 			onChange={onChange}
 			showLeadingZeros
-			value={[startDate, endDate]}
+			value={[new Date(startDate), new Date(endDate)]}
 			{...props}
-			closeWidgets={false}
 		/>
 	);
 };
