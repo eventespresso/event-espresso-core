@@ -1,5 +1,4 @@
 import React, { useCallback } from 'react';
-import { parseISO } from 'date-fns';
 import { __ } from '@wordpress/i18n';
 
 import DateActionsMenu from '../actionsMenu/DateActionsMenu';
@@ -34,8 +33,6 @@ const DateCard: React.FC<DateItemProps> = ({ entity: date }) => {
 	const bgClassName = statusBgColorClassName(date);
 	const footer = getStatusTextLabel(date);
 	const labels = useMemoStringify({ footer });
-	const startDate = parseISO(date.startDate);
-	const endDate = parseISO(date.endDate);
 	const sidebar = (
 		<>
 			<CalendarDateSwitcher
@@ -45,10 +42,10 @@ const DateCard: React.FC<DateItemProps> = ({ entity: date }) => {
 				startDate={date.startDate}
 			/>
 			<EditDateRangeButton
-				endDate={endDate}
+				endDate={date.endDate}
 				header={__('Edit Event Date Start and End Dates')}
 				onEditHandler={onEditHandler}
-				startDate={startDate}
+				startDate={date.startDate}
 				tooltip={__("click to edit this event date's start and end dates")}
 			/>
 		</>

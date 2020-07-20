@@ -1,5 +1,4 @@
 import React, { useCallback } from 'react';
-import { parseISO } from 'date-fns';
 import { __ } from '@wordpress/i18n';
 
 import Details from './Details';
@@ -34,8 +33,6 @@ const TicketCard: React.FC<TicketItemProps> = ({ entity: ticket }) => {
 	const bgClassName = statusBgColorClassName(ticket);
 	const footer = getStatusTextLabel(ticket);
 	const labels = useMemoStringify({ footer });
-	const startDate = parseISO(ticket.startDate);
-	const endDate = parseISO(ticket.endDate);
 	const sidebar = (
 		<>
 			<CalendarDateSwitcher
@@ -45,11 +42,11 @@ const TicketCard: React.FC<TicketItemProps> = ({ entity: ticket }) => {
 				startDate={ticket.startDate}
 			/>
 			<EditDateRangeButton
-				endDate={endDate}
+				endDate={ticket.endDate}
 				header={__('Edit Ticket Sales Start and End Dates')}
 				onEditHandler={onEditHandler}
 				tooltip={__('click to edit the ticket sales start and end dates')}
-				startDate={startDate}
+				startDate={ticket.startDate}
 			/>
 		</>
 	);
