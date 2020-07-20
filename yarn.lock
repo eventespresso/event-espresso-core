@@ -2363,12 +2363,10 @@
   dependencies:
     csstype "^2.6.9"
 
-"@types/styled-system__core@^5.1.0":
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/@types/styled-system__core/-/styled-system__core-5.1.0.tgz#87de3f034d3b5038cf6da23eb9c441b2fafde77f"
-  integrity sha512-YGLnqBHx64ibp6LdFM2itnd59wMgCmMr7s4D8s8ra0L8hRCunwoShauciqyjyYM++EaGF9Mtk+CbzpLHsUFreg==
-  dependencies:
-    csstype "^2.6.10"
+"@types/styled-system__core@npm:@peduarte/styled-system__core":
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/@peduarte/styled-system__core/-/styled-system__core-0.0.1.tgz#de78b6aa193c39d9029d3ed036bd481ad6a5b925"
+  integrity sha512-s3CtmKoSZCyOZfe03ftUrOqVhFTryWuQhs0koYOvyoNnsMtV+NDvMSFf/SHxl9uvy/jp20qkkFlIVu0x9WJOFA==
 
 "@types/styletron-engine-atomic@^1.1.0":
   version "1.1.0"
@@ -5740,11 +5738,6 @@ csstype@2.6.9:
   version "2.6.9"
   resolved "https://registry.yarnpkg.com/csstype/-/csstype-2.6.9.tgz#05141d0cd557a56b8891394c1911c40c8a98d098"
   integrity sha512-xz39Sb4+OaTsULgUERcCk+TJj8ylkL4aSVDQiX/ksxbELSqwkgt4d4RD7fovIdgJGSuNYqwZEiVjYY5l0ask+Q==
-
-csstype@^2.6.10:
-  version "2.6.11"
-  resolved "https://registry.yarnpkg.com/csstype/-/csstype-2.6.11.tgz#452f4d024149ecf260a852b025e36562a253ffc5"
-  integrity sha512-l8YyEC9NBkSm783PFTvh0FmJy7s5pFKrDp49ZL7zBGX3fWkO+N4EEyan1qqp8cwPLDcD0OSdyY6hAMoxp34JFw==
 
 currently-unhandled@^0.4.1:
   version "0.4.1"
