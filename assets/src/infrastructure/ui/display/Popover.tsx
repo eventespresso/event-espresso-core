@@ -2,15 +2,16 @@ import React from 'react';
 
 import {
 	Popover as ChakraPopover,
-	PopoverTrigger,
+	PopoverArrow,
+	PopoverBody,
+	PopoverCloseButton,
 	PopoverContent,
 	PopoverHeader,
-	PopoverBody,
-	PopoverArrow,
-	PopoverCloseButton,
+	PopoverProps as ChakraPopoverProps,
+	PopoverTrigger,
 } from '@chakra-ui/popover';
 
-export interface PopoverProps {
+export interface PopoverProps extends ChakraPopoverProps {
 	className?: string;
 	content: React.ReactNode;
 	contentClassName?: string;
