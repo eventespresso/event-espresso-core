@@ -2,15 +2,17 @@ import React from 'react';
 
 import {
 	Popover as ChakraPopover,
-	PopoverTrigger,
+	PopoverArrow,
+	PopoverBody,
+	PopoverCloseButton,
 	PopoverContent,
 	PopoverHeader,
-	PopoverBody,
-	PopoverArrow,
-	PopoverCloseButton,
+	PopoverProps as ChakraPopoverProps,
+	PopoverTrigger,
 } from '@chakra-ui/popover';
 
-export interface PopoverProps {
+export interface PopoverProps extends ChakraPopoverProps {
+	className?: string;
 	content: React.ReactNode;
 	contentClassName?: string;
 	header?: React.ReactNode;
@@ -23,9 +25,9 @@ const Popover: React.FC<PopoverProps> = ({ content, contentClassName, header, tr
 			<PopoverTrigger>{trigger}</PopoverTrigger>
 			<PopoverContent zIndex={4} className={contentClassName}>
 				<PopoverArrow />
-				<PopoverCloseButton className='ee-popover__close-button' color='var(--ee-color-black)' />
+				<PopoverCloseButton className='ee-popover__close-button' color='var(--ee-button-text-color)' />
 				{header && (
-					<PopoverHeader className='ee-popover__header' color='var(--ee-color-black)'>
+					<PopoverHeader className='ee-popover__header' color='var(--ee-button-text-color)'>
 						{header}
 					</PopoverHeader>
 				)}

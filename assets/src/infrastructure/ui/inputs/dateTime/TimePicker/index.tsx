@@ -1,24 +1,24 @@
 import React, { useCallback, useState } from 'react';
-import classNames from 'classnames';
 import { format, parse } from 'date-fns';
 import { default as ReactTimePicker } from 'react-time-picker';
-import { TimezoneTimeInfo } from '@application/ui/display';
 
 import { CloseOutlined } from '@appDisplay/icons/svgs';
 import { TimePickerProps } from '../types';
 import useConfig from '@appServices/config/useConfig';
 import { convertWordPressTimeFormat } from '../utilities';
 
-import './style.scss';
+import '../style.scss';
 
-const Timepicker: React.FC<TimePickerProps> = ({ onChange, onChangeValue, value, ...props }) => {
+const TimePicker: React.FC<TimePickerProps> = ({ onChange, onChangeValue, value, ...props }) => {
 	const [time, setTime] = useState(format(value, 'HH:mm'));
 	const {
 		dateTimeFormats: { timeFormat },
 		locale: { user },
 	} = useConfig();
+
+	// convert date format to accepatble values for react-time-picker
 	const convertedTimeFormat = convertWordPressTimeFormat(timeFormat);
-	const className = classNames('ee-input-base-wrapper ee-time-picker', props.className);
+
 	const onChangeHandler: TimePickerProps['onChange'] = useCallback(
 		(newTime) => {
 			// incoming value from timepicker is 24hr time like "17:00"
@@ -39,20 +39,17 @@ const Timepicker: React.FC<TimePickerProps> = ({ onChange, onChangeValue, value,
 	);
 
 	return (
-		<div className={className}>
-			<ReactTimePicker
-				format={convertedTimeFormat}
-				{...props}
-				clearIcon={<CloseOutlined />}
-				clockIcon={null}
-				locale={user}
-				onChange={onChangeHandler}
-				required
-				value={time}
-			/>
-			<TimezoneTimeInfo date={value} />
-		</div>
+		<ReactTimePicker
+			format={convertedTimeFormat}
+			{...props}
+			clearIcon={<CloseOutlined />}
+			clockIcon={null}
+			locale={user}
+			onChange={onChangeHandler}
+			required
+			value={time}
+		/>
 	);
 };
 
-export default Timepicker;
+export default TimePicker;

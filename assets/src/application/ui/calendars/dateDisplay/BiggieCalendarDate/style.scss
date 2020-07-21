@@ -6,14 +6,10 @@
 	&__wrapper {
 		box-sizing: border-box;
 		color: var(--ee-color-white);
-		flex: 0, 0, calc(var(--ee-padding-micro) * 34);
-		height: 100%;
 		min-height: calc(var(--ee-padding-micro) * 45);
 		min-width: calc(var(--ee-padding-micro) * 34);
-		padding: var(--ee-padding-micro);
+		padding: var(--ee-padding-micro) var(--ee-padding-micro) 0;
 		text-align: center;
-		width: 100%;
-		vertical-align: bottom;
 	}
 
 	&__header {
@@ -27,14 +23,14 @@
 		&__weekday {
 			font-size: var(--ee-font-size-smaller);
 			font-weight: normal;
-			line-height: var(--ee-font-size-huge);
+			line-height: var(--ee-font-size-bigger);
 			letter-spacing: var(--ee-letter-spacing-font-size-tiny);
 		}
 
 		&__month {
 			font-size: calc(var(--ee-font-size-tiny) * 2);
 			font-weight: bold;
-			line-height: calc(var(--ee-font-size-tiny) * 2.5);
+			line-height: var(--ee-font-size-huge);
 		}
 
 		&__month-day-sep {
@@ -45,7 +41,7 @@
 			opacity: 0.8;
 			font-size: calc(var(--ee-font-size-big) * 2);
 			font-weight: bold;
-			line-height: calc(var(--ee-font-size-big) * 1.5);
+			line-height: var(--ee-font-size-huge);
 			text-shadow: var(--ee-text-shadow-inset);
 		}
 
@@ -53,7 +49,7 @@
 			font-size: var(--ee-font-size-smaller);
 			font-weight: 600;
 			letter-spacing: calc(var(--ee-letter-spacing-font-size-micro) * 2);
-			line-height: var(--ee-font-size-big);
+			line-height: var(--ee-font-size-bigger);
 			left: var(--ee-padding-nano);
 			position: relative;
 		}

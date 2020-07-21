@@ -38,13 +38,12 @@ const TimezoneTimeInfo: React.FC<Props> = ({ date, ...props }) => {
 	const className = classNames(props.className, 'ee-timezone-info');
 
 	return (
-		<div className={className}>
-			<Popover
-				content={content}
-				header={__('This Time Converted To:')}
-				trigger={<Trigger tooltip={__('click for timezone\ninformation')} {...props} />}
-			/>
-		</div>
+		<Popover
+			className={className}
+			content={content}
+			header={__('This Time Converted To:')}
+			trigger={<Trigger tooltip={__('click for timezone\ninformation')} {...props} />}
+		/>
 	);
 };
 
