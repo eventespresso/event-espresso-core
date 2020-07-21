@@ -28,7 +28,7 @@ const TicketCard: React.FC<TicketItemProps> = ({ entity: ticket }) => {
 			const endDate = siteTimeToUtc(new Date(end)).toISOString();
 			updateEntity({ startDate, endDate });
 		},
-		[ticket.cacheId]
+		[ticket.cacheId, updateEntity]
 	);
 	const bgClassName = statusBgColorClassName(ticket);
 	const footer = getStatusTextLabel(ticket);

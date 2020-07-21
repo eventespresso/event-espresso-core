@@ -28,7 +28,7 @@ const DateCard: React.FC<DateItemProps> = ({ entity: date }) => {
 			const endDate = siteTimeToUtc(new Date(end)).toISOString();
 			updateEntity({ startDate, endDate });
 		},
-		[date.cacheId]
+		[date.cacheId, updateEntity]
 	);
 	const bgClassName = statusBgColorClassName(date);
 	const footer = getStatusTextLabel(date);

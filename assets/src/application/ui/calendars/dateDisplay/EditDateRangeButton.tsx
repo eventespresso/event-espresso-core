@@ -1,4 +1,5 @@
 import React, { useCallback, useState } from 'react';
+import { useDisclosure } from '@chakra-ui/hooks';
 import { __ } from '@wordpress/i18n';
 
 import { DateTimeRangePicker } from '../../input';
@@ -7,16 +8,14 @@ import { CalendarOutlined, Popover } from '../../display';
 import { EditDateButtonProps } from './types';
 
 const EditDateRangeButton: React.FC<EditDateButtonProps> = ({ header, onEditHandler, startDate, endDate, tooltip }) => {
-	const [isOpen, setIsOpen] = useState(false);
+	const { isOpen, onOpen, onClose } = useDisclosure();
 	const headerText = header ? header : __('Edit Start and End Dates and Times');
-	const open = useCallback(() => setIsOpen(true), [setIsOpen]);
-	const close = useCallback(() => setIsOpen(false), [setIsOpen]);
 	const onChange = useCallback(
 		(dates: string[]) => {
 			onEditHandler(dates);
-			close();
+			onClose();
 		},
-		[onEditHandler]
+		[onClose, onEditHandler]
 	);
 	return (
 		<Popover
@@ -25,7 +24,7 @@ const EditDateRangeButton: React.FC<EditDateButtonProps> = ({ header, onEditHand
 			content={<DateTimeRangePicker endDate={endDate} startDate={startDate} onChange={onChange} />}
 			header={<strong>{headerText}</strong>}
 			isOpen={isOpen}
-			onClose={close}
+			onClose={onClose}
 			trigger={
 				<IconButton
 					borderless
@@ -33,7 +32,7 @@ const EditDateRangeButton: React.FC<EditDateButtonProps> = ({ header, onEditHand
 					buttonType={ButtonType.MINIMAL}
 					className={'ee-edit-calendar-date-range-btn'}
 					color={'white'}
-					onClick={open}
+					onClick={onOpen}
 					tooltip={tooltip}
 					icon={CalendarOutlined}
 				/>
