@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import { useDisclosure } from '@chakra-ui/hooks';
 import { __ } from '@wordpress/i18n';
 
