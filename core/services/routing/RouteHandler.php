@@ -59,8 +59,10 @@ class RouteHandler
         $this->loader = $loader;
         $this->request = $request;
         $this->routes = $routes;
-        add_action('admin_footer', [$this->data_node_handler, 'printDataNode']);
-        add_action('wp_footer', [$this->data_node_handler, 'printDataNode']);
+        if (! $this->request->isActivation()) {
+            add_action('admin_footer', [$this->data_node_handler, 'printDataNode']);
+            add_action('wp_footer', [$this->data_node_handler, 'printDataNode']);
+        }
     }
 
 
