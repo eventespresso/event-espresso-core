@@ -30,8 +30,6 @@ class JsonDataNodeHandler
 
 
     /**
-     * JsonDataNodeHandler constructor.
-     *
      * @param JsonDataNodeValidator $validator
      */
     public function __construct(JsonDataNodeValidator $validator)
@@ -101,6 +99,9 @@ class JsonDataNodeHandler
      */
     public function printDataNode()
     {
+        if (!$this->primary_data_node instanceof PrimaryJsonDataNode) {
+            return;
+        }
         // validate that the domain, node name, and target script are set
         $domain = $this->primary_data_node->domain();
         $node_name = $this->primary_data_node->nodeName();
