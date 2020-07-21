@@ -45,8 +45,6 @@ abstract class JsonDataNode implements JsonDataNodeInterface
 
 
     /**
-     * JsonDataNodeHandler constructor.
-     *
      * @param JsonDataNodeValidator $validator
      * @throws DomainException
      */

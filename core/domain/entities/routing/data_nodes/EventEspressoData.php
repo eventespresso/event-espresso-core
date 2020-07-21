@@ -40,8 +40,6 @@ class EventEspressoData extends PrimaryJsonDataNode
 
 
     /**
-     * JsonDataNodeHandler constructor.
-     *
      * @param Api $api
      * @param Config $config
      * @param JedLocaleData         $jed_locale

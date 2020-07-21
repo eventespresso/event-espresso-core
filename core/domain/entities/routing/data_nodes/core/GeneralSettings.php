@@ -19,8 +19,6 @@ class GeneralSettings extends JsonDataNode
 
 
     /**
-     * JsonDataNodeHandler constructor.
-     *
      * @param JsonDataNodeValidator $validator
      */
     public function __construct(JsonDataNodeValidator $validator)
