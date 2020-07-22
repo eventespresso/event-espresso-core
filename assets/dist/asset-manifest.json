@@ -23,9 +23,9 @@
     "dates-table-view.css": "/static/css/dates-table-view.90fb43a1.chunk.css",
     "dates-table-view.js": "/static/js/dates-table-view.19d9fa5b.chunk.js",
     "dates-table-view.js.map": "/static/js/dates-table-view.19d9fa5b.chunk.js.map",
-    "edtrServices.js": "/static/js/edtrServices.3e5d6297.js",
-    "edtrServices.js.map": "/static/js/edtrServices.3e5d6297.js.map",
-    "edtrServices.php": "/static/js/edtrServices.da48d95e.asset.php",
+    "edtrServices.js": "/static/js/edtrServices.1bc2140e.js",
+    "edtrServices.js.map": "/static/js/edtrServices.1bc2140e.js.map",
+    "edtrServices.php": "/static/js/edtrServices.8eca333a.asset.php",
     "eventEditor.css": "/static/css/eventEditor.5b0484f4.css",
     "eventEditor.js": "/static/js/eventEditor.3d9d0ca6.js",
     "eventEditor.js.map": "/static/js/eventEditor.3d9d0ca6.js.map",
@@ -104,7 +104,7 @@
       "static/js/data.ba5b730e.js"
     ],
     "edtrServices": [
-      "static/js/edtrServices.3e5d6297.js"
+      "static/js/edtrServices.1bc2140e.js"
     ],
     "form": [
       "static/css/form.50c85ebe.css",
