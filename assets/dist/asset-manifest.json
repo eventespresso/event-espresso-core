@@ -8,10 +8,10 @@
     "blocks.js": "/static/js/blocks.c9b4ffc9.js",
     "blocks.js.map": "/static/js/blocks.c9b4ffc9.js.map",
     "blocks.php": "/static/js/blocks.119a7d5b.asset.php",
-    "components.css": "/static/css/components.a6212f0b.css",
-    "components.js": "/static/js/components.85ce9a1c.js",
-    "components.js.map": "/static/js/components.85ce9a1c.js.map",
-    "components.php": "/static/js/components.d88d790f.asset.php",
+    "components.css": "/static/css/components.2b5585d6.css",
+    "components.js": "/static/js/components.50661ba2.js",
+    "components.js.map": "/static/js/components.50661ba2.js.map",
+    "components.php": "/static/js/components.0f0dbc09.asset.php",
     "constants.js": "/static/js/constants.6f10b45e.js",
     "constants.js.map": "/static/js/constants.6f10b45e.js.map",
     "constants.php": "/static/js/constants.dc5d5a56.asset.php",
@@ -71,7 +71,7 @@
     "wpPluginsPage.php": "/static/js/wpPluginsPage.ab46b997.asset.php",
     "static/css/adapters.dd1edd63.css.map": "/static/css/adapters.dd1edd63.css.map",
     "static/css/blocks.609a154f.css.map": "/static/css/blocks.609a154f.css.map",
-    "static/css/components.a6212f0b.css.map": "/static/css/components.a6212f0b.css.map",
+    "static/css/components.2b5585d6.css.map": "/static/css/components.2b5585d6.css.map",
     "static/css/dates-table-view.90fb43a1.chunk.css.map": "/static/css/dates-table-view.90fb43a1.chunk.css.map",
     "static/css/eventEditor.5b0484f4.css.map": "/static/css/eventEditor.5b0484f4.css.map",
     "static/css/form.50c85ebe.css.map": "/static/css/form.50c85ebe.css.map",
@@ -80,7 +80,7 @@
     "static/css/tpc.2f7fe2a8.css.map": "/static/css/tpc.2f7fe2a8.css.map",
     "static/css/wpPluginsPage.9b2fdbb0.css.map": "/static/css/wpPluginsPage.9b2fdbb0.css.map",
     "static/js/adapters.82745418.js.LICENSE.txt": "/static/js/adapters.82745418.js.LICENSE.txt",
-    "static/js/components.85ce9a1c.js.LICENSE.txt": "/static/js/components.85ce9a1c.js.LICENSE.txt",
+    "static/js/components.50661ba2.js.LICENSE.txt": "/static/js/components.50661ba2.js.LICENSE.txt",
     "static/js/data.ba5b730e.js.LICENSE.txt": "/static/js/data.ba5b730e.js.LICENSE.txt",
     "static/js/eventEditor.3d9d0ca6.js.LICENSE.txt": "/static/js/eventEditor.3d9d0ca6.js.LICENSE.txt",
     "static/js/form.aae81135.js.LICENSE.txt": "/static/js/form.aae81135.js.LICENSE.txt",
@@ -94,8 +94,8 @@
       "static/js/adapters.82745418.js"
     ],
     "components": [
-      "static/css/components.a6212f0b.css",
-      "static/js/components.85ce9a1c.js"
+      "static/css/components.2b5585d6.css",
+      "static/js/components.50661ba2.js"
     ],
     "constants": [
       "static/js/constants.6f10b45e.js"
