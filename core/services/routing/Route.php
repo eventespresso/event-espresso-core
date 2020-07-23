@@ -60,6 +60,15 @@ abstract class Route implements RouteInterface
      */
     private $handled = false;
 
+    /**
+     * @var array $default_dependencies
+     */
+    protected static $default_dependencies = [
+        'EE_Dependency_Map'                           => EE_Dependency_Map::load_from_cache,
+        'EventEspresso\core\services\loaders\Loader'  => EE_Dependency_Map::load_from_cache,
+        'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
+    ];
+
 
     /**
      * Route constructor.
