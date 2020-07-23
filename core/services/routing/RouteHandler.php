@@ -39,6 +39,10 @@ class RouteHandler
      * @var RouteCollection $routes
      */
     private $routes;
+    /**
+     * @var boolean $print_data_nodes
+     */
+    private $print_data_nodes = true;
 
 
     /**
@@ -59,10 +63,6 @@ class RouteHandler
         $this->loader = $loader;
         $this->request = $request;
         $this->routes = $routes;
-        if (! $this->request->isActivation()) {
-            add_action('admin_footer', [$this->data_node_handler, 'printDataNode']);
-            add_action('wp_footer', [$this->data_node_handler, 'printDataNode']);
-        }
     }
 
 
@@ -75,9 +75,6 @@ class RouteHandler
     public function addRoute($fqcn, $handle = true)
     {
         try {
-            if ($this->request->isActivation()) {
-                return;
-            }
             $route = $this->loader->getShared($fqcn);
             $this->validateRoute($route, $fqcn);
             $this->routes->add($route);
@@ -99,6 +96,7 @@ class RouteHandler
             $data_node = $route->dataNode();
             if ($data_node instanceof JsonDataNode) {
                 $this->data_node_handler->addDataNode($data_node);
+                $this->printDataNodes();
             }
         }
     }
@@ -114,6 +112,21 @@ class RouteHandler
     public function handleRoutesForCurrentRequest()
     {
         $this->routes->handleRoutesForCurrentRequest();
+    }
+
+
+    /**
+     * @param RouteInterface $route
+     * @param string         $fqcn
+     * @since $VID:$
+     */
+    private function printDataNodes()
+    {
+        if($this->print_data_nodes) {
+            add_action('admin_footer', [$this->data_node_handler, 'printDataNode']);
+            add_action('wp_footer', [$this->data_node_handler, 'printDataNode']);
+            $this->print_data_nodes = false;
+        }
     }
 
 
