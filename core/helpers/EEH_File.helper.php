@@ -837,6 +837,7 @@ class EEH_File extends EEH_Base implements EEHI_File
                 $msg =
                     sprintf(
                         __('The file located at "%2$s" is not readable or doesn\'t exist.', 'event_espresso'),
+                        '',
                         $full_source_path
                     );
                 $msg .= EEH_File::_permissions_error_for_unreadable_filepath($full_source_path);
@@ -859,7 +860,11 @@ class EEH_File extends EEH_Base implements EEHI_File
         EEH_File::ensure_folder_exists_and_is_writable($folder);
         if (! EEH_File::verify_is_writable($folder, 'folder')) {
             if (defined('WP_DEBUG') && WP_DEBUG) {
-                $msg = sprintf(__('The file located at "%2$s" is not writable.', 'event_espresso'), $full_dest_path);
+                $msg = sprintf(
+                    __('The file located at "%2$s" is not writable.', 'event_espresso'),
+                    '',
+                    $full_dest_path
+                );
                 $msg .= EEH_File::_permissions_error_for_unreadable_filepath($full_dest_path);
                 EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
             }
