@@ -726,12 +726,11 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\request\Request'          => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\routing\RouteCollection'  => EE_Dependency_Map::load_from_cache,
             ],
-            'EventEspresso\core\domain\entities\routing\handlers\shared\RoutingRequests'                                          => [
-                'EE_Dependency_Map'                                                                          => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\json\JsonDataNode'                                              => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\loaders\Loader'                                                 => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\request\Request'                                                => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\domain\entities\routing\data_nodes\EventEspressoData'                    => EE_Dependency_Map::load_from_cache,
+            'EventEspresso\core\domain\entities\routing\handlers\shared\RegularRequests' => [
+                'EE_Dependency_Map'                             => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\loaders\Loader'    => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\request\Request'   => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\json\JsonDataNode' => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\domain\entities\routing\specifications\RouteMatchSpecificationInterface' => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\services\json\JsonDataNodeHandler' => [
@@ -741,6 +740,17 @@ class EE_Dependency_Map
                 'EventEspresso\core\domain\Domain'                   => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\assets\AssetCollection' => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\assets\Registry'        => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\services\routing\RoutingSwitch'                                          => [
+                'EventEspresso\core\services\loaders\Loader'       => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\routing\RouteHandler' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\domain\entities\routing\handlers\admin\ActivationRequests' => [
+                'EE_Dependency_Map'                                                                          => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\loaders\Loader'                                                 => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\request\Request'                                                => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\json\JsonDataNode'                                              => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\entities\routing\specifications\RouteMatchSpecificationInterface' => EE_Dependency_Map::load_from_cache,
             ],
         ];
     }
