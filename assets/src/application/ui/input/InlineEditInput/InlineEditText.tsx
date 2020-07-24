@@ -4,17 +4,17 @@ import Dotdotdot from 'react-dotdotdot';
 import { InlineEdit, InlineEditPreviewProps } from '@infraUI/inputs';
 import { TextFit } from '@infraUI/layout/textfit';
 
-import TabbableText from './TabbableText'
+import TabbableText from './TabbableText';
 import { TextProps } from './types';
 
-const Preview: React.FC<InlineEditPreviewProps> = ({ fitText, isEditing, onRequestEdit, tooltip, value, ...props }) => {
+const Preview: React.FC<InlineEditPreviewProps> = ({ fitText, isEditing, onRequestEdit, tooltip, value }) => {
 	if (isEditing) {
 		return null;
 	}
 
-	const textInput = <TabbableText {...props} onRequestEdit={onRequestEdit} text={value} tooltip={tooltip} />;
+	const textInput = <TabbableText onRequestEdit={onRequestEdit} text={value} tooltip={tooltip} />;
 
-	if (value.length > 30) {
+	if (value.length > 25) {
 		return <Dotdotdot clamp={2}>{textInput}</Dotdotdot>;
 	}
 
@@ -33,11 +33,19 @@ const Preview: React.FC<InlineEditPreviewProps> = ({ fitText, isEditing, onReque
 	return textInput;
 };
 
-const InlineEditText: React.FC<TextProps> = ({ fitText = true, placeholder = '', tag: as, tooltip, ...props }) => {
+const InlineEditText: React.FC<TextProps> = ({
+	className,
+	fitText = true,
+	placeholder = '',
+	tag: as,
+	tooltip,
+	...props
+}) => {
 	return (
 		<InlineEdit
 			{...props}
 			as={as}
+			className={className}
 			inputType='text'
 			placeholder={placeholder}
 			Preview={(previewProps) => <Preview {...previewProps} fitText={fitText} tooltip={tooltip} />}
