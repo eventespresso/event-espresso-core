@@ -216,7 +216,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
         $this->request->setRequestTypeContextChecker(new RequestTypeContextChecker($request_type_context));
         /** @var EventEspresso\core\services\routing\RouteHandler $router */
         $router = $this->loader->getShared('EventEspresso\core\services\routing\RouteHandler');
-        $router->addRoute('EventEspresso\core\domain\entities\routing\handlers\shared\RoutingRequests');
+        $router->addRoute('EventEspresso\core\domain\entities\routing\handlers\shared\RegularRequests');
         switch($request_type_slug) {
             case RequestTypeContext::ADMIN:
                 $router->addRoute('EventEspresso\core\domain\entities\routing\handlers\admin\EspressoLegacyAdmin');

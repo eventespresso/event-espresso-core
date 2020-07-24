@@ -3,6 +3,7 @@
 namespace EventEspresso\core\domain\entities\routing\handlers\shared;
 
 use EE_Dependency_Map;
+use EventEspresso\core\services\routing\PrimaryRoute;
 use EventEspresso\core\services\routing\Route;
 use EventEspresso\core\services\routing\RoutingSwitch;
 
@@ -14,7 +15,7 @@ use EventEspresso\core\services\routing\RoutingSwitch;
  * @author  Brent Christensen
  * @since   $VID:$
  */
-class RoutingRequests extends Route
+class RegularRequests extends PrimaryRoute
 {
 
     /**
@@ -132,12 +133,7 @@ class RoutingRequests extends Route
      */
     protected function requestHandler()
     {
-        add_filter(
-            'FHEE__EE_System__loadRouteMatchSpecifications__routing_request_type',
-            static function() {
-                return RoutingSwitch::ROUTE_REQUEST_TYPE_REGULAR;
-            }
-        );
+        $this->setRouteRequestType(PrimaryRoute::ROUTE_REQUEST_TYPE_REGULAR);
         return true;
     }
 }
