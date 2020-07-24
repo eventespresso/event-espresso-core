@@ -1,3 +1,5 @@
+@import 'application/ui/styles/mixins/breakpoints.scss';
+
 .ee-popover {
 	display: inline-block;
 	position: relative;
@@ -10,11 +12,21 @@
 		box-sizing: border-box;
 		color: var(--ee-default-text-color-high-contrast);
 		font-weight: normal;
-		left: -10rem;
 		min-width: 20rem;
+		left: 50%;
 		padding: var(--ee-padding-small);
 		position: absolute;
+		transform: translateX(-50%);
 		width: max-content;
+
+		@include max850px {
+			left: 0;
+			transform: none;
+		}
+
+		@include max480px {
+			width: 100%;
+		}
 
 		header {
 			margin: 0 0 var(--ee-margin-smaller);

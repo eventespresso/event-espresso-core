@@ -287,6 +287,17 @@
 			}
 		}
 	}
+
+	.react-datetimerange-picker {
+		&__clear-button {
+			visibility: hidden;
+		}
+
+		&__calendar-button {
+			display: none;
+		}
+	}
+
 	&.ee-date-time-range-picker {
 		.ee-btn-base.ee-icon-button.ee-date-time-range-picker-submit {
 			@extend .ee-date-picker-button;
