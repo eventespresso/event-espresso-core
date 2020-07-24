@@ -41,7 +41,6 @@ class EEH_File extends EEH_Base implements EEHI_File
      *                              wp uploads directory, we'll want to just use the filesystem directly.
      *                              If not provided, we have to assume its not in the uploads directory
      * @return WP_Filesystem_Base
-     * @throws RuntimeException  if filesystem credentials are required
      */
     private static function _get_wp_filesystem($filepath = null)
     {
@@ -58,7 +57,6 @@ class EEH_File extends EEH_Base implements EEHI_File
 
     /**
      * @return WP_Filesystem_Base
-     * @throws RuntimeException 
      */
     private static function loadAlternateWpFileSystem()
     {
@@ -91,14 +89,15 @@ class EEH_File extends EEH_Base implements EEHI_File
                 }
             }
             if ( ! $valid || ! file_exists($wp_filesystem_file)) {
-                throw new RuntimeException(
+                EE_Error::add_error(
                     sprintf(
                         __(
                             'The supplied WP Filesystem filepath "%1$s" is either missing or invalid.',
                             'event_espresso'
                         ),
                         $wp_filesystem_file
-                    )
+                    ),
+                    __FILE__, __FUNCTION__, __LINE__
                 );
             }
             // check constants defined, just like in the wp-admin/includes/file.php WP_Filesystem()
@@ -117,7 +116,6 @@ class EEH_File extends EEH_Base implements EEHI_File
 
     /**
      * @return WP_Filesystem_Base
-     * @throws RuntimeException 
      */
     private static function loadWpFileSystem()
     {
@@ -148,7 +146,7 @@ class EEH_File extends EEH_Base implements EEHI_File
                             'event_espresso'
                         );
                 }
-                throw new RuntimeException($msg);
+                EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
             }
             // should be loaded if we are past the wp_loaded hook...
             if (! function_exists('WP_Filesystem')) {
@@ -165,19 +163,21 @@ class EEH_File extends EEH_Base implements EEHI_File
                 // if credentials do NOT exist
                 if ($credentials === false) {
                     add_action('admin_notices', ['EEH_File', 'display_request_filesystem_credentials_form'], 999);
-                    throw new RuntimeException(
+                    EE_Error::add_error(
                         __(
                             'An attempt to access and/or write to a file on the server could not be completed due to a lack of sufficient credentials.',
                             'event_espresso'
-                        )
+                        ),
+                        __FILE__, __FUNCTION__, __LINE__
                     );
                 } elseif (is_wp_error($wp_filesystem->errors) && $wp_filesystem->errors->get_error_code()) {
                     add_action('admin_notices', ['EEH_File', 'display_request_filesystem_credentials_form'], 999);
-                    throw new RuntimeException(
+                    EE_Error::add_error(
                         sprintf(
                             __('WP Filesystem Error: $1%s', 'event_espresso'),
                             $wp_filesystem->errors->get_error_message()
-                        )
+                        ),
+                        __FILE__, __FUNCTION__, __LINE__
                     );
                 }
             }
@@ -208,7 +208,6 @@ class EEH_File extends EEH_Base implements EEHI_File
      * @param string $file_ext       - file extension (ie: "php") if checking a file
      * @param string $type_of_file   - general type of file (ie: "module"), this is only used to improve error messages
      * @return bool
-     * @throws RuntimeException  if filesystem credentials are required
      */
     public static function verify_filepath_and_permissions(
         $full_file_path = '',
@@ -240,7 +239,7 @@ class EEH_File extends EEH_Base implements EEHI_File
                 );
             }
             if (defined('WP_DEBUG') && WP_DEBUG) {
-                throw new RuntimeException($msg . '||' . $msg);
+                EE_Error::add_error($msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__);
             }
             return false;
         }
@@ -256,7 +255,6 @@ class EEH_File extends EEH_Base implements EEHI_File
      * @param string $full_file_path - full server path to the folder or file
      * @param string $type_of_file   - general type of file (ie: "module"), this is only used to improve error messages
      * @return string
-     * @throws RuntimeException  if filesystem credentials are required
      */
     private static function _permissions_error_for_unreadable_filepath($full_file_path = '', $type_of_file = '')
     {
@@ -297,8 +295,6 @@ class EEH_File extends EEH_Base implements EEHI_File
      *
      * @param string $folder
      * @return bool false if folder isn't writable; true if it exists and is writeable,
-     * @throws RuntimeException  if the folder exists and is writeable, but for some reason we
-     * can't write to it
      */
     public static function ensure_folder_exists_and_is_writable($folder = '')
     {
@@ -324,7 +320,7 @@ class EEH_File extends EEH_Base implements EEHI_File
                 if (defined('WP_DEBUG') && WP_DEBUG) {
                     $msg = sprintf(__('"%s" could not be created.', 'event_espresso'), $folder);
                     $msg .= EEH_File::_permissions_error_for_unreadable_filepath($folder);
-                    throw new RuntimeException($msg);
+                    EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
                 }
                 return false;
             }
@@ -342,7 +338,6 @@ class EEH_File extends EEH_Base implements EEHI_File
      * @param string $full_path      - full server path to file or folder
      * @param string $file_or_folder - whether checking a file or folder
      * @return bool
-     * @throws RuntimeException  if filesystem credentials are required
      */
     public static function verify_is_writable($full_path = '', $file_or_folder = 'folder')
     {
@@ -355,7 +350,7 @@ class EEH_File extends EEH_Base implements EEHI_File
             if (defined('WP_DEBUG') && WP_DEBUG) {
                 $msg = sprintf(__('The "%1$s" %2$s is not writable.', 'event_espresso'), $full_path, $file_or_folder);
                 $msg .= EEH_File::_permissions_error_for_unreadable_filepath($full_path);
-                throw new RuntimeException($msg);
+                EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
             }
             return false;
         }
@@ -370,7 +365,6 @@ class EEH_File extends EEH_Base implements EEHI_File
      *
      * @param string $full_file_path
      * @return bool
-     * @throws RuntimeException  if filesystem credentials are required
      */
     public static function ensure_file_exists_and_is_writable($full_file_path = '')
     {
@@ -386,7 +380,7 @@ class EEH_File extends EEH_Base implements EEHI_File
                 if (defined('WP_DEBUG') && WP_DEBUG) {
                     $msg = sprintf(__('The "%s" file could not be created.', 'event_espresso'), $full_file_path);
                     $msg .= EEH_File::_permissions_error_for_unreadable_filepath($full_file_path);
-                    throw new RuntimeException($msg);
+                    EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
                 }
                 return false;
             }
@@ -422,7 +416,6 @@ class EEH_File extends EEH_Base implements EEHI_File
      *
      * @param string $full_file_path
      * @return string
-     * @throws RuntimeException  if filesystem credentials are required
      */
     public static function get_file_contents($full_file_path = '')
     {
@@ -447,7 +440,6 @@ class EEH_File extends EEH_Base implements EEHI_File
      * @param string $file_contents - the content to be written to the file
      * @param string $file_type
      * @return bool
-     * @throws RuntimeException  if filesystem credentials are required
      */
     public static function write_to_file($full_file_path = '', $file_contents = '', $file_type = '')
     {
@@ -463,7 +455,7 @@ class EEH_File extends EEH_Base implements EEHI_File
                         $full_file_path
                     );
                 $msg .= EEH_File::_permissions_error_for_unreadable_filepath($full_file_path);
-                throw new RuntimeException($msg);
+                EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
             }
             return false;
         }
@@ -482,7 +474,7 @@ class EEH_File extends EEH_Base implements EEHI_File
                         $full_file_path
                     );
                 $msg .= EEH_File::_permissions_error_for_unreadable_filepath($full_file_path, 'f');
-                throw new RuntimeException($msg);
+                EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
             }
             return false;
         }
@@ -497,7 +489,6 @@ class EEH_File extends EEH_Base implements EEHI_File
      * @param boolean        $recursive
      * @param boolean|string $type 'd' for directory, 'f' for file
      * @return boolean
-     * @throws RuntimeException  if filesystem credentials are required
      */
     public static function delete($filepath, $recursive = false, $type = false)
     {
@@ -512,7 +503,6 @@ class EEH_File extends EEH_Base implements EEHI_File
      *
      * @param string $full_file_path
      * @return bool
-     * @throws RuntimeException  if filesystem credentials are required
      */
     public static function exists($full_file_path = '')
     {
@@ -527,7 +517,6 @@ class EEH_File extends EEH_Base implements EEHI_File
      *
      * @param string $full_file_path
      * @return bool
-     * @throws RuntimeException  if filesystem credentials are required
      */
     public static function is_readable($full_file_path = '')
     {
@@ -579,7 +568,6 @@ class EEH_File extends EEH_Base implements EEHI_File
      *
      * @param string $folder
      * @return bool
-     * @throws RuntimeException  if filesystem credentials are required
      */
     public static function add_htaccess_deny_from_all($folder = '')
     {
@@ -599,7 +587,6 @@ class EEH_File extends EEH_Base implements EEHI_File
      *
      * @param string $folder
      * @return boolean
-     * @throws RuntimeException  if filesystem credentials are required
      */
     public static function add_index_file($folder)
     {
@@ -721,7 +708,6 @@ class EEH_File extends EEH_Base implements EEHI_File
      * @param string  $destination_file
      * @param boolean $overwrite
      * @return boolean success
-     * @throws RuntimeException  if filesystem credentials are required
      */
     public static function copy($source_file, $destination_file, $overwrite = false)
     {
@@ -748,7 +734,7 @@ class EEH_File extends EEH_Base implements EEHI_File
                     $source_file
                 );
                 $msg .= EEH_File::_permissions_error_for_unreadable_filepath($source_file, 'f');
-                throw new RuntimeException($msg);
+                EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
             }
             return false;
         }
@@ -778,7 +764,6 @@ class EEH_File extends EEH_Base implements EEHI_File
      * @param string $local_filepath the filepath to the folder/file locally
      * @return string the remote filepath (eg the filepath the filesystem method, eg
      *                               ftp or ssh, will use to access the folder
-     * @throws RuntimeException  if filesystem credentials are required
      */
     public static function convert_local_filepath_to_remote_filepath($local_filepath)
     {
@@ -796,7 +781,6 @@ class EEH_File extends EEH_Base implements EEHI_File
      * @param bool      $recursive Optional. If set to true, changes file permissions recursively.
      *                             Default false.
      * @return bool True on success, false on failure.
-     * @throws RuntimeException 
      */
     public static function chmod($file, $mode = false, $recursive = false)
     {
@@ -813,7 +797,6 @@ class EEH_File extends EEH_Base implements EEHI_File
      * @param bool   $overwrite   Optional. Whether to overwrite the destination file if it exists.
      *                            Default false.
      * @return bool True on success, false on failure.
-     * @throws RuntimeException 
      */
     public static function move($source, $destination, $overwrite = false)
     {
@@ -827,14 +810,15 @@ class EEH_File extends EEH_Base implements EEHI_File
             return true;
         }
         if (defined('WP_DEBUG') && WP_DEBUG) {
-            throw new RuntimeException(
+            EE_Error::add_error(
                 sprintf(
                     esc_html__(
                         'Unable to move the file to new location (possible permissions errors). This is the path the class attempted to move the file to: %s',
                         'event_espresso'
                     ),
                     $destination
-                )
+                ),
+                __FILE__, __FUNCTION__, __LINE__
             );
         }
         return false;
@@ -844,7 +828,6 @@ class EEH_File extends EEH_Base implements EEHI_File
     /**
      * @param string $source_file
      * @return string
-     * @throws RuntimeException 
      */
     private static function validateFileForCopyOrMove($source_file)
     {
@@ -857,7 +840,7 @@ class EEH_File extends EEH_Base implements EEHI_File
                         $full_source_path
                     );
                 $msg .= EEH_File::_permissions_error_for_unreadable_filepath($full_source_path);
-                throw new RuntimeException($msg);
+                EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
             }
             return '';
         }
@@ -868,7 +851,6 @@ class EEH_File extends EEH_Base implements EEHI_File
     /**
      * @param string $destination_file
      * @return string
-     * @throws RuntimeException 
      */
     private static function validateFolderForCopyOrMove($destination_file)
     {
@@ -879,7 +861,7 @@ class EEH_File extends EEH_Base implements EEHI_File
             if (defined('WP_DEBUG') && WP_DEBUG) {
                 $msg = sprintf(__('The file located at "%2$s" is not writable.', 'event_espresso'), $full_dest_path);
                 $msg .= EEH_File::_permissions_error_for_unreadable_filepath($full_dest_path);
-                throw new RuntimeException($msg);
+                EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
             }
             return '';
         }
