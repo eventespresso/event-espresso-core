@@ -44,6 +44,11 @@ class RouteHandler
      */
     private $print_data_nodes = true;
 
+    /**
+     * @var string $route_request_type
+     */
+    protected $route_request_type;
+
 
     /**
      * RouteHandler constructor.
@@ -86,6 +91,24 @@ class RouteHandler
 
 
     /**
+     * @return string
+     */
+    public function getRouteRequestType()
+    {
+        return $this->route_request_type;
+    }
+
+
+    /**
+     * @param string $route_request_type
+     */
+    public function setRouteRequestType($route_request_type)
+    {
+        $this->route_request_type = $route_request_type !== null ? $route_request_type : $this->route_request_type;
+    }
+
+
+    /**
      * @param RouteInterface $route
      * @param bool $handle if true [default] will immediately call RouteInterface::handleRequest()
      */
@@ -93,6 +116,9 @@ class RouteHandler
     {
         if ($handle && $route->isNotHandled()) {
             $route->handleRequest();
+            if ($route instanceof PrimaryRoute) {
+                $this->setRouteRequestType($route->getRouteRequestType());
+            }
             $data_node = $route->dataNode();
             if ($data_node instanceof JsonDataNode) {
                 $this->data_node_handler->addDataNode($data_node);
