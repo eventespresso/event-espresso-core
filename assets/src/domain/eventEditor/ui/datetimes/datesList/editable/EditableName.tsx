@@ -29,6 +29,7 @@ const EditableName: React.FC<EditableNameProps> = ({ className, entity: datetime
 
 	return (
 		<InlineEditText
+			clampable={view === 'card'}
 			fitText={view === 'card'}
 			tag={view === 'table' ? 'p' : 'h4'}
 			className={className}
