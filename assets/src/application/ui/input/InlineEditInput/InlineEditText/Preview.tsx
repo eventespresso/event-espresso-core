@@ -1,11 +1,10 @@
 import React from 'react';
 import Dotdotdot from 'react-dotdotdot';
 
-import { InlineEdit, InlineEditPreviewProps } from '@infraUI/inputs';
+import { InlineEditPreviewProps } from '@infraUI/inputs';
 import { TextFit } from '@infraUI/layout/textfit';
 
-import TabbableText from './TabbableText';
-import { TextProps } from './types';
+import TabbableText from '../TabbableText';
 
 const Preview: React.FC<InlineEditPreviewProps> = ({
 	fitText,
@@ -40,24 +39,4 @@ const Preview: React.FC<InlineEditPreviewProps> = ({
 	return textInput;
 };
 
-const InlineEditText: React.FC<TextProps> = ({
-	className,
-	fitText = true,
-	placeholder = '',
-	tag: as,
-	tooltip,
-	...props
-}) => {
-	return (
-		<InlineEdit
-			{...props}
-			as={as}
-			className={className}
-			inputType='text'
-			placeholder={placeholder}
-			Preview={(previewProps) => <Preview {...previewProps} fitText={fitText} tooltip={tooltip} />}
-		/>
-	);
-};
-
-export default InlineEditText;
+export default Preview;
