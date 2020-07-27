@@ -14,13 +14,13 @@ const EntityCard: React.FC<EntityCardProps> = ({
 	entity,
 	reverse = false,
 	sidebar,
-	sidebarClass,
+	sidebarClassName,
 }) => {
-	const sidebarClassName = classNames(sidebarClass, 'entity-card__sidebar');
+	const sidebarClassNameName = classNames(sidebarClassName, 'entity-card__sidebar');
 	return (
 		<EntityPaperFrame cacheId={cacheId} className={'ee-entity-card-wrapper ee-fade-in'} entity={entity}>
 			<Row align={'wide'} className={'entity-card'} reverse={reverse}>
-				<Sidebar align={'wide'} before className={sidebarClassName}>
+				<Sidebar align={'wide'} before className={sidebarClassNameName}>
 					{sidebar}
 				</Sidebar>
 				<Content className={'entity-card__details-wrapper'}>

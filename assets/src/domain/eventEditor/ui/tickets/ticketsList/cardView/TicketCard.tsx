@@ -60,7 +60,7 @@ const TicketCard: React.FC<TicketItemProps> = ({ entity: ticket }) => {
 				entity={ticket}
 				reverse
 				sidebar={sidebar}
-				sidebarClass={bgClassName}
+				sidebarClassName={bgClassName}
 			/>
 		</TicketProvider>
 	) : null;
