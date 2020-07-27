@@ -5,7 +5,7 @@ export interface TextAreaProps extends Omit<InlineEditProps, 'inputType'> {
 }
 
 export interface TextProps extends Omit<InlineEditProps, 'inputType'> {
-	clampable?: boolean;
+	lineCount?: number;
 	fitText?: boolean;
 	tag?: React.ElementType;
 	tooltip?: string;

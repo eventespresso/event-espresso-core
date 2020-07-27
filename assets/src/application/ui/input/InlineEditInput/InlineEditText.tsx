@@ -8,9 +8,9 @@ import TabbableText from './TabbableText';
 import { TextProps } from './types';
 
 const Preview: React.FC<InlineEditPreviewProps> = ({
-	clampable,
 	fitText,
 	isEditing,
+	lineCount,
 	onRequestEdit,
 	tooltip,
 	value,
@@ -21,8 +21,8 @@ const Preview: React.FC<InlineEditPreviewProps> = ({
 
 	const textInput = <TabbableText onRequestEdit={onRequestEdit} text={value} tooltip={tooltip} />;
 
-	if (clampable && value.length > 25) {
-		return <Dotdotdot clamp={2}>{textInput}</Dotdotdot>;
+	if (lineCount && value.length > 25) {
+		return <Dotdotdot clamp={lineCount}>{textInput}</Dotdotdot>;
 	}
 
 	if (fitText) {
