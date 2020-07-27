@@ -142,6 +142,27 @@ class Mirror
 
 
     /**
+     * returns array of ReflectionParameter objects for parameters that are NOT optional
+     *
+     * @param string $class_name
+     * @return ReflectionParameter[]
+     * @throws InvalidDataTypeException
+     * @throws ReflectionException
+     */
+    public function getRequiredParameters($class_name)
+    {
+        $required_parameters = [];
+        $parameters = $this->getParameters($class_name);
+        foreach ($parameters as $parameter) {
+            if ( $parameter instanceof ReflectionParameter && ! $parameter->isOptional()) {
+                $required_parameters[] = $parameter;
+            }
+        }
+        return $required_parameters;
+    }
+
+
+    /**
      * @param ReflectionParameter $param
      * @param string              $class_name
      * @param string              $index
