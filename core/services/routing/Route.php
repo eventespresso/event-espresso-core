@@ -69,6 +69,17 @@ abstract class Route implements RouteInterface
         'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
     ];
 
+    /**
+     * @var array $full_dependencies
+     */
+    protected static $full_dependencies = [
+        'EE_Dependency_Map'                                                                          => EE_Dependency_Map::load_from_cache,
+        'EventEspresso\core\services\loaders\Loader'                                                 => EE_Dependency_Map::load_from_cache,
+        'EventEspresso\core\services\request\Request'                                                => EE_Dependency_Map::load_from_cache,
+        'EventEspresso\core\services\json\JsonDataNode'                                              => EE_Dependency_Map::load_from_cache,
+        'EventEspresso\core\domain\entities\routing\specifications\RouteMatchSpecificationInterface' => EE_Dependency_Map::load_from_cache,
+    ];
+
 
     /**
      * Route constructor.
@@ -87,10 +98,10 @@ abstract class Route implements RouteInterface
         RouteMatchSpecificationInterface $specification = null
     ) {
         $this->dependency_map = $dependency_map;
-        $this->data_node = $data_node;
-        $this->loader = $loader;
-        $this->request = $request;
-        $this->specification = $specification;
+        $this->data_node      = $data_node;
+        $this->loader         = $loader;
+        $this->request        = $request;
+        $this->specification  = $specification;
     }
 
 
@@ -107,6 +118,24 @@ abstract class Route implements RouteInterface
      * @since   $VID:$
      */
     abstract protected function requestHandler();
+
+
+    /**
+     * @return array
+     */
+    public static function getDefaultDependencies()
+    {
+        return self::$default_dependencies;
+    }
+
+
+    /**
+     * @return array
+     */
+    public static function getFullDependencies()
+    {
+        return self::$full_dependencies;
+    }
 
 
     /**
