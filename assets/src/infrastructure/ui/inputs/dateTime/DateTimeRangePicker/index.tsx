@@ -4,7 +4,6 @@ import { default as ReactDateTimeRangePicker } from '@wojtekmaj/react-datetimera
 import { __ } from '@wordpress/i18n';
 
 import { DateTimeRangePickerProps } from '../types';
-import { ClockOutlined } from '@appDisplay/icons/svgs';
 import useConfig from '@appServices/config/useConfig';
 import { convertWordPressDateFormat, convertWordPressTimeFormat } from '../utilities';
 
@@ -30,8 +29,8 @@ const DateTimeRangePicker: React.FC<DateTimeRangePickerProps> = ({
 		<ReactDateTimeRangePicker
 			calendarAriaLabel={__('show calendar')}
 			clearAriaLabel={__('clear values and reset')}
-			clockIcon={showClockIcon && <ClockOutlined />}
 			closeWidgets={false}
+			disableClock
 			format={newDateTimeFormat}
 			locale={user}
 			onChange={onChange}
