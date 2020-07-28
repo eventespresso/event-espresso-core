@@ -184,7 +184,9 @@ class EEH_File extends EEH_Base implements EEHI_File
                         __('WP Filesystem Error: $1%s', 'event_espresso'),
                         $wp_filesystem->errors->get_error_message()
                     ),
-                    __FILE__, __FUNCTION__, __LINE__
+                    __FILE__,
+                    __FUNCTION__,
+                    __LINE__
                 );
             }
         }
@@ -272,22 +274,22 @@ class EEH_File extends EEH_Base implements EEHI_File
             $type_of_file = ! empty($type_of_file) ? $type_of_file . ' ' : '';
             $type_of_file .= ! empty($type_of_file) ? 'file' : 'folder';
             return ' ' . sprintf(
-                    __(
-                        'File permissions for the requested %1$s are currently set at "%2$s". The recommended permissions are 644 for files and 755 for folders.',
-                        'event_espresso'
-                    ),
-                    $type_of_file,
-                    $perms
-                );
+                __(
+                    'File permissions for the requested %1$s are currently set at "%2$s". The recommended permissions are 644 for files and 755 for folders.',
+                    'event_espresso'
+                ),
+                $type_of_file,
+                $perms
+            );
         } else {
             // file exists but file permissions could not be read ?!?!
             return ' ' . sprintf(
-                    __(
-                        'Please ensure that the server and/or PHP configuration allows the current process to access the following file: "%s".',
-                        'event_espresso'
-                    ),
-                    $full_file_path
-                );
+                __(
+                    'Please ensure that the server and/or PHP configuration allows the current process to access the following file: "%s".',
+                    'event_espresso'
+                ),
+                $full_file_path
+            );
         }
     }
 
