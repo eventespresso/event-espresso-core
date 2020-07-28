@@ -5,7 +5,7 @@ namespace EventEspresso\core\domain\entities\routing\handlers\shared;
 use EE_Dependency_Map;
 use EventEspresso\core\services\routing\PrimaryRoute;
 use EventEspresso\core\services\routing\Route;
-use EventEspresso\core\services\routing\RoutingSwitch;
+use EventEspresso\core\services\routing\Router;
 
 /**
  * Class RoutingRequests

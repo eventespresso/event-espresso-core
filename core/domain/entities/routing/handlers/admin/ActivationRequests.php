@@ -5,7 +5,7 @@ namespace EventEspresso\core\domain\entities\routing\handlers\admin;
 use EE_Dependency_Map;
 use EventEspresso\core\services\routing\PrimaryRoute;
 use EventEspresso\core\services\routing\Route;
-use EventEspresso\core\services\routing\RoutingSwitch;
+use EventEspresso\core\services\routing\Router;
 
 /**
  * Class ActivationRequests
@@ -35,7 +35,6 @@ class ActivationRequests extends PrimaryRoute
      */
     protected function registerDependencies()
     {
-
         $this->dependency_map->registerDependencies(
             'EventEspresso\core\domain\entities\routing\handlers\admin\AdminRoute',
             ['EE_Admin_Config' => EE_Dependency_Map::load_from_cache] + Route::$default_dependencies

@@ -142,8 +142,6 @@ class RouteHandler
 
 
     /**
-     * @param RouteInterface $route
-     * @param string         $fqcn
      * @since $VID:$
      */
     private function printDataNodes()
