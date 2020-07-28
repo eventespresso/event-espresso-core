@@ -1,15 +1,16 @@
 import React from 'react';
 import Dotdotdot from 'react-dotdotdot';
 
-import { InlineEditPreviewProps } from '@infraUI/inputs';
+import { PreviewProps } from '@infraUI/inputs';
 import { TextFit } from '@infraUI/layout/textfit';
 
-import TabbableText from '../TabbableText';
+import TabbableText from './TabbableText';
 
-const Preview: React.FC<InlineEditPreviewProps> = ({
+const Preview: React.FC<PreviewProps> = ({
 	fitText,
 	isEditing,
 	lineCount,
+	lineLength = 25,
 	onRequestEdit,
 	tooltip,
 	value,
@@ -20,7 +21,7 @@ const Preview: React.FC<InlineEditPreviewProps> = ({
 
 	const textInput = <TabbableText onRequestEdit={onRequestEdit} text={value} tooltip={tooltip} />;
 
-	if (lineCount && value.length > 25) {
+	if (lineCount && value.length > lineLength) {
 		return <Dotdotdot clamp={lineCount}>{textInput}</Dotdotdot>;
 	}
 

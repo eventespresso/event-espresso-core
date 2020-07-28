@@ -3,7 +3,7 @@ import React from 'react';
 import { InlineEdit } from '@infraUI/inputs';
 
 import Preview from './Preview';
-import { TextProps } from '../types';
+import { TextProps } from './types';
 
 const InlineEditText: React.FC<TextProps> = ({
 	className,
