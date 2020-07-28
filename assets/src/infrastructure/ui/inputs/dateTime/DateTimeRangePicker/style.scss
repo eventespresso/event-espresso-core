@@ -1,0 +1,11 @@
+.ee-date-time-range-picker {
+	.react-datetimerange-picker {
+		&__inputGroup {
+			&__month {
+				option {
+					display: none;
+				}
+			}
+		}
+	}
+}

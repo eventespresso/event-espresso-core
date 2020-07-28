@@ -8,14 +8,9 @@ import useConfig from '@appServices/config/useConfig';
 import { convertWordPressDateFormat, convertWordPressTimeFormat } from '../utilities';
 
 import '../style.scss';
+import './style.scss';
 
-const DateTimeRangePicker: React.FC<DateTimeRangePickerProps> = ({
-	endDate,
-	onChange,
-	showClockIcon = true,
-	startDate,
-	...props
-}) => {
+const DateTimeRangePicker: React.FC<DateTimeRangePickerProps> = ({ endDate, onChange, startDate, ...props }) => {
 	const {
 		dateTimeFormats: { dateTimeFormat },
 		locale: { user },

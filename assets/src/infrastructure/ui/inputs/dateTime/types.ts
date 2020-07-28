@@ -16,8 +16,6 @@ export interface DateTimeRangePickerProps
 	className?: string;
 	endDate: string;
 	onChange: (dates: string[]) => void;
-	showClearIcon?: boolean;
-	showClockIcon?: boolean;
 	startDate: string;
 }
 
