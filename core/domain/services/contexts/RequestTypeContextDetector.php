@@ -62,8 +62,8 @@ class RequestTypeContextDetector
      */
     private function getGlobalRouteCondition($globalRouteCondition, $default)
     {
-        return isset($this->globalRouteConditions[$globalRouteCondition])
-            ? $this->globalRouteConditions[$globalRouteCondition]
+        return isset($this->globalRouteConditions[ $globalRouteCondition ])
+            ? $this->globalRouteConditions[ $globalRouteCondition ]
             : $default;
     }
 
@@ -153,7 +153,7 @@ class RequestTypeContextDetector
      */
     private function isWordPressActivationRequest()
     {
-        $action = $this->request->getRequestParam('action');
+        $action               = $this->request->getRequestParam('action');
         $plugins_page_actions = [
             'activate',
             'activate-multi',
@@ -178,10 +178,10 @@ class RequestTypeContextDetector
     {
         // Check for URLs like http://mysite.com/?rest_route=/ee... and http://mysite.com/wp-json/ee/...
         return strpos(
-                   $this->request->getRequestParam('rest_route', false),
-                   '/' . Domain::API_NAMESPACE
-               ) === 0
-               || $this->uriPathMatches(trim(rest_get_url_prefix(), '/') . '/' . Domain::API_NAMESPACE);
+               $this->request->getRequestParam('rest_route', false),
+               '/' . Domain::API_NAMESPACE
+           ) === 0
+           || $this->uriPathMatches(trim(rest_get_url_prefix(), '/') . '/' . Domain::API_NAMESPACE);
     }
 
 

@@ -696,7 +696,7 @@ class EEH_File extends EEH_Base implements EEHI_File
                         if ($index_numerically) {
                             $class_to_folder_path[] = $file_path;
                         } else {
-                            $classname                        =
+                            $classname =
                                 self::get_classname_from_filepath_with_standard_filename($file_path);
                             $class_to_folder_path[$classname] = $file_path;
                         }
@@ -870,7 +870,9 @@ class EEH_File extends EEH_Base implements EEHI_File
                     $destination,
                     "{$owner}:{$group} $permissions"
                 ),
-                __FILE__, __FUNCTION__, __LINE__
+                __FILE__,
+                __FUNCTION__,
+                __LINE__
             );
         }
         return false;
