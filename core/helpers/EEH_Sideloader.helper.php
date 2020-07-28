@@ -242,7 +242,7 @@ class EEH_Sideloader extends EEH_Base
 
             $response = wp_safe_remote_get($this->_download_from, $wp_remote_args);
 
-            if ($this->isResponseError($response) || $this->isDownloadError($response) ) {
+            if ($this->isResponseError($response) || $this->isDownloadError($response)) {
                 EEH_File::delete($temp_file);
                 return false;
             }
@@ -273,6 +273,15 @@ class EEH_Sideloader extends EEH_Base
                 $this->_permissions,
                 $this
             );
+            // verify permissions are an integer but don't actually modify the value
+            $perms = absint($permissions);
+            if (! $perms) {
+                EE_Error::add_error(
+                    esc_html__('Supplied permissions are invalid', 'event_espresso'),
+                    __FILE__, __FUNCTION__, __LINE__
+                );
+                return false;
+            }
             EEH_File::chmod($path, $permissions);
 
             // that's it.  let's allow for actions after file uploaded.
@@ -298,7 +307,7 @@ class EEH_Sideloader extends EEH_Base
             return false;
         }
         if (defined('WP_DEBUG') && WP_DEBUG) {
-            throw new RuntimeException(
+            EE_Error::add_error(
                 sprintf(
                     esc_html__(
                         'The following error occurred while attempting to download the file from "%1$s":',
@@ -306,7 +315,8 @@ class EEH_Sideloader extends EEH_Base
                     ),
                     $this->_download_from,
                     $response->get_error_message()
-                )
+                ),
+                __FILE__, __FUNCTION__, __LINE__
             );
         }
         return true;
@@ -336,7 +346,10 @@ class EEH_Sideloader extends EEH_Base
                     'Unable to download the file. Either the path given is incorrect, or something else happened. Here is the path given: %s',
                     'event_espresso'
                 );
-            throw new RuntimeException(sprintf($msg, $this->_download_from));
+            EE_Error::add_error(
+                sprintf($msg, $this->_download_from),
+                __FILE__, __FUNCTION__, __LINE__
+            );
         }
         return true;
     }
