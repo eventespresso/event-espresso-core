@@ -31,7 +31,7 @@ final class EE_Admin implements InterminableInterface
     private $persistent_admin_notice_manager;
 
     /**
-     * @var LoaderInterface
+     * @var LoaderInterface $loader
      */
     protected $loader;
 
@@ -43,13 +43,16 @@ final class EE_Admin implements InterminableInterface
 
     /**
      * @singleton method used to instantiate class object
+     * @param LoaderInterface  $loader
+     * @param RequestInterface $request
      * @return EE_Admin
+     * @throws EE_Error
      */
-    public static function instance()
+    public static function instance(LoaderInterface $loader = null, RequestInterface $request = null)
     {
         // check if class object is instantiated
         if (! EE_Admin::$_instance instanceof EE_Admin) {
-            EE_Admin::$_instance = new EE_Admin();
+            EE_Admin::$_instance = new EE_Admin($loader, $request);
         }
         return EE_Admin::$_instance;
     }
@@ -57,26 +60,31 @@ final class EE_Admin implements InterminableInterface
 
     /**
      * @return EE_Admin
+     * @throws EE_Error
      */
     public static function reset()
     {
         EE_Admin::$_instance = null;
-        return EE_Admin::instance();
+        $loader = LoaderFactory::getLoader();
+        $request = $loader->getShared('EventEspresso\core\services\request\Request');
+        return EE_Admin::instance($loader, $request);
     }
 
 
     /**
      * class constructor
      *
+     * @param LoaderInterface  $loader
+     * @param RequestInterface $request
      * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
      */
-    protected function __construct()
+    protected function __construct(LoaderInterface $loader, RequestInterface $request)
     {
-        /** @var EventEspresso\core\services\request\Request $request */
-        $this->request = $this->getLoader()->getShared('EventEspresso\core\services\request\Request');
+        $this->loader = $loader;
+        $this->request = $request;
         // define global EE_Admin constants
         $this->_define_all_constants();
         // set autoloaders for our admin page classes based on included path information
