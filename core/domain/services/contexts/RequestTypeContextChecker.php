@@ -44,7 +44,7 @@ class RequestTypeContextChecker extends ContextChecker implements RequestTypeCon
      */
     public function isActivation()
     {
-        return $this->request_type->isActivation() && ! $this->isUnitTesting();
+        return $this->request_type->isActivation() && ! $this->request_type->isUnitTesting();
     }
 
 
@@ -206,7 +206,7 @@ class RequestTypeContextChecker extends ContextChecker implements RequestTypeCon
      */
     public function isUnitTesting()
     {
-        return $this->request_type->isUnitTesting() && ! $this->isActivation();
+        return $this->request_type->isUnitTesting() && ! $this->request_type->isActivation();
     }
 
 
