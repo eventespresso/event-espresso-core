@@ -47,10 +47,10 @@ class RequestTypeContextDetector
     public function __construct(
         RequestInterface $request,
         RequestTypeContextFactoryInterface $factory,
-        array $globalRouteConditions = array()
+        array $globalRouteConditions = []
     ) {
-        $this->request = $request;
-        $this->factory = $factory;
+        $this->request               = $request;
+        $this->factory               = $factory;
         $this->globalRouteConditions = $globalRouteConditions;
     }
 
@@ -62,8 +62,8 @@ class RequestTypeContextDetector
      */
     private function getGlobalRouteCondition($globalRouteCondition, $default)
     {
-        return isset($this->globalRouteConditions[ $globalRouteCondition ])
-            ? $this->globalRouteConditions[ $globalRouteCondition ]
+        return isset($this->globalRouteConditions[$globalRouteCondition])
+            ? $this->globalRouteConditions[$globalRouteCondition]
             : $default;
     }
 
@@ -75,16 +75,18 @@ class RequestTypeContextDetector
     public function detectRequestTypeContext()
     {
         // Detect error scrapes
-        if ($this->request->getRequestParam('wp_scrape_key') !== null
-            && $this->request->getRequestParam('wp_scrape_nonce') !== null
-        ) {
+        if ($this->isWordPressErrorScrape()) {
             return $this->factory->create(RequestTypeContext::WP_SCRAPE);
+        }
+        // Detect activations
+        if ($this->isWordPressActivationRequest()) {
+            return $this->factory->create(RequestTypeContext::ACTIVATION);
         }
         // Detect EE REST API
         if ($this->isEspressoRestApiRequest()) {
             return $this->factory->create(RequestTypeContext::API);
-        // Detect WP REST API
         }
+        // Detect WP REST API
         if ($this->isWordPressRestApiRequest()) {
             return $this->factory->create(RequestTypeContext::WP_API);
         }
@@ -133,14 +135,53 @@ class RequestTypeContextDetector
     /**
      * @return bool
      */
+    private function isWordPressErrorScrape()
+    {
+        return (
+                   $this->request->getRequestParam('wp_scrape_key') !== null
+                   && $this->request->getRequestParam('wp_scrape_nonce') !== null
+               )
+               || (
+                   $this->request->getRequestParam('action') == 'error_scrape'
+                   && $this->request->getRequestParam('_wpnonce') !== null
+               );
+    }
+
+
+    /**
+     * @return bool
+     */
+    private function isWordPressActivationRequest()
+    {
+        $action = $this->request->getRequestParam('action');
+        $plugins_page_actions = [
+            'activate',
+            'activate-multi',
+            'activate-selected',
+            'deactivate',
+            'deactivate-multi',
+            'deactivate-selected',
+            'delete-selected',
+            'disable-auto-update-selected',
+            'enable-auto-update-selected',
+            'update-selected',
+        ];
+        return $this->uriPathMatches('wp-admin/plugins.php')
+               && ($action === 'true' || in_array($action, $plugins_page_actions, true));
+    }
+
+
+    /**
+     * @return bool
+     */
     private function isEspressoRestApiRequest()
     {
         // Check for URLs like http://mysite.com/?rest_route=/ee... and http://mysite.com/wp-json/ee/...
         return strpos(
-            $this->request->getRequestParam('rest_route', false),
-            '/' . Domain::API_NAMESPACE
-        ) === 0
-            || $this->uriPathMatches(trim(rest_get_url_prefix(), '/') . '/' . Domain::API_NAMESPACE);
+                   $this->request->getRequestParam('rest_route', false),
+                   '/' . Domain::API_NAMESPACE
+               ) === 0
+               || $this->uriPathMatches(trim(rest_get_url_prefix(), '/') . '/' . Domain::API_NAMESPACE);
     }
 
 
@@ -154,7 +195,6 @@ class RequestTypeContextDetector
     }
 
 
-
     /**
      * @return bool
      */
@@ -162,7 +202,7 @@ class RequestTypeContextDetector
     {
         // Check for URLs like http://mysite.com/?rest_route=/.. and http://mysite.com/wp-json/...
         return $this->request->getRequestParam('rest_route', false)
-            || $this->uriPathMatches(trim(rest_get_url_prefix(), '/'));
+               || $this->uriPathMatches(trim(rest_get_url_prefix(), '/'));
     }
 
 
@@ -191,8 +231,8 @@ class RequestTypeContextDetector
     private function uriPathMatches($component)
     {
         $request_uri = $this->request->requestUri(true);
-        $parts = explode('?', $request_uri);
-        $path = trim(reset($parts), '/');
+        $parts       = explode('?', $request_uri);
+        $path        = trim(reset($parts), '/');
         return strpos($path, $component) === 0;
     }
 
