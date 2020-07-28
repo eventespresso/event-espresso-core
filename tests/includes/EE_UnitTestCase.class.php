@@ -207,6 +207,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
 
     /**
      * @param string $request_type_slug
+     * @throws Exception
      * @since $VID:$
      */
     protected function setupRequest($request_type_slug = RequestTypeContext::ADMIN)
@@ -214,9 +215,17 @@ class EE_UnitTestCase extends WP_UnitTestCase
         $request_type_context = new RequestTypeContext($request_type_slug, 'mock request type');
         $request_type_context->setIsUnitTesting(true);
         $this->request->setRequestTypeContextChecker(new RequestTypeContextChecker($request_type_context));
-        /** @var EventEspresso\core\services\routing\RouteHandler $router */
-        $router = $this->loader->getShared('EventEspresso\core\services\routing\RouteHandler');
-        $router->addRoute('EventEspresso\core\domain\entities\routing\handlers\shared\RegularRequests');
+        EE_Dependency_Map::register_dependencies(
+            'EventEspresso\tests\mocks\core\services\routing\RouterMock',
+            [
+                'EE_Dependency_Map'                                => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\loaders\Loader'       => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\routing\RouteHandler' => EE_Dependency_Map::load_from_cache,
+            ]
+        );
+        /** @var EventEspresso\tests\mocks\core\services\routing\RouterMock $router */
+        $router = $this->loader->getShared('EventEspresso\tests\mocks\core\services\routing\RouterMock');
+        $router->loadPrimaryRoutes();
         switch($request_type_slug) {
             case RequestTypeContext::ADMIN:
                 $router->addRoute('EventEspresso\core\domain\entities\routing\handlers\admin\EspressoLegacyAdmin');
