@@ -2,9 +2,10 @@
 
 namespace EventEspresso\tests\mocks\core\services\routing;
 
+use EventEspresso\core\services\routing\Router;
 use Exception;
 
-class  extends \EventEspresso\core\services\routing\Router
+class RouterMock extends Router
 {
     /**
      * @param string $fqcn   Fully Qualified Class Name for Route
