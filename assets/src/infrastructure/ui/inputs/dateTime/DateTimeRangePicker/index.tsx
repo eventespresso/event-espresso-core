@@ -4,25 +4,19 @@ import { default as ReactDateTimeRangePicker } from '@wojtekmaj/react-datetimera
 import { __ } from '@wordpress/i18n';
 
 import { DateTimeRangePickerProps } from '../types';
-import { ClockOutlined } from '@appDisplay/icons/svgs';
 import useConfig from '@appServices/config/useConfig';
 import { convertWordPressDateFormat, convertWordPressTimeFormat } from '../utilities';
 
 import '../style.scss';
+import './style.scss';
 
-const DateTimeRangePicker: React.FC<DateTimeRangePickerProps> = ({
-	endDate,
-	onChange,
-	showClockIcon = true,
-	startDate,
-	...props
-}) => {
+const DateTimeRangePicker: React.FC<DateTimeRangePickerProps> = ({ endDate, onChange, startDate, ...props }) => {
 	const {
 		dateTimeFormats: { dateTimeFormat },
 		locale: { user },
 	} = useConfig();
 
-	// convert date format to accepatble values for react-datetimerange-picker
+	// convert date format to acceptable values for react-datetimerange-picker
 	const newDateFormat = convertWordPressDateFormat(dateTimeFormat);
 	const newDateTimeFormat = convertWordPressTimeFormat(newDateFormat);
 
@@ -30,8 +24,8 @@ const DateTimeRangePicker: React.FC<DateTimeRangePickerProps> = ({
 		<ReactDateTimeRangePicker
 			calendarAriaLabel={__('show calendar')}
 			clearAriaLabel={__('clear values and reset')}
-			clockIcon={showClockIcon && <ClockOutlined />}
 			closeWidgets={false}
+			disableClock
 			format={newDateTimeFormat}
 			locale={user}
 			onChange={onChange}
