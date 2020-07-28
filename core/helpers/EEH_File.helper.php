@@ -62,7 +62,7 @@ class EEH_File extends EEH_Base implements EEHI_File
     {
         if (! EEH_File::$_wp_filesystem instanceof WP_Filesystem_Base) {
             require_once(ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php');
-            $method                    = 'direct';
+            $method             = 'direct';
             $wp_filesystem_file =
                 apply_filters(
                     'filesystem_method_file',
@@ -74,17 +74,17 @@ class EEH_File extends EEH_Base implements EEHI_File
             // and are loading whatever file the path pointed to,
             // but we were not validating things in any way :scream_emoji:
             $valid_wp_filesystem_types = [
-                'direct' => 'WP_Filesystem_Direct',
-                'ftpext' => 'WP_Filesystem_FTPext',
+                'direct'     => 'WP_Filesystem_Direct',
+                'ftpext'     => 'WP_Filesystem_FTPext',
                 'ftpsockets' => 'WP_Filesystem_ftpsockets',
-                'ssh2' => 'WP_Filesystem_SSH2',
+                'ssh2'       => 'WP_Filesystem_SSH2',
             ];
-            $valid = false;
-            $wp_filesystem_class = '';
+            $valid                     = false;
+            $wp_filesystem_class       = '';
             foreach ($valid_wp_filesystem_types as $method => $filesystem_class) {
                 // if file path matches for one of valid types, then toggle $valid to true
-                if (strpos($wp_filesystem_file, $method)  > 0) {
-                    $valid = true;
+                if (strpos($wp_filesystem_file, $method) > 0) {
+                    $valid               = true;
                     $wp_filesystem_class = $filesystem_class;
                 }
             }
@@ -314,7 +314,7 @@ class EEH_File extends EEH_Base implements EEHI_File
         // add / to folder
         $folder        = EEH_File::end_with_directory_separator($folder);
         $wp_filesystem = EEH_File::_get_wp_filesystem($folder);
-        $remote_dir     = EEH_File::convert_local_filepath_to_remote_filepath($folder);
+        $remote_dir    = EEH_File::convert_local_filepath_to_remote_filepath($folder);
         if (! $wp_filesystem->is_dir($remote_dir)) {
             // ok so it doesn't exist. Does its parent? Can we write to it?
             if (! EEH_File::ensure_folder_exists_and_is_writable($parent_folder)) {
@@ -350,9 +350,9 @@ class EEH_File extends EEH_Base implements EEHI_File
     {
         // load WP_Filesystem and set file permissions
         $wp_filesystem = EEH_File::_get_wp_filesystem($full_path);
-        $full_path = EEH_File::standardise_directory_separators($full_path);
-        $remote_path = EEH_File::convert_local_filepath_to_remote_filepath($full_path);
-        $remote_path = rtrim($remote_path, '/\\');
+        $full_path     = EEH_File::standardise_directory_separators($full_path);
+        $remote_path   = EEH_File::convert_local_filepath_to_remote_filepath($full_path);
+        $remote_path   = rtrim($remote_path, '/\\');
         if (! $wp_filesystem->is_writable($remote_path)) {
             if (defined('WP_DEBUG') && WP_DEBUG) {
                 $msg = sprintf(__('The "%1$s" %2$s is not writable.', 'event_espresso'), $full_path, $file_or_folder);
@@ -698,7 +698,7 @@ class EEH_File extends EEH_Base implements EEHI_File
                         } else {
                             $classname =
                                 self::get_classname_from_filepath_with_standard_filename($file_path);
-                            $class_to_folder_path[$classname] = $file_path;
+                            $class_to_folder_path[ $classname ] = $file_path;
                         }
                     }
                 }
@@ -718,7 +718,7 @@ class EEH_File extends EEH_Base implements EEHI_File
      */
     public static function copy($source_file, $destination_file, $overwrite = false)
     {
-        $source_file = EEH_File::validateFileForCopyOrMove($source_file);
+        $source_file      = EEH_File::validateFileForCopyOrMove($source_file);
         $destination_file = EEH_File::validateFolderForCopyOrMove($destination_file);
         if (! $source_file || ! $destination_file) {
             return false;
@@ -799,7 +799,7 @@ class EEH_File extends EEH_Base implements EEHI_File
     /**
      * wrapper for WP_Filesystem::getchmod()
      *
-     * @param string    $file      Path to the file.
+     * @param string $file Path to the file.
      * @return string Mode of the file (the last 3 digits).
      */
     public static function permissions($file)
@@ -847,7 +847,7 @@ class EEH_File extends EEH_Base implements EEHI_File
     public static function move($source, $destination, $overwrite = false)
     {
         // throw new RuntimeException("source: {$source} && destination: {$destination}");
-        $source = EEH_File::validateFileForCopyOrMove($source);
+        $source      = EEH_File::validateFileForCopyOrMove($source);
         $destination = EEH_File::validateFolderForCopyOrMove($destination);
         if (! $source || ! $destination) {
             return false;
@@ -857,9 +857,9 @@ class EEH_File extends EEH_Base implements EEHI_File
             return true;
         }
         if (defined('WP_DEBUG') && WP_DEBUG) {
-            $file = EEH_File::convert_local_filepath_to_remote_filepath($source);
-            $owner = EEH_File::owner($file);
-            $group = EEH_File::group($file);
+            $file        = EEH_File::convert_local_filepath_to_remote_filepath($source);
+            $owner       = EEH_File::owner($file);
+            $group       = EEH_File::group($file);
             $permissions = EEH_File::permissions($file);
             EE_Error::add_error(
                 sprintf(
