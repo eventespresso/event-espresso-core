@@ -155,33 +155,34 @@ class EEH_File extends EEH_Base implements EEHI_File
             }
             // turn on output buffering so that we can capture the credentials form
             ob_start();
-            $credentials = request_filesystem_credentials('');
+            $credentials = request_filesystem_credentials(false);
             // store credentials form for the time being
             EEH_File::$_credentials_form = ob_get_clean();
-            // basically check for direct or previously configured access
-            if (! WP_Filesystem($credentials)) {
-                // if credentials do NOT exist
-                if ($credentials === false) {
-                    add_action('admin_notices', ['EEH_File', 'display_request_filesystem_credentials_form'], 999);
-                    EE_Error::add_error(
-                        __(
-                            'An attempt to access and/or write to a file on the server could not be completed due to a lack of sufficient credentials.',
-                            'event_espresso'
-                        ),
-                        __FILE__, __FUNCTION__, __LINE__
-                    );
-                } elseif (is_wp_error($wp_filesystem->errors) && $wp_filesystem->errors->get_error_code()) {
-                    add_action('admin_notices', ['EEH_File', 'display_request_filesystem_credentials_form'], 999);
-                    EE_Error::add_error(
-                        sprintf(
-                            __('WP Filesystem Error: $1%s', 'event_espresso'),
-                            $wp_filesystem->errors->get_error_message()
-                        ),
-                        __FILE__, __FUNCTION__, __LINE__
-                    );
-                }
+            // if credentials do NOT exist
+            if ($credentials === false) {
+                add_action('admin_notices', ['EEH_File', 'display_request_filesystem_credentials_form'], 999);
+                EE_Error::add_error(
+                    __(
+                        'An attempt to access and/or write to a file on the server could not be completed due to a lack of sufficient credentials.',
+                        'event_espresso'
+                    ),
+                    __FILE__, __FUNCTION__, __LINE__
+                );
             }
-
+            // basically check for direct or previously configured access
+            if (! WP_Filesystem($credentials)
+                && is_wp_error($wp_filesystem->errors)
+                && $wp_filesystem->errors->get_error_code()
+            ) {
+                add_action('admin_notices', ['EEH_File', 'display_request_filesystem_credentials_form'], 999);
+                EE_Error::add_error(
+                    sprintf(
+                        __('WP Filesystem Error: $1%s', 'event_espresso'),
+                        $wp_filesystem->errors->get_error_message()
+                    ),
+                    __FILE__, __FUNCTION__, __LINE__
+                );
+            }
         }
         return $wp_filesystem;
     }
@@ -343,8 +344,8 @@ class EEH_File extends EEH_Base implements EEHI_File
     {
         // load WP_Filesystem and set file permissions
         $wp_filesystem = EEH_File::_get_wp_filesystem($full_path);
-        $full_path     = EEH_File::standardise_directory_separators($full_path);
-        $remote_path     = EEH_File::convert_local_filepath_to_remote_filepath($full_path);
+        $full_path = EEH_File::standardise_directory_separators($full_path);
+        $remote_path = EEH_File::convert_local_filepath_to_remote_filepath($full_path);
         $remote_path = rtrim($remote_path, '/\\');
         if (! $wp_filesystem->is_writable($remote_path)) {
             if (defined('WP_DEBUG') && WP_DEBUG) {
@@ -790,6 +791,45 @@ class EEH_File extends EEH_Base implements EEHI_File
 
 
     /**
+     * wrapper for WP_Filesystem::getchmod()
+     *
+     * @param string    $file      Path to the file.
+     * @return string Mode of the file (the last 3 digits).
+     */
+    public static function permissions($file)
+    {
+        $wp_filesystem = EEH_File::_get_wp_filesystem($file);
+        return $wp_filesystem->getchmod($file);
+    }
+
+
+    /**
+     * wrapper for WP_Filesystem::owner()
+     *
+     * @param string $file Path to the file.
+     * @return string|false Username of the owner on success, false on failure.
+     */
+    public static function owner($file)
+    {
+        $wp_filesystem = EEH_File::_get_wp_filesystem($file);
+        return $wp_filesystem->owner($file);
+    }
+
+
+    /**
+     * wrapper for WP_Filesystem::group()
+     *
+     * @param string $file Path to the file.
+     * @return string|false The group on success, false on failure.
+     */
+    public static function group($file)
+    {
+        $wp_filesystem = EEH_File::_get_wp_filesystem($file);
+        return $wp_filesystem->group($file);
+    }
+
+
+    /**
      * wrapper for WP_Filesystem::move()
      *
      * @param string $source      Path to the source file.
@@ -800,6 +840,7 @@ class EEH_File extends EEH_Base implements EEHI_File
      */
     public static function move($source, $destination, $overwrite = false)
     {
+        // throw new RuntimeException("source: {$source} && destination: {$destination}");
         $source = EEH_File::validateFileForCopyOrMove($source);
         $destination = EEH_File::validateFolderForCopyOrMove($destination);
         if (! $source || ! $destination) {
@@ -810,13 +851,18 @@ class EEH_File extends EEH_Base implements EEHI_File
             return true;
         }
         if (defined('WP_DEBUG') && WP_DEBUG) {
+            $file = EEH_File::convert_local_filepath_to_remote_filepath($source);
+            $owner = EEH_File::owner($file);
+            $group = EEH_File::group($file);
+            $permissions = EEH_File::permissions($file);
             EE_Error::add_error(
                 sprintf(
                     esc_html__(
-                        'Unable to move the file to new location (possible permissions errors). This is the path the class attempted to move the file to: %s',
+                        'Unable to move the file "%1$s" to new location (possible permissions errors). The existing "owner:group permissions" for the file are: "%2$s"',
                         'event_espresso'
                     ),
-                    $destination
+                    $destination,
+                    "{$owner}:{$group} $permissions"
                 ),
                 __FILE__, __FUNCTION__, __LINE__
             );
