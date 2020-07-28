@@ -16,7 +16,7 @@ const DateTimeRangePicker: React.FC<DateTimeRangePickerProps> = ({ endDate, onCh
 		locale: { user },
 	} = useConfig();
 
-	// convert date format to accepatble values for react-datetimerange-picker
+	// convert date format to acceptable values for react-datetimerange-picker
 	const newDateFormat = convertWordPressDateFormat(dateTimeFormat);
 	const newDateTimeFormat = convertWordPressTimeFormat(newDateFormat);
 
