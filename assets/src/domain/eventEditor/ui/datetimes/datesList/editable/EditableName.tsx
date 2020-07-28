@@ -18,6 +18,8 @@ const EditableName: React.FC<EditableNameProps> = ({ className, entity: datetime
 
 	const dateName = datetime.name || tooltip;
 
+	const lineCount = view === 'card' && 2;
+
 	const onChangeName = useCallback(
 		(name: string): void => {
 			if (name !== datetime.name) {
@@ -29,10 +31,11 @@ const EditableName: React.FC<EditableNameProps> = ({ className, entity: datetime
 
 	return (
 		<InlineEditText
-			fitText={view === 'card'}
-			tag={view === 'table' ? 'p' : 'h4'}
 			className={className}
+			fitText={view === 'card'}
+			lineCount={lineCount}
 			onChangeValue={onChangeName}
+			tag={view === 'table' ? 'p' : 'h4'}
 			tooltip={tooltip}
 			value={dateName}
 		/>

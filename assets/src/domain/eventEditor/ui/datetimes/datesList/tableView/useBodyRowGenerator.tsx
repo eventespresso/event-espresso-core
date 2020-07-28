@@ -44,7 +44,7 @@ const useBodyRowGenerator = (): DatesTableBodyRowGen => {
 			value: sortingEnabled ? (
 				datetime.name
 			) : (
-				<EditableName className={'ee-entity-list-text ee-focus-priority-5'} entity={datetime} view={'table'} />
+				<EditableName className='ee-entity-list-text ee-focus-priority-5' entity={datetime} view='table' />
 			),
 		};
 

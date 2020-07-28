@@ -1,37 +1,9 @@
 import React from 'react';
-import Dotdotdot from 'react-dotdotdot';
 
-import { InlineEdit, InlineEditPreviewProps } from '@infraUI/inputs';
-import { TextFit } from '@infraUI/layout/textfit';
+import { InlineEdit } from '@infraUI/inputs';
 
-import TabbableText from './TabbableText';
+import Preview from './Preview';
 import { TextProps } from './types';
-
-const Preview: React.FC<InlineEditPreviewProps> = ({ fitText, isEditing, onRequestEdit, tooltip, value }) => {
-	if (isEditing) {
-		return null;
-	}
-
-	const textInput = <TabbableText onRequestEdit={onRequestEdit} text={value} tooltip={tooltip} />;
-
-	if (value.length > 25) {
-		return <Dotdotdot clamp={2}>{textInput}</Dotdotdot>;
-	}
-
-	if (fitText) {
-		return (
-			<TextFit
-				max={24} // based on --ee-font-size-bigger: 1.5rem;
-				min={18}
-				mode='single'
-			>
-				{textInput}
-			</TextFit>
-		);
-	}
-
-	return textInput;
-};
 
 const InlineEditText: React.FC<TextProps> = ({
 	className,
