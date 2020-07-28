@@ -175,7 +175,7 @@ class RequestTypeContext extends Context
     /**
      * @param bool $is_activation
      */
-    public function setIsActivation($is_activation)
+    public function setIsActivation($is_activation = false)
     {
         $this->is_activation = filter_var($is_activation, FILTER_VALIDATE_BOOLEAN);
     }
@@ -193,7 +193,7 @@ class RequestTypeContext extends Context
     /**
      * @param bool $is_unit_testing
      */
-    public function setIsUnitTesting($is_unit_testing)
+    public function setIsUnitTesting($is_unit_testing = false)
     {
         $this->is_unit_testing = filter_var($is_unit_testing, FILTER_VALIDATE_BOOLEAN);
     }
