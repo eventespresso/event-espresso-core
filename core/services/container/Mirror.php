@@ -154,7 +154,7 @@ class Mirror
         $required_parameters = [];
         $parameters = $this->getParameters($class_name);
         foreach ($parameters as $parameter) {
-            if ( $parameter instanceof ReflectionParameter && ! $parameter->isOptional()) {
+            if ($parameter instanceof ReflectionParameter && ! $parameter->isOptional()) {
                 $required_parameters[] = $parameter;
             }
         }

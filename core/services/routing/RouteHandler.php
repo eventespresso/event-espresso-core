@@ -54,9 +54,9 @@ class RouteHandler
      * RouteHandler constructor.
      *
      * @param JsonDataNodeHandler $data_node_handler
-     * @param LoaderInterface  $loader
-     * @param RequestInterface $request
-     * @param RouteCollection $routes
+     * @param LoaderInterface     $loader
+     * @param RequestInterface    $request
+     * @param RouteCollection     $routes
      */
     public function __construct(
         JsonDataNodeHandler $data_node_handler,
@@ -65,9 +65,9 @@ class RouteHandler
         RouteCollection $routes
     ) {
         $this->data_node_handler = $data_node_handler;
-        $this->loader = $loader;
-        $this->request = $request;
-        $this->routes = $routes;
+        $this->loader            = $loader;
+        $this->request           = $request;
+        $this->routes            = $routes;
     }
 
 
@@ -110,7 +110,7 @@ class RouteHandler
 
     /**
      * @param RouteInterface $route
-     * @param bool $handle if true [default] will immediately call RouteInterface::handleRequest()
+     * @param bool           $handle if true [default] will immediately call RouteInterface::handleRequest()
      */
     public function handle(RouteInterface $route, $handle = true)
     {
@@ -146,7 +146,7 @@ class RouteHandler
      */
     private function printDataNodes()
     {
-        if($this->print_data_nodes) {
+        if ($this->print_data_nodes) {
             add_action('admin_footer', [$this->data_node_handler, 'printDataNode']);
             add_action('wp_footer', [$this->data_node_handler, 'printDataNode']);
             $this->print_data_nodes = false;
@@ -164,10 +164,10 @@ class RouteHandler
         if (! $route instanceof RouteInterface) {
             throw new InvalidClassException(
                 sprintf(
-                    /*
-                     * translators:
-                     * The supplied FQCN (Fully\Qualified\Class\Name) must be an instance of RouteInterface.
-                    */
+                /*
+                 * translators:
+                 * The supplied FQCN (Fully\Qualified\Class\Name) must be an instance of RouteInterface.
+                */
                     esc_html__(
                         'The supplied FQCN (%1$s) must be an instance of RouteInterface.',
                         'event_espresso'

@@ -278,7 +278,9 @@ class EEH_Sideloader extends EEH_Base
             if (! $perms) {
                 EE_Error::add_error(
                     esc_html__('Supplied permissions are invalid', 'event_espresso'),
-                    __FILE__, __FUNCTION__, __LINE__
+                    __FILE__,
+                    __FUNCTION__,
+                    __LINE__
                 );
                 return false;
             }
@@ -287,7 +289,7 @@ class EEH_Sideloader extends EEH_Base
             // that's it.  let's allow for actions after file uploaded.
             do_action('AHEE__EE_Sideloader__sideload_after', $this, $path);
             return true;
-        } catch(Exception $exception) {
+        } catch (Exception $exception) {
             EE_Error::add_error($exception->getMessage(), __FILE__, __FUNCTION__, __LINE__);
             return false;
         }
@@ -316,7 +318,9 @@ class EEH_Sideloader extends EEH_Base
                     $this->_download_from,
                     $response->get_error_message()
                 ),
-                __FILE__, __FUNCTION__, __LINE__
+                __FILE__,
+                __FUNCTION__,
+                __LINE__
             );
         }
         return true;
@@ -348,7 +352,9 @@ class EEH_Sideloader extends EEH_Base
                 );
             EE_Error::add_error(
                 sprintf($msg, $this->_download_from),
-                __FILE__, __FUNCTION__, __LINE__
+                __FILE__,
+                __FUNCTION__,
+                __LINE__
             );
         }
         return true;

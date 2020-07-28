@@ -48,5 +48,4 @@ abstract class PrimaryRoute extends Route
     {
         return $this->route_request_type;
     }
-
 }

@@ -88,7 +88,7 @@ class EEH_File extends EEH_Base implements EEHI_File
                     $wp_filesystem_class = $filesystem_class;
                 }
             }
-            if ( ! $valid || ! file_exists($wp_filesystem_file)) {
+            if (! $valid || ! file_exists($wp_filesystem_file)) {
                 EE_Error::add_error(
                     sprintf(
                         __(
@@ -97,7 +97,9 @@ class EEH_File extends EEH_Base implements EEHI_File
                         ),
                         $wp_filesystem_file
                     ),
-                    __FILE__, __FUNCTION__, __LINE__
+                    __FILE__,
+                    __FUNCTION__,
+                    __LINE__
                 );
             }
             // check constants defined, just like in the wp-admin/includes/file.php WP_Filesystem()
@@ -142,9 +144,9 @@ class EEH_File extends EEH_Base implements EEHI_File
                     );
                 if (WP_DEBUG) {
                     $msg .= '<br />' . __(
-                            'The WP Filesystem can not be accessed until after the "wp_loaded" hook has run, so it\'s best not to attempt access until the "admin_init" hookpoint.',
-                            'event_espresso'
-                        );
+                        'The WP Filesystem can not be accessed until after the "wp_loaded" hook has run, so it\'s best not to attempt access until the "admin_init" hookpoint.',
+                        'event_espresso'
+                    );
                 }
                 EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
             }
@@ -166,7 +168,9 @@ class EEH_File extends EEH_Base implements EEHI_File
                         'An attempt to access and/or write to a file on the server could not be completed due to a lack of sufficient credentials.',
                         'event_espresso'
                     ),
-                    __FILE__, __FUNCTION__, __LINE__
+                    __FILE__,
+                    __FUNCTION__,
+                    __LINE__
                 );
             }
             // basically check for direct or previously configured access
