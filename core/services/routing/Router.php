@@ -25,17 +25,17 @@ class Router
     /**
      * @var LoaderInterface $loader
      */
-    private $loader;
+    protected $loader;
 
     /**
      * @var RouteHandler $route_handler
      */
-    private $route_handler;
+    protected $route_handler;
 
     /**
      * @var string $route_request_type
      */
-    private $route_request_type;
+    protected $route_request_type;
 
 
     /**
