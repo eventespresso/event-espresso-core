@@ -1,6 +1,16 @@
 @import 'application/ui/styles/mixins/screen-reader.scss';
 
 .ee-date-time-range-picker.ee-date-time-range-picker {
+	.react-calendar {
+		&__year-view {
+			.react-calendar {
+				&__tile {
+					padding: var(--ee-padding-small) var(--ee-padding-smaller);
+				}
+			}
+		}
+	}
+
 	.react-datetimerange-picker {
 		&__inputGroup {
 			&__month {
