@@ -3,7 +3,7 @@
 namespace EventEspresso\tests\mocks\core\domain\entities\routing\handlers\shared;
 
 use EE_Dependency_Map;
-use EventEspresso\core\domain\entities\routing\handlers\shared\RoutingRequests;
+use EventEspresso\core\domain\entities\routing\handlers\shared\RegularRequests;
 use EventEspresso\core\services\loaders\LoaderFactory;
 
 /**
@@ -14,21 +14,21 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  * @author  Brent Christensen
  * @since   \$VID:$
  */
-class RoutingRequestsMock extends RoutingRequests
+class RegularRequestsMock extends RegularRequests
 {
 
     public static function register()
     {
         EE_Dependency_Map::instance()->registerDependencies(
-            RoutingRequestsMock::class,
-            [
+			RegularRequestsMock::class,
+			[
                 'EE_Dependency_Map'                                                                          => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\loaders\Loader'                                                 => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\request\Request'                                                => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\domain\entities\routing\specifications\RouteMatchSpecificationInterface' => EE_Dependency_Map::load_from_cache,
             ]
         );
-        $self = LoaderFactory::getLoader()->getShared(RoutingRequestsMock::class);
+        $self = LoaderFactory::getLoader()->getShared(RegularRequestsMock::class);
         $self->registerDependencies();
     }
 

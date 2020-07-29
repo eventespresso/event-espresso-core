@@ -1258,6 +1258,21 @@ class EE_Registry implements ResettableInterface
             return call_user_func_array(array($class_name, 'instance'), $arguments);
         }
         if ($reflector->isInstantiable()) {
+            $args_passed_count = count($arguments);
+            $args_required_count = count($this->mirror->getRequiredParameters($class_name));
+            if ($args_passed_count < $args_required_count) {
+                throw new RuntimeException(
+                    sprintf(
+                        __(
+                            'Invalid arguments supplied for the %1$s class, %2$s were required but %3$s were passed.',
+                            'event_espresso'
+                        ),
+                        $class_name,
+                        $args_required_count,
+                        $args_passed_count
+                    )
+                );
+            }
             // $instantiation_mode = "6) constructor";
             return $reflector->newInstanceArgs($arguments);
         }

@@ -40,14 +40,24 @@ class RouteHandler
      */
     private $routes;
 
+    /**
+     * @var boolean $print_data_nodes
+     */
+    private $print_data_nodes = true;
+
+    /**
+     * @var string $route_request_type
+     */
+    protected $route_request_type;
+
 
     /**
      * RouteHandler constructor.
      *
      * @param JsonDataNodeHandler $data_node_handler
-     * @param LoaderInterface  $loader
-     * @param RequestInterface $request
-     * @param RouteCollection $routes
+     * @param LoaderInterface     $loader
+     * @param RequestInterface    $request
+     * @param RouteCollection     $routes
      */
     public function __construct(
         JsonDataNodeHandler $data_node_handler,
@@ -56,13 +66,9 @@ class RouteHandler
         RouteCollection $routes
     ) {
         $this->data_node_handler = $data_node_handler;
-        $this->loader = $loader;
-        $this->request = $request;
-        $this->routes = $routes;
-        if (! $this->request->isActivation()) {
-            add_action('admin_footer', [$this->data_node_handler, 'printDataNode']);
-            add_action('wp_footer', [$this->data_node_handler, 'printDataNode']);
-        }
+        $this->loader            = $loader;
+        $this->request           = $request;
+        $this->routes            = $routes;
     }
 
 
@@ -75,9 +81,6 @@ class RouteHandler
     public function addRoute($fqcn, $handle = true)
     {
         try {
-            if ($this->request->isActivation()) {
-                return;
-            }
             $route = $this->loader->getShared($fqcn);
             $this->validateRoute($route, $fqcn);
             $this->routes->add($route);
@@ -89,16 +92,38 @@ class RouteHandler
 
 
     /**
+     * @return string
+     */
+    public function getRouteRequestType()
+    {
+        return $this->route_request_type;
+    }
+
+
+    /**
+     * @param string $route_request_type
+     */
+    public function setRouteRequestType($route_request_type)
+    {
+        $this->route_request_type = $route_request_type !== null ? $route_request_type : $this->route_request_type;
+    }
+
+
+    /**
      * @param RouteInterface $route
-     * @param bool $handle if true [default] will immediately call RouteInterface::handleRequest()
+     * @param bool           $handle if true [default] will immediately call RouteInterface::handleRequest()
      */
     public function handle(RouteInterface $route, $handle = true)
     {
         if ($handle && $route->isNotHandled()) {
             $route->handleRequest();
+            if ($route instanceof PrimaryRoute) {
+                $this->setRouteRequestType($route->getRouteRequestType());
+            }
             $data_node = $route->dataNode();
             if ($data_node instanceof JsonDataNode) {
                 $this->data_node_handler->addDataNode($data_node);
+                $this->printDataNodes();
             }
         }
     }
@@ -118,6 +143,19 @@ class RouteHandler
 
 
     /**
+     * @since $VID:$
+     */
+    private function printDataNodes()
+    {
+        if ($this->print_data_nodes) {
+            add_action('admin_footer', [$this->data_node_handler, 'printDataNode']);
+            add_action('wp_footer', [$this->data_node_handler, 'printDataNode']);
+            $this->print_data_nodes = false;
+        }
+    }
+
+
+    /**
      * @param RouteInterface $route
      * @param string         $fqcn
      * @since $VID:$
@@ -130,7 +168,7 @@ class RouteHandler
                     /*
                      * translators:
                      * The supplied FQCN (Fully\Qualified\Class\Name) must be an instance of RouteInterface.
-                    */
+                     */
                     esc_html__(
                         'The supplied FQCN (%1$s) must be an instance of RouteInterface.',
                         'event_espresso'

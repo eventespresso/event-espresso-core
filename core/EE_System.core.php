@@ -2,7 +2,6 @@
 
 use EventEspresso\core\domain\Domain;
 use EventEspresso\core\domain\DomainFactory;
-use EventEspresso\core\domain\services\contexts\RequestTypeContextCheckerInterface;
 use EventEspresso\core\domain\values\FilePath;
 use EventEspresso\core\domain\values\FullyQualifiedName;
 use EventEspresso\core\domain\values\Version;
@@ -15,7 +14,7 @@ use EventEspresso\core\interfaces\ResettableInterface;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\request\RequestInterface;
-use EventEspresso\core\services\routing\RouteHandler;
+use EventEspresso\core\services\routing\Router;
 
 /**
  * EE_System
@@ -112,12 +111,6 @@ final class EE_System implements ResettableInterface
      */
     private $_req_type;
 
-
-    /**
-     * @var RouteHandler $router
-     */
-    private $router;
-
     /**
      * Whether or not there was a non-micro version change in EE core version during this request
      *
@@ -126,30 +119,30 @@ final class EE_System implements ResettableInterface
     private $_major_version_change = false;
 
     /**
-     * A Context DTO dedicated solely to identifying the current request type.
-     *
-     * @var RequestTypeContextCheckerInterface $request_type
+     * @var Router $router
      */
-    private $request_type;
+    private $router;
 
 
     /**
      * @singleton method used to instantiate class object
-     * @param EE_Registry|null         $registry
-     * @param LoaderInterface|null     $loader
-     * @param RequestInterface|null    $request
-     * @param EE_Maintenance_Mode|null $maintenance_mode
+     * @param LoaderInterface     $loader
+     * @param EE_Maintenance_Mode $maintenance_mode
+     * @param EE_Registry         $registry
+     * @param RequestInterface    $request
+     * @param Router $router
      * @return EE_System
      */
     public static function instance(
-        EE_Registry $registry = null,
         LoaderInterface $loader = null,
+        EE_Maintenance_Mode $maintenance_mode = null,
+        EE_Registry $registry = null,
         RequestInterface $request = null,
-        EE_Maintenance_Mode $maintenance_mode = null
+        Router $router = null
     ) {
         // check if class object is instantiated
         if (! self::$_instance instanceof EE_System) {
-            self::$_instance = new self($registry, $loader, $request, $maintenance_mode);
+            self::$_instance = new self($loader, $maintenance_mode, $registry, $request, $router);
         }
         return self::$_instance;
     }
@@ -178,20 +171,23 @@ final class EE_System implements ResettableInterface
      * provides "AHEE__EE_System__construct__complete" hook for EE Addons to use as their starting point
      * starting EE Addons from any other point may lead to problems
      *
-     * @param EE_Registry         $registry
      * @param LoaderInterface     $loader
-     * @param RequestInterface    $request
      * @param EE_Maintenance_Mode $maintenance_mode
+     * @param EE_Registry         $registry
+     * @param RequestInterface    $request
+     * @param Router $router
      */
     private function __construct(
-        EE_Registry $registry,
         LoaderInterface $loader,
+        EE_Maintenance_Mode $maintenance_mode,
+        EE_Registry $registry,
         RequestInterface $request,
-        EE_Maintenance_Mode $maintenance_mode
+        Router $router
     ) {
         $this->registry = $registry;
         $this->loader = $loader;
         $this->request = $request;
+        $this->router = $router;
         $this->maintenance_mode = $maintenance_mode;
         do_action('AHEE__EE_System__construct__begin', $this);
         add_action(
@@ -392,14 +388,9 @@ final class EE_System implements ResettableInterface
         // it could be the basic auth plugin, and it doesn't check if its methods are already defined
         // and causes a fatal error
         if (($this->request->isWordPressApi() || $this->request->isApi())
-            && $this->request->getRequestParam('activate') !== 'true'
+            && ! $this->request->isActivation()
             && ! function_exists('json_basic_auth_handler')
             && ! function_exists('json_basic_auth_error')
-            && ! in_array(
-                $this->request->getRequestParam('action'),
-                array('activate', 'activate-selected'),
-                true
-            )
         ) {
             include_once EE_THIRD_PARTY . 'wp-api-basic-auth/basic-auth.php';
         }
@@ -949,9 +940,7 @@ final class EE_System implements ResettableInterface
         try {
             $this->loader->getShared('EventEspresso\core\services\routing\RouteMatchSpecificationManager');
             $this->loader->getShared('EventEspresso\core\services\routing\RouteCollection');
-            $this->router = $this->loader->getShared('EventEspresso\core\services\routing\RouteHandler');
-            // now load and prep all other Routes
-            $this->router->addRoute('EventEspresso\core\domain\entities\routing\handlers\shared\RoutingRequests');
+            $this->router->loadPrimaryRoutes();
         } catch (Exception $exception) {
             new ExceptionStackTraceDisplay($exception);
         }
@@ -971,7 +960,7 @@ final class EE_System implements ResettableInterface
      */
     public function register_shortcodes_modules_and_widgets()
     {
-        $this->router->addRoute('EventEspresso\core\domain\entities\routing\handlers\frontend\ShortcodeRequests');
+        $this->router->registerShortcodesModulesAndWidgets();
         do_action('AHEE__EE_System__register_shortcodes_modules_and_widgets');
         // check for addons using old hook point
         if (has_action('AHEE__EE_System__register_shortcodes_modules_and_addons')) {
@@ -1040,9 +1029,7 @@ final class EE_System implements ResettableInterface
         add_action('init', array($this, 'core_loaded_and_ready'), 9);
         add_action('init', array($this, 'initialize'), 10);
         add_action('init', array($this, 'initialize_last'), 100);
-        $this->router->addRoute('EventEspresso\core\domain\entities\routing\handlers\shared\GQLRequests');
-        $this->router->addRoute('EventEspresso\core\domain\entities\routing\handlers\admin\PueRequests');
-        $this->router->addRoute('EventEspresso\core\domain\entities\routing\handlers\shared\RestApiRequests');
+        $this->router->brewEspresso();
         do_action('AHEE__EE_System__brew_espresso__complete', $this);
     }
 
@@ -1139,15 +1126,7 @@ final class EE_System implements ResettableInterface
     public function load_controllers()
     {
         do_action('AHEE__EE_System__load_controllers__start');
-        // now start loading routes
-        $this->router->addRoute('EventEspresso\core\domain\entities\routing\handlers\frontend\FrontendRequests');
-        $this->router->addRoute('EventEspresso\core\domain\entities\routing\handlers\admin\AdminRoute');
-        $this->router->addRoute('EventEspresso\core\domain\entities\routing\handlers\admin\EspressoLegacyAdmin');
-        $this->router->addRoute('EventEspresso\core\domain\entities\routing\handlers\admin\EspressoEventsAdmin');
-        $this->router->addRoute('EventEspresso\core\domain\entities\routing\handlers\admin\EspressoEventEditor');
-        $this->router->addRoute('EventEspresso\core\domain\entities\routing\handlers\admin\GutenbergEditor');
-        $this->router->addRoute('EventEspresso\core\domain\entities\routing\handlers\admin\WordPressPluginsPage');
-        $this->router->addRoute('EventEspresso\core\domain\entities\routing\handlers\shared\WordPressHeartbeat');
+        $this->router->loadControllers();
         do_action('AHEE__EE_System__load_controllers__complete');
     }
 
@@ -1162,8 +1141,7 @@ final class EE_System implements ResettableInterface
      */
     public function core_loaded_and_ready()
     {
-        $this->router->addRoute('EventEspresso\core\domain\entities\routing\handlers\shared\AssetRequests');
-        $this->router->addRoute('EventEspresso\core\domain\entities\routing\handlers\shared\SessionRequests');
+        $this->router->coreLoadedAndReady();
         // integrate WP_Query with the EE models
         $this->loader->getShared('EE_CPT_Strategy');
         do_action('AHEE__EE_System__core_loaded_and_ready');
@@ -1204,7 +1182,7 @@ final class EE_System implements ResettableInterface
             'EventEspresso\core\domain\services\custom_post_types\RewriteRules'
         );
         $rewrite_rules->flushRewriteRules();
-        $this->router->addRoute('EventEspresso\core\domain\entities\routing\handlers\admin\PersonalDataRequests');
+        $this->router->initializeLast();
         add_action('admin_bar_init', array($this, 'addEspressoToolbar'));
     }
 

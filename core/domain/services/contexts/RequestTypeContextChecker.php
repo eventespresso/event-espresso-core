@@ -44,7 +44,7 @@ class RequestTypeContextChecker extends ContextChecker implements RequestTypeCon
      */
     public function isActivation()
     {
-        return $this->request_type->isActivation();
+        return $this->request_type->isActivation() && ! $this->request_type->isUnitTesting();
     }
 
 
@@ -64,7 +64,7 @@ class RequestTypeContextChecker extends ContextChecker implements RequestTypeCon
      */
     public function isAdmin()
     {
-        return $this->request_type->slug() === RequestTypeContext::ADMIN;
+        return $this->request_type->slug() === RequestTypeContext::ADMIN && ! $this->isActivation();
     }
 
 
@@ -75,7 +75,7 @@ class RequestTypeContextChecker extends ContextChecker implements RequestTypeCon
      */
     public function isAdminAjax()
     {
-        return $this->request_type->slug() === RequestTypeContext::AJAX_ADMIN;
+        return $this->request_type->slug() === RequestTypeContext::AJAX_ADMIN && ! $this->isActivation();
     }
 
 
@@ -206,7 +206,7 @@ class RequestTypeContextChecker extends ContextChecker implements RequestTypeCon
      */
     public function isUnitTesting()
     {
-        return $this->request_type->isUnitTesting();
+        return $this->request_type->isUnitTesting() && ! $this->request_type->isActivation();
     }
 
 

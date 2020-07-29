@@ -3,13 +3,13 @@
 /**
  * EEH_Sideloader
  *
- * This is a helper utility class that provides "sideloading" functionality.  Sideloading simply refers to retrieving files hosted elsehwere (usually github) that are downloaded into EE.
+ * This is a helper utility class that provides "sideloading" functionality.
+ * Sideloading simply refers to retrieving files hosted elsewhere
+ * (usually github) that are downloaded into EE.
  *
  * @package     Event Espresso
  * @subpackage  /helpers/EEH_Sideloader.helper.php
  * @author      Darren Ethier
- *
- * ------------------------------------------------------------------------
  */
 class EEH_Sideloader extends EEH_Base
 {
@@ -40,12 +40,13 @@ class EEH_Sideloader extends EEH_Base
 
 
     /**
-     * constructor allows the user to set the properties on the sideloader on construct.  However, there are also setters for doing so.
+     * constructor allows the user to set the properties on the sideloader on construct.  However, there are also
+     * setters for doing so.
      *
-     * @since 4.1.0
      * @param array $init array fo initializing the sideloader if keys match the properties.
+     * @since 4.1.0
      */
-    public function __construct($init = array())
+    public function __construct($init = [])
     {
         $this->_init($init);
     }
@@ -54,18 +55,18 @@ class EEH_Sideloader extends EEH_Base
     /**
      * sets the properties for class either to defaults or using incoming initialization array
      *
-     * @since 4.1.0
-     * @param  array  $init array on init (keys match properties others ignored)
+     * @param array $init array on init (keys match properties others ignored)
      * @return void
+     * @since 4.1.0
      */
     private function _init($init)
     {
-        $defaults = array(
-            '_upload_to' => $this->_get_wp_uploads_dir(),
+        $defaults = [
+            '_upload_to'     => $this->_get_wp_uploads_dir(),
             '_download_from' => '',
-            '_permissions' => 0644,
-            '_new_file_name' => 'EE_Sideloader_' . uniqid() . '.default'
-            );
+            '_permissions'   => 0644,
+            '_new_file_name' => 'EE_Sideloader_' . uniqid() . '.default',
+        ];
 
         $props = array_merge($defaults, $init);
 
@@ -74,7 +75,7 @@ class EEH_Sideloader extends EEH_Base
             if (method_exists($this, $setter)) {
                 $this->$setter($val);
             } else {
-                 // No setter found.
+                // No setter found.
                 EE_Error::add_error(
                     sprintf(
                         esc_html__(
@@ -100,11 +101,13 @@ class EEH_Sideloader extends EEH_Base
 
 
     /**
+     * @return string
      * @since 4.1.0
-     * @return void
      */
     private function _get_wp_uploads_dir()
     {
+        $uploads = wp_upload_dir();
+        return $uploads['basedir'];
     }
 
     // setters
@@ -113,9 +116,9 @@ class EEH_Sideloader extends EEH_Base
     /**
      * sets the _upload_to property to the directory to upload to.
      *
-     * @since 4.1.0
      * @param $upload_to_folder
      * @return void
+     * @since 4.1.0
      */
     public function set_upload_to($upload_to_folder)
     {
@@ -126,9 +129,9 @@ class EEH_Sideloader extends EEH_Base
     /**
      * sets the _download_from property to the location we should download the file from.
      *
-     * @since 4.10.5.p
      * @param string $download_from The full path to the file we should sideload.
      * @return void
+     * @since 4.10.5.p
      */
     public function set_download_from($download_from)
     {
@@ -139,9 +142,9 @@ class EEH_Sideloader extends EEH_Base
     /**
      * sets the _permissions property used on the sideloaded file.
      *
-     * @since 4.1.0
      * @param int $permissions
      * @return void
+     * @since 4.1.0
      */
     public function set_permissions($permissions)
     {
@@ -152,9 +155,9 @@ class EEH_Sideloader extends EEH_Base
     /**
      * sets the _new_file_name property used on the sideloaded file.
      *
-     * @since 4.1.0
      * @param string $new_file_name
      * @return void
+     * @since 4.1.0
      */
     public function set_new_file_name($new_file_name)
     {
@@ -165,8 +168,8 @@ class EEH_Sideloader extends EEH_Base
 
 
     /**
-     * @since 4.1.0
      * @return string
+     * @since 4.1.0
      */
     public function get_upload_to()
     {
@@ -175,8 +178,8 @@ class EEH_Sideloader extends EEH_Base
 
 
     /**
-     * @since 4.10.5.p
      * @return string
+     * @since 4.10.5.p
      */
     public function get_download_from()
     {
@@ -185,8 +188,8 @@ class EEH_Sideloader extends EEH_Base
 
 
     /**
-     * @since 4.1.0
      * @return int
+     * @since 4.1.0
      */
     public function get_permissions()
     {
@@ -195,8 +198,8 @@ class EEH_Sideloader extends EEH_Base
 
 
     /**
-     * @since 4.1.0
      * @return string
+     * @since 4.1.0
      */
     public function get_new_file_name()
     {
@@ -210,91 +213,150 @@ class EEH_Sideloader extends EEH_Base
     /**
      * Downloads the file using the WordPress HTTP API.
      *
-     * @since 4.1.0
      * @return bool
+     * @since 4.1.0
      */
     public function sideload()
     {
-        // setup temp dir
-        $temp_file = wp_tempnam($this->_download_from);
+        try {
+            // setup temp dir
+            $temp_file = wp_tempnam($this->_download_from);
 
-        if (!$temp_file) {
-            EE_Error::add_error(
-                esc_html__('Something went wrong with the upload.  Unable to create a tmp file for the uploaded file on the server', 'event_espresso'),
-                __FILE__,
-                __FUNCTION__,
-                __LINE__
-            );
-            return false;
-        }
-
-        do_action('AHEE__EEH_Sideloader__sideload__before', $this, $temp_file);
-
-        $wp_remote_args = apply_filters('FHEE__EEH_Sideloader__sideload__wp_remote_args', array( 'timeout' => 500, 'stream' => true, 'filename' => $temp_file ), $this, $temp_file);
-
-        $response = wp_safe_remote_get($this->_download_from, $wp_remote_args);
-
-        if (is_wp_error($response) || 200 != wp_remote_retrieve_response_code($response)) {
-            unlink($temp_file);
-            if (defined('WP_DEBUG') && WP_DEBUG) {
-                EE_Error::add_error(
-                    sprintf(
-                        esc_html__('Unable to upload the file. Either the path given to download from is incorrect, or something else happened. Here is the path given: %s', 'event_espresso'),
-                        $this->_download_from
-                    ),
-                    __FILE__,
-                    __FUNCTION__,
-                    __LINE__
+            if (! $temp_file) {
+                throw new RuntimeException(
+                    esc_html__(
+                        'Something went wrong with the upload.  Unable to create a tmp file for the uploaded file on the server',
+                        'event_espresso'
+                    )
                 );
             }
-            return false;
-        }
 
-        // possible md5 check
-        $content_md5 = wp_remote_retrieve_header($response, 'content-md5');
-        if ($content_md5) {
-            $md5_check = verify_file_md5($temp_file, $content_md5);
-            if (is_wp_error($md5_check)) {
-                unlink($temp_file);
+            do_action('AHEE__EEH_Sideloader__sideload__before', $this, $temp_file);
+
+            $wp_remote_args = apply_filters(
+                'FHEE__EEH_Sideloader__sideload__wp_remote_args',
+                ['timeout' => 500, 'stream' => true, 'filename' => $temp_file],
+                $this,
+                $temp_file
+            );
+
+            $response = wp_safe_remote_get($this->_download_from, $wp_remote_args);
+
+            if ($this->isResponseError($response) || $this->isDownloadError($response)) {
+                EEH_File::delete($temp_file);
+                return false;
+            }
+
+            // possible md5 check
+            $content_md5 = wp_remote_retrieve_header($response, 'content-md5');
+            if ($content_md5) {
+                $md5_check = verify_file_md5($temp_file, $content_md5);
+                if ($this->isResponseError($md5_check)) {
+                    EEH_File::delete($temp_file);
+                    return false;
+                }
+            }
+
+            // now we have the file, let's get it in the right directory with the right name.
+            $path  = apply_filters(
+                'FHEE__EEH_Sideloader__sideload__new_path',
+                $this->_upload_to . $this->_new_file_name,
+                $this
+            );
+            if (! EEH_File::move($temp_file, $path, true)) {
+                return false;
+            }
+
+            // set permissions
+            $permissions = apply_filters(
+                'FHEE__EEH_Sideloader__sideload__permissions_applied',
+                $this->_permissions,
+                $this
+            );
+            // verify permissions are an integer but don't actually modify the value
+            $perms = absint($permissions);
+            if (! $perms) {
                 EE_Error::add_error(
-                    $md5_check->get_error_message(),
+                    esc_html__('Supplied permissions are invalid', 'event_espresso'),
                     __FILE__,
                     __FUNCTION__,
                     __LINE__
                 );
                 return false;
             }
+            EEH_File::chmod($path, $permissions);
+
+            // that's it.  let's allow for actions after file uploaded.
+            do_action('AHEE__EE_Sideloader__sideload_after', $this, $path);
+            return true;
+        } catch (Exception $exception) {
+            EE_Error::add_error($exception->getMessage(), __FILE__, __FUNCTION__, __LINE__);
+            return false;
         }
+    }
 
-        $file = $temp_file;
 
-        // now we have the file, let's get it in the right directory with the right name.
-        $path = apply_filters('FHEE__EEH_Sideloader__sideload__new_path', $this->_upload_to . $this->_new_file_name, $this);
-
-        // move file in
-        if (false === @ rename($file, $path)) {
-            unlink($temp_file);
+    /**
+     * returns TRUE if there IS an error, FALSE if there is NO ERROR
+     *
+     * @param array|WP_Error $response
+     * @return bool
+     * @throws RuntimeException
+     */
+    private function isResponseError($response)
+    {
+        if (! is_wp_error($response)) {
+            return false;
+        }
+        if (defined('WP_DEBUG') && WP_DEBUG) {
             EE_Error::add_error(
                 sprintf(
-                    esc_html__('Unable to move the file to new location (possible permissions errors). This is the path the class attempted to move the file to: %s', 'event_espresso'),
-                    $path
+                    esc_html__(
+                        'The following error occurred while attempting to download the file from "%1$s":',
+                        'event_espresso'
+                    ),
+                    $this->_download_from,
+                    $response->get_error_message()
                 ),
                 __FILE__,
                 __FUNCTION__,
                 __LINE__
             );
+        }
+        return true;
+    }
+
+
+    /**
+     * returns TRUE if there IS an error, FALSE if there is NO ERROR
+     *
+     * @param array  $response
+     * @return bool
+     * @throws RuntimeException
+     */
+    private function isDownloadError(array $response)
+    {
+        $response_code = wp_remote_retrieve_response_code($response);
+        if ($response_code === 200) {
             return false;
         }
-
-        // set permissions
-        $permissions = apply_filters('FHEE__EEH_Sideloader__sideload__permissions_applied', $this->_permissions, $this);
-        chmod($path, $permissions);
-
-        // that's it.  let's allow for actions after file uploaded.
-        do_action('AHEE__EE_Sideloader__sideload_after', $this, $path);
-
-        // unlink tempfile
-        @unlink($temp_file);
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            $msg = $response_code === 404
+                ? esc_html__(
+                    'Attempted to download a file from "%1$s" but encountered a "404 File Not Found" error.',
+                    'event_espresso'
+                )
+                : esc_html__(
+                    'Unable to download the file. Either the path given is incorrect, or something else happened. Here is the path given: %s',
+                    'event_espresso'
+                );
+            EE_Error::add_error(
+                sprintf($msg, $this->_download_from),
+                __FILE__,
+                __FUNCTION__,
+                __LINE__
+            );
+        }
         return true;
     }
 
@@ -322,8 +384,8 @@ class EEH_Sideloader extends EEH_Base
 
 
     /**
-     * @since 4.1.0
      * @return string
+     * @since      4.1.0
      * @deprecated since version 4.10.5.p
      */
     public function get_upload_from()

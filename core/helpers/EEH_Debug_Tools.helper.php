@@ -181,9 +181,10 @@ class EEH_Debug_Tools
     {
         if (WP_DEBUG) {
             $activation_errors = ob_get_contents();
-            if (! empty($activation_errors)) {
-                $activation_errors = date('Y-m-d H:i:s') . "\n" . $activation_errors;
+            if (empty($activation_errors)) {
+                return;
             }
+            $activation_errors = date('Y-m-d H:i:s') . "\n" . $activation_errors;
             espresso_load_required('EEH_File', EE_HELPERS . 'EEH_File.helper.php');
             if (class_exists('EEH_File')) {
                 try {

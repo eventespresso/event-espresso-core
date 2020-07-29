@@ -2634,7 +2634,7 @@ class EE_Admin_Config extends EE_Config_Base
     public function __construct()
     {
         // set default general admin settings
-        $this->useAdvancedEditor = false;
+        $this->useAdvancedEditor = true;
         $this->use_personnel_manager = true;
         $this->use_dashboard_widget = true;
         $this->events_in_dashboard = 30;

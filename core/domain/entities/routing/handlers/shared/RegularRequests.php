@@ -3,7 +3,9 @@
 namespace EventEspresso\core\domain\entities\routing\handlers\shared;
 
 use EE_Dependency_Map;
+use EventEspresso\core\services\routing\PrimaryRoute;
 use EventEspresso\core\services\routing\Route;
+use EventEspresso\core\services\routing\Router;
 
 /**
  * Class RoutingRequests
@@ -13,7 +15,7 @@ use EventEspresso\core\services\routing\Route;
  * @author  Brent Christensen
  * @since   $VID:$
  */
-class RoutingRequests extends Route
+class RegularRequests extends PrimaryRoute
 {
 
     /**
@@ -95,23 +97,18 @@ class RoutingRequests extends Route
      */
     protected function registerDependencies()
     {
-        $default = [
-            'EE_Dependency_Map'                           => EE_Dependency_Map::load_from_cache,
-            'EventEspresso\core\services\loaders\Loader'  => EE_Dependency_Map::load_from_cache,
-            'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
-        ];
-        $admin = ['EE_Admin_Config' => EE_Dependency_Map::load_from_cache] + $default;
-        $public = ['EE_Maintenance_Mode' => EE_Dependency_Map::load_from_cache] + $default;
+        $admin = ['EE_Admin_Config' => EE_Dependency_Map::load_from_cache] + Route::$default_dependencies;
+        $public = ['EE_Maintenance_Mode' => EE_Dependency_Map::load_from_cache] + Route::$default_dependencies;
         $default_routes = [
             // default dependencies
-            'EventEspresso\core\domain\entities\routing\handlers\admin\PueRequests'          => $default,
-            'EventEspresso\core\domain\entities\routing\handlers\admin\WordPressPluginsPage' => $default,
-            'EventEspresso\core\domain\entities\routing\handlers\frontend\ShortcodeRequests' => $default,
-            'EventEspresso\core\domain\entities\routing\handlers\shared\AssetRequests'       => $default,
-            'EventEspresso\core\domain\entities\routing\handlers\shared\GQLRequests'         => $default,
-            'EventEspresso\core\domain\entities\routing\handlers\shared\RestApiRequests'     => $default,
-            'EventEspresso\core\domain\entities\routing\handlers\shared\SessionRequests'     => $default,
-            'EventEspresso\core\domain\entities\routing\handlers\shared\WordPressHeartbeat'  => $default,
+            'EventEspresso\core\domain\entities\routing\handlers\admin\PueRequests'          => Route::$default_dependencies,
+            'EventEspresso\core\domain\entities\routing\handlers\admin\WordPressPluginsPage' => Route::$default_dependencies,
+            'EventEspresso\core\domain\entities\routing\handlers\frontend\ShortcodeRequests' => Route::$default_dependencies,
+            'EventEspresso\core\domain\entities\routing\handlers\shared\AssetRequests'       => Route::$default_dependencies,
+            'EventEspresso\core\domain\entities\routing\handlers\shared\GQLRequests'         => Route::$default_dependencies,
+            'EventEspresso\core\domain\entities\routing\handlers\shared\RestApiRequests'     => Route::$default_dependencies,
+            'EventEspresso\core\domain\entities\routing\handlers\shared\SessionRequests'     => Route::$default_dependencies,
+            'EventEspresso\core\domain\entities\routing\handlers\shared\WordPressHeartbeat'  => Route::$default_dependencies,
             // admin dependencies
             'EventEspresso\core\domain\entities\routing\handlers\admin\AdminRoute'           => $admin,
             'EventEspresso\core\domain\entities\routing\handlers\admin\EspressoEventsAdmin'  => $admin,
@@ -136,6 +133,7 @@ class RoutingRequests extends Route
      */
     protected function requestHandler()
     {
+        $this->setRouteRequestType(PrimaryRoute::ROUTE_REQUEST_TYPE_REGULAR);
         return true;
     }
 }

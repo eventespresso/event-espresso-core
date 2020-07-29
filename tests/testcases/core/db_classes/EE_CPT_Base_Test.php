@@ -1,6 +1,6 @@
 <?php
 
-use EventEspresso\tests\mocks\core\domain\entities\routing\handlers\shared\RoutingRequestsMock;
+use EventEspresso\tests\mocks\core\domain\entities\routing\handlers\shared\RegularRequestsMock;
 use EventEspresso\tests\mocks\core\domain\entities\routing\handlers\frontend\ShortcodeRequestsMock;
 
 if (!defined('EVENT_ESPRESSO_VERSION'))
@@ -94,7 +94,7 @@ class EE_CPT_Base_Test extends EE_UnitTestCase{
      */
     public function testGetPrettyCurrentPostRemainingTheSame()
     {
-        RoutingRequestsMock::register();
+        RegularRequestsMock::register();
         ShortcodeRequestsMock::register();
         $this->loadShortcodesManagerAndShortcodes();
         $transaction = $this->new_typical_transaction();
