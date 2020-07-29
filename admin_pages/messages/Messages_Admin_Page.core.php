@@ -1076,33 +1076,33 @@ class Messages_Admin_Page extends EE_Admin_Page
 
         /** @type array $status_items status legend setup */
         $status_items = array(
-            'sent_status'                => array(
-                'class' => 'ee-status-legend ee-status-legend-' . EEM_Message::status_sent,
-                'desc'  => EEH_Template::pretty_status(EEM_Message::status_sent, false, 'sentence'),
+            'incomplete_status'          => array(
+                'class' => 'ee-status-legend ee-status-legend-' . EEM_Message::status_incomplete,
+                'desc'  => EEH_Template::pretty_status(EEM_Message::status_incomplete, false, 'sentence'),
             ),
             'idle_status'                => array(
                 'class' => 'ee-status-legend ee-status-legend-' . EEM_Message::status_idle,
                 'desc'  => EEH_Template::pretty_status(EEM_Message::status_idle, false, 'sentence'),
             ),
-            'failed_status'              => array(
-                'class' => 'ee-status-legend ee-status-legend-' . EEM_Message::status_failed,
-                'desc'  => EEH_Template::pretty_status(EEM_Message::status_failed, false, 'sentence'),
+            'resend_status'              => array(
+                'class' => 'ee-status-legend ee-status-legend-' . EEM_Message::status_resend,
+                'desc'  => EEH_Template::pretty_status(EEM_Message::status_resend, false, 'sentence'),
             ),
             'messenger_executing_status' => array(
                 'class' => 'ee-status-legend ee-status-legend-' . EEM_Message::status_messenger_executing,
                 'desc'  => EEH_Template::pretty_status(EEM_Message::status_messenger_executing, false, 'sentence'),
             ),
-            'resend_status'              => array(
-                'class' => 'ee-status-legend ee-status-legend-' . EEM_Message::status_resend,
-                'desc'  => EEH_Template::pretty_status(EEM_Message::status_resend, false, 'sentence'),
-            ),
-            'incomplete_status'          => array(
-                'class' => 'ee-status-legend ee-status-legend-' . EEM_Message::status_incomplete,
-                'desc'  => EEH_Template::pretty_status(EEM_Message::status_incomplete, false, 'sentence'),
+            'sent_status'                => array(
+                'class' => 'ee-status-legend ee-status-legend-' . EEM_Message::status_sent,
+                'desc'  => EEH_Template::pretty_status(EEM_Message::status_sent, false, 'sentence'),
             ),
             'retry_status'               => array(
                 'class' => 'ee-status-legend ee-status-legend-' . EEM_Message::status_retry,
                 'desc'  => EEH_Template::pretty_status(EEM_Message::status_retry, false, 'sentence'),
+            ),
+            'failed_status'              => array(
+                'class' => 'ee-status-legend ee-status-legend-' . EEM_Message::status_failed,
+                'desc'  => EEH_Template::pretty_status(EEM_Message::status_failed, false, 'sentence'),
             ),
         );
         if (EEM_Message::debug()) {
