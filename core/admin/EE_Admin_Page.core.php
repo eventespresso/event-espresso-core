@@ -3144,6 +3144,11 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             (array) $items,
             $this
         );
+        $this->_template_args['status_change_notice'] = EEH_Template::display_template(
+            EE_ADMIN_TEMPLATE . 'status_change_notice.template.php',
+            [ 'context' => '__admin-legend' ],
+            true
+        );
         return EEH_Template::display_template(
             EE_ADMIN_TEMPLATE . 'admin_details_legend.template.php',
             $this->_template_args,

@@ -1142,6 +1142,11 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
             $ticket_row++;
         }
         $main_template_args['ticket_js_structure'] = $this->_get_ticket_js_structure($datetimes, $all_tickets);
+        $main_template_args['status_change_notice'] = EEH_Template::display_template(
+            EE_ADMIN_TEMPLATE . 'status_change_notice.template.php',
+            [ 'context' => '__event-editor' ],
+            true
+        );
         EEH_Template::display_template(
             PRICING_TEMPLATE_PATH . 'event_tickets_metabox_main.template.php',
             $main_template_args
