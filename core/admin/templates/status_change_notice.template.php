@@ -80,7 +80,7 @@
     }
 
     .ee-open-notice {
-        max-height: 17rem !important;
+        max-height: 24rem !important;
     }
 
     .ee-show-link {
@@ -125,7 +125,7 @@
     }
 
     .ee-status-change-notice-div span.pill.yellow {
-        background: #fcb93c;
+        background: #fad800;
         color: #403a3a;
     }
 
@@ -135,6 +135,18 @@
 
     .ee-status-change-notice-div span.pill.charcoal {
         background: #403a3a;
+    }
+
+    .ee-status-change-notice-div span.pill.blue {
+        background: #297abc;
+    }
+
+    .ee-status-change-notice-div span.pill.pink {
+        background: #ff6faa;
+    }
+
+    .ee-status-change-notice-div span.pill.green {
+        background: #91ab30;
     }
 </style>
 
@@ -163,6 +175,14 @@
                 <li>
                     The Event "Inactive" and Ticket "Archived" status colors have changed from
                     <span class="purple pill">Purple</span> to <span class="charcoal pill">Charcoal</span>
+                </li>
+                <li>
+                    The Message "Queued For Resending" status color has changed from
+                    <span class="yellow pill">Yellow</span> to <span class="blue pill">Blue</span>
+                </li>
+                <li>
+                    The Message "Messenger Is Executing" status color has changed from
+                    <span class="pink pill">Pink</span> to <span class="green pill">Green</span>
                 </li>
             </ul>
             <p>Please accept our sincere apologies for any inconvenience this might cause.</p>
