@@ -239,28 +239,43 @@
 	margin-right: .25em;
 }
 
+.ee-icon-size-8,
 .ee-icon-size-8:before { font-size: 8px !important; }
-.ee-icon-size-12:before { font-size: 12px; }
-.ee-icon-size-14:before { font-size: 14px; }
+
+.ee-icon-size-12,
+.ee-icon-size-12:before { font-size: 12px !important; }
+
+.ee-icon-size-14,
+.ee-icon-size-14:before { font-size: 14px !important; }
+
+.ee-icon-size-16,
 .ee-icon-size-16:before {
-	font-size: 16px;
-	margin-right:-0.05em;
+    font-size: 16px !important;
+    margin-right: -.002em;
 }
+
+.ee-icon-size-18,
 .ee-icon-size-18:before {
-	font-size: 18px;
-	margin-right: -0.1em;
+    font-size: 18px !important;
+    margin-right:-0.05em;
 }
+
+.ee-icon-size-20,
 .ee-icon-size-20:before {
-	font-size: 20px;
-	margin-right: -0.15em;
+    font-size: 20px !important;
+    margin-right: -0.1em;
 }
+
+.ee-icon-size-22,
 .ee-icon-size-22:before {
-	font-size: 22px;
-	margin-right: -0.2em;
+    font-size: 22px !important;
+    margin-right: -0.15em;
 }
+
+.ee-icon-size-24,
 .ee-icon-size-24:before {
-	font-size: 24px;
-	margin-right: -0.25em;
+    font-size: 24px !important;
+    margin-right: -0.2em;
 }
 
 
@@ -883,7 +898,7 @@ input.ee-register-button {
 	 color: var(--ee-status-color-pink);
 }
 .green-text {
-	 color: var(--ee-status-color-green);
+	 color: var(--ee-status-color-dark-green);
 }
 .red-text {
 	 color: var(--ee-status-color-red);
