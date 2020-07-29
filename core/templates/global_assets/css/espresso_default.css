@@ -8,15 +8,6 @@
 /****                                               ****/
 /*******************************************************/
 
-:root {
-    --ee-status-color-blue: #297abc;
-    --ee-status-color-charcoal: #3c3c3c;
-    --ee-status-color-green: #91ab30;
-    --ee-status-color-grey: #888888;
-    --ee-status-color-pink: #de5882;
-    --ee-status-color-purple: #795d9d;
-    --ee-status-color-yellow: #f6bd00;
-}
 
 /******************* DASHICONS ****************** */
 
@@ -217,18 +208,19 @@
     content: "\6f";
 }
 
-.pink-icon:before { color: #E44064; }
-.green-icon:before { color: #70CC50; }
-.drk-green-icon:before { color: #009900; }
-.red-icon:before { color: #B4113F; }
-.orange-icon:before { color: #E76700; }
-.lt-blue-icon:before { color: #00B1CA; }
-.blue-icon:before { color: #005B9E; }
-.yellow-icon:before { color: #F8D755; }
-.lt-grey-icon:before { color: #A39D9C; }
-.grey-icon:before { color: #888; }
-.drk-grey-icon:before { color: #59595B; }
-.black-icon:before { color: #2F3334; }
+.red-icon:before { color: var(--ee-status-color-red); }
+.pink-icon:before { color: var(--ee-status-color-pink); }
+.orange-icon:before { color: var(--ee-status-color-orange); }
+.yellow-icon:before { color: var(--ee-status-color-yellow); }
+.green-icon:before { color: var(--ee-status-color-green); }
+.drk-green-icon:before { color: var(--ee-status-color-dark-green); }
+.lt-blue-icon:before { color: var(--ee-status-color-light-blue); }
+.blue-icon:before { color: var(--ee-status-color-blue); }
+.purple-icon:before { color: var(--ee-status-color-purple); }
+.lt-grey-icon:before { color: var(--ee-status-color-light-grey); }
+.grey-icon:before { color: var(--ee-status-color-grey); }
+.drk-grey-icon:before { color: var(--ee-status-color-dark-grey); }
+.black-icon:before { color: var(--ee-status-color-charcoal); }
 
 
 .tags-links a {
@@ -362,10 +354,10 @@ ul.ee-upcoming-events-widget-ul li{
 	position: relative;
 	top: -2px;
 	margin: 0 0 1em;
-	background: #00B1CA -webkit-linear-gradient( #4EBFDE, #00B1CA ); /* For Safari 5.1 to 6.0 */
-	background: #00B1CA -o-linear-gradient( #4EBFDE, #00B1CA ); /* For Opera 11.1 to 12.0 */
-	background: #00B1CA -moz-linear-gradient( #4EBFDE, #00B1CA ); /* For Firefox 3.6 to 15 */
-	background: #00B1CA linear-gradient( #4EBFDE, #00B1CA ); /* Standard syntax */
+	background: var(--ee-status-color-light-blue) -webkit-linear-gradient( var(--ee-status-color-blue), var(--ee-status-color-light-blue)); /* For Safari 5.1 to 6.0 */
+	background: var(--ee-status-color-light-blue) -o-linear-gradient( var(--ee-status-color-blue), var(--ee-status-color-light-blue)); /* For Opera 11.1 to 12.0 */
+	background: var(--ee-status-color-light-blue) -moz-linear-gradient( var(--ee-status-color-blue), var(--ee-status-color-light-blue)); /* For Firefox 3.6 to 15 */
+	background: var(--ee-status-color-light-blue) linear-gradient( var(--ee-status-color-blue), var(--ee-status-color-light-blue)); /* Standard syntax */
 
 	border: 1px solid rgba(0,0,0,0.01) !important;
 	border-top: 1px solid rgba(255,255,255,0.5) !important;
@@ -386,7 +378,7 @@ ul.ee-upcoming-events-widget-ul li{
 }
 .ee-button:hover {
 	color: #fff !important;
-	background-color: #00c7e3;
+	background-color: var(--ee-status-color-light-blue);
 }
 
 .ee-button:active { top:-1px; }
@@ -454,93 +446,93 @@ input.ee-register-button {
 
 /* BUTTON COLOURS */
 .ee-pink.ee-button, .ee-pink.ee-button:visited {
-	background: #E44064 -webkit-linear-gradient( #F65077, #E44064 ); /* For Safari 5.1 to 6.0 */
-	background: #E44064 -o-linear-gradient( #F65077, #E44064 ); /* For Opera 11.1 to 12.0 */
-	background: #E44064 -moz-linear-gradient( #F65077, #E44064 ); /* For Firefox 3.6 to 15 */
-	background: #E44064 linear-gradient( #F65077, #E44064 ); /* Standard syntax */
+	background: #e65983 -webkit-linear-gradient( #ff759e, #e65983 ); /* For Safari 5.1 to 6.0 */
+	background: #e65983 -o-linear-gradient( #ff759e, #e65983 ); /* For Opera 11.1 to 12.0 */
+	background: #e65983 -moz-linear-gradient( #ff759e, #e65983 ); /* For Firefox 3.6 to 15 */
+	background: #e65983 linear-gradient( #ff759e, #e65983 ); /* Standard syntax */
 }
 .ee-pink.ee-button:hover {
-	background: #F65077 none;
+	background: #ff759e none;
 }
 
 .ee-green.ee-button, .ee-green.ee-button:visited {
-	background: #70CC50 -webkit-linear-gradient( #80DD5E, #70CC50 ); /* For Safari 5.1 to 6.0 */
-	background: #70CC50 -o-linear-gradient( #80DD5E, #70CC50 ); /* For Opera 11.1 to 12.0 */
-	background: #70CC50 -moz-linear-gradient( #80DD5E, #70CC50 ); /* For Firefox 3.6 to 15 */
-	background: #70CC50 linear-gradient( #80DD5E, #70CC50 ); /* Standard syntax */
+	background: #7ab540 -webkit-linear-gradient( #a3e860, #7ab540 ); /* For Safari 5.1 to 6.0 */
+	background: #7ab540 -o-linear-gradient( #a3e860, #7ab540 ); /* For Opera 11.1 to 12.0 */
+	background: #7ab540 -moz-linear-gradient( #a3e860, #7ab540 ); /* For Firefox 3.6 to 15 */
+	background: #7ab540 linear-gradient( #a3e860, #7ab540 ); /* Standard syntax */
 }
 .ee-green.ee-button:hover {
-	background : #80DD5E none;
+	background : #a3e860 none;
 }
 
 .ee-red.ee-button, .ee-red.ee-button:visited {
-	background: #B4113F -webkit-linear-gradient( #C8194E, #B4113F ); /* For Safari 5.1 to 6.0 */
-	background: #B4113F -o-linear-gradient( #C8194E, #B4113F ); /* For Opera 11.1 to 12.0 */
-	background: #B4113F -moz-linear-gradient( #C8194E, #B4113F ); /* For Firefox 3.6 to 15 */
-	background: #B4113F linear-gradient( #C8194E, #B4113F ); /* Standard syntax */
+	background: #fc1922 -webkit-linear-gradient( #ff5057, #fc1922 ); /* For Safari 5.1 to 6.0 */
+	background: #fc1922 -o-linear-gradient( #ff5057, #fc1922 ); /* For Opera 11.1 to 12.0 */
+	background: #fc1922 -moz-linear-gradient( #ff5057, #fc1922 ); /* For Firefox 3.6 to 15 */
+	background: #fc1922 linear-gradient( #ff5057, #fc1922 ); /* Standard syntax */
 }
 .ee-red.ee-button:hover {
-	background : #C8194E none;
+	background : #ff5057 none;
 }
 
 .ee-orange.ee-button, .ee-orange.ee-button:visited {
-	background: #E76700 -webkit-linear-gradient( #FA730B, #E76700 ); /* For Safari 5.1 to 6.0 */
-	background: #E76700 -o-linear-gradient( #FA730B, #E76700 ); /* For Opera 11.1 to 12.0 */
-	background: #E76700 -moz-linear-gradient( #FA730B, #E76700 ); /* For Firefox 3.6 to 15 */
-	background: #E76700 linear-gradient( #FA730B, #E76700 ); /* Standard syntax */
+	background: #ff582c -webkit-linear-gradient( #ff7e5f, #ff582c ); /* For Safari 5.1 to 6.0 */
+	background: #ff582c -o-linear-gradient( #ff7e5f, #ff582c ); /* For Opera 11.1 to 12.0 */
+	background: #ff582c -moz-linear-gradient( #ff7e5f, #ff582c ); /* For Firefox 3.6 to 15 */
+	background: #ff582c linear-gradient( #ff7e5f, #ff582c ); /* Standard syntax */
 }
 .ee-orange.ee-button:hover {
-	background : #FA730B none;
+	background : #ff7e5f none;
 }
 
 .ee-blue.ee-button, .ee-blue.ee-button:visited {
-	background: #005B9E -webkit-linear-gradient( #066DB1, #005B9E ); /* For Safari 5.1 to 6.0 */
-	background: #005B9E -o-linear-gradient( #066DB1, #005B9E ); /* For Opera 11.1 to 12.0 */
-	background: #005B9E -moz-linear-gradient( #066DB1, #005B9E ); /* For Firefox 3.6 to 15 */
-	background: #005B9E linear-gradient( #066DB1, #005B9E ); /* Standard syntax */
+	background: #008dcb -webkit-linear-gradient( #19bbff, #008dcb ); /* For Safari 5.1 to 6.0 */
+	background: #008dcb -o-linear-gradient( #19bbff, #008dcb ); /* For Opera 11.1 to 12.0 */
+	background: #008dcb -moz-linear-gradient( #19bbff, #008dcb ); /* For Firefox 3.6 to 15 */
+	background: #008dcb linear-gradient( #19bbff, #008dcb ); /* Standard syntax */
 }
 .ee-blue.ee-button:hover {
-	background : #066DB1 none;
+	background : #19bbff none;
 }
 
 .ee-yellow.ee-button, .ee-yellow.ee-button:visited {
-	background: #F8D755 -webkit-linear-gradient( #FEDF6C, #F8D755 ); /* For Safari 5.1 to 6.0 */
-	background: #F8D755 -o-linear-gradient( #FEDF6C, #F8D755 ); /* For Opera 11.1 to 12.0 */
-	background: #F8D755 -moz-linear-gradient( #FEDF6C, #F8D755 ); /* For Firefox 3.6 to 15 */
-	background: #F8D755 linear-gradient( #FEDF6C, #F8D755 ); /* Standard syntax */
+	background: #fad800 -webkit-linear-gradient( #ffe542, #fad800 ); /* For Safari 5.1 to 6.0 */
+	background: #fad800 -o-linear-gradient( #ffe542, #fad800 ); /* For Opera 11.1 to 12.0 */
+	background: #fad800 -moz-linear-gradient( #ffe542, #fad800 ); /* For Firefox 3.6 to 15 */
+	background: #fad800 linear-gradient( #ffe542, #fad800 ); /* Standard syntax */
 }
 .ee-yellow.ee-button:hover {
-	background : #FEDF6C none;
+	background : #ffe542 none;
 }
 
 .ee-grey.ee-button, .ee-grey.ee-button:visited {
-	background: #A39D9C -webkit-linear-gradient( #B5B3B3, #A39D9C ); /* For Safari 5.1 to 6.0 */
-	background: #A39D9C -o-linear-gradient( #B5B3B3, #A39D9C ); /* For Opera 11.1 to 12.0 */
-	background: #A39D9C -moz-linear-gradient( #B5B3B3, #A39D9C ); /* For Firefox 3.6 to 15 */
-	background: #A39D9C linear-gradient( #B5B3B3, #A39D9C ); /* Standard syntax */
+	background: #9b9b9b -webkit-linear-gradient( #c4c4c4, #9b9b9b ); /* For Safari 5.1 to 6.0 */
+	background: #9b9b9b -o-linear-gradient( #c4c4c4, #9b9b9b ); /* For Opera 11.1 to 12.0 */
+	background: #9b9b9b -moz-linear-gradient( #c4c4c4, #9b9b9b ); /* For Firefox 3.6 to 15 */
+	background: #9b9b9b linear-gradient( #c4c4c4, #9b9b9b ); /* Standard syntax */
 }
 .ee-grey.ee-button:hover {
-	background : #B5B3B3 none;
+	background : #c4c4c4 none;
 }
 
 .ee-dark-grey.ee-button, .ee-dark-grey.ee-button:visited {
-	background: #464549 -webkit-linear-gradient( #59595B, #464549 ); /* For Safari 5.1 to 6.0 */
-	background: #464549 -o-linear-gradient( #59595B, #464549 ); /* For Opera 11.1 to 12.0 */
-	background: #464549 -moz-linear-gradient( #59595B, #464549 ); /* For Firefox 3.6 to 15 */
-	background: #464549 linear-gradient( #59595B, #464549 ); /* Standard syntax */
+	background: #626262 -webkit-linear-gradient( #9b9b9b, #626262 ); /* For Safari 5.1 to 6.0 */
+	background: #626262 -o-linear-gradient( #9b9b9b, #626262 ); /* For Opera 11.1 to 12.0 */
+	background: #626262 -moz-linear-gradient( #9b9b9b, #626262 ); /* For Firefox 3.6 to 15 */
+	background: #626262 linear-gradient( #9b9b9b, #626262 ); /* Standard syntax */
 }
 .ee-dark-grey.ee-button:hover {
-	background : #59595B none;
+	background : #9b9b9b none;
 }
 
 .ee-black.ee-button, .ee-black.ee-button:visited {
-	background: #2F3334 -webkit-linear-gradient( #424646, #2F3334 ); /* For Safari 5.1 to 6.0 */
-	background: #2F3334 -o-linear-gradient( #424646, #2F3334 ); /* For Opera 11.1 to 12.0 */
-	background: #2F3334 -moz-linear-gradient( #424646, #2F3334 ); /* For Firefox 3.6 to 15 */
-	background: #2F3334 linear-gradient( #424646, #2F3334 ); /* Standard syntax */
+	background: #292929 -webkit-linear-gradient( #626262, #292929 ); /* For Safari 5.1 to 6.0 */
+	background: #292929 -o-linear-gradient( #626262, #292929 ); /* For Opera 11.1 to 12.0 */
+	background: #292929 -moz-linear-gradient( #626262, #292929 ); /* For Firefox 3.6 to 15 */
+	background: #292929 linear-gradient( #626262, #292929 ); /* Standard syntax */
 }
 .ee-black.ee-button:hover {
-	background : #424646 none;
+	background : #626262 none;
 }
 
 
@@ -711,22 +703,22 @@ input.ee-register-button {
 }
 #espresso-notices-success,
 #espresso-ajax-notices-success {
-	border-color: #70CC50;
+	border-color: var(--ee-status-color-green);
 }
 #espresso-notices-error,
 #espresso-ajax-notices-error {
-	border-color: #E44064;
+	border-color: var(--ee-status-color-pink);
 }
 #espresso-notices-attention,
 #espresso-ajax-notices-attention {
-	border-color: #F8D755;
+	border-color: var(--ee-status-color-yellow);
 }
 
 
 .close-espresso-notice {
 	background: none !important;
 	box-shadow: none !important;
-	color: #ccc;
+	color: var(--ee-status-color-light-grey);
 	cursor: pointer;
 	font-size: 21px;
 	font-weight: bold;
@@ -740,7 +732,7 @@ input.ee-register-button {
 	text-decoration: none !important;
 }
 .close-espresso-notice:hover {
-	color: #666;
+	color: var(--ee-status-color-dark-grey);
 }
 
 .close-espresso-notice .dashicons-no {
@@ -885,52 +877,52 @@ input.ee-register-button {
 }
 
 .purple-text {
-	 color: #8A549A;
+	 color: var(--ee-status-color-purple);
 }
 .pink-text {
-	 color: #E44064;
+	 color: var(--ee-status-color-pink);
 }
 .green-text {
-	 color: #70CC50;
+	 color: var(--ee-status-color-green);
 }
 .red-text {
-	 color: #B4113F;
+	 color: var(--ee-status-color-red);
 }
 .orange-text {
-	 color: #E76700;
+	 color: var(--ee-status-color-orange);
 }
 .lt-blue-text {
-	 color: #00B1CA;
+	 color: var(--ee-status-color-light-blue);
 }
 .blue-text {
-	 color: #005B9E;
+	 color: var(--ee-status-color-blue);
 }
 .yellow-text {
-	 color: #F8D755;
+	 color: var(--ee-status-color-yellow);
 }
 .lt-grey-text {
-	color: #767676;
+	color: var(--ee-status-color-light-grey);
 }
 .grey-text {
-	color: #888;
+	color: var(--ee-status-color-grey);
 }
 .drk-grey-text {
-	color: #59595B;
+	color: var(--ee-status-color-dark-grey);
 }
 .black-text {
-	color: #2F3334;
+	color: var(--ee-status-color-charcoal);
 }
 .important-notice {
 	font-weight: bold;
-	color: #d54e21;
+	color: var(--ee-status-color-orange);
 }
 .ee-attention {
 	width:100%;
 	padding: .75em 2.5%;
 	margin: 0 auto 1em;
 	background: #fff;
-	border: 4px solid #F8D755;
-	color: #666;
+	border: 4px solid var(--ee-status-color-yellow);
+	color: var(--ee-status-color-dark-grey);
 	font-size: 1em;
 	line-height: 1.6em;
 	text-align: center;
@@ -1016,8 +1008,8 @@ input.ee-register-button {
 	left: 0;
 	width: 100%;
 	padding: .5em;
-	background: #d54e21;
-	background: rgba( 213, 78, 33, .95 );
+	background: var(--ee-status-color-orange);
+	background: rgba( 255, 88, 44, .95 );
 	font-size: 12px;
 	font-weight: bold;
 	line-height: 1;
@@ -1033,15 +1025,15 @@ input.ee-register-button {
 	margin: 0;
 }
 .ee-really-important-notice-dv a {
-	color:#FEDF6C;
+	color:#fad800;
 	text-shadow:0 1px 1px rgba( 0, 0, 0, 0.4 );
 }
 .ee-really-important-notice-dv a:hover {
-	color: #F8D755;
+	color: #e3c500;
 	text-shadow:0 .5px 0  rgba( 0, 0, 0, 0.2 );
 }
 .ee-really-important-notice-dv a:active {
-	color: #F8D755;
+	color: #c4a700;
 	text-shadow:0 -1px 0  rgba( 0, 0, 0, 0.4 );
 }
 
@@ -1252,19 +1244,19 @@ a[href*="message_type=receipt"]:visited {
 }
 
 .powered-by-event-espresso-credit {
-	color: #747B7D;
+	color: var(--ee-status-color-grey);
 	font-size: 10px;
 	text-align: right;
 }
 
 .powered-by-event-espresso-credit a {
-	border-bottom: 1px dotted #A1B1BE;
-	color: #4792BB;;
+	border-bottom: 1px dotted var(--ee-status-color-light-grey);
+	color: var(--ee-status-color-blue);
 	text-decoration: none;
 }
 
 .powered-by-event-espresso-credit a:hover {
-	color: #7FA900;
+	color: var(--ee-status-color-green);
 }
 
 /*******************************************************/

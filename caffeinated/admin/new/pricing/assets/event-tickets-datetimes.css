@@ -1,13 +1,3 @@
-:root {
-    --ee-status-color-blue: #297abc;
-    --ee-status-color-charcoal: #3c3c3c;
-    --ee-status-color-green: #91ab30;
-    --ee-status-color-grey: #888888;
-    --ee-status-color-pink: #de5882;
-    --ee-status-color-purple: #795d9d;
-    --ee-status-color-yellow: #f6bd00;
-}
-
 .event-tickets-datetimes-title {
     display: inline-block;
     font-size: 1.2em;
@@ -316,20 +306,20 @@
 }
 
 .ticket-selected {
-    background-color: #9d7;
+    background-color: var(--ee-status-color-dark-green);
 }
 
 /**
  * ticket selected background color for various wp3.8+ admin themes
  */
-.admin-color-fresh .ticket-selected { background-color: #333; color: #fff;}
-.admin-color-light .ticket-selected { background-color:  #999; color: #fff;}
-.admin-color-blue .ticket-selected { background-color: #4796b3; color: #fff;}
-.admin-color-coffee .ticket-selected { background-color: #59524c; color: #fff;}
-.admin-color-ectoplasm .ticket-selected { background-color: #523f6d; color: #fff;}
-.admin-color-midnight .ticket-selected { background-color: #363b3f; color: #fff;}
-.admin-color-ocean .ticket-selected { background-color: #738e96; color: #fff;}
-.admin-color-sunrise .ticket-selected { background-color: #cf4944; color: #fff;}
+.admin-color-fresh .ticket-selected { background-color: var(--ee-status-color-charcoal); color: #fff;}
+.admin-color-light .ticket-selected { background-color: var(--ee-status-color-grey); color: #fff;}
+.admin-color-blue .ticket-selected { background-color: var(--ee-status-color-blue); color: #fff;}
+.admin-color-coffee .ticket-selected { background-color: var(--ee-status-color-dark-grey); color: #fff;}
+.admin-color-ectoplasm .ticket-selected { background-color: var(--ee-status-color-purple); color: #fff;}
+.admin-color-midnight .ticket-selected { background-color: var(--ee-status-color-charcoal); color: #fff;}
+.admin-color-ocean .ticket-selected { background-color: var(--ee-status-color-light-blue); color: #fff;}
+.admin-color-sunrise .ticket-selected { background-color: var(--ee-status-color-orange); color: #fff;}
 
 .event-tickets-container {
     width: 100%;
