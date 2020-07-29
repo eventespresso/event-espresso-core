@@ -142,7 +142,7 @@ class RequestTypeContextDetector
                    && $this->request->getRequestParam('wp_scrape_nonce') !== null
                )
                || (
-                   $this->request->getRequestParam('action') == 'error_scrape'
+                   $this->request->getRequestParam('action') === 'error_scrape'
                    && $this->request->getRequestParam('_wpnonce') !== null
                );
     }
