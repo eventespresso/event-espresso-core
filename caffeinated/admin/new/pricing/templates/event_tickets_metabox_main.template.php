@@ -104,9 +104,11 @@
     </div> <!-- end #add-event-datetime -->
     <div style="clear:both"></div>
 
-    <?php if (isset($status_change_notice)) {
-        echo $status_change_notice;
-    } ?>
+<?php
+if (isset($status_change_notice)) {
+    echo $status_change_notice;
+}
+?>
 
     <div class="available-tickets-container">
         <h3 class="event-tickets-datetimes-title"><span data-target=".event-tickets-container"
