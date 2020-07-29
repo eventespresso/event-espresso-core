@@ -450,10 +450,10 @@
 
 /*archived*/
 .tkt-status-TKA {
-    border-color: var(--ee-status-color-yellow); /* prev: #8A549A */
+    border-color: var(--ee-status-color-charcoal); /* prev: #8A549A */
 }
 .ee-status-legend-TKA {
-    background-color: var(--ee-status-color-yellow); /* prev: #8A549A */
+    background-color: var(--ee-status-color-charcoal); /* prev: #8A549A */
 }
 
 /*expired*/
