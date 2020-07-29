@@ -8,6 +8,15 @@
 /****                                               ****/
 /*******************************************************/
 
+:root {
+    --ee-status-color-blue: #297abc;
+    --ee-status-color-charcoal: #3c3c3c;
+    --ee-status-color-green: #91ab30;
+    --ee-status-color-grey: #888888;
+    --ee-status-color-pink: #de5882;
+    --ee-status-color-purple: #795d9d;
+    --ee-status-color-yellow: #f6bd00;
+}
 
 /******************* DASHICONS ****************** */
 
@@ -561,13 +570,14 @@ input.ee-register-button {
 	-webkit-box-shadow: none;
 	box-shadow: none;
 }
-.ee-status.event-active-status-DTS { background-color: #FCB93C; }
-.ee-status.event-active-status-DTA { background-color: #70CC50; }
-.ee-status.event-active-status-DTU { background-color: #00B1CA; }
-.ee-status.event-active-status-DTP { background-color: #8A549A; }
-.ee-status.event-active-status-DTC { background-color: #E44064; }
-.ee-status.event-active-status-DTE { background-color: #A39D9C; }
-.ee-status.event-active-status-DTI { background-color: #403A3A; }
+
+.ee-status.event-active-status-DTU { background-color: var(--ee-status-color-blue); } /* prev: #00B1CA */
+.ee-status.event-active-status-DTA { background-color: var(--ee-status-color-green); } /* prev: #70CC50 */
+.ee-status.event-active-status-DTS { background-color: var(--ee-status-color-purple); } /* prev: #FCB93C */
+.ee-status.event-active-status-DTP { background-color: var(--ee-status-color-yellow); } /* prev: #8A549A */
+.ee-status.event-active-status-DTC { background-color: var(--ee-status-color-pink); } /* prev: #E44064 */
+.ee-status.event-active-status-DTE { background-color: var(--ee-status-color-grey); } /* prev: #A39D9C */
+.ee-status.event-active-status-DTI { background-color: var(--ee-status-color-charcoal); } /* prev: #403A3A */
 
 
 .ee-status-size-12 { font-size: 12px; }

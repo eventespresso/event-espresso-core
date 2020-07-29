@@ -1,3 +1,13 @@
+:root {
+    --ee-status-color-blue: #297abc;
+    --ee-status-color-charcoal: #3c3c3c;
+    --ee-status-color-green: #91ab30;
+    --ee-status-color-grey: #888888;
+    --ee-status-color-pink: #de5882;
+    --ee-status-color-purple: #795d9d;
+    --ee-status-color-yellow: #f6bd00;
+}
+
 #Events_Admin_List_Table-table-frm .column-id,
 #Extend_Events_Admin_List_Table-table-frm .column-id { width:5%; }
 #Events_Admin_List_Table-table-frm .column-name,
@@ -115,37 +125,37 @@
 
 /** sold out **/
 .event-active-status-DTS, .ee-status-legend-DTS {
-	background-color: #FCB93C;
+	background-color: var(--ee-status-color-purple);  /* prev: #FCB93C */
 }
 
 /** active **/
 .event-active-status-DTA, .ee-status-legend-DTA {
-	background-color: #70CC50;
+	background-color: var(--ee-status-color-green);  /* prev: #70CC50 */
 }
 
 /** upcoming **/
 .event-active-status-DTU, .ee-status-legend-DTU {
-	background-color: #00B1CA;
+	background-color: var(--ee-status-color-blue);  /* prev: #00B1CA */
 }
 
 /** postponed **/
 .event-active-status-DTP, .ee-status-legend-DTP {
-	background-color: #8A549A;
+	background-color: var(--ee-status-color-yellow);  /* prev: #8A549A */
 }
 
 /** cancelled **/
 .event-active-status-DTC, .ee-status-legend-DTC {
-	background-color: #E44064;
+	background-color: var(--ee-status-color-pink);  /* prev: #E44064 */
 }
 
 /** expired **/
 .event-active-status-DTE, .ee-status-legend-DTE {
-	background-color: #AC9D9C;
+	background-color: var(--ee-status-color-grey);  /* prev: #AC9D9C */
 }
 
 /** inactive **/
 .event-active-status-DTI, .ee-status-legend-DTI {
-	background-color: #403A3A;
+	background-color: var(--ee-status-color-charcoal);  /* prev: #403A3A */
 }
 
 
@@ -153,31 +163,31 @@
 /**status strips**/
 .event-status-DTS,
 .event-status-DTS .check-column {
-	border-left-color: #FCB93C;
+	border-left-color: var(--ee-status-color-purple);  /* prev: #FCB93C */
 }
 .event-status-DTA,
 .event-status-DTA .check-column {
-	border-left-color: #70CC50;
+	border-left-color:  var(--ee-status-color-green);  /* prev: #70CC50 */
 }
 .event-status-DTU,
 .event-status-DTU .check-column {
-	border-left-color: #00B1CA;
+	border-left-color: var(--ee-status-color-blue);  /* prev: #00B1CA */
 }
 .event-status-DTP,
 .event-status-DTP .check-column {
-	border-left-color: #8A549A;
+	border-left-color: var(--ee-status-color-yellow);  /* prev: #8A549A */
 }
 .event-status-DTC,
 .event-status-DTC .check-column {
-	border-left-color: #E44064;
+	border-left-color: var(--ee-status-color-pink);  /* prev: #E44064 */
 }
 .event-status-DTE,
 .event-status-DTE .check-column {
-	border-left-color: #AC9D9C;
+	border-left-color: var(--ee-status-color-grey);  /* prev: #AC9D9C */
 }
 .event-status-DTI,
 .event-status-DTI .check-column {
-	border-left-color: #403A3A;
+	border-left-color: var(--ee-status-color-charcoal);  /* prev: #403A3A */
 }
 
 
