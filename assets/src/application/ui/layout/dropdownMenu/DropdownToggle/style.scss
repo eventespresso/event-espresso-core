@@ -1,6 +1,6 @@
 button.ee-dropdown-menu__toggle {
-	background: none !important;
-	border-color: transparent;
+	// border-color: transparent;
+	box-sizing: border-box;
 	display: inline-flex;
 	height: calc(var(--ee-icon-button-size) + 2px);
 	margin: 0;

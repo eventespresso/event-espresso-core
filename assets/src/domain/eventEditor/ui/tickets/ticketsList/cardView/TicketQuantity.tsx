@@ -24,7 +24,7 @@ const TicketQuantity: React.FC<TicketItemProps> = ({ entity: ticket }) => {
 		<InlineEditInfinity
 			onChangeValue={onChange}
 			value={`${ticket.quantity}`}
-			tooltip={__('Click to edit quantity...')}
+			tooltip={__('edit quantity of tickets available...')}
 		/>
 	);
 };

@@ -18,7 +18,7 @@ const Preview: React.FC<PreviewProps> = ({ value, onRequestEdit, isEditing, ...p
 		return null;
 	}
 
-	const output = isInfinity ? '∞' : value;
+	const output = isInfinity ? <span className={'ee-infinity-sign__inner'}>{'∞'}</span> : value;
 
 	return <TabbableText {...props} className={className} onRequestEdit={onRequestEdit} text={output} />;
 };

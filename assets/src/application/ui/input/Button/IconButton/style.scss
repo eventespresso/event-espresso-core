@@ -26,11 +26,13 @@
 
 .ee-btn-base {
 	&.ee-icon-button {
-		background: none;
+		background: rgba(192, 192, 192, 0.25);
 		border-color: var(--ee-border-color);
+		border-radius: var(--ee-border-radius-small);
 		border-style: solid;
 		border-width: 3px;
 		box-shadow: none !important;
+		box-sizing: border-box;
 		color: var(--ee-default-text-color);
 		display: inline-flex;
 		height: var(--ee-icon-button-size);
@@ -40,6 +42,10 @@
 		padding: var(--ee-padding-micro);
 		top: 0;
 		width: var(--ee-icon-button-size);
+
+		&--link {
+			background: transparent;
+		}
 
 		svg {
 			display: inline-block;
@@ -70,6 +76,8 @@
 
 		&-color {
 			&--white {
+				background: rgba(255, 255, 255, 0.25);
+
 				svg {
 					color: var(--ee-color-white);
 				}

@@ -33,7 +33,7 @@ const EditablePrice: React.FC<EditablePriceProps> = ({ entity: ticket, className
 			wrapperProps={wrapperProps}
 			onChange={onChangePrice}
 			tag={'h3'}
-			tooltip={__('Click to edit ticket total...')}
+			tooltip={__('edit ticket total...')}
 		/>
 	);
 };

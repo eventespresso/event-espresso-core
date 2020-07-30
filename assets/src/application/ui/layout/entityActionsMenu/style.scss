@@ -6,6 +6,10 @@
 	&--horizontal {
 		flex-direction: row;
 		justify-content: flex-start;
+
+		.ee-btn-base.ee-icon-button {
+			margin: 0 var(--ee-margin-tiny) 0 0;
+		}
 	}
 
 	&--vertical {
@@ -16,6 +20,10 @@
 		@include max480px {
 			flex-direction: row;
 			justify-content: center;
+		}
+
+		.ee-btn-base.ee-icon-button {
+			margin: 0 0 var(--ee-margin-tiny);
 		}
 	}
 

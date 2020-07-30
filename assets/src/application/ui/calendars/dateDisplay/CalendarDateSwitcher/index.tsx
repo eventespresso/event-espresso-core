@@ -12,10 +12,14 @@ const CalendarDateSwitcher: React.FC<CalendarDateSwitcherProps> = React.memo(
 	({ className, displayDate = DisplayStartOrEndDate.start, labels, ...props }) => {
 		const startDate = parseISO(props.startDate) || PLUS_ONE_MONTH;
 		const endDate = parseISO(props.endDate) || PLUS_TWO_MONTHS;
-		const { footer = '', footerPast, footerFuture, header = '', headerPast, headerFuture } = labels;
-		const footerText = footerPast && footerFuture ? switchTenseForDate(endDate, footerPast, footerFuture) : footer;
-		const headerText =
-			headerPast && headerFuture ? switchTenseForDate(startDate, headerPast, headerFuture) : header;
+
+		let headerText = '';
+		let footerText = '';
+		if (labels) {
+			const { footer = '', footerPast, footerFuture, header = '', headerPast, headerFuture } = labels;
+			footerText = footerPast && footerFuture ? switchTenseForDate(endDate, footerPast, footerFuture) : footer;
+			headerText = headerPast && headerFuture ? switchTenseForDate(startDate, headerPast, headerFuture) : header;
+		}
 
 		const start = (
 			<BiggieCalendarDate

@@ -3,7 +3,7 @@
  * © 2018 Event Espresso
  * ------------------------------------------------------------------------- */
 
-@import 'application/ui/styles/mixins/breakpoints.scss';
+@import '../../styles/mixins/breakpoints.scss';
 
 .ee-entity-details-panel {
 	align-self: flex-start;
@@ -73,10 +73,11 @@
 		}
 
 		&__value {
-			font-weight: bold;
+			font-weight: 600;
 			margin-bottom: 0;
 
 			.ee-entity-list__card-view & {
+				font-weight: 700;
 				margin-bottom: -0.2rem;
 			}
 
