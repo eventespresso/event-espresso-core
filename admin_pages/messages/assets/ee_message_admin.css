@@ -31,7 +31,7 @@
 }
 
 .mtp-inactive {
-    color: #AC9D93;
+    color: var(--ee-status-color-grey);
 }
 
 /** editor styles **/
@@ -80,7 +80,7 @@
 }
 
 .mtp-inactive {
-    color: #AC9D93;
+    color: var(--ee-status-color-grey);
 }
 
 
@@ -111,16 +111,18 @@
     width: 14%;
 }
 
-#Messages_Template_List_Table-table-frm .column-messenger, #Custom_Messages_Template_List_Table-table-frm .column-messenger {
-    width: 14%;
+#Messages_Template_List_Table-table-frm .column-messenger,
+#Custom_Messages_Template_List_Table-table-frm .column-messenger {
+    width: 30%;
 }
 
-#Messages_Template_List_Table-table-frm .column-message_type, #Custom_Messages_Template_List_Table-table-frm .column-message_type {
-    width: 12%;
+#Messages_Template_List_Table-table-frm .column-message_type,
+#Custom_Messages_Template_List_Table-table-frm .column-message_type {
+    width: 15%;
 }
 
 #Messages_Template_List_Table-table-frm .column-description {
-    width: 60%;
+    width: 40%;
 }
 
 #Custom_Messages_Template_List_Table-table-frm .column-description {
@@ -141,79 +143,84 @@
 }
 
 
-/** status sent **/
-.msg-status-MSN,
-.msg-status-MSN .check-column {
-    border-left-color: #70CC50;
+
+/** status incomplete (queued for generation) **/
+.msg-status-MIC,
+.msg-status-MIC .check-column {
+    border-left-color: var(--ee-status-color-grey);  /* prev: #A39D9C */
 }
-.ee-status-legend-MSN {
-    background-color: #70CC50;
+.ee-status-legend-MIC {
+    background-color: var(--ee-status-color-grey);  /* prev: #A39D9C */
 }
+
 
 /** status idle (queued for sending) **/
 .msg-status-MID,
 .msg-status-MID .check-column {
-    border-left-color: #00B1CA;
+    border-left-color: var(--ee-status-color-light-blue); /* prev: #00B1CA */
 }
 .ee-status-legend-MID {
-    background-color: #00B1CA;
-}
-
-
-/** status failed **/
-.msg-status-MFL,
-.msg-status-MFL .check-column {
-    border-left-color: #E44064;
-}
-.ee-status-legend-MFL {
-    background-color: #E44064;
-}
-
-/** status failed **/
-.msg-status-MEX,
-.msg-status-MEX .check-column {
-    border-left-color: #ff6faa;
-}
-.ee-status-legend-MEX {
-    background-color: #ff6faa;
-}
-
-.msg-status-MDO,
-.msg-status-MDO .check-column {
-    border-left-color: #D2D405;
-}
-.ee-status-legend-MDO {
-    background-color: #D2D405;
+    background-color: var(--ee-status-color-light-blue); /* prev: #00B1CA */
 }
 
 
 /** status resend (queued for resending) **/
 .msg-status-MRS,
 .msg-status-MRS .check-column {
-    border-left-color: #FCB93C;
+    border-left-color: var(--ee-status-color-blue); /* prev: #FCB93C */
 }
 .ee-status-legend-MRS {
-    background-color: #FCB93C;
+    background-color: var(--ee-status-color-blue); /* prev: #FCB93C */
 }
 
 
-/** status incomplete (queued for generation) **/
-.msg-status-MIC,
-.msg-status-MIC .check-column {
-    border-left-color: #A39D9C;
+/** status executing **/
+.msg-status-MEX,
+.msg-status-MEX .check-column {
+    border-left-color: var(--ee-status-color-green);  /* prev: #ff6faa */
 }
-.ee-status-legend-MIC {
-    background-color: #A39D9C;
+.ee-status-legend-MEX {
+    background-color: var(--ee-status-color-green);  /* prev: #ff6faa */
+}
+
+
+/** status sent **/
+.msg-status-MSN,
+.msg-status-MSN .check-column {
+    border-left-color: var(--ee-status-color-dark-green);  /* prev: #70CC50 */
+}
+.ee-status-legend-MSN {
+    background-color: var(--ee-status-color-dark-green);  /* prev: #70CC50 */
+}
+
+
+/** status failed **/
+.msg-status-MFL,
+.msg-status-MFL .check-column {
+    border-left-color: var(--ee-status-color-pink);  /* prev: #E44064 */
+}
+.ee-status-legend-MFL {
+    background-color: var(--ee-status-color-pink);  /* prev: #E44064 */
+}
+
+
+/** status debug ? **/
+.msg-status-MDO,
+.msg-status-MDO .check-column {
+    border-left-color: var(--ee-status-color-red);  /* prev: #D2D405 */;
+}
+.ee-status-legend-MDO {
+    background-color: var(--ee-status-color-red);  /* prev: #D2D405 */;
 }
 
 
 /** status retry (failed sending but can be retried) **/
 .msg-status-MRT,
 .msg-status-MRT .check-column {
-    border-left-color: #E76700;
+    border-left-color: var(--ee-status-color-orange); /* prev: #E76700 */
 }
 .ee-status-legend-MRT {
-    background-color: #E76700;
+    background-color: var(--ee-status-color-orange); /* prev: #E76700 */
 }
 
 
@@ -242,14 +249,16 @@ h4 + .ee-messages-shortcodes-chooser {
     width: 250px;
     overflow: scroll;
     padding: 15px;
-    border: 1px grey solid;
+    border: 1px var(--ee-status-color-grey) solid;
 }
 
 .ee_shortcode_chooser_container li:last-of-type {
     padding-bottom: 15px;
 }
 
-#ee-msg-edit-frm .admin-primary-mbox-dv input[type="text"], #ee-msg-edit-frm .admin-primary-mbox-dv .wp-editor-wrap, #ee-msg-edit-frm .admin-primary-mbox-dv textarea {
+#ee-msg-edit-frm .admin-primary-mbox-dv input[type="text"],
+#ee-msg-edit-frm .admin-primary-mbox-dv .wp-editor-wrap,
+#ee-msg-edit-frm .admin-primary-mbox-dv textarea {
     width: 94%;
 }
 

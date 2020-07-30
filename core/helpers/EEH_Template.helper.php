@@ -683,7 +683,7 @@ class EEH_Template
         foreach ($setup_array as $item => $details) {
             $active_class = $active_status == $details['status'] ? ' class="ee-is-active-status"' : '';
             $content .= '<dt id="ee-legend-item-tooltip-' . $item . '"' . $active_class . '>' . "\n\t\t";
-            $content .= '<span class="' . $details['class'] . '"></span>' . "\n\t\t";
+            $content .= '<span class="ee-legend-item-wrap"><span class="' . $details['class'] . '"></span></span>' . "\n\t\t";
             $content .= '<span class="ee-legend-description">' . $details['desc'] . '</span>' . "\n\t";
             $content .= '</dt>' . "\n";
         }

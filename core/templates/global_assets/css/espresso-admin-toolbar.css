@@ -1,3 +1,22 @@
+:root {
+    --ee-status-color-red: #fc1922;
+    --ee-status-color-pink: #e65983;
+    --ee-status-color-orange: #ff582c;
+    --ee-status-color-gold: #fdad02;
+    --ee-status-color-yellow: #fad800;
+    --ee-status-color-green: #7ab540;
+    --ee-status-color-green-high-contrast: #699f34;
+    --ee-status-color-dark-green: #01873a;
+    --ee-status-color-dark-green-low-contrast: #02ac4a;
+    --ee-status-color-light-blue: #94d5ff;
+    --ee-status-color-blue: #008dcb;
+    --ee-status-color-purple: #795d9d;
+    --ee-status-color-light-grey: #d4d4d4;
+    --ee-status-color-grey: #9b9b9b;
+    --ee-status-color-dark-grey: #626262;
+    --ee-status-color-charcoal: #292929;
+}
+
 #wp-admin-bar-espresso-toolbar-events-add-edit .ab-empty-item,
 #wp-admin-bar-espresso-toolbar-registrations-today .ab-empty-item {
     border-top: none !important;

@@ -279,23 +279,23 @@
 
 .datetime-ticket.ticket-status-TKS {
     background-color: transparent;
-    border-left: solid 4px #FCB93C;
+    border-left: solid 4px var(--ee-status-color-purple);  /* prev: #FCB93C */
 }
 .datetime-ticket.ticket-status-TKO {
     background-color: transparent;
-    border-left: solid 4px #70CC50;
+    border-left: solid 4px var(--ee-status-color-green); /* prev: #70CC50 */
 }
 .datetime-ticket.ticket-status-TKP {
     background-color: transparent;
-    border-left: solid 4px #00B1CA;
+    border-left: solid 4px var(--ee-status-color-blue); /* prev: #00B1CA */
 }
 .datetime-ticket.ticket-status-TKA{
     background-color: transparent;
-    border-left: solid 4px #8A549A;
+    border-left: solid 4px var(--ee-status-color-yellow); /* prev: #8A549A */
 }
 .datetime-ticket.ticket-status-TKE {
     background-color: transparent;
-    border-left: solid 4px #A39D9C;
+    border-left: solid 4px var(--ee-status-color-grey); /* prev: #A39D9C */
 }
 
 
@@ -306,20 +306,20 @@
 }
 
 .ticket-selected {
-    background-color: #9d7;
+    background-color: var(--ee-status-color-dark-green);
 }
 
 /**
  * ticket selected background color for various wp3.8+ admin themes
  */
-.admin-color-fresh .ticket-selected { background-color: #333; color: #fff;}
-.admin-color-light .ticket-selected { background-color:  #999; color: #fff;}
-.admin-color-blue .ticket-selected { background-color: #4796b3; color: #fff;}
-.admin-color-coffee .ticket-selected { background-color: #59524c; color: #fff;}
-.admin-color-ectoplasm .ticket-selected { background-color: #523f6d; color: #fff;}
-.admin-color-midnight .ticket-selected { background-color: #363b3f; color: #fff;}
-.admin-color-ocean .ticket-selected { background-color: #738e96; color: #fff;}
-.admin-color-sunrise .ticket-selected { background-color: #cf4944; color: #fff;}
+.admin-color-fresh .ticket-selected { background-color: var(--ee-status-color-charcoal); color: #fff;}
+.admin-color-light .ticket-selected { background-color: var(--ee-status-color-grey); color: #fff;}
+.admin-color-blue .ticket-selected { background-color: var(--ee-status-color-blue); color: #fff;}
+.admin-color-coffee .ticket-selected { background-color: var(--ee-status-color-dark-grey); color: #fff;}
+.admin-color-ectoplasm .ticket-selected { background-color: var(--ee-status-color-purple); color: #fff;}
+.admin-color-midnight .ticket-selected { background-color: var(--ee-status-color-charcoal); color: #fff;}
+.admin-color-ocean .ticket-selected { background-color: var(--ee-status-color-light-blue); color: #fff;}
+.admin-color-sunrise .ticket-selected { background-color: var(--ee-status-color-orange); color: #fff;}
 
 .event-tickets-container {
     width: 100%;
@@ -424,38 +424,44 @@
      height: 1.4em;*/
 }
 
+/* sold out */
 .tkt-status-TKS {
-    border-color: #FCB93C; /*soldout*/
+    border-color: var(--ee-status-color-purple);  /* prev: #FCB93C */
 }
-.tkt-status-TKO {
-    border-color: #70CC50; /*onsale*/
-}
-.tkt-status-TKP {
-    border-color: #00B1CA; /*pending*/
-}
-.tkt-status-TKA{
-    border-color: #8A549A; /*archived*/
-}
-.tkt-status-TKE {
-    border-color: #A39D9C; /*expired*/
-}
-
-
-
 .ee-status-legend-TKS {
-    background-color: #FCB93C;
+    background-color: var(--ee-status-color-purple);  /* prev: #FCB93C */
+}
+
+/* on sale */
+.tkt-status-TKO {
+    border-color: var(--ee-status-color-green); /* prev: #70CC50 */
 }
 .ee-status-legend-TKO {
-    background-color: #70CC50;
+    background-color: var(--ee-status-color-green); /* prev: #70CC50 */
+}
+
+/*pending*/
+.tkt-status-TKP {
+    border-color: var(--ee-status-color-blue); /* prev: #00B1CA */
 }
 .ee-status-legend-TKP {
-    background-color: #00B1CA;
+    background-color: var(--ee-status-color-blue); /* prev: #00B1CA */
 }
-.ee-status-legend-TKA{
-    background-color: #8A549A;
+
+/*archived*/
+.tkt-status-TKA {
+    border-color: var(--ee-status-color-charcoal); /* prev: #8A549A */
+}
+.ee-status-legend-TKA {
+    background-color: var(--ee-status-color-charcoal); /* prev: #8A549A */
+}
+
+/*expired*/
+.tkt-status-TKE {
+    border-color: var(--ee-status-color-grey); /* prev: #A39D9C */
 }
 .ee-status-legend-TKE {
-    background-color: #A39D9C;
+    background-color: var(--ee-status-color-grey); /* prev: #A39D9C */
 }
 
 

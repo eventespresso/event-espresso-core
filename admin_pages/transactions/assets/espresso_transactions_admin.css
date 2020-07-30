@@ -10,18 +10,18 @@
 .datepicker { width:125px; }
 
 /* green text */
-.status-TCM { color:#70CC50; font-size:.85em; font-weight:bold; }
-.txn-overview-full-payment-spn { color:#70CC50;  }
+.status-TCM { color:var(--ee-status-color-green); /* prev: #70CC50 */ font-size:.85em; font-weight:bold; }
+.txn-overview-full-payment-spn { color:var(--ee-status-color-green); /* prev: #70CC50 */  }
 /* blue text */
-.status-TIN { color:#00B1CA; font-size:.85em; font-weight:bold; }
-.txn-overview-part-payment-spn { color:#00B1CA; font-weight:bold;  }
+.status-TIN { color:var(--ee-status-color-blue); /* prev: #00B1CA */ font-size:.85em; font-weight:bold; }
+.txn-overview-part-payment-spn { color:var(--ee-status-color-blue); /* prev: #00B1CA */ font-weight:bold;  }
 /* orange text */
-.status-TOP { color:#E76700; font-size:.85em; font-weight:bold; }
-.txn-overview-no-payment-spn { color:#E76700; font-weight:bold; }
+.status-TOP { color:var(--ee-status-color-orange); /* prev: #E76700 */ font-size:.85em; font-weight:bold; }
+.txn-overview-no-payment-spn { color:var(--ee-status-color-orange); /* prev: #E76700 */ font-weight:bold; }
 /* red text */
-.status-TFL { color:#E44064; font-size:.85em; }
+.status-TFL { color:var(--ee-status-color-pink);  /* prev: #E44064 */ font-size:.85em; }
 /* yellow text */
-.status-TAB { color:#FCB93C; font-size:.85em; }
+.status-TAB { color:var(--ee-status-color-yellow);  /* prev: #FCB93C */ font-size:.85em; }
 
 /**
  * status strips
@@ -37,20 +37,20 @@
 .txn-status-TCM,
 .pymt-status-PAP,
 .txn-status-TCM td:first-child {
-    border-left-color: #70CC50;
+    border-left-color: var(--ee-status-color-green); /* prev: #70CC50 */
 }
 
 .reg-status-RIC,
 .txn-status-TAB,
 .txn-status-TAB td:first-child  {
-    border-left-color: #FCB93C;
+    border-left-color: var(--ee-status-color-yellow);  /* prev: #FCB93C */
 }
 /*txn incomplete, pymt declined*/
 .reg-status-RDC,
 .txn-status-TFL,
 .pymt-status-PDC,
 .txn-status-TFL td:first-child {
-    border-left-color: #E44064;
+    border-left-color: var(--ee-status-color-pink);  /* prev: #E44064 */
 }
 
 /*txn open, pymt pending*/
@@ -58,7 +58,7 @@
 .txn-status-TIN,
 .pymt-status-PPN,
 .txn-status-TIN td:first-child {
-    border-left-color: #00B1CA;
+    border-left-color: var(--ee-status-color-blue); /* prev: #00B1CA */
 }
 
 /*txn overpaid, pymt fail*/
@@ -66,13 +66,13 @@
 .txn-status-TOP,
 .pymt-status-PFL,
 .txn-status-TOP td:first-child {
-    border-left-color: #E76700;
+    border-left-color: var(--ee-status-color-orange); /* prev: #E76700 */
 }
 
 /*pymt cancelled*/
 .reg-status-RCN,
 .pymt-status-PCN {
-    border-left-color: #A39D9C;
+    border-left-color: var(--ee-status-color-grey);  /* prev: #A39D9C */
 }
 
 
@@ -94,30 +94,30 @@
 /** txn & payment status legend **/
 .ee-status-legend-TCM,
 .ee-status-legend-PAP {
-    background-color: #70CC50;
+    background-color: var(--ee-status-color-green); /* prev: #70CC50 */
 }
 
 .ee-status-legend-TAB  {
-    background-color: #FCB93C;
+    background-color: var(--ee-status-color-yellow);  /* prev: #FCB93C */
 }
 
 .ee-status-legend-TFL,
 .ee-status-legend-PDC {
-    background-color: #E44064;
+    background-color: var(--ee-status-color-pink);  /* prev: #E44064 */
 }
 
 .ee-status-legend-TIN,
 .ee-status-legend-PPN {
-    background-color: #00B1CA;
+    background-color: var(--ee-status-color-blue); /* prev: #00B1CA */
 }
 
 .ee-status-legend-TOP,
 .ee-status-legend-PFL {
-    background-color: #E76700;
+    background-color: var(--ee-status-color-orange); /* prev: #E76700 */
 }
 
 .ee-status-legend-PCN {
-    background-color: #A39D9C;
+    background-color: var(--ee-status-color-grey);  /* prev: #A39D9C */
 }
 
 
@@ -256,12 +256,12 @@ td.column-TXN_ID { padding: 4px 7px  29px; }
 .admin-modal-dialog-inner label { display:inline-block; float:left; width:250px; padding-top:.4em; margin:0 1em .5em 0; vertical-align:top; font-weight: bold; }
 .admin-modal-dialog-inner .txn-admin-payment-reg-to-apply-lbl { width:auto; font-weight: normal; }
 .admin-modal-dialog-inner .left-250 { display:inline-block; padding-left:250px; margin-left:1em; }
-.admin-modal-dialog-inner .description { vertical-align:top; color: #787878; }
+.admin-modal-dialog-inner .description { vertical-align:top; color: var(--ee-status-color-grey); }
 .admin-modal-dialog-inner input,
 .admin-modal-dialog-inner select { vertical-align:top; }
-.validation-notice-dv { display:none; padding:0 0 0 250px; margin-left:1em; color:red; }
+.validation-notice-dv { display:none; padding:0 0 0 250px; margin-left:1em; color: var(--ee-status-color-red); }
 
-.requires-value { border:1px solid #FE2A00 !important; }
+.requires-value { border:1px solid var(--ee-status-color-red) !important; }
 
 /*.admin-modal-dialog-inner label.last { margin-bottom:8em; }*/
 
@@ -311,7 +311,7 @@ td.column-TXN_ID { padding: 4px 7px  29px; }
 }
 
 #txn-admin-transaction-attendees-table .reg-status-RCN {
-	color: #999;
+	color: var(--ee-status-color-grey);
 }
 
 #additional-transaction-actions-dv ul li {

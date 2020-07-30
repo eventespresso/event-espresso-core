@@ -6,6 +6,13 @@ $per_col = isset($per_column) ? $per_column : 5;
 $count = 1;
 ?>
 <div class="ee-list-table-legend-container">
+
+<?php
+if (isset($status_change_notice)) {
+    echo $status_change_notice;
+}
+?>
+
     <h3><?php _e('Legend', 'event_espresso'); ?></h3>
     <dl class="alignleft ee-list-table-legend">
         <?php foreach ($items as $item => $details) : ?>
@@ -17,18 +24,19 @@ $count = 1;
         endif; ?>
         <dt id="ee-legend-item-<?php echo $item; ?>">
             <?php $class = ! empty($details['class']) ? $details['class'] : 'ee-legend-img-container'; ?>
+            <span class="ee-legend-item-wrap">
             <?php
             if (strpos($details['class'], '<span') !== false) {
                 echo $class;
             } else { ?>
-            <span class="<?php echo $class; ?>">
-                <?php if (! empty($details['icon'])) : ?>
-                    <img src="<?php echo $details['icon']; ?>" class="ee-legend-icon"
-                         alt="<?php echo esc_attr($details['desc']); ?>"/>
-                <?php endif; ?>
+                <span class="<?php echo $class; ?>">
+                    <?php if (! empty($details['icon'])) : ?>
+                        <img src="<?php echo $details['icon']; ?>" class="ee-legend-icon"
+                             alt="<?php echo esc_attr($details['desc']); ?>"/>
+                    <?php endif; ?>
+                </span>
+            <?php } ?>
             </span>
-        <?php
-            } ?>
             <span class="ee-legend-description"><?php echo $details['desc']; ?></span>
         </dt>
         <?php $count++;

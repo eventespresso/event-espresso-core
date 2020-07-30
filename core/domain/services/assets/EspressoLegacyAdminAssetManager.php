@@ -56,11 +56,6 @@ class EspressoLegacyAdminAssetManager extends AssetManager
             true,
             EVENT_ESPRESSO_VERSION
         );
-        // joyride is turned OFF by default, but prior to the admin_enqueue_scripts hook,
-        // can be turned back on again via: add_filter('FHEE_load_joyride', '__return_true' );
-        if (! $joyride) {
-            return;
-        }
         // register cookie script for future dependencies
         $this->addJavascript(
             EspressoLegacyAdminAssetManager::JS_HANDLE_JQUERY_COOKIE,
@@ -69,6 +64,12 @@ class EspressoLegacyAdminAssetManager extends AssetManager
             true,
             '2.1'
         );
+        $this->loadQtipJs();
+        // joyride is turned OFF by default, but prior to the admin_enqueue_scripts hook,
+        // can be turned back on again via: add_filter('FHEE_load_joyride', '__return_true' );
+        if (! $joyride) {
+            return;
+        }
         $this->addJavascript(
             EspressoLegacyAdminAssetManager::JS_HANDLE_JOYRIDE_MODERNIZR,
             EE_THIRD_PARTY_URL . 'joyride/modernizr.mq.js',
@@ -87,7 +88,6 @@ class EspressoLegacyAdminAssetManager extends AssetManager
             '2.1',
             true
         )->enqueueAsset();
-        $this->loadQtipJs();
     }
 
 

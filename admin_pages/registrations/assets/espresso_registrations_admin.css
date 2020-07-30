@@ -16,15 +16,15 @@
 
 .status-TCM,
 .status-RAP,
-.reg-overview-full-payment-spn { color : #090; font-weight : bold; }
+.reg-overview-full-payment-spn { color : var(--ee-status-color-dark-green); font-weight : bold; }
 
 .status-TPN,
 .status-RPP,
-.reg-overview-part-payment-spn { color : #F93; font-weight : bold; }
+.reg-overview-part-payment-spn { color : var(--ee-status-color-orange); font-weight : bold; }
 
 .status-TFL, .status-TIN, .status-TOP,
 .status-RCN, .status-RFL, .status-RNA,
-.reg-overview-no-payment-spn { color : #F00; font-weight : bold; }
+.reg-overview-no-payment-spn { color : var(--ee-status-color-red); font-weight : bold; }
 
 /*.status-RAP, .status-RPP, .status-RCN, .status-RFL, .status-RNA { font-size : .9em; }*/
 
@@ -310,13 +310,14 @@
     }
 }
 
+
 /*pending payment*/
 .reg-status-RPP,
 .button-secondary.reg-status-RPP,
 .button-primary.reg-status-RPP,
 .reg-status-RPP ._REG_att_checked_in,
 .reg-status-RPP .check-column{
-    border-left-color : #00B1CA;
+    border-left-color : var(--ee-status-color-blue); /* prev: #00B1CA */
 }
 
 /*cancelled*/
@@ -326,7 +327,7 @@
 .button-primary.reg-status-RCN,
 .reg-status-RCN ._REG_att_checked_in,
 .reg-status-RCN .check-column{
-    border-left-color : #AC9D9C;
+    border-left-color : var(--ee-status-color-grey);  /* prev: #AC9D9C */
 }
 
 /*declined*/
@@ -335,7 +336,7 @@
 .button-primary.reg-status-RDC,
 .reg-status-RDC ._REG_att_checked_in,
 .reg-status-RDC .check-column{
-    border-left-color : #E44064;
+    border-left-color : var(--ee-status-color-pink);  /* prev: #E44064 */
 }
 
 /*approved*/
@@ -344,7 +345,7 @@
 .button-primary.reg-status-RAP,
 .reg-status-RAP ._REG_att_checked_in,
 .reg-status-RAP .check-column{
-    border-left-color : #70CC50;
+    border-left-color : var(--ee-status-color-green); /* prev: #70CC50 */
 }
 
 /*not-approved*/
@@ -353,7 +354,7 @@
 .button-primary.reg-status-RNA,
 .reg-status-RNA ._REG_att_checked_in,
 .reg-status-RNA .check-column{
-    border-left-color : #E76700;
+    border-left-color : var(--ee-status-color-orange); /* prev: #E76700 */
 }
 
 /*not-approved*/
@@ -362,7 +363,7 @@
 .button-primary.reg-status-RIC,
 .reg-status-RIC ._REG_att_checked_in,
 .reg-status-RIC .check-column{
-    border-left-color : #FCB93C;
+    border-left-color : var(--ee-status-color-yellow);  /* prev: #FCB93C */
 }
 
 /*wait-list*/
@@ -371,7 +372,7 @@
 .button-primary.reg-status-RWL,
 .reg-status-RWL ._REG_att_checked_in,
 .reg-status-RWL .check-column{
-    border-left-color : #8A549A;
+    border-left-color : var(--ee-status-color-purple);  /* prev: #8A549A */
 }
 
 .widefat td.column-_Reg_Status,
@@ -384,46 +385,46 @@
 
 /** reg status legend **/
 .ee-status-legend-RPP {
-    background-color : #00B1CA;
+    background-color : var(--ee-status-color-blue); /* prev: #00B1CA */
 }
 
 .ee-status-legend-RCN {
-    background-color : #AC9D9C;
+    background-color : var(--ee-status-color-grey);  /* prev: #AC9D9C */
 }
 
 .ee-status-legend-RDC {
-    background-color : #E44064;
+    background-color : var(--ee-status-color-pink);  /* prev: #E44064 */
 }
 
 .ee-status-legend-RAP {
-    background-color : #70CC50;
+    background-color : var(--ee-status-color-green); /* prev: #70CC50 */
 }
 
 .ee-status-legend-RNA {
-    background-color : #E76700;
+    background-color : var(--ee-status-color-orange); /* prev: #E76700 */
 }
 
 .ee-status-legend-RIC {
-    background-color : #FCB93C;
+    background-color : var(--ee-status-color-yellow);  /* prev: #FCB93C */
 }
 
 .ee-status-legend-RWL {
-    background-color : #8A549A;
+    background-color : var(--ee-status-color-purple);  /* prev: #8A549A */
 }
 
-.status-RPP { color : #00B1CA; }
+.status-RPP { color : var(--ee-status-color-blue); /* prev: #00B1CA */ }
 
-.status-RCN { color : #AC9D9C; }
+.status-RCN { color : var(--ee-status-color-grey);  /* prev: #AC9D9C */ }
 
-.status-RDC { color : #E44064; font-weight : bold; }
+.status-RDC { color : var(--ee-status-color-pink);  /* prev: #E44064 */ font-weight : bold; }
 
-.status-RAP { color : #70CC50; }
+.status-RAP { color : var(--ee-status-color-green); /* prev: #70CC50 */ }
 
-.status-RNA { color : #E76700; }
+.status-RNA { color : var(--ee-status-color-orange); /* prev: #E76700 */ }
 
-.status-RIC { color : #FCB93C; }
+.status-RIC { color : var(--ee-status-color-yellow);  /* prev: #FCB93C */ }
 
-.status-RWL { color : #8A549A; }
+.status-RWL { color : var(--ee-status-color-purple);  /* prev: #8A549A */ }
 
 #admin-primary-mbox-reg-details-dv .button {
     margin : 10px 0;

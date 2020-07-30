@@ -282,6 +282,6 @@ class CoreAssetManager extends AssetManager
     public function loadQtipJs(JavascriptAsset $script)
     {
         // replacement:
-        // \EventEspresso\core\domain\services\assets\EspressoAdminAssetManager::loadQtipJs
+        // EventEspresso\core\domain\services\assets\EspressoLegacyAdminAssetManager::loadQtipJs()
     }
 }
