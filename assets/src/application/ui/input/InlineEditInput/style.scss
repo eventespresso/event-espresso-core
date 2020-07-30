@@ -8,14 +8,13 @@
 
 		&.ee-infinity-sign {
 			color: var(--ee-default-text-color);
-			font-size: calc(var(--ee-font-size-default) * 1.75);
+			font-size: calc(var(--ee-font-size-default) * 1.6);
 			height: 2.625rem; // 42px
 			width: 2.625rem; // 42px
 
 			.ee-infinity-sign__inner {
-				font-weight: 600;
 				position: relative;
-				top: -3px;
+				top: -2px;
 			}
 
 			.ee-rspnsv-table & {
