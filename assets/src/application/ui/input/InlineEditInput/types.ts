@@ -15,6 +15,6 @@ export interface TabbableTextProps {
 	className?: string;
 	icon?: React.ReactNode;
 	onRequestEdit: VoidFunction;
-	text?: string;
+	text?: string | JSX.Element;
 	tooltip?: string;
 }
