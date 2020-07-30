@@ -13,7 +13,7 @@ export interface CalendarDateSwitcherProps {
 	className?: string;
 	displayDate: DisplayStartOrEndDate;
 	endDate: string;
-	labels: CalendarDateLabels;
+	labels?: CalendarDateLabels;
 	showDate?: boolean;
 	startDate: string;
 }

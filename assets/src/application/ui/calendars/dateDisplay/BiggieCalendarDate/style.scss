@@ -6,7 +6,6 @@
 	&__wrapper {
 		box-sizing: border-box;
 		color: var(--ee-color-white);
-		min-height: calc(var(--ee-padding-micro) * 45);
 		min-width: calc(var(--ee-padding-micro) * 34);
 		padding: var(--ee-padding-micro) var(--ee-padding-micro) 0;
 		text-align: center;
@@ -56,7 +55,8 @@
 
 		&__time {
 			font-size: var(--ee-font-size-smaller);
-			line-height: var(--ee-font-size-huge);
+			line-height: var(--ee-font-size-small);
+			margin: 0.5rem 0 0;
 		}
 	}
 
