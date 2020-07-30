@@ -34,7 +34,7 @@ const DateCapacity: React.FC<DateItemProps> = ({ entity: datetime }) => {
 		<InlineEditInfinity
 			onChangeValue={onChange}
 			value={`${datetime.capacity}`}
-			tooltip={__('Click to edit capacity...')}
+			tooltip={__('edit capacity (registration limit)...')}
 		/>
 	);
 };
