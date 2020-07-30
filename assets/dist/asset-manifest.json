@@ -47,9 +47,9 @@
     "registry.js.map": "/static/js/registry.9ba6a89b.js.map",
     "registry.php": "/static/js/registry.989d28b2.asset.php",
     "rruleGenerator.css": "/static/css/rruleGenerator.4f335c44.css",
-    "rruleGenerator.js": "/static/js/rruleGenerator.d35f13b1.js",
-    "rruleGenerator.js.map": "/static/js/rruleGenerator.d35f13b1.js.map",
-    "rruleGenerator.php": "/static/js/rruleGenerator.90a24a38.asset.php",
+    "rruleGenerator.js": "/static/js/rruleGenerator.509b7f08.js",
+    "rruleGenerator.js.map": "/static/js/rruleGenerator.509b7f08.js.map",
+    "rruleGenerator.php": "/static/js/rruleGenerator.e18990af.asset.php",
     "services.js": "/static/js/services.d274408b.js",
     "services.js.map": "/static/js/services.d274408b.js.map",
     "services.php": "/static/js/services.e4e9a1c4.asset.php",
@@ -89,7 +89,7 @@
     "static/js/data.af7bae22.js.LICENSE.txt": "/static/js/data.af7bae22.js.LICENSE.txt",
     "static/js/eventEditor.13cc95e0.js.LICENSE.txt": "/static/js/eventEditor.13cc95e0.js.LICENSE.txt",
     "static/js/form.af79c895.js.LICENSE.txt": "/static/js/form.af79c895.js.LICENSE.txt",
-    "static/js/rruleGenerator.d35f13b1.js.LICENSE.txt": "/static/js/rruleGenerator.d35f13b1.js.LICENSE.txt",
+    "static/js/rruleGenerator.509b7f08.js.LICENSE.txt": "/static/js/rruleGenerator.509b7f08.js.LICENSE.txt",
     "static/js/toaster.1cd53392.js.LICENSE.txt": "/static/js/toaster.1cd53392.js.LICENSE.txt",
     "static/js/tpc.e920b91d.js.LICENSE.txt": "/static/js/tpc.e920b91d.js.LICENSE.txt",
     "static/js/wpPluginsPage.74370444.js.LICENSE.txt": "/static/js/wpPluginsPage.74370444.js.LICENSE.txt"
@@ -130,7 +130,7 @@
     ],
     "rruleGenerator": [
       "static/css/rruleGenerator.4f335c44.css",
-      "static/js/rruleGenerator.d35f13b1.js"
+      "static/js/rruleGenerator.509b7f08.js"
     ],
     "services": [
       "static/js/services.d274408b.js"
