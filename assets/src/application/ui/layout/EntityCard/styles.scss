@@ -2,7 +2,7 @@
 
 .entity-card {
 	--ee-sidebar-width: 9rem;
-	--ee-menu-width: 4rem;
+	--ee-menu-width: 42px;
 
 	align-items: stretch;
 	box-sizing: border-box;
@@ -13,10 +13,12 @@
 		padding: 0;
 		width: var(--ee-sidebar-width);
 
-		.ee-biggie-calendar-date__footer {
+		.ee-ticket-status-label {
 			font-size: var(--ee-font-size-default);
 			font-weight: bolder;
 			letter-spacing: 1px;
+			padding: 0 0 0.5rem;
+			text-align: center;
 			text-transform: uppercase;
 		}
 
@@ -107,11 +109,10 @@
 	}
 
 	&__menu {
-		align-items: stretch;
-		box-sizing: border-box;
-		flex: 0 0 var(--ee-menu-width);
-		padding: var(--ee-padding-micro);
+		box-sizing: content-box;
+		padding: var(--ee-padding-tiny);
 		text-align: center;
+		width: var(--ee-menu-width);
 	}
 
 	@include max480px {
