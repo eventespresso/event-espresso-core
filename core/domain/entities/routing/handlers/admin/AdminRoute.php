@@ -62,7 +62,7 @@ class AdminRoute extends Route
      */
     public function matchesCurrentRequest()
     {
-        return $this->request->isAdmin() || $this->request->isActivation();
+        return $this->request->isAdmin() || $this->request->isAdminAjax() || $this->request->isActivation();
     }
 
 
