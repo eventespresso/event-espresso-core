@@ -12,6 +12,12 @@
 			height: 2.625rem; // 42px
 			width: 2.625rem; // 42px
 
+			.ee-infinity-sign__inner {
+				font-weight: 600;
+				position: relative;
+				top: -3px;
+			}
+
 			.ee-rspnsv-table & {
 				padding-bottom: 0;
 				padding-top: 0;
