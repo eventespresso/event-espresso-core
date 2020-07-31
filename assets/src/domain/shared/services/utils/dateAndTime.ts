@@ -73,7 +73,7 @@ const transformTime = (value: any, originalValue: any): Date => {
 };
 
 /**
- * sets year, month and date for a time value from the given date object
+ * sets year, month and date for a time value from the given date object.
  */
 export const updateTimeFromDate = (time: Date, date: Date): Date => {
 	// clone to avoid mutating the actual object
