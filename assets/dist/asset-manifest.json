@@ -1,9 +1,9 @@
 {
   "files": {
-    "adapters.css": "/static/css/adapters.ce6997eb.css",
-    "adapters.js": "/static/js/adapters.f19398ab.js",
-    "adapters.js.map": "/static/js/adapters.f19398ab.js.map",
-    "adapters.php": "/static/js/adapters.beff4e2f.asset.php",
+    "adapters.css": "/static/css/adapters.551d201a.css",
+    "adapters.js": "/static/js/adapters.3b99f7f6.js",
+    "adapters.js.map": "/static/js/adapters.3b99f7f6.js.map",
+    "adapters.php": "/static/js/adapters.f7ab3dab.asset.php",
     "blocks.css": "/static/css/blocks.609a154f.css",
     "blocks.js": "/static/js/blocks.d6efeb53.js",
     "blocks.js.map": "/static/js/blocks.d6efeb53.js.map",
@@ -73,7 +73,7 @@
     "wpPluginsPage.js": "/static/js/wpPluginsPage.74370444.js",
     "wpPluginsPage.js.map": "/static/js/wpPluginsPage.74370444.js.map",
     "wpPluginsPage.php": "/static/js/wpPluginsPage.49bee697.asset.php",
-    "static/css/adapters.ce6997eb.css.map": "/static/css/adapters.ce6997eb.css.map",
+    "static/css/adapters.551d201a.css.map": "/static/css/adapters.551d201a.css.map",
     "static/css/blocks.609a154f.css.map": "/static/css/blocks.609a154f.css.map",
     "static/css/components.eed73bcc.css.map": "/static/css/components.eed73bcc.css.map",
     "static/css/dates-table-view.90fb43a1.chunk.css.map": "/static/css/dates-table-view.90fb43a1.chunk.css.map",
@@ -84,7 +84,7 @@
     "static/css/toaster.73e4081f.css.map": "/static/css/toaster.73e4081f.css.map",
     "static/css/tpc.2f7fe2a8.css.map": "/static/css/tpc.2f7fe2a8.css.map",
     "static/css/wpPluginsPage.9b2fdbb0.css.map": "/static/css/wpPluginsPage.9b2fdbb0.css.map",
-    "static/js/adapters.f19398ab.js.LICENSE.txt": "/static/js/adapters.f19398ab.js.LICENSE.txt",
+    "static/js/adapters.3b99f7f6.js.LICENSE.txt": "/static/js/adapters.3b99f7f6.js.LICENSE.txt",
     "static/js/components.bf332a03.js.LICENSE.txt": "/static/js/components.bf332a03.js.LICENSE.txt",
     "static/js/data.af7bae22.js.LICENSE.txt": "/static/js/data.af7bae22.js.LICENSE.txt",
     "static/js/eventEditor.13cc95e0.js.LICENSE.txt": "/static/js/eventEditor.13cc95e0.js.LICENSE.txt",
@@ -96,8 +96,8 @@
   },
   "entrypoints": {
     "adapters": [
-      "static/css/adapters.ce6997eb.css",
-      "static/js/adapters.f19398ab.js"
+      "static/css/adapters.551d201a.css",
+      "static/js/adapters.3b99f7f6.js"
     ],
     "components": [
       "static/css/components.eed73bcc.css",
