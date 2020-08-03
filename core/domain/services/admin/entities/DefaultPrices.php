@@ -60,7 +60,9 @@ class DefaultPrices implements DefaultEntityGeneratorInterface
         if (! $entity instanceof EE_Ticket) {
             throw new InvalidEntityException($entity, 'EE_Ticket');
         }
+        $taxes = [];
         $new_prices = [];
+        $is_free = true;
         $has_base_price = false;
         $default_prices = $this->price_model->get_all_default_prices(false, true);
         if (is_array($default_prices)) {
@@ -68,13 +70,25 @@ class DefaultPrices implements DefaultEntityGeneratorInterface
                 if (! $default_price instanceof EE_Price) {
                     throw new InvalidEntityException($default_price, 'EE_Price');
                 }
-                // assign taxes but don't duplicate them because they operate globally
+                // grab any taxes but don't do anything just yet
                 if ($default_price->is_tax()) {
-                    $entity->set_taxable(true);
-                    $default_price->_add_relation_to($entity, 'Ticket');
+                    $taxes[] = $default_price;
                     continue;
                 }
+                // duplicate the default price so that it does not get mutated
+                /** @var EE_Price $default_price_clone */
                 $default_price_clone = clone $default_price;
+                if ((
+                    // has non-zero base price
+                    $default_price_clone->is_base_price()
+                    && $default_price_clone->amount() > 0
+                ) ||(
+                    // or has fixed amount surcharge
+                    $default_price_clone->is_surcharge()
+                    && ! $default_price_clone->is_percent()
+                )) {
+                    $is_free = false;
+                }
                 $default_price_clone->set('PRC_ID', null);
                 $default_price_clone->set('PRC_is_default', false);
                 $default_price_clone->save();
@@ -82,6 +96,13 @@ class DefaultPrices implements DefaultEntityGeneratorInterface
                 // verify that a base price has been set
                 $has_base_price = $default_price_clone->is_base_price() ? true : $has_base_price;
                 $new_prices[ $default_price_clone->ID() ] = $default_price_clone;
+            }
+        }
+        if (! $is_free && ! empty($taxes)) {
+            foreach ($taxes as $tax) {
+                // assign taxes but don't duplicate them because they operate globally
+                $entity->set_taxable(true);
+                $tax->_add_relation_to($entity, 'Ticket');
             }
         }
         if (! $has_base_price) {
