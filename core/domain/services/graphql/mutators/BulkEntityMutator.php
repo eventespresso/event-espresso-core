@@ -18,7 +18,6 @@ class BulkEntityMutator extends EntityMutator
     /**
      * BulkEntityMutator constructor.
      *
-     * @param mixed $model  The model instance.
      * @param array $entity_mutator The mutator for an entity.
      */
     public function __construct(callable $entity_mutator)
@@ -55,7 +54,8 @@ class BulkEntityMutator extends EntityMutator
                     // values in $uniqueInput will override those in $sharedInput
                     $finalInput = array_merge($sharedInput, $uniqueInput);
                     // mutate the individual entity.
-                    call_user_func($this->entity_mutator, $finalInput, $context, $info);
+                    $mutator = $this->entity_mutator;
+                    $mutator($finalInput, $context, $info);
                     // we are here it means the update was successful.
                     $updated[] = $uniqueInput['id'];
                 } catch (Exception $e) {
