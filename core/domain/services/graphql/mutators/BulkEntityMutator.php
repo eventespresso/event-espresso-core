@@ -2,10 +2,6 @@
 
 namespace EventEspresso\core\domain\services\graphql\mutators;
 
-use EE_Datetime;
-use EEM_Datetime;
-use EventEspresso\core\domain\services\graphql\types\Datetime;
-use EventEspresso\core\domain\services\graphql\data\mutations\DatetimeMutation;
 use Exception;
 use OutOfBoundsException;
 use GraphQL\Type\Definition\ResolveInfo;
