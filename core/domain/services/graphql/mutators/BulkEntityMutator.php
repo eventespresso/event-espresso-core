@@ -11,7 +11,7 @@ class BulkEntityMutator extends EntityMutator
 {
 
     /**
-     * @var array $entity_mutator .
+     * @var callable $entity_mutator .
      */
     protected $entity_mutator;
 
