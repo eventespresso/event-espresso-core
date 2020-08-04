@@ -54,13 +54,12 @@
 		display: grid;
 		gap: var(--ee-margin-big);
 		grid-template-columns: repeat(auto-fit, minmax(445px, 1fr));
-		grid-auto-rows: 255px;
+		min-height: 260px;
 		width: 100%;
 
 		@include max480px {
 			gap: var(--ee-margin-big) 0;
 			grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-			grid-auto-rows: unset;
 		}
 
 		.ee-entity-card-wrapper {
