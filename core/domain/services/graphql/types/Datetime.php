@@ -17,6 +17,7 @@ use EventEspresso\core\services\graphql\fields\GraphQLOutputField;
 use EventEspresso\core\domain\services\graphql\mutators\DatetimeCreate;
 use EventEspresso\core\domain\services\graphql\mutators\DatetimeDelete;
 use EventEspresso\core\domain\services\graphql\mutators\DatetimeUpdate;
+use EventEspresso\core\domain\services\graphql\mutators\DatetimeBulkUpdate;
 use EventEspresso\core\domain\services\graphql\mutators\EntityReorder;
 use InvalidArgumentException;
 use ReflectionException;
@@ -249,6 +250,52 @@ class Datetime extends TypeBase
         return (bool) $source->get('DTT_deleted');
     }
 
+    /**
+     * Return the base mutation config for bulk update.
+     *
+     * @param string $base_input
+     * @return array
+     */
+    public static function bulkUpdateBaseConfig($base_input)
+    {
+        return [
+            'inputFields'     => [
+                /**
+                 * represents the input that is unique for each entity
+                 * e.g. dates may be unique for dateimes and tickets
+                 */
+                'uniqueInputs' => [
+                    'type'        => [
+                        'non_null' => ['list_of' => $base_input],
+                    ],
+                    'description' => esc_html__(
+                        'List of unique inputs for each entity in bulk update',
+                        'event_espresso'
+                    ),
+                ],
+                /**
+                 * represents the common input for all entities
+                 * e.g. capacity or quantity may be same for all dates/tickets
+                 */
+                'sharedInput' => [
+                    'type'        => $base_input,
+                    'description' => esc_html__(
+                        'Shared input for all entities in bulk update',
+                        'event_espresso'
+                    ),
+                ],
+            ],
+            'outputFields'        => [
+                'updated' => [
+                    'type' => ['list_of' => 'ID'],
+                ],
+                'failed' => [
+                    'type' => ['list_of' => 'ID'],
+                ],
+            ],
+        ];
+    }
+
 
     /**
      * @param array $inputFields The mutation input fields.
@@ -258,6 +305,12 @@ class Datetime extends TypeBase
      */
     public function registerMutations(array $inputFields)
     {
+        register_graphql_input_type(
+            'Update' .  $this->name() . 'BaseInput',
+            [
+                'fields' => $inputFields,
+            ]
+        );
         // Register mutation to update an entity.
         register_graphql_mutation(
             'update' . $this->name(),
@@ -271,6 +324,17 @@ class Datetime extends TypeBase
                 ],
                 'mutateAndGetPayload' => DatetimeUpdate::mutateAndGetPayload($this->model, $this),
             ]
+        );
+        $base_input = 'Update' .  $this->name() . 'BaseInput';
+        // Register mutation to update an entity.
+        register_graphql_mutation(
+            'bulkUpdate' . $this->name(),
+            array_merge(
+                Datetime::bulkUpdateBaseConfig($base_input),
+                [
+                    'mutateAndGetPayload' => DatetimeBulkUpdate::mutateAndGetPayload($this->model, $this),
+                ]
+            )
         );
         // Register mutation to delete an entity.
         register_graphql_mutation(

@@ -17,6 +17,7 @@ use EventEspresso\core\services\graphql\fields\GraphQLOutputField;
 use EventEspresso\core\domain\services\graphql\mutators\TicketCreate;
 use EventEspresso\core\domain\services\graphql\mutators\TicketDelete;
 use EventEspresso\core\domain\services\graphql\mutators\TicketUpdate;
+use EventEspresso\core\domain\services\graphql\mutators\TicketBulkUpdate;
 use InvalidArgumentException;
 use ReflectionException;
 use WPGraphQL\AppContext;
@@ -335,6 +336,12 @@ class Ticket extends TypeBase
      */
     public function registerMutations(array $inputFields)
     {
+        register_graphql_input_type(
+            'Update' .  $this->name() . 'BaseInput',
+            [
+                'fields' => $inputFields,
+            ]
+        );
         // Register mutation to update an entity.
         register_graphql_mutation(
             'update' . $this->name(),
@@ -348,6 +355,17 @@ class Ticket extends TypeBase
                 ],
                 'mutateAndGetPayload' => TicketUpdate::mutateAndGetPayload($this->model, $this),
             ]
+        );
+        $base_input = 'Update' .  $this->name() . 'BaseInput';
+        // Register mutation to update an entity.
+        register_graphql_mutation(
+            'bulkUpdate' . $this->name(),
+            array_merge(
+                Datetime::bulkUpdateBaseConfig($base_input),
+                [
+                    'mutateAndGetPayload' => TicketBulkUpdate::mutateAndGetPayload($this->model, $this),
+                ]
+            )
         );
         // Register mutation to delete an entity.
         register_graphql_mutation(
