@@ -17,3 +17,4 @@ Event Espresso GraphQL API is based on [WP GraphQL](https://github.com/wp-graphq
     -   [Ticket](./mutations/ticket.md)
     -   [Price](./mutations/price.md)
     -   [Common](./mutations/common.md)
+    -   [Bulk update](./mutations/bulk-update.md)
