@@ -473,43 +473,32 @@ div.TB-ee-frame a {
     color: var(--ee-status-color-purple);
 }
 
-.ee-icon-size-8,
 .ee-icon-size-8:before { font-size: 8px !important; }
 
-.ee-icon-size-12,
 .ee-icon-size-12:before { font-size: 12px !important; }
 
-.ee-icon-size-14,
 .ee-icon-size-14:before { font-size: 14px !important; }
 
-.ee-icon-size-16,
 .ee-icon-size-16:before {
 	font-size: 16px !important;
 	margin-right: -.002em;
 }
 
-.ee-icon-size-18,
 .ee-icon-size-18:before {
 	font-size: 18px !important;
 	margin-right:-0.05em;
 }
 
-.ee-icon-size-20,
 .ee-icon-size-20:before {
+        font-size: 20px !important;
 	margin-right: -0.1em;
 }
 
-.ee-icon-size-20:before {
-        font-size: 20px !important;
-}
-
-.ee-icon-size-22,
 .ee-icon-size-22:before {
 	font-size: 22px !important;
 	margin-right: -0.15em;
 }
 
-.ee-icon-size-24,
 .ee-icon-size-24:before {
 	font-size: 24px !important;
 	margin-right: -0.2em;
@@ -553,7 +542,6 @@ div.TB-ee-frame a {
 	font-size: 13px;
 
 }
-
 
 
 /**
