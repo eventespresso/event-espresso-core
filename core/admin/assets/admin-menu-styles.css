@@ -496,8 +496,11 @@ div.TB-ee-frame a {
 
 .ee-icon-size-20,
 .ee-icon-size-20:before {
-	font-size: 20px !important;
 	margin-right: -0.1em;
+}
+
+.ee-icon-size-20:before {
+        font-size: 20px !important;
 }
 
 .ee-icon-size-22,
