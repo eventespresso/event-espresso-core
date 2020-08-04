@@ -397,6 +397,22 @@ class EE_Price extends EE_Soft_Delete_Base_Class
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
+    public function is_surcharge()
+    {
+        $price_type = $this->type_obj();
+        return $price_type->is_surcharge();
+    }
+
+    /**
+     * whether the price is a percentage or not
+     *
+     * @return boolean
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
     public function is_tax()
     {
         $price_type = $this->type_obj();
