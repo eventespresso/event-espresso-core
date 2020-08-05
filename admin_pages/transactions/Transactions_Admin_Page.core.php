@@ -575,11 +575,6 @@ class Transactions_Admin_Page extends EE_Admin_Page
                 'class' => 'dashicons dashicons-email-alt',
                 'desc'  => esc_html__('Send Payment Reminder', 'event_espresso'),
             );
-        } else {
-            $items['blank*'] = array(
-                'class' => '',
-                'desc'  => '',
-            );
         }
         $more_items = apply_filters(
             'FHEE__Transactions_Admin_Page___transaction_legend_items__more_items',
