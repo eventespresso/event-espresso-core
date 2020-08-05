@@ -374,7 +374,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
               . '</a>'
             : $item->attendee()->full_name();
         $name_link .= $item->count() === 1
-            ? '&nbsp;<sup><div class="dashicons dashicons-star-filled lt-blue-icon ee-icon-size-8"></div></sup>	'
+            ? '&nbsp;<sup><div class="dashicons dashicons-star-filled yellow-icon ee-icon-size-8"></div></sup>	'
             : '';
         // add group details
         $name_link .= '&nbsp;' . sprintf(__('(%s of %s)', 'event_espresso'), $item->count(), $item->group_size());
