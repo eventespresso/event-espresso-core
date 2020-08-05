@@ -6,6 +6,7 @@ use Closure;
 use DomainException;
 use EventEspresso\core\domain\DomainInterface;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
+use http\Exception\RuntimeException;
 
 /**
  * Class JavascriptAsset
@@ -169,7 +170,7 @@ class JavascriptAsset extends BrowserAsset
         if (!empty($attributes)) {
             add_filter('script_loader_tag', [$this, 'addAttributeTagsToScript'], 10, 2);
         }
-        wp_enqueue_script($this->handle());
+        $this->setEnqueueImmediately();
     }
 
 
