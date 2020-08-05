@@ -89,7 +89,7 @@ class EspressoLegacyAdminAssetManager extends AssetManager
                 EspressoLegacyAdminAssetManager::JS_HANDLE_GOOGLE_CHARTS,
                 EspressoLegacyAdminAssetManager::JS_HANDLE_EE_INJECT_WP,
             ]
-        )->enqueueAsset();
+        )->setEnqueueImmediately();
 
         $this->addJavascript(
             EspressoLegacyAdminAssetManager::JS_HANDLE_EE_DIALOG,
@@ -118,7 +118,7 @@ class EspressoLegacyAdminAssetManager extends AssetManager
                 EspressoLegacyAdminAssetManager::JS_HANDLE_EE_ADMIN,
                 JqueryAssetManager::JS_HANDLE_JQUERY_UI_SORTABLE,
             ]
-        )->enqueueAsset();
+        )->setEnqueueImmediately();
 
         // script for parsing uri's
         $this->addJavascript(
@@ -201,7 +201,7 @@ class EspressoLegacyAdminAssetManager extends AssetManager
             ],
             true,
             '2.1'
-        )->enqueueAsset();
+        )->setEnqueueImmediately();
 
         $this->addJavascript(
             EspressoLegacyAdminAssetManager::JS_HANDLE_EE_HELP_TOUR,
@@ -211,7 +211,7 @@ class EspressoLegacyAdminAssetManager extends AssetManager
             ],
             true,
             '2.1'
-        )->enqueueAsset();
+        )->setEnqueueImmediately();
     }
 
 
@@ -236,13 +236,13 @@ class EspressoLegacyAdminAssetManager extends AssetManager
         $this->addStylesheet(
             EspressoLegacyAdminAssetManager::CSS_HANDLE_EE_ADMIN,
             EE_ADMIN_URL . 'assets/ee-admin-page.css'
-        )->enqueueAsset();
+        )->setEnqueueImmediately();
 
         $this->addStylesheet(
             EspressoLegacyAdminAssetManager::CSS_HANDLE_EE_ADMIN_MENU,
             EE_ADMIN_URL . 'assets/admin-menu-styles.css',
             ['dashicons']
-        )->enqueueAsset();
+        )->setEnqueueImmediately();
 
         if (! $joyride) {
             return;
@@ -262,7 +262,7 @@ class EspressoLegacyAdminAssetManager extends AssetManager
             [EspressoLegacyAdminAssetManager::CSS_HANDLE_JOYRIDE],
             'all',
             EVENT_ESPRESSO_VERSION
-        )->enqueueAsset();
+        )->setEnqueueImmediately();
     }
 
 

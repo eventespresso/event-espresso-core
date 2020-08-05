@@ -46,7 +46,7 @@ class JqueryAssetManager extends AssetManager
             array(JqueryAssetManager::JS_HANDLE_JQUERY),
             true,
             '1.15.0'
-        )->enqueueAsset();
+        )->setEnqueueImmediately();
 
         $this->addJavascript(
             JqueryAssetManager::JS_HANDLE_JQUERY_VALIDATE_EXTRA,

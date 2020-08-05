@@ -170,7 +170,7 @@ class JavascriptAsset extends BrowserAsset
         if (!empty($attributes)) {
             add_filter('script_loader_tag', [$this, 'addAttributeTagsToScript'], 10, 2);
         }
-        $this->setEnqueueImmediately();
+        wp_enqueue_script($this->handle());
     }
 
 

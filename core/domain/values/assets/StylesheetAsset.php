@@ -82,6 +82,6 @@ class StylesheetAsset extends BrowserAsset
         if ($this->source() === '') {
             return;
         }
-        $this->setEnqueueImmediately();
+        wp_enqueue_style($this->handle());
     }
 }
