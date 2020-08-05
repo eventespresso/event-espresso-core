@@ -3,6 +3,8 @@
 namespace EventEspresso\core\domain\entities\routing\handlers\admin;
 
 use EE_Dependency_Map;
+use EventEspresso\core\domain\services\assets\EspressoLegacyAdminAssetManager;
+use EventEspresso\core\domain\services\assets\JqueryAssetManager;
 use EventEspresso\core\domain\services\assets\LegacyAccountingAssetManager;
 
 /**
@@ -42,22 +44,16 @@ class EspressoLegacyAdmin extends AdminRoute
      */
     protected function registerDependencies()
     {
+        $asset_manger_dependencies = [
+            'EventEspresso\core\domain\Domain'                   => EE_Dependency_Map::load_from_cache,
+            'EventEspresso\core\services\assets\AssetCollection' => EE_Dependency_Map::load_from_cache,
+            'EventEspresso\core\services\assets\Registry'        => EE_Dependency_Map::load_from_cache,
+        ];
+        $this->dependency_map->registerDependencies(JqueryAssetManager::class, $asset_manger_dependencies);
+        $this->dependency_map->registerDependencies(EspressoLegacyAdminAssetManager::class, $asset_manger_dependencies);
         $this->dependency_map->registerDependencies(
-            'EventEspresso\core\domain\services\assets\EspressoLegacyAdminAssetManager',
-            [
-                'EventEspresso\core\domain\Domain'                   => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\assets\AssetCollection' => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\assets\Registry'        => EE_Dependency_Map::load_from_cache,
-            ]
-        );
-        $this->dependency_map->registerDependencies(
-            'EventEspresso\core\domain\services\assets\LegacyAccountingAssetManager',
-            [
-                'EventEspresso\core\domain\Domain'                   => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\assets\AssetCollection' => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\assets\Registry'        => EE_Dependency_Map::load_from_cache,
-                'EE_Currency_Config'                                 => EE_Dependency_Map::load_from_cache,
-            ]
+            LegacyAccountingAssetManager::class,
+            ['EE_Currency_Config' => EE_Dependency_Map::load_from_cache] + $asset_manger_dependencies
         );
         $this->dependency_map->registerDependencies(
             'EE_Admin_Transactions_List_Table',
@@ -134,24 +130,9 @@ class EspressoLegacyAdmin extends AdminRoute
      */
     protected function requestHandler()
     {
-        do_action('AHEE__EE_System__load_controllers__load_admin_controllers');
-        $this->loader->getShared('EventEspresso\core\domain\services\assets\EspressoLegacyAdminAssetManager');
-        $this->asset_manager = $this->loader->getShared(
-            'EventEspresso\core\domain\services\assets\LegacyAccountingAssetManager'
-        );
-        add_action('admin_enqueue_scripts', [$this, 'enqueueLegacyAccountingAssets'], 100);
+        $this->loader->getShared(JqueryAssetManager::class);
+        $this->loader->getShared(EspressoLegacyAdminAssetManager::class);
+        $this->loader->getShared(LegacyAccountingAssetManager::class);
         return true;
-    }
-
-
-    /**
-     * enqueue_scripts - Load the scripts and css
-     *
-     * @return void
-     */
-    public function enqueueLegacyAccountingAssets()
-    {
-        $this->asset_manager->enqueueBrowserAssets();
-        wp_enqueue_script('ee-accounting');
     }
 }

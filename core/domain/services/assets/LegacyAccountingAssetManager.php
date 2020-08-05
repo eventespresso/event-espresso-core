@@ -65,6 +65,7 @@ class LegacyAccountingAssetManager extends AssetManager
     public function addAssets()
     {
         $this->loadAccountingJs();
+        add_action('admin_enqueue_scripts', [$this, 'enqueueLegacyAccountingAssets'], 100);
     }
 
 
@@ -132,5 +133,16 @@ class LegacyAccountingAssetManager extends AssetManager
                 'decimal'   => $this->currency_config->dec_mrk,
             ],
         ];
+    }
+
+
+    /**
+     * enqueue_scripts - Load the scripts and css
+     *
+     * @return void
+     */
+    public function enqueueLegacyAccountingAssets()
+    {
+        $this->enqueueAsset(LegacyAccountingAssetManager::JS_HANDLE_ACCOUNTING);
     }
 }

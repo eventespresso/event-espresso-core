@@ -586,7 +586,7 @@ label.error { display : block; color : var(--ee-status-color-pink) !important; }
 }
 .ee-list-table-legend-container .ee-icon-size-8 {
 	vertical-align: top;
-	margin-bottom: .5rem;
+    margin: 0 0 .55rem 1px !important;
 }
 
 .ee-legend-description {

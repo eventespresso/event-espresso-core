@@ -27,12 +27,8 @@ class EspressoEventEditor extends EspressoEventsAdmin
      */
     public function matchesCurrentRequest()
     {
-        global $pagenow;
         return parent::matchesCurrentRequest()
-               && $pagenow
-               && $pagenow === 'admin.php'
                && $this->admin_config->useAdvancedEditor()
-               && $this->request->getRequestParam('page') === 'espresso_events'
                && (
                 $this->request->getRequestParam('action') === 'create_new'
                 || $this->request->getRequestParam('action') === 'edit'

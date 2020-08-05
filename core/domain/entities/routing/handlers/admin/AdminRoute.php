@@ -82,6 +82,7 @@ class AdminRoute extends Route
      */
     protected function requestHandler()
     {
+        do_action('AHEE__EE_System__load_controllers__load_admin_controllers');
         $this->loader->getShared('EE_Admin');
         return true;
     }
