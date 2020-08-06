@@ -1,4 +1,3 @@
-import { ButtonSize, ButtonType } from '../types';
 import { withLabelProps, withTooltipProps } from '../../../display';
 import { IconButtonProps as IconButtonAdapterProps } from '@infraUI/inputs';
 
@@ -8,7 +7,5 @@ export interface IconButtonProps
 		Partial<withTooltipProps> {
 	'aria-label'?: string;
 	borderless?: boolean;
-	buttonType?: ButtonType;
-	buttonSize?: ButtonSize;
 	color?: 'white' | 'black';
 }

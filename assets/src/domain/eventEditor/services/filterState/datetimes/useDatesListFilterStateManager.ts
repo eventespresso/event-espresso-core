@@ -16,7 +16,7 @@ const initialState: DatetimesFilterState = {
 const useDatesListFilterStateManager = (): FSM => {
 	const [state, dispatch] = useReducer(reducer, initialState);
 
-	const entityFilterState = useEntityListFilterStateManager<SortBy>('order');
+	const entityFilterState = useEntityListFilterStateManager<SortBy>('date');
 	const { setPageNumber } = entityFilterState;
 
 	const resetPageNumber = useCallback(

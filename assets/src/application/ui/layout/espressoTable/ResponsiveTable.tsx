@@ -9,9 +9,9 @@ import Table from './Table';
 import TableHeader from './TableHeader';
 import TableBody from './TableBody';
 import TableFooter from './TableFooter';
+import './style.scss';
 
-import './style/index.scss';
-import './style/tablet-style.scss';
+import './tablet-style.scss';
 
 import { ResponsiveTableProps } from './types';
 

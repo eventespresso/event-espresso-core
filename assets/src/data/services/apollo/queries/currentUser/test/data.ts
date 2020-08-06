@@ -1,14 +1,14 @@
 import { GraphQLError } from 'graphql';
 
 import { ReadQueryOptions } from '@dataServices/apollo/queries';
-import { Viewer, CurrentUserProps } from '@application/valueObjects/config/types';
+import { Viewer } from '@application/valueObjects/config/types';
 import { GET_CURRENT_USER } from '..';
 
 export const request: ReadQueryOptions = {
 	query: GET_CURRENT_USER,
 };
 
-export const currentUser: CurrentUserProps = {
+export const currentUser = {
 	description: null,
 	email: 'user@eventespresso.com',
 	firstName: null,
@@ -18,7 +18,7 @@ export const currentUser: CurrentUserProps = {
 	nickname: 'admin',
 	lastName: null,
 	locale: 'en_US',
-	databaseId: 1,
+	userId: 1,
 	username: 'admin',
 	__typename: 'User',
 };

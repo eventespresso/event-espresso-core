@@ -1,5 +1,3 @@
-@import 'application/ui/styles/mixins/breakpoints.scss';
-
 .ee-event-editor {
 	position: relative;
 	z-index: 2;
@@ -10,17 +8,6 @@
 
 	#adminmenuwrap {
 		z-index: 2;
-	}
-
-	@include max782px {
-		#wpcontent {
-			margin: 0 !important;
-			padding: 0 10px !important;
-		}
-
-		.wrap {
-			margin-right: 0;
-		}
 	}
 }
 

@@ -16,8 +16,6 @@ import { ReactComponent as ChevronLeftSVG } from './chevron-left.svg';
 
 import { ReactComponent as ChevronRightSVG } from './chevron-right.svg';
 
-import { ReactComponent as ClockOutlinedSVG } from './clockOutlined.svg';
-
 import { ReactComponent as CloseCircleOutlinedSVG } from './closeCircleOutlined.svg';
 
 import { ReactComponent as CloseOutlinedSVG } from './closeOutlined.svg';
@@ -69,8 +67,6 @@ export const ChevronDoubleRight = withEnhance(ChevronDoubleRightSVG);
 export const ChevronLeft = withEnhance(ChevronLeftSVG);
 
 export const ChevronRight = withEnhance(ChevronRightSVG);
-
-export const ClockOutlined = withEnhance(ClockOutlinedSVG);
 
 export const CloseCircleOutlined = withEnhance(CloseCircleOutlinedSVG);
 

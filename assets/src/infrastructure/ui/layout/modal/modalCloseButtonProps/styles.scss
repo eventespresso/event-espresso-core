@@ -1,0 +1,16 @@
+// this selector is used for specificity
+[role='alertdialog'] {
+	.ee-confirm-close {
+		display: inline-flex;
+		position: absolute;
+		top: 8px;
+		right: 12px;
+		width: var(--ee-padding-big);
+		height: var(--ee-padding-big);
+		svg {
+			height: var(--ee-border-radius-big);
+			margin: 0;
+			width: var(--ee-border-radius-big);
+		}
+	}
+}

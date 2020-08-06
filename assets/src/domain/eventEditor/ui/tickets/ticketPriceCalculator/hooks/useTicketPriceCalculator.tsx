@@ -1,4 +1,4 @@
-import { useDisclosure } from '@chakra-ui/hooks';
+import { useDisclosure } from '@chakra-ui/core';
 
 import { TicketPriceCalculator } from '../types';
 import ModalContainer from '../components/ModalContainer';

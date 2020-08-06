@@ -1,0 +1,32 @@
+@import '../../style.scss';
+
+.ee-input-base-wrapper.ee-date-picker {
+	background: none !important;
+	border: 0 !important;
+	[data-baseweb='base-input'] {
+		background: none !important;
+		border: 0 !important;
+		input {
+			@extend .ee-base-inputs-styles;
+
+			&:hover {
+				@extend .ee-input-base-hover;
+			}
+			&:focus {
+				@extend .ee-input-base-focus;
+			}
+		}
+	}
+}
+
+.form-item__datepicker {
+	[data-baseweb='popover'] {
+		.dj,
+		.f0::after {
+			background-color: var(--ee-color-primary) !important;
+		}
+		.f6::after {
+			box-shadow: 0 0 0 2px var(--ee-color-primary-low-contrast) !important;
+		}
+	}
+}

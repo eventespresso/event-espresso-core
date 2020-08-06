@@ -2,7 +2,7 @@ import React from 'react';
 import { __ } from '@wordpress/i18n';
 
 import TicketRegistrationsLink from '../../TicketRegistrationsLink';
-import { EntityDetailsPanel, Sold } from '@application/ui/display/entityDetailsPanel';
+import { EntityDetailsPanel } from '@application/ui/display/entityDetailsPanel';
 import TicketQuantity from './TicketQuantity';
 import { getPropsAreEqual } from '@appServices/utilities';
 import type { TicketItemProps } from '../types';
@@ -12,7 +12,7 @@ const TicketDetailsPanel: React.FC<TicketItemProps> = React.memo(({ entity: tick
 		{
 			id: 'ee-ticket-sold',
 			label: __('sold'),
-			value: <Sold dbId={ticket.dbId} sold={ticket.sold} type='ticket' />,
+			value: ticket.sold,
 		},
 		{
 			id: 'ee-ticket-qty',

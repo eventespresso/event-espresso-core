@@ -48,7 +48,6 @@ $breakpointsMapping: (
 	}
 }
 
-/* tiny phones */
 @mixin max360px {
 	@include breakpoint(360px, max) {
 		@content;
@@ -61,41 +60,30 @@ $breakpointsMapping: (
 	}
 }
 
-/* WordPress Admin Media Query Breakpoint: Smartphone */
 @mixin max600px {
 	@include breakpoint(600px, max) {
 		@content;
 	}
 }
 
-/* WordPress Admin Media Query Breakpoint: Tablet */
 @mixin max782px {
 	@include breakpoint(782px, max) {
 		@content;
 	}
 }
 
-@mixin min782px {
-	@include breakpoint(782px, min) {
-		@content;
-	}
-}
-
-/* WordPress Admin Media Query Breakpoint: one column on the post write/edit screen */
 @mixin max850px {
 	@include breakpoint(850px, max) {
 		@content;
 	}
 }
 
-/* WordPress Admin Media Query Breakpoint: Auto-folding of the admin menu */
 @mixin max960px {
 	@include breakpoint(960px, max) {
 		@content;
 	}
 }
 
-/* iPad */
 @mixin max1024px {
 	@include breakpoint(1024px, max) {
 		@content;
@@ -110,24 +98,6 @@ $breakpointsMapping: (
 
 @mixin max1366px {
 	@include breakpoint(1366px, max) {
-		@content;
-	}
-}
-
-@mixin max1440px {
-	@include breakpoint(1440px, max) {
-		@content;
-	}
-}
-
-@mixin max1600px {
-	@include breakpoint(1600px, max) {
-		@content;
-	}
-}
-
-@mixin min1600px {
-	@include breakpoint(1600px, min) {
 		@content;
 	}
 }

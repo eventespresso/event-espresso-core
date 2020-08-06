@@ -1,127 +1,89 @@
 @import 'application/ui/styles/mixins/breakpoints.scss';
 
-.ee-ticket-price-calculator {
-	width: 100%;
+.ee-ticket-price {
+	&-calculator {
+		width: 100%;
 
-	table {
-		border-bottom: 0.5px solid var(--ee-border-color);
-		padding-bottom: var(--ee-margin-small);
-	}
+		table {
+			border-bottom: 0.5px solid var(--ee-border-color);
+			padding-bottom: var(--ee-margin-small);
+		}
 
-	tbody.ee-rspnsv-table-body {
-		tr.ee-rspnsv-table-body-row {
-			@include max782px {
-				height: auto;
-				width: 100%;
-			}
+		tbody.ee-rspnsv-table-body {
+			tr.ee-rspnsv-table-body-row {
+				@include max782px {
+					height: auto;
+					width: 100%;
+				}
 
-			.ee-rspnsv-table-body-td {
-				&:not(.ee-rspnsv-table-hide-on-mobile) {
-					@include max782px {
-						display: flex;
-						padding: var(--ee-padding-micro);
+				.ee-rspnsv-table-body-td {
+					&:not(.ee-rspnsv-table-hide-on-mobile) {
+						@include max782px {
+							display: flex;
+							padding: var(--ee-padding-micro);
+						}
 					}
 				}
 			}
 		}
-	}
 
-	th,
-	td {
-		padding: var(--ee-padding-tiny) var(--ee-padding-micro);
-	}
-
-	input,
-	select {
-		width: 100%;
-	}
-
-	&__actions {
-		&.ee-rspnsv-table-header-th,
-		&.ee-rspnsv-table-body-td,
-		&.ee-rspnsv-table-footer-th {
-			min-width: 85px;
-			width: 85px;
+		th,
+		td {
+			padding: var(--ee-padding-tiny) var(--ee-padding-micro);
 		}
 
-		.ee-icon-button {
-			margin-bottom: 0;
-		}
-	}
-
-	&__price-id {
-		&.ee-rspnsv-table-header-th,
-		&.ee-rspnsv-table-body-td,
-		&.ee-rspnsv-table-footer-th {
-			min-width: 40px;
-			width: 60px;
-		}
-	}
-
-	&__price-type {
-		&.ee-rspnsv-table-header-th,
-		&.ee-rspnsv-table-body-td,
-		&.ee-rspnsv-table-footer-th {
-			min-width: 120px;
-			width: 120px;
-		}
-	}
-
-	&__amount {
-		&.ee-rspnsv-table-header-th,
-		&.ee-rspnsv-table-body-td,
-		&.ee-rspnsv-table-footer-th {
-			min-width: 120px;
-			width: 160px;
+		input,
+		select {
+			width: 100%;
 		}
 
-		&.ee-rspnsv-table-header-th.ee-rspnsv-table-header-th.ee-number-column {
-			text-align: center;
-		}
-	}
-
-	&__total .ee-input-base.ee-input-base.ee-input:disabled {
-		background: var(--ee-color-grey-14);
-		border-color: var(--ee-color-grey-9);
-	}
-
-	.ee-rspnsv-table-footer {
-		@include max782px {
-			.ee-rspnsv-table-footer-row {
-				position: relative;
-				width: 100%;
-				height: 60px;
-
-				.ee-col-0,
-				.ee-col-1,
-				.ee-col-2 {
-					display: none;
-					padding: 0;
-				}
-
-				.ee-ticket-price-calculator-total-label {
-					float: left;
-					margin: auto 0;
-					padding-right: var(--ee-padding-smaller);
-					text-align: right;
-					vertical-align: middle;
-					width: calc(38.2% - 42px);
-				}
-
-				.ee-ticket-price-calculator__amount {
-					padding-left: var(--ee-padding-smaller);
-					position: absolute;
-					right: var(--ee-padding-tiny);
-					width: calc(61.8% - var(--ee-padding-tiny));
-				}
-
-				.ee-ticket-price-calculator__actions {
-					min-width: 42px;
-					position: absolute;
-					right: 61.8%;
-					width: 42px;
-				}
+		&__actions {
+			&.ee-rspnsv-table-header-th,
+			&.ee-rspnsv-table-body-td,
+			&.ee-rspnsv-table-footer-th {
+				min-width: 85px;
+				width: 85px;
 			}
+
+			.ee-icon-button {
+				margin-bottom: 0;
+			}
+		}
+
+		&__price-id {
+			&.ee-rspnsv-table-header-th,
+			&.ee-rspnsv-table-body-td,
+			&.ee-rspnsv-table-footer-th {
+				min-width: 40px;
+				width: 60px;
+			}
+		}
+
+		&__price-type {
+			&.ee-rspnsv-table-header-th,
+			&.ee-rspnsv-table-body-td,
+			&.ee-rspnsv-table-footer-th {
+				min-width: 120px;
+				width: 120px;
+			}
+		}
+
+		&__amount {
+			&.ee-rspnsv-table-header-th,
+			&.ee-rspnsv-table-body-td,
+			&.ee-rspnsv-table-footer-th {
+				min-width: 120px;
+				width: 160px;
+			}
+
+			&.ee-rspnsv-table-header-th.ee-rspnsv-table-header-th.ee-number-column {
+				text-align: center;
+			}
+		}
+
+		&__total .ee-input-base.ee-input-base.ee-input:disabled {
+			background: var(--ee-color-grey-14);
+			border-color: var(--ee-color-grey-9);
 		}
 	}
 }

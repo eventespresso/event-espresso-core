@@ -39,7 +39,6 @@
 .ee-btn-base {
 	border-style: solid;
 	border-width: 3px;
-	box-sizing: border-box;
 	cursor: pointer;
 	display: inline-flex;
 	height: var(--ee-icon-button-size);
@@ -59,7 +58,6 @@
 		border-color: var(--ee-button-background);
 		border-radius: var(--ee-border-radius-small);
 		box-shadow: var(--ee-button-box-shadow);
-		box-sizing: border-box;
 		color: var(--ee-button-text-color);
 		display: inline-flex;
 		height: var(--ee-icon-button-size);
@@ -75,14 +73,6 @@
 		transition: all linear 50ms;
 		vertical-align: middle;
 		width: auto;
-
-		@include max480px {
-			margin: var(--ee-margin-tiny) var(--ee-margin-nano);
-		}
-
-		@include max360px {
-			width: calc(100% - (var(--ee-margin-nano) * 2));
-		}
 
 		span {
 			font-family: 'Segoe UI', Candara, 'Bitstream Vera Sans', 'DejaVu Sans', 'Bitstream Vera Sans',
@@ -136,6 +126,15 @@
 			box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.35), -1px -1px 2px rgba(255, 255, 255, 0.75);
 			top: 1px;
 		}
+
+		// + .ee-btn {
+		// 	margin-left: var(--ee-margin-default);
+
+		// 	[dir='rtl'] & {
+		// 		margin-left: 0;
+		// 		margin-right: var(--ee-margin-default);
+		// 	}
+		// }
 
 		.text-wrap {
 			font-weight: bold;
@@ -371,8 +370,13 @@
 		&.ee-btn--bigger {
 			height: var(--ee-icon-button-size-big);
 			min-height: var(--ee-font-size-bigger);
+			height: auto;
 			line-height: var(--ee-font-size-big);
 			padding: var(--ee-padding-smaller) var(--ee-padding-default);
+
+			@include max782px {
+				width: 100%;
+			}
 
 			span {
 				font-size: var(--ee-font-size-big);
@@ -429,5 +433,35 @@
 
 	.ee-btn-label + .ee-btn {
 		margin-right: var(--ee-margin-small) !important;
+	}
+}
+
+/* Media Queries for specific screen sizes
+ * -------------------------------------------------------------------------*/
+
+/* WordPress Admin Media Query Breakpoint: Smartphone */
+@media screen and (max-width: 600px) {
+	.ee-btn + .ee-btn {
+		&.ee-btn-base {
+			margin-left: var(--ee-margin-smaller);
+		}
+	}
+}
+
+@media only screen and (max-width: 480px) {
+	.ee-btn + .ee-btn {
+		&.ee-btn-base {
+			margin-left: var(--ee-margin-micro);
+		}
+	}
+}
+
+@media only screen and (max-width: 360px) {
+	.ee-btn {
+		+ .ee-btn {
+			&.ee-btn-base {
+				margin-left: auto;
+			}
+		}
 	}
 }

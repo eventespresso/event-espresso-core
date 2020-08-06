@@ -1,12 +1,19 @@
 import React from 'react';
 
-import { TimePicker as TimePickerComponent } from '../../../input';
+import { Timepicker } from '@infraUI/inputs/dateTime';
 import { FieldRendererProps } from '../types';
 
-// meta does not need to goto the input
-// format from RFF is different (function) than needed by DatePicker (string)
-const TimePicker: React.FC<FieldRendererProps> = ({ input: { onChange, ...input }, meta, format, ...rest }) => {
-	return <TimePickerComponent {...input} {...rest} onChangeValue={onChange} />;
+const TimePicker: React.FC<FieldRendererProps> = ({ input: { onChange, ...input }, meta, ...rest }) => {
+	return (
+		<Timepicker
+			{...input}
+			{...rest}
+			format='12'
+			onChangeValue={onChange}
+			// 300 seconds(5 minutes)
+			step={300}
+		/>
+	);
 };
 
 export default TimePicker;

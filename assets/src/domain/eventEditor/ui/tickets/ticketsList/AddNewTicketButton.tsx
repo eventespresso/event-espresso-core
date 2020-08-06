@@ -1,6 +1,6 @@
 import React from 'react';
 import { __ } from '@wordpress/i18n';
-import { useDisclosure } from '@chakra-ui/hooks';
+import { useDisclosure } from '@chakra-ui/core';
 
 import { Button, ButtonSize } from '@application/ui/input';
 import { Container as FormContainer } from '@edtrUI/tickets/ticketForm/multiStep';

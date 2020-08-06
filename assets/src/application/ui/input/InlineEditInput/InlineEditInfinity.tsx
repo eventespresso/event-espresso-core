@@ -2,15 +2,13 @@ import React, { useCallback } from 'react';
 import classNames from 'classnames';
 
 import parseInfinity from '@appServices/utilities/number/parseInfinity';
-import { InlineEdit, PreviewProps } from '@infraUI/inputs';
+import { InlineEdit, InlineEditPreviewProps } from '@infraUI/inputs';
+import { TextProps } from './types';
 import { isInfinite } from '@application/services';
 
-import TabbableText from './TabbableText';
-import { TextProps } from './types';
-
-const Preview: React.FC<PreviewProps> = ({ value, onRequestEdit, isEditing, ...props }) => {
+const Preview: React.FC<InlineEditPreviewProps> = ({ value, onRequestEdit, isEditing }) => {
 	const isInfinity = isInfinite(value);
-	const className = classNames('ee-inline-edit__infinity', {
+	const classeName = classNames({
 		'ee-infinity-sign': isInfinity,
 	});
 
@@ -18,12 +16,16 @@ const Preview: React.FC<PreviewProps> = ({ value, onRequestEdit, isEditing, ...p
 		return null;
 	}
 
-	const output = isInfinity ? <span className={'ee-infinity-sign__inner'}>{'∞'}</span> : value;
+	let output = isInfinity ? '∞' : value;
 
-	return <TabbableText {...props} className={className} onRequestEdit={onRequestEdit} text={output} />;
+	return (
+		<span className={classeName} onClick={onRequestEdit}>
+			{output}
+		</span>
+	);
 };
 
-const InlineEditInfinity: React.FC<TextProps> = ({ onChangeValue, value, ...props }) => {
+const InlineEditInfinity: React.FC<TextProps> = ({ onChangeValue, value, ...rest }) => {
 	const isInfinity = isInfinite(value);
 
 	const onChangeHandler = useCallback<TextProps['onChangeValue']>(
@@ -38,7 +40,7 @@ const InlineEditInfinity: React.FC<TextProps> = ({ onChangeValue, value, ...prop
 
 	return (
 		<InlineEdit
-			{...props}
+			{...rest}
 			inputType='number'
 			onChangeValue={onChangeHandler}
 			Preview={Preview}

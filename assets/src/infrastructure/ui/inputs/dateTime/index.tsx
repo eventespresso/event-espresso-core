@@ -1,7 +1,5 @@
-export { default as DatePicker } from './DatePicker';
+import './style.scss';
 
-export { default as DateTimeRangePicker } from './DateTimeRangePicker';
+export { default as Datepicker } from './Datepicker';
 
-export { default as TimePicker } from './TimePicker';
-
-export type { DatePickerProps, DateTimeRangePickerProps, TimePickerProps } from './types';
+export { default as Timepicker } from './Timepicker';

@@ -2,8 +2,9 @@ import React from 'react';
 import classNames from 'classnames';
 
 import { FormControl, FormHelperText, FormLabel } from '@infraUI/forms';
-import { HelpIcon } from '@appDisplay/icons';
+import { InfoCircleOutlined } from '@appDisplay/icons/svgs';
 import { reactFinalFormField } from '@application/services/utilities/memo';
+import { Tooltip } from '@infraUI/display';
 
 import ErrorMessage from './ErrorMessage';
 import { FieldRendererProps } from '../types';
@@ -21,7 +22,7 @@ const FieldRenderer: React.FC<FieldRendererProps> = (props) => {
 
 	const className = classNames(
 		'ee-input__wrapper ee-form-item',
-		`ee-form-item__${rest.fieldType}`,
+		`form-item__${rest.fieldType}`,
 		formControlProps?.className
 	);
 
@@ -37,7 +38,11 @@ const FieldRenderer: React.FC<FieldRendererProps> = (props) => {
 		<FormControl className={className} isInvalid={Boolean(errorMessage)} isRequired={required}>
 			<FormLabel htmlFor={props.input.name}>
 				{label}
-				{info && <HelpIcon clickable tooltipText={info} />}
+				{info && (
+					<Tooltip placement='right' tooltip={info}>
+						<InfoCircleOutlined />
+					</Tooltip>
+				)}
 			</FormLabel>
 			{before}
 			<MappedField aria-label={label} aria-describedby={tooltipKey} {...rest} />

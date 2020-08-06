@@ -11,7 +11,6 @@ import Table from './table/Table';
 import TaxesButtons from '../buttons/taxes/TaxesButtons';
 import { useDataState } from '../data';
 import { useInitStateListeners } from '../stateListeners';
-import DefaultTaxesInfo from './DefaultTaxesInfo';
 
 import './styles.scss';
 
@@ -37,8 +36,6 @@ const TicketPriceCalculator: React.FC<TicketPriceCalculatorProps> = ({ context }
 	return (
 		<>
 			<Table prices={dataState.prices} />
-
-			<DefaultTaxesInfo />
 
 			<ButtonRow rightAligned>
 				<DebugInfo data={dataState} />

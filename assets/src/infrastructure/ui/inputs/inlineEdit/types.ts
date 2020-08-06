@@ -7,16 +7,13 @@ export type InputType = 'heading' | 'number' | 'textarea' | 'text';
 
 export interface InlineEditProps extends Partial<ChakraEditableProps>, CommonInputProps<HTMLInputElement> {
 	inputType?: InputType;
-	Preview?: React.ComponentType<PreviewProps>;
+	Preview?: React.ComponentType<InlineEditPreviewProps>;
 }
 
-export interface PreviewProps extends Partial<Omit<InlineEditProps, 'onChange' | 'onChangeValue'>> {
-	lineCount?: number;
-	lineLength?: number;
+export interface InlineEditPreviewProps extends Partial<Omit<InlineEditProps, 'onChange' | 'onChangeValue'>> {
 	fitText?: boolean;
 	isEditing?: boolean;
 	onRequestEdit?: VoidFunction;
-	tooltip?: string;
 }
 
 export interface InlineEditInputProps extends Pick<InlineEditProps, 'inputType'> {

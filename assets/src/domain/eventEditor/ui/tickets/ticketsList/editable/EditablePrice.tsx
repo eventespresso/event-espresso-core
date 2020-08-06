@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 import { __ } from '@wordpress/i18n';
 
 import type { TicketItemProps } from '../types';
+import { useTicketMutator } from '@edtrServices/apollo/mutations';
 import { getPropsAreEqual } from '@appServices/utilities';
 import CurrencyInput from '@appInputs/CurrencyInput';
 import useRecalculateBasePrice from '../../hooks/useRecalculateBasePrice';
@@ -12,12 +13,14 @@ interface EditablePriceProps extends TicketItemProps {
 }
 
 const EditablePrice: React.FC<EditablePriceProps> = ({ entity: ticket, className }) => {
+	const { updateEntity } = useTicketMutator(ticket.id);
 	const recalculateBasePrice = useRecalculateBasePrice(ticket.id);
 	const onChangePrice = useCallback(
-		({ amount }: any): void => {
-			const price = parseFloat(amount);
+		({ amount: price }: any): void => {
+			price = parseFloat(price);
 			if (price !== ticket.price) {
-				recalculateBasePrice(price);
+				updateEntity({ price, reverseCalculate: true });
+				recalculateBasePrice();
 			}
 		},
 		[ticket.cacheId]
@@ -33,7 +36,6 @@ const EditablePrice: React.FC<EditablePriceProps> = ({ entity: ticket, className
 			wrapperProps={wrapperProps}
 			onChange={onChangePrice}
 			tag={'h3'}
-			tooltip={__('edit ticket total...')}
 		/>
 	);
 };

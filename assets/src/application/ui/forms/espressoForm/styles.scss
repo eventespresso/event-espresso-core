@@ -1,4 +1,4 @@
-@import "application/ui/styles/mixins/breakpoints.scss";
+@import 'application/ui/styles/mixins/breakpoints.scss';
 
 .ee-form {
 	.form-wrapper {
@@ -17,7 +17,6 @@
 
 	.sections-wrapper {
 		padding: 0 0 var(--ee-padding-big);
-
 		& > div:first-child {
 			padding: 1em 0;
 		}
@@ -28,22 +27,11 @@
 		display: flex;
 		flex-wrap: wrap;
 	}
-
 	.section-wrapper + .section-wrapper {
 		border-top: 3px solid var(--ee-color-grey-14);
 	}
-
 	.section-heading {
 		position: relative;
-
-		@include max782px {
-			flex: 0 100%;
-		}
-
-		@include min782px {
-			flex: 0 20%;
-		}
-
 		h3 {
 			color: var(--ee-default-text-color);
 			font-size: 1.4rem;
@@ -51,10 +39,6 @@
 			color: var(--ee-default-text-color);
 			font-size: 1.4rem;
 			margin: 0;
-
-			@include max782px {
-				margin: 0 0 1.5rem;
-			}
 		}
 	}
 
@@ -65,31 +49,21 @@
 		position: absolute;
 		top: 2rem;
 		left: 0.25rem;
-
-		@include max782px {
-			left: unset;
-			right: 0.25rem;
-			top: -0.75rem;
-		}
 	}
-
 	.field-group-items {
 		display: flex;
 		flex-wrap: wrap;
 		width: 100%;
 	}
-
 	.repeatable-wrap {
 		margin-bottom: 1em;
 	}
-
 	.repeatable-item {
 		.remove-item {
 			float: right;
 			margin-left: 0.5em;
 		}
 	}
-
 	.submit-wrapper {
 		display: flex;
 
@@ -101,11 +75,61 @@
 	.section-body {
 		padding: var(--ee-padding-smaller) 0;
 
-		@include max782px {
-			flex: 0 100%;
-		}
+		.ee-form-item {
+			padding: var(--ee-padding-smaller) 0;
 
-		@include min782px {
+			&-switch {
+				padding: var(--ee-padding-small) 0;
+			}
+
+			&-pair {
+				width: 50%;
+				display: inline-flex;
+				padding-right: var(--ee-margin-default);
+				margin: var(--ee-margin-default) 0;
+				label {
+					display: flex;
+					align-items: center;
+				}
+			}
+
+			.ee-icon--info-circle-outlined {
+				color: var(--ee-color-primary-low-contrast);
+				margin: 0 var(--ee-margin-tiny);
+			}
+		}
+	}
+
+	@media only screen and (max-width: 782px) {
+		.section-heading {
+			flex: 0 100%;
+			h3 {
+				margin: 0 0 1.5rem;
+			}
+
+			.section-heading-icon {
+				left: unset;
+				right: 0.25rem;
+				top: -0.75rem;
+			}
+		}
+		.section-body {
+			flex: 0 100%;
+
+			.ee-form-item-pair {
+				width: 100%;
+			}
+			.field-group-item {
+				flex: 0 100%;
+			}
+		}
+	}
+
+	@media only screen and (min-width: 782px) {
+		.section-heading {
+			flex: 0 20%;
+		}
+		.section-body {
 			flex: 0 80%;
 			position: relative;
 			.field-group-item {
@@ -113,123 +137,7 @@
 				padding: 0 0.5em;
 			}
 		}
-
-		.ee-form-item {
-			padding: var(--ee-padding-smaller) 0;
-
-			@include max782px {
-				padding: var(--ee-padding-tiny) 0;
-			}
-
-			@include max600px {
-				padding: var(--ee-padding-micro) 0;
-			}
-
-			@include max480px {
-				padding: var(--ee-padding-nano) 0;
-			}
-
-			&-switch {
-				padding: var(--ee-padding-small) 0;
-			}
-
-			&-pair {
-				display: inline-flex;
-				margin: var(--ee-margin-default) 0;
-				padding-right: var(--ee-padding-big);
-				width: 50%;
-
-				label {
-					cursor: default;
-					&:first-child {
-						align-items: center;
-						display: flex;
-						padding: var(--ee-padding-nano) var(--ee-padding-smaller) 0 0;
-						min-width: 200px;
-					}
-				}
-
-				> div {
-					width: calc(50% - 200px);
-				}
-
-				@include max782px {
-					margin: var(--ee-margin-small) 0;
-					width: 100%;
-
-					label:first-child {
-						justify-content: flex-end;
-						min-width: 240px;
-					}
-
-					label + label {
-						padding: var(--ee-padding-nano) var(--ee-padding-smaller);
-					}
-
-					> div {
-						width: calc(100% - 240px);
-					}
-				}
-
-				@include max600px {
-					margin: var(--ee-margin-smaller) 0;
-				}
-
-				@include max480px {
-					margin: var(--ee-margin-smaller) 0;
-
-					label:first-child {
-						min-width: 200px;
-					}
-
-					> div {
-						width: calc(100% - 200px);
-					}
-				}
-
-				@include max360px {
-					margin: var(--ee-margin-tiny) 0;
-
-					&:not(.ee-form-item__switch) {
-						display: flex;
-						flex-flow: column;
-						justify-content: flex-start;
-						padding-right: 0;
-
-						label:first-child {
-							justify-content: flex-start;
-							width: 100%;
-						}
-
-						> div {
-							width: 100%;
-						}
-					}
-				}
-			}
-
-			// to override values set in &__pair
-			&__number > div {
-				width: 120px;
-
-				@include max360px {
-					width: 100%;
-				}
-			}
-		}
-
-		.field-group-item {
-			@include max782px {
-				flex: 0 100%;
-			}
-
-			@include min782px {
-				flex: 0 50%;
-				padding: 0 0.5em;
-			}
-		}
 	}
-
 	.tooltip {
 		margin-left: 0.5em;
 	}

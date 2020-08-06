@@ -5,8 +5,6 @@ import 'rc-pagination/assets/index.css';
 import defaultLocale from 'rc-pagination/lib/locale/en_US';
 import './style.scss';
 
-import { ChevronLeft, ChevronRight } from '@appDisplay/icons/svgs';
-
 import defaultItemRender from './ItemRender';
 import { PaginationProps } from './types';
 import PerPage from './PerPage';
@@ -34,10 +32,8 @@ const Pagination: React.FC<PaginationProps> = ({
 				hideOnSinglePage={hideOnSinglePage}
 				itemRender={defaultItemRender}
 				locale={locale}
-				nextIcon={<ChevronRight size='small' />}
 				onChange={onChangePageNumber}
 				pageSize={perPage}
-				prevIcon={<ChevronLeft size='small' />}
 				showSizeChanger={false}
 				total={total}
 			/>

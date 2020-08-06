@@ -6,7 +6,7 @@ const useSetRelationalData = (): void => {
 	const { initialize } = useRelations();
 
 	useEffect(() => {
-		initialize(window?.eventEspressoData?.eventEditor?.relations);
+		initialize(window.eeEditorData.event.relations);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 };

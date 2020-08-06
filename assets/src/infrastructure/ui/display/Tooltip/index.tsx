@@ -8,16 +8,15 @@ const Tooltip: React.FC<TooltipProps> = ({ children, tooltip, ...props }) => {
 	const ariaLabel = tooltip || props['aria-label'];
 	const className = classNames(props.className, 'ee-tooltip');
 
-
 	return (
 		<ChakraTooltip
 			{...props}
 			aria-label={ariaLabel}
 			className={className}
-			closeOnClick
-			hideDelay={250}
 			label={tooltip}
+			closeOnClick
 			showDelay={500}
+			hideDelay={250}
 		>
 			{children && children}
 		</ChakraTooltip>

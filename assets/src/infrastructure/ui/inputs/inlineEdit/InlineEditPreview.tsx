@@ -1,9 +1,15 @@
 import React from 'react';
 import { EditablePreview as ChakraEditablePreview } from '@chakra-ui/core';
 
-import type { PreviewProps } from './types';
+import type { InlineEditPreviewProps } from './types';
 
-const InlineEditPreview: React.FC<PreviewProps> = ({ isEditing, onRequestEdit, Preview, value, ...props }) => {
+const InlineEditPreview: React.FC<InlineEditPreviewProps> = ({
+	isEditing,
+	onRequestEdit,
+	Preview,
+	value,
+	...props
+}) => {
 	return Preview ? (
 		<Preview {...props} isEditing={isEditing} onRequestEdit={onRequestEdit} value={value} />
 	) : (

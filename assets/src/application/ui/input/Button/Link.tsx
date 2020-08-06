@@ -5,30 +5,21 @@ import { Tooltip } from '@infraUI/display';
 import { LinkProps } from './types';
 import './style.scss';
 
-const Link: React.FC<LinkProps> = ({ children, href, icon, tooltip, tooltipProps, ...props }) => {
-	const className = classNames(
-		props.className,
-		'ee-btn-base',
-		'ee-icon-button',
-		'ee-icon-button--link',
-		'ee-icon-button--borderless'
-	);
+const Link: React.FC<LinkProps> = ({ external, href, icon, tooltip, tooltipProps, ...props }) => {
+	const className = classNames('ee-btn-base ee-icon-button ee-icon-button--borderless', props.className);
 
-	const link = (
-		<a href={href} className={className} target='_blank' rel='noopener norefferer'>
-			{icon ? icon : children}
-		</a>
-	);
-
-	if (tooltip) {
+	if (external && icon) {
 		return (
 			<Tooltip tooltip={tooltip} {...tooltipProps}>
-				{link}
+				<a href={href} className={className} target={'_blank'} rel={'noopener norefferer'}>
+					{icon}
+				</a>
 			</Tooltip>
 		);
 	}
 
-	return link;
+	// this might be extended later when we'll use react-router
+	return null;
 };
 
 export default Link;

@@ -17,10 +17,6 @@ $filter-btn: '.ee-filter-bar__btn';
 		display: flex;
 		flex-flow: row wrap;
 		align-items: flex-start;
-
-		@include max600px {
-			justify-content: space-between;
-		}
 	}
 
 	&__collapsible {
@@ -56,10 +52,6 @@ $filter-btn: '.ee-filter-bar__btn';
 				align-items: flex-start;
 				flex-flow: column nowrap;
 			}
-		}
-
-		@include max480px {
-			margin: 0 0 var(--ee-margin-smaller);
 		}
 
 		> div,
@@ -116,15 +108,10 @@ $filter-btn: '.ee-filter-bar__btn';
 				margin: 0;
 			}
 
-			@include max600px {
+			@include max782px {
 				display: flex;
-				margin: var(--ee-margin-smaller) var(--ee-margin-nano);
-				width: calc(33% - var(--ee-margin-smaller) - var(--ee-margin-nano));
-			}
-
-			@include max480px {
-				margin: var(--ee-margin-tiny) var(--ee-margin-nano);
-				width: calc(50% - var(--ee-margin-nano) * 4);
+				margin-left: 0;
+				width: 100%;
 			}
 		}
 
@@ -152,6 +139,7 @@ $filter-btn: '.ee-filter-bar__btn';
 		&--active {
 			&#{$filter-btn} {
 				border-color: var(--ee-color-primary-low-contrast) !important;
+				// box-shadow: none;
 				color: var(--ee-color-primary);
 				path {
 					fill: var(--ee-color-primary);
@@ -162,7 +150,6 @@ $filter-btn: '.ee-filter-bar__btn';
 		@include max480px {
 			width: 25%;
 		}
-
 		@include max360px {
 			width: 33%;
 		}
@@ -180,12 +167,19 @@ $filter-btn: '.ee-filter-bar__btn';
 		}
 	}
 
-	@include max600px {
+	@media only screen and (max-width: 1280px) {
+		margin: 0 0 var(--ee-margin-default);
+	}
+
+	/* WordPress Admin Media Query Breakpoint: Smartphone */
+	@media screen and (max-width: 600px) {
 		flex-flow: column nowrap;
 		padding-bottom: var(--ee-padding-small);
 	}
 
-	@include max480px {
-		margin: 0;
+	@media only screen and (max-width: 480px) {
+		.ee-filter-bar__filter {
+			margin: 0 0 var(--ee-margin-smaller);
+		}
 	}
 }

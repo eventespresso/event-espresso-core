@@ -1,23 +1,18 @@
 import React from 'react';
-import { LabelPosition } from '@appDisplay/withLabel';
-import { ButtonProps } from '../../input/Button';
 
 export interface CalendarDateProps {
+	editButton?: EditButtonProps;
 	className?: string;
-	editDateButton?: JSX.Element;
-	footerText?: string | React.ReactNode;
 	headerText?: string | React.ReactNode;
+	footerText?: string | React.ReactNode;
+	onEdit?: clickHandler | keyPressHandler;
 	showTime?: boolean;
 }
 
 export type clickHandler = (event: React.MouseEvent<HTMLButtonElement>) => void;
 export type keyPressHandler = (event: React.KeyboardEventHandler<HTMLButtonElement>) => void;
 
-export interface EditDateButtonProps extends ButtonProps {
-	endDate: string;
-	header?: string;
-	onEditHandler: (dates: string[]) => void;
-	startDate: string;
-	tooltip?: string;
-	tooltipPosition?: LabelPosition;
+export interface EditButtonProps {
+	tooltip: string;
+	tooltipPosition: string;
 }

@@ -21,7 +21,7 @@ const useTicketsListFilterStateManager = (): FSM => {
 
 	const { visibleDatetimeIds } = useEdtrState();
 
-	const entityFilterState = useEntityListFilterStateManager<SortBy>('order');
+	const entityFilterState = useEntityListFilterStateManager<SortBy>('date');
 	const { setPageNumber } = entityFilterState;
 
 	// subscribe to visible dates for isChained

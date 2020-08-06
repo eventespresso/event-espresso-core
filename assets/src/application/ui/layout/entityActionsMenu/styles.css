@@ -1,0 +1,8 @@
+.ee-entity-actions-menu {
+	align-content: flex-start;
+	align-items: center;
+	box-sizing: border-box;
+	display: flex;
+	flex-flow: column nowrap;
+	height: 100%;
+}

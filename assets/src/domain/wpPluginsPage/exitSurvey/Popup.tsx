@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { Button, Modal } from '@wordpress/components';
-import { useDisclosure } from '@chakra-ui/hooks';
+import { useDisclosure } from '@chakra-ui/core';
 import { __ } from '@wordpress/i18n';
 
 type PopupProps = {
@@ -9,7 +9,7 @@ type PopupProps = {
 };
 
 const Popup: React.FC<PopupProps> = ({ onOk, onSkip }) => {
-	const { isOpen, onClose } = useDisclosure({ defaultIsOpen: true });
+	const { isOpen, onClose } = useDisclosure(true);
 
 	const onOkHandler = useCallback(() => {
 		if (typeof onOk === 'function') {

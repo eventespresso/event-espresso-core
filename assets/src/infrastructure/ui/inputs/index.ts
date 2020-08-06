@@ -6,10 +6,6 @@ export { default as Checkbox } from './Checkbox';
 
 export { default as CheckboxGroup } from './CheckboxGroup';
 
-export { DatePicker, DateTimeRangePicker, TimePicker } from './dateTime';
-
-export type { DatePickerProps, DateTimeRangePickerProps, TimePickerProps } from './dateTime';
-
 export { default as InputWithLabel } from './InputWithLabel';
 
 export { default as NumberInput } from './NumberInput';
@@ -29,5 +25,4 @@ export { default as TextArea } from './TextArea';
 export * from './inlineEdit';
 
 export * from './Button/types';
-
 export * from './types';

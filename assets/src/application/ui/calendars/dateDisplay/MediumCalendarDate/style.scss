@@ -30,22 +30,24 @@
 			letter-spacing: var(--ee-letter-spacing-font-size-tiny);
 		}
 
-		&__month-day-year {
+		&__month-day {
 			font-size: var(--ee-font-size-bigger);
-			font-weight: 700;
+			font-weight: bold;
 			line-height: var(--ee-font-size-bigger);
 		}
 
 		&__day {
-			margin: 0 0 0 var(--ee-margin-micro);
+			margin: 0 0 0 var(--ee-margin-smaller);
 		}
 
-		&__separator {
-			font-size: var(--ee-font-size-default);
-			font-weight: 100;
-			margin: 0 var(--ee-margin-micro);
+		&__year {
+			font-size: var(--ee-font-size-small);
+			letter-spacing: var(--ee-letter-spacing-font-size-micro);
+			line-height: var(--ee-font-size-smaller);
+			left: var(--ee-padding-nano);
+			margin: 0 var(--ee-margin-nano) var(--ee-margin-tiny);
 			position: relative;
-			top: -0.2rem;
+			top: var(--ee-padding-micro);
 		}
 
 		&__time {

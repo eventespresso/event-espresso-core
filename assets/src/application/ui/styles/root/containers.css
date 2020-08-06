@@ -1,0 +1,38 @@
+.ee-container,
+.ee-container-default,
+.ee-container-primary,
+.ee-container-secondary,
+.ee-container-accent {
+	border-radius: var(--ee-border-radius-default);
+	-moz-border-radius: var(--ee-border-radius-default);
+	-webkit-border-radius: var(--ee-border-radius-default);
+	box-sizing: border-box !important;
+	font-size: var(--ee-font-size-default);
+	line-height: var(--ee-line-height-modifier);
+	margin: var(--ee-margin-smaller) 0 var(--ee-margin-default);
+	padding: var(--ee-padding-default);
+}
+
+.ee-container-default {
+	background: var(--ee-background-color);
+	border: 1px solid var(--ee-border-color);
+	color: var(--ee-default-text-color);
+}
+
+.ee-container-primary {
+	background: var(--ee-color-primary);
+	border: 1px solid var(--ee-color-primary);
+	color: var(--ee-text-on-primary);
+}
+
+.ee-container-secondary {
+	background: var(--ee-color-secondary);
+	border: 1px solid var(--ee-color-secondary);
+	color: var(--ee-text-on-secondary);
+}
+
+.ee-container-accent {
+	background: var(--ee-color-accent);
+	border: 1px solid var(--ee-color-accent);
+	color: var(--ee-text-on-accent);
+}

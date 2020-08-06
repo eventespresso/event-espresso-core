@@ -1,13 +1,23 @@
 import React from 'react';
+import Dotdotdot from 'react-dotdotdot';
 
-import { InlineEdit } from '@infraUI/inputs';
-import Preview from './Preview';
 import { TextAreaProps } from './types';
+import { InlineEdit, InlineEditPreviewProps } from '@infraUI/inputs';
 
-const InlineEditTextArea: React.FC<TextAreaProps> = ({ tooltip, ...props }) => {
-	const preview = (previewProps) => <Preview {...previewProps} lineCount={3} tooltip={tooltip} />;
+const Preview: React.FC<InlineEditPreviewProps> = ({ value, onRequestEdit, isEditing }) => {
+	if (isEditing) {
+		return null;
+	}
 
-	return <InlineEdit placeholder='' {...props} inputType='textarea' Preview={preview} />;
+	return (
+		<Dotdotdot clamp={3}>
+			<span onClick={onRequestEdit}>{value}</span>
+		</Dotdotdot>
+	);
+};
+
+const InlineEditTextArea: React.FC<TextAreaProps> = ({ ...rest }) => {
+	return <InlineEdit placeholder='' {...rest} inputType='textarea' Preview={Preview} />;
 };
 
 export default InlineEditTextArea;

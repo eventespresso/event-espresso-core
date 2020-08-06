@@ -9,7 +9,7 @@
 		margin: var(--ee-margin-nano) var(--ee-margin-nano) var(--ee-margin-smaller) var(--ee-margin-smaller);
 	}
 
-	@include max600px {
+	@include max782px {
 		align-items: stretch;
 		display: flex;
 		flex-direction: row;
@@ -17,15 +17,11 @@
 		margin: var(--ee-margin-nano) var(--ee-margin-nano) var(--ee-margin-smaller);
 	}
 
-	@include max480px {
-		margin-bottom: var(--ee-margin-tiny);
-	}
-
 	.ee-btn-base.ee-btn {
 		box-shadow: none !important;
 		margin: 0 !important;
 
-		@include max600px {
+		@include max782px {
 			flex-grow: 1;
 		}
 
@@ -47,5 +43,19 @@
 			border-top-left-radius: 0 !important;
 			border-bottom-left-radius: 0 !important;
 		}
+	}
+
+	+ .ee-btn {
+		// TODO: rethink this approach such that btn group margins shouldn't rely on nearby buttons
+		// margin-left: var(--ee-margin-default);
+
+		// [dir='rtl'] & {
+		// 	margin-left: 0;
+		// 	margin-right: var(--ee-margin-default);
+		// }
+
+		// @include max782px {
+		// 	margin-left: 0;
+		// }
 	}
 }

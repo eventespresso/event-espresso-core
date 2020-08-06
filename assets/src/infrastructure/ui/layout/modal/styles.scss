@@ -1,52 +1,23 @@
 @import 'application/ui/styles/mixins/breakpoints.scss';
 
-.ee-modal {
-	.ee-modal {
-		&__header {
-			&.ee-modal__header {
-				[dir='rtl'] & {
-					padding-right: var(--ee-padding-extreme);
-				}
-
-				@include max782px {
-					padding-left: var(--ee-padding-smaller);
-					padding-right: var(--ee-padding-extreme);
-				}
+.ee-modal .ee-modal {
+	&__header {
+		&.ee-modal__header {
+			[dir='rtl'] & {
+				padding-right: var(--ee-padding-extreme);
 			}
-		}
 
-		&__body {
 			@include max782px {
 				padding-left: var(--ee-padding-smaller);
-				padding-right: var(--ee-padding-smaller);
+				padding-right: var(--ee-padding-extreme);
 			}
 		}
 	}
 
-	@at-root [role='alertdialog']#{&} {
-		.ee-confirm-close {
-			display: inline-flex;
-			position: absolute;
-			top: 8px;
-			right: 12px;
-			width: var(--ee-padding-big);
-			height: var(--ee-padding-big);
-			svg {
-				height: var(--ee-border-radius-big);
-				margin: 0;
-				width: var(--ee-border-radius-big);
-			}
+	&__body {
+		@include max782px {
+			padding-left: var(--ee-padding-smaller);
+			padding-right: var(--ee-padding-smaller);
 		}
-	}
-}
-
-// targets the div that wraps the modal window and controls how much screen space is taken
-// we want to go full screen on anything smaller than a big tablet in landscape (1024px)
-[data-focus-lock-disabled] > div:last-child {
-	@include max1024px {
-		height: 100vh;
-		max-height: 100vh;
-		top: 0;
-		z-index: 100000;
 	}
 }

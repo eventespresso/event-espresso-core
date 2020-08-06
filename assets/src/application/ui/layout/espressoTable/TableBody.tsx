@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
-import invariant from 'invariant';
+import warning from 'warning';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 
 import { isFunc } from '@appServices/utilities/function';
@@ -69,8 +69,8 @@ const TableBody: React.FC<TableBodyProps> = ({
 			>
 				{row.cells.map((cellData, colNumber) => {
 					const column = primaryHeader.cells[colNumber];
-					invariant(column !== undefined, `Missing data for column ${colNumber} ` + `in row ${rowNumber}.`);
-					invariant(
+					warning(column !== undefined, `Missing data for column ${colNumber} ` + `in row ${rowNumber}.`);
+					warning(
 						cellData.hasOwnProperty('value'),
 						`Missing "value" property for table cell at ` + `row ${rowNumber} column ${colNumber}.`
 					);

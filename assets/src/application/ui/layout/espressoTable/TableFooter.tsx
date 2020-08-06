@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
-import invariant from 'invariant';
+import warning from 'warning';
 
 import { isEmpty } from '@appServices/utilities/array';
 import { isFunc } from '@appServices/utilities/function';
@@ -29,7 +29,7 @@ const TableFooter: React.FC<TableFooterProps> = ({ tableId, footerRows, rowCount
 						className={props.className}
 					>
 						{footerRow.cells.map((column, col) => {
-							invariant(
+							warning(
 								column.hasOwnProperty('value'),
 								`Missing "value" property for footer column ${col}.`
 							);

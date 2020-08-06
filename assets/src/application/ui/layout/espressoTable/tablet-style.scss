@@ -1,0 +1,186 @@
+/* WordPress Admin Media Query Breakpoint: Tablet */
+
+@media only screen and (max-width: 782px) {
+	.ee-rspnsv-table {
+		width: 600px;
+
+		.ee-rspnsv-table-body {
+			background: var(--ee-background-color);
+			display: flex;
+			flex-flow: row wrap;
+			justify-content: space-between;
+			padding: 0 var(--ee-padding-tiny);
+
+			td {
+				&.ee-entity-list-status-stripe.ee-entity-list-status-stripe {
+					text-align: center;
+
+					.ee-rspnsv-table-mobile-only-column-value {
+						padding-left: 0;
+					}
+
+					.ee-rspnsv-table-show-on-mobile {
+						color: white;
+					}
+				}
+
+				&.ee-ticket-list-col-registrations,
+				&.ee-actions-column {
+					.ee-rspnsv-table-mobile-only-column-value {
+						justify-content: start;
+					}
+				}
+			}
+		}
+
+		.ee-rspnsv-table-header .ee-rspnsv-table-header-row,
+		.ee-rspnsv-table-body .ee-rspnsv-table-body-row,
+		.ee-rspnsv-table-footer .ee-rspnsv-table-footer-row {
+			border: 1px dotted var(--ee-color-grey-12);
+			display: flex;
+			flex-flow: column nowrap;
+			margin: var(--ee-margin-tiny) 0;
+			width: 49%;
+		}
+
+		.ee-rspnsv-table-body .ee-rspnsv-table-body-row:nth-child(even) {
+			background: unset;
+		}
+
+		.ee-rspnsv-table-header .ee-rspnsv-table-header-th:not(.ee-rspnsv-table-hide-on-mobile) {
+			padding: var(--ee-padding-micro);
+		}
+
+		.ee-rspnsv-table-body {
+			.ee-rspnsv-table-body-th:not(.ee-rspnsv-table-hide-on-mobile),
+			.ee-rspnsv-table-body-td:not(.ee-rspnsv-table-hide-on-mobile) {
+				padding: var(--ee-padding-micro);
+			}
+		}
+
+		.ee-rspnsv-table-footer {
+			.ee-rspnsv-table-footer-th:not(.ee-rspnsv-table-hide-on-mobile),
+			.ee-rspnsv-table-footer-td:not(.ee-rspnsv-table-hide-on-mobile) {
+				padding: var(--ee-padding-micro);
+			}
+		}
+
+		display: block;
+		width: 100%;
+
+		.ee-rspnsv-table-header,
+		.ee-rspnsv-table-header-th:not(.ee-rspnsv-table-hide-on-mobile),
+		.ee-rspnsv-table-body-th:not(.ee-rspnsv-table-hide-on-mobile),
+		.ee-rspnsv-table-footer,
+		.ee-rspnsv-table-footer-th:not(.ee-rspnsv-table-hide-on-mobile) {
+			display: block;
+			width: 100%;
+		}
+
+		.ee-rspnsv-table-body .ee-rspnsv-table-body-td:not(.ee-rspnsv-table-hide-on-mobile),
+		.ee-rspnsv-table-footer .ee-rspnsv-table-footer-td:not(.ee-rspnsv-table-hide-on-mobile) {
+			display: block;
+			text-align: left;
+			width: 100%;
+		}
+
+		.ee-rspnsv-table-body {
+			.ee-rspnsv-table-body-td.ee-zebra-stripe-on-mobile {
+				background: var(--ee-color-grey-15);
+			}
+
+			.ee-rspnsv-table-body-row:hover {
+				background: unset;
+			}
+
+			.ee-rspnsv-table-body-td.ee-col-0 {
+				font-size: var(--ee-font-size-default);
+				padding: var(--ee-padding-smaller);
+			}
+		}
+
+		.ee-rspnsv-table-mobile-only-column-header {
+			display: inline-block;
+			float: left;
+			margin: auto 0;
+			padding-right: var(--ee-padding-smaller);
+			text-align: right;
+			vertical-align: middle;
+			visibility: visible;
+			width: 38.2%;
+		}
+
+		.ee-rspnsv-table-body-td .ee-rspnsv-table-mobile-only-column-value {
+			display: inline-block;
+			padding-left: var(--ee-padding-smaller);
+			width: 61.8%;
+		}
+
+		.ee-rspnsv-table-long-label,
+		.ee-rspnsv-table-show-on-mobile {
+			color: var(--ee-default-text-color);
+			display: block;
+			height: unset;
+			visibility: visible;
+			width: 100%;
+		}
+
+		.ee-rspnsv-table-short-label,
+		.ee-rspnsv-table-header,
+		.ee-rspnsv-table-hide-on-mobile {
+			display: none;
+			height: 0;
+			margin: 0;
+			padding: 0;
+			visibility: hidden;
+			width: 0;
+		}
+
+		.ee-rspnsv-table-header .ee-rspnsv-table-header-th.ee-centered-column,
+		.ee-rspnsv-table-body .ee-rspnsv-table-body-td.ee-centered-column,
+		.ee-rspnsv-table-footer .ee-rspnsv-table-footer-th.ee-centered-column {
+			text-align: left;
+		}
+
+		.ee-rspnsv-table-header-th.ee-rspnsv-table-column-nano:not(.ee-entity-list-status-stripe):not(.ee-rspnsv-table-hide-on-mobile),
+		.ee-rspnsv-table-body-td.ee-rspnsv-table-column-nano:not(.ee-entity-list-status-stripe):not(.ee-rspnsv-table-hide-on-mobile),
+		.ee-rspnsv-table-footer-th.ee-rspnsv-table-column-nano:not(.ee-entity-list-status-stripe):not(.ee-rspnsv-table-hide-on-mobile),
+		.ee-rspnsv-table-header-th.ee-rspnsv-table-column-micro:not(.ee-entity-list-status-stripe):not(.ee-rspnsv-table-hide-on-mobile),
+		.ee-rspnsv-table-body-td.ee-rspnsv-table-column-micro:not(.ee-entity-list-status-stripe):not(.ee-rspnsv-table-hide-on-mobile),
+		.ee-rspnsv-table-footer-th.ee-rspnsv-table-column-micro:not(.ee-entity-list-status-stripe):not(.ee-rspnsv-table-hide-on-mobile),
+		.ee-rspnsv-table-header-th.ee-rspnsv-table-column-tiny:not(.ee-entity-list-status-stripe):not(.ee-rspnsv-table-hide-on-mobile),
+		.ee-rspnsv-table-body-td.ee-rspnsv-table-column-tiny:not(.ee-entity-list-status-stripe):not(.ee-rspnsv-table-hide-on-mobile),
+		.ee-rspnsv-table-footer-th.ee-rspnsv-table-column-tiny:not(.ee-entity-list-status-stripe):not(.ee-rspnsv-table-hide-on-mobile),
+		.ee-rspnsv-table-header-th.ee-rspnsv-table-column-smaller:not(.ee-entity-list-status-stripe):not(.ee-rspnsv-table-hide-on-mobile),
+		.ee-rspnsv-table-body-td.ee-rspnsv-table-column-smaller:not(.ee-entity-list-status-stripe):not(.ee-rspnsv-table-hide-on-mobile),
+		.ee-rspnsv-table-footer-th.ee-rspnsv-table-column-smaller:not(.ee-entity-list-status-stripe):not(.ee-rspnsv-table-hide-on-mobile),
+		.ee-rspnsv-table-header-th.ee-rspnsv-table-column-small:not(.ee-entity-list-status-stripe):not(.ee-rspnsv-table-hide-on-mobile),
+		.ee-rspnsv-table-body-td.ee-rspnsv-table-column-small:not(.ee-entity-list-status-stripe):not(.ee-rspnsv-table-hide-on-mobile),
+		.ee-rspnsv-table-footer-th.ee-rspnsv-table-column-small:not(.ee-entity-list-status-stripe):not(.ee-rspnsv-table-hide-on-mobile),
+		.ee-rspnsv-table-header-th.ee-rspnsv-table-column-default:not(.ee-entity-list-status-stripe):not(.ee-rspnsv-table-hide-on-mobile),
+		.ee-rspnsv-table-body-td.ee-rspnsv-table-column-default:not(.ee-entity-list-status-stripe):not(.ee-rspnsv-table-hide-on-mobile),
+		.ee-rspnsv-table-footer-th.ee-rspnsv-table-column-default:not(.ee-entity-list-status-stripe):not(.ee-rspnsv-table-hide-on-mobile),
+		.ee-rspnsv-table-header-th.ee-rspnsv-table-column-big:not(.ee-entity-list-status-stripe):not(.ee-rspnsv-table-hide-on-mobile),
+		.ee-rspnsv-table-body-td.ee-rspnsv-table-column-big:not(.ee-entity-list-status-stripe):not(.ee-rspnsv-table-hide-on-mobile),
+		.ee-rspnsv-table-footer-th.ee-rspnsv-table-column-big:not(.ee-entity-list-status-stripe):not(.ee-rspnsv-table-hide-on-mobile),
+		.ee-rspnsv-table-header-th.ee-rspnsv-table-column-bigger:not(.ee-entity-list-status-stripe):not(.ee-rspnsv-table-hide-on-mobile),
+		.ee-rspnsv-table-body-td.ee-rspnsv-table-column-bigger:not(.ee-entity-list-status-stripe):not(.ee-rspnsv-table-hide-on-mobile),
+		.ee-rspnsv-table-footer-th.ee-rspnsv-table-column-bigger:not(.ee-entity-list-status-stripe):not(.ee-rspnsv-table-hide-on-mobile),
+		.ee-rspnsv-table-header-th.ee-rspnsv-table-column-huge:not(.ee-entity-list-status-stripe):not(.ee-rspnsv-table-hide-on-mobile),
+		.ee-rspnsv-table-body-td.ee-rspnsv-table-column-huge:not(.ee-entity-list-status-stripe):not(.ee-rspnsv-table-hide-on-mobile),
+		.ee-rspnsv-table-footer-th.ee-rspnsv-table-column-huge:not(.ee-entity-list-status-stripe):not(.ee-rspnsv-table-hide-on-mobile),
+		.ee-rspnsv-table-header-th.ee-rspnsv-table-column-extreme:not(.ee-entity-list-status-stripe):not(.ee-rspnsv-table-hide-on-mobile),
+		.ee-rspnsv-table-body-td.ee-rspnsv-table-column-extreme:not(.ee-entity-list-status-stripe):not(.ee-rspnsv-table-hide-on-mobile),
+		.ee-rspnsv-table-footer-th.ee-rspnsv-table-column-extreme:not(.ee-entity-list-status-stripe):not(.ee-rspnsv-table-hide-on-mobile),
+		.ee-rspnsv-table-header-th.ee-rspnsv-table-column-auto:not(.ee-entity-list-status-stripe):not(.ee-rspnsv-table-hide-on-mobile),
+		.ee-rspnsv-table-body-td.ee-rspnsv-table-column-auto:not(.ee-entity-list-status-stripe):not(.ee-rspnsv-table-hide-on-mobile),
+		.ee-rspnsv-table-footer-th.ee-rspnsv-table-column-auto:not(.ee-entity-list-status-stripe):not(.ee-rspnsv-table-hide-on-mobile) {
+			padding: var(--ee-padding-micro) var(--ee-padding-smaller);
+			width: 100%;
+		}
+
+		.ee-rspnsv-table-body-td.ee-entity-list-status-stripe {
+			width: 100%;
+		}
+	}
+}

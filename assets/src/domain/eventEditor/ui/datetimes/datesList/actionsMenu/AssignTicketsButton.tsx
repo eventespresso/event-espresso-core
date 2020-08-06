@@ -21,11 +21,12 @@ const AssignTicketsButton: React.FC<EntityListItemProps<Datetime>> = React.memo(
 		entity: 'datetimes',
 		entityId: entity.id,
 	});
-
 	const count = relatedTickets.length;
 
+	const relatedTicketDbIds = relatedTickets.map(({ dbId }) => dbId);
+
 	const title = count
-		? __('Number of related tickets')
+		? `${__('Related Tickets:')} ${relatedTicketDbIds.join(', ')}`
 		: __('There are no tickets assigned to this datetime. Please click the ticket icon to update the assignments.');
 
 	const tooltipProps = useMemoStringify<TooltipProps>({ placement: 'right' });
@@ -48,5 +49,5 @@ const AssignTicketsButton: React.FC<EntityListItemProps<Datetime>> = React.memo(
 
 export default withIsLoaded<EntityListItemProps<Datetime>>(TypeName.tickets, ({ entity, loaded }) => {
 	/* Hide TAM unless tickets are loaded */
-	return loaded && <AssignTicketsButton entity={entity} />;
+	return loaded && <AssignTicketsButton entity={ entity } />;
 });
