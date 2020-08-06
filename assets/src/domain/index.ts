@@ -11,11 +11,11 @@ if (domain) {
 	// 	'color: SkyBlue;',
 	// 	eventEspressoData
 	// );
-	import(
-		/* webpackExclude: /(shared|blocks)/ */
-		/* webpackChunkName: "[request]" */
-		`./${domain}/entryPoint.ts`
-	).catch(console.error);
+	// import(
+	// 	/* webpackExclude: /(shared|blocks)/ */
+	// 	/* webpackChunkName: "[request]" */
+	// 	`./${domain}/entryPoint.ts`
+	// ).catch(console.error);
 } else {
 	console.error('No domain supplied');
 }

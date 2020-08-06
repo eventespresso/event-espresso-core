@@ -17,7 +17,13 @@ use EventEspresso\core\services\collections\DuplicateCollectionIdentifierExcepti
  */
 class EspressoCoreAppAssetManager extends ReactAssetManager
 {
-    const JS_HANDLE_EDITOR = 'eventespresso-core-app';
+    const JS_HANDLE_BARISTA = 'eventespresso-barista';
+
+    const JS_HANDLE_EDITOR  = 'eventespresso-core-app';
+
+    const JS_HANDLE_EVENT_EDITOR  = 'eventespresso-eventEditor';
+
+    const JS_HANDLE_REM_EDITOR  = 'eventespresso-rem';
 
     /**
      * @throws InvalidDataTypeException
@@ -54,5 +60,14 @@ class EspressoCoreAppAssetManager extends ReactAssetManager
                 'wp-url',
             ]
         )->setRequiresTranslation();
+
+        $this->addJs(
+            EspressoCoreAppAssetManager::JS_HANDLE_BARISTA,
+            [
+                EspressoCoreAppAssetManager::JS_HANDLE_EDITOR,
+                EspressoCoreAppAssetManager::JS_HANDLE_EVENT_EDITOR,
+                EspressoCoreAppAssetManager::JS_HANDLE_REM_EDITOR,
+            ]
+        );
     }
 }

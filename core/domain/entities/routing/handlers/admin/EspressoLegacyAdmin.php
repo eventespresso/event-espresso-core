@@ -3,6 +3,7 @@
 namespace EventEspresso\core\domain\entities\routing\handlers\admin;
 
 use EE_Dependency_Map;
+use EventEspresso\core\domain\services\assets\EspressoCoreAppAssetManager;
 use EventEspresso\core\domain\services\assets\EspressoLegacyAdminAssetManager;
 use EventEspresso\core\domain\services\assets\JqueryAssetManager;
 use EventEspresso\core\domain\services\assets\LegacyAccountingAssetManager;
@@ -17,12 +18,6 @@ use EventEspresso\core\domain\services\assets\LegacyAccountingAssetManager;
  */
 class EspressoLegacyAdmin extends AdminRoute
 {
-
-    /**
-     * @var LegacyAccountingAssetManager $asset_manager
-     */
-    protected $asset_manager;
-
 
     /**
      * returns true if the current request matches this route
@@ -133,6 +128,18 @@ class EspressoLegacyAdmin extends AdminRoute
         $this->loader->getShared(JqueryAssetManager::class);
         $this->loader->getShared(EspressoLegacyAdminAssetManager::class);
         $this->loader->getShared(LegacyAccountingAssetManager::class);
+        add_action('admin_enqueue_scripts', [$this, 'enqueueAssets']);
         return true;
+    }
+
+
+    /**
+     * enqueue_scripts - Load the scripts and css
+     *
+     * @return void
+     */
+    public function enqueueAssets()
+    {
+        wp_enqueue_script(EspressoCoreAppAssetManager::JS_HANDLE_BARISTA);
     }
 }
