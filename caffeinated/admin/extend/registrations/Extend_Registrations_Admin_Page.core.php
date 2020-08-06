@@ -1122,7 +1122,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
         $checked_never = new CheckinStatusDashicon(EE_Checkin::status_checked_never);
         $legend_items = array(
             'star-icon'        => array(
-                'class' => 'dashicons dashicons-star-filled lt-blue-icon ee-icon-size-8',
+                'class' => 'dashicons dashicons-star-filled yellow-icon ee-icon-size-8',
                 'desc'  => esc_html__('This Registrant is the Primary Registrant', 'event_espresso'),
             ),
             'checkin'          => array(

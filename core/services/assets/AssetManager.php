@@ -25,7 +25,7 @@ abstract class AssetManager implements AssetManagerInterface
 {
 
     /**
-     * @var AssetCollection $assets
+     * @var AssetCollection|Asset[] $assets
      */
     protected $assets;
 
@@ -267,8 +267,9 @@ abstract class AssetManager implements AssetManagerInterface
     public function enqueueAsset($handle)
     {
         if ($this->assets->has($handle)) {
+            /** @var Asset $asset */
             $asset = $this->assets->get($handle);
-            if ($asset->isRegistered()) {
+            if ($asset instanceof BrowserAsset && $asset->isRegistered()) {
                 $asset->enqueueAsset();
                 return true;
             }

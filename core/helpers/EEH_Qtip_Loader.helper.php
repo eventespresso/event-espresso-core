@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\services\assets\JqueryAssetManager;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
 
@@ -90,7 +91,7 @@ class EEH_Qtip_Loader extends EEH_Base
         wp_register_script(
             'ee-qtip-helper',
             EE_HELPERS_ASSETS . 'ee-qtip-helper.js',
-            array('qtip', 'jquery-cookie'),
+            array('qtip', JqueryAssetManager::JS_HANDLE_JQUERY_COOKIE),
             EVENT_ESPRESSO_VERSION,
             true
         );

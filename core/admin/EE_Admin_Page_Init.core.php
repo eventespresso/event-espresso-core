@@ -154,13 +154,6 @@ abstract class EE_Admin_Page_Init extends EE_Base
      */
     public function load_wp_global_scripts_styles()
     {
-        wp_register_style(
-            'espresso_menu',
-            EE_ADMIN_URL . 'assets/admin-menu-styles.css',
-            array('dashicons'),
-            EVENT_ESPRESSO_VERSION
-        );
-        wp_enqueue_style('espresso_menu');
     }
 
 

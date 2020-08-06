@@ -1023,7 +1023,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     {
         $fc_items = array(
             'star-icon'        => array(
-                'class' => 'dashicons dashicons-star-filled lt-blue-icon ee-icon-size-8',
+                'class' => 'dashicons dashicons-star-filled yellow-icon ee-icon-size-8',
                 'desc'  => esc_html__('This is the Primary Registrant', 'event_espresso'),
             ),
             'view_details'     => array(

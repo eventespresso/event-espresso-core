@@ -75,6 +75,11 @@ abstract class Asset
      */
     private $registered = false;
 
+    /**
+     * @var bool $enqueue_immediately
+     */
+    private $enqueue_immediately = false;
+
 
     /**
      * Asset constructor.
@@ -179,5 +184,23 @@ abstract class Asset
     public function setRegistered($registered = true)
     {
         $this->registered = filter_var($registered, FILTER_VALIDATE_BOOLEAN);
+    }
+
+
+    /**
+     * @return bool
+     */
+    public function enqueueImmediately()
+    {
+        return $this->enqueue_immediately;
+    }
+
+
+    /**
+     * @param bool $enqueue_immediately
+     */
+    public function setEnqueueImmediately($enqueue_immediately = true)
+    {
+        $this->enqueue_immediately = filter_var($enqueue_immediately, FILTER_VALIDATE_BOOLEAN);
     }
 }

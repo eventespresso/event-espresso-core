@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\domain\services\assets\EspressoLegacyAdminAssetManager;
+use EventEspresso\core\domain\services\assets\LegacyAccountingAssetManager;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\InterminableInterface;
@@ -1887,141 +1889,32 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      */
     public function load_global_scripts_styles()
     {
-        /** STYLES **/
         // add debugging styles
         if (WP_DEBUG) {
             add_action('admin_head', array($this, 'add_xdebug_style'));
         }
-        // register all styles
-        wp_register_style(
-            'espresso-ui-theme',
-            EE_GLOBAL_ASSETS_URL . 'css/espresso-ui-theme/jquery-ui-1.10.3.custom.min.css',
-            array(),
-            EVENT_ESPRESSO_VERSION
-        );
-        wp_register_style('ee-admin-css', EE_ADMIN_URL . 'assets/ee-admin-page.css', array(), EVENT_ESPRESSO_VERSION);
-        // helpers styles
-        wp_register_style(
-            'ee-text-links',
-            EE_PLUGIN_DIR_URL . 'core/helpers/assets/ee_text_list_helper.css',
-            array(),
-            EVENT_ESPRESSO_VERSION
-        );
-        /** SCRIPTS **/
-        // register all scripts
-        wp_register_script(
-            'ee-dialog',
-            EE_ADMIN_URL . 'assets/ee-dialog-helper.js',
-            array('jquery', 'jquery-ui-draggable'),
-            EVENT_ESPRESSO_VERSION,
-            true
-        );
-        wp_register_script(
-            'ee_admin_js',
-            EE_ADMIN_URL . 'assets/ee-admin-page.js',
-            array('espresso_core', 'ee-parse-uri', 'ee-dialog'),
-            EVENT_ESPRESSO_VERSION,
-            true
-        );
-        wp_register_script(
-            'jquery-ui-timepicker-addon',
-            EE_GLOBAL_ASSETS_URL . 'scripts/jquery-ui-timepicker-addon.js',
-            array('jquery-ui-datepicker', 'jquery-ui-slider'),
-            EVENT_ESPRESSO_VERSION,
-            true
-        );
-        if (EE_Registry::instance()->CFG->admin->help_tour_activation) {
-            add_filter('FHEE_load_joyride', '__return_true');
-        }
-        // script for sorting tables
-        wp_register_script(
-            'espresso_ajax_table_sorting',
-            EE_ADMIN_URL . 'assets/espresso_ajax_table_sorting.js',
-            array('ee_admin_js', 'jquery-ui-sortable'),
-            EVENT_ESPRESSO_VERSION,
-            true
-        );
-        // script for parsing uri's
-        wp_register_script(
-            'ee-parse-uri',
-            EE_GLOBAL_ASSETS_URL . 'scripts/parseuri.js',
-            array(),
-            EVENT_ESPRESSO_VERSION,
-            true
-        );
-        // and parsing associative serialized form elements
-        wp_register_script(
-            'ee-serialize-full-array',
-            EE_GLOBAL_ASSETS_URL . 'scripts/jquery.serializefullarray.js',
-            array('jquery'),
-            EVENT_ESPRESSO_VERSION,
-            true
-        );
-        // helpers scripts
-        wp_register_script(
-            'ee-text-links',
-            EE_PLUGIN_DIR_URL . 'core/helpers/assets/ee_text_list_helper.js',
-            array('jquery'),
-            EVENT_ESPRESSO_VERSION,
-            true
-        );
-        wp_register_script(
-            'ee-moment-core',
-            EE_THIRD_PARTY_URL . 'moment/moment-with-locales.min.js',
-            array(),
-            EVENT_ESPRESSO_VERSION,
-            true
-        );
-        wp_register_script(
-            'ee-moment',
-            EE_THIRD_PARTY_URL . 'moment/moment-timezone-with-data.min.js',
-            array('ee-moment-core'),
-            EVENT_ESPRESSO_VERSION,
-            true
-        );
-        wp_register_script(
-            'ee-datepicker',
-            EE_ADMIN_URL . 'assets/ee-datepicker.js',
-            array('jquery-ui-timepicker-addon', 'ee-moment'),
-            EVENT_ESPRESSO_VERSION,
-            true
-        );
-        // google charts
-        wp_register_script(
-            'google-charts',
-            'https://www.gstatic.com/charts/loader.js',
-            array(),
-            EVENT_ESPRESSO_VERSION
-        );
-        // ENQUEUE ALL BASICS BY DEFAULT
-        wp_enqueue_style('ee-admin-css');
-        wp_enqueue_script('ee_admin_js');
-        wp_enqueue_script('jquery-validate');
         // taking care of metaboxes
         if (empty($this->_cpt_route)
             && (isset($this->_route_config['metaboxes']) || isset($this->_route_config['has_metaboxes']))
         ) {
             wp_enqueue_script('dashboard');
         }
+
         // LOCALIZED DATA
         // localize script for ajax lazy loading
-        $lazy_loader_container_ids = apply_filters(
-            'FHEE__EE_Admin_Page_Core__load_global_scripts_styles__loader_containers',
-            array('espresso_news_post_box_content')
+        wp_localize_script(
+            EspressoLegacyAdminAssetManager::JS_HANDLE_EE_ADMIN,
+            'eeLazyLoadingContainers',
+            apply_filters(
+                'FHEE__EE_Admin_Page_Core__load_global_scripts_styles__loader_containers',
+                ['espresso_news_post_box_content']
+            )
         );
-        wp_localize_script('ee_admin_js', 'eeLazyLoadingContainers', $lazy_loader_container_ids);
         /**
          * help tour stuff
          */
-        if (! empty($this->_help_tour)) {
-            // register the js for kicking things off
-            wp_enqueue_script(
-                'ee-help-tour',
-                EE_ADMIN_URL . 'assets/ee-help-tour.js',
-                array('jquery-joyride'),
-                EVENT_ESPRESSO_VERSION,
-                true
-            );
+        if (EE_Registry::instance()->CFG->admin->help_tour_activation && ! empty($this->_help_tour)) {
+            add_filter('FHEE_load_joyride', '__return_true');
             $tours = array();
             // setup tours for the js tour object
             foreach ($this->_help_tour['tours'] as $tour) {
@@ -2032,7 +1925,11 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                     );
                 }
             }
-            wp_localize_script('ee-help-tour', 'EE_HELP_TOUR', array('tours' => $tours));
+            wp_localize_script(
+                EspressoLegacyAdminAssetManager::JS_HANDLE_EE_HELP_TOUR,
+                'EE_HELP_TOUR',
+                ['tours' => $tours]
+            );
             // admin_footer_global will take care of making sure our help_tour skeleton gets printed via the info stored in $this->_help_tour
         }
     }

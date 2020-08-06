@@ -191,6 +191,9 @@ class Registry
             if ($script->requiresTranslation()) {
                 $this->registerTranslation($script->handle());
             }
+            if ($script->enqueueImmediately()) {
+                wp_enqueue_script($script->handle());
+            }
             do_action(
                 'AHEE__EventEspresso_core_services_assets_Registry__registerScripts__after_script',
                 $script
@@ -226,6 +229,9 @@ class Registry
                 $style->media()
             );
             $style->setRegistered();
+            if ($style->enqueueImmediately()) {
+                wp_enqueue_style($style->handle());
+            }
             do_action(
                 'AHEE__EventEspresso_core_services_assets_Registry__registerStyles__after_style',
                 $style

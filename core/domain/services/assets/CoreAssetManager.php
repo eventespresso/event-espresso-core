@@ -31,12 +31,6 @@ class CoreAssetManager extends AssetManager
 {
 
     // WordPress core / Third party JS asset handles
-    const JS_HANDLE_JQUERY = 'jquery';
-
-    const JS_HANDLE_JQUERY_VALIDATE = 'jquery-validate';
-
-    const JS_HANDLE_JQUERY_VALIDATE_EXTRA = 'jquery-validate-extra-methods';
-
     const JS_HANDLE_JS_CORE = 'eejs-core';
 
     const JS_HANDLE_CORE = 'espresso_core';
@@ -110,37 +104,6 @@ class CoreAssetManager extends AssetManager
      */
     public function addJavascriptFiles()
     {
-        $this->loadCoreJs();
-        $this->loadJqueryValidate();
-    }
-
-
-    /**
-     * @throws DuplicateCollectionIdentifierException
-     * @throws InvalidDataTypeException
-     * @throws InvalidEntityException
-     * @throws DomainException
-     * @since 4.9.62.p
-     */
-    public function addStylesheetFiles()
-    {
-        $this->loadCoreCss();
-    }
-
-
-    /**
-     * core default javascript
-     *
-     * @since 4.9.62.p
-     * @throws DomainException
-     * @throws DuplicateCollectionIdentifierException
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidEntityException
-     * @throws InvalidInterfaceException
-     */
-    private function loadCoreJs()
-    {
         $this->addJs(CoreAssetManager::JS_HANDLE_VENDOR);
         $this->addJs(CoreAssetManager::JS_HANDLE_JS_CORE)->setHasInlineData();
         // todo verify that the following data is no longer being used anywhere and remove
@@ -191,28 +154,7 @@ class CoreAssetManager extends AssetManager
         $this->addJavascript(
             CoreAssetManager::JS_HANDLE_CORE,
             EE_GLOBAL_ASSETS_URL . 'scripts/espresso_core.js',
-            array(CoreAssetManager::JS_HANDLE_JQUERY)
-        );
-    }
-
-
-
-    /**
-     * Returns configuration data for the js Currency VO.
-     * @since 4.9.71.p
-     * @return array
-     */
-    private function getCurrencySettings()
-    {
-        return array(
-            'code' => $this->currency_config->code,
-            'singularLabel' => $this->currency_config->name,
-            'pluralLabel' => $this->currency_config->plural,
-            'sign' => $this->currency_config->sign,
-            'signB4' => $this->currency_config->sign_b4,
-            'decimalPlaces' => $this->currency_config->dec_plc,
-            'decimalMark' => $this->currency_config->dec_mrk,
-            'thousandsSeparator' => $this->currency_config->thsnds,
+            array(JqueryAssetManager::JS_HANDLE_JQUERY)
         );
     }
 
@@ -224,7 +166,7 @@ class CoreAssetManager extends AssetManager
      * @throws DomainException
      * @since 4.9.62.p
      */
-    private function loadCoreCss()
+    public function addStylesheetFiles()
     {
         if ($this->template_config->enable_default_style && ! is_admin()) {
             $this->addStylesheet(
@@ -246,31 +188,23 @@ class CoreAssetManager extends AssetManager
     }
 
 
-    /**
-     * jQuery Validate for form validation
-     *
-     * @since 4.9.62.p
-     * @throws DomainException
-     * @throws DuplicateCollectionIdentifierException
-     * @throws InvalidDataTypeException
-     * @throws InvalidEntityException
-     */
-    private function loadJqueryValidate()
-    {
-        $this->addJavascript(
-            CoreAssetManager::JS_HANDLE_JQUERY_VALIDATE,
-            EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.min.js',
-            array(CoreAssetManager::JS_HANDLE_JQUERY),
-            true,
-            '1.15.0'
-        );
 
-        $this->addJavascript(
-            CoreAssetManager::JS_HANDLE_JQUERY_VALIDATE_EXTRA,
-            EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.additional-methods.min.js',
-            array(CoreAssetManager::JS_HANDLE_JQUERY_VALIDATE),
-            true,
-            '1.15.0'
+    /**
+     * Returns configuration data for the js Currency VO.
+     * @since 4.9.71.p
+     * @return array
+     */
+    private function getCurrencySettings()
+    {
+        return array(
+            'code' => $this->currency_config->code,
+            'singularLabel' => $this->currency_config->name,
+            'pluralLabel' => $this->currency_config->plural,
+            'sign' => $this->currency_config->sign,
+            'signB4' => $this->currency_config->sign_b4,
+            'decimalPlaces' => $this->currency_config->dec_plc,
+            'decimalMark' => $this->currency_config->dec_mrk,
+            'thousandsSeparator' => $this->currency_config->thsnds,
         );
     }
 

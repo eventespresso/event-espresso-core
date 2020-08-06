@@ -656,7 +656,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
               . $attendee_name
               . '</a>' : $attendee_name;
         $link .= $item->count() === 1
-            ? '&nbsp;<sup><div class="dashicons dashicons-star-filled lt-blue-icon ee-icon-size-8"></div></sup>' : '';
+            ? '&nbsp;<sup><div class="dashicons dashicons-star-filled yellow-icon ee-icon-size-8"></div></sup>' : '';
         $t = $item->get_first_related('Transaction');
         $payment_count = $t instanceof EE_Transaction ? $t->count_related('Payment') : 0;
         // append group count to name
