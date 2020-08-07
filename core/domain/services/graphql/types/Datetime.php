@@ -18,6 +18,7 @@ use EventEspresso\core\domain\services\graphql\mutators\DatetimeCreate;
 use EventEspresso\core\domain\services\graphql\mutators\DatetimeDelete;
 use EventEspresso\core\domain\services\graphql\mutators\DatetimeUpdate;
 use EventEspresso\core\domain\services\graphql\mutators\DatetimeBulkUpdate;
+use EventEspresso\core\domain\services\graphql\mutators\BulkEntityDelete;
 use EventEspresso\core\domain\services\graphql\mutators\EntityReorder;
 use InvalidArgumentException;
 use ReflectionException;
@@ -335,6 +336,40 @@ class Datetime extends TypeBase
                     'mutateAndGetPayload' => DatetimeBulkUpdate::mutateAndGetPayload($this->model, $this),
                 ]
             )
+        );
+
+        // Register mutation to update an entity.
+        register_graphql_mutation(
+            'bulkDelete' . $this->namespace . 'Entities',
+            [
+                'inputFields'         => [
+                    'entityIds'  => [
+                        'type'        => [
+                            'non_null' => ['list_of' => 'ID'],
+                        ],
+                        'description' => esc_html__('The list of GUIDs of the entities to be deleted.', 'event_espresso'),
+                    ],
+                    'entityType' => [
+                        'type'        => [
+                            'non_null' => $this->namespace . 'ModelNameEnum',
+                        ],
+                        'description' => esc_html__('The entity type for the IDs', 'event_espresso'),
+                    ],
+                    'deletePermanently' => [
+                        'type'        => 'Boolean',
+                        'description' => esc_html__('Whether to delete the entities permanently.', 'event_espresso'),
+                    ],
+                ],
+                'outputFields'        => [
+                    'deleted' => [
+                        'type' => ['list_of' => 'ID'],
+                    ],
+                    'failed' => [
+                        'type' => ['list_of' => 'ID'],
+                    ],
+                ],
+                'mutateAndGetPayload' => BulkEntityDelete::mutateAndGetPayload(),
+            ]
         );
         // Register mutation to delete an entity.
         register_graphql_mutation(
