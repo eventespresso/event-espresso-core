@@ -52,13 +52,12 @@ class BulkEntityDelete extends EntityMutator
 
             $deletePermanently = ! empty($input['deletePermanently']);
 
+            $deletionMethod = __NAMESPACE__;
             // if it's for datetimes.
             if ($details['entityType'] === EEM_Datetime::instance()->item_name()) {
-                $deletionMethod = __NAMESPACE__ . '\DatetimeDelete::'
-                 .  ($deletePermanently ? 'deleteDatetimeAndRelations' : 'trashDatetimeAndRelations');
+                $deletionMethod .= '\DatetimeDelete::' . ($deletePermanently ? 'deleteDatetimeAndRelations' : 'trashDatetimeAndRelations');
             } elseif ($details['entityType'] === EEM_Ticket::instance()->item_name()) {
-                $deletionMethod = __NAMESPACE__ . '\TicketDelete::'
-                 .  ($deletePermanently ? 'deleteTicketAndRelations' : 'trashTicket');
+                $deletionMethod .= '\TicketDelete::' . ($deletePermanently ? 'deleteTicketAndRelations' : 'trashTicket');
             } else {
                 throw new UserError(
                     esc_html__(
