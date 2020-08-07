@@ -1,6 +1,6 @@
 import React from 'react';
-import { LabelPosition } from '@appDisplay/withLabel';
-import { ButtonProps } from '../../input/Button';
+import type { LabelPosition } from '@appDisplay/withLabel';
+import type { ButtonProps } from '../../input/Button';
 
 export interface CalendarDateProps {
 	className?: string;

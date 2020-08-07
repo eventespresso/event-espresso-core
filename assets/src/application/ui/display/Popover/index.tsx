@@ -7,6 +7,7 @@ import './style.scss';
 
 const Popover: React.FC<PopoverProps> = (props) => {
 	const className = classNames('ee-popover', props.className);
+
 	return (
 		<div className={className}>
 			<PopoverAdapter {...props} contentClassName='ee-popover__content' />

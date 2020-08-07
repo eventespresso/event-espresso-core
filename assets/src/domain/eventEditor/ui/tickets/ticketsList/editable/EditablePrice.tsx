@@ -20,7 +20,7 @@ const EditablePrice: React.FC<EditablePriceProps> = ({ entity: ticket, className
 				recalculateBasePrice(price);
 			}
 		},
-		[ticket.cacheId]
+		[recalculateBasePrice, ticket.price]
 	);
 
 	const wrapperProps = useMemoStringify({ className });

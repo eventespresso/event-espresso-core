@@ -22,7 +22,7 @@ const TicketCardSidebar: React.FC<TicketItemProps> = ({ entity: ticket }) => {
 			const endDate = siteTimeToUtc(new Date(end)).toISOString();
 			updateEntity({ startDate, endDate });
 		},
-		[ticket.cacheId, updateEntity]
+		[siteTimeToUtc, updateEntity]
 	);
 	const statusText = getStatusTextLabel(ticket);
 
