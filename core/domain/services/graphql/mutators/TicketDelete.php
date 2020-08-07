@@ -100,8 +100,6 @@ class TicketDelete extends EntityMutator
     public static function trashTicket($entity)
     {
         // trash the ticket
-        $result = $entity->delete();
-
-        return $result;
+        return $entity->delete();
     }
 }
