@@ -44,7 +44,7 @@ class TicketDelete extends EntityMutator
                     $result = TicketDelete::deleteTicketAndRelations($entity);
                 } else {
                     // trash the ticket
-                    $result = $entity->delete();
+                    $result = TicketDelete::trashTicket($entity);
                 }
                 EntityMutator::validateResults($result);
             } catch (Exception $exception) {
@@ -82,6 +82,25 @@ class TicketDelete extends EntityMutator
         $entity->_remove_relations('Datetime');
         // Now delete the ticket permanently
         $result = $entity->delete_permanently();
+
+        return $result;
+    }
+
+    /**
+     * Trashes a ticket.
+     *
+     * @param EE_Ticket $entity
+     * @return bool | int
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     */
+    public static function trashTicket($entity)
+    {
+        // trash the ticket
+        $result = $entity->delete();
 
         return $result;
     }
