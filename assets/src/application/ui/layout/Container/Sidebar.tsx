@@ -23,6 +23,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 		before && 'ee-container__sidebar--before',
 		!before && 'ee-container__sidebar--after'
 	);
+
 	return (
 		<ConditionalElement {...props} className={htmlClass} tag={as}>
 			{children}

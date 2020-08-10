@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 
 import { Tooltip } from '@infraUI/display';
-import { LinkProps } from './types';
+import type { LinkProps } from './types';
 import './style.scss';
 
 const Link: React.FC<LinkProps> = ({ children, href, icon, tooltip, tooltipProps, ...props }) => {
@@ -15,7 +15,7 @@ const Link: React.FC<LinkProps> = ({ children, href, icon, tooltip, tooltipProps
 	);
 
 	const link = (
-		<a href={href} className={className} target='_blank' rel='noopener norefferer'>
+		<a href={href} className={className} target='_blank' rel='noopener noreferrer'>
 			{icon ? icon : children}
 		</a>
 	);

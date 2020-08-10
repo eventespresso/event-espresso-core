@@ -26,7 +26,7 @@ const EditableName: React.FC<EditableNameProps> = ({ className, entity: datetime
 				updateEntity({ name });
 			}
 		},
-		[datetime.cacheId]
+		[datetime.name, updateEntity]
 	);
 
 	return (

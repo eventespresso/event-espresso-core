@@ -27,7 +27,7 @@ const DateCapacity: React.FC<DateItemProps> = ({ entity: datetime }) => {
 				updateRelatedTickets(inputGenerator);
 			}
 		},
-		[datetime.cacheId, ticketQuantityForCapacity, updateRelatedTickets, updateEntity]
+		[datetime.capacity, updateEntity, ticketQuantityForCapacity, updateRelatedTickets]
 	);
 
 	return (

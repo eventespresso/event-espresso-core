@@ -22,7 +22,7 @@ const EditableName: React.FC<EditableNameProps> = ({ className, entity: ticket, 
 				updateEntity({ name });
 			}
 		},
-		[ticket.cacheId]
+		[ticket.name, updateEntity]
 	);
 
 	const tooltip = __('edit title...');

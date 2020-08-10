@@ -1,4 +1,4 @@
-import { CurrentUserProps } from './types';
+import type { CurrentUserProps } from './types';
 
 export const CurrentUser = (userData: CurrentUserProps): CurrentUserProps => {
 	return {

@@ -3,8 +3,8 @@ import classNames from 'classnames';
 
 import { Content, Row, Sidebar } from '../Container';
 import EntityPaperFrame from '../EntityPaperFrame';
-import { EntityCardProps } from './types';
 import { getPropsAreEqual } from '@appServices/utilities';
+import type { EntityCardProps } from './types';
 import './styles.scss';
 
 const EntityCard: React.FC<EntityCardProps> = ({
@@ -17,6 +17,7 @@ const EntityCard: React.FC<EntityCardProps> = ({
 	sidebarClass,
 }) => {
 	const sidebarClassName = classNames(sidebarClass, 'entity-card__sidebar');
+
 	return (
 		<EntityPaperFrame cacheId={cacheId} className={'ee-entity-card-wrapper ee-fade-in'} entity={entity}>
 			<Row align={'wide'} className={'entity-card'} reverse={reverse}>
