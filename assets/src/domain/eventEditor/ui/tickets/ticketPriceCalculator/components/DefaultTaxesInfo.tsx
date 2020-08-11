@@ -6,7 +6,7 @@ import { useDataState } from '../data';
 import { useEdtrState } from '@edtrHooks/edtrState';
 import { usePrices } from '@edtrServices/apollo';
 
-const DefaultTaxesInfo = () => {
+const DefaultTaxesInfo: React.FC = () => {
 	const allPrices = usePrices();
 	const defaultTaxPrices = getDefaultTaxes(allPrices);
 

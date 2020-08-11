@@ -2,9 +2,9 @@ import React, { forwardRef } from 'react';
 import classNames from 'classnames';
 
 import { IconButton as IconButtonAdapter } from '@infraUI/inputs';
-import { IconButtonProps } from './types';
 import { ButtonSize, ButtonType } from '../types';
 import { withLabel, withTooltip } from '../../../display';
+import type { IconButtonProps } from './types';
 
 import './style.scss';
 

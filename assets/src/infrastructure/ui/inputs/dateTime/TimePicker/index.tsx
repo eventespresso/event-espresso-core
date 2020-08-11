@@ -35,7 +35,7 @@ const TimePicker: React.FC<TimePickerProps> = ({ onChange, onChangeValue, value,
 				onChange(newDate.toISOString());
 			}
 		},
-		[onChange, onChangeValue]
+		[onChange, onChangeValue, time, value]
 	);
 
 	return (

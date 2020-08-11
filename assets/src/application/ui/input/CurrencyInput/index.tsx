@@ -36,7 +36,7 @@ const CurrencyInput: React.FC<CurrencyInputProps> = ({
 				onChange({ amount: newAmount, id });
 			}
 		},
-		[onChange]
+		[amount, id, onChange]
 	);
 
 	return (

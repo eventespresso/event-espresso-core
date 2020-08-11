@@ -2,8 +2,9 @@ import React, { forwardRef } from 'react';
 import classNames from 'classnames';
 
 import { Button as ButtonAdapter } from '@infraUI/inputs';
-import { ButtonProps, ButtonSize, ButtonType } from './types';
+import { ButtonSize, ButtonType } from './types';
 import { withLabel, withTooltip } from '../../display';
+import type { ButtonProps } from './types';
 
 import './style.scss';
 
@@ -36,7 +37,7 @@ const Button = forwardRef<typeof ButtonAdapter, ButtonProps>(
 			buttonSize !== ButtonSize.DEFAULT && [`ee-btn--${buttonSize}`],
 			buttonType !== ButtonType.DEFAULT && [`ee-btn--${buttonType}`],
 			hasIconClassName,
-			!icon && 'ee-noIcon',
+			!icon && 'ee-noIcon'
 		);
 
 		return (

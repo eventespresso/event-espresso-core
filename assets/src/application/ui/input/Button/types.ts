@@ -1,6 +1,6 @@
 import React from 'react';
-import { withLabelProps, withTooltipProps } from '../../display';
-import { ButtonProps as ButtonAdapterProps } from '@infraUI/inputs';
+import type { withLabelProps, withTooltipProps } from '../../display';
+import type { ButtonProps as ButtonAdapterProps } from '@infraUI/inputs';
 
 export type ClickHandler = (click?: React.MouseEvent<HTMLElement>) => void;
 
@@ -22,7 +22,7 @@ export enum ButtonType {
 
 export interface ButtonProps extends ButtonAdapterProps, Partial<withLabelProps>, Partial<withTooltipProps> {
 	active?: boolean;
-	buttonType?: ButtonType;
+	buttonType?: ButtonType | 'accent' | 'default' | 'minimal' | 'primary' | 'secondary';
 	buttonSize?: ButtonSize;
 	className?: string;
 	onClick?: React.MouseEventHandler;
@@ -31,6 +31,7 @@ export interface ButtonProps extends ButtonAdapterProps, Partial<withLabelProps>
 
 export interface LinkProps extends Partial<withTooltipProps> {
 	className?: string;
+	external?: boolean;
 	href?: string;
 	icon?: React.ReactNode;
 }

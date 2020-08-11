@@ -17,6 +17,7 @@ const EditDateRangeButton: React.FC<EditDateButtonProps> = ({ header, onEditHand
 		},
 		[onClose, onEditHandler]
 	);
+
 	return (
 		<Popover
 			className={'ee-edit-calendar-date-range'}

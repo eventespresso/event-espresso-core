@@ -3,9 +3,10 @@
  * © 2020 Event Espresso
  * ------------------------------------------------------------------------- */
 
-@import "application/ui/styles/mixins/breakpoints.scss";
-@import "./row.scss";
-@import "./data-cell.scss";
+@import 'application/ui/styles/mixins/breakpoints.scss';
+
+@import './_row.scss';
+@import './_data-cell.scss';
 
 .ee-rspnsv-table {
 	border-collapse: separate !important;
@@ -47,7 +48,6 @@
 	}
 
 	.ee-rspnsv-table-body {
-
 		.ee-centered-column {
 			.ee-rspnsv-table-mobile-only-column-value {
 				display: inline-flex;
@@ -129,38 +129,38 @@
 	.ee-rspnsv-table-header .ee-rspnsv-table-header-th.ee-number-column,
 	.ee-rspnsv-table-body .ee-rspnsv-table-body-td.ee-number-column,
 	.ee-rspnsv-table-footer .ee-rspnsv-table-footer-th.ee-number-column,
-	.ee-rspnsv-table-header .ee-rspnsv-table-header-th.ee-number-column input[type="text"] {
+	.ee-rspnsv-table-header .ee-rspnsv-table-header-th.ee-number-column input[type='text'] {
 		text-align: right;
 	}
 
 	.ee-rspnsv-table-body {
-		.ee-rspnsv-table-body-th.ee-number-column input[type="text"],
-		.ee-rspnsv-table-body-td.ee-number-column input[type="text"] {
+		.ee-rspnsv-table-body-th.ee-number-column input[type='text'],
+		.ee-rspnsv-table-body-td.ee-number-column input[type='text'] {
 			text-align: right;
 		}
 	}
 
 	.ee-rspnsv-table-footer {
-		.ee-rspnsv-table-footer-th.ee-number-column input[type="text"],
-		.ee-rspnsv-table-footer-td.ee-number-column input[type="text"] {
+		.ee-rspnsv-table-footer-th.ee-number-column input[type='text'],
+		.ee-rspnsv-table-footer-td.ee-number-column input[type='text'] {
 			text-align: right;
 		}
 	}
 
-	.ee-rspnsv-table-header .ee-rspnsv-table-header-th.ee-number-column input[type="number"] {
+	.ee-rspnsv-table-header .ee-rspnsv-table-header-th.ee-number-column input[type='number'] {
 		text-align: right;
 	}
 
 	.ee-rspnsv-table-body {
-		.ee-rspnsv-table-body-th.ee-number-column input[type="number"],
-		.ee-rspnsv-table-body-td.ee-number-column input[type="number"] {
+		.ee-rspnsv-table-body-th.ee-number-column input[type='number'],
+		.ee-rspnsv-table-body-td.ee-number-column input[type='number'] {
 			text-align: right;
 		}
 	}
 
 	.ee-rspnsv-table-footer {
-		.ee-rspnsv-table-footer-th.ee-number-column input[type="number"],
-		.ee-rspnsv-table-footer-td.ee-number-column input[type="number"] {
+		.ee-rspnsv-table-footer-th.ee-number-column input[type='number'],
+		.ee-rspnsv-table-footer-td.ee-number-column input[type='number'] {
 			text-align: right;
 		}
 	}

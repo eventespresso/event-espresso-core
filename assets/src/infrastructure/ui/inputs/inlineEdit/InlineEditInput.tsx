@@ -1,8 +1,9 @@
 import React from 'react';
-import { EditableInput as ChakraEditableInput, PseudoBoxProps } from '@chakra-ui/core';
+import { EditableInput as ChakraEditableInput } from '@chakra-ui/core';
 import { ESCAPE, ENTER } from '@wordpress/keycodes';
 
-import { InlineEditInputProps } from './types';
+import type { PseudoBoxProps } from '@chakra-ui/core';
+import type { InlineEditInputProps } from './types';
 
 /**
  * Inserts substring into a string at a given position.

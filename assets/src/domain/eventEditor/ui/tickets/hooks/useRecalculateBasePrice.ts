@@ -52,7 +52,7 @@ const useRecalculateBasePrice = (ticketId: EntityId): Callback => {
 				});
 			});
 		},
-		[getDataState, mutatePrices, updateTicket]
+		[defaultBasePrice, getDataState, mutatePrices, updateTicket]
 	);
 };
 

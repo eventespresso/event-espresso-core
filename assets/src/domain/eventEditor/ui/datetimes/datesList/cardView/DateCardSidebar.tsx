@@ -22,7 +22,7 @@ const DateCardSidebar: React.FC<DateItemProps> = ({ entity: date }) => {
 			const endDate = siteTimeToUtc(new Date(end)).toISOString();
 			updateEntity({ startDate, endDate });
 		},
-		[date.cacheId, updateEntity]
+		[siteTimeToUtc, updateEntity]
 	);
 	const statusText = getStatusTextLabel(date);
 

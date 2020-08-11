@@ -19,7 +19,7 @@ const EditableDesc: React.FC<EditableDescProps> = ({ entity: datetime, className
 				updateEntity({ description });
 			}
 		},
-		[datetime.cacheId]
+		[datetime.description, updateEntity]
 	);
 
 	const tooltip = __('edit description...');

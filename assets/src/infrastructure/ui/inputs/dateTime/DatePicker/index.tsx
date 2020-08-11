@@ -30,7 +30,7 @@ const DatePicker: React.FC<DatePickerProps> = ({ value, onChange, onChangeValue,
 				onChange(newDate);
 			}
 		},
-		[onChange, onChangeValue]
+		[date, onChange, onChangeValue]
 	);
 
 	// convert date format to accepatble values for react-date-picker

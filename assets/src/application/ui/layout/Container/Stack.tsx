@@ -15,6 +15,7 @@ const Stack: React.FC<StackProps> = ({ align = 'top', as = 'section', children, 
 		'ee-container--vertical',
 		align && `ee-container--align-${align}`
 	);
+
 	return (
 		<ConditionalElement {...props} className={htmlClass} tag={as}>
 			{children}
