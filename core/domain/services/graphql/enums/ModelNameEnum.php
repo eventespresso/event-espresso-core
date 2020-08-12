@@ -4,6 +4,7 @@ namespace EventEspresso\core\domain\services\graphql\enums;
 
 use EEM_Datetime;
 use EEM_Ticket;
+use EEM_Price;
 use EventEspresso\core\services\graphql\enums\EnumBase;
 
 /**
@@ -35,11 +36,14 @@ class ModelNameEnum extends EnumBase
     protected function getValues()
     {
         return [
-            'DATETIME'     => [
-                'value'       => EEM_Datetime::instance()->item_name(),
+            'DATETIME' => [
+                'value' => EEM_Datetime::instance()->item_name(),
             ],
-            'TICKET'     => [
-                'value'       => EEM_Ticket::instance()->item_name(),
+            'TICKET'   => [
+                'value' => EEM_Ticket::instance()->item_name(),
+            ],
+            'PRICE'    => [
+                'value' => EEM_Price::instance()->item_name(),
             ],
         ];
     }

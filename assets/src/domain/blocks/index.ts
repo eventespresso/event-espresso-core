@@ -2,4 +2,4 @@
 import './i18nInit';
 
 // import blocks
-import './event-attendees';
+// import './event-attendees';

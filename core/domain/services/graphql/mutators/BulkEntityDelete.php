@@ -4,6 +4,7 @@ namespace EventEspresso\core\domain\services\graphql\mutators;
 
 use EEM_Datetime;
 use EEM_Ticket;
+use EEM_Price;
 use EE_Error;
 use Exception;
 use InvalidArgumentException;
@@ -58,6 +59,8 @@ class BulkEntityDelete extends EntityMutator
                 $deletionMethod .= '\DatetimeDelete::' . ($deletePermanently ? 'deleteDatetimeAndRelations' : 'trashDatetimeAndRelations');
             } elseif ($details['entityType'] === EEM_Ticket::instance()->item_name()) {
                 $deletionMethod .= '\TicketDelete::' . ($deletePermanently ? 'deleteTicketAndRelations' : 'trashTicket');
+            } elseif ($details['entityType'] === EEM_Price::instance()->item_name()) {
+                $deletionMethod .= '\PriceDelete::deletePriceAndRelations';
             } else {
                 throw new UserError(
                     esc_html__(
