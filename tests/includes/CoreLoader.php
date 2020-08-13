@@ -84,6 +84,11 @@ class CoreLoader
                 $folder = $this->findWordpressTests(__DIR__);
                 define('WP_TESTS_DIR', $folder);
             }
+            global $wp_version;
+            if ( ! $wp_version ) {
+                require dirname(dirname(WP_TESTS_DIR)) . '/src/wp-includes/version.php';
+            }
+            echo "\nWP_VERSION: " . $wp_version;
             echo "\nWP_TESTS_DIR: " . WP_TESTS_DIR;
             echo "\nEE_TESTS_DIR: " . EE_TESTS_DIR . "\n\n";
             // define('EE_REST_API_DEBUG_MODE', true);
