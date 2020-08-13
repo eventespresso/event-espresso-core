@@ -43,19 +43,21 @@ class CoreLoader
 
     /**
      * @param string $folder
+     * @param string $with_file
      * @return string|null
      * @since $VID:$
      */
-    private function findWordpressTests($folder = '')
+    private function findWordpressFolder($folder = '', $with_file = '')
     {
         static $depth = 10;
         echo ".";
-        if (file_exists($folder . '/includes/functions.php')) {
+        $folder = substr($folder, -1) !== '/' ? $folder . '/' : $folder;
+        if (file_exists($folder . $with_file)) {
             return $folder;
         }
         if ($depth > 0) {
             $depth--;
-            return $this->findWordpressTests(dirname($folder));
+            return $this->findWordpressFolder(dirname($folder), $with_file);
         }
         return null;
     }
@@ -77,25 +79,23 @@ class CoreLoader
             if (! $_tests_dir) {
                 $_tests_dir = '/tmp/wordpress-tests-lib';
             }
+            echo "\ntests_dir: {$_tests_dir}";
             if (file_exists($_tests_dir . '/includes/functions.php')) {
                 define('WP_TESTS_DIR', $_tests_dir);
             } else {
                 echo "\n\n Attempting to find WP_TESTS_DIR ";
-                $folder = $this->findWordpressTests(__DIR__);
+                $folder = $this->findWordpressFolder(__DIR__, 'includes/functions.php');
                 define('WP_TESTS_DIR', $folder);
             }
             global $wp_version;
             if ( ! $wp_version ) {
-                $wp_inc = dirname(dirname(WP_TESTS_DIR));
-                $wp_inc = substr($wp_inc, -1) !== '/' ? $wp_inc . '/' : $wp_inc;
-                if ( file_exists($wp_inc . 'wp-includes/version.php')) {
-                    include $wp_inc . 'wp-includes/version.php';
-                } else if (file_exists($wp_inc . 'src/wp-includes/version.php') ) {
-                    // local unit tests
-                    include $wp_inc . 'src/wp-includes/version.php';
+                echo "\n\n Attempting to find WP version.php ";
+                $wp_version_file = $this->findWordpressFolder(__DIR__, 'wp-includes/version.php');
+                if ($wp_version_file) {
+                    include $wp_version_file . 'wp-includes/version.php';
                 }
             }
-            echo "\nWP_VERSION: " . $wp_version;
+            echo "\nWP_VERSION: {$wp_version}";
             echo "\nWP_TESTS_DIR: " . WP_TESTS_DIR;
             echo "\nEE_TESTS_DIR: " . EE_TESTS_DIR . "\n\n";
             // define('EE_REST_API_DEBUG_MODE', true);
