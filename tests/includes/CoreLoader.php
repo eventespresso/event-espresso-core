@@ -86,7 +86,14 @@ class CoreLoader
             }
             global $wp_version;
             if ( ! $wp_version ) {
-                require dirname(dirname(WP_TESTS_DIR)) . '/src/wp-includes/version.php';
+                $wp_inc = dirname(dirname(WP_TESTS_DIR));
+                $wp_inc = substr($wp_inc, -1) !== '/' ? $wp_inc . '/' : $wp_inc;
+                if ( file_exists($wp_inc . 'wp-includes/version.php')) {
+                    include $wp_inc . 'wp-includes/version.php';
+                } else if (file_exists($wp_inc . 'src/wp-includes/version.php') ) {
+                    // local unit tests
+                    include $wp_inc . 'src/wp-includes/version.php';
+                }
             }
             echo "\nWP_VERSION: " . $wp_version;
             echo "\nWP_TESTS_DIR: " . WP_TESTS_DIR;
