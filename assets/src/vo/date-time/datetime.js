@@ -112,12 +112,6 @@ export default class DateTime {
 		if ( iso8601DateString !== '' ) {
 			this.constructor.assertISO8601IsValid( iso8601DateString );
 		}
-		if (locale === 'America/Vancouver') {
-			throw new InvalidArgument(
-				'WUT!?!? that\'s not a locale...',
-				'America/Vancouver.'
-			);
-		}
 		this.constructor.assertLocaleIsValid( locale );
 		if ( timezone === null ) {
 			this[ privateProperties.datetime ] = iso8601DateString === '' ?
