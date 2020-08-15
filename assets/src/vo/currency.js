@@ -16,31 +16,43 @@ import warning from 'warning';
  */
 export class Currency {
 	/**
+	 * because minification destroys class names and renders instaneOf useless
+	 *
+	 * @type {string}
+	 */
+	displayName = 'Currency';
+
+	/**
 	 * The ISO 4217 code identifying the currency (eg. 'USD')
+	 *
 	 * @type {string}
 	 */
 	code = '';
 
 	/**
 	 * The singular label for the currency (eg. 'Dollar');
+	 *
 	 * @type {string}
 	 */
 	singularLabel = '';
 
 	/**
 	 * The plural label for the currency (eg. 'Dollars');
+	 *
 	 * @type {string}
 	 */
 	pluralLabel = '';
 
 	/**
 	 * The currency symbol (eg. '$');
+	 *
 	 * @type {string}
 	 */
 	sign = '';
 
 	/**
 	 * Whether the currency symbol is displayed before or after the value.
+	 *
 	 * @type {boolean}
 	 */
 	signB4 = true;
@@ -49,18 +61,21 @@ export class Currency {
 	 * The precision for the value (eg. 10.02 is 2, 10.123 is 3). The number of
 	 * decimal places can be used to calculate the number of subunits for the
 	 * currency - subunits = pow( 10, decimalPlaces).
+	 *
 	 * @type {number}
 	 */
 	decimalPlaces = 2;
 
 	/**
 	 * The symbol used for the decimal mark (eg. '.')
+	 *
 	 * @type {string}
 	 */
 	decimalMark = '.';
 
 	/**
 	 * The symbol used to split up thousands in the value (eg. ',')
+	 *
 	 * @type {string}
 	 */
 	thousandsSeparator = ',';
@@ -69,18 +84,21 @@ export class Currency {
 	 * The number of fractional divisions of a currency's main unit.  If not
 	 * provided, then it is automatically calculated from the decimalPlaces
 	 * value.
+	 *
 	 * @type {number}
 	 */
 	subunits = 100;
 
 	/**
 	 * Constructor
+	 *
 	 * @param {{}} currencyConfig An object containing the configuration for
 	 * this currency value object.  On construction, the Currency object is
 	 * frozen so that it becomes immutable.
 	 */
 	constructor( currencyConfig ) {
 		Currency.validateCurrencyConfig( currencyConfig );
+		this.displayName = 'Currency';
 		this.code = currencyConfig.code;
 		this.singularLabel = currencyConfig.singularLabel || '';
 		this.pluralLabel = currencyConfig.pluralLabel || '';
@@ -101,6 +119,7 @@ export class Currency {
 	/**
 	 * Returns the currency properties as an object formatted for the
 	 * accounting-js library configuration.
+	 *
 	 * @return {{}}  An object shaped for what the accounting-js library expects
 	 */
 	toAccountingSettings() {
@@ -125,6 +144,7 @@ export class Currency {
 
 	/**
 	 * Returns JSON representation of this object.
+	 *
 	 * @return {Object} Function returning the object to be serialized by
 	 * JSON.stringify
 	 */
@@ -146,7 +166,7 @@ export class Currency {
 	 * This validates whether the passed in config has the required properties
 	 * (and correct types) for constructing a Currency object.
 	 *
-	 * @param {{}} config
+	 * @param {Object} config
 	 * @throws {Exception}
 	 * @throws {TypeError}
 	 */
@@ -227,7 +247,7 @@ export class Currency {
  * Export of a Currency Value object created from a currency config provided.
  * This catches any exception and triggers a console error.
  *
- * @param {{}} config
+ * @param {Object} config
  * @return {Currency|{}} If there's a problem constructing the currency object
  * an empty object is returned.
  */
