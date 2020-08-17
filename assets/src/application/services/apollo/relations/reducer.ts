@@ -29,7 +29,14 @@ const reducer: RelationsReducer = (state, action) => {
 					newState
 				);
 			}
+			/**
+			 * We need to remove relations both ways i.e.
+			 * from `entity` to `relation` and `relation` to `entity`
+			 */
+			// First lets empty relations from `entity` to `relation`
+			newState = assocPath([entity, entityId, relation], [], state);
 
+			// Now we need to remove relations from `relation` to `entity`
 			if (relations.length) {
 				/**
 				 * If we are here, it means that we have values for `entityId` in `relation`
