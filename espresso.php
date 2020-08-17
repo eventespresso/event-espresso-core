@@ -61,7 +61,7 @@ if (function_exists('espresso_version')) {
     }
     add_action('admin_notices', 'espresso_duplicate_plugin_error', 1);
 } else {
-    define('EE_MIN_PHP_VER_REQUIRED', '5.4.0');
+    define('EE_MIN_PHP_VER_REQUIRED', '5.6.2');
     if (! version_compare(PHP_VERSION, EE_MIN_PHP_VER_REQUIRED, '>=')) {
         /**
          * espresso_minimum_php_version_error

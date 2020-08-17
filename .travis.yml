@@ -32,7 +32,7 @@ before_script:
     # Install the specified version of PHPUnit depending on the PHP version:
     if [[ -n "$TRAVIS_PHP_VERSION" ]]; then
       case "$TRAVIS_PHP_VERSION" in
-        7.3|nightly)
+        7.3|7.4|nightly)
           # when wp tests support phpunit 7 we'll update this.
           echo "Using PHPUnit 6"
           composer global require "phpunit/phpunit=6.5.*"
@@ -41,9 +41,9 @@ before_script:
           echo "Using PHPUnit 6"
           composer global require "phpunit/phpunit=6.5.*"
           ;;
-        5.6|5.5)
-          echo "Using PHPUnit 4.8"
-          composer global require "phpunit/phpunit=4.8.*"
+        5.6)
+          echo "Using PHPUnit 5.7.22"
+          composer global require "phpunit/phpunit=5.7.22"
           ;;
         *)
           echo "No PHPUnit version handling for PHP version $TRAVIS_PHP_VERSION"
@@ -63,7 +63,7 @@ jobs:
   fast_finish: true
   allow_failures:
     - php: nightly
-    - php: 7.3
+    - php: 7.4
       env:
         - PHP_LINT=1
         - PHP_LINT_WITH_WARNINGS=yes
@@ -105,6 +105,8 @@ jobs:
         - composer install || exit 1
         - composer config-eventespressocs || exit 1
         - npm run lint-php:skip-warnings || exit 1
+    - php: 7.4
+      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
     - php: 7.3
       if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
     - php: 7.2
@@ -118,11 +120,6 @@ jobs:
     # multisite
     - php: 7.2
       env: WP_MULTISITE=1
-      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
-    # wp 4.5 builds
-    - php: 5.5
-      dist: trusty
-      env: WP_VERSION=4.5
       if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
     - php: nightly
       if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot

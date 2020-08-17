@@ -25,17 +25,18 @@ import moment from 'moment-timezone';
  * has a timezone string set or is using a UTC offset.
  */
 export default class ServerDateTime extends DateTime {
+
 	/**
 	 * The constructor for the ServerDateTime class
 	 *
 	 * @param {string} iso8601DateString
-	 * @param {string} locale
 	 * @param {string} timezone
+	 * @param {string} locale
 	 */
 	constructor(
 		iso8601DateString = '',
-		locale = DEFAULT_VALID_LOCALE,
 		timezone = DEFAULT_TIMEZONE_STRING,
+		locale = DEFAULT_VALID_LOCALE,
 	) {
 		// we only want to use the timezone value if the server indicates there
 		// is a a timezone string or if constructing an instance for a non UTC
@@ -43,16 +44,16 @@ export default class ServerDateTime extends DateTime {
 		if (
 			HAS_TIMEZONE_STRING ||
 			( !! timezone && timezone !== 'UTC' )
-		) {
-			super( iso8601DateString, timezone, locale );
-		} else {
-			const datetime = !! iso8601DateString ?
+			) {
+				super( iso8601DateString, timezone, locale, 'ServerDateTime' );
+			} else {
+				const datetime = !! iso8601DateString ?
 				moment().utcOffset( DEFAULT_OFFSET, true ).locale( locale ) :
 				moment( iso8601DateString )
-					.utcOffset( DEFAULT_OFFSET, true )
-					.locale( locale );
-			super( datetime.toISOString( true ), null, locale );
-		}
+				.utcOffset( DEFAULT_OFFSET, true )
+				.locale( locale );
+				super( datetime.toISOString( true ), null, locale, 'ServerDateTime' );
+			}
 	}
 
 	/**
@@ -71,12 +72,14 @@ export default class ServerDateTime extends DateTime {
 				super
 					.fromISO( ISOString, DEFAULT_TIMEZONE_STRING )
 					.toISO(),
+				DEFAULT_TIMEZONE_STRING,
 				locale
 			) :
 			new this(
 				super
 					.fromISOWithOffset( ISOString, DEFAULT_OFFSET )
 					.toISO(),
+				null,
 				locale
 			);
 	}
@@ -97,12 +100,14 @@ export default class ServerDateTime extends DateTime {
 				super
 					.fromJSDate( date, DEFAULT_TIMEZONE_STRING )
 					.toISO(),
+				DEFAULT_TIMEZONE_STRING,
 				locale
 			) :
 			new this(
 				super
 					.fromJSDateWithOffset( date, DEFAULT_OFFSET )
 					.toISO(),
+				null,
 				locale
 			);
 	}
