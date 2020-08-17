@@ -4,7 +4,7 @@ import { useDataState } from '../data';
 import { isTax } from '@sharedEntities/priceTypes/predicates';
 
 const useRemoveAllTaxes = (): VoidFunction => {
-	const { deletePrice, prices, ticket } = useDataState();
+	const { deletePrice, prices } = useDataState();
 
 	return useCallback(() => {
 		const taxPrices = prices.filter(isTax);

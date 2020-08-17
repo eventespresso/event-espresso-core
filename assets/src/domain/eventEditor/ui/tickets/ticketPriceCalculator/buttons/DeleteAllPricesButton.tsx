@@ -7,7 +7,7 @@ import { ButtonType } from '@application/ui/input';
 import { useMemoStringify } from '@application/services/hooks';
 
 const DeleteAllPricesButton: React.FC = () => {
-	const { prices, deletePrice, ticket, updateTicketPrice } = useDataState();
+	const { prices, deletePrice, updateTicketPrice } = useDataState();
 
 	const buttonProps = useMemoStringify({
 		buttonText: __('Delete all prices'),
@@ -16,7 +16,7 @@ const DeleteAllPricesButton: React.FC = () => {
 
 	const onConfirm = useCallback(() => {
 		prices.forEach((price) => {
-			// delete the price from TPC state
+			// delete the price from TPC state.
 			deletePrice(price.id, price.isNew || price.isDefault);
 		});
 		// Set ticket price to 0

@@ -7,7 +7,7 @@ import { PriceModifierProps } from '../types';
 import { useDataState } from '../data';
 
 const DeletePriceModifierButton: React.FC<PriceModifierProps> = ({ price }) => {
-	const { deletePrice, ticket } = useDataState();
+	const { deletePrice } = useDataState();
 
 	const buttonProps = useMemo(() => ({ icon: () => <Trash noMargin />, tooltip: __('delete price modifier') }), []);
 	// new or default prices should not be deleted server-side
