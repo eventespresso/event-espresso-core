@@ -12,6 +12,4 @@ export { default as usePriceModifier } from './usePriceModifier';
 
 export { default as useRemoveAllTaxes } from './useRemoveAllTaxes';
 
-export { default as useRemoveDefaultTax } from './useRemoveDefaultTax';
-
 export { default as useTicketPriceCalculator } from './useTicketPriceCalculator';
