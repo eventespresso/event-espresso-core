@@ -266,12 +266,11 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     public function date_range($date_format = '', $conjunction = ' - ')
     {
         $date_format = ! empty($date_format) ? $date_format : $this->_dt_frmt;
-        $first_date  = $this->first_datetime() instanceof EE_Datetime ? $this->first_datetime()
-                                                                            ->get_i18n_datetime('DTT_EVT_start',
-                                                                                                $date_format)
+        $first_date  = $this->first_datetime() instanceof EE_Datetime
+            ? $this->first_datetime()->get_i18n_datetime('DTT_EVT_start', $date_format)
             : '';
-        $last_date   = $this->last_datetime() instanceof EE_Datetime ? $this->last_datetime()
-                                                                           ->get_i18n_datetime('DTT_EVT_end', $date_format)
+        $last_date   = $this->last_datetime() instanceof EE_Datetime
+            ? $this->last_datetime()->get_i18n_datetime('DTT_EVT_end', $date_format)
             : '';
 
         return $first_date && $last_date ? $first_date . $conjunction . $last_date : '';
@@ -351,7 +350,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
                 if (empty($tickets_sold['datetime'])) {
                     return $total;
                 }
-                if (! empty($dtt_id) && ! isset($tickets_sold['datetime'][$dtt_id])) {
+                if (! empty($dtt_id) && ! isset($tickets_sold['datetime'][ $dtt_id ])) {
                     EE_Error::add_error(
                         __(
                             'You\'ve requested the amount of tickets sold for a given ticket and datetime, however there are no records for the datetime id you included.  Are you SURE that is a datetime related to this ticket?',
@@ -363,7 +362,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
                     );
                     return $total;
                 }
-                return empty($dtt_id) ? $tickets_sold['datetime'] : $tickets_sold['datetime'][$dtt_id];
+                return empty($dtt_id) ? $tickets_sold['datetime'] : $tickets_sold['datetime'][ $dtt_id ];
                 break;
             default:
                 return $total;
@@ -384,7 +383,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
         $tickets_sold = [];
         if (! empty($datetimes)) {
             foreach ($datetimes as $datetime) {
-                $tickets_sold['datetime'][$datetime->ID()] = $datetime->get('DTT_sold');
+                $tickets_sold['datetime'][ $datetime->ID() ] = $datetime->get('DTT_sold');
             }
         }
         // Tickets sold
@@ -581,7 +580,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      */
     public function is_free()
     {
-        return $this->get_ticket_total_with_taxes() === (float)0;
+        return $this->get_ticket_total_with_taxes() === (float) 0;
     }
 
 
@@ -598,7 +597,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
         if ($this->_ticket_total_with_taxes === null || $no_cache) {
             $this->_ticket_total_with_taxes = $this->get_ticket_subtotal() + $this->get_ticket_taxes_total_for_admin();
         }
-        return (float)$this->_ticket_total_with_taxes;
+        return (float) $this->_ticket_total_with_taxes;
     }
 
 
@@ -975,7 +974,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     public function set_reserved($reserved)
     {
         // reserved can not go below zero
-        $reserved = max(0, (int)$reserved);
+        $reserved = max(0, (int) $reserved);
         $this->set('TKT_reserved', $reserved);
     }
 
