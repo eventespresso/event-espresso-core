@@ -1236,8 +1236,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
             return 0;
         }
         // ensure all non-line items and non-sub-line-items have a quantity of 1 (except for Events)
-        if (! $this->is_line_item() && ! $this->is_sub_line_item() && ! $this->is_cancellation()
-        ) {
+        if (! $this->is_line_item() && ! $this->is_sub_line_item() && ! $this->is_cancellation()) {
             if ($this->OBJ_type() !== EEM_Line_Item::OBJ_TYPE_EVENT) {
                 $this->set_quantity(1);
             }
@@ -1290,7 +1289,11 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
         $subtotal_quantity = 0;
         // get the total of all its children
         foreach ($my_children as $child_line_item) {
-            if ($child_line_item instanceof EE_Line_Item && ! $child_line_item->is_cancellation()) {
+            if ($child_line_item instanceof EE_Line_Item) {
+                // skip line item if it is cancelled or is a tax
+                if ($child_line_item->is_cancellation() || $child_line_item->is_tax()) {
+                    continue;
+                }
                 // percentage line items are based on total so far
                 if ($child_line_item->is_percent()) {
                     // round as we go so that the line items add up ok
@@ -1351,7 +1354,11 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
         $quantity_for_total = 1;
         // get the total of all its children
         foreach ($my_children as $child_line_item) {
-            if ($child_line_item instanceof EE_Line_Item && ! $child_line_item->is_cancellation()) {
+            if ($child_line_item instanceof EE_Line_Item) {
+                // skip line item if it is cancelled or is a tax
+                if ($child_line_item->is_cancellation() || $child_line_item->is_tax()) {
+                    continue;
+                }
                 if ($child_line_item->is_percent()) {
                     // it should be the unit-price-so-far multiplied by teh percent multiplied by the quantity
                     // not total multiplied by percent, because that ignores rounding along-the-way
