@@ -8,9 +8,13 @@ const useOnUpdateDatetime = (): DatetimeMutationCallbackFn => {
 
 	const onUpdateDatetime = useCallback(
 		({ datetime, tickets }: DatetimeMutationCallbackFnArgs): void => {
-			if (datetime.id && tickets && tickets.length) {
-				const { id: datetimeId } = datetime;
-
+			if (!datetime?.id) {
+				return;
+			}
+			const datetimeId = datetime?.id;
+			// if related tickets are passed
+			// may be empty array to remove relations
+			if (tickets) {
 				// make sure to remove datetime from
 				// all existing relations
 				removeRelation({
@@ -19,21 +23,24 @@ const useOnUpdateDatetime = (): DatetimeMutationCallbackFn => {
 					relation: 'tickets',
 				});
 
-				updateRelations({
-					entity: 'datetimes',
-					entityId: datetimeId,
-					relation: 'tickets',
-					relationIds: tickets,
-				});
-
-				tickets.forEach((entityId) => {
-					addRelation({
-						entity: 'tickets',
-						entityId,
-						relation: 'datetimes',
-						relationId: datetimeId,
+				// if we have any tickets
+				if (tickets.length) {
+					updateRelations({
+						entity: 'datetimes',
+						entityId: datetimeId,
+						relation: 'tickets',
+						relationIds: tickets,
 					});
-				});
+
+					tickets.forEach((entityId) => {
+						addRelation({
+							entity: 'tickets',
+							entityId,
+							relation: 'datetimes',
+							relationId: datetimeId,
+						});
+					});
+				}
 			}
 		},
 		[addRelation, removeRelation, updateRelations]

@@ -34,7 +34,7 @@ const useMutationHandler = (): MH => {
 				data = null;
 			}
 			const datetimes = data?.espressoDatetimes || DEFAULT_LIST_DATA;
-			const tickets = input?.tickets || [];
+			const tickets = input?.tickets;
 
 			switch (mutationType) {
 				case MutationType.Create:

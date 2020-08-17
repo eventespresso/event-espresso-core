@@ -21,21 +21,23 @@ const useOnCreateDatetime = (): DatetimeMutationCallbackFn => {
 				// Update tickets cache for the changed datetimes,
 				// to avoid refetching of tickets.
 				updateTicketCache({ proxy, datetimeIn, datetimeId, action: 'add' });
-
-				updateRelations({
-					entity: 'datetimes',
-					entityId: datetimeId,
-					relation: 'tickets',
-					relationIds: tickets,
-				});
-				tickets.forEach((entityId: string) => {
-					addRelation({
-						entity: 'tickets',
-						entityId,
-						relation: 'datetimes',
-						relationId: datetimeId,
+				// if we have related tickets
+				if (tickets?.length) {
+					updateRelations({
+						entity: 'datetimes',
+						entityId: datetimeId,
+						relation: 'tickets',
+						relationIds: tickets,
 					});
-				});
+					tickets.forEach((entityId: string) => {
+						addRelation({
+							entity: 'tickets',
+							entityId,
+							relation: 'datetimes',
+							relationId: datetimeId,
+						});
+					});
+				}
 			}
 			// Update datetime cache after tickets cache is updated.
 			updateDatetimeCache({ proxy, datetimes, datetime, action: 'add' });

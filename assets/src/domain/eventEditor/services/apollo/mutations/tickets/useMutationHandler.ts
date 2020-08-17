@@ -39,9 +39,9 @@ const useMutationHandler = (): MH => {
 				data = null;
 			}
 			const tickets = data?.espressoTickets || DEFAULT_LIST_DATA;
-			const datetimeIds = input?.datetimes || [];
+			const datetimeIds = input?.datetimes;
 
-			const priceIds: string[] = getGuids(prices?.nodes || []);
+			const priceIds: string[] = prices?.nodes ? getGuids(prices.nodes) : null;
 
 			switch (mutationType) {
 				case MutationType.Create:
