@@ -22,38 +22,43 @@ const useOnCreateTicket = (): TicketMutationCallbackFn => {
 				// to avoid refetching of prices.
 				updatePriceCache({ proxy, prices, ticketIn, ticketId, action: 'add' });
 
-				// Set relations with datetimes
-				updateRelations({
-					entity: 'tickets',
-					entityId: ticketId,
-					relation: 'datetimes',
-					relationIds: datetimeIds,
-				});
-				datetimeIds.forEach((entityId: string) => {
-					addRelation({
-						entity: 'datetimes',
-						entityId,
-						relation: 'tickets',
-						relationId: ticketId,
+				// if related datetimes are passed
+				if (datetimeIds?.length) {
+					// Set relations with datetimes
+					updateRelations({
+						entity: 'tickets',
+						entityId: ticketId,
+						relation: 'datetimes',
+						relationIds: datetimeIds,
 					});
-				});
+					datetimeIds.forEach((entityId: string) => {
+						addRelation({
+							entity: 'datetimes',
+							entityId,
+							relation: 'tickets',
+							relationId: ticketId,
+						});
+					});
+				}
 
 				// Set relations with prices
 				const priceIds = getGuids(prices?.nodes || []);
-				updateRelations({
-					entity: 'tickets',
-					entityId: ticketId,
-					relation: 'prices',
-					relationIds: priceIds,
-				});
-				priceIds.forEach((entityId: string) => {
-					addRelation({
-						entity: 'prices',
-						entityId,
-						relation: 'tickets',
-						relationId: ticketId,
+				if (priceIds.length) {
+					updateRelations({
+						entity: 'tickets',
+						entityId: ticketId,
+						relation: 'prices',
+						relationIds: priceIds,
 					});
-				});
+					priceIds.forEach((entityId: string) => {
+						addRelation({
+							entity: 'prices',
+							entityId,
+							relation: 'tickets',
+							relationId: ticketId,
+						});
+					});
+				}
 			}
 			// Update ticket cache after price cache is updated.
 			updateTicketCache({ proxy, tickets, ticket, action: 'add' });
