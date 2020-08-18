@@ -5,13 +5,13 @@ import { __ } from '@wordpress/i18n';
 import { BiggieCalendarDate, CalendarDateRange } from '../';
 import { CalendarDateSwitcherProps } from './types';
 import { DisplayStartOrEndDate } from '@sharedServices/filterState';
-import { PLUS_ONE_MONTH, PLUS_TWO_MONTHS } from '@sharedConstants/defaultDates';
 import { switchTenseForDate } from '@appServices/utilities/date';
+import { useMemoStringify } from '@application/services/hooks';
 
 const CalendarDateSwitcher: React.FC<CalendarDateSwitcherProps> = React.memo(
 	({ className, displayDate = DisplayStartOrEndDate.start, labels, ...props }) => {
-		const startDate = parseISO(props.startDate) || PLUS_ONE_MONTH;
-		const endDate = parseISO(props.endDate) || PLUS_TWO_MONTHS;
+		const startDate = useMemoStringify(parseISO(props.startDate), [props.startDate]);
+		const endDate = useMemoStringify(parseISO(props.endDate), [props.endDate]);
 
 		let headerText = '';
 		let footerText = '';
