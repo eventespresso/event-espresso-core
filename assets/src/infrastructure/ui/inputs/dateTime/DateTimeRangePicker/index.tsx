@@ -10,7 +10,7 @@ import { convertWordPressDateFormat, convertWordPressTimeFormat } from '../utili
 import '../style.scss';
 import './style.scss';
 
-const DateTimeRangePicker: React.FC<DateTimeRangePickerProps> = ({ endDate, onChange, startDate, ...props }) => {
+const DateTimeRangePicker: React.FC<DateTimeRangePickerProps> = (props) => {
 	const {
 		dateTimeFormats: { dateTimeFormat },
 		locale: { user },
@@ -28,9 +28,7 @@ const DateTimeRangePicker: React.FC<DateTimeRangePickerProps> = ({ endDate, onCh
 			disableClock
 			format={newDateTimeFormat}
 			locale={user}
-			onChange={onChange}
 			showLeadingZeros
-			value={[new Date(startDate), new Date(endDate)]}
 			{...props}
 		/>
 	);
