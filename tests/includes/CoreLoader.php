@@ -72,8 +72,12 @@ class CoreLoader
                 '/tmp/wordpress-tests-lib',
                 __DIR__,
             ];
+            echo "\n";
             foreach($wp_test_dirs as $wp_test_dir) {
-                echo "\n\nAttempting to find WP tests directory: {$wp_test_dir}";
+                if (! $wp_test_dir) {
+                    continue;
+                }
+                echo "\nAttempting to find WP tests directory: {$wp_test_dir}";
                 if ($this->findFolderWithFile($wp_test_dir, '/includes/functions.php')) {
                     return $wp_test_dir;
                 }
