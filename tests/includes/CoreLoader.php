@@ -50,8 +50,8 @@ class CoreLoader
     private function findWordpressFolder($folder = '', $with_file = '')
     {
         static $depth = 10;
-        echo ".";
-        $folder = substr($folder, -1) !== '/' ? $folder . '/' : $folder;
+        $with_file = strpos($with_file, '/') !== 0 ?  '/' . $with_file : $with_file;
+        echo "\n{$folder}{$with_file}";
         if (file_exists($folder . $with_file)) {
             return $folder;
         }
@@ -75,27 +75,32 @@ class CoreLoader
             }
 
             define('EE_MOCKS_DIR', EE_TESTS_DIR . 'mocks/');
-            $_tests_dir = getenv('WP_TESTS_DIR');
-            if (! $_tests_dir) {
-                $_tests_dir = '/tmp/wordpress-tests-lib';
-            }
-            echo "\ntests_dir: {$_tests_dir}";
-            if (file_exists($_tests_dir . '/includes/functions.php')) {
-                define('WP_TESTS_DIR', $_tests_dir);
-            } else {
-                echo "\n\n Attempting to find WP_TESTS_DIR ";
-                $folder = $this->findWordpressFolder(__DIR__, 'includes/functions.php');
-                define('WP_TESTS_DIR', $folder);
-            }
-            global $wp_version;
-            if ( ! $wp_version ) {
-                echo "\n\n Attempting to find WP version.php ";
-                $wp_version_file = $this->findWordpressFolder(__DIR__, 'wp-includes/version.php');
-                if ($wp_version_file) {
-                    include $wp_version_file . 'wp-includes/version.php';
+            // potential base locations for WP tests folder
+            $wp_test_dirs = [
+                getenv('WP_TESTS_DIR'),
+                 '/tmp/wordpress-tests-lib',
+                 __DIR__
+            ];
+            foreach($wp_test_dirs as $wp_test_dir) {
+                echo "\n\nAttempting to find WP tests directory: {$wp_test_dir}";
+                if ($this->findWordpressFolder($wp_test_dir, '/includes/functions.php')) {
+                    define('WP_TESTS_DIR', $wp_test_dir);
+                    break;
                 }
             }
-            echo "\nWP_VERSION: {$wp_version}";
+            if (! defined('WP_TESTS_DIR')) {
+                throw new RuntimeException('Could not find WP Tests Dir!');
+            }
+
+            global $wp_version;
+            if ( ! $wp_version ) {
+                echo "\n\nAttempting to find WP version.php ";
+                $wp_version_file = $this->findWordpressFolder(__DIR__, '/wp-includes/version.php');
+                if ($wp_version_file) {
+                    include $wp_version_file . '/wp-includes/version.php';
+                }
+            }
+            echo "\n\nWP_VERSION: {$wp_version}";
             echo "\nWP_TESTS_DIR: " . WP_TESTS_DIR;
             echo "\nEE_TESTS_DIR: " . EE_TESTS_DIR . "\n\n";
             // define('EE_REST_API_DEBUG_MODE', true);
