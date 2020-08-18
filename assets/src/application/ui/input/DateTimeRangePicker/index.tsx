@@ -8,13 +8,12 @@ import { Save } from '../../display/icons';
 
 const DateTimeRangePicker: React.FC<DateTimeRangePickerProps> = ({
 	className,
-	startDate,
-	endDate,
 	onChange,
 	onChangeValue,
+	value,
 	...props
 }) => {
-	const [dates, setDates] = useState([startDate, endDate]);
+	const [dates, setDates] = useState(value);
 
 	const onSave: VoidFunction = useCallback(() => {
 		if (typeof onChangeValue === 'function') {
@@ -33,11 +32,14 @@ const DateTimeRangePicker: React.FC<DateTimeRangePickerProps> = ({
 		'ee-input-base-wrapper'
 	);
 
-	const [start, end] = dates;
-
 	return (
 		<div className={htmlClass}>
-			<DateTimeRangePickerAdapter required onChange={setDates} startDate={start} endDate={end} {...props} />
+			<DateTimeRangePickerAdapter
+				required
+				onChange={setDates}
+				value={dates}
+				{...props}
+			/>
 			<IconButton
 				aria-label={__('save')}
 				buttonType={ButtonType.MINIMAL}

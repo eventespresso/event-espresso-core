@@ -1,6 +1,7 @@
 import React from 'react';
 import type { LabelPosition } from '@appDisplay/withLabel';
 import type { ButtonProps } from '../../input/Button';
+import { DateRange } from '@infraUI/inputs/dateTime';
 
 export interface CalendarDateProps {
 	className?: string;
@@ -16,7 +17,7 @@ export type keyPressHandler = (event: React.KeyboardEventHandler<HTMLButtonEleme
 export interface EditDateButtonProps extends ButtonProps {
 	endDate: string;
 	header?: string;
-	onEditHandler: (dates: string[]) => void;
+	onEditHandler: (dates: DateRange) => void;
 	startDate: string;
 	tooltip?: string;
 	tooltipPosition?: LabelPosition;

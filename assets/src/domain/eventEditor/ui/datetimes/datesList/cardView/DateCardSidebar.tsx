@@ -8,6 +8,7 @@ import { useDatesListFilterState } from '@edtrServices/filterState';
 import { useDatetimeMutator } from '@edtrServices/apollo/mutations';
 import { useTimeZoneTime } from '@appServices/hooks';
 import type { DateItemProps } from '../types';
+import { DateRange } from '@infraUI/inputs/dateTime';
 
 const DateCardSidebar: React.FC<DateItemProps> = ({ entity: date }) => {
 	const { displayStartOrEndDate } = useDatesListFilterState();
@@ -15,11 +16,10 @@ const DateCardSidebar: React.FC<DateItemProps> = ({ entity: date }) => {
 	const { siteTimeToUtc } = useTimeZoneTime();
 
 	const onEditHandler = useCallback(
-		(dates: string[]): void => {
-			const [start, end] = dates;
+		([start, end]: DateRange): void => {
 			// convert start & end dates to proper UTC "startDate" and "endDate"
-			const startDate = siteTimeToUtc(new Date(start)).toISOString();
-			const endDate = siteTimeToUtc(new Date(end)).toISOString();
+			const startDate = siteTimeToUtc(start).toISOString();
+			const endDate = siteTimeToUtc(end).toISOString();
 			updateEntity({ startDate, endDate });
 		},
 		[siteTimeToUtc, updateEntity]
