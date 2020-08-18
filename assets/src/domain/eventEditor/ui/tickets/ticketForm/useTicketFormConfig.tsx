@@ -9,11 +9,11 @@ import useTicketItem from '@edtrServices/apollo/queries/tickets/useTicketItem';
 import { Ticket } from '@edtrServices/apollo/types';
 import { EntityId } from '@dataServices/types';
 import { processDateAndTime } from '@sharedServices/utils/dateAndTime';
-import { validate } from './formValidation';
-import { TicketFormShape } from './types';
 import { useTimeZoneTime, useMemoStringify } from '@appServices/hooks';
 import { PLUS_ONE_MONTH } from '@sharedConstants/defaultDates';
 import { setDateToToday, setTimeToZeroHour, setDefaultTime } from '@appServices/utilities/date';
+import { validate } from './formValidation';
+import { TicketFormShape } from './types';
 
 type TicketFormConfig = EspressoFormProps<TicketFormShape>;
 
