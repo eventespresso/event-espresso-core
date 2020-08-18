@@ -70,15 +70,10 @@ script: npm run test-php
 jobs:
   allow_failures:
     - php: nightly
-    - php: 7.3
-      env:
-        - PHP_LINT=1
-        - PHP_LINT_WITH_WARNINGS=yes
   fast_finish: true
   include:
     - stage: lint
-      name: "PHP and JavaScript Linting"
-    - language: node_js
+      language: node_js
       env:
         - JS_LINT=1
       before_script:
@@ -93,19 +88,8 @@ jobs:
         - composer install || exit 1
         - composer config-eventespressocs || exit 1
         - npm run lint-php:skip-warnings || exit 1
-        # allowed to fail
-    - php: 7.3
-      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
-      env:
-        - PHP_LINT=1
-        - PHP_LINT_WITH_WARNINGS=yes
-      script:
-        - composer install || exit 1
-        - composer config-eventespressocs || exit 1
-        - npm run lint-php || exit 1
     - stage: js
-      name: "JavaScript Unit Tests"
-    - language: node_js
+      language: node_js
       env:
         - JAVASCRIPT_TESTS=1
       node_js:
@@ -138,8 +122,7 @@ jobs:
       script:
         - npm run ci:build || exit 1
     - stage: php
-      name: "PHP Unit Tests"
-    - php: 7.3
+      php: 7.3
     - php: 7.2
     - php: 7.1
     - php: 7.0
