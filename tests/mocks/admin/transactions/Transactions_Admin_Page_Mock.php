@@ -52,11 +52,11 @@ class Transactions_Admin_Page_Mock extends Transactions_Admin_Page {
 	/**
 	 * create_payment_from_request_data
 	 *
-	 * @param array $txn_admin_payment
+	 * @param array $request_data
 	 * @return \EE_Payment
 	 */
-	public function create_payment_from_request_data( array $txn_admin_payment ) {
-		return $this->_create_payment_from_request_data($txn_admin_payment);
+	public function create_payment_from_request_data( $request_data ) {
+        return $this->_create_payment_from_request_data($request_data);
 	}
 
 
