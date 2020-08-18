@@ -15,12 +15,6 @@ cache:
     - $HOME/.npm
     - $HOME/.yarn-cache
 
-stages:
-  - lint
-  - js
-  - name: php
-    if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
-
 env:
   global:
     - WP_VERSION=latest WP_MULTISITE=0
@@ -72,7 +66,7 @@ jobs:
     - php: nightly
   fast_finish: true
   include:
-    - stage: lint
+    - name: "js lint"
       language: node_js
       env:
         - JS_LINT=1
@@ -86,7 +80,8 @@ jobs:
         - node --version
       script:
         - npm run lint || exit 1
-    - php: 7.3
+    - name: "php lint"
+      php: 7.3
       if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
       env:
         - PHP_LINT=1
@@ -95,7 +90,7 @@ jobs:
         - composer install || exit 1
         - composer config-eventespressocs || exit 1
         - npm run lint-php:skip-warnings || exit 1
-    - stage: js
+    - name: "js test"
       language: node_js
       env:
         - JAVASCRIPT_TESTS=1
@@ -109,7 +104,8 @@ jobs:
         - node --version
       script:
         - npm run ci:test || exit 1
-    - language: node_js
+    - name: "js license check"
+      language: node_js
       env:
         - LICENSE_CHECK=1
       before_script:
@@ -117,7 +113,8 @@ jobs:
         - node --version
       script:
         - npm run lc || exit 1
-    - language: node_js
+    - name: "js build test"
+      language: node_js
       env:
         - BUILD_TEST=1
       before_install:
@@ -128,17 +125,30 @@ jobs:
         - node --version
       script:
         - npm run ci:build || exit 1
-    - stage: php
+    - name: "php 7.3 test"
       php: 7.3
-    - php: 7.2
-    - php: 7.1
-    - php: 7.0
-    - php: 5.6
+      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
+    - name: "php 7.2 test"
+      php: 7.2
+      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
+    - name: "php 7.1 test"
+      php: 7.1
+      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
+    - name: "php 7.0 test"
+      php: 7.0
+      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
+    - name: "php 5.6 test"
+      php: 5.6
+      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
       # multisite
-    - php: 7.2
+    - name: "php 7.2 multisite test"
+      php: 7.2
+      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
       env: WP_MULTISITE=1
       # allowed to fail
-    - php: nightly
+    - name: "php nightly test"
+      php: nightly
+      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
 
 notifications:
   slack:
