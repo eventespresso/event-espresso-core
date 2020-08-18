@@ -21,7 +21,6 @@ class EEM_WP_User extends EEM_Base
     protected static $_instance;
 
 
-
     /**
      *    constructor
      *
@@ -32,8 +31,8 @@ class EEM_WP_User extends EEM_Base
      */
     protected function __construct($timezone = null, ModelFieldFactory $model_field_factory)
     {
-        $this->singular_item = __('WP_User', 'event_espresso');
-        $this->plural_item = __('WP_Users', 'event_espresso');
+        $this->singular_item = esc_html__('WP_User', 'event_espresso');
+        $this->plural_item = esc_html__('WP_Users', 'event_espresso');
         global $wpdb;
         $this->_tables = array(
             'WP_User' => new EE_Primary_Table($wpdb->users, 'ID', true),
@@ -42,46 +41,46 @@ class EEM_WP_User extends EEM_Base
             'WP_User' => array(
                 'ID'                  => $model_field_factory->createPrimaryKeyIntField(
                     'ID',
-                    __('WP_User ID', 'event_espresso')
+                    esc_html__('WP_User ID', 'event_espresso')
                 ),
                 'user_login'          => $model_field_factory->createPlainTextField(
                     'user_login',
-                    __('User Login', 'event_espresso'),
+                    esc_html__('User Login', 'event_espresso'),
                     false
                 ),
                 'user_pass'           => $model_field_factory->createPlainTextField(
                     'user_pass',
-                    __('User Password', 'event_espresso'),
+                    esc_html__('User Password', 'event_espresso'),
                     false
                 ),
                 'user_nicename'       => $model_field_factory->createPlainTextField(
                     'user_nicename',
-                    __(' User Nice Name', 'event_espresso'),
+                    esc_html__(' User Nice Name', 'event_espresso'),
                     false
                 ),
                 'user_email'          => $model_field_factory->createEmailField(
                     'user_email',
-                    __('User Email', 'event_espresso'),
+                    esc_html__('User Email', 'event_espresso'),
                     false,
                     null
                 ),
                 'user_registered'     => $model_field_factory->createDatetimeField(
                     'user_registered',
-                    __('Date User Registered', 'event_espresso'),
+                    esc_html__('Date User Registered', 'event_espresso'),
                     $timezone
                 ),
                 'user_activation_key' => $model_field_factory->createPlainTextField(
                     'user_activation_key',
-                    __('User Activation Key', 'event_espresso'),
+                    esc_html__('User Activation Key', 'event_espresso'),
                     false
                 ),
                 'user_status'         => $model_field_factory->createIntegerField(
                     'user_status',
-                    __('User Status', 'event_espresso')
+                    esc_html__('User Status', 'event_espresso')
                 ),
                 'display_name'        => $model_field_factory->createPlainTextField(
                     'display_name',
-                    __('Display Name', 'event_espresso'),
+                    esc_html__('Display Name', 'event_espresso'),
                     false
                 ),
             ),
@@ -91,6 +90,7 @@ class EEM_WP_User extends EEM_Base
             // all models are related to the change log
             // 'Change_Log'     => new EE_Has_Many_Relation(),
             'Event'          => new EE_Has_Many_Relation(),
+            'Message'        => new EE_Has_Many_Relation(),
             'Payment_Method' => new EE_Has_Many_Relation(),
             'Price'          => new EE_Has_Many_Relation(),
             'Price_Type'     => new EE_Has_Many_Relation(),
@@ -98,8 +98,17 @@ class EEM_WP_User extends EEM_Base
             'Question_Group' => new EE_Has_Many_Relation(),
             'Ticket'         => new EE_Has_Many_Relation(),
             'Venue'          => new EE_Has_Many_Relation(),
-            'Message'        => new EE_Has_Many_Relation(),
         );
+        $this->foreign_key_aliases = [
+            'Event.EVT_wp_user'          => 'WP_User.ID',
+            'Payment_Method.PMD_wp_user' => 'WP_User.ID',
+            'Price.PRC_wp_user'          => 'WP_User.ID',
+            'Price_Type.PRT_wp_user'     => 'WP_User.ID',
+            'Question.QST_wp_user'       => 'WP_User.ID',
+            'Question_Group.QSG_wp_user' => 'WP_User.ID',
+            'Ticket.VNU_wp_user'         => 'WP_User.ID',
+            'Venue.TKT_wp_user'          => 'WP_User.ID',
+        ];
         $this->_wp_core_model = true;
         $this->_caps_slug = 'users';
         $this->_cap_contexts_to_cap_action_map[ EEM_Base::caps_read ] = 'list';
@@ -112,7 +121,6 @@ class EEM_WP_User extends EEM_Base
     }
 
 
-
     /**
      * We don't need a foreign key to the WP_User model, we just need its primary key
      *
@@ -123,7 +131,6 @@ class EEM_WP_User extends EEM_Base
     {
         return $this->primary_key_name();
     }
-
 
 
     /**
