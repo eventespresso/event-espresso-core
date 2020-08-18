@@ -42,20 +42,71 @@ class CoreLoader
 
 
     /**
+     * @return string
+     * @since $VID:$
+     */
+    private function findWordpressVersion()
+    {
+            global $wp_version;
+            if ( ! $wp_version ) {
+                echo "\n\nAttempting to find WP version.php ";
+                $wp_version_file = $this->findFolderWithFile(__DIR__, '/wp-includes/version.php');
+                if ($wp_version_file) {
+                    include $wp_version_file . '/wp-includes/version.php';
+                }
+            }
+            return $wp_version;
+    }
+
+
+    /**
+     * @return string
+     * @throw RuntimeException
+     * @since $VID:$
+     */
+    private function findWordpressTestsFolder()
+    {
+            // potential base locations for WP tests folder
+            $wp_test_dirs = [
+                getenv('WP_TESTS_DIR'),
+                '/tmp/wordpress-tests-lib',
+                __DIR__,
+            ];
+            echo "\n";
+            foreach($wp_test_dirs as $wp_test_dir) {
+                if (! $wp_test_dir) {
+                    continue;
+                }
+                echo "\nAttempting to find WP tests directory: {$wp_test_dir}";
+                if ($this->findFolderWithFile($wp_test_dir, '/includes/functions.php')) {
+                    return $wp_test_dir;
+                }
+            }
+            // if WordPress test suite isn't found then we can't do anything.
+            die("The WordPress PHPUnit test suite could not be found.");
+    }
+
+
+    /**
      * @param string $folder
+     * @param string $with_file
      * @return string|null
      * @since $VID:$
      */
-    private function findWordpressTests($folder = '')
+    private function findFolderWithFile($folder = '', $with_file = '')
     {
+        if (! $folder || $folder === '/') {
+            return null;
+        }
         static $depth = 10;
-        echo ".";
-        if (file_exists($folder . '/includes/functions.php')) {
+        $with_file = strpos($with_file, '/') !== 0 ?  '/' . $with_file : $with_file;
+        echo "\n => {$folder}{$with_file}";
+        if (is_readable($folder . $with_file)) {
             return $folder;
         }
         if ($depth > 0) {
             $depth--;
-            return $this->findWordpressTests(dirname($folder));
+            return $this->findFolderWithFile(dirname($folder), $with_file);
         }
         return null;
     }
@@ -73,17 +124,13 @@ class CoreLoader
             }
 
             define('EE_MOCKS_DIR', EE_TESTS_DIR . 'mocks/');
-            $_tests_dir = getenv('WP_TESTS_DIR');
-            if (! $_tests_dir) {
-                $_tests_dir = '/tmp/wordpress-tests-lib';
-            }
-            if (file_exists($_tests_dir . '/includes/functions.php')) {
-                define('WP_TESTS_DIR', $_tests_dir);
-            } else {
-                echo "\n\n Attempting to find WP_TESTS_DIR ";
-                $folder = $this->findWordpressTests(__DIR__);
-                define('WP_TESTS_DIR', $folder);
-            }
+
+            $wp_test_dir = $this->findWordpressTestsFolder();
+            define('WP_TESTS_DIR', $wp_test_dir);
+
+            $wp_version = $this->findWordpressVersion();
+
+            echo "\n\nWP_VERSION: {$wp_version}";
             echo "\nWP_TESTS_DIR: " . WP_TESTS_DIR;
             echo "\nEE_TESTS_DIR: " . EE_TESTS_DIR . "\n\n";
             // define('EE_REST_API_DEBUG_MODE', true);
@@ -93,10 +140,6 @@ class CoreLoader
 
     protected function preLoadWPandEE()
     {
-        //if WordPress test suite isn't found then we can't do anything.
-        if (! is_readable(WP_TESTS_DIR . '/includes/functions.php')) {
-            die("The WordPress PHPUnit test suite could not be found at: " . WP_TESTS_DIR);
-        }
         require_once WP_TESTS_DIR . '/includes/functions.php';
         require_once EE_PLUGIN_DIR . 'core/Psr4Autoloader.php';
         //set filter for bootstrapping EE which needs to happen BEFORE loading WP.

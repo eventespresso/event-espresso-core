@@ -5,29 +5,30 @@ os: linux
 language: php
 
 services:
-    - mysql
+  - mysql
 
 cache:
-    apt: true
-    yarn: true
-    directories:
-        - $HOME/.composer/cache
-        - $HOME/.npm
-        - $HOME/.yarn-cache
+  apt: true
+  yarn: true
+  directories:
+    - $HOME/.composer/cache
+    - $HOME/.npm
+    - $HOME/.yarn-cache
 
 env:
-    global:
-        - WP_VERSION=latest WP_MULTISITE=0
+  global:
+    - WP_VERSION=latest WP_MULTISITE=0
 
 before_install:
-    - npm install npm@^6.13 -g
-    - |
-        if [[ "$SKIP_XDEBUG_REMOVE" != "true" ]]; then
-          cp $HOME/.phpenv/versions/$(phpenv global)/etc/conf.d/xdebug.ini /tmp
-          phpenv config-rm xdebug.ini
-          echo "xdebug removed";
-        fi
+  - npm install npm@^6.13 -g
+  - |
+    if [[ "$SKIP_XDEBUG_REMOVE" != "true" ]]; then
+      cp $HOME/.phpenv/versions/$(phpenv global)/etc/conf.d/xdebug.ini /tmp
+      phpenv config-rm xdebug.ini
+      echo "xdebug removed";
+    fi
 before_script:
+  - bash tests/bin/install-wp-tests.sh wordpress_test root '' localhost $WP_VERSION
   - export PATH="$HOME/.composer/vendor/bin:$PATH"
   - |
     # Install the specified version of PHPUnit depending on the PHP version:
@@ -61,43 +62,26 @@ before_script:
 script: npm run test-php
 
 jobs:
-  fast_finish: true
   allow_failures:
     - php: nightly
-    - php: 7.4
-      env:
-        - PHP_LINT=1
-        - PHP_LINT_WITH_WARNINGS=yes
+  fast_finish: true
   include:
-    - stage: test
+    - name: "js lint"
       language: node_js
-      node_js: 11.0.0
       env:
         - JS_LINT=1
+      node_js:
+        - lts/*
+      before_install:
+        - nvm install && nvm use
+        - nvm install --latest-npm
       before_script:
         - npm --version
         - node --version
       script:
-        - npm run ci:lint || exit 1
-    - language: node_js
-      node_js: 11.0.0
-      env:
-        - JAVASCRIPT_TESTS=1
-      before_script:
-        - npm --version
-        - node --version
-      script:
-        - npm run ci:test || exit 1
-    - language: node_js
-      node_js: 11.0.0
-      env:
-        - BUILD_TEST=1
-      before_script:
-        - npm --version
-        - node --version
-      script:
-        - npm run ci:build || exit 1
-    - php: 7.3
+        - npm run lint || exit 1
+    - name: "php lint"
+      php: 7.3
       if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
       env:
         - PHP_LINT=1
@@ -106,26 +90,22 @@ jobs:
         - composer install || exit 1
         - composer config-eventespressocs || exit 1
         - npm run lint-php:skip-warnings || exit 1
-    - php: 7.4
-      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
-    - php: 7.3
-      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
-    - php: 7.2
-      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
-    - php: 7.1
-      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
-    - php: 7.0
-      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
-    - php: 5.6
-      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
-    # multisite
-    - php: 7.2
-      env: WP_MULTISITE=1
-      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
-    - php: nightly
-      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
-    - language: node_js
-      node_js: 11.0.0
+    - name: "js test"
+      language: node_js
+      env:
+        - JAVASCRIPT_TESTS=1
+      node_js:
+        - lts/*
+      before_install:
+        - nvm install && nvm use
+        - nvm install --latest-npm
+      before_script:
+        - npm --version
+        - node --version
+      script:
+        - npm run ci:test || exit 1
+    - name: "js license check"
+      language: node_js
       env:
         - LICENSE_CHECK=1
       before_script:
@@ -133,14 +113,50 @@ jobs:
         - node --version
       script:
         - npm run lc || exit 1
+    - name: "js build test"
+      language: node_js
+      env:
+        - BUILD_TEST=1
+      before_install:
+        - nvm install && nvm use
+        - nvm install --latest-npm
+      before_script:
+        - npm --version
+        - node --version
+      script:
+        - npm run ci:build || exit 1
+    - name: "php 7.3 test"
+      php: 7.3
+      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
+    - name: "php 7.2 test"
+      php: 7.2
+      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
+    - name: "php 7.1 test"
+      php: 7.1
+      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
+    - name: "php 7.0 test"
+      php: 7.0
+      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
+    - name: "php 5.6 test"
+      php: 5.6
+      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
+      # multisite
+    - name: "php 7.2 multisite test"
+      php: 7.2
+      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
+      env: WP_MULTISITE=1
+      # allowed to fail
+    - name: "php nightly test"
+      php: nightly
+      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
 
 notifications:
-    slack:
-        rooms:
-            secure: e2xmbwOoagh/rZIqUnx15HcTv5hZGxykvg8Tj0ENGi/bLcXgrEYxs2hpW+nzGggmSl22Eh+6wLRo62L0dEIIo1n+yknqDdAbVG7lmnX7Tc45JNgxWtSmAPzC3wAp0e9w1hy8HILPjYLxl0G7eXUvo3mKVRCCyD/Cyz5dDicE8tQ=
-        on_success: change
-        on_failure: always
-        on_start: always
-        template:
-            - 'Build <%{build_url}|#%{build_number}> (<%{compare_url}|%{commit}>) of %{repository}@%{branch} by %{author} %{result} in %{duration}'
-            - '%{commit_message}'
+  slack:
+    rooms:
+      secure: e2xmbwOoagh/rZIqUnx15HcTv5hZGxykvg8Tj0ENGi/bLcXgrEYxs2hpW+nzGggmSl22Eh+6wLRo62L0dEIIo1n+yknqDdAbVG7lmnX7Tc45JNgxWtSmAPzC3wAp0e9w1hy8HILPjYLxl0G7eXUvo3mKVRCCyD/Cyz5dDicE8tQ=
+    on_success: change
+    on_failure: always
+    on_start: always
+    template:
+      - 'Build <%{build_url}|#%{build_number}> (<%{compare_url}|%{commit}>) of %{repository}@%{branch} by %{author} %{result} in %{duration}'
+      - '%{commit_message}'
