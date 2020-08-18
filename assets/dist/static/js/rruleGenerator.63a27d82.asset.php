@@ -1,1 +1,0 @@
-<?php return array('dependencies' => array('eventespresso-constants', 'react', 'react-dom', 'wp-i18n'), 'version' => '0f1cb73020c08a9448fafb7b10bb0e54');
