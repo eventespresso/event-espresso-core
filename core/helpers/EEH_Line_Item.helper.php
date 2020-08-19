@@ -309,13 +309,15 @@ class EEH_Line_Item
         $event = sprintf(_x('(For %1$s)', '(For Event Name)', 'event_espresso'), $first_datetime_name);
         // get event subtotal line
         $events_sub_total = self::get_event_line_item_for_ticket($total_line_item, $ticket);
+        $taxes = $ticket->tax_price_modifiers();
+        $is_taxable = empty($taxes) ? $ticket->taxable() : false;
         // add $ticket to cart
         $line_item = EE_Line_Item::new_instance(array(
             'LIN_name'       => $ticket->name(),
             'LIN_desc'       => $ticket->description() !== '' ? $ticket->description() . ' ' . $event : $event,
             'LIN_unit_price' => $ticket->price(),
             'LIN_quantity'   => $qty,
-            'LIN_is_taxable' => $ticket->taxable(),
+            'LIN_is_taxable' => $is_taxable,
             'LIN_order'      => count($events_sub_total->children()),
             'LIN_total'      => $ticket->price() * $qty,
             'LIN_type'       => EEM_Line_Item::type_line_item,
