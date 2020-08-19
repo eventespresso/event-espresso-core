@@ -6,7 +6,9 @@
  */
 class EE_Money_Field extends EE_Float_Field
 {
+
     protected $_whole_pennies_only;
+
 
     /**
      * @param string $table_column
@@ -69,7 +71,7 @@ class EE_Money_Field extends EE_Float_Field
         // now it's a float-style string or number
         $float_val = parent::prepare_for_set($value_inputted_for_field_on_model_object);
         // round to the correctly number of decimal places for this  currency
-        return $this->_round_if_no_partial_pennies( $float_val );
+        return $this->_round_if_no_partial_pennies($float_val);
     }
 
 
@@ -86,29 +88,32 @@ class EE_Money_Field extends EE_Float_Field
         );
     }
 
+
     public function getSchemaProperties()
     {
-        return array(
-            'raw' => array(
-                'description' =>  sprintf(
+        return [
+            'raw'    => [
+                'description' => sprintf(
                     esc_html__('%s - the raw value as it exists in the database as a simple float.', 'event_espresso'),
                     $this->get_nicename()
                 ),
-                'type' => 'number',
-            ),
-            'pretty' => array(
-                'description' =>  sprintf(
+                'type'        => 'number',
+            ],
+            'pretty' => [
+                'description' => sprintf(
                     esc_html__('%s - formatted for display in the set currency and decimal places.', 'event_espresso'),
                     $this->get_nicename()
                 ),
-                'type' => 'string',
-                'format' => 'money'
-            )
-        );
+                'type'        => 'string',
+                'format'      => 'money',
+            ],
+        ];
     }
+
 
     /**
      * Returns whether or not this money field allows partial penny amounts
+     *
      * @return boolean
      */
     public function whole_pennies_only()
@@ -125,9 +130,9 @@ class EE_Money_Field extends EE_Float_Field
      * @return float
      * @throws EE_Error
      */
-    protected function _round_if_no_partial_pennies( $amount )
+    protected function _round_if_no_partial_pennies($amount)
     {
-        if($this->whole_pennies_only()) {
+        if ($this->whole_pennies_only()) {
             return EEH_Money::round_for_currency($amount, $this->currency->code);
         }
         return $amount;

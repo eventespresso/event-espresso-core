@@ -626,20 +626,66 @@ class EEH_Template
 
 
         $help_tab_lnk = $page . '-' . $action . '-' . $help_tab_id;
-        $icon         = ! $icon_style ? ' dashicons-editor-help' : $icon_style;
-        $help_text    = ! $help_text ? '' : $help_text;
-        return '<a id="'
-               . esc_attr($help_tab_lnk)
-               . '" class="ee-clickable dashicons espresso-help-tab-lnk ee-icon-size-22'
-               . esc_attr($icon)
-               . '" title="'
-               . esc_attr__(
-                   'Click to open the \'Help\' tab for more information about this feature.',
-                   'event_espresso'
-               )
-               . '" > '
-               . wp_kses($help_text, $allowedtags)
-               . ' </a>';
+        $icon = $icon_style ? $icon_style : ' dashicons-editor-help';
+        $help_text = $help_text ? $help_text : '';
+        $link = '<a id="' . $help_tab_lnk . '"';
+        $link .= ' class="ee-clickable espresso-help-tab-lnk dashicons' . $icon . '"';
+        $link .= ' title="' .  esc_attr__(
+            'Click to open the \'Help\' tab for more information about this feature.',
+            'event_espresso'
+        ) . '"';
+        $link .= ' > ' . $help_text . ' </a>';
+        return $link;
+    }
+
+
+    /**
+     * This helper generates the html structure for the jquery joyride plugin with the given params.
+     *
+     * @link http://zurb.com/playground/jquery-joyride-feature-tour-plugin
+     * @see  EE_Admin_Page->_stop_callback() for the construct expected for the $stops param.
+     * @param EE_Help_Tour
+     * @return string         html
+     * @throws EE_Error
+     */
+    public static function help_tour_stops_generator(EE_Help_Tour $tour)
+    {
+        $id = $tour->get_slug();
+        $stops = $tour->get_stops();
+
+        $content = '<ol style="display:none" id="' . $id . '">';
+
+        foreach ($stops as $stop) {
+            $data_id = ! empty($stop['id']) ? ' data-id="' . $stop['id'] . '"' : '';
+            $data_class = empty($data_id) && ! empty($stop['class']) ? ' data-class="' . $stop['class'] . '"' : '';
+
+            // if container is set to modal then let's make sure we set the options accordingly
+            if (empty($data_id) && empty($data_class)) {
+                $stop['options']['modal'] = true;
+                $stop['options']['expose'] = true;
+            }
+
+            $custom_class = ! empty($stop['custom_class']) ? ' class="' . $stop['custom_class'] . '"' : '';
+            $button_text = ! empty($stop['button_text']) ? ' data-button="' . $stop['button_text'] . '"' : '';
+            $inner_content = isset($stop['content']) ? $stop['content'] : '';
+
+            // options
+            if (isset($stop['options']) && is_array($stop['options'])) {
+                $options = ' data-options="';
+                foreach ($stop['options'] as $option => $value) {
+                    $options .= $option . ':' . $value . ';';
+                }
+                $options .= '"';
+            } else {
+                $options = '';
+            }
+
+            // let's put all together
+            $content .= '<li' . $data_id . $data_class . $custom_class . $button_text . $options . '>' . $inner_content . '</li>';
+        }
+
+        $content .= '</ol>';
+        return $content;
     }
 
 

@@ -5,13 +5,13 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
 /**
  * variables used in template
  *
- * @var boolean $display_taxes
- * @var boolean $display_ticket_price
- * @var boolean $is_valid_base_price
- * @var string $pre_tax_subtotal
+ * @var boolean    $display_taxes
+ * @var boolean    $display_ticket_price
+ * @var boolean    $is_valid_base_price
+ * @var string     $pre_tax_subtotal
  * @var stdClass[] $taxes
- * @var string $ticket_base_price_name
- * @var string $ticket_base_price_pretty_price
+ * @var string     $ticket_base_price_name
+ * @var string     $ticket_base_price_pretty_price
  * @var stdClass[] $ticket_price_modifiers
  * @var string $ticket_total
  * @var EE_Ticket $ticket
