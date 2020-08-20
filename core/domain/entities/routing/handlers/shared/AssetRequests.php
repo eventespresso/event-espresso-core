@@ -38,7 +38,7 @@ class AssetRequests extends Route
     {
         $default_dependencies = [
             'EventEspresso\core\domain\Domain'                   => EE_Dependency_Map::load_from_cache,
-            'EventEspresso\core\services\assets\AssetCollection' => EE_Dependency_Map::load_from_cache,
+            'EventEspresso\core\services\assets\AssetCollection' => EE_Dependency_Map::load_new_object,
             'EventEspresso\core\services\assets\Registry'        => EE_Dependency_Map::load_from_cache,
         ];
         $this->dependency_map->registerDependencies(
@@ -48,7 +48,7 @@ class AssetRequests extends Route
         $this->dependency_map->registerDependencies(
             'EventEspresso\core\domain\services\assets\CoreAssetManager',
             [
-                'EventEspresso\core\services\assets\AssetCollection' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\assets\AssetCollection' => EE_Dependency_Map::load_new_object,
                 'EE_Currency_Config'                                 => EE_Dependency_Map::load_from_cache,
                 'EE_Template_Config'                                 => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\domain\Domain'                   => EE_Dependency_Map::load_from_cache,
@@ -68,7 +68,7 @@ class AssetRequests extends Route
             'EventEspresso\core\domain\entities\editor\CoreBlocksAssetManager',
             [
                 'EventEspresso\core\domain\Domain'                   => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\assets\AssetCollection' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\assets\AssetCollection' => EE_Dependency_Map::load_new_object,
                 'EventEspresso\core\services\assets\Registry'        => EE_Dependency_Map::load_from_cache,
             ]
         );

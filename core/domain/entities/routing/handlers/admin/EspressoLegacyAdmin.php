@@ -46,7 +46,7 @@ class EspressoLegacyAdmin extends AdminRoute
     {
         $asset_manger_dependencies = [
             'EventEspresso\core\domain\Domain'                   => EE_Dependency_Map::load_from_cache,
-            'EventEspresso\core\services\assets\AssetCollection' => EE_Dependency_Map::load_from_cache,
+            'EventEspresso\core\services\assets\AssetCollection' => EE_Dependency_Map::load_new_object,
             'EventEspresso\core\services\assets\Registry'        => EE_Dependency_Map::load_from_cache,
         ];
         $this->dependency_map->registerDependencies(JqueryAssetManager::class, $asset_manger_dependencies);
