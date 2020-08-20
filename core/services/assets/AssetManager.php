@@ -52,6 +52,7 @@ abstract class AssetManager implements AssetManagerInterface
         $this->domain = $domain;
         $this->assets = $assets;
         $this->registry = $registry;
+        $this->registry->addAssetCollection($assets);
         add_action('wp_enqueue_scripts', array($this, 'addManifestFile'), 0);
         add_action('admin_enqueue_scripts', array($this, 'addManifestFile'), 0);
         add_action('wp_enqueue_scripts', array($this, 'addAssets'), 2);
