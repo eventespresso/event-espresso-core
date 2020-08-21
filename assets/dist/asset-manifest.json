@@ -1,17 +1,17 @@
 {
   "files": {
     "adapters.css": "/static/css/adapters.0a5d33ee.css",
-    "adapters.js": "/static/js/adapters.8ce33788.js",
-    "adapters.js.map": "/static/js/adapters.8ce33788.js.map",
-    "adapters.php": "/static/js/adapters.5cbc7b9d.asset.php",
+    "adapters.js": "/static/js/adapters.02853787.js",
+    "adapters.js.map": "/static/js/adapters.02853787.js.map",
+    "adapters.php": "/static/js/adapters.088532c7.asset.php",
     "blocks.css": "/static/css/blocks.609a154f.css",
     "blocks.js": "/static/js/blocks.1fdb21ee.js",
     "blocks.js.map": "/static/js/blocks.1fdb21ee.js.map",
     "blocks.php": "/static/js/blocks.3bc9530c.asset.php",
-    "components.css": "/static/css/components.100154ea.css",
+    "components.css": "/static/css/components.807d8722.css",
     "components.js": "/static/js/components.82a48577.js",
     "components.js.map": "/static/js/components.82a48577.js.map",
-    "components.php": "/static/js/components.e81a74c6.asset.php",
+    "components.php": "/static/js/components.baea7a30.asset.php",
     "config.js": "/static/js/config.ec81c3e7.js",
     "config.js.map": "/static/js/config.ec81c3e7.js.map",
     "config.php": "/static/js/config.d0c68b08.asset.php",
@@ -86,7 +86,7 @@
     "wpPluginsPage.php": "/static/js/wpPluginsPage.24a9e758.asset.php",
     "static/css/adapters.0a5d33ee.css.map": "/static/css/adapters.0a5d33ee.css.map",
     "static/css/blocks.609a154f.css.map": "/static/css/blocks.609a154f.css.map",
-    "static/css/components.100154ea.css.map": "/static/css/components.100154ea.css.map",
+    "static/css/components.807d8722.css.map": "/static/css/components.807d8722.css.map",
     "static/css/dates-table-view.c10c395d.chunk.css.map": "/static/css/dates-table-view.c10c395d.chunk.css.map",
     "static/css/dates.3fffcc97.css.map": "/static/css/dates.3fffcc97.css.map",
     "static/css/eventEditor.49e74978.css.map": "/static/css/eventEditor.49e74978.css.map",
@@ -97,7 +97,7 @@
     "static/css/toaster.7aed8001.css.map": "/static/css/toaster.7aed8001.css.map",
     "static/css/tpc.a1ebd83c.css.map": "/static/css/tpc.a1ebd83c.css.map",
     "static/css/wpPluginsPage.9b2fdbb0.css.map": "/static/css/wpPluginsPage.9b2fdbb0.css.map",
-    "static/js/adapters.8ce33788.js.LICENSE.txt": "/static/js/adapters.8ce33788.js.LICENSE.txt",
+    "static/js/adapters.02853787.js.LICENSE.txt": "/static/js/adapters.02853787.js.LICENSE.txt",
     "static/js/components.82a48577.js.LICENSE.txt": "/static/js/components.82a48577.js.LICENSE.txt",
     "static/js/data.53ed78d2.js.LICENSE.txt": "/static/js/data.53ed78d2.js.LICENSE.txt",
     "static/js/dates.a03b5911.js.LICENSE.txt": "/static/js/dates.a03b5911.js.LICENSE.txt",
@@ -112,10 +112,10 @@
   "entrypoints": {
     "adapters": [
       "static/css/adapters.0a5d33ee.css",
-      "static/js/adapters.8ce33788.js"
+      "static/js/adapters.02853787.js"
     ],
     "components": [
-      "static/css/components.100154ea.css",
+      "static/css/components.807d8722.css",
       "static/js/components.82a48577.js"
     ],
     "config": [
