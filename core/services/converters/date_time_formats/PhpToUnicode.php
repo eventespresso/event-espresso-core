@@ -10,8 +10,8 @@ class PhpToUnicode
      */
     public static $date_formats = [
         // YEAR
-        'Y' => 'YYYY',  // 2000, 2001, ..., 2099
-        'y' => 'YY',    // 00, 01, ..., 99
+        'y' => 'yy',    // 00, 01, ..., 99
+        'Y' => 'yyyy',  // 2000, 2001, ..., 2099
         'o' => 'GGGG',  // ISO "week-numbering year" 2000, 2001, ..., 2099
         // MONTH
         'M' => 'MMM',   // Jan, Feb, ..., Dec
@@ -19,17 +19,16 @@ class PhpToUnicode
         'm' => 'MM',    // 01, 02, ..., 12
         'F' => 'MMMM',  // January, February, ..., December
         // DAY
-        // convert "D" to an intermediary format
-        // to avoid its result getting replaced by "d"
-        'D' => '@',   // Sun, Mon, ..., Sat
-        'd' => 'DD',    // 01, 02, ..., 31
-        '@' => 'ddd',   // Sun, Mon, ..., Sat
+        'd' => 'dd',    // 01, 02, ..., 31
+        'D' => 'eee',   // Sun, Mon, ..., Sat
         'jS' => 'do',   // 1st, 2nd, ..., 31st
-        'j' => 'D',     // 1, 2, ..., 31
-        'l' => 'dddd',  // Sunday, Monday, ..., Saturday
-        'N' => 'E',     // Day of week 0, 1, ..., 6
-        'w' => 'd',     // ISO Day of week 1, 2, ..., 7
-        'z' => 'DDD',   // day of the year 0 - 365 to 1 - 366
+        'j' => 'd',     // 1, 2, ..., 31
+        'l' => 'eeee',  // Sunday, Monday, ..., Saturday
+        'N' => 'e',     // Day of week 0, 1, ..., 6
+        'w' => 'i',     // ISO Day of week 1, 2, ..., 7
+        'z' => 'D',   // day of the year 0 - 365 to 1 - 366
+        // WEEK
+        'W' => 'w',
     ];
 
 
@@ -38,6 +37,8 @@ class PhpToUnicode
      * and values are Unicode Time Format substitutions
      */
     public static $time_formats = [
+        // 'a' => 'a', // am, pm, no pecific JS alternative
+        'A' => 'a', // AM, PM
         // HOUR
         // convert "g" to an intermediary format
         // to avoid its result getting replaced by "h"
@@ -48,8 +49,8 @@ class PhpToUnicode
         'H' => 'HH',    // 00, 01, ... 23
         '#' => 'H',     // 0, 1, ... 23
         // MINUTES & SECONDS
-        'i' => 'mm',    // 00, 01, ..., 59
-        's' => 'ss',    // 00, 01, ..., 59
+        'i' => 'mm',    // minutes 00, 01, ..., 59
+        's' => 'ss',    // seconds 00, 01, ..., 59
         'v' => 'SSS',   // milliseconds 000, 001, ..., 999
         'u' => 'SSS',   // microseconds (not in unicode) 000, 001, ..., 999
     ];
