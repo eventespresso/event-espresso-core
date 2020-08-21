@@ -2553,11 +2553,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
         /** @var EE_Transaction $transaction */
         $transaction = EEM_Transaction::instance()->get_one_by_ID($TXN_ID);
         $total_line_item = $transaction->total_line_item(false);
-        $success = false;
-        if ($total_line_item instanceof EE_Line_Item) {
-            EEH_Line_Item::resetIsTaxableForTickets($total_line_item);
-            $success = EEH_Line_Item::apply_taxes($total_line_item, true);
-        }
+        $success = $transaction->recalculateLineItems();
         $this->_redirect_after_action(
             (bool) $success,
             esc_html__('Transaction taxes and totals', 'event_espresso'),

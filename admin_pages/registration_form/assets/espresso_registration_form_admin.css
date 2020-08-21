@@ -31,6 +31,12 @@
 .question-group-questions-container { display:inline-block; width: 30%; }
 .ee-question-sortable { cursor: move;}
 .ee-question-sortable label { cursor: inherit;}
+.ee-question-sortable .dashicons {
+    float: right;
+    font-size: 1rem;
+    text-decoration: none;
+    margin-top: 3px;
+}
 
 .question-group-questions-container {
     background: white;

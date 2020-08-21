@@ -88,17 +88,27 @@ const validDateTimeUnits = [
  */
 export default class DateTime {
 	/**
+	 * because minification destroys class names and renders instaneOf useless
+	 *
+	 * @type {string}
+	 */
+	displayName = 'DateTime';
+
+	/**
 	 * The constructor for the DateTime class
 	 *
 	 * @param {string} iso8601DateString
 	 * @param {string|null} timezone If null, then timezone is not set.
 	 * @param {string} locale
+	 * @param {string} displayName
 	 */
 	constructor(
 		iso8601DateString = '',
 		timezone = DEFAULT_TIMEZONE_STRING,
-		locale = DEFAULT_VALID_LOCALE
+		locale = DEFAULT_VALID_LOCALE,
+		displayName = 'DateTime'
 	) {
+		this.displayName = displayName === 'DateTime' ||  displayName === 'ServerDateTime'  ? displayName : 'DateTime';
 		if ( iso8601DateString !== '' ) {
 			this.constructor.assertISO8601IsValid( iso8601DateString );
 		}
@@ -128,24 +138,27 @@ export default class DateTime {
 
 	/**
 	 * Indicates if the given locale is a valid locale.
+	 *
 	 * @param {string} locale
 	 * @return {boolean} true means it is valid
 	 */
-	static validateLocale( locale ) {
+	static validateLocale(locale) {
 		return assertions.validateLocale( locale );
 	}
 
 	/**
 	 * Asserts if the given locale is valid and throws an error if not.
+	 *
 	 * @param {string} locale
 	 * @throws InvalidLocale
 	 */
-	static assertLocaleIsValid( locale ) {
+	static assertLocaleIsValid(locale) {
 		assertions.assertLocaleIsValid( locale );
 	}
 
 	/**
 	 * Indicates if the given ISO8601 string is valid.
+	 *
 	 * @param {string} dateTimeString
 	 * @return {boolean} true means it is valid.
 	 */
@@ -155,6 +168,7 @@ export default class DateTime {
 
 	/**
 	 * Asserts if the given string is a valid ISO 8601 string.
+	 *
 	 * @param {string} dateTimeString
 	 * @throws InvalidISO8601String
 	 */
@@ -164,6 +178,7 @@ export default class DateTime {
 
 	/**
 	 * Indicates if the given string is a valid timezone
+	 *
 	 * @param {string} timezone
 	 * @return {boolean} true means it is valid.
 	 */
@@ -173,6 +188,7 @@ export default class DateTime {
 
 	/**
 	 * Asserts whether the given string is a valid timezone string.
+	 *
 	 * @param {string} timezone
 	 * @throws InvalidTimezone
 	 */
@@ -205,16 +221,17 @@ export default class DateTime {
 
 	/**
 	 * Indicates whether the provided value is an instance of DateTime
+	 *
 	 * @param {DateTime} datetime
 	 * @return {boolean} returns true if it is an instance of DateTime
 	 */
-	static validateIsDateTime( datetime ) {
-		return instanceOf( datetime, 'DateTime' ) ||
-			instanceOf( datetime, 'ServerDateTime' );
+	static validateIsDateTime(datetime) {
+		return instanceOf( datetime, 'DateTime' ) || instanceOf( datetime, 'ServerDateTime' );
 	}
 
 	/**
 	 * Asserts whether the provided value is an instance of DateTime
+	 *
 	 * @param {DateTime} datetime
 	 * @throws TypeError
 	 */
@@ -239,6 +256,7 @@ export default class DateTime {
 
 	/**
 	 * Asserts whether the given value is an instance of Date.
+	 *
 	 * @param {Date} date
 	 * @throws TypeError
 	 */
@@ -250,6 +268,7 @@ export default class DateTime {
 	 * Indicates whether the provided value is an instance of DateTime and is
 	 * a "valid" datetime (meaning the instance was constructed with valid
 	 * arguments).
+	 *
 	 * @param {DateTime} datetime
 	 * @return {boolean} true means it is valid.
 	 */
@@ -261,6 +280,7 @@ export default class DateTime {
 	 * Asserts whether the provided value is an instance of DateTime and is
 	 * a "valid" datetime (meaning the instance was constructed with valid
 	 * arguments)
+	 *
 	 * @param {DateTime} datetime
 	 * @throws InvalidDateTime
 	 */
@@ -270,15 +290,14 @@ export default class DateTime {
 		}
 	}
 
-	static [ privateMethods.normalizeArguments ]( dateValue, timezone, locale ) {
-		return this.name === 'ServerDateTime' ?
-			[ dateValue, locale, timezone ] :
-			[ dateValue, timezone, locale ];
+	static [privateMethods.normalizeArguments](dateValue, timezone, locale) {
+		return [ dateValue, timezone, locale ];
 	}
 
 	/**
 	 * A private internal helper method that is used to extract all moment
 	 * instances from the provided DateTimes (passed in as arguments).
+	 *
 	 * @param {...DateTime} datetimes
 	 * @return {Moment[]} An array of moment instances extracted from the
 	 * DateTimes
@@ -293,6 +312,7 @@ export default class DateTime {
 	/**
 	 * Given an indefinite number of DateTimes as arguments, this will return a
 	 * new DateTime that represents the latest point in time.
+	 *
 	 * @param {...DateTime} datetimes
 	 * @return {DateTime|ServerDateTime} A new DateTime representing the latest point of time.
 	 */
@@ -309,6 +329,7 @@ export default class DateTime {
 	/**
 	 * Given an indefinite number of DateTimes as arguments, this will return a
 	 * new DateTime that represents the earliest point in time.
+	 *
 	 * @param {...DateTime} datetimes
 	 * @return {DateTime|ServerDateTime} A new DateTime representing the earliest point in
 	 * time.
@@ -340,18 +361,14 @@ export default class DateTime {
 			! isUndefined( momentInstance.tz() ) &&
 			momentInstance.tz() !== 'UTC' ?
 			new this(
-				...this[ privateMethods.normalizeArguments ](
-					momentInstance.toISOString(),
-					momentInstance.tz(),
-					momentInstance.locale()
-				)
+				momentInstance.toISOString(),
+				momentInstance.tz(),
+				momentInstance.locale()
 			) :
 			new this(
-				...this[ privateMethods.normalizeArguments ](
-					momentInstance.toISOString( true ),
-					null,
-					momentInstance.locale()
-				)
+				momentInstance.toISOString( true ),
+				null,
+				momentInstance.locale()
 			);
 	}
 
@@ -372,11 +389,9 @@ export default class DateTime {
 			throw new InvalidISO8601String( ISOString );
 		}
 		return new this(
-			...this[ privateMethods.normalizeArguments ](
-				ISOString,
-				timezone,
-				locale
-			)
+			ISOString,
+			timezone,
+			locale
 		);
 	}
 
@@ -740,14 +755,11 @@ export default class DateTime {
 	 */
 	set( setObject = {} ) {
 		setObject = this.constructor[ privateMethods.normalizeUnitObject ]( setObject );
-		const instanceArguments = this.constructor[ privateMethods.normalizeArguments ](
-			this[ privateProperties.datetime ]
-				.clone()
-				.set( setObject ).toISOString(),
+		return new this.constructor(
+			this[ privateProperties.datetime ].clone().set( setObject ).toISOString(),
 			this.timezone,
 			this.locale
 		);
-		return new this.constructor( ...instanceArguments );
 	}
 
 	/**
@@ -767,12 +779,11 @@ export default class DateTime {
 	 */
 	setTimezone( timezone ) {
 		this.constructor.assertTimezoneIsValid( timezone );
-		const instanceArguments = this.constructor[ privateMethods.normalizeArguments ](
+		return new this.constructor(
 			this[ privateProperties.datetime ].toISOString(),
 			timezone,
 			this.locale
 		);
-		return new this.constructor( ...instanceArguments );
 	}
 
 	/**
@@ -850,6 +861,7 @@ export default class DateTime {
 
 	/**
 	 * Exposes the ISO number of the week for the date and time in the object.
+	 *
 	 * @link https://en.wikipedia.org/wiki/ISO_week_date
 	 * @return {number} Will be a number between 1 and 52ish
 	 */
@@ -860,6 +872,7 @@ export default class DateTime {
 	/**
 	 * Exposes the ISO number for the week year for the date and time in the
 	 * object.
+	 *
 	 * @link https://en.wikipedia.org/wiki/ISO_week_date
 	 * @return {number}  Will be a number representing a year.
 	 */
@@ -870,6 +883,7 @@ export default class DateTime {
 	/**
 	 * Exposes the ISO number for the day of the week for the date and time in
 	 * the object.
+	 *
 	 * @link https://en.wikipedia.org/wiki/ISO_week_date
 	 * @return {number} A number between 1 and 7 (Monday is 1 and Sunday is 7)
 	 */
@@ -879,8 +893,8 @@ export default class DateTime {
 
 	/**
 	 * Exposes the number of weeks in this DateTime's year.
-	 * @link https://en.wikipedia.org/wiki/ISO_week_date
 	 *
+	 * @link https://en.wikipedia.org/wiki/ISO_week_date
 	 * @return {number} The number of weeks in the ISO year.
 	 */
 	get isoWeeksInWeekYear() {
@@ -889,6 +903,7 @@ export default class DateTime {
 
 	/**
 	 * Returns what the set locale is for this DateTime
+	 *
 	 * @return {string} A locale string
 	 */
 	get locale() {
@@ -948,6 +963,7 @@ export default class DateTime {
 
 	/**
 	 * Returns the difference between this DateTime and "now" as a Duration.
+	 *
 	 * @return {Duration} An instance of Duration representing the difference
 	 * between this DateTime and "now"
 	 */
@@ -963,6 +979,7 @@ export default class DateTime {
 	/**
 	 * Set the value of this DateTime to the end (i.e. the last millisecond) of
 	 * a unit of time.
+	 *
 	 * @param {string} unit
 	 * @return {DateTime|ServerDateTime} Returns a new DateTime instance.
 	 */
@@ -1030,6 +1047,7 @@ export default class DateTime {
 	/**
 	 * Add a period of time (represented by a Duration) to this DateTime and
 	 * return the resulting DateTime
+	 *
 	 * @param {Duration} duration
 	 * @return {DateTime|ServerDateTime} A new instance of DateTime for the new date and time.
 	 */
@@ -1131,6 +1149,7 @@ export default class DateTime {
 	/**
 	 * Returns the milliseconds since the Unix Epoch for the current DateTime
 	 * instance.
+	 *
 	 * @return {number} Number of milliseconds since Unix Epoch
 	 */
 	toMillis() {
@@ -1140,6 +1159,7 @@ export default class DateTime {
 	/**
 	 * Returns a simple object containing year, month, day, hour,
 	 * minute, second, and millisecond.
+	 *
 	 * @return {Object} An object with year, month, day, hour, minute, second,
 	 * and millisecond.
 	 */

@@ -90,6 +90,14 @@ class EE_Admin_Table_Registration_Line_Item_Display_Strategy extends EE_Admin_Ta
                 : $parent_related_object_name,
             '</span>'
         );
+
+        $name_html = apply_filters(
+            'FHEE__EE_Admin_Table_Registration_Line_Item_Display_Strategy___item_row__name_html',
+            $name_html,
+            $line_item,
+            $options
+        );
+        
         $html .= EEH_HTML::td($name_html, '', 'jst-left');
         // Type Column
         $type_html = $line_item->OBJ_type() ? $line_item->OBJ_type_i18n() : '';

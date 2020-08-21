@@ -370,8 +370,8 @@ class CoreAssetManager extends AssetManager
         if ($this->template_config->enable_default_style && ! is_admin()) {
             $this->addStylesheet(
                 CoreAssetManager::CSS_HANDLE_DEFAULT,
-                is_readable(EVENT_ESPRESSO_UPLOAD_DIR . 'css/style.css')
-                    ? EVENT_ESPRESSO_UPLOAD_DIR . 'css/espresso_default.css'
+                is_readable(EVENT_ESPRESSO_UPLOAD_DIR . 'css/espresso_default.css')
+                    ? EVENT_ESPRESSO_UPLOAD_URL . 'css/espresso_default.css'
                     : EE_GLOBAL_ASSETS_URL . 'css/espresso_default.css',
                 array('dashicons')
             );

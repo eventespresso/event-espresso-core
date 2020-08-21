@@ -75,13 +75,6 @@
         ); ?>
     </li>
     <li>
-        <strong><?php esc_html_e('Server', 'event_espresso'); ?></strong>
-        <?php esc_html_e(
-            'Use this setting to change the server where Authorize.net AIM requests are sent. Change this to "Authorize.net/Akamai" before June 30th 2016 to verify your server will work with Authorize.net\'s servers which will be in use after that date.',
-            'event_espresso'
-        ); ?>
-    </li>
-    <li>
         <strong><?php esc_html_e('Button Image URL', 'event_espresso'); ?></strong><br/>
         <?php esc_html_e('Change the image that is used for this payment gateway.', 'event_espresso'); ?>
     </li>

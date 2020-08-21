@@ -13,10 +13,12 @@
                 <directory>../acceptance_tests</directory>
                 <directory>../assets</directory>
                 <directory>../bin</directory>
+                <directory>../config</directory>
                 <directory>../docs</directory>
                 <directory>../eslint</directory>
                 <directory>../languages</directory>
                 <directory>../node_modules</directory>
+                <directory>../scripts</directory>
                 <directory>../public</directory>
                 <directory>../tests</directory>
                 <directory>../vendor</directory>
@@ -25,8 +27,8 @@
         </whitelist>
     </filter>
 	<testsuites>
-		<testsuite>
-			<directory suffix=".php">./testcases/</directory>
+        <testsuite name="default">
+            <directory suffix=".php">./testcases/</directory>
 		</testsuite>
 	</testsuites>
 	<groups>
@@ -37,8 +39,8 @@
         </exclude>
     </groups>
 	<listeners>
-		<listener class="SpeedTrapListener" file="includes/speed-trap-listener.php">
-			<arguments>
+        <listener class="SpeedTrapListener" file="includes/listener-loader.php">
+            <arguments>
 				<array>
 					<element key="slowThreshold">
 						<integer>2000</integer>

@@ -78,8 +78,8 @@ class EED_Core_Rest_Api extends \EED_Module
 
     public static function set_hooks_both()
     {
-        add_action('rest_api_init', array('EED_Core_Rest_Api', 'register_routes'), 10);
         add_action('rest_api_init', array('EED_Core_Rest_Api', 'set_hooks_rest_api'), 5);
+        add_action('rest_api_init', array('EED_Core_Rest_Api', 'register_routes'), 10);
         add_filter('rest_route_data', array('EED_Core_Rest_Api', 'hide_old_endpoints'), 10, 2);
         add_filter(
             'rest_index',
@@ -213,6 +213,13 @@ class EED_Core_Rest_Api extends \EED_Module
                         };
                     } else {
                         $single_endpoint_args['callback'] = $data_for_single_endpoint['callback'];
+                    }
+                    // As of WordPress 5.5, if a permission_callback is not provided,
+                    // the REST API will issue a _doing_it_wrong notice.
+                    // Since the EE REST API defers capabilities to the db model system,
+                    // we will just use the generic WP callback for public endpoints
+                    if (! isset($single_endpoint_args['permission_callback'])) {
+                        $single_endpoint_args['permission_callback'] = '__return_true';
                     }
                     $multiple_endpoint_args[] = $single_endpoint_args;
                 }

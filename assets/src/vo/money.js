@@ -8,31 +8,35 @@ import { Exception } from '@eventespresso/eejs';
 import { isEmpty } from 'lodash';
 import { instanceOf } from '@eventespresso/validators';
 import { sprintf } from '@eventespresso/i18n';
+import { Currency } from './currency';
 
 /**
  * Asserts if incoming value is an instance of Money
+ *
  * @param {Money} money
  * @throws {TypeError}
  */
 const assertMoney = ( money ) => {
 	if ( ! ( instanceOf( money, 'Money' ) ) ) {
-		throw new TypeError( 'Instance of Money required' );
+		throw new TypeError( 'Instance of Money required. Received: ' + JSON.stringify(money) );
 	}
 };
 
 /**
  * Asserts if incoming value is an instance of Currency
+ *
  * @param {Currency} currency
  * @throws {TypeError}
  */
 const assertCurrency = ( currency ) => {
-	if ( ! ( instanceOf( currency, 'Currency' ) ) ) {
-		throw new TypeError( 'Instance of Currency required' );
+	if (!(instanceOf(currency, 'Currency'))) {
+		throw new TypeError( 'Instance of Currency required. Received: ' + JSON.stringify(currency) );
 	}
 };
 
 /**
  * Asserts if two currencies are shallow equal.
+ *
  * @param {Currency} currencyA
  * @param {Currency} currencyB
  * @throws {Exception}
@@ -50,55 +54,71 @@ const assertSameCurrency = ( currencyA, currencyB ) => {
  */
 export default class Money {
 	/**
+	 * because minification destroys class names and renders instaneOf useless
+	 *
+	 * @type {string}
+	 */
+	displayName = 'Money';
+
+	/**
 	 * Internally the amount is stored as a Decimal instance.
+	 *
 	 * @type {Decimal}
 	 */
-	amount = {};
+	amount;
 
 	/**
 	 * Internally the amount is stored as a Currency instance.
+	 *
 	 * @type {Currency}
 	 */
-	currency = {};
+	currency;
 
 	/**
 	 * Formatter object for money values.
+	 *
 	 * @type {{}}
 	 */
 	formatter = {};
 
 	/**
 	 * Rounds away from zero
+	 *
 	 * @type {number}
 	 */
 	static ROUND_UP = Decimal.ROUND_UP;
 
 	/**
 	 * Rounds towards zero
+	 *
 	 * @type {number}
 	 */
 	static ROUND_DOWN = Decimal.ROUND_DOWN;
 
 	/**
 	 * Rounds towards infinity
+	 *
 	 * @type {number}
 	 */
 	static ROUND_CEIL = Decimal.ROUND_CEIL;
 
 	/**
 	 * Rounds towards -Infinity
+	 *
 	 * @type {number}
 	 */
 	static ROUND_FLOOR = Decimal.ROUND_FLOOR;
 
 	/**
 	 * Rounds towards nearest neighbour. If equidistant, rounds away from zero.
+	 *
 	 * @type {number}
 	 */
 	static ROUND_HALF_UP = Decimal.ROUND_HALF_UP;
 
 	/**
 	 * Rounds towards nearest neighbour. If equidistant rounds towards zero.
+	 *
 	 * @type {number}
 	 */
 	static ROUND_HALF_DOWN = Decimal.ROUND_HALF_DOWN;
@@ -106,16 +126,19 @@ export default class Money {
 	/**
 	 * Rounds towards nearest neighbour. If equidistant, rounds towards even
 	 * neighbour.
+	 *
 	 * @type {number}
 	 */
 	static ROUND_HALF_EVEN = Decimal.ROUND_HALF_EVEN;
 
 	/**
 	 * Class constructor
+	 *
 	 * @param {number|string|Decimal} amount
 	 * @param {Currency} currency
 	 */
-	constructor( amount, currency ) {
+	constructor(amount, currency) {
+		this.displayName = 'Money';
 		this.setCurrency( currency )
 			.setAmount( amount )
 			.setFormatter();
@@ -218,6 +241,7 @@ export default class Money {
 
 	/**
 	 * Add one Money object to this Money object
+	 *
 	 * @param {Money} other
 	 * @return {Money} Returns a new instance of Money.
 	 */
@@ -228,6 +252,7 @@ export default class Money {
 
 	/**
 	 * Subtract one Money object from this Money object
+	 *
 	 * @param {Money} other
 	 * @return {Money} Returns a new instance of Money
 	 */
@@ -340,6 +365,7 @@ export default class Money {
 
 	/**
 	 * Compares whether this Money object is greater than the other Money object.
+	 *
 	 * @param {Money} other
 	 * @return {boolean} If true then this is greater than other.
 	 */
@@ -362,6 +388,7 @@ export default class Money {
 
 	/**
 	 * Compares whether this Money object is less than the other Money object.
+	 *
 	 * @param {Money} other
 	 * @return {boolean} If true then this is less than other
 	 */
@@ -411,6 +438,7 @@ export default class Money {
 
 	/**
 	 * Returns the value of this Money object as a number primitive.
+	 *
 	 * @return {number} Returns a number.
 	 */
 	toNumber() {
@@ -455,6 +483,7 @@ export default class Money {
 	/**
 	 * Returns the value of this Money object as a formatted string according
 	 * to the currency configuration.
+	 *
 	 * @return {string} Returns a formatted string according to Currency.
 	 */
 	toString() {
@@ -477,6 +506,7 @@ export default class Money {
 
 	/**
 	 * Asserts if the provided value is an instance of Money.
+	 *
 	 * @param {Money} money
 	 * @throws {TypeError}
 	 */
@@ -486,6 +516,7 @@ export default class Money {
 
 	/**
 	 * Asserts if the provided value is an instance of Currency.
+	 *
 	 * @param {Currency} currency
 	 * @throws {TypeError}
 	 */
@@ -509,6 +540,7 @@ export default class Money {
 
 	/**
 	 * Asserts if two currencies are shallow equal.
+	 *
 	 * @param {Currency} currencyA
 	 * @param {Currency} currencyB
 	 * @throws {Exception}

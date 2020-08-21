@@ -623,11 +623,11 @@ class EE_DMS_Core_4_10_0 extends EE_Data_Migration_Script_Base
     }
 
     /**
-     * Mijireh was removed in $VID:$, but let's avoid having an error message because its files were removed, and don't
+     * Mijireh was removed in 4.10.3.p, but let's avoid having an error message because its files were removed, and don't
      * show old payments made with it as being by "Unknown". The fix is to make it an "Admin_Only" payment method
      * (like Invoice or Check) but don't allow it to be used in the admin either... so it's usable nowhere from now on,
      * but it still exists so there's no problems.
-     * @since $VID:$
+     * @since 4.10.3.p
      */
     protected function removeMijirehPM()
     {

@@ -655,7 +655,7 @@ class DisplayTicketSelector
         $html .= '<input id="ticket-selector-submit-' . $this->event->ID() . '-btn"';
         $html .= ' class="ticket-selector-submit-btn ';
         $html .= empty($external_url) ? 'ticket-selector-submit-ajax"' : '"';
-        $html .= ' type="submit" value="' . $btn_text . '" />';
+        $html .= ' type="submit" value="' . $btn_text . '" data-ee-disable-after-recaptcha="true" />';
         $html .= EEH_HTML::divx() . '<!-- .ticket-selector-submit-btn-wrap -->';
         $html .= apply_filters(
             'FHEE__EE_Ticket_Selector__after_ticket_selector_submit',
@@ -687,7 +687,7 @@ class DisplayTicketSelector
                 __LINE__
             );
         }
-        $view_details_btn = '<form method="POST" action="';
+        $view_details_btn = '<form method="GET" action="';
         $view_details_btn .= apply_filters(
             'FHEE__EE_Ticket_Selector__display_view_details_btn__btn_url',
             $this->event->get_permalink(),

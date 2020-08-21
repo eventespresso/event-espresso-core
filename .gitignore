@@ -3,13 +3,15 @@ core/third_party_libs/dompdf/lib/fonts/log.htm
 core/third_party_libs/dompdf/lib/fonts/*.afm.php
 core/third_party_libs/dompdf/lib/fonts/*.ufm.php
 coverage
-*-translations.php
+*.mo
 *.pot
+*-translations.php
 
 # local project files that should not be committed
-*.mo
-.idea
 node_modules/
 node_modules
-.DS_Store
-/vendor/
+vendor/
+*.code-workspace
+*.DS_Store
+*.idea
+*.vscode

@@ -4,8 +4,8 @@ Donate link: https://eventespresso.com/pricing/?ee_ver=ee4&utm_source=wordpress_
 Tags: event registration, ticketing, online registration, ticket sales, event booking, class registration, conference registration, event ticketing, registration, event, events, online event registration
 Requires at least: 4.5
 Requires PHP: 5.4
-Tested up to: 5.3
-Stable tag: 4.10.2.decaf
+Tested up to: 5.4
+Stable tag: 4.10.4.decaf
 License: GPL2
 
 Manage online event registration and ticketing. Create event registration forms, sell tickets, collect money, send email, and SEO for events.

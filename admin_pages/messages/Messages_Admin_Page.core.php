@@ -1308,6 +1308,10 @@ class Messages_Admin_Page extends EE_Admin_Page
             ? absint($this->_req_data['id'])
             : false;
 
+        $EVT_ID = isset($this->_req_data['evt_id']) && ! empty($this->_req_data['evt_id'])
+        ? absint($this->_req_data['evt_id'])
+        : false;
+
         $this->_set_shortcodes(); // this also sets the _message_template property.
         $message_template_group = $this->_message_template_group;
         $c_label = $message_template_group->context_label();
@@ -1734,6 +1738,7 @@ class Messages_Admin_Page extends EE_Admin_Page
                 'messenger'    => $message_template_group->messenger(),
                 'context'      => $context,
                 'GRP_ID'       => $GRP_ID,
+                'evt_id'       => $EVT_ID,
                 'action'       => 'preview_message',
             ),
             $this->_admin_base_url
@@ -1748,6 +1753,7 @@ class Messages_Admin_Page extends EE_Admin_Page
             'page'    => 'espresso_messages',
             'action'  => 'edit_message_template',
             'id'      => $GRP_ID,
+            'evt_id'  => $EVT_ID,
             'context' => $context,
             'extra'   => $preview_button,
         );
@@ -2133,6 +2139,11 @@ class Messages_Admin_Page extends EE_Admin_Page
         }
 
         EE_Registry::instance()->REQ->set('GRP_ID', $this->_req_data['GRP_ID']);
+        
+        // if we have an evt_id set on the request, use it.
+        $EVT_ID = isset($this->_req_data['evt_id']) && ! empty($this->_req_data['evt_id'])
+        ? absint($this->_req_data['evt_id'])
+        : false;
 
 
         // get the preview!
@@ -2150,6 +2161,7 @@ class Messages_Admin_Page extends EE_Admin_Page
         // let's add a button to go back to the edit view
         $query_args = array(
             'id'      => $this->_req_data['GRP_ID'],
+            'evt_id'  => $EVT_ID,
             'context' => $this->_req_data['context'],
             'action'  => 'edit_message_template',
         );

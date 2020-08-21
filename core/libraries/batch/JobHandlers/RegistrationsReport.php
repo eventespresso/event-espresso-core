@@ -125,7 +125,13 @@ class RegistrationsReport extends JobHandlerFile
      */
     protected function get_filename()
     {
-        return sprintf("event-espresso-registrations-%s.csv", str_replace(':', '-', current_time('mysql')));
+        return apply_filters(
+            'FHEE__EventEspressoBatchRequest__JobHandlers__RegistrationsReport__get_filename',
+            sprintf(
+                "event-espresso-registrations-%s.csv",
+                str_replace(array(':', ' '), '-', current_time('mysql'))
+            )
+        );
     }
 
 
