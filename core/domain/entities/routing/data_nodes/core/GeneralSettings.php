@@ -43,8 +43,6 @@ class GeneralSettings extends JsonDataNode
     {
         $wpDateFormat = get_option('date_format');
         $wpTimeFormat = get_option('time_format');
-        $this->addData('wpDateFormat', $wpDateFormat);
-        $this->addData('wpTimeFormat', $wpTimeFormat);
         $this->addData('dateFormat', $this->converter->convertDateFormat($wpDateFormat));
         $this->addData('timeFormat', $this->converter->convertTimeFormat($wpTimeFormat));
         $this->addData('timezone', get_option('timezone_string'));
