@@ -21,10 +21,10 @@ class PhpToUnicode
         // DAY
         'd' => 'dd',    // 01, 02, ..., 31
         'D' => 'eee',   // Sun, Mon, ..., Sat
+        'jS' => 'do',   // 1st, 2nd, ..., 31st
         'j' => 'd',     // 1, 2, ..., 31
         'l' => 'eeee',  // Sunday, Monday, ..., Saturday
         'N' => 'e',     // Day of week 0, 1, ..., 6
-        'jS' => 'do',   // 1st, 2nd, ..., 31st
         'w' => 'i',     // ISO Day of week 1, 2, ..., 7
         'z' => 'D',   // day of the year 0 - 365 to 1 - 366
         // WEEK
