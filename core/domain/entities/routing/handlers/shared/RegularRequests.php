@@ -29,7 +29,6 @@ class RegularRequests extends PrimaryRoute
         $basic_nodes = [
             'EventEspresso\core\domain\entities\routing\data_nodes\core\Api',
             'EventEspresso\core\domain\entities\routing\data_nodes\core\CurrentUser',
-            'EventEspresso\core\domain\entities\routing\data_nodes\core\GeneralSettings',
             'EventEspresso\core\domain\entities\routing\data_nodes\core\Locale',
             'EventEspresso\core\domain\entities\routing\data_nodes\core\SiteUrls',
         ];
@@ -39,6 +38,13 @@ class RegularRequests extends PrimaryRoute
                 ['EventEspresso\core\services\json\JsonDataNodeValidator' => EE_Dependency_Map::load_from_cache]
             );
         }
+        $this->dependency_map->registerDependencies(
+            'EventEspresso\core\domain\entities\routing\data_nodes\core\GeneralSettings',
+            [
+                'EventEspresso\core\services\json\JsonDataNodeValidator'                => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\converters\date_time_formats\PhpToUnicode' => EE_Dependency_Map::load_from_cache,
+            ]
+        );
         $this->dependency_map->registerDependencies(
             'EventEspresso\core\domain\entities\routing\data_nodes\EventEspressoData',
             [
