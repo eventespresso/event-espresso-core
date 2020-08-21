@@ -29,9 +29,9 @@ class Registry
     const FILE_NAME_BUILD_MANIFEST = 'build-manifest.json';
 
     /**
-     * @var AssetCollection $assets
+     * @var AssetCollection[] $assets
      */
-    protected $assets;
+    protected $assets = [];
 
     /**
      * @var I18nRegistry
@@ -115,7 +115,7 @@ class Registry
      */
     public function __construct(AssetCollection $assets, I18nRegistry $i18n_registry)
     {
-        $this->assets = $assets;
+        $this->addAssetCollection($assets);
         $this->i18n_registry = $i18n_registry;
         add_action('wp_enqueue_scripts', array($this, 'registerManifestFiles'), 1);
         add_action('admin_enqueue_scripts', array($this, 'registerManifestFiles'), 1);
@@ -126,6 +126,20 @@ class Registry
         add_action('wp_print_footer_scripts', array($this, 'enqueueData'), 1);
         add_action('admin_print_footer_scripts', array($this, 'enqueueData'), 1);
     }
+
+
+    /**
+     * @param AssetCollection $asset_collection
+     */
+    public function addAssetCollection(AssetCollection $asset_collection)
+    {
+        $id = spl_object_hash($asset_collection);
+        if (! array_key_exists($id, $this->assets)) {
+            $this->assets[ $id ] = $asset_collection;
+        }
+    }
+
+
 
 
     /**
@@ -149,8 +163,10 @@ class Registry
     public function registerScriptsAndStyles()
     {
         try {
-            $this->registerScripts($this->assets->getJavascriptAssets());
-            $this->registerStyles($this->assets->getStylesheetAssets());
+            foreach ($this->assets as $asset_collection) {
+                $this->registerScripts($asset_collection->getJavascriptAssets());
+                $this->registerStyles($asset_collection->getStylesheetAssets());
+            }
         } catch (Exception $exception) {
             new ExceptionStackTraceDisplay($exception);
         }
@@ -256,12 +272,14 @@ class Registry
                 'var eejsdata=' . wp_json_encode(['data' => $this->jsdata]),
                 'before'
             );
-            $scripts = $this->assets->getJavascriptAssetsWithData();
-            foreach ($scripts as $script) {
-                $this->addRegisteredScriptHandlesWithData($script->handle());
-                if ($script->hasInlineDataCallback()) {
-                    $localize = $script->inlineDataCallback();
-                    $localize();
+            foreach ($this->assets as $asset_collection) {
+                $scripts = $asset_collection->getJavascriptAssetsWithData();
+                foreach ($scripts as $script) {
+                    $this->addRegisteredScriptHandlesWithData($script->handle());
+                    if ($script->hasInlineDataCallback()) {
+                        $localize = $script->inlineDataCallback();
+                        $localize();
+                    }
                 }
             }
         } catch (Exception $exception) {
@@ -624,14 +642,16 @@ class Registry
     public function registerManifestFiles()
     {
         try {
-            $manifest_files = $this->assets->getManifestFiles();
-            foreach ($manifest_files as $manifest_file) {
-                $this->registerManifestFile(
-                    $manifest_file->assetNamespace(),
-                    $manifest_file->urlBase(),
-                    $manifest_file->filepath() . Registry::FILE_NAME_BUILD_MANIFEST,
-                    $manifest_file->filepath()
-                );
+            foreach ($this->assets as $asset_collection) {
+                $manifest_files = $asset_collection->getManifestFiles();
+                foreach ($manifest_files as $manifest_file) {
+                    $this->registerManifestFile(
+                        $manifest_file->assetNamespace(),
+                        $manifest_file->urlBase(),
+                        $manifest_file->filepath() . Registry::FILE_NAME_BUILD_MANIFEST,
+                        $manifest_file->filepath()
+                    );
+                }
             }
         } catch (Exception $exception) {
             EE_Error::add_error($exception->getMessage(), __FILE__, __FUNCTION__, __LINE__);

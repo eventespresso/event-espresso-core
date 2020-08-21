@@ -27,8 +27,6 @@ class EspressoLegacyAdminAssetManager extends AssetManager
 
     const JS_HANDLE_EE_INJECT_WP            = 'ee-inject-wp';
 
-    const JS_HANDLE_EE_LEGACY_ADMIN = 'eventespresso-legacy-admin';
-
     const JS_HANDLE_GOOGLE_CHARTS           = 'google-charts';
 
     const JS_HANDLE_MOMENT                  = 'ee-moment';
@@ -48,10 +46,6 @@ class EspressoLegacyAdminAssetManager extends AssetManager
     const CSS_HANDLE_EE_ADMIN               = 'ee-admin-css';
 
     const CSS_HANDLE_EE_JOYRIDE             = 'ee-joyride-css';
-
-    const CSS_HANDLE_EE_LEGACY_ADMIN = 'eventespresso-legacy-admin';
-
-    const CSS_HANDLE_EE_ADMIN_MENU = 'espresso_menu';
 
     const CSS_HANDLE_EE_TEXT_LINKS          = 'ee-text-links';
 
@@ -78,19 +72,6 @@ class EspressoLegacyAdminAssetManager extends AssetManager
      */
     private function registerJavascript($joyride = false)
     {
-        $this->addJs(
-            EspressoLegacyAdminAssetManager::JS_HANDLE_EE_LEGACY_ADMIN,
-            [
-                EspressoLegacyAdminAssetManager::JS_HANDLE_EE_ADMIN,
-                EspressoLegacyAdminAssetManager::JS_HANDLE_EE_AJAX_TABLE_SORTING,
-                EspressoLegacyAdminAssetManager::JS_HANDLE_EE_SERIALIZE_FULL_ARRAY,
-                EspressoLegacyAdminAssetManager::JS_HANDLE_EE_TEXT_LINKS,
-                EspressoLegacyAdminAssetManager::JS_HANDLE_EE_DATEPICKER,
-                EspressoLegacyAdminAssetManager::JS_HANDLE_GOOGLE_CHARTS,
-                EspressoLegacyAdminAssetManager::JS_HANDLE_EE_INJECT_WP,
-            ]
-        )->setEnqueueImmediately();
-
         $this->addJavascript(
             EspressoLegacyAdminAssetManager::JS_HANDLE_EE_DIALOG,
             EE_ADMIN_URL . 'assets/ee-dialog-helper.js',
@@ -177,6 +158,7 @@ class EspressoLegacyAdminAssetManager extends AssetManager
         );
 
         $this->loadQtipJs();
+
         // joyride is turned OFF by default, but prior to the admin_enqueue_scripts hook,
         // can be turned back on again via: add_filter('FHEE_load_joyride', '__return_true' );
         if (! $joyride) {
@@ -236,12 +218,6 @@ class EspressoLegacyAdminAssetManager extends AssetManager
         $this->addStylesheet(
             EspressoLegacyAdminAssetManager::CSS_HANDLE_EE_ADMIN,
             EE_ADMIN_URL . 'assets/ee-admin-page.css'
-        )->setEnqueueImmediately();
-
-        $this->addStylesheet(
-            EspressoLegacyAdminAssetManager::CSS_HANDLE_EE_ADMIN_MENU,
-            EE_ADMIN_URL . 'assets/admin-menu-styles.css',
-            ['dashicons']
         )->setEnqueueImmediately();
 
         if (! $joyride) {

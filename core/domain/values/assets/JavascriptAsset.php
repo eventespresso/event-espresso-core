@@ -6,7 +6,6 @@ use Closure;
 use DomainException;
 use EventEspresso\core\domain\DomainInterface;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
-use http\Exception\RuntimeException;
 
 /**
  * Class JavascriptAsset
