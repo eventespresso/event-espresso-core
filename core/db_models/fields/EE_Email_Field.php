@@ -1,6 +1,7 @@
 <?php
 use EventEspresso\core\domain\services\factories\EmailAddressFactory;
 use EventEspresso\core\domain\services\validation\email\EmailValidationException;
+use EventEspresso\core\domain\values\EmailAddress;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 
@@ -42,8 +43,8 @@ class EE_Email_Field extends EE_Text_Field_Base
     public function prepare_for_set($email_address)
     {
         try {
-            $email_address = EmailAddressFactory::create($email_address);
-            return $email_address->get();
+            $email_address_obj = EmailAddressFactory::create($email_address);
+            return $email_address_obj instanceof EmailAddress ? $email_address_obj->get() : '';
         } catch (EmailValidationException $e) {
             return '';
         }

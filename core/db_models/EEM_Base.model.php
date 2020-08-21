@@ -6,7 +6,6 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\ModelConfigurationException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
 use EventEspresso\core\interfaces\ResettableInterface;
-use EventEspresso\core\services\orm\ModelFieldFactory;
 use EventEspresso\core\services\loaders\LoaderFactory;
 
 /**
@@ -272,6 +271,17 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     protected $_has_primary_key_field = null;
 
     /**
+     * array in the format:  [ FK alias => full PK ]
+     * where keys are local column name aliases for foreign keys
+     * and values are the fully qualified column name for the primary key they represent
+     *  ex:
+     *      [ 'Event.EVT_wp_user' => 'WP_User.ID' ]
+     *
+     * @var array $foreign_key_aliases
+     */
+    protected $foreign_key_aliases = [];
+
+    /**
      * Whether or not this model is based off a table in WP core only (CPTs should set
      * this to FALSE, but if we were to make an EE_WP_Post model, it should set this to true).
      * This should be true for models that deal with data that should exist independent of EE.
@@ -288,7 +298,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * null until initialized by hasPasswordField()
      */
     protected $has_password_field;
-    
+
     /**
      * @var EE_Password_Field|null Automatically set when calling getPasswordField()
      */
@@ -5421,6 +5431,16 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             $value = $cols_n_values[ $qualified_column ];
         } elseif (isset($cols_n_values[ $regular_column ])) {
             $value = $cols_n_values[ $regular_column ];
+        } elseif (! empty($this->foreign_key_aliases)) {
+            // no PK?  ok check if there is a foreign key alias set for this table
+            // then check if that alias exists in the incoming data
+            // AND that the actual PK the $FK_alias represents matches the $qualified_column (full PK)
+            foreach ($this->foreign_key_aliases as $FK_alias => $PK_column) {
+                if ($PK_column === $qualified_column && isset($cols_n_values[ $FK_alias ])) {
+                    $value = $cols_n_values[ $FK_alias ];
+                    break;
+                }
+            }
         }
         return $value;
     }
