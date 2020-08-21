@@ -105,15 +105,23 @@ export default class Duration {
 	static UNIT_WEEKS = 'weeks';
 
 	/**
+	 * because minification destroys class names and renders instaneOf useless
+	 *
+	 * @type {string}
+	 */
+	displayName = 'Duration';
+
+	/**
 	 * The constructor for the Duration class.
 	 *
 	 * @param {Object|moment.Duration|string|number} values
 	 * Receiving a moment.Duration object is something for internal use and should not be used directly via
 	 * client code.
 	 * @param {string} locale  A valid locale string.
-	 * 							@link http://tools.ietf.org/html/rfc5646
+	 * @link http://tools.ietf.org/html/rfc5646
 	 */
 	constructor( values, locale = DEFAULT_VALID_LOCALE ) {
+		this.displayName = 'Duration';
 		this[ privateProperties.isValid ] = true;
 		assertions.assertLocaleIsValid( locale );
 		if ( typeof values !== 'object' ) {
@@ -135,6 +143,7 @@ export default class Duration {
 
 	/**
 	 * Create an instance of Duration from a number of milliseconds.
+	 *
 	 * @param {number} milliseconds
 	 * @param {string} locale
 	 * @return {Duration}  An instance of Duration.
@@ -172,7 +181,7 @@ export default class Duration {
 	 * @param {string} locale
 	 * @return {boolean}  True means it is valid.
 	 */
-	static isValidLocale( locale ) {
+	static isValidLocale(locale) {
 		return assertions.validateLocale( locale );
 	}
 
@@ -208,7 +217,8 @@ export default class Duration {
 
 	/**
 	 * Indicates whether the provided value is a valid instance of Duration.
-	 * @param {mixed|Duration}duration
+	 *
+	 * @param {Duration}duration
 	 * @return {boolean}  True means it is a valid Duration object.
 	 */
 	static isValidDuration( duration ) {
@@ -219,7 +229,8 @@ export default class Duration {
 	/**
 	 * Asserts whether the provided value is a valid Duration and throws an
 	 * exception if not.
-	 * @param {mixed|Duration} duration
+	 *
+	 * @param {Duration} duration
 	 * @throws TypeError
 	 */
 	static assertIsValidDuration( duration ) {
@@ -233,7 +244,7 @@ export default class Duration {
 	/**
 	 * Indicates whether the provided value is an instance of Duration.
 	 *
-	 * @param {Duration|mixed} duration
+	 * @param {Duration} duration
 	 * @return {boolean}  True means the value is an instance of Duration.
 	 * Note: true may still mean that the Duration instance is not valid!
 	 */
@@ -245,7 +256,7 @@ export default class Duration {
 	 * Asserts whether the provided value is an instance of Duration and if not
 	 * throws an exception.
 	 *
-	 * @param {Duration|mixed} duration
+	 * @param {Duration} duration
 	 * @throws TypeError
 	 */
 	static assertIsDuration( duration ) {
@@ -263,7 +274,7 @@ export default class Duration {
 	 * If a invalid duration unit is discovered, a console.error is generated
 	 * (in non-production mode).
 	 *
-	 * @param {mixed} values
+	 * @param {any} values
 	 * @return {Object} Filtered values.
 	 * @throws TypeError if incoming values argument is not an object.
 	 */
@@ -328,6 +339,7 @@ export default class Duration {
 
 	/**
 	 * Creates getters for the Duration instance from the accessor names.
+	 *
 	 * @access private
 	 */
 	[ privateMethods.createGetters ]() {
@@ -370,6 +382,7 @@ export default class Duration {
 	/**
 	 * Exposes the value of locale.
 	 * eg. instance.locale
+	 *
 	 * @return {string} The locale string.
 	 */
 	get locale() {
@@ -390,6 +403,7 @@ export default class Duration {
 	/**
 	 * Returns a new Duration instance that is identical to this except the
 	 * locale is changed to what was provided.
+	 *
 	 * @param {string} locale
 	 * @return {Duration} A new instance of Duration
 	 */
@@ -416,7 +430,7 @@ export default class Duration {
 	 * Returns whether the provided Duration instance is the same as this
 	 * Duration instance.
 	 *
-	 * @param {Duration|mixed} otherDuration
+	 * @param {Duration} otherDuration
 	 * @throws TypeError
 	 * @return {boolean} True means that the compared durations have the same
 	 * units and the same values for each unit (as well as same locale). This
@@ -443,7 +457,7 @@ export default class Duration {
 	 * - the normalized value of the duration is the same.  eg a duration with
 	 * { hours: 24 } would be considered equal to a duration with { days: 1 }
 	 *
-	 * @param {Duration|mixed} otherDuration
+	 * @param {Duration} otherDuration
 	 * @throws TypeError
 	 * @return {boolean} true if considered equal
 	 */
@@ -555,6 +569,7 @@ export default class Duration {
 
 	/**
 	 * Returns an ISO 8601-compliant string representation of this Duration.
+	 *
 	 * @return {string} eg. "PT24H"
 	 */
 	toISO() {
@@ -564,6 +579,7 @@ export default class Duration {
 	/**
 	 * Returns an ISO 8601 representation of this Duration appropriate for use
 	 * in JSON.
+	 *
 	 * @return {string} eg. "PT24H"
 	 */
 	toJSON() {
@@ -573,6 +589,7 @@ export default class Duration {
 	/**
 	 * Returns an ISO 8601 representation of this Duration appropriate for use
 	 * in debugging.
+	 *
 	 * @return {string} eg. "PT24H"
 	 */
 	toString() {
@@ -581,6 +598,7 @@ export default class Duration {
 
 	/**
 	 * Returns an milliseconds value of this Duration.
+	 *
 	 * @return {number} The value of this duration represented in the number of
 	 * milliseconds.
 	 */

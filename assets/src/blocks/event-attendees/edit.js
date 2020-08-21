@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { InspectorControls } from '@wordpress/editor';
+import { InspectorControls } from '@wordpress/block-editor';
 import { Component, Fragment } from '@wordpress/element';
 import {
 	PanelBody,
