@@ -34,9 +34,9 @@
     "edtrServices.js.map": "/static/js/edtrServices.666a88f5.js.map",
     "edtrServices.php": "/static/js/edtrServices.88666e5f.asset.php",
     "eventEditor.css": "/static/css/eventEditor.49e74978.css",
-    "eventEditor.js": "/static/js/eventEditor.6a0860c4.js",
-    "eventEditor.js.map": "/static/js/eventEditor.6a0860c4.js.map",
-    "eventEditor.php": "/static/js/eventEditor.4b7da3f3.asset.php",
+    "eventEditor.js": "/static/js/eventEditor.61319309.js",
+    "eventEditor.js.map": "/static/js/eventEditor.61319309.js.map",
+    "eventEditor.php": "/static/js/eventEditor.5c5ce6cf.asset.php",
     "form.css": "/static/css/form.027ef124.css",
     "form.js": "/static/js/form.cb352223.js",
     "form.js.map": "/static/js/form.cb352223.js.map",
@@ -44,15 +44,15 @@
     "helpers.js": "/static/js/helpers.ae99a36a.js",
     "helpers.js.map": "/static/js/helpers.ae99a36a.js.map",
     "helpers.php": "/static/js/helpers.4f9d15a7.asset.php",
-    "hooks.js": "/static/js/hooks.a49feaa9.js",
-    "hooks.js.map": "/static/js/hooks.a49feaa9.js.map",
-    "hooks.php": "/static/js/hooks.0cceb8c4.asset.php",
+    "hooks.js": "/static/js/hooks.8168a9a7.js",
+    "hooks.js.map": "/static/js/hooks.8168a9a7.js.map",
+    "hooks.php": "/static/js/hooks.b669b282.asset.php",
     "predicates.js": "/static/js/predicates.5e8b7607.js",
     "predicates.js.map": "/static/js/predicates.5e8b7607.js.map",
     "predicates.php": "/static/js/predicates.ee6e215c.asset.php",
-    "registry.js": "/static/js/registry.451d4f9d.js",
-    "registry.js.map": "/static/js/registry.451d4f9d.js.map",
-    "registry.php": "/static/js/registry.a2f477f6.asset.php",
+    "registry.js": "/static/js/registry.8f5ffebf.js",
+    "registry.js.map": "/static/js/registry.8f5ffebf.js.map",
+    "registry.php": "/static/js/registry.97becbea.asset.php",
     "richTextEditor.css": "/static/css/richTextEditor.caf5360f.css",
     "richTextEditor.js": "/static/js/richTextEditor.994ac94d.js",
     "richTextEditor.js.map": "/static/js/richTextEditor.994ac94d.js.map",
@@ -101,7 +101,7 @@
     "static/js/components.b4609a01.js.LICENSE.txt": "/static/js/components.b4609a01.js.LICENSE.txt",
     "static/js/data.1d507c20.js.LICENSE.txt": "/static/js/data.1d507c20.js.LICENSE.txt",
     "static/js/dates.b14be768.js.LICENSE.txt": "/static/js/dates.b14be768.js.LICENSE.txt",
-    "static/js/eventEditor.6a0860c4.js.LICENSE.txt": "/static/js/eventEditor.6a0860c4.js.LICENSE.txt",
+    "static/js/eventEditor.61319309.js.LICENSE.txt": "/static/js/eventEditor.61319309.js.LICENSE.txt",
     "static/js/form.cb352223.js.LICENSE.txt": "/static/js/form.cb352223.js.LICENSE.txt",
     "static/js/richTextEditor.994ac94d.js.LICENSE.txt": "/static/js/richTextEditor.994ac94d.js.LICENSE.txt",
     "static/js/rruleGenerator.9f0ef16a.js.LICENSE.txt": "/static/js/rruleGenerator.9f0ef16a.js.LICENSE.txt",
@@ -142,13 +142,13 @@
       "static/js/helpers.ae99a36a.js"
     ],
     "hooks": [
-      "static/js/hooks.a49feaa9.js"
+      "static/js/hooks.8168a9a7.js"
     ],
     "predicates": [
       "static/js/predicates.5e8b7607.js"
     ],
     "registry": [
-      "static/js/registry.451d4f9d.js"
+      "static/js/registry.8f5ffebf.js"
     ],
     "richTextEditor": [
       "static/css/richTextEditor.caf5360f.css",
@@ -178,7 +178,7 @@
     ],
     "eventEditor": [
       "static/css/eventEditor.49e74978.css",
-      "static/js/eventEditor.6a0860c4.js"
+      "static/js/eventEditor.61319309.js"
     ],
     "wpPluginsPage": [
       "static/css/wpPluginsPage.9b2fdbb0.css",
