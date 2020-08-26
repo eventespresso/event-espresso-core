@@ -2,12 +2,9 @@
 
 namespace EventEspresso\core\domain\entities\routing\handlers\admin;
 
-use DomainException;
 use EE_Dependency_Map;
 use EventEspresso\core\domain\entities\routing\data_nodes\EventEspressoData;
-use EventEspresso\core\domain\services\assets\EspressoCoreAppAssetManager;
-use EventEspresso\core\domain\values\assets\JavascriptAsset;
-use EventEspresso\core\services\assets\AssetCollection;
+use EventEspresso\core\domain\services\assets\WordPressPluginsPageAssetManager;
 use EventEspresso\core\services\routing\Route;
 use EventEspresso\core\domain\entities\routing\data_nodes\domains\WordPressPluginsPageData;
 use EventEspresso\core\domain\services\admin\PluginUpsells;
@@ -42,6 +39,16 @@ class WordPressPluginsPage extends Route
     protected function registerDependencies()
     {
         $this->dependency_map->registerDependencies(
+            'EventEspresso\core\domain\services\assets\WordPressPluginsPageAssetManager',
+            [
+                'EventEspresso\core\services\assets\AssetCollection' => EE_Dependency_Map::load_from_cache,
+                'EE_Currency_Config'                                 => EE_Dependency_Map::load_from_cache,
+                'EE_Template_Config'                                 => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\Domain'                   => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\assets\Registry'        => EE_Dependency_Map::load_from_cache,
+            ]
+        );
+        $this->dependency_map->registerDependencies(
             'EventEspresso\core\domain\entities\routing\data_nodes\domains\WordPressPluginsPageData',
             [
                 'EventEspresso\core\domain\services\admin\ExitModal'     => EE_Dependency_Map::load_from_cache,
@@ -61,7 +68,7 @@ class WordPressPluginsPage extends Route
         $primary_data_node = $this->loader->getShared(
             'EventEspresso\core\domain\entities\routing\data_nodes\EventEspressoData'
         );
-        $primary_data_node->setTargetScript(EspressoCoreAppAssetManager::JS_HANDLE_EDITOR);
+        $primary_data_node->setTargetScript(WordPressPluginsPageAssetManager::JS_HANDLE_WP_PLUGINS_PAGE);
         /** @var WordPressPluginsPageData $data_node */
         $data_node = $this->loader->getShared(
             'EventEspresso\core\domain\entities\routing\data_nodes\domains\WordPressPluginsPageData'
@@ -81,46 +88,11 @@ class WordPressPluginsPage extends Route
      */
     protected function requestHandler()
     {
-        /** @var EspressoCoreAppAssetManager $asset_manager */
-        $this->asset_manager = $this->loader->getShared(
-            'EventEspresso\core\domain\services\assets\EspressoCoreAppAssetManager'
+        /** @var WordPressPluginsPageAssetManager $asset_manager */
+        $asset_manager = $this->loader->getShared(
+            'EventEspresso\core\domain\services\assets\WordPressPluginsPageAssetManager'
         );
-        add_action('admin_enqueue_scripts', [$this, 'addDependencies'], 3);
-        add_action('admin_enqueue_scripts', [$this->asset_manager, 'enqueueBrowserAssets'], 100);
-        wp_enqueue_style('wp-components');
+        add_action('admin_enqueue_scripts', [$asset_manager, 'enqueueAssets'], 100);
         return true;
-    }
-
-
-    /**
-     * EspressoCoreAppAssetManager sets 'wp-i18n' as the only dependency for its scripts,
-     * but the ExitSurvey uses additional WP core assets, so this method retrieves the
-     * 'eventespresso-core-app' script and updates its dependencies accordingly
-     *
-     * @since $VID:$
-     */
-    public function addDependencies()
-    {
-        if (! $this->asset_manager instanceof EspressoCoreAppAssetManager) {
-            throw new DomainException(
-                esc_html__('Invalid or missing EspressoCoreAppAssetManager!', 'event_espresso')
-            );
-        }
-        $assets = $this->asset_manager->getAssets();
-        if (! $assets instanceof AssetCollection) {
-            throw new DomainException(
-                esc_html__('Invalid or missing AssetCollection!', 'event_espresso')
-            );
-        }
-        $appJs = $assets->getJavascriptAsset(EspressoCoreAppAssetManager::JS_HANDLE_EDITOR);
-        if (! $appJs instanceof JavascriptAsset) {
-            throw new DomainException(
-                sprintf(
-                    esc_html__('Invalid or missing JavascriptAsset! Expected', 'event_espresso'),
-                    EspressoCoreAppAssetManager::JS_HANDLE_EDITOR
-                )
-            );
-        }
-        $appJs->addDependencies(['wp-components', 'wp-url']);
     }
 }
