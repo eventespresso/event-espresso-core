@@ -10,7 +10,6 @@
         <whitelist>
             <directory>../</directory>
             <exclude>
-                <directory>../acceptance_tests</directory>
                 <directory>../assets</directory>
                 <directory>../bin</directory>
                 <directory>../config</directory>

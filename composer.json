@@ -32,8 +32,9 @@
 	},
 	"require": {
 		"composer/installers": "~1.0",
-		"php": ">=5.5"
-	},
+		"php": ">=5.5",
+      	"ext-json": "*"
+    },
 	"scripts": {
 		"config-eventespressocs": [
 			"\"vendor/bin/phpcs\" --config-set installed_paths ../../../vendor/wp-coding-standards/wpcs,../../../vendor/wimg/php-compatibility,../../../vendor/eventespresso/ee-coding-standards",
