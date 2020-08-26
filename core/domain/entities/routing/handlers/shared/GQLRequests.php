@@ -3,6 +3,8 @@
 namespace EventEspresso\core\domain\entities\routing\handlers\shared;
 
 use EE_Dependency_Map;
+use EventEspresso\core\services\assets\AssetManifest;
+use EventEspresso\core\services\assets\Barista;
 use EventEspresso\core\services\routing\Route;
 
 /**
@@ -191,6 +193,12 @@ class GQLRequests extends Route
             'EventEspresso\core\services\graphql\GraphQLManager'
         );
         $graphQL_manager->init();
+        /** @var AssetManifest $manifest */
+        $manifest = $this->loader->getShared('EventEspresso\core\services\assets\AssetManifest');
+        $manifest->initialize();
+        /** @var Barista $barista */
+        $barista = $this->loader->getShared('EventEspresso\core\services\assets\Barista');
+        $barista->initialize();
         return true;
     }
 }

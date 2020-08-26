@@ -34,6 +34,11 @@ class Registry
     protected $assets = [];
 
     /**
+     * @var AssetManifest
+     */
+    private $asset_manifest;
+
+    /**
      * @var I18nRegistry
      */
     private $i18n_registry;
@@ -52,35 +57,6 @@ class Registry
      * @var array
      */
     private $script_handles_with_data = array();
-
-
-    /**
-     * Holds the manifest data obtained from registered manifest files.
-     * Manifests are maps of asset chunk name to actual built asset file names.
-     * Shape of this array is:
-     * array(
-     *  'some_namespace_slug' => array(
-     *      'some_chunk_name' => array(
-     *          'js' => 'filename.js'
-     *          'css' => 'filename.js'
-     *      ),
-     *      'url_base' => 'https://baseurl.com/to/assets
-     *  )
-     * )
-     *
-     * @var array
-     */
-    private $manifest_data = array();
-
-
-    /**
-     * Holds any dependency data obtained from registered dependency map json.
-     * Dependency map json is generated via the @wordpress/dependency-extraction-webpack-plugin via the webpack config.
-     * @see https://github.com/WordPress/gutenberg/tree/master/packages/dependency-extraction-webpack-plugin
-     *
-     * @var array
-     */
-    private $dependencies_data = [];
 
 
     /**
@@ -108,17 +84,18 @@ class Registry
      * Hooking into WP actions for script registry.
      *
      * @param AssetCollection      $assets
+     * @param AssetManifest $asset_manifest
      * @param I18nRegistry         $i18n_registry
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public function __construct(AssetCollection $assets, I18nRegistry $i18n_registry)
+    public function __construct(AssetCollection $assets, AssetManifest $asset_manifest, I18nRegistry $i18n_registry)
     {
         $this->addAssetCollection($assets);
+        $this->asset_manifest = $asset_manifest;
+        $this->asset_manifest->initialize();
         $this->i18n_registry = $i18n_registry;
-        add_action('wp_enqueue_scripts', array($this, 'registerManifestFiles'), 1);
-        add_action('admin_enqueue_scripts', array($this, 'registerManifestFiles'), 1);
         add_action('wp_enqueue_scripts', array($this, 'registerScriptsAndStyles'), 4);
         add_action('admin_enqueue_scripts', array($this, 'registerScriptsAndStyles'), 4);
         add_action('wp_enqueue_scripts', array($this, 'enqueueData'), 5);
@@ -472,17 +449,9 @@ class Registry
      */
     public function getAssetUrl($namespace, $chunk_name, $asset_type)
     {
-        $asset_index = $chunk_name . '.' . $asset_type;
-        $url = isset(
-            $this->manifest_data[ $namespace ][ $asset_index ],
-            $this->manifest_data[ $namespace ]['url_base']
-        )
-            ? $this->manifest_data[ $namespace ]['url_base']
-              . $this->manifest_data[ $namespace ][ $asset_index ]
-            : '';
         return apply_filters(
             'FHEE__EventEspresso_core_services_assets_Registry__getAssetUrl',
-            $url,
+            $this->asset_manifest->getAssetUrl($chunk_name, $asset_type),
             $namespace,
             $chunk_name,
             $asset_type
@@ -514,224 +483,6 @@ class Registry
     public function getCssUrl($namespace, $chunk_name)
     {
         return $this->getAssetUrl($namespace, $chunk_name, Asset::TYPE_CSS);
-    }
-
-
-    /**
-     * Return the dependencies array and version string for a given asset $chunk_name
-     *
-     * @param string $namespace
-     * @param string $chunk_name
-     * @param string $asset_type
-     * @return array
-     * @since 4.9.82.p
-     */
-    private function getDetailsForAsset($namespace, $chunk_name, $asset_type)
-    {
-        $asset_index = $chunk_name . '.' . $asset_type;
-        if (! isset( $this->dependencies_data[ $namespace ][ $asset_index ])) {
-            $path = isset($this->manifest_data[ $namespace ]['path'])
-                ? $this->manifest_data[ $namespace ]['path']
-                : '';
-            $dependencies_index = $chunk_name . '.' . Asset::TYPE_PHP;
-            $file_path = isset($this->manifest_data[ $namespace ][ $dependencies_index ])
-                ? $path . $this->manifest_data[ $namespace ][ $dependencies_index ]
-                :
-                '';
-            $this->dependencies_data[ $namespace ][ $asset_index ] = $file_path !== '' && file_exists($file_path)
-                ? $this->getDetailsForAssetType($namespace, $asset_type, $file_path, $chunk_name)
-                : [];
-        }
-        return $this->dependencies_data[ $namespace ][ $asset_index ];
-    }
-
-
-    /**
-     * Return dependencies array and version string according to asset type.
-     * For css assets, this filters the auto generated dependencies by css type.
-     *
-     * @param string $namespace
-     * @param string $asset_type
-     * @param string $file_path
-     * @param string $chunk_name
-     * @return array
-     * @since 4.9.82.p
-     */
-    private function getDetailsForAssetType($namespace, $asset_type, $file_path, $chunk_name)
-    {
-        // $asset_dependencies = json_decode(file_get_contents($file_path), true);
-        $asset_details = require($file_path);
-        $asset_details['dependencies'] = isset($asset_details['dependencies'])
-            ? $asset_details['dependencies']
-            : [];
-        $asset_details['version'] = isset($asset_details['version'])
-            ? $asset_details['version']
-            : '';
-        if ($asset_type === Asset::TYPE_JS) {
-            $asset_details['dependencies'] =  $chunk_name === 'eejs-core'
-                ? $asset_details['dependencies']
-                : $asset_details['dependencies'] + [ CoreAssetManager::JS_HANDLE_JS_CORE ];
-            return $asset_details;
-        }
-        // for css we need to make sure there is actually a css file related to this chunk.
-        if (isset($this->manifest_data[ $namespace ])) {
-            // array of css chunk files for ee.
-            $css_chunks = array_map(
-                static function ($value) {
-                    return str_replace('.css', '', $value);
-                },
-                array_filter(
-                    array_keys($this->manifest_data[ $namespace ]),
-                    static function ($value) {
-                        return strpos($value, '.css') !== false;
-                    }
-                )
-            );
-            // add known wp chunks with css
-            $css_chunks = array_merge( $css_chunks, $this->wp_css_handle_dependencies);
-            // flip for easier search
-            $css_chunks = array_flip($css_chunks);
-
-            // now let's filter the dependencies for the incoming chunk to actual chunks that have styles
-            $asset_details['dependencies'] = array_filter(
-                $asset_details['dependencies'],
-                static function ($chunk_name) use ($css_chunks) {
-                    return isset($css_chunks[ $chunk_name ]);
-                }
-            );
-            return $asset_details;
-        }
-        return ['dependencies' => [], 'version' => ''];
-    }
-
-
-    /**
-     * Get the dependencies array and version string for the given js asset chunk name
-     *
-     * @param string $namespace
-     * @param string $chunk_name
-     * @return array
-     * @since 4.10.2.p
-     */
-    public function getJsAssetDetails($namespace, $chunk_name)
-    {
-        return $this->getDetailsForAsset($namespace, $chunk_name, Asset::TYPE_JS);
-    }
-
-
-    /**
-     * Get the dependencies array and version string for the given css asset chunk name
-     *
-     * @param string $namespace
-     * @param string $chunk_name
-     * @return array
-     * @since 4.10.2.p
-     */
-    public function getCssAssetDetails($namespace, $chunk_name)
-    {
-        return $this->getDetailsForAsset($namespace, $chunk_name, Asset::TYPE_CSS);
-    }
-
-
-    /**
-     * @throws Exception
-     * @throws InvalidArgumentException
-     * @throws InvalidFilePathException
-     * @since 4.9.62.p
-     */
-    public function registerManifestFiles()
-    {
-        try {
-            foreach ($this->assets as $asset_collection) {
-                $manifest_files = $asset_collection->getManifestFiles();
-                foreach ($manifest_files as $manifest_file) {
-                    $this->registerManifestFile(
-                        $manifest_file->assetNamespace(),
-                        $manifest_file->urlBase(),
-                        $manifest_file->filepath() . Registry::FILE_NAME_BUILD_MANIFEST,
-                        $manifest_file->filepath()
-                    );
-                }
-            }
-        } catch (Exception $exception) {
-            EE_Error::add_error($exception->getMessage(), __FILE__, __FUNCTION__, __LINE__);
-            new ExceptionStackTraceDisplay($exception);
-        }
-    }
-
-
-    /**
-     * Used to register a js/css manifest file with the registered_manifest_files property.
-     *
-     * @param string $namespace     Provided to associate the manifest file with a specific namespace.
-     * @param string $url_base      The url base for the manifest file location.
-     * @param string $manifest_file The absolute path to the manifest file.
-     * @param string $manifest_file_path  The path to the folder containing the manifest file. If not provided will be
-     *                                    default to `plugin_root/assets/dist`.
-     * @throws InvalidArgumentException
-     * @throws InvalidFilePathException
-     * @since 4.9.59.p
-     */
-    public function registerManifestFile($namespace, $url_base, $manifest_file, $manifest_file_path = '')
-    {
-        if (isset($this->manifest_data[ $namespace ])) {
-            if (! $this->debug()) {
-                return;
-            }
-            throw new InvalidArgumentException(
-                sprintf(
-                    esc_html__(
-                        'The namespace for this manifest file has already been registered, choose a namespace other than %s',
-                        'event_espresso'
-                    ),
-                    $namespace
-                )
-            );
-        }
-        if (filter_var($url_base, FILTER_VALIDATE_URL) === false) {
-            if (is_admin()) {
-                EE_Error::add_error(
-                    sprintf(
-                        esc_html__(
-                            'The url given for %1$s assets is invalid.  The url provided was: "%2$s". This usually happens when another plugin or theme on a site is using the "%3$s" filter or has an invalid url set for the "%4$s" constant',
-                            'event_espresso'
-                        ),
-                        'Event Espresso',
-                        $url_base,
-                        'plugins_url',
-                        'WP_PLUGIN_URL'
-                    ),
-                    __FILE__,
-                    __FUNCTION__,
-                    __LINE__
-                );
-            }
-            return;
-        }
-        $this->manifest_data[ $namespace ] = $this->decodeManifestFile($manifest_file);
-        if (! isset($this->manifest_data[ $namespace ]['url_base'])) {
-            $this->manifest_data[ $namespace ]['url_base'] = untrailingslashit($url_base);
-        }
-        if (! isset($this->manifest_data[ $namespace ]['path'])) {
-            $this->manifest_data[ $namespace ]['path'] = untrailingslashit($manifest_file_path);
-        }
-    }
-
-
-    /**
-     * Decodes json from the provided manifest file.
-     *
-     * @since 4.9.59.p
-     * @param string $manifest_file Path to manifest file.
-     * @return array
-     * @throws InvalidFilePathException
-     */
-    private function decodeManifestFile($manifest_file)
-    {
-        if (! file_exists($manifest_file)) {
-            throw new InvalidFilePathException($manifest_file);
-        }
-        return json_decode(file_get_contents($manifest_file), true);
     }
 
 
@@ -814,34 +565,79 @@ class Registry
     }
 
 
+    /**************** deprecated ****************/
+
+
     /**
-     * Get the dependencies array for the given js asset chunk name
-     *
      * @param string $namespace
      * @param string $chunk_name
      * @return array
-     * @deprecated 4.10.2.p
-     * @since 4.9.82.p
+     * @deprecated $VID:$
      */
-    public function getJsDependencies($namespace, $chunk_name)
+    public function getCssAssetDetails($namespace, $chunk_name)
     {
-        $details = $this->getJsAssetDetails($namespace, $chunk_name);
-        return isset($details['dependencies']) ? $details['dependencies'] : [];
+        return [
+            AssetManifest::KEY_DEPENDENCIES => $this->asset_manifest->getAssetDependencies($chunk_name, Asset::TYPE_CSS),
+            AssetManifest::KEY_VERSION => $this->asset_manifest->getAssetVersion($chunk_name, Asset::TYPE_CSS),
+        ];
     }
 
 
     /**
-     * Get the dependencies array for the given css asset chunk name
-     *
      * @param string $namespace
      * @param string $chunk_name
      * @return array
-     * @deprecated 4.10.2.p
-     * @since      4.9.82.p
+     * @deprecated $VID:$
      */
     public function getCssDependencies($namespace, $chunk_name)
     {
-        $details = $this->getCssAssetDetails($namespace, $chunk_name);
-        return isset($details['dependencies']) ? $details['dependencies'] : [];
+        return $this->asset_manifest->getAssetDependencies($chunk_name, AssetManifest::ASSET_EXT_CSS);
+    }
+
+
+    /**
+     * @param string $namespace
+     * @param string $chunk_name
+     * @return array
+     * @deprecated $VID:$
+     */
+    public function getJsAssetDetails($namespace, $chunk_name)
+    {
+        return [
+            AssetManifest::KEY_DEPENDENCIES => $this->asset_manifest->getAssetDependencies($chunk_name, Asset::TYPE_JS),
+            AssetManifest::KEY_VERSION => $this->asset_manifest->getAssetVersion($chunk_name, Asset::TYPE_JS),
+        ];
+    }
+
+
+    /**
+     * @param string $namespace
+     * @param string $chunk_name
+     * @return array
+     * @deprecated $VID:$
+     */
+    public function getJsDependencies($namespace, $chunk_name)
+    {
+        return $this->asset_manifest->getAssetDependencies($chunk_name);
+    }
+
+
+    /**
+     * @deprecated $VID:$
+     */
+    public function registerManifestFiles()
+    {
+    }
+
+
+    /**
+     * @param string $namespace
+     * @param string $url_base
+     * @param string $manifest_file
+     * @param string $manifest_file_path
+     * @deprecated $VID:$
+     */
+    public function registerManifestFile($namespace, $url_base, $manifest_file, $manifest_file_path = '')
+    {
     }
 }
