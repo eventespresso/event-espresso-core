@@ -68,7 +68,7 @@ class WordPressPluginsPage extends Route
         $primary_data_node = $this->loader->getShared(
             'EventEspresso\core\domain\entities\routing\data_nodes\EventEspressoData'
         );
-        $primary_data_node->setTargetScript(WordPressPluginsPageAssetManager::JS_HANDLE_WP_PLUGINS_PAGE);
+        $primary_data_node->setTargetScript(WordPressPluginsPageAssetManager::ASSET_HANDLE_WP_PLUGINS_PAGE);
         /** @var WordPressPluginsPageData $data_node */
         $data_node = $this->loader->getShared(
             'EventEspresso\core\domain\entities\routing\data_nodes\domains\WordPressPluginsPageData'
@@ -92,7 +92,7 @@ class WordPressPluginsPage extends Route
         $asset_manager = $this->loader->getShared(
             'EventEspresso\core\domain\services\assets\WordPressPluginsPageAssetManager'
         );
-        add_action('admin_enqueue_scripts', [$asset_manager, 'enqueueAssets'], 100);
+        add_action('admin_enqueue_scripts', [$asset_manager, 'enqueueAssets']);
         return true;
     }
 }

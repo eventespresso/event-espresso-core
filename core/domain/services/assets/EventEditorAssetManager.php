@@ -16,7 +16,7 @@ class EventEditorAssetManager extends ReactAssetManager
 {
     const DOMAIN = 'eventEditor';
 
-    const JS_HANDLE_EVENT_EDITOR = AssetManager::EE_NAMESPACE . EventEditorAssetManager::DOMAIN;
+    const ASSET_HANDLE_EVENT_EDITOR = AssetManager::EE_NAMESPACE . EventEditorAssetManager::DOMAIN;
 
 
     /**
@@ -24,11 +24,9 @@ class EventEditorAssetManager extends ReactAssetManager
      */
     public function enqueueEventEditor()
     {
-        if ($this->verifyAssetIsRegistered(EventEditorAssetManager::JS_HANDLE_EVENT_EDITOR)) {
-            wp_enqueue_script(
-                EventEditorAssetManager::JS_HANDLE_EVENT_EDITOR,
-                $this->domain->distributionAssetsUrl()
-            );
+        if ($this->verifyAssetIsRegistered(EventEditorAssetManager::ASSET_HANDLE_EVENT_EDITOR)) {
+            wp_enqueue_script(EventEditorAssetManager::ASSET_HANDLE_EVENT_EDITOR);
+            wp_enqueue_style(EventEditorAssetManager::ASSET_HANDLE_EVENT_EDITOR);
         }
     }
 }

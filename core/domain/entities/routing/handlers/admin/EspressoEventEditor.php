@@ -119,7 +119,7 @@ class EspressoEventEditor extends EspressoEventsAdmin
         $primary_data_node = $this->loader->getShared(
             'EventEspresso\core\domain\entities\routing\data_nodes\EventEspressoData'
         );
-        $primary_data_node->setTargetScript(EventEditorAssetManager::JS_HANDLE_EVENT_EDITOR);
+        $primary_data_node->setTargetScript(EventEditorAssetManager::ASSET_HANDLE_EVENT_EDITOR);
         /** @var EventEditor $data_node */
         $data_node = $this->loader->getShared(
             'EventEspresso\core\domain\entities\routing\data_nodes\domains\EventEditor'
@@ -144,7 +144,7 @@ class EspressoEventEditor extends EspressoEventsAdmin
         $asset_manager = $this->loader->getShared(
             'EventEspresso\core\domain\services\assets\EventEditorAssetManager'
         );
-        add_action('admin_enqueue_scripts', [$asset_manager, 'enqueueEventEditor'], 100);
+        add_action('admin_enqueue_scripts', [$asset_manager, 'enqueueEventEditor']);
         return true;
     }
 }

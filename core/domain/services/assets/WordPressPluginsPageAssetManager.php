@@ -17,20 +17,16 @@ class WordPressPluginsPageAssetManager extends ReactAssetManager
 {
     const DOMAIN = 'wpPluginsPage';
 
-    const JS_HANDLE_WP_PLUGINS_PAGE = AssetManager::EE_NAMESPACE . WordPressPluginsPageAssetManager::DOMAIN;
+    const ASSET_HANDLE_WP_PLUGINS_PAGE = AssetManager::EE_NAMESPACE . WordPressPluginsPageAssetManager::DOMAIN;
 
     /**
      * @throws DomainException
      */
     public function enqueueAssets()
     {
-        if ($this->verifyAssetIsRegistered(WordPressPluginsPageAssetManager::JS_HANDLE_WP_PLUGINS_PAGE)) {
-            wp_enqueue_script(
-                WordPressPluginsPageAssetManager::JS_HANDLE_WP_PLUGINS_PAGE,
-                $this->domain->distributionAssetsUrl(),
-                ['wp-components', 'wp-i18n', 'wp-url']
-            );
-            wp_enqueue_style('wp-components');
+        if ($this->verifyAssetIsRegistered(WordPressPluginsPageAssetManager::ASSET_HANDLE_WP_PLUGINS_PAGE)) {
+            wp_enqueue_script(WordPressPluginsPageAssetManager::ASSET_HANDLE_WP_PLUGINS_PAGE);
+            wp_enqueue_style(WordPressPluginsPageAssetManager::ASSET_HANDLE_WP_PLUGINS_PAGE);
         }
     }
 }
