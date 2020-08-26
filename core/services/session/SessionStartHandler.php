@@ -63,6 +63,7 @@ class SessionStartHandler
                 $this->checkCustomSessionSaveHandler();
             } else {
                 session_start();
+                session_write_close();
             }
         }
     }
@@ -95,6 +96,7 @@ class SessionStartHandler
         // on a previous request then just start the session
         if ($this->sessionSaveHandlerIsValid()) {
             session_start();
+            session_write_close();
             return;
         }
         // If not, then attempt to deal with any errors,
@@ -107,6 +109,7 @@ class SessionStartHandler
         $this->initializeSessionSaveHandlerStatus();
         // hold your breath, the custom session save handler might cause a fatal here...
         session_start();
+        session_write_close();
         // phew! we made it! the custom session handler is a-ok
         $this->setSessionSaveHandlerStatusToValid();
     }
