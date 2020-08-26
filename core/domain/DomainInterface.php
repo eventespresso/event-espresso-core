@@ -1,29 +1,42 @@
 <?php
 namespace EventEspresso\core\domain;
 
-use DomainException;
+use EventEspresso\core\domain\values\Version;
 use EventEspresso\core\interfaces\InterminableInterface;
 
 /**
  * DomainInterface
  *
  * @package EventEspresso\core\domain
- * @author  Darren Ethier
+ * @author  Darren Ethier, Brent Christensen
  * @since   4.9.50
  */
 interface DomainInterface extends InterminableInterface
 {
 
     /**
+     * @param string $asset_namespace
+     * @return void
+     * @since $VID:$
+     */
+    public function initialize($asset_namespace = 'eventespresso');
+
+
+    /**
+     * @param string $asset_namespace
+     * @return void
+     */
+    public function setAssetNamespace($asset_namespace = 'eventespresso');
+
+
+    /**
      * @return string
-     * @throws DomainException
      */
     public function pluginFile();
 
 
     /**
      * @return string
-     * @throws DomainException
      */
     public function pluginBasename();
 
@@ -36,28 +49,40 @@ interface DomainInterface extends InterminableInterface
 
     /**
      * @return string
-     * @throws DomainException
      */
     public function pluginUrl();
 
 
     /**
      * @return string
-     * @throws DomainException
      */
     public function version();
 
 
     /**
-     * @return string
+     * @return Version
      */
-    public function distributionAssetsPath();
+    public function versionValueObject();
 
 
     /**
      * @return string
      */
-    public function distributionAssetsUrl();
+    public function distributionAssetsFolder();
+
+
+    /**
+     * @param string $additional_path
+     * @return string
+     */
+    public function distributionAssetsPath($additional_path = '');
+
+
+    /**
+     * @param string $additional_path
+     * @return string
+     */
+    public function distributionAssetsUrl($additional_path = '');
 
 
     /**
