@@ -98,7 +98,7 @@ abstract class DomainBase implements DomainInterface
     {
         if (! $this->asset_namespace) {
             $this->asset_namespace = sanitize_key(
-            // convert directory separators to dashes and remove file extension
+                // convert directory separators to dashes and remove file extension
                 str_replace(['/', '.php'], ['-', ''], $asset_namespace)
             );
         }
