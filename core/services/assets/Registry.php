@@ -58,26 +58,6 @@ class Registry
 
 
     /**
-     * This is a known array of possible wp css handles that correspond to what may be exposed as dependencies in our
-     * build process.  Currently the dependency export process in webpack does not consider css imports, so we derive
-     * them via the js dependencies (WP uses the same handle for both js and css). This is a list of known handles that
-     * are used for both js and css.
-     * @var array
-     */
-    private $wp_css_handle_dependencies = [
-        'wp-components',
-        'wp-block-editor',
-        'wp-block-library',
-        'wp-edit-post',
-        'wp-edit-widgets',
-        'wp-editor',
-        'wp-format-library',
-        'wp-list-reusable-blocks',
-        'wp-nux',
-    ];
-
-
-    /**
      * Registry constructor.
      * Hooking into WP actions for script registry.
      *

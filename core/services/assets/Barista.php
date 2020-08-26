@@ -74,13 +74,11 @@ class Barista
         $entry_points = $this->asset_manifest->getEntryPoints();
         foreach ($entry_points as $entry_point) {
             if ($this->asset_manifest->hasAsset($entry_point)) {
-                wp_register_script(
-                    $this->asset_manifest->getAssetHandle($entry_point),
-                    $this->asset_manifest->getAssetUrl($entry_point),
-                    $this->asset_manifest->getAssetDependencies($entry_point),
-                    $this->asset_manifest->getAssetVersion($entry_point),
-                    true
-                );
+                $handle = $this->asset_manifest->getAssetHandle($entry_point);
+                $source = $this->asset_manifest->getAssetUrl($entry_point);
+                $dependencies = $this->asset_manifest->getAssetDependencies($entry_point);
+                $version = $this->asset_manifest->getAssetVersion($entry_point);
+                wp_register_script($handle, $source, $dependencies, $version, true);
             }
         }
     }
@@ -96,13 +94,11 @@ class Barista
         $entry_points = $this->asset_manifest->getEntryPoints();
         foreach ($entry_points as $entry_point) {
             if ($this->asset_manifest->hasAsset($entry_point, AssetManifest::ASSET_EXT_CSS)) {
-                wp_register_style(
-                    $this->asset_manifest->getAssetHandle($entry_point),
-                    $this->asset_manifest->getAssetUrl($entry_point, AssetManifest::ASSET_EXT_CSS),
-                    $this->asset_manifest->getAssetDependencies($entry_point, AssetManifest::ASSET_EXT_CSS),
-                    $this->asset_manifest->getAssetVersion($entry_point, AssetManifest::ASSET_EXT_CSS),
-                    'all'
-                );
+                $handle = $this->asset_manifest->getAssetHandle($entry_point);
+                $source = $this->asset_manifest->getAssetUrl($entry_point, AssetManifest::ASSET_EXT_CSS);
+                $dependencies = $this->asset_manifest->getAssetDependencies($entry_point, AssetManifest::ASSET_EXT_CSS);
+                $version = $this->asset_manifest->getAssetVersion($entry_point, AssetManifest::ASSET_EXT_CSS);
+                wp_register_style($handle, $source, $dependencies, $version, 'all');
             }
         }
     }

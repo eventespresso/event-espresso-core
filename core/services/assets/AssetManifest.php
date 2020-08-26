@@ -18,8 +18,6 @@ class AssetManifest
 
     const ASSET_EXT_JS      = '.js';
 
-    const ASSET_EXT_JS_MAP  = '.js.map';
-
     const ASSET_EXT_PHP     = '.php';
 
     const FILE_NAME         = 'asset-manifest.json';
@@ -67,6 +65,22 @@ class AssetManifest
      * @var string
      */
     private $manifest_path;
+
+    /**
+     * This is a list of known handles that are used for css.
+     * @var array
+     */
+    private $wp_css_handle_dependencies = [
+        'wp-components',
+        'wp-block-editor',
+        'wp-block-library',
+        'wp-edit-post',
+        'wp-edit-widgets',
+        'wp-editor',
+        'wp-format-library',
+        'wp-list-reusable-blocks',
+        'wp-nux',
+    ];
 
 
     /**
@@ -197,10 +211,6 @@ class AssetManifest
      */
     public function getAssetDependencies($entry_point, $type = AssetManifest::ASSET_EXT_JS)
     {
-        // currently only tracking/need dependencies for JS
-        if ($type !== AssetManifest::ASSET_EXT_JS) {
-            return [];
-        }
         $asset = $this->getAssetDetails($entry_point);
         if (! isset($asset[AssetManifest::KEY_DEPENDENCIES])) {
             return [];
@@ -209,6 +219,19 @@ class AssetManifest
         // remove cyclical dependencies, if any
         if (($key = array_search($this->assets_namespace . '-' . $entry_point, $dependencies, true)) !== false) {
             unset($dependencies[ $key ]);
+        }
+        // currently need to derive dependencies for CSS from the JS dependencies
+        if ($type === AssetManifest::ASSET_EXT_CSS) {
+            $css_dependencies = [];
+            foreach ($dependencies as $handle) {
+                $dependency_style = $this->getEntryPointFromHandle($handle) . AssetManifest::ASSET_EXT_CSS;
+                if (isset($this->asset_files[ $dependency_style ])
+                    || in_array($handle, $this->wp_css_handle_dependencies)
+                ) {
+                    $css_dependencies[] = $handle;
+                }
+            }
+            return $css_dependencies;
         }
         return $dependencies;
     }
@@ -242,6 +265,16 @@ class AssetManifest
     public function getAssetHandle($entry_point)
     {
         return $this->assets_namespace . '-' . $entry_point;
+    }
+
+
+    /**
+     * @param string $handle
+     * @return string|int|false
+     */
+    private function getEntryPointFromHandle($handle)
+    {   $find = $this->assets_namespace . '-';
+        return str_replace($find, '', $handle);
     }
 
 
