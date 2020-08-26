@@ -3,6 +3,7 @@
 namespace EventEspresso\core\domain\entities\routing\handlers\shared;
 
 use EE_Dependency_Map;
+use EventEspresso\core\services\assets\Barista;
 use EventEspresso\core\services\routing\Route;
 
 /**
@@ -98,6 +99,9 @@ class AssetRequests extends Route
      */
     protected function requestHandler()
     {
+        /** @var Barista $barista */
+        $barista = $this->loader->getShared('EventEspresso\core\services\assets\Barista');
+        $barista->initialize();
         $this->loader->getShared('EventEspresso\core\services\assets\Registry');
         $this->loader->getShared('EventEspresso\core\domain\services\assets\CoreAssetManager');
         if ($this->canLoadBlocks()) {
