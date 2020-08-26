@@ -120,7 +120,7 @@ class RegularRequests extends PrimaryRoute
             'EventEspresso\core\domain\entities\routing\handlers\admin\EspressoEventsAdmin'  => $admin,
             'EventEspresso\core\domain\entities\routing\handlers\admin\EspressoEventEditor'  => $admin,
             'EventEspresso\core\domain\entities\routing\handlers\admin\EspressoLegacyAdmin'  => $admin,
-            'EventEspresso\core\domain\entities\routing\handlers\admin\GutenbergEditor'  => $admin,
+            'EventEspresso\core\domain\entities\routing\handlers\admin\GutenbergEditor'      => $admin,
             // public dependencies
             'EventEspresso\core\domain\entities\routing\handlers\admin\PersonalDataRequests' => $public,
             'EventEspresso\core\domain\entities\routing\handlers\frontend\FrontendRequests'  => $public,

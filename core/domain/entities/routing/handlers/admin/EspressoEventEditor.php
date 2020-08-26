@@ -115,9 +115,6 @@ class EspressoEventEditor extends EspressoEventsAdmin
                 'EventEspresso\core\services\assets\Registry'        => EE_Dependency_Map::load_from_cache,
             ]
         );
-
-        // 'EventEspresso\core\domain\services\assets\EspressoCoreAppAssetManager'
-        // ],
         /** @var EventEspressoData $primary_data_node */
         $primary_data_node = $this->loader->getShared(
             'EventEspresso\core\domain\entities\routing\data_nodes\EventEspressoData'

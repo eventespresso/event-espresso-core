@@ -99,7 +99,7 @@ class EspressoLegacyAdminAssetManager extends AssetManager
                 EspressoLegacyAdminAssetManager::JS_HANDLE_EE_ADMIN,
                 JqueryAssetManager::JS_HANDLE_JQUERY_UI_SORTABLE,
             ]
-        )->setEnqueueImmediately();
+        );
 
         // script for parsing uri's
         $this->addJavascript(

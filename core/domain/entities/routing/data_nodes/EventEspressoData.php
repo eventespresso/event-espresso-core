@@ -5,7 +5,6 @@ namespace EventEspresso\core\domain\entities\routing\data_nodes;
 use DomainException;
 use EventEspresso\core\domain\entities\routing\data_nodes\core\Api;
 use EventEspresso\core\domain\entities\routing\data_nodes\core\Config;
-use EventEspresso\core\domain\services\assets\EspressoCoreAppAssetManager;
 use EventEspresso\core\services\assets\JedLocaleData;
 use EventEspresso\core\services\json\PrimaryJsonDataNode;
 use EventEspresso\core\services\json\JsonDataNodeValidator;

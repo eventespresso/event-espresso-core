@@ -2,10 +2,11 @@
 
 namespace EventEspresso\core\services\assets;
 
-use DomainException;
 use EventEspresso\core\domain\DomainInterface;
 
 /**
+ * Class for loading parsing and retrieving data from an asset manifest file
+ *
  * @package EventEspresso\core\services\assets
  * @author  Brent Christensen
  * @since   $VID:$

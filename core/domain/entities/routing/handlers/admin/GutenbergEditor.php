@@ -6,7 +6,6 @@ use EE_Dependency_Map;
 use EventEspresso\core\domain\entities\editor\CoreBlocksAssetManager;
 use EventEspresso\core\domain\entities\routing\data_nodes\domains\EventEditor;
 use EventEspresso\core\domain\entities\routing\data_nodes\EventEspressoData;
-use EventEspresso\core\domain\services\assets\EspressoCoreAppAssetManager;
 
 /**
  * Class GutenbergEditor

@@ -4,13 +4,11 @@ namespace EventEspresso\core\services\assets;
 
 use DomainException;
 use EE_Error;
-use EventEspresso\core\domain\services\assets\CoreAssetManager;
 use EventEspresso\core\domain\values\assets\Asset;
 use EventEspresso\core\domain\values\assets\JavascriptAsset;
 use EventEspresso\core\domain\values\assets\StylesheetAsset;
 use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
-use EventEspresso\core\exceptions\InvalidFilePathException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use Exception;
 use InvalidArgumentException;

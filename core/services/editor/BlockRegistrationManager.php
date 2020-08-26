@@ -71,7 +71,7 @@ class BlockRegistrationManager extends BlockManager
 
 
     /**
-     *  Returns the name of a hookpoint to be used to call initialize()
+     *  Returns the name of a hook point to be used to call initialize()
      *
      * @return string
      */
@@ -133,7 +133,7 @@ class BlockRegistrationManager extends BlockManager
                     'FHEE__EventEspresso_core_services_editor_BlockManager__populateBlockCollection__collection_FQCNs',
                     array('EventEspresso\core\domain\entities\editor\blocks')
                 ),
-                // filepaths to classes to add
+                // file paths to classes to add
                 array(),
                 // file mask to use if parsing folder for files to add
                 '',
