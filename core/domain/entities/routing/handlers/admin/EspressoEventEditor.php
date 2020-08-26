@@ -2,11 +2,17 @@
 
 namespace EventEspresso\core\domain\entities\routing\handlers\admin;
 
+use EE_Admin_Config;
 use EE_Dependency_Map;
+use EventEspresso\core\domain\DomainInterface;
 use EventEspresso\core\domain\entities\routing\data_nodes\domains\EventEditor;
 use EventEspresso\core\domain\entities\routing\data_nodes\EventEspressoData;
-use EventEspresso\core\domain\services\assets\EspressoCoreAppAssetManager;
+use EventEspresso\core\domain\entities\routing\specifications\RouteMatchSpecificationInterface;
+use EventEspresso\core\domain\services\assets\EventEditorAssetManager;
 use EventEspresso\core\services\graphql\GraphQLManager;
+use EventEspresso\core\services\json\JsonDataNode;
+use EventEspresso\core\services\loaders\LoaderInterface;
+use EventEspresso\core\services\request\RequestInterface;
 
 /**
  * Class EspressoEventEditor
@@ -101,11 +107,22 @@ class EspressoEventEditor extends EspressoEventsAdmin
                 'EventEspresso\core\services\json\JsonDataNodeValidator'                        => EE_Dependency_Map::load_from_cache,
             ]
         );
+        $this->dependency_map->registerDependencies(
+            'EventEspresso\core\domain\services\assets\EventEditorAssetManager',
+            [
+                'EventEspresso\core\domain\Domain'                   => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\assets\AssetCollection' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\assets\Registry'        => EE_Dependency_Map::load_from_cache,
+            ]
+        );
+
+        // 'EventEspresso\core\domain\services\assets\EspressoCoreAppAssetManager'
+        // ],
         /** @var EventEspressoData $primary_data_node */
         $primary_data_node = $this->loader->getShared(
             'EventEspresso\core\domain\entities\routing\data_nodes\EventEspressoData'
         );
-        $primary_data_node->setTargetScript(EspressoCoreAppAssetManager::JS_HANDLE_EDITOR);
+        $primary_data_node->setTargetScript(EventEditorAssetManager::JS_HANDLE_EVENT_EDITOR);
         /** @var EventEditor $data_node */
         $data_node = $this->loader->getShared(
             'EventEspresso\core\domain\entities\routing\data_nodes\domains\EventEditor'
@@ -125,10 +142,12 @@ class EspressoEventEditor extends EspressoEventsAdmin
         /** @var GraphQLManager $graphQL_manager */
         $graphQL_manager = $this->loader->getShared('EventEspresso\core\services\graphql\GraphQLManager');
         $graphQL_manager->init();
-        $this->asset_manager = $this->loader->getShared(
-            'EventEspresso\core\domain\services\assets\EspressoCoreAppAssetManager'
+
+        /** @var EventEditorAssetManager $asset_manager */
+        $asset_manager = $this->loader->getShared(
+            'EventEspresso\core\domain\services\assets\EventEditorAssetManager'
         );
-        add_action('admin_enqueue_scripts', [$this->asset_manager, 'enqueueBrowserAssets'], 100);
+        add_action('admin_enqueue_scripts', [$asset_manager, 'enqueueEventEditor'], 100);
         return true;
     }
 }
