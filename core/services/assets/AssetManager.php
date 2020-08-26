@@ -7,7 +7,6 @@ use EventEspresso\core\domain\DomainInterface;
 use EventEspresso\core\domain\values\assets\Asset;
 use EventEspresso\core\domain\values\assets\BrowserAsset;
 use EventEspresso\core\domain\values\assets\JavascriptAsset;
-use EventEspresso\core\domain\values\assets\ManifestFile;
 use EventEspresso\core\domain\values\assets\StylesheetAsset;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidEntityException;
@@ -23,6 +22,8 @@ use EventEspresso\core\services\collections\DuplicateCollectionIdentifierExcepti
  */
 abstract class AssetManager implements AssetManagerInterface
 {
+
+    const EE_NAMESPACE = 'eventespresso-';
 
     /**
      * @var AssetCollection|Asset[] $assets
@@ -53,8 +54,6 @@ abstract class AssetManager implements AssetManagerInterface
         $this->assets = $assets;
         $this->registry = $registry;
         $this->registry->addAssetCollection($assets);
-        add_action('wp_enqueue_scripts', array($this, 'addManifestFile'), 0);
-        add_action('admin_enqueue_scripts', array($this, 'addManifestFile'), 0);
         add_action('wp_enqueue_scripts', array($this, 'addAssets'), 2);
         add_action('admin_enqueue_scripts', array($this, 'addAssets'), 2);
     }
@@ -76,34 +75,6 @@ abstract class AssetManager implements AssetManagerInterface
     public function assetNamespace()
     {
         return $this->domain->assetNamespace();
-    }
-
-
-    /**
-     * @return void
-     * @throws DuplicateCollectionIdentifierException
-     * @throws InvalidDataTypeException
-     * @throws InvalidEntityException
-     * @since 4.9.62.p
-     */
-    public function addManifestFile()
-    {
-        // if a manifest file has already been added for this domain, then just return
-        if ($this->assets->has($this->domain->assetNamespace())) {
-            return;
-        }
-        $asset = new ManifestFile($this->domain);
-        $this->assets->add($asset, $this->domain->assetNamespace());
-    }
-
-
-    /**
-     * @return ManifestFile[]
-     * @since 4.9.62.p
-     */
-    public function getManifestFile()
-    {
-        return $this->assets->getManifestFiles();
     }
 
 
@@ -329,5 +300,48 @@ abstract class AssetManager implements AssetManagerInterface
             : $details['dependencies'];
         return $details;
 
+    }
+
+
+    /**
+     * @param string $handle
+     * @return bool
+     * @throws DomainException
+     */
+    public function verifyAssetIsRegistered($handle)
+    {
+        if (wp_script_is($handle, 'registered')) {
+            return true;
+        }
+        if (WP_DEBUG) {
+            throw new DomainException(
+                sprintf(
+                    esc_html__('The "%1$s" script is not registered when it should be!', 'event_espresso'),
+                    $handle
+                )
+            );
+        }
+        return false;
+    }
+
+
+    /**************** deprecated ****************/
+
+
+    /**
+     * @return void
+     * @deprecated $VID:$
+     */
+    public function addManifestFile()
+    {
+    }
+
+
+    /**
+     * @return void
+     * @deprecated $VID:$
+     */
+    public function getManifestFile()
+    {
     }
 }

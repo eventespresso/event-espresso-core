@@ -18,20 +18,17 @@ class EventEditorAssetManager extends ReactAssetManager
 
     const JS_HANDLE_EVENT_EDITOR = AssetManager::EE_NAMESPACE . EventEditorAssetManager::DOMAIN;
 
+
+    /**
+     * @throws DomainException
+     */
     public function enqueueEventEditor()
     {
-        $registered = wp_script_is(EventEditorAssetManager::JS_HANDLE_EVENT_EDITOR, 'registered');
-        if (WP_DEBUG && ! $registered) {
-            throw new DomainException(
-                sprintf(
-                    esc_html__('The "%1$s" script is not registered when it should be!', 'event_espresso'),
-                    EventEditorAssetManager::JS_HANDLE_EVENT_EDITOR
-                )
+        if ($this->verifyAssetIsRegistered(EventEditorAssetManager::JS_HANDLE_EVENT_EDITOR)) {
+            wp_enqueue_script(
+                EventEditorAssetManager::JS_HANDLE_EVENT_EDITOR,
+                $this->domain->distributionAssetsUrl()
             );
         }
-        wp_enqueue_script(
-            EventEditorAssetManager::JS_HANDLE_EVENT_EDITOR,
-            $this->domain->distributionAssetsUrl()
-        );
     }
 }
