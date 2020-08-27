@@ -95,13 +95,19 @@ class EeAddonTestCase extends EE_UnitTestCase
 
     protected function registerAddon($addon_name = 'EE_NewAddonMock', $options = array())
     {
+        $addon_count = count(EE_Registry::instance()->addons);
+        if ($addon_count) {
+            foreach (EE_Registry::instance()->addons as $addon) {
+                \EEH_Debug_Tools::printr($addon->name(), '$addon->name()', __FILE__, __LINE__);
+            }
+        }
         //register addon with default options.
         EE_NewAddonMock::registerWithGivenOptions($addon_name, $options);
         //ensure the addon has been registered
         $this->assertArrayHasKey($addon_name, EE_Registry::instance()->addons);
         $this->assertInstanceOf($addon_name, EE_Registry::instance()->addons->{$addon_name});
         //assert is the only addon setup
-        $this->assertCount(1, EE_Registry::instance()->addons);
+        $this->assertCount($addon_count + 1, EE_Registry::instance()->addons);
         $this->addon                    = EE_Registry::instance()->addons->{$addon_name};
         $this->addon_activation_history = $this->addon->get_activation_history();
     }
