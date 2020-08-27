@@ -9,7 +9,6 @@ services:
 
 cache:
   apt: true
-  yarn: true
   directories:
     - $HOME/.composer/cache
 
