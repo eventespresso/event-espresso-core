@@ -119,9 +119,11 @@ class AssetManifest
         $manifest_path = $manifest_path ? $manifest_path : $this->assets_path . AssetManifest::FILE_NAME;
         if (! is_readable($manifest_path)) {
             throw new AssetManifestException(
+                $manifest_path,
+                AssetManifest::FILE_NAME,
                 sprintf(
                     esc_html__(
-                        'Manifest file was not found or is not readable. Please try running "yarn dev" in the console and/or verify that "%1$s" exists and has valid permissions.',
+                        'The "%1$s" file was not found or is not readable. Please verify that the file exists and has appropriate permissions.',
                         'event_espresso'
                     ),
                     $manifest_path
