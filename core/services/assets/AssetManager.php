@@ -23,8 +23,6 @@ use EventEspresso\core\services\collections\DuplicateCollectionIdentifierExcepti
 abstract class AssetManager implements AssetManagerInterface
 {
 
-    const EE_NAMESPACE = 'eventespresso-';
-
     /**
      * @var AssetCollection|Asset[] $assets
      */

@@ -3,7 +3,7 @@
 namespace EventEspresso\core\domain\services\assets;
 
 use DomainException;
-use EventEspresso\core\services\assets\AssetManager;
+use EventEspresso\core\domain\Domain;
 
 /**
  * EventEditorAssetManager assets for the EE admin event editor
@@ -16,7 +16,7 @@ class EventEditorAssetManager extends ReactAssetManager
 {
     const DOMAIN = 'eventEditor';
 
-    const ASSET_HANDLE_EVENT_EDITOR = AssetManager::EE_NAMESPACE . EventEditorAssetManager::DOMAIN;
+    const ASSET_HANDLE_EVENT_EDITOR = Domain::ASSET_NAMESPACE . EventEditorAssetManager::DOMAIN;
 
 
     /**

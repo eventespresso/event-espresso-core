@@ -20,6 +20,8 @@ class Domain extends DomainBase implements CaffeinatedInterface
      */
     const API_NAMESPACE = 'ee/v';
 
+    const ASSET_NAMESPACE = 'eventespresso-';
+
     /**
      * Slug used for the context where a registration status is changed from a manual trigger in the Registration Admin
      * Page ui.
