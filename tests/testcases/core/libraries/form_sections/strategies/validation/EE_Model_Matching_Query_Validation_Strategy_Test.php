@@ -19,7 +19,6 @@ class EE_Model_Matching_Query_Validation_Strategy_Test extends EE_UnitTestCase {
      * @throws ReflectionException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @doesNotPerformAssertions
      */
 	public function test_valid() {
 		$validator = new EE_Model_Matching_Query_Validation_Strategy(

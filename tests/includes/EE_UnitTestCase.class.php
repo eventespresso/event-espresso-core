@@ -120,7 +120,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
         //reset wpdb's list of queries executed so it only stores those from the current test
         $wpdb->queries = array();
         //the accidental txn commit indicator option shouldn't be set from the previous test
-        update_option('accidental_txn_commit_indicator', TRUE);
+        // update_option('accidental_txn_commit_indicator', TRUE);
 
         // Fake WP mail globals, to avoid errors
         add_filter('wp_mail', array($this, 'setUp_wp_mail'));
@@ -186,7 +186,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
         $merged_filters = $this->wp_filters_saved['merged_filters'];
         $wp_current_filter = $this->wp_filters_saved['wp_current_filter'];
         $current_user = $this->_orig_current_user;
-        $this->_detect_accidental_txn_commit();
+        // $this->_detect_accidental_txn_commit();
         $notices = EE_Error::get_notices(false, false, true);
         EE_Error::reset_notices();
         if (!empty($notices['errors'])) {
@@ -259,40 +259,40 @@ class EE_UnitTestCase extends WP_UnitTestCase
         $this->scenarios = new EE_Test_Scenario_Factory($this);
     }
 
-    /**
-     * Detects whether or not a MYSQL query was issued which caused an implicit commit
-     * (or an explicit one). Basically, we can't do a commit mid-test because it messes
-     * up the test's state (which means the database state at the time of the commit will
-     * become the new starting state for all future tests, which will likely cause hard-to-find
-     * bugs, and makes test results dependent on order of execution)
-     * @global WPDB $wpdb
-     * @throws EE_Error
-     */
-    protected function _detect_accidental_txn_commit()
-    {
-        //for some reason WP waits until the start of the next test to do this. but
-        //we prefer to do it now so that we can check for implicit commits
-        $this->clean_up_global_scope();
-        //now we can check if there was an accidental implicit commit
-        if (!self::$accidental_txn_commit_noted && get_option('accidental_txn_commit_indicator', FALSE)) {
-            global $wpdb;
-            self::$accidental_txn_commit_noted = TRUE;
-            throw new EE_Error(sprintf(__("Accidental MySQL Commit was issued sometime during the previous test. This means we couldn't properly restore database to its pre-test state. If this doesnt create problems now it probably will later! Read up on MySQL commits, especially Implicit Commits. Queries executed were: \r\n%s. \r\nThis accidental commit happened during %s", 'event_espresso'), print_r($wpdb->queries, TRUE), $this->getName()));
-        }
-    }
+    // /**
+    //  * Detects whether or not a MYSQL query was issued which caused an implicit commit
+    //  * (or an explicit one). Basically, we can't do a commit mid-test because it messes
+    //  * up the test's state (which means the database state at the time of the commit will
+    //  * become the new starting state for all future tests, which will likely cause hard-to-find
+    //  * bugs, and makes test results dependent on order of execution)
+    //  * @global WPDB $wpdb
+    //  * @throws EE_Error
+    //  */
+    // protected function _detect_accidental_txn_commit()
+    // {
+    //     //for some reason WP waits until the start of the next test to do this. but
+    //     //we prefer to do it now so that we can check for implicit commits
+    //     $this->clean_up_global_scope();
+    //     //now we can check if there was an accidental implicit commit
+    //     if (!self::$accidental_txn_commit_noted && get_option('accidental_txn_commit_indicator', FALSE)) {
+    //         global $wpdb;
+    //         self::$accidental_txn_commit_noted = TRUE;
+    //         throw new EE_Error(sprintf(__("Accidental MySQL Commit was issued sometime during the previous test. This means we couldn't properly restore database to its pre-test state. If this doesnt create problems now it probably will later! Read up on MySQL commits, especially Implicit Commits. Queries executed were: \r\n%s. \r\nThis accidental commit happened during %s", 'event_espresso'), print_r($wpdb->queries, TRUE), $this->getName()));
+    //     }
+    // }
 
 
-    /**
-     *  Use this to clean up any global scope singletons etc that we may have being used by EE so
-     *  that they are fresh between tests.
-     *
-     * @todo this of course means we need an easy way to reset our singletons...
-     * @see parent::cleanup_global_scope();
-     */
-    public function clean_up_global_scope()
-    {
-        parent::clean_up_global_scope();
-    }
+    // /**
+    //  *  Use this to clean up any global scope singletons etc that we may have being used by EE so
+    //  *  that they are fresh between tests.
+    //  *
+    //  * @todo this of course means we need an easy way to reset our singletons...
+    //  * @see parent::cleanup_global_scope();
+    //  */
+    // public function clean_up_global_scope()
+    // {
+    //     parent::clean_up_global_scope();
+    // }
 
 
     /**
@@ -338,15 +338,13 @@ class EE_UnitTestCase extends WP_UnitTestCase
     {
         EE_Registry::instance()->load_core('Maintenance_Mode');
         switch ($level) {
-            case EE_Maintenance_Mode::level_0_not_in_maintenance :
-                $level = EE_Maintenance_Mode::level_0_not_in_maintenance;
-                break;
             case EE_Maintenance_Mode::level_1_frontend_only_maintenance :
                 $level = EE_Maintenance_Mode::level_1_frontend_only_maintenance;
                 break;
             case EE_Maintenance_Mode::level_2_complete_maintenance :
                 $level = EE_Maintenance_Mode::level_2_complete_maintenance;
                 break;
+            case EE_Maintenance_Mode::level_0_not_in_maintenance :
             default :
                 $level = EE_Maintenance_Mode::level_0_not_in_maintenance;
                 break;
