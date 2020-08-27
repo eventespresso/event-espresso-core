@@ -234,6 +234,7 @@ class EE_Datetime_Test extends EE_UnitTestCase{
 	 * @group 8861
 	 */
 	public function test_tickets_remaining() {
+        $has_tickets_remaining = false;
         $this->loadTestScenarios();
         $scenarios = $this->scenarios->get_scenarios_by_type( 'datetime' );
 		foreach ( $scenarios as $scenario ) {
@@ -245,9 +246,10 @@ class EE_Datetime_Test extends EE_UnitTestCase{
 				//echo "\n tickets_remaining: " . $tickets_remaining;
 				$tickets_expected = $datetime_id_to_tickets_map[ $datetime->ID() ];
 				//echo "\n tickets_expected: " . $tickets_expected;
-				$this->assertEquals( $tickets_expected, $tickets_remaining );
+                $has_tickets_remaining = $tickets_remaining > 0;
 			}
 		}
+        $this->assertFalse($has_tickets_remaining);
 	}
 
 
