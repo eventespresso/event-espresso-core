@@ -174,6 +174,10 @@ class EE_UnitTestCase extends WP_UnitTestCase
     public function tearDown()
     {
         parent::tearDown();
+        $addon_count = count(EE_Registry::instance()->addons);
+        if ($addon_count) {
+            echo "\n\n\n addon registered during: " . get_called_class() . "\n\n";
+        }
         if ($this->request instanceof RequestInterface && ! $this->request->isFrontend()) {
             $request_type_context = new RequestTypeContext(RequestTypeContext::FRONTEND, 'mock request type');
             $request_type_context->setIsUnitTesting(true);
