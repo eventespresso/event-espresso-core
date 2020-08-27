@@ -89,6 +89,7 @@ class EeAddonTestCase extends EE_UnitTestCase
             }
             $this->stopPretendingAddonHookTime();
         }
+        $this->deRegisterAddon();
         parent::tearDown();
     }
 
