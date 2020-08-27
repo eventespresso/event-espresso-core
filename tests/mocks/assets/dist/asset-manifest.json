@@ -1,0 +1,13 @@
+{
+  "files": {
+    "mockEditor.css": "/static/css/mockEditor.49e74978.css",
+    "mockEditor.js": "/static/js/mockEditor.e77ba157.js",
+    "mockEditor.js.map": "/static/js/mockEditor.e77ba157.js.map",
+    "mockEditor.php": "/static/js/mockEditor.d8de0831.asset.php",
+  },
+    "mockEditor": [
+      "static/css/mockEditor.49e74978.css",
+      "static/js/mockEditor.e77ba157.js"
+    ],
+  }
+}

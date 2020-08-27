@@ -26,7 +26,8 @@ class DomainFactoryTest extends EE_UnitTestCase
 
     public function test_getShared()
     {
-        $file_path = EE_TESTS_DIR . 'mocks/core/domain/DomainMock.php';
+        // $file_path = EE_TESTS_DIR . 'mocks/core/domain/DomainMock.php';
+        $file_path = EE_TESTS_DIR . 'mocks/core';
         $version = '1.2.3.p';
         $domain_mock = DomainFactory::getShared(
             new FullyQualifiedName(

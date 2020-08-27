@@ -5,6 +5,7 @@ use EventEspresso\core\domain\values\FilePath;
 use EventEspresso\core\domain\values\FullyQualifiedName;
 use EventEspresso\core\domain\values\Version;
 use EventEspresso\core\services\assets\AssetCollection;
+use EventEspresso\core\services\assets\AssetManifest;
 use EventEspresso\core\services\assets\I18nRegistry;
 use EventEspresso\core\services\assets\JedLocaleData;
 use EventEspresso\core\services\assets\Registry;
@@ -44,12 +45,14 @@ class RegistryTest extends EE_UnitTestCase
                 'EventEspresso\core\domain\Domain'
             ),
             array(
-                new FilePath(EVENT_ESPRESSO_MAIN_FILE),
-                Version::fromString(espresso_version())
+                new FilePath(EE_TESTS_DIR . 'mocks/core'),
+                Version::fromString('1.2.3.p')
             )
         );
+
         $this->registry = new Registry(
             new AssetCollection(),
+            new AssetManifest($domain),
             new i18nRegistry($domain, new JedLocaleData())
         );
         parent::setUp();

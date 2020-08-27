@@ -2,8 +2,11 @@
 
 namespace EventEspresso\tests\testcases\core\domain\values\assets;
 
+use EventEspresso\core\domain\Domain;
 use EventEspresso\core\domain\DomainInterface;
 use EventEspresso\core\domain\values\assets\JavascriptAsset;
+use EventEspresso\core\domain\values\FilePath;
+use EventEspresso\core\domain\values\Version;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidFilePathException;
 use EventEspresso\tests\mocks\core\domain\DomainMock;
@@ -39,7 +42,10 @@ class JavascriptAssetTest extends EspressoPHPUnitFrameworkTestCase
      */
     public function setUp()
     {
-        $this->domain_mock = new DomainMock();
+        $this->domain_mock = new Domain(
+            new FilePath(EVENT_ESPRESSO_MAIN_FILE),
+            Version::fromString('1.2.3.p')
+        );
         $this->js_asset = $this->getAsset();
     }
 
