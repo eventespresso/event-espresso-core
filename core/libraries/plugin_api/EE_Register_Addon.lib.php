@@ -322,7 +322,7 @@ class EE_Register_Addon implements EEI_Plugin_API
         // required fields MUST be present, so let's make sure they are.
         if (empty($addon_name) || ! is_array($setup_args)) {
             throw new EE_Error(
-                __(
+                esc_html__(
                     'In order to register an EE_Addon with EE_Register_Addon::register(), you must include the "addon_name" (the name of the addon), and an array of arguments.',
                     'event_espresso'
                 )
@@ -331,7 +331,7 @@ class EE_Register_Addon implements EEI_Plugin_API
         if (! isset($setup_args['main_file_path']) || empty($setup_args['main_file_path'])) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'When registering an addon, you didn\'t provide the "main_file_path", which is the full path to the main file loaded directly by Wordpress. You only provided %s',
                         'event_espresso'
                     ),
@@ -343,7 +343,7 @@ class EE_Register_Addon implements EEI_Plugin_API
         if (isset(self::$_settings[ $addon_name ]) && ! did_action('activate_plugin')) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'An EE_Addon with the name "%s" has already been registered and each EE_Addon requires a unique name.',
                         'event_espresso'
                     ),
@@ -1024,6 +1024,14 @@ class EE_Register_Addon implements EEI_Plugin_API
             self::$_settings[ $addon_name ]['class_name'],
             array('EE_Registry::create(addon)' => true)
         );
+        if (! $addon instanceof EE_Addon) {
+            throw new DomainException(
+                sprintf(
+                    esc_html__('The "%1$s" EE_Addon class failed to instantiate!', 'event_espresso'),
+                    self::$_settings[ $addon_name ]['class_name']
+                )
+            );
+        }
         // setter inject dep map if required
         if ($addon instanceof RequiresDependencyMapInterface && $addon->dependencyMap() === null) {
             $addon->setDependencyMap($loader->getShared('EE_Dependency_Map'));
