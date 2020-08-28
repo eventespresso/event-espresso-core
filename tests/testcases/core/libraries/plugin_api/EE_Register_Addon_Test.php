@@ -96,7 +96,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
     public function test_register_mock_addon_fail()
     {
         $this->assertEquals(1, did_action('AHEE__EE_System__load_espresso_addons'));
-        $this->assertNotEquals(0, did_action('AHEE__EE_System___detect_if_activation_or_upgrade__begin'));
+        $this->assertEquals(1, did_action('AHEE__EE_System___detect_if_activation_or_upgrade__begin'));
         //we're registering the addon WAAAY after EE_System has set thing up, so
         //registering this first time should throw an E_USER_NOTICE
         try {
@@ -125,7 +125,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
         $this->_pretend_addon_hook_time();
         $this->assertEquals(0, did_action('activate_plugin'));
         try {
-            EE_Register_Addon::register(
+            $registered = EE_Register_Addon::register(
                 $this->_addon_name,
                 array(
                 	'version'          => '1.0.0',
@@ -137,8 +137,9 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
                 'We should have received a warning that the "main_file_path" is a required argument when registering an addon'
             );
         } catch (EE_Error $e) {
-            $this->assertTrue(true);
+            $registered = false;
         }
+        $this->assertFalse($registered);
 
         //check that we didn't actually register the addon
         $this->assertCount(0, EE_Registry::instance()->addons);
