@@ -255,6 +255,23 @@ class EE_Register_Addon implements EEI_Plugin_API
      */
     public static function register($addon_name = '', $setup_args = array())
     {
+        // make sure this was called in the right place!
+        if (! did_action('AHEE__EE_System__load_espresso_addons')
+            || did_action('AHEE__EE_System___detect_if_activation_or_upgrade__begin')
+        ) {
+            EE_Error::doing_it_wrong(
+                __METHOD__,
+                sprintf(
+                    esc_html__(
+                        'An attempt to register an EE_Addon named "%s" has failed because it was not registered at the correct time.  Please use the "AHEE__EE_System__load_espresso_addons" hook to register addons.',
+                        'event_espresso'
+                    ),
+                    $addon_name
+                ),
+                '4.3.0'
+            );
+            return false;
+        }
         // required fields MUST be present, so let's make sure they are.
         EE_Register_Addon::_verify_parameters($addon_name, $setup_args);
         // get class name for addon
@@ -308,7 +325,7 @@ class EE_Register_Addon implements EEI_Plugin_API
         $addon = EE_Register_Addon::_load_and_init_addon_class($addon_name);
         // delay calling after_registration hook on each addon until after all add-ons have been registered.
         add_action('AHEE__EE_System__load_espresso_addons__complete', array($addon, 'after_registration'), 999);
-        return true;
+        return $addon instanceof EE_Addon;
     }
 
 
@@ -669,9 +686,8 @@ class EE_Register_Addon implements EEI_Plugin_API
     private static function _addon_activation($addon_name, array $addon_settings)
     {
         // this is an activation request
-        if (did_action(
-            'activate_plugin'
-        )) {// to find if THIS is the addon that was activated, just check if we have already registered it or not
+        if (did_action('activate_plugin')) {
+            // to find if THIS is the addon that was activated, just check if we have already registered it or not
             // (as the newly-activated addon wasn't around the first time addons were registered).
             // Note: the presence of pue_options in the addon registration options will initialize the $_settings
             // property for the add-on, but the add-on is only partially initialized.  Hence, the additional check.
@@ -686,24 +702,6 @@ class EE_Register_Addon implements EEI_Plugin_API
                 // dont bother setting up the rest of the addon.
                 // we know it was just activated and the request will end soon
             }
-            return true;
-        }
-        // make sure this was called in the right place!
-        if (! did_action('AHEE__EE_System__load_espresso_addons')
-            || did_action('AHEE__EE_System___detect_if_activation_or_upgrade__begin')
-        ) {
-            EE_Error::doing_it_wrong(
-                __METHOD__,
-                sprintf(
-                    __(
-                        'An attempt to register an EE_Addon named "%s" has failed because it was not registered at the correct time.  Please use the "AHEE__EE_System__load_espresso_addons" hook to register addons.',
-                        'event_espresso'
-                    ),
-                    $addon_name
-                ),
-                '4.3.0'
-            );
-            // it's not really an activation request, but this will truncate the registration process
             return true;
         }
         // make sure addon settings are set correctly without overwriting anything existing
