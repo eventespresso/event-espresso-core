@@ -12,14 +12,9 @@
             <exclude>
                 <directory>../assets</directory>
                 <directory>../bin</directory>
-                <directory>../config</directory>
                 <directory>../docs</directory>
-                <directory>../eslint</directory>
                 <directory>../languages</directory>
-                <directory>../node_modules</directory>
-                <directory>../scripts</directory>
                 <directory>../public</directory>
-                <directory>../scripts</directory>
                 <directory>../tests</directory>
                 <directory>../vendor</directory>
                 <directory>../wp-assets</directory>
