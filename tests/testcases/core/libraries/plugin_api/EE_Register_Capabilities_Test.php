@@ -293,11 +293,11 @@ class EE_Register_Capabilities_Test extends EE_UnitTestCase
 
         //test activating in the wrong spot.
         try {
-            EE_Register_Capabilities::register('Test_Capabilities', $this->_valid_capabilities);
+            $registered = EE_Register_Capabilities::register('Test_Capabilities', $this->_valid_capabilities);
             $this->fail('We should have had a warning saying that we are registering capabilities at the wrong time');
         } catch (PHPUnit_Framework_Error_Notice $e) {
-            $this->assertTrue(true);
         }
+        $this->assertTrue($registered);
     }
 
 

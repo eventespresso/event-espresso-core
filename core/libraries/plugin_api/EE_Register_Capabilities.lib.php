@@ -49,7 +49,7 @@ class EE_Register_Capabilities implements EEI_Plugin_API
      *                                                                                    the arguments for the map.
      *                                                                                    }
      * @throws EE_Error
-     * @return void
+     * @return boolean|null
      */
     public static function register($cap_reference = null, $setup_args = array())
     {
@@ -64,7 +64,7 @@ class EE_Register_Capabilities implements EEI_Plugin_API
         }
         // make sure we don't register twice
         if (isset(self::$_registry[ $cap_reference ])) {
-            return;
+            return null;
         }
         // make sure this is not registered too late or too early.
         if (! did_action('AHEE__EE_System__load_espresso_addons')
@@ -81,6 +81,7 @@ class EE_Register_Capabilities implements EEI_Plugin_API
                 ),
                 '4.5.0'
             );
+            return false;
         }
         // some preliminary sanitization and setting to the $_registry property
         self::$_registry[ $cap_reference ] = array(
@@ -101,6 +102,7 @@ class EE_Register_Capabilities implements EEI_Plugin_API
             'FHEE__EE_Capabilities___set_meta_caps__meta_caps',
             array('EE_Register_Capabilities', 'register_cap_maps')
         );
+        return true;
     }
 
 
