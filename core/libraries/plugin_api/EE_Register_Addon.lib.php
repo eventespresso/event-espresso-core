@@ -256,8 +256,11 @@ class EE_Register_Addon implements EEI_Plugin_API
     public static function register($addon_name = '', $setup_args = array())
     {
         // make sure this was called in the right place!
-        if (! did_action('AHEE__EE_System__load_espresso_addons')
-            || did_action('AHEE__EE_System___detect_if_activation_or_upgrade__begin')
+        if (! did_action('activate_plugin')
+            && (
+                ! did_action('AHEE__EE_System__load_espresso_addons')
+                || did_action('AHEE__EE_System___detect_if_activation_or_upgrade__begin')
+            )
         ) {
             EE_Error::doing_it_wrong(
                 __METHOD__,
