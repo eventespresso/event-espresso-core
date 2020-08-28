@@ -98,11 +98,10 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
         //registering this first time should throw an E_USER_NOTICE
         try {
             $registered = EE_Register_Addon::register($this->_addon_name, $this->_reg_args);
-            $this->assertFalse($registered);
             $this->fail('We should have had a warning saying that we are setting up the ee addon at the wrong time');
         } catch (PHPUnit_Framework_Error_Notice $e) {
-            $this->assertTrue(true);
         }
+        $this->assertFalse($registered);
         //check that we didn't actually register the addon
         $this->assertArrayNotHasKey('EE_New_Addon', EE_Registry::instance()->addons);
         //check DMSs weren't setup either
