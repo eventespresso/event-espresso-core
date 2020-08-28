@@ -63,6 +63,10 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
         );
         // will be overridden by _pretend_addon_hook_time() on a per test basis as needed
         $this->_stop_pretending_addon_hook_time();
+        // make sure that NO OTHER ADD_ONS are registered
+        foreach (EE_Registry::instance()->addons as $key => $addon) {
+            EE_Registry::instance()->addons->offsetUnset($key);
+        }
     }
 
 
@@ -92,9 +96,10 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
 
 
 
-    //test registering a bare minimum addon, and then de-registering it
+    // test registering a bare minimum addon, and then de-registering it
     public function test_register_mock_addon_fail()
     {
+        $this->assertEquals(0, did_action('activate_plugin'));
         $this->assertEquals(1, did_action('AHEE__EE_System__load_espresso_addons'));
         $this->assertEquals(1, did_action('AHEE__EE_System___detect_if_activation_or_upgrade__begin'));
         //we're registering the addon WAAAY after EE_System has set thing up, so
@@ -121,9 +126,11 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
 
     public function test_register_mock_addon_fail__bad_parameters()
     {
-        //we're registering the addon with the wrong parameters
+        // we're registering the addon at the right time but with the wrong parameters
         $this->_pretend_addon_hook_time();
         $this->assertEquals(0, did_action('activate_plugin'));
+        $this->assertEquals(1, did_action('AHEE__EE_System__load_espresso_addons'));
+        $this->assertEquals(0, did_action('AHEE__EE_System___detect_if_activation_or_upgrade__begin'));
         try {
             $registered = EE_Register_Addon::register(
                 $this->_addon_name,
