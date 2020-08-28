@@ -1112,10 +1112,10 @@ class EE_UnitTestCase extends WP_UnitTestCase
     protected function _stop_pretending_addon_hook_time()
     {
         global $wp_actions;
+        $wp_actions['AHEE__EE_System__load_espresso_addons'] = 1;
         $wp_actions['AHEE__EE_System___detect_if_activation_or_upgrade__begin'] = 1;
         $wp_actions['FHEE__EE_System__parse_model_names'] = 1;
         $wp_actions['FHEE__EE_System__parse_implemented_model_names'] = 1;
-        unset($wp_actions['AHEE__EE_System__load_espresso_addons']);
     }
 
 
