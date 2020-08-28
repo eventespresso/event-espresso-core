@@ -135,8 +135,15 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
         } catch (EE_Error $e) {
             $this->assertTrue(true);
         }
+
+        $addon_count = count(EE_Registry::instance()->addons);
+        if ($addon_count) {
+            foreach (EE_Registry::instance()->addons as $key => $addon) {
+                \EEH_Debug_Tools::printr($addon->name(), $key, __FILE__, __LINE__);
+            }
+        }
         //check that we didn't actually register the addon
-        $this->assertArrayNotHasKey('EE_New_Addon', EE_Registry::instance()->addons);
+        $this->assertArrayNotHasKey('EE_New_Addon', (array) EE_Registry::instance()->addons);
         //check DMSs weren't setup either
         $DMSs_available = EE_Data_Migration_Manager::reset()->get_all_data_migration_scripts_available();
         $this->assertArrayNotHasKey('EE_DMS_New_Addon_1_0_0', $DMSs_available);
@@ -155,7 +162,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
         if (did_action('activate_plugin')) {
             $this->assertTrue(false);
         }
-        $this->assertArrayNotHasKey('EE_New_Addon', EE_Registry::instance()->addons);
+        $this->assertArrayNotHasKey('EE_New_Addon', (array) EE_Registry::instance()->addons);
         //just to make this test truly test the "eea-new-addon", use its own addon params
         //this way we're more likely to keep the EE_New_Addon up-to-date
         require_once(EE_TESTS_DIR . 'mocks/addons/eea-new-addon/eea-new-addon.php');
@@ -163,7 +170,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
         EE_New_Addon::register_addon();
         $this->assertArrayHasKey(
             'EE_New_Addon',
-            EE_Registry::instance()->addons
+            (array) EE_Registry::instance()->addons
         );
         $this->assertInstanceOf(
             'EE_New_Addon',
@@ -287,7 +294,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
 
         $this->assertArrayHasKey(
             'EE_New_Addon',
-            EE_Registry::instance()->addons
+            (array) EE_Registry::instance()->addons
         );
         $this->assertInstanceOf(
             'EE_New_Addon',
@@ -318,7 +325,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
         EE_Register_Addon::register($this->_addon_name, $this->_reg_args);
         $this->assertArrayHasKey(
             'EE_New_Addon',
-            EE_Registry::instance()->addons
+            (array) EE_Registry::instance()->addons
         );
         $this->assertInstanceOf(
             'EE_New_Addon',
