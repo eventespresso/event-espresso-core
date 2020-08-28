@@ -39,23 +39,24 @@ Class  EE_New_Addon extends EE_Addon {
     // }
 
 
-
     /**
      * !!! IMPORTANT !!!
-	 * this is not the place to perform any logic or add any other filter or action callbacks
-	 * this is just to bootstrap your addon; and keep in mind the addon might be DE-registered
-	 * in which case your callbacks should probably not be executed.
+     * this is not the place to perform any logic or add any other filter or action callbacks
+     * this is just to bootstrap your addon; and keep in mind the addon might be DE-registered
+     * in which case your callbacks should probably not be executed.
      * EED_New_Addon is typically the best place for most filter and action callbacks
      * to be placed (relating to the primary business logic of your addon)
      * IF however for some reason, a module does not work because you have some logic
      * that needs to run earlier than when the modules load,
      * then please see the after_registration() method below.
      *
-     * @throws \EE_Error
-	 */
+     * @return bool
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
 	public static function register_addon() {
 		// register addon via Plugin API
-		EE_Register_Addon::register(
+		return EE_Register_Addon::register(
 			'New_Addon',
 			array(
 				'version'               => EE_NEW_ADDON_VERSION,
