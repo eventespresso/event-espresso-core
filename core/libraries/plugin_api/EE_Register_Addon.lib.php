@@ -245,7 +245,7 @@ class EE_Register_Addon implements EEI_Plugin_API
      * @type string                   $personal_data_erasers            FQNSs (namespaces, each of which contains only
      *                                                                  privacy policy classes) or FQCNs (specific
      *                                                                  classnames of privacy policy classes)
-     * @return void
+     * @return boolean
      * @throws DomainException
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -265,14 +265,14 @@ class EE_Register_Addon implements EEI_Plugin_API
         EE_Register_Addon::_parse_pue_options($addon_name, $class_name, $setup_args);
         // does this addon work with this version of core or WordPress ?
         if (! EE_Register_Addon::_addon_is_compatible($addon_name, $addon_settings)) {
-            return;
+            return false;
         }
         // register namespaces
         EE_Register_Addon::_setup_namespaces($addon_settings);
         // check if this is an activation request
         if (EE_Register_Addon::_addon_activation($addon_name, $addon_settings)) {
             // dont bother setting up the rest of the addon atm
-            return;
+            return false;
         }
         // we need cars
         EE_Register_Addon::_setup_autoloaders($addon_name);
@@ -308,6 +308,7 @@ class EE_Register_Addon implements EEI_Plugin_API
         $addon = EE_Register_Addon::_load_and_init_addon_class($addon_name);
         // delay calling after_registration hook on each addon until after all add-ons have been registered.
         add_action('AHEE__EE_System__load_espresso_addons__complete', array($addon, 'after_registration'), 999);
+        return true;
     }
 
 
@@ -702,6 +703,8 @@ class EE_Register_Addon implements EEI_Plugin_API
                 ),
                 '4.3.0'
             );
+            // it's not really an activation request, but this will truncate the registration process
+            return true;
         }
         // make sure addon settings are set correctly without overwriting anything existing
         if (isset(self::$_settings[ $addon_name ])) {

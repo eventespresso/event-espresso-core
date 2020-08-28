@@ -97,7 +97,8 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
         //we're registering the addon WAAAY after EE_System has set thing up, so
         //registering this first time should throw an E_USER_NOTICE
         try {
-            EE_Register_Addon::register($this->_addon_name, $this->_reg_args);
+            $registered = EE_Register_Addon::register($this->_addon_name, $this->_reg_args);
+            $this->assertFalse($registered);
             $this->fail('We should have had a warning saying that we are setting up the ee addon at the wrong time');
         } catch (PHPUnit_Framework_Error_Notice $e) {
             $this->assertTrue(true);
@@ -282,7 +283,9 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
     public function test_register_mock_addon__activation()
     {
         $this->_pretend_after_plugin_activation();
-        EE_Register_Addon::register($this->_addon_name, $this->_reg_args);
+        $registered = EE_Register_Addon::register($this->_addon_name, $this->_reg_args);
+        $this->assertFalse($registered);
+
         $this->assertArrayHasKey(
             'EE_New_Addon',
             EE_Registry::instance()->addons
