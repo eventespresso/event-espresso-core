@@ -61,6 +61,8 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
             20,
             3
         );
+        // will be overridden by _pretend_addon_hook_time() on a per test basis as needed
+        $this->_stop_pretending_addon_hook_time();
     }
 
 
@@ -93,17 +95,21 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
     //test registering a bare minimum addon, and then de-registering it
     public function test_register_mock_addon_fail()
     {
-        // echo "\n\n " . __LINE__ . ") " . __METHOD__ . "()";
+        $this->assertEquals(1, did_action('AHEE__EE_System__load_espresso_addons'));
+        $this->assertNotEquals(0, did_action('AHEE__EE_System___detect_if_activation_or_upgrade__begin'));
         //we're registering the addon WAAAY after EE_System has set thing up, so
         //registering this first time should throw an E_USER_NOTICE
         try {
             $registered = EE_Register_Addon::register($this->_addon_name, $this->_reg_args);
             $this->fail('We should have had a warning saying that we are setting up the ee addon at the wrong time');
         } catch (PHPUnit_Framework_Error_Notice $e) {
+            $registered = false;
         }
         $this->assertFalse($registered);
         //check that we didn't actually register the addon
-        $this->assertArrayNotHasKey('EE_New_Addon', EE_Registry::instance()->addons);
+        // $this->assertArrayNotHasKey('EE_New_Addon', EE_Registry::instance()->addons);
+        $this->assertFalse(isset(EE_Registry::instance()->addons->EE_New_Addon));
+
         //check DMSs weren't setup either
         $DMSs_available = EE_Data_Migration_Manager::reset()->get_all_data_migration_scripts_available();
         $this->assertArrayNotHasKey('EE_DMS_New_Addon_1_0_0', $DMSs_available);
@@ -117,9 +123,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
     {
         //we're registering the addon with the wrong parameters
         $this->_pretend_addon_hook_time();
-        if (did_action('activate_plugin')) {
-            $this->assertTrue(false);
-        }
+        $this->assertEquals(0, did_action('activate_plugin'));
         try {
             EE_Register_Addon::register(
                 $this->_addon_name,
@@ -136,14 +140,10 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
             $this->assertTrue(true);
         }
 
-        $addon_count = count(EE_Registry::instance()->addons);
-        if ($addon_count) {
-            foreach (EE_Registry::instance()->addons as $key => $addon) {
-                \EEH_Debug_Tools::printr($addon->name(), $key, __FILE__, __LINE__);
-            }
-        }
         //check that we didn't actually register the addon
-        $this->assertArrayNotHasKey('EE_New_Addon', (array) EE_Registry::instance()->addons);
+        $this->assertCount(0, EE_Registry::instance()->addons);
+        $this->assertFalse(isset(EE_Registry::instance()->addons->EE_New_Addon));
+        // $this->assertArrayNotHasKey('EE_New_Addon', (array) EE_Registry::instance()->addons);
         //check DMSs weren't setup either
         $DMSs_available = EE_Data_Migration_Manager::reset()->get_all_data_migration_scripts_available();
         $this->assertArrayNotHasKey('EE_DMS_New_Addon_1_0_0', $DMSs_available);
@@ -159,19 +159,19 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
         $this->assertFalse($this->_class_has_been_extended());
         $this->assertFalse($this->_model_has_been_extended());
         $this->_pretend_addon_hook_time();
-        if (did_action('activate_plugin')) {
-            $this->assertTrue(false);
-        }
-        $this->assertArrayNotHasKey('EE_New_Addon', (array) EE_Registry::instance()->addons);
+        $this->assertEquals(0, did_action('activate_plugin'));
+        $this->assertEquals(1, did_action('AHEE__EE_System__load_espresso_addons'));
+        $this->assertEquals(0, did_action('AHEE__EE_System___detect_if_activation_or_upgrade__begin'));
+        // $this->assertArrayNotHasKey('EE_New_Addon', (array) EE_Registry::instance()->addons);
+        $this->assertFalse(isset(EE_Registry::instance()->addons->EE_New_Addon));
         //just to make this test truly test the "eea-new-addon", use its own addon params
         //this way we're more likely to keep the EE_New_Addon up-to-date
         require_once(EE_TESTS_DIR . 'mocks/addons/eea-new-addon/eea-new-addon.php');
         require_once(EE_TESTS_DIR . 'mocks/addons/eea-new-addon/EE_New_Addon.class.php');
-        EE_New_Addon::register_addon();
-        $this->assertArrayHasKey(
-            'EE_New_Addon',
-            (array) EE_Registry::instance()->addons
-        );
+        $this->assertCount(0, EE_Registry::instance()->addons);
+        $registered = EE_New_Addon::register_addon();
+        $this->assertTrue($registered);
+        $this->assertTrue(isset(EE_Registry::instance()->addons->EE_New_Addon));
         $this->assertInstanceOf(
             'EE_New_Addon',
             EE_Registry::instance()->addons->EE_New_Addon
@@ -292,10 +292,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
         $registered = EE_Register_Addon::register($this->_addon_name, $this->_reg_args);
         $this->assertFalse($registered);
 
-        $this->assertArrayHasKey(
-            'EE_New_Addon',
-            (array) EE_Registry::instance()->addons
-        );
+        $this->assertTrue(isset(EE_Registry::instance()->addons->EE_New_Addon));
         $this->assertInstanceOf(
             'EE_New_Addon',
             EE_Registry::instance()->addons->EE_New_Addon
@@ -316,17 +313,13 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
      */
     public function test_register_addon_called_twice_on_activation()
     {
+        remove_all_filters('AHEE__EE_System__load_espresso_addons');
         EE_System::reset();
         $this->_pretend_addon_hook_time();
-        if (did_action('activate_plugin')) {
-            $this->assertTrue(false);
-        }
-        $this->assertFalse(property_exists(EE_Registry::instance()->addons, 'EE_New_Addon'));
+        $this->assertEquals(0, did_action('activate_plugin'));
+        $this->assertFalse(isset(EE_Registry::instance()->addons->EE_New_Addon));
         EE_Register_Addon::register($this->_addon_name, $this->_reg_args);
-        $this->assertArrayHasKey(
-            'EE_New_Addon',
-            (array) EE_Registry::instance()->addons
-        );
+        $this->assertTrue(isset(EE_Registry::instance()->addons->EE_New_Addon));
         $this->assertInstanceOf(
             'EE_New_Addon',
             EE_Registry::instance()->addons->EE_New_Addon
@@ -347,7 +340,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
             										->EE_New_Addon
             										->get_main_plugin_file_basename();
             EE_Register_Addon::deregister($this->_addon_name);
-            $this->assertArrayNotHasKey('EE_New_Addon', EE_Registry::instance()->addons);
+            $this->assertFalse(isset(EE_Registry::instance()->addons->EE_New_Addon));
             //verify the de-activation hook was removed
             $this->assertFalse(has_action('deactivate_' . $main_file_path_before_deregistration));
             //verify the models were deregistered

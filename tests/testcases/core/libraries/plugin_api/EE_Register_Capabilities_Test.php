@@ -82,6 +82,9 @@ class EE_Register_Capabilities_Test extends EE_UnitTestCase
             'capabilities'    => $capabilities_array,
             'capability_maps' => $numeric_cap_maps_array,
         );
+        global $wp_actions;
+        $wp_actions['AHEE__EE_System__load_espresso_addons'] = 1;
+        $wp_actions['AHEE__EE_System___detect_if_activation_or_upgrade__begin'] = 1;
     }
 
 
@@ -290,14 +293,16 @@ class EE_Register_Capabilities_Test extends EE_UnitTestCase
 
     public function test_registering_capabilities_too_early()
     {
-
+        $this->assertEquals(1, did_action('AHEE__EE_System__load_espresso_addons'));
+        $this->assertEquals(1, did_action('AHEE__EE_System___detect_if_activation_or_upgrade__begin'));
         //test activating in the wrong spot.
         try {
             $registered = EE_Register_Capabilities::register('Test_Capabilities', $this->_valid_capabilities);
             $this->fail('We should have had a warning saying that we are registering capabilities at the wrong time');
         } catch (PHPUnit_Framework_Error_Notice $e) {
+            $registered = false;
         }
-        $this->assertTrue($registered);
+        $this->assertFalse($registered);
     }
 
 
