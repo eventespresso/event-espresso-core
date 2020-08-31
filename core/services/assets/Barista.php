@@ -45,8 +45,6 @@ class Barista
             add_action('admin_enqueue_scripts', [$this, 'registerScripts'], 0);
             add_action('wp_enqueue_scripts', [$this, 'registerPackagesStyles'], 0);
             add_action('admin_enqueue_scripts', [$this, 'registerPackagesStyles'], 0);
-            add_action('wp_enqueue_scripts', [$this, 'addInlineData'], 10);
-            add_action('admin_enqueue_scripts', [$this, 'addInlineData'], 10);
             $this->initialized = true;
         }
     }
