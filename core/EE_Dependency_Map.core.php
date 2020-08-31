@@ -742,7 +742,6 @@ class EE_Dependency_Map
             ],
             'EventEspresso\core\services\assets\Barista' => [
                 'EventEspresso\core\services\assets\AssetManifest' => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\domain\Domain'                 => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\services\assets\AssetManifest' => [
                 'EventEspresso\core\domain\Domain'                 => EE_Dependency_Map::load_from_cache,

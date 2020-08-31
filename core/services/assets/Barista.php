@@ -2,8 +2,6 @@
 
 namespace EventEspresso\core\services\assets;
 
-use EventEspresso\core\domain\DomainInterface;
-
 /**
  * @package EventEspresso\core\services\assets
  * @author  Manzoor Wani, Brent Christensen
@@ -14,18 +12,11 @@ class Barista
 
     const DEPENDENCY_LIST_REGISTERED = 'registered';
 
-    const INLINE_SCRIPT_TARGET_HANDLE = 'hooks';
-
 
     /**
      * @var AssetManifest
      */
     private $asset_manifest;
-
-    /**
-     * @var DomainInterface
-     */
-    protected $domain;
 
     /**
      * @var bool
@@ -37,12 +28,10 @@ class Barista
      * Barista constructor.
      *
      * @param AssetManifest   $asset_manifest
-     * @param DomainInterface $domain
      */
-    public function __construct(AssetManifest $asset_manifest, DomainInterface $domain)
+    public function __construct(AssetManifest $asset_manifest)
     {
         $this->asset_manifest = $asset_manifest;
-        $this->domain         = $domain;
     }
 
 
@@ -101,18 +90,5 @@ class Barista
                 wp_register_style($handle, $source, $dependencies, $version, 'all');
             }
         }
-    }
-
-
-    /**
-     * @return void
-     */
-    public function addInlineData()
-    {
-        wp_add_inline_script(
-            $this->asset_manifest->getAssetHandle(Barista::INLINE_SCRIPT_TARGET_HANDLE),
-            sprintf('var baristaAssetsUrl = "%s";', $this->domain->distributionAssetsUrl()),
-            'before'
-        );
     }
 }
