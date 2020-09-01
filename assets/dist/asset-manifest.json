@@ -11,9 +11,9 @@
     "blocks.js.map": "/static/js/blocks.4d75a365.js.map",
     "blocks.php": "/static/js/blocks.41ae8b22.asset.php",
     "components.css": "/static/css/components.2c8dd9cb.css",
-    "components.js": "/static/js/components.8fe4643a.js",
-    "components.js.map": "/static/js/components.8fe4643a.js.map",
-    "components.php": "/static/js/components.cf4f8648.asset.php",
+    "components.js": "/static/js/components.34a8fe10.js",
+    "components.js.map": "/static/js/components.34a8fe10.js.map",
+    "components.php": "/static/js/components.ffa54b48.asset.php",
     "config.js": "/static/js/config.5a2ba388.js",
     "config.js.map": "/static/js/config.5a2ba388.js.map",
     "config.php": "/static/js/config.66efa6dc.asset.php",
@@ -102,16 +102,16 @@
     "static/css/toaster.7aed8001.css.map": "/static/css/toaster.7aed8001.css.map",
     "static/css/tpc.e0800e1e.css.map": "/static/css/tpc.e0800e1e.css.map",
     "static/css/wpPluginsPage.9b2fdbb0.css.map": "/static/css/wpPluginsPage.9b2fdbb0.css.map",
-    "static/js/adapters.11da1f55.js.LICENSE.txt": "/static/js/adapters.11da1f55.js.LICENSE.txt",
-    "static/js/components.8fe4643a.js.LICENSE.txt": "/static/js/components.8fe4643a.js.LICENSE.txt",
-    "static/js/data.ee282425.js.LICENSE.txt": "/static/js/data.ee282425.js.LICENSE.txt",
-    "static/js/dates.8cfb6a52.js.LICENSE.txt": "/static/js/dates.8cfb6a52.js.LICENSE.txt",
-    "static/js/eventEditor.b12fae0f.js.LICENSE.txt": "/static/js/eventEditor.b12fae0f.js.LICENSE.txt",
-    "static/js/form.2e4881b7.js.LICENSE.txt": "/static/js/form.2e4881b7.js.LICENSE.txt",
-    "static/js/richTextEditor.230c7546.js.LICENSE.txt": "/static/js/richTextEditor.230c7546.js.LICENSE.txt",
-    "static/js/rruleGenerator.aea9244b.js.LICENSE.txt": "/static/js/rruleGenerator.aea9244b.js.LICENSE.txt",
-    "static/js/toaster.daa9ac66.js.LICENSE.txt": "/static/js/toaster.daa9ac66.js.LICENSE.txt",
-    "static/js/tpc.d676c669.js.LICENSE.txt": "/static/js/tpc.d676c669.js.LICENSE.txt",
+    "static/js/adapters.36134140.js.LICENSE.txt": "/static/js/adapters.36134140.js.LICENSE.txt",
+    "static/js/components.34a8fe10.js.LICENSE.txt": "/static/js/components.34a8fe10.js.LICENSE.txt",
+    "static/js/data.030adef2.js.LICENSE.txt": "/static/js/data.030adef2.js.LICENSE.txt",
+    "static/js/dates.2729db75.js.LICENSE.txt": "/static/js/dates.2729db75.js.LICENSE.txt",
+    "static/js/eventEditor.d560f4e4.js.LICENSE.txt": "/static/js/eventEditor.d560f4e4.js.LICENSE.txt",
+    "static/js/form.e935dad0.js.LICENSE.txt": "/static/js/form.e935dad0.js.LICENSE.txt",
+    "static/js/richTextEditor.677144bd.js.LICENSE.txt": "/static/js/richTextEditor.677144bd.js.LICENSE.txt",
+    "static/js/rruleGenerator.d1e7806f.js.LICENSE.txt": "/static/js/rruleGenerator.d1e7806f.js.LICENSE.txt",
+    "static/js/toaster.1211be4f.js.LICENSE.txt": "/static/js/toaster.1211be4f.js.LICENSE.txt",
+    "static/js/tpc.d4c2c5da.js.LICENSE.txt": "/static/js/tpc.d4c2c5da.js.LICENSE.txt",
     "static/js/wpPluginsPage.2ea5f866.js.LICENSE.txt": "/static/js/wpPluginsPage.2ea5f866.js.LICENSE.txt"
   },
   "entrypoints": {
@@ -121,7 +121,7 @@
     ],
     "components": [
       "static/css/components.2c8dd9cb.css",
-      "static/js/components.8fe4643a.js"
+      "static/js/components.34a8fe10.js"
     ],
     "config": [
       "static/js/config.5a2ba388.js"
