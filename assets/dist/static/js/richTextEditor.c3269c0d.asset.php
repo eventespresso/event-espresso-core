@@ -1,0 +1,1 @@
+<?php return array('dependencies' => array('react', 'react-dom', 'wp-keycodes'), 'version' => '874663785c5ff1c86af33af4b91fedd1');
