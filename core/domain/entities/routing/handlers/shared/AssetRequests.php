@@ -88,6 +88,15 @@ class AssetRequests extends Route
                 'EventEspresso\core\domain\services\blocks\EventAttendeesBlockRenderer' => EE_Dependency_Map::load_from_cache,
             ]
         );
+        if (apply_filters(
+            'FHEE__EventEspresso_core_domain_entities_routing_handlers_shared_AssetRequests__load_Barista',
+            true
+        )) {
+            $this->dependency_map->registerDependencies(
+                'EventEspresso\core\services\assets\Barista',
+                ['EventEspresso\core\services\assets\AssetManifest' => EE_Dependency_Map::load_from_cache]
+            );
+        }
     }
 
 
@@ -99,10 +108,15 @@ class AssetRequests extends Route
      */
     protected function requestHandler()
     {
-        /** @var Barista $barista */
-        $barista = $this->loader->getShared('EventEspresso\core\services\assets\Barista');
-        $barista->initialize();
-        $this->loader->getShared('EventEspresso\core\services\assets\Registry');
+        if (apply_filters(
+            'FHEE__EventEspresso_core_domain_entities_routing_handlers_shared_AssetRequests__load_Barista',
+            true
+        )) {
+            /** @var Barista $barista */
+            $barista = $this->loader->getShared('EventEspresso\core\services\assets\Barista');
+            $barista->initialize();
+            $this->loader->getShared('EventEspresso\core\services\assets\Registry');
+        }
         $this->loader->getShared('EventEspresso\core\domain\services\assets\CoreAssetManager');
         if ($this->canLoadBlocks()) {
             $this->loader->getShared(
