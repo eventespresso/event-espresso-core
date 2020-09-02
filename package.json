@@ -114,7 +114,7 @@
 		"eslint-plugin-react-hooks": "^4.0.4",
 		"handlebars": "^4.7.6",
 		"license-checker": "^25.0.1",
-		"lodash": "^4.17.19",
+		"lodash": "^4.17.20",
 		"mini-css-extract-plugin": "^0.9.0",
 		"pegjs": "^0.10.0",
 		"pegjs-loader": "^0.5.5",
