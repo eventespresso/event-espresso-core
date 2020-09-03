@@ -18,7 +18,7 @@ use EventEspresso\core\services\assets\Registry;
 abstract class DomainBase implements DomainInterface
 {
 
-    const DISTRIBUTION_ASSETS_FOLDER = 'assets/dist/';
+    const ASSETS_FOLDER = 'assets/';
 
     /**
      * Equivalent to `__FILE__` for main plugin file.
@@ -111,7 +111,7 @@ abstract class DomainBase implements DomainInterface
      */
     private function setDistributionAssetsPath()
     {
-        $assets_path = $this->pluginPath() . DomainBase::DISTRIBUTION_ASSETS_FOLDER;
+        $assets_path = $this->pluginPath() . DomainBase::ASSETS_FOLDER;
         if (! is_readable($assets_path)) {
             throw new DomainException(
                 sprintf(
@@ -186,7 +186,7 @@ abstract class DomainBase implements DomainInterface
      */
     public function distributionAssetsFolder()
     {
-        return DomainBase::DISTRIBUTION_ASSETS_FOLDER;
+        return DomainBase::ASSETS_FOLDER;
     }
 
 
@@ -209,8 +209,8 @@ abstract class DomainBase implements DomainInterface
     public function distributionAssetsUrl($additional_path = '')
     {
         return is_string($additional_path) && $additional_path !== ''
-            ? $this->plugin_url . DomainBase::DISTRIBUTION_ASSETS_FOLDER . $additional_path
-            : $this->plugin_url . DomainBase::DISTRIBUTION_ASSETS_FOLDER;
+            ? $this->plugin_url . DomainBase::ASSETS_FOLDER . $additional_path
+            : $this->plugin_url . DomainBase::ASSETS_FOLDER;
     }
 
 
