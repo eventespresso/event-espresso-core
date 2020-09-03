@@ -10,10 +10,10 @@
     "blocks.js": "/static/js/blocks.71de459a.js",
     "blocks.js.map": "/static/js/blocks.71de459a.js.map",
     "blocks.php": "/static/js/blocks.5d81b804.asset.php",
-    "components.css": "/static/css/components.971f3b61.css",
+    "components.css": "/static/css/components.9f340723.css",
     "components.js": "/static/js/components.1b0747ab.js",
     "components.js.map": "/static/js/components.1b0747ab.js.map",
-    "components.php": "/static/js/components.33b751df.asset.php",
+    "components.php": "/static/js/components.f8a8e68c.asset.php",
     "config.js": "/static/js/config.7144bc3e.js",
     "config.js.map": "/static/js/config.7144bc3e.js.map",
     "config.php": "/static/js/config.e9c5be83.asset.php",
@@ -87,7 +87,7 @@
     "wpPluginsPage.php": "/static/js/wpPluginsPage.f4f2baa2.asset.php",
     "static/css/adapters.0476824d.css.map": "/static/css/adapters.0476824d.css.map",
     "static/css/blocks.609a154f.css.map": "/static/css/blocks.609a154f.css.map",
-    "static/css/components.971f3b61.css.map": "/static/css/components.971f3b61.css.map",
+    "static/css/components.9f340723.css.map": "/static/css/components.9f340723.css.map",
     "static/css/dates-table-view.c10c395d.chunk.css.map": "/static/css/dates-table-view.c10c395d.chunk.css.map",
     "static/css/dates.6bee8522.css.map": "/static/css/dates.6bee8522.css.map",
     "static/css/eventEditor.82e36e2b.css.map": "/static/css/eventEditor.82e36e2b.css.map",
@@ -114,7 +114,7 @@
       "static/js/adapters.2628c33e.js"
     ],
     "components": [
-      "static/css/components.971f3b61.css",
+      "static/css/components.9f340723.css",
       "static/js/components.1b0747ab.js"
     ],
     "config": [
