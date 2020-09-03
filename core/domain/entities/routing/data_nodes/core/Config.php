@@ -99,6 +99,7 @@ class Config extends JsonDataNode
         $this->addDataNode($this->general_settings);
         $this->addDataNode($this->locale);
         $this->addDataNode($this->site_urls);
+        $this->addData('wp_debug', WP_DEBUG);
         $this->setInitialized(true);
     }
 }
