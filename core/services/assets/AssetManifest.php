@@ -11,7 +11,7 @@ use EventEspresso\core\domain\DomainInterface;
  * @author  Brent Christensen
  * @since   $VID:$
  */
-class AssetManifest
+class AssetManifest implements AssetManifestInterface
 {
 
     const ASSET_EXT_CSS      = '.css';
