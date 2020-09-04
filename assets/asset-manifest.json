@@ -46,9 +46,9 @@
     "helpers.js": "/static/js/helpers.863ccb7f.js",
     "helpers.js.map": "/static/js/helpers.863ccb7f.js.map",
     "helpers.php": "/static/js/helpers.4cd89908.asset.php",
-    "hooks.js": "/static/js/hooks.7d5870cd.js",
-    "hooks.js.map": "/static/js/hooks.7d5870cd.js.map",
-    "hooks.php": "/static/js/hooks.34950cb4.asset.php",
+    "hooks.js": "/static/js/hooks.ef060bf9.js",
+    "hooks.js.map": "/static/js/hooks.ef060bf9.js.map",
+    "hooks.php": "/static/js/hooks.43ee97bf.asset.php",
     "predicates.js": "/static/js/predicates.3e8e3240.js",
     "predicates.js.map": "/static/js/predicates.3e8e3240.js.map",
     "predicates.php": "/static/js/predicates.1e66cc89.asset.php",
@@ -141,7 +141,7 @@
       "static/js/helpers.863ccb7f.js"
     ],
     "hooks": [
-      "static/js/hooks.7d5870cd.js"
+      "static/js/hooks.ef060bf9.js"
     ],
     "predicates": [
       "static/js/predicates.3e8e3240.js"
