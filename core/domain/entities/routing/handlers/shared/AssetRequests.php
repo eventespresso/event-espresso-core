@@ -3,6 +3,9 @@
 namespace EventEspresso\core\domain\entities\routing\handlers\shared;
 
 use EE_Dependency_Map;
+use EventEspresso\core\domain\services\assets\CoreAssetManager;
+use EventEspresso\core\domain\services\assets\JqueryAssetManager;
+use EventEspresso\core\domain\services\assets\ReactAssetManager;
 use EventEspresso\core\services\assets\Barista;
 use EventEspresso\core\services\routing\Route;
 
@@ -42,12 +45,10 @@ class AssetRequests extends Route
             'EventEspresso\core\services\assets\AssetCollection' => EE_Dependency_Map::load_new_object,
             'EventEspresso\core\services\assets\Registry'        => EE_Dependency_Map::load_from_cache,
         ];
+        $this->dependency_map->registerDependencies(JqueryAssetManager::class, $default_dependencies);
+        $this->dependency_map->registerDependencies(ReactAssetManager::class, $default_dependencies);
         $this->dependency_map->registerDependencies(
-            'EventEspresso\core\domain\services\assets\ReactAssetManager',
-            $default_dependencies
-        );
-        $this->dependency_map->registerDependencies(
-            'EventEspresso\core\domain\services\assets\CoreAssetManager',
+            CoreAssetManager::class,
             [
                 'EventEspresso\core\services\assets\AssetCollection' => EE_Dependency_Map::load_new_object,
                 'EE_Currency_Config'                                 => EE_Dependency_Map::load_from_cache,
@@ -117,7 +118,8 @@ class AssetRequests extends Route
             $barista->initialize();
             $this->loader->getShared('EventEspresso\core\services\assets\Registry');
         }
-        $this->loader->getShared('EventEspresso\core\domain\services\assets\CoreAssetManager');
+        $this->loader->getShared(JqueryAssetManager::class);
+        $this->loader->getShared(CoreAssetManager::class);
         if ($this->canLoadBlocks()) {
             $this->loader->getShared(
                 'EventEspresso\core\services\editor\BlockRegistrationManager'
