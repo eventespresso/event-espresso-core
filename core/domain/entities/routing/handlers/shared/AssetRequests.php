@@ -3,10 +3,13 @@
 namespace EventEspresso\core\domain\entities\routing\handlers\shared;
 
 use EE_Dependency_Map;
+use EventEspresso\core\domain\Domain;
 use EventEspresso\core\domain\services\assets\CoreAssetManager;
 use EventEspresso\core\domain\services\assets\JqueryAssetManager;
 use EventEspresso\core\domain\services\assets\ReactAssetManager;
 use EventEspresso\core\services\assets\Barista;
+use EventEspresso\core\services\assets\BaristaFactory;
+use EventEspresso\core\services\assets\BaristaInterface;
 use EventEspresso\core\services\routing\Route;
 
 /**
@@ -109,14 +112,12 @@ class AssetRequests extends Route
      */
     protected function requestHandler()
     {
-        if (apply_filters(
-            'FHEE__EventEspresso_core_domain_entities_routing_handlers_shared_AssetRequests__load_Barista',
-            true
-        )) {
-            /** @var Barista $barista */
-            $barista = $this->loader->getShared('EventEspresso\core\services\assets\Barista');
-            $barista->initialize();
-            $this->loader->getShared('EventEspresso\core\services\assets\Registry');
+        if (apply_filters('FHEE__load_Barista', true)) {
+            $barista = BaristaFactory::create(Domain::class);
+            if ($barista instanceof BaristaInterface) {
+                $barista->initialize();
+                $this->loader->getShared('EventEspresso\core\services\assets\Registry');
+            }
         }
         $this->loader->getShared(JqueryAssetManager::class);
         $this->loader->getShared(CoreAssetManager::class);
