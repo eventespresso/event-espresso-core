@@ -7,14 +7,14 @@ namespace EventEspresso\core\services\assets;
  * @author  Manzoor Wani, Brent Christensen
  * @since   $VID:$
  */
-class Barista
+class Barista implements BaristaInterface
 {
 
     const DEPENDENCY_LIST_REGISTERED = 'registered';
 
 
     /**
-     * @var AssetManifest
+     * @var AssetManifestInterface
      */
     private $asset_manifest;
 
@@ -27,9 +27,9 @@ class Barista
     /**
      * Barista constructor.
      *
-     * @param AssetManifest   $asset_manifest
+     * @param AssetManifestInterface $asset_manifest
      */
-    public function __construct(AssetManifest $asset_manifest)
+    public function __construct(AssetManifestInterface $asset_manifest)
     {
         $this->asset_manifest = $asset_manifest;
     }
@@ -43,8 +43,8 @@ class Barista
         if (! $this->initialized) {
             add_action('wp_enqueue_scripts', [$this, 'registerScripts'], 0);
             add_action('admin_enqueue_scripts', [$this, 'registerScripts'], 0);
-            add_action('wp_enqueue_scripts', [$this, 'registerPackagesStyles'], 0);
-            add_action('admin_enqueue_scripts', [$this, 'registerPackagesStyles'], 0);
+            add_action('wp_enqueue_scripts', [$this, 'registerStyles'], 0);
+            add_action('admin_enqueue_scripts', [$this, 'registerStyles'], 0);
             $this->initialized = true;
         }
     }
@@ -76,7 +76,7 @@ class Barista
      *
      * @return void
      */
-    public function registerPackagesStyles()
+    public function registerStyles()
     {
         $entry_points = $this->asset_manifest->getEntryPoints();
         foreach ($entry_points as $entry_point) {
