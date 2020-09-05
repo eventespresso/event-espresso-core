@@ -16,9 +16,15 @@ class BaristaFactory implements FactoryInterface
      * @param string $domain_fqcn Fully Qualified Class Name for the applicable DomainInterface class
      * @return BaristaInterface
      */
-    public static function create($domain_fqcn)
+    public static function create($domain_fqcn = '')
     {
         $loader = LoaderFactory::getLoader();
+        // if no FQCN is supplied for the domain, then we are loading the defaults for core
+        // and can just request the Barista instance directly.
+        // add-ons will always have to supply their domain to retrieve their manifest
+        if ( empty($domain_fqcn)) {
+            return $loader->getShared(Barista::class);
+        }
         $domain = BaristaFactory::getDomain($loader, $domain_fqcn);
         /** @var AssetManifestInterface $asset_manifest */
         $asset_manifest = $loader->getShared(AssetManifest::class, [$domain]);

@@ -2,6 +2,9 @@
 
 namespace EventEspresso\core\services\assets;
 
+use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
+use Exception;
+
 /**
  * @package EventEspresso\core\services\assets
  * @author  Manzoor Wani, Brent Christensen
@@ -55,18 +58,23 @@ class Barista implements BaristaInterface
      * `build/` location.
      *
      * @return void
+     * @throws Exception
      */
     public function registerScripts()
     {
-        $entry_points = $this->asset_manifest->getEntryPoints();
-        foreach ($entry_points as $entry_point) {
-            if ($this->asset_manifest->hasAsset($entry_point)) {
-                $handle = $this->asset_manifest->getAssetHandle($entry_point);
-                $source = $this->asset_manifest->getAssetUrl($entry_point);
-                $dependencies = $this->asset_manifest->getAssetDependencies($entry_point);
-                $version = $this->asset_manifest->getAssetVersion($entry_point);
-                wp_register_script($handle, $source, $dependencies, $version, true);
+        try {
+            $entry_points = $this->asset_manifest->getEntryPoints();
+            foreach ($entry_points as $entry_point) {
+                if ($this->asset_manifest->hasAsset($entry_point)) {
+                    $handle = $this->asset_manifest->getAssetHandle($entry_point);
+                    $source = $this->asset_manifest->getAssetUrl($entry_point);
+                    $dependencies = $this->asset_manifest->getAssetDependencies($entry_point);
+                    $version = $this->asset_manifest->getAssetVersion($entry_point);
+                    wp_register_script($handle, $source, $dependencies, $version, true);
+                }
             }
+        } catch (Exception $exception) {
+            wp_die(new ExceptionStackTraceDisplay($exception));
         }
     }
 
@@ -75,18 +83,23 @@ class Barista implements BaristaInterface
      * Registers all the packages and domain styles that are in the build folder.
      *
      * @return void
+     * @throws Exception
      */
     public function registerStyles()
     {
-        $entry_points = $this->asset_manifest->getEntryPoints();
-        foreach ($entry_points as $entry_point) {
-            if ($this->asset_manifest->hasAsset($entry_point, AssetManifest::ASSET_EXT_CSS)) {
-                $handle = $this->asset_manifest->getAssetHandle($entry_point);
-                $source = $this->asset_manifest->getAssetUrl($entry_point, AssetManifest::ASSET_EXT_CSS);
-                $dependencies = $this->asset_manifest->getAssetDependencies($entry_point, AssetManifest::ASSET_EXT_CSS);
-                $version = $this->asset_manifest->getAssetVersion($entry_point, AssetManifest::ASSET_EXT_CSS);
-                wp_register_style($handle, $source, $dependencies, $version, 'all');
+        try {
+            $entry_points = $this->asset_manifest->getEntryPoints();
+            foreach ($entry_points as $entry_point) {
+                if ($this->asset_manifest->hasAsset($entry_point, AssetManifest::ASSET_EXT_CSS)) {
+                    $handle = $this->asset_manifest->getAssetHandle($entry_point);
+                    $source = $this->asset_manifest->getAssetUrl($entry_point, AssetManifest::ASSET_EXT_CSS);
+                    $dependencies = $this->asset_manifest->getAssetDependencies($entry_point, AssetManifest::ASSET_EXT_CSS);
+                    $version = $this->asset_manifest->getAssetVersion($entry_point, AssetManifest::ASSET_EXT_CSS);
+                    wp_register_style($handle, $source, $dependencies, $version, 'all');
+                }
             }
+        } catch (Exception $exception) {
+            wp_die(new ExceptionStackTraceDisplay($exception));
         }
     }
 }

@@ -30,5 +30,5 @@ interface BaristaInterface
 	 *
 	 * @return void
 	 */
-	public function registerPackagesStyles();
+	public function registerStyles();
 }
