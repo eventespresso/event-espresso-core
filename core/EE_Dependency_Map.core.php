@@ -741,7 +741,7 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\routing\RouteHandler' => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\services\assets\AssetManifest' => [
-                'EventEspresso\core\domain\Domain'                 => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\Domain' => EE_Dependency_Map::load_from_cache,
             ],
         ];
     }
@@ -932,6 +932,7 @@ class EE_Dependency_Map
             'EventEspresso\core\services\request\ResponseInterface'                        => 'EventEspresso\core\services\request\Response',
             'EventEspresso\core\domain\DomainInterface'                                    => 'EventEspresso\core\domain\Domain',
             'Registration_Processor'                                                       => 'EE_Registration_Processor',
+            'EventEspresso\core\services\assets\AssetManifestInterface'                    => 'EventEspresso\core\services\assets\AssetManifest',
         ];
         foreach ($aliases as $alias => $fqn) {
             if (is_array($fqn)) {

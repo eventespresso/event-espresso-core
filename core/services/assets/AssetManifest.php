@@ -120,7 +120,7 @@ class AssetManifest implements AssetManifestInterface
         if (! is_readable($manifest_path)) {
             throw new AssetManifestException(
                 $manifest_path,
-                AssetManifest::FILE_NAME,
+                '',
                 sprintf(
                     esc_html__(
                         'The "%1$s" file was not found or is not readable. Please verify that the file exists and has appropriate permissions.',
@@ -165,7 +165,7 @@ class AssetManifest implements AssetManifestInterface
         if (! $this->asset_files) {
             if (empty($this->manifest[ AssetManifest::KEY_FILES ])) {
                 if (WP_DEBUG) {
-                    throw new AssetManifestException(AssetManifest::KEY_FILES);
+                    throw new AssetManifestException(AssetManifest::KEY_FILES, $this->manifest_path);
                 }
                 return [];
             }
@@ -183,7 +183,7 @@ class AssetManifest implements AssetManifestInterface
         if (! $this->entry_points) {
             if (empty($this->manifest[ AssetManifest::KEY_ENTRY_POINTS ])) {
                 if (WP_DEBUG) {
-                    throw new AssetManifestException(AssetManifest::KEY_ENTRY_POINTS);
+                    throw new AssetManifestException(AssetManifest::KEY_ENTRY_POINTS, $this->manifest_path);
                 }
                 return [];
             }
@@ -252,7 +252,7 @@ class AssetManifest implements AssetManifestInterface
         $full_path = $this->assets_path . $file_name;
         if (! is_readable($full_path)) {
             if (WP_DEBUG) {
-                throw new AssetManifestException(AssetManifest::KEY_DEPENDENCIES);
+                throw new AssetManifestException(AssetManifest::KEY_DEPENDENCIES, $full_path);
             }
             return [];
         }
