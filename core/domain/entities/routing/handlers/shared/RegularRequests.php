@@ -5,7 +5,6 @@ namespace EventEspresso\core\domain\entities\routing\handlers\shared;
 use EE_Dependency_Map;
 use EventEspresso\core\services\routing\PrimaryRoute;
 use EventEspresso\core\services\routing\Route;
-use EventEspresso\core\services\routing\Router;
 
 /**
  * Class RoutingRequests
@@ -105,16 +104,22 @@ class RegularRequests extends PrimaryRoute
     {
         $admin = ['EE_Admin_Config' => EE_Dependency_Map::load_from_cache] + Route::$default_dependencies;
         $public = ['EE_Maintenance_Mode' => EE_Dependency_Map::load_from_cache] + Route::$default_dependencies;
+        $default_with_barista = [
+            'EventEspresso\core\services\assets\BaristaFactory' => EE_Dependency_Map::load_from_cache
+        ] + Route::$default_dependencies;
+        $default_with_manifest = [
+            'EventEspresso\core\services\assets\AssetManifestFactory' => EE_Dependency_Map::load_from_cache
+        ] + Route::$default_dependencies;
         $default_routes = [
             // default dependencies
             'EventEspresso\core\domain\entities\routing\handlers\admin\PueRequests'          => Route::$default_dependencies,
             'EventEspresso\core\domain\entities\routing\handlers\admin\WordPressPluginsPage' => Route::$default_dependencies,
             'EventEspresso\core\domain\entities\routing\handlers\frontend\ShortcodeRequests' => Route::$default_dependencies,
-            'EventEspresso\core\domain\entities\routing\handlers\shared\AssetRequests'       => Route::$default_dependencies,
-            'EventEspresso\core\domain\entities\routing\handlers\shared\GQLRequests'         => Route::$default_dependencies,
             'EventEspresso\core\domain\entities\routing\handlers\shared\RestApiRequests'     => Route::$default_dependencies,
             'EventEspresso\core\domain\entities\routing\handlers\shared\SessionRequests'     => Route::$default_dependencies,
             'EventEspresso\core\domain\entities\routing\handlers\shared\WordPressHeartbeat'  => Route::$default_dependencies,
+            'EventEspresso\core\domain\entities\routing\handlers\shared\AssetRequests'       => $default_with_barista,
+            'EventEspresso\core\domain\entities\routing\handlers\shared\GQLRequests'         => $default_with_manifest,
             // admin dependencies
             'EventEspresso\core\domain\entities\routing\handlers\admin\AdminRoute'           => $admin,
             'EventEspresso\core\domain\entities\routing\handlers\admin\EspressoEventsAdmin'  => $admin,

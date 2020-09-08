@@ -3,13 +3,13 @@
 namespace EventEspresso\core\domain\entities\routing\handlers\shared;
 
 use EE_Dependency_Map;
-use EventEspresso\core\domain\Domain;
 use EventEspresso\core\domain\services\assets\CoreAssetManager;
 use EventEspresso\core\domain\services\assets\JqueryAssetManager;
 use EventEspresso\core\domain\services\assets\ReactAssetManager;
-use EventEspresso\core\services\assets\Barista;
 use EventEspresso\core\services\assets\BaristaFactory;
 use EventEspresso\core\services\assets\BaristaInterface;
+use EventEspresso\core\services\loaders\LoaderInterface;
+use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\services\routing\Route;
 
 /**
@@ -22,6 +22,31 @@ use EventEspresso\core\services\routing\Route;
  */
 class AssetRequests extends Route
 {
+
+    /**
+     * @var BaristaFactory $barista_factory
+     */
+    protected $barista_factory;
+
+
+    /**
+     * AssetRequests constructor.
+     *
+     * @param EE_Dependency_Map                $dependency_map
+     * @param LoaderInterface                  $loader
+     * @param RequestInterface                 $request
+     * @param BaristaFactory $barista_factory
+     */
+    public function __construct(
+        EE_Dependency_Map $dependency_map,
+        LoaderInterface $loader,
+        RequestInterface $request,
+        BaristaFactory $barista_factory
+    ) {
+        $this->barista_factory = $barista_factory;
+        parent::__construct($dependency_map, $loader, $request);
+    }
+
 
     /**
      * returns true if the current request matches this route
@@ -110,7 +135,7 @@ class AssetRequests extends Route
     protected function requestHandler()
     {
         if (apply_filters('FHEE__load_Barista', true)) {
-            $barista = BaristaFactory::create();
+            $barista = $this->barista_factory->create();
             if ($barista instanceof BaristaInterface) {
                 $barista->initialize();
                 $this->loader->getShared('EventEspresso\core\services\assets\Registry');
