@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\core\services\factories;
+namespace EventEspresso\core\services\factory;
 
 /**
  * Interface FactoryInterface

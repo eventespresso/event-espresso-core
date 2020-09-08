@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\core\services\factories;
+namespace EventEspresso\core\services\factory;
 
 use EventEspresso\core\services\loaders\LoaderInterface;
 
