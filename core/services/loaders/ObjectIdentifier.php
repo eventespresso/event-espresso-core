@@ -89,6 +89,7 @@ class ObjectIdentifier
         )
             ? $this->getIdentifierForArguments($arguments)
             : '';
+        $fqcn = str_replace('\\', '_', $fqcn);
         if (! empty($identifier)) {
             $fqcn .= ObjectIdentifier::DELIMITER . md5($identifier);
         }
