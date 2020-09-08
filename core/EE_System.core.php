@@ -916,15 +916,7 @@ final class EE_System implements ResettableInterface
     private function _maybe_brew_regular()
     {
         /** @var Domain $domain */
-        $domain = DomainFactory::getShared(
-            new FullyQualifiedName(
-                'EventEspresso\core\domain\Domain'
-            ),
-            array(
-                new FilePath(EVENT_ESPRESSO_MAIN_FILE),
-                Version::fromString(espresso_version()),
-            )
-        );
+        $domain = DomainFactory::getEventEspressoCoreDomain();
         if ($domain->isCaffeinated()) {
             require_once EE_CAFF_PATH . 'brewing_regular.php';
         }
