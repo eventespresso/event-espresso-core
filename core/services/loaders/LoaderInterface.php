@@ -17,7 +17,7 @@ interface LoaderInterface
      * @param bool                      $shared
      * @return mixed
      */
-    public function load($fqcn, array $arguments = array(), $shared = true);
+    public function load($fqcn, array $arguments = [], $shared = true);
 
 
     /**
@@ -27,7 +27,7 @@ interface LoaderInterface
      * @param array                     $arguments
      * @return mixed
      */
-    public function getNew($fqcn, array $arguments = array());
+    public function getNew($fqcn, array $arguments = []);
 
 
     /**
@@ -37,16 +37,17 @@ interface LoaderInterface
      * @param array                     $arguments
      * @return mixed
      */
-    public function getShared($fqcn, array $arguments = array());
+    public function getShared($fqcn, array $arguments = []);
 
 
     /**
      * @param FullyQualifiedName|string $fqcn
      * @param mixed                     $object
+     * @param array                     $arguments
      * @return bool
      * @throws InvalidArgumentException
      */
-    public function share($fqcn, $object);
+    public function share($fqcn, $object, array $arguments = []);
 
 
     /**
