@@ -91,6 +91,7 @@ class AssetManifest implements AssetManifestInterface
     public function __construct(DomainInterface $domain)
     {
         $this->domain = $domain;
+        $this->initialize();
     }
 
 
@@ -267,6 +268,15 @@ class AssetManifest implements AssetManifestInterface
     public function getAssetHandle($entry_point)
     {
         return $this->assets_namespace . '-' . $entry_point;
+    }
+
+
+    /**
+     * @return string
+     */
+    public function getAssetsPath()
+    {
+        return $this->assets_path;
     }
 
 
