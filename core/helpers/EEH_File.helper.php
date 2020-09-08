@@ -587,7 +587,7 @@ class EEH_File extends EEH_Base implements EEHI_File
         foreach ($folder_paths as $folder_path) {
             $folder_path = self::standardise_and_end_with_directory_separator($folder_path);
             // load WP_Filesystem and set file permissions
-            $files_in_folder = glob($folder_path . '*');
+            $files_in_folder = glob($folder_path . '*.php');
             $class_to_folder_path = array();
             if ($files_in_folder) {
                 foreach ($files_in_folder as $file_path) {
