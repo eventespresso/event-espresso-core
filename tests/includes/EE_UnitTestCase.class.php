@@ -1403,7 +1403,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
      * @param callable $callback
      * @param bool|int $equals
      * @param bool     $is_action
-     * @since $VID:$
+     * @since 4.10.7.p
      */
     protected function assertHookIsSet($hook_name, callable $callback, $equals, $is_action = true)
     {
@@ -1439,7 +1439,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
      * @param string   $action
      * @param callable $callback
      * @param bool|int $priority
-     * @since $VID:$
+     * @since 4.10.7.p
      */
     protected function assertActionSet($action, callable $callback, $priority = true)
     {
@@ -1450,7 +1450,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
     /**
      * @param string   $action
      * @param callable $callback
-     * @since $VID:$
+     * @since 4.10.7.p
      */
     protected function assertActionNotSet($action, callable $callback)
     {
@@ -1462,7 +1462,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
      * @param string   $filter
      * @param callable $callback
      * @param bool|int $priority
-     * @since $VID:$
+     * @since 4.10.7.p
      */
     protected function assertFilterSet($filter, callable $callback, $priority = true)
     {
@@ -1473,7 +1473,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
     /**
      * @param string   $filter
      * @param callable $callback
-     * @since $VID:$
+     * @since 4.10.7.p
      */
     protected function assertFilterNotSet($filter, callable $callback)
     {
