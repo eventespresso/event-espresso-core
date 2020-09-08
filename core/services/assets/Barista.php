@@ -44,6 +44,7 @@ class Barista implements BaristaInterface
     public function initialize()
     {
         if (! $this->initialized) {
+            $this->asset_manifest->initialize();
             add_action('wp_enqueue_scripts', [$this, 'registerScripts'], 0);
             add_action('admin_enqueue_scripts', [$this, 'registerScripts'], 0);
             add_action('wp_enqueue_scripts', [$this, 'registerStyles'], 0);
