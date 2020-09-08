@@ -1,45 +1,99 @@
 <?php
 
-
 namespace EventEspresso\core\services\assets;
 
-
 use DomainException;
+use EventEspresso\core\domain\DomainFactory;
 use EventEspresso\core\domain\DomainInterface;
-use EventEspresso\core\domain\services\factories\FactoryInterface;
-use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\factory\FactoryInterface;
+use EventEspresso\core\domain\values\FullyQualifiedName;
 use EventEspresso\core\services\loaders\LoaderInterface;
 
 class BaristaFactory implements FactoryInterface
 {
     /**
-     * @param string $domain_fqcn Fully Qualified Class Name for the applicable DomainInterface class
-     * @return BaristaInterface
+     * @var AssetManifestFactory
      */
-    public static function create($domain_fqcn = '')
+    private $manifest_factory;
+
+    /**
+     * @var BaristaInterface[]
+     */
+    private static $baristas = [];
+
+    /**
+     * @var LoaderInterface $loader
+     */
+    protected $loader;
+
+
+    /**
+     * BaristaFactory constructor.
+     *
+     * @param AssetManifestFactory $manifest_factory
+     * @param LoaderInterface      $loader
+     */
+    public function __construct(AssetManifestFactory $manifest_factory, LoaderInterface $loader)
     {
-        $loader = LoaderFactory::getLoader();
-        // if no FQCN is supplied for the domain, then we are loading the defaults for core
-        // and can just request the Barista instance directly.
-        // add-ons will always have to supply their domain to retrieve their manifest
-        if ( empty($domain_fqcn)) {
-            return $loader->getShared(Barista::class);
-        }
-        $domain = BaristaFactory::getDomain($loader, $domain_fqcn);
-        /** @var AssetManifestInterface $asset_manifest */
-        $asset_manifest = $loader->getShared(AssetManifest::class, [$domain]);
-        return $loader->getShared(Barista::class, [$asset_manifest]);
+        $this->manifest_factory = $manifest_factory;
+        $this->loader           = $loader;
     }
 
 
     /**
-     * @param LoaderInterface $loader
-     * @param mixed $domain_fqcn Fully Qualified Class Name for the applicable DomainInterface class
+     * @param DomainInterface $domain
+     * @return BaristaInterface
+     */
+    public function createFromDomainObject(DomainInterface $domain)
+    {
+        $asset_manifest = $this->manifest_factory->createFromDomainObject($domain);
+        return $this->getBaristaForDomain($asset_manifest, $domain);
+    }
+
+
+    /**
+     * @param string $domain_fqcn      Fully Qualified Class Name for the applicable DomainInterface class
+     * @param array  $domain_arguments arguments required by the applicable DomainInterface class
+     * @return BaristaInterface
+     */
+    public function create($domain_fqcn = '', array $domain_arguments = [])
+    {
+        $domain         = $this->getDomain($domain_fqcn, $domain_arguments);
+        $asset_manifest = $this->manifest_factory->createFromDomainObject($domain);
+        return $this->getBaristaForDomain($asset_manifest, $domain);
+    }
+
+
+    /**
+     * @param AssetManifestInterface $asset_manifest
+     * @param DomainInterface        $domain
+     * @return BaristaInterface
+     */
+    private function getBaristaForDomain(AssetManifestInterface $asset_manifest, DomainInterface $domain)
+    {
+        $domain_fqcn = get_class($domain);
+        if (! isset(BaristaFactory::$baristas[ $domain_fqcn ])) {
+            $barista = new Barista($asset_manifest);
+            // we still need to share this with the core loader to facilitate automatic dependency injection
+            $this->loader->share(Barista::class, $barista, [$asset_manifest]);
+            BaristaFactory::$baristas[ $domain_fqcn ] = $barista;
+        }
+        return BaristaFactory::$baristas[ $domain_fqcn ];
+    }
+
+
+    /**
+     * @param string $domain_fqcn Fully Qualified Class Name for the applicable DomainInterface class
+     * @param array  $arguments
      * @return DomainInterface
      */
-    private static function getDomain(LoaderInterface $loader, $domain_fqcn)
+    private function getDomain($domain_fqcn, array $arguments = [])
     {
-        $domain = is_string($domain_fqcn) ? $loader->getShared($domain_fqcn) : null;
+        // if no FQCN is supplied for the domain, then we are loading the defaults for core
+        // add-ons will always have to supply their domain FQCN and arguments to retrieve their manifest
+        $domain = empty($domain_fqcn)
+            ? DomainFactory::getEventEspressoCoreDomain()
+            : DomainFactory::getShared(new FullyQualifiedName($domain_fqcn), $arguments);
         if ($domain instanceof DomainInterface) {
             return $domain;
         }
