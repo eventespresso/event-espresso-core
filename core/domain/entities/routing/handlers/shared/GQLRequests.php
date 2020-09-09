@@ -28,9 +28,9 @@ class GQLRequests extends Route
     /**
      * AssetRequests constructor.
      *
-     * @param EE_Dependency_Map                $dependency_map
-     * @param LoaderInterface                  $loader
-     * @param RequestInterface                 $request
+     * @param EE_Dependency_Map    $dependency_map
+     * @param LoaderInterface      $loader
+     * @param RequestInterface     $request
      * @param AssetManifestFactory $manifest_factory
      */
     public function __construct(
@@ -42,6 +42,7 @@ class GQLRequests extends Route
         $this->manifest_factory = $manifest_factory;
         parent::__construct($dependency_map, $loader, $request);
     }
+
 
     /**
      * returns true if the current request matches this route
