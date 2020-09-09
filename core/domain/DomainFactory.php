@@ -25,7 +25,7 @@ class DomainFactory
     /**
      * @var DomainInterface[]
      */
-    private static $domains = [];
+    protected static $domains = [];
 
 
     /**
