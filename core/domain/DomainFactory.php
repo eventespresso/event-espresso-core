@@ -6,7 +6,6 @@ use DomainException;
 use EventEspresso\core\domain\values\FilePath;
 use EventEspresso\core\domain\values\FullyQualifiedName;
 use EventEspresso\core\domain\values\Version;
-use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidFilePathException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -30,13 +29,13 @@ class DomainFactory
 
 
     /**
-     * @param FullyQualifiedName $domain_fqcn   [required] Fully Qualified Class Name for the Domain class
-     * @param array $arguments                  [required] array of arguments to be passed to the Domain class
-     *                                          constructor. Must at least include the following two value objects:
-     *                                          array(
+     * @param FullyQualifiedName $domain_fqcn       [required] Fully Qualified Class Name for the Domain class
+     * @param array              $arguments         [required] array of arguments to be passed to the Domain class
+     *                                              constructor. Must at least include the following two value objects:
+     *                                              array(
      *                                              EventEspresso\core\domain\values\FilePath $plugin_file
      *                                              EventEspresso\core\domain\values\Version $version
-     *                                          )
+     *                                              )
      * @return DomainInterface
      * @throws DomainException
      * @throws InvalidArgumentException
@@ -61,16 +60,16 @@ class DomainFactory
     public static function getEventEspressoCoreDomain()
     {
         $fqcn = 'EventEspresso\core\domain\Domain';
-        if(! isset(DomainFactory::$domains[$fqcn])) {
+        if (! isset(DomainFactory::$domains[ $fqcn ])) {
             DomainFactory::getDomain($fqcn, [EVENT_ESPRESSO_MAIN_FILE, espresso_version()]);
         }
-        return DomainFactory::$domains[$fqcn];
+        return DomainFactory::$domains[ $fqcn ];
     }
 
 
     private static function getDomain($fqcn, array $arguments)
     {
-        if(! isset(DomainFactory::$domains[$fqcn])) {
+        if (! isset(DomainFactory::$domains[ $fqcn ])) {
             if (! isset($arguments[0], $arguments[1])) {
                 throw new InvalidArgumentException(
                     esc_html__(
@@ -80,8 +79,8 @@ class DomainFactory
                 );
             }
             $filepath = $arguments[0] instanceof FilePath ? $arguments[0] : new FilePath($arguments[0]);
-            $version = $arguments[1] instanceof Version ? $arguments[1] : Version::fromString($arguments[1]);
-            $domain = new $fqcn($filepath, $version);
+            $version  = $arguments[1] instanceof Version ? $arguments[1] : Version::fromString($arguments[1]);
+            $domain   = new $fqcn($filepath, $version);
             if (! $domain instanceof DomainBase || ! $domain instanceof $fqcn) {
                 throw new DomainException(
                     sprintf(
