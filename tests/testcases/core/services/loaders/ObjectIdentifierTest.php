@@ -10,7 +10,6 @@ use stdClass;
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
-
 /**
  * Class ObjectIdentifierTest
  * Description
@@ -45,6 +44,7 @@ class ObjectIdentifierTest extends EE_UnitTestCase
 
     /**
      * dataProvider for testGetIdentifier()
+     *
      * @return array[]
      */
     public function getIdentifierProvider()
@@ -53,36 +53,36 @@ class ObjectIdentifierTest extends EE_UnitTestCase
         $object1->prop1 = 1234;
         $object1->prop2 = 'mom\'s spaghetti';
         $object1hash = spl_object_hash($object1);
-        return array(
+        return [
             // $fqcn, $arguments, $expected
-            0 => array(
-                'fully/qualified/class/name/DoesNotNeedToBeReal',
-                array(),
-                'fully/qualified/class/name/DoesNotNeedToBeReal',
-            ),
-            1 => array(
-                'fully/qualified/class/name/DoesNotNeedToBeReal',
-                array(1, 2, 3, 4),
-                'fully/qualified/class/name/DoesNotNeedToBeReal' . ObjectIdentifier::DELIMITER . md5('1234'),
-            ),
-            2 => array(
-                'fully/qualified/class/name/DoesNotNeedToBeReal',
-                array($object1),
-                'fully/qualified/class/name/DoesNotNeedToBeReal' . ObjectIdentifier::DELIMITER . md5($object1hash),
-            ),
-            3 => array(
-                'fully/qualified/class/name/DoesNotNeedToBeReal',
-                array(1, 2, 3, 4, $object1),
-                'fully/qualified/class/name/DoesNotNeedToBeReal'
+            0 => [
+                'fully\qualified\class\name\DoesNotNeedToBeReal',
+                [],
+                'fully_qualified_class_name_DoesNotNeedToBeReal',
+            ],
+            1 => [
+                'fully\qualified\class\name\DoesNotNeedToBeReal',
+                [1, 2, 3, 4],
+                'fully_qualified_class_name_DoesNotNeedToBeReal' . ObjectIdentifier::DELIMITER . md5('1234'),
+            ],
+            2 => [
+                'fully\qualified\class\name\DoesNotNeedToBeReal',
+                [$object1],
+                'fully_qualified_class_name_DoesNotNeedToBeReal' . ObjectIdentifier::DELIMITER . md5($object1hash),
+            ],
+            3 => [
+                'fully\qualified\class\name\DoesNotNeedToBeReal',
+                [1, 2, 3, 4, $object1],
+                'fully_qualified_class_name_DoesNotNeedToBeReal'
                 . ObjectIdentifier::DELIMITER . md5('1234' . $object1hash),
-            ),
+            ],
             // test class that implements EventEspresso\core\interfaces\ReservedInstanceInterface
-            4 => array(
+            4 => [
                 'EventEspresso\core\services\request\Request',
-                array(array(1, 2, 3, 4), array(), array(), array()),
-                'EventEspresso\core\services\request\Request',
-            ),
-        );
+                [[1, 2, 3, 4], [], [], []],
+                'EventEspresso_core_services_request_Request',
+            ],
+        ];
     }
 
 
@@ -96,7 +96,7 @@ class ObjectIdentifierTest extends EE_UnitTestCase
     {
         $this->assertEquals(
             $expected,
-            $this->object_identifier->getIdentifier($fqcn,$arguments)
+            $this->object_identifier->getIdentifier($fqcn, $arguments)
         );
     }
 
@@ -108,10 +108,10 @@ class ObjectIdentifierTest extends EE_UnitTestCase
      */
     public function hasArgumentsProvider()
     {
-        return array(
-            array('fully/qualified/class/Name', false),
-            array('fully/qualified/class/Name' . ObjectIdentifier::DELIMITER . md5('1234'), true),
-        );
+        return [
+            ['fully/qualified/class/Name', false],
+            ['fully/qualified/class/Name' . ObjectIdentifier::DELIMITER . md5('1234'), true],
+        ];
     }
 
 
@@ -128,6 +128,7 @@ class ObjectIdentifierTest extends EE_UnitTestCase
         );
     }
 
+
     /**
      * dataProvider for testFqcnMatchesObjectIdentifier()
      *
@@ -135,12 +136,20 @@ class ObjectIdentifierTest extends EE_UnitTestCase
      */
     public function fqcnMatchesObjectIdentifierProvider()
     {
-        return array(
-            array('fully/qualified/class/Name', 'fully/qualified/class/Name', true),
-            array('fully/qualified/class/Name', 'fully/qualified/class/Name' . ObjectIdentifier::DELIMITER . md5('1234'), true),
-            array('fully/qualified/class/Name', 'fully/qualified/class/OtherName', false),
-            array('fully/qualified/class/Name', 'fully/qualified/class/OtherName' . ObjectIdentifier::DELIMITER . md5('1234'), false),
-        );
+        return [
+            ['fully/qualified/class/Name', 'fully/qualified/class/Name', true],
+            [
+                'fully/qualified/class/Name',
+                'fully/qualified/class/Name' . ObjectIdentifier::DELIMITER . md5('1234'),
+                true,
+            ],
+            ['fully/qualified/class/Name', 'fully/qualified/class/OtherName', false],
+            [
+                'fully/qualified/class/Name',
+                'fully/qualified/class/OtherName' . ObjectIdentifier::DELIMITER . md5('1234'),
+                false,
+            ],
+        ];
     }
 
 
@@ -148,7 +157,7 @@ class ObjectIdentifierTest extends EE_UnitTestCase
      * @dataProvider fqcnMatchesObjectIdentifierProvider
      * @param string $fqcn
      * @param string $object_identifier
-     * @param bool $matches
+     * @param bool   $matches
      */
     public function testFqcnMatchesObjectIdentifier($fqcn, $object_identifier, $matches)
     {
