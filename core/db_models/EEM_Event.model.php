@@ -624,7 +624,13 @@ class EEM_Event extends EEM_CPT_Base
         }
         // let's add specific query_params for active_events
         // keep in mind this will override any sent status in the query AND any date queries.
-        $where_params['status'] = array('IN', array('publish', EEM_Event::sold_out));
+        // we need to pull events with a status of publish and sold_out
+        $event_status = array('publish', EEM_Event::sold_out);
+        // check if the user can read private events and if so add the 'private status to the were params'
+        if (EE_Registry::instance()->CAP->current_user_can('ee_read_private_events', 'get_upcoming_events')) {
+            $event_status[] = 'private';
+        }
+        $where_params['status'] = array('IN', $event_status);
         // if there are already query_params matching DTT_EVT_start then we need to modify that to add them.
         if (isset($where_params['Datetime.DTT_EVT_start'])) {
             $where_params['Datetime.DTT_EVT_start*****'] = array(
