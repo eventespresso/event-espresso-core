@@ -7,6 +7,7 @@ namespace EventEspresso\core\services\factory;
  *
  * @package EventEspresso\core\domain\services\factories
  * @author  Brent Christensen
+ * @since   $VID:$
  */
 interface FactoryInterface
 {

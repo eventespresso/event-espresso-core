@@ -8,6 +8,12 @@ use EventEspresso\core\services\factory\FactoryInterface;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use InvalidArgumentException;
 
+/**
+ * Class AssetManifestFactory
+ *
+ * @package EventEspresso\core\services\assets
+ * @since   $VID:$
+ */
 class AssetManifestFactory implements FactoryInterface
 {
     /**

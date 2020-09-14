@@ -67,6 +67,11 @@ class DomainFactory
     }
 
 
+    /**
+     * @param string $fqcn
+     * @param array  $arguments
+     * @return DomainInterface
+     */
     private static function getDomain($fqcn, array $arguments)
     {
         if (! isset(DomainFactory::$domains[ $fqcn ])) {
