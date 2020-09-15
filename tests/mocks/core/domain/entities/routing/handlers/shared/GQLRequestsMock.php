@@ -21,21 +21,25 @@ class GQLRequestsMock extends GQLRequests
         EE_Dependency_Map::instance()->registerDependencies(
             GQLRequestsMock::class,
             [
-                'EE_Dependency_Map'                                                                          => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\loaders\Loader'                                                 => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\request\Request'                                                => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\domain\entities\routing\specifications\RouteMatchSpecificationInterface' => EE_Dependency_Map::load_from_cache,
+                'EE_Dependency_Map'                                       => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\loaders\Loader'              => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\request\Request'             => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\assets\AssetManifestFactory' => EE_Dependency_Map::load_from_cache,
             ]
         );
         $self = LoaderFactory::getLoader()->getShared(GQLRequestsMock::class);
         $self->registerDependencies();
     }
 
-    public function registerDependencies() {
+
+    public function registerDependencies()
+    {
         parent::registerDependencies();
     }
 
-    public function requestHandler() {
+
+    public function requestHandler()
+    {
         parent::requestHandler();
     }
 }

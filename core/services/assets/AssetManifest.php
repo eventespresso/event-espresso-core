@@ -11,7 +11,7 @@ use EventEspresso\core\domain\DomainInterface;
  * @author  Brent Christensen
  * @since   $VID:$
  */
-class AssetManifest
+class AssetManifest implements AssetManifestInterface
 {
 
     const ASSET_EXT_CSS      = '.css';
@@ -91,6 +91,7 @@ class AssetManifest
     public function __construct(DomainInterface $domain)
     {
         $this->domain = $domain;
+        $this->initialize();
     }
 
 
@@ -120,7 +121,7 @@ class AssetManifest
         if (! is_readable($manifest_path)) {
             throw new AssetManifestException(
                 $manifest_path,
-                AssetManifest::FILE_NAME,
+                '',
                 sprintf(
                     esc_html__(
                         'The "%1$s" file was not found or is not readable. Please verify that the file exists and has appropriate permissions.',
@@ -165,7 +166,7 @@ class AssetManifest
         if (! $this->asset_files) {
             if (empty($this->manifest[ AssetManifest::KEY_FILES ])) {
                 if (WP_DEBUG) {
-                    throw new AssetManifestException(AssetManifest::KEY_FILES);
+                    throw new AssetManifestException(AssetManifest::KEY_FILES, $this->manifest_path);
                 }
                 return [];
             }
@@ -183,7 +184,7 @@ class AssetManifest
         if (! $this->entry_points) {
             if (empty($this->manifest[ AssetManifest::KEY_ENTRY_POINTS ])) {
                 if (WP_DEBUG) {
-                    throw new AssetManifestException(AssetManifest::KEY_ENTRY_POINTS);
+                    throw new AssetManifestException(AssetManifest::KEY_ENTRY_POINTS, $this->manifest_path);
                 }
                 return [];
             }
@@ -252,7 +253,7 @@ class AssetManifest
         $full_path = $this->assets_path . $file_name;
         if (! is_readable($full_path)) {
             if (WP_DEBUG) {
-                throw new AssetManifestException(AssetManifest::KEY_DEPENDENCIES);
+                throw new AssetManifestException(AssetManifest::KEY_DEPENDENCIES, $full_path);
             }
             return [];
         }
@@ -267,6 +268,15 @@ class AssetManifest
     public function getAssetHandle($entry_point)
     {
         return $this->assets_namespace . '-' . $entry_point;
+    }
+
+
+    /**
+     * @return string
+     */
+    public function getAssetsPath()
+    {
+        return $this->assets_path;
     }
 
 

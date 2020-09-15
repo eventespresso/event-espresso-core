@@ -59,6 +59,11 @@ abstract class DomainBase implements DomainInterface
      */
     private $assets_path;
 
+    /**
+     * @var bool
+     */
+    protected $initialized = false;
+
 
     /**
      * Initializes internal properties.
@@ -82,11 +87,14 @@ abstract class DomainBase implements DomainInterface
      */
     public function initialize($asset_namespace = 'eventespresso')
     {
-        $this->plugin_basename = plugin_basename($this->pluginFile());
-        $this->plugin_path     = plugin_dir_path($this->pluginFile());
-        $this->plugin_url      = plugin_dir_url($this->pluginFile());
-        $this->setAssetNamespace($asset_namespace);
-        $this->setDistributionAssetsPath();
+        if (! $this->initialized) {
+            $this->plugin_basename = plugin_basename($this->pluginFile());
+            $this->plugin_path     = plugin_dir_path($this->pluginFile());
+            $this->plugin_url      = plugin_dir_url($this->pluginFile());
+            $this->setAssetNamespace($asset_namespace);
+            $this->setDistributionAssetsPath();
+            $this->initialized = true;
+        }
     }
 
 

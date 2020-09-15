@@ -32,7 +32,7 @@ class Registry
     protected $assets = [];
 
     /**
-     * @var AssetManifest
+     * @var AssetManifestInterface
      */
     private $asset_manifest;
 
@@ -61,14 +61,14 @@ class Registry
      * Registry constructor.
      * Hooking into WP actions for script registry.
      *
-     * @param AssetCollection      $assets
-     * @param AssetManifest $asset_manifest
-     * @param I18nRegistry         $i18n_registry
+     * @param AssetCollection        $assets
+     * @param AssetManifestInterface $asset_manifest
+     * @param I18nRegistry           $i18n_registry
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public function __construct(AssetCollection $assets, AssetManifest $asset_manifest, I18nRegistry $i18n_registry)
+    public function __construct(AssetCollection $assets, AssetManifestInterface $asset_manifest, I18nRegistry $i18n_registry)
     {
         $this->addAssetCollection($assets);
         $this->asset_manifest = $asset_manifest;
@@ -88,7 +88,7 @@ class Registry
      */
     public function addAssetCollection(AssetCollection $asset_collection)
     {
-        $id = spl_object_hash($asset_collection);
+        $id = $asset_collection->collectionIdentifier();
         if (! array_key_exists($id, $this->assets)) {
             $this->assets[ $id ] = $asset_collection;
         }

@@ -109,13 +109,14 @@ class Loader implements LoaderInterface
     /**
      * @param FullyQualifiedName|string $fqcn
      * @param mixed                     $object
+     * @param array                     $arguments
      * @return bool
      * @throws InvalidArgumentException
      */
-    public function share($fqcn, $object)
+    public function share($fqcn, $object, array $arguments = [])
     {
         $fqcn = $this->class_cache->getFqn($fqcn);
-        return $this->getSharedLoader()->share($fqcn, $object);
+        return $this->getSharedLoader()->share($fqcn, $object, $arguments);
     }
 
 

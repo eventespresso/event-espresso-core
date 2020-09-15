@@ -68,6 +68,7 @@ class ObjectIdentifier
      */
     public function fqcnMatchesObjectIdentifier($fqcn, $object_identifier)
     {
+        $fqcn = str_replace('\\', '_', $fqcn);
         return $fqcn === $object_identifier
                || strpos($object_identifier, $fqcn . ObjectIdentifier::DELIMITER) === 0;
     }
@@ -92,6 +93,7 @@ class ObjectIdentifier
         if (! empty($identifier)) {
             $fqcn .= ObjectIdentifier::DELIMITER . md5($identifier);
         }
+        $fqcn = str_replace('\\', '_', $fqcn);
         return $fqcn;
     }
 

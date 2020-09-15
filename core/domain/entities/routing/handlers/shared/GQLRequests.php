@@ -3,7 +3,10 @@
 namespace EventEspresso\core\domain\entities\routing\handlers\shared;
 
 use EE_Dependency_Map;
-use EventEspresso\core\services\assets\AssetManifest;
+use EventEspresso\core\domain\DomainFactory;
+use EventEspresso\core\services\assets\AssetManifestFactory;
+use EventEspresso\core\services\loaders\LoaderInterface;
+use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\services\routing\Route;
 
 /**
@@ -16,6 +19,30 @@ use EventEspresso\core\services\routing\Route;
  */
 class GQLRequests extends Route
 {
+    /**
+     * @var AssetManifestFactory
+     */
+    private $manifest_factory;
+
+
+    /**
+     * AssetRequests constructor.
+     *
+     * @param EE_Dependency_Map    $dependency_map
+     * @param LoaderInterface      $loader
+     * @param RequestInterface     $request
+     * @param AssetManifestFactory $manifest_factory
+     */
+    public function __construct(
+        EE_Dependency_Map $dependency_map,
+        LoaderInterface $loader,
+        RequestInterface $request,
+        AssetManifestFactory $manifest_factory
+    ) {
+        $this->manifest_factory = $manifest_factory;
+        parent::__construct($dependency_map, $loader, $request);
+    }
+
 
     /**
      * returns true if the current request matches this route
@@ -192,8 +219,7 @@ class GQLRequests extends Route
             'EventEspresso\core\services\graphql\GraphQLManager'
         );
         $graphQL_manager->init();
-        /** @var AssetManifest $manifest */
-        $manifest = $this->loader->getShared('EventEspresso\core\services\assets\AssetManifest');
+        $manifest = $this->manifest_factory->createFromDomainObject(DomainFactory::getEventEspressoCoreDomain());
         $manifest->initialize();
         return true;
     }

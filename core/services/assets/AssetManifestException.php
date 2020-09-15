@@ -17,38 +17,35 @@ class AssetManifestException extends DomainException
      * AssetManifestException constructor
      *
      * @param string    $entry
-     * @param string    $key
+     * @param string    $path
      * @param string    $message
      * @param int       $code
      * @param Exception $previous
      */
-    public function __construct($entry, $key = '', $message = '', $code = 0, Exception $previous = null)
+    public function __construct($entry, $path, $message = '', $code = 0, Exception $previous = null)
     {
         if (empty($message)) {
-            switch($key) {
+            switch($entry) {
                 case AssetManifest::KEY_DEPENDENCIES:
-                    $key = 'dependency';
-                    break;
-                case AssetManifest::KEY_FILES:
                     $key = 'file';
                     break;
                 case AssetManifest::KEY_VERSION:
                     $key = 'version';
                     break;
                 case AssetManifest::KEY_ENTRY_POINTS:
-                    $key = 'entry point';
-                    break;
+                case AssetManifest::KEY_FILES:
                 default:
                     $key = 'key';
             }
             $message =
                 sprintf(
                     esc_html__(
-                        'The "%1$s" %2$s was not found in the assets manifest file.',
+                        'The "%1$s" %2$s was not found in the assets manifest file at: %3$s',
                         'event_espresso'
                     ),
                     $entry,
-                    $key
+                    $key,
+                    $path
                 );
         }
         parent::__construct($message, $code, $previous);

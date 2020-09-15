@@ -6,7 +6,10 @@ use EE_Dependency_Map;
 use EventEspresso\core\domain\services\assets\CoreAssetManager;
 use EventEspresso\core\domain\services\assets\JqueryAssetManager;
 use EventEspresso\core\domain\services\assets\ReactAssetManager;
-use EventEspresso\core\services\assets\Barista;
+use EventEspresso\core\services\assets\BaristaFactory;
+use EventEspresso\core\services\assets\BaristaInterface;
+use EventEspresso\core\services\loaders\LoaderInterface;
+use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\services\routing\Route;
 
 /**
@@ -19,6 +22,31 @@ use EventEspresso\core\services\routing\Route;
  */
 class AssetRequests extends Route
 {
+
+    /**
+     * @var BaristaFactory $barista_factory
+     */
+    protected $barista_factory;
+
+
+    /**
+     * AssetRequests constructor.
+     *
+     * @param EE_Dependency_Map                $dependency_map
+     * @param LoaderInterface                  $loader
+     * @param RequestInterface                 $request
+     * @param BaristaFactory $barista_factory
+     */
+    public function __construct(
+        EE_Dependency_Map $dependency_map,
+        LoaderInterface $loader,
+        RequestInterface $request,
+        BaristaFactory $barista_factory
+    ) {
+        $this->barista_factory = $barista_factory;
+        parent::__construct($dependency_map, $loader, $request);
+    }
+
 
     /**
      * returns true if the current request matches this route
@@ -89,10 +117,7 @@ class AssetRequests extends Route
                 'EventEspresso\core\domain\services\blocks\EventAttendeesBlockRenderer' => EE_Dependency_Map::load_from_cache,
             ]
         );
-        if (apply_filters(
-            'FHEE__EventEspresso_core_domain_entities_routing_handlers_shared_AssetRequests__load_Barista',
-            true
-        )) {
+        if (apply_filters('FHEE__load_Barista', true)) {
             $this->dependency_map->registerDependencies(
                 'EventEspresso\core\services\assets\Barista',
                 ['EventEspresso\core\services\assets\AssetManifest' => EE_Dependency_Map::load_from_cache]
@@ -109,14 +134,12 @@ class AssetRequests extends Route
      */
     protected function requestHandler()
     {
-        if (apply_filters(
-            'FHEE__EventEspresso_core_domain_entities_routing_handlers_shared_AssetRequests__load_Barista',
-            true
-        )) {
-            /** @var Barista $barista */
-            $barista = $this->loader->getShared('EventEspresso\core\services\assets\Barista');
-            $barista->initialize();
-            $this->loader->getShared('EventEspresso\core\services\assets\Registry');
+        if (apply_filters('FHEE__load_Barista', true)) {
+            $barista = $this->barista_factory->create();
+            if ($barista instanceof BaristaInterface) {
+                $barista->initialize();
+                $this->loader->getShared('EventEspresso\core\services\assets\Registry');
+            }
         }
         $this->loader->getShared(JqueryAssetManager::class);
         $this->loader->getShared(CoreAssetManager::class);
