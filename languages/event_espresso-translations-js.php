@@ -389,7 +389,8 @@ $generated_i18n_strings = array(
 	__( 'trashed dates only', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:34
-	// Reference: packages/dates/src/DateRangePicker.tsx:36
+	// Reference: packages/dates/src/DateRangePicker.tsx:52
+	// Reference: packages/dates/src/DateRangePickerLegend.tsx:10
 	__( 'start date', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:35
@@ -968,8 +969,12 @@ information', 'event_espresso' ),
 	// Reference: packages/components/src/bulkEdit/details/Warning.tsx:13
 	__( 'any changes will be applied to ALL of the selected entities.', 'event_espresso' ),
 
-	// Reference: packages/dates/src/DateRangePicker.tsx:46
+	// Reference: packages/dates/src/DateRangePicker.tsx:66
+	// Reference: packages/dates/src/DateRangePickerLegend.tsx:18
 	__( 'end date', 'event_espresso' ),
+
+	// Reference: packages/dates/src/DateRangePickerLegend.tsx:14
+	__( 'day in range', 'event_espresso' ),
 
 	// Reference: packages/dates/src/DateTimePicker.tsx:8
 	// Reference: packages/dates/src/TimePicker.tsx:13
