@@ -196,7 +196,7 @@ class EE_Messages_Scheduler extends EE_Base
             'AHEE__EE_Messages_Scheduler__sending'    => 'ee_message_cron',
         );
         foreach ($message_crons_to_check as $hook_name => $frequency) {
-            if(! wp_next_scheduled($hook_name)) {
+            if (! wp_next_scheduled($hook_name)) {
                 wp_schedule_event(time(), $frequency, $hook_name);
             }
         }
