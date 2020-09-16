@@ -189,7 +189,19 @@ class EE_Messages_Scheduler extends EE_Base
      */
     public static function cleanup()
     {
-        // first check if user has cleanup turned on or if we're in maintenance mode.  If in maintenance mode we'll wait
+        // First, confirm that the generation and sending EE_Messages_Scheduler crons are
+        // set and reschedule them if they are not.
+        $message_crons_to_check = array(
+            'AHEE__EE_Messages_Scheduler__generation' => 'ee_message_cron',
+            'AHEE__EE_Messages_Scheduler__sending'    => 'ee_message_cron',
+        );
+        foreach($message_crons_to_check as $hook_name => $frequency ){
+            if(! wp_next_scheduled($hook_name)) {
+                wp_schedule_event(time(), $frequency, $hook_name);
+            }
+        }
+
+        // check if user has cleanup turned on or if we're in maintenance mode.  If in maintenance mode we'll wait
         // until the next scheduled event.
         if (! EE_Registry::instance()->CFG->messages->delete_threshold
             || ! EE_Maintenance_Mode::instance()->models_can_query()
