@@ -4,7 +4,7 @@ $generated_i18n_strings = array(
 	// Reference: domains/blocks/src/components/AvatarImage.tsx:24
 	__( 'contact avatar', 'event_espresso' ),
 
-	// Reference: domains/blocks/src/components/OrderByControl.tsx:15
+	// Reference: domains/blocks/src/components/OrderByControl.tsx:13
 	__( 'Order by', 'event_espresso' ),
 
 	// Reference: domains/blocks/src/components/RegStatusControl.tsx:17
@@ -17,7 +17,7 @@ $generated_i18n_strings = array(
 	// Reference: domains/blocks/src/components/SortOrderControl.tsx:19
 	__( 'Descending', 'event_espresso' ),
 
-	// Reference: domains/blocks/src/components/SortOrderControl.tsx:27
+	// Reference: domains/blocks/src/components/SortOrderControl.tsx:25
 	__( 'Sort order:', 'event_espresso' ),
 
 	// Reference: domains/blocks/src/event-attendees/AttendeesDisplay.tsx:37
@@ -26,7 +26,7 @@ $generated_i18n_strings = array(
 	// Reference: domains/blocks/src/event-attendees/AttendeesDisplay.tsx:45
 	__( 'To get started, select what event you want to show attendees from in the block settings.', 'event_espresso' ),
 
-	// Reference: domains/blocks/src/event-attendees/AttendeesDisplay.tsx:54
+	// Reference: domains/blocks/src/event-attendees/AttendeesDisplay.tsx:51
 	__( 'There are no attendees for selected options.', 'event_espresso' ),
 
 	// Reference: domains/blocks/src/event-attendees/controls/ArchiveSettings.tsx:10
@@ -443,11 +443,11 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/newDateOptions/AddSingleDate.tsx:20
 	__( 'Add Single Date', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/newDateOptions/AddSingleDate.tsx:35
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/newDateOptions/AddSingleDate.tsx:34
 	__( 'Add a single date
 that only occurs once', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/newDateOptions/AddSingleDate.tsx:37
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/newDateOptions/AddSingleDate.tsx:36
 	__( 'Single Date', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:104
@@ -908,10 +908,10 @@ that only occurs once', 'event_espresso' ),
 	// Reference: packages/components/src/EntityList/filterBar/buttons/ToggleFiltersButton.tsx:13
 	__( 'show filters', 'event_espresso' ),
 
-	// Reference: packages/components/src/EntityList/filterBar/buttons/ToggleSortingButton.tsx:28
+	// Reference: packages/components/src/EntityList/filterBar/buttons/ToggleSortingButton.tsx:29
 	__( 'disable sorting', 'event_espresso' ),
 
-	// Reference: packages/components/src/EntityList/filterBar/buttons/ToggleSortingButton.tsx:28
+	// Reference: packages/components/src/EntityList/filterBar/buttons/ToggleSortingButton.tsx:29
 	__( 'enable sorting', 'event_espresso' ),
 
 	// Reference: packages/components/src/Legend/ToggleLegendButton.tsx:27
@@ -951,10 +951,10 @@ that only occurs once', 'event_espresso' ),
 	__( 'click for timezone
 information', 'event_espresso' ),
 
-	// Reference: packages/components/src/bulkEdit/BulkActions.tsx:37
+	// Reference: packages/components/src/bulkEdit/BulkActions.tsx:42
 	__( 'select all', 'event_espresso' ),
 
-	// Reference: packages/components/src/bulkEdit/BulkActions.tsx:39
+	// Reference: packages/components/src/bulkEdit/BulkActions.tsx:44
 	__( 'apply', 'event_espresso' ),
 
 	// Reference: packages/components/src/bulkEdit/details/BulkEditDetailsProps.tsx:27
@@ -1141,7 +1141,7 @@ information', 'event_espresso' ),
 	// Reference: packages/tpc/src/components/NoPricesBanner/index.tsx:33
 	__( 'Click the save button below to assign which dates this ticket will be available for purchase on.', 'event_espresso' ),
 
-	// Reference: packages/tpc/src/components/TicketPriceCalculatorModal.tsx:29
+	// Reference: packages/tpc/src/components/TicketPriceCalculatorModal.tsx:31
 	__( 'Price Calculator for Ticket: %s', 'event_espresso' ),
 
 	// Reference: packages/tpc/src/components/table/Table.tsx:44
