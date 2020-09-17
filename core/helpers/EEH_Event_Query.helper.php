@@ -544,7 +544,7 @@ class EEH_Event_Query
         if (! empty($event_category_slug) ) {
             $event_category_slugs_array = array_map('trim', explode(',', $event_category_slug));
             $event_category_slugs_prepare = implode( ', ', array_fill( 0, count( $event_category_slugs_array ), '%s' ));
-            return $wpdb->prepare(" AND {$wpdb->terms}.slug IN ($event_category_slugs_prepare) ", $event_category_slugs_array);
+            return $wpdb->prepare(" AND {$wpdb->terms}.slug IN ({$event_category_slugs_prepare}) ", $event_category_slugs_array);
         }
         return ''; 
     }
