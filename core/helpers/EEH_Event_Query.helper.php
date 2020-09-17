@@ -541,9 +541,12 @@ class EEH_Event_Query
     public static function posts_where_sql_for_event_category_slug($event_category_slug = null)
     {
         global $wpdb;
-        return ! empty($event_category_slug)
-            ? $wpdb->prepare(" AND {$wpdb->terms}.slug = %s ", $event_category_slug)
-            : '';
+        if (! empty($event_category_slug) ) {
+            $event_category_slugs_array = array_map('trim', explode(',', $event_category_slug));
+            $event_category_slugs_prepare = implode( ', ', array_fill( 0, count( $event_category_slugs_array ), '%s' ));
+            return $wpdb->prepare(" AND {$wpdb->terms}.slug IN ($event_category_slugs_prepare) ", $event_category_slugs_array);
+        }
+        return ''; 
     }
 
 
