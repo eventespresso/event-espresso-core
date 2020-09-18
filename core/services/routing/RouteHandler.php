@@ -148,8 +148,8 @@ class RouteHandler
     private function printDataNodes()
     {
         if ($this->print_data_nodes) {
-            add_action('admin_footer', [$this->data_node_handler, 'printDataNode']);
-            add_action('wp_footer', [$this->data_node_handler, 'printDataNode']);
+            add_action('admin_footer', [$this->data_node_handler, 'printDataNode'], 0);
+            add_action('wp_footer', [$this->data_node_handler, 'printDataNode'], 0);
             $this->print_data_nodes = false;
         }
     }

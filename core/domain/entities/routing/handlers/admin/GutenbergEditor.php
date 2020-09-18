@@ -58,11 +58,9 @@ class GutenbergEditor extends AdminRoute
                 'EventEspresso\core\services\assets\Registry'        => EE_Dependency_Map::load_from_cache,
             ]
         );
-        /** @var EventEspressoData $primary_data_node */
-        $primary_data_node = $this->loader->getShared(
+        $this->loader->getShared(
             'EventEspresso\core\domain\entities\routing\data_nodes\EventEspressoData'
         );
-        $primary_data_node->setTargetScript(CoreBlocksAssetManager::JS_HANDLE_CORE_BLOCKS);
         /** @var EventEditor $data_node */
         $data_node = $this->loader->getShared(
             'EventEspresso\core\domain\entities\routing\data_nodes\domains\GutenbergEditorData'
