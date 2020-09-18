@@ -5,7 +5,6 @@ namespace EventEspresso\core\domain;
 use DomainException;
 use EventEspresso\core\domain\values\FilePath;
 use EventEspresso\core\domain\values\Version;
-use EventEspresso\core\services\assets\Registry;
 
 /**
  * DomainBase Class
@@ -72,7 +71,7 @@ abstract class DomainBase implements DomainInterface
      * @param Version  $version
      * @param string $asset_namespace
      */
-    public function __construct(FilePath $plugin_file, Version $version, $asset_namespace = 'eventespresso')
+    public function __construct(FilePath $plugin_file, Version $version, $asset_namespace = Domain::ASSET_NAMESPACE)
     {
         $this->plugin_file = $plugin_file;
         $this->version     = $version;
@@ -85,7 +84,7 @@ abstract class DomainBase implements DomainInterface
      * @return void
      * @since $VID:$
      */
-    public function initialize($asset_namespace = 'eventespresso')
+    public function initialize($asset_namespace = Domain::ASSET_NAMESPACE)
     {
         if (! $this->initialized) {
             $this->plugin_basename = plugin_basename($this->pluginFile());
@@ -102,7 +101,7 @@ abstract class DomainBase implements DomainInterface
      * @param string $asset_namespace
      * @return void
      */
-    public function setAssetNamespace($asset_namespace = 'eventespresso')
+    public function setAssetNamespace($asset_namespace = Domain::ASSET_NAMESPACE)
     {
         if (! $this->asset_namespace) {
             $this->asset_namespace = sanitize_key(
@@ -154,11 +153,14 @@ abstract class DomainBase implements DomainInterface
 
 
     /**
+     * @param string $additional_path
      * @return string
      */
-    public function pluginPath()
+    public function pluginPath($additional_path = '')
     {
-        return $this->plugin_path;
+        return is_string($additional_path) && $additional_path !== ''
+            ? $this->plugin_path . $additional_path
+            : $this->plugin_path;
     }
 
 
