@@ -610,15 +610,9 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\database\TableManager'  => EE_Dependency_Map::load_from_cache,
                 'EE_DMS_Core_4_9_0'                                  => EE_Dependency_Map::load_from_cache,
             ],
-            'EventEspresso\core\services\assets\I18nRegistry'                                                             => [
-                'EventEspresso\core\domain\Domain'                 => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\assets\JedLocaleData' => EE_Dependency_Map::load_from_cache,
-                [],
-            ],
             'EventEspresso\core\services\assets\Registry'                                                                 => [
                 'EventEspresso\core\services\assets\AssetCollection' => EE_Dependency_Map::load_new_object,
                 'EventEspresso\core\services\assets\AssetManifest'   => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\assets\I18nRegistry'    => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\services\cache\BasicCacheManager'                                                         => [
                 'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,

@@ -37,11 +37,6 @@ class Registry
     private $asset_manifest;
 
     /**
-     * @var I18nRegistry
-     */
-    private $i18n_registry;
-
-    /**
      * This holds the jsdata data object that will be exposed on pages that enqueue the `eejs-core` script.
      *
      * @var array
@@ -63,17 +58,15 @@ class Registry
      *
      * @param AssetCollection        $assets
      * @param AssetManifestInterface $asset_manifest
-     * @param I18nRegistry           $i18n_registry
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public function __construct(AssetCollection $assets, AssetManifestInterface $asset_manifest, I18nRegistry $i18n_registry)
+    public function __construct(AssetCollection $assets, AssetManifestInterface $asset_manifest)
     {
         $this->addAssetCollection($assets);
         $this->asset_manifest = $asset_manifest;
         $this->asset_manifest->initialize();
-        $this->i18n_registry = $i18n_registry;
         add_action('wp_enqueue_scripts', array($this, 'registerScriptsAndStyles'), 4);
         add_action('admin_enqueue_scripts', array($this, 'registerScriptsAndStyles'), 4);
         add_action('wp_enqueue_scripts', array($this, 'enqueueData'), 5);
@@ -94,19 +87,6 @@ class Registry
         }
     }
 
-
-
-
-    /**
-     * For classes that have Registry as a dependency, this provides a handy way to register script handles for i18n
-     * translation handling.
-     *
-     * @return I18nRegistry
-     */
-    public function getI18nRegistry()
-    {
-        return $this->i18n_registry;
-    }
 
 
     /**
@@ -159,9 +139,6 @@ class Registry
                 throw new AssetRegistrationException($script->handle());
             }
             $script->setRegistered($registered);
-            if ($script->requiresTranslation()) {
-                $this->registerTranslation($script->handle());
-            }
             if ($script->enqueueImmediately()) {
                 wp_enqueue_script($script->handle());
             }
@@ -520,17 +497,6 @@ class Registry
 
 
     /**
-     * register translations for a registered script
-     *
-     * @param string $handle
-     */
-    public function registerTranslation($handle)
-    {
-        $this->i18n_registry->registerScriptI18n($handle);
-    }
-
-
-    /**
      * @since 4.9.63.p
      * @return bool
      */
@@ -544,6 +510,26 @@ class Registry
 
 
     /**************** deprecated ****************/
+
+
+
+    /**
+     * @return null
+     * @deprecated $VID:$
+     */
+    public function getI18nRegistry()
+    {
+        return null;
+    }
+
+
+    /**
+     * @param string $handle
+     * @deprecated $VID:$
+     */
+    public function registerTranslation($handle)
+    {
+    }
 
 
     /**

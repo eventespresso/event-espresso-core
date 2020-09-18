@@ -157,7 +157,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
             $dependencies,
             ['wp-blocks']
         );
-        return $this->addJs($handle, $dependencies)->setRequiresTranslation();
+        return $this->addJs($handle, $dependencies);
     }
 
 
@@ -193,7 +193,7 @@ abstract class BlockAssetManager extends AssetManager implements BlockAssetManag
         if ($this->assets->hasJavascriptAsset($handle)) {
             return $this->assets->getJavascriptAsset($handle);
         }
-        return $this->addJs($handle, $dependencies)->setRequiresTranslation();
+        return $this->addJs($handle, $dependencies);
     }
 
 
