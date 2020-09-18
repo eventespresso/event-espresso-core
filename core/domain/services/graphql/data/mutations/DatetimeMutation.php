@@ -37,7 +37,7 @@ class DatetimeMutation
         }
 
         if (isset($input['description'])) {
-            $args['DTT_description'] = sanitize_text_field($input['description']);
+            $args['DTT_description'] = wp_kses_post($input['description']);
         }
 
         if (! empty($input['endDate'])) {
