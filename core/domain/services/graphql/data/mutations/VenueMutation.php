@@ -27,12 +27,12 @@ class VenueMutation
             $args['VNU_name'] = sanitize_text_field($input['name']);
         }
 
-        if (! empty($input['desc'])) {
-            $args['VNU_desc'] = sanitize_text_field($input['desc']);
+        if (! empty($input['description'])) {
+            $args['VNU_desc'] = wp_kses_post($input['description']);
         }
 
-        if (! empty($input['shortDesc'])) {
-            $args['VNU_short_desc'] = sanitize_text_field($input['shortDesc']);
+        if (! empty($input['shortDescription'])) {
+            $args['VNU_short_desc'] = sanitize_text_field($input['shortDescription']);
         }
 
         // Likewise the other fields...

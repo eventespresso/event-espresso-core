@@ -29,7 +29,7 @@ class PriceMutation
         }
 
         if (isset($input['description'])) {
-            $args['PRC_desc'] = sanitize_text_field($input['description']);
+            $args['PRC_desc'] = wp_kses_post($input['description']);
         }
 
         if (array_key_exists('isDefault', $input)) {

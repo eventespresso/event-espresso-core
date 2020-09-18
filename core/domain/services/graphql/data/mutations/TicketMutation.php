@@ -40,7 +40,7 @@ class TicketMutation
         }
 
         if (isset($input['description'])) {
-            $args['TKT_description'] = sanitize_text_field($input['description']);
+            $args['TKT_description'] = wp_kses_post($input['description']);
         }
 
         if (! empty($input['endDate'])) {
