@@ -3,10 +3,10 @@
 namespace EventEspresso\core\services\assets;
 
 use EEH_DTT_Helper;
+use EventEspresso\core\domain\Domain;
 
 /**
  * Class JedLocaleData
- * Description
  *
  * @package EventEspresso\core\services\assets
  * @author  Brent Christensen
@@ -16,30 +16,34 @@ class JedLocaleData
 {
 
     /**
+     * @var array $locales
+     */
+    protected $locales = [];
+
+    /**
      * Returns Jed-formatted localization data.
      *
      * @param string $domain Translation domain.
      * @return array
      */
-    public function getData($domain)
+    public function getData($domain = Domain::TEXT_DOMAIN)
     {
-        $translations = get_translations_for_domain($domain);
-
-        $locale = [
-            '' => [
-                'domain' => $domain,
-                'lang'   => is_admin() ? EEH_DTT_Helper::get_user_locale() : get_locale()
-            ],
-        ];
-
-        if (! empty($translations->headers['Plural-Forms'])) {
-            $locale['']['plural_forms'] = $translations->headers['Plural-Forms'];
+        if (! isset($locales[ $domain ])) {
+            $translations = get_translations_for_domain($domain);
+            $locale = [
+                '' => [
+                    'domain' => $domain,
+                    'lang'   => is_admin() ? EEH_DTT_Helper::get_user_locale() : get_locale()
+                ],
+            ];
+            if (! empty($translations->headers['Plural-Forms'])) {
+                $locale['']['plural_forms'] = $translations->headers['Plural-Forms'];
+            }
+            foreach ($translations->entries as $id => $entry) {
+                $locale[ $id ] = $entry->translations;
+            }
+            $locales[ $domain ] = $locale;
         }
-
-        foreach ($translations->entries as $id => $entry) {
-            $locale[ $id ] = $entry->translations;
-        }
-
-        return $locale;
+        return $locales[ $domain ];
     }
 }
