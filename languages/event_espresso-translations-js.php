@@ -7,7 +7,7 @@ $generated_i18n_strings = array(
 	// Reference: domains/blocks/src/components/OrderByControl.tsx:13
 	__( 'Order by', 'event_espresso' ),
 
-	// Reference: domains/blocks/src/components/RegStatusControl.tsx:17
+	// Reference: domains/blocks/src/components/RegStatusControl.tsx:18
 	// Reference: domains/blocks/src/event-attendees/controls/SelectStatus.tsx:12
 	__( 'Select Registration Status', 'event_espresso' ),
 
