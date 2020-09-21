@@ -983,6 +983,21 @@ information', 'event_espresso' ),
 	// Reference: packages/dates/src/TimePicker.tsx:13
 	__( 'time', 'event_espresso' ),
 
+	// Reference: packages/dates/src/utils/misc.ts:13
+	__( 'month(s)', 'event_espresso' ),
+
+	// Reference: packages/dates/src/utils/misc.ts:14
+	__( 'week(s)', 'event_espresso' ),
+
+	// Reference: packages/dates/src/utils/misc.ts:15
+	__( 'day(s)', 'event_espresso' ),
+
+	// Reference: packages/dates/src/utils/misc.ts:16
+	__( 'hour(s)', 'event_espresso' ),
+
+	// Reference: packages/dates/src/utils/misc.ts:17
+	__( 'minute(s)', 'event_espresso' ),
+
 	// Reference: packages/edtr-services/src/apollo/queries/datetimes/useFetchDatetimes.ts:25
 	__( 'datetimes initialized', 'event_espresso' ),
 
@@ -1167,21 +1182,6 @@ information', 'event_espresso' ),
 
 	// Reference: packages/tpc/src/inputs/PriceNameInput.tsx:14
 	__( 'label...', 'event_espresso' ),
-
-	// Reference: packages/utils/src/date/misc.ts:12
-	__( 'month(s)', 'event_espresso' ),
-
-	// Reference: packages/utils/src/date/misc.ts:13
-	__( 'week(s)', 'event_espresso' ),
-
-	// Reference: packages/utils/src/date/misc.ts:14
-	__( 'day(s)', 'event_espresso' ),
-
-	// Reference: packages/utils/src/date/misc.ts:15
-	__( 'hour(s)', 'event_espresso' ),
-
-	// Reference: packages/utils/src/date/misc.ts:16
-	__( 'minute(s)', 'event_espresso' ),
 
 	// Reference: packages/components/src/LoadingNotice/LoadingNotice.tsx:17
 	_x( 'loading%s', 'loading...', 'event_espresso' )
