@@ -4,10 +4,12 @@ use EventEspresso\core\domain\DomainFactory;
 use EventEspresso\core\domain\values\FilePath;
 use EventEspresso\core\domain\values\FullyQualifiedName;
 use EventEspresso\core\domain\values\Version;
+use EventEspresso\core\exceptions\InvalidClassException;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidFilePathException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\assets\AssetCollection;
 use EventEspresso\core\services\assets\AssetManifest;
-use EventEspresso\core\services\assets\I18nRegistry;
-use EventEspresso\core\services\assets\JedLocaleData;
 use EventEspresso\core\services\assets\Registry;
 
 /**
@@ -30,12 +32,11 @@ class RegistryTest extends EE_UnitTestCase
 
     /**
      * @throws DomainException
-     * @throws EE_Error
      * @throws InvalidArgumentException
-     * @throws \EventEspresso\core\exceptions\InvalidClassException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidFilePathException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidClassException
+     * @throws InvalidDataTypeException
+     * @throws InvalidFilePathException
+     * @throws InvalidInterfaceException
      */
     public function setUp()
     {
@@ -50,11 +51,7 @@ class RegistryTest extends EE_UnitTestCase
             )
         );
 
-        $this->registry = new Registry(
-            new AssetCollection(),
-            new AssetManifest($domain),
-            new i18nRegistry($domain, new JedLocaleData())
-        );
+        $this->registry = new Registry(new AssetCollection(), new AssetManifest($domain));
         parent::setUp();
     }
 

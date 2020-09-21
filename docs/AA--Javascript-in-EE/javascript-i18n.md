@@ -44,20 +44,6 @@ import { __ } from '@eventespresso/i18n'
 
 Obviously, you'll import more than just the `__` function if you use others.  If the javascript you are adding will involve adding a new built entry record in the `webpack.common.js` config, then you also need to make sure you modify the `aliases` entry for the options object passed through to the `wpi18nExtractor` webpack plugin.  It simply needs to be a map of entry chunk name to the handle the script will be registered as php side.
 
-### Within PHP
-
-PHP side there is a new `EventEspresso\core\services\assets\I18nRegistry` class that exposes an api for registering a script handle for translation strings.  You can either include the `I18nRegistry` class as a depedency on any classes that register wp scripts, or you can retrieve an instance of that class from `EventEspresso\core\services\assets\Registry` if its already a dependency on your class via the `getI18nRegistry` method.
-
-When registering any javascript references using `wp_register_script`, you can also register that handle for localized strings (assuming you are using `wp.i18n` within that javascript) by doing something like this:
-
-```php
-//assuming you've already assigned `I18nRegistry` to the `$i18n_registry` variable, and that the text_domain for the strings is 'event_espresso'
-wp_register_script('ee-script-a', $script_url, array(), $registry->getJsUrl(Registry::ASSET_NAMESPACE, 'script-a'));
-$i18n_registry->registerScriptI18n('script-a', 'event_espresso');
-```
-
-Behind the scenes `I18nRegistry` will take care of looking for a handle-to-translation-string map which would have been prepped by the webpack build process and using that to match up with any translations loaded php side for the locale.
-
 ## Other important things.
 
 This document is geared towards the basics for implementing usage of the `@wordpress/i18n` package within EE core (and add-ons).  However there are some assumptions made:

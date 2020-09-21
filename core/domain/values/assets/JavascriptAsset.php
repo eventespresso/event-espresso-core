@@ -92,22 +92,6 @@ class JavascriptAsset extends BrowserAsset
 
 
     /**
-     * @param bool $requires_translation
-     * @return JavascriptAsset
-     */
-    public function setRequiresTranslation($requires_translation = true)
-    {
-        $this->requires_translation = filter_var($requires_translation, FILTER_VALIDATE_BOOLEAN);
-        $dependencies = $this->dependencies();
-        if (! in_array('wp-i18n', $dependencies, true)){
-            $dependencies[] = 'wp-i18n';
-            $this->setDependencies($dependencies);
-        }
-        return $this;
-    }
-
-
-    /**
      * @return bool
      */
     public function hasInlineData()
@@ -189,5 +173,17 @@ class JavascriptAsset extends BrowserAsset
         }
 
         return $tag;
+    }
+
+
+    /**
+     * @deprecated $VID:$
+     * @param bool $requires_translation
+     * @return JavascriptAsset
+     */
+    public function setRequiresTranslation($requires_translation = true)
+    {
+        $this->requires_translation = filter_var($requires_translation, FILTER_VALIDATE_BOOLEAN);
+        return $this;
     }
 }

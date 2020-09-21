@@ -81,14 +81,6 @@ class JavascriptAssetTest extends EspressoPHPUnitFrameworkTestCase
     }
 
 
-    public function testRequiresTranslation()
-    {
-        $this->assertFalse($this->js_asset->requiresTranslation());
-        $this->js_asset->setRequiresTranslation();
-        $this->assertTrue($this->js_asset->requiresTranslation());
-    }
-
-
     public function testHasInlineData()
     {
         $this->assertFalse($this->js_asset->hasInlineData());

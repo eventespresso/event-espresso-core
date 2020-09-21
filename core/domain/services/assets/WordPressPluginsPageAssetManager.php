@@ -17,7 +17,7 @@ class WordPressPluginsPageAssetManager extends ReactAssetManager
 {
     const DOMAIN = 'wpPluginsPage';
 
-    const ASSET_HANDLE_WP_PLUGINS_PAGE = Domain::ASSET_NAMESPACE . WordPressPluginsPageAssetManager::DOMAIN;
+    const ASSET_HANDLE_WP_PLUGINS_PAGE = Domain::ASSET_NAMESPACE . '-' . WordPressPluginsPageAssetManager::DOMAIN;
 
     /**
      * @throws DomainException

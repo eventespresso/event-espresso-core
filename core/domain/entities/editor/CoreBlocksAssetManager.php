@@ -3,12 +3,8 @@
 namespace EventEspresso\core\domain\entities\editor;
 
 use DomainException;
-use EventEspresso\core\domain\services\assets\CoreAssetManager;
-use EventEspresso\core\domain\services\assets\ReactAssetManager;
-use EventEspresso\core\exceptions\InvalidDataTypeException;
-use EventEspresso\core\exceptions\InvalidEntityException;
+use EventEspresso\core\domain\Domain;
 use EventEspresso\core\services\assets\BlockAssetManager;
-use EventEspresso\core\services\collections\DuplicateCollectionIdentifierException;
 
 /**
  * Class CoreBlocksAssetManager
@@ -20,7 +16,22 @@ use EventEspresso\core\services\collections\DuplicateCollectionIdentifierExcepti
  */
 class CoreBlocksAssetManager extends BlockAssetManager
 {
-    const JS_HANDLE_CORE_BLOCKS = 'eventespresso-blocks';
+    const DOMAIN = 'blocks';
+
+    const ASSET_HANDLE_CORE_BLOCKS = Domain::ASSET_NAMESPACE . '-' . CoreBlocksAssetManager::DOMAIN;
+
+
+    /**
+     * @since  $VID:$
+     * @throws DomainException
+     */
+    public function enqueueEventEditor()
+    {
+        if ($this->verifyAssetIsRegistered(CoreBlocksAssetManager::ASSET_HANDLE_CORE_BLOCKS)) {
+            wp_enqueue_script(CoreBlocksAssetManager::ASSET_HANDLE_CORE_BLOCKS);
+            wp_enqueue_style(CoreBlocksAssetManager::ASSET_HANDLE_CORE_BLOCKS);
+        }
+    }
 
 
     /**
@@ -28,45 +39,7 @@ class CoreBlocksAssetManager extends BlockAssetManager
      */
     public function setAssetHandles()
     {
-        $this->setEditorScriptHandle(CoreBlocksAssetManager::JS_HANDLE_CORE_BLOCKS);
-        $this->setScriptHandle(CoreBlocksAssetManager::JS_HANDLE_CORE_BLOCKS);
-    }
-
-
-    /**
-     * @throws InvalidDataTypeException
-     * @throws InvalidEntityException
-     * @throws DuplicateCollectionIdentifierException
-     * @throws DomainException
-     */
-    public function addAssets()
-    {
-        parent::addAssets();
-        $this->registerJavascript();
-    }
-
-
-    /**
-     * Register javascript assets
-     *
-     * @throws InvalidDataTypeException
-     * @throws InvalidEntityException
-     * @throws DuplicateCollectionIdentifierException
-     * @throws DomainException
-     */
-    private function registerJavascript()
-    {
-        $this->addJs(
-            CoreBlocksAssetManager::JS_HANDLE_CORE_BLOCKS,
-            [
-                ReactAssetManager::JS_HANDLE_REACT,
-                ReactAssetManager::JS_HANDLE_REACT_DOM,
-                CoreAssetManager::JS_HANDLE_JS_CORE,
-                'wp-components',
-                'wp-i18n',
-                'wp-keycodes',
-                'wp-url',
-            ]
-        )->setRequiresTranslation();
+        $this->setEditorScriptHandle(CoreBlocksAssetManager::ASSET_HANDLE_CORE_BLOCKS);
+        $this->setScriptHandle(CoreBlocksAssetManager::ASSET_HANDLE_CORE_BLOCKS);
     }
 }

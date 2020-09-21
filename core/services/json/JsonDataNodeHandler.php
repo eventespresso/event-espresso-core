@@ -105,10 +105,8 @@ class JsonDataNodeHandler
         // validate that the domain, node name, and target script are set
         $domain = $this->primary_data_node->domain();
         $node_name = $this->primary_data_node->nodeName();
-        $target_script = $this->primary_data_node->targetScript();
         $data_valid =  $this->validator->validateCriticalProperty($domain, 'domain route', false)
-                       && $this->validator->validateCriticalProperty($node_name, 'node name', false)
-                       && $this->validator->validateCriticalProperty($target_script, 'target script', false);
+                       && $this->validator->validateCriticalProperty($node_name, 'node name', false);
         if (! $data_valid) {
             return;
         }
@@ -118,9 +116,13 @@ class JsonDataNodeHandler
         $data = ['domain' => $domain] + $data;
         // add legacy i18n strings
         $data['eei18n'] = EE_Registry::$i18n_js_strings;
-        // and finally JSON encode the data and attach to the target script
-        $data = json_encode($data);
-        wp_add_inline_script($target_script, "var {$node_name}={$data};", 'before');
+        // and finally, print the JSON encoded data to the DOM
+        printf(
+            "<script type='text/javascript' id='%s'>\nvar %s = %s\n</script>\n",
+            $node_name,
+            $node_name,
+            json_encode($data)
+        );
     }
 
 

@@ -64,11 +64,9 @@ class WordPressPluginsPage extends Route
             ['EventEspresso\core\domain\Domain' => EE_Dependency_Map::load_from_cache]
         );
 
-        /** @var EventEspressoData $primary_data_node */
-        $primary_data_node = $this->loader->getShared(
+        $this->loader->getShared(
             'EventEspresso\core\domain\entities\routing\data_nodes\EventEspressoData'
         );
-        $primary_data_node->setTargetScript(WordPressPluginsPageAssetManager::ASSET_HANDLE_WP_PLUGINS_PAGE);
         /** @var WordPressPluginsPageData $data_node */
         $data_node = $this->loader->getShared(
             'EventEspresso\core\domain\entities\routing\data_nodes\domains\WordPressPluginsPageData'

@@ -3,6 +3,7 @@
 namespace EventEspresso\core\domain\entities\routing\data_nodes;
 
 use DomainException;
+use EventEspresso\core\domain\Domain;
 use EventEspresso\core\domain\entities\routing\data_nodes\core\Api;
 use EventEspresso\core\domain\entities\routing\data_nodes\core\Config;
 use EventEspresso\core\services\assets\JedLocaleData;
@@ -62,7 +63,7 @@ class EventEspressoData extends PrimaryJsonDataNode
     {
         $this->addDataNode($this->api);
         $this->addDataNode($this->config);
-        $this->addData('i18n', $this->jed_locale->getData('event_espresso'));
+        $this->addData('i18n', $this->jed_locale->getData(Domain::TEXT_DOMAIN));
         $this->setInitialized(true);
     }
 }

@@ -2,17 +2,11 @@
 
 namespace EventEspresso\core\domain\entities\routing\handlers\admin;
 
-use EE_Admin_Config;
 use EE_Dependency_Map;
-use EventEspresso\core\domain\DomainInterface;
 use EventEspresso\core\domain\entities\routing\data_nodes\domains\EventEditor;
 use EventEspresso\core\domain\entities\routing\data_nodes\EventEspressoData;
-use EventEspresso\core\domain\entities\routing\specifications\RouteMatchSpecificationInterface;
 use EventEspresso\core\domain\services\assets\EventEditorAssetManager;
 use EventEspresso\core\services\graphql\GraphQLManager;
-use EventEspresso\core\services\json\JsonDataNode;
-use EventEspresso\core\services\loaders\LoaderInterface;
-use EventEspresso\core\services\request\RequestInterface;
 
 /**
  * Class EspressoEventEditor
@@ -115,11 +109,9 @@ class EspressoEventEditor extends EspressoEventsAdmin
                 'EventEspresso\core\services\assets\Registry'        => EE_Dependency_Map::load_from_cache,
             ]
         );
-        /** @var EventEspressoData $primary_data_node */
-        $primary_data_node = $this->loader->getShared(
+        $this->loader->getShared(
             'EventEspresso\core\domain\entities\routing\data_nodes\EventEspressoData'
         );
-        $primary_data_node->setTargetScript(EventEditorAssetManager::ASSET_HANDLE_EVENT_EDITOR);
         /** @var EventEditor $data_node */
         $data_node = $this->loader->getShared(
             'EventEspresso\core\domain\entities\routing\data_nodes\domains\EventEditor'

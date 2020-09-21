@@ -16,7 +16,7 @@ class EventEditorAssetManager extends ReactAssetManager
 {
     const DOMAIN = 'eventEditor';
 
-    const ASSET_HANDLE_EVENT_EDITOR = Domain::ASSET_NAMESPACE . EventEditorAssetManager::DOMAIN;
+    const ASSET_HANDLE_EVENT_EDITOR = Domain::ASSET_NAMESPACE . '-' . EventEditorAssetManager::DOMAIN;
 
 
     /**

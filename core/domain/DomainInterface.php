@@ -42,9 +42,10 @@ interface DomainInterface extends InterminableInterface
 
 
     /**
+     * @param string $additional_path
      * @return string
      */
-    public function pluginPath();
+    public function pluginPath($additional_path = '');
 
 
     /**
