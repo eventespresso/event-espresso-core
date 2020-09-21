@@ -2,7 +2,6 @@
 
 namespace EventEspresso\core\services\json;
 
-
 /**
  * Class JsonDataNode
  * A Root level Data Node for a specific domain (use case) that it provides data for.
