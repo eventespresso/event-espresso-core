@@ -1168,19 +1168,19 @@ information', 'event_espresso' ),
 	// Reference: packages/tpc/src/inputs/PriceNameInput.tsx:14
 	__( 'label...', 'event_espresso' ),
 
-	// Reference: packages/utils/src/date/misc.ts:31
+	// Reference: packages/utils/src/date/misc.ts:12
 	__( 'month(s)', 'event_espresso' ),
 
-	// Reference: packages/utils/src/date/misc.ts:32
+	// Reference: packages/utils/src/date/misc.ts:13
 	__( 'week(s)', 'event_espresso' ),
 
-	// Reference: packages/utils/src/date/misc.ts:33
+	// Reference: packages/utils/src/date/misc.ts:14
 	__( 'day(s)', 'event_espresso' ),
 
-	// Reference: packages/utils/src/date/misc.ts:34
+	// Reference: packages/utils/src/date/misc.ts:15
 	__( 'hour(s)', 'event_espresso' ),
 
-	// Reference: packages/utils/src/date/misc.ts:35
+	// Reference: packages/utils/src/date/misc.ts:16
 	__( 'minute(s)', 'event_espresso' ),
 
 	// Reference: packages/components/src/LoadingNotice/LoadingNotice.tsx:17
