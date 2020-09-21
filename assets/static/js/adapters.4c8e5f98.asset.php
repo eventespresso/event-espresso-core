@@ -1,0 +1,1 @@
+<?php return array('dependencies' => array('eventespresso-hooks', 'eventespresso-i18n', 'react', 'react-dom', 'wp-keycodes'), 'version' => 'e28c07343b3157bdf674e071805046cf');

@@ -1,1 +1,0 @@
-<?php return array('dependencies' => array('eventespresso-data', 'eventespresso-i18n', 'eventespresso-predicates', 'react', 'wp-block-editor', 'wp-blocks', 'wp-components'), 'version' => 'ce0a6771eb83d659a6ab6bf11bbf5cd1');
