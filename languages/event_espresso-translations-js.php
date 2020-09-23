@@ -20,67 +20,67 @@ $generated_i18n_strings = array(
 	// Reference: domains/blocks/src/components/SortOrderControl.tsx:25
 	__( 'Sort order:', 'event_espresso' ),
 
-	// Reference: domains/blocks/src/event-attendees/AttendeesDisplay.tsx:37
+	// Reference: domains/blocks/src/event-attendees/AttendeesDisplay.tsx:40
 	__( 'There was some error fetching attendees list', 'event_espresso' ),
 
-	// Reference: domains/blocks/src/event-attendees/AttendeesDisplay.tsx:45
+	// Reference: domains/blocks/src/event-attendees/AttendeesDisplay.tsx:46
 	__( 'To get started, select what event you want to show attendees from in the block settings.', 'event_espresso' ),
 
-	// Reference: domains/blocks/src/event-attendees/AttendeesDisplay.tsx:51
+	// Reference: domains/blocks/src/event-attendees/AttendeesDisplay.tsx:52
 	__( 'There are no attendees for selected options.', 'event_espresso' ),
 
-	// Reference: domains/blocks/src/event-attendees/controls/ArchiveSettings.tsx:10
+	// Reference: domains/blocks/src/event-attendees/controls/ArchiveSettings.tsx:11
 	__( 'Display on Archives', 'event_espresso' ),
 
-	// Reference: domains/blocks/src/event-attendees/controls/ArchiveSettings.tsx:15
+	// Reference: domains/blocks/src/event-attendees/controls/ArchiveSettings.tsx:16
 	__( 'Attendees are shown whenever this post is listed in an archive view.', 'event_espresso' ),
 
-	// Reference: domains/blocks/src/event-attendees/controls/ArchiveSettings.tsx:16
+	// Reference: domains/blocks/src/event-attendees/controls/ArchiveSettings.tsx:17
 	__( 'Attendees are hidden whenever this post is listed in an archive view.', 'event_espresso' ),
 
-	// Reference: domains/blocks/src/event-attendees/controls/AttendeeLimit.tsx:25
+	// Reference: domains/blocks/src/event-attendees/controls/AttendeeLimit.tsx:28
 	__( 'Number of Attendees to Display:', 'event_espresso' ),
 
-	// Reference: domains/blocks/src/event-attendees/controls/AttendeeLimit.tsx:29
+	// Reference: domains/blocks/src/event-attendees/controls/AttendeeLimit.tsx:32
 	_n_noop( 'Used to adjust the number of attendees displayed (There is %d total attendee for the current filter settings).', 'Used to adjust the number of attendees displayed (There are %d total attendees for the current filter settings).', 'event_espresso' ),
 
-	// Reference: domains/blocks/src/event-attendees/controls/GravatarSettings.tsx:14
+	// Reference: domains/blocks/src/event-attendees/controls/GravatarSettings.tsx:26
 	__( 'Display Gravatar', 'event_espresso' ),
 
-	// Reference: domains/blocks/src/event-attendees/controls/GravatarSettings.tsx:19
+	// Reference: domains/blocks/src/event-attendees/controls/GravatarSettings.tsx:31
 	__( 'Gravatar images are shown for each attendee.', 'event_espresso' ),
 
-	// Reference: domains/blocks/src/event-attendees/controls/GravatarSettings.tsx:20
+	// Reference: domains/blocks/src/event-attendees/controls/GravatarSettings.tsx:32
 	__( 'No gravatar images are shown for each attendee.', 'event_espresso' ),
 
-	// Reference: domains/blocks/src/event-attendees/controls/GravatarSettings.tsx:25
+	// Reference: domains/blocks/src/event-attendees/controls/GravatarSettings.tsx:37
 	__( 'Size of Gravatar', 'event_espresso' ),
 
-	// Reference: domains/blocks/src/event-attendees/controls/SelectDatetime.tsx:20
+	// Reference: domains/blocks/src/event-attendees/controls/SelectDatetime.tsx:21
 	__( 'Select Datetime', 'event_espresso' ),
 
-	// Reference: domains/blocks/src/event-attendees/controls/SelectEvent.tsx:20
+	// Reference: domains/blocks/src/event-attendees/controls/SelectEvent.tsx:21
 	__( 'Select Event', 'event_espresso' ),
 
-	// Reference: domains/blocks/src/event-attendees/controls/SelectOrderBy.tsx:13
+	// Reference: domains/blocks/src/event-attendees/controls/SelectOrderBy.tsx:10
 	__( 'Attendee id', 'event_espresso' ),
 
-	// Reference: domains/blocks/src/event-attendees/controls/SelectOrderBy.tsx:17
+	// Reference: domains/blocks/src/event-attendees/controls/SelectOrderBy.tsx:14
 	__( 'Last name only', 'event_espresso' ),
 
-	// Reference: domains/blocks/src/event-attendees/controls/SelectOrderBy.tsx:21
+	// Reference: domains/blocks/src/event-attendees/controls/SelectOrderBy.tsx:18
 	__( 'First name only', 'event_espresso' ),
 
-	// Reference: domains/blocks/src/event-attendees/controls/SelectOrderBy.tsx:25
+	// Reference: domains/blocks/src/event-attendees/controls/SelectOrderBy.tsx:22
 	__( 'First, then Last name', 'event_espresso' ),
 
-	// Reference: domains/blocks/src/event-attendees/controls/SelectOrderBy.tsx:29
+	// Reference: domains/blocks/src/event-attendees/controls/SelectOrderBy.tsx:26
 	__( 'Last, then First name', 'event_espresso' ),
 
-	// Reference: domains/blocks/src/event-attendees/controls/SelectOrderBy.tsx:36
+	// Reference: domains/blocks/src/event-attendees/controls/SelectOrderBy.tsx:40
 	__( 'Order Attendees by:', 'event_espresso' ),
 
-	// Reference: domains/blocks/src/event-attendees/controls/SelectTicket.tsx:19
+	// Reference: domains/blocks/src/event-attendees/controls/SelectTicket.tsx:21
 	__( 'Select Ticket', 'event_espresso' ),
 
 	// Reference: domains/blocks/src/event-attendees/controls/index.tsx:22
@@ -496,7 +496,7 @@ that only occurs once', 'event_espresso' ),
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/prices/buttons/FooterButtons.tsx:17
 	// Reference: packages/components/src/Modal/useSubmitButtonProps.tsx:13
 	// Reference: packages/components/src/Stepper/buttons/Submit.tsx:8
-	// Reference: packages/components/src/bulkEdit/details/Submit.tsx:36
+	// Reference: packages/components/src/bulkEdit/details/Submit.tsx:38
 	// Reference: packages/form/src/Submit.tsx:26
 	// Reference: packages/tpc/src/buttons/useSubmitButtonProps.tsx:25
 	__( 'Submit', 'event_espresso' ),
@@ -538,10 +538,10 @@ that only occurs once', 'event_espresso' ),
 	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/ContentBody.tsx:50
 	__( 'Skip prices - assign dates', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/ContentBody.tsx:65
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/ContentBody.tsx:66
 	__( 'Save and assign dates', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/ContentBody.tsx:77
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/ContentBody.tsx:79
 	__( 'Ticket details', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/TicketFormSteps.tsx:11
@@ -688,8 +688,8 @@ that only occurs once', 'event_espresso' ),
 	__( 'Edit prices for each ticket individually', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/prices/buttons/FooterButtons.tsx:15
-	// Reference: packages/components/src/bulkEdit/details/Submit.tsx:43
-	// Reference: packages/form/src/ResetButton.tsx:16
+	// Reference: packages/components/src/bulkEdit/details/Submit.tsx:45
+	// Reference: packages/form/src/ResetButton.tsx:17
 	// Reference: packages/tpc/src/buttons/useResetButtonProps.tsx:12
 	__( 'Reset', 'event_espresso' ),
 
@@ -944,10 +944,10 @@ that only occurs once', 'event_espresso' ),
 	// Reference: packages/components/src/TimezoneTimeInfo/Content.tsx:26
 	__( 'UTC (Greenwich Mean Time)', 'event_espresso' ),
 
-	// Reference: packages/components/src/TimezoneTimeInfo/TimezoneTimeInfo.tsx:24
+	// Reference: packages/components/src/TimezoneTimeInfo/TimezoneTimeInfo.tsx:23
 	__( 'This Date Converted To:', 'event_espresso' ),
 
-	// Reference: packages/components/src/TimezoneTimeInfo/TimezoneTimeInfo.tsx:25
+	// Reference: packages/components/src/TimezoneTimeInfo/TimezoneTimeInfo.tsx:24
 	__( 'click for timezone
 information', 'event_espresso' ),
 
@@ -1034,10 +1034,10 @@ information', 'event_espresso' ),
 	// Reference: packages/edtr-services/src/utils/dateAndTime.ts:6
 	__( 'Required', 'event_espresso' ),
 
-	// Reference: packages/form/src/renderers/RepeatableRenderer.tsx:30
+	// Reference: packages/form/src/renderers/RepeatableRenderer.tsx:33
 	__( 'Entry %d', 'event_espresso' ),
 
-	// Reference: packages/form/src/renderers/RepeatableRenderer.tsx:44
+	// Reference: packages/form/src/renderers/RepeatableRenderer.tsx:47
 	__( 'Add', 'event_espresso' ),
 
 	// Reference: packages/helpers/src/datetimes/getStatusTextLabel.ts:11
