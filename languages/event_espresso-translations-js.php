@@ -835,6 +835,9 @@ that only occurs once', 'event_espresso' ),
 	// Reference: packages/components/src/ActiveFilters/ActiveFilters.tsx:8
 	__( 'active filters:', 'event_espresso' ),
 
+	// Reference: packages/components/src/ActiveFilters/FilterTag.tsx:12
+	__( 'remove filter', 'event_espresso' ),
+
 	// Reference: packages/components/src/CalendarDateRange/CalendarDateRange.tsx:39
 	__( 'to', 'event_espresso' ),
 
