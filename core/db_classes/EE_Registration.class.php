@@ -1575,6 +1575,9 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
             EE_Error::add_error($error, __FILE__, __FUNCTION__, __LINE__);
             return false;
         }
+        // Fire a checked_in and checkout_out action.
+        $checked_status = $status_to === EE_Checkin::status_checked_in ? 'checked_in' : 'checked_out';
+        do_action('AHEE__EE_Registration__toggle_checkin_status__{$checked_status}', $this, $DTT_ID);
         return $status_to;
     }
 
