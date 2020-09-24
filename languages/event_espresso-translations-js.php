@@ -1,7 +1,7 @@
 <?php
 /* THIS IS A GENERATED FILE. DO NOT EDIT DIRECTLY. */
 $generated_i18n_strings = array(
-	// Reference: domains/blocks/src/components/AvatarImage.tsx:24
+	// Reference: domains/blocks/src/components/AvatarImage.tsx:27
 	__( 'contact avatar', 'event_espresso' ),
 
 	// Reference: domains/blocks/src/components/OrderByControl.tsx:13
@@ -136,7 +136,7 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/multiStep/Container.tsx:17
 	__( 'New Datetime', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/multiStep/ContentBody.tsx:41
+	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/multiStep/ContentBody.tsx:40
 	__( 'Save and assign tickets', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/multiStep/DateFormSteps.tsx:11
@@ -508,7 +508,7 @@ that only occurs once', 'event_espresso' ),
 	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/filters/controls/DatesByMonthControl.tsx:19
 	__( 'All Dates', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/filters/controls/DatesByMonthControl.tsx:23
+	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/filters/controls/DatesByMonthControl.tsx:25
 	__( 'dates by month', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/filters/controls/ShowExpiredTicketsControl.tsx:13
@@ -917,10 +917,10 @@ that only occurs once', 'event_espresso' ),
 	// Reference: packages/components/src/EntityList/filterBar/buttons/ToggleSortingButton.tsx:29
 	__( 'enable sorting', 'event_espresso' ),
 
-	// Reference: packages/components/src/Legend/ToggleLegendButton.tsx:27
+	// Reference: packages/components/src/Legend/ToggleLegendButton.tsx:28
 	__( 'hide legend', 'event_espresso' ),
 
-	// Reference: packages/components/src/Legend/ToggleLegendButton.tsx:27
+	// Reference: packages/components/src/Legend/ToggleLegendButton.tsx:28
 	__( 'show legend', 'event_espresso' ),
 
 	// Reference: packages/components/src/LoadingIndicator/LoadingIndicator.tsx:7
@@ -1125,13 +1125,13 @@ information', 'event_espresso' ),
 	// Reference: packages/tpc/src/components/DefaultTaxesInfo.tsx:30
 	__( 'Add default taxes', 'event_espresso' ),
 
-	// Reference: packages/tpc/src/buttons/taxes/RemoveTaxesButton.tsx:12
+	// Reference: packages/tpc/src/buttons/taxes/RemoveTaxesButton.tsx:11
 	__( 'Are you sure you want to remove all of this ticket\'s taxes?', 'event_espresso' ),
 
-	// Reference: packages/tpc/src/buttons/taxes/RemoveTaxesButton.tsx:16
+	// Reference: packages/tpc/src/buttons/taxes/RemoveTaxesButton.tsx:15
 	__( 'Remove all taxes?', 'event_espresso' ),
 
-	// Reference: packages/tpc/src/buttons/taxes/RemoveTaxesButton.tsx:9
+	// Reference: packages/tpc/src/buttons/taxes/RemoveTaxesButton.tsx:8
 	__( 'Remove taxes', 'event_espresso' ),
 
 	// Reference: packages/tpc/src/components/DefaultPricesInfo.tsx:28
