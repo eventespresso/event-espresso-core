@@ -460,37 +460,60 @@ if ( ! function_exists( 'espresso_list_of_event_dates' )) {
 	 * @return string
 	 */
 	function espresso_list_of_event_dates( $EVT_ID = 0, $date_format = '', $time_format = '', $echo = TRUE, $show_expired = NULL, $format = TRUE, $add_breaks = TRUE, $limit = NULL ) {
+	    $arguments = apply_filters(
+            'FHEE__espresso_list_of_event_dates__arguments',
+            [ $EVT_ID, $date_format, $time_format, $echo, $show_expired, $format, $add_breaks, $limit ]
+        );
+        list($EVT_ID, $date_format, $time_format, $echo, $show_expired, $format, $add_breaks, $limit) = $arguments;
+	    $datetimes = EEH_Event_View::get_all_date_obj( $EVT_ID, $show_expired, FALSE, $limit );
 		$date_format = ! empty( $date_format ) ? $date_format : get_option( 'date_format' );
 		$time_format = ! empty( $time_format ) ? $time_format : get_option( 'time_format' );
 		$date_format = apply_filters( 'FHEE__espresso_list_of_event_dates__date_format', $date_format );
 		$time_format = apply_filters( 'FHEE__espresso_list_of_event_dates__time_format', $time_format );
-		$datetimes = EEH_Event_View::get_all_date_obj( $EVT_ID, $show_expired, FALSE, $limit );
 		if ( ! $format ) {
 			return apply_filters( 'FHEE__espresso_list_of_event_dates__datetimes', $datetimes );
 		}
-		//d( $datetimes );
 		if ( is_array( $datetimes ) && ! empty( $datetimes )) {
 			global $post;
-			$html = $format ? '<ul id="ee-event-datetimes-ul-' . $post->ID . '" class="ee-event-datetimes-ul ee-clearfix">' : '';
+			$html = '<ul id="ee-event-datetimes-ul-' . $post->ID . '" class="ee-event-datetimes-ul ee-clearfix">';
 			foreach ( $datetimes as $datetime ) {
 				if ( $datetime instanceof EE_Datetime ) {
-					$html .= '<li id="ee-event-datetimes-li-' . $datetime->ID();
-					$html .= '" class="ee-event-datetimes-li ee-event-datetimes-li-' . $datetime->get_active_status() . '">';
-					$datetime_name = $datetime->name();
-					$html .= ! empty( $datetime_name ) ? '<strong>' . $datetime_name . '</strong>' : '';
-					$html .= ! empty( $datetime_name )  && $add_breaks ? '<br />' : '';
-					$html .= '<span class="dashicons dashicons-calendar"></span><span class="ee-event-datetimes-li-daterange">' . $datetime->date_range( $date_format ) . '</span><br/>';
-					$html .= '<span class="dashicons dashicons-clock"></span><span class="ee-event-datetimes-li-timerange">' . $datetime->time_range( $time_format ) . '</span>';
-					$datetime_description = $datetime->description();
-					$html .= ! empty( $datetime_description )  && $add_breaks ? '<br />' : '';
-					$html .= ! empty( $datetime_description ) ? ' - ' . $datetime_description : '';
-					$html = apply_filters( 'FHEE__espresso_list_of_event_dates__datetime_html', $html, $datetime );
-					$html .= '</li>';
+                    $datetime_name = $datetime->name();
+                    $datetime_description = $datetime->description();
+                    $html .= '<li id="ee-event-datetimes-li-' . $datetime->ID();
+                    $html .= '" class="ee-event-datetimes-li ee-event-datetimes-li-' . $datetime->get_active_status() . '">';
+                    $inner_html = '';
+                    if (! empty( $datetime_name )) {
+                        $inner_html .= '<strong>' . $datetime_name . '</strong>';
+                        $inner_html .= $add_breaks ? '<br />' : '';
+                    }
+                    // add date
+                    $inner_html .= '<span class="dashicons dashicons-calendar"></span>';
+                    $inner_html .= '</span><span class="ee-event-datetimes-li-daterange">';
+                    $inner_html .= $datetime->date_range( $date_format ) . '</span><br/>';
+                    // add time
+                    $inner_html .= '<span class="dashicons dashicons-clock"></span>';
+                    $inner_html .= '<span class="ee-event-datetimes-li-timerange">';
+                    $inner_html .= $datetime->time_range( $time_format ) . '</span>';
+                    if (! empty( $datetime_description )) {
+                        $inner_html .= $add_breaks ? '<br />' : '';
+                        $inner_html .= ' - ' . $datetime_description;
+                    }
+                    $inner_html = apply_filters(
+                        'FHEE__espresso_list_of_event_dates__datetime_html',
+                        $inner_html,
+                        $datetime,
+                        $arguments
+                    );
+                    $html .= $inner_html . '</li>';
 				}
 			}
-			$html .= $format ? '</ul>' : '';
+			$html .= '</ul>';
+            $html = apply_filters('FHEE__espresso_list_of_event_dates__html', $html, $arguments);
 		} else {
-			$html = $format ?  '<p><span class="dashicons dashicons-marker pink-text"></span>' . esc_html__( 'There are no upcoming dates for this event.', 'event_espresso' ) . '</p><br/>' : '';
+            $html = '<p><span class="dashicons dashicons-marker pink-text"></span>';
+            $html .= esc_html__( 'There are no upcoming dates for this event.', 'event_espresso' );
+            $html .= '</p><br/>';
 		}
 		if ( $echo ) {
 			echo $html;
