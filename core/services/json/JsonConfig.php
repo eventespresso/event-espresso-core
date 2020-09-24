@@ -185,7 +185,8 @@ abstract class JsonConfig
      */
     public function update()
     {
-        if (! $this->has_changes) {
+        $config_exists = get_option($this->option_name);
+        if ($config_exists && ! $this->has_changes) {
             return;
         }
         $config = [];
@@ -197,7 +198,11 @@ abstract class JsonConfig
             $config[ $property ] = $this->{$getter}();
         }
         $config = wp_json_encode($config);
-        update_option($this->option_name, $config, 'no');
+        if ($config_exists) {
+            update_option($this->option_name, $config);
+        } else {
+            add_option($this->option_name, $config, '', 'no');
+        }
         $this->clearChanges();
     }
 }
