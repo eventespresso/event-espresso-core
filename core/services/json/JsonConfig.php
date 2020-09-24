@@ -88,12 +88,12 @@ abstract class JsonConfig
      */
     private function isValidMethod($method)
     {
-        if (method_exists($this, $method)){
+        if (method_exists($this, $method)) {
             return true;
         }
         throw new DomainException(
             sprintf(
-                esc_html__('Missing %1$s method on JsonConfig class %2$s.', 'eventespresso'),
+                esc_html__('Missing %1$s method on JsonConfig class %2$s.', 'event_espresso'),
                 $method,
                 get_class($this)
             )
@@ -108,7 +108,6 @@ abstract class JsonConfig
     {
         $this->option_name = str_replace(['EventEspresso', '\\'], ['ee', '-'], get_class($this));
     }
-
 
 
     /**
@@ -126,7 +125,7 @@ abstract class JsonConfig
             }
             // convert to PascalCase and prepend with "set". ex: show_expired => setShowExpired
             $setter = $this->createGetterSetter($property, false);
-            $value = array_key_exists($property, $config) ? $config[ $property ] : null;
+            $value  = array_key_exists($property, $config) ? $config[ $property ] : null;
             $this->{$setter}($value);
         }
     }
@@ -136,11 +135,11 @@ abstract class JsonConfig
      * updates property value and marks changes if property value has changed
      *
      * @param string $property
-     * @param mixed $value
+     * @param mixed  $value
      */
     protected function setProperty($property, $value)
     {
-        $this->markChanges($this->{$property} === $value );
+        $this->markChanges($this->{$property} === $value);
         $this->{$property} = $value;
     }
 
