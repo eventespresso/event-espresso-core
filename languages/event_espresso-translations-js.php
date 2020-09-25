@@ -253,17 +253,18 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:47
 	__( 'copy datetime', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:27
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:27
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:29
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:29
+	// Reference: packages/components/src/bulkEdit/BulkActions.tsx:38
 	__( 'bulk actions', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:31
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:33
 	__( 'edit datetime details', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:35
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:37
 	__( 'delete datetimes', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:35
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:37
 	__( 'trash datetimes', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/delete/Delete.tsx:13
@@ -422,7 +423,7 @@ $generated_i18n_strings = array(
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:44
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:54
-	// Reference: packages/components/src/EntityList/filterBar/EntityListFilterBar.tsx:71
+	// Reference: packages/components/src/EntityList/filterBar/EntityListFilterBar.tsx:73
 	__( 'search', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:45
@@ -642,16 +643,16 @@ that only occurs once', 'event_espresso' ),
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:43
 	__( 'copy ticket', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:31
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:33
 	__( 'edit ticket details', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:35
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:37
 	__( 'delete tickets', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:35
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:37
 	__( 'trash tickets', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:39
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:41
 	__( 'edit ticket prices', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/delete/Delete.tsx:13
@@ -954,10 +955,13 @@ that only occurs once', 'event_espresso' ),
 	__( 'click for timezone
 information', 'event_espresso' ),
 
-	// Reference: packages/components/src/bulkEdit/BulkActions.tsx:42
+	// Reference: packages/components/src/bulkEdit/ActionCheckbox.tsx:40
+	__( 'select entity', 'event_espresso' ),
+
+	// Reference: packages/components/src/bulkEdit/BulkActions.tsx:45
 	__( 'select all', 'event_espresso' ),
 
-	// Reference: packages/components/src/bulkEdit/BulkActions.tsx:44
+	// Reference: packages/components/src/bulkEdit/BulkActions.tsx:47
 	__( 'apply', 'event_espresso' ),
 
 	// Reference: packages/components/src/bulkEdit/details/BulkEditDetailsProps.tsx:27
