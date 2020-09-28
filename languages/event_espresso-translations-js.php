@@ -254,17 +254,12 @@ $generated_i18n_strings = array(
 	__( 'copy datetime', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:29
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:29
-	// Reference: packages/components/src/bulkEdit/BulkActions.tsx:38
-	__( 'bulk actions', 'event_espresso' ),
-
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:33
 	__( 'edit datetime details', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:37
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:33
 	__( 'delete datetimes', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:37
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:33
 	__( 'trash datetimes', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/delete/Delete.tsx:13
@@ -643,6 +638,10 @@ that only occurs once', 'event_espresso' ),
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:43
 	__( 'copy ticket', 'event_espresso' ),
 
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:29
+	// Reference: packages/components/src/bulkEdit/BulkActions.tsx:43
+	__( 'bulk actions', 'event_espresso' ),
+
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:33
 	__( 'edit ticket details', 'event_espresso' ),
 
@@ -906,10 +905,10 @@ that only occurs once', 'event_espresso' ),
 	// Reference: packages/components/src/EntityList/filterBar/buttons/TableViewFilterButton.tsx:24
 	__( 'table view', 'event_espresso' ),
 
-	// Reference: packages/components/src/EntityList/filterBar/buttons/ToggleFiltersButton.tsx:13
+	// Reference: packages/components/src/EntityList/filterBar/buttons/ToggleFiltersButton.tsx:12
 	__( 'hide filters', 'event_espresso' ),
 
-	// Reference: packages/components/src/EntityList/filterBar/buttons/ToggleFiltersButton.tsx:13
+	// Reference: packages/components/src/EntityList/filterBar/buttons/ToggleFiltersButton.tsx:12
 	__( 'show filters', 'event_espresso' ),
 
 	// Reference: packages/components/src/EntityList/filterBar/buttons/ToggleSortingButton.tsx:29
@@ -958,10 +957,10 @@ information', 'event_espresso' ),
 	// Reference: packages/components/src/bulkEdit/ActionCheckbox.tsx:40
 	__( 'select entity', 'event_espresso' ),
 
-	// Reference: packages/components/src/bulkEdit/BulkActions.tsx:45
+	// Reference: packages/components/src/bulkEdit/BulkActions.tsx:51
 	__( 'select all', 'event_espresso' ),
 
-	// Reference: packages/components/src/bulkEdit/BulkActions.tsx:47
+	// Reference: packages/components/src/bulkEdit/BulkActions.tsx:53
 	__( 'apply', 'event_espresso' ),
 
 	// Reference: packages/components/src/bulkEdit/details/BulkEditDetailsProps.tsx:27
