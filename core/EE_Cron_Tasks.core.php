@@ -422,7 +422,7 @@ class EE_Cron_Tasks extends EE_Base
                         // Don't update the transaction/registrations if the Primary Registration is Not Approved.
                         $primary_registration = $transaction->primary_registration();
                         if ($primary_registration instanceof EE_Registration
-                            && $primary_registration->status_ID() == EEM_Registration::status_id_not_approved
+                            && $primary_registration->status_ID() !== EEM_Registration::status_id_not_approved
                         ) {
                             /** @type EE_Transaction_Processor $transaction_processor */
                             $transaction_processor = EE_Registry::instance()->load_class('Transaction_Processor');
