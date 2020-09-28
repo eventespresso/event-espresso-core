@@ -419,16 +419,22 @@ class EE_Cron_Tasks extends EE_Base
                 switch ($transaction->status_ID()) {
                     // Completed TXNs
                     case EEM_Transaction::complete_status_code:
-                        /** @type EE_Transaction_Processor $transaction_processor */
-                        $transaction_processor = EE_Registry::instance()->load_class('Transaction_Processor');
-                        $transaction_processor->update_transaction_and_registrations_after_checkout_or_payment(
-                            $transaction,
-                            $transaction->last_payment()
-                        );
-                        do_action(
-                            'AHEE__EE_Cron_Tasks__process_expired_transactions__completed_transaction',
-                            $transaction
-                        );
+                        // Don't update the transaction/registrations if the Primary Registration is Not Approved.
+                        $transaction->primary_registration();
+                        if ($primary_registration instanceof EE_Registration
+                            && $primary_registration->status_ID() == EEM_Registration::status_id_not_approved
+                        ) {
+                            /** @type EE_Transaction_Processor $transaction_processor */
+                            $transaction_processor = EE_Registry::instance()->load_class('Transaction_Processor');
+                            $transaction_processor->update_transaction_and_registrations_after_checkout_or_payment(
+                                $transaction,
+                                $transaction->last_payment()
+                            );
+                            do_action(
+                                'AHEE__EE_Cron_Tasks__process_expired_transactions__completed_transaction',
+                                $transaction
+                            );
+                        }
                         break;
                     // Overpaid TXNs
                     case EEM_Transaction::overpaid_status_code:
