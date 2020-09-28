@@ -11,7 +11,7 @@ jobs:
         uses: garygrossgarten/github-action-ssh@release
         with:
           command: source deploy-from-gh-actions-to-nk.sh "event-espresso-core"
-          host: ${{ secrets.NK_HOST }}
-          username: ${{ secrets.NK_USERNAME }}
-          passphrase: ${{ secrets.NK_PASSPHRASE }}
-          privateKey: ${{ secrets.NK_PRIVATE_KEY}}
+          host: ${{ secrets.SERVER_EE_DEVBOX_SITES_HOST }}
+          username: ${{ secrets.SERVER_EE_DEVBOX_SITES_USERNAME }}
+          passphrase: ${{ secrets.SERVER_EE_DEVBOX_SITES_PASSPHRASE }}
+          privateKey: ${{ secrets.SERVER_EE_DEVBOX_SITES_PRIVATE_KEY}}
