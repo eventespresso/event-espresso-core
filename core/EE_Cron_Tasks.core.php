@@ -420,7 +420,7 @@ class EE_Cron_Tasks extends EE_Base
                     // Completed TXNs
                     case EEM_Transaction::complete_status_code:
                         // Don't update the transaction/registrations if the Primary Registration is Not Approved.
-                        $transaction->primary_registration();
+                        $primary_registration = $transaction->primary_registration();
                         if ($primary_registration instanceof EE_Registration
                             && $primary_registration->status_ID() == EEM_Registration::status_id_not_approved
                         ) {
