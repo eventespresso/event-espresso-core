@@ -985,7 +985,7 @@ information', 'event_espresso' ),
 	// Reference: packages/dates/src/DateRangePickerLegend.tsx:14
 	__( 'day in range', 'event_espresso' ),
 
-	// Reference: packages/dates/src/DateTimePicker.tsx:8
+	// Reference: packages/dates/src/DateTimePicker.tsx:9
 	// Reference: packages/dates/src/TimePicker.tsx:13
 	__( 'time', 'event_espresso' ),
 
