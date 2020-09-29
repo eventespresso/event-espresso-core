@@ -164,7 +164,8 @@ abstract class AbstractConnectionResolver extends WPGraphQLConnectionResolver
      * @param array $id_fields   The fields to convert from global IDs to DB IDs.
      * @return array
      */
-    protected function sanitizeWhereArgsForInputFields(array $where_args, array $arg_mapping, array $id_fields) {
+    protected function sanitizeWhereArgsForInputFields(array $where_args, array $arg_mapping, array $id_fields)
+    {
         $query_args = $this->getUtilities()->sanitizeWhereArgs($where_args, $arg_mapping, $id_fields);
         return ! empty($query_args) && is_array($query_args) ? $query_args : [];
     }
