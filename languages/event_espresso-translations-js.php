@@ -963,7 +963,13 @@ information', 'event_espresso' ),
 	// Reference: packages/components/src/bulkEdit/BulkActions.tsx:53
 	__( 'apply', 'event_espresso' ),
 
-	// Reference: packages/components/src/bulkEdit/details/BulkEditDetailsProps.tsx:27
+	// Reference: packages/components/src/bulkEdit/details/BulkEditDetailsProps.tsx:22
+	__( 'Note: ', 'event_espresso' ),
+
+	// Reference: packages/components/src/bulkEdit/details/BulkEditDetailsProps.tsx:22
+	__( 'any changes will be applied to ALL of the selected entities.', 'event_espresso' ),
+
+	// Reference: packages/components/src/bulkEdit/details/BulkEditDetailsProps.tsx:28
 	__( 'Bulk edit details', 'event_espresso' ),
 
 	// Reference: packages/components/src/bulkEdit/details/Submit.tsx:28
@@ -971,12 +977,6 @@ information', 'event_espresso' ),
 
 	// Reference: packages/components/src/bulkEdit/details/Submit.tsx:29
 	__( 'Bulk update details', 'event_espresso' ),
-
-	// Reference: packages/components/src/bulkEdit/details/Warning.tsx:12
-	__( 'Note: ', 'event_espresso' ),
-
-	// Reference: packages/components/src/bulkEdit/details/Warning.tsx:13
-	__( 'any changes will be applied to ALL of the selected entities.', 'event_espresso' ),
 
 	// Reference: packages/dates/src/DateRangePicker.tsx:66
 	// Reference: packages/dates/src/DateRangePickerLegend.tsx:18
