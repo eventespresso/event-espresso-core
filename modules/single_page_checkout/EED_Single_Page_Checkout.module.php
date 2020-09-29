@@ -1326,7 +1326,9 @@ class EED_Single_Page_Checkout extends EED_Module
                     );
                     $process_reg_step = apply_filters(
                         "AHEE__Single_Page_Checkout__process_reg_step__{$this->checkout->current_step->slug()}__{$this->checkout->action}",
-                        $this->checkout->current_step
+                        true,
+                        $this->checkout->current_step,
+                        $this
                     );
                     // call action on current step
                     if ($process_reg_step && call_user_func([$this->checkout->current_step, $this->checkout->action])) {
