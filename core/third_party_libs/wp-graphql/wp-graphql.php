@@ -378,8 +378,8 @@ if ( ! class_exists( 'WPGraphQL' ) ) :
 		 * Initialize admin functionality
 		 */
 		public function init_admin() {
-			$admin = new \WPGraphQL\Admin\Admin();
-			$admin->init();
+			// $admin = new \WPGraphQL\Admin\Admin();
+			// $admin->init();
 		}
 
 		/**
