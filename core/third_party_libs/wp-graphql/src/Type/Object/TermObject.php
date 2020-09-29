@@ -20,10 +20,14 @@ class TermObject {
 	 */
 	public static function register_taxonomy_object_type( $taxonomy_object ) {
 
-		$interfaces = [ 'Node', 'TermNode', 'UniformResourceIdentifiable' ];
+		$interfaces = [ 'Node', 'TermNode', 'UniformResourceIdentifiable', 'DatabaseIdentifier' ];
 
 		if ( $taxonomy_object->hierarchical ) {
 			$interfaces[] = 'HierarchicalTermNode';
+		}
+
+		if ( true === $taxonomy_object->show_in_nav_menus ) {
+			$interfaces[] = 'MenuItemLinkable';
 		}
 
 		$single_name = $taxonomy_object->graphql_single_name;

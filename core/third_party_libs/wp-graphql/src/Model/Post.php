@@ -33,6 +33,7 @@ use WPGraphQL\Utils\Utils;
  * @property string  $pingStatus
  * @property string  $slug
  * @property boolean $isFrontPage
+ * @property boolean $isPostsPage
  * @property boolean $isPreview
  * @property boolean $isRevision
  * @property string  $toPing
@@ -150,10 +151,13 @@ class Post extends Model {
 			'status',
 			'titleRendered',
 			'uri',
-
+			'isPostsPage',
+			'isFrontPage',
 		];
 
-		$allowed_restricted_fields[] = $this->post_type_object->graphql_single_name . 'Id';
+		if ( isset( $this->post_type_object->graphql_single_name ) ) {
+			$allowed_restricted_fields[] = $this->post_type_object->graphql_single_name . 'Id';
+		}
 
 		$restricted_cap = $this->get_restricted_cap();
 
@@ -423,10 +427,6 @@ class Post extends Model {
 
 		if ( empty( $this->fields ) ) {
 
-			$this->fields[ $this->post_type_object->graphql_single_name . 'Id' ] = function() {
-				return absint( $this->data->ID );
-			};
-
 			$this->fields = [
 				'ID'                        => function() {
 					return $this->data->ID;
@@ -439,7 +439,7 @@ class Post extends Model {
 					return ! empty( $this->data->post_author ) ? $this->data->post_author : null;
 				},
 				'id'                        => function() {
-					return ( ! empty( $this->data->post_type ) && ! empty( $this->ID ) ) ? Relay::toGlobalId( 'post', $this->ID ) : null;
+					return ( ! empty( $this->data->post_type ) && ! empty( $this->databaseId ) ) ? Relay::toGlobalId( 'post', $this->databaseId ) : null;
 				},
 				'databaseId'                => function() {
 					return isset( $this->data->ID ) ? absint( $this->data->ID ) : null;
@@ -532,6 +532,16 @@ class Post extends Model {
 						return false;
 					}
 					if ( absint( get_option( 'page_on_front', 0 ) ) === $this->data->ID ) {
+						return true;
+					}
+
+					return false;
+				},
+				'isPostsPage'               => function () {
+					if ( 'page' !== $this->data->post_type ) {
+						return false;
+					}
+					if ( absint( get_option( 'page_for_posts', 0 ) ) === $this->data->ID ) {
 						return true;
 					}
 
@@ -653,6 +663,7 @@ class Post extends Model {
 						$revisions = wp_get_post_revisions( $this->data->ID, [
 							'posts_per_page' => 1,
 							'fields'         => 'ids',
+							'check_enabled'  => false,
 						] );
 
 						return is_array( $revisions ) && ! empty( $revisions ) ? array_values( $revisions )[0] : null;
@@ -667,6 +678,7 @@ class Post extends Model {
 						$revisions = wp_get_post_revisions( $this->parentDatabaseId, [
 							'posts_per_page' => 1,
 							'fields'         => 'ids',
+							'check_enabled'  => false,
 						] );
 
 						if ( in_array( $this->data->ID, array_values( $revisions ), true ) ) {

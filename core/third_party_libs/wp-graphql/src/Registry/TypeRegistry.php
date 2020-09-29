@@ -13,6 +13,7 @@ use WPGraphQL\Connection\ContentTypes;
 use WPGraphQL\Connection\EnqueuedScripts;
 use WPGraphQL\Connection\EnqueuedStylesheets;
 use WPGraphQL\Connection\MediaItems;
+use WPGraphQL\Connection\MenuItemLinkableConnection;
 use WPGraphQL\Connection\MenuItems;
 use WPGraphQL\Connection\Menus;
 use WPGraphQL\Connection\Plugins;
@@ -56,9 +57,11 @@ use WPGraphQL\Type\Input\UsersConnectionOrderbyInput;
 use WPGraphQL\Type\InterfaceType\CommenterInterface;
 use WPGraphQL\Type\InterfaceType\ContentNode;
 use WPGraphQL\Type\InterfaceType\ContentTemplate;
+use WPGraphQL\Type\InterfaceType\DatabaseIdentifier;
 use WPGraphQL\Type\InterfaceType\EnqueuedAsset;
 use WPGraphQL\Type\InterfaceType\HierarchicalContentNode;
 use WPGraphQL\Type\InterfaceType\HierarchicalTermNode;
+use WPGraphQL\Type\InterfaceType\MenuItemLinkable;
 use WPGraphQL\Type\InterfaceType\NodeWithAuthor;
 use WPGraphQL\Type\InterfaceType\NodeWithComments;
 use WPGraphQL\Type\InterfaceType\NodeWithContentEditor;
@@ -74,7 +77,6 @@ use WPGraphQL\Type\InterfaceType\UniformResourceIdentifiable;
 use WPGraphQL\Type\Object\EnqueuedScript;
 use WPGraphQL\Type\Object\EnqueuedStylesheet;
 use WPGraphQL\Type\Union\ContentRevisionUnion;
-use WPGraphQL\Type\Union\ContentTemplateUnion;
 use WPGraphQL\Type\Union\PostObjectUnion;
 use WPGraphQL\Type\Union\MenuItemObjectUnion;
 use WPGraphQL\Type\Enum\AvatarRatingEnum;
@@ -221,9 +223,11 @@ class TypeRegistry {
 		CommenterInterface::register_type( $type_registry );
 		ContentNode::register_type( $type_registry );
 		ContentTemplate::register_type( $type_registry );
+		DatabaseIdentifier::register_type( $type_registry );
 		EnqueuedAsset::register_type( $type_registry );
 		HierarchicalTermNode::register_type( $type_registry );
 		HierarchicalContentNode::register_type( $type_registry );
+		MenuItemLinkable::register_type( $type_registry );
 		NodeWithAuthor::register_type( $type_registry );
 		NodeWithComments::register_type( $type_registry );
 		NodeWithContentEditor::register_type( $type_registry );
@@ -295,7 +299,6 @@ class TypeRegistry {
 		UsersConnectionOrderbyInput::register_type();
 
 		ContentRevisionUnion::register_type( $this );
-		ContentTemplateUnion::register_type( $this );
 		MenuItemObjectUnion::register_type( $this );
 		PostObjectUnion::register_type( $this );
 		TermObjectUnion::register_type( $this );
@@ -309,6 +312,7 @@ class TypeRegistry {
 		EnqueuedStylesheets::register_connections();
 		MediaItems::register_connections();
 		Menus::register_connections();
+		MenuItemLinkableConnection::register_connections();
 		MenuItems::register_connections();
 		Plugins::register_connections();
 		PostObjects::register_connections();
@@ -337,6 +341,49 @@ class TypeRegistry {
 		UserUpdate::register_mutation();
 		UserRegister::register_mutation();
 		UpdateSettings::register_mutation();
+
+		$registered_page_templates = wp_get_theme()->get_post_templates();
+
+		if ( ! empty( $registered_page_templates ) && is_array( $registered_page_templates ) ) {
+
+			$page_templates['default'] = 'Default';
+			foreach ( $registered_page_templates as $post_type_templates ) {
+				foreach ( $post_type_templates as $file => $name ) {
+					$page_templates[ $file ] = $name;
+				}
+			}
+		}
+
+		if ( ! empty( $page_templates ) && is_array( $page_templates ) ) {
+			foreach ( $page_templates as $file => $name ) {
+				$name               = ucwords( $name );
+				$name               = preg_replace( '/[^\w]/', '', $name );
+				$template_type_name = $name . 'Template';
+				register_graphql_object_type(
+					$template_type_name,
+					[
+						'interfaces'  => [ 'ContentTemplate' ],
+						// Translators: Placeholder is the name of the GraphQL Type in the Schema
+						'description' => __( 'The template assigned to the node', 'wp-graphql' ),
+						'fields'      => [
+							'templateName' => [
+								'resolve' => function( $template ) use ( $page_templates ) {
+									return isset( $template['templateName'] ) ? $template['templateName'] : null;
+								},
+							],
+							'templateFile' => [
+								'resolve' => function( $template ) use ( $file ) {
+									// The template file could expose implementation details. Default is reserved for non-http request queries
+									// or authenticated users. This way internal graphql queries can get it or authenticated users
+									return ( ! is_graphql_http_request() || is_user_logged_in() ) && isset( $file ) ? $file : null;
+								},
+							],
+						],
+					]
+				);
+
+			}
+		}
 
 		/**
 		 * Register PostObject types based on post_types configured to show_in_graphql
@@ -600,7 +647,7 @@ class TypeRegistry {
 		$prepared_field  = null;
 		if ( ! empty( $fields ) && is_array( $fields ) ) {
 			foreach ( $fields as $field_name => $field_config ) {
-				if ( isset( $field_config['type'] ) ) {
+				if ( is_array( $field_config ) && isset( $field_config['type'] ) ) {
 					$prepared_field = $this->prepare_field( $field_name, $field_config, $type_name );
 					if ( ! empty( $prepared_field ) ) {
 						$prepared_fields[ $this->format_key( $field_name ) ] = $prepared_field;
@@ -731,7 +778,7 @@ class TypeRegistry {
 			function( $fields ) use ( $type_name, $field_name, $config ) {
 
 				if ( isset( $fields[ $field_name ] ) ) {
-					if ( true === GRAPHQL_DEBUG ) {
+					if ( true === \WPGraphQL::debug() ) {
 						throw new InvariantViolation( sprintf( __( 'You cannot register duplicate fields on the same Type. The field \'%1$s\' already exists on the type \'%2$s\'. Make sure to give the field a unique name.' ), $field_name, $type_name ) );
 					}
 
@@ -773,7 +820,7 @@ class TypeRegistry {
 				if ( isset( $fields[ $field_name ] ) ) {
 					unset( $fields[ $field_name ] );
 				} else {
-					if ( true === GRAPHQL_DEBUG ) {
+					if ( true === \WPGraphQL::debug() ) {
 						throw new InvariantViolation( sprintf( __( 'The field \'%1$s\' does not exist on the type \'%2$s\' and cannot be deregistered', 'wp-graphql' ), $field_name, $type_name ) );
 					}
 				}
