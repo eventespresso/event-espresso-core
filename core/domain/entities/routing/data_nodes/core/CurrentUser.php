@@ -24,7 +24,7 @@ class CurrentUser extends JsonDataNode
      */
     public function __construct(JsonDataNodeValidator $validator)
     {
-        if (! class_exists('WPGraphQL')) {
+        if (PHP_VERSION_ID > 70000 && ! class_exists('WPGraphQL')) {
             require_once EE_THIRD_PARTY . 'wp-graphql/wp-graphql.php';
         }
         parent::__construct($validator);
@@ -41,7 +41,9 @@ class CurrentUser extends JsonDataNode
             $current_user = new WP_User();
         }
 
-        $this->addData('id', Relay::toGlobalId('user', $current_user->ID));
+        if (class_exists(Relay::class)) {
+            $this->addData('id', Relay::toGlobalId('user', $current_user->ID));
+        }
         $this->addData('databaseId', $current_user->ID);
         $this->addData('description', $current_user->description);
         $this->addData('email', $current_user->user_email);
