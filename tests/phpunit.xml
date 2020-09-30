@@ -24,7 +24,7 @@
     </filter>
 	<testsuites>
 		<testsuite name="default">
-			<directory suffix=".php" phpVersion="7.0.0" phpVersionOperator="<">/testcases</directory>
+			<directory suffix=".php" phpVersion="7.0.0" phpVersionOperator="lt">/testcases</directory>
             <exclude>/testcases/core/domain/services/graphql</exclude>
 		</testsuite>
 		<testsuite name="php7tests">
