@@ -2,6 +2,8 @@
 
 namespace EventEspresso\core\domain\services\graphql\data\loaders;
 
+use EE_Error;
+use EEM_Base;
 use EEM_Price;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -13,7 +15,7 @@ use InvalidArgumentException;
 class PriceLoader extends AbstractLoader
 {
     /**
-     * @return EE_Base_Class
+     * @return EEM_Base
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -26,12 +28,7 @@ class PriceLoader extends AbstractLoader
 
     /**
      * @param array $keys
-     *
      * @return array
-     * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      */
     protected function getWhereParams(array $keys)
     {

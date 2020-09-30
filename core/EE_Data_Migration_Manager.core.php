@@ -129,12 +129,12 @@ class EE_Data_Migration_Manager implements ResettableInterface
     public $stati_that_indicate_to_stop_single_migration_script = array();
 
     /**
-     * @var \EventEspresso\core\services\database\TableManager $table_manager
+     * @var TableManager $table_manager
      */
     protected $_table_manager;
 
     /**
-     * @var \EventEspresso\core\services\database\TableAnalysis $table_analysis
+     * @var TableAnalysis $table_analysis
      */
     protected $_table_analysis;
 
@@ -142,6 +142,11 @@ class EE_Data_Migration_Manager implements ResettableInterface
      * @var array $script_migration_versions
      */
     protected $script_migration_versions;
+
+    /**
+     * @var array $dms_folders
+     */
+    protected $dms_folders;
 
     /**
      * @var EE_Data_Migration_Manager $_instance
@@ -178,7 +183,8 @@ class EE_Data_Migration_Manager implements ResettableInterface
 
 
     /**
-     * constructor
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     private function __construct()
     {
@@ -282,12 +288,14 @@ class EE_Data_Migration_Manager implements ResettableInterface
         }
     }
 
+
     /**
      * Gets the array describing what data migrations have run. Also has a side-effect of recording which was the last
      * ran, and which was the last ran which hasn't finished yet
      *
      * @return array where each element should be an array of EE_Data_Migration_Script_Base (but also has a few legacy
      *               arrays in there - which should probably be ignored)
+     * @throws EE_Error
      */
     public function get_data_migrations_ran()
     {
@@ -340,12 +348,13 @@ class EE_Data_Migration_Manager implements ResettableInterface
      * @param string $old_pk      eg 'wp_esp_posts'
      * @param        $new_table
      * @return mixed string or int
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_mapping_new_pk($script_name, $old_table, $old_pk, $new_table)
     {
         $script = EE_Registry::instance()->load_dms($script_name);
-        $mapping = $script->get_mapping_new_pk($old_table, $old_pk, $new_table);
-        return $mapping;
+        return $script->get_mapping_new_pk($old_table, $old_pk, $new_table);
     }
 
     /**
@@ -371,10 +380,13 @@ class EE_Data_Migration_Manager implements ResettableInterface
      */
     public function get_data_migration_script_folders()
     {
-        return apply_filters(
-            'FHEE__EE_Data_Migration_Manager__get_data_migration_script_folders',
-            array('Core' => EE_CORE . 'data_migration_scripts')
-        );
+        if (empty($this->dms_folders)) {
+            $this->dms_folders = apply_filters(
+                'FHEE__EE_Data_Migration_Manager__get_data_migration_script_folders',
+                array('Core' => EE_CORE . 'data_migration_scripts')
+            );
+        }
+        return $this->dms_folders;
     }
 
     /**
@@ -468,12 +480,14 @@ class EE_Data_Migration_Manager implements ResettableInterface
         return $db_state;
     }
 
+
     /**
      * Checks if there are any data migration scripts that ought to be run. If found,
      * returns the instantiated classes. If none are found (ie, they've all already been run
      * or they don't apply), returns an empty array
      *
      * @return EE_Data_Migration_Script_Base[]
+     * @throws EE_Error
      */
     public function check_for_applicable_data_migration_scripts()
     {
@@ -521,14 +535,12 @@ class EE_Data_Migration_Manager implements ResettableInterface
                         $migrates_to_version = $script->migrates_to_version();
                         $next_database_state_to_consider[ $migrates_to_version['slug'] ] = $migrates_to_version['version'];
                         unset($script_class_and_filepaths_available[ $classname ]);
-                    } else {
-                        // it must have a status that indicates it has finished, so we don't want to try and run it again
                     }
-                } else {
-                    // it exists but it's not  a proper data migration script
-                    // maybe the script got renamed? or was simply removed from EE?
-                    // either way, its certainly not runnable!
+                    // else it must have a status that indicates it has finished, so we don't want to try and run it again
                 }
+                // else it exists but it's not  a proper data migration script
+                // maybe the script got renamed? or was simply removed from EE?
+                // either way, its certainly not runnable!
             }
             $iteration++;
         } while ($next_database_state_to_consider != $theoretical_database_state && $iteration < 6);
@@ -559,6 +571,8 @@ class EE_Data_Migration_Manager implements ResettableInterface
      *
      * @param bool $include_completed_scripts
      * @return EE_Data_Migration_Script_Base
+     * @throws EE_Error
+     * @throws EE_Error
      */
     public function get_last_ran_script($include_completed_scripts = false)
     {
@@ -655,6 +669,7 @@ class EE_Data_Migration_Manager implements ResettableInterface
         }
         // ok so we definitely have a data migration script
         try {
+            $init_dbs = false;
             // how big of a bite do we want to take? Allow users to easily override via their wp-config
             if (absint($step_size) < 1) {
                 $step_size = defined('EE_MIGRATION_STEP_SIZE') && absint(EE_MIGRATION_STEP_SIZE)
@@ -663,7 +678,6 @@ class EE_Data_Migration_Manager implements ResettableInterface
             // do what we came to do!
             $currently_executing_script->migration_step($step_size);
             // can we wrap it up and verify default data?
-            $init_dbs = false;
             switch ($currently_executing_script->get_status()) {
                 case EE_Data_Migration_Manager::status_continue:
                     $response_array = array(
@@ -918,12 +932,12 @@ class EE_Data_Migration_Manager implements ResettableInterface
         return false;
     }
 
+
     /**
      * Adds this error string to the data_migrations_ran array, but we dont necessarily know
      * where to put it, so we just throw it in there... better than nothing...
      *
      * @param string $error_message
-     * @throws EE_Error
      */
     public function add_error_to_migrations_ran($error_message)
     {
@@ -970,10 +984,13 @@ class EE_Data_Migration_Manager implements ResettableInterface
         );
     }
 
+
     /**
      * saves what data migrations have ran to the database
      *
      * @return mixed TRUE if successfully saved migrations ran, string if an error occurred
+     * @throws EE_Error
+     * @throws EE_Error
      */
     protected function _save_migrations_ran()
     {
@@ -1057,12 +1074,14 @@ class EE_Data_Migration_Manager implements ResettableInterface
         return $class;
     }
 
+
     /**
      * Gets the classname for the most up-to-date DMS (ie, the one that will finally
      * leave the DB in a state usable by the current plugin code).
      *
      * @param string $plugin_slug the slug for the ee plugin we are searching for. Default is 'Core'
      * @return string
+     * @throws EE_Error
      */
     public function get_most_up_to_date_dms($plugin_slug = 'Core')
     {
@@ -1095,6 +1114,7 @@ class EE_Data_Migration_Manager implements ResettableInterface
         return $most_up_to_date_dms_classname;
     }
 
+
     /**
      * Gets the migration script specified but ONLY if it has already ran.
      *
@@ -1107,6 +1127,8 @@ class EE_Data_Migration_Manager implements ResettableInterface
      *                            period. Eg '4.1.0'
      * @param string $plugin_slug like 'Core', 'Mailchimp', 'Calendar', etc
      * @return EE_Data_Migration_Script_Base
+     * @throws EE_Error
+     * @throws EE_Error
      */
     public function get_migration_ran($version, $plugin_slug = 'Core')
     {
@@ -1152,6 +1174,7 @@ class EE_Data_Migration_Manager implements ResettableInterface
         return $this->_save_migrations_ran();
     }
 
+
     /**
      * Gets whether or not this particular migration has run or not
      *
@@ -1159,6 +1182,7 @@ class EE_Data_Migration_Manager implements ResettableInterface
      *                            period. Eg '4.1.0'
      * @param string $plugin_slug like 'Core', 'Mailchimp', 'Calendar', etc
      * @return boolean
+     * @throws EE_Error
      */
     public function migration_has_ran($version, $plugin_slug = 'Core')
     {
@@ -1179,10 +1203,13 @@ class EE_Data_Migration_Manager implements ResettableInterface
         update_option(self::db_init_queue_option_name, $queue);
     }
 
+
     /**
      * Calls EE_Addon::initialize_db_if_no_migrations_required() on each addon
      * specified in EE_Data_Migration_Manager::get_db_init_queue(), and if 'Core' is
      * in the queue, calls EE_System::initialize_db_if_no_migrations_required().
+     *
+     * @throws EE_Error
      */
     public function initialize_db_for_enqueued_ee_plugins()
     {

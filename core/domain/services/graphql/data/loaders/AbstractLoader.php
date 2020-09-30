@@ -2,6 +2,11 @@
 
 namespace EventEspresso\core\domain\services\graphql\data\loaders;
 
+use EE_Error;
+use EEM_Base;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use InvalidArgumentException;
 use WPGraphQL\Data\Loader\AbstractDataLoader;
 
 /**
@@ -12,7 +17,7 @@ abstract class AbstractLoader extends AbstractDataLoader
     protected $primaryKey;
 
     /**
-     * @return EE_Base_Class
+     * @return EEM_Base
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -22,12 +27,7 @@ abstract class AbstractLoader extends AbstractDataLoader
 
     /**
      * @param array $keys
-     *
      * @return array
-     * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      */
     abstract protected function getWhereParams(array $keys);
 
