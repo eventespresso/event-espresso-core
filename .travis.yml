@@ -30,7 +30,7 @@ before_script:
     # Install the specified version of PHPUnit depending on the PHP version:
     if [[ -n "$TRAVIS_PHP_VERSION" ]]; then
       case "$TRAVIS_PHP_VERSION" in
-        7.0|7.1|7.2|7.3|7.4|nightly)
+        7.1|7.2|7.3|7.4|nightly)
           # when wp tests support phpunit 7 we'll update this.
           echo "Using PHPUnit 6"
           composer global require "phpunit/phpunit=6.5.*"
@@ -62,9 +62,6 @@ jobs:
         - composer install || exit 1
         - composer config-eventespressocs || exit 1
         - vendor/bin/phpcs -n || exit 1
-    - name: "php 7.0 test"
-      php: 7.0
-      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
     - name: "php 7.1 test"
       php: 7.1
       if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
