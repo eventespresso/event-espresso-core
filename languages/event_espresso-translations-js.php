@@ -395,7 +395,7 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:36
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:37
 	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/table/DateCell.tsx:21
-	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/table/HeaderCell.tsx:20
+	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/table/HeaderCell.tsx:21
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:36
 	// Reference: packages/tpc/src/components/table/useHeaderRowGenerator.ts:22
 	__( 'ID', 'event_espresso' ),
@@ -500,6 +500,9 @@ that only occurs once', 'event_espresso' ),
 	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/TicketAssignmentsManagerModal/index.tsx:32
 	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/table/Table.tsx:19
 	__( 'Ticket Assignment Manager', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/table/BodyCell.tsx:24
+	__( 'assign ticket', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/filters/controls/DatesByMonthControl.tsx:19
 	__( 'All Dates', 'event_espresso' ),
@@ -1099,6 +1102,9 @@ information', 'event_espresso' ),
 
 	// Reference: packages/predicates/src/registration/statusOptions.ts:6
 	__( 'Approved', 'event_espresso' ),
+
+	// Reference: packages/rich-text-editor/src/components/ToolbarControls/HeadingControls.tsx:23
+	__( 'heading selector', 'event_espresso' ),
 
 	// Reference: packages/tpc/src/buttons/AddPriceModifierButton.tsx:15
 	__( 'add new price modifier after this row', 'event_espresso' ),
