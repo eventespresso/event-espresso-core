@@ -28,6 +28,7 @@ class EspressoEventEditor extends EspressoEventsAdmin
     public function matchesCurrentRequest()
     {
         return parent::matchesCurrentRequest()
+               && PHP_VERSION_ID > 70000
                && $this->admin_config->useAdvancedEditor()
                && (
                 $this->request->getRequestParam('action') === 'create_new'
@@ -128,6 +129,9 @@ class EspressoEventEditor extends EspressoEventsAdmin
      */
     protected function requestHandler()
     {
+        if (! class_exists('WPGraphQL')) {
+            require_once EE_THIRD_PARTY . 'wp-graphql/wp-graphql.php';
+        }
         /** @var GraphQLManager $graphQL_manager */
         $graphQL_manager = $this->loader->getShared('EventEspresso\core\services\graphql\GraphQLManager');
         $graphQL_manager->init();
