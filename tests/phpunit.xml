@@ -24,8 +24,11 @@
     </filter>
 	<testsuites>
 		<testsuite name="default">
-			<directory suffix=".php">./testcases/</directory>
-            <exclude phpVersion="7.0.0" phpVersionOperator="<">./testcases/core/domain/services/graphql</exclude>
+			<directory suffix=".php" phpVersion="7.0.0" phpVersionOperator="<">./testcases/</directory>
+            <exclude>./testcases/core/domain/services/graphql</exclude>
+		</testsuite>
+		<testsuite name="php7tests">
+			<directory suffix=".php" phpVersion="7.0.0">./testcases/</directory>
 		</testsuite>
 	</testsuites>
 	<groups>
