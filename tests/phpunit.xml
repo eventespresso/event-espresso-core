@@ -25,6 +25,7 @@
 	<testsuites>
 		<testsuite name="default">
 			<directory suffix=".php">./testcases/</directory>
+            <exclude phpVersion="7.0.0" phpVersionOperator="<">./testcases/core/domain/services/graphql</exclude>
 		</testsuite>
 	</testsuites>
 	<groups>
