@@ -28,7 +28,6 @@ class EspressoEventEditor extends EspressoEventsAdmin
     public function matchesCurrentRequest()
     {
         return parent::matchesCurrentRequest()
-               && PHP_VERSION_ID > 70000
                && $this->admin_config->useAdvancedEditor()
                && (
                 $this->request->getRequestParam('action') === 'create_new'

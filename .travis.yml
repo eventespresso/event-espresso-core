@@ -35,10 +35,6 @@ before_script:
           echo "Using PHPUnit 6"
           composer global require "phpunit/phpunit=6.5.*"
           ;;
-        5.6)
-          echo "Using PHPUnit 5.7.22"
-          composer global require "phpunit/phpunit=5.7.22"
-          ;;
         *)
           echo "No PHPUnit version handling for PHP version $TRAVIS_PHP_VERSION"
           exit 1
@@ -66,9 +62,6 @@ jobs:
         - composer install || exit 1
         - composer config-eventespressocs || exit 1
         - vendor/bin/phpcs -n || exit 1
-    - name: "php 5.6 test"
-      php: 5.6
-      if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
     - name: "php 7.0 test"
       php: 7.0
       if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot

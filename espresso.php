@@ -60,7 +60,7 @@ if (function_exists('espresso_version')) {
     }
     add_action('admin_notices', 'espresso_duplicate_plugin_error', 1);
 } else {
-    define('EE_MIN_PHP_VER_REQUIRED', '5.6.2');
+    define('EE_MIN_PHP_VER_REQUIRED', '7.1.0');
     if (! version_compare(PHP_VERSION, EE_MIN_PHP_VER_REQUIRED, '>=')) {
         /**
          * espresso_minimum_php_version_error
@@ -113,9 +113,6 @@ if (function_exists('espresso_version')) {
             update_option('ee_espresso_activation', true);
 
             // Run WP GraphQL activation callback
-            if (PHP_VERSION_ID < 70100) {
-                return;
-            }
             if (! class_exists('WPGraphQL')) {
                 require_once EE_THIRD_PARTY . 'wp-graphql/wp-graphql.php';
             }
@@ -130,9 +127,6 @@ if (function_exists('espresso_version')) {
         function espresso_plugin_deactivation()
         {
             // Run WP GraphQL deactivation callback
-            if (PHP_VERSION_ID < 70100) {
-                return;
-            }
             if (! class_exists('WPGraphQL')) {
                 require_once EE_THIRD_PARTY . 'wp-graphql/wp-graphql.php';
             }

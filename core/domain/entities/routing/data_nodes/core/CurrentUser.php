@@ -29,7 +29,7 @@ class CurrentUser extends JsonDataNode
      */
     public function __construct(Capabilities $capabilities, JsonDataNodeValidator $validator)
     {
-        if (PHP_VERSION_ID > 70000 && ! class_exists('WPGraphQL')) {
+        if (! class_exists('WPGraphQL')) {
             require_once EE_THIRD_PARTY . 'wp-graphql/wp-graphql.php';
         }
         parent::__construct($validator);
