@@ -12,6 +12,7 @@
             <exclude>
                 <directory>../assets</directory>
                 <directory>../bin</directory>
+                <directory>../core/third_party_libs</directory>
                 <directory>../docs</directory>
                 <directory>../languages</directory>
                 <directory>../public</directory>
