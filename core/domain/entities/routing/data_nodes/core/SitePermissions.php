@@ -24,10 +24,13 @@ class SitePermissions extends JsonDataNode
     public function initialize()
     {
         $permissions = [];
-        $all_permissions = [
-            'use_bulk_edit' => true,
-        ];
-        foreach ($all_permissions as $permission => $you_can_do_it) {
+        $site_permissions = apply_filters(
+            'FHEE__EventEspresso_core_domain_entities_routing_data_nodes_core_SitePermissions__initialize__site_permissions',
+            [
+                'use_bulk_edit' => true,
+            ]
+        );
+        foreach ($site_permissions as $permission => $you_can_do_it) {
             if ($you_can_do_it) {
                 $permissions[] = $permission;
             }
