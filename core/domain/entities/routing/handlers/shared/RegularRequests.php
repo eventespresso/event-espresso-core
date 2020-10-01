@@ -27,8 +27,9 @@ class RegularRequests extends PrimaryRoute
     {
         $basic_nodes = [
             'EventEspresso\core\domain\entities\routing\data_nodes\core\Api',
-            'EventEspresso\core\domain\entities\routing\data_nodes\core\CurrentUser',
+            'EventEspresso\core\domain\entities\routing\data_nodes\core\Capabilities',
             'EventEspresso\core\domain\entities\routing\data_nodes\core\Locale',
+            'EventEspresso\core\domain\entities\routing\data_nodes\core\SitePermissions',
             'EventEspresso\core\domain\entities\routing\data_nodes\core\SiteUrls',
         ];
         foreach ($basic_nodes as $basic_node) {
@@ -61,8 +62,16 @@ class RegularRequests extends PrimaryRoute
                 'EventEspresso\core\domain\entities\routing\data_nodes\core\GeneralSettings'    => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\domain\entities\routing\data_nodes\core\Locale'             => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\domain\entities\routing\data_nodes\core\SiteCurrency'       => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\entities\routing\data_nodes\core\SitePermissions'    => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\domain\entities\routing\data_nodes\core\SiteUrls'           => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\json\JsonDataNodeValidator'                        => EE_Dependency_Map::load_from_cache,
+            ]
+        );
+        $this->dependency_map->registerDependencies(
+            'EventEspresso\core\domain\entities\routing\data_nodes\core\CurrentUser',
+            [
+                'EventEspresso\core\domain\entities\routing\data_nodes\core\Capabilities' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\json\JsonDataNodeValidator'                  => EE_Dependency_Map::load_from_cache,
             ]
         );
         $this->dependency_map->registerDependencies(
