@@ -70,6 +70,20 @@ abstract class JsonDataNode implements JsonDataNodeInterface
 
 
     /**
+     * for setting value of the entire data array for the node
+     *
+     * @param array $data
+     * @throws DomainException
+     */
+    protected function setDataArray(array $data)
+    {
+        if ($this->validator->dataArrayEmpty($this)) {
+            $this->data = $data;
+        }
+    }
+
+
+    /**
      * for embedding other JsonDataNode objects within this one
      *
      * @param JsonDataNode $data_node

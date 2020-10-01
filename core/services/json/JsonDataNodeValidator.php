@@ -15,6 +15,21 @@ class JsonDataNodeValidator
 {
 
     /**
+     * @param JsonDataNode $data_node
+     * @return bool             returns true if data array is safe to set, false if overwrite will occur
+     * @throws DomainException  throws exception if WP_DEBUG is true
+     */
+    public function dataArrayEmpty(JsonDataNode $data_node)
+    {
+        $data = $data_node->data();
+        if (! empty($data)) {
+            $this->overwriteError($data_node->nodeName(), esc_html__('data array', 'event_espresso'));
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * @param array  $data      data array to check for property key
      * @param string $key       value for the key being checked for
      * @param string $type      the type of key and/or the data being checked
