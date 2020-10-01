@@ -9,6 +9,7 @@ class Capabilities extends JsonDataNode
 {
     const NODE_NAME = 'capabilities';
 
+
     /**
      * @param JsonDataNodeValidator $validator
      */
@@ -18,13 +19,14 @@ class Capabilities extends JsonDataNode
         $this->setNodeName(Capabilities::NODE_NAME);
     }
 
-	/**
-	 * @inheritDoc
-	 */
-	public function initialize()
-	{
-        $current_user = wp_get_current_user();
-        $capabilities = [];
+
+    /**
+     * @inheritDoc
+     */
+    public function initialize()
+    {
+        $current_user      = wp_get_current_user();
+        $capabilities      = [];
         $role_capabilities = $current_user->get_role_caps();
         foreach ($role_capabilities as $capability => $you_can_do_it) {
             if ($you_can_do_it) {
@@ -32,5 +34,5 @@ class Capabilities extends JsonDataNode
             }
         }
         $this->setDataArray($capabilities);
-	}
+    }
 }
