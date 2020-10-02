@@ -2,10 +2,10 @@
   "files": {
     "vendors~dates-table-view~tickets-table-view.js": "/static/js/vendors~dates-table-view~tickets-table-view.e907cd20.chunk.js",
     "vendors~dates-table-view~tickets-table-view.js.map": "/static/js/vendors~dates-table-view~tickets-table-view.e907cd20.chunk.js.map",
-    "adapters.css": "/static/css/adapters.1f472e88.css",
-    "adapters.js": "/static/js/adapters.fa051294.js",
-    "adapters.js.map": "/static/js/adapters.fa051294.js.map",
-    "adapters.php": "/static/js/adapters.bbea7aa2.asset.php",
+    "adapters.css": "/static/css/adapters.d61e9afd.css",
+    "adapters.js": "/static/js/adapters.036a4963.js",
+    "adapters.js.map": "/static/js/adapters.036a4963.js.map",
+    "adapters.php": "/static/js/adapters.5ef95576.asset.php",
     "blocks.css": "/static/css/blocks.2f5a366a.css",
     "blocks.js": "/static/js/blocks.b4e72c5f.js",
     "blocks.js.map": "/static/js/blocks.b4e72c5f.js.map",
@@ -36,13 +36,13 @@
     "edtrServices.js.map": "/static/js/edtrServices.77a296d2.js.map",
     "edtrServices.php": "/static/js/edtrServices.995bd123.asset.php",
     "eventEditor.css": "/static/css/eventEditor.2611858f.css",
-    "eventEditor.js": "/static/js/eventEditor.e7f194e2.js",
-    "eventEditor.js.map": "/static/js/eventEditor.e7f194e2.js.map",
-    "eventEditor.php": "/static/js/eventEditor.b57c03aa.asset.php",
-    "form.css": "/static/css/form.338757b1.css",
-    "form.js": "/static/js/form.e80bb24b.js",
-    "form.js.map": "/static/js/form.e80bb24b.js.map",
-    "form.php": "/static/js/form.78876408.asset.php",
+    "eventEditor.js": "/static/js/eventEditor.caebb673.js",
+    "eventEditor.js.map": "/static/js/eventEditor.caebb673.js.map",
+    "eventEditor.php": "/static/js/eventEditor.d94777ea.asset.php",
+    "form.css": "/static/css/form.6cac5252.css",
+    "form.js": "/static/js/form.e5c227a2.js",
+    "form.js.map": "/static/js/form.e5c227a2.js.map",
+    "form.php": "/static/js/form.322bce77.asset.php",
     "helpers.js": "/static/js/helpers.abd49fab.js",
     "helpers.js.map": "/static/js/helpers.abd49fab.js.map",
     "helpers.php": "/static/js/helpers.164ecfab.asset.php",
@@ -74,8 +74,8 @@
     "tickets-card-view.js": "/static/js/tickets-card-view.e61f0274.chunk.js",
     "tickets-card-view.js.map": "/static/js/tickets-card-view.e61f0274.chunk.js.map",
     "tickets-table-view.css": "/static/css/tickets-table-view.2a778a4d.chunk.css",
-    "tickets-table-view.js": "/static/js/tickets-table-view.9a2c30d3.chunk.js",
-    "tickets-table-view.js.map": "/static/js/tickets-table-view.9a2c30d3.chunk.js.map",
+    "tickets-table-view.js": "/static/js/tickets-table-view.70298190.chunk.js",
+    "tickets-table-view.js.map": "/static/js/tickets-table-view.70298190.chunk.js.map",
     "toaster.css": "/static/css/toaster.66b3694f.css",
     "toaster.js": "/static/js/toaster.7f471608.js",
     "toaster.js.map": "/static/js/toaster.7f471608.js.map",
@@ -91,24 +91,24 @@
     "wpPluginsPage.js": "/static/js/wpPluginsPage.666da148.js",
     "wpPluginsPage.js.map": "/static/js/wpPluginsPage.666da148.js.map",
     "wpPluginsPage.php": "/static/js/wpPluginsPage.6d1a586a.asset.php",
-    "static/css/adapters.1f472e88.css.map": "/static/css/adapters.1f472e88.css.map",
+    "static/css/adapters.d61e9afd.css.map": "/static/css/adapters.d61e9afd.css.map",
     "static/css/blocks.2f5a366a.css.map": "/static/css/blocks.2f5a366a.css.map",
     "static/css/components.39dd4a2e.css.map": "/static/css/components.39dd4a2e.css.map",
     "static/css/dates-table-view.f4cf28fa.chunk.css.map": "/static/css/dates-table-view.f4cf28fa.chunk.css.map",
     "static/css/dates.cb237a73.css.map": "/static/css/dates.cb237a73.css.map",
     "static/css/eventEditor.2611858f.css.map": "/static/css/eventEditor.2611858f.css.map",
-    "static/css/form.338757b1.css.map": "/static/css/form.338757b1.css.map",
+    "static/css/form.6cac5252.css.map": "/static/css/form.6cac5252.css.map",
     "static/css/richTextEditor.74f86a5d.css.map": "/static/css/richTextEditor.74f86a5d.css.map",
     "static/css/tickets-table-view.2a778a4d.chunk.css.map": "/static/css/tickets-table-view.2a778a4d.chunk.css.map",
     "static/css/toaster.66b3694f.css.map": "/static/css/toaster.66b3694f.css.map",
     "static/css/tpc.626c93d8.css.map": "/static/css/tpc.626c93d8.css.map",
     "static/css/wpPluginsPage.880a0b20.css.map": "/static/css/wpPluginsPage.880a0b20.css.map",
-    "static/js/adapters.fa051294.js.LICENSE.txt": "/static/js/adapters.fa051294.js.LICENSE.txt",
+    "static/js/adapters.036a4963.js.LICENSE.txt": "/static/js/adapters.036a4963.js.LICENSE.txt",
     "static/js/components.5050eecc.js.LICENSE.txt": "/static/js/components.5050eecc.js.LICENSE.txt",
     "static/js/data.119ed116.js.LICENSE.txt": "/static/js/data.119ed116.js.LICENSE.txt",
     "static/js/dates.eda923e8.js.LICENSE.txt": "/static/js/dates.eda923e8.js.LICENSE.txt",
-    "static/js/eventEditor.e7f194e2.js.LICENSE.txt": "/static/js/eventEditor.e7f194e2.js.LICENSE.txt",
-    "static/js/form.e80bb24b.js.LICENSE.txt": "/static/js/form.e80bb24b.js.LICENSE.txt",
+    "static/js/eventEditor.caebb673.js.LICENSE.txt": "/static/js/eventEditor.caebb673.js.LICENSE.txt",
+    "static/js/form.e5c227a2.js.LICENSE.txt": "/static/js/form.e5c227a2.js.LICENSE.txt",
     "static/js/richTextEditor.7bdbe364.js.LICENSE.txt": "/static/js/richTextEditor.7bdbe364.js.LICENSE.txt",
     "static/js/toaster.7f471608.js.LICENSE.txt": "/static/js/toaster.7f471608.js.LICENSE.txt",
     "static/js/tpc.a858a9eb.js.LICENSE.txt": "/static/js/tpc.a858a9eb.js.LICENSE.txt",
@@ -116,8 +116,8 @@
   },
   "entrypoints": {
     "adapters": [
-      "static/css/adapters.1f472e88.css",
-      "static/js/adapters.fa051294.js"
+      "static/css/adapters.d61e9afd.css",
+      "static/js/adapters.036a4963.js"
     ],
     "components": [
       "static/css/components.39dd4a2e.css",
@@ -140,8 +140,8 @@
       "static/js/edtrServices.77a296d2.js"
     ],
     "form": [
-      "static/css/form.338757b1.css",
-      "static/js/form.e80bb24b.js"
+      "static/css/form.6cac5252.css",
+      "static/js/form.e5c227a2.js"
     ],
     "helpers": [
       "static/js/helpers.abd49fab.js"
@@ -188,7 +188,7 @@
     ],
     "eventEditor": [
       "static/css/eventEditor.2611858f.css",
-      "static/js/eventEditor.e7f194e2.js"
+      "static/js/eventEditor.caebb673.js"
     ],
     "wpPluginsPage": [
       "static/css/wpPluginsPage.880a0b20.css",
