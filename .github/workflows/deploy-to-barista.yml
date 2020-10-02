@@ -1,16 +1,18 @@
-name: Deploy to NK site
+name: Deploy to barista site
 
 on:
   push:
     branches: [barista-prod]
+
 jobs:
-  deploy-to-nk-site:
+  deploy-to-barista-site:
     runs-on: ubuntu-latest
     steps:
-      - name: deploy via ssh
+      - name: Deploy via ssh
         uses: garygrossgarten/github-action-ssh@release
         with:
-          command: source deploy-from-gh-actions-to-nk.sh "event-espresso-core"
+          # the command is supposed to run in home directory of deploy user
+          command: source deploy-to-barista.sh "event-espresso-core"
           host: ${{ secrets.SERVER_EE_DEVBOX_SITES_HOST }}
           username: ${{ secrets.SERVER_EE_DEVBOX_SITES_USERNAME }}
           passphrase: ${{ secrets.SERVER_EE_DEVBOX_SITES_PASSPHRASE }}
