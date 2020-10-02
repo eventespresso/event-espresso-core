@@ -498,7 +498,7 @@ that only occurs once', 'event_espresso' ),
 	__( 'Submit', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/TicketAssignmentsManagerModal/index.tsx:32
-	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/table/Table.tsx:19
+	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/table/Table.tsx:14
 	__( 'Ticket Assignment Manager', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/table/BodyCell.tsx:24
