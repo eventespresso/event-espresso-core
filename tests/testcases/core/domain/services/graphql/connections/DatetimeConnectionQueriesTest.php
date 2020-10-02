@@ -74,7 +74,7 @@ class DatetimeConnectionQueriesTest extends BaseQueriesTest
         $first_entity    = reset($entities);
         $first_entity_id = $first_entity->ID();
         $expected_cursor = \GraphQLRelay\Connection\ArrayConnection::offsetToCursor($first_entity_id);
-        $this->assertCount(1, $results['data']['espressoDatetimes']['edges']);
+        $this->assertCount(1, (array) $results['data']['espressoDatetimes']['edges']);
 
         $first_edge = $results['data']['espressoDatetimes']['edges'][0];
 

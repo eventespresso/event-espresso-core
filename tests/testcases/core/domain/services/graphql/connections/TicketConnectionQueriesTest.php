@@ -80,7 +80,7 @@ class TicketConnectionQueriesTest extends BaseQueriesTest
         $first_entity_id = $first_entity->ID();
         $expected_cursor = \GraphQLRelay\Connection\ArrayConnection::offsetToCursor($first_entity_id);
 
-        $this->assertCount(1, $results['data']['espressoTickets']['edges']);
+        $this->assertCount(1, (array) $results['data']['espressoTickets']['edges']);
 
         $first_edge = $results['data']['espressoTickets']['edges'][0];
 
