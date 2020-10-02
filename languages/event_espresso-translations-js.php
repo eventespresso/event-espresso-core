@@ -188,7 +188,7 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/details/useBulkEditFormConfig.ts:55
 	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:92
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:55
-	// Reference: packages/tpc/src/components/table/useHeaderRowGenerator.ts:40
+	// Reference: packages/tpc/src/components/table/useHeaderRowGenerator.ts:41
 	__( 'Description', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:88
@@ -395,9 +395,9 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:36
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:37
 	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/table/DateCell.tsx:21
-	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/table/HeaderCell.tsx:21
+	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/table/HeaderCell.tsx:20
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:36
-	// Reference: packages/tpc/src/components/table/useHeaderRowGenerator.ts:22
+	// Reference: packages/tpc/src/components/table/useHeaderRowGenerator.ts:23
 	__( 'ID', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:37
@@ -448,7 +448,7 @@ that only occurs once', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:104
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:103
-	// Reference: packages/tpc/src/components/table/useHeaderRowGenerator.ts:52
+	// Reference: packages/tpc/src/components/table/useHeaderRowGenerator.ts:53
 	__( 'Actions', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:52
@@ -932,7 +932,7 @@ that only occurs once', 'event_espresso' ),
 	// Reference: packages/components/src/LoadingIndicator/LoadingIndicator.tsx:7
 	__( 'loading ...', 'event_espresso' ),
 
-	// Reference: packages/components/src/PriceTypeSign/PercentSign.tsx:11
+	// Reference: packages/components/src/PercentSign/index.tsx:11
 	__( '%', 'event_espresso' ),
 
 	// Reference: packages/components/src/Stepper/buttons/Next.tsx:12
@@ -1174,19 +1174,19 @@ information', 'event_espresso' ),
 	// Reference: packages/tpc/src/components/TicketPriceCalculatorModal.tsx:31
 	__( 'Price Calculator for Ticket: %s', 'event_espresso' ),
 
-	// Reference: packages/tpc/src/components/table/Table.tsx:44
+	// Reference: packages/tpc/src/components/table/Table.tsx:43
 	__( 'Ticket Price Calculator', 'event_espresso' ),
 
-	// Reference: packages/tpc/src/components/table/useFooterRowGenerator.tsx:42
+	// Reference: packages/tpc/src/components/table/useFooterRowGenerator.tsx:40
 	__( 'Total', 'event_espresso' ),
 
-	// Reference: packages/tpc/src/components/table/useHeaderRowGenerator.ts:28
+	// Reference: packages/tpc/src/components/table/useHeaderRowGenerator.ts:29
 	__( 'Price Type', 'event_espresso' ),
 
-	// Reference: packages/tpc/src/components/table/useHeaderRowGenerator.ts:34
+	// Reference: packages/tpc/src/components/table/useHeaderRowGenerator.ts:35
 	__( 'Label', 'event_espresso' ),
 
-	// Reference: packages/tpc/src/components/table/useHeaderRowGenerator.ts:46
+	// Reference: packages/tpc/src/components/table/useHeaderRowGenerator.ts:47
 	__( 'Amount', 'event_espresso' ),
 
 	// Reference: packages/tpc/src/inputs/PriceAmountInput.tsx:44
