@@ -22,7 +22,7 @@ class PostObject {
 
 		$single_name = $post_type_object->graphql_single_name;
 
-		$interfaces = [ 'Node', 'ContentNode', 'UniformResourceIdentifiable' ];
+		$interfaces = [ 'Node', 'ContentNode', 'UniformResourceIdentifiable', 'DatabaseIdentifier' ];
 
 		if ( post_type_supports( $post_type_object->name, 'title' ) ) {
 			$interfaces[] = 'NodeWithTitle';
@@ -69,6 +69,10 @@ class PostObject {
 			true
 		) ) {
 			$interfaces[] = 'HierarchicalContentNode';
+		}
+
+		if ( true === $post_type_object->show_in_nav_menus ) {
+			$interfaces[] = 'MenuItemLinkable';
 		}
 
 		register_graphql_object_type(
@@ -206,6 +210,31 @@ class PostObject {
 							return ! empty( $size ) ? $image->sourceUrlsBySize[ $size ] : $image->sourceUrl;
 						},
 					],
+					'fileSize'     => [
+						'type'        => 'Int',
+						'description' => __( 'The filesize in bytes of the resource', 'wp-graphql' ),
+						'args'        => [
+							'size' => [
+								'type'        => 'MediaItemSizeEnum',
+								'description' => __( 'Size of the MediaItem to return', 'wp-graphql' ),
+							],
+						],
+						'resolve'     => function( $image, $args, $context, $info ) {
+
+							// @codingStandardsIgnoreLine.
+							$size = null;
+							if ( isset( $args['size'] ) ) {
+								$size = ( 'full' === $args['size'] ) ? 'large' : $args['size'];
+							}
+
+							$sourceUrl     = ! empty( $size ) ? $image->sourceUrlsBySize[ $size ] : $image->mediaItemUrl;
+							$path_parts    = pathinfo( $sourceUrl );
+							$original_file = get_attached_file( absint( $image->databaseId ) );
+							$filesize_path = path_join( dirname( $original_file ), $path_parts['basename'] );
+							return filesize( $filesize_path );
+
+						},
+					],
 					'mimeType'     => [
 						'type'        => 'String',
 						'description' => __( 'The mime type of the mediaItem', 'wp-graphql' ),
@@ -253,9 +282,11 @@ class PostObject {
 			$fields['isFrontPage'] = [
 				'type'        => [ 'non_null' => 'Bool' ],
 				'description' => __( 'Whether this page is set to the static front page.', 'wp-graphql' ),
-				'resolve'     => function( Post $page ) {
-					return isset( $page->isFrontPage ) ? (bool) $page->isFrontPage : false;
-				},
+			];
+
+			$fields['isPostsPage'] = [
+				'type'        => [ 'non_null' => 'Bool' ],
+				'description' => __( 'Whether this page is set to the blog posts page.', 'wp-graphql' ),
 			];
 		}
 
@@ -274,7 +305,7 @@ class PostObject {
 
 		$fields['template'] = [
 			'description' => __( 'The template assigned to the node', 'wp-graphql' ),
-			'type'        => 'ContentTemplateUnion',
+			'type'        => 'ContentTemplate',
 			'resolve'     => function( Post $post_object, $args, $context, $info ) use ( $post_type_object, $type_registry ) {
 
 				$registered_templates = wp_get_theme()->get_post_templates();
@@ -297,6 +328,7 @@ class PostObject {
 					$template = [
 						'__typename'   => $name . 'Template',
 						'templateName' => ucwords( $registered_templates[ $post_object->post_type ][ $set_template ] ),
+						'templateFile' => ! empty( $template_name ) ? $template_name : null,
 					];
 				}
 
@@ -308,3 +340,5 @@ class PostObject {
 
 	}
 }
+
+

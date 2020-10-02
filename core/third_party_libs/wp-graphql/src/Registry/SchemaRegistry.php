@@ -19,10 +19,10 @@ class SchemaRegistry {
 	/**
 	 * SchemaRegistry constructor.
 	 *
-	 * @param TypeRegistry $type_registry The TypeRegistry instance
+	 * @throws \Exception
 	 */
-	public function __construct( TypeRegistry $type_registry ) {
-		$this->type_registry = $type_registry;
+	public function __construct() {
+		$this->type_registry = \WPGraphQL::get_type_registry();
 	}
 
 	/**
@@ -44,8 +44,8 @@ class SchemaRegistry {
 				'mutation'   => $this->type_registry->get_type( 'RootMutation' ),
 				'typeLoader' => function( $type ) {
 					return $this->type_registry->get_type( $type );
-
 				},
+				'types'      => $this->type_registry->get_types(),
 			]
 		);
 

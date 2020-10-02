@@ -53,8 +53,7 @@ class GQLRequests extends Route
     public function matchesCurrentRequest()
     {
         global $pagenow;
-        return PHP_VERSION_ID > 70000
-               && (
+        return (
                    $this->request->isGQL()
                    || $this->request->isUnitTesting()
                    || (

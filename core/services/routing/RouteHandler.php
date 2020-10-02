@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\services\routing;
 
+use DomainException;
 use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
 use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\services\json\JsonDataNode;
@@ -86,7 +87,19 @@ class RouteHandler
             $this->routes->add($route);
             $this->handle($route, $handle);
         } catch (Exception $exception) {
-            new ExceptionStackTraceDisplay($exception);
+            new ExceptionStackTraceDisplay(
+                new DomainException(
+                    sprintf(
+                        esc_html__(
+                            'The following error occurred while trying to handle the "%1$s" route:%2$s%3$s',
+                            'event_espresso'
+                        ),
+                        $fqcn,
+                        '<br />',
+                        $exception->getMessage()
+                    )
+                )
+            );
         }
     }
 

@@ -12,7 +12,7 @@ class MenuItem {
 			'MenuItem',
 			[
 				'description' => __( 'Navigation menu items are the individual items assigned to a menu. These are rendered as the links in a navigation menu.', 'wp-graphql' ),
-				'interfaces'  => [ 'Node' ],
+				'interfaces'  => [ 'Node', 'DatabaseIdentifier' ],
 				'fields'      => [
 					'id'               => [
 						'description' => __( 'The globally unique identifier of the nav menu item object.', 'wp-graphql' ),
@@ -48,10 +48,6 @@ class MenuItem {
 						'description'       => __( 'WP ID of the menu item.', 'wp-graphql' ),
 						'deprecationReason' => __( 'Deprecated in favor of the databaseId field', 'wp-graphql' ),
 					],
-					'databaseId'       => [
-						'type'        => 'Int',
-						'description' => __( 'WP ID of the menu item.', 'wp-graphql' ),
-					],
 					'target'           => [
 						'type'        => 'String',
 						'description' => __( 'Target attribute for the menu item link.', 'wp-graphql' ),
@@ -83,9 +79,10 @@ class MenuItem {
 						],
 					],
 					'connectedObject'  => [
-						'type'        => 'MenuItemObjectUnion',
-						'description' => __( 'The object connected to this menu item.', 'wp-graphql' ),
-						'resolve'     => function( $menu_item, array $args, $context, $info ) {
+						'type'              => 'MenuItemObjectUnion',
+						'deprecationReason' => __( 'Deprecated in favor of the connectedNode field', 'wp-graphql' ),
+						'description'       => __( 'The object connected to this menu item.', 'wp-graphql' ),
+						'resolve'           => function( $menu_item, array $args, AppContext $context, $info ) {
 
 							$object_id   = intval( get_post_meta( $menu_item->menuItemId, '_menu_item_object_id', true ) );
 							$object_type = get_post_meta( $menu_item->menuItemId, '_menu_item_type', true );
@@ -93,15 +90,15 @@ class MenuItem {
 							switch ( $object_type ) {
 								// Post object
 								case 'post_type':
-									$resolved_object = DataSource::resolve_post_object( $object_id, $context );
+									$resolved_object = $context->get_loader( 'post' )->load_deferred( $object_id );
 									break;
 
 								// Taxonomy term
 								case 'taxonomy':
-									$resolved_object = DataSource::resolve_term_object( $object_id, $context );
+									$resolved_object = $context->get_loader( 'term' )->load_deferred( $object_id );
 									break;
 								default:
-									$resolved_object = $menu_item;
+									$resolved_object = null;
 									break;
 							}
 

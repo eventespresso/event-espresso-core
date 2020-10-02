@@ -128,6 +128,9 @@ class EspressoEventEditor extends EspressoEventsAdmin
      */
     protected function requestHandler()
     {
+        if (! class_exists('WPGraphQL')) {
+            require_once EE_THIRD_PARTY . 'wp-graphql/wp-graphql.php';
+        }
         /** @var GraphQLManager $graphQL_manager */
         $graphQL_manager = $this->loader->getShared('EventEspresso\core\services\graphql\GraphQLManager');
         $graphQL_manager->init();
