@@ -3,12 +3,6 @@
 namespace EventEspresso\core\domain\entities\routing\data_nodes\core;
 
 use DomainException;
-use EventEspresso\core\domain\entities\routing\data_nodes\core\CurrentUser;
-use EventEspresso\core\domain\entities\routing\data_nodes\core\EspressoCoreDomain;
-use EventEspresso\core\domain\entities\routing\data_nodes\core\GeneralSettings;
-use EventEspresso\core\domain\entities\routing\data_nodes\core\Locale;
-use EventEspresso\core\domain\entities\routing\data_nodes\core\SiteCurrency;
-use EventEspresso\core\domain\entities\routing\data_nodes\core\SiteUrls;
 use EventEspresso\core\services\json\JsonDataNode;
 use EventEspresso\core\services\json\JsonDataNodeValidator;
 
@@ -51,6 +45,11 @@ class Config extends JsonDataNode
     private $site_currency;
 
     /**
+     * @var SitePermissions $site_permissions
+     */
+    private $site_permissions;
+
+    /**
      * @var SiteUrls $site_urls
      */
     private $site_urls;
@@ -64,6 +63,7 @@ class Config extends JsonDataNode
      * @param GeneralSettings    $general_settings
      * @param Locale $locale
      * @param SiteCurrency $site_currency
+     * @param SitePermissions $site_permissions
      * @param SiteUrls $site_urls
      * @param JsonDataNodeValidator $validator
      */
@@ -73,6 +73,7 @@ class Config extends JsonDataNode
         GeneralSettings $general_settings,
         Locale $locale,
         SiteCurrency $site_currency,
+        SitePermissions $site_permissions,
         SiteUrls $site_urls,
         JsonDataNodeValidator $validator
     ) {
@@ -82,6 +83,7 @@ class Config extends JsonDataNode
         $this->general_settings = $general_settings;
         $this->locale = $locale;
         $this->site_currency = $site_currency;
+        $this->site_permissions = $site_permissions;
         $this->site_urls = $site_urls;
         $this->setNodeName(Config::NODE_NAME);
     }
@@ -94,10 +96,11 @@ class Config extends JsonDataNode
     public function initialize()
     {
         $this->addDataNode($this->core_domain);
-        $this->addDataNode($this->site_currency);
         $this->addDataNode($this->current_user);
         $this->addDataNode($this->general_settings);
         $this->addDataNode($this->locale);
+        $this->addDataNode($this->site_currency);
+        $this->addDataNode($this->site_permissions);
         $this->addDataNode($this->site_urls);
         $this->addData('wp_debug', WP_DEBUG);
         $this->setInitialized(true);

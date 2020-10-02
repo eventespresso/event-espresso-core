@@ -18,16 +18,22 @@ class CurrentUser extends JsonDataNode
 {
     const NODE_NAME = 'currentUser';
 
+    /**
+     * @var Capabilities $capabilities
+     */
+    private $capabilities;
 
     /**
+     * @param Capabilities $capabilities
      * @param JsonDataNodeValidator $validator
      */
-    public function __construct(JsonDataNodeValidator $validator)
+    public function __construct(Capabilities $capabilities, JsonDataNodeValidator $validator)
     {
         if (PHP_VERSION_ID > 70000 && ! class_exists('WPGraphQL')) {
             require_once EE_THIRD_PARTY . 'wp-graphql/wp-graphql.php';
         }
         parent::__construct($validator);
+        $this->capabilities = $capabilities;
         $this->setNodeName(CurrentUser::NODE_NAME);
     }
 
@@ -55,6 +61,7 @@ class CurrentUser extends JsonDataNode
         $this->addData('nickname', $current_user->nickname);
         $this->addData('username', $current_user->user_login);
         $this->addData('__typename', 'User');
+        $this->addDataNode($this->capabilities);
         $this->setInitialized(true);
     }
 }
