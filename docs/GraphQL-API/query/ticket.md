@@ -6,17 +6,17 @@ Ticket object has connections with `RootQuery`, `Datetime` etc. and thus can be 
 
 ```gql
 query GET_TICKETS($where: EspressoRootQueryTicketsConnectionWhereArgs) {
-    espressoTickets(where: $where) {
-        edges {
-            node {
-                id
-                dbId
-                name
-                description
-                price
-            }
-        }
-    }
+	espressoTickets(where: $where) {
+		edges {
+			node {
+				id
+				dbId
+				name
+				description
+				price
+			}
+		}
+	}
 }
 ```
 
@@ -24,16 +24,16 @@ query GET_TICKETS($where: EspressoRootQueryTicketsConnectionWhereArgs) {
 
 ```json
 {
-    "where": {
-        "datetime": "RGF0ZXRpbWU6MTQ=",
-        "search": "some keywords",
-        "orderby": [
-            {
-                "field": "NAME",
-                "order": "DESC"
-            }
-        ]
-    }
+	"where": {
+		"datetime": "RGF0ZXRpbWU6MTQ=",
+		"search": "some keywords",
+		"orderby": [
+			{
+				"field": "NAME",
+				"order": "DESC"
+			}
+		]
+	}
 }
 ```
 
@@ -41,9 +41,9 @@ or
 
 ```json
 {
-    "where": {
-        "datetimeIn": ["RGF0ZXRpbWU6MTQ=", "RGF0ZXRpbWU6MTU="]
-    }
+	"where": {
+		"datetimeIn": ["RGF0ZXRpbWU6MTQ=", "RGF0ZXRpbWU6MTU="]
+	}
 }
 ```
 
@@ -53,22 +53,22 @@ or
 
 ```gql
 query GET_TICKETS {
-    espressoTickets {
-        edges {
-            node {
-                id
-                dbId
-                name
-                description
-                prices {
-                    nodes {
-                        id
-                        dbId
-                        name
-                    }
-                }
-            }
-        }
-    }
+	espressoTickets {
+		edges {
+			node {
+				id
+				dbId
+				name
+				description
+				prices {
+					nodes {
+						id
+						dbId
+						name
+					}
+				}
+			}
+		}
+	}
 }
 ```

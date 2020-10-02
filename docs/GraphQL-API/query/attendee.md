@@ -6,31 +6,31 @@ Attendee object has connections with `RootQuery`.
 
 ```gql
 query GET_ATTENDEES($where: EspressoRootQueryAttendeesConnectionWhereArgs) {
-    espressoAttendees(where: $where) {
-        edges {
-            node {
-                id
-                dbId
-                avatar
-                firstName
-                lastName
-                bio
-                shortBio
-                email
-                phone
-                address
-                address2
-                city
-                zip
-                country {
-                    name
-                }
-                state {
-                    name
-                }
-            }
-        }
-    }
+	espressoAttendees(where: $where) {
+		edges {
+			node {
+				id
+				dbId
+				avatar
+				firstName
+				lastName
+				bio
+				shortBio
+				email
+				phone
+				address
+				address2
+				city
+				zip
+				country {
+					name
+				}
+				state {
+					name
+				}
+			}
+		}
+	}
 }
 ```
 
@@ -40,11 +40,11 @@ query GET_ATTENDEES($where: EspressoRootQueryAttendeesConnectionWhereArgs) {
 
 ```json
 {
-    "where": {
-        "regStatus": "APPROVED",
-        "regTicket": "VGlja2V0OjQ3",
-        "search": "some keywords"
-    }
+	"where": {
+		"regStatus": "APPROVED",
+		"regTicket": "VGlja2V0OjQ3",
+		"search": "some keywords"
+	}
 }
 ```
 
@@ -52,8 +52,8 @@ or
 
 ```json
 {
-    "where": {
-        "regTicketIn": ["VGlja2V0OjQ1", "VGlja2V0OjQ2"]
-    }
+	"where": {
+		"regTicketIn": ["VGlja2V0OjQ1", "VGlja2V0OjQ2"]
+	}
 }
 ```

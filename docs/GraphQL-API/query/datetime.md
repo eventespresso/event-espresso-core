@@ -6,25 +6,25 @@ Datetime object has connections with `RootQuery`, `EspressoEvent`, `EspressoTick
 
 ```gql
 query GET_DATETIMES(
-    $first: Int
-    $where: EspressoRootQueryDatetimesConnectionWhereArgs
+	$first: Int
+	$where: EspressoRootQueryDatetimesConnectionWhereArgs
 ) {
-    espressoDatetimes(first: $first, where: $where) {
-        edges {
-            node {
-                id
-                name
-                description
-                sold
-                reserved
-                order
-                startDate
-                endDate
-                startTime
-                endTime
-            }
-        }
-    }
+	espressoDatetimes(first: $first, where: $where) {
+		edges {
+			node {
+				id
+				name
+				description
+				sold
+				reserved
+				order
+				startDate
+				endDate
+				startTime
+				endTime
+			}
+		}
+	}
 }
 ```
 
@@ -32,12 +32,12 @@ query GET_DATETIMES(
 
 ```json
 {
-    "first": 50,
-    "where": {
-        "upcoming": true,
-        "event": "ZXNwcmVzc29fZXZlbnRzOjIy",
-        "search": "some keywords"
-    }
+	"first": 50,
+	"where": {
+		"upcoming": true,
+		"event": "ZXNwcmVzc29fZXZlbnRzOjIy",
+		"search": "some keywords"
+	}
 }
 ```
 
@@ -45,9 +45,9 @@ or
 
 ```json
 {
-    "where": {
-        "eventId": 22
-    }
+	"where": {
+		"eventId": 22
+	}
 }
 ```
 
@@ -57,32 +57,32 @@ or
 
 ```gql
 query GET_DATETIMES {
-    espressoDatetimes {
-        edges {
-            node {
-                id
-                dbId
-                name
-                description
-                sold
-                reserved
-                order
-                startDate
-                endDate
-                startTime
-                endTime
-                # All tickets for the datetime
-                tickets {
-                    nodes {
-                        id
-                        dbId
-                        name
-                        description
-                        price
-                    }
-                }
-            }
-        }
-    }
+	espressoDatetimes {
+		edges {
+			node {
+				id
+				dbId
+				name
+				description
+				sold
+				reserved
+				order
+				startDate
+				endDate
+				startTime
+				endTime
+				# All tickets for the datetime
+				tickets {
+					nodes {
+						id
+						dbId
+						name
+						description
+						price
+					}
+				}
+			}
+		}
+	}
 }
 ```
