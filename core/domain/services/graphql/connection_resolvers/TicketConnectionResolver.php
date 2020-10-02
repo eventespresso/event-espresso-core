@@ -103,6 +103,16 @@ class TicketConnectionResolver extends AbstractConnectionResolver
 
         list($query_args, $where_params) = $this->mapOrderbyInputArgs($query_args, $where_params, 'TKT_ID');
 
+        $search = $this->getSearchKeywords($this->args['where']);
+
+        if (! empty($search)) {
+            // use OR operator to search in any of the fields
+            $where_params['OR'] = array(
+                'TKT_name'        => array('LIKE', '%' . $search . '%'),
+                'TKT_description' => array('LIKE', '%' . $search . '%'),
+            );
+        }
+
         $where_params = apply_filters(
             'FHEE__EventEspresso_core_domain_services_graphql_connection_resolvers__ticket_where_params',
             $where_params,

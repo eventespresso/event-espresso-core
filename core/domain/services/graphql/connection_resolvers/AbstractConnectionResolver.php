@@ -169,4 +169,20 @@ abstract class AbstractConnectionResolver extends WPGraphQLConnectionResolver
         $query_args = $this->getUtilities()->sanitizeWhereArgs($where_args, $arg_mapping, $id_fields);
         return ! empty($query_args) && is_array($query_args) ? $query_args : [];
     }
+
+
+    /**
+     * This returns the sanitized "search" keywords from where_args
+     *
+     * @param array $where_args
+     * @return string
+     */
+    protected function getSearchKeywords(array $where_args)
+    {
+        $search = '';
+        if (! empty($where_args['search'])) {
+            $search = sanitize_text_field($where_args['search']);
+        }
+        return esc_sql($search);
+    }
 }
