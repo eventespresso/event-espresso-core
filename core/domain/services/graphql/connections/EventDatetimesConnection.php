@@ -124,6 +124,10 @@ class EventDatetimesConnection extends ConnectionBase
                 'type'        => 'Boolean',
                 'description' => esc_html__('Datetimes which are expired.', 'event_espresso'),
             ],
+            'search' => [
+                'type'        => 'String',
+                'description' => esc_html__('The search keywords', 'event_espresso'),
+            ],
         ];
 
         $newArgs = apply_filters(

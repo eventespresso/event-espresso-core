@@ -131,6 +131,10 @@ class RootQueryAttendeesConnection extends AbstractRootQueryConnection
                 'type'        => 'EspressoRegistrationStatusEnum',
                 'description' => esc_html__('Limit attendees to registration status.', 'event_espresso'),
             ],
+            'search' => [
+                'type'        => 'String',
+                'description' => esc_html__('The search keywords', 'event_espresso'),
+            ],
         ];
 
         $newArgs = apply_filters(
