@@ -124,7 +124,7 @@ class DatetimeConnectionResolver extends AbstractConnectionResolver
 
         list($query_args, $where_params) = $this->mapOrderbyInputArgs($query_args, $where_params, 'DTT_ID');
 
-        $search = $this->getSearchKeywords($this->args['where']);
+        $search = isset($this->args['where']) ? $this->getSearchKeywords($this->args['where']) : '';
 
         if (! empty($search)) {
             // use OR operator to search in any of the fields
