@@ -130,6 +130,17 @@ class AttendeeConnectionResolver extends AbstractConnectionResolver
 
         list($query_args, $where_params) = $this->mapOrderbyInputArgs($query_args, $where_params, 'ATT_ID');
 
+        $search = $this->getSearchKeywords($this->args['where']);
+
+        if (! empty($search)) {
+            // use OR operator to search in any of the fields
+            $where_params['OR'] = array(
+                'ATT_full_name' => array('LIKE', '%' . $search . '%'),
+                'ATT_bio'       => array('LIKE', '%' . $search . '%'),
+                'ATT_short_bio' => array('LIKE', '%' . $search . '%'),
+            );
+        }
+
         $where_params = apply_filters(
             'FHEE__EventEspresso_core_domain_services_graphql_connection_resolvers__attendee_where_params',
             $where_params,

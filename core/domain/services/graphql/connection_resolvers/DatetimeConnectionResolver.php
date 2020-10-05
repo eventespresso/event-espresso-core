@@ -124,6 +124,16 @@ class DatetimeConnectionResolver extends AbstractConnectionResolver
 
         list($query_args, $where_params) = $this->mapOrderbyInputArgs($query_args, $where_params, 'DTT_ID');
 
+        $search = isset($this->args['where']) ? $this->getSearchKeywords($this->args['where']) : '';
+
+        if (! empty($search)) {
+            // use OR operator to search in any of the fields
+            $where_params['OR'] = array(
+                'DTT_name'        => array('LIKE', '%' . $search . '%'),
+                'DTT_description' => array('LIKE', '%' . $search . '%'),
+            );
+        }
+
         if (! empty($this->args['where']['upcoming'])) {
             $where_params['DTT_EVT_start'] = array(
                 '>',

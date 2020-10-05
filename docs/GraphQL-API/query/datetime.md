@@ -5,7 +5,10 @@ Datetime object has connections with `RootQuery`, `EspressoEvent`, `EspressoTick
 ## Example with `RootQuery`
 
 ```gql
-query GET_DATETIMES($first: Int, $where: EspressoRootQueryDatetimesConnectionWhereArgs) {
+query GET_DATETIMES(
+	$first: Int
+	$where: EspressoRootQueryDatetimesConnectionWhereArgs
+) {
 	espressoDatetimes(first: $first, where: $where) {
 		edges {
 			node {
@@ -32,7 +35,8 @@ query GET_DATETIMES($first: Int, $where: EspressoRootQueryDatetimesConnectionWhe
 	"first": 50,
 	"where": {
 		"upcoming": true,
-		"event": "ZXNwcmVzc29fZXZlbnRzOjIy"
+		"event": "ZXNwcmVzc29fZXZlbnRzOjIy",
+		"search": "some keywords"
 	}
 }
 ```

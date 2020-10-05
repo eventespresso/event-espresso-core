@@ -42,7 +42,8 @@ query GET_ATTENDEES($where: EspressoRootQueryAttendeesConnectionWhereArgs) {
 {
 	"where": {
 		"regStatus": "APPROVED",
-		"regTicket": "VGlja2V0OjQ3"
+		"regTicket": "VGlja2V0OjQ3",
+		"search": "some keywords"
 	}
 }
 ```

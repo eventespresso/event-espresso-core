@@ -26,6 +26,7 @@ query GET_TICKETS($where: EspressoRootQueryTicketsConnectionWhereArgs) {
 {
 	"where": {
 		"datetime": "RGF0ZXRpbWU6MTQ=",
+		"search": "some keywords",
 		"orderby": [
 			{
 				"field": "NAME",

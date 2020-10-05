@@ -95,6 +95,10 @@ class DatetimeTicketsConnection extends ConnectionBase
                 'type'        => ['list_of' => 'Int'],
                 'description' => esc_html__('Datetime IDs to get the tickets for.', 'event_espresso'),
             ],
+            'search' => [
+                'type'        => 'String',
+                'description' => esc_html__('The search keywords', 'event_espresso'),
+            ],
         ];
 
         $newArgs = apply_filters(
