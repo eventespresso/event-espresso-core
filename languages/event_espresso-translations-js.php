@@ -1013,28 +1013,28 @@ information', 'event_espresso' ),
 	// Reference: packages/dates/src/utils/misc.ts:17
 	__( 'minute(s)', 'event_espresso' ),
 
-	// Reference: packages/edtr-services/src/apollo/queries/datetimes/useFetchDatetimes.ts:25
+	// Reference: packages/edtr-services/src/apollo/queries/datetimes/useFetchDatetimes.ts:27
 	__( 'datetimes initialized', 'event_espresso' ),
 
-	// Reference: packages/edtr-services/src/apollo/queries/datetimes/useFetchDatetimes.ts:37
+	// Reference: packages/edtr-services/src/apollo/queries/datetimes/useFetchDatetimes.ts:43
 	__( 'initializing datetimes', 'event_espresso' ),
 
-	// Reference: packages/edtr-services/src/apollo/queries/priceTypes/useFetchPriceTypes.ts:25
+	// Reference: packages/edtr-services/src/apollo/queries/priceTypes/useFetchPriceTypes.ts:26
 	__( 'price types initialized', 'event_espresso' ),
 
-	// Reference: packages/edtr-services/src/apollo/queries/priceTypes/useFetchPriceTypes.ts:36
+	// Reference: packages/edtr-services/src/apollo/queries/priceTypes/useFetchPriceTypes.ts:41
 	__( 'initializing  price types', 'event_espresso' ),
 
-	// Reference: packages/edtr-services/src/apollo/queries/prices/useFetchPrices.ts:35
+	// Reference: packages/edtr-services/src/apollo/queries/prices/useFetchPrices.ts:36
 	__( 'prices initialized', 'event_espresso' ),
 
-	// Reference: packages/edtr-services/src/apollo/queries/prices/useFetchPrices.ts:65
+	// Reference: packages/edtr-services/src/apollo/queries/prices/useFetchPrices.ts:70
 	__( 'initializing prices', 'event_espresso' ),
 
-	// Reference: packages/edtr-services/src/apollo/queries/tickets/useFetchTickets.ts:31
+	// Reference: packages/edtr-services/src/apollo/queries/tickets/useFetchTickets.ts:32
 	__( 'tickets initialized', 'event_espresso' ),
 
-	// Reference: packages/edtr-services/src/apollo/queries/tickets/useFetchTickets.ts:42
+	// Reference: packages/edtr-services/src/apollo/queries/tickets/useFetchTickets.ts:47
 	__( 'initializing tickets', 'event_espresso' ),
 
 	// Reference: packages/edtr-services/src/utils/dateAndTime.ts:11
