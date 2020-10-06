@@ -932,6 +932,9 @@ that only occurs once', 'event_espresso' ),
 	// Reference: packages/components/src/LoadingIndicator/LoadingIndicator.tsx:7
 	__( 'loading ...', 'event_espresso' ),
 
+	// Reference: packages/components/src/Modal/modalCloseButtonProps/index.ts:8
+	__( 'close modal', 'event_espresso' ),
+
 	// Reference: packages/components/src/PercentSign/index.tsx:11
 	__( '%', 'event_espresso' ),
 
@@ -1171,7 +1174,7 @@ information', 'event_espresso' ),
 	// Reference: packages/tpc/src/components/NoPricesBanner/index.tsx:33
 	__( 'Click the save button below to assign which dates this ticket will be available for purchase on.', 'event_espresso' ),
 
-	// Reference: packages/tpc/src/components/TicketPriceCalculatorModal.tsx:31
+	// Reference: packages/tpc/src/components/TicketPriceCalculatorModal.tsx:30
 	__( 'Price Calculator for Ticket: %s', 'event_espresso' ),
 
 	// Reference: packages/tpc/src/components/table/Table.tsx:43
