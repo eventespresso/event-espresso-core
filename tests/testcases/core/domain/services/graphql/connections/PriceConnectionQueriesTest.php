@@ -4,6 +4,7 @@ namespace EventEspresso\tests\testcases\core\domain\services\graphql\connections
 
 use EEM_Price;
 use EEM_Ticket;
+use GraphQLRelay\Connection\ArrayConnection;
 use GraphQLRelay\Relay;
 
 /**
@@ -72,7 +73,7 @@ class PriceConnectionQueriesTest extends BaseQueriesTest
         );
         $first_entity    = reset($entities);
         $first_entity_id = $first_entity->ID();
-        $expected_cursor = \GraphQLRelay\Connection\ArrayConnection::offsetToCursor($first_entity_id);
+        $expected_cursor = ArrayConnection::offsetToCursor($first_entity_id);
         $this->assertCount(1, $results['data']['espressoPrices']['edges']);
 
         $first_edge = $results['data']['espressoPrices']['edges'][0];
@@ -98,7 +99,7 @@ class PriceConnectionQueriesTest extends BaseQueriesTest
                 'ticketId' => $first_ticket->ID(),
             ]
         ];
-        $results   = $this->pricesQuery($variables);
+        $results   = (array) $this->pricesQuery($variables);
         $this->assertNotEmpty($results);
 
         /**
@@ -111,7 +112,7 @@ class PriceConnectionQueriesTest extends BaseQueriesTest
         );
         $first_entity    = reset($entities);
         $first_entity_id = $first_entity->ID();
-        $expected_cursor = \GraphQLRelay\Connection\ArrayConnection::offsetToCursor($first_entity_id);
+        $expected_cursor = ArrayConnection::offsetToCursor($first_entity_id);
 
         $this->assertCount(1, $results['data']['espressoPrices']['edges']);
 
@@ -138,7 +139,7 @@ class PriceConnectionQueriesTest extends BaseQueriesTest
                 'ticketIn' => [Relay::toGlobalId('Ticket', $first_ticket->ID())],
             ]
         ];
-        $results   = $this->pricesQuery($variables);
+        $results   = (array) $this->pricesQuery($variables);
         $this->assertNotEmpty($results);
 
         /**
@@ -151,7 +152,7 @@ class PriceConnectionQueriesTest extends BaseQueriesTest
         );
         $first_entity    = reset($entities);
         $first_entity_id = $first_entity->ID();
-        $expected_cursor = \GraphQLRelay\Connection\ArrayConnection::offsetToCursor($first_entity_id);
+        $expected_cursor = ArrayConnection::offsetToCursor($first_entity_id);
 
         $this->assertCount(1, $results['data']['espressoPrices']['edges']);
 
