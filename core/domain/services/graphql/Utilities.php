@@ -17,7 +17,6 @@ class Utilities
      */
     public function sanitizeWhereArgs(array $where_args, array $arg_mapping, array $id_fields)
     {
-        $where_params = [];
         foreach ($where_args as $arg => $value) {
             if (! array_key_exists($arg, $arg_mapping)) {
                 continue;
@@ -35,11 +34,11 @@ class Utilities
             } elseif (is_string($value)) {
                 $value = sanitize_text_field($value);
             }
-            $where_params[ $arg_mapping[ $arg ] ] = in_array($arg, $id_fields, true)
+            $where_args[ $arg_mapping[ $arg ] ] = in_array($arg, $id_fields, true)
                 ? $this->convertGlobalId($value)
                 : $value;
         }
-        return $where_params;
+        return $where_args;
     }
 
 
