@@ -24,7 +24,7 @@ class EspressoEditor implements GQLDataDomainInterface
      * @return array
      * @since $VID:$
      */
-    public function registerLoaders($loaders, $context)
+    public function registerLoaders(array $loaders, AppContext $context)
     {
         $newLoaders = [
             'espresso_attendee'  => new Loaders\AttendeeLoader($context),
