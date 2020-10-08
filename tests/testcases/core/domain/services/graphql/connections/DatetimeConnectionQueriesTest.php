@@ -4,6 +4,7 @@ namespace EventEspresso\tests\testcases\core\domain\services\graphql\connections
 
 use EEM_Datetime;
 use EEM_Event;
+use GraphQLRelay\Connection\ArrayConnection;
 
 /**
  * @group wpGraphQL
@@ -59,7 +60,7 @@ class DatetimeConnectionQueriesTest extends BaseQueriesTest
         $variables = [
             'first' => 1,
         ];
-        $results   = $this->datetimesQuery($variables);
+        $results   = (array) $this->datetimesQuery($variables);
         $this->assertNotEmpty($results);
 
         /**
@@ -73,8 +74,8 @@ class DatetimeConnectionQueriesTest extends BaseQueriesTest
 
         $first_entity    = reset($entities);
         $first_entity_id = $first_entity->ID();
-        $expected_cursor = \GraphQLRelay\Connection\ArrayConnection::offsetToCursor($first_entity_id);
-        $this->assertCount(1, (array) $results['data']['espressoDatetimes']['edges']);
+        $expected_cursor = ArrayConnection::offsetToCursor($first_entity_id);
+        $this->assertCount(1, $results['data']['espressoDatetimes']['edges']);
 
         $first_edge = $results['data']['espressoDatetimes']['edges'][0];
 
@@ -106,7 +107,7 @@ class DatetimeConnectionQueriesTest extends BaseQueriesTest
             ]
         ];
 
-        $results   = $this->datetimesQuery($variables);
+        $results   = (array) $this->datetimesQuery($variables);
         $this->assertNotEmpty($results);
 
         /**
@@ -120,7 +121,7 @@ class DatetimeConnectionQueriesTest extends BaseQueriesTest
 
         $first_entity    = reset($entities);
         $first_entity_id = $first_entity->ID();
-        $expected_cursor = \GraphQLRelay\Connection\ArrayConnection::offsetToCursor($first_entity_id);
+        $expected_cursor = ArrayConnection::offsetToCursor($first_entity_id);
         $this->assertCount(1, $results['data']['espressoDatetimes']['edges']);
 
         $first_edge = $results['data']['espressoDatetimes']['edges'][0];
