@@ -1180,8 +1180,11 @@ information', 'event_espresso' ),
 	// Reference: packages/tpc/src/components/table/Table.tsx:43
 	__( 'Ticket Price Calculator', 'event_espresso' ),
 
-	// Reference: packages/tpc/src/components/table/useFooterRowGenerator.tsx:40
+	// Reference: packages/tpc/src/components/table/useFooterRowGenerator.tsx:41
 	__( 'Total', 'event_espresso' ),
+
+	// Reference: packages/tpc/src/components/table/useFooterRowGenerator.tsx:50
+	__( 'ticket total', 'event_espresso' ),
 
 	// Reference: packages/tpc/src/components/table/useHeaderRowGenerator.ts:29
 	__( 'Price Type', 'event_espresso' ),
@@ -1192,14 +1195,29 @@ information', 'event_espresso' ),
 	// Reference: packages/tpc/src/components/table/useHeaderRowGenerator.ts:47
 	__( 'Amount', 'event_espresso' ),
 
-	// Reference: packages/tpc/src/inputs/PriceAmountInput.tsx:44
+	// Reference: packages/tpc/src/inputs/PriceAmountInput.tsx:34
+	__( 'amount', 'event_espresso' ),
+
+	// Reference: packages/tpc/src/inputs/PriceAmountInput.tsx:45
 	__( 'amount...', 'event_espresso' ),
 
-	// Reference: packages/tpc/src/inputs/PriceDescriptionInput.tsx:14
+	// Reference: packages/tpc/src/inputs/PriceDescriptionInput.tsx:10
+	__( 'price description', 'event_espresso' ),
+
+	// Reference: packages/tpc/src/inputs/PriceDescriptionInput.tsx:15
 	__( 'description...', 'event_espresso' ),
 
-	// Reference: packages/tpc/src/inputs/PriceNameInput.tsx:14
+	// Reference: packages/tpc/src/inputs/PriceIdInput.tsx:9
+	__( 'price id', 'event_espresso' ),
+
+	// Reference: packages/tpc/src/inputs/PriceNameInput.tsx:10
+	__( 'price name', 'event_espresso' ),
+
+	// Reference: packages/tpc/src/inputs/PriceNameInput.tsx:15
 	__( 'label...', 'event_espresso' ),
+
+	// Reference: packages/tpc/src/inputs/PriceTypeInput.tsx:16
+	__( 'price type', 'event_espresso' ),
 
 	// Reference: packages/components/src/LoadingNotice/LoadingNotice.tsx:17
 	_x( 'loading%s', 'loading...', 'event_espresso' )
