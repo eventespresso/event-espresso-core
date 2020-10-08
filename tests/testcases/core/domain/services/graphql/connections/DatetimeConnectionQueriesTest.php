@@ -4,7 +4,6 @@ namespace EventEspresso\tests\testcases\core\domain\services\graphql\connections
 
 use EEM_Datetime;
 use EEM_Event;
-use Exception;
 use GraphQLRelay\Connection\ArrayConnection;
 
 /**
