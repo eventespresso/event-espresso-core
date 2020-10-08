@@ -206,11 +206,11 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:110
 	__( 'End Date', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/DatesList.tsx:30
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/TableView.tsx:36
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/DatesList.tsx:34
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/TableView.tsx:35
 	__( 'Event Dates', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/DatesList.tsx:33
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/DatesList.tsx:37
 	__( 'loading event dates...', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/DatesListButtons.tsx:22
@@ -253,13 +253,13 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:47
 	__( 'copy datetime', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:29
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:30
 	__( 'edit datetime details', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:33
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:34
 	__( 'delete datetimes', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:33
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:34
 	__( 'trash datetimes', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/delete/Delete.tsx:13
@@ -342,6 +342,10 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/editable/EditableName.tsx:28
 	__( 'edit title...', 'event_espresso' ),
 
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/filterBar/ActiveDatesFilters.tsx:25
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/filterBar/ActiveTicketsFilters.tsx:25
+	__( 'ON', 'event_espresso' ),
+
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:10
 	__( 'start and end dates', 'event_espresso' ),
 
@@ -409,19 +413,22 @@ $generated_i18n_strings = array(
 	__( 'display', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:42
+	__( 'recurrence', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:43
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:53
 	__( 'sales', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:43
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:44
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:55
 	__( 'sort by', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:44
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:45
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:54
 	// Reference: packages/components/src/EntityList/filterBar/EntityListFilterBar.tsx:73
 	__( 'search', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:45
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:46
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:56
 	__( 'status', 'event_espresso' ),
 
@@ -602,10 +609,10 @@ that only occurs once', 'event_espresso' ),
 	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:190
 	__( 'If enabled, the ticket will appear on all new events.', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/TicketsList.tsx:30
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/TicketsList.tsx:34
 	__( 'Available Tickets', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/TicketsList.tsx:33
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/TicketsList.tsx:37
 	__( 'loading tickets...', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/AssignDatesButton.tsx:27
@@ -641,20 +648,20 @@ that only occurs once', 'event_espresso' ),
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:43
 	__( 'copy ticket', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:29
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:30
 	// Reference: packages/components/src/bulkEdit/BulkActions.tsx:43
 	__( 'bulk actions', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:33
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:34
 	__( 'edit ticket details', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:37
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:38
 	__( 'delete tickets', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:37
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:38
 	__( 'trash tickets', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:41
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:42
 	__( 'edit ticket prices', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/delete/Delete.tsx:13
@@ -699,10 +706,10 @@ that only occurs once', 'event_espresso' ),
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/prices/editSeparately/TPCInstance.tsx:22
 	__( 'Edit prices for Ticket: %s', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/cardView/TicketCardSidebar.tsx:38
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/cardView/TicketCardSidebar.tsx:37
 	__( 'Edit Ticket Sale Dates', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/cardView/TicketCardSidebar.tsx:40
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/cardView/TicketCardSidebar.tsx:39
 	__( 'edit ticket sales start and end dates', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/cardView/TicketDetailsPanel.tsx:27
@@ -723,9 +730,6 @@ that only occurs once', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/editable/EditablePrice.tsx:36
 	__( 'edit ticket total...', 'event_espresso' ),
-
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/filterBar/ActiveTicketsFilters.tsx:24
-	__( 'ON', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/IsChainedButton.tsx:24
 	__( 'tickets list is linked to dates list and is showing tickets for above dates only', 'event_espresso' ),
@@ -802,7 +806,7 @@ that only occurs once', 'event_espresso' ),
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/newTicketOptions/AddSingleTicket.tsx:33
 	__( 'Add a single ticket and assign the dates to it', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/tableView/TableView.tsx:34
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/tableView/TableView.tsx:33
 	__( 'Tickets', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:50
@@ -899,10 +903,10 @@ that only occurs once', 'event_espresso' ),
 	// Reference: packages/components/src/EntityDetailsPanel/EntityDetailsPanelSold.tsx:32
 	__( 'view approved registrations for this ticket.', 'event_espresso' ),
 
-	// Reference: packages/components/src/EntityList/EntityList.tsx:39
+	// Reference: packages/components/src/EntityList/EntityList.tsx:38
 	__( 'no results found', 'event_espresso' ),
 
-	// Reference: packages/components/src/EntityList/EntityList.tsx:40
+	// Reference: packages/components/src/EntityList/EntityList.tsx:39
 	__( 'try changing filter settings', 'event_espresso' ),
 
 	// Reference: packages/components/src/EntityList/filterBar/buttons/CardViewFilterButton.tsx:23
