@@ -130,10 +130,10 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/formValidation.ts:12
 	__( 'Name must be at least three characters', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/multiStep/Container.tsx:17
+	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/multiStep/Container.tsx:19
 	__( 'Edit datetime %s', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/multiStep/Container.tsx:17
+	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/multiStep/Container.tsx:19
 	__( 'New Datetime', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/multiStep/ContentBody.tsx:40
@@ -532,10 +532,10 @@ that only occurs once', 'event_espresso' ),
 	// Reference: domains/eventEditor/src/ui/tickets/TicketRegistrationsLink.tsx:30
 	__( 'view ALL registrations for this ticket.', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/Container.tsx:16
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/Container.tsx:18
 	__( 'Edit ticket %s', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/Container.tsx:16
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/Container.tsx:18
 	__( 'New Ticket Details', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/ContentBody.tsx:44
