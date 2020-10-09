@@ -165,11 +165,14 @@ abstract class DomainBase implements DomainInterface
 
 
     /**
+     * @param string $additional_path
      * @return string
      */
-    public function pluginUrl()
+    public function pluginUrl($additional_path = '')
     {
-        return $this->plugin_url;
+        return is_string($additional_path) && $additional_path !== ''
+            ? $this->plugin_url . $additional_path
+            : $this->plugin_url;
     }
 
 
