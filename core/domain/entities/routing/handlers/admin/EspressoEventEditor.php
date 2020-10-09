@@ -4,7 +4,6 @@ namespace EventEspresso\core\domain\entities\routing\handlers\admin;
 
 use EE_Dependency_Map;
 use EventEspresso\core\domain\entities\routing\data_nodes\domains\EventEditor;
-use EventEspresso\core\domain\entities\routing\data_nodes\EventEspressoData;
 use EventEspresso\core\domain\services\assets\EventEditorAssetManager;
 use EventEspresso\core\services\graphql\GraphQLManager;
 
