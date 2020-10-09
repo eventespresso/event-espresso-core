@@ -70,7 +70,9 @@ abstract class GraphQLData implements GraphQLDataInterface
             }
             return null;
         } catch (Exception $e) {
-            // do something with the errors thrown
+            if (defined('GRAPHQL_DEBUG') && GRAPHQL_DEBUG) {
+                error_log($e->getMessage());
+            }
             return null;
         }
     }
