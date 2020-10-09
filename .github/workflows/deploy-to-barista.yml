@@ -2,7 +2,7 @@ name: Deploy to barista site
 
 on:
   push:
-    branches: [barista-prod]
+    branches: [barista]
 
 jobs:
   deploy-to-barista-site:
