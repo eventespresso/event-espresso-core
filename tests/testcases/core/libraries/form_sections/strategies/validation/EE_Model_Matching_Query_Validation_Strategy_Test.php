@@ -12,7 +12,7 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
 class EE_Model_Matching_Query_Validation_Strategy_Test extends EE_UnitTestCase {
 
     /**
-     * @since $VID:$
+     * @since 4.10.7.p
      * @throws EE_Error
      * @throws EE_Validation_Error
      * @throws InvalidArgumentException
@@ -49,7 +49,7 @@ class EE_Model_Matching_Query_Validation_Strategy_Test extends EE_UnitTestCase {
 
 
     /**
-     * @since $VID:$
+     * @since 4.10.7.p
      * @throws EE_Error
      * @throws EE_Validation_Error
      * @doesNotPerformAssertions

@@ -91,7 +91,7 @@ class CoreLoader
      * @param string $folder
      * @param string $with_file
      * @return string|null
-     * @since $VID:$
+     * @since 4.10.7.p
      */
     private function findFolderWithFile($folder = '', $with_file = '')
     {

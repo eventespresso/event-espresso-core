@@ -11,7 +11,7 @@ use PHPUnit_Framework_TestCase;
  *
  * @package EETests\bootstrap\
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   4.10.7.p
  */
 class EspressoPHPUnitFrameworkTestCase extends PHPUnit_Framework_TestCase
 {
