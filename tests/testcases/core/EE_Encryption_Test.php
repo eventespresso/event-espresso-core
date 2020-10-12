@@ -229,41 +229,6 @@ class EE_Encryption_Test extends EE_UnitTestCase
     }
 
 
-
-    /**
-     * @requires function mcrypt_encrypt
-     * @return void
-     * @throws RuntimeException
-     */
-    public function testMcryptEncryption()
-    {
-        if (PHP_VERSION_ID >= 70100) {
-            $this->markTestSkipped(
-                'The mcrypt extension is deprecated in PHP version 7.1 and therefore can not be tested.'
-            );
-        }
-        $this->assertEquals(
-            $this->getString(),
-            $this->encryption->m_decrypt(
-                $this->encryption->m_encrypt(
-                    $this->getString()
-                )
-            )
-        );
-        $this->runEncryptionTest(
-            'm_encrypt',
-            'm_decrypt',
-            $this->getArrayData()
-        );
-        $this->runEncryptionTest(
-            'm_encrypt',
-            'm_decrypt',
-            $this->getObjectData()
-        );
-    }
-
-
-
     /**
      * @return void
      * @throws RuntimeException

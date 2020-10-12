@@ -112,37 +112,4 @@ class EE_Encryption_Mock extends EE_Encryption
     {
         return parent::valid_base_64($string);
     }
-
-
-
-    /**
-     * encrypts data using PHP's mcrypt functions
-     *
-     * @deprecated 4.9.39
-     * @param string $text_string
-     * @internal   param $string - the text to be encrypted
-     * @return string
-     * @throws RuntimeException
-     */
-    public function m_encrypt($text_string = '')
-    {
-        return parent::m_encrypt($text_string);
-    }
-
-
-
-    /**
-     * decrypts data that has been encrypted with PHP's mcrypt functions
-     *
-     * @deprecated 4.9.39
-     * @param string $encrypted_text the text to be decrypted
-     * @return string
-     * @throws RuntimeException
-     */
-    public function m_decrypt($encrypted_text = '')
-    {
-        return parent::m_decrypt($encrypted_text);
-    }
-
-
 }
