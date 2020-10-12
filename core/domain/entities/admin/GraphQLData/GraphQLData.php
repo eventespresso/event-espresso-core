@@ -63,17 +63,21 @@ abstract class GraphQLData implements GraphQLDataInterface
      */
     protected function makeGraphQLRequest($data)
     {
+        $error = '';
         try {
             $response = graphql($data);
             if (! empty($response['data'])) {
                 return $response['data'];
             }
-            return null;
         } catch (Exception $e) {
             if (defined('GRAPHQL_DEBUG') && GRAPHQL_DEBUG) {
-                error_log($e->getMessage());
+                $error = $e->getMessage();
             }
-            return null;
         }
+        if (!$error && ! empty($response['errors'])) {
+            $error = print_r($response['errors'], true);
+        }
+        error_log($error);
+        return null;
     }
 }
