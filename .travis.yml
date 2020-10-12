@@ -30,11 +30,11 @@ before_script:
     # Install the specified version of PHPUnit depending on the PHP version:
     if [[ -n "$TRAVIS_PHP_VERSION" ]]; then
       case "$TRAVIS_PHP_VERSION" in
-        8.0)
+        nightly)
           echo "Using PHPUnit 7"
           composer global require "phpunit/phpunit=7.5.*"
           ;;
-        7.1|7.2|7.3|7.4|nightly)
+        7.1|7.2|7.3|7.4)
           # when wp tests support phpunit 7 we'll update this.
           echo "Using PHPUnit 6"
           composer global require "phpunit/phpunit=6.5.*"
