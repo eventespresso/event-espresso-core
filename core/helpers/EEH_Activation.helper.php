@@ -1638,14 +1638,8 @@ class EEH_Activation implements ResettableInterface
      */
     public static function last_wpdb_error_code()
     {
-        // phpcs:disable PHPCompatibility.PHP.RemovedExtensions.mysql_DeprecatedRemoved
         global $wpdb;
-        if ($wpdb->use_mysqli) {
-            return mysqli_errno($wpdb->dbh);
-        } else {
-            return mysql_errno($wpdb->dbh);
-        }
-        // phpcs:enable
+        return $wpdb->use_mysqli ? mysqli_errno($wpdb->dbh) : 0;
     }
 
     /**
