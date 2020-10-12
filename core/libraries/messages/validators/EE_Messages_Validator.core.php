@@ -12,7 +12,6 @@
  * @package        Event Espresso
  * @subpackage     includes/core/messages/validators/EE_Messages_Validator.core.php
  * @author         Darren Ethier
- * ------------------------------------------------------------------------
  */
 abstract class EE_Messages_Validator extends EE_Base
 {
@@ -262,26 +261,26 @@ abstract class EE_Messages_Validator extends EE_Base
                 continue;
             }
 
-            // If we have an override then we use it to indicate the codes we want.
             if (isset($this->_valid_shortcodes_modifier[ $context ][ $field ])) {
+                // If we have an override then we use it to indicate the codes we want.
                 $this->_validators[ $field ]['shortcodes'] = $this->_reassemble_valid_shortcodes_from_group(
                     $this->_valid_shortcodes_modifier[ $context ][ $field ],
                     $codes_from_objs
                 );
-            } //if we have specific shortcodes for a field then we need to use them
-            elseif (isset($groups_per_field[ $field ])) {
+            } elseif (isset($groups_per_field[ $field ])) {
+                //if we have specific shortcodes for a field then we need to use them
                 $this->_validators[ $field ]['shortcodes'] = $this->_reassemble_valid_shortcodes_from_group(
                     $groups_per_field[ $field ],
                     $codes_from_objs
                 );
-            } //if empty config then we're assuming we're just going to use the shortcodes from the message type context
-            elseif (empty($config)) {
+            } elseif (empty($config)) {
+                //if empty config then we're assuming we're just going to use the shortcodes from the message type context
                 $this->_validators[ $field ]['shortcodes'] = $mt_codes;
-            } //if we have specific shortcodes then we need to use them
-            elseif (isset($config['specific_shortcodes'])) {
+            } elseif (isset($config['specific_shortcodes'])) {
+                //if we have specific shortcodes then we need to use them
                 $this->_validators[ $field ]['shortcodes'] = $config['specific_shortcodes'];
-            } //otherwise the shortcodes are what is set by the messenger for that field
-            else {
+            } else {
+                //otherwise the shortcodes are what is set by the messenger for that field
                 foreach ($config['shortcodes'] as $group) {
                     $this->_validators[ $field ]['shortcodes'] = isset($this->_validators[ $field ]['shortcodes'])
                         ? array_merge($this->_validators[ $field ]['shortcodes'], $codes_from_objs[ $group ])
@@ -369,8 +368,7 @@ abstract class EE_Messages_Validator extends EE_Base
             if (isset($template_fields[ $field ])) {
                 if (empty($template_fields[ $field ])) {
                     $field_label = $field;
-                } //most likely the field is found in the 'extra' array.
-                else {
+                } else { //most likely the field is found in the 'extra' array.
                     $field_label = $template_fields[ $field ]['label'];
                 }
             }

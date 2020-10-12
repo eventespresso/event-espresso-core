@@ -1,7 +1,5 @@
 <p><strong><?php esc_html_e('PayPal Pro', 'event_espresso'); ?></strong></p>
-<p>
-    <?php esc_html_e('Adjust the settings for the PayPal Pro payment gateway.', 'event_espresso'); ?>
-</p>
+<p><?php esc_html_e('Adjust the settings for the PayPal Pro payment gateway.', 'event_espresso'); ?></p>
 <p>
     <?php printf(
         esc_html__('See %1$shere%2$s for list of currencies supported by Paypal Pro.', 'event_espresso'),
@@ -22,8 +20,8 @@
                 'Enter your API Username for PayPal. Learn how to find your %1$sAPI Username%2$s.',
                 'event_espresso'
             ),
-                '<a href="https://www.paypal.com/us/cgi-bin/webscr?cmd=xpt/cps/merchant/wppro/WPProIntegrationSteps-outside#SectionB" target="_blank" rel="noopener noreferrer">',
-                '</a>'
+            '<a href="https://www.paypal.com/us/cgi-bin/webscr?cmd=xpt/cps/merchant/wppro/WPProIntegrationSteps-outside#SectionB" target="_blank" rel="noopener noreferrer">',
+            '</a>'
         ); ?>
     </li>
     <li>
@@ -33,8 +31,8 @@
                 'Enter your API Password for PayPal. Learn how to find your %1$sAPI Password%2$s.',
                 'event_espresso'
             ),
-                '<a href="https://www.paypal.com/us/cgi-bin/webscr?cmd=xpt/cps/merchant/wppro/WPProIntegrationSteps-outside#SectionB" target="_blank" rel="noopener noreferrer">',
-                '</a>'
+            '<a href="https://www.paypal.com/us/cgi-bin/webscr?cmd=xpt/cps/merchant/wppro/WPProIntegrationSteps-outside#SectionB" target="_blank" rel="noopener noreferrer">',
+            '</a>'
         ); ?>
     </li>
     <li>
@@ -44,8 +42,8 @@
                 'Enter your API Signature for PayPal. Learn how to find your %1$sAPI Signature%2$s.',
                 'event_espresso'
             ),
-                '<a href="https://www.paypal.com/us/cgi-bin/webscr?cmd=xpt/cps/merchant/wppro/WPProIntegrationSteps-outside#SectionB" target="_blank" rel="noopener noreferrer">',
-                '</a>'
+            '<a href="https://www.paypal.com/us/cgi-bin/webscr?cmd=xpt/cps/merchant/wppro/WPProIntegrationSteps-outside#SectionB" target="_blank" rel="noopener noreferrer">',
+            '</a>'
         ); ?>
     </li>
     <li>

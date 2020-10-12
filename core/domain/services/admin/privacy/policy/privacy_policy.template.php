@@ -71,8 +71,7 @@
                 'Masked billing information may be stored on our servers (eg only the last 4 digits of credit card numbers are stored: **** **** **** 1234).',
                 'event_espresso'
             ); ?></p>
-    <?php } // IF OFFSITE PAYMENT METHOD ACTIVE
-    elseif (! empty($active_offsite_payment_methods)) { ?>
+    <?php } elseif (! empty($active_offsite_payment_methods)) { // IF OFFSITE PAYMENT METHOD ACTIVE ?>
         <p><?php
             printf(
                 esc_html_x(

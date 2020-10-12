@@ -15,34 +15,31 @@
  * @package        Event Espresso
  * @subpackage     libraries/shortcodes/EE_Attendee_List_Shortcodes.lib.php
  * @author         Darren Ethier
- *
- * ------------------------------------------------------------------------
  */
 class EE_Attendee_List_Shortcodes extends EE_Shortcodes
 {
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
 
     protected function _init_props()
     {
-        $this->label = __('Attendee List Shortcodes', 'event_espresso');
-        $this->description = __('All shortcodes specific to attendee lists', 'event_espresso');
+        $this->label = esc_html__('Attendee List Shortcodes', 'event_espresso');
+        $this->description = esc_html__('All shortcodes specific to attendee lists', 'event_espresso');
         $this->_shortcodes = array(
-            '[ATTENDEE_LIST]' => __('Will output a list of attendees', 'event_espresso'),
+            '[ATTENDEE_LIST]' => esc_html__('Will output a list of attendees', 'event_espresso'),
         );
     }
 
 
+    /**
+     * @param string $shortcode
+     * @return string
+     * @throws EE_Error
+     */
     protected function _parser($shortcode)
     {
         switch ($shortcode) {
             case '[ATTENDEE_LIST]':
                 return $this->_get_attendee_list();
-                break;
         }
         return '';
     }
@@ -52,6 +49,7 @@ class EE_Attendee_List_Shortcodes extends EE_Shortcodes
      * figure out what the incoming data is and then return the appropriate parsed value.
      *
      * @return string
+     * @throws EE_Error
      */
     private function _get_attendee_list()
     {
@@ -63,10 +61,9 @@ class EE_Attendee_List_Shortcodes extends EE_Shortcodes
             return $this->_get_attendee_list_for_event();
         } elseif ($this->_data['data'] instanceof EE_Ticket) {
             return $this->_get_registration_list_for_ticket();
-        } // prevent recursive loop
-        else {
-            return '';
         }
+        // prevent recursive loop
+        return '';
     }
 
 

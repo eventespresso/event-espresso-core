@@ -1652,8 +1652,8 @@ class Read extends Base
             )) {
                 throw new RestPasswordIncorrectException();
             }
-        } // wait! maybe this content is password protected
-        elseif ($model->restrictedByRelatedModelPassword()
+        } elseif (// wait! maybe this content is password protected
+            $model->restrictedByRelatedModelPassword()
             && $request->get_param('caps') === EEM_Base::caps_read) {
             $password_supplied = $request->get_param('password');
             if (empty($password_supplied)) {

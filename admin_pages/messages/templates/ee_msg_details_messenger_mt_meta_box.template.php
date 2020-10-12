@@ -3,19 +3,19 @@
     <?php
     if (empty($inactive_message_types) && empty($active_message_types)) :
         echo '<p>'
-             . __(
+             . esc_html__(
                  'This messenger is not currently used with any message types for templates but merely adds to the shortcodes available for templates on other messenger and message types.',
                  'event_espresso'
              ) . '</p>';
     else : ?>
         <p class="active-on-message <?php echo $hide_on_message; ?>">
             <?php printf(
-                __(
+                esc_html__(
                     'Below are message types that are currently %sactive%s with this messenger. Drag them over to the "Inactive Message Types" box to deactivate them.',
                     'event_espresso'
                 ),
-                                    '<strong>',
-                                    '</strong>'
+                '<strong>',
+                '</strong>'
             ); ?>
         <p>
         <div <?php

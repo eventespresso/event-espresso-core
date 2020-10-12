@@ -15,34 +15,32 @@
  * @package        Event Espresso
  * @subpackage     libraries/shortcodes/EE_Ticket_List_Shortcodes.lib.php
  * @author         Darren Ethier
- *
- * ------------------------------------------------------------------------
  */
 class EE_Ticket_List_Shortcodes extends EE_Shortcodes
 {
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
 
     protected function _init_props()
     {
-        $this->label = __('Ticket List Shortcodes', 'event_espresso');
-        $this->description = __('All shortcodes specific to ticket lists', 'event_espresso');
+        $this->label = esc_html__('Ticket List Shortcodes', 'event_espresso');
+        $this->description = esc_html__('All shortcodes specific to ticket lists', 'event_espresso');
         $this->_shortcodes = array(
-            '[TICKET_LIST]' => __('Will output a list of tickets', 'event_espresso'),
+            '[TICKET_LIST]' => esc_html__('Will output a list of tickets', 'event_espresso'),
         );
     }
 
 
+    /**
+     * @param string $shortcode
+     * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
     protected function _parser($shortcode)
     {
         switch ($shortcode) {
             case '[TICKET_LIST]':
                 return $this->_get_ticket_list();
-                break;
         }
         return '';
     }
@@ -52,6 +50,8 @@ class EE_Ticket_List_Shortcodes extends EE_Shortcodes
      * figure out what the incoming data is and then return the appropriate parsed value.
      *
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     private function _get_ticket_list()
     {
@@ -63,10 +63,9 @@ class EE_Ticket_List_Shortcodes extends EE_Shortcodes
             return $this->_get_ticket_list_for_attendee();
         } elseif ($this->_data['data'] instanceof EE_Event) {
             return $this->_get_ticket_list_for_event();
-        } // prevent recursive loop
-        else {
-            return '';
         }
+        // prevent recursive loop
+        return '';
     }
 
 
@@ -150,6 +149,8 @@ class EE_Ticket_List_Shortcodes extends EE_Shortcodes
      * return parsed list of tickets for an attendee
      *
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     private function _get_ticket_list_for_attendee()
     {
@@ -186,12 +187,25 @@ class EE_Ticket_List_Shortcodes extends EE_Shortcodes
         return $tkt_parsed;
     }
 
+
+    /**
+     * @param EE_Event $event
+     * @return array|mixed
+     */
     private function _get_tickets_from_event(EE_Event $event)
     {
         return isset($this->_extra_data['data']->events) ? $this->_extra_data['data']->events[ $event->ID(
         ) ]['tkt_objs'] : array();
     }
 
+
+    /**
+     * @param EE_Registration $registration
+     * @param null            $att
+     * @return array
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
     private function _get_ticket_list_from_registration(EE_Registration $registration, $att = null)
     {
         return isset($this->_extra_data['data']->registrations)

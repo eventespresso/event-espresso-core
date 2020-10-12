@@ -14,10 +14,10 @@
                     'Some themes and plugins have %1$sknown conflicts%2$s with Event Espresso. (You can also browse the %3$sEvent Espresso support pages%2$s or %4$sEvent Espresso support forums%2$s to see if other members have experienced and solved the problem.)',
                     'event_espresso'
                 ),
-                        '<a href="https://eventespresso.com/wiki/known-third-party-plugin-theme-conflicts/" target="_blank">',
-                        '</a>',
-                        '<a href="https://eventespresso.com/support/documentation/versioned-docs/?doc_ver=ee4" target="_blank">',
-                        '<a href="https://eventespresso.com/support/forums/" target="_blank">'
+                '<a href="https://eventespresso.com/wiki/known-third-party-plugin-theme-conflicts/" target="_blank">',
+                '</a>',
+                '<a href="https://eventespresso.com/support/documentation/versioned-docs/?doc_ver=ee4" target="_blank">',
+                '<a href="https://eventespresso.com/support/forums/" target="_blank">'
             ); ?></li>
         <li><strong><em><?php esc_html_e('A plugin conflict.', 'event_espresso'); ?></em></strong>
             <?php esc_html_e(
