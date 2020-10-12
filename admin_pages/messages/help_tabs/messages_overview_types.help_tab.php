@@ -1,13 +1,15 @@
 <p><strong><?php esc_html_e('Message Types', 'event_espresso'); ?></strong></p>
 <p>
-    <?php printf(
+    <?php
+    printf(
         esc_html__(
             'Messages are email notifications that are sent out by Event Espresso. Message Types are the %1$skinds%2$s of messages that get delivered.  They can be thought of as the "type" of package that is being delivered by the messenger. For example, Event Espresso comes with two Message Types attached to the Email Messenger:',
             'event_espresso'
         ),
         '<em>',
         '</em>'
-    ); ?>
+    );
+    ?>
 </p>
 <ul>
     <li>

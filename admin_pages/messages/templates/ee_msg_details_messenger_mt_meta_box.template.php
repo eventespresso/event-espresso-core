@@ -1,11 +1,11 @@
 <?php
 /**
- * @var boolean $active;
- * @var string $active_message_types;
- * @var string $content;
- * @var string $hide_on_message;
- * @var string $messenger;
-*/
+ * @var boolean $active               ;
+ * @var string  $active_message_types ;
+ * @var string  $content              ;
+ * @var string  $hide_on_message      ;
+ * @var string  $messenger            ;
+ */
 ?>
 <div class="<?php echo $messenger; ?>-content">
     <?php echo $content; ?>
@@ -29,7 +29,11 @@
             );
             ?>
         <p>
-        <div <?php if ($active) { ?> id="active-message-types"<?php } ?> class="mt-tab-container <?php echo $hide_on_message; ?>">
+        <div <?php
+        if ($active) {
+            ?> id="active-message-types"<?php
+        }
+        ?> class="mt-tab-container <?php echo $hide_on_message; ?>">
             <ul class="messenger-activation">
                 <?php echo $active_message_types; ?>
             </ul>
