@@ -5,8 +5,8 @@
             'Message Templates are the %1$sformat%2$s of the messages going out. Think of them as a “form letter”. Templates tell the Messages system how to style your messages and the content (information) they will have when they are delivered.',
             'event_espresso'
         ),
-        '<em>',
-        '</em>'
+           '<em>',
+           '</em>'
     ); ?></p>
 <p>
     <?php esc_html_e(

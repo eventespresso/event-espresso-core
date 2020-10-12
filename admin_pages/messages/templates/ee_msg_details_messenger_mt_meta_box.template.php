@@ -14,8 +14,8 @@
                     'Below are message types that are currently %sactive%s with this messenger. Drag them over to the "Inactive Message Types" box to deactivate them.',
                     'event_espresso'
                 ),
-                '<strong>',
-                '</strong>'
+                                    '<strong>',
+                                    '</strong>'
             ); ?>
         <p>
         <div <?php

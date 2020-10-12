@@ -15,7 +15,7 @@
         <?php echo $no_attendee_message; ?>
     </p>
 </div> <!-- end #admin-side-mbox-primary-registrant-dv -->
-<?php
+        <?php
     else : ?>
     <p class="clearfix">
         <span class="admin-side-mbox-label-spn lt-grey-txt float-left">
@@ -35,11 +35,11 @@
                 'event_espresso'
             ); ?>
     </span>
-    <?php if (! empty($prime_reg_phone)) : ?>
+        <?php if (! empty($prime_reg_phone)) : ?>
         <a href="tel:<?php echo $prime_reg_phone; ?>">
             <?php echo $prime_reg_phone; ?>
         </a>
-    <?php endif; ?>
+        <?php endif; ?>
     </p>
     <p class="clearfix">
         <span class="admin-side-mbox-label-spn lt-grey-txt float-left"><?php esc_html_e('Address', 'event_espresso'); ?></span>
@@ -49,14 +49,14 @@
     </p>
     </div> <!-- end #admin-side-mbox-primary-registrant-dv -->
 
-    <?php
+        <?php
     /** only show if logged in user has access */
-    if (EE_Registry::instance()->CAP->current_user_can(
-        'ee_edit_contact',
-        'view_or_edit_contact_button',
-        $ATT_ID
-    )
-    ) : ?>
+        if (EE_Registry::instance()->CAP->current_user_can(
+            'ee_edit_contact',
+            'view_or_edit_contact_button',
+            $ATT_ID
+        )
+        ) : ?>
         <p style="text-align:right;">
             <a class="button button-small" href="<?php echo $edit_attendee_url; ?>"
                title="<?php esc_attr_e('View details for this contact.', 'event_espresso'); ?>">
@@ -67,5 +67,5 @@
                 ); ?>
             </a>
         </p>
-    <?php endif;
+        <?php endif;
     endif;

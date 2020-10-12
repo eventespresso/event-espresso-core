@@ -61,7 +61,7 @@ $tax_total_line_item;
             <?php
             if (strlen($event->description() > 1)) {
                 ?><p class="event-description"><?php $event->description() ?></p>
-            <?php
+                <?php
             } ?>
             <ul class="tickets-per-event">
                 <?php foreach ($ticket_line_items_per_event[ $event_id ] as $line_item_id => $line_item) {
@@ -97,7 +97,7 @@ $tax_total_line_item;
                                                         'This ticket can be used once at %s of the dates/times below.',
                                                         'event_espresso'
                                                     ),
-                                                    $ticket_uses
+                                                        $ticket_uses
                                                 ); ?></p></td>
                                         <td class="item_c"><?php echo $line_item->quantity() ?></td>
                                         <td class="item_c"><?php echo $line_item->unit_price_no_code() ?></td>
@@ -113,7 +113,7 @@ $tax_total_line_item;
                                                         'This ticket can be used once at %s of the dates/times below.',
                                                         'event_espresso'
                                                     ),
-                                                    $ticket_uses
+                                                        $ticket_uses
                                                 ); ?></p></td>
                                         <td class="item_c"><?php echo $line_item->quantity() ?></td>
                                         <td class="item_c"><?php echo $line_item->unit_price_no_code() ?></td>
@@ -397,7 +397,7 @@ $tax_total_line_item;
                             <td class="venue-details-part venue-address-dv">
                                 <h3><a href='<?php echo $venue->get_permalink() ?>'><?php
                                         echo $venue->name()
-                                        ?></a></h3>
+                                ?></a></h3>
                                 <p><?php echo $venue->description() ?></p>
                                 <?php echo EEH_Address::format($venue); ?></td>
                             <?php if ($venue->enable_for_gmap()) { ?>

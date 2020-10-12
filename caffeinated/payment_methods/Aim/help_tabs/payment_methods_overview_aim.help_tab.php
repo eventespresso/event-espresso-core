@@ -21,8 +21,8 @@
                 'Enter your API Login ID for Authorize.net. Learn how to find your %1$sAPI Login%2$s ID.',
                 'event_espresso'
             ),
-            '<a href="https://support.authorize.net/authkb/index?page=content&id=A405" target="_blank" rel="noopener noreferrer">',
-            '</a>'
+                '<a href="https://support.authorize.net/authkb/index?page=content&id=A405" target="_blank" rel="noopener noreferrer">',
+                '</a>'
         ); ?>
     </li>
     <li>
@@ -32,8 +32,8 @@
                 'Enter your Transaction Key for Authorize.net. Learn how to find your %1$sTransaction Key%2$s.',
                 'event_espresso'
             ),
-            '<a href="https://support.authorize.net/authkb/index?page=content&id=A405" target="_blank" rel="noopener noreferrer">',
-            '</a>'
+                '<a href="https://support.authorize.net/authkb/index?page=content&id=A405" target="_blank" rel="noopener noreferrer">',
+                '</a>'
         ); ?>
     </li>
     <li>

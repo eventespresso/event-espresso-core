@@ -139,7 +139,7 @@ class EE_DMS_4_6_0_payment_method_currencies extends EE_Data_Migration_Script_St
             }
             foreach ($currencies as $currency_code) {
                 if ($this->count_records_migrated() <= $iterator &&
-                        $iterator < $migrate_up_to_count ) {
+                        $iterator < $migrate_up_to_count) {
                     $relations_to_add_this_step[ $pm_slug ] [] = $currency_code;
                 }
                 $iterator++;

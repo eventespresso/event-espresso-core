@@ -68,14 +68,14 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      *
      * @var array
      */
-    static protected $_js_localization = array();
+    protected static $_js_localization = array();
 
     /**
      * whether or not the form's localized validation JS vars have been set
      *
      * @type boolean
      */
-    static protected $_scripts_localized = false;
+    protected static $_scripts_localized = false;
 
 
     /**

@@ -52,7 +52,7 @@
                 'The URL of the button image for this payment method in the registration process. You may use any uploaded image on your website (click %s next to the field to select). If left blank, the default button image will be used.',
                 'event_espresso'
             ),
-            '<img src="' . admin_url('images/media-button-image.gif') . '">'
+                '<img src="' . admin_url('images/media-button-image.gif') . '">'
         ); ?>
     </li>
     <li><strong><?php _e('Usable From', 'event_espresso'); ?></strong><br/>

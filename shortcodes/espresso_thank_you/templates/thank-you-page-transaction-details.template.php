@@ -30,7 +30,7 @@
                 if ($show_try_pay_again_link && ! $transaction->is_completed()) { ?>
                     &nbsp; <span class="small-text"><a href='<?php echo $SPCO_payment_options_url ?>'><?php
                                 _e('View Payment Options', 'event_espresso');
-                            ?></a></span>
+                    ?></a></span>
                 <?php } ?>
             </td>
         </tr>

@@ -3,7 +3,7 @@
 
 <?php
 foreach ($shortcodes as $name => $description) :
-?>
+    ?>
     <p><strong><?php echo $name; ?></strong></p>
     <p><?php echo $description; ?></p>
 <?php endforeach; ?>

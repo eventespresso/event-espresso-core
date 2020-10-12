@@ -63,7 +63,7 @@
                 'These parameters (options) are available for the %s shortcode parameter above. Multiple parameters should be separated by a comma.',
                 'event_espresso'
             ),
-            'order_by'
+                'order_by'
         ); ?>
     </p>
     id<br/>
