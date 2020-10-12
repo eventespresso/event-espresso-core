@@ -1,13 +1,15 @@
 <p><strong><?php esc_html_e('Message Templates', 'event_espresso'); ?></strong></p>
 <p>
-    <?php printf(
+    <?php
+    printf(
         esc_html__(
             'Message Templates are the %1$sformat%2$s of the messages going out. Think of them as a “form letter”. Templates tell the Messages system how to style your messages and the content (information) they will have when they are delivered.',
             'event_espresso'
         ),
         '<em>',
         '</em>'
-    ); ?>
+    );
+    ?>
 </p>
 <p>
     <?php esc_html_e(

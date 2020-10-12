@@ -92,15 +92,18 @@
             <tr>
                 <td colspan="3" style="padding: 0">
                     <div id="migration-details-dv" style="display: none; padding: 1em;">
-<span class="reminder-spn">
-    <?php printf(
-        esc_html__(
-            "%s Important: %s Before migrating, please back up your database and files.",
-            "event_espresso"
-        ),
-        "<b>",
-        "</b>"
-    ); ?></span>
+                        <span class="reminder-spn">
+                            <?php
+                            printf(
+                                esc_html__(
+                                    "%s Important: %s Before migrating, please back up your database and files.",
+                                    "event_espresso"
+                                ),
+                                "<b>",
+                                "</b>"
+                            );
+                            ?>
+                        </span>
                         <p>
                             <?php
                             printf(
@@ -158,32 +161,38 @@
                        class="hide-the-displayed lt-grey-text smaller-text hide-if-no-js"
                        rel="no-migration-details"
                        style="display:none;">
-                        <?php echo sprintf(
+                        <?php
+                        echo sprintf(
                             esc_html__(
                                 'hide%1$sdetails%1$s-',
                                 'event_espresso'
                             ),
                             '&nbsp;'
-                        ); ?></a>
+                        );
+                        ?>
+                    </a>
                 </td>
                 <td>
-                    <a id="do-not-migrate" class="do-not-migrate button-primary"
-                       href="<?php echo $reset_db_page_link; ?>">
-                        <?php echo apply_filters(
+                    <a id="do-not-migrate" class="do-not-migrate button-primary" href="<?php echo $reset_db_page_link; ?>">
+                        <?php
+                        echo apply_filters(
                             'FHEE__ee_migration_page__option_2_button_text',
                             sprintf(
                                 esc_html__("Just Start %s and Delete Existing Data", "event_espresso"),
                                 $ultimate_db_state
                             ),
                             $ultimate_db_state
-                        ); ?></a>
+                        );
+                        ?>
+                    </a>
                 </td>
             </tr>
             <tr>
                 <td colspan="3" style="padding: 0">
                     <div id="no-migration-details-dv" style="display: none; padding: 1em;">
                         <p>
-                            <?php echo apply_filters(
+                            <?php
+                            echo apply_filters(
                                 'FHEE__ee_migration_page__option_2_details',
                                 sprintf(
                                     esc_html__(
@@ -193,7 +202,8 @@
                                     $ultimate_db_state
                                 ),
                                 $ultimate_db_state
-                            ); ?>
+                            );
+                            ?>
                         </p>
                     </div>
                 </td>

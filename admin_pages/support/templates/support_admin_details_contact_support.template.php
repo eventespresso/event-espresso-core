@@ -8,8 +8,10 @@
         ); ?>
     </h4>
     <ol>
-        <li><strong><em><?php esc_html_e('A known issue.', 'event_espresso'); ?></em></strong>
-            <?php printf(
+        <li>
+            <strong><em><?php esc_html_e('A known issue.', 'event_espresso'); ?></em></strong>
+            <?php
+            printf(
                 esc_html__(
                     'Some themes and plugins have %1$sknown conflicts%2$s with Event Espresso. (You can also browse the %3$sEvent Espresso support pages%2$s or %4$sEvent Espresso support forums%2$s to see if other members have experienced and solved the problem.)',
                     'event_espresso'
@@ -18,12 +20,16 @@
                 '</a>',
                 '<a href="https://eventespresso.com/support/documentation/versioned-docs/?doc_ver=ee4" target="_blank">',
                 '<a href="https://eventespresso.com/support/forums/" target="_blank">'
-            ); ?></li>
-        <li><strong><em><?php esc_html_e('A plugin conflict.', 'event_espresso'); ?></em></strong>
+            );
+            ?>
+        </li>
+        <li>
+            <strong><em><?php esc_html_e('A plugin conflict.', 'event_espresso'); ?></em></strong>
             <?php esc_html_e(
                 'You can check to see if there is a plugin conflict by temporarily deactivating all plugins except for Event Espresso. If the problem goes away, then reactivate your plugins one by one until the issue returns. This will help you pinpoint the source of the conflict.',
                 'event_espresso'
-            ); ?></li>
+            ); ?>
+        </li>
         <li>
             <strong><em><?php esc_html_e('A theme conflict.', 'event_espresso'); ?></em></strong>
             <?php
@@ -57,7 +63,8 @@
             'event_espresso'
         ); ?></p>
     <p>
-        <?php printf(
+        <?php
+        printf(
             esc_html__(
                 'Login to your account on EventEspresso.com and %1$screate a support post in our member support forums%2$s. Use a %3$sclear and descriptive title%4$s in your support post, %3$sdescribe the issue to the best of your knowledge%4$s, and %3$snever post any sensitive information such as login details%4$s. Be sure to also include %5$simportant information in the section below%2$s about your WordPress site.',
                 'event_espresso'
@@ -67,17 +74,22 @@
             '<strong>',
             '</strong>',
             '<a href="#espresso_important_information_settings">'
-        ); ?></p>
+        );
+        ?>
+    </p>
 
     <h4><?php esc_html_e('Have an emergency?', 'event_espresso'); ?></h4>
 
     <p>
-        <?php printf(
+        <?php
+        printf(
             esc_html__(
                 'We offer support tokens to members that need help with a time-sensitive issue. A support token will provide you with up to 30 minutes of one-on-one time with a team member at Event Espresso. If you have an emergency and need help quickly, then please %1$spurchase a support token%2$s.',
                 'event_espresso'
             ),
             '<a href="https://eventespresso.com/product/premium-support-token/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=help_support_tab&utm_content=support_token" target="_blank">',
             '</a>'
-        ); ?></p>
+        );
+        ?>
+    </p>
 </div>

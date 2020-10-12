@@ -348,7 +348,7 @@ class ModelDataTranslator
                 );
             }
             if ($new_value !== null) {
-                $new_value = mysql2date( 'Y-m-d\TH:i:s', $new_value, false );
+                $new_value = mysql2date('Y-m-d\TH:i:s', $new_value, false);
             }
         } else {
             $new_value = $original_value;

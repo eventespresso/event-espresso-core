@@ -47,13 +47,15 @@
     </li>
     <li>
         <strong><?php esc_html_e('Button URL', 'event_espresso'); ?></strong><br/>
-        <?php printf(
+        <?php
+        printf(
             esc_html__(
                 'The URL of the button image for this payment method in the registration process. You may use any uploaded image on your website (click %s next to the field to select). If left blank, the default button image will be used.',
                 'event_espresso'
             ),
             '<img src="' . admin_url('images/media-button-image.gif') . '">'
-        ); ?>
+        );
+        ?>
     </li>
     <li><strong><?php esc_html_e('Usable From', 'event_espresso'); ?></strong><br/>
         <?php esc_html_e('Where this payment method can be used from.', 'event_espresso'); ?>
@@ -62,12 +64,14 @@
                 <?php esc_html_e(
                     'Front-end Registration Page: the payment method will appear as an option during the normal registration process to customers and they can use it to process payments.',
                     'event_espresso'
-                ); ?></li>
+                ); ?>
+            </li>
             <li>
                 <?php esc_html_e(
                     'Admin Registration Page: when recording payments made from the transaction admin page, the payment method will appear as an option. Note: currently payments can only be RECORDED from the admin, they cannot be PROCESSED.',
                     'event_espresso'
-                ); ?></li>
+                ); ?>
+            </li>
         </ul>
     </li>
 </ul>

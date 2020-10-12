@@ -56,14 +56,13 @@ class EE_Question_List_Shortcodes extends EE_Shortcodes
     {
         $this->_validate_list_requirements();
 
-        // for when [QUESTION_LIST] is used in the [attendee_list] field.
         if ($this->_data['data'] instanceof EE_Registration) {
+            // for when [QUESTION_LIST] is used in the [attendee_list] field.
             return $this->_get_question_answer_list_for_attendee();
-        } elseif (
-            //for when [QUESTION_LIST] is used in the main content field.
-            $this->_data['data'] instanceof EE_Messages_Addressee
+        } elseif ($this->_data['data'] instanceof EE_Messages_Addressee
             && $this->_data['data']->reg_obj instanceof EE_Registration
         ) {
+            //for when [QUESTION_LIST] is used in the main content field.
             return $this->_get_question_answer_list_for_attendee($this->_data['data']->reg_obj);
         }
         return '';

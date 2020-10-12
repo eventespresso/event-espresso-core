@@ -268,19 +268,20 @@ abstract class EE_Messages_Validator extends EE_Base
                     $codes_from_objs
                 );
             } elseif (isset($groups_per_field[ $field ])) {
-                //if we have specific shortcodes for a field then we need to use them
+                // if we have specific shortcodes for a field then we need to use them
                 $this->_validators[ $field ]['shortcodes'] = $this->_reassemble_valid_shortcodes_from_group(
                     $groups_per_field[ $field ],
                     $codes_from_objs
                 );
             } elseif (empty($config)) {
-                //if empty config then we're assuming we're just going to use the shortcodes from the message type context
+                // if empty config then we're assuming we're just going to use the shortcodes from the message type
+                // context
                 $this->_validators[ $field ]['shortcodes'] = $mt_codes;
             } elseif (isset($config['specific_shortcodes'])) {
-                //if we have specific shortcodes then we need to use them
+                // if we have specific shortcodes then we need to use them
                 $this->_validators[ $field ]['shortcodes'] = $config['specific_shortcodes'];
             } else {
-                //otherwise the shortcodes are what is set by the messenger for that field
+                // otherwise the shortcodes are what is set by the messenger for that field
                 foreach ($config['shortcodes'] as $group) {
                     $this->_validators[ $field ]['shortcodes'] = isset($this->_validators[ $field ]['shortcodes'])
                         ? array_merge($this->_validators[ $field ]['shortcodes'], $codes_from_objs[ $group ])
@@ -368,7 +369,8 @@ abstract class EE_Messages_Validator extends EE_Base
             if (isset($template_fields[ $field ])) {
                 if (empty($template_fields[ $field ])) {
                     $field_label = $field;
-                } else { //most likely the field is found in the 'extra' array.
+                } else {
+                    // most likely the field is found in the 'extra' array.
                     $field_label = $template_fields[ $field ]['label'];
                 }
             }

@@ -382,16 +382,13 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
                 $QSG_name = isset($this->_req_data['QSG_name']) ? $this->_req_data['QSG_name'] : '';
                 $set_column_values[ $fieldName ] = sanitize_title($QSG_name) . '-' . uniqid('', true);
             } elseif (
-                //if the admin label is blank, use a slug version of the question text
+                // if the admin label is blank, use a slug version of the question text
                 $fieldName === 'QST_admin_label'
-                && (isset($this->_req_data['QST_admin_label']) && empty ($this->_req_data['QST_admin_label']))
+                && (isset($this->_req_data['QST_admin_label']) && empty($this->_req_data['QST_admin_label']))
             ) {
                 $QST_text = isset($this->_req_data['QST_display_text']) ? $this->_req_data['QST_display_text'] : '';
                 $set_column_values[ $fieldName ] = sanitize_title(wp_trim_words($QST_text, 10));
-            } elseif (
-                $fieldName === 'QST_admin_only'
-                && (! isset($this->_req_data['QST_admin_only']))
-            ) {
+            } elseif ($fieldName === 'QST_admin_only' && (! isset($this->_req_data['QST_admin_only']))) {
                 $set_column_values[ $fieldName ] = 0;
             } elseif ($fieldName === 'QST_max') {
                 $qst_system = EEM_Question::instance()->get_var(
