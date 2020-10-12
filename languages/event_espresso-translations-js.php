@@ -207,7 +207,7 @@ $generated_i18n_strings = array(
 	__( 'End Date', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/DatesList.tsx:34
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/TableView.tsx:35
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/TableView.tsx:34
 	__( 'Event Dates', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/DatesList.tsx:37
@@ -806,7 +806,7 @@ that only occurs once', 'event_espresso' ),
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/newTicketOptions/AddSingleTicket.tsx:33
 	__( 'Add a single ticket and assign the dates to it', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/tableView/TableView.tsx:33
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/tableView/TableView.tsx:32
 	__( 'Tickets', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:50
@@ -1223,7 +1223,7 @@ information', 'event_espresso' ),
 	// Reference: packages/tpc/src/inputs/PriceTypeInput.tsx:16
 	__( 'price type', 'event_espresso' ),
 
-	// Reference: packages/components/src/LoadingNotice/LoadingNotice.tsx:17
+	// Reference: packages/components/src/LoadingNotice/LoadingNotice.tsx:16
 	_x( 'loading%s', 'loading...', 'event_espresso' )
 );
 /* THIS IS THE END OF THE GENERATED FILE */
