@@ -7,7 +7,7 @@ use GraphQLRelay\Relay;
 
 /**
  * Class EventEditorRelationalData
- * Description
+ * Retrieves relational data for entities used in the Event Editor such as dates and tickets
  *
  * @package EventEspresso\core\domain\services\admin\events\editor
  * @author  Manzoor Wani
@@ -27,7 +27,7 @@ class EventEntityRelations extends EventEditorData
      * @throws EE_Error
      * @since $VID:$
      */
-    public function getData($eventId)
+    public function getData(int $eventId)
     {
         $this->data = [
             'datetimes' => [],
@@ -49,7 +49,7 @@ class EventEntityRelations extends EventEditorData
      * @throws EE_Error
      * @since $VID:$
      */
-    private function processDatetimes($eventId)
+    private function processDatetimes(int $eventId)
     {
         $related_models = [
             'tickets' => $this->ticket_model,
@@ -60,7 +60,7 @@ class EventEntityRelations extends EventEditorData
             'default_where_conditions' => 'minimum',
         ]);
         foreach ($datetimeIds as $datetimeId) {
-            $GID = $this->convertToGlobalId($this->datetime_model->item_name(), $datetimeId);
+            $GID = $this->utilities->convertToGlobalId($this->datetime_model->item_name(), $datetimeId);
             foreach ($related_models as $key => $model) {
                 // Get the IDs of related entities for the datetime ID.
                 $Ids = $model->get_col([
@@ -68,7 +68,7 @@ class EventEntityRelations extends EventEditorData
                     'default_where_conditions' => 'minimum',
                 ]);
                 $this->data['datetimes'][ $GID ][ $key ] = ! empty($Ids)
-                    ? $this->convertToGlobalId($model->item_name(), $Ids)
+                    ? $this->utilities->convertToGlobalId($model->item_name(), $Ids)
                     : [];
             }
         }
@@ -94,7 +94,7 @@ class EventEntityRelations extends EventEditorData
             'default_where_conditions' => 'minimum',
         ]);
         foreach ($ticketIds as $ticketId) {
-            $GID = $this->convertToGlobalId($this->ticket_model->item_name(), $ticketId);
+            $GID = $this->utilities->convertToGlobalId($this->ticket_model->item_name(), $ticketId);
 
             foreach ($related_models as $key => $model) {
                 // Get the IDs of related entities for the ticket ID.
@@ -103,7 +103,7 @@ class EventEntityRelations extends EventEditorData
                     'default_where_conditions' => 'minimum',
                 ]);
                 $this->data['tickets'][ $GID ][ $key ] = ! empty($Ids)
-                    ? $this->convertToGlobalId($model->item_name(), $Ids)
+                    ? $this->utilities->convertToGlobalId($model->item_name(), $Ids)
                     : [];
             }
         }
@@ -139,7 +139,7 @@ class EventEntityRelations extends EventEditorData
             'default_where_conditions' => 'minimum',
         ]);
         foreach ($priceIds as $priceId) {
-            $GID = $this->convertToGlobalId($this->price_model->item_name(), $priceId);
+            $GID = $this->utilities->convertToGlobalId($this->price_model->item_name(), $priceId);
 
             foreach ($related_models as $key => $model) {
                 // Get the IDs of related entities for the price ID.
@@ -148,31 +148,9 @@ class EventEntityRelations extends EventEditorData
                     'default_where_conditions' => 'minimum',
                 ]);
                 $this->data['prices'][ $GID ][ $key ] = ! empty($Ids)
-                    ? $this->convertToGlobalId($model->item_name(), $Ids)
+                    ? $this->utilities->convertToGlobalId($model->item_name(), $Ids)
                     : [];
             }
         }
-    }
-
-
-    /**
-     * Convert the DB ID into GID
-     *
-     * @param string    $type
-     * @param int|int[] $ID
-     * @return mixed
-     */
-    public function convertToGlobalId($type, $ID)
-    {
-        $convertToGlobalId = [$this, 'convertToGlobalId'];
-        if (is_array($ID)) {
-            return array_map(
-                static function ($id) use ($convertToGlobalId, $type) {
-                    return $convertToGlobalId($type, $id);
-                },
-                $ID
-            );
-        }
-        return Relay::toGlobalId($type, $ID);
     }
 }
