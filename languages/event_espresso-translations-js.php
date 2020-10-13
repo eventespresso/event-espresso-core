@@ -389,8 +389,8 @@ $generated_i18n_strings = array(
 	__( 'trashed dates only', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:34
-	// Reference: packages/dates/src/DateRangePicker.tsx:52
-	// Reference: packages/dates/src/DateRangePickerLegend.tsx:10
+	// Reference: packages/dates/src/DateRangePicker/DateRangePickerLegend.tsx:10
+	// Reference: packages/dates/src/DateRangePicker/index.tsx:55
 	__( 'start date', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:35
@@ -876,7 +876,7 @@ that only occurs once', 'event_espresso' ),
 	// Reference: packages/components/src/Confirm/useConfirmationDialog.tsx:36
 	__( 'Yes', 'event_espresso' ),
 
-	// Reference: packages/components/src/DateTimeRangePicker/index.tsx:33
+	// Reference: packages/components/src/DateTimeRangePicker/index.tsx:48
 	__( 'save', 'event_espresso' ),
 
 	// Reference: packages/components/src/DebugInfo/DebugInfo.tsx:36
@@ -991,12 +991,12 @@ information', 'event_espresso' ),
 	// Reference: packages/components/src/bulkEdit/details/Submit.tsx:29
 	__( 'Bulk update details', 'event_espresso' ),
 
-	// Reference: packages/dates/src/DateRangePicker.tsx:66
-	// Reference: packages/dates/src/DateRangePickerLegend.tsx:18
-	__( 'end date', 'event_espresso' ),
-
-	// Reference: packages/dates/src/DateRangePickerLegend.tsx:14
+	// Reference: packages/dates/src/DateRangePicker/DateRangePickerLegend.tsx:14
 	__( 'day in range', 'event_espresso' ),
+
+	// Reference: packages/dates/src/DateRangePicker/DateRangePickerLegend.tsx:18
+	// Reference: packages/dates/src/DateRangePicker/index.tsx:74
+	__( 'end date', 'event_espresso' ),
 
 	// Reference: packages/dates/src/DateTimePicker.tsx:9
 	// Reference: packages/dates/src/TimePicker.tsx:13
