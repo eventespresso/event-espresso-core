@@ -1116,6 +1116,24 @@ information', 'event_espresso' ),
 	// Reference: packages/rich-text-editor/src/components/ToolbarControls/HeadingControls.tsx:23
 	__( 'heading selector', 'event_espresso' ),
 
+	// Reference: packages/rich-text-editor/src/components/constants.ts:12
+	__( 'blockquote', 'event_espresso' ),
+
+	// Reference: packages/rich-text-editor/src/components/constants.ts:13
+	__( 'unordered list', 'event_espresso' ),
+
+	// Reference: packages/rich-text-editor/src/components/constants.ts:14
+	__( 'ordered list', 'event_espresso' ),
+
+	// Reference: packages/rich-text-editor/src/components/constants.ts:27
+	__( 'bold', 'event_espresso' ),
+
+	// Reference: packages/rich-text-editor/src/components/constants.ts:28
+	__( 'italic', 'event_espresso' ),
+
+	// Reference: packages/rich-text-editor/src/components/constants.ts:29
+	__( 'underline', 'event_espresso' ),
+
 	// Reference: packages/tpc/src/buttons/AddPriceModifierButton.tsx:15
 	__( 'add new price modifier after this row', 'event_espresso' ),
 
