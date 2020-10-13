@@ -836,6 +836,24 @@ that only occurs once', 'event_espresso' ),
 	// Reference: domains/wpPluginsPage/src/exitSurvey/Popup.tsx:41
 	__( 'Sure I\'ll help', 'event_espresso' ),
 
+	// Reference: packages/adapters/src/Pagination/ItemRender.tsx:10
+	__( 'next', 'event_espresso' ),
+
+	// Reference: packages/adapters/src/Pagination/ItemRender.tsx:11
+	__( 'jump to previous', 'event_espresso' ),
+
+	// Reference: packages/adapters/src/Pagination/ItemRender.tsx:12
+	__( 'jump to next', 'event_espresso' ),
+
+	// Reference: packages/adapters/src/Pagination/ItemRender.tsx:13
+	__( 'page', 'event_espresso' ),
+
+	// Reference: packages/adapters/src/Pagination/ItemRender.tsx:9
+	__( 'previous', 'event_espresso' ),
+
+	// Reference: packages/adapters/src/Pagination/Pagination.tsx:38
+	__( 'pagination', 'event_espresso' ),
+
 	// Reference: packages/adapters/src/Pagination/PerPage.tsx:38
 	__( 'items per page', 'event_espresso' ),
 
@@ -845,8 +863,8 @@ that only occurs once', 'event_espresso' ),
 	// Reference: packages/components/src/ActiveFilters/ActiveFilters.tsx:8
 	__( 'active filters:', 'event_espresso' ),
 
-	// Reference: packages/components/src/ActiveFilters/FilterTag.tsx:12
-	__( 'remove filter', 'event_espresso' ),
+	// Reference: packages/components/src/ActiveFilters/FilterTag.tsx:9
+	__( 'remove filter - %s', 'event_espresso' ),
 
 	// Reference: packages/components/src/CalendarDateRange/CalendarDateRange.tsx:39
 	__( 'to', 'event_espresso' ),
@@ -967,8 +985,11 @@ that only occurs once', 'event_espresso' ),
 	__( 'click for timezone
 information', 'event_espresso' ),
 
-	// Reference: packages/components/src/bulkEdit/ActionCheckbox.tsx:40
-	__( 'select entity', 'event_espresso' ),
+	// Reference: packages/components/src/bulkEdit/ActionCheckbox.tsx:34
+	__( 'select entity with id %s', 'event_espresso' ),
+
+	// Reference: packages/components/src/bulkEdit/ActionCheckbox.tsx:34
+	__( 'select all entities', 'event_espresso' ),
 
 	// Reference: packages/components/src/bulkEdit/BulkActions.tsx:51
 	__( 'select all', 'event_espresso' ),
@@ -998,8 +1019,8 @@ information', 'event_espresso' ),
 	// Reference: packages/dates/src/DateRangePicker/index.tsx:74
 	__( 'end date', 'event_espresso' ),
 
-	// Reference: packages/dates/src/DateTimePicker.tsx:9
-	// Reference: packages/dates/src/TimePicker.tsx:13
+	// Reference: packages/dates/src/DateTimePicker.tsx:13
+	// Reference: packages/dates/src/TimePicker.tsx:14
 	__( 'time', 'event_espresso' ),
 
 	// Reference: packages/dates/src/utils/misc.ts:13
