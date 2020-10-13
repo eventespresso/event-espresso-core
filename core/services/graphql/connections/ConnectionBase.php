@@ -2,6 +2,8 @@
 
 namespace EventEspresso\core\services\graphql\connections;
 
+use EEM_Base;
+
 /**
  * Class ConnectionBase
  * Description

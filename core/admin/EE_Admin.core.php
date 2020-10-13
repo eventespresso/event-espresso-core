@@ -503,7 +503,7 @@ final class EE_Admin implements InterminableInterface
                                      remove_query_arg($removed_args)
                                  )
                              );
-                        ?>#posttype-extra-nav-menu-pages" class="select-all"><?php esc_html_e('Select All', 'event_espresso'); ?></a>
+                                ?>#posttype-extra-nav-menu-pages" class="select-all"><?php esc_html_e('Select All', 'event_espresso'); ?></a>
                 </span>
                 <span class="add-to-menu">
                     <input type="submit"<?php wp_nav_menu_disabled_check($nav_menu_selected_id); ?>

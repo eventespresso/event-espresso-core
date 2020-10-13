@@ -6,7 +6,7 @@ use Exception;
 
 /**
  * Class GraphQLData
- * Description
+ * abstract parent class for processing GQL requests
  *
  * @package EventEspresso\core\domain\entities\admin\GraphQLData
  * @author  Manzoor Wani
@@ -42,7 +42,7 @@ abstract class GraphQLData implements GraphQLDataInterface
      * @return mixed|null
      * @since $VID:$
      */
-    protected function getQueryResponse($field_key, array $where_params = [])
+    protected function getQueryResponse(string $field_key, array $where_params = [])
     {
         if (! empty($where_params)) {
             if (! array_key_exists('variables', $this->params)) {
@@ -58,20 +58,31 @@ abstract class GraphQLData implements GraphQLDataInterface
 
     /**
      * @param array $data
-     * @return array
+     * @return array|null
      * @since $VID:$
      */
-    protected function makeGraphQLRequest($data)
+    protected function makeGraphQLRequest(array $data)
     {
+        $error = '';
         try {
             $response = graphql($data);
             if (! empty($response['data'])) {
                 return $response['data'];
             }
-            return null;
+            $error = ! empty($response['errors'])
+                ? print_r($response['errors'], true)
+                : esc_html__(
+                    'An unknown error has occurred during the GraphQL request and no data was found to return.',
+                    'event_espresso'
+                );
         } catch (Exception $e) {
-            // do something with the errors thrown
-            return null;
+            if (defined('GRAPHQL_DEBUG') && GRAPHQL_DEBUG) {
+                $error = $e->getMessage();
+            }
         }
+        if ($error !== '') {
+            error_log($error);
+        }
+        return null;
     }
 }

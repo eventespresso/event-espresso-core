@@ -24,10 +24,10 @@ class EE_Datetime_List_Shortcodes extends EE_Shortcodes
 
     protected function _init_props()
     {
-        $this->label = __('Datetime List Shortcodes', 'event_espresso');
-        $this->description = __('All shortcodes specific to datetime lists', 'event_espresso');
+        $this->label = esc_html__('Datetime List Shortcodes', 'event_espresso');
+        $this->description = esc_html__('All shortcodes specific to datetime lists', 'event_espresso');
         $this->_shortcodes = array(
-            '[DATETIME_LIST]' => __(
+            '[DATETIME_LIST]' => esc_html__(
                 'Will output a list of datetimes according to the layout specified in the datetime list field.',
                 'event_espresso'
             ),
@@ -35,12 +35,16 @@ class EE_Datetime_List_Shortcodes extends EE_Shortcodes
     }
 
 
+    /**
+     * @param string $shortcode
+     * @return string
+     * @throws EE_Error
+     */
     protected function _parser($shortcode)
     {
         switch ($shortcode) {
             case '[DATETIME_LIST]':
                 return $this->_get_datetime_list();
-                break;
         }
         return '';
     }
@@ -50,6 +54,7 @@ class EE_Datetime_List_Shortcodes extends EE_Shortcodes
      * figure out what the incoming data is and then return the appropriate parsed value.
      *
      * @return string
+     * @throws EE_Error
      */
     private function _get_datetime_list()
     {
@@ -61,10 +66,9 @@ class EE_Datetime_List_Shortcodes extends EE_Shortcodes
             return $this->_get_datetime_list_for_event();
         } elseif ($this->_data['data'] instanceof EE_Messages_Addressee && $this->_data['data']->reg_obj instanceof EE_Registration) {
             return $this->_get_datetime_list_for_registration();
-        } // prevent recursive loop
-        else {
-            return '';
         }
+        // prevent recursive loop
+        return '';
     }
 
 

@@ -200,10 +200,10 @@ class EE_DMS_4_1_0_line_items extends EE_Data_Migration_Script_Stage_Table
                 '%s',// OBJ_type
             );
             $success = $wpdb->insert($this->_new_line_table, $cols_n_values, $datatypes);
-        if (! $success) {
-            $this->add_error($this->get_migration_script()->_create_error_message_for_db_insertion($this->_old_table, $old_attendee, $this->_new_reg_table, $cols_n_values, $datatypes));
-            return 0;
-        }
+            if (! $success) {
+                $this->add_error($this->get_migration_script()->_create_error_message_for_db_insertion($this->_old_table, $old_attendee, $this->_new_reg_table, $cols_n_values, $datatypes));
+                return 0;
+            }
             return $wpdb->insert_id;
     }
 }

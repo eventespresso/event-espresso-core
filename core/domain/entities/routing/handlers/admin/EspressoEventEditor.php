@@ -4,7 +4,6 @@ namespace EventEspresso\core\domain\entities\routing\handlers\admin;
 
 use EE_Dependency_Map;
 use EventEspresso\core\domain\entities\routing\data_nodes\domains\EventEditor;
-use EventEspresso\core\domain\entities\routing\data_nodes\EventEspressoData;
 use EventEspresso\core\domain\services\assets\EventEditorAssetManager;
 use EventEspresso\core\services\graphql\GraphQLManager;
 
@@ -55,22 +54,24 @@ class EspressoEventEditor extends EspressoEventsAdmin
         $this->dependency_map->registerDependencies(
             'EventEspresso\core\domain\services\admin\events\editor\EventEntityRelations',
             [
-                'EEM_Datetime'   => EE_Dependency_Map::load_from_cache,
-                'EEM_Event'      => EE_Dependency_Map::load_from_cache,
-                'EEM_Price'      => EE_Dependency_Map::load_from_cache,
-                'EEM_Price_Type' => EE_Dependency_Map::load_from_cache,
-                'EEM_Ticket'     => EE_Dependency_Map::load_from_cache,
+                'EEM_Datetime'                                         => EE_Dependency_Map::load_from_cache,
+                'EEM_Event'                                            => EE_Dependency_Map::load_from_cache,
+                'EEM_Price'                                            => EE_Dependency_Map::load_from_cache,
+                'EEM_Price_Type'                                       => EE_Dependency_Map::load_from_cache,
+                'EEM_Ticket'                                           => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\services\graphql\Utilities' => EE_Dependency_Map::load_from_cache,
             ]
         );
         $this->dependency_map->registerDependencies(
             'EventEspresso\core\domain\services\admin\events\editor\NewEventDefaultEntities',
             [
+                'EventEspresso\core\domain\services\admin\entities\DefaultDatetimes' => EE_Dependency_Map::load_from_cache,
                 'EEM_Datetime'                                                       => EE_Dependency_Map::load_from_cache,
                 'EEM_Event'                                                          => EE_Dependency_Map::load_from_cache,
                 'EEM_Price'                                                          => EE_Dependency_Map::load_from_cache,
                 'EEM_Price_Type'                                                     => EE_Dependency_Map::load_from_cache,
                 'EEM_Ticket'                                                         => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\domain\services\admin\entities\DefaultDatetimes' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\services\graphql\Utilities'               => EE_Dependency_Map::load_from_cache,
             ]
         );
         $this->dependency_map->registerDependencies(

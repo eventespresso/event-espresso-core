@@ -4,6 +4,12 @@ namespace EventEspresso\core\domain\services\graphql;
 
 use GraphQLRelay\Relay;
 
+/**
+ * Class Utilities
+ *
+ * @package EventEspresso\core\domain\services\graphql
+ * @since   $VID:$
+ */
 class Utilities
 {
     /**
@@ -52,7 +58,7 @@ class Utilities
                 $value = sanitize_text_field($value);
             }
             if (in_array($arg, $id_fields, true)) {
-                $ID = $this->convertGlobalId($value);
+                $ID = $this->convertFromGlobalId($value);
                 // Use the proper operator.
                 $value = $use_IN_operator && is_array($ID) ? ['IN', $ID] : $ID;
             }
@@ -68,12 +74,34 @@ class Utilities
      * @param string|string[] $ID
      * @return mixed
      */
-    protected function convertGlobalId($ID)
+    public function convertFromGlobalId($ID)
     {
         if (is_array($ID)) {
-            return array_map([$this, 'convertGlobalId'], $ID);
+            return array_map([$this, 'convertFromGlobalId'], $ID);
         }
         $parts = Relay::fromGlobalId($ID);
         return ! empty($parts['id']) ? $parts['id'] : null;
+    }
+
+
+    /**
+     * Convert the DB ID into GID
+     *
+     * @param string    $type
+     * @param int|int[] $ID
+     * @return mixed
+     */
+    public function convertToGlobalId(string $type, $ID)
+    {
+        $convertToGlobalId = [$this, 'convertToGlobalId'];
+        if (is_array($ID)) {
+            return array_map(
+                static function ($id) use ($convertToGlobalId, $type) {
+                    return $convertToGlobalId($type, $id);
+                },
+                $ID
+            );
+        }
+        return Relay::toGlobalId($type, $ID);
     }
 }

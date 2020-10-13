@@ -7,7 +7,7 @@
 <ul class="wp-people-group" id="ee-people-group-owners">
     <li class="wp-person" id="ee-person-sshoultes">
         <a href="<?php esp_gravatar_profile('seth@eventespresso.com'); ?>">
-            <?php echo esp_gravatar_image('seth@eventespresso.com', 'Seth Shoultes'); ?>
+            <?php esp_gravatar_image('seth@eventespresso.com', 'Seth Shoultes'); ?>
         </a>
         <a class="web" href="<?php esp_gravatar_profile('seth@eventespresso.com'); ?>">
             Seth Shoultes
@@ -16,7 +16,7 @@
     </li>
     <li class="wp-person" id="ee-person-gkoyle">
         <a href="<?php esp_gravatar_profile('garth@eventespresso.com'); ?>">
-            <?php echo esp_gravatar_image('garth@eventespresso.com', 'Garth Koyle'); ?>
+            <?php esp_gravatar_image('garth@eventespresso.com', 'Garth Koyle'); ?>
         </a>
         <a class="web" href="<?php esp_gravatar_profile('garth@eventespresso.com'); ?>">
             Garth Koyle
@@ -28,7 +28,7 @@
 <ul class="wp-people-group" id="ee-people-group-core-developers">
     <li class="wp-person" id="ee-person-bchristensen">
         <a href="<?php esp_gravatar_profile('brent@eventespresso.com'); ?>">
-            <?php echo esp_gravatar_image('brent@eventespresso.com', 'Brent Christensen'); ?>
+            <?php esp_gravatar_image('brent@eventespresso.com', 'Brent Christensen'); ?>
         </a>
         <a class="web" href="<?php esp_gravatar_profile('brent@eventespresso.com'); ?>">
             Brent Christensen
@@ -37,7 +37,7 @@
     </li>
     <li class="wp-person" id="ee-person-mnelson">
         <a href="<?php esp_gravatar_profile('michael@eventespresso.com'); ?>">
-            <?php echo esp_gravatar_image('michael@eventespresso.com', 'Michael Nelson'); ?>
+            <?php esp_gravatar_image('michael@eventespresso.com', 'Michael Nelson'); ?>
         </a>
         <a class="web" href="<?php esp_gravatar_profile('michael@eventespresso.com'); ?>">
             Michael Nelson
@@ -46,7 +46,7 @@
     </li>
     <li class="wp-person" id="ee-person-nkolivoshka">
         <a href="<?php esp_gravatar_profile('nazar@eventespresso.com'); ?>">
-            <?php echo esp_gravatar_image('nazar@eventespresso.com', 'Nazar Kolivoshka'); ?>
+            <?php esp_gravatar_image('nazar@eventespresso.com', 'Nazar Kolivoshka'); ?>
         </a>
         <a class="web" href="<?php esp_gravatar_profile('nazar@eventespresso.com'); ?>">
             Nazar Kolivoshka
@@ -58,7 +58,7 @@
 <ul class="wp-people-group" id="ee-people-group-support-staff">
     <li class="wp-person" id="ee-person-jfeck">
         <a href="<?php esp_gravatar_profile('josh@eventespresso.com'); ?>">
-            <?php echo esp_gravatar_image('josh@eventespresso.com', 'Josh Feck'); ?>
+            <?php esp_gravatar_image('josh@eventespresso.com', 'Josh Feck'); ?>
         </a>
         <a class="web" href="<?php esp_gravatar_profile('josh@eventespresso.com'); ?>">
             Josh Feck
@@ -66,7 +66,7 @@
     </li>
     <li class="wp-person" id="ee-person-twarwick">
         <a href="<?php esp_gravatar_profile('tony@eventespresso.com'); ?>">
-            <?php echo esp_gravatar_image('tony@eventespresso.com', 'Tony Warwick'); ?>
+            <?php esp_gravatar_image('tony@eventespresso.com', 'Tony Warwick'); ?>
         </a>
         <a class="web" href="<?php esp_gravatar_profile('tony@eventespresso.com'); ?>">
             Tony Warwick
@@ -74,7 +74,7 @@
     </li>
     <li class="wp-person" id="ee-person-lcaum">
         <a href="<?php esp_gravatar_profile('lorenzo@eventespresso.com'); ?>">
-            <?php echo esp_gravatar_image('lorenzo@eventespresso.com', 'Lorenzo Caum'); ?>
+            <?php esp_gravatar_image('lorenzo@eventespresso.com', 'Lorenzo Caum'); ?>
         </a>
         <a class="web" href="<?php esp_gravatar_profile('lorenzo@eventespresso.com'); ?>">
             Lorenzo Caum
@@ -84,14 +84,16 @@
 </ul>
 <h3 class="wp-people-group"><?php esc_html_e('Contributor Recognition', 'event_espresso'); ?></h3>
 <p class="description">
-    <?php printf(
+    <?php
+    printf(
         esc_html__(
             'For every major release we want to recognize the people who contributed to the release via a GitHub pull request. Want to see your name listed here? %sWhen you submit a pull request that gets included in a major release%s, we\'ll add your name here linked to your GitHub profile.',
             'event_espresso'
         ),
         '<a href="https://github.com/eventespresso/event-espresso-core" title="Contribute to Event Espresso by making a pull request via GitHub">',
         '</a>'
-    ); ?>
+    );
+    ?>
 </p>
 <p class="wp-credits-list">
 <ul>
@@ -105,14 +107,16 @@
 </p>
 <h3 class="wp-people-group"><?php esc_html_e('External Libraries', 'event_espresso'); ?></h3>
 <p class="description">
-    <?php printf(
+    <?php
+    printf(
         esc_html__(
             'Along with the libraries %sincluded with WordPress%s, Event Espresso utilizes the following third party libraries:',
             'event_espresso'
         ),
         '<a href="credits.php">',
         '</a>'
-    ); ?>
+    );
+    ?>
 </p>
 <p class="wp-credits-list">
     <a href="https://openexchangerates.github.io/accounting.js/">accounting.js</a>,

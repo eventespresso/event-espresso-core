@@ -2505,7 +2505,7 @@ class Messages_Admin_Page extends EE_Admin_Page
             ?>
             <div style="float:right; margin-top:10px"><?php
                             echo $this->_get_help_tab_link('message_template_shortcodes');
-                            ?></div>
+            ?></div>
             <p class="small-text"><?php
                                   printf(
                                       esc_html__(
@@ -2514,7 +2514,7 @@ class Messages_Admin_Page extends EE_Admin_Page
                                       ),
                                       '<span class="dashicons dashicons-menu"></span>'
                                   );
-                                ?>
+                                    ?>
             </p>
             <?php
         }

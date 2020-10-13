@@ -56,6 +56,12 @@ class Router
      */
     public function loadPrimaryRoutes()
     {
+        do_action(
+            'AHEE__EventEspresso_core_services_routing_Router__loadPrimaryRoutes',
+            $this->route_handler,
+            $this->route_request_type,
+            $this->dependency_map
+        );
         $this->dependency_map->registerDependencies(
             'EventEspresso\core\domain\entities\routing\handlers\admin\ActivationRequests',
             Route::getFullDependencies()
@@ -77,6 +83,12 @@ class Router
      */
     public function registerShortcodesModulesAndWidgets()
     {
+        do_action(
+            'AHEE__EventEspresso_core_services_routing_Router__registerShortcodesModulesAndWidgets',
+            $this->route_handler,
+            $this->route_request_type,
+            $this->dependency_map
+        );
         switch ($this->route_request_type) {
             case PrimaryRoute::ROUTE_REQUEST_TYPE_ACTIVATION:
                 break;
@@ -98,6 +110,12 @@ class Router
      */
     public function brewEspresso()
     {
+        do_action(
+            'AHEE__EventEspresso_core_services_routing_Router__brewEspresso',
+            $this->route_handler,
+            $this->route_request_type,
+            $this->dependency_map
+        );
         switch ($this->route_request_type) {
             case PrimaryRoute::ROUTE_REQUEST_TYPE_ACTIVATION:
                 $this->route_handler->addRoute(
@@ -134,6 +152,12 @@ class Router
      */
     public function loadControllers()
     {
+        do_action(
+            'AHEE__EventEspresso_core_services_routing_Router__loadControllers',
+            $this->route_handler,
+            $this->route_request_type,
+            $this->dependency_map
+        );
         switch ($this->route_request_type) {
             case PrimaryRoute::ROUTE_REQUEST_TYPE_ACTIVATION:
                 $this->route_handler->addRoute(
@@ -180,6 +204,12 @@ class Router
      */
     public function coreLoadedAndReady()
     {
+        do_action(
+            'AHEE__EventEspresso_core_services_routing_Router__coreLoadedAndReady',
+            $this->route_handler,
+            $this->route_request_type,
+            $this->dependency_map
+        );
         switch ($this->route_request_type) {
             case PrimaryRoute::ROUTE_REQUEST_TYPE_ACTIVATION:
                 break;
@@ -201,6 +231,12 @@ class Router
      */
     public function initializeLast()
     {
+        do_action(
+            'AHEE__EventEspresso_core_services_routing_Router__initializeLast',
+            $this->route_handler,
+            $this->route_request_type,
+            $this->dependency_map
+        );
         switch ($this->route_request_type) {
             case PrimaryRoute::ROUTE_REQUEST_TYPE_ACTIVATION:
                 break;

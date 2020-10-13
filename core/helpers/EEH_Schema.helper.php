@@ -179,7 +179,7 @@ class EEH_Schema
         if (preg_match(
             "/^\s*((P(OST)?.?\s*(O(FF(ICE)?)?)?.?\s+(B(IN|OX))?)|B(IN|OX))/i",
             $obj_with_address->address2()
-        ) ) {
+        )) {
             return $obj_with_address->address2() !== null && $obj_with_address->address2() !== ''
                 ? '<span itemprop="postOfficeBoxNumber">' . $obj_with_address->address2() . '</span>' : '';
         } else {

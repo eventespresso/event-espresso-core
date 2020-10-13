@@ -11,6 +11,7 @@ use EEM_Price;
 use EEM_Price_Type;
 use EEM_Ticket;
 use EventEspresso\core\domain\services\admin\entities\DefaultDatetimes;
+use EventEspresso\core\domain\services\graphql\Utilities;
 use EventEspresso\core\exceptions\InvalidEntityException;
 use InvalidArgumentException;
 use ReflectionException;
@@ -32,24 +33,25 @@ class NewEventDefaultEntities extends EventEditorData
     protected $default_datetime;
 
 
-
     /**
      * NewEventDefaultEntities constructor.
      *
+     * @param DefaultDatetimes $default_datetime
      * @param EEM_Datetime     $datetime_model
      * @param EEM_Event        $event_model
      * @param EEM_Price        $price_model
      * @param EEM_Price_Type   $price_type_model
      * @param EEM_Ticket       $ticket_model
-     * @param DefaultDatetimes $default_datetime
+     * @param Utilities        $utilities
      */
     public function __construct(
+        DefaultDatetimes $default_datetime,
         EEM_Datetime $datetime_model,
         EEM_Event $event_model,
         EEM_Price $price_model,
         EEM_Price_Type $price_type_model,
         EEM_Ticket $ticket_model,
-        DefaultDatetimes $default_datetime
+        Utilities $utilities
     ) {
         $this->default_datetime = $default_datetime;
         parent::__construct(
@@ -57,7 +59,8 @@ class NewEventDefaultEntities extends EventEditorData
             $event_model,
             $price_model,
             $price_type_model,
-            $ticket_model
+            $ticket_model,
+            $utilities
         );
     }
 
@@ -71,7 +74,7 @@ class NewEventDefaultEntities extends EventEditorData
      * @throws ReflectionException
      * @since $VID:$
      */
-    public function getData($eventId)
+    public function getData(int $eventId)
     {
 
         $EVT_ID = absint($eventId);

@@ -339,12 +339,12 @@ class EEH_Event_View extends EEH_Base
     {
         $datetime = EEH_Event_View::get_primary_date_obj($EVT_ID);
         if ($datetime instanceof EE_Datetime) {
-    ?>
+            ?>
         <div class="event-date-calendar-page-dv">
             <div class="event-date-calendar-page-month-dv"><?php echo $datetime->get_i18n_datetime('DTT_EVT_start', 'M');?></div>
             <div class="event-date-calendar-page-day-dv"><?php echo $datetime->start_date('d');?></div>
         </div>
-    <?php
+            <?php
         }
     }
 

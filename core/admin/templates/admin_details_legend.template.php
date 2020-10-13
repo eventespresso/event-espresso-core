@@ -16,12 +16,12 @@ if (isset($status_change_notice)) {
     <h3><?php _e('Legend', 'event_espresso'); ?></h3>
     <dl class="alignleft ee-list-table-legend">
         <?php foreach ($items as $item => $details) : ?>
-        <?php
-        if ($per_col < $count) : ?>
+            <?php
+            if ($per_col < $count) : ?>
     </dl>
     <dl class="alignleft ee-list-table-legend">
-        <?php $count = 1;
-        endif; ?>
+                <?php $count = 1;
+            endif; ?>
         <dt id="ee-legend-item-<?php echo $item; ?>">
             <?php $class = ! empty($details['class']) ? $details['class'] : 'ee-legend-img-container'; ?>
             <span class="ee-legend-item-wrap">
@@ -39,7 +39,7 @@ if (isset($status_change_notice)) {
             </span>
             <span class="ee-legend-description"><?php echo $details['desc']; ?></span>
         </dt>
-        <?php $count++;
+            <?php $count++;
         endforeach; ?>
     </dl>
     <div style="clear:both"></div>

@@ -14,9 +14,9 @@ interface EventEditorDataInterface
 {
 
     /**
-     * @param $eventId
+     * @param int $eventId
      * @return array
      * @since $VID:$
      */
-    public function getData($eventId);
+    public function getData(int $eventId);
 }

@@ -374,12 +374,18 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
             $this->_req_data['QST_max'] = null;
         }
         foreach ($model->field_settings() as $fieldName => $settings) {
-            // basically if QSG_identifier is empty or not set
-            if ($fieldName === 'QSG_identifier' && (isset($this->_req_data['QSG_identifier']) && empty($this->_req_data['QSG_identifier']))) {
+            if (
+                // basically if QSG_identifier is empty or not set
+                $fieldName === 'QSG_identifier'
+                && (isset($this->_req_data['QSG_identifier']) && empty($this->_req_data['QSG_identifier']))
+            ) {
                 $QSG_name = isset($this->_req_data['QSG_name']) ? $this->_req_data['QSG_name'] : '';
                 $set_column_values[ $fieldName ] = sanitize_title($QSG_name) . '-' . uniqid('', true);
-            } //if the admin label is blank, use a slug version of the question text
-            elseif ($fieldName === 'QST_admin_label' && (isset($this->_req_data['QST_admin_label']) && empty($this->_req_data['QST_admin_label']))) {
+            } elseif (
+                // if the admin label is blank, use a slug version of the question text
+                $fieldName === 'QST_admin_label'
+                && (isset($this->_req_data['QST_admin_label']) && empty($this->_req_data['QST_admin_label']))
+            ) {
                 $QST_text = isset($this->_req_data['QST_display_text']) ? $this->_req_data['QST_display_text'] : '';
                 $set_column_values[ $fieldName ] = sanitize_title(wp_trim_words($QST_text, 10));
             } elseif ($fieldName === 'QST_admin_only' && (! isset($this->_req_data['QST_admin_only']))) {

@@ -3,45 +3,52 @@
     <?php esc_html_e('Adjust the settings for the Authorize.net AIM payment gateway.', 'event_espresso'); ?>
 </p>
 <p>
-    <?php printf(
+    <?php
+    printf(
         esc_html__(
             'See %1$shere%2$s for list of currencies supported by Authorize.net AIM.',
             'event_espresso'
         ),
         "<a href='https://support.authorize.net/s/article/Which-Currencies-Does-Authorize-Net-Support/' target='_blank' rel='noopener noreferrer'>",
         "</a>"
-    ); ?>
+    );
+    ?>
 </p>
 <p><strong><?php esc_html_e('Authorize.net AIM Settings', 'event_espresso'); ?></strong></p>
 <ul>
     <li>
         <strong><?php esc_html_e('Authorize.net API Login ID', 'event_espresso'); ?></strong><br/>
-        <?php printf(
+        <?php
+        printf(
             esc_html__(
                 'Enter your API Login ID for Authorize.net. Learn how to find your %1$sAPI Login%2$s ID.',
                 'event_espresso'
             ),
             '<a href="https://support.authorize.net/authkb/index?page=content&id=A405" target="_blank" rel="noopener noreferrer">',
             '</a>'
-        ); ?>
+        );
+        ?>
     </li>
     <li>
         <strong><?php esc_html_e('Authorize.net Transaction Key', 'event_espresso'); ?></strong><br/>
-        <?php printf(
+        <?php
+        printf(
             esc_html__(
                 'Enter your Transaction Key for Authorize.net. Learn how to find your %1$sTransaction Key%2$s.',
                 'event_espresso'
             ),
             '<a href="https://support.authorize.net/authkb/index?page=content&id=A405" target="_blank" rel="noopener noreferrer">',
             '</a>'
-        ); ?>
+        );
+        ?>
     </li>
     <li>
         <strong>
             <?php esc_html_e(
                 'Is this an account on the Authorize.net development server?',
                 'event_espresso'
-            ); ?></strong><br/>
+            ); ?>
+        </strong><br/>
         <?php esc_html_e(
             'Specify whether this is a live/production account or a test account on the Authorize.net development server.',
             'event_espresso'
@@ -80,6 +87,6 @@
     </li>
     <li>
         <strong><?php esc_html_e('Note About Special Characters', 'event_espresso');?></strong>
-        <?php esc_html_e('If your event name, ticket name or ticket description contain special characters (eg emojis, foreign language characters, or curly quotes) they will be removed when sent to Authorize.net. This is because Authorize.net doesn\'t support them.', 'event_espresso');?></li>
+        <?php esc_html_e('If your event name, ticket name or ticket description contain special characters (eg emojis, foreign language characters, or curly quotes) they will be removed when sent to Authorize.net. This is because Authorize.net doesn\'t support them.', 'event_espresso');?>
     </li>
 </ul>

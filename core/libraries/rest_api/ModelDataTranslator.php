@@ -55,6 +55,7 @@ class ModelDataTranslator
      * @param string              $timezone_string treat values as being in this timezone
      * @return mixed
      * @throws RestException
+     * @throws EE_Error
      */
     public static function prepareFieldValuesFromJson(
         $field_obj,
@@ -93,6 +94,8 @@ class ModelDataTranslator
      * @param mixed               $original_value_maybe_array
      * @param string              $request_version (eg 4.8.36)
      * @return array
+     * @throws EE_Error
+     * @throws EE_Error
      */
     public static function prepareFieldValuesForJson($field_obj, $original_value_maybe_array, $request_version)
     {
@@ -297,6 +300,8 @@ class ModelDataTranslator
      * @param mixed               $original_value
      * @param string              $requested_version
      * @return mixed
+     * @throws EE_Error
+     * @throws EE_Error
      */
     public static function prepareFieldValueForJson($field_obj, $original_value, $requested_version)
     {
@@ -343,7 +348,7 @@ class ModelDataTranslator
                 );
             }
             if ($new_value !== null) {
-                $new_value = mysql_to_rfc3339($new_value);
+                $new_value = mysql2date('Y-m-d\TH:i:s', $new_value, false);
             }
         } else {
             $new_value = $original_value;
@@ -634,6 +639,7 @@ class ModelDataTranslator
      * @param EEM_Base $model
      * @return EE_Model_Field_Base
      * @throws EE_Error
+     * @throws \ReflectionException
      */
     public static function deduceFieldFromQueryParam($query_param_name, EEM_Base $model)
     {

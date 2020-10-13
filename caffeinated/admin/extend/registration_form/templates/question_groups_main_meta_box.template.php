@@ -127,7 +127,7 @@ $id = ! empty($QST_system) ? '_disabled' : '';
                     ); ?>
                     <p class="description"><?php
                         _e(' Show Group Description on Registration Page?', 'event_espresso');
-                        ?></p>
+                    ?></p>
                 </label>
                 <input type="hidden" name="QSG_system" value="<?php echo $question_group->system_group(); ?>">
             </td>
@@ -186,7 +186,7 @@ $id = ! empty($QST_system) ? '_disabled' : '';
                                              . (95 <= strlen(trim($question->display_text()))
                                                 ? "&hellip;"
                                                 : '');
-                                        ?>
+                                                                ?>
                                     </span>
                                     <input class="question-group-QGQ_order" type="hidden"
                                            name="question_orders[<?php echo $question_ID; ?>]"
