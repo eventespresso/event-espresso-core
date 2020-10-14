@@ -71,8 +71,8 @@ class TableAnalysis extends EE_Base
     {
         global $wpdb;
         $table_name = $this->ensureTableNameHasPrefix($table_name);
-        $query = $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $table_name ) );
-        return $wpdb->get_var( $query ) === $table_name;
+        $query = $wpdb->prepare('SHOW TABLES LIKE %s', $wpdb->esc_like($table_name));
+        return $wpdb->get_var($query) === $table_name;
     }
 
 
