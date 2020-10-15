@@ -46,26 +46,24 @@ class EEM_Base_Using_Mock_Model_Test extends EE_UnitTestCase
     }
 
 
-
     /**
      * OK's the creation of the esp_new_addon table, because this hooks in AFTER EE_UNitTestCase's callback on this same hook
      *
      * @param bool   $short_circuit
      * @param string $table_name
      * @param string $create_sql
-     * @return array
+     * @return bool
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function dont_short_circuit_mock_table($short_circuit = false, $table_name = '', $create_sql = '')
     {
-        $table_analysis = EE_Registry::instance()->create('TableAnalysis', array(), true);
-        if ($table_name == 'esp_mock' && ! $table_analysis->tableExists($table_name)) {
-            //			echo "\r\n\r\nDONT short circuit $sql";
-            //it's not altering. it's ok to allow this
+        $this->initTableAnalysis();
+        if ($table_name === 'esp_mock' && ! $this->table_analysis->tableExists($table_name)) {
+            // it's not altering. it's ok to allow this
             return false;
-        } else {
-            //			echo "3\r\n\r\n short circuit:$sql";
-            return $short_circuit;
         }
+        return $short_circuit;
     }
 
 
@@ -81,7 +79,7 @@ class EEM_Base_Using_Mock_Model_Test extends EE_UnitTestCase
                 'MCK_value' => 'foobar',
             )
         );
-        $id = $mock_thing->save();
+        $mock_thing->save();
         $found_mock_thing = EEM_Mock::instance()->get_one();
         $this->assertEquals($mock_thing, $found_mock_thing);
     }

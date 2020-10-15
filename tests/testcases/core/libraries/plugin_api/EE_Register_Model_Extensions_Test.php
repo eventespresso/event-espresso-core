@@ -164,28 +164,28 @@ class EE_Register_Model_Extensions_Test extends EE_UnitTestCase{
 	}
 
 
-
-	/**
-	 * OK's the creation of the esp_new_addon table, because this hooks in AFTER EE_UNitTestCase's callback on this same hook
-	 *
-	 * @param bool   $short_circuit
-	 * @param string $table_name
-	 * @param string $create_sql
-	 * @return array
-	 */
+    /**
+     * OK's the creation of the esp_new_addon table, because this hooks in AFTER EE_UNitTestCase's callback on this same hook
+     *
+     * @param bool   $short_circuit
+     * @param string $table_name
+     * @param string $create_sql
+     * @return bool
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
 	public function dont_short_circuit_mock_table( $short_circuit = false, $table_name = '', $create_sql = '' ){
-		$table_analysis = EE_Registry::instance()->create( 'TableAnalysis', array(), true );
-		if( $table_name == 'esp_mock_attendee_meta' && ! $table_analysis->tableExists( $table_name) ){
-//			echo "\r\n\r\nDONT short circuit $sql";
+        $this->initTableAnalysis();
+		if( $table_name == 'esp_mock_attendee_meta' && ! $this->table_analysis->tableExists( $table_name) ){
 			//it's not altering. it's ok to allow this
 			return false;
-		}else{
-//			echo "3\r\n\r\n short circuit:$sql";
-			return $short_circuit;
 		}
+        return $short_circuit;
 	}
+
+
 	public function tearDown(){
-		//ensure the models aren't stil registered. they should have either been
+		//ensure the models aren't still registered. they should have either been
 		//deregistered during the test, or not been registered at all
 		$this->_stop_pretending_addon_hook_time();
 		parent::tearDown();

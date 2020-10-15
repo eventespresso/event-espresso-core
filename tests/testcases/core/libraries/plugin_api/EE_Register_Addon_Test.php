@@ -64,7 +64,6 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
     }
 
 
-
     /**
      * OK's the creation of the esp_new_addon table, because this hooks in AFTER EE_UNitTestCase's callback on this same hook
      *
@@ -72,19 +71,18 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
      * @param string $table_name
      * @param string $create_sql
      * @return boolean
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function dont_short_circuit_new_addon_table($short_circuit = false, $table_name = '', $create_sql = '')
     {
-        $table_analysis = EE_Registry::instance()->create('TableAnalysis', array(), true);
-        if (
-            in_array($table_name, array('esp_new_addon_thing', 'esp_new_addon_attendee_meta'), true)
-            && ! $table_analysis->tableExists($table_name)
+        $this->initTableAnalysis();
+        if (in_array($table_name, array('esp_new_addon_thing', 'esp_new_addon_attendee_meta'), true)
+            && ! $this->table_analysis->tableExists($table_name)
         ) {
-            // echo "\r\n\r\nDONT short circuit $sql";
             // it's not altering. it's ok to allow this
             return false;
         }
-        // echo "3\r\n\r\n short circuit:$sql";
         return $short_circuit;
     }
 

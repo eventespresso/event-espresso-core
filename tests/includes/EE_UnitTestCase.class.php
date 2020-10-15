@@ -1,15 +1,13 @@
 <?php
-/**
- * EE's extension of WP_UnitTestCase for writing all EE_Tests
- *
- * @since        4.3.0
- * @package        Event Espresso
- * @subpackage    tests
- */
 
+use EventEspresso\core\domain\entities\contexts\RequestTypeContext;
+use EventEspresso\core\domain\services\contexts\RequestTypeContextChecker;
+use EventEspresso\core\services\database\TableAnalysis;
+use EventEspresso\core\services\database\TableManager;
 use EventEspresso\core\services\loaders\LoaderFactory;
 
 /**
+ * EE's extension of WP_UnitTestCase for writing all EE_Tests
  * This is used to override any existing WP_UnitTestCase methods that need specific handling in EE.  We
  * can also add additional methods in here for EE tests (that are used frequently)
  *
@@ -19,11 +17,7 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  */
 class EE_UnitTestCase extends WP_UnitTestCase
 {
-
-    /**
-     * @var EE_UnitTest_Factory
-     */
-    public $factory;
+    const error_code_undefined_property = 8;
 
     /**
      * Should be used to store the global $wp_actions during a test
@@ -31,7 +25,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
      * @var array
      */
     protected $wp_filters_saved = NULL;
-    const error_code_undefined_property = 8;
+
     protected $_cached_SERVER_NAME = NULL;
     /**
      *
@@ -46,7 +40,6 @@ class EE_UnitTestCase extends WP_UnitTestCase
      */
     public static $accidental_txn_commit_noted = FALSE;
 
-
     /**
      * Holds an array of default DateTime objects for testing with.
      * This is set via the _set_default_dates() method.  Child test classes that wish to use this much set it first
@@ -56,21 +49,45 @@ class EE_UnitTestCase extends WP_UnitTestCase
      */
     protected $_default_dates;
 
+    /**
+     * @var EE_UnitTest_Factory
+     */
+    public $factory;
+
+    /**
+     * @var LoaderInterface $loader
+     */
+    protected $loader;
+
+    /**
+     * @var RequestInterface $request
+     */
+    protected $request;
 
     /**
      * @var EE_Test_Scenario_Factory
      */
     public $scenarios;
 
+    /**
+	* @var TableAnalysis $table_analysis
+     */
+    protected $table_analysis;
 
     /**
-     * basically used for displaying the test case class while tests are running.
-     * this can be helpful if you are getting weird errors happening,
-     * but the test name is not being reported anywhere.
-     * Just uncomment this method as well as the first line of setUp() below.
-     *
-     * @throws \EE_Error
+     * @var TableManager $table_manager
      */
+    protected $table_manager;
+
+
+	// /**
+    //  * basically used for displaying the test case class while tests are running.
+    //  * this can be helpful if you are getting weird errors happening,
+    //  * but the test name is not being reported anywhere.
+    //  * Just uncomment this method as well as the first line of setUp() below.
+    //  *
+    //  * @throws \EE_Error
+    //  */
     // public static function setUpBeforeClass() {
     //     echo "\n\n\n" . get_called_class() . "\n\n";
     //     parent::setUpBeforeClass();
@@ -86,6 +103,8 @@ class EE_UnitTestCase extends WP_UnitTestCase
 
     public function setUp()
     {
+        global $EE_TEST_RUN;
+        $EE_TEST_RUN = true;
         // echo "\n\n" . strtoupper($this->getName()) . '()';
         //save the hooks state before WP_UnitTestCase actually gets its hands on it...
         //as it immediately adds a few hooks we might not want to backup
@@ -176,6 +195,8 @@ class EE_UnitTestCase extends WP_UnitTestCase
         }
         // turn caching back on for any loaders in use
         remove_all_filters('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache');
+        global $EE_TEST_RUN;
+        $EE_TEST_RUN = false;
     }
 
     protected function loadTestScenarios()
@@ -970,43 +991,92 @@ class EE_UnitTestCase extends WP_UnitTestCase
 
 
     /**
-     * asserts that a table (even temporary one) exists
-     * We really should implement this function in the proper PHPunit style
-     * @see http://php-and-symfony.matthiasnoback.nl/2012/02/phpunit-writing-a-custom-assertion/
-     * @global WPDB $wpdb
-     * @param string $table_name with or without $wpdb->prefix
-     * @param string $model_name the model's name (only used for error reporting)
+     * @return TableAnalysis
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since   $VID:$
      */
-    public function assertTableExists($table_name, $model_name = 'Unknown')
+    protected function initTableAnalysis()
     {
-        $table_analysis = EE_Registry::instance()->create('TableAnalysis', array(), true);
-        if (!$table_analysis->tableExists($table_name)) {
-            global $wpdb;
-            $this->fail($wpdb->last_error);
+        if (! $this->table_analysis instanceof TableAnalysis) {
+            $this->table_analysis = EE_Registry::instance()->create('TableAnalysis', array(), true);
         }
+        return $this->table_analysis;
     }
 
+
     /**
-     * Asserts the table (even temporary one) does not exist
-     * We really should implement this function in the proper PHPunit style
+     * @return TableManager
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since   $VID:$
+     */
+    protected function initTableManager()
+    {
+        if (! $this->table_manager instanceof TableManager) {
+            $this->initTableAnalysis();
+            $this->table_manager = EE_Registry::instance()->create(
+                'TableManager',
+                [$this->table_analysis],
+                true
+            );
+        }
+        return $this->table_manager;
+    }
+
+
+    /**
+     * asserts that a table (even temporary one) exists
+     * We really should implement this function in the proper PHPUnit style
+     *
      * @see http://php-and-symfony.matthiasnoback.nl/2012/02/phpunit-writing-a-custom-assertion/
-     * @global WPDB $wpdb
      * @param string $table_name with or without $wpdb->prefix
      * @param string $model_name the model's name (only used for error reporting)
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function assertTableDoesNotExist($table_name, $model_name = 'Unknown')
+    public function assertTableExists($table_name, $model_name = 'New_Addon_Thing')
     {
-        $table_analysis = EE_Registry::instance()->create('TableAnalysis', array(), true);
-        if ($table_analysis->tableExists($table_name)) {
+        $this->initTableAnalysis();
+        if (! $this->table_analysis->tableExists($table_name)) {
             $this->fail(
                 sprintf(
-                    __('Table like %1$s SHOULD NOT exist. It was apparently defined on the model "%2$s"', 'event_espresso'),
+                    esc_html__(
+                        'The %1$s table SHOULD exist on the model %2$s but it was not found in the database.',
+                        'event_espresso'
+                    ),
                     $table_name,
                     $model_name
                 )
             );
         }
     }
+
+
+    /**
+     * Asserts the table (even temporary one) does not exist
+     * We really should implement this function in the proper PHPUnit style
+     *
+     * @see http://php-and-symfony.matthiasnoback.nl/2012/02/phpunit-writing-a-custom-assertion/
+     * @param string $table_name with or without $wpdb->prefix
+     * @param string $model_name the model's name (only used for error reporting)
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function assertTableDoesNotExist($table_name, $model_name = 'Unknown')
+    {
+        $this->initTableAnalysis();
+        if ($this->table_analysis->tableExists($table_name)) {
+            $this->fail(
+                sprintf(
+                    esc_html__('Table like %1$s SHOULD NOT exist. It was apparently defined on the model "%2$s"', 'event_espresso'),
+                    $table_name,
+                    $model_name
+                )
+            );
+        }
+    }
+
 
     /**
      * Modifies the $wp_actions global to make it look like certain actions were and weren't
