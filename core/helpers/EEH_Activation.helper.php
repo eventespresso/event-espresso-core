@@ -1328,7 +1328,8 @@ class EEH_Activation implements ResettableInterface
                 // if already active or has already been activated before we skip
                 // (otherwise we might reactivate something user's intentionally deactivated.)
                 // we also skip if the message type is not installed.
-                if ($message_resource_manager->has_message_type_been_activated_for_messenger(
+                if (! isset($installed_message_types[ $default_message_type_name_for_messenger ])
+                    || $message_resource_manager->has_message_type_been_activated_for_messenger(
                         $default_message_type_name_for_messenger,
                         $active_messenger->name
                     )
@@ -1336,7 +1337,6 @@ class EEH_Activation implements ResettableInterface
                         $active_messenger->name,
                         $default_message_type_name_for_messenger
                     )
-                    || ! isset($installed_message_types[ $default_message_type_name_for_messenger ])
                 ) {
                     continue;
                 }

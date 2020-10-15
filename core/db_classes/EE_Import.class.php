@@ -34,13 +34,13 @@ class EE_Import implements ResettableInterface
 
     private static $_columns_to_save     = [];
 
-    protected      $_total_inserts       = 0;
+    protected $_total_inserts       = 0;
 
-    protected      $_total_updates       = 0;
+    protected $_total_updates       = 0;
 
-    protected      $_total_insert_errors = 0;
+    protected $_total_insert_errors = 0;
 
-    protected      $_total_update_errors = 0;
+    protected $_total_update_errors = 0;
 
 
     /**
