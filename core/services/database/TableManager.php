@@ -2,6 +2,9 @@
 
 namespace EventEspresso\core\services\database;
 
+use EE_Error;
+use wpdb;
+
 /**
  * Class TableManager
  * For performing mysql database table schema manipulation
@@ -34,14 +37,14 @@ class TableManager extends \EE_Base
      * Gets the injected table analyzer, or throws an exception
      *
      * @return TableAnalysis
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     protected function getTableAnalysis()
     {
         if ($this->table_analysis instanceof TableAnalysis) {
             return $this->table_analysis;
         } else {
-            throw new \EE_Error(
+            throw new EE_Error(
                 sprintf(
                     __('Table analysis class on class %1$s is not set properly.', 'event_espresso'),
                     get_class($this)
@@ -56,6 +59,8 @@ class TableManager extends \EE_Base
      * @param string $column_name
      * @param string $column_info
      * @return bool|false|int
+     * @throws EE_Error
+     * @throws EE_Error
      */
     public function addColumn($table_name, $column_name, $column_info = 'INT UNSIGNED NOT NULL')
     {
@@ -77,9 +82,11 @@ class TableManager extends \EE_Base
      * Gets the name of all columns on the  table. $table_name can
      * optionally start with $wpdb->prefix or not
      *
-     * @global \wpdb $wpdb
      * @param string $table_name
      * @return array
+     * @throws EE_Error
+     * @throws EE_Error
+     * @global wpdb $wpdb
      */
     public function getTableColumns($table_name)
     {
@@ -102,9 +109,11 @@ class TableManager extends \EE_Base
      * Drops the specified table from the database. $table_name can
      * optionally start with $wpdb->prefix or not
      *
-     * @global \wpdb $wpdb
      * @param string $table_name
      * @return int
+     * @throws EE_Error
+     * @throws EE_Error
+     * @global wpdb $wpdb
      */
     public function dropTable($table_name)
     {
@@ -122,9 +131,11 @@ class TableManager extends \EE_Base
      * each table name provided has a wpdb prefix attached, and that it exists.
      * Returns the list actually deleted
      *
-     * @global WPDB $wpdb
      * @param array $table_names
      * @return array of table names which we deleted
+     * @throws EE_Error
+     * @throws EE_Error
+     * @global WPDB $wpdb
      */
     public function dropTables($table_names)
     {
@@ -149,10 +160,11 @@ class TableManager extends \EE_Base
      * Drops the specified index from the specified table. $table_name can
      * optionally start with $wpdb->prefix or not
      *
-     * @global \wpdb $wpdb
      * @param string $table_name
      * @param string $index_name
-     * @return int the number of indexes dropped. False if there was a datbase error
+     * @return int the number of indexes dropped. False if there was a database error
+     * @throws EE_Error
+     * @global wpdb $wpdb
      */
     public function dropIndex($table_name, $index_name)
     {
@@ -163,8 +175,8 @@ class TableManager extends \EE_Base
         $table_name = $this->getTableAnalysis()->ensureTableNameHasPrefix($table_name);
         $index_exists_query = "SHOW INDEX FROM {$table_name} WHERE key_name = '{$index_name}'";
         if ($this->getTableAnalysis()->tableExists($table_name)
-            && $wpdb->get_var($index_exists_query)
-               === $table_name // using get_var with the $index_exists_query returns the table's name
+            && $wpdb->get_var($index_exists_query) === $table_name
+            // using get_var with the $index_exists_query returns the table's name
         ) {
             return $wpdb->query("ALTER TABLE {$table_name} DROP INDEX {$index_name}");
         }
@@ -180,38 +192,15 @@ class TableManager extends \EE_Base
      * @param string $create_sql defining the table's columns and indexes
      * @param string $engine     (no need to specify "ENGINE=", that's implied)
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @global wpdb $wpdb
      */
     public function createTable($table_name, $create_sql, $engine = 'MyISAM')
     {
-        $engine = apply_filters(
-            'FHEE__EventEspresso_core_services_database_TableManager__createTable__engine',
-            $engine,
-            $table_name,
-            $create_sql
-        );
-        // does $sql contain valid column information? ( LPT: https://regex101.com/ is great for working out regex patterns )
-        if (preg_match('((((.*?))(,\s))+)', $create_sql, $valid_column_data)) {
-            $table_name = $this->getTableAnalysis()->ensureTableNameHasPrefix($table_name);
-            /** @var \wpdb $wpdb */
-            global $wpdb;
-            $SQL = "CREATE TABLE {$table_name} ( {$create_sql} ) ENGINE={$engine} " . $wpdb->get_charset_collate();
-
-            // get $wpdb to echo errors, but buffer them. This way at least WE know an error
-            // happened. And then we can choose to tell the end user
-            $old_show_errors_policy = $wpdb->show_errors(true);
-            $old_error_suppression_policy = $wpdb->suppress_errors(false);
-            ob_start();
-            dbDelta($SQL);
-            $output = ob_get_contents();
-            ob_end_clean();
-            $wpdb->show_errors($old_show_errors_policy);
-            $wpdb->suppress_errors($old_error_suppression_policy);
-            if (! empty($output)) {
-                throw new \EE_Error($output);
-            }
-        } else {
-            throw new \EE_Error(
+        // does $sql contain valid column information?
+        // LPT: https://regex101.com/ is great for working out regex patterns
+        if (! preg_match('(((.*?)(,\s))+)', $create_sql, $valid_column_data)) {
+            throw new EE_Error(
                 sprintf(
                     __(
                         'The following table creation SQL does not contain valid information about the table columns: %1$s %2$s',
@@ -222,22 +211,49 @@ class TableManager extends \EE_Base
                 )
             );
         }
+        $engine = apply_filters(
+            'FHEE__EventEspresso_core_services_database_TableManager__createTable__engine',
+            $engine,
+            $table_name,
+            $create_sql
+        );
+        $table_name = $this->getTableAnalysis()->ensureTableNameHasPrefix($table_name);
+        global $wpdb;
+        $collation = $wpdb->get_charset_collate();
+        $SQL = "
+CREATE TABLE {$table_name} (
+{$create_sql}
+) ENGINE={$engine}
+{$collation}
+";
+        // get $wpdb to echo errors, but buffer them. This way at least WE know an error
+        // happened. And then we can choose to tell the end user
+        $old_show_errors_policy = $wpdb->show_errors(true);
+        $old_error_suppression_policy = $wpdb->suppress_errors(false);
+        ob_start();
+        dbDelta($SQL);
+        $output = ob_get_clean();
+        $wpdb->show_errors($old_show_errors_policy);
+        $wpdb->suppress_errors($old_error_suppression_policy);
+        if (! empty($output)) {
+            throw new EE_Error($output);
+        }
     }
 
 
     /**
      * Drops the specified index if it's size differs from $desired_index_size.
-     * WordPress' dbdelta method doesn't automatically change index sizes, so this
-     * method can be used to only drop the index if needed, and afterwards dbdelta can be used as normal.
+     * WordPress' dbDelta method doesn't automatically change index sizes, so this
+     * method can be used to only drop the index if needed, and afterwards dbDelta can be used as normal.
      * If the table doesn't exist, or it exists but the index does not, or returns false
      *
      * @param string     $table_name
      * @param string     $index_name
-     * @param string     $column_name        if none is provided, we assume the column name matches the index (often
-     *                                       true in EE)
+     * @param string|null $column_name       if none is provided, we assume the column name matches the index
+     *                                       (often true in EE)
      * @param string|int $desired_index_size defaults to TableAnalysis::index_col_size, the max for utf8mb4.
      * @return bool whether an index was dropped or not
-     * @throws /EE_Error if table analysis object isn't defined
+     * @throws EE_Error if table analysis object isn't defined
      */
     public function dropIndexIfSizeNot(
         $table_name,

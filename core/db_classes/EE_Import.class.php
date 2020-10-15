@@ -14,28 +14,33 @@ use EventEspresso\core\interfaces\ResettableInterface;
 class EE_Import implements ResettableInterface
 {
 
-    const do_insert = 'insert';
-    const do_update = 'update';
+    const do_insert  = 'insert';
+
+    const do_update  = 'update';
+
     const do_nothing = 'nothing';
 
 
     // instance of the EE_Import object
-    private static $_instance = null;
+    private static $_instance  = null;
 
-    private static $_csv_array = array();
+    private static $_csv_array = [];
 
     /**
      *
      * @var array of model names
      */
-    private static $_model_list = array();
+    private static $_model_list          = [];
 
-    private static $_columns_to_save = array();
+    private static $_columns_to_save     = [];
 
-    protected $_total_inserts = 0;
-    protected $_total_updates = 0;
-    protected $_total_insert_errors = 0;
-    protected $_total_update_errors = 0;
+    protected      $_total_inserts       = 0;
+
+    protected      $_total_updates       = 0;
+
+    protected      $_total_insert_errors = 0;
+
+    protected      $_total_update_errors = 0;
 
 
     /**
@@ -47,8 +52,8 @@ class EE_Import implements ResettableInterface
      */
     private function __construct()
     {
-        $this->_total_inserts = 0;
-        $this->_total_updates = 0;
+        $this->_total_inserts       = 0;
+        $this->_total_updates       = 0;
         $this->_total_insert_errors = 0;
         $this->_total_update_errors = 0;
     }
@@ -69,6 +74,7 @@ class EE_Import implements ResettableInterface
         return self::$_instance;
     }
 
+
     /**
      * Resets the importer
      *
@@ -85,17 +91,17 @@ class EE_Import implements ResettableInterface
      *    @ generates HTML for a file upload input and form
      *    @ access    public
      *
-     * @param    string $title  - heading for the form
-     * @param    string $intro  - additional text explaing what to do
-     * @param    string $page   - EE Admin page to direct form to - in the form "espresso_{pageslug}"
-     * @param    string $action - EE Admin page route array "action" that form will direct to
-     * @param    string $type   - type of file to import
+     * @param string $title     - heading for the form
+     * @param string $intro     - additional text explaing what to do
+     * @param string $page      - EE Admin page to direct form to - in the form "espresso_{pageslug}"
+     * @param string $action    - EE Admin page route array "action" that form will direct to
+     * @param string $type      - type of file to import
      *                          @ return    string
      */
     public function upload_form($title, $intro, $form_url, $action, $type)
     {
 
-        $form_url = EE_Admin_Page::add_query_args_and_nonce(array('action' => $action), $form_url);
+        $form_url = EE_Admin_Page::add_query_args_and_nonce(['action' => $action], $form_url);
 
         ob_start();
         ?>
@@ -131,6 +137,7 @@ class EE_Import implements ResettableInterface
      * @Import Event Espresso data - some code "borrowed" from event espresso csv_import.php
      * @access public
      * @return boolean success
+     * @throws EE_Error
      */
     public function import()
     {
@@ -180,17 +187,17 @@ class EE_Import implements ResettableInterface
                 }
 
                 if (! $error_msg) {
-                    $filename = $_FILES['file']['name'][0];
-                    $file_ext = substr(strrchr($filename, '.'), 1);
+                    $filename  = $_FILES['file']['name'][0];
+                    $file_ext  = substr(strrchr($filename, '.'), 1);
                     $file_type = $_FILES['file']['type'][0];
                     $temp_file = $_FILES['file']['tmp_name'][0];
-                    $filesize = $_FILES['file']['size'][0] / 1024;// convert from bytes to KB
+                    $filesize  = $_FILES['file']['size'][0] / 1024;// convert from bytes to KB
 
                     if ($file_ext == 'csv') {
                         $max_upload = $this->EE_CSV->get_max_upload_size();// max upload size in KB
                         if ($filesize < $max_upload || true) {
-                            $wp_upload_dir = str_replace(array('\\', '/'), '/', wp_upload_dir());
-                            $path_to_file = $wp_upload_dir['basedir'] . '/espresso/' . $filename;
+                            $wp_upload_dir = str_replace(['\\', '/'], '/', wp_upload_dir());
+                            $path_to_file  = $wp_upload_dir['basedir'] . '/espresso/' . $filename;
 
                             if (move_uploaded_file($temp_file, $path_to_file)) {
                                 // convert csv to array
@@ -198,9 +205,9 @@ class EE_Import implements ResettableInterface
 
                                 // was data successfully stored in an array?
                                 if (is_array($this->csv_array)) {
-                                    $import_what = str_replace('csv_import_', '', $_REQUEST['action']);
-                                    $import_what = str_replace('_', ' ', ucwords($import_what));
-                                    $processed_data = $this->csv_array;
+                                    $import_what           = str_replace('csv_import_', '', $_REQUEST['action']);
+                                    $import_what           = str_replace('_', ' ', ucwords($import_what));
+                                    $processed_data        = $this->csv_array;
                                     $this->columns_to_save = false;
 
                                     // if any imports require funcky processing, we'll catch them in the switch
@@ -211,7 +218,7 @@ class EE_Import implements ResettableInterface
                                             break;
 
                                         case 'groupon_import_csv':
-                                            $import_what = 'Groupon Codes';
+                                            $import_what    = 'Groupon Codes';
                                             $processed_data = $this->process_groupon_codes();
                                             break;
                                     }
@@ -312,14 +319,14 @@ class EE_Import implements ResettableInterface
     public function save_csv_data_array_to_db($csv_data_array, $model_name = false)
     {
         $success = false;
-        $error = false;
+        $error   = false;
         // whther to treat this import as if it's data froma different database or not
         // ie, if it IS from a different database, ignore foreign keys whihf
         $export_from_site_a_to_b = true;
         // first level of array is not table information but a table name was passed to the function
         // array is only two levels deep, so let's fix that by adding a level, else the next steps will fail
         if ($model_name) {
-            $csv_data_array = array($csv_data_array);
+            $csv_data_array = [$csv_data_array];
         }
         // begin looking through the $csv_data_array, expecting the toplevel key to be the model's name...
         $old_site_url = 'none-specified';
@@ -357,7 +364,7 @@ class EE_Import implements ResettableInterface
          * the value will be the newly-inserted ID.
          * If we have already imported data from the same website via CSV, it shoudl be kept in this wp option
          */
-        $old_db_to_new_db_mapping = get_option('ee_id_mapping_from' . sanitize_title($old_site_url), array());
+        $old_db_to_new_db_mapping = get_option('ee_id_mapping_from' . sanitize_title($old_site_url), []);
         if ($old_db_to_new_db_mapping) {
             EE_Error::add_attention(
                 sprintf(
@@ -448,8 +455,8 @@ class EE_Import implements ResettableInterface
      * are mapped to the real IDs in the target database. Also, before doing any update or
      * insert, we replace all the temp ID which are foreign keys with their mapped real IDs.
      * An exception: string primary keys are treated as real IDs, or else we'd need to
-     * dynamically generate new string primary keys which would be very awkard for the country table etc.
-     * Also, models with no primary key are strange too. We combine use their primar key INDEX (a
+     * dynamically generate new string primary keys which would be very awkward for the country table etc.
+     * Also, models with no primary key are strange too. We combine use their primary key INDEX (a
      * combination of fields) to create a unique string identifying the row and store
      * those in the mapping.
      *
@@ -458,13 +465,18 @@ class EE_Import implements ResettableInterface
      * we need to insert a new row for that ID, and then map from the non-existent ID
      * to the newly-inserted real ID.
      *
-     * @param type $csv_data_array
-     * @param type $export_from_site_a_to_b
-     * @param type $old_db_to_new_db_mapping
+     * @param array   $csv_data_array
+     * @param boolean $export_from_site_a_to_b
+     * @param array   $old_db_to_new_db_mapping
      * @return array updated $old_db_to_new_db_mapping
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function save_data_rows_to_db($csv_data_array, $export_from_site_a_to_b, $old_db_to_new_db_mapping)
-    {
+    public function save_data_rows_to_db(
+        array $csv_data_array,
+        $export_from_site_a_to_b,
+        array $old_db_to_new_db_mapping
+    ) {
         foreach ($csv_data_array as $model_name_in_csv_data => $model_data_from_import) {
             // now check that assumption was correct. If
             if (EE_Registry::instance()->is_model_name($model_name_in_csv_data)) {
@@ -480,12 +492,12 @@ class EE_Import implements ResettableInterface
                     __FUNCTION__,
                     __LINE__
                 );
-                return false;
+                return [];
             }
             /* @var $model EEM_Base */
             $model = EE_Registry::instance()->load_model($model_name);
 
-            // so without further ado, scanning all the data provided for primary keys and their inital values
+            // so without further ado, scanning all the data provided for primary keys and their initial values
             foreach ($model_data_from_import as $model_object_data) {
                 // before we do ANYTHING, make sure the csv row wasn't just completely blank
                 $row_is_completely_empty = true;
@@ -525,8 +537,7 @@ class EE_Import implements ResettableInterface
                     $what_to_do = $this->_decide_whether_to_insert_or_update_given_data_from_same_db(
                         $id_in_csv,
                         $model_object_data,
-                        $model,
-                        $old_db_to_new_db_mapping
+                        $model
                     );
                 }
                 if ($what_to_do == self::do_nothing) {
@@ -545,7 +556,7 @@ class EE_Import implements ResettableInterface
                         // and if this model has a primary key, remember its mapping
                         if ($model->has_primary_key_field()) {
                             $old_db_to_new_db_mapping[ $model_name ][ $id_in_csv ] = $conflicting->ID();
-                            $model_object_data[ $model->primary_key_name() ] = $conflicting->ID();
+                            $model_object_data[ $model->primary_key_name() ]       = $conflicting->ID();
                         } else {
                             // we want to update this conflicting item, instead of inserting a conflicting item
                             // so we need to make sure they match entirely (its possible that they only conflicted on one field, but we need them to match on other fields
@@ -618,6 +629,7 @@ class EE_Import implements ResettableInterface
         }
     }
 
+
     /**
      * If this thing basically already exists in the database, we want to update it;
      * otherwise insert it (ie, someone tweaked the CSV file, or the item was
@@ -626,8 +638,8 @@ class EE_Import implements ResettableInterface
      * @param type     $id_in_csv
      * @param type     $model_object_data
      * @param EEM_Base $model
-     * @param type     $old_db_to_new_db_mapping
-     * @return
+     * @return string
+     * @throws EE_Error
      */
     protected function _decide_whether_to_insert_or_update_given_data_from_same_db(
         $id_in_csv,
@@ -641,6 +653,7 @@ class EE_Import implements ResettableInterface
             return self::do_insert;
         }
     }
+
 
     /**
      * Using the $old_db_to_new_db_mapping array, replaces all the temporary IDs
@@ -656,6 +669,7 @@ class EE_Import implements ResettableInterface
      * @param type     $old_db_to_new_db_mapping
      * @param boolean  $export_from_site_a_to_b
      * @return array updated model object data with temp IDs removed
+     * @throws EE_Error
      */
     protected function _replace_temp_ids_with_mappings(
         $model_object_data,
@@ -664,27 +678,29 @@ class EE_Import implements ResettableInterface
         $export_from_site_a_to_b
     ) {
         // if this model object's primary key is in the mapping, replace it
-        if ($model->has_primary_key_field() &&
-            $model->get_primary_key_field()->is_auto_increment() &&
-            isset($old_db_to_new_db_mapping[ $model->get_this_model_name() ]) &&
-            isset(
-                $old_db_to_new_db_mapping[ $model->get_this_model_name() ][ $model_object_data[ $model->primary_key_name() ] ]
+        if ($model->has_primary_key_field()
+            && $model->get_primary_key_field()->is_auto_increment()
+            && isset($old_db_to_new_db_mapping[ $model->get_this_model_name() ])
+            && isset(
+                $old_db_to_new_db_mapping[ $model->get_this_model_name(
+                ) ][ $model_object_data[ $model->primary_key_name() ] ]
             )) {
-            $model_object_data[ $model->primary_key_name() ] = $old_db_to_new_db_mapping[ $model->get_this_model_name(
-            ) ][ $model_object_data[ $model->primary_key_name() ] ];
+            $model_object_data[ $model->primary_key_name() ] =
+                $old_db_to_new_db_mapping[ $model->get_this_model_name(
+                ) ][ $model_object_data[ $model->primary_key_name() ] ];
         }
 
         try {
-            $model_name_field = $model->get_field_containing_related_model_name();
+            $model_name_field                      = $model->get_field_containing_related_model_name();
             $models_pointed_to_by_model_name_field = $model_name_field->get_model_names_pointed_to();
         } catch (EE_Error $e) {
-            $model_name_field = null;
-            $models_pointed_to_by_model_name_field = array();
+            $model_name_field                      = null;
+            $models_pointed_to_by_model_name_field = [];
         }
         foreach ($model->field_settings(true) as $field_obj) {
             if ($field_obj instanceof EE_Foreign_Key_Int_Field) {
                 $models_pointed_to = $field_obj->get_model_names_pointed_to();
-                $found_a_mapping = false;
+                $found_a_mapping   = false;
                 foreach ($models_pointed_to as $model_pointed_to_by_fk) {
                     if ($model_name_field) {
                         $value_of_model_name_field = $model_object_data[ $model_name_field->get_name() ];
@@ -695,7 +711,7 @@ class EE_Import implements ResettableInterface
                                 $old_db_to_new_db_mapping,
                                 $export_from_site_a_to_b
                             );
-                            $found_a_mapping = true;
+                            $found_a_mapping                             = true;
                             break;
                         }
                     } else {
@@ -705,7 +721,7 @@ class EE_Import implements ResettableInterface
                             $old_db_to_new_db_mapping,
                             $export_from_site_a_to_b
                         );
-                        $found_a_mapping = true;
+                        $found_a_mapping                             = true;
                     }
                     // once we've found a mapping for this field no need to continue
                     if ($found_a_mapping) {
@@ -725,6 +741,7 @@ class EE_Import implements ResettableInterface
         }
         return $model_object_data;
     }
+
 
     /**
      * If the data was exported PRE-4.2, but then imported POST-4.2, then the term_id
@@ -750,6 +767,7 @@ class EE_Import implements ResettableInterface
         }
         return $model_object_data;
     }
+
 
     /**
      * Given the object's ID and its model's name, find it int he mapping data,
@@ -779,13 +797,15 @@ class EE_Import implements ResettableInterface
         }
     }
 
+
     /**
      *
      * @param type     $id_in_csv
      * @param type     $model_object_data
      * @param EEM_Base $model
      * @param type     $old_db_to_new_db_mapping
-     * @return array updated $old_db_to_new_db_mapping
+     * @return type updated $old_db_to_new_db_mapping
+     * @throws EE_Error
      */
     protected function _insert_from_data_array($id_in_csv, $model_object_data, $model, $old_db_to_new_db_mapping)
     {
@@ -848,6 +868,7 @@ class EE_Import implements ResettableInterface
         return $old_db_to_new_db_mapping;
     }
 
+
     /**
      * Given the model object data, finds the row to update and updates it
      *
@@ -864,11 +885,11 @@ class EE_Import implements ResettableInterface
             // one for performing an update, one for everthing else
             $model_object_data_for_update = $model_object_data;
             if ($model->has_primary_key_field()) {
-                $conditions = array($model->primary_key_name() => $model_object_data[ $model->primary_key_name() ]);
+                $conditions = [$model->primary_key_name() => $model_object_data[ $model->primary_key_name() ]];
                 // remove the primary key because we shouldn't use it for updating
                 unset($model_object_data_for_update[ $model->primary_key_name() ]);
             } elseif ($model->get_combined_primary_key_fields() > 1) {
-                $conditions = array();
+                $conditions = [];
                 foreach ($model->get_combined_primary_key_fields() as $key_field) {
                     $conditions[ $key_field->get_name() ] = $model_object_data[ $key_field->get_name() ];
                 }
@@ -877,7 +898,7 @@ class EE_Import implements ResettableInterface
                 );// this shoudl just throw an exception, explaining that we dont have a primary key (or a combine dkey)
             }
 
-            $success = $model->update($model_object_data_for_update, array($conditions));
+            $success = $model->update($model_object_data_for_update, [$conditions]);
             if ($success) {
                 $this->_total_updates++;
                 EE_Error::add_success(
@@ -899,7 +920,7 @@ class EE_Import implements ResettableInterface
                 }
                 $old_db_to_new_db_mapping[ $model->get_this_model_name() ][ $id_in_csv ] = $new_key_for_mapping;
             } else {
-                $matched_items = $model->get_all(array($conditions));
+                $matched_items = $model->get_all([$conditions]);
                 if (! $matched_items) {
                     // no items were matched (so we shouldn't have updated)... but then we should have inserted? what the heck?
                     $this->_total_update_errors++;
@@ -945,6 +966,7 @@ class EE_Import implements ResettableInterface
         return $old_db_to_new_db_mapping;
     }
 
+
     /**
      * Gets the number of inserts performed since importer was instantiated or reset
      *
@@ -954,6 +976,7 @@ class EE_Import implements ResettableInterface
     {
         return $this->_total_inserts;
     }
+
 
     /**
      *  Gets the number of insert errors since importer was instantiated or reset
@@ -965,6 +988,7 @@ class EE_Import implements ResettableInterface
         return $this->_total_insert_errors;
     }
 
+
     /**
      *  Gets the number of updates performed since importer was instantiated or reset
      *
@@ -974,6 +998,7 @@ class EE_Import implements ResettableInterface
     {
         return $this->_total_updates;
     }
+
 
     /**
      *  Gets the number of update errors since importer was instantiated or reset
