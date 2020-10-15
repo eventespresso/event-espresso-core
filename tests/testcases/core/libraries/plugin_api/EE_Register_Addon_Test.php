@@ -1,19 +1,17 @@
 <?php
-if (! defined('EVENT_ESPRESSO_VERSION')) {
-    exit('No direct script access allowed');
-}
+
 /**
  * EE_Register_Addon_Test
  *
- * @package 	Event Espresso
+ * @package       Event Espresso
  * @subpackage
- * @author 		Mike Nelson
+ * @author        Mike Nelson
  *
- * @group 		core/libraries/plugin_api
- * @group 		core
- * @group 		agg
- * @group 		addons
- * @group 		caps
+ * @group         core/libraries/plugin_api
+ * @group         core
+ * @group         agg
+ * @group         addons
+ * @group         caps
  */
 class EE_Register_Addon_Test extends EE_UnitTestCase
 {
@@ -25,18 +23,17 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
     private $_addon_name;
 
 
-
     /**
      * Constructs a test case with the given name.
      *
-     * @param string $name
-     * @param array  $data
-     * @param string $dataName
+     * @param string|null $name
+     * @param array       $data
+     * @param string      $dataName
      */
-    public function __construct($name = null, array $data = array(), $dataName = '')
+    public function __construct($name = null, array $data = [], $dataName = '')
     {
         $this->_mock_addon_path = EE_MOCKS_DIR . 'addons/eea-new-addon/';
-        $this->_reg_args = array(
+        $this->_reg_args        = [
             'version'               => '1.0.0',
             'min_core_version'      => '4.0.0',
             'main_file_path'        => $this->_mock_addon_path . 'eea-new-addon.php',
@@ -45,11 +42,10 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
             'class_paths'           => $this->_mock_addon_path . 'core/db_classes',
             'class_extension_paths' => $this->_mock_addon_path . 'core/db_class_extensions',
             'model_extension_paths' => $this->_mock_addon_path . 'core/db_model_extensions',
-        );
-        $this->_addon_name = 'New_Addon';
+        ];
+        $this->_addon_name      = 'New_Addon';
         parent::__construct($name, $data, $dataName);
     }
-
 
 
     public function setUp()
@@ -57,7 +53,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
         parent::setUp();
         add_filter(
             'FHEE__EEH_Activation__create_table__short_circuit',
-            array($this, 'dont_short_circuit_new_addon_table'),
+            [$this, 'dont_short_circuit_new_addon_table'],
             20,
             3
         );
@@ -65,7 +61,8 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
 
 
     /**
-     * OK's the creation of the esp_new_addon table, because this hooks in AFTER EE_UNitTestCase's callback on this same hook
+     * OK's the creation of the esp_new_addon table, because this hooks in AFTER EE_UNitTestCase's callback on this
+     * same hook
      *
      * @param bool   $short_circuit
      * @param string $table_name
@@ -77,7 +74,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
     public function dont_short_circuit_new_addon_table($short_circuit = false, $table_name = '', $create_sql = '')
     {
         $this->initTableAnalysis();
-        if (in_array($table_name, array('esp_new_addon_thing', 'esp_new_addon_attendee_meta'), true)
+        if (in_array($table_name, ['esp_new_addon_thing', 'esp_new_addon_attendee_meta'], true)
             && ! $this->table_analysis->tableExists($table_name)
         ) {
             // it's not altering. it's ok to allow this
@@ -87,8 +84,12 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
     }
 
 
-
-    //test registering a bare minimum addon, and then de-registering it
+    /**
+     * test registering a bare minimum addon, and then de-registering it
+     *
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
     public function test_register_mock_addon_fail()
     {
         // echo "\n\n " . __LINE__ . ") " . __METHOD__ . "()";
@@ -110,7 +111,10 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
     }
 
 
-
+    /**
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
     public function test_register_mock_addon_fail__bad_parameters()
     {
         //we're registering the addon with the wrong parameters
@@ -121,11 +125,11 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
         try {
             EE_Register_Addon::register(
                 $this->_addon_name,
-                array(
-                	'version'          => '1.0.0',
-                	'min_core_version' => '4.0.0',
-                	'dms_paths'        => $this->_mock_addon_path . 'core/data_migration_scripts',
-            	)
+                [
+                    'version'          => '1.0.0',
+                    'min_core_version' => '4.0.0',
+                    'dms_paths'        => $this->_mock_addon_path . 'core/data_migration_scripts',
+                ]
             );
             $this->fail(
                 'We should have received a warning that the "main_file_path" is a required argument when registering an addon'
@@ -138,12 +142,15 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
         //check DMSs weren't setup either
         $DMSs_available = EE_Data_Migration_Manager::reset()->get_all_data_migration_scripts_available();
         $this->assertArrayNotHasKey('EE_DMS_New_Addon_1_0_0', $DMSs_available);
-        //check that we didn't register the addon's de-activaiton hook either
+        //check that we didn't register the addon's de-activation hook either
         $this->assertFalse(has_action('deactivate_' . plugin_basename($this->_reg_args['main_file_path'])));
     }
 
 
-
+    /**
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
     public function test_register_mock_addon_success()
     {
         //ensure model and class extensions weren't setup beforehand
@@ -190,13 +197,13 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
         //check that the caps maps were registered properly too
         $this->_pretend_capabilities_registered();
         $current_user = $this->factory->user->create_and_get();
-        $other_user = $this->factory->user->create_and_get();
+        $other_user   = $this->factory->user->create_and_get();
         //give user administrator role for test!
         $current_user->add_role('administrator');
-        $a_thing = $this->new_model_obj_with_dependencies('New_Addon_Thing', array('NEW_wp_user' => $current_user->ID));
+        $a_thing      = $this->new_model_obj_with_dependencies('New_Addon_Thing', ['NEW_wp_user' => $current_user->ID]);
         $others_thing = $this->new_model_obj_with_dependencies(
-        	'New_Addon_Thing',
-        	array('NEW_wp_user' => $other_user->ID)
+            'New_Addon_Thing',
+            ['NEW_wp_user' => $other_user->ID]
         );
         $this->assertTrue(
             EE_Capabilities::instance()->user_can($current_user, 'edit_thing', 'testing_edit', $a_thing->ID())
@@ -207,12 +214,13 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
     }
 
 
-
     /**
      * Utility function to just setup valid capabilities for tests in this suite.
      *
-     * @since 1.0.0
      * @return void
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since 1.0.0
      */
     private function _pretend_capabilities_registered()
     {
@@ -224,7 +232,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
         //verify new caps are in the role
         $role = get_role('administrator');
         $this->assertContains(
-            array('edit_thing', 'edit_things', 'edit_others_things', 'edit_private_things'),
+            ['edit_thing', 'edit_things', 'edit_others_things', 'edit_private_things'],
             $role->capabilities
         );
     }
@@ -270,12 +278,15 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
     //		$this->assertTrue( $this->_class_has_been_extended( TRUE ) );
     //		$this->assertTrue( $this->_model_has_been_extended( TRUE ) );
     //	}
+
+
     /**
      * check that when we register an addon and then another after the 'activate_plugin'
      * action fired, that there are no errors and the 2nd addon's activation indicator
      * was set properly
      *
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function test_register_mock_addon__activation()
     {
@@ -295,13 +306,13 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
     }
 
 
-
     /**
      * registers an addon as usual, but then calls 'activate_plugin', as if a different
      * addon had been activated. Because the register method is called twice, this has the potential
      * for problems
      *
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function test_register_addon_called_twice_on_activation()
     {
@@ -327,14 +338,17 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
     }
 
 
-
+    /**
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
     public function tearDown()
     {
         if (isset($this->_addon_name, EE_Registry::instance()->addons->EE_New_Addon)) {
             $main_file_path_before_deregistration = EE_Registry::instance()
-            										->addons
-            										->EE_New_Addon
-            										->get_main_plugin_file_basename();
+                ->addons
+                ->EE_New_Addon
+                ->get_main_plugin_file_basename();
             EE_Register_Addon::deregister($this->_addon_name);
             $this->assertArrayNotHasKey('EE_New_Addon', EE_Registry::instance()->addons);
             //verify the de-activation hook was removed
@@ -378,12 +392,10 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
     }
 
 
-
     protected function _pretend_after_plugin_activation()
     {
         do_action('activate_plugin');
     }
-
 
 
     protected function _pretend_addon_hook_time()
@@ -397,7 +409,6 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
         );
         parent::_pretend_addon_hook_time();
     }
-
 
 
     /**
@@ -422,7 +433,6 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
     }
 
 
-
     /**
      * Determines if the Attendee model has been extended by the mock extension
      *
@@ -442,7 +452,8 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
                             __(
                                 'The field ATT_foobar is not on EEM_Attendee, but the extension should have added it. fields are: %s',
                                 'event_espresso'
-                            ), implode(",", array_keys(EEM_Attendee::instance()->field_settings()))
+                            ),
+                            implode(",", array_keys(EEM_Attendee::instance()->field_settings()))
                         )
                     );
                 }
@@ -455,7 +466,8 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
                             __(
                                 'The relation of type New_Addon_Thing on EEM_Attendee, but the extension should have added it. fields are: %s',
                                 'event_espresso'
-                            ), implode(",", array_keys(EEM_Attendee::instance()->field_settings()))
+                            ),
+                            implode(",", array_keys(EEM_Attendee::instance()->field_settings()))
                         )
                     );
                 }
@@ -472,7 +484,6 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
     }
 
 
-
     public function test_effective_version()
     {
         //use reflection to test this protected method
@@ -482,7 +493,6 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
         $this->assertEquals('4.3.0.p.000', $method->invoke(null, '4.3.0.p'));
         $this->assertEquals('4.3.0.rc.123', $method->invoke(null, '4.3.0.rc.123'));
     }
-
 
 
     public function test_meets_min_core_version_requirement()
