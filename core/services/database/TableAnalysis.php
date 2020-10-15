@@ -3,6 +3,7 @@
 namespace EventEspresso\core\services\database;
 
 use EE_Base;
+use EEH_Activation;
 use wpdb;
 
 /**
@@ -69,10 +70,49 @@ class TableAnalysis extends EE_Base
      */
     public function tableExists($table_name)
     {
-        global $wpdb;
+        global $wpdb, $EZSQL_ERROR;
         $table_name = $this->ensureTableNameHasPrefix($table_name);
-        $query = $wpdb->prepare('SHOW TABLES LIKE %s', $wpdb->esc_like($table_name));
-        return $wpdb->get_var($query) === $table_name;
+        // ignore if this causes an sql error
+        $prev_last_error      = $wpdb->last_error;
+        $prev_EZSQL_ERROR     = $EZSQL_ERROR;
+        $prev_suppress_errors = $wpdb->suppress_errors();
+        $prev_show_errors     = $wpdb->hide_errors();
+        ob_start();
+        $wpdb->get_results("SELECT COUNT(*) from $table_name LIMIT 1");
+        ob_get_clean();
+        // grab any new errors that were just generated
+        $new_error        = $wpdb->last_error;
+        // reset error handling values to previous state
+        $wpdb->last_error = $prev_last_error;
+        $EZSQL_ERROR      = $prev_EZSQL_ERROR;
+        $wpdb->show_errors($prev_show_errors);
+        $wpdb->suppress_errors($prev_suppress_errors);
+        // if there was no "table doesn't exist" error then the table must exist
+        if (empty($new_error)) {
+            return true;
+        }
+        $error_codes = [
+            1051, // bad table
+            1109, // unknown table
+            117, // no such table
+        ];
+        if (in_array(EEH_Activation::last_wpdb_error_code(), $error_codes)
+            // in case not using mysql and error codes aren't reliable, just check for this error string
+            || preg_match('~^Table .* doesn\'t exist~', $new_error)
+        ) {
+            return false;
+        }
+        // log this because that's weird. Just use the normal PHP error log
+        error_log(
+            sprintf(
+                __(
+                    'Event Espresso error detected when checking if table existed: %1$s (it wasn\'t just that the table didn\'t exist either)',
+                    'event_espresso'
+                ),
+                $new_error
+            )
+        );
+        return false;
     }
 
 
