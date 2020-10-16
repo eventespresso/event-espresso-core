@@ -162,7 +162,7 @@ $generated_i18n_strings = array(
 
 	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:111
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/details/useBulkEditFormConfig.ts:112
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:74
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:75
 	__( 'Capacity', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:116
@@ -183,7 +183,7 @@ $generated_i18n_strings = array(
 
 	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:73
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/details/useBulkEditFormConfig.ts:49
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:43
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:44
 	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:85
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:49
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:42
@@ -202,12 +202,12 @@ $generated_i18n_strings = array(
 	__( 'Dates', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:92
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:51
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:52
 	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:104
 	__( 'Start Date', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:98
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:62
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:63
 	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:110
 	__( 'End Date', 'event_espresso' ),
 
@@ -317,11 +317,11 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/cardView/TicketDetailsPanel.tsx:32
 	__( 'reg list', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/cardView/Details.tsx:43
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/cardView/Details.tsx:44
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/cardView/Details.tsx:40
 	__( 'Edit description', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/cardView/Details.tsx:44
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/cardView/Details.tsx:45
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/cardView/Details.tsx:41
 	__( 'edit description…', 'event_espresso' ),
 
@@ -405,7 +405,7 @@ $generated_i18n_strings = array(
 	__( 'name', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:37
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:37
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:38
 	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/table/DateCell.tsx:21
 	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/table/HeaderCell.tsx:20
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:36
@@ -457,28 +457,28 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/newDateOptions/AddSingleDate.tsx:36
 	__( 'Single Date', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:104
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:105
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:103
 	// Reference: packages/tpc/src/components/table/useHeaderRowGenerator.ts:53
 	__( 'Actions', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:52
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:53
 	__( 'Start', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:63
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:64
 	__( 'End', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:75
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:76
 	__( 'Cap', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:83
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:84
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:85
 	__( 'Sold', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:92
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:93
 	__( 'Reg list', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:93
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:94
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:95
 	__( 'Regs', 'event_espresso' ),
 
