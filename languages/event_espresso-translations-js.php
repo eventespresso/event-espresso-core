@@ -704,16 +704,16 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/prices/EditPrices.tsx:18
 	__( 'Bulk edit ticket prices', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/prices/buttons/EditModeButtons.tsx:18
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/prices/buttons/EditModeButtons.tsx:19
 	__( 'Edit all prices together', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/prices/buttons/EditModeButtons.tsx:19
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/prices/buttons/EditModeButtons.tsx:20
 	__( 'Edit all the selected ticket prices dynamically', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/prices/buttons/EditModeButtons.tsx:23
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/prices/buttons/EditModeButtons.tsx:24
 	__( 'Edit prices individually', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/prices/buttons/EditModeButtons.tsx:24
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/prices/buttons/EditModeButtons.tsx:25
 	__( 'Edit prices for each ticket individually', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/prices/buttons/FooterButtons.tsx:15
@@ -942,10 +942,10 @@ $generated_i18n_strings = array(
 	// Reference: packages/components/src/EntityDetailsPanel/EntityDetailsPanelSold.tsx:37
 	__( 'view approved registrations for this ticket.', 'event_espresso' ),
 
-	// Reference: packages/components/src/EntityList/EntityList.tsx:38
+	// Reference: packages/components/src/EntityList/EntityList.tsx:39
 	__( 'no results found', 'event_espresso' ),
 
-	// Reference: packages/components/src/EntityList/EntityList.tsx:39
+	// Reference: packages/components/src/EntityList/EntityList.tsx:40
 	__( 'try changing filter settings', 'event_espresso' ),
 
 	// Reference: packages/components/src/EntityList/filterBar/buttons/CardViewFilterButton.tsx:22
