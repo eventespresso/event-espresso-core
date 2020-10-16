@@ -317,11 +317,11 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/cardView/TicketDetailsPanel.tsx:32
 	__( 'reg list', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/cardView/Details.tsx:40
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/cardView/Details.tsx:43
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/cardView/Details.tsx:40
 	__( 'Edit description', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/cardView/Details.tsx:41
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/cardView/Details.tsx:44
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/cardView/Details.tsx:41
 	__( 'edit description…', 'event_espresso' ),
 
