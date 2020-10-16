@@ -212,7 +212,7 @@ $generated_i18n_strings = array(
 	__( 'End Date', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/DatesList.tsx:34
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/TableView.tsx:34
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/TableView.tsx:42
 	__( 'Event Dates', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/DatesList.tsx:37
@@ -826,7 +826,7 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/newTicketOptions/AddSingleTicket.tsx:33
 	__( 'Add a single ticket and assign the dates to it', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/tableView/TableView.tsx:32
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/tableView/TableView.tsx:40
 	__( 'Tickets', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:50
