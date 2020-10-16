@@ -220,12 +220,7 @@ class TableManager extends \EE_Base
         $table_name = $this->getTableAnalysis()->ensureTableNameHasPrefix($table_name);
         global $wpdb;
         $collation = $wpdb->get_charset_collate();
-        $SQL = "
-CREATE TABLE {$table_name} (
-{$create_sql}
-) ENGINE={$engine}
-{$collation}
-";
+        $SQL = "CREATE TABLE {$table_name} ({$create_sql}) ENGINE={$engine} {$collation}";
         // get $wpdb to echo errors, but buffer them. This way at least WE know an error
         // happened. And then we can choose to tell the end user
         $old_show_errors_policy = $wpdb->show_errors(true);
