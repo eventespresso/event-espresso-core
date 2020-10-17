@@ -5,6 +5,8 @@ use EventEspresso\core\domain\services\contexts\RequestTypeContextChecker;
 use EventEspresso\core\services\database\TableAnalysis;
 use EventEspresso\core\services\database\TableManager;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\loaders\LoaderInterface;
+use EventEspresso\core\services\request\RequestInterface;
 
 /**
  * EE's extension of WP_UnitTestCase for writing all EE_Tests
