@@ -141,6 +141,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
         // load factories
         EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_TESTS_DIR . 'includes/factories');
         $this->factory = new EE_UnitTest_Factory();
+        $this->loader = LoaderFactory::getLoader();
 
         //IF we detect we're running tests on WP4.1, then we need to make sure current_user_can tests pass by implementing
         //updating all_caps when `WP_User::add_cap` is run (which is fixed in later wp versions).  So we hook into the

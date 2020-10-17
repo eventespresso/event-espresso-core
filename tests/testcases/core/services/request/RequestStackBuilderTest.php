@@ -4,20 +4,20 @@ namespace EventEspresso\tests\testcases\core\services\request;
 
 use EE_Error;
 use EE_UnitTestCase;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
+use EventEspresso\core\services\request\InvalidRequestStackMiddlewareException;
 use EventEspresso\core\services\request\Request;
 use EventEspresso\core\services\request\Response;
 use EventEspresso\tests\mocks\core\services\request\RequestStackBuilderMock;
 use EventEspresso\tests\mocks\core\services\request\RequestStackCoreAppMock;
+use Exception;
+use InvalidArgumentException;
 
 class RequestStackBuilderTest extends EE_UnitTestCase
 {
-
-    /**
-     * @type LoaderInterface $loader
-     */
-    private $loader;
 
     /**
      * @var RequestStackBuilderMock $request_stack_builder
@@ -36,15 +36,14 @@ class RequestStackBuilderTest extends EE_UnitTestCase
 
 
     /**
-     * @throws \EE_Error
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \InvalidArgumentException
+     * @throws EE_Error
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
      */
     public function setUp()
     {
         parent::setUp();
-        $this->loader = LoaderFactory::getLoader();
         $this->request_stack_builder = $this->loader->getShared(
             'EventEspresso\tests\mocks\core\services\request\RequestStackBuilderMock',
             array($this->loader)
@@ -182,7 +181,7 @@ class RequestStackBuilderTest extends EE_UnitTestCase
      * @param array  $middleware_app
      * @param bool   $recurse
      * @param string $expected
-     * @throws \EventEspresso\core\services\request\InvalidRequestStackMiddlewareException
+     * @throws InvalidRequestStackMiddlewareException
      */
     public function testValidateMiddlewareAppDetails(array $middleware_app, $recurse, $expected)
     {
@@ -209,7 +208,7 @@ class RequestStackBuilderTest extends EE_UnitTestCase
 
     /**
      * @return void
-     * @throws \Exception
+     * @throws Exception
      */
     public function testRequestStackBuilderResolve()
     {
@@ -219,7 +218,7 @@ class RequestStackBuilderTest extends EE_UnitTestCase
 
     /**
      * @return void
-     * @throws \Exception
+     * @throws Exception
      */
     public function testRequestStackBuilderResolveWithLegacyMiddleware()
     {
@@ -230,7 +229,7 @@ class RequestStackBuilderTest extends EE_UnitTestCase
 
     /**
      * @return void
-     * @throws \Exception
+     * @throws Exception
      */
     public function TheBattleOfUtapau()
     {

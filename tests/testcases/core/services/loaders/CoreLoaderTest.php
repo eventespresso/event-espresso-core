@@ -16,18 +16,17 @@ use EventEspresso\core\services\loaders\LoaderInterface;
 class CoreLoaderTest extends EE_UnitTestCase
 {
 
-
     /**
-     * @var LoaderInterface $loader
+     * @var LoaderInterface $loader_mock
      */
-    private $loader;
+    private $loader_mock;
 
 
 
     public function setUp()
     {
         parent::setUp();
-        $this->loader = new CoreLoader(EE_Registry::instance());
+        $this->loader_mock = new CoreLoader(EE_Registry::instance());
     }
 
 
@@ -38,7 +37,7 @@ class CoreLoaderTest extends EE_UnitTestCase
     public function testBadConstruct()
     {
         try {
-            $this->loader = new CoreLoader(new stdClass());
+            $this->loader_mock = new CoreLoader(new stdClass());
             $this->fail('EventEspresso\core\services\loaders\CoreLoader should have thrown an InvalidArgumentException');
         } catch (Exception $e) {
             $this->assertTrue(true);
@@ -52,8 +51,8 @@ class CoreLoaderTest extends EE_UnitTestCase
      */
     public function testLoad()
     {
-        $fqcn = '\EventEspresso\core\services\address\formatters\AddressFormatter';
-        $formatter = $this->loader->load($fqcn);
+        $fqcn = 'EventEspresso\core\services\address\formatters\AddressFormatter';
+        $formatter = $this->loader_mock->load($fqcn);
         $this->assertInstanceOf(
             $fqcn,
             $formatter,
