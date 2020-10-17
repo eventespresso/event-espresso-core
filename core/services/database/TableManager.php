@@ -60,7 +60,6 @@ class TableManager extends \EE_Base
      * @param string $column_info
      * @return bool|false|int
      * @throws EE_Error
-     * @throws EE_Error
      */
     public function addColumn($table_name, $column_name, $column_info = 'INT UNSIGNED NOT NULL')
     {
@@ -84,7 +83,6 @@ class TableManager extends \EE_Base
      *
      * @param string $table_name
      * @return array
-     * @throws EE_Error
      * @throws EE_Error
      * @global wpdb $wpdb
      */
@@ -112,7 +110,6 @@ class TableManager extends \EE_Base
      * @param string $table_name
      * @return int
      * @throws EE_Error
-     * @throws EE_Error
      * @global wpdb $wpdb
      */
     public function dropTable($table_name)
@@ -133,7 +130,6 @@ class TableManager extends \EE_Base
      *
      * @param array $table_names
      * @return array of table names which we deleted
-     * @throws EE_Error
      * @throws EE_Error
      * @global WPDB $wpdb
      */
