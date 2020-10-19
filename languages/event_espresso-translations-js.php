@@ -147,8 +147,8 @@ $generated_i18n_strings = array(
 	__( 'Name must be at least three characters', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/multiStep/Container.tsx:22
-	/* translators: %d datetime id */
-	__( 'Edit datetime %d', 'event_espresso' ),
+	/* translators: %s datetime id */
+	__( 'Edit datetime %s', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/multiStep/Container.tsx:25
 	__( 'New Datetime', 'event_espresso' ),
@@ -943,10 +943,10 @@ $generated_i18n_strings = array(
 	// Reference: packages/components/src/DateTimeRangePicker/index.tsx:48
 	__( 'save', 'event_espresso' ),
 
-	// Reference: packages/components/src/DebugInfo/DebugInfo.tsx:36
+	// Reference: packages/components/src/DebugInfo/DebugInfo.tsx:38
 	__( 'Hide Debug Info', 'event_espresso' ),
 
-	// Reference: packages/components/src/DebugInfo/DebugInfo.tsx:36
+	// Reference: packages/components/src/DebugInfo/DebugInfo.tsx:38
 	__( 'Show Debug Info', 'event_espresso' ),
 
 	// Reference: packages/components/src/EditDateRangeButton/index.tsx:41
