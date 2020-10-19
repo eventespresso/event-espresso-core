@@ -1,19 +1,19 @@
 <?php
 /* THIS IS A GENERATED FILE. DO NOT EDIT DIRECTLY. */
 $generated_i18n_strings = array(
-	// Reference: packages/adapters/src/Pagination/Pagination.tsx:16
+	// Reference: packages/adapters/src/Pagination/constants.ts:6
 	__( '2', 'event_espresso' ),
 
-	// Reference: packages/adapters/src/Pagination/Pagination.tsx:17
+	// Reference: packages/adapters/src/Pagination/constants.ts:7
 	__( '6', 'event_espresso' ),
 
-	// Reference: packages/adapters/src/Pagination/Pagination.tsx:18
+	// Reference: packages/adapters/src/Pagination/constants.ts:8
 	__( '12', 'event_espresso' ),
 
-	// Reference: packages/adapters/src/Pagination/Pagination.tsx:19
+	// Reference: packages/adapters/src/Pagination/constants.ts:9
 	__( '24', 'event_espresso' ),
 
-	// Reference: packages/adapters/src/Pagination/Pagination.tsx:20
+	// Reference: packages/adapters/src/Pagination/constants.ts:10
 	__( '48', 'event_espresso' ),
 
 	// Reference: domains/blocks/src/components/AvatarImage.tsx:27
@@ -886,15 +886,21 @@ $generated_i18n_strings = array(
 	// Reference: packages/adapters/src/Pagination/ItemRender.tsx:9
 	__( 'previous', 'event_espresso' ),
 
-	// Reference: packages/adapters/src/Pagination/Pagination.tsx:20
-	/* translators: %s is per page value */
-	__( '%s / page', 'event_espresso' ),
-
-	// Reference: packages/adapters/src/Pagination/Pagination.tsx:40
+	// Reference: packages/adapters/src/Pagination/Pagination.tsx:34
 	__( 'pagination', 'event_espresso' ),
 
 	// Reference: packages/adapters/src/Pagination/PerPage.tsx:36
 	__( 'items per page', 'event_espresso' ),
+
+	// Reference: packages/adapters/src/Pagination/constants.ts:10
+	/* translators: %s is per page value */
+	__( '%s / page', 'event_espresso' ),
+
+	// Reference: packages/adapters/src/Pagination/constants.ts:13
+	__( 'Next Page', 'event_espresso' ),
+
+	// Reference: packages/adapters/src/Pagination/constants.ts:14
+	__( 'Previous Page', 'event_espresso' ),
 
 	// Reference: packages/adapters/src/Steps/Steps.tsx:30
 	__( 'Steps', 'event_espresso' ),
