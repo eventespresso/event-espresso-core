@@ -1,0 +1,1 @@
+<?php return array('dependencies' => array('eventespresso-adapters', 'eventespresso-constants', 'eventespresso-dates', 'eventespresso-i18n', 'eventespresso-richTextEditor', 'eventespresso-utils', 'react', 'wp-polyfill'), 'version' => '5e52396723ba9dd86e98d17810987310');
