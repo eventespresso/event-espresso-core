@@ -1,6 +1,21 @@
 <?php
 /* THIS IS A GENERATED FILE. DO NOT EDIT DIRECTLY. */
 $generated_i18n_strings = array(
+	// Reference: packages/adapters/src/Pagination/Pagination.tsx:16
+	__( '2', 'event_espresso' ),
+
+	// Reference: packages/adapters/src/Pagination/Pagination.tsx:17
+	__( '6', 'event_espresso' ),
+
+	// Reference: packages/adapters/src/Pagination/Pagination.tsx:18
+	__( '12', 'event_espresso' ),
+
+	// Reference: packages/adapters/src/Pagination/Pagination.tsx:19
+	__( '24', 'event_espresso' ),
+
+	// Reference: packages/adapters/src/Pagination/Pagination.tsx:20
+	__( '48', 'event_espresso' ),
+
 	// Reference: domains/blocks/src/components/AvatarImage.tsx:27
 	__( 'contact avatar', 'event_espresso' ),
 
@@ -871,10 +886,14 @@ $generated_i18n_strings = array(
 	// Reference: packages/adapters/src/Pagination/ItemRender.tsx:9
 	__( 'previous', 'event_espresso' ),
 
-	// Reference: packages/adapters/src/Pagination/Pagination.tsx:38
+	// Reference: packages/adapters/src/Pagination/Pagination.tsx:20
+	/* translators: %s is per page value */
+	__( '%s / page', 'event_espresso' ),
+
+	// Reference: packages/adapters/src/Pagination/Pagination.tsx:40
 	__( 'pagination', 'event_espresso' ),
 
-	// Reference: packages/adapters/src/Pagination/PerPage.tsx:38
+	// Reference: packages/adapters/src/Pagination/PerPage.tsx:36
 	__( 'items per page', 'event_espresso' ),
 
 	// Reference: packages/adapters/src/Steps/Steps.tsx:30
