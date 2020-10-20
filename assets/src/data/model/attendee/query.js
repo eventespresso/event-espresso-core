@@ -21,6 +21,7 @@ export const orderByMap = {
 
 /**
  * Described attributes for this model
+ *
  * @type {{attributes: *}}
  */
 export const queryDataTypes = {
@@ -39,6 +40,7 @@ export const queryDataTypes = {
 
 /**
  * Default attributes for this model
+ *
  * @type {
  * 	{
  * 		attributes: {
@@ -66,9 +68,9 @@ export const defaultQueryData = {
  * 						for the REST query for the provided alias
  */
 export const mapOrderBy = ( orderBy ) => {
-	return isUndefined( orderByMap[ orderBy ] ) ?
-		orderBy :
-		orderByMap[ orderBy ];
+	return isUndefined( orderByMap[ orderBy ] )
+		? orderBy
+		: orderByMap[ orderBy ];
 };
 
 /**
@@ -104,7 +106,9 @@ export const whereConditions = ( {
 	} else if ( forTicketId !== 0 && ! isNaN( forTicketId ) ) {
 		where.push( `where[Registration.Ticket.TKT_ID]=${ forTicketId }` );
 	} else if ( forDatetimeId !== 0 && ! isNaN( forDatetimeId ) ) {
-		where.push( `where[Registration.Ticket.Datetime.DTT_ID]=${ forDatetimeId }` );
+		where.push(
+			`where[Registration.Ticket.Datetime.DTT_ID]=${ forDatetimeId }`
+		);
 	} else if ( forEventId !== 0 && ! isNaN( forEventId ) ) {
 		where.push( `where[Registration.EVT_ID]=${ forEventId }` );
 	}
@@ -120,6 +124,7 @@ export const whereConditions = ( {
 
 /**
  * Return a query string for use by a REST request given a set of queryData.
+ *
  * @param { Object } queryData
  * @return { string }  Returns the query string.
  */

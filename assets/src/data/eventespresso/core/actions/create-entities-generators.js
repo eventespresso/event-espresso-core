@@ -53,11 +53,7 @@ export function* createEntity( modelName, entity ) {
  */
 export function* receiveEntityAndResolve( entity ) {
 	assertIsModelEntity( entity );
-	yield dispatch(
-		CORE_REDUCER_KEY,
-		'receiveEntity',
-		entity
-	);
+	yield dispatch( CORE_REDUCER_KEY, 'receiveEntity', entity );
 	yield dispatch(
 		'core/data',
 		'finishResolution',
@@ -69,17 +65,16 @@ export function* receiveEntityAndResolve( entity ) {
 
 /**
  * Same as receivesEntityAndResolve except this handles multiple entities.
+ *
  * @param {string} modelName
  * @param {Array<BaseEntity>}entities
  */
 export function* receiveEntitiesAndResolve( modelName, entities ) {
 	modelName = singularModelName( modelName );
-	const entityIds = entities.map(
-		( entity ) => {
-			assertIsModelEntity( entity );
-			return entity.id;
-		}
-	);
+	const entityIds = entities.map( ( entity ) => {
+		assertIsModelEntity( entity );
+		return entity.id;
+	} );
 	while ( entityIds.length > 0 ) {
 		yield dispatch(
 			'core/data',
@@ -93,7 +88,7 @@ export function* receiveEntitiesAndResolve( modelName, entities ) {
 		CORE_REDUCER_KEY,
 		'receiveEntityRecords',
 		modelName,
-		entities,
+		entities
 	);
 }
 
@@ -108,7 +103,7 @@ function assertIsModelEntity( entity ) {
 	if ( ! isModelEntity( entity ) ) {
 		throw new InvalidModelEntity(
 			'receiveEntityIdAndResolve expects an instance of BaseEntity',
-			entity,
+			entity
 		);
 	}
 }

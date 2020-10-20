@@ -24,10 +24,7 @@ import { appendCalculatedFieldsToPath } from './utils';
 export function* getEntityById( modelName, entityId, calculatedFields = [] ) {
 	modelName = singularModelName( modelName );
 	let path = `${ getEndpoint( modelName ) }/${ entityId }`;
-	path = appendCalculatedFieldsToPath(
-		path,
-		calculatedFields
-	);
+	path = appendCalculatedFieldsToPath( path, calculatedFields );
 	const entity = yield fetch( { path } );
 	const factory = yield resolveSelect(
 		SCHEMA_REDUCER_KEY,

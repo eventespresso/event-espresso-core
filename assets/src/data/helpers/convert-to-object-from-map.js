@@ -18,8 +18,12 @@ export const convertToObjectFromMap = ( mapObject ) => {
 	if ( ! isMap( mapObject ) ) {
 		return mapObject;
 	}
-	return mapReducer( mapObject, ( object, item, itemId ) => {
-		object[ itemId ] = item;
-		return object;
-	}, {} );
+	return mapReducer(
+		mapObject,
+		( object, item, itemId ) => {
+			object[ itemId ] = item;
+			return object;
+		},
+		{}
+	);
 };

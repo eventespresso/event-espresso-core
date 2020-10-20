@@ -30,13 +30,12 @@ const DEFAULT_EMPTY_ARRAY = [];
  * querystring does not exist in the state or the given items as an array or
  * object (depending on how they are stored in the state).
  */
-const retrieveItems =
-	(
-		state,
-		identifier,
-		queryString,
-		defaultEmpty = Set()
-	) => state.getIn( [ identifier, queryString ] ) || defaultEmpty;
+const retrieveItems = (
+	state,
+	identifier,
+	queryString,
+	defaultEmpty = Set()
+) => state.getIn( [ identifier, queryString ] ) || defaultEmpty;
 
 /**
  * Returns all the items for the given identifier and queryString
@@ -47,11 +46,8 @@ const retrieveItems =
  * @return {Array} Returns an array of items for the given model and query.
  */
 export const getItems = createSelector(
-	( state, identifier, queryString ) => retrieveItems(
-		state,
-		identifier,
-		queryString
-	).toArray(),
+	( state, identifier, queryString ) =>
+		retrieveItems( state, identifier, queryString ).toArray(),
 	( state, identifier, queryString ) => [
 		state.getIn( [ identifier, queryString ] ),
 	]
@@ -66,12 +62,10 @@ export const getItems = createSelector(
  * @return {Array<BaseEntity>} Returns array of entities.
  */
 export const getEntities = createSelector(
-	( state, modelName, queryString ) => retrieveItems(
-		state,
-		modelName,
-		queryString,
-		OrderedMap()
-	).valueSeq().toArray(),
+	( state, modelName, queryString ) =>
+		retrieveItems( state, modelName, queryString, OrderedMap() )
+			.valueSeq()
+			.toArray(),
 	( state, modelName, queryString ) => [
 		state.getIn( [ modelName, queryString ] ),
 	]
@@ -113,10 +107,10 @@ function isRequesting( state, identifier, selectorName, queryString ) {
 		sprintf(
 			__(
 				'The given identifier (%s) does not exist in the state.',
-				'event_espresso',
+				'event_espresso'
 			),
-			identifier,
-		),
+			identifier
+		)
 	);
 	return isResolving( REDUCER_KEY, selectorName, identifier, queryString );
 }
@@ -137,16 +131,13 @@ export function isRequestingItems( state, identifier, queryString ) {
 /**
  * Returns whether the get entities request is in the process of being resolved
  * or not.
+ *
  * @param {Immutable.Map} state
  * @param {string} modelName
  * @param {string} queryString
  * @return {boolean} True means entities (for the given model) are being
  * requested.
  */
-export function isRequestingEntities(
-	state,
-	modelName,
-	queryString
-) {
+export function isRequestingEntities( state, modelName, queryString ) {
 	return isRequesting( state, modelName, 'getEntities', queryString );
 }

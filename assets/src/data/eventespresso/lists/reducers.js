@@ -45,12 +45,10 @@ export function receiveListItems(
 			return state.delete( identifier );
 		case resetTypes.RESET_SPECIFIC_STATE_FOR_IDENTIFIER:
 			return state.deleteIn( [ identifier, queryString ] );
-		default :
+		default:
 			doUpdate = false;
 	}
-	return doUpdate ?
-		state.setIn( [ identifier, queryString ], items ) :
-		state;
+	return doUpdate ? state.setIn( [ identifier, queryString ], items ) : state;
 }
 
 export default receiveListItems;

@@ -25,9 +25,10 @@ export function* getLatestCheckin( registrationId, dateTimeId ) {
 	warning(
 		! isUndefined( registrationId ) && ! isUndefined( dateTimeId ),
 		'Both a registration id and datetime id are needed for getting the ' +
-		'latest checkin.'
+			'latest checkin.'
 	);
-	const path = `${ getEndpoint( 'checkin' ) }/` +
+	const path =
+		`${ getEndpoint( 'checkin' ) }/` +
 		`?where[REG_ID]=${ registrationId }&where[DTT_ID]=${ dateTimeId }` +
 		'&order_by[CHK_timestamp]=DESC&limit=1';
 	try {
@@ -63,7 +64,7 @@ export function* getLatestCheckin( registrationId, dateTimeId ) {
 		'receiveLatestCheckin',
 		newCheckin,
 		registrationId,
-		dateTimeId,
+		dateTimeId
 	);
 	return newCheckin;
 }

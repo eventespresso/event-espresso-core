@@ -48,7 +48,7 @@ const fetchThrowError = ( error ) => {
 
 describe( 'getLatestCheckin()', () => {
 	let fulfillment;
-	const reset = () => fulfillment = getLatestCheckin( 10, 20 );
+	const reset = () => ( fulfillment = getLatestCheckin( 10, 20 ) );
 	it( 'returns null when fetch produces error', () => {
 		fetchThrowError( { code: 500 } );
 		reset();
@@ -61,14 +61,13 @@ describe( 'getLatestCheckin()', () => {
 		reset();
 		const { value } = fulfillment.next();
 		expect( value ).toEqual(
-			fetch(
-				{
-					path: getEndpoint( 'checkin' ) +
-						'/?where[REG_ID]=10&where[DTT_ID]=20' +
-						'&order_by[CHK_timestamp]=DESC&limit=1',
-					method: 'GET',
-				}
-			)
+			fetch( {
+				path:
+					getEndpoint( 'checkin' ) +
+					'/?where[REG_ID]=10&where[DTT_ID]=20' +
+					'&order_by[CHK_timestamp]=DESC&limit=1',
+				method: 'GET',
+			} )
 		);
 	} );
 	it( 'returns null when fetch returns no checkin record', () => {
@@ -81,11 +80,7 @@ describe( 'getLatestCheckin()', () => {
 		fulfillment.next();
 		const { value } = fulfillment.next( [ AuthedCheckinResponse ] );
 		expect( value ).toEqual(
-			resolveSelect(
-				SCHEMA_REDUCER_KEY,
-				'getFactoryForModel',
-				'checkin',
-			)
+			resolveSelect( SCHEMA_REDUCER_KEY, 'getFactoryForModel', 'checkin' )
 		);
 	} );
 	it( 'returns null when factory is not retrievable', () => {
@@ -94,22 +89,24 @@ describe( 'getLatestCheckin()', () => {
 		expect( done ).toBe( true );
 		expect( console ).toHaveErrored();
 	} );
-	it( 'yields dispatch action for receiving checkin entity to the ' +
-		'state', () => {
-		reset();
-		fulfillment.next();
-		fulfillment.next( [ AuthedCheckinResponse ] );
-		const { value } = fulfillment.next( CheckinFactory );
-		expect( value ).toEqual(
-			dispatch(
-				REDUCER_KEY,
-				'receiveLatestCheckin',
-				AuthedCheckinEntity,
-				10,
-				20,
-			)
-		);
-	} );
+	it(
+		'yields dispatch action for receiving checkin entity to the ' + 'state',
+		() => {
+			reset();
+			fulfillment.next();
+			fulfillment.next( [ AuthedCheckinResponse ] );
+			const { value } = fulfillment.next( CheckinFactory );
+			expect( value ).toEqual(
+				dispatch(
+					REDUCER_KEY,
+					'receiveLatestCheckin',
+					AuthedCheckinEntity,
+					10,
+					20
+				)
+			);
+		}
+	);
 	it( 'returns new checkin record', () => {
 		const { value, done } = fulfillment.next();
 		expect( value ).toEqual( AuthedCheckinEntity );

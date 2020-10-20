@@ -25,18 +25,15 @@ export const appendCalculatedFieldsToPath = (
 	calculatedFields = castArray( calculatedFields );
 	if ( calculatedFields.length > 0 ) {
 		// setup fields string
-		const nameForQueryString = modelName !== undefined ?
-			modelNameForQueryString(
-				singularModelName( modelName )
-			) :
-			'';
-		const queryStrings = nameForQueryString ?
-			calculatedFields.map(
-				( field ) => {
+		const nameForQueryString =
+			modelName !== undefined
+				? modelNameForQueryString( singularModelName( modelName ) )
+				: '';
+		const queryStrings = nameForQueryString
+			? calculatedFields.map( ( field ) => {
 					return `${ nameForQueryString }.${ field }`;
-				},
-			) :
-			calculatedFields;
+			  } )
+			: calculatedFields;
 		path = addQueryArgs( path, { calculate: queryStrings.join() } );
 	}
 	return path;

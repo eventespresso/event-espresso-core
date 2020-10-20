@@ -87,9 +87,11 @@ export const validateType = ( type, value ) => {
  * @return {boolean}  True means this value is valid.
  */
 export const validateEnumType = ( type, enumValues, value ) => {
-	return validateType( type, value ) &&
+	return (
+		validateType( type, value ) &&
 		isArray( enumValues ) &&
-		enumValues.indexOf( value ) > -1;
+		enumValues.indexOf( value ) > -1
+	);
 };
 
 /**
@@ -119,30 +121,34 @@ export const isShallowValidValueForField = (
 	// if field is a primary Key field then we override the validation so it can
 	// be either string or number
 	if ( isPrimaryKeyField( fieldName, schema ) ) {
-		return validateType( 'string', fieldValue ) ||
-			validateType( 'number', fieldValue );
+		return (
+			validateType( 'string', fieldValue ) ||
+			validateType( 'number', fieldValue )
+		);
 	}
 	const isEnum = isEnumField( fieldName, schema );
 	const isValueObject = isValueObjectField( fieldName, schema );
-	fieldValue = expectValueObjects && isValueObject ?
-		maybeConvertFromValueObjectWithAssertions(
-			fieldName,
-			fieldValue,
-			schema
-		) :
-		fieldValue;
-	fieldValue = expectValueObjects &&
-			schema[ fieldName ].type === 'object' &&
-			isValueObject ?
-		{ raw: fieldValue } :
-		fieldValue;
-	const isValid = isEnum ?
-		validateEnumType(
-			schema[ fieldName ].type,
-			schema[ fieldName ].enum,
-			fieldValue
-		) :
-		validateType( schema[ fieldName ].type, fieldValue );
+	fieldValue =
+		expectValueObjects && isValueObject
+			? maybeConvertFromValueObjectWithAssertions(
+					fieldName,
+					fieldValue,
+					schema
+			  )
+			: fieldValue;
+	fieldValue =
+		expectValueObjects &&
+		schema[ fieldName ].type === 'object' &&
+		isValueObject
+			? { raw: fieldValue }
+			: fieldValue;
+	const isValid = isEnum
+		? validateEnumType(
+				schema[ fieldName ].type,
+				schema[ fieldName ].enum,
+				fieldValue
+		  )
+		: validateType( schema[ fieldName ].type, fieldValue );
 	// if isEnum and not valid, then lets bail with error
 	if ( isEnum && ! isValid ) {
 		throw new TypeError(
@@ -165,7 +171,7 @@ export const isShallowValidValueForField = (
  * @return {string} The validation type for the given field and instance.
  */
 export const validateTypeForField = ( fieldName, instance ) => {
-	return instance[ PRIVATE_PROPERTIES.VALIDATE_TYPES ][ fieldName ] ?
-		instance[ PRIVATE_PROPERTIES.VALIDATE_TYPES ][ fieldName ] :
-		VALIDATE_TYPE.RAW;
+	return instance[ PRIVATE_PROPERTIES.VALIDATE_TYPES ][ fieldName ]
+		? instance[ PRIVATE_PROPERTIES.VALIDATE_TYPES ][ fieldName ]
+		: VALIDATE_TYPE.RAW;
 };

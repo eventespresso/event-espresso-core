@@ -21,6 +21,7 @@ export const nowDateAndTime = moment();
 
 /**
  * Described attributes for this model
+ *
  * @type {{attributes: *}}
  */
 export const queryDataTypes = {
@@ -40,6 +41,7 @@ export const queryDataTypes = {
 
 /**
  * Default attributes for this model
+ *
  * @type {
  * 	{
  * 		attributes: {
@@ -74,9 +76,9 @@ export const mapOrderBy = ( orderBy ) => {
 		start_date: 'DTT_EVT_start',
 		end_date: 'DTT_EVT_end',
 	};
-	return isUndefined( orderByMap[ orderBy ] ) ?
-		orderBy :
-		orderByMap[ orderBy ];
+	return isUndefined( orderByMap[ orderBy ] )
+		? orderBy
+		: orderByMap[ orderBy ];
 };
 
 /**
@@ -97,21 +99,32 @@ export const whereConditions = ( {
 	const where = [];
 	if ( ! showExpired ) {
 		where.push(
-			'where[DTT_EVT_end**expired][]=' + GREATER_THAN +
-			'&where[DTT_EVT_end**expired][]=' +
-			nowDateAndTime.local().format()
+			'where[DTT_EVT_end**expired][]=' +
+				GREATER_THAN +
+				'&where[DTT_EVT_end**expired][]=' +
+				nowDateAndTime.local().format()
 		);
 	}
 	if ( month && month !== 'none' ) {
 		where.push(
-			'where[DTT_EVT_start][]=' + GREATER_THAN_AND_EQUAL +
-			'&where[DTT_EVT_start][]=' +
-			moment().month( month ).startOf( 'month' ).local().format()
+			'where[DTT_EVT_start][]=' +
+				GREATER_THAN_AND_EQUAL +
+				'&where[DTT_EVT_start][]=' +
+				moment()
+					.month( month )
+					.startOf( 'month' )
+					.local()
+					.format()
 		);
 		where.push(
-			'where[DTT_EVT_end][]=' + LESS_THAN_AND_EQUAL +
-			'&where[DTT_EVT_end][]=' +
-			moment().month( month ).endOf( 'month' ).local().format()
+			'where[DTT_EVT_end][]=' +
+				LESS_THAN_AND_EQUAL +
+				'&where[DTT_EVT_end][]=' +
+				moment()
+					.month( month )
+					.endOf( 'month' )
+					.local()
+					.format()
 		);
 	}
 	if ( parseInt( forEventId, 10 ) !== 0 ) {
@@ -122,6 +135,7 @@ export const whereConditions = ( {
 
 /**
  * Return a query string for use by a REST request given a set of queryData.
+ *
  * @param { Object } queryData
  * @return { string }  Returns the query string.
  */

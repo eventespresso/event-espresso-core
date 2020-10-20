@@ -12,10 +12,7 @@ import {
 /**
  * Internal imports
  */
-import {
-	isDateTimeField,
-	isMoneyField,
-} from './booleans';
+import { isDateTimeField, isMoneyField } from './booleans';
 import {
 	isShallowValidValueForField,
 	validateEnumType,
@@ -56,9 +53,7 @@ export const maybeAssertValueObject = ( fieldName, fieldValue, schema ) => {
  */
 export const assertValidSchema = ( schema ) => {
 	if ( ! isSchema( schema ) ) {
-		throw new InvalidSchema(
-			'This is an invalid schema for a model.',
-		);
+		throw new InvalidSchema( 'This is an invalid schema for a model.' );
 	}
 };
 
@@ -76,15 +71,15 @@ export const assertValidSchema = ( schema ) => {
 export const assertValidSchemaFieldProperties = (
 	modelName,
 	fieldName,
-	schema,
+	schema
 ) => {
 	if ( isUndefined( schema[ fieldName ] ) ) {
 		throw new TypeError(
 			sprintf(
 				'The given "%s" fieldName does not have a defined schema for the model "%s"',
 				fieldName,
-				modelName,
-			),
+				modelName
+			)
 		);
 	}
 	if ( schema[ fieldName ].type === 'object' ) {
@@ -112,7 +107,7 @@ export const assertValidSchemaFieldProperties = (
 					'The schema for the field %s on the model %s is of type "object" and has a properties.raw property, however there is no "type" defined for the raw property.',
 					fieldName,
 					modelName
-				),
+				)
 			);
 		}
 	}
@@ -145,39 +140,37 @@ export const assertValidSchemaFieldProperties = (
 export const assertValidValueForPreparedField = (
 	fieldName,
 	fieldValue,
-	instance,
+	instance
 ) => {
 	const { schema } = instance;
-	let isValid = isShallowValidValueForField(
-		fieldName,
-		fieldValue,
-		schema,
-	);
-	if ( ! isValid && schema[ fieldName ].type === 'object' &&
+	let isValid = isShallowValidValueForField( fieldName, fieldValue, schema );
+	if (
+		! isValid &&
+		schema[ fieldName ].type === 'object' &&
 		schema[ fieldName ].properties
 	) {
-		isValid = schema[ fieldName ].properties.raw.enum ?
-			validateEnumType(
-				schema[ fieldName ].properties.raw.type,
-				schema[ fieldName ].properties.raw.enum,
-				fieldValue,
-			) :
-			validateType(
-				schema[ fieldName ].properties.raw.type,
-				maybeConvertFromValueObjectWithAssertions(
-					fieldName,
-					fieldValue,
-					schema
-				)
-			);
+		isValid = schema[ fieldName ].properties.raw.enum
+			? validateEnumType(
+					schema[ fieldName ].properties.raw.type,
+					schema[ fieldName ].properties.raw.enum,
+					fieldValue
+			  )
+			: validateType(
+					schema[ fieldName ].properties.raw.type,
+					maybeConvertFromValueObjectWithAssertions(
+						fieldName,
+						fieldValue,
+						schema
+					)
+			  );
 		if ( ! isValid ) {
 			throw new TypeError(
 				sprintf(
 					'The given "%1$s" field  is not valid for the defined schema.  It\'s `raw` property Value (%2$s) is not the correct expected type (%3$s).',
 					fieldName,
 					fieldValue,
-					schema[ fieldName ].properties.raw.type,
-				),
+					schema[ fieldName ].properties.raw.type
+				)
 			);
 		}
 	}
@@ -187,8 +180,8 @@ export const assertValidValueForPreparedField = (
 				'The given "%1$s" field\'s Value (%2$s) is not valid for the defined schema type (%3$s).',
 				fieldName,
 				fieldValue,
-				schema[ fieldName ].type,
-			),
+				schema[ fieldName ].type
+			)
 		);
 	}
 };
@@ -213,7 +206,7 @@ export const assertValidFieldAndValueAgainstSchema = (
 	modelName,
 	fieldName,
 	fieldValue,
-	instance,
+	instance
 ) => {
 	const schema = instance.schema;
 	const validationType = validateTypeForField( fieldName, instance );
@@ -222,11 +215,12 @@ export const assertValidFieldAndValueAgainstSchema = (
 		fieldName,
 		fieldValue,
 		schema,
-		false,
+		false
 	);
 	// account for fieldName fieldValues that have property schema. For Model
 	// Entities, only the VALIDATE_TYPE property is cared about.
-	if ( schema[ fieldName ].type === 'object' &&
+	if (
+		schema[ fieldName ].type === 'object' &&
 		schema[ fieldName ].properties
 	) {
 		if ( isUndefined( fieldValue[ validationType ] ) ) {
@@ -234,20 +228,20 @@ export const assertValidFieldAndValueAgainstSchema = (
 				sprintf(
 					'The given "%1$s" value is not valid for the defined schema. It must be an object and it must have a `%2$s` key.',
 					fieldName,
-					validationType,
-				),
+					validationType
+				)
 			);
 		}
-		isValid = schema[ fieldName ].properties[ validationType ].enum ?
-			validateEnumType(
-				schema[ fieldName ].properties[ validationType ].type,
-				schema[ fieldName ].properties.raw.enum,
-				fieldValue[ validationType ],
-			) :
-			validateType(
-				schema[ fieldName ].properties[ validationType ].type,
-				fieldValue[ validationType ]
-			);
+		isValid = schema[ fieldName ].properties[ validationType ].enum
+			? validateEnumType(
+					schema[ fieldName ].properties[ validationType ].type,
+					schema[ fieldName ].properties.raw.enum,
+					fieldValue[ validationType ]
+			  )
+			: validateType(
+					schema[ fieldName ].properties[ validationType ].type,
+					fieldValue[ validationType ]
+			  );
 		if ( ! isValid ) {
 			throw new TypeError(
 				sprintf(
@@ -255,8 +249,8 @@ export const assertValidFieldAndValueAgainstSchema = (
 					fieldName,
 					validationType,
 					fieldValue,
-					schema[ fieldName ].properties[ validationType ].type,
-				),
+					schema[ fieldName ].properties[ validationType ].type
+				)
 			);
 		}
 	}
@@ -266,8 +260,8 @@ export const assertValidFieldAndValueAgainstSchema = (
 				'The given "%1$s" field\'s value (%2$s) is not valid for the defined schema type (%3$s).',
 				fieldName,
 				fieldValue,
-				schema[ fieldName ].type,
-			),
+				schema[ fieldName ].type
+			)
 		);
 	}
 };

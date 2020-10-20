@@ -21,46 +21,14 @@ jest.mock( '@eventespresso/model', () => ( {
 describe( 'createActions()', () => {
 	const newActions = createActions( actions );
 	const expectedActions = [
-		[
-			'createEvent',
-			[ EventEntities.a ],
-			'generator',
-		],
-		[
-			'deleteEventById',
-			[ 10 ],
-			'generator',
-		],
-		[
-			'trashEventById',
-			[ 10 ],
-			'generator',
-		],
-		[
-			'persistEventRecord',
-			[ EventEntities.a ],
-			'generator',
-		],
-		[
-			'persistForEventId',
-			[ 10 ],
-			'generator',
-		],
-		[
-			'persistForEventIds',
-			[ 10, 20 ],
-			'generator',
-		],
-		[
-			'persistDeletesForEvent',
-			[],
-			'generator',
-		],
-		[
-			'persistTrashesForEvent',
-			[],
-			'generator',
-		],
+		[ 'createEvent', [ EventEntities.a ], 'generator' ],
+		[ 'deleteEventById', [ 10 ], 'generator' ],
+		[ 'trashEventById', [ 10 ], 'generator' ],
+		[ 'persistEventRecord', [ EventEntities.a ], 'generator' ],
+		[ 'persistForEventId', [ 10 ], 'generator' ],
+		[ 'persistForEventIds', [ 10, 20 ], 'generator' ],
+		[ 'persistDeletesForEvent', [], 'generator' ],
+		[ 'persistTrashesForEvent', [], 'generator' ],
 		[
 			'removeEventById',
 			[ 10 ],
@@ -88,11 +56,7 @@ describe( 'createActions()', () => {
 				entityId: 10,
 			},
 		],
-		[
-			'receiveEventsAndResolve',
-			[ [ 10, 20 ] ],
-			'generator',
-		],
+		[ 'receiveEventsAndResolve', [ [ 10, 20 ] ], 'generator' ],
 		[
 			'receiveAndReplaceEventRecords',
 			[ [ 10, 20 ] ],
@@ -122,27 +86,27 @@ describe( 'createActions()', () => {
 		],
 	];
 	describe( 'creates expected actions for given model name', () => {
-		expectedActions.forEach( ( [
-			expectedAction,
-			args,
-			expectedResponse,
-		] ) => {
-			describe( expectedAction + '()', () => {
-				it( 'is defined.', () => {
-					expect( newActions[ expectedAction ] ).toBeDefined();
+		expectedActions.forEach(
+			( [ expectedAction, args, expectedResponse ] ) => {
+				describe( expectedAction + '()', () => {
+					it( 'is defined.', () => {
+						expect( newActions[ expectedAction ] ).toBeDefined();
+					} );
+					it( 'returns expectedValue', () => {
+						if ( expectedResponse === 'generator' ) {
+							expect(
+								isGenerator(
+									newActions[ expectedAction ]( ...args )
+								)
+							).toBe( true );
+						} else {
+							expect(
+								newActions[ expectedAction ]( ...args )
+							).toEqual( expectedResponse );
+						}
+					} );
 				} );
-				it( 'returns expectedValue', () => {
-					if ( expectedResponse === 'generator' ) {
-						expect( isGenerator(
-							newActions[ expectedAction ]( ...args )
-						) ).toBe( true );
-					} else {
-						expect( newActions[ expectedAction ](
-							...args
-						) ).toEqual( expectedResponse );
-					}
-				} );
-			} );
-		} );
+			}
+		);
 	} );
 } );

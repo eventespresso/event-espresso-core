@@ -21,19 +21,16 @@ export const formatDatesOnEntities = (
 	entities = [],
 	entityDateFields = [],
 	format = dateFormats.DATE_TIME_FORMAT_ISO8601,
-	local = true,
+	local = true
 ) => {
 	if ( isEmpty( entities ) || isEmpty( entityDateFields ) ) {
 		return entities;
 	}
 	const formattedEntities = [];
 	entities.forEach( ( entity ) => {
-		formattedEntities.push( formatDatesOnEntity(
-			entity,
-			entityDateFields,
-			format,
-			local,
-		) );
+		formattedEntities.push(
+			formatDatesOnEntity( entity, entityDateFields, format, local )
+		);
 	} );
 	return formattedEntities;
 };
@@ -54,7 +51,7 @@ export const formatDatesOnEntity = (
 	entity = {},
 	entityDateFields = [],
 	format = dateFormats.DATE_TIME_FORMAT_ISO8601,
-	local = true,
+	local = true
 ) => {
 	const newEntity = { ...entity };
 	entityDateFields.forEach( ( dateField ) => {
@@ -62,7 +59,7 @@ export const formatDatesOnEntity = (
 			newEntity[ dateField ] = dateFormats.formatDateString(
 				newEntity[ dateField ],
 				format,
-				local,
+				local
 			);
 		}
 	} );
@@ -84,13 +81,13 @@ export const formatDatesOnEntity = (
 export const formatEntitiesDatesToMysql = (
 	entities = [],
 	entityDateFields = [],
-	local = true,
+	local = true
 ) => {
 	return formatDatesOnEntities(
 		entities,
 		entityDateFields,
 		dateFormats.DATE_TIME_FORMAT_MYSQL,
-		local,
+		local
 	);
 };
 
@@ -108,13 +105,13 @@ export const formatEntitiesDatesToMysql = (
 export const formatEntityDatesToMysql = (
 	entity = {},
 	entityDateFields = [],
-	local = true,
+	local = true
 ) => {
 	return formatDatesOnEntity(
 		entity,
 		entityDateFields,
 		dateFormats.DATE_TIME_FORMAT_MYSQL,
-		local,
+		local
 	);
 };
 
@@ -133,13 +130,13 @@ export const formatEntityDatesToMysql = (
 export const formatEntitiesDatesToSite = (
 	entities = [],
 	entityDateFields = [],
-	local = true,
+	local = true
 ) => {
 	return formatDatesOnEntities(
 		entities,
 		entityDateFields,
 		dateFormats.DATE_TIME_FORMAT_SITE,
-		local,
+		local
 	);
 };
 
@@ -157,13 +154,13 @@ export const formatEntitiesDatesToSite = (
 export const formatEntityDatesToSite = (
 	entity = {},
 	entityDateFields = [],
-	local = true,
+	local = true
 ) => {
 	return formatDatesOnEntity(
 		entity,
 		entityDateFields,
 		dateFormats.DATE_TIME_FORMAT_SITE,
-		local,
+		local
 	);
 };
 
@@ -179,17 +176,16 @@ export const formatEntityDatesToSite = (
  */
 export const convertEntitiesDatesToMoment = (
 	entities = [],
-	entityDateFields = [],
+	entityDateFields = []
 ) => {
 	if ( isEmpty( entities ) || isEmpty( entityDateFields ) ) {
 		return entities;
 	}
 	const formattedEntities = [];
 	entities.forEach( ( entity ) => {
-		formattedEntities.push( convertEntityDatesToMoment(
-			entity,
-			entityDateFields,
-		) );
+		formattedEntities.push(
+			convertEntityDatesToMoment( entity, entityDateFields )
+		);
 	} );
 	return formattedEntities;
 };
@@ -206,13 +202,13 @@ export const convertEntitiesDatesToMoment = (
  */
 export const convertEntityDatesToMoment = (
 	entity = {},
-	entityDateFields = [],
+	entityDateFields = []
 ) => {
 	const newEntity = { ...entity };
 	entityDateFields.forEach( ( dateField ) => {
 		if ( newEntity[ dateField ] ) {
 			newEntity[ dateField ] = dateFormats.stringToMoment(
-				newEntity[ dateField ],
+				newEntity[ dateField ]
 			);
 		}
 	} );

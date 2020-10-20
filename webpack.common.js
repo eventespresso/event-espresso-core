@@ -47,10 +47,7 @@ const rulesConfig = {
 };
 
 const moduleConfigWithJsAndCssRules = {
-	rules: [
-		rulesConfig.jsRulesConfig,
-		rulesConfig.cssRulesConfig,
-	],
+	rules: [ rulesConfig.jsRulesConfig, rulesConfig.cssRulesConfig ],
 };
 
 const moduleConfigWithJsRules = { rules: [ rulesConfig.jsRulesConfig ] };
@@ -168,9 +165,7 @@ const config = [
 	},
 	{
 		entry: {
-			'ee-wp-plugins-page': [
-				assets + 'wp-plugins-page/index.js',
-			],
+			'ee-wp-plugins-page': [ assets + 'wp-plugins-page/index.js' ],
 		},
 		output: {
 			filename: '[name].[chunkhash].dist.js',
@@ -183,9 +178,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-data-stores': [
-				assets + 'data/index.js',
-			],
+			'eventespresso-data-stores': [ assets + 'data/index.js' ],
 		},
 		output: {
 			filename: '[name].[chunkhash].dist.js',
@@ -198,9 +191,7 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-core-blocks': [
-				assets + 'blocks/index.js',
-			],
+			'eventespresso-core-blocks': [ assets + 'blocks/index.js' ],
 		},
 		output: {
 			filename: '[name].[chunkhash].dist.js',

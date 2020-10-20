@@ -20,10 +20,10 @@ export const assertEntityHasKey = ( key, entity, message = '' ) => {
 		message = sprintf(
 			__(
 				'The provided entity (%s) does not have the given property (%s)',
-				'event_espresso',
+				'event_espresso'
 			),
 			entity,
-			key,
+			key
 		);
 	}
 	if ( ! entity.hasOwnProperty( key ) ) {
@@ -57,10 +57,10 @@ export const assertImmutableObjectHasPath = (
 		message = sprintf(
 			__(
 				'The provided immutable object (%s) does not have the given path (%s)',
-				'event_espresso',
+				'event_espresso'
 			),
 			immutable,
-			path,
+			path
 		);
 	}
 	if ( ! immutable.hasIn( path ) ) {
@@ -98,7 +98,7 @@ export const assertIsNotEmpty = ( items, message = '' ) => {
 	if ( message === '' ) {
 		message = __(
 			'The provided items must not be empty',
-			'event_espresso',
+			'event_espresso'
 		);
 	}
 	if ( isEmpty( items ) ) {

@@ -24,10 +24,13 @@ describe( 'Currency Value Object', () => {
 		} );
 		it( 'with a valid config has expected props', () => {
 			expect( currency ).not.toThrow();
-			Object.getOwnPropertyNames( CURRENCY_CONFIG ).forEach( ( property ) => {
-				expect( currency()[ property ] )
-					.toEqual( CURRENCY_CONFIG[ property ] );
-			} );
+			Object.getOwnPropertyNames( CURRENCY_CONFIG ).forEach(
+				( property ) => {
+					expect( currency()[ property ] ).toEqual(
+						CURRENCY_CONFIG[ property ]
+					);
+				}
+			);
 		} );
 		it( 'cannot have properties changed after construction', () => {
 			const testCurrency = currency();
@@ -51,49 +54,46 @@ describe( 'Currency Value Object', () => {
 				[ 'decimalPlaces', 2 ],
 				[ 'thousandsSeparator', ',' ],
 				[ 'subunits', 100 ],
-			].forEach( ( [
-				propertyName,
-				expectedValue,
-			] ) => {
-				it( 'has expected value for the ' + propertyName +
-					' property', () => {
-					expect( testCurrency[ propertyName ] )
-						.toBe( expectedValue );
-				} );
-			} );
-		} );
-		describe( 'toAccountingSettings()', () => {
-			it( 'returns expected shape for object', () => {
-				expect( currency().toAccountingSettings() ).toEqual(
-					{
-						currency: {
-							symbol: '$',
-							format: {
-								pos: '%s%v',
-								neg: '- $s%v',
-								zero: '%s%v',
-							},
-							decimal: '.',
-							thousand: ',',
-							precision: 2,
-						},
-						number: {
-							decimal: '.',
-							thousand: ',',
-							precision: 2,
-						},
+			].forEach( ( [ propertyName, expectedValue ] ) => {
+				it(
+					'has expected value for the ' + propertyName + ' property',
+					() => {
+						expect( testCurrency[ propertyName ] ).toBe(
+							expectedValue
+						);
 					}
 				);
 			} );
 		} );
+		describe( 'toAccountingSettings()', () => {
+			it( 'returns expected shape for object', () => {
+				expect( currency().toAccountingSettings() ).toEqual( {
+					currency: {
+						symbol: '$',
+						format: {
+							pos: '%s%v',
+							neg: '- $s%v',
+							zero: '%s%v',
+						},
+						decimal: '.',
+						thousand: ',',
+						precision: 2,
+					},
+					number: {
+						decimal: '.',
+						thousand: ',',
+						precision: 2,
+					},
+				} );
+			} );
+		} );
 		describe( 'toJSON()', () => {
 			it( 'returns expected string when converted to JSON', () => {
-				expect( JSON.stringify( SiteCurrency( CURRENCY_CONFIG ) ) )
-					.toEqual(
-						JSON.stringify(
-							{ ...CURRENCY_CONFIG, decimalPlaces: 2 }
-						)
-					);
+				expect(
+					JSON.stringify( SiteCurrency( CURRENCY_CONFIG ) )
+				).toEqual(
+					JSON.stringify( { ...CURRENCY_CONFIG, decimalPlaces: 2 } )
+				);
 			} );
 		} );
 	} );
@@ -121,12 +121,12 @@ describe( 'Currency Value Object', () => {
 						expect( getTestObject ).toThrow( TypeError );
 					} );
 					it( 'throws Type Error for invalid property', () => {
-						testConfig[ property ] =
-							propertiesToTest[ property ];
+						testConfig[ property ] = propertiesToTest[ property ];
 						expect( getTestObject ).toThrow( TypeError );
 					} );
 				} );
-			} );
+			}
+		);
 	} );
 } );
 

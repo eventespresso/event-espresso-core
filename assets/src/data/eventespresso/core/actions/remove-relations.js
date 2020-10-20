@@ -59,7 +59,7 @@ function removeRelatedEntities(
 	modelName,
 	entityId,
 	relationName,
-	relatedEntityIds,
+	relatedEntityIds
 ) {
 	modelName = singularModelName( modelName );
 	relationName = singularModelName( relationName );
@@ -101,17 +101,18 @@ function removeDirtyRelationForType(
 ) {
 	modelName = singularModelName( modelName );
 	relationName = singularModelName( relationName );
-	const type = addRelation ? types.REMOVE_DIRTY_RELATION_ADDITION :
-		types.REMOVE_DIRTY_RELATION_DELETION;
+	const type = addRelation
+		? types.REMOVE_DIRTY_RELATION_ADDITION
+		: types.REMOVE_DIRTY_RELATION_DELETION;
 	return {
 		relationName,
 		relationEntityId,
 		modelName,
 		entityId,
 		type,
-		queueType: addRelation ?
-			TYPE_QUEUE_RELATION_ADD :
-			TYPE_QUEUE_RELATION_DELETE,
+		queueType: addRelation
+			? TYPE_QUEUE_RELATION_ADD
+			: TYPE_QUEUE_RELATION_DELETE,
 	};
 }
 
@@ -138,7 +139,7 @@ function removeDirtyRelationAddition(
 	relationName,
 	relationEntityId,
 	modelName,
-	entityId,
+	entityId
 ) {
 	modelName = singularModelName( modelName );
 	relationName = singularModelName( relationName );
@@ -146,7 +147,7 @@ function removeDirtyRelationAddition(
 		relationName,
 		relationEntityId,
 		modelName,
-		entityId,
+		entityId
 	);
 }
 
@@ -173,7 +174,7 @@ function removeDirtyRelationDeletion(
 	relationName,
 	relationEntityId,
 	modelName,
-	entityId,
+	entityId
 ) {
 	modelName = singularModelName( modelName );
 	relationName = singularModelName( relationName );
@@ -182,7 +183,7 @@ function removeDirtyRelationDeletion(
 		relationEntityId,
 		modelName,
 		entityId,
-		false,
+		false
 	);
 }
 

@@ -16,6 +16,7 @@ import * as statusModel from '../status/constants';
 
 /**
  * Described attributes for this model
+ *
  * @type {{attributes: *}}
  */
 export const queryDataTypes = {
@@ -23,13 +24,12 @@ export const queryDataTypes = {
 	forAttendeeId: PropTypes.number,
 	forTransactionId: PropTypes.number,
 	forTicketId: PropTypes.number,
-	forStatusId: PropTypes.oneOf( values( statusModel.REGISTRATION_STATUS_ID ) ),
+	forStatusId: PropTypes.oneOf(
+		values( statusModel.REGISTRATION_STATUS_ID )
+	),
 	queryData: PropTypes.shape( {
 		limit: PropTypes.number,
-		orderBy: PropTypes.oneOf( [
-			'REG_ID',
-			'REG_date',
-		] ),
+		orderBy: PropTypes.oneOf( [ 'REG_ID', 'REG_date' ] ),
 		order: PropTypes.oneOf( ALLOWED_ORDER_VALUES ),
 	} ),
 };
@@ -43,6 +43,7 @@ export const optionsEntityMap = {
 
 /**
  * Default attributes for this model
+ *
  * @type {
  * 	{
  * 		attributes: {
@@ -75,9 +76,9 @@ export const mapOrderBy = ( orderBy ) => {
 		reg_id: 'REG_ID',
 		reg_date: 'REG_date',
 	};
-	return isUndefined( orderByMap[ orderBy ] ) ?
-		orderBy :
-		orderByMap[ orderBy ];
+	return isUndefined( orderByMap[ orderBy ] )
+		? orderBy
+		: orderByMap[ orderBy ];
 };
 
 /**
@@ -122,6 +123,7 @@ export const whereConditions = ( {
 
 /**
  * Return a query string for use by a REST request given a set of queryData.
+ *
  * @param { Object } queryData
  * @return { string }  Returns the query string.
  */

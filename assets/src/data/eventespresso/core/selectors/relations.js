@@ -11,10 +11,7 @@ import { Map, Set } from 'immutable';
 /**
  * Internal imports
  */
-import {
-	getEntitiesByIds,
-	getEntityById,
-} from './entities';
+import { getEntitiesByIds, getEntityById } from './entities';
 
 const DEFAULT_EMPTY_SET = Set();
 
@@ -36,13 +33,13 @@ const getRelationIdsForEntityRelation = createSelector(
 		const modelName = singularModelName( entity.modelName );
 		relationName = singularModelName( relationName );
 		if ( state.relations.hasIn( [ modelName, entity.id, relationName ] ) ) {
-			return ( state.relations.getIn(
-				[
+			return (
+				state.relations.getIn( [
 					modelName,
 					entity.id,
 					relationName,
-				],
-			) || Set() ).toArray();
+				] ) || Set()
+			).toArray();
 		}
 		return [];
 	},
@@ -53,13 +50,7 @@ const getRelationIdsForEntityRelation = createSelector(
 		const modelName = singularModelName( entity.modelName ),
 			id = entity.id;
 		relationName = singularModelName( relationName );
-		return [
-			state.relations.getIn( [
-				modelName,
-				id,
-				relationName,
-			] ),
-		];
+		return [ state.relations.getIn( [ modelName, id, relationName ] ) ];
 	}
 );
 
@@ -80,11 +71,7 @@ const getRelatedEntities = createSelector(
 		return getEntitiesByIds(
 			state,
 			relationModelName,
-			getRelationIdsForEntityRelation(
-				state,
-				entity,
-				relationModelName
-			)
+			getRelationIdsForEntityRelation( state, entity, relationModelName )
 		);
 	},
 	( state, entity, relationName ) => [
@@ -125,11 +112,7 @@ export const getRelatedEntitiesForIds = createSelector(
 		modelName = singularModelName( modelName );
 		relationName = singularModelName( relationName );
 		entityIds.forEach( ( entityId ) => {
-			const entity = getEntityById(
-				state,
-				modelName,
-				entityId
-			);
+			const entity = getEntityById( state, modelName, entityId );
 			const relatedEntities = getRelatedEntities(
 				state,
 				entity,
@@ -142,7 +125,7 @@ export const getRelatedEntitiesForIds = createSelector(
 	( state, modelName, entityIds, relationName ) => [
 		...getEntitiesByIds.getDependants(
 			state,
-			singularModelName( modelName ),
+			singularModelName( modelName )
 		),
 		...getEntitiesByIds.getDependants(
 			state,
@@ -181,8 +164,9 @@ const lookupRelationsQueuedForModel = ( state, modelName, type = 'add' ) => {
 	}
 	if ( state.dirty.relations.hasIn( [ 'index', modelName ] ) ) {
 		let relations = Map();
-		state.dirty.relations.getIn( [ 'index', modelName ] ).forEach(
-			( relationMap, entityId ) => {
+		state.dirty.relations
+			.getIn( [ 'index', modelName ] )
+			.forEach( ( relationMap, entityId ) => {
 				relationMap.forEach( ( relationRecord, model ) => {
 					if ( relationRecord.has( type ) ) {
 						relations = relations.setIn(
@@ -191,8 +175,7 @@ const lookupRelationsQueuedForModel = ( state, modelName, type = 'add' ) => {
 						);
 					}
 				} );
-			}
-		);
+			} );
 		relationsQueued = relationsQueued.mergeDeep( relations );
 	}
 	return relationsQueued.toJS();
@@ -222,8 +205,14 @@ const getRelationAdditionsQueuedForModel = createSelector(
 		return lookupRelationsQueuedForModel( state, modelName );
 	},
 	( state, modelName ) => [
-		state.dirty.relations.getIn( [ 'add', singularModelName( modelName ) ] ),
-		state.dirty.relations.getIn( [ 'index', singularModelName( modelName ) ] ),
+		state.dirty.relations.getIn( [
+			'add',
+			singularModelName( modelName ),
+		] ),
+		state.dirty.relations.getIn( [
+			'index',
+			singularModelName( modelName ),
+		] ),
 	]
 );
 
@@ -243,10 +232,14 @@ const getRelationDeletionsQueuedForModel = createSelector(
 		return lookupRelationsQueuedForModel( state, modelName, 'delete' );
 	},
 	( state, modelName ) => [
-		state.dirty.relations.getIn(
-			[ 'delete', singularModelName( modelName ) ]
-		),
-		state.dirty.relations.getIn( [ 'index', singularModelName( modelName ) ] ),
+		state.dirty.relations.getIn( [
+			'delete',
+			singularModelName( modelName ),
+		] ),
+		state.dirty.relations.getIn( [
+			'index',
+			singularModelName( modelName ),
+		] ),
 	]
 );
 
@@ -263,25 +256,18 @@ const getRelationDeletionsQueuedForModel = createSelector(
  * @return {number} The count of relations.
  */
 const countRelationModelsIndexedForEntity = createSelector(
-	(
-		state,
-		modelName,
-		entityId
-	) => {
+	( state, modelName, entityId ) => {
 		modelName = singularModelName( modelName );
 		entityId = normalizeEntityId( entityId );
 		// we can just get this from the context of the model
 		return (
-			state.relations
-				.getIn( [ modelName, entityId ] ) || Map()
+			state.relations.getIn( [ modelName, entityId ] ) || Map()
 		).count();
 	},
 	( state, modelName, entityId ) => {
 		modelName = singularModelName( modelName );
 		entityId = normalizeEntityId( entityId );
-		return [
-			state.relations.getIn( [ modelName, entityId ] ),
-		];
+		return [ state.relations.getIn( [ modelName, entityId ] ) ];
 	}
 );
 

@@ -15,18 +15,21 @@ export default class Label {
 
 	/**
 	 * The string representing the singular form of the label.
+	 *
 	 * @type {string}
 	 */
 	singular = '';
 
 	/**
 	 * The string representing the plural form of the label.
+	 *
 	 * @type {string}
 	 */
 	plural = '';
 
 	/**
 	 * Constructor
+	 *
 	 * @param {string} singular
 	 * @param {string} plural
 	 */
@@ -40,6 +43,7 @@ export default class Label {
 	 *
 	 * If the singular property has already been set, this will return a new
 	 * instance of Label
+	 *
 	 * @param {string} singular
 	 * @return {Label}  An instance of Label
 	 */
@@ -83,9 +87,9 @@ export default class Label {
 	 * @return {string} The string in sentence case
 	 */
 	asSentenceCase( singular = true ) {
-		return singular === true ?
-			startCase( this.singular.toLowerCase() ) :
-			startCase( this.plural.toLowerCase() );
+		return singular === true
+			? startCase( this.singular.toLowerCase() )
+			: startCase( this.plural.toLowerCase() );
 	}
 
 	/**
@@ -97,9 +101,9 @@ export default class Label {
 	 * @return {string} The string in lower case
 	 */
 	asLowerCase( singular = true ) {
-		return singular ?
-			this.singular.toLowerCase() :
-			this.plural.toLowerCase();
+		return singular
+			? this.singular.toLowerCase()
+			: this.plural.toLowerCase();
 	}
 
 	/**
@@ -111,9 +115,9 @@ export default class Label {
 	 * @return {string} The string in upper case
 	 */
 	asUpperCase( singular = true ) {
-		return singular ?
-			this.singular.toUpperCase() :
-			this.plural.toUpperCase();
+		return singular
+			? this.singular.toUpperCase()
+			: this.plural.toUpperCase();
 	}
 
 	/**
@@ -135,9 +139,12 @@ export default class Label {
 			case Label.FORMAT_UPPERCASE:
 				return this.asUpperCase( singular );
 			default:
-				warning( false, 'Format type must be one of ' +
-					'Label.FORMAT_SENTENCE_CASE, Label.FORMAT_UPPERCASE, ' +
-					'or Label.FORMAT_LOWERCASE' );
+				warning(
+					false,
+					'Format type must be one of ' +
+						'Label.FORMAT_SENTENCE_CASE, Label.FORMAT_UPPERCASE, ' +
+						'or Label.FORMAT_LOWERCASE'
+				);
 				return this.asSentenceCase( singular );
 		}
 	}
@@ -150,8 +157,9 @@ export default class Label {
 	 */
 	static assertString( value ) {
 		if ( ! isString( value ) ) {
-			throw new TypeError( 'Incoming label value (' + value + ') must' +
-				' be a string' );
+			throw new TypeError(
+				'Incoming label value (' + value + ') must' + ' be a string'
+			);
 		}
 	}
 
@@ -164,5 +172,5 @@ export default class Label {
 	 */
 	static fromSameSingleAndPlural = ( label ) => {
 		return new Label( label, label );
-	}
+	};
 }

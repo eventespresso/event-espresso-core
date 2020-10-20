@@ -28,10 +28,9 @@ describe( 'getEntityRecordsForModel()', () => {
 	} );
 	it( 'returns expected object when the model exists in the state', () => {
 		const records = getEntityRecordsForModel( mockStateForTests, 'event' );
-		expect( records )
-			.toEqual(
-				mockStateForTests.entities.get( 'event' ).toJS()
-			);
+		expect( records ).toEqual(
+			mockStateForTests.entities.get( 'event' ).toJS()
+		);
 		expect( records[ 10 ] ).toEqual( EventEntities.a );
 	} );
 	it( 'returns cached copy when selector executed multiple times', () => {
@@ -49,21 +48,23 @@ describe( 'getEntityRecordsForModel()', () => {
 } );
 describe( 'getEntitiesForModel', () => {
 	beforeEach( () => getEntitiesForModel.clear() );
-	it( 'returns an empty array when the model does not exist in the ' +
-		'state', () => {
-		expect(
-			getEntitiesForModel( mockStateForTests, 'cheeseburgers' )
-		).toEqual( [] );
-	} );
+	it(
+		'returns an empty array when the model does not exist in the ' +
+			'state',
+		() => {
+			expect(
+				getEntitiesForModel( mockStateForTests, 'cheeseburgers' )
+			).toEqual( [] );
+		}
+	);
 	it( 'returns expected array when the model exists in the state', () => {
 		const records = getEntitiesForModel( mockStateForTests, 'event' );
-		expect( records )
-			.toEqual(
-				mockStateForTests.entities
-					.get( 'event' )
-					.valueSeq()
-					.toArray()
-			);
+		expect( records ).toEqual(
+			mockStateForTests.entities
+				.get( 'event' )
+				.valueSeq()
+				.toArray()
+		);
 		expect( records[ 0 ] ).toEqual( EventEntities.a );
 	} );
 	it( 'returns cached copy when selector executed multiple times', () => {
@@ -76,58 +77,57 @@ describe( 'getEntitiesForModel', () => {
 } );
 describe( 'getEntityById()', () => {
 	it( 'returns null if the model does not exist in the state', () => {
-		expect( getEntityById(
-			mockStateForTests,
-			'cheese',
-			10
-		) ).toBe( null );
+		expect( getEntityById( mockStateForTests, 'cheese', 10 ) ).toBe( null );
 	} );
 	it( 'returns null if the entity id does not exist in the state', () => {
-		expect( getEntityById(
-			mockStateForTests,
-			'event',
-			44
-		) ).toBe( null );
+		expect( getEntityById( mockStateForTests, 'event', 44 ) ).toBe( null );
 	} );
-	it( 'returns expected entity for id that exists in state ' +
-		'(when id is given as string)', () => {
-		expect( getEntityById(
-			mockStateForTests,
-			'event',
-			'10'
-		) ).toEqual( EventEntities.a );
-	} );
+	it(
+		'returns expected entity for id that exists in state ' +
+			'(when id is given as string)',
+		() => {
+			expect( getEntityById( mockStateForTests, 'event', '10' ) ).toEqual(
+				EventEntities.a
+			);
+		}
+	);
 	it( 'returns expected entity for id that exists in state', () => {
-		expect( getEntityById(
-			mockStateForTests,
-			'datetime',
-			52
-		) ).toEqual( DateTimeEntities.a );
+		expect( getEntityById( mockStateForTests, 'datetime', 52 ) ).toEqual(
+			DateTimeEntities.a
+		);
 	} );
 } );
 describe( 'getEntitiesByIds()', () => {
 	beforeEach( () => getEntitiesByIds.clear() );
-	it( 'returns an empty array if the model does not exist in the ' +
-		'state', () => {
-		expect( getEntitiesByIds( mockStateForTests, 'cheese', [] ) )
-			.toEqual( [] );
-	} );
-	it( 'returns an empty array if none of the provided ids exist in the ' +
-		'state', () => {
-		expect( getEntitiesByIds( mockStateForTests, 'event', [ 44, 55 ] ) )
-			.toEqual( [] );
-	} );
-	it( 'returns expected entities when some of the ids exist in the ' +
-		'state', () => {
-		expect( getEntitiesByIds( mockStateForTests, 'event', [ 10, 44, 20 ] ) )
-			.toEqual( [ EventEntities.a, EventEntities.b ] );
-	} );
+	it(
+		'returns an empty array if the model does not exist in the ' + 'state',
+		() => {
+			expect(
+				getEntitiesByIds( mockStateForTests, 'cheese', [] )
+			).toEqual( [] );
+		}
+	);
+	it(
+		'returns an empty array if none of the provided ids exist in the ' +
+			'state',
+		() => {
+			expect(
+				getEntitiesByIds( mockStateForTests, 'event', [ 44, 55 ] )
+			).toEqual( [] );
+		}
+	);
+	it(
+		'returns expected entities when some of the ids exist in the ' +
+			'state',
+		() => {
+			expect(
+				getEntitiesByIds( mockStateForTests, 'event', [ 10, 44, 20 ] )
+			).toEqual( [ EventEntities.a, EventEntities.b ] );
+		}
+	);
 	it( 'returns expected cached result when called multiple times', () => {
-		const testResult = () => getEntitiesByIds(
-			mockStateForTests,
-			'event',
-			[ 10, 20 ]
-		);
+		const testResult = () =>
+			getEntitiesByIds( mockStateForTests, 'event', [ 10, 20 ] );
 		const firstState = testResult();
 		expect( testResult() ).toBe( firstState );
 	} );
@@ -141,21 +141,26 @@ describe( 'getEntityIdsQueuedForTrash()', () => {
 			Set.of( 44, 60, 77 )
 		);
 	} );
-	it( 'returns an empty array if the model does not exist in the ' +
-		'state', () => {
-		expect( getEntityIdsQueuedForTrash( originalState, 'cheese' ) )
-			.toEqual( [] );
-	} );
-	it( 'returns expected entity ids for what is queued for trash for the ' +
-		'given model in state', () => {
-		expect( getEntityIdsQueuedForTrash( originalState, 'event' ) )
-			.toEqual( [ 44, 60, 77 ] );
-	} );
+	it(
+		'returns an empty array if the model does not exist in the ' + 'state',
+		() => {
+			expect(
+				getEntityIdsQueuedForTrash( originalState, 'cheese' )
+			).toEqual( [] );
+		}
+	);
+	it(
+		'returns expected entity ids for what is queued for trash for the ' +
+			'given model in state',
+		() => {
+			expect(
+				getEntityIdsQueuedForTrash( originalState, 'event' )
+			).toEqual( [ 44, 60, 77 ] );
+		}
+	);
 	it( 'returns expected cached result when called multiple times', () => {
-		const testResult = () => getEntityIdsQueuedForTrash(
-			originalState,
-			'event'
-		);
+		const testResult = () =>
+			getEntityIdsQueuedForTrash( originalState, 'event' );
 		const firstResult = testResult();
 		expect( testResult() ).toBe( firstResult );
 	} );
@@ -169,21 +174,26 @@ describe( 'getEntityIdsQueuedForDelete()', () => {
 			Set.of( 44, 60, 77 )
 		);
 	} );
-	it( 'returns an empty array if the model does not exist in the ' +
-		'state', () => {
-		expect( getEntityIdsQueuedForDelete( originalState, 'cheese' ) )
-			.toEqual( [] );
-	} );
-	it( 'returns expected entity ids for what is queued for delete for the ' +
-		'given model in state', () => {
-		expect( getEntityIdsQueuedForDelete( originalState, 'event' ) )
-			.toEqual( [ 44, 60, 77 ] );
-	} );
+	it(
+		'returns an empty array if the model does not exist in the ' + 'state',
+		() => {
+			expect(
+				getEntityIdsQueuedForDelete( originalState, 'cheese' )
+			).toEqual( [] );
+		}
+	);
+	it(
+		'returns expected entity ids for what is queued for delete for the ' +
+			'given model in state',
+		() => {
+			expect(
+				getEntityIdsQueuedForDelete( originalState, 'event' )
+			).toEqual( [ 44, 60, 77 ] );
+		}
+	);
 	it( 'returns expected cached result when called multiple times', () => {
-		const testResult = () => getEntityIdsQueuedForDelete(
-			originalState,
-			'event'
-		);
+		const testResult = () =>
+			getEntityIdsQueuedForDelete( originalState, 'event' );
 		const firstResult = testResult();
 		expect( testResult() ).toBe( firstResult );
 	} );
@@ -194,18 +204,22 @@ describe( 'getModelsQueuedForTrash', () => {
 		getModelsQueuedForTrash.clear();
 		originalState.dirty.trash = Map();
 	} );
-	it( 'returns an empty array if there are no models queues for ' +
-		'trash', () => {
-		expect( getModelsQueuedForTrash( originalState ) ).toEqual( [] );
-	} );
+	it(
+		'returns an empty array if there are no models queues for ' + 'trash',
+		() => {
+			expect( getModelsQueuedForTrash( originalState ) ).toEqual( [] );
+		}
+	);
 	it( 'returns the expected array of models queued for trash', () => {
 		originalState.dirty.trash = originalState.dirty.trash
 			.set( 'event', Set() )
 			.set( 'datetime', Set() )
 			.set( 'ticket', Set() );
-		expect( getModelsQueuedForTrash( originalState ) ).toEqual(
-			[ 'event', 'datetime', 'ticket' ]
-		);
+		expect( getModelsQueuedForTrash( originalState ) ).toEqual( [
+			'event',
+			'datetime',
+			'ticket',
+		] );
 	} );
 	it( 'returns expected cached result when called multiple times', () => {
 		originalState.dirty.trash = originalState.dirty.trash
@@ -223,18 +237,24 @@ describe( 'getModelsQueuedForDelete', () => {
 		getModelsQueuedForDelete.clear();
 		originalState.dirty.delete = Map();
 	} );
-	it( 'returns an empty array if there are no models queues for ' +
-		'delete', () => {
-		expect( getModelsQueuedForDelete( mockStateForTests ) ).toEqual( [] );
-	} );
+	it(
+		'returns an empty array if there are no models queues for ' + 'delete',
+		() => {
+			expect( getModelsQueuedForDelete( mockStateForTests ) ).toEqual(
+				[]
+			);
+		}
+	);
 	it( 'returns the expected array of models queued for delete', () => {
 		originalState.dirty.delete = originalState.dirty.delete
 			.set( 'event', Set() )
 			.set( 'datetime', Set() )
 			.set( 'ticket', Set() );
-		expect( getModelsQueuedForDelete( originalState ) ).toEqual(
-			[ 'event', 'datetime', 'ticket' ]
-		);
+		expect( getModelsQueuedForDelete( originalState ) ).toEqual( [
+			'event',
+			'datetime',
+			'ticket',
+		] );
 	} );
 	it( 'returns expected cached result when called multiple times', () => {
 		originalState.dirty.delete = originalState.dirty.delete

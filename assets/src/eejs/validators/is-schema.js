@@ -11,10 +11,7 @@ import { isPlainObject, isUndefined, lowerCase } from 'lodash';
  * @return {boolean} true if this is a schema response object.
  */
 export const isSchemaResponse = ( response ) => {
-	return (
-		hasSchemaProperty( response ) &&
-		isSchema( response.schema )
-	);
+	return hasSchemaProperty( response ) && isSchema( response.schema );
 };
 
 /**

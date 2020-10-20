@@ -17,9 +17,10 @@ function InvalidType( message, argumentValue, ...args ) {
 	Object.setPrototypeOf( instance, Object.getPrototypeOf( this ) );
 	instance.argumentValue = argumentValue || null;
 	instance.name = instance.constructor.name;
-	instance.message = instance.message !== '' ?
-		'Invalid type provided. ' + instance.message :
-		'Invalid type provided.';
+	instance.message =
+		instance.message !== ''
+			? 'Invalid type provided. ' + instance.message
+			: 'Invalid type provided.';
 	if ( Error.captureStackTrace ) {
 		Error.captureStackTrace( instance, InvalidType );
 	}

@@ -22,7 +22,11 @@ const { entities: types, resets: resetTypes } = ACTION_TYPES;
  * @param {Immutable.Map} entityRecords
  * @return {Immutable.Map} New entityRecords object.
  */
-const replaceExistingEntitiesFromState = ( state, modelName, entityRecords ) => {
+const replaceExistingEntitiesFromState = (
+	state,
+	modelName,
+	entityRecords
+) => {
 	const existingEntities = state.get( modelName, null );
 	if ( existingEntities === null ) {
 		return entityRecords;
@@ -73,27 +77,29 @@ function receiveEntityRecords( state, action ) {
 	const { type, modelName } = action;
 	// convert from array of entities to a Map indexed by entity id.
 	const incomingEntities = Map().withMutations( ( subState ) => {
-		action.entities.forEach(
-			( entity ) => {
-				if ( isModelEntityOfModel( entity, modelName ) ) {
-					subState.set( entity.id, entity );
-				}
+		action.entities.forEach( ( entity ) => {
+			if ( isModelEntityOfModel( entity, modelName ) ) {
+				subState.set( entity.id, entity );
 			}
-		);
+		} );
 	} );
 	if ( ! state.has( modelName ) || incomingEntities.isEmpty() ) {
 		return state;
 	}
-	let	updateState = false,
+	let updateState = false,
 		entityRecords;
 	switch ( type ) {
 		case types.RECEIVE_ENTITY_RECORDS:
 			// if all incoming keys exist in state already then we don't do
 			// anything
-			if ( isEmpty( difference(
-				Array.from( incomingEntities.keys() ),
-				Array.from( state.get( modelName, Map() ).keys() )
-			) ) ) {
+			if (
+				isEmpty(
+					difference(
+						Array.from( incomingEntities.keys() ),
+						Array.from( state.get( modelName, Map() ).keys() )
+					)
+				)
+			) {
 				break;
 			}
 			// replace any incoming entityRecords with existing entityRecords already
@@ -108,7 +114,9 @@ function receiveEntityRecords( state, action ) {
 			break;
 		case types.RECEIVE_AND_REPLACE_ENTITY_RECORDS:
 			updateState = true;
-			entityRecords = state.get( modelName, Map() ).merge( incomingEntities );
+			entityRecords = state
+				.get( modelName, Map() )
+				.merge( incomingEntities );
 			break;
 	}
 	if ( updateState ) {
@@ -134,11 +142,7 @@ function removeEntityById( state, action ) {
 /**
  * Exports useful for tests.
  */
-export {
-	receiveEntity,
-	receiveEntityRecords,
-	removeEntityById,
-};
+export { receiveEntity, receiveEntityRecords, removeEntityById };
 
 /**
  * Default reducer for handling entities in state.
@@ -158,14 +162,14 @@ export default function entities(
 				return receiveEntityRecords( state, action );
 			case types.RECEIVE_ENTITY:
 				return receiveEntity( state, action );
-			case types.REMOVE_ENTITY_BY_ID :
+			case types.REMOVE_ENTITY_BY_ID:
 				return removeEntityById( state, action );
-			case resetTypes.RESET_ALL_STATE :
+			case resetTypes.RESET_ALL_STATE:
 				return fromJS( DEFAULT_CORE_STATE.entities );
-			case resetTypes.RESET_STATE_FOR_MODEL :
-				return state.has( singularModelName( action.modelName ) ) ?
-					state.set( singularModelName( action.modelName ), Map() ) :
-					state;
+			case resetTypes.RESET_STATE_FOR_MODEL:
+				return state.has( singularModelName( action.modelName ) )
+					? state.set( singularModelName( action.modelName ), Map() )
+					: state;
 		}
 	}
 	return state;

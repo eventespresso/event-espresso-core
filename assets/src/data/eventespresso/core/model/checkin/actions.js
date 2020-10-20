@@ -36,11 +36,7 @@ export function* receiveLatestCheckin(
 			checkinEntity
 		);
 	}
-	yield dispatch(
-		REDUCER_KEY,
-		'receiveEntity',
-		checkinEntity
-	);
+	yield dispatch( REDUCER_KEY, 'receiveEntity', checkinEntity );
 	yield dispatch(
 		'core/data',
 		'finishResolution',
@@ -54,7 +50,7 @@ export function* receiveLatestCheckin(
 		'getLatestCheckin',
 		checkinEntity.id,
 		registrationId,
-		dateTimeId,
+		dateTimeId
 	);
 	yield dispatch(
 		'core/data',
@@ -76,7 +72,8 @@ export function* receiveLatestCheckin(
  */
 export function* toggleCheckin( registrationId, dateTimeId, force = false ) {
 	let checkInResponse;
-	const path = `${ getEndpoint( 'registration' ) }/` +
+	const path =
+		`${ getEndpoint( 'registration' ) }/` +
 		`${ registrationId }/toggle_checkin_for_datetime/${ dateTimeId }`;
 	try {
 		checkInResponse = yield fetch( {
@@ -90,7 +87,7 @@ export function* toggleCheckin( registrationId, dateTimeId, force = false ) {
 			'createErrorNotice',
 			__(
 				'Toggling the checkin failed. Usually this is due to the checkin not having access',
-				'event_espresso',
+				'event_espresso'
 			)
 		);
 		return null;
@@ -113,7 +110,7 @@ export function* toggleCheckin( registrationId, dateTimeId, force = false ) {
 		'receiveLatestCheckin',
 		newCheckin,
 		registrationId,
-		dateTimeId,
+		dateTimeId
 	);
 	return newCheckin;
 }

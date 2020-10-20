@@ -11,19 +11,16 @@ describe( 'StatusSelect()', () => {
 		order: QUERY_ORDER_ASC,
 	};
 	it( 'matches snapshot with default props plus provided statusType', () => {
-		const wrapper = shallow(
-			<StatusSelect />
-		);
+		const wrapper = shallow( <StatusSelect /> );
 		expect( wrapper ).toMatchSnapshot();
 	} );
 	it( 'matches expected default props plus provided statusType', () => {
-		const wrapper = shallow(
-			<StatusSelect />
+		const wrapper = shallow( <StatusSelect /> );
+		expect( wrapper.prop( 'queryData' ) ).toEqual(
+			expectedDefaultQueryData
 		);
-		expect( wrapper.prop( 'queryData' ) )
-			.toEqual( expectedDefaultQueryData );
 		expect( wrapper.prop( 'selectConfiguration' ).placeholder ).toEqual(
-			'Select Status...',
+			'Select Status...'
 		);
 		expect( wrapper.prop( 'modelName' ) ).toEqual( 'status' );
 		expect( wrapper.prop( 'label' ) ).toEqual( 'Select Status' );
@@ -32,9 +29,7 @@ describe( 'StatusSelect()', () => {
 
 describe( 'EditorStatusSelect()', () => {
 	it( 'matches snapshot with default props', () => {
-		const wrapper = render(
-			<EditorStatusSelect />
-		);
+		const wrapper = render( <EditorStatusSelect /> );
 		expect( wrapper ).toMatchSnapshot();
 	} );
 } );

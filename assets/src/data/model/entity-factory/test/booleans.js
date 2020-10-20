@@ -29,24 +29,28 @@ describe( 'Testing boolean functions for model-entity factory.', () => {
 	const testRunner = (
 		testConditions,
 		methodToTest,
-		schema = EventSchemaProperties,
+		schema = EventSchemaProperties
 	) => {
-		testConditions.forEach( ( [
-			description,
-			fieldName,
-			expectedResponse,
-			withSchema = true,
-		] ) => {
-			it( description, () => {
-				if ( withSchema && schema !== null ) {
-					expect( methodToTest( fieldName, schema ) )
-						.toBe( expectedResponse );
-				} else {
-					expect( methodToTest( fieldName ) )
-						.toBe( expectedResponse );
-				}
-			} );
-		} );
+		testConditions.forEach(
+			( [
+				description,
+				fieldName,
+				expectedResponse,
+				withSchema = true,
+			] ) => {
+				it( description, () => {
+					if ( withSchema && schema !== null ) {
+						expect( methodToTest( fieldName, schema ) ).toBe(
+							expectedResponse
+						);
+					} else {
+						expect( methodToTest( fieldName ) ).toBe(
+							expectedResponse
+						);
+					}
+				} );
+			}
+		);
 	};
 	describe( 'hasRawProperty()', () => {
 		const tests = [
@@ -96,11 +100,7 @@ describe( 'Testing boolean functions for model-entity factory.', () => {
 		const tests = [
 			[ 'Expect false for non object.', 'some string', false ],
 			[ 'Expect false for object without enum property', {}, false ],
-			[
-				'Expect true for object with enum property',
-				{ enum: 0 },
-				true,
-			],
+			[ 'Expect true for object with enum property', { enum: 0 }, true ],
 		];
 		testRunner( tests, hasEnumProperty, null );
 	} );
@@ -157,7 +157,7 @@ describe( 'Testing boolean functions for model-entity factory.', () => {
 			],
 			[
 				'Expect true for UTC-like field that is not a date-time ' +
-				'field without schema',
+					'field without schema',
 				'some_field_gmt',
 				true,
 				false,
@@ -223,11 +223,7 @@ describe( 'Testing boolean functions for model-entity factory.', () => {
 				'some_field',
 				false,
 			],
-			[
-				'Expect true for primary key field',
-				'EVT_ID',
-				true,
-			],
+			[ 'Expect true for primary key field', 'EVT_ID', true ],
 			[
 				'Expect true for field that is an entity field (non-primary key)',
 				'EVT_desc',

@@ -1,14 +1,8 @@
 /**
  * External imports
  */
-import {
-	TIMEZONE_CONFIG,
-	SERVER_LOCALE,
-} from '@eventespresso/eejs';
-import {
-	FORMAT_SITE_DATE,
-	FORMAT_SITE_TIME,
-} from '@eventespresso/helpers';
+import { TIMEZONE_CONFIG, SERVER_LOCALE } from '@eventespresso/eejs';
+import { FORMAT_SITE_DATE, FORMAT_SITE_TIME } from '@eventespresso/helpers';
 import { validateLocale } from './assertions';
 
 import { snakeCase } from 'lodash';
@@ -17,9 +11,8 @@ import { snakeCase } from 'lodash';
  *
  * @type {string}
  */
-export const DEFAULT_TIMEZONE_STRING = TIMEZONE_CONFIG.string === '' ?
-	'UTC' :
-	TIMEZONE_CONFIG.string;
+export const DEFAULT_TIMEZONE_STRING =
+	TIMEZONE_CONFIG.string === '' ? 'UTC' : TIMEZONE_CONFIG.string;
 
 /**
  * Default offset
@@ -35,10 +28,9 @@ export const DEFAULT_OFFSET = TIMEZONE_CONFIG.offset;
  *
  * @type {boolean}
  */
-export const HAS_TIMEZONE_STRING = (
+export const HAS_TIMEZONE_STRING =
 	DEFAULT_TIMEZONE_STRING !== 'UTC' ||
-	! ( DEFAULT_TIMEZONE_STRING === 'UTC' && DEFAULT_OFFSET !== 0 )
-);
+	! ( DEFAULT_TIMEZONE_STRING === 'UTC' && DEFAULT_OFFSET !== 0 );
 
 /**
  *
@@ -48,6 +40,7 @@ export const DEFAULT_FORMAT = FORMAT_SITE_DATE + ' ' + FORMAT_SITE_TIME;
 
 /**
  * Exposes what to use for the default locale.
+ *
  * @type {string}
  */
 export const DEFAULT_LOCALE = snakeCase( SERVER_LOCALE.user );
@@ -58,6 +51,6 @@ export const DEFAULT_LOCALE = snakeCase( SERVER_LOCALE.user );
  *
  * @type {string}
  */
-export const DEFAULT_VALID_LOCALE = validateLocale( DEFAULT_LOCALE ) ?
-	DEFAULT_LOCALE :
-	'en';
+export const DEFAULT_VALID_LOCALE = validateLocale( DEFAULT_LOCALE )
+	? DEFAULT_LOCALE
+	: 'en';

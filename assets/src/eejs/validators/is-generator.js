@@ -9,8 +9,5 @@
  * @return {boolean} True if the provided value is a generator.
  */
 export const isGenerator = ( object ) => {
-	return (
-		!! object &&
-		object[ Symbol.toStringTag ] === 'Generator'
-	);
+	return !! object && object[ Symbol.toStringTag ] === 'Generator';
 };

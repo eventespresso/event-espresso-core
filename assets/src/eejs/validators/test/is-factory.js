@@ -20,12 +20,11 @@ describe( 'isModelEntityFactory()', () => {
 		[ { modelName: 'something', classDef: {} }, false ],
 		[ true, false ],
 		[ EventFactory, true ],
-	].forEach( ( [
-		factoryWannabe,
-		expectedResult,
-	] ) => {
+	].forEach( ( [ factoryWannabe, expectedResult ] ) => {
 		it( 'has expected result for tested value', () => {
-			expect( isModelEntityFactory( factoryWannabe ) ).toBe( expectedResult );
+			expect( isModelEntityFactory( factoryWannabe ) ).toBe(
+				expectedResult
+			);
 		} );
 	} );
 } );
@@ -34,14 +33,11 @@ describe( 'isModelEntityFactoryOfModel', () => {
 	[
 		[ EventFactory, 'event', true ],
 		[ DateTimeFactory, 'event', false ],
-	].forEach( ( [
-		factoryWannabe,
-		modelName,
-		expectedResult,
-	] ) => {
+	].forEach( ( [ factoryWannabe, modelName, expectedResult ] ) => {
 		it( 'has expected result for tested value', () => {
-			expect( isModelEntityFactoryOfModel( factoryWannabe, modelName ) )
-				.toBe( expectedResult );
+			expect(
+				isModelEntityFactoryOfModel( factoryWannabe, modelName )
+			).toBe( expectedResult );
 		} );
 	} );
 } );

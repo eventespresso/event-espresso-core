@@ -13,18 +13,28 @@ describe( 'EventAttendeesEditor Block', () => {
 		const wrapper = shallow( <EventAttendeesEditor /> );
 		expect( wrapper ).toMatchSnapshot();
 	} );
-	test( 'block edit matches snapshot with isLoading false and ' +
-		'no attendees', () => {
-		const wrapper = shallow( <EventAttendeesEditor isLoading={ false } /> );
-		expect( wrapper ).toMatchSnapshot();
-	} );
-	test( 'block edit matches snapshot with isLoading false ' +
-		'and has attendees', () => {
-		const testProps = {
-			isLoading: false,
-			attendees: [ { ATT_ID: 10, ATT_fname: 'dude' } ],
-		};
-		const wrapper = shallow( <EventAttendeesEditor { ...testProps } /> );
-		expect( wrapper ).toMatchSnapshot();
-	} );
+	test(
+		'block edit matches snapshot with isLoading false and ' +
+			'no attendees',
+		() => {
+			const wrapper = shallow(
+				<EventAttendeesEditor isLoading={ false } />
+			);
+			expect( wrapper ).toMatchSnapshot();
+		}
+	);
+	test(
+		'block edit matches snapshot with isLoading false ' +
+			'and has attendees',
+		() => {
+			const testProps = {
+				isLoading: false,
+				attendees: [ { ATT_ID: 10, ATT_fname: 'dude' } ],
+			};
+			const wrapper = shallow(
+				<EventAttendeesEditor { ...testProps } />
+			);
+			expect( wrapper ).toMatchSnapshot();
+		}
+	);
 } );

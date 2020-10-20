@@ -28,7 +28,7 @@ import warning from 'warning';
 const buildOptions = (
 	entities,
 	optionsEntityMap,
-	mapSelection = 'default',
+	mapSelection = 'default'
 ) => {
 	if ( isEmpty( entities ) ) {
 		return [];
@@ -38,8 +38,8 @@ const buildOptions = (
 		warning(
 			false,
 			'A valid optionsEntityMap must be supplied ' +
-			'in order to build options for a ModelSelect component',
-			optionsEntityMap,
+				'in order to build options for a ModelSelect component',
+			optionsEntityMap
 		);
 		return [];
 	}
@@ -47,9 +47,9 @@ const buildOptions = (
 		warning(
 			false,
 			'A valid optionsEntityMap[ mapSelection ] must be supplied ' +
-			'in order to build options for a ModelSelect component',
+				'in order to build options for a ModelSelect component',
 			optionsEntityMap,
-			mapSelection,
+			mapSelection
 		);
 		return [];
 	}
@@ -67,29 +67,31 @@ const buildOptions = (
 		map = {};
 		warning(
 			false,
-			'The optionsEntityMap for ' + mapSelection + 'was a function but' +
-			' it did not return an array of options.  Make sure the function' +
-			' returns an array of simple objects with label and value keys.',
+			'The optionsEntityMap for ' +
+				mapSelection +
+				'was a function but' +
+				' it did not return an array of options.  Make sure the function' +
+				' returns an array of simple objects with label and value keys.'
 		);
 	}
 	if ( isEmpty( map ) ) {
 		return [];
 	}
 	const reducerCallback = ( options, entity ) => {
-		const label = isFunction( map.label ) ?
-			map.label( entity ) :
-			entity[ map.label ];
-		const value = isFunction( map.value ) ?
-			map.value( entity ) :
-			entity[ map.value ];
+		const label = isFunction( map.label )
+			? map.label( entity )
+			: entity[ map.label ];
+		const value = isFunction( map.value )
+			? map.value( entity )
+			: entity[ map.value ];
 		if ( label && value ) {
 			options.push( { label, value } );
 		}
 		return options;
 	};
-	return ! isArray( entities ) ?
-		entities.reduce( reducerCallback, [] ) :
-		reduce( entities, reducerCallback, [] );
+	return ! isArray( entities )
+		? entities.reduce( reducerCallback, [] )
+		: reduce( entities, reducerCallback, [] );
 };
 
 export default buildOptions;

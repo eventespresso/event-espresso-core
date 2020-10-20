@@ -22,29 +22,20 @@ import { REDUCER_KEY } from '../constants';
  * @param {string} relationName
  * @param {BaseEntity} relationEntity
  */
-function* createRelation(
-	modelName,
-	entityId,
-	relationName,
-	relationEntity
-) {
+function* createRelation( modelName, entityId, relationName, relationEntity ) {
 	relationName = singularModelName( relationName );
 	modelName = singularModelName( modelName );
 	if ( ! isModelEntityOfModel( relationEntity, relationName ) ) {
 		warning(
 			false,
 			'The provided relation entity (%s) is not a base entity instance' +
-			' for the %s relation model',
+				' for the %s relation model',
 			relationEntity,
 			relationName
 		);
 		return;
 	}
-	yield dispatch(
-		REDUCER_KEY,
-		'receiveEntityAndResolve',
-		relationEntity
-	);
+	yield dispatch( REDUCER_KEY, 'receiveEntityAndResolve', relationEntity );
 	yield dispatch(
 		REDUCER_KEY,
 		'receiveRelatedEntities',
@@ -59,7 +50,7 @@ function* createRelation(
 		relationName,
 		relationEntity.id,
 		modelName,
-		entityId,
+		entityId
 	);
 }
 
@@ -76,7 +67,7 @@ function* createRelations(
 	modelName,
 	entityId,
 	relationName,
-	relationEntities,
+	relationEntities
 ) {
 	modelName = singularModelName( modelName );
 	relationName = singularModelName( relationName );
@@ -87,8 +78,8 @@ function* createRelations(
 		warning(
 			false,
 			'Incoming relation Entities do not contain BaseEntity instances ' +
-			'for the given relation model (%s)',
-			relationName,
+				'for the given relation model (%s)',
+			relationName
 		);
 		return;
 	}
@@ -105,13 +96,13 @@ function* createRelations(
 		modelName,
 		entityId,
 		relationName,
-		relationIds,
+		relationIds
 	);
 	const modelEntity = yield resolveSelect(
 		REDUCER_KEY,
 		'getEntityById',
 		modelName,
-		entityId,
+		entityId
 	);
 	yield dispatch(
 		'core/data',
@@ -129,7 +120,7 @@ function* createRelations(
 			relationName,
 			relationEntity.id,
 			modelName,
-			entityId,
+			entityId
 		);
 		yield dispatch(
 			'core/data',
@@ -169,14 +160,14 @@ function* resolveRelationRecordForRelation(
 		'getEntityById',
 		[ relationName, relationEntity.id ]
 	);
-	relationEntity = hasEntity ?
-		yield select(
-			REDUCER_KEY,
-			'getEntityById',
-			relationName,
-			relationEntity.id
-		) :
-		relationEntity;
+	relationEntity = hasEntity
+		? yield select(
+				REDUCER_KEY,
+				'getEntityById',
+				relationName,
+				relationEntity.id
+		  )
+		: relationEntity;
 	if ( ! hasEntity ) {
 		yield dispatch(
 			REDUCER_KEY,

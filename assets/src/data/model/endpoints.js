@@ -32,14 +32,15 @@ export const getEndpoint = ( modelName ) => {
 
 /**
  * Applies the provided queryString to the endpoint for the provided model name.
+ *
  * @param {string} modelName  What model the final string is for.
  * @param {string} queryString  The query being appended to the endpoint.
  * @return {string} The final assembled query string.
  */
 export const applyQueryString = ( modelName, queryString = '' ) => {
-	return queryString !== '' ?
-		getEndpoint( modelName ) + '?' + queryString :
-		getEndpoint( modelName );
+	return queryString !== ''
+		? getEndpoint( modelName ) + '?' + queryString
+		: getEndpoint( modelName );
 };
 
 /**

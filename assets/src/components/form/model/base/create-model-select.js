@@ -11,10 +11,7 @@ import { modelSelectName } from './utils';
 import PropTypes from 'prop-types';
 
 const defaultPropTypes = {
-	selected: PropTypes.oneOfType( [
-		PropTypes.number,
-		PropTypes.string,
-	] ),
+	selected: PropTypes.oneOfType( [ PropTypes.number, PropTypes.string ] ),
 	onSelect: PropTypes.func,
 	label: PropTypes.string,
 };

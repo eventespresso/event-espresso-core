@@ -28,12 +28,10 @@ const DatetimeSelect = createModelSelect(
 	model.MODEL_NAME,
 	{
 		selectConfiguration: {
-			loadingMessage: () => __( 'Retrieving Datetimes.', 'event_espresso' ),
-			noOptionsMessage: () => __(
-				'No Datetimes.',
-				'event_espresso',
-			),
-			placeholder: __( 'Select Datetime...', 'event_espresso' ),
+			loadingMessage: () =>
+				__( 'Retrieving Datetimes.', 'event_espresso' ),
+			noOptionsMessage: () => __( 'No Datetimes.', 'event_espresso' ),
+			placeholder: __( 'Select Datetime…', 'event_espresso' ),
 		},
 		...model.defaultQueryData,
 		getQueryString: model.getQueryString,
@@ -51,6 +49,6 @@ export default DatetimeSelect;
 /**
  * Enhanced Datetime Select for the WordPress editor
  */
-export const EditorDatetimeSelect = withBaseControl(
-	'select-datetime'
-)( DatetimeSelect );
+export const EditorDatetimeSelect = withBaseControl( 'select-datetime' )(
+	DatetimeSelect
+);

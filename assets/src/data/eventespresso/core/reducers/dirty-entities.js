@@ -39,9 +39,9 @@ const removeFromState = ( state, modelName, entityId ) => {
 		return state;
 	}
 	entityIds = entityIds.delete( entityId );
-	return entityIds.isEmpty() ?
-		state.delete( modelName ) :
-		state.set( modelName, entityIds );
+	return entityIds.isEmpty()
+		? state.delete( modelName )
+		: state.set( modelName, entityIds );
 };
 
 /**

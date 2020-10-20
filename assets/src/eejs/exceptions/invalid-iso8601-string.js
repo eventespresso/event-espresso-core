@@ -15,10 +15,10 @@ import InvalidArgument from './invalid-argument';
  */
 export default class InvalidISO8601String extends InvalidArgument {
 	constructor( dateTimeString, message = '', ...args ) {
-		message = message ?
-			'The string provided is not a valid ISO 8601 formatted string. ' +
-				message :
-			'The string provided is not a valid ISO 8601 formatted string.';
+		message = message
+			? 'The string provided is not a valid ISO 8601 formatted string. ' +
+			  message
+			: 'The string provided is not a valid ISO 8601 formatted string.';
 		super( message, dateTimeString, ...args );
 		if ( Error.captureStackTrace ) {
 			Error.captureStackTrace( this, InvalidISO8601String );

@@ -1,8 +1,4 @@
-import {
-	mapOrderBy,
-	whereConditions,
-	getQueryString,
-} from '../';
+import { mapOrderBy, whereConditions, getQueryString } from '../';
 
 describe( 'mapOrderBy()', () => {
 	it( 'correctly maps incoming values to the correct expectation', () => {
@@ -57,7 +53,9 @@ describe( 'whereConditions()', () => {
 
 describe( 'getQueryString', () => {
 	it( 'returns expected default for no arguments passed in', () => {
-		expect( getQueryString() ).toEqual( 'limit=100&order=DESC&order_by=REG_date' );
+		expect( getQueryString() ).toEqual(
+			'limit=100&order=DESC&order_by=REG_date'
+		);
 	} );
 } );
 

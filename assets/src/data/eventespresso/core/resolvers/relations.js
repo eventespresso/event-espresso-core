@@ -33,10 +33,7 @@ import {
 	resolveGetEntityByIdForIds,
 	resolveGetRelatedEntities,
 } from '../../base-controls';
-import {
-	receiveEntityRecords,
-	receiveRelatedEntities,
-} from './../actions';
+import { receiveEntityRecords, receiveRelatedEntities } from './../actions';
 import { keepExistingEntitiesInObject } from '../../base-model';
 import { REDUCER_KEY as CORE_REDUCER_KEY } from '../constants';
 import { REDUCER_KEY as SCHEMA_REDUCER_KEY } from '../../schema/constants';
@@ -71,11 +68,11 @@ export function* getRelatedEntities(
 	const pluralRelationName = pluralModelName( relationModelName );
 	const modelName = entity.modelName.toLowerCase();
 	const relationResourceProperty = pluralRelationName + 'Resource';
-	const relationEndpoint = entity[ relationResourceProperty ] ?
-		stripBaseRouteFromUrl(
-			entity[ relationResourceProperty ].resourceLink
-		) :
-		'';
+	const relationEndpoint = entity[ relationResourceProperty ]
+		? stripBaseRouteFromUrl(
+				entity[ relationResourceProperty ].resourceLink
+		  )
+		: '';
 	if ( relationEndpoint === '' ) {
 		warning(
 			false,
@@ -111,12 +108,12 @@ export function* getRelatedEntities(
 
 	let relationEntities = yield fetch( { path } );
 
-	relationEntities = ! isEmpty( relationEntities ) ?
-		relationEntities :
-		DEFAULT_EMPTY_ARRAY;
-	relationEntities = ! isArray( relationEntities ) ?
-		[ relationEntities ] :
-		relationEntities;
+	relationEntities = ! isEmpty( relationEntities )
+		? relationEntities
+		: DEFAULT_EMPTY_ARRAY;
+	relationEntities = ! isArray( relationEntities )
+		? [ relationEntities ]
+		: relationEntities;
 
 	if ( ! relationEntities.length ) {
 		return relationEntities;
@@ -127,10 +124,7 @@ export function* getRelatedEntities(
 		'getFactoryForModel',
 		relationModelName
 	);
-	if ( ! isModelEntityFactoryOfModel(
-		factory,
-		relationModelName
-	) ) {
+	if ( ! isModelEntityFactoryOfModel( factory, relationModelName ) ) {
 		return DEFAULT_EMPTY_ARRAY;
 	}
 
@@ -140,7 +134,7 @@ export function* getRelatedEntities(
 	);
 	fullEntities = createAndKeyEntitiesByPrimaryKeyValue(
 		factory,
-		fullEntities,
+		fullEntities
 	);
 	const entityIds = Array.from( fullEntities.keys() );
 
@@ -155,41 +149,29 @@ export function* getRelatedEntities(
 
 	if ( ! isEmpty( existingEntities ) ) {
 		fullEntities = keepExistingEntitiesInObject(
-			existingEntities.reduce(
-				( entitiesObject, entityObj ) => {
-					entitiesObject[ entityObj.id ] = entity;
-					return entitiesObject;
-				},
-				{}
-			),
-			fullEntities,
+			existingEntities.reduce( ( entitiesObject, entityObj ) => {
+				entitiesObject[ entityObj.id ] = entity;
+				return entitiesObject;
+			}, {} ),
+			fullEntities
 		);
 	}
 
 	// if fullEntities is not a map, then we need to make it a map
-	const entityArray = fullEntities instanceof Map ?
-		Array.from( fullEntities.values() ) :
-		fullEntities;
+	const entityArray =
+		fullEntities instanceof Map
+			? Array.from( fullEntities.values() )
+			: fullEntities;
 
-	yield receiveEntityRecords(
-		relationModelName,
-		entityArray
-	);
+	yield receiveEntityRecords( relationModelName, entityArray );
 	yield receiveRelatedEntities(
 		modelName,
 		entity.id,
 		relationModelName,
-		entityIds,
-	);
-	yield resolveGetRelatedEntities(
-		entity,
-		fullEntities,
-		entityIds,
-	);
-	yield resolveGetEntityByIdForIds(
-		relationModelName,
 		entityIds
 	);
+	yield resolveGetRelatedEntities( entity, fullEntities, entityIds );
+	yield resolveGetEntityByIdForIds( relationModelName, entityIds );
 	return entityArray;
 }
 
@@ -217,13 +199,13 @@ export function* getRelatedEntitiesForIds(
 		SCHEMA_REDUCER_KEY,
 		'hasJoinTableRelation',
 		modelName,
-		relationName,
+		relationName
 	);
 	const relationSchema = yield resolveSelect(
 		SCHEMA_REDUCER_KEY,
 		'getRelationSchema',
 		modelName,
-		relationName,
+		relationName
 	);
 	if ( relationSchema === null ) {
 		return DEFAULT_EMPTY_ARRAY;
@@ -243,7 +225,7 @@ export function* getRelatedEntitiesForIds(
 			relationSchema,
 			relationType,
 			hasJoinTable,
-			calculatedFields,
+			calculatedFields
 		),
 	} );
 	if ( ! response.length ) {
@@ -257,30 +239,33 @@ export function* getRelatedEntitiesForIds(
 		while ( response.length > 0 ) {
 			const record = response.pop();
 			let relationRecords = record[ pluralRelationName ] || null;
-			relationRecords = relationRecords === null &&
-			! isUndefined( record[ relationName ] ) ?
-				record[ relationName ] :
-				relationRecords;
-			relationRecords = relationRecords !== null &&
-				! isArray( relationRecords ) ?
-				[ relationRecords ] :
-				relationRecords;
+			relationRecords =
+				relationRecords === null &&
+				! isUndefined( record[ relationName ] )
+					? record[ relationName ]
+					: relationRecords;
+			relationRecords =
+				relationRecords !== null && ! isArray( relationRecords )
+					? [ relationRecords ]
+					: relationRecords;
 			if ( relationRecords !== null ) {
 				while ( relationRecords.length > 0 ) {
 					const modelId = record[ modelPrimaryKey ];
 					const relationId = record[ relationPrimaryKey ];
 					const relationRecord = relationRecords.pop();
-					if ( relationRecord !== null &&
+					if (
+						relationRecord !== null &&
 						! hasSetMap.hasIn( [ modelId, relationId ] )
 					) {
 						const relationEntity = factory.fromExisting(
-							relationRecord );
+							relationRecord
+						);
 						yield dispatch(
 							CORE_REDUCER_KEY,
 							'resolveRelationRecordForRelation',
 							relationEntity,
 							modelName,
-							modelId,
+							modelId
 						);
 						hasSetMap = hasSetMap.setIn(
 							[ modelId, relationId ],
@@ -293,9 +278,9 @@ export function* getRelatedEntitiesForIds(
 	} else {
 		while ( response.length > 0 ) {
 			const record = response.pop();
-			const modelId = isBelongsToRelation( relationType ) ?
-				record[ modelPrimaryKey ] :
-				record[ modelName ].id;
+			const modelId = isBelongsToRelation( relationType )
+				? record[ modelPrimaryKey ]
+				: record[ modelName ].id;
 			const relationId = record[ relationPrimaryKey ];
 			if ( ! hasSetMap.hasIn( [ modelId, relationId ] ) ) {
 				const relationEntity = factory.fromExisting(
@@ -306,12 +291,9 @@ export function* getRelatedEntitiesForIds(
 					'resolveRelationRecordForRelation',
 					relationEntity,
 					modelName,
-					modelId,
+					modelId
 				);
-				hasSetMap = hasSetMap.setIn(
-					[ modelId, relationId ],
-					true
-				);
+				hasSetMap = hasSetMap.setIn( [ modelId, relationId ], true );
 			}
 		}
 	}
@@ -337,7 +319,7 @@ const getRelationRequestUrl = (
 	relationSchema,
 	relationType,
 	hasJoinTable,
-	calculatedFields,
+	calculatedFields
 ) => {
 	let path;
 	modelName = singularModelName( modelName );
@@ -345,13 +327,12 @@ const getRelationRequestUrl = (
 	switch ( true ) {
 		case hasJoinTable:
 			path = getEndpoint(
-				singularModelName( relationSchema.joining_model_name )
-					.toLowerCase()
+				singularModelName(
+					relationSchema.joining_model_name
+				).toLowerCase()
 			);
-			path += '/?where' + getPrimaryKeyQueryString(
-				modelName,
-				entityIds
-			);
+			path +=
+				'/?where' + getPrimaryKeyQueryString( modelName, entityIds );
 			path += `&include=${ modelNameForQueryString( relationName ) }.*`;
 			path = appendCalculatedFieldsToPath(
 				path,
@@ -361,7 +342,10 @@ const getRelationRequestUrl = (
 			break;
 		case isBelongsToRelation( relationType ):
 			path = getEndpoint( modelName );
-			path += `/?where${ getPrimaryKeyQueryString( modelName, entityIds ) }`;
+			path += `/?where${ getPrimaryKeyQueryString(
+				modelName,
+				entityIds
+			) }`;
 			path += `&include=${ modelNameForQueryString( relationName ) }.*`;
 			path = appendCalculatedFieldsToPath(
 				path,
@@ -385,12 +369,12 @@ const getRelationRequestUrl = (
 			// in the query for easier parsing/dispatching.
 			// @todo, currently this will NOT account for paging.
 			path = getEndpoint( relationName );
-			path += `/?where${ getPrimaryKeyQueryString( modelName, entityIds ) }`;
+			path += `/?where${ getPrimaryKeyQueryString(
+				modelName,
+				entityIds
+			) }`;
 			path += `&include=${ modelNameForQueryString( modelName ) }.*`;
-			path = appendCalculatedFieldsToPath(
-				path,
-				calculatedFields,
-			);
+			path = appendCalculatedFieldsToPath( path, calculatedFields );
 			break;
 	}
 	return path;

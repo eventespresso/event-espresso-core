@@ -1,10 +1,7 @@
 /**
  * External imports
  */
-import {
-	DEFAULT_CORE_STATE,
-	singularModelName,
-} from '@eventespresso/model';
+import { DEFAULT_CORE_STATE, singularModelName } from '@eventespresso/model';
 import { fromJS, Set, Map } from 'immutable';
 import {
 	removeEmptyFromState,
@@ -41,11 +38,7 @@ const relationExistsInMap = ( relationMap, queueType, entityId ) => {
  * @return {boolean} True means the relation exists in the state.
  */
 const hasRelation = ( state, action, relationMap ) => {
-	const {
-		relationEntityId,
-		entityId,
-		queueType,
-	} = action;
+	const { relationEntityId, entityId, queueType } = action;
 	let { relationName, modelName } = action;
 	if ( relationExistsInMap( relationMap, queueType, entityId ) ) {
 		return true;
@@ -55,9 +48,12 @@ const hasRelation = ( state, action, relationMap ) => {
 	// be stored with the relation as the originating entity.
 	relationName = singularModelName( relationName );
 	modelName = singularModelName( modelName );
-	const entityIds = state.getIn(
-		[ queueType, relationName, relationEntityId, modelName ],
-	);
+	const entityIds = state.getIn( [
+		queueType,
+		relationName,
+		relationEntityId,
+		modelName,
+	] );
 	return entityIds ? entityIds.includes( entityId ) : false;
 };
 
@@ -71,9 +67,9 @@ const hasRelation = ( state, action, relationMap ) => {
 const getRelationMap = ( state, action ) => {
 	const { relationName, relationEntityId: relationId, modelName } = action;
 	// get the map for the queueType
-	return state.getIn(
-		[ 'index', relationName, relationId, modelName ]
-	) || Map();
+	return (
+		state.getIn( [ 'index', relationName, relationId, modelName ] ) || Map()
+	);
 };
 
 /**
@@ -84,10 +80,7 @@ const getRelationMap = ( state, action ) => {
  * @return {boolean} True means it exists in the array.
  */
 const idExistsInSet = ( entityId, idSet ) => {
-	return (
-		idSet instanceof Set &&
-		idSet.includes( entityId )
-	);
+	return idSet instanceof Set && idSet.includes( entityId );
 };
 
 /**
@@ -141,11 +134,7 @@ function indexRelations( state, action, relationMap ) {
  * @return {Immutable.Set} A List of ids if present or empty List if not.
  */
 function getRelationIdsFromState( state, action ) {
-	const {
-		relationName,
-		modelName,
-		entityId,
-	} = action;
+	const { relationName, modelName, entityId } = action;
 	const path = [ modelName, entityId, relationName ];
 	return state.hasIn( path ) ? state.getIn( path ) : Set();
 }
@@ -250,7 +239,7 @@ function replaceOldRelationIdWithNewRelationId( state, action ) {
 			newState,
 			modelName,
 			oldEntityId,
-			newEntityId,
+			newEntityId
 		);
 	}
 	if ( newState === state ) {
@@ -259,7 +248,7 @@ function replaceOldRelationIdWithNewRelationId( state, action ) {
 			newState,
 			modelName,
 			oldEntityId,
-			newEntityId,
+			newEntityId
 		);
 	}
 	return newState;
@@ -321,9 +310,11 @@ const replaceIds = ( stateProperty, state, modelName, oldId, newId ) => {
 		} else if ( mapOrIds instanceof Set ) {
 			const relationPath = [ 'index', relationModelName ];
 			mapOrIds.forEach( ( relationId ) => {
-				let indexRecord = state.getIn(
-					[ ...relationPath, relationId, modelName ]
-				);
+				let indexRecord = state.getIn( [
+					...relationPath,
+					relationId,
+					modelName,
+				] );
 				let ids = indexRecord.get( stateProperty ) || Set();
 				ids = ids.delete( oldId ).add( newId );
 				indexRecord = indexRecord.set( stateProperty, ids );
@@ -356,10 +347,7 @@ const normalizeActionForState = ( state, action ) => {
 	const modelName = singularModelName( action.modelName );
 	const relationName = singularModelName( action.relationName );
 	const { relationEntityId, entityId } = action;
-	if ( modelName &&
-		relationName &&
-		index.has( modelName )
-	) {
+	if ( modelName && relationName && index.has( modelName ) ) {
 		// okay this model has already been used as a relation on another model
 		// so let's normalize and make it the relation instead.
 		return {
@@ -450,10 +438,7 @@ function dirtyRelations( state, action ) {
  * @param {Object} modelData An object containing data for use in the function.
  * @return {Immutable.Map} Immutable collection  either the original state or a new state.
  */
-const clearRelatedEntitiesForEntity = (
-	state,
-	modelData
-) => {
+const clearRelatedEntitiesForEntity = ( state, modelData ) => {
 	const {
 		modelRemoved,
 		entityIdRemoved,
@@ -461,11 +446,7 @@ const clearRelatedEntitiesForEntity = (
 		relationTypes,
 	} = modelData;
 
-	const recordPath = [
-		indexType,
-		modelRemoved,
-		entityIdRemoved,
-	];
+	const recordPath = [ indexType, modelRemoved, entityIdRemoved ];
 
 	const clearEntityIdsInPath = ( subState, path ) => {
 		if ( subState.hasIn( path ) ) {
@@ -474,12 +455,7 @@ const clearRelatedEntitiesForEntity = (
 			if ( ! entityIds.isEmpty() ) {
 				subState.setIn( path, entityIds );
 			} else {
-				removeEmptyFromState(
-					subState,
-					path,
-					1,
-					false
-				);
+				removeEmptyFromState( subState, path, 1, false );
 			}
 		}
 	};
@@ -487,25 +463,17 @@ const clearRelatedEntitiesForEntity = (
 	if ( state.hasIn( recordPath ) ) {
 		state = state.withMutations( ( subState ) => {
 			const mainRecord = subState.getIn( recordPath );
-			removeEmptyFromState(
-				subState,
-				recordPath,
-				1,
-				false
-			);
+			removeEmptyFromState( subState, recordPath, 1, false );
 			mainRecord.forEach( ( relationRecord, relationModelName ) => {
 				if ( relationRecord instanceof Set ) {
 					relationRecord.forEach( ( relationId ) => {
-						clearEntityIdsInPath(
-							subState,
-							[
-								'index',
-								relationModelName,
-								relationId,
-								modelRemoved,
-								indexType,
-							]
-						);
+						clearEntityIdsInPath( subState, [
+							'index',
+							relationModelName,
+							relationId,
+							modelRemoved,
+							indexType,
+						] );
 					} );
 				} else if (
 					relationTypes !== null &&
@@ -513,19 +481,15 @@ const clearRelatedEntitiesForEntity = (
 				) {
 					relationTypes.forEach( ( relationType ) => {
 						if ( relationRecord.has( relationType ) ) {
-							const relationIds = relationRecord.get(
-								relationType
-							) || Set();
+							const relationIds =
+								relationRecord.get( relationType ) || Set();
 							relationIds.forEach( ( relationId ) => {
-								clearEntityIdsInPath(
-									subState,
-									[
-										relationType,
-										relationModelName,
-										relationId,
-										modelRemoved,
-									]
-								);
+								clearEntityIdsInPath( subState, [
+									relationType,
+									relationModelName,
+									relationId,
+									modelRemoved,
+								] );
 							} );
 						}
 					} );
@@ -551,17 +515,21 @@ function removeRelatedEntitiesForEntity( state, action ) {
 		[ modelName, entityId, 'index', [ 'add', 'delete' ] ],
 		[ modelName, entityId, 'add' ],
 		[ modelName, entityId, 'delete' ],
-	].forEach( ( [
-		modelRemoved,
-		entityIdRemoved,
-		indexType,
-		relationTypes = null,
-	] ) => {
-		state = clearRelatedEntitiesForEntity(
-			state,
-			{ modelRemoved, entityIdRemoved, indexType, relationTypes }
-		);
-	} );
+	].forEach(
+		( [
+			modelRemoved,
+			entityIdRemoved,
+			indexType,
+			relationTypes = null,
+		] ) => {
+			state = clearRelatedEntitiesForEntity( state, {
+				modelRemoved,
+				entityIdRemoved,
+				indexType,
+				relationTypes,
+			} );
+		}
+	);
 	return state;
 }
 
@@ -576,25 +544,13 @@ function removeRelatedEntitiesForEntity( state, action ) {
 const clearStateForModel = ( state, action ) => {
 	const modelName = singularModelName( action.modelName );
 	// index record path
-	state = clearModelFromSubstate(
-		state,
-		'index',
-		modelName,
-	);
+	state = clearModelFromSubstate( state, 'index', modelName );
 
 	// delete record path
-	state = clearModelFromSubstate(
-		state,
-		'delete',
-		modelName,
-	);
+	state = clearModelFromSubstate( state, 'delete', modelName );
 
 	// add record path
-	state = clearModelFromSubstate(
-		state,
-		'add',
-		modelName,
-	);
+	state = clearModelFromSubstate( state, 'add', modelName );
 	return state;
 };
 
@@ -607,11 +563,7 @@ const clearStateForModel = ( state, action ) => {
  * @param {string} modelName
  * @return {Immutable.Map} The new state.
  */
-const clearModelFromSubstate = (
-	state,
-	subStateKey,
-	modelName,
-) => {
+const clearModelFromSubstate = ( state, subStateKey, modelName ) => {
 	state = state.deleteIn( [ subStateKey, modelName ] );
 	let subState = state.get( subStateKey );
 	subState = subState.withMutations( ( mutatedState ) => {
@@ -623,12 +575,7 @@ const clearModelFromSubstate = (
 					modelName,
 				];
 				mutatedState.deleteIn( deletePath );
-				removeEmptyFromState(
-					mutatedState,
-					deletePath,
-					1,
-					false,
-				);
+				removeEmptyFromState( mutatedState, deletePath, 1, false );
 			} );
 		} );
 	} );

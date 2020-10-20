@@ -5,12 +5,11 @@ const webpack = require( 'webpack' );
 const common = require( './webpack.common.js' );
 const miniExtract = require( 'mini-css-extract-plugin' );
 const assetsData = Object.create( null );
-const DependencyExtractionWebpackPlugin = require(
-	'@wordpress/dependency-extraction-webpack-plugin'
-);
-const { requestToExternal, requestToHandle } = require(
-	'./bin/asset-dependency-maps'
-);
+const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
+const {
+	requestToExternal,
+	requestToHandle,
+} = require( './bin/asset-dependency-maps' );
 const pluginsConfigWithExternals = [
 	new webpack.ProvidePlugin( {
 		React: 'react',
@@ -20,9 +19,7 @@ const pluginsConfigWithExternals = [
 		requestToHandle,
 	} ),
 	new WebpackAssetsManifest( {
-		output: path.resolve( __dirname,
-			'assets/dist/build-manifest.json',
-		),
+		output: path.resolve( __dirname, 'assets/dist/build-manifest.json' ),
 		assets: assetsData,
 	} ),
 	new miniExtract( {
@@ -31,9 +28,7 @@ const pluginsConfigWithExternals = [
 ];
 const pluginsConfigWithoutExternals = [
 	new WebpackAssetsManifest( {
-		output: path.resolve( __dirname,
-			'assets/dist/build-manifest.json',
-		),
+		output: path.resolve( __dirname, 'assets/dist/build-manifest.json' ),
 		assets: assetsData,
 	} ),
 	new webpack.ProvidePlugin( {
@@ -44,9 +39,9 @@ const pluginsConfigWithoutExternals = [
 	} ),
 ];
 common.forEach( ( config, index ) => {
-	const plugins = config.entry[ 'eventespresso-vendor' ] ?
-		pluginsConfigWithoutExternals :
-		pluginsConfigWithExternals;
+	const plugins = config.entry[ 'eventespresso-vendor' ]
+		? pluginsConfigWithoutExternals
+		: pluginsConfigWithExternals;
 	common[ index ] = merge( config, {
 		devtool: 'inline-source-map',
 		plugins,

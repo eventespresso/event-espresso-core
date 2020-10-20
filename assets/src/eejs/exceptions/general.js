@@ -1,6 +1,7 @@
 /**
  * General EE Exception
  * Usage: throw new eejs.Exception('some message')
+ *
  * @param {string} message
  * @param {...mixed} args
  * @return {Exception} instance

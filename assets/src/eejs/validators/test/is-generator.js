@@ -14,10 +14,7 @@ describe( 'isGenerator()', () => {
 		[ true, false ],
 		[ testGenerator, false ],
 		[ testGenerator(), true ],
-	].forEach( ( [
-		generator,
-		expectedResult,
-	] ) => {
+	].forEach( ( [ generator, expectedResult ] ) => {
 		it( 'returns expected result for given value', () => {
 			expect( isGenerator( generator ) ).toBe( expectedResult );
 		} );

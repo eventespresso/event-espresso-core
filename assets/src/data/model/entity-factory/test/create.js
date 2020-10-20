@@ -69,11 +69,15 @@ describe( 'testing create functions for model-entity factory', () => {
 			expect( testInstance.someProp ).toEqual( 10 );
 		} );
 		describe( 'testing setting values', () => {
-			it( 'throws TypeError for value that doesn\'t match type in ' +
-				'schema', () => {
-				const setInvalidValue = () => testInstance.someProp = 'invalid';
-				expect( setInvalidValue ).toThrow( TypeError );
-			} );
+			it(
+				"throws TypeError for value that doesn't match type in " +
+					'schema',
+				() => {
+					const setInvalidValue = () =>
+						( testInstance.someProp = 'invalid' );
+					expect( setInvalidValue ).toThrow( TypeError );
+				}
+			);
 			it( 'sets new value', () => {
 				testInstance.someProp = 20;
 				expect( testInstance.someProp ).toEqual( 20 );
@@ -101,12 +105,15 @@ describe( 'testing create functions for model-entity factory', () => {
 			expect( testInstance.aliasField ).toEqual( 42 );
 		} );
 		describe( 'testing setting new value', () => {
-			it( 'throws TypeError for value that doesn\'t match type in ' +
-				'schema', () => {
-				const setInvalidValue = () =>
-					testInstance.aliasField = 'invalid';
-				expect( setInvalidValue ).toThrow( TypeError );
-			} );
+			it(
+				"throws TypeError for value that doesn't match type in " +
+					'schema',
+				() => {
+					const setInvalidValue = () =>
+						( testInstance.aliasField = 'invalid' );
+					expect( setInvalidValue ).toThrow( TypeError );
+				}
+			);
 			it( 'sets new value on original prop', () => {
 				testInstance.aliasField = 20;
 				expect( testInstance.originalField ).toEqual( 20 );
@@ -126,12 +133,15 @@ describe( 'testing create functions for model-entity factory', () => {
 		} );
 		describe( 'testing setting new value', () => {
 			const returnedInstance = testInstance.setSomeProp( 20 );
-			it( 'throws TypeError for value that doesn\'t match type in ' +
-				'schem', () => {
-				const setInvalidValue = () =>
-					testInstance.setSomeProp( 'invalid' );
-				expect( setInvalidValue ).toThrow( TypeError );
-			} );
+			it(
+				"throws TypeError for value that doesn't match type in " +
+					'schem',
+				() => {
+					const setInvalidValue = () =>
+						testInstance.setSomeProp( 'invalid' );
+					expect( setInvalidValue ).toThrow( TypeError );
+				}
+			);
 			it( 'sets new value on prop', () => {
 				expect( testInstance.someProp ).toEqual( 20 );
 			} );
@@ -154,15 +164,17 @@ describe( 'testing create functions for model-entity factory', () => {
 			expect( testInstance.getRendered ).toBeDefined();
 		} );
 		it( 'has expected value using general `getRendered` getter', () => {
-			expect( testInstance.getRendered( 'someProp' ) )
-				.toEqual( 42 );
+			expect( testInstance.getRendered( 'someProp' ) ).toEqual( 42 );
 		} );
-		it( 'does not error when attempting to create a new ' +
-			'renderedGetter', () => {
-			expect(
-				() => createRenderedGetters( testInstance, 'someOtherProp', 35 )
-			).not.toThrow();
-		} );
+		it(
+			'does not error when attempting to create a new ' +
+				'renderedGetter',
+			() => {
+				expect( () =>
+					createRenderedGetters( testInstance, 'someOtherProp', 35 )
+				).not.toThrow();
+			}
+		);
 	} );
 	describe( 'createPrimaryKeyFieldGetters()', () => {
 		const testSingleKeyInstance = getMockInstance();
@@ -185,7 +197,9 @@ describe( 'testing create functions for model-entity factory', () => {
 				executeMethod( [ 'pk' ] );
 				describe( 'instance.primaryKey', () => {
 					it( 'is set', () => {
-						expect( testSingleKeyInstance.primaryKey ).toBeDefined();
+						expect(
+							testSingleKeyInstance.primaryKey
+						).toBeDefined();
 					} );
 					it( 'has expected value', () => {
 						expect( testSingleKeyInstance.primaryKey ).toBe( 'pk' );
@@ -193,31 +207,35 @@ describe( 'testing create functions for model-entity factory', () => {
 				} );
 				describe( 'instance.primaryKeys', () => {
 					it( 'is set', () => {
-						expect( testSingleKeyInstance.primaryKeys )
-							.toBeDefined();
+						expect(
+							testSingleKeyInstance.primaryKeys
+						).toBeDefined();
 					} );
 					it( 'has expected value', () => {
-						expect( testSingleKeyInstance.primaryKeys )
-							.toEqual( [ 'pk' ] );
+						expect( testSingleKeyInstance.primaryKeys ).toEqual( [
+							'pk',
+						] );
 					} );
 				} );
 				describe( 'instance.hasMultiplePrimaryKeys', () => {
 					it( 'is set', () => {
-						expect( testSingleKeyInstance.hasMultiplePrimaryKeys )
-							.toBeDefined();
+						expect(
+							testSingleKeyInstance.hasMultiplePrimaryKeys
+						).toBeDefined();
 					} );
 					it( 'has expected value', () => {
-						expect( testSingleKeyInstance.hasMultiplePrimaryKeys )
-							.toBe( false );
+						expect(
+							testSingleKeyInstance.hasMultiplePrimaryKeys
+						).toBe( false );
 					} );
 				} );
 			} );
 		} );
 		describe( 'expected multiple primary key results', () => {
-			createPrimaryKeyFieldGetters(
-				testMultiKeyInstance,
-				[ 'pk1', 'pk2' ]
-			);
+			createPrimaryKeyFieldGetters( testMultiKeyInstance, [
+				'pk1',
+				'pk2',
+			] );
 			describe( 'has expected getters and setters', () => {
 				describe( 'instance.primaryKey', () => {
 					it( 'is set', () => {
@@ -229,22 +247,27 @@ describe( 'testing create functions for model-entity factory', () => {
 				} );
 				describe( 'instance.primaryKeys', () => {
 					it( 'is set', () => {
-						expect( testMultiKeyInstance.primaryKeys )
-							.toBeDefined();
+						expect(
+							testMultiKeyInstance.primaryKeys
+						).toBeDefined();
 					} );
 					it( 'has expected value', () => {
-						expect( testMultiKeyInstance.primaryKeys )
-							.toEqual( [ 'pk1', 'pk2' ] );
+						expect( testMultiKeyInstance.primaryKeys ).toEqual( [
+							'pk1',
+							'pk2',
+						] );
 					} );
 				} );
 				describe( 'instance.hasMultiplePrimaryKeys', () => {
 					it( 'is set', () => {
-						expect( testMultiKeyInstance.hasMultiplePrimaryKeys )
-							.toBeDefined();
+						expect(
+							testMultiKeyInstance.hasMultiplePrimaryKeys
+						).toBeDefined();
 					} );
 					it( 'has expected value', () => {
-						expect( testMultiKeyInstance.hasMultiplePrimaryKeys )
-							.toBe( true );
+						expect(
+							testMultiKeyInstance.hasMultiplePrimaryKeys
+						).toBe( true );
 					} );
 				} );
 			} );
@@ -268,28 +291,27 @@ describe( 'testing create functions for model-entity factory', () => {
 			it( 'has method', () => {
 				expect( testInstance.hasCalculatedField ).toBeDefined();
 			} );
-			it( 'has expected value when called with known calculated field',
-				() => {
-					expect(
-						testInstance.hasCalculatedField( 'registrationCount' )
-					).toBe( true );
-				} );
-			it( 'has expected value when called for a calculated field that ' +
-				'does not exist', () => {
-				expect( testInstance.hasCalculatedField( 'nothere' ) )
-					.toBe( false );
+			it( 'has expected value when called with known calculated field', () => {
+				expect(
+					testInstance.hasCalculatedField( 'registrationCount' )
+				).toBe( true );
 			} );
+			it(
+				'has expected value when called for a calculated field that ' +
+					'does not exist',
+				() => {
+					expect( testInstance.hasCalculatedField( 'nothere' ) ).toBe(
+						false
+					);
+				}
+			);
 		} );
 	} );
 	describe( 'setResources()', () => {
 		const testInstance = getMockInstance();
 		const resources = {
-			self: [
-				{ href: 'self link' },
-			],
-			collection: [
-				{ href: 'collection link' },
-			],
+			self: [ { href: 'self link' } ],
+			collection: [ { href: 'collection link' } ],
 			'https://api.eventespresso.com/event': [
 				{ href: 'event relation', single: true },
 			],
@@ -311,8 +333,9 @@ describe( 'testing create functions for model-entity factory', () => {
 				expect( testInstance.collectionResourceLink ).toBeDefined();
 			} );
 			it( 'has expected value', () => {
-				expect( testInstance.collectionResourceLink )
-					.toEqual( 'collection link' );
+				expect( testInstance.collectionResourceLink ).toEqual(
+					'collection link'
+				);
 			} );
 		} );
 		describe( 'relation resource properties are as expected', () => {
@@ -321,17 +344,17 @@ describe( 'testing create functions for model-entity factory', () => {
 				expect( testInstance.transactionsResource ).toBeDefined();
 			} );
 		} );
-		describe( 'getRelations getter is defined and has expected value',
-			() => {
-				it( 'is created', () => {
-					expect( testInstance.getRelations ).toBeDefined();
-				} );
-				it( 'has expected value', () => {
-					expect( testInstance.getRelations ).toEqual(
-						[ 'events', 'transactions' ]
-					);
-				} );
+		describe( 'getRelations getter is defined and has expected value', () => {
+			it( 'is created', () => {
+				expect( testInstance.getRelations ).toBeDefined();
 			} );
+			it( 'has expected value', () => {
+				expect( testInstance.getRelations ).toEqual( [
+					'events',
+					'transactions',
+				] );
+			} );
+		} );
 	} );
 	describe( 'setRelationsResource()', () => {
 		const testInstance = getMockInstance();
@@ -344,11 +367,10 @@ describe( 'testing create functions for model-entity factory', () => {
 				expect( testInstance.relation ).toBeDefined();
 			} );
 			it( 'has expected value for property', () => {
-				expect( testInstance.relation )
-					.toEqual( {
-						resourceLink: 'resource link',
-						single: true,
-					} );
+				expect( testInstance.relation ).toEqual( {
+					resourceLink: 'resource link',
+					single: true,
+				} );
 			} );
 		} );
 		describe( 'creates expected getRelationResource property', () => {
@@ -356,17 +378,17 @@ describe( 'testing create functions for model-entity factory', () => {
 				expect( testInstance.getRelationResource ).toBeDefined();
 			} );
 			it( 'returns expected value for known resource', () => {
-				expect( testInstance.getRelationResource( 'relation' ) )
-					.toEqual(
-						{
-							resourceLink: 'resource link',
-							single: true,
-						}
-					);
+				expect(
+					testInstance.getRelationResource( 'relation' )
+				).toEqual( {
+					resourceLink: 'resource link',
+					single: true,
+				} );
 			} );
 			it( 'returns expected value for non valid resource', () => {
-				expect( testInstance.getRelationResource( 'invalid' ) )
-					.not.toBeDefined();
+				expect(
+					testInstance.getRelationResource( 'invalid' )
+				).not.toBeDefined();
 			} );
 		} );
 	} );
@@ -382,18 +404,21 @@ describe( 'testing create functions for model-entity factory', () => {
 				[ 'new', SAVE_STATE.NEW, SAVE_STATE.NEW ],
 				[ 'clean', SAVE_STATE.CLEAN, SAVE_STATE.CLEAN ],
 			];
-			testConditions.forEach( ( [
-				description,
-				stateToSet,
-				expectedState,
-			] ) => {
-				it( 'returns expected value for setting ' + description +
-					' state', () => {
-					setSaveState( testInstance, stateToSet );
-					expect( testInstance[ PRIVATE_PROPERTIES.SAVE_STATE ] )
-						.toEqual( expectedState );
-				} );
-			} );
+			testConditions.forEach(
+				( [ description, stateToSet, expectedState ] ) => {
+					it(
+						'returns expected value for setting ' +
+							description +
+							' state',
+						() => {
+							setSaveState( testInstance, stateToSet );
+							expect(
+								testInstance[ PRIVATE_PROPERTIES.SAVE_STATE ]
+							).toEqual( expectedState );
+						}
+					);
+				}
+			);
 		} );
 		describe( 'when current state is dirty', () => {
 			beforeEach( () => {
@@ -405,47 +430,52 @@ describe( 'testing create functions for model-entity factory', () => {
 				[ 'new', SAVE_STATE.NEW, SAVE_STATE.DIRTY ],
 				[ 'clean', SAVE_STATE.CLEAN, SAVE_STATE.DIRTY ],
 			];
-			testConditions.forEach( ( [
-				description,
-				stateToSet,
-				expectedState,
-			] ) => {
-				it( 'returns expected value for setting ' + description +
-					' state', () => {
-					setSaveState( testInstance, stateToSet );
-					expect( testInstance[ PRIVATE_PROPERTIES.SAVE_STATE ] )
-						.toEqual( expectedState );
-				} );
-			} );
+			testConditions.forEach(
+				( [ description, stateToSet, expectedState ] ) => {
+					it(
+						'returns expected value for setting ' +
+							description +
+							' state',
+						() => {
+							setSaveState( testInstance, stateToSet );
+							expect(
+								testInstance[ PRIVATE_PROPERTIES.SAVE_STATE ]
+							).toEqual( expectedState );
+						}
+					);
+				}
+			);
 		} );
 		describe( 'when current state is new', () => {
 			beforeEach( () => {
-				testInstance[ PRIVATE_PROPERTIES.SAVE_STATE ] =
-					SAVE_STATE.NEW;
+				testInstance[ PRIVATE_PROPERTIES.SAVE_STATE ] = SAVE_STATE.NEW;
 			} );
 			const testConditions = [
 				[ 'dirty', SAVE_STATE.DIRTY, SAVE_STATE.NEW ],
 				[ 'new', SAVE_STATE.NEW, SAVE_STATE.NEW ],
 				[ 'clean', SAVE_STATE.CLEAN, SAVE_STATE.NEW ],
 			];
-			testConditions.forEach( ( [
-				description,
-				stateToSet,
-				expectedState,
-			] ) => {
-				it( 'returns expected value for setting ' + description +
-					' state', () => {
-					setSaveState( testInstance, stateToSet );
-					expect( testInstance[ PRIVATE_PROPERTIES.SAVE_STATE ] )
-						.toEqual( expectedState );
-				} );
-			} );
+			testConditions.forEach(
+				( [ description, stateToSet, expectedState ] ) => {
+					it(
+						'returns expected value for setting ' +
+							description +
+							' state',
+						() => {
+							setSaveState( testInstance, stateToSet );
+							expect(
+								testInstance[ PRIVATE_PROPERTIES.SAVE_STATE ]
+							).toEqual( expectedState );
+						}
+					);
+				}
+			);
 		} );
 		describe( 'when provided state is an invalid state', () => {
 			it( 'throws InvalidArgument', () => {
-				expect(
-					() => setSaveState( testInstance, 'invalid' )
-				).toThrow( InvalidArgument );
+				expect( () => setSaveState( testInstance, 'invalid' ) ).toThrow(
+					InvalidArgument
+				);
 			} );
 		} );
 	} );

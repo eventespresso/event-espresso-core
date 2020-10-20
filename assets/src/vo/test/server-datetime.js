@@ -61,10 +61,7 @@ describe( 'ServerDateTime', () => {
 				'fromISO',
 				() => new Date( testDateValueInMilliseconds ).toISOString(),
 			],
-			[
-				'fromJSDate',
-				() => new Date( testDateValueInMilliseconds ),
-			],
+			[ 'fromJSDate', () => new Date( testDateValueInMilliseconds ) ],
 		];
 		testConditions.forEach( ( testCondition ) => {
 			const [ METHOD, getDate ] = testCondition;

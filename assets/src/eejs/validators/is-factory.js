@@ -31,8 +31,5 @@ export const isModelEntityFactory = ( factory ) => {
  * @return {boolean} True means the given factory
  */
 export const isModelEntityFactoryOfModel = ( factory, modelName ) => {
-	return (
-		isModelEntityFactory( factory ) &&
-		factory.modelName === modelName
-	);
+	return isModelEntityFactory( factory ) && factory.modelName === modelName;
 };

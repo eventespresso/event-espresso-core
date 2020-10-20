@@ -33,8 +33,10 @@ describe( 'mapOrderBy()', () => {
 describe( 'whereConditions()', () => {
 	it( 'returns expected default for empty object passed in', () => {
 		expect( whereConditions( {} ) ).toEqual(
-			'where[Datetime.DTT_EVT_end**expired][]=' + GREATER_THAN +
-			'&where[Datetime.DTT_EVT_end**expired][]=' + expectedNow
+			'where[Datetime.DTT_EVT_end**expired][]=' +
+				GREATER_THAN +
+				'&where[Datetime.DTT_EVT_end**expired][]=' +
+				expectedNow
 		);
 	} );
 	it( 'returns expected string for values passed in', () => {
@@ -54,13 +56,19 @@ describe( 'whereConditions()', () => {
 			month: 'may',
 		};
 		expect( whereConditions( testObject ) ).toEqual(
-			'where[Datetime.DTT_EVT_end**expired][]=' + GREATER_THAN +
-			'&where[Datetime.DTT_EVT_end**expired][]=' + expectedNow +
-			'&where[Term_Relationship.Term_Taxonomy.Term.slug]=test' +
-			'&where[Datetime.DTT_EVT_start][]=' + GREATER_THAN_AND_EQUAL +
-			'&where[Datetime.DTT_EVT_start][]=' + expectedStartofDate +
-			'&where[Datetime.DTT_EVT_end][]=' + LESS_THAN_AND_EQUAL +
-			'&where[Datetime.DTT_EVT_end][]=' + expectedEndofDate,
+			'where[Datetime.DTT_EVT_end**expired][]=' +
+				GREATER_THAN +
+				'&where[Datetime.DTT_EVT_end**expired][]=' +
+				expectedNow +
+				'&where[Term_Relationship.Term_Taxonomy.Term.slug]=test' +
+				'&where[Datetime.DTT_EVT_start][]=' +
+				GREATER_THAN_AND_EQUAL +
+				'&where[Datetime.DTT_EVT_start][]=' +
+				expectedStartofDate +
+				'&where[Datetime.DTT_EVT_end][]=' +
+				LESS_THAN_AND_EQUAL +
+				'&where[Datetime.DTT_EVT_end][]=' +
+				expectedEndofDate
 		);
 	} );
 } );
@@ -69,8 +77,10 @@ describe( 'getQueryString', () => {
 	it( 'returns expected default for no arguments passed in', () => {
 		expect( getQueryString() ).toEqual(
 			'limit=100&order=DESC&order_by=Datetime.DTT_EVT_start' +
-			'&where[Datetime.DTT_EVT_end**expired][]=' + GREATER_THAN +
-			'&where[Datetime.DTT_EVT_end**expired][]=' + expectedNow
+				'&where[Datetime.DTT_EVT_end**expired][]=' +
+				GREATER_THAN +
+				'&where[Datetime.DTT_EVT_end**expired][]=' +
+				expectedNow
 		);
 	} );
 } );
