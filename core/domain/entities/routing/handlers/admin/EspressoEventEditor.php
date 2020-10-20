@@ -44,6 +44,7 @@ class EspressoEventEditor extends EspressoEventsAdmin
             'EventEspresso\core\domain\services\admin\events\editor\EventEditorGraphQLData',
             [
                 'EventEspresso\core\domain\entities\admin\GraphQLData\Datetimes'                 => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\entities\admin\GraphQLData\Events'                    => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\domain\entities\admin\GraphQLData\Prices'                    => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\domain\entities\admin\GraphQLData\PriceTypes'                => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\domain\entities\admin\GraphQLData\Tickets'                   => EE_Dependency_Map::load_from_cache,
