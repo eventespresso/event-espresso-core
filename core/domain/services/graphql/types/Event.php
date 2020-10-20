@@ -97,7 +97,7 @@ class Event extends TypeBase
                 esc_html__('Event Menu Order', 'event_espresso')
             ),
             new GraphQLField(
-                'displayDesc',
+                'displayDescription',
                 'Boolean',
                 'display_description',
                 esc_html__('Display Description Flag', 'event_espresso')
