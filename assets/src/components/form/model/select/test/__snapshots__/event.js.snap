@@ -47,7 +47,7 @@ exports[`EventSelect() matches snapshot with default props 1`] = `
       "loadingMessage": [Function],
       "noOptionsMessage": [Function],
       "onChange": undefined,
-      "placeholder": "Select Event...",
+      "placeholder": "Select Event…",
     }
   }
 />

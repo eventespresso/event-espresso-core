@@ -20,7 +20,7 @@ describe( 'TicketSelect()', () => {
 			expectedDefaultQueryData
 		);
 		expect( wrapper.prop( 'selectConfiguration' ).placeholder ).toEqual(
-			'Select Ticket...'
+			'Select Ticket…'
 		);
 		expect( wrapper.prop( 'modelName' ) ).toEqual( 'ticket' );
 		expect( wrapper.prop( 'label' ) ).toEqual( 'Select Ticket' );

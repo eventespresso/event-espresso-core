@@ -39,7 +39,7 @@ describe( 'ModelSelect props check', () => {
 		] );
 		expect( selectWrapper.prop( 'isClearable' ) ).toEqual( false );
 		expect( selectWrapper.prop( 'isLoading' ) ).toEqual( false );
-		expect( selectWrapper.prop( 'placeholder' ) ).toEqual( 'Select...' );
+		expect( selectWrapper.prop( 'placeholder' ) ).toEqual( 'Select…' );
 	} );
 	it( 'should render a label when selectLabel is provided', () => {
 		const wrapper = shallow(

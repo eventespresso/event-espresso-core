@@ -20,7 +20,7 @@ describe( 'DatetimeSelect()', () => {
 			expectedDefaultQueryData
 		);
 		expect( wrapper.prop( 'selectConfiguration' ).placeholder ).toEqual(
-			'Select Datetime...'
+			'Select Datetime…'
 		);
 		expect( wrapper.prop( 'modelName' ) ).toEqual( 'datetime' );
 		expect( wrapper.prop( 'label' ) ).toEqual( 'Select Datetime' );

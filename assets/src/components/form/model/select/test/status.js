@@ -20,7 +20,7 @@ describe( 'StatusSelect()', () => {
 			expectedDefaultQueryData
 		);
 		expect( wrapper.prop( 'selectConfiguration' ).placeholder ).toEqual(
-			'Select Status...'
+			'Select Status…'
 		);
 		expect( wrapper.prop( 'modelName' ) ).toEqual( 'status' );
 		expect( wrapper.prop( 'label' ) ).toEqual( 'Select Status' );

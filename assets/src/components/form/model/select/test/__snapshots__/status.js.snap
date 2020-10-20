@@ -46,7 +46,7 @@ exports[`StatusSelect() matches snapshot with default props plus provided status
       "loadingMessage": [Function],
       "noOptionsMessage": [Function],
       "onChange": undefined,
-      "placeholder": "Select Status...",
+      "placeholder": "Select Status…",
     }
   }
 />
