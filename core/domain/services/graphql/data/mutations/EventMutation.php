@@ -38,8 +38,8 @@ class EventMutation
             $args['EVT_desc'] = wp_kses_post($input['description']);
         }
 
-        if (array_key_exists('displayDesc', $input)) {
-            $args['EVT_display_desc'] = (bool) ($input['displayDesc']);
+        if (array_key_exists('displayDescription', $input)) {
+            $args['EVT_display_desc'] = (bool) ($input['displayDescription']);
         }
 
         if (array_key_exists('displayTicketSelector', $input)) {
