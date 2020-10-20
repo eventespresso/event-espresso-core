@@ -109,21 +109,13 @@ export const whereConditions = ( {
 			'where[TKT_start_date][]=' +
 				GREATER_THAN_AND_EQUAL +
 				'&where[TKT_start_date][]=' +
-				moment()
-					.month( month )
-					.startOf( 'month' )
-					.local()
-					.format()
+				moment().month( month ).startOf( 'month' ).local().format()
 		);
 		where.push(
 			'where[TKT_end_date][]=' +
 				LESS_THAN_AND_EQUAL +
 				'&where[TKT_end_date][]=' +
-				moment()
-					.month( month )
-					.endOf( 'month' )
-					.local()
-					.format()
+				moment().month( month ).endOf( 'month' ).local().format()
 		);
 	}
 	forEventId = parseInt( forEventId, 10 );

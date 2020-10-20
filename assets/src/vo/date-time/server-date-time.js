@@ -44,9 +44,7 @@ export default class ServerDateTime extends DateTime {
 			super( iso8601DateString, timezone, locale, 'ServerDateTime' );
 		} else {
 			const datetime = !! iso8601DateString
-				? moment()
-						.utcOffset( DEFAULT_OFFSET, true )
-						.locale( locale )
+				? moment().utcOffset( DEFAULT_OFFSET, true ).locale( locale )
 				: moment( iso8601DateString )
 						.utcOffset( DEFAULT_OFFSET, true )
 						.locale( locale );

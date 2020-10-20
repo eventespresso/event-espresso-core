@@ -17,7 +17,7 @@ import { endpoints } from './endpoints.js';
  * @return { Object } An object of { { modelName } : {} }
  */
 const mapToObjectValues = ( modelNameEndpoints ) => {
-	return mapValues( modelNameEndpoints, function() {
+	return mapValues( modelNameEndpoints, function () {
 		return {};
 	} );
 };

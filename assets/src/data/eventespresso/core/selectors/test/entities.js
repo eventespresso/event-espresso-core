@@ -60,10 +60,7 @@ describe( 'getEntitiesForModel', () => {
 	it( 'returns expected array when the model exists in the state', () => {
 		const records = getEntitiesForModel( mockStateForTests, 'event' );
 		expect( records ).toEqual(
-			mockStateForTests.entities
-				.get( 'event' )
-				.valueSeq()
-				.toArray()
+			mockStateForTests.entities.get( 'event' ).valueSeq().toArray()
 		);
 		expect( records[ 0 ] ).toEqual( EventEntities.a );
 	} );

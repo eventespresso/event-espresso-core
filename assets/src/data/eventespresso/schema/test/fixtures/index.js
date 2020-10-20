@@ -10,9 +10,7 @@ import {
 import { fromJS, Map } from 'immutable';
 
 export const mockStateForTests = {
-	schema: Map()
-		.set( 'event', EventSchema )
-		.set( 'datetime', DateTimeSchema ),
+	schema: Map().set( 'event', EventSchema ).set( 'datetime', DateTimeSchema ),
 	factory: Map()
 		.set( 'event', EventFactory )
 		.set( 'datetime', DateTimeFactory ),

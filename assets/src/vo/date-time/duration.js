@@ -546,7 +546,7 @@ export default class Duration {
 	 */
 	negate() {
 		return new Duration(
-			mapValues( this.toObject(), function( value ) {
+			mapValues( this.toObject(), function ( value ) {
 				return value * -1;
 			} )
 		);

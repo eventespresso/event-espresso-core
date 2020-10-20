@@ -40,32 +40,22 @@ const testEntities = [
 	{
 		DTT_name: 'Test Date A',
 		DTT_EVT_start: moment( testMoment ).format(),
-		DTT_EVT_end: moment( testMoment )
-			.add( 1, 'd' )
-			.format(),
+		DTT_EVT_end: moment( testMoment ).add( 1, 'd' ).format(),
 	},
 	{
 		DTT_name: 'Test Date B',
-		DTT_EVT_start: moment( testMoment )
-			.add( 2, 'd' )
-			.format(),
-		DTT_EVT_end: moment( testMoment )
-			.add( 3, 'd' )
-			.format(),
+		DTT_EVT_start: moment( testMoment ).add( 2, 'd' ).format(),
+		DTT_EVT_end: moment( testMoment ).add( 3, 'd' ).format(),
 	},
 	{
 		DTT_name: '',
 		DTT_EVT_start: moment( testMoment ).format(),
-		DTT_EVT_end: moment( testMoment )
-			.add( 1, 'h' )
-			.format(),
+		DTT_EVT_end: moment( testMoment ).add( 1, 'h' ).format(),
 	},
 	{
 		DTT_name: 'Test Date D',
 		DTT_EVT_start: moment( testMoment ).format(),
-		DTT_EVT_end: moment( testMoment )
-			.add( 1, 'd' )
-			.format(),
+		DTT_EVT_end: moment( testMoment ).add( 1, 'd' ).format(),
 	},
 	{
 		DTT_name: 'Test Date E',
