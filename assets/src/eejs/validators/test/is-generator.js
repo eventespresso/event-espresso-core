@@ -10,7 +10,7 @@ describe( 'isGenerator()', () => {
 		[ {}, false ],
 		[ null, false ],
 		[ 'fail', false ],
-		[ function() {}, false ],
+		[ function () {}, false ],
 		[ true, false ],
 		[ testGenerator, false ],
 		[ testGenerator(), true ],

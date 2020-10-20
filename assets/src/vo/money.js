@@ -144,9 +144,7 @@ export default class Money {
 	 */
 	constructor( amount, currency ) {
 		this.displayName = 'Money';
-		this.setCurrency( currency )
-			.setAmount( amount )
-			.setFormatter();
+		this.setCurrency( currency ).setAmount( amount ).setFormatter();
 		Object.freeze( this );
 	}
 

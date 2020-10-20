@@ -35,7 +35,7 @@ export const { primary_keys: primaryKeys = {} } = data.paths;
  */
 export const valuesForCombinedPrimaryKeys = memoize( ( keys, entity ) => {
 	assertIsArray( keys );
-	const primaryKey = reduce( keys, function( result, key ) {
+	const primaryKey = reduce( keys, function ( result, key ) {
 		assertEntityHasKey( key, entity );
 		return entity[ result ] + ':' + entity[ key ];
 	} );

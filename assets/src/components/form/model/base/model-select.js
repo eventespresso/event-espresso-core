@@ -160,7 +160,7 @@ export class ModelSelect extends Component {
 	 */
 	static getOptionObjectForValue( value, options ) {
 		if ( ! isEmpty( options ) ) {
-			const match = find( options, function( option ) {
+			const match = find( options, function ( option ) {
 				return option.value === value;
 			} );
 			return ! isUndefined( match ) ? match : null;

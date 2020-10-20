@@ -110,21 +110,13 @@ export const whereConditions = ( {
 			'where[DTT_EVT_start][]=' +
 				GREATER_THAN_AND_EQUAL +
 				'&where[DTT_EVT_start][]=' +
-				moment()
-					.month( month )
-					.startOf( 'month' )
-					.local()
-					.format()
+				moment().month( month ).startOf( 'month' ).local().format()
 		);
 		where.push(
 			'where[DTT_EVT_end][]=' +
 				LESS_THAN_AND_EQUAL +
 				'&where[DTT_EVT_end][]=' +
-				moment()
-					.month( month )
-					.endOf( 'month' )
-					.local()
-					.format()
+				moment().month( month ).endOf( 'month' ).local().format()
 		);
 	}
 	if ( parseInt( forEventId, 10 ) !== 0 ) {

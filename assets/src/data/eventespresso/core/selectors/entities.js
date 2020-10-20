@@ -39,10 +39,7 @@ const getEntitiesForModel = createSelector(
 	( state, modelName ) => {
 		modelName = singularModelName( modelName );
 		return state.entities.has( modelName )
-			? state.entities
-					.get( modelName )
-					.valueSeq()
-					.toArray()
+			? state.entities.get( modelName ).valueSeq().toArray()
 			: [];
 	},
 	( state, modelName ) => [ state.entities.get( modelName ) ]

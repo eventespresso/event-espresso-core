@@ -66,7 +66,7 @@ const handleDeactivationClick = ( e, el ) => {
 	);
 	modalContainer.el.addEventListener(
 		CLOSE_MODAL_EVENT,
-		function() {
+		function () {
 			window.location.href = link;
 		},
 		{ once: true }
@@ -80,7 +80,7 @@ if ( info.isModalActive ) {
 	$( 'tr[data-slug="event-espresso"]' ).on(
 		'click',
 		'span.deactivate > a',
-		function( e ) {
+		function ( e ) {
 			handleDeactivationClick( e, this );
 		}
 	);
@@ -91,7 +91,7 @@ if ( info.isModalActive ) {
 	$( 'tr[data-slug="event-espresso-decaf"]' ).on(
 		'click',
 		'span.deactivate > a',
-		function( e ) {
+		function ( e ) {
 			handleDeactivationClick( e, this );
 		}
 	);

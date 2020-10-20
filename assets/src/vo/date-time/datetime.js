@@ -134,9 +134,7 @@ export default class DateTime {
 			this.constructor.assertTimezoneIsValid( timezone );
 			this[ privateProperties.datetime ] =
 				iso8601DateString === ''
-					? moment()
-							.tz( timezone )
-							.locale( locale )
+					? moment().tz( timezone ).locale( locale )
 					: moment.tz( iso8601DateString, timezone ).locale( locale );
 		}
 		this[ privateMethods.createGettersAndSetters ]();
@@ -448,9 +446,7 @@ export default class DateTime {
 		this.assertTimezoneIsValid( timezone );
 		this.assertLocaleIsValid( locale );
 		return this.fromMoment(
-			moment( date )
-				.tz( timezone )
-				.locale( locale )
+			moment( date ).tz( timezone ).locale( locale )
 		);
 	}
 
@@ -474,9 +470,7 @@ export default class DateTime {
 		this.assertIsOffset( offset );
 		this.assertLocaleIsValid( locale );
 		return this.fromMoment(
-			moment( date )
-				.utcOffset( offset )
-				.locale( locale )
+			moment( date ).utcOffset( offset ).locale( locale )
 		);
 	}
 
@@ -496,11 +490,7 @@ export default class DateTime {
 					'representing milliseconds from the epoch'
 			);
 		}
-		return this.fromMoment(
-			moment( milliseconds )
-				.utc()
-				.locale( locale )
-		);
+		return this.fromMoment( moment( milliseconds ).utc().locale( locale ) );
 	}
 
 	/**
@@ -519,12 +509,7 @@ export default class DateTime {
 					'representing seconds from the epoch'
 			);
 		}
-		return this.fromMoment(
-			moment
-				.unix( seconds )
-				.utc()
-				.locale( locale )
-		);
+		return this.fromMoment( moment.unix( seconds ).utc().locale( locale ) );
 	}
 
 	/**
@@ -622,9 +607,7 @@ export default class DateTime {
 				valuesForConstruct
 			);
 			const datetime = isEmpty( valuesForConstruct )
-				? moment()
-						.utcOffset( offset, true )
-						.locale( locale )
+				? moment().utcOffset( offset, true ).locale( locale )
 				: moment
 						.utc( valuesForConstruct )
 						.utcOffset( offset, true )
