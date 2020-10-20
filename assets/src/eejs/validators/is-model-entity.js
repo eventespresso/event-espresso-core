@@ -24,8 +24,5 @@ export const isModelEntity = ( entity ) => {
  */
 export const isModelEntityOfModel = ( entity, modelName ) => {
 	modelName = upperFirst( camelCase( modelName ) );
-	return (
-		isModelEntity( entity ) &&
-		entity.constructor.name === modelName
-	);
+	return isModelEntity( entity ) && entity.constructor.name === modelName;
 };

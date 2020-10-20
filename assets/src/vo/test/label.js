@@ -7,33 +7,35 @@ describe( 'Label Value Object', () => {
 			const testDelayedInstance = ( singularLabel, pluralLabel ) => {
 				return () => new Label( singularLabel, pluralLabel );
 			};
-			expect( testDelayedInstance( 20, 'something' ) ).toThrow( TypeError );
-			expect( testDelayedInstance( 'something', 20 ) ).toThrow( TypeError );
+			expect( testDelayedInstance( 20, 'something' ) ).toThrow(
+				TypeError
+			);
+			expect( testDelayedInstance( 'something', 20 ) ).toThrow(
+				TypeError
+			);
 		} );
 		it( 'disallows changing of properties after construct', () => {
 			expect( testInstance.singular ).toBe( 'singular' );
-			expect( () => testInstance.singular = 'testChange' ).toThrow();
+			expect( () => ( testInstance.singular = 'testChange' ) ).toThrow();
 			expect( testInstance.singular ).toBe( 'singular' );
-			expect( () => testInstance.plural = 'testChange' ).toThrow();
+			expect( () => ( testInstance.plural = 'testChange' ) ).toThrow();
 			expect( testInstance.plural ).toBe( 'plural' );
 		} );
 		describe( 'setSingular()', () => {
-			it( 'returns a new Label instance and original is unchanged',
-				() => {
-					const newInstance = testInstance.setSingular( 'singularA' );
-					expect( newInstance ).not.toBe( testInstance );
-					expect( newInstance.singular ).toBe( 'singularA' );
-					expect( testInstance.singular ).toBe( 'singular' );
-				} );
+			it( 'returns a new Label instance and original is unchanged', () => {
+				const newInstance = testInstance.setSingular( 'singularA' );
+				expect( newInstance ).not.toBe( testInstance );
+				expect( newInstance.singular ).toBe( 'singularA' );
+				expect( testInstance.singular ).toBe( 'singular' );
+			} );
 		} );
 		describe( 'setPlural()', () => {
-			it( 'returns a new Label instance and original is unchanged',
-				() => {
-					const newInstance = testInstance.setPlural( 'pluralA' );
-					expect( newInstance ).not.toBe( testInstance );
-					expect( newInstance.plural ).toBe( 'pluralA' );
-					expect( testInstance.plural ).toBe( 'plural' );
-				} );
+			it( 'returns a new Label instance and original is unchanged', () => {
+				const newInstance = testInstance.setPlural( 'pluralA' );
+				expect( newInstance ).not.toBe( testInstance );
+				expect( newInstance.plural ).toBe( 'pluralA' );
+				expect( testInstance.plural ).toBe( 'plural' );
+			} );
 		} );
 		describe( 'asSentenceCase()', () => {
 			let newInstance = {};
@@ -45,14 +47,17 @@ describe( 'Label Value Object', () => {
 			it( 'returns the singular label in Sentence Case', () => {
 				testCases.forEach( ( testCase ) => {
 					newInstance = testInstance.setSingular( testCase[ 0 ] );
-					expect( newInstance.asSentenceCase() ).toBe( testCase[ 1 ] );
+					expect( newInstance.asSentenceCase() ).toBe(
+						testCase[ 1 ]
+					);
 				} );
 			} );
 			it( 'returns the plural label in Sentence Case', () => {
 				testCases.forEach( ( testCase ) => {
 					newInstance = testInstance.setPlural( testCase[ 0 ] );
-					expect( newInstance.asSentenceCase( false ) )
-						.toBe( testCase[ 1 ] );
+					expect( newInstance.asSentenceCase( false ) ).toBe(
+						testCase[ 1 ]
+					);
 				} );
 			} );
 		} );
@@ -72,8 +77,9 @@ describe( 'Label Value Object', () => {
 			it( 'returns the plural label in Lower Case', () => {
 				testCases.forEach( ( testCase ) => {
 					newInstance = testInstance.setPlural( testCase[ 0 ] );
-					expect( newInstance.asLowerCase( false ) )
-						.toBe( testCase[ 1 ] );
+					expect( newInstance.asLowerCase( false ) ).toBe(
+						testCase[ 1 ]
+					);
 				} );
 			} );
 		} );
@@ -93,25 +99,34 @@ describe( 'Label Value Object', () => {
 			it( 'returns the plural label in Upper Case', () => {
 				testCases.forEach( ( testCase ) => {
 					newInstance = testInstance.setPlural( testCase[ 0 ] );
-					expect( newInstance.asUpperCase( false ) )
-						.toBe( testCase[ 1 ] );
+					expect( newInstance.asUpperCase( false ) ).toBe(
+						testCase[ 1 ]
+					);
 				} );
 			} );
 		} );
 		describe( 'asFormatted()', () => {
-			it( 'throws a warning when invalid format type argument' +
-				' provided.', () => {
-				testInstance.asFormatted( true, 'invalid' );
-				expect( console ).toHaveErroredWith( 'Warning: Format type must' +
-					' be one of Label.FORMAT_SENTENCE_CASE,' +
-					' Label.FORMAT_UPPERCASE, or Label.FORMAT_LOWERCASE' );
-			} );
+			it(
+				'throws a warning when invalid format type argument' +
+					' provided.',
+				() => {
+					testInstance.asFormatted( true, 'invalid' );
+					expect( console ).toHaveErroredWith(
+						'Warning: Format type must' +
+							' be one of Label.FORMAT_SENTENCE_CASE,' +
+							' Label.FORMAT_UPPERCASE, or Label.FORMAT_LOWERCASE'
+					);
+				}
+			);
 			it( 'converts as expected for the provided format type', () => {
 				expect(
 					testInstance.asFormatted( true, Label.FORMAT_SENTENCE_CASE )
 				).toBe( 'Singular' );
 				expect(
-					testInstance.asFormatted( false, Label.FORMAT_SENTENCE_CASE )
+					testInstance.asFormatted(
+						false,
+						Label.FORMAT_SENTENCE_CASE
+					)
 				).toBe( 'Plural' );
 				expect(
 					testInstance.asFormatted( true, Label.FORMAT_LOWERCASE )
@@ -129,16 +144,21 @@ describe( 'Label Value Object', () => {
 		} );
 	} );
 	describe( 'Label.assertString()', () => {
-		it( 'throws a TypeError if the provided value is not a' +
-			' string', () => {
-			expect( () => Label.assertString( 20 ) ).toThrow( TypeError );
-		} );
+		it(
+			'throws a TypeError if the provided value is not a' + ' string',
+			() => {
+				expect( () => Label.assertString( 20 ) ).toThrow( TypeError );
+			}
+		);
 	} );
 	describe( 'Label.fromSameSingleAndPlural()', () => {
-		it( 'creates a new Label instance with the same value for singular' +
-			' and plural strings for the provided value', () => {
-			const newInstance = Label.fromSameSingleAndPlural( 'same' );
-			expect( newInstance.singular ).toBe( newInstance.plural );
-		} );
+		it(
+			'creates a new Label instance with the same value for singular' +
+				' and plural strings for the provided value',
+			() => {
+				const newInstance = Label.fromSameSingleAndPlural( 'same' );
+				expect( newInstance.singular ).toBe( newInstance.plural );
+			}
+		);
 	} );
 } );

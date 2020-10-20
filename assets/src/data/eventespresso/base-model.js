@@ -7,6 +7,7 @@ import { mapReducer } from '@eventespresso/helpers';
 
 /**
  * A helper for getting a method name.
+ *
  * @param {string} modelName
  * @param {string} suffix
  * @param {string} prefix
@@ -41,7 +42,7 @@ export const getMethodName = (
  */
 export const keepExistingEntitiesInObject = (
 	existingEntities,
-	incomingEntities,
+	incomingEntities
 ) => {
 	const getExistingOrDefaultEntity = ( defaultEntity, entityId ) => {
 		if ( isMap( existingEntities ) && existingEntities.has( entityId ) ) {
@@ -54,9 +55,9 @@ export const keepExistingEntitiesInObject = (
 		mapped.set( entityId, getExistingOrDefaultEntity( entity, entityId ) );
 		return mapped;
 	};
-	return isMap( incomingEntities ) ?
-		mapReducer( incomingEntities, reduceCallback, new Map() ) :
-		reduce( incomingEntities, reduceCallback, new Map() );
+	return isMap( incomingEntities )
+		? mapReducer( incomingEntities, reduceCallback, new Map() )
+		: reduce( incomingEntities, reduceCallback, new Map() );
 };
 
 /**

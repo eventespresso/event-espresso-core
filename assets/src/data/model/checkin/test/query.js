@@ -1,8 +1,4 @@
-import {
-	mapOrderBy,
-	whereConditions,
-	getQueryString,
-} from '../query';
+import { mapOrderBy, whereConditions, getQueryString } from '../query';
 import { CHECKIN_STATUS_ID } from '../constants';
 
 describe( 'mapOrderBy()', () => {
@@ -32,10 +28,11 @@ describe( 'whereConditions()', () => {
 		};
 		expect( whereConditions( testObject ) ).toEqual(
 			'where[Registration.EVT_ID]=20' +
-			'&where[DTT_ID]=10' +
-			'&where[REG_ID]=15' +
-			'&where[Registration.TKT_ID]=3' +
-			'&where[CHK_in]=' + CHECKIN_STATUS_ID.STATUS_CHECKED_IN
+				'&where[DTT_ID]=10' +
+				'&where[REG_ID]=15' +
+				'&where[Registration.TKT_ID]=3' +
+				'&where[CHK_in]=' +
+				CHECKIN_STATUS_ID.STATUS_CHECKED_IN
 		);
 	} );
 } );

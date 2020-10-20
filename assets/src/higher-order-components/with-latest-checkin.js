@@ -27,47 +27,37 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
  */
 const withLatestCheckin = createHigherOrderComponent(
 	compose( [
-		withSelect(
-			( select, { registration, datetimeId } ) => {
-				if ( ! isModelEntityOfModel(
-					registration,
-					'registration'
-				) ) {
-					return {};
-				}
-				const { getLatestCheckin } = select( 'eventespresso/core' );
-				const { hasFinishedResolution } = select( 'core/data' );
-				const checkInEntity = getLatestCheckin(
-					registration.id,
-					datetimeId
-				);
-				return {
-					checkinEntity: checkInEntity || null,
-					hasResolvedCheckin: hasFinishedResolution(
-						'eventespresso/core',
-						'getLatestCheckin',
-						[ registration.id, datetimeId ]
-					),
-				};
+		withSelect( ( select, { registration, datetimeId } ) => {
+			if ( ! isModelEntityOfModel( registration, 'registration' ) ) {
+				return {};
 			}
-		),
-		withDispatch(
-			( dispatch, { registration, datetimeId } ) => {
-				const { toggleCheckin } = dispatch( 'eventespresso/core' );
-				return {
-					onClick() {
-						if (
-							isModelEntityOfModel(
-								registration,
-								'registration'
-							)
-						) {
-							toggleCheckin( registration.id, datetimeId );
-						}
-					},
-				};
-			}
-		),
+			const { getLatestCheckin } = select( 'eventespresso/core' );
+			const { hasFinishedResolution } = select( 'core/data' );
+			const checkInEntity = getLatestCheckin(
+				registration.id,
+				datetimeId
+			);
+			return {
+				checkinEntity: checkInEntity || null,
+				hasResolvedCheckin: hasFinishedResolution(
+					'eventespresso/core',
+					'getLatestCheckin',
+					[ registration.id, datetimeId ]
+				),
+			};
+		} ),
+		withDispatch( ( dispatch, { registration, datetimeId } ) => {
+			const { toggleCheckin } = dispatch( 'eventespresso/core' );
+			return {
+				onClick() {
+					if (
+						isModelEntityOfModel( registration, 'registration' )
+					) {
+						toggleCheckin( registration.id, datetimeId );
+					}
+				},
+			};
+		} ),
 	] ),
 	'withLatestCheckin'
 );

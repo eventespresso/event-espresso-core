@@ -1,8 +1,4 @@
-import {
-	mapOrderBy,
-	whereConditions,
-	getQueryString,
-} from '../';
+import { mapOrderBy, whereConditions, getQueryString } from '../';
 
 describe( 'mapOrderBy()', () => {
 	it( 'correctly maps incoming values to the correct expectation', () => {
@@ -22,7 +18,9 @@ describe( 'mapOrderBy()', () => {
 
 describe( 'whereConditions()', () => {
 	it( 'returns empty string when NO parameters provided', () => {
-		expect( whereConditions( {} ) ).toEqual( 'where[Registration.Status.STS_ID]=RAP' );
+		expect( whereConditions( {} ) ).toEqual(
+			'where[Registration.Status.STS_ID]=RAP'
+		);
 	} );
 	it( 'returns expected string for supplied Event ID', () => {
 		const testObject = { forEventId: 123 };
@@ -54,43 +52,49 @@ describe( 'whereConditions()', () => {
 			'where[Registration.Status.STS_ID]=RAP&calculate=user_avatar'
 		);
 	} );
-	it( 'returns expected string when ALL parameters provided not' +
-		' including Registration ID', () => {
-		const testObject = {
-			forEventId: 1,
-			forDatetimeId: 2,
-			forTicketId: 3,
-			forStatusId: 'RNA',
-			showGravatar: true,
-		};
-		expect( whereConditions( testObject ) ).toEqual(
-			'where[Registration.Ticket.TKT_ID]=3' +
-			'&where[Registration.Status.STS_ID]=RNA' +
-			'&calculate=user_avatar'
-		);
-	} );
+	it(
+		'returns expected string when ALL parameters provided not' +
+			' including Registration ID',
+		() => {
+			const testObject = {
+				forEventId: 1,
+				forDatetimeId: 2,
+				forTicketId: 3,
+				forStatusId: 'RNA',
+				showGravatar: true,
+			};
+			expect( whereConditions( testObject ) ).toEqual(
+				'where[Registration.Ticket.TKT_ID]=3' +
+					'&where[Registration.Status.STS_ID]=RNA' +
+					'&calculate=user_avatar'
+			);
+		}
+	);
 	it( 'returns expected string for supplied Registration ID', () => {
 		const testObject = { forRegistrationId: 123 };
 		expect( whereConditions( testObject ) ).toEqual(
 			'where[Registration.REG_ID]=123&where[Registration.Status.STS_ID]=RAP'
 		);
 	} );
-	it( 'returns expected string when ALL parameters provided including' +
-		' Registration ID', () => {
-		const testObject = {
-			forEventId: 1,
-			forDatetimeId: 2,
-			forTicketId: 3,
-			forRegistrationId: 123,
-			forStatusId: 'RNA',
-			showGravatar: true,
-		};
-		expect( whereConditions( testObject ) ).toEqual(
-			'where[Registration.REG_ID]=123' +
-			'&where[Registration.Status.STS_ID]=RNA' +
-			'&calculate=user_avatar'
-		);
-	} );
+	it(
+		'returns expected string when ALL parameters provided including' +
+			' Registration ID',
+		() => {
+			const testObject = {
+				forEventId: 1,
+				forDatetimeId: 2,
+				forTicketId: 3,
+				forRegistrationId: 123,
+				forStatusId: 'RNA',
+				showGravatar: true,
+			};
+			expect( whereConditions( testObject ) ).toEqual(
+				'where[Registration.REG_ID]=123' +
+					'&where[Registration.Status.STS_ID]=RNA' +
+					'&calculate=user_avatar'
+			);
+		}
+	);
 } );
 
 describe( 'getQueryString', () => {

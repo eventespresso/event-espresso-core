@@ -19,6 +19,7 @@ import createSelector from 'rememo';
 /**
  * Selector for returning the schema object for a given model name from the
  * state.
+ *
  * @param {Object} state
  * @param {string} modelName
  * @return {Object} The schema object or null if it doesn't exist.
@@ -46,6 +47,7 @@ export function isRequestingSchemaForModel( state, modelName ) {
 /**
  * Selector for returning whether the schema has been resolved or not for the
  * given model name.
+ *
  * @param {Object} state
  * @param {string} modelName
  * @return {boolean} True means that the schema has finished resolving for this
@@ -125,14 +127,19 @@ export function getRelationEndpointForEntityId(
 	modelName = singularModelName( modelName );
 	relationModelName = singularModelName( relationModelName );
 	entityId = normalizeEntityId( entityId );
-	return state.relationEndpoints.getIn(
-		[ modelName, entityId, relationModelName ]
-	) || '';
+	return (
+		state.relationEndpoints.getIn( [
+			modelName,
+			entityId,
+			relationModelName,
+		] ) || ''
+	);
 }
 
 /**
  * Selector for returning whether the relation endpoint is being requested
  * or not for the given model name, entity id, and relation from the state.
+ *
  * @param {Object} state
  * @param {string} modelName
  * @param {number|string} entityId
@@ -153,7 +160,7 @@ export function isRequestingRelationEndpointForEntityId(
 		'getRelationEndpointForEntityId',
 		modelName,
 		entityId,
-		relationModelName,
+		relationModelName
 	);
 }
 
@@ -178,11 +185,7 @@ export function isRequestingRelationEndpointForEntityId(
  * type could not be determined.
  */
 export const getRelationPrimaryKeyString = createSelector(
-	(
-		state,
-		modelName,
-		relationName
-	) => {
+	( state, modelName, relationName ) => {
 		modelName = singularModelName( modelName );
 		relationName = singularModelName( relationName );
 		const relationType = getRelationType( state, modelName, relationName );
@@ -190,9 +193,11 @@ export const getRelationPrimaryKeyString = createSelector(
 			return '';
 		}
 		const relationPrimaryKey = getPrimaryKey( relationName );
-		return relationType === 'EE_Belongs_To_Relation' ?
-			relationPrimaryKey :
-			`${ modelNameForQueryString( relationName ) }.${ relationPrimaryKey }`;
+		return relationType === 'EE_Belongs_To_Relation'
+			? relationPrimaryKey
+			: `${ modelNameForQueryString(
+					relationName
+			  ) }.${ relationPrimaryKey }`;
 	},
 	( state, modelName, relationName ) => {
 		modelName = singularModelName( modelName );
@@ -200,7 +205,7 @@ export const getRelationPrimaryKeyString = createSelector(
 		return [
 			state.relationSchema.getIn( [ modelName, relationName ], '' ),
 		];
-	},
+	}
 );
 
 /**
@@ -216,9 +221,7 @@ export const getRelationResponseType = ( state, modelName, relationName ) => {
 	modelName = singularModelName( modelName );
 	relationName = singularModelName( relationName );
 	const relationSchema = getRelationSchema( state, modelName, relationName );
-	return relationSchema !== null ?
-		relationSchema.type :
-		'';
+	return relationSchema !== null ? relationSchema.type : '';
 };
 
 /**
@@ -250,9 +253,7 @@ export const getRelationType = ( state, modelName, relationName ) => {
 	modelName = singularModelName( modelName );
 	relationName = singularModelName( relationName );
 	const relationSchema = getRelationSchema( state, modelName, relationName );
-	return relationSchema !== null ?
-		relationSchema.relation_type :
-		'';
+	return relationSchema !== null ? relationSchema.relation_type : '';
 };
 
 /**

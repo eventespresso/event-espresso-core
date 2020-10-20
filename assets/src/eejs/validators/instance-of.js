@@ -7,17 +7,26 @@
  * @param {string} expectedName
  * @return {boolean} True means the object is an instance of expectedName.
  */
-export function instanceOf(objectInstance, expectedName) {
-	if (!objectInstance) {
+export function instanceOf( objectInstance, expectedName ) {
+	if ( ! objectInstance ) {
 		return false;
 	}
-	if (objectInstance.constructor) {
-		if (objectInstance.constructor.name && objectInstance.constructor.name === expectedName) {
+	if ( objectInstance.constructor ) {
+		if (
+			objectInstance.constructor.name &&
+			objectInstance.constructor.name === expectedName
+		) {
 			return true;
 		}
-		if (objectInstance.constructor.displayName && objectInstance.constructor.displayName === expectedName) {
+		if (
+			objectInstance.constructor.displayName &&
+			objectInstance.constructor.displayName === expectedName
+		) {
 			return true;
 		}
 	}
-	return objectInstance.hasOwnProperty('displayName') && objectInstance.displayName === expectedName;
+	return (
+		objectInstance.hasOwnProperty( 'displayName' ) &&
+		objectInstance.displayName === expectedName
+	);
 }

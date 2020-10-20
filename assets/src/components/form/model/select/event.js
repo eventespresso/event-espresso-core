@@ -22,11 +22,8 @@ const EventSelect = createModelSelect(
 	{
 		selectConfiguration: {
 			loadingMessage: () => __( 'Retrieving Events.', 'event_espresso' ),
-			noOptionsMessage: () => __(
-				'No Events.',
-				'event_espresso',
-			),
-			placeholder: __( 'Select Event...', 'event_espresso' ),
+			noOptionsMessage: () => __( 'No Events.', 'event_espresso' ),
+			placeholder: __( 'Select Event…', 'event_espresso' ),
 		},
 		...model.defaultQueryData,
 		getQueryString: model.getQueryString,
@@ -43,6 +40,6 @@ export default EventSelect;
 /**
  * Enhanced EventSelect for the WordPress editor.
  */
-export const EditorEventSelect = withBaseControl(
-	'select-event'
-)( EventSelect );
+export const EditorEventSelect = withBaseControl( 'select-event' )(
+	EventSelect
+);

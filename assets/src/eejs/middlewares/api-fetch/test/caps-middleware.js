@@ -31,12 +31,7 @@ describe( 'caps context middleware tests', () => {
 			'url',
 			invalidUrl,
 		],
-	].forEach( ( [
-		descriptionPart,
-		options,
-		optionsType,
-		expectedUrl,
-	] ) => {
+	].forEach( ( [ descriptionPart, options, optionsType, expectedUrl ] ) => {
 		it( 'should not have context appended ' + descriptionPart, () => {
 			expect.hasAssertions();
 			const callback = ( opts ) => {
@@ -64,12 +59,7 @@ describe( 'caps context middleware tests', () => {
 			'url',
 			appendedPath,
 		],
-	].forEach( ( [
-		descriptionPart,
-		options,
-		optionsType,
-		expectedUrl,
-	] ) => {
+	].forEach( ( [ descriptionPart, options, optionsType, expectedUrl ] ) => {
 		it( 'should have context appended ' + descriptionPart, () => {
 			expect.hasAssertions();
 			const callback = ( opts ) => {

@@ -19,6 +19,7 @@ export const TIME_FORMAT_SITE = FORMAT_SITE_TIME;
 /**
  * Recieves a moment parseable dateString and returns a string in the provided
  * format.
+ *
  * @param { string } dateString  Incoming date string.  Should be parseable by
  *   moment
  * @param { string } format        Incoming format string.  Should be a format
@@ -32,17 +33,16 @@ export const TIME_FORMAT_SITE = FORMAT_SITE_TIME;
 export const formatDateString = (
 	dateString = '',
 	format = DATE_TIME_FORMAT_ISO8601,
-	local = true,
+	local = true
 ) => {
 	const date = stringToMoment( dateString );
-	return local ?
-		date.local().format( format ) :
-		date.format( format );
+	return local ? date.local().format( format ) : date.format( format );
 };
 
 /**
  * Receives a moment parseable dateString and returns a string in the mysql
  * date and time format.
+ *
  * @param { string } dateString  Incoming date string.  Should be parseable by
  *   moment
  * @param { boolean } local        Whether or not convert the date to the local
@@ -58,6 +58,7 @@ export const formatMysqlDateString = ( dateString = '', local = true ) => {
 /**
  * Receives a moment parseable dateString and returns a string in the format
  * currently set on the host site.
+ *
  * @param { string } dateString  Incoming date string.  Should be parseable by
  *   moment
  * @param { boolean } local        Whether or not convert the date to the local
@@ -86,12 +87,16 @@ export const stringToMoment = ( dateString = '' ) => {
 /**
  * Receives an indefinite number of dateStrings as arguments and concatenates
  * them together with the given separator.
+ *
  * @param { string } separator
  * @param { ...string } dateStrings
  * @return { string }  Returns a string concatenating all the provided
  *   dateStrings together with the given separator.
  */
-export const allDateTimesAsString = ( separator = SEPARATOR_SPACE_DASH_SPACE, ...dateStrings ) => {
+export const allDateTimesAsString = (
+	separator = SEPARATOR_SPACE_DASH_SPACE,
+	...dateStrings
+) => {
 	let content = '';
 	dateStrings.forEach( ( item ) => {
 		content += item + separator;

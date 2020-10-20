@@ -12,7 +12,7 @@ import { withSelect } from '@wordpress/data';
  * @param {WPElement} children
  * @param {(string|string[])} excludedPostTypeSlugs
  * @return {?WPElement} Rendered element or null.
- * @constructor
+ * @class
  */
 export function NotWithPostTypeCheck( {
 	postType,

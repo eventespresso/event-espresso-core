@@ -49,12 +49,7 @@ describe( 'removeEmptyFromState()', () => {
 			1,
 			testState.deleteIn( [ 'level1', 'level2b', 'level3', 'level4' ] ),
 		],
-	].forEach( ( [
-		description,
-		path,
-		length,
-		expectedResult,
-	] ) => {
+	].forEach( ( [ description, path, length, expectedResult ] ) => {
 		it( description + ' withMutations is true', () => {
 			const resultState = removeEmptyFromState(
 				testState,
@@ -65,12 +60,7 @@ describe( 'removeEmptyFromState()', () => {
 		} );
 		it( description + ' withMutations is not true', () => {
 			const resultState = testState.withMutations( ( subState ) => {
-				removeEmptyFromState(
-					subState,
-					path,
-					length,
-					false,
-				);
+				removeEmptyFromState( subState, path, length, false );
 			} );
 			expect( resultState ).toEqual( expectedResult );
 		} );

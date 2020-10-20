@@ -1,10 +1,7 @@
 /**
  * Internal imports
  */
-import {
-	deleteEntityById,
-	trashEntityById,
-} from '../delete-entity-generators';
+import { deleteEntityById, trashEntityById } from '../delete-entity-generators';
 import {
 	receiveTrashEntityId,
 	receiveDeleteEntityId,

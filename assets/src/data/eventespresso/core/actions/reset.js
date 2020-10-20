@@ -36,7 +36,7 @@ export function* resetAllState() {
 		yield dispatch(
 			'core/data',
 			'invalidateResolutionForStore',
-			REDUCER_KEY,
+			REDUCER_KEY
 		);
 		return;
 	}
@@ -83,10 +83,8 @@ export function* resetStateForModel( modelName ) {
 	for ( const selector in resolvers ) {
 		for ( const entry of resolvers[ selector ]._map ) {
 			if (
-				(
-					modelNameInSelector( selector, modelName ) ||
-					modelNameInArgs( entry[ 0 ], modelName )
-				) &&
+				( modelNameInSelector( selector, modelName ) ||
+					modelNameInArgs( entry[ 0 ], modelName ) ) &&
 				! selectorIsModelSpecific( selector )
 			) {
 				yield dispatch(
@@ -94,7 +92,7 @@ export function* resetStateForModel( modelName ) {
 					'invalidateResolution',
 					REDUCER_KEY,
 					selector,
-					entry[ 0 ],
+					entry[ 0 ]
 				);
 			}
 		}
@@ -137,12 +135,9 @@ const modelNameInArgs = ( args, modelName ) => {
 
 	// it's possible one of the args is an instance of BaseEntity.  If so,
 	// then let's compare against the modelName on the entity instance.
-	return some(
-		args,
-		( arg ) => {
-			return isModelEntityOfModel( arg, singularName );
-		}
-	);
+	return some( args, ( arg ) => {
+		return isModelEntityOfModel( arg, singularName );
+	} );
 };
 
 /**
@@ -160,9 +155,10 @@ const selectorIsModelSpecific = (
 	selectorName,
 	selectorsToInvalidate = null
 ) => {
-	selectorsToInvalidate = selectorsToInvalidate === null ?
-		keys( modelSpecificSelectors ) :
-		selectorsToInvalidate;
+	selectorsToInvalidate =
+		selectorsToInvalidate === null
+			? keys( modelSpecificSelectors )
+			: selectorsToInvalidate;
 	return selectorsToInvalidate.indexOf( selectorName ) > -1;
 };
 
@@ -175,9 +171,10 @@ const selectorIsModelSpecific = (
  */
 export function* resetAllModelSpecific( selectorName ) {
 	yield {
-		type: selectorName === undefined ?
-			types.RESET_ALL_MODEL_SPECIFIC :
-			types.RESET_MODEL_SPECIFIC_FOR_SELECTOR,
+		type:
+			selectorName === undefined
+				? types.RESET_ALL_MODEL_SPECIFIC
+				: types.RESET_MODEL_SPECIFIC_FOR_SELECTOR,
 		selector: selectorName,
 	};
 
@@ -202,7 +199,7 @@ export function* resetAllModelSpecific( selectorName ) {
 						'invalidateResolution',
 						REDUCER_KEY,
 						selector,
-						entry[ 0 ],
+						entry[ 0 ]
 					);
 				}
 			}
@@ -237,7 +234,7 @@ export function* resetModelSpecificForSelectorAndArgs( selectorName, ...args ) {
 		'invalidateResolution',
 		REDUCER_KEY,
 		selectorName,
-		args,
+		args
 	);
 }
 

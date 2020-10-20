@@ -19,8 +19,8 @@ export default class InvalidDateTime extends InvalidType {
 		if ( Error.captureStackTrace ) {
 			Error.captureStackTrace( this, InvalidDateTime );
 		}
-		this.message = 'The value provided is not a valid DateTime. ' +
-			this.message;
+		this.message =
+			'The value provided is not a valid DateTime. ' + this.message;
 		this.datetime = datetime || '';
 		this.name = 'InvalidDateTime';
 	}

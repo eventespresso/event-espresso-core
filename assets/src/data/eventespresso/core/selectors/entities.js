@@ -8,6 +8,7 @@ import { singularModelName } from '@eventespresso/model';
 /**
  * Returns all entity records for the given modelName in the current state.
  * An entity record is the Map of entities (entityId => entity).
+ *
  * @param {Object} state
  * @param {string} modelName
  * @return {Object<number|string, BaseEntity>}|null} A collection of entity
@@ -17,9 +18,9 @@ import { singularModelName } from '@eventespresso/model';
 const getEntityRecordsForModel = createSelector(
 	( state, modelName ) => {
 		modelName = singularModelName( modelName );
-		return state.entities.has( modelName ) ?
-			state.entities.get( modelName ).toJS() :
-			null;
+		return state.entities.has( modelName )
+			? state.entities.get( modelName ).toJS()
+			: null;
 	},
 	( state, modelName ) => [ state.entities.get( modelName ) ]
 );
@@ -37,11 +38,14 @@ const getEntityRecordsForModel = createSelector(
 const getEntitiesForModel = createSelector(
 	( state, modelName ) => {
 		modelName = singularModelName( modelName );
-		return state.entities.has( modelName ) ?
-			state.entities.get( modelName ).valueSeq().toArray() :
-			[];
+		return state.entities.has( modelName )
+			? state.entities
+					.get( modelName )
+					.valueSeq()
+					.toArray()
+			: [];
 	},
-	( state, modelName ) => [ state.entities.get( modelName ) ],
+	( state, modelName ) => [ state.entities.get( modelName ) ]
 );
 
 /**
@@ -54,10 +58,10 @@ const getEntitiesForModel = createSelector(
  */
 function getEntityById( state, modelName, entityId ) {
 	modelName = singularModelName( modelName );
-	return state.entities.getIn( [
-		modelName,
-		normalizeEntityId( entityId ),
-	] ) || null;
+	return (
+		state.entities.getIn( [ modelName, normalizeEntityId( entityId ) ] ) ||
+		null
+	);
 }
 
 /**
@@ -74,8 +78,8 @@ const getEntitiesByIds = ( state, modelName, entityIds ) => {
 };
 
 getEntitiesByIds.clear = () => retrieveEntitiesByIds.clear();
-getEntitiesByIds.getDependants = ( state, modelName ) => retrieveEntitiesByIds
-	.getDependants( state, modelName );
+getEntitiesByIds.getDependants = ( state, modelName ) =>
+	retrieveEntitiesByIds.getDependants( state, modelName );
 
 /**
  * Retrieves an array of model entities for the provided array of ids and model.
@@ -115,9 +119,9 @@ const retrieveEntitiesByIds = createSelector(
 const getEntityIdsQueuedForTrash = createSelector(
 	( state, modelName ) => {
 		modelName = singularModelName( modelName );
-		return state.dirty.trash.has( modelName ) ?
-			state.dirty.trash.get( modelName ).toArray() :
-			[];
+		return state.dirty.trash.has( modelName )
+			? state.dirty.trash.get( modelName ).toArray()
+			: [];
 	},
 	( state, modelName ) => [ state.dirty.trash.get( modelName ) ]
 );
@@ -132,9 +136,9 @@ const getEntityIdsQueuedForTrash = createSelector(
 const getEntityIdsQueuedForDelete = createSelector(
 	( state, modelName ) => {
 		modelName = singularModelName( modelName );
-		return state.dirty.delete.has( modelName ) ?
-			state.dirty.delete.get( modelName ).toArray() :
-			[];
+		return state.dirty.delete.has( modelName )
+			? state.dirty.delete.get( modelName ).toArray()
+			: [];
 	},
 	( state, modelName ) => [ state.dirty.delete.get( modelName ) ]
 );

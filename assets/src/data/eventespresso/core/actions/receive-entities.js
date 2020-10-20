@@ -37,6 +37,7 @@ function receiveEntityRecords( modelName, entities = [] ) {
 /**
  * Same as receiveEntityRecords except incoming entities will replace any
  * matching records (by ID)  in the state.
+ *
  * @param {string} modelName
  * @param {Array} entities
  * @return {

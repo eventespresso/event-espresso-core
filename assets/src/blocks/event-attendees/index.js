@@ -17,12 +17,11 @@ import './style.css';
 export const name = 'eventespresso/event-attendees';
 
 export const settings = {
-
 	title: __( 'Event Attendees', 'event_espresso' ),
 
 	description: __(
 		'Displays a list of people that have registered for the specified event',
-		'event_espresso',
+		'event_espresso'
 	),
 
 	icon: 'groups',

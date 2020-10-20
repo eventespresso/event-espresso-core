@@ -42,9 +42,8 @@ const defaultQueryData = {
 	limit: 50,
 };
 
-const isNewBlock = ( { eventId, datetimeId, ticketId } ) => eventId === 0 &&
-	datetimeId === 0 &&
-	ticketId === 0;
+const isNewBlock = ( { eventId, datetimeId, ticketId } ) =>
+	eventId === 0 && datetimeId === 0 && ticketId === 0;
 
 const DEFAULT_ARRAY = [];
 
@@ -126,19 +125,19 @@ export class EventAttendeesEditor extends Component {
 
 	/**
 	 * Set eventId on attributes
+	 *
 	 * @param {Object} eventId
 	 */
 	setEventId = ( eventId ) => {
-		const value = eventId !== null && eventId.value ?
-			parseInt( eventId.value, 10 ) :
-			0;
-		this.props.setAttributes(
-			{
-				eventId: value,
-				datetimeId: 0,
-				ticketId: 0,
-			}
-		);
+		const value =
+			eventId !== null && eventId.value
+				? parseInt( eventId.value, 10 )
+				: 0;
+		this.props.setAttributes( {
+			eventId: value,
+			datetimeId: 0,
+			ticketId: 0,
+		} );
 		this.setState( {
 			datetimeQueryData: {
 				...this.state.datetimeQueryData,
@@ -149,18 +148,18 @@ export class EventAttendeesEditor extends Component {
 
 	/**
 	 * Set datetimeId on attributes
+	 *
 	 * @param {Object} datetimeId
 	 */
 	setDatetimeId = ( datetimeId ) => {
-		const value = datetimeId !== null && datetimeId.value ?
-			parseInt( datetimeId.value, 10 ) :
-			0;
-		this.props.setAttributes(
-			{
-				datetimeId: value,
-				ticketId: 0,
-			}
-		);
+		const value =
+			datetimeId !== null && datetimeId.value
+				? parseInt( datetimeId.value, 10 )
+				: 0;
+		this.props.setAttributes( {
+			datetimeId: value,
+			ticketId: 0,
+		} );
 		this.setState( {
 			ticketQueryData: {
 				...this.state.ticketQueryData,
@@ -171,28 +170,33 @@ export class EventAttendeesEditor extends Component {
 
 	/**
 	 * Set ticketId on attributes
+	 *
 	 * @param {Object} ticketId
 	 */
 	setTicketId = ( ticketId ) => {
-		const value = ticketId !== null && ticketId.value ?
-			parseInt( ticketId.value, 10 ) :
-			0;
+		const value =
+			ticketId !== null && ticketId.value
+				? parseInt( ticketId.value, 10 )
+				: 0;
 		this.props.setAttributes( { ticketId: value } );
 	};
 
 	/**
 	 * Set status on attributes
+	 *
 	 * @param {Object} status
 	 */
 	setStatus = ( status ) => {
-		const value = status !== null && status.value ?
-			status.value :
-			statusModel.REGISTRATION_STATUS_ID.APPROVED;
+		const value =
+			status !== null && status.value
+				? status.value
+				: statusModel.REGISTRATION_STATUS_ID.APPROVED;
 		this.props.setAttributes( { status: value } );
 	};
 
 	/**
 	 * Set limit for attendees to be shown in attributes.
+	 *
 	 * @param {number} limit
 	 */
 	setLimit = ( limit ) => {
@@ -203,6 +207,7 @@ export class EventAttendeesEditor extends Component {
 
 	/**
 	 * Set the orderBy attribute
+	 *
 	 * @param {string} orderBy
 	 */
 	setOrderBy = ( orderBy ) => {
@@ -211,6 +216,7 @@ export class EventAttendeesEditor extends Component {
 
 	/**
 	 * Set the order attribute
+	 *
 	 * @param {string} order
 	 */
 	setOrder = ( order ) => {
@@ -219,6 +225,7 @@ export class EventAttendeesEditor extends Component {
 
 	/**
 	 * Set the size for the gravatar displayed.
+	 *
 	 * @param {number} size
 	 */
 	setAvatarSize = ( size ) => {
@@ -229,6 +236,7 @@ export class EventAttendeesEditor extends Component {
 
 	/**
 	 * Sets whether to show gravatar for attendees in attributes.
+	 *
 	 * @param {boolean} showGravatar
 	 */
 	toggleShowGravatar = ( showGravatar ) => {
@@ -237,6 +245,7 @@ export class EventAttendeesEditor extends Component {
 
 	/**
 	 * Sets whether to show block on archive pages in attributes.
+	 *
 	 * @param {boolean} displayOnArchives
 	 */
 	toggleDisplayOnArchives = ( displayOnArchives ) => {
@@ -245,15 +254,12 @@ export class EventAttendeesEditor extends Component {
 
 	/**
 	 * Retrieve the Attendees List component for the given attributes
+	 *
 	 * @return {Component} What to display for the attendee display.
 	 */
 	getAttendeesDisplay() {
 		const { isLoading, attendees } = this.props;
-		const {
-			showGravatar,
-			avatarSize,
-			avatarClass,
-		} = this.props.attributes;
+		const { showGravatar, avatarSize, avatarClass } = this.props.attributes;
 
 		const avatarOptions = {
 			avatarWidth: avatarSize,
@@ -269,7 +275,8 @@ export class EventAttendeesEditor extends Component {
 			);
 		}
 
-		if ( isNewBlock( this.props.attributes ) &&
+		if (
+			isNewBlock( this.props.attributes ) &&
 			attendees === DEFAULT_ARRAY
 		) {
 			return (
@@ -292,20 +299,23 @@ export class EventAttendeesEditor extends Component {
 				</Placeholder>
 			);
 		}
-		return <EventAttendeeList
-			attendees={ this.applyLimit( attendees ) }
-			showGravatar={ showGravatar }
-			avatarOptions={ avatarOptions }
-			isLoading={ isLoading }
-			containerCssClass={ CSS_CLASS_CORE_BLOCKS }
-			containerId={ 'ee-block-event-attendees' }
-		/>;
+		return (
+			<EventAttendeeList
+				attendees={ this.applyLimit( attendees ) }
+				showGravatar={ showGravatar }
+				avatarOptions={ avatarOptions }
+				isLoading={ isLoading }
+				containerCssClass={ CSS_CLASS_CORE_BLOCKS }
+				containerId={ 'ee-block-event-attendees' }
+			/>
+		);
 	}
 
 	/**
 	 * This receives the array of attendees and applies the limit to it so that
 	 * only the set limit of attendees is returned from the beginning of the
 	 * array.
+	 *
 	 * @param {Array} attendees
 	 * @return {Array} A new array of attendees with the applied limit
 	 */
@@ -326,32 +336,31 @@ export class EventAttendeesEditor extends Component {
 		const countAttendees = this.props.attendees.length || 0;
 		return (
 			<InspectorControls>
-				<PanelBody title={ __(
-					'Filter By Settings',
-					'event_espresso'
-				) }>
+				<PanelBody
+					title={ __( 'Filter By Settings', 'event_espresso' ) }
+				>
 					<EditorEventSelect
 						key="attendees-event-select"
 						selected={ attributes.eventId }
 						onSelect={ this.setEventId }
 						queryData={ this.state.eventQueryData }
 					/>
-					{ attributes.eventId !== 0 &&
+					{ attributes.eventId !== 0 && (
 						<EditorDatetimeSelect
 							key="attendees-datetime-select"
 							selected={ attributes.datetimeId }
 							onSelect={ this.setDatetimeId }
 							queryData={ this.state.datetimeQueryData }
 						/>
-					}
-					{ attributes.datetimeId !== 0 &&
+					) }
+					{ attributes.datetimeId !== 0 && (
 						<EditorTicketSelect
 							key="attendees-ticket-select"
 							selected={ attributes.ticketId }
 							onSelect={ this.setTicketId }
 							queryData={ this.state.ticketQueryData }
 						/>
-					}
+					) }
 					<EditorStatusSelect
 						key="attendees-status-select"
 						selected={ attributes.status }
@@ -433,52 +442,56 @@ export class EventAttendeesEditor extends Component {
 						onChange={ this.setOrder }
 					/>
 				</PanelBody>
-				<PanelBody title={ __(
-					'Gravatar Setttings',
-					'event_espresso'
-				) } >
+				<PanelBody
+					title={ __( 'Gravatar Setttings', 'event_espresso' ) }
+				>
 					<ToggleControl
 						label={ __( 'Display Gravatar', 'event_espresso' ) }
 						checked={ attributes.showGravatar }
 						onChange={ this.toggleShowGravatar }
-						help={ attributes.showGravatar ?
-							__(
-								'Gravatar images are shown for each attendee.',
-								'event_espresso'
-							) :
-							__(
-								'No gravatar images are shown for each attendee.',
-								'event_espresso'
-							) }
+						help={
+							attributes.showGravatar
+								? __(
+										'Gravatar images are shown for each attendee.',
+										'event_espresso'
+								  )
+								: __(
+										'No gravatar images are shown for each attendee.',
+										'event_espresso'
+								  )
+						}
 					/>
-					{ attributes.showGravatar &&
-					<RangeControl
-						label={ __( 'Size of Gravatar', 'event_espresso' ) }
-						value={ attributes.avatarSize }
-						min={ 10 }
-						max={ 128 }
-						onChange={ this.setAvatarSize }
-					/>
-					}
+					{ attributes.showGravatar && (
+						<RangeControl
+							label={ __( 'Size of Gravatar', 'event_espresso' ) }
+							value={ attributes.avatarSize }
+							min={ 10 }
+							max={ 128 }
+							onChange={ this.setAvatarSize }
+						/>
+					) }
 				</PanelBody>
 				<NotWithPostTypeCheck excludedPostTypeSlugs={ 'page' }>
-					<PanelBody title={ __(
-						'Archive Settings',
-						'event_espresso'
-					) } >
+					<PanelBody
+						title={ __( 'Archive Settings', 'event_espresso' ) }
+					>
 						<ToggleControl
-							label={ __( 'Display on Archives', 'event_espresso' ) }
+							label={ __(
+								'Display on Archives',
+								'event_espresso'
+							) }
 							checked={ attributes.displayOnArchives }
 							onChange={ this.toggleDisplayOnArchives }
-							help={ attributes.displayOnArchives ?
-								__(
-									'Attendees are shown whenever this post is listed in an archive view.',
-									'event_espresso'
-								) :
-								__(
-									'Attendees are hidden whenever this post is listed in an archive view.',
-									'event_espresso'
-								)
+							help={
+								attributes.displayOnArchives
+									? __(
+											'Attendees are shown whenever this post is listed in an archive view.',
+											'event_espresso'
+									  )
+									: __(
+											'Attendees are hidden whenever this post is listed in an archive view.',
+											'event_espresso'
+									  )
 							}
 						/>
 					</PanelBody>
@@ -512,11 +525,10 @@ export default withSelect( ( select, ownProps ) => {
 	// This ensures that we don't query unnecessarily since if the limit is
 	// lower than a query we've already done, then we already have cached data
 	// for this limit (and cache is still busted by any other query changes)
-	highestRequestedLimit = ! limit ||
-		isNaN( limit ) ||
-		limit <= highestRequestedLimit ?
-		highestRequestedLimit :
-		limit;
+	highestRequestedLimit =
+		! limit || isNaN( limit ) || limit <= highestRequestedLimit
+			? highestRequestedLimit
+			: limit;
 
 	const queryData = {
 		forEventId: eventId,
@@ -531,10 +543,9 @@ export default withSelect( ( select, ownProps ) => {
 	};
 
 	const queryString = attendeeModel.getQueryString( queryData );
-	const {
-		getAttendees,
-		isRequestingAttendees,
-	} = select( 'eventespresso/lists' );
+	const { getAttendees, isRequestingAttendees } = select(
+		'eventespresso/lists'
+	);
 	return {
 		...EventAttendeesEditor.defaultProps,
 		...ownProps,
@@ -542,9 +553,9 @@ export default withSelect( ( select, ownProps ) => {
 			...EventAttendeesEditor.defaultProps.attributes,
 			...ownProps.attributes,
 		},
-		attendees: isNewBlock( { eventId, datetimeId, ticketId } ) ?
-			DEFAULT_ARRAY :
-			getAttendees( queryString ),
+		attendees: isNewBlock( { eventId, datetimeId, ticketId } )
+			? DEFAULT_ARRAY
+			: getAttendees( queryString ),
 		isLoading: isRequestingAttendees( queryString ),
 	};
 } )( EventAttendeesEditor );

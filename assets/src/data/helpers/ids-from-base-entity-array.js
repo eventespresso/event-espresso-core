@@ -10,9 +10,9 @@ import { isArray } from 'lodash';
  * @return {Array} An array of ids.
  */
 export function getIdsFromBaseEntityArray( entities ) {
-	return isArray( entities ) ?
-		entities
-			.map( ( entity ) => !! entity.id ? entity.id : false )
-			.filter( ( x ) => x ) :
-		entities;
+	return isArray( entities )
+		? entities
+				.map( ( entity ) => ( !! entity.id ? entity.id : false ) )
+				.filter( ( x ) => x )
+		: entities;
 }

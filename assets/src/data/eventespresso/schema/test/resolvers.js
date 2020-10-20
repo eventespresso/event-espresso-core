@@ -37,17 +37,20 @@ describe( 'getSchemaForModel()', () => {
 		const fulfillment = getSchemaForModel( 'event' );
 		it( 'yields expected result for api fetch action object', () => {
 			const { value: apiFetchAction } = fulfillment.next();
-			expect( apiFetchAction.request ).toEqual(
-				{ path: '/ee/v4.8.36/events', method: 'OPTIONS' }
-			);
+			expect( apiFetchAction.request ).toEqual( {
+				path: '/ee/v4.8.36/events',
+				method: 'OPTIONS',
+			} );
 		} );
-		it( 'yields expected result for received schema action ' +
-			'object', () => {
-			const { value: schemaAction } = fulfillment.next( EventSchema );
-			expect( schemaAction ).toEqual(
-				receiveSchemaForModel( 'event', EventSchema )
-			);
-		} );
+		it(
+			'yields expected result for received schema action ' + 'object',
+			() => {
+				const { value: schemaAction } = fulfillment.next( EventSchema );
+				expect( schemaAction ).toEqual(
+					receiveSchemaForModel( 'event', EventSchema )
+				);
+			}
+		);
 		it( 'returns schema', () => {
 			const { value, done } = fulfillment.next();
 			expect( value ).toBe( EventSchema );
@@ -59,55 +62,63 @@ describe( 'getSchemaForModel()', () => {
 describe( 'getFactoryForModel()', () => {
 	describe( 'yields with expected response', () => {
 		let fulfillment;
-		const reset = ( schema = {} ) => fulfillment = getFactoryForModel(
-			'event',
-			schema
-		);
+		const reset = ( schema = {} ) =>
+			( fulfillment = getFactoryForModel( 'event', schema ) );
 		const assertFactoryActionsAreEqual = ( actualAction ) => {
 			// we're using poorManSerializer to compare because
 			// the modelEntityFactory constructor uses Symbols for
 			// properties and thus no two built factories will EVER be
 			// the same. So for the purpose of this test, we just need to know
 			// that the action object is as expected on a shallow comparison.
-			expect( poorManSerializer( actualAction ) )
-				.toEqual( poorManSerializer(
+			expect( poorManSerializer( actualAction ) ).toEqual(
+				poorManSerializer(
 					receiveFactoryForModel( 'event', eventFactory )
-				) );
-		};
-		it( 'yields expected action object for received factory when schema ' +
-			'is provided', () => {
-			reset( EventSchema );
-			const { value } = fulfillment.next();
-			assertFactoryActionsAreEqual( value );
-		} );
-		it( 'yields expected generator for schema selector when no ' +
-			'schema provided', () => {
-			reset();
-			const { value } = fulfillment.next();
-			expect( value ).toEqual(
-				resolveSelect(
-					SCHEMA_REDUCER_KEY,
-					'getSchemaForModel',
-					'event'
 				)
 			);
-		} );
+		};
+		it(
+			'yields expected action object for received factory when schema ' +
+				'is provided',
+			() => {
+				reset( EventSchema );
+				const { value } = fulfillment.next();
+				assertFactoryActionsAreEqual( value );
+			}
+		);
+		it(
+			'yields expected generator for schema selector when no ' +
+				'schema provided',
+			() => {
+				reset();
+				const { value } = fulfillment.next();
+				expect( value ).toEqual(
+					resolveSelect(
+						SCHEMA_REDUCER_KEY,
+						'getSchemaForModel',
+						'event'
+					)
+				);
+			}
+		);
 		it( 'returns null when there is no schema for the given model', () => {
 			const { value, done } = fulfillment.next( {} );
 			expect( value ).toBe( null );
 			expect( done ).toBe( true );
 		} );
-		it( 'yields expected action object for received factory ' +
-			'action', () => {
-			reset();
-			fulfillment.next();
-			const { value } = fulfillment.next( EventSchema );
-			assertFactoryActionsAreEqual( value );
-		} );
+		it(
+			'yields expected action object for received factory ' + 'action',
+			() => {
+				reset();
+				fulfillment.next();
+				const { value } = fulfillment.next( EventSchema );
+				assertFactoryActionsAreEqual( value );
+			}
+		);
 		it( 'returns factory on successful generation', () => {
 			const { value, done } = fulfillment.next();
-			expect( poorManSerializer( value ) )
-				.toEqual( poorManSerializer( eventFactory ) );
+			expect( poorManSerializer( value ) ).toEqual(
+				poorManSerializer( eventFactory )
+			);
 			expect( done ).toBe( true );
 		} );
 	} );
@@ -115,82 +126,92 @@ describe( 'getFactoryForModel()', () => {
 
 describe( 'getRelationEndpointForEntityId()', () => {
 	let fulfillment;
-	const reset = () => fulfillment = getRelationEndpointForEntityId(
-		'event',
-		10,
-		'datetimes'
-	);
+	const reset = () =>
+		( fulfillment = getRelationEndpointForEntityId(
+			'event',
+			10,
+			'datetimes'
+		) );
 	it( 'yields resolve select control action for getting entity by id', () => {
 		reset();
 		const { value } = fulfillment.next();
-		expect( value ).toEqual( resolveSelect(
-			CORE_REDUCER_KEY,
-			'getEntityById',
-			'event',
-			10
-		) );
-	} );
-	it( 'when entity endpoint is available for retrieved entity yields receive' +
-		' relation endpoint active', () => {
-		const { value } = fulfillment.next( EventEntities.a );
 		expect( value ).toEqual(
-			receiveRelationEndpointForModelEntity(
-				'event',
-				10,
-				'datetime',
-				'ee/v4.8.36/events/10/datetimes'
-			)
+			resolveSelect( CORE_REDUCER_KEY, 'getEntityById', 'event', 10 )
 		);
 	} );
+	it(
+		'when entity endpoint is available for retrieved entity yields receive' +
+			' relation endpoint active',
+		() => {
+			const { value } = fulfillment.next( EventEntities.a );
+			expect( value ).toEqual(
+				receiveRelationEndpointForModelEntity(
+					'event',
+					10,
+					'datetime',
+					'ee/v4.8.36/events/10/datetimes'
+				)
+			);
+		}
+	);
 	it( 'yields fetch action for retrieving the entity', () => {
 		reset();
 		fulfillment.next();
 		const { value } = fulfillment.next( {} );
-		expect( value ).toEqual( fetch(
-			{
-				path: getEndpoint( 'event' ) + '/' + 10,
-			}
-		) );
-	} );
-	it( 'returns empty string when there is no response for that ' +
-		'endpoint', () => {
-		const { value, done } = fulfillment.next( {} );
-		expect( value ).toEqual( '' );
-		expect( done ).toBe( true );
-	} );
-	it( 'returns empty string when there is no endpoint for the given ' +
-		'relation', () => {
-		reset();
-		fulfillment.next();
-		fulfillment.next( {} );
-		const { value, done } = fulfillment.next( {
-			_links: {
-				'https://api.eventespresso.com/tickets': 'https://some_endpoint',
-			},
-		} );
-		expect( value ).toEqual( '' );
-		expect( done ).toBe( true );
-	} );
-	it( 'yields receive relation endpoint action object for relation existing ' +
-		'in the response', () => {
-		reset();
-		fulfillment.next();
-		fulfillment.next( {} );
-		const { value } = fulfillment.next( {
-			_links: {
-				'https://api.eventespresso.com/datetimes':
-					'https://some_endpoint',
-			},
-		} );
 		expect( value ).toEqual(
-			receiveRelationEndpointForModelEntity(
-				'event',
-				10,
-				'datetime',
-				'https://some_endpoint'
-			)
+			fetch( {
+				path: getEndpoint( 'event' ) + '/' + 10,
+			} )
 		);
 	} );
+	it(
+		'returns empty string when there is no response for that ' + 'endpoint',
+		() => {
+			const { value, done } = fulfillment.next( {} );
+			expect( value ).toEqual( '' );
+			expect( done ).toBe( true );
+		}
+	);
+	it(
+		'returns empty string when there is no endpoint for the given ' +
+			'relation',
+		() => {
+			reset();
+			fulfillment.next();
+			fulfillment.next( {} );
+			const { value, done } = fulfillment.next( {
+				_links: {
+					'https://api.eventespresso.com/tickets':
+						'https://some_endpoint',
+				},
+			} );
+			expect( value ).toEqual( '' );
+			expect( done ).toBe( true );
+		}
+	);
+	it(
+		'yields receive relation endpoint action object for relation existing ' +
+			'in the response',
+		() => {
+			reset();
+			fulfillment.next();
+			fulfillment.next( {} );
+			const { value } = fulfillment.next( {
+				_links: {
+					'https://api.eventespresso.com/datetimes':
+						'https://some_endpoint',
+				},
+			} );
+			expect( value ).toEqual(
+				receiveRelationEndpointForModelEntity(
+					'event',
+					10,
+					'datetime',
+					'https://some_endpoint'
+				)
+			);
+		}
+	);
 	it( 'returns endpoint for valid data', () => {
 		const { value, done } = fulfillment.next();
 		expect( value ).toEqual( 'https://some_endpoint' );
@@ -200,10 +221,8 @@ describe( 'getRelationEndpointForEntityId()', () => {
 
 describe( 'hasJoinTableRelation()', () => {
 	let fulfillment;
-	const reset = () => fulfillment = hasJoinTableRelation(
-		'event',
-		'datetimes'
-	);
+	const reset = () =>
+		( fulfillment = hasJoinTableRelation( 'event', 'datetimes' ) );
 	it( 'yields resolveSelect control for getting the relation type', () => {
 		reset();
 		const { value } = fulfillment.next();
@@ -225,20 +244,24 @@ describe( 'hasJoinTableRelation()', () => {
 
 describe( 'getRelationType()', () => {
 	let fulfillment;
-	const reset = () => fulfillment = getRelationType( 'event', 'datetimes' );
-	it( 'yields resolveSelect control action for getting the relation ' +
-		'schema', () => {
-		reset();
-		const { value } = fulfillment.next();
-		expect( value ).toEqual(
-			resolveSelect(
-				SCHEMA_REDUCER_KEY,
-				'getRelationSchema',
-				'event',
-				'datetime',
-			)
-		);
-	} );
+	const reset = () =>
+		( fulfillment = getRelationType( 'event', 'datetimes' ) );
+	it(
+		'yields resolveSelect control action for getting the relation ' +
+			'schema',
+		() => {
+			reset();
+			const { value } = fulfillment.next();
+			expect( value ).toEqual(
+				resolveSelect(
+					SCHEMA_REDUCER_KEY,
+					'getRelationSchema',
+					'event',
+					'datetime'
+				)
+			);
+		}
+	);
 	it( 'returns empty string if schema returns null', () => {
 		const { value, done } = fulfillment.next( null );
 		expect( value ).toBe( '' );
@@ -254,10 +277,8 @@ describe( 'getRelationType()', () => {
 } );
 describe( 'getRelationResponseType', () => {
 	let fulfillment;
-	const reset = () => fulfillment = getRelationResponseType(
-		'event',
-		'datetimes'
-	);
+	const reset = () =>
+		( fulfillment = getRelationResponseType( 'event', 'datetimes' ) );
 	it( 'yields resolve select control for getRelationSchema', () => {
 		reset();
 		const { value } = fulfillment.next();
@@ -266,7 +287,7 @@ describe( 'getRelationResponseType', () => {
 				SCHEMA_REDUCER_KEY,
 				'getRelationSchema',
 				'event',
-				'datetime',
+				'datetime'
 			)
 		);
 	} );
@@ -285,56 +306,60 @@ describe( 'getRelationResponseType', () => {
 } );
 describe( 'getRelationSchema()', () => {
 	let fulfillment;
-	const reset = () => fulfillment = getRelationSchema( 'event', 'datetimes' );
-	it( 'yields resolveSelect control for getting the Schema for the ' +
-		'model', () => {
-		reset();
-		const { value } = fulfillment.next();
-		expect( value ).toEqual(
-			resolveSelect(
-				SCHEMA_REDUCER_KEY,
-				'getSchemaForModel',
-				'event'
-			)
-		);
-	} );
+	const reset = () =>
+		( fulfillment = getRelationSchema( 'event', 'datetimes' ) );
+	it(
+		'yields resolveSelect control for getting the Schema for the ' +
+			'model',
+		() => {
+			reset();
+			const { value } = fulfillment.next();
+			expect( value ).toEqual(
+				resolveSelect(
+					SCHEMA_REDUCER_KEY,
+					'getSchemaForModel',
+					'event'
+				)
+			);
+		}
+	);
 	it( 'throws an error if a schema is not returned', () => {
 		const test = () => fulfillment.next( null );
 		expect( test ).toThrow();
 	} );
-	it( 'throws an error if there is no schema for the relation in the returned' +
-		'model schema', () => {
-		reset();
-		fulfillment.next();
-		const test = () => fulfillment.next( {} );
-		expect( test ).toThrow();
-	} );
-	it( 'yields the receiveRelationSchema action when a schema is ' +
-		'returned', () => {
-		reset();
-		fulfillment.next();
-		const { value } = fulfillment.next( {
-			schema: {
-				properties: {
-					datetimes: 'foo',
+	it(
+		'throws an error if there is no schema for the relation in the returned' +
+			'model schema',
+		() => {
+			reset();
+			fulfillment.next();
+			const test = () => fulfillment.next( {} );
+			expect( test ).toThrow();
+		}
+	);
+	it(
+		'yields the receiveRelationSchema action when a schema is ' +
+			'returned',
+		() => {
+			reset();
+			fulfillment.next();
+			const { value } = fulfillment.next( {
+				schema: {
+					properties: {
+						datetimes: 'foo',
+					},
 				},
-			},
-		} );
-		expect( value ).toEqual(
-			receiveRelationSchema(
-				'event',
-				'datetime',
-				'foo'
-			)
-		);
-	} );
+			} );
+			expect( value ).toEqual(
+				receiveRelationSchema( 'event', 'datetime', 'foo' )
+			);
+		}
+	);
 } );
 describe( 'getRelationPrimaryKeyString()', () => {
 	let fulfillment;
-	const reset = () => fulfillment = getRelationPrimaryKeyString(
-		'event',
-		'datetime'
-	);
+	const reset = () =>
+		( fulfillment = getRelationPrimaryKeyString( 'event', 'datetime' ) );
 	it( 'yields resolve select action for the getRelationType selector', () => {
 		reset();
 		const { value } = fulfillment.next();
@@ -352,20 +377,28 @@ describe( 'getRelationPrimaryKeyString()', () => {
 		expect( value ).toBe( '' );
 		expect( done ).toBe( true );
 	} );
-	it( 'returns expected value when relationType is ' +
-		'EE_Belongs_To_Relation', () => {
-		reset();
-		fulfillment.next();
-		const { value, done } = fulfillment.next( 'EE_Belongs_To_Relation' );
-		expect( value ).toBe( 'DTT_ID' );
-		expect( done ).toBe( true );
-	} );
-	it( 'returns expected value when relationType is not ' +
-		'EE_Belongs_To_Relation', () => {
-		reset();
-		fulfillment.next();
-		const { value, done } = fulfillment.next( 'foo' );
-		expect( value ).toBe( 'Datetime.DTT_ID' );
-		expect( done ).toBe( true );
-	} );
+	it(
+		'returns expected value when relationType is ' +
+			'EE_Belongs_To_Relation',
+		() => {
+			reset();
+			fulfillment.next();
+			const { value, done } = fulfillment.next(
+				'EE_Belongs_To_Relation'
+			);
+			expect( value ).toBe( 'DTT_ID' );
+			expect( done ).toBe( true );
+		}
+	);
+	it(
+		'returns expected value when relationType is not ' +
+			'EE_Belongs_To_Relation',
+		() => {
+			reset();
+			fulfillment.next();
+			const { value, done } = fulfillment.next( 'foo' );
+			expect( value ).toBe( 'Datetime.DTT_ID' );
+			expect( done ).toBe( true );
+		}
+	);
 } );

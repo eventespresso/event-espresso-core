@@ -18,6 +18,7 @@ export const nowDateAndTime = moment();
 
 /**
  * Described attributes for this model
+ *
  * @type {{attributes: *}}
  */
 export const queryDataTypes = {
@@ -37,6 +38,7 @@ export const queryDataTypes = {
 
 /**
  * Default attributes for this model
+ *
  * @type {
  * 	{
  * 		attributes: {
@@ -71,9 +73,9 @@ export const mapOrderBy = ( orderBy ) => {
 		start_date: 'TKT_start_date',
 		end_date: 'TKT_end_date',
 	};
-	return isUndefined( orderByMap[ orderBy ] ) ?
-		orderBy :
-		orderByMap[ orderBy ];
+	return isUndefined( orderByMap[ orderBy ] )
+		? orderBy
+		: orderByMap[ orderBy ];
 };
 
 /**
@@ -96,21 +98,32 @@ export const whereConditions = ( {
 	const where = [];
 	if ( ! showExpired ) {
 		where.push(
-			'where[TKT_end_date**expired][]=' + GREATER_THAN +
-			'&where[TKT_end_date**expired][]=' +
-			nowDateAndTime.local().format()
+			'where[TKT_end_date**expired][]=' +
+				GREATER_THAN +
+				'&where[TKT_end_date**expired][]=' +
+				nowDateAndTime.local().format()
 		);
 	}
 	if ( month && month !== 'none' ) {
 		where.push(
-			'where[TKT_start_date][]=' + GREATER_THAN_AND_EQUAL +
-			'&where[TKT_start_date][]=' +
-			moment().month( month ).startOf( 'month' ).local().format()
+			'where[TKT_start_date][]=' +
+				GREATER_THAN_AND_EQUAL +
+				'&where[TKT_start_date][]=' +
+				moment()
+					.month( month )
+					.startOf( 'month' )
+					.local()
+					.format()
 		);
 		where.push(
-			'where[TKT_end_date][]=' + LESS_THAN_AND_EQUAL +
-			'&where[TKT_end_date][]=' +
-			moment().month( month ).endOf( 'month' ).local().format()
+			'where[TKT_end_date][]=' +
+				LESS_THAN_AND_EQUAL +
+				'&where[TKT_end_date][]=' +
+				moment()
+					.month( month )
+					.endOf( 'month' )
+					.local()
+					.format()
 		);
 	}
 	forEventId = parseInt( forEventId, 10 );
@@ -126,6 +139,7 @@ export const whereConditions = ( {
 
 /**
  * Return a query string for use by a REST request given a set of queryData.
+ *
  * @param { Object } queryData
  * @return { string }  Returns the query string.
  */

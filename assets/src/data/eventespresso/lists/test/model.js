@@ -2,14 +2,8 @@
  * Internal dependencies
  */
 import { mockStateForTests } from './fixtures';
-import {
-	EventEntities,
-	DateTimeEntities,
-} from '../../test/fixtures/base';
-import {
-	createEntitySelectors,
-	createEntityResolvers,
-} from '../model';
+import { EventEntities, DateTimeEntities } from '../../test/fixtures/base';
+import { createEntitySelectors, createEntityResolvers } from '../model';
 import * as selectors from '../selectors';
 import * as resolvers from '../resolvers';
 import { select, registerStore } from '@wordpress/data';
@@ -30,64 +24,37 @@ describe( 'createEntitySelectors()', () => {
 	} );
 	const newSelectors = createEntitySelectors( selectors );
 	const expectedSelectors = [
-		[
-			'getEvents',
-			'testQueryA',
-			[
-				EventEntities.b,
-				EventEntities.a,
-			],
-		],
-		[
-			'getEventsByIds',
-			[ 20, 10 ],
-			[
-				EventEntities.b,
-				EventEntities.a,
-			],
-		],
-		[
-			'getEventsByIds',
-			[ 10, 50 ],
-			[],
-		],
-		[
-			'isRequestingEvents',
-			'testQueryA',
-			false,
-		],
+		[ 'getEvents', 'testQueryA', [ EventEntities.b, EventEntities.a ] ],
+		[ 'getEventsByIds', [ 20, 10 ], [ EventEntities.b, EventEntities.a ] ],
+		[ 'getEventsByIds', [ 10, 50 ], [] ],
+		[ 'isRequestingEvents', 'testQueryA', false ],
 		[
 			'getDatetimes',
 			'testQueryB',
-			[
-				DateTimeEntities.c,
-				DateTimeEntities.b,
-			],
+			[ DateTimeEntities.c, DateTimeEntities.b ],
 		],
-		[
-			'isRequestingDatetimes',
-			'testQueryB',
-			false,
-		],
+		[ 'isRequestingDatetimes', 'testQueryB', false ],
 	];
 	describe( 'creates expected selectors for given modelNames', () => {
-		expectedSelectors.forEach( ( [
-			expectedSelector,
-			arg,
-			expectedResponse,
-		] ) => {
-			describe( expectedSelector + '()', () => {
-				it( 'is defined.', () => {
-					expect( newSelectors[ expectedSelector ] ).toBeDefined();
+		expectedSelectors.forEach(
+			( [ expectedSelector, arg, expectedResponse ] ) => {
+				describe( expectedSelector + '()', () => {
+					it( 'is defined.', () => {
+						expect(
+							newSelectors[ expectedSelector ]
+						).toBeDefined();
+					} );
+					it( 'returns expected value', () => {
+						expect(
+							newSelectors[ expectedSelector ](
+								mockStateForTests,
+								arg
+							)
+						).toEqual( expectedResponse );
+					} );
 				} );
-				it( 'returns expected value', () => {
-					expect( newSelectors[ expectedSelector ](
-						mockStateForTests,
-						arg,
-					) ).toEqual( expectedResponse );
-				} );
-			} );
-		} );
+			}
+		);
 	} );
 } );
 
@@ -116,26 +83,35 @@ describe( 'createEntityResolvers()', () => {
 		],
 	];
 	describe( 'creates expected resolvers for given modelNames', () => {
-		expectedResolvers.forEach( ( [
-			expectedResolver,
-			queryString,
-			expectedApiFetchRequestValue,
-		] ) => {
-			describe( expectedResolver + '()', () => {
-				it( 'is defined.', () => {
-					expect( newResolvers[ expectedResolver ] ).toBeDefined();
-				} );
-				it( 'yields expected result for api fetch action ' +
-					'object', () => {
-					const fulfillment = newResolvers[ expectedResolver ](
-						queryString
+		expectedResolvers.forEach(
+			( [
+				expectedResolver,
+				queryString,
+				expectedApiFetchRequestValue,
+			] ) => {
+				describe( expectedResolver + '()', () => {
+					it( 'is defined.', () => {
+						expect(
+							newResolvers[ expectedResolver ]
+						).toBeDefined();
+					} );
+					it(
+						'yields expected result for api fetch action ' +
+							'object',
+						() => {
+							const fulfillment = newResolvers[
+								expectedResolver
+							]( queryString );
+							const {
+								value: apiFetchAction,
+							} = fulfillment.next();
+							expect( apiFetchAction.request ).toEqual(
+								expectedApiFetchRequestValue
+							);
+						}
 					);
-					const { value: apiFetchAction } = fulfillment.next();
-					expect( apiFetchAction.request ).toEqual(
-						expectedApiFetchRequestValue
-					);
 				} );
-			} );
-		} );
+			}
+		);
 	} );
 } );

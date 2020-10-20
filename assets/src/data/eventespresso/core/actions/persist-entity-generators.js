@@ -52,16 +52,13 @@ function* persistEntityRecord( modelName, entity ) {
 		warning(
 			false,
 			'The provided entity is not a BaseEntity child for the ' +
-			'provided model.'
+				'provided model.'
 		);
 		return null;
 	}
 	// check if there are any changes in the entity
 	if ( entity.isClean ) {
-		warning(
-			false,
-			'The entity provided has no changes to persist.'
-		);
+		warning( false, 'The entity provided has no changes to persist.' );
 		return null;
 	}
 	const factory = yield resolveSelect(
@@ -94,10 +91,7 @@ function* persistEntityRecord( modelName, entity ) {
 		);
 		yield receiveUpdatedEntityIdForRelations( modelName, entity.id, newId );
 	}
-	yield receiveAndReplaceEntityRecords(
-		modelName,
-		[ updatedEntityRecord ]
-	);
+	yield receiveAndReplaceEntityRecords( modelName, [ updatedEntityRecord ] );
 	return updatedEntityRecord;
 }
 
@@ -115,7 +109,7 @@ function* persistForEntityId( modelName, entityId ) {
 		CORE_REDUCER_KEY,
 		'getEntityById',
 		modelName,
-		entityId,
+		entityId
 	);
 	if ( isModelEntityOfModel( entity, modelName ) ) {
 		const persistedEntity = yield dispatch(
@@ -124,9 +118,9 @@ function* persistForEntityId( modelName, entityId ) {
 			modelName,
 			entity
 		);
-		return isModelEntityOfModel( persistedEntity, modelName ) ?
-			persistedEntity :
-			null;
+		return isModelEntityOfModel( persistedEntity, modelName )
+			? persistedEntity
+			: null;
 	}
 	return null;
 }
@@ -144,11 +138,11 @@ function* persistForEntityIds( modelName, entityIds = [] ) {
 		CORE_REDUCER_KEY,
 		'getEntitiesByIds',
 		modelName,
-		entityIds,
+		entityIds
 	);
-	const retrievedEntities = isArray( entities ) ?
-		keyEntitiesByPrimaryKeyValue( 'event', entities ) :
-		new Map();
+	const retrievedEntities = isArray( entities )
+		? keyEntitiesByPrimaryKeyValue( 'event', entities )
+		: new Map();
 	const retrievedIds = Array.from( retrievedEntities.keys() );
 	if ( retrievedIds.length < 1 ) {
 		return DEFAULT_EMPTY_OBJECT;

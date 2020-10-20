@@ -40,7 +40,7 @@ export const removeEmptyFromState = (
 		}
 	};
 
-	return withMutations ?
-		state.withMutations( ( subState ) => clearPaths( subState ) ) :
-		clearPaths( state );
+	return withMutations
+		? state.withMutations( ( subState ) => clearPaths( subState ) )
+		: clearPaths( state );
 };

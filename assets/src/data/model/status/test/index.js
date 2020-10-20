@@ -1,8 +1,4 @@
-import {
-	mapOrderBy,
-	whereConditions,
-	getQueryString,
-} from '../';
+import { mapOrderBy, whereConditions, getQueryString } from '../';
 import * as statusModel from 'assets/src/data/model/status/index';
 
 const testParams = [
@@ -46,10 +42,13 @@ describe( 'mapOrderBy()', () => {
 
 describe( 'whereConditions()', () => {
 	for ( let i = 0; i < testParams.length; i++ ) {
-		it( 'returns expected where clause for statusType: ' + testParams[ i ].expected,
+		it(
+			'returns expected where clause for statusType: ' +
+				testParams[ i ].expected,
 			() => {
-				expect( whereConditions( testParams[ i ] ) )
-					.toEqual( 'where[STS_type]=' + testParams[ i ].expected );
+				expect( whereConditions( testParams[ i ] ) ).toEqual(
+					'where[STS_type]=' + testParams[ i ].expected
+				);
 			}
 		);
 	}
@@ -57,15 +56,17 @@ describe( 'whereConditions()', () => {
 
 describe( 'getQueryString()', () => {
 	for ( let i = 0; i < testParams.length; i++ ) {
-		it( 'returns expected query string for statusType: ' + testParams[ i ].expected,
+		it(
+			'returns expected query string for statusType: ' +
+				testParams[ i ].expected,
 			() => {
-				expect( getQueryString( testParams[ i ] ) )
-					.toEqual(
-						'limit=25&' +
+				expect( getQueryString( testParams[ i ] ) ).toEqual(
+					'limit=25&' +
 						'order=ASC&' +
 						'order_by=STS_code&' +
-						'where[STS_type]=' + testParams[ i ].expected
-					);
+						'where[STS_type]=' +
+						testParams[ i ].expected
+				);
 			}
 		);
 	}

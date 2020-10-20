@@ -40,11 +40,7 @@ describe( 'NotWithPostTypeCheck Component Test', () => {
 			true,
 		],
 	];
-	testConditions.forEach( ( [
-		description,
-		postTypes,
-		expectRendered,
-	] ) => {
+	testConditions.forEach( ( [ description, postTypes, expectRendered ] ) => {
 		const rendered = renderer.create( getTestComponent( postTypes ) );
 		const instance = rendered.root;
 		it( description, () => {

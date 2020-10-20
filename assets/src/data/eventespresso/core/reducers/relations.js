@@ -1,10 +1,7 @@
 /**
  * External imports.
  */
-import {
-	DEFAULT_CORE_STATE,
-	singularModelName,
-} from '@eventespresso/model';
+import { DEFAULT_CORE_STATE, singularModelName } from '@eventespresso/model';
 import {
 	removeEmptyFromState,
 	normalizeEntityId,
@@ -33,12 +30,7 @@ const normalizedReceiveAndRemoveRelations = ( state, action ) => {
 		relationName: singularModelName( action.relationName ),
 		entityId: normalizeEntityId( action.entityId ),
 	};
-	const {
-		modelName,
-		relationName,
-		relatedEntityIds,
-		entityId,
-	} = action;
+	const { modelName, relationName, relatedEntityIds, entityId } = action;
 
 	// add to state from the context of the model
 	state = receiveAndRemoveRelations( state, action );
@@ -67,12 +59,7 @@ const normalizedReceiveAndRemoveRelations = ( state, action ) => {
  * @return {Immutable.Map} Either a new state or the existing state.
  */
 function receiveAndRemoveRelations( state, action ) {
-	const {
-		modelName,
-		relationName,
-		entityId,
-		type,
-	} = action;
+	const { modelName, relationName, entityId, type } = action;
 	const relationEntityIds = Set( action.relatedEntityIds );
 
 	const path = [ modelName, entityId, relationName ];
@@ -80,10 +67,7 @@ function receiveAndRemoveRelations( state, action ) {
 
 	switch ( type ) {
 		case types.RECEIVE_RELATED_ENTITY_IDS:
-			return state.setIn(
-				path,
-				existingIds.concat( relationEntityIds )
-			);
+			return state.setIn( path, existingIds.concat( relationEntityIds ) );
 		case types.REMOVE_RELATED_ENTITY_IDS:
 			const idsAfterRemoval = existingIds.filter(
 				( id ) => ! relationEntityIds.keyOf( normalizeEntityId( id ) )
@@ -94,9 +78,9 @@ function receiveAndRemoveRelations( state, action ) {
 			if ( idsAfterRemoval.count() === existingIds.count() ) {
 				return state;
 			}
-			return ! idsAfterRemoval.isEmpty() ?
-				state.setIn( path, idsAfterRemoval ) :
-				removeEmptyFromState( state, path );
+			return ! idsAfterRemoval.isEmpty()
+				? state.setIn( path, idsAfterRemoval )
+				: removeEmptyFromState( state, path );
 	}
 
 	return state;
@@ -111,11 +95,7 @@ function receiveAndRemoveRelations( state, action ) {
  * @return {Immutable.Map} Either new or original state
  */
 function updateEntityIdForRelations( state, action ) {
-	let {
-		oldEntityId,
-		newEntityId,
-		modelName,
-	} = action;
+	let { oldEntityId, newEntityId, modelName } = action;
 	modelName = singularModelName( modelName );
 	oldEntityId = normalizeEntityId( oldEntityId );
 	newEntityId = normalizeEntityId( newEntityId );
@@ -127,15 +107,12 @@ function updateEntityIdForRelations( state, action ) {
 	);
 
 	if ( ! modelRecordToReplace.isEmpty() ) {
-		state = replaceRelationRecords(
-			state,
-			{
-				modelName,
-				oldEntityId,
-				newEntityId,
-				mainRecordToReplace: modelRecordToReplace,
-			}
-		);
+		state = replaceRelationRecords( state, {
+			modelName,
+			oldEntityId,
+			newEntityId,
+			mainRecordToReplace: modelRecordToReplace,
+		} );
 	}
 	return state;
 }
@@ -151,11 +128,7 @@ function updateEntityIdForRelations( state, action ) {
  * removed from state and newEntity will not be added to state.
  * @return {Immutable.Map} Returns either new or existing state.
  */
-const replaceRelationRecords = (
-	state,
-	modelData,
-	removeOnly = false,
-) => {
+const replaceRelationRecords = ( state, modelData, removeOnly = false ) => {
 	const {
 		modelName,
 		oldEntityId,
@@ -173,10 +146,7 @@ const replaceRelationRecords = (
 				subState.deleteIn( mainPath );
 			}
 		} else {
-			subState.setIn(
-				[ ...mainPath, newEntityId ],
-				mainRecordToReplace
-			);
+			subState.setIn( [ ...mainPath, newEntityId ], mainRecordToReplace );
 		}
 	} );
 
@@ -194,16 +164,11 @@ const replaceRelationRecords = (
 				let relationRecord = subState.getIn( relationPath, Set() );
 				relationRecord = relationRecord.delete( oldEntityId );
 				if ( removeOnly && relationRecord.isEmpty() ) {
-					removeEmptyFromState(
-						subState,
-						relationPath,
-						1,
-						false
-					);
+					removeEmptyFromState( subState, relationPath, 1, false );
 				} else {
-					relationRecord = removeOnly ?
-						relationRecord :
-						relationRecord.add( newEntityId );
+					relationRecord = removeOnly
+						? relationRecord
+						: relationRecord.add( newEntityId );
 					subState.setIn( relationPath, relationRecord );
 				}
 			}
@@ -220,17 +185,11 @@ const replaceRelationRecords = (
  * @return {Immutable.Map} either existing (if no changes) or new state.
  */
 const removeRelatedEntitiesForEntity = ( state, action ) => {
-	let {
-		modelName,
-		entityId,
-	} = action;
+	let { modelName, entityId } = action;
 	modelName = singularModelName( modelName );
 	entityId = normalizeEntityId( entityId );
 
-	const modelRecordToReplace = state.getIn(
-		[ modelName, entityId ],
-		Map()
-	);
+	const modelRecordToReplace = state.getIn( [ modelName, entityId ], Map() );
 
 	if ( ! modelRecordToReplace.isEmpty() ) {
 		state = replaceRelationRecords(
@@ -266,36 +225,34 @@ const resetStateForModel = ( state, action ) => {
 		state = state.delete( modelName );
 
 		// loop through the relations and delete
-		state = state.withMutations(
-			( subState ) => {
-				modelRelations.forEach( ( relationState ) => {
-					relationState.forEach( ( relationIds, relationName ) => {
-						relationIds = relationIds.toArray();
-						while ( relationIds.length > 0 ) {
-							const relationPath = [
-								singularModelName( relationName ),
-								relationIds.pop(),
-							];
-							let relationRecord = subState.getIn(
+		state = state.withMutations( ( subState ) => {
+			modelRelations.forEach( ( relationState ) => {
+				relationState.forEach( ( relationIds, relationName ) => {
+					relationIds = relationIds.toArray();
+					while ( relationIds.length > 0 ) {
+						const relationPath = [
+							singularModelName( relationName ),
+							relationIds.pop(),
+						];
+						let relationRecord = subState.getIn(
+							relationPath,
+							Map()
+						);
+						relationRecord = relationRecord.delete( modelName );
+						if ( relationRecord.isEmpty() ) {
+							removeEmptyFromState(
+								subState,
 								relationPath,
-								Map()
+								0,
+								false
 							);
-							relationRecord = relationRecord.delete( modelName );
-							if ( relationRecord.isEmpty() ) {
-								removeEmptyFromState(
-									subState,
-									relationPath,
-									0,
-									false
-								);
-							} else {
-								subState.setIn( relationPath, relationRecord );
-							}
+						} else {
+							subState.setIn( relationPath, relationRecord );
 						}
-					} );
+					}
 				} );
-			}
-		);
+			} );
+		} );
 	}
 	return state;
 };
@@ -311,6 +268,7 @@ export {
 
 /**
  * Reducer for relation related state changes.
+ *
  * @param {Immutable.Map} state
  * @param {Object} action
  * @return {Immutable.Map} Original state if no change, new state if change.

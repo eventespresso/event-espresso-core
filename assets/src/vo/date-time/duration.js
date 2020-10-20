@@ -12,14 +12,13 @@ import { instanceOf } from '@eventespresso/validators';
  * Internal imports
  */
 import * as assertions from './assertions';
-import {
-	DEFAULT_VALID_LOCALE,
-} from './defaults';
+import { DEFAULT_VALID_LOCALE } from './defaults';
 
 momentDurationFormatSetup( moment );
 
 /**
  * A collection of symbols used for "private" properties in the Duration object.
+ *
  * @type {
  * 	{
  * 		duration: Symbol,
@@ -36,6 +35,7 @@ const privateProperties = {
 
 /**
  * A collection of symbols used for "private" methods in the Duration object.
+ *
  * @type {
  * 	{
  * 		createGettersAndSetters: Symbol,
@@ -58,6 +58,7 @@ const privateMethods = {
 
 /**
  * An array of unit names for properties in the Duration object
+ *
  * @type {string[]}
  */
 const unitNames = [
@@ -74,11 +75,10 @@ const unitNames = [
  * An array of derivative unit names.
  * These are accessors that are derivatives of base units.  For instance,
  * "weeks" ends up being a derivative (calculated from) the "days" unit.
+ *
  * @type {string[]}
  */
-const derivativeUnitNames = [
-	'weeks',
-];
+const derivativeUnitNames = [ 'weeks' ];
 
 /**
  * Where a DateTime object represents a single point in time, a Duration object
@@ -133,9 +133,9 @@ export default class Duration {
 		} else {
 			values = this[ privateMethods.filterValues ]( values );
 			this[ privateMethods.setValues ]( values );
-			this[ privateProperties.duration ] = moment.duration(
-				values
-			).locale( locale );
+			this[ privateProperties.duration ] = moment
+				.duration( values )
+				.locale( locale );
 		}
 		this[ privateMethods.createGetters ]();
 		Object.freeze( this );
@@ -181,7 +181,7 @@ export default class Duration {
 	 * @param {string} locale
 	 * @return {boolean}  True means it is valid.
 	 */
-	static isValidLocale(locale) {
+	static isValidLocale( locale ) {
 		return assertions.validateLocale( locale );
 	}
 
@@ -222,8 +222,7 @@ export default class Duration {
 	 * @return {boolean}  True means it is a valid Duration object.
 	 */
 	static isValidDuration( duration ) {
-		return instanceOf( duration, 'Duration' ) &&
-			duration.isValid;
+		return instanceOf( duration, 'Duration' ) && duration.isValid;
 	}
 
 	/**
@@ -235,9 +234,7 @@ export default class Duration {
 	 */
 	static assertIsValidDuration( duration ) {
 		if ( ! Duration.isValidDuration( duration ) ) {
-			throw new TypeError(
-				'This Duration object is not valid.'
-			);
+			throw new TypeError( 'This Duration object is not valid.' );
 		}
 	}
 
@@ -287,8 +284,8 @@ export default class Duration {
 			warning(
 				false,
 				'The following unexpected keys were in the configuration ' +
-				'object for constructing the Duration: ' +
-				keys( omit( values, unitNames ) ).join()
+					'object for constructing the Duration: ' +
+					keys( omit( values, unitNames ) ).join()
 			);
 			this[ privateProperties.isValid ] = false;
 		}
@@ -304,8 +301,8 @@ export default class Duration {
 	[ privateMethods.setValues ]( values ) {
 		this[ privateProperties.durationValues ] = {};
 		unitNames.forEach( ( unit ) => {
-			this[ privateProperties.durationValues ][ unit ] = values[ unit ] ||
-				0;
+			this[ privateProperties.durationValues ][ unit ] =
+				values[ unit ] || 0;
 		} );
 	}
 
@@ -331,10 +328,7 @@ export default class Duration {
 	 * @return {string[]}  Array of accessor names.
 	 */
 	[ privateMethods.getAllUnitNames ]() {
-		return [
-			...unitNames,
-			...derivativeUnitNames,
-		];
+		return [ ...unitNames, ...derivativeUnitNames ];
 	}
 
 	/**
@@ -343,40 +337,42 @@ export default class Duration {
 	 * @access private
 	 */
 	[ privateMethods.createGetters ]() {
-		this[ privateMethods.getAllUnitNames ]().forEach(
-			( accessorName ) => {
-				// creates accessor for getting the value via a property
-				// eg. instance.hours
-				Object.defineProperty( this, accessorName, {
-					get() {
-						if ( derivativeUnitNames.indexOf( accessorName ) > -1 ) {
-							return this[ privateProperties.duration ][ accessorName ]();
-						}
-						return this
-							[ privateProperties.durationValues ]
-							[ accessorName ] ||
-							0;
-					},
-				} );
-				// creates `as*` methods.
-				// eg `instance.asHours` would return the given duration
-				// expressed as the hours unit.
-				// note for units such as "years" and "months", this uses what
-				// is termed as "longterm" calculation. Longterm is based on
-				// a 400 year cycle averaging out the days in a month and
-				// days in a year over that cycle.
-				// @link https://github.com/moment/moment/blob/develop/src/lib/duration/bubble.js#L52
-				const asMethodName = 'as' + capitalize( accessorName );
-				Object.defineProperty( this, asMethodName, {
-					get() {
-						return () => {
-							return this[ privateProperties.duration ]
-								[ asMethodName ]();
-						};
-					},
-				} );
-			}
-		);
+		this[ privateMethods.getAllUnitNames ]().forEach( ( accessorName ) => {
+			// creates accessor for getting the value via a property
+			// eg. instance.hours
+			Object.defineProperty( this, accessorName, {
+				get() {
+					if ( derivativeUnitNames.indexOf( accessorName ) > -1 ) {
+						return this[ privateProperties.duration ][
+							accessorName
+						]();
+					}
+					return (
+						this[ privateProperties.durationValues ][
+							accessorName
+						] || 0
+					);
+				},
+			} );
+			// creates `as*` methods.
+			// eg `instance.asHours` would return the given duration
+			// expressed as the hours unit.
+			// note for units such as "years" and "months", this uses what
+			// is termed as "longterm" calculation. Longterm is based on
+			// a 400 year cycle averaging out the days in a month and
+			// days in a year over that cycle.
+			// @link https://github.com/moment/moment/blob/develop/src/lib/duration/bubble.js#L52
+			const asMethodName = 'as' + capitalize( accessorName );
+			Object.defineProperty( this, asMethodName, {
+				get() {
+					return () => {
+						return this[ privateProperties.duration ][
+							asMethodName
+						]();
+					};
+				},
+			} );
+		} );
 	}
 
 	/**
@@ -396,8 +392,10 @@ export default class Duration {
 	 * @return {boolean} True means the Duration instance is valid.
 	 */
 	get isValid() {
-		return this[ privateProperties.isValid ] &&
-			this[ privateProperties.duration ].toISOString() !== 'P0D';
+		return (
+			this[ privateProperties.isValid ] &&
+			this[ privateProperties.duration ].toISOString() !== 'P0D'
+		);
 	}
 
 	/**
@@ -504,9 +502,7 @@ export default class Duration {
 			value = this[ privateMethods.filterValues ]( value );
 		}
 		return new Duration(
-			this[ privateProperties.duration ]
-				.clone()
-				.add( value )
+			this[ privateProperties.duration ].clone().add( value )
 		);
 	}
 
@@ -539,9 +535,7 @@ export default class Duration {
 			value = this[ privateMethods.filterValues ]( value );
 		}
 		return new Duration(
-			this[ privateProperties.duration ]
-				.clone()
-				.subtract( value )
+			this[ privateProperties.duration ].clone().subtract( value )
 		);
 	}
 

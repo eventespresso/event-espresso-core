@@ -3,6 +3,7 @@ import { getEntityById } from '../../selectors';
 
 /**
  * Gets the latest checkin entity in the state for the given value.
+ *
  * @param {Object} state
  * @param {number} registrationId
  * @param {number} dateTimeId

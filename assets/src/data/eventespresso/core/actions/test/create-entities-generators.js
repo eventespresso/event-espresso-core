@@ -21,19 +21,22 @@ describe( 'createEntity()', () => {
 		const TestEvent = { EVT_name: 'test event' };
 		let fulfillment;
 		const reset = () =>
-			fulfillment = createEntity( 'event', TestEvent );
-		it( 'yields a resolveSelect action for retrieving an Event ' +
-			'factory', () => {
-			reset();
-			const { value } = fulfillment.next();
-			expect( value ).toEqual(
-				resolveSelect(
-					SCHEMA_REDUCER_KEY,
-					'getFactoryForModel',
-					'event'
-				)
-			);
-		} );
+			( fulfillment = createEntity( 'event', TestEvent ) );
+		it(
+			'yields a resolveSelect action for retrieving an Event ' +
+				'factory',
+			() => {
+				reset();
+				const { value } = fulfillment.next();
+				expect( value ).toEqual(
+					resolveSelect(
+						SCHEMA_REDUCER_KEY,
+						'getFactoryForModel',
+						'event'
+					)
+				);
+			}
+		);
 		it( 'yields null when invalid factory retrieved', () => {
 			const { value } = fulfillment.next();
 			expect( value ).toBe( null );
@@ -56,83 +59,81 @@ describe( 'createEntity()', () => {
 
 describe( 'receiveEntityAndResolve()', () => {
 	let fulfillment;
-	const TestEvent = eventFactory.createNew(
-		{ EVT_name: 'test event' }
-	);
-	const reset = () => fulfillment = receiveEntityAndResolve( TestEvent );
+	const TestEvent = eventFactory.createNew( { EVT_name: 'test event' } );
+	const reset = () => ( fulfillment = receiveEntityAndResolve( TestEvent ) );
 	it( 'yields dispatch action for receiving the entity', () => {
 		reset();
 		const { value } = fulfillment.next();
 		expect( value ).toEqual(
-			dispatch(
-				CORE_REDUCER_KEY,
-				'receiveEntity',
-				TestEvent
-			)
+			dispatch( CORE_REDUCER_KEY, 'receiveEntity', TestEvent )
 		);
 	} );
-	it( 'yields dispatch action for finishing the resolution on ' +
-		'`getEntityById` for this entity id', () => {
-		const { value } = fulfillment.next();
-		expect( value ).toEqual(
-			dispatch(
-				'core/data',
-				'finishResolution',
-				CORE_REDUCER_KEY,
-				'getEntityById',
-				[ 'event', TestEvent.id ]
-			)
-		);
-	} );
+	it(
+		'yields dispatch action for finishing the resolution on ' +
+			'`getEntityById` for this entity id',
+		() => {
+			const { value } = fulfillment.next();
+			expect( value ).toEqual(
+				dispatch(
+					'core/data',
+					'finishResolution',
+					CORE_REDUCER_KEY,
+					'getEntityById',
+					[ 'event', TestEvent.id ]
+				)
+			);
+		}
+	);
 } );
 describe( 'receiveEntitiesAndResolve()', () => {
 	let fulfillment;
-	const TestEventA = eventFactory.createNew(
-		{ EVT_name: 'test event a' }
+	const TestEventA = eventFactory.createNew( { EVT_name: 'test event a' } );
+	const TestEventB = eventFactory.createNew( { EVT_name: 'test event b' } );
+	const reset = () =>
+		( fulfillment = receiveEntitiesAndResolve( 'event', [
+			TestEventA,
+			TestEventB,
+		] ) );
+	it(
+		'yields dispatch action for finishing the resolution on ' +
+			'TestEventB',
+		() => {
+			reset();
+			const { value } = fulfillment.next();
+			expect( value ).toEqual(
+				dispatch(
+					'core/data',
+					'finishResolution',
+					CORE_REDUCER_KEY,
+					'getEntityById',
+					[ 'event', TestEventB.id ]
+				)
+			);
+		}
 	);
-	const TestEventB = eventFactory.createNew(
-		{ EVT_name: 'test event b' }
+	it(
+		'yields dispatch action for finishing the resolution on ' +
+			'TestEventA',
+		() => {
+			const { value } = fulfillment.next();
+			expect( value ).toEqual(
+				dispatch(
+					'core/data',
+					'finishResolution',
+					CORE_REDUCER_KEY,
+					'getEntityById',
+					[ 'event', TestEventA.id ]
+				)
+			);
+		}
 	);
-	const reset = () => fulfillment = receiveEntitiesAndResolve(
-		'event',
-		[ TestEventA, TestEventB ]
-	);
-	it( 'yields dispatch action for finishing the resolution on ' +
-		'TestEventB', () => {
-		reset();
-		const { value } = fulfillment.next();
-		expect( value ).toEqual(
-			dispatch(
-				'core/data',
-				'finishResolution',
-				CORE_REDUCER_KEY,
-				'getEntityById',
-				[ 'event', TestEventB.id ]
-			)
-		);
-	} );
-	it( 'yields dispatch action for finishing the resolution on ' +
-		'TestEventA', () => {
-		const { value } = fulfillment.next();
-		expect( value ).toEqual(
-			dispatch(
-				'core/data',
-				'finishResolution',
-				CORE_REDUCER_KEY,
-				'getEntityById',
-				[ 'event', TestEventA.id ]
-			)
-		);
-	} );
 	it( 'yields dispatch action for receivingEntityRecords', () => {
 		const { value } = fulfillment.next();
 		expect( value ).toEqual(
-			dispatch(
-				CORE_REDUCER_KEY,
-				'receiveEntityRecords',
-				'event',
-				[ TestEventA, TestEventB ]
-			)
+			dispatch( CORE_REDUCER_KEY, 'receiveEntityRecords', 'event', [
+				TestEventA,
+				TestEventB,
+			] )
 		);
 	} );
 } );

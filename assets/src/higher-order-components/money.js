@@ -17,23 +17,25 @@ import { Money, SiteCurrency } from '@eventespresso/value-objects';
 const validateNextState = ( nextStateResponse ) => {
 	warning(
 		nextStateResponse &&
-		nextStateResponse.hasOwnProperty( 'convertedValues' ),
+			nextStateResponse.hasOwnProperty( 'convertedValues' ),
 		'The propNameMap callback for the withMoney HOC should return an' +
-		' object with a "convertedValues" key.'
+			' object with a "convertedValues" key.'
 	);
-	if ( nextStateResponse &&
-		nextStateResponse.hasOwnProperty( 'convertedValues' ) ) {
+	if (
+		nextStateResponse &&
+		nextStateResponse.hasOwnProperty( 'convertedValues' )
+	) {
 		warning(
 			isArray( nextStateResponse.convertedValues ),
 			'The propNameMap callback for the withMoney HOC should return an ' +
-			'object with a "convertedValues" key that has an array' +
-			' of numbers as the value.'
+				'object with a "convertedValues" key that has an array' +
+				' of numbers as the value.'
 		);
 	}
 	warning(
 		nextStateResponse && nextStateResponse.hasOwnProperty( 'props' ),
 		'The propNameMap callback for the withMoneyHOC should return an' +
-		' object with a "props" key.'
+			' object with a "props" key.'
 	);
 };
 
@@ -41,7 +43,7 @@ const validateNextState = ( nextStateResponse ) => {
  * A higher order component that converts any props matching the map provided
  * as an argument to Money value objects and passes them to the WrappedComponent
  *
- * @param {Array|function} propNameMap
+ * @param {Array|Function} propNameMap
  * @return {function(*): EnhancedComponent}  Returns an enhanced component where
  * props that represent money values have been converted to a Money value object
  */
@@ -67,16 +69,15 @@ const withMoney = ( propNameMap = [] ) => ( WrappedComponent ) => {
 				if ( nextStateResponse && nextStateResponse.props ) {
 					nextState = { ...nextStateResponse.props };
 				}
-				convertedValues = nextStateResponse.convertedValues ||
-					convertedValues;
+				convertedValues =
+					nextStateResponse.convertedValues || convertedValues;
 			} else if ( isArray( propNameMap ) ) {
 				propNameMap.forEach( ( propName ) => {
 					if ( props[ propName ] ) {
-						nextState[ propName ] =
-							new Money(
-								props[ propName ],
-								SiteCurrency
-							);
+						nextState[ propName ] = new Money(
+							props[ propName ],
+							SiteCurrency
+						);
 						convertedValues.push(
 							nextState[ propName ].toNumber()
 						);
@@ -86,7 +87,7 @@ const withMoney = ( propNameMap = [] ) => ( WrappedComponent ) => {
 				warning(
 					false,
 					'The propNameMap argument provided to withMoney must be either a' +
-					' function or an array'
+						' function or an array'
 				);
 			}
 			nextState.convertedValues = convertedValues;
@@ -109,12 +110,14 @@ const withMoney = ( propNameMap = [] ) => ( WrappedComponent ) => {
 			prevState,
 			nextState
 		) => {
-			return ! isShallowEqualArrays(
-				nextState.convertedValues,
-				prevState.convertedValues
-			) &&
+			return (
+				! isShallowEqualArrays(
+					nextState.convertedValues,
+					prevState.convertedValues
+				) &&
 				nextState.convertedValues[ 0 ] !==
-				prevState.convertedValues[ 0 ];
+					prevState.convertedValues[ 0 ]
+			);
 		};
 
 		componentDidMount() {
@@ -123,11 +126,13 @@ const withMoney = ( propNameMap = [] ) => ( WrappedComponent ) => {
 
 		componentDidUpdate( prevProps, prevState ) {
 			const nextState = this.getNextState( this.props );
-			if ( this.shouldUpdateStateWithConvertedValues(
-				prevProps,
-				prevState,
-				nextState
-			) ) {
+			if (
+				this.shouldUpdateStateWithConvertedValues(
+					prevProps,
+					prevState,
+					nextState
+				)
+			) {
 				this.setState( nextState );
 			}
 		}

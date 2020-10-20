@@ -20,9 +20,8 @@ describe( 'QueryLimit', () => {
 		}
 	}
 
-	const getWrapper = ( props = {} ) => TestUtils.renderIntoDocument(
-		<TestWrapper { ...props } />
-	);
+	const getWrapper = ( props = {} ) =>
+		TestUtils.renderIntoDocument( <TestWrapper { ...props } /> );
 	describe( 'QueryLimit with no optional parameters passed', () => {
 		it( 'should have default values', () => {
 			const onChange = jest.fn();
@@ -41,17 +40,14 @@ describe( 'QueryLimit', () => {
 			expect( label.textContent ).toEqual( 'Limit' );
 
 			//test OnChange
-			TestUtils.Simulate.change(
-				inputWrapper,
-				{
-					target: {
-						value: '5',
-						checkValidity() {
-							return true;
-						},
+			TestUtils.Simulate.change( inputWrapper, {
+				target: {
+					value: '5',
+					checkValidity() {
+						return true;
 					},
-				}
-			);
+				},
+			} );
 			expect( onChange ).toHaveBeenCalledWith( 5 );
 		} );
 	} );
@@ -81,17 +77,14 @@ describe( 'QueryLimit', () => {
 			expect( label.textContent ).toEqual( 'No Limit' );
 			// test onChange
 			//test OnChange
-			TestUtils.Simulate.change(
-				inputWrapper,
-				{
-					target: {
-						value: '30',
-						checkValidity() {
-							return true;
-						},
+			TestUtils.Simulate.change( inputWrapper, {
+				target: {
+					value: '30',
+					checkValidity() {
+						return true;
 					},
-				}
-			);
+				},
+			} );
 			expect( onChange ).toHaveBeenCalledWith( 30 );
 		} );
 	} );

@@ -16,9 +16,10 @@ function InvalidArgument( message, argumentValue, ...args ) {
 	Object.setPrototypeOf( instance, Object.getPrototypeOf( this ) );
 	instance.argumentValue = argumentValue || null;
 	instance.name = instance.constructor.name;
-	instance.message = instance.message !== '' ?
-		'Invalid argument provided. ' + instance.message :
-		'Invalid argument provided.';
+	instance.message =
+		instance.message !== ''
+			? 'Invalid argument provided. ' + instance.message
+			: 'Invalid argument provided.';
 	if ( Error.captureStackTrace ) {
 		Error.captureStackTrace( instance, InvalidArgument );
 	}

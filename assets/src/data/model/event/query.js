@@ -21,6 +21,7 @@ export const nowDateAndTime = moment();
 
 /**
  * Described attributes for this model
+ *
  * @type {{attributes: *}}
  */
 export const queryDataTypes = {
@@ -43,6 +44,7 @@ export const queryDataTypes = {
 
 /**
  * Default attributes for this model
+ *
  * @type {
  * 	{
  * 		attributes: {
@@ -79,9 +81,9 @@ export const mapOrderBy = ( orderBy ) => {
 		ticket_start: 'Datetime.Ticket.TKT_start_date',
 		ticket_end: 'Datetime.Ticket.TKT_end_date',
 	};
-	return isUndefined( orderByMap[ orderBy ] ) ?
-		orderBy :
-		orderByMap[ orderBy ];
+	return isUndefined( orderByMap[ orderBy ] )
+		? orderBy
+		: orderByMap[ orderBy ];
 };
 
 /**
@@ -103,9 +105,10 @@ export const whereConditions = ( {
 
 	if ( ! showExpired ) {
 		where.push(
-			'where[Datetime.DTT_EVT_end**expired][]=' + GREATER_THAN +
-			'&where[Datetime.DTT_EVT_end**expired][]=' +
-			nowDateAndTime.local().format()
+			'where[Datetime.DTT_EVT_end**expired][]=' +
+				GREATER_THAN +
+				'&where[Datetime.DTT_EVT_end**expired][]=' +
+				nowDateAndTime.local().format()
 		);
 	}
 	if ( categorySlug ) {
@@ -115,14 +118,24 @@ export const whereConditions = ( {
 	}
 	if ( month && month !== 'none' ) {
 		where.push(
-			'where[Datetime.DTT_EVT_start][]=' + GREATER_THAN_AND_EQUAL +
-			'&where[Datetime.DTT_EVT_start][]=' +
-			moment().month( month ).startOf( 'month' ).local().format()
+			'where[Datetime.DTT_EVT_start][]=' +
+				GREATER_THAN_AND_EQUAL +
+				'&where[Datetime.DTT_EVT_start][]=' +
+				moment()
+					.month( month )
+					.startOf( 'month' )
+					.local()
+					.format()
 		);
 		where.push(
-			'where[Datetime.DTT_EVT_end][]=' + LESS_THAN_AND_EQUAL +
-			'&where[Datetime.DTT_EVT_end][]=' +
-			moment().month( month ).endOf( 'month' ).local().format()
+			'where[Datetime.DTT_EVT_end][]=' +
+				LESS_THAN_AND_EQUAL +
+				'&where[Datetime.DTT_EVT_end][]=' +
+				moment()
+					.month( month )
+					.endOf( 'month' )
+					.local()
+					.format()
 		);
 	}
 	return where.join( '&' );
@@ -130,6 +143,7 @@ export const whereConditions = ( {
 
 /**
  * Return a query string for use by a REST request given a set of queryData.
+ *
  * @param { Object } queryData
  * @return { string }  Returns the query string.
  */

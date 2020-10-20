@@ -20,8 +20,10 @@ export default class InvalidSchema extends InvalidType {
 		if ( Error.captureStackTrace ) {
 			Error.captureStackTrace( this, InvalidSchema );
 		}
-		this.message = 'Invalid schema object provided. Must have a' +
-			' "properties" property.' + this.message;
+		this.message =
+			'Invalid schema object provided. Must have a' +
+			' "properties" property.' +
+			this.message;
 		this.schema = args[ 1 ] || {};
 	}
 }

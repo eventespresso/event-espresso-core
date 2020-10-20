@@ -33,7 +33,5 @@ const DateTimeEntities = {};
 forEach( DateTimeResponses, ( response, key ) => {
 	DateTimeEntities[ key ] = dateTimeFactory.fromExisting( response );
 } );
-DateTimeEntities.d = dateTimeFactory.createNew(
-	'Test New Datetime'
-);
+DateTimeEntities.d = dateTimeFactory.createNew( 'Test New Datetime' );
 export { EventEntities, DateTimeEntities };

@@ -16,6 +16,7 @@ import { isArray } from 'lodash';
 
 /**
  * Translation map for Registration statuses
+ *
  * @type {{}}
  */
 const STATUS_TRANSLATION_MAP_REGISTRATION = {
@@ -26,7 +27,8 @@ const STATUS_TRANSLATION_MAP_REGISTRATION = {
 	[ status.REGISTRATION_STATUS_ID.APPROVED ]: Label.fromSameSingleAndPlural(
 		__( 'approved', 'event_espresso' )
 	),
-	[ status.REGISTRATION_STATUS_ID.NOT_APPROVED ]: Label.fromSameSingleAndPlural(
+	[ status.REGISTRATION_STATUS_ID
+		.NOT_APPROVED ]: Label.fromSameSingleAndPlural(
 		__( 'not approved', 'event_espresso' )
 	),
 	[ status.REGISTRATION_STATUS_ID.CANCELLED ]: Label.fromSameSingleAndPlural(
@@ -46,6 +48,7 @@ const STATUS_TRANSLATION_MAP_REGISTRATION = {
 
 /**
  * Translation map for Transaction statuses
+ *
  * @type {{}}
  *
  */
@@ -69,6 +72,7 @@ const STATUS_TRANSLATION_MAP_TRANSACTION = {
 
 /**
  * Translation map for payment statuses
+ *
  * @type {{}}
  */
 const STATUS_TRANSLATION_MAP_PAYMENT = {
@@ -79,10 +83,10 @@ const STATUS_TRANSLATION_MAP_PAYMENT = {
 		__( 'pending', 'event_espresso' )
 	),
 	[ status.PAYMENT_STATUS_ID.CANCELLED ]: Label.fromSameSingleAndPlural(
-		__( 'cancelled', 'event_espresso' ),
+		__( 'cancelled', 'event_espresso' )
 	),
 	[ status.PAYMENT_STATUS_ID.DECLINED ]: Label.fromSameSingleAndPlural(
-		__( 'declined', 'event_espresso' ),
+		__( 'declined', 'event_espresso' )
 	),
 	[ status.PAYMENT_STATUS_ID.FAILED ]: Label.fromSameSingleAndPlural(
 		__( 'failed', 'event_espresso' )
@@ -91,6 +95,7 @@ const STATUS_TRANSLATION_MAP_PAYMENT = {
 
 /**
  * Translation map for Message statuses
+ *
  * @type {{}}
  */
 const STATUS_TRANSLATION_MAP_MESSAGE = {
@@ -122,6 +127,7 @@ const STATUS_TRANSLATION_MAP_MESSAGE = {
 
 /**
  * Translation map for CPT statuses
+ *
  * @type {{}}
  */
 const STATUS_TRANSLATION_MAP_CPT = {
@@ -150,6 +156,7 @@ const STATUS_TRANSLATION_MAP_CPT = {
 
 /**
  * Translation map for Event Statuses
+ *
  * @type {{}}
  */
 const STATUS_TRANSLATION_MAP_EVENT = {
@@ -166,6 +173,7 @@ const STATUS_TRANSLATION_MAP_EVENT = {
 
 /**
  * Translation map for Ticket statuses
+ *
  * @type {{}}
  */
 const STATUS_TRANSLATION_MAP_TICKET = {
@@ -188,6 +196,7 @@ const STATUS_TRANSLATION_MAP_TICKET = {
 
 /**
  * Translation map for datetime statuses
+ *
  * @type {{}}
  */
 const STATUS_TRANSLATION_MAP_DATETIME = {
@@ -235,6 +244,7 @@ const STATUS_TRANSLATION_MAP_CHECKIN = {
 
 /**
  * Combined translation map for all statuses.
+ *
  * @type {{}}
  */
 const STATUS_TRANSLATION_MAP_ALL = {
@@ -267,12 +277,15 @@ export const prettyStatus = (
 	singular = true,
 	schema = Label.FORMAT_SENTENCE_CASE
 ) => {
-	return STATUS_TRANSLATION_MAP_ALL[ statusCode ] ?
-		STATUS_TRANSLATION_MAP_ALL[ statusCode ].asFormatted( singular, schema ) :
-		STATUS_TRANSLATION_MAP_ALL[ status.UNKNOWN_STATUS_ID ].asFormatted(
-			singular,
-			schema
-		);
+	return STATUS_TRANSLATION_MAP_ALL[ statusCode ]
+		? STATUS_TRANSLATION_MAP_ALL[ statusCode ].asFormatted(
+				singular,
+				schema
+		  )
+		: STATUS_TRANSLATION_MAP_ALL[ status.UNKNOWN_STATUS_ID ].asFormatted(
+				singular,
+				schema
+		  );
 };
 
 /**
@@ -291,8 +304,9 @@ export const prettyStatuses = (
 	schema = Label.FORMAT_SENTENCE_CASE
 ) => {
 	if ( ! isArray( statusCodes ) ) {
-		throw new TypeError( 'Expect incoming statusCodes argument' +
-			' to be an array' );
+		throw new TypeError(
+			'Expect incoming statusCodes argument' + ' to be an array'
+		);
 	}
 	const mappedStatuses = {};
 	statusCodes.forEach( ( statusCode ) => {

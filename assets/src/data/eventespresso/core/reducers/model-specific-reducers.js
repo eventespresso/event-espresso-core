@@ -14,12 +14,7 @@ const { modelSpecific: types, resets: resetTypes } = ACTION_TYPES;
  * @return {Map} New or existing state.
  */
 export default function handleReceiveSelector( state = Map(), action ) {
-	const {
-		type,
-		selector,
-		args,
-		value,
-	} = action;
+	const { type, selector, args, value } = action;
 	switch ( type ) {
 		case types.RECEIVE_SELECTOR_VALUE:
 			return state.setIn( [ selector, JSON.stringify( args ) ], value );

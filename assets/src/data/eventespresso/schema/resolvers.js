@@ -35,6 +35,7 @@ import {
 
 /**
  * A resolver for getting the schema for a given model name.
+ *
  * @param {string} modelName
  * @return {Object} Retrieved schema.
  */
@@ -47,6 +48,7 @@ export function* getSchemaForModel( modelName ) {
 
 /**
  * A resolver for getting the model entity factory for a given model name.
+ *
  * @param {string} modelName
  * @param {Object} schema
  * @return {Object|null} retrieved factory
@@ -104,27 +106,27 @@ export function* getRelationEndpointForEntityId(
 	relationModelName = singularModelName( relationModelName );
 	const pluralRelationName = pluralModelName( relationModelName );
 	let endpoint = '';
-	if ( isModelEntity( entity ) && entity[ pluralRelationName + 'Resource' ] ) {
+	if (
+		isModelEntity( entity ) &&
+		entity[ pluralRelationName + 'Resource' ]
+	) {
 		endpoint = stripBaseRouteFromUrl(
 			entity[ pluralRelationName + 'Resource' ].resourceLink
 		);
 	} else {
-		const response = yield fetch(
-			{
-				path: getEndpoint( modelName ) + '/' + entityId,
-			}
-		);
+		const response = yield fetch( {
+			path: getEndpoint( modelName ) + '/' + entityId,
+		} );
 		if ( ! response._links ) {
 			return '';
 		}
 		const links = response._links || {};
 		const baseRelationPath = 'https://api.eventespresso.com/';
-		endpoint = links[
-			baseRelationPath + relationModelName
-		] || '';
-		endpoint = ( endpoint === '' && links[
-			baseRelationPath + pluralRelationName
-		] ) || endpoint;
+		endpoint = links[ baseRelationPath + relationModelName ] || '';
+		endpoint =
+			( endpoint === '' &&
+				links[ baseRelationPath + pluralRelationName ] ) ||
+			endpoint;
 	}
 	if ( endpoint ) {
 		yield receiveRelationEndpointForModelEntity(
@@ -162,9 +164,11 @@ export function* getRelationPrimaryKeyString( modelName, relationName ) {
 		return '';
 	}
 	const relationPrimaryKey = getPrimaryKey( relationName );
-	return relationType === 'EE_Belongs_To_Relation' ?
-		relationPrimaryKey :
-		`${ modelNameForQueryString( relationName ) }.${ relationPrimaryKey }`;
+	return relationType === 'EE_Belongs_To_Relation'
+		? relationPrimaryKey
+		: `${ modelNameForQueryString(
+				relationName
+		  ) }.${ relationPrimaryKey }`;
 }
 
 /**
@@ -182,7 +186,7 @@ export function* getRelationResponseType( modelName, relationName ) {
 		SCHEMA_REDUCER_KEY,
 		'getRelationSchema',
 		modelName,
-		relationName,
+		relationName
 	);
 	return relationSchema !== null ? relationSchema.type : '';
 }
@@ -202,7 +206,7 @@ export function* hasJoinTableRelation( modelName, relationName ) {
 		SCHEMA_REDUCER_KEY,
 		'getRelationType',
 		modelName,
-		relationName,
+		relationName
 	);
 	return JOIN_RELATION_TYPES.indexOf( relationType ) > -1;
 }
@@ -245,25 +249,23 @@ export function* getRelationSchema( modelName, relationName ) {
 		modelName
 	);
 	if ( schema === null ) {
-		throw new Error(
-			'The ' + modelName + ' does not have a schema'
-		);
+		throw new Error( 'The ' + modelName + ' does not have a schema' );
 	}
 	// is there a schema for plural relation name?
 	let typeSchema = schema.schema.properties[ pluralRelationName ] || null;
-	typeSchema = typeSchema === null &&
-		! isUndefined( schema.schema.properties[ relationName ] ) ?
-		schema.schema.properties[ relationName ] :
-		typeSchema;
+	typeSchema =
+		typeSchema === null &&
+		! isUndefined( schema.schema.properties[ relationName ] )
+			? schema.schema.properties[ relationName ]
+			: typeSchema;
 	if ( typeSchema === null ) {
 		throw new Error(
-			'There is no relation for ' + relationName + ' on the ' +
-			'model ' + modelName
+			'There is no relation for ' +
+				relationName +
+				' on the ' +
+				'model ' +
+				modelName
 		);
 	}
-	yield receiveRelationSchema(
-		modelName,
-		relationName,
-		typeSchema
-	);
+	yield receiveRelationSchema( modelName, relationName, typeSchema );
 }

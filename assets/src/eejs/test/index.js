@@ -1,8 +1,4 @@
-import {
-	data,
-	Exception,
-	routes,
-} from '../';
+import { data, Exception, routes } from '../';
 
 describe( 'eejs', () => {
 	describe( 'data', () => {

@@ -9,8 +9,8 @@ import { isPlainObject, isUndefined } from 'lodash';
  * @param {*} value
  * @return {boolean} True if the value is a plain object and has a `raw` property.
  */
-export const hasRawProperty = ( value ) => isPlainObject( value ) &&
-	! isUndefined( value.raw );
+export const hasRawProperty = ( value ) =>
+	isPlainObject( value ) && ! isUndefined( value.raw );
 
 /**
  * Indicates whether the provided value has a "pretty" property.
@@ -18,8 +18,8 @@ export const hasRawProperty = ( value ) => isPlainObject( value ) &&
  * @param {*} value
  * @return {*} True if the value is a plain object and has a `pretty` property.
  */
-export const hasPrettyProperty = ( value ) => isPlainObject( value ) &&
-	! isUndefined( value.pretty );
+export const hasPrettyProperty = ( value ) =>
+	isPlainObject( value ) && ! isUndefined( value.pretty );
 
 /**
  * Indicates whether the provided value has a "rendered" property.
@@ -27,8 +27,8 @@ export const hasPrettyProperty = ( value ) => isPlainObject( value ) &&
  * @param {*} value
  * @return {boolean} True if the value is a plain object and has a `rendered` property.
  */
-export const hasRenderedProperty = ( value ) => isPlainObject( value ) &&
-	! isUndefined( value.rendered );
+export const hasRenderedProperty = ( value ) =>
+	isPlainObject( value ) && ! isUndefined( value.rendered );
 
 /**
  * Indicates whether the provided value has a "format" property.
@@ -36,8 +36,8 @@ export const hasRenderedProperty = ( value ) => isPlainObject( value ) &&
  * @param {*} value
  * @return {boolean} True if the value is a plain object and has a `format` property.
  */
-export const hasFormatProperty = ( value ) => isPlainObject( value ) &&
-	! isUndefined( value.format );
+export const hasFormatProperty = ( value ) =>
+	isPlainObject( value ) && ! isUndefined( value.format );
 
 /**
  * Indicates whether the provided value has a "enum" property.
@@ -46,8 +46,8 @@ export const hasFormatProperty = ( value ) => isPlainObject( value ) &&
  * @return {boolean} True if the value is a plain object and has an enum
  * property.
  */
-export const hasEnumProperty = ( value ) => isPlainObject( value ) &&
-	! isUndefined( value.enum );
+export const hasEnumProperty = ( value ) =>
+	isPlainObject( value ) && ! isUndefined( value.enum );
 
 /**
  * Indicates whether the provided value is a "value object" field.
@@ -84,10 +84,10 @@ export const isDateTimeField = ( field, schema ) =>
  * means this is also a date-time field.
  */
 export const isUTCDateTimeField = ( dateTimeFieldName, schema = null ) => {
-	return schema !== null ?
-		isDateTimeField( dateTimeFieldName, schema ) &&
-			dateTimeFieldName.indexOf( '_gmt' ) > 0 :
-		dateTimeFieldName.indexOf( '_gmt' ) > 0;
+	return schema !== null
+		? isDateTimeField( dateTimeFieldName, schema ) &&
+				dateTimeFieldName.indexOf( '_gmt' ) > 0
+		: dateTimeFieldName.indexOf( '_gmt' ) > 0;
 };
 
 /**
@@ -132,8 +132,7 @@ export const isReadOnly = ( fieldName, schema ) =>
 export const isEntityField = ( fieldName, schema ) =>
 	! isUndefined( schema[ fieldName ] ) &&
 	( ! isReadOnly( fieldName, schema ) ||
-		isPrimaryKeyField( fieldName, schema )
-	) &&
+		isPrimaryKeyField( fieldName, schema ) ) &&
 	! isUTCDateTimeField( fieldName ) &&
 	fieldName !== '_protected';
 

@@ -17,11 +17,15 @@ describe( 'instanceOf()', () => {
 		const money = new Money( 0, SiteCurrency );
 		expect( instanceOf( money, 'Money' ) ).toBe( true );
 	} );
-	it( 'when object instance matches instance of arbitrary function new it ' +
-		'returns true', () => {
-		expect( instanceOf( new ExampleClass(), 'ExampleClass' ) )
-			.toBe( true );
-	} );
+	it(
+		'when object instance matches instance of arbitrary function new it ' +
+			'returns true',
+		() => {
+			expect( instanceOf( new ExampleClass(), 'ExampleClass' ) ).toBe(
+				true
+			);
+		}
+	);
 	it( 'when class is not instantiated, returns false', () => {
 		expect( instanceOf( Money, 'Money' ) ).toBe( false );
 	} );
@@ -29,11 +33,7 @@ describe( 'instanceOf()', () => {
 		expect( instanceOf( new ExampleClass(), 'Money' ) ).toBe( false );
 	} );
 	it( 'returns false when objectInstance is not an object', () => {
-		[
-			null,
-			'',
-			[ 'foo', 'bar' ],
-		].forEach( ( testValue ) => {
+		[ null, '', [ 'foo', 'bar' ] ].forEach( ( testValue ) => {
 			expect( instanceOf( testValue, 'foo' ) ).toBe( false );
 		} );
 	} );

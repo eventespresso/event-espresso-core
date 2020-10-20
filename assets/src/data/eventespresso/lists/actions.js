@@ -52,11 +52,7 @@ export function receiveResponse( identifier, queryString, items = [] ) {
  * @return {{type: string, identifier: string, queryString: string, items:
  *   Array<BaseEntity>}} An action object.
  */
-export function receiveEntityResponse(
-	modelName,
-	queryString,
-	entities = [],
-) {
+export function receiveEntityResponse( modelName, queryString, entities = [] ) {
 	return {
 		type: types.RECEIVE_ENTITY_LIST,
 		identifier: modelName,
@@ -78,7 +74,7 @@ export function* resetAllState() {
 		yield dispatch(
 			'core/data',
 			'invalidateResolutionForStore',
-			REDUCER_KEY,
+			REDUCER_KEY
 		);
 		return;
 	}
@@ -139,7 +135,7 @@ export function* resetForSelectorAndIdentifier( selectorName, identifier ) {
 						'invalidateResolution',
 						REDUCER_KEY,
 						selector,
-						entry[ 0 ],
+						entry[ 0 ]
 					);
 				}
 			}
@@ -220,6 +216,8 @@ const identifierInSelector = ( selectorName, identifier ) => {
 	const singularName = singularModelName( identifier );
 	const pluralName = pluralModelName( identifier );
 	selectorName = selectorName.toLowerCase();
-	return selectorName.indexOf( singularName ) > -1 ||
-		selectorName.indexOf( pluralName ) > -1;
+	return (
+		selectorName.indexOf( singularName ) > -1 ||
+		selectorName.indexOf( pluralName ) > -1
+	);
 };

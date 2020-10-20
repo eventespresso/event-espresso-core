@@ -34,56 +34,34 @@ describe( 'Testing assertion utilities', () => {
 			],
 			[ [ 'event', 10 ], IMap().set( 'event', IMap().set( 10, {} ) ) ],
 		],
-		[
-			assertIsArray,
-			[ 'foo', '' ],
-			[ 'foo', 'fail' ],
-			[ [ 1, 2 ], '' ],
-		],
-		[
-			assertIsNotEmpty,
-			[ '', '' ],
-			[ {}, 'fail' ],
-			[ [ 'foo' ], '' ],
-		],
-		[
-			assertIsMap,
-			[ {}, '' ],
-			[ {}, 'fail' ],
-			[ new Map(), '' ],
-		],
+		[ assertIsArray, [ 'foo', '' ], [ 'foo', 'fail' ], [ [ 1, 2 ], '' ] ],
+		[ assertIsNotEmpty, [ '', '' ], [ {}, 'fail' ], [ [ 'foo' ], '' ] ],
+		[ assertIsMap, [ {}, '' ], [ {}, 'fail' ], [ new Map(), '' ] ],
 	];
-	testConditions.forEach( ( [
-		testMethod,
-		throwExceptionArgs,
-		customMessageArgs,
-		noExceptionArgs,
-	] ) => {
-		describe( testMethod.name + '()', () => {
-			it( 'throws Exception when assertion fails', () => {
-				expect(
-					tester(
-						testMethod,
-						throwExceptionArgs
-					)
-				).toThrow( Exception );
+	testConditions.forEach(
+		( [
+			testMethod,
+			throwExceptionArgs,
+			customMessageArgs,
+			noExceptionArgs,
+		] ) => {
+			describe( testMethod.name + '()', () => {
+				it( 'throws Exception when assertion fails', () => {
+					expect( tester( testMethod, throwExceptionArgs ) ).toThrow(
+						Exception
+					);
+				} );
+				it( 'throws Exception with custom message', () => {
+					expect( tester( testMethod, customMessageArgs ) ).toThrow(
+						'fail'
+					);
+				} );
+				it( 'does not throw exception for passing assertion', () => {
+					expect(
+						tester( testMethod, noExceptionArgs )
+					).not.toThrow();
+				} );
 			} );
-			it( 'throws Exception with custom message', () => {
-				expect(
-					tester(
-						testMethod,
-						customMessageArgs
-					)
-				).toThrow( 'fail' );
-			} );
-			it( 'does not throw exception for passing assertion', () => {
-				expect(
-					tester(
-						testMethod,
-						noExceptionArgs
-					)
-				).not.toThrow();
-			} );
-		} );
-	} );
+		}
+	);
 } );

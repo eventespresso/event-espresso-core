@@ -13,7 +13,8 @@ describe( 'mapReducer()', () => {
 	map.set( 'foo', 'bar' );
 	map.set( 'bar', 'foo' );
 	it( 'returns the expected result for given arguments', () => {
-		expect( mapReducer( map, reducerCallback, {} ) )
-			.toEqual( expectedAccumulator );
+		expect( mapReducer( map, reducerCallback, {} ) ).toEqual(
+			expectedAccumulator
+		);
 	} );
 } );

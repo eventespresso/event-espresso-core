@@ -7,7 +7,7 @@ import { isUndefined } from 'lodash';
 /**
  * Constants describing the current "save state" for an entity.
  *
- * @type {{CLEAN: Symbol, NEW: Symbol, DIRTY: Symbol}}
+ * @type {{CLEAN: symbol, NEW: symbol, DIRTY: symbol}}
  */
 export const SAVE_STATE = {
 	CLEAN: Symbol( 'Entity is persisted.' ),
@@ -17,6 +17,7 @@ export const SAVE_STATE = {
 
 /**
  * Validation types are for schema's that have value variations.
+ *
  * @type {{RAW: string, RENDERED: string, PRETTY: string}}
  */
 export const VALIDATE_TYPE = {
@@ -27,6 +28,7 @@ export const VALIDATE_TYPE = {
 
 /**
  * Private properties used internally by the Base Entity Class
+ *
  * @type {{saveState: boolean}}
  */
 export const PRIVATE_PROPERTIES = {
@@ -36,7 +38,7 @@ export const PRIVATE_PROPERTIES = {
 
 /**
  * Hardcoded list of model prefixes for fields on models.
-
+ 
  * A model prefix is something that "namespaces" a field on a model.  For
  * example, if the field is "EVT_ID", then the prefix is "EVT"; if the field is
  * "DTT_EVT_start", then the prefixes are "DTT", and "DTT_EVT".
@@ -90,8 +92,9 @@ export const MODEL_PREFIXES = ( modelName ) => {
 			transaction: [ 'TXN' ],
 			venue: [ 'VNU' ],
 			wp_user: [ 'user' ],
-		} );
-	return ! isUndefined( prefixMap[ modelName ] ) ?
-		prefixMap[ modelName ] :
-		[];
+		}
+	);
+	return ! isUndefined( prefixMap[ modelName ] )
+		? prefixMap[ modelName ]
+		: [];
 };

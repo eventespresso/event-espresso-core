@@ -17,7 +17,7 @@ describe( 'EventSelect()', () => {
 			showExpired: false,
 		} );
 		expect( wrapper.prop( 'selectConfiguration' ).placeholder ).toEqual(
-			'Select Event...',
+			'Select Event…'
 		);
 		expect( wrapper.prop( 'modelName' ) ).toEqual( 'event' );
 	} );

@@ -47,7 +47,7 @@ export const valuesForCombinedPrimaryKeys = memoize( ( keys, entity ) => {
  * This function would be used for models that have only one primary key.
  *
  * @type {memoized}
- * @return { function } The value for the key in the provided entity.
+ * @return {Function} The value for the key in the provided entity.
  * @throws { Exception }
  */
 export const valueForPrimaryKey = memoize( ( key, entity ) => {
@@ -84,16 +84,16 @@ export const getPrimaryKeyQueryString = memoize(
  * Returns the values for the primary keys from the provided entity.
  *
  * @type {memoized}
- * @return { function }  If the model has only one primary key then the value will
+ * @return {Function}  If the model has only one primary key then the value will
  * be a simple string.  If the model has combined primary keys, then the value
  * will be as string in the format `%s.%s` for the primary key values.
  * @throws { Exception }
  */
 export const getEntityPrimaryKeyValues = memoize( ( modelName, entity ) => {
 	const keys = getPrimaryKey( modelName );
-	return isArray( keys ) ?
-		valuesForCombinedPrimaryKeys( keys, entity ) :
-		valueForPrimaryKey( keys, entity );
+	return isArray( keys )
+		? valuesForCombinedPrimaryKeys( keys, entity )
+		: valueForPrimaryKey( keys, entity );
 } );
 
 /**
@@ -110,7 +110,7 @@ export const keyEntitiesByPrimaryKeyValue = ( modelName, entities = [] ) => {
 		entities,
 		__(
 			'The provided array of entities must not be empty',
-			'event_espresso',
+			'event_espresso'
 		)
 	);
 	assertIsArray( entities );
@@ -134,15 +134,12 @@ export const keyEntitiesByPrimaryKeyValue = ( modelName, entities = [] ) => {
  * @return {Map}  An array of entity instances indexed by
  * their primary key value
  */
-export const createAndKeyEntitiesByPrimaryKeyValue = (
-	factory,
-	entities,
-) => {
+export const createAndKeyEntitiesByPrimaryKeyValue = ( factory, entities ) => {
 	assertIsMap(
 		entities,
 		__(
 			'The provided object of entities must be a Map object',
-			'event_espresso',
+			'event_espresso'
 		)
 	);
 	entities.forEach( ( entity, entityId ) => {

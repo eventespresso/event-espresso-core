@@ -16,36 +16,31 @@ jest.mock( '@eventespresso/model', () => ( {
 
 describe( 'createResolvers()', () => {
 	const newResolvers = createResolvers( resolvers );
-	const expectedResolvers = [
-		[
-			'getDatetimeById',
-			[ 10 ],
-			'generator',
-		],
-	];
+	const expectedResolvers = [ [ 'getDatetimeById', [ 10 ], 'generator' ] ];
 	describe( 'creates expected resolvers for given model name', () => {
-		expectedResolvers.forEach( ( [
-			expectedResolver,
-			args,
-			expectedResponse,
-		] ) => {
-			describe( expectedResolver + '()', () => {
-				it( 'is defined.', () => {
-					expect( newResolvers[ expectedResolver ] ).toBeDefined();
+		expectedResolvers.forEach(
+			( [ expectedResolver, args, expectedResponse ] ) => {
+				describe( expectedResolver + '()', () => {
+					it( 'is defined.', () => {
+						expect(
+							newResolvers[ expectedResolver ]
+						).toBeDefined();
+					} );
+					it( 'returns expectedValue', () => {
+						if ( expectedResponse === 'generator' ) {
+							expect(
+								isGenerator(
+									newResolvers[ expectedResolver ]( ...args )
+								)
+							).toBe( true );
+						} else {
+							expect(
+								newResolvers[ expectedResolver ]( ...args )
+							).toEqual( expectedResponse );
+						}
+					} );
 				} );
-				it( 'returns expectedValue', () => {
-					if ( expectedResponse === 'generator' ) {
-						expect( isGenerator(
-							newResolvers[ expectedResolver ]( ...args )
-						) ).toBe( true );
-					} else {
-						expect( newResolvers[ expectedResolver ](
-							...args
-						) ).toEqual( expectedResponse );
-					}
-				} );
-			} );
-		} );
+			}
+		);
 	} );
 } );
-

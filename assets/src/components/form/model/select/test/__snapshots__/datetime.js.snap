@@ -31,7 +31,7 @@ exports[`DatetimeSelect() matches snapshot with default props 1`] = `
       "loadingMessage": [Function],
       "noOptionsMessage": [Function],
       "onChange": undefined,
-      "placeholder": "Select Datetime...",
+      "placeholder": "Select Datetime…",
     }
   }
 />

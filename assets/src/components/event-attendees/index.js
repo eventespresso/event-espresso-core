@@ -34,25 +34,21 @@ export default class EventAttendeeList extends Component {
 		if ( isEmpty( attendees ) ) {
 			return null;
 		}
-		const listItems = attendees.map(
-			( attendee ) => {
-				if ( attendee.id ) {
-					return <AttendeeListItem
+		const listItems = attendees.map( ( attendee ) => {
+			if ( attendee.id ) {
+				return (
+					<AttendeeListItem
 						key={ attendee.id }
 						attendee={ attendee }
 						showGravatar={ showGravatar }
 						isLoading={ isLoading }
 						{ ...this.props }
-					/>;
-				}
-				return null;
+					/>
+				);
 			}
-		);
-		return (
-			<ul>
-				{ listItems }
-			</ul>
-		);
+			return null;
+		} );
+		return <ul>{ listItems }</ul>;
 	}
 
 	render() {
@@ -60,12 +56,7 @@ export default class EventAttendeeList extends Component {
 		return (
 			<div
 				id={ containerId }
-				className={
-					classNames(
-						containerCssClass,
-						'event-attendees',
-					)
-				}
+				className={ classNames( containerCssClass, 'event-attendees' ) }
 			>
 				{ this.getAttendeeList() }
 			</div>

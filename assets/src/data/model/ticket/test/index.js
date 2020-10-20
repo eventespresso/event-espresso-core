@@ -29,8 +29,10 @@ describe( 'mapOrderBy()', () => {
 describe( 'whereConditions()', () => {
 	it( 'returns expected default for empty object passed in', () => {
 		expect( whereConditions( {} ) ).toEqual(
-			'where[TKT_end_date**expired][]=' + GREATER_THAN +
-			'&where[TKT_end_date**expired][]=' + expectedNow
+			'where[TKT_end_date**expired][]=' +
+				GREATER_THAN +
+				'&where[TKT_end_date**expired][]=' +
+				expectedNow
 		);
 	} );
 	it( 'returns expected string for values passed in', () => {
@@ -51,14 +53,22 @@ describe( 'whereConditions()', () => {
 			month: 'may',
 		};
 		expect( whereConditions( testObject ) ).toEqual(
-			'where[TKT_end_date**expired][]=' + GREATER_THAN +
-			'&where[TKT_end_date**expired][]=' + expectedNow +
-			'&where[TKT_start_date][]=' + GREATER_THAN_AND_EQUAL +
-			'&where[TKT_start_date][]=' + expectedStartofDate +
-			'&where[TKT_end_date][]=' + LESS_THAN_AND_EQUAL +
-			'&where[TKT_end_date][]=' + expectedEndofDate +
-			'&where[Datetime.Event.EVT_ID]=' + 20 +
-			'&where[Datetime.DTT_ID]=' + 123
+			'where[TKT_end_date**expired][]=' +
+				GREATER_THAN +
+				'&where[TKT_end_date**expired][]=' +
+				expectedNow +
+				'&where[TKT_start_date][]=' +
+				GREATER_THAN_AND_EQUAL +
+				'&where[TKT_start_date][]=' +
+				expectedStartofDate +
+				'&where[TKT_end_date][]=' +
+				LESS_THAN_AND_EQUAL +
+				'&where[TKT_end_date][]=' +
+				expectedEndofDate +
+				'&where[Datetime.Event.EVT_ID]=' +
+				20 +
+				'&where[Datetime.DTT_ID]=' +
+				123
 		);
 	} );
 } );
@@ -67,8 +77,10 @@ describe( 'getQueryString', () => {
 	it( 'returns expected default for no arguments passed in', () => {
 		expect( getQueryString() ).toEqual(
 			'limit=100&order=DESC&order_by=TKT_start_date' +
-			'&where[TKT_end_date**expired][]=' + GREATER_THAN +
-			'&where[TKT_end_date**expired][]=' + expectedNow
+				'&where[TKT_end_date**expired][]=' +
+				GREATER_THAN +
+				'&where[TKT_end_date**expired][]=' +
+				expectedNow
 		);
 	} );
 } );

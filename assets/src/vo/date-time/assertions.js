@@ -61,9 +61,9 @@ export function validateISO8601( dateTimeString, isDuration = false ) {
 	if ( ! isString( dateTimeString ) ) {
 		return false;
 	}
-	const regex = isDuration ?
-		/^(R\d*\/)?P(?:\d+(?:\.\d+)?Y)?(?:\d+(?:\.\d+)?M)?(?:\d+(?:\.\d+)?W)?(?:\d+(?:\.\d+)?D)?(?:T(?:\d+(?:\.\d+)?H)?(?:\d+(?:\.\d+)?M)?(?:\d+(?:\.\d+)?S)?)?$/ :
-		/^([\+-]?\d{4}(?!\d{2}\b))((-?)((0[1-9]|1[0-2])(\3([12]\d|0[1-9]|3[01]))?|W([0-4]\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\d|[12]\d{2}|3([0-5]\d|6[1-6])))([T\s]((([01]\d|2[0-3])((:?)[0-5]\d)?|24\:?00)([\.,]\d+(?!:))?)?(\17[0-5]\d([\.,]\d+)?)?([zZ]|([\+-])([01]\d|2[0-3]):?([0-5]\d)?)?)?)?$/;
+	const regex = isDuration
+		? /^(R\d*\/)?P(?:\d+(?:\.\d+)?Y)?(?:\d+(?:\.\d+)?M)?(?:\d+(?:\.\d+)?W)?(?:\d+(?:\.\d+)?D)?(?:T(?:\d+(?:\.\d+)?H)?(?:\d+(?:\.\d+)?M)?(?:\d+(?:\.\d+)?S)?)?$/
+		: /^([\+-]?\d{4}(?!\d{2}\b))((-?)((0[1-9]|1[0-2])(\3([12]\d|0[1-9]|3[01]))?|W([0-4]\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\d|[12]\d{2}|3([0-5]\d|6[1-6])))([T\s]((([01]\d|2[0-3])((:?)[0-5]\d)?|24\:?00)([\.,]\d+(?!:))?)?(\17[0-5]\d([\.,]\d+)?)?([zZ]|([\+-])([01]\d|2[0-3]):?([0-5]\d)?)?)?)?$/;
 	return regex.test( dateTimeString );
 }
 
@@ -122,14 +122,13 @@ export function validateIsDate( date ) {
 
 /**
  * Asserts whether the given value is an instance of Date.
+ *
  * @param {Date} date
  * @throws TypeError
  */
 export function assertIsDate( date ) {
 	if ( ! validateIsDate( date ) ) {
-		throw new TypeError(
-			'The provided value is not an instance of Date'
-		);
+		throw new TypeError( 'The provided value is not an instance of Date' );
 	}
 }
 
@@ -154,8 +153,6 @@ export function validateIsOffset( offset ) {
  */
 export function assertIsOffset( offset ) {
 	if ( ! validateIsOffset( offset ) ) {
-		throw new TypeError(
-			'Offset is expected to be a number'
-		);
+		throw new TypeError( 'Offset is expected to be a number' );
 	}
 }

@@ -17,8 +17,10 @@ import { Currency } from './currency';
  * @throws {TypeError}
  */
 const assertMoney = ( money ) => {
-	if ( ! ( instanceOf( money, 'Money' ) ) ) {
-		throw new TypeError( 'Instance of Money required. Received: ' + JSON.stringify(money) );
+	if ( ! instanceOf( money, 'Money' ) ) {
+		throw new TypeError(
+			'Instance of Money required. Received: ' + JSON.stringify( money )
+		);
 	}
 };
 
@@ -29,8 +31,11 @@ const assertMoney = ( money ) => {
  * @throws {TypeError}
  */
 const assertCurrency = ( currency ) => {
-	if (!(instanceOf(currency, 'Currency'))) {
-		throw new TypeError( 'Instance of Currency required. Received: ' + JSON.stringify(currency) );
+	if ( ! instanceOf( currency, 'Currency' ) ) {
+		throw new TypeError(
+			'Instance of Currency required. Received: ' +
+				JSON.stringify( currency )
+		);
 	}
 };
 
@@ -137,7 +142,7 @@ export default class Money {
 	 * @param {number|string|Decimal} amount
 	 * @param {Currency} currency
 	 */
-	constructor(amount, currency) {
+	constructor( amount, currency ) {
 		this.displayName = 'Money';
 		this.setCurrency( currency )
 			.setAmount( amount )
@@ -170,9 +175,9 @@ export default class Money {
 	 * property.
 	 */
 	setAmount( amount ) {
-		const value = instanceOf( amount, 'Decimal' ) ?
-			amount.toNumber() :
-			amount;
+		const value = instanceOf( amount, 'Decimal' )
+			? amount.toNumber()
+			: amount;
 		// if there's already an amount set, then return a new object.
 		if ( instanceOf( this.amount, 'Decimal' ) ) {
 			return new Money( new Decimal( value ), this.currency );
@@ -200,6 +205,7 @@ export default class Money {
 
 	/**
 	 * Returns the value of this Money as its subunits.
+	 *
 	 * @return {number} If the subunits is 100 and the value is .45,
 	 * this returns 450
 	 */
@@ -216,8 +222,9 @@ export default class Money {
 	 */
 	equals( other ) {
 		Money.assertMoney( other );
-		return this.amount.equals( other.amount ) &&
-			this.hasSameCurrency( other );
+		return (
+			this.amount.equals( other.amount ) && this.hasSameCurrency( other )
+		);
 	}
 
 	/**
@@ -321,7 +328,7 @@ export default class Money {
 		convertedRatios.forEach( ( ratio ) => {
 			const share = new Decimal(
 				Math.floor(
-					self.toSubunits() * ratio.toNumber() / total.toNumber()
+					( self.toSubunits() * ratio.toNumber() ) / total.toNumber()
 				)
 			);
 			results.push(
@@ -334,7 +341,7 @@ export default class Money {
 		} );
 		for ( let i = 0; remainder.greaterThan( 0 ); i++ ) {
 			results[ i ] = new Money(
-				( new Decimal( results[ i ].toSubunits() ) )
+				new Decimal( results[ i ].toSubunits() )
 					.plus( 1 )
 					.dividedBy( this.currency.subunits ),
 				this.currency
@@ -474,10 +481,7 @@ export default class Money {
 	 * @return {Money} A new Money object
 	 */
 	toIntegerMoney() {
-		return new Money(
-			this.amount.toInteger(),
-			this.currency
-		);
+		return new Money( this.amount.toInteger(), this.currency );
 	}
 
 	/**
@@ -547,7 +551,7 @@ export default class Money {
 	 */
 	static assertSameCurrency = ( currencyA, currencyB ) => {
 		assertSameCurrency( currencyA, currencyB );
-	}
+	};
 
 	/**
 	 * Receives an incoming value that could be a money formatted
@@ -570,16 +574,17 @@ export default class Money {
 				// The first error message is used if we have just one character
 				// returned which is likely the currency symbol.  Otherwise,
 				// give a more generic message.
-				const message = match[ 0 ].length === 1 ?
-					sprintf(
-						'The provided money value has a %1$s sign in it, but the provided currency value object defines %2$s as the currency sign.',
-						match[ 0 ],
-						currency.sign
-					) :
-					sprintf(
-						'The provided money value has non numeric strings in it (%1$s), please double-check the value.',
-						match[ 0 ]
-					);
+				const message =
+					match[ 0 ].length === 1
+						? sprintf(
+								'The provided money value has a %1$s sign in it, but the provided currency value object defines %2$s as the currency sign.',
+								match[ 0 ],
+								currency.sign
+						  )
+						: sprintf(
+								'The provided money value has non numeric strings in it (%1$s), please double-check the value.',
+								match[ 0 ]
+						  );
 
 				throw new Error( message );
 			}
@@ -588,5 +593,5 @@ export default class Money {
 		const money = new Money( 0, currency );
 		// set a new value using the parse on the formatter.
 		return money.setAmount( money.formatter.parse( moneyValue ) );
-	}
+	};
 }

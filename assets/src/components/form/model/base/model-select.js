@@ -3,7 +3,14 @@
  */
 import Select from 'react-select';
 import { Component, Fragment } from '@wordpress/element';
-import { isEmpty, uniqueId, find, isUndefined, isFunction, isMap } from 'lodash';
+import {
+	isEmpty,
+	uniqueId,
+	find,
+	isUndefined,
+	isFunction,
+	isMap,
+} from 'lodash';
 import PropTypes from 'prop-types';
 import isShallowEqual from '@wordpress/is-shallow-equal';
 
@@ -39,7 +46,7 @@ import {
  * @param { Array } modelEntities          	Array of model entities
  * @param { string } modelName              The name of the Model the entities
  *                                          belong to.
- * @param { function } mapOptionsCallback  	This function will receive by default
+ * @param {Function} mapOptionsCallback  	This function will receive by default
  * 											the modelEntities and optionsEntityMap,
  * 											and is expected to return an array of options
  * 											to be used for the react-select component.
@@ -91,6 +98,7 @@ export class ModelSelect extends Component {
 
 	/**
 	 * Sets the state from provided props
+	 *
 	 * @param {Object} props
 	 * @return {{
 	 * isClearable,
@@ -105,7 +113,8 @@ export class ModelSelect extends Component {
 		const { selectConfiguration } = props;
 		const options = ModelSelect.getOptions( props );
 		const selectedValue = ModelSelect.getOptionObjectForValue(
-			selectConfiguration.defaultValue, options
+			selectConfiguration.defaultValue,
+			options
 		);
 		const updated = {
 			options,
@@ -121,6 +130,7 @@ export class ModelSelect extends Component {
 
 	/**
 	 * Sets up options for the select control from the incoming props.
+	 *
 	 * @param {Object} props
 	 * @return {Array<Object>} Array of options for select control
 	 */
@@ -143,6 +153,7 @@ export class ModelSelect extends Component {
 
 	/**
 	 * Given a value, returns the corresponding option object.
+	 *
 	 * @param {*} value
 	 * @param {Array<Object>} options
 	 * @return {Object|null} The option object for the given value or null.
@@ -152,9 +163,7 @@ export class ModelSelect extends Component {
 			const match = find( options, function( option ) {
 				return option.value === value;
 			} );
-			return ! isUndefined( match ) ?
-				match :
-				null;
+			return ! isUndefined( match ) ? match : null;
 		}
 		return null;
 	}
@@ -206,16 +215,12 @@ export class ModelSelect extends Component {
 	}
 
 	componentDidMount() {
-		this.setState(
-			ModelSelect.setStateFromProps( this.props )
-		);
+		this.setState( ModelSelect.setStateFromProps( this.props ) );
 	}
 
 	componentDidUpdate( prevProps ) {
 		if ( ModelSelect.shouldUpdateState( prevProps, this.props ) ) {
-			this.setState(
-				ModelSelect.setStateFromProps( this.props )
-			);
+			this.setState( ModelSelect.setStateFromProps( this.props ) );
 		}
 	}
 
@@ -226,9 +231,11 @@ export class ModelSelect extends Component {
 	 */
 	getSelectLabel() {
 		const { label, selectConfiguration } = this.props;
-		return label ?
-			<label htmlFor={ selectConfiguration.name }>{ label }</label> :
-			'';
+		return label ? (
+			<label htmlFor={ selectConfiguration.name }>{ label }</label>
+		) : (
+			''
+		);
 	}
 
 	render() {
@@ -249,7 +256,9 @@ export class ModelSelect extends Component {
 export default withSelect( ( select, ownProps ) => {
 	const { getQueryString, modelName, selectConfiguration } = ownProps;
 	const queryString = getQueryString( ownProps.queryData );
-	const { getEntities, isRequestingEntities } = select( 'eventespresso/lists' );
+	const { getEntities, isRequestingEntities } = select(
+		'eventespresso/lists'
+	);
 	return {
 		...ModelSelect.defaultProps,
 		...ownProps,

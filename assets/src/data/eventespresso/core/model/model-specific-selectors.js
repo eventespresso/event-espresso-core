@@ -11,14 +11,12 @@ import createSelector from 'rememo';
  */
 export const getSelectorValue = createSelector(
 	( state, selector, ...args ) => {
-		return state.modelSpecific.getIn(
-			[ selector, JSON.stringify( args ) ]
-		) || null;
+		return (
+			state.modelSpecific.getIn( [ selector, JSON.stringify( args ) ] ) ||
+			null
+		);
 	},
 	( state, selector, ...args ) => [
-		state.modelSpecific.getIn( [
-			selector,
-			JSON.stringify( args ),
-		] ),
-	],
+		state.modelSpecific.getIn( [ selector, JSON.stringify( args ) ] ),
+	]
 );

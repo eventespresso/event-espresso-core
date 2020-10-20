@@ -17,6 +17,7 @@ import * as checkinStatus from './constants';
 
 /**
  * Described attributes for this model
+ *
  * @type {{attributes: *}}
  */
 export const queryDataTypes = {
@@ -58,6 +59,7 @@ export const optionsEntityMap = {
 
 /**
  * Default attributes for this model
+ *
  * @type {
  * 	{
  * 		attributes: {
@@ -90,9 +92,9 @@ export const mapOrderBy = ( orderBy ) => {
 		timestamp: 'CHK_timestamp',
 		id: 'CHK_ID',
 	};
-	return isUndefined( orderByMap[ orderBy ] ) ?
-		orderBy :
-		orderByMap[ orderBy ];
+	return isUndefined( orderByMap[ orderBy ] )
+		? orderBy
+		: orderByMap[ orderBy ];
 };
 
 /**
@@ -137,6 +139,7 @@ export const whereConditions = ( {
 
 /**
  * Return a query string for use by a REST request given a set of queryData.
+ *
  * @param { Object } queryData
  * @return { string }  Returns the query string.
  */

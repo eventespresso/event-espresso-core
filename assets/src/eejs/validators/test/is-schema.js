@@ -11,10 +11,7 @@ import {
 /**
  * External Imports
  */
-import {
-	EventSchema,
-	DateTimeSchema,
-} from '@test/fixtures';
+import { EventSchema, DateTimeSchema } from '@test/fixtures';
 
 const expectedFails = [
 	0,
@@ -48,13 +45,13 @@ describe( 'isSchema()', () => {
 describe( 'isSchemaResponseOfModel()', () => {
 	[ ...expectedFails, DateTimeSchema ].forEach( ( testValue ) => {
 		it( 'fails validation for given value', () => {
-			expect( isSchemaResponseOfModel( testValue, 'event' ) )
-				.toBe( false );
+			expect( isSchemaResponseOfModel( testValue, 'event' ) ).toBe(
+				false
+			);
 		} );
 	} );
 	it( 'passes validation for schema', () => {
-		expect( isSchemaResponseOfModel( EventSchema, 'event' ) )
-			.toBe( true );
+		expect( isSchemaResponseOfModel( EventSchema, 'event' ) ).toBe( true );
 	} );
 } );
 describe( 'isSchemaOfModel()', () => {

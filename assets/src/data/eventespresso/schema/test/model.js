@@ -32,65 +32,41 @@ describe( 'createEntitySelectors', () => {
 	} );
 	const newSelectors = createEntitySelectors( selectors );
 	const expectedSelectors = [
-		[
-			'getEventSchema',
-			EventSchema,
-		],
-		[
-			'isRequestingEventSchema',
-			false,
-		],
-		[
-			'getEventFactory',
-			eventFactory,
-		],
-		[
-			'isRequestingEventFactory',
-			false,
-		],
-		[
-			'getDatetimeSchema',
-			DateTimeSchema,
-		],
-		[
-			'isRequestingDatetimeSchema',
-			false,
-		],
-		[
-			'getDatetimeFactory',
-			dateTimeFactory,
-		],
-		[
-			'isRequestingDatetimeFactory',
-			false,
-		],
+		[ 'getEventSchema', EventSchema ],
+		[ 'isRequestingEventSchema', false ],
+		[ 'getEventFactory', eventFactory ],
+		[ 'isRequestingEventFactory', false ],
+		[ 'getDatetimeSchema', DateTimeSchema ],
+		[ 'isRequestingDatetimeSchema', false ],
+		[ 'getDatetimeFactory', dateTimeFactory ],
+		[ 'isRequestingDatetimeFactory', false ],
 	];
 	describe( 'creates expected selectors for given modelNames', () => {
-		expectedSelectors.forEach( ( [
-			expectedSelector,
-			expectedResponse,
-		] ) => {
-			describe( expectedSelector + '()', () => {
-				it( 'is defined', () => {
-					expect( newSelectors[ expectedSelector ] ).toBeDefined();
+		expectedSelectors.forEach(
+			( [ expectedSelector, expectedResponse ] ) => {
+				describe( expectedSelector + '()', () => {
+					it( 'is defined', () => {
+						expect(
+							newSelectors[ expectedSelector ]
+						).toBeDefined();
+					} );
+					it( 'returns expected value', () => {
+						expect(
+							newSelectors[ expectedSelector ](
+								mockStateForTests
+							)
+						).toEqual( expectedResponse );
+					} );
 				} );
-				it( 'returns expected value', () => {
-					expect( newSelectors[ expectedSelector ](
-						mockStateForTests
-					) ).toEqual( expectedResponse );
-				} );
-			} );
-		} );
+			}
+		);
 	} );
 } );
 
 describe( 'createEntityResolvers()', () => {
 	const newResolvers = createEntityResolvers( resolvers );
 	const expectedResolvers = [
-		[
-			'getEventSchema',
-			{ path: '/ee/v4.8.36/events', method: 'OPTIONS' },
-		],
+		[ 'getEventSchema', { path: '/ee/v4.8.36/events', method: 'OPTIONS' } ],
 		[
 			'getEventFactory',
 			[ SCHEMA_REDUCER_KEY, 'getSchemaForModel', 'event' ],
@@ -105,29 +81,37 @@ describe( 'createEntityResolvers()', () => {
 		],
 	];
 	describe( 'creates expected resolvers for given modelNames', () => {
-		expectedResolvers.forEach( ( [
-			expectedResolver,
-			expectedResponse,
-		] ) => {
-			describe( expectedResolver + '()', () => {
-				it( 'is defined', () => {
-					expect( newResolvers[ expectedResolver ] ).toBeDefined();
+		expectedResolvers.forEach(
+			( [ expectedResolver, expectedResponse ] ) => {
+				describe( expectedResolver + '()', () => {
+					it( 'is defined', () => {
+						expect(
+							newResolvers[ expectedResolver ]
+						).toBeDefined();
+					} );
+					it(
+						'yields expected result for initial generator ' +
+							'yield',
+						() => {
+							const fulfillment = newResolvers[
+								expectedResolver
+							]();
+							const {
+								value: initialResponse,
+							} = fulfillment.next();
+							if ( ! isUndefined( initialResponse.request ) ) {
+								expect( initialResponse.request ).toEqual(
+									expectedResponse
+								);
+							} else {
+								expect( initialResponse ).toEqual(
+									resolveSelect( ...expectedResponse )
+								);
+							}
+						}
+					);
 				} );
-				it( 'yields expected result for initial generator ' +
-					'yield', () => {
-					const fulfillment = newResolvers[ expectedResolver ]();
-					const { value: initialResponse } = fulfillment.next();
-					if ( ! isUndefined( initialResponse.request ) ) {
-						expect( initialResponse.request ).toEqual(
-							expectedResponse
-						);
-					} else {
-						expect( initialResponse ).toEqual(
-							resolveSelect( ...expectedResponse )
-						);
-					}
-				} );
-			} );
-		} );
+			}
+		);
 	} );
 } );

@@ -16,11 +16,11 @@ describe( 'DatetimeSelect()', () => {
 	} );
 	it( 'matches expected default props', () => {
 		const wrapper = shallow( <DatetimeSelect /> );
-		expect( wrapper.prop( 'queryData' ) )
-			.toEqual( expectedDefaultQueryData );
-		expect( wrapper
-			.prop( 'selectConfiguration' ).placeholder ).toEqual(
-			'Select Datetime...',
+		expect( wrapper.prop( 'queryData' ) ).toEqual(
+			expectedDefaultQueryData
+		);
+		expect( wrapper.prop( 'selectConfiguration' ).placeholder ).toEqual(
+			'Select Datetime…'
 		);
 		expect( wrapper.prop( 'modelName' ) ).toEqual( 'datetime' );
 		expect( wrapper.prop( 'label' ) ).toEqual( 'Select Datetime' );

@@ -15,9 +15,9 @@ import InvalidArgument from './invalid-argument';
  */
 export default class InvalidTimezone extends InvalidArgument {
 	constructor( timezone, message = '', ...args ) {
-		message = message ?
-			'The timezone string provided is not valid. ' + message :
-			'The timezone string provided is not valid.';
+		message = message
+			? 'The timezone string provided is not valid. ' + message
+			: 'The timezone string provided is not valid.';
 		super( message, timezone, ...args );
 		if ( Error.captureStackTrace ) {
 			Error.captureStackTrace( this, InvalidTimezone );

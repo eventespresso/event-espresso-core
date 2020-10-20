@@ -22,8 +22,8 @@ export const QueryLimit = ( {
 	withSlider = true,
 	...rest
 } ) => {
-	return withSlider ?
-		( <RangeControl
+	return withSlider ? (
+		<RangeControl
 			key={ 'query-limit' }
 			value={ limit }
 			label={ label }
@@ -31,8 +31,9 @@ export const QueryLimit = ( {
 			max={ max }
 			onChange={ onLimitChange }
 			{ ...rest }
-		/> ) :
-		( <TextControl
+		/>
+	) : (
+		<TextControl
 			type="number"
 			value={ limit }
 			label={ label }
@@ -40,5 +41,6 @@ export const QueryLimit = ( {
 			max={ max }
 			onChange={ onLimitChange }
 			{ ...rest }
-		/> );
+		/>
+	);
 };

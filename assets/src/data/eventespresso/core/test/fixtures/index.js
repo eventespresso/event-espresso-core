@@ -1,10 +1,7 @@
 /**
  * Internal dependencies
  */
-import {
-	EventEntities,
-	DateTimeEntities,
-} from '../../../test/fixtures/base';
+import { EventEntities, DateTimeEntities } from '../../../test/fixtures/base';
 
 /**
  * External Imports
@@ -38,10 +35,7 @@ export const mockStateForTests = {
 				.set( 54, Map().set( 'event', Set.of( 30 ) ) )
 				.set(
 					DateTimeEntities.d.id,
-					Map().set(
-						'event',
-						Set.of( EventEntities.d.id )
-					)
+					Map().set( 'event', Set.of( EventEntities.d.id ) )
 				)
 		)
 		.set(
@@ -52,10 +46,7 @@ export const mockStateForTests = {
 				.set( 30, Map().set( 'datetime', Set.of( 54 ) ) )
 				.set(
 					EventEntities.d.id,
-					Map().set(
-						'datetime',
-						Set.of( DateTimeEntities.d.id )
-					)
+					Map().set( 'datetime', Set.of( DateTimeEntities.d.id ) )
 				)
 		),
 	dirty: {

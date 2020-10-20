@@ -5,26 +5,11 @@ import { getMethodName, keepExistingEntitiesInObject } from '../base-model';
 
 describe( 'getMethodName()', () => {
 	[
-		[
-			[ 'event', '', 'get', false ],
-			'getEvent',
-		],
-		[
-			[ 'event', '', 'get', true ],
-			'getEvents',
-		],
-		[
-			[ 'event', 'toGo', '', false ],
-			'EventToGo',
-		],
-		[
-			[ 'event', 'toGo', '', true ],
-			'EventsToGo',
-		],
-	].forEach( ( [
-		args,
-		expectedName,
-	] ) => {
+		[ [ 'event', '', 'get', false ], 'getEvent' ],
+		[ [ 'event', '', 'get', true ], 'getEvents' ],
+		[ [ 'event', 'toGo', '', false ], 'EventToGo' ],
+		[ [ 'event', 'toGo', '', true ], 'EventsToGo' ],
+	].forEach( ( [ args, expectedName ] ) => {
 		it( 'returns the expected value of ' + expectedName, () => {
 			expect( getMethodName( ...args ) ).toEqual( expectedName );
 		} );
@@ -35,18 +20,18 @@ describe( 'keepExistingEntitiesInObject()', () => {
 	const plainExisting = { 0: 'bar' };
 	const plainIncoming = { 1: 'foo', 0: 'foo' };
 	const mapExisting = new Map( [ [ 0, 'bar' ] ] );
-	const mapIncoming = new Map(
-		[
-			[ 1, 'foo' ],
-			[ 0, 'foo' ],
-		]
-	);
-	const expectedMapUnordered = new Map(
-		[ [ 0, 'bar' ], [ 1, 'foo' ] ]
-	);
-	const expectedMapOrdered = new Map(
-		[ [ 1, 'foo' ], [ 0, 'bar' ] ]
-	);
+	const mapIncoming = new Map( [
+		[ 1, 'foo' ],
+		[ 0, 'foo' ],
+	] );
+	const expectedMapUnordered = new Map( [
+		[ 0, 'bar' ],
+		[ 1, 'foo' ],
+	] );
+	const expectedMapOrdered = new Map( [
+		[ 1, 'foo' ],
+		[ 0, 'bar' ],
+	] );
 	const testConditions = [
 		[
 			'when both arguments are plain objects',
@@ -73,15 +58,13 @@ describe( 'keepExistingEntitiesInObject()', () => {
 			expectedMapOrdered,
 		],
 	];
-	testConditions.forEach( ( [
-		description,
-		existing,
-		incoming,
-		expectedResult,
-	] ) => {
-		it( 'returns expected result ' + description, () => {
-			expect( keepExistingEntitiesInObject( existing, incoming ) )
-				.toEqual( expectedResult );
-		} );
-	} );
+	testConditions.forEach(
+		( [ description, existing, incoming, expectedResult ] ) => {
+			it( 'returns expected result ' + description, () => {
+				expect(
+					keepExistingEntitiesInObject( existing, incoming )
+				).toEqual( expectedResult );
+			} );
+		}
+	);
 } );
