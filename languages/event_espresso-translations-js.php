@@ -128,6 +128,7 @@ $generated_i18n_strings = array(
 
 	// Reference: domains/blocks/src/services/utils.ts:19
 	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/ErrorMessage.tsx:32
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:75
 	__( 'Error', 'event_espresso' ),
 
 	// Reference: domains/blocks/src/services/utils.ts:26
@@ -560,16 +561,16 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/Container.tsx:24
 	__( 'New Ticket Details', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/ContentBody.tsx:44
-	__( 'Add ticket prices', 'event_espresso' ),
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/ContentBody.tsx:47
+	__( 'Set ticket prices', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/ContentBody.tsx:50
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/ContentBody.tsx:54
 	__( 'Skip prices - assign dates', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/ContentBody.tsx:66
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/ContentBody.tsx:70
 	__( 'Save and assign dates', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/ContentBody.tsx:79
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/ContentBody.tsx:83
 	__( 'Ticket details', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/TicketFormSteps.tsx:11
@@ -682,20 +683,20 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:43
 	__( 'copy ticket', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:30
-	// Reference: packages/components/src/bulkEdit/BulkActions.tsx:43
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:39
+	// Reference: packages/components/src/bulkEdit/BulkActions.tsx:44
 	__( 'bulk actions', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:34
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:43
 	__( 'edit ticket details', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:38
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:47
 	__( 'delete tickets', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:38
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:47
 	__( 'trash tickets', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:42
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:51
 	__( 'edit ticket prices', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/delete/Delete.tsx:13
@@ -760,11 +761,11 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/config.ts:17
 	__( 'Pending', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/editable/EditablePrice.tsx:31
-	__( 'set price…', 'event_espresso' ),
-
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/editable/EditablePrice.tsx:35
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/editable/EditablePrice.tsx:30
 	__( 'edit ticket total…', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/editable/EditablePrice.tsx:37
+	__( 'set price…', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/IsChainedButton.tsx:24
 	__( 'tickets list is linked to dates list and is showing tickets for above dates only', 'event_espresso' ),
@@ -1040,10 +1041,10 @@ $generated_i18n_strings = array(
 	// Reference: packages/components/src/bulkEdit/ActionCheckbox.tsx:41
 	__( 'select all entities', 'event_espresso' ),
 
-	// Reference: packages/components/src/bulkEdit/BulkActions.tsx:51
+	// Reference: packages/components/src/bulkEdit/BulkActions.tsx:52
 	__( 'select all', 'event_espresso' ),
 
-	// Reference: packages/components/src/bulkEdit/BulkActions.tsx:53
+	// Reference: packages/components/src/bulkEdit/BulkActions.tsx:54
 	__( 'apply', 'event_espresso' ),
 
 	// Reference: packages/components/src/bulkEdit/details/BulkEditDetailsProps.tsx:22
@@ -1226,7 +1227,7 @@ $generated_i18n_strings = array(
 	// Reference: packages/tpc/src/buttons/ReverseCalculateButton.tsx:18
 	__( 'Ticket total is being calculated normally from top to bottom starting from the base price. Entering a new ticket base price will recalculate the ticket total after applying all price modifiers. Click to turn on reverse calculations', 'event_espresso' ),
 
-	// Reference: packages/tpc/src/buttons/TicketPriceCalculatorButton.tsx:30
+	// Reference: packages/tpc/src/buttons/TicketPriceCalculatorButton.tsx:29
 	__( 'ticket price calculator', 'event_espresso' ),
 
 	// Reference: packages/tpc/src/buttons/taxes/AddDefaultTaxesButton.tsx:10
@@ -1310,6 +1311,9 @@ $generated_i18n_strings = array(
 	__( 'label…', 'event_espresso' ),
 
 	// Reference: packages/tpc/src/inputs/PriceTypeInput.tsx:16
-	__( 'price type', 'event_espresso' )
+	__( 'price type', 'event_espresso' ),
+
+	// Reference: packages/tpc/src/utils/constants.ts:12
+	__( 'Ticket price modifications are blocked for Tickets that have already been sold to registrants, because doing so would negatively affect internal accounting for the event. If you still need to modify ticket prices, then create a copy of those tickets, edit the prices for the new tickets, and then archive the old tickets.', 'event_espresso' )
 );
 /* THIS IS THE END OF THE GENERATED FILE */
