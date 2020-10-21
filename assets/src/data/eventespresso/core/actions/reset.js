@@ -32,7 +32,7 @@ export function* resetAllState() {
 		REDUCER_KEY
 	);
 
-	if ( invalidateActionsAvailable() ) {
+	if (invalidateActionsAvailable()) {
 		yield dispatch(
 			'core/data',
 			'invalidateResolutionForStore',
@@ -42,14 +42,14 @@ export function* resetAllState() {
 	}
 
 	// dispatch invalidation of the cached resolvers
-	for ( const selector in resolvers ) {
-		for ( const entry of resolvers[ selector ]._map ) {
+	for (const selector in resolvers) {
+		for (const entry of resolvers[selector]._map) {
 			yield dispatch(
 				'core/data',
 				'invalidateResolution',
 				REDUCER_KEY,
 				selector,
-				entry[ 0 ]
+				entry[0]
 			);
 		}
 	}
@@ -63,8 +63,8 @@ export function* resetAllState() {
  *
  * @param {string} modelName
  */
-export function* resetStateForModel( modelName ) {
-	modelName = singularModelName( modelName );
+export function* resetStateForModel(modelName) {
+	modelName = singularModelName(modelName);
 	yield {
 		type: types.RESET_STATE_FOR_MODEL,
 		modelName,
@@ -80,19 +80,19 @@ export function* resetStateForModel( modelName ) {
 	// dispatch invalidation of the cached resolvers for any resolver that
 	// has a variation of modelName in the selector name or in the args for the
 	// cached resolver.
-	for ( const selector in resolvers ) {
-		for ( const entry of resolvers[ selector ]._map ) {
+	for (const selector in resolvers) {
+		for (const entry of resolvers[selector]._map) {
 			if (
-				( modelNameInSelector( selector, modelName ) ||
-					modelNameInArgs( entry[ 0 ], modelName ) ) &&
-				! selectorIsModelSpecific( selector )
+				(modelNameInSelector(selector, modelName) ||
+					modelNameInArgs(entry[0], modelName)) &&
+				!selectorIsModelSpecific(selector)
 			) {
 				yield dispatch(
 					'core/data',
 					'invalidateResolution',
 					REDUCER_KEY,
 					selector,
-					entry[ 0 ]
+					entry[0]
 				);
 			}
 		}
@@ -108,10 +108,10 @@ export function* resetStateForModel( modelName ) {
  *
  * @return {boolean} True means it is present, false means it isn't
  */
-const modelNameInSelector = ( selectorName, modelName ) => {
-	const singularName = singularModelName( modelName );
+const modelNameInSelector = (selectorName, modelName) => {
+	const singularName = singularModelName(modelName);
 	selectorName = selectorName.toLowerCase();
-	return selectorName.indexOf( singularName ) > -1;
+	return selectorName.indexOf(singularName) > -1;
 };
 
 /**
@@ -126,18 +126,18 @@ const modelNameInSelector = ( selectorName, modelName ) => {
  *
  * @return {boolean}  True means it is present, false means it isn't.
  */
-const modelNameInArgs = ( args, modelName ) => {
-	const singularName = singularModelName( modelName );
-	const hasModelName = args.indexOf( singularName ) > -1;
-	if ( hasModelName ) {
+const modelNameInArgs = (args, modelName) => {
+	const singularName = singularModelName(modelName);
+	const hasModelName = args.indexOf(singularName) > -1;
+	if (hasModelName) {
 		return true;
 	}
 
 	// it's possible one of the args is an instance of BaseEntity.  If so,
 	// then let's compare against the modelName on the entity instance.
-	return some( args, ( arg ) => {
-		return isModelEntityOfModel( arg, singularName );
-	} );
+	return some(args, (arg) => {
+		return isModelEntityOfModel(arg, singularName);
+	});
 };
 
 /**
@@ -157,9 +157,9 @@ const selectorIsModelSpecific = (
 ) => {
 	selectorsToInvalidate =
 		selectorsToInvalidate === null
-			? keys( modelSpecificSelectors )
+			? keys(modelSpecificSelectors)
 			: selectorsToInvalidate;
-	return selectorsToInvalidate.indexOf( selectorName ) > -1;
+	return selectorsToInvalidate.indexOf(selectorName) > -1;
 };
 
 /**
@@ -169,7 +169,7 @@ const selectorIsModelSpecific = (
  * @param {string} selectorName  If present then state will only be reset for
  * the specific selector.  Otherwise all model specific state is reset.
  */
-export function* resetAllModelSpecific( selectorName ) {
+export function* resetAllModelSpecific(selectorName) {
 	yield {
 		type:
 			selectorName === undefined
@@ -185,21 +185,19 @@ export function* resetAllModelSpecific( selectorName ) {
 		REDUCER_KEY
 	);
 
-	const selectorsToInvalidate = keys( modelSpecificSelectors );
+	const selectorsToInvalidate = keys(modelSpecificSelectors);
 
 	// dispatch invalidation of the cached resolvers for model specific selector
-	for ( const selector in resolvers ) {
-		if ( selectorName === undefined || selectorName === selector ) {
-			for ( const entry of resolvers[ selector ]._map ) {
-				if (
-					selectorIsModelSpecific( selector, selectorsToInvalidate )
-				) {
+	for (const selector in resolvers) {
+		if (selectorName === undefined || selectorName === selector) {
+			for (const entry of resolvers[selector]._map) {
+				if (selectorIsModelSpecific(selector, selectorsToInvalidate)) {
 					yield dispatch(
 						'core/data',
 						'invalidateResolution',
 						REDUCER_KEY,
 						selector,
-						entry[ 0 ]
+						entry[0]
 					);
 				}
 			}
@@ -212,8 +210,8 @@ export function* resetAllModelSpecific( selectorName ) {
  *
  * @param {string} selectorName
  */
-export function* resetModelSpecificForSelector( selectorName ) {
-	yield* resetAllModelSpecific( selectorName );
+export function* resetModelSpecificForSelector(selectorName) {
+	yield* resetAllModelSpecific(selectorName);
 }
 
 /**
@@ -222,7 +220,7 @@ export function* resetModelSpecificForSelector( selectorName ) {
  * @param {string} selectorName
  * @param {Array} args
  */
-export function* resetModelSpecificForSelectorAndArgs( selectorName, ...args ) {
+export function* resetModelSpecificForSelectorAndArgs(selectorName, ...args) {
 	yield {
 		type: types.RESET_MODEL_SPECIFIC_FOR_SELECTOR_AND_ARGS,
 		selector: selectorName,
@@ -244,5 +242,5 @@ export function* resetModelSpecificForSelectorAndArgs( selectorName, ...args ) {
  * @return {boolean}  True means additional invalidation actions available.
  */
 const invalidateActionsAvailable = () => {
-	return dataSelect( 'core/data' ).invalidateResolutionForStore !== undefined;
+	return dataSelect('core/data').invalidateResolutionForStore !== undefined;
 };

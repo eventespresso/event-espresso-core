@@ -17,22 +17,20 @@ import { REDUCER_KEY } from './constants';
  * @param {Object<Function>} source
  * @return {Object<Function>} All the generated selectors for each model.
  */
-export const createEntitySelectors = ( source ) =>
-	MODEL_NAMES.reduce( ( selectors, modelName ) => {
-		const schemaMethodName = getMethodName( modelName, 'schema', 'get' );
-		const factoryMethodName = getMethodName( modelName, 'factory', 'get' );
-		selectors[ schemaMethodName ] = ( state ) =>
-			source.getSchemaForModel( state, modelName );
-		selectors[
-			getMethodName( modelName, 'schema', 'isRequesting' )
-		] = () => isResolving( REDUCER_KEY, schemaMethodName );
-		selectors[ factoryMethodName ] = ( state ) =>
-			source.getFactoryForModel( state, modelName );
-		selectors[
-			getMethodName( modelName, 'factory', 'isRequesting' )
-		] = () => isResolving( REDUCER_KEY, factoryMethodName );
+export const createEntitySelectors = (source) =>
+	MODEL_NAMES.reduce((selectors, modelName) => {
+		const schemaMethodName = getMethodName(modelName, 'schema', 'get');
+		const factoryMethodName = getMethodName(modelName, 'factory', 'get');
+		selectors[schemaMethodName] = (state) =>
+			source.getSchemaForModel(state, modelName);
+		selectors[getMethodName(modelName, 'schema', 'isRequesting')] = () =>
+			isResolving(REDUCER_KEY, schemaMethodName);
+		selectors[factoryMethodName] = (state) =>
+			source.getFactoryForModel(state, modelName);
+		selectors[getMethodName(modelName, 'factory', 'isRequesting')] = () =>
+			isResolving(REDUCER_KEY, factoryMethodName);
 		return selectors;
-	}, {} );
+	}, {});
 
 /**
  * Creates resolvers for each registered model name wrapping the generic source
@@ -41,11 +39,11 @@ export const createEntitySelectors = ( source ) =>
  * @param {Object<Function>} source
  * @return {Object<Function>} All the generated resolvers for each model.
  */
-export const createEntityResolvers = ( source ) =>
-	MODEL_NAMES.reduce( ( resolvers, modelName ) => {
-		resolvers[ getMethodName( modelName, 'schema', 'get' ) ] = () =>
-			source.getSchemaForModel( modelName );
-		resolvers[ getMethodName( modelName, 'factory', 'get' ) ] = () =>
-			source.getFactoryForModel( modelName );
+export const createEntityResolvers = (source) =>
+	MODEL_NAMES.reduce((resolvers, modelName) => {
+		resolvers[getMethodName(modelName, 'schema', 'get')] = () =>
+			source.getSchemaForModel(modelName);
+		resolvers[getMethodName(modelName, 'factory', 'get')] = () =>
+			source.getFactoryForModel(modelName);
 		return resolvers;
-	}, {} );
+	}, {});

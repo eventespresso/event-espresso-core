@@ -13,38 +13,38 @@ import moment from 'moment-timezone';
 
 const expectedNow = nowDateAndTime.local().format();
 
-describe( 'mapOrderBy()', () => {
-	it( 'correctly maps incoming values to the correct expectation', () => {
+describe('mapOrderBy()', () => {
+	it('correctly maps incoming values to the correct expectation', () => {
 		const incomingToExpectedMap = {
 			start_date: 'DTT_EVT_start',
 			end_date: 'DTT_EVT_end',
 			DTT_ID: 'DTT_ID',
 		};
-		for ( const incomingOrderBy in incomingToExpectedMap ) {
-			const expectedValue = incomingToExpectedMap[ incomingOrderBy ];
-			expect( mapOrderBy( incomingOrderBy ) ).toEqual( expectedValue );
+		for (const incomingOrderBy in incomingToExpectedMap) {
+			const expectedValue = incomingToExpectedMap[incomingOrderBy];
+			expect(mapOrderBy(incomingOrderBy)).toEqual(expectedValue);
 		}
-	} );
-} );
+	});
+});
 
-describe( 'whereConditions()', () => {
-	it( 'returns expected default for empty object passed in', () => {
-		expect( whereConditions( {} ) ).toEqual(
+describe('whereConditions()', () => {
+	it('returns expected default for empty object passed in', () => {
+		expect(whereConditions({})).toEqual(
 			'where[DTT_EVT_end**expired][]=' +
 				GREATER_THAN +
 				'&where[DTT_EVT_end**expired][]=' +
 				expectedNow
 		);
-	} );
-	it( 'returns expected string for values passed in', () => {
+	});
+	it('returns expected string for values passed in', () => {
 		const expectedEndofDate = moment()
-			.month( 'may' )
-			.endOf( 'month' )
+			.month('may')
+			.endOf('month')
 			.local()
 			.format();
 		const expectedStartofDate = moment()
-			.month( 'may' )
-			.startOf( 'month' )
+			.month('may')
+			.startOf('month')
 			.local()
 			.format();
 		const testObject = {
@@ -52,7 +52,7 @@ describe( 'whereConditions()', () => {
 			forEventId: 20,
 			month: 'may',
 		};
-		expect( whereConditions( testObject ) ).toEqual(
+		expect(whereConditions(testObject)).toEqual(
 			'where[DTT_EVT_end**expired][]=' +
 				GREATER_THAN +
 				'&where[DTT_EVT_end**expired][]=' +
@@ -68,17 +68,17 @@ describe( 'whereConditions()', () => {
 				'&where[Event.EVT_ID]=' +
 				20
 		);
-	} );
-} );
+	});
+});
 
-describe( 'getQueryString', () => {
-	it( 'returns expected default for no arguments passed in', () => {
-		expect( getQueryString() ).toEqual(
+describe('getQueryString', () => {
+	it('returns expected default for no arguments passed in', () => {
+		expect(getQueryString()).toEqual(
 			'limit=100&order=DESC&order_by=DTT_EVT_start' +
 				'&where[DTT_EVT_end**expired][]=' +
 				GREATER_THAN +
 				'&where[DTT_EVT_end**expired][]=' +
 				expectedNow
 		);
-	} );
-} );
+	});
+});

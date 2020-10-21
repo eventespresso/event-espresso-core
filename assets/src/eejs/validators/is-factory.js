@@ -10,12 +10,12 @@ import { isUndefined } from 'lodash';
  * @param {Object} factory
  * @return {boolean} true means the object is a ModelEntityFactory
  */
-export const isModelEntityFactory = ( factory ) => {
+export const isModelEntityFactory = (factory) => {
 	return (
-		!! factory &&
-		! isUndefined( factory.classDef ) &&
-		! isUndefined( factory.modelName ) &&
-		Object.getPrototypeOf( factory.classDef ).name === 'BaseEntity'
+		!!factory &&
+		!isUndefined(factory.classDef) &&
+		!isUndefined(factory.modelName) &&
+		Object.getPrototypeOf(factory.classDef).name === 'BaseEntity'
 	);
 };
 
@@ -30,6 +30,6 @@ export const isModelEntityFactory = ( factory ) => {
  * @param {string} modelName
  * @return {boolean} True means the given factory
  */
-export const isModelEntityFactoryOfModel = ( factory, modelName ) => {
-	return isModelEntityFactory( factory ) && factory.modelName === modelName;
+export const isModelEntityFactoryOfModel = (factory, modelName) => {
+	return isModelEntityFactory(factory) && factory.modelName === modelName;
 };

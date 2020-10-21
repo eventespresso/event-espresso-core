@@ -25,13 +25,13 @@ export const DateTimeResponses = {
 };
 
 const EventEntities = {};
-forEach( EventResponses, ( response, key ) => {
-	EventEntities[ key ] = eventFactory.fromExisting( response );
-} );
-EventEntities.d = eventFactory.createNew( 'Test New Event' );
+forEach(EventResponses, (response, key) => {
+	EventEntities[key] = eventFactory.fromExisting(response);
+});
+EventEntities.d = eventFactory.createNew('Test New Event');
 const DateTimeEntities = {};
-forEach( DateTimeResponses, ( response, key ) => {
-	DateTimeEntities[ key ] = dateTimeFactory.fromExisting( response );
-} );
-DateTimeEntities.d = dateTimeFactory.createNew( 'Test New Datetime' );
+forEach(DateTimeResponses, (response, key) => {
+	DateTimeEntities[key] = dateTimeFactory.fromExisting(response);
+});
+DateTimeEntities.d = dateTimeFactory.createNew('Test New Datetime');
 export { EventEntities, DateTimeEntities };

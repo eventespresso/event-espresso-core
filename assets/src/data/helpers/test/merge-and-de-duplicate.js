@@ -6,23 +6,23 @@ import {
 	mergeAndDeDuplicateObjects,
 } from '../merge-and-de-duplicate';
 
-describe( 'mergeAndDeDuplicateArrays()', () => {
+describe('mergeAndDeDuplicateArrays()', () => {
 	it(
 		'merges arrays and removes duplicate values from the final' + ' array',
 		() => {
 			expect(
 				mergeAndDeDuplicateArrays(
 					{},
-					[ 1, 2, 3 ],
-					[ 2, 3, 4 ],
-					[ 4, 5, 6, 7 ]
+					[1, 2, 3],
+					[2, 3, 4],
+					[4, 5, 6, 7]
 				)
-			).toEqual( [ 1, 2, 3, 4, 5, 6, 7 ] );
+			).toEqual([1, 2, 3, 4, 5, 6, 7]);
 		}
 	);
-} );
+});
 
-describe( 'mergeAndDeDuplicateObjects()', () => {
+describe('mergeAndDeDuplicateObjects()', () => {
 	it(
 		'merges arrays of objects and removes duplicate objects from' +
 			' the final array using the provided property as the' +
@@ -45,13 +45,13 @@ describe( 'mergeAndDeDuplicateObjects()', () => {
 						{ id: 15, name: 'fifteen' },
 					]
 				)
-			).toEqual( [
+			).toEqual([
 				{ id: 10, name: 'ten' },
 				{ id: 30, name: 'thirty' },
 				{ id: 25, name: 'twenty-five' },
 				{ id: 50, name: 'fifty' },
 				{ id: 15, name: 'fifteen' },
-			] );
+			]);
 		}
 	);
-} );
+});

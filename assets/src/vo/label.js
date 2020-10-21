@@ -33,9 +33,9 @@ export default class Label {
 	 * @param {string} singular
 	 * @param {string} plural
 	 */
-	constructor( singular, plural ) {
-		this.setSingular( singular ).setPlural( plural );
-		Object.freeze( this );
+	constructor(singular, plural) {
+		this.setSingular(singular).setPlural(plural);
+		Object.freeze(this);
 	}
 
 	/**
@@ -47,10 +47,10 @@ export default class Label {
 	 * @param {string} singular
 	 * @return {Label}  An instance of Label
 	 */
-	setSingular( singular ) {
-		Label.assertString( singular );
-		if ( this.singular !== '' ) {
-			return new Label( singular, this.plural );
+	setSingular(singular) {
+		Label.assertString(singular);
+		if (this.singular !== '') {
+			return new Label(singular, this.plural);
 		}
 		this.singular = singular;
 		return this;
@@ -65,10 +65,10 @@ export default class Label {
 	 * @param {string} plural
 	 * @return {Label} An instance of Label
 	 */
-	setPlural( plural ) {
-		Label.assertString( plural );
-		if ( this.plural !== '' ) {
-			return new Label( this.singular, plural );
+	setPlural(plural) {
+		Label.assertString(plural);
+		if (this.plural !== '') {
+			return new Label(this.singular, plural);
 		}
 		this.plural = plural;
 		return this;
@@ -86,10 +86,10 @@ export default class Label {
 	 * property.
 	 * @return {string} The string in sentence case
 	 */
-	asSentenceCase( singular = true ) {
+	asSentenceCase(singular = true) {
 		return singular === true
-			? startCase( this.singular.toLowerCase() )
-			: startCase( this.plural.toLowerCase() );
+			? startCase(this.singular.toLowerCase())
+			: startCase(this.plural.toLowerCase());
 	}
 
 	/**
@@ -100,7 +100,7 @@ export default class Label {
 	 * property.
 	 * @return {string} The string in lower case
 	 */
-	asLowerCase( singular = true ) {
+	asLowerCase(singular = true) {
 		return singular
 			? this.singular.toLowerCase()
 			: this.plural.toLowerCase();
@@ -114,7 +114,7 @@ export default class Label {
 	 * property.
 	 * @return {string} The string in upper case
 	 */
-	asUpperCase( singular = true ) {
+	asUpperCase(singular = true) {
 		return singular
 			? this.singular.toUpperCase()
 			: this.plural.toUpperCase();
@@ -130,14 +130,14 @@ export default class Label {
 	 * @param {('sentence'|'lower'|'upper')} formatType
 	 * @return {string} The string formatted according to formatType
 	 */
-	asFormatted( singular = true, formatType = Label.FORMAT_SENTENCE_CASE ) {
-		switch ( formatType ) {
+	asFormatted(singular = true, formatType = Label.FORMAT_SENTENCE_CASE) {
+		switch (formatType) {
 			case Label.FORMAT_SENTENCE_CASE:
-				return this.asSentenceCase( singular );
+				return this.asSentenceCase(singular);
 			case Label.FORMAT_LOWERCASE:
-				return this.asLowerCase( singular );
+				return this.asLowerCase(singular);
 			case Label.FORMAT_UPPERCASE:
-				return this.asUpperCase( singular );
+				return this.asUpperCase(singular);
 			default:
 				warning(
 					false,
@@ -145,7 +145,7 @@ export default class Label {
 						'Label.FORMAT_SENTENCE_CASE, Label.FORMAT_UPPERCASE, ' +
 						'or Label.FORMAT_LOWERCASE'
 				);
-				return this.asSentenceCase( singular );
+				return this.asSentenceCase(singular);
 		}
 	}
 
@@ -155,8 +155,8 @@ export default class Label {
 	 * @param {*} value
 	 * @throws TypeError
 	 */
-	static assertString( value ) {
-		if ( ! isString( value ) ) {
+	static assertString(value) {
+		if (!isString(value)) {
 			throw new TypeError(
 				'Incoming label value (' + value + ') must' + ' be a string'
 			);
@@ -170,7 +170,7 @@ export default class Label {
 	 * @param {string} label
 	 * @return {Label}  A Label instance
 	 */
-	static fromSameSingleAndPlural = ( label ) => {
-		return new Label( label, label );
+	static fromSameSingleAndPlural = (label) => {
+		return new Label(label, label);
 	};
 }

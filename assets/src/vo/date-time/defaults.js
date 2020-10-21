@@ -30,7 +30,7 @@ export const DEFAULT_OFFSET = TIMEZONE_CONFIG.offset;
  */
 export const HAS_TIMEZONE_STRING =
 	DEFAULT_TIMEZONE_STRING !== 'UTC' ||
-	! ( DEFAULT_TIMEZONE_STRING === 'UTC' && DEFAULT_OFFSET !== 0 );
+	!(DEFAULT_TIMEZONE_STRING === 'UTC' && DEFAULT_OFFSET !== 0);
 
 /**
  *
@@ -43,7 +43,7 @@ export const DEFAULT_FORMAT = FORMAT_SITE_DATE + ' ' + FORMAT_SITE_TIME;
  *
  * @type {string}
  */
-export const DEFAULT_LOCALE = snakeCase( SERVER_LOCALE.user );
+export const DEFAULT_LOCALE = snakeCase(SERVER_LOCALE.user);
 
 /**
  * This ensures that the provided locale is valid.  So if `DEFAULT_LOCALE` is
@@ -51,6 +51,6 @@ export const DEFAULT_LOCALE = snakeCase( SERVER_LOCALE.user );
  *
  * @type {string}
  */
-export const DEFAULT_VALID_LOCALE = validateLocale( DEFAULT_LOCALE )
+export const DEFAULT_VALID_LOCALE = validateLocale(DEFAULT_LOCALE)
 	? DEFAULT_LOCALE
 	: 'en';

@@ -3,7 +3,7 @@ import {
 	DEFAULT_CORE_STATE,
 } from '../default-model-state';
 
-describe( 'DEFAULT_LISTS_STATE', () => {
+describe('DEFAULT_LISTS_STATE', () => {
 	it(
 		'matches expected initial state for the models exposed ' +
 			'on the endpoints',
@@ -18,12 +18,12 @@ describe( 'DEFAULT_LISTS_STATE', () => {
 				checkin: {},
 				registration: {},
 			};
-			expect( DEFAULT_LISTS_STATE ).toEqual( expectedState );
+			expect(DEFAULT_LISTS_STATE).toEqual(expectedState);
 		}
 	);
-} );
+});
 
-describe( 'DEFAULT_CORE_STATE', () => {
+describe('DEFAULT_CORE_STATE', () => {
 	it(
 		'matches expected initial state for the models exposed' +
 			' on the endpoints',
@@ -50,7 +50,7 @@ describe( 'DEFAULT_CORE_STATE', () => {
 					delete: {},
 				},
 			};
-			expect( DEFAULT_CORE_STATE ).toEqual( expectedState );
+			expect(DEFAULT_CORE_STATE).toEqual(expectedState);
 		}
 	);
-} );
+});

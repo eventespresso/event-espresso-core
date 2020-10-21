@@ -10,7 +10,7 @@ import { InvalidLocale, InvalidISO8601String } from '@eventespresso/eejs';
 import { forEach } from 'lodash';
 import moment from 'moment-timezone';
 
-describe( 'Duration Value Object', () => {
+describe('Duration Value Object', () => {
 	const baseObjectValues = {
 		days: 0,
 		hours: 0,
@@ -20,20 +20,20 @@ describe( 'Duration Value Object', () => {
 		years: 0,
 		milliseconds: 0,
 	};
-	describe( 'with Instance', () => {
-		it( 'Throws an InvalidLocale error with invalid locale on construction', () => {
+	describe('with Instance', () => {
+		it('Throws an InvalidLocale error with invalid locale on construction', () => {
 			const testInvalidDuration = () => {
-				return new Duration( { years: 1 }, 'invalid' );
+				return new Duration({ years: 1 }, 'invalid');
 			};
-			expect( testInvalidDuration ).toThrow( InvalidLocale );
-		} );
-		it( 'Is Immutable', () => {
-			const testDuration = new Duration( { hours: 10 } );
-			const testChange = () => ( testDuration.hours = 30 );
-			expect( testChange ).toThrow();
-			expect( testDuration.hours ).toBe( 10 );
-		} );
-		describe( 'Getter generation (privateMethods.createGetters symbol)', () => {
+			expect(testInvalidDuration).toThrow(InvalidLocale);
+		});
+		it('Is Immutable', () => {
+			const testDuration = new Duration({ hours: 10 });
+			const testChange = () => (testDuration.hours = 30);
+			expect(testChange).toThrow();
+			expect(testDuration.hours).toBe(10);
+		});
+		describe('Getter generation (privateMethods.createGetters symbol)', () => {
 			const expectedProperties = {
 				days: 0,
 				hours: 10,
@@ -51,28 +51,28 @@ describe( 'Duration Value Object', () => {
 				asHours: 10,
 				asMilliseconds: 36000000,
 				asMinutes: 600,
-				asMonths: 10 / ( ( 146097 / 4800 ) * 24 ),
+				asMonths: 10 / ((146097 / 4800) * 24),
 				asSeconds: 36000,
-				asYears: 10 / ( 12 * ( 146097 / 4800 ) * 24 ),
+				asYears: 10 / (12 * (146097 / 4800) * 24),
 			};
-			const testRuns = ( DurationInstance ) => {
-				forEach( expectedProperties, ( value, property ) => {
-					it( 'creates expected property ' + property, () => {
-						expect( DurationInstance[ property ] ).toBe( value );
-					} );
-				} );
-				forEach( expectedFunctions, ( value, func ) => {
-					it( 'creates expected function ' + func, () => {
-						expect( DurationInstance[ func ]() ).toBe( value );
-					} );
-				} );
+			const testRuns = (DurationInstance) => {
+				forEach(expectedProperties, (value, property) => {
+					it('creates expected property ' + property, () => {
+						expect(DurationInstance[property]).toBe(value);
+					});
+				});
+				forEach(expectedFunctions, (value, func) => {
+					it('creates expected function ' + func, () => {
+						expect(DurationInstance[func]()).toBe(value);
+					});
+				});
 			};
 			describe(
 				'with Duration constructed from basic object as' +
 					' values argument',
 				() => {
-					const testDuration = new Duration( { hours: 10 } );
-					testRuns( testDuration );
+					const testDuration = new Duration({ hours: 10 });
+					testRuns(testDuration);
 				}
 			);
 			describe(
@@ -80,30 +80,30 @@ describe( 'Duration Value Object', () => {
 					' instance as values argument',
 				() => {
 					const testDuration = new Duration(
-						moment.duration( { hours: 10 } )
+						moment.duration({ hours: 10 })
 					);
-					testRuns( testDuration );
+					testRuns(testDuration);
 				}
 			);
-		} );
-		describe( 'locale property', () => {
-			const testDuration = new Duration( { hours: 10 } );
-			describe( 'getter', () => {
-				it( 'returns the default locale', () => {
-					expect( testDuration.locale ).toBe( 'en' );
-				} );
-			} );
-			describe( 'setLocale()', () => {
-				it( 'returns a new Duration with the new locale', () => {
-					const newDuration = testDuration.setLocale( 'en-ca' );
-					expect( testDuration ).not.toBe( newDuration );
-					expect( testDuration.hours ).toEqual( newDuration.hours );
-					expect( newDuration.locale ).toBe( 'en-ca' );
-					expect( testDuration.locale ).toBe( 'en' );
-				} );
-			} );
-		} );
-		describe( 'normalize()', () => {
+		});
+		describe('locale property', () => {
+			const testDuration = new Duration({ hours: 10 });
+			describe('getter', () => {
+				it('returns the default locale', () => {
+					expect(testDuration.locale).toBe('en');
+				});
+			});
+			describe('setLocale()', () => {
+				it('returns a new Duration with the new locale', () => {
+					const newDuration = testDuration.setLocale('en-ca');
+					expect(testDuration).not.toBe(newDuration);
+					expect(testDuration.hours).toEqual(newDuration.hours);
+					expect(newDuration.locale).toBe('en-ca');
+					expect(testDuration.locale).toBe('en');
+				});
+			});
+		});
+		describe('normalize()', () => {
 			const testRuns = [
 				[
 					{
@@ -133,32 +133,32 @@ describe( 'Duration Value Object', () => {
 					},
 				],
 			];
-			testRuns.forEach( ( testRun ) => {
+			testRuns.forEach((testRun) => {
 				it(
 					'returns a new Duration with the expected normalized ' +
 						'values for the input of: ' +
-						JSON.stringify( testRun[ 0 ] ),
+						JSON.stringify(testRun[0]),
 					() => {
-						const testDuration = new Duration( testRun[ 0 ] );
+						const testDuration = new Duration(testRun[0]);
 						const normalized = testDuration.normalize();
-						expect( normalized ).not.toBe( testDuration );
-						expect( normalized.toObject() ).toEqual( testRun[ 1 ] );
+						expect(normalized).not.toBe(testDuration);
+						expect(normalized.toObject()).toEqual(testRun[1]);
 					}
 				);
-			} );
-		} );
-		describe( 'isValid getter', () => {
-			it( 'returns false for an invalid duration', () => {
-				const invalidDuration = new Duration( { cheeseburgers: 1 } );
-				expect( invalidDuration.isValid ).toBe( false );
-				expect( console ).toHaveErrored();
-			} );
-			it( 'returns true for a valid duration', () => {
-				const validDuration = new Duration( { years: 10 } );
-				expect( validDuration.isValid ).toBe( true );
-			} );
-		} );
-		describe( 'sameAs()', () => {
+			});
+		});
+		describe('isValid getter', () => {
+			it('returns false for an invalid duration', () => {
+				const invalidDuration = new Duration({ cheeseburgers: 1 });
+				expect(invalidDuration.isValid).toBe(false);
+				expect(console).toHaveErrored();
+			});
+			it('returns true for a valid duration', () => {
+				const validDuration = new Duration({ years: 10 });
+				expect(validDuration.isValid).toBe(true);
+			});
+		});
+		describe('sameAs()', () => {
 			const testConditions = [
 				[
 					'same years and hours for both durations',
@@ -183,7 +183,7 @@ describe( 'Duration Value Object', () => {
 					true,
 				],
 			];
-			testConditions.forEach( ( testCondition ) => {
+			testConditions.forEach((testCondition) => {
 				const [
 					description,
 					durationAarg,
@@ -194,24 +194,22 @@ describe( 'Duration Value Object', () => {
 				it(
 					'expected response is as expected for ' + description,
 					() => {
-						const durationA = new Duration( durationAarg );
-						const durationB = new Duration( durationBarg );
-						if ( expectConsoleError ) {
-							expect( console ).toHaveErrored();
+						const durationA = new Duration(durationAarg);
+						const durationB = new Duration(durationBarg);
+						if (expectConsoleError) {
+							expect(console).toHaveErrored();
 						}
-						expect( durationA.sameAs( durationB ) ).toBe(
-							expectSame
-						);
+						expect(durationA.sameAs(durationB)).toBe(expectSame);
 					}
 				);
-			} );
-			it( 'throws an error when Duration instance is not provided', () => {
-				const duration = new Duration( { years: 10 } );
-				const test = () => duration.sameAs( 'error error' );
-				expect( test ).toThrow( TypeError );
-			} );
-		} );
-		describe( 'equals()', () => {
+			});
+			it('throws an error when Duration instance is not provided', () => {
+				const duration = new Duration({ years: 10 });
+				const test = () => duration.sameAs('error error');
+				expect(test).toThrow(TypeError);
+			});
+		});
+		describe('equals()', () => {
 			const testConditions = [
 				[
 					'same years and hours for both durations',
@@ -236,7 +234,7 @@ describe( 'Duration Value Object', () => {
 					true,
 				],
 			];
-			testConditions.forEach( ( testCondition ) => {
+			testConditions.forEach((testCondition) => {
 				const [
 					description,
 					durationAarg,
@@ -248,25 +246,23 @@ describe( 'Duration Value Object', () => {
 					'expected equality response is as expected for ' +
 						description,
 					() => {
-						const durationA = new Duration( durationAarg );
-						const durationB = new Duration( durationBarg );
-						if ( expectConsoleError ) {
-							expect( console ).toHaveErrored();
+						const durationA = new Duration(durationAarg);
+						const durationB = new Duration(durationBarg);
+						if (expectConsoleError) {
+							expect(console).toHaveErrored();
 						}
-						expect( durationA.equals( durationB ) ).toBe(
-							expectEquals
-						);
+						expect(durationA.equals(durationB)).toBe(expectEquals);
 					}
 				);
-			} );
-			it( 'throws an error when Duration instance is not provided', () => {
-				const duration = new Duration( { years: 10 } );
-				const test = () => duration.equals( 'error error' );
-				expect( test ).toThrow( TypeError );
-			} );
-		} );
-		describe( 'plus()', () => {
-			const testDuration = new Duration( { hours: 10 } );
+			});
+			it('throws an error when Duration instance is not provided', () => {
+				const duration = new Duration({ years: 10 });
+				const test = () => duration.equals('error error');
+				expect(test).toThrow(TypeError);
+			});
+		});
+		describe('plus()', () => {
+			const testDuration = new Duration({ hours: 10 });
 
 			// 0 -> test Description
 			// 1 -> passed in value
@@ -275,7 +271,7 @@ describe( 'Duration Value Object', () => {
 			const testConditions = [
 				[
 					'adding a Duration',
-					new Duration( { hours: 14 } ),
+					new Duration({ hours: 14 }),
 					{ ...baseObjectValues, days: 1 },
 					24,
 				],
@@ -292,40 +288,38 @@ describe( 'Duration Value Object', () => {
 					24,
 				],
 			];
-			testConditions.forEach( ( testCondition ) => {
+			testConditions.forEach((testCondition) => {
 				const [
 					description,
 					passedInArg,
 					expectedObject,
 					expectedAsHoursValue,
 				] = testCondition;
-				describe( 'returns expected value when ' + description, () => {
-					const newDuration = testDuration.plus( passedInArg );
+				describe('returns expected value when ' + description, () => {
+					const newDuration = testDuration.plus(passedInArg);
 					it(
 						'original Duration is not the same instance as ' +
 							'new Duration',
 						() => {
-							expect( testDuration ).not.toBe( newDuration );
+							expect(testDuration).not.toBe(newDuration);
 						}
 					);
-					it( 'original Duration has not been mutated', () => {
-						expect( testDuration.hours ).toBe( 10 );
-					} );
-					it( 'new Duration has expected toObject value', () => {
-						expect( newDuration.toObject() ).toEqual(
-							expectedObject
-						);
-					} );
-					it( 'new Duration has expected asHours value', () => {
-						expect( newDuration.asHours() ).toBe(
+					it('original Duration has not been mutated', () => {
+						expect(testDuration.hours).toBe(10);
+					});
+					it('new Duration has expected toObject value', () => {
+						expect(newDuration.toObject()).toEqual(expectedObject);
+					});
+					it('new Duration has expected asHours value', () => {
+						expect(newDuration.asHours()).toBe(
 							expectedAsHoursValue
 						);
-					} );
-				} );
-			} );
-		} );
-		describe( 'minus()', () => {
-			const testDuration = new Duration( { hours: 34 } );
+					});
+				});
+			});
+		});
+		describe('minus()', () => {
+			const testDuration = new Duration({ hours: 34 });
 
 			// 0 -> test Description
 			// 1 -> passed in value
@@ -334,7 +328,7 @@ describe( 'Duration Value Object', () => {
 			const testConditions = [
 				[
 					'subtracting a Duration',
-					new Duration( { hours: 10 } ),
+					new Duration({ hours: 10 }),
 					{ ...baseObjectValues, days: 1 },
 					24,
 				],
@@ -351,291 +345,285 @@ describe( 'Duration Value Object', () => {
 					24,
 				],
 			];
-			testConditions.forEach( ( testCondition ) => {
+			testConditions.forEach((testCondition) => {
 				const [
 					description,
 					passedInArg,
 					expectedObject,
 					expectedAsHoursValue,
 				] = testCondition;
-				describe( 'returns expected value when ' + description, () => {
-					const newDuration = testDuration.minus( passedInArg );
+				describe('returns expected value when ' + description, () => {
+					const newDuration = testDuration.minus(passedInArg);
 					it(
 						'original Duration is not the same instance as ' +
 							'new Duration',
 						() => {
-							expect( testDuration ).not.toBe( newDuration );
+							expect(testDuration).not.toBe(newDuration);
 						}
 					);
-					it( 'original Duration has not been mutated', () => {
-						expect( testDuration.hours ).toBe( 34 );
-					} );
-					it( 'new Duration has expected toObject value', () => {
-						expect( newDuration.toObject() ).toEqual(
-							expectedObject
-						);
-					} );
-					it( 'new Duration has expected asHours value', () => {
-						expect( newDuration.asHours() ).toBe(
+					it('original Duration has not been mutated', () => {
+						expect(testDuration.hours).toBe(34);
+					});
+					it('new Duration has expected toObject value', () => {
+						expect(newDuration.toObject()).toEqual(expectedObject);
+					});
+					it('new Duration has expected asHours value', () => {
+						expect(newDuration.asHours()).toBe(
 							expectedAsHoursValue
 						);
-					} );
-				} );
-			} );
-		} );
-		describe( 'negate()', () => {
-			describe( 'returns expected values for calling this method', () => {
-				const testDuration = new Duration( {
+					});
+				});
+			});
+		});
+		describe('negate()', () => {
+			describe('returns expected values for calling this method', () => {
+				const testDuration = new Duration({
 					hours: 10,
 					days: -1,
-				} );
+				});
 				const negatedDuration = testDuration.negate();
-				it( 'results in new Duration', () => {
-					expect( testDuration ).not.toBe( negatedDuration );
-				} );
-				it( 'does not mutate original Duration', () => {
-					expect( testDuration.toObject() ).toEqual( {
+				it('results in new Duration', () => {
+					expect(testDuration).not.toBe(negatedDuration);
+				});
+				it('does not mutate original Duration', () => {
+					expect(testDuration.toObject()).toEqual({
 						...baseObjectValues,
 						hours: 10,
 						days: -1,
-					} );
-				} );
-				it( 'has expected values on new Duration', () => {
-					expect( negatedDuration.toObject() ).toEqual( {
+					});
+				});
+				it('has expected values on new Duration', () => {
+					expect(negatedDuration.toObject()).toEqual({
 						...baseObjectValues,
 						hours: -10,
 						days: 1,
-					} );
-					expect( negatedDuration.normalize().toObject() ).toEqual( {
+					});
+					expect(negatedDuration.normalize().toObject()).toEqual({
 						...baseObjectValues,
 						hours: 14,
-					} );
-				} );
-			} );
-		} );
-		describe( 'toISO()', () => {
+					});
+				});
+			});
+		});
+		describe('toISO()', () => {
 			it(
 				'returns an ISO 8601-compliant string representation of a ' +
 					'Duration',
 				() => {
-					expect(
-						new Duration( { hours: 10, days: 255 } ).toISO()
-					).toBe( 'P255DT10H' );
+					expect(new Duration({ hours: 10, days: 255 }).toISO()).toBe(
+						'P255DT10H'
+					);
 				}
 			);
-		} );
-		describe( 'toJSON()', () => {
+		});
+		describe('toJSON()', () => {
 			it(
 				'returns an ISO 8601-compliant string representation of a ' +
 					'Duration appropriate for use in JSON',
 				() => {
-					const testDuration = new Duration( {
+					const testDuration = new Duration({
 						hours: 10,
 						days: 255,
-					} );
+					});
 					expect(
-						JSON.stringify( {
+						JSON.stringify({
 							duration: testDuration,
-						} )
-					).toBe( '{"duration":"P255DT10H"}' );
+						})
+					).toBe('{"duration":"P255DT10H"}');
 				}
 			);
-		} );
-		describe( 'toString()', () => {
+		});
+		describe('toString()', () => {
 			it(
 				'returns an ISO 8601 representation of this Duration when the ' +
 					'object is coerced to a string',
 				() => {
-					const testDuration = new Duration( {
+					const testDuration = new Duration({
 						hours: 10,
 						days: 255,
-					} );
-					expect( `Duration: ${ testDuration }` ).toBe(
+					});
+					expect(`Duration: ${testDuration}`).toBe(
 						'Duration: P255DT10H'
 					);
 				}
 			);
-		} );
-		describe( 'valueOf()', () => {
+		});
+		describe('valueOf()', () => {
 			it(
 				'returns the millisecond value of the Duration when coerced ' +
 					'to a number',
 				() => {
-					const testDuration = new Duration( {
+					const testDuration = new Duration({
 						hours: 10,
 						days: 255,
-					} );
-					expect( 1 + testDuration ).toBe( 22068000001 );
+					});
+					expect(1 + testDuration).toBe(22068000001);
 				}
 			);
-		} );
-		describe( 'toFormat()', () => {
+		});
+		describe('toFormat()', () => {
 			const testHours = { hours: 24 };
 			// 0 -> format string to test
 			// 1 -> expected return value
 			const testConditions = [
-				[ 'y', '0' ],
-				[ 'y m d', '0 1' ],
-				[ 'h', '24' ],
-				[ 'm', '1,440' ],
-				[ 's', '86,400' ],
-				[ 'S', '86,400,000' ],
-				[ 'h:mm:ss S', '24:00:00 0' ],
+				['y', '0'],
+				['y m d', '0 1'],
+				['h', '24'],
+				['m', '1,440'],
+				['s', '86,400'],
+				['S', '86,400,000'],
+				['h:mm:ss S', '24:00:00 0'],
 			];
-			testConditions.forEach( ( testCondition ) => {
-				const [ format, expectedValue ] = testCondition;
+			testConditions.forEach((testCondition) => {
+				const [format, expectedValue] = testCondition;
 				it(
 					'returns expected result for ' +
-						JSON.stringify( testHours ) +
+						JSON.stringify(testHours) +
 						' and format ' +
 						'string ' +
 						format,
 					() => {
-						expect(
-							new Duration( testHours ).toFormat( format )
-						).toBe( expectedValue );
+						expect(new Duration(testHours).toFormat(format)).toBe(
+							expectedValue
+						);
 					}
 				);
-			} );
-		} );
-	} );
-	describe( 'static methods', () => {
-		describe( 'DateTime.fromMilliseconds', () => {
-			describe( 'constructs an instance of Duration from milliseconds', () => {
-				const testDuration = Duration.fromMilliseconds( 86400000 );
-				it( 'is an instance of Duration', () => {
-					expect( testDuration ).toBeInstanceOf( Duration );
-				} );
-				it( 'has the expected locale', () => {
-					expect( testDuration.locale ).toBe( 'en' );
-				} );
-				it( 'has the expected milliseconds value', () => {
-					expect( testDuration.milliseconds ).toBe( 86400000 );
-				} );
-			} );
-		} );
-		describe( 'DateTime.fromObject', () => {
-			describe( 'constructs an instance of Duration from invalid object', () => {
+			});
+		});
+	});
+	describe('static methods', () => {
+		describe('DateTime.fromMilliseconds', () => {
+			describe('constructs an instance of Duration from milliseconds', () => {
+				const testDuration = Duration.fromMilliseconds(86400000);
+				it('is an instance of Duration', () => {
+					expect(testDuration).toBeInstanceOf(Duration);
+				});
+				it('has the expected locale', () => {
+					expect(testDuration.locale).toBe('en');
+				});
+				it('has the expected milliseconds value', () => {
+					expect(testDuration.milliseconds).toBe(86400000);
+				});
+			});
+		});
+		describe('DateTime.fromObject', () => {
+			describe('constructs an instance of Duration from invalid object', () => {
 				const testDuration = () => {
-					return Duration.fromObject( {
+					return Duration.fromObject({
 						hours: 24,
 						cheeseburgers: 1,
-					} );
+					});
 				};
-				it( 'outputs a console error', () => {
+				it('outputs a console error', () => {
 					testDuration();
-					expect( console ).toHaveErrored();
-				} );
-				it( 'is considered invalid', () => {
+					expect(console).toHaveErrored();
+				});
+				it('is considered invalid', () => {
 					const duration = testDuration();
-					expect( console ).toHaveErrored();
-					expect( duration.isValid ).toBe( false );
-				} );
-				it( 'has expected values', () => {
+					expect(console).toHaveErrored();
+					expect(duration.isValid).toBe(false);
+				});
+				it('has expected values', () => {
 					const duration = testDuration();
-					expect( console ).toHaveErrored();
-					expect( duration.hours ).toBe( 24 );
-				} );
-				it( 'has expected locale', () => {
+					expect(console).toHaveErrored();
+					expect(duration.hours).toBe(24);
+				});
+				it('has expected locale', () => {
 					const duration = testDuration();
-					expect( console ).toHaveErrored();
-					expect( duration.locale ).toBe( 'en' );
-				} );
-			} );
+					expect(console).toHaveErrored();
+					expect(duration.locale).toBe('en');
+				});
+			});
 			describe(
 				'constructs an instance of Duration from a valid ' + 'object',
 				() => {
-					const testDuration = Duration.fromObject( {
+					const testDuration = Duration.fromObject({
 						hours: 24,
 						days: 1,
-					} );
-					it( 'has expected values', () => {
-						expect( testDuration.toObject() ).toEqual( {
+					});
+					it('has expected values', () => {
+						expect(testDuration.toObject()).toEqual({
 							...baseObjectValues,
 							hours: 24,
 							days: 1,
-						} );
-					} );
-					it( 'has expected locale', () => {
-						expect( testDuration.locale ).toBe( 'en' );
-					} );
+						});
+					});
+					it('has expected locale', () => {
+						expect(testDuration.locale).toBe('en');
+					});
 				}
 			);
-		} );
-		describe( 'DateTime.fromISO', () => {
-			const testDuration = Duration.fromISO( 'P1DT24H30M' );
-			it( 'returns an instance of Duration', () => {
-				expect( testDuration ).toBeInstanceOf( Duration );
-			} );
-			it( 'has expected values', () => {
-				expect( testDuration.toObject() ).toEqual( {
+		});
+		describe('DateTime.fromISO', () => {
+			const testDuration = Duration.fromISO('P1DT24H30M');
+			it('returns an instance of Duration', () => {
+				expect(testDuration).toBeInstanceOf(Duration);
+			});
+			it('has expected values', () => {
+				expect(testDuration.toObject()).toEqual({
 					...baseObjectValues,
 					days: 2,
 					minutes: 30,
-				} );
-			} );
-			it( 'has expected locale', () => {
-				expect( testDuration.locale ).toBe( 'en' );
-			} );
+				});
+			});
+			it('has expected locale', () => {
+				expect(testDuration.locale).toBe('en');
+			});
 			it(
 				'throws a an InvalidISO8601String error for invalid duration ' +
 					'format',
 				() => {
-					const getDuration = () => Duration.fromISO( 'invalid' );
-					expect( getDuration ).toThrow( InvalidISO8601String );
+					const getDuration = () => Duration.fromISO('invalid');
+					expect(getDuration).toThrow(InvalidISO8601String);
 				}
 			);
-		} );
-		describe( 'DateTime.isValidDuration', () => {
-			it( 'returns true for a valid duration', () => {
-				const testDuration = new Duration( { hours: 24 } );
-				expect( Duration.isValidDuration( testDuration ) ).toBe( true );
-			} );
+		});
+		describe('DateTime.isValidDuration', () => {
+			it('returns true for a valid duration', () => {
+				const testDuration = new Duration({ hours: 24 });
+				expect(Duration.isValidDuration(testDuration)).toBe(true);
+			});
 			it(
 				'throws a console error and returns false for invalid ' +
 					'duration instance',
 				() => {
-					const testDuration = new Duration( {
+					const testDuration = new Duration({
 						hours: 24,
 						cheeseburgers: 1,
-					} );
-					expect( console ).toHaveErrored();
-					expect( Duration.isValidDuration( testDuration ) ).toBe(
-						false
-					);
+					});
+					expect(console).toHaveErrored();
+					expect(Duration.isValidDuration(testDuration)).toBe(false);
 				}
 			);
-			it( 'returns false when value is not an instance of Duration', () => {
-				expect( Duration.isValidDuration( 'invalid' ) ).toBe( false );
-			} );
-		} );
-		describe( 'DateTime.isDuration', () => {
+			it('returns false when value is not an instance of Duration', () => {
+				expect(Duration.isValidDuration('invalid')).toBe(false);
+			});
+		});
+		describe('DateTime.isDuration', () => {
 			it(
 				'returns true for a value that is an instance of ' + 'Duration',
 				() => {
-					expect( Duration.isDuration( new Duration() ) ).toBe(
-						true
-					);
+					expect(Duration.isDuration(new Duration())).toBe(true);
 				}
 			);
 			it(
 				'returns false for a value that is not an instance of ' +
 					'Duration',
 				() => {
-					expect( Duration.isDuration( null ) ).toBe( false );
+					expect(Duration.isDuration(null)).toBe(false);
 				}
 			);
-		} );
-		describe( 'DateTime.assertIsDuration', () => {
+		});
+		describe('DateTime.assertIsDuration', () => {
 			it(
 				'throws an error for a value that is not an instance of ' +
 					'Duration',
 				() => {
 					const invalidDuration = () =>
-						Duration.assertIsDuration( null );
-					expect( invalidDuration ).toThrow( TypeError );
+						Duration.assertIsDuration(null);
+					expect(invalidDuration).toThrow(TypeError);
 				}
 			);
-		} );
-	} );
-} );
+		});
+	});
+});

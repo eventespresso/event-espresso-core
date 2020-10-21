@@ -43,13 +43,13 @@ import { PRIVATE_PROPERTIES, SAVE_STATE } from './constants';
  * @param {Object} opts used to pass through additional options for the
  * Object.defineProperty call.
  */
-export const createGetter = ( instance, fieldName, fieldValue, opts = {} ) => {
-	Object.defineProperty( instance, fieldName, {
+export const createGetter = (instance, fieldName, fieldValue, opts = {}) => {
+	Object.defineProperty(instance, fieldName, {
 		get() {
 			return fieldValue;
 		},
 		...opts,
-	} );
+	});
 };
 
 /**
@@ -68,12 +68,12 @@ export const createCallbackGetter = (
 	callBack,
 	opts = {}
 ) => {
-	Object.defineProperty( instance, propertyName, {
+	Object.defineProperty(instance, propertyName, {
 		get() {
-			return callBack( instance );
+			return callBack(instance);
 		},
 		...opts,
-	} );
+	});
 };
 
 /**
@@ -92,16 +92,16 @@ export const createGetterAndSetter = (
 	opts = {}
 ) => {
 	let propertyValue = initialFieldValue;
-	Object.defineProperty( instance, fieldName, {
+	Object.defineProperty(instance, fieldName, {
 		get() {
 			return propertyValue;
 		},
-		set( receivedValue ) {
+		set(receivedValue) {
 			const isPrimaryField = isPrimaryKeyField(
 				fieldName,
 				instance.schema
 			);
-			if ( ! instance.isNew && isPrimaryField ) {
+			if (!instance.isNew && isPrimaryField) {
 				return;
 			}
 			assertValidValueForPreparedField(
@@ -109,14 +109,14 @@ export const createGetterAndSetter = (
 				receivedValue,
 				instance
 			);
-			if ( ! isPrimaryField ) {
-				setSaveState( instance, SAVE_STATE.DIRTY );
-				setFieldToPersist( instance, fieldName );
+			if (!isPrimaryField) {
+				setSaveState(instance, SAVE_STATE.DIRTY);
+				setFieldToPersist(instance, fieldName);
 			}
 			propertyValue = receivedValue;
 		},
 		...opts,
-	} );
+	});
 };
 
 /**
@@ -133,16 +133,16 @@ export const createAliasGetterAndSetter = (
 	aliasFieldName,
 	opts = {}
 ) => {
-	if ( originalFieldName !== aliasFieldName ) {
-		Object.defineProperty( instance, aliasFieldName, {
+	if (originalFieldName !== aliasFieldName) {
+		Object.defineProperty(instance, aliasFieldName, {
 			get() {
-				return instance[ originalFieldName ];
+				return instance[originalFieldName];
 			},
-			set( receivedValue ) {
-				return ( instance[ originalFieldName ] = receivedValue );
+			set(receivedValue) {
+				return (instance[originalFieldName] = receivedValue);
 			},
 			...opts,
-		} );
+		});
 	}
 };
 
@@ -160,13 +160,13 @@ export const createAliasGetter = (
 	aliasFieldName,
 	opts = {}
 ) => {
-	if ( originalFieldName !== aliasFieldName ) {
-		Object.defineProperty( instance, aliasFieldName, {
+	if (originalFieldName !== aliasFieldName) {
+		Object.defineProperty(instance, aliasFieldName, {
 			get() {
-				return instance[ originalFieldName ];
+				return instance[originalFieldName];
 			},
 			...opts,
-		} );
+		});
 	}
 };
 
@@ -177,16 +177,16 @@ export const createAliasGetter = (
  * @param {string} fieldName
  * @param {Object} opts  Options for Object.defineProperty
  */
-export const createFluentSetter = ( instance, fieldName, opts = {} ) => {
-	Object.defineProperty( instance, 'set' + upperFirst( fieldName ), {
+export const createFluentSetter = (instance, fieldName, opts = {}) => {
+	Object.defineProperty(instance, 'set' + upperFirst(fieldName), {
 		get() {
-			return ( receivedValue ) => {
-				instance[ fieldName ] = receivedValue;
+			return (receivedValue) => {
+				instance[fieldName] = receivedValue;
 				return instance;
 			};
 		},
 		...opts,
-	} );
+	});
 };
 
 /**
@@ -196,13 +196,13 @@ export const createFluentSetter = ( instance, fieldName, opts = {} ) => {
  * @param {Object} instance
  * keys on instance.
  */
-export const createEntityGettersAndSetters = ( instance ) => {
+export const createEntityGettersAndSetters = (instance) => {
 	const primaryKeys = [];
-	forEach( instance.originalFieldsAndValues, ( fieldValue, fieldName ) => {
-		const isPrimaryKey = isPrimaryKeyField( fieldName, instance.schema );
-		setValidateTypeForField( instance, fieldName, fieldValue );
-		if ( isEntityField( fieldName, instance.schema ) ) {
-			if ( instance.isNew ) {
+	forEach(instance.originalFieldsAndValues, (fieldValue, fieldName) => {
+		const isPrimaryKey = isPrimaryKeyField(fieldName, instance.schema);
+		setValidateTypeForField(instance, fieldName, fieldValue);
+		if (isEntityField(fieldName, instance.schema)) {
+			if (instance.isNew) {
 				assertValidValueForPreparedField(
 					fieldName,
 					fieldValue,
@@ -223,28 +223,28 @@ export const createEntityGettersAndSetters = ( instance ) => {
 				isPrimaryKey
 			);
 		}
-		if ( fieldName === '_calculated_fields' ) {
-			setCalculatedFieldAndValues( instance, fieldValue );
+		if (fieldName === '_calculated_fields') {
+			setCalculatedFieldAndValues(instance, fieldValue);
 		}
-		if ( fieldName === '_protected' ) {
-			populateProtectedFieldsProperty( instance, fieldValue );
+		if (fieldName === '_protected') {
+			populateProtectedFieldsProperty(instance, fieldValue);
 		}
-		if ( fieldName === 'link' ) {
-			createGetter( instance, 'link', fieldValue );
+		if (fieldName === 'link') {
+			createGetter(instance, 'link', fieldValue);
 		}
-		if ( fieldName === '_links' ) {
-			setResources( instance, fieldValue );
+		if (fieldName === '_links') {
+			setResources(instance, fieldValue);
 		}
-		if ( ! instance.isNew && isPrimaryKey ) {
-			primaryKeys.push( fieldName );
+		if (!instance.isNew && isPrimaryKey) {
+			primaryKeys.push(fieldName);
 		}
-	} );
-	if ( ! instance.isNew && primaryKeys.length ) {
-		createPrimaryKeyFieldGetters( instance, primaryKeys );
+	});
+	if (!instance.isNew && primaryKeys.length) {
+		createPrimaryKeyFieldGetters(instance, primaryKeys);
 	}
 
-	populatePrimaryKeys( instance );
-	populateMissingFields( instance );
+	populatePrimaryKeys(instance);
+	populateMissingFields(instance);
 };
 
 /**
@@ -253,20 +253,14 @@ export const createEntityGettersAndSetters = ( instance ) => {
  * @param {Object} instance
  * @param {Array} protectedFields
  */
-const populateProtectedFieldsProperty = ( instance, protectedFields ) => {
+const populateProtectedFieldsProperty = (instance, protectedFields) => {
 	// get any calculated protected fields.
 	const calculatedFields =
 		instance.originalFieldsAndValues._calculated_fields || {};
-	if (
-		calculatedFields._protected &&
-		isArray( calculatedFields._protected )
-	) {
-		protectedFields = [
-			...protectedFields,
-			...calculatedFields._protected,
-		];
+	if (calculatedFields._protected && isArray(calculatedFields._protected)) {
+		protectedFields = [...protectedFields, ...calculatedFields._protected];
 	}
-	createGetter( instance, 'protectedFields', protectedFields );
+	createGetter(instance, 'protectedFields', protectedFields);
 };
 
 /**
@@ -276,23 +270,23 @@ const populateProtectedFieldsProperty = ( instance, protectedFields ) => {
  *
  * @param {Object} instance
  */
-const populatePrimaryKeys = ( instance ) => {
-	if ( ! instance.isNew ) {
+const populatePrimaryKeys = (instance) => {
+	if (!instance.isNew) {
 		return;
 	}
-	const primaryKeys = getPrimaryKeyFieldsFromSchema( instance );
-	forEach( primaryKeys, ( schemaProperties, schemaField ) => {
+	const primaryKeys = getPrimaryKeyFieldsFromSchema(instance);
+	forEach(primaryKeys, (schemaProperties, schemaField) => {
 		// always delete and override what is existing.
-		if ( instance[ schemaField ] ) {
-			delete instance[ schemaField ];
+		if (instance[schemaField]) {
+			delete instance[schemaField];
 		}
-		createGetterAndSetter( instance, schemaField, cuid(), {
+		createGetterAndSetter(instance, schemaField, cuid(), {
 			configurable: true,
 			enumerable: true,
-		} );
-		createAliasGetterAndSetterForField( instance, schemaField );
-	} );
-	createPrimaryKeyFieldGetters( instance, keys( primaryKeys ) );
+		});
+		createAliasGetterAndSetterForField(instance, schemaField);
+	});
+	createPrimaryKeyFieldGetters(instance, keys(primaryKeys));
 };
 
 /**
@@ -302,10 +296,10 @@ const populatePrimaryKeys = ( instance ) => {
  * @param {string} fieldName
  * @param {*} fieldValue
  */
-const setValidateTypeForField = ( instance, fieldName, fieldValue ) => {
-	instance[ PRIVATE_PROPERTIES.VALIDATE_TYPES ][
+const setValidateTypeForField = (instance, fieldName, fieldValue) => {
+	instance[PRIVATE_PROPERTIES.VALIDATE_TYPES][
 		fieldName
-	] = deriveValidateTypeForField( fieldName, fieldValue, instance.schema );
+	] = deriveValidateTypeForField(fieldName, fieldValue, instance.schema);
 };
 
 /**
@@ -315,25 +309,21 @@ const setValidateTypeForField = ( instance, fieldName, fieldValue ) => {
  *
  * @param {Object} instance
  */
-const populateMissingFields = ( instance ) => {
-	if ( typeof instance.protectedFields === 'undefined' ) {
-		populateProtectedFieldsProperty( instance, [] );
+const populateMissingFields = (instance) => {
+	if (typeof instance.protectedFields === 'undefined') {
+		populateProtectedFieldsProperty(instance, []);
 	}
-	if ( ! instance.isNew ) {
+	if (!instance.isNew) {
 		return;
 	}
 	forEach(
-		getEntityFieldsFromSchema( instance ),
-		( schemaProperties, fieldName ) => {
+		getEntityFieldsFromSchema(instance),
+		(schemaProperties, fieldName) => {
 			if (
-				typeof instance[ fieldName ] === 'undefined' &&
-				! isPrimaryKeyField( fieldName, instance.schema )
+				typeof instance[fieldName] === 'undefined' &&
+				!isPrimaryKeyField(fieldName, instance.schema)
 			) {
-				setInitialEntityFieldsAndValues(
-					instance,
-					fieldName,
-					undefined
-				);
+				setInitialEntityFieldsAndValues(instance, fieldName, undefined);
 			}
 		}
 	);
@@ -347,8 +337,8 @@ const populateMissingFields = ( instance ) => {
  *
  * @return {Object} Plain object of all field:value pairs.
  */
-const forClone = ( instance ) => {
-	return getBaseFieldsAndValuesForCloning( instance );
+const forClone = (instance) => {
+	return getBaseFieldsAndValuesForCloning(instance);
 };
 
 /**
@@ -358,8 +348,8 @@ const forClone = ( instance ) => {
  * @param {Object} instance
  * @return {Object} Plain object of field:value pairs.
  */
-const forUpdate = ( instance ) => {
-	return getBaseFieldsAndValuesForPersisting( instance );
+const forUpdate = (instance) => {
+	return getBaseFieldsAndValuesForPersisting(instance);
 };
 
 /**
@@ -369,11 +359,11 @@ const forUpdate = ( instance ) => {
  * @param {Object} instance
  * @return {Object} Plain object of field:value pairs.
  */
-const forInsert = ( instance ) => {
-	const entityValues = getBaseFieldsAndValuesForPersisting( instance, true );
-	instance.primaryKeys.forEach( ( primaryKey ) => {
-		entityValues[ primaryKey ] = instance[ primaryKey ];
-	} );
+const forInsert = (instance) => {
+	const entityValues = getBaseFieldsAndValuesForPersisting(instance, true);
+	instance.primaryKeys.forEach((primaryKey) => {
+		entityValues[primaryKey] = instance[primaryKey];
+	});
 	return entityValues;
 };
 
@@ -386,11 +376,11 @@ const forInsert = ( instance ) => {
  * @param {Object} instance
  * @return {Object} Plain object of field:value pairs.
  */
-const forPersist = ( instance ) => {
-	if ( instance.isNew ) {
-		return forInsert( instance );
+const forPersist = (instance) => {
+	if (instance.isNew) {
+		return forInsert(instance);
 	}
-	return forUpdate( instance );
+	return forUpdate(instance);
 };
 
 /**
@@ -399,11 +389,11 @@ const forPersist = ( instance ) => {
  *
  * @param {Object} instance
  */
-export const createPersistingGettersAndSetters = ( instance ) => {
-	createCallbackGetter( instance, 'forUpdate', forUpdate );
-	createCallbackGetter( instance, 'forInsert', forInsert );
-	createCallbackGetter( instance, 'forPersist', forPersist );
-	createCallbackGetter( instance, 'forClone', forClone );
+export const createPersistingGettersAndSetters = (instance) => {
+	createCallbackGetter(instance, 'forUpdate', forUpdate);
+	createCallbackGetter(instance, 'forInsert', forInsert);
+	createCallbackGetter(instance, 'forPersist', forPersist);
+	createCallbackGetter(instance, 'forClone', forClone);
 };
 
 /**
@@ -420,21 +410,21 @@ const setInitialEntityFieldsAndValues = (
 	fieldValue,
 	isPrimaryKey = false
 ) => {
-	if ( isUndefined( fieldValue ) ) {
-		fieldValue = getDefaultValueForField( fieldName, instance.schema );
-		setValidateTypeForField( instance, fieldName, fieldValue );
+	if (isUndefined(fieldValue)) {
+		fieldValue = getDefaultValueForField(fieldName, instance.schema);
+		setValidateTypeForField(instance, fieldName, fieldValue);
 	}
 	createRawEntityGettersSetters(
 		instance,
 		fieldName,
-		derivePreparedValueForField( fieldName, fieldValue, instance ),
+		derivePreparedValueForField(fieldName, fieldValue, instance),
 		isPrimaryKey
 	);
-	if ( ! isPrimaryKey ) {
+	if (!isPrimaryKey) {
 		createRenderedGetters(
 			instance,
 			fieldName,
-			deriveRenderedValue( fieldValue )
+			deriveRenderedValue(fieldValue)
 		);
 	}
 };
@@ -456,13 +446,13 @@ export const createRawEntityGettersSetters = (
 ) => {
 	const opts = { enumerable: true };
 	// primary key is immutable
-	if ( isPrimaryKey ) {
-		createGetter( instance, fieldName, fieldValue, opts );
-		createAliasGetterForField( instance, fieldName );
+	if (isPrimaryKey) {
+		createGetter(instance, fieldName, fieldValue, opts);
+		createAliasGetterForField(instance, fieldName);
 	} else {
-		createGetterAndSetter( instance, fieldName, fieldValue, opts );
-		createFluentSetter( instance, fieldName );
-		createAliasGetterAndSetterForField( instance, fieldName );
+		createGetterAndSetter(instance, fieldName, fieldValue, opts);
+		createFluentSetter(instance, fieldName);
+		createAliasGetterAndSetterForField(instance, fieldName);
 	}
 };
 
@@ -472,8 +462,8 @@ export const createRawEntityGettersSetters = (
  * @param {Object} instance
  * @param {string} fieldName
  */
-export const createAliasGetterForField = ( instance, fieldName ) => {
-	createAliasesForMethod( instance, fieldName, createAliasGetter );
+export const createAliasGetterForField = (instance, fieldName) => {
+	createAliasesForMethod(instance, fieldName, createAliasGetter);
 };
 
 /**
@@ -490,8 +480,8 @@ export const createAliasGetterForField = ( instance, fieldName ) => {
  * @param {Object} instance
  * @param {string} fieldName
  */
-export const createAliasGetterAndSetterForField = ( instance, fieldName ) => {
-	createAliasesForMethod( instance, fieldName, createAliasGetterAndSetter );
+export const createAliasGetterAndSetterForField = (instance, fieldName) => {
+	createAliasesForMethod(instance, fieldName, createAliasGetterAndSetter);
 };
 
 /**
@@ -501,23 +491,23 @@ export const createAliasGetterAndSetterForField = ( instance, fieldName ) => {
  * @param {string} fieldName
  * @param {Function} method
  */
-const createAliasesForMethod = ( instance, fieldName, method ) => {
+const createAliasesForMethod = (instance, fieldName, method) => {
 	// camelCase getter (or setter) for full field name (eg. EVT_desc => evtDesc)
-	method( instance, fieldName, camelCase( fieldName ) );
+	method(instance, fieldName, camelCase(fieldName));
 	// strip field prefixes and camelCase (if there are field prefixes for the
 	// entity. (eg. EVT_desc => desc);
-	if ( instance.fieldPrefixes ) {
+	if (instance.fieldPrefixes) {
 		let newFieldName = '';
 		// Yes, its intended that if there are multiple prefixes, this could
 		// end up creating multiple aliased getters (or setters)
 		// (eg Datetime: DTT_EVT_start would end up with `evtStart` and `start`
 		// as getter accessors).
-		instance.fieldPrefixes.forEach( ( fieldPrefix ) => {
-			newFieldName = fieldName.replace( fieldPrefix + '_', '' );
-			if ( newFieldName !== fieldName ) {
-				method( instance, fieldName, camelCase( newFieldName ) );
+		instance.fieldPrefixes.forEach((fieldPrefix) => {
+			newFieldName = fieldName.replace(fieldPrefix + '_', '');
+			if (newFieldName !== fieldName) {
+				method(instance, fieldName, camelCase(newFieldName));
 			}
-		} );
+		});
 	}
 };
 
@@ -527,8 +517,8 @@ const createAliasesForMethod = ( instance, fieldName, method ) => {
  * @param {Object} instance
  * @return {function(string): *}  A callback.
  */
-const getRenderedCallback = ( instance ) => ( requestedFieldName ) =>
-	instance[ requestedFieldName + 'Rendered' ];
+const getRenderedCallback = (instance) => (requestedFieldName) =>
+	instance[requestedFieldName + 'Rendered'];
 
 /**
  * Returns a fieldName stripped of all possible prefixes.
@@ -537,18 +527,18 @@ const getRenderedCallback = ( instance ) => ( requestedFieldName ) =>
  * @param {string} fieldName
  * @return {string} The prefix free fieldName.
  */
-const removePrefixesFromField = ( instance, fieldName ) => {
+const removePrefixesFromField = (instance, fieldName) => {
 	const prefixesToRemove = sortBy(
 		instance.fieldPrefixes,
-		( prefix ) => prefix.length * -1
+		(prefix) => prefix.length * -1
 	);
 	let newFieldName = fieldName;
-	forEach( prefixesToRemove, ( prefix ) => {
-		newFieldName = fieldName.replace( prefix, '' );
-		if ( newFieldName !== fieldName ) {
+	forEach(prefixesToRemove, (prefix) => {
+		newFieldName = fieldName.replace(prefix, '');
+		if (newFieldName !== fieldName) {
 			return false;
 		}
-	} );
+	});
 	return newFieldName;
 };
 
@@ -559,15 +549,14 @@ const removePrefixesFromField = ( instance, fieldName ) => {
  * @param {string} fieldName
  * @param {*}  fieldValue
  */
-export const createRenderedGetters = ( instance, fieldName, fieldValue ) => {
+export const createRenderedGetters = (instance, fieldName, fieldValue) => {
 	createGetter(
 		instance,
-		camelCase( removePrefixesFromField( instance, fieldName ) ) +
-			'Rendered',
+		camelCase(removePrefixesFromField(instance, fieldName)) + 'Rendered',
 		fieldValue
 	);
-	if ( isUndefined( instance.getRendered ) ) {
-		createCallbackGetter( instance, 'getRendered', getRenderedCallback );
+	if (isUndefined(instance.getRendered)) {
+		createCallbackGetter(instance, 'getRendered', getRenderedCallback);
 	}
 };
 
@@ -577,7 +566,7 @@ export const createRenderedGetters = ( instance, fieldName, fieldValue ) => {
  * @param {Object} instance
  * @return {function(): boolean} The callback for hasMultiplePrimaryKeys getter
  */
-const hasMultiplePrimaryKeysCallback = ( instance ) =>
+const hasMultiplePrimaryKeysCallback = (instance) =>
 	instance.primaryKeys.length > 1;
 
 /**
@@ -586,11 +575,11 @@ const hasMultiplePrimaryKeysCallback = ( instance ) =>
  * @param {Object} instance
  * @param {Array} primaryKeys
  */
-export const createPrimaryKeyFieldGetters = ( instance, primaryKeys ) => {
+export const createPrimaryKeyFieldGetters = (instance, primaryKeys) => {
 	const opts = { configurable: true };
-	if ( isArray( primaryKeys ) ) {
-		createGetter( instance, 'primaryKey', primaryKeys[ 0 ], opts );
-		createGetterAndSetter( instance, 'primaryKeys', primaryKeys, opts );
+	if (isArray(primaryKeys)) {
+		createGetter(instance, 'primaryKey', primaryKeys[0], opts);
+		createGetterAndSetter(instance, 'primaryKeys', primaryKeys, opts);
 		createCallbackGetter(
 			instance,
 			'hasMultiplePrimaryKeys',
@@ -605,8 +594,8 @@ export const createPrimaryKeyFieldGetters = ( instance, primaryKeys ) => {
  * @return {function(string): boolean} Returns a callback for the
  * hasCalculatedField getter
  */
-const hasCalculatedFieldCallback = ( instance ) => ( fieldNameToCheck ) =>
-	! isUndefined( instance[ fieldNameToCheck ] );
+const hasCalculatedFieldCallback = (instance) => (fieldNameToCheck) =>
+	!isUndefined(instance[fieldNameToCheck]);
 
 /**
  * Creates the getters for all the calculated fields and value on the entity.
@@ -614,16 +603,16 @@ const hasCalculatedFieldCallback = ( instance ) => ( fieldNameToCheck ) =>
  * @param {Object} instance
  * @param {Object.<string,*>}fieldsAndValues
  */
-export const setCalculatedFieldAndValues = ( instance, fieldsAndValues ) => {
-	forEach( fieldsAndValues, ( calculatedFieldValue, calculatedFieldName ) => {
-		if ( calculatedFieldName !== '_protected' ) {
+export const setCalculatedFieldAndValues = (instance, fieldsAndValues) => {
+	forEach(fieldsAndValues, (calculatedFieldValue, calculatedFieldName) => {
+		if (calculatedFieldName !== '_protected') {
 			createGetter(
 				instance,
-				camelCase( calculatedFieldName ),
+				camelCase(calculatedFieldName),
 				calculatedFieldValue
 			);
 		}
-	} );
+	});
 	createCallbackGetter(
 		instance,
 		'hasCalculatedField',
@@ -637,30 +626,30 @@ export const setCalculatedFieldAndValues = ( instance, fieldsAndValues ) => {
  * @param {Object} instance
  * @param {Object.<string,*>}fieldsAndValues
  */
-export const setResources = ( instance, fieldsAndValues ) => {
+export const setResources = (instance, fieldsAndValues) => {
 	const relations = [];
 	let relationName;
-	forEach( fieldsAndValues, ( resourceValue, resourceName ) => {
-		if ( resourceName === 'self' ) {
-			createGetter( instance, 'resourceLink', resourceValue[ 0 ].href );
-		} else if ( resourceName === 'collection' ) {
+	forEach(fieldsAndValues, (resourceValue, resourceName) => {
+		if (resourceName === 'self') {
+			createGetter(instance, 'resourceLink', resourceValue[0].href);
+		} else if (resourceName === 'collection') {
 			createGetter(
 				instance,
 				'collectionResourceLink',
-				resourceValue[ 0 ].href
+				resourceValue[0].href
 			);
 		} else {
-			relationName = getRelationNameFromLink( resourceName );
-			relations.push( relationName );
+			relationName = getRelationNameFromLink(resourceName);
+			relations.push(relationName);
 			setRelationsResource(
 				instance,
 				relationName + 'Resource',
 				resourceValue
 			);
 		}
-	} );
+	});
 	//set relations getter
-	createGetter( instance, 'getRelations', relations );
+	createGetter(instance, 'getRelations', relations);
 };
 
 /**
@@ -668,8 +657,8 @@ export const setResources = ( instance, fieldsAndValues ) => {
  * @return {function(string): Object} Returns the callback for getting a
  * relation resource
  */
-const getRelationResourceCallback = ( instance ) => ( relationName ) =>
-	instance[ relationName.replace( 'Resource', '' ) ];
+const getRelationResourceCallback = (instance) => (relationName) =>
+	instance[relationName.replace('Resource', '')];
 
 /**
  * Creates getters for the relations resource object.
@@ -678,16 +667,12 @@ const getRelationResourceCallback = ( instance ) => ( relationName ) =>
  * @param {string} relationName
  * @param {Object.<string, string>} resourceInfo
  */
-export const setRelationsResource = (
-	instance,
-	relationName,
-	resourceInfo
-) => {
-	createGetter( instance, relationName, {
-		resourceLink: resourceInfo[ 0 ].href,
-		single: resourceInfo[ 0 ].single,
-	} );
-	if ( isUndefined( instance.getRelationResource ) ) {
+export const setRelationsResource = (instance, relationName, resourceInfo) => {
+	createGetter(instance, relationName, {
+		resourceLink: resourceInfo[0].href,
+		single: resourceInfo[0].single,
+	});
+	if (isUndefined(instance.getRelationResource)) {
 		createCallbackGetter(
 			instance,
 			'getRelationResource',
@@ -706,17 +691,17 @@ export const setRelationsResource = (
  * setting state.  When true, the saveState is set to whatever the incoming
  * saveState value is.
  */
-export const setSaveState = ( instance, saveState, override = false ) => {
-	const currentState = instance[ PRIVATE_PROPERTIES.SAVE_STATE ];
-	switch ( saveState ) {
+export const setSaveState = (instance, saveState, override = false) => {
+	const currentState = instance[PRIVATE_PROPERTIES.SAVE_STATE];
+	switch (saveState) {
 		case SAVE_STATE.DIRTY:
 		case SAVE_STATE.NEW:
 		case SAVE_STATE.CLEAN:
-			if ( override ) {
-				instance[ PRIVATE_PROPERTIES.SAVE_STATE ] = saveState;
+			if (override) {
+				instance[PRIVATE_PROPERTIES.SAVE_STATE] = saveState;
 				break;
 			}
-			instance[ PRIVATE_PROPERTIES.SAVE_STATE ] =
+			instance[PRIVATE_PROPERTIES.SAVE_STATE] =
 				currentState === SAVE_STATE.CLEAN ? saveState : currentState;
 			break;
 		default:
@@ -734,8 +719,8 @@ export const setSaveState = ( instance, saveState, override = false ) => {
  * @param {Object} instance
  * @param {string} fieldName
  */
-export const setFieldToPersist = ( instance, fieldName ) => {
-	if ( instance.fieldsToPersistOnInsert ) {
-		instance.fieldsToPersistOnInsert.add( fieldName );
+export const setFieldToPersist = (instance, fieldName) => {
+	if (instance.fieldsToPersistOnInsert) {
+		instance.fieldsToPersistOnInsert.add(fieldName);
 	}
 };

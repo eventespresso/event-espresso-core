@@ -24,14 +24,12 @@ export const queryDataTypes = {
 	forAttendeeId: PropTypes.number,
 	forTransactionId: PropTypes.number,
 	forTicketId: PropTypes.number,
-	forStatusId: PropTypes.oneOf(
-		values( statusModel.REGISTRATION_STATUS_ID )
-	),
-	queryData: PropTypes.shape( {
+	forStatusId: PropTypes.oneOf(values(statusModel.REGISTRATION_STATUS_ID)),
+	queryData: PropTypes.shape({
 		limit: PropTypes.number,
-		orderBy: PropTypes.oneOf( [ 'REG_ID', 'REG_date' ] ),
-		order: PropTypes.oneOf( ALLOWED_ORDER_VALUES ),
-	} ),
+		orderBy: PropTypes.oneOf(['REG_ID', 'REG_date']),
+		order: PropTypes.oneOf(ALLOWED_ORDER_VALUES),
+	}),
 };
 
 export const optionsEntityMap = {
@@ -71,14 +69,12 @@ export const defaultQueryData = {
  * @return { string } Returns an actual orderBy string for the REST query for
  *                      the provided alias
  */
-export const mapOrderBy = ( orderBy ) => {
+export const mapOrderBy = (orderBy) => {
 	const orderByMap = {
 		reg_id: 'REG_ID',
 		reg_date: 'REG_date',
 	};
-	return isUndefined( orderByMap[ orderBy ] )
-		? orderBy
-		: orderByMap[ orderBy ];
+	return isUndefined(orderByMap[orderBy]) ? orderBy : orderByMap[orderBy];
 };
 
 /**
@@ -91,34 +87,34 @@ export const mapOrderBy = ( orderBy ) => {
  * @param {string} forStatusId 		ID of Status to retrieve registrations for
  * @return {string}                	The assembled where conditions.
  */
-export const whereConditions = ( {
+export const whereConditions = ({
 	forEventId = 0,
 	forAttendeeId = 0,
 	forTransactionId = 0,
 	forTicketId = 0,
 	forStatusId = '',
-} ) => {
+}) => {
 	const where = [];
-	forEventId = parseInt( forEventId, 10 );
-	if ( forEventId !== 0 && ! isNaN( forEventId ) ) {
-		where.push( 'where[EVT_ID]=' + forEventId );
+	forEventId = parseInt(forEventId, 10);
+	if (forEventId !== 0 && !isNaN(forEventId)) {
+		where.push('where[EVT_ID]=' + forEventId);
 	}
-	forAttendeeId = parseInt( forAttendeeId, 10 );
-	if ( forAttendeeId !== 0 && ! isNaN( forAttendeeId ) ) {
-		where.push( 'where[ATT_ID]=' + forAttendeeId );
+	forAttendeeId = parseInt(forAttendeeId, 10);
+	if (forAttendeeId !== 0 && !isNaN(forAttendeeId)) {
+		where.push('where[ATT_ID]=' + forAttendeeId);
 	}
-	forTransactionId = parseInt( forTransactionId, 10 );
-	if ( forTransactionId !== 0 && ! isNaN( forTransactionId ) ) {
-		where.push( 'where[TXN_ID]=' + forTransactionId );
+	forTransactionId = parseInt(forTransactionId, 10);
+	if (forTransactionId !== 0 && !isNaN(forTransactionId)) {
+		where.push('where[TXN_ID]=' + forTransactionId);
 	}
-	forTicketId = parseInt( forTicketId, 10 );
-	if ( forTicketId !== 0 && ! isNaN( forTicketId ) ) {
-		where.push( 'where[TKT_ID]=' + forTicketId );
+	forTicketId = parseInt(forTicketId, 10);
+	if (forTicketId !== 0 && !isNaN(forTicketId)) {
+		where.push('where[TKT_ID]=' + forTicketId);
 	}
-	if ( forStatusId !== '' && forStatusId !== null ) {
-		where.push( 'where[STS_ID]=' + forStatusId );
+	if (forStatusId !== '' && forStatusId !== null) {
+		where.push('where[STS_ID]=' + forStatusId);
 	}
-	return where.join( '&' );
+	return where.join('&');
 };
 
 /**
@@ -127,7 +123,7 @@ export const whereConditions = ( {
  * @param { Object } queryData
  * @return { string }  Returns the query string.
  */
-export const getQueryString = ( queryData = {} ) => {
+export const getQueryString = (queryData = {}) => {
 	queryData = { ...defaultQueryData.queryData, ...queryData };
-	return baseGetQueryString( queryData, whereConditions, mapOrderBy );
+	return baseGetQueryString(queryData, whereConditions, mapOrderBy);
 };

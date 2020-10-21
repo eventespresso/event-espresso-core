@@ -21,16 +21,16 @@ import {
 } from '../assertions';
 import { PRIVATE_PROPERTIES, VALIDATE_TYPE } from '../constants';
 
-describe( 'Testing assertions for model-entity factory.', () => {
-	const getMockInstance = ( schema, validationType ) => {
+describe('Testing assertions for model-entity factory.', () => {
+	const getMockInstance = (schema, validationType) => {
 		return {
 			schema,
-			[ PRIVATE_PROPERTIES.VALIDATE_TYPES ]: validationType,
+			[PRIVATE_PROPERTIES.VALIDATE_TYPES]: validationType,
 		};
 	};
-	describe( 'maybeAssertValueObject()', () => {
-		const assertTest = ( fieldName, fieldValue, schema ) => () =>
-			maybeAssertValueObject( fieldName, fieldValue, schema );
+	describe('maybeAssertValueObject()', () => {
+		const assertTest = (fieldName, fieldValue, schema) => () =>
+			maybeAssertValueObject(fieldName, fieldValue, schema);
 		const tests = [
 			[
 				'Does not throw exception for field not in schema',
@@ -66,7 +66,7 @@ describe( 'Testing assertions for model-entity factory.', () => {
 				'Does not throw exception for datetime field with ' +
 					'valid DateTime value object as value',
 				'EVT_visible_on',
-				DateTime.fromJSDate( new Date() ),
+				DateTime.fromJSDate(new Date()),
 				EventSchemaProperties,
 				null,
 			],
@@ -74,45 +74,45 @@ describe( 'Testing assertions for model-entity factory.', () => {
 				'Does not throw exception for money field with ' +
 					'valid Money value object as value',
 				'REG_final_price',
-				new Money( 1.25, SiteCurrency ),
+				new Money(1.25, SiteCurrency),
 				RegistrationSchemaProperties,
 				null,
 			],
 		];
 		tests.forEach(
-			( [
+			([
 				description,
 				fieldName,
 				fieldValue,
 				schema,
 				expectedException,
-			] ) => {
-				it( description, () => {
-					if ( expectedException === null ) {
+			]) => {
+				it(description, () => {
+					if (expectedException === null) {
 						expect(
-							assertTest( fieldName, fieldValue, schema )
+							assertTest(fieldName, fieldValue, schema)
 						).not.toThrow();
 					} else {
 						expect(
-							assertTest( fieldName, fieldValue, schema )
-						).toThrow( expectedException );
+							assertTest(fieldName, fieldValue, schema)
+						).toThrow(expectedException);
 					}
-				} );
+				});
 			}
 		);
-	} );
-	describe( 'assertValidSchema()', () => {
-		const testRunner = ( schema ) => () => assertValidSchema( schema );
-		it( 'Throws an error with invalid schema.', () => {
-			expect( testRunner( {} ) ).toThrow( InvalidSchema );
-		} );
-		it( 'Does not throw an error with valid schema.', () => {
-			expect( testRunner( EventSchema.schema ) ).not.toThrow();
-		} );
-	} );
-	describe( 'assertValidSchemaFieldProperties()', () => {
-		const assertTest = ( modelName, fieldName, schema ) => () =>
-			assertValidSchemaFieldProperties( modelName, fieldName, schema );
+	});
+	describe('assertValidSchema()', () => {
+		const testRunner = (schema) => () => assertValidSchema(schema);
+		it('Throws an error with invalid schema.', () => {
+			expect(testRunner({})).toThrow(InvalidSchema);
+		});
+		it('Does not throw an error with valid schema.', () => {
+			expect(testRunner(EventSchema.schema)).not.toThrow();
+		});
+	});
+	describe('assertValidSchemaFieldProperties()', () => {
+		const assertTest = (modelName, fieldName, schema) => () =>
+			assertValidSchemaFieldProperties(modelName, fieldName, schema);
 		const tests = [
 			[
 				'Throws TypeError for field not found in schema.',
@@ -168,23 +168,21 @@ describe( 'Testing assertions for model-entity factory.', () => {
 				null,
 			],
 		];
-		tests.forEach(
-			( [ description, fieldName, schema, expectedException ] ) => {
-				it( description, () => {
-					if ( expectedException === null ) {
-						expect(
-							assertTest( 'Event', fieldName, schema )
-						).not.toThrow();
-					} else {
-						expect(
-							assertTest( 'Event', fieldName, schema )
-						).toThrow( expectedException );
-					}
-				} );
-			}
-		);
-	} );
-	describe( 'assertValidValueForPreparedField()', () => {
+		tests.forEach(([description, fieldName, schema, expectedException]) => {
+			it(description, () => {
+				if (expectedException === null) {
+					expect(
+						assertTest('Event', fieldName, schema)
+					).not.toThrow();
+				} else {
+					expect(assertTest('Event', fieldName, schema)).toThrow(
+						expectedException
+					);
+				}
+			});
+		});
+	});
+	describe('assertValidValueForPreparedField()', () => {
 		const assertTest = (
 			fieldName,
 			fieldValue,
@@ -194,7 +192,7 @@ describe( 'Testing assertions for model-entity factory.', () => {
 			assertValidValueForPreparedField(
 				fieldName,
 				fieldValue,
-				getMockInstance( schema, { [ fieldName ]: validationType } )
+				getMockInstance(schema, { [fieldName]: validationType })
 			);
 		const tests = [
 			[
@@ -242,7 +240,7 @@ describe( 'Testing assertions for model-entity factory.', () => {
 				'Does not throw an error when the provided DateTime value ' +
 					'object is of the correct type for the field.',
 				'EVT_visible_on',
-				DateTime.fromJSDate( new Date() ),
+				DateTime.fromJSDate(new Date()),
 				EventSchemaProperties,
 				null,
 			],
@@ -250,7 +248,7 @@ describe( 'Testing assertions for model-entity factory.', () => {
 				'Does not throw an error when the provided Money value ' +
 					'object is of the correct type for the field.',
 				'REG_final_price',
-				new Money( 0, SiteCurrency ),
+				new Money(0, SiteCurrency),
 				RegistrationSchemaProperties,
 				null,
 			],
@@ -265,28 +263,28 @@ describe( 'Testing assertions for model-entity factory.', () => {
 			],
 		];
 		tests.forEach(
-			( [
+			([
 				description,
 				fieldName,
 				fieldValue,
 				schema,
 				expectedException,
-			] ) => {
-				it( description, () => {
-					if ( expectedException === null ) {
+			]) => {
+				it(description, () => {
+					if (expectedException === null) {
 						expect(
-							assertTest( fieldName, fieldValue, schema )
+							assertTest(fieldName, fieldValue, schema)
 						).not.toThrow();
 					} else {
 						expect(
-							assertTest( fieldName, fieldValue, schema )
-						).toThrow( expectedException );
+							assertTest(fieldName, fieldValue, schema)
+						).toThrow(expectedException);
 					}
-				} );
+				});
 			}
 		);
-	} );
-	describe( 'assertValidFieldAndValueAgainstSchema()', () => {
+	});
+	describe('assertValidFieldAndValueAgainstSchema()', () => {
 		const assertTest = (
 			modelName,
 			fieldName,
@@ -298,7 +296,7 @@ describe( 'Testing assertions for model-entity factory.', () => {
 				modelName,
 				fieldName,
 				fieldValue,
-				getMockInstance( schema, { [ fieldName ]: validationType } )
+				getMockInstance(schema, { [fieldName]: validationType })
 			);
 		};
 		const tests = [
@@ -378,36 +376,26 @@ describe( 'Testing assertions for model-entity factory.', () => {
 			],
 		];
 		tests.forEach(
-			( [
+			([
 				description,
 				modelName,
 				fieldName,
 				fieldValue,
 				schema,
 				expectedException,
-			] ) => {
-				it( description, () => {
-					if ( expectedException === null ) {
+			]) => {
+				it(description, () => {
+					if (expectedException === null) {
 						expect(
-							assertTest(
-								modelName,
-								fieldName,
-								fieldValue,
-								schema
-							)
+							assertTest(modelName, fieldName, fieldValue, schema)
 						).not.toThrow();
 					} else {
 						expect(
-							assertTest(
-								modelName,
-								fieldName,
-								fieldValue,
-								schema
-							)
-						).toThrow( expectedException );
+							assertTest(modelName, fieldName, fieldValue, schema)
+						).toThrow(expectedException);
 					}
-				} );
+				});
 			}
 		);
-	} );
-} );
+	});
+});

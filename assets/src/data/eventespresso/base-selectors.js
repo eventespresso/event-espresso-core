@@ -12,8 +12,8 @@ import { select } from '@wordpress/data';
  * @param {*[]} args
  * @return {boolean}  Whether resolution is in progress.
  */
-export const isResolving = ( reducerKey, selectorName, ...args ) => {
-	return select( 'core/data' ).isResolving( reducerKey, selectorName, args );
+export const isResolving = (reducerKey, selectorName, ...args) => {
+	return select('core/data').isResolving(reducerKey, selectorName, args);
 };
 
 /**
@@ -25,8 +25,8 @@ export const isResolving = ( reducerKey, selectorName, ...args ) => {
  * @param {*[]} args
  * @return {boolean} Whether resolution has completed.
  */
-export const hasFinishedResolving = ( reducerKey, selectorName, ...args ) => {
-	return select( 'core/data' ).hasFinishedResolution(
+export const hasFinishedResolving = (reducerKey, selectorName, ...args) => {
+	return select('core/data').hasFinishedResolution(
 		reducerKey,
 		selectorName,
 		args

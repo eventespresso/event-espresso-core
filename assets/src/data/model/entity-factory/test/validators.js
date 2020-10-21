@@ -17,52 +17,52 @@ import {
 	isShallowValidValueForField,
 } from '../validators';
 
-describe( 'Testing validator functions for model-entity factory', () => {
-	describe( 'validateType()', () => {
+describe('Testing validator functions for model-entity factory', () => {
+	describe('validateType()', () => {
 		const testConditions = [
-			[ 'returns false for invalid integer', 'integer', 1.26, false ],
-			[ 'returns true for valid integer', 'integer', 2, true ],
-			[ 'returns false for invalid number', 'number', 'invalid', false ],
-			[ 'returns true for valid number', 'number', 1.25, true ],
-			[ 'returns false for invalid string', 'string', 1, false ],
-			[ 'returns true for valid string', 'string', 'valid', true ],
+			['returns false for invalid integer', 'integer', 1.26, false],
+			['returns true for valid integer', 'integer', 2, true],
+			['returns false for invalid number', 'number', 'invalid', false],
+			['returns true for valid number', 'number', 1.25, true],
+			['returns false for invalid string', 'string', 1, false],
+			['returns true for valid string', 'string', 'valid', true],
 			[
 				'returns false for invalid plain object',
 				'object',
 				'invalid',
 				false,
 			],
-			[ 'returns true for valid plain object', 'object', {}, true ],
-			[ 'returns false for invalid boolean', 'bool', 'invalid', false ],
-			[ 'returns true for valid boolean', 'bool', false, true ],
-			[ 'returns false for invalid null', 'null', 'invalid', false ],
-			[ 'returns true for valid null', 'null', null, true ],
+			['returns true for valid plain object', 'object', {}, true],
+			['returns false for invalid boolean', 'bool', 'invalid', false],
+			['returns true for valid boolean', 'bool', false, true],
+			['returns false for invalid null', 'null', 'invalid', false],
+			['returns true for valid null', 'null', null, true],
 			[
 				'returns false for invalid type in an array of types',
-				[ 'integer', 'number' ],
+				['integer', 'number'],
 				'invalid',
 				false,
 			],
 			[
 				'returns true for valid type in an array of types',
-				[ 'integer', 'number' ],
+				['integer', 'number'],
 				1.25,
 				true,
 			],
 		];
 		testConditions.forEach(
-			( [ description, testType, testValue, expectedResponse ] ) => {
-				it( description, () => {
-					expect( validateType( testType, testValue ) ).toBe(
+			([description, testType, testValue, expectedResponse]) => {
+				it(description, () => {
+					expect(validateType(testType, testValue)).toBe(
 						expectedResponse
 					);
-				} );
+				});
 			}
 		);
-	} );
-	describe( 'validateEnumType()', () => {
+	});
+	describe('validateEnumType()', () => {
 		const testConditions = [
-			[ 'it returns false when not of the correct type', 10, false ],
+			['it returns false when not of the correct type', 10, false],
 			[
 				'it returns false when of the correct type but not of the ' +
 					'expected enum values',
@@ -76,21 +76,15 @@ describe( 'Testing validator functions for model-entity factory', () => {
 				true,
 			],
 		];
-		testConditions.forEach(
-			( [ description, testValue, expectedValue ] ) => {
-				it( description, () => {
-					expect(
-						validateEnumType(
-							'string',
-							[ 'a', 'b', 'valid' ],
-							testValue
-						)
-					).toBe( expectedValue );
-				} );
-			}
-		);
-	} );
-	describe( 'isShallowValidValueForField()', () => {
+		testConditions.forEach(([description, testValue, expectedValue]) => {
+			it(description, () => {
+				expect(
+					validateEnumType('string', ['a', 'b', 'valid'], testValue)
+				).toBe(expectedValue);
+			});
+		});
+	});
+	describe('isShallowValidValueForField()', () => {
 		const testCall = (
 			fieldName,
 			fieldValue,
@@ -106,7 +100,7 @@ describe( 'Testing validator functions for model-entity factory', () => {
 		const testEnumSchema = {
 			enumfield: {
 				type: 'string',
-				enum: [ 'a', 'b', 'c' ],
+				enum: ['a', 'b', 'c'],
 			},
 		};
 		const testConditions = [
@@ -162,7 +156,7 @@ describe( 'Testing validator functions for model-entity factory', () => {
 				'it returns expected response for valid field value when ' +
 					'value objects are expected',
 				'EVT_visible_on',
-				DateTime.fromJSDate( new Date() ),
+				DateTime.fromJSDate(new Date()),
 				EventSchemaProperties,
 				true,
 				true,
@@ -204,7 +198,7 @@ describe( 'Testing validator functions for model-entity factory', () => {
 					'is of object type for the schema field when value objects ' +
 					'are expected',
 				'REG_final_price',
-				new Money( 1.25, SiteCurrency ),
+				new Money(1.25, SiteCurrency),
 				RegistrationSchemaProperties,
 				true,
 				true,
@@ -232,7 +226,7 @@ describe( 'Testing validator functions for model-entity factory', () => {
 			],
 		];
 		testConditions.forEach(
-			( [
+			([
 				description,
 				fieldName,
 				testValue,
@@ -240,9 +234,9 @@ describe( 'Testing validator functions for model-entity factory', () => {
 				expectValueObjects,
 				expectedValue,
 				expectedException,
-			] ) => {
-				it( description, () => {
-					if ( expectedException === null ) {
+			]) => {
+				it(description, () => {
+					if (expectedException === null) {
 						expect(
 							testCall(
 								fieldName,
@@ -250,7 +244,7 @@ describe( 'Testing validator functions for model-entity factory', () => {
 								schema,
 								expectValueObjects
 							)()
-						).toBe( expectedValue );
+						).toBe(expectedValue);
 					} else {
 						expect(
 							testCall(
@@ -259,10 +253,10 @@ describe( 'Testing validator functions for model-entity factory', () => {
 								schema,
 								expectValueObjects
 							)
-						).toThrow( expectedException );
+						).toThrow(expectedException);
 					}
-				} );
+				});
 			}
 		);
-	} );
-} );
+	});
+});

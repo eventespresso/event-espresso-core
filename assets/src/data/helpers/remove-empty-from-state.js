@@ -26,21 +26,21 @@ export const removeEmptyFromState = (
 	lengthRemaining = 1,
 	withMutations = true
 ) => {
-	const clearPaths = ( subState ) => {
-		if ( subState.hasIn( path ) ) {
-			subState.deleteIn( path );
+	const clearPaths = (subState) => {
+		if (subState.hasIn(path)) {
+			subState.deleteIn(path);
 			path.pop();
 			while (
 				path.length > lengthRemaining &&
-				subState.getIn( path ).isEmpty()
+				subState.getIn(path).isEmpty()
 			) {
-				subState.deleteIn( path );
+				subState.deleteIn(path);
 				path.pop();
 			}
 		}
 	};
 
 	return withMutations
-		? state.withMutations( ( subState ) => clearPaths( subState ) )
-		: clearPaths( state );
+		? state.withMutations((subState) => clearPaths(subState))
+		: clearPaths(state);
 };

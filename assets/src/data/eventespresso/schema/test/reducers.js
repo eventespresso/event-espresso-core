@@ -18,31 +18,31 @@ import { eventFactory } from '../../test/fixtures/base';
 import { ACTION_TYPES as types } from '../action-types';
 
 const expectedDefaultState = {
-	schema: fromJS( {
+	schema: fromJS({
 		datetime: {},
 		event: {},
 		term: {},
 		ticket: {},
 		venue: {},
-	} ),
-	factory: fromJS( {
+	}),
+	factory: fromJS({
 		datetime: {},
 		event: {},
 		term: {},
 		ticket: {},
 		venue: {},
-	} ),
-	relationEndpoints: fromJS( {
+	}),
+	relationEndpoints: fromJS({
 		datetime: {},
 		event: {},
 		term: {},
 		ticket: {},
 		venue: {},
-	} ),
+	}),
 	relationSchema: Map(),
 };
 
-describe( 'receiveSchema()', () => {
+describe('receiveSchema()', () => {
 	const testRunner = (
 		testConditions,
 		formerState,
@@ -50,47 +50,47 @@ describe( 'receiveSchema()', () => {
 		reducerMethod
 	) =>
 		testConditions.forEach(
-			( [ modelName, args, expectedState, isEqualIncomingState ] ) => {
+			([modelName, args, expectedState, isEqualIncomingState]) => {
 				const oldState = formerState;
-				const newState = reducerMethod( formerState, {
+				const newState = reducerMethod(formerState, {
 					type: actionType,
 					modelName,
 					...args,
-				} );
-				it( 'has expected match to former state', () => {
-					if ( isEqualIncomingState ) {
-						expect( newState ).toBe( oldState );
+				});
+				it('has expected match to former state', () => {
+					if (isEqualIncomingState) {
+						expect(newState).toBe(oldState);
 					} else {
-						expect( newState ).not.toEqual( oldState );
+						expect(newState).not.toEqual(oldState);
 					}
-				} );
-				it( 'returns expected value', () => {
-					expect( newState ).toEqual( expectedState );
-				} );
+				});
+				it('returns expected value', () => {
+					expect(newState).toEqual(expectedState);
+				});
 				formerState = newState;
 			}
 		);
-	it( 'returns the expected default object (from mock data)', () => {
-		const state = receiveSchema( undefined, {} );
-		expect( state ).toEqual( fromJS( DEFAULT_SCHEMA_STATE.schema ) );
-	} );
-	describe( types.RECEIVE_SCHEMA_RECORD + ' action handling', () => {
+	it('returns the expected default object (from mock data)', () => {
+		const state = receiveSchema(undefined, {});
+		expect(state).toEqual(fromJS(DEFAULT_SCHEMA_STATE.schema));
+	});
+	describe(types.RECEIVE_SCHEMA_RECORD + ' action handling', () => {
 		describe(
 			'returns correct state for multiple consecutive ' + 'queries',
 			() => {
 				const originalState = expectedDefaultState.schema;
 				const testConditions = [
-					[ 'datetime', {}, originalState, true ],
+					['datetime', {}, originalState, true],
 					[
 						'event',
 						{ schema: EventSchema },
-						originalState.set( 'event', EventSchema ),
+						originalState.set('event', EventSchema),
 						false,
 					],
 					[
 						'event',
 						{ schema: EventSchema },
-						originalState.set( 'event', EventSchema ),
+						originalState.set('event', EventSchema),
 						true,
 					],
 				];
@@ -102,24 +102,24 @@ describe( 'receiveSchema()', () => {
 				);
 			}
 		);
-	} );
-	describe( types.RECEIVE_FACTORY_FOR_MODEL + ' action handling', () => {
+	});
+	describe(types.RECEIVE_FACTORY_FOR_MODEL + ' action handling', () => {
 		describe(
 			'returns correct state for multiple consecutive ' + 'queries',
 			() => {
 				const originalState = expectedDefaultState.factory;
 				const testConditions = [
-					[ 'datetime', {}, originalState, true ],
+					['datetime', {}, originalState, true],
 					[
 						'event',
 						{ factory: eventFactory },
-						originalState.set( 'event', eventFactory ),
+						originalState.set('event', eventFactory),
 						false,
 					],
 					[
 						'event',
 						{ factory: eventFactory },
-						originalState.set( 'event', eventFactory ),
+						originalState.set('event', eventFactory),
 						true,
 					],
 				];
@@ -131,7 +131,7 @@ describe( 'receiveSchema()', () => {
 				);
 			}
 		);
-	} );
+	});
 	describe(
 		types.RECEIVE_RELATION_ENDPOINT_FOR_MODEL_ENTITY +
 			' action ' +
@@ -143,7 +143,7 @@ describe( 'receiveSchema()', () => {
 					const originalState =
 						expectedDefaultState.relationEndpoints;
 					const testConditions = [
-						[ 'datetime', {}, originalState, true ],
+						['datetime', {}, originalState, true],
 						[
 							'event',
 							{
@@ -153,7 +153,7 @@ describe( 'receiveSchema()', () => {
 								endpoint: 'event/10/datetimes',
 							},
 							originalState.setIn(
-								[ 'event', 10, 'datetime' ],
+								['event', 10, 'datetime'],
 								'event/10/datetimes'
 							),
 							false,
@@ -166,7 +166,7 @@ describe( 'receiveSchema()', () => {
 								endpoint: 'event/10/datetimes',
 							},
 							originalState.setIn(
-								[ 'event', 10, 'datetime' ],
+								['event', 10, 'datetime'],
 								'event/10/datetimes'
 							),
 							true,
@@ -182,7 +182,7 @@ describe( 'receiveSchema()', () => {
 			);
 		}
 	);
-	describe( types.RECEIVE_RELATION_SCHEMA + ' action handling', () => {
+	describe(types.RECEIVE_RELATION_SCHEMA + ' action handling', () => {
 		describe(
 			'returns correct state for multiple consecutive ' + 'queries',
 			() => {
@@ -194,9 +194,9 @@ describe( 'receiveSchema()', () => {
 							relationName: 'datetimes',
 							relationSchema: { foo: 'bar' },
 						},
-						originalState.setIn( [ 'event', 'datetime' ], {
+						originalState.setIn(['event', 'datetime'], {
 							foo: 'bar',
-						} ),
+						}),
 						false,
 					],
 					[
@@ -206,8 +206,8 @@ describe( 'receiveSchema()', () => {
 							relationSchema: { foo: 'bar' },
 						},
 						originalState
-							.setIn( [ 'event', 'datetime' ], { foo: 'bar' } )
-							.setIn( [ 'datetime', 'event' ], { foo: 'bar' } ),
+							.setIn(['event', 'datetime'], { foo: 'bar' })
+							.setIn(['datetime', 'event'], { foo: 'bar' }),
 						false,
 					],
 					[
@@ -217,8 +217,8 @@ describe( 'receiveSchema()', () => {
 							relationSchema: { foo: 'bar' },
 						},
 						originalState
-							.setIn( [ 'event', 'datetime' ], { foo: 'bar' } )
-							.setIn( [ 'datetime', 'event' ], { foo: 'bar' } ),
+							.setIn(['event', 'datetime'], { foo: 'bar' })
+							.setIn(['datetime', 'event'], { foo: 'bar' }),
 						true,
 					],
 				];
@@ -230,5 +230,5 @@ describe( 'receiveSchema()', () => {
 				);
 			}
 		);
-	} );
-} );
+	});
+});

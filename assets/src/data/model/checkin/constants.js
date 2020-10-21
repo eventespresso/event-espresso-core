@@ -11,4 +11,4 @@ export const CHECKIN_STATUS_ID = {
 	STATUS_CHECKED_NEVER: 2,
 };
 
-export const CHECKIN_STATUS_IDS = values( CHECKIN_STATUS_ID );
+export const CHECKIN_STATUS_IDS = values(CHECKIN_STATUS_ID);

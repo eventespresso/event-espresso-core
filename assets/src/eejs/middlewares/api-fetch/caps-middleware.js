@@ -16,12 +16,12 @@ export const CONTEXT_CAPS_DELETE = 'delete';
  * @param {Object} options the options object provided to api-fetch
  * @return {boolean} Whether context should be appended or not.
  */
-function shouldBeAppended( pathType, options ) {
+function shouldBeAppended(pathType, options) {
 	return (
-		typeof options[ pathType ] === 'string' &&
-		( ! options.method || options.method === 'GET' ) &&
-		! hasQueryArg( options[ pathType ], 'caps' ) &&
-		/ee\/v4\.8\.36/.exec( options[ pathType ] ) !== null
+		typeof options[pathType] === 'string' &&
+		(!options.method || options.method === 'GET') &&
+		!hasQueryArg(options[pathType], 'caps') &&
+		/ee\/v4\.8\.36/.exec(options[pathType]) !== null
 	);
 }
 
@@ -32,15 +32,15 @@ function shouldBeAppended( pathType, options ) {
  * @param { string } context Defaults to 'read'
  * @return {Function} middleware callback
  */
-const capsMiddleware = ( context = CONTEXT_CAPS_READ ) => ( options, next ) => {
-	if ( shouldBeAppended( 'url', options ) ) {
-		options.url = addQueryArgs( options.url, { caps: context } );
+const capsMiddleware = (context = CONTEXT_CAPS_READ) => (options, next) => {
+	if (shouldBeAppended('url', options)) {
+		options.url = addQueryArgs(options.url, { caps: context });
 	}
 
-	if ( shouldBeAppended( 'path', options ) ) {
-		options.path = addQueryArgs( options.path, { caps: context } );
+	if (shouldBeAppended('path', options)) {
+		options.path = addQueryArgs(options.path, { caps: context });
 	}
-	return next( options, next );
+	return next(options, next);
 };
 
 export default capsMiddleware;

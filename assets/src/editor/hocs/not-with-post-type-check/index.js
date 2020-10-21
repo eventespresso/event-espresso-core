@@ -14,28 +14,28 @@ import { withSelect } from '@wordpress/data';
  * @return {?WPElement} Rendered element or null.
  * @class
  */
-export function NotWithPostTypeCheck( {
+export function NotWithPostTypeCheck({
 	postType,
 	children,
 	excludedPostTypeSlugs,
-} ) {
+}) {
 	let isExcluded = false;
-	if ( postType ) {
+	if (postType) {
 		isExcluded = some(
-			castArray( excludedPostTypeSlugs ),
-			( type ) => postType === type
+			castArray(excludedPostTypeSlugs),
+			(type) => postType === type
 		);
 	}
-	if ( isExcluded ) {
+	if (isExcluded) {
 		return null;
 	}
 
 	return children;
 }
 
-export default withSelect( ( select ) => {
-	const { getEditedPostAttribute } = select( 'core/editor' );
+export default withSelect((select) => {
+	const { getEditedPostAttribute } = select('core/editor');
 	return {
-		postType: getEditedPostAttribute( 'type' ),
+		postType: getEditedPostAttribute('type'),
 	};
-} )( NotWithPostTypeCheck );
+})(NotWithPostTypeCheck);

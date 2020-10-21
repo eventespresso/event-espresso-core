@@ -21,8 +21,8 @@ import { removeEntityById } from '../../reducers/entities';
 import { removeRelatedEntitiesForEntity } from '../../reducers/relations';
 import { trashEntity } from '../../reducers/dirty-entities';
 
-describe( 'getRelationIdsForEntityRelation()', () => {
-	beforeEach( () => getRelationIdsForEntityRelation.clear() );
+describe('getRelationIdsForEntityRelation()', () => {
+	beforeEach(() => getRelationIdsForEntityRelation.clear());
 	it(
 		'throws InvalidModelEntity when the provided entity is not a model ' +
 			'entity',
@@ -33,21 +33,21 @@ describe( 'getRelationIdsForEntityRelation()', () => {
 					{},
 					'cheese'
 				);
-			expect( test ).toThrow( InvalidModelEntity );
+			expect(test).toThrow(InvalidModelEntity);
 		}
 	);
-	it( 'returns empty array when the given entity is not in state', () => {
-		const testEvent = EventFactory.createNew( {
+	it('returns empty array when the given entity is not in state', () => {
+		const testEvent = EventFactory.createNew({
 			EVT_name: 'Test Event',
-		} );
+		});
 		expect(
 			getRelationIdsForEntityRelation(
 				mockStateForTests,
 				testEvent,
 				'datetime'
 			)
-		).toEqual( [] );
-	} );
+		).toEqual([]);
+	});
 	it(
 		'returns empty array when the given entity exists but the relation is' +
 			'not in state',
@@ -58,18 +58,18 @@ describe( 'getRelationIdsForEntityRelation()', () => {
 					EventEntities.a,
 					'cheese'
 				)
-			).toEqual( [] );
+			).toEqual([]);
 		}
 	);
-	it( 'returns expected array for the given entity and relation', () => {
+	it('returns expected array for the given entity and relation', () => {
 		expect(
 			getRelationIdsForEntityRelation(
 				mockStateForTests,
 				EventEntities.a,
 				'datetime'
 			)
-		).toEqual( [ 52 ] );
-	} );
+		).toEqual([52]);
+	});
 	it(
 		'returns cached copy when state has not changed for the given ' +
 			'query',
@@ -85,10 +85,10 @@ describe( 'getRelationIdsForEntityRelation()', () => {
 					EventEntities.a,
 					'datetime'
 				)
-			).toBe( testResult );
+			).toBe(testResult);
 		}
 	);
-	it( 'breaks cache when state has changed', () => {
+	it('breaks cache when state has changed', () => {
 		const testResult = getRelationIdsForEntityRelation(
 			mockStateForTests,
 			EventEntities.a,
@@ -96,48 +96,44 @@ describe( 'getRelationIdsForEntityRelation()', () => {
 		);
 		const modifiedState = { ...mockStateForTests };
 		modifiedState.relations = modifiedState.relations.setIn(
-			[ 'event', 10, 'datetime' ],
-			Set.of( 52, 88 )
+			['event', 10, 'datetime'],
+			Set.of(52, 88)
 		);
 		const modifiedResult = getRelationIdsForEntityRelation(
 			modifiedState,
 			EventEntities.a,
 			'datetime'
 		);
-		expect( modifiedResult ).not.toBe( testResult );
-		expect( modifiedResult ).toEqual( [ 52, 88 ] );
-	} );
-} );
-describe( 'getRelatedEntities()', () => {
-	beforeEach( () => getRelatedEntities.clear() );
+		expect(modifiedResult).not.toBe(testResult);
+		expect(modifiedResult).toEqual([52, 88]);
+	});
+});
+describe('getRelatedEntities()', () => {
+	beforeEach(() => getRelatedEntities.clear());
 	it(
 		'throws InvalidModelEntity when entity is not a BaseEntity ' +
 			'instance',
 		() => {
 			const testResult = () =>
-				getRelatedEntities( mockStateForTests, {}, 'datetimes' );
-			expect( testResult ).toThrow( InvalidModelEntity );
+				getRelatedEntities(mockStateForTests, {}, 'datetimes');
+			expect(testResult).toThrow(InvalidModelEntity);
 		}
 	);
-	it( 'returns an empty array when the given entity is not in state', () => {
-		const testEvent = EventFactory.createNew( {
+	it('returns an empty array when the given entity is not in state', () => {
+		const testEvent = EventFactory.createNew({
 			EVT_name: 'Test Event',
-		} );
+		});
 		expect(
-			getRelatedEntities( mockStateForTests, testEvent, 'datetime' )
-		).toEqual( [] );
-	} );
+			getRelatedEntities(mockStateForTests, testEvent, 'datetime')
+		).toEqual([]);
+	});
 	it(
 		'returns an empty array when there are no relations for the given ' +
 			'relation name in the state',
 		() => {
 			expect(
-				getRelatedEntities(
-					mockStateForTests,
-					EventEntities.a,
-					'cheese'
-				)
-			).toEqual( [] );
+				getRelatedEntities(mockStateForTests, EventEntities.a, 'cheese')
+			).toEqual([]);
 		}
 	);
 	it(
@@ -150,7 +146,7 @@ describe( 'getRelatedEntities()', () => {
 					EventEntities.a,
 					'datetime'
 				)
-			).toEqual( [ DateTimeEntities.a ] );
+			).toEqual([DateTimeEntities.a]);
 		}
 	);
 	it(
@@ -168,10 +164,10 @@ describe( 'getRelatedEntities()', () => {
 					EventEntities.a,
 					'datetime'
 				)
-			).toBe( testResult );
+			).toBe(testResult);
 		}
 	);
-	it( 'breaks cache when state has changed', () => {
+	it('breaks cache when state has changed', () => {
 		const testResult = getRelatedEntities(
 			mockStateForTests,
 			EventEntities.a,
@@ -179,13 +175,13 @@ describe( 'getRelatedEntities()', () => {
 		);
 		const modifiedStateA = { ...mockStateForTests };
 		modifiedStateA.relations = modifiedStateA.relations.setIn(
-			[ 'event', 10, 'datetime' ],
-			Set.of( 52, 88 )
+			['event', 10, 'datetime'],
+			Set.of(52, 88)
 		);
 		const modifiedStateB = { ...mockStateForTests };
 		modifiedStateB.entities = modifiedStateB.entities
-			.deleteIn( [ 'datetime', 52 ] )
-			.setIn( [ 'datetime', 52 ], DateTimeEntities.a );
+			.deleteIn(['datetime', 52])
+			.setIn(['datetime', 52], DateTimeEntities.a);
 		const modifiedResultA = getRelatedEntities(
 			modifiedStateA,
 			EventEntities.a,
@@ -196,66 +192,61 @@ describe( 'getRelatedEntities()', () => {
 			EventEntities.a,
 			'datetime'
 		);
-		expect( modifiedResultA ).not.toBe( testResult );
-		expect( modifiedResultA ).toEqual( [ DateTimeEntities.a ] );
-		expect( modifiedResultB ).not.toBe( testResult );
-		expect( modifiedResultB ).toEqual( [ DateTimeEntities.a ] );
-	} );
-} );
-describe( 'Dirty relations tests', () => {
+		expect(modifiedResultA).not.toBe(testResult);
+		expect(modifiedResultA).toEqual([DateTimeEntities.a]);
+		expect(modifiedResultB).not.toBe(testResult);
+		expect(modifiedResultB).toEqual([DateTimeEntities.a]);
+	});
+});
+describe('Dirty relations tests', () => {
 	const originalState = { ...mockStateForTests };
-	beforeEach( () => {
-		const getState = ( incomingState = Map() ) => {
-			return incomingState.withMutations( ( subState ) => {
+	beforeEach(() => {
+		const getState = (incomingState = Map()) => {
+			return incomingState.withMutations((subState) => {
 				subState.set(
 					'index',
 					Map().setIn(
-						[ 'datetime', 20 ],
-						fromJS( {
-							event: { delete: Set( [ 10 ] ) },
+						['datetime', 20],
+						fromJS({
+							event: { delete: Set([10]) },
 							ticket: {
-								delete: Set( [ 50 ] ),
-								add: Set( [ 60 ] ),
+								delete: Set([50]),
+								add: Set([60]),
 							},
-						} )
+						})
 					)
 				);
 				subState.set(
 					'delete',
 					Map().set(
 						'event',
-						Map().set( 10, fromJS( { datetime: Set( [ 20 ] ) } ) )
+						Map().set(10, fromJS({ datetime: Set([20]) }))
 					)
 				);
 				subState.setIn(
-					[ 'delete', 'ticket' ],
-					Map().set( 50, fromJS( { datetime: Set( [ 20 ] ) } ) )
+					['delete', 'ticket'],
+					Map().set(50, fromJS({ datetime: Set([20]) }))
 				);
 				subState.set(
 					'add',
 					Map().set(
 						'ticket',
-						Map().set( 60, fromJS( { datetime: Set( [ 20 ] ) } ) )
+						Map().set(60, fromJS({ datetime: Set([20]) }))
 					)
 				);
-			} );
+			});
 		};
-		originalState.dirty.relations = getState(
-			originalState.dirty.relations
-		);
-	} );
-	describe( 'getRelationAdditionsQueuedForModel()', () => {
-		beforeEach( () => getRelationAdditionsQueuedForModel.clear() );
+		originalState.dirty.relations = getState(originalState.dirty.relations);
+	});
+	describe('getRelationAdditionsQueuedForModel()', () => {
+		beforeEach(() => getRelationAdditionsQueuedForModel.clear());
 		it(
 			'returns an empty object when there are no records for the ' +
 				'given model name',
 			() => {
 				expect(
-					getRelationAdditionsQueuedForModel(
-						originalState,
-						'cheese'
-					)
-				).toEqual( {} );
+					getRelationAdditionsQueuedForModel(originalState, 'cheese')
+				).toEqual({});
 			}
 		);
 		it(
@@ -263,13 +254,10 @@ describe( 'Dirty relations tests', () => {
 				'modelName',
 			() => {
 				expect(
-					getRelationAdditionsQueuedForModel(
-						originalState,
-						'ticket'
-					)
-				).toEqual( {
-					60: { datetime: [ 20 ] },
-				} );
+					getRelationAdditionsQueuedForModel(originalState, 'ticket')
+				).toEqual({
+					60: { datetime: [20] },
+				});
 			}
 		);
 		it(
@@ -281,21 +269,21 @@ describe( 'Dirty relations tests', () => {
 						originalState,
 						'datetime'
 					)
-				).toEqual( {
-					20: { ticket: [ 60 ] },
-				} );
+				).toEqual({
+					20: { ticket: [60] },
+				});
 			}
 		);
-		it( 'returns cached copy when state has not changed', () => {
+		it('returns cached copy when state has not changed', () => {
 			const testResult = getRelationAdditionsQueuedForModel(
 				originalState,
 				'ticket'
 			);
 			expect(
-				getRelationAdditionsQueuedForModel( originalState, 'ticket' )
-			).toBe( testResult );
-		} );
-		it( 'breaks cache when state changes', () => {
+				getRelationAdditionsQueuedForModel(originalState, 'ticket')
+			).toBe(testResult);
+		});
+		it('breaks cache when state changes', () => {
 			const testResult = getRelationAdditionsQueuedForModel(
 				originalState,
 				'ticket'
@@ -306,31 +294,28 @@ describe( 'Dirty relations tests', () => {
 			modifiedState.dirty.relations = modifiedState.dirty.relations.set(
 				'add',
 				modifiedState.dirty.relations
-					.get( 'add' )
-					.setIn( [ 'ticket', 60, 'datetime' ], Set.of( 20, 80 ) )
+					.get('add')
+					.setIn(['ticket', 60, 'datetime'], Set.of(20, 80))
 			);
 			const modifiedResult = getRelationAdditionsQueuedForModel(
 				modifiedState,
 				'ticket'
 			);
-			expect( modifiedResult ).not.toBe( testResult );
-			expect( modifiedResult ).toEqual( {
-				60: { datetime: [ 20, 80 ] },
-			} );
-		} );
-	} );
-	describe( 'getRelationDeletionsQueuedForModel()', () => {
-		beforeEach( () => getRelationDeletionsQueuedForModel.clear() );
+			expect(modifiedResult).not.toBe(testResult);
+			expect(modifiedResult).toEqual({
+				60: { datetime: [20, 80] },
+			});
+		});
+	});
+	describe('getRelationDeletionsQueuedForModel()', () => {
+		beforeEach(() => getRelationDeletionsQueuedForModel.clear());
 		it(
 			'returns an empty object when there are no records for the ' +
 				'given model name',
 			() => {
 				expect(
-					getRelationDeletionsQueuedForModel(
-						originalState,
-						'cheese'
-					)
-				).toEqual( {} );
+					getRelationDeletionsQueuedForModel(originalState, 'cheese')
+				).toEqual({});
 			}
 		);
 		it(
@@ -338,10 +323,10 @@ describe( 'Dirty relations tests', () => {
 				'modelName',
 			() => {
 				expect(
-					getRelationDeletionsQueuedForModel( originalState, 'event' )
-				).toEqual( {
-					10: { datetime: [ 20 ] },
-				} );
+					getRelationDeletionsQueuedForModel(originalState, 'event')
+				).toEqual({
+					10: { datetime: [20] },
+				});
 			}
 		);
 		it(
@@ -353,21 +338,21 @@ describe( 'Dirty relations tests', () => {
 						originalState,
 						'datetime'
 					)
-				).toEqual( {
-					20: { event: [ 10 ], ticket: [ 50 ] },
-				} );
+				).toEqual({
+					20: { event: [10], ticket: [50] },
+				});
 			}
 		);
-		it( 'returns cached copy when state has not changed', () => {
+		it('returns cached copy when state has not changed', () => {
 			const testResult = getRelationDeletionsQueuedForModel(
 				originalState,
 				'event'
 			);
 			expect(
-				getRelationDeletionsQueuedForModel( originalState, 'event' )
-			).toBe( testResult );
-		} );
-		it( 'breaks cache when state changes', () => {
+				getRelationDeletionsQueuedForModel(originalState, 'event')
+			).toBe(testResult);
+		});
+		it('breaks cache when state changes', () => {
 			const testResult = getRelationDeletionsQueuedForModel(
 				originalState,
 				'event'
@@ -378,39 +363,31 @@ describe( 'Dirty relations tests', () => {
 			modifiedState.dirty.relations = modifiedState.dirty.relations.set(
 				'delete',
 				modifiedState.dirty.relations
-					.get( 'delete' )
-					.setIn( [ 'event', 10, 'datetime' ], Set.of( 20, 80 ) )
+					.get('delete')
+					.setIn(['event', 10, 'datetime'], Set.of(20, 80))
 			);
 			const modifiedResult = getRelationDeletionsQueuedForModel(
 				modifiedState,
 				'event'
 			);
-			expect( modifiedResult ).not.toBe( testResult );
-			expect( modifiedResult ).toEqual( {
-				10: { datetime: [ 20, 80 ] },
-			} );
-		} );
-	} );
-} );
-describe( 'countRelationModelsIndexedForEntity()', () => {
-	it( 'returns 0 for entity models not existing in the state', () => {
+			expect(modifiedResult).not.toBe(testResult);
+			expect(modifiedResult).toEqual({
+				10: { datetime: [20, 80] },
+			});
+		});
+	});
+});
+describe('countRelationModelsIndexedForEntity()', () => {
+	it('returns 0 for entity models not existing in the state', () => {
 		expect(
-			countRelationModelsIndexedForEntity(
-				mockStateForTests,
-				'cheese',
-				10
-			)
-		).toBe( 0 );
-	} );
-	it( 'returns 0 for entity id not existing in the state', () => {
+			countRelationModelsIndexedForEntity(mockStateForTests, 'cheese', 10)
+		).toBe(0);
+	});
+	it('returns 0 for entity id not existing in the state', () => {
 		expect(
-			countRelationModelsIndexedForEntity(
-				mockStateForTests,
-				'event',
-				80
-			)
-		).toBe( 0 );
-	} );
+			countRelationModelsIndexedForEntity(mockStateForTests, 'event', 80)
+		).toBe(0);
+	});
 	it(
 		'returns expected value for entity existing in state when id is a ' +
 			'string (testing normalization)',
@@ -421,7 +398,7 @@ describe( 'countRelationModelsIndexedForEntity()', () => {
 					'events',
 					'10'
 				)
-			).toBe( 1 );
+			).toBe(1);
 		}
 	);
 	it(
@@ -434,7 +411,7 @@ describe( 'countRelationModelsIndexedForEntity()', () => {
 					'event',
 					10
 				)
-			).toBe( 1 );
+			).toBe(1);
 		}
 	);
 	it(
@@ -447,25 +424,25 @@ describe( 'countRelationModelsIndexedForEntity()', () => {
 					'datetime',
 					'52'
 				)
-			).toBe( 1 );
+			).toBe(1);
 		}
 	);
-	it( 'returns cached value for repeated call', () => {
+	it('returns cached value for repeated call', () => {
 		const testResult = countRelationModelsIndexedForEntity(
 			mockStateForTests,
 			'events',
 			20
 		);
-		expect( testResult ).toBe( 1 );
+		expect(testResult).toBe(1);
 		expect(
 			countRelationModelsIndexedForEntity(
 				mockStateForTests,
 				'event',
 				'20'
 			)
-		).toBe( testResult );
-	} );
-	describe( 'busts cache when state has changed', () => {
+		).toBe(testResult);
+	});
+	describe('busts cache when state has changed', () => {
 		const testResult = countRelationModelsIndexedForEntity(
 			mockStateForTests,
 			'event',
@@ -473,28 +450,25 @@ describe( 'countRelationModelsIndexedForEntity()', () => {
 		);
 		const modifiedState = { ...mockStateForTests };
 		modifiedState.relations = modifiedState.relations
-			.setIn(
-				[ 'datetime', 44 ],
-				Map().set( 'ticket', Set.of( 30, 20 ) )
-			)
-			.setIn( [ 'ticket', 30 ], Map().set( 'datetime', Set.of( 44 ) ) )
-			.setIn( [ 'ticket', 20 ], Map().set( 'datetime', Set.of( 44 ) ) );
+			.setIn(['datetime', 44], Map().set('ticket', Set.of(30, 20)))
+			.setIn(['ticket', 30], Map().set('datetime', Set.of(44)))
+			.setIn(['ticket', 20], Map().set('datetime', Set.of(44)));
 		const modifiedStateResult = countRelationModelsIndexedForEntity(
 			modifiedState,
 			'event',
 			10
 		);
-		it( 'has expected result for initial cached result', () => {
-			expect( testResult ).toBe( 1 );
-		} );
-		it( 'busts cache when monitored state modified', () => {
-			expect( testResult ).not.toBe( modifiedState );
-		} );
+		it('has expected result for initial cached result', () => {
+			expect(testResult).toBe(1);
+		});
+		it('busts cache when monitored state modified', () => {
+			expect(testResult).not.toBe(modifiedState);
+		});
 		it(
 			'has expected result for modified state with same ' +
 				'initial query',
 			() => {
-				expect( modifiedStateResult ).toBe( 1 );
+				expect(modifiedStateResult).toBe(1);
 			}
 		);
 		it(
@@ -507,24 +481,24 @@ describe( 'countRelationModelsIndexedForEntity()', () => {
 						'datetime',
 						'44'
 					)
-				).toBe( 1 );
+				).toBe(1);
 			}
 		);
-	} );
-} );
+	});
+});
 
-describe( 'getRelatedEntitiesForIds()', () => {
-	beforeEach( () => getRelatedEntitiesForIds.clear() );
-	it( 'returns expected entities for given arguments', () => {
+describe('getRelatedEntitiesForIds()', () => {
+	beforeEach(() => getRelatedEntitiesForIds.clear());
+	it('returns expected entities for given arguments', () => {
 		expect(
 			getRelatedEntitiesForIds(
 				mockStateForTests,
 				'event',
-				[ 10, 20 ],
+				[10, 20],
 				'datetimes'
 			)
-		).toEqual( [ DateTimeEntities.a, DateTimeEntities.b ] );
-	} );
+		).toEqual([DateTimeEntities.a, DateTimeEntities.b]);
+	});
 	it(
 		'returns expected entities for given arguments when the same ' +
 			'relation entity is shared across multiple model entity ids',
@@ -532,46 +506,43 @@ describe( 'getRelatedEntitiesForIds()', () => {
 			const testState = {
 				...mockStateForTests,
 				relations: mockStateForTests.relations
+					.setIn(['datetime', 54], Map().set('event', Set.of(10, 30)))
 					.setIn(
-						[ 'datetime', 54 ],
-						Map().set( 'event', Set.of( 10, 30 ) )
-					)
-					.setIn(
-						[ 'event', 10 ],
-						Map().set( 'datetime', Set.of( 52, 54 ) )
+						['event', 10],
+						Map().set('datetime', Set.of(52, 54))
 					),
 			};
 			expect(
 				getRelatedEntitiesForIds(
 					testState,
 					'event',
-					[ 10, 30 ],
+					[10, 30],
 					'datetimes'
 				)
-			).toEqual( [ DateTimeEntities.a, DateTimeEntities.c ] );
+			).toEqual([DateTimeEntities.a, DateTimeEntities.c]);
 		}
 	);
-	it( 'does not return cached results after entity has been trashed', () => {
+	it('does not return cached results after entity has been trashed', () => {
 		const modifiedState = { ...mockStateForTests };
 		// add date b to event a
 		modifiedState.relations = modifiedState.relations
 			.setIn(
-				[ 'event', EventEntities.a.id, 'datetime' ],
-				Set.of( DateTimeEntities.a.id, DateTimeEntities.b.id )
+				['event', EventEntities.a.id, 'datetime'],
+				Set.of(DateTimeEntities.a.id, DateTimeEntities.b.id)
 			)
 			.setIn(
-				[ 'datetime', DateTimeEntities.b.id, 'event' ],
-				Set.of( EventEntities.a.id, EventEntities.b.id )
+				['datetime', DateTimeEntities.b.id, 'event'],
+				Set.of(EventEntities.a.id, EventEntities.b.id)
 			);
 		// get date entities using IDs for event a & b
 		expect(
 			getRelatedEntitiesForIds(
 				modifiedState,
 				'event',
-				[ EventEntities.a.id, EventEntities.b.id ],
+				[EventEntities.a.id, EventEntities.b.id],
 				'datetime'
 			)
-		).toEqual( [ DateTimeEntities.a, DateTimeEntities.b ] );
+		).toEqual([DateTimeEntities.a, DateTimeEntities.b]);
 		// trash date a
 		const trashAction = {
 			modelName: 'datetime',
@@ -595,9 +566,9 @@ describe( 'getRelatedEntitiesForIds()', () => {
 			getRelatedEntitiesForIds(
 				modifiedState,
 				'event',
-				[ EventEntities.a.id, EventEntities.b.id ],
+				[EventEntities.a.id, EventEntities.b.id],
 				'datetime'
 			)
-		).toEqual( [ DateTimeEntities.b ] );
-	} );
-} );
+		).toEqual([DateTimeEntities.b]);
+	});
+});

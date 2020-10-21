@@ -11,18 +11,18 @@ import * as modelSelectors from './model-selectors-index';
 import * as modelResolvers from './model-resolvers-index';
 
 export const selectors = {
-	...entitySelectors.createSelectors( baseSelectors ),
-	...relationSelectors.createSelectors( baseSelectors ),
+	...entitySelectors.createSelectors(baseSelectors),
+	...relationSelectors.createSelectors(baseSelectors),
 	...modelSelectors,
 };
 
 export const actions = {
-	...entityActions.createActions( baseActions ),
-	...relationActions.createActions( baseActions ),
+	...entityActions.createActions(baseActions),
+	...relationActions.createActions(baseActions),
 	...modelActions,
 };
 
 export const resolvers = {
-	...entityResolvers.createResolvers( baseResolvers ),
+	...entityResolvers.createResolvers(baseResolvers),
 	...modelResolvers,
 };

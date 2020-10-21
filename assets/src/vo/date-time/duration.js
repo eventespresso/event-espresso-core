@@ -14,7 +14,7 @@ import { instanceOf } from '@eventespresso/validators';
 import * as assertions from './assertions';
 import { DEFAULT_VALID_LOCALE } from './defaults';
 
-momentDurationFormatSetup( moment );
+momentDurationFormatSetup(moment);
 
 /**
  * A collection of symbols used for "private" properties in the Duration object.
@@ -28,9 +28,9 @@ momentDurationFormatSetup( moment );
  * }
  */
 const privateProperties = {
-	duration: Symbol( 'DurationPrivatePropertiesDuration' ),
-	durationValues: Symbol( 'DurationPrivatePropertiesDurationValues' ),
-	isValid: Symbol( 'DurationPrivatePropertiesIsValid' ),
+	duration: Symbol('DurationPrivatePropertiesDuration'),
+	durationValues: Symbol('DurationPrivatePropertiesDurationValues'),
+	isValid: Symbol('DurationPrivatePropertiesIsValid'),
 };
 
 /**
@@ -47,13 +47,13 @@ const privateProperties = {
  * }
  */
 const privateMethods = {
-	createGetters: Symbol( 'DurationPrivateMethodsCreateGetters' ),
-	getAllUnitNames: Symbol( 'DurationPrivateMethodsGetAllUnitNames' ),
+	createGetters: Symbol('DurationPrivateMethodsCreateGetters'),
+	getAllUnitNames: Symbol('DurationPrivateMethodsGetAllUnitNames'),
 	populateValuesFromDuration: Symbol(
 		'DurationPrivateMethodsPopulateValuesFromDuration'
 	),
-	setValues: Symbol( 'DurationPrivateMethodsSetValues' ),
-	filterValues: Symbol( 'DurationPrivateMethodsFilterValues' ),
+	setValues: Symbol('DurationPrivateMethodsSetValues'),
+	filterValues: Symbol('DurationPrivateMethodsFilterValues'),
 };
 
 /**
@@ -78,7 +78,7 @@ const unitNames = [
  *
  * @type {string[]}
  */
-const derivativeUnitNames = [ 'weeks' ];
+const derivativeUnitNames = ['weeks'];
 
 /**
  * Where a DateTime object represents a single point in time, a Duration object
@@ -120,25 +120,25 @@ export default class Duration {
 	 * @param {string} locale  A valid locale string.
 	 * @link http://tools.ietf.org/html/rfc5646
 	 */
-	constructor( values, locale = DEFAULT_VALID_LOCALE ) {
+	constructor(values, locale = DEFAULT_VALID_LOCALE) {
 		this.displayName = 'Duration';
-		this[ privateProperties.isValid ] = true;
-		assertions.assertLocaleIsValid( locale );
-		if ( typeof values !== 'object' ) {
-			values = moment.duration( values ).locale( locale );
+		this[privateProperties.isValid] = true;
+		assertions.assertLocaleIsValid(locale);
+		if (typeof values !== 'object') {
+			values = moment.duration(values).locale(locale);
 		}
-		if ( moment.isDuration( values ) ) {
-			this[ privateProperties.duration ] = values;
-			this[ privateMethods.populateValuesFromDuration ]( values );
+		if (moment.isDuration(values)) {
+			this[privateProperties.duration] = values;
+			this[privateMethods.populateValuesFromDuration](values);
 		} else {
-			values = this[ privateMethods.filterValues ]( values );
-			this[ privateMethods.setValues ]( values );
-			this[ privateProperties.duration ] = moment
-				.duration( values )
-				.locale( locale );
+			values = this[privateMethods.filterValues](values);
+			this[privateMethods.setValues](values);
+			this[privateProperties.duration] = moment
+				.duration(values)
+				.locale(locale);
 		}
-		this[ privateMethods.createGetters ]();
-		Object.freeze( this );
+		this[privateMethods.createGetters]();
+		Object.freeze(this);
 	}
 
 	/**
@@ -148,8 +148,8 @@ export default class Duration {
 	 * @param {string} locale
 	 * @return {Duration}  An instance of Duration.
 	 */
-	static fromMilliseconds( milliseconds, locale = DEFAULT_VALID_LOCALE ) {
-		return new Duration( { milliseconds }, locale );
+	static fromMilliseconds(milliseconds, locale = DEFAULT_VALID_LOCALE) {
+		return new Duration({ milliseconds }, locale);
 	}
 
 	/**
@@ -159,8 +159,8 @@ export default class Duration {
 	 * @param {string} locale
 	 * @return {Duration} An instance of Duration
 	 */
-	static fromObject( values, locale = DEFAULT_VALID_LOCALE ) {
-		return new Duration( values, locale );
+	static fromObject(values, locale = DEFAULT_VALID_LOCALE) {
+		return new Duration(values, locale);
 	}
 
 	/**
@@ -170,9 +170,9 @@ export default class Duration {
 	 * @param {string} locale
 	 * @return {Duration} An instance of Duration
 	 */
-	static fromISO( ISOString, locale = DEFAULT_VALID_LOCALE ) {
-		assertions.assertISO8601IsValid( ISOString, true );
-		return new Duration( ISOString, locale );
+	static fromISO(ISOString, locale = DEFAULT_VALID_LOCALE) {
+		assertions.assertISO8601IsValid(ISOString, true);
+		return new Duration(ISOString, locale);
 	}
 
 	/**
@@ -181,8 +181,8 @@ export default class Duration {
 	 * @param {string} locale
 	 * @return {boolean}  True means it is valid.
 	 */
-	static isValidLocale( locale ) {
-		return assertions.validateLocale( locale );
+	static isValidLocale(locale) {
+		return assertions.validateLocale(locale);
 	}
 
 	/**
@@ -191,8 +191,8 @@ export default class Duration {
 	 * @param {string} locale
 	 * @throws InvalidLocale
 	 */
-	static assertIsValidLocale( locale ) {
-		assertions.assertLocaleIsValid( locale );
+	static assertIsValidLocale(locale) {
+		assertions.assertLocaleIsValid(locale);
 	}
 
 	/**
@@ -201,8 +201,8 @@ export default class Duration {
 	 * @param {string} isoString
 	 * @return {boolean} True means it is valid.
 	 */
-	static isValidISO8601Duration( isoString ) {
-		return assertions.validateISO8601( isoString, true );
+	static isValidISO8601Duration(isoString) {
+		return assertions.validateISO8601(isoString, true);
 	}
 
 	/**
@@ -211,8 +211,8 @@ export default class Duration {
 	 * @param {string} isoString
 	 * @throws InvalidISO8601String
 	 */
-	static assertIsValidISO8601Duration( isoString ) {
-		assertions.assertISO8601IsValid( isoString );
+	static assertIsValidISO8601Duration(isoString) {
+		assertions.assertISO8601IsValid(isoString);
 	}
 
 	/**
@@ -221,8 +221,8 @@ export default class Duration {
 	 * @param {Duration}duration
 	 * @return {boolean}  True means it is a valid Duration object.
 	 */
-	static isValidDuration( duration ) {
-		return instanceOf( duration, 'Duration' ) && duration.isValid;
+	static isValidDuration(duration) {
+		return instanceOf(duration, 'Duration') && duration.isValid;
 	}
 
 	/**
@@ -232,9 +232,9 @@ export default class Duration {
 	 * @param {Duration} duration
 	 * @throws TypeError
 	 */
-	static assertIsValidDuration( duration ) {
-		if ( ! Duration.isValidDuration( duration ) ) {
-			throw new TypeError( 'This Duration object is not valid.' );
+	static assertIsValidDuration(duration) {
+		if (!Duration.isValidDuration(duration)) {
+			throw new TypeError('This Duration object is not valid.');
 		}
 	}
 
@@ -245,8 +245,8 @@ export default class Duration {
 	 * @return {boolean}  True means the value is an instance of Duration.
 	 * Note: true may still mean that the Duration instance is not valid!
 	 */
-	static isDuration( duration ) {
-		return instanceOf( duration, 'Duration' );
+	static isDuration(duration) {
+		return instanceOf(duration, 'Duration');
 	}
 
 	/**
@@ -256,8 +256,8 @@ export default class Duration {
 	 * @param {Duration} duration
 	 * @throws TypeError
 	 */
-	static assertIsDuration( duration ) {
-		if ( ! Duration.isDuration( duration ) ) {
+	static assertIsDuration(duration) {
+		if (!Duration.isDuration(duration)) {
 			throw new TypeError(
 				'The provided value is not an instance of Duration.'
 			);
@@ -275,19 +275,19 @@ export default class Duration {
 	 * @return {Object} Filtered values.
 	 * @throws TypeError if incoming values argument is not an object.
 	 */
-	[ privateMethods.filterValues ]( values ) {
-		if ( typeof values !== 'object' ) {
-			throw new TypeError( 'Incoming values must be a simple object.' );
+	[privateMethods.filterValues](values) {
+		if (typeof values !== 'object') {
+			throw new TypeError('Incoming values must be a simple object.');
 		}
-		const valuesToSet = pick( values, unitNames );
-		if ( ! isShallowEqual( values, valuesToSet ) ) {
+		const valuesToSet = pick(values, unitNames);
+		if (!isShallowEqual(values, valuesToSet)) {
 			warning(
 				false,
 				'The following unexpected keys were in the configuration ' +
 					'object for constructing the Duration: ' +
-					keys( omit( values, unitNames ) ).join()
+					keys(omit(values, unitNames)).join()
 			);
-			this[ privateProperties.isValid ] = false;
+			this[privateProperties.isValid] = false;
 		}
 		return valuesToSet;
 	}
@@ -298,12 +298,11 @@ export default class Duration {
 	 * @param {Object} values
 	 * @access private
 	 */
-	[ privateMethods.setValues ]( values ) {
-		this[ privateProperties.durationValues ] = {};
-		unitNames.forEach( ( unit ) => {
-			this[ privateProperties.durationValues ][ unit ] =
-				values[ unit ] || 0;
-		} );
+	[privateMethods.setValues](values) {
+		this[privateProperties.durationValues] = {};
+		unitNames.forEach((unit) => {
+			this[privateProperties.durationValues][unit] = values[unit] || 0;
+		});
 	}
 
 	/**
@@ -312,12 +311,12 @@ export default class Duration {
 	 * @param {moment.Duration} duration
 	 * @access private
 	 */
-	[ privateMethods.populateValuesFromDuration ]( duration ) {
+	[privateMethods.populateValuesFromDuration](duration) {
 		const setValues = {};
-		unitNames.forEach( ( unit ) => {
-			setValues[ unit ] = duration[ unit ]();
-		} );
-		this[ privateMethods.setValues ]( setValues );
+		unitNames.forEach((unit) => {
+			setValues[unit] = duration[unit]();
+		});
+		this[privateMethods.setValues](setValues);
 	}
 
 	/**
@@ -327,8 +326,8 @@ export default class Duration {
 	 * @access private
 	 * @return {string[]}  Array of accessor names.
 	 */
-	[ privateMethods.getAllUnitNames ]() {
-		return [ ...unitNames, ...derivativeUnitNames ];
+	[privateMethods.getAllUnitNames]() {
+		return [...unitNames, ...derivativeUnitNames];
 	}
 
 	/**
@@ -336,24 +335,21 @@ export default class Duration {
 	 *
 	 * @access private
 	 */
-	[ privateMethods.createGetters ]() {
-		this[ privateMethods.getAllUnitNames ]().forEach( ( accessorName ) => {
+	[privateMethods.createGetters]() {
+		this[privateMethods.getAllUnitNames]().forEach((accessorName) => {
 			// creates accessor for getting the value via a property
 			// eg. instance.hours
-			Object.defineProperty( this, accessorName, {
+			Object.defineProperty(this, accessorName, {
 				get() {
-					if ( derivativeUnitNames.indexOf( accessorName ) > -1 ) {
-						return this[ privateProperties.duration ][
-							accessorName
-						]();
+					if (derivativeUnitNames.indexOf(accessorName) > -1) {
+						return this[privateProperties.duration][accessorName]();
 					}
 					return (
-						this[ privateProperties.durationValues ][
-							accessorName
-						] || 0
+						this[privateProperties.durationValues][accessorName] ||
+						0
 					);
 				},
-			} );
+			});
 			// creates `as*` methods.
 			// eg `instance.asHours` would return the given duration
 			// expressed as the hours unit.
@@ -362,17 +358,15 @@ export default class Duration {
 			// a 400 year cycle averaging out the days in a month and
 			// days in a year over that cycle.
 			// @link https://github.com/moment/moment/blob/develop/src/lib/duration/bubble.js#L52
-			const asMethodName = 'as' + capitalize( accessorName );
-			Object.defineProperty( this, asMethodName, {
+			const asMethodName = 'as' + capitalize(accessorName);
+			Object.defineProperty(this, asMethodName, {
 				get() {
 					return () => {
-						return this[ privateProperties.duration ][
-							asMethodName
-						]();
+						return this[privateProperties.duration][asMethodName]();
 					};
 				},
-			} );
-		} );
+			});
+		});
 	}
 
 	/**
@@ -382,7 +376,7 @@ export default class Duration {
 	 * @return {string} The locale string.
 	 */
 	get locale() {
-		return this[ privateProperties.duration ].locale();
+		return this[privateProperties.duration].locale();
 	}
 
 	/**
@@ -393,8 +387,8 @@ export default class Duration {
 	 */
 	get isValid() {
 		return (
-			this[ privateProperties.isValid ] &&
-			this[ privateProperties.duration ].toISOString() !== 'P0D'
+			this[privateProperties.isValid] &&
+			this[privateProperties.duration].toISOString() !== 'P0D'
 		);
 	}
 
@@ -405,8 +399,8 @@ export default class Duration {
 	 * @param {string} locale
 	 * @return {Duration} A new instance of Duration
 	 */
-	setLocale( locale ) {
-		return new Duration( this[ privateProperties.durationValues ], locale );
+	setLocale(locale) {
+		return new Duration(this[privateProperties.durationValues], locale);
 	}
 
 	/**
@@ -421,7 +415,7 @@ export default class Duration {
 	 * @return {Duration} A new instance of Duration
 	 */
 	normalize() {
-		return new Duration( this[ privateProperties.duration ] );
+		return new Duration(this[privateProperties.duration]);
 	}
 
 	/**
@@ -435,15 +429,15 @@ export default class Duration {
 	 * means that a duration with{ minutes: 60 } would be considered not equal
 	 * to a duration with { hours: 1 }.
 	 */
-	sameAs( otherDuration ) {
-		Duration.assertIsDuration( otherDuration );
-		if ( ! this.isValid || ! otherDuration.isValid ) {
+	sameAs(otherDuration) {
+		Duration.assertIsDuration(otherDuration);
+		if (!this.isValid || !otherDuration.isValid) {
 			return false;
 		}
-		if ( this.locale !== otherDuration.locale ) {
+		if (this.locale !== otherDuration.locale) {
 			return false;
 		}
-		return isShallowEqual( this.toObject(), otherDuration.toObject() );
+		return isShallowEqual(this.toObject(), otherDuration.toObject());
 	}
 
 	/**
@@ -459,12 +453,12 @@ export default class Duration {
 	 * @throws TypeError
 	 * @return {boolean} true if considered equal
 	 */
-	equals( otherDuration ) {
-		Duration.assertIsDuration( otherDuration );
-		if ( ! this.isValid || ! otherDuration.isValid ) {
+	equals(otherDuration) {
+		Duration.assertIsDuration(otherDuration);
+		if (!this.isValid || !otherDuration.isValid) {
 			return false;
 		}
-		if ( this.locale !== otherDuration.locale ) {
+		if (this.locale !== otherDuration.locale) {
 			return false;
 		}
 		return isShallowEqual(
@@ -490,19 +484,19 @@ export default class Duration {
 	 *
 	 * @return {Duration} A new instance of Duration
 	 */
-	plus( value ) {
-		if ( Duration.isDuration( value ) ) {
+	plus(value) {
+		if (Duration.isDuration(value)) {
 			return new Duration(
-				this[ privateProperties.duration ]
+				this[privateProperties.duration]
 					.clone()
-					.add( value[ privateProperties.duration ] )
+					.add(value[privateProperties.duration])
 			);
 		}
-		if ( typeof value === 'object' ) {
-			value = this[ privateMethods.filterValues ]( value );
+		if (typeof value === 'object') {
+			value = this[privateMethods.filterValues](value);
 		}
 		return new Duration(
-			this[ privateProperties.duration ].clone().add( value )
+			this[privateProperties.duration].clone().add(value)
 		);
 	}
 
@@ -523,19 +517,19 @@ export default class Duration {
 	 *
 	 * @return {Duration} A new instance of Duration
 	 */
-	minus( value ) {
-		if ( Duration.isDuration( value ) ) {
+	minus(value) {
+		if (Duration.isDuration(value)) {
 			return new Duration(
-				this[ privateProperties.duration ]
+				this[privateProperties.duration]
 					.clone()
-					.subtract( value[ privateProperties.duration ] )
+					.subtract(value[privateProperties.duration])
 			);
 		}
-		if ( typeof value === 'object' ) {
-			value = this[ privateMethods.filterValues ]( value );
+		if (typeof value === 'object') {
+			value = this[privateMethods.filterValues](value);
 		}
 		return new Duration(
-			this[ privateProperties.duration ].clone().subtract( value )
+			this[privateProperties.duration].clone().subtract(value)
 		);
 	}
 
@@ -546,9 +540,9 @@ export default class Duration {
 	 */
 	negate() {
 		return new Duration(
-			mapValues( this.toObject(), function ( value ) {
+			mapValues(this.toObject(), function (value) {
 				return value * -1;
-			} )
+			})
 		);
 	}
 
@@ -558,7 +552,7 @@ export default class Duration {
 	 * @return {*} Returns { years: number, hours: number ... }
 	 */
 	toObject() {
-		return this[ privateProperties.durationValues ];
+		return this[privateProperties.durationValues];
 	}
 
 	/**
@@ -567,7 +561,7 @@ export default class Duration {
 	 * @return {string} eg. "PT24H"
 	 */
 	toISO() {
-		return this[ privateProperties.duration ].toISOString();
+		return this[privateProperties.duration].toISOString();
 	}
 
 	/**
@@ -577,7 +571,7 @@ export default class Duration {
 	 * @return {string} eg. "PT24H"
 	 */
 	toJSON() {
-		return this[ privateProperties.duration ].toJSON();
+		return this[privateProperties.duration].toJSON();
 	}
 
 	/**
@@ -624,7 +618,7 @@ export default class Duration {
 	 * @param {string}format
 	 * @return {string}  A formatted string representation of this duration.
 	 */
-	toFormat( format ) {
-		return this.normalize()[ privateProperties.duration ].format( format );
+	toFormat(format) {
+		return this.normalize()[privateProperties.duration].format(format);
 	}
 }

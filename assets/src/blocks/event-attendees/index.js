@@ -17,7 +17,7 @@ import './style.css';
 export const name = 'eventespresso/event-attendees';
 
 export const settings = {
-	title: __( 'Event Attendees', 'event_espresso' ),
+	title: __('Event Attendees', 'event_espresso'),
 
 	description: __(
 		'Displays a list of people that have registered for the specified event',
@@ -29,9 +29,9 @@ export const settings = {
 	category: 'event-espresso',
 
 	keywords: [
-		__( 'event', 'event_espresso' ),
-		__( 'attendees', 'event_espresso' ),
-		__( 'list', 'event_espresso' ),
+		__('event', 'event_espresso'),
+		__('attendees', 'event_espresso'),
+		__('list', 'event_espresso'),
 	],
 
 	attributes: {
@@ -88,4 +88,4 @@ export const settings = {
 	},
 };
 
-registerBlockType( name, settings );
+registerBlockType(name, settings);

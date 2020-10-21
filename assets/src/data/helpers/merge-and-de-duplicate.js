@@ -10,8 +10,8 @@ import { isArray } from 'lodash';
  * @return { Array } A new array consisting of all the incoming arrays combined
  * 					 and with no duplicate values.
  */
-export const mergeAndDeDuplicateArrays = ( ...arrays ) => [
-	...new Set( [].concat( ...arrays.filter( ( item ) => isArray( item ) ) ) ),
+export const mergeAndDeDuplicateArrays = (...arrays) => [
+	...new Set([].concat(...arrays.filter((item) => isArray(item)))),
 ];
 
 /**
@@ -23,10 +23,10 @@ export const mergeAndDeDuplicateArrays = ( ...arrays ) => [
  * @return { Array }  A merged array of all the provided objects with only one
  * 					  object for the given property value.
  */
-export const mergeAndDeDuplicateObjects = ( property, ...arrays ) => {
-	return [].concat( ...arrays ).reduce( ( a, b ) => {
-		return ! a.filter( ( c ) => b[ property ] === c[ property ] ).length
-			? [ ...a, b ]
+export const mergeAndDeDuplicateObjects = (property, ...arrays) => {
+	return [].concat(...arrays).reduce((a, b) => {
+		return !a.filter((c) => b[property] === c[property]).length
+			? [...a, b]
 			: a;
-	}, [] );
+	}, []);
 };

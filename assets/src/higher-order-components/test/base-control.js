@@ -2,26 +2,24 @@ import TestRenderer from 'react-test-renderer';
 import withBaseControl from '../base-control';
 import { BaseControl } from '@wordpress/components';
 
-describe( 'withBaseControl()', () => {
-	const TestComponent = ( {} ) => {
+describe('withBaseControl()', () => {
+	const TestComponent = ({}) => {
 		return <div />;
 	};
 	it(
 		'should generate the expected css id when there is no' +
 			' custom id provided',
 		() => {
-			const WrappedComponent = withBaseControl()( TestComponent );
-			const elementInstance = TestRenderer.create( <WrappedComponent /> )
+			const WrappedComponent = withBaseControl()(TestComponent);
+			const elementInstance = TestRenderer.create(<WrappedComponent />)
 				.root;
-			const BaseControlInstance = elementInstance.findByType(
-				BaseControl
-			);
+			const BaseControlInstance = elementInstance.findByType(BaseControl);
 			const TestComponentInstance = elementInstance.findByType(
 				TestComponent
 			);
 
-			expect( BaseControlInstance.props.id ).toEqual(
-				`inspector--control-${ TestComponentInstance.props.instanceId }`
+			expect(BaseControlInstance.props.id).toEqual(
+				`inspector--control-${TestComponentInstance.props.instanceId}`
 			);
 		}
 	);
@@ -29,20 +27,18 @@ describe( 'withBaseControl()', () => {
 		'should generate the expected css id when there is a custom ' +
 			'id provided',
 		() => {
-			const WrappedComponent = withBaseControl( 'custom-id' )(
+			const WrappedComponent = withBaseControl('custom-id')(
 				TestComponent
 			);
-			const elementInstance = TestRenderer.create( <WrappedComponent /> )
+			const elementInstance = TestRenderer.create(<WrappedComponent />)
 				.root;
-			const BaseControlInstance = elementInstance.findByType(
-				BaseControl
-			);
+			const BaseControlInstance = elementInstance.findByType(BaseControl);
 			const TestComponentInstance = elementInstance.findByType(
 				TestComponent
 			);
-			expect( BaseControlInstance.props.id ).toEqual(
-				`inspector-custom-id-control-${ TestComponentInstance.props.instanceId }`
+			expect(BaseControlInstance.props.id).toEqual(
+				`inspector-custom-id-control-${TestComponentInstance.props.instanceId}`
 			);
 		}
 	);
-} );
+});

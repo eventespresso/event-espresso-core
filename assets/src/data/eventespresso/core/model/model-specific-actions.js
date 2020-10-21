@@ -13,7 +13,7 @@ const { modelSpecific: types } = ACTION_TYPES;
  * @param {Array} args
  * @return {Object} An action object
  */
-export function receiveSelectorValue( selector, value, ...args ) {
+export function receiveSelectorValue(selector, value, ...args) {
 	return {
 		type: types.RECEIVE_SELECTOR_VALUE,
 		selector,

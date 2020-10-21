@@ -21,10 +21,10 @@ import controls from '../base-controls';
 /**
  * Registers store for 'eventespresso/core'.
  */
-export default registerStore( REDUCER_KEY, {
+export default registerStore(REDUCER_KEY, {
 	reducer,
 	actions: { ...actions, ...modelActions },
 	selectors: { ...selectors, ...modelSelectors },
 	resolvers: { ...resolvers, ...modelResolvers },
 	controls,
-} );
+});

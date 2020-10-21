@@ -9,10 +9,10 @@ import { reduce } from 'lodash';
  * @param {Array<number|string,BaseEntity>}entities
  * @return {Map} A map.
  */
-export const convertToMapFromObject = ( entities ) => {
-	const reduceCallback = ( mapped, entity ) => {
-		mapped.set( entity.id, entity );
+export const convertToMapFromObject = (entities) => {
+	const reduceCallback = (mapped, entity) => {
+		mapped.set(entity.id, entity);
 		return mapped;
 	};
-	return reduce( entities, reduceCallback, new Map() );
+	return reduce(entities, reduceCallback, new Map());
 };

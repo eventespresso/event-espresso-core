@@ -14,14 +14,14 @@ import InvalidArgument from './invalid-argument';
  * @param {mixed} dateTimeString Optional, the timezone string that is invalid
  */
 export default class InvalidISO8601String extends InvalidArgument {
-	constructor( dateTimeString, message = '', ...args ) {
+	constructor(dateTimeString, message = '', ...args) {
 		message = message
 			? 'The string provided is not a valid ISO 8601 formatted string. ' +
 			  message
 			: 'The string provided is not a valid ISO 8601 formatted string.';
-		super( message, dateTimeString, ...args );
-		if ( Error.captureStackTrace ) {
-			Error.captureStackTrace( this, InvalidISO8601String );
+		super(message, dateTimeString, ...args);
+		if (Error.captureStackTrace) {
+			Error.captureStackTrace(this, InvalidISO8601String);
 		}
 		this.dateTimeString = dateTimeString || '';
 	}

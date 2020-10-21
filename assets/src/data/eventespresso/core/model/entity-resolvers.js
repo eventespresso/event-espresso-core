@@ -15,9 +15,9 @@ import { getMethodName } from '../../base-model';
  * functions will be mapped to.
  * @return {Object} The new resolver object containing functions for each model.
  */
-export const createResolvers = ( resolver ) =>
-	MODEL_NAMES.reduce( ( resolvers, modelName ) => {
-		resolvers[ getMethodName( modelName, 'byId', 'get' ) ] = ( entityId ) =>
-			resolver.getEntityById( modelName, entityId );
+export const createResolvers = (resolver) =>
+	MODEL_NAMES.reduce((resolvers, modelName) => {
+		resolvers[getMethodName(modelName, 'byId', 'get')] = (entityId) =>
+			resolver.getEntityById(modelName, entityId);
 		return resolvers;
-	}, {} );
+	}, {});

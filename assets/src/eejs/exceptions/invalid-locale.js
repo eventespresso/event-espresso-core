@@ -14,18 +14,18 @@ import InvalidArgument from './invalid-argument';
  * @param {mixed} locale Optional, the locale string that is invalid
  */
 export default class InvalidLocale extends InvalidArgument {
-	constructor( locale, message = '', ...args ) {
+	constructor(locale, message = '', ...args) {
 		message = message
 			? 'The locale string provided (' +
-			  JSON.stringify( locale ) +
+			  JSON.stringify(locale) +
 			  ') is not valid. ' +
 			  message
 			: 'The locale string provided (' +
-			  JSON.stringify( locale ) +
+			  JSON.stringify(locale) +
 			  ') is not valid.';
-		super( message, locale, ...args );
-		if ( Error.captureStackTrace ) {
-			Error.captureStackTrace( this, InvalidLocale );
+		super(message, locale, ...args);
+		if (Error.captureStackTrace) {
+			Error.captureStackTrace(this, InvalidLocale);
 		}
 		this.locale = locale || '';
 	}

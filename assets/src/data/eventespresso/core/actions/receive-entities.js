@@ -25,8 +25,8 @@ import { singularModelName } from '@eventespresso/model';
  * 	}
  * }  An action object.
  */
-function receiveEntityRecords( modelName, entities = [] ) {
-	modelName = singularModelName( modelName );
+function receiveEntityRecords(modelName, entities = []) {
+	modelName = singularModelName(modelName);
 	return {
 		type: types.RECEIVE_ENTITY_RECORDS,
 		modelName,
@@ -48,8 +48,8 @@ function receiveEntityRecords( modelName, entities = [] ) {
  * 	}
  * }  An action object.
  */
-function receiveAndReplaceEntityRecords( modelName, entities = [] ) {
-	modelName = singularModelName( modelName );
+function receiveAndReplaceEntityRecords(modelName, entities = []) {
+	modelName = singularModelName(modelName);
 	return {
 		type: types.RECEIVE_AND_REPLACE_ENTITY_RECORDS,
 		modelName,
@@ -65,7 +65,7 @@ function receiveAndReplaceEntityRecords( modelName, entities = [] ) {
  * @return {{type: string, entity: BaseEntity}} An action
  * object.
  */
-function receiveEntity( entity ) {
+function receiveEntity(entity) {
 	return {
 		type: types.RECEIVE_ENTITY,
 		entity,
@@ -80,8 +80,8 @@ function receiveEntity( entity ) {
  * @return {{type: string, modelName: string, entityId: number}} An action
  * object.
  */
-function receiveTrashEntityId( modelName, entityId ) {
-	modelName = singularModelName( modelName );
+function receiveTrashEntityId(modelName, entityId) {
+	modelName = singularModelName(modelName);
 	return {
 		type: types.RECEIVE_TRASH_ENTITY_ID,
 		modelName,
@@ -97,8 +97,8 @@ function receiveTrashEntityId( modelName, entityId ) {
  * @return {{type: string, modelName: string, entityId: number}} An action
  * object.
  */
-function receiveDeleteEntityId( modelName, entityId ) {
-	modelName = singularModelName( modelName );
+function receiveDeleteEntityId(modelName, entityId) {
+	modelName = singularModelName(modelName);
 	return {
 		type: types.RECEIVE_DELETE_ENTITY_ID,
 		modelName,

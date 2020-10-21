@@ -15,8 +15,8 @@ import { isArray, isEmpty, isMap } from 'lodash';
  * @throws { Exception }  Throws an exception if the provided entity does not
  *                          have the given key.
  */
-export const assertEntityHasKey = ( key, entity, message = '' ) => {
-	if ( message === '' ) {
+export const assertEntityHasKey = (key, entity, message = '') => {
+	if (message === '') {
 		message = sprintf(
 			__(
 				'The provided entity (%s) does not have the given property (%s)',
@@ -26,8 +26,8 @@ export const assertEntityHasKey = ( key, entity, message = '' ) => {
 			key
 		);
 	}
-	if ( ! entity.hasOwnProperty( key ) ) {
-		throw new Exception( message );
+	if (!entity.hasOwnProperty(key)) {
+		throw new Exception(message);
 	}
 };
 
@@ -48,12 +48,8 @@ export const assertEntityHasKey = ( key, entity, message = '' ) => {
  * @param {string} message A custom message to use.
  * @throws Exception
  */
-export const assertImmutableObjectHasPath = (
-	path,
-	immutable,
-	message = ''
-) => {
-	if ( message === '' ) {
+export const assertImmutableObjectHasPath = (path, immutable, message = '') => {
+	if (message === '') {
 		message = sprintf(
 			__(
 				'The provided immutable object (%s) does not have the given path (%s)',
@@ -63,8 +59,8 @@ export const assertImmutableObjectHasPath = (
 			path
 		);
 	}
-	if ( ! immutable.hasIn( path ) ) {
-		throw new Exception( message );
+	if (!immutable.hasIn(path)) {
+		throw new Exception(message);
 	}
 };
 
@@ -76,12 +72,12 @@ export const assertImmutableObjectHasPath = (
  * @throws { Exception } Throws an exception if the provided value is not an
  *                          array.
  */
-export const assertIsArray = ( items, message = '' ) => {
-	if ( message === '' ) {
-		message = __( 'The provided value is not an array.', 'event_espresso' );
+export const assertIsArray = (items, message = '') => {
+	if (message === '') {
+		message = __('The provided value is not an array.', 'event_espresso');
 	}
-	if ( ! isArray( items ) ) {
-		throw new Exception( message );
+	if (!isArray(items)) {
+		throw new Exception(message);
 	}
 };
 
@@ -94,15 +90,12 @@ export const assertIsArray = ( items, message = '' ) => {
  * @param { string } message
  * @throws { Exception } Throws an exception if the provided value is empty.
  */
-export const assertIsNotEmpty = ( items, message = '' ) => {
-	if ( message === '' ) {
-		message = __(
-			'The provided items must not be empty',
-			'event_espresso'
-		);
+export const assertIsNotEmpty = (items, message = '') => {
+	if (message === '') {
+		message = __('The provided items must not be empty', 'event_espresso');
 	}
-	if ( isEmpty( items ) ) {
-		throw new Exception( message );
+	if (isEmpty(items)) {
+		throw new Exception(message);
 	}
 };
 
@@ -113,14 +106,14 @@ export const assertIsNotEmpty = ( items, message = '' ) => {
  * @param {string} message
  * @throws { Exception }
  */
-export const assertIsMap = ( item, message = '' ) => {
-	if ( message === '' ) {
+export const assertIsMap = (item, message = '') => {
+	if (message === '') {
 		message = __(
 			'The provided item must be a Map object',
 			'event_espresso'
 		);
 	}
-	if ( ! isMap( item ) ) {
-		throw new Exception( message );
+	if (!isMap(item)) {
+		throw new Exception(message);
 	}
 };

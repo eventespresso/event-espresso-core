@@ -56,24 +56,22 @@ export function* getRelatedEntities(
 	relationModelName,
 	calculatedFields = []
 ) {
-	if ( ! isModelEntity( entity ) ) {
-		throw new InvalidModelEntity( '', entity );
+	if (!isModelEntity(entity)) {
+		throw new InvalidModelEntity('', entity);
 	}
 	// if entity is new then there won't be any relations for it on the server
 	// yet, so let's just return early.
-	if ( entity.isNew ) {
+	if (entity.isNew) {
 		return DEFAULT_EMPTY_ARRAY;
 	}
-	relationModelName = singularModelName( relationModelName );
-	const pluralRelationName = pluralModelName( relationModelName );
+	relationModelName = singularModelName(relationModelName);
+	const pluralRelationName = pluralModelName(relationModelName);
 	const modelName = entity.modelName.toLowerCase();
 	const relationResourceProperty = pluralRelationName + 'Resource';
-	const relationEndpoint = entity[ relationResourceProperty ]
-		? stripBaseRouteFromUrl(
-				entity[ relationResourceProperty ].resourceLink
-		  )
+	const relationEndpoint = entity[relationResourceProperty]
+		? stripBaseRouteFromUrl(entity[relationResourceProperty].resourceLink)
 		: '';
-	if ( relationEndpoint === '' ) {
+	if (relationEndpoint === '') {
 		warning(
 			false,
 			sprintf(
@@ -97,7 +95,7 @@ export function* getRelatedEntities(
 		'finishResolution',
 		SCHEMA_REDUCER_KEY,
 		'receiveRelationEndpointForModelEntity',
-		[ modelName, entity.id, relationModelName, relationEndpoint ]
+		[modelName, entity.id, relationModelName, relationEndpoint]
 	);
 
 	// add calculatedFields to endpoint?
@@ -106,16 +104,16 @@ export function* getRelatedEntities(
 		calculatedFields
 	);
 
-	let relationEntities = yield fetch( { path } );
+	let relationEntities = yield fetch({ path });
 
-	relationEntities = ! isEmpty( relationEntities )
+	relationEntities = !isEmpty(relationEntities)
 		? relationEntities
 		: DEFAULT_EMPTY_ARRAY;
-	relationEntities = ! isArray( relationEntities )
-		? [ relationEntities ]
+	relationEntities = !isArray(relationEntities)
+		? [relationEntities]
 		: relationEntities;
 
-	if ( ! relationEntities.length ) {
+	if (!relationEntities.length) {
 		return relationEntities;
 	}
 
@@ -124,7 +122,7 @@ export function* getRelatedEntities(
 		'getFactoryForModel',
 		relationModelName
 	);
-	if ( ! isModelEntityFactoryOfModel( factory, relationModelName ) ) {
+	if (!isModelEntityFactoryOfModel(factory, relationModelName)) {
 		return DEFAULT_EMPTY_ARRAY;
 	}
 
@@ -132,11 +130,8 @@ export function* getRelatedEntities(
 		relationModelName,
 		relationEntities
 	);
-	fullEntities = createAndKeyEntitiesByPrimaryKeyValue(
-		factory,
-		fullEntities
-	);
-	const entityIds = Array.from( fullEntities.keys() );
+	fullEntities = createAndKeyEntitiesByPrimaryKeyValue(factory, fullEntities);
+	const entityIds = Array.from(fullEntities.keys());
 
 	// are there already entities for the ids in the store? If so...we use
 	// those.
@@ -147,12 +142,12 @@ export function* getRelatedEntities(
 		entityIds
 	);
 
-	if ( ! isEmpty( existingEntities ) ) {
+	if (!isEmpty(existingEntities)) {
 		fullEntities = keepExistingEntitiesInObject(
-			existingEntities.reduce( ( entitiesObject, entityObj ) => {
-				entitiesObject[ entityObj.id ] = entity;
+			existingEntities.reduce((entitiesObject, entityObj) => {
+				entitiesObject[entityObj.id] = entity;
 				return entitiesObject;
-			}, {} ),
+			}, {}),
 			fullEntities
 		);
 	}
@@ -160,18 +155,18 @@ export function* getRelatedEntities(
 	// if fullEntities is not a map, then we need to make it a map
 	const entityArray =
 		fullEntities instanceof Map
-			? Array.from( fullEntities.values() )
+			? Array.from(fullEntities.values())
 			: fullEntities;
 
-	yield receiveEntityRecords( relationModelName, entityArray );
+	yield receiveEntityRecords(relationModelName, entityArray);
 	yield receiveRelatedEntities(
 		modelName,
 		entity.id,
 		relationModelName,
 		entityIds
 	);
-	yield resolveGetRelatedEntities( entity, fullEntities, entityIds );
-	yield resolveGetEntityByIdForIds( relationModelName, entityIds );
+	yield resolveGetRelatedEntities(entity, fullEntities, entityIds);
+	yield resolveGetEntityByIdForIds(relationModelName, entityIds);
 	return entityArray;
 }
 
@@ -193,8 +188,8 @@ export function* getRelatedEntitiesForIds(
 	relationName,
 	calculatedFields = []
 ) {
-	modelName = singularModelName( modelName );
-	relationName = singularModelName( relationName );
+	modelName = singularModelName(modelName);
+	relationName = singularModelName(relationName);
 	const hasJoinTable = yield resolveSelect(
 		SCHEMA_REDUCER_KEY,
 		'hasJoinTableRelation',
@@ -207,7 +202,7 @@ export function* getRelatedEntitiesForIds(
 		modelName,
 		relationName
 	);
-	if ( relationSchema === null ) {
+	if (relationSchema === null) {
 		return DEFAULT_EMPTY_ARRAY;
 	}
 	const relationType = relationSchema.relation_type;
@@ -217,7 +212,7 @@ export function* getRelatedEntitiesForIds(
 		'getFactoryForModel',
 		relationName
 	);
-	const response = yield fetch( {
+	const response = yield fetch({
 		path: getRelationRequestUrl(
 			modelName,
 			entityIds,
@@ -227,35 +222,34 @@ export function* getRelatedEntitiesForIds(
 			hasJoinTable,
 			calculatedFields
 		),
-	} );
-	if ( ! response.length ) {
+	});
+	if (!response.length) {
 		return DEFAULT_EMPTY_ARRAY;
 	}
-	const relationPrimaryKey = getPrimaryKey( relationName );
-	const modelPrimaryKey = getPrimaryKey( modelName );
-	const pluralRelationName = pluralModelName( relationName );
+	const relationPrimaryKey = getPrimaryKey(relationName);
+	const modelPrimaryKey = getPrimaryKey(modelName);
+	const pluralRelationName = pluralModelName(relationName);
 	let hasSetMap = ImmutableMap();
-	if ( hasJoinTable ) {
-		while ( response.length > 0 ) {
+	if (hasJoinTable) {
+		while (response.length > 0) {
 			const record = response.pop();
-			let relationRecords = record[ pluralRelationName ] || null;
+			let relationRecords = record[pluralRelationName] || null;
 			relationRecords =
-				relationRecords === null &&
-				! isUndefined( record[ relationName ] )
-					? record[ relationName ]
+				relationRecords === null && !isUndefined(record[relationName])
+					? record[relationName]
 					: relationRecords;
 			relationRecords =
-				relationRecords !== null && ! isArray( relationRecords )
-					? [ relationRecords ]
+				relationRecords !== null && !isArray(relationRecords)
+					? [relationRecords]
 					: relationRecords;
-			if ( relationRecords !== null ) {
-				while ( relationRecords.length > 0 ) {
-					const modelId = record[ modelPrimaryKey ];
-					const relationId = record[ relationPrimaryKey ];
+			if (relationRecords !== null) {
+				while (relationRecords.length > 0) {
+					const modelId = record[modelPrimaryKey];
+					const relationId = record[relationPrimaryKey];
 					const relationRecord = relationRecords.pop();
 					if (
 						relationRecord !== null &&
-						! hasSetMap.hasIn( [ modelId, relationId ] )
+						!hasSetMap.hasIn([modelId, relationId])
 					) {
 						const relationEntity = factory.fromExisting(
 							relationRecord
@@ -268,7 +262,7 @@ export function* getRelatedEntitiesForIds(
 							modelId
 						);
 						hasSetMap = hasSetMap.setIn(
-							[ modelId, relationId ],
+							[modelId, relationId],
 							true
 						);
 					}
@@ -276,15 +270,15 @@ export function* getRelatedEntitiesForIds(
 			}
 		}
 	} else {
-		while ( response.length > 0 ) {
+		while (response.length > 0) {
 			const record = response.pop();
-			const modelId = isBelongsToRelation( relationType )
-				? record[ modelPrimaryKey ]
-				: record[ modelName ].id;
-			const relationId = record[ relationPrimaryKey ];
-			if ( ! hasSetMap.hasIn( [ modelId, relationId ] ) ) {
+			const modelId = isBelongsToRelation(relationType)
+				? record[modelPrimaryKey]
+				: record[modelName].id;
+			const relationId = record[relationPrimaryKey];
+			if (!hasSetMap.hasIn([modelId, relationId])) {
 				const relationEntity = factory.fromExisting(
-					record[ relationName ]
+					record[relationName]
 				);
 				yield dispatch(
 					CORE_REDUCER_KEY,
@@ -293,7 +287,7 @@ export function* getRelatedEntitiesForIds(
 					modelName,
 					modelId
 				);
-				hasSetMap = hasSetMap.setIn( [ modelId, relationId ], true );
+				hasSetMap = hasSetMap.setIn([modelId, relationId], true);
 			}
 		}
 	}
@@ -322,31 +316,27 @@ const getRelationRequestUrl = (
 	calculatedFields
 ) => {
 	let path;
-	modelName = singularModelName( modelName );
-	relationName = singularModelName( relationName );
-	switch ( true ) {
+	modelName = singularModelName(modelName);
+	relationName = singularModelName(relationName);
+	switch (true) {
 		case hasJoinTable:
 			path = getEndpoint(
 				singularModelName(
 					relationSchema.joining_model_name
 				).toLowerCase()
 			);
-			path +=
-				'/?where' + getPrimaryKeyQueryString( modelName, entityIds );
-			path += `&include=${ modelNameForQueryString( relationName ) }.*`;
+			path += '/?where' + getPrimaryKeyQueryString(modelName, entityIds);
+			path += `&include=${modelNameForQueryString(relationName)}.*`;
 			path = appendCalculatedFieldsToPath(
 				path,
 				calculatedFields,
 				relationName
 			);
 			break;
-		case isBelongsToRelation( relationType ):
-			path = getEndpoint( modelName );
-			path += `/?where${ getPrimaryKeyQueryString(
-				modelName,
-				entityIds
-			) }`;
-			path += `&include=${ modelNameForQueryString( relationName ) }.*`;
+		case isBelongsToRelation(relationType):
+			path = getEndpoint(modelName);
+			path += `/?where${getPrimaryKeyQueryString(modelName, entityIds)}`;
+			path += `&include=${modelNameForQueryString(relationName)}.*`;
 			path = appendCalculatedFieldsToPath(
 				path,
 				calculatedFields,
@@ -368,13 +358,10 @@ const getRelationRequestUrl = (
 			// basically the goal here is to get one to one relations returned
 			// in the query for easier parsing/dispatching.
 			// @todo, currently this will NOT account for paging.
-			path = getEndpoint( relationName );
-			path += `/?where${ getPrimaryKeyQueryString(
-				modelName,
-				entityIds
-			) }`;
-			path += `&include=${ modelNameForQueryString( modelName ) }.*`;
-			path = appendCalculatedFieldsToPath( path, calculatedFields );
+			path = getEndpoint(relationName);
+			path += `/?where${getPrimaryKeyQueryString(modelName, entityIds)}`;
+			path += `&include=${modelNameForQueryString(modelName)}.*`;
+			path = appendCalculatedFieldsToPath(path, calculatedFields);
 			break;
 	}
 	return path;
@@ -386,6 +373,6 @@ const getRelationRequestUrl = (
  * @param {string} relationType
  * @return {boolean}  True means the given relationType is `EE_Belongs_To_Relation`
  */
-const isBelongsToRelation = ( relationType ) => {
+const isBelongsToRelation = (relationType) => {
 	return relationType === 'EE_Belongs_To_Relation';
 };

@@ -14,11 +14,11 @@ import { __ } from '@eventespresso/i18n';
 
 const { exitModalInfo: info = {} } = data;
 
-const queryString = stringify( {
+const queryString = stringify({
 	firstname: info.firstname,
 	emailaddress: info.emailaddress,
 	website: info.website,
-} );
+});
 
 const modalProps = {
 	styles: {
@@ -41,8 +41,8 @@ const modalProps = {
 		'Do you have a moment to share why you are deactivating Event Espresso?',
 		'event_espresso'
 	),
-	doSurveyButtonText: __( "Sure I'll help", 'event_espresso' ),
-	skipButtonText: __( 'Skip', 'event_espresso' ),
+	doSurveyButtonText: __("Sure I'll help", 'event_espresso'),
+	skipButtonText: __('Skip', 'event_espresso'),
 	buttonClass: {
 		doSurvey: 'button button-primary',
 		closeModal: 'button button-secondary',
@@ -55,13 +55,13 @@ const modalProps = {
  * @param {Event} e
  * @param {element} el
  */
-const handleDeactivationClick = ( e, el ) => {
+const handleDeactivationClick = (e, el) => {
 	e.preventDefault();
-	const link = $( el ).attr( 'href' );
-	const appContainer = document.getElementById( 'ee-exit-survey-modal' );
-	ReactModal.setAppElement( appContainer );
+	const link = $(el).attr('href');
+	const appContainer = document.getElementById('ee-exit-survey-modal');
+	ReactModal.setAppElement(appContainer);
 	const modalContainer = ReactDOM.render(
-		<ExitModal { ...modalProps } />, //eslint-disable-line react/no-render-return-value
+		<ExitModal {...modalProps} />, //eslint-disable-line react/no-render-return-value
 		appContainer
 	);
 	modalContainer.el.addEventListener(
@@ -76,23 +76,23 @@ const handleDeactivationClick = ( e, el ) => {
 /**
  * EE caffeinated click capture but only if feature is active
  */
-if ( info.isModalActive ) {
-	$( 'tr[data-slug="event-espresso"]' ).on(
+if (info.isModalActive) {
+	$('tr[data-slug="event-espresso"]').on(
 		'click',
 		'span.deactivate > a',
-		function ( e ) {
-			handleDeactivationClick( e, this );
+		function (e) {
+			handleDeactivationClick(e, this);
 		}
 	);
 
 	/**
 	 * EE decaf click capture.
 	 */
-	$( 'tr[data-slug="event-espresso-decaf"]' ).on(
+	$('tr[data-slug="event-espresso-decaf"]').on(
 		'click',
 		'span.deactivate > a',
-		function ( e ) {
-			handleDeactivationClick( e, this );
+		function (e) {
+			handleDeactivationClick(e, this);
 		}
 	);
 }
