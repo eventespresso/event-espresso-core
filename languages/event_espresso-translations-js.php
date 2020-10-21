@@ -128,7 +128,7 @@ $generated_i18n_strings = array(
 
 	// Reference: domains/blocks/src/services/utils.ts:19
 	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/ErrorMessage.tsx:32
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:75
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:80
 	__( 'Error', 'event_espresso' ),
 
 	// Reference: domains/blocks/src/services/utils.ts:26
