@@ -19,15 +19,15 @@ import {
  * @param  {string} locale
  * @return {boolean} If given locale string is not valid this will return false.
  */
-export function validateLocale( locale ) {
-	if ( ! isString( locale ) ) {
+export function validateLocale(locale) {
+	if (!isString(locale)) {
 		return false;
 	}
 	const originalLocale = moment.locale();
-	const validationLocale = moment.locale( locale );
+	const validationLocale = moment.locale(locale);
 	// reset back to original locale
-	moment.locale( originalLocale );
-	return ! ( locale !== 'en' && validationLocale === 'en' );
+	moment.locale(originalLocale);
+	return !(locale !== 'en' && validationLocale === 'en');
 }
 
 /**
@@ -37,9 +37,9 @@ export function validateLocale( locale ) {
  * @param {string} locale
  * @throws InvalidLocale
  */
-export function assertLocaleIsValid( locale ) {
-	if ( ! validateLocale( locale ) ) {
-		throw new InvalidLocale( locale );
+export function assertLocaleIsValid(locale) {
+	if (!validateLocale(locale)) {
+		throw new InvalidLocale(locale);
 	}
 }
 
@@ -57,14 +57,14 @@ export function assertLocaleIsValid( locale ) {
  * @return {boolean}  Returns false if the given string is not valid ISO8601
  * format
  */
-export function validateISO8601( dateTimeString, isDuration = false ) {
-	if ( ! isString( dateTimeString ) ) {
+export function validateISO8601(dateTimeString, isDuration = false) {
+	if (!isString(dateTimeString)) {
 		return false;
 	}
 	const regex = isDuration
 		? /^(R\d*\/)?P(?:\d+(?:\.\d+)?Y)?(?:\d+(?:\.\d+)?M)?(?:\d+(?:\.\d+)?W)?(?:\d+(?:\.\d+)?D)?(?:T(?:\d+(?:\.\d+)?H)?(?:\d+(?:\.\d+)?M)?(?:\d+(?:\.\d+)?S)?)?$/
 		: /^([\+-]?\d{4}(?!\d{2}\b))((-?)((0[1-9]|1[0-2])(\3([12]\d|0[1-9]|3[01]))?|W([0-4]\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\d|[12]\d{2}|3([0-5]\d|6[1-6])))([T\s]((([01]\d|2[0-3])((:?)[0-5]\d)?|24\:?00)([\.,]\d+(?!:))?)?(\17[0-5]\d([\.,]\d+)?)?([zZ]|([\+-])([01]\d|2[0-3]):?([0-5]\d)?)?)?)?$/;
-	return regex.test( dateTimeString );
+	return regex.test(dateTimeString);
 }
 
 /**
@@ -75,9 +75,9 @@ export function validateISO8601( dateTimeString, isDuration = false ) {
  * @param {boolean} isDuration  Whether to assert for a duration format or not.
  * @throws InvalidISO8601String
  */
-export function assertISO8601IsValid( dateTimeString, isDuration = false ) {
-	if ( ! validateISO8601( dateTimeString, isDuration ) ) {
-		throw new InvalidISO8601String( dateTimeString );
+export function assertISO8601IsValid(dateTimeString, isDuration = false) {
+	if (!validateISO8601(dateTimeString, isDuration)) {
+		throw new InvalidISO8601String(dateTimeString);
 	}
 }
 
@@ -88,11 +88,11 @@ export function assertISO8601IsValid( dateTimeString, isDuration = false ) {
  * @return {boolean} Returns false if the given string is not a valid timezone
  * string
  */
-export function validateTimezone( timezone ) {
-	if ( ! isString( timezone ) ) {
+export function validateTimezone(timezone) {
+	if (!isString(timezone)) {
 		return false;
 	}
-	const dt = moment.tz.zone( timezone );
+	const dt = moment.tz.zone(timezone);
 	return dt !== null;
 }
 
@@ -103,9 +103,9 @@ export function validateTimezone( timezone ) {
  * @param {string} timezone
  * @throws InvalidTimezone
  */
-export function assertTimezoneIsValid( timezone ) {
-	if ( ! validateTimezone( timezone ) ) {
-		throw new InvalidTimezone( timezone );
+export function assertTimezoneIsValid(timezone) {
+	if (!validateTimezone(timezone)) {
+		throw new InvalidTimezone(timezone);
 	}
 }
 
@@ -116,7 +116,7 @@ export function assertTimezoneIsValid( timezone ) {
  * @param {Date} date
  * @return {boolean} True means the value is an instance of Date
  */
-export function validateIsDate( date ) {
+export function validateIsDate(date) {
 	return date instanceof Date;
 }
 
@@ -126,9 +126,9 @@ export function validateIsDate( date ) {
  * @param {Date} date
  * @throws TypeError
  */
-export function assertIsDate( date ) {
-	if ( ! validateIsDate( date ) ) {
-		throw new TypeError( 'The provided value is not an instance of Date' );
+export function assertIsDate(date) {
+	if (!validateIsDate(date)) {
+		throw new TypeError('The provided value is not an instance of Date');
 	}
 }
 
@@ -141,8 +141,8 @@ export function assertIsDate( date ) {
  * @param {number} offset
  * @return {boolean}  true means its valid.
  */
-export function validateIsOffset( offset ) {
-	return isNumber( offset );
+export function validateIsOffset(offset) {
+	return isNumber(offset);
 }
 
 /**
@@ -151,8 +151,8 @@ export function validateIsOffset( offset ) {
  * @param {number} offset
  * @throws TypeError
  */
-export function assertIsOffset( offset ) {
-	if ( ! validateIsOffset( offset ) ) {
-		throw new TypeError( 'Offset is expected to be a number' );
+export function assertIsOffset(offset) {
+	if (!validateIsOffset(offset)) {
+		throw new TypeError('Offset is expected to be a number');
 	}
 }

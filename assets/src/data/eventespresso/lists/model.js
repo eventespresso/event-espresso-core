@@ -13,21 +13,21 @@ import { REDUCER_KEY } from './constants';
  * @param {Object<Function>} source
  * @return {Object<Function>} All the generated selectors for each model.
  */
-export const createEntitySelectors = ( source ) =>
-	MODEL_NAMES.reduce( ( selectors, modelName ) => {
-		const methodNameForGet = getMethodName( modelName, '', 'get', true );
-		selectors[ methodNameForGet ] = ( state, queryString ) =>
-			source.getEntities( state, modelName, queryString );
-		selectors[ getMethodName( modelName, 'byIds', 'get', true ) ] = (
+export const createEntitySelectors = (source) =>
+	MODEL_NAMES.reduce((selectors, modelName) => {
+		const methodNameForGet = getMethodName(modelName, '', 'get', true);
+		selectors[methodNameForGet] = (state, queryString) =>
+			source.getEntities(state, modelName, queryString);
+		selectors[getMethodName(modelName, 'byIds', 'get', true)] = (
 			state,
 			ids = []
-		) => source.getEntitiesByIds( state, modelName, ids );
-		selectors[ getMethodName( modelName, '', 'isRequesting', true ) ] = (
+		) => source.getEntitiesByIds(state, modelName, ids);
+		selectors[getMethodName(modelName, '', 'isRequesting', true)] = (
 			state,
 			queryString
-		) => isResolving( REDUCER_KEY, methodNameForGet, queryString );
+		) => isResolving(REDUCER_KEY, methodNameForGet, queryString);
 		return selectors;
-	}, {} );
+	}, {});
 
 /**
  * This method creates resolvers for each registered model name wrapping the
@@ -36,13 +36,11 @@ export const createEntitySelectors = ( source ) =>
  * @param {Object<Function>} source
  * @return {Object<Function>} All the generated resolvers for each model.
  */
-export const createEntityResolvers = ( source ) =>
-	MODEL_NAMES.reduce( ( resolvers, modelName ) => {
-		resolvers[ getMethodName( modelName, '', 'get', true ) ] = (
-			queryString
-		) => source.getEntities( modelName, queryString );
-		resolvers[ getMethodName( modelName, 'byIds', 'get', true ) ] = (
-			ids
-		) => source.getEntitiesByIds( modelName, ids );
+export const createEntityResolvers = (source) =>
+	MODEL_NAMES.reduce((resolvers, modelName) => {
+		resolvers[getMethodName(modelName, '', 'get', true)] = (queryString) =>
+			source.getEntities(modelName, queryString);
+		resolvers[getMethodName(modelName, 'byIds', 'get', true)] = (ids) =>
+			source.getEntitiesByIds(modelName, ids);
 		return resolvers;
-	}, {} );
+	}, {});

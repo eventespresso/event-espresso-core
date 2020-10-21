@@ -21,20 +21,20 @@ import { appendCalculatedFieldsToPath } from './utils';
  * @return {null|BaseEntity} If successfully retrieved, the entity,
  * otherwise null.
  */
-export function* getEntityById( modelName, entityId, calculatedFields = [] ) {
-	modelName = singularModelName( modelName );
-	let path = `${ getEndpoint( modelName ) }/${ entityId }`;
-	path = appendCalculatedFieldsToPath( path, calculatedFields );
-	const entity = yield fetch( { path } );
+export function* getEntityById(modelName, entityId, calculatedFields = []) {
+	modelName = singularModelName(modelName);
+	let path = `${getEndpoint(modelName)}/${entityId}`;
+	path = appendCalculatedFieldsToPath(path, calculatedFields);
+	const entity = yield fetch({ path });
 	const factory = yield resolveSelect(
 		SCHEMA_REDUCER_KEY,
 		'getFactoryForModel',
 		modelName
 	);
-	if ( ! isModelEntityFactoryOfModel( factory, modelName ) ) {
+	if (!isModelEntityFactoryOfModel(factory, modelName)) {
 		return null;
 	}
-	const fullEntity = factory.fromExisting( entity );
-	yield receiveEntityRecords( modelName, [ fullEntity ] );
+	const fullEntity = factory.fromExisting(entity);
+	yield receiveEntityRecords(modelName, [fullEntity]);
 	return fullEntity;
 }

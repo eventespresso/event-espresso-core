@@ -58,19 +58,19 @@ export class ModelSelect extends Component {
 	state = {};
 
 	static propTypes = {
-		selectConfiguration: PropTypes.shape( {
+		selectConfiguration: PropTypes.shape({
 			...REACT_SELECT_TYPES,
-		} ),
+		}),
 		modelEntities: PropTypes.array,
-		modelName: PropTypes.oneOf( MODEL_NAMES ).isRequired,
+		modelName: PropTypes.oneOf(MODEL_NAMES).isRequired,
 		mapOptionsCallback: PropTypes.func,
 		optionsEntityMap: PropTypes.object,
 		mapSelection: PropTypes.string,
-		queryData: PropTypes.shape( {
+		queryData: PropTypes.shape({
 			limit: PropTypes.number,
 			orderBy: PropTypes.string,
-			order: PropTypes.oneOf( ALLOWED_ORDER_VALUES ),
-		} ),
+			order: PropTypes.oneOf(ALLOWED_ORDER_VALUES),
+		}),
 		getQueryString: PropTypes.func,
 		label: PropTypes.string,
 	};
@@ -78,7 +78,7 @@ export class ModelSelect extends Component {
 	static defaultProps = {
 		selectConfiguration: {
 			...REACT_SELECT_DEFAULTS,
-			name: uniqueId( 'model-select-' ),
+			name: uniqueId('model-select-'),
 		},
 		modelEntities: [],
 		mapOptionsCallback: buildOptions,
@@ -91,9 +91,9 @@ export class ModelSelect extends Component {
 		getQueryString: () => '',
 	};
 
-	constructor( props ) {
-		super( props );
-		this.state = ModelSelect.setStateFromProps( props );
+	constructor(props) {
+		super(props);
+		this.state = ModelSelect.setStateFromProps(props);
 	}
 
 	/**
@@ -109,9 +109,9 @@ export class ModelSelect extends Component {
 	 * }}
 	 * Object to replace state.
 	 */
-	static setStateFromProps( props ) {
+	static setStateFromProps(props) {
 		const { selectConfiguration } = props;
-		const options = ModelSelect.getOptions( props );
+		const options = ModelSelect.getOptions(props);
 		const selectedValue = ModelSelect.getOptionObjectForValue(
 			selectConfiguration.defaultValue,
 			options
@@ -134,14 +134,14 @@ export class ModelSelect extends Component {
 	 * @param {Object} props
 	 * @return {Array<Object>} Array of options for select control
 	 */
-	static getOptions( props ) {
+	static getOptions(props) {
 		const {
 			mapOptionsCallback,
 			modelEntities,
 			optionsEntityMap,
 			mapSelection,
 		} = props;
-		if ( isFunction( mapOptionsCallback ) && ! isEmpty( modelEntities ) ) {
+		if (isFunction(mapOptionsCallback) && !isEmpty(modelEntities)) {
 			return mapOptionsCallback(
 				modelEntities,
 				optionsEntityMap,
@@ -158,12 +158,12 @@ export class ModelSelect extends Component {
 	 * @param {Array<Object>} options
 	 * @return {Object|null} The option object for the given value or null.
 	 */
-	static getOptionObjectForValue( value, options ) {
-		if ( ! isEmpty( options ) ) {
-			const match = find( options, function ( option ) {
+	static getOptionObjectForValue(value, options) {
+		if (!isEmpty(options)) {
+			const match = find(options, function (option) {
 				return option.value === value;
-			} );
-			return ! isUndefined( match ) ? match : null;
+			});
+			return !isUndefined(match) ? match : null;
 		}
 		return null;
 	}
@@ -177,8 +177,8 @@ export class ModelSelect extends Component {
 	 * @param {Object} nextProps
 	 * @return {boolean} True means state should be updated.
 	 */
-	static shouldUpdateState( prevProps, nextProps ) {
-		if ( prevProps === nextProps ) {
+	static shouldUpdateState(prevProps, nextProps) {
+		if (prevProps === nextProps) {
 			return false;
 		}
 
@@ -186,28 +186,26 @@ export class ModelSelect extends Component {
 		const { selectConfiguration: nextConfiguration } = nextProps;
 
 		// if defaultValue has changed (selected value) then update state
-		if (
-			prevConfiguration.defaultValue !== nextConfiguration.defaultValue
-		) {
+		if (prevConfiguration.defaultValue !== nextConfiguration.defaultValue) {
 			return true;
 		}
 
-		if ( prevConfiguration.isLoading !== nextConfiguration.isLoading ) {
+		if (prevConfiguration.isLoading !== nextConfiguration.isLoading) {
 			return true;
 		}
 
 		// shallow compare of keys but only if we can
 		if (
-			! isMap( prevProps.modelEntities ) ||
-			! isMap( nextProps.modelEntities )
+			!isMap(prevProps.modelEntities) ||
+			!isMap(nextProps.modelEntities)
 		) {
 			return true;
 		}
 
 		if (
-			! isShallowEqual(
-				Array.from( prevProps.modelEntities.keys() ),
-				Array.from( nextProps.modelEntities.keys() )
+			!isShallowEqual(
+				Array.from(prevProps.modelEntities.keys()),
+				Array.from(nextProps.modelEntities.keys())
 			)
 		) {
 			return true;
@@ -215,12 +213,12 @@ export class ModelSelect extends Component {
 	}
 
 	componentDidMount() {
-		this.setState( ModelSelect.setStateFromProps( this.props ) );
+		this.setState(ModelSelect.setStateFromProps(this.props));
 	}
 
-	componentDidUpdate( prevProps ) {
-		if ( ModelSelect.shouldUpdateState( prevProps, this.props ) ) {
-			this.setState( ModelSelect.setStateFromProps( this.props ) );
+	componentDidUpdate(prevProps) {
+		if (ModelSelect.shouldUpdateState(prevProps, this.props)) {
+			this.setState(ModelSelect.setStateFromProps(this.props));
 		}
 	}
 
@@ -232,7 +230,7 @@ export class ModelSelect extends Component {
 	getSelectLabel() {
 		const { label, selectConfiguration } = this.props;
 		return label ? (
-			<label htmlFor={ selectConfiguration.name }>{ label }</label>
+			<label htmlFor={selectConfiguration.name}>{label}</label>
 		) : (
 			''
 		);
@@ -241,8 +239,8 @@ export class ModelSelect extends Component {
 	render() {
 		return (
 			<Fragment>
-				{ this.getSelectLabel() }
-				<Select { ...this.state } />
+				{this.getSelectLabel()}
+				<Select {...this.state} />
 			</Fragment>
 		);
 	}
@@ -253,20 +251,18 @@ export class ModelSelect extends Component {
  * This subscribes the ModelSelect component to the state maintained via the
  * eventespresso/lists store.
  */
-export default withSelect( ( select, ownProps ) => {
+export default withSelect((select, ownProps) => {
 	const { getQueryString, modelName, selectConfiguration } = ownProps;
-	const queryString = getQueryString( ownProps.queryData );
-	const { getEntities, isRequestingEntities } = select(
-		'eventespresso/lists'
-	);
+	const queryString = getQueryString(ownProps.queryData);
+	const { getEntities, isRequestingEntities } = select('eventespresso/lists');
 	return {
 		...ModelSelect.defaultProps,
 		...ownProps,
-		modelEntities: getEntities( modelName, queryString ),
+		modelEntities: getEntities(modelName, queryString),
 		selectConfiguration: {
 			...ModelSelect.defaultProps.selectConfiguration,
 			...selectConfiguration,
-			isLoading: isRequestingEntities( modelName, queryString ),
+			isLoading: isRequestingEntities(modelName, queryString),
 		},
 	};
-} )( ModelSelect );
+})(ModelSelect);

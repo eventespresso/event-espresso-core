@@ -1,8 +1,8 @@
 import { MODEL_NAMES, modelNameForQueryString } from '../model-names';
 
-describe( 'MODEL_NAMES', () => {
-	it( 'returns the expected values for models', () => {
-		expect( MODEL_NAMES ).toEqual( [
+describe('MODEL_NAMES', () => {
+	it('returns the expected values for models', () => {
+		expect(MODEL_NAMES).toEqual([
 			'event',
 			'datetime',
 			'ticket',
@@ -10,19 +10,17 @@ describe( 'MODEL_NAMES', () => {
 			'term',
 			'checkin',
 			'registration',
-		] );
-	} );
-} );
+		]);
+	});
+});
 
-describe( 'modelNameForQueryString()', () => {
+describe('modelNameForQueryString()', () => {
 	[
-		[ 'event', 'Event' ],
-		[ 'message_template_group', 'Message_Template_Group' ],
-	].forEach( ( [ incomingString, expectedValue ] ) => {
-		it( `returns expected format for the string: ${ incomingString }`, () => {
-			expect( modelNameForQueryString( incomingString ) ).toBe(
-				expectedValue
-			);
-		} );
-	} );
-} );
+		['event', 'Event'],
+		['message_template_group', 'Message_Template_Group'],
+	].forEach(([incomingString, expectedValue]) => {
+		it(`returns expected format for the string: ${incomingString}`, () => {
+			expect(modelNameForQueryString(incomingString)).toBe(expectedValue);
+		});
+	});
+});

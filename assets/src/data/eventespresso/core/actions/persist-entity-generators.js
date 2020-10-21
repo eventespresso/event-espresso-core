@@ -45,10 +45,10 @@ const DEFAULT_EMPTY_ARRAY = [];
  * @return {null|BaseEntity} If successfully persisted the persisted entity is
  * returned.  Otherwise null.
  */
-function* persistEntityRecord( modelName, entity ) {
-	modelName = singularModelName( modelName );
+function* persistEntityRecord(modelName, entity) {
+	modelName = singularModelName(modelName);
 	// check if is an instance of BaseEntity
-	if ( ! isModelEntityOfModel( entity, modelName ) ) {
+	if (!isModelEntityOfModel(entity, modelName)) {
 		warning(
 			false,
 			'The provided entity is not a BaseEntity child for the ' +
@@ -57,8 +57,8 @@ function* persistEntityRecord( modelName, entity ) {
 		return null;
 	}
 	// check if there are any changes in the entity
-	if ( entity.isClean ) {
-		warning( false, 'The entity provided has no changes to persist.' );
+	if (entity.isClean) {
+		warning(false, 'The entity provided has no changes to persist.');
 		return null;
 	}
 	const factory = yield resolveSelect(
@@ -66,32 +66,32 @@ function* persistEntityRecord( modelName, entity ) {
 		'getFactoryForModel',
 		modelName
 	);
-	if ( ! isModelEntityFactoryOfModel( factory, modelName ) ) {
+	if (!isModelEntityFactoryOfModel(factory, modelName)) {
 		return null;
 	}
-	const path = applyQueryString( modelName );
-	const updatedEntity = yield fetch( {
+	const path = applyQueryString(modelName);
+	const updatedEntity = yield fetch({
 		path: entity.isNew ? path : path + '/' + entity.id,
 		method: entity.isNew ? 'POST' : 'PUT',
 		data: entity.forPersist,
-	} );
-	if ( isEmpty( updatedEntity ) ) {
+	});
+	if (isEmpty(updatedEntity)) {
 		return null;
 	}
-	const updatedEntityRecord = factory.fromExisting( updatedEntity );
+	const updatedEntityRecord = factory.fromExisting(updatedEntity);
 	const newId = updatedEntityRecord.id;
-	if ( entity.isNew ) {
-		yield removeEntityById( modelName, entity.id );
+	if (entity.isNew) {
+		yield removeEntityById(modelName, entity.id);
 		yield dispatch(
 			'core/data',
 			'finishResolution',
 			CORE_REDUCER_KEY,
 			'getEntityById',
-			[ modelName, newId ]
+			[modelName, newId]
 		);
-		yield receiveUpdatedEntityIdForRelations( modelName, entity.id, newId );
+		yield receiveUpdatedEntityIdForRelations(modelName, entity.id, newId);
 	}
-	yield receiveAndReplaceEntityRecords( modelName, [ updatedEntityRecord ] );
+	yield receiveAndReplaceEntityRecords(modelName, [updatedEntityRecord]);
 	return updatedEntityRecord;
 }
 
@@ -103,22 +103,22 @@ function* persistEntityRecord( modelName, entity ) {
  * @return {BaseEntity|null} If the entity is successfully persisted it is
  * returned (may have a new id!), otherwise null is returned.
  */
-function* persistForEntityId( modelName, entityId ) {
-	modelName = singularModelName( modelName );
+function* persistForEntityId(modelName, entityId) {
+	modelName = singularModelName(modelName);
 	const entity = yield resolveSelect(
 		CORE_REDUCER_KEY,
 		'getEntityById',
 		modelName,
 		entityId
 	);
-	if ( isModelEntityOfModel( entity, modelName ) ) {
+	if (isModelEntityOfModel(entity, modelName)) {
 		const persistedEntity = yield dispatch(
 			CORE_REDUCER_KEY,
 			'persistEntityRecord',
 			modelName,
 			entity
 		);
-		return isModelEntityOfModel( persistedEntity, modelName )
+		return isModelEntityOfModel(persistedEntity, modelName)
 			? persistedEntity
 			: null;
 	}
@@ -132,31 +132,31 @@ function* persistForEntityId( modelName, entityId ) {
  * @param {Array} entityIds
  * @return {Object} Entities persisted indexed by ID.
  */
-function* persistForEntityIds( modelName, entityIds = [] ) {
-	modelName = singularModelName( modelName );
+function* persistForEntityIds(modelName, entityIds = []) {
+	modelName = singularModelName(modelName);
 	const entities = yield select(
 		CORE_REDUCER_KEY,
 		'getEntitiesByIds',
 		modelName,
 		entityIds
 	);
-	const retrievedEntities = isArray( entities )
-		? keyEntitiesByPrimaryKeyValue( 'event', entities )
+	const retrievedEntities = isArray(entities)
+		? keyEntitiesByPrimaryKeyValue('event', entities)
 		: new Map();
-	const retrievedIds = Array.from( retrievedEntities.keys() );
-	if ( retrievedIds.length < 1 ) {
+	const retrievedIds = Array.from(retrievedEntities.keys());
+	if (retrievedIds.length < 1) {
 		return DEFAULT_EMPTY_OBJECT;
 	}
 	const persistedEntities = {};
-	while ( retrievedIds.length > 0 ) {
+	while (retrievedIds.length > 0) {
 		const persistedEntity = yield dispatch(
 			CORE_REDUCER_KEY,
 			'persistEntityRecord',
 			modelName,
-			retrievedEntities.get( retrievedIds.pop() )
+			retrievedEntities.get(retrievedIds.pop())
 		);
-		if ( isModelEntityOfModel( persistedEntity, modelName ) ) {
-			persistedEntities[ persistedEntity.id ] = persistedEntity;
+		if (isModelEntityOfModel(persistedEntity, modelName)) {
+			persistedEntities[persistedEntity.id] = persistedEntity;
 		}
 	}
 	return persistedEntities;
@@ -168,27 +168,27 @@ function* persistForEntityIds( modelName, entityIds = [] ) {
  * @param {string} modelName
  * @return {Array} An array of entity ids for entities successfully deleted.
  */
-function* persistDeletesForModel( modelName ) {
-	modelName = singularModelName( modelName );
+function* persistDeletesForModel(modelName) {
+	modelName = singularModelName(modelName);
 	const entityIds = yield select(
 		CORE_REDUCER_KEY,
 		'getEntityIdsQueuedForDelete',
 		modelName
 	);
-	if ( entityIds.length < 0 ) {
+	if (entityIds.length < 0) {
 		return DEFAULT_EMPTY_ARRAY;
 	}
 	const deletedIds = [];
-	while ( entityIds.length > 0 ) {
+	while (entityIds.length > 0) {
 		const entityId = entityIds.pop();
-		const response = yield fetch( {
-			path: applyQueryString( modelName ) + '/' + entityId,
+		const response = yield fetch({
+			path: applyQueryString(modelName) + '/' + entityId,
 			data: { force: true },
 			method: 'DELETE',
-		} );
-		if ( response.deleted ) {
-			deletedIds.push( entityId );
-			yield removeDeleteEntityId( modelName, entityId );
+		});
+		if (response.deleted) {
+			deletedIds.push(entityId);
+			yield removeDeleteEntityId(modelName, entityId);
 		}
 	}
 	return deletedIds;
@@ -200,26 +200,26 @@ function* persistDeletesForModel( modelName ) {
  * @param {string} modelName
  * @return {Array} An array of entity ids for entities successfully trashed.
  */
-function* persistTrashesForModel( modelName ) {
-	modelName = singularModelName( modelName );
+function* persistTrashesForModel(modelName) {
+	modelName = singularModelName(modelName);
 	const entityIds = yield select(
 		CORE_REDUCER_KEY,
 		'getEntityIdsQueuedForTrash',
 		modelName
 	);
-	if ( entityIds.length < 1 ) {
+	if (entityIds.length < 1) {
 		return DEFAULT_EMPTY_ARRAY;
 	}
 	const trashedIds = [];
-	while ( entityIds.length > 0 ) {
+	while (entityIds.length > 0) {
 		const entityId = entityIds.pop();
-		const success = yield fetch( {
-			path: applyQueryString( modelName ) + '/' + entityId,
+		const success = yield fetch({
+			path: applyQueryString(modelName) + '/' + entityId,
 			method: 'DELETE',
-		} );
-		if ( success ) {
-			trashedIds.push( entityId );
-			yield removeTrashEntityId( modelName, entityId );
+		});
+		if (success) {
+			trashedIds.push(entityId);
+			yield removeTrashEntityId(modelName, entityId);
 		}
 	}
 	return trashedIds;
@@ -237,38 +237,38 @@ function* persistAllDeletes() {
 		CORE_REDUCER_KEY,
 		'getModelsQueuedForDelete'
 	);
-	if ( modelsForDelete.length < 1 ) {
+	if (modelsForDelete.length < 1) {
 		return DEFAULT_EMPTY_OBJECT;
 	}
 	const deletedIds = {};
-	while ( modelsForDelete.length > 0 ) {
+	while (modelsForDelete.length > 0) {
 		const modelForDelete = modelsForDelete.pop();
 		const idsDeleted = yield resolveDispatch(
 			CORE_REDUCER_KEY,
 			'persistDeletesForModel',
 			modelForDelete
 		);
-		if ( ! isEmpty( idsDeleted ) ) {
-			deletedIds[ modelForDelete ] = idsDeleted;
+		if (!isEmpty(idsDeleted)) {
+			deletedIds[modelForDelete] = idsDeleted;
 		}
 	}
 	const modelsForTrash = yield select(
 		CORE_REDUCER_KEY,
 		'getModelsQueuedForTrash'
 	);
-	if ( modelsForTrash.length < 1 ) {
+	if (modelsForTrash.length < 1) {
 		return DEFAULT_EMPTY_OBJECT;
 	}
 	const trashedIds = {};
-	while ( modelsForTrash.length > 0 ) {
+	while (modelsForTrash.length > 0) {
 		const modelForTrash = modelsForTrash.pop();
 		const idsTrashed = yield resolveDispatch(
 			CORE_REDUCER_KEY,
 			'persistTrashesForModel',
 			modelForTrash
 		);
-		if ( ! isEmpty( idsTrashed ) ) {
-			trashedIds[ modelForTrash ] = idsTrashed;
+		if (!isEmpty(idsTrashed)) {
+			trashedIds[modelForTrash] = idsTrashed;
 		}
 	}
 	return { deleted: deletedIds, trashed: trashedIds };

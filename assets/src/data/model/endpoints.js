@@ -25,9 +25,9 @@ export const {
  * @return {string}  The endpoint for the provided model.
  * @throws {Exception}
  */
-export const getEndpoint = ( modelName ) => {
-	assertEntityHasKey( modelName, endpoints );
-	return endpoints[ modelName ];
+export const getEndpoint = (modelName) => {
+	assertEntityHasKey(modelName, endpoints);
+	return endpoints[modelName];
 };
 
 /**
@@ -37,10 +37,10 @@ export const getEndpoint = ( modelName ) => {
  * @param {string} queryString  The query being appended to the endpoint.
  * @return {string} The final assembled query string.
  */
-export const applyQueryString = ( modelName, queryString = '' ) => {
+export const applyQueryString = (modelName, queryString = '') => {
 	return queryString !== ''
-		? getEndpoint( modelName ) + '?' + queryString
-		: getEndpoint( modelName );
+		? getEndpoint(modelName) + '?' + queryString
+		: getEndpoint(modelName);
 };
 
 /**
@@ -50,6 +50,6 @@ export const applyQueryString = ( modelName, queryString = '' ) => {
  * @param {string} url
  * @return {string} the url with the base rest route removed.
  */
-export const stripBaseRouteFromUrl = ( url ) => {
-	return url.replace( baseRestRoute, '' );
+export const stripBaseRouteFromUrl = (url) => {
+	return url.replace(baseRestRoute, '');
 };

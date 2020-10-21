@@ -8,11 +8,11 @@ import { EventEntities, DateTimeEntities } from '../../../test/fixtures/base';
  */
 import { Map, OrderedMap } from 'immutable';
 
-export const genericObjects = [ { item: 1 }, { item: 2 }, { item: 3 } ];
+export const genericObjects = [{ item: 1 }, { item: 2 }, { item: 3 }];
 
-export const eventEntityItems = [ EventEntities.b, EventEntities.a ];
+export const eventEntityItems = [EventEntities.b, EventEntities.a];
 
-export const dateTimeEntityItems = [ DateTimeEntities.c, DateTimeEntities.b ];
+export const dateTimeEntityItems = [DateTimeEntities.c, DateTimeEntities.b];
 
 export const mockStateForTests = Map()
 	.set(
@@ -21,13 +21,13 @@ export const mockStateForTests = Map()
 			.set(
 				'testQueryA',
 				OrderedMap(
-					eventEntityItems.map( ( entity ) => [ entity.id, entity ] )
+					eventEntityItems.map((entity) => [entity.id, entity])
 				)
 			)
 			.set(
 				'[EVT_ID][IN]=20,10',
 				OrderedMap(
-					eventEntityItems.map( ( entity ) => [ entity.id, entity ] )
+					eventEntityItems.map((entity) => [entity.id, entity])
 				)
 			)
 	)
@@ -35,8 +35,6 @@ export const mockStateForTests = Map()
 		'datetime',
 		Map().set(
 			'testQueryB',
-			OrderedMap(
-				dateTimeEntityItems.map( ( entity ) => [ entity.id, entity ] )
-			)
+			OrderedMap(dateTimeEntityItems.map((entity) => [entity.id, entity]))
 		)
 	);

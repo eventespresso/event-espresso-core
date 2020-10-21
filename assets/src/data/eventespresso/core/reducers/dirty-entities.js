@@ -20,9 +20,9 @@ const { entities: types, resets: resetTypes } = ACTION_TYPES;
  * @param {Immutable.Set} existingEntities
  * @return {Immutable.Map} New state.
  */
-const addToState = ( state, modelName, entityId, existingEntities ) => {
-	existingEntities = existingEntities.add( entityId );
-	return state.set( modelName, existingEntities );
+const addToState = (state, modelName, entityId, existingEntities) => {
+	existingEntities = existingEntities.add(entityId);
+	return state.set(modelName, existingEntities);
 };
 
 /**
@@ -33,15 +33,15 @@ const addToState = ( state, modelName, entityId, existingEntities ) => {
  * @param {number|string} entityId
  * @return {Immutable.Map} new state or existing state if no change.
  */
-const removeFromState = ( state, modelName, entityId ) => {
-	let entityIds = state.get( modelName, Set() );
-	if ( ! entityIds.includes( entityId ) ) {
+const removeFromState = (state, modelName, entityId) => {
+	let entityIds = state.get(modelName, Set());
+	if (!entityIds.includes(entityId)) {
 		return state;
 	}
-	entityIds = entityIds.delete( entityId );
+	entityIds = entityIds.delete(entityId);
 	return entityIds.isEmpty()
-		? state.delete( modelName )
-		: state.set( modelName, entityIds );
+		? state.delete(modelName)
+		: state.set(modelName, entityIds);
 };
 
 /**
@@ -51,19 +51,19 @@ const removeFromState = ( state, modelName, entityId ) => {
  * @param {Object} action
  * @return {Immutable.Map} Either the existing state if no change or new state.
  */
-const processAction = ( state, action ) => {
+const processAction = (state, action) => {
 	const { type, modelName } = action;
-	const entityId = normalizeEntityId( action.entityId );
-	const existingEntities = state.get( modelName, Set() );
+	const entityId = normalizeEntityId(action.entityId);
+	const existingEntities = state.get(modelName, Set());
 
-	switch ( type ) {
+	switch (type) {
 		case types.RECEIVE_DELETE_ENTITY_ID:
 		case types.RECEIVE_TRASH_ENTITY_ID:
-			state = addToState( state, modelName, entityId, existingEntities );
+			state = addToState(state, modelName, entityId, existingEntities);
 			break;
 		case types.REMOVE_DELETE_ENTITY_ID:
 		case types.REMOVE_TRASH_ENTITY_ID:
-			state = removeFromState( state, modelName, entityId );
+			state = removeFromState(state, modelName, entityId);
 			break;
 	}
 	return state;
@@ -77,17 +77,17 @@ const processAction = ( state, action ) => {
  * @return {Immutable.Map} Existing or new state.
  */
 export function deleteEntity(
-	state = fromJS( DEFAULT_CORE_STATE.dirty.delete ),
+	state = fromJS(DEFAULT_CORE_STATE.dirty.delete),
 	action
 ) {
-	switch ( action.type ) {
+	switch (action.type) {
 		case types.RECEIVE_DELETE_ENTITY_ID:
 		case types.REMOVE_DELETE_ENTITY_ID:
-			return processAction( state, action );
+			return processAction(state, action);
 		case resetTypes.RESET_ALL_STATE:
-			return fromJS( DEFAULT_CORE_STATE.dirty.delete );
+			return fromJS(DEFAULT_CORE_STATE.dirty.delete);
 		case resetTypes.RESET_STATE_FOR_MODEL:
-			return state.delete( singularModelName( action.modelName ) );
+			return state.delete(singularModelName(action.modelName));
 	}
 	return state;
 }
@@ -100,17 +100,17 @@ export function deleteEntity(
  * @return {Immutable.Map} Existing or new state.
  */
 export function trashEntity(
-	state = fromJS( DEFAULT_CORE_STATE.dirty.trash ),
+	state = fromJS(DEFAULT_CORE_STATE.dirty.trash),
 	action
 ) {
-	switch ( action.type ) {
+	switch (action.type) {
 		case types.RECEIVE_TRASH_ENTITY_ID:
 		case types.REMOVE_TRASH_ENTITY_ID:
-			return processAction( state, action );
+			return processAction(state, action);
 		case resetTypes.RESET_ALL_STATE:
-			return fromJS( DEFAULT_CORE_STATE.dirty.trash );
+			return fromJS(DEFAULT_CORE_STATE.dirty.trash);
 		case resetTypes.RESET_STATE_FOR_MODEL:
-			return state.delete( singularModelName( action.modelName ) );
+			return state.delete(singularModelName(action.modelName));
 	}
 	return state;
 }

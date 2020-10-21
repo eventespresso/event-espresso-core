@@ -6,7 +6,7 @@ import {
 	CONTEXT_CAPS_READ_ADMIN,
 } from '../caps-middleware';
 
-describe( 'caps context middleware tests', () => {
+describe('caps context middleware tests', () => {
 	const validUrl = 'https://ee.test/wp-json/ee/v4.8.36/events';
 	const validPath = '/ee/v4.8.36/events';
 	const invalidUrl = 'https://ee.test/wp-json/ee/events';
@@ -31,15 +31,15 @@ describe( 'caps context middleware tests', () => {
 			'url',
 			invalidUrl,
 		],
-	].forEach( ( [ descriptionPart, options, optionsType, expectedUrl ] ) => {
-		it( 'should not have context appended ' + descriptionPart, () => {
+	].forEach(([descriptionPart, options, optionsType, expectedUrl]) => {
+		it('should not have context appended ' + descriptionPart, () => {
 			expect.hasAssertions();
-			const callback = ( opts ) => {
-				expect( opts[ optionsType ] ).toBe( expectedUrl );
+			const callback = (opts) => {
+				expect(opts[optionsType]).toBe(expectedUrl);
 			};
-			capsMiddleware( CONTEXT_CAPS_READ_ADMIN )( options, callback );
-		} );
-	} );
+			capsMiddleware(CONTEXT_CAPS_READ_ADMIN)(options, callback);
+		});
+	});
 	[
 		[
 			'when the options.path property is a valid full url',
@@ -59,13 +59,13 @@ describe( 'caps context middleware tests', () => {
 			'url',
 			appendedPath,
 		],
-	].forEach( ( [ descriptionPart, options, optionsType, expectedUrl ] ) => {
-		it( 'should have context appended ' + descriptionPart, () => {
+	].forEach(([descriptionPart, options, optionsType, expectedUrl]) => {
+		it('should have context appended ' + descriptionPart, () => {
 			expect.hasAssertions();
-			const callback = ( opts ) => {
-				expect( opts[ optionsType ] ).toBe( expectedUrl );
+			const callback = (opts) => {
+				expect(opts[optionsType]).toBe(expectedUrl);
 			};
-			capsMiddleware( CONTEXT_CAPS_READ_ADMIN )( options, callback );
-		} );
-	} );
-} );
+			capsMiddleware(CONTEXT_CAPS_READ_ADMIN)(options, callback);
+		});
+	});
+});

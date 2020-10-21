@@ -41,7 +41,7 @@ import {
  * }
  */
 const privateProperties = {
-	datetime: Symbol( 'DateTimePropertyDateTime' ),
+	datetime: Symbol('DateTimePropertyDateTime'),
 };
 
 /**
@@ -59,15 +59,15 @@ const privateProperties = {
  * }
  */
 const privateMethods = {
-	getUnitNames: Symbol( 'DateTimeMethodGetUnitNames' ),
-	createGettersAndSetters: Symbol( 'DateTimeMethodCreateGettersAndSetters' ),
+	getUnitNames: Symbol('DateTimeMethodGetUnitNames'),
+	createGettersAndSetters: Symbol('DateTimeMethodCreateGettersAndSetters'),
 	extractMomentsFromDateTimes: Symbol(
 		'DateTimeMethodExtractMomentsFromDateTimes'
 	),
-	normalizeUnitName: Symbol( 'DateTimeMethodNormalizeUnitName' ),
-	normalizeUnitObject: Symbol( 'DateTimeMethodNormalizeUnitObject' ),
-	normalizeUnitValue: Symbol( 'DateTimeMethodNormalizeUnitValue' ),
-	normalizeArguments: Symbol( 'DateTimeMethodNormalizeArguments' ),
+	normalizeUnitName: Symbol('DateTimeMethodNormalizeUnitName'),
+	normalizeUnitObject: Symbol('DateTimeMethodNormalizeUnitObject'),
+	normalizeUnitValue: Symbol('DateTimeMethodNormalizeUnitValue'),
+	normalizeArguments: Symbol('DateTimeMethodNormalizeArguments'),
 };
 
 const validDateTimeUnits = [
@@ -114,31 +114,31 @@ export default class DateTime {
 			displayName === 'DateTime' || displayName === 'ServerDateTime'
 				? displayName
 				: 'DateTime';
-		if ( iso8601DateString !== '' ) {
-			this.constructor.assertISO8601IsValid( iso8601DateString );
+		if (iso8601DateString !== '') {
+			this.constructor.assertISO8601IsValid(iso8601DateString);
 		}
-		this.constructor.assertLocaleIsValid( locale );
-		if ( timezone === null ) {
-			this[ privateProperties.datetime ] =
+		this.constructor.assertLocaleIsValid(locale);
+		if (timezone === null) {
+			this[privateProperties.datetime] =
 				iso8601DateString === ''
-					? moment.utc().locale( locale )
-					: moment( iso8601DateString )
-							.utcOffset( iso8601DateString )
-							.locale( locale );
-		} else if ( timezone === this.constructor.TIMEZONE_LOCAL ) {
-			this[ privateProperties.datetime ] =
+					? moment.utc().locale(locale)
+					: moment(iso8601DateString)
+							.utcOffset(iso8601DateString)
+							.locale(locale);
+		} else if (timezone === this.constructor.TIMEZONE_LOCAL) {
+			this[privateProperties.datetime] =
 				iso8601DateString === ''
-					? moment().locale( locale )
-					: moment( iso8601DateString ).locale( locale );
+					? moment().locale(locale)
+					: moment(iso8601DateString).locale(locale);
 		} else {
-			this.constructor.assertTimezoneIsValid( timezone );
-			this[ privateProperties.datetime ] =
+			this.constructor.assertTimezoneIsValid(timezone);
+			this[privateProperties.datetime] =
 				iso8601DateString === ''
-					? moment().tz( timezone ).locale( locale )
-					: moment.tz( iso8601DateString, timezone ).locale( locale );
+					? moment().tz(timezone).locale(locale)
+					: moment.tz(iso8601DateString, timezone).locale(locale);
 		}
-		this[ privateMethods.createGettersAndSetters ]();
-		Object.freeze( this );
+		this[privateMethods.createGettersAndSetters]();
+		Object.freeze(this);
 	}
 
 	/**
@@ -147,8 +147,8 @@ export default class DateTime {
 	 * @param {string} locale
 	 * @return {boolean} true means it is valid
 	 */
-	static validateLocale( locale ) {
-		return assertions.validateLocale( locale );
+	static validateLocale(locale) {
+		return assertions.validateLocale(locale);
 	}
 
 	/**
@@ -157,8 +157,8 @@ export default class DateTime {
 	 * @param {string} locale
 	 * @throws InvalidLocale
 	 */
-	static assertLocaleIsValid( locale ) {
-		assertions.assertLocaleIsValid( locale );
+	static assertLocaleIsValid(locale) {
+		assertions.assertLocaleIsValid(locale);
 	}
 
 	/**
@@ -167,8 +167,8 @@ export default class DateTime {
 	 * @param {string} dateTimeString
 	 * @return {boolean} true means it is valid.
 	 */
-	static validateISO8601( dateTimeString ) {
-		return assertions.validateISO8601( dateTimeString );
+	static validateISO8601(dateTimeString) {
+		return assertions.validateISO8601(dateTimeString);
 	}
 
 	/**
@@ -177,8 +177,8 @@ export default class DateTime {
 	 * @param {string} dateTimeString
 	 * @throws InvalidISO8601String
 	 */
-	static assertISO8601IsValid( dateTimeString ) {
-		assertions.assertISO8601IsValid( dateTimeString );
+	static assertISO8601IsValid(dateTimeString) {
+		assertions.assertISO8601IsValid(dateTimeString);
 	}
 
 	/**
@@ -187,8 +187,8 @@ export default class DateTime {
 	 * @param {string} timezone
 	 * @return {boolean} true means it is valid.
 	 */
-	static validateTimezone( timezone ) {
-		return assertions.validateTimezone( timezone );
+	static validateTimezone(timezone) {
+		return assertions.validateTimezone(timezone);
 	}
 
 	/**
@@ -197,8 +197,8 @@ export default class DateTime {
 	 * @param {string} timezone
 	 * @throws InvalidTimezone
 	 */
-	static assertTimezoneIsValid( timezone ) {
-		assertions.assertTimezoneIsValid( timezone );
+	static assertTimezoneIsValid(timezone) {
+		assertions.assertTimezoneIsValid(timezone);
 	}
 
 	/**
@@ -210,8 +210,8 @@ export default class DateTime {
 	 * @param {number} offset
 	 * @return {boolean}  true means its valid.
 	 */
-	static validateIsOffset( offset ) {
-		return assertions.validateIsOffset( offset );
+	static validateIsOffset(offset) {
+		return assertions.validateIsOffset(offset);
 	}
 
 	/**
@@ -220,8 +220,8 @@ export default class DateTime {
 	 * @param {number} offset
 	 * @throws TypeError
 	 */
-	static assertIsOffset( offset ) {
-		assertions.assertIsOffset( offset );
+	static assertIsOffset(offset) {
+		assertions.assertIsOffset(offset);
 	}
 
 	/**
@@ -230,10 +230,10 @@ export default class DateTime {
 	 * @param {DateTime} datetime
 	 * @return {boolean} returns true if it is an instance of DateTime
 	 */
-	static validateIsDateTime( datetime ) {
+	static validateIsDateTime(datetime) {
 		return (
-			instanceOf( datetime, 'DateTime' ) ||
-			instanceOf( datetime, 'ServerDateTime' )
+			instanceOf(datetime, 'DateTime') ||
+			instanceOf(datetime, 'ServerDateTime')
 		);
 	}
 
@@ -243,8 +243,8 @@ export default class DateTime {
 	 * @param {DateTime} datetime
 	 * @throws TypeError
 	 */
-	static assertIsDateTime( datetime ) {
-		if ( ! this.validateIsDateTime( datetime ) ) {
+	static assertIsDateTime(datetime) {
+		if (!this.validateIsDateTime(datetime)) {
 			throw new TypeError(
 				'The provided value is not an instance of DateTime'
 			);
@@ -258,8 +258,8 @@ export default class DateTime {
 	 * @param {Date} date
 	 * @return {boolean} True means the value is an instance of Date
 	 */
-	static validateIsDate( date ) {
-		return assertions.validateIsDate( date );
+	static validateIsDate(date) {
+		return assertions.validateIsDate(date);
 	}
 
 	/**
@@ -268,8 +268,8 @@ export default class DateTime {
 	 * @param {Date} date
 	 * @throws TypeError
 	 */
-	static assertIsDate( date ) {
-		assertions.assertIsDate( date );
+	static assertIsDate(date) {
+		assertions.assertIsDate(date);
 	}
 
 	/**
@@ -280,8 +280,8 @@ export default class DateTime {
 	 * @param {DateTime} datetime
 	 * @return {boolean} true means it is valid.
 	 */
-	static isValid( datetime ) {
-		return this.validateIsDateTime( datetime ) && datetime.isValid();
+	static isValid(datetime) {
+		return this.validateIsDateTime(datetime) && datetime.isValid();
 	}
 
 	/**
@@ -292,18 +292,14 @@ export default class DateTime {
 	 * @param {DateTime} datetime
 	 * @throws InvalidDateTime
 	 */
-	static assertIsValid( datetime ) {
-		if ( ! this.isValid( datetime ) ) {
-			throw new InvalidDateTime( datetime );
+	static assertIsValid(datetime) {
+		if (!this.isValid(datetime)) {
+			throw new InvalidDateTime(datetime);
 		}
 	}
 
-	static [ privateMethods.normalizeArguments ](
-		dateValue,
-		timezone,
-		locale
-	) {
-		return [ dateValue, timezone, locale ];
+	static [privateMethods.normalizeArguments](dateValue, timezone, locale) {
+		return [dateValue, timezone, locale];
 	}
 
 	/**
@@ -314,11 +310,11 @@ export default class DateTime {
 	 * @return {Moment[]} An array of moment instances extracted from the
 	 * DateTimes
 	 */
-	static [ privateMethods.extractMomentsFromDateTimes ]( ...datetimes ) {
-		return datetimes.map( ( datetime ) => {
-			this.assertIsDateTime( datetime );
-			return datetime[ privateProperties.datetime ];
-		} );
+	static [privateMethods.extractMomentsFromDateTimes](...datetimes) {
+		return datetimes.map((datetime) => {
+			this.assertIsDateTime(datetime);
+			return datetime[privateProperties.datetime];
+		});
 	}
 
 	/**
@@ -328,12 +324,10 @@ export default class DateTime {
 	 * @param {...DateTime} datetimes
 	 * @return {DateTime|ServerDateTime} A new DateTime representing the latest point of time.
 	 */
-	static max( ...datetimes ) {
+	static max(...datetimes) {
 		return this.fromMoment(
 			moment.max(
-				this[ privateMethods.extractMomentsFromDateTimes ](
-					...datetimes
-				)
+				this[privateMethods.extractMomentsFromDateTimes](...datetimes)
 			)
 		);
 	}
@@ -346,12 +340,10 @@ export default class DateTime {
 	 * @return {DateTime|ServerDateTime} A new DateTime representing the earliest point in
 	 * time.
 	 */
-	static min( ...datetimes ) {
+	static min(...datetimes) {
 		return this.fromMoment(
 			moment.min(
-				this[ privateMethods.extractMomentsFromDateTimes ](
-					...datetimes
-				)
+				this[privateMethods.extractMomentsFromDateTimes](...datetimes)
 			)
 		);
 	}
@@ -362,15 +354,15 @@ export default class DateTime {
 	 * @param {moment} momentInstance
 	 * @return {DateTime|ServerDateTime} An instance of DateTime
 	 */
-	static fromMoment( momentInstance ) {
-		if ( ! moment.isMoment( momentInstance ) ) {
-			throw new TypeError( 'Requires an instance of moment.' );
+	static fromMoment(momentInstance) {
+		if (!moment.isMoment(momentInstance)) {
+			throw new TypeError('Requires an instance of moment.');
 		}
 
 		// this would account for client code that is using `moment` but not
 		// using `moment-timezone`.
-		return isFunction( momentInstance.tz ) &&
-			! isUndefined( momentInstance.tz() ) &&
+		return isFunction(momentInstance.tz) &&
+			!isUndefined(momentInstance.tz()) &&
 			momentInstance.tz() !== 'UTC'
 			? new this(
 					momentInstance.toISOString(),
@@ -378,7 +370,7 @@ export default class DateTime {
 					momentInstance.locale()
 			  )
 			: new this(
-					momentInstance.toISOString( true ),
+					momentInstance.toISOString(true),
 					null,
 					momentInstance.locale()
 			  );
@@ -397,10 +389,10 @@ export default class DateTime {
 		timezone = DEFAULT_TIMEZONE_STRING,
 		locale = DEFAULT_VALID_LOCALE
 	) {
-		if ( isEmpty( ISOString ) ) {
-			throw new InvalidISO8601String( ISOString );
+		if (isEmpty(ISOString)) {
+			throw new InvalidISO8601String(ISOString);
 		}
-		return new this( ISOString, timezone, locale );
+		return new this(ISOString, timezone, locale);
 	}
 
 	/**
@@ -419,14 +411,14 @@ export default class DateTime {
 		offset = DEFAULT_OFFSET,
 		locale = DEFAULT_VALID_LOCALE
 	) {
-		this.assertISO8601IsValid( ISOString );
-		this.assertIsOffset( offset );
-		this.assertLocaleIsValid( locale );
+		this.assertISO8601IsValid(ISOString);
+		this.assertIsOffset(offset);
+		this.assertLocaleIsValid(locale);
 		const datetime = moment
-			.utc( ISOString )
-			.utcOffset( offset, true )
-			.locale( locale );
-		return this.fromMoment( datetime );
+			.utc(ISOString)
+			.utcOffset(offset, true)
+			.locale(locale);
+		return this.fromMoment(datetime);
 	}
 
 	/**
@@ -442,12 +434,10 @@ export default class DateTime {
 		timezone = DEFAULT_TIMEZONE_STRING,
 		locale = DEFAULT_VALID_LOCALE
 	) {
-		this.assertIsDate( date );
-		this.assertTimezoneIsValid( timezone );
-		this.assertLocaleIsValid( locale );
-		return this.fromMoment(
-			moment( date ).tz( timezone ).locale( locale )
-		);
+		this.assertIsDate(date);
+		this.assertTimezoneIsValid(timezone);
+		this.assertLocaleIsValid(locale);
+		return this.fromMoment(moment(date).tz(timezone).locale(locale));
 	}
 
 	/**
@@ -466,12 +456,10 @@ export default class DateTime {
 		offset = DEFAULT_OFFSET,
 		locale = DEFAULT_VALID_LOCALE
 	) {
-		this.assertIsDate( date );
-		this.assertIsOffset( offset );
-		this.assertLocaleIsValid( locale );
-		return this.fromMoment(
-			moment( date ).utcOffset( offset ).locale( locale )
-		);
+		this.assertIsDate(date);
+		this.assertIsOffset(offset);
+		this.assertLocaleIsValid(locale);
+		return this.fromMoment(moment(date).utcOffset(offset).locale(locale));
 	}
 
 	/**
@@ -482,15 +470,15 @@ export default class DateTime {
 	 * @return {DateTime|ServerDateTime} Returns an instance of DateTime
 	 * @throws TypeError
 	 */
-	static fromMilliseconds( milliseconds, locale = DEFAULT_VALID_LOCALE ) {
-		this.assertLocaleIsValid( locale );
-		if ( ! isNumber( milliseconds ) ) {
+	static fromMilliseconds(milliseconds, locale = DEFAULT_VALID_LOCALE) {
+		this.assertLocaleIsValid(locale);
+		if (!isNumber(milliseconds)) {
 			throw new TypeError(
 				'Provided value must be a number ' +
 					'representing milliseconds from the epoch'
 			);
 		}
-		return this.fromMoment( moment( milliseconds ).utc().locale( locale ) );
+		return this.fromMoment(moment(milliseconds).utc().locale(locale));
 	}
 
 	/**
@@ -501,15 +489,15 @@ export default class DateTime {
 	 * @return {DateTime|ServerDateTime} An instance of DateTime
 	 * @throws TypeError
 	 */
-	static fromUnix( seconds, locale = DEFAULT_VALID_LOCALE ) {
-		this.assertLocaleIsValid( locale );
-		if ( ! isNumber( seconds ) ) {
+	static fromUnix(seconds, locale = DEFAULT_VALID_LOCALE) {
+		this.assertLocaleIsValid(locale);
+		if (!isNumber(seconds)) {
 			throw new TypeError(
 				'Provided value must be a number ' +
 					'representing seconds from the epoch'
 			);
 		}
-		return this.fromMoment( moment.unix( seconds ).utc().locale( locale ) );
+		return this.fromMoment(moment.unix(seconds).utc().locale(locale));
 	}
 
 	/**
@@ -528,19 +516,19 @@ export default class DateTime {
 	 * @return {DateTime|ServerDateTime} An instance of DateTime
 	 * @throws InvalidArgument
 	 */
-	static fromLocal( values, locale = DEFAULT_VALID_LOCALE ) {
-		this.assertLocaleIsValid( locale );
-		values = this[ privateMethods.normalizeUnitObject ]( values );
-		const datetime = isEmpty( values )
-			? moment().locale( locale )
-			: moment( values ).locale( locale );
-		if ( datetime.isValid() !== true ) {
+	static fromLocal(values, locale = DEFAULT_VALID_LOCALE) {
+		this.assertLocaleIsValid(locale);
+		values = this[privateMethods.normalizeUnitObject](values);
+		const datetime = isEmpty(values)
+			? moment().locale(locale)
+			: moment(values).locale(locale);
+		if (datetime.isValid() !== true) {
 			throw new InvalidArgument(
 				'Double-check the values you sent in.',
 				values
 			);
 		}
-		return this.fromMoment( datetime );
+		return this.fromMoment(datetime);
 	}
 
 	/**
@@ -561,19 +549,19 @@ export default class DateTime {
 	 * @return {DateTime|ServerDateTime} An instance of DateTime
 	 * @throws InvalidArgument
 	 */
-	static utc( values, locale = DEFAULT_VALID_LOCALE ) {
-		this.assertLocaleIsValid( locale );
-		values = this[ privateMethods.normalizeUnitObject ]( values );
-		const datetime = isEmpty( values )
-			? moment.utc().locale( locale )
-			: moment.utc( values ).locale( locale );
-		if ( datetime.isValid() !== true ) {
+	static utc(values, locale = DEFAULT_VALID_LOCALE) {
+		this.assertLocaleIsValid(locale);
+		values = this[privateMethods.normalizeUnitObject](values);
+		const datetime = isEmpty(values)
+			? moment.utc().locale(locale)
+			: moment.utc(values).locale(locale);
+		if (datetime.isValid() !== true) {
 			throw new InvalidArgument(
 				'Double-check the values sent in.',
 				values
 			);
 		}
-		return this.fromMoment( datetime );
+		return this.fromMoment(datetime);
 	}
 
 	/**
@@ -589,57 +577,51 @@ export default class DateTime {
 	 * @param {Object} values
 	 * @return {DateTime|ServerDateTime} An instance of DateTime
 	 */
-	static fromObject( values ) {
+	static fromObject(values) {
 		const locale = values.locale || DEFAULT_VALID_LOCALE;
 		const timezone = values.timezone || DEFAULT_TIMEZONE_STRING;
-		const offset = isUndefined( values.offset ) ? null : values.offset;
-		let valuesForConstruct = omit( values, [
-			'locale',
-			'timezone',
-			'offset',
-		] );
+		const offset = isUndefined(values.offset) ? null : values.offset;
+		let valuesForConstruct = omit(values, ['locale', 'timezone', 'offset']);
 
-		this.assertLocaleIsValid( locale );
+		this.assertLocaleIsValid(locale);
 
-		if ( offset !== null ) {
-			this.assertIsOffset( offset );
-			valuesForConstruct = this[ privateMethods.normalizeUnitObject ](
+		if (offset !== null) {
+			this.assertIsOffset(offset);
+			valuesForConstruct = this[privateMethods.normalizeUnitObject](
 				valuesForConstruct
 			);
-			const datetime = isEmpty( valuesForConstruct )
-				? moment().utcOffset( offset, true ).locale( locale )
+			const datetime = isEmpty(valuesForConstruct)
+				? moment().utcOffset(offset, true).locale(locale)
 				: moment
-						.utc( valuesForConstruct )
-						.utcOffset( offset, true )
-						.locale( locale );
-			if ( datetime.isValid() !== true ) {
+						.utc(valuesForConstruct)
+						.utcOffset(offset, true)
+						.locale(locale);
+			if (datetime.isValid() !== true) {
 				throw new InvalidArgument(
 					'Double-check the configuration object sent in.',
 					values
 				);
 			}
-			return this.fromMoment( datetime );
+			return this.fromMoment(datetime);
 		}
 
-		if ( timezone === this.TIMEZONE_LOCAL ) {
-			return this.fromLocal( valuesForConstruct, locale );
+		if (timezone === this.TIMEZONE_LOCAL) {
+			return this.fromLocal(valuesForConstruct, locale);
 		}
 
-		this.assertTimezoneIsValid( timezone );
+		this.assertTimezoneIsValid(timezone);
 
-		valuesForConstruct = this[ privateMethods.normalizeUnitObject ](
+		valuesForConstruct = this[privateMethods.normalizeUnitObject](
 			valuesForConstruct
 		);
-		const datetime = moment
-			.tz( valuesForConstruct, timezone )
-			.locale( locale );
-		if ( datetime.isValid() !== true ) {
+		const datetime = moment.tz(valuesForConstruct, timezone).locale(locale);
+		if (datetime.isValid() !== true) {
 			throw new InvalidArgument(
 				'Double-check the configuration object sent in.',
 				values
 			);
 		}
-		return this.fromMoment( datetime );
+		return this.fromMoment(datetime);
 	}
 
 	/**
@@ -649,7 +631,7 @@ export default class DateTime {
 	 * @param {string} nameToNormalize
 	 * @return {string}  Normalized unit name.
 	 */
-	static [ privateMethods.normalizeUnitName ]( nameToNormalize ) {
+	static [privateMethods.normalizeUnitName](nameToNormalize) {
 		const map = {
 			day: 'date',
 			days: 'day',
@@ -661,9 +643,7 @@ export default class DateTime {
 			seconds: 'second',
 			hours: 'hour',
 		};
-		return map[ nameToNormalize ]
-			? map[ nameToNormalize ]
-			: nameToNormalize;
+		return map[nameToNormalize] ? map[nameToNormalize] : nameToNormalize;
 	}
 
 	/**
@@ -680,8 +660,8 @@ export default class DateTime {
 	 * getting.
 	 * @return {mixed}  The normalized value.
 	 */
-	static [ privateMethods.normalizeUnitValue ]( unit, value, set = true ) {
-		if ( unit === 'month' ) {
+	static [privateMethods.normalizeUnitValue](unit, value, set = true) {
+		if (unit === 'month') {
 			value = set ? value - 1 : value + 1;
 		}
 		return value;
@@ -696,15 +676,15 @@ export default class DateTime {
 	 * object
 	 * @return {Object} The normalized object.
 	 */
-	static [ privateMethods.normalizeUnitObject ]( setObject, set = true ) {
-		if ( ! isObject( setObject ) ) {
-			throw new TypeError( 'The incoming value must be an object' );
+	static [privateMethods.normalizeUnitObject](setObject, set = true) {
+		if (!isObject(setObject)) {
+			throw new TypeError('The incoming value must be an object');
 		}
 		return reduce(
 			setObject,
-			( result, value, key ) => {
-				key = this[ privateMethods.normalizeUnitName ]( key );
-				result[ key ] = this[ privateMethods.normalizeUnitValue ](
+			(result, value, key) => {
+				key = this[privateMethods.normalizeUnitName](key);
+				result[key] = this[privateMethods.normalizeUnitValue](
 					key,
 					value,
 					set
@@ -720,39 +700,41 @@ export default class DateTime {
 	 *
 	 * @return {string[]} An array of unit names
 	 */
-	[ privateMethods.getUnitNames ]() {
+	[privateMethods.getUnitNames]() {
 		return validDateTimeUnits;
 	}
 
 	/**
 	 * Creates the various getter and setters for the value object.
 	 */
-	[ privateMethods.createGettersAndSetters ]() {
-		this[ privateMethods.getUnitNames ]().forEach( ( unitName ) => {
+	[privateMethods.createGettersAndSetters]() {
+		this[privateMethods.getUnitNames]().forEach((unitName) => {
 			// creates accessor for getting the unit value via a
 			// property (eg. instance.hour)
-			Object.defineProperty( this, unitName, {
+			Object.defineProperty(this, unitName, {
 				get() {
 					const methodName = this.constructor[
 						privateMethods.normalizeUnitName
-					]( unitName );
-					const unitValue = this[ privateProperties.datetime ][
+					](unitName);
+					const unitValue = this[privateProperties.datetime][
 						methodName
 					]();
-					return this.constructor[
-						privateMethods.normalizeUnitValue
-					]( unitName, unitValue, false );
+					return this.constructor[privateMethods.normalizeUnitValue](
+						unitName,
+						unitValue,
+						false
+					);
 				},
-			} );
+			});
 			// creates a fluent setter for the value.
-			Object.defineProperty( this, 'set' + capitalize( unitName ), {
+			Object.defineProperty(this, 'set' + capitalize(unitName), {
 				get() {
-					return ( value ) => {
-						return this.set( { [ unitName ]: value } );
+					return (value) => {
+						return this.set({ [unitName]: value });
 					};
 				},
-			} );
-		} );
+			});
+		});
 	}
 
 	/**
@@ -765,14 +747,14 @@ export default class DateTime {
 	 * @param {{}} setObject An object where keys are the units.
 	 * @return {DateTime|ServerDateTime} A new instance of DateTime.
 	 */
-	set( setObject = {} ) {
-		setObject = this.constructor[ privateMethods.normalizeUnitObject ](
+	set(setObject = {}) {
+		setObject = this.constructor[privateMethods.normalizeUnitObject](
 			setObject
 		);
 		return new this.constructor(
-			this[ privateProperties.datetime ]
+			this[privateProperties.datetime]
 				.clone()
-				.set( setObject )
+				.set(setObject)
 				.toISOString(),
 			this.timezone,
 			this.locale
@@ -785,7 +767,7 @@ export default class DateTime {
 	 * @return {string} The timezone string
 	 */
 	get timezone() {
-		return this[ privateProperties.datetime ].tz();
+		return this[privateProperties.datetime].tz();
 	}
 
 	/**
@@ -794,10 +776,10 @@ export default class DateTime {
 	 * @param {string} timezone
 	 * @return {DateTime|ServerDateTime} Returns a new instance of DateTime
 	 */
-	setTimezone( timezone ) {
-		this.constructor.assertTimezoneIsValid( timezone );
+	setTimezone(timezone) {
+		this.constructor.assertTimezoneIsValid(timezone);
 		return new this.constructor(
-			this[ privateProperties.datetime ].toISOString(),
+			this[privateProperties.datetime].toISOString(),
 			timezone,
 			this.locale
 		);
@@ -809,7 +791,7 @@ export default class DateTime {
 	 * @return {number}  The number of days in the month.
 	 */
 	get daysInMonth() {
-		return this[ privateProperties.datetime ].daysInMonth();
+		return this[privateProperties.datetime].daysInMonth();
 	}
 
 	/**
@@ -819,7 +801,7 @@ export default class DateTime {
 	 * @return {boolean} True means it is currently in Daylight Savings Time.
 	 */
 	get isInDST() {
-		return this[ privateProperties.datetime ].isDST();
+		return this[privateProperties.datetime].isDST();
 	}
 
 	/**
@@ -828,7 +810,7 @@ export default class DateTime {
 	 * @return {boolean} True means this date time is in a leap year.
 	 */
 	get isInLeapYear() {
-		return this[ privateProperties.datetime ].isLeapYear();
+		return this[privateProperties.datetime].isLeapYear();
 	}
 
 	/**
@@ -837,7 +819,7 @@ export default class DateTime {
 	 * @return {number}  The offset is in minutes
 	 */
 	get offset() {
-		return this[ privateProperties.datetime ].utcOffset();
+		return this[privateProperties.datetime].utcOffset();
 	}
 
 	/**
@@ -850,10 +832,10 @@ export default class DateTime {
 	 * @param {number} offset
 	 * @return {DateTime|ServerDateTime} returns a new instance of DateTime
 	 */
-	setOffset( offset ) {
-		this.constructor.assertIsOffset( offset );
+	setOffset(offset) {
+		this.constructor.assertIsOffset(offset);
 		return this.constructor.fromMoment(
-			this[ privateProperties.datetime ].clone().utcOffset( offset )
+			this[privateProperties.datetime].clone().utcOffset(offset)
 		);
 	}
 
@@ -865,7 +847,7 @@ export default class DateTime {
 	 * internal date and time is in a leap year or not).
 	 */
 	get dayOfYear() {
-		return this[ privateProperties.datetime ].dayOfYear();
+		return this[privateProperties.datetime].dayOfYear();
 	}
 
 	/**
@@ -874,7 +856,7 @@ export default class DateTime {
 	 * @return {number} A number between 1 and 4
 	 */
 	get quarter() {
-		return this[ privateProperties.datetime ].quarter();
+		return this[privateProperties.datetime].quarter();
 	}
 
 	/**
@@ -884,7 +866,7 @@ export default class DateTime {
 	 * @return {number} Will be a number between 1 and 52ish
 	 */
 	get isoWeekNumber() {
-		return this[ privateProperties.datetime ].isoWeek();
+		return this[privateProperties.datetime].isoWeek();
 	}
 
 	/**
@@ -895,7 +877,7 @@ export default class DateTime {
 	 * @return {number}  Will be a number representing a year.
 	 */
 	get isoWeekYear() {
-		return this[ privateProperties.datetime ].isoWeekYear();
+		return this[privateProperties.datetime].isoWeekYear();
 	}
 
 	/**
@@ -906,7 +888,7 @@ export default class DateTime {
 	 * @return {number} A number between 1 and 7 (Monday is 1 and Sunday is 7)
 	 */
 	get isoWeekDay() {
-		return this[ privateProperties.datetime ].isoWeekday();
+		return this[privateProperties.datetime].isoWeekday();
 	}
 
 	/**
@@ -916,7 +898,7 @@ export default class DateTime {
 	 * @return {number} The number of weeks in the ISO year.
 	 */
 	get isoWeeksInWeekYear() {
-		return this[ privateProperties.datetime ].isoWeeksInYear();
+		return this[privateProperties.datetime].isoWeeksInYear();
 	}
 
 	/**
@@ -925,7 +907,7 @@ export default class DateTime {
 	 * @return {string} A locale string
 	 */
 	get locale() {
-		return this[ privateProperties.datetime ].locale();
+		return this[privateProperties.datetime].locale();
 	}
 
 	/**
@@ -935,10 +917,10 @@ export default class DateTime {
 	 * @return {DateTime|ServerDateTime} a new instance of DateTime equivalent to this one but
 	 * with different locale.
 	 */
-	setLocale( locale ) {
-		this.constructor.assertLocaleIsValid( locale );
+	setLocale(locale) {
+		this.constructor.assertLocaleIsValid(locale);
 		return this.constructor.fromMoment(
-			this[ privateProperties.datetime ].clone().locale( locale )
+			this[privateProperties.datetime].clone().locale(locale)
 		);
 	}
 
@@ -957,7 +939,7 @@ export default class DateTime {
 	 * @return {boolean}  True means the instance is valid.
 	 */
 	isValid() {
-		return this[ privateProperties.datetime ].isValid() === true;
+		return this[privateProperties.datetime].isValid() === true;
 	}
 
 	/**
@@ -967,12 +949,12 @@ export default class DateTime {
 	 * @return {Duration} An instance of Duration representing the difference
 	 * between the two DateTime objects.
 	 */
-	diff( otherDateTime ) {
-		this.constructor.assertIsDateTime( otherDateTime );
+	diff(otherDateTime) {
+		this.constructor.assertIsDateTime(otherDateTime);
 		return new Duration(
 			moment.duration(
-				this[ privateProperties.datetime ].diff(
-					otherDateTime[ privateProperties.datetime ]
+				this[privateProperties.datetime].diff(
+					otherDateTime[privateProperties.datetime]
 				)
 			)
 		);
@@ -986,9 +968,7 @@ export default class DateTime {
 	 */
 	diffNow() {
 		return new Duration(
-			moment.duration(
-				this[ privateProperties.datetime ].diff( moment() )
-			)
+			moment.duration(this[privateProperties.datetime].diff(moment()))
 		);
 	}
 
@@ -999,9 +979,9 @@ export default class DateTime {
 	 * @param {string} unit
 	 * @return {DateTime|ServerDateTime} Returns a new DateTime instance.
 	 */
-	endOf( unit ) {
+	endOf(unit) {
 		return this.constructor.fromMoment(
-			this[ privateProperties.datetime ].clone().endOf( unit )
+			this[privateProperties.datetime].clone().endOf(unit)
 		);
 	}
 
@@ -1015,10 +995,10 @@ export default class DateTime {
 	 * @param {DateTime} otherDateTime
 	 * @return {boolean}  True means they are equal
 	 */
-	equals( otherDateTime ) {
-		this.constructor.assertIsDateTime( otherDateTime );
-		return this[ privateProperties.datetime ].isSame(
-			otherDateTime[ privateProperties.datetime ]
+	equals(otherDateTime) {
+		this.constructor.assertIsDateTime(otherDateTime);
+		return this[privateProperties.datetime].isSame(
+			otherDateTime[privateProperties.datetime]
 		);
 	}
 
@@ -1039,10 +1019,10 @@ export default class DateTime {
 	 * @return {boolean}  True means they are both in the same time for the
 	 * given unit.
 	 */
-	hasSame( otherDateTime, unit ) {
-		this.constructor.assertIsDateTime( otherDateTime );
-		return this[ privateProperties.datetime ].isSame(
-			otherDateTime[ privateProperties.datetime ],
+	hasSame(otherDateTime, unit) {
+		this.constructor.assertIsDateTime(otherDateTime);
+		return this[privateProperties.datetime].isSame(
+			otherDateTime[privateProperties.datetime],
 			unit
 		);
 	}
@@ -1054,12 +1034,12 @@ export default class DateTime {
 	 * @param {Duration} duration
 	 * @return {DateTime|ServerDateTime} A new instance of DateTime for the new date and time.
 	 */
-	minus( duration ) {
-		Duration.assertIsValidDuration( duration );
+	minus(duration) {
+		Duration.assertIsValidDuration(duration);
 		return this.constructor.fromMoment(
-			this[ privateProperties.datetime ]
+			this[privateProperties.datetime]
 				.clone()
-				.subtract( duration.toObject() )
+				.subtract(duration.toObject())
 		);
 	}
 
@@ -1070,12 +1050,10 @@ export default class DateTime {
 	 * @param {Duration} duration
 	 * @return {DateTime|ServerDateTime} A new instance of DateTime for the new date and time.
 	 */
-	plus( duration ) {
-		Duration.assertIsValidDuration( duration );
+	plus(duration) {
+		Duration.assertIsValidDuration(duration);
 		return this.constructor.fromMoment(
-			this[ privateProperties.datetime ]
-				.clone()
-				.add( duration.toObject() )
+			this[privateProperties.datetime].clone().add(duration.toObject())
 		);
 	}
 
@@ -1091,9 +1069,9 @@ export default class DateTime {
 	 * @param {string} unit
 	 * @return {DateTime|ServerDateTime} A new instance of DateTime
 	 */
-	startOf( unit ) {
+	startOf(unit) {
 		return this.constructor.fromMoment(
-			this[ privateProperties.datetime ].clone().startOf( unit )
+			this[privateProperties.datetime].clone().startOf(unit)
 		);
 	}
 
@@ -1114,8 +1092,8 @@ export default class DateTime {
 	 * @return {string}  The date and time displayed according to the provided
 	 * format.
 	 */
-	toFormat( format = DEFAULT_FORMAT ) {
-		return this[ privateProperties.datetime ].format( format );
+	toFormat(format = DEFAULT_FORMAT) {
+		return this[privateProperties.datetime].format(format);
 	}
 
 	/**
@@ -1129,10 +1107,10 @@ export default class DateTime {
 	 * @param {boolean} inUTC
 	 * @return {string} An ISO8601 string
 	 */
-	toISO( inUTC = true ) {
+	toISO(inUTC = true) {
 		return inUTC
-			? this[ privateProperties.datetime ].toISOString()
-			: this[ privateProperties.datetime ].toISOString( true );
+			? this[privateProperties.datetime].toISOString()
+			: this[privateProperties.datetime].toISOString(true);
 	}
 
 	/**
@@ -1141,7 +1119,7 @@ export default class DateTime {
 	 * @return {Date} A javascript Date instance
 	 */
 	toJSDate() {
-		return this[ privateProperties.datetime ].toDate();
+		return this[privateProperties.datetime].toDate();
 	}
 
 	/**
@@ -1151,7 +1129,7 @@ export default class DateTime {
 	 * @return {string} An ISO 8601 string
 	 */
 	toJSON() {
-		return this[ privateProperties.datetime ].toISOString();
+		return this[privateProperties.datetime].toISOString();
 	}
 
 	/**
@@ -1161,7 +1139,7 @@ export default class DateTime {
 	 */
 	toLocal() {
 		return this.constructor.fromMoment(
-			this[ privateProperties.datetime ].clone().local()
+			this[privateProperties.datetime].clone().local()
 		);
 	}
 
@@ -1183,16 +1161,14 @@ export default class DateTime {
 	 * and millisecond.
 	 */
 	toObject() {
-		const datetime = this[ privateProperties.datetime ].toObject();
+		const datetime = this[privateProperties.datetime].toObject();
 		return reduce(
 			datetime,
-			( result, value, key ) => {
-				key = this.constructor[ privateMethods.normalizeUnitName ](
-					key
-				);
-				result[ key ] = this.constructor[
+			(result, value, key) => {
+				key = this.constructor[privateMethods.normalizeUnitName](key);
+				result[key] = this.constructor[
 					privateMethods.normalizeUnitValue
-				]( key, value, false );
+				](key, value, false);
 				return result;
 			},
 			{}
@@ -1206,7 +1182,7 @@ export default class DateTime {
 	 */
 	toUTC() {
 		return this.constructor.fromMoment(
-			this[ privateProperties.datetime ].clone().utc()
+			this[privateProperties.datetime].clone().utc()
 		);
 	}
 
@@ -1219,7 +1195,7 @@ export default class DateTime {
 	 * @return {string} A string representation of this DateTime
 	 */
 	toString() {
-		return this[ privateProperties.datetime ].toString();
+		return this[privateProperties.datetime].toString();
 	}
 
 	/**
@@ -1229,7 +1205,7 @@ export default class DateTime {
 	 * @return {number} Amount of milliseconds since the Unix Epoch
 	 */
 	valueOf() {
-		return this[ privateProperties.datetime ].valueOf();
+		return this[privateProperties.datetime].valueOf();
 	}
 }
 

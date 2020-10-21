@@ -8,6 +8,6 @@
  * @param {*} object
  * @return {boolean} True if the provided value is a generator.
  */
-export const isGenerator = ( object ) => {
-	return !! object && object[ Symbol.toStringTag ] === 'Generator';
+export const isGenerator = (object) => {
+	return !!object && object[Symbol.toStringTag] === 'Generator';
 };

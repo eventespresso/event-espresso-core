@@ -25,16 +25,12 @@ import warning from 'warning';
  * select control that receives its options in the format of an array of objects
  * with label and value keys.
  */
-const buildOptions = (
-	entities,
-	optionsEntityMap,
-	mapSelection = 'default'
-) => {
-	if ( isEmpty( entities ) ) {
+const buildOptions = (entities, optionsEntityMap, mapSelection = 'default') => {
+	if (isEmpty(entities)) {
 		return [];
 	}
-	entities = isMap( entities ) ? Array.from( entities.values() ) : entities;
-	if ( isEmpty( optionsEntityMap ) ) {
+	entities = isMap(entities) ? Array.from(entities.values()) : entities;
+	if (isEmpty(optionsEntityMap)) {
 		warning(
 			false,
 			'A valid optionsEntityMap must be supplied ' +
@@ -43,7 +39,7 @@ const buildOptions = (
 		);
 		return [];
 	}
-	if ( isUndefined( optionsEntityMap[ mapSelection ] ) ) {
+	if (isUndefined(optionsEntityMap[mapSelection])) {
 		warning(
 			false,
 			'A valid optionsEntityMap[ mapSelection ] must be supplied ' +
@@ -54,12 +50,12 @@ const buildOptions = (
 		return [];
 	}
 	// if requested mapSelection exists then use that
-	let map = optionsEntityMap[ mapSelection ];
+	let map = optionsEntityMap[mapSelection];
 
 	// if map is function then simply pass through entities to that function
-	if ( isFunction( map ) ) {
-		const options = map( entities );
-		if ( isArray( options ) ) {
+	if (isFunction(map)) {
+		const options = map(entities);
+		if (isArray(options)) {
 			return options;
 		}
 		// set map to empty object because the function on it returned something
@@ -74,24 +70,24 @@ const buildOptions = (
 				' returns an array of simple objects with label and value keys.'
 		);
 	}
-	if ( isEmpty( map ) ) {
+	if (isEmpty(map)) {
 		return [];
 	}
-	const reducerCallback = ( options, entity ) => {
-		const label = isFunction( map.label )
-			? map.label( entity )
-			: entity[ map.label ];
-		const value = isFunction( map.value )
-			? map.value( entity )
-			: entity[ map.value ];
-		if ( label && value ) {
-			options.push( { label, value } );
+	const reducerCallback = (options, entity) => {
+		const label = isFunction(map.label)
+			? map.label(entity)
+			: entity[map.label];
+		const value = isFunction(map.value)
+			? map.value(entity)
+			: entity[map.value];
+		if (label && value) {
+			options.push({ label, value });
 		}
 		return options;
 	};
-	return ! isArray( entities )
-		? entities.reduce( reducerCallback, [] )
-		: reduce( entities, reducerCallback, [] );
+	return !isArray(entities)
+		? entities.reduce(reducerCallback, [])
+		: reduce(entities, reducerCallback, []);
 };
 
 export default buildOptions;

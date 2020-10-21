@@ -21,47 +21,47 @@ const { relations: types, resets: resetTypes } = ACTION_TYPES;
 
 let originalState;
 
-describe( 'dirty relations tests', () => {
-	beforeEach( () => {
-		const getState = ( incomingState = Map() ) => {
-			return incomingState.withMutations( ( subState ) => {
+describe('dirty relations tests', () => {
+	beforeEach(() => {
+		const getState = (incomingState = Map()) => {
+			return incomingState.withMutations((subState) => {
 				subState.set(
 					'index',
 					Map().setIn(
-						[ 'datetime', 20 ],
-						fromJS( {
-							event: { delete: Set( [ 10 ] ) },
+						['datetime', 20],
+						fromJS({
+							event: { delete: Set([10]) },
 							ticket: {
-								delete: Set( [ 50 ] ),
-								add: Set( [ 60 ] ),
+								delete: Set([50]),
+								add: Set([60]),
 							},
-						} )
+						})
 					)
 				);
 				subState.set(
 					'delete',
 					Map().set(
 						'event',
-						Map().set( 10, fromJS( { datetime: Set( [ 20 ] ) } ) )
+						Map().set(10, fromJS({ datetime: Set([20]) }))
 					)
 				);
 				subState.setIn(
-					[ 'delete', 'ticket' ],
-					Map().set( 50, fromJS( { datetime: Set( [ 20 ] ) } ) )
+					['delete', 'ticket'],
+					Map().set(50, fromJS({ datetime: Set([20]) }))
 				);
 				subState.set(
 					'add',
 					Map().set(
 						'ticket',
-						Map().set( 60, fromJS( { datetime: Set( [ 20 ] ) } ) )
+						Map().set(60, fromJS({ datetime: Set([20]) }))
 					)
 				);
-			} );
+			});
 		};
-		originalState = getState( mockStateForTests.dirty.relations );
-	} );
-	describe( 'replaceOldRelationIdWithNewRelationId()', () => {
-		const testAction = ( modelName, oldEntityId, newEntityId ) => {
+		originalState = getState(mockStateForTests.dirty.relations);
+	});
+	describe('replaceOldRelationIdWithNewRelationId()', () => {
+		const testAction = (modelName, oldEntityId, newEntityId) => {
 			return {
 				modelName,
 				oldEntityId,
@@ -75,9 +75,9 @@ describe( 'dirty relations tests', () => {
 				expect(
 					replaceOldRelationIdWithNewRelationId(
 						originalState,
-						testAction( 'cheeseburgers', 20, 30 )
+						testAction('cheeseburgers', 20, 30)
 					)
-				).toBe( originalState );
+				).toBe(originalState);
 			}
 		);
 		it(
@@ -87,9 +87,9 @@ describe( 'dirty relations tests', () => {
 				expect(
 					replaceOldRelationIdWithNewRelationId(
 						originalState,
-						testAction( 'event', 30, 20 )
+						testAction('event', 30, 20)
 					)
-				).toBe( originalState );
+				).toBe(originalState);
 			}
 		);
 		it(
@@ -98,18 +98,18 @@ describe( 'dirty relations tests', () => {
 			() => {
 				const newState = replaceOldRelationIdWithNewRelationId(
 					originalState,
-					testAction( 'datetime', 20, 44 )
+					testAction('datetime', 20, 44)
 				);
-				expect( newState ).not.toBe( originalState );
-				expect( newState.toJS() ).toEqual( {
+				expect(newState).not.toBe(originalState);
+				expect(newState.toJS()).toEqual({
 					...originalState.toJS(),
 					index: {
 						datetime: {
 							44: {
-								event: { delete: [ 10 ] },
+								event: { delete: [10] },
 								ticket: {
-									delete: [ 50 ],
-									add: [ 60 ],
+									delete: [50],
+									add: [60],
 								},
 							},
 						},
@@ -117,23 +117,23 @@ describe( 'dirty relations tests', () => {
 					delete: {
 						event: {
 							10: {
-								datetime: [ 44 ],
+								datetime: [44],
 							},
 						},
 						ticket: {
 							50: {
-								datetime: [ 44 ],
+								datetime: [44],
 							},
 						},
 					},
 					add: {
 						ticket: {
 							60: {
-								datetime: [ 44 ],
+								datetime: [44],
 							},
 						},
 					},
-				} );
+				});
 			}
 		);
 		it(
@@ -142,18 +142,18 @@ describe( 'dirty relations tests', () => {
 			() => {
 				const newState = replaceOldRelationIdWithNewRelationId(
 					originalState,
-					testAction( 'tickets', 60, 44 )
+					testAction('tickets', 60, 44)
 				);
-				expect( newState ).not.toBe( originalState );
-				expect( newState.toJS() ).toEqual( {
+				expect(newState).not.toBe(originalState);
+				expect(newState.toJS()).toEqual({
 					...originalState.toJS(),
 					index: {
 						datetime: {
 							20: {
-								event: { delete: [ 10 ] },
+								event: { delete: [10] },
 								ticket: {
-									delete: [ 50 ],
-									add: [ 44 ],
+									delete: [50],
+									add: [44],
 								},
 							},
 						},
@@ -161,32 +161,32 @@ describe( 'dirty relations tests', () => {
 					delete: {
 						event: {
 							10: {
-								datetime: [ 20 ],
+								datetime: [20],
 							},
 						},
 						ticket: {
 							50: {
-								datetime: [ 20 ],
+								datetime: [20],
 							},
 						},
 					},
 					add: {
 						ticket: {
 							44: {
-								datetime: [ 20 ],
+								datetime: [20],
 							},
 						},
 					},
-				} );
+				});
 			}
 		);
-	} );
+	});
 
-	describe( 'removeRelatedEntitiesForEntity()', () => {
-		const testAction = ( modelName, entityId ) => ( {
+	describe('removeRelatedEntitiesForEntity()', () => {
+		const testAction = (modelName, entityId) => ({
 			modelName,
 			entityId,
-		} );
+		});
 		it(
 			'returns original state if the model does not exist in the ' +
 				'state',
@@ -194,9 +194,9 @@ describe( 'dirty relations tests', () => {
 				expect(
 					removeRelatedEntitiesForEntity(
 						originalState,
-						testAction( 'cheeseburgers', 20 )
+						testAction('cheeseburgers', 20)
 					)
-				).toBe( originalState );
+				).toBe(originalState);
 			}
 		);
 		it(
@@ -206,9 +206,9 @@ describe( 'dirty relations tests', () => {
 				expect(
 					removeRelatedEntitiesForEntity(
 						originalState,
-						testAction( 'event', 50 )
+						testAction('event', 50)
 					)
-				).toBe( originalState );
+				).toBe(originalState);
 			}
 		);
 		it(
@@ -217,17 +217,17 @@ describe( 'dirty relations tests', () => {
 			() => {
 				const result = removeRelatedEntitiesForEntity(
 					originalState,
-					testAction( 'event', 10 )
+					testAction('event', 10)
 				);
-				expect( result ).not.toBe( originalState );
-				expect( result.toJS() ).toEqual( {
+				expect(result).not.toBe(originalState);
+				expect(result.toJS()).toEqual({
 					...originalState.toJS(),
 					index: {
 						datetime: {
 							20: {
 								ticket: {
-									delete: [ 50 ],
-									add: [ 60 ],
+									delete: [50],
+									add: [60],
 								},
 							},
 						},
@@ -235,18 +235,18 @@ describe( 'dirty relations tests', () => {
 					delete: {
 						ticket: {
 							50: {
-								datetime: [ 20 ],
+								datetime: [20],
 							},
 						},
 					},
 					add: {
 						ticket: {
 							60: {
-								datetime: [ 20 ],
+								datetime: [20],
 							},
 						},
 					},
-				} );
+				});
 			}
 		);
 		it(
@@ -256,124 +256,119 @@ describe( 'dirty relations tests', () => {
 			() => {
 				const result = removeRelatedEntitiesForEntity(
 					originalState,
-					testAction( 'datetime', 20 )
+					testAction('datetime', 20)
 				);
-				expect( result ).not.toBe( originalState );
-				expect( result.toJS() ).toEqual( {
+				expect(result).not.toBe(originalState);
+				expect(result.toJS()).toEqual({
 					index: {},
 					delete: {},
 					add: {},
-				} );
+				});
 			}
 		);
-	} );
-	describe( 'dirtyRelations()', () => {
-		const testAction = ( actionType ) => (
+	});
+	describe('dirtyRelations()', () => {
+		const testAction = (actionType) => (
 			relationName = 'datetimes',
 			relationEntityId = 20,
 			modelName = 'event',
 			entityId = 10,
 			queueType = 'delete'
-		) => ( {
+		) => ({
 			type: actionType,
 			relationName,
 			relationEntityId,
 			modelName,
 			entityId,
 			queueType,
-		} );
-		describe( 'testing the normalizeAction behaviour', () => {
-			it( 'does not duplicate relations in state', () => {
+		});
+		describe('testing the normalizeAction behaviour', () => {
+			it('does not duplicate relations in state', () => {
 				expect(
 					dirtyRelations(
 						originalState,
-						testAction( types.RECEIVE_DIRTY_RELATION_ADDITION )(
+						testAction(types.RECEIVE_DIRTY_RELATION_ADDITION)(
 							'events',
 							10,
 							'datetime',
 							20
 						)
 					)
-				).toBe( originalState );
-			} );
-		} );
-		describe( 'add and delete state updates', () => {
+				).toBe(originalState);
+			});
+		});
+		describe('add and delete state updates', () => {
 			[
 				[
 					types.RECEIVE_DIRTY_RELATION_ADDITION,
-					[ 'tickets', 60, 'datetime', 20, 'add' ],
-					[ 'tickets', 400, 'datetime', 20, 'add' ],
-					() => ( {
+					['tickets', 60, 'datetime', 20, 'add'],
+					['tickets', 400, 'datetime', 20, 'add'],
+					() => ({
 						...originalState.toJS(),
 						index: {
-							...originalState.get( 'index' ).toJS(),
+							...originalState.get('index').toJS(),
 							datetime: {
 								20: {
 									...originalState
-										.getIn( [ 'index', 'datetime', 20 ] )
+										.getIn(['index', 'datetime', 20])
 										.toJS(),
 									ticket: {
-										delete: [ 50 ],
-										add: [ 60, 400 ],
+										delete: [50],
+										add: [60, 400],
 									},
 								},
 							},
 						},
 						add: {
-							...originalState.get( 'add' ).toJS(),
+							...originalState.get('add').toJS(),
 							ticket: {
 								60: {
-									datetime: [ 20 ],
+									datetime: [20],
 								},
 								400: {
-									datetime: [ 20 ],
+									datetime: [20],
 								},
 							},
 						},
-					} ),
+					}),
 				],
 				[
 					types.RECEIVE_DIRTY_RELATION_DELETION,
-					[ 'tickets', 50, 'datetime', 20, 'delete' ],
-					[ 'tickets', 400, 'datetime', 20, 'delete' ],
-					() => ( {
+					['tickets', 50, 'datetime', 20, 'delete'],
+					['tickets', 400, 'datetime', 20, 'delete'],
+					() => ({
 						...originalState.toJS(),
 						index: {
-							...originalState.get( 'index' ).toJS(),
+							...originalState.get('index').toJS(),
 							datetime: {
 								20: {
 									...originalState
-										.getIn( [ 'index', 'datetime', 20 ] )
+										.getIn(['index', 'datetime', 20])
 										.toJS(),
 									ticket: {
-										delete: [ 50, 400 ],
-										add: [ 60 ],
+										delete: [50, 400],
+										add: [60],
 									},
 								},
 							},
 						},
 						delete: {
-							...originalState.get( 'delete' ).toJS(),
+							...originalState.get('delete').toJS(),
 							ticket: {
 								50: {
-									datetime: [ 20 ],
+									datetime: [20],
 								},
 								400: {
-									datetime: [ 20 ],
+									datetime: [20],
 								},
 							},
 						},
-					} ),
+					}),
 				],
 			].forEach(
-				( [
-					actionType,
-					noChangeArgs,
-					changeArgs,
-					expectedChange,
-				] ) => {
-					describe( actionType + ' action type', () => {
-						const action = testAction( actionType );
+				([actionType, noChangeArgs, changeArgs, expectedChange]) => {
+					describe(actionType + ' action type', () => {
+						const action = testAction(actionType);
 						it(
 							'returns original state if given model entity id already ' +
 								'exists in the state',
@@ -381,9 +376,9 @@ describe( 'dirty relations tests', () => {
 								expect(
 									dirtyRelations(
 										originalState,
-										action( ...noChangeArgs )
+										action(...noChangeArgs)
 									)
-								).toBe( originalState );
+								).toBe(originalState);
 							}
 						);
 						it(
@@ -392,55 +387,53 @@ describe( 'dirty relations tests', () => {
 							() => {
 								const result = dirtyRelations(
 									originalState,
-									action( ...changeArgs )
+									action(...changeArgs)
 								);
-								expect( result ).not.toBe( originalState );
-								expect( result.toJS() ).toEqual(
-									expectedChange()
-								);
+								expect(result).not.toBe(originalState);
+								expect(result.toJS()).toEqual(expectedChange());
 							}
 						);
-					} );
+					});
 				}
 			);
 			[
 				[
 					types.REMOVE_DIRTY_RELATION_ADDITION,
-					[ 'tickets', 400, 'datetime', 20, 'add' ],
-					[ 'tickets', 60, 'datetime', 20, 'add' ],
-					() => ( {
+					['tickets', 400, 'datetime', 20, 'add'],
+					['tickets', 60, 'datetime', 20, 'add'],
+					() => ({
 						...originalState.toJS(),
 						index: {
-							...originalState.get( 'index' ).toJS(),
+							...originalState.get('index').toJS(),
 							datetime: {
 								20: {
 									event: {
-										delete: [ 10 ],
+										delete: [10],
 									},
 									ticket: {
-										delete: [ 50 ],
+										delete: [50],
 									},
 								},
 							},
 						},
 						add: {},
-					} ),
+					}),
 				],
 				[
 					types.REMOVE_DIRTY_RELATION_DELETION,
-					[ 'tickets', 400, 'datetime', 20, 'delete' ],
-					[ 'tickets', 50, 'datetime', 20, 'delete' ],
-					() => ( {
+					['tickets', 400, 'datetime', 20, 'delete'],
+					['tickets', 50, 'datetime', 20, 'delete'],
+					() => ({
 						...originalState.toJS(),
 						index: {
-							...originalState.get( 'index' ).toJS(),
+							...originalState.get('index').toJS(),
 							datetime: {
 								20: {
 									event: {
-										delete: [ 10 ],
+										delete: [10],
 									},
 									ticket: {
-										add: [ 60 ],
+										add: [60],
 									},
 								},
 							},
@@ -448,21 +441,16 @@ describe( 'dirty relations tests', () => {
 						delete: {
 							event: {
 								...originalState
-									.getIn( [ 'delete', 'event' ] )
+									.getIn(['delete', 'event'])
 									.toJS(),
 							},
 						},
-					} ),
+					}),
 				],
 			].forEach(
-				( [
-					actionType,
-					noChangeArgs,
-					changeArgs,
-					expectedChange,
-				] ) => {
-					describe( actionType + ' action type', () => {
-						const action = testAction( actionType );
+				([actionType, noChangeArgs, changeArgs, expectedChange]) => {
+					describe(actionType + ' action type', () => {
+						const action = testAction(actionType);
 						it(
 							'returns original state if given model entity id does ' +
 								'not exist in the state',
@@ -470,9 +458,9 @@ describe( 'dirty relations tests', () => {
 								expect(
 									dirtyRelations(
 										originalState,
-										action( ...noChangeArgs )
+										action(...noChangeArgs)
 									)
-								).toBe( originalState );
+								).toBe(originalState);
 							}
 						);
 						it(
@@ -481,15 +469,13 @@ describe( 'dirty relations tests', () => {
 							() => {
 								const result = dirtyRelations(
 									originalState,
-									action( ...changeArgs )
+									action(...changeArgs)
 								);
-								expect( result ).not.toBe( originalState );
-								expect( result.toJS() ).toEqual(
-									expectedChange()
-								);
+								expect(result).not.toBe(originalState);
+								expect(result.toJS()).toEqual(expectedChange());
 							}
 						);
-					} );
+					});
 				}
 			);
 			describe(
@@ -499,13 +485,13 @@ describe( 'dirty relations tests', () => {
 					[
 						[
 							'returns original state when relation id is cuid',
-							[ 'tickets', 400, 'datetime', cuid(), 'delete' ],
+							['tickets', 400, 'datetime', cuid(), 'delete'],
 						],
 						[
 							'returns original state when entity id is cuid',
-							[ 'tickets', cuid(), 'datetime', 20 ],
+							['tickets', cuid(), 'datetime', 20],
 						],
-					].forEach( ( [ description, args ] ) => {
+					].forEach(([description, args]) => {
 						it(
 							description +
 								' when adding to relation deletion ' +
@@ -517,9 +503,9 @@ describe( 'dirty relations tests', () => {
 								expect(
 									dirtyRelations(
 										originalState,
-										action( ...args )
+										action(...args)
 									)
-								).toBe( originalState );
+								).toBe(originalState);
 							}
 						);
 						it(
@@ -533,51 +519,51 @@ describe( 'dirty relations tests', () => {
 								expect(
 									dirtyRelations(
 										originalState,
-										action( ...args )
+										action(...args)
 									)
-								).toBe( originalState );
+								).toBe(originalState);
 							}
 						);
-					} );
+					});
 				}
 			);
-		} );
-	} );
-	describe( 'RESET_ALL_STATE', () => {
-		it( 'resets the state to its default', () => {
-			const newState = reducer( originalState, {
+		});
+	});
+	describe('RESET_ALL_STATE', () => {
+		it('resets the state to its default', () => {
+			const newState = reducer(originalState, {
 				type: resetTypes.RESET_ALL_STATE,
-			} );
-			expect( newState ).not.toBe( originalState );
-			expect( newState ).toEqual(
-				fromJS( DEFAULT_CORE_STATE.dirty.relations )
+			});
+			expect(newState).not.toBe(originalState);
+			expect(newState).toEqual(
+				fromJS(DEFAULT_CORE_STATE.dirty.relations)
 			);
-		} );
-	} );
-	describe( 'RESET_STATE_FOR_MODEL', () => {
+		});
+	});
+	describe('RESET_STATE_FOR_MODEL', () => {
 		let expectedState;
-		beforeEach( () => {
+		beforeEach(() => {
 			expectedState = originalState
-				.deleteIn( [ 'index', 'datetime', 20, 'event' ] )
-				.deleteIn( [ 'delete', 'event' ] );
-		} );
-		it( 'only resets the state for the given model name', () => {
-			const newState = reducer( originalState, {
+				.deleteIn(['index', 'datetime', 20, 'event'])
+				.deleteIn(['delete', 'event']);
+		});
+		it('only resets the state for the given model name', () => {
+			const newState = reducer(originalState, {
 				type: resetTypes.RESET_STATE_FOR_MODEL,
 				modelName: 'event',
-			} );
-			expect( newState ).not.toBe( originalState );
-			expect( newState.toJS() ).toEqual( expectedState.toJS() );
-		} );
+			});
+			expect(newState).not.toBe(originalState);
+			expect(newState.toJS()).toEqual(expectedState.toJS());
+		});
 		it(
 			'resets the state for the a model name that is not ' + 'normalized',
 			() => {
-				const newState = reducer( originalState, {
+				const newState = reducer(originalState, {
 					type: resetTypes.RESET_STATE_FOR_MODEL,
 					modelName: 'events',
-				} );
-				expect( newState.toJS() ).toEqual( expectedState.toJS() );
+				});
+				expect(newState.toJS()).toEqual(expectedState.toJS());
 			}
 		);
-	} );
-} );
+	});
+});

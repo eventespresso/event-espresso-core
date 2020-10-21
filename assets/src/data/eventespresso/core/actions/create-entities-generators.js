@@ -25,22 +25,18 @@ import { REDUCER_KEY as CORE_REDUCER_KEY } from '../constants';
  * @return {null|Object}  If the entity is successfully created the model entity
  * instance is returned, otherwise null.
  */
-export function* createEntity( modelName, entity ) {
-	modelName = singularModelName( modelName );
+export function* createEntity(modelName, entity) {
+	modelName = singularModelName(modelName);
 	const factory = yield resolveSelect(
 		SCHEMA_REDUCER_KEY,
 		'getFactoryForModel',
 		modelName
 	);
-	if ( ! isModelEntityFactoryOfModel( factory, modelName ) ) {
+	if (!isModelEntityFactoryOfModel(factory, modelName)) {
 		return null;
 	}
-	const entityInstance = factory.createNew( entity );
-	yield dispatch(
-		CORE_REDUCER_KEY,
-		'receiveEntityAndResolve',
-		entityInstance
-	);
+	const entityInstance = factory.createNew(entity);
+	yield dispatch(CORE_REDUCER_KEY, 'receiveEntityAndResolve', entityInstance);
 	return entityInstance;
 }
 
@@ -51,15 +47,15 @@ export function* createEntity( modelName, entity ) {
  *
  * @param {BaseEntity} entity
  */
-export function* receiveEntityAndResolve( entity ) {
-	assertIsModelEntity( entity );
-	yield dispatch( CORE_REDUCER_KEY, 'receiveEntity', entity );
+export function* receiveEntityAndResolve(entity) {
+	assertIsModelEntity(entity);
+	yield dispatch(CORE_REDUCER_KEY, 'receiveEntity', entity);
 	yield dispatch(
 		'core/data',
 		'finishResolution',
 		CORE_REDUCER_KEY,
 		'getEntityById',
-		[ entity.modelName.toLowerCase(), entity.id ]
+		[entity.modelName.toLowerCase(), entity.id]
 	);
 }
 
@@ -69,19 +65,19 @@ export function* receiveEntityAndResolve( entity ) {
  * @param {string} modelName
  * @param {Array<BaseEntity>}entities
  */
-export function* receiveEntitiesAndResolve( modelName, entities ) {
-	modelName = singularModelName( modelName );
-	const entityIds = entities.map( ( entity ) => {
-		assertIsModelEntity( entity );
+export function* receiveEntitiesAndResolve(modelName, entities) {
+	modelName = singularModelName(modelName);
+	const entityIds = entities.map((entity) => {
+		assertIsModelEntity(entity);
 		return entity.id;
-	} );
-	while ( entityIds.length > 0 ) {
+	});
+	while (entityIds.length > 0) {
 		yield dispatch(
 			'core/data',
 			'finishResolution',
 			CORE_REDUCER_KEY,
 			'getEntityById',
-			[ modelName, entityIds.pop() ]
+			[modelName, entityIds.pop()]
 		);
 	}
 	yield dispatch(
@@ -99,8 +95,8 @@ export function* receiveEntitiesAndResolve( modelName, entities ) {
  * @param {BaseEntity} entity
  * @throws InvalidModelEntity
  */
-function assertIsModelEntity( entity ) {
-	if ( ! isModelEntity( entity ) ) {
+function assertIsModelEntity(entity) {
+	if (!isModelEntity(entity)) {
 		throw new InvalidModelEntity(
 			'receiveEntityIdAndResolve expects an instance of BaseEntity',
 			entity

@@ -10,14 +10,14 @@ import { Fragment } from '@wordpress/element';
  */
 import { AvatarImage } from '../ui/image';
 
-const AttendeeListItem = ( {
+const AttendeeListItem = ({
 	isLoading,
 	attendee,
 	showGravatar,
 	avatarOptions = {},
-} ) => {
+}) => {
 	function getAvatarUrl() {
-		const url = attendee.hasCalculatedField( 'userAvatar' )
+		const url = attendee.hasCalculatedField('userAvatar')
 			? attendee.userAvatar
 			: '';
 		return url === '' && avatarOptions.avatarUrl
@@ -31,7 +31,7 @@ const AttendeeListItem = ( {
 
 	function getAvatar() {
 		const url = getAvatarUrl();
-		if ( ! isLoading && showGravatar && url === '' ) {
+		if (!isLoading && showGravatar && url === '') {
 			warning(
 				false,
 				'showGravatar is true but there is no avatar url included ' +
@@ -39,11 +39,11 @@ const AttendeeListItem = ( {
 			);
 		}
 		return showGravatar ? (
-			<AvatarImage avatarUrl={ url } { ...avatarOptions } />
+			<AvatarImage avatarUrl={url} {...avatarOptions} />
 		) : null;
 	}
 
-	if ( ! isModelEntityOfModel( attendee, 'attendee' ) ) {
+	if (!isModelEntityOfModel(attendee, 'attendee')) {
 		warning(
 			false,
 			'The EventAttendee component expects an attendee model entity.'
@@ -54,8 +54,8 @@ const AttendeeListItem = ( {
 	return (
 		<Fragment>
 			<li>
-				{ getAvatar() }
-				<span>{ getAttendeeName() }</span>
+				{getAvatar()}
+				<span>{getAttendeeName()}</span>
 			</li>
 		</Fragment>
 	);

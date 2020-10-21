@@ -11,32 +11,32 @@
  * @param {...mixed} args
  * @return {InvalidArgument} instance of InvalidArgument
  */
-function InvalidArgument( message, argumentValue, ...args ) {
-	const instance = new Error( message, ...args );
-	Object.setPrototypeOf( instance, Object.getPrototypeOf( this ) );
+function InvalidArgument(message, argumentValue, ...args) {
+	const instance = new Error(message, ...args);
+	Object.setPrototypeOf(instance, Object.getPrototypeOf(this));
 	instance.argumentValue = argumentValue || null;
 	instance.name = instance.constructor.name;
 	instance.message =
 		instance.message !== ''
 			? 'Invalid argument provided. ' + instance.message
 			: 'Invalid argument provided.';
-	if ( Error.captureStackTrace ) {
-		Error.captureStackTrace( instance, InvalidArgument );
+	if (Error.captureStackTrace) {
+		Error.captureStackTrace(instance, InvalidArgument);
 	}
 	return instance;
 }
 
-InvalidArgument.prototype = Object.create( Error.prototype, {
+InvalidArgument.prototype = Object.create(Error.prototype, {
 	constructor: {
 		value: Error,
 		enumerable: false,
 		writable: true,
 		configurable: true,
 	},
-} );
+});
 
-if ( Object.setPrototypeOf ) {
-	Object.setPrototypeOf( InvalidArgument, Error );
+if (Object.setPrototypeOf) {
+	Object.setPrototypeOf(InvalidArgument, Error);
 } else {
 	InvalidArgument.__proto__ = Error;
 }

@@ -15,8 +15,7 @@ import { statusModel } from '@eventespresso/model';
 const optionsEntityMap = {
 	default: {
 		value: 'STS_ID',
-		label: ( statusEntity ) =>
-			statusModel.prettyStatus( statusEntity.STS_ID ),
+		label: (statusEntity) => statusModel.prettyStatus(statusEntity.STS_ID),
 	},
 };
 
@@ -27,19 +26,18 @@ const StatusSelect = createModelSelect(
 	model.MODEL_NAME,
 	{
 		selectConfiguration: {
-			loadingMessage: () =>
-				__( 'Retrieving Statuses.', 'event_espresso' ),
-			noOptionsMessage: () => __( 'No Statuses.', 'event_espresso' ),
-			placeholder: __( 'Select Status…', 'event_espresso' ),
+			loadingMessage: () => __('Retrieving Statuses.', 'event_espresso'),
+			noOptionsMessage: () => __('No Statuses.', 'event_espresso'),
+			placeholder: __('Select Status…', 'event_espresso'),
 		},
 		...model.defaultQueryData,
 		getQueryString: model.getQueryString,
-		label: __( 'Select Status', 'event_espresso' ),
+		label: __('Select Status', 'event_espresso'),
 		optionsEntityMap,
 	},
 	{
 		...model.queryDataTypes,
-		selected: PropTypes.oneOf( model.ALL_STATUS_IDS ),
+		selected: PropTypes.oneOf(model.ALL_STATUS_IDS),
 		optionsEntityMap: PropTypes.object,
 	}
 );
@@ -49,6 +47,6 @@ export default StatusSelect;
 /**
  * Enhanced Status Select for the WordPress editor
  */
-export const EditorStatusSelect = withBaseControl( 'select-status' )(
+export const EditorStatusSelect = withBaseControl('select-status')(
 	StatusSelect
 );

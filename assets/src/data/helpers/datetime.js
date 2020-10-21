@@ -35,8 +35,8 @@ export const formatDateString = (
 	format = DATE_TIME_FORMAT_ISO8601,
 	local = true
 ) => {
-	const date = stringToMoment( dateString );
-	return local ? date.local().format( format ) : date.format( format );
+	const date = stringToMoment(dateString);
+	return local ? date.local().format(format) : date.format(format);
 };
 
 /**
@@ -51,8 +51,8 @@ export const formatDateString = (
  *   the incoming string includes offset info.
  * @return { string }  Returns a date string in mysql format.
  */
-export const formatMysqlDateString = ( dateString = '', local = true ) => {
-	return formatDateString( dateString, DATE_TIME_FORMAT_MYSQL, local );
+export const formatMysqlDateString = (dateString = '', local = true) => {
+	return formatDateString(dateString, DATE_TIME_FORMAT_MYSQL, local);
 };
 
 /**
@@ -67,8 +67,8 @@ export const formatMysqlDateString = ( dateString = '', local = true ) => {
  *   the incoming string includes offset info.
  * @return { string }  Returns a date string in sites format.
  */
-export const formatSiteDateString = ( dateString = '', local = true ) => {
-	return formatDateString( dateString, DATE_TIME_FORMAT_SITE, local );
+export const formatSiteDateString = (dateString = '', local = true) => {
+	return formatDateString(dateString, DATE_TIME_FORMAT_SITE, local);
 };
 
 /**
@@ -80,8 +80,8 @@ export const formatSiteDateString = ( dateString = '', local = true ) => {
  *   moment
  * @return {null|moment.Moment}  A moment object.
  */
-export const stringToMoment = ( dateString = '' ) => {
-	return dateString === '' ? moment() : moment( dateString );
+export const stringToMoment = (dateString = '') => {
+	return dateString === '' ? moment() : moment(dateString);
 };
 
 /**
@@ -98,8 +98,8 @@ export const allDateTimesAsString = (
 	...dateStrings
 ) => {
 	let content = '';
-	dateStrings.forEach( ( item ) => {
+	dateStrings.forEach((item) => {
 		content += item + separator;
-	} );
-	return trimEnd( content, separator );
+	});
+	return trimEnd(content, separator);
 };

@@ -23,15 +23,15 @@ export const formatDatesOnEntities = (
 	format = dateFormats.DATE_TIME_FORMAT_ISO8601,
 	local = true
 ) => {
-	if ( isEmpty( entities ) || isEmpty( entityDateFields ) ) {
+	if (isEmpty(entities) || isEmpty(entityDateFields)) {
 		return entities;
 	}
 	const formattedEntities = [];
-	entities.forEach( ( entity ) => {
+	entities.forEach((entity) => {
 		formattedEntities.push(
-			formatDatesOnEntity( entity, entityDateFields, format, local )
+			formatDatesOnEntity(entity, entityDateFields, format, local)
 		);
-	} );
+	});
 	return formattedEntities;
 };
 
@@ -54,15 +54,15 @@ export const formatDatesOnEntity = (
 	local = true
 ) => {
 	const newEntity = { ...entity };
-	entityDateFields.forEach( ( dateField ) => {
-		if ( newEntity[ dateField ] ) {
-			newEntity[ dateField ] = dateFormats.formatDateString(
-				newEntity[ dateField ],
+	entityDateFields.forEach((dateField) => {
+		if (newEntity[dateField]) {
+			newEntity[dateField] = dateFormats.formatDateString(
+				newEntity[dateField],
 				format,
 				local
 			);
 		}
-	} );
+	});
 	return newEntity;
 };
 
@@ -178,15 +178,15 @@ export const convertEntitiesDatesToMoment = (
 	entities = [],
 	entityDateFields = []
 ) => {
-	if ( isEmpty( entities ) || isEmpty( entityDateFields ) ) {
+	if (isEmpty(entities) || isEmpty(entityDateFields)) {
 		return entities;
 	}
 	const formattedEntities = [];
-	entities.forEach( ( entity ) => {
+	entities.forEach((entity) => {
 		formattedEntities.push(
-			convertEntityDatesToMoment( entity, entityDateFields )
+			convertEntityDatesToMoment(entity, entityDateFields)
 		);
-	} );
+	});
 	return formattedEntities;
 };
 
@@ -205,12 +205,12 @@ export const convertEntityDatesToMoment = (
 	entityDateFields = []
 ) => {
 	const newEntity = { ...entity };
-	entityDateFields.forEach( ( dateField ) => {
-		if ( newEntity[ dateField ] ) {
-			newEntity[ dateField ] = dateFormats.stringToMoment(
-				newEntity[ dateField ]
+	entityDateFields.forEach((dateField) => {
+		if (newEntity[dateField]) {
+			newEntity[dateField] = dateFormats.stringToMoment(
+				newEntity[dateField]
 			);
 		}
-	} );
+	});
 	return newEntity;
 };

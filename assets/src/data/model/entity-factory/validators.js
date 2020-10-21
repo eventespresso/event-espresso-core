@@ -38,35 +38,35 @@ import { PRIVATE_PROPERTIES, VALIDATE_TYPE } from './constants';
  * @param {*} value  The value being validated
  * @return {boolean}  True means the value is valid for the given type.
  */
-export const validateType = ( type, value ) => {
+export const validateType = (type, value) => {
 	let valid = false;
 	// account for type definitions that are an array of allowed types.
-	if ( isArray( type ) ) {
-		for ( const singleType of type ) {
-			valid = validateType( singleType, value );
-			if ( valid ) {
+	if (isArray(type)) {
+		for (const singleType of type) {
+			valid = validateType(singleType, value);
+			if (valid) {
 				break;
 			}
 		}
 		// return right away because we've determined the validity of the type.
 		return valid;
 	}
-	switch ( type ) {
+	switch (type) {
 		case 'integer':
-			valid = isInteger( value );
+			valid = isInteger(value);
 			break;
 		case 'number':
-			valid = isNumber( value );
+			valid = isNumber(value);
 			break;
 		case 'string':
-			valid = isString( value );
+			valid = isString(value);
 			break;
 		case 'object':
-			valid = isPlainObject( value );
+			valid = isPlainObject(value);
 			break;
 		case 'boolean':
 		case 'bool':
-			valid = isBoolean( value );
+			valid = isBoolean(value);
 			break;
 		case 'null':
 			valid = value === null;
@@ -86,11 +86,11 @@ export const validateType = ( type, value ) => {
  * @param {*} value
  * @return {boolean}  True means this value is valid.
  */
-export const validateEnumType = ( type, enumValues, value ) => {
+export const validateEnumType = (type, enumValues, value) => {
 	return (
-		validateType( type, value ) &&
-		isArray( enumValues ) &&
-		enumValues.indexOf( value ) > -1
+		validateType(type, value) &&
+		isArray(enumValues) &&
+		enumValues.indexOf(value) > -1
 	);
 };
 
@@ -120,14 +120,14 @@ export const isShallowValidValueForField = (
 ) => {
 	// if field is a primary Key field then we override the validation so it can
 	// be either string or number
-	if ( isPrimaryKeyField( fieldName, schema ) ) {
+	if (isPrimaryKeyField(fieldName, schema)) {
 		return (
-			validateType( 'string', fieldValue ) ||
-			validateType( 'number', fieldValue )
+			validateType('string', fieldValue) ||
+			validateType('number', fieldValue)
 		);
 	}
-	const isEnum = isEnumField( fieldName, schema );
-	const isValueObject = isValueObjectField( fieldName, schema );
+	const isEnum = isEnumField(fieldName, schema);
+	const isValueObject = isValueObjectField(fieldName, schema);
 	fieldValue =
 		expectValueObjects && isValueObject
 			? maybeConvertFromValueObjectWithAssertions(
@@ -138,24 +138,24 @@ export const isShallowValidValueForField = (
 			: fieldValue;
 	fieldValue =
 		expectValueObjects &&
-		schema[ fieldName ].type === 'object' &&
+		schema[fieldName].type === 'object' &&
 		isValueObject
 			? { raw: fieldValue }
 			: fieldValue;
 	const isValid = isEnum
 		? validateEnumType(
-				schema[ fieldName ].type,
-				schema[ fieldName ].enum,
+				schema[fieldName].type,
+				schema[fieldName].enum,
 				fieldValue
 		  )
-		: validateType( schema[ fieldName ].type, fieldValue );
+		: validateType(schema[fieldName].type, fieldValue);
 	// if isEnum and not valid, then lets bail with error
-	if ( isEnum && ! isValid ) {
+	if (isEnum && !isValid) {
 		throw new TypeError(
 			sprintf(
 				'The given "%s" fieldName is not valid for the defined schema.  It must be a "%s" and it must be one of "%s". The fieldValue given was "%s"',
 				fieldName,
-				schema[ fieldName ].enum.join(),
+				schema[fieldName].enum.join(),
 				fieldValue
 			)
 		);
@@ -170,8 +170,8 @@ export const isShallowValidValueForField = (
  * @param {Object} instance
  * @return {string} The validation type for the given field and instance.
  */
-export const validateTypeForField = ( fieldName, instance ) => {
-	return instance[ PRIVATE_PROPERTIES.VALIDATE_TYPES ][ fieldName ]
-		? instance[ PRIVATE_PROPERTIES.VALIDATE_TYPES ][ fieldName ]
+export const validateTypeForField = (fieldName, instance) => {
+	return instance[PRIVATE_PROPERTIES.VALIDATE_TYPES][fieldName]
+		? instance[PRIVATE_PROPERTIES.VALIDATE_TYPES][fieldName]
 		: VALIDATE_TYPE.RAW;
 };

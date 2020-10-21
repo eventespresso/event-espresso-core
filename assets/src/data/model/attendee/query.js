@@ -15,8 +15,8 @@ export const orderByMap = {
 	id: 'ATT_ID',
 	lastNameOnly: 'ATT_lname',
 	firstNameOnly: 'ATT_fname',
-	firstThenLastName: [ 'ATT_fname', 'ATT_lname' ],
-	lastThenFirstName: [ 'ATT_lname', 'ATT_fname' ],
+	firstThenLastName: ['ATT_fname', 'ATT_lname'],
+	lastThenFirstName: ['ATT_lname', 'ATT_fname'],
 };
 
 /**
@@ -28,14 +28,14 @@ export const queryDataTypes = {
 	forEventId: PropTypes.number,
 	forDatetimeId: PropTypes.number,
 	forTicketId: PropTypes.number,
-	forStatusId: PropTypes.oneOf( REGISTRATION_STATUS_IDS ),
+	forStatusId: PropTypes.oneOf(REGISTRATION_STATUS_IDS),
 	forRegistrationId: PropTypes.number,
 	showGravatar: PropTypes.bool,
-	queryData: PropTypes.shape( {
+	queryData: PropTypes.shape({
 		limit: PropTypes.number,
-		orderBy: PropTypes.oneOf( Object.keys( orderByMap ) ),
-		order: PropTypes.oneOf( ALLOWED_ORDER_VALUES ),
-	} ),
+		orderBy: PropTypes.oneOf(Object.keys(orderByMap)),
+		order: PropTypes.oneOf(ALLOWED_ORDER_VALUES),
+	}),
 };
 
 /**
@@ -67,10 +67,8 @@ export const defaultQueryData = {
  * @return { string } 	Returns an actual orderBy string
  * 						for the REST query for the provided alias
  */
-export const mapOrderBy = ( orderBy ) => {
-	return isUndefined( orderByMap[ orderBy ] )
-		? orderBy
-		: orderByMap[ orderBy ];
+export const mapOrderBy = (orderBy) => {
+	return isUndefined(orderByMap[orderBy]) ? orderBy : orderByMap[orderBy];
 };
 
 /**
@@ -84,42 +82,42 @@ export const mapOrderBy = ( orderBy ) => {
  * @param {string} showGravatar 	Boolean toggle for whether to display user Gravatar
  * @return {string}                	The assembled where conditions.
  */
-export const whereConditions = ( {
+export const whereConditions = ({
 	forEventId = 0,
 	forDatetimeId = 0,
 	forTicketId = 0,
 	forRegistrationId = 0,
 	forStatusId = 'RAP',
 	showGravatar = false,
-} ) => {
+}) => {
 	const where = [];
 
 	// ensure that entity IDs are integers
-	forRegistrationId = parseInt( forRegistrationId, 10 );
-	forTicketId = parseInt( forTicketId, 10 );
-	forDatetimeId = parseInt( forDatetimeId, 10 );
-	forEventId = parseInt( forEventId, 10 );
+	forRegistrationId = parseInt(forRegistrationId, 10);
+	forTicketId = parseInt(forTicketId, 10);
+	forDatetimeId = parseInt(forDatetimeId, 10);
+	forEventId = parseInt(forEventId, 10);
 
 	// order of priority for provided arguments.
-	if ( forRegistrationId !== 0 && ! isNaN( forRegistrationId ) ) {
-		where.push( `where[Registration.REG_ID]=${ forRegistrationId }` );
-	} else if ( forTicketId !== 0 && ! isNaN( forTicketId ) ) {
-		where.push( `where[Registration.Ticket.TKT_ID]=${ forTicketId }` );
-	} else if ( forDatetimeId !== 0 && ! isNaN( forDatetimeId ) ) {
+	if (forRegistrationId !== 0 && !isNaN(forRegistrationId)) {
+		where.push(`where[Registration.REG_ID]=${forRegistrationId}`);
+	} else if (forTicketId !== 0 && !isNaN(forTicketId)) {
+		where.push(`where[Registration.Ticket.TKT_ID]=${forTicketId}`);
+	} else if (forDatetimeId !== 0 && !isNaN(forDatetimeId)) {
 		where.push(
-			`where[Registration.Ticket.Datetime.DTT_ID]=${ forDatetimeId }`
+			`where[Registration.Ticket.Datetime.DTT_ID]=${forDatetimeId}`
 		);
-	} else if ( forEventId !== 0 && ! isNaN( forEventId ) ) {
-		where.push( `where[Registration.EVT_ID]=${ forEventId }` );
+	} else if (forEventId !== 0 && !isNaN(forEventId)) {
+		where.push(`where[Registration.EVT_ID]=${forEventId}`);
 	}
 
-	if ( REGISTRATION_STATUS_IDS.includes( forStatusId ) ) {
-		where.push( `where[Registration.Status.STS_ID]=${ forStatusId }` );
+	if (REGISTRATION_STATUS_IDS.includes(forStatusId)) {
+		where.push(`where[Registration.Status.STS_ID]=${forStatusId}`);
 	}
-	if ( showGravatar === true ) {
-		where.push( 'calculate=user_avatar' );
+	if (showGravatar === true) {
+		where.push('calculate=user_avatar');
 	}
-	return where.join( '&' );
+	return where.join('&');
 };
 
 /**
@@ -128,7 +126,7 @@ export const whereConditions = ( {
  * @param { Object } queryData
  * @return { string }  Returns the query string.
  */
-export const getQueryString = ( queryData = {} ) => {
+export const getQueryString = (queryData = {}) => {
 	queryData = { ...defaultQueryData.queryData, ...queryData };
-	return baseGetQueryString( queryData, whereConditions, mapOrderBy );
+	return baseGetQueryString(queryData, whereConditions, mapOrderBy);
 };

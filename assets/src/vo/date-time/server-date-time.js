@@ -40,20 +40,15 @@ export default class ServerDateTime extends DateTime {
 		// we only want to use the timezone value if the server indicates there
 		// is a a timezone string or if constructing an instance for a non UTC
 		// value timezone (HAS_TIMEZONE_STRING is just a shortcut check).
-		if ( HAS_TIMEZONE_STRING || ( !! timezone && timezone !== 'UTC' ) ) {
-			super( iso8601DateString, timezone, locale, 'ServerDateTime' );
+		if (HAS_TIMEZONE_STRING || (!!timezone && timezone !== 'UTC')) {
+			super(iso8601DateString, timezone, locale, 'ServerDateTime');
 		} else {
-			const datetime = !! iso8601DateString
-				? moment().utcOffset( DEFAULT_OFFSET, true ).locale( locale )
-				: moment( iso8601DateString )
-						.utcOffset( DEFAULT_OFFSET, true )
-						.locale( locale );
-			super(
-				datetime.toISOString( true ),
-				null,
-				locale,
-				'ServerDateTime'
-			);
+			const datetime = !!iso8601DateString
+				? moment().utcOffset(DEFAULT_OFFSET, true).locale(locale)
+				: moment(iso8601DateString)
+						.utcOffset(DEFAULT_OFFSET, true)
+						.locale(locale);
+			super(datetime.toISOString(true), null, locale, 'ServerDateTime');
 		}
 	}
 
@@ -67,17 +62,15 @@ export default class ServerDateTime extends DateTime {
 	 * @param {string} locale
 	 * @return {ServerDateTime} An instance of ServerDateTime
 	 */
-	static fromISO( ISOString, locale = DEFAULT_VALID_LOCALE ) {
+	static fromISO(ISOString, locale = DEFAULT_VALID_LOCALE) {
 		return HAS_TIMEZONE_STRING
 			? new this(
-					super.fromISO( ISOString, DEFAULT_TIMEZONE_STRING ).toISO(),
+					super.fromISO(ISOString, DEFAULT_TIMEZONE_STRING).toISO(),
 					DEFAULT_TIMEZONE_STRING,
 					locale
 			  )
 			: new this(
-					super
-						.fromISOWithOffset( ISOString, DEFAULT_OFFSET )
-						.toISO(),
+					super.fromISOWithOffset(ISOString, DEFAULT_OFFSET).toISO(),
 					null,
 					locale
 			  );
@@ -93,15 +86,15 @@ export default class ServerDateTime extends DateTime {
 	 * @param {string} locale
 	 * @return {ServerDateTime} An instance of ServerDateTime
 	 */
-	static fromJSDate( date, locale = DEFAULT_VALID_LOCALE ) {
+	static fromJSDate(date, locale = DEFAULT_VALID_LOCALE) {
 		return HAS_TIMEZONE_STRING
 			? new this(
-					super.fromJSDate( date, DEFAULT_TIMEZONE_STRING ).toISO(),
+					super.fromJSDate(date, DEFAULT_TIMEZONE_STRING).toISO(),
 					DEFAULT_TIMEZONE_STRING,
 					locale
 			  )
 			: new this(
-					super.fromJSDateWithOffset( date, DEFAULT_OFFSET ).toISO(),
+					super.fromJSDateWithOffset(date, DEFAULT_OFFSET).toISO(),
 					null,
 					locale
 			  );

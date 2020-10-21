@@ -22,16 +22,12 @@ const { entities: types, resets: resetTypes } = ACTION_TYPES;
  * @param {Immutable.Map} entityRecords
  * @return {Immutable.Map} New entityRecords object.
  */
-const replaceExistingEntitiesFromState = (
-	state,
-	modelName,
-	entityRecords
-) => {
-	const existingEntities = state.get( modelName, null );
-	if ( existingEntities === null ) {
+const replaceExistingEntitiesFromState = (state, modelName, entityRecords) => {
+	const existingEntities = state.get(modelName, null);
+	if (existingEntities === null) {
 		return entityRecords;
 	}
-	return entityRecords.merge( existingEntities );
+	return entityRecords.merge(existingEntities);
 };
 
 /**
@@ -43,20 +39,17 @@ const replaceExistingEntitiesFromState = (
  * @param {Object} action
  * @return {Immutable.Map} New state if there is a change otherwise existing state.
  */
-function receiveEntity( state, action ) {
+function receiveEntity(state, action) {
 	/**
 	 * @type {string} modelName
 	 * @type {BaseEntity|null} entity
 	 */
 	const { entity } = action;
 
-	if (
-		! isModelEntity( entity ) ||
-		state.hasIn( [ entity.modelName, entity.id ] )
-	) {
+	if (!isModelEntity(entity) || state.hasIn([entity.modelName, entity.id])) {
 		return state;
 	}
-	return state.setIn( [ entity.modelName, entity.id ], entity );
+	return state.setIn([entity.modelName, entity.id], entity);
 }
 
 /**
@@ -73,30 +66,30 @@ function receiveEntity( state, action ) {
  * @return {Immutable.Map} The new state (or the original if no
  * change detected or action isn't handled by this method)
  */
-function receiveEntityRecords( state, action ) {
+function receiveEntityRecords(state, action) {
 	const { type, modelName } = action;
 	// convert from array of entities to a Map indexed by entity id.
-	const incomingEntities = Map().withMutations( ( subState ) => {
-		action.entities.forEach( ( entity ) => {
-			if ( isModelEntityOfModel( entity, modelName ) ) {
-				subState.set( entity.id, entity );
+	const incomingEntities = Map().withMutations((subState) => {
+		action.entities.forEach((entity) => {
+			if (isModelEntityOfModel(entity, modelName)) {
+				subState.set(entity.id, entity);
 			}
-		} );
-	} );
-	if ( ! state.has( modelName ) || incomingEntities.isEmpty() ) {
+		});
+	});
+	if (!state.has(modelName) || incomingEntities.isEmpty()) {
 		return state;
 	}
 	let updateState = false,
 		entityRecords;
-	switch ( type ) {
+	switch (type) {
 		case types.RECEIVE_ENTITY_RECORDS:
 			// if all incoming keys exist in state already then we don't do
 			// anything
 			if (
 				isEmpty(
 					difference(
-						Array.from( incomingEntities.keys() ),
-						Array.from( state.get( modelName, Map() ).keys() )
+						Array.from(incomingEntities.keys()),
+						Array.from(state.get(modelName, Map()).keys())
 					)
 				)
 			) {
@@ -114,13 +107,11 @@ function receiveEntityRecords( state, action ) {
 			break;
 		case types.RECEIVE_AND_REPLACE_ENTITY_RECORDS:
 			updateState = true;
-			entityRecords = state
-				.get( modelName, Map() )
-				.merge( incomingEntities );
+			entityRecords = state.get(modelName, Map()).merge(incomingEntities);
 			break;
 	}
-	if ( updateState ) {
-		return state.set( modelName, entityRecords );
+	if (updateState) {
+		return state.set(modelName, entityRecords);
 	}
 	return state;
 }
@@ -133,10 +124,10 @@ function receiveEntityRecords( state, action ) {
  * @param {Object} action
  * @return {Immutable.Map} New or existing state.
  */
-function removeEntityById( state, action ) {
+function removeEntityById(state, action) {
 	const { modelName, entityId = 0 } = action;
-	const id = normalizeEntityId( entityId );
-	return state.deleteIn( [ modelName, id ] );
+	const id = normalizeEntityId(entityId);
+	return state.deleteIn([modelName, id]);
 }
 
 /**
@@ -152,23 +143,23 @@ export { receiveEntity, receiveEntityRecords, removeEntityById };
  * @return {Immutable.Map} New or existing state
  */
 export default function entities(
-	state = fromJS( DEFAULT_CORE_STATE.entities ),
+	state = fromJS(DEFAULT_CORE_STATE.entities),
 	action
 ) {
-	if ( action.type ) {
-		switch ( action.type ) {
+	if (action.type) {
+		switch (action.type) {
 			case types.RECEIVE_ENTITY_RECORDS:
 			case types.RECEIVE_AND_REPLACE_ENTITY_RECORDS:
-				return receiveEntityRecords( state, action );
+				return receiveEntityRecords(state, action);
 			case types.RECEIVE_ENTITY:
-				return receiveEntity( state, action );
+				return receiveEntity(state, action);
 			case types.REMOVE_ENTITY_BY_ID:
-				return removeEntityById( state, action );
+				return removeEntityById(state, action);
 			case resetTypes.RESET_ALL_STATE:
-				return fromJS( DEFAULT_CORE_STATE.entities );
+				return fromJS(DEFAULT_CORE_STATE.entities);
 			case resetTypes.RESET_STATE_FOR_MODEL:
-				return state.has( singularModelName( action.modelName ) )
-					? state.set( singularModelName( action.modelName ), Map() )
+				return state.has(singularModelName(action.modelName))
+					? state.set(singularModelName(action.modelName), Map())
 					: state;
 		}
 	}

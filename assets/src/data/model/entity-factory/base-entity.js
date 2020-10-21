@@ -22,8 +22,8 @@ import { SAVE_STATE, PRIVATE_PROPERTIES } from './constants';
  * dynamically created via the constructor.
  */
 class BaseEntity {
-	[ PRIVATE_PROPERTIES.SAVE_STATE ] = SAVE_STATE.CLEAN;
-	[ PRIVATE_PROPERTIES.VALIDATE_TYPES ] = {};
+	[PRIVATE_PROPERTIES.SAVE_STATE] = SAVE_STATE.CLEAN;
+	[PRIVATE_PROPERTIES.VALIDATE_TYPES] = {};
 
 	/**
 	 * Constructor for Base Entity
@@ -41,21 +41,21 @@ class BaseEntity {
 		fieldPrefixes = [],
 		isNew = false
 	) {
-		assertValidSchema( schema );
-		fieldPrefixes = isArray( fieldPrefixes ) ? fieldPrefixes : [];
-		createGetter( this, 'fieldPrefixes', fieldPrefixes );
-		createGetter( this, 'schema', schema.properties );
-		setSaveState( this, isNew ? SAVE_STATE.NEW : SAVE_STATE.CLEAN );
-		createGetter( this, 'modelName', modelName );
-		createGetter( this, 'originalFieldsAndValues', entityFieldsAndValues );
+		assertValidSchema(schema);
+		fieldPrefixes = isArray(fieldPrefixes) ? fieldPrefixes : [];
+		createGetter(this, 'fieldPrefixes', fieldPrefixes);
+		createGetter(this, 'schema', schema.properties);
+		setSaveState(this, isNew ? SAVE_STATE.NEW : SAVE_STATE.CLEAN);
+		createGetter(this, 'modelName', modelName);
+		createGetter(this, 'originalFieldsAndValues', entityFieldsAndValues);
 		createGetter(
 			this,
 			'fieldsToPersistOnInsert',
-			new Set( Object.keys( entityFieldsAndValues ) )
+			new Set(Object.keys(entityFieldsAndValues))
 		);
-		createEntityGettersAndSetters( this );
-		createPersistingGettersAndSetters( this );
-		Object.seal( this );
+		createEntityGettersAndSetters(this);
+		createPersistingGettersAndSetters(this);
+		Object.seal(this);
 	}
 
 	/**
@@ -71,7 +71,7 @@ class BaseEntity {
 	 * @return {symbol}  Returns the current save state for the entity.
 	 */
 	get saveState() {
-		return this[ PRIVATE_PROPERTIES.SAVE_STATE ];
+		return this[PRIVATE_PROPERTIES.SAVE_STATE];
 	}
 
 	/**
@@ -117,7 +117,7 @@ class BaseEntity {
 	 * to check if the given field name is a protected field in this entity.
 	 */
 	get isFieldPasswordProtected() {
-		return ( fieldName ) => this.protectedFields.indexOf( fieldName ) > -1;
+		return (fieldName) => this.protectedFields.indexOf(fieldName) > -1;
 	}
 
 	/**
@@ -128,8 +128,8 @@ class BaseEntity {
 	 * @return {BaseEntity} A new instance of BaseEntity
 	 */
 	get clone() {
-		return ( keepId = false ) => {
-			const createFactory = memoize( () =>
+		return (keepId = false) => {
+			const createFactory = memoize(() =>
 				createEntityFactory(
 					this.modelName,
 					{ $schema: {}, properties: this.schema },
@@ -137,10 +137,10 @@ class BaseEntity {
 				)
 			);
 			const factory = createFactory();
-			const newEntity = factory.createNew( this.forClone );
-			if ( keepId ) {
+			const newEntity = factory.createNew(this.forClone);
+			if (keepId) {
 				newEntity.id = this.id;
-				setSaveState( newEntity, this.saveState, true );
+				setSaveState(newEntity, this.saveState, true);
 			}
 			return newEntity;
 		};
@@ -157,7 +157,7 @@ class BaseEntity {
  * @param {Object} extendedClass
  * @return {Function} A function
  */
-const nameClass = ( name, extendedClass ) => {
+const nameClass = (name, extendedClass) => {
 	return class extends extendedClass {
 		static get name() {
 			return name;
@@ -183,11 +183,8 @@ const nameClass = ( name, extendedClass ) => {
  * has [ `DTT`, `DTT_EVT` ]
  * @return {Object} A factory for instantiating an entity instance.
  */
-const createEntityFactory = ( modelName, schema, fieldPrefixes = [] ) => {
-	const Entity = nameClass(
-		upperFirst( camelCase( modelName ) ),
-		BaseEntity
-	);
+const createEntityFactory = (modelName, schema, fieldPrefixes = []) => {
+	const Entity = nameClass(upperFirst(camelCase(modelName)), BaseEntity);
 	return {
 		/**
 		 * Exposes modelName so client code can derive what model this factory
@@ -222,14 +219,8 @@ const createEntityFactory = ( modelName, schema, fieldPrefixes = [] ) => {
 		 * @param {Object} fieldsAndValues
 		 * @return {Entity} an instance of Entity
 		 */
-		createNew: ( fieldsAndValues ) =>
-			new Entity(
-				modelName,
-				fieldsAndValues,
-				schema,
-				fieldPrefixes,
-				true
-			),
+		createNew: (fieldsAndValues) =>
+			new Entity(modelName, fieldsAndValues, schema, fieldPrefixes, true),
 		/**
 		 * This returns an instance of Entity for the given arguments with the
 		 * indication this represents the entity as is in the db.  This means:
@@ -244,8 +235,8 @@ const createEntityFactory = ( modelName, schema, fieldPrefixes = [] ) => {
 		 * @param {Object} fieldsAndValues
 		 * @return {Entity} an instance of Entity
 		 */
-		fromExisting: ( fieldsAndValues ) =>
-			new Entity( modelName, fieldsAndValues, schema, fieldPrefixes ),
+		fromExisting: (fieldsAndValues) =>
+			new Entity(modelName, fieldsAndValues, schema, fieldPrefixes),
 	};
 };
 export default createEntityFactory;

@@ -33,7 +33,7 @@ import { REDUCER_KEY } from './constants';
  *	}
  * } Object for action.
  */
-export function receiveResponse( identifier, queryString, items = [] ) {
+export function receiveResponse(identifier, queryString, items = []) {
 	return {
 		type: types.RECEIVE_LIST,
 		identifier,
@@ -52,7 +52,7 @@ export function receiveResponse( identifier, queryString, items = [] ) {
  * @return {{type: string, identifier: string, queryString: string, items:
  *   Array<BaseEntity>}} An action object.
  */
-export function receiveEntityResponse( modelName, queryString, entities = [] ) {
+export function receiveEntityResponse(modelName, queryString, entities = []) {
 	return {
 		type: types.RECEIVE_ENTITY_LIST,
 		identifier: modelName,
@@ -70,7 +70,7 @@ export function* resetAllState() {
 		type: resetTypes.RESET_ALL_STATE,
 	};
 
-	if ( invalidateActionsAvailable() ) {
+	if (invalidateActionsAvailable()) {
 		yield dispatch(
 			'core/data',
 			'invalidateResolutionForStore',
@@ -87,14 +87,14 @@ export function* resetAllState() {
 	);
 
 	// dispatch invalidation of the cached resolvers
-	for ( const selector in resolvers ) {
-		for ( const entry of resolvers[ selector ]._map ) {
+	for (const selector in resolvers) {
+		for (const entry of resolvers[selector]._map) {
 			yield dispatch(
 				'core/data',
 				'invalidateResolution',
 				REDUCER_KEY,
 				selector,
-				entry[ 0 ]
+				entry[0]
 			);
 		}
 	}
@@ -107,7 +107,7 @@ export function* resetAllState() {
  * @param {string} selectorName
  * @param {string} identifier
  */
-export function* resetForSelectorAndIdentifier( selectorName, identifier ) {
+export function* resetForSelectorAndIdentifier(selectorName, identifier) {
 	yield {
 		type: resetTypes.RESET_STATE_FOR_IDENTIFIER,
 		identifier,
@@ -123,19 +123,19 @@ export function* resetForSelectorAndIdentifier( selectorName, identifier ) {
 	// dispatch invalidation of the cached resolvers for any resolver that
 	// has a variation of modelName in the selector name or in the args for the
 	// cached resolver.
-	for ( const selector in resolvers ) {
+	for (const selector in resolvers) {
 		if (
 			selectorName === selector ||
-			identifierInSelector( selector, identifier )
+			identifierInSelector(selector, identifier)
 		) {
-			for ( const entry of resolvers[ selector ]._map ) {
-				if ( entry[ 0 ][ 0 ] === identifier ) {
+			for (const entry of resolvers[selector]._map) {
+				if (entry[0][0] === identifier) {
 					yield dispatch(
 						'core/data',
 						'invalidateResolution',
 						REDUCER_KEY,
 						selector,
-						entry[ 0 ]
+						entry[0]
 					);
 				}
 			}
@@ -149,8 +149,8 @@ export function* resetForSelectorAndIdentifier( selectorName, identifier ) {
  *
  * @param {string} identifier
  */
-export function* resetGenericItemsWithIdentifier( identifier ) {
-	yield* resetForSelectorAndIdentifier( 'getItems', identifier );
+export function* resetGenericItemsWithIdentifier(identifier) {
+	yield* resetForSelectorAndIdentifier('getItems', identifier);
 }
 
 /**
@@ -159,9 +159,9 @@ export function* resetGenericItemsWithIdentifier( identifier ) {
  *
  * @param {string} modelName
  */
-export function* resetEntitiesForModelName( modelName ) {
-	yield* resetForSelectorAndIdentifier( 'getEntities', modelName );
-	yield* resetForSelectorAndIdentifier( 'getEntitiesByIds', modelName );
+export function* resetEntitiesForModelName(modelName) {
+	yield* resetForSelectorAndIdentifier('getEntities', modelName);
+	yield* resetForSelectorAndIdentifier('getEntitiesByIds', modelName);
 }
 
 /**
@@ -188,7 +188,7 @@ export function* resetSpecificStateForSelector(
 		'invalidateResolution',
 		REDUCER_KEY,
 		selectorName,
-		[ identifier, queryString ]
+		[identifier, queryString]
 	);
 }
 
@@ -198,7 +198,7 @@ export function* resetSpecificStateForSelector(
  * @return {boolean}  True means additional invalidation actions available.
  */
 const invalidateActionsAvailable = () => {
-	return dataSelect( 'core/data' ).invalidateResolutionForStore !== undefined;
+	return dataSelect('core/data').invalidateResolutionForStore !== undefined;
 };
 
 /**
@@ -209,15 +209,15 @@ const invalidateActionsAvailable = () => {
  * @param {string} identifier
  * @return {boolean} True means it is present, false means it isn't
  */
-const identifierInSelector = ( selectorName, identifier ) => {
-	if ( selectorName === 'getItems' ) {
+const identifierInSelector = (selectorName, identifier) => {
+	if (selectorName === 'getItems') {
 		return false;
 	}
-	const singularName = singularModelName( identifier );
-	const pluralName = pluralModelName( identifier );
+	const singularName = singularModelName(identifier);
+	const pluralName = pluralModelName(identifier);
 	selectorName = selectorName.toLowerCase();
 	return (
-		selectorName.indexOf( singularName ) > -1 ||
-		selectorName.indexOf( pluralName ) > -1
+		selectorName.indexOf(singularName) > -1 ||
+		selectorName.indexOf(pluralName) > -1
 	);
 };

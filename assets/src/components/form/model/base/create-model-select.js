@@ -11,7 +11,7 @@ import { modelSelectName } from './utils';
 import PropTypes from 'prop-types';
 
 const defaultPropTypes = {
-	selected: PropTypes.oneOfType( [ PropTypes.number, PropTypes.string ] ),
+	selected: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 	onSelect: PropTypes.func,
 	label: PropTypes.string,
 };
@@ -24,7 +24,7 @@ const defaultPropTypes = {
  * @param {Object} propTypes
  * @return {ModelSelectComponent} A model select component.
  */
-const createModelSelect = ( modelName, defaultProps = {}, propTypes = {} ) => {
+const createModelSelect = (modelName, defaultProps = {}, propTypes = {}) => {
 	class ModelSelectComponent extends Component {
 		/**
 		 * @type {string}
@@ -55,7 +55,7 @@ const createModelSelect = ( modelName, defaultProps = {}, propTypes = {} ) => {
 				},
 			};
 
-			if ( defaultProps.queryData && queryData ) {
+			if (defaultProps.queryData && queryData) {
 				queryData = {
 					...defaultProps.queryData,
 					...queryData,
@@ -68,10 +68,10 @@ const createModelSelect = ( modelName, defaultProps = {}, propTypes = {} ) => {
 				queryData,
 				modelName: this.constructor.modelName,
 			};
-			return <ModelSelect { ...props } />;
+			return <ModelSelect {...props} />;
 		}
 	}
-	ModelSelectComponent.displayName = modelSelectName( modelName );
+	ModelSelectComponent.displayName = modelSelectName(modelName);
 	return ModelSelectComponent;
 };
 

@@ -15,23 +15,22 @@ import { getMethodName } from '../../base-model';
  * will be mapped to.
  * @return {Object} The new selector objects for each model relation.
  */
-export const createSelectors = ( selector ) =>
-	MODEL_NAMES.reduce( ( selectors, modelName ) => {
+export const createSelectors = (selector) =>
+	MODEL_NAMES.reduce((selectors, modelName) => {
 		selectors[
-			getMethodName( modelName, 'additionRelations', 'getQueued' )
-		] = ( state ) =>
-			selector.getRelationAdditionsQueuedForModel( state, modelName );
+			getMethodName(modelName, 'additionRelations', 'getQueued')
+		] = (state) =>
+			selector.getRelationAdditionsQueuedForModel(state, modelName);
+		selectors[getMethodName(modelName, 'deleteRelations', 'getQueued')] = (
+			state
+		) => selector.getRelationDeletionsQueuedForModel(state, modelName);
 		selectors[
-			getMethodName( modelName, 'deleteRelations', 'getQueued' )
-		] = ( state ) =>
-			selector.getRelationDeletionsQueuedForModel( state, modelName );
-		selectors[
-			getMethodName( modelName, 'id', 'countRelationModelsIndexedFor' )
-		] = ( state, entityId ) =>
+			getMethodName(modelName, 'id', 'countRelationModelsIndexedFor')
+		] = (state, entityId) =>
 			selector.countRelationModelsIndexedForEntity(
 				state,
 				modelName,
 				entityId
 			);
 		return selectors;
-	}, {} );
+	}, {});

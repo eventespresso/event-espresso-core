@@ -33,14 +33,14 @@ export const { primary_keys: primaryKeys = {} } = data.paths;
  * @return { string } The string representation for the values.
  * @throws { Exception }
  */
-export const valuesForCombinedPrimaryKeys = memoize( ( keys, entity ) => {
-	assertIsArray( keys );
-	const primaryKey = reduce( keys, function ( result, key ) {
-		assertEntityHasKey( key, entity );
-		return entity[ result ] + ':' + entity[ key ];
-	} );
-	return trimEnd( primaryKey, ':' );
-} );
+export const valuesForCombinedPrimaryKeys = memoize((keys, entity) => {
+	assertIsArray(keys);
+	const primaryKey = reduce(keys, function (result, key) {
+		assertEntityHasKey(key, entity);
+		return entity[result] + ':' + entity[key];
+	});
+	return trimEnd(primaryKey, ':');
+});
 
 /**
  * Returns the value for the given key from the provided entity.
@@ -50,10 +50,10 @@ export const valuesForCombinedPrimaryKeys = memoize( ( keys, entity ) => {
  * @return {Function} The value for the key in the provided entity.
  * @throws { Exception }
  */
-export const valueForPrimaryKey = memoize( ( key, entity ) => {
-	assertEntityHasKey( key, entity );
-	return entity[ key ];
-} );
+export const valueForPrimaryKey = memoize((key, entity) => {
+	assertEntityHasKey(key, entity);
+	return entity[key];
+});
 
 /**
  * Returns the primary key (or combined primary keys) from the available data.
@@ -62,10 +62,10 @@ export const valueForPrimaryKey = memoize( ( key, entity ) => {
  * @return { function(string) }
  * @throws { Exception }
  */
-export const getPrimaryKey = memoize( ( modelName ) => {
-	assertEntityHasKey( modelName, primaryKeys );
-	return primaryKeys[ modelName ];
-} );
+export const getPrimaryKey = memoize((modelName) => {
+	assertEntityHasKey(modelName, primaryKeys);
+	return primaryKeys[modelName];
+});
 
 /**
  * Returns a query string for getting the entities belonging to a model for the
@@ -73,12 +73,10 @@ export const getPrimaryKey = memoize( ( modelName ) => {
  *
  * @type {memoized}
  */
-export const getPrimaryKeyQueryString = memoize(
-	( modelName, keyValues = [] ) => {
-		const primaryKey = getPrimaryKey( modelName );
-		return `[${ primaryKey }][IN]=` + keyValues.join();
-	}
-);
+export const getPrimaryKeyQueryString = memoize((modelName, keyValues = []) => {
+	const primaryKey = getPrimaryKey(modelName);
+	return `[${primaryKey}][IN]=` + keyValues.join();
+});
 
 /**
  * Returns the values for the primary keys from the provided entity.
@@ -89,12 +87,12 @@ export const getPrimaryKeyQueryString = memoize(
  * will be as string in the format `%s.%s` for the primary key values.
  * @throws { Exception }
  */
-export const getEntityPrimaryKeyValues = memoize( ( modelName, entity ) => {
-	const keys = getPrimaryKey( modelName );
-	return isArray( keys )
-		? valuesForCombinedPrimaryKeys( keys, entity )
-		: valueForPrimaryKey( keys, entity );
-} );
+export const getEntityPrimaryKeyValues = memoize((modelName, entity) => {
+	const keys = getPrimaryKey(modelName);
+	return isArray(keys)
+		? valuesForCombinedPrimaryKeys(keys, entity)
+		: valueForPrimaryKey(keys, entity);
+});
 
 /**
  * This receives an array of entities and returns a collection of those same
@@ -105,23 +103,20 @@ export const getEntityPrimaryKeyValues = memoize( ( modelName, entity ) => {
  * @return {Map}  A collection indexed by the primary key values for each entity.
  * @throws {Exception}
  */
-export const keyEntitiesByPrimaryKeyValue = ( modelName, entities = [] ) => {
+export const keyEntitiesByPrimaryKeyValue = (modelName, entities = []) => {
 	assertIsNotEmpty(
 		entities,
-		__(
-			'The provided array of entities must not be empty',
-			'event_espresso'
-		)
+		__('The provided array of entities must not be empty', 'event_espresso')
 	);
-	assertIsArray( entities );
+	assertIsArray(entities);
 
 	const mappedEntities = new Map();
-	entities.forEach( ( entity ) => {
+	entities.forEach((entity) => {
 		mappedEntities.set(
-			getEntityPrimaryKeyValues( modelName, entity ),
+			getEntityPrimaryKeyValues(modelName, entity),
 			entity
 		);
-	} );
+	});
 	return mappedEntities;
 };
 
@@ -134,7 +129,7 @@ export const keyEntitiesByPrimaryKeyValue = ( modelName, entities = [] ) => {
  * @return {Map}  An array of entity instances indexed by
  * their primary key value
  */
-export const createAndKeyEntitiesByPrimaryKeyValue = ( factory, entities ) => {
+export const createAndKeyEntitiesByPrimaryKeyValue = (factory, entities) => {
 	assertIsMap(
 		entities,
 		__(
@@ -142,8 +137,8 @@ export const createAndKeyEntitiesByPrimaryKeyValue = ( factory, entities ) => {
 			'event_espresso'
 		)
 	);
-	entities.forEach( ( entity, entityId ) => {
-		entities.set( entityId, factory.fromExisting( entity ) );
-	} );
+	entities.forEach((entity, entityId) => {
+		entities.set(entityId, factory.fromExisting(entity));
+	});
 	return entities;
 };

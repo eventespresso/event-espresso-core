@@ -26,7 +26,7 @@ function* removeDirtyRelationForAddition(
 	relationName,
 	relationEntityId
 ) {
-	modelName = singularModelName( modelName );
+	modelName = singularModelName(modelName);
 	yield removeDirtyRelationAddition(
 		relationName,
 		relationEntityId,
@@ -50,11 +50,11 @@ function* removeRelationForEntity(
 	relationName,
 	relationEntityId
 ) {
-	modelName = singularModelName( modelName );
-	relationName = singularModelName( relationName );
-	yield removeRelatedEntities( modelName, entityId, relationName, [
+	modelName = singularModelName(modelName);
+	relationName = singularModelName(relationName);
+	yield removeRelatedEntities(modelName, entityId, relationName, [
 		relationEntityId,
-	] );
+	]);
 	yield removeDirtyRelationAddition(
 		modelName,
 		entityId,

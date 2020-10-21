@@ -35,8 +35,8 @@ function receiveRelatedEntities(
 	relationName,
 	relatedEntityIds
 ) {
-	modelName = singularModelName( modelName );
-	relationName = singularModelName( relationName );
+	modelName = singularModelName(modelName);
+	relationName = singularModelName(relationName);
 	return {
 		type: types.RECEIVE_RELATED_ENTITY_IDS,
 		modelName,
@@ -71,8 +71,8 @@ function receiveDirtyRelationAddition(
 	modelName,
 	entityId
 ) {
-	modelName = singularModelName( modelName );
-	relationName = singularModelName( relationName );
+	modelName = singularModelName(modelName);
+	relationName = singularModelName(relationName);
 	return {
 		type: types.RECEIVE_DIRTY_RELATION_ADDITION,
 		relationName,
@@ -107,8 +107,8 @@ function receiveDirtyRelationDeletion(
 	modelName,
 	entityId
 ) {
-	modelName = singularModelName( modelName );
-	relationName = singularModelName( relationName );
+	modelName = singularModelName(modelName);
+	relationName = singularModelName(relationName);
 	return {
 		type: types.RECEIVE_DIRTY_RELATION_DELETION,
 		relationName,
@@ -143,7 +143,7 @@ function receiveUpdatedEntityIdForRelations(
 	oldEntityId,
 	newEntityId
 ) {
-	modelName = singularModelName( modelName );
+	modelName = singularModelName(modelName);
 	return {
 		type: types.RECEIVE_UPDATED_ENTITY_ID_FOR_RELATIONS,
 		modelName,
