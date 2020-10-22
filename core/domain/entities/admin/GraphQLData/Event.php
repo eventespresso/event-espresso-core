@@ -23,6 +23,7 @@ class Event extends GraphQLData
                 description
                 displayDescription
                 displayTicketSelector
+                donations
                 externalUrl
                 isActive
                 isCancelled
