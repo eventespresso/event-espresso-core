@@ -4,7 +4,7 @@ namespace EventEspresso\core\domain\services\admin\events\editor;
 
 use EE_Error;
 use EventEspresso\core\domain\entities\admin\GraphQLData\Datetimes;
-use EventEspresso\core\domain\entities\admin\GraphQLData\Events;
+use EventEspresso\core\domain\entities\admin\GraphQLData\Event;
 use EventEspresso\core\domain\entities\admin\GraphQLData\Prices;
 use EventEspresso\core\domain\entities\admin\GraphQLData\PriceTypes;
 use EventEspresso\core\domain\entities\admin\GraphQLData\Tickets;
@@ -22,9 +22,9 @@ class EventEditorGraphQLData
 {
 
     /**
-     * @var Events $events
+     * @var Event $event
      */
-    protected $events;
+    protected $event;
 
     /**
      * @var Datetimes $datetimes
@@ -61,7 +61,7 @@ class EventEditorGraphQLData
      * EventEditorGraphQLData constructor.
      *
      * @param Datetimes               $datetimes
-     * @param Events                  $events
+     * @param Event                   $event
      * @param Prices                  $prices
      * @param PriceTypes              $price_types
      * @param Tickets                 $tickets
@@ -70,7 +70,7 @@ class EventEditorGraphQLData
      */
     public function __construct(
         Datetimes $datetimes,
-        Events $events,
+        Event $event,
         Prices $prices,
         PriceTypes $price_types,
         Tickets $tickets,
@@ -78,7 +78,7 @@ class EventEditorGraphQLData
         NewEventDefaultEntities $default_entities
     ) {
         $this->datetimes        = $datetimes;
-        $this->events           = $events;
+        $this->event           = $event;
         $this->default_entities = $default_entities;
         $this->prices           = $prices;
         $this->price_types      = $price_types;
@@ -97,7 +97,7 @@ class EventEditorGraphQLData
     public function getData(int $eventId)
     {
         \EEH_Debug_Tools::printr($eventId, '$eventId', __FILE__, __LINE__);
-        $event = $this->events->getData(['eventId' => $eventId]);
+        $event = $this->event->getData(['id' => $eventId]);
         \EEH_Debug_Tools::printr($event, '$event', __FILE__, __LINE__);
         $datetimes = $this->datetimes->getData(['eventId' => $eventId]);
 

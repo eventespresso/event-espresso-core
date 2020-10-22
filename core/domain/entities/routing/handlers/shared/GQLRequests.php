@@ -164,10 +164,6 @@ class GQLRequests extends Route
             ['EEM_Datetime' => EE_Dependency_Map::load_from_cache]
         );
         $this->dependency_map->registerDependencies(
-            'EventEspresso\core\domain\services\graphql\connections\RootQueryEventsConnection',
-            ['EEM_Event' => EE_Dependency_Map::load_from_cache]
-        );
-        $this->dependency_map->registerDependencies(
             'EventEspresso\core\domain\services\graphql\connections\RootQueryDatetimesConnection',
             ['EEM_Datetime' => EE_Dependency_Map::load_from_cache]
         );
