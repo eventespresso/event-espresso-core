@@ -509,7 +509,7 @@ if ( ! function_exists( 'espresso_list_of_event_dates' )) {
 				}
 			}
 			$html .= '</ul>';
-            $html = apply_filters('FHEE__espresso_list_of_event_dates__html', $html, $arguments);
+            $html = apply_filters('FHEE__espresso_list_of_event_dates__html', $html, $arguments, $datetime);
 		} else {
             $html = '<p><span class="dashicons dashicons-marker pink-text"></span>';
             $html .= esc_html__( 'There are no upcoming dates for this event.', 'event_espresso' );
