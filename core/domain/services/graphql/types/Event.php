@@ -115,13 +115,13 @@ class Event extends TypeBase
                 esc_html__('Event Visible Date', 'event_espresso')
             ),
             new GraphQLField(
-                'additionalLimit',
+                'maxRegistrations',
                 'Int',
                 'additional_limit',
                 esc_html__('Limit of Additional Registrations on Same Transaction', 'event_espresso')
             ),
             new GraphQLField(
-                'phone',
+                'phoneNumber',
                 'String',
                 'phone',
                 esc_html__('Event Phone Number', 'event_espresso')
@@ -145,13 +145,13 @@ class Event extends TypeBase
                 esc_html__('Timezone (name) for Event times', 'event_espresso')
             ),
             new GraphQLField(
-                'externalUrl',
+                'altRegPage',
                 'String',
                 'external_url',
                 esc_html__('URL of Event Page if hosted elsewhere', 'event_espresso')
             ),
             new GraphQLField(
-                'donations',
+                'allowDonations',
                 'Boolean',
                 'donations',
                 esc_html__('Accept Donations?', 'event_espresso')

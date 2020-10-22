@@ -26,12 +26,16 @@ class EventMutation
     {
         $args = [];
 
-        if (! empty($input['additionalLimit'])) {
-            $args['EVT_additional_limit'] = absint($input['additionalLimit']);
+        if (array_key_exists('allowDonations', $input)) {
+            $args['EVT_donations'] = (bool) ($input['allowDonations']);
         }
 
         if (array_key_exists('allowOverflow', $input)) {
             $args['EVT_allow_overflow'] = (bool) ($input['allowOverflow']);
+        }
+
+        if (! empty($input['altRegPage'])) {
+            $args['EVT_external_URL'] = sanitize_text_field($input['altRegPage']);
         }
 
         if (! empty($input['description'])) {
@@ -46,12 +50,8 @@ class EventMutation
             $args['EVT_display_ticket_selector'] = (bool) ($input['displayTicketSelector']);
         }
 
-        if (array_key_exists('donations', $input)) {
-            $args['EVT_donations'] = (bool) ($input['donations']);
-        }
-
-        if (! empty($input['externalUrl'])) {
-            $args['EVT_external_URL'] = sanitize_text_field($input['externalUrl']);
+        if (! empty($input['maxRegistrations'])) {
+            $args['EVT_additional_limit'] = absint($input['maxRegistrations']);
         }
 
         if (array_key_exists('memberOnly', $input)) {
@@ -66,8 +66,8 @@ class EventMutation
             $args['EVT_order'] = absint($input['order']);
         }
 
-        if (! empty($input['phone'])) {
-            $args['EVT_phone'] = sanitize_text_field($input['phone']);
+        if (! empty($input['phoneNumber'])) {
+            $args['EVT_phone'] = sanitize_text_field($input['phoneNumber']);
         }
 
         if (! empty($input['shortDescription'])) {

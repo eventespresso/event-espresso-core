@@ -17,14 +17,13 @@ class Event extends GraphQLData
                 id
                 dbId
                 cacheId
-                additionalLimit
+                allowDonations
                 allowOverflow
+                altRegPage
                 created
                 description
                 displayDescription
                 displayTicketSelector
-                donations
-                externalUrl
                 isActive
                 isCancelled
                 isExpired
@@ -32,14 +31,19 @@ class Event extends GraphQLData
                 isPostponed
                 isSoldOut
                 isUpcoming
+                maxRegistrations
                 memberOnly
                 name
                 order
-                phone
+                phoneNumber
                 shortDescription
                 status
                 timezoneString
                 visibleOn
+                wpUser {
+                    id
+                    name
+                }
                 __typename
             }
         }
