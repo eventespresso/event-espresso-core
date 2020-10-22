@@ -41,7 +41,6 @@ class Event extends GraphQLData
                 visibleOn
                 __typename
             }
-            __typename
         }
 QUERY;
         $this->setParams(
