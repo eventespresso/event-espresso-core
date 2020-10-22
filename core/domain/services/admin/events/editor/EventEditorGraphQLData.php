@@ -4,6 +4,7 @@ namespace EventEspresso\core\domain\services\admin\events\editor;
 
 use EE_Error;
 use EventEspresso\core\domain\entities\admin\GraphQLData\Datetimes;
+use EventEspresso\core\domain\entities\admin\GraphQLData\Event;
 use EventEspresso\core\domain\entities\admin\GraphQLData\Prices;
 use EventEspresso\core\domain\entities\admin\GraphQLData\PriceTypes;
 use EventEspresso\core\domain\entities\admin\GraphQLData\Tickets;
@@ -19,6 +20,11 @@ use ReflectionException;
  */
 class EventEditorGraphQLData
 {
+
+    /**
+     * @var Event $event
+     */
+    protected $event;
 
     /**
      * @var Datetimes $datetimes
@@ -54,27 +60,30 @@ class EventEditorGraphQLData
     /**
      * EventEditorGraphQLData constructor.
      *
-     * @param Datetimes  $datetimes
-     * @param Prices     $prices
-     * @param PriceTypes $price_types
-     * @param Tickets    $tickets
-     * @param EventEntityRelations $relations
+     * @param Datetimes               $datetimes
+     * @param Event                   $event
+     * @param Prices                  $prices
+     * @param PriceTypes              $price_types
+     * @param Tickets                 $tickets
+     * @param EventEntityRelations    $relations
      * @param NewEventDefaultEntities $default_entities
      */
     public function __construct(
         Datetimes $datetimes,
+        Event $event,
         Prices $prices,
         PriceTypes $price_types,
         Tickets $tickets,
         EventEntityRelations $relations,
         NewEventDefaultEntities $default_entities
     ) {
-        $this->datetimes = $datetimes;
+        $this->datetimes        = $datetimes;
+        $this->event           = $event;
         $this->default_entities = $default_entities;
-        $this->prices = $prices;
-        $this->price_types = $price_types;
-        $this->relations = $relations;
-        $this->tickets = $tickets;
+        $this->prices           = $prices;
+        $this->price_types      = $price_types;
+        $this->relations        = $relations;
+        $this->tickets          = $tickets;
     }
 
 
@@ -85,13 +94,14 @@ class EventEditorGraphQLData
      * @throws ReflectionException
      * @since $VID:$
      */
-    public function getData($eventId)
+    public function getData(int $eventId)
     {
+        $event = $this->event->getData(['id' => $eventId]);
         $datetimes = $this->datetimes->getData(['eventId' => $eventId]);
 
         // Avoid undefined variable warning in PHP >= 7.3
         $tickets = null;
-        $prices = null;
+        $prices  = null;
 
         if (empty($datetimes['nodes']) || (isset($_REQUEST['action']) && $_REQUEST['action'] === 'create_new')) {
             $this->default_entities->getData($eventId);
@@ -122,6 +132,6 @@ class EventEditorGraphQLData
         $relations = $this->relations->getData($eventId);
 
 
-        return compact('datetimes', 'tickets', 'prices', 'priceTypes', 'relations');
+        return compact('event', 'datetimes', 'tickets', 'prices', 'priceTypes', 'relations');
     }
 }

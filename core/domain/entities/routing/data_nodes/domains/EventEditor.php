@@ -58,8 +58,6 @@ class EventEditor extends JsonDataNode
         // if there's no event ID but there IS a WP Post... then use the Post ID
         $use_post_id = $eventId === 0 && $post instanceof WP_Post && $post->post_type === 'espresso_events';
         $eventId = $use_post_id ? $post->ID : $eventId;
-        $event = ['dbId' => $eventId];
-        $this->addData('event', $event);
         $related_data = $this->event_editor_gql_data->getData($eventId);
         foreach ($related_data as $key => $value) {
             $this->addData($key, $value);
