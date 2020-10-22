@@ -134,6 +134,15 @@ $generated_i18n_strings = array(
 	// Reference: domains/blocks/src/services/utils.ts:26
 	__( 'Select…', 'event_espresso' ),
 
+	// Reference: domains/eventEditor/src/ui/EventMeta.tsx:28
+	__( 'Manager: ', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/EventMeta.tsx:32
+	__( 'Enable Donations', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/EventMeta.tsx:37
+	__( 'Display Ticket Selector', 'event_espresso' ),
+
 	// Reference: domains/eventEditor/src/ui/datetimes/DateRegistrationsLink.tsx:17
 	__( 'view ALL registrations for this date.', 'event_espresso' ),
 
