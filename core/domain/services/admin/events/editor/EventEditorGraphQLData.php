@@ -96,9 +96,7 @@ class EventEditorGraphQLData
      */
     public function getData(int $eventId)
     {
-        \EEH_Debug_Tools::printr($eventId, '$eventId', __FILE__, __LINE__);
         $event = $this->event->getData(['id' => $eventId]);
-        \EEH_Debug_Tools::printr($event, '$event', __FILE__, __LINE__);
         $datetimes = $this->datetimes->getData(['eventId' => $eventId]);
 
         // Avoid undefined variable warning in PHP >= 7.3

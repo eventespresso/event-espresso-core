@@ -60,7 +60,6 @@ class EventEditor extends JsonDataNode
         $eventId = $use_post_id ? $post->ID : $eventId;
         $related_data = $this->event_editor_gql_data->getData($eventId);
         foreach ($related_data as $key => $value) {
-            \EEH_Debug_Tools::printr($value, $key, __FILE__, __LINE__);
             $this->addData($key, $value);
         }
     }

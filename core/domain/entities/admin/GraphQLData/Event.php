@@ -51,7 +51,6 @@ QUERY;
                 'query'          => $query,
             ]
         );
-        \EEH_Debug_Tools::printr($query, '$query', __FILE__, __LINE__);
 
         return $this->getQueryResponse($field_key);
     }
