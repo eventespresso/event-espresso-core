@@ -699,10 +699,10 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:193
 	__( 'If enabled, the ticket will appear on all new events.', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/TicketsList.tsx:34
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/TicketsList.tsx:38
 	__( 'Available Tickets', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/TicketsList.tsx:37
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/TicketsList.tsx:41
 	__( 'loading tickets…', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/AssignDatesButton.tsx:27
@@ -1023,10 +1023,10 @@ $generated_i18n_strings = array(
 	// Reference: packages/components/src/EntityDetailsPanel/EntityDetailsPanelSold.tsx:37
 	__( 'view approved registrations for this ticket.', 'event_espresso' ),
 
-	// Reference: packages/components/src/EntityList/EntityList.tsx:38
+	// Reference: packages/components/src/EntityList/EntityList.tsx:37
 	__( 'no results found', 'event_espresso' ),
 
-	// Reference: packages/components/src/EntityList/EntityList.tsx:39
+	// Reference: packages/components/src/EntityList/EntityList.tsx:38
 	__( 'try changing filter settings', 'event_espresso' ),
 
 	// Reference: packages/components/src/EntityList/filterBar/buttons/CardViewFilterButton.tsx:22
