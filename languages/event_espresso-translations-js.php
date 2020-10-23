@@ -915,7 +915,7 @@ $generated_i18n_strings = array(
 	// Reference: packages/adapters/src/Steps/Steps.tsx:30
 	__( 'Steps', 'event_espresso' ),
 
-	// Reference: packages/components/src/ActiveFilters/ActiveFilters.tsx:8
+	// Reference: packages/components/src/ActiveFilters/ActiveFilters.tsx:9
 	__( 'active filters:', 'event_espresso' ),
 
 	// Reference: packages/components/src/ActiveFilters/FilterTag.tsx:11
