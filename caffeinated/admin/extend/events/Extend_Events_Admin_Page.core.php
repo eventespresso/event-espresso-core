@@ -73,45 +73,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
                 'obj_id'     => $evt_id,
                 'noheader'   => true,
             ),
-            'ticket_list_table'        => array(
-                'func'       => '_tickets_overview_list_table',
-                'capability' => 'ee_read_default_tickets',
-            ),
-            'trash_ticket'             => array(
-                'func'       => '_trash_or_restore_ticket',
-                'capability' => 'ee_delete_default_ticket',
-                'obj_id'     => $tkt_id,
-                'noheader'   => true,
-                'args'       => array('trash' => true),
-            ),
-            'trash_tickets'            => array(
-                'func'       => '_trash_or_restore_ticket',
-                'capability' => 'ee_delete_default_tickets',
-                'noheader'   => true,
-                'args'       => array('trash' => true),
-            ),
-            'restore_ticket'           => array(
-                'func'       => '_trash_or_restore_ticket',
-                'capability' => 'ee_delete_default_ticket',
-                'obj_id'     => $tkt_id,
-                'noheader'   => true,
-            ),
-            'restore_tickets'          => array(
-                'func'       => '_trash_or_restore_ticket',
-                'capability' => 'ee_delete_default_tickets',
-                'noheader'   => true,
-            ),
-            'delete_ticket'            => array(
-                'func'       => '_delete_ticket',
-                'capability' => 'ee_delete_default_ticket',
-                'obj_id'     => $tkt_id,
-                'noheader'   => true,
-            ),
-            'delete_tickets'           => array(
-                'func'       => '_delete_ticket',
-                'capability' => 'ee_delete_default_tickets',
-                'noheader'   => true,
-            ),
             'import_page'              => array(
                 'func'       => '_import_page',
                 'capability' => 'import',
@@ -146,17 +107,60 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
                 'capability' => 'manage_options',
                 'noheader'   => true,
             ),
-        );
+        );        // don't load these meta boxes if using the advanced editor
+        if (! $this->admin_config->useAdvancedEditor()) {
+            $this->_page_config['create_new']['metaboxes'][] = '_premium_event_editor_meta_boxes';
+            $this->_page_config['edit']['metaboxes'][] = '_premium_event_editor_meta_boxes';
+            $this->_page_config['create_new']['qtips'][] = 'EE_Event_Editor_Tips';
+            $this->_page_config['edit']['qtips'][] = 'EE_Event_Editor_Tips';
+
+            $legacy_editor_page_routes = [
+                'ticket_list_table' => [
+                    'func'       => '_tickets_overview_list_table',
+                    'capability' => 'ee_read_default_tickets',
+                ],
+                'trash_ticket'      => [
+                    'func'       => '_trash_or_restore_ticket',
+                    'capability' => 'ee_delete_default_ticket',
+                    'obj_id'     => $tkt_id,
+                    'noheader'   => true,
+                    'args'       => ['trash' => true],
+                ],
+                'trash_tickets'     => [
+                    'func'       => '_trash_or_restore_ticket',
+                    'capability' => 'ee_delete_default_tickets',
+                    'noheader'   => true,
+                    'args'       => ['trash' => true],
+                ],
+                'restore_ticket'    => [
+                    'func'       => '_trash_or_restore_ticket',
+                    'capability' => 'ee_delete_default_ticket',
+                    'obj_id'     => $tkt_id,
+                    'noheader'   => true,
+                ],
+                'restore_tickets'   => [
+                    'func'       => '_trash_or_restore_ticket',
+                    'capability' => 'ee_delete_default_tickets',
+                    'noheader'   => true,
+                ],
+                'delete_ticket'     => [
+                    'func'       => '_delete_ticket',
+                    'capability' => 'ee_delete_default_ticket',
+                    'obj_id'     => $tkt_id,
+                    'noheader'   => true,
+                ],
+                'delete_tickets'    => [
+                    'func'       => '_delete_ticket',
+                    'capability' => 'ee_delete_default_tickets',
+                    'noheader'   => true,
+                ],
+            ];
+            $new_page_routes = array_merge($new_page_routes, $legacy_editor_page_routes);
+        }
+
         $this->_page_routes = array_merge($this->_page_routes, $new_page_routes);
         // partial route/config override
         $this->_page_config['import_events']['metaboxes'] = $this->_default_espresso_metaboxes;
-        $this->_page_config['create_new']['metaboxes'][] = '_premium_event_editor_meta_boxes';
-        // don't load qTips if using the advanced editor
-        if (! $this->admin_config->useAdvancedEditor()) {
-            $this->_page_config['create_new']['qtips'][] = 'EE_Event_Editor_Tips';
-            $this->_page_config['edit']['qtips'][] = 'EE_Event_Editor_Tips';
-        }
-        $this->_page_config['edit']['metaboxes'][] = '_premium_event_editor_meta_boxes';
         $this->_page_config['default']['list_table'] = 'Extend_Events_Admin_List_Table';
         // add tickets tab but only if there are more than one default ticket!
         $tkt_count = EEM_Ticket::instance()->count_deleted_and_undeleted(

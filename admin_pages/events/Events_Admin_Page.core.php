@@ -1569,16 +1569,25 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     protected function _register_event_editor_meta_boxes()
     {
         $this->verify_cpt_object();
-        if (! EE_Registry::instance()->CFG->admin->useAdvancedEditor()) {
-            add_meta_box(
-                'espresso_event_editor_tickets',
-                esc_html__('Event Datetime & Ticket', 'event_espresso'),
-                [$this, 'ticket_metabox'],
-                $this->page_slug,
-                'normal',
-                'high'
+        if (EE_Registry::instance()->CFG->admin->useAdvancedEditor()) {
+            add_action(
+                'add_meta_boxes_espresso_events',
+                function () {
+                    global $current_screen;
+                    remove_meta_box( 'authordiv' , $current_screen , 'normal' );
+                },
+                99
             );
+            return;
         }
+        add_meta_box(
+            'espresso_event_editor_tickets',
+            esc_html__('Event Datetime & Ticket', 'event_espresso'),
+            [$this, 'ticket_metabox'],
+            $this->page_slug,
+            'normal',
+            'high'
+        );
         add_meta_box(
             'espresso_event_editor_event_options',
             esc_html__('Event Registration Options', 'event_espresso'),
