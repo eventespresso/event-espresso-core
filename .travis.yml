@@ -18,9 +18,10 @@ install:
       else
         composer require phpunit/phpunit ^6;
       fi
+  - composer --version
 
 script:
-  - ./vendor/bin/phpunit tests --configuration tests/phpunit.xml
+  - phpunit tests --configuration tests/phpunit.xml
 
 jobs:
   allow_failures:
@@ -34,7 +35,7 @@ jobs:
       if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
       script:
         - composer config-eventespressocs || exit 1
-        - ./vendor/bin/phpcs -n || exit 1
+        - vendor/bin/phpcs -n || exit 1
 
     - name: "php 7.1 test"
       php: 7.1
@@ -47,14 +48,14 @@ jobs:
     - name: "php 7.3 test"
       php: 7.3
       if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
-      # multisite
 
+      # multisite
     - name: "php 7.2 multisite test"
       php: 7.2
       if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
       env: WP_MULTISITE=1
-      # allowed to fail
 
+      # allowed to fail
     - name: "php nightly test"
       php: nightly
       if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
