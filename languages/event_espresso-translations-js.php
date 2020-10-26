@@ -128,7 +128,6 @@ $generated_i18n_strings = array(
 
 	// Reference: domains/blocks/src/services/utils.ts:19
 	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/ErrorMessage.tsx:32
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:80
 	__( 'Error', 'event_espresso' ),
 
 	// Reference: domains/blocks/src/services/utils.ts:26
@@ -1102,13 +1101,13 @@ $generated_i18n_strings = array(
 	// Reference: packages/components/src/bulkEdit/BulkActions.tsx:54
 	__( 'apply', 'event_espresso' ),
 
-	// Reference: packages/components/src/bulkEdit/details/BulkEditDetailsProps.tsx:22
+	// Reference: packages/components/src/bulkEdit/details/BulkEditDetailsProps.tsx:20
 	__( 'Note: ', 'event_espresso' ),
 
-	// Reference: packages/components/src/bulkEdit/details/BulkEditDetailsProps.tsx:22
+	// Reference: packages/components/src/bulkEdit/details/BulkEditDetailsProps.tsx:20
 	__( 'any changes will be applied to ALL of the selected entities.', 'event_espresso' ),
 
-	// Reference: packages/components/src/bulkEdit/details/BulkEditDetailsProps.tsx:28
+	// Reference: packages/components/src/bulkEdit/details/BulkEditDetailsProps.tsx:26
 	__( 'Bulk edit details', 'event_espresso' ),
 
 	// Reference: packages/components/src/bulkEdit/details/Submit.tsx:28
@@ -1365,7 +1364,7 @@ $generated_i18n_strings = array(
 	// Reference: packages/tpc/src/inputs/PriceTypeInput.tsx:16
 	__( 'price type', 'event_espresso' ),
 
-	// Reference: packages/tpc/src/utils/constants.ts:12
+	// Reference: packages/tpc/src/utils/constants.ts:13
 	__( 'Ticket price modifications are blocked for Tickets that have already been sold to registrants, because doing so would negatively affect internal accounting for the event. If you still need to modify ticket prices, then create a copy of those tickets, edit the prices for the new tickets, and then archive the old tickets.', 'event_espresso' )
 );
 /* THIS IS THE END OF THE GENERATED FILE */
