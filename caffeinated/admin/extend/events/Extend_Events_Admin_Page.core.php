@@ -352,18 +352,20 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
      */
     public function load_scripts_styles_edit()
     {
-        wp_register_script(
-            'ee-event-editor-heartbeat',
-            EVENTS_CAF_ASSETS_URL . 'event-editor-heartbeat.js',
-            array('ee_admin_js', 'heartbeat'),
-            EVENT_ESPRESSO_VERSION,
-            true
-        );
-        wp_enqueue_script('ee-accounting');
+        if (! $this->admin_config->useAdvancedEditor()) {
+            wp_register_script(
+                'ee-event-editor-heartbeat',
+                EVENTS_CAF_ASSETS_URL . 'event-editor-heartbeat.js',
+                ['ee_admin_js', 'heartbeat'],
+                EVENT_ESPRESSO_VERSION,
+                true
+            );
+            wp_enqueue_script('ee-accounting');
+            wp_enqueue_script('ee-event-editor-heartbeat');
+        }
+        wp_enqueue_script('event_editor_js');
         // styles
         wp_enqueue_style('espresso-ui-theme');
-        wp_enqueue_script('event_editor_js');
-        wp_enqueue_script('ee-event-editor-heartbeat');
     }
 
 

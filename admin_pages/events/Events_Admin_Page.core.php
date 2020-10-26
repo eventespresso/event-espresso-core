@@ -562,19 +562,22 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         wp_register_style(
             'events-admin-css',
             EVENTS_ASSETS_URL . 'events-admin-page.css',
-            array(),
+            [],
             EVENT_ESPRESSO_VERSION
         );
-        wp_register_style('ee-cat-admin', EVENTS_ASSETS_URL . 'ee-cat-admin.css', array(), EVENT_ESPRESSO_VERSION);
+        wp_register_style(
+            'ee-cat-admin',
+            EVENTS_ASSETS_URL . 'ee-cat-admin.css',
+            [],
+            EVENT_ESPRESSO_VERSION
+        );
         wp_enqueue_style('events-admin-css');
         wp_enqueue_style('ee-cat-admin');
-        // todo note: we also need to load_scripts_styles per view (i.e. default/view_report/event_details
-        // registers for all views
         // scripts
         wp_register_script(
             'event_editor_js',
             EVENTS_ASSETS_URL . 'event_editor.js',
-            array('ee_admin_js', 'jquery-ui-slider', 'jquery-ui-timepicker-addon'),
+            ['ee_admin_js', 'jquery-ui-slider', 'jquery-ui-timepicker-addon'],
             EVENT_ESPRESSO_VERSION,
             true
         );
@@ -600,18 +603,20 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         wp_register_style(
             'event-editor-css',
             EVENTS_ASSETS_URL . 'event-editor.css',
-            array('ee-admin-css'),
+            ['ee-admin-css'],
             EVENT_ESPRESSO_VERSION
         );
         wp_enqueue_style('event-editor-css');
         // scripts
-        wp_register_script(
-            'event-datetime-metabox',
-            EVENTS_ASSETS_URL . 'event-datetime-metabox.js',
-            array('event_editor_js', 'ee-datepicker'),
-            EVENT_ESPRESSO_VERSION
-        );
-        wp_enqueue_script('event-datetime-metabox');
+        if (! $this->admin_config->useAdvancedEditor()) {
+            wp_register_script(
+                'event-datetime-metabox',
+                EVENTS_ASSETS_URL . 'event-datetime-metabox.js',
+                ['event_editor_js', 'ee-datepicker'],
+                EVENT_ESPRESSO_VERSION
+            );
+            wp_enqueue_script('event-datetime-metabox');
+        }
     }
 
 
@@ -1177,7 +1182,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      */
     protected function _default_tickets_update(EE_Event $evtobj, $data)
     {
-        if (EE_Registry::instance()->CFG->admin->useAdvancedEditor()) {
+        if ($this->admin_config->useAdvancedEditor()) {
             return [];
         }
         $success = true;
@@ -1569,7 +1574,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     protected function _register_event_editor_meta_boxes()
     {
         $this->verify_cpt_object();
-        if (EE_Registry::instance()->CFG->admin->useAdvancedEditor()) {
+        if ($this->admin_config->useAdvancedEditor()) {
             add_action(
                 'add_meta_boxes_espresso_events',
                 function () {
