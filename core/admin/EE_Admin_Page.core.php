@@ -18,6 +18,10 @@ use EventEspresso\core\services\loaders\LoaderInterface;
  */
 abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
 {
+    /**
+     * @var EE_Admin_Config
+     */
+    protected $admin_config;
 
     /**
      * @var LoaderInterface $loader
@@ -187,6 +191,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     public function __construct($routing = true)
     {
         $this->loader = LoaderFactory::getLoader();
+        $this->admin_config = $this->loader->getShared('EE_Admin_Config');
         if (strpos($this->_get_dir(), 'caffeinated') !== false) {
             $this->_is_caf = true;
         }
