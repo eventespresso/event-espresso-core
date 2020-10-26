@@ -468,7 +468,7 @@ $generated_i18n_strings = array(
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:35
 	// Reference: packages/dates/src/DateRangePicker/DateRangePickerLegend.tsx:10
-	// Reference: packages/dates/src/DateRangePicker/index.tsx:55
+	// Reference: packages/dates/src/DateRangePicker/index.tsx:41
 	__( 'start date', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:36
@@ -995,7 +995,7 @@ $generated_i18n_strings = array(
 	// Reference: packages/components/src/Confirm/useConfirmationDialog.tsx:36
 	__( 'Yes', 'event_espresso' ),
 
-	// Reference: packages/components/src/DateTimeRangePicker/index.tsx:48
+	// Reference: packages/components/src/DateTimeRangePicker/index.tsx:73
 	__( 'save', 'event_espresso' ),
 
 	// Reference: packages/components/src/DebugInfo/DebugInfo.tsx:38
@@ -1120,12 +1120,18 @@ $generated_i18n_strings = array(
 	__( 'day in range', 'event_espresso' ),
 
 	// Reference: packages/dates/src/DateRangePicker/DateRangePickerLegend.tsx:18
-	// Reference: packages/dates/src/DateRangePicker/index.tsx:74
+	// Reference: packages/dates/src/DateRangePicker/index.tsx:59
 	__( 'end date', 'event_espresso' ),
 
 	// Reference: packages/dates/src/DateTimePicker.tsx:13
 	// Reference: packages/dates/src/TimePicker.tsx:14
 	__( 'time', 'event_espresso' ),
+
+	// Reference: packages/dates/src/constants.ts:7
+	__( 'End Date & Time must be set later than the Start Date & Time', 'event_espresso' ),
+
+	// Reference: packages/dates/src/constants.ts:9
+	__( 'Start Date & Time must be set before the End Date & Time', 'event_espresso' ),
 
 	// Reference: packages/dates/src/utils/misc.ts:13
 	__( 'month(s)', 'event_espresso' ),
@@ -1166,16 +1172,13 @@ $generated_i18n_strings = array(
 	// Reference: packages/edtr-services/src/apollo/queries/tickets/useFetchTickets.ts:47
 	__( 'initializing tickets', 'event_espresso' ),
 
-	// Reference: packages/edtr-services/src/utils/dateAndTime.ts:11
+	// Reference: packages/edtr-services/src/utils/dateAndTime.ts:12
 	__( 'Start Date is required', 'event_espresso' ),
 
-	// Reference: packages/edtr-services/src/utils/dateAndTime.ts:15
+	// Reference: packages/edtr-services/src/utils/dateAndTime.ts:16
 	__( 'End Date is required', 'event_espresso' ),
 
-	// Reference: packages/edtr-services/src/utils/dateAndTime.ts:5
-	__( 'End Date & Time must be set later than the Start Date & Time', 'event_espresso' ),
-
-	// Reference: packages/edtr-services/src/utils/dateAndTime.ts:6
+	// Reference: packages/edtr-services/src/utils/dateAndTime.ts:7
 	__( 'Required', 'event_espresso' ),
 
 	// Reference: packages/form/src/renderers/RepeatableRenderer.tsx:35
