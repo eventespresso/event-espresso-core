@@ -22,9 +22,9 @@ install:
       else
         composer require phpunit/phpunit ^6;
       fi
-  - phpunit --version
-  - vendor/bin/phpunit --version
-  - ./vendor/bin/phpunit --version
+
+before_script:
+  - phpenv config-rm xdebug.ini
 
 script:
   - ./vendor/bin/phpunit tests --configuration tests/phpunit.xml
@@ -46,10 +46,18 @@ jobs:
     - name: "php 7.1 test"
       php: 7.1
       if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
+      script:
+        - phpunit --version
+        - vendor/bin/phpunit --version
+        - ./vendor/bin/phpunit --version
 
     - name: "php 7.2 test"
       php: 7.2
       if: NOT commit_message =~ js_only AND NOT commit_message =~ dependabot AND NOT sender =~ dependabot
+      script:
+        - phpunit --version
+        - vendor/bin/phpunit --version
+        - ./vendor/bin/phpunit --version
 
     - name: "php 7.3 test"
       php: 7.3
