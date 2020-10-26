@@ -1579,7 +1579,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 'add_meta_boxes_espresso_events',
                 function () {
                     global $current_screen;
-                    remove_meta_box( 'authordiv' , $current_screen , 'normal' );
+                    remove_meta_box('authordiv', $current_screen, 'normal');
                 },
                 99
             );
