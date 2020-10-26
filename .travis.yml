@@ -21,7 +21,7 @@ install:
   - composer --version
 
 script:
-  - phpunit tests --configuration tests/phpunit.xml
+  - vendor/bin/phpunit tests --configuration tests/phpunit.xml
 
 jobs:
   allow_failures:
