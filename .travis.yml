@@ -17,7 +17,6 @@ cache:
 env:
   global:
     - WP_VERSION=latest WP_MULTISITE=0
-    - EE_TESTS_DIR=${HOME}/build/eventespresso/event-espresso-core/tests
 
 install:
   - composer install || exit 1
@@ -33,7 +32,7 @@ before_script:
 
 script:
   - vendor/bin/phpunit --version
-  - vendor/bin/phpunit ${EE_TESTS_DIR} --configuration ${EE_TESTS_DIR}/phpunit.xml
+  - vendor/bin/phpunit --configuration phpunit.xml
 
 jobs:
   allow_failures:

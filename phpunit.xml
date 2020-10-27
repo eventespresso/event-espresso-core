@@ -8,23 +8,23 @@
 	>
     <filter>
         <whitelist>
-            <directory>../</directory>
+            <directory>./tests/</directory>
             <exclude>
-                <directory>../assets</directory>
-                <directory>../bin</directory>
-                <directory>../core/third_party_libs</directory>
-                <directory>../docs</directory>
-                <directory>../languages</directory>
-                <directory>../public</directory>
-                <directory>../tests</directory>
-                <directory>../vendor</directory>
-                <directory>../wp-assets</directory>
+                <directory>./assets</directory>
+                <directory>./bin</directory>
+                <directory>./core/third_party_libs</directory>
+                <directory>./docs</directory>
+                <directory>./languages</directory>
+                <directory>./public</directory>
+                <directory>./tests</directory>
+                <directory>./vendor</directory>
+                <directory>./wp-assets</directory>
             </exclude>
         </whitelist>
     </filter>
 	<testsuites>
 		<testsuite name="default">
-			<directory suffix=".php">/testcases</directory>
+			<directory suffix=".php">./tests/testcases</directory>
 		</testsuite>
 	</testsuites>
 	<groups>
