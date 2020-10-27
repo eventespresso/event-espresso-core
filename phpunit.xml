@@ -1,5 +1,5 @@
 <phpunit
-	bootstrap="bootstrap.php"
+	bootstrap="./tests/bootstrap.php"
 	backupGlobals="false"
 	colors="true"
 	convertErrorsToExceptions="true"
@@ -35,7 +35,7 @@
         </exclude>
     </groups>
 	<listeners>
-        <listener class="SpeedTrapListener" file="includes/listener-loader.php">
+        <listener class="SpeedTrapListener" file="./tests/includes/listener-loader.php">
             <arguments>
 				<array>
 					<element key="slowThreshold">
