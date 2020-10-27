@@ -957,9 +957,6 @@ $generated_i18n_strings = array(
 	// Reference: packages/adapters/src/Pagination/constants.ts:14
 	__( 'Previous Page', 'event_espresso' ),
 
-	// Reference: packages/adapters/src/Steps/Steps.tsx:30
-	__( 'Steps', 'event_espresso' ),
-
 	// Reference: packages/components/src/ActiveFilters/ActiveFilters.tsx:9
 	__( 'active filters:', 'event_espresso' ),
 
@@ -1069,6 +1066,9 @@ $generated_i18n_strings = array(
 
 	// Reference: packages/components/src/Stepper/buttons/Previous.tsx:12
 	__( 'Previous', 'event_espresso' ),
+
+	// Reference: packages/components/src/Steps/Steps.tsx:30
+	__( 'Steps', 'event_espresso' ),
 
 	// Reference: packages/components/src/TabbableText/index.tsx:12
 	__( 'Click to edit…', 'event_espresso' ),
