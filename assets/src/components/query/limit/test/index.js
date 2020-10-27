@@ -28,7 +28,7 @@ describe('QueryLimit', () => {
 			const wrapper = getWrapper({ onLimitChange: onChange });
 			const inputWrapper = TestUtils.findRenderedDOMComponentWithClass(
 				wrapper,
-				'components-range-control__number'
+				'components-range-control__slider'
 			);
 			const label = TestUtils.findRenderedDOMComponentWithTag(
 				wrapper,
@@ -60,11 +60,12 @@ describe('QueryLimit', () => {
 				min: 10,
 				max: 50,
 				onLimitChange: onChange,
+				withSlider: false,
 			});
 			// test range input
 			const inputWrapper = TestUtils.findRenderedDOMComponentWithClass(
 				wrapper,
-				'components-range-control__number'
+				'components-text-control__input'
 			);
 			const label = TestUtils.findRenderedDOMComponentWithTag(
 				wrapper,
@@ -76,10 +77,9 @@ describe('QueryLimit', () => {
 			// and label
 			expect(label.textContent).toEqual('No Limit');
 			// test onChange
-			//test OnChange
 			TestUtils.Simulate.change(inputWrapper, {
 				target: {
-					value: '30',
+					value: 30,
 					checkValidity() {
 						return true;
 					},
