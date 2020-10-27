@@ -6,7 +6,7 @@ exports[`EventAttendeesEditor Block block edit matches snapshot for no props 1`]
     <Spinner />
   </Placeholder>
   <InspectorControls>
-    <ForwardRef(PanelBody)
+    <PanelBody
       title="Filter By Settings"
     >
       <WithBaseControl(EventSelect)
@@ -41,7 +41,7 @@ exports[`EventAttendeesEditor Block block edit matches snapshot for no props 1`]
         onLimitChange={[Function]}
         withSlider={false}
       />
-      <SelectControl
+      <ForwardRef(SelectControl)
         label="Order Attendees by:"
         onChange={[Function]}
         options={
@@ -70,7 +70,7 @@ exports[`EventAttendeesEditor Block block edit matches snapshot for no props 1`]
         }
         value="lastThenFirstName"
       />
-      <SelectControl
+      <ForwardRef(SelectControl)
         label="Sort order:"
         onChange={[Function]}
         options={
@@ -87,8 +87,8 @@ exports[`EventAttendeesEditor Block block edit matches snapshot for no props 1`]
         }
         value="ASC"
       />
-    </ForwardRef(PanelBody)>
-    <ForwardRef(PanelBody)
+    </PanelBody>
+    <PanelBody
       title="Gravatar Setttings"
     >
       <ToggleControl
@@ -97,18 +97,18 @@ exports[`EventAttendeesEditor Block block edit matches snapshot for no props 1`]
         label="Display Gravatar"
         onChange={[Function]}
       />
-      <WithInstanceId(Component)
+      <ForwardRef(RangeControl)
         label="Size of Gravatar"
         max={128}
         min={10}
         onChange={[Function]}
         value={24}
       />
-    </ForwardRef(PanelBody)>
+    </PanelBody>
     <WithSelect(NotWithPostTypeCheck)
       excludedPostTypeSlugs="page"
     >
-      <ForwardRef(PanelBody)
+      <PanelBody
         title="Archive Settings"
       >
         <ToggleControl
@@ -117,7 +117,7 @@ exports[`EventAttendeesEditor Block block edit matches snapshot for no props 1`]
           label="Display on Archives"
           onChange={[Function]}
         />
-      </ForwardRef(PanelBody)>
+      </PanelBody>
     </WithSelect(NotWithPostTypeCheck)>
   </InspectorControls>
 </Fragment>
@@ -147,7 +147,7 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
     showGravatar={true}
   />
   <InspectorControls>
-    <ForwardRef(PanelBody)
+    <PanelBody
       title="Filter By Settings"
     >
       <WithBaseControl(EventSelect)
@@ -182,7 +182,7 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
         onLimitChange={[Function]}
         withSlider={false}
       />
-      <SelectControl
+      <ForwardRef(SelectControl)
         label="Order Attendees by:"
         onChange={[Function]}
         options={
@@ -211,7 +211,7 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
         }
         value="lastThenFirstName"
       />
-      <SelectControl
+      <ForwardRef(SelectControl)
         label="Sort order:"
         onChange={[Function]}
         options={
@@ -228,8 +228,8 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
         }
         value="ASC"
       />
-    </ForwardRef(PanelBody)>
-    <ForwardRef(PanelBody)
+    </PanelBody>
+    <PanelBody
       title="Gravatar Setttings"
     >
       <ToggleControl
@@ -238,18 +238,18 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
         label="Display Gravatar"
         onChange={[Function]}
       />
-      <WithInstanceId(Component)
+      <ForwardRef(RangeControl)
         label="Size of Gravatar"
         max={128}
         min={10}
         onChange={[Function]}
         value={24}
       />
-    </ForwardRef(PanelBody)>
+    </PanelBody>
     <WithSelect(NotWithPostTypeCheck)
       excludedPostTypeSlugs="page"
     >
-      <ForwardRef(PanelBody)
+      <PanelBody
         title="Archive Settings"
       >
         <ToggleControl
@@ -258,7 +258,7 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
           label="Display on Archives"
           onChange={[Function]}
         />
-      </ForwardRef(PanelBody)>
+      </PanelBody>
     </WithSelect(NotWithPostTypeCheck)>
   </InspectorControls>
 </Fragment>
@@ -270,7 +270,7 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
     There are no attendees for selected options.
   </Placeholder>
   <InspectorControls>
-    <ForwardRef(PanelBody)
+    <PanelBody
       title="Filter By Settings"
     >
       <WithBaseControl(EventSelect)
@@ -305,7 +305,7 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
         onLimitChange={[Function]}
         withSlider={false}
       />
-      <SelectControl
+      <ForwardRef(SelectControl)
         label="Order Attendees by:"
         onChange={[Function]}
         options={
@@ -334,7 +334,7 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
         }
         value="lastThenFirstName"
       />
-      <SelectControl
+      <ForwardRef(SelectControl)
         label="Sort order:"
         onChange={[Function]}
         options={
@@ -351,8 +351,8 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
         }
         value="ASC"
       />
-    </ForwardRef(PanelBody)>
-    <ForwardRef(PanelBody)
+    </PanelBody>
+    <PanelBody
       title="Gravatar Setttings"
     >
       <ToggleControl
@@ -361,18 +361,18 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
         label="Display Gravatar"
         onChange={[Function]}
       />
-      <WithInstanceId(Component)
+      <ForwardRef(RangeControl)
         label="Size of Gravatar"
         max={128}
         min={10}
         onChange={[Function]}
         value={24}
       />
-    </ForwardRef(PanelBody)>
+    </PanelBody>
     <WithSelect(NotWithPostTypeCheck)
       excludedPostTypeSlugs="page"
     >
-      <ForwardRef(PanelBody)
+      <PanelBody
         title="Archive Settings"
       >
         <ToggleControl
@@ -381,7 +381,7 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
           label="Display on Archives"
           onChange={[Function]}
         />
-      </ForwardRef(PanelBody)>
+      </PanelBody>
     </WithSelect(NotWithPostTypeCheck)>
   </InspectorControls>
 </Fragment>

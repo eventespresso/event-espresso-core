@@ -2,13 +2,13 @@
 
 exports[`EditorStatusSelect() matches snapshot with default props 1`] = `
 <div
-  class="components-base-control"
+  class="components-base-control css-wdf2ti-Wrapper e1puf3u0"
 >
   <div
-    class="components-base-control__field"
+    class="components-base-control__field css-11vcxb9-StyledField e1puf3u1"
   >
     <label
-      class="components-base-control__label"
+      class="components-base-control__label css-pezhm9-StyledLabel e1puf3u2"
       for="inspector-select-status-control-0"
     >
       Select Status
