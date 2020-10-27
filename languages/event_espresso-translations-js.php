@@ -162,7 +162,7 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/ActiveStatus.tsx:37
 	__( 'Active Status', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/AltRegPage.tsx:28
+	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/AltRegPage.tsx:36
 	__( 'Alternative Registration Page', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/DefaultRegistrationStatus.tsx:30
@@ -174,16 +174,13 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/Donations.tsx:21
 	__( 'Enable Donations', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/EventManager.tsx:18
+	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/EventManager.tsx:23
 	__( 'Event Manager', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/EventPhoneNumber.tsx:23
+	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/EventPhoneNumber.tsx:28
 	__( 'Event Phone Number', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/MaxRegistrations.tsx:23
-	__( 'edit maximum number of registrations allowed per transaction', 'event_espresso' ),
-
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/MaxRegistrations.tsx:29
+	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/MaxRegistrations.tsx:30
 	__( 'Maximum Number of Registrations Allowed per Transaction', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/TicketSelector.tsx:22
@@ -1070,7 +1067,7 @@ $generated_i18n_strings = array(
 	// Reference: packages/components/src/Steps/Steps.tsx:30
 	__( 'Steps', 'event_espresso' ),
 
-	// Reference: packages/components/src/TabbableText/index.tsx:12
+	// Reference: packages/components/src/TabbableText/index.tsx:19
 	__( 'Click to edit…', 'event_espresso' ),
 
 	// Reference: packages/components/src/TimezoneTimeInfo/Content.tsx:16
