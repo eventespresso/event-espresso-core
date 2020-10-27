@@ -667,44 +667,43 @@ class Pricing_Admin_Page extends EE_Admin_Page
 
 
     /**
-     *        set_price_column_values
-     *
-     * @access protected
      * @return array
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function set_price_column_values()
     {
-
-        do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-
-        $set_column_values = array(
-            'PRT_ID'         => absint($this->_req_data['PRT_ID']),
+        $PRC_order = 0;
+        $PRT_ID = absint($this->_req_data['PRT_ID']);
+        if ($PRT_ID) {
+            /** @var EE_Price_Type $price_type */
+            $price_type = EEM_Price_Type::instance()->get_one_by_ID($PRT_ID);
+            if ($price_type instanceof EE_Price_Type) {
+                $PRC_order = $price_type->order();
+            }
+        }
+        return array(
+            'PRT_ID'         => $PRT_ID,
             'PRC_amount'     => $this->_req_data['PRC_amount'],
             'PRC_name'       => $this->_req_data['PRC_name'],
             'PRC_desc'       => $this->_req_data['PRC_desc'],
             'PRC_is_default' => 1,
             'PRC_overrides'  => null,
-            'PRC_order'      => 0,
+            'PRC_order'      => $PRC_order,
             'PRC_deleted'    => 0,
             'PRC_parent'     => 0,
         );
-        return $set_column_values;
     }
 
 
     /**
-     *        insert_or_update_price
-     *
      * @param boolean $insert - whether to insert or update
-     * @access protected
      * @return void
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _insert_or_update_price($insert = false)
     {
-
-        // echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-        do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-
         require_once(EE_MODELS . 'EEM_Price.model.php');
         $PRC = EEM_Price::instance();
 
@@ -718,7 +717,7 @@ class Pricing_Admin_Page extends EE_Admin_Page
             if ($PRC_ID = $PRC->insert($set_column_values)) {
                 // make sure this new price modifier is attached to the ticket but ONLY if it is not a tax type
                 $PR = EEM_price::instance()->get_one_by_ID($PRC_ID);
-                if ($PR->type_obj()->base_type() !== EEM_Price_Type::base_type_tax) {
+                if ($PR instanceof EE_Price && $PR->type_obj()->base_type() !== EEM_Price_Type::base_type_tax) {
                     $ticket = EEM_Ticket::instance()->get_one_by_ID(1);
                     $ticket->_add_relation_to($PR, 'Price');
                     $ticket->save();
@@ -738,8 +737,9 @@ class Pricing_Admin_Page extends EE_Admin_Page
             }
 
             $PR = EEM_Price::instance()->get_one_by_ID($PRC_ID);
-            if ($PR->type_obj()->base_type() !== EEM_Price_Type::base_type_tax) {
-                // if this is $PRC_ID == 1, then we need to update the default ticket attached to this price so the TKT_price value is updated.
+            if ($PR instanceof EE_Price && $PR->type_obj()->base_type() !== EEM_Price_Type::base_type_tax) {
+                // if this is $PRC_ID == 1,
+                // then we need to update the default ticket attached to this price so the TKT_price value is updated.
                 if ($PRC_ID === 1) {
                     $ticket = $PR->get_first_related('Ticket');
                     if ($ticket) {
