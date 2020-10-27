@@ -698,10 +698,10 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:193
 	__( 'If enabled, the ticket will appear on all new events.', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/TicketsList.tsx:38
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/TicketsList.tsx:35
 	__( 'Available Tickets', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/TicketsList.tsx:41
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/TicketsList.tsx:38
 	__( 'loading tickets…', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/AssignDatesButton.tsx:27
@@ -1148,29 +1148,17 @@ $generated_i18n_strings = array(
 	// Reference: packages/dates/src/utils/misc.ts:17
 	__( 'minute(s)', 'event_espresso' ),
 
-	// Reference: packages/edtr-services/src/apollo/queries/datetimes/useFetchDatetimes.ts:27
-	__( 'datetimes initialized', 'event_espresso' ),
-
-	// Reference: packages/edtr-services/src/apollo/queries/datetimes/useFetchDatetimes.ts:43
-	__( 'initializing datetimes', 'event_espresso' ),
-
-	// Reference: packages/edtr-services/src/apollo/queries/priceTypes/useFetchPriceTypes.ts:26
+	// Reference: packages/edtr-services/src/apollo/initialization/useCacheRehydration.ts:104
 	__( 'price types initialized', 'event_espresso' ),
 
-	// Reference: packages/edtr-services/src/apollo/queries/priceTypes/useFetchPriceTypes.ts:41
-	__( 'initializing price types', 'event_espresso' ),
+	// Reference: packages/edtr-services/src/apollo/initialization/useCacheRehydration.ts:114
+	__( 'datetimes initialized', 'event_espresso' ),
 
-	// Reference: packages/edtr-services/src/apollo/queries/prices/useFetchPrices.ts:36
-	__( 'prices initialized', 'event_espresso' ),
-
-	// Reference: packages/edtr-services/src/apollo/queries/prices/useFetchPrices.ts:70
-	__( 'initializing prices', 'event_espresso' ),
-
-	// Reference: packages/edtr-services/src/apollo/queries/tickets/useFetchTickets.ts:32
+	// Reference: packages/edtr-services/src/apollo/initialization/useCacheRehydration.ts:124
 	__( 'tickets initialized', 'event_espresso' ),
 
-	// Reference: packages/edtr-services/src/apollo/queries/tickets/useFetchTickets.ts:47
-	__( 'initializing tickets', 'event_espresso' ),
+	// Reference: packages/edtr-services/src/apollo/initialization/useCacheRehydration.ts:134
+	__( 'prices initialized', 'event_espresso' ),
 
 	// Reference: packages/edtr-services/src/utils/dateAndTime.ts:12
 	__( 'Start Date is required', 'event_espresso' ),
