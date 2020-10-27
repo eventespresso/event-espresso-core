@@ -22,6 +22,7 @@ describe('QueryLimit', () => {
 
 	const getWrapper = (props = {}) =>
 		TestUtils.renderIntoDocument(<TestWrapper {...props} />);
+
 	describe('QueryLimit with no optional parameters passed', () => {
 		it('should have default values', () => {
 			const onChange = jest.fn();
