@@ -974,7 +974,7 @@ $generated_i18n_strings = array(
 	__( 'TO', 'event_espresso' ),
 
 	// Reference: packages/components/src/Confirm/ConfirmClose.tsx:8
-	// Reference: packages/components/src/Modal/ModalWithAlert.tsx:23
+	// Reference: packages/components/src/Modal/ModalWithAlert.tsx:22
 	__( 'Are you sure you want to close this?', 'event_espresso' ),
 
 	// Reference: packages/components/src/Confirm/ConfirmDelete.tsx:8
