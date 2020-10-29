@@ -133,39 +133,13 @@ $generated_i18n_strings = array(
 	// Reference: domains/blocks/src/services/utils.ts:26
 	__( 'Select…', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/ActiveStatus.tsx:11
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/config.ts:13
-	__( 'Active', 'event_espresso' ),
-
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/ActiveStatus.tsx:12
-	// Reference: packages/predicates/src/registration/statusOptions.ts:10
-	__( 'Cancelled', 'event_espresso' ),
-
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/ActiveStatus.tsx:13
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/config.ts:15
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/config.ts:14
-	__( 'Expired', 'event_espresso' ),
-
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/ActiveStatus.tsx:14
-	__( 'Inactive', 'event_espresso' ),
-
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/ActiveStatus.tsx:15
-	__( 'Postponed', 'event_espresso' ),
-
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/ActiveStatus.tsx:16
-	__( 'SoldOut', 'event_espresso' ),
-
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/ActiveStatus.tsx:17
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/config.ts:17
-	__( 'Upcoming', 'event_espresso' ),
-
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/ActiveStatus.tsx:37
+	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/ActiveStatus.tsx:30
 	__( 'Active Status', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/AltRegPage.tsx:36
 	__( 'Alternative Registration Page', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/DefaultRegistrationStatus.tsx:30
+	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/DefaultRegistrationStatus.tsx:18
 	__( 'Default Registration Status', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/Donations.tsx:21
@@ -174,7 +148,7 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/Donations.tsx:21
 	__( 'Enable Donations', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/EventManager.tsx:23
+	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/EventManager.tsx:49
 	__( 'Event Manager', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/EventPhoneNumber.tsx:28
@@ -402,13 +376,23 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/cardView/Details.tsx:41
 	__( 'edit description…', 'event_espresso' ),
 
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/config.ts:13
+	__( 'Active', 'event_espresso' ),
+
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/config.ts:14
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/config.ts:13
 	__( 'Trashed', 'event_espresso' ),
 
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/config.ts:15
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/config.ts:14
+	__( 'Expired', 'event_espresso' ),
+
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/config.ts:16
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/config.ts:16
 	__( 'Sold Out', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/config.ts:17
+	__( 'Upcoming', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/editable/EditableName.tsx:17
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/editable/EditableName.tsx:27
@@ -990,6 +974,7 @@ $generated_i18n_strings = array(
 	__( 'Yes', 'event_espresso' ),
 
 	// Reference: packages/components/src/DateTimeRangePicker/index.tsx:73
+	// Reference: packages/components/src/PopoverForm/PopoverForm.tsx:42
 	__( 'save', 'event_espresso' ),
 
 	// Reference: packages/components/src/DebugInfo/DebugInfo.tsx:38
@@ -1205,6 +1190,9 @@ $generated_i18n_strings = array(
 
 	// Reference: packages/helpers/src/tickets/getStatusTextLabel.ts:23
 	__( 'on sale', 'event_espresso' ),
+
+	// Reference: packages/predicates/src/registration/statusOptions.ts:10
+	__( 'Cancelled', 'event_espresso' ),
 
 	// Reference: packages/predicates/src/registration/statusOptions.ts:14
 	__( 'Declined', 'event_espresso' ),
