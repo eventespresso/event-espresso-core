@@ -47,7 +47,7 @@ class EventManagers implements EventEditorDataInterface
         $event_managers = [];
         foreach ($event_manager_users as $user) {
             $GUID                  = $this->utilities->convertToGlobalId('User', $user->ID);
-            $event_managers[$GUID] = [
+            $event_managers[ $GUID ] = [
                 'id'   => $GUID,
                 'name' => $user->display_name,
             ];
@@ -80,8 +80,8 @@ class EventManagers implements EventEditorDataInterface
         foreach ($roles as $role) {
             foreach ($capabilities as $capability) {
                 // we're using the role name as the array index to prevent duplicates
-                if (! isset($event_manager_roles[$role->name]) && $role->has_cap($capability)) {
-                    $event_manager_roles[$role->name] = $role;
+                if (! isset($event_manager_roles[ $role->name ]) && $role->has_cap($capability)) {
+                    $event_manager_roles[ $role->name ] = $role;
                 }
             }
         }
