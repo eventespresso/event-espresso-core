@@ -57,7 +57,7 @@ class EventManagers implements EventEditorDataInterface
 
 
     /**
-     * Returns a list of WP_Role names that have "event manager" capabilities
+     * Returns a list of WP_Role that have "event manager" capabilities
      * The list of "event manager" capabilities is filtered but defaults to:
      *      - 'ee_edit_events'
      *      - 'ee_edit_event'
@@ -98,18 +98,21 @@ class EventManagers implements EventEditorDataInterface
     private function getEventManagerUsers(array $event_manager_roles)
     {
         global $wpdb;
+        // no roles ?!!? then nothing to query for
         if (empty($event_manager_roles)) {
             return [];
         }
-        // now begin to build our
+        // begin to build our query
         $SQL = "SELECT u1.ID, u1.display_name FROM {$wpdb->users} AS u1 "
              . "INNER JOIN {$wpdb->usermeta} AS u2 ON u1.ID = u2.user_id "
              . "AND u2.meta_key='{$wpdb->prefix}capabilities' "
              . 'WHERE';
         $operator = '';
         foreach ($event_manager_roles as $role) {
+            // for each role, add a WHERE clause
             if ($role instanceof WP_Role) {
                 $SQL     .= $operator . ' u2.meta_value LIKE \'%"' . $role->name . '"%\' ';
+                // subsequent clauses will use OR so that any role is accepted
                 $operator = 'OR';
             }
         }
