@@ -40,7 +40,7 @@ class Event extends GraphQLData
                 status
                 timezoneString
                 visibleOn
-                wpUser {
+                manager {
                     id
                     name
                 }

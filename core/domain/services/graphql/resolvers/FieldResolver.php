@@ -111,6 +111,7 @@ class FieldResolver extends ResolverBase
                 case 'event':
                     return $this->resolveEvent($source, $args, $context);
                 case 'wpUser':
+                case 'manager':
                     return $this->resolveWpUser($source, $args, $context);
                 case 'state': // Venue
                     return $this->resolveState($source);
