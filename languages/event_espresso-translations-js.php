@@ -1,19 +1,19 @@
 <?php
 /* THIS IS A GENERATED FILE. DO NOT EDIT DIRECTLY. */
 $generated_i18n_strings = array(
-	// Reference: packages/adapters/src/Pagination/constants.ts:6
+	// Reference: packages/components/src/Pagination/constants.ts:6
 	__( '2', 'event_espresso' ),
 
-	// Reference: packages/adapters/src/Pagination/constants.ts:7
+	// Reference: packages/components/src/Pagination/constants.ts:7
 	__( '6', 'event_espresso' ),
 
-	// Reference: packages/adapters/src/Pagination/constants.ts:8
+	// Reference: packages/components/src/Pagination/constants.ts:8
 	__( '12', 'event_espresso' ),
 
-	// Reference: packages/adapters/src/Pagination/constants.ts:9
+	// Reference: packages/components/src/Pagination/constants.ts:9
 	__( '24', 'event_espresso' ),
 
-	// Reference: packages/adapters/src/Pagination/constants.ts:10
+	// Reference: packages/components/src/Pagination/constants.ts:10
 	__( '48', 'event_espresso' ),
 
 	// Reference: domains/blocks/src/components/AvatarImage.tsx:27
@@ -297,7 +297,7 @@ $generated_i18n_strings = array(
 	__( 'event date main menu', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:37
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:33
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:35
 	__( 'delete permanently', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:37
@@ -706,16 +706,16 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:20
 	__( 'Are you sure you want to move this ticket to the trash? You can "untrash" this ticket later if you need to.', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:29
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:31
 	__( 'ticket main menu', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:33
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:35
 	__( 'trash ticket', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:42
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:44
 	__( 'edit ticket', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:43
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:45
 	__( 'copy ticket', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:39
@@ -907,36 +907,8 @@ $generated_i18n_strings = array(
 	// Reference: domains/wpPluginsPage/src/exitSurvey/Popup.tsx:41
 	__( 'Sure I\'ll help', 'event_espresso' ),
 
-	// Reference: packages/adapters/src/Pagination/ItemRender.tsx:10
-	__( 'next', 'event_espresso' ),
-
-	// Reference: packages/adapters/src/Pagination/ItemRender.tsx:11
-	__( 'jump to previous', 'event_espresso' ),
-
-	// Reference: packages/adapters/src/Pagination/ItemRender.tsx:12
-	__( 'jump to next', 'event_espresso' ),
-
-	// Reference: packages/adapters/src/Pagination/ItemRender.tsx:13
-	__( 'page', 'event_espresso' ),
-
-	// Reference: packages/adapters/src/Pagination/ItemRender.tsx:9
-	__( 'previous', 'event_espresso' ),
-
-	// Reference: packages/adapters/src/Pagination/Pagination.tsx:34
+	// Reference: packages/adapters/src/Pagination/Pagination.tsx:24
 	__( 'pagination', 'event_espresso' ),
-
-	// Reference: packages/adapters/src/Pagination/PerPage.tsx:36
-	__( 'items per page', 'event_espresso' ),
-
-	// Reference: packages/adapters/src/Pagination/constants.ts:10
-	/* translators: %s is per page value */
-	__( '%s / page', 'event_espresso' ),
-
-	// Reference: packages/adapters/src/Pagination/constants.ts:13
-	__( 'Next Page', 'event_espresso' ),
-
-	// Reference: packages/adapters/src/Pagination/constants.ts:14
-	__( 'Previous Page', 'event_espresso' ),
 
 	// Reference: packages/components/src/ActiveFilters/ActiveFilters.tsx:9
 	__( 'active filters:', 'event_espresso' ),
@@ -1001,10 +973,10 @@ $generated_i18n_strings = array(
 	// Reference: packages/components/src/EntityDetailsPanel/EntityDetailsPanelSold.tsx:37
 	__( 'view approved registrations for this ticket.', 'event_espresso' ),
 
-	// Reference: packages/components/src/EntityList/EntityList.tsx:37
+	// Reference: packages/components/src/EntityList/EntityList.tsx:36
 	__( 'no results found', 'event_espresso' ),
 
-	// Reference: packages/components/src/EntityList/EntityList.tsx:38
+	// Reference: packages/components/src/EntityList/EntityList.tsx:37
 	__( 'try changing filter settings', 'event_espresso' ),
 
 	// Reference: packages/components/src/EntityList/filterBar/buttons/CardViewFilterButton.tsx:22
@@ -1039,6 +1011,34 @@ $generated_i18n_strings = array(
 
 	// Reference: packages/components/src/Modal/modalCloseButtonProps/index.ts:8
 	__( 'close modal', 'event_espresso' ),
+
+	// Reference: packages/components/src/Pagination/ItemRender.tsx:10
+	__( 'next', 'event_espresso' ),
+
+	// Reference: packages/components/src/Pagination/ItemRender.tsx:11
+	__( 'jump to previous', 'event_espresso' ),
+
+	// Reference: packages/components/src/Pagination/ItemRender.tsx:12
+	__( 'jump to next', 'event_espresso' ),
+
+	// Reference: packages/components/src/Pagination/ItemRender.tsx:13
+	__( 'page', 'event_espresso' ),
+
+	// Reference: packages/components/src/Pagination/ItemRender.tsx:9
+	__( 'previous', 'event_espresso' ),
+
+	// Reference: packages/components/src/Pagination/PerPage.tsx:37
+	__( 'items per page', 'event_espresso' ),
+
+	// Reference: packages/components/src/Pagination/constants.ts:10
+	/* translators: %s is per page value */
+	__( '%s / page', 'event_espresso' ),
+
+	// Reference: packages/components/src/Pagination/constants.ts:13
+	__( 'Next Page', 'event_espresso' ),
+
+	// Reference: packages/components/src/Pagination/constants.ts:14
+	__( 'Previous Page', 'event_espresso' ),
 
 	// Reference: packages/components/src/PercentSign/index.tsx:11
 	__( '%', 'event_espresso' ),
