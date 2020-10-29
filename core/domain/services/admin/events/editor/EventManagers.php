@@ -39,15 +39,16 @@ class EventManagers implements EventEditorDataInterface
      */
     public function getData(int $eventId)
     {
-        // first get a list of WP_Role names that have "event manager" capabilities
+        // first get a list of WP_Roles that have "event manager" capabilities
         $event_manager_roles = $this->getEventManagerRoles();
         // then get a list of WP Users that have any of those roles
         $event_manager_users = $this->getEventManagerUsers($event_manager_roles);
-        // now convert to a format that's usable by AGQL
+        // now convert to a format that's usable by GQL
         $event_managers = [];
         foreach ($event_manager_users as $user) {
-            $event_managers[] = [
-                'id' => $this->utilities->convertToGlobalId('User', $user->ID),
+            $GUID = $this->utilities->convertToGlobalId('User', $user->ID);
+            $event_managers[ $GUID ] = [
+                'id' => $GUID,
                 'name' => $user->display_name,
             ];
         }
