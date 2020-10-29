@@ -88,7 +88,7 @@ class Event extends TypeBase
                 'manager',
                 'String',
                 null,
-                esc_html__('Event manager GUID', 'event_espresso')
+                esc_html__('Globally unique event ID the event manager', 'event_espresso')
             ),
             new GraphQLField(
                 'order',
