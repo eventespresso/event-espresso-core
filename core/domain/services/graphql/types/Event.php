@@ -79,16 +79,16 @@ class Event extends TypeBase
                 esc_html__('Date/Time Event Created', 'event_espresso')
             ),
             new GraphQLOutputField(
-                'wpUser',
+                'manager',
                 'User',
                 null,
-                esc_html__('Event Creator', 'event_espresso')
+                esc_html__('Event Manager', 'event_espresso')
             ),
             new GraphQLInputField(
-                'wpUser',
-                'Int',
+                'manager',
+                'String',
                 null,
-                esc_html__('Event Creator ID', 'event_espresso')
+                esc_html__('Globally unique event ID the event manager', 'event_espresso')
             ),
             new GraphQLField(
                 'order',

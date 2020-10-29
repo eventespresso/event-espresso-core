@@ -4,6 +4,7 @@ namespace EventEspresso\core\domain\services\graphql\data\mutations;
 
 use DateTime;
 use Exception;
+use GraphQLRelay\Relay;
 
 /**
  * Class EventMutation
@@ -82,8 +83,9 @@ class EventMutation
             $args['EVT_visible_on'] = new DateTime(sanitize_text_field($input['visibleOn']));
         }
 
-        if (! empty($input['wpUser'])) {
-            $args['EVT_wp_user'] = absint($input['wpUser']);
+        if (! empty($input['manager'])) {
+            $parts = Relay::fromGlobalId(sanitize_text_field($input['manager']));
+            $args['EVT_wp_user'] = ! empty($parts['id']) ? $parts['id'] : null;
         }
 
         return apply_filters(
