@@ -52,6 +52,11 @@ class EventEditorGraphQLData
     protected $relations;
 
     /**
+     * @var EventManagers $managers
+     */
+    protected $managers;
+
+    /**
      * @var NewEventDefaultEntities $default_entities
      */
     protected $default_entities;
@@ -66,6 +71,7 @@ class EventEditorGraphQLData
      * @param PriceTypes              $price_types
      * @param Tickets                 $tickets
      * @param EventEntityRelations    $relations
+     * @param EventManagers           $managers
      * @param NewEventDefaultEntities $default_entities
      */
     public function __construct(
@@ -75,13 +81,15 @@ class EventEditorGraphQLData
         PriceTypes $price_types,
         Tickets $tickets,
         EventEntityRelations $relations,
+        EventManagers $managers,
         NewEventDefaultEntities $default_entities
     ) {
         $this->datetimes        = $datetimes;
-        $this->event           = $event;
+        $this->event            = $event;
         $this->default_entities = $default_entities;
         $this->prices           = $prices;
         $this->price_types      = $price_types;
+        $this->managers         = $managers;
         $this->relations        = $relations;
         $this->tickets          = $tickets;
     }
@@ -98,6 +106,7 @@ class EventEditorGraphQLData
     {
         $event = $this->event->getData(['id' => $eventId]);
         $datetimes = $this->datetimes->getData(['eventId' => $eventId]);
+        $eventManagers = $this->managers ->getData($eventId);
 
         // Avoid undefined variable warning in PHP >= 7.3
         $tickets = null;
@@ -131,7 +140,14 @@ class EventEditorGraphQLData
 
         $relations = $this->relations->getData($eventId);
 
-
-        return compact('event', 'datetimes', 'tickets', 'prices', 'priceTypes', 'relations');
+        return compact(
+            'datetimes',
+            'event',
+            'eventManagers',
+            'prices',
+            'priceTypes',
+            'relations',
+            'tickets'
+        );
     }
 }
