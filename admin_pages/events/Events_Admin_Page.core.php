@@ -1014,25 +1014,35 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             // get out we're not processing an event save.
             return;
         }
-        $event_values = array(
-            'EVT_display_desc'                => ! empty($this->_req_data['display_desc']) ? 1 : 0,
-            'EVT_display_ticket_selector'     => ! empty($this->_req_data['display_ticket_selector']) ? 1 : 0,
-            'EVT_additional_limit'            => min(
+        $event_values = [
+            'EVT_member_only'     => ! empty($this->_req_data['member_only']) ? 1 : 0,
+            'EVT_allow_overflow'  => ! empty($this->_req_data['EVT_allow_overflow']) ? 1 : 0,
+            'EVT_timezone_string' => ! empty($this->_req_data['timezone_string'])
+                ? sanitize_text_field($this->_req_data['timezone_string'])
+                : null,
+        ];
+        if (! $this->admin_config->useAdvancedEditor()) {
+            $event_values['EVT_display_ticket_selector'] =
+                ! empty($this->_req_data['display_ticket_selector'])
+                    ? 1
+                    : 0;
+            $event_values['EVT_additional_limit'] = min(
                 apply_filters('FHEE__EE_Events_Admin__insert_update_cpt_item__EVT_additional_limit_max', 255),
-                ! empty($this->_req_data['additional_limit']) ? $this->_req_data['additional_limit'] : null
-            ),
-            'EVT_default_registration_status' => ! empty($this->_req_data['EVT_default_registration_status'])
-                ? $this->_req_data['EVT_default_registration_status']
-                : EE_Registry::instance()->CFG->registration->default_STS_ID,
-            'EVT_member_only'                 => ! empty($this->_req_data['member_only']) ? 1 : 0,
-            'EVT_allow_overflow'              => ! empty($this->_req_data['EVT_allow_overflow']) ? 1 : 0,
-            'EVT_timezone_string'             => ! empty($this->_req_data['timezone_string'])
-                ? $this->_req_data['timezone_string'] : null,
-            'EVT_external_URL'                => ! empty($this->_req_data['externalURL'])
-                ? $this->_req_data['externalURL'] : null,
-            'EVT_phone'                       => ! empty($this->_req_data['event_phone'])
-                ? $this->_req_data['event_phone'] : null,
-        );
+                ! empty($this->_req_data['additional_limit'])
+                    ? absint($this->_req_data['additional_limit'])
+                    : null
+            );
+            $event_values['EVT_default_registration_status'] =
+                ! empty($this->_req_data['EVT_default_registration_status'])
+                    ? sanitize_text_field($this->_req_data['EVT_default_registration_status'])
+                    : EE_Registry::instance()->CFG->registration->default_STS_ID;
+            $event_values['EVT_external_URL'] = ! empty($this->_req_data['externalURL'])
+                ? esc_url_raw($this->_req_data['externalURL'])
+                : null;
+            $event_values['EVT_phone'] = ! empty($this->_req_data['event_phone'])
+                ? sanitize_text_field($this->_req_data['event_phone'])
+                : null;
+        }
         // update event
         $success = $this->_event_model()->update_by_ID($event_values, $post_id);
         // get event_object for other metaboxes... though it would seem to make sense to just use $this->_event_model()->get_one_by_ID( $post_id ).. i have to setup where conditions to override the filters in the model that filter out autodraft and inherit statuses so we GET the inherit id!

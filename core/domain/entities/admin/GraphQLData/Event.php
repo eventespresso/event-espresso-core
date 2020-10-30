@@ -31,6 +31,10 @@ class Event extends GraphQLData
                 isPostponed
                 isSoldOut
                 isUpcoming
+                manager {
+                    id
+                    name
+                }
                 maxRegistrations
                 memberOnly
                 name
@@ -40,10 +44,6 @@ class Event extends GraphQLData
                 status
                 timezoneString
                 visibleOn
-                manager {
-                    id
-                    name
-                }
                 __typename
             }
         }
