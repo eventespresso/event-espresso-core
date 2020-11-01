@@ -90,7 +90,7 @@
 		"@wordpress/element": "^2.14.0",
 		"@wordpress/eslint-plugin": "^6.1.0",
 		"@wordpress/hooks": "^2.6.0",
-		"@wordpress/jest-preset-default": "^6.3.0",
+		"@wordpress/jest-preset-default": "^6.5.0",
 		"@wordpress/keycodes": "^2.7.0",
 		"@wordpress/plugins": "^2.20.3",
 		"@wordpress/prettier-config": "^0.4.0",
