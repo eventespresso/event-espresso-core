@@ -196,6 +196,9 @@ jobs:
         outputs:
             assets: ${{ steps.filter.outputs.assets }}
         steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+
             - uses: dorny/paths-filter@v2
               id: filter
               with:
