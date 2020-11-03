@@ -15,7 +15,7 @@ jobs:
         strategy:
             matrix:
                 operating-system: [ubuntu-latest]
-                php-versions: ['7.3', '7.4', '8.0', '8.1']
+                php-versions: ['7.3'] #, '7.4', '8.0', '8.1']
         name: Lint with PHP ${{ matrix.php-versions }}
         steps:
             - name: Checkout
@@ -44,7 +44,7 @@ jobs:
             - name: PHP Lint
               run: composer config-eventespressocs && composer run-script lint:skip-warnings
               # Allow failure for PHP > 7.3
-              continue-on-error: ${{ matrix.php-versions != '7.3' }}
+              # continue-on-error: ${{ matrix.php-versions != '7.3' }}
 
     php-unit-tests:
         runs-on: ${{ matrix.operating-system }}
