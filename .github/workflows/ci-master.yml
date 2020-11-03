@@ -4,7 +4,7 @@ on:
     # Run this workflow only if the PR is to master branch
     pull_request:
         branches:
-            - master
+            - '!barista'
 
 jobs:
     php-lint:
