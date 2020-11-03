@@ -19,7 +19,7 @@ jobs:
               uses: shivammathur/setup-php@v2
               with:
                   php-version: ${{ matrix.php-versions }}
-                  tools: phpunit:v8
+                  tools: phpunit:v7
 
             - name: Start mysql service
               run: sudo /etc/init.d/mysql start
