@@ -5,8 +5,13 @@ on: [push]
 jobs:
     php-unit-tests:
         runs-on: ${{ matrix.operating-system }}
+        services:
+            mysql:
+                image: mysql:5.7
         env:
             PHPUNIT_VER: v7 # default
+            WP_VERSION: latest
+            WP_MULTISITE: 0
         strategy:
             matrix:
                 operating-system: [ubuntu-latest]
