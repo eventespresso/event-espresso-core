@@ -3,12 +3,11 @@ name: Build and Test
 on: [push]
 
 jobs:
-    tests:
+    php-unit-tests:
         runs-on: ${{ matrix.operating-system }}
         strategy:
             matrix:
                 operating-system: [ubuntu-latest]
-                # php-versions: ['7.2']
                 php-versions: ['7.1', '7.2', '7.3', '7.4']
         name: PHP ${{ matrix.php-versions }} Test on ${{ matrix.operating-system }}
         steps:
@@ -24,6 +23,18 @@ jobs:
             - name: Start mysql service
               run: sudo /etc/init.d/mysql start
 
+            - name: Get composer cache directory
+              id: composercache
+              run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+            - name: Cache composer dependencies
+              uses: actions/cache@v2
+              with:
+                  path: ${{ steps.composercache.outputs.dir }}
+                  # Use composer.lock for key.
+                  key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+                  restore-keys: ${{ runner.os }}-composer-
+
             - name: Check PHP Version
               run: php -v
 
@@ -37,7 +48,7 @@ jobs:
               run: phpunit --configuration phpunit.xml
 
               # run multisite test only with 1 PHP version
-            - if: ${{ matrix.php-versions == '7.2' }}
+            - if: ${{ matrix.php-versions == '7.4' }}
               name: Run PHP Unit Tests - WP Multisite
               env:
                   WP_MULTISITE: 1
