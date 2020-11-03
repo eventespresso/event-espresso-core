@@ -115,6 +115,7 @@ jobs:
 
     js-lint-and-build:
         name: JS Lint/Build
+        runs-on: ubuntu-latest
         steps:
             - name: Checkout
               uses: actions/checkout@v2
@@ -148,6 +149,7 @@ jobs:
 
     js-unit-tests:
         name: JS Unit tests
+        runs-on: ubuntu-latest
         steps:
             - name: Checkout
               uses: actions/checkout@v2
