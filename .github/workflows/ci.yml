@@ -35,7 +35,7 @@ jobs:
               run: composer install
 
             - name: PHP Lint
-              run: composer config-eventespressocs && composer lint
+              run: composer config-eventespressocs && composer run-script lint:skip-warnings
               # Allow failure for PHP > 7.3
               continue-on-error: ${{ matrix.php-versions != '7.3' }}
 
