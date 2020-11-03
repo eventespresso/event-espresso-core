@@ -4,7 +4,6 @@ on: [push]
 
 jobs:
     tests:
-        name: Unit Tests
         runs-on: ${{ matrix.operating-system }}
         strategy:
             matrix:
