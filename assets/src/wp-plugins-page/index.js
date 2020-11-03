@@ -5,7 +5,7 @@ import '../exit-modal-survey';
 import './style.css';
 
 /**
- * External imports
+ * External imports.
  */
 import $ from 'jquery';
 
