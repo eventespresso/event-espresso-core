@@ -19,6 +19,9 @@ jobs:
               with:
                   php-version: ${{ matrix.php-versions }}
 
+            - name: Start mysql service
+              run: sudo /etc/init.d/mysql start
+
             - name: Check PHP Version
               run: php -v
 
