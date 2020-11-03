@@ -1,9 +1,9 @@
 name: Build and Test
 
 on:
-    # Run this workflow only if the PR is to master branch
     pull_request:
-        branches:
+        # Prevent this workflow from running on pull requests to barista branch
+        branches-ignore:
             - '!barista'
 
 jobs:
