@@ -5,6 +5,8 @@ on: [push]
 jobs:
     php-unit-tests:
         runs-on: ${{ matrix.operating-system }}
+        env:
+            PHPUNIT_VER: v7 # default
         strategy:
             matrix:
                 operating-system: [ubuntu-latest]
@@ -14,11 +16,26 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v2
 
+            - name: Set PHPUnit version
+              run: |
+                  if [[ -n "${{ matrix.php-versions }}" ]]; then
+                    case "${{ matrix.php-versions }}" in
+                      7.0)
+                        echo "Using PHPUnit 6"
+                        echo "::set-env name=PHPUNIT_VER::v6"
+                        ;;
+                      5.6)
+                        echo "Using PHPUnit 5"
+                        echo "::set-env name=PHPUNIT_VER::v5"
+                        ;;
+                    esac
+                  fi
+
             - name: Setup PHP
               uses: shivammathur/setup-php@v2
               with:
                   php-version: ${{ matrix.php-versions }}
-                  tools: phpunit:v7
+                  tools: phpunit:${{ env.PHPUNIT_VER }}
 
             - name: Start mysql service
               run: sudo /etc/init.d/mysql start
