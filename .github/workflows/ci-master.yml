@@ -9,9 +9,9 @@ on:
 jobs:
     php-lint:
         runs-on: ubuntu-latest
-        needs: changed
+        needs: what_has_changed
         # Run only if PHP files have changed
-        if: ${{ needs.changed.outputs.php == 'true' }}
+        if: ${{ needs.what_has_changed.outputs.php == 'true' }}
         strategy:
             matrix:
                 operating-system: [ubuntu-latest]
@@ -48,9 +48,9 @@ jobs:
 
     php-unit-tests:
         runs-on: ${{ matrix.operating-system }}
-        needs: changed
+        needs: what_has_changed
         # Run only if PHP files have changed
-        if: ${{ needs.changed.outputs.php == 'true' }}
+        if: ${{ needs.what_has_changed.outputs.php == 'true' }}
         env:
             PHPUNIT_VER: v7 # default
             WP_VERSION: latest
@@ -126,9 +126,9 @@ jobs:
     js-lint-and-build:
         name: JS Lint/Build
         runs-on: ubuntu-latest
-        needs: changed
+        needs: what_has_changed
         # Run only if files in /assets/ have changed
-        if: ${{ needs.changed.outputs.assets == 'true' }}
+        if: ${{ needs.what_has_changed.outputs.assets == 'true' }}
         steps:
             - name: Checkout
               uses: actions/checkout@v2
@@ -163,9 +163,9 @@ jobs:
     js-unit-tests:
         name: JS Unit tests
         runs-on: ubuntu-latest
-        needs: changed
+        needs: what_has_changed
         # Run only if files in /assets/ have changed
-        if: ${{ needs.changed.outputs.assets == 'true' }}
+        if: ${{ needs.what_has_changed.outputs.assets == 'true' }}
         steps:
             - name: Checkout
               uses: actions/checkout@v2
@@ -195,7 +195,7 @@ jobs:
               run: npm run ci:test
 
     # JOB to check if the files in a path have changed
-    changed:
+    what_has_changed:
         runs-on: ubuntu-latest
         outputs:
             assets: ${{ steps.filter.outputs.assets }}
