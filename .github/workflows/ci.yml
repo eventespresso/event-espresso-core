@@ -52,4 +52,4 @@ jobs:
               name: Run PHP Unit Tests - WP Multisite
               env:
                   WP_MULTISITE: 1
-              run: phpunit --configuration phpunit.xml
+              run: phpunit --configuration tests/phpunit.xml
