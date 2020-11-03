@@ -9,9 +9,6 @@ on:
 jobs:
     php-lint:
         runs-on: ubuntu-latest
-        needs: changed
-        # Run only if PHP files have changed
-        if: ${{ needs.changed.outputs.php == 'true' }}
         strategy:
             matrix:
                 operating-system: [ubuntu-latest]
