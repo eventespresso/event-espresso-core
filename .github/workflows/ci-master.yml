@@ -4,7 +4,7 @@ on:
     pull_request:
         # Prevent this workflow from running on pull requests to barista branch
         branches-ignore:
-            - '!barista'
+            - 'barista'
 
 jobs:
     php-lint:
