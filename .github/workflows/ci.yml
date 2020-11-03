@@ -65,7 +65,7 @@ jobs:
                         ;;
                       5.6)
                         echo "Using PHPUnit 5"
-                        echo "PHPUNIT_VER=v5" >> $GITHUB_ENV
+                        echo "PHPUNIT_VER=5.7.22" >> $GITHUB_ENV
                         ;;
                     esac
                   fi
