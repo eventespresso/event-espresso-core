@@ -12,7 +12,8 @@ jobs:
         strategy:
             matrix:
                 operating-system: [ubuntu-latest]
-                php-versions: ['5.6', '7.0', '7.1', '7.2', '7.3', '7.4']
+                php-versions:
+                    ['5.6', '7.0', '7.1', '7.2', '7.3', '7.4', '8.0', '8.1']
         name: PHP ${{ matrix.php-versions }} Test on ${{ matrix.operating-system }}
         steps:
             - name: Checkout
@@ -66,6 +67,8 @@ jobs:
 
             - name: Run PHP Unit Tests
               run: phpunit --configuration tests/phpunit.xml
+              # Allow failure for nightly builds - PHP 8.0/8.1
+              continue-on-error: ${{ matrix.php-versions == '8.0' || matrix.php-versions == '8.1' }}
 
               # run multisite test only with 1 PHP version
             - if: ${{ matrix.php-versions == '7.4' }}
