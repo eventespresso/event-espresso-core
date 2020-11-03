@@ -4,12 +4,12 @@ on: [push]
 
 jobs:
     php-lint:
-        name: PHP Lints
         runs-on: ubuntu-latest
         strategy:
             matrix:
                 operating-system: [ubuntu-latest]
                 php-versions: ['7.3', '7.4', '8.0', '8.1']
+        name: Lint with PHP ${{ matrix.php-versions }} on ${{ matrix.operating-system }}
         steps:
             - name: Checkout
               uses: actions/checkout@v2
@@ -32,7 +32,7 @@ jobs:
                   restore-keys: ${{ runner.os }}-composer-
 
             - name: Install dependencies
-              run: composer install --no-progress --prefer-dist --optimize-autoloader
+              run: composer install
 
             - name: PHP Lint
               run: composer config-eventespressocs && composer lint
@@ -50,7 +50,7 @@ jobs:
                 operating-system: [ubuntu-latest]
                 php-versions:
                     ['5.6', '7.0', '7.1', '7.2', '7.3', '7.4', '8.0', '8.1']
-        name: PHP ${{ matrix.php-versions }} Test on ${{ matrix.operating-system }}
+        name: Unit Tests with PHP ${{ matrix.php-versions }} on ${{ matrix.operating-system }}
         steps:
             - name: Checkout
               uses: actions/checkout@v2
