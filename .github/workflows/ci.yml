@@ -195,6 +195,7 @@ jobs:
         runs-on: ubuntu-latest
         outputs:
             assets: ${{ steps.filter.outputs.assets }}
+            php: ${{ steps.filter.outputs.php }}
         steps:
             - name: Checkout
               uses: actions/checkout@v2
