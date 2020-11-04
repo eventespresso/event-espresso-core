@@ -495,8 +495,8 @@ $generated_i18n_strings = array(
 	__( 'start dates only', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/newDateOptions/AddSingleDate.tsx:20
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/newDateOptions/OptionsPopover.tsx:14
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/newDateOptions/OptionsPopoverButton.tsx:11
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/newDateOptions/NewDateModal.tsx:15
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/newDateOptions/OptionsModalButton.tsx:11
 	__( 'Add New Date', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/newDateOptions/AddSingleDate.tsx:20
@@ -1064,10 +1064,10 @@ $generated_i18n_strings = array(
 	// Reference: packages/components/src/TimezoneTimeInfo/Content.tsx:26
 	__( 'UTC (Greenwich Mean Time)', 'event_espresso' ),
 
-	// Reference: packages/components/src/TimezoneTimeInfo/TimezoneTimeInfo.tsx:23
+	// Reference: packages/components/src/TimezoneTimeInfo/TimezoneTimeInfo.tsx:22
 	__( 'This Date Converted To:', 'event_espresso' ),
 
-	// Reference: packages/components/src/TimezoneTimeInfo/TimezoneTimeInfo.tsx:24
+	// Reference: packages/components/src/TimezoneTimeInfo/TimezoneTimeInfo.tsx:23
 	__( 'click for timezone information', 'event_espresso' ),
 
 	// Reference: packages/components/src/bulkEdit/ActionCheckbox.tsx:38
@@ -1212,7 +1212,7 @@ $generated_i18n_strings = array(
 	// Reference: packages/predicates/src/registration/statusOptions.ts:6
 	__( 'Approved', 'event_espresso' ),
 
-	// Reference: packages/rich-text-editor/src/components/ToolbarControls/HeadingControls.tsx:23
+	// Reference: packages/rich-text-editor/src/components/ToolbarControls/HeadingControls.tsx:21
 	__( 'heading selector', 'event_espresso' ),
 
 	// Reference: packages/rich-text-editor/src/components/constants.ts:12
