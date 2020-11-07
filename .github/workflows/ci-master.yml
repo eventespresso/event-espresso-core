@@ -127,8 +127,8 @@ jobs:
         name: JS Lint/Build
         runs-on: ubuntu-latest
         needs: what_has_changed
-        # Run only if files in /assets/ have changed
-        if: ${{ needs.what_has_changed.outputs.assets == 'true' }}
+        # Run only if JS files have changed
+        if: ${{ needs.what_has_changed.outputs.js == 'true' }}
         steps:
             - name: Checkout
               uses: actions/checkout@v2
@@ -164,8 +164,8 @@ jobs:
         name: JS Unit tests
         runs-on: ubuntu-latest
         needs: what_has_changed
-        # Run only if files in /assets/ have changed
-        if: ${{ needs.what_has_changed.outputs.assets == 'true' }}
+        # Run only if JS files have changed
+        if: ${{ needs.what_has_changed.outputs.js == 'true' }}
         steps:
             - name: Checkout
               uses: actions/checkout@v2
@@ -198,7 +198,7 @@ jobs:
     what_has_changed:
         runs-on: ubuntu-latest
         outputs:
-            assets: ${{ steps.filter.outputs.assets }}
+            js: ${{ steps.filter.outputs.js }}
             php: ${{ steps.filter.outputs.php }}
         steps:
             - name: Checkout
@@ -211,7 +211,7 @@ jobs:
               with:
                   base: ${{ github.ref }}
                   filters: |
-                      assets:
-                        - 'assets/**'
+                      js:
+                        - '*.js'
                       php:
                         - '**/*.php'
