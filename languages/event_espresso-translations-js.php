@@ -1003,10 +1003,7 @@ $generated_i18n_strings = array(
 	// Reference: packages/components/src/Legend/ToggleLegendButton.tsx:27
 	__( 'show legend', 'event_espresso' ),
 
-	// Reference: packages/components/src/LoadingIndicator/LoadingIndicator.tsx:7
-	__( 'loading …', 'event_espresso' ),
-
-	// Reference: packages/components/src/LoadingNotice/LoadingNotice.tsx:16
+	// Reference: packages/components/src/LoadingNotice/LoadingNotice.tsx:12
 	__( 'loading…', 'event_espresso' ),
 
 	// Reference: packages/components/src/Modal/modalCloseButtonProps/index.ts:8
