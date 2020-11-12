@@ -46,7 +46,7 @@ class EventManagers implements EventEditorDataInterface
         // now convert to a format that's usable by GQL
         $event_managers = [];
         foreach ($event_manager_users as $user) {
-            $GUID             = $this->utilities->convertToGlobalId('User', $user->ID);
+            $GUID             = $this->utilities->convertToGlobalId('user', $user->ID);
             $event_managers[] = [
                 'id'   => $GUID,
                 'name' => $user->display_name,
