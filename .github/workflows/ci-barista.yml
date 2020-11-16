@@ -118,6 +118,6 @@ jobs:
                   base: ${{ github.ref }}
                   filters: |
                       assets:
-                        - 'assets/**'
+                        - added|deleted|modified: 'assets/**'
                       php:
-                        - '*.php'
+                        - added|deleted|modified: '*.php'
