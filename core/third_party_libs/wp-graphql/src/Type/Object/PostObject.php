@@ -22,7 +22,11 @@ class PostObject {
 
 		$single_name = $post_type_object->graphql_single_name;
 
-		$interfaces = [ 'Node', 'ContentNode', 'UniformResourceIdentifiable', 'DatabaseIdentifier' ];
+		$interfaces = [ 'Node', 'ContentNode', 'DatabaseIdentifier', 'NodeWithTemplate' ];
+
+		if ( true === $post_type_object->public ) {
+			$interfaces[] = 'UniformResourceIdentifiable';
+		}
 
 		if ( post_type_supports( $post_type_object->name, 'title' ) ) {
 			$interfaces[] = 'NodeWithTitle';
@@ -290,6 +294,13 @@ class PostObject {
 			];
 		}
 
+		if ( 'post' === $post_type_object->name ) {
+			$fields['isSticky'] = [
+				'type'        => [ 'non_null' => 'Bool' ],
+				'description' => __( 'Whether this page is sticky', 'wp-graphql' ),
+			];
+		}
+
 		if ( ! $post_type_object->hierarchical &&
 			! in_array(
 				$post_type_object->name,
@@ -302,39 +313,6 @@ class PostObject {
 			$fields['ancestors']['deprecationReason'] = __( 'This content type is not hierarchical and typcially will not have ancestors', 'wp-graphql' );
 			$fields['parent']['deprecationReason']    = __( 'This content type is not hierarchical and typcially will not have a parent', 'wp-graphql' );
 		}
-
-		$fields['template'] = [
-			'description' => __( 'The template assigned to the node', 'wp-graphql' ),
-			'type'        => 'ContentTemplate',
-			'resolve'     => function( Post $post_object, $args, $context, $info ) use ( $post_type_object, $type_registry ) {
-
-				$registered_templates = wp_get_theme()->get_post_templates();
-				if ( ! isset( $registered_templates[ $post_object->post_type ] ) ) {
-					return null;
-				}
-
-				$set_template = get_post_meta( $post_object->ID, '_wp_page_template', true );
-
-				$template_name = get_page_template_slug( $post_object->ID );
-
-				$template = [
-					'__typename'   => 'DefaultTemplate',
-					'templateName' => ! empty( $template_name ) ? $template_name : 'Default',
-				];
-
-				if ( ! empty( $registered_templates[ $post_object->post_type ][ $set_template ] ) ) {
-					$name     = ucwords( $registered_templates[ $post_object->post_type ][ $set_template ] );
-					$name     = preg_replace( '/[^\w]/', '', $name );
-					$template = [
-						'__typename'   => $name . 'Template',
-						'templateName' => ucwords( $registered_templates[ $post_object->post_type ][ $set_template ] ),
-						'templateFile' => ! empty( $template_name ) ? $template_name : null,
-					];
-				}
-
-				return $template;
-			},
-		];
 
 		return $fields;
 

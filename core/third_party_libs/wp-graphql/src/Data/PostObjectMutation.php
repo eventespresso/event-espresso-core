@@ -40,7 +40,7 @@ class PostObjectMutation {
 		}
 
 		if ( ! empty( $input['date'] ) && false !== strtotime( $input['date'] ) ) {
-			$insert_post_args['post_date'] = date( 'Y-m-d H:i:s', strtotime( $input['date'] ) );
+			$insert_post_args['post_date'] = gmdate( 'Y-m-d H:i:s', strtotime( $input['date'] ) );
 		}
 
 		if ( ! empty( $input['content'] ) ) {
@@ -356,19 +356,14 @@ class PostObjectMutation {
 						}
 
 						/**
-						 * If there are terms to connect, set the connection
+						 * If the current user cannot edit terms, don't create terms to connect
 						 */
-						if ( ! empty( $terms_to_connect ) && is_array( $terms_to_connect ) ) {
-
-							/**
-							 * If the current user cannot edit terms, don't create terms to connect
-							 */
-							if ( ! current_user_can( $tax_object->cap->assign_terms ) ) {
-								return;
-							}
-
-							wp_set_object_terms( $post_id, $terms_to_connect, $tax_object->name, $append );
+						if ( ! current_user_can( $tax_object->cap->assign_terms ) ) {
+							return;
 						}
+
+						wp_set_object_terms( $post_id, $terms_to_connect, $tax_object->name, $append );
+
 					}
 				}
 			}
