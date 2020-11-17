@@ -209,7 +209,8 @@ class Events_Admin_Page_Decaf_Test extends EE_UnitTestCase {
 			$new_dtts[$format] = EEM_Datetime::instance()->refresh_entity_map_from_db( $dtt->ID() );
 		}/**/
 
-		$new_event = EEM_Event::instance()->refresh_entity_map_from_db( $this->_event->ID() );
+        /** @var EE_Event $new_event */
+        $new_event = EEM_Event::instance()->refresh_entity_map_from_db($this->_event->ID() );
 		$new_event->set_timezone( 'America/Vancouver' );
 
 		$evt_dtts = $new_event->datetimes_ordered();
