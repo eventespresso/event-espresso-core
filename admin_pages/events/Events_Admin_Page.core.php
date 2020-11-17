@@ -592,28 +592,31 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      */
     public function load_scripts_styles()
     {
-        wp_register_style(
-            'events-admin-css',
-            EVENTS_ASSETS_URL . 'events-admin-page.css',
-            [],
-            EVENT_ESPRESSO_VERSION
-        );
-        wp_register_style(
-            'ee-cat-admin',
-            EVENTS_ASSETS_URL . 'ee-cat-admin.css',
-            [],
-            EVENT_ESPRESSO_VERSION
-        );
-        wp_enqueue_style('events-admin-css');
-        wp_enqueue_style('ee-cat-admin');
-        // scripts
-        wp_register_script(
-            'event_editor_js',
-            EVENTS_ASSETS_URL . 'event_editor.js',
-            ['ee_admin_js', 'jquery-ui-slider', 'jquery-ui-timepicker-addon'],
-            EVENT_ESPRESSO_VERSION,
-            true
-        );
+		wp_register_style(
+			'events-admin-css',
+			EVENTS_ASSETS_URL . 'events-admin-page.css',
+			array(),
+			EVENT_ESPRESSO_VERSION
+		);
+		wp_register_style(
+			'ee-cat-admin',
+			EVENTS_ASSETS_URL . 'ee-cat-admin.css',
+			array(),
+			EVENT_ESPRESSO_VERSION
+		);
+		wp_enqueue_style('events-admin-css');
+		wp_enqueue_style('ee-cat-admin');
+		// todo note: we also need to load_scripts_styles per view (i.e. default/view_report/event_details
+		if (! $this->admin_config->useAdvancedEditor()) {
+            // scripts
+            wp_register_script(
+                'event_editor_js',
+                EVENTS_ASSETS_URL . 'event_editor.js',
+                array('ee_admin_js', 'jquery-ui-slider', 'jquery-ui-timepicker-addon'),
+                EVENT_ESPRESSO_VERSION,
+                true
+            );
+        }
     }
 
 
