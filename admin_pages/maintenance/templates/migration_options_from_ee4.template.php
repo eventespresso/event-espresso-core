@@ -16,6 +16,7 @@
  * @var string $next_db_state
  * @var string $ultimate_db_state
  * @var string $reset_db_page_link
+ * @var string $data_reset_page
  */
 ?>
 <div id="migration-options-dv">
