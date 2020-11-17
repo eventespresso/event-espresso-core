@@ -364,10 +364,9 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             );
             wp_enqueue_script('ee-accounting');
             wp_enqueue_script('ee-event-editor-heartbeat');
+            wp_enqueue_style('espresso-ui-theme');
+			wp_enqueue_script('event_editor_js');
         }
-        wp_enqueue_script('event_editor_js');
-        // styles
-        wp_enqueue_style('espresso-ui-theme');
     }
 
 
