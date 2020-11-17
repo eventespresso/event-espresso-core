@@ -37,6 +37,14 @@ class ShortcodeRequests extends Route
     protected function registerDependencies()
     {
         $this->dependency_map->registerDependencies(
+            'EE_Front_Controller',
+            [
+                'EE_Registry'              => EE_Dependency_Map::load_from_cache,
+                'EE_Request_Handler'       => EE_Dependency_Map::load_from_cache,
+                'EE_Module_Request_Router' => EE_Dependency_Map::load_from_cache,
+            ]
+        );
+        $this->dependency_map->registerDependencies(
             'EventEspresso\core\domain\entities\shortcodes\EspressoCancelled',
             ['EventEspresso\core\services\cache\PostRelatedCacheManager' => EE_Dependency_Map::load_from_cache]
         );
