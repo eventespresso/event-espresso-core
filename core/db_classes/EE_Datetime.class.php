@@ -52,7 +52,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
 
     /**
      * @param array  $props_n_values    incoming values
-     * @param string $timezone          incoming timezone (if not set the timezone set for the website will be used.)
+     * @param string|null $timezone     incoming timezone (will use website timezone if null)
      * @param array  $date_formats      incoming date_formats in an array where the first value is the date_format
      *                                  and the second value is the time format
      * @return EE_Datetime
@@ -78,7 +78,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
 
     /**
      * @param array  $props_n_values  incoming values from the database
-     * @param string $timezone        incoming timezone as set by the model.  If not set the timezone for
+     * @param string|null $timezone        incoming timezone as set by the model.  If not set the timezone for
      *                                the website will be used.
      * @return EE_Datetime
      * @throws ReflectionException
@@ -94,28 +94,28 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
 
 
     /**
-     * @param $name
+     * @param string $name
      * @throws ReflectionException
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function set_name($name)
+    public function set_name(string $name)
     {
         $this->set('DTT_name', $name);
     }
 
 
     /**
-     * @param $description
+     * @param string $description
      * @throws ReflectionException
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function set_description($description)
+    public function set_description(string $description)
     {
         $this->set('DTT_description', $description);
     }
@@ -132,7 +132,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function set_start_date($date)
+    public function set_start_date(string $date)
     {
         $this->_set_date_for($date, 'DTT_EVT_start');
     }
@@ -149,7 +149,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function set_start_time($time)
+    public function set_start_time(string $time)
     {
         $this->_set_time_for($time, 'DTT_EVT_start');
     }
@@ -166,7 +166,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function set_end_date($date)
+    public function set_end_date(string $date)
     {
         $this->_set_date_for($date, 'DTT_EVT_end');
     }
@@ -183,7 +183,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function set_end_time($time)
+    public function set_end_time(string $time)
     {
         $this->_set_time_for($time, 'DTT_EVT_end');
     }
@@ -200,7 +200,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function set_reg_limit($reg_limit)
+    public function set_reg_limit(int $reg_limit)
     {
         $this->set('DTT_reg_limit', $reg_limit);
     }
@@ -230,7 +230,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function set_sold($sold)
+    public function set_sold(int $sold)
     {
         // sold can not go below zero
         $sold = max(0, $sold);
@@ -337,7 +337,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function set_reserved($reserved)
+    public function set_reserved(int $reserved)
     {
         // reserved can not go below zero
         $reserved = max(0, (int) $reserved);
@@ -471,6 +471,18 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
 
 
     /**
+     * @param bool $is_primary
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function set_is_primary(bool $is_primary)
+    {
+        $is_primary = filter_var($is_primary, FILTER_VALIDATE_BOOLEAN);
+        $this->set('DTT_is_primary', $is_primary);
+    }
+
+
+    /**
      * This helper simply returns the order for the datetime
      *
      * @return int  The order of the datetime for this event.
@@ -505,10 +517,10 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
     /**
      * show date and/or time
      *
-     * @param string $date_or_time    whether to display a date or time or both
+     * @param string|null $date_or_time    whether to display a date or time or both
      * @param string $start_or_end    whether to display start or end datetimes
-     * @param string $dt_frmt
-     * @param string $tm_frmt
+     * @param string $date_format
+     * @param string $time_format
      * @param bool   $echo            whether we echo or return (note echoing uses "pretty" formats,
      *                                otherwise we use the standard formats)
      * @return string|bool  string on success, FALSE on fail
@@ -521,15 +533,15 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
     private function _show_datetime(
         $date_or_time = null,
         $start_or_end = 'start',
-        $dt_frmt = '',
-        $tm_frmt = '',
+        $date_format = '',
+        $time_format = '',
         $echo = false
     ) {
         $field_name = "DTT_EVT_{$start_or_end}";
         $dtt = $this->_get_datetime(
             $field_name,
-            $dt_frmt,
-            $tm_frmt,
+            $date_format,
+            $time_format,
             $date_or_time,
             $echo
         );
@@ -544,7 +556,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * get event start date.  Provide either the date format, or NULL to re-use the
      * last-used format, or '' to use the default date format
      *
-     * @param string $dt_frmt string representation of date format defaults to 'F j, Y'
+     * @param string $date_format string representation of date format defaults to 'F j, Y'
      * @return mixed            string on success, FALSE on fail
      * @throws ReflectionException
      * @throws InvalidArgumentException
@@ -552,25 +564,25 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function start_date($dt_frmt = '')
+    public function start_date($date_format = '')
     {
-        return $this->_show_datetime('D', 'start', $dt_frmt);
+        return $this->_show_datetime('D', 'start', $date_format);
     }
 
 
     /**
      * Echoes start_date()
      *
-     * @param string $dt_frmt
+     * @param string $date_format
      * @throws ReflectionException
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function e_start_date($dt_frmt = '')
+    public function e_start_date($date_format = '')
     {
-        $this->_show_datetime('D', 'start', $dt_frmt, null, true);
+        $this->_show_datetime('D', 'start', $date_format, null, true);
     }
 
 
@@ -578,7 +590,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * get end date. Provide either the date format, or NULL to re-use the
      * last-used format, or '' to use the default date format
      *
-     * @param string $dt_frmt string representation of date format defaults to 'F j, Y'
+     * @param string $date_format string representation of date format defaults to 'F j, Y'
      * @return mixed            string on success, FALSE on fail
      * @throws ReflectionException
      * @throws InvalidArgumentException
@@ -586,25 +598,25 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function end_date($dt_frmt = '')
+    public function end_date($date_format = '')
     {
-        return $this->_show_datetime('D', 'end', $dt_frmt);
+        return $this->_show_datetime('D', 'end', $date_format);
     }
 
 
     /**
      * Echoes the end date. See end_date()
      *
-     * @param string $dt_frmt
+     * @param string $date_format
      * @throws ReflectionException
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function e_end_date($dt_frmt = '')
+    public function e_end_date($date_format = '')
     {
-        $this->_show_datetime('D', 'end', $dt_frmt, null, true);
+        $this->_show_datetime('D', 'end', $date_format, null, true);
     }
 
 
@@ -612,7 +624,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * get date_range - meaning the start AND end date
      *
      * @access public
-     * @param string $dt_frmt     string representation of date format defaults to WP settings
+     * @param string $date_time_format string representation of date time format defaults to WP settings
      * @param string $conjunction conjunction junction what's your function ?
      *                            this string joins the start date with the end date ie: Jan 01 "to" Dec 31
      * @return mixed              string on success, FALSE on fail
@@ -622,25 +634,48 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function date_range($dt_frmt = '', $conjunction = ' - ')
+    protected function date_time_range($date_time_format = '', $conjunction = ' - ')
     {
-        $dt_frmt = ! empty($dt_frmt) ? $dt_frmt : $this->_dt_frmt;
+        $date_time_format = ! empty($date_time_format)
+            ? $date_time_format
+            : $this->_dt_frmt . ' ' . $this->_tm_frmt;
         $start = str_replace(
             ' ',
             '&nbsp;',
-            $this->get_i18n_datetime('DTT_EVT_start', $dt_frmt)
+            $this->get_i18n_datetime('DTT_EVT_start', $date_time_format)
         );
         $end = str_replace(
             ' ',
             '&nbsp;',
-            $this->get_i18n_datetime('DTT_EVT_end', $dt_frmt)
+            $this->get_i18n_datetime('DTT_EVT_end', $date_time_format)
         );
         return $start !== $end ? $start . $conjunction . $end : $start;
     }
 
 
     /**
-     * @param string $dt_frmt
+     * get date_range - meaning the start AND end date
+     *
+     * @access public
+     * @param string $date_format     string representation of date format defaults to WP settings
+     * @param string $conjunction conjunction junction what's your function ?
+     *                            this string joins the start date with the end date ie: Jan 01 "to" Dec 31
+     * @return mixed              string on success, FALSE on fail
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     */
+    public function date_range($date_format = '', $conjunction = ' - ')
+    {
+        $date_format = ! empty($date_format) ? $date_format : $this->_dt_frmt;
+        return $this->date_time_range($date_format, $conjunction);
+    }
+
+
+    /**
+     * @param string $date_format
      * @param string $conjunction
      * @throws ReflectionException
      * @throws InvalidArgumentException
@@ -648,16 +683,16 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function e_date_range($dt_frmt = '', $conjunction = ' - ')
+    public function e_date_range($date_format = '', $conjunction = ' - ')
     {
-        echo $this->date_range($dt_frmt, $conjunction);
+        echo $this->date_range($date_format, $conjunction);
     }
 
 
     /**
      * get start time
      *
-     * @param string $tm_format - string representation of time format defaults to 'g:i a'
+     * @param string $time_format - string representation of time format defaults to 'g:i a'
      * @return mixed        string on success, FALSE on fail
      * @throws ReflectionException
      * @throws InvalidArgumentException
@@ -665,30 +700,30 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function start_time($tm_format = '')
+    public function start_time($time_format = '')
     {
-        return $this->_show_datetime('T', 'start', null, $tm_format);
+        return $this->_show_datetime('T', 'start', null, $time_format);
     }
 
 
     /**
-     * @param string $tm_format
+     * @param string $time_format
      * @throws ReflectionException
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function e_start_time($tm_format = '')
+    public function e_start_time($time_format = '')
     {
-        $this->_show_datetime('T', 'start', null, $tm_format, true);
+        $this->_show_datetime('T', 'start', null, $time_format, true);
     }
 
 
     /**
      * get end time
      *
-     * @param string $tm_format string representation of time format defaults to 'g:i a'
+     * @param string $time_format string representation of time format defaults to 'g:i a'
      * @return mixed                string on success, FALSE on fail
      * @throws ReflectionException
      * @throws InvalidArgumentException
@@ -696,23 +731,23 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function end_time($tm_format = '')
+    public function end_time($time_format = '')
     {
-        return $this->_show_datetime('T', 'end', null, $tm_format);
+        return $this->_show_datetime('T', 'end', null, $time_format);
     }
 
 
     /**
-     * @param string $tm_format
+     * @param string $time_format
      * @throws ReflectionException
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function e_end_time($tm_format = '')
+    public function e_end_time($time_format = '')
     {
-        $this->_show_datetime('T', 'end', null, $tm_format, true);
+        $this->_show_datetime('T', 'end', null, $time_format, true);
     }
 
 
@@ -720,7 +755,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * get time_range
      *
      * @access public
-     * @param string $tm_format   string representation of time format defaults to 'g:i a'
+     * @param string $time_format   string representation of time format defaults to 'g:i a'
      * @param string $conjunction conjunction junction what's your function ?
      *                            this string joins the start date with the end date ie: Jan 01 "to" Dec 31
      * @return mixed              string on success, FALSE on fail
@@ -730,25 +765,15 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function time_range($tm_format = '', $conjunction = ' - ')
+    public function time_range($time_format = '', $conjunction = ' - ')
     {
-        $tm_format = ! empty($tm_format) ? $tm_format : $this->_tm_frmt;
-        $start = str_replace(
-            ' ',
-            '&nbsp;',
-            $this->get_i18n_datetime('DTT_EVT_start', $tm_format)
-        );
-        $end = str_replace(
-            ' ',
-            '&nbsp;',
-            $this->get_i18n_datetime('DTT_EVT_end', $tm_format)
-        );
-        return $start !== $end ? $start . $conjunction . $end : $start;
+        $time_format = ! empty($time_format) ? $time_format : $this->_tm_frmt;
+        return $this->date_time_range($time_format, $conjunction);
     }
 
 
     /**
-     * @param string $tm_format
+     * @param string $time_format
      * @param string $conjunction
      * @throws ReflectionException
      * @throws InvalidArgumentException
@@ -756,9 +781,9 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function e_time_range($tm_format = '', $conjunction = ' - ')
+    public function e_time_range($time_format = '', $conjunction = ' - ')
     {
-        echo $this->time_range($tm_format, $conjunction);
+        echo $this->time_range($time_format, $conjunction);
     }
 
 
@@ -767,8 +792,8 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * Output is dependent on the difference (or similarity) between DTT_EVT_start and DTT_EVT_end.
      * Also, the return value is localized.
      *
-     * @param string $dt_format
-     * @param string $tm_format
+     * @param string $date_format
+     * @param string $time_format
      * @param string $conjunction used between two different dates or times.
      *                            ex: Dec 1{$conjunction}}Dec 6, or 2pm{$conjunction}3pm
      * @param string $separator   used between the date and time formats.
@@ -781,14 +806,14 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @throws EE_Error
      */
     public function date_and_time_range(
-        $dt_format = '',
-        $tm_format = '',
+        $date_format = '',
+        $time_format = '',
         $conjunction = ' - ',
         $separator = ' '
     ) {
-        $dt_format = ! empty($dt_format) ? $dt_format : $this->_dt_frmt;
-        $tm_format = ! empty($tm_format) ? $tm_format : $this->_tm_frmt;
-        $full_format = $dt_format . $separator . $tm_format;
+        $date_format = ! empty($date_format) ? $date_format : $this->_dt_frmt;
+        $time_format = ! empty($time_format) ? $time_format : $this->_tm_frmt;
+        $full_format = $date_format . $separator . $time_format;
         // the range output depends on various conditions
         switch (true) {
             // start date timestamp and end date timestamp are the same.
@@ -799,7 +824,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
             case ($this->start_date() === $this->end_date()):
                 $output = $this->get_i18n_datetime('DTT_EVT_start', $full_format)
                           . $conjunction
-                          . $this->get_i18n_datetime('DTT_EVT_end', $tm_format);
+                          . $this->get_i18n_datetime('DTT_EVT_end', $time_format);
                 break;
             // all other conditions
             default:
@@ -816,8 +841,8 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * This echos the results of date and time range.
      *
      * @see date_and_time_range() for more details on purpose.
-     * @param string $dt_format
-     * @param string $tm_format
+     * @param string $date_format
+     * @param string $time_format
      * @param string $conjunction
      * @return void
      * @throws ReflectionException
@@ -826,17 +851,17 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function e_date_and_time_range($dt_format = '', $tm_format = '', $conjunction = ' - ')
+    public function e_date_and_time_range($date_format = '', $time_format = '', $conjunction = ' - ')
     {
-        echo $this->date_and_time_range($dt_format, $tm_format, $conjunction);
+        echo $this->date_and_time_range($date_format, $time_format, $conjunction);
     }
 
 
     /**
      * get start date and start time
      *
-     * @param    string $dt_format - string representation of date format defaults to 'F j, Y'
-     * @param    string $tm_format - string representation of time format defaults to 'g:i a'
+     * @param    string $date_format - string representation of date format defaults to 'F j, Y'
+     * @param    string $time_format - string representation of time format defaults to 'g:i a'
      * @return    mixed    string on success, FALSE on fail
      * @throws ReflectionException
      * @throws InvalidArgumentException
@@ -844,24 +869,24 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function start_date_and_time($dt_format = '', $tm_format = '')
+    public function start_date_and_time($date_format = '', $time_format = '')
     {
-        return $this->_show_datetime('', 'start', $dt_format, $tm_format);
+        return $this->_show_datetime('', 'start', $date_format, $time_format);
     }
 
 
     /**
-     * @param string $dt_frmt
-     * @param string $tm_format
+     * @param string $date_format
+     * @param string $time_format
      * @throws ReflectionException
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function e_start_date_and_time($dt_frmt = '', $tm_format = '')
+    public function e_start_date_and_time($date_format = '', $time_format = '')
     {
-        $this->_show_datetime('', 'start', $dt_frmt, $tm_format, true);
+        $this->_show_datetime('', 'start', $date_format, $time_format, true);
     }
 
 
@@ -914,8 +939,8 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
     /**
      *        get end date and time
      *
-     * @param string $dt_frmt   - string representation of date format defaults to 'F j, Y'
-     * @param string $tm_format - string representation of time format defaults to 'g:i a'
+     * @param string $date_format   - string representation of date format defaults to 'F j, Y'
+     * @param string $time_format - string representation of time format defaults to 'g:i a'
      * @return    mixed                string on success, FALSE on fail
      * @throws ReflectionException
      * @throws InvalidArgumentException
@@ -923,24 +948,24 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function end_date_and_time($dt_frmt = '', $tm_format = '')
+    public function end_date_and_time($date_format = '', $time_format = '')
     {
-        return $this->_show_datetime('', 'end', $dt_frmt, $tm_format);
+        return $this->_show_datetime('', 'end', $date_format, $time_format);
     }
 
 
     /**
-     * @param string $dt_frmt
-     * @param string $tm_format
+     * @param string $date_format
+     * @param string $time_format
      * @throws ReflectionException
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function e_end_date_and_time($dt_frmt = '', $tm_format = '')
+    public function e_end_date_and_time($date_format = '', $time_format = '')
     {
-        $this->_show_datetime('', 'end', $dt_frmt, $tm_format, true);
+        $this->_show_datetime('', 'end', $date_format, $time_format, true);
     }
 
 
