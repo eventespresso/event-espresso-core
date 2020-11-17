@@ -111,7 +111,7 @@ class TermObjectUpdate {
 
 			if ( $taxonomy->name !== $existing_term->taxonomy ) {
 				// translators: The first placeholder is an ID and the second placeholder is the name of the post type being edited
-				throw new UserError( sprintf( __( 'The id %1$d is not of the type "%2$s"', 'wp-graphql' ), $id_parts['id'], $post_type_object->name ) );
+				throw new UserError( sprintf( __( 'The id %1$d is not of the type "%2$s"', 'wp-graphql' ), $id_parts['id'], $taxonomy->name ) );
 			}
 
 			/**
@@ -142,6 +142,18 @@ class TermObjectUpdate {
 					throw new UserError( sprintf( __( 'The %1$s failed to update', 'wp-graphql' ), $taxonomy->name ) );
 				}
 			}
+
+			/**
+			 * Fires an action when a term is updated via a GraphQL Mutation
+			 *
+			 * @param int         $term_id       The ID of the term object that was mutated
+			 * @param \WP_Taxonomy $taxonomy     The taxonomy of the term being updated
+			 * @param array       $args          The args used to update the term
+			 * @param string      $mutation_name The name of the mutation being performed (create, update, delete, etc)
+			 * @param AppContext  $context       The AppContext passed down the resolve tree
+			 * @param ResolveInfo $info          The ResolveInfo passed down the resolve tree
+			 */
+			do_action( 'graphql_update_term', $existing_term->term_id, $taxonomy, $args, $mutation_name, $context, $info );
 
 			/**
 			 * Fires an action when a term is updated via a GraphQL Mutation

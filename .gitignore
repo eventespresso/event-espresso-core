@@ -10,7 +10,7 @@ coverage
 # local project files that should not be committed
 node_modules/
 node_modules
-vendor/
+/vendor/
 *.code-workspace
 *.DS_Store
 *.idea

@@ -72,6 +72,11 @@ class Router {
 		 */
 		add_action( 'parse_request', [ $this, 'resolve_http_request' ], 10 );
 
+		/**
+		 * Adds support for application passwords
+		 */
+		add_filter( 'application_password_is_api_request', [ $this, 'is_api_request' ] );
+
 	}
 
 	/**
@@ -89,6 +94,19 @@ class Router {
 			'top'
 		);
 
+	}
+
+	/**
+	 * Determines whether the request is an API request to play nice with
+	 * application passwords and potential other WordPress core functionality
+	 * for APIs
+	 *
+	 * @param bool $is_api_request Whether the request is an API request
+	 *
+	 * @return bool
+	 */
+	public function is_api_request( $is_api_request ) {
+		return true === is_graphql_http_request() ? true : $is_api_request;
 	}
 
 	/**
@@ -118,12 +136,46 @@ class Router {
 	 */
 	public static function is_graphql_http_request() {
 
+		/**
+		 * Filter whether the request is a GraphQL HTTP Request. Default is null, as the majority
+		 * of WordPress requests are NOT GraphQL requests (at least today that's true 😆).
+		 *
+		 * If this filter returns anything other than null, the function will return now and skip the
+		 * default checks.
+		 *
+		 * @param boolean $is_graphql_http_request Whether the request is a GraphQL HTTP Request. Default false.
+		 */
+		$pre_is_graphql_http_request = apply_filters( 'graphql_pre_is_graphql_http_request', null );
+
+		/**
+		 * If the filter has been applied, return now before executing default checks
+		 */
+		if ( null !== $pre_is_graphql_http_request ) {
+			return (bool) $pre_is_graphql_http_request;
+		}
+
 		// Default is false
 		$is_graphql_http_request = false;
 
 		// Support wp-graphiql style request to /index.php?graphql.
 		if ( isset( $_GET[ self::$route ] ) ) {
+
 			$is_graphql_http_request = true;
+
+		} else {
+
+			// Check the server to determine if the GraphQL endpoint is being requested
+			if ( isset( $_SERVER['HTTP_HOST'] ) && isset( $_SERVER['REQUEST_URI'] ) ) {
+				$haystack = wp_unslash( $_SERVER['HTTP_HOST'] )
+							. wp_unslash( $_SERVER['REQUEST_URI'] );
+				$needle   = site_url( self::$route );
+
+				// Strip protocol.
+				$haystack                = preg_replace( '#^(http(s)?://)#', '', $haystack );
+				$needle                  = preg_replace( '#^(http(s)?://)#', '', $needle );
+				$len                     = strlen( $needle );
+				$is_graphql_http_request = ( substr( $haystack, 0, $len ) === $needle );
+			}
 		}
 
 		/**
@@ -138,31 +190,8 @@ class Router {
 		 *
 		 * @param boolean $is_graphql_http_request Whether the request is a GraphQL HTTP Request. Default false.
 		 */
-		$is_graphql_http_request = apply_filters( 'graphql_is_graphql_http_request', $is_graphql_http_request );
+		return apply_filters( 'graphql_is_graphql_http_request', $is_graphql_http_request );
 
-		/**
-		 * If true, return right away. This allows custom code to
-		 * define graphql requests if their definition doesn't match the standard
-		 * definition.
-		 */
-		if ( true === $is_graphql_http_request ) {
-			return $is_graphql_http_request;
-		}
-
-		// Check the server to determine if the GraphQL endpoint is being requested
-		if ( isset( $_SERVER['HTTP_HOST'] ) && isset( $_SERVER['REQUEST_URI'] ) ) {
-			$haystack = wp_unslash( $_SERVER['HTTP_HOST'] )
-						. wp_unslash( $_SERVER['REQUEST_URI'] );
-			$needle   = site_url( self::$route );
-
-			// Strip protocol.
-			$haystack                = preg_replace( '#^(http(s)?://)#', '', $haystack );
-			$needle                  = preg_replace( '#^(http(s)?://)#', '', $needle );
-			$len                     = strlen( $needle );
-			$is_graphql_http_request = ( substr( $haystack, 0, $len ) === $needle );
-		}
-
-		return $is_graphql_http_request;
 	}
 
 	/**
@@ -382,7 +411,7 @@ class Router {
 		 * @see: https://apollographql.slack.com/archives/C10HTKHPC/p1507649812000123
 		 * @see: https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS#Preflighted_requests
 		 */
-		if ( 'OPTIONS' === $_SERVER['REQUEST_METHOD'] ) {
+		if ( isset( $_SERVER['REQUEST_METHOD'] ) && 'OPTIONS' === $_SERVER['REQUEST_METHOD'] ) {
 			self::$http_status_code = 200;
 			self::set_headers();
 			exit;

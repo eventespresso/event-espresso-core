@@ -6,10 +6,10 @@
  * Description: GraphQL API for WordPress
  * Author: WPGraphQL
  * Author URI: http://www.wpgraphql.com
- * Version: 0.13.1
+ * Version: 1.0
  * Text Domain: wp-graphql
  * Domain Path: /languages/
- * Requires at least: 4.7.0
+ * Requires at least: 5.0
  * Tested up to: 5.4
  * Requires PHP: 7.1
  * License: GPL-3
@@ -18,7 +18,7 @@
  * @package  WPGraphQL
  * @category Core
  * @author   WPGraphQL
- * @version  0.13.1
+ * @version  1.0
  */
 
 // Exit if accessed directly.
@@ -178,7 +178,7 @@ if ( ! class_exists( 'WPGraphQL' ) ) :
 
 			// Plugin version.
 			if ( ! defined( 'WPGRAPHQL_VERSION' ) ) {
-				define( 'WPGRAPHQL_VERSION', '0.13.1' );
+				define( 'WPGRAPHQL_VERSION', '1.0' );
 			}
 
 			// Plugin Folder Path.
@@ -378,8 +378,8 @@ if ( ! class_exists( 'WPGraphQL' ) ) :
 		 * Initialize admin functionality
 		 */
 		public function init_admin() {
-			// $admin = new \WPGraphQL\Admin\Admin();
-			// $admin->init();
+			$admin = new \WPGraphQL\Admin\Admin();
+			$admin->init();
 		}
 
 		/**
@@ -610,7 +610,10 @@ if ( ! class_exists( 'WPGraphQL' ) ) :
 				$enabled = 'on' === $enabled ? true : false;
 			}
 
-			return (bool) $enabled;
+			/**
+			 * @param bool $enabled Whether GraphQL Debug is enabled or not
+			 */
+			return (bool) apply_filters( 'graphql_debug_enabled', $enabled );
 		}
 
 		/**

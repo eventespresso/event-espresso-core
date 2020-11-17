@@ -96,6 +96,14 @@ class PostObjectUpdate {
 			}
 
 			/**
+			 * If the existing post was authored by another author, ensure the requesting user has permission to edit it
+			 */
+			if ( get_current_user_id() !== $existing_post->post_author && ! current_user_can( $post_type_object->cap->edit_others_posts ) ) {
+				// translators: the $post_type_object->graphql_single_name placeholder is the name of the object being mutated
+				throw new UserError( sprintf( __( 'Sorry, you are not allowed to another author\'s %1$s', 'wp-graphql' ), $post_type_object->graphql_single_name ) );
+			}
+
+			/**
 			 * If the mutation is setting the author to be someone other than the user making the request
 			 * make sure they have permission to edit others posts
 			 */
@@ -132,6 +140,18 @@ class PostObjectUpdate {
 			if ( is_wp_error( $post_id ) ) {
 				throw new UserError( __( 'The object failed to update but no error was provided', 'wp-graphql' ) );
 			}
+
+			/**
+			 * Fires after a single term is created or updated via a GraphQL mutation
+			 *
+			 * The dynamic portion of the hook name, `$taxonomy->name` refers to the taxonomy of the term being mutated
+			 *
+			 * @param int    $post_id       Inserted post ID
+			 * @param \WP_Post_Type $post_type_object The Post Type object for the post being mutated
+			 * @param array  $args          The args used to insert the term
+			 * @param string $mutation_name The name of the mutation being performed
+			 */
+			do_action( 'graphql_insert_post_object', $post_id, $post_type_object, $post_args, $mutation_name );
 
 			/**
 			 * Fires after a single term is created or updated via a GraphQL mutation

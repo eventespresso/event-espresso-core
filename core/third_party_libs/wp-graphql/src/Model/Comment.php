@@ -14,6 +14,8 @@ use GraphQLRelay\Relay;
  * @property string     $comment_author_url
  * @property int        $comment_ID
  * @property int        $comment_parent_id
+ * @property string     $parentId
+ * @property int        $parentDatabaseId
  * @property string     $authorIp
  * @property string     $date
  * @property string     $dateGmt
@@ -49,6 +51,7 @@ class Comment extends Model {
 			'id',
 			'ID',
 			'commentId',
+			'databaseId',
 			'contentRendered',
 			'date',
 			'dateGmt',
@@ -58,6 +61,8 @@ class Comment extends Model {
 			'comment_post_ID',
 			'approved',
 			'comment_parent_id',
+			'parentId',
+			'parentDatabaseId',
 			'isRestricted',
 			'userId',
 		];
@@ -71,8 +76,14 @@ class Comment extends Model {
 	 * Method for determining if the data should be considered private or not
 	 *
 	 * @return bool
+	 * @throws \Exception
 	 */
 	protected function is_private() {
+
+		// A comment is considered private if it is attached to a private post.
+		if ( ! empty( $this->data->comment_post_ID ) && ( new Post( get_post( $this->data->comment_post_ID ) ) )->is_private() ) {
+			return true;
+		}
 
 		// NOTE: Do a non-strict check here, as the return is a `1` or `0`.
 		// phpcs:disable WordPress.PHP.StrictComparisons.LooseComparison
@@ -115,6 +126,12 @@ class Comment extends Model {
 				'comment_parent_id'  => function() {
 					return ! empty( $this->data->comment_parent ) ? absint( $this->data->comment_parent ) : 0;
 				},
+				'parentDatabaseId'   => function() {
+					return ! empty( $this->data->comment_parent ) ? absint( $this->data->comment_parent ) : 0;
+				},
+				'parentId'           => function() {
+					return ! empty( $this->comment_parent_id ) ? Relay::toGlobalId( 'comment', $this->data->comment_parent ) : null;
+				},
 				'comment_author'     => function() {
 					return ! empty( $this->data->comment_author ) ? absint( $this->data->comment_author ) : null;
 				},
@@ -135,7 +152,7 @@ class Comment extends Model {
 				},
 				'contentRendered'    => function() {
 					$content = ! empty( $this->data->comment_content ) ? $this->data->comment_content : null;
-					return html_entity_decode( apply_filters( 'comment_text', $content ) );
+					return $this->html_entity_decode( apply_filters( 'comment_text', $content ), 'contentRendered', false );
 				},
 				'karma'              => function() {
 					return ! empty( $this->data->comment_karma ) ? $this->data->comment_karma : null;
