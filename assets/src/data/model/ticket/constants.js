@@ -13,4 +13,4 @@ export const TICKET_STATUS_ID = {
 	ONSALE: 'TKO',
 };
 
-export const TICKET_STATUS_IDS = values( TICKET_STATUS_ID );
+export const TICKET_STATUS_IDS = values(TICKET_STATUS_ID);

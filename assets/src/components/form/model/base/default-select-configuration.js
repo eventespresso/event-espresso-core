@@ -28,10 +28,7 @@ export const REACT_SELECT_TYPES = {
 	id: PropTypes.string,
 	inputValue: PropTypes.string,
 	inputId: PropTypes.string,
-	instanceId: PropTypes.oneOfType( [
-		PropTypes.number,
-		PropTypes.string,
-	] ),
+	instanceId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 	isClearable: PropTypes.bool,
 	isDisabled: PropTypes.bool,
 	isLoading: PropTypes.bool,
@@ -43,15 +40,8 @@ export const REACT_SELECT_TYPES = {
 	minMenuHeight: PropTypes.number,
 	maxMenuHeight: PropTypes.number,
 	menuIsOpen: PropTypes.bool,
-	menuPlacement: PropTypes.oneOf( [
-		'auto',
-		'bottom',
-		'top',
-	] ),
-	menuPosition: PropTypes.oneOf( [
-		'absolute',
-		'fixed',
-	] ),
+	menuPlacement: PropTypes.oneOf(['auto', 'bottom', 'top']),
+	menuPosition: PropTypes.oneOf(['absolute', 'fixed']),
 	menuPortalTarget: PropTypes.element,
 	menuShouldBlockScroll: PropTypes.bool,
 	menuShouldScrollIntoView: PropTypes.bool,
@@ -72,7 +62,7 @@ export const REACT_SELECT_TYPES = {
 	pageSize: PropTypes.number,
 	placeholder: PropTypes.string,
 	screenReaderStatus: PropTypes.func,
-	styles: PropTypes.shape( {
+	styles: PropTypes.shape({
 		clearIndicator: PropTypes.func,
 		container: PropTypes.func,
 		control: PropTypes.func,
@@ -95,17 +85,14 @@ export const REACT_SELECT_TYPES = {
 		placeholder: PropTypes.func,
 		singleValue: PropTypes.func,
 		valueContainer: PropTypes.func,
-	} ),
+	}),
 	tabIndex: PropTypes.string,
 	tabSelectsValue: PropTypes.bool,
-	value: PropTypes.oneOfType( [
-		PropTypes.object,
-		PropTypes.array,
-	] ),
+	value: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
 };
 
 export const REACT_SELECT_DEFAULTS = {
 	isClearable: true,
 	isLoading: true,
-	placeholder: __( 'Select...', 'event_espresso' ),
+	placeholder: __('Select…', 'event_espresso'),
 };

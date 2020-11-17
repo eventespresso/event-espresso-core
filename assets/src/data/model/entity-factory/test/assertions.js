@@ -21,16 +21,16 @@ import {
 } from '../assertions';
 import { PRIVATE_PROPERTIES, VALIDATE_TYPE } from '../constants';
 
-describe( 'Testing assertions for model-entity factory.', () => {
-	const getMockInstance = ( schema, validationType ) => {
+describe('Testing assertions for model-entity factory.', () => {
+	const getMockInstance = (schema, validationType) => {
 		return {
 			schema,
-			[ PRIVATE_PROPERTIES.VALIDATE_TYPES ]: validationType,
+			[PRIVATE_PROPERTIES.VALIDATE_TYPES]: validationType,
 		};
 	};
-	describe( 'maybeAssertValueObject()', () => {
-		const assertTest = ( fieldName, fieldValue, schema ) => () =>
-			maybeAssertValueObject( fieldName, fieldValue, schema );
+	describe('maybeAssertValueObject()', () => {
+		const assertTest = (fieldName, fieldValue, schema) => () =>
+			maybeAssertValueObject(fieldName, fieldValue, schema);
 		const tests = [
 			[
 				'Does not throw exception for field not in schema',
@@ -41,7 +41,7 @@ describe( 'Testing assertions for model-entity factory.', () => {
 			],
 			[
 				'Throws InvalidDateTime error for datetime field with ' +
-				'invalid value.',
+					'invalid value.',
 				'EVT_visible_on',
 				'invalidDate',
 				EventSchemaProperties,
@@ -56,7 +56,7 @@ describe( 'Testing assertions for model-entity factory.', () => {
 			],
 			[
 				'Does not throw exception for valid field that is not a ' +
-				'value object',
+					'value object',
 				'EVT_desc',
 				'Some description',
 				EventSchemaProperties,
@@ -64,58 +64,55 @@ describe( 'Testing assertions for model-entity factory.', () => {
 			],
 			[
 				'Does not throw exception for datetime field with ' +
-				'valid DateTime value object as value',
+					'valid DateTime value object as value',
 				'EVT_visible_on',
-				DateTime.fromJSDate( new Date() ),
+				DateTime.fromJSDate(new Date()),
 				EventSchemaProperties,
 				null,
 			],
 			[
 				'Does not throw exception for money field with ' +
-				'valid Money value object as value',
+					'valid Money value object as value',
 				'REG_final_price',
-				new Money( 1.25, SiteCurrency ),
+				new Money(1.25, SiteCurrency),
 				RegistrationSchemaProperties,
 				null,
 			],
 		];
-		tests.forEach( ( [
-			description,
-			fieldName,
-			fieldValue,
-			schema,
-			expectedException,
-		] ) => {
-			it( description, () => {
-				if ( expectedException === null ) {
-					expect( assertTest( fieldName, fieldValue, schema ) )
-						.not.toThrow();
-				} else {
-					expect( assertTest( fieldName, fieldValue, schema ) )
-						.toThrow( expectedException );
-				}
-			} );
-		} );
-	} );
-	describe( 'assertValidSchema()', () => {
-		const testRunner = ( schema ) => () => assertValidSchema( schema );
-		it( 'Throws an error with invalid schema.', () => {
-			expect( testRunner( {} ) ).toThrow( InvalidSchema );
-		} );
-		it( 'Does not throw an error with valid schema.', () => {
-			expect( testRunner( EventSchema.schema ) ).not.toThrow();
-		} );
-	} );
-	describe( 'assertValidSchemaFieldProperties()', () => {
-		const assertTest = (
-			modelName,
-			fieldName,
-			schema
-		) => () => assertValidSchemaFieldProperties(
-			modelName,
-			fieldName,
-			schema
+		tests.forEach(
+			([
+				description,
+				fieldName,
+				fieldValue,
+				schema,
+				expectedException,
+			]) => {
+				it(description, () => {
+					if (expectedException === null) {
+						expect(
+							assertTest(fieldName, fieldValue, schema)
+						).not.toThrow();
+					} else {
+						expect(
+							assertTest(fieldName, fieldValue, schema)
+						).toThrow(expectedException);
+					}
+				});
+			}
 		);
+	});
+	describe('assertValidSchema()', () => {
+		const testRunner = (schema) => () => assertValidSchema(schema);
+		it('Throws an error with invalid schema.', () => {
+			expect(testRunner({})).toThrow(InvalidSchema);
+		});
+		it('Does not throw an error with valid schema.', () => {
+			expect(testRunner(EventSchema.schema)).not.toThrow();
+		});
+	});
+	describe('assertValidSchemaFieldProperties()', () => {
+		const assertTest = (modelName, fieldName, schema) => () =>
+			assertValidSchemaFieldProperties(modelName, fieldName, schema);
 		const tests = [
 			[
 				'Throws TypeError for field not found in schema.',
@@ -125,8 +122,8 @@ describe( 'Testing assertions for model-entity factory.', () => {
 			],
 			[
 				'Throws InvalidSchema error for schema that has field in the ' +
-				'schema, but the type for that field is "object", and there ' +
-				'is no "properties" property in the schema.',
+					'schema, but the type for that field is "object", and there ' +
+					'is no "properties" property in the schema.',
 				'EVT_desc',
 				{
 					EVT_desc: {
@@ -137,8 +134,8 @@ describe( 'Testing assertions for model-entity factory.', () => {
 			],
 			[
 				'Throws InvalidSchema error for schema that has field in the ' +
-				'schema, but the type for that field is "object", and there ' +
-				'is no "properties.raw" property in the schema.',
+					'schema, but the type for that field is "object", and there ' +
+					'is no "properties.raw" property in the schema.',
 				'EVT_desc',
 				{
 					EVT_desc: {
@@ -150,9 +147,9 @@ describe( 'Testing assertions for model-entity factory.', () => {
 			],
 			[
 				'Throws InvalidSchema error for schema that has field in the ' +
-				'schema, but the type for that field is "object", and ' +
-				'although there is a "properties.raw" property in the schema, ' +
-				'the "raw" property does not have a "type" property defined.',
+					'schema, but the type for that field is "object", and ' +
+					'although there is a "properties.raw" property in the schema, ' +
+					'the "raw" property does not have a "type" property defined.',
 				'EVT_desc',
 				{
 					EVT_desc: {
@@ -171,39 +168,36 @@ describe( 'Testing assertions for model-entity factory.', () => {
 				null,
 			],
 		];
-		tests.forEach( ( [
-			description,
-			fieldName,
-			schema,
-			expectedException,
-		] ) => {
-			it( description, () => {
-				if ( expectedException === null ) {
-					expect( assertTest( 'Event', fieldName, schema ) )
-						.not
-						.toThrow();
+		tests.forEach(([description, fieldName, schema, expectedException]) => {
+			it(description, () => {
+				if (expectedException === null) {
+					expect(
+						assertTest('Event', fieldName, schema)
+					).not.toThrow();
 				} else {
-					expect( assertTest( 'Event', fieldName, schema ) )
-						.toThrow( expectedException );
+					expect(assertTest('Event', fieldName, schema)).toThrow(
+						expectedException
+					);
 				}
-			} );
-		} );
-	} );
-	describe( 'assertValidValueForPreparedField()', () => {
+			});
+		});
+	});
+	describe('assertValidValueForPreparedField()', () => {
 		const assertTest = (
 			fieldName,
 			fieldValue,
 			schema,
-			validationType = VALIDATE_TYPE.RAW,
-		) => () => assertValidValueForPreparedField(
-			fieldName,
-			fieldValue,
-			getMockInstance( schema, { [ fieldName ]: validationType } )
-		);
+			validationType = VALIDATE_TYPE.RAW
+		) => () =>
+			assertValidValueForPreparedField(
+				fieldName,
+				fieldValue,
+				getMockInstance(schema, { [fieldName]: validationType })
+			);
 		const tests = [
 			[
 				'Throws a TypeError when a provided primitive value is not ' +
-				'of the correct type for the provided field.',
+					'of the correct type for the provided field.',
 				'EVT_name',
 				10,
 				EventSchemaProperties,
@@ -211,7 +205,7 @@ describe( 'Testing assertions for model-entity factory.', () => {
 			],
 			[
 				'Throws an InvalidDateTime error when the provided value for ' +
-				'a DateTime field is not an instance of DateTime value object',
+					'a DateTime field is not an instance of DateTime value object',
 				'EVT_visible_on',
 				'invalid datetime',
 				EventSchemaProperties,
@@ -219,7 +213,7 @@ describe( 'Testing assertions for model-entity factory.', () => {
 			],
 			[
 				'Throws a TypeError when the provided value for a Money ' +
-				'field is not an instance of the Money value object',
+					'field is not an instance of the Money value object',
 				'REG_final_price',
 				0,
 				RegistrationSchemaProperties,
@@ -227,8 +221,8 @@ describe( 'Testing assertions for model-entity factory.', () => {
 			],
 			[
 				'Throws a TypeError when a provided primitive value on a ' +
-				'object type field does not match the expected type for the ' +
-				'raw property schema for that object',
+					'object type field does not match the expected type for the ' +
+					'raw property schema for that object',
 				'EVT_desc',
 				10,
 				EventSchemaProperties,
@@ -236,7 +230,7 @@ describe( 'Testing assertions for model-entity factory.', () => {
 			],
 			[
 				'Does not throw an error when the provided primitive value ' +
-				'is of the correct type for the field.',
+					'is of the correct type for the field.',
 				'EVT_name',
 				'Some title.',
 				EventSchemaProperties,
@@ -244,50 +238,53 @@ describe( 'Testing assertions for model-entity factory.', () => {
 			],
 			[
 				'Does not throw an error when the provided DateTime value ' +
-				'object is of the correct type for the field.',
+					'object is of the correct type for the field.',
 				'EVT_visible_on',
-				DateTime.fromJSDate( new Date() ),
+				DateTime.fromJSDate(new Date()),
 				EventSchemaProperties,
 				null,
 			],
 			[
 				'Does not throw an error when the provided Money value ' +
-				'object is of the correct type for the field.',
+					'object is of the correct type for the field.',
 				'REG_final_price',
-				new Money( 0, SiteCurrency ),
+				new Money(0, SiteCurrency),
 				RegistrationSchemaProperties,
 				null,
 			],
 			[
 				'Does not throw an error when the provided primitive value ' +
-				'on an object type field does match the expected type for the ' +
-				'raw property schema for that object.',
+					'on an object type field does match the expected type for the ' +
+					'raw property schema for that object.',
 				'EVT_desc',
 				'Some description',
 				EventSchemaProperties,
 				null,
 			],
 		];
-		tests.forEach( ( [
-			description,
-			fieldName,
-			fieldValue,
-			schema,
-			expectedException,
-		] ) => {
-			it( description, () => {
-				if ( expectedException === null ) {
-					expect( assertTest( fieldName, fieldValue, schema ) )
-						.not
-						.toThrow();
-				} else {
-					expect( assertTest( fieldName, fieldValue, schema ) )
-						.toThrow( expectedException );
-				}
-			} );
-		} );
-	} );
-	describe( 'assertValidFieldAndValueAgainstSchema()', () => {
+		tests.forEach(
+			([
+				description,
+				fieldName,
+				fieldValue,
+				schema,
+				expectedException,
+			]) => {
+				it(description, () => {
+					if (expectedException === null) {
+						expect(
+							assertTest(fieldName, fieldValue, schema)
+						).not.toThrow();
+					} else {
+						expect(
+							assertTest(fieldName, fieldValue, schema)
+						).toThrow(expectedException);
+					}
+				});
+			}
+		);
+	});
+	describe('assertValidFieldAndValueAgainstSchema()', () => {
 		const assertTest = (
 			modelName,
 			fieldName,
@@ -299,13 +296,13 @@ describe( 'Testing assertions for model-entity factory.', () => {
 				modelName,
 				fieldName,
 				fieldValue,
-				getMockInstance( schema, { [ fieldName ]: validationType } ),
+				getMockInstance(schema, { [fieldName]: validationType })
 			);
 		};
 		const tests = [
 			[
 				'Throws a TypeError when a provided primitive value is not ' +
-				'of the correct type for the provided field.',
+					'of the correct type for the provided field.',
 				'Event',
 				'EVT_name',
 				10,
@@ -314,7 +311,7 @@ describe( 'Testing assertions for model-entity factory.', () => {
 			],
 			[
 				'Throws a TypeError when the provided value for ' +
-				'a DateTime field is not the correct type',
+					'a DateTime field is not the correct type',
 				'Event',
 				'EVT_visible_on',
 				10,
@@ -323,7 +320,7 @@ describe( 'Testing assertions for model-entity factory.', () => {
 			],
 			[
 				'Throws a TypeError when the provided value for a Money ' +
-				'field is not the correct type',
+					'field is not the correct type',
 				'Registration',
 				'REG_final_price',
 				1.25,
@@ -332,8 +329,8 @@ describe( 'Testing assertions for model-entity factory.', () => {
 			],
 			[
 				'Throws a TypeError when a provided primitive value on a ' +
-				'object type field does not match the expected type for the ' +
-				'raw property schema for that object',
+					'object type field does not match the expected type for the ' +
+					'raw property schema for that object',
 				'Event',
 				'EVT_desc',
 				'some description',
@@ -342,7 +339,7 @@ describe( 'Testing assertions for model-entity factory.', () => {
 			],
 			[
 				'Does not throw an error when the provided primitive value ' +
-				'is of the correct type for the field.',
+					'is of the correct type for the field.',
 				'Event',
 				'EVT_name',
 				'Some title.',
@@ -351,16 +348,16 @@ describe( 'Testing assertions for model-entity factory.', () => {
 			],
 			[
 				'Does not throw an error when the provided DateTime value ' +
-				'object is of the correct type for the field.',
+					'object is of the correct type for the field.',
 				'Event',
 				'EVT_visible_on',
-				( new Date() ).toISOString(),
+				new Date().toISOString(),
 				EventSchemaProperties,
 				null,
 			],
 			[
 				'Does not throw an error when the provided Money value ' +
-				'object is of the correct type for the field.',
+					'object is of the correct type for the field.',
 				'Registration',
 				'REG_final_price',
 				{ raw: 1.25 },
@@ -369,8 +366,8 @@ describe( 'Testing assertions for model-entity factory.', () => {
 			],
 			[
 				'Does not throw an error when the provided primitive value ' +
-				'on an object type field does match the expected type for the ' +
-				'raw property schema for that object.',
+					'on an object type field does match the expected type for the ' +
+					'raw property schema for that object.',
 				'Event',
 				'EVT_desc',
 				{ raw: 'some description' },
@@ -378,28 +375,27 @@ describe( 'Testing assertions for model-entity factory.', () => {
 				null,
 			],
 		];
-		tests.forEach( ( [
-			description,
-			modelName,
-			fieldName,
-			fieldValue,
-			schema,
-			expectedException,
-		] ) => {
-			it( description, () => {
-				if ( expectedException === null ) {
-					expect(
-						assertTest( modelName, fieldName, fieldValue, schema )
-					)
-						.not
-						.toThrow();
-				} else {
-					expect(
-						assertTest( modelName, fieldName, fieldValue, schema )
-					)
-						.toThrow( expectedException );
-				}
-			} );
-		} );
-	} );
-} );
+		tests.forEach(
+			([
+				description,
+				modelName,
+				fieldName,
+				fieldValue,
+				schema,
+				expectedException,
+			]) => {
+				it(description, () => {
+					if (expectedException === null) {
+						expect(
+							assertTest(modelName, fieldName, fieldValue, schema)
+						).not.toThrow();
+					} else {
+						expect(
+							assertTest(modelName, fieldName, fieldValue, schema)
+						).toThrow(expectedException);
+					}
+				});
+			}
+		);
+	});
+});

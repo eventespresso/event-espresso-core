@@ -22,13 +22,13 @@ const TicketSelect = createModelSelect(
 	model.MODEL_NAME,
 	{
 		selectConfiguration: {
-			loadingMessage: () => __( 'Retrieving Tickets.', 'event_espresso' ),
-			noOptionsMessage: () => __( 'No Tickets.', 'event_espresso' ),
-			placeholder: __( 'Select Ticket...', 'event_espresso' ),
+			loadingMessage: () => __('Retrieving Tickets.', 'event_espresso'),
+			noOptionsMessage: () => __('No Tickets.', 'event_espresso'),
+			placeholder: __('Select Ticket…', 'event_espresso'),
 		},
 		...model.defaultQueryData,
 		getQueryString: model.getQueryString,
-		label: __( 'Select Ticket', 'event_espresso' ),
+		label: __('Select Ticket', 'event_espresso'),
 		optionsEntityMap,
 	},
 	{
@@ -42,6 +42,6 @@ export default TicketSelect;
 /**
  * Enhanced Ticket Select for the WordPress editor
  */
-export const EditorTicketSelect = withBaseControl(
-	'select-ticket'
-)( TicketSelect );
+export const EditorTicketSelect = withBaseControl('select-ticket')(
+	TicketSelect
+);
