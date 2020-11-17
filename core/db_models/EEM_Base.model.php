@@ -7,6 +7,7 @@ use EventEspresso\core\exceptions\ModelConfigurationException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
 use EventEspresso\core\interfaces\ResettableInterface;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\loaders\LoaderInterface;
 
 /**
  * Class EEM_Base
@@ -870,6 +871,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     {
         if (
             isset($query_params['limit'])
+			&& $query_params['limit']
             && ! isset($query_params['group_by'])
         ) {
             $query_params['group_by'] = array_keys($this->get_combined_primary_key_fields());
