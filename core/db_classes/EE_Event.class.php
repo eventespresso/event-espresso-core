@@ -37,13 +37,14 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 
 
     /**
-     * @param array  $props_n_values          incoming values
-     * @param string $timezone                incoming timezone (if not set the timezone set for the website will be
-     *                                        used.)
-     * @param array  $date_formats            incoming date_formats in an array where the first value is the
-     *                                        date_format and the second value is the time format
+     * @param array  $props_n_values    incoming values
+     * @param string|null $timezone     incoming timezone
+     *                                  (if not set the timezone set for the website will be used.)
+     * @param array  $date_formats      incoming date_formats in an array where the first value is the
+     *                                  date_format and the second value is the time format
      * @return EE_Event
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function new_instance($props_n_values = array(), $timezone = null, $date_formats = array())
     {
@@ -54,10 +55,11 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 
     /**
      * @param array  $props_n_values  incoming values from the database
-     * @param string $timezone        incoming timezone as set by the model.  If not set the timezone for
-     *                                the website will be used.
+     * @param string|null $timezone   incoming timezone
+     *                                (if not set the timezone set for the website will be used.)
      * @return EE_Event
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function new_instance_from_db($props_n_values = array(), $timezone = null)
     {
@@ -67,7 +69,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 
     /**
      * @return EventSpacesCalculator
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function getAvailableSpacesCalculator()
     {
@@ -85,6 +87,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      * @param mixed  $field_value
      * @param bool   $use_default
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set($field_name, $field_value, $use_default = false)
     {
@@ -109,8 +112,9 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      * @param bool   $use_default
      * @return void
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function set_status($new_status = null, $use_default = false)
+    public function set_status($new_status = '', $use_default = false)
     {
         // if nothing is set, and we aren't explicitly wanting to reset the status, then just leave
         if (empty($new_status) && ! $use_default) {
@@ -146,9 +150,11 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * Gets all the datetimes for this event
      *
-     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @param array $query_params @see
+     *                            https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Base_Class[]|EE_Datetime[]
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function datetimes($query_params = array())
     {
@@ -161,6 +167,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      *
      * @return EE_Base_Class[]|EE_Datetime[]
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function datetimes_in_chronological_order()
     {
@@ -176,11 +183,11 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      *
      * @param boolean $show_expired whether or not to include expired events
      * @param boolean $show_deleted whether or not to include deleted events
-     * @param null    $limit
+     * @param int    $limit
      * @return EE_Datetime[]
      * @throws EE_Error
      */
-    public function datetimes_ordered($show_expired = true, $show_deleted = false, $limit = null)
+    public function datetimes_ordered($show_expired = true, $show_deleted = false, $limit = 0)
     {
         return EEM_Datetime::instance($this->_timezone)->get_datetimes_for_event_ordered_by_DTT_order(
             $this->ID(),
@@ -196,6 +203,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      *
      * @return EE_Base_Class|EE_Datetime
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function first_datetime()
     {
@@ -228,9 +236,11 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * Gets all the tickets available for purchase of this event
      *
-     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @param array $query_params @see
+     *                            https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Base_Class[]|EE_Ticket[]
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function tickets($query_params = array())
     {
@@ -260,6 +270,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      *
      * @return EE_Ticket[]
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function active_tickets()
     {
@@ -277,6 +288,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * @return bool
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function additional_limit()
     {
@@ -287,6 +299,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * @return bool
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function allow_overflow()
     {
@@ -297,6 +310,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * @return bool
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function created()
     {
@@ -307,6 +321,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * @return bool
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function description()
     {
@@ -319,6 +334,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      *
      * @return string of html
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function description_filtered()
     {
@@ -329,6 +345,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * @return bool
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function display_description()
     {
@@ -339,6 +356,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * @return bool
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function display_ticket_selector()
     {
@@ -349,6 +367,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * @return bool
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function external_url()
     {
@@ -359,6 +378,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * @return bool
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function member_only()
     {
@@ -369,6 +389,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * @return bool
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function phone()
     {
@@ -379,6 +400,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * @return bool
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function modified()
     {
@@ -389,6 +411,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * @return bool
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function name()
     {
@@ -399,6 +422,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * @return bool
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function order()
     {
@@ -409,6 +433,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * @return bool|string
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function default_registration_status()
     {
@@ -425,6 +450,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      * @param bool $not_full_desc
      * @return bool|string
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function short_description($num_words = 55, $more = null, $not_full_desc = false)
     {
@@ -440,6 +466,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * @return bool
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function slug()
     {
@@ -450,6 +477,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * @return bool
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function timezone_string()
     {
@@ -460,6 +488,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * @return bool
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function visible_on()
     {
@@ -470,6 +499,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * @return int
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function wp_user()
     {
@@ -480,6 +510,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * @return bool
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function donations()
     {
@@ -490,6 +521,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * @param $limit
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_additional_limit($limit)
     {
@@ -500,6 +532,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * @param $created
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_created($created)
     {
@@ -510,6 +543,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * @param $desc
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_description($desc)
     {
@@ -520,6 +554,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * @param $display_desc
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_display_description($display_desc)
     {
@@ -530,6 +565,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * @param $display_ticket_selector
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_display_ticket_selector($display_ticket_selector)
     {
@@ -540,6 +576,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * @param $external_url
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_external_url($external_url)
     {
@@ -550,6 +587,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * @param $member_only
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_member_only($member_only)
     {
@@ -560,6 +598,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * @param $event_phone
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_event_phone($event_phone)
     {
@@ -570,6 +609,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * @param $modified
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_modified($modified)
     {
@@ -580,6 +620,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * @param $name
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_name($name)
     {
@@ -590,6 +631,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * @param $order
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_order($order)
     {
@@ -600,6 +642,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * @param $short_desc
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_short_description($short_desc)
     {
@@ -610,6 +653,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * @param $slug
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_slug($slug)
     {
@@ -620,6 +664,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * @param $timezone_string
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_timezone_string($timezone_string)
     {
@@ -630,6 +675,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * @param $visible_on
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_visible_on($visible_on)
     {
@@ -640,6 +686,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * @param $wp_user
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_wp_user($wp_user)
     {
@@ -650,6 +697,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * @param $default_registration_status
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_default_registration_status($default_registration_status)
     {
@@ -660,6 +708,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * @param $donations
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_donations($donations)
     {
@@ -673,6 +722,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      * @param EE_Venue /int $venue_id_or_obj
      * @return EE_Base_Class|EE_Venue
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function add_venue($venue_id_or_obj)
     {
@@ -686,6 +736,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      * @param EE_Venue /int $venue_id_or_obj
      * @return EE_Base_Class|EE_Venue
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function remove_venue($venue_id_or_obj)
     {
@@ -696,9 +747,11 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * Gets all the venues related ot the event. May provide additional $query_params if desired
      *
-     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @param array $query_params @see
+     *                            https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Base_Class[]|EE_Venue[]
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function venues($query_params = array())
     {
@@ -711,7 +764,6 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      *
      * @access public
      * @return boolean true yes, false no
-     * @throws EE_Error
      */
     private function _has_ID_and_is_published()
     {
@@ -734,15 +786,31 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      * @access public
      * @return boolean true yes, false no
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function is_upcoming()
+    {
+        return $this->isActiveOrUpcoming('upcoming');
+    }
+
+
+    /**
+     * compares the internal dates with NOW and determines if the event is active or upcoming
+     *
+     * @param string $compare   options: 'active' or 'upcoming'
+     * @return boolean          true yes, false no
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    private function isActiveOrUpcoming($compare = 'active')
     {
         // check if event id is present and if this event is published
         if ($this->is_inactive()) {
             return false;
         }
+        $compare = $compare === 'active' ? 'active' : 'upcoming';
         // set initial value
-        $upcoming = false;
+        $active_or_upcoming = false;
         // next let's get all datetimes and loop through them
         $datetimes = $this->datetimes_in_chronological_order();
         foreach ($datetimes as $datetime) {
@@ -751,53 +819,43 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
                 if ($datetime->is_expired()) {
                     continue;
                 }
-                // if this dtt is active then we return false.
+                // if this datetime is active...
                 if ($datetime->is_active()) {
-                    return false;
+                    // but we're comparing against upcoming dates
+                    if ($compare === 'upcoming') {
+                        return false;
+                    }
+                    $active_or_upcoming = true;
                 }
-                // otherwise let's check upcoming status
-                $upcoming = $datetime->is_upcoming();
+                // if this datetime is upcoming...
+                if ($datetime->is_upcoming()) {
+                    // but we're comparing against active dates
+                    if ($compare === 'active') {
+                        return false;
+                    }
+                    $active_or_upcoming = true;
+                }
             }
         }
-        return $upcoming;
+        return $active_or_upcoming;
     }
 
 
     /**
      * @return bool
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function is_active()
     {
-        // check if event id is present and if this event is published
-        if ($this->is_inactive()) {
-            return false;
-        }
-        // set initial value
-        $active = false;
-        // next let's get all datetimes and loop through them
-        $datetimes = $this->datetimes_in_chronological_order();
-        foreach ($datetimes as $datetime) {
-            if ($datetime instanceof EE_Datetime) {
-                // if this dtt is expired then we continue cause one of the other datetimes might be active.
-                if ($datetime->is_expired()) {
-                    continue;
-                }
-                // if this dtt is upcoming then we return false.
-                if ($datetime->is_upcoming()) {
-                    return false;
-                }
-                // otherwise let's check active status
-                $active = $datetime->is_active();
-            }
-        }
-        return $active;
+        return $this->isActiveOrUpcoming('active');
     }
 
 
     /**
      * @return bool
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function is_expired()
     {
@@ -825,7 +883,6 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 
     /**
      * @return bool
-     * @throws EE_Error
      */
     public function is_inactive()
     {
@@ -864,13 +921,14 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 
     /**
      *    perform_sold_out_status_check
-     *    checks all of this events's datetime  reg_limit - sold values to determine if ANY datetimes have spaces
+     *    checks all of this event's datetime  reg_limit - sold values to determine if ANY datetimes have spaces
      *    available... if NOT, then the event status will get toggled to 'sold_out'
      *
      * @return bool    return the ACTUAL sold out state.
      * @throws EE_Error
      * @throws DomainException
      * @throws UnexpectedEntityException
+     * @throws ReflectionException
      */
     public function perform_sold_out_status_check()
     {
@@ -933,7 +991,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 
     /**
      * This returns the total spaces available for an event
-     * while considering all the qtys on the tickets and the reg limits
+     * while considering all the quantities on the tickets and the reg limits
      * on the datetimes attached to this event.
      *
      * @param   bool $consider_sold Whether to consider any tickets that have already sold in our calculation.
@@ -966,11 +1024,12 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * Checks if the event is set to sold out
      *
-     * @param  bool $actual whether or not to perform calculations to not only figure the
+     * @param bool $actual  whether or not to perform calculations to not only figure the
      *                      actual status but also to flip the status if necessary to sold
      *                      out If false, we just check the existing status of the event
      * @return boolean
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function is_sold_out($actual = false)
     {
@@ -1109,6 +1168,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * @return bool|int
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_number_of_tickets_sold()
     {
@@ -1145,6 +1205,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      *
      * @return EE_Base_Class|EE_Ticket|null
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_ticket_with_earliest_start_time()
     {
@@ -1160,6 +1221,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      *
      * @return EE_Base_Class|EE_Ticket|null
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_ticket_with_latest_end_time()
     {
@@ -1204,6 +1266,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      *
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_permalink()
     {
@@ -1308,15 +1371,18 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
                 $field_to_update => false
             ]
         );
+        return $question_group_id_or_obj;
     }
 
 
     /**
      * Gets all the question groups, ordering them by QSG_order ascending
      *
-     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @param array $query_params @see
+     *                            https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Base_Class[]|EE_Question_Group[]
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function question_groups($query_params = array())
     {
@@ -1333,16 +1399,15 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      */
     public function get_icon()
     {
-        return '<span class="dashicons dashicons-flag"></span>';
+        return '<span class="dashicons dashicons-flag" />';
     }
 
 
     /**
      * Implementation for EEI_Admin_Links interface method.
      *
-     * @see EEI_Admin_Links for comments
      * @return string
-     * @throws EE_Error
+     *@see EEI_Admin_Links for comments
      */
     public function get_admin_details_link()
     {
@@ -1353,9 +1418,8 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * Implementation for EEI_Admin_Links interface method.
      *
-     * @see EEI_Admin_Links for comments
      * @return string
-     * @throws EE_Error
+     *@see EEI_Admin_Links for comments
      */
     public function get_admin_edit_link()
     {
