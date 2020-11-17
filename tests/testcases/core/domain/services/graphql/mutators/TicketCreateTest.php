@@ -83,24 +83,22 @@ class TicketCreateTest extends BaseMutationTest
          * Run the mutation
          */
         $actual = $this->createEntityMutation();
-        $this->assertNotEmpty($actual);
+        $this->assertNotEmpty($actual['data']);
 
         /**
          * We're expecting to have createEntity returned with a nested clientMutationId matching the
          * clientMutationId we sent through, as well as the name and description we passed through in the mutation
          */
         $expected = [
-            'data' => [
-                'createEspressoTicket' => [
-                    'clientMutationId' => $this->client_mutation_id,
-                    'espressoTicket' => [
-                        'name'        => $this->name,
-                        'description' => $this->description,
-                    ],
+            'createEspressoTicket' => [
+                'clientMutationId' => $this->client_mutation_id,
+                'espressoTicket' => [
+                    'name'        => $this->name,
+                    'description' => $this->description,
                 ],
             ],
         ];
 
-        $this->assertEquals($expected, $actual);
+        $this->assertEquals($expected, $actual['data']);
     }
 }
