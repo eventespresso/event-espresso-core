@@ -1209,36 +1209,6 @@ $generated_i18n_strings = array(
 	// Reference: packages/predicates/src/registration/statusOptions.ts:6
 	__( 'Approved', 'event_espresso' ),
 
-	// Reference: packages/rich-text-editor/src/components/RichTextEditor/RichTextEditor.tsx:78
-	__( 'Write something…', 'event_espresso' ),
-
-	// Reference: packages/rich-text-editor/src/components/ToolbarControls/HeadingControls.tsx:19
-	__( 'heading selector', 'event_espresso' ),
-
-	// Reference: packages/rich-text-editor/src/components/ToolbarControls/UrlInput.tsx:66
-	__( 'Confirm', 'event_espresso' ),
-
-	// Reference: packages/rich-text-editor/src/components/constants.ts:13
-	__( 'blockquote', 'event_espresso' ),
-
-	// Reference: packages/rich-text-editor/src/components/constants.ts:18
-	__( 'unordered list', 'event_espresso' ),
-
-	// Reference: packages/rich-text-editor/src/components/constants.ts:23
-	__( 'ordered list', 'event_espresso' ),
-
-	// Reference: packages/rich-text-editor/src/components/constants.ts:58
-	__( 'bold', 'event_espresso' ),
-
-	// Reference: packages/rich-text-editor/src/components/constants.ts:63
-	__( 'italic', 'event_espresso' ),
-
-	// Reference: packages/rich-text-editor/src/components/constants.ts:68
-	__( 'underline', 'event_espresso' ),
-
-	// Reference: packages/rich-text-editor/src/components/constants.ts:73
-	__( 'strikethrough', 'event_espresso' ),
-
 	// Reference: packages/tpc/src/buttons/AddPriceModifierButton.tsx:15
 	__( 'add new price modifier after this row', 'event_espresso' ),
 
