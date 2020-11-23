@@ -945,7 +945,7 @@ $generated_i18n_strings = array(
 	// Reference: packages/components/src/Confirm/useConfirmationDialog.tsx:35
 	__( 'Yes', 'event_espresso' ),
 
-	// Reference: packages/components/src/DateTimeRangePicker/index.tsx:73
+	// Reference: packages/components/src/DateTimeRangePicker/index.tsx:74
 	// Reference: packages/components/src/PopoverForm/PopoverForm.tsx:42
 	__( 'save', 'event_espresso' ),
 
