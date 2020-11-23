@@ -205,62 +205,62 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/multiStep/DateFormSteps.tsx:12
 	__( 'Assign Tickets', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:107
+	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:101
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:63
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:114
+	__( 'End Date', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:110
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/details/useBulkEditFormConfig.ts:108
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:119
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:123
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:108
 	__( 'Details', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:111
+	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:114
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/details/useBulkEditFormConfig.ts:112
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:75
 	__( 'Capacity', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:116
+	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:119
 	__( 'The maximum number of registrants that can attend the event at this particular date.', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:120
+	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:123
 	__( 'Set to 0 to close registration or leave blank for no limit.', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:125
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:198
+	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:128
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:202
 	__( 'Trash', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:69
+	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:72
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/details/useBulkEditFormConfig.ts:45
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:81
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:85
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:45
 	__( 'Basics', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:73
+	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:76
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/details/useBulkEditFormConfig.ts:49
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:44
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:85
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:89
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:49
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:42
 	__( 'Name', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:80
+	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:83
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/details/useBulkEditFormConfig.ts:55
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:92
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:96
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:55
 	// Reference: packages/tpc/src/components/table/useHeaderRowGenerator.ts:41
 	__( 'Description', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:88
+	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:91
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/details/useBulkEditFormConfig.ts:63
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:63
 	__( 'Dates', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:92
+	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:95
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:52
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:104
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:108
 	__( 'Start Date', 'event_espresso' ),
-
-	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:98
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:63
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:110
-	__( 'End Date', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/DatesList.tsx:34
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/TableView.tsx:42
@@ -623,60 +623,60 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/TicketFormSteps.tsx:17
 	__( 'Assign Dates', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:100
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:104
 	__( 'Ticket Sales', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:123
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:127
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:112
 	__( 'Quantity For Sale', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:129
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:133
 	__( 'The maximum number of this ticket available for sale.', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:131
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:135
 	__( 'Set to 0 to stop sales, or leave blank for no limit.', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:136
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:140
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:121
 	__( 'Number of Uses', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:142
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:146
 	__( 'Controls the total number of times this ticket can be used, regardless of the number of dates it is assigned to.', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:146
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:150
 	__( 'Example: A ticket might have access to 4 different dates, but setting this field to 2 would mean that the ticket could only be used twice. Leave blank for no limit.', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:153
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:157
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:129
 	__( 'Minimum Quantity', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:158
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:162
 	__( 'The minimum quantity that can be selected for this ticket. Use this to create ticket bundles or graduated pricing.', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:162
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:166
 	__( 'Leave blank for no minimum.', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:167
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:171
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:137
 	__( 'Maximum Quantity', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:173
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:177
 	__( 'The maximum quantity that can be selected for this ticket. Use this to create ticket bundles or graduated pricing.', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:177
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:181
 	__( 'Leave blank for no maximum.', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:182
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:186
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:146
 	__( 'Required Ticket', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:184
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:188
 	__( 'If enabled, the ticket must be selected and will appear first in frontend ticket lists.', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:191
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:195
 	__( 'Default Ticket', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:193
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.tsx:197
 	__( 'If enabled, the ticket will appear on all new events.', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/TicketsList.tsx:35
@@ -1139,14 +1139,20 @@ $generated_i18n_strings = array(
 	// Reference: packages/edtr-services/src/apollo/initialization/useCacheRehydration.ts:134
 	__( 'prices initialized', 'event_espresso' ),
 
-	// Reference: packages/edtr-services/src/utils/dateAndTime.ts:12
+	// Reference: packages/edtr-services/src/utils/dateAndTime.ts:23
+	__( 'End date has been set one hour after start date', 'event_espresso' ),
+
+	// Reference: packages/edtr-services/src/utils/dateAndTime.ts:36
+	__( 'Start date has been set one hour before end date', 'event_espresso' ),
+
+	// Reference: packages/edtr-services/src/utils/dateAndTime.ts:48
+	__( 'Required', 'event_espresso' ),
+
+	// Reference: packages/edtr-services/src/utils/dateAndTime.ts:53
 	__( 'Start Date is required', 'event_espresso' ),
 
-	// Reference: packages/edtr-services/src/utils/dateAndTime.ts:16
+	// Reference: packages/edtr-services/src/utils/dateAndTime.ts:57
 	__( 'End Date is required', 'event_espresso' ),
-
-	// Reference: packages/edtr-services/src/utils/dateAndTime.ts:7
-	__( 'Required', 'event_espresso' ),
 
 	// Reference: packages/form/src/renderers/RepeatableRenderer.tsx:35
 	/* translators: %d the entry number */
