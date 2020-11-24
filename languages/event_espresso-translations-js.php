@@ -166,7 +166,7 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/TicketSelector.tsx:28
 	__( 'Display Ticket Selector', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/index.tsx:21
+	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/index.tsx:22
 	__( 'Registration Options', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/DateRegistrationsLink.tsx:17
