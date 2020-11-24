@@ -4,8 +4,9 @@ namespace EventEspresso\core\domain\services\contexts;
 
 use EventEspresso\core\domain\Domain;
 use EventEspresso\core\services\request\RequestInterface;
-use InvalidArgumentException;
 use EventEspresso\core\domain\entities\contexts\RequestTypeContext;
+use InvalidArgumentException;
+use Throwable;
 
 /**
  * Class RequestTypeContextDetector
@@ -186,12 +187,23 @@ class RequestTypeContextDetector
 
 
     /**
+     * Checks for URLs like https://mysite.com/graphql
+     *
      * @return bool
      */
     private function isEspressoGraphQLRequest()
     {
-        // Check for URLs like https://mysite.com/graphql
-        return $this->uriPathMatches(RequestTypeContext::GQL);
+        try {
+            require_once EE_THIRD_PARTY . 'wp-graphql/access-functions.php';
+            $endpoint = get_graphql_setting(
+                'graphql_endpoint',
+                apply_filters('graphql_endpoint', RequestTypeContext::GQL)
+            );
+            $is_gql_request = $this->uriPathMatches($endpoint);
+        } catch (Throwable $t) {
+            $is_gql_request = false;
+        }
+        return $is_gql_request;
     }
 
 
