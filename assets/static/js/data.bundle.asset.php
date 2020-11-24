@@ -1,1 +1,0 @@
-<?php return array('dependencies' => array('eventespresso-events', 'react'), 'version' => '941b7822d59a83ff82eafaae2c30216a');
