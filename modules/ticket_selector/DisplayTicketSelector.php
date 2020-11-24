@@ -207,7 +207,7 @@ class DisplayTicketSelector
         // is the event expired ?
         $template_args['event_is_expired'] = ! is_admin() ? $this->event->is_expired() : false;
         if ($template_args['event_is_expired']) {
-            return $this->expiredEventMessage();
+            return is_single() ? $this->expiredEventMessage() : $this->expiredEventMessage() . $this->displayViewDetailsButton();
         }
         // begin gathering template arguments by getting event status
         $template_args = array('event_status' => $this->event->get_active_status());
