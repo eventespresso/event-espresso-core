@@ -15,18 +15,20 @@ import {
 
 /**
  * Described attributes for this model
+ *
  * @type {{attributes: *}}
  */
 export const queryDataTypes = {
-	queryData: PropTypes.shape( {
+	queryData: PropTypes.shape({
 		limit: PropTypes.number,
 		orderBy: PropTypes.string,
-		order: PropTypes.oneOf( ALLOWED_ORDER_VALUES ),
-	} ),
+		order: PropTypes.oneOf(ALLOWED_ORDER_VALUES),
+	}),
 };
 
 /**
  * Default attributes for this model
+ *
  * @type {
  * 	{
  * 		attributes: {
@@ -54,13 +56,11 @@ export const defaultQueryData = {
  * @return { string } Returns an actual orderBy string for the REST query for
  *                      the provided alias
  */
-export const mapOrderBy = ( orderBy ) => {
+export const mapOrderBy = (orderBy) => {
 	const orderByMap = {
 		statusCode: 'STS_code',
 	};
-	return isUndefined( orderByMap[ orderBy ] ) ?
-		orderBy :
-		orderByMap[ orderBy ];
+	return isUndefined(orderByMap[orderBy]) ? orderBy : orderByMap[orderBy];
 };
 
 /**
@@ -70,21 +70,21 @@ export const mapOrderBy = ( orderBy ) => {
  * @param {number} statusType 	ID for type of Status to retrieve
  * @return {string}             The assembled where conditions.
  */
-export const whereConditions = ( { statusType } ) => {
+export const whereConditions = ({ statusType }) => {
 	const where = [];
-	if ( statusType ) {
-		where.push( 'where[STS_type]=' + statusType );
+	if (statusType) {
+		where.push('where[STS_type]=' + statusType);
 	}
-	return where.join( '&' );
+	return where.join('&');
 };
 
 /**
  * Return a query string for use by a REST request given a set of queryData.
+ *
  * @param { Object } queryData
  * @return { string }  Returns the query string.
  */
-export const getQueryString = ( queryData = {} ) => {
+export const getQueryString = (queryData = {}) => {
 	queryData = { ...defaultQueryData.queryData, ...queryData };
-	return baseGetQueryString( queryData, whereConditions, mapOrderBy );
+	return baseGetQueryString(queryData, whereConditions, mapOrderBy);
 };
-

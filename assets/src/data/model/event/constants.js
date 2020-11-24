@@ -11,4 +11,4 @@ export const EVENT_STATUS_ID = {
 	CANCELLED: 'cancelled',
 };
 
-export const EVENT_STATUS_IDS = values( EVENT_STATUS_ID );
+export const EVENT_STATUS_IDS = values(EVENT_STATUS_ID);

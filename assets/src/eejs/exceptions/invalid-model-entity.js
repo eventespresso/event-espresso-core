@@ -15,12 +15,12 @@ import InvalidType from './invalid-type';
  * schema property.
  */
 export default class InvalidModelEntity extends InvalidType {
-	constructor( ...args ) {
-		super( ...args );
-		if ( Error.captureStackTrace ) {
-			Error.captureStackTrace( this, InvalidModelEntity );
+	constructor(...args) {
+		super(...args);
+		if (Error.captureStackTrace) {
+			Error.captureStackTrace(this, InvalidModelEntity);
 		}
 		this.message = 'Invalid model entity instance provided.' + this.message;
-		this.modelEntity = args[ 1 ] || {};
+		this.modelEntity = args[1] || {};
 	}
 }

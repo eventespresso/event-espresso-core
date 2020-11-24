@@ -12,4 +12,4 @@ export const DATETIME_STATUS_ID = {
 	INACTIVE: 'DTI',
 };
 
-export const DATETIME_STATUS_IDS = values( DATETIME_STATUS_ID );
+export const DATETIME_STATUS_IDS = values(DATETIME_STATUS_ID);

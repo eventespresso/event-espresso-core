@@ -8,8 +8,8 @@ import { removeEmptyFromState } from '../remove-empty-from-state';
  */
 import { fromJS } from 'immutable';
 
-describe( 'removeEmptyFromState()', () => {
-	const testState = fromJS( {
+describe('removeEmptyFromState()', () => {
+	const testState = fromJS({
 		level1: {
 			level2a: {
 				level3: {
@@ -23,56 +23,46 @@ describe( 'removeEmptyFromState()', () => {
 				},
 			},
 		},
-	} );
+	});
 	[
 		[
 			'level 1 remaining',
-			[ 'level1', 'level2a', 'level3', 'level4' ],
+			['level1', 'level2a', 'level3', 'level4'],
 			1,
-			testState.deleteIn( [ 'level1', 'level2a' ] ),
+			testState.deleteIn(['level1', 'level2a']),
 		],
 		[
 			'2 levels remaining',
-			[ 'level1', 'level2a', 'level3', 'level4' ],
+			['level1', 'level2a', 'level3', 'level4'],
 			2,
-			testState.deleteIn( [ 'level1', 'level2a', 'level3' ] ),
+			testState.deleteIn(['level1', 'level2a', 'level3']),
 		],
 		[
 			'0 levels remaining',
-			[ 'level1', 'level2a' ],
+			['level1', 'level2a'],
 			0,
-			testState.deleteIn( [ 'level1', 'level2a' ] ),
+			testState.deleteIn(['level1', 'level2a']),
 		],
 		[
 			'keeping non empty level',
-			[ 'level1', 'level2b', 'level3', 'level4' ],
+			['level1', 'level2b', 'level3', 'level4'],
 			1,
-			testState.deleteIn( [ 'level1', 'level2b', 'level3', 'level4' ] ),
+			testState.deleteIn(['level1', 'level2b', 'level3', 'level4']),
 		],
-	].forEach( ( [
-		description,
-		path,
-		length,
-		expectedResult,
-	] ) => {
-		it( description + ' withMutations is true', () => {
+	].forEach(([description, path, length, expectedResult]) => {
+		it(description + ' withMutations is true', () => {
 			const resultState = removeEmptyFromState(
 				testState,
-				[ ...path ],
+				[...path],
 				length
 			);
-			expect( resultState ).toEqual( expectedResult );
-		} );
-		it( description + ' withMutations is not true', () => {
-			const resultState = testState.withMutations( ( subState ) => {
-				removeEmptyFromState(
-					subState,
-					path,
-					length,
-					false,
-				);
-			} );
-			expect( resultState ).toEqual( expectedResult );
-		} );
-	} );
-} );
+			expect(resultState).toEqual(expectedResult);
+		});
+		it(description + ' withMutations is not true', () => {
+			const resultState = testState.withMutations((subState) => {
+				removeEmptyFromState(subState, path, length, false);
+			});
+			expect(resultState).toEqual(expectedResult);
+		});
+	});
+});

@@ -14,12 +14,16 @@ import { mapReducer } from './map-reducer';
  * @param {Map} mapObject
  * @return {Object} A plain object equivalent of the incoming Map
  */
-export const convertToObjectFromMap = ( mapObject ) => {
-	if ( ! isMap( mapObject ) ) {
+export const convertToObjectFromMap = (mapObject) => {
+	if (!isMap(mapObject)) {
 		return mapObject;
 	}
-	return mapReducer( mapObject, ( object, item, itemId ) => {
-		object[ itemId ] = item;
-		return object;
-	}, {} );
+	return mapReducer(
+		mapObject,
+		(object, item, itemId) => {
+			object[itemId] = item;
+			return object;
+		},
+		{}
+	);
 };

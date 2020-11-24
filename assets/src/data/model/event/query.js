@@ -21,28 +21,30 @@ export const nowDateAndTime = moment();
 
 /**
  * Described attributes for this model
+ *
  * @type {{attributes: *}}
  */
 export const queryDataTypes = {
-	queryData: PropTypes.shape( {
+	queryData: PropTypes.shape({
 		limit: PropTypes.number,
-		orderBy: PropTypes.oneOf( [
+		orderBy: PropTypes.oneOf([
 			'EVT_name',
 			'EVT_ID',
 			'start_date',
 			'end_date',
 			'ticket_start',
 			'ticket_end',
-		] ),
-		order: PropTypes.oneOf( ALLOWED_ORDER_VALUES ),
+		]),
+		order: PropTypes.oneOf(ALLOWED_ORDER_VALUES),
 		showExpired: PropTypes.bool,
 		categorySlug: PropTypes.string,
 		month: PropTypes.month,
-	} ),
+	}),
 };
 
 /**
  * Default attributes for this model
+ *
  * @type {
  * 	{
  * 		attributes: {
@@ -72,16 +74,14 @@ export const defaultQueryData = {
  * @return { string } Returns an actual orderBy string for the REST query for
  *                      the provided alias
  */
-export const mapOrderBy = ( orderBy ) => {
+export const mapOrderBy = (orderBy) => {
 	const orderByMap = {
 		start_date: 'Datetime.DTT_EVT_start',
 		end_date: 'Datetime.DTT_EVT_end',
 		ticket_start: 'Datetime.Ticket.TKT_start_date',
 		ticket_end: 'Datetime.Ticket.TKT_end_date',
 	};
-	return isUndefined( orderByMap[ orderBy ] ) ?
-		orderBy :
-		orderByMap[ orderBy ];
+	return isUndefined(orderByMap[orderBy]) ? orderBy : orderByMap[orderBy];
 };
 
 /**
@@ -94,46 +94,50 @@ export const mapOrderBy = ( orderBy ) => {
  * 								 Can be any month format recognized by moment.
  * @return {string}              The assembled where conditions.
  */
-export const whereConditions = ( {
+export const whereConditions = ({
 	showExpired = false,
 	categorySlug,
 	month = 'none',
-} ) => {
+}) => {
 	const where = [];
 
-	if ( ! showExpired ) {
+	if (!showExpired) {
 		where.push(
-			'where[Datetime.DTT_EVT_end**expired][]=' + GREATER_THAN +
-			'&where[Datetime.DTT_EVT_end**expired][]=' +
-			nowDateAndTime.local().format()
+			'where[Datetime.DTT_EVT_end**expired][]=' +
+				GREATER_THAN +
+				'&where[Datetime.DTT_EVT_end**expired][]=' +
+				nowDateAndTime.local().format()
 		);
 	}
-	if ( categorySlug ) {
+	if (categorySlug) {
 		where.push(
 			'where[Term_Relationship.Term_Taxonomy.Term.slug]=' + categorySlug
 		);
 	}
-	if ( month && month !== 'none' ) {
+	if (month && month !== 'none') {
 		where.push(
-			'where[Datetime.DTT_EVT_start][]=' + GREATER_THAN_AND_EQUAL +
-			'&where[Datetime.DTT_EVT_start][]=' +
-			moment().month( month ).startOf( 'month' ).local().format()
+			'where[Datetime.DTT_EVT_start][]=' +
+				GREATER_THAN_AND_EQUAL +
+				'&where[Datetime.DTT_EVT_start][]=' +
+				moment().month(month).startOf('month').local().format()
 		);
 		where.push(
-			'where[Datetime.DTT_EVT_end][]=' + LESS_THAN_AND_EQUAL +
-			'&where[Datetime.DTT_EVT_end][]=' +
-			moment().month( month ).endOf( 'month' ).local().format()
+			'where[Datetime.DTT_EVT_end][]=' +
+				LESS_THAN_AND_EQUAL +
+				'&where[Datetime.DTT_EVT_end][]=' +
+				moment().month(month).endOf('month').local().format()
 		);
 	}
-	return where.join( '&' );
+	return where.join('&');
 };
 
 /**
  * Return a query string for use by a REST request given a set of queryData.
+ *
  * @param { Object } queryData
  * @return { string }  Returns the query string.
  */
-export const getQueryString = ( queryData = {} ) => {
+export const getQueryString = (queryData = {}) => {
 	queryData = { ...defaultQueryData.queryData, ...queryData };
-	return baseGetQueryString( queryData, whereConditions, mapOrderBy );
+	return baseGetQueryString(queryData, whereConditions, mapOrderBy);
 };

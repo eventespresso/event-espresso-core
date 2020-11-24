@@ -30,23 +30,19 @@ export function* receiveLatestCheckin(
 	registrationId,
 	dateTimeId
 ) {
-	if ( ! isModelEntityOfModel( checkinEntity, 'checkin' ) ) {
+	if (!isModelEntityOfModel(checkinEntity, 'checkin')) {
 		throw new InvalidModelEntity(
 			'Expected a checkin record.',
 			checkinEntity
 		);
 	}
-	yield dispatch(
-		REDUCER_KEY,
-		'receiveEntity',
-		checkinEntity
-	);
+	yield dispatch(REDUCER_KEY, 'receiveEntity', checkinEntity);
 	yield dispatch(
 		'core/data',
 		'finishResolution',
 		REDUCER_KEY,
 		'getEntityById',
-		[ 'checkin', checkinEntity.id ]
+		['checkin', checkinEntity.id]
 	);
 	yield dispatch(
 		REDUCER_KEY,
@@ -54,14 +50,14 @@ export function* receiveLatestCheckin(
 		'getLatestCheckin',
 		checkinEntity.id,
 		registrationId,
-		dateTimeId,
+		dateTimeId
 	);
 	yield dispatch(
 		'core/data',
 		'finishResolution',
 		REDUCER_KEY,
 		'getLatestCheckin',
-		[ registrationId, dateTimeId ]
+		[registrationId, dateTimeId]
 	);
 }
 
@@ -74,23 +70,24 @@ export function* receiveLatestCheckin(
  * in or not is ignored.
  * @return {BaseEntity|null} Null if there is an error or the new Checkin entity
  */
-export function* toggleCheckin( registrationId, dateTimeId, force = false ) {
+export function* toggleCheckin(registrationId, dateTimeId, force = false) {
 	let checkInResponse;
-	const path = `${ getEndpoint( 'registration' ) }/` +
-		`${ registrationId }/toggle_checkin_for_datetime/${ dateTimeId }`;
+	const path =
+		`${getEndpoint('registration')}/` +
+		`${registrationId}/toggle_checkin_for_datetime/${dateTimeId}`;
 	try {
-		checkInResponse = yield fetch( {
+		checkInResponse = yield fetch({
 			path,
 			method: 'POST',
 			data: { force },
-		} );
-	} catch ( error ) {
+		});
+	} catch (error) {
 		yield dispatch(
 			'core/notices',
 			'createErrorNotice',
 			__(
 				'Toggling the checkin failed. Usually this is due to the checkin not having access',
-				'event_espresso',
+				'event_espresso'
 			)
 		);
 		return null;
@@ -100,20 +97,20 @@ export function* toggleCheckin( registrationId, dateTimeId, force = false ) {
 		'getFactoryForModel',
 		'checkin'
 	);
-	if ( ! isModelEntityFactoryOfModel( factory, 'checkin' ) ) {
+	if (!isModelEntityFactoryOfModel(factory, 'checkin')) {
 		warning(
 			false,
 			'The factory for the checkin model could not be retrieved.'
 		);
 		return null;
 	}
-	const newCheckin = factory.fromExisting( checkInResponse );
+	const newCheckin = factory.fromExisting(checkInResponse);
 	yield dispatch(
 		REDUCER_KEY,
 		'receiveLatestCheckin',
 		newCheckin,
 		registrationId,
-		dateTimeId,
+		dateTimeId
 	);
 	return newCheckin;
 }

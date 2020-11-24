@@ -30,7 +30,7 @@ class CoreLoader
     /**
      * @param string $folder
      * @return string|null
-     * @since $VID:$
+     * @since 4.10.7.p
      */
     private function findWordpressTests($folder = '')
     {

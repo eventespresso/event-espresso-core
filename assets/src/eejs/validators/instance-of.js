@@ -12,12 +12,21 @@ export function instanceOf(objectInstance, expectedName) {
 		return false;
 	}
 	if (objectInstance.constructor) {
-		if (objectInstance.constructor.name && objectInstance.constructor.name === expectedName) {
+		if (
+			objectInstance.constructor.name &&
+			objectInstance.constructor.name === expectedName
+		) {
 			return true;
 		}
-		if (objectInstance.constructor.displayName && objectInstance.constructor.displayName === expectedName) {
+		if (
+			objectInstance.constructor.displayName &&
+			objectInstance.constructor.displayName === expectedName
+		) {
 			return true;
 		}
 	}
-	return objectInstance.hasOwnProperty('displayName') && objectInstance.displayName === expectedName;
+	return (
+		objectInstance.hasOwnProperty('displayName') &&
+		objectInstance.displayName === expectedName
+	);
 }

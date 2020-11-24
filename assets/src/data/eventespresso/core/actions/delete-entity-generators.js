@@ -20,12 +20,12 @@ import { singularModelName } from '@eventespresso/model';
  * @param {string} modelName
  * @param {number} entityId
  */
-export function* deleteEntityById( modelName, entityId ) {
-	modelName = singularModelName( modelName );
-	yield removeEntityById( modelName, entityId );
+export function* deleteEntityById(modelName, entityId) {
+	modelName = singularModelName(modelName);
+	yield removeEntityById(modelName, entityId);
 	// remove any relation records for this entity
-	yield removeAllRelatedEntitiesForModelEntity( modelName, entityId );
-	yield receiveDeleteEntityId( modelName, entityId );
+	yield removeAllRelatedEntitiesForModelEntity(modelName, entityId);
+	yield receiveDeleteEntityId(modelName, entityId);
 }
 
 /**
@@ -35,9 +35,9 @@ export function* deleteEntityById( modelName, entityId ) {
  * @param {string} modelName
  * @param {number} entityId
  */
-export function* trashEntityById( modelName, entityId ) {
-	modelName = singularModelName( modelName );
-	yield removeEntityById( modelName, entityId );
-	yield removeAllRelatedEntitiesForModelEntity( modelName, entityId );
-	yield receiveTrashEntityId( modelName, entityId );
+export function* trashEntityById(modelName, entityId) {
+	modelName = singularModelName(modelName);
+	yield removeEntityById(modelName, entityId);
+	yield removeAllRelatedEntitiesForModelEntity(modelName, entityId);
+	yield receiveTrashEntityId(modelName, entityId);
 }

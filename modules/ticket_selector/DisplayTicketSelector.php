@@ -204,6 +204,11 @@ class DisplayTicketSelector
         if (! $this->setEvent($event)) {
             return $this->handleMissingEvent();
         }
+        // is the event expired ?
+        $template_args['event_is_expired'] = ! is_admin() ? $this->event->is_expired() : false;
+        if ($template_args['event_is_expired']) {
+            return $this->expiredEventMessage();
+        }
         // begin gathering template arguments by getting event status
         $template_args = array('event_status' => $this->event->get_active_status());
         if ($this->activeEventAndShowTicketSelector(
@@ -217,11 +222,6 @@ class DisplayTicketSelector
         $this->setMaxAttendees($this->event->additional_limit());
         if ($this->getMaxAttendees() < 1) {
             return $this->ticketSalesClosedMessage();
-        }
-        // is the event expired ?
-        $template_args['event_is_expired'] = ! is_admin() ? $this->event->is_expired() : false;
-        if ($template_args['event_is_expired']) {
-            return $this->expiredEventMessage();
         }
         // get all tickets for this event ordered by the datetime
         $tickets = $this->getTickets();

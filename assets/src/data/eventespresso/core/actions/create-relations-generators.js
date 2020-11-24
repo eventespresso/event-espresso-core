@@ -22,36 +22,27 @@ import { REDUCER_KEY } from '../constants';
  * @param {string} relationName
  * @param {BaseEntity} relationEntity
  */
-function* createRelation(
-	modelName,
-	entityId,
-	relationName,
-	relationEntity
-) {
-	relationName = singularModelName( relationName );
-	modelName = singularModelName( modelName );
-	if ( ! isModelEntityOfModel( relationEntity, relationName ) ) {
+function* createRelation(modelName, entityId, relationName, relationEntity) {
+	relationName = singularModelName(relationName);
+	modelName = singularModelName(modelName);
+	if (!isModelEntityOfModel(relationEntity, relationName)) {
 		warning(
 			false,
 			'The provided relation entity (%s) is not a base entity instance' +
-			' for the %s relation model',
+				' for the %s relation model',
 			relationEntity,
 			relationName
 		);
 		return;
 	}
-	yield dispatch(
-		REDUCER_KEY,
-		'receiveEntityAndResolve',
-		relationEntity
-	);
+	yield dispatch(REDUCER_KEY, 'receiveEntityAndResolve', relationEntity);
 	yield dispatch(
 		REDUCER_KEY,
 		'receiveRelatedEntities',
 		modelName,
 		entityId,
 		relationName,
-		[ relationEntity.id ]
+		[relationEntity.id]
 	);
 	yield dispatch(
 		REDUCER_KEY,
@@ -59,7 +50,7 @@ function* createRelation(
 		relationName,
 		relationEntity.id,
 		modelName,
-		entityId,
+		entityId
 	);
 }
 
@@ -72,27 +63,22 @@ function* createRelation(
  * @param {string} relationName
  * @param {Array<BaseEntity>} relationEntities
  */
-function* createRelations(
-	modelName,
-	entityId,
-	relationName,
-	relationEntities,
-) {
-	modelName = singularModelName( modelName );
-	relationName = singularModelName( relationName );
+function* createRelations(modelName, entityId, relationName, relationEntities) {
+	modelName = singularModelName(modelName);
+	relationName = singularModelName(relationName);
 
 	try {
-		assertArrayHasEntitiesForModel( relationEntities, relationName );
-	} catch ( exception ) {
+		assertArrayHasEntitiesForModel(relationEntities, relationName);
+	} catch (exception) {
 		warning(
 			false,
 			'Incoming relation Entities do not contain BaseEntity instances ' +
-			'for the given relation model (%s)',
-			relationName,
+				'for the given relation model (%s)',
+			relationName
 		);
 		return;
 	}
-	const relationIds = getIdsFromBaseEntityArray( relationEntities );
+	const relationIds = getIdsFromBaseEntityArray(relationEntities);
 	yield dispatch(
 		REDUCER_KEY,
 		'receiveEntitiesAndResolve',
@@ -105,23 +91,23 @@ function* createRelations(
 		modelName,
 		entityId,
 		relationName,
-		relationIds,
+		relationIds
 	);
 	const modelEntity = yield resolveSelect(
 		REDUCER_KEY,
 		'getEntityById',
 		modelName,
-		entityId,
+		entityId
 	);
 	yield dispatch(
 		'core/data',
 		'finishResolution',
 		REDUCER_KEY,
 		'getRelatedEntities',
-		[ modelEntity, relationName ]
+		[modelEntity, relationName]
 	);
-	const relationsToResolve = [ ...relationEntities ];
-	while ( relationsToResolve.length > 0 ) {
+	const relationsToResolve = [...relationEntities];
+	while (relationsToResolve.length > 0) {
 		const relationEntity = relationsToResolve.pop();
 		yield dispatch(
 			REDUCER_KEY,
@@ -129,14 +115,14 @@ function* createRelations(
 			relationName,
 			relationEntity.id,
 			modelName,
-			entityId,
+			entityId
 		);
 		yield dispatch(
 			'core/data',
 			'finishResolution',
 			REDUCER_KEY,
 			'getRelatedEntities',
-			[ relationEntity, modelName ]
+			[relationEntity, modelName]
 		);
 	}
 }
@@ -155,34 +141,26 @@ function* createRelations(
  * @param {string} modelName
  * @param {number|string} modelId
  */
-function* resolveRelationRecordForRelation(
-	relationEntity,
-	modelName,
-	modelId
-) {
-	modelName = singularModelName( modelName );
-	const relationName = singularModelName( relationEntity.modelName );
+function* resolveRelationRecordForRelation(relationEntity, modelName, modelId) {
+	modelName = singularModelName(modelName);
+	const relationName = singularModelName(relationEntity.modelName);
 	const hasEntity = yield select(
 		'core/data',
 		'hasFinishedResolution',
 		REDUCER_KEY,
 		'getEntityById',
-		[ relationName, relationEntity.id ]
+		[relationName, relationEntity.id]
 	);
-	relationEntity = hasEntity ?
-		yield select(
-			REDUCER_KEY,
-			'getEntityById',
-			relationName,
-			relationEntity.id
-		) :
-		relationEntity;
-	if ( ! hasEntity ) {
-		yield dispatch(
-			REDUCER_KEY,
-			'receiveEntityAndResolve',
-			relationEntity
-		);
+	relationEntity = hasEntity
+		? yield select(
+				REDUCER_KEY,
+				'getEntityById',
+				relationName,
+				relationEntity.id
+		  )
+		: relationEntity;
+	if (!hasEntity) {
+		yield dispatch(REDUCER_KEY, 'receiveEntityAndResolve', relationEntity);
 	}
 	yield dispatch(
 		REDUCER_KEY,
@@ -190,7 +168,7 @@ function* resolveRelationRecordForRelation(
 		modelName,
 		modelId,
 		relationName,
-		[ relationEntity.id ]
+		[relationEntity.id]
 	);
 	const modelEntity = yield resolveSelect(
 		REDUCER_KEY,
@@ -203,14 +181,14 @@ function* resolveRelationRecordForRelation(
 		'finishResolution',
 		REDUCER_KEY,
 		'getRelatedEntities',
-		[ modelEntity, relationName ]
+		[modelEntity, relationName]
 	);
 	yield dispatch(
 		'core/data',
 		'finishResolution',
 		REDUCER_KEY,
 		'getRelatedEntities',
-		[ relationEntity, modelName ]
+		[relationEntity, modelName]
 	);
 }
 
@@ -223,11 +201,11 @@ function* resolveRelationRecordForRelation(
  * modelName.
  * @throws InvalidModelEntity
  */
-const assertArrayHasEntitiesForModel = ( entities, relationModelName ) => {
-	relationModelName = singularModelName( relationModelName );
-	for ( const entity of entities ) {
-		if ( ! isModelEntityOfModel( entity, relationModelName ) ) {
-			throw new InvalidModelEntity( '', entity );
+const assertArrayHasEntitiesForModel = (entities, relationModelName) => {
+	relationModelName = singularModelName(relationModelName);
+	for (const entity of entities) {
+		if (!isModelEntityOfModel(entity, relationModelName)) {
+			throw new InvalidModelEntity('', entity);
 		}
 	}
 };
