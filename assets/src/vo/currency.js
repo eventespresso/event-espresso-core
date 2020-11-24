@@ -1,13 +1,7 @@
 /**
  * External imports
  */
-import {
-	isEmpty,
-	isString,
-	isNumber,
-	isBoolean,
-	isUndefined,
-} from 'lodash';
+import { isEmpty, isString, isNumber, isBoolean, isUndefined } from 'lodash';
 import { Exception, CURRENCY_CONFIG } from '@eventespresso/eejs';
 import warning from 'warning';
 
@@ -96,24 +90,25 @@ export class Currency {
 	 * this currency value object.  On construction, the Currency object is
 	 * frozen so that it becomes immutable.
 	 */
-	constructor( currencyConfig ) {
-		Currency.validateCurrencyConfig( currencyConfig );
+	constructor(currencyConfig) {
+		Currency.validateCurrencyConfig(currencyConfig);
 		this.displayName = 'Currency';
 		this.code = currencyConfig.code;
 		this.singularLabel = currencyConfig.singularLabel || '';
 		this.pluralLabel = currencyConfig.pluralLabel || '';
 		this.sign = currencyConfig.sign;
-		this.signB4 = isUndefined( currencyConfig.signB4 ) ?
-			this.signB4 :
-			currencyConfig.signB4;
-		this.decimalPlaces = isUndefined( currencyConfig.decimalPlaces ) ?
-			this.decimalPlaces :
-			currencyConfig.decimalPlaces;
+		this.signB4 = isUndefined(currencyConfig.signB4)
+			? this.signB4
+			: currencyConfig.signB4;
+		this.decimalPlaces = isUndefined(currencyConfig.decimalPlaces)
+			? this.decimalPlaces
+			: currencyConfig.decimalPlaces;
 		this.decimalMark = currencyConfig.decimalMark || this.decimalMark;
-		this.thousandsSeparator = currencyConfig.thousandsSeparator || this.thousandsSeparator;
-		this.subunits = currencyConfig.subunits ||
-			Math.pow( 10, this.decimalPlaces );
-		Object.freeze( this );
+		this.thousandsSeparator =
+			currencyConfig.thousandsSeparator || this.thousandsSeparator;
+		this.subunits =
+			currencyConfig.subunits || Math.pow(10, this.decimalPlaces);
+		Object.freeze(this);
 	}
 
 	/**
@@ -170,77 +165,76 @@ export class Currency {
 	 * @throws {Exception}
 	 * @throws {TypeError}
 	 */
-	static validateCurrencyConfig = ( config ) => {
-		if ( isEmpty( config ) ) {
+	static validateCurrencyConfig = (config) => {
+		if (isEmpty(config)) {
 			throw new Exception(
 				'The configuration object provided to Currency must not' +
-				' be empty'
+					' be empty'
 			);
 		}
-		if ( ! config.code || ! isString( config.code ) ) {
+		if (!config.code || !isString(config.code)) {
 			throw new TypeError(
 				'The configuration object provided to Currency must have ' +
-				'a "code" property that is a string.'
+					'a "code" property that is a string.'
 			);
 		}
 
-		if ( ! config.sign || ! isString( config.sign ) ) {
+		if (!config.sign || !isString(config.sign)) {
 			throw new TypeError(
 				'The configuration object provided to Currency must have a ' +
-				'"sign" property that is a string.'
+					'"sign" property that is a string.'
 			);
 		}
 
-		if ( config.singularLabel && ! isString( config.singularLabel ) ) {
+		if (config.singularLabel && !isString(config.singularLabel)) {
 			throw new TypeError(
 				'The singularLabel property on the configuration object ' +
-				'must be a string primitive.'
+					'must be a string primitive.'
 			);
 		}
 
-		if ( config.pluralLabel && ! isString( config.pluralLabel ) ) {
+		if (config.pluralLabel && !isString(config.pluralLabel)) {
 			throw new TypeError(
 				'The pluralLabel property on the configuration object ' +
-				'must be a string primitive.'
+					'must be a string primitive.'
 			);
 		}
 
-		if ( config.signB4 && ! isBoolean( config.signB4 ) ) {
+		if (config.signB4 && !isBoolean(config.signB4)) {
 			throw new TypeError(
 				'The signB4 property on the configuration object ' +
-				'must be a boolean primitive.'
+					'must be a boolean primitive.'
 			);
 		}
 
-		if ( config.decimalPlaces && ! isNumber( config.decimalPlaces ) ) {
+		if (config.decimalPlaces && !isNumber(config.decimalPlaces)) {
 			throw new TypeError(
 				'The decimalPlaces property on the configuration object ' +
-				'must be a number primitive'
+					'must be a number primitive'
 			);
 		}
 
-		if ( config.decimalMark && ! isString( config.decimalMark ) ) {
+		if (config.decimalMark && !isString(config.decimalMark)) {
 			throw new TypeError(
 				'The decimalMark property on the configuration object ' +
-				'must be a string primitive.'
+					'must be a string primitive.'
 			);
 		}
 
-		if ( config.thousandsSeparator &&
-			! isString( config.thousandsSeparator ) ) {
+		if (config.thousandsSeparator && !isString(config.thousandsSeparator)) {
 			throw new TypeError(
 				'The thousandsSeparator property on the configuration object ' +
-				'must be a string primitive.'
+					'must be a string primitive.'
 			);
 		}
 
-		if ( config.subunits && ! isNumber( config.subunits ) ) {
+		if (config.subunits && !isNumber(config.subunits)) {
 			throw new TypeError(
 				'The subunits property on the configuration object ' +
-				'must be a number primitive.'
+					'must be a number primitive.'
 			);
 		}
-	}
+	};
 }
 
 /**
@@ -251,19 +245,20 @@ export class Currency {
  * @return {Currency|{}} If there's a problem constructing the currency object
  * an empty object is returned.
  */
-export const SiteCurrency = ( config = {} ) => {
+export const SiteCurrency = (config = {}) => {
 	let currency;
 	try {
-		currency = new Currency( config );
-	} catch ( e ) {
+		currency = new Currency(config);
+	} catch (e) {
 		currency = {};
 		warning(
 			false,
 			'The Site Currency object could not be created because ' +
-			'of this error: ' + e.message
+				'of this error: ' +
+				e.message
 		);
 	}
 	return currency;
 };
 
-export default SiteCurrency( CURRENCY_CONFIG );
+export default SiteCurrency(CURRENCY_CONFIG);

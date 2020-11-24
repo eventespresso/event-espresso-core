@@ -17,6 +17,7 @@ import * as checkinStatus from './constants';
 
 /**
  * Described attributes for this model
+ *
  * @type {{attributes: *}}
  */
 export const queryDataTypes = {
@@ -24,17 +25,17 @@ export const queryDataTypes = {
 	forEventId: PropTypes.number,
 	forRegistrationId: PropTypes.number,
 	forTicketId: PropTypes.number,
-	forStatusId: PropTypes.oneOf( checkinStatus.CHECKIN_STATUS_IDS ),
-	queryData: PropTypes.shape( {
+	forStatusId: PropTypes.oneOf(checkinStatus.CHECKIN_STATUS_IDS),
+	queryData: PropTypes.shape({
 		limit: PropTypes.number,
-		orderBy: PropTypes.oneOf( [
+		orderBy: PropTypes.oneOf([
 			'CHK_ID',
 			'REG_ID',
 			'CHK_timestamp',
 			'DTT_ID',
-		] ),
-		order: PropTypes.oneOf( ALLOWED_ORDER_VALUES ),
-	} ),
+		]),
+		order: PropTypes.oneOf(ALLOWED_ORDER_VALUES),
+	}),
 };
 
 export const optionsEntityMap = {
@@ -58,6 +59,7 @@ export const optionsEntityMap = {
 
 /**
  * Default attributes for this model
+ *
  * @type {
  * 	{
  * 		attributes: {
@@ -85,14 +87,12 @@ export const defaultQueryData = {
  * @return { string } Returns an actual orderBy string for the REST query for
  *                      the provided alias
  */
-export const mapOrderBy = ( orderBy ) => {
+export const mapOrderBy = (orderBy) => {
 	const orderByMap = {
 		timestamp: 'CHK_timestamp',
 		id: 'CHK_ID',
 	};
-	return isUndefined( orderByMap[ orderBy ] ) ?
-		orderBy :
-		orderByMap[ orderBy ];
+	return isUndefined(orderByMap[orderBy]) ? orderBy : orderByMap[orderBy];
 };
 
 /**
@@ -105,42 +105,43 @@ export const mapOrderBy = ( orderBy ) => {
  * @param {string} forStatusId 		ID of Status to retrieve registrations for
  * @return {string}                	The assembled where conditions.
  */
-export const whereConditions = ( {
+export const whereConditions = ({
 	forDatetimeId = 0,
 	forEventId = 0,
 	forRegistrationId = 0,
 	forTicketId = 0,
 	forStatusId = '',
-} ) => {
+}) => {
 	const where = [];
-	forEventId = parseInt( forEventId, 10 );
-	if ( forEventId !== 0 && ! isNaN( forEventId ) ) {
-		where.push( 'where[Registration.EVT_ID]=' + forEventId );
+	forEventId = parseInt(forEventId, 10);
+	if (forEventId !== 0 && !isNaN(forEventId)) {
+		where.push('where[Registration.EVT_ID]=' + forEventId);
 	}
-	forDatetimeId = parseInt( forDatetimeId, 10 );
-	if ( forDatetimeId !== 0 && ! isNaN( forDatetimeId ) ) {
-		where.push( 'where[DTT_ID]=' + forDatetimeId );
+	forDatetimeId = parseInt(forDatetimeId, 10);
+	if (forDatetimeId !== 0 && !isNaN(forDatetimeId)) {
+		where.push('where[DTT_ID]=' + forDatetimeId);
 	}
-	forRegistrationId = parseInt( forRegistrationId, 10 );
-	if ( forRegistrationId !== 0 && ! isNaN( forRegistrationId ) ) {
-		where.push( 'where[REG_ID]=' + forRegistrationId );
+	forRegistrationId = parseInt(forRegistrationId, 10);
+	if (forRegistrationId !== 0 && !isNaN(forRegistrationId)) {
+		where.push('where[REG_ID]=' + forRegistrationId);
 	}
-	forTicketId = parseInt( forTicketId, 10 );
-	if ( forTicketId !== 0 && ! isNaN( forTicketId ) ) {
-		where.push( 'where[Registration.TKT_ID]=' + forTicketId );
+	forTicketId = parseInt(forTicketId, 10);
+	if (forTicketId !== 0 && !isNaN(forTicketId)) {
+		where.push('where[Registration.TKT_ID]=' + forTicketId);
 	}
-	if ( forStatusId !== '' && forStatusId !== null ) {
-		where.push( 'where[CHK_in]=' + forStatusId );
+	if (forStatusId !== '' && forStatusId !== null) {
+		where.push('where[CHK_in]=' + forStatusId);
 	}
-	return where.join( '&' );
+	return where.join('&');
 };
 
 /**
  * Return a query string for use by a REST request given a set of queryData.
+ *
  * @param { Object } queryData
  * @return { string }  Returns the query string.
  */
-export const getQueryString = ( queryData = {} ) => {
+export const getQueryString = (queryData = {}) => {
 	queryData = { ...defaultQueryData.queryData, ...queryData };
-	return baseGetQueryString( queryData, whereConditions, mapOrderBy );
+	return baseGetQueryString(queryData, whereConditions, mapOrderBy);
 };

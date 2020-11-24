@@ -17,12 +17,10 @@ import { isModelEntityOfModel } from '@eventespresso/validators';
 
 /**
  * Array of fields that have date information
+ *
  * @type { string[] }
  */
-export const DATE_FIELDS = [
-	'DTT_EVT_start',
-	'DTT_EVT_end',
-];
+export const DATE_FIELDS = ['DTT_EVT_start', 'DTT_EVT_end'];
 
 /**
  * Will hold the dynamically generated list of formatters for dates.  Formatters
@@ -44,12 +42,12 @@ export const DATE_FIELDS = [
  */
 const formatters = {};
 
-forOwn( baseFormatter, ( implementation, functionName ) => {
-	formatters[ functionName ] = ( ...incomingArgs ) => {
-		const firstArg = pullAt( incomingArgs, 0 );
-		return implementation( firstArg[ 0 ], DATE_FIELDS, ...incomingArgs );
+forOwn(baseFormatter, (implementation, functionName) => {
+	formatters[functionName] = (...incomingArgs) => {
+		const firstArg = pullAt(incomingArgs, 0);
+		return implementation(firstArg[0], DATE_FIELDS, ...incomingArgs);
 	};
-} );
+});
 
 /**
  * This will spit out a prettified label for the provided DateTime entity.
@@ -67,36 +65,30 @@ forOwn( baseFormatter, ( implementation, functionName ) => {
  * @return { string }  A formatted string representing the provided
  *    DateTimeEntity.
  */
-export const prettyDateFromDateTime = ( DateTimeEntity ) => {
+export const prettyDateFromDateTime = (DateTimeEntity) => {
 	let content = '';
-	if ( isModelEntityOfModel( DateTimeEntity, 'datetime' ) ) {
-		if ( DateTimeEntity.DTT_EVT_start.hasSame(
-			DateTimeEntity.DTT_EVT_end,
-			'day'
-		) ) {
+	if (isModelEntityOfModel(DateTimeEntity, 'datetime')) {
+		if (
+			DateTimeEntity.DTT_EVT_start.hasSame(
+				DateTimeEntity.DTT_EVT_end,
+				'day'
+			)
+		) {
 			content += allDateTimesAsString(
 				SEPARATOR_SPACE_DASH_SPACE,
-				DateTimeEntity.DTT_EVT_start.toFormat(
-					DATE_TIME_FORMAT_SITE
-				),
-				DateTimeEntity.DTT_EVT_end.toFormat(
-					TIME_FORMAT_SITE
-				),
+				DateTimeEntity.DTT_EVT_start.toFormat(DATE_TIME_FORMAT_SITE),
+				DateTimeEntity.DTT_EVT_end.toFormat(TIME_FORMAT_SITE)
 			);
 		} else {
 			content += allDateTimesAsString(
 				SEPARATOR_SPACE_DASH_SPACE,
-				DateTimeEntity.DTT_EVT_start.toFormat(
-					DATE_TIME_FORMAT_SITE
-				),
-				DateTimeEntity.DTT_EVT_end.toFormat(
-					DATE_TIME_FORMAT_SITE
-				),
+				DateTimeEntity.DTT_EVT_start.toFormat(DATE_TIME_FORMAT_SITE),
+				DateTimeEntity.DTT_EVT_end.toFormat(DATE_TIME_FORMAT_SITE)
 			);
 		}
-		content = DateTimeEntity.DTT_name ?
-			`${ DateTimeEntity.DTT_name } (${ content })` :
-			content;
+		content = DateTimeEntity.DTT_name
+			? `${DateTimeEntity.DTT_name} (${content})`
+			: content;
 	}
 	return content;
 };

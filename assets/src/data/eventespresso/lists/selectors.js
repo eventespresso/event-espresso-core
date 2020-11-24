@@ -30,13 +30,8 @@ const DEFAULT_EMPTY_ARRAY = [];
  * querystring does not exist in the state or the given items as an array or
  * object (depending on how they are stored in the state).
  */
-const retrieveItems =
-	(
-		state,
-		identifier,
-		queryString,
-		defaultEmpty = Set()
-	) => state.getIn( [ identifier, queryString ] ) || defaultEmpty;
+const retrieveItems = (state, identifier, queryString, defaultEmpty = Set()) =>
+	state.getIn([identifier, queryString]) || defaultEmpty;
 
 /**
  * Returns all the items for the given identifier and queryString
@@ -47,14 +42,9 @@ const retrieveItems =
  * @return {Array} Returns an array of items for the given model and query.
  */
 export const getItems = createSelector(
-	( state, identifier, queryString ) => retrieveItems(
-		state,
-		identifier,
-		queryString
-	).toArray(),
-	( state, identifier, queryString ) => [
-		state.getIn( [ identifier, queryString ] ),
-	]
+	(state, identifier, queryString) =>
+		retrieveItems(state, identifier, queryString).toArray(),
+	(state, identifier, queryString) => [state.getIn([identifier, queryString])]
 );
 
 /**
@@ -66,15 +56,11 @@ export const getItems = createSelector(
  * @return {Array<BaseEntity>} Returns array of entities.
  */
 export const getEntities = createSelector(
-	( state, modelName, queryString ) => retrieveItems(
-		state,
-		modelName,
-		queryString,
-		OrderedMap()
-	).valueSeq().toArray(),
-	( state, modelName, queryString ) => [
-		state.getIn( [ modelName, queryString ] ),
-	]
+	(state, modelName, queryString) =>
+		retrieveItems(state, modelName, queryString, OrderedMap())
+			.valueSeq()
+			.toArray(),
+	(state, modelName, queryString) => [state.getIn([modelName, queryString])]
 );
 
 /**
@@ -85,11 +71,11 @@ export const getEntities = createSelector(
  * @param {Array} ids
  * @return {Array<BaseEntity>} An array of entities.
  */
-export const getEntitiesByIds = ( state, modelName, ids = [] ) => {
+export const getEntitiesByIds = (state, modelName, ids = []) => {
 	try {
-		const queryString = getPrimaryKeyQueryString( modelName, ids );
-		return getEntities( state, modelName, queryString );
-	} catch ( e ) {
+		const queryString = getPrimaryKeyQueryString(modelName, ids);
+		return getEntities(state, modelName, queryString);
+	} catch (e) {
 		return DEFAULT_EMPTY_ARRAY;
 	}
 };
@@ -106,19 +92,19 @@ getEntitiesByIds.clear = () => getEntities.clear();
  * @param {string} queryString
  * @return {boolean} Returns true if the selector is currently requesting items.
  */
-function isRequesting( state, identifier, selectorName, queryString ) {
+function isRequesting(state, identifier, selectorName, queryString) {
 	assertImmutableObjectHasPath(
-		[ identifier ],
+		[identifier],
 		state,
 		sprintf(
 			__(
 				'The given identifier (%s) does not exist in the state.',
-				'event_espresso',
+				'event_espresso'
 			),
-			identifier,
-		),
+			identifier
+		)
 	);
-	return isResolving( REDUCER_KEY, selectorName, identifier, queryString );
+	return isResolving(REDUCER_KEY, selectorName, identifier, queryString);
 }
 
 /**
@@ -130,23 +116,20 @@ function isRequesting( state, identifier, selectorName, queryString ) {
  * @param {string} queryString The query string for the request
  * @return {boolean} Whether items are being requested or not.
  */
-export function isRequestingItems( state, identifier, queryString ) {
-	return isRequesting( state, identifier, 'getItems', queryString );
+export function isRequestingItems(state, identifier, queryString) {
+	return isRequesting(state, identifier, 'getItems', queryString);
 }
 
 /**
  * Returns whether the get entities request is in the process of being resolved
  * or not.
+ *
  * @param {Immutable.Map} state
  * @param {string} modelName
  * @param {string} queryString
  * @return {boolean} True means entities (for the given model) are being
  * requested.
  */
-export function isRequestingEntities(
-	state,
-	modelName,
-	queryString
-) {
-	return isRequesting( state, modelName, 'getEntities', queryString );
+export function isRequestingEntities(state, modelName, queryString) {
+	return isRequesting(state, modelName, 'getEntities', queryString);
 }

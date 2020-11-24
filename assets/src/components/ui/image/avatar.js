@@ -33,7 +33,7 @@ export class AvatarImage extends Component {
 		avatarClass: 'contact',
 		avatarHeight: 32,
 		avatarWidth: 32,
-		avatarAltText: __( 'contact avatar', 'event_espresso' ),
+		avatarAltText: __('contact avatar', 'event_espresso'),
 	};
 	render() {
 		const {
@@ -49,16 +49,14 @@ export class AvatarImage extends Component {
 			width: avatarWidth,
 		};
 		return avatarUrl ? (
-			<div className={ avatarClass + '-image-wrap-div' }>
+			<div className={avatarClass + '-image-wrap-div'}>
 				<img
-					className={ avatarClass + '-avatar-img avatar' }
-					src={ avatarUrl }
-					style={ style }
-					alt={ avatarAltText }
+					className={avatarClass + '-avatar-img avatar'}
+					src={avatarUrl}
+					style={style}
+					alt={avatarAltText}
 				/>
 			</div>
-		) : (
-			null
-		);
+		) : null;
 	}
 }

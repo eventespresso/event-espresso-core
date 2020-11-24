@@ -10,11 +10,8 @@ import { isPlainObject, isUndefined, lowerCase } from 'lodash';
  * @param {Object} response
  * @return {boolean} true if this is a schema response object.
  */
-export const isSchemaResponse = ( response ) => {
-	return (
-		hasSchemaProperty( response ) &&
-		isSchema( response.schema )
-	);
+export const isSchemaResponse = (response) => {
+	return hasSchemaProperty(response) && isSchema(response.schema);
 };
 
 /**
@@ -23,11 +20,11 @@ export const isSchemaResponse = ( response ) => {
  * @param {Object} schema
  * @return {boolean} true if this is a schema object.
  */
-export const isSchema = ( schema ) => {
+export const isSchema = (schema) => {
 	return (
-		isPlainObject( schema ) &&
-		! isUndefined( schema.$schema ) &&
-		isPlainObject( schema.properties )
+		isPlainObject(schema) &&
+		!isUndefined(schema.$schema) &&
+		isPlainObject(schema.properties)
 	);
 };
 
@@ -40,10 +37,10 @@ export const isSchema = ( schema ) => {
  * @return {boolean}  True means this is a schema response object for the given
  * model name.
  */
-export const isSchemaResponseOfModel = ( response, modelName ) => {
+export const isSchemaResponseOfModel = (response, modelName) => {
 	return (
-		hasSchemaProperty( response ) &&
-		isSchemaOfModel( response.schema, modelName )
+		hasSchemaProperty(response) &&
+		isSchemaOfModel(response.schema, modelName)
 	);
 };
 
@@ -55,11 +52,11 @@ export const isSchemaResponseOfModel = ( response, modelName ) => {
  * @return {boolean} True means this is a schema object for the given model
  * name.
  */
-export const isSchemaOfModel = ( schema, modelName ) => {
+export const isSchemaOfModel = (schema, modelName) => {
 	return (
-		isSchema( schema ) &&
-		! isUndefined( schema.title ) &&
-		lowerCase( modelName ) === lowerCase( schema.title )
+		isSchema(schema) &&
+		!isUndefined(schema.title) &&
+		lowerCase(modelName) === lowerCase(schema.title)
 	);
 };
 
@@ -69,6 +66,6 @@ export const isSchemaOfModel = ( schema, modelName ) => {
  * @param {*} object
  * @return {boolean}  True if a plain object with a schema property
  */
-const hasSchemaProperty = ( object ) => {
-	return isPlainObject( object ) && ! isUndefined( object.schema );
+const hasSchemaProperty = (object) => {
+	return isPlainObject(object) && !isUndefined(object.schema);
 };

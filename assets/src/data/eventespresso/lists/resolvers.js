@@ -30,11 +30,11 @@ const DEFAULT_EMPTY_ARRAY = [];
  * @param {string} queryString  Additional query string parameters passed on to
  *   the REST request.
  */
-export function* getItems( identifier, queryString ) {
-	const items = yield fetch( {
+export function* getItems(identifier, queryString) {
+	const items = yield fetch({
 		path: queryString,
-	} );
-	yield receiveResponse( identifier, queryString, items );
+	});
+	yield receiveResponse(identifier, queryString, items);
 }
 
 /**
@@ -51,19 +51,17 @@ export function* getItems( identifier, queryString ) {
  * factory cannot be retrieved for the model.  Otherwise the constructed
  * entities.
  */
-export function* buildAndDispatchEntitiesFromResponse( modelName, response ) {
+export function* buildAndDispatchEntitiesFromResponse(modelName, response) {
 	const factory = yield resolveSelect(
 		SCHEMA_REDUCER_KEY,
 		'getFactoryForModel',
 		modelName
 	);
-	if ( isEmpty( factory ) ) {
+	if (isEmpty(factory)) {
 		return DEFAULT_EMPTY_ARRAY;
 	}
-	let fullEntities = response.map(
-		( entity ) => factory.fromExisting( entity )
-	);
-	const entityIds = fullEntities.map( ( entity ) => entity.id );
+	let fullEntities = response.map((entity) => factory.fromExisting(entity));
+	const entityIds = fullEntities.map((entity) => entity.id);
 	// are there already entities for the ids in the store?  If so, we use those
 	const existingEntities = yield select(
 		CORE_REDUCER_KEY,
@@ -71,12 +69,14 @@ export function* buildAndDispatchEntitiesFromResponse( modelName, response ) {
 		modelName,
 		entityIds
 	);
-	if ( ! isEmpty( existingEntities ) ) {
-		fullEntities = fullEntities.map( ( entity ) => {
-			return find( existingEntities, ( existingEntity ) => {
-				return existingEntity.id === entity.id;
-			} ) || entity;
-		} );
+	if (!isEmpty(existingEntities)) {
+		fullEntities = fullEntities.map((entity) => {
+			return (
+				find(existingEntities, (existingEntity) => {
+					return existingEntity.id === entity.id;
+				}) || entity
+			);
+		});
 	}
 	yield dispatch(
 		CORE_REDUCER_KEY,
@@ -84,51 +84,50 @@ export function* buildAndDispatchEntitiesFromResponse( modelName, response ) {
 		modelName,
 		fullEntities
 	);
-	yield resolveGetEntityByIdForIds( modelName, entityIds );
+	yield resolveGetEntityByIdForIds(modelName, entityIds);
 	return fullEntities;
 }
 
 /**
  * Resolver for model entities returned from an endpoint.
+ *
  * @param {string} modelName
  * @param {string} queryString
  * @return {IterableIterator<*>|Array<BaseEntity>} An empty array if no
  * entities retrieved.
  */
-export function* getEntities( modelName, queryString ) {
-	const response = yield fetch( {
-		path: applyQueryString( modelName, queryString ),
-	} );
-	if ( isEmpty( response ) ) {
+export function* getEntities(modelName, queryString) {
+	const response = yield fetch({
+		path: applyQueryString(modelName, queryString),
+	});
+	if (isEmpty(response)) {
 		return DEFAULT_EMPTY_ARRAY;
 	}
 	const fullEntities = yield buildAndDispatchEntitiesFromResponse(
 		modelName,
 		response
 	);
-	yield receiveEntityResponse( modelName, queryString, fullEntities );
+	yield receiveEntityResponse(modelName, queryString, fullEntities);
 }
 
 /**
  * Resolver for getting model entities for a given set of ids
+ *
  * @param {string} modelName
  * @param {Array<number>}ids
  * @return {IterableIterator<*>|Array} An empty array if no entities retrieved.
  */
-export function* getEntitiesByIds( modelName, ids = [] ) {
-	const queryString = getPrimaryKeyQueryString( modelName, ids );
-	const response = yield fetch( {
-		path: applyQueryString(
-			modelName,
-			queryString
-		),
-	} );
-	if ( isEmpty( response ) ) {
+export function* getEntitiesByIds(modelName, ids = []) {
+	const queryString = getPrimaryKeyQueryString(modelName, ids);
+	const response = yield fetch({
+		path: applyQueryString(modelName, queryString),
+	});
+	if (isEmpty(response)) {
 		return DEFAULT_EMPTY_ARRAY;
 	}
 	const fullEntities = yield buildAndDispatchEntitiesFromResponse(
 		modelName,
 		response
 	);
-	yield receiveEntityResponse( modelName, queryString, fullEntities );
+	yield receiveEntityResponse(modelName, queryString, fullEntities);
 }

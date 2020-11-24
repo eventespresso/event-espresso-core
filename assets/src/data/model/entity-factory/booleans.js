@@ -9,8 +9,8 @@ import { isPlainObject, isUndefined } from 'lodash';
  * @param {*} value
  * @return {boolean} True if the value is a plain object and has a `raw` property.
  */
-export const hasRawProperty = ( value ) => isPlainObject( value ) &&
-	! isUndefined( value.raw );
+export const hasRawProperty = (value) =>
+	isPlainObject(value) && !isUndefined(value.raw);
 
 /**
  * Indicates whether the provided value has a "pretty" property.
@@ -18,8 +18,8 @@ export const hasRawProperty = ( value ) => isPlainObject( value ) &&
  * @param {*} value
  * @return {*} True if the value is a plain object and has a `pretty` property.
  */
-export const hasPrettyProperty = ( value ) => isPlainObject( value ) &&
-	! isUndefined( value.pretty );
+export const hasPrettyProperty = (value) =>
+	isPlainObject(value) && !isUndefined(value.pretty);
 
 /**
  * Indicates whether the provided value has a "rendered" property.
@@ -27,8 +27,8 @@ export const hasPrettyProperty = ( value ) => isPlainObject( value ) &&
  * @param {*} value
  * @return {boolean} True if the value is a plain object and has a `rendered` property.
  */
-export const hasRenderedProperty = ( value ) => isPlainObject( value ) &&
-	! isUndefined( value.rendered );
+export const hasRenderedProperty = (value) =>
+	isPlainObject(value) && !isUndefined(value.rendered);
 
 /**
  * Indicates whether the provided value has a "format" property.
@@ -36,8 +36,8 @@ export const hasRenderedProperty = ( value ) => isPlainObject( value ) &&
  * @param {*} value
  * @return {boolean} True if the value is a plain object and has a `format` property.
  */
-export const hasFormatProperty = ( value ) => isPlainObject( value ) &&
-	! isUndefined( value.format );
+export const hasFormatProperty = (value) =>
+	isPlainObject(value) && !isUndefined(value.format);
 
 /**
  * Indicates whether the provided value has a "enum" property.
@@ -46,8 +46,8 @@ export const hasFormatProperty = ( value ) => isPlainObject( value ) &&
  * @return {boolean} True if the value is a plain object and has an enum
  * property.
  */
-export const hasEnumProperty = ( value ) => isPlainObject( value ) &&
-	! isUndefined( value.enum );
+export const hasEnumProperty = (value) =>
+	isPlainObject(value) && !isUndefined(value.enum);
 
 /**
  * Indicates whether the provided value is a "value object" field.
@@ -56,8 +56,8 @@ export const hasEnumProperty = ( value ) => isPlainObject( value ) &&
  * @param {Object} schema
  * @return {boolean} True if the value is a value object field.
  */
-export const isValueObjectField = ( field, schema ) => {
-	return isDateTimeField( field, schema ) || isMoneyField( field, schema );
+export const isValueObjectField = (field, schema) => {
+	return isDateTimeField(field, schema) || isMoneyField(field, schema);
 };
 
 /**
@@ -68,10 +68,10 @@ export const isValueObjectField = ( field, schema ) => {
  * @param {Object} schema
  * @return {boolean} True means it is a date-time field.
  */
-export const isDateTimeField = ( field, schema ) =>
-	! isUndefined( schema[ field ] ) &&
-	hasFormatProperty( schema[ field ] ) &&
-	schema[ field ].format === 'date-time';
+export const isDateTimeField = (field, schema) =>
+	!isUndefined(schema[field]) &&
+	hasFormatProperty(schema[field]) &&
+	schema[field].format === 'date-time';
 
 /**
  * Indicates whether the provided field is a UTC date-time field.
@@ -83,11 +83,11 @@ export const isDateTimeField = ( field, schema ) =>
  * @return {boolean} True means this is a UTC field.  If schema is provided it
  * means this is also a date-time field.
  */
-export const isUTCDateTimeField = ( dateTimeFieldName, schema = null ) => {
-	return schema !== null ?
-		isDateTimeField( dateTimeFieldName, schema ) &&
-			dateTimeFieldName.indexOf( '_gmt' ) > 0 :
-		dateTimeFieldName.indexOf( '_gmt' ) > 0;
+export const isUTCDateTimeField = (dateTimeFieldName, schema = null) => {
+	return schema !== null
+		? isDateTimeField(dateTimeFieldName, schema) &&
+				dateTimeFieldName.indexOf('_gmt') > 0
+		: dateTimeFieldName.indexOf('_gmt') > 0;
 };
 
 /**
@@ -98,9 +98,9 @@ export const isUTCDateTimeField = ( dateTimeFieldName, schema = null ) => {
  * @param {Object} schema
  * @return {boolean}  True means it is a primary key field.
  */
-export const isPrimaryKeyField = ( fieldName, schema ) =>
-	! isUndefined( schema[ fieldName ] ) &&
-	! isUndefined( schema[ fieldName ].primary_key );
+export const isPrimaryKeyField = (fieldName, schema) =>
+	!isUndefined(schema[fieldName]) &&
+	!isUndefined(schema[fieldName].primary_key);
 
 /**
  * Returns whether the provided field represents a readonly field using the
@@ -110,10 +110,10 @@ export const isPrimaryKeyField = ( fieldName, schema ) =>
  * @param {Object} schema
  * @return {boolean}  True means it is a readonly field.
  */
-export const isReadOnly = ( fieldName, schema ) =>
-	! isUndefined( schema[ fieldName ] ) &&
-	! isUndefined( schema[ fieldName ].readonly ) &&
-	schema[ fieldName ].readonly;
+export const isReadOnly = (fieldName, schema) =>
+	!isUndefined(schema[fieldName]) &&
+	!isUndefined(schema[fieldName].readonly) &&
+	schema[fieldName].readonly;
 
 /**
  * Indicates whether the provided field is a "entity" field using the provided
@@ -129,12 +129,10 @@ export const isReadOnly = ( fieldName, schema ) =>
  * @param {Object} schema
  * @return {boolean} True if this is an entity field
  */
-export const isEntityField = ( fieldName, schema ) =>
-	! isUndefined( schema[ fieldName ] ) &&
-	( ! isReadOnly( fieldName, schema ) ||
-		isPrimaryKeyField( fieldName, schema )
-	) &&
-	! isUTCDateTimeField( fieldName ) &&
+export const isEntityField = (fieldName, schema) =>
+	!isUndefined(schema[fieldName]) &&
+	(!isReadOnly(fieldName, schema) || isPrimaryKeyField(fieldName, schema)) &&
+	!isUTCDateTimeField(fieldName) &&
 	fieldName !== '_protected';
 
 /**
@@ -152,12 +150,12 @@ export const isEntityField = ( fieldName, schema ) =>
  * @param {Object} schema
  * @return {boolean} True if it is a money field.
  */
-export const isMoneyField = ( fieldName, schema ) =>
-	! isUndefined( schema[ fieldName ] ) &&
-	! isUndefined( schema[ fieldName ].properties ) &&
-	hasPrettyProperty( schema[ fieldName ].properties ) &&
-	hasFormatProperty( schema[ fieldName ].properties.pretty ) &&
-	schema[ fieldName ].properties.pretty.format === 'money';
+export const isMoneyField = (fieldName, schema) =>
+	!isUndefined(schema[fieldName]) &&
+	!isUndefined(schema[fieldName].properties) &&
+	hasPrettyProperty(schema[fieldName].properties) &&
+	hasFormatProperty(schema[fieldName].properties.pretty) &&
+	schema[fieldName].properties.pretty.format === 'money';
 
 /**
  * Indicates whether the field is an enum type field as defined in the provided
@@ -171,8 +169,8 @@ export const isMoneyField = ( fieldName, schema ) =>
  * @param {Object} schema
  * @return {boolean}  True if the field is an enum type field.
  */
-export const isEnumField = ( fieldName, schema ) =>
-	! isUndefined( schema[ fieldName ] ) &&
-	hasEnumProperty( schema[ fieldName ] ) &&
-	! isUndefined( schema[ fieldName ].enum.length ) &&
-	schema[ fieldName ].enum.length > 0;
+export const isEnumField = (fieldName, schema) =>
+	!isUndefined(schema[fieldName]) &&
+	hasEnumProperty(schema[fieldName]) &&
+	!isUndefined(schema[fieldName].enum.length) &&
+	schema[fieldName].enum.length > 0;

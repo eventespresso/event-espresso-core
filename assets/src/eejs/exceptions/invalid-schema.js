@@ -15,13 +15,15 @@ import InvalidType from './invalid-type';
  * schema property.
  */
 export default class InvalidSchema extends InvalidType {
-	constructor( ...args ) {
-		super( ...args );
-		if ( Error.captureStackTrace ) {
-			Error.captureStackTrace( this, InvalidSchema );
+	constructor(...args) {
+		super(...args);
+		if (Error.captureStackTrace) {
+			Error.captureStackTrace(this, InvalidSchema);
 		}
-		this.message = 'Invalid schema object provided. Must have a' +
-			' "properties" property.' + this.message;
-		this.schema = args[ 1 ] || {};
+		this.message =
+			'Invalid schema object provided. Must have a' +
+			' "properties" property.' +
+			this.message;
+		this.schema = args[1] || {};
 	}
 }

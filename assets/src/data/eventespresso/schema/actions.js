@@ -11,7 +11,7 @@ import { ACTION_TYPES as types } from './action-types';
  * @param {Object} schema
  * @return {{type: string, modelName: *, schema}}  The action object.
  */
-export function receiveSchemaForModel( modelName, schema = {} ) {
+export function receiveSchemaForModel(modelName, schema = {}) {
 	return {
 		type: types.RECEIVE_SCHEMA_RECORD,
 		modelName,
@@ -28,7 +28,7 @@ export function receiveSchemaForModel( modelName, schema = {} ) {
  * @return {{type: string, modelName: string, factory: Object}} An action
  * object.
  */
-export function receiveFactoryForModel( modelName, factory = {} ) {
+export function receiveFactoryForModel(modelName, factory = {}) {
 	return {
 		type: types.RECEIVE_FACTORY_FOR_MODEL,
 		modelName,
@@ -69,11 +69,7 @@ export function receiveRelationEndpointForModelEntity(
 	};
 }
 
-export function receiveRelationSchema(
-	modelName,
-	relationName,
-	relationSchema
-) {
+export function receiveRelationSchema(modelName, relationName, relationSchema) {
 	return {
 		type: types.RECEIVE_RELATION_SCHEMA,
 		modelName,
