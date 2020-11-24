@@ -796,10 +796,10 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/config.ts:17
 	__( 'Pending', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/editable/EditablePrice.tsx:30
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/editable/EditablePrice.tsx:32
 	__( 'edit ticket total…', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/editable/EditablePrice.tsx:37
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/editable/EditablePrice.tsx:42
 	__( 'set price…', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/IsChainedButton.tsx:24
