@@ -29,7 +29,6 @@ class RegularRequests extends PrimaryRoute
             'EventEspresso\core\domain\entities\routing\data_nodes\core\Api',
             'EventEspresso\core\domain\entities\routing\data_nodes\core\Capabilities',
             'EventEspresso\core\domain\entities\routing\data_nodes\core\Locale',
-            'EventEspresso\core\domain\entities\routing\data_nodes\core\SitePermissions',
             'EventEspresso\core\domain\entities\routing\data_nodes\core\SiteUrls',
         ];
         foreach ($basic_nodes as $basic_node) {
@@ -38,6 +37,13 @@ class RegularRequests extends PrimaryRoute
                 ['EventEspresso\core\services\json\JsonDataNodeValidator' => EE_Dependency_Map::load_from_cache]
             );
         }
+        $this->dependency_map->registerDependencies(
+            'EventEspresso\core\domain\entities\routing\data_nodes\core\SitePermissions',
+            [
+                'EventEspresso\core\domain\services\capabilities\FeatureFlags' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\json\JsonDataNodeValidator'       => EE_Dependency_Map::load_from_cache,
+            ]
+        );
         $this->dependency_map->registerDependencies(
             'EventEspresso\core\domain\entities\routing\data_nodes\core\GeneralSettings',
             [
@@ -114,11 +120,11 @@ class RegularRequests extends PrimaryRoute
         $admin = ['EE_Admin_Config' => EE_Dependency_Map::load_from_cache] + Route::$default_dependencies;
         $public = ['EE_Maintenance_Mode' => EE_Dependency_Map::load_from_cache] + Route::$default_dependencies;
         $default_with_barista = [
-            'EventEspresso\core\services\assets\BaristaFactory' => EE_Dependency_Map::load_from_cache
-        ] + Route::$default_dependencies;
+                                    'EventEspresso\core\services\assets\BaristaFactory' => EE_Dependency_Map::load_from_cache,
+                                ] + Route::$default_dependencies;
         $default_with_manifest = [
-            'EventEspresso\core\services\assets\AssetManifestFactory' => EE_Dependency_Map::load_from_cache
-        ] + Route::$default_dependencies;
+                                     'EventEspresso\core\services\assets\AssetManifestFactory' => EE_Dependency_Map::load_from_cache,
+                                 ] + Route::$default_dependencies;
         $default_routes = [
             // default dependencies
             'EventEspresso\core\domain\entities\routing\handlers\admin\PueRequests'          => Route::$default_dependencies,

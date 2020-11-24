@@ -1,0 +1,15 @@
+/*!
+      * rrule.js - Library for working with recurrence rules for calendar dates.
+      * https://github.com/jakubroztocil/rrule
+      *
+      * Copyright 2010, Jakub Roztocil and Lars Schoning
+      * Licenced under the BSD licence.
+      * https://github.com/jakubroztocil/rrule/blob/master/LICENCE
+      *
+      */
+
+/*!
+  Copyright (c) 2017 Jed Watson.
+  Licensed under the MIT License (MIT), see
+  http://jedwatson.github.io/classnames
+*/
