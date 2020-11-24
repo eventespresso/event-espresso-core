@@ -32,10 +32,10 @@
     "edtrServices.js": "/static/js/edtrServices.5dc27564.js",
     "edtrServices.js.map": "/static/js/edtrServices.5dc27564.js.map",
     "edtrServices.php": "/static/js/edtrServices.30a328fd.asset.php",
-    "eventEditor.css": "/static/css/eventEditor.25797e84.css",
+    "eventEditor.css": "/static/css/eventEditor.91f4308a.css",
     "eventEditor.js": "/static/js/eventEditor.4c8be3ad.js",
     "eventEditor.js.map": "/static/js/eventEditor.4c8be3ad.js.map",
-    "eventEditor.php": "/static/js/eventEditor.e2e0b32e.asset.php",
+    "eventEditor.php": "/static/js/eventEditor.1a79eeeb.asset.php",
     "events.js": "/static/js/events.bf58ed92.js",
     "events.js.map": "/static/js/events.bf58ed92.js.map",
     "events.php": "/static/js/events.7c249d44.asset.php",
@@ -95,7 +95,7 @@
     "static/css/components.86d6e1eb.css.map": "/static/css/components.86d6e1eb.css.map",
     "static/css/dates-table-view.90dfb5f9.chunk.css.map": "/static/css/dates-table-view.90dfb5f9.chunk.css.map",
     "static/css/dates.ab51aac0.css.map": "/static/css/dates.ab51aac0.css.map",
-    "static/css/eventEditor.25797e84.css.map": "/static/css/eventEditor.25797e84.css.map",
+    "static/css/eventEditor.91f4308a.css.map": "/static/css/eventEditor.91f4308a.css.map",
     "static/css/form.f7f4a780.css.map": "/static/css/form.f7f4a780.css.map",
     "static/css/richTextEditor.2a1d5438.css.map": "/static/css/richTextEditor.2a1d5438.css.map",
     "static/css/toaster.2eec1262.css.map": "/static/css/toaster.2eec1262.css.map",
@@ -185,7 +185,7 @@
       "static/js/blocks.49483b54.js"
     ],
     "eventEditor": [
-      "static/css/eventEditor.25797e84.css",
+      "static/css/eventEditor.91f4308a.css",
       "static/js/eventEditor.4c8be3ad.js"
     ],
     "wpPluginsPage": [
