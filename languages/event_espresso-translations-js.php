@@ -1298,10 +1298,10 @@ $generated_i18n_strings = array(
 	// Reference: packages/tpc/src/components/table/useHeaderRowGenerator.ts:47
 	__( 'Amount', 'event_espresso' ),
 
-	// Reference: packages/tpc/src/inputs/PriceAmountInput.tsx:34
+	// Reference: packages/tpc/src/inputs/PriceAmountInput.tsx:33
 	__( 'amount', 'event_espresso' ),
 
-	// Reference: packages/tpc/src/inputs/PriceAmountInput.tsx:45
+	// Reference: packages/tpc/src/inputs/PriceAmountInput.tsx:44
 	__( 'amount…', 'event_espresso' ),
 
 	// Reference: packages/tpc/src/inputs/PriceDescriptionInput.tsx:10
