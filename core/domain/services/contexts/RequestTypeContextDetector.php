@@ -3,10 +3,11 @@
 namespace EventEspresso\core\domain\services\contexts;
 
 use EventEspresso\core\domain\Domain;
+use EventEspresso\core\services\graphql\GraphQLEndpoint;
 use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\domain\entities\contexts\RequestTypeContext;
 use InvalidArgumentException;
-use Throwable;
+use WPGraphQL\Router;
 
 /**
  * Class RequestTypeContextDetector
@@ -18,6 +19,11 @@ use Throwable;
  */
 class RequestTypeContextDetector
 {
+
+    /**
+     * @var GraphQLEndpoint $gql_endpoint
+     */
+    private $gql_endpoint;
 
     /**
      * @var RequestTypeContextFactoryInterface $factory
@@ -38,6 +44,7 @@ class RequestTypeContextDetector
     /**
      * RequestTypeContextDetector constructor.
      *
+     * @param GraphQLEndpoint                    $gql_endpoint
      * @param RequestInterface                   $request
      * @param RequestTypeContextFactoryInterface $factory
      * @param array                              $globalRouteConditions an array for injecting values that would
@@ -46,12 +53,14 @@ class RequestTypeContextDetector
      *                                                                  request route such as DOING_AJAX
      */
     public function __construct(
+        GraphQLEndpoint $gql_endpoint,
         RequestInterface $request,
         RequestTypeContextFactoryInterface $factory,
         array $globalRouteConditions = []
     ) {
-        $this->request               = $request;
-        $this->factory               = $factory;
+        $this->gql_endpoint = $gql_endpoint;
+        $this->request = $request;
+        $this->factory = $factory;
         $this->globalRouteConditions = $globalRouteConditions;
     }
 
@@ -61,7 +70,7 @@ class RequestTypeContextDetector
      * @param mixed  $default
      * @return mixed
      */
-    private function getGlobalRouteCondition($globalRouteCondition, $default)
+    private function getGlobalRouteCondition(string $globalRouteCondition, $default)
     {
         return isset($this->globalRouteConditions[ $globalRouteCondition ])
             ? $this->globalRouteConditions[ $globalRouteCondition ]
@@ -154,7 +163,7 @@ class RequestTypeContextDetector
      */
     private function isWordPressActivationRequest()
     {
-        $action               = $this->request->getRequestParam('action');
+        $action = $this->request->getRequestParam('action');
         $plugins_page_actions = [
             'activate',
             'activate-multi',
@@ -179,10 +188,10 @@ class RequestTypeContextDetector
     {
         // Check for URLs like http://mysite.com/?rest_route=/ee... and http://mysite.com/wp-json/ee/...
         return strpos(
-            $this->request->getRequestParam('rest_route', false),
-            '/' . Domain::API_NAMESPACE
-        ) === 0
-        || $this->uriPathMatches(trim(rest_get_url_prefix(), '/') . '/' . Domain::API_NAMESPACE);
+                   $this->request->getRequestParam('rest_route', false),
+                   '/' . Domain::API_NAMESPACE
+               ) === 0
+               || $this->uriPathMatches(trim(rest_get_url_prefix(), '/') . '/' . Domain::API_NAMESPACE);
     }
 
 
@@ -193,17 +202,11 @@ class RequestTypeContextDetector
      */
     private function isEspressoGraphQLRequest()
     {
-        try {
-            require_once EE_THIRD_PARTY . 'wp-graphql/access-functions.php';
-            $endpoint = get_graphql_setting(
-                'graphql_endpoint',
-                apply_filters('graphql_endpoint', RequestTypeContext::GQL)
-            );
-            $is_gql_request = $this->uriPathMatches($endpoint);
-        } catch (Throwable $t) {
-            $is_gql_request = false;
+        if ($this->gql_endpoint->isGraphqlRequest()) {
+            return true;
         }
-        return $is_gql_request;
+        $gql_endpoint = $this->gql_endpoint->getEndpoint();
+        return $this->uriPathMatches($gql_endpoint) || $this->request->requestParamIsSet($gql_endpoint);
     }
 
 
@@ -243,8 +246,8 @@ class RequestTypeContextDetector
     private function uriPathMatches($component)
     {
         $request_uri = $this->request->requestUri(true);
-        $parts       = explode('?', $request_uri);
-        $path        = trim(reset($parts), '/');
+        $parts = explode('?', $request_uri);
+        $path = trim(reset($parts), '/');
         return strpos($path, $component) === 0;
     }
 

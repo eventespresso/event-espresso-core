@@ -3,6 +3,8 @@
 namespace EventEspresso\core\services\request\middleware;
 
 use EventEspresso\core\domain\services\contexts\RequestTypeContextDetector;
+use EventEspresso\core\domain\services\contexts\RequestTypeContextFactoryInterface;
+use EventEspresso\core\services\graphql\GraphQLEndpoint;
 use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\services\request\ResponseInterface;
 use InvalidArgumentException;
@@ -28,29 +30,34 @@ class SetRequestTypeContextChecker extends Middleware
      */
     public function handleRequest(RequestInterface $request, ResponseInterface $response)
     {
-        $this->request  = $request;
+        $this->request = $request;
         $this->response = $response;
+        /** @var GraphQLEndpoint $gql_endpoint */
+        $gql_endpoint = $this->loader->getShared('EventEspresso\core\services\graphql\GraphQLEndpoint');
+        /** @var RequestTypeContextFactoryInterface $request_type_context_factory */
+        $request_type_context_factory = $this->loader->getShared(
+            'EventEspresso\core\domain\services\contexts\RequestTypeContextFactory',
+            [$this->loader]
+        );
         /** @var RequestTypeContextDetector $request_type_context_detector */
         $request_type_context_detector = $this->loader->getShared(
             'EventEspresso\core\domain\services\contexts\RequestTypeContextDetector',
-            array(
+            [
+                $gql_endpoint,
                 $this->request,
-                $this->loader->getShared(
-                    'EventEspresso\core\domain\services\contexts\RequestTypeContextFactory',
-                    array($this->loader)
-                ),
-                array(
+                $request_type_context_factory,
+                [
                     'DOING_AJAX' => defined('DOING_AJAX') && DOING_AJAX,
                     'WP_CLI'     => defined('WP_CLI') && WP_CLI,
                     'is_admin'   => is_admin(),
-                )
-            )
+                ],
+            ]
         );
         $request_type_context = $request_type_context_detector->detectRequestTypeContext();
         $request_type_context->setIsUnitTesting(defined('EE_TESTS_DIR'));
         $request_type_context_checker = $this->loader->getShared(
             'EventEspresso\core\domain\services\contexts\RequestTypeContextChecker',
-            array($request_type_context)
+            [$request_type_context]
         );
         $this->request->setRequestTypeContextChecker($request_type_context_checker);
         $this->response = $this->processRequestStack($this->request, $this->response);
