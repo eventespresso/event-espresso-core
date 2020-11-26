@@ -188,10 +188,10 @@ class RequestTypeContextDetector
     {
         // Check for URLs like http://mysite.com/?rest_route=/ee... and http://mysite.com/wp-json/ee/...
         return strpos(
-                   $this->request->getRequestParam('rest_route', false),
-                   '/' . Domain::API_NAMESPACE
-               ) === 0
-               || $this->uriPathMatches(trim(rest_get_url_prefix(), '/') . '/' . Domain::API_NAMESPACE);
+            $this->request->getRequestParam('rest_route', false),
+            '/' . Domain::API_NAMESPACE
+        ) === 0
+            || $this->uriPathMatches(trim(rest_get_url_prefix(), '/') . '/' . Domain::API_NAMESPACE);
     }
 
 
