@@ -151,8 +151,11 @@ class JsonDataHandler
     {
         $this->decode_flags = $decode_flags === JSON_BIGINT_AS_STRING
                               || $decode_flags === JSON_OBJECT_AS_ARRAY
+                              // phpcs:ignore PHPCompatibility.Constants.NewConstants.json_invalid_utf8_ignoreFound
                               || $decode_flags === JSON_INVALID_UTF8_IGNORE
+                              // phpcs:ignore PHPCompatibility.Constants.NewConstants.json_invalid_utf8_substituteFound
                               || $decode_flags === JSON_INVALID_UTF8_SUBSTITUTE
+                              // phpcs:ignore PHPCompatibility.Constants.NewConstants.json_throw_on_errorFound
                               || $decode_flags === JSON_THROW_ON_ERROR
             ? $decode_flags
             : 0;
@@ -206,8 +209,11 @@ class JsonDataHandler
                               || $encode_flags === JSON_UNESCAPED_LINE_TERMINATORS
                               || $encode_flags === JSON_UNESCAPED_SLASHES
                               || $encode_flags === JSON_UNESCAPED_UNICODE
+                              // phpcs:ignore PHPCompatibility.Constants.NewConstants.json_invalid_utf8_ignoreFound
                               || $encode_flags === JSON_INVALID_UTF8_IGNORE
+                              // phpcs:ignore PHPCompatibility.Constants.NewConstants.json_invalid_utf8_substituteFound
                               || $encode_flags === JSON_INVALID_UTF8_SUBSTITUTE
+                              // phpcs:ignore PHPCompatibility.Constants.NewConstants.json_throw_on_errorFound
                               || $encode_flags === JSON_THROW_ON_ERROR
             ? $encode_flags
             : 0;
