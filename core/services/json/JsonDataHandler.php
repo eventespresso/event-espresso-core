@@ -84,6 +84,23 @@ class JsonDataHandler
 
 
     /**
+     * JsonDataHandler constructor.
+     */
+    public function __construct()
+    {
+        if (!defined('JSON_INVALID_UTF8_IGNORE')) {
+            define('JSON_INVALID_UTF8_IGNORE', 1048576);
+        }
+        if (!defined('JSON_INVALID_UTF8_SUBSTITUTE')) {
+            define('JSON_INVALID_UTF8_SUBSTITUTE', 2097152);
+        }
+        if (!defined('JSON_THROW_ON_ERROR')) {
+            define('JSON_THROW_ON_ERROR', 4194304);
+        }
+    }
+
+
+    /**
      * set $data_type, $decode_flags, $encode_flags, and depth all in one shot
      *
      * @param string $data_type
@@ -134,18 +151,11 @@ class JsonDataHandler
     {
         $this->decode_flags = $decode_flags === JSON_BIGINT_AS_STRING
                               || $decode_flags === JSON_OBJECT_AS_ARRAY
+                              || $decode_flags === JSON_INVALID_UTF8_IGNORE
+                              || $decode_flags === JSON_INVALID_UTF8_SUBSTITUTE
+                              || $decode_flags === JSON_THROW_ON_ERROR
             ? $decode_flags
             : 0;
-        $this->decode_flags = PHP_VERSION_ID > 70200
-                              && (
-                                  $decode_flags === JSON_INVALID_UTF8_IGNORE
-                                  || $decode_flags === JSON_INVALID_UTF8_SUBSTITUTE
-                              )
-            ? $decode_flags
-            : $this->decode_flags;
-        $this->decode_flags = PHP_VERSION_ID > 70300 && $decode_flags === JSON_THROW_ON_ERROR
-            ? $decode_flags
-            : $this->decode_flags;
     }
 
 
@@ -196,18 +206,11 @@ class JsonDataHandler
                               || $encode_flags === JSON_UNESCAPED_LINE_TERMINATORS
                               || $encode_flags === JSON_UNESCAPED_SLASHES
                               || $encode_flags === JSON_UNESCAPED_UNICODE
+                              || $encode_flags === JSON_INVALID_UTF8_IGNORE
+                              || $encode_flags === JSON_INVALID_UTF8_SUBSTITUTE
+                              || $encode_flags === JSON_THROW_ON_ERROR
             ? $encode_flags
             : 0;
-        $this->encode_flags = PHP_VERSION_ID > 70200
-                              && (
-                                  $encode_flags === JSON_INVALID_UTF8_IGNORE
-                                  || $encode_flags === JSON_INVALID_UTF8_SUBSTITUTE
-                              )
-            ? $encode_flags
-            : $this->encode_flags;
-        $this->encode_flags = PHP_VERSION_ID > 70300 && $encode_flags === JSON_THROW_ON_ERROR
-            ? $encode_flags
-            : $this->encode_flags;
     }
 
 
