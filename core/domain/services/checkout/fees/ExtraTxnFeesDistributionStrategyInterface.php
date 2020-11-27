@@ -10,5 +10,5 @@ interface ExtraTxnFeesDistributionStrategyInterface
      * @param float $extra_fees
      * @param EE_Registration[] $registrations
      */
-    public function applyExtraFeesToRegistrants(float $extra_fees, array $registrations);
+    public function applyExtraFeesToRegistrants($extra_fees, array $registrations);
 }

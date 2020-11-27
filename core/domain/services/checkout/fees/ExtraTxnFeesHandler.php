@@ -82,7 +82,7 @@ class ExtraTxnFeesHandler
      * @param string $extra_fees_strategy_fqcn
      * @throws DomainException
      */
-    private function validateExtraTxnFeesDistributionStrategy(string $extra_fees_strategy_fqcn)
+    private function validateExtraTxnFeesDistributionStrategy($extra_fees_strategy_fqcn)
     {
         if (! is_subclass_of(
             $extra_fees_strategy_fqcn,

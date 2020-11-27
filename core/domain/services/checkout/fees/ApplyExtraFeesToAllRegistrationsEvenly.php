@@ -21,7 +21,7 @@ class ApplyExtraFeesToAllRegistrationsEvenly implements ExtraTxnFeesDistribution
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function applyExtraFeesToRegistrants(float $extra_fees, array $registrations)
+    public function applyExtraFeesToRegistrants($extra_fees, array $registrations)
     {
         // divide remaining fees by number of registrations and apply to each
         $extra_payment = $extra_fees / count($registrations);

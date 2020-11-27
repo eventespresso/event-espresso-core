@@ -21,7 +21,7 @@ class ApplyExtraFeesToPrimaryRegistrantOnly implements ExtraTxnFeesDistributionS
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function applyExtraFeesToRegistrants(float $extra_fees, array $registrations)
+    public function applyExtraFeesToRegistrants($extra_fees, array $registrations)
     {
         foreach ($registrations as $registration) {
             if ($registration instanceof EE_Registration && $registration->is_primary_registrant()) {
