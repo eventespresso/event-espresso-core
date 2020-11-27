@@ -11,9 +11,9 @@
     "blocks.js.map": "/static/js/blocks.de9330b3.js.map",
     "blocks.php": "/static/js/blocks.4fff0138.asset.php",
     "components.css": "/static/css/components.549f585a.css",
-    "components.js": "/static/js/components.e3923ef3.js",
-    "components.js.map": "/static/js/components.e3923ef3.js.map",
-    "components.php": "/static/js/components.593de7b7.asset.php",
+    "components.js": "/static/js/components.e3e9834c.js",
+    "components.js.map": "/static/js/components.e3e9834c.js.map",
+    "components.php": "/static/js/components.ebb62e58.asset.php",
     "constants.js": "/static/js/constants.10c388df.js",
     "constants.js.map": "/static/js/constants.10c388df.js.map",
     "constants.php": "/static/js/constants.351f3d95.asset.php",
@@ -102,7 +102,7 @@
     "static/css/tpc.c205e942.css.map": "/static/css/tpc.c205e942.css.map",
     "static/css/wpPluginsPage.f8e8e26d.css.map": "/static/css/wpPluginsPage.f8e8e26d.css.map",
     "static/js/adapters.b0064906.js.LICENSE.txt": "/static/js/adapters.b0064906.js.LICENSE.txt",
-    "static/js/components.e3923ef3.js.LICENSE.txt": "/static/js/components.e3923ef3.js.LICENSE.txt",
+    "static/js/components.e3e9834c.js.LICENSE.txt": "/static/js/components.e3e9834c.js.LICENSE.txt",
     "static/js/data.8d7c0ba3.js.LICENSE.txt": "/static/js/data.8d7c0ba3.js.LICENSE.txt",
     "static/js/dates.2c13dd7d.js.LICENSE.txt": "/static/js/dates.2c13dd7d.js.LICENSE.txt",
     "static/js/eventEditor.4f5ae6e6.js.LICENSE.txt": "/static/js/eventEditor.4f5ae6e6.js.LICENSE.txt",
@@ -119,7 +119,7 @@
     ],
     "components": [
       "static/css/components.549f585a.css",
-      "static/js/components.e3923ef3.js"
+      "static/js/components.e3e9834c.js"
     ],
     "constants": [
       "static/js/constants.10c388df.js"
