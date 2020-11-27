@@ -368,11 +368,11 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/cardView/TicketDetailsPanel.tsx:32
 	__( 'reg list', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/cardView/Details.tsx:44
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/cardView/Details.tsx:42
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/cardView/Details.tsx:40
 	__( 'Edit description', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/cardView/Details.tsx:45
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/cardView/Details.tsx:43
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/cardView/Details.tsx:41
 	__( 'edit description…', 'event_espresso' ),
 
@@ -946,7 +946,7 @@ $generated_i18n_strings = array(
 	__( 'Yes', 'event_espresso' ),
 
 	// Reference: packages/components/src/DateTimeRangePicker/index.tsx:74
-	// Reference: packages/components/src/PopoverForm/PopoverForm.tsx:42
+	// Reference: packages/components/src/Popover/PopoverForm/PopoverForm.tsx:42
 	__( 'save', 'event_espresso' ),
 
 	// Reference: packages/components/src/DebugInfo/DebugInfo.tsx:38
