@@ -18,7 +18,6 @@ use WPGraphQL\Router;
  */
 class Api extends JsonDataNode
 {
-
     const NODE_NAME = 'api';
 
 
@@ -43,7 +42,13 @@ class Api extends JsonDataNode
         $this->addData('restApiRouteUrl', rest_url('ee/v4.8.36/'));
         $this->addData('restApiCollectionEndpoints', EED_Core_Rest_Api::getCollectionRoutesIndexedByModelName());
         $this->addData('restApiPrimaryKeys', EED_Core_Rest_Api::getPrimaryKeyNamesIndexedByModelName());
-        $graphqlEndpoint = class_exists('WPGraphQL') ? trailingslashit(site_url()) . Router::$route : '';
+
+        // route can be something like 'graphql'
+        $route = trim(Router::$route, '/');
+        // make sure we are dealing with sane folks
+        $has_pretty_permalinks = (bool) get_option('permalink_structure');
+        // if pretty permalinks, use '/graphql' otherwise '?graphql=1'
+        $graphqlEndpoint = $has_pretty_permalinks ? site_url($route) : add_query_arg($route, 1, site_url());
         $this->addData('graphqlEndpoint', esc_url($graphqlEndpoint));
         $this->setInitialized(true);
     }

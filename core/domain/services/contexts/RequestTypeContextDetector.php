@@ -3,9 +3,11 @@
 namespace EventEspresso\core\domain\services\contexts;
 
 use EventEspresso\core\domain\Domain;
+use EventEspresso\core\services\graphql\GraphQLEndpoint;
 use EventEspresso\core\services\request\RequestInterface;
-use InvalidArgumentException;
 use EventEspresso\core\domain\entities\contexts\RequestTypeContext;
+use InvalidArgumentException;
+use WPGraphQL\Router;
 
 /**
  * Class RequestTypeContextDetector
@@ -17,6 +19,11 @@ use EventEspresso\core\domain\entities\contexts\RequestTypeContext;
  */
 class RequestTypeContextDetector
 {
+
+    /**
+     * @var GraphQLEndpoint $gql_endpoint
+     */
+    private $gql_endpoint;
 
     /**
      * @var RequestTypeContextFactoryInterface $factory
@@ -37,6 +44,7 @@ class RequestTypeContextDetector
     /**
      * RequestTypeContextDetector constructor.
      *
+     * @param GraphQLEndpoint                    $gql_endpoint
      * @param RequestInterface                   $request
      * @param RequestTypeContextFactoryInterface $factory
      * @param array                              $globalRouteConditions an array for injecting values that would
@@ -45,12 +53,14 @@ class RequestTypeContextDetector
      *                                                                  request route such as DOING_AJAX
      */
     public function __construct(
+        GraphQLEndpoint $gql_endpoint,
         RequestInterface $request,
         RequestTypeContextFactoryInterface $factory,
         array $globalRouteConditions = []
     ) {
-        $this->request               = $request;
-        $this->factory               = $factory;
+        $this->gql_endpoint = $gql_endpoint;
+        $this->request = $request;
+        $this->factory = $factory;
         $this->globalRouteConditions = $globalRouteConditions;
     }
 
@@ -60,7 +70,7 @@ class RequestTypeContextDetector
      * @param mixed  $default
      * @return mixed
      */
-    private function getGlobalRouteCondition($globalRouteCondition, $default)
+    private function getGlobalRouteCondition(string $globalRouteCondition, $default)
     {
         return isset($this->globalRouteConditions[ $globalRouteCondition ])
             ? $this->globalRouteConditions[ $globalRouteCondition ]
@@ -153,7 +163,7 @@ class RequestTypeContextDetector
      */
     private function isWordPressActivationRequest()
     {
-        $action               = $this->request->getRequestParam('action');
+        $action = $this->request->getRequestParam('action');
         $plugins_page_actions = [
             'activate',
             'activate-multi',
@@ -181,17 +191,22 @@ class RequestTypeContextDetector
             $this->request->getRequestParam('rest_route', false),
             '/' . Domain::API_NAMESPACE
         ) === 0
-        || $this->uriPathMatches(trim(rest_get_url_prefix(), '/') . '/' . Domain::API_NAMESPACE);
+            || $this->uriPathMatches(trim(rest_get_url_prefix(), '/') . '/' . Domain::API_NAMESPACE);
     }
 
 
     /**
+     * Checks for URLs like https://mysite.com/graphql
+     *
      * @return bool
      */
     private function isEspressoGraphQLRequest()
     {
-        // Check for URLs like https://mysite.com/graphql
-        return $this->uriPathMatches(RequestTypeContext::GQL);
+        if ($this->gql_endpoint->isGraphqlRequest()) {
+            return true;
+        }
+        $gql_endpoint = $this->gql_endpoint->getEndpoint();
+        return $this->uriPathMatches($gql_endpoint) || $this->request->requestParamIsSet($gql_endpoint);
     }
 
 
@@ -231,8 +246,8 @@ class RequestTypeContextDetector
     private function uriPathMatches($component)
     {
         $request_uri = $this->request->requestUri(true);
-        $parts       = explode('?', $request_uri);
-        $path        = trim(reset($parts), '/');
+        $parts = explode('?', $request_uri);
+        $path = trim(reset($parts), '/');
         return strpos($path, $component) === 0;
     }
 
