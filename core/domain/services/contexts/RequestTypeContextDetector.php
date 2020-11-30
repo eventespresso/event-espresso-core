@@ -240,6 +240,8 @@ class RequestTypeContextDetector
 
 
     /**
+     * returns true if the current request URI starts with the supplied $component string
+     *
      * @param string $component
      * @return bool
      */
