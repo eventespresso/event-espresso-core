@@ -133,37 +133,37 @@ $generated_i18n_strings = array(
 	// Reference: domains/blocks/src/services/utils.ts:26
 	__( 'Select…', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/ActiveStatus.tsx:35
+	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/ActiveStatus.tsx:34
 	__( 'Active Status', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/AltRegPage.tsx:37
 	__( 'Alternative Registration Page', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/DefaultRegistrationStatus.tsx:18
+	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/DefaultRegistrationStatus.tsx:17
 	__( 'Default Registration Status', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/Donations.tsx:21
+	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/Donations.tsx:19
 	__( 'Disable Donations', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/Donations.tsx:21
+	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/Donations.tsx:19
 	__( 'Enable Donations', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/EventManager.tsx:42
+	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/EventManager.tsx:37
 	__( 'Event Manager', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/EventPhoneNumber.tsx:28
+	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/EventPhoneNumber.tsx:26
 	__( 'Event Phone Number', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/MaxRegistrations.tsx:30
+	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/MaxRegistrations.tsx:35
 	__( 'Maximum Number of Registrations Allowed per Transaction', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/TicketSelector.tsx:22
+	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/TicketSelector.tsx:20
 	__( 'hide ticket selector', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/TicketSelector.tsx:22
+	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/TicketSelector.tsx:20
 	__( 'show ticket selector', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/TicketSelector.tsx:28
+	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/TicketSelector.tsx:24
 	__( 'Display Ticket Selector', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/index.tsx:22
