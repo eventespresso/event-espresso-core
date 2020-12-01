@@ -118,17 +118,17 @@ abstract class DomainBase implements DomainInterface
      */
     private function setDistributionAssetsPath()
     {
-        $assets_path = $this->pluginPath() . DomainBase::ASSETS_FOLDER;
-        if (! is_readable($assets_path)) {
-            throw new DomainException(
-                sprintf(
-                    esc_html__(
-                        'The assets distribution folder was not found or is not readable. Please verify that "%1$s" exists and has valid permissions.',
-                        'event_espresso'
-                    ),
-                    $assets_path
-                )
-            );
+        $assets_folder_paths = [
+            $this->plugin_path . DomainBase::ASSETS_FOLDER,
+            $this->plugin_path . 'src/' . DomainBase::ASSETS_FOLDER,
+            $this->plugin_path,
+        ];
+        $assets_path = '';
+        foreach ($assets_folder_paths as $assets_folder_path) {
+            if (is_readable($assets_folder_path)) {
+                $assets_path = $assets_folder_path;
+                break;
+            }
         }
         $this->assets_path = trailingslashit($assets_path);
     }
