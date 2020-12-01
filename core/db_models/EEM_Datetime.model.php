@@ -6,9 +6,9 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
 /**
  * Class Datetime Model
  *
- * @package               Event Espresso
- * @subpackage            includes/models/
- * @author                Michael Nelson, Brent Christensen
+ * @package     Event Espresso
+ * @subpackage  includes/models/
+ * @author      Michael Nelson, Brent Christensen
  */
 class EEM_Datetime extends EEM_Soft_Delete_Base
 {
@@ -171,8 +171,8 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
          * Filters the initial start date for the new datetime.
          * Any time included in this value will be overridden later so use additional filters to modify the time.
          *
-         * @param int $start_date Unixtimestamp representing now + 30 days in seconds.
-         * @return int unixtimestamp
+         * @param int $start_date Unix timestamp representing now + 30 days in seconds.
+         * @return int Unix timestamp
          */
         $start_date = apply_filters(
             'FHEE__EEM_Datetime__create_new_blank_datetime__start_date',
@@ -182,8 +182,8 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
          * Filters the initial end date for the new datetime.
          * Any time included in this value will be overridden later so use additional filters to modify the time.
          *
-         * @param int $end_data Unixtimestamp representing now + 30 days in seconds.
-         * @return int unixtimestamp
+         * @param int $end_data Unix timestamp representing now + 30 days in seconds.
+         * @return int Unix timestamp
          */
         $end_date       = apply_filters(
             'FHEE__EEM_Datetime__create_new_blank_datetime__end_date',
@@ -313,10 +313,10 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @throws EE_Error
      */
     public function get_datetimes_for_event_ordered_by_DTT_order(
-        $EVT_ID,
-        $include_expired = true,
-        $include_deleted = true,
-        $limit = null
+        int $EVT_ID,
+        bool $include_expired = true,
+        bool $include_deleted = true,
+        int $limit = 0
     ) {
         $prev_data_prep_value = $this->prepModelForQuery();
         $where_params         = ['Event.EVT_ID' => absint($EVT_ID)];
@@ -338,7 +338,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @return EE_Datetime[]|EE_Base_Class[]
      * @throws EE_Error
      */
-    public function get_datetimes_for_event_ordered_by_importance($EVT_ID = 0, $limit = 0)
+    public function get_datetimes_for_event_ordered_by_importance(int $EVT_ID, int $limit = 0)
     {
         $query_params[0] = ['Event.EVT_ID' => absint($EVT_ID)];
         $query_params    = $this->addDefaultWhereConditions($query_params);
@@ -354,8 +354,12 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @return EE_Datetime
      * @throws EE_Error
      */
-    public function get_oldest_datetime_for_event($EVT_ID, $include_expired = false, $include_deleted = false)
-    {
+    public function get_oldest_datetime_for_event(
+        int $EVT_ID,
+        bool $include_expired = false,
+        bool $include_deleted =
+        false
+    ) {
         $results = $this->get_datetimes_for_event_ordered_by_start_time(
             $EVT_ID,
             $include_expired,
@@ -375,13 +379,13 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @param int  $EVT_ID
      * @param bool $try_to_exclude_expired
      * @param bool $try_to_exclude_deleted
-     * @return \EE_Datetime
+     * @return EE_Datetime
      * @throws EE_Error
      */
     public function get_primary_datetime_for_event(
-        $EVT_ID,
-        $try_to_exclude_expired = true,
-        $try_to_exclude_deleted = true
+        int $EVT_ID,
+        bool $try_to_exclude_expired = true,
+        bool $try_to_exclude_deleted = true
     ) {
         if ($try_to_exclude_expired) {
             $non_expired = $this->get_oldest_datetime_for_event($EVT_ID, false, false);
@@ -411,10 +415,10 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @throws EE_Error
      */
     public function get_datetimes_for_event_ordered_by_start_time(
-        $EVT_ID,
-        $include_expired = true,
-        $include_deleted = true,
-        $limit = null
+        int $EVT_ID,
+        bool $include_expired = true,
+        bool $include_deleted = true,
+        $limit = 0
     ) {
         $prev_data_prep_value = $this->prepModelForQuery();
         $where_params         = ['Event.EVT_ID' => absint($EVT_ID)];
@@ -440,10 +444,10 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @throws EE_Error
      */
     public function get_datetimes_for_ticket_ordered_by_start_time(
-        $TKT_ID,
-        $include_expired = true,
-        $include_deleted = true,
-        $limit = null
+        int $TKT_ID,
+        bool $include_expired = true,
+        bool $include_deleted = true,
+        $limit = 0
     ) {
         $prev_data_prep_value = $this->prepModelForQuery();
         $where_params         = ['Ticket.TKT_ID' => absint($TKT_ID)];
@@ -466,9 +470,9 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @throws EE_Error
      */
     public function get_datetimes_for_ticket_ordered_by_DTT_order(
-        $TKT_ID,
-        $include_expired = true,
-        $include_deleted = true,
+        int $TKT_ID,
+        bool $include_expired = true,
+        bool $include_deleted = true,
         $limit = null
     ) {
         $prev_data_prep_value = $this->prepModelForQuery();
@@ -487,7 +491,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @return EE_Datetime
      * @throws EE_Error
      */
-    public function get_most_important_datetime_for_event($EVT_ID)
+    public function get_most_important_datetime_for_event(int $EVT_ID)
     {
         $results = $this->get_datetimes_for_event_ordered_by_importance($EVT_ID, 1);
         if ($results) {
@@ -632,7 +636,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function sum_tickets_currently_available_at_datetime($DTT_ID, array $query_params = [])
+    public function sum_tickets_currently_available_at_datetime(int $DTT_ID, array $query_params = [])
     {
         $datetime = $this->get_one_by_ID($DTT_ID);
         if ($datetime instanceof EE_Datetime) {
@@ -743,7 +747,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @return array
      * @since   $VID:$
      */
-    private function addDefaultQueryParams(array $query_params, $limit = 0, $order_by = 'DTT_EVT_start', $order = 'ASC')
+    private function addDefaultQueryParams(array $query_params, int $limit = 0, $order_by = 'DTT_EVT_start', $order = 'ASC')
     {
         $query_params = $this->addOrderByQueryParams($query_params, $order_by, $order);
         $query_params = $this->addLimitQueryParams($query_params, $limit);
@@ -773,7 +777,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @return array
      * @since   $VID:$
      */
-    private function addDefaultWhereParams(array $where_params, $include_deleted = true, $include_expired = true)
+    private function addDefaultWhereParams(array $where_params, bool $include_deleted = true, bool $include_expired = true)
     {
         $where_params = $this->addExpiredWhereParams($where_params, $include_expired);
         $where_params = $this->addDeletedWhereParams($where_params, $include_deleted);
@@ -787,7 +791,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @return array
      * @since   $VID:$
      */
-    private function addDeletedWhereParams(array $where_params, $include_deleted = true)
+    private function addDeletedWhereParams(array $where_params, bool $include_deleted = true)
     {
         $deleted                     = $include_deleted ? [true, false] : [false];
         $where_params['DTT_deleted'] = ['IN', $deleted];
@@ -801,7 +805,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @return array
      * @since   $VID:$
      */
-    private function addExpiredWhereParams(array $where_params, $include_expired = true)
+    private function addExpiredWhereParams(array $where_params, bool $include_expired = true)
     {
         if (! $include_expired) {
             $where_params['DTT_EVT_end'] = ['>=', current_time('mysql', true)];
@@ -816,7 +820,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @return array
      * @since   $VID:$
      */
-    private function addLimitQueryParams(array $query_params, $limit = 0)
+    private function addLimitQueryParams(array $query_params, int $limit = 0)
     {
         if ($limit) {
             $query_params['limit'] = $limit;
