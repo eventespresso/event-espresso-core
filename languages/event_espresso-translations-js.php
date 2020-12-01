@@ -561,7 +561,7 @@ $generated_i18n_strings = array(
 	// Reference: packages/tpc/src/buttons/useSubmitButtonProps.tsx:25
 	__( 'Submit', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/TicketAssignmentsManagerModal/index.tsx:32
+	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/TicketAssignmentsManagerModal/index.tsx:30
 	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/table/Table.tsx:14
 	__( 'Ticket Assignment Manager', 'event_espresso' ),
 
@@ -930,7 +930,7 @@ $generated_i18n_strings = array(
 	__( 'TO', 'event_espresso' ),
 
 	// Reference: packages/components/src/Confirm/ConfirmClose.tsx:8
-	// Reference: packages/components/src/Modal/ModalWithAlert.tsx:22
+	// Reference: packages/components/src/Modal/ModalWithAlert.tsx:24
 	__( 'Are you sure you want to close this?', 'event_espresso' ),
 
 	// Reference: packages/components/src/Confirm/ConfirmDelete.tsx:8
@@ -939,10 +939,10 @@ $generated_i18n_strings = array(
 	// Reference: packages/components/src/Confirm/useConfirmWithButton.tsx:11
 	__( 'Please confirm this action.', 'event_espresso' ),
 
-	// Reference: packages/components/src/Confirm/useConfirmationDialog.tsx:34
+	// Reference: packages/components/src/Confirm/useConfirmationDialog.tsx:32
 	__( 'No', 'event_espresso' ),
 
-	// Reference: packages/components/src/Confirm/useConfirmationDialog.tsx:35
+	// Reference: packages/components/src/Confirm/useConfirmationDialog.tsx:33
 	__( 'Yes', 'event_espresso' ),
 
 	// Reference: packages/components/src/DateTimeRangePicker/index.tsx:74
@@ -1006,8 +1006,11 @@ $generated_i18n_strings = array(
 	// Reference: packages/components/src/LoadingNotice/LoadingNotice.tsx:12
 	__( 'loading…', 'event_espresso' ),
 
-	// Reference: packages/components/src/Modal/modalCloseButtonProps/index.ts:8
+	// Reference: packages/components/src/Modal/Modal.tsx:59
 	__( 'close modal', 'event_espresso' ),
+
+	// Reference: packages/components/src/Modal/ModalWithAlert.tsx:23
+	__( 'Alert!', 'event_espresso' ),
 
 	// Reference: packages/components/src/Pagination/ItemRender.tsx:10
 	__( 'next', 'event_espresso' ),
@@ -1276,7 +1279,7 @@ $generated_i18n_strings = array(
 	// Reference: packages/tpc/src/components/NoPricesBanner/index.tsx:33
 	__( 'Click the save button below to assign which dates this ticket will be available for purchase on.', 'event_espresso' ),
 
-	// Reference: packages/tpc/src/components/TicketPriceCalculatorModal.tsx:32
+	// Reference: packages/tpc/src/components/TicketPriceCalculatorModal.tsx:31
 	/* translators: %s ticket name */
 	__( 'Price Calculator for Ticket: %s', 'event_espresso' ),
 
