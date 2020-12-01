@@ -836,7 +836,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
     {
         $order                    = $order === 'ASC' ? 'ASC' : 'DESC';
         $valid_order_columns      = ['DTT_ID', 'DTT_EVT_start', 'DTT_EVT_end', 'DTT_order'];
-        $order_by                 = in_array($order_by, $valid_order_columns) ? $order_by : 'DTT_EVT_start';
+        $order_by                 = in_array($order_by, $valid_order_columns, true) ? $order_by : 'DTT_EVT_start';
         $query_params['order_by'] = [$order_by => $order];
         return $query_params;
     }
