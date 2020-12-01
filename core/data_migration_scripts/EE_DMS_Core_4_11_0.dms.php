@@ -46,7 +46,6 @@ class EE_DMS_Core_4_11_0 extends EE_Data_Migration_Script_Base
         return $version_string
                && version_compare($version_string, '4.11.0.decaf', '<')
                && version_compare($version_string, '4.10.0.decaf', '>=');
-
     }
 
 
@@ -238,8 +237,8 @@ class EE_DMS_Core_4_11_0 extends EE_Data_Migration_Script_Base
         $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB ');
 
         $now_in_mysql = current_time('mysql', true);
-        $table_name = 'esp_line_item';
-        $sql        = "LIN_ID int(11) NOT NULL AUTO_INCREMENT,
+        $table_name   = 'esp_line_item';
+        $sql          = "LIN_ID int(11) NOT NULL AUTO_INCREMENT,
 				LIN_code varchar(245) NOT NULL DEFAULT '',
 				TXN_ID int(11) DEFAULT NULL,
 				LIN_name varchar(245) NOT NULL DEFAULT '',
