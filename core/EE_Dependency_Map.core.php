@@ -202,7 +202,7 @@ class EE_Dependency_Map
         array $dependencies,
         $overwrite = EE_Dependency_Map::KEEP_EXISTING_DEPENDENCIES
     ) {
-        $class = trim($class, '\\');
+        $class      = trim($class, '\\');
         $registered = false;
         if (empty(EE_Dependency_Map::$_instance->_dependency_map[ $class ])) {
             EE_Dependency_Map::$_instance->_dependency_map[ $class ] = [];
@@ -216,7 +216,7 @@ class EE_Dependency_Map
             ) {
                 unset($dependencies[ $dependency ]);
                 $dependencies[ $alias ] = $load_source;
-                $registered = true;
+                $registered             = true;
             }
         }
         // now add our two lists of dependencies together.
@@ -609,6 +609,11 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\database\TableAnalysis' => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\database\TableManager'  => EE_Dependency_Map::load_from_cache,
                 'EE_DMS_Core_4_9_0'                                  => EE_Dependency_Map::load_from_cache,
+            ],
+            'EE_DMS_Core_4_11_0'                                                                                          => [
+                'EE_DMS_Core_4_10_0'                                 => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\database\TableAnalysis' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\database\TableManager'  => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\services\assets\Registry'                                                                 => [
                 'EventEspresso\core\services\assets\AssetCollection' => EE_Dependency_Map::load_new_object,
