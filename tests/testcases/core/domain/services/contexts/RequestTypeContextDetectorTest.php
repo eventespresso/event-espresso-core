@@ -5,6 +5,7 @@ namespace EventEspresso\tests\testcases\core\domain\services\contexts;
 use EventEspresso\core\domain\Domain;
 use EventEspresso\core\domain\entities\contexts\RequestTypeContext;
 use EventEspresso\core\domain\services\contexts\RequestTypeContextDetector;
+use EventEspresso\core\services\graphql\GraphQLEndpoint;
 use EventEspresso\tests\mocks\core\domain\services\contexts\RequestTypeContextFactoryMock;
 use EventEspresso\tests\mocks\core\services\request\RequestMock;
 use InvalidArgumentException;
@@ -37,6 +38,7 @@ class RequestTypeContextDetectorTest extends EspressoPHPUnitFrameworkTestCase
         return [
             'Detect WP Scrape Request' => [
                 new RequestTypeContextDetector(
+                    new GraphQLEndpoint(),
                     new RequestMock(
                         array('wp_scrape_key' => '123', 'wp_scrape_nonce' => '456'),
                         array(),
@@ -50,6 +52,7 @@ class RequestTypeContextDetectorTest extends EspressoPHPUnitFrameworkTestCase
             ],
             'Detect EE REST API Request' => [
                 new RequestTypeContextDetector(
+                    new GraphQLEndpoint(),
                     new RequestMock(
                         array(),
                         array(),
@@ -63,6 +66,7 @@ class RequestTypeContextDetectorTest extends EspressoPHPUnitFrameworkTestCase
             ],
             'Detect WP REST API Request' => [
                 new RequestTypeContextDetector(
+                    new GraphQLEndpoint(),
                     new RequestMock(
                         array(),
                         array(),
@@ -76,6 +80,7 @@ class RequestTypeContextDetectorTest extends EspressoPHPUnitFrameworkTestCase
             ],
             'Detect Frontend AJAX Request' => [
                 new RequestTypeContextDetector(
+                    new GraphQLEndpoint(),
                     new RequestMock(
                         array(),
                         array('ee_front_ajax' => true),
@@ -89,6 +94,7 @@ class RequestTypeContextDetectorTest extends EspressoPHPUnitFrameworkTestCase
             ],
             'Detect Admin AJAX Request' => [
                 new RequestTypeContextDetector(
+                    new GraphQLEndpoint(),
                     new RequestMock(
                         array(),
                         array('ee_admin_ajax' => true),
@@ -102,6 +108,7 @@ class RequestTypeContextDetectorTest extends EspressoPHPUnitFrameworkTestCase
             ],
             'Detect Other AJAX Request' => [
                 new RequestTypeContextDetector(
+                    new GraphQLEndpoint(),
                     new RequestMock(
                         array(),
                         array(),
@@ -115,6 +122,7 @@ class RequestTypeContextDetectorTest extends EspressoPHPUnitFrameworkTestCase
             ],
             'Detect WP Cron Request' => [
                 new RequestTypeContextDetector(
+                    new GraphQLEndpoint(),
                     new RequestMock(
                         array(),
                         array(),
@@ -128,6 +136,7 @@ class RequestTypeContextDetectorTest extends EspressoPHPUnitFrameworkTestCase
             ],
             'Detect WP CLI Request' => [
                 new RequestTypeContextDetector(
+                    new GraphQLEndpoint(),
                     new RequestMock(
                         array(),
                         array(),
@@ -141,6 +150,7 @@ class RequestTypeContextDetectorTest extends EspressoPHPUnitFrameworkTestCase
             ],
             'Detect WP Admin Request' => [
                 new RequestTypeContextDetector(
+                    new GraphQLEndpoint(),
                     new RequestMock(
                         array(),
                         array(),
@@ -154,6 +164,7 @@ class RequestTypeContextDetectorTest extends EspressoPHPUnitFrameworkTestCase
             ],
             'Detect Event List iFrame Request' => [
                 new RequestTypeContextDetector(
+                    new GraphQLEndpoint(),
                     new RequestMock(
                         array('event_list' => 'iframe'),
                         array(),
@@ -167,6 +178,7 @@ class RequestTypeContextDetectorTest extends EspressoPHPUnitFrameworkTestCase
             ],
             'Detect Ticket Selector iFrame Request' => [
                 new RequestTypeContextDetector(
+                    new GraphQLEndpoint(),
                     new RequestMock(
                         array('ticket_selector' => 'iframe'),
                         array(),
@@ -180,6 +192,7 @@ class RequestTypeContextDetectorTest extends EspressoPHPUnitFrameworkTestCase
             ],
             'Detect Calendar iFrame Request' => [
                 new RequestTypeContextDetector(
+                    new GraphQLEndpoint(),
                     new RequestMock(
                         array('calendar' => 'iframe'),
                         array(),
@@ -193,6 +206,7 @@ class RequestTypeContextDetectorTest extends EspressoPHPUnitFrameworkTestCase
             ],
             'Detect Feed Request' => [
                 new RequestTypeContextDetector(
+                    new GraphQLEndpoint(),
                     new RequestMock(
                         array(),
                         array(),
@@ -206,6 +220,7 @@ class RequestTypeContextDetectorTest extends EspressoPHPUnitFrameworkTestCase
             ],
             'Detect Frontend Request' => [
                 new RequestTypeContextDetector(
+                    new GraphQLEndpoint(),
                     new RequestMock(
                         array('param' => 'value'),
                         array(),
