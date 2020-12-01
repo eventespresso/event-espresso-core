@@ -151,7 +151,7 @@ class EEH_File extends EEH_Base implements EEHI_File
                 EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
             }
             // should be loaded if we are past the wp_loaded hook...
-            if (! function_exists('WP_Filesystem')) {
+            if (! function_exists('WP_Filesystem') || ! function_exists('submit_button')) {
                 require_once(ABSPATH . 'wp-admin/includes/file.php');
                 require_once(ABSPATH . 'wp-admin/includes/template.php');
             }

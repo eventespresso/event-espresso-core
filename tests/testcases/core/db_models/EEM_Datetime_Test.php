@@ -375,11 +375,48 @@ class EEM_Datetime_Test extends EE_UnitTestCase {
 
 		//setup some datetimes to attach to events.
 		$datetimes = array(
-			'expired_datetime' => $this->factory->datetime->create( array( 'DTT_EVT_start' => $past_start_date->format( $full_format ), 'DTT_EVT_end' => $past_start_date->format( $full_format), 'timezone' => 'America/Toronto', 'formats' =>  $formats ) ),
-			'upcoming_datetime' => $this->factory->datetime->create( array( 'DTT_EVT_start' => $upcoming_start_date->format( $full_format ), 'DTT_EVT_end' => $upcoming_start_date->format( $full_format), 'timezone' => 'America/Toronto', 'formats' => $formats ) ),
-			'active_datetime' => $this->factory->datetime->create( array( 'DTT_EVT_start' => $current->sub( new DateInterval( "PT2H") )->format( $full_format ), 'DTT_EVT_end' => $current_end_date->add( new DateInterval( "PT2H" ) )->format( $full_format), 'timezone' => 'America/Toronto', 'formats' =>  $formats ) ),
-			'sold_out_datetime' => $this->factory->datetime->create( array( 'DTT_EVT_start' => $upcoming_start_date->format( $full_format ), 'DTT_EVT_end' => $upcoming_start_date->format( $full_format), 'DTT_reg_limit' => 10, 'DTT_sold' => 10,  'timezone' => 'America/Toronto', 'formats' =>  $formats ) ),
-			'inactive_datetime' => $this->factory->datetime->create( array( 'DTT_EVT_start' => $current->format( $full_format ), 'DTT_EVT_end' => $current_end_date->format( $full_format), 'timezone' => 'America/Toronto', 'formats' =>  $formats ) )
+            'expired_datetime' => $this->factory->datetime->create(
+                array(
+                    'DTT_EVT_start' => $past_start_date->format($full_format),
+                    'DTT_EVT_end'   => $past_start_date->format($full_format),
+                    'timezone'      => 'America/Toronto',
+                    'formats'       => $formats,
+                )
+            ),
+            'upcoming_datetime' => $this->factory->datetime->create(
+                array(
+                    'DTT_EVT_start' => $upcoming_start_date->format($full_format),
+                    'DTT_EVT_end'   => $upcoming_start_date->format($full_format),
+                    'timezone'      => 'America/Toronto',
+                    'formats'       => $formats,
+                )
+            ),
+            'active_datetime' => $this->factory->datetime->create(
+                array(
+                    'DTT_EVT_start' => $current->sub(new DateInterval("PT2H"))->format($full_format),
+                    'DTT_EVT_end'   => $current_end_date->add(new DateInterval("PT2H"))->format($full_format),
+                    'timezone'      => 'America/Toronto',
+                    'formats'       => $formats,
+                )
+            ),
+            'sold_out_datetime' => $this->factory->datetime->create(
+                array(
+                    'DTT_EVT_start' => $upcoming_start_date->format($full_format),
+                    'DTT_EVT_end'   => $upcoming_start_date->format($full_format),
+                    'DTT_reg_limit' => 10,
+                    'DTT_sold'      => 10,
+                    'timezone'      => 'America/Toronto',
+                    'formats'       => $formats,
+                )
+            ),
+            'inactive_datetime' => $this->factory->datetime->create(
+                array(
+                    'DTT_EVT_start' => $current->format($full_format),
+                    'DTT_EVT_end'   => $current_end_date->format($full_format),
+                    'timezone'      => 'America/Toronto',
+                    'formats'       => $formats,
+                )
+            ),
 		);
 
 
@@ -414,6 +451,7 @@ class EEM_Datetime_Test extends EE_UnitTestCase {
 					$this->assertEquals( $past_start_date->format('Y'), $dtt->dtt_year );
 					$this->assertEquals( $past_start_date->format('F'), $dtt->dtt_month );
 					break;
+				case 'sold_out_datetime' :
 				case 'upcoming_datetime' :
 					$dtts = EEM_Datetime::instance()->get_dtt_months_and_years( array(), 'upcoming' );
 					$dtt = reset( $dtts );
@@ -427,13 +465,6 @@ class EEM_Datetime_Test extends EE_UnitTestCase {
 					$this->assertEquals( 1, count( $dtts ) );
 					$this->assertEquals( $current->format('Y'), $dtt->dtt_year );
 					$this->assertEquals( $current->format('F'), $dtt->dtt_month );
-					break;
-				case 'sold_out_datetime' :
-					$dtts = EEM_Datetime::instance()->get_dtt_months_and_years( array(), 'upcoming' );
-					$dtt = reset( $dtts );
-					$this->assertEquals( 1, count( $dtts ) );
-					$this->assertEquals( $upcoming_start_date->format('Y'), $dtt->dtt_year );
-					$this->assertEquals( $upcoming_start_date->format('F'), $dtt->dtt_month );
 					break;
 				case 'inactive_datetime' :
 					$dtts = EEM_Datetime::instance()->get_dtt_months_and_years( array(), 'inactive' );
