@@ -121,16 +121,14 @@ abstract class DomainBase implements DomainInterface
         $assets_folder_paths = [
             $this->plugin_path . DomainBase::ASSETS_FOLDER,
             $this->plugin_path . 'src/' . DomainBase::ASSETS_FOLDER,
-            $this->plugin_path,
         ];
-        $assets_path = '';
         foreach ($assets_folder_paths as $assets_folder_path) {
             if (is_readable($assets_folder_path)) {
-                $assets_path = $assets_folder_path;
+                $this->assets_path = trailingslashit($assets_folder_path);
+                // once we find a valid path, just break out of loop
                 break;
             }
         }
-        $this->assets_path = trailingslashit($assets_path);
     }
 
 
