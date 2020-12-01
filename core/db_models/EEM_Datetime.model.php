@@ -316,7 +316,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
         int $EVT_ID,
         bool $include_expired = true,
         bool $include_deleted = true,
-        int $limit = 0
+        $limit = 0
     ) {
         $prev_data_prep_value = $this->prepModelForQuery();
         $where_params         = ['Event.EVT_ID' => absint($EVT_ID)];
@@ -338,7 +338,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @return EE_Datetime[]|EE_Base_Class[]
      * @throws EE_Error
      */
-    public function get_datetimes_for_event_ordered_by_importance(int $EVT_ID, int $limit = 0)
+    public function get_datetimes_for_event_ordered_by_importance(int $EVT_ID, $limit = 0)
     {
         $query_params[0] = ['Event.EVT_ID' => absint($EVT_ID)];
         $query_params    = $this->addDefaultWhereConditions($query_params);
@@ -357,8 +357,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
     public function get_oldest_datetime_for_event(
         int $EVT_ID,
         bool $include_expired = false,
-        bool $include_deleted =
-        false
+        bool $include_deleted = false
     ) {
         $results = $this->get_datetimes_for_event_ordered_by_start_time(
             $EVT_ID,
@@ -473,7 +472,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
         int $TKT_ID,
         bool $include_expired = true,
         bool $include_deleted = true,
-        $limit = null
+        $limit = 0
     ) {
         $prev_data_prep_value = $this->prepModelForQuery();
         $where_params         = ['Ticket.TKT_ID' => absint($TKT_ID)];
@@ -747,7 +746,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @return array
      * @since   $VID:$
      */
-    private function addDefaultQueryParams(array $query_params, int $limit = 0, $order_by = 'DTT_EVT_start', $order = 'ASC')
+    private function addDefaultQueryParams(array $query_params, $limit = 0, $order_by = 'DTT_EVT_start', $order = 'ASC')
     {
         $query_params = $this->addOrderByQueryParams($query_params, $order_by, $order);
         $query_params = $this->addLimitQueryParams($query_params, $limit);
@@ -820,7 +819,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @return array
      * @since   $VID:$
      */
-    private function addLimitQueryParams(array $query_params, int $limit = 0)
+    private function addLimitQueryParams(array $query_params, $limit = 0)
     {
         if ($limit) {
             $query_params['limit'] = $limit;
