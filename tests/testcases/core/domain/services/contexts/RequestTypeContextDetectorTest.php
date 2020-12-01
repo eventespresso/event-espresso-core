@@ -29,147 +29,147 @@ class RequestTypeContextDetectorTest extends EspressoPHPUnitFrameworkTestCase
 
 
     /**
-     * @since 4.9.70.p
      * @return array
+     * @since 4.9.70.p
      */
     public function requestProvider()
     {
         $factory = new RequestTypeContextFactoryMock();
         return [
-            'Detect WP Scrape Request' => [
+            'Detect WP Scrape Request'              => [
                 new RequestTypeContextDetector(
                     new GraphQLEndpoint(),
                     new RequestMock(
-                        array('wp_scrape_key' => '123', 'wp_scrape_nonce' => '456'),
-                        array(),
-                        array(),
-                        array()
+                        ['wp_scrape_key' => '123', 'wp_scrape_nonce' => '456'],
+                        [],
+                        [],
+                        []
                     ),
                     $factory,
                     ['EE_TESTS_DIR' => false]
                 ),
                 RequestTypeContext::WP_SCRAPE,
             ],
-            'Detect EE REST API Request' => [
+            'Detect EE REST API Request'            => [
                 new RequestTypeContextDetector(
                     new GraphQLEndpoint(),
                     new RequestMock(
-                        array(),
-                        array(),
-                        array(),
-                        array('REQUEST_URI' => '/wp-json/' . Domain::API_NAMESPACE . '/')
+                        [],
+                        [],
+                        [],
+                        ['REQUEST_URI' => '/wp-json/' . Domain::API_NAMESPACE . '/']
                     ),
                     $factory,
                     ['EE_TESTS_DIR' => false]
                 ),
                 RequestTypeContext::API,
             ],
-            'Detect WP REST API Request' => [
+            'Detect WP REST API Request'            => [
                 new RequestTypeContextDetector(
                     new GraphQLEndpoint(),
                     new RequestMock(
-                        array(),
-                        array(),
-                        array(),
-                        array('REQUEST_URI' => '/wp-json/')
+                        [],
+                        [],
+                        [],
+                        ['REQUEST_URI' => '/wp-json/']
                     ),
                     $factory,
                     ['EE_TESTS_DIR' => false]
                 ),
                 RequestTypeContext::WP_API,
             ],
-            'Detect Frontend AJAX Request' => [
+            'Detect Frontend AJAX Request'          => [
                 new RequestTypeContextDetector(
                     new GraphQLEndpoint(),
                     new RequestMock(
-                        array(),
-                        array('ee_front_ajax' => true),
-                        array(),
-                        array()
+                        [],
+                        ['ee_front_ajax' => true],
+                        [],
+                        []
                     ),
                     $factory,
                     ['DOING_AJAX' => true, 'EE_TESTS_DIR' => false]
                 ),
                 RequestTypeContext::AJAX_FRONT,
             ],
-            'Detect Admin AJAX Request' => [
+            'Detect Admin AJAX Request'             => [
                 new RequestTypeContextDetector(
                     new GraphQLEndpoint(),
                     new RequestMock(
-                        array(),
-                        array('ee_admin_ajax' => true),
-                        array(),
-                        array()
+                        [],
+                        ['ee_admin_ajax' => true],
+                        [],
+                        []
                     ),
                     $factory,
                     ['DOING_AJAX' => true, 'EE_TESTS_DIR' => false]
                 ),
                 RequestTypeContext::AJAX_ADMIN,
             ],
-            'Detect Other AJAX Request' => [
+            'Detect Other AJAX Request'             => [
                 new RequestTypeContextDetector(
                     new GraphQLEndpoint(),
                     new RequestMock(
-                        array(),
-                        array(),
-                        array(),
-                        array()
+                        [],
+                        [],
+                        [],
+                        []
                     ),
                     $factory,
                     ['DOING_AJAX' => true, 'EE_TESTS_DIR' => false]
                 ),
                 RequestTypeContext::AJAX_OTHER,
             ],
-            'Detect WP Cron Request' => [
+            'Detect WP Cron Request'                => [
                 new RequestTypeContextDetector(
                     new GraphQLEndpoint(),
                     new RequestMock(
-                        array(),
-                        array(),
-                        array(),
-                        array('REQUEST_URI' => '/wp-cron.php')
+                        [],
+                        [],
+                        [],
+                        ['REQUEST_URI' => '/wp-cron.php']
                     ),
                     $factory,
                     ['EE_TESTS_DIR' => false]
                 ),
                 RequestTypeContext::CRON,
             ],
-            'Detect WP CLI Request' => [
+            'Detect WP CLI Request'                 => [
                 new RequestTypeContextDetector(
                     new GraphQLEndpoint(),
                     new RequestMock(
-                        array(),
-                        array(),
-                        array(),
-                        array()
+                        [],
+                        [],
+                        [],
+                        []
                     ),
                     $factory,
                     ['WP_CLI' => true, 'EE_TESTS_DIR' => false]
                 ),
                 RequestTypeContext::CLI,
             ],
-            'Detect WP Admin Request' => [
+            'Detect WP Admin Request'               => [
                 new RequestTypeContextDetector(
                     new GraphQLEndpoint(),
                     new RequestMock(
-                        array(),
-                        array(),
-                        array(),
-                        array()
+                        [],
+                        [],
+                        [],
+                        []
                     ),
                     $factory,
-                    array('is_admin' => true, 'EE_TESTS_DIR' => false)
+                    ['is_admin' => true, 'EE_TESTS_DIR' => false]
                 ),
                 RequestTypeContext::ADMIN,
             ],
-            'Detect Event List iFrame Request' => [
+            'Detect Event List iFrame Request'      => [
                 new RequestTypeContextDetector(
                     new GraphQLEndpoint(),
                     new RequestMock(
-                        array('event_list' => 'iframe'),
-                        array(),
-                        array(),
-                        array()
+                        ['event_list' => 'iframe'],
+                        [],
+                        [],
+                        []
                     ),
                     $factory,
                     ['EE_TESTS_DIR' => false]
@@ -180,52 +180,52 @@ class RequestTypeContextDetectorTest extends EspressoPHPUnitFrameworkTestCase
                 new RequestTypeContextDetector(
                     new GraphQLEndpoint(),
                     new RequestMock(
-                        array('ticket_selector' => 'iframe'),
-                        array(),
-                        array(),
-                        array()
+                        ['ticket_selector' => 'iframe'],
+                        [],
+                        [],
+                        []
                     ),
                     $factory,
                     ['EE_TESTS_DIR' => false]
                 ),
                 RequestTypeContext::IFRAME,
             ],
-            'Detect Calendar iFrame Request' => [
+            'Detect Calendar iFrame Request'        => [
                 new RequestTypeContextDetector(
                     new GraphQLEndpoint(),
                     new RequestMock(
-                        array('calendar' => 'iframe'),
-                        array(),
-                        array(),
-                        array()
+                        ['calendar' => 'iframe'],
+                        [],
+                        [],
+                        []
                     ),
                     $factory,
                     ['EE_TESTS_DIR' => false]
                 ),
                 RequestTypeContext::IFRAME,
             ],
-            'Detect Feed Request' => [
+            'Detect Feed Request'                   => [
                 new RequestTypeContextDetector(
                     new GraphQLEndpoint(),
                     new RequestMock(
-                        array(),
-                        array(),
-                        array(),
-                        array('REQUEST_URI' => '/feed/')
+                        [],
+                        [],
+                        [],
+                        ['REQUEST_URI' => '/feed/']
                     ),
                     $factory,
                     ['EE_TESTS_DIR' => false]
                 ),
                 RequestTypeContext::FEED,
             ],
-            'Detect Frontend Request' => [
+            'Detect Frontend Request'               => [
                 new RequestTypeContextDetector(
                     new GraphQLEndpoint(),
                     new RequestMock(
-                        array('param' => 'value'),
-                        array(),
-                        array(),
-                        array()
+                        ['param' => 'value'],
+                        [],
+                        [],
+                        []
                     ),
                     $factory,
                     ['EE_TESTS_DIR' => false]
