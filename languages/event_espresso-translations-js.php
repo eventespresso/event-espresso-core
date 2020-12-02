@@ -540,12 +540,19 @@ $generated_i18n_strings = array(
 	__( 'Event Dates must always have at least one Ticket assigned to them but one or more of the Event Dates below does not have any. Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/ModalContainer.tsx:25
-	/* translators: %d entity id, %s entity name */
-	__( 'Ticket Assignment Manager for Datetime: %1$d - %2$s', 'event_espresso' ),
+	__( 'There seem to be some dates/tickets which have no tickets/dates assigned. Do you want to fix them now?', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/ModalContainer.tsx:32
-	/* translators: %d entity id, %s entity name */
-	__( 'Ticket Assignment Manager for Ticket: %1$d - %2$s', 'event_espresso' ),
+	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/ModalContainer.tsx:28
+	// Reference: packages/components/src/Modal/ModalWithAlert.tsx:23
+	__( 'Alert!', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/ModalContainer.tsx:41
+	/* translators: 1 entity id, 2 entity name */
+	__( 'Ticket Assignment Manager for Datetime: %1$s - %2$s', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/ModalContainer.tsx:48
+	/* translators: 1 entity id, 2 entity name */
+	__( 'Ticket Assignment Manager for Ticket: %1$s - %2$s', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/TicketAssignmentsManagerModal/buttons/useCancelButtonProps.tsx:18
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/prices/buttons/FooterButtons.tsx:16
@@ -1008,9 +1015,6 @@ $generated_i18n_strings = array(
 
 	// Reference: packages/components/src/Modal/Modal.tsx:59
 	__( 'close modal', 'event_espresso' ),
-
-	// Reference: packages/components/src/Modal/ModalWithAlert.tsx:23
-	__( 'Alert!', 'event_espresso' ),
 
 	// Reference: packages/components/src/Pagination/ItemRender.tsx:10
 	__( 'next', 'event_espresso' ),
