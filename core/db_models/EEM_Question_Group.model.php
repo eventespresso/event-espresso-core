@@ -1,11 +1,14 @@
 <?php
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+
 /**
  * Question Group Model
  *
- * @package     Event Espresso
- * @subpackage  includes/models/
- * @author      Michael Nelson
+ * @package             Event Espresso
+ * @subpackage          includes/models/
+ * @author              Michael Nelson
  */
 class EEM_Question_Group extends EEM_Soft_Delete_Base
 {
@@ -120,7 +123,6 @@ class EEM_Question_Group extends EEM_Soft_Delete_Base
             new EE_Restriction_Generator_Reg_Form('QSG_system');
         $this->_cap_restriction_generators[ EEM_Base::caps_delete ]     =
             new EE_Restriction_Generator_Reg_Form('QSG_system');
-
         parent::__construct($timezone);
     }
 
@@ -141,5 +143,63 @@ class EEM_Question_Group extends EEM_Soft_Delete_Base
             ]
         );
         return $max[0]['max_order'];
+    }
+
+
+    /**
+     * get_question_groups
+     *
+     * @return array
+     * @throws EE_Error
+     */
+    public function getAllQuestionGroups()
+    {
+        return $this->get_all(
+            [
+                ['QSG_deleted' => false],
+                'order_by' => ['QSG_order' => 'ASC'],
+            ]
+        );
+    }
+
+
+    /**
+     * get_question_groups
+     *
+     * @param int             $EVT_ID
+     * @param EE_Registration $registration
+     * @return array|bool
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    public function getQuestionGroupsForEvent(int $EVT_ID, EE_Registration $registration)
+    {
+        $EVT_ID = absint($EVT_ID);
+        if (! $EVT_ID) {
+            EE_Error::add_error(
+                esc_html__(
+                    'An error occurred. No Question Groups could be retrieved because an Event ID was not received.',
+                    'event_espresso'
+                ),
+                __FILE__,
+                __FUNCTION__,
+                __LINE__
+            );
+            return false;
+        }
+        $field_name = EEM_Event_Question_Group::instance()->fieldNameForContext(
+            $registration->is_primary_registrant()
+        ) ;
+        return $this->get_all(
+            [
+                [
+                    'Event_Question_Group.EVT_ID'        => $EVT_ID,
+                    "Event_Question_Group.{$field_name}" => true,
+                ],
+                'order_by' => ['QSG_order' => 'ASC'],
+            ]
+        );
     }
 }

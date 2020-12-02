@@ -335,7 +335,7 @@ class EEM_Question extends EEM_Soft_Delete_Base
         $this->_cap_restriction_generators[ EEM_Base::caps_delete ]     =
             new EE_Restriction_Generator_Reg_Form('QST_system');
 
-        parent::__construct($timezone);
+			parent::__construct($timezone);
     }
 
 
@@ -583,5 +583,34 @@ class EEM_Question extends EEM_Soft_Delete_Base
     public function questionTypesWithMaxLength(): array
     {
         return (array) $this->question_types_with_max_length;
+    }
+
+
+    /**
+     * @param string $QSG_IDs csv list of $QSG IDs
+     * @return array|bool
+     * @throws EE_Error
+     */
+    public function getQuestionsInGroups($QSG_IDs = '')
+    {
+        if (empty($QSG_IDs)) {
+            EE_Error::add_error(
+                esc_html__('An error occurred. No Question Group IDs were received.', 'event_espresso'),
+                __FILE__,
+                __FUNCTION__,
+                __LINE__
+            );
+            return false;
+        }
+        return $this->get_all(
+            [
+                [
+                    'Question_Group.QSG_ID' => ['IN', $QSG_IDs],
+                    'QST_deleted'           => false,
+                    'QST_admin_only'        => is_admin(),
+                ],
+                'order_by' => 'QST_order',
+            ]
+        );
     }
 }

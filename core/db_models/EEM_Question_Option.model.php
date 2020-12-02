@@ -84,6 +84,34 @@ class EEM_Question_Option extends EEM_Soft_Delete_Base
         $this->_cap_restriction_generators[ EEM_Base::caps_delete ]     =
             new EE_Restriction_Generator_Reg_Form('QSO_system');
 
-        parent::__construct($timezone);
+			parent::__construct($timezone);
+    }
+
+
+    /**
+     * @param string $QST_IDs csv list of $QST IDs
+     * @return array|bool
+     * @throws EE_Error
+     */
+    public function getOptionsForQuestion(string $QST_IDs)
+    {
+        if (empty($QST_IDs)) {
+            EE_Error::add_error(
+                esc_html__('An error occurred. No Question IDs were received.', 'event_espresso'),
+                __FILE__,
+                __FUNCTION__,
+                __LINE__
+            );
+            return false;
+        }
+        return $this->get_all(
+            [
+                [
+                    'Question.QST_ID' => ['IN', $QST_IDs],
+                    'QSO_deleted'     => false,
+                ],
+                'order_by' => 'QSO_ID',
+            ]
+        );
     }
 }
