@@ -84,12 +84,26 @@ class EE_Data_Migration_Manager_Test extends EE_UnitTestCase{
 		$this->assertArrayHasKey('Core', $dms_ran);
 		$this->assertArrayhasKey('4.1.0',$dms_ran['Core']);
 	}
-	public function test_get_most_up_to_date_dms(){
-		EE_Data_Migration_Manager::reset();
-		$dms_classname = EE_Data_Migration_Manager::instance()->get_most_up_to_date_dms();
-		//yes, this test will need to be updated everytime we add a new core DMS
-		$this->assertEquals('EE_DMS_Core_4_10_0',$dms_classname);
-	}
+
+
+    public function test_get_most_up_to_date_dms()
+    {
+        EE_Data_Migration_Manager::reset();
+        $dms_classname  = EE_Data_Migration_Manager::instance()->get_most_up_to_date_dms();
+        $version_string = espresso_version();
+        $version_parts  = [];
+        preg_match(
+            '~^([a-zA-Z_-]*)\.?([0-9]+)\.([0-9]+)\.([0-9]+)\.?(alpha|beta|rc|p|decaf|dms)*\.?([0-9]*)$~',
+            $version_string,
+            $version_parts
+        );
+        $version_parts += ['', '', 0, 0, 0, 'p', 0];
+        // reassign to individual variables
+        [$full_match, $slug, $major, $minor, $patch, $release, $build] = $version_parts;
+        $expected_dms = "EE_DMS_Core_{$major}_{$minor}_0";
+        //yes, this test will need to be updated everytime we add a new core DMS
+        $this->assertEquals($expected_dms, $dms_classname);
+    }
 
 	/**
 	 * @group 7120
