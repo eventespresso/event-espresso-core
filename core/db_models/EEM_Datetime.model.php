@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\services\database\DatetimeModelQueryHelper;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 
@@ -14,9 +15,14 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
 {
 
     /**
-     * @var EEM_Datetime $_instance
+     * @var EEM_Datetime
      */
     protected static $_instance;
+
+    /**
+     * @var DatetimeModelQueryHelper
+     */
+    protected $model_query_helper;
 
 
     /**
@@ -149,6 +155,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
                 EEM_Base::caps_edit
             );
         parent::__construct($timezone);
+        $this->model_query_helper = new DatetimeModelQueryHelper($this);
     }
 
 
@@ -318,12 +325,16 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
         bool $include_deleted = true,
         $limit = 0
     ) {
-        $prev_data_prep_value = $this->prepModelForQuery();
-        $where_params         = ['Event.EVT_ID' => absint($EVT_ID)];
-        $query_params[0]      = $this->addDefaultWhereParams($where_params, $include_deleted, $include_expired);
-        $query_params         = $this->addDefaultWhereConditions($query_params);
-        $query_params         = $this->addDefaultQueryParams($query_params, $limit, 'DTT_order');
-        return $this->getDatetimesAndRestoreModel($query_params, $prev_data_prep_value);
+        $prev_model_state = $this->model_query_helper->prepModelForQuery();
+        $where_params     = ['Event.EVT_ID' => absint($EVT_ID)];
+        $query_params[0]  = $this->model_query_helper->addDefaultWhereParams(
+            $where_params,
+            $include_deleted,
+            $include_expired
+        );
+        $query_params     = $this->model_query_helper->addDefaultWhereConditions($query_params);
+        $query_params     = $this->model_query_helper->addDefaultQueryParams($query_params, $limit, 'DTT_order');
+        return $this->model_query_helper->getDatetimesAndRestoreModel($query_params, $prev_model_state);
     }
 
 
@@ -341,8 +352,8 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
     public function get_datetimes_for_event_ordered_by_importance(int $EVT_ID, $limit = 0)
     {
         $query_params[0] = ['Event.EVT_ID' => absint($EVT_ID)];
-        $query_params    = $this->addDefaultWhereConditions($query_params);
-        $query_params    = $this->addDefaultQueryParams($query_params, $limit);
+        $query_params    = $this->model_query_helper->addDefaultWhereConditions($query_params);
+        $query_params    = $this->model_query_helper->addDefaultQueryParams($query_params, $limit);
         return $this->get_all($query_params);
     }
 
@@ -419,15 +430,19 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
         bool $include_deleted = true,
         $limit = 0
     ) {
-        $prev_data_prep_value = $this->prepModelForQuery();
-        $where_params         = ['Event.EVT_ID' => absint($EVT_ID)];
-        $query_params[0]      = $this->addDefaultWhereParams($where_params, $include_deleted, $include_expired);
-        $query_params         = $this->addDefaultWhereConditions(
+        $prev_model_state = $this->model_query_helper->prepModelForQuery();
+        $where_params     = ['Event.EVT_ID' => absint($EVT_ID)];
+        $query_params[0]  = $this->model_query_helper->addDefaultWhereParams(
+            $where_params,
+            $include_deleted,
+            $include_expired
+        );
+        $query_params     = $this->model_query_helper->addDefaultWhereConditions(
             $query_params,
             EEM_Base::default_where_conditions_this_only
         );
-        $query_params         = $this->addDefaultQueryParams($query_params, $limit, 'DTT_order');
-        return $this->getDatetimesAndRestoreModel($query_params, $prev_data_prep_value);
+        $query_params     = $this->model_query_helper->addDefaultQueryParams($query_params, $limit, 'DTT_order');
+        return $this->model_query_helper->getDatetimesAndRestoreModel($query_params, $prev_model_state);
     }
 
 
@@ -448,11 +463,15 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
         bool $include_deleted = true,
         $limit = 0
     ) {
-        $prev_data_prep_value = $this->prepModelForQuery();
-        $where_params         = ['Ticket.TKT_ID' => absint($TKT_ID)];
-        $query_params[0]      = $this->addDefaultWhereParams($where_params, $include_deleted, $include_expired);
-        $query_params         = $this->addDefaultQueryParams($query_params, $limit);
-        return $this->getDatetimesAndRestoreModel($query_params, $prev_data_prep_value);
+        $prev_model_state = $this->model_query_helper->prepModelForQuery();
+        $where_params     = ['Ticket.TKT_ID' => absint($TKT_ID)];
+        $query_params[0]  = $this->model_query_helper->addDefaultWhereParams(
+            $where_params,
+            $include_deleted,
+            $include_expired
+        );
+        $query_params     = $this->model_query_helper->addDefaultQueryParams($query_params, $limit);
+        return $this->model_query_helper->getDatetimesAndRestoreModel($query_params, $prev_model_state);
     }
 
 
@@ -474,11 +493,15 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
         bool $include_deleted = true,
         $limit = 0
     ) {
-        $prev_data_prep_value = $this->prepModelForQuery();
-        $where_params         = ['Ticket.TKT_ID' => absint($TKT_ID)];
-        $query_params[0]      = $this->addDefaultWhereParams($where_params, $include_deleted, $include_expired);
-        $query_params         = $this->addDefaultQueryParams($query_params, $limit, 'DTT_order');
-        return $this->getDatetimesAndRestoreModel($query_params, $prev_data_prep_value);
+        $prev_model_state = $this->model_query_helper->prepModelForQuery();
+        $where_params     = ['Ticket.TKT_ID' => absint($TKT_ID)];
+        $query_params[0]  = $this->model_query_helper->addDefaultWhereParams(
+            $where_params,
+            $include_deleted,
+            $include_expired
+        );
+        $query_params     = $this->model_query_helper->addDefaultQueryParams($query_params, $limit, 'DTT_order');
+        return $this->model_query_helper->getDatetimesAndRestoreModel($query_params, $prev_model_state);
     }
 
 
@@ -504,8 +527,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * This returns a wpdb->results        Array of all DTT month and years matching the incoming query params and
      * grouped by month and year.
      *
-     * @param array  $where_params       @see
-     *                                   https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
+     * @param array  $where_params
      * @param string $evt_active_status  A string representing the evt active status to filter the months by.
      *                                   Can be:
      *                                   - '' = no filter
@@ -518,53 +540,43 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidArgumentException
+     * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
      */
     public function get_dtt_months_and_years(array $where_params, $evt_active_status = '')
     {
-        $current_time_for_DTT_EVT_start = $this->current_time_for_query('DTT_EVT_start');
-        $current_time_for_DTT_EVT_end   = $this->current_time_for_query('DTT_EVT_end');
         switch ($evt_active_status) {
             case 'upcoming':
                 $where_params['Event.status'] = 'publish';
-                // if there are already query_params matching DTT_EVT_start then we need to modify that to add them.
-                if (isset($where_params['DTT_EVT_start'])) {
-                    $where_params['DTT_EVT_start*****'] = $where_params['DTT_EVT_start'];
-                }
-                $where_params['DTT_EVT_start'] = ['>', $current_time_for_DTT_EVT_start];
+                $where_params                 =
+                    $this->model_query_helper->addWhereParamsForDateField($where_params, 'DTT_EVT_start', '>');
                 break;
+
             case 'expired':
                 if (isset($where_params['Event.status'])) {
                     unset($where_params['Event.status']);
                 }
                 // get events to exclude
-                $exclude_query[0] = array_merge(
-                    $where_params,
-                    ['DTT_EVT_end' => ['>', $current_time_for_DTT_EVT_end]]
-                );
+                $exclude_query[0] =
+                    $this->model_query_helper->addWhereParamsForDateField($where_params, 'DTT_EVT_end', '>');
                 // first get all events that have datetimes where its not expired.
-                $event_ids = $this->_get_all_wpdb_results(
+                $event_ids                    = $this->_get_all_wpdb_results(
                     $exclude_query,
                     OBJECT_K,
                     'Datetime.EVT_ID'
                 );
-                $event_ids = array_keys($event_ids);
-                if (isset($where_params['DTT_EVT_end'])) {
-                    $where_params['DTT_EVT_end****'] = $where_params['DTT_EVT_end'];
-                }
-                $where_params['DTT_EVT_end']  = ['<', $current_time_for_DTT_EVT_end];
-                $where_params['Event.EVT_ID'] = ['NOT IN', $event_ids];
+                $where_params['Event.EVT_ID'] = ['NOT IN', array_keys($event_ids)];
+                $where_params                 =
+                    $this->model_query_helper->addWhereParamsForDateField($where_params, 'DTT_EVT_end', '<');
                 break;
+
             case 'active':
                 $where_params['Event.status'] = 'publish';
-                if (isset($where_params['DTT_EVT_start'])) {
-                    $where_params['Datetime.DTT_EVT_start******'] = $where_params['DTT_EVT_start'];
-                }
-                if (isset($where_params['Datetime.DTT_EVT_end'])) {
-                    $where_params['Datetime.DTT_EVT_end*****'] = $where_params['DTT_EVT_end'];
-                }
-                $where_params['DTT_EVT_start'] = ['<', $current_time_for_DTT_EVT_start];
-                $where_params['DTT_EVT_end']   = ['>', $current_time_for_DTT_EVT_end];
+                $where_params                 =
+                    $this->model_query_helper->addWhereParamsForDateField($where_params, 'DTT_EVT_start', '<');
+                $where_params                 =
+                    $this->model_query_helper->addWhereParamsForDateField($where_params, 'DTT_EVT_end', '>');
                 break;
+
             case 'inactive':
                 if (isset($where_params['Event.status'])) {
                     unset($where_params['Event.status']);
@@ -585,7 +597,8 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
         }
         $query_params[0]          = $where_params;
         $query_params['group_by'] = ['dtt_year', 'dtt_month'];
-        $query_params             = $this->addOrderByQueryParams($query_params, 'DTT_EVT_start', 'DESC');
+        $query_params             =
+            $this->model_query_helper->addOrderByQueryParams($query_params, 'DTT_EVT_start', 'DESC');
 
         $query_interval    = EEH_DTT_Helper::get_sql_query_interval_for_offset(
             $this->get_timezone(),
@@ -597,30 +610,6 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
             'dtt_month_num' => ['MONTH(' . $query_interval . ')', '%s'],
         ];
         return $this->_get_all_wpdb_results($query_params, OBJECT, $columns_to_select);
-    }
-
-
-    /**
-     * Updates the DTT_sold attribute on each datetime (based on the registrations
-     * for the tickets for each datetime)
-     *
-     * @param EE_Base_Class[]|EE_Datetime[] $datetimes
-     * @throws EE_Error
-     * @throws ReflectionException
-     */
-    public function update_sold(array $datetimes)
-    {
-        EE_Error::doing_it_wrong(
-            __FUNCTION__,
-            esc_html__(
-                'Please use \EEM_Ticket::update_tickets_sold() instead which will in turn correctly update both the Ticket AND Datetime counts.',
-                'event_espresso'
-            ),
-            '4.9.32.rc.005'
-        );
-        foreach ($datetimes as $datetime) {
-            $datetime->update_sold();
-        }
     }
 
 
@@ -660,37 +649,21 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      */
     public function get_datetime_counts_by_status(array $stati_to_include = [], array $query_params = [])
     {
-        // only accept where conditions for this query.
-        $_where            = isset($query_params[0]) ? $query_params[0] : [];
-        $status_query_args = [
-            EE_Datetime::active   => array_merge(
-                $_where,
-                ['DTT_EVT_start' => ['<', time()], 'DTT_EVT_end' => ['>', time()]]
-            ),
-            EE_Datetime::upcoming => array_merge(
-                $_where,
-                ['DTT_EVT_start' => ['>', time()]]
-            ),
-            EE_Datetime::expired  => array_merge(
-                $_where,
-                ['DTT_EVT_end' => ['<', time()]]
-            ),
-        ];
-        if (! empty($stati_to_include)) {
-            foreach (array_keys($status_query_args) as $status) {
-                if (! in_array($status, $stati_to_include, true)) {
-                    unset($status_query_args[ $status ]);
-                }
-            }
-        }
-        // loop through and query counts for each stati.
         $status_query_results = [];
-        foreach ($status_query_args as $status => $status_where_conditions) {
-            $status_query_results[ $status ] = EEM_Datetime::count(
-                [$status_where_conditions],
-                'DTT_ID',
-                true
-            );
+        $include_all          = empty($stati_to_include);
+        // only accept where conditions for this query.
+        $where_params = isset($query_params[0]) ? $query_params[0] : [];
+        // Active Datetimes
+        if ($include_all || in_array(EE_Datetime::active, $stati_to_include, true)) {
+            $status_query_results[ EE_Datetime::active ] = $this->countActiveDatetimes($where_params);
+        }
+        // Upcoming Datetimes
+        if ($include_all || in_array(EE_Datetime::upcoming, $stati_to_include, true)) {
+            $status_query_results[ EE_Datetime::upcoming ] = $this->countUpcomingDatetimes($where_params);
+        }
+        // Expired Datetimes
+        if ($include_all || in_array(EE_Datetime::expired, $stati_to_include, true)) {
+            $status_query_results[ EE_Datetime::expired ] = $this->countExpiredDatetimes($where_params);
         }
         return $status_query_results;
     }
@@ -712,135 +685,70 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
 
 
     /**
-     * @return bool|int
-     * @since   $VID:$
-     */
-    private function prepModelForQuery()
-    {
-        $prev_data_prep_value = $this->get_assumption_concerning_values_already_prepared_by_model_object();
-        $this->assume_values_already_prepared_by_model_object(EEM_Base::prepared_for_use_in_db);
-        return $prev_data_prep_value;
-    }
-
-
-    /**
-     * @param array    $query_params
-     * @param bool|int $prev_data_prep_value
-     * @return EE_Base_Class[]|EE_Datetime[]
+     * @param array $where_params
+     * @return int
      * @throws EE_Error
      * @since   $VID:$
      */
-    private function getDatetimesAndRestoreModel(array $query_params, $prev_data_prep_value)
+    public function countActiveDatetimes(array $where_params)
     {
-        $result = $this->get_all($query_params);
-        $this->assume_values_already_prepared_by_model_object($prev_data_prep_value);
-        return $result;
-    }
-
-
-    /**
-     * @param array  $query_params
-     * @param int    $limit
-     * @param string $order_by
-     * @param string $order
-     * @return array
-     * @since   $VID:$
-     */
-    private function addDefaultQueryParams(array $query_params, $limit = 0, $order_by = 'DTT_EVT_start', $order = 'ASC')
-    {
-        $query_params = $this->addOrderByQueryParams($query_params, $order_by, $order);
-        $query_params = $this->addLimitQueryParams($query_params, $limit);
-        return $query_params;
-    }
-
-
-    /**
-     * @param array  $query_params
-     * @param string $default_where_conditions
-     * @return array
-     * @since   $VID:$
-     */
-    private function addDefaultWhereConditions(
-        array $query_params,
-        $default_where_conditions = EEM_Base::default_where_conditions_none
-    ) {
-        $query_params['default_where_conditions'] = $default_where_conditions;
-        return $query_params;
+        $where_params = $this->model_query_helper->addWhereParamsForDateField($where_params, 'DTT_EVT_start', '<');
+        $where_params = $this->model_query_helper->addWhereParamsForDateField($where_params, 'DTT_EVT_end', '>');
+        return EEM_Datetime::count([$where_params], 'DTT_ID', true);
     }
 
 
     /**
      * @param array $where_params
-     * @param bool  $include_deleted
-     * @param bool  $include_expired
-     * @return array
+     * @return int
+     * @throws EE_Error
      * @since   $VID:$
      */
-    private function addDefaultWhereParams(array $where_params, bool $include_deleted = true, bool $include_expired = true)
+    public function countUpcomingDatetimes(array $where_params)
     {
-        $where_params = $this->addExpiredWhereParams($where_params, $include_expired);
-        $where_params = $this->addDeletedWhereParams($where_params, $include_deleted);
-        return $where_params;
+        $where_params = $this->model_query_helper->addWhereParamsForDateField($where_params, 'DTT_EVT_start', '>');
+        return EEM_Datetime::count([$where_params], 'DTT_ID', true);
     }
 
 
     /**
      * @param array $where_params
-     * @param bool  $include_deleted
-     * @return array
+     * @return int
+     * @throws EE_Error
      * @since   $VID:$
      */
-    private function addDeletedWhereParams(array $where_params, bool $include_deleted = true)
+    public function countExpiredDatetimes(array $where_params)
     {
-        $deleted                     = $include_deleted ? [true, false] : [false];
-        $where_params['DTT_deleted'] = ['IN', $deleted];
-        return $where_params;
+        $where_params = $this->model_query_helper->addWhereParamsForDateField($where_params, 'DTT_EVT_end', '<');
+        return EEM_Datetime::count([$where_params], 'DTT_ID', true);
     }
 
 
+
+    /******************** DEPRECATED METHODS ********************/
+
+
     /**
-     * @param array $where_params
-     * @param bool  $include_expired
-     * @return array
-     * @since   $VID:$
+     * Updates the DTT_sold attribute on each datetime (based on the registrations
+     * for the tickets for each datetime)
+     *
+     * @param EE_Base_Class[]|EE_Datetime[] $datetimes
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @deprecated 4.9.32.rc.005
      */
-    private function addExpiredWhereParams(array $where_params, bool $include_expired = true)
+    public function update_sold(array $datetimes)
     {
-        if (! $include_expired) {
-            $where_params['DTT_EVT_end'] = ['>=', current_time('mysql', true)];
+        EE_Error::doing_it_wrong(
+            __FUNCTION__,
+            esc_html__(
+                'Please use \EEM_Ticket::update_tickets_sold() instead which will in turn correctly update both the Ticket AND Datetime counts.',
+                'event_espresso'
+            ),
+            '4.9.32.rc.005'
+        );
+        foreach ($datetimes as $datetime) {
+            $datetime->update_sold();
         }
-        return $where_params;
-    }
-
-
-    /**
-     * @param array $query_params
-     * @param int   $limit
-     * @return array
-     * @since   $VID:$
-     */
-    private function addLimitQueryParams(array $query_params, $limit = 0)
-    {
-        if ($limit) {
-            $query_params['limit'] = $limit;
-        }
-        return $query_params;
-    }
-
-
-    /**
-     * @param array  $query_params
-     * @param string $order_by
-     * @param string $order
-     * @return array
-     * @since   $VID:$
-     */
-    private function addOrderByQueryParams(array $query_params, $order_by = 'DTT_EVT_start', $order = 'ASC')
-    {
-        $order                    = $order === 'ASC' ? 'ASC' : 'DESC';
-        $valid_order_columns      = ['DTT_ID', 'DTT_EVT_start', 'DTT_EVT_end', 'DTT_order'];
-        $order_by                 = in_array($order_by, $valid_order_columns, true) ? $order_by : 'DTT_EVT_start';
-        $query_params['order_by'] = [$order_by => $order];
-        return $query_params;
     }
 }
