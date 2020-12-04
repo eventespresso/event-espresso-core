@@ -1,0 +1,138 @@
+name: Create a release
+on:
+    workflow_dispatch:
+        inputs:
+            type:
+                description: 'Bump type - major, minor, patch, build'
+                required: true
+                default: 'minor'
+            release-type:
+                description: 'Type of release - alpha, beta, decaf, rc, p'
+                default: 'p'
+            release-notes:
+                description: 'Release notes'
+            release-notes-path:
+                description: 'Path of the file that contains release notes'
+
+jobs:
+    release:
+        name: New release
+        runs-on: ubuntu-latest
+        steps:
+            # Set up the anvironment variables to use later
+            - name: Set up ENV
+              run: |
+                  echo "TARGET_BRANCH=$(echo ${GITHUB_REF#refs/heads/})" >> $GITHUB_ENV
+
+            # This is expected to run on master branch
+            - name: Checkout the branch
+              uses: actions/checkout@v2
+              with:
+                  token: ${{ secrets.GH_ACTIONS_ACCESS_TOKEN || secrets.GITHUB_TOKEN }}
+
+            # Bump the version before creating the release
+            - name: Bump version
+              id: bump-version
+              uses: eventespresso/actions/packages/version-bump@main
+              with:
+                  type: ${{ github.event.inputs.type }}
+                  main-file: espresso.php
+                  readme-file: readme.txt
+                  info-json-file: info.json
+                  release-type: ${{ github.event.inputs.release-type }}
+
+            # commit the changes files
+            - name: Commit version bump
+              uses: stefanzweifel/git-auto-commit-action@v4
+              with:
+                  commit_message: Bump the version to ${{ steps.bump-version.outputs.new-version }}
+                  push_options: --force # required for protected branches
+
+            # Replace version ID with the bumped version
+            - name: Replace $VID:$ in all files
+              uses: bejoistic/str-replace@master
+              with:
+                  find: '$VID:$'
+                  replace: ${{ steps.bump-version.outputs.new-version }}
+
+            # commit the changes files
+            - name: Commit the replaced $VID:$
+              uses: stefanzweifel/git-auto-commit-action@v4
+              with:
+                  commit_message: Replace $VID:$ with ${{ steps.bump-version.outputs.new-version }}
+                  push_options: --force # required for protected branches
+
+            # Create a GitHub release, this is ideally the master branch
+            - name: Create Release from current branch
+              id: create-release
+              uses: actions/create-release@v1
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GH_ACTIONS_ACCESS_TOKEN || secrets.GITHUB_TOKEN }}
+              with:
+                  tag_name: ${{ steps.bump-version.outputs.new-version }}
+                  release_name: v${{ steps.bump-version.outputs.new-version }}
+                  body: ${{ github.event.inputs.release-notes }}
+                  body_path: ${{ github.event.inputs.release-notes-path }}
+
+            # This is to create a release without tests, docs etc.
+            - name: Checkout the release branch
+              # this branch is expected to be used only for creating releases
+              run: git checkout -B release # -B to reset the branch
+
+            - name: Get the value of files to remove
+              id: files-to-remove
+              uses: eventespresso/actions/packages/json-prop@main
+              with:
+                  file-path: info.json
+                  prop-path: releaseFilesRemove
+                  output-as-json: true
+
+            # Remove the files not needed for installable release
+            - name: Remove files/directories
+              uses: eventespresso/actions/packages/remove-files@main
+              with:
+                  paths: ${{ steps.files-to-remove.outputs.value }}
+
+            # commit the changes files
+            - name: Commit after cleanup
+              uses: stefanzweifel/git-auto-commit-action@v4
+              with:
+                  branch: release # required to make sure the branch is pushed upstream
+                  commit_message: Clean up for (sans tests) release - ${{ steps.bump-version.outputs.new-version }}
+                  push_options: --force # required for protected branches
+
+            # Create a GitHub release, sans tests
+            - name: Create Release sans tests
+              id: create-release-sans-tests
+              uses: actions/create-release@v1
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GH_ACTIONS_ACCESS_TOKEN || secrets.GITHUB_TOKEN }}
+              with:
+                  commitish: release # make sure the release is created from the correct branch
+                  tag_name: ${{ steps.bump-version.outputs.new-version }}-sans-tests
+                  release_name: v${{ steps.bump-version.outputs.new-version }}-sans-tests
+                  body: ${{ github.event.inputs.release-notes }}
+                  body_path: ${{ github.event.inputs.release-notes-path }}
+
+            # Checkout the target (usually master) branch again
+            - name: Checkout the target branch
+              # this branch is expected to be used only for creating releases
+              run: git checkout ${{ env.TARGET_BRANCH }}
+
+            # Bump the version to create an RC for the target branch
+            - name: Bump version to RC
+              id: bump-version-rc
+              uses: eventespresso/actions/packages/version-bump@main
+              with:
+                  type: release_type
+                  main-file: espresso.php
+                  readme-file: readme.txt
+                  info-json-file: info.json
+                  release-type: rc
+
+            # commit the changes files
+            - name: Commit RC
+              uses: stefanzweifel/git-auto-commit-action@v4
+              with:
+                  commit_message: Create RC after releasing ${{ steps.bump-version.outputs.new-version }}
+                  push_options: --force # required for protected branches
