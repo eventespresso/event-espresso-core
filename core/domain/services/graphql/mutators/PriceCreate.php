@@ -47,6 +47,8 @@ class PriceCreate extends EntityMutator
                 $entity = EE_Price::new_instance($args);
                 $id = $entity->save();
                 EntityMutator::validateResults($id);
+
+                do_action('AHEE__EventEspresso_core_domain_services_graphql_mutators_price_create', $entity, $input);
             } catch (Exception $exception) {
                 EntityMutator::handleExceptions(
                     $exception,

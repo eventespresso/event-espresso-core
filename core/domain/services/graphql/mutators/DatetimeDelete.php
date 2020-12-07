@@ -46,6 +46,8 @@ class DatetimeDelete extends EntityMutator
                     $result = DatetimeDelete::trashDatetimeAndRelations($entity);
                 }
                 EntityMutator::validateResults($result);
+
+                do_action('AHEE__EventEspresso_core_domain_services_graphql_mutators_datetime_delete', $entity, $input);
             } catch (Exception $exception) {
                 EntityMutator::handleExceptions(
                     $exception,
