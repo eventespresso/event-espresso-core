@@ -62,6 +62,8 @@ class TicketCreate extends EntityMutator
                     // we do this client-side
                     // TicketMutation::addDefaultPrices($entity, $model);
                 }
+
+                do_action('AHEE__EventEspresso_core_domain_services_graphql_mutators_ticket_create', $entity, $input);
             } catch (Exception $exception) {
                 EntityMutator::handleExceptions(
                     $exception,

@@ -47,6 +47,8 @@ class PriceDelete extends EntityMutator
                     $result = $entity->delete();
                 }
                 EntityMutator::validateResults($result);
+
+                do_action('AHEE__EventEspresso_core_domain_services_graphql_mutators_price_delete', $entity, $input);
             } catch (Exception $exception) {
                 EntityMutator::handleExceptions(
                     $exception,

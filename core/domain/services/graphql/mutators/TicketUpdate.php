@@ -58,6 +58,8 @@ class TicketUpdate extends EntityMutator
                 if (is_array($prices)) {
                     TicketMutation::setRelatedPrices($entity, $prices);
                 }
+
+                do_action('AHEE__EventEspresso_core_domain_services_graphql_mutators_ticket_update', $entity, $input);
             } catch (Exception $exception) {
                 EntityMutator::handleExceptions(
                     $exception,

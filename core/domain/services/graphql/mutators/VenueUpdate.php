@@ -59,6 +59,8 @@ class VenueUpdate extends EntityMutator
 
                 // Update the entity
                 $entity->save($args);
+
+                do_action('AHEE__EventEspresso_core_domain_services_graphql_mutators_venue_update', $entity, $input);
             } catch (Exception $exception) {
                 EntityMutator::handleExceptions(
                     $exception,

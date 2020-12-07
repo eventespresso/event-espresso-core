@@ -47,6 +47,8 @@ class TicketDelete extends EntityMutator
                     $result = TicketDelete::trashTicket($entity);
                 }
                 EntityMutator::validateResults($result);
+
+                do_action('AHEE__EventEspresso_core_domain_services_graphql_mutators_ticket_delete', $entity, $input);
             } catch (Exception $exception) {
                 EntityMutator::handleExceptions(
                     $exception,
