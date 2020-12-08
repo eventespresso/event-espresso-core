@@ -6,6 +6,8 @@ use DomainException;
 use EE_Dependency_Map;
 use EventEspresso\core\domain\entities\routing\specifications\RouteMatchSpecificationInterface;
 use EventEspresso\core\services\assets\AssetManagerInterface;
+use EventEspresso\core\services\assets\BaristaFactory;
+use EventEspresso\core\services\assets\BaristaInterface;
 use EventEspresso\core\services\json\JsonDataNode;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\request\RequestInterface;
@@ -84,11 +86,11 @@ abstract class Route implements RouteInterface
     /**
      * Route constructor.
      *
-     * @param EE_Dependency_Map                $dependency_map
-     * @param LoaderInterface                  $loader
-     * @param RequestInterface                 $request
-     * @param JsonDataNode                     $data_node
-     * @param RouteMatchSpecificationInterface $specification
+     * @param EE_Dependency_Map                     $dependency_map
+     * @param LoaderInterface                       $loader
+     * @param RequestInterface                      $request
+     * @param JsonDataNode|null                     $data_node
+     * @param RouteMatchSpecificationInterface|null $specification
      */
     public function __construct(
         EE_Dependency_Map $dependency_map,
@@ -240,5 +242,22 @@ abstract class Route implements RouteInterface
         return $this->specification instanceof RouteMatchSpecificationInterface
             ? $this->specification->isMatchingRoute()
             : false;
+    }
+
+
+    /**
+     * @param string $domain_fqcn
+     * @since   $VID:$
+     */
+    public function initializeBaristaForDomain($domain_fqcn)
+    {
+        if (apply_filters('FHEE__load_Barista', true)) {
+            /** @var BaristaFactory $factory */
+            $factory = $this->loader->getShared(BaristaFactory::class);
+            $barista = $factory->createFromDomainClass($domain_fqcn);
+            if ($barista instanceof BaristaInterface) {
+                $barista->initialize();
+            }
+        }
     }
 }
