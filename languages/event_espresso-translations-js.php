@@ -133,6 +133,9 @@ $generated_i18n_strings = array(
 	// Reference: domains/blocks/src/services/utils.ts:26
 	__( 'Select…', 'event_espresso' ),
 
+	// Reference: domains/eventEditor/src/ui/EventDescription.tsx:14
+	__( 'Event Description', 'event_espresso' ),
+
 	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/ActiveStatus.tsx:34
 	__( 'Active Status', 'event_espresso' ),
 
@@ -143,10 +146,10 @@ $generated_i18n_strings = array(
 	__( 'Default Registration Status', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/Donations.tsx:19
-	__( 'Disable Donations', 'event_espresso' ),
+	__( 'Donations Enabled', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/Donations.tsx:19
-	__( 'Enable Donations', 'event_espresso' ),
+	__( 'Donations Disabled', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/EventManager.tsx:37
 	__( 'Event Manager', 'event_espresso' ),
@@ -158,13 +161,10 @@ $generated_i18n_strings = array(
 	__( 'Maximum Number of Registrations Allowed per Transaction', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/TicketSelector.tsx:20
-	__( 'hide ticket selector', 'event_espresso' ),
+	__( 'Ticket Selector Enabled', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/TicketSelector.tsx:20
-	__( 'show ticket selector', 'event_espresso' ),
-
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/TicketSelector.tsx:24
-	__( 'Display Ticket Selector', 'event_espresso' ),
+	__( 'Ticket Selector Disabled', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/index.tsx:22
 	__( 'Registration Options', 'event_espresso' ),
@@ -376,6 +376,9 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/cardView/Details.tsx:41
 	__( 'edit description…', 'event_espresso' ),
 
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/config.ts:10
+	__( 'Move Date to Trash', 'event_espresso' ),
+
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/config.ts:13
 	__( 'Active', 'event_espresso' ),
 
@@ -393,6 +396,15 @@ $generated_i18n_strings = array(
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/config.ts:17
 	__( 'Upcoming', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/config.ts:7
+	__( 'Edit Event Date Details', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/config.ts:8
+	__( 'View Registrations for this Date', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/config.ts:9
+	__( 'Manage Ticket Assignments', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/editable/EditableName.tsx:17
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/editable/EditableName.tsx:27
@@ -484,7 +496,7 @@ $generated_i18n_strings = array(
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:46
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:55
-	// Reference: packages/components/src/EntityList/filterBar/EntityListFilterBar.tsx:73
+	// Reference: packages/components/src/EntityList/filterBar/EntityListFilterBar.tsx:62
 	__( 'search', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:47
@@ -567,6 +579,21 @@ $generated_i18n_strings = array(
 	// Reference: packages/form/src/Submit.tsx:26
 	// Reference: packages/tpc/src/buttons/useSubmitButtonProps.tsx:25
 	__( 'Submit', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/TicketAssignmentsManagerModal/config.ts:10
+	__( 'existing relation', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/TicketAssignmentsManagerModal/config.ts:15
+	__( 'remove existing relation', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/TicketAssignmentsManagerModal/config.ts:20
+	__( 'add new relation', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/TicketAssignmentsManagerModal/config.ts:25
+	__( 'invalid relation', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/TicketAssignmentsManagerModal/config.ts:29
+	__( 'no relation', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/TicketAssignmentsManagerModal/index.tsx:30
 	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/table/Table.tsx:14
@@ -796,12 +823,25 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/cardView/TicketQuantity.tsx:26
 	__( 'edit quantity of tickets available…', 'event_espresso' ),
 
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/config.ts:10
+	__( 'Move Ticket to Trash', 'event_espresso' ),
+
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/config.ts:15
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:51
 	__( 'On Sale', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/config.ts:17
 	__( 'Pending', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/config.ts:7
+	__( 'Edit Ticket Details', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/config.ts:8
+	__( 'Manage Date Assignments', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/config.ts:9
+	// Reference: packages/tpc/src/components/table/Table.tsx:43
+	__( 'Ticket Price Calculator', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/editable/EditablePrice.tsx:32
 	__( 'edit ticket total…', 'event_espresso' ),
@@ -1286,9 +1326,6 @@ $generated_i18n_strings = array(
 	// Reference: packages/tpc/src/components/TicketPriceCalculatorModal.tsx:31
 	/* translators: %s ticket name */
 	__( 'Price Calculator for Ticket: %s', 'event_espresso' ),
-
-	// Reference: packages/tpc/src/components/table/Table.tsx:43
-	__( 'Ticket Price Calculator', 'event_espresso' ),
 
 	// Reference: packages/tpc/src/components/table/useFooterRowGenerator.tsx:41
 	__( 'Total', 'event_espresso' ),
