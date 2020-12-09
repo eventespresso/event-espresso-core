@@ -41,6 +41,18 @@ class BaristaFactory implements FactoryInterface
 
 
     /**
+     * @param string $domain_fqcn
+     * @return BaristaInterface
+     */
+    public function createFromDomainClass($domain_fqcn)
+    {
+        /** @var DomainInterface $domain */
+        $domain = $this->loader->getShared($domain_fqcn);
+        return $this->createFromDomainObject($domain);
+    }
+
+
+    /**
      * @param DomainInterface $domain
      * @return BaristaInterface
      */
