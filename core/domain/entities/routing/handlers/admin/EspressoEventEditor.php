@@ -24,7 +24,7 @@ class EspressoEventEditor extends EspressoEventsAdmin
      * @return bool
      * @since   $VID:$
      */
-    public function matchesCurrentRequest()
+    public function matchesCurrentRequest(): bool
     {
         return parent::matchesCurrentRequest()
                && $this->admin_config->useAdvancedEditor()
@@ -118,14 +118,15 @@ class EspressoEventEditor extends EspressoEventsAdmin
                 'EventEspresso\core\domain\services\graphql\Utilities' => EE_Dependency_Map::load_from_cache,
             ]
         );
-        $this->loader->getShared(
-            'EventEspresso\core\domain\entities\routing\data_nodes\EventEspressoData'
-        );
-        /** @var EventEditor $data_node */
-        $data_node = $this->loader->getShared(
-            'EventEspresso\core\domain\entities\routing\data_nodes\domains\EventEditor'
-        );
-        $this->setDataNode($data_node);
+    }
+
+
+    /**
+     * @return string
+     */
+    protected function dataNodeClass(): string
+    {
+        return EventEditor::class;
     }
 
 
@@ -135,7 +136,7 @@ class EspressoEventEditor extends EspressoEventsAdmin
      * @return bool
      * @since   $VID:$
      */
-    protected function requestHandler()
+    protected function requestHandler(): bool
     {
         if (! class_exists('WPGraphQL')) {
             require_once EE_THIRD_PARTY . 'wp-graphql/wp-graphql.php';

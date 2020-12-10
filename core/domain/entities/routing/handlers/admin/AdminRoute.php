@@ -34,12 +34,12 @@ class AdminRoute extends Route
     /**
      * Route constructor.
      *
-     * @param EE_Admin_Config                  $admin_config
-     * @param EE_Dependency_Map                $dependency_map
-     * @param LoaderInterface                  $loader
-     * @param RequestInterface                 $request
-     * @param JsonDataNode                     $data_node
-     * @param RouteMatchSpecificationInterface $specification
+     * @param EE_Admin_Config                       $admin_config
+     * @param EE_Dependency_Map                     $dependency_map
+     * @param LoaderInterface                       $loader
+     * @param RequestInterface                      $request
+     * @param JsonDataNode|null                     $data_node
+     * @param RouteMatchSpecificationInterface|null $specification
      */
     public function __construct(
         EE_Admin_Config $admin_config,
@@ -58,16 +58,15 @@ class AdminRoute extends Route
      * returns true if the current request matches this route
      *
      * @return bool
-     * @since   $VID:$
      */
-    public function matchesCurrentRequest()
+    public function matchesCurrentRequest(): bool
     {
         return $this->request->isAdmin() || $this->request->isAdminAjax() || $this->request->isActivation();
     }
 
 
     /**
-     * @since $VID:$
+     * @return void
      */
     protected function registerDependencies()
     {
@@ -78,9 +77,8 @@ class AdminRoute extends Route
      * implements logic required to run during request
      *
      * @return bool
-     * @since   $VID:$
      */
-    protected function requestHandler()
+    protected function requestHandler(): bool
     {
         do_action('AHEE__EE_System__load_controllers__load_admin_controllers');
         $this->loader->getShared('EE_Admin');

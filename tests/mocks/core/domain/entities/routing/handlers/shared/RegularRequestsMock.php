@@ -20,8 +20,8 @@ class RegularRequestsMock extends RegularRequests
     public static function register()
     {
         EE_Dependency_Map::instance()->registerDependencies(
-			RegularRequestsMock::class,
-			[
+            RegularRequestsMock::class,
+            [
                 'EE_Dependency_Map'                                                                          => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\loaders\Loader'                                                 => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\request\Request'                                                => EE_Dependency_Map::load_from_cache,
@@ -32,11 +32,15 @@ class RegularRequestsMock extends RegularRequests
         $self->registerDependencies();
     }
 
-    public function registerDependencies() {
+
+    public function registerDependencies()
+    {
         parent::registerDependencies();
     }
 
-    public function requestHandler() {
-        parent::requestHandler();
+
+    public function requestHandler(): bool
+    {
+        return parent::requestHandler();
     }
 }

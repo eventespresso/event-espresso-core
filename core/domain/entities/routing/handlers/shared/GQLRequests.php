@@ -50,7 +50,7 @@ class GQLRequests extends Route
      * @return bool
      * @since   $VID:$
      */
-    public function matchesCurrentRequest()
+    public function matchesCurrentRequest(): bool
     {
         global $pagenow;
         return (
@@ -208,7 +208,7 @@ class GQLRequests extends Route
      * @return bool
      * @since   $VID:$
      */
-    protected function requestHandler()
+    protected function requestHandler(): bool
     {
         if (! class_exists('WPGraphQL')) {
             require_once EE_THIRD_PARTY . 'wp-graphql/wp-graphql.php';

@@ -63,10 +63,9 @@ class JsonDataNodeHandler
     /**
      * @param JsonDataNode $data_node
      * @param int                $depth
-     * @return mixed
-     * @since $VID:$
+     * @return array
      */
-    private function initializeDataNodes(JsonDataNode $data_node, $depth = 0)
+    private function initializeDataNodes(JsonDataNode $data_node, $depth = 0): array
     {
         $depth++;
         $data = [];
@@ -95,7 +94,6 @@ class JsonDataNodeHandler
 
     /**
      * @throws DomainException
-     * @since $VID:$
      */
     public function printDataNode()
     {

@@ -26,7 +26,7 @@ class WordPressPluginsPage extends Route
      * @return bool
      * @since   $VID:$
      */
-    public function matchesCurrentRequest()
+    public function matchesCurrentRequest(): bool
     {
         global $pagenow;
         return $this->request->isAdmin() && $pagenow && $pagenow === 'plugins.php';
@@ -84,7 +84,7 @@ class WordPressPluginsPage extends Route
      * @return bool
      * @since   $VID:$
      */
-    protected function requestHandler()
+    protected function requestHandler(): bool
     {
         /** @var WordPressPluginsPageAssetManager $asset_manager */
         $asset_manager = $this->loader->getShared(

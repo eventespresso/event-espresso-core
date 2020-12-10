@@ -22,7 +22,7 @@ class PueRequests extends Route
      * @return bool
      * @since   $VID:$
      */
-    public function matchesCurrentRequest()
+    public function matchesCurrentRequest(): bool
     {
         return $this->request->isAdmin() && apply_filters('FHEE__EE_System__brew_espresso__load_pue', true);
     }
@@ -76,7 +76,7 @@ class PueRequests extends Route
      * @return bool
      * @since   $VID:$
      */
-    protected function requestHandler()
+    protected function requestHandler(): bool
     {
         // pew pew pew
         $this->loader->getShared('EventEspresso\core\services\licensing\LicenseService');

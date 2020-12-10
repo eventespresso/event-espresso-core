@@ -22,7 +22,7 @@ class SessionRequests extends Route
      * @return bool
      * @since   $VID:$
      */
-    public function matchesCurrentRequest()
+    public function matchesCurrentRequest(): bool
     {
         return $this->request->isAdmin() || $this->request->isEeAjax() || $this->request->isFrontend();
     }
@@ -56,7 +56,7 @@ class SessionRequests extends Route
      * @return bool
      * @since   $VID:$
      */
-    protected function requestHandler()
+    protected function requestHandler(): bool
     {
         $this->loader->getShared('EE_Session');
         return true;

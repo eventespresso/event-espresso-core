@@ -38,8 +38,8 @@ class GQLRequestsMock extends GQLRequests
     }
 
 
-    public function requestHandler()
+    public function requestHandler(): bool
     {
-        parent::requestHandler();
+        return parent::requestHandler();
     }
 }
