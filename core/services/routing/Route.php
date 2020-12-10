@@ -103,12 +103,12 @@ abstract class Route implements RouteInterface
         $this->data_node      = $data_node;
         $this->loader         = $loader;
         $this->request        = $request;
-        $this->specification  = $specification;
+        $this->setSpecification($specification);
     }
 
 
     /**
-     * @since $VID:$
+     * @return void
      */
     abstract protected function registerDependencies();
 
@@ -117,15 +117,52 @@ abstract class Route implements RouteInterface
      * implements logic required to run during request
      *
      * @return bool
-     * @since   $VID:$
      */
-    abstract protected function requestHandler();
+    abstract protected function requestHandler(): bool;
+
+
+    /**
+     * called just before matchesCurrentRequest()
+     * and allows Route to perform any setup required such as calling setSpecification()
+     *
+     * @return void
+     */
+    public function initialize()
+    {
+        // do nothing by default
+    }
+
+
+    /**
+     * returns true if the current request matches this route
+     * child classes can override and use Request directly to match route with request
+     * or supply a RouteMatchSpecification class and just use the below
+     *
+     * @return bool
+     */
+    public function matchesCurrentRequest(): bool
+    {
+        return $this->specification instanceof RouteMatchSpecificationInterface
+            ? $this->specification->isMatchingRoute()
+            : false;
+    }
+
+
+    /**
+     * returns the FQCN for this route's JsonDataNode
+     *
+     * @return string
+     */
+    protected function dataNodeClass(): string
+    {
+        return '';
+    }
 
 
     /**
      * @return array
      */
-    public static function getDefaultDependencies()
+    public static function getDefaultDependencies(): array
     {
         return self::$default_dependencies;
     }
@@ -134,25 +171,25 @@ abstract class Route implements RouteInterface
     /**
      * @return array
      */
-    public static function getFullDependencies()
+    public static function getFullDependencies(): array
     {
         return self::$full_dependencies;
     }
 
 
     /**
-     * @param JsonDataNode $data_node
+     * @param JsonDataNode|null $data_node
      */
-    protected function setDataNode($data_node)
+    protected function setDataNode(JsonDataNode $data_node = null)
     {
         $this->data_node = $data_node;
     }
 
 
     /**
-     * @param RouteMatchSpecificationInterface $specification
+     * @param RouteMatchSpecificationInterface|null $specification
      */
-    protected function setSpecification($specification)
+    protected function setSpecification(RouteMatchSpecificationInterface $specification = null)
     {
         $this->specification = $specification;
     }
@@ -161,7 +198,7 @@ abstract class Route implements RouteInterface
     /**
      * @return JsonDataNode
      */
-    public function dataNode()
+    public function dataNode(): ?JsonDataNode
     {
         return $this->data_node;
     }
@@ -174,25 +211,16 @@ abstract class Route implements RouteInterface
      * sets route handled property based on results returned by requestHandler()
      *
      * @return bool
-     * @since   $VID:$
      */
-    public function handleRequest()
+    public function handleRequest(): bool
     {
         if ($this->isNotHandled()) {
             $this->initialize();
             if ($this->matchesCurrentRequest()) {
                 do_action('AHEE__EventEspresso_core_domain_entities_routes_handlers_Route__handleRequest', $this);
                 $this->registerDependencies();
-                $handled = $this->requestHandler();
-                if (! is_bool($handled)) {
-                    throw new DomainException(
-                        esc_html__(
-                            'Route::requestHandler() must return a boolean to indicate whether the request has been handled or not.',
-                            'event_espresso'
-                        )
-                    );
-                }
-                $this->handled = filter_var($handled, FILTER_VALIDATE_BOOLEAN);
+                $this->loadDataNode();
+                $this->verifyIsHandled($this->requestHandler());
             }
         }
         return $this->handled;
@@ -200,21 +228,9 @@ abstract class Route implements RouteInterface
 
 
     /**
-     * called just before matchesCurrentRequest()
-     * and allows Route to perform any setup required such as calling setSpecification()
-     *
-     * @since $VID:$
-     */
-    public function initialize()
-    {
-        // do nothing by default
-    }
-
-
-    /**
      * @return bool
      */
-    final public function isHandled()
+    final public function isHandled(): bool
     {
         return $this->handled;
     }
@@ -223,33 +239,29 @@ abstract class Route implements RouteInterface
     /**
      * @return bool
      */
-    final public function isNotHandled()
+    final public function isNotHandled(): bool
     {
         return ! $this->handled;
     }
 
 
     /**
-     * returns true if the current request matches this route
-     * child classes can override and use Request directly to match route with request
-     * or supply a RouteMatchSpecification class and just use the below
-     *
-     * @return bool
-     * @since   $VID:$
+     * @return void
      */
-    public function matchesCurrentRequest()
+    private function loadDataNode()
     {
-        return $this->specification instanceof RouteMatchSpecificationInterface
-            ? $this->specification->isMatchingRoute()
-            : false;
+        $data_node_fqcn = $this->dataNodeClass();
+        if (! empty($data_node_fqcn)) {
+            $data_node = $this->loader->getShared($data_node_fqcn);
+            $this->setDataNode($data_node);
+        }
     }
 
 
     /**
      * @param string $domain_fqcn
-     * @since   $VID:$
      */
-    public function initializeBaristaForDomain($domain_fqcn)
+    public function initializeBaristaForDomain(string $domain_fqcn)
     {
         if (apply_filters('FHEE__load_Barista', true)) {
             /** @var BaristaFactory $factory */
@@ -259,5 +271,22 @@ abstract class Route implements RouteInterface
                 $barista->initialize();
             }
         }
+    }
+
+
+    /**
+     * @var bool
+     */
+    private function verifyIsHandled($handled)
+    {
+        if (! is_bool($handled)) {
+            throw new DomainException(
+                esc_html__(
+                    'Route::requestHandler() must return a boolean to indicate whether the request has been handled or not.',
+                    'event_espresso'
+                )
+            );
+        }
+        $this->handled = filter_var($handled, FILTER_VALIDATE_BOOLEAN);
     }
 }
