@@ -30,11 +30,16 @@ class ShortcodeRequestsMock extends ShortcodeRequests
         $self = LoaderFactory::getLoader()->getShared(ShortcodeRequestsMock::class);
         $self->registerDependencies();
     }
-    public function registerDependencies() {
+
+
+    public function registerDependencies()
+    {
         parent::registerDependencies();
     }
 
-    public function requestHandler() {
-        parent::requestHandler();
+
+    public function requestHandler(): bool
+    {
+        return parent::requestHandler();
     }
 }
