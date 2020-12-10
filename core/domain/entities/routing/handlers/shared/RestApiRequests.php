@@ -22,7 +22,7 @@ class RestApiRequests extends Route
      * @return bool
      * @since   $VID:$
      */
-    public function matchesCurrentRequest()
+    public function matchesCurrentRequest(): bool
     {
         return $this->request->isWordPressApi();
     }
@@ -74,7 +74,7 @@ class RestApiRequests extends Route
      * @return bool
      * @since   $VID:$
      */
-    protected function requestHandler()
+    protected function requestHandler(): bool
     {
         // rest api handled by module for now
         return true;

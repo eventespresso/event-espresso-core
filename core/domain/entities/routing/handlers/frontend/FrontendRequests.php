@@ -24,7 +24,7 @@ class FrontendRequests extends PublicRoute
      * @return bool
      * @since   $VID:$
      */
-    public function matchesCurrentRequest()
+    public function matchesCurrentRequest(): bool
     {
         return ($this->request->isFrontend() || $this->request->isFrontAjax()) && ! $this->maintenance_mode->level();
     }
@@ -52,7 +52,7 @@ class FrontendRequests extends PublicRoute
      * @return bool
      * @since   $VID:$
      */
-    protected function requestHandler()
+    protected function requestHandler(): bool
     {
         do_action('AHEE__EE_System__load_controllers__load_front_controllers');
         $this->loader->getShared('EE_Front_Controller');

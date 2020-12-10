@@ -77,9 +77,8 @@ class RouteHandler
      * @param string $fqcn   Fully Qualified Class Name for Route
      * @param bool   $handle if true [default] will immediately call RouteInterface::handleRequest() after adding
      * @throws Exception
-     * @since $VID:$
      */
-    public function addRoute($fqcn, $handle = true)
+    public function addRoute(string $fqcn, bool $handle = true)
     {
         try {
             $route = $this->loader->getShared($fqcn);
@@ -107,7 +106,7 @@ class RouteHandler
     /**
      * @return string
      */
-    public function getRouteRequestType()
+    public function getRouteRequestType(): string
     {
         return $this->route_request_type;
     }
@@ -116,9 +115,9 @@ class RouteHandler
     /**
      * @param string $route_request_type
      */
-    public function setRouteRequestType($route_request_type)
+    public function setRouteRequestType(string $route_request_type = '')
     {
-        $this->route_request_type = $route_request_type !== null ? $route_request_type : $this->route_request_type;
+        $this->route_request_type = ! empty($route_request_type) ? $route_request_type : $this->route_request_type;
     }
 
 
@@ -126,7 +125,7 @@ class RouteHandler
      * @param RouteInterface $route
      * @param bool           $handle if true [default] will immediately call RouteInterface::handleRequest()
      */
-    public function handle(RouteInterface $route, $handle = true)
+    public function handle(RouteInterface $route, bool $handle = true)
     {
         if ($handle && $route->isNotHandled()) {
             $route->handleRequest();
@@ -156,7 +155,7 @@ class RouteHandler
 
 
     /**
-     * @since $VID:$
+     * @return void
      */
     private function printDataNodes()
     {
@@ -171,9 +170,8 @@ class RouteHandler
     /**
      * @param RouteInterface $route
      * @param string         $fqcn
-     * @since $VID:$
      */
-    private function validateRoute($route, $fqcn)
+    private function validateRoute(RouteInterface $route, string $fqcn)
     {
         if (! $route instanceof RouteInterface) {
             throw new InvalidClassException(

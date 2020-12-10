@@ -30,7 +30,7 @@ class EspressoLegacyAdmin extends AdminRoute
      * @return bool
      * @since   $VID:$
      */
-    public function matchesCurrentRequest()
+    public function matchesCurrentRequest(): bool
     {
         global $pagenow;
         return $this->request->isAdminAjax() || (
@@ -128,7 +128,7 @@ class EspressoLegacyAdmin extends AdminRoute
      * @return bool
      * @since   $VID:$
      */
-    protected function requestHandler()
+    protected function requestHandler(): bool
     {
         $this->loader->getShared(JqueryAssetManager::class);
         $this->loader->getShared(EspressoLegacyAdminAssetManager::class);

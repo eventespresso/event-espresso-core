@@ -21,7 +21,7 @@ class EspressoEventsAdmin extends AdminRoute
      * @return bool
      * @since   $VID:$
      */
-    public function matchesCurrentRequest()
+    public function matchesCurrentRequest(): bool
     {
         global $pagenow;
         return parent::matchesCurrentRequest()

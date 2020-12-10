@@ -29,13 +29,13 @@ abstract class PrimaryRoute extends Route
     /**
      * @var string $route_request_type
      */
-    protected $route_request_type;
+    protected $route_request_type = '';
 
 
     /**
      * @param string $route_request_type
      */
-    public function setRouteRequestType($route_request_type)
+    public function setRouteRequestType(string $route_request_type = '')
     {
         $this->route_request_type = $route_request_type;
     }
@@ -44,7 +44,7 @@ abstract class PrimaryRoute extends Route
     /**
      * @return string
      */
-    public function getRouteRequestType()
+    public function getRouteRequestType(): string
     {
         return $this->route_request_type;
     }

@@ -54,7 +54,7 @@ class AssetRequests extends Route
      * @return bool
      * @since   $VID:$
      */
-    public function matchesCurrentRequest()
+    public function matchesCurrentRequest(): bool
     {
         return $this->request->isAdmin()
                || $this->request->isFrontend()
@@ -132,7 +132,7 @@ class AssetRequests extends Route
      * @return bool
      * @since   $VID:$
      */
-    protected function requestHandler()
+    protected function requestHandler(): bool
     {
         if (apply_filters('FHEE__load_Barista', true)) {
             $barista = $this->barista_factory->create();

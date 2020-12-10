@@ -22,7 +22,7 @@ class PersonalDataRequests extends PublicRoute
      * @return bool
      * @since   $VID:$
      */
-    public function matchesCurrentRequest()
+    public function matchesCurrentRequest(): bool
     {
         return ($this->request->isAdmin() || $this->request->isAjax()) && $this->maintenance_mode->models_can_query();
     }
@@ -90,7 +90,7 @@ class PersonalDataRequests extends PublicRoute
      * @return bool
      * @since   $VID:$
      */
-    protected function requestHandler()
+    protected function requestHandler(): bool
     {
         $this->loader->getShared('EventEspresso\core\services\privacy\erasure\PersonalDataEraserManager');
         $this->loader->getShared('EventEspresso\core\services\privacy\export\PersonalDataExporterManager');

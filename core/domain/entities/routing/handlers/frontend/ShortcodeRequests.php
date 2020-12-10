@@ -25,7 +25,7 @@ class ShortcodeRequests extends Route
      * @return bool
      * @since   $VID:$
      */
-    public function matchesCurrentRequest()
+    public function matchesCurrentRequest(): bool
     {
         return $this->request->isFrontend() || $this->request->isIframe() || $this->request->isAjax();
     }
@@ -73,7 +73,7 @@ class ShortcodeRequests extends Route
      * @return bool
      * @since   $VID:$
      */
-    protected function requestHandler()
+    protected function requestHandler(): bool
     {
         // load, register, and add shortcodes the new way
         $this->loader->getShared(

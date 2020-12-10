@@ -22,7 +22,7 @@ class WordPressHeartbeat extends Route
      * @return bool
      * @since   $VID:$
      */
-    public function matchesCurrentRequest()
+    public function matchesCurrentRequest(): bool
     {
         return $this->request->isWordPressHeartbeat();
     }
@@ -56,7 +56,7 @@ class WordPressHeartbeat extends Route
      * @return bool
      * @since   $VID:$
      */
-    protected function requestHandler()
+    protected function requestHandler(): bool
     {
         $this->loader->getShared('EventEspresso\core\domain\services\admin\ajax\WordpressHeartbeat');
         return true;

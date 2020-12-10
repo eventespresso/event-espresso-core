@@ -24,7 +24,7 @@ class ActivationRequests extends PrimaryRoute
      * @return bool
      * @since   $VID:$
      */
-    public function matchesCurrentRequest()
+    public function matchesCurrentRequest(): bool
     {
         return $this->request->isActivation();
     }
@@ -56,7 +56,7 @@ class ActivationRequests extends PrimaryRoute
      * @return bool
      * @since   $VID:$
      */
-    protected function requestHandler()
+    protected function requestHandler(): bool
     {
         $this->setRouteRequestType(PrimaryRoute::ROUTE_REQUEST_TYPE_ACTIVATION);
         return true;

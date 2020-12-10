@@ -22,7 +22,7 @@ interface RouteInterface
     /**
      * @return JsonDataNode
      */
-    public function dataNode();
+    public function dataNode(): ?JsonDataNode;
 
 
     /**
@@ -31,7 +31,7 @@ interface RouteInterface
      * @return bool
      * @since   $VID:$
      */
-    public function handleRequest();
+    public function handleRequest(): bool;
 
 
     /**
@@ -47,7 +47,7 @@ interface RouteInterface
      *
      * @return bool
      */
-    public function isHandled();
+    public function isHandled(): bool;
 
 
     /**
@@ -55,7 +55,7 @@ interface RouteInterface
      *
      * @return bool
      */
-    public function isNotHandled();
+    public function isNotHandled(): bool;
 
 
     /**
@@ -64,5 +64,5 @@ interface RouteInterface
      * @return bool
      * @since   $VID:$
      */
-    public function matchesCurrentRequest();
+    public function matchesCurrentRequest(): bool;
 }
