@@ -3,9 +3,7 @@
 namespace EventEspresso\core\domain\entities\routing\handlers\admin;
 
 use EE_Dependency_Map;
-use EventEspresso\core\domain\entities\editor\CoreBlocksAssetManager;
-use EventEspresso\core\domain\entities\routing\data_nodes\domains\EventEditor;
-use EventEspresso\core\domain\entities\routing\data_nodes\EventEspressoData;
+use EventEspresso\core\domain\entities\routing\data_nodes\domains\GutenbergEditorData;
 
 /**
  * Class GutenbergEditor
@@ -22,9 +20,8 @@ class GutenbergEditor extends AdminRoute
      * returns true if the current request matches this route
      *
      * @return bool
-     * @since   $VID:$
      */
-    public function matchesCurrentRequest()
+    public function matchesCurrentRequest(): bool
     {
         global $pagenow;
         return parent::matchesCurrentRequest()
@@ -40,7 +37,7 @@ class GutenbergEditor extends AdminRoute
 
 
     /**
-     * @since $VID:$
+     * @return void
      */
     protected function registerDependencies()
     {
@@ -58,14 +55,15 @@ class GutenbergEditor extends AdminRoute
                 'EventEspresso\core\services\assets\Registry'        => EE_Dependency_Map::load_from_cache,
             ]
         );
-        $this->loader->getShared(
-            'EventEspresso\core\domain\entities\routing\data_nodes\EventEspressoData'
-        );
-        /** @var EventEditor $data_node */
-        $data_node = $this->loader->getShared(
-            'EventEspresso\core\domain\entities\routing\data_nodes\domains\GutenbergEditorData'
-        );
-        $this->setDataNode($data_node);
+    }
+
+
+    /**
+     * @return string
+     */
+    protected function dataNodeClass(): string
+    {
+        return GutenbergEditorData::class;
     }
 
 
@@ -73,9 +71,8 @@ class GutenbergEditor extends AdminRoute
      * implements logic required to run during request
      *
      * @return bool
-     * @since   $VID:$
      */
-    protected function requestHandler()
+    protected function requestHandler(): bool
     {
         $this->asset_manager = $this->loader->getShared(
             'EventEspresso\core\domain\entities\editor\CoreBlocksAssetManager'
