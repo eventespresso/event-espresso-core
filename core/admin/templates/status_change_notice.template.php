@@ -4,7 +4,7 @@
  * @var string $page_slug
  */
 
-$page_slug = ! empty($page_slug) ? "{$page_slug}-page" : '';
+$page_slug          = ! empty($page_slug) ? "{$page_slug}-page" : '';
 $unknown_error_msg  = __(
     'Oops... an unknown error has occurred on the server and this notice could not be dismissed.',
     'event_espresso'
@@ -34,38 +34,30 @@ $failed_request_msg = __('Request failed. The server returned status code: ', 'e
     }
 
     function dismissStatusNotice() {
-        var data = {
-            'action': 'espresso_hide_status_change_notice',
-            'ee_admin_ajax': 1
-        };
-        var xhr = new XMLHttpRequest();
-        var urlParams = [];
-        for (var key in data) {
-            if (data.hasOwnProperty(key)) {
-                urlParams.push(encodeURIComponent(key) + '=' + encodeURIComponent(data[key]));
-            }
-        }
-        var dismissUrl = ajaxurl + '?' + urlParams.join('&');
-        xhr.open('POST', dismissUrl);
-        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState > 3) {
-                var response = JSON.parse(xhr.response);
-                if (xhr.status !== 200) {
-                    console.error("<?php echo $failed_request_msg; ?>" + xhr.status);
-                } else if (typeof response.error !== undefined && response.error !== '') {
-                    console.error(response.error);
-                } else if (typeof response.success !== undefined && response.success) {
+        jQuery.ajax({
+            type: "POST",
+            url: ajaxurl,
+            data: {
+                action: "espresso_hide_status_change_notice",
+                ee_admin_ajax: 1
+            },
+            dataType: "json",
+            success: function (response) {
+                if (typeof response.success !== 'undefined' && response.success) {
                     removeStatusNotice();
                 } else {
-                    console.error("<?php echo $unknown_error_msg; ?>");
+                    if (typeof response.errors !== 'undefined' && response.errors !== '') {
+                        console.error(response.errors);
+                    } else {
+                        console.error("<?php echo $unknown_error_msg; ?>");
+                    }
                 }
+            },
+            error: function (xhr) {
+                console.error("<?php echo $failed_request_msg; ?>" + xhr.status + " " + xhr.statusText);
             }
-        };
-        xhr.send();
+        });
     }
-
 </script>
 
 <style type="text/css">
@@ -158,7 +150,7 @@ $failed_request_msg = __('Request failed. The server returned status code: ', 'e
 
     .espresso_events-page .ee-status-message,
     .espresso_messages-page .ee-status-event {
-        display:none;
+        display: none;
     }
 
     .ee-status-change-notice-div h3 {
@@ -228,6 +220,7 @@ $failed_request_msg = __('Request failed. The server returned status code: ', 'e
         color: #e65983;
         transition: all 0.15s;
     }
+
     .ee-status-change-notice-div .ee-dismiss-notice-pg a .pill:hover {
         background: #e65983;
         color: #fff;
@@ -339,7 +332,7 @@ $failed_request_msg = __('Request failed. The server returned status code: ', 'e
             <p class="ee-dismiss-notice-pg">
                 <a href="javascript:void(0);" onclick="dismissStatusNotice();" class="ee-dismiss-notice-link">
                     <span class="pill pink"><?php esc_html_e('don\'t show this notice again please', 'event_espresso');
-                    ?></span>
+                        ?></span>
                 </a>
             </p>
         </div>

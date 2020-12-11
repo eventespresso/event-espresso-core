@@ -514,16 +514,16 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
 
     public function hideStatusChangeNotice()
     {
-        $response = ['error' => '', 'success' => true];
+        $response = [];
         try {
             /** @var EventEspresso\core\admin\StatusChangeNotice $status_change_notice */
             $status_change_notice = $this->loader->getShared('EventEspresso\core\admin\StatusChangeNotice');
             $response['success'] = $status_change_notice->dismiss() > -1;
         } catch (Exception $exception) {
-            $response['error'] = $exception->getMessage();
+            $response['errors'] = $exception->getMessage();
         }
         echo wp_json_encode($response);
-        wp_die();
+        exit();
     }
 
 
