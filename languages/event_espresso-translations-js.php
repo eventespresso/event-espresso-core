@@ -608,13 +608,13 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/filters/controls/DatesByMonthControl.tsx:26
 	__( 'dates by month', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/filters/controls/ShowExpiredTicketsControl.tsx:14
+	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/filters/controls/ShowExpiredTicketsControl.tsx:16
 	__( 'show expired tickets', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/filters/controls/ShowTrashedDatesControl.tsx:10
 	__( 'show trashed dates', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/filters/controls/ShowTrashedTicketsControl.tsx:14
+	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/filters/controls/ShowTrashedTicketsControl.tsx:16
 	__( 'show trashed tickets', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/TicketRegistrationsLink.tsx:17
