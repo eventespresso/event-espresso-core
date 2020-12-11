@@ -7,7 +7,11 @@ $count = 1;
 ?>
 <div class="ee-list-table-legend-container">
     <h3><?php _e('Legend', 'event_espresso'); ?></h3>
-    <?php if (isset($status_change_notice)) { echo $status_change_notice; } ?>
+    <?php
+    if (isset($status_change_notice)) {
+        echo $status_change_notice;
+    }
+    ?>
     <dl class="alignleft ee-list-table-legend">
         <?php foreach ($items as $item => $details) : ?>
             <?php

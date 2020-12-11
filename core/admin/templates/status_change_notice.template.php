@@ -245,10 +245,12 @@ $failed_request_msg = __('Request failed. The server returned status code: ', 'e
 
             <a href="javascript:void(0);" onclick="closeStatusNotice();" class="ee-close-notice-btn"></a>
             <h3><?php esc_html_e('Important Notice Regarding Status Color Codes', 'event_espresso'); ?></h3>
-            <p><?php esc_html_e(
+            <p>
+                <?php esc_html_e(
                     'In order to correct some inconsistencies in our event, datetime, and ticket status color codes, we have made the following changes:',
                     'event_espresso'
-                ); ?></p>
+                ); ?>
+            </p>
             <ul>
                 <li class="ee-status-event">
                     <?php printf(
