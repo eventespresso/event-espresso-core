@@ -145,10 +145,10 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/DefaultRegistrationStatus.tsx:17
 	__( 'Default Registration Status', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/Donations.tsx:19
+	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/Donations.tsx:12
 	__( 'Donations Enabled', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/Donations.tsx:19
+	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/Donations.tsx:12
 	__( 'Donations Disabled', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/EventManager.tsx:37
@@ -160,10 +160,10 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/MaxRegistrations.tsx:35
 	__( 'Maximum Number of Registrations Allowed per Transaction', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/TicketSelector.tsx:20
+	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/TicketSelector.tsx:13
 	__( 'Ticket Selector Enabled', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/TicketSelector.tsx:20
+	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/TicketSelector.tsx:13
 	__( 'Ticket Selector Disabled', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/index.tsx:22
