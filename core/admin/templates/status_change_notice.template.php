@@ -331,8 +331,9 @@ $failed_request_msg = __('Request failed. The server returned status code: ', 'e
             </p>
             <p class="ee-dismiss-notice-pg">
                 <a href="javascript:void(0);" onclick="dismissStatusNotice();" class="ee-dismiss-notice-link">
-                    <span class="pill pink"><?php esc_html_e('don\'t show this notice again please', 'event_espresso');
-                        ?></span>
+                    <span class="pill pink"><?php
+                        esc_html_e('don\'t show this notice again please', 'event_espresso');
+                    ?></span>
                 </a>
             </p>
         </div>
