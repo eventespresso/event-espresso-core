@@ -189,7 +189,7 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/multiStep/Container.tsx:25
 	__( 'New Datetime', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/multiStep/ContentBody.tsx:40
+	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/multiStep/ContentBody.tsx:41
 	__( 'Save and assign tickets', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/multiStep/DateFormSteps.tsx:11
@@ -991,6 +991,9 @@ $generated_i18n_strings = array(
 
 	// Reference: packages/components/src/Confirm/useConfirmationDialog.tsx:33
 	__( 'Yes', 'event_espresso' ),
+
+	// Reference: packages/components/src/CurrencyDisplay/index.tsx:19
+	__( 'free', 'event_espresso' ),
 
 	// Reference: packages/components/src/DateTimeRangePicker/index.tsx:74
 	// Reference: packages/components/src/Popover/PopoverForm/PopoverForm.tsx:42
