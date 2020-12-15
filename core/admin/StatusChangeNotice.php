@@ -55,7 +55,7 @@ class StatusChangeNotice extends WordPressOption
     private function getCurrentUser(): string
     {
         $user = wp_get_current_user();
-        if (! $user instanceof WP_User) {
+        if (! $user instanceof WP_User || ! $user->exists()) {
             throw new RuntimeException(
                 esc_html__('A valid WP User could not be retrieved.', 'event_espresso')
             );
