@@ -151,7 +151,7 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/Donations.tsx:12
 	__( 'Donations Disabled', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/EventManager.tsx:37
+	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/EventManager.tsx:29
 	__( 'Event Manager', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/EventPhoneNumber.tsx:26
