@@ -15,7 +15,7 @@ namespace EventEspresso\core\services\database;
  */
 abstract class WordPressOption
 {
-    const NOT_SET_YET    = 'wordpress-option-value-not-yet-set';
+    const NOT_SET_YET = 'wordpress-option-value-not-yet-set';
 
     /**
      * WordPress makes it difficult to determine if an option was successfully saved or not
@@ -117,7 +117,7 @@ abstract class WordPressOption
      * @param $value
      * @return int
      */
-    public function updateOption($value) : int
+    public function updateOption($value): int
     {
         // don't update if value has not changed since last update
         if ($value === $this->value) {
@@ -141,7 +141,7 @@ abstract class WordPressOption
     /**
      * @return string
      */
-    private function autoload() : string
+    private function autoload(): string
     {
         return $this->autoload ? 'yes' : 'no';
     }

@@ -491,6 +491,15 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     {
         // for lazy loading of metabox content
         add_action('wp_ajax_espresso-ajax-content', array($this, 'ajax_metabox_content'), 10);
+
+        add_action(
+            'wp_ajax_espresso_hide_status_change_notice',
+            [$this, 'hideStatusChangeNotice']
+        );
+        add_action(
+            'wp_ajax_nopriv_espresso_hide_status_change_notice',
+            [$this, 'hideStatusChangeNotice']
+        );
     }
 
 
@@ -500,6 +509,21 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         $url = isset($this->_req_data['contenturl']) ? $this->_req_data['contenturl'] : '';
         EE_Admin_Page::cached_rss_display($contentid, $url);
         wp_die();
+    }
+
+
+    public function hideStatusChangeNotice()
+    {
+        $response = [];
+        try {
+            /** @var EventEspresso\core\admin\StatusChangeNotice $status_change_notice */
+            $status_change_notice = $this->loader->getShared('EventEspresso\core\admin\StatusChangeNotice');
+            $response['success'] = $status_change_notice->dismiss() > -1;
+        } catch (Exception $exception) {
+            $response['errors'] = $exception->getMessage();
+        }
+        echo wp_json_encode($response);
+        exit();
     }
 
 
@@ -3046,11 +3070,15 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             (array) $items,
             $this
         );
-        $this->_template_args['status_change_notice'] = EEH_Template::display_template(
-            EE_ADMIN_TEMPLATE . 'status_change_notice.template.php',
-            [ 'context' => '__admin-legend' ],
-            true
-        );
+        /** @var EventEspresso\core\admin\StatusChangeNotice $status_change_notice */
+        $status_change_notice = $this->loader->getShared('EventEspresso\core\admin\StatusChangeNotice');
+        if (! $status_change_notice->isDismissed()) {
+            $this->_template_args['status_change_notice'] = EEH_Template::display_template(
+                EE_ADMIN_TEMPLATE . 'status_change_notice.template.php',
+                [ 'context' => '__admin-legend', 'page_slug' => $this->page_slug ],
+                true
+            );
+        }
         return EEH_Template::display_template(
             EE_ADMIN_TEMPLATE . 'admin_details_legend.template.php',
             $this->_template_args,
