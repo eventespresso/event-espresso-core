@@ -38,6 +38,7 @@ jQuery(document).ready(function ($) {
                 var $ticket_selector_rows = $ticket_selector.find('.tckt-slctr-tbl-tr');
                 $.each($ticket_selector_rows, function () {
                     var $ticket_selector_row = $(this);
+					var $ticket_details_row = $ticket_selector_row.next('.tckt-slctr-tkt-details-tr');
                     // get all of the specific datetime related classes assigned to this ticket row
                     var ticket_row_datetime_classes = $ticket_selector_row.attr('class').split(' ').filter(
                         function(element) {
@@ -54,9 +55,11 @@ jQuery(document).ready(function ($) {
                     });
                     if (display) {
                         $ticket_selector_row.removeClass('ee-hidden-ticket-tr');
+						$ticket_details_row.removeClass('ee-hidden-ticket-tr');
                         active_rows++;
                     } else {
 						$ticket_selector_row.addClass( 'ee-hidden-ticket-tr' );
+						$ticket_details_row.addClass( 'ee-hidden-ticket-tr' );
 						var $qty_input = $ticket_selector_row.find(
 							'.ticket-selector-tbl-qty-slct'
 						);
