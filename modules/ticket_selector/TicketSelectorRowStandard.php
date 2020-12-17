@@ -147,7 +147,7 @@ class TicketSelectorRowStandard extends TicketSelectorRow
         $ticket_selector_row_html = EEH_HTML::tr(
             '',
             '',
-            "tckt-slctr-tbl-tr {$this->status_class}{$this->ticket_datetime_classes} "
+            "tckt-slctr-tbl-tr ee-hidden-ticket-tr {$this->status_class}{$this->ticket_datetime_classes} "
             . espresso_get_object_css_class($this->ticket)
         );
         $filtered_row_content = $this->getFilteredRowContents();

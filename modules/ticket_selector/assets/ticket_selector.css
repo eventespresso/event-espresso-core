@@ -427,7 +427,14 @@
     top: -2px;
 }
 
-.ee-hidden-ticket-tr {
+
+.tckt-slctr-tbl-tr,
+.tckt-slctr-tkt-details-tr {
+    display: table-row;
+}
+
+.tckt-slctr-tbl-tr.ee-hidden-ticket-tr,
+.tckt-slctr-tkt-details-tr.ee-hidden-ticket-tr {
     display: none;
 }
 
