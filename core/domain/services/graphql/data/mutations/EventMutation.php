@@ -23,7 +23,7 @@ class EventMutation
      * @return array
      * @throws Exception
      */
-    public static function prepareFields(array $input, $mutation_name)
+    public static function prepareFields(array $input, string $mutation_name): array
     {
         $args = [];
 

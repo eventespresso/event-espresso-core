@@ -44,15 +44,14 @@ abstract class EnumBase implements EnumInterface
 
     /**
      * @return array
-     * @since $VID:$
      */
-    abstract protected function getValues();
+    abstract protected function getValues(): array;
 
 
     /**
      * @return string
      */
-    public function name()
+    public function name(): string
     {
         return $this->name;
     }
@@ -61,7 +60,7 @@ abstract class EnumBase implements EnumInterface
     /**
      * @param string $name
      */
-    protected function setName($name)
+    protected function setName(string $name)
     {
         $this->name = $name;
     }
@@ -70,7 +69,7 @@ abstract class EnumBase implements EnumInterface
     /**
      * @return string
      */
-    public function description()
+    public function description(): string
     {
         return $this->description;
     }
@@ -79,7 +78,7 @@ abstract class EnumBase implements EnumInterface
     /**
      * @param string $description
      */
-    protected function setDescription($description)
+    protected function setDescription(string $description)
     {
         $this->description = $description;
     }
@@ -87,9 +86,8 @@ abstract class EnumBase implements EnumInterface
 
     /**
      * @return array
-     * @since $VID:$
      */
-    public function values()
+    public function values(): array
     {
         return (array) $this->values;
     }

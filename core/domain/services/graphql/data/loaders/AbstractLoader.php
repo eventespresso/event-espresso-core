@@ -23,13 +23,13 @@ abstract class AbstractLoader extends AbstractDataLoader
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    abstract protected function getQuery();
+    abstract protected function getQuery(): EEM_Base;
 
     /**
      * @param array $keys
      * @return array
      */
-    abstract protected function getWhereParams(array $keys);
+    abstract protected function getWhereParams(array $keys): array;
 
     /**
      * Given array of keys, loads and returns a map consisting of keys from `keys` array and loaded

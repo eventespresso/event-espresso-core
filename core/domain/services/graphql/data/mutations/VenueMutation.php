@@ -2,6 +2,9 @@
 
 namespace EventEspresso\core\domain\services\graphql\data\mutations;
 
+use DateTime;
+use Exception;
+
 /**
  * Class VenueMutation
  *
@@ -17,12 +20,10 @@ class VenueMutation
      * @param array  $input         Data coming from the GraphQL mutation query input
      * @param string $mutation_name Name of the mutation being performed
      * @return array
+     * @throws Exception
      */
-    public static function prepareFields(array $input, $mutation_name)
+    public static function prepareFields(array $input, string $mutation_name): array
     {
-
-        $args = [];
-
         if (! empty($input['name'])) {
             $args['VNU_name'] = sanitize_text_field($input['name']);
         }

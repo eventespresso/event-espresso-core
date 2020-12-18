@@ -15,23 +15,23 @@ use InvalidArgumentException;
 class AttendeeLoader extends AbstractLoader
 {
     /**
-     * @return EEM_Base
+     * @return EEM_Base|EEM_Attendee
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    protected function getQuery()
+    protected function getQuery(): EEM_Base
     {
         return EEM_Attendee::instance();
     }
 
+
     /**
      * @param array $keys
-     *
      * @return array
      */
-    protected function getWhereParams(array $keys)
+    protected function getWhereParams(array $keys): array
     {
         return [
             'ATT_ID' => ['IN', $keys],

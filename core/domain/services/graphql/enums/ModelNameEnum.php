@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\domain\services\graphql\enums;
 
+use EE_Error;
 use EEM_Datetime;
 use EEM_Ticket;
 use EEM_Price;
@@ -31,9 +32,9 @@ class ModelNameEnum extends EnumBase
 
     /**
      * @return array
-     * @since $VID:$
+     * @throws EE_Error
      */
-    protected function getValues()
+    protected function getValues(): array
     {
         return [
             'DATETIME' => [

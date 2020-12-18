@@ -21,7 +21,7 @@ class VenueLoader extends AbstractLoader
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    protected function getQuery()
+    protected function getQuery(): EEM_Base
     {
         return EEM_Venue::instance();
     }
@@ -30,7 +30,7 @@ class VenueLoader extends AbstractLoader
      * @param array $keys
      * @return array
      */
-    protected function getWhereParams(array $keys)
+    protected function getWhereParams(array $keys): array
     {
         return [
             'VNU_ID' => ['IN', $keys],

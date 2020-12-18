@@ -28,9 +28,8 @@ class AttendeesConnectionOrderbyEnum extends EnumBase
 
     /**
      * @return array
-     * @since $VID:$
      */
-    protected function getValues()
+    protected function getValues(): array
     {
         return [
             'ID'     => [

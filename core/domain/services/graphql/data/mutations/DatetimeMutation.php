@@ -28,7 +28,7 @@ class DatetimeMutation
      * @return array
      * @throws Exception
      */
-    public static function prepareFields(array $input)
+    public static function prepareFields(array $input): array
     {
         $args = [];
 
@@ -107,7 +107,7 @@ class DatetimeMutation
      * @throws InvalidArgumentException
      * @throws ReflectionException
      */
-    public static function setRelatedTickets($entity, array $tickets)
+    public static function setRelatedTickets(EE_Datetime $entity, array $tickets)
     {
         $relationName = 'Ticket';
         // Remove all the existing related tickets
