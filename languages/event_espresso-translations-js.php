@@ -136,37 +136,37 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/EventDescription.tsx:18
 	__( 'Event Description', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/ActiveStatus.tsx:34
-	__( 'Active Status', 'event_espresso' ),
+	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/ActiveStatus.tsx:23
+	__( 'Active status', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/AltRegPage.tsx:37
+	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/AltRegPage.tsx:25
 	__( 'Alternative Registration Page', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/DefaultRegistrationStatus.tsx:17
+	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/DefaultRegistrationStatus.tsx:24
 	__( 'Default Registration Status', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/Donations.tsx:12
+	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/Donations.tsx:10
 	__( 'Donations Enabled', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/Donations.tsx:12
+	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/Donations.tsx:10
 	__( 'Donations Disabled', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/EventManager.tsx:29
+	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/EventManager.tsx:24
 	__( 'Event Manager', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/EventPhoneNumber.tsx:26
+	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/EventPhoneNumber.tsx:14
 	__( 'Event Phone Number', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/MaxRegistrations.tsx:35
+	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/MaxRegistrations.tsx:19
 	__( 'Maximum Number of Registrations Allowed per Transaction', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/TicketSelector.tsx:13
+	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/TicketSelector.tsx:11
 	__( 'Ticket Selector Enabled', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/TicketSelector.tsx:13
+	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/TicketSelector.tsx:11
 	__( 'Ticket Selector Disabled', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/index.tsx:22
+	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/index.tsx:44
 	__( 'Registration Options', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/DateRegistrationsLink.tsx:17
@@ -380,6 +380,7 @@ $generated_i18n_strings = array(
 	__( 'Move Date to Trash', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/config.ts:13
+	// Reference: packages/constants/src/datetimeStatus.ts:4
 	__( 'Active', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/config.ts:14
@@ -388,6 +389,7 @@ $generated_i18n_strings = array(
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/config.ts:15
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/config.ts:14
+	// Reference: packages/constants/src/datetimeStatus.ts:6
 	__( 'Expired', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/config.ts:16
@@ -395,6 +397,7 @@ $generated_i18n_strings = array(
 	__( 'Sold Out', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/config.ts:17
+	// Reference: packages/constants/src/datetimeStatus.ts:10
 	__( 'Upcoming', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/config.ts:7
@@ -1145,6 +1148,19 @@ $generated_i18n_strings = array(
 	// Reference: packages/components/src/bulkEdit/details/Submit.tsx:29
 	__( 'Bulk update details', 'event_espresso' ),
 
+	// Reference: packages/constants/src/datetimeStatus.ts:5
+	// Reference: packages/predicates/src/registration/statusOptions.ts:10
+	__( 'Cancelled', 'event_espresso' ),
+
+	// Reference: packages/constants/src/datetimeStatus.ts:7
+	__( 'Inactive', 'event_espresso' ),
+
+	// Reference: packages/constants/src/datetimeStatus.ts:8
+	__( 'Postponed', 'event_espresso' ),
+
+	// Reference: packages/constants/src/datetimeStatus.ts:9
+	__( 'SoldOut', 'event_espresso' ),
+
 	// Reference: packages/dates/src/DateRangePicker/DateRangePickerLegend.tsx:14
 	__( 'day in range', 'event_espresso' ),
 
@@ -1243,9 +1259,6 @@ $generated_i18n_strings = array(
 
 	// Reference: packages/helpers/src/tickets/getStatusTextLabel.ts:23
 	__( 'on sale', 'event_espresso' ),
-
-	// Reference: packages/predicates/src/registration/statusOptions.ts:10
-	__( 'Cancelled', 'event_espresso' ),
 
 	// Reference: packages/predicates/src/registration/statusOptions.ts:14
 	__( 'Declined', 'event_espresso' ),
