@@ -15,7 +15,7 @@ use EventEspresso\core\domain\services\graphql\mutators\EventUpdate;
  * Description
  *
  * @package EventEspresso\core\domain\services\graphql\types
- * @author  Brent Christensen
+ * @author  Manzoor Wani
  * @since   $VID:$
  */
 class Event extends TypeBase
@@ -37,9 +37,8 @@ class Event extends TypeBase
 
     /**
      * @return GraphQLFieldInterface[]
-     * @since $VID:$
      */
-    public function getFields()
+    public function getFields(): array
     {
         $fields = [
             new GraphQLField(
@@ -78,11 +77,11 @@ class Event extends TypeBase
                 'ID',
                 esc_html__('The event ID.', 'event_espresso')
             ),
-            new GraphQLField(
+            new GraphQLOutputField(
                 'defaultRegStatus',
-                'String',
+                $this->namespace . 'RegistrationStatusEnum',
                 'default_registration_status',
-                esc_html__('Default Registration Status', 'event_espresso')
+                esc_html__('Default Event Registration Status', 'event_espresso')
             ),
             new GraphQLField(
                 'description',
@@ -108,7 +107,7 @@ class Event extends TypeBase
                 'is_active',
                 esc_html__('Flag indicating event is active', 'event_espresso')
             ),
-            new GraphQLField(
+            new GraphQLOutputField(
                 'isCancelled',
                 'Boolean',
                 'is_cancelled',
@@ -126,13 +125,13 @@ class Event extends TypeBase
                 'is_inactive',
                 esc_html__('Flag indicating event is inactive', 'event_espresso')
             ),
-            new GraphQLField(
+            new GraphQLOutputField(
                 'isPostponed',
                 'Boolean',
                 'is_postponed',
                 esc_html__('Flag indicating whether the event is marked as postponed', 'event_espresso')
             ),
-            new GraphQLField(
+            new GraphQLOutputField(
                 'isSoldOut',
                 'Boolean',
                 'is_sold_out',
@@ -147,17 +146,17 @@ class Event extends TypeBase
                 'is_upcoming',
                 esc_html__('Whether the event is upcoming', 'event_espresso')
             ),
-            new GraphQLOutputField(
-                'manager',
-                'User',
-                null,
-                esc_html__('Event Manager', 'event_espresso')
-            ),
             new GraphQLInputField(
                 'manager',
                 'String',
                 null,
                 esc_html__('Globally unique event ID for the event manager', 'event_espresso')
+            ),
+            new GraphQLOutputField(
+                'manager',
+                'User',
+                null,
+                esc_html__('Event Manager', 'event_espresso')
             ),
             new GraphQLField(
                 'maxRegistrations',
