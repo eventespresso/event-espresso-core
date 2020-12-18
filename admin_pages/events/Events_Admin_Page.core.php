@@ -1601,14 +1601,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 $this->page_slug,
                 'side'
             );
-            add_action(
-                'add_meta_boxes_espresso_events',
-                function () {
-                    global $current_screen;
-                    remove_meta_box('authordiv', $current_screen, 'normal');
-                },
-                99
-            );
         }
         if (! $use_advanced_editor) {
             add_meta_box(
@@ -1619,6 +1611,17 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 'normal',
                 'high'
             );
+        } else {
+            if ($flags->featureAllowed('use_reg_options_meta_box')) {
+                add_action(
+                    'add_meta_boxes_espresso_events',
+                    function () {
+                        global $current_screen;
+                        remove_meta_box('authordiv', $current_screen, 'normal');
+                    },
+                    99
+                );
+            }
         }
         // NOTE: if you're looking for other metaboxes in here,
         // where a metabox has a related management page in the admin
