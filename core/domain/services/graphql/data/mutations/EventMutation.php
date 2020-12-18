@@ -28,15 +28,19 @@ class EventMutation
         $args = [];
 
         if (array_key_exists('allowDonations', $input)) {
-            $args['EVT_donations'] = (bool) ($input['allowDonations']);
+            $args['EVT_donations'] = filter_var($input['allowDonations'], FILTER_VALIDATE_BOOLEAN);
         }
 
         if (array_key_exists('allowOverflow', $input)) {
-            $args['EVT_allow_overflow'] = (bool) ($input['allowOverflow']);
+            $args['EVT_allow_overflow'] = filter_var($input['allowOverflow'], FILTER_VALIDATE_BOOLEAN);
         }
 
         if (! empty($input['altRegPage'])) {
             $args['EVT_external_URL'] = sanitize_text_field($input['altRegPage']);
+        }
+
+        if (! empty($input['defaultRegStatus'])) {
+            $args['EVT_default_registration_status'] = sanitize_text_field($input['defaultRegStatus']);
         }
 
         if (! empty($input['description'])) {
@@ -44,11 +48,11 @@ class EventMutation
         }
 
         if (array_key_exists('displayDescription', $input)) {
-            $args['EVT_display_desc'] = (bool) ($input['displayDescription']);
+            $args['EVT_display_desc'] = filter_var($input['displayDescription'], FILTER_VALIDATE_BOOLEAN);
         }
 
         if (array_key_exists('displayTicketSelector', $input)) {
-            $args['EVT_display_ticket_selector'] = (bool) ($input['displayTicketSelector']);
+            $args['EVT_display_ticket_selector'] = filter_var($input['displayTicketSelector'], FILTER_VALIDATE_BOOLEAN);
         }
 
         if (! empty($input['maxRegistrations'])) {
@@ -56,7 +60,7 @@ class EventMutation
         }
 
         if (array_key_exists('memberOnly', $input)) {
-            $args['EVT_member_only'] = (bool) ($input['memberOnly']);
+            $args['EVT_member_only'] = filter_var($input['memberOnly'], FILTER_VALIDATE_BOOLEAN);
         }
 
         if (! empty($input['name'])) {
