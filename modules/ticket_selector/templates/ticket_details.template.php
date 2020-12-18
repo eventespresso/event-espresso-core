@@ -13,7 +13,7 @@
 /** @var \EventEspresso\modules\ticket_selector\TicketDetails $ticket_details */
 ?>
 <?php if ($show_ticket_details) : ?>
-    <tr class="tckt-slctr-tkt-details-tr <?php echo $ticket_details_row_class; ?>">
+    <tr class="tckt-slctr-tkt-details-tr ee-hidden-ticket-tr <?php echo $ticket_details_row_class; ?>">
         <td class="tckt-slctr-tkt-details-td" colspan="<?php echo $cols; ?>">
             <div id="<?php echo $ticket_details_css_id; ?>-dv" class="tckt-slctr-tkt-details-dv" style="display: none;">
 
