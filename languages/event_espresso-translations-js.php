@@ -1278,6 +1278,15 @@ $generated_i18n_strings = array(
 	// Reference: packages/predicates/src/registration/statusOptions.ts:6
 	__( 'Approved', 'event_espresso' ),
 
+	// Reference: packages/rich-text-editor/src/components/toolbarButtons/WPMedia.tsx:10
+	__( 'Select media', 'event_espresso' ),
+
+	// Reference: packages/rich-text-editor/src/components/toolbarButtons/WPMedia.tsx:12
+	__( 'Select', 'event_espresso' ),
+
+	// Reference: packages/rich-text-editor/src/components/toolbarButtons/WPMedia.tsx:68
+	__( 'Add Media', 'event_espresso' ),
+
 	// Reference: packages/tpc/src/buttons/AddPriceModifierButton.tsx:15
 	__( 'add new price modifier after this row', 'event_espresso' ),
 
