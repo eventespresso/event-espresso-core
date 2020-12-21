@@ -133,7 +133,7 @@ $generated_i18n_strings = array(
 	// Reference: domains/blocks/src/services/utils.ts:26
 	__( 'Select…', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/EventDescription.tsx:18
+	// Reference: domains/eventEditor/src/ui/EventDescription.tsx:19
 	__( 'Event Description', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/ActiveStatus.tsx:23
