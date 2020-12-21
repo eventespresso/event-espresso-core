@@ -756,7 +756,7 @@ $generated_i18n_strings = array(
 	__( 'copy ticket', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:39
-	// Reference: packages/components/src/bulkEdit/BulkActions.tsx:44
+	// Reference: packages/components/src/bulkEdit/BulkActions.tsx:46
 	__( 'bulk actions', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:43
@@ -995,7 +995,7 @@ $generated_i18n_strings = array(
 	// Reference: packages/components/src/Confirm/useConfirmationDialog.tsx:33
 	__( 'Yes', 'event_espresso' ),
 
-	// Reference: packages/components/src/CurrencyDisplay/index.tsx:19
+	// Reference: packages/components/src/CurrencyDisplay/index.tsx:41
 	__( 'free', 'event_espresso' ),
 
 	// Reference: packages/components/src/DateTimeRangePicker/index.tsx:74
@@ -1127,10 +1127,10 @@ $generated_i18n_strings = array(
 	// Reference: packages/components/src/bulkEdit/ActionCheckbox.tsx:41
 	__( 'select all entities', 'event_espresso' ),
 
-	// Reference: packages/components/src/bulkEdit/BulkActions.tsx:52
+	// Reference: packages/components/src/bulkEdit/BulkActions.tsx:54
 	__( 'select all', 'event_espresso' ),
 
-	// Reference: packages/components/src/bulkEdit/BulkActions.tsx:54
+	// Reference: packages/components/src/bulkEdit/BulkActions.tsx:56
 	__( 'apply', 'event_espresso' ),
 
 	// Reference: packages/components/src/bulkEdit/details/BulkEditDetailsProps.tsx:20
