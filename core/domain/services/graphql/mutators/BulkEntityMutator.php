@@ -18,7 +18,7 @@ class BulkEntityMutator extends EntityMutator
     /**
      * BulkEntityMutator constructor.
      *
-     * @param array $entity_mutator The mutator for an entity.
+     * @param callable $entity_mutator The mutator for an entity.
      */
     public function __construct(callable $entity_mutator)
     {
@@ -32,7 +32,7 @@ class BulkEntityMutator extends EntityMutator
      * @param ResolveInfo $info    The ResolveInfo passed down to all resolvers
      * @return array
      */
-    public function updateEntities($input, AppContext $context, ResolveInfo $info)
+    public function updateEntities(array $input, AppContext $context, ResolveInfo $info): array
     {
 
         $updated = [];

@@ -29,9 +29,8 @@ class TicketStatusEnum extends EnumBase
 
     /**
      * @return array
-     * @since $VID:$
      */
-    protected function getValues()
+    protected function getValues(): array
     {
         return [
             'SOLD_OUT'     => [

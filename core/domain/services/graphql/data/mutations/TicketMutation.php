@@ -31,7 +31,7 @@ class TicketMutation
      * @return array
      * @throws Exception
      */
-    public static function prepareFields(array $input)
+    public static function prepareFields(array $input): array
     {
         $args = [];
 
@@ -146,7 +146,7 @@ class TicketMutation
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public static function setRelatedDatetimes($entity, array $datetimes)
+    public static function setRelatedDatetimes(EE_Ticket $entity, array $datetimes)
     {
         $relationName = 'Datetime';
         // Remove all the existing related datetimes

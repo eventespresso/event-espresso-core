@@ -30,7 +30,7 @@ class DatetimeUpdate extends EntityMutator
          * @param ResolveInfo $info    The ResolveInfo passed down to all resolvers
          * @return array
          */
-        return static function ($input, AppContext $context, ResolveInfo $info) use ($model, $type) {
+        return static function (array $input, AppContext $context, ResolveInfo $info) use ($model, $type) {
             try {
                 /** @var EE_Datetime $entity */
                 $entity = EntityMutator::getEntityFromInputData($model, $input);

@@ -15,7 +15,7 @@ use RuntimeException;
  * Description
  *
  * @package EventEspresso\core\domain\services\graphql\mutators
- * @author  Brent Christensen
+ * @author  Manzoor Wani
  * @since   $VID:$
  */
 abstract class EntityMutator
@@ -23,18 +23,18 @@ abstract class EntityMutator
 
     /**
      * @param EEM_Base $model
-     * @param integer $ID
+     * @param integer  $ID
      * @param string   $capability
      * @return EE_Base_Class
      * @throws OutOfBoundsException
      * @throws UserError
-     * @since $VID:$
      */
-    protected static function getEntityFromID(EEM_Base $model, $ID, $capability = 'ee_edit_events')
+    protected static function getEntityFromID(EEM_Base $model, int $ID, $capability = 'ee_edit_events'): EE_Base_Class
     {
         EntityMutator::checkPermissions($model, $capability);
         return EntityMutator::getEntity($model, $ID);
     }
+
 
     /**
      * @param EEM_Base $model
@@ -43,10 +43,12 @@ abstract class EntityMutator
      * @return EE_Base_Class
      * @throws OutOfBoundsException
      * @throws UserError
-     * @since $VID:$
      */
-    protected static function getEntityFromInputData(EEM_Base $model, array $input, $capability = 'ee_edit_events')
-    {
+    protected static function getEntityFromInputData(
+        EEM_Base $model,
+        array $input,
+        $capability = 'ee_edit_events'
+    ): EE_Base_Class {
         EntityMutator::checkPermissions($model, $capability);
         $ID = EntityMutator::getEntityIDFromGlobalId($model, $input);
         return EntityMutator::getEntity($model, $ID);
@@ -55,9 +57,8 @@ abstract class EntityMutator
 
     /**
      * @param EEM_Base $model
-     * @param string $capability
+     * @param string   $capability
      * @throws UserError
-     * @since $VID:$
      */
     protected static function checkPermissions(EEM_Base $model, $capability = 'ee_edit_events')
     {
@@ -66,7 +67,7 @@ abstract class EntityMutator
          */
         if (! current_user_can($capability)) {
             $model_name = $model->get_this_model_name();
-            $message = sprintf(
+            $message    = sprintf(
                 esc_html_x(
                     'We\'re sorry but you do not have the required permissions to execute %1$s mutations!',
                     'We\'re sorry but you do not have the required permissions to execute entity(datetime/ticket/etc) mutations!',
@@ -78,17 +79,17 @@ abstract class EntityMutator
         }
     }
 
+
     /**
      * @param EEM_Base $model
      * @param array    $input
      * @return int
      * @throws OutOfBoundsException
-     * @since $VID:$
      */
-    protected static function getEntityIDFromGlobalId(EEM_Base $model, array $input)
+    protected static function getEntityIDFromGlobalId(EEM_Base $model, array $input): int
     {
         $id_parts = ! empty($input['id']) ? Relay::fromGlobalId($input['id']) : null;
-        $id = ! empty($id_parts['id']) ? absint($id_parts['id']) : 0;
+        $id       = ! empty($id_parts['id']) ? absint($id_parts['id']) : 0;
         if ($id > 0) {
             return $id;
         }
@@ -112,9 +113,8 @@ abstract class EntityMutator
      * @param int      $ID
      * @return EE_Base_Class
      * @throws OutOfBoundsException
-     * @since $VID:$
      */
-    protected static function getEntity(EEM_Base $model, $ID = 0)
+    protected static function getEntity(EEM_Base $model, $ID = 0): EE_Base_Class
     {
         $entity = $model->get_one_by_ID($ID);
         $model_name = $model->get_this_model_name();
@@ -140,7 +140,6 @@ abstract class EntityMutator
      * @param        $results
      * @param string $message
      * @throws RuntimeException
-     * @since $VID:$
      */
     protected static function validateResults($results, $message = '')
     {
@@ -160,7 +159,6 @@ abstract class EntityMutator
      * @param Exception $exception
      * @param string    $message_prefix
      * @throws RuntimeException
-     * @since $VID:$
      */
     protected static function handleExceptions(Exception $exception, $message_prefix = '')
     {

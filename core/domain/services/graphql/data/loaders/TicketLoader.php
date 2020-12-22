@@ -21,7 +21,7 @@ class TicketLoader extends AbstractLoader
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    protected function getQuery()
+    protected function getQuery(): EEM_Base
     {
         return EEM_Ticket::instance();
     }
@@ -30,7 +30,7 @@ class TicketLoader extends AbstractLoader
      * @param array $keys
      * @return array
      */
-    protected function getWhereParams(array $keys)
+    protected function getWhereParams(array $keys): array
     {
         return [
             'TKT_ID'      => ['IN', $keys],

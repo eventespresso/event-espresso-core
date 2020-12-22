@@ -21,7 +21,7 @@ class PriceTypeLoader extends AbstractLoader
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    protected function getQuery()
+    protected function getQuery(): EEM_Base
     {
         return EEM_Price_Type::instance();
     }
@@ -30,7 +30,7 @@ class PriceTypeLoader extends AbstractLoader
      * @param array $keys
      * @return array
      */
-    protected function getWhereParams(array $keys)
+    protected function getWhereParams(array $keys): array
     {
         return [
             'PRT_ID' => ['IN', $keys],

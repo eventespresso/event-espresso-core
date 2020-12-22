@@ -21,6 +21,7 @@ class Event extends GraphQLData
                 allowOverflow
                 altRegPage
                 created
+                defaultRegStatus
                 description
                 displayDescription
                 displayTicketSelector

@@ -20,6 +20,7 @@ use EventEspresso\core\domain\services\graphql\mutators\DatetimeUpdate;
 use EventEspresso\core\domain\services\graphql\mutators\DatetimeBulkUpdate;
 use EventEspresso\core\domain\services\graphql\mutators\BulkEntityDelete;
 use EventEspresso\core\domain\services\graphql\mutators\EntityReorder;
+use GraphQL\Error\UserError;
 use InvalidArgumentException;
 use ReflectionException;
 use WPGraphQL\AppContext;
@@ -30,7 +31,7 @@ use GraphQL\Type\Definition\ResolveInfo;
  * Description
  *
  * @package EventEspresso\core\domain\services\graphql\types
- * @author  Brent Christensen
+ * @author  Manzoor Wani
  * @since   $VID:$
  */
 class Datetime extends TypeBase
@@ -53,9 +54,8 @@ class Datetime extends TypeBase
 
     /**
      * @return GraphQLFieldInterface[]
-     * @since $VID:$
      */
-    public function getFields()
+    public function getFields(): array
     {
         $fields = [
             new GraphQLField(
