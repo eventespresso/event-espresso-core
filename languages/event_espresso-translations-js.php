@@ -136,13 +136,13 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/EventDescription.tsx:29
 	__( 'Event Description', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/ActiveStatus.tsx:23
+	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/ActiveStatus.tsx:22
 	__( 'Active status', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/AltRegPage.tsx:25
+	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/AltRegPage.tsx:16
 	__( 'Alternative Registration Page', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/DefaultRegistrationStatus.tsx:24
+	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/DefaultRegistrationStatus.tsx:16
 	__( 'Default Registration Status', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/Donations.tsx:10
@@ -151,14 +151,14 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/Donations.tsx:10
 	__( 'Donations Disabled', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/EventManager.tsx:17
+	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/EventManager.tsx:16
 	__( 'Event Manager', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/EventPhoneNumber.tsx:14
+	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/EventPhoneNumber.tsx:13
 	__( 'Event Phone Number', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/MaxRegistrations.tsx:19
-	__( 'Maximum Number of Registrations Allowed per Transaction', 'event_espresso' ),
+	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/MaxRegistrations.tsx:14
+	__( 'Max Registrations per Transaction', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/TicketSelector.tsx:11
 	__( 'Ticket Selector Enabled', 'event_espresso' ),
