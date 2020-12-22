@@ -133,7 +133,7 @@ $generated_i18n_strings = array(
 	// Reference: domains/blocks/src/services/utils.ts:26
 	__( 'Select…', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/EventDescription.tsx:19
+	// Reference: domains/eventEditor/src/ui/EventDescription.tsx:29
 	__( 'Event Description', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/ActiveStatus.tsx:23
@@ -151,7 +151,7 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/Donations.tsx:10
 	__( 'Donations Disabled', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/EventManager.tsx:24
+	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/EventManager.tsx:17
 	__( 'Event Manager', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/EventPhoneNumber.tsx:14
