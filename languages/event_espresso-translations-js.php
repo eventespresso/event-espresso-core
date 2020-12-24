@@ -310,12 +310,17 @@ $generated_i18n_strings = array(
 	__( 'copy datetime', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:30
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:40
+	// Reference: packages/components/src/bulkEdit/BulkActions.tsx:43
+	__( 'bulk actions', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:34
 	__( 'edit datetime details', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:34
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:38
 	__( 'delete datetimes', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:34
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:38
 	__( 'trash datetimes', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/delete/Delete.tsx:13
@@ -578,7 +583,7 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/prices/buttons/FooterButtons.tsx:17
 	// Reference: packages/components/src/Modal/useSubmitButtonProps.tsx:13
 	// Reference: packages/components/src/Stepper/buttons/Submit.tsx:8
-	// Reference: packages/components/src/bulkEdit/details/Submit.tsx:38
+	// Reference: packages/ee-components/src/bulkEdit/details/Submit.tsx:26
 	// Reference: packages/form/src/Submit.tsx:26
 	// Reference: packages/tpc/src/buttons/useSubmitButtonProps.tsx:25
 	__( 'Submit', 'event_espresso' ),
@@ -755,20 +760,16 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:49
 	__( 'copy ticket', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:39
-	// Reference: packages/components/src/bulkEdit/BulkActions.tsx:46
-	__( 'bulk actions', 'event_espresso' ),
-
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:43
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:44
 	__( 'edit ticket details', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:47
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:48
 	__( 'delete tickets', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:47
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:48
 	__( 'trash tickets', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:51
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:52
 	__( 'edit ticket prices', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/delete/Delete.tsx:13
@@ -805,7 +806,7 @@ $generated_i18n_strings = array(
 	__( 'Edit prices for each ticket individually', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/prices/buttons/FooterButtons.tsx:15
-	// Reference: packages/components/src/bulkEdit/details/Submit.tsx:45
+	// Reference: packages/ee-components/src/bulkEdit/details/Submit.tsx:33
 	// Reference: packages/form/src/ResetButton.tsx:17
 	// Reference: packages/tpc/src/buttons/useResetButtonProps.tsx:12
 	__( 'Reset', 'event_espresso' ),
@@ -1120,33 +1121,11 @@ $generated_i18n_strings = array(
 	// Reference: packages/components/src/TimezoneTimeInfo/TimezoneTimeInfo.tsx:23
 	__( 'click for timezone information', 'event_espresso' ),
 
-	// Reference: packages/components/src/bulkEdit/ActionCheckbox.tsx:38
-	/* translators: %d entity id */
-	__( 'select entity with id %d', 'event_espresso' ),
-
-	// Reference: packages/components/src/bulkEdit/ActionCheckbox.tsx:41
-	__( 'select all entities', 'event_espresso' ),
-
-	// Reference: packages/components/src/bulkEdit/BulkActions.tsx:54
+	// Reference: packages/components/src/bulkEdit/BulkActions.tsx:51
 	__( 'select all', 'event_espresso' ),
 
-	// Reference: packages/components/src/bulkEdit/BulkActions.tsx:56
+	// Reference: packages/components/src/bulkEdit/BulkActions.tsx:54
 	__( 'apply', 'event_espresso' ),
-
-	// Reference: packages/components/src/bulkEdit/details/BulkEditDetailsProps.tsx:20
-	__( 'Note: ', 'event_espresso' ),
-
-	// Reference: packages/components/src/bulkEdit/details/BulkEditDetailsProps.tsx:20
-	__( 'any changes will be applied to ALL of the selected entities.', 'event_espresso' ),
-
-	// Reference: packages/components/src/bulkEdit/details/BulkEditDetailsProps.tsx:26
-	__( 'Bulk edit details', 'event_espresso' ),
-
-	// Reference: packages/components/src/bulkEdit/details/Submit.tsx:28
-	__( 'Are you sure you want to bulk update the details?', 'event_espresso' ),
-
-	// Reference: packages/components/src/bulkEdit/details/Submit.tsx:29
-	__( 'Bulk update details', 'event_espresso' ),
 
 	// Reference: packages/constants/src/datetimeStatus.ts:5
 	// Reference: packages/predicates/src/registration/statusOptions.ts:10
@@ -1219,6 +1198,28 @@ $generated_i18n_strings = array(
 
 	// Reference: packages/edtr-services/src/utils/dateAndTime.ts:56
 	__( 'End Date is required', 'event_espresso' ),
+
+	// Reference: packages/ee-components/src/bulkEdit/ActionCheckbox.tsx:38
+	/* translators: %d entity id */
+	__( 'select entity with id %d', 'event_espresso' ),
+
+	// Reference: packages/ee-components/src/bulkEdit/ActionCheckbox.tsx:41
+	__( 'select all entities', 'event_espresso' ),
+
+	// Reference: packages/ee-components/src/bulkEdit/details/BulkEditDetails.tsx:21
+	__( 'Note: ', 'event_espresso' ),
+
+	// Reference: packages/ee-components/src/bulkEdit/details/BulkEditDetails.tsx:21
+	__( 'any changes will be applied to ALL of the selected entities.', 'event_espresso' ),
+
+	// Reference: packages/ee-components/src/bulkEdit/details/BulkEditDetails.tsx:27
+	__( 'Bulk edit details', 'event_espresso' ),
+
+	// Reference: packages/ee-components/src/bulkEdit/details/Submit.tsx:16
+	__( 'Are you sure you want to bulk update the details?', 'event_espresso' ),
+
+	// Reference: packages/ee-components/src/bulkEdit/details/Submit.tsx:17
+	__( 'Bulk update details', 'event_espresso' ),
 
 	// Reference: packages/form/src/renderers/RepeatableRenderer.tsx:35
 	/* translators: %d the entry number */
