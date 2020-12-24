@@ -351,10 +351,10 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/cardView/DateCapacity.tsx:35
 	__( 'edit capacity (registration limit)…', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/cardView/DateCardSidebar.tsx:37
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/cardView/DateCardSidebar.tsx:38
 	__( 'Edit Event Date', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/cardView/DateCardSidebar.tsx:40
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/cardView/DateCardSidebar.tsx:41
 	__( 'edit start and end dates', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/cardView/DateDetailsPanel.tsx:14
@@ -814,10 +814,10 @@ $generated_i18n_strings = array(
 	/* translators: %s ticket name */
 	__( 'Edit prices for Ticket: %s', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/cardView/TicketCardSidebar.tsx:36
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/cardView/TicketCardSidebar.tsx:37
 	__( 'Edit Ticket Sale Dates', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/cardView/TicketCardSidebar.tsx:38
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/cardView/TicketCardSidebar.tsx:39
 	__( 'edit ticket sales start and end dates', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/cardView/TicketDetailsPanel.tsx:27
@@ -967,16 +967,16 @@ $generated_i18n_strings = array(
 	/* translators: %s filter name */
 	__( 'remove filter - %s', 'event_espresso' ),
 
-	// Reference: packages/components/src/CalendarDateRange/CalendarDateRange.tsx:39
+	// Reference: packages/components/src/CalendarDateRange/CalendarDateRange.tsx:37
 	__( 'to', 'event_espresso' ),
 
-	// Reference: packages/components/src/CalendarDateSwitcher/CalendarDateSwitcher.tsx:33
+	// Reference: packages/components/src/CalendarDateSwitcher/CalendarDateSwitcher.tsx:35
 	__( 'starts', 'event_espresso' ),
 
-	// Reference: packages/components/src/CalendarDateSwitcher/CalendarDateSwitcher.tsx:45
+	// Reference: packages/components/src/CalendarDateSwitcher/CalendarDateSwitcher.tsx:48
 	__( 'ends', 'event_espresso' ),
 
-	// Reference: packages/components/src/CalendarPageDate/CalendarPageDate.tsx:57
+	// Reference: packages/components/src/CalendarPageDate/CalendarPageDate.tsx:55
 	__( 'TO', 'event_espresso' ),
 
 	// Reference: packages/components/src/Confirm/ConfirmClose.tsx:8
