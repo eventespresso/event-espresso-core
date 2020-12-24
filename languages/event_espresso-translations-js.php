@@ -351,10 +351,10 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/cardView/DateCapacity.tsx:35
 	__( 'edit capacity (registration limit)…', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/cardView/DateCardSidebar.tsx:38
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/cardView/DateCardSidebar.tsx:37
 	__( 'Edit Event Date', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/cardView/DateCardSidebar.tsx:41
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/cardView/DateCardSidebar.tsx:40
 	__( 'edit start and end dates', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/cardView/DateDetailsPanel.tsx:14
@@ -814,10 +814,10 @@ $generated_i18n_strings = array(
 	/* translators: %s ticket name */
 	__( 'Edit prices for Ticket: %s', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/cardView/TicketCardSidebar.tsx:37
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/cardView/TicketCardSidebar.tsx:36
 	__( 'Edit Ticket Sale Dates', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/cardView/TicketCardSidebar.tsx:39
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/cardView/TicketCardSidebar.tsx:38
 	__( 'edit ticket sales start and end dates', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/cardView/TicketDetailsPanel.tsx:27
@@ -998,7 +998,7 @@ $generated_i18n_strings = array(
 	// Reference: packages/components/src/CurrencyDisplay/index.tsx:41
 	__( 'free', 'event_espresso' ),
 
-	// Reference: packages/components/src/DateTimeRangePicker/index.tsx:74
+	// Reference: packages/components/src/DateTimeRangePicker/index.tsx:70
 	// Reference: packages/components/src/Popover/PopoverForm/PopoverForm.tsx:42
 	__( 'save', 'event_espresso' ),
 
@@ -1008,7 +1008,7 @@ $generated_i18n_strings = array(
 	// Reference: packages/components/src/DebugInfo/DebugInfo.tsx:37
 	__( 'Show Debug Info', 'event_espresso' ),
 
-	// Reference: packages/components/src/EditDateRangeButton/index.tsx:41
+	// Reference: packages/components/src/EditDateRangeButton/EditDateRangeButton.tsx:38
 	__( 'Edit Start and End Dates and Times', 'event_espresso' ),
 
 	// Reference: packages/components/src/EntityActionsMenu/entityMenuItems/Copy.tsx:9
