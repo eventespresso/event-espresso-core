@@ -1002,10 +1002,10 @@ $generated_i18n_strings = array(
 	// Reference: packages/components/src/Popover/PopoverForm/PopoverForm.tsx:42
 	__( 'save', 'event_espresso' ),
 
-	// Reference: packages/components/src/DebugInfo/DebugInfo.tsx:38
+	// Reference: packages/components/src/DebugInfo/DebugInfo.tsx:37
 	__( 'Hide Debug Info', 'event_espresso' ),
 
-	// Reference: packages/components/src/DebugInfo/DebugInfo.tsx:38
+	// Reference: packages/components/src/DebugInfo/DebugInfo.tsx:37
 	__( 'Show Debug Info', 'event_espresso' ),
 
 	// Reference: packages/components/src/EditDateRangeButton/index.tsx:41
@@ -1102,7 +1102,7 @@ $generated_i18n_strings = array(
 	// Reference: packages/components/src/Steps/Steps.tsx:30
 	__( 'Steps', 'event_espresso' ),
 
-	// Reference: packages/components/src/TabbableText/index.tsx:19
+	// Reference: packages/components/src/TabbableText/index.tsx:18
 	__( 'Click to edit…', 'event_espresso' ),
 
 	// Reference: packages/components/src/TimezoneTimeInfo/Content.tsx:16
