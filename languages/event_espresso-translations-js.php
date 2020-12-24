@@ -995,7 +995,7 @@ $generated_i18n_strings = array(
 	// Reference: packages/components/src/Confirm/useConfirmationDialog.tsx:33
 	__( 'Yes', 'event_espresso' ),
 
-	// Reference: packages/components/src/CurrencyDisplay/index.tsx:41
+	// Reference: packages/components/src/CurrencyDisplay/CurrencyDisplay.tsx:35
 	__( 'free', 'event_espresso' ),
 
 	// Reference: packages/components/src/DateTimeRangePicker/index.tsx:70
