@@ -922,11 +922,11 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/newTicketOptions/AddSingleTicket.tsx:19
 	__( 'Add New Ticket', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/newTicketOptions/AddSingleTicket.tsx:31
-	__( 'Single Ticket', 'event_espresso' ),
-
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/newTicketOptions/AddSingleTicket.tsx:33
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/newTicketOptions/AddSingleTicket.tsx:32
 	__( 'Add a single ticket and assign the dates to it', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/newTicketOptions/AddSingleTicket.tsx:34
+	__( 'Single Ticket', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/tableView/TableView.tsx:40
 	__( 'Tickets', 'event_espresso' ),
@@ -1389,10 +1389,10 @@ $generated_i18n_strings = array(
 	// Reference: packages/ui-components/src/TimezoneTimeInfo/Content.tsx:21
 	__( 'UTC (Greenwich Mean Time)', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/TimezoneTimeInfo/TimezoneTimeInfo.tsx:20
+	// Reference: packages/ui-components/src/TimezoneTimeInfo/TimezoneTimeInfo.tsx:21
 	__( 'This Date Converted To:', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/TimezoneTimeInfo/TimezoneTimeInfo.tsx:21
+	// Reference: packages/ui-components/src/TimezoneTimeInfo/TimezoneTimeInfo.tsx:22
 	__( 'click for timezone information', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/bulkEdit/BulkActions.tsx:51
