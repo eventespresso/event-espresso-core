@@ -1,19 +1,19 @@
 <?php
 /* THIS IS A GENERATED FILE. DO NOT EDIT DIRECTLY. */
 $generated_i18n_strings = array(
-	// Reference: packages/components/src/Pagination/constants.ts:6
+	// Reference: packages/ui-components/src/Pagination/constants.ts:6
 	__( '2', 'event_espresso' ),
 
-	// Reference: packages/components/src/Pagination/constants.ts:7
+	// Reference: packages/ui-components/src/Pagination/constants.ts:7
 	__( '6', 'event_espresso' ),
 
-	// Reference: packages/components/src/Pagination/constants.ts:8
+	// Reference: packages/ui-components/src/Pagination/constants.ts:8
 	__( '12', 'event_espresso' ),
 
-	// Reference: packages/components/src/Pagination/constants.ts:9
+	// Reference: packages/ui-components/src/Pagination/constants.ts:9
 	__( '24', 'event_espresso' ),
 
-	// Reference: packages/components/src/Pagination/constants.ts:10
+	// Reference: packages/ui-components/src/Pagination/constants.ts:10
 	__( '48', 'event_espresso' ),
 
 	// Reference: domains/blocks/src/components/AvatarImage.tsx:27
@@ -133,7 +133,7 @@ $generated_i18n_strings = array(
 	// Reference: domains/blocks/src/services/utils.ts:26
 	__( 'Select…', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/EventDescription.tsx:29
+	// Reference: domains/eventEditor/src/ui/EventDescription.tsx:30
 	__( 'Event Description', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/ActiveStatus.tsx:22
@@ -281,37 +281,37 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/AssignTicketsButton.tsx:42
 	__( 'assign tickets', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:19
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:26
 	__( 'Permanently delete Datetime?', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:19
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:26
 	__( 'Move Datetime to Trash?', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:21
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:28
 	__( 'Are you sure you want to permanently delete this datetime? This action is permanent and can not be undone.', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:24
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:31
 	__( 'Are you sure you want to move this datetime to the trash? You can "untrash" this datetime later if you need to.', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:34
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:41
 	__( 'event date main menu', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:38
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:37
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:45
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:44
 	__( 'delete permanently', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:38
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:45
 	__( 'trash datetime', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:49
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:56
 	__( 'edit datetime', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:50
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:57
 	__( 'copy datetime', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:29
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:39
-	// Reference: packages/components/src/bulkEdit/BulkActions.tsx:43
+	// Reference: packages/ui-components/src/bulkEdit/BulkActions.tsx:43
 	__( 'bulk actions', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:33
@@ -563,7 +563,7 @@ $generated_i18n_strings = array(
 	__( 'There seem to be some dates/tickets which have no tickets/dates assigned. Do you want to fix them now?', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/ModalContainer.tsx:28
-	// Reference: packages/components/src/Modal/ModalWithAlert.tsx:23
+	// Reference: packages/ui-components/src/Modal/ModalWithAlert.tsx:23
 	__( 'Alert!', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/ModalContainer.tsx:41
@@ -576,16 +576,16 @@ $generated_i18n_strings = array(
 
 	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/TicketAssignmentsManagerModal/buttons/useCancelButtonProps.tsx:18
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/prices/buttons/FooterButtons.tsx:16
-	// Reference: packages/components/src/Modal/useCancelButtonProps.tsx:10
+	// Reference: packages/ui-components/src/Modal/useCancelButtonProps.tsx:10
 	__( 'Cancel', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/TicketAssignmentsManagerModal/buttons/useSubmitButtonProps.tsx:25
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/prices/buttons/FooterButtons.tsx:17
-	// Reference: packages/components/src/Modal/useSubmitButtonProps.tsx:13
-	// Reference: packages/components/src/Stepper/buttons/Submit.tsx:8
 	// Reference: packages/ee-components/src/bulkEdit/details/Submit.tsx:26
 	// Reference: packages/form/src/Submit.tsx:26
 	// Reference: packages/tpc/src/buttons/useSubmitButtonProps.tsx:25
+	// Reference: packages/ui-components/src/Modal/useSubmitButtonProps.tsx:13
+	// Reference: packages/ui-components/src/Stepper/buttons/Submit.tsx:8
 	__( 'Submit', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/TicketAssignmentsManagerModal/config.ts:10
@@ -736,28 +736,28 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/AssignDatesButton.tsx:44
 	__( 'assign dates', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:19
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:26
 	__( 'Permanently delete Ticket?', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:19
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:26
 	__( 'Move Ticket to Trash?', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:21
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:28
 	__( 'Are you sure you want to permanently delete this ticket? This action is permanent and can not be undone.', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:22
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:29
 	__( 'Are you sure you want to move this ticket to the trash? You can "untrash" this ticket later if you need to.', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:33
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:40
 	__( 'ticket main menu', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:37
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:44
 	__( 'trash ticket', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:48
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:55
 	__( 'edit ticket', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:49
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:56
 	__( 'copy ticket', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:43
@@ -961,166 +961,6 @@ $generated_i18n_strings = array(
 	// Reference: packages/adapters/src/Pagination/Pagination.tsx:24
 	__( 'pagination', 'event_espresso' ),
 
-	// Reference: packages/components/src/ActiveFilters/ActiveFilters.tsx:9
-	__( 'active filters:', 'event_espresso' ),
-
-	// Reference: packages/components/src/ActiveFilters/FilterTag.tsx:11
-	/* translators: %s filter name */
-	__( 'remove filter - %s', 'event_espresso' ),
-
-	// Reference: packages/components/src/CalendarDateRange/CalendarDateRange.tsx:37
-	__( 'to', 'event_espresso' ),
-
-	// Reference: packages/components/src/CalendarDateSwitcher/CalendarDateSwitcher.tsx:35
-	__( 'starts', 'event_espresso' ),
-
-	// Reference: packages/components/src/CalendarDateSwitcher/CalendarDateSwitcher.tsx:48
-	__( 'ends', 'event_espresso' ),
-
-	// Reference: packages/components/src/CalendarPageDate/CalendarPageDate.tsx:55
-	__( 'TO', 'event_espresso' ),
-
-	// Reference: packages/components/src/Confirm/ConfirmClose.tsx:8
-	// Reference: packages/components/src/Modal/ModalWithAlert.tsx:24
-	__( 'Are you sure you want to close this?', 'event_espresso' ),
-
-	// Reference: packages/components/src/Confirm/ConfirmDelete.tsx:8
-	__( 'Are you sure you want to delete this?', 'event_espresso' ),
-
-	// Reference: packages/components/src/Confirm/useConfirmWithButton.tsx:11
-	__( 'Please confirm this action.', 'event_espresso' ),
-
-	// Reference: packages/components/src/Confirm/useConfirmationDialog.tsx:32
-	__( 'No', 'event_espresso' ),
-
-	// Reference: packages/components/src/Confirm/useConfirmationDialog.tsx:33
-	__( 'Yes', 'event_espresso' ),
-
-	// Reference: packages/components/src/CurrencyDisplay/CurrencyDisplay.tsx:35
-	__( 'free', 'event_espresso' ),
-
-	// Reference: packages/components/src/DateTimeRangePicker/DateTimeRangePicker.tsx:80
-	// Reference: packages/components/src/Popover/PopoverForm/PopoverForm.tsx:42
-	__( 'save', 'event_espresso' ),
-
-	// Reference: packages/components/src/DebugInfo/DebugInfo.tsx:36
-	__( 'Hide Debug Info', 'event_espresso' ),
-
-	// Reference: packages/components/src/DebugInfo/DebugInfo.tsx:36
-	__( 'Show Debug Info', 'event_espresso' ),
-
-	// Reference: packages/components/src/EditDateRangeButton/EditDateRangeButton.tsx:44
-	__( 'Edit Start and End Dates and Times', 'event_espresso' ),
-
-	// Reference: packages/components/src/EntityActionsMenu/entityMenuItems/Copy.tsx:9
-	__( 'copy', 'event_espresso' ),
-
-	// Reference: packages/components/src/EntityActionsMenu/entityMenuItems/Edit.tsx:9
-	__( 'edit', 'event_espresso' ),
-
-	// Reference: packages/components/src/EntityActionsMenu/entityMenuItems/Trash.tsx:9
-	__( 'trash', 'event_espresso' ),
-
-	// Reference: packages/components/src/EntityDetailsPanel/EntityDetailsPanelSold.tsx:36
-	__( 'view approved registrations for this date.', 'event_espresso' ),
-
-	// Reference: packages/components/src/EntityDetailsPanel/EntityDetailsPanelSold.tsx:37
-	__( 'view approved registrations for this ticket.', 'event_espresso' ),
-
-	// Reference: packages/components/src/EntityList/filterBar/buttons/CardViewFilterButton.tsx:22
-	__( 'card view', 'event_espresso' ),
-
-	// Reference: packages/components/src/EntityList/filterBar/buttons/TableViewFilterButton.tsx:22
-	__( 'table view', 'event_espresso' ),
-
-	// Reference: packages/components/src/EntityList/filterBar/buttons/ToggleFiltersButton.tsx:11
-	__( 'hide filters', 'event_espresso' ),
-
-	// Reference: packages/components/src/EntityList/filterBar/buttons/ToggleFiltersButton.tsx:11
-	__( 'show filters', 'event_espresso' ),
-
-	// Reference: packages/components/src/EntityList/filterBar/buttons/ToggleSortingButton.tsx:21
-	__( 'disable sorting', 'event_espresso' ),
-
-	// Reference: packages/components/src/EntityList/filterBar/buttons/ToggleSortingButton.tsx:21
-	__( 'enable sorting', 'event_espresso' ),
-
-	// Reference: packages/components/src/Legend/ToggleLegendButton.tsx:27
-	__( 'hide legend', 'event_espresso' ),
-
-	// Reference: packages/components/src/Legend/ToggleLegendButton.tsx:27
-	__( 'show legend', 'event_espresso' ),
-
-	// Reference: packages/components/src/LoadingNotice/LoadingNotice.tsx:12
-	__( 'loading…', 'event_espresso' ),
-
-	// Reference: packages/components/src/Modal/Modal.tsx:59
-	__( 'close modal', 'event_espresso' ),
-
-	// Reference: packages/components/src/Pagination/ItemRender.tsx:10
-	__( 'next', 'event_espresso' ),
-
-	// Reference: packages/components/src/Pagination/ItemRender.tsx:11
-	__( 'jump to previous', 'event_espresso' ),
-
-	// Reference: packages/components/src/Pagination/ItemRender.tsx:12
-	__( 'jump to next', 'event_espresso' ),
-
-	// Reference: packages/components/src/Pagination/ItemRender.tsx:13
-	__( 'page', 'event_espresso' ),
-
-	// Reference: packages/components/src/Pagination/ItemRender.tsx:9
-	__( 'previous', 'event_espresso' ),
-
-	// Reference: packages/components/src/Pagination/PerPage.tsx:37
-	__( 'items per page', 'event_espresso' ),
-
-	// Reference: packages/components/src/Pagination/constants.ts:10
-	/* translators: %s is per page value */
-	__( '%s / page', 'event_espresso' ),
-
-	// Reference: packages/components/src/Pagination/constants.ts:13
-	__( 'Next Page', 'event_espresso' ),
-
-	// Reference: packages/components/src/Pagination/constants.ts:14
-	__( 'Previous Page', 'event_espresso' ),
-
-	// Reference: packages/components/src/PercentSign/index.tsx:11
-	__( '%', 'event_espresso' ),
-
-	// Reference: packages/components/src/Stepper/buttons/Next.tsx:12
-	__( 'Next', 'event_espresso' ),
-
-	// Reference: packages/components/src/Stepper/buttons/Previous.tsx:12
-	__( 'Previous', 'event_espresso' ),
-
-	// Reference: packages/components/src/Steps/Steps.tsx:30
-	__( 'Steps', 'event_espresso' ),
-
-	// Reference: packages/components/src/TabbableText/index.tsx:18
-	__( 'Click to edit…', 'event_espresso' ),
-
-	// Reference: packages/components/src/TimezoneTimeInfo/Content.tsx:11
-	__( 'Your Local Time Zone', 'event_espresso' ),
-
-	// Reference: packages/components/src/TimezoneTimeInfo/Content.tsx:16
-	__( 'The Website\'s Time Zone', 'event_espresso' ),
-
-	// Reference: packages/components/src/TimezoneTimeInfo/Content.tsx:21
-	__( 'UTC (Greenwich Mean Time)', 'event_espresso' ),
-
-	// Reference: packages/components/src/TimezoneTimeInfo/TimezoneTimeInfo.tsx:20
-	__( 'This Date Converted To:', 'event_espresso' ),
-
-	// Reference: packages/components/src/TimezoneTimeInfo/TimezoneTimeInfo.tsx:21
-	__( 'click for timezone information', 'event_espresso' ),
-
-	// Reference: packages/components/src/bulkEdit/BulkActions.tsx:51
-	__( 'select all', 'event_espresso' ),
-
-	// Reference: packages/components/src/bulkEdit/BulkActions.tsx:54
-	__( 'apply', 'event_espresso' ),
-
 	// Reference: packages/constants/src/datetimeStatus.ts:5
 	// Reference: packages/predicates/src/registration/statusOptions.ts:10
 	__( 'Cancelled', 'event_espresso' ),
@@ -1279,10 +1119,10 @@ $generated_i18n_strings = array(
 	// Reference: packages/predicates/src/registration/statusOptions.ts:6
 	__( 'Approved', 'event_espresso' ),
 
-	// Reference: packages/rich-text-editor/src/components/RTEWithEditMode/RTEWithEditMode.tsx:35
+	// Reference: packages/rich-text-editor/src/components/RTEWithEditMode/RTEWithEditMode.tsx:32
 	__( 'Code editor', 'event_espresso' ),
 
-	// Reference: packages/rich-text-editor/src/components/RTEWithEditMode/RTEWithEditMode.tsx:35
+	// Reference: packages/rich-text-editor/src/components/RTEWithEditMode/RTEWithEditMode.tsx:32
 	__( 'Visual editor', 'event_espresso' ),
 
 	// Reference: packages/rich-text-editor/src/components/toolbarButtons/WPMedia.tsx:10
@@ -1399,6 +1239,166 @@ $generated_i18n_strings = array(
 	__( 'price type', 'event_espresso' ),
 
 	// Reference: packages/tpc/src/utils/constants.ts:13
-	__( 'Ticket price modifications are blocked for Tickets that have already been sold to registrants, because doing so would negatively affect internal accounting for the event. If you still need to modify ticket prices, then create a copy of those tickets, edit the prices for the new tickets, and then archive the old tickets.', 'event_espresso' )
+	__( 'Ticket price modifications are blocked for Tickets that have already been sold to registrants, because doing so would negatively affect internal accounting for the event. If you still need to modify ticket prices, then create a copy of those tickets, edit the prices for the new tickets, and then archive the old tickets.', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/ActiveFilters/ActiveFilters.tsx:9
+	__( 'active filters:', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/ActiveFilters/FilterTag.tsx:11
+	/* translators: %s filter name */
+	__( 'remove filter - %s', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/CalendarDateRange/CalendarDateRange.tsx:37
+	__( 'to', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/CalendarDateSwitcher/CalendarDateSwitcher.tsx:35
+	__( 'starts', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/CalendarDateSwitcher/CalendarDateSwitcher.tsx:48
+	__( 'ends', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/CalendarPageDate/CalendarPageDate.tsx:55
+	__( 'TO', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/Confirm/ConfirmClose.tsx:8
+	// Reference: packages/ui-components/src/Modal/ModalWithAlert.tsx:24
+	__( 'Are you sure you want to close this?', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/Confirm/ConfirmDelete.tsx:8
+	__( 'Are you sure you want to delete this?', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/Confirm/useConfirmWithButton.tsx:11
+	__( 'Please confirm this action.', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/Confirm/useConfirmationDialog.tsx:32
+	__( 'No', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/Confirm/useConfirmationDialog.tsx:33
+	__( 'Yes', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/CurrencyDisplay/CurrencyDisplay.tsx:35
+	__( 'free', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/DateTimeRangePicker/DateTimeRangePicker.tsx:80
+	// Reference: packages/ui-components/src/Popover/PopoverForm/PopoverForm.tsx:42
+	__( 'save', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/DebugInfo/DebugInfo.tsx:36
+	__( 'Hide Debug Info', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/DebugInfo/DebugInfo.tsx:36
+	__( 'Show Debug Info', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/EditDateRangeButton/EditDateRangeButton.tsx:44
+	__( 'Edit Start and End Dates and Times', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/EntityActionsMenu/entityMenuItems/Copy.tsx:9
+	__( 'copy', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/EntityActionsMenu/entityMenuItems/Edit.tsx:9
+	__( 'edit', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/EntityActionsMenu/entityMenuItems/Trash.tsx:9
+	__( 'trash', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/EntityDetailsPanel/EntityDetailsPanelSold.tsx:36
+	__( 'view approved registrations for this date.', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/EntityDetailsPanel/EntityDetailsPanelSold.tsx:37
+	__( 'view approved registrations for this ticket.', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/EntityList/filterBar/buttons/CardViewFilterButton.tsx:22
+	__( 'card view', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/EntityList/filterBar/buttons/TableViewFilterButton.tsx:22
+	__( 'table view', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/EntityList/filterBar/buttons/ToggleFiltersButton.tsx:11
+	__( 'hide filters', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/EntityList/filterBar/buttons/ToggleFiltersButton.tsx:11
+	__( 'show filters', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/EntityList/filterBar/buttons/ToggleSortingButton.tsx:21
+	__( 'disable sorting', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/EntityList/filterBar/buttons/ToggleSortingButton.tsx:21
+	__( 'enable sorting', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/Legend/ToggleLegendButton.tsx:27
+	__( 'hide legend', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/Legend/ToggleLegendButton.tsx:27
+	__( 'show legend', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/LoadingNotice/LoadingNotice.tsx:12
+	__( 'loading…', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/Modal/Modal.tsx:59
+	__( 'close modal', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/Pagination/ItemRender.tsx:10
+	__( 'next', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/Pagination/ItemRender.tsx:11
+	__( 'jump to previous', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/Pagination/ItemRender.tsx:12
+	__( 'jump to next', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/Pagination/ItemRender.tsx:13
+	__( 'page', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/Pagination/ItemRender.tsx:9
+	__( 'previous', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/Pagination/PerPage.tsx:37
+	__( 'items per page', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/Pagination/constants.ts:10
+	/* translators: %s is per page value */
+	__( '%s / page', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/Pagination/constants.ts:13
+	__( 'Next Page', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/Pagination/constants.ts:14
+	__( 'Previous Page', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/PercentSign/index.tsx:11
+	__( '%', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/Stepper/buttons/Next.tsx:12
+	__( 'Next', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/Stepper/buttons/Previous.tsx:12
+	__( 'Previous', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/Steps/Steps.tsx:30
+	__( 'Steps', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/TabbableText/index.tsx:18
+	__( 'Click to edit…', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/TimezoneTimeInfo/Content.tsx:11
+	__( 'Your Local Time Zone', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/TimezoneTimeInfo/Content.tsx:16
+	__( 'The Website\'s Time Zone', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/TimezoneTimeInfo/Content.tsx:21
+	__( 'UTC (Greenwich Mean Time)', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/TimezoneTimeInfo/TimezoneTimeInfo.tsx:20
+	__( 'This Date Converted To:', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/TimezoneTimeInfo/TimezoneTimeInfo.tsx:21
+	__( 'click for timezone information', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/bulkEdit/BulkActions.tsx:51
+	__( 'select all', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/bulkEdit/BulkActions.tsx:54
+	__( 'apply', 'event_espresso' )
 );
 /* THIS IS THE END OF THE GENERATED FILE */
