@@ -999,17 +999,17 @@ $generated_i18n_strings = array(
 	// Reference: packages/components/src/CurrencyDisplay/CurrencyDisplay.tsx:35
 	__( 'free', 'event_espresso' ),
 
-	// Reference: packages/components/src/DateTimeRangePicker/index.tsx:70
+	// Reference: packages/components/src/DateTimeRangePicker/DateTimeRangePicker.tsx:80
 	// Reference: packages/components/src/Popover/PopoverForm/PopoverForm.tsx:42
 	__( 'save', 'event_espresso' ),
 
-	// Reference: packages/components/src/DebugInfo/DebugInfo.tsx:37
+	// Reference: packages/components/src/DebugInfo/DebugInfo.tsx:36
 	__( 'Hide Debug Info', 'event_espresso' ),
 
-	// Reference: packages/components/src/DebugInfo/DebugInfo.tsx:37
+	// Reference: packages/components/src/DebugInfo/DebugInfo.tsx:36
 	__( 'Show Debug Info', 'event_espresso' ),
 
-	// Reference: packages/components/src/EditDateRangeButton/EditDateRangeButton.tsx:37
+	// Reference: packages/components/src/EditDateRangeButton/EditDateRangeButton.tsx:44
 	__( 'Edit Start and End Dates and Times', 'event_espresso' ),
 
 	// Reference: packages/components/src/EntityActionsMenu/entityMenuItems/Copy.tsx:9
@@ -1100,19 +1100,19 @@ $generated_i18n_strings = array(
 	// Reference: packages/components/src/TabbableText/index.tsx:18
 	__( 'Click to edit…', 'event_espresso' ),
 
-	// Reference: packages/components/src/TimezoneTimeInfo/Content.tsx:16
+	// Reference: packages/components/src/TimezoneTimeInfo/Content.tsx:11
 	__( 'Your Local Time Zone', 'event_espresso' ),
 
-	// Reference: packages/components/src/TimezoneTimeInfo/Content.tsx:21
+	// Reference: packages/components/src/TimezoneTimeInfo/Content.tsx:16
 	__( 'The Website\'s Time Zone', 'event_espresso' ),
 
-	// Reference: packages/components/src/TimezoneTimeInfo/Content.tsx:26
+	// Reference: packages/components/src/TimezoneTimeInfo/Content.tsx:21
 	__( 'UTC (Greenwich Mean Time)', 'event_espresso' ),
 
-	// Reference: packages/components/src/TimezoneTimeInfo/TimezoneTimeInfo.tsx:22
+	// Reference: packages/components/src/TimezoneTimeInfo/TimezoneTimeInfo.tsx:20
 	__( 'This Date Converted To:', 'event_espresso' ),
 
-	// Reference: packages/components/src/TimezoneTimeInfo/TimezoneTimeInfo.tsx:23
+	// Reference: packages/components/src/TimezoneTimeInfo/TimezoneTimeInfo.tsx:21
 	__( 'click for timezone information', 'event_espresso' ),
 
 	// Reference: packages/components/src/bulkEdit/BulkActions.tsx:51
