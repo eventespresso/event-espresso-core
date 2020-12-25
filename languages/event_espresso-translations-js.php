@@ -237,7 +237,7 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:44
 	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:83
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:49
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:42
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:43
 	__( 'Name', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:81
@@ -479,7 +479,7 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:38
 	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/table/DateCell.tsx:21
 	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/table/HeaderCell.tsx:20
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:36
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:37
 	// Reference: packages/tpc/src/components/table/useHeaderRowGenerator.ts:23
 	__( 'ID', 'event_espresso' ),
 
@@ -504,7 +504,7 @@ $generated_i18n_strings = array(
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:46
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:55
-	// Reference: packages/components/src/EntityList/filterBar/EntityListFilterBar.tsx:62
+	// Reference: packages/ee-components/src/EntityList/EntityListFilterBar.tsx:45
 	__( 'search', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:47
@@ -529,7 +529,7 @@ $generated_i18n_strings = array(
 	__( 'Single Date', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:105
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:103
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:104
 	// Reference: packages/tpc/src/components/table/useHeaderRowGenerator.ts:53
 	__( 'Actions', 'event_espresso' ),
 
@@ -543,14 +543,14 @@ $generated_i18n_strings = array(
 	__( 'Cap', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:84
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:85
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:86
 	__( 'Sold', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:93
 	__( 'Reg list', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:94
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:95
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:96
 	__( 'Regs', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/ErrorMessage.tsx:18
@@ -831,7 +831,7 @@ $generated_i18n_strings = array(
 	__( 'Move Ticket to Trash', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/config.ts:15
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:51
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:52
 	__( 'On Sale', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/config.ts:17
@@ -931,22 +931,22 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/tableView/TableView.tsx:40
 	__( 'Tickets', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:50
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:51
 	__( 'Goes on Sale', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:61
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:62
 	__( 'Sale Ends', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:62
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:63
 	__( 'Ends', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:71
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:72
 	__( 'Price', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:78
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:79
 	__( 'Quantity', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:94
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:95
 	__( 'Registrations', 'event_espresso' ),
 
 	// Reference: domains/wpPluginsPage/src/exitSurvey/Popup.tsx:28
@@ -1027,12 +1027,6 @@ $generated_i18n_strings = array(
 	// Reference: packages/components/src/EntityDetailsPanel/EntityDetailsPanelSold.tsx:37
 	__( 'view approved registrations for this ticket.', 'event_espresso' ),
 
-	// Reference: packages/components/src/EntityList/EntityList.tsx:36
-	__( 'no results found', 'event_espresso' ),
-
-	// Reference: packages/components/src/EntityList/EntityList.tsx:37
-	__( 'try changing filter settings', 'event_espresso' ),
-
 	// Reference: packages/components/src/EntityList/filterBar/buttons/CardViewFilterButton.tsx:22
 	__( 'card view', 'event_espresso' ),
 
@@ -1045,10 +1039,10 @@ $generated_i18n_strings = array(
 	// Reference: packages/components/src/EntityList/filterBar/buttons/ToggleFiltersButton.tsx:11
 	__( 'show filters', 'event_espresso' ),
 
-	// Reference: packages/components/src/EntityList/filterBar/buttons/ToggleSortingButton.tsx:28
+	// Reference: packages/components/src/EntityList/filterBar/buttons/ToggleSortingButton.tsx:21
 	__( 'disable sorting', 'event_espresso' ),
 
-	// Reference: packages/components/src/EntityList/filterBar/buttons/ToggleSortingButton.tsx:28
+	// Reference: packages/components/src/EntityList/filterBar/buttons/ToggleSortingButton.tsx:21
 	__( 'enable sorting', 'event_espresso' ),
 
 	// Reference: packages/components/src/Legend/ToggleLegendButton.tsx:27
@@ -1198,6 +1192,12 @@ $generated_i18n_strings = array(
 
 	// Reference: packages/edtr-services/src/utils/dateAndTime.ts:56
 	__( 'End Date is required', 'event_espresso' ),
+
+	// Reference: packages/ee-components/src/EntityList/EntityList.tsx:31
+	__( 'no results found', 'event_espresso' ),
+
+	// Reference: packages/ee-components/src/EntityList/EntityList.tsx:32
+	__( 'try changing filter settings', 'event_espresso' ),
 
 	// Reference: packages/ee-components/src/bulkEdit/ActionCheckbox.tsx:38
 	/* translators: %d entity id */
