@@ -1119,11 +1119,11 @@ $generated_i18n_strings = array(
 	// Reference: packages/predicates/src/registration/statusOptions.ts:6
 	__( 'Approved', 'event_espresso' ),
 
-	// Reference: packages/rich-text-editor/src/components/RTEWithEditMode/RTEWithEditMode.tsx:32
-	__( 'Code editor', 'event_espresso' ),
-
-	// Reference: packages/rich-text-editor/src/components/RTEWithEditMode/RTEWithEditMode.tsx:32
+	// Reference: packages/rich-text-editor/src/components/RTEWithEditMode/RTEWithEditMode.tsx:33
 	__( 'Visual editor', 'event_espresso' ),
+
+	// Reference: packages/rich-text-editor/src/components/RTEWithEditMode/RTEWithEditMode.tsx:34
+	__( 'HTML editor', 'event_espresso' ),
 
 	// Reference: packages/rich-text-editor/src/components/toolbarButtons/WPMedia.tsx:10
 	__( 'Select media', 'event_espresso' ),
