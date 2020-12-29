@@ -1,6 +1,18 @@
 <?php
 /* THIS IS A GENERATED FILE. DO NOT EDIT DIRECTLY. */
 $generated_i18n_strings = array(
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:35
+	__( 'bulk actions', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:39
+	__( 'edit datetime details', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:43
+	__( 'delete datetimes', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:43
+	__( 'trash datetimes', 'event_espresso' ),
+
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:105
 	__( 'Actions', 'event_espresso' ),
 
