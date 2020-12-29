@@ -1,9 +1,9 @@
 {
   "files": {
     "adapters.css": "/static/css/adapters.d7f96f47.css",
-    "adapters.js": "/static/js/adapters.4a41792d.js",
-    "adapters.js.map": "/static/js/adapters.4a41792d.js.map",
-    "adapters.php": "/static/js/adapters.5b42cde3.asset.php",
+    "adapters.js": "/static/js/adapters.d8d039f1.js",
+    "adapters.js.map": "/static/js/adapters.d8d039f1.js.map",
+    "adapters.php": "/static/js/adapters.1a459a63.asset.php",
     "blocks.css": "/static/css/blocks.161bb224.css",
     "blocks.js": "/static/js/blocks.6031f16d.js",
     "blocks.js.map": "/static/js/blocks.6031f16d.js.map",
@@ -59,10 +59,10 @@
     "registry.js": "/static/js/registry.a1b73cee.js",
     "registry.js.map": "/static/js/registry.a1b73cee.js.map",
     "registry.php": "/static/js/registry.19dd5291.asset.php",
-    "richTextEditor.css": "/static/css/richTextEditor.8be396b7.css",
+    "richTextEditor.css": "/static/css/richTextEditor.306da5db.css",
     "richTextEditor.js": "/static/js/richTextEditor.7db2c8c3.js",
     "richTextEditor.js.map": "/static/js/richTextEditor.7db2c8c3.js.map",
-    "richTextEditor.php": "/static/js/richTextEditor.0389d5d1.asset.php",
+    "richTextEditor.php": "/static/js/richTextEditor.fae45add.asset.php",
     "services.js": "/static/js/services.d437b40a.js",
     "services.js.map": "/static/js/services.d437b40a.js.map",
     "services.php": "/static/js/services.a0377c23.asset.php",
@@ -102,12 +102,12 @@
     "static/css/eeComponents.c3375404.css.map": "/static/css/eeComponents.c3375404.css.map",
     "static/css/eventEditor.da1350b3.css.map": "/static/css/eventEditor.da1350b3.css.map",
     "static/css/form.a609b7c7.css.map": "/static/css/form.a609b7c7.css.map",
-    "static/css/richTextEditor.8be396b7.css.map": "/static/css/richTextEditor.8be396b7.css.map",
+    "static/css/richTextEditor.306da5db.css.map": "/static/css/richTextEditor.306da5db.css.map",
     "static/css/toaster.a747d0c0.css.map": "/static/css/toaster.a747d0c0.css.map",
     "static/css/tpc.12ecdd83.css.map": "/static/css/tpc.12ecdd83.css.map",
     "static/css/uiComponents.c4133af2.css.map": "/static/css/uiComponents.c4133af2.css.map",
     "static/css/wpPluginsPage.e59608e8.css.map": "/static/css/wpPluginsPage.e59608e8.css.map",
-    "static/js/adapters.4a41792d.js.LICENSE.txt": "/static/js/adapters.4a41792d.js.LICENSE.txt",
+    "static/js/adapters.d8d039f1.js.LICENSE.txt": "/static/js/adapters.d8d039f1.js.LICENSE.txt",
     "static/js/blocks.6031f16d.js.LICENSE.txt": "/static/js/blocks.6031f16d.js.LICENSE.txt",
     "static/js/data.69d088ef.js.LICENSE.txt": "/static/js/data.69d088ef.js.LICENSE.txt",
     "static/js/dates.6c6dcfb1.js.LICENSE.txt": "/static/js/dates.6c6dcfb1.js.LICENSE.txt",
@@ -127,7 +127,7 @@
   "entrypoints": {
     "adapters": [
       "static/css/adapters.d7f96f47.css",
-      "static/js/adapters.4a41792d.js"
+      "static/js/adapters.d8d039f1.js"
     ],
     "constants": [
       "static/js/constants.b9312d99.js"
@@ -172,7 +172,7 @@
       "static/js/registry.a1b73cee.js"
     ],
     "richTextEditor": [
-      "static/css/richTextEditor.8be396b7.css",
+      "static/css/richTextEditor.306da5db.css",
       "static/js/richTextEditor.7db2c8c3.js"
     ],
     "services": [
