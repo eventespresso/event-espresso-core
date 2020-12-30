@@ -84,10 +84,10 @@
     "tpc.js": "/static/js/tpc.65cb254c.js",
     "tpc.js.map": "/static/js/tpc.65cb254c.js.map",
     "tpc.php": "/static/js/tpc.12e7e09f.asset.php",
-    "uiComponents.css": "/static/css/uiComponents.b4e31c12.css",
-    "uiComponents.js": "/static/js/uiComponents.b4b58f17.js",
-    "uiComponents.js.map": "/static/js/uiComponents.b4b58f17.js.map",
-    "uiComponents.php": "/static/js/uiComponents.353e810e.asset.php",
+    "uiComponents.css": "/static/css/uiComponents.d1bb24eb.css",
+    "uiComponents.js": "/static/js/uiComponents.d4664fe0.js",
+    "uiComponents.js.map": "/static/js/uiComponents.d4664fe0.js.map",
+    "uiComponents.php": "/static/js/uiComponents.d54df0cb.asset.php",
     "utils.js": "/static/js/utils.ff0cdf48.js",
     "utils.js.map": "/static/js/utils.ff0cdf48.js.map",
     "utils.php": "/static/js/utils.283e53d8.asset.php",
@@ -105,7 +105,7 @@
     "static/css/richTextEditor.fed46b5a.css.map": "/static/css/richTextEditor.fed46b5a.css.map",
     "static/css/toaster.2b0ed9ba.css.map": "/static/css/toaster.2b0ed9ba.css.map",
     "static/css/tpc.1022c5e4.css.map": "/static/css/tpc.1022c5e4.css.map",
-    "static/css/uiComponents.b4e31c12.css.map": "/static/css/uiComponents.b4e31c12.css.map",
+    "static/css/uiComponents.d1bb24eb.css.map": "/static/css/uiComponents.d1bb24eb.css.map",
     "static/css/wpPluginsPage.e59608e8.css.map": "/static/css/wpPluginsPage.e59608e8.css.map",
     "static/js/adapters.e95973d6.js.LICENSE.txt": "/static/js/adapters.e95973d6.js.LICENSE.txt",
     "static/js/blocks.f8f2879d.js.LICENSE.txt": "/static/js/blocks.f8f2879d.js.LICENSE.txt",
@@ -121,7 +121,7 @@
     "static/js/services.7d17be0b.js.LICENSE.txt": "/static/js/services.7d17be0b.js.LICENSE.txt",
     "static/js/toaster.37d221cb.js.LICENSE.txt": "/static/js/toaster.37d221cb.js.LICENSE.txt",
     "static/js/tpc.65cb254c.js.LICENSE.txt": "/static/js/tpc.65cb254c.js.LICENSE.txt",
-    "static/js/uiComponents.b4b58f17.js.LICENSE.txt": "/static/js/uiComponents.b4b58f17.js.LICENSE.txt",
+    "static/js/uiComponents.d4664fe0.js.LICENSE.txt": "/static/js/uiComponents.d4664fe0.js.LICENSE.txt",
     "static/js/wpPluginsPage.a17f838e.js.LICENSE.txt": "/static/js/wpPluginsPage.a17f838e.js.LICENSE.txt"
   },
   "entrypoints": {
@@ -193,8 +193,8 @@
       "static/js/tpc.65cb254c.js"
     ],
     "uiComponents": [
-      "static/css/uiComponents.b4e31c12.css",
-      "static/js/uiComponents.b4b58f17.js"
+      "static/css/uiComponents.d1bb24eb.css",
+      "static/js/uiComponents.d4664fe0.js"
     ],
     "utils": [
       "static/js/utils.ff0cdf48.js"
