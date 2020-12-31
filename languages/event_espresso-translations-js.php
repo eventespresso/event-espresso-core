@@ -1368,10 +1368,10 @@ $generated_i18n_strings = array(
 	// Reference: packages/ui-components/src/PercentSign/index.tsx:10
 	__( '%', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/Stepper/buttons/Next.tsx:11
+	// Reference: packages/ui-components/src/Stepper/buttons/Next.tsx:8
 	__( 'Next', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/Stepper/buttons/Previous.tsx:11
+	// Reference: packages/ui-components/src/Stepper/buttons/Previous.tsx:8
 	__( 'Previous', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/Steps/Steps.tsx:31
