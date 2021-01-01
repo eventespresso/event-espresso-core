@@ -18,13 +18,14 @@ class EE_Psr4AutoloaderInit
 
 
     /**
-     * @type \EventEspresso\core\Psr4Autoloader
+     * @type Psr4Autoloader
      */
     protected static $psr4_loader;
 
 
     /**
-     * @return \EventEspresso\core\Psr4Autoloader
+     * @return void
+     * @throws EE_Error
      */
     public function initializeAutoloader()
     {
@@ -45,9 +46,9 @@ class EE_Psr4AutoloaderInit
 
 
     /**
-     * @return \EventEspresso\core\Psr4Autoloader
+     * @return Psr4Autoloader
      */
-    public static function psr4_loader()
+    public static function psr4_loader(): Psr4Autoloader
     {
         return self::$psr4_loader;
     }
