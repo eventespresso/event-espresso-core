@@ -2,6 +2,8 @@
 
 namespace EventEspresso\core;
 
+use EEH_File;
+
 /**
  * Class Psr4Autoloader
  * A general-purpose autoloader implementation that includes the optional
@@ -56,7 +58,7 @@ class Psr4Autoloader
      *
      * @var array
      */
-    protected $prefixes = array();
+    protected $prefixes = [];
 
 
     /**
@@ -65,11 +67,11 @@ class Psr4Autoloader
      * @param string $prefix
      * @return array
      */
-    public function prefixes($prefix = '')
+    public function prefixes(string $prefix = ''): array
     {
         if (! empty($prefix)) {
             // are there any base directories for this namespace prefix?
-            return isset($this->prefixes[ $prefix ]) ? $this->prefixes[ $prefix ] : array();
+            return isset($this->prefixes[ $prefix ]) ? $this->prefixes[ $prefix ] : [];
         }
         return $this->prefixes;
     }
@@ -82,30 +84,28 @@ class Psr4Autoloader
      */
     public function register()
     {
-        spl_autoload_register(array($this, 'loadClass'));
+        spl_autoload_register([$this, 'loadClass']);
     }
 
 
     /**
      * Adds a base directory for a namespace prefix.
      *
-     * @param string $prefix   The namespace prefix.
-     * @param string $base_dir A base directory for class files in the
-     *                         namespace.
-     * @param bool   $prepend  If true, prepend the base directory to the stack
-     *                         instead of appending it; this causes it to be searched first rather
-     *                         than last.
-     * @return void
+     * @param string $prefix    The namespace prefix.
+     * @param string $base_dir  A base directory for class files in the namespace.
+     * @param bool $prepend     If true, prepend the base directory to the stack instead of appending it;
+     *                          this causes it to be searched first rather than last.
+     * @return bool             returns TRUE if the namespace was successfully added
      */
-    public function addNamespace($prefix, $base_dir, $prepend = false)
+    public function addNamespace(string $prefix, string $base_dir, bool $prepend = false): bool
     {
         // normalize namespace prefix
         $prefix = trim($prefix, Psr4Autoloader::NS) . Psr4Autoloader::NS;
         // normalize the base directory with a trailing separator
-        $base_dir = \EEH_File::standardise_and_end_with_directory_separator($base_dir);
+        $base_dir = EEH_File::standardise_and_end_with_directory_separator($base_dir);
         // initialize the namespace prefix array
-        if (isset($this->prefixes[ $prefix ]) === false) {
-            $this->prefixes[ $prefix ] = array();
+        if (! isset($this->prefixes[ $prefix ])) {
+            $this->prefixes[ $prefix ] = [];
         }
         // retain the base directory for the namespace prefix
         if ($prepend) {
@@ -113,6 +113,7 @@ class Psr4Autoloader
         } else {
             $this->prefixes[ $prefix ][] = $base_dir;
         }
+        return isset($this->prefixes[ $prefix ]);
     }
 
 
@@ -120,10 +121,9 @@ class Psr4Autoloader
      * Loads the class file for a given class name.
      *
      * @param string $class The fully-qualified class name.
-     * @return mixed The mapped file name on success, or boolean false on
-     *                      failure.
+     * @return string        The mapped file name on success, or boolean false on failure.
      */
-    public function loadClass($class)
+    public function loadClass(string $class): string
     {
         // the current namespace prefix
         $prefix = $class;
@@ -139,24 +139,23 @@ class Psr4Autoloader
             if ($mapped_file) {
                 return $mapped_file;
             }
-            // remove the trailing namespace separator for the next iteration
-            // of strrpos()
+            // remove the trailing namespace separator for the next iteration of strrpos()
             $prefix = rtrim($prefix, Psr4Autoloader::NS);
         }
         // never found a mapped file
-        return false;
+        return '';
     }
 
 
     /**
      * Load the mapped file for a namespace prefix and relative class.
      *
-     * @param string $prefix         The namespace prefix.
-     * @param string $relative_class The relative class name.
-     * @return mixed Boolean false if no mapped file can be loaded, or the
-     *                               name of the mapped file that was loaded.
+     * @param string $prefix            The namespace prefix.
+     * @param string $relative_class    The relative class name.
+     * @return mixed                    Boolean false if no mapped file can be loaded,
+     *                                  or the name of the mapped file that was loaded.
      */
-    protected function loadMappedFile($prefix, $relative_class)
+    protected function loadMappedFile(string $prefix, string $relative_class)
     {
         // look through base directories for this namespace prefix
         foreach ($this->prefixes($prefix) as $base_dir) {
@@ -180,10 +179,10 @@ class Psr4Autoloader
     /**
      * If a file exists, require it from the file system.
      *
-     * @param string $file The file to require.
-     * @return bool True if the file exists, false if not.
+     * @param string $file  The file to require.
+     * @return bool         True if the file exists, false if not.
      */
-    protected function requireFile($file)
+    protected function requireFile(string $file): bool
     {
         if (file_exists($file)) {
             require $file;

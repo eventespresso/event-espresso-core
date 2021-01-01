@@ -37,18 +37,19 @@ class EEH_File extends EEH_Base implements EEHI_File
 
 
     /**
-     * @param string|null $filepath the filepath we want to work in. If its in the
+     * @param string $filepath      the filepath we want to work in. If its in the
      *                              wp uploads directory, we'll want to just use the filesystem directly.
      *                              If not provided, we have to assume its not in the uploads directory
      * @return WP_Filesystem_Base
      */
-    private static function _get_wp_filesystem($filepath = null)
+    private static function _get_wp_filesystem($filepath = ''): WP_Filesystem_Base
     {
         if (apply_filters(
             'FHEE__EEH_File___get_wp_filesystem__allow_using_filesystem_direct',
             $filepath && EEH_File::is_in_uploads_folder($filepath),
             $filepath
-        )) {
+        )
+        ) {
             return EEH_File::loadAlternateWpFileSystem();
         }
         return EEH_File::loadWpFileSystem();
@@ -58,7 +59,7 @@ class EEH_File extends EEH_Base implements EEHI_File
     /**
      * @return WP_Filesystem_Base
      */
-    private static function loadAlternateWpFileSystem()
+    private static function loadAlternateWpFileSystem(): WP_Filesystem_Base
     {
         if (! EEH_File::$_wp_filesystem instanceof WP_Filesystem_Base) {
             require_once(ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php');
@@ -91,7 +92,7 @@ class EEH_File extends EEH_Base implements EEHI_File
             if (! $valid || ! file_exists($wp_filesystem_file)) {
                 EE_Error::add_error(
                     sprintf(
-                        __(
+                        esc_html__(
                             'The supplied WP Filesystem filepath "%1$s" is either missing or invalid.',
                             'event_espresso'
                         ),
@@ -119,7 +120,7 @@ class EEH_File extends EEH_Base implements EEHI_File
     /**
      * @return WP_Filesystem_Base
      */
-    private static function loadWpFileSystem()
+    private static function loadWpFileSystem(): WP_Filesystem_Base
     {
         global $wp_filesystem;
         // no filesystem setup ???
@@ -127,7 +128,8 @@ class EEH_File extends EEH_Base implements EEHI_File
             // if some eager beaver's just trying to get in there too early...
             // let them do it, because we are one of those eager beavers! :P
             /**
-             * more explanations are probably merited. http://codex.wordpress.org/Filesystem_API#Initializing_WP_Filesystem_Base
+             * more explanations are probably merited.
+             * http://codex.wordpress.org/Filesystem_API#Initializing_WP_Filesystem_Base
              * says WP_Filesystem should be used after 'wp_loaded', but currently EE's activation process
              * is setup to mostly happen on 'init', and refactoring to have it happen on
              * 'wp_loaded' is too much work on a BETA milestone.
@@ -136,20 +138,20 @@ class EEH_File extends EEH_Base implements EEHI_File
              * and there may be troubles if the WP files are owned by a different user
              * than the server user. But both of these issues should exist in 4.4 and earlier too
              */
-            if (false && ! did_action('wp_loaded')) {
-                $msg =
-                    __(
-                        'An attempt to access and/or write to a file on the server could not be completed due to a lack of sufficient credentials.',
-                        'event_espresso'
-                    );
-                if (WP_DEBUG) {
-                    $msg .= '<br />' . __(
-                        'The WP Filesystem can not be accessed until after the "wp_loaded" hook has run, so it\'s best not to attempt access until the "admin_init" hookpoint.',
-                        'event_espresso'
-                    );
-                }
-                EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
-            }
+            // if (false && ! did_action('wp_loaded')) {
+            //     $msg =
+            //         esc_html__(
+            //             'An attempt to access and/or write to a file on the server could not be completed due to a lack of sufficient credentials.',
+            //             'event_espresso'
+            //         );
+            //     if (WP_DEBUG) {
+            //         $msg .= '<br />' . esc_html__(
+            //             'The WP Filesystem can not be accessed until after the "wp_loaded" hook has run, so it\'s best not to attempt access until the "admin_init" hookpoint.',
+            //             'event_espresso'
+            //         );
+            //     }
+            //     EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
+            // }
             // should be loaded if we are past the wp_loaded hook...
             if (! function_exists('WP_Filesystem') || ! function_exists('submit_button')) {
                 require_once(ABSPATH . 'wp-admin/includes/file.php');
@@ -164,7 +166,7 @@ class EEH_File extends EEH_Base implements EEHI_File
             if ($credentials === false) {
                 add_action('admin_notices', ['EEH_File', 'display_request_filesystem_credentials_form'], 999);
                 EE_Error::add_error(
-                    __(
+                    esc_html__(
                         'An attempt to access and/or write to a file on the server could not be completed due to a lack of sufficient credentials.',
                         'event_espresso'
                     ),
@@ -181,7 +183,7 @@ class EEH_File extends EEH_Base implements EEHI_File
                 add_action('admin_notices', ['EEH_File', 'display_request_filesystem_credentials_form'], 999);
                 EE_Error::add_error(
                     sprintf(
-                        __('WP Filesystem Error: $1%s', 'event_espresso'),
+                        esc_html__('WP Filesystem Error: $1%s', 'event_espresso'),
                         $wp_filesystem->errors->get_error_message()
                     ),
                     __FILE__,
@@ -217,11 +219,11 @@ class EEH_File extends EEH_Base implements EEHI_File
      * @return bool
      */
     public static function verify_filepath_and_permissions(
-        $full_file_path = '',
-        $file_name = '',
-        $file_ext = '',
-        $type_of_file = ''
-    ) {
+        string $full_file_path = '',
+        string $file_name = '',
+        string $file_ext = '',
+        string $type_of_file = ''
+    ): bool {
         // load WP_Filesystem and set file permissions
         $wp_filesystem  = EEH_File::_get_wp_filesystem($full_file_path);
         $full_file_path = EEH_File::standardise_directory_separators($full_file_path);
@@ -229,7 +231,7 @@ class EEH_File extends EEH_Base implements EEHI_File
             $file_name = ! empty($type_of_file) ? $file_name . ' ' . $type_of_file : $file_name;
             $file_name .= ! empty($file_ext) ? ' file' : ' folder';
             $msg       = sprintf(
-                __(
+                esc_html__(
                     'The requested %1$s could not be found or is not readable, possibly due to an incorrect filepath, or incorrect file permissions.%2$s',
                     'event_espresso'
                 ),
@@ -241,7 +243,7 @@ class EEH_File extends EEH_Base implements EEHI_File
             } else {
                 // no file permissions means the file was not found
                 $msg .= sprintf(
-                    __('Please ensure the following path is correct: "%s".', 'event_espresso'),
+                    esc_html__('Please ensure the following path is correct: "%s".', 'event_espresso'),
                     $full_file_path
                 );
             }
@@ -263,8 +265,10 @@ class EEH_File extends EEH_Base implements EEHI_File
      * @param string $type_of_file   - general type of file (ie: "module"), this is only used to improve error messages
      * @return string
      */
-    private static function _permissions_error_for_unreadable_filepath($full_file_path = '', $type_of_file = '')
-    {
+    private static function _permissions_error_for_unreadable_filepath(
+        string $full_file_path = '',
+        string $type_of_file = ''
+    ): string {
         // load WP_Filesystem and set file permissions
         $wp_filesystem = EEH_File::_get_wp_filesystem($full_file_path);
         // check file permissions
@@ -274,22 +278,22 @@ class EEH_File extends EEH_Base implements EEHI_File
             $type_of_file = ! empty($type_of_file) ? $type_of_file . ' ' : '';
             $type_of_file .= ! empty($type_of_file) ? 'file' : 'folder';
             return ' ' . sprintf(
-                __(
-                    'File permissions for the requested %1$s are currently set at "%2$s". The recommended permissions are 644 for files and 755 for folders.',
-                    'event_espresso'
-                ),
-                $type_of_file,
-                $perms
-            );
+                    esc_html__(
+                        'File permissions for the requested %1$s are currently set at "%2$s". The recommended permissions are 644 for files and 755 for folders.',
+                        'event_espresso'
+                    ),
+                    $type_of_file,
+                    $perms
+                );
         } else {
             // file exists but file permissions could not be read ?!?!
             return ' ' . sprintf(
-                __(
-                    'Please ensure that the server and/or PHP configuration allows the current process to access the following file: "%s".',
-                    'event_espresso'
-                ),
-                $full_file_path
-            );
+                    esc_html__(
+                        'Please ensure that the server and/or PHP configuration allows the current process to access the following file: "%s".',
+                        'event_espresso'
+                    ),
+                    $full_file_path
+                );
         }
     }
 
@@ -303,7 +307,7 @@ class EEH_File extends EEH_Base implements EEHI_File
      * @param string $folder
      * @return bool false if folder isn't writable; true if it exists and is writeable,
      */
-    public static function ensure_folder_exists_and_is_writable($folder = '')
+    public static function ensure_folder_exists_and_is_writable(string $folder = ''): bool
     {
         if (empty($folder)) {
             return false;
@@ -320,7 +324,7 @@ class EEH_File extends EEH_Base implements EEHI_File
             if (! EEH_File::ensure_folder_exists_and_is_writable($parent_folder)) {
                 return false;
             }
-            if (! EEH_File::verify_is_writable($parent_folder, 'folder')) {
+            if (! EEH_File::verify_is_writable($parent_folder)) {
                 return false;
             }
             if (! $wp_filesystem->mkdir(EEH_File::convert_local_filepath_to_remote_filepath($folder))) {
@@ -332,7 +336,7 @@ class EEH_File extends EEH_Base implements EEHI_File
                 return false;
             }
             EEH_File::add_index_file($folder);
-        } elseif (! EEH_File::verify_is_writable($folder, 'folder')) {
+        } elseif (! EEH_File::verify_is_writable($folder)) {
             return false;
         }
         return true;
@@ -346,7 +350,7 @@ class EEH_File extends EEH_Base implements EEHI_File
      * @param string $file_or_folder - whether checking a file or folder
      * @return bool
      */
-    public static function verify_is_writable($full_path = '', $file_or_folder = 'folder')
+    public static function verify_is_writable(string $full_path = '', string $file_or_folder = 'folder'): bool
     {
         // load WP_Filesystem and set file permissions
         $wp_filesystem = EEH_File::_get_wp_filesystem($full_path);
@@ -373,7 +377,7 @@ class EEH_File extends EEH_Base implements EEHI_File
      * @param string $full_file_path
      * @return bool
      */
-    public static function ensure_file_exists_and_is_writable($full_file_path = '')
+    public static function ensure_file_exists_and_is_writable(string $full_file_path = ''): bool
     {
         // load WP_Filesystem and set file permissions
         $wp_filesystem  = EEH_File::_get_wp_filesystem($full_file_path);
@@ -406,7 +410,7 @@ class EEH_File extends EEH_Base implements EEHI_File
      * @param string $file_or_folder_path
      * @return string parent folder, ENDING with a directory separator
      */
-    public static function get_parent_folder($file_or_folder_path)
+    public static function get_parent_folder(string $file_or_folder_path): string
     {
         // find the last /, ignoring a / on the very end
         // eg if given "/var/something/somewhere/", we want to get "somewhere"'s
@@ -424,14 +428,15 @@ class EEH_File extends EEH_Base implements EEHI_File
      * @param string $full_file_path
      * @return string
      */
-    public static function get_file_contents($full_file_path = '')
+    public static function get_file_contents(string $full_file_path = ''): string
     {
         $full_file_path = EEH_File::standardise_directory_separators($full_file_path);
         if (EEH_File::verify_filepath_and_permissions(
             $full_file_path,
             EEH_File::get_filename_from_filepath($full_file_path),
             EEH_File::get_file_extension($full_file_path)
-        )) {
+        )
+        ) {
             // load WP_Filesystem and set file permissions
             $wp_filesystem = EEH_File::_get_wp_filesystem($full_file_path);
             return $wp_filesystem->get_contents(EEH_File::convert_local_filepath_to_remote_filepath($full_file_path));
@@ -448,16 +453,19 @@ class EEH_File extends EEH_Base implements EEHI_File
      * @param string $file_type
      * @return bool
      */
-    public static function write_to_file($full_file_path = '', $file_contents = '', $file_type = '')
-    {
+    public static function write_to_file(
+        string $full_file_path = '',
+        string $file_contents = '',
+        string $file_type = ''
+    ): bool {
         $full_file_path = EEH_File::standardise_directory_separators($full_file_path);
         $file_type      = ! empty($file_type) ? rtrim($file_type, ' ') . ' ' : '';
         $folder         = EEH_File::remove_filename_from_filepath($full_file_path);
-        if (! EEH_File::verify_is_writable($folder, 'folder')) {
+        if (! EEH_File::verify_is_writable($folder)) {
             if (defined('WP_DEBUG') && WP_DEBUG) {
                 $msg =
                     sprintf(
-                        __('The %1$sfile located at "%2$s" is not writable.', 'event_espresso'),
+                        esc_html__('The %1$sfile located at "%2$s" is not writable.', 'event_espresso'),
                         $file_type,
                         $full_file_path
                     );
@@ -472,11 +480,12 @@ class EEH_File extends EEH_Base implements EEHI_File
         if (! $wp_filesystem->put_contents(
             EEH_File::convert_local_filepath_to_remote_filepath($full_file_path),
             $file_contents
-        )) {
+        )
+        ) {
             if (defined('WP_DEBUG') && WP_DEBUG) {
                 $msg =
                     sprintf(
-                        __('The %1$sfile located at "%2$s" could not be written to.', 'event_espresso'),
+                        esc_html__('The %1$sfile located at "%2$s" could not be written to.', 'event_espresso'),
                         $file_type,
                         $full_file_path
                     );
@@ -497,7 +506,7 @@ class EEH_File extends EEH_Base implements EEHI_File
      * @param boolean|string $type 'd' for directory, 'f' for file
      * @return boolean
      */
-    public static function delete($filepath, $recursive = false, $type = false)
+    public static function delete(string $filepath, bool $recursive = false, $type = false): bool
     {
         $wp_filesystem = EEH_File::_get_wp_filesystem();
         return $wp_filesystem->delete($filepath, $recursive, $type);
@@ -511,7 +520,7 @@ class EEH_File extends EEH_Base implements EEHI_File
      * @param string $full_file_path
      * @return bool
      */
-    public static function exists($full_file_path = '')
+    public static function exists(string $full_file_path = ''): bool
     {
         $wp_filesystem = EEH_File::_get_wp_filesystem($full_file_path);
         return $wp_filesystem->exists(EEH_File::convert_local_filepath_to_remote_filepath($full_file_path));
@@ -525,7 +534,7 @@ class EEH_File extends EEH_Base implements EEHI_File
      * @param string $full_file_path
      * @return bool
      */
-    public static function is_readable($full_file_path = '')
+    public static function is_readable(string $full_file_path = ''): bool
     {
         $wp_filesystem = EEH_File::_get_wp_filesystem($full_file_path);
         return $wp_filesystem->is_readable(EEH_File::convert_local_filepath_to_remote_filepath($full_file_path));
@@ -540,7 +549,7 @@ class EEH_File extends EEH_Base implements EEHI_File
      * @param string $full_file_path
      * @return string
      */
-    public static function remove_filename_from_filepath($full_file_path = '')
+    public static function remove_filename_from_filepath(string $full_file_path = ''): string
     {
         return pathinfo($full_file_path, PATHINFO_DIRNAME);
     }
@@ -552,7 +561,7 @@ class EEH_File extends EEH_Base implements EEHI_File
      * @param string $full_file_path
      * @return string
      */
-    public static function get_filename_from_filepath($full_file_path = '')
+    public static function get_filename_from_filepath(string $full_file_path = ''): string
     {
         return pathinfo($full_file_path, PATHINFO_BASENAME);
     }
@@ -564,7 +573,7 @@ class EEH_File extends EEH_Base implements EEHI_File
      * @param string $full_file_path
      * @return string
      */
-    public static function get_file_extension($full_file_path = '')
+    public static function get_file_extension(string $full_file_path = ''): string
     {
         return pathinfo($full_file_path, PATHINFO_EXTENSION);
     }
@@ -576,7 +585,7 @@ class EEH_File extends EEH_Base implements EEHI_File
      * @param string $folder
      * @return bool
      */
-    public static function add_htaccess_deny_from_all($folder = '')
+    public static function add_htaccess_deny_from_all(string $folder = ''): bool
     {
         $folder = EEH_File::standardise_and_end_with_directory_separator($folder);
         if (! EEH_File::exists($folder . '.htaccess')) {
@@ -595,7 +604,7 @@ class EEH_File extends EEH_Base implements EEHI_File
      * @param string $folder
      * @return boolean
      */
-    public static function add_index_file($folder)
+    public static function add_index_file(string $folder): bool
     {
         $folder = EEH_File::standardise_and_end_with_directory_separator($folder);
         if (! EEH_File::exists($folder . 'index.php')) {
@@ -603,7 +612,8 @@ class EEH_File extends EEH_Base implements EEHI_File
                 $folder . 'index.php',
                 'You are not permitted to read from this folder',
                 '.php'
-            )) {
+            )
+            ) {
                 return false;
             }
         }
@@ -618,7 +628,7 @@ class EEH_File extends EEH_Base implements EEHI_File
      * @param string $file_path
      * @return string
      */
-    public static function get_classname_from_filepath_with_standard_filename($file_path)
+    public static function get_classname_from_filepath_with_standard_filename(string $file_path): string
     {
         // extract file from path
         $filename = basename($file_path);
@@ -636,7 +646,7 @@ class EEH_File extends EEH_Base implements EEHI_File
      * @param bool   $rtrim will remove trailing backslash
      * @return string
      */
-    public static function standardise_directory_separators($file_path, $rtrim = false)
+    public static function standardise_directory_separators(string $file_path, bool $rtrim = false): string
     {
         $file_path = $rtrim ? rtrim($file_path, '/\\') : $file_path;
         return str_replace(['\\', '/'], '/', $file_path);
@@ -650,7 +660,7 @@ class EEH_File extends EEH_Base implements EEHI_File
      * @param string $file_path
      * @return string
      */
-    public static function end_with_directory_separator($file_path)
+    public static function end_with_directory_separator(string $file_path): string
     {
         return rtrim($file_path, '/\\') . '/';
     }
@@ -659,10 +669,10 @@ class EEH_File extends EEH_Base implements EEHI_File
     /**
      * shorthand for both EEH_FIle::end_with_directory_separator AND EEH_File::standardise_directory_separators
      *
-     * @param $file_path
+     * @param string $file_path
      * @return string
      */
-    public static function standardise_and_end_with_directory_separator($file_path)
+    public static function standardise_and_end_with_directory_separator(string $file_path): string
     {
         return self::end_with_directory_separator(self::standardise_directory_separators($file_path));
     }
@@ -681,13 +691,13 @@ class EEH_File extends EEH_Base implements EEHI_File
      *                                   if $index_numerically == FALSE (Default) keys are what the class names SHOULD
      *                                   be; and values are their file paths
      */
-    public static function get_contents_of_folders($folder_paths = [], $index_numerically = false)
+    public static function get_contents_of_folders(array $folder_paths = [], bool $index_numerically = false): array
     {
         $class_to_folder_path = [];
         foreach ($folder_paths as $folder_path) {
             $folder_path = self::standardise_and_end_with_directory_separator($folder_path);
             // load WP_Filesystem and set file permissions
-            $files_in_folder = glob($folder_path . '*.php');
+            $files_in_folder      = glob($folder_path . '*.php');
             $class_to_folder_path = [];
             if ($files_in_folder) {
                 foreach ($files_in_folder as $file_path) {
@@ -696,7 +706,7 @@ class EEH_File extends EEH_Base implements EEHI_File
                         if ($index_numerically) {
                             $class_to_folder_path[] = $file_path;
                         } else {
-                            $classname =
+                            $classname                          =
                                 self::get_classname_from_filepath_with_standard_filename($file_path);
                             $class_to_folder_path[ $classname ] = $file_path;
                         }
@@ -716,7 +726,7 @@ class EEH_File extends EEH_Base implements EEHI_File
      * @param boolean $overwrite
      * @return boolean success
      */
-    public static function copy($source_file, $destination_file, $overwrite = false)
+    public static function copy(string $source_file, string $destination_file, bool $overwrite = false): bool
     {
         $source_file      = EEH_File::validateFileForCopyOrMove($source_file);
         $destination_file = EEH_File::validateFolderForCopyOrMove($destination_file);
@@ -734,7 +744,7 @@ class EEH_File extends EEH_Base implements EEHI_File
         if (! $copied) {
             if (defined('WP_DEBUG') && WP_DEBUG) {
                 $msg = sprintf(
-                    __(
+                    esc_html__(
                         'Attempted writing to file %1$s, but could not, probably because of permissions issues',
                         'event_espresso'
                     ),
@@ -755,7 +765,7 @@ class EEH_File extends EEH_Base implements EEHI_File
      * @param string $filepath
      * @return boolean
      */
-    public static function is_in_uploads_folder($filepath)
+    public static function is_in_uploads_folder(string $filepath): bool
     {
         $uploads = wp_upload_dir();
         return strpos($filepath, $uploads['basedir']) === 0;
@@ -772,7 +782,7 @@ class EEH_File extends EEH_Base implements EEHI_File
      * @return string the remote filepath (eg the filepath the filesystem method, eg
      *                               ftp or ssh, will use to access the folder
      */
-    public static function convert_local_filepath_to_remote_filepath($local_filepath)
+    public static function convert_local_filepath_to_remote_filepath(string $local_filepath): string
     {
         $wp_filesystem = EEH_File::_get_wp_filesystem($local_filepath);
         return str_replace(WP_CONTENT_DIR . '/', $wp_filesystem->wp_content_dir(), $local_filepath);
@@ -789,7 +799,7 @@ class EEH_File extends EEH_Base implements EEHI_File
      *                             Default false.
      * @return bool True on success, false on failure.
      */
-    public static function chmod($file, $mode = false, $recursive = false)
+    public static function chmod(string $file, $mode = false, bool $recursive = false): bool
     {
         $wp_filesystem = EEH_File::_get_wp_filesystem($file);
         return $wp_filesystem->chmod($file, $mode, $recursive);
@@ -802,7 +812,7 @@ class EEH_File extends EEH_Base implements EEHI_File
      * @param string $file Path to the file.
      * @return string Mode of the file (the last 3 digits).
      */
-    public static function permissions($file)
+    public static function permissions(string $file): string
     {
         $wp_filesystem = EEH_File::_get_wp_filesystem($file);
         return $wp_filesystem->getchmod($file);
@@ -815,7 +825,7 @@ class EEH_File extends EEH_Base implements EEHI_File
      * @param string $file Path to the file.
      * @return string|false Username of the owner on success, false on failure.
      */
-    public static function owner($file)
+    public static function owner(string $file)
     {
         $wp_filesystem = EEH_File::_get_wp_filesystem($file);
         return $wp_filesystem->owner($file);
@@ -828,7 +838,7 @@ class EEH_File extends EEH_Base implements EEHI_File
      * @param string $file Path to the file.
      * @return string|false The group on success, false on failure.
      */
-    public static function group($file)
+    public static function group(string $file)
     {
         $wp_filesystem = EEH_File::_get_wp_filesystem($file);
         return $wp_filesystem->group($file);
@@ -844,7 +854,7 @@ class EEH_File extends EEH_Base implements EEHI_File
      *                            Default false.
      * @return bool True on success, false on failure.
      */
-    public static function move($source, $destination, $overwrite = false)
+    public static function move(string $source, string $destination, bool $overwrite = false): bool
     {
         // throw new RuntimeException("source: {$source} && destination: {$destination}");
         $source      = EEH_File::validateFileForCopyOrMove($source);
@@ -883,14 +893,14 @@ class EEH_File extends EEH_Base implements EEHI_File
      * @param string $source_file
      * @return string
      */
-    private static function validateFileForCopyOrMove($source_file)
+    private static function validateFileForCopyOrMove(string $source_file): string
     {
         $full_source_path = EEH_File::standardise_directory_separators($source_file);
         if (! EEH_File::exists($full_source_path)) {
             if (defined('WP_DEBUG') && WP_DEBUG) {
                 $msg =
                     sprintf(
-                        __('The file located at "%2$s" is not readable or doesn\'t exist.', 'event_espresso'),
+                        esc_html__('The file located at "%2$s" is not readable or doesn\'t exist.', 'event_espresso'),
                         '',
                         $full_source_path
                     );
@@ -907,15 +917,15 @@ class EEH_File extends EEH_Base implements EEHI_File
      * @param string $destination_file
      * @return string
      */
-    private static function validateFolderForCopyOrMove($destination_file)
+    private static function validateFolderForCopyOrMove(string $destination_file): string
     {
         $full_dest_path = EEH_File::standardise_directory_separators($destination_file);
         $folder         = EEH_File::remove_filename_from_filepath($full_dest_path);
         EEH_File::ensure_folder_exists_and_is_writable($folder);
-        if (! EEH_File::verify_is_writable($folder, 'folder')) {
+        if (! EEH_File::verify_is_writable($folder)) {
             if (defined('WP_DEBUG') && WP_DEBUG) {
                 $msg = sprintf(
-                    __('The file located at "%2$s" is not writable.', 'event_espresso'),
+                    esc_html__('The file located at "%2$s" is not writable.', 'event_espresso'),
                     '',
                     $full_dest_path
                 );

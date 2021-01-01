@@ -31,7 +31,7 @@ class FullyQualifiedName
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      */
-    public function __construct($fully_qualified_name)
+    public function __construct(string $fully_qualified_name)
     {
         if (! is_string($fully_qualified_name)) {
             throw new InvalidDataTypeException(
@@ -53,7 +53,7 @@ class FullyQualifiedName
     /**
      * @return string
      */
-    public function string()
+    public function string(): string
     {
         return $this->fully_qualified_name;
     }
@@ -62,7 +62,7 @@ class FullyQualifiedName
     /**
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->fully_qualified_name;
     }
