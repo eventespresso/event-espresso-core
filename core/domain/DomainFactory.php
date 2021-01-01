@@ -29,23 +29,39 @@ class DomainFactory
 
 
     /**
-     * @param FullyQualifiedName $domain_fqcn       [required] Fully Qualified Class Name for the Domain class
-     * @param array              $arguments         [required] array of arguments to be passed to the Domain class
-     *                                              constructor. Must at least include the following two value objects:
-     *                                              array(
-     *                                              EventEspresso\core\domain\values\FilePath $plugin_file
-     *                                              EventEspresso\core\domain\values\Version $version
-     *                                              )
+     * @param string $domain_fqcn       [required] Fully Qualified Class Name for the Domain class
+     * @param string $main_file         [required] path to the main plugin file
+     * @param string $version           [required] version string for the plugin
      * @return DomainInterface
      * @throws DomainException
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public static function getShared(FullyQualifiedName $domain_fqcn, array $arguments)
+    public static function create(string $domain_fqcn, string $main_file, string $version): DomainInterface
     {
-        $fqcn = $domain_fqcn->string();
-        return DomainFactory::getDomain($fqcn, $arguments);
+        $fqcn = new FullyQualifiedName($domain_fqcn);
+        return DomainFactory::getDomain($fqcn->string(), [$main_file, $version]);
+    }
+
+
+    /**
+     * @param FullyQualifiedName $domain_fqcn   [required] Fully Qualified Class Name for the Domain class
+     * @param array              $arguments     [required] array of arguments to be passed to the Domain class
+     *                                          constructor. Must at least include the following two value objects:
+     *                                          [
+     *                                              EventEspresso\core\domain\values\FilePath $plugin_file
+     *                                              EventEspresso\core\domain\values\Version $version
+     *                                          ]
+     * @return DomainInterface
+     * @throws DomainException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    public static function getShared(FullyQualifiedName $domain_fqcn, array $arguments): DomainInterface
+    {
+        return DomainFactory::getDomain($domain_fqcn->string(), $arguments);
     }
 
 
@@ -57,7 +73,7 @@ class DomainFactory
      * @throws InvalidFilePathException
      * @throws InvalidInterfaceException
      */
-    public static function getEventEspressoCoreDomain()
+    public static function getEventEspressoCoreDomain(): DomainInterface
     {
         $fqcn = 'EventEspresso\core\domain\Domain';
         if (! isset(DomainFactory::$domains[ $fqcn ])) {
@@ -72,7 +88,7 @@ class DomainFactory
      * @param array  $arguments
      * @return DomainInterface
      */
-    private static function getDomain($fqcn, array $arguments)
+    private static function getDomain(string $fqcn, array $arguments): DomainInterface
     {
         if (! isset(DomainFactory::$domains[ $fqcn ])) {
             if (! isset($arguments[0], $arguments[1])) {
