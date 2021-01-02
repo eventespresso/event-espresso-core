@@ -13,34 +13,46 @@ class EE_Register_Model_Extensions implements EEI_Plugin_API
 {
 
     protected static $_registry;
-    protected static $_extensions = array();
+
+    protected static $_extensions = [];
+
 
     /**
      * register method for setting up model extensions
      *
-     * @param string $model_id unique id for the extensions being setup
-     * @param array  $config {
+     * @param string $model_id              unique id for the extensions being setup
+     * @param array  $config                {
+     * @return bool
      * @throws EE_Error
      * @type  array  $model_extension_paths array of folders containing DB model extensions, where each file follows
-     *        the models naming convention, which is: EEME_{your_plugin_slug}_model_name_extended}.model_ext.php. Where
-     *        your_plugin_slug} is really anything you want (but something having to do with your addon, like
-     *        'Calendar' or '3D_View') and model_name_extended} is the model extended. The class contained in teh file
-     *        should extend EEME_Base_{model_name_extended}.model_ext.php. Where {your_plugin_slug} is really anything
-     *        you want (but something having to do with your addon, like 'Calendar' or '3D_View') and
-     *        {model_name_extended} is the model extended. The class contained in teh file should extend EEME_Base
+     *                                      the models naming convention, which is:
+     *                                      EEME_{your_plugin_slug}_model_name_extended}.model_ext.php. Where
+     *                                      your_plugin_slug} is really anything you want (but something having to do
+     *                                      with your addon, like
+     *                                      'Calendar' or '3D_View') and model_name_extended} is the model extended.
+     *                                      The class contained in teh file should extend
+     *                                      EEME_Base_{model_name_extended}.model_ext.php. Where {your_plugin_slug} is
+     *                                      really anything you want (but something having to do with your addon, like
+     *                                      'Calendar' or '3D_View') and
+     *                                      {model_name_extended} is the model extended. The class contained in teh
+     *                                      file should extend EEME_Base
      * @type array   $class_extension_paths array of folders containing DB class extensions, where each file follows
-     *       the model class extension naming convention, which is:
-     *       EEE_{your_plugin_slug}_model_name_extended}.class_ext.php. Where your_plugin_slug} is something like
-     *       'Calendar','MailChimp',etc, and model_name_extended} is the name of the model extended, eg
-     *       'Attendee','Event',etc. The class contained in the file should extend
-     *       EEE_Base_Class._{model_name_extended}.class_ext.php. Where {your_plugin_slug} is something like
-     *       'Calendar','MailChimp',etc, and {model_name_extended} is the name of the model extended, eg
-     *       'Attendee','Event',etc. The class contained in the file should extend EEE_Base_Class.
+     *                                      the model class extension naming convention, which is:
+     *                                      EEE_{your_plugin_slug}_model_name_extended}.class_ext.php. Where
+     *                                      your_plugin_slug} is something like
+     *                                      'Calendar','MailChimp',etc, and model_name_extended} is the name of the
+     *                                      model extended, eg
+     *                                      'Attendee','Event',etc. The class contained in the file should extend
+     *                                      EEE_Base_Class._{model_name_extended}.class_ext.php. Where
+     *                                      {your_plugin_slug} is something like
+     *                                      'Calendar','MailChimp',etc, and {model_name_extended} is the name of the
+     *                                      model extended, eg
+     *                                      'Attendee','Event',etc. The class contained in the file should extend
+     *                                      EEE_Base_Class.
      *                                      }
      *
-     * @return void
      */
-    public static function register($model_id = null, $config = array())
+    public static function register(string $model_id = '', array $config = []): bool
     {
         // required fields MUST be present, so let's make sure they are.
         if (empty($model_id)
@@ -57,7 +69,7 @@ class EE_Register_Model_Extensions implements EEI_Plugin_API
 
         // make sure we don't register twice
         if (isset(self::$_registry[ $model_id ])) {
-            return;
+            return true;
         }
         // check correct loading
         if (! did_action('AHEE__EE_System__load_espresso_addons') || did_action('AHEE__EE_Admin__loaded')) {
@@ -77,8 +89,8 @@ class EE_Register_Model_Extensions implements EEI_Plugin_API
             );
         }
 
-        self::$_registry[ $model_id ] = $config;
-        self::$_extensions[ $model_id ] = array();
+        self::$_registry[ $model_id ]   = $config;
+        self::$_extensions[ $model_id ] = [];
 
         if (isset($config['model_extension_paths'])) {
             require_once(EE_LIBRARIES . 'plugin_api/db/EEME_Base.lib.php');
@@ -110,6 +122,7 @@ class EE_Register_Model_Extensions implements EEI_Plugin_API
                 sprintf(__("The key '%s' is not a known key for registering a model", "event_espresso"), $unknown_key)
             );
         }
+        return true;
     }
 
 
@@ -118,7 +131,7 @@ class EE_Register_Model_Extensions implements EEI_Plugin_API
      *
      * @param string $model_id
      */
-    public static function deregister($model_id = null)
+    public static function deregister(string $model_id = '')
     {
         if (isset(self::$_registry[ $model_id ])) {
             unset(self::$_registry[ $model_id ]);
