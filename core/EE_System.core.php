@@ -595,10 +595,10 @@ final class EE_System implements ResettableInterface
             $previous_version_parts[1],
             $current_version_parts[0],
             $current_version_parts[1]
-       ) && (
-           $previous_version_parts[0] !== $current_version_parts[0]
-           || $previous_version_parts[1] !== $current_version_parts[1]
-       );
+        ) && (
+            $previous_version_parts[0] !== $current_version_parts[0]
+            || $previous_version_parts[1] !== $current_version_parts[1]
+        );
     }
 
 
@@ -633,7 +633,8 @@ final class EE_System implements ResettableInterface
         array $activation_history,
         string $activation_indicator_option_name,
         string $current_version
-    ): int {
+    ): int
+    {
         $version_change = self::compareVersionWithPrevious($activation_history, $current_version);
         $is_activation  = get_option($activation_indicator_option_name, false);
         $req_type       = self::getRequestType($activation_history, $version_change, $is_activation);
@@ -652,7 +653,8 @@ final class EE_System implements ResettableInterface
      * @return int
      * @since $VID:$
      */
-    private static function getRequestType(array $activation_history, int $version_change, bool $is_activation): int {
+    private static function getRequestType(array $activation_history, int $version_change, bool $is_activation): int
+    {
         // if no previous activation history exists, then this is a brand new install
         if (empty($activation_history)) {
             return EE_System::req_type_new_activation;

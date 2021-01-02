@@ -55,7 +55,7 @@ class EE_Register_Personal_Data_Eraser implements EEI_Plugin_API
      */
     public static function addErasers(array $erasers): array
     {
-        return array_merge( $erasers, ...self::$erasers );
+        return array_merge($erasers, ...self::$erasers);
     }
 }
 // End of file EE_Register_Personal_Data_Eraser.lib.php
