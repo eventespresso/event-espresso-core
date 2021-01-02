@@ -6,6 +6,7 @@ use EventEspresso\core\domain\RequiresDomainInterface;
 use EventEspresso\core\exceptions\ExceptionLogger;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderInterface;
 
 /**
  * Class EE_Register_Addon
@@ -52,6 +53,11 @@ class EE_Register_Addon implements EEI_Plugin_API
         'Multi_Event_Registration' => '2.0.11.rc.002',
         'Promotions'               => '1.0.0.rc.084',
     ];
+
+    /**
+     * @var LoaderInterface
+     */
+    protected static $loader;
 
 
     /**
@@ -254,6 +260,9 @@ class EE_Register_Addon implements EEI_Plugin_API
      */
     public static function register(string $addon_name = '', array $setup_args = []): bool
     {
+        if (!self::$loader instanceof LoaderInterface) {
+            self::$loader = EventEspresso\core\services\loaders\LoaderFactory::getLoader();
+        }
         // make sure this was called in the right place!
         if (! did_action('activate_plugin')
             && (
@@ -1017,8 +1026,7 @@ class EE_Register_Addon implements EEI_Plugin_API
      */
     private static function _load_and_init_addon_class(string $addon_name)
     {
-        $loader = EventEspresso\core\services\loaders\LoaderFactory::getLoader();
-        $addon  = $loader->getShared(
+        $addon  = self::$loader->getShared(
             self::$_settings[ $addon_name ]['class_name'],
             ['EE_Registry::create(addon)' => true]
         );
@@ -1032,7 +1040,7 @@ class EE_Register_Addon implements EEI_Plugin_API
         }
         // setter inject dep map if required
         if ($addon instanceof RequiresDependencyMapInterface && $addon->dependencyMap() === null) {
-            $addon->setDependencyMap($loader->getShared('EE_Dependency_Map'));
+            $addon->setDependencyMap(self::$loader->getShared('EE_Dependency_Map'));
         }
         // setter inject domain if required
         if ($addon instanceof RequiresDomainInterface
@@ -1044,7 +1052,7 @@ class EE_Register_Addon implements EEI_Plugin_API
                 : null;
             // or construct one using Domain FQCN
             if ($domain === null && self::$_settings[ $addon_name ]['domain_fqcn'] !== '') {
-                $domain = $loader->getShared(
+                $domain = self::$loader->getShared(
                     self::$_settings[ $addon_name ]['domain_fqcn'],
                     [
                         new EventEspresso\core\domain\values\FilePath(
