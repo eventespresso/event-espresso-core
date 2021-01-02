@@ -318,7 +318,7 @@ class EE_System_Test extends EE_UnitTestCase{
 	 */
 	function test__new_version_is_higher(){
 		$class = new ReflectionClass("EE_System");
-		$method = $class->getMethod("_new_version_is_higher");
+		$method = $class->getMethod("compareVersionWithPrevious");
 		$method->setAccessible(true);
 
 		$current_version = '4.7.0.rc.000';

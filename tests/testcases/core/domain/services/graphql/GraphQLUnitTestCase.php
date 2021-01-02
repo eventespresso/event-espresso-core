@@ -39,9 +39,4 @@ class GraphQLUnitTestCase extends EE_UnitTestCase
             return;
         }
     }
-
-    public function testDumb()
-    {
-        $this->assertTrue(true);
-    }
 }
