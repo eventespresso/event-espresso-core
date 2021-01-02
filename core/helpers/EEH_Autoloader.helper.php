@@ -10,8 +10,6 @@ use EventEspresso\core\services\Benchmark;
  * @package     Event Espresso
  * @subpackage  /helpers/EEH_Autoloader.helper.php
  * @author      Darren Ethier
- *
- * ------------------------------------------------------------------------
  */
 class EEH_Autoloader extends EEH_Base
 {
@@ -21,15 +19,13 @@ class EEH_Autoloader extends EEH_Base
      *    instance of the EE_System object
      *
      * @var    $_instance
-     * @access    private
      */
     private static $_instance = null;
 
     /**
-    *   $_autoloaders
-    *   @var array $_autoloaders
-    *   @access     private
-    */
+     *   $_autoloaders
+     * @var array $_autoloaders
+     */
     private static $_autoloaders;
 
     /**
@@ -38,33 +34,27 @@ class EEH_Autoloader extends EEH_Base
      * set to "all" to display both
      *
      * @var string $debug
-     * @access    private
      */
     public static $debug = false;
 
 
     /**
-     *    class constructor
-     *
-     * @access    private
      * @throws EE_Error
      */
     private function __construct()
     {
         if (EEH_Autoloader::$_autoloaders === null) {
-            EEH_Autoloader::$_autoloaders = array();
+            EEH_Autoloader::$_autoloaders = [];
             $this->_register_custom_autoloaders();
-            spl_autoload_register(array( $this, 'espresso_autoloader' ));
+            spl_autoload_register([$this, 'espresso_autoloader']);
         }
     }
 
 
-
     /**
-     * @access public
      * @return EEH_Autoloader
      */
-    public static function instance()
+    public static function instance(): EEH_Autoloader
     {
         // check if class object is instantiated
         if (! EEH_Autoloader::$_instance instanceof EEH_Autoloader) {
@@ -74,15 +64,11 @@ class EEH_Autoloader extends EEH_Base
     }
 
 
-
     /**
-     *    espresso_autoloader
-     *
-     * @access    public
      * @param   $class_name
-     * @internal  param $className
-     * @internal  param string $class_name - simple class name ie: session
      * @return  void
+     * @internal  param string $class_name - simple class name ie: session
+     * @internal  param $className
      */
     public static function espresso_autoloader($class_name)
     {
@@ -92,19 +78,15 @@ class EEH_Autoloader extends EEH_Base
     }
 
 
-
     /**
-     *    register_autoloader
-     *
-     * @access    public
      * @param array | string $class_paths - array of key => value pairings between class names and paths
      * @param bool           $read_check  true if we need to check whether the file is readable or not.
-     * @param bool           $debug **deprecated**
+     * @param bool           $debug       **deprecated**
      * @throws EE_Error
      */
     public static function register_autoloader($class_paths, $read_check = true, $debug = false)
     {
-        $class_paths = is_array($class_paths) ? $class_paths : array( $class_paths );
+        $class_paths = is_array($class_paths) ? $class_paths : [$class_paths];
         foreach ($class_paths as $class => $path) {
             // skip all files that are not PHP
             if (substr($path, strlen($path) - 3) !== 'php') {
@@ -113,19 +95,41 @@ class EEH_Autoloader extends EEH_Base
             // don't give up! you gotta...
             // get some class
             if (empty($class)) {
-                throw new EE_Error(sprintf(__('No Class name was specified while registering an autoloader for the following path: %s.', 'event_espresso'), $path));
+                throw new EE_Error(
+                    sprintf(
+                        __(
+                            'No Class name was specified while registering an autoloader for the following path: %s.',
+                            'event_espresso'
+                        ),
+                        $path
+                    )
+                );
             }
             // one day you will find the path young grasshopper
             if (empty($path)) {
-                throw new EE_Error(sprintf(__('No path was specified while registering an autoloader for the %s class.', 'event_espresso'), $class));
+                throw new EE_Error(
+                    sprintf(
+                        __('No path was specified while registering an autoloader for the %s class.', 'event_espresso'),
+                        $class
+                    )
+                );
             }
             // is file readable ?
             if ($read_check && ! is_readable($path)) {
-                throw new EE_Error(sprintf(__('The file for the %s class could not be found or is not readable due to file permissions. Please ensure the following path is correct: %s', 'event_espresso'), $class, $path));
+                throw new EE_Error(
+                    sprintf(
+                        __(
+                            'The file for the %s class could not be found or is not readable due to file permissions. Please ensure the following path is correct: %s',
+                            'event_espresso'
+                        ),
+                        $class,
+                        $path
+                    )
+                );
             }
             if (! isset(EEH_Autoloader::$_autoloaders[ $class ])) {
-                EEH_Autoloader::$_autoloaders[ $class ] = str_replace(array( '/', '\\' ), '/', $path);
-                if (EE_DEBUG && ( EEH_Autoloader::$debug === 'paths' || EEH_Autoloader::$debug === 'all' || $debug )) {
+                EEH_Autoloader::$_autoloaders[ $class ] = str_replace(['/', '\\'], '/', $path);
+                if (EE_DEBUG && (EEH_Autoloader::$debug === 'paths' || EEH_Autoloader::$debug === 'all' || $debug)) {
                     EEH_Debug_Tools::printr(EEH_Autoloader::$_autoloaders[ $class ], $class, __FILE__, __LINE__);
                 }
             }
@@ -133,24 +137,16 @@ class EEH_Autoloader extends EEH_Base
     }
 
 
-
-
     /**
-     *  get_autoloaders
-     *
-     *  @access public
-     *  @return array
+     * @return array
      */
-    public static function get_autoloaders()
+    public static function get_autoloaders(): array
     {
         return EEH_Autoloader::$_autoloaders;
     }
 
 
     /**
-     *  register core, model and class 'autoloaders'
-     *
-     * @access private
      * @return void
      * @throws EE_Error
      */
@@ -172,9 +168,6 @@ class EEH_Autoloader extends EEH_Base
 
 
     /**
-     *    register core, model and class 'autoloaders'
-     *
-     * @access public
      * @throws EE_Error
      */
     public static function register_helpers_autoloaders()
@@ -183,13 +176,8 @@ class EEH_Autoloader extends EEH_Base
     }
 
 
-
-
     /**
-     *  register core, model and class 'autoloaders'
-     *
-     *  @access public
-     *  @return void
+     * @return void
      */
     public static function register_form_sections_autoloaders()
     {
@@ -198,9 +186,6 @@ class EEH_Autoloader extends EEH_Base
 
 
     /**
-     *  register core, model and class 'autoloaders'
-     *
-     * @access public
      * @return void
      * @throws EE_Error
      */
@@ -211,9 +196,6 @@ class EEH_Autoloader extends EEH_Base
 
 
     /**
-     *  register core, model and class 'autoloaders'
-     *
-     * @access public
      * @return void
      * @throws EE_Error
      */
@@ -224,9 +206,6 @@ class EEH_Autoloader extends EEH_Base
 
 
     /**
-     *  register template part 'autoloaders'
-     *
-     * @access public
      * @return void
      * @throws EE_Error
      */
@@ -246,30 +225,32 @@ class EEH_Autoloader extends EEH_Base
     }
 
 
-
     /**
      * Assumes all the files in this folder have the normal naming scheme (namely that their classname
      * is the file's name, plus ".whatever.php".) and adds each of them to the autoloader list.
-     * If that's not the case, you'll need to improve this function or just use EEH_File::get_classname_from_filepath_with_standard_filename() directly.
-     * Yes this has to scan the directory for files, but it only does it once -- not on EACH
-     * time the autoloader is used
+     * If that's not the case, you'll need to improve this function or just use
+     * EEH_File::get_classname_from_filepath_with_standard_filename() directly. Yes this has to scan the directory for
+     * files, but it only does it once -- not on EACH time the autoloader is used
      *
      * @param string $folder name, with or without trailing /, doesn't matter
      * @param bool   $recursive
      * @param bool   $debug  **deprecated**
      * @throws EE_Error
      */
-    public static function register_autoloaders_for_each_file_in_folder($folder, $recursive = false, $debug = false)
-    {
+    public static function register_autoloaders_for_each_file_in_folder(
+        string $folder,
+        bool $recursive = false,
+        bool $debug = false
+    ) {
         if (EEH_Autoloader::$debug === 'times' || EEH_Autoloader::$debug === 'all' || $debug) {
             Benchmark::startTimer(basename($folder));
         }
         // make sure last char is a /
-        $folder .= $folder[ strlen($folder)-1 ] !== '/' ? '/' : '';
-        $class_to_filepath_map = array();
-        $exclude = array( 'index' );
+        $folder .= $folder[ strlen($folder) - 1 ] !== '/' ? '/' : '';
+        $class_to_filepath_map = [];
+        $exclude = ['index'];
         // get all the files in that folder that end in php
-        $filepaths = glob($folder.'*');
+        $filepaths = glob($folder . '*');
 
         if (empty($filepaths)) {
             return;
@@ -293,16 +274,13 @@ class EEH_Autoloader extends EEH_Base
     }
 
 
-
     /**
-     * add_alias
      * register additional autoloader based on variation of the classname for an existing autoloader
      *
-     * @access    public
      * @param string $class_name - simple class name ie: EE_Session
-     * @param string $alias - variation on class name ie: EE_session, session, etc
+     * @param string $alias      - variation on class name ie: EE_session, session, etc
      */
-    public static function add_alias($class_name, $alias)
+    public static function add_alias(string $class_name, string $alias)
     {
         if (isset(EEH_Autoloader::$_autoloaders[ $class_name ])) {
             EEH_Autoloader::$_autoloaders[ $alias ] = EEH_Autoloader::$_autoloaders[ $class_name ];
