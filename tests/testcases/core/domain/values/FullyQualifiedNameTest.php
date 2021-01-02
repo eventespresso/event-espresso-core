@@ -4,6 +4,7 @@ namespace EventEspresso\tests\testcases\core\domain\values;
 
 use EE_UnitTestCase;
 use EventEspresso\core\domain\values\FullyQualifiedName;
+use stdClass;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -30,8 +31,8 @@ class FullyQualifiedNameTest extends EE_UnitTestCase
 
     public function test_constructor_with_invalid_data_type()
     {
-        $this->setExceptionExpected('EventEspresso\core\exceptions\InvalidDataTypeException');
-        new FullyQualifiedName(1234);
+        $this->setExceptionExpected('TypeError');
+        new FullyQualifiedName(new stdClass());
     }
 
 

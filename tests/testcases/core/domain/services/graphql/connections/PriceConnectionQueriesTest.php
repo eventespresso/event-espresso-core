@@ -15,8 +15,8 @@ class PriceConnectionQueriesTest extends BaseQueriesTest
     public function setUp()
     {
         $this->model_name = 'Price';
-        parent::setUp();
         $this->model = EEM_Price::instance();
+        parent::setUp();
     }
 
     public function pricesQuery($variables)
