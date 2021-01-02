@@ -114,7 +114,7 @@ class EE_Register_Capabilities implements EEI_Plugin_API
         foreach (self::$_registry as $cap_reference => $caps_and_cap_map) {
             $caps[] = $caps_and_cap_map['caps'];
         }
-        return array_merge_recursive($incoming_caps, $caps);
+        return array_merge_recursive($incoming_caps, ...$caps);
     }
 
 
