@@ -12,7 +12,6 @@ class RegisterAddon
     /**
      * @param AddonApiV1 $addon
      * @throws EE_Error
-     * @throws ReflectionException
      */
     public function register(AddonApiV1 $addon)
     {

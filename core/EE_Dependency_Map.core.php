@@ -753,6 +753,7 @@ class EE_Dependency_Map
                 'EventEspresso\core\domain\services\capabilities\CapabilitiesChecker' => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\services\addon\AddonManager' => [
+                'EventEspresso\core\services\addon\AddonCollection'              => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\Psr4Autoloader'                              => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\addon\api\v1\RegisterAddon'         => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\addon\api\IncompatibleAddonHandler' => EE_Dependency_Map::load_from_cache,
