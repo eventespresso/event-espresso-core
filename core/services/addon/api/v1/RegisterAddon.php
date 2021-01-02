@@ -5,7 +5,6 @@ namespace EventEspresso\core\services\addon\api\v1;
 use EE_Error;
 use EE_Register_Addon;
 use EventEspresso\core\services\addon\api\v1\AddonApi as AddonApiV1;
-use ReflectionException;
 
 class RegisterAddon
 {
@@ -31,5 +30,4 @@ class RegisterAddon
             ]
         );
     }
-
 }

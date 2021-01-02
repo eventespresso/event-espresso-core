@@ -278,22 +278,22 @@ class EEH_File extends EEH_Base implements EEHI_File
             $type_of_file = ! empty($type_of_file) ? $type_of_file . ' ' : '';
             $type_of_file .= ! empty($type_of_file) ? 'file' : 'folder';
             return ' ' . sprintf(
-                    esc_html__(
-                        'File permissions for the requested %1$s are currently set at "%2$s". The recommended permissions are 644 for files and 755 for folders.',
-                        'event_espresso'
-                    ),
-                    $type_of_file,
-                    $perms
-                );
+                esc_html__(
+                    'File permissions for the requested %1$s are currently set at "%2$s". The recommended permissions are 644 for files and 755 for folders.',
+                    'event_espresso'
+                ),
+                $type_of_file,
+                $perms
+            );
         } else {
             // file exists but file permissions could not be read ?!?!
             return ' ' . sprintf(
-                    esc_html__(
-                        'Please ensure that the server and/or PHP configuration allows the current process to access the following file: "%s".',
-                        'event_espresso'
-                    ),
-                    $full_file_path
-                );
+                esc_html__(
+                    'Please ensure that the server and/or PHP configuration allows the current process to access the following file: "%s".',
+                    'event_espresso'
+                ),
+                $full_file_path
+            );
         }
     }
 

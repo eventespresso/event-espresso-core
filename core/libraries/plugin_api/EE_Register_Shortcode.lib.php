@@ -134,8 +134,10 @@ class EE_Register_Shortcode implements EEI_Plugin_API
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public static function instantiateAndAddToShortcodeCollection(CollectionInterface $shortcodes_collection
-    ): CollectionInterface {
+    public static function instantiateAndAddToShortcodeCollection(
+        CollectionInterface $shortcodes_collection
+    ): CollectionInterface
+    {
         foreach (self::$_settings as $settings) {
             if (! empty($settings['shortcode_fqcns'])) {
                 foreach ($settings['shortcode_fqcns'] as $shortcode_fqcn) {
