@@ -23,6 +23,10 @@ use ReflectionException;
  */
 class AddonManager
 {
+    /**
+     * @var AddonCollection
+     */
+    private $addons;
 
     /**
      * @var IncompatibleAddonHandler
@@ -48,17 +52,20 @@ class AddonManager
     /**
      * AddonManager constructor.
      *
+     * @param AddonCollection          $addons
      * @param Psr4Autoloader           $psr4_loader
      * @param RegisterV1Addon          $register_v1_addon
      * @param IncompatibleAddonHandler $incompatible_addon_handler
      * @param ThirdPartyPluginHandler  $third_party_plugin_handler
      */
     public function __construct(
+        AddonCollection $addons,
         Psr4Autoloader $psr4_loader,
         RegisterV1Addon $register_v1_addon,
         IncompatibleAddonHandler $incompatible_addon_handler,
         ThirdPartyPluginHandler $third_party_plugin_handler
     ) {
+        $this->addons                     = $addons;
         $this->psr4_loader                = $psr4_loader;
         $this->register_v1_addon          = $register_v1_addon;
         $this->incompatible_addon_handler = $incompatible_addon_handler;
@@ -87,12 +94,13 @@ class AddonManager
             // legacy add-on API
             do_action('AHEE__EE_System__load_espresso_addons');
             // new add-on API that uses versioning
-            $addons = apply_filters(
-                'FHEE__EventEspresso_core_services_addon_AddonManager__initialize__addons',
-                [],
+            do_action(
+                'AHEE__EventEspresso_core_services_addon_AddonManager__initialize__addons',
+                $this->addons,
                 espresso_version()
             );
-            foreach ($addons as $addon) {
+            // addons are responsible for loading their AddonApiVersion into the AddonCollection
+            foreach ($this->addons as $addon) {
                 if ($addon instanceof AddonApiVersion) {
                     $this->registerAddon($addon);
                 }
@@ -108,7 +116,6 @@ class AddonManager
     /**
      * @param AddonApiVersion $addon
      * @throws EE_Error
-     * @throws ReflectionException
      */
     private function registerAddon(AddonApiVersion $addon)
     {
