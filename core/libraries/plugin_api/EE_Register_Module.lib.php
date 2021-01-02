@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class EE_Register_Module
  *
@@ -19,24 +20,23 @@ class EE_Register_Module implements EEI_Plugin_API
      *
      * @var array
      */
-    protected static $_settings = array();
+    protected static $_settings = [];
 
 
     /**
      *    Method for registering new EED_Modules
      *
-     * @since    4.3.0
-     * @param string $module_id a unique identifier for this set of modules Required.
-     * @param  array $setup_args an array of full server paths to folders containing any EED_Modules, or to the
+     * @param string $module_id  a unique identifier for this set of modules Required.
+     * @param array  $setup_args an array of full server paths to folders containing any EED_Modules, or to the
      *                           EED_Module files themselves Required.
      * @type    array module_paths    an array of full server paths to folders containing any EED_Modules, or to the
-     *          EED_Module files themselves
+     *                           EED_Module files themselves
+     * @return bool
      * @throws EE_Error
-     * @return void
+     * @since    4.3.0
      */
-    public static function register($module_id = null, $setup_args = array())
+    public static function register(string $module_id = '', array $setup_args = []): bool
     {
-
         // required fields MUST be present, so let's make sure they are.
         if (empty($module_id) || ! is_array($setup_args) || empty($setup_args['module_paths'])) {
             throw new EE_Error(
@@ -49,7 +49,7 @@ class EE_Register_Module implements EEI_Plugin_API
 
         // make sure we don't register twice
         if (isset(self::$_settings[ $module_id ])) {
-            return;
+            return true;
         }
 
         // make sure this was called in the right place!
@@ -66,44 +66,46 @@ class EE_Register_Module implements EEI_Plugin_API
             );
         }
         // setup $_settings array from incoming values.
-        self::$_settings[ $module_id ] = array(
+        self::$_settings[ $module_id ] = [
             // array of full server paths to any EED_Modules used by the module
-            'module_paths' => isset($setup_args['module_paths']) ? (array) $setup_args['module_paths'] : array(),
-        );
+            'module_paths' => isset($setup_args['module_paths']) ? (array) $setup_args['module_paths'] : [],
+        ];
         // add to list of modules to be registered
         add_filter(
             'FHEE__EE_Config__register_modules__modules_to_register',
-            array('EE_Register_Module', 'add_modules')
+            ['EE_Register_Module', 'add_modules']
         );
+        return true;
     }
 
 
     /**
      * Filters the list of modules to add ours.
      * and they're just full filepaths to FOLDERS containing a module class file. Eg.
-     * array('espresso_monkey'=>'/public_html/wonder-site/wp-content/plugins/ee4/shortcodes/espresso_monkey',...)
+     * array('espresso_monkey'=>'/public_html/wonder-site/wp-content/plugins/ee4/shortcodes/espresso_monkey', etc)
      *
      * @param array $modules_to_register array of paths to all modules that require registering
      * @return array
      */
-    public static function add_modules($modules_to_register)
+    public static function add_modules(array $modules_to_register): array
     {
+        $module_paths = [];
         foreach (self::$_settings as $settings) {
-            $modules_to_register = array_merge($modules_to_register, $settings['module_paths']);
+            $module_paths[] = $settings['module_paths'];
         }
-        return $modules_to_register;
+        return array_merge($modules_to_register, ...$module_paths);
     }
 
 
     /**
      * This deregisters a module that was previously registered with a specific $module_id.
      *
-     * @since    4.3.0
-     *
      * @param string $module_id the name for the module that was previously registered
      * @return void
+     * @since    4.3.0
+     *
      */
-    public static function deregister($module_id = null)
+    public static function deregister(string $module_id = '')
     {
         if (isset(self::$_settings[ $module_id ])) {
             unset(self::$_settings[ $module_id ]);

@@ -25,15 +25,15 @@ class EE_Register_Widget implements EEI_Plugin_API
     /**
      *    Method for registering new EED_Widgets
      *
-     * @since    4.3.0
      * @param string $widget_id a unique identifier for this set of widgets
      * @param  array $setup_args an array of arguments provided for registering widgets
      * @type array widget_paths        an array of full server paths to folders containing any EED_Widgets, or to the
      *       EED_Widget files themselves
-     * @throws EE_Error
-     * @return void
+     * @return bool
+     *@throws EE_Error
+     * @since    4.3.0
      */
-    public static function register($widget_id = null, $setup_args = array())
+    public static function register(string $widget_id = '', array $setup_args = array()): bool
     {
 
         // required fields MUST be present, so let's make sure they are.
@@ -48,7 +48,7 @@ class EE_Register_Widget implements EEI_Plugin_API
 
         // make sure we don't register twice
         if (isset(self::$_settings[ $widget_id ])) {
-            return;
+            return true;
         }
 
 
@@ -75,23 +75,25 @@ class EE_Register_Widget implements EEI_Plugin_API
             'FHEE__EE_Config__register_widgets__widgets_to_register',
             array('EE_Register_Widget', 'add_widgets')
         );
+        return true;
     }
 
 
     /**
      * Filters the list of widgets to add ours.
      * and they're just full filepaths to FOLDERS containing a shortcode class file. Eg.
-     * array('espresso_monkey'=>'/public_html/wonder-site/wp-content/plugins/ee4/widgets/espresso_monkey',...)
+     * array('espresso_monkey'=>'/public_html/wonder-site/wp-content/plugins/ee4/widgets/espresso_monkey', etc)
      *
      * @param array $widgets_to_register array of paths to all widgets that require registering
      * @return array
      */
-    public static function add_widgets($widgets_to_register = array())
+    public static function add_widgets(array $widgets_to_register = array()): array
     {
+        $widget_paths = [];
         foreach (self::$_settings as $settings) {
-            $widgets_to_register = array_merge($widgets_to_register, $settings['widget_paths']);
+            $widget_paths[] = $settings['widget_paths'];
         }
-        return $widgets_to_register;
+        return array_merge($widgets_to_register, ...$widget_paths);
     }
 
 
@@ -103,10 +105,8 @@ class EE_Register_Widget implements EEI_Plugin_API
      * @param string $widget_id the name for the widget that was previously registered
      * @return void
      */
-    public static function deregister($widget_id = null)
+    public static function deregister(string $widget_id = '')
     {
-        if (isset(self::$_settings[ $widget_id ])) {
-            unset(self::$_settings[ $widget_id ]);
-        }
+        unset(self::$_settings[ $widget_id ]);
     }
 }

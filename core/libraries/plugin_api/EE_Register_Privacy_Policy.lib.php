@@ -18,7 +18,7 @@ class EE_Register_Privacy_Policy implements EEI_Plugin_API
      *
      * @var array keys are plugin_ids, and values are an array of FQCNs or FQCNs
      */
-    protected static $privacy_policies = array();
+    protected static $privacy_policies = [];
 
 
     /*
@@ -26,41 +26,36 @@ class EE_Register_Privacy_Policy implements EEI_Plugin_API
      * @param array $FQNSs can be the fully qualified namespaces each containing only privacy policies,
      *              OR fully qualified class names of privacy policies
      */
-    public static function register($plugin_id = null, $FQCNs = array())
+    public static function register(string $plugin_id = '', array $FQCNs = []): bool
     {
         self::$privacy_policies[ $plugin_id ] = $FQCNs;
         // add to list of modules to be registered
         add_filter(
             'FHEE__EventEspresso_core_services_privacy_policy_PrivacyPolicyManager__privacy_policies',
-            array('EE_Register_Privacy_Policy', 'addPrivacyPolicies')
+            ['EE_Register_Privacy_Policy', 'addPrivacyPolicies']
         );
+        return true;
     }
 
 
     /**
-     * @param null $ID
+     * @param string $ID
      */
-    public static function deregister($ID = null)
+    public static function deregister(string $ID = '')
     {
         unset(self::$privacy_policies[ $ID ]);
     }
 
 
     /**
-     * Adds our privacy policiy generators registered by add-ons
+     * Adds our privacy policy generators registered by add-ons
      *
      * @param string[] $privacy_policies
      * @return string[]
      */
-    public static function addPrivacyPolicies(array $privacy_policies)
+    public static function addPrivacyPolicies(array $privacy_policies): array
     {
-        foreach (self::$privacy_policies as $privacy_policies_per_addon) {
-            $privacy_policies = array_merge(
-                $privacy_policies,
-                $privacy_policies_per_addon
-            );
-        }
-        return $privacy_policies;
+        return array_merge($privacy_policies, ...self::$privacy_policies);
     }
 }
 // End of file EE_Register_Privacy_Policy.lib.php
