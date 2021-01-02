@@ -136,8 +136,7 @@ class EE_Register_Shortcode implements EEI_Plugin_API
      */
     public static function instantiateAndAddToShortcodeCollection(
         CollectionInterface $shortcodes_collection
-    ): CollectionInterface
-    {
+    ): CollectionInterface {
         foreach (self::$_settings as $settings) {
             if (! empty($settings['shortcode_fqcns'])) {
                 foreach ($settings['shortcode_fqcns'] as $shortcode_fqcn) {

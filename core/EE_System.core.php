@@ -633,8 +633,7 @@ final class EE_System implements ResettableInterface
         array $activation_history,
         string $activation_indicator_option_name,
         string $current_version
-    ): int
-    {
+    ): int {
         $version_change = self::compareVersionWithPrevious($activation_history, $current_version);
         $is_activation  = get_option($activation_indicator_option_name, false);
         $req_type       = self::getRequestType($activation_history, $version_change, $is_activation);
