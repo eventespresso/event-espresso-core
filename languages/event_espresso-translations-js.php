@@ -136,7 +136,7 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/EventDescription.tsx:30
 	__( 'Event Description', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/ActiveStatus.tsx:23
+	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/ActiveStatus.tsx:22
 	__( 'Active status', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/AltRegPage.tsx:14
@@ -145,10 +145,10 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/DefaultRegistrationStatus.tsx:15
 	__( 'Default Registration Status', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/Donations.tsx:8
+	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/Donations.tsx:9
 	__( 'Donations Enabled', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/Donations.tsx:8
+	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/Donations.tsx:9
 	__( 'Donations Disabled', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/EventManager.tsx:16
