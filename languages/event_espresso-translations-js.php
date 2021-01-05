@@ -1285,7 +1285,7 @@ $generated_i18n_strings = array(
 	// Reference: packages/ui-components/src/CurrencyDisplay/CurrencyDisplay.tsx:34
 	__( 'free', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/DateTimeRangePicker/DateTimeRangePicker.tsx:81
+	// Reference: packages/ui-components/src/DateTimeRangePicker/DateTimeRangePicker.tsx:77
 	// Reference: packages/ui-components/src/Popover/PopoverForm/PopoverForm.tsx:43
 	__( 'save', 'event_espresso' ),
 
