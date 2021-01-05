@@ -128,4 +128,40 @@ jQuery(document).ready(function ($) {
 		$( this ).click();
 	} );
 
+
+	$('.display-tckt-slctr-tkt-details').on(
+		'click',
+		function () {
+			// get target element from "this" (the control element's) "rel" attribute
+			var target = $(this).attr("rel");
+			if (target.length) {
+				var $ticket_details_row = $('#' + target + '-dv').closest('.tckt-slctr-tkt-details-tr');
+				$ticket_details_row.removeClass('ee-hidden-ticket-tr');
+				if ($ticket_details_row.length) {
+					$ticket_details_row.removeClass('ee-hidden-ticket-tr');
+				}
+			}
+			e.preventDefault();
+			e.stopPropagation();
+			return false;
+		}
+	);
+
+	$('.hide-tckt-slctr-tkt-details').on(
+		'click',
+		function () {
+			// get target element from "this" (the control element's) "rel" attribute
+			var target = $(this).attr("rel");
+			if (target.length) {
+				var $ticket_details_row = $('#' + target + '-dv').closest('.tckt-slctr-tkt-details-tr');
+				if ($ticket_details_row.length){
+					$ticket_details_row.addClass('ee-hidden-ticket-tr');
+				}
+			}
+			e.preventDefault();
+			e.stopPropagation();
+			return false;
+		}
+	);
+
 });
