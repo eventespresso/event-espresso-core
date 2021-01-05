@@ -260,7 +260,7 @@ class EE_Register_Addon implements EEI_Plugin_API
      */
     public static function register(string $addon_name = '', array $setup_args = []): bool
     {
-        if (!self::$loader instanceof LoaderInterface) {
+        if (! self::$loader instanceof LoaderInterface) {
             self::$loader = EventEspresso\core\services\loaders\LoaderFactory::getLoader();
         }
         // make sure this was called in the right place!
@@ -1026,7 +1026,7 @@ class EE_Register_Addon implements EEI_Plugin_API
      */
     private static function _load_and_init_addon_class(string $addon_name)
     {
-        $addon  = self::$loader->getShared(
+        $addon = self::$loader->getShared(
             self::$_settings[ $addon_name ]['class_name'],
             ['EE_Registry::create(addon)' => true]
         );
