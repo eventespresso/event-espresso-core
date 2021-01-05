@@ -126,7 +126,7 @@ if (function_exists('espresso_version')) {
          */
         function espresso_plugin_deactivation()
         {
-            // Run WP GraphQL deactivation callback
+            // Run WP GraphQL deactivation callback.
             if (! class_exists('WPGraphQL')) {
                 require_once EE_THIRD_PARTY . 'wp-graphql/wp-graphql.php';
             }
