@@ -1,19 +1,20 @@
 name: Deploy to barista site
 
 on:
-  push:
-    branches: [barista]
+    push:
+        branches: [dev]
 
 jobs:
-  deploy-to-barista-site:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deploy via ssh
-        uses: garygrossgarten/github-action-ssh@release
-        with:
-          # the command is supposed to run in home directory of deploy user
-          command: source deploy-to-barista.sh "event-espresso-core"
-          host: ${{ secrets.SERVER_EE_DEVBOX_SITES_HOST }}
-          username: ${{ secrets.SERVER_EE_DEVBOX_SITES_USERNAME }}
-          passphrase: ${{ secrets.SERVER_EE_DEVBOX_SITES_PASSPHRASE }}
-          privateKey: ${{ secrets.SERVER_EE_DEVBOX_SITES_PRIVATE_KEY}}
+    deploy-to-barista-site:
+        runs-on: ubuntu-latest
+        name: Deploy to barista site
+        steps:
+            - name: Deploy via ssh
+              uses: garygrossgarten/github-action-ssh@release
+              with:
+                  # the command is supposed to run in home directory of deploy user
+                  command: source deploy-to-barista.sh "event-espresso-core"
+                  host: ${{ secrets.SERVER_EE_DEVBOX_SITES_HOST }}
+                  username: ${{ secrets.SERVER_EE_DEVBOX_SITES_USERNAME }}
+                  passphrase: ${{ secrets.SERVER_EE_DEVBOX_SITES_PASSPHRASE }}
+                  privateKey: ${{ secrets.SERVER_EE_DEVBOX_SITES_PRIVATE_KEY}}

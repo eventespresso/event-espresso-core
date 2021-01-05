@@ -1,10 +1,10 @@
-name: Build and Test
+name: Pull Request checks
 
 on:
-    # Run this workflow only if the PR is to barista branch
+    # Run this workflow only if the PR is to dev branch
     pull_request:
         branches:
-            - barista
+            - dev
 
 jobs:
     php-lint:
@@ -88,7 +88,12 @@ jobs:
               run: composer install --optimize-autoloader --prefer-dist
 
             - name: Install WP Tests
-              run: bash tests/bin/install-wp-tests.sh wordpress_test root root localhost latest
+              uses: eventespresso/actions/packages/install-wp-tests@main
+              with:
+                  database: wordpress_test
+                  username: root
+                  password: root
+                  host: localhost
 
             - name: Run PHP Unit Tests
               run: phpunit --configuration phpunit.xml
