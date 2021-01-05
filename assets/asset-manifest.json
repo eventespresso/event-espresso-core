@@ -1,9 +1,9 @@
 {
   "files": {
     "adapters.css": "/static/css/adapters.d7f96f47.css",
-    "adapters.js": "/static/js/adapters.06f9d230.js",
-    "adapters.js.map": "/static/js/adapters.06f9d230.js.map",
-    "adapters.php": "/static/js/adapters.f8920b14.asset.php",
+    "adapters.js": "/static/js/adapters.6d70a653.js",
+    "adapters.js.map": "/static/js/adapters.6d70a653.js.map",
+    "adapters.php": "/static/js/adapters.b3143aef.asset.php",
     "blocks.css": "/static/css/blocks.161bb224.css",
     "blocks.js": "/static/js/blocks.f02f5d10.js",
     "blocks.js.map": "/static/js/blocks.f02f5d10.js.map",
@@ -38,15 +38,15 @@
     "events.js.map": "/static/js/events.a2d96905.js.map",
     "events.php": "/static/js/events.c98d691d.asset.php",
     "form.css": "/static/css/form.11bd104a.css",
-    "form.js": "/static/js/form.1504d26b.js",
-    "form.js.map": "/static/js/form.1504d26b.js.map",
-    "form.php": "/static/js/form.fac2077b.asset.php",
+    "form.js": "/static/js/form.1d586c65.js",
+    "form.js.map": "/static/js/form.1d586c65.js.map",
+    "form.php": "/static/js/form.44028ba9.asset.php",
     "helpers.js": "/static/js/helpers.0c46319e.js",
     "helpers.js.map": "/static/js/helpers.0c46319e.js.map",
     "helpers.php": "/static/js/helpers.8ddda61b.asset.php",
-    "hooks.js": "/static/js/hooks.bdd168fb.js",
-    "hooks.js.map": "/static/js/hooks.bdd168fb.js.map",
-    "hooks.php": "/static/js/hooks.8b22e075.asset.php",
+    "hooks.js": "/static/js/hooks.e03cded6.js",
+    "hooks.js.map": "/static/js/hooks.e03cded6.js.map",
+    "hooks.php": "/static/js/hooks.778a844b.asset.php",
     "i18n.js": "/static/js/i18n.9658d852.js",
     "i18n.js.map": "/static/js/i18n.9658d852.js.map",
     "i18n.php": "/static/js/i18n.3e541655.asset.php",
@@ -107,15 +107,15 @@
     "static/css/tpc.1022c5e4.css.map": "/static/css/tpc.1022c5e4.css.map",
     "static/css/uiComponents.b8ba3826.css.map": "/static/css/uiComponents.b8ba3826.css.map",
     "static/css/wpPluginsPage.e59608e8.css.map": "/static/css/wpPluginsPage.e59608e8.css.map",
-    "static/js/adapters.06f9d230.js.LICENSE.txt": "/static/js/adapters.06f9d230.js.LICENSE.txt",
+    "static/js/adapters.6d70a653.js.LICENSE.txt": "/static/js/adapters.6d70a653.js.LICENSE.txt",
     "static/js/blocks.f02f5d10.js.LICENSE.txt": "/static/js/blocks.f02f5d10.js.LICENSE.txt",
     "static/js/data.6e5e550b.js.LICENSE.txt": "/static/js/data.6e5e550b.js.LICENSE.txt",
     "static/js/dates.62ddf403.js.LICENSE.txt": "/static/js/dates.62ddf403.js.LICENSE.txt",
     "static/js/edtrServices.20deba7d.js.LICENSE.txt": "/static/js/edtrServices.20deba7d.js.LICENSE.txt",
     "static/js/eeComponents.55441500.js.LICENSE.txt": "/static/js/eeComponents.55441500.js.LICENSE.txt",
     "static/js/eventEditor.6d720720.js.LICENSE.txt": "/static/js/eventEditor.6d720720.js.LICENSE.txt",
-    "static/js/form.1504d26b.js.LICENSE.txt": "/static/js/form.1504d26b.js.LICENSE.txt",
-    "static/js/hooks.bdd168fb.js.LICENSE.txt": "/static/js/hooks.bdd168fb.js.LICENSE.txt",
+    "static/js/form.1d586c65.js.LICENSE.txt": "/static/js/form.1d586c65.js.LICENSE.txt",
+    "static/js/hooks.e03cded6.js.LICENSE.txt": "/static/js/hooks.e03cded6.js.LICENSE.txt",
     "static/js/registry.addd20ee.js.LICENSE.txt": "/static/js/registry.addd20ee.js.LICENSE.txt",
     "static/js/richTextEditor.f8e60a64.js.LICENSE.txt": "/static/js/richTextEditor.f8e60a64.js.LICENSE.txt",
     "static/js/services.c0bcaa7d.js.LICENSE.txt": "/static/js/services.c0bcaa7d.js.LICENSE.txt",
@@ -127,7 +127,7 @@
   "entrypoints": {
     "adapters": [
       "static/css/adapters.d7f96f47.css",
-      "static/js/adapters.06f9d230.js"
+      "static/js/adapters.6d70a653.js"
     ],
     "constants": [
       "static/js/constants.b3ebb0fd.js"
@@ -151,13 +151,13 @@
     ],
     "form": [
       "static/css/form.11bd104a.css",
-      "static/js/form.1504d26b.js"
+      "static/js/form.1d586c65.js"
     ],
     "helpers": [
       "static/js/helpers.0c46319e.js"
     ],
     "hooks": [
-      "static/js/hooks.bdd168fb.js"
+      "static/js/hooks.e03cded6.js"
     ],
     "i18n": [
       "static/js/i18n.9658d852.js"
