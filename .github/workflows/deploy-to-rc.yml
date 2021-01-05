@@ -3,6 +3,7 @@ name: Deploy to RC site
 on:
     push:
         branches:
+            - dev
             # If the branch name starts with "rc-"
             - rc-**
 jobs:
