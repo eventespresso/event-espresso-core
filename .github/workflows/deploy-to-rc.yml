@@ -1,20 +1,20 @@
 name: Deploy to RC site
 
 on:
-  push:
-    branches:
-      # If the branch name starts with "rc-"
-      - rc-**
+    push:
+        branches:
+            # If the branch name starts with "rc-"
+            - rc-**
 jobs:
-  deploy-to-rc-site:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deploy via ssh
-        uses: garygrossgarten/github-action-ssh@release
-        with:
-          # the command is supposed to run in home directory of deploy user
-          command: source deploy-to-rc.sh "event-espresso-core" ${{ github.ref }}
-          host: ${{ secrets.SERVER_EE_DEVBOX_SITES_HOST }}
-          username: ${{ secrets.SERVER_EE_DEVBOX_SITES_USERNAME }}
-          passphrase: ${{ secrets.SERVER_EE_DEVBOX_SITES_PASSPHRASE }}
-          privateKey: ${{ secrets.SERVER_EE_DEVBOX_SITES_PRIVATE_KEY}}
+    deploy-to-rc-site:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Deploy via ssh
+              uses: garygrossgarten/github-action-ssh@release
+              with:
+                  # the command is supposed to run in home directory of deploy user
+                  command: source deploy-to-rc.sh "event-espresso-core" ${{ github.ref }}
+                  host: ${{ secrets.SERVER_EE_DEVBOX_SITES_HOST }}
+                  username: ${{ secrets.SERVER_EE_DEVBOX_SITES_USERNAME }}
+                  passphrase: ${{ secrets.SERVER_EE_DEVBOX_SITES_PASSPHRASE }}
+                  privateKey: ${{ secrets.SERVER_EE_DEVBOX_SITES_PRIVATE_KEY}}
