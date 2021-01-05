@@ -488,27 +488,27 @@ $generated_i18n_strings = array(
 	__( 'custom order', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:42
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:52
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:51
 	__( 'display', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:43
 	__( 'recurrence', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:44
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:54
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:53
 	__( 'sales', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:45
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:56
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:55
 	__( 'sort by', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:46
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:55
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:54
 	// Reference: packages/ee-components/src/EntityList/EntityListFilterBar.tsx:45
 	__( 'search', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:47
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:57
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:56
 	__( 'status', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:9
@@ -910,7 +910,7 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:46
 	__( 'ticket ID', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:53
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:52
 	__( 'link', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:8
