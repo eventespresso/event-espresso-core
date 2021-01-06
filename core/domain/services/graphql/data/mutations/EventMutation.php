@@ -35,7 +35,7 @@ class EventMutation
             $args['EVT_allow_overflow'] = filter_var($input['allowOverflow'], FILTER_VALIDATE_BOOLEAN);
         }
 
-        if (! empty($input['altRegPage'])) {
+        if (array_key_exists('altRegPage', $input)) {
             $args['EVT_external_URL'] = sanitize_text_field($input['altRegPage']);
         }
 
@@ -67,11 +67,11 @@ class EventMutation
             $args['EVT_name'] = sanitize_text_field($input['name']);
         }
 
-        if (! empty($input['order'])) {
+        if (array_key_exists('order', $input)) {
             $args['EVT_order'] = absint($input['order']);
         }
 
-        if (! empty($input['phoneNumber'])) {
+        if (array_key_exists('phoneNumber', $input)) {
             $args['EVT_phone'] = sanitize_text_field($input['phoneNumber']);
         }
 
