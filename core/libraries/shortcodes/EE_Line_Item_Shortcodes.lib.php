@@ -64,7 +64,8 @@ class EE_Line_Item_Shortcodes extends EE_Shortcodes
                 break;
 
             case '[LINE_ITEM_TOTAL]':
-                return $line_item->total_no_code();
+                // return $line_item->total_no_code();
+                return EEH_Template::format_currency($line_item->total(), false, false);
                 break;
         }
 

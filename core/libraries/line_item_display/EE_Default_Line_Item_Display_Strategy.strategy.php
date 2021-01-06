@@ -173,7 +173,7 @@ class EE_Default_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         // price td
         $unit_price = apply_filters(
             'FHEE__EE_Default_Line_Item_Display_Strategy___item_row__unit_price',
-            EEH_Template::format_currency($line_item->unit_price() * $tax_rate, false, false),
+            EEH_Template::format_currency($line_item->unit_price() * $tax_rate, false, false, '', '', true),
             $line_item,
             $tax_rate
         );
@@ -181,7 +181,11 @@ class EE_Default_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         // total td
         $total = apply_filters(
             'FHEE__EE_Default_Line_Item_Display_Strategy___item_row__total',
-            EEH_Template::format_currency($line_item->unit_price() * $line_item->quantity() * $tax_rate, false, false),
+            EEH_Template::format_currency(
+                $line_item->unit_price() * $line_item->quantity() * $tax_rate,
+                false,
+                false
+            ),
             $line_item,
             $tax_rate
         );
@@ -217,7 +221,11 @@ class EE_Default_Line_Item_Display_Strategy implements EEI_Line_Item_Display
             $html .= EEH_HTML::td($line_item->unit_price_no_code(), '', 'item_c jst-rght');
         }
         // total td
-        $html .= EEH_HTML::td(EEH_Template::format_currency($line_item->total(), false, false), '', 'item_r jst-rght');
+        $html .= EEH_HTML::td(
+            EEH_Template::format_currency($line_item->total(), false, false),
+            '',
+            'item_r jst-rght'
+        );
         // end of row
         $html .= EEH_HTML::trx();
         return $html;
