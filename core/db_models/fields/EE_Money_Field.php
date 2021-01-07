@@ -7,19 +7,31 @@
 class EE_Money_Field extends EE_Float_Field
 {
 
-    protected $_whole_pennies_only;
+    /**
+     * if true, then money values will be accurate to 6 decimal places
+     * if false, then money values will be rounded to the correct number of subunits for the site's currency
+     *
+     * @var   bool
+     * @since $VID:$
+     */
+    protected $allow_fractional_subunits;
 
 
     /**
      * @param string $table_column
      * @param string $nicename
      * @param bool   $nullable
-     * @param null   $default_value
-     * @param bool   $whole_pennies_only
+     * @param float   $default_value
+     * @param bool $allow_fractional_subunits
      */
-    public function __construct($table_column, $nicename, $nullable, $default_value = null, $whole_pennies_only = false)
-    {
-        $this->_whole_pennies_only = $whole_pennies_only;
+    public function __construct(
+        string $table_column,
+        string $nicename,
+        bool $nullable,
+        float $default_value = 0,
+        bool $allow_fractional_subunits = true
+    ) {
+        $this->allow_fractional_subunits = $allow_fractional_subunits;
         parent::__construct($table_column, $nicename, $nullable, $default_value);
         $this->setSchemaType('object');
     }
@@ -31,27 +43,22 @@ class EE_Money_Field extends EE_Float_Field
      *    'no_currency_code': "$3,023.00"
      *    null: "$3,023.00<span>USD</span>"
      *
-     * @param string $value_on_field_to_be_outputted
+     * @param string $amount
      * @param string $schema
      * @return string
      * @throws EE_Error
      */
-    public function prepare_for_pretty_echoing($value_on_field_to_be_outputted, $schema = null)
+    public function prepare_for_pretty_echoing($amount, $schema = null): string
     {
-        $pretty_float = parent::prepare_for_pretty_echoing($value_on_field_to_be_outputted);
-
-        if ($schema === 'localized_float') {
-            return $pretty_float;
-        }
-        $display_code = $schema !== 'no_currency_code';
-        // we don't use the $pretty_float because format_currency will take care of it.
         return EEH_Template::format_currency(
-            $value_on_field_to_be_outputted,
-            false,
-            $display_code,
+            $amount,
+            strpos($schema, 'localized_float') !== false,
+            strpos($schema, 'no_currency_code') === false,
             '',
             'currency-code',
-            ! $this->_whole_pennies_only
+            $this->allow_fractional_subunits
+                && strpos($schema, 'localized_currency') === false
+                && strpos($schema, 'localized_float') === false
         );
     }
 
@@ -60,36 +67,34 @@ class EE_Money_Field extends EE_Float_Field
      * If provided with a string, strips out money-related formatting to turn it into a proper float.
      * Rounds the float to the correct number of decimal places for this country's currency.
      * Also, interprets periods and commas according to the country's currency settings.
-     * So if you want to pass in a string that NEEDS to interpret periods as decimal marks, call floatval() on it first.
+     * So if you want to pass in a string that NEEDS to interpret periods as decimal marks,
+     * type cast it as a float first.
      *
-     * @param string $value_inputted_for_field_on_model_object
+     * @param string $amount
      * @return float
      * @throws EE_Error
      */
-    public function prepare_for_set($value_inputted_for_field_on_model_object)
+    public function prepare_for_set($amount): float
     {
-        // now it's a float-style string or number
-        $float_val = parent::prepare_for_set($value_inputted_for_field_on_model_object);
-        // round to the correctly number of decimal places for this  currency
-        return $this->_round_if_no_partial_pennies($float_val);
+        // first convert to a float-style string or number
+        // then round to the correct number of decimal places for this  currency
+        return $this->roundSubunitsIfNotAllowed(parent::prepare_for_set($amount));
     }
 
 
     /**
-     * @param mixed $value_of_field_on_model_object
+     * @param mixed $amount
      * @return float|mixed
      * @throws EE_Error
      * @since $VID:$
      */
-    public function prepare_for_get($value_of_field_on_model_object)
+    public function prepare_for_get($amount): float
     {
-        return $this->_round_if_no_partial_pennies(
-            parent::prepare_for_get($value_of_field_on_model_object)
-        );
+        return $this->roundSubunitsIfNotAllowed(parent::prepare_for_get($amount));
     }
 
 
-    public function getSchemaProperties()
+    public function getSchemaProperties(): array
     {
         return [
             'raw'    => [
@@ -116,9 +121,9 @@ class EE_Money_Field extends EE_Float_Field
      *
      * @return boolean
      */
-    public function whole_pennies_only()
+    public function allowFractionalSubunits(): bool
     {
-        return $this->_whole_pennies_only;
+        return $this->allow_fractional_subunits;
     }
 
 
@@ -130,11 +135,22 @@ class EE_Money_Field extends EE_Float_Field
      * @return float
      * @throws EE_Error
      */
-    protected function _round_if_no_partial_pennies($amount)
+    protected function roundSubunitsIfNotAllowed(float $amount): float
     {
-        if ($this->whole_pennies_only()) {
+        if (! $this->allowFractionalSubunits()) {
             return EEH_Money::round_for_currency($amount, $this->currency->code);
         }
         return $amount;
+    }
+
+
+    /**
+     * Returns whether or not this money field allows partial penny amounts
+     *
+     * @return boolean
+     */
+    public function whole_pennies_only(): bool
+    {
+        return $this->allow_fractional_subunits;
     }
 }
