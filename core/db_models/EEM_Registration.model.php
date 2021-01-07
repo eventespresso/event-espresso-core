@@ -167,15 +167,11 @@ class EEM_Registration extends EEM_Soft_Delete_Base
                 ),
                 'REG_final_price' => new EE_Money_Field(
                     'REG_final_price',
-                    esc_html__('Registration\'s share of the transaction total', 'event_espresso'),
-                    false,
-                    0
+                    esc_html__('Registration\'s share of the transaction total', 'event_espresso')
                 ),
                 'REG_paid' => new EE_Money_Field(
                     'REG_paid',
-                    esc_html__('Amount paid to date towards registration', 'event_espresso'),
-                    false,
-                    0
+                    esc_html__('Amount paid to date towards registration', 'event_espresso')
                 ),
                 'REG_session' => new EE_Plain_Text_Field(
                     'REG_session',

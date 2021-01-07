@@ -164,10 +164,7 @@ class EEM_Line_Item extends EEM_Base
                 ),
                 'LIN_unit_price' => new EE_Money_Field(
                     'LIN_unit_price',
-                    esc_html__('Unit Price', 'event_espresso'),
-                    false,
-                    0,
-                    false
+                    esc_html__('Unit Price', 'event_espresso')
                 ),
                 'LIN_percent'    => new EE_Float_Field(
                     'LIN_percent',
@@ -189,10 +186,7 @@ class EEM_Line_Item extends EEM_Base
                 ),
                 'LIN_total'      => new EE_Money_Field(
                     'LIN_total',
-                    esc_html__('Total (unit price x quantity)', 'event_espresso'),
-                    false,
-                    0,
-                    false
+                    esc_html__('Total (unit price x quantity)', 'event_espresso')
                 ),
                 'LIN_quantity'   => new EE_Integer_Field(
                     'LIN_quantity',

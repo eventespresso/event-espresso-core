@@ -475,7 +475,7 @@ class EE_Registry implements ResettableInterface
      *                           set this to FALSE (ie. when instantiating model objects from client in a loop)
      * @param bool   $load_only  whether or not to just load the file and NOT instantiate, or load AND instantiate
      *                           (default)
-     * @return bool|null|object
+     * @return EE_Base_Class|mixed|bool|null
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
@@ -855,18 +855,18 @@ class EE_Registry implements ResettableInterface
     /**
      * instantiates, caches, and injects dependencies for classes
      *
-     * @param array  $file_paths         an array of paths to folders to look in
-     * @param string $class_prefix       EE  or EEM or... ???
-     * @param string $class_name         $class name
-     * @param string $type               file type - core? class? helper? model?
-     * @param mixed  $arguments          an argument or array of arguments to pass to the class upon instantiation
-     * @param bool   $from_db            some classes are instantiated from the db
-     *                                   and thus call a different method to instantiate
-     * @param bool   $cache              whether to cache the instantiated object for reuse
-     * @param bool   $load_only          if true, will only load the file, but will NOT instantiate an object
-     * @return bool|null|object          null   = failure to load or instantiate class object.
-     *                                   object = class loaded and instantiated successfully.
-     *                                   bool   = fail or success when $load_only is true
+     * @param array       $file_paths   an array of paths to folders to look in
+     * @param string      $class_prefix EE  or EEM or... ???
+     * @param bool|string $class_name   $class name
+     * @param string      $type         file type - core? class? helper? model?
+     * @param mixed       $arguments    an argument or array of arguments to pass to the class upon instantiation
+     * @param bool        $from_db      some classes are instantiated from the db
+     *                                  and thus call a different method to instantiate
+     * @param bool        $cache        whether to cache the instantiated object for reuse
+     * @param bool        $load_only    if true, will only load the file, but will NOT instantiate an object
+     * @return EE_Base_Class|mixed|bool|null = failure to load or instantiate class object.
+     *                                  object = class loaded and instantiated successfully.
+     *                                  bool = fail or success when $load_only is true
      * @throws EE_Error
      * @throws ReflectionException
      * @throws InvalidInterfaceException

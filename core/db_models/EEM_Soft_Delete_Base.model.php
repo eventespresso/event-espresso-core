@@ -27,9 +27,14 @@
 abstract class EEM_Soft_Delete_Base extends EEM_Base
 {
     /**
-     * @param null $timezone
+     * @param string|null $timezone string representing the timezone we want to set for returned Date Time Strings
+     *                              (and any incoming timezone data that gets saved).
+     *                              Note this just sends the timezone info to the date time model field objects.
+     *                              Default is ''
+     *                              (and will be assumed using the set timezone in the 'timezone_string' wp option)
+     * @throws EE_Error
      */
-    protected function __construct($timezone = null)
+    protected function __construct(?string $timezone = '')
     {
         if (! $this->_default_where_conditions_strategy instanceof EE_Default_Where_Conditions) {
             $this->_default_where_conditions_strategy = new EE_Soft_Delete_Where_Conditions();

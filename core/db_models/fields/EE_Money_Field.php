@@ -27,7 +27,7 @@ class EE_Money_Field extends EE_Float_Field
     public function __construct(
         string $table_column,
         string $nicename,
-        bool $nullable,
+        bool $nullable = false,
         float $default_value = 0,
         bool $allow_fractional_subunits = true
     ) {

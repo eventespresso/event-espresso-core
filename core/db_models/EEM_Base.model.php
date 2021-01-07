@@ -844,7 +844,8 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * @param array $query_params  @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      *                             or if you have the development copy of EE you can view this at the path:
      *                             /docs/G--Model-System/model-query-params.md
-     * @return EE_Base_Class[]  *note that there is NO option to pass the output type. If you want results different
+     * @return array|EE_Base_Class[]  *note that there is NO option to pass the output type. If you want results
+     *                             different
      *                                        from EE_Base_Class[], use get_all_wpdb_results(). Array keys are object IDs (if there is a primary key on the model.
      *                                        if not, numerically indexed) Some full examples: get 10 transactions
      *                                        which have Scottish attendees: EEM_Transaction::instance()->get_all(
@@ -1176,7 +1177,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * array. If no item is found, null is returned.
      *
      * @param array $query_params like EEM_Base's $query_params variable.
-     * @return EE_Base_Class|EE_Soft_Delete_Base_Class|NULL
+     * @return mixed|EE_Base_Class|EE_Soft_Delete_Base_Class|NULL
      * @throws EE_Error
      */
     public function get_one($query_params = array())
@@ -5223,21 +5224,25 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * dont' necessarily want to test for if the object is present but just assume it is BUT load the defaults from the
      * object (as set in the model_field!).
      *
-     * @return EE_Base_Class single EE_Base_Class object with default values for the properties.
+     * @return EE_Base_Class|mixed|bool|null single EE_Base_Class object with default values for the properties.
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function create_default_object()
     {
-        $this_model_fields_and_values = array();
+        $this_model_fields_and_values = [];
         // setup the row using default values;
         foreach ($this->field_settings() as $field_name => $field_obj) {
             $this_model_fields_and_values[ $field_name ] = $field_obj->get_default_value();
         }
         $className = $this->_get_class_name();
-        $classInstance = EE_Registry::instance()
-                                    ->load_class($className, array($this_model_fields_and_values), false, false);
-        return $classInstance;
+        return EE_Registry::instance()->load_class(
+            $className,
+            [$this_model_fields_and_values],
+            false,
+            false
+        );
     }
-
 
 
     /**
@@ -5460,7 +5465,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             foreach ($this->foreign_key_aliases as $FK_alias => $PK_column) {
                 if ($PK_column === $qualified_column && isset($cols_n_values[ $FK_alias ])) {
                     $value = $cols_n_values[ $FK_alias ];
-                    list($pk_class) = explode('.', $PK_column);
+                    [$pk_class] = explode('.', $PK_column);
                     $pk_model_name = "EEM_{$pk_class}";
                     /** @var EEM_Base $pk_model */
                     $pk_model = EE_Registry::instance()->load_model($pk_model_name);
