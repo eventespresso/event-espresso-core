@@ -2,6 +2,7 @@
 
 namespace EventEspresso\tests\testcases\core\domain;
 
+use DomainException;
 use EE_UnitTestCase;
 use EventEspresso\core\domain\values\FullyQualifiedName;
 use EventEspresso\tests\mocks\core\domain\DomainFactoryMock;
@@ -74,7 +75,7 @@ class DomainFactoryTest extends EE_UnitTestCase
 
     public function test_constructor_with_invalid_arguments_3()
     {
-        $this->setExceptionExpected('EventEspresso\core\exceptions\InvalidDataTypeException');
+        $this->setExceptionExpected(DomainException::class);
         DomainFactoryMock::getShared(
             new FullyQualifiedName(
                 'EventEspresso\core\domain\values\FilePath'

@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 
 /**
@@ -18,40 +20,32 @@ class EE_Register_Capabilities implements EEI_Plugin_API
      *
      * @var array
      */
-    protected static $_registry = array();
+    protected static $_registry = [];
 
 
     /**
      * Used to register capability items with EE core.
      *
-     * @since 4.5.0
-     * @param string $cap_reference                                                       usually will be a class name
-     *                                                                                    that references capability
-     *                                                                                    related items setup for
-     *                                                                                    something.
-     * @param array  $setup_args                                                          {
-     *                                                                                    An array of items related to
-     *                                                                                    registering capabilities.
-     * @type array   $capabilities                                                        An array mapping capability
-     *                                                                                    strings to core WP Role.
-     *                                                                                    Something like: array(
-     *                                                                                    'administrator'    => array(
-     *                                                                                    'read_cap', 'edit_cap',
-     *                                                                                    'delete_cap'),
-     *                                                                                    'author'                =>
-     *                                                                                    array( 'read_cap' )
-     *                                                                                    ).
-     * @type array   $capability_maps                                                     EE_Meta_Capability_Map[]
-     * @see   EE_Capabilities.php for php docs on these objects.
-     *                                                                                    Should be indexed by the
-     *                                                                                    classname for the capability
-     *                                                                                    map and values representing
-     *                                                                                    the arguments for the map.
-     *                                                                                    }
-     * @throws EE_Error
+     * @param string $cap_reference     usually will be a class name that references capability
+     *                                  related items setup for something.
+     * @param array  $setup_args        An array of items related to registering capabilities.
+     *      @type array   $capabilities     An array mapping capability strings to core WP Role.
+     *                                      Something like: array(
+     *                                          'administrator'    => array(
+     *                                              'read_cap', 'edit_cap',
+     *                                              'delete_cap'
+     *                                          ),
+     *                                          'author' => array( 'read_cap' )
+     *                                      ).
+     *      @type array   $capability_maps EE_Meta_Capability_Map[]
      * @return boolean|null
+     * @throws EE_Error
+     * @since 4.5.0
+     * @see EE_Capabilities.php for php docs on these objects.
+     *                          Should be indexed by the classname for the capability
+     *                          map and values representing the arguments for the map.
      */
-    public static function register($cap_reference = null, $setup_args = array())
+    public static function register(string $cap_reference = '', array $setup_args = []): bool
     {
         // required fields MUST be present, so let's make sure they are.
         if ($cap_reference === null || ! is_array($setup_args) || empty($setup_args['capabilities'])) {
@@ -64,7 +58,7 @@ class EE_Register_Capabilities implements EEI_Plugin_API
         }
         // make sure we don't register twice
         if (isset(self::$_registry[ $cap_reference ])) {
-            return null;
+            return true;
         }
         // make sure this is not registered too late or too early.
         if (! did_action('AHEE__EE_System__load_espresso_addons')
@@ -84,23 +78,23 @@ class EE_Register_Capabilities implements EEI_Plugin_API
             return false;
         }
         // some preliminary sanitization and setting to the $_registry property
-        self::$_registry[ $cap_reference ] = array(
+        self::$_registry[ $cap_reference ] = [
             'caps'     => isset($setup_args['capabilities']) && is_array($setup_args['capabilities'])
                 ? $setup_args['capabilities']
-                : array(),
+                : [],
             'cap_maps' => isset($setup_args['capability_maps'])
                 ? $setup_args['capability_maps']
-                : array(),
-        );
+                : [],
+        ];
         // set initial caps (note that EE_Capabilities takes care of making sure that the caps get added only once)
         add_filter(
             'FHEE__EE_Capabilities__addCaps__capabilities_to_add',
-            array('EE_Register_Capabilities', 'register_capabilities')
+            ['EE_Register_Capabilities', 'register_capabilities']
         );
         // add filter for cap maps
         add_filter(
             'FHEE__EE_Capabilities___set_meta_caps__meta_caps',
-            array('EE_Register_Capabilities', 'register_cap_maps')
+            ['EE_Register_Capabilities', 'register_cap_maps']
         );
         return true;
     }
@@ -114,12 +108,13 @@ class EE_Register_Capabilities implements EEI_Plugin_API
      * @param array $incoming_caps The original caps map.
      * @return array merged in new caps.
      */
-    public static function register_capabilities($incoming_caps)
+    public static function register_capabilities(array $incoming_caps): array
     {
+        $caps = [];
         foreach (self::$_registry as $cap_reference => $caps_and_cap_map) {
-            $incoming_caps = array_merge_recursive($incoming_caps, $caps_and_cap_map['caps']);
+            $caps[] = $caps_and_cap_map['caps'];
         }
-        return $incoming_caps;
+        return array_merge_recursive($incoming_caps, ...$caps);
     }
 
 
@@ -127,12 +122,12 @@ class EE_Register_Capabilities implements EEI_Plugin_API
      * Callback for the 'FHEE__EE_Capabilities___set_meta_caps__meta_caps' filter which registers an array of
      * capability maps for the WP meta_caps filter called in EE_Capabilities.
      *
-     * @since 4.5.0
      * @param EE_Meta_Capability_Map[] $cap_maps The existing cap maps array.
      * @return EE_Meta_Capability_Map[]
      * @throws EE_Error
+     * @since 4.5.0
      */
-    public static function register_cap_maps($cap_maps)
+    public static function register_cap_maps(array $cap_maps): array
     {
         // loop through and instantiate cap maps.
         foreach (self::$_registry as $cap_reference => $setup) {
@@ -165,7 +160,7 @@ class EE_Register_Capabilities implements EEI_Plugin_API
                  */
                 if (is_numeric($cap_class)) {
                     $cap_class = key($args);
-                    $args = $args[ $cap_class ];
+                    $args      = $args[ $cap_class ];
                 }
 
                 if (! class_exists($cap_class)) {
@@ -200,12 +195,11 @@ class EE_Register_Capabilities implements EEI_Plugin_API
 
     /**
      * @param string $cap_reference
-     * @throws EE_Error
-     * @throws \InvalidArgumentException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
-    public static function deregister($cap_reference = '')
+    public static function deregister(string $cap_reference = '')
     {
         if (! empty(self::$_registry[ $cap_reference ])) {
             if (! empty(self::$_registry[ $cap_reference ]['caps'])) {

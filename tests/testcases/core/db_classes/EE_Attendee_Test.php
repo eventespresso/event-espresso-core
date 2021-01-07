@@ -74,7 +74,7 @@ class EE_Attendee_Test extends EE_UnitTestCase{
 				'phone'		=> '9991231234',
 				'credit_card'=>'4007000000027',
 				'exp_month'=>'12',
-				'exp_year'=>'2030',
+				'exp_year'=>date('Y', strtotime('+5 years')),
 				'cvv'=>'123',
 			);
 		$form->receive_form_submission( array( $form_name => $form_values  ) );
@@ -83,7 +83,7 @@ class EE_Attendee_Test extends EE_UnitTestCase{
 		$reg = $this->new_model_obj_with_dependencies('Registration',array( 'TXN_ID' => $p->TXN_ID() ) );
 		$att = $reg->attendee();
 		$att->save_and_clean_billing_info_for_payment_method( $form, $pm );
-		//ok so now it should ahve been saved. Let's verify that
+		//ok so now it should have been saved. Let's verify that
 		$billing_info_form = $att->billing_info_for_payment_method( $pm );
 		$this->assertInstanceOf( 'EE_Billing_Attendee_Info_Form', $billing_info_form );
 		//it should ahve been cleaned too, so lets tweak teh form values ot what they should be

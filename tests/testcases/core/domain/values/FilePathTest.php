@@ -4,6 +4,7 @@ namespace EventEspresso\tests\testcases\core\domain\values;
 
 use EE_UnitTestCase;
 use EventEspresso\core\domain\values\FilePath;
+use stdClass;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -31,8 +32,8 @@ class FilePathTest extends EE_UnitTestCase
 
     public function test_constructor_with_invalid_data_type()
     {
-        $this->setExceptionExpected('EventEspresso\core\exceptions\InvalidDataTypeException');
-        new FilePath(1234);
+        $this->setExceptionExpected('TypeError');
+        new FilePath(new stdClass());
     }
 
 

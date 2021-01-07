@@ -71,8 +71,11 @@ abstract class DomainBase implements DomainInterface
      * @param Version  $version
      * @param string $asset_namespace
      */
-    public function __construct(FilePath $plugin_file, Version $version, $asset_namespace = Domain::ASSET_NAMESPACE)
-    {
+    public function __construct(
+        FilePath $plugin_file,
+        Version $version,
+        string $asset_namespace = Domain::ASSET_NAMESPACE
+    ) {
         $this->plugin_file = $plugin_file;
         $this->version     = $version;
         $this->initialize($asset_namespace);
@@ -135,16 +138,25 @@ abstract class DomainBase implements DomainInterface
     /**
      * @return string
      */
-    public function pluginFile()
+    public function pluginFile(): string
     {
         return (string) $this->plugin_file;
     }
 
 
     /**
+     * @return FilePath
+     */
+    public function pluginFileObject(): FilePath
+    {
+        return $this->plugin_file;
+    }
+
+
+    /**
      * @return string
      */
-    public function pluginBasename()
+    public function pluginBasename(): string
     {
         return $this->plugin_basename;
     }
@@ -154,7 +166,7 @@ abstract class DomainBase implements DomainInterface
      * @param string $additional_path
      * @return string
      */
-    public function pluginPath($additional_path = '')
+    public function pluginPath($additional_path = ''): string
     {
         return is_string($additional_path) && $additional_path !== ''
             ? $this->plugin_path . $additional_path
@@ -166,7 +178,7 @@ abstract class DomainBase implements DomainInterface
      * @param string $additional_path
      * @return string
      */
-    public function pluginUrl($additional_path = '')
+    public function pluginUrl($additional_path = ''): string
     {
         return is_string($additional_path) && $additional_path !== ''
             ? $this->plugin_url . $additional_path
@@ -177,7 +189,7 @@ abstract class DomainBase implements DomainInterface
     /**
      * @return string
      */
-    public function version()
+    public function version(): string
     {
         return (string) $this->version;
     }
@@ -195,7 +207,7 @@ abstract class DomainBase implements DomainInterface
     /**
      * @return string
      */
-    public function distributionAssetsFolder()
+    public function distributionAssetsFolder(): string
     {
         return DomainBase::ASSETS_FOLDER;
     }
@@ -205,7 +217,7 @@ abstract class DomainBase implements DomainInterface
      * @param string $additional_path
      * @return string
      */
-    public function distributionAssetsPath($additional_path = '')
+    public function distributionAssetsPath($additional_path = ''): string
     {
         return is_string($additional_path) && $additional_path !== ''
             ? $this->assets_path . $additional_path
@@ -217,7 +229,7 @@ abstract class DomainBase implements DomainInterface
      * @param string $additional_path
      * @return string
      */
-    public function distributionAssetsUrl($additional_path = '')
+    public function distributionAssetsUrl($additional_path = ''): string
     {
         return is_string($additional_path) && $additional_path !== ''
             ? $this->plugin_url . DomainBase::ASSETS_FOLDER . $additional_path
@@ -228,7 +240,7 @@ abstract class DomainBase implements DomainInterface
     /**
      * @return string
      */
-    public function assetNamespace()
+    public function assetNamespace(): string
     {
         return $this->asset_namespace;
     }

@@ -29,7 +29,7 @@ class FilePath
      * @throws InvalidDataTypeException
      * @throws InvalidFilePathException
      */
-    public function __construct($file_path)
+    public function __construct(string $file_path)
     {
         if (! is_string($file_path)) {
             throw new InvalidDataTypeException(
@@ -48,7 +48,7 @@ class FilePath
     /**
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->file_path;
     }

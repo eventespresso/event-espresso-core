@@ -61,7 +61,7 @@ class Psr4AutoloaderTest extends \EE_UnitTestCase {
 
 	public function testMissingFile() {
 		$actual = $this->loader->loadClass( 'No_Vendor\No_Package\NoClass' );
-		$this->assertFalse( $actual );
+		$this->assertEquals('', $actual);
 	}
 
 

@@ -27,11 +27,11 @@ class EE_Register_Model implements EEI_Plugin_API
 
 
     /**
-     * @param string $model_id unique id for it
-     * @param array  $config {
+     * @param string $model_id    unique id for it
+     * @param array  $config      {
      * @type array   $model_paths array of folders containing DB models, where each file follows the models naming
-     *       convention, which is: EEM_{model_name}.model.php which contains a single class called EEM_{model_name}.
-     *       Eg. you could pass
+     *                            convention, which is: EEM_{model_name}.model.php which contains a single class called
+     *                            EEM_{model_name}. Eg. you could pass
      *                            "public_html/wp-content/plugins/my_addon/db_models" (with or without trailing slash)
      *                            and in that folder put each of your model files, like "EEM_Food.model.php" which
      *                            contains the class "EEM_Food" and
@@ -39,13 +39,14 @@ class EE_Register_Model implements EEI_Plugin_API
      *                            autoloaded and added to the EE registry so they can be used like ordinary models. The
      *                            class contained in each file should extend EEM_Base.
      * @type array   $class_paths array of folders containing DB classes, where each file follows the model class
-     *       naming convention, which is EE_{model_name}.class.php. The class contained in each file should extend
-     *       EE_Base_Class
+     *                            naming convention, which is EE_{model_name}.class.php. The class contained in each
+     *                            file should extend EE_Base_Class
      *
      * }
+     * @return bool
      * @throws EE_Error
      */
-    public static function register($model_id = null, $config = array())
+    public static function register(string $model_id = '', array $config = []): bool
     {
         // required fields MUST be present, so let's make sure they are.
         if (empty($model_id) || ! is_array($config) || empty($config['model_paths'])) {
@@ -59,12 +60,13 @@ class EE_Register_Model implements EEI_Plugin_API
 
         // make sure we don't register twice
         if (isset(self::$_model_registry[ $model_id ])) {
-            return;
+            return true;
         }
 
         if (! did_action('AHEE__EE_System__load_espresso_addons')
             || did_action('FHEE__EE_System__parse_model_names')
-            || did_action('FHEE__EE_System__parse_implemented_model_names')) {
+            || did_action('FHEE__EE_System__parse_implemented_model_names')
+        ) {
             EE_Error::doing_it_wrong(
                 __METHOD__,
                 sprintf(
@@ -79,8 +81,9 @@ class EE_Register_Model implements EEI_Plugin_API
         }
         self::$_model_registry[ $model_id ] = $config;
 
-        if ((isset($config['model_paths']) && ! isset($config['class_paths'])) ||
-            (! isset($config['model_paths']) && isset($config['class_paths']))) {
+        if ((isset($config['model_paths']) && ! isset($config['class_paths']))
+            || (! isset($config['model_paths']) && isset($config['class_paths']))
+        ) {
             throw new EE_Error(
                 sprintf(
                     __(
@@ -94,33 +97,33 @@ class EE_Register_Model implements EEI_Plugin_API
         if (isset($config['model_paths'])) {
             // make sure they passed in an array
             if (! is_array($config['model_paths'])) {
-                $config['model_paths'] = array($config['model_paths']);
+                $config['model_paths'] = [$config['model_paths']];
             }
             // we want to add this as a model folder
             // and autoload them all
             $class_to_filepath_map = EEH_File::get_contents_of_folders($config['model_paths']);
             EEH_Autoloader::register_autoloader($class_to_filepath_map);
-            $model_name_to_classname_map = array();
+            $model_name_to_classname_map = [];
             foreach (array_keys($class_to_filepath_map) as $classname) {
                 $model_name_to_classname_map[ str_replace("EEM_", "", $classname) ] = $classname;
             }
             self::$_model_name_to_classname_map[ $model_id ] = $model_name_to_classname_map;
-            add_filter('FHEE__EE_System__parse_model_names', array('EE_Register_Model', 'add_addon_models'));
+            add_filter('FHEE__EE_System__parse_model_names', ['EE_Register_Model', 'add_addon_models']);
             add_filter(
                 'FHEE__EE_System__parse_implemented_model_names',
-                array('EE_Register_Model', 'add_addon_models')
+                ['EE_Register_Model', 'add_addon_models']
             );
-            add_filter('FHEE__EE_Registry__load_model__paths', array('EE_Register_Model', 'add_model_folders'));
+            add_filter('FHEE__EE_Registry__load_model__paths', ['EE_Register_Model', 'add_model_folders']);
             unset($config['model_paths']);
         }
         if (isset($config['class_paths'])) {
             // make sure they passed in an array
             if (! is_array($config['class_paths'])) {
-                $config['class_paths'] = array($config['class_paths']);
+                $config['class_paths'] = [$config['class_paths']];
             }
             $class_to_filepath_map = EEH_File::get_contents_of_folders($config['class_paths']);
             EEH_Autoloader::register_autoloader($class_to_filepath_map);
-            add_filter('FHEE__EE_Registry__load_class__paths', array('EE_Register_Model', 'add_class_folders'));
+            add_filter('FHEE__EE_Registry__load_class__paths', ['EE_Register_Model', 'add_class_folders']);
             unset($config['class_paths']);
         }
         foreach ($config as $unknown_key => $unknown_config) {
@@ -129,7 +132,9 @@ class EE_Register_Model implements EEI_Plugin_API
                 sprintf(__("The key '%s' is not a known key for registering a model", "event_espresso"), $unknown_key)
             );
         }
+        return true;
     }
+
 
     /**
      * Filters the core list of models
@@ -137,13 +142,15 @@ class EE_Register_Model implements EEI_Plugin_API
      * @param array $core_models
      * @return array keys are model names (eg 'Event') and values are their classes (eg 'EE_Event')
      */
-    public static function add_addon_models($core_models = array())
+    public static function add_addon_models($core_models = []): array
     {
-        foreach (self::$_model_name_to_classname_map as $model_name_to_class_map) {
-            $core_models = array_merge($core_models, $model_name_to_class_map);
+        $models = [];
+        foreach (self::$_model_name_to_classname_map as $model_map) {
+            $models[] = $model_map;
         }
-        return $core_models;
+        return array_merge($core_models, ...$models);
     }
+
 
     /**
      * Filters the list of model folders
@@ -151,15 +158,17 @@ class EE_Register_Model implements EEI_Plugin_API
      * @param array $folders
      * @return array of folder paths
      */
-    public static function add_model_folders($folders = array())
+    public static function add_model_folders(array $folders = []): array
     {
+        $model_folders = [];
         foreach (self::$_model_registry as $config) {
             if (isset($config['model_paths'])) {
-                $folders = array_merge($folders, $config['model_paths']);
+                $model_folders[] = $config['model_paths'];
             }
         }
-        return $folders;
+        return array_merge($folders, ...$model_folders);
     }
+
 
     /**
      * Filters the array of model class paths
@@ -167,14 +176,15 @@ class EE_Register_Model implements EEI_Plugin_API
      * @param array $folders
      * @return array of folder paths
      */
-    public static function add_class_folders($folders = array())
+    public static function add_class_folders(array $folders = []): array
     {
+        $class_folders = [];
         foreach (self::$_model_registry as $config) {
             if (isset($config['class_paths'])) {
-                $folders = array_merge($folders, $config['class_paths']);
+                $class_folders[] = $config['class_paths'];
             }
         }
-        return $folders;
+        return array_merge($folders, ...$class_folders);
     }
 
 
@@ -183,7 +193,7 @@ class EE_Register_Model implements EEI_Plugin_API
      *
      * @param string $model_id
      */
-    public static function deregister($model_id = null)
+    public static function deregister(string $model_id = '')
     {
         if (isset(self::$_model_registry[ $model_id ])) {
             unset(self::$_model_registry[ $model_id ]);
