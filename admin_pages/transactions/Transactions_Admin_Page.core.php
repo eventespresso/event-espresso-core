@@ -700,19 +700,9 @@ class Transactions_Admin_Page extends EE_Admin_Page
         $this->_template_args['txn_status']['class'] = 'status-' . $this->_transaction->status_ID();
 
         $this->_template_args['grand_total'] = $this->_transaction->total();
-        $this->_template_args['total_paid']  = $this->_transaction->paid();
+        $this->_template_args['total_paid'] = $this->_transaction->paid();
+        $this->_template_args['amount_due'] = $this->_transaction->prettyRemaining();
 
-        $amount_due                         = $this->_transaction->total() - $this->_transaction->paid();
-        $this->_template_args['amount_due'] = EEH_Template::format_currency(
-            $amount_due,
-            true
-        );
-        if (EE_Registry::instance()->CFG->currency->sign_b4) {
-            $this->_template_args['amount_due'] = EE_Registry::instance()->CFG->currency->sign
-                                                  . $this->_template_args['amount_due'];
-        } else {
-            $this->_template_args['amount_due'] .= EE_Registry::instance()->CFG->currency->sign;
-        }
         $this->_template_args['amount_due_class'] = '';
 
         if ($this->_transaction->paid() === $this->_transaction->total()) {
@@ -1442,8 +1432,8 @@ class Transactions_Admin_Page extends EE_Admin_Page
                                 EE_Error::add_error($e->getMessage(), __FILE__, __FUNCTION__, __LINE__);
                                 $event_name = esc_html__('Unknown Event', 'event_espresso');
                             }
-                            $event_name   .= ' - ' . $item->name();
-                            $ticket_price = EEH_Template::format_currency($item->unit_price());
+                            $event_name .= ' - ' . $item->name();
+                            $ticket_price = $item->prettyUnitPrice();
                             // now get all of the registrations for this transaction that use this ticket
                             $registrations = $ticket->registrations(
                                 [['TXN_ID' => $this->_transaction->ID()]]

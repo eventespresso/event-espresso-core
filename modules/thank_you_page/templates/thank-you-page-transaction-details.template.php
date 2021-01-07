@@ -1,14 +1,11 @@
 <?php
-
 /**
- * @type EE_Transaction $transaction
- * @type string $primary_registrant_name
- * @type string $show_try_pay_again_link
- * @type string $SPCO_payment_options_url
+ * @var EE_Transaction $transaction
+ * @var boolean $show_try_pay_again_link
+ * @var string $SPCO_payment_options_url
+ * @var string $primary_registrant_name
  */
-
 ?>
-
 <h3><?php esc_html_e('Transaction Details', 'event_espresso'); ?></h3>
 <?php do_action('AHEE__thank_you_page_transaction_details_template__after_heading'); ?>
 
@@ -20,17 +17,15 @@
                 <label><?php esc_html_e('Total Cost: ', 'event_espresso'); ?></label>
             </td>
             <td>
-                <?php echo EEH_Template::format_currency($transaction->total()); // already escaped ?>
+                <?php echo $transaction->pretty_total(); ?>
             </td>
         </tr>
         <tr>
             <td>
                 <label><?php esc_html_e('Amount Owing: ', 'event_espresso'); ?></label>
             </td>
-            <td class="<?php echo ($transaction->paid() == $transaction->total())
-                ? 'ee-transaction-paid'
-                : 'ee-transaction-unpaid' ?>">
-                <?php echo EEH_Template::format_currency($transaction->remaining()); // already escaped ?>
+            <td class="<?php echo ($transaction->paidInFull()) ? 'ee-transaction-paid' : 'ee-transaction-unpaid' ?>">
+                <?php echo $transaction->prettyRemaining(); ?>
             </td>
         </tr>
         <tr>
