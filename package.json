@@ -88,7 +88,7 @@
 		"@wordpress/dependency-extraction-webpack-plugin": "^2.1.0",
 		"@wordpress/editor": "^9.17.0",
 		"@wordpress/element": "^2.14.0",
-		"@wordpress/eslint-plugin": "^6.1.0",
+		"@wordpress/eslint-plugin": "^7.4.0",
 		"@wordpress/hooks": "^2.6.0",
 		"@wordpress/jest-preset-default": "^6.3.0",
 		"@wordpress/keycodes": "^2.7.0",
