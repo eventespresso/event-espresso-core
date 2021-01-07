@@ -123,7 +123,7 @@ class EE_Admin_Table_Registration_Line_Item_Display_Strategy extends EE_Admin_Ta
         if ($line_item->is_percent()) {
             $html .= EEH_HTML::td($line_item->percent() . '%', '', 'jst-rght');
         } else {
-            $html .= EEH_HTML::td($line_item->unit_price_no_code(), '', 'jst-rght');
+            $html .= EEH_HTML::td($line_item->prettyUnitPrice(), '', 'jst-rght');
         }
 
 
@@ -148,7 +148,7 @@ class EE_Admin_Table_Registration_Line_Item_Display_Strategy extends EE_Admin_Ta
         // name th
         $html .= EEH_HTML::th($line_item->name() . '(' . $line_item->get_pretty('LIN_percent') . '%)', '', 'jst-rght', '', ' colspan="3"');
         // total th
-        $html .= EEH_HTML::th(EEH_Template::format_currency($line_item->total(), false, false), '', 'jst-rght');
+        $html .= EEH_HTML::th($line_item->prettyTotal(), '', 'jst-rght');
         // end of row
         $html .= EEH_HTML::trx();
         return $html;
@@ -195,7 +195,7 @@ class EE_Admin_Table_Registration_Line_Item_Display_Strategy extends EE_Admin_Ta
         $html .= EEH_HTML::th($total_label, '', 'jst-rght', '', ' colspan="3"');
         // total th
 
-        $html .= EEH_HTML::th(EEH_Template::format_currency($line_item->total(), false, false), '', 'jst-rght');
+        $html .= EEH_HTML::th($line_item->prettyTotal(), '', 'jst-rght');
         // end of row
         $html .= EEH_HTML::trx();
         return $html;
