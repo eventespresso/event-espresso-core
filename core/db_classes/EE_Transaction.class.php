@@ -296,7 +296,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function pretty_total($schema = 'localized_currency'): string
+    public function pretty_total($schema = 'localized_currency')
     {
         return $this->get_pretty('TXN_total', $schema);
     }
@@ -313,7 +313,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function pretty_paid($schema = 'localized_currency'): string
+    public function pretty_paid($schema = 'localized_currency')
     {
         return $this->get_pretty('TXN_paid', $schema);
     }
@@ -326,7 +326,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      * @throws ReflectionException
      * @since   $VID:$
      */
-    public function prettyRemaining($schema = 'localized_currency'): string
+    public function prettyRemaining($schema = 'localized_currency')
     {
         return EEH_Template::format_currency(
             $this->remaining(),
@@ -345,7 +345,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      * @throws ReflectionException
      * @since   $VID:$
      */
-    public function paidInFull(): bool
+    public function paidInFull()
     {
         return $this->remaining() === (float) 0;
     }
@@ -360,7 +360,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function remaining(): float
+    public function remaining()
     {
         return $this->total() - $this->paid();
     }
@@ -376,7 +376,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function total(): float
+    public function total()
     {
         return (float) $this->get('TXN_total');
     }
@@ -392,7 +392,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function paid(): float
+    public function paid()
     {
         return (float) $this->get('TXN_paid');
     }

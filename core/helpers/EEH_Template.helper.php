@@ -552,7 +552,7 @@ class EEH_Template
      * @throws EE_Error
      * @since   $VID:$
      */
-    public static function precisionFormatCurrency(float $amount, $display_code = false, $CNT_ISO = ''): string
+    public static function precisionFormatCurrency($amount, $display_code = false, $CNT_ISO = '')
     {
         return EEH_Template::format_currency(
             $amount,

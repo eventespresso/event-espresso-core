@@ -379,7 +379,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
      * @throws ReflectionException
      * @since $VID:$
      */
-    public function prettyUnitPrice(string $schema = 'localized_currency no_currency_code'): string
+    public function prettyUnitPrice($schema = 'localized_currency no_currency_code')
     {
         if ($this->parent_ID() !== 0
             && $this->parent() instanceof EE_Line_Item
@@ -408,7 +408,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function prettyTotal(string $schema = 'localized_currency no_currency_code'): string
+    public function prettyTotal($schema = 'localized_currency no_currency_code')
     {
         return $this->get_pretty('LIN_total', $schema);
     }

@@ -25,11 +25,11 @@ class EE_Money_Field extends EE_Float_Field
      * @param bool $allow_fractional_subunits
      */
     public function __construct(
-        string $table_column,
-        string $nicename,
-        bool $nullable = false,
-        float $default_value = 0,
-        bool $allow_fractional_subunits = true
+        $table_column,
+        $nicename,
+        $nullable = false,
+        $default_value = 0,
+        $allow_fractional_subunits = true
     ) {
         $this->allow_fractional_subunits = $allow_fractional_subunits;
         parent::__construct($table_column, $nicename, $nullable, $default_value);
@@ -48,7 +48,7 @@ class EE_Money_Field extends EE_Float_Field
      * @return string
      * @throws EE_Error
      */
-    public function prepare_for_pretty_echoing($amount, $schema = null): string
+    public function prepare_for_pretty_echoing($amount, $schema = null)
     {
         return EEH_Template::format_currency(
             $amount,
@@ -74,7 +74,7 @@ class EE_Money_Field extends EE_Float_Field
      * @return float
      * @throws EE_Error
      */
-    public function prepare_for_set($amount): float
+    public function prepare_for_set($amount)
     {
         // first convert to a float-style string or number
         // then round to the correct number of decimal places for this  currency
@@ -88,13 +88,13 @@ class EE_Money_Field extends EE_Float_Field
      * @throws EE_Error
      * @since $VID:$
      */
-    public function prepare_for_get($amount): float
+    public function prepare_for_get($amount)
     {
         return $this->roundSubunitsIfNotAllowed(parent::prepare_for_get($amount));
     }
 
 
-    public function getSchemaProperties(): array
+    public function getSchemaProperties()
     {
         return [
             'raw'    => [
@@ -121,7 +121,7 @@ class EE_Money_Field extends EE_Float_Field
      *
      * @return boolean
      */
-    public function allowFractionalSubunits(): bool
+    public function allowFractionalSubunits()
     {
         return $this->allow_fractional_subunits;
     }
@@ -135,7 +135,7 @@ class EE_Money_Field extends EE_Float_Field
      * @return float
      * @throws EE_Error
      */
-    protected function roundSubunitsIfNotAllowed(float $amount): float
+    protected function roundSubunitsIfNotAllowed($amount)
     {
         if (! $this->allowFractionalSubunits()) {
             return EEH_Money::round_for_currency($amount, $this->currency->code);
@@ -149,7 +149,7 @@ class EE_Money_Field extends EE_Float_Field
      *
      * @return boolean
      */
-    public function whole_pennies_only(): bool
+    public function whole_pennies_only()
     {
         return $this->allow_fractional_subunits;
     }

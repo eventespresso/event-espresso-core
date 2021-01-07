@@ -37,7 +37,7 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
     /**
      * @return float
      */
-    public function grand_total(): float
+    public function grand_total()
     {
         return $this->_grand_total;
     }
@@ -53,7 +53,7 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
      * @throws EE_Error
      * @throws EE_Error|ReflectionException
      */
-    public function display_line_item(EE_Line_Item $line_item, $options = array()): string
+    public function display_line_item(EE_Line_Item $line_item, $options = array())
     {
 
         $html = '';
@@ -135,7 +135,7 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
      * @param array $options
      * @return string
      */
-    protected function _table_header($options): string
+    protected function _table_header($options)
     {
         $html = EEH_HTML::table('', '', $options['table_css_class']);
         $html .= EEH_HTML::thead();
@@ -156,7 +156,7 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
      * @param array $options array of options for the table.
      * @return string
      */
-    protected function _table_footer($options): string
+    protected function _table_footer($options)
     {
         return EEH_HTML::tbodyx() .  EEH_HTML::tablex();
     }
@@ -171,7 +171,7 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
      * @throws EE_Error
      * @throws ReflectionException
      */
-    protected function _item_row(EE_Line_Item $line_item, $options = array()): string
+    protected function _item_row(EE_Line_Item $line_item, $options = array())
     {
         $line_item_related_object = $line_item->get_object();
         $parent_line_item_related_object = $line_item->parent() instanceof EE_Line_Item ? $line_item->parent()->get_object() : null;
@@ -251,7 +251,7 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
      * @throws EE_Error
      * @throws ReflectionException
      */
-    protected function _get_cancellations(EE_Line_Item $line_item): string
+    protected function _get_cancellations(EE_Line_Item $line_item)
     {
         $html = '';
         $cancellations = $line_item->get_cancellations();
@@ -282,7 +282,7 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
      * @param array        $options
      * @return mixed
      */
-    protected function _sub_item_row(EE_Line_Item $line_item, $options = array()): string
+    protected function _sub_item_row(EE_Line_Item $line_item, $options = array())
     {
         // for now we're not showing sub-items
         return '';
@@ -298,7 +298,7 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
      * @throws EE_Error
      * @throws ReflectionException
      */
-    protected function _tax_row(EE_Line_Item $line_item, $options = array()): string
+    protected function _tax_row(EE_Line_Item $line_item, $options = array())
     {
         // start of row
         $html = EEH_HTML::tr('', 'admin-primary-mbox-taxes-tr');
@@ -326,7 +326,7 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
      * @param array        $options
      * @return mixed
      */
-    protected function _sub_total_row(EE_Line_Item $line_item, $text = '', $options = array()): string
+    protected function _sub_total_row(EE_Line_Item $line_item, $text = '', $options = array())
     {
         // currently not showing subtotal row
         return '';
@@ -342,7 +342,7 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
      * @throws EE_Error
      * @throws ReflectionException
      */
-    protected function _total_row(EE_Line_Item $line_item, $options = array()): string
+    protected function _total_row(EE_Line_Item $line_item, $options = array())
     {
         // start of row
         $html = EEH_HTML::tr('', '', 'admin-primary-mbox-total-tr');
