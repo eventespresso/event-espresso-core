@@ -373,12 +373,13 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
 
 
     /**
+     * @param string $schema
      * @return mixed|string
      * @throws EE_Error
      * @throws ReflectionException
      * @since $VID:$
      */
-    public function prettyUnitPrice()
+    public function prettyUnitPrice(string $schema = 'localized_currency no_currency_code'): string
     {
         if ($this->parent_ID() !== 0
             && $this->parent() instanceof EE_Line_Item
@@ -389,11 +390,27 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
             $quantity = $this->quantity();
         }
         if ($quantity !== 0 && $this->is_percent()) {
-            return $this->get_model()
-                        ->field_settings_for('LIN_unit_price')
-                        ->prepare_for_pretty_echoing($this->total() / $quantity);
+            $money_field = $this->get_model()->field_settings_for('LIN_unit_price');
+            if ($money_field instanceof EE_Money_Field) {
+                return $money_field->prepare_for_pretty_echoing($this->total() / $quantity, $schema);
+            }
         }
-        return $this->unit_price_no_code();
+        return $this->get_pretty('LIN_unit_price', $schema);
+    }
+
+
+    /**
+     * @param string $schema
+     * @return string
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
+    public function prettyTotal(string $schema = 'localized_currency no_currency_code'): string
+    {
+        return $this->get_pretty('LIN_total', $schema);
     }
 
 
