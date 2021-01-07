@@ -1108,12 +1108,14 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * pretty_final_price
      *  final price as formatted string, with correct decimal places and currency symbol
      *
+     * @param string|null $schema
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function pretty_final_price()
+    public function pretty_final_price($schema = 'localized_currency'): string
     {
-        return $this->get_pretty('REG_final_price');
+        return $this->get_pretty('REG_final_price', $schema);
     }
 
 
@@ -1132,12 +1134,13 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     /**
      * pretty_paid
      *
+     * @param string|null $schema
      * @return float
      * @throws EE_Error
      */
-    public function pretty_paid()
+    public function pretty_paid($schema = 'localized_currency'): string
     {
-        return $this->get_pretty('REG_paid');
+        return $this->get_pretty('REG_paid', $schema);
     }
 
 
