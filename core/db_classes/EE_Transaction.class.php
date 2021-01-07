@@ -288,6 +288,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
 
 
     /**
+     * @param string|null $schema
      * @return string of transaction's total cost, with currency symbol and decimal
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -295,15 +296,16 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function pretty_total()
+    public function pretty_total($schema = 'localized_currency'): string
     {
-        return $this->get_pretty('TXN_total');
+        return $this->get_pretty('TXN_total', $schema);
     }
 
 
     /**
      * Gets the amount paid in a pretty string (formatted and with currency symbol)
      *
+     * @param string|null $schema
      * @return string
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -311,11 +313,42 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function pretty_paid()
+    public function pretty_paid($schema = 'localized_currency'): string
     {
-        return $this->get_pretty('TXN_paid');
+        return $this->get_pretty('TXN_paid', $schema);
     }
 
+
+    /**
+     * @param string $schema
+     * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since   $VID:$
+     */
+    public function prettyRemaining($schema = 'localized_currency'): string
+    {
+        return EEH_Template::format_currency(
+            $this->remaining(),
+            strpos($schema, 'localized_float') !== false,
+            strpos($schema, 'no_currency_code') === false,
+            '',
+            'currency-code',
+            strpos($schema, 'localized_currency') === false && strpos($schema, 'localized_float') === false
+        );
+    }
+
+
+    /**
+     * @return bool
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since   $VID:$
+     */
+    public function paidInFull(): bool
+    {
+        return $this->remaining() === (float) 0;
+    }
 
     /**
      * calculate the amount remaining for this transaction and return;
@@ -327,7 +360,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function remaining()
+    public function remaining(): float
     {
         return $this->total() - $this->paid();
     }
@@ -343,7 +376,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function total()
+    public function total(): float
     {
         return (float) $this->get('TXN_total');
     }
@@ -359,7 +392,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function paid()
+    public function paid(): float
     {
         return (float) $this->get('TXN_paid');
     }
