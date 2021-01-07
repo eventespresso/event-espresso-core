@@ -441,13 +441,13 @@ class EEH_Template
      * This helper takes a raw float value and formats it according to the default config country currency settings, or
      * the country currency settings from the supplied country ISO code
      *
-     * @param float   $amount                raw money value
-     * @param boolean $return_raw            whether to return the formatted float value only with no currency sign or
+     * @param float   $amount                    raw money value
+     * @param boolean $return_raw                whether to return the formatted float value only with no currency sign or
      *                                       code
-     * @param boolean $display_code          whether to display the country code (USD). Default = TRUE
-     * @param string  $CNT_ISO               2 letter ISO code for a country
+     * @param boolean $display_code              whether to display the country code (USD). Default = TRUE
+     * @param string  $CNT_ISO                   2 letter ISO code for a country
      * @param string  $cur_code_span_class
-     * @param boolean $allow_partial_pennies whether to allow displaying partial penny amounts
+     * @param boolean $allow_fractional_subunits whether to allow displaying partial penny amounts
      * @return string        the html output for the formatted money value
      * @throws EE_Error
      */
@@ -457,7 +457,7 @@ class EEH_Template
         $display_code = true,
         $CNT_ISO = '',
         $cur_code_span_class = 'currency-code',
-        $allow_partial_pennies = false
+        $allow_fractional_subunits = false
     ) {
         // ensure amount was received
         if ($amount === null) {
@@ -489,7 +489,7 @@ class EEH_Template
             // format float
             $decimal_places_to_use = $mny->dec_plc;
             // If we're allowing showing partial penny amounts, determine how many decimal places to use.
-            if ($allow_partial_pennies) {
+            if ($allow_fractional_subunits) {
                 $pos_of_period = strrpos($amount, '.');
                 if ($pos_of_period !== false) {
                     // Use a max of two extra decimal places (more than that and it starts
@@ -543,6 +543,26 @@ class EEH_Template
         return $amount_formatted;
     }
 
+
+    /**
+     * @param float  $amount
+     * @param bool   $display_code
+     * @param string $CNT_ISO
+     * @return string
+     * @throws EE_Error
+     * @since   $VID:$
+     */
+    public static function precisionFormatCurrency(float $amount, $display_code = false, $CNT_ISO = ''): string
+    {
+        return EEH_Template::format_currency(
+            $amount,
+            false,
+            $display_code,
+            $CNT_ISO,
+            '',
+            true
+        );
+    }
 
     /**
      * This function is used for outputting the localized label for a given status id in the schema requested (and
