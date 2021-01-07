@@ -3,8 +3,7 @@ jQuery(document).ready(function($) {
 	$.ajaxSetup ({ cache: false });
 
 	// clear firefox and safari cache
-	$(window).unload( function() {});
-
+	$(window).on("unload", function() {});
 
 	$('#reg-admin-attendee-questions-submit').prop( 'disabled', true );
 

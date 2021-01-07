@@ -2,7 +2,7 @@ jQuery(document).ready(function($) {
 
 	$.ajaxSetup ({ cache: false });
 	// clear firefox and safari cache
-	$(window).unload( function() {});
+	$(window).on("unload", function() {});
 
 
 	function validate_form_inputs( submittedForm ) {

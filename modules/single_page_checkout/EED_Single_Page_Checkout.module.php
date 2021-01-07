@@ -1324,8 +1324,14 @@ class EED_Single_Page_Checkout extends EED_Module
                         "AHEE__Single_Page_Checkout__before_{$this->checkout->current_step->slug()}__{$this->checkout->action}",
                         $this->checkout->current_step
                     );
+                    $process_reg_step = apply_filters(
+                        "AHEE__Single_Page_Checkout__process_reg_step__{$this->checkout->current_step->slug()}__{$this->checkout->action}",
+                        true,
+                        $this->checkout->current_step,
+                        $this
+                    );
                     // call action on current step
-                    if (call_user_func(array($this->checkout->current_step, $this->checkout->action))) {
+                    if ($process_reg_step && call_user_func([$this->checkout->current_step, $this->checkout->action])) {
                         // good registrant, you get to proceed
                         if ($this->checkout->current_step->success_message() !== ''
                             && apply_filters(

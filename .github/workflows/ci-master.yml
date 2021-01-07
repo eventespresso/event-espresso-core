@@ -1,0 +1,219 @@
+name: Build and Test
+
+on:
+    pull_request:
+        # Prevent this workflow from running on pull requests to barista branch
+        branches-ignore:
+            - 'barista'
+
+jobs:
+    php-lint:
+        runs-on: ubuntu-latest
+        needs: what_has_changed
+        # Run only if PHP files have changed
+        if: ${{ needs.what_has_changed.outputs.php == 'true' }}
+        strategy:
+            matrix:
+                operating-system: [ubuntu-latest]
+                php-versions: ['7.3'] #, '7.4', '8.0', '8.1']
+        name: Lint with PHP ${{ matrix.php-versions }}
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+
+            - name: Setup PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: ${{ matrix.php-versions }}
+
+            - name: Get composer cache directory
+              id: composercache
+              run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+            - name: Cache composer dependencies
+              uses: actions/cache@v2
+              with:
+                  path: ${{ steps.composercache.outputs.dir }}
+                  # Use composer-lock.json for key
+                  key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+                  restore-keys: ${{ runner.os }}-composer-
+
+            - name: Install dependencies
+              run: composer install
+
+            - name: PHP Lint
+              run: composer config-eventespressocs && composer run-script lint:skip-warnings
+              # Allow failure for PHP > 7.3
+              # continue-on-error: ${{ matrix.php-versions != '7.3' }}
+
+    php-unit-tests:
+        runs-on: ${{ matrix.operating-system }}
+        needs: what_has_changed
+        # Run only if PHP files have changed
+        if: ${{ needs.what_has_changed.outputs.php == 'true' }}
+        env:
+            PHPUNIT_VER: v7 # default
+            WP_VERSION: latest
+            WP_MULTISITE: 0
+        strategy:
+            matrix:
+                operating-system: [ubuntu-latest]
+                php-versions:
+                    ['5.6', '7.0', '7.1', '7.2', '7.3', '7.4', '8.0', '8.1']
+        name: Unit Tests with PHP ${{ matrix.php-versions }}
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+
+            - name: Set PHPUnit version
+              run: |
+                  if [[ -n "${{ matrix.php-versions }}" ]]; then
+                    case "${{ matrix.php-versions }}" in
+                      7.0)
+                        echo "Using PHPUnit 6"
+                        echo "PHPUNIT_VER=v6" >> $GITHUB_ENV
+                        ;;
+                      5.6)
+                        echo "Using PHPUnit 5"
+                        echo "PHPUNIT_VER=5.7.22" >> $GITHUB_ENV
+                        ;;
+                    esac
+                  fi
+
+            - name: Setup PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: ${{ matrix.php-versions }}
+                  tools: phpunit:${{ env.PHPUNIT_VER }}
+                  extensions: mysql # needed for PHP < 7.1
+
+            - name: Start mysql service
+              run: sudo /etc/init.d/mysql start
+
+            - name: Get composer cache directory
+              id: composercache
+              run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+            - name: Cache composer dependencies
+              uses: actions/cache@v2
+              with:
+                  path: ${{ steps.composercache.outputs.dir }}
+                  # Use composer.lock for key.
+                  key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+                  restore-keys: ${{ runner.os }}-composer-
+
+            - name: Check PHP Version
+              run: php -v
+
+            - name: Composer install
+              run: composer install --optimize-autoloader --prefer-dist
+
+            - name: Install WP Tests
+              run: bash tests/bin/install-wp-tests.sh wordpress_test root root localhost latest
+
+            - name: Run PHP Unit Tests
+              run: phpunit --configuration tests/phpunit.xml
+              # Allow failure for nightly builds - PHP 8.0/8.1
+              continue-on-error: ${{ matrix.php-versions == '8.0' || matrix.php-versions == '8.1' }}
+
+              # run multisite test only with 1 PHP version
+            - if: ${{ matrix.php-versions == '7.4' }}
+              name: Run PHP Unit Tests - WP Multisite
+              env:
+                  WP_MULTISITE: 1
+              run: phpunit --configuration tests/phpunit.xml
+
+    js-lint-and-build:
+        name: JS Lint/Build
+        runs-on: ubuntu-latest
+        needs: what_has_changed
+        # Run only if JS files have changed
+        if: ${{ needs.what_has_changed.outputs.js == 'true' }}
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+
+            - name: Set up Node
+              uses: dcodeIO/setup-node-nvm@master
+              with:
+                  node-version: lts/*
+
+            - name: Cache node modules
+              uses: actions/cache@v2
+              env:
+                  cache-name: cache-node-modules
+              with:
+                  # npm cache files are stored in `~/.npm` on Linux/macOS
+                  path: ~/.npm
+                  key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+                  restore-keys: |
+                      ${{ runner.os }}-build-${{ env.cache-name }}-
+                      ${{ runner.os }}-build-
+                      ${{ runner.os }}-
+
+            - name: Install Dependencies
+              run: npm install
+
+            - name: JS Lint
+              run: npm run ci:lint
+
+            - name: JS Build
+              run: npm run ci:build
+
+    js-unit-tests:
+        name: JS Unit tests
+        runs-on: ubuntu-latest
+        needs: what_has_changed
+        # Run only if JS files have changed
+        if: ${{ needs.what_has_changed.outputs.js == 'true' || needs.what_has_changed.outputs.webpack == 'true' }}
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+
+            - name: Set up Node
+              uses: dcodeIO/setup-node-nvm@master
+              with:
+                  node-version: lts/*
+
+            - name: Cache node modules
+              uses: actions/cache@v2
+              env:
+                  cache-name: cache-node-modules
+              with:
+                  # npm cache files are stored in `~/.npm` on Linux/macOS
+                  path: ~/.npm
+                  key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+                  restore-keys: |
+                      ${{ runner.os }}-build-${{ env.cache-name }}-
+                      ${{ runner.os }}-build-
+                      ${{ runner.os }}-
+
+            - name: Install Dependencies
+              run: npm install
+
+            - name: JS Unit tests
+              run: npm run ci:test
+
+    # JOB to check if the files in a path have changed
+    what_has_changed:
+        runs-on: ubuntu-latest
+        outputs:
+            js: ${{ steps.filter.outputs.js }}
+            php: ${{ steps.filter.outputs.php }}
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+              # For pull requests it's not necessary to checkout the code
+              if: ${{ github.event_name != 'pull_request' }}
+
+            - uses: dorny/paths-filter@v2
+              id: filter
+              with:
+                  base: ${{ github.ref }}
+                  filters: |
+                      js:
+                        - '**/*.js'
+                      webpack:
+                        - 'package.json'
+                      php:
+                        - '**/*.php'

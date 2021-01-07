@@ -22,7 +22,7 @@
 		"src\/.travis.yml",
 		"src\/.github\/**",
 		"src\/.babelrc",
-		"src\/.editorconfig",
+		"src\/.editorconfig"
 	],
 	"decafFilesRemove": [
 		"src\/tests\/**",
@@ -34,7 +34,7 @@
 		"src\/wp-assets\/**",
 		"src\/.github\/**",
 		"src\/.babelrc",
-		"src\/.editorconfig",
+		"src\/.editorconfig"
 	],
 	"awsbucket": "",
 	"awsregion": "",
