@@ -74,7 +74,7 @@ class EE_Attendee_Test extends EE_UnitTestCase{
             'phone'       => '9991231234',
             'credit_card' => '4007000000027',
             'exp_month'   => '12',
-            'exp_year'    => new date('Y', strtotime('+5 years')),
+            'exp_year'    => date('Y', strtotime('+5 years')),
             'cvv'         => '123',
         ];
         $form->receive_form_submission( array( $form_name => $form_values  ) );
