@@ -24,7 +24,8 @@ class PueRequests extends Route
      */
     public function matchesCurrentRequest(): bool
     {
-        return $this->request->isAdmin() && apply_filters('FHEE__EE_System__brew_espresso__load_pue', true);
+        return ($this->request->isAdmin() || $this->request->isAdminAjax())
+               && apply_filters('FHEE__EE_System__brew_espresso__load_pue', true);
     }
 
 
