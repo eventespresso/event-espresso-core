@@ -61,23 +61,23 @@ class EE_Attendee_Test extends EE_UnitTestCase{
 		EEM_Country::reset();
 		$form = $pm->type_obj()->billing_form();
 		$form_name = $form->name();
-		$form_values = array(
-				'first_name'	=> 'e',
-				'last_name'	=> 'e',
-				'email'		=> 'developers@eventespresso.com',
-				'address'		=> '123',
-				'address2'	=> '',
-				'city'			=> 'someville',
-				'state' 		=> 12,
-				'country' 		=> 'US',
-				'zip'			=> '1235',
-				'phone'		=> '9991231234',
-				'credit_card'=>'4007000000027',
-				'exp_month'=>'12',
-				'exp_year'=>'2020',
-				'cvv'=>'123',
-			);
-		$form->receive_form_submission( array( $form_name => $form_values  ) );
+        $form_values = [
+            'first_name'  => 'e',
+            'last_name'   => 'e',
+            'email'       => 'developers@eventespresso.com',
+            'address'     => '123',
+            'address2'    => '',
+            'city'        => 'someville',
+            'state'       => 12,
+            'country'     => 'US',
+            'zip'         => '1235',
+            'phone'       => '9991231234',
+            'credit_card' => '4007000000027',
+            'exp_month'   => '12',
+            'exp_year'    => date('Y', strtotime('+5 years')),
+            'cvv'         => '123',
+        ];
+        $form->receive_form_submission( array( $form_name => $form_values  ) );
 		$this->assertTrue( $form->is_valid(), 'error was: ' . $form->get_validation_error_string()  );
 		$p = $this->new_model_obj_with_dependencies('Payment', array( 'PMD_ID'=>$pm->ID() ) );
 		$reg = $this->new_model_obj_with_dependencies('Registration',array( 'TXN_ID' => $p->TXN_ID() ) );

@@ -228,7 +228,7 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper
                         break;
                     case 'EE_Primary_Key_Int_Field':
                         $input_class = 'EE_Hidden_Input';
-                        $input_constructor_args['normalization_strategy'] = new EE_Int_Normalization();
+                        $input_constructor_args[0]['normalization_strategy'] = new EE_Int_Normalization();
                         break;
                     case 'EE_Primary_Key_String_Field':
                         $input_class = 'EE_Hidden_Input';
