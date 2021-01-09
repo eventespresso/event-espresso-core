@@ -120,11 +120,13 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
         // verify transaction
         EEM_Transaction::instance()->ensure_is_obj($transaction);
         $transaction->set_payment_method_ID($payment_method->ID());
+        $amount = EEH_Template::format_currency($amount, true, false);
+        $remaining = EEH_Template::format_currency($transaction->remaining(), true, false);
         // verify payment method type
         if ($payment_method->type_obj() instanceof EE_PMT_Base) {
             $payment = $payment_method->type_obj()->process_payment(
                 $transaction,
-                min($amount, $transaction->remaining()), // make sure we don't overcharge
+                min($amount, $remaining), // make sure we don't overcharge
                 $billing_form,
                 $return_url,
                 add_query_arg(array('ee_cancel_payment' => true), $cancel_url),
