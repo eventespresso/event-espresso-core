@@ -707,11 +707,11 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      *
      * @access    public
      * @param    float $REG_final_price
-     * @throws EE_Error
-     * @throws RuntimeException
+     * @throws EE_Error|ReflectionException
      */
     public function set_final_price($REG_final_price = 0.00)
     {
+        $REG_final_price = EEH_Template::format_currency($REG_final_price, true, false);
         $this->set('REG_final_price', $REG_final_price);
     }
 
@@ -721,11 +721,11 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      *
      * @access    public
      * @param    float $REG_paid
-     * @throws EE_Error
-     * @throws RuntimeException
+     * @throws EE_Error|ReflectionException
      */
     public function set_paid($REG_paid = 0.00)
     {
+        $REG_paid = EEH_Template::format_currency($REG_paid, true, false);
         $this->set('REG_paid', $REG_paid);
     }
 

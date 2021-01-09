@@ -193,14 +193,11 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      * Set transaction total
      *
      * @param float $total total value of transaction
-     * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws ReflectionException
+     * @throws EE_Error|ReflectionException
      */
     public function set_total($total = 0.00)
     {
+        $total = EEH_Template::format_currency($total, true, false);
         $this->set('TXN_total', (float) $total);
     }
 
@@ -209,14 +206,11 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      * Set Total Amount Paid to Date
      *
      * @param float $total_paid total amount paid to date (sum of all payments)
-     * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws ReflectionException
+     * @throws EE_Error|ReflectionException
      */
     public function set_paid($total_paid = 0.00)
     {
+        $total_paid = EEH_Template::format_currency($total_paid, true, false);
         $this->set('TXN_paid', (float) $total_paid);
     }
 

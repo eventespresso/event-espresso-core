@@ -78,10 +78,12 @@ class EE_Registration_Payment extends EE_Base_Class
      *
      * @access    public
      * @param float $amount
+     * @throws EE_Error|ReflectionException
      */
     public function set_amount($amount = 0.000)
     {
-        $this->set('RPY_amount', $amount);
+        $amount = EEH_Template::format_currency($amount, true, false);
+        $this->set('RPY_amount', (float) $amount);
     }
 
 
