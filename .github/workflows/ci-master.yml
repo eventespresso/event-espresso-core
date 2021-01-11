@@ -2,9 +2,9 @@ name: Build and Test
 
 on:
     pull_request:
-        # Prevent this workflow from running on pull requests to barista branch
+        # Prevent this workflow from running on pull requests to dev branch
         branches-ignore:
-            - 'barista'
+            - 'dev'
 
 jobs:
     php-lint:
