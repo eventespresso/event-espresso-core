@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c9258d570c1b5de15ecb3f3386ab3412",
+    "content-hash": "142157b73110a369c6467fcb52d20934",
     "packages": [
         {
             "name": "composer/installers",
@@ -155,16 +155,16 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/eventespresso/ee-coding-standards.git",
-                "reference": "276d7999ffc6b562b7678ce78f10183e8dd1d4d2"
+                "reference": "3b9cfb3adbc62bee9c36be97d0e19065a38a8259"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/eventespresso/ee-coding-standards/zipball/276d7999ffc6b562b7678ce78f10183e8dd1d4d2",
-                "reference": "276d7999ffc6b562b7678ce78f10183e8dd1d4d2",
+                "url": "https://api.github.com/repos/eventespresso/ee-coding-standards/zipball/3b9cfb3adbc62bee9c36be97d0e19065a38a8259",
+                "reference": "3b9cfb3adbc62bee9c36be97d0e19065a38a8259",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.1",
+                "php": ">=5.6",
                 "phpcompatibility/php-compatibility": "9.*",
                 "phpcompatibility/phpcompatibility-wp": "2.*",
                 "squizlabs/php_codesniffer": "3.*",
@@ -211,7 +211,7 @@
                 "issues": "https://github.com/eventespresso/ee-coding-standards/issues",
                 "source": "https://github.com/eventespresso/ee-coding-standards/tree/master"
             },
-            "time": "2020-10-12T19:17:22+00:00"
+            "time": "2021-01-11T19:18:27+00:00"
         },
         {
             "name": "phpcompatibility/php-compatibility",
@@ -823,7 +823,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=5.5",
+        "php": ">=5.6",
         "ext-json": "*"
     },
     "platform-dev": [],
