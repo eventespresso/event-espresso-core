@@ -4,7 +4,7 @@ use EETests\bootstrap\CoreLoader;
 /**
  * Bootstrap for EE Unit Tests
  */
-require __DIR__ . '/includes/CoreLoader.php';
+require __DIR__ . '/bootstrap/CoreLoader.php';
 $core_loader = new CoreLoader();
 $core_loader->init();
 
