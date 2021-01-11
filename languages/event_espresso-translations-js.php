@@ -127,7 +127,6 @@ $generated_i18n_strings = array(
 	__( 'Loading…', 'event_espresso' ),
 
 	// Reference: domains/blocks/src/services/utils.ts:19
-	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/ErrorMessage.tsx:31
 	__( 'Error', 'event_espresso' ),
 
 	// Reference: domains/blocks/src/services/utils.ts:26
@@ -553,11 +552,16 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:99
 	__( 'Cap', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/ErrorMessage.tsx:17
-	__( 'Tickets must always have at least one date assigned to them but one or more of the tickets below does not have any. Please correct the assignments for the highlighted cells.', 'event_espresso' ),
+	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/ErrorMessage.tsx:18
+	__( 'Tickets must always have at least one date assigned to them but one or more of the tickets below does not have any. 
+Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/ErrorMessage.tsx:21
-	__( 'Event Dates must always have at least one Ticket assigned to them but one or more of the Event Dates below does not have any. Please correct the assignments for the highlighted cells.', 'event_espresso' ),
+	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/ErrorMessage.tsx:22
+	__( 'Event Dates must always have at least one Ticket assigned to them but one or more of the Event Dates below does not have any. 
+Please correct the assignments for the highlighted cells.', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/ErrorMessage.tsx:32
+	__( 'Please Update Assignments', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/ModalContainer.tsx:26
 	__( 'There seem to be some dates/tickets which have no tickets/dates assigned. Do you want to fix them now?', 'event_espresso' ),
