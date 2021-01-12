@@ -113,7 +113,7 @@ class EEH_Template
      * @param string $name The name of the specialised template.
      * @param array  $template_args
      * @param bool   $return_string
-     * @return string        the html output for the formatted money value
+     * @return void  echos the html output for the template
      */
     public static function get_template_part(
         $slug = null,
@@ -124,7 +124,7 @@ class EEH_Template
         do_action("get_template_part_{$slug}-{$name}", $slug, $name);
         $templates = [];
         $name      = (string) $name;
-        if ($name != '') {
+        if ($name !== '') {
             $templates[] = "{$slug}-{$name}.php";
         }
         // allow template parts to be turned off via something like:
@@ -215,7 +215,7 @@ class EEH_Template
                 if (isset($EE_CPTs[ $post_type ])) {
                     $archive_or_single = is_archive() ? 'archive' : '';
                     $archive_or_single = is_single() ? 'single' : $archive_or_single;
-                    $templates = $archive_or_single . '-' . $post_type . '.php';
+                    $templates         = $archive_or_single . '-' . $post_type . '.php';
                 }
             }
             // currently active EE template theme
@@ -231,7 +231,7 @@ class EEH_Template
 
             // add core plugin folders for checking only if we're not $check_if_custom
             if (! $check_if_custom) {
-                $core_paths = [
+                $core_paths            = [
                     // in the  /wp-content/plugins/(EE4 folder)/public/(current EE theme)/ folder within the plugin
                     EE_PUBLIC . $current_theme,
                     // in the  /wp-content/plugins/(EE4 folder)/core/templates/(current EE theme)/ folder within the plugin
@@ -253,12 +253,12 @@ class EEH_Template
                 : [$template_folder_paths];
             // array to hold all possible template paths
             $full_template_paths = [];
-            $file_name = '';
+            $file_name           = '';
             // loop through $templates
             foreach ($templates as $template) {
                 // normalize directory separators
-                $template = EEH_File::standardise_directory_separators($template);
-                $file_name = basename($template);
+                $template                      = EEH_File::standardise_directory_separators($template);
+                $file_name                     = basename($template);
                 $template_path_minus_file_name = substr($template, 0, (strlen($file_name) * -1));
                 // while looping through all template folder paths
                 foreach ($template_folder_paths as $template_folder_path) {
@@ -321,11 +321,11 @@ class EEH_Template
      */
     protected static function _find_common_base_path($paths)
     {
-        $last_offset = 0;
+        $last_offset      = 0;
         $common_base_path = '';
         while (($index = strpos($paths[0], '/', $last_offset)) !== false) {
             $dir_length = $index - $last_offset + 1;
-            $directory = substr($paths[0], $last_offset, $dir_length);
+            $directory  = substr($paths[0], $last_offset, $dir_length);
             foreach ($paths as $path) {
                 if (substr($path, $last_offset, $dir_length) !== $directory) {
                     return $common_base_path;
@@ -356,7 +356,6 @@ class EEH_Template
         $return_string = false,
         $throw_exceptions = false
     ) {
-
         /**
          * These two filters are intended for last minute changes to templates being loaded and/or template arg
          * modifications.  NOTE... modifying these things can cause breakage as most templates running through
@@ -442,8 +441,8 @@ class EEH_Template
      * the country currency settings from the supplied country ISO code
      *
      * @param float   $amount                    raw money value
-     * @param boolean $return_raw                whether to return the formatted float value only with no currency sign or
-     *                                       code
+     * @param boolean $return_raw                whether to return the formatted float value only with no currency sign
+     *                                           or code
      * @param boolean $display_code              whether to display the country code (USD). Default = TRUE
      * @param string  $CNT_ISO                   2 letter ISO code for a country
      * @param string  $cur_code_span_class
@@ -522,7 +521,9 @@ class EEH_Template
                 $display_code = apply_filters('FHEE__EEH_Template__format_currency__display_code', $display_code);
 
                 // add currency code ?
-                $amount_formatted = $display_code ? $amount_formatted . ' <span class="' . $cur_code_span_class . '">(' . $mny->code . ')</span>' : $amount_formatted;
+                $amount_formatted = $display_code
+                    ? $amount_formatted . ' <span class="' . $cur_code_span_class . '">(' . $mny->code . ')</span>'
+                    : $amount_formatted;
             }
 
             // filter results
@@ -564,6 +565,7 @@ class EEH_Template
         );
     }
 
+
     /**
      * This function is used for outputting the localized label for a given status id in the schema requested (and
      * possibly plural).  The intended use of this function is only for cases where wanting a label outside of a
@@ -603,7 +605,7 @@ class EEH_Template
         if (! empty($icon)) {
             $dashicons = preg_split("(ee-icon |dashicons )", $icon);
             $dashicons = array_filter($dashicons);
-            $count = count($dashicons);
+            $count     = count($dashicons);
             $icon_html .= $count > 1 ? '<span class="ee-composite-dashicon">' : '';
             foreach ($dashicons as $dashicon) {
                 $type      = strpos($dashicon, 'ee-icon') !== false ? 'ee-icon ' : 'dashicons ';
@@ -670,23 +672,23 @@ class EEH_Template
      */
     public static function help_tour_stops_generator(EE_Help_Tour $tour)
     {
-        $id = $tour->get_slug();
+        $id    = $tour->get_slug();
         $stops = $tour->get_stops();
 
         $content = '<ol style="display:none" id="' . $id . '">';
 
         foreach ($stops as $stop) {
-            $data_id = ! empty($stop['id']) ? ' data-id="' . $stop['id'] . '"' : '';
+            $data_id    = ! empty($stop['id']) ? ' data-id="' . $stop['id'] . '"' : '';
             $data_class = empty($data_id) && ! empty($stop['class']) ? ' data-class="' . $stop['class'] . '"' : '';
 
             // if container is set to modal then let's make sure we set the options accordingly
             if (empty($data_id) && empty($data_class)) {
-                $stop['options']['modal'] = true;
+                $stop['options']['modal']  = true;
                 $stop['options']['expose'] = true;
             }
 
-            $custom_class = ! empty($stop['custom_class']) ? ' class="' . $stop['custom_class'] . '"' : '';
-            $button_text = ! empty($stop['button_text']) ? ' data-button="' . $stop['button_text'] . '"' : '';
+            $custom_class  = ! empty($stop['custom_class']) ? ' class="' . $stop['custom_class'] . '"' : '';
+            $button_text   = ! empty($stop['button_text']) ? ' data-button="' . $stop['button_text'] . '"' : '';
             $inner_content = isset($stop['content']) ? $stop['content'] : '';
 
             // options
@@ -701,7 +703,15 @@ class EEH_Template
             }
 
             // let's put all together
-            $content .= '<li' . $data_id . $data_class . $custom_class . $button_text . $options . '>' . $inner_content . '</li>';
+            $content .= '<li'
+                        . $data_id
+                        . $data_class
+                        . $custom_class
+                        . $button_text
+                        . $options
+                        . '>'
+                        . $inner_content
+                        . '</li>';
         }
 
         $content .= '</ol>';
@@ -783,7 +793,8 @@ class EEH_Template
                                 <?php echo esc_html($data_key); ?>
                             </td>
                             <td>
-                                <?php echo EEH_Template::layout_array_as_table($data_values); ?>
+                                <?php
+                                echo EEH_Template::layout_array_as_table($data_values); ?>
                             </td>
                         </tr>
                     <?php } ?>
@@ -945,7 +956,7 @@ class EEH_Template
             '<span class="total-pages">%s</span>',
             number_format_i18n($total_pages)
         );
-        $page_links[] = sprintf(
+        $page_links[]     = sprintf(
             _x('%3$s%1$s of %2$s%4$s', 'paging', 'event_espresso'),
             $html_current_page,
             $html_total_pages,
@@ -999,7 +1010,7 @@ class EEH_Template
         ) {
             return '';
         }
-        $tag = $admin ? 'span' : 'div';
+        $tag        = $admin ? 'span' : 'div';
         $attributes = ! empty($wrap_id) ? " id=\"{$wrap_id}\"" : '';
         $wrap_class = $admin ? "{$wrap_class} float-left" : $wrap_class;
         $attributes .= ! empty($wrap_class)
@@ -1018,8 +1029,8 @@ class EEH_Template
             'FHEE__EEH_Template__powered_by_event_espresso_text',
             $admin ? 'Event Espresso - ' . EVENT_ESPRESSO_VERSION : 'Event Espresso'
         );
-        $url = add_query_arg($query_args, 'https://eventespresso.com/');
-        $url = apply_filters('FHEE__EEH_Template__powered_by_event_espresso__url', $url);
+        $url        = add_query_arg($query_args, 'https://eventespresso.com/');
+        $url        = apply_filters('FHEE__EEH_Template__powered_by_event_espresso__url', $url);
         return (string) apply_filters(
             'FHEE__EEH_Template__powered_by_event_espresso__html',
             sprintf(
@@ -1060,7 +1071,7 @@ if (! function_exists('espresso_pagination')) {
     function espresso_pagination()
     {
         global $wp_query;
-        $big = 999999999; // need an unlikely integer
+        $big        = 999999999; // need an unlikely integer
         $pagination = paginate_links(
             [
                 'base'         => str_replace($big, '%#%', esc_url(get_pagenum_link($big))),
