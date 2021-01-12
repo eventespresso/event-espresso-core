@@ -93,7 +93,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
      *
      * @type string
      */
-    protected $pue_slug;
+    protected $pue_slug = '';
 
 
     /**

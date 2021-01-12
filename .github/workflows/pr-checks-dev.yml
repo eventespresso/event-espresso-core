@@ -96,14 +96,14 @@ jobs:
                   host: localhost
 
             - name: Run PHP Unit Tests
-              run: phpunit --configuration phpunit.xml
+              run: phpunit --configuration tests/phpunit.xml
 
               # run multisite test only with 1 PHP version
             - if: ${{ matrix.php-versions == '7.4' }}
               name: Run PHP Unit Tests - WP Multisite
               env:
                   WP_MULTISITE: 1
-              run: phpunit --configuration phpunit.xml
+              run: phpunit --configuration tests/phpunit.xml
 
     # JOB to check if the files in a path have changed
     what_has_changed:

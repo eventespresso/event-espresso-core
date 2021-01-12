@@ -1,40 +1,39 @@
 {
-	"name": "eventespresso/event-espresso-core",
-	"type": "wordpress-plugin",
-	"license": "GPL-2.0-or-later",
-	"description": "Event Espresso 4 Core for WordPress: Build an Event Ticketing Website Today!",
-	"authors" : [
+	"authors": [
 		{
 			"name": "Event Espresso Teem",
 			"email": "developers@eventspresso.com",
 			"homepage": "http://developer.eventespresso.com"
 		}
 	],
+	"description": "Event Espresso 4 Core for WordPress: Build an Event Ticketing Website Today!",
 	"homepage": "https://eventespresso.com",
 	"keywords": [
-		"event-espresso", "wordpress", "events", "event-management", "event-tickets", "event-registration", "ticketing-system"
+		"event-espresso",
+		"wordpress",
+		"events",
+		"event-management",
+		"event-tickets",
+		"event-registration",
+		"ticketing-system"
 	],
-	"support": {
-		"issues": "https://github.com/eventespresso/event-espresso-core/issues",
-		"forum": "https://eventespresso/support/forums",
-		"source": "https://github.com/eventespresso/event-espresso-core",
-		"docs": "https://github.com/eventespresso/event-espresso-core/tree/master/docs"
-	},
+	"license": "GPL-2.0-or-later",
+	"name": "eventespresso/event-espresso-core",
 	"repositories": [
 		{
 			"type": "vcs",
 			"url": "https://github.com/eventespresso/ee-coding-standards"
 		}
 	],
+	"require": {
+		"composer/installers": "~1.0",
+		"php": ">=5.6",
+		"ext-json": "*"
+	},
 	"require-dev": {
 		"eventespresso/ee-coding-standards": "dev-master",
 		"roave/security-advisories": "dev-master"
 	},
-	"require": {
-		"composer/installers": "~1.0",
-		"php": ">=5.5",
-      	"ext-json": "*"
-    },
 	"scripts": {
 		"config-eventespressocs": [
 			"\"vendor/bin/phpcs\" --config-set installed_paths ../../../vendor/wp-coding-standards/wpcs,../../../vendor/wimg/php-compatibility,../../../vendor/eventespresso/ee-coding-standards",
@@ -43,5 +42,12 @@
 		"lint": "vendor/bin/phpcs --runtime-set testVersion 7.1-",
 		"lint:skip-warnings": "vendor/bin/phpcs -n --runtime-set testVersion 7.1-",
 		"lint:fix": "vendor/bin/phpcbf"
-	}
+	},
+	"support": {
+		"issues": "https://github.com/eventespresso/event-espresso-core/issues",
+		"forum": "https://eventespresso/support/forums",
+		"source": "https://github.com/eventespresso/event-espresso-core",
+		"docs": "https://github.com/eventespresso/event-espresso-core/tree/master/docs"
+	},
+	"type": "wordpress-plugin"
 }

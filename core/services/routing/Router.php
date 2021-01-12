@@ -116,18 +116,15 @@ class Router
             $this->route_request_type,
             $this->dependency_map
         );
+        $this->route_handler->addRoute(
+            'EventEspresso\core\domain\entities\routing\handlers\admin\PueRequests'
+        );
         switch ($this->route_request_type) {
             case PrimaryRoute::ROUTE_REQUEST_TYPE_ACTIVATION:
-                $this->route_handler->addRoute(
-                    'EventEspresso\core\domain\entities\routing\handlers\admin\PueRequests'
-                );
                 break;
             case PrimaryRoute::ROUTE_REQUEST_TYPE_REGULAR:
                 $this->route_handler->addRoute(
                     'EventEspresso\core\domain\entities\routing\handlers\shared\GQLRequests'
-                );
-                $this->route_handler->addRoute(
-                    'EventEspresso\core\domain\entities\routing\handlers\admin\PueRequests'
                 );
                 $this->route_handler->addRoute(
                     'EventEspresso\core\domain\entities\routing\handlers\shared\RestApiRequests'
@@ -158,11 +155,11 @@ class Router
             $this->route_request_type,
             $this->dependency_map
         );
+        $this->route_handler->addRoute(
+            'EventEspresso\core\domain\entities\routing\handlers\admin\AdminRoute'
+        );
         switch ($this->route_request_type) {
             case PrimaryRoute::ROUTE_REQUEST_TYPE_ACTIVATION:
-                $this->route_handler->addRoute(
-                    'EventEspresso\core\domain\entities\routing\handlers\admin\AdminRoute'
-                );
                 $this->route_handler->addRoute(
                     'EventEspresso\core\domain\entities\routing\handlers\admin\WordPressPluginsPage'
                 );
@@ -170,9 +167,6 @@ class Router
             case PrimaryRoute::ROUTE_REQUEST_TYPE_REGULAR:
                 $this->route_handler->addRoute(
                     'EventEspresso\core\domain\entities\routing\handlers\frontend\FrontendRequests'
-                );
-                $this->route_handler->addRoute(
-                    'EventEspresso\core\domain\entities\routing\handlers\admin\AdminRoute'
                 );
                 $this->route_handler->addRoute(
                     'EventEspresso\core\domain\entities\routing\handlers\admin\EspressoLegacyAdmin'
