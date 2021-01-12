@@ -1,9 +1,9 @@
 {
   "files": {
     "adapters.css": "/static/css/adapters.d7f96f47.css",
-    "adapters.js": "/static/js/adapters.b054b55c.js",
-    "adapters.js.map": "/static/js/adapters.b054b55c.js.map",
-    "adapters.php": "/static/js/adapters.4e3242e7.asset.php",
+    "adapters.js": "/static/js/adapters.c4916ce5.js",
+    "adapters.js.map": "/static/js/adapters.c4916ce5.js.map",
+    "adapters.php": "/static/js/adapters.975b24a7.asset.php",
     "blocks.css": "/static/css/blocks.161bb224.css",
     "blocks.js": "/static/js/blocks.d4f83354.js",
     "blocks.js.map": "/static/js/blocks.d4f83354.js.map",
@@ -84,10 +84,10 @@
     "tpc.js": "/static/js/tpc.78390050.js",
     "tpc.js.map": "/static/js/tpc.78390050.js.map",
     "tpc.php": "/static/js/tpc.7844bb4a.asset.php",
-    "uiComponents.css": "/static/css/uiComponents.15267ac3.css",
-    "uiComponents.js": "/static/js/uiComponents.16b623f1.js",
-    "uiComponents.js.map": "/static/js/uiComponents.16b623f1.js.map",
-    "uiComponents.php": "/static/js/uiComponents.4e09dfdf.asset.php",
+    "uiComponents.css": "/static/css/uiComponents.cc21c51f.css",
+    "uiComponents.js": "/static/js/uiComponents.795dbdd8.js",
+    "uiComponents.js.map": "/static/js/uiComponents.795dbdd8.js.map",
+    "uiComponents.php": "/static/js/uiComponents.14bdb3e6.asset.php",
     "utils.js": "/static/js/utils.1a4bcf0a.js",
     "utils.js.map": "/static/js/utils.1a4bcf0a.js.map",
     "utils.php": "/static/js/utils.c6bbc13e.asset.php",
@@ -105,9 +105,9 @@
     "static/css/richTextEditor.18a5c48a.css.map": "/static/css/richTextEditor.18a5c48a.css.map",
     "static/css/toaster.60e25ddb.css.map": "/static/css/toaster.60e25ddb.css.map",
     "static/css/tpc.f5dee559.css.map": "/static/css/tpc.f5dee559.css.map",
-    "static/css/uiComponents.15267ac3.css.map": "/static/css/uiComponents.15267ac3.css.map",
+    "static/css/uiComponents.cc21c51f.css.map": "/static/css/uiComponents.cc21c51f.css.map",
     "static/css/wpPluginsPage.e59608e8.css.map": "/static/css/wpPluginsPage.e59608e8.css.map",
-    "static/js/adapters.b054b55c.js.LICENSE.txt": "/static/js/adapters.b054b55c.js.LICENSE.txt",
+    "static/js/adapters.c4916ce5.js.LICENSE.txt": "/static/js/adapters.c4916ce5.js.LICENSE.txt",
     "static/js/blocks.d4f83354.js.LICENSE.txt": "/static/js/blocks.d4f83354.js.LICENSE.txt",
     "static/js/data.ea8a3bfc.js.LICENSE.txt": "/static/js/data.ea8a3bfc.js.LICENSE.txt",
     "static/js/dates.b8580ca8.js.LICENSE.txt": "/static/js/dates.b8580ca8.js.LICENSE.txt",
@@ -121,13 +121,13 @@
     "static/js/services.cda72351.js.LICENSE.txt": "/static/js/services.cda72351.js.LICENSE.txt",
     "static/js/toaster.268fed89.js.LICENSE.txt": "/static/js/toaster.268fed89.js.LICENSE.txt",
     "static/js/tpc.78390050.js.LICENSE.txt": "/static/js/tpc.78390050.js.LICENSE.txt",
-    "static/js/uiComponents.16b623f1.js.LICENSE.txt": "/static/js/uiComponents.16b623f1.js.LICENSE.txt",
+    "static/js/uiComponents.795dbdd8.js.LICENSE.txt": "/static/js/uiComponents.795dbdd8.js.LICENSE.txt",
     "static/js/wpPluginsPage.83fe0086.js.LICENSE.txt": "/static/js/wpPluginsPage.83fe0086.js.LICENSE.txt"
   },
   "entrypoints": {
     "adapters": [
       "static/css/adapters.d7f96f47.css",
-      "static/js/adapters.b054b55c.js"
+      "static/js/adapters.c4916ce5.js"
     ],
     "constants": [
       "static/js/constants.07bfd8ae.js"
@@ -193,8 +193,8 @@
       "static/js/tpc.78390050.js"
     ],
     "uiComponents": [
-      "static/css/uiComponents.15267ac3.css",
-      "static/js/uiComponents.16b623f1.js"
+      "static/css/uiComponents.cc21c51f.css",
+      "static/js/uiComponents.795dbdd8.js"
     ],
     "utils": [
       "static/js/utils.1a4bcf0a.js"
