@@ -100,7 +100,8 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
         $update_txn = true,
         $cancel_url = ''
     ) {
-        if ((float) $amount < 0) {
+        $amount = (float) $amount;
+        if ($amount < 0) {
             throw new EE_Error(
                 sprintf(
                     esc_html__(
