@@ -261,11 +261,11 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:108
 	__( 'End Date', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/DatesList.tsx:35
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/TableView.tsx:41
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/DatesList.tsx:34
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/TableView.tsx:33
 	__( 'Event Dates', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/DatesList.tsx:38
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/DatesList.tsx:37
 	__( 'loading event dates…', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/DatesListButtons.tsx:23
@@ -384,7 +384,7 @@ $generated_i18n_strings = array(
 	__( 'Move Date to Trash', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/config.ts:13
-	// Reference: packages/constants/src/datetimeStatus.ts:4
+	// Reference: packages/constants/src/datetime.ts:6
 	__( 'Active', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/config.ts:14
@@ -393,7 +393,7 @@ $generated_i18n_strings = array(
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/config.ts:15
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/config.ts:14
-	// Reference: packages/constants/src/datetimeStatus.ts:6
+	// Reference: packages/constants/src/datetime.ts:8
 	__( 'Expired', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/config.ts:16
@@ -401,7 +401,7 @@ $generated_i18n_strings = array(
 	__( 'Sold Out', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/config.ts:17
-	// Reference: packages/constants/src/datetimeStatus.ts:10
+	// Reference: packages/constants/src/datetime.ts:12
 	__( 'Upcoming', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/config.ts:7
@@ -503,7 +503,7 @@ $generated_i18n_strings = array(
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:46
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:54
-	// Reference: packages/ee-components/src/EntityList/EntityListFilterBar.tsx:45
+	// Reference: packages/ee-components/src/EntityList/EntityListFilterBar.tsx:43
 	__( 'search', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:47
@@ -965,18 +965,18 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/adapters/src/Pagination/Pagination.tsx:23
 	__( 'pagination', 'event_espresso' ),
 
-	// Reference: packages/constants/src/datetimeStatus.ts:5
+	// Reference: packages/constants/src/datetime.ts:10
+	__( 'Postponed', 'event_espresso' ),
+
+	// Reference: packages/constants/src/datetime.ts:11
+	__( 'SoldOut', 'event_espresso' ),
+
+	// Reference: packages/constants/src/datetime.ts:7
 	// Reference: packages/predicates/src/registration/statusOptions.ts:10
 	__( 'Cancelled', 'event_espresso' ),
 
-	// Reference: packages/constants/src/datetimeStatus.ts:7
+	// Reference: packages/constants/src/datetime.ts:9
 	__( 'Inactive', 'event_espresso' ),
-
-	// Reference: packages/constants/src/datetimeStatus.ts:8
-	__( 'Postponed', 'event_espresso' ),
-
-	// Reference: packages/constants/src/datetimeStatus.ts:9
-	__( 'SoldOut', 'event_espresso' ),
 
 	// Reference: packages/dates/src/DateRangePicker/DateRangePickerLegend.tsx:13
 	__( 'day in range', 'event_espresso' ),
@@ -1021,6 +1021,9 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 
 	// Reference: packages/edtr-services/src/apollo/initialization/useCacheRehydration.ts:134
 	__( 'prices initialized', 'event_espresso' ),
+
+	// Reference: packages/edtr-services/src/apollo/mutations/useReorderEntities.ts:63
+	__( 'reordering has been applied', 'event_espresso' ),
 
 	// Reference: packages/edtr-services/src/utils/dateAndTime.ts:32
 	__( 'End date has been set one hour after start date', 'event_espresso' ),
@@ -1070,6 +1073,12 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 
 	// Reference: packages/ee-components/src/bulkEdit/details/Submit.tsx:18
 	__( 'Bulk update details', 'event_espresso' ),
+
+	// Reference: packages/ee-components/src/filterBar/SortByControl/index.tsx:26
+	__( 'reorder dates', 'event_espresso' ),
+
+	// Reference: packages/ee-components/src/filterBar/SortByControl/index.tsx:26
+	__( 'reorder tickets', 'event_espresso' ),
 
 	// Reference: packages/form/src/renderers/RepeatableRenderer.tsx:36
 	/* translators: %d the entry number */
@@ -1399,12 +1408,6 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/EntityList/filterBar/buttons/ToggleFiltersButton.tsx:9
 	__( 'show filters', 'event_espresso' ),
-
-	// Reference: packages/ui-components/src/EntityList/filterBar/buttons/ToggleSortingButton.tsx:20
-	__( 'disable sorting', 'event_espresso' ),
-
-	// Reference: packages/ui-components/src/EntityList/filterBar/buttons/ToggleSortingButton.tsx:20
-	__( 'enable sorting', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/Legend/ToggleLegendButton.tsx:26
 	__( 'hide legend', 'event_espresso' ),
