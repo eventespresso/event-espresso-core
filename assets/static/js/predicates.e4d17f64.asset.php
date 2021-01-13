@@ -1,0 +1,1 @@
+<?php return array('dependencies' => array('eventespresso-constants', 'eventespresso-dates', 'eventespresso-i18n', 'eventespresso-utils'), 'version' => 'e136698a7d5e1f2f1ec0a6aee6c2120d');

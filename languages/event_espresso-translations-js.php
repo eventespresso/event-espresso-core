@@ -132,7 +132,7 @@ $generated_i18n_strings = array(
 	// Reference: domains/blocks/src/services/utils.ts:26
 	__( 'Select…', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/EventDescription.tsx:34
+	// Reference: domains/eventEditor/src/ui/EventDescription.tsx:32
 	__( 'Event Description', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/ActiveStatus.tsx:22
@@ -1135,7 +1135,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/rich-text-editor/src/components/AdvancedTextEditor/toolbarButtons/WPMedia.tsx:8
 	__( 'Select media', 'event_espresso' ),
 
-	// Reference: packages/rich-text-editor/src/components/RichTextEditor/RichTextEditor.tsx:86
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/RichTextEditor.tsx:90
 	__( 'Write something…', 'event_espresso' ),
 
 	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/Toolbar.tsx:20
@@ -1208,6 +1208,12 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 
 	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/textAlign/Component.tsx:12
 	__( 'Ordered textalign', 'event_espresso' ),
+
+	// Reference: packages/rich-text-editor/src/components/WithEditMode/WithEditMode.tsx:57
+	__( 'Visual editor', 'event_espresso' ),
+
+	// Reference: packages/rich-text-editor/src/components/WithEditMode/WithEditMode.tsx:58
+	__( 'HTML editor', 'event_espresso' ),
 
 	// Reference: packages/tpc/src/buttons/AddPriceModifierButton.tsx:14
 	__( 'add new price modifier after this row', 'event_espresso' ),
