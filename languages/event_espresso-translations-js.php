@@ -132,7 +132,7 @@ $generated_i18n_strings = array(
 	// Reference: domains/blocks/src/services/utils.ts:26
 	__( 'Select…', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/EventDescription.tsx:30
+	// Reference: domains/eventEditor/src/ui/EventDescription.tsx:34
 	__( 'Event Description', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/ActiveStatus.tsx:22
@@ -1129,20 +1129,85 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/predicates/src/registration/statusOptions.ts:6
 	__( 'Approved', 'event_espresso' ),
 
-	// Reference: packages/rich-text-editor/src/components/RTEWithEditMode/RTEWithEditMode.tsx:33
-	__( 'Visual editor', 'event_espresso' ),
-
-	// Reference: packages/rich-text-editor/src/components/RTEWithEditMode/RTEWithEditMode.tsx:34
-	__( 'HTML editor', 'event_espresso' ),
-
-	// Reference: packages/rich-text-editor/src/components/toolbarButtons/WPMedia.tsx:10
-	__( 'Select media', 'event_espresso' ),
-
-	// Reference: packages/rich-text-editor/src/components/toolbarButtons/WPMedia.tsx:12
+	// Reference: packages/rich-text-editor/src/components/AdvancedTextEditor/toolbarButtons/WPMedia.tsx:10
 	__( 'Select', 'event_espresso' ),
 
-	// Reference: packages/rich-text-editor/src/components/toolbarButtons/WPMedia.tsx:68
-	__( 'Add Media', 'event_espresso' ),
+	// Reference: packages/rich-text-editor/src/components/AdvancedTextEditor/toolbarButtons/WPMedia.tsx:8
+	__( 'Select media', 'event_espresso' ),
+
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/RichTextEditor.tsx:86
+	__( 'Write something…', 'event_espresso' ),
+
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/Toolbar.tsx:20
+	__( 'RTE Toolbar', 'event_espresso' ),
+
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/blockType/Component.tsx:11
+	__( 'Normal', 'event_espresso' ),
+
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/blockType/Component.tsx:12
+	__( 'H1', 'event_espresso' ),
+
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/blockType/Component.tsx:13
+	__( 'H2', 'event_espresso' ),
+
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/blockType/Component.tsx:14
+	__( 'H3', 'event_espresso' ),
+
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/blockType/Component.tsx:15
+	__( 'H4', 'event_espresso' ),
+
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/blockType/Component.tsx:16
+	__( 'H5', 'event_espresso' ),
+
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/blockType/Component.tsx:17
+	__( 'H6', 'event_espresso' ),
+
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/blockType/Component.tsx:18
+	__( 'Block quote', 'event_espresso' ),
+
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/blockType/Component.tsx:19
+	__( 'Code', 'event_espresso' ),
+
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/image/Component.tsx:36
+	__( 'Add mage', 'event_espresso' ),
+
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/image/Component.tsx:43
+	__( 'Image URL', 'event_espresso' ),
+
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/image/Component.tsx:47
+	__( 'Alt text', 'event_espresso' ),
+
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/image/Component.tsx:48
+	__( 'Width', 'event_espresso' ),
+
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/image/Component.tsx:52
+	__( 'Height', 'event_espresso' ),
+
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/link/Component.tsx:51
+	__( 'Edit link', 'event_espresso' ),
+
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/link/Component.tsx:55
+	__( 'URL title', 'event_espresso' ),
+
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/list/Component.tsx:11
+	__( 'Unordered list', 'event_espresso' ),
+
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/list/Component.tsx:12
+	__( 'Ordered list', 'event_espresso' ),
+
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/list/Component.tsx:13
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/textAlign/Component.tsx:13
+	__( 'Indent', 'event_espresso' ),
+
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/list/Component.tsx:14
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/textAlign/Component.tsx:14
+	__( 'Outdent', 'event_espresso' ),
+
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/textAlign/Component.tsx:11
+	__( 'Unordered textalign', 'event_espresso' ),
+
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/textAlign/Component.tsx:12
+	__( 'Ordered textalign', 'event_espresso' ),
 
 	// Reference: packages/tpc/src/buttons/AddPriceModifierButton.tsx:14
 	__( 'add new price modifier after this row', 'event_espresso' ),
