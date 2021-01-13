@@ -330,7 +330,7 @@ class CoreAssetManager extends AssetManager
                 'precision' => $this->currency_config->dec_plc,
             ),
             'number'   => array(
-                'precision' => $this->currency_config->dec_plc + 3,
+                'precision' => 3,
                 'thousand'  => $this->currency_config->thsnds,
                 'decimal'   => $this->currency_config->dec_mrk,
             ),
