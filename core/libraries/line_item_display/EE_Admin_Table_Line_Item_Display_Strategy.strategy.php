@@ -222,7 +222,7 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
 
         // Amount Column
         if ($line_item->is_percent()) {
-            $html .= EEH_HTML::td($line_item->percent() . '%', '', 'jst-rght');
+            $html .= EEH_HTML::td(apply_filters('FHEE__format_percentage_value', $line_item->percent()), '', 'jst-rght');
         } else {
             $html .= EEH_HTML::td($line_item->unit_price_no_code(), '', 'jst-rght');
         }

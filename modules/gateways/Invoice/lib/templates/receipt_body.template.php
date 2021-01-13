@@ -1,23 +1,24 @@
 <?php
 
-/**
- * @deprecated 4.9.13
- * @var EE_Event[]        $events_for_txn
- * @var EE_Line_Item      $tax_total_line_item
- * @var EE_Line_Item[]    $ticket_line_items_per_event
- * @var EE_Registration[] $registrations_per_line_item
- * @var EE_Transaction    $transaction
- * @var EE_Venue[]        $venues_for_events
- * @var float             $amount_owed
- * @var float             $amount_pd
- * @var float             $total_cost
- * @var string            $edit_reg_info_url
- * @var string            $questions_to_skip
- * @var string            $retry_payment_url
- */
-
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
+/**
+ * @deprecated 4.9.13
+
+ * @var $events_for_txn              EE_Event[]
+ * @var $transaction                 EE_Transaction
+ * @var $ticket_line_items_per_event EE_Line_Item[]
+ * @var $registrations_per_ticket    EE_Registration[]
+ * @var $registrations_per_line_item EE_Registration[]
+ * @var $venues_for_events           EE_Venue[]
+ * @var $tax_total_line_item         EE_Line_Item
+ * @var $edit_reg_info_url           string
+ * @var $total_cost                  string
+ * @var $amount_pd                   string
+ * @var $amount_owed                 string
+ * @var $retry_payment_url           string
+ * @var $questions_to_skip           array
+ */
 ?>
 
 <div id="invoice">
@@ -63,14 +64,12 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
         <?php foreach ($events_for_txn as $event_id => $event) { ?>
             <h3 class="section-title event-name">
                 <img class="icon" src="<?php echo EE_IMAGES_URL . 'calendar_year-24x24.png'; ?>">
-                <?php
-                esc_html_e(
-                    "Event Name:",
-                    "event_espresso"
-                ) ?>
+                <?php esc_html_e("Event Name:", "event_espresso"); ?>
                 <span class="plain-text"><?php echo wp_kses($event->name(), AllowedTags::getAllowedTags()); ?></span>
                 <span class="small-text link">
-                [ <a href='<?php echo esc_url_raw($event->get_permalink()) ?>'><?php esc_html_e('view', 'event_espresso'); ?></a> ]
+                [ <a href='<?php echo esc_url_raw($event->get_permalink()) ?>'>
+                    <?php esc_html_e('view', 'event_espresso'); ?>
+                </a> ]
             </span>
             </h3>
             <?php if (strlen($event->description() > 1)) { ?>
@@ -91,16 +90,21 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                             <table class="invoice-amount">
                                 <thead>
                                 <tr class="header_row">
-                                    <th class="name-column"><?php esc_html_e("Ticket", "event_espresso"); ?></th>
+                                    <th class="name-column">
+                                        <?php esc_html_e("Ticket", "event_espresso"); ?>
+                                </th>
                                     <th colspan="2" class="desc-column">
-                                        <?php
-                                        esc_html_e(
-                                            "Description",
-                                            "event_espresso"
-                                        ); ?></th>
-                                    <th class="number-column item_c"><?php esc_html_e("Quantity", "event_espresso"); ?></th>
-                                    <th class="number-column item_c"><?php esc_html_e("Price", "event_espresso"); ?></th>
-                                    <th class="number-column item_r"><?php esc_html_e("Total", "event_espresso"); ?></th>
+                                        <?php esc_html_e("Description", "event_espresso"); ?>
+                                    </th>
+                                    <th class="number-column item_c">
+                                        <?php esc_html_e("Quantity", "event_espresso"); ?>
+                                    </th>
+                                    <th class="number-column item_c">
+                                        <?php esc_html_e("Price", "event_espresso"); ?>
+                                    </th>
+                                    <th class="number-column item_r">
+                                        <?php esc_html_e("Total", "event_espresso"); ?>
+                                    </th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -122,8 +126,8 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                                             </p>
                                         </td>
                                         <td class="item_c"><?php echo esc_html($line_item->quantity()); ?></td>
-                                        <td class="item_c"><?php echo wp_kses($line_item->unit_price_no_code(), AllowedTags::getAllowedTags()); ?></td>
-                                        <td class="item_r"><?php echo wp_kses($line_item->total_no_code(), AllowedTags::getAllowedTags());  ?></td>
+                                        <td class="item_c"><?php echo wp_kses($line_item->prettyUnitPrice(), AllowedTags::getAllowedTags()); ?></td>
+                                        <td class="item_r"><?php echo wp_kses($line_item->prettyTotal(), AllowedTags::getAllowedTags());  ?></td>
                                     </tr>
                                     <?php
                                 } else { ?>
@@ -147,10 +151,10 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                                             <?php echo esc_html($line_item->quantity()); ?>
                                         </td>
                                         <td class="item_c">
-                                            <?php echo wp_kses($line_item->unit_price_no_code(), AllowedTags::getAllowedTags()); ?>
+                                            <?php echo wp_kses($line_item->prettyUnitPrice(), AllowedTags::getAllowedTags()); ?>
                                         </td>
                                         <td class="item_r">
-                                            <?php echo wp_kses($line_item->total_no_code(), AllowedTags::getAllowedTags()); ?>
+                                            <?php echo wp_kses($line_item->prettyTotal(), AllowedTags::getAllowedTags()); ?>
                                         </td>
                                     </tr>
                                     <?php
@@ -168,9 +172,9 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                                             <td class="item_c"><?php
                                                 echo ($is_percent
                                                     ? $sub_line_item->percent() . "%"
-                                                    : $sub_line_item->unit_price_no_code()); ?>
+                                                    : $sub_line_item->prettyUnitPrice()); ?>
                                             </td>
-                                            <td class="item_r"><?php echo wp_kses($sub_line_item->total_no_code(), AllowedTags::getAllowedTags()); ?></td>
+                                            <td class="item_r"><?php echo wp_kses($sub_line_item->prettyTotal(), AllowedTags::getAllowedTags()); ?></td>
                                         </tr>
                                         <?php
                                     } ?>
@@ -180,7 +184,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                                             <?php esc_html_e("Ticket Total:", "event_espresso"); ?>
                                         </td>
                                         <td class="item_r">
-                                            <?php echo wp_kses($line_item->total_no_code(), AllowedTags::getAllowedTags()); ?>
+                                            <?php echo wp_kses($line_item->prettyTotal(), AllowedTags::getAllowedTags()); ?>
                                         </td>
                                     </tr>
                                     <?php
@@ -336,7 +340,8 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                             </div>
                         </div>
                     </li>
-                <?php } ?>
+                    <?php
+                } ?>
             </ul>
         <?php } ?>
     </div>
@@ -357,15 +362,21 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                     <tr>
                         <td><?php echo esc_html($child_tax->name()); ?></td>
                         <td><?php echo esc_html($child_tax->desc()); ?></td>
-                        <td class="item_c"><?php echo esc_html($child_tax->percent()); ?>%
+                        <td class="item_c">
+                            <?php echo apply_filters('FHEE__format_percentage_value', $child_tax->percent()); ?>
                         </td>
-                        <td class="item_r"><?php echo wp_kses($child_tax->total_no_code(), AllowedTags::getAllowedTags()); ?></td>
+                        <td class="item_r">
+                            <?php echo wp_kses($child_tax->prettyTotal(), AllowedTags::getAllowedTags()); ?>
+                        </td>
                     </tr>
-                <?php } ?>
+                    <?php
+                } ?>
                 <tr class="total_tr odd">
                     <td class="total_tr" colspan="2"></td>
                     <td class="total"><?php esc_html_e("Tax Total:", "event_espresso"); ?></td>
-                    <td class="item_r"><?php echo wp_kses($tax_total_line_item->total_no_code(), AllowedTags::getAllowedTags()); ?></td>
+                    <td class="item_r">
+                        <?php echo wp_kses($tax_total_line_item->prettyTotal(), AllowedTags::getAllowedTags()); ?>
+                    </td>
                 </tr>
                 </tbody>
             </table>

@@ -135,7 +135,7 @@ class EE_Invoice_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         $html .= EEH_HTML::td() . EEH_HTML::tdx();
         // discount/surcharge td
         if ($line_item->is_percent()) {
-            $html .= EEH_HTML::td($line_item->percent() . '%', '', 'item_r');
+            $html .= EEH_HTML::td(apply_filters('FHEE__format_percentage_value', $line_item->percent()), '', 'item_r');
         } else {
             $html .= EEH_HTML::td($line_item->unit_price_no_code(), '', 'item_r');
         }
@@ -164,7 +164,13 @@ class EE_Invoice_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         // desc td
         $html .= $options['show_desc'] ? EEH_HTML::td($line_item->desc(), '', 'item_l') : '';
         // percent td
-        $html .= EEH_HTML::td($line_item->percent() . '%', '', 'item_r', '', ' colspan="2"');
+        $html .= EEH_HTML::td(
+            apply_filters('FHEE__format_percentage_value', $line_item->percent()),
+            '',
+            'item_r',
+            '',
+            ' colspan="2"'
+        );
         // total td
         $html .= EEH_HTML::td($line_item->total_no_code(), '', 'item_r');
         // end of row

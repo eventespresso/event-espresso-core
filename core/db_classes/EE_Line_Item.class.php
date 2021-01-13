@@ -34,6 +34,11 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
      */
     protected $decimal_precision = 6;
 
+    /**
+     * @var EE_Currency_Config $currency_config
+     */
+    protected $currency;
+
 
     /**
      * @param array  $props_n_values          incoming values
@@ -96,6 +101,11 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
         parent::__construct($fieldValues, $bydb, $timezone);
         if (! $this->get('LIN_code')) {
             $this->set_code($this->generate_code());
+        }
+        if (! $this->currency instanceof EE_Currency_Config) {
+            $this->currency = EE_Registry::instance()->CFG->currency instanceof EE_Currency_Config
+                ? EE_Registry::instance()->CFG->currency
+                : new EE_Currency_Config();
         }
     }
 
@@ -359,16 +369,17 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
      * Gets unit_price for flat rate items. Percent items should set this to 0.
      * You may alternatively want to use prettyUnitPrice(), which works for flat and percent items.
      *
+     * @param bool $localized
      * @return float
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function unit_price()
+    public function unit_price($localized = false)
     {
-        return $this->get('LIN_unit_price');
+        return round(
+            $this->get('LIN_unit_price'),
+            $localized ? $this->currency->dec_plc : $this->decimal_precision
+        );
     }
 
 
@@ -381,21 +392,32 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
      */
     public function prettyUnitPrice($schema = 'localized_currency no_currency_code')
     {
-        if ($this->parent_ID() !== 0
-            && $this->parent() instanceof EE_Line_Item
-            && $this->parent()->type() === EEM_Line_Item::type_line_item
-        ) {
-            $quantity = $this->parent()->quantity();
-        } else {
-            $quantity = $this->quantity();
-        }
-        if ($quantity !== 0 && $this->is_percent()) {
-            $money_field = $this->get_model()->field_settings_for('LIN_unit_price');
-            if ($money_field instanceof EE_Money_Field) {
-                return $money_field->prepare_for_pretty_echoing($this->total() / $quantity, $schema);
+        if ($this->is_percent()) {
+            $quantity = $this->parent_ID() !== 0
+                        && $this->parent() instanceof EE_Line_Item
+                        && $this->parent()->type() === EEM_Line_Item::type_line_item
+                ? $this->parent()->quantity()
+                : $this->quantity();
+            if ($quantity !== 0) {
+                $money_field = $this->getMoneyField();
+                if ($money_field instanceof EE_Money_Field) {
+                    return $money_field->prepare_for_pretty_echoing($this->total() / $quantity, 'precision_float');
+                }
             }
         }
         return $this->get_pretty('LIN_unit_price', $schema);
+    }
+
+
+    /**
+     * @return EE_Model_Field_Base
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since   $VID:$
+     */
+    private function getMoneyField()
+    {
+        return $this->get_model()->field_settings_for('LIN_unit_price');
     }
 
 
@@ -418,16 +440,17 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
      * Sets unit_price
      *
      * @param float $unit_price
+     * @param bool  $localized
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function set_unit_price($unit_price)
+    public function set_unit_price($unit_price, $localized = false)
     {
         if ($this->type() !== EEM_Line_Item::type_sub_line_item) {
-            $unit_price = (float) round($unit_price, $this->decimal_precision);
+            $unit_price = round(
+                $unit_price,
+                $localized ? $this->currency->dec_plc : $this->decimal_precision
+            );
         }
         $this->set('LIN_unit_price', $unit_price);
     }
@@ -478,16 +501,15 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
     /**
      * Gets percent (between 100-.001)
      *
+     * @param bool $as_decimal if true will divide value by 100
      * @return float
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function percent()
+    public function percent($as_decimal = false)
     {
-        return $this->get('LIN_percent');
+        $percent = $this->get('LIN_percent');
+        return $as_decimal ? $percent / 100 : $percent;
     }
 
 
@@ -510,16 +532,17 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
     /**
      * Gets total
      *
+     * @param bool $localized
      * @return float
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function total()
+    public function total($localized = false)
     {
-        return round($this->get('LIN_total'), $this->decimal_precision);
+        return round(
+            $this->get('LIN_total'),
+            $localized ? $this->currency->dec_plc : $this->decimal_precision
+        );
     }
 
 
@@ -527,16 +550,17 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
      * Sets total
      *
      * @param float $total
+     * @param bool  $localized
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function set_total($total)
+    public function set_total($total, $localized = false)
     {
         if ($this->type() !== EEM_Line_Item::type_sub_line_item) {
-            $total = (float) round($total, $this->decimal_precision);
+            $total = round(
+                $total,
+                $localized ? $this->currency->dec_plc : $this->decimal_precision
+            );
         }
         $this->set('LIN_total', $total);
     }
@@ -1198,30 +1222,26 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
 
 
     /**
+     * @param string $schema
      * @return string like '2, 004.00', formatted according to the localized currency
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function unit_price_no_code()
+    public function unit_price_no_code($schema = 'localized_float')
     {
-        return $this->get_pretty('LIN_unit_price', 'no_currency_code');
+        return $this->get_pretty('LIN_unit_price', $schema);
     }
 
 
     /**
+     * @param string $schema
      * @return string like '2, 004.00', formatted according to the localized currency
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function total_no_code()
+    public function total_no_code($schema = 'localized_float')
     {
-        return $this->get_pretty('LIN_total', 'no_currency_code');
+        return $this->get_pretty('LIN_total', $schema);
     }
 
 
@@ -1248,7 +1268,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
         $total = $pre_tax_total + $tax_total;
         // no negative totals plz
         $total = max($total, 0);
-        $this->set_total($total);
+        $this->set_total($total, true);
         // only update the related transaction's total
         // if we intend to save this line item and its a grand total
         if (
@@ -1292,7 +1312,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
         if ($has_children && $this->is_line_item()) {
             $total = $this->_recalculate_pretax_total_for_line_item($my_children);
         } elseif (! $has_children && ($this->is_sub_line_item() || $this->is_line_item())) {
-            $total = $this->unit_price() * $this->quantity();
+            $total = $this->unit_price(true) * $this->quantity();
         } elseif ($this->is_sub_total() || $this->is_total()) {
             $total = $this->_recalculate_pretax_total_for_subtotal($total, $my_children);
         } elseif ($this->is_tax_sub_total() || $this->is_tax() || $this->is_cancelled()) {
@@ -1307,20 +1327,16 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
                 $this->set_quantity(1);
             }
             if (! $this->is_percent()) {
-                $this->set_unit_price($total);
+                $this->set_unit_price($total, true);
             }
         }
         // we don't want to bother saving grand totals, because that needs to factor in taxes anyways
         if (! $this->is_total()) {
-            $this->set_total($total);
+            $this->set_total($total, true);
             // if not a percent line item, make sure we keep the unit price in sync
-            if (
-                $has_children
-                && $this->is_line_item()
-                && ! $this->is_percent()
-            ) {
+            if ($has_children && $this->is_line_item() && ! $this->is_percent()) {
                 $new_unit_price = $this->quantity() !== 0 ? $this->total() / $this->quantity() : 0;
-                $this->set_unit_price($new_unit_price);
+                $this->set_unit_price($new_unit_price, true);
             }
             $this->maybe_save();
         }
@@ -1354,8 +1370,11 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
             if ($child_line_item instanceof EE_Line_Item && ! $child_line_item->is_cancellation()) {
                 // percentage line items are based on total so far
                 if ($child_line_item->is_percent()) {
-                    $percent_total = $calculated_total_so_far * $child_line_item->percent() / 100;
-                    $child_line_item->set_total($calculated_total_so_far * $child_line_item->percent() / 100);
+                    $percent_total = round(
+                        $calculated_total_so_far * $child_line_item->percent(true),
+                        $this->currency->dec_plc
+                    );
+                    $child_line_item->set_total($percent_total);
                     // so far all percent line items should have a quantity of 1
                     // (ie, no double percent discounts. Although that might be requested someday)
                     $child_line_item->set_quantity(1);
@@ -1411,9 +1430,12 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
                 if ($child_line_item->is_percent()) {
                     // it should be the unit-price-so-far multiplied by teh percent multiplied by the quantity
                     // not total multiplied by percent, because that ignores rounding along-the-way
-                    $percent_unit_price = $unit_price_for_total * $child_line_item->percent() / 100;
+                    $percent_unit_price = round(
+                        $unit_price_for_total * $child_line_item->percent(true),
+                        $this->currency->dec_plc
+                    );
                     $percent_total = $percent_unit_price * $quantity_for_total;
-                    $child_line_item->set_total($percent_total);
+                    $child_line_item->set_total($percent_total, true);
                     // so far all percent line items should have a quantity of 1
                     // (ie, no double percent discounts. Although that might be requested someday)
                     $child_line_item->set_quantity(1);
@@ -1426,7 +1448,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
                     }
                     $quantity_for_total = $child_line_item->quantity();
                     $child_line_item->recalculate_pre_tax_total();
-                    $unit_price_for_total += $child_line_item->unit_price();
+                    $unit_price_for_total += $child_line_item->unit_price(true);
                 }
             }
         }
@@ -1454,9 +1476,9 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
         $taxable_total = $this->taxable_total();
         $tax_total = 0;
         foreach ($taxes as $tax) {
-            $total_on_this_tax = $taxable_total * $tax->percent() / 100;
+            $total_on_this_tax = $taxable_total * $tax->percent(true) ;
             // remember the total on this line item
-            $tax->set_total($total_on_this_tax);
+            $tax->set_total($total_on_this_tax, true);
             $tax->maybe_save();
             $tax_total += $tax->total();
         }
@@ -1487,7 +1509,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
                     $total_percent += $child_tax->percent();
                 }
             }
-            $this->set_total($total);
+            $this->set_total($total, true);
             $this->set_percent($total_percent);
             $this->maybe_save();
         } elseif ($this->is_total()) {
@@ -1600,7 +1622,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
                     // if it's a percent item, only take into account the percent
                     // that's taxable too (the taxable total so far)
                     if ($child_line_item->is_percent()) {
-                        $total += ($total * $child_line_item->percent() / 100);
+                        $total += ($total * $child_line_item->percent(true) );
                     } else {
                         $total += $child_line_item->total();
                     }

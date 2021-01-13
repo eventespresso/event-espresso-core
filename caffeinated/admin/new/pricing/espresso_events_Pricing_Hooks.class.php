@@ -1765,18 +1765,20 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
         $show_trash = true,
         $show_create = true
     ) {
-        $send_disabled = ! empty($ticket) && $ticket->get('TKT_deleted');
+        $missing_price = ! $price instanceof EE_Price;
+        $missing_ticket = ! $ticket instanceof EE_Ticket;
+        $send_disabled = ! $missing_ticket && $ticket->get('TKT_deleted');
         $template_args = array(
-            'tkt_row'               => $default && empty($ticket)
+            'tkt_row'               => $default && $missing_ticket
                 ? 'TICKETNUM'
                 : $ticket_row,
-            'PRC_order'             => $default && empty($price)
+            'PRC_order'             => $default && $missing_price
                 ? 'PRICENUM'
                 : $price_row,
-            'edit_prices_name'      => $default && empty($price)
+            'edit_prices_name'      => $default && $missing_price
                 ? 'PRICENAMEATTR'
                 : 'edit_prices',
-            'price_type_selector'   => $default && empty($price)
+            'price_type_selector'   => $default && $missing_price
                 ? $this->_get_base_price_template($ticket_row, $price_row, $price, $default)
                 : $this->_get_price_type_selector(
                     $ticket_row,
@@ -1785,17 +1787,17 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                     $default,
                     $send_disabled
                 ),
-            'PRC_ID'                => $default && empty($price)
+            'PRC_ID'                => $default && $missing_price
                 ? 0
                 : $price->ID(),
-            'PRC_is_default'        => $default && empty($price)
+            'PRC_is_default'        => $default && $missing_price
                 ? 0
                 : $price->get('PRC_is_default'),
-            'PRC_name'              => $default && empty($price)
+            'PRC_name'              => $default && $missing_price
                 ? ''
                 : $price->get('PRC_name'),
             'price_currency_symbol' => EE_Registry::instance()->CFG->currency->sign,
-            'show_plus_or_minus'    => $default && empty($price)
+            'show_plus_or_minus'    => $default && $missing_price
                 ? ''
                 : 'display:none;',
             'show_plus'             => ($default && empty($price)) || ($price->is_discount() || $price->is_base_price())
@@ -1807,7 +1809,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
             'show_currency_symbol'  => ($default && empty($price)) || $price->is_percent()
                 ? 'display:none'
                 : '',
-            'PRC_amount'            => $default && empty($price)
+            'PRC_amount'            => $default && $missing_price
                 ? 0
                 : $price->get_pretty('PRC_amount', 'localized_float'),
             'show_percentage'       => ($default && empty($price)) || ! $price->is_percent()
@@ -1815,14 +1817,14 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                 : '',
             'show_trash_icon'       => $show_trash
                 ? ''
-                : ' style="display:none;"',
+                : 'display:none;',
             'show_create_button'    => $show_create
                 ? ''
-                : ' style="display:none;"',
-            'PRC_desc'              => $default && empty($price)
+                : 'display:none;',
+            'PRC_desc'              => $default && $missing_price
                 ? ''
                 : $price->get('PRC_desc'),
-            'disabled'              => ! empty($ticket) && $ticket->get('TKT_deleted'),
+            'disabled'              => ! $missing_ticket && $ticket->get('TKT_deleted'),
         );
         $template_args = apply_filters(
             'FHEE__espresso_events_Pricing_Hooks___get_ticket_price_row__template_args',

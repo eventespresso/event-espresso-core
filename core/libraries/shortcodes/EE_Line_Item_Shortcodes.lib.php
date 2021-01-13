@@ -60,12 +60,13 @@ class EE_Line_Item_Shortcodes extends EE_Shortcodes
                 break;
 
             case '[LINE_ITEM_AMOUNT]':
-                return $line_item->is_percent() ? $line_item->percent() . '%' : $line_item->unit_price_no_code();
+                return $line_item->is_percent()
+                    ? apply_filters('FHEE__format_percentage_value', $line_item->percent())
+                    : $line_item->prettyUnitPrice();
                 break;
 
             case '[LINE_ITEM_TOTAL]':
-                // return $line_item->total_no_code();
-                return EEH_Template::format_currency($line_item->total(), false, false);
+                return $line_item->prettyTotal();
                 break;
         }
 

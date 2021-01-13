@@ -1656,7 +1656,7 @@ class EEH_Line_Item
                 case EEM_Line_Item::type_tax_sub_total:
                     // find how much the taxes percentage is
                     if ($child_line_item->percent() !== 0) {
-                        $tax_percent_decimal = $child_line_item->percent() / 100;
+                        $tax_percent_decimal = $child_line_item->percent(true);
                     } else {
                         $tax_percent_decimal = EE_Taxes::get_total_taxes_percentage() / 100;
                     }

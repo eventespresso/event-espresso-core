@@ -52,11 +52,11 @@ class EE_Money_Field extends EE_Float_Field
     {
         return EEH_Template::format_currency(
             $amount,
-            strpos($schema, 'localized_float') !== false,
-            strpos($schema, 'no_currency_code') === false,
+            strpos($schema, 'localized_float') !== false || strpos($schema, 'precision_float') !== false,
+            strpos($schema, 'no_currency_code') === false && strpos($schema, 'precision_float') === false,
             '',
             'currency-code',
-            $this->allow_fractional_subunits
+            ($this->allow_fractional_subunits || strpos($schema, 'precision_float') !== false)
                 && strpos($schema, 'localized_currency') === false
                 && strpos($schema, 'localized_float') === false
         );

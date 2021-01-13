@@ -284,12 +284,15 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
             'item_l'
         );
         // price td
-        $price = apply_filters(
-            'FHEE__EE_SPCO_Line_Item_Display_Strategy___ticket_row__price',
-            $line_item->unit_price_no_code(),
-            $line_item
+        $html .= EEH_HTML::td(
+            apply_filters(
+                'FHEE__EE_SPCO_Line_Item_Display_Strategy___ticket_row__price',
+                $line_item->prettyUnitPrice(),
+                $line_item
+            ),
+            '',
+            'item_c jst-rght'
         );
-        $html .= EEH_HTML::td($price, '', 'item_c jst-rght');
         // quantity td
         $html .= EEH_HTML::td($line_item->quantity(), '', 'item_l jst-rght');
         $this->_total_items += $line_item->quantity();
@@ -302,7 +305,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         $this->_events[ $options['event_id'] ] += $total;
         // total td
         $html .= EEH_HTML::td(
-            EEH_Template::precisionFormatCurrency($total),
+            EEH_Template::format_currency($total),
             '',
             'item_r jst-rght'
         );
@@ -354,11 +357,10 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         // name td
         $html .= EEH_HTML::td($name_and_desc, '', 'item_l');
         // price td
-        if ($line_item->is_percent()) {
-            $html .= EEH_HTML::td($line_item->percent() . '%', '', 'item_c jst-rght');
-        } else {
-            $html .= EEH_HTML::td($line_item->unit_price_no_code(), '', 'item_c jst-rght');
-        }
+        $amount = $line_item->is_percent()
+            ? apply_filters('FHEE__format_percentage_value', $line_item->percent())
+            : $line_item->prettyUnitPrice();
+        $html .= EEH_HTML::td($amount, '', 'item_c jst-rght');
         // quantity td
         $html .= EEH_HTML::td($line_item->quantity(), '', 'item_l jst-rght');
         if (isset($options['event_id'], $this->_events[ $options['event_id'] ])) {
@@ -366,7 +368,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         }
         // total td
         $html .= EEH_HTML::td(
-            $line_item->prettyTotal('no_currency_code'),
+            $line_item->prettyTotal(),
             '',
             'item_r jst-rght'
         );
@@ -407,13 +409,12 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         $name_and_desc .= $options['show_desc'] ? '<span class="line-sub-item-desc-spn smaller-text">: '
                                                   . $line_item->desc()
                                                   . '</span>' : '';
-        // name td
+        // amount td
         $html .= EEH_HTML::td($name_and_desc, '', 'item_l sub-item');
-        $html .= EEH_HTML::td(
-            $line_item->prettyUnitPrice('no_currency_code'),
-            '',
-            'item_c jst-rght'
-        );
+        $amount = $line_item->is_percent()
+            ? apply_filters('FHEE__format_percentage_value', $line_item->prettyUnitPrice() )
+            : $line_item->prettyUnitPrice('no_currency_code');
+        $html .= EEH_HTML::td($amount, '', 'item_c jst-rght');
         // no quantity td
         $html .= EEH_HTML::td();
         // no total td
@@ -456,7 +457,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
             'item_l sub-item'
         );
         // percent td
-        $html .= EEH_HTML::td($line_item->percent() . '%', '', ' jst-rght', '');
+        $html .= EEH_HTML::td(apply_filters('FHEE__format_percentage_value', $line_item->percent()), '', ' jst-rght', '');
         // empty td (price)
         $html .= EEH_HTML::td(EEH_HTML::nbsp());
         // total td

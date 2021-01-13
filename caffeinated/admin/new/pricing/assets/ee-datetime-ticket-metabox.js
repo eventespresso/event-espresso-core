@@ -1588,13 +1588,17 @@ jQuery(document).ready(function($) {
 					return 0;
 
 				if ( is_percent ) {
-					runningtotal = operator == '+' ? runningtotal + (runningtotal*(priceAmount/100)) : runningtotal - (runningtotal*(priceAmount/100));
+					runningtotal = operator === '+'
+						? runningtotal + (runningtotal*(priceAmount/100))
+						: runningtotal - (runningtotal*(priceAmount/100));
 				} else {
-					runningtotal = operator == '+' ? runningtotal + priceAmount : runningtotal - priceAmount;
+					runningtotal = operator === '+'
+						? runningtotal + priceAmount
+						: runningtotal - priceAmount;
 				}
 			});
-
-			totals.subtotal = accounting.formatNumber( accounting.toFixed( runningtotal, 6 ), 6 );
+			runningtotal = accounting.toFixed(runningtotal, 6);
+			totals.subtotal = accounting.formatNumber(runningtotal, 6 );
 
 			//apply taxes?
 			if ( dotaxes && $('#edit-ticket-TKT_taxable-' + this.ticketRow + ':checked').length > 0 ) {
@@ -1605,7 +1609,8 @@ jQuery(document).ready(function($) {
 				});
 			}
 
-			totals.finalTotal = accounting.formatNumber( accounting.toFixed( runningtotal, 6 ), 6 );
+			runningtotal = accounting.toFixed(runningtotal, 6);
+			totals.finalTotal = accounting.formatNumber(runningtotal, 6 );
 
 			return totals;
 		},

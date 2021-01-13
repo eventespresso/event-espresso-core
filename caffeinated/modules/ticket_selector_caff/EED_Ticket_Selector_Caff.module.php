@@ -346,21 +346,18 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
                 $ticket_price_modifier->desc = $price_modifier->desc();
 
                 if ($price_modifier->is_percent()) {
-                    $ticket_price_modifier->desc .= ' ' . $price_modifier->amount() . '%';
+                    $ticket_price_modifier->desc .= ' ' . $price_modifier->pretty_price();
                     $new_sub_total = $running_total * ($price_modifier->amount() / 100);
                     $new_sub_total = $price_modifier->is_discount() ? $new_sub_total * -1 : $new_sub_total;
                 } else {
                     $new_sub_total = $price_modifier->is_discount()
-                        ? $price_modifier->amount() * -1
-                        : $price_modifier->amount();
+                        ? (float) $price_modifier->amount() * -1
+                        : $price_modifier->pretty_price();
                 }
                 $ticket_price_modifier->sub_total = EEH_Template::format_currency(
                     $new_sub_total,
                     false,
-                    true,
-                    '',
-                    'currency-code',
-                    true
+                    false
                 );
                 $ticket_price_modifiers[] = $ticket_price_modifier;
                 $running_total += $new_sub_total;

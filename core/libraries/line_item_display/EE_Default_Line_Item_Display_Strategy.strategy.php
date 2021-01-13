@@ -171,9 +171,19 @@ class EE_Default_Line_Item_Display_Strategy implements EEI_Line_Item_Display
             ? 1 + ( $this->_tax_rate / 100 )
             : 1;
         // price td
+        // FIRST get the correctly rounded price per ticket including taxes
+        $raw_unit_price = EEH_Template::format_currency(
+            $line_item->unit_price() * $tax_rate,
+            true,
+            false
+        );
         $unit_price = apply_filters(
             'FHEE__EE_Default_Line_Item_Display_Strategy___item_row__unit_price',
-            EEH_Template::format_currency($line_item->unit_price() * $tax_rate, false, false, '', '', true),
+            EEH_Template::format_currency(
+                $raw_unit_price,
+                false,
+                false
+            ),
             $line_item,
             $tax_rate
         );
@@ -182,7 +192,7 @@ class EE_Default_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         $total = apply_filters(
             'FHEE__EE_Default_Line_Item_Display_Strategy___item_row__total',
             EEH_Template::format_currency(
-                $line_item->unit_price() * $line_item->quantity() * $tax_rate,
+                $raw_unit_price * $line_item->quantity(),
                 false,
                 false
             ),
@@ -216,7 +226,7 @@ class EE_Default_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         $html .= EEH_HTML::td(/*__FUNCTION__ .*/ $name_and_desc, '', 'item_l sub-item');
         // discount/surcharge td
         if ($line_item->is_percent()) {
-            $html .= EEH_HTML::td($line_item->percent() . '%', '', 'item_c');
+            $html .= EEH_HTML::td(apply_filters('FHEE__format_percentage_value', $line_item->percent()), '', 'item_c');
         } else {
             $html .= EEH_HTML::td($line_item->unit_price_no_code(), '', 'item_c jst-rght');
         }

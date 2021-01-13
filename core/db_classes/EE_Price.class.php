@@ -283,7 +283,9 @@ class EE_Price extends EE_Soft_Delete_Base_Class
      */
     public function pretty_price()
     {
-        return ! $this->is_percent() ? $this->get_pretty('PRC_amount') : $this->get('PRC_amount') . '%';
+        return $this->is_percent()
+            ? apply_filters('FHEE__format_percentage_value', $this->get('PRC_amount'))
+            : $this->get_pretty('PRC_amount', 'localized_currency no_currency_code');
     }
 
 
@@ -292,6 +294,6 @@ class EE_Price extends EE_Soft_Delete_Base_Class
      */
     public function get_price_without_currency_symbol()
     {
-        return str_replace(EE_Registry::instance()->CFG->currency->sign, '', $this->get_pretty('PRC_amount'));
+        return $this->get_pretty('PRC_amount', 'localized_float');
     }
 }
