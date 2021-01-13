@@ -1022,19 +1022,19 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/edtr-services/src/apollo/initialization/useCacheRehydration.ts:134
 	__( 'prices initialized', 'event_espresso' ),
 
-	// Reference: packages/edtr-services/src/utils/dateAndTime.ts:22
+	// Reference: packages/edtr-services/src/utils/dateAndTime.ts:32
 	__( 'End date has been set one hour after start date', 'event_espresso' ),
 
-	// Reference: packages/edtr-services/src/utils/dateAndTime.ts:35
+	// Reference: packages/edtr-services/src/utils/dateAndTime.ts:44
 	__( 'Start date has been set one hour before end date', 'event_espresso' ),
 
-	// Reference: packages/edtr-services/src/utils/dateAndTime.ts:47
+	// Reference: packages/edtr-services/src/utils/dateAndTime.ts:62
 	__( 'Required', 'event_espresso' ),
 
-	// Reference: packages/edtr-services/src/utils/dateAndTime.ts:52
+	// Reference: packages/edtr-services/src/utils/dateAndTime.ts:67
 	__( 'Start Date is required', 'event_espresso' ),
 
-	// Reference: packages/edtr-services/src/utils/dateAndTime.ts:56
+	// Reference: packages/edtr-services/src/utils/dateAndTime.ts:71
 	__( 'End Date is required', 'event_espresso' ),
 
 	// Reference: packages/ee-components/src/EntityList/EntityList.tsx:30
