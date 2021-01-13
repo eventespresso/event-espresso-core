@@ -1579,7 +1579,8 @@ jQuery(document).ready(function($) {
 
 			//loop through all the prices for a given ticket
 			$('.ticket-price-rows', '#edit-ticketrow-' + this.ticketRow ).find('tr.ee-active-price').each( function() {
-				priceAmount = accounting.unformat($('.edit-price-PRC_amount', this).val());
+				var priceModifierField = $('.edit-price-PRC_amount', this);
+				priceAmount = accounting.unformat(priceModifierField.val());
 				operator = $('.ee-price-selected-operator', this).val();
 				is_percent = $('.ee-price-selected-is-percent', this ).val();
 				is_percent = parseInt(is_percent, 10);
@@ -1591,10 +1592,12 @@ jQuery(document).ready(function($) {
 					runningtotal = operator === '+'
 						? runningtotal + (runningtotal*(priceAmount/100))
 						: runningtotal - (runningtotal*(priceAmount/100));
+					priceModifierField.val(accounting.formatNumber(priceAmount));
 				} else {
 					runningtotal = operator === '+'
 						? runningtotal + priceAmount
 						: runningtotal - priceAmount;
+					priceModifierField.val(accounting.formatMoney(priceAmount));
 				}
 			});
 			runningtotal = accounting.toFixed(runningtotal, 6);
