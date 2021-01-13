@@ -327,10 +327,10 @@ class CoreAssetManager extends AssetManager
                 ),
                 'decimal'   => $this->currency_config->dec_mrk,
                 'thousand'  => $this->currency_config->thsnds,
-                'precision' => $this->currency_config->dec_plc,
+                'precision' => $this->currency_config->dec_plc + 3,
             ),
             'number'   => array(
-                'precision' => $this->currency_config->dec_plc,
+                'precision' => $this->currency_config->dec_plc + 3,
                 'thousand'  => $this->currency_config->thsnds,
                 'decimal'   => $this->currency_config->dec_mrk,
             ),
