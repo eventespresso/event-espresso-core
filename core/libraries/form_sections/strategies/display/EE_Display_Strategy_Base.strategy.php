@@ -134,7 +134,6 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
     }
 
 
-
     /**
      * returns an array of standard HTML attributes that get added to nearly all inputs,
      * where string keys represent named attributes like id, class, etc
@@ -143,19 +142,21 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
      * it.
      *
      * @return array
+     * @throws EE_Error
      */
     protected function _standard_attributes_array()
     {
-        return array(
-            'name'  => $this->_input->html_name(),
-            'id'    => $this->_input->html_id(),
-            'class' => $this->_input->html_class(true),
-            0       => array('required', $this->_input->required()),
-            1       => $this->_input->other_html_attributes(),
-            'style' => $this->_input->html_style(),
+        return array_filter(
+            [
+                'name'  => $this->_input->html_name(),
+                'id'    => $this->_input->html_id(),
+                'class' => $this->_input->html_class(true),
+                0       => ['required', $this->_input->required()],
+                1       => $this->_input->other_html_attributes(),
+                'style' => $this->_input->html_style(),
+            ]
         );
     }
-
 
 
     /**
