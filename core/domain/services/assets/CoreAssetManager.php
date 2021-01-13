@@ -321,13 +321,13 @@ class CoreAssetManager extends AssetManager
             'currency' => array(
                 'symbol'    => $this->currency_config->sign,
                 'format'    => array(
-                    'pos'  => $this->currency_config->sign_b4 ? '%s%v' : '%v%s',
-                    'neg'  => $this->currency_config->sign_b4 ? '- %s%v' : '- %v%s',
-                    'zero' => $this->currency_config->sign_b4 ? '%s--' : '--%s',
+                    'pos'  => $this->currency_config->sign_b4 ? '%s %v' : '%v %s',
+                    'neg'  => $this->currency_config->sign_b4 ? '- %s %v' : '- %v %s',
+                    'zero' => $this->currency_config->sign_b4 ? '%s --' : '-- %s',
                 ),
                 'decimal'   => $this->currency_config->dec_mrk,
                 'thousand'  => $this->currency_config->thsnds,
-                'precision' => $this->currency_config->dec_plc + 3,
+                'precision' => $this->currency_config->dec_plc,
             ),
             'number'   => array(
                 'precision' => $this->currency_config->dec_plc + 3,
