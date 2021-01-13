@@ -393,15 +393,14 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
     public function prettyUnitPrice($schema = 'localized_currency no_currency_code')
     {
         if ($this->is_percent()) {
-            $quantity = $this->parent_ID() !== 0
-                        && $this->parent() instanceof EE_Line_Item
+            $quantity = $this->parent() instanceof EE_Line_Item
                         && $this->parent()->type() === EEM_Line_Item::type_line_item
                 ? $this->parent()->quantity()
                 : $this->quantity();
             if ($quantity !== 0) {
                 $money_field = $this->getMoneyField();
                 if ($money_field instanceof EE_Money_Field) {
-                    return $money_field->prepare_for_pretty_echoing($this->total() / $quantity, 'precision_float');
+                    return $money_field->prepare_for_pretty_echoing($this->total() / $quantity, $schema);
                 }
             }
         }
