@@ -10,17 +10,26 @@
 class EE_Price extends EE_Soft_Delete_Base_Class
 {
     /**
-     * @param array  $props_n_values          incoming values
-     * @param string $timezone                incoming timezone (if not set the timezone set for the website will be
-     *                                        used.)
-     * @param array  $date_formats            incoming date_formats in an array where the first value is the
-     *                                        date_format and the second value is the time format
-     * @return EE_Price
+     * @var EE_Currency_Config $currency_config
      */
-    public static function new_instance($props_n_values = array(), $timezone = null, $date_formats = array())
+    protected $currency;
+
+
+    /**
+     * @param array  $props_n_values    incoming values
+     * @param string $timezone          incoming timezone (if not set the timezone set for the website will be used.)
+     * @param array  $date_formats      incoming date_formats in an array where the first value is the
+     *                                  date_format and the second value is the time format
+     * @return EE_Price
+     * @throws EE_Error|ReflectionException
+     */
+    public static function new_instance($props_n_values = [], $timezone = null, $date_formats = [])
     {
-        $has_object = parent::_check_for_object($props_n_values, __CLASS__, $timezone, $date_formats);
-        return $has_object ? $has_object : new self($props_n_values, false, $timezone, $date_formats);
+        $price = parent::_check_for_object($props_n_values, __CLASS__, $timezone, $date_formats);
+        if (! $price instanceof EE_Price) {
+            $price = new EE_Price($props_n_values, false, $timezone, $date_formats);
+        }
+        return $price;
     }
 
 
@@ -29,18 +38,42 @@ class EE_Price extends EE_Soft_Delete_Base_Class
      * @param string $timezone        incoming timezone as set by the model.  If not set the timezone for
      *                                the website will be used.
      * @return EE_Price
+     * @throws EE_Error|ReflectionException
      */
-    public static function new_instance_from_db($props_n_values = array(), $timezone = null)
+    public static function new_instance_from_db($props_n_values = [], $timezone = null)
     {
         return new self($props_n_values, true, $timezone);
     }
 
 
     /**
-     *        Set Price type ID
+     * Adds some defaults if they're not specified
      *
-     * @access        public
-     * @param        int $PRT_ID
+     * @param array  $props_n_values
+     * @param bool   $bydb
+     * @param string $timezone
+     * @param array  $date_formats  incoming date_formats in an array where the first value is the
+     *                              date_format and the second value is the time format
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    protected function __construct($props_n_values = [], $bydb = false, $timezone = '', $date_formats = [])
+    {
+        parent::__construct($props_n_values, $bydb, $timezone, $date_formats);
+        if (! $this->currency instanceof EE_Currency_Config) {
+            $this->currency = EE_Registry::instance()->CFG->currency instanceof EE_Currency_Config
+                ? EE_Registry::instance()->CFG->currency
+                : new EE_Currency_Config();
+        }
+    }
+
+
+    /**
+     * Set Price type ID
+     *
+     * @param int $PRT_ID
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_type($PRT_ID = 0)
     {
@@ -49,22 +82,25 @@ class EE_Price extends EE_Soft_Delete_Base_Class
 
 
     /**
-     *        Set Price Amount
+     * Set Price Amount
      *
-     * @access        public
-     * @param        float $PRC_amount
+     * @param float $amount
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function set_amount($PRC_amount = 0.00)
+    public function set_amount($amount = 0.00)
     {
-        $this->set('PRC_amount', $PRC_amount);
+        $amount = $this->is_percent() ? $amount : round($amount, $this->currency->dec_plc);
+        $this->set('PRC_amount', $amount);
     }
 
 
     /**
-     *        Set Price Name
+     * Set Price Name
      *
-     * @access        public
-     * @param        string $PRC_name
+     * @param string $PRC_name
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_name($PRC_name = '')
     {
@@ -73,10 +109,11 @@ class EE_Price extends EE_Soft_Delete_Base_Class
 
 
     /**
-     *        Set Price Description
+     * Set Price Description
      *
-     * @access        public
-     * @param        string $PRC_desc
+     * @param string $PRC_desc
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_description($PRC_desc = '')
     {
@@ -85,10 +122,11 @@ class EE_Price extends EE_Soft_Delete_Base_Class
 
 
     /**
-     *        set is_default
+     * set is_default
      *
-     * @access        public
-     * @param        bool $PRC_is_default
+     * @param bool $PRC_is_default
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_is_default($PRC_is_default = false)
     {
@@ -97,10 +135,11 @@ class EE_Price extends EE_Soft_Delete_Base_Class
 
 
     /**
-     *        set deleted
+     * set deleted
      *
-     * @access        public
-     * @param        bool $PRC_deleted
+     * @param bool $PRC_deleted
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_deleted($PRC_deleted = null)
     {
@@ -109,10 +148,11 @@ class EE_Price extends EE_Soft_Delete_Base_Class
 
 
     /**
-     *    get Price type
+     * get Price type
      *
-     * @access        public
      * @return        int
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function type()
     {
@@ -121,10 +161,11 @@ class EE_Price extends EE_Soft_Delete_Base_Class
 
 
     /**
-     *    get Price Amount
+     * get Price Amount
      *
-     * @access        public
      * @return        float
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function amount()
     {
@@ -133,10 +174,11 @@ class EE_Price extends EE_Soft_Delete_Base_Class
 
 
     /**
-     *    get Price Name
+     * get Price Name
      *
-     * @access        public
      * @return        string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function name()
     {
@@ -145,10 +187,11 @@ class EE_Price extends EE_Soft_Delete_Base_Class
 
 
     /**
-     *    get Price description
+     * get Price description
      *
-     * @access        public
      * @return        string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function desc()
     {
@@ -157,10 +200,11 @@ class EE_Price extends EE_Soft_Delete_Base_Class
 
 
     /**
-     *    get overrides
+     * get overrides
      *
-     * @access        public
      * @return        int
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function overrides()
     {
@@ -169,10 +213,11 @@ class EE_Price extends EE_Soft_Delete_Base_Class
 
 
     /**
-     *    get order
+     * get order
      *
-     * @access        public
      * @return        int
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function order()
     {
@@ -183,9 +228,11 @@ class EE_Price extends EE_Soft_Delete_Base_Class
     /**
      * get the author of the price
      *
+     * @return int
+     * @throws EE_Error
+     * @throws ReflectionException
      * @since 4.5.0
      *
-     * @return int
      */
     public function wp_user()
     {
@@ -194,10 +241,11 @@ class EE_Price extends EE_Soft_Delete_Base_Class
 
 
     /**
-     *    get is_default
+     * get is_default
      *
-     * @access        public
      * @return        bool
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function is_default()
     {
@@ -206,10 +254,11 @@ class EE_Price extends EE_Soft_Delete_Base_Class
 
 
     /**
-     *    get deleted
+     * get deleted
      *
-     * @access        public
      * @return        bool
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function deleted()
     {
@@ -219,6 +268,8 @@ class EE_Price extends EE_Soft_Delete_Base_Class
 
     /**
      * @return bool
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function parent()
     {
@@ -228,10 +279,13 @@ class EE_Price extends EE_Soft_Delete_Base_Class
 
     // some helper methods for getting info on the price_type for this price
 
+
     /**
      * return whether the price is a base price or not
      *
      * @return boolean
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function is_base_price()
     {
@@ -242,7 +296,9 @@ class EE_Price extends EE_Soft_Delete_Base_Class
 
     /**
      *
-     * @return EE_Price_Type
+     * @return EE_Base_Class|EE_Price_Type
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function type_obj()
     {
@@ -254,6 +310,8 @@ class EE_Price extends EE_Soft_Delete_Base_Class
      * Simply indicates whether this price increases or decreases the total
      *
      * @return boolean true = discount, otherwise adds to the total
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function is_discount()
     {
@@ -266,6 +324,8 @@ class EE_Price extends EE_Soft_Delete_Base_Class
      * whether the price is a percentage or not
      *
      * @return boolean
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function is_percent()
     {
@@ -277,9 +337,11 @@ class EE_Price extends EE_Soft_Delete_Base_Class
     /**
      * return pretty price dependant on whether its a dollar or percent.
      *
+     * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      * @since 4.4.0
      *
-     * @return string
      */
     public function pretty_price()
     {
@@ -291,6 +353,8 @@ class EE_Price extends EE_Soft_Delete_Base_Class
 
     /**
      * @return mixed
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_price_without_currency_symbol()
     {

@@ -26,6 +26,11 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      */
     protected $_old_txn_status;
 
+    /**
+     * @var EE_Currency_Config $currency_config
+     */
+    protected $currency;
+
 
     /**
      * @param array  $props_n_values          incoming values
@@ -42,11 +47,9 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      */
     public static function new_instance($props_n_values = array(), $timezone = null, $date_formats = array())
     {
-        $has_object = parent::_check_for_object($props_n_values, __CLASS__, $timezone, $date_formats);
-        $txn = $has_object
-            ? $has_object
-            : new self($props_n_values, false, $timezone, $date_formats);
-        if (! $has_object) {
+        $txn = parent::_check_for_object($props_n_values, __CLASS__, $timezone, $date_formats);
+        if (! $txn instanceof EE_Transaction) {
+            $txn = new EE_Transaction($props_n_values, false, $timezone, $date_formats);
             $txn->set_old_txn_status($txn->status_ID());
         }
         return $txn;
@@ -69,6 +72,28 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
         $txn = new self($props_n_values, true, $timezone);
         $txn->set_old_txn_status($txn->status_ID());
         return $txn;
+    }
+
+
+    /**
+     * Adds some defaults if they're not specified
+     *
+     * @param array  $props_n_values
+     * @param bool   $bydb
+     * @param string $timezone
+     * @param array  $date_formats  incoming date_formats in an array where the first value is the
+     *                              date_format and the second value is the time format
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    protected function __construct($props_n_values = [], $bydb = false, $timezone = '', $date_formats = [])
+    {
+        parent::__construct($props_n_values, $bydb, $timezone, $date_formats);
+        if (! $this->currency instanceof EE_Currency_Config) {
+            $this->currency = EE_Registry::instance()->CFG->currency instanceof EE_Currency_Config
+                ? EE_Registry::instance()->CFG->currency
+                : new EE_Currency_Config();
+        }
     }
 
 
@@ -149,7 +174,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
         // _remove_expired_lock() returns 0 when lock is valid (ie: removed = false)
         // and a positive number if the lock was removed (ie: number of locks deleted),
         // so we need to return the opposite
-        return ! $this->_remove_expired_lock() ? true : false;
+        return ! $this->_remove_expired_lock();
     }
 
 
@@ -192,26 +217,24 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     /**
      * Set transaction total
      *
-     * @param float $total total value of transaction
+     * @param float $amount total value of transaction
      * @throws EE_Error|ReflectionException
      */
-    public function set_total($total = 0.00)
+    public function set_total($amount = 0.00)
     {
-        $total = EEH_Template::format_currency($total, true, false);
-        $this->set('TXN_total', (float) $total);
+        $this->set('TXN_total', round($amount, $this->currency->dec_plc));
     }
 
 
     /**
      * Set Total Amount Paid to Date
      *
-     * @param float $total_paid total amount paid to date (sum of all payments)
+     * @param float $amount total amount paid to date (sum of all payments)
      * @throws EE_Error|ReflectionException
      */
-    public function set_paid($total_paid = 0.00)
+    public function set_paid($amount = 0.00)
     {
-        $total_paid = EEH_Template::format_currency($total_paid, true, false);
-        $this->set('TXN_paid', (float) $total_paid);
+        $this->set('TXN_paid', round($amount, $this->currency->dec_plc));
     }
 
 
@@ -1034,7 +1057,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      * meaning it takes them all into account on its total)
      *
      * @param bool $create_if_not_found
-     * @return \EE_Line_Item
+     * @return EE_Line_Item
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException

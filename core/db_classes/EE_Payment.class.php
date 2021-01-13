@@ -143,7 +143,7 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment
      */
     public function set_amount($amount = 0.00)
     {
-        $this->set('PAY_amount', (float) round($amount, $this->currency->dec_plc));
+        $this->set('PAY_amount', round($amount, $this->currency->dec_plc));
     }
 
 
@@ -772,7 +772,7 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment
      */
     public function currency_code()
     {
-        return EE_Config::instance()->currency->code;
+        return $this->currency->code;
     }
 
 
