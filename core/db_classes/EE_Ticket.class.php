@@ -52,6 +52,11 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      */
     private $_ticket_total_with_taxes;
 
+    /**
+     * @var EE_Currency_Config $currency_config
+     */
+    protected $currency;
+
 
     /**
      * @param array  $props_n_values          incoming values
@@ -65,8 +70,11 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      */
     public static function new_instance($props_n_values = [], $timezone = null, $date_formats = [])
     {
-        $has_object = parent::_check_for_object($props_n_values, __CLASS__, $timezone, $date_formats);
-        return $has_object ? $has_object : new self($props_n_values, false, $timezone, $date_formats);
+        $ticket = parent::_check_for_object($props_n_values, __CLASS__, $timezone, $date_formats);
+        if (! $ticket instanceof EE_Ticket) {
+            $ticket = new EE_Ticket($props_n_values, false, $timezone, $date_formats);
+        }
+        return $ticket;
     }
 
 
@@ -85,9 +93,28 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 
 
     /**
-     * @return bool
+     * @param array  $props_n_values
+     * @param bool   $bydb
+     * @param string $timezone
+     * @param array  $date_formats            incoming date_formats in an array where the first value is the
+     *                                        date_format and the second value is the time format
      * @throws EE_Error
      * @throws ReflectionException
+     */
+    protected function __construct($props_n_values = [], $bydb = false, $timezone = '', $date_formats = [])
+    {
+        parent::__construct($props_n_values, $bydb, $timezone, $date_formats);
+        if (! $this->currency instanceof EE_Currency_Config) {
+            $this->currency = EE_Registry::instance()->CFG->currency instanceof EE_Currency_Config
+                ? EE_Registry::instance()->CFG->currency
+                : new EE_Currency_Config();
+        }
+    }
+
+
+    /**
+     * @return bool
+     * @throws EE_Error|ReflectionException
      */
     public function parent()
     {
@@ -566,9 +593,13 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     }
 
 
+    /**
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
     public function ensure_TKT_Price_correct()
     {
-        $this->set('TKT_price', EE_Taxes::get_subtotal_for_admin($this));
+        $this->set_price(EE_Taxes::get_subtotal_for_admin($this));
         $this->save();
     }
 
@@ -756,7 +787,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      */
     public function set_price($price)
     {
-        $this->set('TKT_price', $price);
+        $this->set('TKT_price', (float) round($price, $this->currency->dec_plc));
     }
 
 

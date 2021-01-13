@@ -242,7 +242,11 @@ class EE_Line_Item_Test extends EE_UnitTestCase
             $ticket,
             $quantity
         );
-        $this->assertEquals($ticket->price() * $quantity, $total_line_item->total());
+        $currency = new EE_Currency_Config();
+        $this->assertEquals(
+            round($ticket->price(), $currency->dec_plc) * $quantity,
+            $total_line_item->total()
+        );
     }
 
 

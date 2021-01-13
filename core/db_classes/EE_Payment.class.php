@@ -12,18 +12,26 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
 class EE_Payment extends EE_Base_Class implements EEI_Payment
 {
     /**
+     * @var EE_Currency_Config $currency_config
+     */
+    protected $currency;
+
+    /**
      * @param array  $props_n_values          incoming values
      * @param string $timezone                incoming timezone (if not set the timezone set for the website will be
      *                                        used.)
      * @param array  $date_formats            incoming date_formats in an array where the first value is the
      *                                        date_format and the second value is the time format
      * @return EE_Payment
-     * @throws EE_Error
+     * @throws EE_Error|ReflectionException
      */
     public static function new_instance($props_n_values = array(), $timezone = null, $date_formats = array())
     {
-        $has_object = parent::_check_for_object($props_n_values, __CLASS__, $timezone, $date_formats);
-        return $has_object ? $has_object : new self($props_n_values, false, $timezone, $date_formats);
+        $payment = parent::_check_for_object($props_n_values, __CLASS__, $timezone, $date_formats);
+        if (! $payment instanceof EE_Payment) {
+            $payment = new EE_Payment($props_n_values, false, $timezone, $date_formats);
+        }
+        return $payment;
     }
 
 
@@ -32,11 +40,33 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment
      * @param string $timezone        incoming timezone as set by the model.  If not set the timezone for
      *                                the website will be used.
      * @return EE_Payment
-     * @throws EE_Error
+     * @throws EE_Error|ReflectionException
      */
     public static function new_instance_from_db($props_n_values = array(), $timezone = null)
     {
-        return new self($props_n_values, true, $timezone);
+        return new EE_Payment($props_n_values, true, $timezone);
+    }
+
+
+    /**
+     * Adds some defaults if they're not specified
+     *
+     * @param array  $props_n_values
+     * @param bool   $bydb
+     * @param string $timezone
+     * @param array  $date_formats            incoming date_formats in an array where the first value is the
+     *                                        date_format and the second value is the time format
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    protected function __construct($props_n_values = [], $bydb = false, $timezone = '', $date_formats = [])
+    {
+        parent::__construct($props_n_values, $bydb, $timezone, $date_formats);
+        if (! $this->currency instanceof EE_Currency_Config) {
+            $this->currency = EE_Registry::instance()->CFG->currency instanceof EE_Currency_Config
+                ? EE_Registry::instance()->CFG->currency
+                : new EE_Currency_Config();
+        }
     }
 
 
@@ -113,8 +143,7 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment
      */
     public function set_amount($amount = 0.00)
     {
-        $amount = EEH_Template::format_currency($amount, true, false);
-        $this->set('PAY_amount', (float) $amount);
+        $this->set('PAY_amount', (float) round($amount, $this->currency->dec_plc));
     }
 
 

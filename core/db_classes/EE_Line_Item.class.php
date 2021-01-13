@@ -63,7 +63,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
         );
         return $has_object
             ? $has_object
-            : new EE_Line_Item($props_n_values, false, $timezone);
+            : new EE_Line_Item($props_n_values, false, $timezone, $date_formats);
     }
 
 
@@ -90,15 +90,17 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
      * @param array  $fieldValues
      * @param bool   $bydb
      * @param string $timezone
+     * @param array  $date_formats            incoming date_formats in an array where the first value is the
+     *                                        date_format and the second value is the time format
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    protected function __construct($fieldValues = [], $bydb = false, $timezone = '')
+    protected function __construct($fieldValues = [], $bydb = false, $timezone = '', $date_formats = [])
     {
-        parent::__construct($fieldValues, $bydb, $timezone);
+        parent::__construct($fieldValues, $bydb, $timezone, $date_formats);
         if (! $this->get('LIN_code')) {
             $this->set_code($this->generate_code());
         }
