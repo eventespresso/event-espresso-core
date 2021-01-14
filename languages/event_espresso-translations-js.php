@@ -563,18 +563,18 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/ErrorMessage.tsx:32
 	__( 'Please Update Assignments', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/ModalContainer.tsx:27
+	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/ModalContainer.tsx:26
 	__( 'There seem to be some dates/tickets which have no tickets/dates assigned. Do you want to fix them now?', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/ModalContainer.tsx:30
+	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/ModalContainer.tsx:29
 	// Reference: packages/ui-components/src/Modal/ModalWithAlert.tsx:23
 	__( 'Alert!', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/ModalContainer.tsx:43
+	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/ModalContainer.tsx:42
 	/* translators: 1 entity id, 2 entity name */
 	__( 'Ticket Assignment Manager for Datetime: %1$s - %2$s', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/ModalContainer.tsx:50
+	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/ModalContainer.tsx:49
 	/* translators: 1 entity id, 2 entity name */
 	__( 'Ticket Assignment Manager for Ticket: %1$s - %2$s', 'event_espresso' ),
 
