@@ -216,7 +216,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
      *
      * @return string
      */
-    public function name(): string
+    public function name()
     {
         return $this->_addon_name;
     }
