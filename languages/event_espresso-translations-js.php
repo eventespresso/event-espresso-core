@@ -985,7 +985,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/dates/src/DateRangePicker/index.tsx:61
 	__( 'end date', 'event_espresso' ),
 
-	// Reference: packages/dates/src/DateTimePicker.tsx:12
+	// Reference: packages/dates/src/DateTimePicker.tsx:13
 	// Reference: packages/dates/src/TimePicker.tsx:13
 	__( 'time', 'event_espresso' ),
 
