@@ -187,18 +187,20 @@ $ticket_archive_class .= WP_DEBUG ? ' ee-wp-debug' : '';
     <!-- TKT_qty -->
     <td>
         <?php if ($disabled) : ?>
-            <input type="hidden" class="edit-ticket-TKT_qty ee-small-text-inp ee-numeric"
+            <input type="hidden"
+                   class="edit-ticket-TKT_qty ee-small-text-inp ee-numeric"
                    name="<?php echo esc_attr($edit_tickets_name); ?>[<?php echo esc_attr($tkt_row); ?>][TKT_qty]"
                    value="<?php echo esc_attr($TKT_qty_for_input); ?>"
             />
             <label class='screen-reader-text' for='disabled-ticket-TKT_qty-<?php echo esc_attr($tkt_row); ?>'>
                 <?php esc_html_e('Qty', 'event_espresso') ?>
             </label>
-            <input type="text" disabled
+            <input type="text"
                    class="edit-ticket-TKT_qty ee-small-text-inp ee-numeric"
                    id="disabled-ticket-TKT_qty-<?php echo esc_attr($tkt_row); ?>"
                    name="archived_ticket[<?php echo esc_attr($tkt_row); ?>][TKT_qty]"
                    value="<?php echo esc_attr($TKT_qty_for_input); ?>"
+                   disabled
             />
         <?php else : ?>
             <label class='screen-reader-text' for='edit-ticket-TKT_qty-<?php echo esc_attr($tkt_row); ?>'>
@@ -395,8 +397,11 @@ $ticket_archive_class .= WP_DEBUG ? ' ee-wp-debug' : '';
                     </tr>
                     </tbody>
                 </table>
-                <button data-context="price-create" class="button-secondary ee-create-button ee-price-create-button"
-                        data-ticket-row="<?php echo esc_attr($tkt_row); ?>" style="<?php echo esc_attr($show_price_mod_button); ?>">
+                <button class="button-secondary ee-create-button ee-price-create-button"
+                        data-context="price-create"
+                        data-ticket-row="<?php echo esc_attr($tkt_row); ?>"
+                        style="<?php echo esc_attr($show_price_mod_button); ?>"
+                >
                     <?php esc_html_e('Add Price Modifier', 'event_espresso'); ?>
                 </button>
                 <div class="ticket-is-required-container">
@@ -480,9 +485,9 @@ $ticket_archive_class .= WP_DEBUG ? ' ee-wp-debug' : '';
                                 <?php echo wp_kses($TKT_subtotal_amount_display, AllowedTags::getWithFormTags()); ?>
                             </span>
                             <input type="hidden"
-                                   value="<?php echo esc_attr($TKT_subtotal_amount); ?>"
-                                   name="subtotal_amount_<?php echo esc_attr($tkt_row); ?>"
                                    class="TKT-taxable-subtotal-amount"
+                                   name="subtotal_amount_<?php echo esc_attr($tkt_row); ?>"
+                                   value="<?php echo esc_attr($TKT_subtotal_amount); ?>"
                             />
                         </td>
                         <td></td>
@@ -491,21 +496,23 @@ $ticket_archive_class .= WP_DEBUG ? ' ee-wp-debug' : '';
                     <?php echo wp_kses($tax_rows, AllowedTags::getWithFormTags()); ?>
                     <tr class="price-total-row">
                         <td colspan="4" class="ee-numeric">
-                            <strong><?php esc_html_e('Total', 'event_espresso'); ?></strong>
+                            <strong>
+                                <?php esc_html_e('Total', 'event_espresso'); ?>
+                            </strong>
                         </td>
                         <td class="ee-numeric">
                             <span id="price-total-amount-<?php echo esc_attr($tkt_row); ?>"><?php echo wp_kses($TKT_price, AllowedTags::getAllowedTags()); ?></span>
                             <input type="hidden"
-                                   name="<?php echo esc_attr($edit_tickets_name); ?>[<?php echo esc_attr($tkt_row); ?>][TKT_price]"
                                    class="edit-ticket-TKT_price"
+                                   name="<?php echo esc_attr($edit_tickets_name); ?>[<?php echo esc_attr($tkt_row); ?>][TKT_price]"
                                    value="<?php echo esc_attr($TKT_price_amount); ?>"
                             />
                         </td>
                         <td><?php echo wp_kses($TKT_price_code, AllowedTags::getWithFormTags()); ?></td>
                         <td>
                             <input type="hidden"
-                                   name="price_total_rows_ticket[<?php echo esc_attr($tkt_row); ?>]"
                                    id="price-total-rows-<?php echo esc_attr($tkt_row); ?>"
+                                   name="price_total_rows_ticket[<?php echo esc_attr($tkt_row); ?>]"
                                    value="<?php echo esc_attr($total_price_rows); ?>"
                             />
                         </td>
@@ -532,10 +539,9 @@ $ticket_archive_class .= WP_DEBUG ? ' ee-wp-debug' : '';
             ); ?>
             <div class="ee-editor-footer-container">
                 <div class="ee-editor-id-container">
-                    <span class="ee-item-id"><?php
-                        echo ($TKT_ID
-                            ? sprintf(esc_html__('Ticket ID: %d', 'event_espresso'), $TKT_ID)
-                            : ''); ?></span>
+                    <span class="ee-item-id">
+                        <?php echo ($TKT_ID ? sprintf(esc_html__('Ticket ID: %d', 'event_espresso'), $TKT_ID) : ''); ?>
+                    </span>
                 </div>
                 <div class="save-cancel-button-container">
                     <label for="edit-ticket-TKT_is_default_selector-<?php echo esc_attr($tkt_row); ?>">

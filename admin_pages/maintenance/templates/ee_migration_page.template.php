@@ -80,7 +80,7 @@ if ($show_backup_db_text) { ?>
                     )
                 ); ?> &nbsp;
                 <b>
-                    <a class="button-primary"
+                    <a class="button button--primary"
                        id='get-started-after-migrate'
                        href="<?php
                         echo esc_url_raw(add_query_arg(['page' => 'espresso_about'], admin_url('admin.php')));
@@ -91,15 +91,13 @@ if ($show_backup_db_text) { ?>
                     </a>
                 </b>
             </p>
-        <?php } ?>
-
-
         <?php
+        }
+
         if ($show_backup_db_text) {
             echo wp_kses($migration_options_html, AllowedTags::getAllowedTags());
-        } ?>
+        }
 
-        <?php
         if ($show_most_recent_migration) {
             if ($most_recent_migration instanceof EE_Data_Migration_Script_Base) {
                 if ($most_recent_migration->can_continue()) {
@@ -178,7 +176,6 @@ if ($show_backup_db_text) { ?>
                         <?php esc_html_e("return to previous screen", "event_espresso"); ?>
                     </a>
                     <br />
-
                 </p>
                 <?php
             } ?>
@@ -244,9 +241,9 @@ if ($show_backup_db_text) { ?>
                 <!-- #progress-responsive -->
 
                 <button id='start-migration' class='button-primary'>
-                    <?php echo ($show_continue_current_migration_script
-                        ? esc_html__("Continue Database Update", "event_espresso")
-                        : esc_html__("Begin Database Update", "event_espresso")); ?>
+                    <?php $show_continue_current_migration_script
+                        ? esc_html_e("Continue Database Update", "event_espresso")
+                        : esc_html_e("Begin Database Update", "event_espresso"); ?>
                 </button>
                 <br class="clear" />
 
@@ -323,7 +320,7 @@ if ($show_backup_db_text) { ?>
                 </table>
             </div>
             <p>
-                <input class='button-primary'
+                <input class='button button--primary'
                        type='submit'
                        value='<?php esc_html_e("Update Maintenance Mode", "event_espresso"); ?>'
                 />

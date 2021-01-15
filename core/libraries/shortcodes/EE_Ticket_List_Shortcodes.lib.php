@@ -199,6 +199,8 @@ class EE_Ticket_List_Shortcodes extends EE_Shortcodes
 
 
     /**
+     * @param EE_Event $event
+     * @return array|mixed
      * @throws EE_Error
      * @throws ReflectionException
      */

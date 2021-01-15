@@ -63,4 +63,3 @@ function ee_show_billing_info_cleaned(EE_Form_Section_Proper $form_section, $fou
     endif; ?>
 
 </div>
-

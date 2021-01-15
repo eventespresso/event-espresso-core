@@ -1,10 +1,11 @@
 <?php
 /**
  * @var EE_Transaction $transaction
- * @var boolean $show_try_pay_again_link
- * @var string $SPCO_payment_options_url
- * @var string $primary_registrant_name
+ * @var boolean        $show_try_pay_again_link
+ * @var string         $SPCO_payment_options_url
+ * @var string         $primary_registrant_name
  */
+
 ?>
 <h3><?php esc_html_e('Transaction Details', 'event_espresso'); ?></h3>
 <?php do_action('AHEE__thank_you_page_transaction_details_template__after_heading'); ?>

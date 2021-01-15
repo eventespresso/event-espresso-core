@@ -1,11 +1,10 @@
 <?php
 
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 /**
  * @var string[] $shortcodes
  */
-
-use EventEspresso\core\services\request\sanitizers\AllowedTags;
-
 ?>
 
     <p>

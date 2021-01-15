@@ -122,11 +122,11 @@ class EEW_Upcoming_Events extends EspressoWidget
             <label for="<?php echo esc_attr($this->fieldID('title')); ?>">
                 <?php esc_html_e('Title:', 'event_espresso'); ?>
             </label>
-            <input id="<?php echo esc_attr($this->fieldID('title')); ?>"
+            <input type="text"
                    class="widefat"
+                   id="<?php echo esc_attr($this->fieldID('title')); ?>"
                    name="<?php echo esc_attr($this->fieldName('title')); ?>"
                    value="<?php echo esc_attr($instance['title']); ?>"
-                   type="text"
             />
         </p>
         <p>
@@ -139,11 +139,11 @@ class EEW_Upcoming_Events extends EspressoWidget
             <label for="<?php echo esc_attr($this->fieldID('limit')); ?>">
                 <?php esc_html_e('Number of Events to Display:', 'event_espresso'); ?>
             </label>
-            <input id="<?php echo esc_attr($this->fieldID('limit')); ?>"
+            <input
+                   id="<?php echo esc_attr($this->fieldID('limit')); ?>"
                    name="<?php echo esc_attr($this->fieldName('limit')); ?>"
                    value="<?php echo esc_attr($instance['limit']); ?>"
                    size="3"
-                   type="text"
             />
         </p>
         <p>
@@ -153,7 +153,10 @@ class EEW_Upcoming_Events extends EspressoWidget
             <?php
             $show_expired_options   = $yes_no_values;
             $show_expired_options[] = EE_Question_Option::new_instance(
-                ['QSO_value' => 2, 'QSO_desc' => esc_html__('Show Only Expired', 'event_espresso')]
+                [
+                    'QSO_value' => 2,
+                    'QSO_desc' => esc_html__('Show Only Expired', 'event_espresso')
+                ]
             );
             echo EEH_Form_Fields::select(
                 esc_html__('Show Expired Events:', 'event_espresso'),
@@ -304,7 +307,6 @@ class EEW_Upcoming_Events extends EspressoWidget
      */
     public function widget($args, $instance)
     {
-
         global $post;
         // make sure there is some kinda post object
         if ($post instanceof WP_Post) {
@@ -515,7 +517,7 @@ class EEW_Upcoming_Events extends EspressoWidget
             if ($event instanceof EE_Event && (! is_single() || $post->ID != $event->ID())) {
                 $event_url = $this->eventUrl($event);
                 $list_items .= '
-                <li id="ee-upcoming-events-widget-li-' . absint($event->ID()) . '" 
+                <li id="ee-upcoming-events-widget-li-' . absint($event->ID()) . '"
                     class="ee-upcoming-events-widget-li"
                 >
                     <h5 class="ee-upcoming-events-widget-title-h5">

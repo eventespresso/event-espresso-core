@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 /**
  * @var bool   $active
  * @var string $content
@@ -7,8 +9,6 @@
  * @var string $messenger
  * @var string $active_message_types
  */
-
-use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 ?>
 

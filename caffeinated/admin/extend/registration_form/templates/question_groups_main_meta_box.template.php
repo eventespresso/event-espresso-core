@@ -127,9 +127,9 @@ $id = ! empty($QST_system) ? '_disabled' : '';
                         $values,
                         $question_group->show_group_desc()
                     ); ?>
-                    <p class="description"><?php
-                        esc_html_e(' Show Group Description on Registration Page?', 'event_espresso');
-                    ?></p>
+                    <p class="description">
+                        <?php esc_html_e(' Show Group Description on Registration Page?', 'event_espresso'); ?>
+                    </p>
                 </label>
                 <input type="hidden" name="QSG_system" value="<?php echo esc_attr($question_group->system_group()); ?>">
             </td>

@@ -15,6 +15,7 @@ class EEH_MSG_Template
 {
     /**
      * Holds a collection of EE_Message_Template_Pack objects.
+     *
      * @type EE_Messages_Template_Pack_Collection
      */
     protected static $_template_pack_collection;
@@ -54,13 +55,14 @@ class EEH_MSG_Template
     {
         // make sure message_type is an array.
         $message_types = (array) $message_types;
-        $templates = array();
+        $templates     = [];
 
         if (empty($messenger)) {
             throw new EE_Error(esc_html__('We need a messenger to generate templates!', 'event_espresso'));
         }
 
-        // if we STILL have empty $message_types then we need to generate an error message b/c we NEED message types to do the template files.
+        // if we STILL have empty $message_types then we need to generate an error message
+        // b/c we NEED message types to do the template files.
         if (empty($message_types)) {
             throw new EE_Error(esc_html__('We need at least one message type to generate templates!', 'event_espresso'));
         }
@@ -93,7 +95,12 @@ class EEH_MSG_Template
                     continue;
                 }
             }
-            $new_message_template_group = EEH_MSG_Template::create_new_templates($messenger, $message_type, $GRP_ID, $global);
+            $new_message_template_group = EEH_MSG_Template::create_new_templates(
+                $messenger,
+                $message_type,
+                $GRP_ID,
+                $global
+            );
 
             if (! $new_message_template_group) {
                 continue;
@@ -122,15 +129,15 @@ class EEH_MSG_Template
         // what method we use depends on whether we have an GRP_ID or not
         $count = empty($GRP_ID)
             ? EEM_Message_Template::instance()->count(
-                array(
-                    array(
+                [
+                    [
                         'Message_Template_Group.MTP_messenger'    => $messenger,
                         'Message_Template_Group.MTP_message_type' => $message_type,
-                        'Message_Template_Group.MTP_is_global'    => true
-                    )
-                )
+                        'Message_Template_Group.MTP_is_global'    => true,
+                    ],
+                ]
             )
-            : EEM_Message_Template::instance()->count(array( array( 'GRP_ID' => $GRP_ID ) ));
+            : EEM_Message_Template::instance()->count([['GRP_ID' => $GRP_ID]]);
 
         return $count > 0;
     }
@@ -147,16 +154,16 @@ class EEH_MSG_Template
      */
     public static function update_to_active($messenger_names, $message_type_names)
     {
-        $messenger_names = is_array($messenger_names) ? $messenger_names : array( $messenger_names );
-        $message_type_names = is_array($message_type_names) ? $message_type_names : array( $message_type_names );
+        $messenger_names    = is_array($messenger_names) ? $messenger_names : [$messenger_names];
+        $message_type_names = is_array($message_type_names) ? $message_type_names : [$message_type_names];
         return EEM_Message_Template_Group::instance()->update(
-            array( 'MTP_is_active' => 1 ),
-            array(
-                array(
-                    'MTP_messenger'     => array( 'IN', $messenger_names ),
-                    'MTP_message_type'  => array( 'IN', $message_type_names )
-                )
-            )
+            ['MTP_is_active' => 1],
+            [
+                [
+                    'MTP_messenger'    => ['IN', $messenger_names],
+                    'MTP_message_type' => ['IN', $message_type_names],
+                ],
+            ]
         );
     }
 
@@ -175,7 +182,7 @@ class EEH_MSG_Template
      * @return int  count of updated records.
      * @throws EE_Error
      */
-    public static function update_to_inactive($messenger_names = array(), $message_type_names = array())
+    public static function update_to_inactive($messenger_names = [], $message_type_names = [])
     {
         return EEM_Message_Template_Group::instance()->deactivate_message_template_groups_for(
             $messenger_names,
@@ -199,10 +206,10 @@ class EEH_MSG_Template
     {
         self::_set_autoloader();
         $message_resource_manager = EE_Registry::instance()->load_lib('Message_Resource_Manager');
-        return array(
-            'messenger' => $message_resource_manager->installed_messengers(),
-            'message_type' => $message_resource_manager->installed_message_types()
-        );
+        return [
+            'messenger'    => $message_resource_manager->installed_messengers(),
+            'message_type' => $message_resource_manager->installed_message_types(),
+        ];
     }
 
 
@@ -224,18 +231,19 @@ class EEH_MSG_Template
      *                                              OR
      *                                              FALSE if no shortcodes found.
      * @throws ReflectionException
-     * @throws EE_Error*@since 4.3.0
+     * @throws EE_Error
+     * @since 4.3.0
      *
      */
     public static function get_shortcodes(
         $message_type,
         $messenger,
-        $fields = array(),
+        $fields = [],
         $context = 'admin',
         $merged = false
     ) {
         $messenger_name = str_replace(' ', '_', ucwords(str_replace('_', ' ', $messenger)));
-        $mt_name = str_replace(' ', '_', ucwords(str_replace('_', ' ', $message_type)));
+        $mt_name        = str_replace(' ', '_', ucwords(str_replace('_', ' ', $message_type)));
         /** @var EE_Message_Resource_Manager $message_resource_manager */
         $message_resource_manager = EE_Registry::instance()->load_lib('Message_Resource_Manager');
         // convert slug to object
@@ -243,7 +251,7 @@ class EEH_MSG_Template
 
         // if messenger isn't a EE_messenger resource then bail.
         if (! $messenger instanceof EE_messenger) {
-            return array();
+            return [];
         }
 
         // validate class for getting our list of shortcodes
@@ -251,18 +259,21 @@ class EEH_MSG_Template
         if (! class_exists($classname)) {
             $msg[] = esc_html__('The Validator class was unable to load', 'event_espresso');
             $msg[] = sprintf(
-                esc_html__('The class name compiled was %s. Please check and make sure the spelling and case is correct for the class name and that there is an autoloader in place for this class', 'event_espresso'),
+                esc_html__(
+                    'The class name compiled was %s. Please check and make sure the spelling and case is correct for the class name and that there is an autoloader in place for this class',
+                    'event_espresso'
+                ),
                 $classname
             );
             throw new EE_Error(implode('||', $msg));
         }
 
         /** @type EE_Messages_Validator $_VLD */
-        $_VLD = new $classname(array(), $context);
+        $_VLD             = new $classname([], $context);
         $valid_shortcodes = $_VLD->get_validators();
 
         // let's make sure we're only getting the shortcode part of the validators
-        $shortcodes = array();
+        $shortcodes = [];
         foreach ($valid_shortcodes as $field => $validators) {
             $shortcodes[ $field ] = $validators['shortcodes'];
         }
@@ -270,7 +281,7 @@ class EEH_MSG_Template
 
         // if not all fields let's make sure we ONLY include the shortcodes for the specified fields.
         if (! empty($fields)) {
-            $specified_shortcodes = array();
+            $specified_shortcodes = [];
             foreach ($fields as $field) {
                 if (isset($valid_shortcodes[ $field ])) {
                     $specified_shortcodes[ $field ] = $valid_shortcodes[ $field ];
@@ -283,7 +294,7 @@ class EEH_MSG_Template
         if (! $merged) {
             // let's get all the fields for the set messenger so that we can get the localized label and use that in the returned array.
             $field_settings = $messenger->get_template_fields();
-            $localized = array();
+            $localized      = [];
             foreach ($valid_shortcodes as $field => $shortcodes) {
                 // get localized field label
                 if (isset($field_settings[ $field ])) {
@@ -318,7 +329,7 @@ class EEH_MSG_Template
 
         // if $merged then let's merge all the shortcodes into one list NOT indexed by field.
         if ($merged) {
-            $merged_codes = array();
+            $merged_codes = [];
             foreach ($valid_shortcodes as $shortcode) {
                 foreach ($shortcode as $code => $label) {
                     if (isset($merged_codes[ $code ])) {
@@ -341,7 +352,8 @@ class EEH_MSG_Template
      * @param string $messenger messenger slug for the messenger object we want to retrieve.
      * @return EE_messenger
      * @throws ReflectionException
-     * @throws EE_Error*@since 4.3.0
+     * @throws EE_Error
+     * @since 4.3.0
      * @deprecated 4.9.0
      */
     public static function messenger_obj($messenger)
@@ -358,7 +370,8 @@ class EEH_MSG_Template
      * @param string $message_type the slug for the message type object to retrieve
      * @return EE_message_type
      * @throws ReflectionException
-     * @throws EE_Error*@since 4.3.0
+     * @throws EE_Error
+     * @since 4.3.0
      * @deprecated 4.9.0
      */
     public static function message_type_obj($message_type)
@@ -372,17 +385,17 @@ class EEH_MSG_Template
     /**
      * Given a message_type slug, will return whether that message type is active in the system or not.
      *
-     * @since    4.3.0
      * @param string $message_type message type to check for.
      * @return boolean
      * @throws EE_Error
      * @throws ReflectionException
+     * @since    4.3.0
      */
     public static function is_mt_active($message_type)
     {
         /** @type EE_Message_Resource_Manager $Message_Resource_Manager */
         $Message_Resource_Manager = EE_Registry::instance()->load_lib('Message_Resource_Manager');
-        $active_mts = $Message_Resource_Manager->list_of_active_message_types();
+        $active_mts               = $Message_Resource_Manager->list_of_active_message_types();
         return in_array($message_type, $active_mts);
     }
 
@@ -390,18 +403,17 @@ class EEH_MSG_Template
     /**
      * Given a messenger slug, will return whether that messenger is active in the system or not.
      *
-     * @since    4.3.0
-     *
      * @param string $messenger slug for messenger to check.
      * @return boolean
      * @throws EE_Error
      * @throws ReflectionException
+     * @since    4.3.0
      */
     public static function is_messenger_active($messenger)
     {
         /** @type EE_Message_Resource_Manager $Message_Resource_Manager */
         $Message_Resource_Manager = EE_Registry::instance()->load_lib('Message_Resource_Manager');
-        $active_messenger = $Message_Resource_Manager->get_active_messenger($messenger);
+        $active_messenger         = $Message_Resource_Manager->get_active_messenger($messenger);
         return $active_messenger instanceof EE_messenger;
     }
 
@@ -410,18 +422,20 @@ class EEH_MSG_Template
      * Used to return active messengers array stored in the wp options table.
      * If no value is present in the option then an empty array is returned.
      *
-     * @deprecated 4.9
-     * @since      4.3.1
-     *
      * @return array
      * @throws EE_Error
      * @throws ReflectionException
+     * @since      4.3.1
+     * @deprecated 4.9
      */
     public static function get_active_messengers_in_db()
     {
         EE_Error::doing_it_wrong(
             __METHOD__,
-            esc_html__('Please use EE_Message_Resource_Manager::get_active_messengers_option() instead.', 'event_espresso'),
+            esc_html__(
+                'Please use EE_Message_Resource_Manager::get_active_messengers_option() instead.',
+                'event_espresso'
+            ),
             '4.9.0'
         );
         /** @var EE_Message_Resource_Manager $Message_Resource_Manager */
@@ -433,20 +447,21 @@ class EEH_MSG_Template
     /**
      * Used to update the active messengers array stored in the wp options table.
      *
-     * @since      4.3.1
-     * @deprecated 4.9.0
-     *
      * @param array $data_to_save Incoming data to save.
-     *
      * @return bool FALSE if not updated, TRUE if updated.
      * @throws EE_Error
      * @throws ReflectionException
+     * @since      4.3.1
+     * @deprecated 4.9.0
      */
     public static function update_active_messengers_in_db($data_to_save)
     {
         EE_Error::doing_it_wrong(
             __METHOD__,
-            esc_html__('Please use EE_Message_Resource_Manager::update_active_messengers_option() instead.', 'event_espresso'),
+            esc_html__(
+                'Please use EE_Message_Resource_Manager::update_active_messengers_option() instead.',
+                'event_espresso'
+            ),
             '4.9.0'
         );
         /** @var EE_Message_Resource_Manager $Message_Resource_Manager */
@@ -459,14 +474,14 @@ class EEH_MSG_Template
      * This does some validation of incoming params, determines what type of url is being prepped and returns the
      * appropriate url trigger
      *
-     * @param EE_message_type $message_type
-     * @param EE_Message $message
-     * @param EE_Registration | null $registration  The registration object must be included if this
-     *                                              is going to be a registration trigger url.
-     * @param string $sending_messenger             The (optional) sending messenger for the url.
+     * @param EE_message_type        $message_type
+     * @param EE_Message             $message
+     * @param EE_Registration | null $registration      The registration object must be included if this
+     *                                                  is going to be a registration trigger url.
+     * @param string                 $sending_messenger The (optional) sending messenger for the url.
      *
      * @return string
-     * @throws EE_Error
+     * @throws EE_Error|ReflectionException
      */
     public static function get_url_trigger(
         EE_message_type $message_type,
@@ -482,7 +497,10 @@ class EEH_MSG_Template
         // if $registration object is not valid then exit early because there's nothing that can be generated.
         if (! $registration instanceof EE_Registration) {
             throw new EE_Error(
-                esc_html__('Incoming value for registration is not a valid EE_Registration object.', 'event_espresso')
+                esc_html__(
+                    'Incoming value for registration is not a valid EE_Registration object.',
+                    'event_espresso'
+                )
             );
         }
 
@@ -532,15 +550,16 @@ class EEH_MSG_Template
 
     /**
      * This returns the url for triggering a in browser view of a specific EE_Message object.
+     *
      * @param EE_Message $message
      * @return string.
      */
     public static function generate_browser_trigger(EE_Message $message)
     {
-        $query_args = array(
-            'ee' => 'msg_browser_trigger',
-            'token' => $message->MSG_token()
-        );
+        $query_args = [
+            'ee'    => 'msg_browser_trigger',
+            'token' => $message->MSG_token(),
+        ];
         return apply_filters(
             'FHEE__EEH_MSG_Template__generate_browser_trigger',
             add_query_arg($query_args, site_url()),
@@ -549,12 +568,9 @@ class EEH_MSG_Template
     }
 
 
-
-
-
-
     /**
      * This returns the url for triggering an in browser view of the error saved on the incoming message object.
+     *
      * @param EE_Message $message
      * @return string
      */
@@ -563,10 +579,10 @@ class EEH_MSG_Template
         return apply_filters(
             'FHEE__EEH_MSG_Template__generate_error_display_trigger',
             add_query_arg(
-                array(
-                    'ee' => 'msg_browser_error_trigger',
-                    'token' => $message->MSG_token()
-                ),
+                [
+                    'ee'    => 'msg_browser_error_trigger',
+                    'token' => $message->MSG_token(),
+                ],
                 site_url()
             ),
             $message
@@ -587,6 +603,7 @@ class EEH_MSG_Template
      *                                                trigger.
      * @return string          The generated url.
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function generate_url_trigger(
         $sending_messenger,
@@ -597,17 +614,17 @@ class EEH_MSG_Template
         $message_template_group,
         $data_id = 0
     ) {
-        $query_args = array(
-            'ee' => 'msg_url_trigger',
-            'snd_msgr' => $sending_messenger,
-            'gen_msgr' => $generating_messenger,
+        $query_args = [
+            'ee'           => 'msg_url_trigger',
+            'snd_msgr'     => $sending_messenger,
+            'gen_msgr'     => $generating_messenger,
             'message_type' => $message_type,
-            'context' => $context,
-            'token' => $registration->reg_url_link(),
-            'GRP_ID' => $message_template_group,
-            'id' => $data_id
-            );
-        $url = add_query_arg($query_args, get_home_url());
+            'context'      => $context,
+            'token'        => $registration->reg_url_link(),
+            'GRP_ID'       => $message_template_group,
+            'id'           => $data_id,
+        ];
+        $url        = add_query_arg($query_args, get_home_url());
 
         // made it here so now we can just get the url and filter it.  Filtered globally and by message type.
         return apply_filters(
@@ -622,8 +639,6 @@ class EEH_MSG_Template
             $data_id
         );
     }
-
-
 
 
     /**
@@ -643,44 +658,44 @@ class EEH_MSG_Template
     /**
      * This is used for retrieving the css classes used for the icons representing message actions.
      *
+     * @return string[][]
      * @since 4.9.0
      *
-     * @return array
      */
     public static function get_message_action_icons()
     {
         return apply_filters(
             'FHEE__EEH_MSG_Template__message_action_icons',
-            array(
-                'view' => array(
-                    'label' => esc_html__('View Message', 'event_espresso'),
+            [
+                'view'                  => [
+                    'label'     => esc_html__('View Message', 'event_espresso'),
                     'css_class' => 'dashicons dashicons-welcome-view-site',
-                ),
-                'error' => array(
-                    'label' => esc_html__('View Error Message', 'event_espresso'),
+                ],
+                'error'                 => [
+                    'label'     => esc_html__('View Error Message', 'event_espresso'),
                     'css_class' => 'dashicons dashicons-info',
-                ),
-                'see_notifications_for' => array(
-                    'label' => esc_html__('View Related Messages', 'event_espresso'),
+                ],
+                'see_notifications_for' => [
+                    'label'     => esc_html__('View Related Messages', 'event_espresso'),
                     'css_class' => 'dashicons dashicons-megaphone',
-                ),
-                'generate_now' => array(
-                    'label' => esc_html__('Generate the message now.', 'event_espresso'),
+                ],
+                'generate_now'          => [
+                    'label'     => esc_html__('Generate the message now.', 'event_espresso'),
                     'css_class' => 'dashicons dashicons-admin-tools',
-                ),
-                'send_now' => array(
-                    'label' => esc_html__('Send Immediately', 'event_espresso'),
+                ],
+                'send_now'              => [
+                    'label'     => esc_html__('Send Immediately', 'event_espresso'),
                     'css_class' => 'dashicons dashicons-controls-forward',
-                ),
-                'queue_for_resending' => array(
-                    'label' => esc_html__('Queue for Resending', 'event_espresso'),
+                ],
+                'queue_for_resending'   => [
+                    'label'     => esc_html__('Queue for Resending', 'event_espresso'),
                     'css_class' => 'dashicons dashicons-controls-repeat',
-                ),
-                'view_transaction' => array(
-                    'label' => esc_html__('View related Transaction', 'event_espresso'),
+                ],
+                'view_transaction'      => [
+                    'label'     => esc_html__('View related Transaction', 'event_espresso'),
                     'css_class' => 'dashicons dashicons-cart',
-                )
-            )
+                ],
+            ]
         );
     }
 
@@ -691,24 +706,20 @@ class EEH_MSG_Template
      * @param string     $type         What type of action to return the url for.
      * @param EE_Message $message      Required for generating the correct url for some types.
      * @param array      $query_params Any additional query params to be included with the generated url.
-     *
      * @return string
      * @throws EE_Error
      * @throws ReflectionException
      * @since 4.9.0
-     *
      */
-    public static function get_message_action_url($type, EE_Message $message = null, $query_params = array())
+    public static function get_message_action_url($type, EE_Message $message = null, $query_params = [])
     {
         $action_urls = self::get_message_action_urls($message, $query_params);
-        return isset($action_urls[ $type ])  ? $action_urls[ $type ] : '';
+        return isset($action_urls[ $type ]) ? $action_urls[ $type ] : '';
     }
 
 
     /**
      * This returns all the current urls for EE_Message actions.
-     *
-     * @since 4.9.0
      *
      * @param EE_Message $message      The EE_Message object required to generate correct urls for some types.
      * @param array      $query_params Any additional query_params to be included with the generated url.
@@ -716,53 +727,55 @@ class EEH_MSG_Template
      * @return array
      * @throws EE_Error
      * @throws ReflectionException
+     * @since 4.9.0
+     *
      */
-    public static function get_message_action_urls(EE_Message $message = null, $query_params = array())
+    public static function get_message_action_urls(EE_Message $message = null, $query_params = [])
     {
         EE_Registry::instance()->load_helper('URL');
         // if $message is not an instance of EE_Message then let's just do a dummy.
-        $message = empty($message) ? EE_Message_Factory::create() : $message;
-        $action_urls =  apply_filters(
+        $message     = empty($message) ? EE_Message_Factory::create() : $message;
+        $action_urls = apply_filters(
             'FHEE__EEH_MSG_Template__get_message_action_url',
-            array(
-                'view' => EEH_MSG_Template::generate_browser_trigger($message),
-                'error' => EEH_MSG_Template::generate_error_display_trigger($message),
+            [
+                'view'                  => EEH_MSG_Template::generate_browser_trigger($message),
+                'error'                 => EEH_MSG_Template::generate_error_display_trigger($message),
                 'see_notifications_for' => EEH_URL::add_query_args_and_nonce(
                     array_merge(
-                        array(
-                            'page' => 'espresso_messages',
-                            'action' => 'default',
+                        [
+                            'page'     => 'espresso_messages',
+                            'action'   => 'default',
                             'filterby' => 1,
-                        ),
+                        ],
                         $query_params
                     ),
                     admin_url('admin.php')
                 ),
-                'generate_now' => EEH_URL::add_query_args_and_nonce(
-                    array(
-                        'page' => 'espresso_messages',
+                'generate_now'          => EEH_URL::add_query_args_and_nonce(
+                    [
+                        'page'   => 'espresso_messages',
                         'action' => 'generate_now',
-                        'MSG_ID' => $message->ID()
-                    ),
+                        'MSG_ID' => $message->ID(),
+                    ],
                     admin_url('admin.php')
                 ),
-                'send_now' => EEH_URL::add_query_args_and_nonce(
-                    array(
-                        'page' => 'espresso_messages',
+                'send_now'              => EEH_URL::add_query_args_and_nonce(
+                    [
+                        'page'   => 'espresso_messages',
                         'action' => 'send_now',
-                        'MSG_ID' => $message->ID()
-                    ),
+                        'MSG_ID' => $message->ID(),
+                    ],
                     admin_url('admin.php')
                 ),
-                'queue_for_resending' => EEH_URL::add_query_args_and_nonce(
-                    array(
-                        'page' => 'espresso_messages',
+                'queue_for_resending'   => EEH_URL::add_query_args_and_nonce(
+                    [
+                        'page'   => 'espresso_messages',
                         'action' => 'queue_for_resending',
-                        'MSG_ID' => $message->ID()
-                    ),
+                        'MSG_ID' => $message->ID(),
+                    ],
                     admin_url('admin.php')
                 ),
-            )
+            ]
         );
         if (
             $message->TXN_ID() > 0
@@ -773,11 +786,11 @@ class EEH_MSG_Template
             )
         ) {
             $action_urls['view_transaction'] = EEH_URL::add_query_args_and_nonce(
-                array(
-                    'page' => 'espresso_transactions',
+                [
+                    'page'   => 'espresso_transactions',
                     'action' => 'view_transaction',
-                    'TXN_ID' => $message->TXN_ID()
-                ),
+                    'TXN_ID' => $message->TXN_ID(),
+                ],
                 admin_url('admin.php')
             );
         } else {
@@ -794,18 +807,16 @@ class EEH_MSG_Template
      *                                      empty string is returned)
      * @param EE_Message|null $message      The EE_Message object (required for some actions to generate correctly)
      * @param array           $query_params Any extra query params to include in the generated link.
-     *
      * @return string
      * @throws EE_Error
      * @throws ReflectionException
      * @since 4.9.0
-     *
      */
-    public static function get_message_action_link($type, EE_Message $message = null, $query_params = array())
+    public static function get_message_action_link($type, EE_Message $message = null, $query_params = [])
     {
-        $url = EEH_MSG_Template::get_message_action_url($type, $message, $query_params);
+        $url      = EEH_MSG_Template::get_message_action_url($type, $message, $query_params);
         $icon_css = EEH_MSG_Template::get_message_action_icon($type);
-        $title = isset($icon_css['label']) ? 'title="' . $icon_css['label'] . '"' : '';
+        $title    = isset($icon_css['label']) ? 'title="' . $icon_css['label'] . '"' : '';
 
         if (empty($url) || empty($icon_css) || ! isset($icon_css['css_class'])) {
             return '';
@@ -821,43 +832,41 @@ class EEH_MSG_Template
             )
         );
 
-        return '<a href="' . $url . '" ' . $title . '><span class="' . esc_attr($icon_css['css_class']) . '"></span></a>';
+        return '
+        <a href="' . $url . '" ' . $title . '>
+            <span class="' . esc_attr($icon_css['css_class']) . '"></span>
+        </a>';
     }
-
-
-
 
 
     /**
      * This returns an array with keys as reg statuses and values as the corresponding message type slug (filtered).
      *
-     * @since 4.9.0
      * @return array
+     * @since 4.9.0
      */
     public static function reg_status_to_message_type_array()
     {
         return (array) apply_filters(
             'FHEE__EEH_MSG_Template__reg_status_to_message_type_array',
-            array(
-                EEM_Registration::status_id_approved => 'registration',
+            [
+                EEM_Registration::status_id_approved        => 'registration',
                 EEM_Registration::status_id_pending_payment => 'pending_approval',
-                EEM_Registration::status_id_not_approved => 'not_approved_registration',
-                EEM_Registration::status_id_cancelled => 'cancelled_registration',
-                EEM_Registration::status_id_declined => 'declined_registration'
-            )
+                EEM_Registration::status_id_not_approved    => 'not_approved_registration',
+                EEM_Registration::status_id_cancelled       => 'cancelled_registration',
+                EEM_Registration::status_id_declined        => 'declined_registration',
+            ]
         );
     }
-
-
 
 
     /**
      * This returns the corresponding registration message type slug to the given reg status. If there isn't a
      * match, then returns an empty string.
      *
-     * @since 4.9.0
      * @param $reg_status
      * @return string
+     * @since 4.9.0
      */
     public static function convert_reg_status_to_message_type($reg_status)
     {
@@ -869,33 +878,31 @@ class EEH_MSG_Template
     /**
      * This returns an array with keys as payment stati and values as the corresponding message type slug (filtered).
      *
-     * @since 4.9.0
      * @return array
+     * @since 4.9.0
      */
     public static function payment_status_to_message_type_array()
     {
         return (array) apply_filters(
             'FHEE__EEH_MSG_Template__payment_status_to_message_type_array',
-            array(
-                EEM_Payment::status_id_approved => 'payment',
-                EEM_Payment::status_id_pending => 'payment_pending',
+            [
+                EEM_Payment::status_id_approved  => 'payment',
+                EEM_Payment::status_id_pending   => 'payment_pending',
                 EEM_Payment::status_id_cancelled => 'payment_cancelled',
-                EEM_Payment::status_id_declined => 'payment_declined',
-                EEM_Payment::status_id_failed => 'payment_failed'
-            )
+                EEM_Payment::status_id_declined  => 'payment_declined',
+                EEM_Payment::status_id_failed    => 'payment_failed',
+            ]
         );
     }
-
-
 
 
     /**
      * This returns the corresponding payment message type slug to the given payment status. If there isn't a match then
      * an empty string is returned
      *
-     * @since 4.9.0
      * @param $payment_status
      * @return string
+     * @since 4.9.0
      */
     public static function convert_payment_status_to_message_type($payment_status)
     {
@@ -907,7 +914,7 @@ class EEH_MSG_Template
     /**
      * This is used to retrieve the template pack for the given name.
      *
-     * @param string $template_pack_name  should match the set `dbref` property value on the EE_Messages_Template_Pack.
+     * @param string $template_pack_name should match the set `dbref` property value on the EE_Messages_Template_Pack.
      *
      * @return EE_Messages_Template_Pack
      */
@@ -927,12 +934,12 @@ class EEH_MSG_Template
         // nope...let's get it.
         // not set yet so let's attempt to get it.
         $pack_class_name = 'EE_Messages_Template_Pack_' . str_replace(
-            ' ',
-            '_',
-            ucwords(
-                str_replace('_', ' ', $template_pack_name)
-            )
-        );
+                ' ',
+                '_',
+                ucwords(
+                    str_replace('_', ' ', $template_pack_name)
+                )
+            );
         if (! class_exists($pack_class_name) && $template_pack_name !== 'default') {
             return self::get_template_pack('default');
         } else {
@@ -943,22 +950,20 @@ class EEH_MSG_Template
     }
 
 
-
-
     /**
      * Globs template packs installed in core and returns the template pack collection with all installed template packs
      * in it.
      *
+     * @return EE_Messages_Template_Pack_Collection
      * @since 4.9.0
      *
-     * @return EE_Messages_Template_Pack_Collection
      */
     public static function get_template_pack_collection()
     {
         $new_collection = false;
         if (! self::$_template_pack_collection instanceof EE_Messages_Template_Pack_Collection) {
             self::$_template_pack_collection = new EE_Messages_Template_Pack_Collection();
-            $new_collection = true;
+            $new_collection                  = true;
         }
 
         // glob the defaults directory for messages
@@ -976,16 +981,16 @@ class EEH_MSG_Template
 
             // setup classname.
             $template_pack_class_name = 'EE_Messages_Template_Pack_' . str_replace(
-                ' ',
-                '_',
-                ucwords(
-                    str_replace(
-                        '_',
-                        ' ',
-                        $template
+                    ' ',
+                    '_',
+                    ucwords(
+                        str_replace(
+                            '_',
+                            ' ',
+                            $template
+                        )
                     )
-                )
-            );
+                );
             if (! class_exists($template_pack_class_name)) {
                 continue;
             }
@@ -996,7 +1001,7 @@ class EEH_MSG_Template
          * Filter for plugins to add in any additional template packs
          * Note the filter name here is for backward compat, this used to be found in EED_Messages.
          */
-        $additional_template_packs = apply_filters('FHEE__EED_Messages__get_template_packs__template_packs', array());
+        $additional_template_packs = apply_filters('FHEE__EED_Messages__get_template_packs__template_packs', []);
         foreach ((array) $additional_template_packs as $template_pack) {
             if (
                 self::$_template_pack_collection->get_by_name(
@@ -1026,10 +1031,10 @@ class EEH_MSG_Template
     {
         /** @type EE_Message_Resource_Manager $Message_Resource_Manager */
         $Message_Resource_Manager = EE_Registry::instance()->load_lib('Message_Resource_Manager');
-        $messenger = $Message_Resource_Manager->valid_messenger($messenger_name);
-        $message_type = $Message_Resource_Manager->valid_message_type($message_type_name);
+        $messenger                = $Message_Resource_Manager->valid_messenger($messenger_name);
+        $message_type             = $Message_Resource_Manager->valid_message_type($message_type_name);
         if (! EEH_MSG_Template::message_type_has_active_templates_for_messenger($messenger, $message_type, $global)) {
-            return array();
+            return [];
         }
         // whew made it this far!  Okay, let's go ahead and create the templates then
         return EEH_MSG_Template::_create_new_templates($messenger, $message_type, $GRP_ID, $global);
@@ -1045,8 +1050,12 @@ class EEH_MSG_Template
      * @throws EE_Error
      * @throws ReflectionException
      */
-    protected static function _create_new_templates(EE_messenger $messenger, EE_message_type $message_type, $GRP_ID, $global)
-    {
+    protected static function _create_new_templates(
+        EE_messenger $messenger,
+        EE_message_type $message_type,
+        $GRP_ID,
+        $global
+    ) {
         // if we're creating a custom template then we don't need to use the defaults class
         if (! $global) {
             return EEH_MSG_Template::_create_custom_template_group($messenger, $message_type, $GRP_ID);
@@ -1054,7 +1063,7 @@ class EEH_MSG_Template
         /** @type EE_Messages_Template_Defaults $Message_Template_Defaults */
         $Message_Template_Defaults = EE_Registry::factory(
             'EE_Messages_Template_Defaults',
-            array( $messenger, $message_type, $GRP_ID )
+            [$messenger, $message_type, $GRP_ID]
         );
         // generate templates
         $success = $Message_Template_Defaults->create_new_templates();
@@ -1094,20 +1103,23 @@ class EEH_MSG_Template
      * @throws ReflectionException
      * @access private
      */
-    private static function _create_custom_template_group(EE_messenger $messenger, EE_message_type $message_type, $GRP_ID)
-    {
+    private static function _create_custom_template_group(
+        EE_messenger $messenger,
+        EE_message_type $message_type,
+        $GRP_ID
+    ) {
         // defaults
-        $success = array( 'GRP_ID' => null, 'MTP_context' => '' );
+        $success = ['GRP_ID' => null, 'MTP_context' => ''];
         // get the template group to use as a template from the db.  If $GRP_ID is empty then we'll assume the base will be the global template matching the messenger and message type.
         $Message_Template_Group = empty($GRP_ID)
             ? EEM_Message_Template_Group::instance()->get_one(
-                array(
-                    array(
+                [
+                    [
                         'MTP_messenger'    => $messenger->name,
                         'MTP_message_type' => $message_type->name,
-                        'MTP_is_global'    => true
-                    )
-                )
+                        'MTP_is_global'    => true,
+                    ],
+                ]
             )
             : EEM_Message_Template_Group::instance()->get_one_by_ID($GRP_ID);
         // if we don't have a mtg at this point then we need to bail.
@@ -1153,7 +1165,7 @@ class EEH_MSG_Template
         // remove ALL relations on this template group so they don't get saved!
         $new_mtg->_remove_relations('Message_Template');
         $new_mtg->save();
-        $success['GRP_ID'] = $new_mtg->ID();
+        $success['GRP_ID']        = $new_mtg->ID();
         $success['template_name'] = $template_name;
         // add new message templates and add relation to.
         foreach ($message_templates as $message_template) {
@@ -1191,13 +1203,13 @@ class EEH_MSG_Template
             return true;
         }
         $active_templates = EEM_Message_Template_Group::instance()->count(
-            array(
-                array(
+            [
+                [
                     'MTP_is_active'    => true,
                     'MTP_messenger'    => $messenger->name,
-                    'MTP_message_type' => $message_type->name
-                )
-            )
+                    'MTP_message_type' => $message_type->name,
+                ],
+            ]
         );
         if ($active_templates > 0) {
             return true;
@@ -1221,7 +1233,8 @@ class EEH_MSG_Template
 
     /**
      * get_fields
-     * This takes a given messenger and message type and returns all the template fields indexed by context (and with field type).
+     * This takes a given messenger and message type and returns all the template fields indexed by context (and with
+     * field type).
      *
      * @param string $messenger_name    name of EE_messenger
      * @param string $message_type_name name of EE_message_type
@@ -1231,13 +1244,13 @@ class EEH_MSG_Template
      */
     public static function get_fields($messenger_name, $message_type_name)
     {
-        $template_fields = array();
+        $template_fields = [];
         /** @type EE_Message_Resource_Manager $Message_Resource_Manager */
         $Message_Resource_Manager = EE_Registry::instance()->load_lib('Message_Resource_Manager');
-        $messenger = $Message_Resource_Manager->valid_messenger($messenger_name);
-        $message_type = $Message_Resource_Manager->valid_message_type($message_type_name);
+        $messenger                = $Message_Resource_Manager->valid_messenger($messenger_name);
+        $message_type             = $Message_Resource_Manager->valid_message_type($message_type_name);
         if (! EEH_MSG_Template::message_type_has_active_templates_for_messenger($messenger, $message_type)) {
-            return array();
+            return [];
         }
 
         $excluded_fields_for_messenger = $message_type->excludedFieldsForMessenger($messenger_name);
@@ -1258,7 +1271,7 @@ class EEH_MSG_Template
                 __FUNCTION__,
                 __LINE__
             );
-            return array();
+            return [];
         }
         return $template_fields;
     }

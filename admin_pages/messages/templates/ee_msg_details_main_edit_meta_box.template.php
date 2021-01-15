@@ -1,14 +1,13 @@
 <?php
 
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 /**
  * @var EE_Message_Template_Group $MTP
  * @var string                    $context
  * @var string                    $event_name
  * @var string[]                  $template_fields
  */
-
-use EventEspresso\core\services\request\sanitizers\AllowedTags;
-
 ?>
 
 <div id="admin-primary-mbox-dv" class="admin-primary-mbox-dv">
@@ -16,8 +15,11 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
     <h3 class="admin-primary-mbox-h4">
         <?php echo isset($event_name) ? sprintf(esc_html__('%1$s Custom Template'), $event_name) : ''; ?>
     </h3>
-    <input type="hidden" id="ee-msg-current-context" name="MTP_context" value="<?php echo esc_attr($context); ?>" />
-    <!-- if this is not a global template then let's show the name and description fields -->
+    <input type="hidden"
+           id="ee-msg-current-context"
+           name="MTP_context"
+           value="<?php echo esc_attr($context); ?>"
+    />
     <?php
     if (! $MTP->is_global()) : ?>
         <div class="non-global-mtp-fields">
@@ -32,9 +34,9 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                     <label for="title" class="label-MTP_name" style="visibility:hidden">
                         <?php esc_html_e('Message Template Name:', 'event_espresso'); ?>
                     </label>
-                    <input class='regular-text'
+                    <input type="text"
+                           class='regular-text'
                            id="title"
-                           type="text"
                            name="ee_msg_non_global_fields[MTP_name]"
                            value="<?php echo esc_attr($MTP->name()); ?>"
                     >
@@ -55,29 +57,21 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                 </textarea>
             </p>
         </div>
-        <?php
-    else :
-        ?>
+    <?php else : ?>
         <input type="hidden" name="ee_msg_non_global_fields[MTP_name]" value="<?php echo esc_attr($MTP->name()); ?>">
         <input type="hidden"
                name="ee_msg_non_global_fields[MTP_description]"
                value="<?php echo esc_attr($MTP->description()); ?>"
         />
-    <?php endif; ?>
-    <!-- we need to loop through the template_fields so we know our structure -->
     <?php
+    endif;
+    //  we need to loop through the template_fields so we know our structure
     if (isset($template_fields) && ! empty($template_fields) && ! is_wp_error($template_fields)) {
         echo wp_kses($template_fields, AllowedTags::getWithFullTags());
     } else {
         ?>
         <p>
-            <?php esc_html_e(
-                'Something has gone wrong, there are no template fields to output.',
-                'event_espresso'
-            ); ?>
+            <?php esc_html_e('Something has gone wrong, there are no template fields to output.', 'event_espresso'); ?>
         </p>
-        <?php
-    }
-
-    ?>
-</div> <!-- end #admin-primary-mbox-dv -->
+    <?php } ?>
+</div>

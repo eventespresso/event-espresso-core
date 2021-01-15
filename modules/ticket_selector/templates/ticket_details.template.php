@@ -1,5 +1,8 @@
 <?php
 
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+use EventEspresso\modules\ticket_selector\TicketDetails;
+
 /**
  * @var boolean       $show_ticket_details
  * @var boolean       $display_ticket_price
@@ -16,9 +19,6 @@
  * @var EE_Ticket     $ticket
  * @var TicketDetails $ticket_details
  */
-
-use EventEspresso\core\services\request\sanitizers\AllowedTags;
-use EventEspresso\modules\ticket_selector\TicketDetails;
 
 $event_date_label = apply_filters(
     'FHEE__ticket_selector_chart_template__ticket_details_event_access_table_event_date',

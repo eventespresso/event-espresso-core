@@ -185,7 +185,7 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
         );
         $filtered_attributes = array_filter(
             $attributes,
-            function($value, $attribute) {
+            function ($value, $attribute) {
                 // always add 'value' attribute or arrays of attributes
                 if ($attribute === 'value' || is_array($value)) {
                     return true;

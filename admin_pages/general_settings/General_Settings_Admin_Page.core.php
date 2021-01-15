@@ -897,7 +897,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
                 }
             }
         }
-        if (is_array($states)) {
+        if (is_array($states) && ! empty($states)) {
             foreach ($states as $STA_ID => $state) {
                 if ($state instanceof EE_State) {
                     $inputs = EE_Question_Form_Input::generate_question_form_inputs_for_object(

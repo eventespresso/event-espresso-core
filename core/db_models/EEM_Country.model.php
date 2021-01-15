@@ -36,6 +36,12 @@ class EEM_Country extends EEM_Base
     }
 
 
+    /**
+     * EEM_Country constructor.
+     *
+     * @param string|null $timezone
+     * @throws EE_Error
+     */
     protected function __construct($timezone = '')
     {
         $this->singular_item = esc_html__('Country', 'event_espresso');
@@ -63,13 +69,13 @@ class EEM_Country extends EEM_Base
                     false,
                     ''
                 ),
+                // should be a foreign key, but no region table exists yet
                 'RGN_ID'          => new EE_Integer_Field(
                     'RGN_ID',
                     esc_html__('Region ID', 'event_espresso'),
                     false,
                     0
                 ),
-                // should be a foreign key, but no region table exists yet
                 'CNT_name'        => new EE_Plain_Text_Field(
                     'CNT_name',
                     esc_html__('Country Name', 'event_espresso'),
@@ -192,9 +198,8 @@ class EEM_Country extends EEM_Base
         $names = $this->get_col([['CNT_ISO' => $country_ISO], 'limit' => 1], 'CNT_name');
         if (is_array($names) && ! empty($names)) {
             return reset($names);
-        } else {
-            return '';
         }
+        return '';
     }
 
 

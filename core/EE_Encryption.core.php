@@ -386,7 +386,7 @@ class EE_Encryption implements InterminableInterface
     /**
      * @param string $cipher_method
      * @return string
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     protected function getAvailableCipherMethod($cipher_method)
     {
@@ -494,7 +494,7 @@ class EE_Encryption implements InterminableInterface
      * with the available values returned from openssl_get_md_methods().
      *
      * @return string
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     protected function getDigestMethod()
     {
@@ -532,8 +532,7 @@ class EE_Encryption implements InterminableInterface
             str_pad(
                 '',
                 strlen($text_string),
-                $this->get_encryption_key(),
-                STR_PAD_RIGHT
+                $this->get_encryption_key()
             )
         );
         $string_bits = str_split($text_string);
@@ -578,8 +577,7 @@ class EE_Encryption implements InterminableInterface
             str_pad(
                 '',
                 strlen($encrypted_text),
-                $this->get_encryption_key(),
-                STR_PAD_RIGHT
+                $this->get_encryption_key()
             )
         );
         $string_bits    = str_split($encrypted_text);

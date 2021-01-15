@@ -16,7 +16,6 @@ class EEH_Event_View extends EEH_Base
 
 
     /**
-     * get_event
      * attempts to retrieve an EE_Event object any way it can
      *
      * @param int|WP_Post $EVT_ID
@@ -64,11 +63,8 @@ class EEH_Event_View extends EEH_Base
 
 
     /**
-     *    display_ticket_selector
-     *
      * @param int $EVT_ID
      * @return    boolean
-     * @throws EE_Error
      * @throws EE_Error
      * @throws ReflectionException
      */
@@ -80,11 +76,8 @@ class EEH_Event_View extends EEH_Base
 
 
     /**
-     *    event_status
-     *
      * @param int $EVT_ID
      * @return    string
-     * @throws EE_Error
      * @throws EE_Error
      * @throws ReflectionException
      */
@@ -96,11 +89,9 @@ class EEH_Event_View extends EEH_Base
 
 
     /**
-     *  event_active_status
-     *
-     * @param int $EVT_ID
-     * @return     string
-     * @throws EE_Error
+     * @param int  $EVT_ID
+     * @param bool $echo
+     * @return string
      * @throws EE_Error
      * @throws ReflectionException
      */
@@ -112,11 +103,8 @@ class EEH_Event_View extends EEH_Base
 
 
     /**
-     *  event_has_content_or_excerpt
-     *
      * @param int $EVT_ID
-     * @return     bool
-     * @throws EE_Error
+     * @return bool
      * @throws EE_Error
      * @throws ReflectionException
      */
@@ -139,8 +127,6 @@ class EEH_Event_View extends EEH_Base
 
 
     /**
-     *    event_active_status
-     *
      * @param null $num_words
      * @param null $more
      * @return    string
@@ -205,8 +191,6 @@ class EEH_Event_View extends EEH_Base
 
 
     /**
-     *  event_tickets_available
-     *
      * @param int $EVT_ID
      * @return     EE_Ticket[]
      * @throws EE_Error
@@ -228,8 +212,6 @@ class EEH_Event_View extends EEH_Base
 
 
     /**
-     *    the_event_date
-     *
      * @param int  $EVT_ID
      * @param bool $hide_uncategorized
      * @return    string
@@ -301,11 +283,9 @@ class EEH_Event_View extends EEH_Base
     public static function the_event_end_date($date_format = 'D M jS', $time_format = 'g:i a', $EVT_ID = 0)
     {
         $datetime = EEH_Event_View::get_last_date_obj($EVT_ID);
-        $format   =
-            ! empty($date_format) && ! empty($time_format)
-                ? $date_format . ' ' . $time_format
-                : $date_format
-                  . $time_format;
+        $format   = ! empty($date_format) && ! empty($time_format)
+            ? $date_format . ' ' . $time_format
+            : $date_format . $time_format;
         return $datetime instanceof EE_Datetime ? $datetime->get_i18n_datetime('DTT_EVT_end', $format) : '';
     }
 
@@ -323,11 +303,9 @@ class EEH_Event_View extends EEH_Base
     public static function the_earliest_event_date($date_format = 'D M jS', $time_format = 'g:i a', $EVT_ID = 0)
     {
         $datetime = EEH_Event_View::get_earliest_date_obj($EVT_ID);
-        $format   =
-            ! empty($date_format) && ! empty($time_format)
-                ? $date_format . ' ' . $time_format
-                : $date_format
-                  . $time_format;
+        $format   = ! empty($date_format) && ! empty($time_format)
+            ? $date_format . ' ' . $time_format
+            : $date_format . $time_format;
         return $datetime instanceof EE_Datetime ? $datetime->get_i18n_datetime('DTT_EVT_start', $format) : '';
     }
 
@@ -345,11 +323,9 @@ class EEH_Event_View extends EEH_Base
     public static function the_latest_event_date($date_format = 'D M jS', $time_format = 'g:i a', $EVT_ID = 0)
     {
         $datetime = EEH_Event_View::get_latest_date_obj($EVT_ID);
-        $format   =
-            ! empty($date_format) && ! empty($time_format)
-                ? $date_format . ' ' . $time_format
-                : $date_format
-                  . $time_format;
+        $format   = ! empty($date_format) && ! empty($time_format)
+            ? $date_format . ' ' . $time_format
+            : $date_format . $time_format;
         return $datetime instanceof EE_Datetime ? $datetime->get_i18n_datetime('DTT_EVT_end', $format) : '';
     }
 
@@ -365,8 +341,7 @@ class EEH_Event_View extends EEH_Base
     public static function event_date_as_calendar_page($EVT_ID = 0)
     {
         $datetime = EEH_Event_View::get_primary_date_obj($EVT_ID);
-        if ($datetime instanceof EE_Datetime) {
-            ?>
+        if ($datetime instanceof EE_Datetime) { ?>
             <div class="event-date-calendar-page-dv">
                 <div class="event-date-calendar-page-month-dv">
                     <?php echo esc_html($datetime->get_i18n_datetime('DTT_EVT_start', 'M')); ?>
@@ -384,7 +359,7 @@ class EEH_Event_View extends EEH_Base
      *    get_primary_date_obj - orders date by DTT_order
      *
      * @param int $EVT_ID
-     * @return EE_Datetime
+     * @return EE_Datetime|null
      * @throws EE_Error
      * @throws ReflectionException
      */
@@ -409,7 +384,7 @@ class EEH_Event_View extends EEH_Base
      *    get_last_date_obj - orders date by DTT_order
      *
      * @param int $EVT_ID
-     * @return EE_Datetime
+     * @return EE_Datetime|null
      * @throws EE_Error
      * @throws ReflectionException
      */
@@ -434,7 +409,7 @@ class EEH_Event_View extends EEH_Base
      *    get_earliest_date_obj - orders date chronologically
      *
      * @param int $EVT_ID
-     * @return EE_Datetime
+     * @return EE_Datetime|null
      * @throws EE_Error
      * @throws ReflectionException
      */
@@ -459,7 +434,7 @@ class EEH_Event_View extends EEH_Base
      *    get_latest_date_obj - orders date chronologically
      *
      * @param int $EVT_ID
-     * @return EE_Datetime
+     * @return EE_Datetime|null
      * @throws EE_Error
      * @throws ReflectionException
      */
@@ -486,7 +461,6 @@ class EEH_Event_View extends EEH_Base
      * @param int $EVT_ID
      * @return    EE_Datetime|null
      * @throws EE_Error
-     * @throws EE_Error
      */
     public static function get_next_upcoming_date_obj($EVT_ID = 0)
     {
@@ -504,14 +478,11 @@ class EEH_Event_View extends EEH_Base
 
 
     /**
-     *    get_all_date_obj
-     *
      * @param int  $EVT_ID
      * @param null $include_expired
      * @param bool $include_deleted
      * @param null $limit
      * @return EE_Datetime[]
-     * @throws EE_Error
      * @throws EE_Error
      * @throws ReflectionException
      */
@@ -538,10 +509,8 @@ class EEH_Event_View extends EEH_Base
 
 
     /**
-     *    event_link_url
-     *
      * @param int $EVT_ID
-     * @return string
+     * @return    string
      * @throws EE_Error
      * @throws ReflectionException
      */
@@ -560,11 +529,8 @@ class EEH_Event_View extends EEH_Base
 
 
     /**
-     *    event_phone
-     *
      * @param int $EVT_ID
      * @return    string
-     * @throws EE_Error
      * @throws EE_Error
      * @throws ReflectionException
      */
@@ -579,8 +545,6 @@ class EEH_Event_View extends EEH_Base
 
 
     /**
-     *    edit_event_link
-     *
      * @param int    $EVT_ID
      * @param string $link
      * @param string $before

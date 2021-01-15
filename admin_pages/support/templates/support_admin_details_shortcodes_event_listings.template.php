@@ -17,12 +17,16 @@
     </p>
     <ul>
         <li>
-            <strong><?php esc_html_e('Show a list of all of your events', 'event_espresso'); ?></strong>
+            <strong>
+                <?php esc_html_e('Show a list of all of your events', 'event_espresso'); ?>
+            </strong>
             <br />
             [ESPRESSO_EVENTS]
         </li>
         <li>
-            <strong><?php esc_html_e('Set a custom title for the event list', 'event_espresso'); ?></strong>
+            <strong>
+                <?php esc_html_e('Set a custom title for the event list', 'event_espresso'); ?>
+            </strong>
             <br />
             [ESPRESSO_EVENTS title="My Super Event List"]
         </li>
@@ -35,12 +39,10 @@
         </li>
         <li>
             <strong>
-                <?php
-                esc_html_e(
+                <?php esc_html_e(
                     'Limit (paginate) the number of events that are shown in the event list on a page or post',
                     'event_espresso'
-                );
-                ?>
+                ); ?>
             </strong>
             <br />
             [ESPRESSO_EVENTS limit=5]

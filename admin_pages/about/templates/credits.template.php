@@ -55,6 +55,15 @@
         </a>
         <span class="title"><?php esc_html_e('Core Developer', 'event_espresso'); ?></span>
     </li>
+    <li class='wp-person' id='ee-person-vnicolai'>
+        <a href="<?php esp_gravatar_profile('vadim@eventespresso.com'); ?>">
+            <?php esp_gravatar_image('vadim@eventespresso.com', 'Vadim Nicolai'); ?>
+        </a>
+        <a class="web" href="<?php esp_gravatar_profile('vadim@eventespresso.com'); ?>">
+            Vadim Nicolai
+        </a>
+        <span class="title"><?php esc_html_e('Core Developer', 'event_espresso'); ?></span>
+    </li>
 </ul>
 <h3 class="wp-people-group"><?php esc_html_e('Support Staff', 'event_espresso'); ?></h3>
 <ul class="wp-people-group" id="ee-people-group-support-staff">
@@ -82,7 +91,6 @@
             Lorenzo Caum
         </a>
     </li>
-
 </ul>
 <h3 class="wp-people-group"><?php esc_html_e('Contributor Recognition', 'event_espresso'); ?></h3>
 <p class="description">

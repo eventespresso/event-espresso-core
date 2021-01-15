@@ -1,6 +1,6 @@
 <?php
 /**
- * @var string[][] $states
+ * @var array $states
  */
 ?>
 
@@ -42,22 +42,19 @@
                 </a>
             </td>
         </tr>
-            <?php
-        }
-        ?>
+        <?php } ?>
     </tbody>
 </table>
 <br/>
-<input class="button-primary save right"
+<input class="button button--primary save right"
        id='country_settings_save3'
        type="submit"
        name="save"
        value="<?php esc_html_e('Save States/Provinces', 'event_espresso'); ?>"
 />
 <br/>
-        <?php
-    }
-    ?>
+
+<?php } ?>
 <table class="form-table add-new-state-tbl">
     <tbody>
     <tr>
@@ -65,7 +62,6 @@
             <h4><?php esc_html_e('Add New State/Province', 'event_espresso'); ?></h4>
         </td>
     </tr>
-
     <tr>
         <td class="general-settings-country-state-input-td">
             <label for="STA_abbrev_XXX"><?php esc_html_e('Code', 'event_espresso'); ?></label>
@@ -81,18 +77,23 @@
         <td class="general-settings-country-state-input-td">
             <label for="STA_name_XXX"><?php esc_html_e('Name', 'event_espresso'); ?></label>
             <br/>
-            <input id="STA_name-XXX" class="STA_name regular-text " type="text" title="" value="" name="STA_name_XXX">
+            <input class="STA_name regular-text "
+                   id="STA_name-XXX"
+                   name="STA_name_XXX"
+                   title=""
+                   type="text"
+                   value=""
+            >
         </td>
     </tr>
     <tr>
         <td colspan="2">
-            <input class="secondary-button button right"
+            <input class="button button--secondary right"
                    id='add-new-state-btn'
                    type='submit'
                    value="<?php esc_html_e('Add New State/Province', 'event_espresso'); ?>"
             />
         </td>
     </tr>
-
     </tbody>
 </table>

@@ -213,7 +213,6 @@ class EEH_Activation implements ResettableInterface
      */
     public static function create_cron_tasks()
     {
-
         foreach (EEH_Activation::get_cron_tasks('current') as $hook_name => $frequency) {
             if (! wp_next_scheduled($hook_name)) {
                 /**
@@ -509,7 +508,9 @@ class EEH_Activation implements ResettableInterface
         global $wpdb;
         $shortcode_and_opening_bracket = '[' . $ee_shortcode;
         $post_id                       =
-            $wpdb->get_var("SELECT ID FROM {$wpdb->posts} WHERE post_content LIKE '%$shortcode_and_opening_bracket%' LIMIT 1");
+            $wpdb->get_var(
+                "SELECT ID FROM {$wpdb->posts} WHERE post_content LIKE '%$shortcode_and_opening_bracket%' LIMIT 1"
+            );
         if ($post_id) {
             return get_post($post_id);
         } else {
@@ -526,7 +527,6 @@ class EEH_Activation implements ResettableInterface
      */
     public static function create_critical_page($critical_page)
     {
-
         $post_args = [
             'post_title'     => $critical_page['name'],
             'post_status'    => 'publish',
@@ -781,7 +781,7 @@ class EEH_Activation implements ResettableInterface
             } else {
                 EE_Error::add_error(
                     esc_html__(
-                        'There were errors creating the Event Espresso database tables and Event Espresso has been 
+                        'There were errors creating the Event Espresso database tables and Event Espresso has been
                             deactivated. To view the errors, please enable WP_DEBUG in your wp-config.php file.',
                         'event_espresso'
                     )
@@ -892,8 +892,9 @@ class EEH_Activation implements ResettableInterface
                             'QST_required_text' => esc_html__('This field is required', 'event_espresso'),
                             'QST_order'         => 1,
                             'QST_admin_only'    => 0,
-                            'QST_max'           => EEM_Question::instance()
-                                                               ->absolute_max_for_system_question($QST_system),
+                            'QST_max'           => EEM_Question::instance()->absolute_max_for_system_question(
+                                $QST_system
+                            ),
                             'QST_wp_user'       => self::get_default_creator_id(),
                             'QST_deleted'       => 0,
                         ];
@@ -908,8 +909,9 @@ class EEH_Activation implements ResettableInterface
                             'QST_required_text' => esc_html__('This field is required', 'event_espresso'),
                             'QST_order'         => 2,
                             'QST_admin_only'    => 0,
-                            'QST_max'           => EEM_Question::instance()
-                                                               ->absolute_max_for_system_question($QST_system),
+                            'QST_max'           => EEM_Question::instance()->absolute_max_for_system_question(
+                                $QST_system
+                            ),
                             'QST_wp_user'       => self::get_default_creator_id(),
                             'QST_deleted'       => 0,
                         ];
@@ -924,8 +926,9 @@ class EEH_Activation implements ResettableInterface
                             'QST_required_text' => esc_html__('This field is required', 'event_espresso'),
                             'QST_order'         => 3,
                             'QST_admin_only'    => 0,
-                            'QST_max'           => EEM_Question::instance()
-                                                               ->absolute_max_for_system_question($QST_system),
+                            'QST_max'           => EEM_Question::instance()->absolute_max_for_system_question(
+                                $QST_system
+                            ),
                             'QST_wp_user'       => self::get_default_creator_id(),
                             'QST_deleted'       => 0,
                         ];
@@ -940,8 +943,9 @@ class EEH_Activation implements ResettableInterface
                             'QST_required_text' => esc_html__('This field is required', 'event_espresso'),
                             'QST_order'         => 4,
                             'QST_admin_only'    => 0,
-                            'QST_max'           => EEM_Question::instance()
-                                                               ->absolute_max_for_system_question($QST_system),
+                            'QST_max'           => EEM_Question::instance()->absolute_max_for_system_question(
+                                $QST_system
+                            ),
                             'QST_wp_user'       => self::get_default_creator_id(),
                             'QST_deleted'       => 0,
                         ];
@@ -956,8 +960,9 @@ class EEH_Activation implements ResettableInterface
                             'QST_required_text' => esc_html__('This field is required', 'event_espresso'),
                             'QST_order'         => 5,
                             'QST_admin_only'    => 0,
-                            'QST_max'           => EEM_Question::instance()
-                                                               ->absolute_max_for_system_question($QST_system),
+                            'QST_max'           => EEM_Question::instance()->absolute_max_for_system_question(
+                                $QST_system
+                            ),
                             'QST_wp_user'       => self::get_default_creator_id(),
                             'QST_deleted'       => 0,
                         ];
@@ -972,8 +977,9 @@ class EEH_Activation implements ResettableInterface
                             'QST_required_text' => esc_html__('This field is required', 'event_espresso'),
                             'QST_order'         => 6,
                             'QST_admin_only'    => 0,
-                            'QST_max'           => EEM_Question::instance()
-                                                               ->absolute_max_for_system_question($QST_system),
+                            'QST_max'           => EEM_Question::instance()->absolute_max_for_system_question(
+                                $QST_system
+                            ),
                             'QST_wp_user'       => self::get_default_creator_id(),
                             'QST_deleted'       => 0,
                         ];
@@ -988,8 +994,9 @@ class EEH_Activation implements ResettableInterface
                             'QST_required_text' => esc_html__('This field is required', 'event_espresso'),
                             'QST_order'         => 7,
                             'QST_admin_only'    => 0,
-                            'QST_max'           => EEM_Question::instance()
-                                                               ->absolute_max_for_system_question($QST_system),
+                            'QST_max'           => EEM_Question::instance()->absolute_max_for_system_question(
+                                $QST_system
+                            ),
                             'QST_wp_user'       => self::get_default_creator_id(),
                             'QST_deleted'       => 0,
                         ];
@@ -1032,8 +1039,9 @@ class EEH_Activation implements ResettableInterface
                             'QST_required_text' => esc_html__('This field is required', 'event_espresso'),
                             'QST_order'         => 10,
                             'QST_admin_only'    => 0,
-                            'QST_max'           => EEM_Question::instance()
-                                                               ->absolute_max_for_system_question($QST_system),
+                            'QST_max'           => EEM_Question::instance()->absolute_max_for_system_question(
+                                $QST_system
+                            ),
                             'QST_wp_user'       => self::get_default_creator_id(),
                             'QST_deleted'       => 0,
                         ];
@@ -1048,8 +1056,9 @@ class EEH_Activation implements ResettableInterface
                             'QST_required_text' => esc_html__('This field is required', 'event_espresso'),
                             'QST_order'         => 11,
                             'QST_admin_only'    => 0,
-                            'QST_max'           => EEM_Question::instance()
-                                                               ->absolute_max_for_system_question($QST_system),
+                            'QST_max'           => EEM_Question::instance()->absolute_max_for_system_question(
+                                $QST_system
+                            ),
                             'QST_wp_user'       => self::get_default_creator_id(),
                             'QST_deleted'       => 0,
                         ];
@@ -1139,7 +1148,6 @@ class EEH_Activation implements ResettableInterface
      */
     public static function insert_default_status_codes()
     {
-
         global $wpdb;
 
         if (EEH_Activation::getTableAnalysis()->tableExists(EEM_Status::instance()->table())) {
@@ -1650,7 +1658,6 @@ class EEH_Activation implements ResettableInterface
      */
     public static function removeEmailConfirmFromAddressGroup()
     {
-
         // Pull the email_confirm question ID.
         $email_confirm_question_id = EEM_Question::instance()->get_Question_ID_from_system_string(
             EEM_Attendee::system_question_email_confirm

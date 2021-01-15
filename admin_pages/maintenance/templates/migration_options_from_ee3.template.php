@@ -19,6 +19,7 @@
  * @var string                        $ultimate_db_state
  * @var string                        $reset_db_page_link
  */
+
 ?>
 
 <div id="migration-options-dv">
@@ -33,12 +34,14 @@
         <table>
             <tbody>
                 <tr>
-                    <td><h3><?php esc_html_e('1', 'event_espresso'); ?></h3></td>
+                    <td>
+                        <h3><?php esc_html_e('1', 'event_espresso'); ?></h3>
+                    </td>
                     <td>
                         <?php echo apply_filters(
                             'FHEE__ee_migration_page__option_1_main',
                             sprintf(
-                                __(
+                                esc_html__(
                                     '%1$sYes. I have backed up my database%2$s, %3$sunderstand the risks involved%4$s, and am ready to migrate my existing %5$s data to %6$s.',
                                     "event_espresso"
                                 ),
@@ -58,8 +61,11 @@
                         <a id="display-migration-details"
                            class="display-the-hidden lt-grey-text smaller-text hide-if-no-js"
                            rel="migration-details"
-                        ><?php esc_html_e('click for more details', "event_espresso"); ?>
-                            &nbsp;+
+                        >
+                            <?php printf(
+                                esc_html__('click for more details%1$s', 'event_espresso'),
+                                '&nbsp;+'
+                            ); ?>
                         </a>
                         <a id="hide-migration-details"
                            class="hide-the-displayed lt-grey-text smaller-text hide-if-no-js"
@@ -74,7 +80,7 @@
                     </td>
                     <td>
                         <a id="db-backed-up"
-                           class="toggle-migration-monitor button-primary"
+                           class="toggle-migration-monitor button button--primary"
                         >
                             <?php echo esc_html(
                                 apply_filters(
@@ -100,8 +106,8 @@
                                     "%s Important: %s Before migrating, please back up your database and files.",
                                     "event_espresso"
                                 ),
-                                "<b>",
-                                "</b>"
+                                "<strong>",
+                                "</strong>"
                             );
 ?>
                             </span>
@@ -111,8 +117,8 @@
                                         '%1$sNot sure how to backup your existing data?%2$s Here is %3$sWordPress\'s explanation%7$s, and here\'s %6$sour explanation%7$s.%8$sYou can also search the WordPress plugin database for %4$s database backup plugins %7$s,%8$sor have one of our dedicated support technicians help you by purchasing a %5$sPriority Support Token%7$s.',
                                         "event_espresso"
                                     ),
-                                    '<b>',
-                                    '</b>',
+                                    '<strong>',
+                                    '</strong>',
                                     "<a href='https://codex.wordpress.org/Backing_Up_Your_Database'>",
                                     "<a href='"
                                     . admin_url(
@@ -180,7 +186,7 @@
                     </td>
                     <td>
                         <a id="do-not-migrate"
-                           class="do-not-migrate button-primary"
+                           class="do-not-migrate button button--primary"
                            href="<?php echo esc_url_raw($reset_db_page_link); ?>"
                         >
                             <?php echo esc_html(

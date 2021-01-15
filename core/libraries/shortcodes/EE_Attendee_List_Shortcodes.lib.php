@@ -85,7 +85,6 @@ class EE_Attendee_List_Shortcodes extends EE_Shortcodes
         $data             = $this->_data['data'];
         $attendees        = '';
 
-
         // now we need to loop through the attendee list and send data to the EE_Parser helper.
         foreach ($data->reg_objs as $registration) {
             $attendees .= $this->_shortcode_helper->parse_attendee_list_template(

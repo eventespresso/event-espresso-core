@@ -32,6 +32,8 @@ class EE_Datetime_List_Shortcodes extends EE_Shortcodes
 
 
     /**
+     * @param string $shortcode
+     * @return string
      * @throws EE_Error
      * @throws ReflectionException
      */
@@ -49,7 +51,6 @@ class EE_Datetime_List_Shortcodes extends EE_Shortcodes
      * figure out what the incoming data is and then return the appropriate parsed value.
      *
      * @return string
-     * @throws EE_Error
      * @throws EE_Error
      * @throws ReflectionException
      */
@@ -112,6 +113,7 @@ class EE_Datetime_List_Shortcodes extends EE_Shortcodes
      *
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
     private function _get_datetime_list_for_ticket()
     {
@@ -145,13 +147,14 @@ class EE_Datetime_List_Shortcodes extends EE_Shortcodes
      *
      * @return string
      * @throws EE_Error
-     * @throws EE_Error
+     * @throws ReflectionException
      */
     private function _get_datetime_list_for_registration()
     {
         $registration = $this->_data['data']->reg_obj;
 
-        // now let's just get the ticket, set $this->_data['data'] to the ticket and then call _get_datetime_list_for__ticket();
+        // now let's just get the ticket, set $this->_data['data'] to the ticket
+        // and then call _get_datetime_list_for__ticket();
         $this->_data['data'] = $registration->ticket();
         return $this->_get_datetime_list_for_ticket();
     }
@@ -175,6 +178,7 @@ class EE_Datetime_List_Shortcodes extends EE_Shortcodes
      * @param EE_Ticket $ticket
      * @return array|mixed
      * @throws EE_Error
+     * @throws ReflectionException
      */
     private function _get_datetimes_from_ticket(EE_Ticket $ticket)
     {

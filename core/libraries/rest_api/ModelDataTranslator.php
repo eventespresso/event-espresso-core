@@ -352,7 +352,7 @@ class ModelDataTranslator
                     )
                 );
             }
-            if ($new_value !== null) {
+            if ($new_value !== null && extension_loaded('mysql')) {
                 // phpcs:disable PHPCompatibility.Extensions.RemovedExtensions.mysql_DeprecatedRemoved
                 $new_value = mysql_to_rfc3339($new_value);
                 // phpcs:enable

@@ -3,7 +3,7 @@
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidIdentifierException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
-use EventEspresso\core\services\request\sanitizers\AllowedTags;
+use EventEspresso\core\services\request\DataType;
 
 /**
  *
@@ -327,7 +327,11 @@ class Messages_Admin_Page extends EE_Admin_Page
                 'html_name'  => 'ee_messenger_filter_by',
                 'html_id'    => 'ee_messenger_filter_by',
                 'html_class' => 'wide',
-                'default'    => $this->request->getRequestParam('ee_messenger_filter_by', 'none_selected', 'title'),
+                'default' => $this->request->getRequestParam(
+                    'ee_messenger_filter_by',
+                    'none_selected',
+                    DataType::TITLE
+                ),
             ]
         );
 
@@ -364,7 +368,11 @@ class Messages_Admin_Page extends EE_Admin_Page
                 'html_name'  => 'ee_message_type_filter_by',
                 'html_id'    => 'ee_message_type_filter_by',
                 'html_class' => 'wide',
-                'default'    => $this->request->getRequestParam('ee_message_type_filter_by', 'none_selected', 'title'),
+                'default' => $this->request->getRequestParam(
+                    'ee_message_type_filter_by',
+                    'none_selected',
+                    DataType::TITLE
+                ),
             ]
         );
 
@@ -398,10 +406,14 @@ class Messages_Admin_Page extends EE_Admin_Page
         $input           = new EE_Select_Input(
             $context_options,
             [
-                'html_name'  => 'ee_context_filter_by',
-                'html_id'    => 'ee_context_filter_by',
+                'html_name' => 'ee_context_filter_by',
+                'html_id' => 'ee_context_filter_by',
                 'html_class' => 'wide',
-                'default'    => $this->request->getRequestParam('ee_context_filter_by', 'none_selected', 'title'),
+                'default' => $this->request->getRequestParam(
+                    'ee_context_filter_by',
+                    'none_selected',
+                    DataType::TITLE
+                ),
             ]
         );
 
@@ -822,8 +834,8 @@ class Messages_Admin_Page extends EE_Admin_Page
 
 
     /**
-     * @throws ReflectionException
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function message_template_shortcodes_help_tab()
     {
@@ -916,7 +928,6 @@ class Messages_Admin_Page extends EE_Admin_Page
      */
     public function load_scripts_styles_edit_message_template()
     {
-
         $this->_set_shortcodes();
 
         EE_Registry::$i18n_js_strings['confirm_default_reset']        = sprintf(
@@ -1133,11 +1144,12 @@ class Messages_Admin_Page extends EE_Admin_Page
 
 
     /**
+     * @return array
      * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _message_legend_items()
     {
-
         $action_css_classes = EEH_MSG_Template::get_message_action_icons();
         $action_items       = [];
 
@@ -1473,13 +1485,10 @@ class Messages_Admin_Page extends EE_Admin_Page
                                 }
                             }
 
-                            $field_id = $reference_field . '-' . $extra_field . '-content';
+                            $field_id = "$reference_field-$extra_field-content";
 
                             $template_form_fields[ $field_id ]         = $extra_array;
-                            $template_form_fields[ $field_id ]['name'] = 'MTP_template_fields['
-                                                                         . $reference_field
-                                                                         . '][content]['
-                                                                         . $extra_field . ']';
+                            $template_form_fields[ $field_id ]['name'] = "MTP_template_fields[$reference_field][content][$extra_field]";
                             $css_class                                 = isset($extra_array['css_class'])
                                 ? $extra_array['css_class']
                                 : '';
@@ -1507,19 +1516,18 @@ class Messages_Admin_Page extends EE_Admin_Page
                             $template_form_fields[ $field_id ]['db-col'] = 'MTP_content';
 
                             // shortcode selector
-                            $field_name_to_use                                   = $extra_field === 'main'
-                                ? 'content'
-                                : $extra_field;
+                            $field_name_to_use = $extra_field === 'main' ? 'content' : $extra_field;
+
                             $template_form_fields[ $field_id ]['append_content'] = $this->_get_shortcode_selector(
                                 $field_name_to_use,
                                 $field_id
                             );
                         }
-                        $template_field_MTP_id           = $reference_field . '-MTP_ID';
-                        $template_field_template_name_id = $reference_field . '-name';
+                        $template_field_MTP_id           = "$reference_field-MTP_ID";
+                        $template_field_template_name_id = "$reference_field-name";
 
                         $template_form_fields[ $template_field_MTP_id ] = [
-                            'name'       => 'MTP_template_fields[' . $reference_field . '][MTP_ID]',
+                            'name'       => "MTP_template_fields[$reference_field][MTP_ID]",
                             'label'      => null,
                             'input'      => 'hidden',
                             'type'       => 'int',
@@ -1532,7 +1540,7 @@ class Messages_Admin_Page extends EE_Admin_Page
                         ];
 
                         $template_form_fields[ $template_field_template_name_id ] = [
-                            'name'       => 'MTP_template_fields[' . $reference_field . '][name]',
+                            'name'       => "MTP_template_fields[$reference_field][name]",
                             'label'      => null,
                             'input'      => 'hidden',
                             'type'       => 'string',
@@ -1546,10 +1554,9 @@ class Messages_Admin_Page extends EE_Admin_Page
                     }
                     continue; // skip the next stuff, we got the necessary fields here for this dataset.
                 } else {
-                    $field_id                                   = $template_field . '-content';
+                    $field_id                                   = "$template_field-content";
                     $template_form_fields[ $field_id ]          = $field_setup_array;
-                    $template_form_fields[ $field_id ]['name']  =
-                        'MTP_template_fields[' . $template_field . '][content]';
+                    $template_form_fields[ $field_id ]['name']  = "MTP_template_fields[$template_field][content]";
                     $message_template                           =
                         isset($message_templates[ $context ][ $template_field ])
                             ? $message_templates[ $context ][ $template_field ]
@@ -1567,13 +1574,13 @@ class Messages_Admin_Page extends EE_Admin_Page
 
 
                     $template_form_fields[ $field_id ]['db-col']    = 'MTP_content';
-                    $css_class                                      = isset($field_setup_array['css_class'])
-                        ? $field_setup_array['css_class']
-                        : '';
+
+                    $css_class = isset($field_setup_array['css_class']) ? $field_setup_array['css_class'] : '';
+
                     $template_form_fields[ $field_id ]['css_class'] = ! empty($v_fields)
                                                                       && in_array($template_field, $v_fields, true)
                                                                       && isset($validators[ $template_field ]['msg'])
-                        ? 'validate-error ' . $css_class
+                        ? "validate-error $css_class"
                         : $css_class;
 
                     // shortcode selector
@@ -1585,12 +1592,12 @@ class Messages_Admin_Page extends EE_Admin_Page
 
                 // k took care of content field(s) now let's take care of others.
 
-                $template_field_MTP_id                 = $template_field . '-MTP_ID';
-                $template_field_field_template_name_id = $template_field . '-name';
+                $template_field_MTP_id                 = "$template_field-MTP_ID";
+                $template_field_field_template_name_id = "$template_field-name";
 
                 // foreach template field there are actually two form fields created
                 $template_form_fields[ $template_field_MTP_id ] = [
-                    'name'       => 'MTP_template_fields[' . $template_field . '][MTP_ID]',
+                    'name'       => "MTP_template_fields[$template_field][MTP_ID]",
                     'label'      => null,
                     'input'      => 'hidden',
                     'type'       => 'int',
@@ -2529,28 +2536,27 @@ class Messages_Admin_Page extends EE_Admin_Page
     public function shortcode_meta_box()
     {
         $shortcodes = $this->_get_shortcodes([], false);
-        // just make sure the shortcodes property is set
+        // just make sure shortcodes property is set
         // $messenger = $this->_message_template_group->messenger_obj();
         // now let's set the content depending on the status of the shortcodes array
         if (empty($shortcodes)) {
-            echo '<p>' . esc_html__('There are no valid shortcodes available', 'event_espresso') . '</p>';
-            return;
+            $content = '<p>' . __('There are no valid shortcodes available', 'event_espresso') . '</p>';
+        } else {
+            $content = '
+            <div style="float:right; margin-top:10px">
+                ' . $this->_get_help_tab_link('message_template_shortcodes') . '
+            </div>
+            <p class="small-text">
+                ' . sprintf(
+                    __(
+                        'You can view the shortcodes usable in your template by clicking the %s icon next to each field.',
+                        'event_espresso'
+                    ),
+                    '<span class="dashicons dashicons-menu"></span>'
+                ) . '
+            </p>';
         }
-        ?>
-        <div style="float:right; margin-top:10px">
-            <?php echo wp_kses($this->_get_help_tab_link('message_template_shortcodes'), AllowedTags::getAllowedTags());
-            ?>
-        </div>
-        <p class="small-text">
-            <?php printf(
-                esc_html__(
-                    'You can view the shortcodes usable in your template by clicking the %s icon next to each field.',
-                    'event_espresso'
-                ),
-                '<span class="dashicons dashicons-menu"></span>'
-            ); ?>
-        </p>
-        <?php
+        echo wp_kses($content, AllowedTags::getAllowedTags());
     }
 
 
@@ -2567,7 +2573,6 @@ class Messages_Admin_Page extends EE_Admin_Page
      */
     protected function _set_shortcodes()
     {
-
         // no need to run this if the property is already set
         if (! empty($this->_shortcodes)) {
             return;
@@ -2585,7 +2590,7 @@ class Messages_Admin_Page extends EE_Admin_Page
      * @param array   $fields  include an array of specific field names that you want to be used to get the shortcodes
      *                         for. Defaults to all (for the given context)
      * @param boolean $merged  Whether to merge all the shortcodes into one list of unique shortcodes
-     * @return array Shortcodes indexed by fieldname and the an array of shortcode/label pairs OR if merged is
+     * @return array Shortcodes indexed by field name and the an array of shortcode/label pairs OR if merged is
      *                         true just an array of shortcode/label pairs.
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -3415,7 +3420,7 @@ class Messages_Admin_Page extends EE_Admin_Page
         $this->_set_m_mt_settings();
 
         // let's setup the messenger tabs
-        $this->_template_args['admin_page_header'] = EEH_Tabbed_Content::tab_text_links(
+        $this->_template_args['admin_page_header']         = EEH_Tabbed_Content::tab_text_links(
             $this->_m_mt_settings['messenger_tabs'],
             'messenger_links',
             '|',
@@ -3626,7 +3631,6 @@ class Messages_Admin_Page extends EE_Admin_Page
                     'messenger'              => $messenger,
                     'active'                 => $active,
                 ];
-
                 // message type meta boxes
                 // (which is really just the inactive container for each messenger
                 // showing inactive message types for that messenger)
@@ -3883,7 +3887,6 @@ class Messages_Admin_Page extends EE_Admin_Page
      */
     protected function _get_messenger_box_content(EE_messenger $messenger)
     {
-
         $fields                                         = $messenger->get_admin_settings_fields();
         $settings_template_args['template_form_fields'] = '';
 
@@ -3942,8 +3945,8 @@ class Messages_Admin_Page extends EE_Admin_Page
             $settings_template_args['hidden_fields'],
             'array'
         );
-        $active                                  =
-            $this->_message_resource_manager->is_messenger_active($messenger->name);
+
+        $active = $this->_message_resource_manager->is_messenger_active($messenger->name);
 
         $settings_template_args['messenger']           = $messenger->name;
         $settings_template_args['description']         = $messenger->description;
@@ -4364,18 +4367,18 @@ class Messages_Admin_Page extends EE_Admin_Page
             } else {
                 EE_Error::add_error(
                     $message_type instanceof EE_message_type
-                    ? sprintf(
-                        esc_html__(
-                            '%s message type was not successfully activated with the %s messenger',
-                            'event_espresso'
+                        ? sprintf(
+                            esc_html__(
+                                '%s message type was not successfully activated with the %s messenger',
+                                'event_espresso'
+                            ),
+                            ucwords($message_type->label['singular']),
+                            ucwords($messenger->label['singular'])
+                        )
+                        : sprintf(
+                            esc_html__('%s messenger was not successfully activated', 'event_espresso'),
+                            ucwords($messenger->label['singular'])
                         ),
-                        ucwords($message_type->label['singular']),
-                        ucwords($messenger->label['singular'])
-                    )
-                    : sprintf(
-                        esc_html__('%s messenger was not successfully activated', 'event_espresso'),
-                        ucwords($messenger->label['singular'])
-                    ),
                     __FILE__,
                     __FUNCTION__,
                     __LINE__
@@ -4473,7 +4476,6 @@ class Messages_Admin_Page extends EE_Admin_Page
      *
      * @throws DomainException
      * @throws EE_Error
-     * @throws EE_Error
      */
     public function update_mt_form()
     {
@@ -4501,7 +4503,6 @@ class Messages_Admin_Page extends EE_Admin_Page
     /**
      * this handles saving the settings for a messenger or message type
      *
-     * @throws EE_Error
      * @throws EE_Error
      */
     public function save_settings()

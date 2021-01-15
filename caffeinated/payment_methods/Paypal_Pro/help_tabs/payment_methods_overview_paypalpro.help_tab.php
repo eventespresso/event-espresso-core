@@ -3,11 +3,13 @@
     <?php esc_html_e('Adjust the settings for the PayPal Pro payment gateway.', 'event_espresso'); ?>
 </p>
 <p>
-    <?php printf(
+    <?php
+    printf(
         esc_html__('See %1$shere%2$s for list of currencies supported by Paypal Pro.', 'event_espresso'),
         "<a href='https://www.paypal.com/multicurrency' target='_blank' rel='noopener noreferrer'>",
         "</a>"
-    ); ?>
+    );
+    ?>
 </p>
 <p><strong><?php esc_html_e('PayPal Pro Settings', 'event_espresso'); ?></strong></p>
 <ul>

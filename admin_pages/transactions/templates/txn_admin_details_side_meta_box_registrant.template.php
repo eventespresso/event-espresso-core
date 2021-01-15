@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 /**
  * @var int    $ATT_ID
  * @var string $no_attendee_message
@@ -10,8 +12,6 @@
  * @var string $formatted_address
  * @var string $edit_attendee_url
  */
-
-use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 $prime_reg_email = sanitize_email($prime_reg_email);
 ?>

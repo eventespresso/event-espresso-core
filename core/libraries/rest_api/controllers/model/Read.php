@@ -3,6 +3,34 @@
 namespace EventEspresso\core\libraries\rest_api\controllers\model;
 
 use DateTimeZone;
+use EE_HABTM_Relation;
+use EE_Model_Field_Base;
+use EE_Model_Relation_Base;
+use EEH_DTT_Helper;
+use EEM_Soft_Delete_Base;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\exceptions\ModelConfigurationException;
+use EventEspresso\core\exceptions\RestPasswordIncorrectException;
+use EventEspresso\core\exceptions\RestPasswordRequiredException;
+use EventEspresso\core\services\loaders\LoaderFactory;
+use Exception;
+use InvalidArgumentException;
+use ReflectionException;
+use stdClass;
+use WP;
+use WP_Error;
+use WP_Post;
+use WP_REST_Request;
+use EventEspresso\core\libraries\rest_api\Capabilities;
+use EventEspresso\core\libraries\rest_api\CalculatedModelFields;
+use EventEspresso\core\libraries\rest_api\RestException;
+use EventEspresso\core\libraries\rest_api\ModelDataTranslator;
+use EventEspresso\core\entities\models\JsonModelSchema;
+use EE_Belongs_To_Relation;
+use EE_Datetime_Field;
+use EE_Error;
+use EE_Registry;
 use EED_Core_Rest_Api;
 use EEH_DTT_Helper;
 use EEH_Inflector;
@@ -251,13 +279,12 @@ class Read extends Base
             && isset($GLOBALS['wp']->query_vars['rest_route'])
         ) {
             return $GLOBALS['wp']->query_vars['rest_route'];
-        } else {
-            /** @var RequestInterface $request */
-            $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
-            return $request->serverParamIsSet('PATH_INFO')
-                ? $request->getServerParam('PATH_INFO')
-                : '/';
         }
+        /** @var RequestInterface $request */
+        $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+        return $request->serverParamIsSet('PATH_INFO')
+            ? $request->getServerParam('PATH_INFO')
+            : '/';
     }
 
 
@@ -512,9 +539,8 @@ class Read extends Base
         }
         if ($relation instanceof EE_Belongs_To_Relation) {
             return array_shift($nice_results);
-        } else {
-            return $nice_results;
         }
+        return $nice_results;
     }
 
 
@@ -1040,10 +1066,7 @@ class Read extends Base
                     $entity_array['_protected'][] = Read::getRelatedEntityName($relation_name, $relation_obj);
                 }
                 if ($related_results instanceof WP_Error || $related_results === null) {
-                    $related_results =
-                        $relation_obj instanceof EE_Belongs_To_Relation
-                            ? null
-                            : [];
+                    $related_results = $relation_obj instanceof EE_Belongs_To_Relation ? null : [];
                 }
                 $entity_array[ Read::getRelatedEntityName($relation_name, $relation_obj) ] = $related_results;
             }
@@ -1068,7 +1091,6 @@ class Read extends Base
         WP_REST_Request $rest_request,
         $entity_array
     ) {
-
         $includes_for_this_model = $this->explodeAndGetItemsPrefixedWith($rest_request->get_param('include'), '');
         $includes_for_this_model = $this->removeModelNamesFromArray($includes_for_this_model);
         // if they passed in * or didn't specify any includes, return everything
@@ -1218,9 +1240,8 @@ class Read extends Base
     {
         if ($relation_obj instanceof EE_Belongs_To_Relation) {
             return strtolower($relation_name);
-        } else {
-            return EEH_Inflector::pluralize_and_lower($relation_name);
         }
+        return EEH_Inflector::pluralize_and_lower($relation_name);
     }
 
 
@@ -1230,7 +1251,6 @@ class Read extends Base
      * @param EEM_Base        $model
      * @param WP_REST_Request $request
      * @return array
-     * @throws EE_Error
      * @throws EE_Error
      * @throws ReflectionException
      */
@@ -1256,9 +1276,8 @@ class Read extends Base
         $valid_contexts = EEM_Base::valid_cap_contexts();
         if (in_array($context, $valid_contexts)) {
             return $context;
-        } else {
-            return EEM_Base::caps_read;
         }
+        return EEM_Base::caps_read;
     }
 
 
@@ -1292,19 +1311,19 @@ class Read extends Base
 
 
     /**
-     * Translates API filter get parameter into model query params @see
-     * https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions.
-     * Note: right now the query parameter keys for fields (and related fields) can be left as-is, but it's quite
-     * possible this will change someday. Also, this method's contents might be candidate for moving to
-     * Model_Data_Translator
+     * Translates API filter get parameter into model query params
      *
      * @param EEM_Base $model
      * @param array    $query_params
-     * @return array model query params (@see
-     *               https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions)
-     *               or FALSE to indicate that absolutely no results should be returned
+     * @return array model query params
      * @throws EE_Error
      * @throws RestException
+     * @see
+     *                            https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions.
+     *                            Note: right now the query parameter keys for fields (and related fields) can be left
+     *                            as-is, but it's quite possible this will change someday. Also, this method's contents
+     *                            might be candidate for moving to Model_Data_Translator
+     *
      */
     public function createModelQueryParams($model, $query_params)
     {
@@ -1444,11 +1463,9 @@ class Read extends Base
     {
         $model_ready_query_params = [];
         foreach ($query_params as $key => $value) {
-            if (is_array($value)) {
-                $model_ready_query_params[ $key ] = $this->prepareRestQueryParamsValuesForModels($model, $value);
-            } else {
-                $model_ready_query_params[ $key ] = $value;
-            }
+            $model_ready_query_params[ $key ] = is_array($value)
+                ? $this->prepareRestQueryParamsValuesForModels($model, $value)
+                : $value;
         }
         return $model_ready_query_params;
     }
@@ -1590,7 +1607,10 @@ class Read extends Base
                 throw new RestException(
                     'rest_user_cannot_' . $context,
                     sprintf(
-                        esc_html__('Sorry, you cannot %1$s this %2$s. Missing permissions are: %3$s', 'event_espresso'),
+                        esc_html__(
+                            'Sorry, you cannot %1$s this %2$s. Missing permissions are: %3$s',
+                            'event_espresso'
+                        ),
                         $context,
                         $lowercase_model_name,
                         Capabilities::getMissingPermissionsString(
@@ -1633,8 +1653,8 @@ class Read extends Base
     protected function checkPassword(EEM_Base $model, $model_row, $query_params, WP_REST_Request $request)
     {
         $query_params['default_where_conditions'] = 'minimum';
-        // stuff is only "protected" for front-end requests. Elsewhere, you either get full permission to access the object
-        // or you don't.
+        // stuff is only "protected" for front-end requests.
+        // Elsewhere, you either get full permission to access the object or you don't.
         $request_caps = $request->get_param('caps');
         if (isset($request_caps) && $request_caps !== EEM_Base::caps_read) {
             return;

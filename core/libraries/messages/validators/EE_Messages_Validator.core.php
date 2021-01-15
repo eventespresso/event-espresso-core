@@ -138,7 +138,6 @@ abstract class EE_Messages_Validator extends EE_Base
      * This is so we can specify specific validation instructions for a messenger/message_type combo
      * that aren't handled by the defaults setup in the messenger.
      *
-     * @abstract
      * @return void
      */
     abstract protected function _modify_validator();

@@ -1,5 +1,8 @@
 <?php
 
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+use EventEspresso\core\services\request\sanitizers\AttributesSanitizer;
+
 /**
  * Template for content to be displayed in an iframe.
  * Following template arguments are available:
@@ -17,9 +20,6 @@
  * @since   4.9.0
  * @package Event Espresso
  */
-
-use EventEspresso\core\services\request\sanitizers\AllowedTags;
-use EventEspresso\core\services\request\sanitizers\AttributesSanitizer;
 
 ?>
 <!DOCTYPE html>

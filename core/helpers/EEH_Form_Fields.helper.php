@@ -170,7 +170,7 @@ class EEH_Form_Fields
             $output = "
             <ul>
                 <li>
-                {$inputs} 
+                {$inputs}
                 </li>
             </ul>
             ";
@@ -1729,12 +1729,12 @@ class EEH_Form_Fields
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function generate_state_dropdown($QST, $get_all = false)
+    public static function generate_state_dropdown(EE_Question_Form_Input $QST, $get_all = false)
     {
         $states = $get_all
             ? EEM_State::instance()->get_all_states()
             : EEM_State::instance()->get_all_states_of_active_countries();
-        if ($states && count($states) != count($QST->options())) {
+        if (!empty($states) && count($states) != count($QST->options())) {
             $QST->set('QST_type', 'DROPDOWN');
             // if multiple countries, we'll create option groups within the dropdown
             foreach ($states as $state) {

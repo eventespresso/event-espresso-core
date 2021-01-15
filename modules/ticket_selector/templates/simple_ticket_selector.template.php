@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 /**
  * @var int       $EVT_ID
  * @var int       $TKT_ID
@@ -9,8 +11,6 @@
  * @var EE_Event  $event
  * @var EE_Ticket $ticket
  */
-
-use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 ?>
 
@@ -43,3 +43,4 @@ if ($ticket instanceof EE_Ticket) {
     <?php
     do_action('AHEE__ticket_selector_chart__template__after_ticket_selector', $EVT_ID, $event);
 }
+// missing </div> tag is on purpose as that is printed in another template

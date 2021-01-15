@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 /**
  * displays legends with an array of $items
  * that are indexed by id for each item
@@ -10,8 +12,6 @@
  */
 
 // figure out the columns based on the count of items (we want a max of 6 items per column).
-use EventEspresso\core\services\request\sanitizers\AllowedTags;
-
 $per_col = isset($per_column) ? absint($per_column) : 5;
 $count = 1;
 ?>
@@ -19,15 +19,19 @@ $count = 1;
 <div class="ee-list-table-legend-container">
     <h3><?php esc_html_e('Legend', 'event_espresso'); ?></h3>
     <dl class="alignleft ee-list-table-legend">
-        <?php foreach ($items as $item => $details) : ?>
-            <?php if ($per_col < $count) : ?>
+        <?php
+        foreach ($items as $item => $details) :
+            if ($per_col < $count) :
+        ?>
     </dl>
     <dl class="alignleft ee-list-table-legend">
-                <?php $count = 1;
-            endif; ?>
-        <dt id="ee-legend-item-<?php echo esc_attr($item); ?>">
-            <?php $class = ! empty($details['class']) ? $details['class'] : 'ee-legend-img-container'; ?>
             <?php
+                $count = 1;
+            endif;
+            ?>
+        <dt id="ee-legend-item-<?php echo esc_attr($item); ?>">
+            <?php
+            $class = ! empty($details['class']) ? $details['class'] : 'ee-legend-img-container';
             if (strpos($details['class'], '<span') !== false) {
                 echo wp_kses($class, AllowedTags::getWithFormTags());
             } else { ?>

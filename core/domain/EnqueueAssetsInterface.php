@@ -14,6 +14,7 @@ interface EnqueueAssetsInterface
      */
     public function registerScriptsAndStylesheets();
 
+
     /**
      * a place to enqueue previously registered stylesheets
      * this will be called during the wp_enqueue_scripts hook for frontend requests
@@ -21,6 +22,7 @@ interface EnqueueAssetsInterface
      * @return void
      */
     public function enqueueStylesheets();
+
 
     /**
      * a place to enqueue previously registered stylesheets
@@ -30,12 +32,14 @@ interface EnqueueAssetsInterface
      */
     public function enqueueAdminStylesheets();
 
+
     /**
      * a place to enqueue previously registered scripts for frontend requests
      *
      * @return void
      */
     public function enqueueScripts();
+
 
     /**
      * a place to enqueue previously registered scripts for admin requests
@@ -44,5 +48,3 @@ interface EnqueueAssetsInterface
      */
     public function enqueueAdminScripts();
 }
-// End of file EnqueueAssetsInterface.php
-// Location: EventEspresso\core\domain/EnqueueAssetsInterface.php

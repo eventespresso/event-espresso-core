@@ -79,7 +79,6 @@ class EE_Event_List_Shortcodes extends EE_Shortcodes
      */
     private function _get_event_list_for_main()
     {
-
         $valid_shortcodes = [
             'event',
             'attendee_list',

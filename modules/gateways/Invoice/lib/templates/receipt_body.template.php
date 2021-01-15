@@ -19,6 +19,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
  * @var $retry_payment_url           string
  * @var $questions_to_skip           array
  */
+
 ?>
 
 <div id="invoice">
@@ -36,12 +37,16 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                     </div>
                     <!-- adr -->
                     <div class="email">[email]</div>
-                    <div class="vat"><?php esc_html_e('VAT/Tax Number:', 'event_espresso') ?>[vat]</div>
+                    <div class="vat">
+                        <?php esc_html_e('VAT/Tax Number:', 'event_espresso') ?>[vat]
+                    </div>
                 </div>
             </td>
             <td>
                 <div id="invoice-info">
-                    <h2 id="invoice-hdr"><?php esc_html_e('Order Confirmation', 'event_espresso') ?></h2>
+                    <h2 id="invoice-hdr">
+                        <?php esc_html_e('Order Confirmation', 'event_espresso') ?>
+                    </h2>
                     <h3 id="invoice-date">
                         <?php esc_html_e('Date:', 'event_espresso') ?>
                         <span class="plain-text">[registration_date]</span>
@@ -242,14 +247,15 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                                         <ul class="event-venues">
                                             <?php
                                             foreach ($event->venues() as $venue) { ?>
-                                                <li><?php echo esc_html($venue->name()) ?>
+                                                <li>
+                                                    <?php echo esc_html($venue->name()) ?>
                                                     <span class="small-text">
-                                                [
-                                                <a href='<?php echo esc_url_raw($venue->get_permalink()) ?>'>
-                                                    <?php esc_html_e('view', 'event_espresso'); ?>
-                                                </a>
-                                                ]
-                                            </span>
+                                                        [
+                                                        <a href='<?php echo esc_url_raw($venue->get_permalink()) ?>'>
+                                                            <?php esc_html_e('view', 'event_espresso'); ?>
+                                                        </a>
+                                                        ]
+                                                    </span>
                                                 </li>
                                                 <?php
                                             } ?>
@@ -264,12 +270,15 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                                     echo esc_url_raw(EE_IMAGES_URL . 'users-16x16.png'); ?>">
                                     <?php
                                     echo esc_html__("Registration Details", "event_espresso"); ?>
-                                    <span class="small-text link">[
-                                <a class="print_button noPrint" href="<?php echo esc_url_raw($edit_reg_info_url); ?>">
-                                    <?php esc_html_e('edit', 'event_espresso'); ?>
-                                </a>
-                                ]
-                            </span>
+                                    <span class="small-text link">
+                                        [
+                                        <a class="print_button noPrint"
+                                           href="<?php echo esc_url_raw($edit_reg_info_url); ?>"
+                                        >
+                                            <?php esc_html_e('edit', 'event_espresso'); ?>
+                                        </a>
+                                        ]
+                                    </span>
                                 </h4>
                                 <ul class="ticket-registrations-list">
                                     <?php
@@ -321,7 +330,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                                                             <th><?php esc_html_e('Attendee', 'event_espresso'); ?></th>
                                                             <td>
                                                                 <?php
-                                                                echo sprintf(
+                                                                printf(
                                                                     esc_html__('%s (%s)', "event_espresso"),
                                                                     esc_html($attendee->full_name()),
                                                                     sanitize_email($attendee->email())
@@ -373,7 +382,9 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                 } ?>
                 <tr class="total_tr odd">
                     <td class="total_tr" colspan="2"></td>
-                    <td class="total"><?php esc_html_e("Tax Total:", "event_espresso"); ?></td>
+                    <td class="total">
+                        <?php esc_html_e("Tax Total:", "event_espresso"); ?>
+                    </td>
                     <td class="item_r">
                         <?php echo wp_kses($tax_total_line_item->prettyTotal(), AllowedTags::getAllowedTags()); ?>
                     </td>
@@ -398,12 +409,12 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
         <table class="invoice-amount">
             <thead>
             <tr class="header_row">
-                <th><span class=""><?php esc_html_e('Payment Method', 'event_espresso'); ?></span></th>
-                <th class='left datetime_th'><?php esc_html_e("Date", 'event_espresso') ?></th>
-                <th><span class=""><?php esc_html_e('Transaction Id / Cheque #', 'event_espresso'); ?></span></th>
-                <th><span class=""><?php esc_html_e('P.O. / S.O.#', 'event_espresso'); ?></span></th>
-                <th><span class=""><?php esc_html_e('Status', 'event_espresso'); ?></span></th>
-                <th><?php esc_html_e('Amount', 'event_espresso'); ?></th>
+                <th><span><?php esc_html_e('Payment Method', 'event_espresso'); ?></span></th>
+                <th class='left datetime_th'><span><?php esc_html_e("Date", 'event_espresso') ?></span></th>
+                <th><span><?php esc_html_e('Transaction Id / Cheque #', 'event_espresso'); ?></span></th>
+                <th><span><?php esc_html_e('P.O. / S.O.#', 'event_espresso'); ?></span></th>
+                <th><span><?php esc_html_e('Status', 'event_espresso'); ?></span></th>
+                <th><span><?php esc_html_e('Amount', 'event_espresso'); ?></span></th>
             </tr>
             </thead>
             <tbody>
@@ -447,21 +458,29 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
             <tfoot>
             <tr class='total_tr'>
                 <td colspan="4">&nbsp;</td>
-                <td class="item_r"><?php esc_html_e('Total Paid', 'event_espresso') ?></td>
+                <td class="item_r">
+                    <?php esc_html_e('Total Paid', 'event_espresso') ?>
+                </td>
                 <td class="item_r">
                     <?php echo EEH_Template::format_currency($amount_pd, false, false) ?>
                 </td>
             </tr>
             <tr class="total_tr odd">
                 <td colspan="4">&nbsp;</td>
-                <td class="total" id="total_currency"><?php esc_html_e('Amount Owed:', 'event_espresso'); ?></td>
-                <td class="total"><?php echo EEH_Template::format_currency($amount_owed) ?></td>
+                <td class="total" id="total_currency">
+                    <?php esc_html_e('Amount Owed:', 'event_espresso'); ?>
+                </td>
+                <td class="total">
+                    <?php echo EEH_Template::format_currency($amount_owed) ?>
+                </td>
             </tr>
             </tfoot>
         </table>
     </div>
     <div class="additional-info-dv">
-        <h3 class="section-title"><?php esc_html_e("Additional Information:", "event_espresso"); ?></h3>
+        <h3 class="section-title">
+            <?php esc_html_e("Additional Information:", "event_espresso"); ?>
+        </h3>
         <div class="additional-info">
             <?php if ($venues_for_events) { ?>
             <h2>

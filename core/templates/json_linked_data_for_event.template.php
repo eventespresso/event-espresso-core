@@ -1,4 +1,5 @@
 <?php
+
 defined('EVENT_ESPRESSO_VERSION') || exit;
 /** @var array $event_tickets */
 /** @var string $currency */
@@ -30,7 +31,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
   "offers": [
     <?php
     $i = 0;
-    foreach ($event_tickets as $ticket) {?>
+    foreach ($event_tickets as $ticket) { ?>
     {
       "@type": "Offer",
       "url": "<?php echo esc_url_raw($event_permalink); ?>",
@@ -38,14 +39,14 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
       "validThrough": "<?php echo esc_html($ticket['end_date']); ?>",
       "price": "<?php echo esc_html($ticket['price']); ?>",
       "priceCurrency": "<?php echo esc_html($currency); ?>"
-        <?php if (isset($ticket['availability'])) {
-            ?>,"availability": "<?php echo esc_url_raw('https://schema.org/' . $ticket['availability']); ?>"
-        <?php } ?>
+      <?php if (isset($ticket['availability'])) { ?>,
+      "availability": "<?php echo esc_url_raw('https://schema.org/' . $ticket['availability']); ?>"
+      <?php } ?>
     }<?php
-    $i++;
-    if ($i < count($event_tickets)) {
-        echo ',';
-    }
+        $i++;
+        if ($i < count($event_tickets)) {
+            echo ',';
+        }
     }
     ?>
     ]<?php
@@ -57,9 +58,9 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
     "url": "<?php echo esc_url_raw($venue_url); ?>",
     "address": {
       "@type": "PostalAddress",
-      "addressLocality": <?php echo wp_json_encode($venue_locality); ?>,
-      "addressRegion": <?php echo wp_json_encode($venue_region); ?>,
-      "streetAddress": <?php echo wp_json_encode($venue_address); ?>
+      "addressLocality": "<?php echo wp_json_encode($venue_locality); ?>",
+      "addressRegion": "<?php echo wp_json_encode($venue_region); ?>",
+      "streetAddress": "<?php echo wp_json_encode($venue_address); ?>"
     }
   }
         <?php
@@ -72,5 +73,4 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
     } ?>
     <?php do_action('AHEE__json_linked_data_for_event__template'); ?>
 }
-
 </script>
