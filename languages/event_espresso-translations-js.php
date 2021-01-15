@@ -1177,19 +1177,28 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/blockType/Component.tsx:19
 	__( 'Code', 'event_espresso' ),
 
-	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/image/Component.tsx:36
-	__( 'Add mage', 'event_espresso' ),
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/colorPicker/Component.tsx:37
+	__( 'Set color', 'event_espresso' ),
 
-	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/image/Component.tsx:43
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/colorPicker/Component.tsx:40
+	__( 'Text color', 'event_espresso' ),
+
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/colorPicker/Component.tsx:42
+	__( 'Background color', 'event_espresso' ),
+
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/image/Component.tsx:36
+	__( 'Add image', 'event_espresso' ),
+
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/image/Component.tsx:42
 	__( 'Image URL', 'event_espresso' ),
 
-	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/image/Component.tsx:47
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/image/Component.tsx:46
 	__( 'Alt text', 'event_espresso' ),
 
-	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/image/Component.tsx:48
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/image/Component.tsx:47
 	__( 'Width', 'event_espresso' ),
 
-	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/image/Component.tsx:52
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/image/Component.tsx:51
 	__( 'Height', 'event_espresso' ),
 
 	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/link/Component.tsx:51
@@ -1349,6 +1358,49 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/CalendarPageDate/CalendarPageDate.tsx:54
 	__( 'TO', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/ColorPicker/ColorPicker.tsx:60
+	__( 'Custom color', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/ColorPicker/Swatch.tsx:23
+	/* translators: color name */
+	__( 'Color: %s', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/ColorPicker/constants.ts:13
+	__( 'Cyan bluish gray', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/ColorPicker/constants.ts:17
+	__( 'White', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/ColorPicker/constants.ts:21
+	__( 'Pale pink', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/ColorPicker/constants.ts:25
+	__( 'Vivid red', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/ColorPicker/constants.ts:29
+	__( 'Luminous vivid orange', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/ColorPicker/constants.ts:33
+	__( 'Luminous vivid amber', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/ColorPicker/constants.ts:37
+	__( 'Light green cyan', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/ColorPicker/constants.ts:41
+	__( 'Vivid green cyan', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/ColorPicker/constants.ts:45
+	__( 'Pale cyan blue', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/ColorPicker/constants.ts:49
+	__( 'Vivid cyan blue', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/ColorPicker/constants.ts:53
+	__( 'Vivid purple', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/ColorPicker/constants.ts:9
+	__( 'Black', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/Confirm/ConfirmClose.tsx:7
 	// Reference: packages/ui-components/src/Modal/ModalWithAlert.tsx:24
