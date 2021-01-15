@@ -614,6 +614,18 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/table/BodyCell.tsx:24
 	__( 'assign ticket', 'event_espresso' ),
 
+	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/table/useGetHeaderRows.tsx:15
+	__( 'Assignments', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/table/useGetHeaderRows.tsx:16
+	__( 'Event Dates are listed below', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/table/useGetHeaderRows.tsx:17
+	__( 'Tickets are listed along the top', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/table/useGetHeaderRows.tsx:18
+	__( 'Click the cell buttons to toggle assigments', 'event_espresso' ),
+
 	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/filters/controls/DatesByMonthControl.tsx:19
 	__( 'All Dates', 'event_espresso' ),
 
