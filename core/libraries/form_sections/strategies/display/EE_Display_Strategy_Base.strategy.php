@@ -110,6 +110,17 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
     }
 
 
+    /**
+     * returns '>'
+     *
+     * @return string
+     */
+    protected function _end_opening_tag()
+    {
+        return '>';
+    }
+
+
 
     /**
      * returns string like: '</tag>
@@ -146,16 +157,14 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
      */
     protected function _standard_attributes_array()
     {
-        return array_filter(
-            [
-                'name'  => $this->_input->html_name(),
-                'id'    => $this->_input->html_id(),
-                'class' => $this->_input->html_class(true),
-                0       => ['required', $this->_input->required()],
-                1       => $this->_input->other_html_attributes(),
-                'style' => $this->_input->html_style(),
-            ]
-        );
+        return [
+            'name'  => $this->_input->html_name(),
+            'id'    => $this->_input->html_id(),
+            'class' => $this->_input->html_class(true),
+            0       => ['required', $this->_input->required()],
+            1       => $this->_input->other_html_attributes(),
+            'style' => $this->_input->html_style(),
+        ];
     }
 
 
@@ -174,8 +183,21 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
             $this,
             $this->_input
         );
-        $attributes_string = '';
-        foreach ($attributes as $attribute => $value) {
+        $filtered_attributes = array_filter(
+            $attributes,
+            function($value, $attribute) {
+                // always add 'value' attribute or arrays of attributes
+                if ($attribute === 'value' || is_array($value)) {
+                    return true;
+                }
+                // otherwise only add those with a value (ie: attribute has been set)
+                return ! empty($value);
+            },
+            ARRAY_FILTER_USE_BOTH
+        );
+        $processed_attributes = [];
+        foreach ($filtered_attributes as $attribute => $value) {
+            $attribute = trim($attribute);
             if (is_numeric($attribute)) {
                 $add = true;
                 if (is_array($value)) {
@@ -184,12 +206,16 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
                 } else {
                     $attribute = $value;
                 }
-                $attributes_string .= $this->_single_attribute($attribute, $add);
+                $attribute_string = $this->_single_attribute($attribute, $add);
             } else {
-                $attributes_string .= $this->_attribute($attribute, $value);
+                $attribute_string = $this->_attribute($attribute, $value);
+            }
+            $attribute_string = trim($attribute_string);
+            if ($attribute_string) {
+                $processed_attributes[] = trim($attribute_string);
             }
         }
-        return $attributes_string;
+        return ! empty($processed_attributes) ? ' ' . implode(' ', $processed_attributes) : '';
     }
 
 
@@ -207,8 +233,8 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
         if ($value === null) {
             return '';
         }
-        $value = esc_attr($value);
-        return " {$attribute}=\"{$value}\"";
+        $value = esc_attr(trim($value));
+        return "{$attribute}=\"{$value}\"";
     }
 
 
@@ -227,7 +253,7 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
             return '';
         }
         $value = esc_attr($value);
-        return " data-{$attribute}=\"{$value}\"";
+        return "data-{$attribute}=\"{$value}\"";
     }
 
 
@@ -241,6 +267,26 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
      */
     protected function _single_attribute($attribute, $add = true)
     {
-        return $add ? " {$attribute}" : '';
+        $attribute = trim($attribute);
+        return $add ? "{$attribute}" : '';
+    }
+
+
+    /**
+     * @param string $tag
+     * @param string $children
+     * @return string
+     * @throws EE_Error
+     * @since   $VID:$
+     */
+    protected function fullDisplayString($tag, $children)
+    {
+        return EEH_HTML::nl(0, $tag)
+               . $this->_opening_tag($tag)
+               . $this->_attributes_string($this->_standard_attributes_array())
+               . $this->_end_opening_tag()
+               . $children
+               . EEH_HTML::nl(0, $tag)
+               . $this->_closing_tag();
     }
 }

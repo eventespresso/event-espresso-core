@@ -25,33 +25,27 @@ class EE_Select_Display_Strategy extends EE_Display_Strategy_Base
             throw new EE_Error(sprintf(esc_html__('Cannot use Select Display Strategy with an input that doesn\'t have options', 'event_espresso')));
         }
 
-        $html = EEH_HTML::nl(0, 'select');
-        $html .= '<select';
-        $html .= $this->_attributes_string(
-            $this->_standard_attributes_array()
-        );
-        $html .= '>';
+        $options_html = '';
 
         if (EEH_Array::is_multi_dimensional_array($this->_input->options())) {
             EEH_HTML::indent(1, 'optgroup');
             foreach ($this->_input->options() as $opt_group_label => $opt_group) {
                 if (! empty($opt_group_label)) {
-                    $html .= EEH_HTML::nl(0, 'optgroup') . '<optgroup label="' . esc_attr($opt_group_label) . '">';
+                    $options_html .= EEH_HTML::nl(0, 'optgroup') . '<optgroup label="' . esc_attr($opt_group_label) . '">';
                 }
                 EEH_HTML::indent(1, 'option');
-                $html .= $this->_display_options($opt_group);
+                $options_html .= $this->_display_options($opt_group);
                 EEH_HTML::indent(-1, 'option');
                 if (! empty($opt_group_label)) {
-                    $html .= EEH_HTML::nl(0, 'optgroup') . '</optgroup>';
+                    $options_html .= EEH_HTML::nl(0, 'optgroup') . '</optgroup>';
                 }
             }
             EEH_HTML::indent(-1, 'optgroup');
         } else {
-            $html .= $this->_display_options($this->_input->options());
+            $options_html.=$this->_display_options($this->_input->options());
         }
 
-        $html .= EEH_HTML::nl(0, 'select') . '</select>';
-        return $html;
+        return $this->fullDisplayString('select', $options_html);
     }
 
 
