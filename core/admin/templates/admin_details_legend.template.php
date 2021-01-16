@@ -22,7 +22,7 @@ $count = 1;
         <?php
         foreach ($items as $item => $details) :
             if ($per_col < $count) :
-        ?>
+                ?>
     </dl>
     <dl class="alignleft ee-list-table-legend">
             <?php

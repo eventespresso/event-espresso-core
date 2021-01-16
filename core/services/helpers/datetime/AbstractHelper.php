@@ -171,7 +171,7 @@ abstract class AbstractHelper implements HelperInterface
             );
             ?>
         </span>
-    <?php endif; ?>
+        <?php endif; ?>
         <?php if ($check_zone_info && $timezone_string) : ?>
         <br/>
         <span>
@@ -219,7 +219,7 @@ abstract class AbstractHelper implements HelperInterface
             date_default_timezone_set('UTC');
             ?>
         </span></p>
-    <?php endif;
+        <?php endif;
     }
 
 

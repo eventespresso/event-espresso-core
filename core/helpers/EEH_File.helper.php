@@ -27,7 +27,7 @@ class EEH_File extends EEH_Base implements EEHI_File
     /**
      * @var string $_credentials_form
      */
-    private static   $_credentials_form;
+    private static $_credentials_form;
 
     protected static $_wp_filesystem_direct;
 

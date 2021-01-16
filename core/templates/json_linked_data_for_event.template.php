@@ -44,9 +44,9 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
       <?php } ?>
     }<?php
         $i++;
-        if ($i < count($event_tickets)) {
-            echo ',';
-        }
+    if ($i < count($event_tickets)) {
+        echo ',';
+    }
     }
     ?>
     ]<?php

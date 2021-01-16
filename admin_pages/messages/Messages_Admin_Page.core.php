@@ -3730,11 +3730,11 @@ class Messages_Admin_Page extends EE_Admin_Page
             $form->form_open(
                 $this->add_query_args_and_nonce(['action' => 'update_global_settings'], EE_MSG_ADMIN_URL),
                 'POST'
-            ),
+            )
+            . $form->get_html()
+            . $form->form_close(),
             AllowedTags::getWithFormTags()
         );
-        echo wp_kses($form->get_html(), AllowedTags::getWithFormTags());
-        echo wp_kses($form->form_close(), AllowedTags::getWithFormTags());
     }
 
 

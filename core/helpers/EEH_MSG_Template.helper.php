@@ -934,12 +934,12 @@ class EEH_MSG_Template
         // nope...let's get it.
         // not set yet so let's attempt to get it.
         $pack_class_name = 'EE_Messages_Template_Pack_' . str_replace(
-                ' ',
-                '_',
-                ucwords(
-                    str_replace('_', ' ', $template_pack_name)
-                )
-            );
+            ' ',
+            '_',
+            ucwords(
+                str_replace('_', ' ', $template_pack_name)
+            )
+        );
         if (! class_exists($pack_class_name) && $template_pack_name !== 'default') {
             return self::get_template_pack('default');
         } else {
@@ -981,16 +981,16 @@ class EEH_MSG_Template
 
             // setup classname.
             $template_pack_class_name = 'EE_Messages_Template_Pack_' . str_replace(
-                    ' ',
-                    '_',
-                    ucwords(
-                        str_replace(
-                            '_',
-                            ' ',
-                            $template
-                        )
+                ' ',
+                '_',
+                ucwords(
+                    str_replace(
+                        '_',
+                        ' ',
+                        $template
                     )
-                );
+                )
+            );
             if (! class_exists($template_pack_class_name)) {
                 continue;
             }

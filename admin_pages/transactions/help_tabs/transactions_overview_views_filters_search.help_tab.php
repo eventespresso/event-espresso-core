@@ -21,7 +21,8 @@
             '<li>',
             '</li>',
             '</ul>'
-        ); ?>
+        );
+        ?>
     </li>
     <li>
         <strong><?php esc_html_e('Abandoned Transactions', 'event_espresso'); ?></strong>

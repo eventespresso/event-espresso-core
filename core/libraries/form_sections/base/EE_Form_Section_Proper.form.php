@@ -1334,7 +1334,8 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      * @param string $form_submission_error_message
      * @throws EE_Error
      */
-    public function set_submission_error_message($form_submission_error_message = '') {
+    public function set_submission_error_message($form_submission_error_message = '')
+    {
         $this->_form_submission_error_message = ! empty($form_submission_error_message)
             ? $form_submission_error_message
             : $this->getAllValidationErrorsString();

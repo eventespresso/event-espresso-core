@@ -22,13 +22,12 @@
     <tbody>
     <?php
     if ($states) {
-        foreach ($states as $STA_ID => $state) {
-            ?>
+        foreach ($states as $STA_ID => $state) { ?>
         <tr id="state-<?php echo absint($STA_ID); ?>-tr" class="country-state-columns">
             <?php
             foreach ($state['inputs'] as $ID => $input) {
-                if ($ID != 'STA_ID' && $ID != 'CNT_ISO') {
-                    echo EEH_Form_Fields::generate_form_input($input); // already escaped
+                if ($ID !== 'STA_ID' && $ID !== 'CNT_ISO') {
+                    echo EEH_Form_Fields::generate_form_input($input);
                 }
             }
             ?>
@@ -42,10 +41,14 @@
                 </a>
             </td>
         </tr>
-        <?php } ?>
+    <?php
+        }
+    }
+    ?>
     </tbody>
 </table>
 <br/>
+<?php if ($states) { ?>
 <input class="button button--primary save right"
        id='country_settings_save3'
        type="submit"
@@ -53,8 +56,8 @@
        value="<?php esc_html_e('Save States/Provinces', 'event_espresso'); ?>"
 />
 <br/>
-
 <?php } ?>
+
 <table class="form-table add-new-state-tbl">
     <tbody>
     <tr>
