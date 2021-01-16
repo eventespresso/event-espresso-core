@@ -95,7 +95,6 @@ class ModelDataTranslator
      * @param string              $request_version (eg 4.8.36)
      * @return array
      * @throws EE_Error
-     * @throws EE_Error
      */
     public static function prepareFieldValuesForJson($field_obj, $original_value_maybe_array, $request_version)
     {
@@ -306,7 +305,6 @@ class ModelDataTranslator
      * @param string              $requested_version
      * @return mixed
      * @throws EE_Error
-     * @throws EE_Error
      */
     public static function prepareFieldValueForJson($field_obj, $original_value, $requested_version)
     {
@@ -352,7 +350,7 @@ class ModelDataTranslator
                     )
                 );
             }
-            if ($new_value !== null && extension_loaded('mysql')) {
+            if ($new_value !== null) {
                 // phpcs:disable PHPCompatibility.Extensions.RemovedExtensions.mysql_DeprecatedRemoved
                 $new_value = mysql_to_rfc3339($new_value);
                 // phpcs:enable
