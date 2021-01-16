@@ -34,20 +34,6 @@ class RestApiRequests extends Route
     protected function registerDependencies()
     {
         $this->dependency_map->registerDependencies(
-            'EventEspresso\core\libraries\rest_api\CalculatedModelFields',
-            [
-                'EventEspresso\core\libraries\rest_api\calculations\CalculatedModelFieldsFactory' => EE_Dependency_Map::load_from_cache
-            ]
-        );
-        $this->dependency_map->registerDependencies(
-            'EventEspresso\core\libraries\rest_api\calculations\CalculatedModelFieldsFactory',
-            ['EventEspresso\core\services\loaders\Loader' => EE_Dependency_Map::load_from_cache]
-        );
-        $this->dependency_map->registerDependencies(
-            'EventEspresso\core\libraries\rest_api\controllers\model\Read',
-            ['EventEspresso\core\libraries\rest_api\CalculatedModelFields' => EE_Dependency_Map::load_from_cache]
-        );
-        $this->dependency_map->registerDependencies(
             'EventEspresso\core\libraries\rest_api\calculations\Datetime',
             [
                 'EEM_Datetime'     => EE_Dependency_Map::load_from_cache,
