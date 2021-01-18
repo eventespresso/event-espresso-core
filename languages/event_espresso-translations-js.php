@@ -467,8 +467,8 @@ $generated_i18n_strings = array(
 	__( 'trashed dates only', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:35
-	// Reference: packages/dates/src/DateRangePicker/DateRangePickerLegend.tsx:9
-	// Reference: packages/dates/src/DateRangePicker/index.tsx:43
+	// Reference: packages/dates/src/components/DateRangePicker/DateRangePickerLegend.tsx:9
+	// Reference: packages/dates/src/components/DateRangePicker/index.tsx:43
 	__( 'start date', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:36
@@ -990,15 +990,15 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/constants/src/datetime.ts:9
 	__( 'Inactive', 'event_espresso' ),
 
-	// Reference: packages/dates/src/DateRangePicker/DateRangePickerLegend.tsx:13
+	// Reference: packages/dates/src/components/DateRangePicker/DateRangePickerLegend.tsx:13
 	__( 'day in range', 'event_espresso' ),
 
-	// Reference: packages/dates/src/DateRangePicker/DateRangePickerLegend.tsx:17
-	// Reference: packages/dates/src/DateRangePicker/index.tsx:61
+	// Reference: packages/dates/src/components/DateRangePicker/DateRangePickerLegend.tsx:17
+	// Reference: packages/dates/src/components/DateRangePicker/index.tsx:61
 	__( 'end date', 'event_espresso' ),
 
-	// Reference: packages/dates/src/DateTimePicker.tsx:13
-	// Reference: packages/dates/src/TimePicker.tsx:13
+	// Reference: packages/dates/src/components/DateTimePicker.tsx:13
+	// Reference: packages/dates/src/components/TimePicker.tsx:13
 	__( 'time', 'event_espresso' ),
 
 	// Reference: packages/dates/src/constants.ts:5
@@ -1279,7 +1279,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	/* translators: %s filter name */
 	__( 'remove filter - %s', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/CalendarDateRange/CalendarDateRange.tsx:36
+	// Reference: packages/ui-components/src/CalendarDateRange/CalendarDateRange.tsx:37
 	__( 'to', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/CalendarDateSwitcher/CalendarDateSwitcher.tsx:34
