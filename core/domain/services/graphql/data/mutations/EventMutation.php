@@ -44,7 +44,7 @@ class EventMutation
         }
 
         if (! empty($input['description'])) {
-            $args['EVT_desc'] = wp_kses_post($input['description']);
+            $args['EVT_desc'] = sanitize_post_field('post_content', $input['description'], null, $context = 'db');
         }
 
         if (array_key_exists('displayDescription', $input)) {
