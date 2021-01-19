@@ -578,7 +578,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	/* translators: 1 entity id, 2 entity name */
 	__( 'Ticket Assignment Manager for Ticket: %1$s - %2$s', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/TicketAssignmentsManagerModal/buttons/useCancelButtonProps.tsx:18
+	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/TicketAssignmentsManagerModal/buttons/useCancelButtonProps.tsx:17
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/prices/buttons/FooterButtons.tsx:15
 	// Reference: packages/ui-components/src/Modal/useCancelButtonProps.tsx:10
 	__( 'Cancel', 'event_espresso' ),
@@ -607,7 +607,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/TicketAssignmentsManagerModal/config.ts:29
 	__( 'no relation', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/TicketAssignmentsManagerModal/index.tsx:29
+	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/TicketAssignmentsManagerModal/index.tsx:28
 	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/table/Table.tsx:13
 	__( 'Ticket Assignment Manager', 'event_espresso' ),
 
