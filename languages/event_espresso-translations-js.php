@@ -168,7 +168,7 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/EventRegistrationOptions/index.tsx:42
 	__( 'Registration Options', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/DateRegistrationsLink.tsx:15
+	// Reference: domains/eventEditor/src/ui/datetimes/DateRegistrationsLink.tsx:13
 	__( 'view ALL registrations for this date.', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/formValidation.ts:14
@@ -271,14 +271,17 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/DatesListButtons.tsx:23
 	__( 'Ticket Assignments', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/AssignTicketsButton.tsx:28
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/AssignTicketsButton.tsx:25
 	__( 'Number of related tickets', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/AssignTicketsButton.tsx:29
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/AssignTicketsButton.tsx:26
 	__( 'There are no tickets assigned to this datetime. Please click the ticket icon to update the assignments.', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/AssignTicketsButton.tsx:43
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/AssignTicketsButton.tsx:34
 	__( 'assign tickets', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:19
+	__( 'event date main menu', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:27
 	__( 'Permanently delete Datetime?', 'event_espresso' ),
@@ -292,20 +295,17 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:32
 	__( 'Are you sure you want to move this datetime to the trash? You can "untrash" this datetime later if you need to.', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:42
-	__( 'event date main menu', 'event_espresso' ),
-
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:46
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:45
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:41
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:40
 	__( 'delete permanently', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:46
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:41
 	__( 'trash datetime', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:57
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:52
 	__( 'edit datetime', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:58
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:53
 	__( 'copy datetime', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:37
@@ -641,10 +641,10 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/filters/controls/ShowTrashedTicketsControl.tsx:15
 	__( 'show trashed tickets', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/TicketRegistrationsLink.tsx:16
+	// Reference: domains/eventEditor/src/ui/tickets/TicketRegistrationsLink.tsx:13
 	__( 'total registrations.', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/TicketRegistrationsLink.tsx:17
+	// Reference: domains/eventEditor/src/ui/tickets/TicketRegistrationsLink.tsx:14
 	__( 'view ALL registrations for this ticket.', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/Container.tsx:22
@@ -743,14 +743,17 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/TicketsList.tsx:39
 	__( 'loading tickets…', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/AssignDatesButton.tsx:28
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/AssignDatesButton.tsx:26
 	__( 'Number of related dates', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/AssignDatesButton.tsx:29
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/AssignDatesButton.tsx:27
 	__( 'There are no event dates assigned to this ticket. Please click the calendar icon to update the assignments.', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/AssignDatesButton.tsx:45
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/AssignDatesButton.tsx:37
 	__( 'assign dates', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:19
+	__( 'ticket main menu', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:27
 	__( 'Permanently delete Ticket?', 'event_espresso' ),
@@ -764,16 +767,13 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:30
 	__( 'Are you sure you want to move this ticket to the trash? You can "untrash" this ticket later if you need to.', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:41
-	__( 'ticket main menu', 'event_espresso' ),
-
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:45
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:40
 	__( 'trash ticket', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:56
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:51
 	__( 'edit ticket', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:57
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:52
 	__( 'copy ticket', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:44
@@ -1186,7 +1186,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/tpc/src/buttons/ReverseCalculateButton.tsx:17
 	__( 'Ticket total is being calculated normally from top to bottom starting from the base price. Entering a new ticket base price will recalculate the ticket total after applying all price modifiers. Click to turn on reverse calculations', 'event_espresso' ),
 
-	// Reference: packages/tpc/src/buttons/TicketPriceCalculatorButton.tsx:30
+	// Reference: packages/tpc/src/buttons/TicketPriceCalculatorButton.tsx:26
 	__( 'ticket price calculator', 'event_espresso' ),
 
 	// Reference: packages/tpc/src/buttons/taxes/AddDefaultTaxesButton.tsx:9
