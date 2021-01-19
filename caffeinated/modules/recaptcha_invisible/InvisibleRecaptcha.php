@@ -53,7 +53,7 @@ class InvisibleRecaptcha
      * @param EE_Registration_Config $registration_config
      * @param EE_Session             $session
      */
-    public function __construct(EE_Registration_Config $registration_config, EE_Session $session)
+    public function __construct(EE_Registration_Config $registration_config, EE_Session $session = null)
     {
         $this->config = $registration_config;
         $this->session = $session;
@@ -65,7 +65,9 @@ class InvisibleRecaptcha
      */
     public function useInvisibleRecaptcha()
     {
-        return $this->config->use_captcha && $this->config->recaptcha_theme === 'invisible';
+        return $this->session instanceof EE_Session
+               && $this->config->use_captcha
+               && $this->config->recaptcha_theme === 'invisible';
     }
 
 
@@ -287,8 +289,8 @@ class InvisibleRecaptcha
      */
     public function setSessionData()
     {
-        $this->session->set_session_data(
-            array(InvisibleRecaptcha::SESSION_DATA_KEY_RECAPTCHA_PASSED => true)
-        );
+        if ($this->session instanceof EE_Session) {
+            $this->session->set_session_data([InvisibleRecaptcha::SESSION_DATA_KEY_RECAPTCHA_PASSED => true]);
+        }
     }
 }
