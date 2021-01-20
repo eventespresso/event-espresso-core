@@ -32,7 +32,8 @@ class GutenbergEditor extends AdminRoute
                        $pagenow === 'post.php'
                        && $this->request->getRequestParam('action') === 'edit'
                    )
-               );
+               )
+               && apply_filters('FHEE__EE_System__canLoadBlocks', true);
     }
 
 
