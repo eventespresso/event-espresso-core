@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\libraries\rest_api\controllers\model;
 
+use EE_Belongs_To_Relation;
 use Exception;
 use EE_Boolean_Field;
 use EE_Maintenance_Mode;
@@ -10,6 +11,8 @@ use EE_Serialized_Text_Field;
 use EED_Core_Rest_Api;
 use EEM_System_Status;
 use EventEspresso\core\libraries\rest_api\ModelDataTranslator;
+use WP_REST_Request;
+use WP_REST_Response;
 
 /**
  * Controller for handling requests regarding meta info about the models
@@ -24,11 +27,11 @@ class Meta extends Base
 
 
     /**
-     * @param \WP_REST_Request $request
+     * @param WP_REST_Request $request
      * @param string           $version
-     * @return array|\WP_REST_Response
+     * @return array|WP_REST_Response
      */
-    public static function handleRequestModelsMeta(\WP_REST_Request $request, $version)
+    public static function handleRequestModelsMeta(WP_REST_Request $request, $version)
     {
         $controller = new Meta();
         try {
@@ -96,7 +99,7 @@ class Meta extends Base
                 $relation_json = array(
                     'name'   => $relation_name,
                     'type'   => str_replace('EE_', '', get_class($relation_obj)),
-                    'single' => $relation_obj instanceof \EE_Belongs_To_Relation ? true : false,
+                    'single' => $relation_obj instanceof EE_Belongs_To_Relation,
                 );
                 $relations_json[ $relation_name ] = $relation_json;
             }
@@ -113,10 +116,10 @@ class Meta extends Base
     /**
      * Adds EE metadata to the index
      *
-     * @param \WP_REST_Response $rest_response_obj
-     * @return \WP_REST_Response
+     * @param WP_REST_Response $rest_response_obj
+     * @return WP_REST_Response
      */
-    public static function filterEeMetadataIntoIndex(\WP_REST_Response $rest_response_obj)
+    public static function filterEeMetadataIntoIndex(WP_REST_Response $rest_response_obj)
     {
         $response_data = $rest_response_obj->get_data();
         $addons = array();

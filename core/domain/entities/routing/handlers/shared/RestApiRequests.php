@@ -3,6 +3,7 @@
 namespace EventEspresso\core\domain\entities\routing\handlers\shared;
 
 use EE_Dependency_Map;
+use EED_Core_Rest_Api;
 use EventEspresso\core\services\routing\Route;
 
 /**
@@ -24,7 +25,7 @@ class RestApiRequests extends Route
      */
     public function matchesCurrentRequest(): bool
     {
-        return $this->request->isWordPressApi();
+        return $this->request->isApi() || $this->request->isWordPressApi();
     }
 
 
@@ -62,7 +63,7 @@ class RestApiRequests extends Route
      */
     protected function requestHandler(): bool
     {
-        // rest api handled by module for now
+        EED_Core_Rest_Api::set_hooks_both();
         return true;
     }
 }

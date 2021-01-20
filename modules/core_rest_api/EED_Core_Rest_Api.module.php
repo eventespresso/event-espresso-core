@@ -58,7 +58,6 @@ class EED_Core_Rest_Api extends EED_Module
      */
     public static function set_hooks()
     {
-        EED_Core_Rest_Api::set_hooks_both();
     }
 
 
@@ -70,24 +69,26 @@ class EED_Core_Rest_Api extends EED_Module
      */
     public static function set_hooks_admin()
     {
-        EED_Core_Rest_Api::set_hooks_both();
     }
 
 
     public static function set_hooks_both()
     {
-        /** @var EventEspresso\core\services\request\Request $request */
-        $request = LoaderFactory::getLoader()->getShared('EventEspresso\core\services\request\Request');
-        if (! $request->isWordPressApi()) {
-            return;
-        }
-        add_action('rest_api_init', array('EED_Core_Rest_Api', 'set_hooks_rest_api'), 5);
-        add_action('rest_api_init', array('EED_Core_Rest_Api', 'register_routes'), 10);
-        add_filter('rest_route_data', array('EED_Core_Rest_Api', 'hide_old_endpoints'), 10, 2);
+        add_action('rest_api_init', ['EED_Core_Rest_Api', 'set_hooks_rest_api'], 5);
+        add_action('rest_api_init', ['EED_Core_Rest_Api', 'register_routes'], 10);
+        add_filter('rest_route_data', ['EED_Core_Rest_Api', 'hide_old_endpoints'], 10, 2);
         add_filter(
             'rest_index',
             ['EventEspresso\core\libraries\rest_api\controllers\model\Meta', 'filterEeMetadataIntoIndex']
         );
+    }
+
+
+    /**
+     * @since   $VID:$
+     */
+    public static function loadCalculatedModelFields()
+    {
         EED_Core_Rest_Api::$_field_calculator = LoaderFactory::getLoader()->load(
             'EventEspresso\core\libraries\rest_api\CalculatedModelFields'
         );
@@ -726,6 +727,7 @@ class EED_Core_Rest_Api extends EED_Module
      */
     protected function _get_response_selection_query_params(EEM_Base $model, $version, $single_only = false)
     {
+        EED_Core_Rest_Api::loadCalculatedModelFields();
         $query_params = [
             'include'   => [
                 'required' => false,
@@ -737,7 +739,7 @@ class EED_Core_Rest_Api extends EED_Module
                 'default'           => '',
                 'enum'              => EED_Core_Rest_Api::$_field_calculator->retrieveCalculatedFieldsForModel($model),
                 'type'              => 'string',
-                // because we accept a CSV'd list of the enumerated strings, WP core validation and sanitization
+                // because we accept a CSV list of the enumerated strings, WP core validation and sanitization
                 // freaks out. We'll just validate this argument while handling the request
                 'validate_callback' => null,
                 'sanitize_callback' => null,
