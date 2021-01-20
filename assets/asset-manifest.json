@@ -84,10 +84,10 @@
     "tpc.js": "/static/js/tpc.12775fbb.js",
     "tpc.js.map": "/static/js/tpc.12775fbb.js.map",
     "tpc.php": "/static/js/tpc.ce9d2cf0.asset.php",
-    "uiComponents.css": "/static/css/uiComponents.ea823417.css",
+    "uiComponents.css": "/static/css/uiComponents.7f7e6f17.css",
     "uiComponents.js": "/static/js/uiComponents.6d894539.js",
     "uiComponents.js.map": "/static/js/uiComponents.6d894539.js.map",
-    "uiComponents.php": "/static/js/uiComponents.5ec87d64.asset.php",
+    "uiComponents.php": "/static/js/uiComponents.02dbeec8.asset.php",
     "utils.js": "/static/js/utils.7217b716.js",
     "utils.js.map": "/static/js/utils.7217b716.js.map",
     "utils.php": "/static/js/utils.24b1ac34.asset.php",
@@ -105,7 +105,7 @@
     "static/css/richTextEditor.062a043e.css.map": "/static/css/richTextEditor.062a043e.css.map",
     "static/css/toaster.60e25ddb.css.map": "/static/css/toaster.60e25ddb.css.map",
     "static/css/tpc.f5dee559.css.map": "/static/css/tpc.f5dee559.css.map",
-    "static/css/uiComponents.ea823417.css.map": "/static/css/uiComponents.ea823417.css.map",
+    "static/css/uiComponents.7f7e6f17.css.map": "/static/css/uiComponents.7f7e6f17.css.map",
     "static/css/wpPluginsPage.e59608e8.css.map": "/static/css/wpPluginsPage.e59608e8.css.map",
     "static/js/adapters.75768489.js.LICENSE.txt": "/static/js/adapters.75768489.js.LICENSE.txt",
     "static/js/blocks.f9de064f.js.LICENSE.txt": "/static/js/blocks.f9de064f.js.LICENSE.txt",
@@ -193,7 +193,7 @@
       "static/js/tpc.12775fbb.js"
     ],
     "uiComponents": [
-      "static/css/uiComponents.ea823417.css",
+      "static/css/uiComponents.7f7e6f17.css",
       "static/js/uiComponents.6d894539.js"
     ],
     "utils": [
