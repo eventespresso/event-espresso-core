@@ -171,16 +171,6 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/datetimes/DateRegistrationsLink.tsx:13
 	__( 'view ALL registrations for this date.', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/multiStep/Container.tsx:23
-	/* translators: %s datetime id */
-	__( 'Edit datetime %s', 'event_espresso' ),
-
-	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/multiStep/Container.tsx:26
-	__( 'New Datetime', 'event_espresso' ),
-
-	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/multiStep/ContentBody.tsx:40
-	__( 'Save and assign tickets', 'event_espresso' ),
-
 	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/multiStep/DateFormSteps.tsx:10
 	__( 'primary information about the date', 'event_espresso' ),
 
@@ -193,6 +183,16 @@ $generated_i18n_strings = array(
 
 	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/multiStep/DateFormSteps.tsx:11
 	__( 'Assign Tickets', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/multiStep/FooterButtons.tsx:22
+	__( 'Save and assign tickets', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/multiStep/Modal.tsx:31
+	/* translators: %s datetime id */
+	__( 'Edit datetime %s', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/multiStep/Modal.tsx:34
+	__( 'New Datetime', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:106
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/details/useBulkEditFormConfig.ts:108
@@ -470,8 +470,8 @@ $generated_i18n_strings = array(
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:37
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:48
-	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/table/DateCell.tsx:20
-	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/table/HeaderCell.tsx:19
+	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/table/DateCell.tsx:25
+	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/table/HeaderCell.tsx:27
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:48
 	// Reference: packages/tpc/src/components/table/useHeaderRowGenerator.ts:23
 	__( 'ID', 'event_espresso' ),
@@ -561,7 +561,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'There seem to be some dates/tickets which have no tickets/dates assigned. Do you want to fix them now?', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/ModalContainer.tsx:29
-	// Reference: packages/ui-components/src/Modal/ModalWithAlert.tsx:23
+	// Reference: packages/ui-components/src/Modal/ModalWithAlert.tsx:20
 	__( 'Alert!', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/ModalContainer.tsx:42
@@ -641,24 +641,24 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: domains/eventEditor/src/ui/tickets/TicketRegistrationsLink.tsx:14
 	__( 'view ALL registrations for this ticket.', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/Container.tsx:22
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/FooterButtons.tsx:38
+	__( 'Set ticket prices', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/FooterButtons.tsx:45
+	__( 'Skip prices - assign dates', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/FooterButtons.tsx:56
+	__( 'Save and assign dates', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/FooterButtons.tsx:62
+	__( 'Ticket details', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/Modal.tsx:31
 	/* translators: %s ticket id */
 	__( 'Edit ticket %s', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/Container.tsx:25
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/Modal.tsx:34
 	__( 'New Ticket Details', 'event_espresso' ),
-
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/ContentBody.tsx:46
-	__( 'Set ticket prices', 'event_espresso' ),
-
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/ContentBody.tsx:53
-	__( 'Skip prices - assign dates', 'event_espresso' ),
-
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/ContentBody.tsx:69
-	__( 'Save and assign dates', 'event_espresso' ),
-
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/ContentBody.tsx:82
-	__( 'Ticket details', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/TicketFormSteps.tsx:10
 	__( 'primary information about the ticket', 'event_espresso' ),
@@ -1416,7 +1416,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'Black', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/Confirm/ConfirmClose.tsx:7
-	// Reference: packages/ui-components/src/Modal/ModalWithAlert.tsx:24
+	// Reference: packages/ui-components/src/Modal/ModalWithAlert.tsx:21
 	__( 'Are you sure you want to close this?', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/Confirm/ConfirmDelete.tsx:7
