@@ -1305,7 +1305,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/tpc/src/components/NoPricesBanner/index.tsx:32
 	__( 'Click the save button below to assign which dates this ticket will be available for purchase on.', 'event_espresso' ),
 
-	// Reference: packages/tpc/src/components/TicketPriceCalculatorModal.tsx:30
+	// Reference: packages/tpc/src/components/TicketPriceCalculatorModal.tsx:32
 	/* translators: %s ticket name */
 	__( 'Price Calculator for Ticket: %s', 'event_espresso' ),
 
