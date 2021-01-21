@@ -561,7 +561,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'There seem to be some dates/tickets which have no tickets/dates assigned. Do you want to fix them now?', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/ModalContainer.tsx:29
-	// Reference: packages/ui-components/src/Modal/ModalWithAlert.tsx:20
+	// Reference: packages/ui-components/src/Modal/ModalWithAlert.tsx:21
 	__( 'Alert!', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/ModalContainer.tsx:42
@@ -572,38 +572,24 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	/* translators: 1 entity id, 2 entity name */
 	__( 'Ticket Assignment Manager for Ticket: %1$s - %2$s', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/TicketAssignmentsManagerModal/buttons/useCancelButtonProps.tsx:17
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/prices/buttons/FooterButtons.tsx:15
-	// Reference: packages/ui-components/src/Modal/useCancelButtonProps.tsx:10
-	__( 'Cancel', 'event_espresso' ),
-
-	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/TicketAssignmentsManagerModal/buttons/useSubmitButtonProps.tsx:25
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/prices/buttons/FooterButtons.tsx:16
-	// Reference: packages/ee-components/src/bulkEdit/details/Submit.tsx:27
-	// Reference: packages/form/src/Submit.tsx:25
-	// Reference: packages/tpc/src/buttons/useSubmitButtonProps.tsx:25
-	// Reference: packages/ui-components/src/Modal/useSubmitButtonProps.tsx:13
-	// Reference: packages/ui-components/src/Stepper/buttons/Submit.tsx:7
-	__( 'Submit', 'event_espresso' ),
-
-	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/TicketAssignmentsManagerModal/config.ts:10
-	__( 'existing relation', 'event_espresso' ),
-
-	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/TicketAssignmentsManagerModal/config.ts:15
-	__( 'remove existing relation', 'event_espresso' ),
-
-	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/TicketAssignmentsManagerModal/config.ts:20
-	__( 'add new relation', 'event_espresso' ),
-
-	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/TicketAssignmentsManagerModal/config.ts:25
-	__( 'invalid relation', 'event_espresso' ),
-
-	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/TicketAssignmentsManagerModal/config.ts:29
-	__( 'no relation', 'event_espresso' ),
-
-	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/TicketAssignmentsManagerModal/index.tsx:28
+	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/TicketAssignmentsManagerModal.tsx:31
 	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/table/Table.tsx:13
 	__( 'Ticket Assignment Manager', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/config.ts:10
+	__( 'existing relation', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/config.ts:15
+	__( 'remove existing relation', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/config.ts:20
+	__( 'add new relation', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/config.ts:25
+	__( 'invalid relation', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/config.ts:29
+	__( 'no relation', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/table/BodyCell.tsx:24
 	__( 'assign ticket', 'event_espresso' ),
@@ -820,6 +806,18 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/form/src/ResetButton.tsx:18
 	// Reference: packages/tpc/src/buttons/useResetButtonProps.tsx:12
 	__( 'Reset', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/prices/buttons/FooterButtons.tsx:15
+	// Reference: packages/ui-components/src/Modal/useCancelButtonProps.tsx:10
+	__( 'Cancel', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/prices/buttons/FooterButtons.tsx:16
+	// Reference: packages/ee-components/src/bulkEdit/details/Submit.tsx:27
+	// Reference: packages/form/src/Submit.tsx:25
+	// Reference: packages/tpc/src/buttons/useSubmitButtonProps.tsx:25
+	// Reference: packages/ui-components/src/Modal/useSubmitButtonProps.tsx:13
+	// Reference: packages/ui-components/src/Stepper/buttons/Submit.tsx:7
+	__( 'Submit', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/prices/editSeparately/TPCInstance.tsx:26
 	/* translators: %s ticket name */
@@ -1416,7 +1414,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'Black', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/Confirm/ConfirmClose.tsx:7
-	// Reference: packages/ui-components/src/Modal/ModalWithAlert.tsx:21
+	// Reference: packages/ui-components/src/Modal/ModalWithAlert.tsx:22
 	__( 'Are you sure you want to close this?', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/Confirm/ConfirmDelete.tsx:7
