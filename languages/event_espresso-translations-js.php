@@ -187,11 +187,11 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/multiStep/FooterButtons.tsx:22
 	__( 'Save and assign tickets', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/multiStep/Modal.tsx:31
+	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/multiStep/Modal.tsx:33
 	/* translators: %s datetime id */
 	__( 'Edit datetime %s', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/multiStep/Modal.tsx:34
+	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/multiStep/Modal.tsx:36
 	__( 'New Datetime', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:106
@@ -572,7 +572,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	/* translators: 1 entity id, 2 entity name */
 	__( 'Ticket Assignment Manager for Ticket: %1$s - %2$s', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/TicketAssignmentsManagerModal.tsx:31
+	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/TicketAssignmentsManagerModal.tsx:28
 	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/table/Table.tsx:13
 	__( 'Ticket Assignment Manager', 'event_espresso' ),
 
@@ -606,6 +606,15 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/table/useGetHeaderRows.tsx:18
 	__( 'Click the cell buttons to toggle assigments', 'event_espresso' ),
 
+	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/useSubmitButtonProps.ts:29
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/prices/buttons/FooterButtons.tsx:16
+	// Reference: packages/ee-components/src/bulkEdit/details/Submit.tsx:27
+	// Reference: packages/form/src/Submit.tsx:25
+	// Reference: packages/tpc/src/buttons/useSubmitButtonProps.tsx:29
+	// Reference: packages/ui-components/src/Modal/useSubmitButtonProps.tsx:13
+	// Reference: packages/ui-components/src/Stepper/buttons/Submit.tsx:7
+	__( 'Submit', 'event_espresso' ),
+
 	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/filters/controls/DatesByMonthControl.tsx:19
 	__( 'All Dates', 'event_espresso' ),
 
@@ -636,14 +645,14 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/FooterButtons.tsx:56
 	__( 'Save and assign dates', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/FooterButtons.tsx:62
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/FooterButtons.tsx:63
 	__( 'Ticket details', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/Modal.tsx:31
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/Modal.tsx:33
 	/* translators: %s ticket id */
 	__( 'Edit ticket %s', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/Modal.tsx:34
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/Modal.tsx:36
 	__( 'New Ticket Details', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/TicketFormSteps.tsx:10
@@ -810,14 +819,6 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/prices/buttons/FooterButtons.tsx:15
 	// Reference: packages/ui-components/src/Modal/useCancelButtonProps.tsx:10
 	__( 'Cancel', 'event_espresso' ),
-
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/prices/buttons/FooterButtons.tsx:16
-	// Reference: packages/ee-components/src/bulkEdit/details/Submit.tsx:27
-	// Reference: packages/form/src/Submit.tsx:25
-	// Reference: packages/tpc/src/buttons/useSubmitButtonProps.tsx:25
-	// Reference: packages/ui-components/src/Modal/useSubmitButtonProps.tsx:13
-	// Reference: packages/ui-components/src/Stepper/buttons/Submit.tsx:7
-	__( 'Submit', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/prices/editSeparately/TPCInstance.tsx:26
 	/* translators: %s ticket name */
