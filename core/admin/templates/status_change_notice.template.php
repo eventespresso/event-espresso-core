@@ -5,14 +5,14 @@
  */
 
 $page_slug          = ! empty($page_slug) ? "{$page_slug}-page" : '';
-$unknown_error_msg  = __(
+$unknown_error_msg  = esc_html__(
     'Oops... an unknown error has occurred on the server and this notice could not be dismissed.',
     'event_espresso'
 );
-$failed_request_msg = __('Request failed. The server returned status code: ', 'event_espresso');
+$failed_request_msg = esc_html__('Request failed. The server returned status code: ', 'event_espresso');
 ?>
 
-<script type="text/javascript">
+<script type='text/javascript'>
     function openStatusNotice() {
         let link = document.getElementById('ee-open-notice-link');
         link.classList.remove('ee-show-link');
@@ -35,13 +35,13 @@ $failed_request_msg = __('Request failed. The server returned status code: ', 'e
 
     function dismissStatusNotice() {
         jQuery.ajax({
-            type: "POST",
+            type: 'POST',
             url: ajaxurl,
             data: {
-                action: "espresso_hide_status_change_notice",
+                action: 'espresso_hide_status_change_notice',
                 ee_admin_ajax: 1
             },
-            dataType: "json",
+            dataType: 'json',
             success: function (response) {
                 if (typeof response.success !== 'undefined' && response.success) {
                     removeStatusNotice();
@@ -54,7 +54,7 @@ $failed_request_msg = __('Request failed. The server returned status code: ', 'e
                 }
             },
             error: function (xhr) {
-                console.error("<?php echo $failed_request_msg; ?>" + xhr.status + " " + xhr.statusText);
+                console.error("<?php echo $failed_request_msg; ?>" + xhr.status + ' ' + xhr.statusText);
             }
         });
     }
@@ -148,7 +148,7 @@ $failed_request_msg = __('Request failed. The server returned status code: ', 'e
         background: #f1f1f1;
     }
 
-    .espresso_events-page .ee-status-message,
+    .espresso-events-page .ee-status-message,
     .espresso_messages-page .ee-status-event {
         display: none;
     }
