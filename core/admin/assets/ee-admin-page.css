@@ -74,6 +74,7 @@
 
 .poststuff .ee-nav-tabs-small .nav-tab,
 #poststuff .ee-nav-tabs-small .nav-tab {
+	box-sizing: content-box;
 	height : 18px;
 }
 
