@@ -149,6 +149,7 @@ $failed_request_msg = esc_html__('Request failed. The server returned status cod
     }
 
     .espresso-events-page .ee-status-message,
+    .espresso_events-page .ee-status-message,
     .espresso_messages-page .ee-status-event {
         display: none;
     }
