@@ -1231,6 +1231,9 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/textAlign/Component.tsx:12
 	__( 'Ordered textalign', 'event_espresso' ),
 
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/render/Image/Toolbar.tsx:30
+	__( 'Image toolbar', 'event_espresso' ),
+
 	// Reference: packages/rich-text-editor/src/components/WithEditMode/WithEditMode.tsx:59
 	// Reference: packages/rich-text-editor/src/rte-old/components/RTEWithEditMode/RTEWithEditMode.tsx:33
 	__( 'Visual editor', 'event_espresso' ),
