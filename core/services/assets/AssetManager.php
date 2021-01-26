@@ -156,7 +156,7 @@ abstract class AssetManager implements AssetManagerInterface
         $load_in_footer = true,
         $version = ''
     ) {
-        $dev_suffix = wp_scripts_get_suffix('dev');
+        $dev_suffix = wp_scripts_get_suffix();
         $vendor_path = $this->domain->pluginUrl() . 'assets/vendor/';
         return $this->addJavascript(
             $handle,
