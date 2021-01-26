@@ -20,7 +20,7 @@ use EventEspresso\core\services\collections\DuplicateCollectionIdentifierExcepti
 class ReactAssetManager extends AssetManager
 {
 
-    const REACT_VERSION = '16.13.1';
+    const REACT_VERSION = '17.0.1';
 
     const JS_HANDLE_REACT = 'react';
 
@@ -35,6 +35,17 @@ class ReactAssetManager extends AssetManager
      */
     public function addAssets()
     {
+        // TODO get these values from router
+        $is_ee_domain = true;
+        $is_blocks_domain = false;
+
+        if (!$is_ee_domain || $is_blocks_domain) {
+            return;
+        }
+
+        wp_deregister_script(ReactAssetManager::JS_HANDLE_REACT);
+        wp_deregister_script(ReactAssetManager::JS_HANDLE_REACT_DOM);
+
         $this->addVendorJavascript(
             ReactAssetManager::JS_HANDLE_REACT,
             [],
