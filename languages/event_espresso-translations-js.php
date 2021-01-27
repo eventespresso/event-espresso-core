@@ -130,6 +130,7 @@ $generated_i18n_strings = array(
 	__( 'Error', 'event_espresso' ),
 
 	// Reference: domains/blocks/src/services/utils.ts:26
+	// Reference: packages/ui-components/src/SimpleEntityList/EntityTemplate.tsx:16
 	__( 'Select…', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/EventDescription.tsx:32
@@ -757,9 +758,11 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'Are you sure you want to move this ticket to the trash? You can "untrash" this ticket later if you need to.', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:40
+	// Reference: packages/ee-components/src/SimpleTicketCard/actions/Trash.tsx:6
 	__( 'trash ticket', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:51
+	// Reference: packages/ee-components/src/SimpleTicketCard/actions/Edit.tsx:14
 	__( 'edit ticket', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:52
@@ -1051,6 +1054,14 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/ee-components/src/EntityList/EntityList.tsx:31
 	__( 'try changing filter settings', 'event_espresso' ),
 
+	// Reference: packages/ee-components/src/SimpleTicketCard/SimpleTicketCard.tsx:20
+	// Reference: packages/ui-components/src/CalendarDateSwitcher/CalendarDateSwitcher.tsx:34
+	__( 'starts', 'event_espresso' ),
+
+	// Reference: packages/ee-components/src/SimpleTicketCard/SimpleTicketCard.tsx:22
+	// Reference: packages/ui-components/src/CalendarDateSwitcher/CalendarDateSwitcher.tsx:47
+	__( 'ends', 'event_espresso' ),
+
 	// Reference: packages/ee-components/src/bulkEdit/ActionCheckbox.tsx:38
 	/* translators: %d entity id */
 	__( 'select entity with id %d', 'event_espresso' ),
@@ -1084,6 +1095,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'Entry %d', 'event_espresso' ),
 
 	// Reference: packages/form/src/renderers/RepeatableRenderer.tsx:52
+	// Reference: packages/ui-components/src/SimpleEntityList/EntityTemplate.tsx:27
 	__( 'Add', 'event_espresso' ),
 
 	// Reference: packages/helpers/src/datetimes/getStatusTextLabel.ts:11
@@ -1359,12 +1371,6 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/ui-components/src/CalendarDateRange/CalendarDateRange.tsx:37
 	__( 'to', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/CalendarDateSwitcher/CalendarDateSwitcher.tsx:34
-	__( 'starts', 'event_espresso' ),
-
-	// Reference: packages/ui-components/src/CalendarDateSwitcher/CalendarDateSwitcher.tsx:47
-	__( 'ends', 'event_espresso' ),
-
 	// Reference: packages/ui-components/src/CalendarPageDate/CalendarPageDate.tsx:54
 	__( 'TO', 'event_espresso' ),
 
@@ -1518,6 +1524,18 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/PercentSign/index.tsx:10
 	__( '%', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/SimpleEntityList/EntityOptionsRow/index.tsx:23
+	__( 'Select an existing one to use as a template.', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/SimpleEntityList/EntityOptionsRow/index.tsx:27
+	__( 'or', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/SimpleEntityList/EntityOptionsRow/index.tsx:30
+	__( 'Add new and insert details manually', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/SimpleEntityList/EntityOptionsRow/index.tsx:34
+	__( 'Add New', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/Stepper/buttons/Next.tsx:8
 	__( 'Next', 'event_espresso' ),
