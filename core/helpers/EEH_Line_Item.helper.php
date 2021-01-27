@@ -1778,9 +1778,7 @@ class EEH_Line_Item
     ) {
         static $final_prices_per_ticket_line_item = [];
         if (empty($final_prices_per_ticket_line_item)
-            || empty(
-            $final_prices_per_ticket_line_item[ $total_line_item->ID() ]
-            )
+            || empty($final_prices_per_ticket_line_item[ $total_line_item->ID() ])
         ) {
             $final_prices_per_ticket_line_item[ $total_line_item->ID() ] =
                 EEH_Line_Item::calculate_reg_final_prices_per_line_item(
