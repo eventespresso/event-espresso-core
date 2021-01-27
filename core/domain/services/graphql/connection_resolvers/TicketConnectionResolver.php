@@ -148,6 +148,10 @@ class TicketConnectionResolver extends AbstractConnectionResolver
             'datetimeIn'   => 'Datetime.DTT_ID',
             'datetimeIdIn' => 'Datetime.DTT_ID',
             'datetimeId'   => 'Datetime.DTT_ID', // priority.
+            'isDefault'    => 'TKT_is_default',
+            'isRequired'   => 'TKT_required',
+            'isTaxable'    => 'TKT_taxable',
+            'isTrashed'    => 'TKT_deleted',
         ];
         return $this->sanitizeWhereArgsForInputFields(
             $where_args,

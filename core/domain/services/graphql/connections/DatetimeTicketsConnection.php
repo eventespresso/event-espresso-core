@@ -99,6 +99,22 @@ class DatetimeTicketsConnection extends ConnectionBase
                 'type'        => 'String',
                 'description' => esc_html__('The search keywords', 'event_espresso'),
             ],
+            'isDefault' => [
+                'type'        => 'Boolean',
+                'description' => esc_html__('Filter the default tickets', 'event_espresso'),
+            ],
+            'isRequired'   => [
+                'type'        => 'Boolean',
+                'description' => esc_html__('Filter the required tickets', 'event_espresso'),
+            ],
+            'isTaxable'   => [
+                'type'        => 'Boolean',
+                'description' => esc_html__('Filter the taxable tickets', 'event_espresso'),
+            ],
+            'isTrashed'   => [
+                'type'        => 'Boolean',
+                'description' => esc_html__('Filter the trashed tickets', 'event_espresso'),
+            ],
         ];
 
         $newArgs = apply_filters(
