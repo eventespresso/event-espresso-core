@@ -1077,11 +1077,11 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/ee-components/src/EntityList/EntityList.tsx:31
 	__( 'try changing filter settings', 'event_espresso' ),
 
-	// Reference: packages/ee-components/src/SimpleTicketCard/SimpleTicketCard.tsx:20
+	// Reference: packages/ee-components/src/SimpleTicketCard/SimpleTicketCard.tsx:25
 	// Reference: packages/ui-components/src/CalendarDateSwitcher/CalendarDateSwitcher.tsx:34
 	__( 'starts', 'event_espresso' ),
 
-	// Reference: packages/ee-components/src/SimpleTicketCard/SimpleTicketCard.tsx:22
+	// Reference: packages/ee-components/src/SimpleTicketCard/SimpleTicketCard.tsx:32
 	// Reference: packages/ui-components/src/CalendarDateSwitcher/CalendarDateSwitcher.tsx:47
 	__( 'ends', 'event_espresso' ),
 
