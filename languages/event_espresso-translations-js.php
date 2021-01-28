@@ -353,7 +353,7 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/cardView/DateCardSidebar.tsx:38
 	__( 'Edit Event Date', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/cardView/DateCardSidebar.tsx:41
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/cardView/DateCardSidebar.tsx:42
 	__( 'edit start and end dates', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/cardView/DateDetailsPanel.tsx:15
@@ -830,7 +830,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/cardView/TicketCardSidebar.tsx:37
 	__( 'Edit Ticket Sale Dates', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/cardView/TicketCardSidebar.tsx:39
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/cardView/TicketCardSidebar.tsx:41
 	__( 'edit ticket sales start and end dates', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/cardView/TicketDetailsPanel.tsx:28
@@ -1446,7 +1446,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/ui-components/src/DebugInfo/DebugInfo.tsx:36
 	__( 'Show Debug Info', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/EditDateRangeButton/EditDateRangeButton.tsx:44
+	// Reference: packages/ui-components/src/EditDateRangeButton/EditDateRangeButton.tsx:47
 	__( 'Edit Start and End Dates and Times', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/EntityActionsMenu/entityMenuItems/Copy.tsx:8
