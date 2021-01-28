@@ -639,7 +639,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'view ALL registrations for this ticket.', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/defaultTickets/Container.tsx:38
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actions/Actions.tsx:13
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actions/Actions.tsx:16
 	__( 'Default tickets', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/defaultTickets/multiStep/FooterButtons.tsx:26
@@ -957,10 +957,10 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/newTicketOptions/AddSingleTicket.tsx:18
 	__( 'Add New Ticket', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/newTicketOptions/AddSingleTicket.tsx:31
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/newTicketOptions/AddSingleTicket.tsx:32
 	__( 'Add a single ticket and assign the dates to it', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/newTicketOptions/AddSingleTicket.tsx:33
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/newTicketOptions/AddSingleTicket.tsx:34
 	__( 'Single Ticket', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/tableView/TableView.tsx:39
