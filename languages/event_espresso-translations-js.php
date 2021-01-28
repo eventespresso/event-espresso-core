@@ -179,6 +179,7 @@ $generated_i18n_strings = array(
 	__( 'Date Details', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/multiStep/DateFormSteps.tsx:11
+	// Reference: domains/eventEditor/src/ui/tickets/defaultTickets/multiStep/TicketFormSteps.tsx:16
 	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/TicketFormSteps.tsx:16
 	__( 'relations between tickets and dates', 'event_espresso' ),
 
@@ -637,8 +638,51 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: domains/eventEditor/src/ui/tickets/TicketRegistrationsLink.tsx:14
 	__( 'view ALL registrations for this ticket.', 'event_espresso' ),
 
+	// Reference: domains/eventEditor/src/ui/tickets/defaultTickets/Container.tsx:38
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actions/Actions.tsx:13
+	__( 'Default tickets', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/tickets/defaultTickets/multiStep/FooterButtons.tsx:26
 	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/FooterButtons.tsx:38
 	__( 'Set ticket prices', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/tickets/defaultTickets/multiStep/FooterButtons.tsx:31
+	__( 'Skip prices - Save', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/tickets/defaultTickets/multiStep/FooterButtons.tsx:37
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/FooterButtons.tsx:63
+	__( 'Ticket details', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/tickets/defaultTickets/multiStep/FooterButtons.tsx:38
+	__( 'Save', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/tickets/defaultTickets/multiStep/Modal.tsx:26
+	/* translators: %d ticket id */
+	__( 'Edit ticket %d', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/tickets/defaultTickets/multiStep/Modal.tsx:29
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/Modal.tsx:36
+	__( 'New Ticket Details', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/tickets/defaultTickets/multiStep/TicketFormSteps.tsx:10
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/TicketFormSteps.tsx:10
+	__( 'primary information about the ticket', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/tickets/defaultTickets/multiStep/TicketFormSteps.tsx:10
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/TicketFormSteps.tsx:10
+	__( 'Ticket Details', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/tickets/defaultTickets/multiStep/TicketFormSteps.tsx:12
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/TicketFormSteps.tsx:12
+	__( 'apply ticket price modifiers and taxes', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/tickets/defaultTickets/multiStep/TicketFormSteps.tsx:14
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/TicketFormSteps.tsx:14
+	__( 'Price Calculator', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/tickets/defaultTickets/multiStep/TicketFormSteps.tsx:16
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/TicketFormSteps.tsx:16
+	__( 'Assign Dates', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/FooterButtons.tsx:45
 	__( 'Skip prices - assign dates', 'event_espresso' ),
@@ -646,30 +690,9 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/FooterButtons.tsx:56
 	__( 'Save and assign dates', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/FooterButtons.tsx:63
-	__( 'Ticket details', 'event_espresso' ),
-
 	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/Modal.tsx:33
 	/* translators: %s ticket id */
 	__( 'Edit ticket %s', 'event_espresso' ),
-
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/Modal.tsx:36
-	__( 'New Ticket Details', 'event_espresso' ),
-
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/TicketFormSteps.tsx:10
-	__( 'primary information about the ticket', 'event_espresso' ),
-
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/TicketFormSteps.tsx:10
-	__( 'Ticket Details', 'event_espresso' ),
-
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/TicketFormSteps.tsx:12
-	__( 'apply ticket price modifiers and taxes', 'event_espresso' ),
-
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/TicketFormSteps.tsx:14
-	__( 'Price Calculator', 'event_espresso' ),
-
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/TicketFormSteps.tsx:16
-	__( 'Assign Dates', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:119
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:112
@@ -727,10 +750,10 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:96
 	__( 'Ticket Sales', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/TicketsList.tsx:36
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/TicketsList.tsx:35
 	__( 'Available Tickets', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/TicketsList.tsx:39
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/TicketsList.tsx:38
 	__( 'loading tickets…', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/AssignDatesButton.tsx:26
