@@ -1575,11 +1575,11 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/ui-components/src/TimezoneTimeInfo/Content.tsx:9
 	__( 'Your Local Time Zone', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/TimezoneTimeInfo/TimezoneTimeInfo.tsx:20
-	__( 'This Date Converted To:', 'event_espresso' ),
-
-	// Reference: packages/ui-components/src/TimezoneTimeInfo/TimezoneTimeInfo.tsx:21
+	// Reference: packages/ui-components/src/TimezoneTimeInfo/TimezoneTimeInfo.tsx:27
 	__( 'click for timezone information', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/TimezoneTimeInfo/TimezoneTimeInfo.tsx:32
+	__( 'This Date Converted To:', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/bulkEdit/BulkActions.tsx:51
 	__( 'select all', 'event_espresso' ),
