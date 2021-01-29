@@ -214,7 +214,7 @@ $generated_i18n_strings = array(
 	__( 'Set to 0 to close registration or leave blank for no limit.', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:124
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:194
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:187
 	__( 'Trash', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:70
@@ -740,12 +740,6 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:180
 	__( 'If enabled, the ticket must be selected and will appear first in frontend ticket lists.', 'event_espresso' ),
-
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:187
-	__( 'Default Ticket', 'event_espresso' ),
-
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:189
-	__( 'If enabled, the ticket will appear on all new events.', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:96
 	__( 'Ticket Sales', 'event_espresso' ),
