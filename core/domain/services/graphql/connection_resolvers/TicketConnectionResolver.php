@@ -83,7 +83,10 @@ class TicketConnectionResolver extends AbstractConnectionResolver
 
             // Use the proper operator.
             if (! empty($input_fields['Datetime.DTT_ID']) && is_array($input_fields['Datetime.DTT_ID'])) {
-                $input_fields['Datetime.DTT_ID'] = ['in', $input_fields['Datetime.DTT_ID']];
+                $input_fields['Datetime.DTT_ID'] = ['IN', $input_fields['Datetime.DTT_ID']];
+            }
+            if (! empty($input_fields['Datetime.EVT_ID']) && is_array($input_fields['Datetime.EVT_ID'])) {
+                $input_fields['Datetime.EVT_ID'] = ['IN', $input_fields['Datetime.EVT_ID']];
             }
         }
 
@@ -111,6 +114,28 @@ class TicketConnectionResolver extends AbstractConnectionResolver
                 'TKT_name'        => array('LIKE', '%' . $search . '%'),
                 'TKT_description' => array('LIKE', '%' . $search . '%'),
             );
+        }
+
+        // If default tickets should be included.
+        if (! empty($this->args['where']['includeDefaultTickets'])) {
+            /**
+             * We need to get each ticket that
+             * - satisfies $where_params above
+             * OR
+             * - it's a default ticket
+             */
+            $where_params = [
+                'OR' => [
+                    // use extra OR instead of AND to avoid it getting overridden
+                    'OR' => [
+                        'AND' => [
+                            'TKT_deleted'    => ['IN', [true, false]],
+                            'TKT_is_default' => 1,
+                        ]
+                    ],
+                    'AND' => $where_params,
+                ],
+            ];
         }
 
         $where_params = apply_filters(
@@ -148,6 +173,10 @@ class TicketConnectionResolver extends AbstractConnectionResolver
             'datetimeIn'   => 'Datetime.DTT_ID',
             'datetimeIdIn' => 'Datetime.DTT_ID',
             'datetimeId'   => 'Datetime.DTT_ID', // priority.
+            'event'        => 'Datetime.EVT_ID',
+            'eventIn'      => 'Datetime.EVT_ID',
+            'eventIdIn'    => 'Datetime.EVT_ID',
+            'eventId'      => 'Datetime.EVT_ID', // priority.
             'isDefault'    => 'TKT_is_default',
             'isRequired'   => 'TKT_required',
             'isTaxable'    => 'TKT_taxable',
@@ -156,7 +185,7 @@ class TicketConnectionResolver extends AbstractConnectionResolver
         return $this->sanitizeWhereArgsForInputFields(
             $where_args,
             $arg_mapping,
-            ['datetime', 'datetimeIn']
+            ['datetime', 'datetimeIn', 'event', 'eventIn']
         );
     }
 }

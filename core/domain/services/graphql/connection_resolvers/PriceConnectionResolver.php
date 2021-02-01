@@ -3,6 +3,8 @@
 namespace EventEspresso\core\domain\services\graphql\connection_resolvers;
 
 use EE_Ticket;
+use EEM_Datetime;
+use EEM_Ticket;
 use EE_Error;
 use EEM_Price;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
@@ -94,6 +96,30 @@ class PriceConnectionResolver extends AbstractConnectionResolver
             if (! empty($input_fields['Price_Type.PRT_ID']) && is_array($input_fields['Price_Type.PRT_ID'])) {
                 $input_fields['Price_Type.PRT_ID'] = ['in', $input_fields['Price_Type.PRT_ID']];
             }
+            // if event ID is passed but not a ticket ID
+            if (! isset($input_fields['Ticket.TKT_ID']) && isset($input_fields['Event.EVT_ID'])) {
+                $event_id = $input_fields['Event.EVT_ID'];
+                // Ensure that this doesn't go to the query.
+                // After all there is no DB relation between event and price
+                unset($input_fields['Event.EVT_ID']);
+                // get all the datetimeIds of the event
+                $event_datetime_ids = EEM_Datetime::instance()->get_col([
+                    [
+                        'EVT_ID'      => $event_id,
+                    ],
+                    'default_where_conditions' => 'minimum'
+                ]);
+                // get all the related ticket Ids
+                $ticket_ids = EEM_Ticket::instance()->get_col([
+                    [
+                        'Datetime.DTT_ID' => ['IN', $event_datetime_ids],
+                    ],
+                    'default_where_conditions' => 'minimum'
+                ]);
+
+                // add tickets relation to the query
+                $input_fields['Ticket.TKT_ID'] = ['IN', $ticket_ids];
+            }
         }
 
         /**
@@ -112,26 +138,44 @@ class PriceConnectionResolver extends AbstractConnectionResolver
 
         list($query_args, $where_params) = $this->mapOrderbyInputArgs($query_args, $where_params, 'PRC_ID');
 
+        $default_prices_params = [];
+
+        // If default ticket prices should be included.
+        if (! empty($this->args['where']['includeDefaultTicketsPrices'])) {
+            $default_ticket_ids = EEM_Ticket::instance()->get_col([
+                [
+                    'TKT_is_default' => 1,
+                ],
+                'default_where_conditions' => 'minimum'
+            ]);
+
+            // if we have default tickets
+            if (! empty($default_ticket_ids)) {
+                $default_prices_params['OR'] = [
+                    'Ticket.TKT_ID' => ['IN', $default_ticket_ids],
+                ];
+            }
+        }
+
         // If default prices should be included.
         if (! empty($this->args['where']['includeDefaultPrices'])) {
-            /**
-             * We need to get each price that
-             * - satisfies $where_params above
-             * OR
-             * - it's a default non trashed price
-             */
-            $where_params = [
-                'OR' => [
-                    // use extra OR instead of AND to avoid it getting overridden
-                    'OR' => [
-                        'AND' => [
-                            'PRC_deleted'    => 0,
-                            'PRC_is_default' => 1,
-                        ]
-                    ],
-                    'AND' => $where_params,
-                ],
+            $default_prices_params['AND'] = [
+                'PRC_deleted'    => 0,
+                'PRC_is_default' => 1,
             ];
+        }
+
+        if (! empty($default_prices_params)) {
+            if (empty($where_params)) {
+                $where_params['OR'] = $default_prices_params;
+            } else {
+                $where_params = [
+                    'OR' => [
+                        'OR'  => $default_prices_params,
+                        'AND' => $where_params,
+                    ],
+                ];
+            }
         }
 
         $where_params = apply_filters(
@@ -167,6 +211,9 @@ class PriceConnectionResolver extends AbstractConnectionResolver
         $arg_mapping = [
             'in'              => 'PRC_ID',
             'idIn'            => 'PRC_ID',
+            'isDefault'       => 'PRC_is_default',
+            'event'           => 'Event.EVT_ID',
+            'eventId'         => 'Event.EVT_ID', // priority.
             'ticket'          => 'Ticket.TKT_ID',
             'ticketIn'        => 'Ticket.TKT_ID',
             'ticketIdIn'      => 'Ticket.TKT_ID',
@@ -181,7 +228,7 @@ class PriceConnectionResolver extends AbstractConnectionResolver
         return $this->sanitizeWhereArgsForInputFields(
             $where_args,
             $arg_mapping,
-            ['in', 'ticket', 'ticketIn', 'priceType', 'priceTypeIn']
+            ['in', 'event', 'ticket', 'ticketIn', 'priceType', 'priceTypeIn']
         );
     }
 }
