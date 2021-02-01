@@ -31,13 +31,13 @@ class EEM_Price extends EEM_Soft_Delete_Base
     {
         require_once(EE_MODELS . 'EEM_Price_Type.model.php');
         $this->singular_item = __('Price', 'event_espresso');
-        $this->plural_item = __('Prices', 'event_espresso');
+        $this->plural_item   = __('Prices', 'event_espresso');
 
-        $this->_tables = array(
+        $this->_tables          = [
             'Price' => new EE_Primary_Table('esp_price', 'PRC_ID'),
-        );
-        $this->_fields = array(
-            'Price' => array(
+        ];
+        $this->_fields          = [
+            'Price' => [
                 'PRC_ID'         => new EE_Primary_Key_Int_Field(
                     'PRC_ID',
                     'Price ID'
@@ -108,13 +108,13 @@ class EEM_Price extends EEM_Soft_Delete_Base
                     esc_html__('Price Creator ID', 'event_espresso'),
                     false
                 ),
-            ),
-        );
-        $this->_model_relations = array(
+            ],
+        ];
+        $this->_model_relations = [
             'Ticket'     => new EE_HABTM_Relation('Ticket_Price'),
             'Price_Type' => new EE_Belongs_To_Relation(),
             'WP_User'    => new EE_Belongs_To_Relation(),
-        );
+        ];
         // this model is generally available for reading
         $this->_cap_restriction_generators[ EEM_Base::caps_read ] =
             new EE_Restriction_Generator_Default_Public(
@@ -127,12 +127,12 @@ class EEM_Price extends EEM_Soft_Delete_Base
                 'PRC_is_default',
                 'Ticket.Datetime.Event'
             );
-        $this->_cap_restriction_generators[ EEM_Base::caps_edit ] =
+        $this->_cap_restriction_generators[ EEM_Base::caps_edit ]       =
             new EE_Restriction_Generator_Default_Protected(
                 'PRC_is_default',
                 'Ticket.Datetime.Event'
             );
-        $this->_cap_restriction_generators[ EEM_Base::caps_delete ] =
+        $this->_cap_restriction_generators[ EEM_Base::caps_delete ]     =
             new EE_Restriction_Generator_Default_Protected(
                 'PRC_is_default',
                 'Ticket.Datetime.Event'
@@ -161,7 +161,7 @@ class EEM_Price extends EEM_Soft_Delete_Base
     public function get_all_prices()
     {
         // retrieve all prices
-        return $this->get_all(array('order_by' => array('PRC_amount' => 'ASC')));
+        return $this->get_all(['order_by' => ['PRC_amount' => 'ASC']]);
     }
 
 
@@ -174,13 +174,15 @@ class EEM_Price extends EEM_Soft_Delete_Base
      */
     public function get_all_event_prices($EVT_ID = 0)
     {
-        return $this->get_all(array(
-            array(
-                'EVT_ID'            => $EVT_ID,
-                'Price_Type.PBT_ID' => array('!=', EEM_Price_Type::base_type_tax),
-            ),
-            'order_by' => $this->_order_by_array_for_get_all_method(),
-        ));
+        return $this->get_all(
+            [
+                [
+                    'EVT_ID'            => $EVT_ID,
+                    'Price_Type.PBT_ID' => ['!=', EEM_Price_Type::base_type_tax],
+                ],
+                'order_by' => $this->_order_by_array_for_get_all_method(),
+            ]
+        );
     }
 
 
@@ -194,18 +196,43 @@ class EEM_Price extends EEM_Soft_Delete_Base
      */
     public function get_all_default_prices($count = false, $include_taxes = false)
     {
-        $_where = array(
-            'PRC_deleted'       => 0,
-            'PRC_is_default'    => 1,
-        );
-        if (!$include_taxes) {
-            $_where['Price_Type.PBT_ID']  = ['!=', 4];
+        $_where = [
+            'PRC_deleted'    => 0,
+            'PRC_is_default' => 1,
+        ];
+        if (! $include_taxes) {
+            $_where['Price_Type.PBT_ID'] = ['!=', 4];
         }
-        $_query_params = array(
+        $_query_params = [
             $_where,
             'order_by' => $this->_order_by_array_for_get_all_method(),
+        ];
+        return $count ? $this->count([$_where]) : $this->get_all($_query_params);
+    }
+
+
+    /**
+     * retrieve all active global prices that are taxes
+     *
+     * @return bool|EE_Base_Class[]|EE_PRice[]
+     * @throws EE_Error
+     * @since   $VID:$
+     */
+    public function getAllDefaultTaxes()
+    {
+        return $this->get_all(
+            [
+                [
+                    'PRC_deleted'    => 0,
+                    'PRC_is_default' => 1,
+                    'Price_Type.PBT_ID' => EEM_Price_Type::base_type_tax
+                ],
+                'order_by' => [
+                    'Price_Type.PRT_order' => 'ASC',
+                    'PRC_order' => 'ASC'
+                ],
+            ]
         );
-        return $count ? $this->count(array($_where)) : $this->get_all($_query_params);
     }
 
 
@@ -221,11 +248,13 @@ class EEM_Price extends EEM_Soft_Delete_Base
      */
     public function get_all_prices_that_are_taxes()
     {
-        $taxes = array();
-        $all_taxes = $this->get_all(array(
-            array('Price_Type.PBT_ID' => EEM_Price_Type::base_type_tax),
-            'order_by' => array('Price_Type.PRT_order' => 'ASC', 'PRC_order' => 'ASC'),
-        ));
+        $taxes     = [];
+        $all_taxes = $this->get_all(
+            [
+                ['Price_Type.PBT_ID' => EEM_Price_Type::base_type_tax],
+                'order_by' => ['Price_Type.PRT_order' => 'ASC', 'PRC_order' => 'ASC'],
+            ]
+        );
         foreach ($all_taxes as $tax) {
             if ($tax instanceof EE_Price) {
                 $taxes[ $tax->order() ][ $tax->ID() ] = $tax;
@@ -244,7 +273,7 @@ class EEM_Price extends EEM_Soft_Delete_Base
      */
     public function get_all_ticket_prices_for_admin($TKT_ID = 0)
     {
-        $array_of_price_objects = array();
+        $array_of_price_objects = [];
         if (empty($TKT_ID)) {
             // if there is no tkt, get prices with no tkt ID, are global, are not a tax, and are active
             // return that list
@@ -258,15 +287,17 @@ class EEM_Price extends EEM_Soft_Delete_Base
                 }
                 return $array_of_price_objects;
             }
-            return array();
+            return [];
         }
-        $ticket_prices = $this->get_all(array(
-            array(
-                'TKT_ID'      => $TKT_ID,
-                'PRC_deleted' => 0,
-            ),
-            'order_by' => array('PRC_order' => 'ASC'),
-        ));
+        $ticket_prices = $this->get_all(
+            [
+                [
+                    'TKT_ID'      => $TKT_ID,
+                    'PRC_deleted' => 0,
+                ],
+                'order_by' => ['PRC_order' => 'ASC'],
+            ]
+        );
 
         if (! empty($ticket_prices)) {
             foreach ($ticket_prices as $price) {
@@ -321,12 +352,14 @@ class EEM_Price extends EEM_Soft_Delete_Base
      */
     public function get_all_prices_that_are_type($type = 0)
     {
-        return $this->get_all(array(
-            array(
-                'PRT_ID' => $type,
-            ),
-            'order_by' => $this->_order_by_array_for_get_all_method(),
-        ));
+        return $this->get_all(
+            [
+                [
+                    'PRT_ID' => $type,
+                ],
+                'order_by' => $this->_order_by_array_for_get_all_method(),
+            ]
+        );
     }
 
 
@@ -339,10 +372,10 @@ class EEM_Price extends EEM_Soft_Delete_Base
      */
     public function _order_by_array_for_get_all_method()
     {
-        return array(
+        return [
             'PRC_order'            => 'ASC',
             'Price_Type.PRT_order' => 'ASC',
             'PRC_ID'               => 'ASC',
-        );
+        ];
     }
 }
