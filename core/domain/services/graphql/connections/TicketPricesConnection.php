@@ -82,9 +82,25 @@ class TicketPricesConnection extends ConnectionBase
                 'type'        => ['list_of' => 'ID'],
                 'description' => esc_html__('Limit prices to the given IDs', 'event_espresso'),
             ],
+            'event'  => [
+                'type'        => 'ID',
+                'description' => esc_html__('Globally unique event ID to get the prices for.', 'event_espresso'),
+            ],
+            'eventId'  => [
+                'type'        => 'Int',
+                'description' => esc_html__('Event ID to get the prices for.', 'event_espresso'),
+            ],
             'includeDefaultPrices'  => [
                 'type'        => 'Boolean',
                 'description' => esc_html__('Whether to add default prices to the list.', 'event_espresso'),
+            ],
+            'includeDefaultTicketsPrices'  => [
+                'type'        => 'Boolean',
+                'description' => esc_html__('Whether to add default tickets prices to the list.', 'event_espresso'),
+            ],
+            'isDefault' => [
+                'type'        => 'Boolean',
+                'description' => esc_html__('Filter the default prices', 'event_espresso'),
             ],
             'ticket'          => [
                 'type'        => 'ID',
