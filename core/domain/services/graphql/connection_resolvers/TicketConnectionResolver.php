@@ -169,14 +169,14 @@ class TicketConnectionResolver extends AbstractConnectionResolver
     public function sanitizeInputFields(array $where_args)
     {
         $arg_mapping = [
-            'datetime'     => 'Datetime.DTT_ID',
-            'datetimeIn'   => 'Datetime.DTT_ID',
-            'datetimeIdIn' => 'Datetime.DTT_ID',
-            'datetimeId'   => 'Datetime.DTT_ID', // priority.
             'event'        => 'Datetime.EVT_ID',
             'eventIn'      => 'Datetime.EVT_ID',
             'eventIdIn'    => 'Datetime.EVT_ID',
             'eventId'      => 'Datetime.EVT_ID', // priority.
+            'datetime'     => 'Datetime.DTT_ID',
+            'datetimeIn'   => 'Datetime.DTT_ID',
+            'datetimeIdIn' => 'Datetime.DTT_ID',
+            'datetimeId'   => 'Datetime.DTT_ID', // priority.
             'isDefault'    => 'TKT_is_default',
             'isRequired'   => 'TKT_required',
             'isTaxable'    => 'TKT_taxable',
