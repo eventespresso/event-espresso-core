@@ -639,7 +639,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'view ALL registrations for this ticket.', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/defaultTickets/Container.tsx:38
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actions/Actions.tsx:16
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actions/Actions.tsx:17
 	__( 'Default tickets', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/defaultTickets/multiStep/FooterButtons.tsx:26
