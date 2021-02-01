@@ -117,24 +117,16 @@ class EventEditorGraphQLData
             $datetimes = $this->datetimes->getData(['eventId' => $eventId]);
         }
 
-        if (! empty($datetimes['nodes'])) {
-            $datetimeIn = wp_list_pluck($datetimes['nodes'], 'id');
+        $tickets = $this->tickets->getData([
+            'eventId'               => $eventId,
+            'includeDefaultTickets' => true,
+        ]);
 
-            if (! empty($datetimeIn)) {
-                $tickets = $this->tickets->getData(['datetimeIn' => $datetimeIn]);
-            }
-        }
-
-        if (! empty($tickets['nodes'])) {
-            $ticketIn = wp_list_pluck($tickets['nodes'], 'id');
-        }
-
-        $pricesArgs = ['includeDefaultPrices' => true];
-
-        if (! empty($ticketIn)) {
-            $pricesArgs['ticketIn'] = $ticketIn;
-        }
-        $prices = $this->prices->getData($pricesArgs);
+        $prices = $this->prices->getData([
+            'eventId'                     => $eventId,
+            'includeDefaultTicketsPrices' => true,
+            'includeDefaultPrices'        => true,
+        ]);
 
         $priceTypes = $this->price_types->getData();
 

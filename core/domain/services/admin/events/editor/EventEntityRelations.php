@@ -90,7 +90,12 @@ class EventEntityRelations extends EventEditorData
         ];
         // Get the IDs of all datetime tickets.
         $ticketIds = $this->ticket_model->get_col([
-            [ 'Datetime.DTT_ID' => ['IN', $datetimeIds] ],
+            [
+                'OR' => [
+                    'Datetime.DTT_ID' => ['IN', $datetimeIds],
+                    'TKT_is_default' => 1,
+                ]
+            ],
             'default_where_conditions' => 'minimum',
         ]);
         foreach ($ticketIds as $ticketId) {
