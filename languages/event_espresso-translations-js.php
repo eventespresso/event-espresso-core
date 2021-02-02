@@ -1040,17 +1040,17 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/dates/src/utils/misc.ts:18
 	__( 'minute(s)', 'event_espresso' ),
 
-	// Reference: packages/edtr-services/src/apollo/initialization/useCacheRehydration.ts:104
-	__( 'price types initialized', 'event_espresso' ),
-
-	// Reference: packages/edtr-services/src/apollo/initialization/useCacheRehydration.ts:114
+	// Reference: packages/edtr-services/src/apollo/initialization/useCacheRehydration.ts:109
 	__( 'datetimes initialized', 'event_espresso' ),
 
-	// Reference: packages/edtr-services/src/apollo/initialization/useCacheRehydration.ts:124
+	// Reference: packages/edtr-services/src/apollo/initialization/useCacheRehydration.ts:119
 	__( 'tickets initialized', 'event_espresso' ),
 
-	// Reference: packages/edtr-services/src/apollo/initialization/useCacheRehydration.ts:134
+	// Reference: packages/edtr-services/src/apollo/initialization/useCacheRehydration.ts:129
 	__( 'prices initialized', 'event_espresso' ),
+
+	// Reference: packages/edtr-services/src/apollo/initialization/useCacheRehydration.ts:99
+	__( 'price types initialized', 'event_espresso' ),
 
 	// Reference: packages/edtr-services/src/apollo/mutations/useReorderEntities.ts:73
 	__( 'reordering has been applied', 'event_espresso' ),
