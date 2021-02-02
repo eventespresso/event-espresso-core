@@ -25,6 +25,13 @@ class IncompatibleAddonHandler
             'load_espresso_automated_upcoming_event_notification',
             'EE_AUTOMATED_UPCOMING_EVENT_NOTIFICATION_PLUGIN_FILE'
         );
+        $this->deactivateIncompatibleAddon(
+            'WP Users Integration',
+            'EE_WPUSERS_VERSION',
+            '2.1.0.rc.003',
+            'load_ee_core_wpusers',
+            'EE_WPUSERS_PLUGIN_FILE'
+        );
     }
 
 
