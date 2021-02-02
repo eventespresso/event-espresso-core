@@ -95,6 +95,26 @@ class DatetimeTicketsConnection extends ConnectionBase
                 'type'        => ['list_of' => 'Int'],
                 'description' => esc_html__('Datetime IDs to get the tickets for.', 'event_espresso'),
             ],
+            'event'  => [
+                'type'        => 'ID',
+                'description' => esc_html__('Globally unique event ID to get the tickets for.', 'event_espresso'),
+            ],
+            'eventIn'  => [
+                'type'        => ['list_of' => 'ID'],
+                'description' => esc_html__('Globally unique event IDs to get the tickets for.', 'event_espresso'),
+            ],
+            'eventId'  => [
+                'type'        => 'Int',
+                'description' => esc_html__('Event ID to get the tickets for.', 'event_espresso'),
+            ],
+            'eventIdIn'  => [
+                'type'        => ['list_of' => 'Int'],
+                'description' => esc_html__('Event IDs to get the tickets for.', 'event_espresso'),
+            ],
+            'includeDefaultTickets'  => [
+                'type'        => 'Boolean',
+                'description' => esc_html__('Whether to add default tickets to the list.', 'event_espresso'),
+            ],
             'search' => [
                 'type'        => 'String',
                 'description' => esc_html__('The search keywords', 'event_espresso'),
