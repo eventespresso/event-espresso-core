@@ -105,7 +105,7 @@
 		"concurrently": "^5.2.0",
 		"core-js": "3.6.5",
 		"cross-env": "7.0.2",
-		"css-loader": "^3.2.0",
+		"css-loader": "^5.0.1",
 		"cssnano": "^4.1.10",
 		"deep-freeze": "0.0.1",
 		"del": "git+https://github.com/sindresorhus/del.git",
