@@ -288,7 +288,7 @@ $generated_i18n_strings = array(
 	__( 'Are you sure you want to move this datetime to the trash? You can "untrash" this datetime later if you need to.', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:41
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/DeleteTicket.tsx:40
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/DeleteTicket.tsx:44
 	__( 'delete permanently', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:41
@@ -563,7 +563,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'There seem to be some dates/tickets which have no tickets/dates assigned. Do you want to fix them now?', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/components/ModalContainer.tsx:29
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:31
+	// Reference: packages/tpc/src/hooks/useLockedTicketAction.ts:74
 	// Reference: packages/ui-components/src/Modal/ModalWithAlert.tsx:21
 	__( 'Alert!', 'event_espresso' ),
 
@@ -644,14 +644,14 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'Default tickets', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/defaultTickets/multiStep/FooterButtons.tsx:26
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/FooterButtons.tsx:38
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/FooterButtons.tsx:33
 	__( 'Set ticket prices', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/defaultTickets/multiStep/FooterButtons.tsx:31
 	__( 'Skip prices - Save', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/defaultTickets/multiStep/FooterButtons.tsx:37
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/FooterButtons.tsx:63
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/FooterButtons.tsx:57
 	__( 'Ticket details', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/defaultTickets/multiStep/FooterButtons.tsx:38
@@ -685,10 +685,10 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/TicketFormSteps.tsx:16
 	__( 'Assign Dates', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/FooterButtons.tsx:45
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/FooterButtons.tsx:39
 	__( 'Skip prices - assign dates', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/FooterButtons.tsx:56
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/FooterButtons.tsx:50
 	__( 'Save and assign dates', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/Modal.tsx:33
@@ -760,39 +760,31 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/AssignDatesButton.tsx:37
 	__( 'assign dates', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/DeleteTicket.tsx:17
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/DeleteTicket.tsx:18
 	__( 'Permanently delete Ticket?', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/DeleteTicket.tsx:17
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/DeleteTicket.tsx:18
 	__( 'Move Ticket to Trash?', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/DeleteTicket.tsx:20
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/DeleteTicket.tsx:21
 	__( 'Are you sure you want to permanently delete this ticket? This action is permanent and can not be undone.', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/DeleteTicket.tsx:21
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/DeleteTicket.tsx:22
 	__( 'Are you sure you want to move this ticket to the trash? You can "untrash" this ticket later if you need to.', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/DeleteTicket.tsx:40
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/DeleteTicket.tsx:44
 	// Reference: packages/ee-components/src/SimpleTicketCard/actions/Trash.tsx:6
 	__( 'trash ticket', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:21
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:13
 	__( 'ticket main menu', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:37
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/prices/buttons/FooterButtons.tsx:15
-	// Reference: packages/ui-components/src/Modal/useCancelButtonProps.tsx:10
-	__( 'Cancel', 'event_espresso' ),
-
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:46
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:31
 	// Reference: packages/ee-components/src/SimpleTicketCard/actions/Edit.tsx:14
 	__( 'edit ticket', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:47
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:32
 	__( 'copy ticket', 'event_espresso' ),
-
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:53
-	__( 'restore', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:43
 	__( 'edit ticket details', 'event_espresso' ),
@@ -845,6 +837,11 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/tpc/src/buttons/useResetButtonProps.tsx:12
 	__( 'Reset', 'event_espresso' ),
 
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/prices/buttons/FooterButtons.tsx:15
+	// Reference: packages/tpc/src/hooks/useLockedTicketAction.ts:76
+	// Reference: packages/ui-components/src/Modal/useCancelButtonProps.tsx:10
+	__( 'Cancel', 'event_espresso' ),
+
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/prices/editSeparately/TPCInstance.tsx:26
 	/* translators: %s ticket name */
 	__( 'Edit prices for Ticket: %s', 'event_espresso' ),
@@ -878,13 +875,13 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'Manage Date Assignments', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/config.ts:9
-	// Reference: packages/tpc/src/components/table/Table.tsx:43
+	// Reference: packages/tpc/src/components/table/Table.tsx:44
 	__( 'Ticket Price Calculator', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/editable/EditablePrice.tsx:33
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/editable/EditablePrice.tsx:37
 	__( 'edit ticket total…', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/editable/EditablePrice.tsx:43
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/editable/EditablePrice.tsx:51
 	__( 'set price…', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/IsChainedButton.tsx:23
@@ -1297,7 +1294,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/tpc/src/buttons/ReverseCalculateButton.tsx:17
 	__( 'Ticket total is being calculated normally from top to bottom starting from the base price. Entering a new ticket base price will recalculate the ticket total after applying all price modifiers. Click to turn on reverse calculations', 'event_espresso' ),
 
-	// Reference: packages/tpc/src/buttons/TicketPriceCalculatorButton.tsx:26
+	// Reference: packages/tpc/src/buttons/TicketPriceCalculatorButton.tsx:28
 	__( 'ticket price calculator', 'event_espresso' ),
 
 	// Reference: packages/tpc/src/buttons/taxes/AddDefaultTaxesButton.tsx:9
@@ -1317,6 +1314,9 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 
 	// Reference: packages/tpc/src/components/DefaultTaxesInfo.tsx:29
 	__( 'New default taxes are available. Click the - Add default taxes - button to add them now.', 'event_espresso' ),
+
+	// Reference: packages/tpc/src/components/LockedTicketsBanner.tsx:12
+	__( 'Editing of prices is disabled', 'event_espresso' ),
 
 	// Reference: packages/tpc/src/components/NoPricesBanner/AddDefaultPricesButton.tsx:9
 	__( 'Add default prices', 'event_espresso' ),
@@ -1341,10 +1341,10 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	/* translators: %s ticket name */
 	__( 'Price Calculator for Ticket: %s', 'event_espresso' ),
 
-	// Reference: packages/tpc/src/components/table/useFooterRowGenerator.tsx:41
+	// Reference: packages/tpc/src/components/table/useFooterRowGenerator.tsx:42
 	__( 'Total', 'event_espresso' ),
 
-	// Reference: packages/tpc/src/components/table/useFooterRowGenerator.tsx:50
+	// Reference: packages/tpc/src/components/table/useFooterRowGenerator.tsx:51
 	__( 'ticket total', 'event_espresso' ),
 
 	// Reference: packages/tpc/src/components/table/useHeaderRowGenerator.ts:29
@@ -1355,6 +1355,15 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 
 	// Reference: packages/tpc/src/components/table/useHeaderRowGenerator.ts:47
 	__( 'Amount', 'event_espresso' ),
+
+	// Reference: packages/tpc/src/hooks/useLockedTicketAction.ts:22
+	__( 'Copy ticket', 'event_espresso' ),
+
+	// Reference: packages/tpc/src/hooks/useLockedTicketAction.ts:26
+	__( 'Copy and archive this ticket', 'event_espresso' ),
+
+	// Reference: packages/tpc/src/hooks/useLockedTicketAction.ts:29
+	__( 'OK', 'event_espresso' ),
 
 	// Reference: packages/tpc/src/inputs/PriceAmountInput.tsx:30
 	__( 'amount', 'event_espresso' ),
@@ -1377,7 +1386,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/tpc/src/inputs/PriceNameInput.tsx:8
 	__( 'price name', 'event_espresso' ),
 
-	// Reference: packages/tpc/src/inputs/PriceTypeInput.tsx:14
+	// Reference: packages/tpc/src/inputs/PriceTypeInput.tsx:19
 	__( 'price type', 'event_espresso' ),
 
 	// Reference: packages/tpc/src/utils/constants.ts:13
