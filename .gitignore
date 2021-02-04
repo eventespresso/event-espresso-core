@@ -4,6 +4,7 @@ core/third_party_libs/dompdf/lib/fonts/*.afm.php
 core/third_party_libs/dompdf/lib/fonts/*.ufm.php
 coverage
 *.mo
+*.po
 *.pot
 *-translations.php
 
