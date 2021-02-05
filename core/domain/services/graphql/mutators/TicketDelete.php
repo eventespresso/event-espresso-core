@@ -78,8 +78,10 @@ class TicketDelete extends EntityMutator
      */
     public static function deleteTicketAndRelations($entity)
     {
-        // Remove related prices for the ticket
-        $entity->delete_related_permanently('Price');
+        // Remove related non-default prices for the ticket
+        $entity->delete_related_permanently('Price', [['PRC_is_default' => false]]);
+        // The ticket still might have relations with default taxes, lets divorce them
+        $entity->_remove_relations('Price');
         // Remove relation with datetimes
         $entity->_remove_relations('Datetime');
         // Now delete the ticket permanently
