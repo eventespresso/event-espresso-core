@@ -123,15 +123,15 @@ $generated_i18n_strings = array(
 	// Reference: domains/blocks/src/event-attendees/index.tsx:14
 	__( 'list', 'event_espresso' ),
 
-	// Reference: domains/blocks/src/services/utils.ts:11
-	__( 'Loading…', 'event_espresso' ),
-
-	// Reference: domains/blocks/src/services/utils.ts:19
+	// Reference: domains/blocks/src/services/utils.ts:17
 	__( 'Error', 'event_espresso' ),
 
-	// Reference: domains/blocks/src/services/utils.ts:26
+	// Reference: domains/blocks/src/services/utils.ts:24
 	// Reference: packages/ui-components/src/SimpleEntityList/EntityTemplate.tsx:16
 	__( 'Select…', 'event_espresso' ),
+
+	// Reference: domains/blocks/src/services/utils.ts:9
+	__( 'Loading…', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/EventDescription.tsx:32
 	__( 'Event Description', 'event_espresso' ),
@@ -1046,7 +1046,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/edtr-services/src/apollo/initialization/useCacheRehydration.ts:99
 	__( 'price types initialized', 'event_espresso' ),
 
-	// Reference: packages/edtr-services/src/apollo/mutations/useReorderEntities.ts:73
+	// Reference: packages/edtr-services/src/apollo/mutations/useReorderEntities.ts:72
 	__( 'reordering has been applied', 'event_espresso' ),
 
 	// Reference: packages/edtr-services/src/utils/dateAndTime.ts:38
