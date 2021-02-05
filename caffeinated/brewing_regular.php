@@ -200,7 +200,7 @@ class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
                             'PRC_is_default' => true,
                             'PRC_overrides'  => null,
                             'PRC_deleted'    => false,
-                            'PRC_order'      => 50,
+                            'PRC_order'      => 60,
                             'PRC_parent'     => null,
                             'PRC_wp_user'    => $default_creator_id,
                         ),
