@@ -1,1 +1,0 @@
-<?php return array('dependencies' => array('wp-hooks'), 'version' => '264b7fe27bdf629f70e456e285de7da7');

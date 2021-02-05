@@ -189,11 +189,11 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/multiStep/FooterButtons.tsx:22
 	__( 'Save and assign tickets', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/multiStep/Modal.tsx:33
+	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/multiStep/Modal.tsx:26
 	/* translators: %s datetime id */
 	__( 'Edit datetime %s', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/multiStep/Modal.tsx:36
+	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/multiStep/Modal.tsx:29
 	__( 'New Datetime', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:108
@@ -657,12 +657,13 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: domains/eventEditor/src/ui/tickets/defaultTickets/multiStep/FooterButtons.tsx:38
 	__( 'Save', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/defaultTickets/multiStep/Modal.tsx:26
-	/* translators: %d ticket id */
-	__( 'Edit ticket %d', 'event_espresso' ),
+	// Reference: domains/eventEditor/src/ui/tickets/defaultTickets/multiStep/Modal.tsx:22
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/Modal.tsx:26
+	/* translators: %s ticket id */
+	__( 'Edit ticket %s', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/defaultTickets/multiStep/Modal.tsx:29
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/Modal.tsx:36
+	// Reference: domains/eventEditor/src/ui/tickets/defaultTickets/multiStep/Modal.tsx:25
+	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/Modal.tsx:29
 	__( 'New Ticket Details', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/defaultTickets/multiStep/TicketFormSteps.tsx:10
@@ -690,10 +691,6 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/FooterButtons.tsx:50
 	__( 'Save and assign dates', 'event_espresso' ),
-
-	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/multiStep/Modal.tsx:33
-	/* translators: %s ticket id */
-	__( 'Edit ticket %s', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:121
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:112
@@ -1387,7 +1384,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/tpc/src/inputs/PriceTypeInput.tsx:19
 	__( 'price type', 'event_espresso' ),
 
-	// Reference: packages/tpc/src/utils/constants.ts:13
+	// Reference: packages/tpc/src/utils/constants.ts:8
 	__( 'Ticket price modifications are blocked for Tickets that have already been sold to registrants, because doing so would negatively affect internal accounting for the event. If you still need to modify ticket prices, then create a copy of those tickets, edit the prices for the new tickets, and then trash the old tickets.', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/ActiveFilters/ActiveFilters.tsx:8
