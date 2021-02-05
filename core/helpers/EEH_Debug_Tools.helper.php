@@ -536,7 +536,7 @@ class EEH_Debug_Tools
         if (EEH_Debug_Tools::plainOutput()) {
             return $var;
         }
-        return '<pre style="color:#999; padding:1em; background: #fff">' . $var . '</pre>';
+        return '<pre style="color: #9C3; display: inline-block; padding:.4em .6em; background: #334">' . $var . '</pre>';
     }
 
 

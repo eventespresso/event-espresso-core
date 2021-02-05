@@ -113,7 +113,7 @@ class DefaultPrices implements DefaultEntityGeneratorInterface
      */
     private function applyTaxes(EE_Ticket $ticket, bool $is_free)
     {
-        if (! $is_free && ! empty($this->taxes)) {
+        if (! $is_free && $ticket->taxable() && ! empty($this->taxes)) {
             foreach ($this->taxes as $tax) {
                 // assign taxes but don't duplicate them because they operate globally
                 $ticket->set_taxable(true);
