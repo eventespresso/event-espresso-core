@@ -113,7 +113,7 @@ class DefaultPrices implements DefaultEntityGeneratorInterface
      */
     private function applyTaxes(EE_Ticket $ticket, bool $is_free)
     {
-        if (! $is_free && ! empty($this->taxes)) {
+        if (! $is_free && $ticket->taxable() && ! empty($this->taxes)) {
             foreach ($this->taxes as $tax) {
                 // assign taxes but don't duplicate them because they operate globally
                 $ticket->set_taxable(true);
@@ -170,6 +170,31 @@ class DefaultPrices implements DefaultEntityGeneratorInterface
                 $this->new_prices[ $default_price_clone->ID() ] = $default_price_clone;
                 // then recheck that a base price has been set so that we don't add another one
                 $has_base_price = $is_base_price ? true : $has_base_price;
+                // \EEH_Debug_Tools::printr(
+                //     $default_price_clone->type_obj()->name(),
+                //     '$default_price_clone->type()',
+                //     __FILE__,
+                //     __LINE__,
+                //     3
+                // );
+                // \EEH_Debug_Tools::printr(
+                //     $default_price_clone->ID(),
+                //     '$default_price_clone->ID()',
+                //     __FILE__,
+                //     __LINE__
+                // );
+                // \EEH_Debug_Tools::printr(
+                //     $default_price_clone->order(),
+                //     '$default_price_clone->order()',
+                //     __FILE__,
+                //     __LINE__
+                // );
+                // \EEH_Debug_Tools::printr(
+                //     $default_price_clone->type_order(),
+                //     '$default_price_clone->type_order()',
+                //     __FILE__,
+                //     __LINE__
+                // );
             }
         }
         return [$has_base_price, $is_free];
