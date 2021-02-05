@@ -176,7 +176,7 @@ class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
                         'PRT_name'       => __("Federal Tax", "event_espresso"),
                         'PBT_ID'         => 4,
                         'PRT_is_percent' => true,
-                        'PRT_order'      => 70,
+                        'PRT_order'      => 60,
                         'PRT_deleted'    => false,
                         'PRT_wp_user'    => $default_creator_id,
                     ),
