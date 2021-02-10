@@ -235,7 +235,7 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/details/useBulkEditFormConfig.ts:55
 	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:89
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:55
-	// Reference: packages/tpc/src/components/table/useHeaderRowGenerator.ts:41
+	// Reference: packages/tpc/src/components/table/useHeaderRowGenerator.ts:47
 	__( 'Description', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:88
@@ -532,7 +532,7 @@ $generated_i18n_strings = array(
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:122
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:126
-	// Reference: packages/tpc/src/components/table/useHeaderRowGenerator.ts:53
+	// Reference: packages/tpc/src/components/table/useHeaderRowGenerator.ts:59
 	__( 'Actions', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:52
@@ -1336,19 +1336,22 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	/* translators: %s ticket name */
 	__( 'Price Calculator for Ticket: %s', 'event_espresso' ),
 
-	// Reference: packages/tpc/src/components/table/useFooterRowGenerator.tsx:42
+	// Reference: packages/tpc/src/components/table/useFooterRowGenerator.tsx:48
 	__( 'Total', 'event_espresso' ),
 
-	// Reference: packages/tpc/src/components/table/useFooterRowGenerator.tsx:51
+	// Reference: packages/tpc/src/components/table/useFooterRowGenerator.tsx:57
 	__( 'ticket total', 'event_espresso' ),
 
 	// Reference: packages/tpc/src/components/table/useHeaderRowGenerator.ts:29
-	__( 'Price Type', 'event_espresso' ),
+	__( 'Order', 'event_espresso' ),
 
 	// Reference: packages/tpc/src/components/table/useHeaderRowGenerator.ts:35
+	__( 'Price Type', 'event_espresso' ),
+
+	// Reference: packages/tpc/src/components/table/useHeaderRowGenerator.ts:41
 	__( 'Label', 'event_espresso' ),
 
-	// Reference: packages/tpc/src/components/table/useHeaderRowGenerator.ts:47
+	// Reference: packages/tpc/src/components/table/useHeaderRowGenerator.ts:53
 	__( 'Amount', 'event_espresso' ),
 
 	// Reference: packages/tpc/src/hooks/useLockedTicketAction.ts:22
@@ -1372,7 +1375,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/tpc/src/inputs/PriceDescriptionInput.tsx:9
 	__( 'price description', 'event_espresso' ),
 
-	// Reference: packages/tpc/src/inputs/PriceIdInput.tsx:7
+	// Reference: packages/tpc/src/inputs/PriceIdInput.tsx:5
 	__( 'price id', 'event_espresso' ),
 
 	// Reference: packages/tpc/src/inputs/PriceNameInput.tsx:13
@@ -1380,6 +1383,9 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 
 	// Reference: packages/tpc/src/inputs/PriceNameInput.tsx:8
 	__( 'price name', 'event_espresso' ),
+
+	// Reference: packages/tpc/src/inputs/PriceOrderInput.tsx:14
+	__( 'price order', 'event_espresso' ),
 
 	// Reference: packages/tpc/src/inputs/PriceTypeInput.tsx:19
 	__( 'price type', 'event_espresso' ),
