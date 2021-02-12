@@ -189,11 +189,11 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/multiStep/FooterButtons.tsx:22
 	__( 'Save and assign tickets', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/multiStep/Modal.tsx:26
+	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/multiStep/Modal.tsx:27
 	/* translators: %s datetime id */
 	__( 'Edit datetime %s', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/multiStep/Modal.tsx:29
+	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/multiStep/Modal.tsx:30
 	__( 'New Datetime', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:108
@@ -1062,10 +1062,10 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/edtr-services/src/utils/dateAndTime.ts:68
 	__( 'End Date is required', 'event_espresso' ),
 
-	// Reference: packages/ee-components/src/EntityList/EntityList.tsx:31
+	// Reference: packages/ee-components/src/EntityList/EntityList.tsx:30
 	__( 'no results found', 'event_espresso' ),
 
-	// Reference: packages/ee-components/src/EntityList/EntityList.tsx:32
+	// Reference: packages/ee-components/src/EntityList/EntityList.tsx:31
 	__( 'try changing filter settings', 'event_espresso' ),
 
 	// Reference: packages/ee-components/src/SimpleTicketCard/SimpleTicketCard.tsx:25
@@ -1581,7 +1581,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/ui-components/src/Steps/Steps.tsx:31
 	__( 'Steps', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/TabbableText/index.tsx:19
+	// Reference: packages/ui-components/src/TabbableText/index.tsx:20
 	__( 'Click to edit…', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/TimezoneTimeInfo/Content.tsx:14
