@@ -1581,7 +1581,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/ui-components/src/Steps/Steps.tsx:31
 	__( 'Steps', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/TabbableText/index.tsx:20
+	// Reference: packages/ui-components/src/TabbableText/index.tsx:19
 	__( 'Click to edit…', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/TimezoneTimeInfo/Content.tsx:14
