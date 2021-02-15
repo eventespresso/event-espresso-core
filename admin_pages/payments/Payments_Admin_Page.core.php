@@ -234,12 +234,15 @@ class Payments_Admin_Page extends EE_Admin_Page
 
     public function load_scripts_styles()
     {
+        // styles
+        wp_enqueue_style('espresso-ui-theme');
+        // scripts
         wp_enqueue_script('ee_admin_js');
         wp_enqueue_script('ee-text-links');
         wp_enqueue_script(
             'espresso_payments',
             EE_PAYMENTS_ASSETS_URL . 'espresso_payments_admin.js',
-            array('espresso-ui-theme', 'ee-datepicker'),
+            array('ee-datepicker'),
             EVENT_ESPRESSO_VERSION,
             true
         );
