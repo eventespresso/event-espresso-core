@@ -81,9 +81,9 @@
     "toaster.js.map": "/static/js/toaster.e2c74250.js.map",
     "toaster.php": "/static/js/toaster.78ac845e.asset.php",
     "tpc.css": "/static/css/tpc.591b9523.css",
-    "tpc.js": "/static/js/tpc.e78d907e.js",
-    "tpc.js.map": "/static/js/tpc.e78d907e.js.map",
-    "tpc.php": "/static/js/tpc.e40bcfe7.asset.php",
+    "tpc.js": "/static/js/tpc.067fce3c.js",
+    "tpc.js.map": "/static/js/tpc.067fce3c.js.map",
+    "tpc.php": "/static/js/tpc.a084490b.asset.php",
     "uiComponents.css": "/static/css/uiComponents.a1a14330.css",
     "uiComponents.js": "/static/js/uiComponents.0941bcc7.js",
     "uiComponents.js.map": "/static/js/uiComponents.0941bcc7.js.map",
@@ -119,7 +119,7 @@
     "static/js/richTextEditor.341d2973.js.LICENSE.txt": "/static/js/richTextEditor.341d2973.js.LICENSE.txt",
     "static/js/services.b5205ac5.js.LICENSE.txt": "/static/js/services.b5205ac5.js.LICENSE.txt",
     "static/js/toaster.e2c74250.js.LICENSE.txt": "/static/js/toaster.e2c74250.js.LICENSE.txt",
-    "static/js/tpc.e78d907e.js.LICENSE.txt": "/static/js/tpc.e78d907e.js.LICENSE.txt",
+    "static/js/tpc.067fce3c.js.LICENSE.txt": "/static/js/tpc.067fce3c.js.LICENSE.txt",
     "static/js/uiComponents.0941bcc7.js.LICENSE.txt": "/static/js/uiComponents.0941bcc7.js.LICENSE.txt",
     "static/js/wpPluginsPage.2c2712dd.js.LICENSE.txt": "/static/js/wpPluginsPage.2c2712dd.js.LICENSE.txt"
   },
@@ -189,7 +189,7 @@
     ],
     "tpc": [
       "static/css/tpc.591b9523.css",
-      "static/js/tpc.e78d907e.js"
+      "static/js/tpc.067fce3c.js"
     ],
     "uiComponents": [
       "static/css/uiComponents.a1a14330.css",
