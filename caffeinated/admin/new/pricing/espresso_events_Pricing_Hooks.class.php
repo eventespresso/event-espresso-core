@@ -374,6 +374,13 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                 }
             }
             $datetime->save();
+            do_action(
+                'AHEE__espresso_events_Pricing_Hooks___update_datetimes_after_save',
+                $datetime,
+                $row,
+                $datetime_data,
+                $data
+            );
             $datetime = $event->_add_relation_to($datetime, 'Datetime');
             // before going any further make sure our dates are setup correctly
             // so that the end date is always equal or greater than the start date.
