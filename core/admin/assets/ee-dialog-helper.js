@@ -80,6 +80,7 @@ jQuery(document).ready(function($) {
 
 			return this;
 		},
+		
 		closeModal: function() {
 			eedialog.fadeOut( 'fast' ).addClass('hidden');
 			overlay.fadeOut( 'fast' );
