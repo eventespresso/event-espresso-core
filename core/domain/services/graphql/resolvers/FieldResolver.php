@@ -10,7 +10,6 @@ use EE_Datetime;
 use EE_Ticket;
 use EE_State;
 use EEM_State;
-use EE_Country;
 use EEM_Country;
 use EE_Error;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
@@ -21,7 +20,6 @@ use EventEspresso\core\services\graphql\fields\GraphQLField;
 use Exception;
 use InvalidArgumentException;
 use ReflectionException;
-use WPGraphQL\Data\DataSource;
 use GraphQL\Deferred;
 use GraphQL\Error\UserError;
 use GraphQL\Type\Definition\ResolveInfo;
@@ -113,6 +111,8 @@ class FieldResolver extends ResolverBase
                 case 'wpUser':
                 case 'manager':
                     return $this->resolveWpUser($source, $args, $context);
+                case 'userId':
+                    return $this->resolveUserId($source, $args, $context);
                 case 'state': // Venue
                     return $this->resolveState($source);
                 case 'country': // State, Venue
@@ -169,8 +169,23 @@ class FieldResolver extends ResolverBase
     {
         $user_id = $source->wp_user();
         return $user_id
-            ? DataSource::resolve_user($user_id, $context)
+            ? $context->get_loader('user')->load_deferred($user_id)
             : null;
+    }
+
+
+    /**
+     * @param mixed     $source
+     * @param           $args
+     * @param           $context
+     * @return Deferred|null
+     * @throws Exception
+     * @since $VID:$
+     */
+    public function resolveUserId($source, $args, $context)
+    {
+        $user_id = $source->wp_user();
+        return $user_id ? Relay::toGlobalId('user', $user_id) : null;
     }
 
 
@@ -219,7 +234,7 @@ class FieldResolver extends ResolverBase
                 break;
         }
         return $event instanceof EE_Event
-            ? DataSource::resolve_post_object($event->ID(), $context)
+            ? $context->get_loader('post')->load_deferred($event->ID())
             : null;
     }
 
