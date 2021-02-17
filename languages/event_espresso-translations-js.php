@@ -368,12 +368,12 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/cardView/TicketDetailsPanel.tsx:33
 	__( 'reg list', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/cardView/Details.tsx:42
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/cardView/Details.tsx:41
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/cardView/Details.tsx:46
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/cardView/Details.tsx:45
 	__( 'Edit description', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/cardView/Details.tsx:43
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/cardView/Details.tsx:42
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/cardView/Details.tsx:47
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/cardView/Details.tsx:46
 	__( 'edit description…', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/config.ts:10
@@ -509,18 +509,18 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:9
 	__( 'start dates only', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/newDateOptions/AddSingleDate.tsx:18
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/newDateOptions/AddSingleDate.tsx:26
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/newDateOptions/NewDateModal.tsx:14
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/newDateOptions/OptionsModalButton.tsx:10
 	__( 'Add New Date', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/newDateOptions/AddSingleDate.tsx:18
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/newDateOptions/AddSingleDate.tsx:26
 	__( 'Add Single Date', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/newDateOptions/AddSingleDate.tsx:32
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/newDateOptions/AddSingleDate.tsx:43
 	__( 'Add a single date that only occurs once', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/newDateOptions/AddSingleDate.tsx:34
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/newDateOptions/AddSingleDate.tsx:45
 	__( 'Single Date', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:106
@@ -640,7 +640,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'view ALL registrations for this ticket.', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/defaultTickets/Container.tsx:38
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actions/Actions.tsx:17
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actions/Actions.tsx:21
 	__( 'Default tickets', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/defaultTickets/multiStep/FooterButtons.tsx:26
