@@ -290,6 +290,12 @@ class Ticket extends TypeBase
                 null,
                 esc_html__('Ticket Creator', 'event_espresso')
             ),
+            new GraphQLOutputField(
+                'userId',
+                'ID',
+                null,
+                esc_html__('Ticket Creator ID', 'event_espresso')
+            ),
             new GraphQLInputField(
                 'wpUser',
                 'Int',

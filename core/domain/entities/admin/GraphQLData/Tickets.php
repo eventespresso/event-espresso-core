@@ -50,6 +50,7 @@ class Tickets extends GraphQLData
                     reverseCalculate
                     sold
                     startDate
+                    userId
                     uses
                     __typename
                 }

@@ -161,6 +161,12 @@ class Price extends TypeBase
                 null,
                 esc_html__('Price Creator', 'event_espresso')
             ),
+            new GraphQLOutputField(
+                'userId',
+                'ID',
+                null,
+                esc_html__('Price Creator ID', 'event_espresso')
+            ),
             new GraphQLInputField(
                 'wpUser',
                 'Int',
