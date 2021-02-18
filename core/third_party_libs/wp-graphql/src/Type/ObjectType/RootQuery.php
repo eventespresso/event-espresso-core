@@ -1,13 +1,12 @@
 <?php
 
-namespace WPGraphQL\Type\Object;
+namespace WPGraphQL\Type\ObjectType;
 
 use GraphQL\Error\UserError;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQLRelay\Relay;
 use WPGraphQL\AppContext;
 use WPGraphQL\Data\DataSource;
-use WPGraphQL\Model\Term;
 
 /**
  * Class RootQuery
@@ -18,6 +17,8 @@ class RootQuery {
 
 	/**
 	 * Register the RootQuery type
+	 *
+	 * @return void
 	 */
 	public static function register_type() {
 		register_graphql_object_type(
@@ -78,7 +79,6 @@ class RootQuery {
 							switch ( $idType ) {
 								case 'uri':
 									return $context->node_resolver->resolve_uri( $args['id'] );
-									break;
 								case 'database_id':
 									$post_id = absint( $args['id'] );
 									break;
@@ -340,7 +340,6 @@ class RootQuery {
 									break;
 								case 'uri':
 									return $context->node_resolver->resolve_uri( $args['id'] );
-									break;
 								case 'global_id':
 								default:
 									$id_components = Relay::fromGlobalId( $args['id'] );
@@ -395,7 +394,6 @@ class RootQuery {
 									break;
 								case 'uri':
 									return $context->node_resolver->resolve_uri( $args['id'] );
-									break;
 								case 'login':
 									$current_user = wp_get_current_user();
 									if ( $current_user->user_login !== $args['id'] ) {
@@ -453,7 +451,7 @@ class RootQuery {
 					'viewer'      => [
 						'type'        => 'User',
 						'description' => __( 'Returns the current user', 'wp-graphql' ),
-						'resolve'     => function( $source, array $args, $context, $info ) {
+						'resolve'     => function( $source, array $args, AppContext $context, ResolveInfo $info ) {
 							return isset( $context->viewer->ID ) && ! empty( $context->viewer->ID ) ? DataSource::resolve_user( $context->viewer->ID, $context ) : null;
 						},
 					],
@@ -464,6 +462,8 @@ class RootQuery {
 
 	/**
 	 * Register RootQuery fields for Post Objects of supported post types
+	 *
+	 * @return void
 	 */
 	public static function register_post_object_fields() {
 
@@ -471,6 +471,10 @@ class RootQuery {
 		if ( ! empty( $allowed_post_types ) && is_array( $allowed_post_types ) ) {
 			foreach ( $allowed_post_types as $post_type ) {
 				$post_type_object = get_post_type_object( $post_type );
+
+				if ( ! $post_type_object instanceof \WP_Post_Type ) {
+					return;
+				}
 
 				register_graphql_field(
 					'RootQuery',
@@ -503,8 +507,11 @@ class RootQuery {
 										'post_type' => $post_type_object->name,
 									] );
 								case 'uri':
-									return $context->node_resolver->resolve_uri( $args['id'], [ 'post_type' => $post_type_object->name ] );
-									break;
+									return $context->node_resolver->resolve_uri( $args['id'], [
+										'post_type' => $post_type_object->name,
+										'archive'   => false,
+										'nodeType'  => 'Page',
+									] );
 								case 'database_id':
 									$post_id = absint( $args['id'] );
 									break;
@@ -531,7 +538,12 @@ class RootQuery {
 								$post_id   = ! empty( $revisions ) ? array_values( $revisions )[0] : null;
 							}
 
-							return ! empty( $post_id ) ? DataSource::resolve_post_object( $post_id, $context ) : null;
+							return $context->get_loader( 'post' )->load_deferred( $post_id )->then( function( $post ) use ( $post_type_object ) {
+								if ( ! isset( $post->post_type ) || ! in_array( $post->post_type, [ 'revision', $post_type_object->name ], true ) ) {
+									return null;
+								}
+								return $post;
+							});
 						},
 					]
 				);
@@ -586,12 +598,19 @@ class RootQuery {
 								$slug = esc_html( $args['slug'] );
 								return $context->node_resolver->resolve_uri( $slug );
 							}
-							$post = DataSource::resolve_post_object( $post_id, $context );
-							if ( ! get_post( $post_id ) || get_post( $post_id )->post_type !== $post_type_object->name ) {
-								return null;
-							}
 
-							return $post;
+							return $context->get_loader( 'post' )->load_deferred( $post_id )->then( function( $post ) use ( $post_type_object ) {
+
+								if ( ! $post_type_object instanceof \WP_Post_Type ) {
+									return null;
+								}
+
+								if ( ! isset( $post->post_type ) || ! in_array( $post->post_type, [ 'revision', $post_type_object->name ], true ) ) {
+									return null;
+								}
+								return $post;
+							});
+
 						},
 					]
 				);
@@ -601,6 +620,8 @@ class RootQuery {
 
 	/**
 	 * Register RootQuery fields for Term Objects of supported taxonomies
+	 *
+	 * @return void
 	 */
 	public static function register_term_object_fields() {
 
@@ -637,12 +658,11 @@ class RootQuery {
 									if ( 'database_id' === $idType ) {
 										$idType = 'id';
 									}
-									$term    = get_term_by( $idType, $args['id'], $taxonomy_object->name );
+									$term    = isset( $taxonomy_object->name ) ? get_term_by( $idType, $args['id'], $taxonomy_object->name ) : null;
 									$term_id = isset( $term->term_id ) ? absint( $term->term_id ) : null;
 									break;
 								case 'uri':
 									return $context->node_resolver->resolve_uri( $args['id'] );
-									break;
 								case 'global_id':
 								default:
 									$id_components = Relay::fromGlobalId( $args['id'] );

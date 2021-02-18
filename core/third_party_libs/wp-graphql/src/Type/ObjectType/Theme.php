@@ -1,6 +1,6 @@
 <?php
 
-namespace WPGraphQL\Type\Object;
+namespace WPGraphQL\Type\ObjectType;
 
 /**
  * Class Theme
@@ -11,6 +11,8 @@ class Theme {
 
 	/**
 	 * Register the Theme Type
+	 *
+	 * @return void
 	 */
 	public static function register_type() {
 		register_graphql_object_type(

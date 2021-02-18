@@ -1,16 +1,18 @@
 <?php
 
-namespace WPGraphQL\Type\Object;
+namespace WPGraphQL\Type\ObjectType;
 
 /**
  * Class MediaItemMeta
  *
- * @package WPGraphQL\Type\Object
+ * @package WPGraphQL\Type\ObjectType
  */
 class MediaItemMeta {
 
 	/**
 	 * Register the MediaItemMeta Type
+	 *
+	 * @return void
 	 */
 	public static function register_type() {
 		register_graphql_object_type(

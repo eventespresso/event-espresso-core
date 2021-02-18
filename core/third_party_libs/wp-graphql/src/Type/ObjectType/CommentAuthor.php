@@ -1,8 +1,14 @@
 <?php
 
-namespace WPGraphQL\Type\Object;
+namespace WPGraphQL\Type\ObjectType;
 
 class CommentAuthor {
+
+	/**
+	 * Register the CommentAuthor Type to the Schema
+	 *
+	 * @return void
+	 */
 	public static function register_type() {
 		register_graphql_object_type(
 			'CommentAuthor',
