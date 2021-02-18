@@ -196,34 +196,34 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/multiStep/Modal.tsx:30
 	__( 'New Datetime', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:108
+	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:104
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/details/useBulkEditFormConfig.ts:108
 	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:117
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:108
 	__( 'Details', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:112
+	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:108
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/details/useBulkEditFormConfig.ts:112
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:81
 	__( 'Capacity', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:117
+	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:113
 	__( 'The maximum number of registrants that can attend the event at this particular date.', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:121
+	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:117
 	__( 'Set to 0 to close registration or leave blank for no limit.', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:126
+	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:122
 	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:189
 	__( 'Trash', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:71
+	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:67
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/details/useBulkEditFormConfig.ts:45
 	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:80
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:45
 	__( 'Basics', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:75
+	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:71
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/details/useBulkEditFormConfig.ts:49
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:40
 	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:84
@@ -231,24 +231,24 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:40
 	__( 'Name', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:80
+	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:76
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/details/useBulkEditFormConfig.ts:55
 	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:89
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:55
 	// Reference: packages/tpc/src/components/table/useHeaderRowGenerator.ts:47
 	__( 'Description', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:88
+	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:84
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/details/useBulkEditFormConfig.ts:63
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:63
 	__( 'Dates', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:92
+	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:88
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:51
 	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:101
 	__( 'Start Date', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:98
+	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:94
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:65
 	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:107
 	__( 'End Date', 'event_espresso' ),
@@ -260,7 +260,10 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/DatesList.tsx:37
 	__( 'loading event dates…', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/DatesListButtons.tsx:23
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/DatesListButtons.tsx:20
+	__( 'Add a date or a ticket in order to use Ticket Assignment Manager', 'event_espresso' ),
+
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/DatesListButtons.tsx:30
 	__( 'Ticket Assignments', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/AssignTicketsButton.tsx:25
@@ -777,7 +780,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'ticket main menu', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:31
-	// Reference: packages/ee-components/src/SimpleTicketCard/actions/Edit.tsx:14
+	// Reference: packages/ee-components/src/SimpleTicketCard/actions/Edit.tsx:15
 	__( 'edit ticket', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:32
@@ -1068,11 +1071,11 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/ee-components/src/EntityList/EntityList.tsx:31
 	__( 'try changing filter settings', 'event_espresso' ),
 
-	// Reference: packages/ee-components/src/SimpleTicketCard/SimpleTicketCard.tsx:25
+	// Reference: packages/ee-components/src/SimpleTicketCard/SimpleTicketCard.tsx:27
 	// Reference: packages/ui-components/src/CalendarDateSwitcher/CalendarDateSwitcher.tsx:34
 	__( 'starts', 'event_espresso' ),
 
-	// Reference: packages/ee-components/src/SimpleTicketCard/SimpleTicketCard.tsx:32
+	// Reference: packages/ee-components/src/SimpleTicketCard/SimpleTicketCard.tsx:34
 	// Reference: packages/ui-components/src/CalendarDateSwitcher/CalendarDateSwitcher.tsx:47
 	__( 'ends', 'event_espresso' ),
 
@@ -1171,7 +1174,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/rich-text-editor/src/rte-old/components/toolbarButtons/WPMedia.tsx:10
 	__( 'Select media', 'event_espresso' ),
 
-	// Reference: packages/rich-text-editor/src/components/RichTextEditor/RichTextEditor.tsx:81
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/RichTextEditor.tsx:84
 	__( 'Write something…', 'event_espresso' ),
 
 	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/Toolbar.tsx:20
@@ -1257,11 +1260,11 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/rich-text-editor/src/components/RichTextEditor/render/Image/Toolbar.tsx:30
 	__( 'Image toolbar', 'event_espresso' ),
 
-	// Reference: packages/rich-text-editor/src/components/WithEditMode/WithEditMode.tsx:59
+	// Reference: packages/rich-text-editor/src/components/WithEditMode/WithEditMode.tsx:60
 	// Reference: packages/rich-text-editor/src/rte-old/components/RTEWithEditMode/RTEWithEditMode.tsx:33
 	__( 'Visual editor', 'event_espresso' ),
 
-	// Reference: packages/rich-text-editor/src/components/WithEditMode/WithEditMode.tsx:60
+	// Reference: packages/rich-text-editor/src/components/WithEditMode/WithEditMode.tsx:61
 	// Reference: packages/rich-text-editor/src/rte-old/components/RTEWithEditMode/RTEWithEditMode.tsx:34
 	__( 'HTML editor', 'event_espresso' ),
 
