@@ -1,8 +1,14 @@
 <?php
 
-namespace WPGraphQL\Type\Object;
+namespace WPGraphQL\Type\ObjectType;
 
 class UserRole {
+
+	/**
+	 * Register the UserRole Type
+	 *
+	 * @return void
+	 */
 	public static function register_type() {
 		register_graphql_object_type(
 			'UserRole',

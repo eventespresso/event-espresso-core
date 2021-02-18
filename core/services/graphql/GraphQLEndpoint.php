@@ -35,6 +35,9 @@ class GraphQLEndpoint extends WordPressOption
     {
         parent::__construct(GraphQLEndpoint::OPTION_NAME, GraphQLEndpoint::DEFAULT_ENDPOINT, true);
         add_action('graphql_register_settings', [$this, 'verifyAndSetEndpoint'], 20);
+        // disable WPGraphQL admin by default.
+        add_filter('graphql_show_admin', '__return_false', 10);
+        add_filter('graphql_enable_graphiql', '__return_false', 10);
     }
 
 

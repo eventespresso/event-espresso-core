@@ -2,8 +2,10 @@
 
 namespace WPGraphQL\Model;
 
+use Exception;
 use GraphQL\Error\UserError;
 use GraphQLRelay\Relay;
+use WP_Post;
 
 /**
  * Class MenuItem - Models the data for the MenuItem object type
@@ -30,19 +32,19 @@ class MenuItem extends Model {
 	/**
 	 * Stores the incoming post data
 	 *
-	 * @var \WP_Post $data
+	 * @var mixed|WP_Post|object $data
 	 */
 	protected $data;
 
 	/**
 	 * MenuItem constructor.
 	 *
-	 * @param \WP_Post $post The incoming WP_Post object that needs modeling
+	 * @param WP_Post $post The incoming WP_Post object that needs modeling
 	 *
 	 * @return void
-	 * @throws \Exception
+	 * @throws Exception
 	 */
-	public function __construct( \WP_Post $post ) {
+	public function __construct( WP_Post $post ) {
 		$this->data = wp_setup_nav_menu_item( $post );
 		parent::__construct();
 	}
@@ -54,7 +56,7 @@ class MenuItem extends Model {
 	 * it's not considered a public node
 	 *
 	 * @return bool
-	 * @throws \Exception
+	 * @throws Exception
 	 */
 	public function is_private() {
 
@@ -81,7 +83,7 @@ class MenuItem extends Model {
 		}
 
 		if ( is_wp_error( $menus ) ) {
-			throw new \Exception( sprintf( __( 'No menus could be found for menu item %s', 'wp-graphql' ), $this->data->ID ) );
+			throw new Exception( sprintf( __( 'No menus could be found for menu item %s', 'wp-graphql' ), $this->data->ID ) );
 		}
 		$menu_id = $menus[0];
 		if ( empty( $location_ids ) || ! in_array( $menu_id, $location_ids, true ) ) {
@@ -102,10 +104,10 @@ class MenuItem extends Model {
 
 			$this->fields = [
 				'id'               => function() {
-					return ! empty( $this->data->ID ) ? Relay::toGlobalId( 'nav_menu_item', $this->data->ID ) : null;
+					return ! empty( $this->data->ID ) ? Relay::toGlobalId( 'post', $this->data->ID ) : null;
 				},
 				'parentId'         => function() {
-					return ! empty( $this->data->menu_item_parent ) ? Relay::toGlobalId( 'nav_menu_item', $this->data->menu_item_parent ) : null;
+					return ! empty( $this->data->menu_item_parent ) ? Relay::toGlobalId( 'post', $this->data->menu_item_parent ) : null;
 				},
 				'parentDatabaseId' => function() {
 					return $this->data->menu_item_parent;
@@ -123,7 +125,7 @@ class MenuItem extends Model {
 					return ( ! empty( $this->data->description ) ) ? $this->data->description : null;
 				},
 				'label'            => function() {
-					return ( ! empty( $this->data->title ) ) ? $this->data->title : null;
+					return ( ! empty( $this->data->title ) ) ? $this->html_entity_decode( $this->data->title, 'label', true ) : null;
 				},
 				'linkRelationship' => function() {
 					return ! empty( $this->data->xfn ) ? $this->data->xfn : null;
@@ -160,6 +162,7 @@ class MenuItem extends Model {
 							}
 						}
 					}
+
 					return $url;
 
 				},

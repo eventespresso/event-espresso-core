@@ -2,6 +2,7 @@
 
 namespace WPGraphQL\Data\Connection;
 
+use Exception;
 use GraphQL\Error\InvariantViolation;
 use GraphQL\Type\Definition\ResolveInfo;
 use WPGraphQL\AppContext;
@@ -25,17 +26,17 @@ class PostObjectConnectionResolver extends AbstractConnectionResolver {
 	/**
 	 * PostObjectConnectionResolver constructor.
 	 *
-	 * @param mixed       $source                         The object passed down from the previous
-	 *                                                    level in the Resolve tree
-	 * @param array       $args                           The input arguments for the query
-	 * @param AppContext  $context                        The context of the request
-	 * @param ResolveInfo $info                           The resolve info passed down the Resolve
-	 *                                                    tree
-	 * @param mixed string|array $post_type The post type to resolve for
+	 * @param mixed              $source    source passed down from the resolve tree
+	 * @param array              $args      array of arguments input in the field as part of the
+	 *                                      GraphQL query
+	 * @param AppContext         $context   Object containing app context that gets passed down the
+	 *                                      resolve tree
+	 * @param ResolveInfo        $info      Info about fields passed down the resolve tree
+	 * @param mixed|string|array $post_type The post type to resolve for
 	 *
-	 * @throws \Exception
+	 * @throws Exception
 	 */
-	public function __construct( $source, $args, $context, $info, $post_type = 'any' ) {
+	public function __construct( $source, array $args, AppContext $context, ResolveInfo $info, $post_type = 'any' ) {
 
 		/**
 		 * The $post_type can either be a single value or an array of post_types to
@@ -82,7 +83,7 @@ class PostObjectConnectionResolver extends AbstractConnectionResolver {
 	 *
 	 * @return \WP_Query
 	 *
-	 * @throws \Exception
+	 * @throws Exception
 	 */
 	public function get_query() {
 
@@ -130,7 +131,7 @@ class PostObjectConnectionResolver extends AbstractConnectionResolver {
 
 			if ( $this->source instanceof Post ) {
 				$parent_post_type_obj = get_post_type_object( $this->source->post_type );
-				if ( ! current_user_can( $parent_post_type_obj->cap->edit_post, $this->source->ID ) ) {
+				if ( ! isset( $parent_post_type_obj->cap->edit_post ) || ! current_user_can( $parent_post_type_obj->cap->edit_post, $this->source->ID ) ) {
 					$this->should_execute = false;
 				}
 				/**
@@ -269,20 +270,18 @@ class PostObjectConnectionResolver extends AbstractConnectionResolver {
 					return absint( $id );
 				}, $ids );
 				if ( ! empty( $this->get_offset() ) ) {
-					if ( ! empty( $this->get_offset() ) ) {
-						// Determine if the offset is in the array
-						$key = array_search( $this->get_offset(), $ids, true );
-						// If the offset is in the array
-						if ( false !== $key ) {
-							$key = absint( $key );
-							// Slice the array from the back
-							if ( ! empty( $this->args['before'] ) ) {
-								$ids = array_slice( $ids, 0, $key, true );
-								// Slice the array from the front
-							} else {
-								$key++;
-								$ids = array_slice( $ids, $key, null, true );
-							}
+					// Determine if the offset is in the array
+					$key = array_search( $this->get_offset(), $ids, true );
+					// If the offset is in the array
+					if ( false !== $key ) {
+						$key = absint( $key );
+						// Slice the array from the back
+						if ( ! empty( $this->args['before'] ) ) {
+							$ids = array_slice( $ids, 0, $key, true );
+							// Slice the array from the front
+						} else {
+							$key ++;
+							$ids = array_slice( $ids, $key, null, true );
 						}
 					}
 				}
@@ -368,10 +367,12 @@ class PostObjectConnectionResolver extends AbstractConnectionResolver {
 	 * this was quick. I'd be down to explore more dynamic ways to map this, but for
 	 * now this gets the job done.
 	 *
-	 * @since  0.0.5
+	 * @param array $where_args The args passed to the connection
+	 *
 	 * @return array
+	 * @since  0.0.5
 	 */
-	public function sanitize_input_fields( $where_args ) {
+	public function sanitize_input_fields( array $where_args ) {
 
 		$arg_mapping = [
 			'authorName'    => 'author_name',
@@ -425,8 +426,8 @@ class PostObjectConnectionResolver extends AbstractConnectionResolver {
 		 * @param ResolveInfo        $info       The ResolveInfo object
 		 * @param mixed|string|array $post_type  The post type for the query
 		 *
-		 * @since 0.0.5
 		 * @return array
+		 * @since 0.0.5
 		 */
 		$query_args = apply_filters( 'graphql_map_input_fields_to_wp_query', $query_args, $where_args, $this->source, $this->args, $this->context, $this->info, $this->post_type );
 
@@ -445,7 +446,7 @@ class PostObjectConnectionResolver extends AbstractConnectionResolver {
 	 * This strips the status from the query_args if the user doesn't have permission to query for
 	 * posts of that status.
 	 *
-	 * @param $stati
+	 * @param mixed $stati The status(es) to sanitize
 	 *
 	 * @return array|null
 	 */
@@ -488,11 +489,16 @@ class PostObjectConnectionResolver extends AbstractConnectionResolver {
 						if ( 'publish' === $status ) {
 							return $status;
 						}
-						if ( current_user_can( $post_type_object->cap->edit_posts ) || 'private' === $status && current_user_can( $post_type_object->cap->read_private_posts ) ) {
-							return $status;
-						} else {
+
+						if ( 'private' === $status && ( ! isset( $post_type_object->cap->read_private_posts ) || ! current_user_can( $post_type_object->cap->read_private_posts ) ) ) {
 							return null;
 						}
+
+						if ( ! isset( $post_type_object->cap->edit_posts ) || ! current_user_can( $post_type_object->cap->edit_posts ) ) {
+							return null;
+						}
+
+						return $status;
 					}
 				},
 				$statuses

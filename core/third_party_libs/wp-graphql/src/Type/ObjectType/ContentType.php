@@ -1,8 +1,14 @@
 <?php
 
-namespace WPGraphQL\Type\Object;
+namespace WPGraphQL\Type\ObjectType;
 
 class ContentType {
+
+	/**
+	 * Register the ContentType Type to the Schema
+	 *
+	 * @return void
+	 */
 	public static function register_type() {
 
 		$interfaces = [ 'Node', 'UniformResourceIdentifiable' ];

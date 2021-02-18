@@ -1,6 +1,6 @@
 <?php
 
-namespace WPGraphQL\Type\Object;
+namespace WPGraphQL\Type\ObjectType;
 
 /**
  * Class PostTypeLabelDetails
@@ -11,6 +11,8 @@ class PostTypeLabelDetails {
 
 	/**
 	 * Register the PostTypeLabelDetails type
+	 *
+	 * @return void
 	 */
 	public static function register_type() {
 		register_graphql_object_type(
