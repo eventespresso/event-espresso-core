@@ -116,7 +116,7 @@ if (function_exists('espresso_version')) {
             if (! class_exists('WPGraphQL')) {
                 require_once EE_THIRD_PARTY . 'wp-graphql/wp-graphql.php';
             }
-            graphql_init()->activate();
+            graphql_activation_callback();
         }
 
         register_activation_hook(EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_activation');
@@ -130,7 +130,7 @@ if (function_exists('espresso_version')) {
             if (! class_exists('WPGraphQL')) {
                 require_once EE_THIRD_PARTY . 'wp-graphql/wp-graphql.php';
             }
-            graphql_init()->deactivate();
+            graphql_deactivation_callback();
         }
         register_deactivation_hook(EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_deactivation');
 
