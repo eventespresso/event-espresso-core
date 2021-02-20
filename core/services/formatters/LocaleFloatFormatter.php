@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\services\formatters;
 
+use EventEspresso\core\services\locale\Locale;
 use EventEspresso\core\services\locale\Locales;
 
 abstract class LocaleFloatFormatter implements LocaleFloatFormatterInterface
@@ -111,28 +112,33 @@ abstract class LocaleFloatFormatter implements LocaleFloatFormatterInterface
     /**
      * formats the provided number to 6 decimal places using the site locale and returns a string
      *
-     * @param float $number unformatted float, ex: 1.23456789
-     * @return string       formatted number value, ex: '1.234568'
+     * @param float $number    unformatted float, ex: 1.23456789
+     * @param int   $precision the number of decimal places to round to
+     * @return string          formatted number value, ex: '1.234568'
      */
-    public function precisionFormat($number)
+    public function precisionFormat($number, $precision = LocaleFloatFormatter::DECIMAL_PRECISION)
     {
         $locale = $this->locales->getLocale($this->locales->getSiteLocaleName());
-        return $this->format($locale, $number, LocaleFloatFormatter::DECIMAL_PRECISION);
+        return $this->format($locale, $number, $precision);
     }
 
 
     /**
      * strips formatting using the site locale, then rounds the provided number to 6 decimal places and returns a float
      *
-     * @param float $number unformatted number value, ex: 1234.5678956789
-     * @param int   $mode   one of the PHP_ROUND_* constants for round up, round down, etc
-     * @return float        rounded value, ex: 1,234.567896
+     * @param float $number    unformatted number value, ex: 1234.5678956789
+     * @param int   $precision the number of decimal places to round to
+     * @param int   $mode      one of the PHP_ROUND_* constants for round up, round down, etc
+     * @return float           rounded value, ex: 1,234.567896
      */
-    public function precisionRound($number, $mode = PHP_ROUND_HALF_UP)
-    {
+    public function precisionRound(
+        $number,
+        $precision = LocaleFloatFormatter::DECIMAL_PRECISION,
+        $mode = PHP_ROUND_HALF_UP
+    ) {
         return round(
             $this->filterNumericValue($number),
-            LocaleFloatFormatter::DECIMAL_PRECISION,
+            $precision,
             $mode
         );
     }
@@ -142,14 +148,14 @@ abstract class LocaleFloatFormatter implements LocaleFloatFormatterInterface
      * strips formatting for the provided locale (defaults to site locale),
      * then rounds the provided number and returns a float
      *
-     * @param float  $number      unformatted number value, ex: 1234.56789
-     * @param string $locale_name ex: 'en_US'
-     * @param int    $mode        one of the PHP_ROUND_* constants for round up, round down, etc
-     * @return float              rounded value, ex: 1,234.57
+     * @param float         $number unformatted number value, ex: 1234.56789
+     * @param string|Locale $locale ex: 'en_US' or Locale object
+     * @param int           $mode   one of the PHP_ROUND_* constants for round up, round down, etc
+     * @return float                rounded value, ex: 1,234.57
      */
-    public function roundForLocale($number, $locale_name = '', $mode = PHP_ROUND_HALF_UP)
+    public function roundForLocale($number, $mode = PHP_ROUND_HALF_UP, $locale = '')
     {
-        $locale = $this->locales->getLocale($locale_name);
+        $locale = $this->locales->getLocale($locale);
         return round($this->filterNumericValue($number), $locale->decimalPrecision(), $mode);
     }
 }
