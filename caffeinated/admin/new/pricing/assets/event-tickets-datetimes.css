@@ -251,8 +251,9 @@
 
 
 .ee-full-textarea-inp {
+    height: auto;
+    min-height: 3rem;
     width: 100%;
-    height: 100px;
 }
 
 .edit-price-PRC_desc {
@@ -666,10 +667,9 @@
 
 .edit-ticket-row .edit-price-PRC_amount {
     text-align: right;
-    margin: 0;
-    margin-left: 4px;
+    margin: 0 0 0 4px;
     padding-right: 5px;
-    width: 75px;
+    min-width: 80px;
 }
 
 .ee-active-price .ee-create-button {
