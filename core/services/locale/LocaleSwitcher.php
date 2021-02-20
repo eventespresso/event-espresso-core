@@ -73,7 +73,7 @@ class LocaleSwitcher
                 $category = LC_ALL;
                 $locale   = $locale_setting;
             }
-            setlocale($category, $locale);
+            setlocale(absint($category), $locale);
         }
     }
 
