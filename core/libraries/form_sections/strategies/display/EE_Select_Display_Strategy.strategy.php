@@ -7,7 +7,7 @@
  * displays either simple arrays as selected, or if a 2d array is provided, separates them into optgroups
  *
  * @package             Event Espresso
- * @subpackage  core
+ * @subpackage          core
  * @author              Mike Nelson
  *
  *
@@ -15,14 +15,27 @@
 class EE_Select_Display_Strategy extends EE_Display_Strategy_Base
 {
     /**
+     * @var EE_Form_Input_With_Options_Base
+     */
+    protected $_input;
+
+
+    /**
      *
-     * @throws EE_Error
      * @return string of html to display the field
+     * @throws EE_Error
      */
     public function display()
     {
         if (! $this->_input instanceof EE_Form_Input_With_Options_Base) {
-            throw new EE_Error(sprintf(esc_html__('Cannot use Select Display Strategy with an input that doesn\'t have options', 'event_espresso')));
+            throw new EE_Error(
+                sprintf(
+                    esc_html__(
+                        'Cannot use Select Display Strategy with an input that doesn\'t have options',
+                        'event_espresso'
+                    )
+                )
+            );
         }
 
         $options_html = '';
@@ -31,7 +44,8 @@ class EE_Select_Display_Strategy extends EE_Display_Strategy_Base
             EEH_HTML::indent(1, 'optgroup');
             foreach ($this->_input->options() as $opt_group_label => $opt_group) {
                 if (! empty($opt_group_label)) {
-                    $options_html .= EEH_HTML::nl(0, 'optgroup') . '<optgroup label="' . esc_attr($opt_group_label) . '">';
+                    $options_html .= EEH_HTML::nl(0, 'optgroup');
+                    $options_html .= '<optgroup label="' . esc_attr($opt_group_label) . '">';
                 }
                 EEH_HTML::indent(1, 'option');
                 $options_html .= $this->_display_options($opt_group);
@@ -42,16 +56,16 @@ class EE_Select_Display_Strategy extends EE_Display_Strategy_Base
             }
             EEH_HTML::indent(-1, 'optgroup');
         } else {
-            $options_html.=$this->_display_options($this->_input->options());
+            $options_html .= $this->_display_options($this->_input->options());
         }
 
         return $this->fullDisplayString('select', $options_html);
     }
 
 
-
     /**
      * Displays a flat list of options as option tags
+     *
      * @param array $options
      * @return string
      */
@@ -59,26 +73,74 @@ class EE_Select_Display_Strategy extends EE_Display_Strategy_Base
     {
         $html = '';
         EEH_HTML::indent(1, 'option');
-        foreach ($options as $value => $display_text) {
+        foreach ($options as $value => $option) {
             // even if this input uses EE_Text_Normalization if one of the array keys is a numeric string, like "123",
             // PHP will have converted it to a PHP integer (eg 123). So we need to make sure it's a string
             $unnormalized_value = $this->_input->get_normalization_strategy()->unnormalize_one($value);
-            $selected = $this->_check_if_option_selected($unnormalized_value) ? ' selected' : '';
-            $html .= EEH_HTML::nl(0, 'option') . '<option value="' . esc_attr($unnormalized_value) . '"' . $selected . '>' . $display_text . '</option>';
+            $html               .= is_array($option)
+                ? $this->processArrayOption($unnormalized_value, $option)
+                : $this->processTextOption($unnormalized_value, $option);
         }
         EEH_HTML::indent(-1, 'option');
         return $html;
     }
 
 
+    /**
+     * @param string $value
+     * @param array  $attributes
+     * @return string
+     */
+    protected function processArrayOption($value, $attributes)
+    {
+        $html = '';
+        if (! isset($attributes['display_text'])) {
+            return $html;
+        }
+        $display_text = $attributes['display_text'];
+        unset($attributes['display_text']);
+        if ($this->optionIsSelected($value)) {
+            $attributes['selected'] = 'selected';
+        }
+        $attributes['value'] = esc_attr($value);
+        $html                .= EEH_HTML::nl(0, 'option');
+        $html                .= '<option ';
+        foreach ($attributes as $attribute => $attribute_value) {
+            $attribute       = sanitize_key($attribute);
+            $attribute_value = esc_attr($attribute_value);
+            $html            .= " {$attribute}='{$attribute_value}'";
+        }
+        $html .= '>';
+        $html .= $display_text;
+        $html .= '</option>';
+        return $html;
+    }
+
+
+    /**
+     * @param string $value
+     * @param string $option
+     * @return string
+     */
+    protected function processTextOption($value, $option)
+    {
+        $html     = '';
+        $selected = $this->optionIsSelected($value) ? ' selected="selected"' : '';
+        $html     .= EEH_HTML::nl(0, 'option');
+        $html     .= '<option value="' . esc_attr($value) . '"' . $selected . '>';
+        $html     .= $option;
+        $html     .= '</option>';
+        return $html;
+    }
+
 
     /**
      * Checks if that value is the one selected
      *
      * @param string|int $option_value unnormalized value option (string). How it will appear in the HTML.
-     * @return string
+     * @return bool
      */
-    protected function _check_if_option_selected($option_value)
+    protected function optionIsSelected($option_value)
     {
         return $option_value === $this->_input->raw_value();
     }

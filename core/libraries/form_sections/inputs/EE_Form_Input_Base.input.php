@@ -208,10 +208,20 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
         }
         // loop thru incoming options
         foreach ($input_args as $key => $value) {
-            // add underscore to $key to match property names
-            $_key = '_' . $key;
-            if (property_exists($this, $_key)) {
-                $this->{$_key} = $value;
+            // add underscore to $key to match setter or property names
+            $setter = "set_{$key}";
+            if (method_exists($this, $setter)) {
+                $this->{$setter}($value);
+                continue;
+            }
+            $setter = "_set_{$key}";
+            if (method_exists($this, $setter)) {
+                $this->{$setter}($value);
+                continue;
+            }
+            $_prop = "_{$key}";
+            if (property_exists($this, $_prop)) {
+                $this->{$_prop} = $value;
             }
         }
         // ensure that "required" is set correctly
@@ -490,6 +500,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      * Gets the HTML
      *
      * @return string
+     * @throws EE_Error
      */
     public function get_html()
     {
@@ -616,7 +627,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
             if ($validation_strategy instanceof EE_Validation_Strategy_Base) {
                 try {
                     $validation_strategy->validate($this->normalized_value());
-                } catch (EE_Validation_Error $e) {
+                } catch (Exception $e) {
                     $this->add_validation_error($e);
                 }
             }
@@ -678,7 +689,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
             // we want to mostly leave the input alone in case we need to re-display it to the user
             $this->_set_normalized_value($this->_normalization_strategy->normalize($this->raw_value()));
             return false;
-        } catch (EE_Validation_Error $e) {
+        } catch (Exception $e) {
             $this->add_validation_error($e);
             return true;
         }
@@ -1242,10 +1253,11 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     }
 
 
-
     /**
      * Makes this input disabled. That means it will have the HTML attribute 'disabled="disabled"',
      * and server-side if any input was received it will be ignored
+     *
+     * @param bool $disable
      */
     public function disable($disable = true)
     {
