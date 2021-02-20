@@ -920,6 +920,22 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\shortcodes\LegacyShortcodesManager' => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\request\CurrentPage'                => EE_Dependency_Map::load_from_cache,
             ],
+            'EventEspresso\core\services\locale\Locales'                   => [
+                'EventEspresso\core\services\locale\DefaultLocaleData' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\locale\LocaleSwitcher' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\services\locale\DefaultLocaleData'                   => [
+                'EE_Currency_Config' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\services\formatters\CurrencyFormatter' => [
+                'EventEspresso\core\services\locale\Locales' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\services\formatters\NumberFormatter'       => [
+                'EventEspresso\core\services\locale\Locales' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\services\calculators\LineItemCalculator'   => [
+                'EventEspresso\core\services\formatters\CurrencyFormatter' => EE_Dependency_Map::load_from_cache,
+            ],
         ];
     }
 
