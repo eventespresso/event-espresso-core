@@ -187,7 +187,7 @@ class EEM_Country extends EEM_Base
      *
      * @param string $country_ISO
      * @return string
-     * @throws EE_Error
+     * @throws EE_Error|ReflectionException
      */
     public function get_country_name_by_ISO($country_ISO)
     {
@@ -219,5 +219,31 @@ class EEM_Country extends EEM_Base
             }
         }
         return $this->get_one([['CNT_name' => $country_name]]);
+    }
+
+
+    /**
+     * @param string $currency_ISO
+     * @return EE_Country|EE_Base_Class|EE_Soft_Delete_Base_Class|NULL
+     * @throws EE_Error
+     * @since   $VID:$
+     */
+    public function getCountryForCurrencyISO($currency_ISO)
+    {
+        return $this->get_one([['CNT_cur_code' => $currency_ISO]]);
+    }
+
+
+    /**
+     * @param string $currency_ISO
+     * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since   $VID:$
+     */
+    public function getCountryISOForCurrencyISO($currency_ISO)
+    {
+        $country = $this->getCountryForCurrencyISO($currency_ISO);
+        return $country instanceof EE_Country ? $country->Iso3Code() : '';
     }
 }
