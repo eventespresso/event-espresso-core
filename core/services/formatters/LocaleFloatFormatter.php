@@ -80,6 +80,9 @@ abstract class LocaleFloatFormatter implements LocaleFloatFormatterInterface
         $formatted_number = chunk_split(strrev($integer), $grouping, $thousands_separator);
         // so THEN we reverse the string again and remove any extra separators
         $formatted_number = ltrim(strrev($formatted_number), $thousands_separator);
+        if ($precision === 0) {
+            return $formatted_number;
+        }
         // now let's deal with the decimal places, by first adding a decimal to an otherwise non-decimal number
         $decimal = "0.{$decimal}";
         // then type cast the string to a float and round to the appropriate precision for the locale
