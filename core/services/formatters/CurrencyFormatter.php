@@ -23,12 +23,12 @@ class CurrencyFormatter extends LocaleFloatFormatter
     const FORMAT_LOCALIZED_CURRENCY = 2;
 
     /**
-     * localized number no symbols: '$123,456.12 USD'
+     * localized number with currency symbol and code: '$123,456.12 USD'
      */
     const FORMAT_LOCALIZED_CURRENCY_RAW_CODE = 3;
 
     /**
-     * localized number no symbols: '$123,456.12 <span>USD</span>'
+     * localized number with currency symbol and code wrapped in span: '$123,456.12 <span>USD</span>'
      */
     const FORMAT_LOCALIZED_CURRENCY_HTML_CODE = 4;
 

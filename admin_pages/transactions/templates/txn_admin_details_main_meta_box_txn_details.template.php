@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 /**
  * @var EE_Attendee  $attendee
  * @var EE_Payment[] $payments
@@ -22,8 +24,6 @@
  * @var string       $line_item_table
  * @var string       $status_change_select
  */
-
-use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 ?>
 
@@ -137,10 +137,10 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                             ?>
                             <tr id="txn-admin-payment-tr-<?php echo absint($PAY_ID); ?>">
                                 <td>
-                <span id="payment-status-<?php echo absint($PAY_ID); ?>"
-                      class="ee-status-strip-td ee-status-strip pymt-status-<?php echo esc_attr($payment->STS_ID()); ?>"
-                >
-                </span>
+                                    <span id="payment-status-<?php echo absint($PAY_ID); ?>"
+                                        class="ee-status-strip-td ee-status-strip pymt-status-<?php echo esc_attr($payment->STS_ID()); ?>"
+                                    >
+                                    </span>
                                     <div id="payment-STS_ID-<?php echo absint($PAY_ID); ?>" class="hidden">
                                         <?php echo esc_html($payment->STS_ID()); ?>
                                     </div>
@@ -227,12 +227,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                                     ?>
                                     <span class="<?php echo esc_attr($payment_class); ?>">
                                         <span id="payment-amount-<?php echo absint($PAY_ID); ?>" style="display:inline;">
-                                        <?php echo EEH_Template::format_currency(
-                                            $payment->amount(),
-                                            false,
-                                            false
-                                        ); // already escaped
-                                        ?>
+                                            <?php echo $payment->prettyAmount(); ?>
                                         </span>
                                     </span>
                                 </td>
@@ -256,14 +251,14 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                         <?php
                         $overpaid = $payment_total > $grand_raw_total
                             ? '<span id="overpaid">'
-                              . __('This transaction has been overpaid ! ', 'event_espresso')
+                              . esc_html__('This transaction has been overpaid ! ', 'event_espresso')
                               . '</span>'
                             : '';
                         echo wp_kses(
                             $overpaid
                             . sprintf(
-                                __('Payments Total %s', 'event_espresso'),
-                                '(' . EE_Registry::instance()->CFG->currency->code . ')'
+                                esc_html__('Payments Total %s', 'event_espresso'),
+                                '(' . EEH_Money::getCurrencyIsoCodeForLocale() . ')'
                             ),
                             AllowedTags::getAllowedTags()
                         ); ?>
@@ -271,12 +266,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                             </th>
                             <th class=" jst-rght">
                         <span id="txn-admin-payment-total">
-                        <?php
-                        echo EEH_Template::format_currency(
-                            $payment_total,
-                            false,
-                            false
-                        ); // already escaped ?>
+                            <?php echo EEH_Money::formatForLocale($payment_total); ?>
                         </span>
                             </th>
                         </tr>

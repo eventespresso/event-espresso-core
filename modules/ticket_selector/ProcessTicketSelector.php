@@ -272,6 +272,7 @@ class ProcessTicketSelector
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     private function addTicketsToCart(array $valid)
     {
@@ -343,7 +344,7 @@ class ProcessTicketSelector
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
-     * @throws EE_Error
+     * @throws EE_Error|ReflectionException
      */
     private function addTicketToCart(EE_Ticket $ticket, $qty = 1)
     {
@@ -382,7 +383,7 @@ class ProcessTicketSelector
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
-     * @throws InvalidArgumentException
+     * @throws InvalidArgumentException|ReflectionException
      */
     private function processSuccessfulCart($tickets_added)
     {

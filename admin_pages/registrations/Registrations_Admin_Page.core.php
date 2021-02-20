@@ -2078,15 +2078,18 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             $this->_template_args['resend_registration_button'] = '';
         }
         $this->_template_args['currency_sign'] = EE_Registry::instance()->CFG->currency->sign;
-        $payment                               = $transaction->get_first_related('Payment');
-        $payment                               = ! $payment instanceof EE_Payment
+
+        $payment = $transaction->get_first_related('Payment');
+        $payment = ! $payment instanceof EE_Payment
             ? EE_Payment::new_instance()
             : $payment;
-        $payment_method                        = $payment->get_first_related('Payment_Method');
-        $payment_method                        = ! $payment_method instanceof EE_Payment_Method
+
+        $payment_method = $payment->get_first_related('Payment_Method');
+        $payment_method = $payment_method instanceof EE_Payment_Method
             ? EE_Payment_Method::new_instance()
             : $payment_method;
-        $reg_details                           = [
+
+        $reg_details = [
             'payment_method'       => $payment_method->name(),
             'response_msg'         => $payment->gateway_response(),
             'registration_id'      => $this->_registration->get('REG_code'),
@@ -2480,7 +2483,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                         : '';
                 $att_nmbr++;
             }
-            $this->_template_args['currency_sign'] = EE_Registry::instance()->CFG->currency->sign;
         }
         $template_path = REG_TEMPLATE_PATH . 'reg_admin_details_main_meta_box_attendees.template.php';
         EEH_Template::display_template($template_path, $this->_template_args);

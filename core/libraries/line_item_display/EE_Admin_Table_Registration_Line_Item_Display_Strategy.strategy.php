@@ -15,9 +15,10 @@ class EE_Admin_Table_Registration_Line_Item_Display_Strategy extends EE_Admin_Ta
 {
     /**
      * Table header for display.
-     * @since   4.8
+     *
      * @param array $options
      * @return string
+     * @since   4.8
      */
     protected function _table_header($options)
     {
@@ -33,29 +34,30 @@ class EE_Admin_Table_Registration_Line_Item_Display_Strategy extends EE_Admin_Ta
     }
 
 
-
-
-
     /**
      *    _item_row
      *
      * @param EE_Line_Item $line_item
      * @param array        $options
      * @return mixed
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    protected function _item_row(EE_Line_Item $line_item, $options = array())
+    protected function _item_row(EE_Line_Item $line_item, $options = [])
     {
-        $line_item_related_object = $line_item->get_object();
+        $line_item_related_object        = $line_item->get_object();
         $parent_line_item_related_object = $line_item->parent() instanceof EE_Line_Item
             ? $line_item->parent()->get_object()
             : null;
         // start of row
         $row_class = $options['odd'] ? 'item odd' : 'item';
-        $html = EEH_HTML::tr('', '', $row_class);
+        $html      = EEH_HTML::tr('', '', $row_class);
 
 
         // Name Column
-        $name_link = $line_item_related_object instanceof EEI_Admin_Links ? $line_item_related_object->get_admin_details_link() : '';
+        $name_link = $line_item_related_object instanceof EEI_Admin_Links
+            ? $line_item_related_object->get_admin_details_link()
+            : '';
 
         // related object scope.
         $parent_related_object_name = $parent_line_item_related_object instanceof EEI_Line_Item_Object
@@ -68,18 +70,21 @@ class EE_Admin_Table_Registration_Line_Item_Display_Strategy extends EE_Admin_Ta
             ? $parent_line_item_related_object->get_admin_details_link()
             : '';
 
-
         $name_html = $line_item_related_object instanceof EEI_Line_Item_Object
-            ? $line_item_related_object->name() : $line_item->name();
-        $name_html = $name_link ? '<a href="' . $name_link . '">' . $name_html . '</a>'
+            ? $line_item_related_object->name()
+            : $line_item->name();
+
+        $name_html = $name_link
+            ? '<a href="' . $name_link . '">' . $name_html . '</a>'
             : $name_html;
+
         $name_html .= $line_item->is_taxable() ? ' *' : '';
         // maybe preface with icon?
         $name_html = $line_item_related_object instanceof EEI_Has_Icon
             ? $line_item_related_object->get_icon() . $name_html
             : $name_html;
         $name_html = '<span class="ee-line-item-name linked">' . $name_html . '</span><br>';
-        $name_html .=  sprintf(
+        $name_html .= sprintf(
             _x('%1$sfor the %2$s: %3$s%4$s', 'eg. "for the Event: My Cool Event"', 'event_espresso'),
             '<span class="ee-line-item-related-parent-object">',
             $line_item->parent() instanceof EE_Line_Item
@@ -103,9 +108,11 @@ class EE_Admin_Table_Registration_Line_Item_Display_Strategy extends EE_Admin_Ta
         $type_html = $line_item->OBJ_type() ? $line_item->OBJ_type_i18n() : '';
         $type_html .= $this->_get_cancellations($line_item);
         $type_html .= $line_item->OBJ_type() ? '<br />' : '';
-        $code = $line_item_related_object instanceof EEI_Has_Code ? $line_item_related_object->code() : '';
-        $type_html .= ! empty($code) ? '<span class="ee-line-item-id">' . sprintf(esc_html__('Code: %s', 'event_espresso'), $code) . '</span>' : '';
-        $html .= EEH_HTML::td($type_html, '', 'jst-left');
+        $code      = $line_item_related_object instanceof EEI_Has_Code ? $line_item_related_object->code() : '';
+        $type_html .= ! empty($code)
+            ? '<span class="ee-line-item-id">' . sprintf(esc_html__('Code: %s', 'event_espresso'), $code) . '</span>'
+            : '';
+        $html      .= EEH_HTML::td($type_html, '', 'jst-left');
 
         // Date column
         $datetime_content = '';
@@ -121,17 +128,15 @@ class EE_Admin_Table_Registration_Line_Item_Display_Strategy extends EE_Admin_Ta
 
         // Amount Column
         if ($line_item->is_percent()) {
-            $html .= EEH_HTML::td(apply_filters('FHEE__format_percentage_value', $line_item->percent()), '', 'jst-rght');
+            $html .= EEH_HTML::td($line_item->prettyPercent(), '', 'jst-rght');
         } else {
             $html .= EEH_HTML::td($line_item->prettyUnitPrice(), '', 'jst-rght');
         }
-
 
         // finish things off and return
         $html .= EEH_HTML::trx();
         return $html;
     }
-
 
 
     /**
@@ -140,13 +145,21 @@ class EE_Admin_Table_Registration_Line_Item_Display_Strategy extends EE_Admin_Ta
      * @param EE_Line_Item $line_item
      * @param array        $options
      * @return mixed
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    protected function _tax_row(EE_Line_Item $line_item, $options = array())
+    protected function _tax_row(EE_Line_Item $line_item, $options = [])
     {
         // start of row
         $html = EEH_HTML::tr('', 'admin-primary-mbox-taxes-tr');
         // name th
-        $html .= EEH_HTML::th($line_item->name() . '(' . $line_item->get_pretty('LIN_percent') . '%)', '', 'jst-rght', '', ' colspan="3"');
+        $html .= EEH_HTML::th(
+            $line_item->name() . '(' . $line_item->prettyPercent() . ')',
+            '',
+            'jst-rght',
+            '',
+            ' colspan="3"'
+        );
         // total th
         $html .= EEH_HTML::th($line_item->prettyTotal(), '', 'jst-rght');
         // end of row
@@ -155,20 +168,19 @@ class EE_Admin_Table_Registration_Line_Item_Display_Strategy extends EE_Admin_Ta
     }
 
 
-
-
-
     /**
      *  _total_row
      *
      * @param EE_Line_Item $line_item
      * @param array        $options
      * @return mixed
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    protected function _total_row(EE_Line_Item $line_item, $options = array())
+    protected function _total_row(EE_Line_Item $line_item, $options = [])
     {
-
-        $registration = isset($options['EE_Registration']) ? $options['EE_Registration'] : null;
+        $currency_code      = $this->currency_formatter->getCurrencyIsoCodeForLocale();
+        $registration       = isset($options['EE_Registration']) ? $options['EE_Registration'] : null;
         $registration_total = $registration instanceof EE_Registration ? $registration->pretty_final_price() : 0;
         // if no valid registration object then we're not going to show the approximate text.
         $total_match = $registration instanceof EE_Registration
@@ -179,13 +191,22 @@ class EE_Admin_Table_Registration_Line_Item_Display_Strategy extends EE_Admin_Ta
         $html = EEH_HTML::tr('', '', 'admin-primary-mbox-total-tr');
         // Total th label
         if ($total_match) {
-            $total_label = sprintf(esc_html__('This registration\'s total %s:', 'event_espresso'), '(' . EE_Registry::instance()->CFG->currency->code . ')');
+            $total_label = sprintf(
+                esc_html__('This registration\'s total %s:', 'event_espresso'),
+                '(' . $currency_code . ')'
+            );
         } else {
-            $total_label = sprintf(esc_html__('This registration\'s approximate total %s', 'event_espresso'), '(' . EE_Registry::instance()->CFG->currency->code . ')');
+            $total_label = sprintf(
+                esc_html__('This registration\'s approximate total %s', 'event_espresso'),
+                '(' . $currency_code . ')'
+            );
             $total_label .= '<br>';
             $total_label .= '<p class="ee-footnote-text">'
                             . sprintf(
-                                esc_html__('The registrations\' share of the transaction total is approximate because it might not be possible to evenly divide the transaction total among each registration, and so some registrations may need to pay a penny more than others.  This registration\'s final share is actually %1$s%2$s%3$s.', 'event_espresso'),
+                                esc_html__(
+                                    'The registrations\' share of the transaction total is approximate because it might not be possible to evenly divide the transaction total among each registration, and so some registrations may need to pay a penny more than others.  This registration\'s final share is actually %1$s%2$s%3$s.',
+                                    'event_espresso'
+                                ),
                                 '<strong>',
                                 $registration_total,
                                 '</strong>'

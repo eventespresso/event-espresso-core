@@ -38,10 +38,7 @@
                                 </a>
                             </td>
                             <td class="jst-rght">
-                                <?php
-                                $final_price = number_format((float) $attendee['final_price'], 2);
-                                echo esc_html("$currency_sign $final_price");
-                                ?>
+                                <?php echo esc_html(EEH_Money::formatForLocale($attendee['final_price'])); ?>
                             </td>
                             <td class="jst-left"><?php echo esc_html($attendee['email']); ?></td>
                             <td class="jst-left"><?php echo esc_html($attendee['address']); ?></td>

@@ -12,8 +12,8 @@
                 <tr class="header_row">
                     <th class="name-column"><?php esc_html_e("Ticket", "event_espresso"); ?></th>
                     <th colspan="2" class="desc-column"><?php esc_html_e("Description", "event_espresso"); ?></th>
-                    <th class="number-column item_c"><?php esc_html_e("Quantity", "event_espresso"); ?></th>
-                    <th class="number-column item_c"><?php esc_html_e("Price", "event_espresso"); ?></th>
+                    <th class="number-column item_r"><?php esc_html_e("Quantity", "event_espresso"); ?></th>
+                    <th class="number-column item_r"><?php esc_html_e("Price", "event_espresso"); ?></th>
                     <th class="number-column item_r"><?php esc_html_e("Total", "event_espresso"); ?></th>
                 </tr>
             </thead>

@@ -1,24 +1,24 @@
 <?php
 
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 /**
  * template args in use
  *
- * @var $tkt_row int
- * @var $PRC_order int
- * @var $price_modifier_selector string
- * @var $price_option_spans string
- * @var $price_selected_operator string
- * @var $price_selected_is_percent bool
- * @var $main_name string
- * @var $selected_price_type_id int
- * @var $disabled bool
+ * @var bool $disabled
+ * @var string $tkt_row
+ * @var string $PRC_order
+ * @var string $price_modifier_selector
+ * @var string $price_option_spans;
+ * @var string $price_selected_operator
+ * @var string $price_selected_is_percent
+ * @var string $main_name
+ * @var string $selected_price_type_id
  */
 
-use EventEspresso\core\services\request\sanitizers\AllowedTags;
+echo wp_kses($price_modifier_selector, AllowedTags::getWithFormTags());
 
-?>
-<?php echo wp_kses($price_modifier_selector, AllowedTags::getWithFormTags()); ?>
-<?php if ($disabled) : ?>
+if ($disabled) : ?>
     <input type="hidden" name="<?php echo esc_attr($main_name); ?>" value="<?php echo absint($selected_price_type_id); ?>">
 <?php endif; ?>
 
@@ -29,4 +29,3 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
            class="ee-price-selected-operator" value="<?php echo esc_attr($price_selected_operator); ?>">
     <input type="hidden" name="ee_price_selected[<?php echo esc_attr($tkt_row); ?>][<?php echo esc_attr($PRC_order); ?>]"
            class="ee-price-selected-is-percent" value="<?php echo esc_attr($price_selected_is_percent); ?>">
-

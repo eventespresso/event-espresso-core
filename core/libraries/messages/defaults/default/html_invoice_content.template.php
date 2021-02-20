@@ -62,8 +62,8 @@
             <tr class="header_row">
                 <th class="left ticket_th"><?php esc_html_e('Item', 'event_espresso'); ?></th>
                 <th class="left event_th"><?php esc_html_e('Description', 'event_espresso'); ?></th>
-                <th class="quantity_th"><?php esc_html_e('Qty', 'event_espresso'); ?></th>
-                <th class="left event_th"><?php esc_html_e('Price', 'event_espresso'); ?></th>
+                <th class="quantity_th item_r"><?php esc_html_e('Qty', 'event_espresso'); ?></th>
+                <th class="event_th item_r"><?php esc_html_e('Price', 'event_espresso'); ?></th>
                 <th class="subtotal_th item_r"><?php esc_html_e('Total', 'event_espresso'); ?></th>
             </tr>
         </thead>
@@ -73,8 +73,8 @@
             </tr>
             <tr class="total_tr odd">
                 <td colspan="2">&nbsp;</td>
-                <td colspan="2" class="total" id="total_currency"><?php esc_html_e('Sub-Total', 'event_espresso'); ?></td>
-                <td class="total">[TXN_SUBTOTAL]</td>
+                <td colspan="2" class="total item_r" id="total_currency"><?php esc_html_e('Sub-Total', 'event_espresso'); ?></td>
+                <td class="total item_r">[TXN_SUBTOTAL]</td>
             </tr>
             <tr>
                 <td colspan="5">[ADDITIONAL_LINE_ITEM_LIST][TAX_LINE_ITEM_LIST]</td>
@@ -82,8 +82,8 @@
 
             <tr class="total_tr odd">
                 <td colspan="2">&nbsp;</td>
-                <td colspan="2" class="total" id="total_currency"><?php esc_html_e('Total', 'event_espresso'); ?></td>
-                <td class="total">[TOTAL_COST]</td>
+                <td colspan="2" class="total item_r" id="total_currency"><?php esc_html_e('Total', 'event_espresso'); ?></td>
+                <td class="total item_r">[TOTAL_COST]</td>
             </tr>
         </tbody>
     </table>
@@ -98,8 +98,8 @@
                 <th class='left datetime_th'><?php esc_html_e("Date", 'event_espresso') ?></th>
                 <th><span class=""><?php esc_html_e('Transaction Id / Cheque #', 'event_espresso'); ?></span></th>
                 <th><span class=""><?php esc_html_e('P.O. / S.O.#', 'event_espresso'); ?></span></th>
-                <th><span class=""><?php esc_html_e('Status', 'event_espresso'); ?></span></th>
-                <th><?php esc_html_e('Amount', 'event_espresso'); ?></th>
+                <th><span class="item_c"><?php esc_html_e('Status', 'event_espresso'); ?></span></th>
+                <th><span class='item_r'><?php esc_html_e('Amount', 'event_espresso'); ?></span></th>
             </tr>
         </thead>
         <tbody>
@@ -115,8 +115,8 @@
             </tr>
             <tr class="total_tr">
                 <td colspan="4"></td>
-                <td class="total" id="total_currency"><?php esc_html_e('Amount Owed', 'event_espresso'); ?></td>
-                <td class="total">[TOTAL_OWING]</td>
+                <td class="total item_r" id="total_currency"><?php esc_html_e('Amount Owed', 'event_espresso'); ?></td>
+                <td class="total item_r">[TOTAL_OWING]</td>
             </tr>
         </tfoot>
     </table>

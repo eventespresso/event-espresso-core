@@ -219,24 +219,20 @@ class Prices_List_Table extends EE_Admin_List_Table
     }
 
 
-    public function column_type($item)
+    public function column_type(EE_Price $item)
     {
         return $this->_price_types[ $item->type() ]->name();
     }
 
 
-    public function column_description($item)
+    public function column_description(EE_Price $item)
     {
         return stripslashes($item->desc());
     }
 
 
-    public function column_amount($item)
+    public function column_amount(EE_Price $item)
     {
-        if ($this->_price_types[ $item->type() ]->is_percent()) {
-            return '<div class="pad-amnt-rght">' . $item->amount() . '%</div>';
-        } else {
-            return '<div class="pad-amnt-rght">' . EEH_Template::format_currency($item->amount()) . '</div>';
-        }
+        return '<div class="pad-amnt-rght">' . $item->pretty_price() . '</div>';
     }
 }

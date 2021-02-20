@@ -678,9 +678,11 @@ class EED_Thank_You_Page extends EED_Module
                     <?php
                     foreach ($events as $event) {
                         if ($event instanceof EE_Event) {
-                            echo '<li><span class="dashicons dashicons-marker ee-icon-size-16 orange-text"></span>',
-                            esc_html($event->name()),
-                            '</li>';
+                            echo '
+                            <li>
+                                <span class="dashicons dashicons-marker ee-icon-size-16 orange-text"></span>
+                                ' . esc_html($event->name()) . '
+                            </li>';
                         }
                     } ?>
                 </ul>
@@ -763,7 +765,7 @@ class EED_Thank_You_Page extends EED_Module
             ) . '
                 </td>
                 <td class="jst-rght">
-                    ' . EEH_Template::format_currency($payment->amount()) . '
+                    ' . $payment->prettyAmount() . '
                 </td>
                 <td class="jst-rght" style="line-height:1;">
                     ' . $payment->pretty_status(true) . $payment_declined_msg . '

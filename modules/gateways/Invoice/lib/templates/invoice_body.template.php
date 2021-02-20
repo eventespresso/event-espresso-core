@@ -252,8 +252,8 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
             <th class='left datetime_th'><?php esc_html_e("Date", 'event_espresso') ?></th>
             <th><span class=""><?php esc_html_e('Transaction Id / Cheque #', 'event_espresso'); ?></span></th>
             <th><span class=""><?php esc_html_e('P.O. / S.O.#', 'event_espresso'); ?></span></th>
-            <th><span class=""><?php esc_html_e('Status', 'event_espresso'); ?></span></th>
-            <th><?php esc_html_e('Amount', 'event_espresso'); ?></th>
+            <th><span class="item_c"><?php esc_html_e('Status', 'event_espresso'); ?></span></th>
+            <th><span class='item_r'><?php esc_html_e('Amount', 'event_espresso'); ?></span></th>
         </tr>
         </thead>
         <tbody>
@@ -268,8 +268,8 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                     <td><?php echo esc_html($payment->timestamp('D M j, Y')); ?></td>
                     <td><?php $payment->e('PAY_txn_id_chq_nmbr') ?></td>
                     <td><?php $payment->e('PAY_po_number') ?></td>
-                    <td><?php $payment->e_pretty_status() ?></td>
-                    <td class='item_r'><?php echo EEH_Template::format_currency($payment->amount()); ?></td>
+                    <td class='item_c'><?php $payment->e_pretty_status() ?></td>
+                    <td class='item_r'><?php echo EEH_Money::formatForLocale($payment->amount()); ?></td>
                 </tr>
             <?php }
         } else {
@@ -288,12 +288,12 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
         <tr class='total_tr'>
             <td colspan="4"></td>
             <td class="item_r"><?php esc_html_e('Total Paid', 'event_espresso') ?></td>
-            <td class="item_r"><?php echo EEH_Template::format_currency($amount_pd) ?> </td>
+            <td class="item_r"><?php echo EEH_Money::formatForLocale($amount_pd) ?> </td>
         </tr>
         <tr class="total_tr">
             <td colspan="4"></td>
-            <td class="total" id="total_currency"><?php esc_html_e('Amount Owed', 'event_espresso'); ?></td>
-            <td class="total"><?php echo EEH_Template::format_currency($total_cost - $amount_pd) ?></td>
+            <td class="total item_r" id="total_currency"><?php esc_html_e('Amount Owed', 'event_espresso'); ?></td>
+            <td class="total item_r"><?php echo EEH_Money::formatForLocale($total_cost - $amount_pd) ?></td>
         </tr>
         </tfoot>
     </table>

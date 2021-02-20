@@ -9,6 +9,7 @@
  * @var string  $DTT_EVT_start
  * @var string  $DTT_EVT_end
  * @var integer $DTT_reg_limit
+ * @var string  $dtt_reserved
  * @var integer $DTT_order
  * @var integer $dtt_sold
  * @var string  $clone_icon

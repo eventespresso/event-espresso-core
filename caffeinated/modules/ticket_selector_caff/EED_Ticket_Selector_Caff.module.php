@@ -354,30 +354,27 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
                         ? (float) $price_modifier->amount() * -1
                         : $price_modifier->pretty_price();
                 }
-                $ticket_price_modifier->sub_total = EEH_Template::format_currency(
-                    $new_sub_total,
-                    false,
-                    false
-                );
+                $ticket_price_modifier->sub_total = EEH_Money::formatForLocale($new_sub_total);
                 $ticket_price_modifiers[] = $ticket_price_modifier;
                 $running_total += $new_sub_total;
             }
-            $pre_tax_subtotal = EEH_Template::format_currency($running_total);
+            $pre_tax_subtotal = EEH_Money::formatForLocale($running_total, '', 4);
             // taxes
             $taxes = [];
+            $total_taxes = 0;
             $display_taxes = $ticket->taxable();
             if ($display_taxes) {
                 foreach ($ticket->get_ticket_taxes_for_admin() as $tax) {
                     $ticket_tax = new stdClass();
                     $ticket_tax->name = $tax->name();
                     $ticket_tax->rate = $tax->amount() . '%';
-                    $taxes[] = $ticket_tax;
                     $tax_amount = $running_total * ($tax->amount() / 100);
-                    $ticket_tax->amount = EEH_Template::format_currency($tax_amount);
-                    $running_total += $tax_amount;
+                    $ticket_tax->amount = EEH_Money::formatForLocale($tax_amount, '', 4);
+                    $total_taxes += $tax_amount;
+                    $taxes[] = $ticket_tax;
                 }
             }
-            $ticket_total = EEH_Template::format_currency($running_total);
+            $ticket_total = EEH_Money::formatForLocale($running_total + $total_taxes, '', 4);
         } catch (Exception $exception) {
             EE_Error::add_error($exception->getMessage(), __FILE__, __FUNCTION__, __LINE__);
             new ExceptionStackTraceDisplay($exception);

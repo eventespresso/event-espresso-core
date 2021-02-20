@@ -1,4 +1,7 @@
 <?php
+
+use EventEspresso\core\services\formatters\CurrencyFormatter;
+
 /**
  * @var EE_Transaction $transaction
  * @var bool $show_try_pay_again_link
@@ -17,7 +20,13 @@
                     <label><?php esc_html_e('Total Cost: ', 'event_espresso'); ?></label>
                 </td>
                 <td>
-                    <?php echo EEH_Template::format_currency($transaction->total()); ?>
+                    <?php
+                    echo EEH_Money::formatForLocale(
+                        $transaction->total(),
+                        '',
+                        CurrencyFormatter::FORMAT_LOCALIZED_CURRENCY_HTML_CODE
+                    );
+                    ?>
                 </td>
             </tr>
             <tr>
@@ -30,7 +39,7 @@
                     : 'ee-transaction-unpaid'
                 ?>"
                 >
-                    <?php echo EEH_Template::format_currency($transaction->remaining()); ?>
+                    <?php echo EEH_Money::formatForLocale($transaction->remaining()); ?>
                 </td>
             </tr>
             <tr>

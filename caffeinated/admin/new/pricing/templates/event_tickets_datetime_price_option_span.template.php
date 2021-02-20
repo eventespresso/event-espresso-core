@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 /**
  * template args in use
  *
@@ -7,8 +9,6 @@
  * @var string $PRT_operator
  * @var string $PRT_is_percent
  */
-
-use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 ?>
 <section id="price-option-<?php echo absint($PRT_ID); ?>">

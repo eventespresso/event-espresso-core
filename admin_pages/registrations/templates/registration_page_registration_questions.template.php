@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 /**
  * @var bool         $print_copy_info
  * @var int[]        $ticket_count
@@ -7,8 +9,6 @@
  * @var string[]     $event_queue
  * @var string[][][] $additional_event_attendees
  */
-
-use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 ?>
 
@@ -44,19 +44,19 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                             <p class="spco-ticket-info-pg">
                                 <?php
                                 echo esc_html($item['ticket']->name()) . ':  ';
-                                echo esc_html(
-                                    EEH_Template::format_currency($item['ticket']->price(), false, false)
-                                );
+                                echo esc_html($item['ticket']->pretty_price());
                                 $qty_price = $item['ticket']->price() * $ticket_count[ $item['ticket']->ID() ];
                                 echo ($item['ticket']->qty()
                                     ? ' &nbsp; x &nbsp; '
-                                      . sprintf(
-                                          /* translators: %s: ticket count */
-                                          esc_html__('%1$s tickets', 'event_espresso'),
-                                          absint($ticket_count[ $item['ticket']->ID() ])
-                                      )
-                                      . ' &nbsp; = &nbsp; '
-                                      . EEH_Template::format_currency($qty_price)
+                                        . sprintf(
+                                            /* translators: %s: ticket count */
+                                            esc_html__('%1$s tickets', 'event_espresso'),
+                                            absint($ticket_count[ $item['ticket']->ID() ])
+                                        )
+                                        . ' &nbsp; = &nbsp; '
+                                        . EEH_Money::formatForLocale(
+                                            $item['ticket']->price() * $ticket_count[ $item['ticket']->ID() ]
+                                        )
                                     : '');
                                 echo ($item['ticket']->description()
                                     ? '<br/>'

@@ -1,23 +1,25 @@
 <?php
 
- /**
+use EventEspresso\core\libraries\line_item_display\LineItemDisplayStrategy;
+
+/**
  *
  * Class EE_Invoice_Line_Item_Display_Strategy
  *
- * Description
- *
- * @package         Event Espresso
- * @subpackage    core
- * @author              Brent Christensen
+ * @package     Event Espresso
+ * @subpackage  core
+ * @author      Brent Christensen
  *
  *
  */
-class EE_Invoice_Line_Item_Display_Strategy implements EEI_Line_Item_Display
+class EE_Invoice_Line_Item_Display_Strategy extends LineItemDisplayStrategy
 {
     /**
      * @param EE_Line_Item $line_item
      * @param array        $options
      * @return mixed
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function display_line_item(EE_Line_Item $line_item, $options = array())
     {
@@ -86,13 +88,14 @@ class EE_Invoice_Line_Item_Display_Strategy implements EEI_Line_Item_Display
     }
 
 
-
     /**
      *  _total_row
      *
      * @param EE_Line_Item $line_item
      * @param array        $options
      * @return mixed
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     private function _item_row(EE_Line_Item $line_item, $options = array())
     {
@@ -106,15 +109,14 @@ class EE_Invoice_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         // quantity td
         $html .= EEH_HTML::td($line_item->quantity(), '', 'item_r');
         // price td
-        $html .= EEH_HTML::td($line_item->unit_price_no_code(), '', 'item_r');
+        $html .= EEH_HTML::td($line_item->prettyUnitPrice(), '', 'item_r');
         // total td
-        $total = $line_item->is_taxable() ? $line_item->total_no_code() . '*' : $line_item->total_no_code();
+        $total = $line_item->is_taxable() ? $line_item->prettyTotal() . '*' : $line_item->prettyTotal();
         $html .= EEH_HTML::td($total, '', 'item_r');
         // end of row
         $html .= EEH_HTML::trx();
         return $html;
     }
-
 
 
     /**
@@ -123,6 +125,8 @@ class EE_Invoice_Line_Item_Display_Strategy implements EEI_Line_Item_Display
      * @param EE_Line_Item $line_item
      * @param array        $options
      * @return mixed
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     private function _sub_item_row(EE_Line_Item $line_item, $options = array())
     {
@@ -135,17 +139,16 @@ class EE_Invoice_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         $html .= EEH_HTML::td() . EEH_HTML::tdx();
         // discount/surcharge td
         if ($line_item->is_percent()) {
-            $html .= EEH_HTML::td(apply_filters('FHEE__format_percentage_value', $line_item->percent()), '', 'item_r');
+            $html .= EEH_HTML::td($line_item->prettyPercent(), '', 'item_r');
         } else {
-            $html .= EEH_HTML::td($line_item->unit_price_no_code(), '', 'item_r');
+            $html .= EEH_HTML::td($line_item->prettyUnitPrice(), '', 'item_r');
         }
         // total td
-        $html .= EEH_HTML::td($line_item->total_no_code(), '', 'item_r');
+        $html .= EEH_HTML::td($line_item->prettyTotal(), '', 'item_r');
         // end of row
         $html .= EEH_HTML::trx();
         return $html;
     }
-
 
 
     /**
@@ -154,6 +157,8 @@ class EE_Invoice_Line_Item_Display_Strategy implements EEI_Line_Item_Display
      * @param EE_Line_Item $line_item
      * @param array        $options
      * @return mixed
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     private function _tax_row(EE_Line_Item $line_item, $options = array())
     {
@@ -165,19 +170,18 @@ class EE_Invoice_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         $html .= $options['show_desc'] ? EEH_HTML::td($line_item->desc(), '', 'item_l') : '';
         // percent td
         $html .= EEH_HTML::td(
-            apply_filters('FHEE__format_percentage_value', $line_item->percent()),
+            $line_item->prettyPercent(),
             '',
             'item_r',
             '',
             ' colspan="2"'
         );
         // total td
-        $html .= EEH_HTML::td($line_item->total_no_code(), '', 'item_r');
+        $html .= EEH_HTML::td($line_item->prettyTotal(), '', 'item_r');
         // end of row
         $html .= EEH_HTML::trx();
         return $html;
     }
-
 
 
     /**
@@ -187,6 +191,8 @@ class EE_Invoice_Line_Item_Display_Strategy implements EEI_Line_Item_Display
      * @param string       $text
      * @param array        $options
      * @return mixed
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     private function _total_row(EE_Line_Item $line_item, $text = '', $options = array())
     {
@@ -199,7 +205,7 @@ class EE_Invoice_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         // total td
         $html .= EEH_HTML::td($text, '', 'total_currency total', '', $colspan);
         // total td
-        $html .= EEH_HTML::td($line_item->total_no_code(), '', 'total');
+        $html .= EEH_HTML::td($line_item->prettyTotal(), '', 'total');
         // end of row
         $html .= EEH_HTML::trx();
         return $html;

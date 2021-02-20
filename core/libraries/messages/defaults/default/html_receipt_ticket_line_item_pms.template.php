@@ -10,13 +10,13 @@
     <td colspan="2">[LINE_ITEM_DESCRIPTION]
         <p class="ticket-note"><?php echo sprintf(esc_html__('This ticket can be used once at %s of the dates/times below.', 'event_espresso'), '[TKT_USES_* schema=' . esc_html__('any', 'event_espresso') . ']'); ?></p>
     </td>
-    <td class="item_c">[LINE_ITEM_QUANTITY]</td>
-    <td class="item_c">[LINE_ITEM_AMOUNT]</td>
+    <td class="item_r">[LINE_ITEM_QUANTITY]</td>
+    <td class="item_r">[LINE_ITEM_AMOUNT]</td>
     <td class="item_r">[LINE_ITEM_TOTAL]</td>
 </tr>
 [PRICE_MODIFIER_LINE_ITEM_LIST]
 <tr class="total_tr odd">
     <td colspan="4"></td>
-    <td class="total" nowrap="nowrap"><?php esc_html_e("Ticket Total:", "event_espresso"); ?></td>
+    <td class="total item_r" nowrap="nowrap"><?php esc_html_e("Ticket Total:", "event_espresso"); ?></td>
     <td class="item_r">[LINE_ITEM_TOTAL]</td>
 </tr>

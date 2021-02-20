@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 /**
  * template args in use
  *
@@ -17,11 +19,8 @@
  * @var string $new_available_datetime_ticket_list_item
  * @var string $new_available_ticket_datetime_list_item
  */
-
-use EventEspresso\core\services\request\sanitizers\AllowedTags;
-
 ?>
-<!-- edit datetime base form -->
+
 <table id="edit-datetime-form-holder" class="hidden">
     <tbody>
     <?php echo wp_kses($default_datetime_edit_row, AllowedTags::getWithFormTags()); ?>

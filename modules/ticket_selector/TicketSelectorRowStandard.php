@@ -6,7 +6,7 @@ use EE_Error;
 use EE_Tax_Config;
 use EE_Ticket_Selector_Config;
 use EEH_HTML;
-use EEH_Template;
+use EEH_Money;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
 use ReflectionException;
 
@@ -206,6 +206,7 @@ class TicketSelectorRowStandard extends TicketSelectorRow
      *
      * @return void
      * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function setTicketPriceDetails()
     {
@@ -265,6 +266,7 @@ class TicketSelectorRowStandard extends TicketSelectorRow
      *
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function ticketPriceTableCell()
     {
@@ -277,7 +279,7 @@ class TicketSelectorRowStandard extends TicketSelectorRow
                 '',
                 'headers="price-' . $this->EVT_ID . '"'
             );
-            $html .= EEH_Template::format_currency($this->ticket_price);
+            $html .= EEH_Money::formatForLocale($this->ticket_price);
             $html .= $this->ticket->taxable()
                 ? EEH_HTML::span('*', '', 'taxable-tickets-asterisk grey-text')
                 : '';
@@ -334,6 +336,7 @@ class TicketSelectorRowStandard extends TicketSelectorRow
      *
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function ticketQuantitySelector()
     {
@@ -366,6 +369,7 @@ class TicketSelectorRowStandard extends TicketSelectorRow
      *
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function ticketQtyAndIdHiddenInputs()
     {

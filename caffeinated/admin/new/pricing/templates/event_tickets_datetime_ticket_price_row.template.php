@@ -1,31 +1,32 @@
 <?php
 
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 /**
  * template args in use
  *
- * @var int $tkt_row
- * @var int $PRC_order
- * @var int $PRC_ID
- * @var float $PRC_amount
- * @var bool $PRC_is_default
- * @var string $show_plus
- * @var string $show_minus
- * @var string $show_currency_symbol
- * @var string $show_percentage
- * @var bool $show_trash_icon
- * @var bool $show_lock_icon
- * @var bool $show_create_button
  * @var bool $disabled
- * @var string $show_plus_or_minus
+ * @var bool $PRC_is_default
+ * @var bool $show_create_button
+ * @var bool $show_lock_icon
+ * @var bool $show_trash_icon
+ * @var float $PRC_amount
+ * @var int $PRC_ID
+ * @var int $PRC_order
+ * @var int $tkt_row
+ * @var string $currency_symbol_after
+ * @var string $currency_symbol_before
  * @var string $edit_prices_name
  * @var string $PRC_desc
- * @var string $price_type_selector;
  * @var string $PRC_name
  * @var string $price_currency_symbol
+ * @var string $price_type_selector;
+ * @var string $show_currency_symbol
+ * @var string $show_minus
+ * @var string $show_percentage
+ * @var string $show_plus
+ * @var string $show_plus_or_minus
  */
-
-use EventEspresso\core\services\request\sanitizers\AllowedTags;
-
 ?>
 
 <tr id="price-row-<?php echo esc_attr($tkt_row); ?>-<?php echo esc_attr($PRC_order); ?>" class="ee-active-price" valign="top">
@@ -52,7 +53,9 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
         <span class="ticket-price-info-display ticket-price-plus-minus" style="<?php echo esc_attr($show_plus_or_minus); ?>">+/-</span>
         <span class="ticket-price-info-display ticket-price-plus" style="<?php echo esc_attr($show_plus); ?>">+</span>
         <span class="ticket-price-info-display ticket-price-minus" style="<?php echo esc_attr($show_minus); ?>">-</span>
-        <span class="ticket-price-info-display ticket-price-dollar-sign-display" style="<?php echo esc_attr($show_currency_symbol); ?>">
+        <span class="ticket-price-info-display ticket-price-dollar-sign-display"
+              style="<?php echo esc_attr($currency_symbol_before); ?>"
+        >
             <?php echo esc_html($price_currency_symbol); ?>
         </span>
     </td>
@@ -71,8 +74,16 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
         <?php endif; ?>
     </td>
     <td>
-        <span
-            class="ticket-price-info-display ticket-price-percentage-char-display" style="<?php echo esc_attr($show_percentage); ?>">%</span>
+        <span class="ticket-price-info-display ticket-price-percentage-char-display"
+              style="<?php echo esc_attr($show_percentage); ?>"
+        >
+            %
+        </span>
+        <span class="ticket-price-info-display ticket-price-dollar-sign-display"
+              style="<?php echo esc_attr($currency_symbol_after); ?>"
+        >
+            <?php echo esc_html($price_currency_symbol); ?>
+        </span>
     </td>
     <td>
         <?php if ($disabled) : ?>

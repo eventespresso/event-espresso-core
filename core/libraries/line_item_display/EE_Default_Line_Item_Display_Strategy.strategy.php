@@ -1,38 +1,37 @@
 <?php
 
- /**
- *
+use EventEspresso\core\libraries\line_item_display\LineItemDisplayStrategy;
+
+/**
  * Class EE_Default_Line_Item_Display_Strategy
  *
- * Description
- *
- * @package         Event Espresso
- * @subpackage    core
+ * @package             Event Espresso
+ * @subpackage          core
  * @author              Brent Christensen
- *
- *
  */
 
-class EE_Default_Line_Item_Display_Strategy implements EEI_Line_Item_Display
+class EE_Default_Line_Item_Display_Strategy extends LineItemDisplayStrategy
 {
     /**
      * total amount of tax to apply
+     *
      * @type float $_tax_rate
      */
     private $_tax_rate = 0;
 
     /**
      * total amount including tax we can bill for at this time
+     *
      * @type float $_grand_total
      */
     private $_grand_total = 0.00;
 
     /**
      * total number of items being billed for
+     *
      * @type int $_total_items
      */
     private $_total_items = 0;
-
 
 
     /**
@@ -44,7 +43,6 @@ class EE_Default_Line_Item_Display_Strategy implements EEI_Line_Item_Display
     }
 
 
-
     /**
      * @return int
      */
@@ -54,22 +52,22 @@ class EE_Default_Line_Item_Display_Strategy implements EEI_Line_Item_Display
     }
 
 
-
     /**
      * @param EE_Line_Item $line_item
      * @param array        $options
      * @return mixed
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function display_line_item(EE_Line_Item $line_item, $options = array())
+    public function display_line_item(EE_Line_Item $line_item, $options = [])
     {
-
         $html = '';
         // set some default options and merge with incoming
-        $default_options = array(
+        $default_options = [
             'show_desc' => true,  //    TRUE        FALSE
-            'odd' => false
-        );
-        $options = array_merge($default_options, (array) $options);
+            'odd'       => false,
+        ];
+        $options         = array_merge($default_options, (array) $options);
 
         switch ($line_item->type()) {
             case EEM_Line_Item::type_line_item:
@@ -128,19 +126,20 @@ class EE_Default_Line_Item_Display_Strategy implements EEI_Line_Item_Display
     }
 
 
-
     /**
      *  _total_row
      *
      * @param EE_Line_Item $line_item
      * @param array        $options
      * @return mixed
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    private function _item_row(EE_Line_Item $line_item, $options = array())
+    private function _item_row(EE_Line_Item $line_item, $options = [])
     {
         // start of row
         $row_class = $options['odd'] ? 'item odd' : 'item';
-        $html = EEH_HTML::tr('', '', $row_class);
+        $html      = EEH_HTML::tr('', '', $row_class);
         // name && desc
         $name_and_desc = apply_filters(
             'FHEE__EE_Default_Line_Item_Display_Strategy__item_row__name',
@@ -149,7 +148,8 @@ class EE_Default_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         );
         $name_and_desc .= apply_filters(
             'FHEE__EE_Default_Line_Item_Display_Strategy__item_row__desc',
-            ( $options['show_desc'] ? '<span class="line-item-desc-spn smaller-text">: ' . $line_item->desc() . '</span>' : '' ),
+            ($options['show_desc'] ? '<span class="line-item-desc-spn smaller-text">: ' . $line_item->desc() . '</span>'
+                : ''),
             $line_item,
             $options
         );
@@ -158,54 +158,41 @@ class EE_Default_Line_Item_Display_Strategy implements EEI_Line_Item_Display
                 ? esc_html__('* price includes taxes', 'event_espresso')
                 : esc_html__('* price does not include taxes', 'event_espresso');
             $name_and_desc .= '<span class="smaller-text lt-grey-text" style="margin:0 0 0 2em;">'
-                  . $ticket_price_includes_taxes
-                  . '</span>';
+                              . $ticket_price_includes_taxes
+                              . '</span>';
         }
 
         // name td
         $html .= EEH_HTML::td($name_and_desc, '', 'item_l');
         // quantity td
-        $html .= EEH_HTML::td($line_item->quantity(), '', 'item_l jst-rght');
+        $html     .= EEH_HTML::td($line_item->quantity(), '', 'item_l jst-rght');
         $tax_rate = $line_item->is_taxable()
                     && EE_Registry::instance()->CFG->tax_settings->prices_displayed_including_taxes
-            ? 1 + ( $this->_tax_rate / 100 )
+            ? 1 + ($this->_tax_rate / 100)
             : 1;
         // price td
         // FIRST get the correctly rounded price per ticket including taxes
-        $raw_unit_price = EEH_Template::format_currency(
-            $line_item->unit_price() * $tax_rate,
-            true,
-            false
-        );
-        $unit_price = apply_filters(
+        $raw_unit_price = $this->currency_formatter->roundForLocale($line_item->unit_price() * $tax_rate);
+        $unit_price     = apply_filters(
             'FHEE__EE_Default_Line_Item_Display_Strategy___item_row__unit_price',
-            EEH_Template::format_currency(
-                $raw_unit_price,
-                false,
-                false
-            ),
+            $this->currency_formatter->formatForLocale($raw_unit_price),
             $line_item,
             $tax_rate
         );
-        $html .= EEH_HTML::td($unit_price, '', 'item_c jst-rght');
+        $html           .= EEH_HTML::td($unit_price, '', 'item_c jst-rght');
         // total td
         $total = apply_filters(
             'FHEE__EE_Default_Line_Item_Display_Strategy___item_row__total',
-            EEH_Template::format_currency(
-                $raw_unit_price * $line_item->quantity(),
-                false,
-                false
-            ),
+            $this->currency_formatter->formatForLocale($raw_unit_price * $line_item->quantity()),
             $line_item,
             $tax_rate
         );
-        $html .= EEH_HTML::td($total, '', 'item_r jst-rght');
+        $html  .= EEH_HTML::td($total, '', 'item_r jst-rght');
         // end of row
         $html .= EEH_HTML::trx();
 
         return $html;
     }
-
 
 
     /**
@@ -214,28 +201,28 @@ class EE_Default_Line_Item_Display_Strategy implements EEI_Line_Item_Display
      * @param EE_Line_Item $line_item
      * @param array        $options
      * @return mixed
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    private function _sub_item_row(EE_Line_Item $line_item, $options = array())
+    private function _sub_item_row(EE_Line_Item $line_item, $options = [])
     {
         // start of row
         $html = EEH_HTML::tr('', 'item sub-item-row');
         // name && desc
         $name_and_desc = $line_item->name();
-        $name_and_desc .= $options['show_desc'] ? '<span class="line-sub-item-desc-spn smaller-text">: ' . $line_item->desc() . '</span>' : '';
+        $name_and_desc .= $options['show_desc'] ? '<span class="line-sub-item-desc-spn smaller-text">: '
+                                                  . $line_item->desc()
+                                                  . '</span>' : '';
         // name td
         $html .= EEH_HTML::td(/*__FUNCTION__ .*/ $name_and_desc, '', 'item_l sub-item');
         // discount/surcharge td
         if ($line_item->is_percent()) {
-            $html .= EEH_HTML::td(apply_filters('FHEE__format_percentage_value', $line_item->percent()), '', 'item_c');
+            $html .= EEH_HTML::td($line_item->prettyPercent(), '', 'item_c');
         } else {
-            $html .= EEH_HTML::td($line_item->unit_price_no_code(), '', 'item_c jst-rght');
+            $html .= EEH_HTML::td($line_item->prettyUnitPrice(), '', 'item_c jst-rght');
         }
         // total td
-        $html .= EEH_HTML::td(
-            EEH_Template::format_currency($line_item->total(), false, false),
-            '',
-            'item_r jst-rght'
-        );
+        $html .= EEH_HTML::td($line_item->prettyTotal(), '', 'item_r jst-rght');
         // end of row
         $html .= EEH_HTML::trx();
         return $html;

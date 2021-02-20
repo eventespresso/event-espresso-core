@@ -436,14 +436,11 @@ if (! function_exists('espresso_event_tickets_available')) {
             foreach ($tickets as $ticket) {
                 if ($ticket instanceof EE_Ticket) {
                     if ($format) {
-                        $html .= '<li id="ee-event-tickets-li-'
-                                 . esc_attr($ticket->ID())
-                                 . '" class="ee-event-tickets-li">';
-                        $html .= esc_html($ticket->name()) . ' ';
-                        $html .= EEH_Template::format_currency(
-                            $ticket->get_ticket_total_with_taxes()
-                        ); // already escaped
-                        $html .= '</li>';
+                        $html .= '
+                        <li id="ee-event-tickets-li-' . esc_attr($ticket->ID()) . '" class="ee-event-tickets-li">
+                            ' . esc_html($ticket->name()) . ' '
+                            . EEH_Money::formatForLocale($ticket->get_ticket_total_with_taxes()) . '
+                        </li>';
                     } else {
                         $html[] = $ticket;
                     }

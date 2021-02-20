@@ -399,7 +399,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
             <?php
             printf(
                 esc_html__("Grand Total: %s", "event_espresso"),
-                EEH_Template::format_currency($total_cost)
+                EEH_Money::formatForLocale($total_cost)
             ); ?>
         </h2>
     </div>
@@ -462,7 +462,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                     <?php esc_html_e('Total Paid', 'event_espresso') ?>
                 </td>
                 <td class="item_r">
-                    <?php echo EEH_Template::format_currency($amount_pd, false, false) ?>
+                    <?php echo EEH_Money::formatForLocale($amount_pd) ?>
                 </td>
             </tr>
             <tr class="total_tr odd">
@@ -471,7 +471,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                     <?php esc_html_e('Amount Owed:', 'event_espresso'); ?>
                 </td>
                 <td class="total">
-                    <?php echo EEH_Template::format_currency($amount_owed) ?>
+                    <?php echo EEH_Money::formatForLocale($amount_owed) ?>
                 </td>
             </tr>
             </tfoot>

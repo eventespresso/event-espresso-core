@@ -730,7 +730,6 @@ class Transactions_Admin_Page extends EE_Admin_Page
             ? $payment_method->admin_name()
             : esc_html__('Unknown', 'event_espresso');
 
-        $this->_template_args['currency_sign'] = EE_Registry::instance()->CFG->currency->sign;
         // link back to overview
         $this->_template_args['txn_overview_url'] = $this->request->getServerParam(
             'HTTP_REFERER',
@@ -1030,11 +1029,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
         $taxes                         = $this->_transaction->line_items([['LIN_type' => EEM_Line_Item::type_tax]]);
         $this->_template_args['taxes'] = ! empty($taxes) ? $taxes : false;
 
-        $this->_template_args['grand_total']     = EEH_Template::format_currency(
-            $this->_transaction->total(),
-            false,
-            false
-        );
+        $this->_template_args['grand_total'] = $this->_transaction->pretty_total();
         $this->_template_args['grand_raw_total'] = $this->_transaction->total();
         $this->_template_args['TXN_status']      = $this->_transaction->status_ID();
 
@@ -1265,8 +1260,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
                 $attendee_name                     = $registration->attendee() instanceof EE_Attendee
                     ? $registration->attendee()->full_name()
                     : esc_html__('Unknown Attendee', 'event_espresso');
-                $owing                             = $registration->final_price() - $registration->paid();
-                $taxable                           = $registration->ticket()->taxable()
+                $taxable = $registration->ticket()->taxable()
                     ? ' <span class="smaller-text lt-grey-text"> ' . esc_html__('+ tax', 'event_espresso') . '</span>'
                     : '';
                 $checked                           = empty($existing_reg_payments)
@@ -1283,7 +1277,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
                     EEH_HTML::td($registration->event_name()) .
                     EEH_HTML::td($registration->pretty_paid(), '', 'txn-admin-payment-paid-td jst-cntr') .
                     EEH_HTML::td(
-                        EEH_Template::format_currency($owing),
+                        $registration->prettyAmountOwing(),
                         '',
                         'txn-admin-payment-owing-td jst-cntr'
                     ) .
@@ -2282,7 +2276,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
                 if ($registration instanceof EE_Registration) {
                     $registration_payment_data[ $registration->ID() ] = [
                         'paid'  => $registration->pretty_paid(),
-                        'owing' => EEH_Template::format_currency($registration->final_price() - $registration->paid()),
+                        'owing' => $registration->prettyAmountOwing(),
                     ];
                 }
             }
