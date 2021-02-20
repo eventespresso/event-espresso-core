@@ -178,18 +178,19 @@ class EEM_Price extends EEM_Soft_Delete_Base
 
 
     /**
-     *  retrieve all active global prices (that are not taxes (PBT_ID=4)) for a particular event
+     * retrieve all active global prices (that are not taxes (PBT_ID=4)) for a particular event
      *
      * @param bool $count return count
+     * @param bool $include_taxes
      * @return array|int
      * @throws EE_Error
      */
-    public function get_all_default_prices(bool $count = false)
+    public function get_all_default_prices($count = false, $include_taxes = true)
     {
         $_where        = [
             'PRC_deleted'       => 0,
             'PRC_is_default'    => 1,
-            'Price_Type.PBT_ID' => ['!=', 4],
+            'Price_Type.PBT_ID' => ['!=', EEM_Price_Type::base_type_tax],
         ];
         $_query_params = [
             $_where,
@@ -202,7 +203,7 @@ class EEM_Price extends EEM_Soft_Delete_Base
     /**
      * retrieve all prices that are taxes
      *
-     * @return array top-level keys are the price's order and their values are an array,
+     * @return  EE_Price[] top-level keys are the price's order and their values are an array,
      *                      next-level keys are the price's ID, and their values are EE_Price objects
      * @throws EE_Error
      * @throws ReflectionException
@@ -212,8 +213,14 @@ class EEM_Price extends EEM_Soft_Delete_Base
         $taxes     = [];
         $all_taxes = $this->get_all(
             [
-                ['Price_Type.PBT_ID' => EEM_Price_Type::base_type_tax],
-                'order_by' => ['Price_Type.PRT_order' => 'ASC', 'PRC_order' => 'ASC'],
+                [
+                    'Price_Type.PBT_ID' => EEM_Price_Type::base_type_tax,
+                    'PRC_deleted' => 0
+                ],
+                'order_by' => [
+                    'Price_Type.PRT_order' => 'ASC',
+                    'PRC_order' => 'ASC'
+                ],
             ]
         );
         foreach ($all_taxes as $tax) {

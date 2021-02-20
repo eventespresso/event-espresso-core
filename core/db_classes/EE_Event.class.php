@@ -86,10 +86,11 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      * @param string $field_name
      * @param mixed  $field_value
      * @param bool   $use_default
+     * @param string $schema
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function set($field_name, $field_value, $use_default = false)
+    public function set($field_name, $field_value, $use_default = false, $schema = '')
     {
         switch ($field_name) {
             case 'status':
