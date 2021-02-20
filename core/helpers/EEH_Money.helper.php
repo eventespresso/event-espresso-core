@@ -1,5 +1,9 @@
 <?php
 
+use EventEspresso\core\services\formatters\CurrencyFormatter;
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\locale\Locale;
+
 /**
  * Money helper class.
  * This class has helper methods that help with money related conversions and calculations.
@@ -10,6 +14,76 @@
  */
 class EEH_Money extends EEH_Base
 {
+    /**
+     * @var CurrencyFormatter
+     * @since   $VID:$
+     */
+    private static $currency_formatter;
+
+
+    /**
+     * @return CurrencyFormatter
+     * @since   $VID:$
+     */
+    private static function getCurrencyFormatter()
+    {
+        if(! EEH_Money::$currency_formatter instanceof CurrencyFormatter) {
+            EEH_Money::$currency_formatter = LoaderFactory::getLoader()->getShared(CurrencyFormatter::class);
+        }
+        return EEH_Money::$currency_formatter;
+    }
+
+
+    /**
+     * @param string $CNT_ISO
+     * @return Locale
+     * @throws EE_Error
+     * @since   $VID:$
+     */
+    private static function getLocaleForCountryISO($CNT_ISO)
+    {
+        $currency_config = EEH_Money::get_currency_config($CNT_ISO);
+        return EEH_Money::getCurrencyFormatter()->getLocaleForCurrencyISO($currency_config->code);
+    }
+
+
+    /**
+     * @param float  $money_value
+     * @param string|Locale $locale locale name ex: en_US, en_CA, fr_CA, de_DE, etc, or Locale object
+     * @param int           $format
+     * @return string
+     * @since $VID:$
+     */
+    public static function formatForLocale(
+        $money_value,
+        $locale = '',
+        $format = CurrencyFormatter::FORMAT_LOCALIZED_CURRENCY
+    ) {
+        return EEH_Money::getCurrencyFormatter()->formatForLocale($money_value, $format, $locale);
+    }
+
+
+    /**
+     * @param string|Locale $locale locale name ex: en_US, en_CA, fr_CA, de_DE, etc, or Locale object
+     * @return string ex: 'USD'
+     * @since $VID:$
+     */
+    public static function getCurrencyIsoCodeForLocale($locale = '')
+    {
+        return EEH_Money::getCurrencyFormatter()->getCurrencyIsoCodeForLocale($locale);
+    }
+
+
+    /**
+     * @param string|Locale $locale locale name ex: en_US, en_CA, fr_CA, de_DE, etc, or Locale object
+     * @return string ex: '$'
+     * @since $VID:$
+     */
+    public static function getCurrencySymbolForLocale($locale = '')
+    {
+        return EEH_Money::getCurrencyFormatter()->getCurrencySymbolForLocale($locale);
+    }
+
     /**
      * This removes all localized money formatting from the incoming value
      * Note: uses this site's currency settings for deciding what is considered a
@@ -23,24 +97,8 @@ class EEH_Money extends EEH_Base
      */
     public static function strip_localized_money_formatting($money_value, $CNT_ISO = '')
     {
-        $currency_config = EEH_Money::get_currency_config($CNT_ISO);
-        $money_value = str_replace(
-            [
-                $currency_config->thsnds,
-                $currency_config->dec_mrk,
-            ],
-            [
-                '',  // remove thousands separator
-                '.', // convert decimal mark to what PHP expects
-            ],
-            $money_value
-        );
-        $money_value     = filter_var(
-            $money_value,
-            FILTER_SANITIZE_NUMBER_FLOAT,
-            FILTER_FLAG_ALLOW_FRACTION
-        );
-        return $money_value;
+        $locale = EEH_Money::getLocaleForCountryISO($CNT_ISO);
+        return EEH_Money::getCurrencyFormatter()->parseForLocale($money_value, $locale);
     }
 
 
@@ -53,12 +111,12 @@ class EEH_Money extends EEH_Base
      *
      * @param int|string $money_value
      * @return float
-     * @throws EE_Error
      */
     public static function convert_to_float_from_localized_money($money_value)
     {
-        // float it! and round to three decimal places
-        return round((float) EEH_Money::strip_localized_money_formatting($money_value), 6);
+        return EEH_Money::getCurrencyFormatter()->precisionRound(
+            EEH_Money::getCurrencyFormatter()->parseForLocale($money_value)
+        );
     }
 
 
@@ -165,13 +223,14 @@ class EEH_Money extends EEH_Base
     {
         // default format
         $format          = 'f';
-        $currency_config = $currency_config = EEH_Money::get_currency_config($CNT_ISO);
-        if ($currency_config instanceof EE_Currency_Config) {
-            // first get the decimal place and number of places
-            $format = "%'." . $currency_config->dec_plc . $format;
-            // currency symbol on right side.
-            $format = $currency_config->sign_b4 ? $currency_config->sign . $format : $format . $currency_config->sign;
-        }
+        $locale = EEH_Money::getLocaleForCountryISO($CNT_ISO);
+        // first get the decimal place and number of places
+        $format = "%'" . $locale->currencyDecimalPoint() . $locale->decimalPrecision() . $format;
+        $spacer = $locale->currencySymbolSpaceB4Positive() ? ' ' : '';
+        // currency symbol on right side.
+        $format = $locale->currencySymbolB4Positive()
+            ? $locale->currencySymbol() . $spacer . $format
+            : $format . $spacer . $locale->currencySymbol();
         return $format;
     }
 
@@ -188,24 +247,24 @@ class EEH_Money extends EEH_Base
      */
     public static function get_format_for_google_charts($CNT_ISO = '')
     {
-        $currency_config            = EEH_Money::get_currency_config($CNT_ISO);
-        $decimal_places_placeholder = str_pad('', $currency_config->dec_plc, '0');
+        $locale = EEH_Money::getLocaleForCountryISO($CNT_ISO);
+        $decimal_places_placeholder = str_pad('', $locale->decimalPrecision(), '0');
         // first get the decimal place and number of places
         $format = '#,##0.' . $decimal_places_placeholder;
         // currency symbol on right side.
-        $format          = $currency_config->sign_b4
-            ? $currency_config->sign . $format
+        $format          = $locale->currencySymbolB4Positive()
+            ? $locale->currencySymbol() . $format
             : $format
-              . $currency_config->sign;
+              . $locale->currencySymbol();
         $formatterObject = [
-            'decimalSymbol'  => $currency_config->dec_mrk,
-            'groupingSymbol' => $currency_config->thsnds,
-            'fractionDigits' => $currency_config->dec_plc,
+            'decimalSymbol'  => $locale->currencyDecimalPoint(),
+            'groupingSymbol' => $locale->currencyThousandsSeparator(),
+            'fractionDigits' => $locale->decimalPrecision(),
         ];
-        if ($currency_config->sign_b4) {
-            $formatterObject['prefix'] = $currency_config->sign;
+        if ($locale->currencySymbolB4Positive()) {
+            $formatterObject['prefix'] = $locale->currencySymbol();
         } else {
-            $formatterObject['suffix'] = $currency_config->sign;
+            $formatterObject['suffix'] = $locale->currencySymbol();
         }
         return [
             'format'          => $format,
@@ -243,15 +302,9 @@ class EEH_Money extends EEH_Base
      * @return float
      * @throws EE_Error
      */
-    public static function round_for_currency($amount, $currency_code)
+    public static function round_for_currency($amount, $currency_code = '')
     {
-        $dec_places = EEM_Currency::instance()->get_var(
-            [['CUR_code' => $currency_code], 'limit' => 1],
-            'CUR_dec_plc'
-        );
-        if ($dec_places === false || $dec_places === null) {
-            $dec_places = EE_Config::instance()->currency->dec_plc;
-        }
-        return round($amount, $dec_places);
+        $locale = EEH_Money::getLocaleForCountryISO($currency_code);
+        return EEH_Money::getCurrencyFormatter()->roundForLocale($amount, $locale);
     }
 }

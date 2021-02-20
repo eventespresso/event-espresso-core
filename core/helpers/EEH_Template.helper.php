@@ -2,7 +2,9 @@
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\formatters\CurrencyFormatter;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\locale\Locale;
 use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
@@ -49,7 +51,57 @@ if (! function_exists('espresso_get_object_css_class')) {
  */
 class EEH_Template
 {
+    /**
+     * @var EE_Currency_Config[]
+     */
+    private static $currency_config;
+
+    /**
+     * @var CurrencyFormatter
+     */
+    private static $currency_formatter;
+
+    /**
+     * @var array
+     */
     private static $_espresso_themes = [];
+
+
+    /**
+     * get legacy currency config object for locale
+     *
+     * @param Locale $currency_locale
+     * @return EE_Currency_Config
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since $VID:$
+     */
+    private static function getCurrencyConfigForCountryISO(Locale $currency_locale)
+    {
+        $currencyISO = $currency_locale->currencyIsoCode();
+        if (
+            ! isset(EEH_Template::$currency_config[ $currencyISO ])
+            || ! EEH_Template::$currency_config[ $currencyISO ] instanceof EE_Currency_Config
+        ) {
+            $CNT_ISO = EEM_Country::instance()->getCountryISOForCurrencyISO($currencyISO);
+            $currency_config = new EE_Currency_Config($CNT_ISO);
+            EEH_Template::$currency_config[ $currencyISO ] = $currency_config;
+        }
+        return EEH_Template::$currency_config[ $currencyISO ];
+    }
+
+
+    /**
+     * @return CurrencyFormatter
+     * @since   $VID:$
+     */
+    private static function getCurrencyFormatter()
+    {
+        if (! EEH_Template::$currency_formatter instanceof CurrencyFormatter) {
+            EEH_Template::$currency_formatter = LoaderFactory::getLoader()->getShared(CurrencyFormatter::class);
+        }
+        return EEH_Template::$currency_formatter;
+    }
 
 
     /**
@@ -449,13 +501,15 @@ class EEH_Template
      * @param boolean $allow_fractional_subunits whether to allow displaying partial penny amounts
      * @return string        the html output for the formatted money value
      * @throws EE_Error
+     * @throws ReflectionException
+     * @deprecated $VID:$ plz use CurrencyFormatter::formatForLocale()
      */
     public static function format_currency(
         $amount = null,
         $return_raw = false,
         $display_code = true,
         $CNT_ISO = '',
-        $cur_code_span_class = 'currency-code',
+        $cur_code_span_class = 'currency-code', // not used anywhere
         $allow_fractional_subunits = false
     ) {
         // ensure amount was received
@@ -470,98 +524,56 @@ class EEH_Template
 
         // filter raw amount (allows 0.00 to be changed to "free" for example)
         $amount_formatted = apply_filters('FHEE__EEH_Template__format_currency__amount', $amount, $return_raw);
-        // still a number, or was amount converted to a string like "free" ?
+        // still a number or was amount converted to a string like "free" ?
         if (! is_float($amount_formatted)) {
             return esc_html($amount_formatted);
         }
+
         try {
-            // was a country ISO code passed ? if so generate currency config object for that country
-            $mny = $CNT_ISO !== '' ? new EE_Currency_Config($CNT_ISO) : null;
-
-            // verify results
-            if (! $mny instanceof EE_Currency_Config) {
-                // set default config country currency settings
-                $mny = EE_Registry::instance()->CFG->currency instanceof EE_Currency_Config
-                    ? EE_Registry::instance()->CFG->currency
-                    : new EE_Currency_Config();
+            $currency_formatter = EEH_Template::getCurrencyFormatter();
+            $currency_ISO = '';
+            if ($CNT_ISO !== '') {
+                $currency_config = EEH_Money::get_currency_config($CNT_ISO);
+                $currency_ISO = $currency_config->code;
             }
+            $currency_locale = $currency_formatter->getLocaleForCurrencyISO($currency_ISO, true);
 
-            // format float
-            $decimal_places_to_use = $mny->dec_plc;
-            // If we're allowing showing partial penny amounts, determine how many decimal places to use.
-            if ($allow_fractional_subunits) {
-                $pos_of_period = strrpos($amount, '.');
-                if ($pos_of_period !== false) {
-                    // Use a max of two extra decimal places (more than that and it starts
-                    // to look silly), but at least the normal number of decimal places.
-                    $decimal_places_to_use = min(
-                        max(
-                            strlen($amount) - 1 - strpos($amount, '.'),
-                            $decimal_places_to_use
-                        ),
-                        $decimal_places_to_use + 2
-                    );
-                }
+            // filter to allow global setting of display_code
+            $display_code = apply_filters('FHEE__EEH_Template__format_currency__display_code', $display_code);
+
+            $format = CurrencyFormatter::FORMAT_LOCALIZED_CURRENCY;
+            if ($return_raw) {
+                $format = CurrencyFormatter::FORMAT_LOCALIZED_FLOAT;
+            } elseif ($display_code) {
+                $format = CurrencyFormatter::FORMAT_LOCALIZED_CURRENCY_HTML_CODE;
             }
-            $amount_formatted = number_format($amount, $decimal_places_to_use, $mny->dec_mrk, $mny->thsnds);
-            $amount_formatted = str_replace('-', ' - ', $amount_formatted);
-            // add formatting ?
-            if (! $return_raw) {
-                // add currency sign
-                if ($mny->sign_b4) {
-                    $amount_formatted = $amount >= 0
-                        ? $mny->sign . ' ' . $amount_formatted
-                        : ' - ' . $mny->sign . ' ' . str_replace(' - ', '', $amount_formatted);
-                } else {
-                    $amount_formatted .= ' ' . $mny->sign;
-                }
+            // don't like this but it maintains backwards compatibility with how things were done before
+            $precision = $allow_fractional_subunits
+                ? $currency_locale->decimalPrecision() + 2
+                : $currency_locale->decimalPrecision(
+            );
 
-                // filter to allow global setting of display_code
-                $display_code = apply_filters('FHEE__EEH_Template__format_currency__display_code', $display_code);
-
-                // add currency code ?
-                $amount_formatted = $display_code
-                    ? $amount_formatted . ' <span class="' . $cur_code_span_class . '">(' . $mny->code . ')</span>'
-                    : $amount_formatted;
-            }
+            $amount_formatted = $currency_formatter->formatForLocale(
+                $amount_formatted,
+                $format,
+                $currency_locale->name(),
+                $precision
+            );
 
             // filter results
             $amount_formatted = apply_filters(
                 'FHEE__EEH_Template__format_currency__amount_formatted',
                 $amount_formatted,
-                $mny,
-                $return_raw
+                EEH_Template::getCurrencyConfigForCountryISO($currency_locale),
+                $return_raw,
+                $display_code
             );
-
-            // clean up vars
-            unset($mny);
 
         } catch (Exception $e) {
             // eat exception
         }
         // return formatted currency amount
-        return $amount_formatted;
-    }
-
-
-    /**
-     * @param float  $amount
-     * @param bool   $display_code
-     * @param string $CNT_ISO
-     * @return string
-     * @throws EE_Error
-     * @since   $VID:$
-     */
-    public static function precisionFormatCurrency($amount, $display_code = false, $CNT_ISO = '')
-    {
-        return EEH_Template::format_currency(
-            $amount,
-            false,
-            $display_code,
-            $CNT_ISO,
-            '',
-            true
-        );
+        return esc_html($amount_formatted);
     }
 
 
