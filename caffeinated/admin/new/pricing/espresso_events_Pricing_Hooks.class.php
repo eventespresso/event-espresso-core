@@ -2,6 +2,8 @@
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\formatters\CurrencyFormatter;
+use EventEspresso\core\services\loaders\LoaderFactory;
 
 /**
  * espresso_events_Pricing_Hooks
@@ -36,6 +38,27 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
      * @var string $_date_time_format
      */
     protected $_date_time_format;
+
+    /**
+     * @var CurrencyFormatter
+     */
+    protected $currency_formatter;
+
+
+    /**
+     * constructor
+     *
+     * @param EE_Admin_Page $admin_page the calling admin_page_object
+     * @throws EE_Error
+     */
+    public function __construct(EE_Admin_Page $admin_page)
+    {
+        parent::__construct($admin_page);
+        if (! $this->currency_formatter instanceof CurrencyFormatter)
+        {
+            $this->currency_formatter = LoaderFactory::getLoader()->getShared(CurrencyFormatter::class);
+        }
+    }
 
 
     /**
@@ -478,7 +501,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                 : 0;
             // note incoming base price needs converted from localized value.
             $base_price = isset($tkt['TKT_base_price'])
-                ? EEH_Money::convert_to_float_from_localized_money($tkt['TKT_base_price'])
+                ? $this->currency_formatter->parseForLocale($tkt['TKT_base_price'])
                 : 0;
             // if ticket price == 0 and $base_price != 0 then ticket price == base_price
             $ticket_price = $ticket_price === 0 && $base_price !== 0
@@ -922,7 +945,12 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                 $price = EE_Registry::instance()->load_model('Price')->get_one_by_ID($prc['PRC_ID']);
                 // update this price with new values
                 foreach ($PRC_values as $field => $value) {
-                    $price->set($field, $value);
+                    $setter = str_replace('PRC', 'set', $field);
+                    if (method_exists($price, $setter)) {
+                        $price->{$setter}($value);
+                    } else {
+                        $price->set($field, $value);
+                    }
                 }
             }
             $price->save();
@@ -989,6 +1017,9 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
      */
     public function pricing_metabox()
     {
+        if (! $this->currency_formatter instanceof CurrencyFormatter) {
+            $this->currency_formatter = LoaderFactory::getLoader()->getShared(CurrencyFormatter::class);
+        }
         $existing_datetime_ids = $existing_ticket_ids = $datetime_tickets = $ticket_datetimes = array();
         $event = $this->_adminpage_obj->get_cpt_model_obj();
         // set is_creating_event property.
@@ -1455,37 +1486,21 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
         $ticket_subtotal = $default ? 0 : $ticket->get_ticket_subtotal();
         $base_price = $default ? null : $ticket->base_price();
         $count_price_mods = EEM_Price::instance()->get_all_default_prices(true);
+
         // breaking out complicated condition for ticket_status
-        if ($default) {
-            $ticket_status_class = ' tkt-status-' . EE_Ticket::onsale;
-        } else {
-            $ticket_status_class = $ticket->is_default()
-                ? ' tkt-status-' . EE_Ticket::onsale
-                : ' tkt-status-' . $ticket->ticket_status();
-        }
+        $ticket_status_class = $default || $ticket->is_default()
+            ? ' tkt-status-' . EE_Ticket::onsale
+            : ' tkt-status-' . $ticket->ticket_status();
+
         // breaking out complicated condition for TKT_taxable
-        if ($default) {
-            $TKT_taxable = '';
-        } else {
-            $TKT_taxable = $ticket->taxable()
-                ? 'checked'
-                : '';
-        }
-        if ($default) {
-            $TKT_status = EEH_Template::pretty_status(EE_Ticket::onsale, false, 'sentence');
-        } elseif ($ticket->is_default()) {
-            $TKT_status = EEH_Template::pretty_status(EE_Ticket::onsale, false, 'sentence');
-        } else {
-            $TKT_status = $ticket->ticket_status(true);
-        }
-        if ($default) {
-            $TKT_min = '';
-        } else {
-            $TKT_min = $ticket->min();
-            if ($TKT_min === -1 || $TKT_min === 0) {
-                $TKT_min = '';
-            }
-        }
+        $TKT_taxable = $default || ! $ticket->taxable() ? '' : ' checked';
+        $TKT_status = $default || $ticket->is_default()
+            ? EEH_Template::pretty_status(EE_Ticket::onsale, false, 'sentence')
+            : $ticket->ticket_status(true);
+
+        $TKT_min = $default ? '' : $ticket->min();
+        $TKT_min = $TKT_min === -1 || $TKT_min === 0 ? '' : $TKT_min;
+
         $template_args = array(
             'tkt_row'                       => $default ? 'TICKETNUM' : $ticket_row,
             'TKT_order'                     => $default ? 'TICKETNUM' : $ticket_row,
@@ -1504,12 +1519,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
             'TKT_status'                    => $TKT_status,
             'TKT_price'                     => $default
                 ? ''
-                : EEH_Template::format_currency(
-                    $ticket->get_ticket_total_with_taxes(),
-                    false,
-                    false
-                ),
-            'TKT_price_code'                => EE_Registry::instance()->CFG->currency->code,
+                : $this->currency_formatter->formatForLocale($ticket->get_ticket_total_with_taxes()),
+            'TKT_price_code'                => $this->currency_formatter->getCurrencyIsoCodeForLocale(),
             'TKT_price_amount'              => $default ? 0 : $ticket_subtotal,
             'TKT_qty'                       => $default
                 ? ''
@@ -1546,7 +1557,10 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
             'ticket_price_rows'             => '',
             'TKT_base_price'                => $default || ! $base_price instanceof EE_Price
                 ? ''
-                : $base_price->get_pretty('PRC_amount', 'localized_float'),
+                : $this->currency_formatter->formatForLocale(
+                    $base_price->amount(),
+                    CurrencyFormatter::FORMAT_LOCALIZED_FLOAT
+                ),
             'TKT_base_price_ID'             => $default || ! $base_price instanceof EE_Price ? 0 : $base_price->ID(),
             'show_price_modifier'           => count($prices) > 1 || ($default && $count_price_mods > 0)
                 ? ''
@@ -1566,12 +1580,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
             'display_subtotal'              => $ticket instanceof EE_Ticket && $ticket->taxable()
                 ? ''
                 : 'display:none;',
-            'price_currency_symbol'         => EE_Registry::instance()->CFG->currency->sign,
-            'TKT_subtotal_amount_display'   => EEH_Template::format_currency(
-                $ticket_subtotal,
-                false,
-                false
-            ),
+            'price_currency_symbol'         => $this->currency_formatter->getCurrencySymbolForLocale(),
+            'TKT_subtotal_amount_display'   => $this->currency_formatter->formatForLocale($ticket_subtotal),
             'TKT_subtotal_amount'           => $ticket_subtotal,
             'tax_rows'                      => $this->_get_tax_rows($ticket_row, $ticket),
             'disabled'                      => $ticket instanceof EE_Ticket && $ticket->deleted(),
@@ -1707,7 +1717,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                 'tkt_row'           => $ticket_row,
                 'tax_label'         => $tax->get('PRC_name'),
                 'tax_added'         => $tax_added,
-                'tax_added_display' => EEH_Template::format_currency($tax_added, false, false),
+                'tax_added_display' => $this->currency_formatter->formatForLocale($tax_added),
                 'tax_amount'        => $tax->get('PRC_amount'),
             );
             $template_args = apply_filters(
@@ -1768,6 +1778,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
         $missing_price = ! $price instanceof EE_Price;
         $missing_ticket = ! $ticket instanceof EE_Ticket;
         $send_disabled = ! $missing_ticket && $ticket->get('TKT_deleted');
+        $currency_locale = $this->currency_formatter->getLocale();
+        $show_currency_symbol = ($default && $missing_price) || $price->is_percent();
         $template_args = array(
             'tkt_row'               => $default && $missing_ticket
                 ? 'TICKETNUM'
@@ -1796,7 +1808,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
             'PRC_name'              => $default && $missing_price
                 ? ''
                 : $price->get('PRC_name'),
-            'price_currency_symbol' => EE_Registry::instance()->CFG->currency->sign,
+            'price_currency_symbol' => $currency_locale->currencySymbol(),
             'show_plus_or_minus'    => $default && $missing_price
                 ? ''
                 : 'display:none;',
@@ -1806,14 +1818,17 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
             'show_minus'            => ($default && empty($price)) || ! $price->is_discount()
                 ? 'display:none;'
                 : '',
-            'show_currency_symbol'  => ($default && empty($price)) || $price->is_percent()
+            'currency_symbol_before'  => $show_currency_symbol || ! $currency_locale->currencySymbolB4Positive()
+                ? 'display:none'
+                : '',
+            'currency_symbol_after'  => $show_currency_symbol || $currency_locale->currencySymbolB4Positive()
                 ? 'display:none'
                 : '',
             'PRC_amount'            => $default && $missing_price
                 ? 0
-                : $price->get_pretty('PRC_amount', 'localized_float'),
-            'show_percentage'       => ($default && empty($price)) || ! $price->is_percent()
-                ? 'display:none;'
+                : $this->currency_formatter->precisionRound($price->amount()),
+            'show_percentage'       => ($default && $missing_price) || ! $price->is_percent()
+                ? 'display:none'
                 : '',
             'show_trash_icon'       => $show_trash
                 ? ''
@@ -2179,9 +2194,9 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                 continue;
             }
             if ($price->is_base_price()) {
-                $template_args['default_base_price_amount'] = $price->get_pretty(
-                    'PRC_amount',
-                    'localized_float'
+                $template_args['default_base_price_amount'] = $this->currency_formatter->formatForLocale(
+                    $price->amount(),
+                    CurrencyFormatter::FORMAT_LOCALIZED_FLOAT
                 );
                 $template_args['default_base_price_name'] = $price->get('PRC_name');
                 $template_args['default_base_price_description'] = $price->get('PRC_desc');

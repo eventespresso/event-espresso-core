@@ -3,12 +3,13 @@
 namespace EventEspresso\core\domain\services\assets;
 
 use DomainException;
-use EE_Currency_Config;
+use EE_Error;
 use EE_Registry;
 use EE_Template_Config;
 use EED_Core_Rest_Api;
 use EEH_DTT_Helper;
 use EEH_Qtip_Loader;
+use EEM_Country;
 use EventEspresso\core\domain\Domain;
 use EventEspresso\core\domain\DomainInterface;
 use EventEspresso\core\domain\values\assets\JavascriptAsset;
@@ -19,7 +20,9 @@ use EventEspresso\core\services\assets\AssetCollection;
 use EventEspresso\core\services\assets\AssetManager;
 use EventEspresso\core\services\assets\Registry;
 use EventEspresso\core\services\collections\DuplicateCollectionIdentifierException;
+use EventEspresso\core\services\formatters\CurrencyFormatter;
 use InvalidArgumentException;
+use ReflectionException;
 
 /**
  * Class CoreAssetManager
@@ -96,9 +99,16 @@ class CoreAssetManager extends AssetManager
     const CSS_HANDLE_CORE_CSS_DEFAULT = 'eventespresso-core-css-default';
 
     /**
-     * @var EE_Currency_Config $currency_config
+     * @var EEM_Country
+     * @since $VID:$
      */
-    protected $currency_config;
+    protected $country_model;
+
+    /**
+     * @var CurrencyFormatter
+     * @since $VID:$
+     */
+    protected $currency_formatter;
 
     /**
      * @var EE_Template_Config $template_config
@@ -110,32 +120,37 @@ class CoreAssetManager extends AssetManager
      * CoreAssetRegister constructor.
      *
      * @param AssetCollection    $assets
-     * @param EE_Currency_Config $currency_config
+     * @param EEM_Country        $country_model
+     * @param CurrencyFormatter  $currency_formatter
      * @param EE_Template_Config $template_config
      * @param DomainInterface    $domain
      * @param Registry           $registry
      */
     public function __construct(
         AssetCollection $assets,
-        EE_Currency_Config $currency_config,
+        EEM_Country $country_model,
+        CurrencyFormatter $currency_formatter,
         EE_Template_Config $template_config,
         DomainInterface $domain,
         Registry $registry
     ) {
-        $this->currency_config = $currency_config;
+        $this->country_model = $country_model;
+        $this->currency_formatter = $currency_formatter;
         $this->template_config = $template_config;
         parent::__construct($domain, $assets, $registry);
     }
 
 
     /**
-     * @since 4.9.62.p
      * @throws DomainException
      * @throws DuplicateCollectionIdentifierException
+     * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     *@since 4.9.62.p
      */
     public function addAssets()
     {
@@ -145,13 +160,15 @@ class CoreAssetManager extends AssetManager
 
 
     /**
-     * @since 4.9.62.p
      * @throws DomainException
      * @throws DuplicateCollectionIdentifierException
+     * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     *@since 4.9.62.p
      */
     public function addJavascriptFiles()
     {
@@ -182,13 +199,15 @@ class CoreAssetManager extends AssetManager
     /**
      * core default javascript
      *
-     * @since 4.9.62.p
      * @throws DomainException
      * @throws DuplicateCollectionIdentifierException
+     * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidEntityException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     *@since 4.9.62.p
      */
     private function loadCoreJs()
     {
@@ -317,22 +336,32 @@ class CoreAssetManager extends AssetManager
      * @return array
      */
     private function getAccountingSettings() {
+        $site = $this->currency_formatter->getSiteLocale();
+        $spacer_pos = $site->currencySymbolSpaceB4Positive() ? ' ' : '';
+        $spacer_neg = $site->currencySymbolSpaceB4Negative() ? ' ' : '';
         return array(
             'currency' => array(
-                'symbol'    => $this->currency_config->sign,
+                'decimal' => $site->currencyDecimalPoint(),
                 'format'    => array(
-                    'pos'  => $this->currency_config->sign_b4 ? '%s %v' : '%v %s',
-                    'neg'  => $this->currency_config->sign_b4 ? '- %s %v' : '- %v %s',
-                    'zero' => $this->currency_config->sign_b4 ? '%s --' : '-- %s',
+                    'pos'  => $site->currencySymbolB4Positive()
+                        ? "%s{$spacer_pos}%v"
+                        : "%v{$spacer_pos}%s",
+                    'neg'  => $site->currencySymbolB4Negative()
+                        ? "-{$spacer_neg}%s{$spacer_neg}%v"
+                        : "-{$spacer_neg}%v{$spacer_neg}%s",
+                    'zero' => $site->currencySymbolB4Positive()
+                        ? "%s{$spacer_pos}--"
+                        : "--{$spacer_pos}%s",
                 ),
-                'decimal'   => $this->currency_config->dec_mrk,
-                'thousand'  => $this->currency_config->thsnds,
-                'precision' => $this->currency_config->dec_plc,
+                'precision' => $site->decimalPrecision(),
+                'symbol' => $site->currencySymbol(),
+                'thousand'  => $site->currencyThousandsSeparator(),
             ),
             'number'   => array(
-                'precision' => 3,
-                'thousand'  => $this->currency_config->thsnds,
-                'decimal'   => $this->currency_config->dec_mrk,
+                'decimal'   => $site->decimalPoint(),
+                'precision' => $site->decimalPrecision(),
+                'thousand'  => $site->thousandsSeparator(),
+                'percentPrecision' => 6,
             ),
         );
     }
@@ -340,20 +369,25 @@ class CoreAssetManager extends AssetManager
 
     /**
      * Returns configuration data for the js Currency VO.
-     * @since 4.9.71.p
+     *
      * @return array
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since 4.9.71.p
      */
     private function getCurrencySettings()
     {
+        $site = $this->currency_formatter->getSiteLocale();
+        $currency_country = $this->country_model->getCountryForCurrencyISO($site->currencyIsoCode());
         return array(
-            'code' => $this->currency_config->code,
-            'singularLabel' => $this->currency_config->name,
-            'pluralLabel' => $this->currency_config->plural,
-            'sign' => $this->currency_config->sign,
-            'signB4' => $this->currency_config->sign_b4,
-            'decimalPlaces' => $this->currency_config->dec_plc,
-            'decimalMark' => $this->currency_config->dec_mrk,
-            'thousandsSeparator' => $this->currency_config->thsnds,
+            'code' => $site->currencyIsoCode(),
+            'singularLabel' => $currency_country->currency_name_single(),
+            'pluralLabel' => $currency_country->currency_name_plural(),
+            'sign' => $site->currencySymbol(),
+            'signB4' => $site->currencySymbolB4Positive(),
+            'decimalPlaces' => $site->decimalPrecision(),
+            'decimalMark' => $site->currencyDecimalPoint(),
+            'thousandsSeparator' => $site->currencyThousandsSeparator(),
         );
     }
 
