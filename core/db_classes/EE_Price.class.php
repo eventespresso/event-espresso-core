@@ -9,11 +9,6 @@
  */
 class EE_Price extends EE_Soft_Delete_Base_Class
 {
-    /**
-     * @var EE_Currency_Config $currency_config
-     */
-    protected $currency;
-
 
     /**
      * @param array  $props_n_values    incoming values
@@ -60,11 +55,6 @@ class EE_Price extends EE_Soft_Delete_Base_Class
     protected function __construct($props_n_values = [], $bydb = false, $timezone = '', $date_formats = [])
     {
         parent::__construct($props_n_values, $bydb, $timezone, $date_formats);
-        if (! $this->currency instanceof EE_Currency_Config) {
-            $this->currency = EE_Registry::instance()->CFG->currency instanceof EE_Currency_Config
-                ? EE_Registry::instance()->CFG->currency
-                : new EE_Currency_Config();
-        }
     }
 
 
@@ -90,7 +80,6 @@ class EE_Price extends EE_Soft_Delete_Base_Class
      */
     public function set_amount($amount = 0.00)
     {
-        $amount = $this->is_percent() ? $amount : round($amount, $this->currency->dec_plc);
         $this->set('PRC_amount', $amount);
     }
 
@@ -163,7 +152,7 @@ class EE_Price extends EE_Soft_Delete_Base_Class
     /**
      * get Price Amount
      *
-     * @return        float
+     * @return float
      * @throws EE_Error
      * @throws ReflectionException
      */
@@ -346,8 +335,11 @@ class EE_Price extends EE_Soft_Delete_Base_Class
     public function pretty_price()
     {
         return $this->is_percent()
-            ? apply_filters('FHEE__format_percentage_value', $this->get('PRC_amount'))
-            : $this->get_pretty('PRC_amount', 'localized_currency no_currency_code');
+            ? apply_filters(
+                'FHEE__format_percentage_value',
+                $this->get_pretty('PRC_amount', 'localized_float')
+            )
+            : $this->get_pretty('PRC_amount', 'localized_currency');
     }
 
 

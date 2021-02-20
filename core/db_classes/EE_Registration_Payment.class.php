@@ -12,11 +12,6 @@
 class EE_Registration_Payment extends EE_Base_Class
 {
     /**
-     * @var EE_Currency_Config $currency_config
-     */
-    protected $currency;
-
-    /**
      *
      * @param array  $props_n_values          incoming values
      * @param string $timezone                incoming timezone (if not set the timezone set for the website will be
@@ -62,11 +57,6 @@ class EE_Registration_Payment extends EE_Base_Class
     protected function __construct($props_n_values = [], $bydb = false, $timezone = '', $date_formats = [])
     {
         parent::__construct($props_n_values, $bydb, $timezone, $date_formats);
-        if (! $this->currency instanceof EE_Currency_Config) {
-            $this->currency = EE_Registry::instance()->CFG->currency instanceof EE_Currency_Config
-                ? EE_Registry::instance()->CFG->currency
-                : new EE_Currency_Config();
-        }
     }
 
 
@@ -110,14 +100,28 @@ class EE_Registration_Payment extends EE_Base_Class
 
 
     /**
+     * formatted amount
+     *
+     * @param string|null $schema
+     * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function prettyAmount($schema = 'localized_currency')
+    {
+        return $this->get_pretty('RPY_amount', $schema);
+    }
+
+
+    /**
      * amount
      *
      * @param float $amount
      * @throws EE_Error|ReflectionException
      */
-    public function set_amount($amount = 0.000)
+    public function set_amount($amount = 0)
     {
-        $this->set('RPY_amount', round($amount, $this->currency->dec_plc));
+        $this->set('RPY_amount', $amount);
     }
 
 

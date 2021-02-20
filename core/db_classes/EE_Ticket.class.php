@@ -52,11 +52,6 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      */
     private $_ticket_total_with_taxes;
 
-    /**
-     * @var EE_Currency_Config $currency_config
-     */
-    protected $currency;
-
 
     /**
      * @param array  $props_n_values          incoming values
@@ -104,11 +99,6 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     protected function __construct($props_n_values = [], $bydb = false, $timezone = '', $date_formats = [])
     {
         parent::__construct($props_n_values, $bydb, $timezone, $date_formats);
-        if (! $this->currency instanceof EE_Currency_Config) {
-            $this->currency = EE_Registry::instance()->CFG->currency instanceof EE_Currency_Config
-                ? EE_Registry::instance()->CFG->currency
-                : new EE_Currency_Config();
-        }
     }
 
 
@@ -565,19 +555,20 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 
 
     /**
+     * @param string|null $schema
      * @return mixed
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function pretty_price()
+    public function pretty_price($schema = 'localized_currency')
     {
-        return $this->get_pretty('TKT_price');
+        return $this->get_pretty('TKT_price', $schema);
     }
 
 
     /**
      * @return bool
-     * @throws EE_Error
+     * @throws EE_Error|ReflectionException
      */
     public function is_free()
     {
@@ -590,7 +581,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      *
      * @param bool $no_cache
      * @return float
-     * @throws EE_Error
+     * @throws EE_Error|ReflectionException
      */
     public function get_ticket_total_with_taxes($no_cache = false)
     {
@@ -614,7 +605,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 
     /**
      * @return float
-     * @throws EE_Error
+     * @throws EE_Error|ReflectionException
      */
     public function get_ticket_subtotal()
     {
@@ -626,7 +617,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * Returns the total taxes applied to this ticket
      *
      * @return float
-     * @throws EE_Error
+     * @throws EE_Error|ReflectionException
      */
     public function get_ticket_taxes_total_for_admin()
     {
@@ -790,17 +781,12 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * Sets price
      *
      * @param float $price
-     * @param bool  $localize
      * @return void
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function set_price($price, $localize = true)
+    public function set_price($price)
     {
-        // after merge to EDTR, this will also need to check if reverse calculate is set to true,
-        // and if so, then NOT round off the ticket price as that will negatively affect calculations
-        // ie: $localize && ! $this->reverseCalculate() ? round($price, $this->currency->dec_plc) : $price;
-        $price = $localize ? round($price, $this->currency->dec_plc) : $price;
         $this->set('TKT_price', $price);
     }
 

@@ -2,6 +2,8 @@
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\formatters\CurrencyFormatter;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 /**
@@ -27,9 +29,10 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     protected $_old_txn_status;
 
     /**
-     * @var EE_Currency_Config $currency_config
+     * @var CurrencyFormatter
+     * @since $VID:$
      */
-    protected $currency;
+    protected $currency_formatter;
 
 
     /**
@@ -89,10 +92,9 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     protected function __construct($props_n_values = [], $bydb = false, $timezone = '', $date_formats = [])
     {
         parent::__construct($props_n_values, $bydb, $timezone, $date_formats);
-        if (! $this->currency instanceof EE_Currency_Config) {
-            $this->currency = EE_Registry::instance()->CFG->currency instanceof EE_Currency_Config
-                ? EE_Registry::instance()->CFG->currency
-                : new EE_Currency_Config();
+        // in a better world this would have been injected upon construction
+        if (! $this->currency_formatter instanceof CurrencyFormatter) {
+            $this->currency_formatter = LoaderFactory::getLoader()->getShared(CurrencyFormatter::class);
         }
     }
 
@@ -222,7 +224,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      */
     public function set_total($amount = 0.00)
     {
-        $this->set('TXN_total', round($amount, $this->currency->dec_plc));
+        $this->set('TXN_total', $amount);
     }
 
 
@@ -234,7 +236,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      */
     public function set_paid($amount = 0.00)
     {
-        $this->set('TXN_paid', round($amount, $this->currency->dec_plc));
+        $this->set('TXN_paid', $amount);
     }
 
 
@@ -345,14 +347,8 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      */
     public function prettyRemaining($schema = 'localized_currency')
     {
-        return EEH_Template::format_currency(
-            $this->remaining(),
-            strpos($schema, 'localized_float') !== false,
-            strpos($schema, 'no_currency_code') === false,
-            '',
-            'currency-code',
-            strpos($schema, 'localized_currency') === false && strpos($schema, 'localized_float') === false
-        );
+        $format = $this->currency_formatter->getFormatFromLegacySchema($schema);
+        return $this->currency_formatter->formatForLocale($this->remaining(), $format);
     }
 
 
@@ -386,6 +382,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     /**
      * get Transaction Total
      *
+     * @param string $schema
      * @return float
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -393,15 +390,16 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function total()
+    public function total($schema = 'localized_float')
     {
-        return (float) $this->get('TXN_total');
+        return (float) $this->get('TXN_total', $schema);
     }
 
 
     /**
      * get Total Amount Paid to Date
      *
+     * @param string $schema
      * @return float
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -409,9 +407,9 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function paid()
+    public function paid($schema = 'localized_float')
     {
-        return (float) $this->get('TXN_paid');
+        return (float) $this->get('TXN_paid', $schema);
     }
 
 

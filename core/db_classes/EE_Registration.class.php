@@ -5,6 +5,8 @@ use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
+use EventEspresso\core\services\formatters\CurrencyFormatter;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 /**
@@ -54,10 +56,12 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      */
     const HAS_RESERVED_TICKET_KEY = 'has_reserved_ticket';
 
+
     /**
-     * @var EE_Currency_Config $currency_config
+     * @var CurrencyFormatter
+     * @since $VID:$
      */
-    protected $currency;
+    protected $currency_formatter;
 
 
     /**
@@ -106,10 +110,9 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     protected function __construct($props_n_values = [], $bydb = false, $timezone = '', $date_formats = [])
     {
         parent::__construct($props_n_values, $bydb, $timezone, $date_formats);
-        if (! $this->currency instanceof EE_Currency_Config) {
-            $this->currency = EE_Registry::instance()->CFG->currency instanceof EE_Currency_Config
-                ? EE_Registry::instance()->CFG->currency
-                : new EE_Currency_Config();
+        // in a better world this would have been injected upon construction
+        if (! $this->currency_formatter instanceof CurrencyFormatter) {
+            $this->currency_formatter = LoaderFactory::getLoader()->getShared(CurrencyFormatter::class);
         }
     }
 
@@ -134,6 +137,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @param string $field_name
      * @param mixed  $field_value
      * @param bool   $use_default
+     * @param string $schema
      * @throws EE_Error
      * @throws EntityNotFoundException
      * @throws InvalidArgumentException
@@ -142,7 +146,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @throws ReflectionException
      * @throws RuntimeException
      */
-    public function set($field_name, $field_value, $use_default = false)
+    public function set($field_name, $field_value, $use_default = false, $schema = '')
     {
         switch ($field_name) {
             case 'REG_code':
@@ -748,7 +752,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      */
     public function set_final_price($amount = 0.00)
     {
-        $this->set('REG_final_price', round($amount, $this->currency->dec_plc));
+        $this->set('REG_final_price', $amount);
     }
 
 
@@ -760,7 +764,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      */
     public function set_paid($amount = 0.00)
     {
-        $this->set('REG_paid', round($amount, $this->currency->dec_plc));
+        $this->set('REG_paid', $amount);
     }
 
 
@@ -832,9 +836,8 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
         $event = $this->event_obj();
         if ($event) {
             return $event->name();
-        } else {
-            return null;
         }
+        return null;
     }
 
 
@@ -1146,12 +1149,13 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * the registration's share of the transaction total, so that the
      * sum of all the transaction's REG_final_prices equal the transaction's total
      *
+     * @param string $schema
      * @return float
      * @throws EE_Error|ReflectionException
      */
-    public function final_price()
+    public function final_price($schema = 'localized_float')
     {
-        return $this->get('REG_final_price');
+        return $this->get('REG_final_price', $schema);
     }
 
 
@@ -1159,7 +1163,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * pretty_final_price
      *  final price as formatted string, with correct decimal places and currency symbol
      *
-     * @param string|null $schema
+     * @param string $schema
      * @return string
      * @throws EE_Error
      * @throws ReflectionException
@@ -1173,25 +1177,57 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     /**
      * get paid (yeah)
      *
+     * @param string $schema
      * @return float
      * @throws EE_Error|ReflectionException
      */
-    public function paid()
+    public function paid($schema = 'localized_float')
     {
-        return $this->get('REG_paid');
+        return $this->get('REG_paid', $schema);
     }
 
 
     /**
      * pretty_paid
      *
-     * @param string|null $schema
+     * @param string $schema
      * @return float
      * @throws EE_Error|ReflectionException
      */
     public function pretty_paid($schema = 'localized_currency')
     {
         return $this->get_pretty('REG_paid', $schema);
+    }
+
+
+
+    /**
+     * amountOwing
+     *
+     * @param string $schema
+     * @return float
+     * @throws EE_Error|ReflectionException
+     */
+    public function amountOwing($schema = 'localized_float')
+    {
+        $format = $this->currency_formatter->getFormatFromLegacySchema($schema);
+        return $this->currency_formatter->formatForLocale($this->final_price() - $this->paid(), $format);
+    }
+
+
+
+
+    /**
+     * pretty_paid
+     *
+     * @param string $schema
+     * @return float
+     * @throws EE_Error|ReflectionException
+     */
+    public function prettyAmountOwing($schema = 'localized_currency')
+    {
+        $format = $this->currency_formatter->getFormatFromLegacySchema($schema);
+        return $this->currency_formatter->formatForLocale($this->amountOwing(), $format);
     }
 
 
@@ -1215,9 +1251,8 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
             $this->final_price() !== $this->paid()
         ) {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
 
@@ -1441,10 +1476,9 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     public function set_deleted($deleted)
     {
         if ($deleted) {
-            $this->delete();
-        } else {
-            $this->restore();
+            return $this->delete();
         }
+        return $this->restore();
     }
 
 
@@ -1803,7 +1837,9 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
     /**
-     *        get Registration Code
+     * get Registration Code
+     *
+     * @throws EE_Error|ReflectionException
      */
     public function reg_code()
     {
@@ -1812,7 +1848,9 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
     /**
-     *        get Transaction ID
+     * get Transaction ID
+     *
+     * @throws EE_Error|ReflectionException
      */
     public function transaction_ID()
     {
