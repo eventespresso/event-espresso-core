@@ -38,15 +38,15 @@ class CurrencyFormatter extends LocaleFloatFormatter
      *
      * @param Locale   $locale
      * @param float    $amount unformatted number value, ex: 1234.56789
+     * @param int      $format one of the CurrencyFormatter::FORMAT_* constants
      * @param int|null $precision
-     * @param int      $format
      * @return string formatted amount, ex: '1,234.57'
      */
     protected function format(
         Locale $locale,
         $amount,
-        $precision = null,
-        $format = CurrencyFormatter::FORMAT_LOCALIZED_CURRENCY
+        $format = CurrencyFormatter::FORMAT_LOCALIZED_CURRENCY,
+        $precision = null
     ) {
         // if a specific decimal precision has been requested then use that, otherwise set it for the locale
         $precision = $precision !== null ? absint($precision) : $locale->decimalPrecision();
@@ -65,7 +65,7 @@ class CurrencyFormatter extends LocaleFloatFormatter
         // inserts symbols for the locale's decimal and thousands separator at the appropriate places
         $formatted_amount = $this->formatGroupings(
             $amount,
-            $precision,
+            absint($precision),
             $locale->currencyDecimalPoint(),
             $locale->currencyGrouping(),
             $locale->currencyThousandsSeparator()
@@ -90,7 +90,7 @@ class CurrencyFormatter extends LocaleFloatFormatter
     /**
      * @param Locale $locale
      * @param string $amount
-     * @param string $format
+     * @param int    $format one of the CurrencyFormatter::FORMAT_* constants
      * @return string fully formatted amount with ISO code, ex: '$ 1,234.57 USD'
      */
     protected function appendCurrencyIsoCode(Locale $locale, $amount, $format)
@@ -174,18 +174,16 @@ class CurrencyFormatter extends LocaleFloatFormatter
      *
      * @param float    $number       unformatted number value, ex: 1234.56789
      * @param string   $currency_ISO ex: "USD"
-     * @param int      $format
-     * @param int|null $precision
+     * @param int      $format       one of the CurrencyFormatter::FORMAT_* constants
      * @return string formatted value, ex: '1,234.57'
      */
     public function formatForCurrencyISO(
         $number,
         $currency_ISO,
-        $format = CurrencyFormatter::FORMAT_LOCALIZED_CURRENCY,
-        $precision = null
+        $format = CurrencyFormatter::FORMAT_LOCALIZED_CURRENCY
     ) {
         $locale = $this->getLocaleForCurrencyISO($currency_ISO);
-        return $this->format($locale, $number, $precision, $format);
+        return $this->format($locale, $number, $format);
     }
 
 
@@ -193,19 +191,19 @@ class CurrencyFormatter extends LocaleFloatFormatter
      * formats the provided number for the selected locale (defaults to site locale) and returns a string
      *
      * @param float         $number unformatted number value, ex: 1234.56789
+     * @param int           $format one of the CurrencyFormatter::FORMAT_* constants
      * @param string|Locale $locale ex: "en_US" or Locale object
-     * @param int           $format
      * @param int|null      $precision
      * @return string formatted value, ex: '1,234.57'
      */
     public function formatForLocale(
         $number,
-        $locale = '',
         $format = CurrencyFormatter::FORMAT_LOCALIZED_CURRENCY,
+        $locale = '',
         $precision = null
     ) {
         $locale = $this->locales->getLocale($locale);
-        return $this->format($locale, $number, $precision, $format);
+        return $this->format($locale, $number, $format, $precision);
     }
 
 
