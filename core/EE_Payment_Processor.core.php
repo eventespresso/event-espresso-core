@@ -3,6 +3,8 @@
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\ResettableInterface;
+use EventEspresso\core\services\formatters\CurrencyFormatter;
+use EventEspresso\core\services\loaders\LoaderFactory;
 
 EE_Registry::instance()->load_class('Processor_Base');
 
@@ -18,15 +20,19 @@ EE_Registry::instance()->load_class('Processor_Base');
 class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterface
 {
     /**
+     * @var CurrencyFormatter
+     * @since $VID:$
+     */
+    protected $currency_formatter;
+
+    /**
      * @var EE_Payment_Processor $_instance
-     * @access    private
      */
     private static $_instance;
 
 
     /**
      * @singleton method used to instantiate class object
-     * @access    public
      * @return EE_Payment_Processor instance
      */
     public static function instance()
@@ -51,14 +57,15 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
 
     /**
      *private constructor to prevent direct creation
-     *
-     * @Constructor
-     * @access private
      */
     private function __construct()
     {
         do_action('AHEE__EE_Payment_Processor__construct');
-        add_action('http_api_curl', array($this, '_curl_requests_to_paypal_use_tls'), 10, 3);
+        add_action('http_api_curl', [$this, '_curl_requests_to_paypal_use_tls'], 10, 3);
+        // in a better world this would have been injected upon construction
+        if (! $this->currency_formatter instanceof CurrencyFormatter) {
+            $this->currency_formatter = LoaderFactory::getLoader()->getShared(CurrencyFormatter::class);
+        }
     }
 
 
@@ -121,8 +128,11 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
         // verify transaction
         EEM_Transaction::instance()->ensure_is_obj($transaction);
         $transaction->set_payment_method_ID($payment_method->ID());
-        $amount = EEH_Template::format_currency($amount, true, false);
-        $remaining = EEH_Template::format_currency($transaction->remaining(), true, false);
+        $amount    = (float) $this->currency_formatter->formatForLocale(
+            $amount,
+            CurrencyFormatter::FORMAT_LOCALIZED_FLOAT
+        );
+        $remaining = (float) $transaction->prettyRemaining('localized_float');
         // verify payment method type
         if ($payment_method->type_obj() instanceof EE_PMT_Base) {
             $payment = $payment_method->type_obj()->process_payment(
@@ -130,7 +140,7 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
                 min($amount, $remaining), // make sure we don't overcharge
                 $billing_form,
                 $return_url,
-                add_query_arg(array('ee_cancel_payment' => true), $cancel_url),
+                add_query_arg(['ee_cancel_payment' => true], $cancel_url),
                 $method,
                 $by_admin
             );
@@ -166,10 +176,11 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function get_ipn_url_for_payment_method($transaction, $payment_method)
     {
-        /** @type \EE_Transaction $transaction */
+        /** @type EE_Transaction $transaction */
         $transaction = EEM_Transaction::instance()->ensure_is_obj($transaction);
         $primary_reg = $transaction->primary_registration();
         if (! $primary_reg instanceof EE_Registration) {
@@ -187,14 +198,13 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
             $payment_method,
             true
         );
-        $url = add_query_arg(
-            array(
+        return add_query_arg(
+            [
                 'e_reg_url_link'    => $primary_reg->reg_url_link(),
                 'ee_payment_method' => $payment_method->slug(),
-            ),
+            ],
             EE_Registry::instance()->CFG->core->txn_page_url()
         );
-        return $url;
     }
 
 
@@ -211,12 +221,12 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
      *                                                 EE_Transaction_Processor::update_transaction_and_registrations_after_checkout_or_payment()
      * @param bool               $separate_IPN_request whether the IPN uses a separate request (true, like PayPal)
      *                                                 or is processed manually (false, like Authorize.net)
+     * @return EE_Payment
      * @throws EE_Error
      * @throws Exception
-     * @return EE_Payment
-     * @throws \RuntimeException
-     * @throws \ReflectionException
-     * @throws \InvalidArgumentException
+     * @throws RuntimeException
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      */
@@ -235,10 +245,10 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
             $obj_for_log = $transaction;
             if ($payment_method instanceof EE_Payment_Method) {
                 $obj_for_log = EEM_Payment::instance()->get_one(
-                    array(
-                        array('TXN_ID' => $transaction->ID(), 'PMD_ID' => $payment_method->ID()),
-                        'order_by' => array('PAY_timestamp' => 'desc'),
-                    )
+                    [
+                        ['TXN_ID' => $transaction->ID(), 'PMD_ID' => $payment_method->ID()],
+                        'order_by' => ['PAY_timestamp' => 'desc'],
+                    ]
                 );
             }
         } elseif ($payment_method instanceof EE_Payment) {
@@ -246,7 +256,7 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
         }
         $log = EEM_Change_Log::instance()->log(
             EEM_Change_Log::type_gateway,
-            array('IPN data received' => $_req_data),
+            ['IPN data received' => $_req_data],
             $obj_for_log
         );
         try {
@@ -266,12 +276,12 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
                     } catch (EventEspresso\core\exceptions\IpnException $e) {
                         EEM_Change_Log::instance()->log(
                             EEM_Change_Log::type_gateway,
-                            array(
+                            [
                                 'message'     => 'IPN Exception: ' . $e->getMessage(),
                                 'current_url' => EEH_URL::current_url(),
                                 'payment'     => $e->getPaymentProperties(),
                                 'IPN_data'    => $e->getIpnData(),
-                            ),
+                            ],
                             $obj_for_log
                         );
                         return $e->getPayment();
@@ -299,23 +309,23 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
                 $active_payment_methods = EEM_Payment_Method::instance()->get_all_active();
                 foreach ($active_payment_methods as $active_payment_method) {
                     try {
-                        $payment = $active_payment_method->type_obj()->handle_unclaimed_ipn($_req_data);
+                        $payment        = $active_payment_method->type_obj()->handle_unclaimed_ipn($_req_data);
                         $payment_method = $active_payment_method;
                         EEM_Change_Log::instance()->log(
                             EEM_Change_Log::type_gateway,
-                            array('IPN data' => $_req_data),
+                            ['IPN data' => $_req_data],
                             $payment
                         );
                         break;
                     } catch (EventEspresso\core\exceptions\IpnException $e) {
                         EEM_Change_Log::instance()->log(
                             EEM_Change_Log::type_gateway,
-                            array(
+                            [
                                 'message'     => 'IPN Exception: ' . $e->getMessage(),
                                 'current_url' => EEH_URL::current_url(),
                                 'payment'     => $e->getPaymentProperties(),
                                 'IPN_data'    => $e->getIpnData(),
-                            ),
+                            ],
                             $obj_for_log
                         );
                         return $e->getPayment();
@@ -339,13 +349,13 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
                 if ($payment_method) {
                     EEM_Change_Log::instance()->log(
                         EEM_Change_Log::type_gateway,
-                        array('IPN data' => $_req_data),
+                        ['IPN data' => $_req_data],
                         $payment_method
                     );
                 } elseif ($transaction) {
                     EEM_Change_Log::instance()->log(
                         EEM_Change_Log::type_gateway,
-                        array('IPN data' => $_req_data),
+                        ['IPN data' => $_req_data],
                         $transaction
                     );
                 }
@@ -375,12 +385,12 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
      * Removes any non-printable illegal characters from the input,
      * which might cause a raucous when trying to insert into the database
      *
-     * @param  array $request_data
+     * @param array $request_data
      * @return array
      */
     protected function _remove_unusable_characters_from_array(array $request_data)
     {
-        $return_data = array();
+        $return_data = [];
         foreach ($request_data as $key => $value) {
             $return_data[ $this->_remove_unusable_characters($key) ] = $this->_remove_unusable_characters(
                 $value
@@ -428,7 +438,7 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
     public function finalize_payment_for($transaction, $update_txn = true)
     {
         /** @var $transaction EE_Transaction */
-        $transaction = EEM_Transaction::instance()->ensure_is_obj($transaction);
+        $transaction         = EEM_Transaction::instance()->ensure_is_obj($transaction);
         $last_payment_method = $transaction->payment_method();
         if ($last_payment_method instanceof EE_Payment_Method) {
             $payment = $last_payment_method->type_obj()->finalize_payment_for($transaction);
@@ -456,7 +466,7 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
     public function process_refund(
         EE_Payment_Method $payment_method,
         EE_Payment $payment_to_refund,
-        array $refund_info = array()
+        array $refund_info = []
     ) {
         if ($payment_method instanceof EE_Payment_Method && $payment_method->type_obj()->supports_sending_refunds()) {
             $payment_method->type_obj()->process_refund($payment_to_refund, $refund_info);
@@ -568,11 +578,12 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
      * @throws RuntimeException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function process_registration_payments(
         EE_Transaction $transaction,
         EE_Payment $payment,
-        array $registrations = array()
+        array $registrations = []
     ) {
         // only process if payment was successful
         if ($payment->status() !== EEM_Payment::status_id_approved) {
@@ -582,14 +593,14 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
         if (empty($registrations)) {
             // find registrations with monies owing that can receive a payment
             $registrations = $transaction->registrations(
-                array(
-                    array(
+                [
+                    [
                         // only these reg statuses can receive payments
-                        'STS_ID'           => array('IN', EEM_Registration::reg_statuses_that_allow_payment()),
-                        'REG_final_price'  => array('!=', 0),
-                        'REG_final_price*' => array('!=', 'REG_paid', true),
-                    ),
-                )
+                        'STS_ID'           => ['IN', EEM_Registration::reg_statuses_that_allow_payment()],
+                        'REG_final_price'  => ['!=', 0],
+                        'REG_final_price*' => ['!=', 'REG_paid', true],
+                    ],
+                ]
             );
         }
         // still nothing ??!??
@@ -639,10 +650,11 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
                         'A remainder of %1$s exists after applying this payment to Registration(s) %2$s.%3$sPlease verify that the original payment amount of %4$s is correct. If so, you should edit this payment and select at least one additional registration in the "Registrations to Apply Payment to" section, so that the remainder of this payment can be applied to the additional registration(s).',
                         'event_espresso'
                     ),
-                    EEH_Template::format_currency($available_payment_amount),
+
+                    $this->currency_formatter->formatForLocale($available_payment_amount),
                     implode(', ', array_keys($registrations)),
                     '<br/>',
-                    EEH_Template::format_currency($payment->amount())
+                    $payment->prettyAmount()
                 ),
                 __FILE__,
                 __FUNCTION__,
@@ -664,13 +676,14 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
      * @throws RuntimeException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function process_registration_payment(
         EE_Registration $registration,
         EE_Payment $payment,
         $available_payment_amount = 0.00
     ) {
-        $owing = $registration->final_price() - $registration->paid();
+        $owing = $registration->amountOwing();
         if ($owing > 0) {
             // don't allow payment amount to exceed the available payment amount, OR the amount owing
             $payment_amount = min($available_payment_amount, $owing);
@@ -696,6 +709,7 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     protected function _apply_registration_payment(
         EE_Registration $registration,
@@ -704,7 +718,7 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
     ) {
         // find any existing reg payment records for this registration and payment
         $existing_reg_payment = EEM_Registration_Payment::instance()->get_one(
-            array(array('REG_ID' => $registration->ID(), 'PAY_ID' => $payment->ID()))
+            [['REG_ID' => $registration->ID(), 'PAY_ID' => $payment->ID()]]
         );
         // if existing registration payment exists
         if ($existing_reg_payment instanceof EE_Registration_Payment) {
@@ -716,7 +730,7 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
             $registration->_add_relation_to(
                 $payment,
                 'Payment',
-                array('RPY_amount' => $payment_amount)
+                ['RPY_amount' => $payment_amount]
             );
             // make it stick
             $registration->save();
@@ -736,6 +750,7 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
      * @throws RuntimeException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function process_registration_refund(
         EE_Registration $registration,
@@ -826,15 +841,18 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
                 $gateway = $payment_method_type_obj->get_gateway();
                 if ($gateway instanceof EE_Gateway) {
                     $gateway->log(
-                        array(
-                            'message'               => (string) esc_html__('Post Payment Transaction Details', 'event_espresso'),
+                        [
+                            'message'               => (string) esc_html__(
+                                'Post Payment Transaction Details',
+                                'event_espresso'
+                            ),
                             'transaction'           => $transaction->model_field_array(),
                             'finalized'             => $finalized,
                             'IPN'                   => $IPN,
                             'deliver_notifications' => has_filter(
                                 'FHEE__EED_Messages___maybe_registration__deliver_notifications'
                             ),
-                        ),
+                        ],
                         $payment
                     );
                 }
