@@ -1,5 +1,8 @@
 <?php
 
+use EventEspresso\core\services\formatters\CurrencyFormatter;
+use EventEspresso\core\services\loaders\LoaderFactory;
+
 /**
  * Text_Fields is a base class for any fields which are have float value. (Exception: foreign and private key fields.
  * Wish PHP had multiple-inheritance for this...)
@@ -16,13 +19,19 @@ class EE_Money_Field extends EE_Float_Field
      */
     protected $allow_fractional_subunits;
 
+    /**
+     * @var CurrencyFormatter
+     * @since $VID:$
+     */
+    protected $currency_formatter;
+
 
     /**
      * @param string $table_column
      * @param string $nicename
      * @param bool   $nullable
-     * @param float   $default_value
-     * @param bool $allow_fractional_subunits
+     * @param float  $default_value
+     * @param bool   $allow_fractional_subunits
      */
     public function __construct(
         $table_column,
@@ -31,88 +40,13 @@ class EE_Money_Field extends EE_Float_Field
         $default_value = 0,
         $allow_fractional_subunits = true
     ) {
-        $this->allow_fractional_subunits = $allow_fractional_subunits;
         parent::__construct($table_column, $nicename, $nullable, $default_value);
+        $this->allow_fractional_subunits = $allow_fractional_subunits;
+        // in a better world this would have been injected upon construction
+        if (! $this->currency_formatter instanceof CurrencyFormatter) {
+            $this->currency_formatter = LoaderFactory::getLoader()->getShared(CurrencyFormatter::class);
+        }
         $this->setSchemaType('object');
-    }
-
-
-    /**
-     * Schemas:
-     *    'localized_float': "3,023.00"
-     *    'no_currency_code': "$3,023.00"
-     *    null: "$3,023.00<span>USD</span>"
-     *
-     * @param string $amount
-     * @param string $schema
-     * @return string
-     * @throws EE_Error
-     */
-    public function prepare_for_pretty_echoing($amount, $schema = null)
-    {
-        return EEH_Template::format_currency(
-            $amount,
-            strpos($schema, 'localized_float') !== false || strpos($schema, 'precision_float') !== false,
-            strpos($schema, 'no_currency_code') === false && strpos($schema, 'precision_float') === false,
-            '',
-            'currency-code',
-            ($this->allow_fractional_subunits || strpos($schema, 'precision_float') !== false)
-                && strpos($schema, 'localized_currency') === false
-                && strpos($schema, 'localized_float') === false
-        );
-    }
-
-
-    /**
-     * If provided with a string, strips out money-related formatting to turn it into a proper float.
-     * Rounds the float to the correct number of decimal places for this country's currency.
-     * Also, interprets periods and commas according to the country's currency settings.
-     * So if you want to pass in a string that NEEDS to interpret periods as decimal marks,
-     * type cast it as a float first.
-     *
-     * @param string $amount
-     * @return float
-     * @throws EE_Error
-     */
-    public function prepare_for_set($amount)
-    {
-        // first convert to a float-style string or number
-        // then round to the correct number of decimal places for this  currency
-        return $this->roundSubunitsIfNotAllowed(parent::prepare_for_set($amount));
-    }
-
-
-    /**
-     * @param mixed $amount
-     * @return float|mixed
-     * @throws EE_Error
-     * @since $VID:$
-     */
-    public function prepare_for_get($amount)
-    {
-        return $this->roundSubunitsIfNotAllowed(parent::prepare_for_get($amount));
-    }
-
-
-    public function getSchemaProperties()
-    {
-        return [
-            'raw'    => [
-                'description' => sprintf(
-                    esc_html__('%s - the raw value as it exists in the database as a simple float.', 'event_espresso'),
-                    $this->get_nicename()
-                ),
-                'type'        => 'number',
-            ],
-            'pretty' => [
-                'description' => sprintf(
-                    esc_html__('%s - formatted for display in the set currency and decimal places.', 'event_espresso'),
-                    $this->get_nicename()
-                ),
-                'type'        => 'string',
-                'format'      => 'money',
-            ],
-        ];
     }
 
 
@@ -128,25 +62,105 @@ class EE_Money_Field extends EE_Float_Field
 
 
     /**
-     * If partial pennies allowed, leaves the amount as-is; if not, rounds it according
-     * to the site's currency
+     * Schemas:
+     *    'localized_float': '3,023.00'
+     *    'no_currency_code': '$3,023.00'
+     *    null: '$3,023.00<span>USD</span>'
      *
+     * @param float|int|string $amount
+     * @param string           $schema
+     * @return string
+     * @since $VID:$
+     */
+    public function prepare_for_get($amount, $schema = 'precision_float')
+    {
+        $schema = $schema ? $schema : 'precision_float';
+        $format = $this->currency_formatter->getFormatFromLegacySchema($schema, $this->allow_fractional_subunits);
+        return $this->currency_formatter->formatForLocale((float) $amount, $format);
+    }
+
+
+    /**
+     * Schemas:
+     *    'localized_float': "3,023.00"
+     *    'no_currency_code': "$3,023.00"
+     *    null: "$3,023.00<span>USD</span>"
+     *
+     * @param float|int|string $amount
+     * @param string           $schema
+     * @return string
+     */
+    public function prepare_for_pretty_echoing($amount, $schema = 'localized_currency')
+    {
+        $format = $this->currency_formatter->getFormatFromLegacySchema($schema, $this->allow_fractional_subunits);
+        return $this->currency_formatter->formatForLocale((float) $amount, $format);
+    }
+
+
+    /**
+     * Converts periods and commas according to the country's currency settings.
+     * Strips out money-related formatting to turn it into a proper float.
+     * If fractional subunits are not allowed,
+     * it rounds the float to the correct number of decimal places for this country's currency.
+     *
+     * @param float|int|string $amount
+     * @param string           $schema
+     * @return float
+     */
+    public function prepare_for_set($amount, $schema = '')
+    {
+        $amount = $this->currency_formatter->parseForLocale($amount);
+        return $this->prepare_for_set_from_db($amount);
+    }
+
+
+    /**
      * @param float $amount
      * @return float
-     * @throws EE_Error
      */
-    protected function roundSubunitsIfNotAllowed($amount)
+    public function prepare_for_set_from_db($amount)
     {
-        if (! $this->allowFractionalSubunits()) {
-            return EEH_Money::round_for_currency($amount, $this->currency->code);
-        }
-        return $amount;
+        return $this->allowFractionalSubunits()
+            ? $this->currency_formatter->precisionRound($amount)
+            : $this->currency_formatter->roundForLocale($amount);
+    }
+
+
+    /**
+     * @return array[]
+     */
+    public function getSchemaProperties()
+    {
+        return [
+            'raw'    => [
+                'description' => sprintf(
+                    esc_html__(
+                        '%s - the raw value as it exists in the database as a simple float.',
+                        'event_espresso'
+                    ),
+                    $this->get_nicename()
+                ),
+                'type'        => 'number',
+            ],
+            'pretty' => [
+                'description' => sprintf(
+                    esc_html__(
+                        '%s - formatted for display in the set currency and decimal places.',
+                        'event_espresso'
+                    ),
+                    $this->get_nicename()
+                ),
+                'type'        => 'string',
+                'format'      => 'money',
+            ],
+        ];
     }
 
 
     /**
      * Returns whether or not this money field allows partial penny amounts
      *
+     * @deprecatd $VID:$
      * @return boolean
      */
     public function whole_pennies_only()
