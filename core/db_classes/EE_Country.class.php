@@ -35,6 +35,32 @@ class EE_Country extends EE_Base_Class
 
 
     /**
+     * Gets the two character country ISO code
+     *
+     * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function Iso2Code()
+    {
+        return $this->get('CNT_ISO');
+    }
+
+
+    /**
+     * Gets the three character country ISO code
+     *
+     * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function Iso3Code()
+    {
+        return $this->get('CNT_ISO3');
+    }
+
+
+    /**
      * Gets the country name
      *
      * @return string
