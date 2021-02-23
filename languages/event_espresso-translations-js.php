@@ -513,8 +513,8 @@ $generated_i18n_strings = array(
 	__( 'start dates only', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/newDateOptions/AddSingleDate.tsx:26
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/newDateOptions/NewDateModal.tsx:14
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/newDateOptions/OptionsModalButton.tsx:10
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/newDateOptions/NewDateModal.tsx:12
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/newDateOptions/OptionsModalButton.tsx:16
 	__( 'Add New Date', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/newDateOptions/AddSingleDate.tsx:26
