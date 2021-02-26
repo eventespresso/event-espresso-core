@@ -277,7 +277,7 @@ class EE_Cart implements ResettableInterface
      */
     public function hasTickets()
     {
-        if ($this->has_tickets === null) {
+        if (! $this->has_tickets) {
             $tickets           = EEH_Line_Item::get_ticket_line_items($this->get_grand_total());
             $this->has_tickets = is_array($tickets) && count($tickets) > 0;
         }
