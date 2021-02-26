@@ -151,6 +151,8 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
      *
      * @param EE_Registration $item the current item
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _get_row_class($item)
     {
@@ -214,8 +216,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
 
 
     /**
-     *    _get_table_filters
-     *
      * @return array
      * @throws EE_Error
      * @throws ReflectionException
@@ -554,7 +554,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
     public function column_DTT_EVT_start(EE_Registration $item)
     {
         $datetime_strings = [];
-        $ticket           = $item->ticket();
+        $ticket           = $item->ticket(true);
         if ($ticket instanceof EE_Ticket) {
             $remove_defaults = ['default_where_conditions' => 'none'];
             $datetimes       = $ticket->datetimes($remove_defaults);
@@ -683,9 +683,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                     $action,
                     REG_ADMIN_URL
                 );
-                $actions['restore'] = '<a href="'
-                                      . $restore_lnk_url
-                                      . '" title="'
+                $actions['restore'] = '<a href="' . $restore_lnk_url . '" title="'
                                       . esc_attr__('Restore Registration', 'event_espresso') . '">'
                                       . esc_html__('Restore', 'event_espresso') . '</a>';
             }
@@ -701,9 +699,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                     $action,
                     REG_ADMIN_URL
                 );
-                $actions['delete'] = '<a href="'
-                                     . $delete_lnk_url
-                                     . '" title="'
+                $actions['delete'] = '<a href="' . $delete_lnk_url . '" title="'
                                      . esc_attr__('Delete Registration Permanently', 'event_espresso')
                                      . '">'
                                      . esc_html__('Delete', 'event_espresso')
@@ -735,6 +731,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
     /**
      * @param EE_Registration $item
      * @return string
+     * @throws EE_Error|ReflectionException
      */
     public function column__REG_count(EE_Registration $item)
     {
@@ -789,6 +786,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
      * @param EE_Registration $item
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function column__REG_paid(EE_Registration $item)
     {
@@ -834,15 +832,9 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                 'espresso_transactions_view_transaction',
                 $item->transaction_ID()
             )
-                ? '<span class="reg-pad-rght"><a class="status-'
-                  . $item->transaction()->status_ID()
-                  . '" href="'
-                  . $view_txn_lnk_url
-                  . '"  title="'
-                  . esc_attr__('View Transaction', 'event_espresso')
-                  . '">'
-                  . $item->transaction()->pretty_total()
-                  . '</a></span>'
+                ? '<span class="reg-pad-rght"><a class="status-' . $item->transaction()->status_ID() . '" href="'
+                  .  $view_txn_lnk_url . '"  title="' . esc_attr__('View Transaction', 'event_espresso')
+                  . '">' . $item->transaction()->pretty_total() . '</a></span>'
                 : '<span class="reg-pad-rght">' . $item->transaction()->pretty_total() . '</span>';
         } else {
             return esc_html__("None", "event_espresso");
@@ -898,8 +890,6 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
 
 
     /**
-     * column_actions
-     *
      * @param EE_Registration $item
      * @return string
      * @throws EE_Error
