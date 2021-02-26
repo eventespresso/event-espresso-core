@@ -787,11 +787,14 @@ class EE_Registry implements ResettableInterface
         if ($this->_cache_on && $cache) {
             // return object if it's already cached
             $cached_class = $this->_get_cached_class($class_name, $addon, $arguments);
+
             if ($cached_class !== null) {
                 return $cached_class;
             }
-        }                                                           // obtain the loader method from the dependency map
-        $loader = $this->_dependency_map->class_loader($class_name);// instantiate the requested object
+        }
+        // obtain the loader method from the dependency map
+        $loader = $this->_dependency_map->class_loader($class_name);
+        // instantiate the requested object
         if ($loader instanceof Closure) {
             $class_obj = $loader($arguments);
         } else {
@@ -1508,6 +1511,10 @@ class EE_Registry implements ResettableInterface
     public function getAddon(string $class_name): ?EE_Addon
     {
         $class_name = str_replace('\\', '_', $class_name);
+        $addon = $this->_get_cached_class($class_name);
+        if($addon) {
+            return $addon;
+        }
         return $this->addons->{$class_name} ?? null;
     }
 
@@ -1516,7 +1523,7 @@ class EE_Registry implements ResettableInterface
      * removes the addon from the internal cache
      *
      * @param string $class_name
-     * @return void
+     * @return bool
      */
     public function removeAddon(string $class_name)
     {
@@ -1634,33 +1641,46 @@ class EE_Registry implements ResettableInterface
      * @return EE_Registry
      * @throws EE_Error
      * @throws ReflectionException
+     * @throws InvalidArgumentException
      */
     public static function reset(bool $hard = false, bool $reinstantiate = true, bool $reset_models = true): EE_Registry
     {
-        $instance            = self::instance();
-        $instance->_cache_on = true;
-        // reset some "special" classes
-        EEH_Activation::reset();
-        $hard                     = apply_filters('FHEE__EE_Registry__reset__hard', $hard);
-        $instance->CFG            = EE_Config::reset($hard, $reinstantiate);
-        $instance->CART           = null;
-        $instance->MRM            = null;
-        $instance->AssetsRegistry = LoaderFactory::getLoader()->getShared(
-            'EventEspresso\core\services\assets\Registry'
-        );
-        // messages reset
-        EED_Messages::reset();
-        // handle of objects cached on LIB
-        foreach (['LIB', 'modules'] as $cache) {
-            foreach ($instance->{$cache} as $class_name => $class) {
-                if (self::_reset_and_unset_object($class, $reset_models)) {
-                    unset($instance->{$cache}->{$class_name});
+        $hard = apply_filters('FHEE__EE_Registry__reset__hard', $hard);
+        $cached_properties = [
+            'BUS',
+            'CART',
+            'CFG',
+            'LIB',
+            'REQ',
+            'MRM',
+            'AssetsRegistry',
+            // 'addons',
+            // 'models',
+            'modules',
+            'shortcodes',
+            'widgets',
+        ];
+        foreach ($cached_properties as $cached_property) {
+            if (! property_exists(self::$_instance, $cached_property) || ! isset(self::$_instance->{$cached_property})) {
+                continue;
+            }
+            $cached = self::$_instance->{$cached_property};
+            if (is_array($cached) || $cached instanceof RegistryContainer) {
+                foreach ($cached as $class_name => $class) {
+                    if (self::_reset_object($class, $reset_models, $hard, $reinstantiate)) {
+                        unset(self::$_instance->{$cached_property}->{$class_name});
+                    }
+                }
+                continue;
+            }
+            if (is_object($cached)) {
+                if (self::_reset_object($cached, $reset_models, $hard, $reinstantiate)) {
+                    unset(self::$_instance->{$cached_property});
                 }
             }
         }
-        return $instance;
+        return self::$_instance;
     }
-
 
     /**
      * if passed object implements ResettableInterface, then call it's reset() method
@@ -1669,11 +1689,12 @@ class EE_Registry implements ResettableInterface
      *
      * @param      $object
      * @param bool $reset_models
+     * @param      $hard
+     * @param      $reinstantiate
      * @return bool returns true if cached object should be unset
      * @throws EE_Error
-     * @throws ReflectionException
      */
-    private static function _reset_and_unset_object($object, bool $reset_models): bool
+    private static function _reset_object($object, bool $reset_models, $hard, $reinstantiate): bool
     {
         if (! is_object($object)) {
             // don't unset anything that's not an object
@@ -1685,15 +1706,25 @@ class EE_Registry implements ResettableInterface
             return false;
         }
         if ($object instanceof ResettableInterface) {
+            // reset some "special" classes
+            if ($object instanceof EE_Config) {
+                EE_Config::reset($hard, $reinstantiate);
+                return false;
+            }
+            if ($object instanceof EEH_Activation) {
+                EEH_Activation::reset();
+                return false;
+            }
             if ($object instanceof EEM_Base) {
                 if ($reset_models) {
-                    $object->reset();
-                    return true;
+                    self::$_instance->reset_model(get_class($object));
                 }
                 return false;
             }
-            $object->reset();
-            return true;
+            if (method_exists($object, 'reset') && is_callable([$object, 'reset'])) {
+                $object->reset();
+            }
+            return false;
         }
         if (! $object instanceof InterminableInterface) {
             return true;
