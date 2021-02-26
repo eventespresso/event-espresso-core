@@ -1,6 +1,7 @@
 <?php
 
 use EventEspresso\core\domain\DomainFactory;
+use EventEspresso\core\interfaces\InterminableInterface;
 use EventEspresso\core\services\loaders\ClassInterfaceCache;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
@@ -17,7 +18,7 @@ use EventEspresso\core\services\request\ResponseInterface;
  * @author        Brent Christensen
  * @since         4.9.0
  */
-class EE_Dependency_Map
+class EE_Dependency_Map implements InterminableInterface
 {
     /**
      * This means that the requested class dependency is not present in the dependency map
@@ -937,6 +938,7 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\formatters\CurrencyFormatter' => EE_Dependency_Map::load_from_cache,
             ],
         ];
+        do_action('AHEE__EE_Dependency_Map___register_core_dependencies', $this);
     }
 
 
@@ -1072,6 +1074,7 @@ class EE_Dependency_Map
                 return EE_Config::instance()->template_settings->EED_Ticket_Selector;
             },
         ];
+        do_action('AHEE__EE_Dependency_Map___register_core_class_loaders', $this);
     }
 
 
@@ -1136,6 +1139,7 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\notices\NoticeConverterInterface'
             );
         }
+        do_action('AHEE__EE_Dependency_Map___register_core_aliases', $this);
     }
 
 
