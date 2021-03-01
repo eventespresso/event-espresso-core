@@ -221,7 +221,6 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/details/useBulkEditFormConfig.ts:45
 	// Reference: domains/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:80
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:45
-	// Reference: packages/ee-components/src/UpsellForm/useUpsellFormConfig.ts:22
 	__( 'Basics', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:71
@@ -1038,16 +1037,16 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/dates/src/utils/misc.ts:19
 	__( 'minute(s)', 'event_espresso' ),
 
-	// Reference: packages/edtr-services/src/apollo/initialization/useCacheRehydration.ts:109
+	// Reference: packages/edtr-services/src/apollo/initialization/useCacheRehydration.ts:104
 	__( 'datetimes initialized', 'event_espresso' ),
 
-	// Reference: packages/edtr-services/src/apollo/initialization/useCacheRehydration.ts:119
+	// Reference: packages/edtr-services/src/apollo/initialization/useCacheRehydration.ts:114
 	__( 'tickets initialized', 'event_espresso' ),
 
-	// Reference: packages/edtr-services/src/apollo/initialization/useCacheRehydration.ts:129
+	// Reference: packages/edtr-services/src/apollo/initialization/useCacheRehydration.ts:124
 	__( 'prices initialized', 'event_espresso' ),
 
-	// Reference: packages/edtr-services/src/apollo/initialization/useCacheRehydration.ts:99
+	// Reference: packages/edtr-services/src/apollo/initialization/useCacheRehydration.ts:94
 	__( 'price types initialized', 'event_espresso' ),
 
 	// Reference: packages/edtr-services/src/apollo/mutations/useReorderEntities.ts:72
@@ -1079,54 +1078,6 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/ee-components/src/SimpleTicketCard/SimpleTicketCard.tsx:34
 	// Reference: packages/ui-components/src/CalendarDateSwitcher/CalendarDateSwitcher.tsx:47
 	__( 'ends', 'event_espresso' ),
-
-	// Reference: packages/ee-components/src/UpsellForm/useUpsellFormConfig.ts:104
-	__( 'Media', 'event_espresso' ),
-
-	// Reference: packages/ee-components/src/UpsellForm/useUpsellFormConfig.ts:108
-	__( 'Image', 'event_espresso' ),
-
-	// Reference: packages/ee-components/src/UpsellForm/useUpsellFormConfig.ts:26
-	__( 'Main title', 'event_espresso' ),
-
-	// Reference: packages/ee-components/src/UpsellForm/useUpsellFormConfig.ts:31
-	__( 'Subtitle', 'event_espresso' ),
-
-	// Reference: packages/ee-components/src/UpsellForm/useUpsellFormConfig.ts:36
-	__( 'Main text', 'event_espresso' ),
-
-	// Reference: packages/ee-components/src/UpsellForm/useUpsellFormConfig.ts:41
-	__( 'CTA', 'event_espresso' ),
-
-	// Reference: packages/ee-components/src/UpsellForm/useUpsellFormConfig.ts:46
-	__( 'CTA link', 'event_espresso' ),
-
-	// Reference: packages/ee-components/src/UpsellForm/useUpsellFormConfig.ts:51
-	__( 'CTA style', 'event_espresso' ),
-
-	// Reference: packages/ee-components/src/UpsellForm/useUpsellFormConfig.ts:56
-	__( 'Alternative CTA text', 'event_espresso' ),
-
-	// Reference: packages/ee-components/src/UpsellForm/useUpsellFormConfig.ts:61
-	__( 'Alternative CTA link', 'event_espresso' ),
-
-	// Reference: packages/ee-components/src/UpsellForm/useUpsellFormConfig.ts:66
-	__( 'Alternative CTA style', 'event_espresso' ),
-
-	// Reference: packages/ee-components/src/UpsellForm/useUpsellFormConfig.ts:71
-	__( 'Dismissable', 'event_espresso' ),
-
-	// Reference: packages/ee-components/src/UpsellForm/useUpsellFormConfig.ts:78
-	__( 'Layout/ UI', 'event_espresso' ),
-
-	// Reference: packages/ee-components/src/UpsellForm/useUpsellFormConfig.ts:82
-	__( 'Theme', 'event_espresso' ),
-
-	// Reference: packages/ee-components/src/UpsellForm/useUpsellFormConfig.ts:87
-	__( 'Template', 'event_espresso' ),
-
-	// Reference: packages/ee-components/src/UpsellForm/useUpsellFormConfig.ts:92
-	__( 'Orientation', 'event_espresso' ),
 
 	// Reference: packages/ee-components/src/bulkEdit/ActionCheckbox.tsx:38
 	/* translators: %d entity id */
