@@ -1107,6 +1107,14 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/ee-components/src/filterBar/SortByControl/index.tsx:26
 	__( 'reorder tickets', 'event_espresso' ),
 
+	// Reference: packages/form/src/adapters/WPMediaImage.tsx:12
+	__( 'Select Image', 'event_espresso' ),
+
+	// Reference: packages/form/src/adapters/WPMediaImage.tsx:44
+	// Reference: packages/rich-text-editor/src/components/AdvancedTextEditor/toolbarButtons/WPMedia.tsx:10
+	// Reference: packages/rich-text-editor/src/rte-old/components/toolbarButtons/WPMedia.tsx:12
+	__( 'Select', 'event_espresso' ),
+
 	// Reference: packages/form/src/renderers/RepeatableRenderer.tsx:36
 	/* translators: %d the entry number */
 	__( 'Entry %d', 'event_espresso' ),
@@ -1165,10 +1173,6 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 
 	// Reference: packages/predicates/src/registration/statusOptions.ts:6
 	__( 'Approved', 'event_espresso' ),
-
-	// Reference: packages/rich-text-editor/src/components/AdvancedTextEditor/toolbarButtons/WPMedia.tsx:10
-	// Reference: packages/rich-text-editor/src/rte-old/components/toolbarButtons/WPMedia.tsx:12
-	__( 'Select', 'event_espresso' ),
 
 	// Reference: packages/rich-text-editor/src/components/AdvancedTextEditor/toolbarButtons/WPMedia.tsx:8
 	// Reference: packages/rich-text-editor/src/rte-old/components/toolbarButtons/WPMedia.tsx:10
