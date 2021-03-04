@@ -1554,6 +1554,9 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
                     }
                 } elseif ($child_line_item->type() === EEM_Line_Item::type_sub_total) {
                     $total += $child_line_item->taxable_total();
+                } elseif ($child_line_item->is_percent()) {
+                    // Taxes should be charged on the discounted price.
+                    $total += $child_line_item->total();
                 }
             }
         }
