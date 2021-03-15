@@ -992,6 +992,9 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/adapters/src/Pagination/Pagination.tsx:23
 	__( 'pagination', 'event_espresso' ),
 
+	// Reference: packages/adapters/src/TagSelector/TagSelector.tsx:112
+	__( 'toggle menu', 'event_espresso' ),
+
 	// Reference: packages/constants/src/datetime.ts:10
 	__( 'Postponed', 'event_espresso' ),
 

@@ -1,9 +1,9 @@
 {
   "files": {
     "adapters.css": "/static/css/adapters.da385b84.css",
-    "adapters.js": "/static/js/adapters.28ff966f.js",
-    "adapters.js.map": "/static/js/adapters.28ff966f.js.map",
-    "adapters.php": "/static/js/adapters.a21d2c19.asset.php",
+    "adapters.js": "/static/js/adapters.e6c4fb23.js",
+    "adapters.js.map": "/static/js/adapters.e6c4fb23.js.map",
+    "adapters.php": "/static/js/adapters.146e3aa0.asset.php",
     "blocks.css": "/static/css/blocks.13a22cf1.css",
     "blocks.js": "/static/js/blocks.7981c908.js",
     "blocks.js.map": "/static/js/blocks.7981c908.js.map",
@@ -38,9 +38,9 @@
     "events.js.map": "/static/js/events.a7b1ffac.js.map",
     "events.php": "/static/js/events.c2ef44aa.asset.php",
     "form.css": "/static/css/form.2ea71cf0.css",
-    "form.js": "/static/js/form.71b1e440.js",
-    "form.js.map": "/static/js/form.71b1e440.js.map",
-    "form.php": "/static/js/form.ebd2380c.asset.php",
+    "form.js": "/static/js/form.baa63ab9.js",
+    "form.js.map": "/static/js/form.baa63ab9.js.map",
+    "form.php": "/static/js/form.5a3c992d.asset.php",
     "helpers.js": "/static/js/helpers.021110b2.js",
     "helpers.js.map": "/static/js/helpers.021110b2.js.map",
     "helpers.php": "/static/js/helpers.7e83ed62.asset.php",
@@ -113,14 +113,14 @@
     "static/css/tpc.591b9523.css.map": "/static/css/tpc.591b9523.css.map",
     "static/css/uiComponents.96b458f4.css.map": "/static/css/uiComponents.96b458f4.css.map",
     "static/css/wpPluginsPage.b0ffc4b1.css.map": "/static/css/wpPluginsPage.b0ffc4b1.css.map",
-    "static/js/adapters.28ff966f.js.LICENSE.txt": "/static/js/adapters.28ff966f.js.LICENSE.txt",
+    "static/js/adapters.e6c4fb23.js.LICENSE.txt": "/static/js/adapters.e6c4fb23.js.LICENSE.txt",
     "static/js/blocks.7981c908.js.LICENSE.txt": "/static/js/blocks.7981c908.js.LICENSE.txt",
     "static/js/data.7c053a8f.js.LICENSE.txt": "/static/js/data.7c053a8f.js.LICENSE.txt",
     "static/js/dates.1f6a356d.js.LICENSE.txt": "/static/js/dates.1f6a356d.js.LICENSE.txt",
     "static/js/edtrServices.02c593e9.js.LICENSE.txt": "/static/js/edtrServices.02c593e9.js.LICENSE.txt",
     "static/js/eeComponents.a750c191.js.LICENSE.txt": "/static/js/eeComponents.a750c191.js.LICENSE.txt",
     "static/js/eventEditor.73df89cf.js.LICENSE.txt": "/static/js/eventEditor.73df89cf.js.LICENSE.txt",
-    "static/js/form.71b1e440.js.LICENSE.txt": "/static/js/form.71b1e440.js.LICENSE.txt",
+    "static/js/form.baa63ab9.js.LICENSE.txt": "/static/js/form.baa63ab9.js.LICENSE.txt",
     "static/js/plugins.6f63a25d.js.LICENSE.txt": "/static/js/plugins.6f63a25d.js.LICENSE.txt",
     "static/js/registry.fe7a02a8.js.LICENSE.txt": "/static/js/registry.fe7a02a8.js.LICENSE.txt",
     "static/js/richTextEditor.18d1065c.js.LICENSE.txt": "/static/js/richTextEditor.18d1065c.js.LICENSE.txt",
@@ -134,7 +134,7 @@
   "entrypoints": {
     "adapters": [
       "static/css/adapters.da385b84.css",
-      "static/js/adapters.28ff966f.js"
+      "static/js/adapters.e6c4fb23.js"
     ],
     "constants": [
       "static/js/constants.2008e188.js"
@@ -158,7 +158,7 @@
     ],
     "form": [
       "static/css/form.2ea71cf0.css",
-      "static/js/form.71b1e440.js"
+      "static/js/form.baa63ab9.js"
     ],
     "helpers": [
       "static/js/helpers.021110b2.js"
