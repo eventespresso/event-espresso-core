@@ -992,7 +992,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/adapters/src/Pagination/Pagination.tsx:23
 	__( 'pagination', 'event_espresso' ),
 
-	// Reference: packages/adapters/src/TagSelector/TagSelector.tsx:112
+	// Reference: packages/adapters/src/TagSelector/TagSelector.tsx:117
 	__( 'toggle menu', 'event_espresso' ),
 
 	// Reference: packages/constants/src/datetime.ts:10
@@ -1406,7 +1406,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/ui-components/src/ActiveFilters/ActiveFilters.tsx:8
 	__( 'active filters:', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/ActiveFilters/FilterTag.tsx:10
+	// Reference: packages/ui-components/src/ActiveFilters/FilterTag/index.tsx:15
 	/* translators: %s filter name */
 	__( 'remove filter - %s', 'event_espresso' ),
 
