@@ -54,7 +54,7 @@ jobs:
         strategy:
             matrix:
                 operating-system: [ubuntu-latest]
-                php-versions: ['7.4'] # ['7.1', '7.2', '7.3', '7.4']
+                php-versions: ['7.1', '7.2', '7.3', '7.4']
         name: PHP ${{ matrix.php-versions }} Test on ${{ matrix.operating-system }}
         steps:
             - name: Checkout
@@ -94,6 +94,9 @@ jobs:
                   username: root
                   password: root
                   host: localhost
+
+            - name: Fix MySQL authentication for PHP < 7.4
+              run: mysql --user="root" --password="root" --database="wordpress_test" --execute="ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'root';"
 
             - name: Run PHP Unit Tests
               run: phpunit --configuration tests/phpunit.xml
