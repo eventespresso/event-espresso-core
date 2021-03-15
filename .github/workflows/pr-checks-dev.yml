@@ -92,7 +92,7 @@ jobs:
               with:
                   database: wordpress_test
                   username: root
-                  password: '""'
+                  password: password
                   host: localhost
 
             - name: Run PHP Unit Tests
