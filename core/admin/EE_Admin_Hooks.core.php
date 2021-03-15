@@ -298,7 +298,6 @@ abstract class EE_Admin_Hooks extends EE_Base
                     );
                     throw new EE_Error(implode('||', $msg));
                 }
-                $depends = is_array($depends) ? $depends : [ $depends ];
                 // made it here so let's do the appropriate registration
                 $type == 'js'
                     ? wp_register_script($ref, $url, $depends, $version, $footer)
