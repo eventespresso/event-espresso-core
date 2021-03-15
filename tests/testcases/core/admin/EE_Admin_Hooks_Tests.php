@@ -63,7 +63,7 @@ class EE_Admin_Hooks_Tests extends EE_UnitTestCase
     public function test_enqueue_scripts_styles()
     {
         global $wp_scripts;
-        $this->assertInstanceOf('WP_Scripts', $wp_scripts);
+        $this->assertInstanceOf(WP_Scripts::class, $wp_scripts);
 
         $this->_eeAdminHookMock->enqueue_scripts_styles();
         $this->assertTrue(wp_style_is('test-css', 'registered'));
