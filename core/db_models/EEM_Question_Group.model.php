@@ -9,7 +9,6 @@
  */
 class EEM_Question_Group extends EEM_Soft_Delete_Base
 {
-
     const system_personal = 1;
 
     const system_address = 2;
@@ -79,7 +78,8 @@ class EEM_Question_Group extends EEM_Soft_Delete_Base
                     esc_html__(
                         'Flag indicating whether to show the group\s description on the registration page',
                         'event_espresso'
-                    ), false,
+                    ),
+                    false,
                     false
                 ),
                 'QSG_wp_user'         => new EE_WP_User_Field(
@@ -92,7 +92,8 @@ class EEM_Question_Group extends EEM_Soft_Delete_Base
                     esc_html__(
                         'Indicate IF this is a system group and if it is what system group it corresponds to.',
                         'event_espresso'
-                    ), false,
+                    ),
+                    false,
                     0
                 ),
                 'QSG_deleted'         => new EE_Trashed_Flag_Field(
