@@ -92,10 +92,8 @@ jobs:
               with:
                   database: wordpress_test
                   username: root
-                  password: root
+                  password: ''
                   host: localhost
-            - name: Start MySQL
-              run: sudo systemctl start mysql.service
 
             - name: Run PHP Unit Tests
               run: phpunit --configuration tests/phpunit.xml
