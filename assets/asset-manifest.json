@@ -62,10 +62,10 @@
     "registry.js": "/static/js/registry.356f3e28.js",
     "registry.js.map": "/static/js/registry.356f3e28.js.map",
     "registry.php": "/static/js/registry.06dac26c.asset.php",
-    "richTextEditor.css": "/static/css/richTextEditor.67ae5847.css",
+    "richTextEditor.css": "/static/css/richTextEditor.157b0c36.css",
     "richTextEditor.js": "/static/js/richTextEditor.dc5dc85d.js",
     "richTextEditor.js.map": "/static/js/richTextEditor.dc5dc85d.js.map",
-    "richTextEditor.php": "/static/js/richTextEditor.a3e68420.asset.php",
+    "richTextEditor.php": "/static/js/richTextEditor.5cf3fc60.asset.php",
     "services.js": "/static/js/services.6d9833e8.js",
     "services.js.map": "/static/js/services.6d9833e8.js.map",
     "services.php": "/static/js/services.1f0d8a27.asset.php",
@@ -108,7 +108,7 @@
     "static/css/eeComponents.98ca7698.css.map": "/static/css/eeComponents.98ca7698.css.map",
     "static/css/eventEditor.3e67a82c.css.map": "/static/css/eventEditor.3e67a82c.css.map",
     "static/css/form.2ea71cf0.css.map": "/static/css/form.2ea71cf0.css.map",
-    "static/css/richTextEditor.67ae5847.css.map": "/static/css/richTextEditor.67ae5847.css.map",
+    "static/css/richTextEditor.157b0c36.css.map": "/static/css/richTextEditor.157b0c36.css.map",
     "static/css/toaster.e4c5bf97.css.map": "/static/css/toaster.e4c5bf97.css.map",
     "static/css/tpc.591b9523.css.map": "/static/css/tpc.591b9523.css.map",
     "static/css/uiComponents.a6f5fcc3.css.map": "/static/css/uiComponents.a6f5fcc3.css.map",
@@ -182,7 +182,7 @@
       "static/js/registry.356f3e28.js"
     ],
     "richTextEditor": [
-      "static/css/richTextEditor.67ae5847.css",
+      "static/css/richTextEditor.157b0c36.css",
       "static/js/richTextEditor.dc5dc85d.js"
     ],
     "services": [
