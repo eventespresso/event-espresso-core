@@ -89,7 +89,7 @@ class mock_valid_admin_page_Admin_Mock_Valid_Hooks extends EE_Admin_Hooks {
 				),
 			'localize' => array(
 				'test-js' => array(
-					'TEST_ITEM' => 'this is a test' )
+					'TEST_ITEM' => array('data' => 'this is a test') )
 				)
 			);
 	}

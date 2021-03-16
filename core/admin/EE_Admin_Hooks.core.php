@@ -199,7 +199,6 @@ abstract class EE_Admin_Hooks extends EE_Base
      */
     public function __construct(EE_Admin_Page $adminpage)
     {
-
         $this->_adminpage_obj = $adminpage;
         $this->_req_data = array_merge($_GET, $_POST);
         $this->_set_defaults();
@@ -255,7 +254,6 @@ abstract class EE_Admin_Hooks extends EE_Base
      */
     public function enqueue_scripts_styles()
     {
-
         if (! empty($this->_scripts_styles)) {
             // first let's do all the registrations
             if (! isset($this->_scripts_styles['registers'])) {
@@ -550,7 +548,6 @@ abstract class EE_Admin_Hooks extends EE_Base
      */
     private function _ajax_hooks()
     {
-
         if (empty($this->_ajax_func)) {
             return;
         } //get out there's nothing to take care of.
@@ -630,7 +627,6 @@ abstract class EE_Admin_Hooks extends EE_Base
 
     private function _handle_metabox_array($boxes, $add = true)
     {
-
         foreach ($boxes as $box) {
             if (! isset($box['page_route'])) {
                 continue;
@@ -659,7 +655,6 @@ abstract class EE_Admin_Hooks extends EE_Base
      */
     public function remove_metaboxes()
     {
-
         if (empty($this->_remove_metaboxes)) {
             return;
         } //get out there are no metaboxes to remove

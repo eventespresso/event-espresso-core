@@ -67,7 +67,7 @@ jobs:
                   tools: phpunit:v7
 
             - name: Start mysql service
-              run: sudo /etc/init.d/mysql start
+              run: sudo systemctl start mysql.service
 
             - name: Get composer cache directory
               id: composercache
@@ -94,6 +94,9 @@ jobs:
                   username: root
                   password: root
                   host: localhost
+
+            - name: Fix MySQL authentication for PHP < 7.4
+              run: mysql --user="root" --password="root" --database="wordpress_test" --execute="ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'root';"
 
             - name: Run PHP Unit Tests
               run: phpunit --configuration tests/phpunit.xml
