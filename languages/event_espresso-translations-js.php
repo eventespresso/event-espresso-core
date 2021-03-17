@@ -1376,7 +1376,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/tpc/src/inputs/PriceAmountInput.tsx:30
 	__( 'amount', 'event_espresso' ),
 
-	// Reference: packages/tpc/src/inputs/PriceAmountInput.tsx:41
+	// Reference: packages/tpc/src/inputs/PriceAmountInput.tsx:42
 	__( 'amount…', 'event_espresso' ),
 
 	// Reference: packages/tpc/src/inputs/PriceDescriptionInput.tsx:14
