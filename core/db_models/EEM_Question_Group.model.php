@@ -3,12 +3,13 @@
 /**
  * Question Group Model
  *
- * @package         Event Espresso
- * @subpackage      includes/models/
- * @author          Michael Nelson
+ * @package     Event Espresso
+ * @subpackage  includes/models/
+ * @author      Michael Nelson
  */
 class EEM_Question_Group extends EEM_Soft_Delete_Base
 {
+
     const system_personal = 1;
 
     const system_address = 2;
@@ -130,7 +131,7 @@ class EEM_Question_Group extends EEM_Soft_Delete_Base
      * @return int
      * @throws EE_Error
      */
-    public function get_latest_question_group_order()
+    public function get_latest_question_group_order(): int
     {
         $max = $this->_get_all_wpdb_results(
             [],
