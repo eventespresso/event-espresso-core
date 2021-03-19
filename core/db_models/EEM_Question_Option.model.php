@@ -34,11 +34,11 @@ class EEM_Question_Option extends EEM_Soft_Delete_Base
                     0,
                     'Question'
                 ),
-                'QSO_value'   => new EE_Plain_Text_Field(
-                    'QSO_value',
-                    esc_html__("Question Option Value", "event_espresso"),
+                'QSO_deleted' => new EE_Trashed_Flag_Field(
+                    'QSO_deleted',
+                    esc_html__('Flag indicating Option was trashed', 'event_espresso'),
                     false,
-                    ''
+                    false
                 ),
                 'QSO_desc'    => new EE_Post_Content_Field(
                     'QSO_desc',
@@ -58,11 +58,11 @@ class EEM_Question_Option extends EEM_Soft_Delete_Base
                     true,
                     null
                 ),
-                'QSO_deleted' => new EE_Trashed_Flag_Field(
-                    'QSO_deleted',
-                    esc_html__('Flag indicating Option was trashed', 'event_espresso'),
+                'QSO_value'   => new EE_Plain_Text_Field(
+                    'QSO_value',
+                    esc_html__("Question Option Value", "event_espresso"),
                     false,
-                    false
+                    ''
                 ),
             ],
         ];

@@ -56,19 +56,19 @@ class EEM_Event_Question_Group extends EEM_Base
                     0,
                     'Question_Group'
                 ),
-                'EQG_primary'    => new EE_Boolean_Field(
-                    'EQG_primary',
+                'EQG_additional' => new EE_Boolean_Field(
+                    'EQG_additional',
                     __(
-                        'Flag indicating question is only for primary attendees',
+                        'Flag indicating question is only for additional attendees',
                         'event_espresso'
                     ),
                     false,
                     false
                 ),
-                'EQG_additional' => new EE_Boolean_Field(
-                    'EQG_additional',
+                'EQG_primary'    => new EE_Boolean_Field(
+                    'EQG_primary',
                     __(
-                        'Flag indicating question is only for additional attendees',
+                        'Flag indicating question is only for primary attendees',
                         'event_espresso'
                     ),
                     false,
