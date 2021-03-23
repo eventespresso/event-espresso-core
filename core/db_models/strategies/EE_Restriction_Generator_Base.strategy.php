@@ -166,7 +166,7 @@ abstract class EE_Restriction_Generator_Base
      * @return EE_Default_Where_Conditions[]|EE_Return_None_Where_Conditions[]
      * @see EEM_Base::_cap_restrictions
      */
-    abstract protected function _generate_restrictions();
+    abstract protected function _generate_restrictions(): array;
 
 
     /**
@@ -193,9 +193,10 @@ abstract class EE_Restriction_Generator_Base
     public static function get_cap_name(EEM_Base $model, string $action): string
     {
         $prefix = $model->is_wp_core_model() ? '' : 'ee_';
+        $cap_slug = $model->cap_slug();
         return apply_filters(
             'FHEE__EE_Restriction_Generator__get_cap_name',
-            "{$prefix}{$action}_{$model->cap_slug()}",
+            "{$prefix}{$action}_{$cap_slug}",
             $model,
             $action
         );
