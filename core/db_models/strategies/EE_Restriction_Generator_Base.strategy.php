@@ -168,7 +168,7 @@ abstract class EE_Restriction_Generator_Base
      *
      * @return array @see EEM_Base::_cap_restrictions
      */
-    abstract protected function _generate_restrictions(): array;
+    abstract protected function _generate_restrictions();
 
 
     /**
