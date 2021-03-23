@@ -49,7 +49,7 @@ class EE_Default_Where_Conditions
      *
      * @param array $custom_where_conditions
      */
-    public function __construct($custom_where_conditions = [])
+    public function __construct(array $custom_where_conditions = [])
     {
         $this->_where_conditions_provided = $custom_where_conditions;
     }
@@ -124,58 +124,87 @@ class EE_Default_Where_Conditions
      * @throws EE_Error
      */
     public function prepare_where_conditions_for_querying(
-        array $where_conditions,
-        string $model_relation_chain
+        array $where_conditions = [],
+        string $model_relation_chain = ''
     ): array {
-        $where_conditions_with_model_relation_chain_prefixes = [];
-        if (! is_array($where_conditions)) {
-            $where_conditions = [];
-        }
+        $qualified_where_conditions = [];
+        // if (! is_array($where_conditions)) {
+        //     $where_conditions = [];
+        // }
         foreach ($where_conditions as $key => $value) {
-            if (
-                in_array($key, ['OR', 'AND', 'NOT'])
-                || strpos($key, 'OR*') !== false
-                || strpos($key, 'AND*') !== false
-                || strpos($key, 'NOT*') !== false
-            ) {
-                $where_conditions_with_model_relation_chain_prefixes[ $key ] =
+            if ($this->isOrHasQueryOperator($key)) {
+                $qualified_where_conditions[ $key ] =
                     $this->prepare_where_conditions_for_querying(
                         $value,
                         $model_relation_chain
                     );
             } else {
-                if (
-                    $model_relation_chain != ''
-                    &&
-                    $model_relation_chain[ strlen($model_relation_chain) -
-                                           1 ] != '.'
-                ) {
-                    $model_relation_chain = $model_relation_chain . ".";
-                }
-                // check for the current user id place holder, and if present change it
-                if ($value === self::current_user_placeholder) {
-                    $value = get_current_user_id();
-                }
-                // check for user field placeholder
-                if ($key == self::user_field_name_placeholder) {
-                    if (! $this->_model->wp_user_field_name()) {
-                        throw new EE_Error(
-                            sprintf(
-                                esc_html__(
-                                    'There is no foreign key to the WP_User model on model %s. Please either modify your default where conditions, add a _model_chain_to_wp_user onto the model, or a proper EE_WP_User_Field onto the model',
-                                    'event_espresso'
-                                ),
-                                $this->_model->get_this_model_name()
-                            )
-                        );
-                    }
-                    $key = $this->_model->wp_user_field_name();
-                }
-                $where_conditions_with_model_relation_chain_prefixes[ $model_relation_chain .
-                                                                      $key ] =
-                    $value;
+                $qualified_where_conditions =
+                    $this->prepare_where_condition(
+                        $qualified_where_conditions,
+                        $model_relation_chain,
+                        $key,
+                        $value
+                    );
             }
         }
-        return $where_conditions_with_model_relation_chain_prefixes;
+        return $qualified_where_conditions;
+    }
+
+
+    /**
+     * @param string $query_string
+     * @return bool
+     */
+    private function isOrHasQueryOperator(string $query_string): bool
+    {
+        return in_array($query_string, ['OR', 'AND', 'NOT'])
+               || strpos($query_string, 'OR*') !== false
+               || strpos($query_string, 'AND*') !== false
+               || strpos($query_string, 'NOT*') !== false;
+    }
+
+
+    /**
+     * ensures relation name is fully qualified
+     * and swaps placeholders for expected values
+     *
+     * @param array  $qualified_where_conditions
+     * @param string $model_relation_chain
+     * @param string $key
+     * @param string $value
+     * @return array
+     * @throws EE_Error
+     */
+    private function prepare_where_condition(
+        array $qualified_where_conditions,
+        string $model_relation_chain,
+        string $key,
+        string $value
+    ): array {
+        $model_relation_chain = $model_relation_chain !== ''
+            ? rtrim( $model_relation_chain, '.' ) . '.'
+            : $model_relation_chain;
+        // check for the current user id place holder, and if present change it
+        if ($value === self::current_user_placeholder) {
+            $value = get_current_user_id();
+        }
+        // check for user field placeholder
+        if ($key === self::user_field_name_placeholder) {
+            if (! $this->_model->wp_user_field_name()) {
+                throw new EE_Error(
+                    sprintf(
+                        esc_html__(
+                            'There is no foreign key to the WP_User model on model %s. Please either modify your default where conditions, add a _model_chain_to_wp_user onto the model, or a proper EE_WP_User_Field onto the model',
+                            'event_espresso'
+                        ),
+                        $this->_model->get_this_model_name()
+                    )
+                );
+            }
+            $key = $this->_model->wp_user_field_name();
+        }
+        $qualified_where_conditions[ $model_relation_chain . $key ] = $value;
+        return $qualified_where_conditions;
     }
 }
