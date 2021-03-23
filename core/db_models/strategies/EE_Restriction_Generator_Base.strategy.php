@@ -256,8 +256,7 @@ abstract class EE_Restriction_Generator_Base
         }
         // only add a check for the previous event status
         // if the model is the event or it's related to the event model
-        if (
-            $this->model() instanceof EEM_Event
+        if ($this->model() instanceof EEM_Event
             || strpos($path_to_event_model, 'Event') !== false
         ) {
             $where_conditions['OR*status'] = [
