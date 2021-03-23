@@ -87,8 +87,9 @@ class EE_Default_Where_Conditions
      * @throws EE_Error
      * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
      */
-    public function get_default_where_conditions($model_relation_chain = ''): array
-    {
+    public function get_default_where_conditions(
+        string $model_relation_chain = ''
+    ): array {
         return $this->prepare_where_conditions_for_querying(
             array_merge(
                 $this->_get_default_where_conditions(),
@@ -117,7 +118,7 @@ class EE_Default_Where_Conditions
      * relation chain onto them (intelligently doesn't do that to logic query
      * params like NOT, OR, and AND)
      *
-     * @param array $where_conditions
+     * @param array  $where_conditions
      * @param string $model_relation_chain
      * @return array
      * @throws EE_Error
@@ -170,7 +171,9 @@ class EE_Default_Where_Conditions
                     }
                     $key = $this->_model->wp_user_field_name();
                 }
-                $where_conditions_with_model_relation_chain_prefixes[ $model_relation_chain . $key ] = $value;
+                $where_conditions_with_model_relation_chain_prefixes[ $model_relation_chain .
+                                                                      $key ] =
+                    $value;
             }
         }
         return $where_conditions_with_model_relation_chain_prefixes;

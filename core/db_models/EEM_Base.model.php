@@ -3809,7 +3809,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * @param string $model_relation_path eg, path from Event to Payment is "Registration.Transaction.Payment."
      * @return array @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
      */
-    private function _get_default_where_conditions($model_relation_path = null)
+    private function _get_default_where_conditions($model_relation_path = '')
     {
         if ($this->_ignore_where_strategy) {
             return array();
