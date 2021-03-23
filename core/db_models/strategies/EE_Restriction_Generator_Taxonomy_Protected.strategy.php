@@ -9,8 +9,7 @@
  * @subpackage
  * @author              Mike Nelson
  */
-class EE_Restriction_Generator_Taxonomy_Protected
-    extends EE_Restriction_Generator_Base
+class EE_Restriction_Generator_Taxonomy_Protected extends EE_Restriction_Generator_Base
 {
 
     /**
