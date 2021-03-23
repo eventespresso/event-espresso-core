@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\core\libraries\rest_api\controllers\model;
 
 use EEM_Base;

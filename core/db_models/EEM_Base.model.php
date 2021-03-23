@@ -868,7 +868,8 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      */
     public function get_all($query_params = array())
     {
-        if (isset($query_params['limit'])
+        if (
+            isset($query_params['limit'])
             && ! isset($query_params['group_by'])
         ) {
             $query_params['group_by'] = array_keys($this->get_combined_primary_key_fields());
@@ -1675,7 +1676,8 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                     $this_table_pk_column = $table_obj->get_fully_qualified_pk_column();
                     // if there is no private key for this table on the results, it means there's no entry
                     // in this table, right? so insert a row in the current table, using any fields available
-                    if (! (array_key_exists($this_table_pk_column, $wpdb_result)
+                    if (
+                        ! (array_key_exists($this_table_pk_column, $wpdb_result)
                            && $wpdb_result[ $this_table_pk_column ])
                     ) {
                         $success = $this->_insert_into_specific_table(
@@ -1971,7 +1973,8 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
 
         // Next, make sure those items are removed from the entity map; if they could be put into it at all; and if
         // there was no error with the delete query.
-        if ($this->has_primary_key_field()
+        if (
+            $this->has_primary_key_field()
             && $rows_deleted !== false
             && isset($columns_and_ids_for_deleting[ $this->get_primary_key_field()->get_qualified_column() ])
         ) {
@@ -1987,11 +1990,13 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             // unnecessarily.  It's very unlikely that users will have assigned Extra Meta to Extra Meta
             // (although it is possible).
             // Note this can be skipped by using the provided filter and returning false.
-            if (apply_filters(
-                'FHEE__EEM_Base__delete_permanently__dont_delete_extra_meta_for_extra_meta',
-                ! $this instanceof EEM_Extra_Meta,
-                $this
-            )) {
+            if (
+                apply_filters(
+                    'FHEE__EEM_Base__delete_permanently__dont_delete_extra_meta_for_extra_meta',
+                    ! $this instanceof EEM_Extra_Meta,
+                    $this
+                )
+            ) {
                 EEM_Extra_Meta::instance()->delete_permanently(array(
                     0 => array(
                         'EXM_type' => $this->get_this_model_name(),
@@ -2104,7 +2109,8 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             foreach ($row_results_for_deleting as $item_to_delete) {
                 // before we mark this item for deletion,
                 // make sure there's no related entities blocking its deletion (if we're checking)
-                if ($allow_blocking
+                if (
+                    $allow_blocking
                     && $this->delete_is_blocked_by_related_models(
                         $item_to_delete[ $primary_table->get_fully_qualified_pk_column() ]
                     )
@@ -2365,7 +2371,8 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         $result = call_user_func_array(array($wpdb, $wpdb_method), $arguments_to_provide);
         // was there an error running the query? but we don't care on new activations
         // (we're going to setup the DB anyway on new activations)
-        if (($result === false || ! empty($wpdb->last_error))
+        if (
+            ($result === false || ! empty($wpdb->last_error))
             && EE_System::instance()->detect_req_type() !== EE_System::req_type_new_activation
         ) {
             switch (EEM_Base::$_db_verification_level) {
@@ -2889,7 +2896,8 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             );
         }
         $query_params = array();
-        if ($this->has_primary_key_field()
+        if (
+            $this->has_primary_key_field()
             && ($include_primary_key
                 || $this->get_primary_key_field()
                    instanceof
@@ -3025,7 +3033,8 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     protected function _prepare_value_or_use_default($field_obj, $fields_n_values)
     {
         // if this field doesn't allow nullable, don't allow it
-        if (! $field_obj->is_nullable()
+        if (
+            ! $field_obj->is_nullable()
             && (
                 ! isset($fields_n_values[ $field_obj->get_name() ])
                 || $fields_n_values[ $field_obj->get_name() ] === null
@@ -3282,7 +3291,8 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                         $model_query_info_carrier,
                         $query_param_type
                     );
-                } elseif ($query_param_type === 0 // ie WHERE
+                } elseif (
+                    $query_param_type === 0 // ie WHERE
                           && is_array($possibly_array_of_params)
                           && isset($possibly_array_of_params[2])
                           && $possibly_array_of_params[2] == true
@@ -3413,7 +3423,8 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                 );
             }
         }
-        if (array_key_exists('default_where_conditions', $query_params)
+        if (
+            array_key_exists('default_where_conditions', $query_params)
             && ! empty($query_params['default_where_conditions'])
         ) {
             $use_default_where_conditions = $query_params['default_where_conditions'];
@@ -3509,7 +3520,8 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             }
         }
         // if 'order_by' wasn't set, maybe they are just using 'order' on its own?
-        if (! array_key_exists('order_by', $query_params)
+        if (
+            ! array_key_exists('order_by', $query_params)
             && array_key_exists('order', $query_params)
             && ! empty($query_params['order'])
         ) {
@@ -3989,7 +4001,8 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             );
         }
         // check if it's a custom selection
-        if ($this->_custom_selections instanceof CustomSelects
+        if (
+            $this->_custom_selections instanceof CustomSelects
             && in_array($query_param, $this->_custom_selections->columnAliases(), true)
         ) {
             return;
@@ -3997,12 +4010,14 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         // check if has a model name at the beginning
         // and
         // check if it's a field on a related model
-        if ($this->extractJoinModelFromQueryParams(
-            $passed_in_query_info,
-            $query_param,
-            $original_query_param,
-            $query_param_type
-        )) {
+        if (
+            $this->extractJoinModelFromQueryParams(
+                $passed_in_query_info,
+                $query_param,
+                $original_query_param,
+                $query_param_type
+            )
+        ) {
             return;
         }
 
@@ -4092,7 +4107,8 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      */
     private function extractRelatedModelsFromCustomSelects(EE_Model_Query_Info_Carrier $query_info_carrier)
     {
-        if ($this->_custom_selections instanceof CustomSelects
+        if (
+            $this->_custom_selections instanceof CustomSelects
             && ($this->_custom_selections->type() === CustomSelects::TYPE_STRUCTURED
                 || $this->_custom_selections->type() == CustomSelects::TYPE_COMPLEX
             )
@@ -4284,7 +4300,8 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             );
             return $table_alias_prefix . $field->get_qualified_column();
         }
-        if ($this->_custom_selections instanceof CustomSelects
+        if (
+            $this->_custom_selections instanceof CustomSelects
             && in_array($query_param, $this->_custom_selections->columnAliases(), true)
         ) {
             // maybe it's custom selection item?
@@ -5000,7 +5017,8 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     {
         if (! isset($this->_cache_foreign_key_to_fields[ $model_name ])) {
             foreach ($this->field_settings() as $field) {
-                if ($field instanceof EE_Foreign_Key_Field_Base
+                if (
+                    $field instanceof EE_Foreign_Key_Field_Base
                     && in_array($model_name, $field->get_model_names_pointed_to())
                 ) {
                     $this->_cache_foreign_key_to_fields[ $model_name ] = $field;
@@ -5612,7 +5630,8 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             $model_object = $base_class_obj_or_id;
         } else {
             $primary_key_field = $this->get_primary_key_field();
-            if ($primary_key_field instanceof EE_Primary_Key_Int_Field
+            if (
+                $primary_key_field instanceof EE_Primary_Key_Int_Field
                 && (
                     is_int($base_class_obj_or_id)
                     || is_string($base_class_obj_or_id)
@@ -5621,7 +5640,8 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                 // assume it's an ID.
                 // either a proper integer or a string representing an integer (eg "101" instead of 101)
                 $model_object = $this->get_one_by_ID($base_class_obj_or_id);
-            } elseif ($primary_key_field instanceof EE_Primary_Key_String_Field
+            } elseif (
+                $primary_key_field instanceof EE_Primary_Key_String_Field
                 && is_string($base_class_obj_or_id)
             ) {
                 // assume its a string representation of the object
@@ -6113,7 +6133,8 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     {
         EEM_Base::verify_is_valid_cap_context($context);
         // check if we ought to run the restriction generator first
-        if (isset($this->_cap_restriction_generators[ $context ])
+        if (
+            isset($this->_cap_restriction_generators[ $context ])
             && $this->_cap_restriction_generators[ $context ] instanceof EE_Restriction_Generator_Base
             && ! $this->_cap_restriction_generators[ $context ]->has_generated_cap_restrictions()
         ) {
@@ -6158,7 +6179,8 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         $missing_caps = array();
         $cap_restrictions = $this->cap_restrictions($context);
         foreach ($cap_restrictions as $cap => $restriction_if_no_cap) {
-            if (! EE_Capabilities::instance()
+            if (
+                ! EE_Capabilities::instance()
                                  ->current_user_can($cap, $this->get_this_model_name() . '_model_applying_caps')
             ) {
                 $missing_caps[ $cap ] = $restriction_if_no_cap;
@@ -6313,7 +6335,8 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     public function is_logic_query_param_key($query_param_key)
     {
         foreach ($this->logic_query_param_keys() as $logic_query_param_key) {
-            if ($query_param_key === $logic_query_param_key
+            if (
+                $query_param_key === $logic_query_param_key
                 || strpos($query_param_key, $logic_query_param_key . '*') === 0
             ) {
                 return true;

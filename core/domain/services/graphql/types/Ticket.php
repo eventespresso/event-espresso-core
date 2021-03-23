@@ -6,7 +6,6 @@ use Exception;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
-
 use EE_Ticket;
 use EEM_Ticket;
 use EventEspresso\core\services\graphql\fields\GraphQLFieldInterface;

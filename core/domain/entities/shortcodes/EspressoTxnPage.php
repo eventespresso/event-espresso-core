@@ -70,7 +70,8 @@ class EspressoTxnPage extends EspressoShortcode
             }
             if ($payment_method instanceof EE_Payment_Method && $payment_method->is_off_site()) {
                 $gateway = $payment_method->type_obj()->get_gateway();
-                if ($gateway instanceof EE_Offsite_Gateway
+                if (
+                    $gateway instanceof EE_Offsite_Gateway
                     && $gateway->handle_IPN_in_this_request(
                         \EE_Registry::instance()->REQ->params(),
                         true

@@ -240,7 +240,8 @@ class Read extends Base
      */
     protected function getRouteFromRequest()
     {
-        if (isset($GLOBALS['wp'])
+        if (
+            isset($GLOBALS['wp'])
             && $GLOBALS['wp'] instanceof WP
             && isset($GLOBALS['wp']->query_vars['rest_route'])
         ) {
@@ -429,10 +430,11 @@ class Read extends Base
         if (is_array($primary_model_rows)) {
             $primary_model_row = reset($primary_model_rows);
         }
-        if (! (
+        if (
+            ! (
             $primary_model_row
             && Capabilities::currentUserHasPartialAccessTo($related_model, $context)
-        )
+            )
         ) {
             if ($relation instanceof EE_Belongs_To_Relation) {
                 $related_model_name_maybe_plural = strtolower($related_model->get_this_model_name());
@@ -809,19 +811,21 @@ class Read extends Base
             $field_obj = $model->field_settings_for($field_name);
             if ($this->isSubclassOfOne($field_obj, $this->getModelVersionInfo()->fieldsIgnored())) {
                 unset($result[ $field_name ]);
-            } elseif ($this->isSubclassOfOne(
-                $field_obj,
-                $this->getModelVersionInfo()->fieldsThatHaveRenderedFormat()
-            )
+            } elseif (
+                $this->isSubclassOfOne(
+                    $field_obj,
+                    $this->getModelVersionInfo()->fieldsThatHaveRenderedFormat()
+                )
             ) {
                 $result[ $field_name ] = array(
                     'raw'      => $this->prepareFieldObjValueForJson($field_obj, $field_value),
                     'rendered' => $this->prepareFieldObjValueForJson($field_obj, $field_value, 'pretty'),
                 );
-            } elseif ($this->isSubclassOfOne(
-                $field_obj,
-                $this->getModelVersionInfo()->fieldsThatHavePrettyFormat()
-            )
+            } elseif (
+                $this->isSubclassOfOne(
+                    $field_obj,
+                    $this->getModelVersionInfo()->fieldsThatHavePrettyFormat()
+                )
             ) {
                 $result[ $field_name ] = array(
                     'raw'    => $this->prepareFieldObjValueForJson($field_obj, $field_value),
@@ -1123,9 +1127,11 @@ class Read extends Base
             try {
                 // it's password protected, so they shouldn't be able to read this. Remove the value
                 $schema = $this->fields_calculator->getJsonSchemaForModel($model);
-                if ($row_is_protected
+                if (
+                    $row_is_protected
                     && isset($schema['properties'][ $field_to_calculate ]['protected'])
-                    && $schema['properties'][ $field_to_calculate ]['protected']) {
+                    && $schema['properties'][ $field_to_calculate ]['protected']
+                ) {
                     $calculated_value = null;
                     $protected_fields[] = $field_to_calculate;
                     if ($schema['properties'][ $field_to_calculate ]['type']) {
@@ -1276,11 +1282,13 @@ class Read extends Base
         if (! $default_query_params) {
             $default_query_params = EEM_Base::default_where_conditions_all;
         }
-        if (in_array(
-            $default_query_params,
-            $valid_default_where_conditions_for_api_calls,
-            true
-        )) {
+        if (
+            in_array(
+                $default_query_params,
+                $valid_default_where_conditions_for_api_calls,
+                true
+            )
+        ) {
             return $default_query_params;
         } else {
             return EEM_Base::default_where_conditions_all;
@@ -1399,7 +1407,8 @@ class Read extends Base
         // if this is a model protected by a password on another model, exclude the password protected
         // entities by default. But if they passed in a password, try to show them all. If the password is wrong,
         // though, they'll get an error (see Read::createEntityFromWpdbResult() which calls Read::checkPassword)
-        if ($model_query_params['caps'] === EEM_Base::caps_read
+        if (
+            $model_query_params['caps'] === EEM_Base::caps_read
             && empty($query_params['password'])
             && ! $model->hasPassword()
             && $model->restrictedByRelatedModelPassword()
@@ -1540,7 +1549,8 @@ class Read extends Base
             // look for ones with no period
             foreach ($includes as $field_to_include) {
                 $field_to_include = trim($field_to_include);
-                if (strpos($field_to_include, '.') === false
+                if (
+                    strpos($field_to_include, '.') === false
                     && ! $this->getModelVersionInfo()->isModelNameInThisVersion($field_to_include)
                 ) {
                     $extracted_fields_to_include[] = $field_to_include;
@@ -1641,20 +1651,26 @@ class Read extends Base
             return;
         }
         // if this entity requires a password, they better give it and it better be right!
-        if ($model->hasPassword()
-            && $model_row[ $model->getPasswordField()->get_qualified_column() ] !== '') {
+        if (
+            $model->hasPassword()
+            && $model_row[ $model->getPasswordField()->get_qualified_column() ] !== ''
+        ) {
             if (empty($request['password'])) {
                 throw new RestPasswordRequiredException();
             }
-            if (!hash_equals(
-                $model_row[ $model->getPasswordField()->get_qualified_column() ],
-                $request['password']
-            )) {
+            if (
+                !hash_equals(
+                    $model_row[ $model->getPasswordField()->get_qualified_column() ],
+                    $request['password']
+                )
+            ) {
                 throw new RestPasswordIncorrectException();
             }
-        } elseif (// wait! maybe this content is password protected
+        } elseif (
+// wait! maybe this content is password protected
             $model->restrictedByRelatedModelPassword()
-            && $request->get_param('caps') === EEM_Base::caps_read) {
+            && $request->get_param('caps') === EEM_Base::caps_read
+        ) {
             $password_supplied = $request->get_param('password');
             if (empty($password_supplied)) {
                 $query_params['exclude_protected'] = true;

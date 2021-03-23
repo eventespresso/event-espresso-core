@@ -499,7 +499,8 @@ final class EE_System implements ResettableInterface
         } else {
             EE_Data_Migration_Manager::instance()->enqueue_db_initialization_for('Core');
         }
-        if ($request_type === EE_System::req_type_new_activation
+        if (
+            $request_type === EE_System::req_type_new_activation
             || $request_type === EE_System::req_type_reactivation
             || (
                 $request_type === EE_System::req_type_upgrade
@@ -735,7 +736,8 @@ final class EE_System implements ResettableInterface
     {
         $notices = EE_Error::get_notices(false);
         // if current user is an admin and it's not an ajax or rest request
-        if (! isset($notices['errors'])
+        if (
+            ! isset($notices['errors'])
             && $this->request->isAdmin()
             && apply_filters(
                 'FHEE__EE_System__redirect_to_about_ee__do_redirect',

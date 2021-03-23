@@ -183,7 +183,7 @@ class EE_Default_Where_Conditions
         string $value
     ): array {
         $model_relation_chain = $model_relation_chain !== ''
-            ? rtrim( $model_relation_chain, '.' ) . '.'
+            ? rtrim($model_relation_chain, '.') . '.'
             : $model_relation_chain;
         // check for the current user id place holder, and if present change it
         if ($value === self::current_user_placeholder) {

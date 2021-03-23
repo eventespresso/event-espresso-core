@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\core\services\commands\middleware;
 
 use Closure;

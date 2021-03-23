@@ -70,7 +70,8 @@ class DependencyInjector implements InjectorInterface
      */
     public function getReflectionClass($class_name)
     {
-        if (! isset($this->reflectors[ $class_name ])
+        if (
+            ! isset($this->reflectors[ $class_name ])
             || ! $this->reflectors[ $class_name ] instanceof ReflectionClass
         ) {
             $this->reflectors[ $class_name ] = new ReflectionClass($class_name);
@@ -89,7 +90,8 @@ class DependencyInjector implements InjectorInterface
      */
     protected function getConstructor(ReflectionClass $reflector)
     {
-        if (! isset($this->constructors[ $reflector->getName() ])
+        if (
+            ! isset($this->constructors[ $reflector->getName() ])
             || ! $this->constructors[ $reflector->getName() ] instanceof ReflectionMethod
         ) {
             $this->constructors[ $reflector->getName() ] = $reflector->getConstructor();
@@ -165,31 +167,36 @@ class DependencyInjector implements InjectorInterface
             // is this a dependency for a specific class ?
             $param_class = $param->getClass() ? $param->getClass()->name : '';
             $param_name = $param->getName() ? $param->getName() : '';
-            if (// param is not a class but is specified in the list of ingredients for this Recipe
+            if (
+// param is not a class but is specified in the list of ingredients for this Recipe
                 is_string($param_name) && isset($ingredients[ $param_name ])
             ) {
                 // attempt to inject the dependency
                 $resolved_parameters[ $index ] = $ingredients[ $param_name ];
-            } elseif (// param is specified in the list of ingredients for this Recipe
-            isset($ingredients[ $param_class ])
+            } elseif (
+// param is specified in the list of ingredients for this Recipe
+                isset($ingredients[ $param_class ])
             ) { // attempt to inject the dependency
                 $resolved_parameters[ $index ] = $this->injectDependency($reflector, $ingredients[ $param_class ]);
-            } elseif (// param is not even a class
+            } elseif (
+// param is not even a class
                 empty($param_class)
                 // and something already exists in the incoming arguments for this param
                 && isset($argument_keys[ $index ], $arguments[ $argument_keys[ $index ] ])
             ) {
                 // add parameter from incoming arguments
                 $resolved_parameters[ $index ] = $arguments[ $argument_keys[ $index ] ];
-            } elseif (// parameter is type hinted as a class, exists as an incoming argument, AND it's the correct class
+            } elseif (
+// parameter is type hinted as a class, exists as an incoming argument, AND it's the correct class
                 ! empty($param_class)
                 && isset($argument_keys[ $index ], $arguments[ $argument_keys[ $index ] ])
                 && $arguments[ $argument_keys[ $index ] ] instanceof $param_class
             ) {
                 // add parameter from incoming arguments
                 $resolved_parameters[ $index ] = $arguments[ $argument_keys[ $index ] ];
-            } elseif (// parameter is type hinted as a class, and should be injected
-            ! empty($param_class)
+            } elseif (
+// parameter is type hinted as a class, and should be injected
+                ! empty($param_class)
             ) {
                 // attempt to inject the dependency
                 $resolved_parameters[ $index ] = $this->injectDependency($reflector, $param_class);

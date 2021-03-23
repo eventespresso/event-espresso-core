@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Payment class
  *
@@ -760,7 +761,8 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment
             $this->get_model()->field_settings_for('STS_ID')->get_default_value()
         );
         $current_status = $this->status();
-        if ($original_status !== EEM_Payment::status_id_approved
+        if (
+            $original_status !== EEM_Payment::status_id_approved
             && $current_status === EEM_Payment::status_id_approved
         ) {
             return true;

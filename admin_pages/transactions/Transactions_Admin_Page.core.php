@@ -237,11 +237,13 @@ class Transactions_Admin_Page extends EE_Admin_Page
     public function admin_init()
     {
         // IF a registration was JUST added via the admin...
-        if (isset(
-            $this->_req_data['redirect_from'],
-            $this->_req_data['EVT_ID'],
-            $this->_req_data['event_name']
-        )) {
+        if (
+            isset(
+                $this->_req_data['redirect_from'],
+                $this->_req_data['EVT_ID'],
+                $this->_req_data['event_name']
+            )
+        ) {
             // then set a cookie so that we can block any attempts to use
             // the back button as a way to enter another registration.
             setcookie(
@@ -432,7 +434,8 @@ class Transactions_Admin_Page extends EE_Admin_Page
                 'count' => 0,
             ),
         );
-        if (/**
+        if (
+/**
          * Filters whether a link to the "Failed Transactions" list table
          * appears on the Transactions Admin Page list table.
          * List display can be turned back on via the following:
@@ -445,11 +448,11 @@ class Transactions_Admin_Page extends EE_Admin_Page
          * @param boolean                 $display_failed_txns_list
          * @param Transactions_Admin_Page $this
          */
-        apply_filters(
-            'FHEE__Transactions_Admin_Page___set_list_table_views_default__display_failed_txns_list',
-            false,
-            $this
-        )
+            apply_filters(
+                'FHEE__Transactions_Admin_Page___set_list_table_views_default__display_failed_txns_list',
+                false,
+                $this
+            )
         ) {
             $this->_views['failed'] = array(
                 'slug'  => 'failed',
@@ -521,12 +524,15 @@ class Transactions_Admin_Page extends EE_Admin_Page
         EE_Registry::instance()->load_helper('MSG_Template');
         $items = array();
 
-        if (EE_Registry::instance()->CAP->current_user_can(
-            'ee_read_global_messages',
-            'view_filtered_messages'
-        )) {
+        if (
+            EE_Registry::instance()->CAP->current_user_can(
+                'ee_read_global_messages',
+                'view_filtered_messages'
+            )
+        ) {
             $related_for_icon = EEH_MSG_Template::get_message_action_icon('see_notifications_for');
-            if (is_array($related_for_icon)
+            if (
+                is_array($related_for_icon)
                 && isset($related_for_icon['css_class'], $related_for_icon['label'])
             ) {
                 $items['view_related_messages'] = array(
@@ -565,7 +571,8 @@ class Transactions_Admin_Page extends EE_Admin_Page
             )
         );
 
-        if (EEH_MSG_Template::is_mt_active('payment_reminder')
+        if (
+            EEH_MSG_Template::is_mt_active('payment_reminder')
             && EE_Registry::instance()->CAP->current_user_can(
                 'ee_send_message',
                 'espresso_transactions_send_payment_reminder'
@@ -793,16 +800,20 @@ class Transactions_Admin_Page extends EE_Admin_Page
             : '';
 
         // were we just redirected here after adding a new registration ???
-        if (isset(
-            $this->_req_data['redirect_from'],
-            $this->_req_data['EVT_ID'],
-            $this->_req_data['event_name']
-        )) {
-            if (EE_Registry::instance()->CAP->current_user_can(
-                'ee_edit_registrations',
-                'espresso_registrations_new_registration',
-                $this->_req_data['EVT_ID']
-            )) {
+        if (
+            isset(
+                $this->_req_data['redirect_from'],
+                $this->_req_data['EVT_ID'],
+                $this->_req_data['event_name']
+            )
+        ) {
+            if (
+                EE_Registry::instance()->CAP->current_user_can(
+                    'ee_edit_registrations',
+                    'espresso_registrations_new_registration',
+                    $this->_req_data['EVT_ID']
+                )
+            ) {
                 $this->_admin_page_title .= '<a id="add-new-registration" class="add-new-h2 button-primary" href="';
                 $this->_admin_page_title .= EE_Admin_Page::add_query_args_and_nonce(
                     array(
@@ -921,7 +932,8 @@ class Transactions_Admin_Page extends EE_Admin_Page
             ? $primary_registration->attendee()
             : null;
 
-        if ($attendee instanceof EE_Attendee
+        if (
+            $attendee instanceof EE_Attendee
             && EE_Registry::instance()->CAP->current_user_can(
                 'ee_send_message',
                 'espresso_transactions_send_payment_reminder'
@@ -947,10 +959,11 @@ class Transactions_Admin_Page extends EE_Admin_Page
                     : '';
         }
 
-        if (EE_Registry::instance()->CAP->current_user_can(
-            'ee_edit_payments',
-            'espresso_transactions_recalculate_line_items'
-        )
+        if (
+            EE_Registry::instance()->CAP->current_user_can(
+                'ee_edit_payments',
+                'espresso_transactions_recalculate_line_items'
+            )
         ) {
             $actions['recalculate_line_items'] = EEH_Template::get_button_or_link(
                 EE_Admin_Page::add_query_args_and_nonce(
@@ -967,7 +980,8 @@ class Transactions_Admin_Page extends EE_Admin_Page
             );
         }
 
-        if ($primary_registration instanceof EE_Registration
+        if (
+            $primary_registration instanceof EE_Registration
             && EEH_MSG_Template::is_mt_active('receipt')
         ) {
             $actions['receipt'] = EEH_Template::get_button_or_link(
@@ -978,7 +992,8 @@ class Transactions_Admin_Page extends EE_Admin_Page
             );
         }
 
-        if ($primary_registration instanceof EE_Registration
+        if (
+            $primary_registration instanceof EE_Registration
             && EEH_MSG_Template::is_mt_active('invoice')
         ) {
             $actions['invoice'] = EEH_Template::get_button_or_link(
@@ -1208,7 +1223,8 @@ class Transactions_Admin_Page extends EE_Admin_Page
                     $existing_reg_payments[ $payment->ID() ] = array();
                 }
                 foreach ($reg_payments as $reg_payment) {
-                    if ($reg_payment instanceof EE_Registration_Payment
+                    if (
+                        $reg_payment instanceof EE_Registration_Payment
                         && $reg_payment->payment_ID() === $payment->ID()
                     ) {
                         $existing_reg_payments[ $payment->ID() ][] = $reg_payment->registration_ID();
@@ -2113,7 +2129,8 @@ class Transactions_Admin_Page extends EE_Admin_Page
     protected function _process_registration_status_change(EE_Transaction $transaction, $REG_IDs = array())
     {
         // first if there is no change in status then we get out.
-        if (! isset($this->_req_data['txn_reg_status_change']['reg_status'])
+        if (
+            ! isset($this->_req_data['txn_reg_status_change']['reg_status'])
             || $this->_req_data['txn_reg_status_change']['reg_status'] === 'NAN'
         ) {
             // no error message, no change requested, just nothing to do man.
@@ -2321,7 +2338,8 @@ class Transactions_Admin_Page extends EE_Admin_Page
         switch ($payment instanceof EE_Payment) {
             // payment notifications
             case true:
-                if (isset($this->_req_data['txn_payments']['send_notifications'])
+                if (
+                    isset($this->_req_data['txn_payments']['send_notifications'])
                     && filter_var(
                         $this->_req_data['txn_payments']['send_notifications'],
                         FILTER_VALIDATE_BOOLEAN
@@ -2332,7 +2350,8 @@ class Transactions_Admin_Page extends EE_Admin_Page
                 break;
             // registration notifications
             case false:
-                if (isset($this->_req_data['txn_reg_status_change']['send_notifications'])
+                if (
+                    isset($this->_req_data['txn_reg_status_change']['send_notifications'])
                     && filter_var(
                         $this->_req_data['txn_reg_status_change']['send_notifications'],
                         FILTER_VALIDATE_BOOLEAN

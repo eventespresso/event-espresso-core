@@ -53,14 +53,14 @@ class EE_DMS_4_1_0_event_category extends EE_Data_Migration_Script_Stage
     public function _count_records_to_migrate()
     {
         global $wpdb;
-        $count = $wpdb->get_var("SELECT COUNT(id) FROM ".$this->_old_table);
+        $count = $wpdb->get_var("SELECT COUNT(id) FROM " . $this->_old_table);
         return $count;
     }
     public function __construct()
     {
         global $wpdb;
-        $this->_old_table = $wpdb->prefix."events_category_rel";
-        $this->_new_table = $wpdb->prefix."term_relationships";
+        $this->_old_table = $wpdb->prefix . "events_category_rel";
+        $this->_new_table = $wpdb->prefix . "term_relationships";
         $this->_pretty_name = __("Event to Category (4.1 Term Relationships)", "event_espresso");
         parent::__construct();
     }
@@ -74,8 +74,8 @@ class EE_DMS_4_1_0_event_category extends EE_Data_Migration_Script_Stage
     private function _add_relation_from_event_to_term_taxonomy($old_event_cat_relation)
     {
         global $wpdb;
-        $new_event_id = $this->get_migration_script()->get_mapping_new_pk($wpdb->prefix."events_detail", intval($old_event_cat_relation['event_id']), $wpdb->prefix."posts");
-        $new_term_taxonomy_id = $this->get_migration_script()->get_mapping_new_pk($wpdb->prefix."events_category_detail", intval($old_event_cat_relation['cat_id']), $wpdb->prefix."term_taxonomy");
+        $new_event_id = $this->get_migration_script()->get_mapping_new_pk($wpdb->prefix . "events_detail", intval($old_event_cat_relation['event_id']), $wpdb->prefix . "posts");
+        $new_term_taxonomy_id = $this->get_migration_script()->get_mapping_new_pk($wpdb->prefix . "events_category_detail", intval($old_event_cat_relation['cat_id']), $wpdb->prefix . "term_taxonomy");
         if (! $new_event_id) {
             $this->add_error(sprintf(__("Could not find 4.1 event id for 3.1 event #%d.", "event_espresso"), $old_event_cat_relation['event_id']));
             return 0;
@@ -85,9 +85,9 @@ class EE_DMS_4_1_0_event_category extends EE_Data_Migration_Script_Stage
             return 0;
         }
         $cols_n_values = array(
-            'object_id'=>$new_event_id,
-            'term_taxonomy_id'=>$new_term_taxonomy_id,
-            'term_order'=>0
+            'object_id' => $new_event_id,
+            'term_taxonomy_id' => $new_term_taxonomy_id,
+            'term_order' => 0
         );
         $datatypes = array(
             '%d',// object_id

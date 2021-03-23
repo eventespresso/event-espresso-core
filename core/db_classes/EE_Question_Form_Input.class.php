@@ -234,13 +234,15 @@ class EE_Question_Form_Input
     public function set_question_form_input_answer($qstn_id)
     {
         // check for answer in $_REQUEST in case we are reprocessing a form after an error
-        if (isset($this->_QST_meta['EVT_ID'])
+        if (
+            isset($this->_QST_meta['EVT_ID'])
             && isset($this->_QST_meta['att_nmbr'])
             && isset($this->_QST_meta['date'])
             && isset($this->_QST_meta['time'])
             && isset($this->_QST_meta['price_id'])
         ) {
-            if (isset($_REQUEST['qstn'][ $this->_QST_meta['EVT_ID'] ][ $this->_QST_meta['att_nmbr'] ][ $this->_QST_meta['date'] ][ $this->_QST_meta['time'] ][ $this->_QST_meta['price_id'] ][ $qstn_id ])
+            if (
+                isset($_REQUEST['qstn'][ $this->_QST_meta['EVT_ID'] ][ $this->_QST_meta['att_nmbr'] ][ $this->_QST_meta['date'] ][ $this->_QST_meta['time'] ][ $this->_QST_meta['price_id'] ][ $qstn_id ])
             ) {
                 $answer = $_REQUEST['qstn'][ $this->_QST_meta['EVT_ID'] ][ $this->_QST_meta['att_nmbr'] ][ $this->_QST_meta['date'] ][ $this->_QST_meta['time'] ][ $this->_QST_meta['price_id'] ][ $qstn_id ];
                 $this->_ANS->set('ANS_value', $answer);
@@ -336,7 +338,8 @@ class EE_Question_Form_Input
                         )
                     );
                     // does question type have options ?
-                    if (in_array($type, array('DROPDOWN', 'RADIO_BTN', 'CHECKBOX'))
+                    if (
+                        in_array($type, array('DROPDOWN', 'RADIO_BTN', 'CHECKBOX'))
                         && isset($input_types[ $field_ID ])
                         && isset($input_types[ $field_ID ]['options'])
                     ) {

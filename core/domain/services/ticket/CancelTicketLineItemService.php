@@ -116,7 +116,8 @@ class CancelTicketLineItemService extends DomainService
             array($ticket->ID())
         );
         foreach ($ticket_line_items as $ticket_line_item) {
-            if ($ticket_line_item instanceof \EE_Line_Item
+            if (
+                $ticket_line_item instanceof \EE_Line_Item
                 && $ticket_line_item->OBJ_type() === 'Ticket'
                 && $ticket_line_item->OBJ_ID() === $ticket->ID()
             ) {

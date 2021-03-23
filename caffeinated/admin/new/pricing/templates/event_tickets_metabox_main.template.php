@@ -157,6 +157,7 @@ if (isset($status_change_notice)) {
 
 <?php echo $ticket_js_structure; ?>
 <?php
+
 /**
  * template vars in use
  *

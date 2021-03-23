@@ -1,5 +1,7 @@
 <?php
+
 /** @type string $transaction_details */
+
 /** @type string $before_payment_options */
 /** @type string $payment_options */
 /** @type string $after_payment_options */

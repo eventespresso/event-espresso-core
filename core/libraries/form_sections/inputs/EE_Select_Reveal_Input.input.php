@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class EE_Select_Reveal_Input
  *
@@ -45,7 +46,8 @@ class EE_Select_Reveal_Input extends EE_Select_Input
                 continue;
             }
             $sibling_section = $this->find_section_from_path('../' . $sibling_section_name);
-            if ($sibling_section instanceof EE_Form_Section_Base
+            if (
+                $sibling_section instanceof EE_Form_Section_Base
                 && ! empty($sibling_section_name)
             ) {
                 $sibling_sections[ $sibling_section_name ] = $sibling_section;

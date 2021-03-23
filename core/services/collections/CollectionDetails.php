@@ -249,10 +249,12 @@ class CollectionDetails implements CollectionDetailsInterface
      */
     protected function setIdentifierType($identifier_type)
     {
-        if (! ($identifier_type === CollectionDetails::ID_CLASS_NAME
+        if (
+            ! ($identifier_type === CollectionDetails::ID_CLASS_NAME
                || $identifier_type === CollectionDetails::ID_OBJECT_HASH
                || $identifier_type === CollectionDetails::ID_CALLBACK_METHOD
-        )) {
+            )
+        ) {
             throw new InvalidIdentifierException(
                 $identifier_type,
                 'CollectionDetails::ID_CLASS_NAME or CollectionDetails::ID_OBJECT_HASH or CollectionDetails::ID_CALLBACK_METHOD'

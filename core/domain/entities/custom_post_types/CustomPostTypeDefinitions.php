@@ -240,7 +240,8 @@ class CustomPostTypeDefinitions
             if (! isset($cpts[ $post_type_slug ])) {
                 return [];
             }
-            if (empty($cpts[ $post_type_slug ]['class_name'])
+            if (
+                empty($cpts[ $post_type_slug ]['class_name'])
                 && empty($cpts[ $post_type_slug ]['model_name'])
             ) {
                 return [];

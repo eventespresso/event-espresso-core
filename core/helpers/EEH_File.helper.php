@@ -44,11 +44,12 @@ class EEH_File extends EEH_Base implements EEHI_File
      */
     private static function _get_wp_filesystem($filepath = ''): WP_Filesystem_Base
     {
-        if (apply_filters(
-            'FHEE__EEH_File___get_wp_filesystem__allow_using_filesystem_direct',
-            $filepath && EEH_File::is_in_uploads_folder($filepath),
-            $filepath
-        )
+        if (
+            apply_filters(
+                'FHEE__EEH_File___get_wp_filesystem__allow_using_filesystem_direct',
+                $filepath && EEH_File::is_in_uploads_folder($filepath),
+                $filepath
+            )
         ) {
             return EEH_File::loadAlternateWpFileSystem();
         }
@@ -176,7 +177,8 @@ class EEH_File extends EEH_Base implements EEHI_File
                 );
             }
             // basically check for direct or previously configured access
-            if (! WP_Filesystem($credentials)
+            if (
+                ! WP_Filesystem($credentials)
                 && is_wp_error($wp_filesystem->errors)
                 && $wp_filesystem->errors->get_error_code()
             ) {
@@ -431,11 +433,12 @@ class EEH_File extends EEH_Base implements EEHI_File
     public static function get_file_contents(string $full_file_path = ''): string
     {
         $full_file_path = EEH_File::standardise_directory_separators($full_file_path);
-        if (EEH_File::verify_filepath_and_permissions(
-            $full_file_path,
-            EEH_File::get_filename_from_filepath($full_file_path),
-            EEH_File::get_file_extension($full_file_path)
-        )
+        if (
+            EEH_File::verify_filepath_and_permissions(
+                $full_file_path,
+                EEH_File::get_filename_from_filepath($full_file_path),
+                EEH_File::get_file_extension($full_file_path)
+            )
         ) {
             // load WP_Filesystem and set file permissions
             $wp_filesystem = EEH_File::_get_wp_filesystem($full_file_path);
@@ -477,10 +480,11 @@ class EEH_File extends EEH_Base implements EEHI_File
         // load WP_Filesystem and set file permissions
         $wp_filesystem = EEH_File::_get_wp_filesystem($full_file_path);
         // write the file
-        if (! $wp_filesystem->put_contents(
-            EEH_File::convert_local_filepath_to_remote_filepath($full_file_path),
-            $file_contents
-        )
+        if (
+            ! $wp_filesystem->put_contents(
+                EEH_File::convert_local_filepath_to_remote_filepath($full_file_path),
+                $file_contents
+            )
         ) {
             if (defined('WP_DEBUG') && WP_DEBUG) {
                 $msg =
@@ -608,11 +612,12 @@ class EEH_File extends EEH_Base implements EEHI_File
     {
         $folder = EEH_File::standardise_and_end_with_directory_separator($folder);
         if (! EEH_File::exists($folder . 'index.php')) {
-            if (! EEH_File::write_to_file(
-                $folder . 'index.php',
-                'You are not permitted to read from this folder',
-                '.php'
-            )
+            if (
+                ! EEH_File::write_to_file(
+                    $folder . 'index.php',
+                    'You are not permitted to read from this folder',
+                    '.php'
+                )
             ) {
                 return false;
             }

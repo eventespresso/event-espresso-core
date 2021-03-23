@@ -436,7 +436,7 @@ abstract class EE_Messages_Template_Pack
             $variations = array( 'default' => $this->get_default_variation_labels($messenger) ) + $variations;
         }
 
-        return empty($variations) ? array( 'default' => $this->get_default_variation_labels('dft') ): $variations;
+        return empty($variations) ? array( 'default' => $this->get_default_variation_labels('dft') ) : $variations;
     }
 
 

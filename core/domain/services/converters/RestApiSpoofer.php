@@ -1,4 +1,5 @@
 <?php
+
 /**
  *     Event Espresso
  *     Manage events, sell tickets, and receive payments from your WordPress website.

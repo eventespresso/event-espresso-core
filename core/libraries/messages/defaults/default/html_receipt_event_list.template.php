@@ -1,7 +1,9 @@
 <?php
+
 /**
  * This is the template for the html messenger and receipt message type event_list field.
  */
+
 ?>
 <h3 class="section-title event-name">
     <img class="icon" src="<?php echo EE_IMAGES_URL . 'calendar_year-24x24.png'; ?>"><?php _e("Event Name:", "event_espresso") ?>

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * EE_Ticket_Price class
  *

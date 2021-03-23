@@ -139,11 +139,11 @@ class EE_Restriction_Generator_Default_Protected extends EE_Restriction_Generato
             // restrict access to only their default ones, and non-default ones
         ];
         if (
-        EE_Restriction_Generator_Base::is_cap(
-            $this->model(),
-            $this->action() .
-            '_others_default'
-        )
+            EE_Restriction_Generator_Base::is_cap(
+                $this->model(),
+                $this->action() .
+                '_others_default'
+            )
         ) {
             $restrictions[ EE_Restriction_Generator_Base::get_cap_name(
                 $this->model(),

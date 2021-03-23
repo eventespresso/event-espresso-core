@@ -272,12 +272,14 @@ class Messages_Template_List_Table extends EE_Admin_List_Table
     {
         $edit_url = '';
         // edit link but only if item isn't trashed.
-        if (! $item->get('MTP_deleted')
+        if (
+            ! $item->get('MTP_deleted')
             && EE_Registry::instance()->CAP->current_user_can(
                 'ee_edit_message',
                 'espresso_messages_edit_message_template',
                 $item->ID()
-            )) {
+            )
+        ) {
             $edit_url = EE_Admin_Page::add_query_args_and_nonce(
                 array(
                     'action' => 'edit_message_template',
@@ -300,11 +302,12 @@ class Messages_Template_List_Table extends EE_Admin_List_Table
     protected function _get_context_links(EE_Message_Template_Group $item)
     {
         // first check if we even show the context links or not.
-        if (! EE_Registry::instance()->CAP->current_user_can(
-            'ee_edit_message',
-            'espresso_messages_edit_message_template',
-            $item->ID()
-        )
+        if (
+            ! EE_Registry::instance()->CAP->current_user_can(
+                'ee_edit_message',
+                'espresso_messages_edit_message_template',
+                $item->ID()
+            )
             || $item->get('MTP_deleted')
         ) {
             return '';

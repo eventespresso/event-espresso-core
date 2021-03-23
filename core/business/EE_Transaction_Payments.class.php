@@ -1,6 +1,5 @@
 <?php
 
-
 /**
  * Class EE_Transaction_Payments
  *
@@ -202,7 +201,8 @@ class EE_Transaction_Payments
 
         $transaction = $payment->transaction();
         $TXN_status = $transaction->status_ID();
-        if ($TXN_status === EEM_Transaction::abandoned_status_code
+        if (
+            $TXN_status === EEM_Transaction::abandoned_status_code
             || $TXN_status === EEM_Transaction::failed_status_code
             || $payment->amount() === 0
         ) {

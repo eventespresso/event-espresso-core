@@ -40,7 +40,7 @@ class EE_Restriction_Generator_Meta extends EE_Restriction_Generator_Base
     /**
      * @return EE_Default_Where_Conditions[]|EE_Return_None_Where_Conditions[]
      */
-    protected function _generate_restrictions():array
+    protected function _generate_restrictions(): array
     {
         $whitelisted_meta_keys =
             apply_filters(

@@ -3,6 +3,7 @@
         class="ee-PRT_is_percent hidden"><?php echo $PRT_is_percent; ?></span>
 </section>
 <?php
+
 /**
  * template args in use
  *

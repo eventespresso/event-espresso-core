@@ -444,10 +444,12 @@ class Pricing_Admin_Page extends EE_Admin_Page
             ),
         );
 
-        if (EE_Registry::instance()->CAP->current_user_can(
-            'ee_delete_default_price_types',
-            'pricing_trash_price_type'
-        )) {
+        if (
+            EE_Registry::instance()->CAP->current_user_can(
+                'ee_delete_default_price_types',
+                'pricing_trash_price_type'
+            )
+        ) {
             $this->_views['trashed'] = array(
                 'slug'        => 'trashed',
                 'label'       => __('Trash', 'event_espresso'),
@@ -908,10 +910,12 @@ class Pricing_Admin_Page extends EE_Admin_Page
             for ($i = 0; $i < count($row_ids); $i++) {
                 // Update the prices when re-ordering
                 $id = absint($row_ids[ $i ]);
-                if (EEM_Price::instance()->update(
-                    array('PRC_order' => $i + 1),
-                    array(array('PRC_ID' => $id))
-                ) === false) {
+                if (
+                    EEM_Price::instance()->update(
+                        array('PRC_order' => $i + 1),
+                        array(array('PRC_ID' => $id))
+                    ) === false
+                ) {
                     $success = false;
                 }
             }

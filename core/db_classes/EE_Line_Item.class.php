@@ -1187,7 +1187,8 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
         $this->set_total($total);
         // only update the related transaction's total
         // if we intend to save this line item and its a grand total
-        if ($this->allow_persist() && $this->type() === EEM_Line_Item::type_total
+        if (
+            $this->allow_persist() && $this->type() === EEM_Line_Item::type_total
             && $this->transaction()
                instanceof
                EE_Transaction
@@ -1249,7 +1250,8 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
         if (! $this->is_total()) {
             $this->set_total($total);
             // if not a percent line item, make sure we keep the unit price in sync
-            if ($has_children
+            if (
+                $has_children
                 && $this->is_line_item()
                 && ! $this->is_percent()
             ) {

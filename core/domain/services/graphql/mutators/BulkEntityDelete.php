@@ -11,7 +11,6 @@ use InvalidArgumentException;
 use ReflectionException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
-
 use GraphQL\Type\Definition\ResolveInfo;
 use WPGraphQL\AppContext;
 use GraphQL\Error\UserError;

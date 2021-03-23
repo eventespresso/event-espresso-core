@@ -224,7 +224,8 @@ class Recipe implements RecipeInterface
             );
         }
         $fqcn = ltrim($fqcn, '\\');
-        if ($fqcn !== Recipe::DEFAULT_ID
+        if (
+            $fqcn !== Recipe::DEFAULT_ID
             && ! empty($fqcn)
             && empty($this->paths)
             && ! (class_exists($fqcn) || interface_exists($fqcn))

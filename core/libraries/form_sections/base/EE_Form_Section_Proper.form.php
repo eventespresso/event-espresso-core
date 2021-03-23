@@ -258,10 +258,11 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      */
     protected function getCachedRequest($req_data = null)
     {
-        if ($this->cached_request_data === null
+        if (
+            $this->cached_request_data === null
             || (
-                $req_data !== null &&
-                $req_data !== $this->cached_request_data
+                $req_data !== null
+                && $req_data !== $this->cached_request_data
             )
         ) {
             $req_data = apply_filters(
@@ -1282,7 +1283,8 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
     public function has_subsection($subsection_name, $recursive = false)
     {
         foreach ($this->_subsections as $name => $subsection) {
-            if ($name === $subsection_name
+            if (
+                $name === $subsection_name
                 || (
                     $recursive
                     && $subsection instanceof EE_Form_Section_Proper

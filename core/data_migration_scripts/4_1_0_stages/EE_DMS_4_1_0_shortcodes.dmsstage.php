@@ -18,7 +18,7 @@ class EE_DMS_4_1_0_shortcodes extends EE_Data_Migration_Script_Stage
     {
         $new_post_content = $this->_change_event_list_shortcode($old_row['post_content']);
         global $wpdb;
-        $wpdb->query($wpdb->prepare("UPDATE ".$this->_old_table." SET post_content=%s WHERE ID=%d", $new_post_content, $old_row['ID']));
+        $wpdb->query($wpdb->prepare("UPDATE " . $this->_old_table . " SET post_content=%s WHERE ID=%d", $new_post_content, $old_row['ID']));
     }
 
     /**
@@ -48,7 +48,7 @@ class EE_DMS_4_1_0_shortcodes extends EE_Data_Migration_Script_Stage
     public function _count_records_to_migrate()
     {
         global $wpdb;
-        $count = $wpdb->get_var("SELECT COUNT(id) FROM ".$this->_old_table.$this->_sql_to_only_select_non_drafts());
+        $count = $wpdb->get_var("SELECT COUNT(id) FROM " . $this->_old_table . $this->_sql_to_only_select_non_drafts());
         return $count;
     }
 

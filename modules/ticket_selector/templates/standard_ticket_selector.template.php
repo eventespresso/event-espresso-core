@@ -39,6 +39,7 @@
             <?php if (apply_filters('FHEE__ticket_selector_chart_template__display_ticket_price_details', true)) { ?>
                 <th id="price-<?php echo $EVT_ID; ?>" scope="col" class="ee-ticket-selector-ticket-price-th cntr">
                     <?php
+
                     /**
                      * Filters the text printed for the header of the price column in the ticket selector table
                      *
@@ -47,6 +48,7 @@
                      * @param string 'Price' The translatable text to display in the table header for price
                      * @param int $EVT_ID The Event ID
                      */
+
                     echo apply_filters(
                         'FHEE__ticket_selector_chart_template__table_header_price',
                         esc_html__('Price', 'event_espresso'),

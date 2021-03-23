@@ -43,9 +43,11 @@ class PrivacyPolicyManager
      */
     public function addPrivacyPolicy(WP_Screen $screen)
     {
-        if ($screen instanceof WP_Screen
+        if (
+            $screen instanceof WP_Screen
             && $screen->id === 'tools'
-            && isset($_GET['wp-privacy-policy-guide'])) {
+            && isset($_GET['wp-privacy-policy-guide'])
+        ) {
             // load all the privacy policy stuff
             // add post policy text
             foreach ($this->loadPrivacyPolicyCollection() as $privacy_policy) {

@@ -1,1 +1,3 @@
-<?php _e('Cancelled Registration', 'event_espresso');
+<?php
+
+_e('Cancelled Registration', 'event_espresso');

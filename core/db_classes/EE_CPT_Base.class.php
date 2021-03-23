@@ -46,7 +46,8 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class
             } else {
                 $simulated_db_result = new stdClass();
                 foreach ($this->get_model()->field_settings(true) as $field_name => $field_obj) {
-                    if ($this->get_model()->get_table_obj_by_alias($field_obj->get_table_alias())->get_table_name()
+                    if (
+                        $this->get_model()->get_table_obj_by_alias($field_obj->get_table_alias())->get_table_name()
                         === $wpdb->posts
                     ) {
                         $column = $field_obj->get_table_column();
@@ -85,7 +86,8 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class
     {
         global $post;
 
-        if ($pretty
+        if (
+            $pretty
             && (
                 ! (
                     $post instanceof WP_Post
@@ -93,7 +95,8 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class
                 )
                 || (int) $post->ID !== $this->ID()
             )
-            && $this->get_model()->field_settings_for($fieldname) instanceof EE_Post_Content_Field) {
+            && $this->get_model()->field_settings_for($fieldname) instanceof EE_Post_Content_Field
+        ) {
             $old_post = $post;
             $post = $this->wp_post();
             $return_value = parent::_get_fresh_property($fieldname, $pretty, $extra_cache_ref);

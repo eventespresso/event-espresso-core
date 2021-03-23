@@ -1,4 +1,5 @@
 <?php
+
 /**
  * EEM_Soft_Delete_Base
  * About this class: modifies parent EEM_Base's behaviour to make usage of soft-deletable models
@@ -303,10 +304,11 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base
         if (! $ID) {
             return false;
         }
-        if ($this->delete_or_restore(
-            $delete,
-            $this->alter_query_params_to_restrict_by_ID($ID)
-        )
+        if (
+            $this->delete_or_restore(
+                $delete,
+                $this->alter_query_params_to_restrict_by_ID($ID)
+            )
         ) {
             return true;
         } else {

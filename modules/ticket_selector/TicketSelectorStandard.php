@@ -88,7 +88,8 @@ class TicketSelectorStandard extends TicketSelector
         $taxable_tickets = false;
         $datetime_selector = null;
         $this->template_args['datetime_selector'] = '';
-        if ($this->ticket_selector_config->getShowDatetimeSelector()
+        if (
+            $this->ticket_selector_config->getShowDatetimeSelector()
             !== \EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR
         ) {
             $datetime_selector = new DatetimeSelector(

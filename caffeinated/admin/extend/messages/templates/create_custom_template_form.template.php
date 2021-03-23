@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is the template for the create_custom template form that is used as a part of the messages metabox on the
  * event editor.

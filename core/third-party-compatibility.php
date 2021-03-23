@@ -1,4 +1,5 @@
 <?php
+
 /**
  * File holding various third party compatibility shims.
  */

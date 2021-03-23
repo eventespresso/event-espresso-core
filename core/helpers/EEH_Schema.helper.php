@@ -65,7 +65,7 @@ class EEH_Schema
         $template_args['currency'] = EE_Registry::instance()->CFG->currency->code;
         foreach ($event->tickets() as $original_ticket) {
             // clone tickets so that date formats don't override those for the original ticket
-            $ticket= clone $original_ticket;
+            $ticket = clone $original_ticket;
             $ID = $ticket->ID();
             $template_args['event_tickets'][ $ID ]['start_date'] = $ticket->start_date(DateTime::ATOM, null);
             $template_args['event_tickets'][ $ID ]['end_date'] = $ticket->end_date(DateTime::ATOM, null);
@@ -176,10 +176,12 @@ class EEH_Schema
     public static function postOfficeBoxNumber(EEI_Address $obj_with_address = null)
     {
         // regex check for some form of PO Box or P.O. Box, etc, etc, etc
-        if (preg_match(
-            "/^\s*((P(OST)?.?\s*(O(FF(ICE)?)?)?.?\s+(B(IN|OX))?)|B(IN|OX))/i",
-            $obj_with_address->address2()
-        )) {
+        if (
+            preg_match(
+                "/^\s*((P(OST)?.?\s*(O(FF(ICE)?)?)?.?\s+(B(IN|OX))?)|B(IN|OX))/i",
+                $obj_with_address->address2()
+            )
+        ) {
             return $obj_with_address->address2() !== null && $obj_with_address->address2() !== ''
                 ? '<span itemprop="postOfficeBoxNumber">' . $obj_with_address->address2() . '</span>' : '';
         } else {

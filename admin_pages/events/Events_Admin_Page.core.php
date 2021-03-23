@@ -695,7 +695,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         }
         $orig_status = $event->status();
         // first check if event is active.
-        if ($orig_status === EEM_Event::cancelled
+        if (
+            $orig_status === EEM_Event::cancelled
             || $orig_status === EEM_Event::postponed
             || $event->is_expired()
             || $event->is_inactive()
@@ -1665,7 +1666,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         /** @type EE_Datetime $first_datetime */
         $first_datetime = reset($times);
         // do we get related tickets?
-        if ($first_datetime instanceof EE_Datetime
+        if (
+            $first_datetime instanceof EE_Datetime
             && $first_datetime->ID() !== 0
         ) {
             $existing_datetime_ids[] = $first_datetime->get('DTT_ID');
@@ -1938,7 +1940,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         }
         if (! EE_Registry::instance()->CAP->current_user_can('ee_read_others_events', 'get_events')) {
             $where['EVT_wp_user'] = get_current_user_id();
-        } elseif (! isset($where['status'])
+        } elseif (
+            ! isset($where['status'])
                   && ! EE_Registry::instance()->CAP->current_user_can('ee_read_private_events', 'get_events')
         ) {
             $where['OR'] = [
@@ -1950,7 +1953,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             ];
         }
 
-        if (isset($this->_req_data['EVT_wp_user'])
+        if (
+            isset($this->_req_data['EVT_wp_user'])
             && (int) $this->_req_data['EVT_wp_user'] !== (int) get_current_user_id()
             && EE_Registry::instance()->CAP->current_user_can('ee_read_others_events', 'get_events')
         ) {
@@ -2326,7 +2330,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
             return false;
         }
-        if (! $this->_cpt_model_obj instanceof EE_Event
+        if (
+            ! $this->_cpt_model_obj instanceof EE_Event
             || $this->_cpt_model_obj->ID() !== $EVT_ID
         ) {
             $this->_cpt_model_obj = EEM_Event::instance()->get_one_by_ID($EVT_ID);

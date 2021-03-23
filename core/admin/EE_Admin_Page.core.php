@@ -1068,7 +1068,8 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                 $args['admin_page_object'] = $this;
             }
             // is it a method on a class that doesn't work?
-            if (((method_exists($class, $method)
+            if (
+                ((method_exists($class, $method)
                   && call_user_func_array(array($class, $method), $args) === false)
                  && (// is it a standalone function that doesn't work?
                      function_exists($method)
@@ -1103,7 +1104,8 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         // if we've routed and this route has a no headers route AND a sent_headers_route,
         // then we need to reset the routing properties to the new route.
         // now if UI request is FALSE and noheader is true AND we have a headers_sent_route in the route array then let's set UI_request to true because the no header route has a second func after headers have been sent.
-        if ($this->_is_UI_request === false
+        if (
+            $this->_is_UI_request === false
             && is_array($this->_route)
             && ! empty($this->_route['headers_sent_route'])
         ) {
@@ -1343,7 +1345,8 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                     $content = '';
                 }
                 // check if callback is valid
-                if (empty($content) && (
+                if (
+                    empty($content) && (
                         ! isset($cfg['callback']) || ! method_exists($this, $cfg['callback'])
                     )
                 ) {
@@ -1394,7 +1397,8 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         $tours = array();
         $this->_help_tour = array();
         // exit early if help tours are turned off globally
-        if ((defined('EE_DISABLE_HELP_TOURS') && EE_DISABLE_HELP_TOURS)
+        if (
+            (defined('EE_DISABLE_HELP_TOURS') && EE_DISABLE_HELP_TOURS)
             || ! EE_Registry::instance()->CFG->admin->help_tour_activation
         ) {
             return;
@@ -1519,7 +1523,8 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
         $i = 0;
         foreach ($this->_page_config as $slug => $config) {
-            if (! is_array($config)
+            if (
+                ! is_array($config)
                 || (
                     is_array($config)
                     && (
@@ -1623,7 +1628,8 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             $capability = empty($capability) ? 'manage_options' : $capability;
         }
         $id = is_array($this->_route) && ! empty($this->_route['obj_id']) ? $this->_route['obj_id'] : 0;
-        if (! defined('DOING_AJAX')
+        if (
+            ! defined('DOING_AJAX')
             && (
                 ! function_exists('is_admin')
                 || ! EE_Registry::instance()->CAP->current_user_can(
@@ -1705,7 +1711,8 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         $this->_add_admin_page_ajax_loading_img();
         $this->_add_admin_page_overlay();
         // if metaboxes are present we need to add the nonce field
-        if (isset($this->_route_config['metaboxes'])
+        if (
+            isset($this->_route_config['metaboxes'])
             || isset($this->_route_config['list_table'])
             || (isset($this->_route_config['has_metaboxes']) && $this->_route_config['has_metaboxes'])
         ) {
@@ -1923,7 +1930,8 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             add_action('admin_head', array($this, 'add_xdebug_style'));
         }
         // taking care of metaboxes
-        if (empty($this->_cpt_route)
+        if (
+            empty($this->_cpt_route)
             && (isset($this->_route_config['metaboxes']) || isset($this->_route_config['has_metaboxes']))
         ) {
             wp_enqueue_script('dashboard');
@@ -2238,7 +2246,8 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     {
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
         // we only add meta boxes if the page_route calls for it
-        if (is_array($this->_route_config) && isset($this->_route_config['metaboxes'])
+        if (
+            is_array($this->_route_config) && isset($this->_route_config['metaboxes'])
             && is_array(
                 $this->_route_config['metaboxes']
             )
@@ -2286,7 +2295,8 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      */
     private function _add_screen_columns()
     {
-        if (is_array($this->_route_config)
+        if (
+            is_array($this->_route_config)
             && isset($this->_route_config['columns'])
             && is_array($this->_route_config['columns'])
             && count($this->_route_config['columns']) === 2

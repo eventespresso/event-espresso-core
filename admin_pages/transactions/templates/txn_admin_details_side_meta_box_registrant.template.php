@@ -1,5 +1,7 @@
 <?php
+
 /** @type int ATT_ID */
+
 /** @type string $no_attendee_message */
 /** @type string $prime_reg_fname */
 /** @type string $prime_reg_lname */
@@ -51,11 +53,12 @@
 
         <?php
     /** only show if logged in user has access */
-        if (EE_Registry::instance()->CAP->current_user_can(
-            'ee_edit_contact',
-            'view_or_edit_contact_button',
-            $ATT_ID
-        )
+        if (
+            EE_Registry::instance()->CAP->current_user_can(
+                'ee_edit_contact',
+                'view_or_edit_contact_button',
+                $ATT_ID
+            )
         ) : ?>
         <p style="text-align:right;">
             <a class="button button-small" href="<?php echo $edit_attendee_url; ?>"

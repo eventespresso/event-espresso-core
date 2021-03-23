@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Attendee Model
  *
@@ -43,18 +44,18 @@ class EEM_Answer extends EEM_Base
         $this->singular_item = __('Answer', 'event_espresso');
         $this->plural_item = __('Answers', 'event_espresso');
         $this->_tables = array(
-            'Answer'=> new EE_Primary_Table('esp_answer', 'ANS_ID')
+            'Answer' => new EE_Primary_Table('esp_answer', 'ANS_ID')
         );
         $this->_fields = array(
-            'Answer'=>array(
-                'ANS_ID'=> new EE_Primary_Key_Int_Field('ANS_ID', __('Answer ID', 'event_espresso')),
-                'REG_ID'=>new EE_Foreign_Key_Int_Field('REG_ID', __('Registration ID', 'event_espresso'), false, 0, 'Registration'),
-                'QST_ID'=>new EE_Foreign_Key_Int_Field('QST_ID', __('Question ID', 'event_espresso'), false, 0, 'Question'),
-                'ANS_value'=>new EE_Maybe_Serialized_Simple_HTML_Field('ANS_value', __('Answer Value', 'event_espresso'), false, '')
+            'Answer' => array(
+                'ANS_ID' => new EE_Primary_Key_Int_Field('ANS_ID', __('Answer ID', 'event_espresso')),
+                'REG_ID' => new EE_Foreign_Key_Int_Field('REG_ID', __('Registration ID', 'event_espresso'), false, 0, 'Registration'),
+                'QST_ID' => new EE_Foreign_Key_Int_Field('QST_ID', __('Question ID', 'event_espresso'), false, 0, 'Question'),
+                'ANS_value' => new EE_Maybe_Serialized_Simple_HTML_Field('ANS_value', __('Answer Value', 'event_espresso'), false, '')
             ));
         $this->_model_relations = array(
-            'Registration'=>new EE_Belongs_To_Relation(),
-            'Question'=>new EE_Belongs_To_Relation()
+            'Registration' => new EE_Belongs_To_Relation(),
+            'Question' => new EE_Belongs_To_Relation()
         );
         $this->_model_chain_to_wp_user = 'Registration.Event';
         $this->_caps_slug = 'registrations';
@@ -97,7 +98,7 @@ class EEM_Answer extends EEM_Base
      */
     public function get_registration_question_answer_object(EE_Registration $registration, $question_id = null)
     {
-        $answer_obj = $this->get_one(array( array( 'QST_ID'=>$question_id, 'REG_ID'=>$registration->ID() )));
+        $answer_obj = $this->get_one(array( array( 'QST_ID' => $question_id, 'REG_ID' => $registration->ID() )));
         return apply_filters('FHEE__EEM_Answer__get_registration_question_answer_object__answer_obj', $answer_obj, $registration, $question_id);
     }
 

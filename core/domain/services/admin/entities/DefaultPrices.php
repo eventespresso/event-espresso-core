@@ -146,7 +146,8 @@ class DefaultPrices implements DefaultEntityGeneratorInterface
             if ($remove_existing_relations) {
                 $ticket->_remove_relation_to($default_price, 'Price');
             }
-            if ((
+            if (
+                (
                     // has non-zero base price
                     $default_price_clone->is_base_price()
                     && $default_price_clone->amount() > 0

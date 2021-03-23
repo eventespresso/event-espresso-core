@@ -63,7 +63,8 @@ class EE_Register_Model implements EEI_Plugin_API
             return true;
         }
 
-        if (! did_action('AHEE__EE_System__load_espresso_addons')
+        if (
+            ! did_action('AHEE__EE_System__load_espresso_addons')
             || did_action('FHEE__EE_System__parse_model_names')
             || did_action('FHEE__EE_System__parse_implemented_model_names')
         ) {
@@ -81,7 +82,8 @@ class EE_Register_Model implements EEI_Plugin_API
         }
         self::$_model_registry[ $model_id ] = $config;
 
-        if ((isset($config['model_paths']) && ! isset($config['class_paths']))
+        if (
+            (isset($config['model_paths']) && ! isset($config['class_paths']))
             || (! isset($config['model_paths']) && isset($config['class_paths']))
         ) {
             throw new EE_Error(

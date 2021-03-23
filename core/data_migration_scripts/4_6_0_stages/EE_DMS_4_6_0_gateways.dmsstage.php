@@ -41,10 +41,10 @@ class EE_DMS_4_6_0_gateways extends EE_Data_Migration_Script_Stage
     public function __construct()
     {
         global $wpdb;
-        $this->_new_table_name = $wpdb->prefix."esp_payment_method";
-        $this->_extra_meta_table_name = $wpdb->prefix."esp_extra_meta";
-        $this->_currency_table_name = $wpdb->prefix."esp_currency";
-        $this->_currency_payment_method_table_name = $wpdb->prefix."esp_currency_payment_method";
+        $this->_new_table_name = $wpdb->prefix . "esp_payment_method";
+        $this->_extra_meta_table_name = $wpdb->prefix . "esp_extra_meta";
+        $this->_currency_table_name = $wpdb->prefix . "esp_currency";
+        $this->_currency_payment_method_table_name = $wpdb->prefix . "esp_currency_payment_method";
         $this->_pretty_name = __('Gateways', 'event_espresso');
         parent::__construct();
     }
@@ -114,24 +114,24 @@ class EE_DMS_4_6_0_gateways extends EE_Data_Migration_Script_Stage
         switch ($old_gateway_slug) {
             case 'Aim':
                 $extra_meta_key_values = array(
-                    'login_id'=>$old_gateway_settings['authnet_aim_login_id'],
-                    'transaction_key'=>$old_gateway_settings['authnet_aim_transaction_key'],
-                    'test_transactions'=>$old_gateway_settings['test_transactions']
+                    'login_id' => $old_gateway_settings['authnet_aim_login_id'],
+                    'transaction_key' => $old_gateway_settings['authnet_aim_transaction_key'],
+                    'test_transactions' => $old_gateway_settings['test_transactions']
                 );
                 $desc = __('Please provide the following billing information.', 'event_espresso');
                 break;
             case 'Bank':
                 $extra_meta_key_values = array(
-                    'page_title'=>$old_gateway_settings['page_title'],
-                    'payment_instructions'=>
+                    'page_title' => $old_gateway_settings['page_title'],
+                    'payment_instructions' =>
                     sprintf(__('%1$s<br/>Name on Bank Account: %2$s<br/>Bank Account Number: %3$s<br/>Bank Name: %4$s<br/>Bank Address:%5$s', 'event_espresso'), $old_gateway_settings['bank_instructions'], $old_gateway_settings['account_name'], $old_gateway_settings['account_number'], $old_gateway_settings['bank_name'], $old_gateway_settings['bank_address']) );
                 $desc = __('Make payment using an electronic funds transfer from your bank.', 'event_espresso');
                 break;
             case 'Check':
                 $extra_meta_key_values = array(
-                    'check_title'=> $old_gateway_settings['check_title'],
-                    'payment_instructions'=>$old_gateway_settings['check_instructions'],
-                    'address_to_send_payment'=>$old_gateway_settings['payment_address']
+                    'check_title' => $old_gateway_settings['check_title'],
+                    'payment_instructions' => $old_gateway_settings['check_instructions'],
+                    'address_to_send_payment' => $old_gateway_settings['payment_address']
                 );
                 $desc = __('On the next page you will be given instructions on how to make a payment by check.', 'event_espresso');
                 break;
@@ -161,10 +161,10 @@ class EE_DMS_4_6_0_gateways extends EE_Data_Migration_Script_Stage
                 break;
             case 'Paypal_Pro':
                 $extra_meta_key_values = array(
-                    'username'=>$old_gateway_settings['username'],
-                    'password'=>$old_gateway_settings['password'],
-                    'signature'=>$old_gateway_settings['signature'],
-                    'credit_card_types'=>$old_gateway_settings['credit_cards'],
+                    'username' => $old_gateway_settings['username'],
+                    'password' => $old_gateway_settings['password'],
+                    'signature' => $old_gateway_settings['signature'],
+                    'credit_card_types' => $old_gateway_settings['credit_cards'],
                 );
                 $desc = __('Please provide the following billing information.', 'event_espresso');
                 break;
@@ -222,7 +222,7 @@ class EE_DMS_4_6_0_gateways extends EE_Data_Migration_Script_Stage
                 $this->_new_table_name,
                 $payment_method_col_values,
                 array(
-                        'PMD_ID'=>$id
+                        'PMD_ID' => $id
                     ),
                 $db_types,
                 array(
@@ -267,10 +267,10 @@ class EE_DMS_4_6_0_gateways extends EE_Data_Migration_Script_Stage
         global $wpdb;
         foreach ($extra_meta_key_values as $key => $value) {
             $exm_args = array(
-                'OBJ_ID'=>$id,
-                'EXM_type'=>'Payment_Method',
-                'EXM_key'=>$key,
-                'EXM_value'=> maybe_serialize($value)
+                'OBJ_ID' => $id,
+                'EXM_type' => 'Payment_Method',
+                'EXM_key' => $key,
+                'EXM_value' => maybe_serialize($value)
             );
             $success = $wpdb->insert(
                 $this->_extra_meta_table_name,

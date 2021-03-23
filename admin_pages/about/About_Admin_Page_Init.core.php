@@ -1,4 +1,5 @@
 <?php
+
 /**
  * EE_About_Admin_Page_Init
  *

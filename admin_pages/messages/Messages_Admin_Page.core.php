@@ -239,7 +239,8 @@ class Messages_Admin_Page extends EE_Admin_Page
     public function get_messengers_select_input($messenger_options)
     {
         // if empty or just one value then just return an empty string
-        if (empty($messenger_options)
+        if (
+            empty($messenger_options)
             || ! is_array($messenger_options)
             || count($messenger_options) === 1
         ) {
@@ -277,7 +278,8 @@ class Messages_Admin_Page extends EE_Admin_Page
     public function get_message_types_select_input($message_type_options)
     {
         // if empty or count of options is 1 then just return an empty string
-        if (empty($message_type_options)
+        if (
+            empty($message_type_options)
             || ! is_array($message_type_options)
             || count($message_type_options) === 1
         ) {
@@ -315,7 +317,8 @@ class Messages_Admin_Page extends EE_Admin_Page
     public function get_contexts_for_message_types_select_input($context_options)
     {
         // if empty or count of options is one then just return empty string
-        if (empty($context_options)
+        if (
+            empty($context_options)
             || ! is_array($context_options)
             || count($context_options) === 1
         ) {
@@ -1866,11 +1869,13 @@ class Messages_Admin_Page extends EE_Admin_Page
     {
         $success = true;
         // check for required data
-        if (! isset(
-            $this->_req_data['message_template_group_id'],
-            $this->_req_data['context'],
-            $this->_req_data['status']
-        )) {
+        if (
+            ! isset(
+                $this->_req_data['message_template_group_id'],
+                $this->_req_data['context'],
+                $this->_req_data['status']
+            )
+        ) {
             EE_Error::add_error(
                 esc_html__('Required data for doing this action is not available.', 'event_espresso'),
                 __FILE__,
@@ -2124,12 +2129,14 @@ class Messages_Admin_Page extends EE_Admin_Page
     public function _preview_message($send = false)
     {
         // first make sure we've got the necessary parameters
-        if (! isset(
-            $this->_req_data['message_type'],
-            $this->_req_data['messenger'],
-            $this->_req_data['messenger'],
-            $this->_req_data['GRP_ID']
-        )) {
+        if (
+            ! isset(
+                $this->_req_data['message_type'],
+                $this->_req_data['messenger'],
+                $this->_req_data['messenger'],
+                $this->_req_data['GRP_ID']
+            )
+        ) {
             EE_Error::add_error(
                 esc_html__('Missing necessary parameters for displaying preview', 'event_espresso'),
                 __FILE__,
@@ -2139,7 +2146,7 @@ class Messages_Admin_Page extends EE_Admin_Page
         }
 
         EE_Registry::instance()->REQ->set('GRP_ID', $this->_req_data['GRP_ID']);
-        
+
         // if we have an evt_id set on the request, use it.
         $EVT_ID = isset($this->_req_data['evt_id']) && ! empty($this->_req_data['evt_id'])
         ? absint($this->_req_data['evt_id'])
@@ -2303,7 +2310,8 @@ class Messages_Admin_Page extends EE_Admin_Page
         foreach ($tp_collection as $tp) {
             // only include template packs that support this messenger and message type!
             $supports = $tp->get_supports();
-            if (! isset($supports[ $this->_message_template_group->messenger() ])
+            if (
+                ! isset($supports[ $this->_message_template_group->messenger() ])
                 || ! in_array(
                     $this->_message_template_group->message_type(),
                     $supports[ $this->_message_template_group->messenger() ],
@@ -3022,7 +3030,8 @@ class Messages_Admin_Page extends EE_Admin_Page
         $active_messenger = $this->_message_resource_manager->get_active_messenger($messenger);
 
         // let's save any existing fields that might be required by the messenger
-        if (isset($this->_req_data['test_settings_fld'])
+        if (
+            isset($this->_req_data['test_settings_fld'])
             && $active_messenger instanceof EE_messenger
             && apply_filters(
                 'FHEE__Messages_Admin_Page__do_test_send__set_existing_test_settings',
@@ -3037,14 +3046,16 @@ class Messages_Admin_Page extends EE_Admin_Page
         /**
          * Use filter to add additional controls on whether message can send or not
          */
-        if (apply_filters(
-            'FHEE__Messages_Admin_Page__do_test_send__can_send',
-            true,
-            $context,
-            $this->_req_data,
-            $messenger,
-            $message_type
-        )) {
+        if (
+            apply_filters(
+                'FHEE__Messages_Admin_Page__do_test_send__can_send',
+                true,
+                $context,
+                $this->_req_data,
+                $messenger,
+                $message_type
+            )
+        ) {
             if (EEM_Event::instance()->count() > 0) {
                 $success = $this->_preview_message(true);
                 if ($success) {
@@ -3683,11 +3694,13 @@ class Messages_Admin_Page extends EE_Admin_Page
                     $setter = 'set_' . $property;
                     if (method_exists($network_config, $setter)) {
                         $network_config->{$setter}($value);
-                    } elseif (property_exists($network_config, $property)
+                    } elseif (
+                        property_exists($network_config, $property)
                         && $network_config->{$property} !== $value
                     ) {
                         $network_config->{$property} = $value;
-                    } elseif (property_exists($messages_config, $property)
+                    } elseif (
+                        property_exists($messages_config, $property)
                         && $messages_config->{$property} !== $value
                     ) {
                         $messages_config->{$property} = $value;
@@ -4020,10 +4033,11 @@ class Messages_Admin_Page extends EE_Admin_Page
         foreach ($message_types_to_activate as $message_type_name) {
             /** @var EE_message_type $message_type */
             $message_type = $this->_message_resource_manager->get_message_type($message_type_name);
-            if ($this->_message_resource_manager->is_message_type_active_for_messenger(
-                $messenger_name,
-                $message_type_name
-            )
+            if (
+                $this->_message_resource_manager->is_message_type_active_for_messenger(
+                    $messenger_name,
+                    $message_type_name
+                )
                 && $message_type instanceof EE_message_type
             ) {
                 $this->_template_args['data']['active_mts'][] = $message_type_name;
@@ -4084,10 +4098,11 @@ class Messages_Admin_Page extends EE_Admin_Page
         $this->_message_resource_manager->activate_messenger($messenger_name, $message_type_name);
 
         // set response for load
-        if ($this->_message_resource_manager->is_message_type_active_for_messenger(
-            $messenger_name,
-            $message_type_name
-        )
+        if (
+            $this->_message_resource_manager->is_message_type_active_for_messenger(
+                $messenger_name,
+                $message_type_name
+            )
         ) {
             $this->_template_args['data']['active_mts'][] = $message_type_name;
             if ($message_type_to_activate->get_admin_settings_fields()) {

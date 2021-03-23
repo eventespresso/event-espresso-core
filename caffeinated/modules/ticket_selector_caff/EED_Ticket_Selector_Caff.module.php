@@ -124,7 +124,8 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
      */
     public static function _ticket_selector_appearance_settings()
     {
-        if (! EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector instanceof EE_Ticket_Selector_Config
+        if (
+            ! EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector instanceof EE_Ticket_Selector_Config
         ) {
             EED_Ticket_Selector::instance()->set_config();
             EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector = EED_Ticket_Selector::instance()

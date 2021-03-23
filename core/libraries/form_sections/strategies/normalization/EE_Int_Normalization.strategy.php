@@ -1,4 +1,5 @@
 <?php
+
 /**
  * EE_Int_Normalization
  * Casts the string to an int. If the user inputs anything but numbers, we growl at them

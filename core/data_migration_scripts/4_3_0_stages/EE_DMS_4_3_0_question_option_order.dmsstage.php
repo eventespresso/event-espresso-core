@@ -11,7 +11,7 @@ class EE_DMS_4_3_0_question_option_order extends EE_Data_Migration_Script_Stage_
     {
         global $wpdb;
         $this->_pretty_name = __("Question Options", "event_espresso");
-        $this->_old_table = $wpdb->prefix."esp_question_option";
+        $this->_old_table = $wpdb->prefix . "esp_question_option";
         parent::__construct();
     }
     protected function _migrate_old_row($old_row)
@@ -21,8 +21,8 @@ class EE_DMS_4_3_0_question_option_order extends EE_Data_Migration_Script_Stage_
         global $wpdb;
         $updated = $wpdb->update(
             $this->_old_table,
-            array('QSO_order'=>$old_row['QSO_ID']),
-            array('QSO_ID'=>$old_row['QSO_ID']),
+            array('QSO_order' => $old_row['QSO_ID']),
+            array('QSO_ID' => $old_row['QSO_ID']),
             array('%d',// QSO_order
                     ),
             array('%d',// QSO_ID

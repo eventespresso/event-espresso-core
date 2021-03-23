@@ -95,7 +95,8 @@ class EED_Venues_Archive extends EED_Module
     public function template_include($template)
     {
         // not a custom template?
-        if (EE_Registry::instance()->load_core('Front_Controller', array(), false, true)
+        if (
+            EE_Registry::instance()->load_core('Front_Controller', array(), false, true)
                                    ->get_selected_template() != 'archive-espresso_venues.php'
         ) {
             EEH_Template::load_espresso_theme_functions();
@@ -135,7 +136,8 @@ class EED_Venues_Archive extends EED_Module
     public function venue_details($content)
     {
         global $post;
-        if ($post->post_type == 'espresso_venues'
+        if (
+            $post->post_type == 'espresso_venues'
             && ! post_password_required()
         ) {
             // since the 'content-espresso_venues-details.php' template might be used directly from within a theme,

@@ -57,7 +57,8 @@ class EE_Invisible_Recaptcha_Input extends EE_Form_Input_Base
         $this->submit_button_id = isset($input_settings['submit_button_id'])
             ? $input_settings['submit_button_id']
             : '';
-        if (isset($input_settings['localized_vars'])
+        if (
+            isset($input_settings['localized_vars'])
             && filter_var($input_settings['iframe'], FILTER_VALIDATE_BOOLEAN)
         ) {
             $this->addIframeAssets($input_settings['localized_vars']);

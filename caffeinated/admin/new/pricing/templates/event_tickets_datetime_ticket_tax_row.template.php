@@ -14,6 +14,7 @@
     <td></td>
 </tr>
 <?php
+
 /**
  * template vars in use:
  *

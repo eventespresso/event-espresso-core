@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Country Model
  *
@@ -38,16 +39,16 @@ class EEM_Country extends EEM_Base
 
 
         $this->_tables = array(
-            'Country'=> new EE_Primary_Table('esp_country', 'CNT_ISO')
+            'Country' => new EE_Primary_Table('esp_country', 'CNT_ISO')
         );
         $this->_fields = array(
-            'Country'=>array(
+            'Country' => array(
                 'CNT_active' => new EE_Boolean_Field('CNT_active', esc_html__('Country Appears in Dropdown Select Lists', 'event_espresso'), false, true),
-                'CNT_ISO'=> new EE_Primary_Key_String_Field('CNT_ISO', esc_html__('Country ISO Code', 'event_espresso')),
-                'CNT_ISO3'=>new EE_All_Caps_Text_Field('CNT_ISO3', esc_html__('Country ISO3 Code', 'event_espresso'), false, ''),
-                'RGN_ID'=>new EE_Integer_Field('RGN_ID', esc_html__('Region ID', 'event_espresso'), false, 0),// should be a foreign key, but no region table exists yet
-                'CNT_name'=>new EE_Plain_Text_Field('CNT_name', esc_html__('Country Name', 'event_espresso'), false, ''),
-                'CNT_cur_code'=>new EE_All_Caps_Text_Field('CNT_cur_code', esc_html__('Country Currency Code', 'event_espresso'), false),
+                'CNT_ISO' => new EE_Primary_Key_String_Field('CNT_ISO', esc_html__('Country ISO Code', 'event_espresso')),
+                'CNT_ISO3' => new EE_All_Caps_Text_Field('CNT_ISO3', esc_html__('Country ISO3 Code', 'event_espresso'), false, ''),
+                'RGN_ID' => new EE_Integer_Field('RGN_ID', esc_html__('Region ID', 'event_espresso'), false, 0),// should be a foreign key, but no region table exists yet
+                'CNT_name' => new EE_Plain_Text_Field('CNT_name', esc_html__('Country Name', 'event_espresso'), false, ''),
+                'CNT_cur_code' => new EE_All_Caps_Text_Field('CNT_cur_code', esc_html__('Country Currency Code', 'event_espresso'), false),
                 'CNT_cur_single' => new EE_Plain_Text_Field('CNT_cur_single', esc_html__('Currency Name Singular', 'event_espresso'), false),
                 'CNT_cur_plural' => new EE_Plain_Text_Field('CNT_cur_plural', esc_html__('Currency Name Plural', 'event_espresso'), false),
                 'CNT_cur_sign' => new EE_Plain_Text_Field('CNT_cur_sign', esc_html__('Currency Sign', 'event_espresso'), false),
@@ -59,9 +60,9 @@ class EEM_Country extends EEM_Base
                 'CNT_is_EU' => new EE_Boolean_Field('CNT_is_EU', esc_html__('Country is Member of EU', 'event_espresso'), false, false)
             ));
         $this->_model_relations = array(
-            'Attendee'=>new EE_Has_Many_Relation(),
-            'State'=>new EE_Has_Many_Relation(),
-            'Venue'=>new EE_Has_Many_Relation(),
+            'Attendee' => new EE_Has_Many_Relation(),
+            'State' => new EE_Has_Many_Relation(),
+            'Venue' => new EE_Has_Many_Relation(),
         );
         // only anyone to view, but only those with the default role can do anything
         $this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Public();
@@ -81,7 +82,7 @@ class EEM_Country extends EEM_Base
     public function get_all_countries()
     {
         if (! self::$_all_countries) {
-            self::$_all_countries = $this->get_all(array( 'order_by'=>array('CNT_name'=>'ASC'), 'limit'=> array( 0,99999 )));
+            self::$_all_countries = $this->get_all(array( 'order_by' => array('CNT_name' => 'ASC'), 'limit' => array( 0,99999 )));
         }
         return self::$_all_countries;
     }
@@ -96,7 +97,7 @@ class EEM_Country extends EEM_Base
     public function get_all_active_countries()
     {
         if (! self::$_active_countries) {
-            self::$_active_countries =  $this->get_all(array( array( 'CNT_active' => true ), 'order_by'=>array('CNT_name'=>'ASC'), 'limit'=>array( 0, 99999 )));
+            self::$_active_countries =  $this->get_all(array( array( 'CNT_active' => true ), 'order_by' => array('CNT_name' => 'ASC'), 'limit' => array( 0, 99999 )));
         }
         return self::$_active_countries;
     }
@@ -108,8 +109,10 @@ class EEM_Country extends EEM_Base
      */
     public function get_country_name_by_ISO($country_ISO)
     {
-        if (isset(self::$_all_countries[ $country_ISO ]) &&
-                self::$_all_countries[ $country_ISO ] instanceof EE_Country) {
+        if (
+            isset(self::$_all_countries[ $country_ISO ]) &&
+                self::$_all_countries[ $country_ISO ] instanceof EE_Country
+        ) {
             return self::$_all_countries[ $country_ISO ]->name();
         }
         $names = $this->get_col(array( array( 'CNT_ISO' => $country_ISO ), 'limit' => 1), 'CNT_name');

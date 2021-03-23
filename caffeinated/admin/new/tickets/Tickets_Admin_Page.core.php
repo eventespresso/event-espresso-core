@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Tickets_Admin_Page class
  *

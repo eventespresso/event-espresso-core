@@ -221,16 +221,17 @@ abstract class SequentialStepForm extends FormHandler implements SequentialStepF
      */
     public function setRedirectTo($redirect_to)
     {
-        if (! in_array(
-            $redirect_to,
-            array(
+        if (
+            ! in_array(
+                $redirect_to,
+                array(
                     SequentialStepForm::REDIRECT_TO_NEXT_STEP,
                     SequentialStepForm::REDIRECT_TO_CURRENT_STEP,
                     SequentialStepForm::REDIRECT_TO_PREV_STEP,
                     SequentialStepForm::REDIRECT_TO_OTHER,
                 ),
-            true
-        )
+                true
+            )
         ) {
             throw new InvalidDataTypeException(
                 'setRedirectTo()',

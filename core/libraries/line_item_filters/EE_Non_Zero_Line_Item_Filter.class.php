@@ -46,7 +46,8 @@ class EE_Non_Zero_Line_Item_Filter extends EE_Line_Item_Filter_Base
                     $line_item->delete_child_line_item($code);
                     continue;
                 }
-                if ((
+                if (
+                    (
                         $child_line_item instanceof EEI_Line_Item
                         && $child_line_item->type() === EEM_Line_Item::type_sub_total
                     )
@@ -79,7 +80,8 @@ class EE_Non_Zero_Line_Item_Filter extends EE_Line_Item_Filter_Base
      */
     protected function _filter_zero_line_item(EEI_Line_Item $line_item)
     {
-        if ($line_item->type() === EEM_Line_Item::type_line_item
+        if (
+            $line_item->type() === EEM_Line_Item::type_line_item
             && $line_item->OBJ_type() === 'Ticket'
             && (int) $line_item->quantity() === 0
         ) {
@@ -99,7 +101,8 @@ class EE_Non_Zero_Line_Item_Filter extends EE_Line_Item_Filter_Base
      */
     protected function _filter_zero_subtotal_line_item(EEI_Line_Item $line_item, $ticket_children = 0)
     {
-        if ((int) $ticket_children === 0
+        if (
+            (int) $ticket_children === 0
             && $line_item->type() === EEM_Line_Item::type_sub_total
         ) {
             return null;

@@ -355,6 +355,7 @@ if (WP_DEBUG) {
     </td>
 </tr>
 <?php
+
 /**
  * template args in use
  *

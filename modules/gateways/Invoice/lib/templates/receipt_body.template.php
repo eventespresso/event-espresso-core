@@ -1,7 +1,9 @@
 <?php
+
 /**
  * @deprecated 4.9.13
  */
+
 /* @var $events_for_txn EE_Event[] */
 $events_for_txn;
 /* @var $ticket_line_items_per_event EE_Line_Item[] */

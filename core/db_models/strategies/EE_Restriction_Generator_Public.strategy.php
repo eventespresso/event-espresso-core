@@ -26,10 +26,10 @@ class EE_Restriction_Generator_Public extends EE_Restriction_Generator_Base
         $restrictions = [];
         // does the basic cap exist? (eg 'ee_read_registrations')
         if (
-        EE_Restriction_Generator_Base::is_cap(
-            $this->model(),
-            $this->action()
-        )
+            EE_Restriction_Generator_Base::is_cap(
+                $this->model(),
+                $this->action()
+            )
         ) {
             if ($this->model() instanceof EEM_CPT_Base) {
                 $restrictions[ EE_Restriction_Generator_Base::get_cap_name(
@@ -50,10 +50,10 @@ class EE_Restriction_Generator_Public extends EE_Restriction_Generator_Base
 
             // does the others cap exist? (eg 'ee_read_others_registrations')
             if (
-            EE_Restriction_Generator_Base::is_cap(
-                $this->model(),
-                $this->action() . '_others'
-            )
+                EE_Restriction_Generator_Base::is_cap(
+                    $this->model(),
+                    $this->action() . '_others'
+                )
             ) {// both caps exist
                 if ($this->model() instanceof EEM_CPT_Base) {
                     // then if they don't have the others cap,

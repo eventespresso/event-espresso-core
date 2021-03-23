@@ -59,7 +59,8 @@ class EE_Enum_Text_Field extends EE_Text_Field_Base
      */
     public function prepare_for_set($value_inputted_for_field_on_model_object)
     {
-        if ($value_inputted_for_field_on_model_object !== null
+        if (
+            $value_inputted_for_field_on_model_object !== null
             && ! array_key_exists($value_inputted_for_field_on_model_object, $this->_allowed_enum_values())
         ) {
             if (defined('WP_DEBUG') && WP_DEBUG) {

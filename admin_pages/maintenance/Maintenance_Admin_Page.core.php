@@ -242,7 +242,8 @@ class Maintenance_Admin_Page extends EE_Admin_Page
         }
         $current_db_state = EE_Data_Migration_Manager::instance()->ensure_current_database_state_is_set();
         $current_db_state = str_replace('.decaf', '', $current_db_state);
-        if ($exception_thrown
+        if (
+            $exception_thrown
             || ($most_recent_migration
                 && $most_recent_migration instanceof EE_Data_Migration_Script_Base
                 && $most_recent_migration->is_broken()
@@ -260,7 +261,8 @@ class Maintenance_Admin_Page extends EE_Admin_Page
         } elseif ($addons_should_be_upgraded_first) {
             $this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_upgrade_addons_before_migrating.template.php';
         } else {
-            if ($most_recent_migration
+            if (
+                $most_recent_migration
                 && $most_recent_migration instanceof EE_Data_Migration_Script_Base
                 && $most_recent_migration->can_continue()
             ) {

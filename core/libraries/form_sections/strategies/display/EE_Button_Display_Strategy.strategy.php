@@ -1,7 +1,5 @@
 <?php
 
-
-
 /**
  * Class EE_Button_Display_Strategy
  * Description

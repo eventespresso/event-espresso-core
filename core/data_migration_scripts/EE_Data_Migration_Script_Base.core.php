@@ -188,8 +188,10 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
      */
     public function get_mapping_new_pk($old_table, $old_pk, $new_table)
     {
-        if (! isset($this->_mappings[ $old_table ]) ||
-            ! isset($this->_mappings[ $old_table ][ $new_table ])) {
+        if (
+            ! isset($this->_mappings[ $old_table ]) ||
+            ! isset($this->_mappings[ $old_table ][ $new_table ])
+        ) {
             // try fetching the option
             $this->_mappings[ $old_table ][ $new_table ] = $this->_get_mapping_option($old_table, $new_table);
         }
@@ -209,8 +211,10 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
      */
     public function get_mapping_old_pk($old_table, $new_table, $new_pk)
     {
-        if (! isset($this->_mappings[ $old_table ]) ||
-            ! isset($this->_mappings[ $old_table ][ $new_table ])) {
+        if (
+            ! isset($this->_mappings[ $old_table ]) ||
+            ! isset($this->_mappings[ $old_table ][ $new_table ])
+        ) {
             // try fetching the option
             $this->_mappings[ $old_table ][ $new_table ] = $this->_get_mapping_option($old_table, $new_table);
         }
@@ -356,7 +360,8 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
             // once we've migrated all the number we intended to (possibly from different stages), stop migrating
             // or if we had a fatal error
             // or if the current script stopped early- its not done, but it's done all it thinks we should do on this step
-            if ($num_records_actually_migrated >= $num_records_to_migrate_limit
+            if (
+                $num_records_actually_migrated >= $num_records_to_migrate_limit
                 || $stage->is_broken()
                 || $stage->has_more_to_do()
             ) {
@@ -615,7 +620,8 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
     protected function _pre_existing_table_should_be_dropped($table_is_new)
     {
         if ($table_is_new) {
-            if ($this->_get_req_type_for_plugin_corresponding_to_this_dms() == EE_System::req_type_new_activation
+            if (
+                $this->_get_req_type_for_plugin_corresponding_to_this_dms() == EE_System::req_type_new_activation
                 || $this->_currently_migrating()
             ) {
                 return true;
@@ -623,10 +629,12 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
                 return false;
             }
         } else {
-            if (in_array(
-                $this->_get_req_type_for_plugin_corresponding_to_this_dms(),
-                array(EE_System::req_type_new_activation)
-            )) {
+            if (
+                in_array(
+                    $this->_get_req_type_for_plugin_corresponding_to_this_dms(),
+                    array(EE_System::req_type_new_activation)
+                )
+            ) {
                 return true;
             } else {
                 return false;

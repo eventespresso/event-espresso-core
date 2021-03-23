@@ -515,7 +515,8 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
             $answer = EEM_Answer::instance()->get_registration_question_answer_object($registration, $this->ID());
         }
         // has this question been answered ?
-        if ($answer instanceof EE_Answer
+        if (
+            $answer instanceof EE_Answer
             && $answer->value() !== ''
         ) {
             // answer gets htmlspecialchars called on it, undo that please
@@ -530,11 +531,13 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
             $input_constructor_args['default'] = $default_value;
         }
         $max_max_for_question = EEM_Question::instance()->absolute_max_for_system_question($this->system_ID());
-        if (in_array(
-            $this->type(),
-            EEM_Question::instance()->questionTypesWithMaxLength(),
-            true
-        )) {
+        if (
+            in_array(
+                $this->type(),
+                EEM_Question::instance()->questionTypesWithMaxLength(),
+                true
+            )
+        ) {
             $input_constructor_args['validation_strategies'][] = new EE_Max_Length_Validation_Strategy(
                 null,
                 min($max_max_for_question, $this->max())

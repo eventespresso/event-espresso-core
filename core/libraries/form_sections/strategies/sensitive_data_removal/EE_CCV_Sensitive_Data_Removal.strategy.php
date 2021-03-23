@@ -16,7 +16,7 @@ class EE_CCV_Sensitive_Data_Removal extends EE_Sensitive_Data_Removal_Base
         // Get the ccv Length
         $ccv_lenght = strlen($normalized_value);
         // Replace all characters of credit card except the last four and dashes
-        for ($i=0; $i<$ccv_lenght; $i++) {
+        for ($i = 0; $i < $ccv_lenght; $i++) {
             if ($normalized_value[ $i ] == '-') {
                 continue;
             }

@@ -108,7 +108,7 @@ abstract class AbstractConnectionResolver extends WPGraphQLConnectionResolver
     public function is_valid_offset($offset)
     {
         $entity = $this->get_query()->get_one_by_ID($offset);
-        
+
         return $entity instanceof EE_Base_Class;
     }
 

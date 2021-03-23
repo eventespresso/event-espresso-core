@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is the template for newsletter send form
  *

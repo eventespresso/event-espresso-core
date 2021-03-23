@@ -1,4 +1,5 @@
 <?php
+
 /**
  * EE_Float_Normalization
  * Casts to float, and allows spaces, commas, and periods in the inputted string

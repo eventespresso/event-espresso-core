@@ -23,7 +23,7 @@ class EE_PMT_Bank extends EE_PMT_Base
     {
         $this->_pretty_name = __("Bank", 'event_espresso');
         parent::__construct($pm_instance);
-        $this->_default_button_url = $this->file_url().'lib/bank-logo.png';
+        $this->_default_button_url = $this->file_url() . 'lib/bank-logo.png';
         $this->_default_description = __('Make payment using an electronic funds transfer from your bank.', 'event_espresso');
     }
 
@@ -48,22 +48,22 @@ class EE_PMT_Bank extends EE_PMT_Base
     public function generate_new_settings_form()
     {
         return new EE_Payment_Method_Form(array(
-            'extra_meta_inputs'=>array(
-                'page_title'=>new EE_Text_Input(array(
-                    'html_label_text'=>  sprintf(__("Title %s", "event_espresso"), $this->get_help_tab_link()),
-                    'default'=>  __("Electronic Funds Transfers", 'event_espresso')
+            'extra_meta_inputs' => array(
+                'page_title' => new EE_Text_Input(array(
+                    'html_label_text' =>  sprintf(__("Title %s", "event_espresso"), $this->get_help_tab_link()),
+                    'default' =>  __("Electronic Funds Transfers", 'event_espresso')
                 )),
-                'payment_instructions'=>new EE_Text_Area_Input(array(
-                    'html_label_text'=>  sprintf(__("Payment Instructions %s", "event_espresso"), $this->get_help_tab_link()),
+                'payment_instructions' => new EE_Text_Area_Input(array(
+                    'html_label_text' =>  sprintf(__("Payment Instructions %s", "event_espresso"), $this->get_help_tab_link()),
                     'html_help_text' => __('Provide instructions on how registrants can send the bank draft payment. Eg, mention your account name, bank account number, bank name, bank routing code, and bank address, etc.', 'event_espresso'),
-                    'default'=> sprintf(
+                    'default' => sprintf(
                         __('Please initiate an electronic payment using the following bank information: %1$sAccount Owner: Luke Skywalker%1$sBank Account # 1234567890%1$sBank Name: Rebellion Bank%1$sRouting Number: 12345%1$sBank Address: 12345 Wookie Rd., Planet Corellian.%1$sPayment must be received within 48 hours of event date.', 'event_espresso'),
                         "\n"
                     ),
                     'validation_strategies' => array( new EE_Full_HTML_Validation_Strategy() ),
                 )),
             ),
-            'exclude'=>array('PMD_debug_mode')
+            'exclude' => array('PMD_debug_mode')
         ));
     }
 
@@ -97,10 +97,10 @@ class EE_PMT_Bank extends EE_PMT_Base
         $extra_meta_for_payment_method = $this->_pm_instance->all_extra_meta_array();
         $template_vars = array_merge(
             array(
-                            'payment_method'=>$this->_pm_instance,
-                            'payment'=>$payment,
-                            'page_title'=>'',
-                            'payment_instructions'=>'',
+                            'payment_method' => $this->_pm_instance,
+                            'payment' => $payment,
+                            'page_title' => '',
+                            'payment_instructions' => '',
                             ),
             $extra_meta_for_payment_method
         );

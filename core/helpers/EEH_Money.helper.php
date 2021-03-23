@@ -106,7 +106,8 @@ class EEH_Money extends EEH_Base
             // less than or equal
             case '<=':
             case 'lte':
-                if (self::compare_floats($float1, $float2, '<')
+                if (
+                    self::compare_floats($float1, $float2, '<')
                     || self::compare_floats($float1, $float2, '=')
                 ) {
                     return true;
@@ -125,7 +126,8 @@ class EEH_Money extends EEH_Base
             // greater than or equal
             case '>=':
             case 'gte':
-                if (self::compare_floats($float1, $float2, '>')
+                if (
+                    self::compare_floats($float1, $float2, '>')
                     || self::compare_floats($float1, $float2, '=')
                 ) {
                     return true;
