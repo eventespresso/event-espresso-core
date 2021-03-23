@@ -100,8 +100,7 @@ class EE_Restriction_Generator_Default_Public extends EE_Restriction_Generator_B
             // others' that are for published events, or defaults
             EE_Restriction_Generator_Base::get_cap_name(
                 $event_model,
-                $this->action() .
-                '_others'
+                $this->action() . '_others'
             ) => new EE_Default_Where_Conditions(
                 [
                     'OR*no_' .
@@ -124,8 +123,7 @@ class EE_Restriction_Generator_Default_Public extends EE_Restriction_Generator_B
             // and others' that aren't private
             EE_Restriction_Generator_Base::get_cap_name(
                 $event_model,
-                $this->action() .
-                '_private'
+                $this->action() . '_private'
             ) => new EE_Default_Where_Conditions(
                 [
                     'OR*no_' .
@@ -149,18 +147,16 @@ class EE_Restriction_Generator_Default_Public extends EE_Restriction_Generator_B
             // restrict access to only non-default items
             EE_Restriction_Generator_Base::get_cap_name(
                 $this->model(),
-                $this->action() .
-                '_default'
+                $this->action() . '_default'
             ) => new EE_Default_Where_Conditions(
                 [$this->_default_field_name => false]
             ),
         ];
         if (
-        EE_Restriction_Generator_Base::is_cap(
-            $this->model(),
-            $this->action() .
-            '_others_default'
-        )
+            EE_Restriction_Generator_Base::is_cap(
+                $this->model(),
+                $this->action() . '_others_default'
+            )
         ) {
             // if they don't have the "others" default capability,
             // restrict access to only their default ones, and non-default ones
