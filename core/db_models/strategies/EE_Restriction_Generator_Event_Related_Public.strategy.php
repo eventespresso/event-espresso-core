@@ -81,8 +81,7 @@ class EE_Restriction_Generator_Event_Related_Public extends EE_Restriction_Gener
                         $this->action() . '_others'
                     ) => $this->addPublishedPostConditions(
                         [
-                            $this->_path_to_event_model .
-                            'EVT_wp_user' => EE_Default_Where_Conditions::current_user_placeholder,
+                            $this->_path_to_event_model . 'EVT_wp_user' => EE_QUERY_PLACEHOLDER_CURRENT_USER,
                         ],
                         true,
                         $this->_path_to_event_model
@@ -103,8 +102,7 @@ class EE_Restriction_Generator_Event_Related_Public extends EE_Restriction_Gener
                         $this->action() . '_private'
                     ) => $this->addPublishedPostConditions(
                         [
-                            $this->_path_to_event_model .
-                            'EVT_wp_user' => EE_Default_Where_Conditions::current_user_placeholder,
+                            $this->_path_to_event_model . 'EVT_wp_user' => EE_QUERY_PLACEHOLDER_CURRENT_USER,
                         ],
                         false,
                         $this->_path_to_event_model

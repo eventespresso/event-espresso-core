@@ -71,8 +71,8 @@ class EE_Restriction_Generator_Global extends EE_Restriction_Generator_Base
                         $this->model(),
                         $this->action() . '_others'
                     ) => [
-                        EE_Default_Where_Conditions::user_field_name_placeholder => EE_Default_Where_Conditions::current_user_placeholder,
-                        $this->_global_field_name                                => true,
+                        EE_QUERY_PLACEHOLDER_USER_FIELD_NAME => EE_QUERY_PLACEHOLDER_CURRENT_USER,
+                        $this->_global_field_name            => true,
                     ],
                 ]
             ),

@@ -61,7 +61,7 @@ class EE_Restriction_Generator_Protected extends EE_Restriction_Generator_Base
                     $this->action() . '_others'
                 ) ] = new EE_Default_Where_Conditions(
                     [
-                        EE_Default_Where_Conditions::user_field_name_placeholder => EE_Default_Where_Conditions::current_user_placeholder,
+                        EE_QUERY_PLACEHOLDER_USER_FIELD_NAME => EE_QUERY_PLACEHOLDER_CURRENT_USER,
                     ]
                 );
                 // does the private cap exist (eg 'ee_read_others_private_events')
@@ -84,8 +84,8 @@ class EE_Restriction_Generator_Protected extends EE_Restriction_Generator_Base
                                 $this->model(),
                                 $this->action() . '_private'
                             ) => [
-                                EE_Default_Where_Conditions::user_field_name_placeholder => EE_Default_Where_Conditions::current_user_placeholder,
-                                'status'                                                 => [
+                                EE_QUERY_PLACEHOLDER_USER_FIELD_NAME => EE_QUERY_PLACEHOLDER_CURRENT_USER,
+                                'status'                             => [
                                     '!=',
                                     'private',
                                 ],

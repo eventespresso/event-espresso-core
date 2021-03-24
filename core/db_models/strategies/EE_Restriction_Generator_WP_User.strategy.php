@@ -25,7 +25,7 @@ class EE_Restriction_Generator_WP_User extends EE_Restriction_Generator_Base
                 $this->action()
             ) => new EE_Default_Where_Conditions(
                 [
-                    EE_Default_Where_Conditions::user_field_name_placeholder => EE_Default_Where_Conditions::current_user_placeholder,
+                    EE_QUERY_PLACEHOLDER_USER_FIELD_NAME => EE_QUERY_PLACEHOLDER_CURRENT_USER,
                 ]
             ),
 

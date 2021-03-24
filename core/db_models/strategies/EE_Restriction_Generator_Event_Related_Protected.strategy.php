@@ -113,8 +113,7 @@ class EE_Restriction_Generator_Event_Related_Protected extends EE_Restriction_Ge
                 $this->action_for_event() . '_others'
             ) => new EE_Default_Where_Conditions(
                 [
-                    $this->_path_to_event_model .
-                    'EVT_wp_user' => EE_Default_Where_Conditions::current_user_placeholder,
+                    $this->_path_to_event_model . 'EVT_wp_user' => EE_QUERY_PLACEHOLDER_CURRENT_USER,
                 ]
             ),
             // if they have basic and others, but not private,
@@ -130,8 +129,7 @@ class EE_Restriction_Generator_Event_Related_Protected extends EE_Restriction_Ge
                         $this->action_for_event() . '_private'
                     ) => $this->addPublishedPostConditions(
                         [
-                            $this->_path_to_event_model .
-                            'EVT_wp_user' => EE_Default_Where_Conditions::current_user_placeholder,
+                            $this->_path_to_event_model . 'EVT_wp_user' => EE_QUERY_PLACEHOLDER_CURRENT_USER,
                         ],
                         false,
                         $this->_path_to_event_model

@@ -16,6 +16,9 @@ if (! defined('EVENT_ESPRESSO_VERSION')) {
 class EE_Default_Where_Conditions_Test extends EE_UnitTestCase
 {
 
+    /**
+     * @throws EE_Error
+     */
     function test_add_model_relation_chain_onto_where_conditions()
     {
         global $current_user;
@@ -48,8 +51,7 @@ class EE_Default_Where_Conditions_Test extends EE_UnitTestCase
                         'EVT_name'          => ['IN', $value3],
                         'Datetime.DTT_name' => $value4,
                     ],
-                    EEM_Event::instance()->wp_user_field_name(
-                    )                                           => EE_Default_Where_Conditions::current_user_placeholder,
+                    EEM_Event::instance()->wp_user_field_name() => EE_QUERY_PLACEHOLDER_CURRENT_USER,
                 ],
                 'Event.'
             )
@@ -57,6 +59,9 @@ class EE_Default_Where_Conditions_Test extends EE_UnitTestCase
     }
 
 
+    /**
+     * @throws EE_Error
+     */
     function test_wp_user_field_name()
     {
         $this->assertEquals(
@@ -93,5 +98,4 @@ class EE_Default_Where_Conditions_Test extends EE_UnitTestCase
     //				$default_where_conditions->add_model_relation_chain_onto_where_conditions( array( 'Event.EVT_wp_user' => $value1 ), 'Registration.' ));
     //	}
 }
-
 // End of file EE_Default_Where_Conditions_Test.php

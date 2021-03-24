@@ -69,7 +69,7 @@ class EE_Restriction_Generator_Public extends EE_Restriction_Generator_Base
                                 $this->action() . '_others'
                             ) => $this->addPublishedPostConditions(
                                 [
-                                    EE_Default_Where_Conditions::user_field_name_placeholder => EE_Default_Where_Conditions::current_user_placeholder,
+                                    EE_QUERY_PLACEHOLDER_USER_FIELD_NAME => EE_QUERY_PLACEHOLDER_CURRENT_USER,
                                 ]
                             ),
                         ]
@@ -87,9 +87,9 @@ class EE_Restriction_Generator_Public extends EE_Restriction_Generator_Base
                                 $this->model(),
                                 $this->action() . '_others'
                             ) => [
-                                EE_Default_Where_Conditions::user_field_name_placeholder => EE_Default_Where_Conditions::current_user_placeholder,
+                                EE_QUERY_PLACEHOLDER_USER_FIELD_NAME => EE_QUERY_PLACEHOLDER_CURRENT_USER,
                                 $this->model()->deleted_field_name(
-                                )                                                        => false,
+                                )                                    => false,
                             ],
                         ]
                     );
@@ -117,7 +117,7 @@ class EE_Restriction_Generator_Public extends EE_Restriction_Generator_Base
                                 $this->action() . '_private'
                             ) => $this->addPublishedPostConditions(
                                 [
-                                    EE_Default_Where_Conditions::user_field_name_placeholder => EE_Default_Where_Conditions::current_user_placeholder,
+                                    EE_QUERY_PLACEHOLDER_USER_FIELD_NAME => EE_QUERY_PLACEHOLDER_CURRENT_USER,
                                 ],
                                 false
                             ),

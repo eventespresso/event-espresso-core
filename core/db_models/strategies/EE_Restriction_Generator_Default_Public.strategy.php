@@ -109,9 +109,8 @@ class EE_Restriction_Generator_Default_Public extends EE_Restriction_Generator_B
                         $this->action() . '_others'
                     ) => $this->addPublishedPostConditions(
                         [
-                            $this->_path_to_event_model .
-                            'EVT_wp_user'              => EE_Default_Where_Conditions::current_user_placeholder,
-                            $this->_default_field_name => true,
+                            $this->_path_to_event_model . 'EVT_wp_user' => EE_QUERY_PLACEHOLDER_CURRENT_USER,
+                            $this->_default_field_name                  => true,
                         ],
                         true,
                         $this->_path_to_event_model
@@ -132,9 +131,8 @@ class EE_Restriction_Generator_Default_Public extends EE_Restriction_Generator_B
                         $this->action() . '_private'
                     ) => $this->addPublishedPostConditions(
                         [
-                            $this->_path_to_event_model .
-                            'EVT_wp_user'              => EE_Default_Where_Conditions::current_user_placeholder,
-                            $this->_default_field_name => true,
+                            $this->_path_to_event_model . 'EVT_wp_user' => EE_QUERY_PLACEHOLDER_CURRENT_USER,
+                            $this->_default_field_name                  => true,
                         ],
                         false,
                         $this->_path_to_event_model
@@ -175,8 +173,8 @@ class EE_Restriction_Generator_Default_Public extends EE_Restriction_Generator_B
                         $this->action() . '_others_default'
                     ) => [
                         'AND'                      => [
-                            EE_Default_Where_Conditions::user_field_name_placeholder => EE_Default_Where_Conditions::current_user_placeholder,
-                            $this->_default_field_name                               => true
+                            EE_QUERY_PLACEHOLDER_USER_FIELD_NAME => EE_QUERY_PLACEHOLDER_CURRENT_USER,
+                            $this->_default_field_name           => true
                         ],
                         $this->_default_field_name => false
                     ]
