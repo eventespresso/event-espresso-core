@@ -44,9 +44,10 @@ class EE_CPT_Minimum_Where_Conditions extends EE_Default_Where_Conditions
      * different tables
      *
      * @param string $column column name
-     * @return EE_Model_Field_Base|null
+     * @return EE_Model_Field_Base
+     * @throws EE_Error
      */
-    protected function _get_field_on_column(string $column): ?EE_Model_Field_Base
+    protected function _get_field_on_column(string $column): EE_Model_Field_Base
     {
         $all_fields = $this->_model->field_settings(true);
         foreach ($all_fields as $field_name => $field_obj) {
@@ -54,7 +55,15 @@ class EE_CPT_Minimum_Where_Conditions extends EE_Default_Where_Conditions
                 return $field_obj;
             }
         }
-        return null;
+        throw new EE_Error(
+            sprintf(
+                esc_html__(
+                    'Could not find a valid field for the supplied "" column.',
+                    'event_espresso'
+                ),
+                $column
+            )
+        );
     }
 
 
