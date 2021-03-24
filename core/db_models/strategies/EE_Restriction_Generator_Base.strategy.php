@@ -49,7 +49,7 @@ abstract class EE_Restriction_Generator_Base
      *
      * @var EE_Default_Where_Conditions[]
      */
-    protected $_cap_restrictions_generated = false;
+    protected $_cap_restrictions_generated;
 
     /**
      * Model for which restrictions are generated
@@ -141,13 +141,12 @@ abstract class EE_Restriction_Generator_Base
      */
     public function generate_restrictions(): array
     {
-        if ($this->_cap_restrictions_generated === false) {
-            $this->_cap_restrictions_generated =
-                apply_filters(
-                    'FHEE__EE_Restriction_Generator_Base__generate_restrictions__first_time',
-                    $this->_generate_restrictions(),
-                    $this
-                );
+        if ($this->_cap_restrictions_generated === null) {
+            $this->_cap_restrictions_generated = apply_filters(
+                'FHEE__EE_Restriction_Generator_Base__generate_restrictions__first_time',
+                $this->_generate_restrictions(),
+                $this
+            );
         }
         return apply_filters(
             'FHEE__EE_Restriction_Generator_Base__generate_restrictions__every_time',
@@ -177,7 +176,7 @@ abstract class EE_Restriction_Generator_Base
      */
     public function has_generated_cap_restrictions(): bool
     {
-        return $this->_cap_restrictions_generated === false;
+        return $this->_cap_restrictions_generated !== null;
     }
 
 
