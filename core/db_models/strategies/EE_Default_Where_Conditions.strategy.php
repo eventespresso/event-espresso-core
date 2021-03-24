@@ -1,5 +1,8 @@
 <?php
 
+const EE_QUERY_PLACEHOLDER_CURRENT_USER    = EE_Default_Where_Conditions::current_user_placeholder;
+const EE_QUERY_PLACEHOLDER_USER_FIELD_NAME = EE_Default_Where_Conditions::user_field_name_placeholder;
+
 /**
  * Class EE_Default_Where_Conditions
  * Strategy to be used for getting default where conditions for EEM_Base
