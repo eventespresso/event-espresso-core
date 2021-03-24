@@ -700,12 +700,23 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment
         $html = '';
         if ($args !== null && is_array($args)) {
             foreach ($args as $name => $value) {
-                $html .= EEH_HTML::nl(0)
+                if (is_array($value)) {
+                    foreach ($value as $array_value) {
+                        $html .= EEH_HTML::nl(0)
+                             . '<input type="hidden" name="'
+                             . $name
+                             . '[]" value="'
+                             . esc_attr($array_value)
+                             . '"/>';
+                    }
+                } else {
+                    $html .= EEH_HTML::nl(0)
                          . '<input type="hidden" name="'
                          . $name
                          . '" value="'
                          . esc_attr($value)
                          . '"/>';
+                }
             }
         }
         return $html;
