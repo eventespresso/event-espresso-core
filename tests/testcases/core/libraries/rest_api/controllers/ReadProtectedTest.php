@@ -76,7 +76,6 @@ class ReadProtectedTest extends EE_REST_TestCase
         $this->assertEquals($event->ID(), $response_data[0]['EVT_ID']);
         // note that this event was password-protected
         $this->assertEquals('', $response_data[0]['EVT_desc']['rendered']);
-        \EEH_Debug_Tools::printr($response_data, '$response_data', __FILE__, __LINE__);
         $this->assertFalse(isset($response_data[0]['EVT_desc']['raw']));
     }
 
