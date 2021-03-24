@@ -10,6 +10,8 @@
  * @var int $ticket_count
  * @var string $event_status
  * @var string $date_format
+ * @var string $table_header_price
+ * @var string $table_header_qty
  * @var string $time_format
  * @var string $ticket_row_html
  * @var string $anchor_id
@@ -41,41 +43,11 @@
             </th>
             <?php if (apply_filters('FHEE__ticket_selector_chart_template__display_ticket_price_details', true)) { ?>
                 <th id="price-<?php echo $EVT_ID; ?>" scope="col" class="ee-ticket-selector-ticket-price-th cntr">
-                    <?php
-
-                    /**
-                     * Filters the text printed for the header of the price column in the ticket selector table
-                     *
-                     * @since 4.7.2
-                     *
-                     * @param string 'Price' The translatable text to display in the table header for price
-                     * @param int $EVT_ID The Event ID
-                     */
-
-                    echo apply_filters(
-                        'FHEE__ticket_selector_chart_template__table_header_price',
-                        esc_html__('Price', 'event_espresso'),
-                        $EVT_ID
-                    );
-                    ?>
+                    <?php echo $table_header_price; ?>
                 </th>
             <?php } ?>
             <th id="quantity-<?php echo $EVT_ID; ?>" scope="col" class="ee-ticket-selector-ticket-qty-th cntr">
-                <?php
-                /**
-                 * Filters the text printed for the header of the quantity column in the ticket selector table
-                 *
-                 * @since 4.7.2
-                 *
-                 * @param string 'Qty' The translatable text to display in the table header for the Quantity of tickets
-                 * @param int $EVT_ID The Event ID
-                 */
-                echo apply_filters(
-                    'FHEE__ticket_selector_chart_template__table_header_qty',
-                    esc_html__('Qty', 'event_espresso'),
-                    $EVT_ID
-                );
-                ?>
+                <?php echo $table_header_qty; ?>
             </th>
         </tr>
         </thead>

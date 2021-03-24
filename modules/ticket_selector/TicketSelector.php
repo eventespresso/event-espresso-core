@@ -2,6 +2,13 @@
 
 namespace EventEspresso\modules\ticket_selector;
 
+use EE_Error;
+use EE_Event;
+use EE_Ticket;
+use EEH_Template;
+use EEH_URL;
+use Exception;
+
 /**
  * Class TicketSelector
  * Description
@@ -13,12 +20,12 @@ abstract class TicketSelector
 {
 
     /**
-     * @var \EE_Event $event
+     * @var EE_Event $event
      */
     protected $event;
 
     /**
-     * @var \EE_Ticket[] $tickets
+     * @var EE_Ticket[] $tickets
      */
     protected $tickets;
 
@@ -36,13 +43,13 @@ abstract class TicketSelector
     /**
      * TicketSelectorSimple constructor.
      *
-     * @param \EE_Event    $event
-     * @param \EE_Ticket[] $tickets
+     * @param EE_Event    $event
+     * @param EE_Ticket[] $tickets
      * @param int          $max_attendees
      * @param array        $template_args
-     * @throws \EE_Error
+     * @throws EE_Error
      */
-    public function __construct(\EE_Event $event, array $tickets, $max_attendees, array $template_args)
+    public function __construct(EE_Event $event, array $tickets, $max_attendees, array $template_args)
     {
         $this->event = $event;
         $this->tickets = $tickets;
@@ -69,7 +76,7 @@ abstract class TicketSelector
     protected function loadTicketSelectorTemplate()
     {
         try {
-            return \EEH_Template::locate_template(
+            return EEH_Template::locate_template(
                 apply_filters(
                     'FHEE__EE_Ticket_Selector__display_ticket_selector__template_path',
                     $this->template_args['template_path'],
@@ -77,8 +84,8 @@ abstract class TicketSelector
                 ),
                 $this->template_args
             );
-        } catch (\Exception $e) {
-            \EE_Error::add_error($e->getMessage(), __FILE__, __FUNCTION__, __LINE__);
+        } catch (Exception $e) {
+            EE_Error::add_error($e->getMessage(), __FILE__, __FUNCTION__, __LINE__);
         }
         return '';
     }
@@ -100,14 +107,14 @@ abstract class TicketSelector
      * getHiddenInputs
      *
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function getHiddenInputs()
     {
         // $rows = count($this->tickets);
         $html = '<input type="hidden" name="noheader" value="true"/>';
         $html .= '<input type="hidden" name="tkt-slctr-return-url-' . $this->event->ID() . '"';
-        $html .= ' value="' . \EEH_URL::current_url() . $this->template_args['anchor_id'] . '"/>';
+        $html .= ' value="' . EEH_URL::current_url() . $this->template_args['anchor_id'] . '"/>';
         $html .= '<input type="hidden" name="tkt-slctr-rows-' . $this->event->ID();
         $html .= '" value="' . count($this->tickets) . '"/>';
         $html .= '<input type="hidden" name="tkt-slctr-max-atndz-' . $this->event->ID();

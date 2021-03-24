@@ -66,7 +66,7 @@
                     <td>
                         <span class="DTT_reserved_label"><?php _e('Rsrvd', 'event_espresso'); ?></span>
                     </td>
-                <?php
+                    <?php
                 endif; ?>
                 <td></td>
             </tr>
@@ -93,19 +93,19 @@
                     <td class="event-datetime-column date-name-column">
                         <label class="add-new-event-datetime-DTT_name_label"
                                for="add-new-event-datetime-DTT_name"><?php
-                            _e('Name', 'event_espresso'); ?></label>
+                                _e('Name', 'event_espresso'); ?></label>
                         <input type="text" name="add_new_datetime[DTT_name]" id="add-new-event-datetime-DTT_name"
                                class="ee-large-text-inp"
                                placeholder="<?php
-                               _e('Add Title (optional)', 'event_espresso'); ?>">
+                                _e('Add Title (optional)', 'event_espresso'); ?>">
                     </td>
                     <td class="event-datetime-column date-column">
                         <label class="add-new-event-datetime-DTT_EVT_start_label"
                                for="add-new-event-datetime-DTT_EVT_start"><?php
-                            _e(
-                                'Event Start',
-                                'event_espresso'
-                            ); ?></label>
+                                _e(
+                                    'Event Start',
+                                    'event_espresso'
+                                ); ?></label>
                         <input type="text" name="add_new_datetime[DTT_EVT_start]"
                                id="add-new-event-datetime-DTT_EVT_start" class="ee-text-inp ee-datepicker"
                                data-context="start-dtt" data-date-field-context="#add-event-datetime"
@@ -115,10 +115,10 @@
                     <td class="event-datetime-column date-column">
                         <label class="add-new-event-datetime-DTT_EVT_end_label"
                                for="add-new-event-datetime-DTT_EVT_end"><?php
-                            _e(
-                                'Event End',
-                                'event_espresso'
-                            ); ?></label>
+                                _e(
+                                    'Event End',
+                                    'event_espresso'
+                                ); ?></label>
                         <input type="text" name="add_new_datetime[DTT_EVT_end]" id="add-new-event-datetime-DTT_EVT_end"
                                class="ee-text-inp ee-datepicker" data-context="end-dtt"
                                data-date-field-context="#add-event-datetime"
@@ -128,10 +128,10 @@
                     <td class="event-datetime-column reg-limit-column">
                         <label class="add-new-event-datetime-DTT_EVT_end_label"
                                for="add-new-event-datetime-DTT_reg_limit"><?php
-                            _e(
-                                'Limit',
-                                'event_espresso'
-                            ); ?></label>
+                                _e(
+                                    'Limit',
+                                    'event_espresso'
+                                ); ?></label>
                         <input type="text" name="add_new_datetime[DTT_reg_limit]"
                                id="add-new-event-datetime-DTT_reg_limit" class="ee-numeric ee-small-text-inp">
                     </td>
@@ -163,10 +163,10 @@
                                                         class="clickable ee-collapsible<?php
                                                         echo $ee_collapsible_status; ?>"><span
                     class="ee-icon ee-icon-tickets ee-icon-size-20"></span><?php
-                _e(
-                    'Available Tickets',
-                    'event_espresso'
-                ); ?></span></h3>
+                    _e(
+                        'Available Tickets',
+                        'event_espresso'
+                    ); ?></span></h3>
         <div class="event-tickets-container ee-create-ticket-button"<?php
         echo $show_tickets_container; ?>>
             <button class="ee-create-ticket-button button-secondary ee-create-button" data-context="ticket"><?php
@@ -196,7 +196,7 @@
                     if (apply_filters('FHEE__event_tickets_metabox__tkt_reserved', true)) : ?>
                         <td><span class="TKT_reserved_label"><?php
                                 _e('Rsrvd', 'event_espresso'); ?></span></td>
-                    <?php
+                        <?php
                     endif; ?>
                     <td colspan="2"><span class="TKT_regs_label"><?php
                             _e('Regs', 'event_espresso'); ?></span></td>
@@ -212,7 +212,7 @@
             echo $existing_ticket_ids; ?>">
             <input type="hidden" name="ticket_total_rows" id="ticket-total-rows"
                    value="<?php
-                   echo $total_ticket_rows; ?>">
+                    echo $total_ticket_rows; ?>">
         </div> <!-- end .event-tickets-container -->
         <div style="clear:both"></div>
     </div>

@@ -340,11 +340,7 @@
                 </li>
             <?php endif; ?>
             <?php
-
-                /**
-                 * Allows extend the fields at actions area.
-                 */
-
+                // Allows extend the fields at actions area.
                 do_action(
                     'AHEE__txn_admin_details_main_meta_box_txn_details__after_actions_buttons',
                     $can_edit_payments
