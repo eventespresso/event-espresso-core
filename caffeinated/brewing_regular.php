@@ -5,21 +5,17 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\InterminableInterface;
 use EventEspresso\core\services\database\TableAnalysis;
 
-/**
- * the purpose of this file is to simply contain any action/filter hook callbacks etc for specific aspects of EE
- * related to caffeinated (regular) use.  Before putting any code in here, First be certain that it isn't better to
- * define and use the hook in a specific caffeinated/whatever class or file.
- */
-
 // defined some new constants related to caffeinated folder
 define('EE_CAF_URL', EE_PLUGIN_DIR_URL . 'caffeinated/');
 define('EE_CAF_CORE', EE_CAFF_PATH . 'core/');
 define('EE_CAF_LIBRARIES', EE_CAF_CORE . 'libraries/');
 define('EE_CAF_PAYMENT_METHODS', EE_CAFF_PATH . 'payment_methods/');
 
-
 /**
  * EE_Brewing_Regular class.  Just a wrapper to help namespace activity for the functionality of this file.
+ * the purpose of this file is to simply contain any action/filter hook callbacks etc for specific aspects of EE
+ * related to caffeinated (regular) use.  Before putting any code in here, First be certain that it isn't better to
+ * define and use the hook in a specific caffeinated/whatever class or file.
  *
  * @package        Event Espresso
  * @subpackage     /caffeinated/brewing_regular.php

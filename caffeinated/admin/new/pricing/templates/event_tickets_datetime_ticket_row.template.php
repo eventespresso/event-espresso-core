@@ -1,3 +1,61 @@
+<?php
+
+/**
+ * template args in use
+ *
+ * @var int $tkt_row
+ * @var int $TKT_qty_for_input
+ * @var string $tkt_status_class
+ * @var string $TKT_name
+ * @var string $ticket_datetime_rows
+ * @var string $TKT_start_date
+ * @var string $TKT_end_date
+ * @var string $TKT_status
+ * @var string $TKT_price
+ * @var string $TKT_qty
+ * @var string $TKT_uses
+ * @var string $TKT_min
+ * @var string $TKT_max
+ * @var string $TKT_required
+ * @var string $TKT_reserved
+ * @var string $TKT_sold
+ * @var string $TKT_registrations
+ * @var string $TKT_ID
+ * @var string $TKT_description
+ * @var string $TKT_is_default
+ * @var string $TKT_price_amount
+ * @var string $TKT_price_code
+ * @var string $TKT_price_rows
+ * @var string $TKT_base_price
+ * @var string $TKT_subtotal_amount_display
+ * @var string $TKT_base_price_ID
+ * @var string $TKT_order
+ * @var string $disabled
+ * @var string $ticket_archive_class
+ * @var string $trash_icon
+ * @var string $trash_hidden
+ * @var string $clone_icon
+ * @var string $display_edit_tkt_row
+ * @var string $edit_tkt_expanded
+ * @var string $edit_tickets_name
+ *
+ * @var string $TKT_taxable
+ * @var string $display_subtotal
+ * @var string $TKT_subtotal_amount
+ * @var string $tax_rows
+ *
+ * @var string $show_price_modifier;
+ * @var string $ticket_price_rows
+ * @var string $total_price_rows
+ * @var string $ticket_datetimes_list
+ * @var string $starting_ticket_datetime_rows (datetimes attached to ticket on page load)
+ * @var string $existing_ticket_price_ids;
+ * @var string $ticket_template_id;
+ * @var string $show_price_modifier
+ * @var string $show_price_mod_button
+ */
+?>
+
 <tr valign="top" class="ee-ticket-sortable ticket-row<?php echo $ticket_archive_class;
 if (WP_DEBUG) {
     echo ' ee-wp-debug';
@@ -354,50 +412,3 @@ if (WP_DEBUG) {
         </fieldset>
     </td>
 </tr>
-<?php
-
-/**
- * template args in use
- *
- * $tkt_row
- * $tkt_status_class
- * $TKT_name
- * $TKT_start_date
- * $TKT_end_date
- * $TKT_status
- * $TKT_price
- * $TKT_qty
- * $TKT_uses
- * $TKT_min
- * $TKT_max
- * $TKT_sold
- * $TKT_registrations
- * $TKT_ID
- * $TKT_description
- * $TKT_is_default
- * $TKT_price_rows
- * $TKT_base_price
- * $TKT_base_price_ID
- * $TKT_order
- * $disabled
- * $ticket_archive_class
- * $trash_icon
- * $trash_hidden
- * $clone_icon
- * $display_edit_tkt_row
- * $edit_tkt_expanded
- *
- * $TKT_taxable
- * $display_subtotal
- * $TKT_subtotal_amount
- * $tax_rows
- *
- * $show_price_modifier;
- * $total_price_rows
- * $ticket_datetimes_list
- * $starting_ticket_datetime_rows (datetimes attached to ticket on page load)
- * $existing_ticket_price_ids;
- * $ticket_template_id;
- * $show_price_modifier
- * $show_price_mod_button
- */

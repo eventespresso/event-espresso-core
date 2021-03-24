@@ -352,7 +352,7 @@ class EE_Admin_Page_Main_Menu extends EE_Admin_Page_Menu_Map
         }
         return $main;
     }
-} //end EE_Admin_Page_Main_Menu
+}
 
 
 /**

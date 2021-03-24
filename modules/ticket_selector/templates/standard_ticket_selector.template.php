@@ -1,23 +1,26 @@
 <?php
-/** @var boolean $event_is_expired */
-/** @var boolean $taxable_tickets */
-/** @var boolean $prices_displayed_including_taxes */
-/** @var int $row */
-/** @var int $EVT_ID */
-/** @var int $max_atndz */
-/** @var int $ticket_count */
-/** @var string $event_status */
-/** @var string $date_format */
-/** @var string $time_format */
-/** @var string $ticket_row_html */
-/** @var string $anchor_id */
-/** @var string $hidden_inputs */
-/** @var string $datetime_selector */
-/** @var EE_Ticket[] $tickets */
-/** @var EE_Event $event */
-/** @var EE_Tax_Config $tax_settings */
-/** @var EE_Ticket_Selector_Config $template_settings */
-/** @var \EventEspresso\modules\ticket_selector\TicketDetails $ticket_details */
+
+/**
+ * @var boolean $event_is_expired
+ * @var boolean $taxable_tickets
+ * @var boolean $prices_displayed_including_taxes
+ * @var int $row
+ * @var int $EVT_ID
+ * @var int $max_atndz
+ * @var int $ticket_count
+ * @var string $event_status
+ * @var string $date_format
+ * @var string $time_format
+ * @var string $ticket_row_html
+ * @var string $anchor_id
+ * @var string $hidden_inputs
+ * @var string $datetime_selector
+ * @var EE_Ticket[] $tickets
+ * @var EE_Event $event
+ * @var EE_Tax_Config $tax_settings
+ * @var EE_Ticket_Selector_Config $template_settings
+ * @var EventEspresso\modules\ticket_selector\TicketDetails $ticket_details
+ */
 ?>
 <div id="tkt-slctr-tbl-wrap-dv-<?php echo $EVT_ID; ?>" class="tkt-slctr-tbl-wrap-dv">
 

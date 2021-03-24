@@ -1,3 +1,19 @@
+<?php
+
+/**
+ * template args used
+ *
+ * @var int $DTT_ID
+ * @var int $dtt_row
+ * @var string $DTT_description
+ * @var string $event_datetimes_name
+ * @var string $show_tickets_row
+ * @var string $datetime_tickets_list
+ * @var string $add_new_datetime_ticket_help_link
+ */
+
+?>
+
 <tr id="advanced-dtt-edit-row-<?php echo $dtt_row; ?>" class="advanced-dtt-edit-row">
     <td colspan="7">
         <section id="edit-event-datetime-tickets-<?php echo $dtt_row; ?>"
@@ -78,8 +94,14 @@
                             <span class="clickable gear-icon dashicons dashicons-admin-generic add-edit"
                                   data-context="short-ticket" data-datetime-row="<?php echo $dtt_row; ?>"
                                   style="display:none"></span>
-                            <!-- the "add-edit" class is used by jQuery to indicate we need to retrieve a edit form using the value from the #next-ticket-row hidden input (which in turn is incremented if the new created item is saved). -->
-                            <!-- Also: when the Add New Ticket form is recalled, jQuery will automatically populate the data-context and data-datetime-row properties on the edit icon and save buttons from the event handler for the datetime being edited. -->
+                            <!--
+                            the "add-edit" class is used by jQuery to indicate we need to retrieve
+                            an edit form using the value from the #next-ticket-row hidden input
+                            (which in turn is incremented if the new created item is saved).
+                            Also: when the Add New Ticket form is recalled, jQuery will automatically populate
+                            the data-context and data-datetime-row properties on the edit icon and save buttons
+                            from the event handler for the datetime being edited.
+                            -->
                         </td>
                     </tr>
                     </tbody>
@@ -110,17 +132,3 @@
         </section> <!-- /.datetime-tickets-edit-->
     </td>
 </tr>
-
-
-<?php
-
-/**
- * template args used
- *
- * $dtt_row
- * $DTT_description
- * $show_tickets_row
- * $datetime_tickets_list
- * $add_new_datetime_ticket_help_link
- * $DTT_ID
- */

@@ -1,3 +1,25 @@
+<?php
+
+/**
+ * template args in use
+ *
+ * @var string $default_datetime_edit_row
+ * @var string $default_ticket_row
+ * @var string $default_price_row
+ * @var string $default_price_rows
+ * @var string $default_base_price_amount
+ * @var string $default_base_price_name
+ * @var string $default_base_price_description
+ * @var string $default_price_modifier_selector_row
+ * @var string $default_available_tickets_for_datetime
+ * @var string $existing_available_datetime_tickets_list
+ * @var string $existing_available_ticket_datetimes_list
+ * @var string $new_available_datetime_ticket_list_item
+ * @var string $new_available_ticket_datetime_list_item
+ */
+
+?>
+
 <!-- edit datetime base form -->
 <table id="edit-datetime-form-holder" class="hidden">
     <tbody>
@@ -72,23 +94,3 @@
 <ul id="dtt-new-available-datetime-list-items-holder" class="hidden">
     <?php echo $new_available_ticket_datetime_list_item; ?>
 </ul>
-
-<?php
-
-/**
- * template args in use
- *
- * $default_datetime_edit_row
- * $default_ticket_row
- * $default_price_row
- * $default_price_rows
- * $default_base_price_amount
- * $default_base_price_name
- * $default_base_price_description
- * $default_price_modifier_selector_row
- * $default_available_tickets_for_datetime
- * $existing_available_datetime_tickets_list
- * $existing_available_ticket_datetimes_list
- * $new_available_datetime_ticket_list_item
- * $new_available_ticket_datetime_list_item
- */

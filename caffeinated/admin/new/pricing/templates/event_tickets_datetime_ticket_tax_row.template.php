@@ -1,3 +1,19 @@
+<?php
+
+/**
+ * template vars in use:
+ *
+ * @var int $tax_id
+ * @var int $tkt_row
+ * @var string $display_tax
+ * @var string $tax_added_display
+ * @var string $tax_label
+ * @var string $tax_added
+ * @var string $tax_amount
+ */
+
+?>
+
 <tr class="ticket-tax-row TKT-taxes-display"<?php echo $display_tax; ?>>
     <td colspan="4" class="ee-numeric">
         <span class="TKT-tax-label"><?php echo $tax_label; ?></span>
@@ -13,14 +29,3 @@
     </td>
     <td></td>
 </tr>
-<?php
-
-/**
- * template vars in use:
- *
- * $tkt_row
- * $display_tax
- * $tax_label
- * $tax_added
- * $tax_amount
- */

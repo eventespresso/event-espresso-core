@@ -172,7 +172,7 @@ class EE_Default_Where_Conditions
      * @param array  $qualified_where_conditions
      * @param string $model_relation_chain
      * @param string $key
-     * @param string $value
+     * @param mixed $value
      * @return array
      * @throws EE_Error
      */
@@ -180,7 +180,7 @@ class EE_Default_Where_Conditions
         array $qualified_where_conditions,
         string $model_relation_chain,
         string $key,
-        string $value
+        $value
     ): array {
         $model_relation_chain = $model_relation_chain !== ''
             ? rtrim($model_relation_chain, '.') . '.'

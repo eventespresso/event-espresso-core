@@ -1,3 +1,31 @@
+<?php
+
+/**
+ * template vars in use
+ *
+ * @var array $payments
+ * @var array $payment_methods
+ * @var array $payment_status
+ * @var array $txn_details
+ * @var array $txn_nmbr
+ * @var bool $can_edit_payments
+ * @var bool $can_delete_payments
+ * @var int $TXN_ID
+ * @var string $line_item_table
+ * @var string $grand_raw_total
+ * @var string $action_buttons
+ * @var string $TXN_status
+ * @var string $apply_payment_form_url
+ * @var string $delete_payment_form_url
+ * @var string $REG_code
+ * @var string $registrations_to_apply_payment_to
+ * @var string $status_change_select
+ * @var string $delete_payment_url
+ * @var string $delete_status_change_select
+ * @var EE_Attendee $attendee
+ */
+?>
+
 <div id="admin-primary-mbox-dv" class="admin-primary-mbox-dv">
 
     <h3 class="admin-primary-mbox-h4 hdr-has-icon">

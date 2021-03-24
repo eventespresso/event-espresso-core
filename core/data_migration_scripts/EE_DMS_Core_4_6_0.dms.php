@@ -3,12 +3,6 @@
 use EventEspresso\core\services\database\TableAnalysis;
 use EventEspresso\core\services\database\TableManager;
 
-/**
- * meant to convert DBs between 4.6 and 4.6
- * mostly just
- * -move payment methods from EE_Config into a separate table just for them
- */
-
 // make sure we have all the stages loaded too
 // unfortunately, this needs to be done upon INCLUSION of this file,
 // instead of construction, because it only gets constructed on first page load
@@ -28,6 +22,9 @@ EEH_Autoloader::register_autoloader($class_to_filepath);
 
 /**
  * Class EE_DMS_Core_4_6_0
+ * meant to convert DBs between 4.6 and 4.6
+ * mostly just
+ * -move payment methods from EE_Config into a separate table just for them
  *
  * @package               Event Espresso
  * @subpackage            core

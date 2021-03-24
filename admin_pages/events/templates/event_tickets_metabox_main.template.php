@@ -1,3 +1,18 @@
+<?php
+
+/**
+ * template vars in use
+ *
+ * @var string $event_datetime_help_link
+ * @var string $ticket_options_help_link
+ * @var string $existing_datetime_ids
+ * @var string $time
+ * @var string $ticket_rows
+ * @var string $existing_ticket_ids
+ * @var string $total_ticket_rows
+ * @var string $ticket_js_structure
+ */
+?>
 <?php do_action('AHEE__event_tickets_metabox_main__before_content'); ?>
     <div id="event-and-ticket-form-content">
         <h4 class="event-tickets-datetimes-title">
@@ -110,17 +125,3 @@
     <table id="new-ticket-row-form" class="hidden">
         <tbody><?php echo $ticket_js_structure; ?></tbody>
     </table>
-<?php
-
-/**
- * template vars in use
- *
- * $event_datetime_help_link
- * $ticket_options_help_link
- * $existing_datetime_ids
- * $time
- * $ticket_rows
- * $existing_ticket_ids
- * $total_ticket_rows
- * $ticket_js_structure
- */

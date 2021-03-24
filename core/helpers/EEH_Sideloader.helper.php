@@ -400,4 +400,4 @@ class EEH_Sideloader extends EEH_Base
         );
         return $this->_download_from;
     }
-} //end EEH_Sideloader class
+}
