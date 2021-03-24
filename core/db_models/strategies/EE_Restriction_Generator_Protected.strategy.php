@@ -52,10 +52,10 @@ class EE_Restriction_Generator_Protected extends EE_Restriction_Generator_Base
             if (
                 EE_Restriction_Generator_Base::is_cap(
                     $this->model(),
-                    $this->action() .
-                    '_others'
+                    $this->action() . '_others'
                 )
-            ) {// both caps exist
+            ) {
+                // both caps exist
                 $restrictions[ EE_Restriction_Generator_Base::get_cap_name(
                     $this->model(),
                     $this->action() . '_others'
@@ -68,8 +68,7 @@ class EE_Restriction_Generator_Protected extends EE_Restriction_Generator_Base
                 if (
                     EE_Restriction_Generator_Base::is_cap(
                         $this->model(),
-                        $this->action() .
-                        '_private'
+                        $this->action() . '_private'
                     ) && $this->model() instanceof EEM_CPT_Base
                 ) {
                     // if they have basic and others, but not private,

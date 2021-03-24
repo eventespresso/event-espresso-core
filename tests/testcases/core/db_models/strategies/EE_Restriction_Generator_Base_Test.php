@@ -4,13 +4,13 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 }
 
 /**
- *
  * EE_Restriction_Generator_Base
  *
- * @package			Event Espresso
- * @subpackage
- * @author				Mike Nelson
- * @group core/db_models
+ * @package     Event Espresso
+ * @subpackage  tests
+ * @author      Mike Nelson
+ * @group       core/db_models
+ * @group       restriction-generators
  *
  */
 class EE_Restriction_Generator_Base_Test extends EE_UnitTestCase{

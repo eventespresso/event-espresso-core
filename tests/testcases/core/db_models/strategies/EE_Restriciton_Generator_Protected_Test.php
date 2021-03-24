@@ -5,16 +5,15 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
 }
 
 /**
+ * EE_Restriction_Generator_Protected_Test
  *
- * EE_Restriciton_Generator_Protected_Test
- *
- * @package			Event Espresso
- * @subpackage
- * @author				Mike Nelson
- * @group core/db_models
- *
+ * @package     Event Espresso
+ * @subpackage  tests
+ * @author      Mike Nelson
+ * @group       core/db_models
+ * @group       restriction-generators
  */
-class EE_Restriciton_Generator_Protected_Test extends EE_UnitTestCase {
+class EE_Restriction_Generator_Protected_Test extends EE_UnitTestCase {
 
 	function test_generate_restrictions__basic_only() {
 		//currently transactions only have the basic cap

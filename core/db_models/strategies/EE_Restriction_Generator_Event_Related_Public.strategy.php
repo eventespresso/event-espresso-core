@@ -46,8 +46,7 @@ class EE_Restriction_Generator_Event_Related_Public extends EE_Restriction_Gener
         // all we know if they need the default cap to access this
         if (! $this->model()->cap_slug()) {
             return [
-                self::get_default_restrictions_cap(
-                ) => new EE_Return_None_Where_Conditions(),
+                self::get_default_restrictions_cap() => new EE_Return_None_Where_Conditions(),
             ];
         }
 
@@ -57,10 +56,7 @@ class EE_Restriction_Generator_Event_Related_Public extends EE_Restriction_Gener
             // controlled by which events are accessible
             // if they don't have the basic event cap,
             // they can only read things for published events
-            EE_Restriction_Generator_Base::get_cap_name(
-                $event_model,
-                $this->action()
-            ) => new EE_Default_Where_Conditions(
+            self::get_cap_name($event_model, $this->action()) => new EE_Default_Where_Conditions(
                 $this->addPublishedPostConditions(
                     [],
                     true,
@@ -69,14 +65,12 @@ class EE_Restriction_Generator_Event_Related_Public extends EE_Restriction_Gener
             ),
             // if they don't have the others event cap,
             // they can't access others' non-default items
-            EE_Restriction_Generator_Base::get_cap_name(
+            self::get_cap_name(
                 $event_model,
-                $this->action() .
-                '_others'
+                $this->action() . '_others'
             ) => new EE_Default_Where_Conditions(
                 [
-                    'OR*' .
-                    EE_Restriction_Generator_Base::get_cap_name(
+                    'OR*' . self::get_cap_name(
                         $event_model,
                         $this->action() . '_others'
                     ) => $this->addPublishedPostConditions(
@@ -90,14 +84,9 @@ class EE_Restriction_Generator_Event_Related_Public extends EE_Restriction_Gener
             ),
             // if they have basic and others, but not private,
             // they can't access others' private non-default items
-            EE_Restriction_Generator_Base::get_cap_name(
-                $event_model,
-                $this->action() .
-                '_private'
-            ) => new EE_Default_Where_Conditions(
+            self::get_cap_name($event_model, $this->action() . '_private') => new EE_Default_Where_Conditions(
                 [
-                    'OR*no_' .
-                    EE_Restriction_Generator_Base::get_cap_name(
+                    'OR*no_' . self::get_cap_name(
                         $event_model,
                         $this->action() . '_private'
                     ) => $this->addPublishedPostConditions(

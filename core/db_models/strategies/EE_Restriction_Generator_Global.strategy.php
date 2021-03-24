@@ -61,8 +61,7 @@ class EE_Restriction_Generator_Global extends EE_Restriction_Generator_Base
             ) => new EE_Return_None_Where_Conditions(),
             EE_Restriction_Generator_Base::get_cap_name(
                 $this->model(),
-                $this->action() .
-                '_others'
+                $this->action() . '_others'
             ) => new EE_Default_Where_Conditions(
                 [
                     // I need to be the owner, or it must be a global item
@@ -78,8 +77,7 @@ class EE_Restriction_Generator_Global extends EE_Restriction_Generator_Base
             ),
             EE_Restriction_Generator_Base::get_cap_name(
                 $this->model(),
-                $this->action() .
-                '_global'
+                $this->action() . '_global'
             ) => new EE_Default_Where_Conditions(
                 [
                     // it mustn't be global
