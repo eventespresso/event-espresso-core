@@ -1544,12 +1544,13 @@ abstract class EE_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    protected function _set_date_time($what = 'T', $datetime_value, $field_name)
+    protected function _set_date_time($what, $datetime_value, $field_name)
     {
         $field = $this->_get_dtt_field_settings($field_name);
         $field->set_timezone($this->_timezone);
         $field->set_date_format($this->_dt_frmt);
         $field->set_time_format($this->_tm_frmt);
+        $what = in_array($what, ['T', 'D', 'B']) ? $what : 'T';
         switch ($what) {
             case 'T':
                 $this->_fields[ $field_name ] = $field->prepare_for_set_with_new_time(
