@@ -620,7 +620,7 @@ abstract class EE_Base_Class
      *
      * @access protected
      * @param string      $field_name the property item the corresponding value is for.
-     * @param mixed       $value     The value we are caching.
+     * @param mixed       $value      The value we are caching.
      * @param string|null $cache_type
      * @return void
      * @throws InvalidArgumentException
@@ -632,7 +632,7 @@ abstract class EE_Base_Class
     {
         // first make sure this property exists
         $this->_model->field_settings_for($field_name);
-        $cache_type                                            = empty($cache_type) ? 'standard' : $cache_type;
+        $cache_type                                             = empty($cache_type) ? 'standard' : $cache_type;
         $this->_cached_properties[ $field_name ][ $cache_type ] = $value;
     }
 
@@ -641,7 +641,7 @@ abstract class EE_Base_Class
      * This returns the value cached property if it exists OR the actual property value if the cache doesn't exist.
      * This also SETS the cache if we return the actual property!
      *
-     * @param string $field_name        the name of the property we're trying to retrieve
+     * @param string $field_name       the name of the property we're trying to retrieve
      * @param bool   $pretty
      * @param string $extra_cache_ref  This allows the user to specify an extra cache ref for the given property
      *                                 (in cases where the same property may be used for different outputs
@@ -1298,10 +1298,10 @@ abstract class EE_Base_Class
      *
      * @access   protected
      * @param string  $field_name    Field on the instantiated EE_Base_Class child object
-     * @param string  $date_format       valid datetime format used for date
+     * @param string  $date_format   valid datetime format used for date
      *                               (if '' then we just use the default on the field,
      *                               if NULL we use the last-used format)
-     * @param string  $time_format       Same as above except this is for time format
+     * @param string  $time_format   Same as above except this is for time format
      * @param string  $date_or_time  if NULL then both are returned, otherwise "D" = only date and "T" = only time.
      * @param boolean $echo          Whether the dtt is echoing using pretty echoing or just returned using vanilla get
      * @return string|bool|EE_Error string on success, FALSE on fail, or EE_Error Exception is thrown
@@ -1311,8 +1311,13 @@ abstract class EE_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    protected function _get_datetime($field_name, $date_format = '', $time_format = '', $date_or_time = '', $echo = false)
-    {
+    protected function _get_datetime(
+        $field_name,
+        $date_format = '',
+        $time_format = '',
+        $date_or_time = '',
+        $echo = false
+    ) {
         // clear cached property
         $this->_clear_cached_property($field_name);
         // reset format properties because they are used in get()
@@ -1397,9 +1402,9 @@ abstract class EE_Base_Class
      * time portion of a datetime value. (note the only difference between get_ and e_ is one returns the value and the
      * other echoes the pretty value for dtt)
      *
-     * @param string $field_name name of model object datetime field holding the value
-     * @param string $date_format    format for the date returned (if NULL we use default in dt_frmt property)
-     * @param string $time_format    format for the time returned (if NULL we use default in tm_frmt property)
+     * @param string $field_name  name of model object datetime field holding the value
+     * @param string $date_format format for the date returned (if NULL we use default in dt_frmt property)
+     * @param string $time_format format for the time returned (if NULL we use default in tm_frmt property)
      * @return string             datetime value formatted
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
@@ -1429,7 +1434,7 @@ abstract class EE_Base_Class
 
     /**
      * Get the i8ln value for a date using the WordPress @param string $field_name The EE_Datetime_Field reference for
-     * the date being retrieved.
+     *                           the date being retrieved.
      *
      * @param string $format     PHP valid date/time string format.  If none is provided then the internal set format
      *                           on the object will be used.
@@ -1500,8 +1505,9 @@ abstract class EE_Base_Class
      * sets the time on a datetime property
      *
      * @access protected
-     * @param string|Datetime $time      a valid time string for php datetime functions (or DateTime object)
-     * @param string          $field_name the name of the field the time is being set on (must match a EE_Datetime_Field)
+     * @param string|Datetime $time       a valid time string for php datetime functions (or DateTime object)
+     * @param string          $field_name the name of the field the time is being set on (must match a
+     *                                    EE_Datetime_Field)
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
@@ -1517,8 +1523,9 @@ abstract class EE_Base_Class
      * sets the date on a datetime property
      *
      * @access protected
-     * @param string|DateTime $date      a valid date string for php datetime functions ( or DateTime object)
-     * @param string          $field_name the name of the field the date is being set on (must match a EE_Datetime_Field)
+     * @param string|DateTime $date       a valid date string for php datetime functions ( or DateTime object)
+     * @param string          $field_name the name of the field the date is being set on (must match a
+     *                                    EE_Datetime_Field)
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
@@ -1537,7 +1544,7 @@ abstract class EE_Base_Class
      * @access protected
      * @param string          $what           "T" for time, 'B' for both, 'D' for Date.
      * @param string|DateTime $datetime_value A valid Date or Time string (or DateTime object)
-     * @param string          $field_name      the name of the field the date OR time is being set on (must match a
+     * @param string          $field_name     the name of the field the date OR time is being set on (must match a
      *                                        EE_Datetime_Field property)
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
@@ -1557,18 +1564,18 @@ abstract class EE_Base_Class
                     $datetime_value,
                     $this->_fields[ $field_name ]
                 );
-                $this->_has_changes          = true;
+                $this->_has_changes           = true;
                 break;
             case 'D':
                 $this->_fields[ $field_name ] = $field->prepare_for_set_with_new_date(
                     $datetime_value,
                     $this->_fields[ $field_name ]
                 );
-                $this->_has_changes          = true;
+                $this->_has_changes           = true;
                 break;
             case 'B':
                 $this->_fields[ $field_name ] = $field->prepare_for_set($datetime_value);
-                $this->_has_changes          = true;
+                $this->_has_changes           = true;
                 break;
         }
         $this->_clear_cached_property($field_name);
