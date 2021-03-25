@@ -205,7 +205,7 @@ class EEM_Question extends EEM_Soft_Delete_Base
                 ),
             ]
         );
-        $this->_question_type_categories      = (array)apply_filters(
+        $this->_question_type_categories      = (array) apply_filters(
             'FHEE__EEM_Question__construct__question_type_categories',
             [
                 'text'               => [
@@ -582,6 +582,6 @@ class EEM_Question extends EEM_Soft_Delete_Base
      */
     public function questionTypesWithMaxLength(): array
     {
-        return (array)$this->question_types_with_max_length;
+        return (array) $this->question_types_with_max_length;
     }
 }

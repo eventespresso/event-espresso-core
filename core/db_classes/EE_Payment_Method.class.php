@@ -84,8 +84,10 @@ class EE_Payment_Method extends EE_Base_Class
     public function set_active()
     {
         $default_scopes = array(EEM_Payment_Method::scope_cart);
-        if ($this->type_obj() &&
-            $this->type_obj()->payment_occurs() === EE_PMT_Base::offline) {
+        if (
+            $this->type_obj() &&
+            $this->type_obj()->payment_occurs() === EE_PMT_Base::offline
+        ) {
             $default_scopes[] = EEM_Payment_Method::scope_admin;
         }
         $this->set_scope($default_scopes);

@@ -264,7 +264,8 @@ class EE_Register_Addon implements EEI_Plugin_API
             self::$loader = EventEspresso\core\services\loaders\LoaderFactory::getLoader();
         }
         // make sure this was called in the right place!
-        if (! did_action('activate_plugin')
+        if (
+            ! did_action('activate_plugin')
             && (
                 ! did_action('AHEE__EE_System__load_espresso_addons')
                 || did_action('AHEE__EE_System___detect_if_activation_or_upgrade__begin')
@@ -568,7 +569,8 @@ class EE_Register_Addon implements EEI_Plugin_API
         global $wp_version;
         $incompatibility_message = '';
         // check whether this addon version is compatible with EE core
-        if (isset(EE_Register_Addon::$_incompatible_addons[ $addon_name ])
+        if (
+            isset(EE_Register_Addon::$_incompatible_addons[ $addon_name ])
             && ! self::_meets_min_core_version_requirement(
                 EE_Register_Addon::$_incompatible_addons[ $addon_name ],
                 $addon_settings['version']
@@ -585,7 +587,8 @@ class EE_Register_Addon implements EEI_Plugin_API
                 '<span style="font-weight: bold; color: #D54E21;">',
                 '</span><br />'
             );
-        } elseif (! self::_meets_min_core_version_requirement($addon_settings['min_core_version'], espresso_version())
+        } elseif (
+            ! self::_meets_min_core_version_requirement($addon_settings['min_core_version'], espresso_version())
         ) {
             $incompatibility_message = sprintf(
                 __(
@@ -672,10 +675,11 @@ class EE_Register_Addon implements EEI_Plugin_API
     private static function _setup_namespaces(array $addon_settings)
     {
         //
-        if (isset(
-            $addon_settings['namespace']['FQNS'],
-            $addon_settings['namespace']['DIR']
-        )
+        if (
+            isset(
+                $addon_settings['namespace']['FQNS'],
+                $addon_settings['namespace']['DIR']
+            )
         ) {
             EE_Psr4AutoloaderInit::psr4_loader()->addNamespace(
                 $addon_settings['namespace']['FQNS'],
@@ -701,7 +705,8 @@ class EE_Register_Addon implements EEI_Plugin_API
             // (as the newly-activated addon wasn't around the first time addons were registered).
             // Note: the presence of pue_options in the addon registration options will initialize the $_settings
             // property for the add-on, but the add-on is only partially initialized.  Hence, the additional check.
-            if (! isset(self::$_settings[ $addon_name ])
+            if (
+                ! isset(self::$_settings[ $addon_name ])
                 || (isset(self::$_settings[ $addon_name ])
                     && ! isset(self::$_settings[ $addon_name ]['class_name'])
                 )
@@ -754,7 +759,8 @@ class EE_Register_Addon implements EEI_Plugin_API
     private static function _register_models_and_extensions(string $addon_name)
     {
         // register new models
-        if (! empty(self::$_settings[ $addon_name ]['model_paths'])
+        if (
+            ! empty(self::$_settings[ $addon_name ]['model_paths'])
             || ! empty(self::$_settings[ $addon_name ]['class_paths'])
         ) {
             EE_Register_Model::register(
@@ -766,7 +772,8 @@ class EE_Register_Addon implements EEI_Plugin_API
             );
         }
         // register model extensions
-        if (! empty(self::$_settings[ $addon_name ]['model_extension_paths'])
+        if (
+            ! empty(self::$_settings[ $addon_name ]['model_extension_paths'])
             || ! empty(self::$_settings[ $addon_name ]['class_extension_paths'])
         ) {
             EE_Register_Model_Extensions::register(
@@ -856,7 +863,8 @@ class EE_Register_Addon implements EEI_Plugin_API
      */
     private static function _register_shortcodes(string $addon_name)
     {
-        if (! empty(self::$_settings[ $addon_name ]['shortcode_paths'])
+        if (
+            ! empty(self::$_settings[ $addon_name ]['shortcode_paths'])
             || ! empty(self::$_settings[ $addon_name ]['shortcode_fqcns'])
         ) {
             EE_Register_Shortcode::register(
@@ -931,7 +939,8 @@ class EE_Register_Addon implements EEI_Plugin_API
      */
     private static function _register_custom_post_types(string $addon_name)
     {
-        if (! empty(self::$_settings[ $addon_name ]['custom_post_types'])
+        if (
+            ! empty(self::$_settings[ $addon_name ]['custom_post_types'])
             || ! empty(self::$_settings[ $addon_name ]['custom_taxonomies'])
         ) {
             EE_Register_CPT::register(
@@ -1043,7 +1052,8 @@ class EE_Register_Addon implements EEI_Plugin_API
             $addon->setDependencyMap(self::$loader->getShared('EE_Dependency_Map'));
         }
         // setter inject domain if required
-        if ($addon instanceof RequiresDomainInterface
+        if (
+            $addon instanceof RequiresDomainInterface
             && $addon->domain() === null
         ) {
             // using supplied Domain object
@@ -1186,7 +1196,8 @@ class EE_Register_Addon implements EEI_Plugin_API
                     // add to list of modules to be registered
                     EE_Register_Module::deregister($addon_name);
                 }
-                if (! empty(self::$_settings[ $addon_name ]['shortcode_paths'])
+                if (
+                    ! empty(self::$_settings[ $addon_name ]['shortcode_paths'])
                     || ! empty(self::$_settings[ $addon_name ]['shortcode_fqcns'])
                 ) {
                     // add to list of shortcodes to be registered
@@ -1200,13 +1211,15 @@ class EE_Register_Addon implements EEI_Plugin_API
                     // add to list of widgets to be registered
                     EE_Register_Widget::deregister($addon_name);
                 }
-                if (! empty(self::$_settings[ $addon_name ]['model_paths'])
+                if (
+                    ! empty(self::$_settings[ $addon_name ]['model_paths'])
                     || ! empty(self::$_settings[ $addon_name ]['class_paths'])
                 ) {
                     // add to list of shortcodes to be registered
                     EE_Register_Model::deregister($addon_name);
                 }
-                if (! empty(self::$_settings[ $addon_name ]['model_extension_paths'])
+                if (
+                    ! empty(self::$_settings[ $addon_name ]['model_extension_paths'])
                     || ! empty(self::$_settings[ $addon_name ]['class_extension_paths'])
                 ) {
                     // add to list of shortcodes to be registered
@@ -1218,7 +1231,8 @@ class EE_Register_Addon implements EEI_Plugin_API
                     }
                 }
                 // deregister capabilities for addon
-                if (! empty(self::$_settings[ $addon_name ]['capabilities'])
+                if (
+                    ! empty(self::$_settings[ $addon_name ]['capabilities'])
                     || ! empty(self::$_settings[ $addon_name ]['capability_maps'])
                 ) {
                     EE_Register_Capabilities::deregister($addon_name);

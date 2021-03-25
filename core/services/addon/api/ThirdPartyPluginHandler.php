@@ -37,7 +37,8 @@ class ThirdPartyPluginHandler
         // also, don't load the basic auth when a plugin is getting activated, because
         // it could be the basic auth plugin, and it doesn't check if its methods are already defined
         // and causes a fatal error
-        if (($this->request->isWordPressApi() || $this->request->isApi())
+        if (
+            ($this->request->isWordPressApi() || $this->request->isApi())
             && ! $this->request->isActivation()
             && ! function_exists('json_basic_auth_handler')
             && ! function_exists('json_basic_auth_error')

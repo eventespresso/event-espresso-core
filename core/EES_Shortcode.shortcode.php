@@ -1,4 +1,5 @@
 <?php
+
 use EventEspresso\core\services\shortcodes\LegacyShortcodesManager;
 
 /**

@@ -89,9 +89,9 @@ class EE_DMS_4_6_0_payment_method_currencies extends EE_Data_Migration_Script_St
     {
         global $wpdb;
         $this->_pretty_name = __('Payment Method Currencies', 'event_espresso');
-        $this->_payment_method_table_name = $wpdb->prefix.'esp_payment_method';
-        $this->_currency_payment_method_table_name = $wpdb->prefix.'esp_currency_payment_method';
-        $this->_currency_table_name = $wpdb->prefix.'esp_currency';
+        $this->_payment_method_table_name = $wpdb->prefix . 'esp_payment_method';
+        $this->_currency_payment_method_table_name = $wpdb->prefix . 'esp_currency_payment_method';
+        $this->_currency_table_name = $wpdb->prefix . 'esp_currency';
         parent::__construct();
     }
 
@@ -138,8 +138,10 @@ class EE_DMS_4_6_0_payment_method_currencies extends EE_Data_Migration_Script_St
                 $currencies = $this->_get_all_currencies();
             }
             foreach ($currencies as $currency_code) {
-                if ($this->count_records_migrated() <= $iterator &&
-                        $iterator < $migrate_up_to_count) {
+                if (
+                    $this->count_records_migrated() <= $iterator &&
+                        $iterator < $migrate_up_to_count
+                ) {
                     $relations_to_add_this_step[ $pm_slug ] [] = $currency_code;
                 }
                 $iterator++;
@@ -167,8 +169,8 @@ class EE_DMS_4_6_0_payment_method_currencies extends EE_Data_Migration_Script_St
     {
         global $wpdb;
         $cur_pm_relation = array(
-                    'CUR_code'=>$currency_code,
-                    'PMD_ID'=>$pm_id,
+                    'CUR_code' => $currency_code,
+                    'PMD_ID' => $pm_id,
                 );
         $success = $wpdb->insert(
             $this->_currency_payment_method_table_name,

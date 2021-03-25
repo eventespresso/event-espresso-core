@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This class contains all business logic related to generating, queuing, and scheduling of
  * messages in the EE_messages system.

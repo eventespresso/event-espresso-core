@@ -5,9 +5,6 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\database\TableAnalysis;
 use EventEspresso\core\services\database\TableManager;
 
-/**
- * Meant to add the new ee_message table to the database.
- */
 // make sure we have all the stages loaded too
 // unfortunately, this needs to be done upon INCLUSION of this file,
 // instead of construction, because it only gets constructed on first page load
@@ -27,6 +24,7 @@ EEH_Autoloader::register_autoloader($class_to_filepath);
 
 /**
  * Class EE_DMS_Core_4_9_0
+ * Meant to add the new ee_message table to the database.
  *
  * @package               Event Espresso
  * @subpackage            core
@@ -658,8 +656,10 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
     {
         global $wpdb;
         // double-check we haven't already done it or that that the DB doesn't support utf8mb4
-        if ('utf8mb4' !== $wpdb->charset
-            || get_option('ee_verified_db_collations', false)) {
+        if (
+            'utf8mb4' !== $wpdb->charset
+            || get_option('ee_verified_db_collations', false)
+        ) {
             return;
         }
         // grab tables from each model
@@ -669,7 +669,8 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
                 $model_obj = call_user_func(array($model_name, 'instance'));
                 if ($model_obj instanceof EEM_Base) {
                     foreach ($model_obj->get_tables() as $table) {
-                        if (strpos($table->get_table_name(), 'esp_')
+                        if (
+                            strpos($table->get_table_name(), 'esp_')
                             && (is_main_site()// for main tables, verify global tables
                                 || ! $table->is_global()// if not the main site, then only verify non-global tables (avoid doubling up)
                             )
@@ -718,8 +719,10 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
         global $wpdb;
         // double-check we haven't already done this or that the DB doesn't support it
         // compare to how WordPress' upgrade_430() function does this check
-        if ('utf8mb4' !== $wpdb->charset
-            || get_option('ee_verified_db_collations_again', false)) {
+        if (
+            'utf8mb4' !== $wpdb->charset
+            || get_option('ee_verified_db_collations_again', false)
+        ) {
             return;
         }
         $tables_to_check = array(
@@ -741,7 +744,8 @@ class EE_DMS_Core_4_9_0 extends EE_Data_Migration_Script_Base
     {
         foreach ($tables_to_check as $table_name) {
             $table_name = $this->_table_analysis->ensureTableNameHasPrefix($table_name);
-            if (! apply_filters('FHEE__EE_DMS_Core_4_9_0__verify_db_collations__check_overridden', false, $table_name)
+            if (
+                ! apply_filters('FHEE__EE_DMS_Core_4_9_0__verify_db_collations__check_overridden', false, $table_name)
                 && $this->_get_table_analysis()->tableExists($table_name)
             ) {
                 maybe_convert_table_to_utf8mb4($table_name);

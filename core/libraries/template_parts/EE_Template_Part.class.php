@@ -1,6 +1,5 @@
 <?php
 
-
 /**
  * Class EE_Template_Part
  *

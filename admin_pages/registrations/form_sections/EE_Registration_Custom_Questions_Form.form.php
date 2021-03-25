@@ -105,8 +105,10 @@ class EE_Registration_Custom_Questions_Form extends EE_Form_Section_Proper
      */
     public function build_subform_from_question_group($question_group, $registration)
     {
-        if (! $question_group instanceof EE_Question_Group ||
-            ! $registration instanceof EE_Registration) {
+        if (
+            ! $question_group instanceof EE_Question_Group ||
+            ! $registration instanceof EE_Registration
+        ) {
             throw new EE_Error(__('A valid question group and registration must be passed to EE_Registration_Custom_Question_Form', 'event_espresso'));
         }
         $parts_of_subsection = array(
@@ -131,11 +133,13 @@ class EE_Registration_Custom_Questions_Form extends EE_Form_Section_Proper
         foreach ($questions as $question) {
             $parts_of_subsection[ $question->ID() ] = $question->generate_form_input($registration);
         }
-        if (EE_Registry::instance()->CAP->current_user_can(
-            'ee_edit_registration',
-            'edit-reg-questions-mbox',
-            $this->_registration->ID()
-        )) {
+        if (
+            EE_Registry::instance()->CAP->current_user_can(
+                'ee_edit_registration',
+                'edit-reg-questions-mbox',
+                $this->_registration->ID()
+            )
+        ) {
             $parts_of_subsection['edit_link'] = new EE_Form_Section_HTML(
                 EEH_HTML::table(
                     EEH_HTML::tr(
@@ -189,8 +193,8 @@ class EE_Registration_Custom_Questions_Form extends EE_Form_Section_Proper
     {
         foreach ($this->get_validatable_subsections() as $subsection_name => $subsection) {
             if ($subsection->form_data_present_in(array_merge($_GET, $_POST))) {
-                if (method_exists($this, '_validate_'.$subsection_name)) {
-                    call_user_func_array(array($this,'_validate_'.$subsection_name), array($subsection));
+                if (method_exists($this, '_validate_' . $subsection_name)) {
+                    call_user_func_array(array($this,'_validate_' . $subsection_name), array($subsection));
                 }
                 $subsection->_validate();
             } elseif ($subsection instanceof EE_Form_Section_Proper) {

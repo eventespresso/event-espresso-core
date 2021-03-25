@@ -118,10 +118,12 @@ class AdminOptionsSettings extends FormHandler
                 ),
             )
         );
-        if ($this->registry->CAP->current_user_can(
-            'manage_options',
-            'display_admin_settings_options_promote_and_affiliate'
-        )) {
+        if (
+            $this->registry->CAP->current_user_can(
+                'manage_options',
+                'display_admin_settings_options_promote_and_affiliate'
+            )
+        ) {
             $form->add_subsections(
                 array(
                     'promote_ee_hdr'  => new EE_Form_Section_HTML(

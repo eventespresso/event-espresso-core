@@ -2,6 +2,13 @@
 
 namespace EventEspresso\modules\ticket_selector;
 
+use EE_Error;
+use EE_Event;
+use EE_Registry;
+use EE_Tax_Config;
+use EE_Ticket;
+use EE_Ticket_Selector_Config;
+
 /**
  * Class TicketSelectorStandard
  * regular ticket selector that displays one row for each ticket
@@ -25,12 +32,12 @@ class TicketSelectorStandard extends TicketSelector
     protected $time_format;
 
     /**
-     * @var \EE_Ticket_Selector_Config $ticket_selector_config
+     * @var EE_Ticket_Selector_Config $ticket_selector_config
      */
     protected $ticket_selector_config;
 
     /**
-     * @var \EE_Tax_Config $tax_config
+     * @var EE_Tax_Config $tax_config
      */
     protected $tax_config;
 
@@ -38,37 +45,38 @@ class TicketSelectorStandard extends TicketSelector
     /**
      * TicketSelectorSimple constructor.
      *
-     * @param \EE_Event                  $event
-     * @param \EE_Ticket[]               $tickets
-     * @param int                        $max_attendees
-     * @param array                      $template_args
-     * @param string                     $date_format
-     * @param string                     $time_format
-     * @param \EE_Ticket_Selector_Config $ticket_selector_config
-     * @param \EE_Tax_Config             $tax_config
+     * @param EE_Event                       $event
+     * @param EE_Ticket[]                    $tickets
+     * @param int                            $max_attendees
+     * @param array                          $template_args
+     * @param string                         $date_format
+     * @param string                         $time_format
+     * @param EE_Ticket_Selector_Config|null $ticket_selector_config
+     * @param EE_Tax_Config|null             $tax_config
+     * @throws EE_Error
      */
     public function __construct(
-        \EE_Event $event,
+        EE_Event $event,
         array $tickets,
-        $max_attendees,
+        int $max_attendees,
         array $template_args,
         $date_format = 'Y-m-d',
         $time_format = 'g:i a',
-        \EE_Ticket_Selector_Config $ticket_selector_config = null,
-        \EE_Tax_Config $tax_config = null
+        EE_Ticket_Selector_Config $ticket_selector_config = null,
+        EE_Tax_Config $tax_config = null
     ) {
         $this->date_format = $date_format;
         $this->time_format = $time_format;
         // get EE_Ticket_Selector_Config and TicketDetails
-        $this->ticket_selector_config = isset(\EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector)
-            ? \EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector
-            : new \EE_Ticket_Selector_Config();
+        $this->ticket_selector_config = isset(EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector)
+            ? EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector
+            : new EE_Ticket_Selector_Config();
         // $template_settings->setDatetimeSelectorThreshold(2);
         // \EEH_Debug_Tools::printr($template_settings->getShowDatetimeSelector(), 'getShowDatetimeSelector', __FILE__, __LINE__);
         // \EEH_Debug_Tools::printr($template_settings->getDatetimeSelectorThreshold(), 'getDatetimeSelectorThreshold', __FILE__, __LINE__);
-        $this->tax_config = isset(\EE_Registry::instance()->CFG->tax_settings)
-            ? \EE_Registry::instance()->CFG->tax_settings
-            : new \EE_Tax_Config();
+        $this->tax_config = isset(EE_Registry::instance()->CFG->tax_settings)
+            ? EE_Registry::instance()->CFG->tax_settings
+            : new EE_Tax_Config();
         parent::__construct($event, $tickets, $max_attendees, $template_args);
     }
 
@@ -77,7 +85,8 @@ class TicketSelectorStandard extends TicketSelector
      * sets any and all template args that are required for this Ticket Selector
      *
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws \ReflectionException
      */
     protected function addTemplateArgs()
     {
@@ -88,8 +97,9 @@ class TicketSelectorStandard extends TicketSelector
         $taxable_tickets = false;
         $datetime_selector = null;
         $this->template_args['datetime_selector'] = '';
-        if ($this->ticket_selector_config->getShowDatetimeSelector()
-            !== \EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR
+        if (
+            $this->ticket_selector_config->getShowDatetimeSelector()
+            !== EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR
         ) {
             $datetime_selector = new DatetimeSelector(
                 $this->event,
@@ -103,7 +113,7 @@ class TicketSelectorStandard extends TicketSelector
         $total_tickets = count($this->tickets);
         // loop through tickets
         foreach ($this->tickets as $TKT_ID => $ticket) {
-            if ($ticket instanceof \EE_Ticket) {
+            if ($ticket instanceof EE_Ticket) {
                 $cols = 2;
                 $taxable_tickets = $ticket->taxable() ? true : $taxable_tickets;
                 $ticket_selector_row = new TicketSelectorRowStandard(
@@ -128,6 +138,35 @@ class TicketSelectorStandard extends TicketSelector
         $this->template_args['ticket_row_html'] = $ticket_row_html;
         $this->template_args['taxable_tickets'] = $taxable_tickets;
         $this->template_args['prices_displayed_including_taxes'] = $this->tax_config->prices_displayed_including_taxes;
+
+
+        /**
+         * Filters the text printed for the header of the price column in the ticket selector table
+         *
+         * @param string 'Price' The translatable text to display in the table header for price
+         * @param int $EVT_ID The Event ID
+         * @since 4.7.2
+         *
+         */
+        $this->template_args['table_header_price'] = apply_filters(
+            'FHEE__ticket_selector_chart_template__table_header_price',
+            esc_html__('Price', 'event_espresso'),
+            $this->event->ID()
+        );
+
+        /**
+         * Filters the text printed for the header of the quantity column in the ticket selector table
+         *
+         * @param string 'Qty' The translatable text to display in the table header for the Quantity of tickets
+         * @param int $EVT_ID The Event ID
+         * @since 4.7.2
+         *
+         */
+        $this->template_args['table_header_qty'] = apply_filters(
+            'FHEE__ticket_selector_chart_template__table_header_qty',
+            esc_html__('Qty', 'event_espresso'),
+            $this->event->ID()
+        );
         $this->template_args['template_path'] = TICKET_SELECTOR_TEMPLATES_PATH . 'standard_ticket_selector.template.php';
         remove_all_filters('FHEE__EE_Ticket_Selector__hide_ticket_selector');
     }

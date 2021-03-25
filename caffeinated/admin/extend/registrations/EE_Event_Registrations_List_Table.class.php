@@ -90,7 +90,8 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
         }
         $this->_columns = array_merge($columns, $this->_columns);
         $this->_primary_column = '_REG_att_checked_in';
-        if (! empty($evt_id)
+        if (
+            ! empty($evt_id)
             && EE_Registry::instance()->CAP->current_user_can(
                 'ee_read_registrations',
                 'espresso_registrations_registrations_reports',
@@ -405,7 +406,8 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
         $DTT_ID = $latest_related_datetime instanceof EE_Datetime
             ? $latest_related_datetime->ID()
             : $DTT_ID;
-        if (! empty($DTT_ID)
+        if (
+            ! empty($DTT_ID)
             && EE_Registry::instance()->CAP->current_user_can(
                 'ee_read_checkins',
                 'espresso_registrations_registration_checkins'

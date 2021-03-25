@@ -218,7 +218,8 @@ final class EE_Front_Controller
     public function pre_get_posts($WP_Query)
     {
         // only load Module_Request_Router if this is the main query
-        if ($this->Module_Request_Router instanceof EE_Module_Request_Router
+        if (
+            $this->Module_Request_Router instanceof EE_Module_Request_Router
             && $WP_Query->is_main_query()
         ) {
             // cycle thru module routes
@@ -335,7 +336,8 @@ final class EE_Front_Controller
         // let's exclude all event type taxonomy term archive pages from search engine indexing
         // @see https://events.codebasehq.com/projects/event-espresso/tickets/10249
         // also exclude all critical pages from indexing
-        if ((
+        if (
+            (
                 is_tax('espresso_event_type')
                 && get_option('blog_public') !== '0'
             )
@@ -359,7 +361,8 @@ final class EE_Front_Controller
     public function wp_print_scripts()
     {
         global $post;
-        if (isset($post->EE_Event)
+        if (
+            isset($post->EE_Event)
             && $post->EE_Event instanceof EE_Event
             && get_post_type() === 'espresso_events'
             && is_singular()
@@ -397,7 +400,8 @@ final class EE_Front_Controller
     {
         static $shown_already = false;
         do_action('AHEE__EE_Front_Controller__display_errors__begin');
-        if (! $shown_already
+        if (
+            ! $shown_already
             && apply_filters('FHEE__EE_Front_Controller__display_errors', true)
             && is_main_query()
             && ! is_feed()

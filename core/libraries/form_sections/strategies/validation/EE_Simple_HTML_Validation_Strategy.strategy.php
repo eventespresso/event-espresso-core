@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class EE_Simple_HTML_Validation_Strategy
  *

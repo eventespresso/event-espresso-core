@@ -209,7 +209,8 @@ class LegacyShortcodesManager
      */
     public function initializeShortcodes(WP_Query $wp_query)
     {
-        if (empty($this->registry->shortcodes)
+        if (
+            empty($this->registry->shortcodes)
             || defined('EE_TESTS_DIR')
             || ! $wp_query->is_main_query()
             || is_admin()
@@ -251,7 +252,8 @@ class LegacyShortcodesManager
         }
         // in case $current_post is hierarchical like: /parent-page/current-page
         $current_post = basename($current_post);
-        if (// is current page/post the "blog" page ?
+        if (
+// is current page/post the "blog" page ?
             $current_post === EE_Config::get_page_for_posts()
             // or are we on a category page?
             || (
@@ -312,7 +314,8 @@ class LegacyShortcodesManager
     public function initializeShortcode($shortcode_class = '', WP $wp = null)
     {
         // don't do anything if shortcode is already initialized
-        if (empty($this->registry->shortcodes->{$shortcode_class})
+        if (
+            empty($this->registry->shortcodes->{$shortcode_class})
             || ! is_string($this->registry->shortcodes->{$shortcode_class})
         ) {
             return;
@@ -320,7 +323,8 @@ class LegacyShortcodesManager
         // let's pause to reflect on this...
         $sc_reflector = new ReflectionClass(LegacyShortcodesManager::addShortcodeClassPrefix($shortcode_class));
         // ensure that class is actually a shortcode
-        if (defined('WP_DEBUG')
+        if (
+            defined('WP_DEBUG')
             && WP_DEBUG === true
             && ! $sc_reflector->isSubclassOf('EES_Shortcode')
         ) {

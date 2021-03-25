@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This class is the signature for an object representing prepped message for queueing.
  * This particular "Message To Generate" class receives an EE_Messages_Queue object and uses

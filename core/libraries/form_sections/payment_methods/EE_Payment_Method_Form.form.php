@@ -1,7 +1,5 @@
 <?php
 
-
-
 /**
  * Specialized form for payment methods, allowing for easy setting and retrieving of meta fields.
  * Uses EEM_Payment_Method as the model

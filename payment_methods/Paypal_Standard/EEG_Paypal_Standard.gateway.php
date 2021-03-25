@@ -205,9 +205,9 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway
         if ($this->_debug_mode) {
             $redirect_args[ 'item_name_' . $item_num ] = 'DEBUG INFO (this item only added in sandbox mode';
             $redirect_args[ 'amount_' . $item_num ] = 0;
-            $redirect_args[ 'on0_'.$item_num ] = 'NOTIFY URL';
+            $redirect_args[ 'on0_' . $item_num ] = 'NOTIFY URL';
             $redirect_args[ 'os0_' . $item_num ] = $notify_url;
-            $redirect_args[ 'on1_'.$item_num ] = 'RETURN URL';
+            $redirect_args[ 'on1_' . $item_num ] = 'RETURN URL';
             $redirect_args[ 'os1_' . $item_num ] = $return_url;
 //          $redirect_args['option_index_' . $item_num] = 1; // <-- dunno if this is needed ?
             $redirect_args[ 'shipping_' . $item_num ] = '0';
@@ -291,7 +291,8 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway
         }
         // kill request here if this is a refund, we don't support them yet (we'd need to adjust the transaction,
         // registrations, ticket counts, etc)
-        if ((
+        if (
+            (
                 $update_info['payment_status'] === 'Refunded'
                 || $update_info['payment_status'] === 'Partially_Refunded'
             )
@@ -451,7 +452,8 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway
             )
         );
         // then check the response
-        if (array_key_exists('body', $response)
+        if (
+            array_key_exists('body', $response)
             && ! is_wp_error($response)
             && strcmp($response['body'], "VERIFIED") === 0
         ) {
@@ -534,7 +536,8 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway
             );
             return;
         }
-        if (! is_array($update_info)
+        if (
+            ! is_array($update_info)
             || ! isset($update_info['mc_shipping'])
             || ! isset($update_info['tax'])
         ) {

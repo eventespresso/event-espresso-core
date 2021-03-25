@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\core\services\payment_methods\gateways;
 
 /**

@@ -1,4 +1,6 @@
-<?php use EventEspresso\core\services\Benchmark;
+<?php
+
+use EventEspresso\core\services\Benchmark;
 
 /**
  * Class EEH_Debug_Tools
@@ -93,7 +95,8 @@ class EEH_Debug_Tools
      */
     public function espresso_session_footer_dump()
     {
-        if ((defined('WP_DEBUG') && WP_DEBUG)
+        if (
+            (defined('WP_DEBUG') && WP_DEBUG)
             && ! defined('DOING_AJAX')
             && class_exists('Kint')
             && function_exists('wp_get_current_user')

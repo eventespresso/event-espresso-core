@@ -71,11 +71,13 @@ class Extend_EE_Registrations_List_Table extends EE_Registrations_List_Table
         $datetimes_for_display = array();
         foreach ($datetimes as $datetime) {
             $datetime_string = '';
-            if (EE_Registry::instance()->CAP->current_user_can(
-                'ee_read_checkin',
-                'espresso_registrations_registration_checkins',
-                $item->ID()
-            )) {
+            if (
+                EE_Registry::instance()->CAP->current_user_can(
+                    'ee_read_checkin',
+                    'espresso_registrations_registration_checkins',
+                    $item->ID()
+                )
+            ) {
                 // open "a" tag and "href"
                 $datetime_string .= '<a href="';
                 // checkin URL

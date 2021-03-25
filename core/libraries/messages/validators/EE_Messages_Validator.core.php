@@ -394,7 +394,8 @@ abstract class EE_Messages_Validator extends EE_Base
             }
 
             // field is present. Let's validate shortcodes first (but only if shortcodes present).
-            if (isset($this->_validators[ $field ]['shortcodes'])
+            if (
+                isset($this->_validators[ $field ]['shortcodes'])
                 && ! empty($this->_validators[ $field ]['shortcodes'])
             ) {
                 $invalid_shortcodes = $this->_invalid_shortcodes($value, $this->_validators[ $field ]['shortcodes']);

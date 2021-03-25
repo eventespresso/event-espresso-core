@@ -203,7 +203,8 @@ class EE_Registration_Processor extends EE_Processor_Base
         // set incoming REG_Status
         $this->set_new_reg_status($registration->ID(), $new_reg_status);
         // toggle reg status but only if it has changed and the user can do so
-        if ($this->reg_status_updated($registration->ID())
+        if (
+            $this->reg_status_updated($registration->ID())
             && (
                 (! $this->request->isAdmin() || $this->request->isFrontAjax())
                 || EE_Registry::instance()->CAP->current_user_can(
@@ -312,7 +313,8 @@ class EE_Registration_Processor extends EE_Processor_Base
         $this->set_old_reg_status($registration->ID(), $reg_status);
         // if not already, toggle reg status to approved IF the event default reg status is approved
         // ( as long as the registration wasn't cancelled or declined at some point )
-        if ($reg_status !== EEM_Registration::status_id_cancelled
+        if (
+            $reg_status !== EEM_Registration::status_id_cancelled
             && $reg_status
                !== EEM_Registration::status_id_declined
             && $reg_status !== EEM_Registration::status_id_approved
@@ -381,7 +383,8 @@ class EE_Registration_Processor extends EE_Processor_Base
             : null;
         $total_paid = array_sum(self::$_amount_paid);
         // toggle reg status to approved IF
-        if (// REG status is pending payment
+        if (
+// REG status is pending payment
             $registration->status_ID() === EEM_Registration::status_id_pending_payment
             // AND no monies are owing
             && (
@@ -497,7 +500,8 @@ class EE_Registration_Processor extends EE_Processor_Base
         // set initial REG_Status
         $this->set_old_reg_status($registration->ID(), $registration->status_ID());
         // if the registration status gets updated, then save the registration
-        if ($this->toggle_registration_status_for_default_approved_events($registration, false)
+        if (
+            $this->toggle_registration_status_for_default_approved_events($registration, false)
             || $this->toggle_registration_status_if_no_monies_owing(
                 $registration,
                 false,

@@ -93,10 +93,12 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
     {
         $this->_views['all']['count'] = $this->_admin_page->total_events();
         $this->_views['draft']['count'] = $this->_admin_page->total_events_draft();
-        if (EE_Registry::instance()->CAP->current_user_can(
-            'ee_delete_events',
-            'espresso_events_trash_events'
-        )) {
+        if (
+            EE_Registry::instance()->CAP->current_user_can(
+                'ee_delete_events',
+                'espresso_events_trash_events'
+            )
+        ) {
             $this->_views['trash']['count'] = $this->_admin_page->total_trashed_events();
         }
     }
@@ -223,11 +225,13 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
         $restore_event_link = '';
         $delete_event_link = '';
         $trash_event_link = '';
-        if (EE_Registry::instance()->CAP->current_user_can(
-            'ee_edit_event',
-            'espresso_events_edit',
-            $item->ID()
-        )) {
+        if (
+            EE_Registry::instance()->CAP->current_user_can(
+                'ee_edit_event',
+                'espresso_events_edit',
+                $item->ID()
+            )
+        ) {
             $edit_query_args = array(
                 'action' => 'edit',
                 'post'   => $item->ID(),
@@ -238,10 +242,11 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
                                . esc_html__('Edit', 'event_espresso')
                                . '</a>';
         }
-        if (EE_Registry::instance()->CAP->current_user_can(
-            'ee_read_registrations',
-            'espresso_registrations_view_registration'
-        )
+        if (
+            EE_Registry::instance()->CAP->current_user_can(
+                'ee_read_registrations',
+                'espresso_registrations_view_registration'
+            )
             && EE_Registry::instance()->CAP->current_user_can(
                 'ee_read_event',
                 'espresso_registrations_view_registration',
@@ -258,11 +263,13 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
                                     . esc_html__('Registrations', 'event_espresso')
                                     . '</a>';
         }
-        if (EE_Registry::instance()->CAP->current_user_can(
-            'ee_delete_event',
-            'espresso_events_trash_event',
-            $item->ID()
-        )) {
+        if (
+            EE_Registry::instance()->CAP->current_user_can(
+                'ee_delete_event',
+                'espresso_events_trash_event',
+                $item->ID()
+            )
+        ) {
             $trash_event_query_args = array(
                 'action' => 'trash_event',
                 'EVT_ID' => $item->ID(),
@@ -272,11 +279,13 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
                 EVENTS_ADMIN_URL
             );
         }
-        if (EE_Registry::instance()->CAP->current_user_can(
-            'ee_delete_event',
-            'espresso_events_restore_event',
-            $item->ID()
-        )) {
+        if (
+            EE_Registry::instance()->CAP->current_user_can(
+                'ee_delete_event',
+                'espresso_events_restore_event',
+                $item->ID()
+            )
+        ) {
             $restore_event_query_args = array(
                 'action' => 'restore_event',
                 'EVT_ID' => $item->ID(),
@@ -286,11 +295,13 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
                 EVENTS_ADMIN_URL
             );
         }
-        if (EE_Registry::instance()->CAP->current_user_can(
-            'ee_delete_event',
-            'espresso_events_delete_event',
-            $item->ID()
-        )) {
+        if (
+            EE_Registry::instance()->CAP->current_user_can(
+                'ee_delete_event',
+                'espresso_events_delete_event',
+                $item->ID()
+            )
+        ) {
             $delete_event_query_args = array(
                 'action' => 'delete_event',
                 'EVT_ID' => $item->ID(),
@@ -306,18 +317,21 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
                            . esc_html__('View', 'event_espresso')
                            . '</a>';
         if ($item->get('status') === 'trash') {
-            if (EE_Registry::instance()->CAP->current_user_can(
-                'ee_delete_event',
-                'espresso_events_restore_event',
-                $item->ID()
-            )) {
+            if (
+                EE_Registry::instance()->CAP->current_user_can(
+                    'ee_delete_event',
+                    'espresso_events_restore_event',
+                    $item->ID()
+                )
+            ) {
                 $actions['restore_from_trash'] = '<a href="' . $restore_event_link . '"'
                                                  . ' title="' . esc_attr__('Restore from Trash', 'event_espresso')
                                                  . '">'
                                                  . esc_html__('Restore from Trash', 'event_espresso')
                                                  . '</a>';
             }
-            if ($item->count_related('Registration') === 0
+            if (
+                $item->count_related('Registration') === 0
                 && EE_Registry::instance()->CAP->current_user_can(
                     'ee_delete_event',
                     'espresso_events_delete_event',
@@ -330,11 +344,13 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
                                      . '</a>';
             }
         } else {
-            if (EE_Registry::instance()->CAP->current_user_can(
-                'ee_delete_event',
-                'espresso_events_trash_event',
-                $item->ID()
-            )) {
+            if (
+                EE_Registry::instance()->CAP->current_user_can(
+                    'ee_delete_event',
+                    'espresso_events_trash_event',
+                    $item->ID()
+                )
+            ) {
                 $actions['move to trash'] = '<a href="' . $trash_event_link . '"'
                                             . ' title="' . esc_attr__('Trash Event', 'event_espresso') . '">'
                                             . esc_html__('Trash', 'event_espresso')
@@ -492,11 +508,13 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
         $action_links[] = '<a href="' . $view_link . '"'
                           . ' title="' . esc_attr__('View Event', 'event_espresso') . '" target="_blank">';
         $action_links[] = '<div class="dashicons dashicons-search"></div></a>';
-        if (EE_Registry::instance()->CAP->current_user_can(
-            'ee_edit_event',
-            'espresso_events_edit',
-            $item->ID()
-        )) {
+        if (
+            EE_Registry::instance()->CAP->current_user_can(
+                'ee_edit_event',
+                'espresso_events_edit',
+                $item->ID()
+            )
+        ) {
             $edit_query_args = array(
                 'action' => 'edit',
                 'post'   => $item->ID(),
@@ -507,14 +525,15 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
                               . '<div class="ee-icon ee-icon-calendar-edit"></div>'
                               . '</a>';
         }
-        if (EE_Registry::instance()->CAP->current_user_can(
-            'ee_read_registrations',
-            'espresso_registrations_view_registration'
-        ) && EE_Registry::instance()->CAP->current_user_can(
-            'ee_read_event',
-            'espresso_registrations_view_registration',
-            $item->ID()
-        )
+        if (
+            EE_Registry::instance()->CAP->current_user_can(
+                'ee_read_registrations',
+                'espresso_registrations_view_registration'
+            ) && EE_Registry::instance()->CAP->current_user_can(
+                'ee_read_event',
+                'espresso_registrations_view_registration',
+                $item->ID()
+            )
         ) {
             $attendees_query_args = array(
                 'action'   => 'default',

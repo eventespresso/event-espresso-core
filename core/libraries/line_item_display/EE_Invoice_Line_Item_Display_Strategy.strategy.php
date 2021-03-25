@@ -1,4 +1,5 @@
 <?php
+
  /**
  *
  * Class EE_Invoice_Line_Item_Display_Strategy

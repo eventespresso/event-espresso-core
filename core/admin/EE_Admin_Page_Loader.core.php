@@ -323,7 +323,8 @@ class EE_Admin_Page_Loader
         $hooks_ref = [];
         foreach ($installed_refs as $page => $path) {
             // don't load the page init class IF IT's ALREADY LOADED !!!
-            if (isset($this->_installed_pages[ $page ])
+            if (
+                isset($this->_installed_pages[ $page ])
                 && $this->_installed_pages[ $page ] instanceof EE_Admin_Page_Init
             ) {
                 continue;
@@ -339,7 +340,8 @@ class EE_Admin_Page_Loader
                 }
                 // skip if in full maintenance mode and maintenance_mode_parent is set
                 $maintenance_mode_parent = $this->_installed_pages[ $page ]->get_menu_map()->maintenance_mode_parent;
-                if (empty($maintenance_mode_parent)
+                if (
+                    empty($maintenance_mode_parent)
                     && EE_Maintenance_Mode::instance()->level() === EE_Maintenance_Mode::level_2_complete_maintenance
                 ) {
                     unset($installed_refs[ $page ]);
@@ -574,7 +576,8 @@ class EE_Admin_Page_Loader
                     );
                 }
                 // use the maintenance_mode_parent property and maintenance mode status to determine if this page even gets added to array.
-                if (empty($page_map->maintenance_mode_parent)
+                if (
+                    empty($page_map->maintenance_mode_parent)
                     && EE_Maintenance_Mode::instance()->level() === EE_Maintenance_Mode::level_2_complete_maintenance
                 ) {
                     continue;

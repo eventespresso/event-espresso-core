@@ -387,10 +387,11 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
             ),
         );
 
-        if (EE_Registry::instance()->CAP->current_user_can(
-            'ee_delete_questions',
-            'espresso_registration_form_trash_questions'
-        )
+        if (
+            EE_Registry::instance()->CAP->current_user_can(
+                'ee_delete_questions',
+                'espresso_registration_form_trash_questions'
+            )
         ) {
             $this->_views['trash'] = array(
                 'slug'        => 'trash',
@@ -421,10 +422,11 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
             ),
         );
 
-        if (EE_Registry::instance()->CAP->current_user_can(
-            'ee_delete_question_groups',
-            'espresso_registration_form_trash_question_groups'
-        )
+        if (
+            EE_Registry::instance()->CAP->current_user_can(
+                'ee_delete_question_groups',
+                'espresso_registration_form_trash_question_groups'
+            )
         ) {
             $this->_views['trash'] = array(
                 'slug'        => 'trash',
@@ -744,12 +746,14 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
             } else {
                 // not found, remove it (but only if not a system question for the personal group
                 // with the exception of lname system question - we allow removal of it)
-                if (in_array(
-                    $question->system_ID(),
-                    EEM_Question::instance()->required_system_questions_in_system_question_group(
-                        $question_group->system_group()
+                if (
+                    in_array(
+                        $question->system_ID(),
+                        EEM_Question::instance()->required_system_questions_in_system_question_group(
+                            $question_group->system_group()
+                        )
                     )
-                )) {
+                ) {
                     continue;
                 } else {
                     $question_group->remove_question($question_ID);

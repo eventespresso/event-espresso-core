@@ -1,3 +1,18 @@
+<?php
+
+/**
+ * template args in use
+ *
+ * @var int $dtt_row
+ * @var int $tkt_row
+ * @var string $ticket_datetime_checked
+ * @var string $ticket_datetime_selected
+ * @var string $DTT_name;
+ * @var string $tkt_status_class;
+ */
+
+?>
+
 <li class="datetime-ticket clickable<?php echo $ticket_datetime_selected; ?><?php echo $tkt_status_class; ?>"
     data-datetime-row="<?php echo $dtt_row; ?>" data-context="ticket-datetime"
     data-ticket-row="<?php echo $tkt_row; ?>">
@@ -8,14 +23,3 @@
     <span class="clickable gear-icon dashicons dashicons-admin-generic" data-datetime-row="<?php echo $dtt_row; ?>"
           data-context="ticket-datetime" data-ticket-row="<?php echo $tkt_row; ?>"></span>
 </li>
-<?php
-/**
- * template args in use
- *
- * $dtt_row
- * $tkt_row
- * $ticket_datetime_checked
- * $ticket_datetime_selected
- * $DTT_name;
- * $tkt_status_class;
- */

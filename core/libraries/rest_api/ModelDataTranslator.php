@@ -63,7 +63,8 @@ class ModelDataTranslator
         $requested_version,
         $timezone_string = 'UTC'
     ) {
-        if (is_array($original_value_maybe_array)
+        if (
+            is_array($original_value_maybe_array)
             && ! $field_obj instanceof EE_Serialized_Text_Field
         ) {
             $new_value_maybe_array = array();
@@ -139,8 +140,10 @@ class ModelDataTranslator
         $timezone_string = 'UTC' // UTC
     ) {
         // check if they accidentally submitted an error value. If so throw an exception
-        if (is_array($original_value)
-            && isset($original_value['error_code'], $original_value['error_message'])) {
+        if (
+            is_array($original_value)
+            && isset($original_value['error_code'], $original_value['error_message'])
+        ) {
             throw new RestException(
                 'rest_submitted_error_value',
                 sprintf(
@@ -162,7 +165,8 @@ class ModelDataTranslator
         // walk through the submitted data and double-check for serialized PHP. We never accept serialized PHP. No
         // way Jose.
         ModelDataTranslator::throwExceptionIfContainsSerializedData($original_value);
-        if ($field_obj instanceof EE_Infinite_Integer_Field
+        if (
+            $field_obj instanceof EE_Infinite_Integer_Field
             && in_array($original_value, array(null, ''), true)
         ) {
             $new_value = EE_INF;
@@ -405,7 +409,8 @@ class ModelDataTranslator
             $query_param_meta = new RestIncomingQueryParamMetadata($query_param_key, $query_param_value, $context);
             if ($query_param_meta->getField() instanceof EE_Model_Field_Base) {
                 $translated_value = $query_param_meta->determineConditionsQueryParameterValue();
-                if ((isset($query_param_for_models[ $query_param_meta->getQueryParamKey() ]) && $query_param_meta->isGmtField())
+                if (
+                    (isset($query_param_for_models[ $query_param_meta->getQueryParamKey() ]) && $query_param_meta->isGmtField())
                     || $translated_value === null
                 ) {
                     // they have already provided a non-gmt field, ignore the gmt one. That's what WP core

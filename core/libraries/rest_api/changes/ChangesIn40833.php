@@ -1,4 +1,6 @@
-<?php namespace EventEspresso\core\libraries\rest_api\changes;
+<?php
+
+namespace EventEspresso\core\libraries\rest_api\changes;
 
 /**
  * The checkin and checkout endpoints were added in 4.8.33,

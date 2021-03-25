@@ -13,7 +13,7 @@ class EE_DMS_4_5_0_update_wp_user_for_tickets extends EE_Data_Migration_Script_S
     {
         global $wpdb;
         $this->_pretty_name = __("Tickets", "event_espresso");
-        $this->_old_table = $wpdb->prefix."esp_ticket";
+        $this->_old_table = $wpdb->prefix . "esp_ticket";
         parent::__construct();
     }
     protected function _migrate_old_row($old_row)
@@ -23,8 +23,8 @@ class EE_DMS_4_5_0_update_wp_user_for_tickets extends EE_Data_Migration_Script_S
         $user_id = EEH_Activation::get_default_creator_id();
         $updated = $wpdb->update(
             $this->_old_table,
-            array('TKT_wp_user'=>$user_id),
-            array('TKT_ID'=>$old_row['TKT_ID']),
+            array('TKT_wp_user' => $user_id),
+            array('TKT_ID' => $old_row['TKT_ID']),
             array('%d',// TKT_wp_user
                     ),
             array('%d',// TKT_ID

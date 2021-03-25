@@ -6,7 +6,6 @@ use Exception;
 use WP_Error;
 use WP_REST_Response;
 use EventEspresso\core\libraries\rest_api\RestException;
-
 use EE_Error;
 use EED_Core_Rest_Api;
 use EEH_Inflector;

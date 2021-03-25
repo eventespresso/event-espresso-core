@@ -664,12 +664,14 @@ class EE_Import implements ResettableInterface
         $export_from_site_a_to_b
     ) {
         // if this model object's primary key is in the mapping, replace it
-        if ($model->has_primary_key_field() &&
+        if (
+            $model->has_primary_key_field() &&
             $model->get_primary_key_field()->is_auto_increment() &&
             isset($old_db_to_new_db_mapping[ $model->get_this_model_name() ]) &&
             isset(
                 $old_db_to_new_db_mapping[ $model->get_this_model_name() ][ $model_object_data[ $model->primary_key_name() ] ]
-            )) {
+            )
+        ) {
             $model_object_data[ $model->primary_key_name() ] = $old_db_to_new_db_mapping[ $model->get_this_model_name(
             ) ][ $model_object_data[ $model->primary_key_name() ] ];
         }
@@ -736,13 +738,15 @@ class EE_Import implements ResettableInterface
      */
     protected function _handle_split_term_ids($model_object_data)
     {
-        if (isset($model_object_data['term_id'])
+        if (
+            isset($model_object_data['term_id'])
             && isset($model_object_data['taxonomy'])
             && apply_filters(
                 'FHEE__EE_Import__handle_split_term_ids__function_exists',
                 function_exists('wp_get_split_term'),
                 $model_object_data
-            )) {
+            )
+        ) {
             $new_term_id = wp_get_split_term($model_object_data['term_id'], $model_object_data['taxonomy']);
             if ($new_term_id) {
                 $model_object_data['term_id'] = $new_term_id;

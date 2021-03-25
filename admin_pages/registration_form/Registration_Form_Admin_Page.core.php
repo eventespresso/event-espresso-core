@@ -308,10 +308,11 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
             ),
         );
 
-        if (EE_Registry::instance()->CAP->current_user_can(
-            'ee_delete_questions',
-            'espresso_registration_form_trash_questions'
-        )
+        if (
+            EE_Registry::instance()->CAP->current_user_can(
+                'ee_delete_questions',
+                'espresso_registration_form_trash_questions'
+            )
         ) {
             $this->_views['trash'] = array(
                 'slug'  => 'trash',
@@ -360,10 +361,11 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
             $this->_req_data['QST_required'] = 0;
         }
         // if the question shouldn't have a max length, don't let them set one
-        if (! isset(
-            $this->_req_data['QST_type'],
-            $this->_req_data['QST_max']
-        )
+        if (
+            ! isset(
+                $this->_req_data['QST_type'],
+                $this->_req_data['QST_max']
+            )
             || ! in_array(
                 $this->_req_data['QST_type'],
                 EEM_Question::instance()->questionTypesWithMaxLength(),
@@ -400,7 +402,8 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
                     'QST_system'
                 );
                 $max_max = EEM_Question::instance()->absolute_max_for_system_question($qst_system);
-                if (empty($this->_req_data['QST_max']) ||
+                if (
+                    empty($this->_req_data['QST_max']) ||
                     $this->_req_data['QST_max'] > $max_max
                 ) {
                     $set_column_values[ $fieldName ] = $max_max;
@@ -409,7 +412,8 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
 
 
             // only add a property to the array if it's not null (otherwise the model should just use the default value)
-            if (! isset($set_column_values[ $fieldName ]) &&
+            if (
+                ! isset($set_column_values[ $fieldName ]) &&
                 isset($this->_req_data[ $fieldName ])
             ) {
                 $set_column_values[ $fieldName ] = $this->_req_data[ $fieldName ];
@@ -566,7 +570,8 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
                     continue;
                 }
                 // note we allow saving blank options.
-                if (empty($option_req_data['QSO_ID'])
+                if (
+                    empty($option_req_data['QSO_ID'])
                 ) {// no ID! save it!
                     $new_option = EE_Question_Option::new_instance(
                         array(

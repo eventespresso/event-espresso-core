@@ -95,7 +95,8 @@ class EED_Venue_Single extends EED_Module
     public function template_include($template)
     {
         // not a custom template?
-        if (EE_Registry::instance()
+        if (
+            EE_Registry::instance()
                        ->load_core('Front_Controller', array(), false, true)
                        ->get_selected_template() != 'single-espresso_venues.php'
         ) {
@@ -133,7 +134,8 @@ class EED_Venue_Single extends EED_Module
     public function venue_details($content)
     {
         global $post;
-        if ($post->post_type == 'espresso_venues'
+        if (
+            $post->post_type == 'espresso_venues'
             && ! post_password_required()
         ) {
             // since the 'content-espresso_venues-details.php' template might be used directly from within a theme,

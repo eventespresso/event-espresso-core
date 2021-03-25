@@ -12,7 +12,8 @@
  */
 function ee_recurse_into_array_for_display($data)
 {
-    if (is_object($data)
+    if (
+        is_object($data)
         || $data instanceof __PHP_Incomplete_Class
     ) {// is_object($incomplete_class) actually returns false, hence why we check for it
         $data = json_decode(json_encode($data), true);

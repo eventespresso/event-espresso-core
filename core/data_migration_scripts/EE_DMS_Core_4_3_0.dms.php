@@ -1,12 +1,8 @@
 <?php
+
 use EventEspresso\core\services\database\TableAnalysis;
 use EventEspresso\core\services\database\TableManager;
 
-/**
- * meant to convert DBs between 4.2.x to 4.3.0
- * mostly just
- * -adds QSO_order to the Question_Option table;
- */
 // make sure we have all the stages loaded too
 // unfortunately, this needs to be done upon INCLUSION of this file,
 // instead of construction, because it only gets constructed on first page load
@@ -24,8 +20,14 @@ if (! empty($stages)) {
 $class_to_filepath = apply_filters('FHEE__EE_DMS_4_3_0__autoloaded_stages', $class_to_filepath);
 EEH_Autoloader::register_autoloader($class_to_filepath);
 
-
-
+/**
+ * Class EE_DMS_Core_4_3_0
+ * meant to convert DBs between 4.2.x to 4.3.0
+ * mostly just
+ * -adds QSO_order to the Question_Option table;
+ *
+ * @author  Mike Nelson
+ */
 class EE_DMS_Core_4_3_0 extends EE_Data_Migration_Script_Base
 {
 

@@ -1,8 +1,10 @@
 <?php
+
 /**
  * Template: includes/core/admin/registration_form/templates/question_groups_main_meta_box.template.php
  * For displaying a question group for editing/creating within the EE Admin page
  */
+
 /* @var int $QSG_ID the main question group's ID */
 assert($QSG_ID);
 /* @var EE_Question_Group $question_group the main question group we're displaying */
@@ -165,7 +167,8 @@ $id = ! empty($QST_system) ? '_disabled' : '';
                                 )
                             ) ? 'disabled="disabled"' : '';
                             // limit where system questions can appear
-                            if ($question->system_ID() &&
+                            if (
+                                $question->system_ID() &&
                                 ! in_array(
                                     $question->system_ID(),
                                     EEM_Question::instance()->allowed_system_questions_in_system_question_group(
@@ -193,11 +196,13 @@ $id = ! empty($QST_system) ? '_disabled' : '';
                                            value="<?php echo $question_order; ?>">
                                 </label>
                                 <?php
-                                if (EE_Registry::instance()->CAP->current_user_can(
-                                    'ee_edit_question',
-                                    'espresso_registration_form_edit_question',
-                                    $question->ID()
-                                )) {
+                                if (
+                                    EE_Registry::instance()->CAP->current_user_can(
+                                        'ee_edit_question',
+                                        'espresso_registration_form_edit_question',
+                                        $question->ID()
+                                    )
+                                ) {
                                     $edit_query_args = array(
                                         'action' => 'edit_question',
                                         'QST_ID' => $question->ID(),

@@ -178,7 +178,8 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
     public function setRequestParam($key, $value, $override_ee = false)
     {
         // don't allow "ee" to be overwritten unless explicitly instructed to do so
-        if ($key !== 'ee'
+        if (
+            $key !== 'ee'
             || ($key === 'ee' && empty($this->request['ee']))
             || ($key === 'ee' && ! empty($this->request['ee']) && $override_ee)
         ) {

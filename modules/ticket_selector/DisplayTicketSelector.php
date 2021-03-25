@@ -211,11 +211,13 @@ class DisplayTicketSelector
         }
         // begin gathering template arguments by getting event status
         $template_args = array('event_status' => $this->event->get_active_status());
-        if ($this->activeEventAndShowTicketSelector(
-            $event,
-            $template_args['event_status'],
-            $view_details
-        )) {
+        if (
+            $this->activeEventAndShowTicketSelector(
+                $event,
+                $template_args['event_status'],
+                $view_details
+            )
+        ) {
             return ! is_single() ? $this->displayViewDetailsButton() : '';
         }
         // filter the maximum qty that can appear in the Ticket Selector qty dropdowns
@@ -459,11 +461,13 @@ class DisplayTicketSelector
         /** @var \EE_Ticket $ticket */
         $ticket = reset($tickets);
         // if the ticket is free... then not much need for the ticket selector
-        if (apply_filters(
-            'FHEE__ticket_selector_chart_template__hide_ticket_selector',
-            $ticket->is_free(),
-            $this->event->ID()
-        )) {
+        if (
+            apply_filters(
+                'FHEE__ticket_selector_chart_template__hide_ticket_selector',
+                $ticket->is_free(),
+                $this->event->ID()
+            )
+        ) {
             return new TicketSelectorSimple(
                 $this->event,
                 $ticket,
@@ -586,16 +590,19 @@ class DisplayTicketSelector
                         ),
                         $this->event
                     );
-                    if (apply_filters(
-                        'FHEE__EE_Ticket_Selector__display_ticket_selector_submit__no_tickets_but_display_register_now_button',
-                        false,
-                        $this->event
-                    )) {
+                    if (
+                        apply_filters(
+                            'FHEE__EE_Ticket_Selector__display_ticket_selector_submit__no_tickets_but_display_register_now_button',
+                            false,
+                            $this->event
+                        )
+                    ) {
                         $html .= $this->displayRegisterNowButton();
                     }
                     // sold out DWMTS event, no TS, no submit or view details button, but has additional content
                     $html .= $this->ticketSelectorEndDiv();
-                } elseif (apply_filters('FHEE__EE_Ticket_Selector__hide_ticket_selector', false)
+                } elseif (
+                    apply_filters('FHEE__EE_Ticket_Selector__hide_ticket_selector', false)
                           && ! is_single()
                 ) {
                     // this is a "Dude Where's my Ticket Selector?" (DWMTS) type event,
@@ -610,11 +617,13 @@ class DisplayTicketSelector
                 $html .= $this->ticketSelectorEndDiv();
                 $html .= $this->displayViewDetailsButton();
             } else {
-                if (apply_filters(
-                    'FHEE__EE_Ticket_Selector__display_ticket_selector_submit__no_tickets_but_display_register_now_button',
-                    false,
-                    $this->event
-                )) {
+                if (
+                    apply_filters(
+                        'FHEE__EE_Ticket_Selector__display_ticket_selector_submit__no_tickets_but_display_register_now_button',
+                        false,
+                        $this->event
+                    )
+                ) {
                     $html .= $this->displayRegisterNowButton();
                 }
                 // no submit or view details button, and no additional content

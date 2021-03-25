@@ -1,10 +1,8 @@
 <?php
+
 use EventEspresso\core\services\database\TableAnalysis;
 use EventEspresso\core\services\database\TableManager;
 
-/**
- * meant to convert DBs between 3.1.26 and 4.0.0 to 4.1.0
- */
 // make sure we have all the stages loaded too
 // unfortunately, this needs to be done upon INCLUSION of this file,
 // instead of construction, because it only gets constructed on first page load
@@ -22,9 +20,8 @@ if (! empty($stages)) {
 $class_to_filepath = apply_filters('FHEE__EE_DMS_4_1_0__autoloaded_stages', $class_to_filepath);
 EEH_Autoloader::register_autoloader($class_to_filepath);
 
-
-
 /**
+ * meant to convert DBs between 3.1.26 and 4.0.0 to 4.1.0
  * Organizes all the various stages of the migration from 3.1 (but only versions above 3.1.26,
  * lower versions need to eb upgraded to 3.1.26 normally) to 4.1.0.P.
  * It adds the database tables on some of the first migration_steps, then migrates the data within

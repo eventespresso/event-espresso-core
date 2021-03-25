@@ -3,11 +3,13 @@
     <div class="ee-new-registration-step-content">
         <?php echo $content; ?>
         <?php
-        if ($show_notification_toggle
+        if (
+            $show_notification_toggle
             && EE_Registry::instance()->CAP->current_user_can(
                 'ee_send_message',
                 'registration_message_type'
-            )) : ?>
+            )
+        ) : ?>
             <div class="ee-attention">
                 <label for="txn_reg_status_change" class="last">
                     <?php _e(

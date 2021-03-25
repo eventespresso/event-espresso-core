@@ -52,7 +52,7 @@ class EE_DMS_4_1_0_question_groups extends EE_Data_Migration_Script_Stage
     private $_already_got_system_question_group_1 = false;
     public function _migration_step($num_items = 50)
     {
-        
+
         global $wpdb;
         $start_at_record = $this->count_records_migrated();
         $rows = $wpdb->get_results($wpdb->prepare("SELECT * FROM $this->_old_table LIMIT %d,%d", $start_at_record, $num_items), ARRAY_A);
@@ -71,18 +71,18 @@ class EE_DMS_4_1_0_question_groups extends EE_Data_Migration_Script_Stage
     public function _count_records_to_migrate()
     {
         global $wpdb;
-        $count = $wpdb->get_var("SELECT COUNT(id) FROM ".$this->_old_table);
+        $count = $wpdb->get_var("SELECT COUNT(id) FROM " . $this->_old_table);
         return $count;
     }
     public function __construct()
     {
         global $wpdb;
-        $this->_old_table = $wpdb->prefix."events_qst_group";
-        $this->_new_table = $wpdb->prefix."esp_question_group";
+        $this->_old_table = $wpdb->prefix . "events_qst_group";
+        $this->_new_table = $wpdb->prefix . "esp_question_group";
         $this->_pretty_name = __("Question Groups", "event_espresso");
         parent::__construct();
     }
-    
+
     /**
      * Attempts to insert a new question group inthe new format given an old one
      * @global type $wpdb
@@ -97,28 +97,28 @@ class EE_DMS_4_1_0_question_groups extends EE_Data_Migration_Script_Stage
         // could be easily removed.
         if ($old_question_group['system_group'] && ! $this->_already_got_system_question_group_1()) {
             $guess_at_system_number = 1;
-        } elseif ($old_question_group['id'] == '2' && strpos($old_question_group['group_name'], 'Address')!==false) {
+        } elseif ($old_question_group['id'] == '2' && strpos($old_question_group['group_name'], 'Address') !== false) {
             $guess_at_system_number = 2;
         } else {
             $guess_at_system_number = 0;
         }
         // if the question group wasn't made by the normal admin,
         // we'd like to keep track of who made it
-        if (intval($old_question_group['wp_user'])!=1) {
-            $username = $wpdb->get_var($wpdb->prepare("SELECT user_nicename FROM ".$wpdb->users." WHERE ID = %d", $old_question_group['wp_user']));
-            $identifier = $old_question_group['group_identifier']."-by-".$username;
+        if (intval($old_question_group['wp_user']) != 1) {
+            $username = $wpdb->get_var($wpdb->prepare("SELECT user_nicename FROM " . $wpdb->users . " WHERE ID = %d", $old_question_group['wp_user']));
+            $identifier = $old_question_group['group_identifier'] . "-by-" . $username;
         } else {
             $identifier = $old_question_group['group_identifier'];
         }
         $cols_n_values = array(
-            'QSG_name'=>stripslashes($old_question_group['group_name']),
-            'QSG_identifier'=>$identifier,
-            'QSG_desc'=>stripslashes($old_question_group['group_description']),
-            'QSG_order'=>$old_question_group['group_order'],
-            'QSG_show_group_name'=>$old_question_group['show_group_name'],
-            'QSG_show_group_desc'=>$old_question_group['show_group_description'],
-            'QSG_system'=>$guess_at_system_number,
-            'QSG_deleted'=>false
+            'QSG_name' => stripslashes($old_question_group['group_name']),
+            'QSG_identifier' => $identifier,
+            'QSG_desc' => stripslashes($old_question_group['group_description']),
+            'QSG_order' => $old_question_group['group_order'],
+            'QSG_show_group_name' => $old_question_group['show_group_name'],
+            'QSG_show_group_desc' => $old_question_group['show_group_description'],
+            'QSG_system' => $guess_at_system_number,
+            'QSG_deleted' => false
         );
         $datatypes = array(
             '%s',// QSG_name
@@ -137,7 +137,7 @@ class EE_DMS_4_1_0_question_groups extends EE_Data_Migration_Script_Stage
         }
         return $wpdb->insert_id;
     }
-    
+
     /**
      * Checks if we've already added a system question 1 to the new question groups table
      * @global type $wpdb
@@ -149,7 +149,7 @@ class EE_DMS_4_1_0_question_groups extends EE_Data_Migration_Script_Stage
             // check the db
             global $wpdb;
             $exists = $wpdb->get_var("SELECT COUNT(*) FROM {$this->_new_table} WHERE QSG_system=1");
-            if (intval($exists)>0) {
+            if (intval($exists) > 0) {
                 $this->_already_got_system_question_group_1 = true;
             }
         }

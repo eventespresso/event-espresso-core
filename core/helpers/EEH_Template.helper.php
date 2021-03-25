@@ -822,7 +822,8 @@ class EEH_Template
             $items_label
         );
 
-        if (empty($items_label)
+        if (
+            empty($items_label)
             || ! is_array($items_label)
             || ! isset($items_label['single'])
             || ! isset($items_label['plural'])
@@ -930,7 +931,8 @@ class EEH_Template
     public static function powered_by_event_espresso($wrap_class = '', $wrap_id = '', array $query_args = array())
     {
         $admin = is_admin() && ! (defined('DOING_AJAX') && DOING_AJAX);
-        if (! $admin &&
+        if (
+            ! $admin &&
             ! apply_filters(
                 'FHEE__EEH_Template__powered_by_event_espresso__show_reg_footer',
                 EE_Registry::instance()->CFG->admin->show_reg_footer

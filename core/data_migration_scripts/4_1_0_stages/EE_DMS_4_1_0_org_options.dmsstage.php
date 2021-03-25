@@ -113,7 +113,7 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage
             if (isset($old_org_options[ $option_name ])) {
                 $this->_handle_org_option($option_name, $old_org_options[ $option_name ]);
             }
-            if ($option_name=='surcharge') {
+            if ($option_name == 'surcharge') {
                 $this->_insert_new_global_surcharge_price($old_org_options);
             }
             $items_actually_migrated++;
@@ -179,7 +179,7 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage
                 $c->registration->default_STS_ID =  $this->get_migration_script()->convert_3_1_payment_status_to_4_1_STS_ID($value);
                 break;
             case 'organization_country':
-                $iso =$this->get_migration_script()->get_iso_from_3_1_country_id($value);
+                $iso = $this->get_migration_script()->get_iso_from_3_1_country_id($value);
                 $c->organization->CNT_ISO = $iso;
                 $country_row = $this->get_migration_script()->get_or_create_country($iso);
                 if (! $country_row) {
@@ -277,7 +277,7 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage
     {
         $amount = floatval($org_options['surcharge']);
         // dont createa a price if the surcharge is 0
-        if ($amount <=.01) {
+        if ($amount <= .01) {
             return 0;
         }
         if ($org_options['surcharge_type'] == 'flat_rate') {
@@ -287,14 +287,14 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage
         }
         global $wpdb;
         $cols_n_values = array(
-            'PRT_ID'=>$price_type,
-            'PRC_amount'=>$amount,
-            'PRC_name'=>  $org_options['surcharge_text'],
-            'PRC_is_default'=>true,
-            'PRC_overrides'=>false,
-            'PRC_order'=>100,
-            'PRC_deleted'=>false,
-            'PRC_parent'=>null
+            'PRT_ID' => $price_type,
+            'PRC_amount' => $amount,
+            'PRC_name' =>  $org_options['surcharge_text'],
+            'PRC_is_default' => true,
+            'PRC_overrides' => false,
+            'PRC_order' => 100,
+            'PRC_deleted' => false,
+            'PRC_parent' => null
 
         );
         $datatypes = array(
@@ -307,15 +307,15 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage
             '%d',// PRC_deleted
             '%d',// PRC_parent
         );
-        $price_table = $wpdb->prefix."esp_price";
+        $price_table = $wpdb->prefix . "esp_price";
         $success = $wpdb->insert($price_table, $cols_n_values, $datatypes);
         if (! $success) {
             $this->add_error($this->get_migration_script()->_create_error_message_for_db_insertion(
                 'org_options',
                 array(
-                        'surcharge'=>$org_options['surcharge'],
-                        'surcharge_type'=>$org_options['surcharge_type'],
-                        'surcharge_text'=>$org_options['surcharge_text']),
+                        'surcharge' => $org_options['surcharge'],
+                        'surcharge_type' => $org_options['surcharge_type'],
+                        'surcharge_text' => $org_options['surcharge_text']),
                 $price_table,
                 $cols_n_values,
                 $datatypes

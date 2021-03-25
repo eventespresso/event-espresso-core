@@ -1,4 +1,5 @@
 <?php
+
 /**
  *
  * Payment Model
@@ -64,30 +65,30 @@ class EEM_Payment extends EEM_Base implements EEMI_Payment
         $this->plural_item = __('Payments', 'event_espresso');
 
         $this->_tables = array(
-            'Payment'=>new EE_Primary_Table('esp_payment', 'PAY_ID')
+            'Payment' => new EE_Primary_Table('esp_payment', 'PAY_ID')
         );
         $this->_fields = array(
-            'Payment'=>array(
-                'PAY_ID'=>new EE_Primary_Key_Int_Field('PAY_ID', __('Payment ID', 'event_espresso')),
-                'TXN_ID'=>new EE_Foreign_Key_Int_Field('TXN_ID', __('Transaction ID', 'event_espresso'), false, 0, 'Transaction'),
-                'STS_ID'=>new EE_Foreign_Key_String_Field('STS_ID', __('Status ID', 'event_espresso'), false, EEM_Payment::status_id_failed, 'Status'),
-                'PAY_timestamp'=> new EE_Datetime_Field('PAY_timestamp', __('Timestamp of when payment was attempted', 'event_espresso'), false, EE_Datetime_Field::now, $timezone),
-                'PAY_source'=>new EE_All_Caps_Text_Field('PAY_source', __('User-friendly description of payment', 'event_espresso'), false, 'CART'),
-                'PAY_amount'=>new EE_Money_Field('PAY_amount', __('Amount Payment should be for', 'event_espresso'), false, 0),
-                'PMD_ID'=>new EE_Foreign_Key_Int_Field('PMD_ID', __("Payment Method ID", 'event_espresso'), false, null, 'Payment_Method'),
-                'PAY_gateway_response'=>new EE_Plain_Text_Field('PAY_gateway_response', __('Response from Gateway about the payment', 'event_espresso'), false, ''),
-                'PAY_txn_id_chq_nmbr'=>new EE_Plain_Text_Field('PAY_txn_id_chq_nmbr', __('Gateway Transaction ID or Cheque Number', 'event_espresso'), true, ''),
-                'PAY_po_number'=>new EE_Plain_Text_Field('PAY_po_number', __('Purchase or Sales Number', 'event_espresso'), true, ''),
-                'PAY_extra_accntng'=>new EE_Simple_HTML_Field('PAY_extra_accntng', __('Extra Account Info', 'event_espresso'), true, ''),
-                'PAY_details'=>new EE_Serialized_Text_Field('PAY_details', __('Full Gateway response about payment', 'event_espresso'), true, ''),
-                'PAY_redirect_url'=>new EE_Plain_Text_Field('PAY_redirect_url', __("Redirect URL", 'event_espresso'), true),
-                'PAY_redirect_args'=>new EE_Serialized_Text_Field('PAY_redirect_args', __("Key-Value POST vars to send along with redirect", 'event_espresso'), true)
+            'Payment' => array(
+                'PAY_ID' => new EE_Primary_Key_Int_Field('PAY_ID', __('Payment ID', 'event_espresso')),
+                'TXN_ID' => new EE_Foreign_Key_Int_Field('TXN_ID', __('Transaction ID', 'event_espresso'), false, 0, 'Transaction'),
+                'STS_ID' => new EE_Foreign_Key_String_Field('STS_ID', __('Status ID', 'event_espresso'), false, EEM_Payment::status_id_failed, 'Status'),
+                'PAY_timestamp' => new EE_Datetime_Field('PAY_timestamp', __('Timestamp of when payment was attempted', 'event_espresso'), false, EE_Datetime_Field::now, $timezone),
+                'PAY_source' => new EE_All_Caps_Text_Field('PAY_source', __('User-friendly description of payment', 'event_espresso'), false, 'CART'),
+                'PAY_amount' => new EE_Money_Field('PAY_amount', __('Amount Payment should be for', 'event_espresso'), false, 0),
+                'PMD_ID' => new EE_Foreign_Key_Int_Field('PMD_ID', __("Payment Method ID", 'event_espresso'), false, null, 'Payment_Method'),
+                'PAY_gateway_response' => new EE_Plain_Text_Field('PAY_gateway_response', __('Response from Gateway about the payment', 'event_espresso'), false, ''),
+                'PAY_txn_id_chq_nmbr' => new EE_Plain_Text_Field('PAY_txn_id_chq_nmbr', __('Gateway Transaction ID or Cheque Number', 'event_espresso'), true, ''),
+                'PAY_po_number' => new EE_Plain_Text_Field('PAY_po_number', __('Purchase or Sales Number', 'event_espresso'), true, ''),
+                'PAY_extra_accntng' => new EE_Simple_HTML_Field('PAY_extra_accntng', __('Extra Account Info', 'event_espresso'), true, ''),
+                'PAY_details' => new EE_Serialized_Text_Field('PAY_details', __('Full Gateway response about payment', 'event_espresso'), true, ''),
+                'PAY_redirect_url' => new EE_Plain_Text_Field('PAY_redirect_url', __("Redirect URL", 'event_espresso'), true),
+                'PAY_redirect_args' => new EE_Serialized_Text_Field('PAY_redirect_args', __("Key-Value POST vars to send along with redirect", 'event_espresso'), true)
             )
         );
         $this->_model_relations = array(
-            'Transaction'=> new EE_Belongs_To_Relation(),
-            'Status'=> new EE_Belongs_To_Relation(),
-            'Payment_Method'=>new EE_Belongs_To_Relation(),
+            'Transaction' => new EE_Belongs_To_Relation(),
+            'Status' => new EE_Belongs_To_Relation(),
+            'Payment_Method' => new EE_Belongs_To_Relation(),
             'Registration_Payment' => new EE_Has_Many_Relation(),
             'Registration' => new EE_HABTM_Relation('Registration_Payment'),
         );
@@ -107,7 +108,7 @@ class EEM_Payment extends EEM_Base implements EEMI_Payment
      */
     public function get_payment_by_txn_id_chq_nmbr($PAY_txn_id_chq_nmbr)
     {
-        return $this->get_one(array(array('PAY_txn_id_chq_nmbr'=>$PAY_txn_id_chq_nmbr)));
+        return $this->get_one(array(array('PAY_txn_id_chq_nmbr' => $PAY_txn_id_chq_nmbr)));
     }
 
 
@@ -193,7 +194,7 @@ class EEM_Payment extends EEM_Base implements EEMI_Payment
         $start_date = $this->convert_datetime_for_query('PAY_timestamp', date('Y-m-d', $start) . ' 00:00:00', 'Y-m-d H:i:s', $this->get_timezone());
         $end_date = $this->convert_datetime_for_query('PAY_timestamp', date('Y-m-d', $end) . ' 23:59:59', 'Y-m-d H:i:s', $this->get_timezone());
 
-        return $this->get_all(array(array('PAY_timestamp'=>array('>=',$start_date),'PAY_timestamp*'=>array('<=',$end_date))));
+        return $this->get_all(array(array('PAY_timestamp' => array('>=',$start_date),'PAY_timestamp*' => array('<=',$end_date))));
     }
 
     /**

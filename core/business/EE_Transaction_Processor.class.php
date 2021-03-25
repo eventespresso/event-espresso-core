@@ -316,12 +316,14 @@ class EE_Transaction_Processor extends EE_Processor_Base
         }
         try {
             $transaction = $this->get_transaction_for_registration($registration);
-            if (apply_filters(
-                'FHEE__EE_Transaction_Processor__update_transaction_after_canceled_or_declined_registration__cancel_ticket_line_item',
-                true,
-                $registration,
-                $transaction
-            )) {
+            if (
+                apply_filters(
+                    'FHEE__EE_Transaction_Processor__update_transaction_after_canceled_or_declined_registration__cancel_ticket_line_item',
+                    true,
+                    $registration,
+                    $transaction
+                )
+            ) {
                 $ticket_line_item = $this->get_ticket_line_item_for_transaction_registration(
                     $transaction,
                     $registration
@@ -437,7 +439,8 @@ class EE_Transaction_Processor extends EE_Processor_Base
             : EEM_Registration::closed_reg_statuses();
         // loop through cached registrations
         foreach ($transaction->registrations($this->_registration_query_params) as $registration) {
-            if ($registration instanceof EE_Registration
+            if (
+                $registration instanceof EE_Registration
                 && ! in_array($registration->status_ID(), $closed_reg_statuses)
             ) {
                 return false;
@@ -537,7 +540,8 @@ class EE_Transaction_Processor extends EE_Processor_Base
                     if (! empty($available_payment_methods)) {
                         $PMD_ID = 0;
                         foreach ($available_payment_methods as $available_payment_method) {
-                            if ($available_payment_method instanceof EE_Payment_Method
+                            if (
+                                $available_payment_method instanceof EE_Payment_Method
                                 && $available_payment_method->open_by_default()
                             ) {
                                 $PMD_ID = $available_payment_method->ID();

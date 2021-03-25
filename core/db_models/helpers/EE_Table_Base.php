@@ -1,7 +1,5 @@
 <?php
 
-
-
 /**
  * Base class for defining the tables that comprise models. This is used to store information
  * about the table\s alias, private key, etc.

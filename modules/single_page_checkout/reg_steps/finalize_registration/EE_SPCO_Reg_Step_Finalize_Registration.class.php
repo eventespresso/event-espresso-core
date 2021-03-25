@@ -99,10 +99,12 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step
         $this->checkout->redirect = true;
         $this->checkout->continue_reg = true;
         $this->checkout->json_response->set_redirect_url($this->checkout->redirect_url);
-        if (! (
+        if (
+            ! (
             $this->checkout->payment_method instanceof EE_Payment_Method
             && $this->checkout->payment_method->is_off_site()
-        )) {
+            )
+        ) {
             // mark this reg step as completed
             $this->set_completed();
         }
@@ -170,7 +172,8 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step
             // let's start with the assumption that we need to trigger notifications
             // then toggle this to false for conditions where we know we don't need to
             $deliver_notifications = true;
-            if (// if SPCO revisit
+            if (
+// if SPCO revisit
                 filter_var($this->checkout->revisit, FILTER_VALIDATE_BOOLEAN)
                 // and TXN or REG statuses have NOT changed due to a payment
                 && ! (
@@ -184,7 +187,8 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step
                 /** @var EE_Gateway $gateway */
                 $gateway = $this->checkout->payment_method->type_obj()->get_gateway();
                 // and the gateway uses a separate request to process the IPN
-                if ($gateway instanceof EE_Offsite_Gateway
+                if (
+                    $gateway instanceof EE_Offsite_Gateway
                     && $gateway->handle_IPN_in_this_request(\EE_Registry::instance()->REQ->params(), true)
                 ) {
                     // IPN request will handle triggering notifications

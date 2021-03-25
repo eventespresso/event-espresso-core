@@ -1,4 +1,5 @@
 <?php
+
 /**
  * EED_Ical Class
  *

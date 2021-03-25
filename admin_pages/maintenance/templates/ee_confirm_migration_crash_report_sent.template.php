@@ -1,5 +1,7 @@
 <?php
+
 /** @type bool $success */
+
 /** @type string $reset_db_page_url */
 /** @type string $reattempt_action_url */
 /** @type string $reset_db_action_url */

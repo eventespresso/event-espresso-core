@@ -366,7 +366,8 @@ class EED_Single_Page_Checkout extends EED_Module
      */
     public function run($WP_Query)
     {
-        if ($WP_Query instanceof WP_Query
+        if (
+            $WP_Query instanceof WP_Query
             && $WP_Query->is_main_query()
             && apply_filters('FHEE__EED_Single_Page_Checkout__run', true)
             && $this->_is_reg_checkout()
@@ -513,7 +514,8 @@ class EED_Single_Page_Checkout extends EED_Module
             FILTER_VALIDATE_BOOLEAN
         );
         // is session still valid ?
-        if ($clear_session_requested
+        if (
+            $clear_session_requested
             || (EE_Registry::instance()->SSN->expired()
                 && EE_Registry::instance()->REQ->get('e_reg_url_link', '') === ''
             )
@@ -712,7 +714,8 @@ class EED_Single_Page_Checkout extends EED_Module
     {
         do_action('AHEE__Single_Page_Checkout___load_and_instantiate_reg_steps__start', $this->checkout);
         // have reg_steps already been instantiated ?
-        if (empty($this->checkout->reg_steps)
+        if (
+            empty($this->checkout->reg_steps)
             || apply_filters('FHEE__Single_Page_Checkout__load_reg_steps__reload_reg_steps', false, $this->checkout)
         ) {
             // if not, then loop through raw reg steps array
@@ -726,7 +729,8 @@ class EED_Single_Page_Checkout extends EED_Module
                 if (EE_Registry::instance()->CFG->registration->skip_reg_confirmation) {
                     // just remove it from the reg steps array
                     $this->checkout->remove_reg_step('registration_confirmation', false);
-                } elseif (EE_Registry::instance()->CFG->registration->reg_confirmation_last
+                } elseif (
+                    EE_Registry::instance()->CFG->registration->reg_confirmation_last
                 ) {
                     // set the order to something big like 100
                     $this->checkout->set_reg_step_order('registration_confirmation', 100);
@@ -773,7 +777,8 @@ class EED_Single_Page_Checkout extends EED_Module
         // we need a file_path, class_name, and slug to add a reg step
         if (isset($reg_step['file_path'], $reg_step['class_name'], $reg_step['slug'])) {
             // if editing a specific step, but this is NOT that step... (and it's not the 'finalize_registration' step)
-            if ($this->checkout->reg_url_link
+            if (
+                $this->checkout->reg_url_link
                 && $this->checkout->step !== $reg_step['slug']
                 && $reg_step['slug'] !== 'finalize_registration'
                 // normally at this point we would NOT load the reg step, but this filter can change that
@@ -1033,7 +1038,8 @@ class EED_Single_Page_Checkout extends EED_Module
             // verify each registration
             if ($registration instanceof EE_Registration) {
                 // we display all attendee info for the primary registrant
-                if ($this->checkout->reg_url_link === $registration->reg_url_link()
+                if (
+                    $this->checkout->reg_url_link === $registration->reg_url_link()
                     && $registration->is_primary_registrant()
                 ) {
                     $this->checkout->primary_revisit = true;
@@ -1165,7 +1171,8 @@ class EED_Single_Page_Checkout extends EED_Module
             }
             $valid_registrant = null;
             foreach ($this->checkout->transaction->registrations($this->checkout->reg_cache_where_params) as $registration) {
-                if ($registration instanceof EE_Registration
+                if (
+                    $registration instanceof EE_Registration
                     && $registration->reg_url_link() === $this->checkout->reg_url_link
                 ) {
                     $valid_registrant = $registration;
@@ -1253,7 +1260,8 @@ class EED_Single_Page_Checkout extends EED_Module
             try {
                 $this->checkout->current_step->reg_form = $this->checkout->current_step->generate_reg_form();
                 // if not displaying a form, then check for form submission
-                if ($this->checkout->process_form_submission
+                if (
+                    $this->checkout->process_form_submission
                     && $this->checkout->current_step->reg_form->was_submitted()
                 ) {
                     // clear out any old data in case this step is being run again
@@ -1315,7 +1323,8 @@ class EED_Single_Page_Checkout extends EED_Module
                 break;
             default:
                 // meh... do one of those other steps first
-                if (! empty($this->checkout->action)
+                if (
+                    ! empty($this->checkout->action)
                     && is_callable(array($this->checkout->current_step, $this->checkout->action))
                 ) {
                     // dynamically creates hook point like:
@@ -1333,7 +1342,8 @@ class EED_Single_Page_Checkout extends EED_Module
                     // call action on current step
                     if ($process_reg_step && call_user_func([$this->checkout->current_step, $this->checkout->action])) {
                         // good registrant, you get to proceed
-                        if ($this->checkout->current_step->success_message() !== ''
+                        if (
+                            $this->checkout->current_step->success_message() !== ''
                             && apply_filters(
                                 'FHEE__Single_Page_Checkout___process_form_action__display_success',
                                 false
@@ -1645,10 +1655,12 @@ class EED_Single_Page_Checkout extends EED_Module
      */
     public static function display_registration_footer()
     {
-        if (apply_filters(
-            'FHEE__EE_Front__Controller__show_reg_footer',
-            EE_Registry::instance()->CFG->admin->show_reg_footer
-        )) {
+        if (
+            apply_filters(
+                'FHEE__EE_Front__Controller__show_reg_footer',
+                EE_Registry::instance()->CFG->admin->show_reg_footer
+            )
+        ) {
             add_filter(
                 'FHEE__EEH_Template__powered_by_event_espresso__url',
                 function ($url) {
@@ -1720,7 +1732,8 @@ class EED_Single_Page_Checkout extends EED_Module
         }
         $this->unlock_transaction();
         // just return for these conditions
-        if ($this->checkout->admin_request
+        if (
+            $this->checkout->admin_request
             || $this->checkout->action === 'redirect_form'
             || $this->checkout->action === 'update_checkout'
         ) {

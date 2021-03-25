@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\core\domain\services\admin;
 
 use WP_User;

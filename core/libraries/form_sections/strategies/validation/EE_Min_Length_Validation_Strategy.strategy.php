@@ -1,4 +1,5 @@
 <?php
+
 /**
  * EE_Min_Length_Validation_Strategy
  *
@@ -24,10 +25,12 @@ class EE_Min_Length_Validation_Strategy extends EE_Validation_Strategy_Base
      */
     public function validate($normalized_value)
     {
-        if ($this->_min_length > 0 &&
+        if (
+            $this->_min_length > 0 &&
                 $normalized_value &&
                 is_string($normalized_value) &&
-                strlen($normalized_value) < $this->_min_length) {
+                strlen($normalized_value) < $this->_min_length
+        ) {
             throw new EE_Validation_Error($this->get_validation_error_message(), 'minlength');
         }
     }
@@ -37,6 +40,6 @@ class EE_Min_Length_Validation_Strategy extends EE_Validation_Strategy_Base
      */
     public function get_jquery_validation_rule_array()
     {
-        return array( 'minlength'=> $this->_min_length, 'messages' => array( 'minlength' => $this->get_validation_error_message() ) );
+        return array( 'minlength' => $this->_min_length, 'messages' => array( 'minlength' => $this->get_validation_error_message() ) );
     }
 }

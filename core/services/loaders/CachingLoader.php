@@ -131,11 +131,13 @@ class CachingLoader extends CachingLoaderDecorator
         $fqcn = ltrim($fqcn, '\\');
         // caching can be turned off via the following code:
         // add_filter('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache', '__return_true');
-        if (apply_filters(
-            'FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache',
-            false,
-            $this
-        )) {
+        if (
+            apply_filters(
+                'FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache',
+                false,
+                $this
+            )
+        ) {
             // even though $shared might be true, caching could be bypassed for whatever reason,
             // so we don't want the core loader to cache anything, therefore caching is turned off
             return $this->loader->load($fqcn, $arguments, false);

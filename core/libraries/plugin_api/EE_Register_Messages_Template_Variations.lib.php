@@ -103,7 +103,8 @@ class EE_Register_Messages_Template_Variations implements EEI_Plugin_API
             );
         }
 
-        if (! is_array($setup_args)
+        if (
+            ! is_array($setup_args)
             || empty($setup_args['variations'])
             || empty($setup_args['base_path'])
             || empty($setup_args['base_url'])
@@ -128,7 +129,8 @@ class EE_Register_Messages_Template_Variations implements EEI_Plugin_API
 
 
         // make sure this was called in the right place!
-        if (! did_action('EE_Brewing_Regular___messages_caf')
+        if (
+            ! did_action('EE_Brewing_Regular___messages_caf')
             || did_action('AHEE__EE_System__perform_activations_upgrades_and_migrations')
         ) {
             EE_Error::doing_it_wrong(

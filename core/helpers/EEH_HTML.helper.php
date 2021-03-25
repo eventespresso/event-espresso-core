@@ -1,4 +1,5 @@
 <?php
+
  /**
  *
  * Class EEH_HTML
@@ -858,7 +859,7 @@ class EEH_HTML
     public static function get_simple_tags()
     {
         global $allowedtags;
-        $tags_we_allow['p']=array();
+        $tags_we_allow['p'] = array();
         $tags_we_allow = array_merge_recursive(
             $allowedtags,
             array(

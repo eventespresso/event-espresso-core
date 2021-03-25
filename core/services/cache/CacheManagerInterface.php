@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\core\services\cache;
 
 use Closure;

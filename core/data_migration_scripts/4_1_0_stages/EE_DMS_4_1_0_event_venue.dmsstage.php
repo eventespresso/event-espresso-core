@@ -36,7 +36,7 @@ class EE_DMS_4_1_0_event_venue extends EE_Data_Migration_Script_Stage
     private $_new_table;
     public function _migration_step($num_items = 50)
     {
-        
+
         global $wpdb;
         $start_at_record = $this->count_records_migrated();
         $rows = $wpdb->get_results(
@@ -63,7 +63,7 @@ class EE_DMS_4_1_0_event_venue extends EE_Data_Migration_Script_Stage
     {
         global $wpdb;
         $count = $wpdb->get_var(
-            "SELECT COUNT(ev.id) FROM ".$this->_old_table . " AS ev 
+            "SELECT COUNT(ev.id) FROM " . $this->_old_table . " AS ev 
             INNER JOIN " . $wpdb->prefix . 'events_detail AS e ON ev.event_id=e.id
             WHERE e.event_status!="D"'
         );
@@ -72,12 +72,12 @@ class EE_DMS_4_1_0_event_venue extends EE_Data_Migration_Script_Stage
     public function __construct()
     {
         global $wpdb;
-        $this->_old_table = $wpdb->prefix."events_venue_rel";
-        $this->_new_table = $wpdb->prefix."esp_event_venue";
+        $this->_old_table = $wpdb->prefix . "events_venue_rel";
+        $this->_new_table = $wpdb->prefix . "esp_event_venue";
         $this->_pretty_name = __("Event to Venue Relations", "event_espresso");
         parent::__construct();
     }
-    
+
     /**
      * Attempts to insert a new question group inthe new format given an old one
      * @global type $wpdb
@@ -87,8 +87,8 @@ class EE_DMS_4_1_0_event_venue extends EE_Data_Migration_Script_Stage
     private function _insert_new_event_to_venue_rel($old_event_venue_rel)
     {
         global $wpdb;
-        $new_event_id = $this->get_migration_script()->get_mapping_new_pk($wpdb->prefix."events_detail", $old_event_venue_rel['event_id'], $wpdb->prefix."posts");
-        $new_venue_id = $this->get_migration_script()->get_mapping_new_pk($wpdb->prefix."events_venue", $old_event_venue_rel['venue_id'], $wpdb->prefix."posts");
+        $new_event_id = $this->get_migration_script()->get_mapping_new_pk($wpdb->prefix . "events_detail", $old_event_venue_rel['event_id'], $wpdb->prefix . "posts");
+        $new_venue_id = $this->get_migration_script()->get_mapping_new_pk($wpdb->prefix . "events_venue", $old_event_venue_rel['venue_id'], $wpdb->prefix . "posts");
         if (! $new_event_id) {
             $this->add_error(sprintf(__("Could not find 4.1 event id for 3.1 event #%d.", "event_espresso"), $old_event_venue_rel['event_id']));
             return 0;
@@ -110,9 +110,9 @@ class EE_DMS_4_1_0_event_venue extends EE_Data_Migration_Script_Stage
         );
 //      echo "last query". $wpdb->last_query;die;
         $cols_n_values = array(
-            'EVT_ID'=>$new_event_id,
-            'VNU_ID'=>$new_venue_id,
-            'EVV_primary'=>true
+            'EVT_ID' => $new_event_id,
+            'VNU_ID' => $new_venue_id,
+            'EVV_primary' => true
         );
         $datatypes = array(
             '%d',// EVT_ID

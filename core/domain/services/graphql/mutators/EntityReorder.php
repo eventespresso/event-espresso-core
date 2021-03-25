@@ -5,7 +5,6 @@ namespace EventEspresso\core\domain\services\graphql\mutators;
 use EE_Registry;
 use EEM_Base;
 use EE_Base_Class;
-
 use EE_Error;
 use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
 use Exception;
@@ -13,7 +12,6 @@ use InvalidArgumentException;
 use ReflectionException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
-
 use GraphQL\Type\Definition\ResolveInfo;
 use RuntimeException;
 use WPGraphQL\AppContext;

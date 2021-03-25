@@ -1,4 +1,5 @@
 <?php
+
 /**
  * EEH_Class_Tools Helper
  *
@@ -50,7 +51,7 @@ class EEH_Class_Tools
                 }
             } else {
                 $lines = file($backtrace[2]['file']);
-                preg_match_all('/([a-zA-Z0-9\_]+)::' . $backtrace[2]['function'] . '/', $lines[ $backtrace[2]['line']-1 ], $matches);
+                preg_match_all('/([a-zA-Z0-9\_]+)::' . $backtrace[2]['function'] . '/', $lines[ $backtrace[2]['line'] - 1 ], $matches);
                 if (isset($matches[1]) && isset($matches[1][ self::$i ])) {
                     return $matches[1][ self::$i ];
                 }

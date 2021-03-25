@@ -20,7 +20,7 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base
      */
     public function __construct($pm_instance = null)
     {
-        require_once($this->file_folder().'EEG_Paypal_Pro.gateway.php');
+        require_once($this->file_folder() . 'EEG_Paypal_Pro.gateway.php');
         $this->_gateway = new EEG_Paypal_Pro();
         $this->_pretty_name = esc_html__("Paypal Pro", 'event_espresso');
         $this->_default_description = esc_html__('Please provide the following billing information.', 'event_espresso');
@@ -59,26 +59,26 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base
         $billing_form = new EE_Billing_Attendee_Info_Form(
             $this->_pm_instance,
             array(
-                'name'=> 'Paypal_Pro_Billing_Form',
+                'name' => 'Paypal_Pro_Billing_Form',
             //              'html_id'=> 'ee-Paypal_Pro-billing-form',
-                'subsections'=>array(
-                    'credit_card'=>new EE_Credit_Card_Input(
-                        array( 'required'=>true, 'html_class' => 'ee-billing-qstn', 'html_label_text' => esc_html__('Card Number', 'event_espresso'))
+                'subsections' => array(
+                    'credit_card' => new EE_Credit_Card_Input(
+                        array( 'required' => true, 'html_class' => 'ee-billing-qstn', 'html_label_text' => esc_html__('Card Number', 'event_espresso'))
                     ),
-                    'credit_card_type'=>new EE_Select_Input(
+                    'credit_card_type' => new EE_Select_Input(
                         // the options are set dynamically
                         array_intersect_key(EE_PMT_Paypal_Pro::card_types_supported(), array_flip($allowed_types)),
-                        array( 'required'=>true, 'html_class' => 'ee-billing-qstn', 'html_label_text' => esc_html__('Card Type', 'event_espresso'))
+                        array( 'required' => true, 'html_class' => 'ee-billing-qstn', 'html_label_text' => esc_html__('Card Type', 'event_espresso'))
                     ),
-                    'exp_month'=>new EE_Credit_Card_Month_Input(
+                    'exp_month' => new EE_Credit_Card_Month_Input(
                         true,
-                        array( 'required'=>true, 'html_class' => 'ee-billing-qstn', 'html_label_text' =>  esc_html__('Expiry Month', 'event_espresso')  )
+                        array( 'required' => true, 'html_class' => 'ee-billing-qstn', 'html_label_text' =>  esc_html__('Expiry Month', 'event_espresso')  )
                     ),
-                    'exp_year'=>new EE_Credit_Card_Year_Input(
-                        array( 'required'=>true, 'html_class' => 'ee-billing-qstn', 'html_label_text' => esc_html__('Expiry Year', 'event_espresso')  )
+                    'exp_year' => new EE_Credit_Card_Year_Input(
+                        array( 'required' => true, 'html_class' => 'ee-billing-qstn', 'html_label_text' => esc_html__('Expiry Year', 'event_espresso')  )
                     ),
-                    'cvv'=>new EE_CVV_Input(
-                        array( 'required'=>true, 'html_class' => 'ee-billing-qstn', 'html_label_text' => esc_html__('CVV', 'event_espresso') )
+                    'cvv' => new EE_CVV_Input(
+                        array( 'required' => true, 'html_class' => 'ee-billing-qstn', 'html_label_text' => esc_html__('CVV', 'event_espresso') )
                     ),
                 )
             )
@@ -103,7 +103,7 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base
                 'credit_card'
             );
             $billing_form->add_subsections(
-                array( 'debug_content' => new EE_Form_Section_HTML_From_Template(dirname(__FILE__).'/templates/paypal_pro_debug_info.template.php')),
+                array( 'debug_content' => new EE_Form_Section_HTML_From_Template(dirname(__FILE__) . '/templates/paypal_pro_debug_info.template.php')),
                 'first_name'
             );
             $billing_form->get_input('credit_card_type')->set_default('Visa');
@@ -123,10 +123,10 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base
     public static function card_types_supported()
     {
         return array(
-            'Visa'=>  esc_html__("Visa", 'event_espresso'),
-            'MasterCard'=>  esc_html__("MasterCard", 'event_espresso'),
-            'Amex'=>  esc_html__("American Express", 'event_espresso'),
-            'Discover'=>  esc_html__("Discover", 'event_espresso')
+            'Visa' =>  esc_html__("Visa", 'event_espresso'),
+            'MasterCard' =>  esc_html__("MasterCard", 'event_espresso'),
+            'Amex' =>  esc_html__("American Express", 'event_espresso'),
+            'Discover' =>  esc_html__("Discover", 'event_espresso')
             );
     }
 

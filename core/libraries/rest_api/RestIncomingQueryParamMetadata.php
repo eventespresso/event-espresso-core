@@ -208,7 +208,8 @@ class RestIncomingQueryParamMetadata
             $this->getContext()->getModel()
         ));
         // double-check is it a *_gmt field?
-        if (!$this->getField() instanceof EE_Model_Field_Base
+        if (
+            !$this->getField() instanceof EE_Model_Field_Base
             && ModelDataTranslator::isGmtDateFieldName($this->getQueryParamKeySansStars())
         ) {
             // yep, take off '_gmt', and find the field
@@ -236,8 +237,10 @@ class RestIncomingQueryParamMetadata
      */
     private function assertOnlyAdminCanReadPasswordFields()
     {
-        if ($this->getField() instanceof EE_Password_Field
-            && ! current_user_can(EE_Restriction_Generator_Base::get_default_restrictions_cap())) {
+        if (
+            $this->getField() instanceof EE_Password_Field
+            && ! current_user_can(EE_Restriction_Generator_Base::get_default_restrictions_cap())
+        ) {
             // only full admins can query by password. sorry bub!
             throw new RestException(
                 'only_admins_can_query_by_password',

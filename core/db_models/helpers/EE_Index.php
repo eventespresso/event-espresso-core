@@ -29,7 +29,7 @@ class EE_Index
      */
     protected function _get_model($model_name)
     {
-        $modelInstance=call_user_func("EEM_".$model_name."::instance");
+        $modelInstance = call_user_func("EEM_" . $model_name . "::instance");
         return $modelInstance;
     }
     /**

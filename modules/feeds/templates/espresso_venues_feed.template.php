@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This template will display venue details for your RSS feed
  *
@@ -9,6 +10,7 @@
  * @ link            http://www.eventespresso.com
  * @ version        4+
  */
+
 ?>
 <p><?php _e('Organizer Name: ', 'event_espresso') . espresso_organization_name($VNU_ID); ?><br/>
     <?php _e('Organizer Email: ', 'event_espresso') . espresso_organization_email($VNU_ID); ?><br/>

@@ -8,12 +8,10 @@
  * The primary method on this class is _generate_restrictions(), which returns
  * an array where keys are capability names (eg "ee_read_others_events")
  * and values are EE_Default_Where_Conditions objects.
- *
  * Please Note:
  *      EE_Default_Where_Conditions can be passed in an array of model query
  *      param WHERE conditions, and you can retrieve those using
  *      EE_Default_Where_Conditions::get_default_where_conditions().
- *
  * We use these classes instead of the array directly because
  * in some cases the classes themselves can be interpreted in a special way
  * for example:
@@ -22,18 +20,15 @@
  *      so NO results get returned, which some client code can use
  *      to decide to not bother running a query at all
  *      if that class is in the list of applicable restrictions
- *
  * sometimes we need to generate the WHERE conditions at the time of querying
  * for example:
  *      because the $current_user global isn't set when models are constructed,
  *      but is when they are queried
- *
- * and because this class simplifies adding default where conditions onto a query
- * from a related model object
- * for example:
- *      while querying events, you may include datetimes in the query,
- *      in which case we may someday decide to add the capabilities restrictions
- *      for the datetime onto the query too, not just those for events
+ * and because this class simplifies adding default where conditions onto a
+ * query from a related model object for example: while querying events, you
+ * may include datetimes in the query, in which case we may someday decide to
+ * add the capabilities restrictions for the datetime onto the query too, not
+ * just those for events
  *
  * @package     Event Espresso
  * @subpackage
@@ -54,7 +49,7 @@ abstract class EE_Restriction_Generator_Base
      *
      * @var EE_Default_Where_Conditions[]
      */
-    protected $_cap_restrictions_generated = false;
+    protected $_cap_restrictions_generated;
 
     /**
      * Model for which restrictions are generated
@@ -65,9 +60,9 @@ abstract class EE_Restriction_Generator_Base
 
 
     /**
-     * Puts the last necessary info onto the restriction generator class. This is usually
-     * called by EEM_Base during its constructor, so child classes don't have to
-     * always provide this info.
+     * Puts the last necessary info onto the restriction generator class. This
+     * is usually called by EEM_Base during its constructor, so child classes
+     * don't have to always provide this info.
      *
      * @param EEM_Base $model
      * @param string   $action
@@ -82,7 +77,7 @@ abstract class EE_Restriction_Generator_Base
     /**
      * Returns the model set for this restriction generator
      *
-     * @return EEM_Base | EEM_Soft_Delete_Base
+     * @return EEM_Base|EEM_Soft_Delete_Base
      * @throws EE_Error
      */
     public function model()
@@ -103,8 +98,8 @@ abstract class EE_Restriction_Generator_Base
 
 
     /**
-     * Returns the action this restriction generator will generate restrictions for.
-     * It should be one of EEM_Base::valid_cap_contexts()
+     * Returns the action this restriction generator will generate restrictions
+     * for. It should be one of EEM_Base::valid_cap_contexts()
      *
      * @return string
      * @throws EE_Error
@@ -127,7 +122,8 @@ abstract class EE_Restriction_Generator_Base
 
 
     /**
-     * Returns whether or not _construct_finalize() has been called on this restriction generator object
+     * Returns whether or not _construct_finalize() has been called on this
+     * restriction generator object
      *
      * @return boolean
      */
@@ -145,13 +141,12 @@ abstract class EE_Restriction_Generator_Base
      */
     public function generate_restrictions(): array
     {
-        if ($this->_cap_restrictions_generated === false) {
-            $this->_cap_restrictions_generated =
-                apply_filters(
-                    'FHEE__EE_Restriction_Generator_Base__generate_restrictions__first_time',
-                    $this->_generate_restrictions(),
-                    $this
-                );
+        if ($this->_cap_restrictions_generated === null) {
+            $this->_cap_restrictions_generated = apply_filters(
+                'FHEE__EE_Restriction_Generator_Base__generate_restrictions__first_time',
+                $this->_generate_restrictions(),
+                $this
+            );
         }
         return apply_filters(
             'FHEE__EE_Restriction_Generator_Base__generate_restrictions__every_time',
@@ -162,11 +157,13 @@ abstract class EE_Restriction_Generator_Base
 
 
     /**
-     * Provided with the model, and using global knowledge about what capabilities exist,
-     * generates an array for use in one of the sub-arrays in EEM_Base::_cap_restrictions,
-     * where keys are capability names, and values are children of EE_Default_Where_Conditions
+     * Provided with the model, and using global knowledge about what
+     * capabilities exist, generates an array for use in one of the sub-arrays
+     * in EEM_Base::_cap_restrictions, where keys are capability names, and
+     * values are children of EE_Default_Where_Conditions
      *
-     * @return array @see EEM_Base::_cap_restrictions
+     * @return EE_Default_Where_Conditions[]|EE_Return_None_Where_Conditions[]
+     * @see EEM_Base::_cap_restrictions
      */
     abstract protected function _generate_restrictions(): array;
 
@@ -179,15 +176,14 @@ abstract class EE_Restriction_Generator_Base
      */
     public function has_generated_cap_restrictions(): bool
     {
-        return $this->_cap_restrictions_generated === false;
+        return $this->_cap_restrictions_generated !== null;
     }
 
 
     /**
      * Given an action like 'edit' generates the cap name based off
-     * the EEM_Base::_cap_slug, which for events would be 'events', to generate the
-     * cap name like 'ee_edit_events'.
-     * If a $qualifier is passed,
+     * the EEM_Base::_cap_slug, which for events would be 'events', to generate
+     * the cap name like 'ee_edit_events'. If a $qualifier is passed,
      *
      * @param EEM_Base $model
      * @param string   $action
@@ -196,9 +192,10 @@ abstract class EE_Restriction_Generator_Base
     public static function get_cap_name(EEM_Base $model, string $action): string
     {
         $prefix = $model->is_wp_core_model() ? '' : 'ee_';
+        $cap_slug = $model->cap_slug();
         return apply_filters(
             'FHEE__EE_Restriction_Generator__get_cap_name',
-            "{$prefix}{$action}_{$model->cap_slug()}",
+            "{$prefix}{$action}_{$cap_slug}",
             $model,
             $action
         );
@@ -236,12 +233,13 @@ abstract class EE_Restriction_Generator_Base
 
 
     /**
-     * Gets WHERE conditions for the query that show the post model is published,
-     * or that it's sold out and it was previously published
+     * Gets WHERE conditions for the query that show the post model is
+     * published, or that it's sold out and it was previously published
      *
      * @param array   $where_conditions
-     * @param boolean $check_if_published  if true, will add conditions like status=publish
-     *                                     if false, will add conditions like status!=private
+     * @param boolean $check_if_published  if true, will add conditions like
+     *                                     status=publish if false, will add
+     *                                     conditions like status!=private
      * @param string  $path_to_event_model including the period at the end
      * @return array
      * @throws EE_Error
@@ -265,12 +263,15 @@ abstract class EE_Restriction_Generator_Base
             $where_conditions['OR*status'] = [
                 $path_to_event_model . 'status' => $published_value,
                 'AND'                           => [
-                    $path_to_event_model . 'Post_Meta.meta_key'   => '_previous_event_status',
-                    $path_to_event_model . 'Post_Meta.meta_value' => $published_value,
+                    $path_to_event_model .
+                    'Post_Meta.meta_key'                          => '_previous_event_status',
+                    $path_to_event_model .
+                    'Post_Meta.meta_value'                        => $published_value,
                 ],
             ];
         } else {
-            $where_conditions[ $path_to_event_model . 'status' ] = $published_value;
+            $where_conditions[ $path_to_event_model . 'status' ] =
+                $published_value;
         }
         return $where_conditions;
     }

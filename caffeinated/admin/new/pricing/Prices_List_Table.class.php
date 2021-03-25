@@ -126,11 +126,13 @@ class Prices_List_Table extends EE_Admin_List_Table
         // Build row actions
         $actions = array();
         // edit price link
-        if (EE_Registry::instance()->CAP->current_user_can(
-            'ee_edit_default_price',
-            'pricing_edit_price',
-            $item->ID()
-        )) {
+        if (
+            EE_Registry::instance()->CAP->current_user_can(
+                'ee_edit_default_price',
+                'pricing_edit_price',
+                $item->ID()
+            )
+        ) {
             $edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce(array(
                 'action' => 'edit_price',
                 'id'     => $item->ID(),
@@ -153,11 +155,13 @@ class Prices_List_Table extends EE_Admin_List_Table
         if ($item->type_obj()->base_type() !== 1) {
             if ($this->_view == 'all') {
                 // trash price link
-                if (EE_Registry::instance()->CAP->current_user_can(
-                    'ee_delete_default_price',
-                    'pricing_trash_price',
-                    $item->ID()
-                )) {
+                if (
+                    EE_Registry::instance()->CAP->current_user_can(
+                        'ee_delete_default_price',
+                        'pricing_trash_price',
+                        $item->ID()
+                    )
+                ) {
                     $trash_lnk_url = EE_Admin_Page::add_query_args_and_nonce(array(
                         'action'   => 'trash_price',
                         'id'       => $item->ID(),
@@ -168,11 +172,13 @@ class Prices_List_Table extends EE_Admin_List_Table
                                         . __('Move to Trash', 'event_espresso') . '</a>';
                 }
             } else {
-                if (EE_Registry::instance()->CAP->current_user_can(
-                    'ee_delete_default_price',
-                    'pricing_restore_price',
-                    $item->ID()
-                )) {
+                if (
+                    EE_Registry::instance()->CAP->current_user_can(
+                        'ee_delete_default_price',
+                        'pricing_restore_price',
+                        $item->ID()
+                    )
+                ) {
                     // restore price link
                     $restore_lnk_url = EE_Admin_Page::add_query_args_and_nonce(array(
                         'action'   => 'restore_price',
@@ -185,11 +191,13 @@ class Prices_List_Table extends EE_Admin_List_Table
                 }
 
                 // delete price link
-                if (EE_Registry::instance()->CAP->current_user_can(
-                    'ee_delete_default_price',
-                    'pricing_delete_price',
-                    $item->ID()
-                )) {
+                if (
+                    EE_Registry::instance()->CAP->current_user_can(
+                        'ee_delete_default_price',
+                        'pricing_delete_price',
+                        $item->ID()
+                    )
+                ) {
                     $delete_lnk_url = EE_Admin_Page::add_query_args_and_nonce(array(
                         'action'   => 'delete_price',
                         'id'       => $item->ID(),

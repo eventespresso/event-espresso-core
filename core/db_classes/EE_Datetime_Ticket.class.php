@@ -1,4 +1,5 @@
 <?php
+
 /**
  * EE_Datetime_Ticket class
  *

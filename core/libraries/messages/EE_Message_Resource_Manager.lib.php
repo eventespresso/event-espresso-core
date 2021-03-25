@@ -776,7 +776,8 @@ class EE_Message_Resource_Manager
             foreach ($message_type_names as $message_type_name) {
                 // only register the message type as active IF it isn't already active
                 // and if its actually installed.
-                if (! $this->is_message_type_active_for_messenger($messenger->name, $message_type_name)
+                if (
+                    ! $this->is_message_type_active_for_messenger($messenger->name, $message_type_name)
                 ) {
                     $this->add_settings_for_message_type($messenger->name, $message_type_name);
                     $this->_set_messenger_has_activated_message_type(
@@ -963,7 +964,8 @@ class EE_Message_Resource_Manager
     {
         // get the $messengers the message type says it can be used with.
         foreach ($message_type->with_messengers() as $generating_messenger => $secondary_messengers) {
-            if ($messenger->name === $generating_messenger
+            if (
+                $messenger->name === $generating_messenger
                 && $this->is_message_type_active_for_messenger($messenger->name, $message_type->name)
             ) {
                 return true;
@@ -1083,7 +1085,8 @@ class EE_Message_Resource_Manager
         $messenger_name,
         $consider_current_state = false
     ) {
-        if ($consider_current_state
+        if (
+            $consider_current_state
             && ! $this->is_message_type_active_for_messenger($messenger_name, $message_type_name)
         ) {
             // when consider current state is true, this means we don't want to change anything on the "has_activated"

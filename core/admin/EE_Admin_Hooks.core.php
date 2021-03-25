@@ -204,10 +204,12 @@ abstract class EE_Admin_Hooks extends EE_Base
         $this->_set_defaults();
         $this->_set_hooks_properties();
         // first let's verify we're on the right page
-        if (! isset($this->_req_data['page'])
+        if (
+            ! isset($this->_req_data['page'])
             || (isset($this->_req_data['page'])
                 && $this->_adminpage_obj->page_slug
-                   != $this->_req_data['page'])) {
+                   != $this->_req_data['page'])
+        ) {
             return;
         } //get out nothing more to be done here.
         // allow for extends to modify properties

@@ -1,5 +1,7 @@
 <?php
+
 use EventEspresso\core\domain\Domain;
+
 ?>
 <p><strong><?php esc_html_e('Add New Question', 'event_espresso'); ?></strong></p>
 <p>

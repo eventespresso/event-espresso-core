@@ -53,7 +53,8 @@ class EE_Register_Module implements EEI_Plugin_API
         }
 
         // make sure this was called in the right place!
-        if (! did_action('AHEE__EE_System__load_espresso_addons')
+        if (
+            ! did_action('AHEE__EE_System__load_espresso_addons')
             || did_action('AHEE__EE_System__register_shortcodes_modules_and_widgets')
         ) {
             EE_Error::doing_it_wrong(

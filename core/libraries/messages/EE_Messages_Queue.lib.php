@@ -1,4 +1,5 @@
 <?php
+
 use EventEspresso\core\exceptions\SendMessageException;
 
 /**
@@ -207,8 +208,10 @@ class EE_Messages_Queue
     public function get_to_send_batch_and_send()
     {
         $rate_limit = $this->get_rate_limit();
-        if ($rate_limit < 1
-            || $this->is_locked(EE_Messages_Queue::action_sending)) {
+        if (
+            $rate_limit < 1
+            || $this->is_locked(EE_Messages_Queue::action_sending)
+        ) {
             return false;
         }
 
@@ -375,7 +378,8 @@ class EE_Messages_Queue
          * @see usage of this filter in EE_Messages_Queue::initiate_request_by_priority() method.
          *            Also implemented here because messages processed on the same request should not have any locks applied.
          */
-        if (apply_filters('FHEE__EE_Messages_Processor__initiate_request_by_priority__do_immediate_processing', false)
+        if (
+            apply_filters('FHEE__EE_Messages_Processor__initiate_request_by_priority__do_immediate_processing', false)
             || EE_Registry::instance()->NET_CFG->core->do_messages_on_same_request
         ) {
             $is_locked = false;
@@ -457,7 +461,8 @@ class EE_Messages_Queue
          * - any race condition protection (locks) are removed because they don't apply when things are processed on
          *   the same request.
          */
-        if (apply_filters('FHEE__EE_Messages_Processor__initiate_request_by_priority__do_immediate_processing', false)
+        if (
+            apply_filters('FHEE__EE_Messages_Processor__initiate_request_by_priority__do_immediate_processing', false)
             || EE_Registry::instance()->NET_CFG->core->do_messages_on_same_request
         ) {
             $messages_processor = EE_Registry::instance()->load_lib('Messages_Processor');
@@ -572,7 +577,8 @@ class EE_Messages_Queue
         $messenger    = $message->messenger_object();
         $message_type = $message->message_type_object();
         // do actions for sending messenger if it differs from generating messenger and swap values.
-        if ($sending_messenger instanceof EE_messenger
+        if (
+            $sending_messenger instanceof EE_messenger
             && $messenger instanceof EE_messenger
             && $sending_messenger->name != $messenger->name
         ) {

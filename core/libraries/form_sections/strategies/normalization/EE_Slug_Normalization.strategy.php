@@ -1,4 +1,5 @@
 <?php
+
 /**
  * EE_Slug_Normalization
  * Simply converts the string into a slug. DOes not add any errors if its bad.

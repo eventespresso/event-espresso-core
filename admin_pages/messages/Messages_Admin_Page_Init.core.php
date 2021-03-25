@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Messages_Admin_Page_Init
  *

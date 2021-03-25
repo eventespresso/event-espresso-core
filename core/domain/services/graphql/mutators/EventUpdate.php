@@ -47,8 +47,10 @@ class EventUpdate extends EntityMutator
         ) {
             try {
                 // Make sure we are dealing with the right entity.
-                if (! property_exists($post_type_object, 'graphql_single_name')
-                    || $post_type_object->graphql_single_name !== $type->name()) {
+                if (
+                    ! property_exists($post_type_object, 'graphql_single_name')
+                    || $post_type_object->graphql_single_name !== $type->name()
+                ) {
                     return;
                 }
 

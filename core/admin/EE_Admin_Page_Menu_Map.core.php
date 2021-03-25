@@ -163,7 +163,8 @@ abstract class EE_Admin_Page_Menu_Map
                     $value = (int) $value;
                     break;
                 case 'admin_init_page':
-                    if (! $value instanceof EE_Admin_Page_Init
+                    if (
+                        ! $value instanceof EE_Admin_Page_Init
                         && in_array('admin_init_page', $required, true)
                     ) {
                         throw new EE_Error(
@@ -204,7 +205,8 @@ abstract class EE_Admin_Page_Menu_Map
         $this->capability = apply_filters('FHEE_' . $this->menu_slug . '_capability', $this->capability, null);
 
         // Might need to change parent slug depending on maintenance mode.
-        if (! empty($this->maintenance_mode_parent)
+        if (
+            ! empty($this->maintenance_mode_parent)
             && EE_Maintenance_Mode::instance()->level() === EE_Maintenance_Mode::level_2_complete_maintenance
         ) {
             $this->parent_slug = $this->maintenance_mode_parent;
@@ -240,7 +242,8 @@ abstract class EE_Admin_Page_Menu_Map
     {
 
         $show_on_menu_int = (int) $this->show_on_menu;
-        if (($network_admin
+        if (
+            ($network_admin
              && in_array(
                  $show_on_menu_int,
                  array(self::BLOG_AND_NETWORK_ADMIN, self::NETWORK_ADMIN_ONLY),
@@ -252,7 +255,8 @@ abstract class EE_Admin_Page_Menu_Map
                  $show_on_menu_int,
                  array(self::BLOG_AND_NETWORK_ADMIN, self::BLOG_ADMIN_ONLY),
                  true
-             ))) {
+             ))
+        ) {
             $wp_page_slug = $this->_add_menu_page();
         } else {
             $wp_page_slug = '';
@@ -348,7 +352,7 @@ class EE_Admin_Page_Main_Menu extends EE_Admin_Page_Menu_Map
         }
         return $main;
     }
-} //end EE_Admin_Page_Main_Menu
+}
 
 
 /**

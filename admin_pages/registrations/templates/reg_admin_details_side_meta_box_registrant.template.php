@@ -35,12 +35,14 @@
 
 <div class="contact-details-buttons">
     <?php
-    if ($att_check instanceof EE_Attendee
+    if (
+        $att_check instanceof EE_Attendee
         && EE_Registry::instance()->CAP->current_user_can(
             'ee_edit_contact',
             'view_or_edit_contact_button',
             $att_check->ID()
-        )) :
+        )
+    ) :
         ?>
     <a class="button button-small" href="<?php echo $att_edit_link; ?>"
        title="<?php echo esc_attr($att_edit_label); ?>">

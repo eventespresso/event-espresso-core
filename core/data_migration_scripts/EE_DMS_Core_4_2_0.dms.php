@@ -1,13 +1,8 @@
 <?php
+
 use EventEspresso\core\services\database\TableAnalysis;
 use EventEspresso\core\services\database\TableManager;
 
-/**
- * meant to convert DBs between 4.1.x to 4.2.0
- * mostly just
- * -adds QGQ_order to the question-group_question table;
- * -adds DTT_name and DTT_description to the datetime table;
- */
 // make sure we have all the stages loaded too
 // unfortunately, this needs to be done upon INCLUSION of this file,
 // instead of construction, because it only gets constructed on first page load
@@ -26,7 +21,15 @@ $class_to_filepath = apply_filters('FHEE__EE_DMS_4_2_0__autoloaded_stages', $cla
 EEH_Autoloader::register_autoloader($class_to_filepath);
 
 
-
+/**
+ * Class EE_DMS_Core_4_2_0
+ * meant to convert DBs between 4.1.x to 4.2.0
+ * mostly just
+ * -adds QGQ_order to the question-group_question table;
+ * -adds DTT_name and DTT_description to the datetime table;
+ *
+ * @author  Mike Nelson
+ */
 class EE_DMS_Core_4_2_0 extends EE_Data_Migration_Script_Base
 {
 

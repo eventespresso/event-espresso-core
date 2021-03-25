@@ -207,7 +207,8 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
     {
         global $pagenow, $hook_suffix;
         // possibly reset pagenow.
-        if (! empty($this->_req_data['page'])
+        if (
+            ! empty($this->_req_data['page'])
             && $this->_req_data['page'] === $this->page_slug
             && ! empty($this->_req_data['action'])
             && isset($this->_pagenow_map[ $this->_req_data['action'] ])
@@ -248,7 +249,8 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         foreach ($current_metaboxes as $box_context) {
             foreach ($box_context as $box_details) {
                 foreach ($box_details as $box) {
-                    if (is_array($box) && is_array($box['callback'])
+                    if (
+                        is_array($box) && is_array($box['callback'])
                         && (
                             $box['callback'][0] instanceof EE_Admin_Page
                             || $box['callback'][0] instanceof EE_Admin_Hooks
@@ -694,7 +696,8 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
     protected function _set_model_object($id = null, $ignore_route_check = false, $req_type = '')
     {
         $model = null;
-        if (empty($this->_cpt_model_names)
+        if (
+            empty($this->_cpt_model_names)
             || (
                 ! $ignore_route_check
                 && ! isset($this->_cpt_routes[ $this->_req_action ])
@@ -946,7 +949,8 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
     public function insert_update($post_id, $post, $update)
     {
         // make sure that if this is a revision OR trash action that we don't do any updates!
-        if (isset($this->_req_data['action'])
+        if (
+            isset($this->_req_data['action'])
             && (
                 $this->_req_data['action'] === 'restore'
                 || $this->_req_data['action'] === 'trash'
@@ -956,7 +960,8 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         }
         $this->_set_model_object($post_id, true, 'insert_update');
         // if our cpt object is not instantiated and its NOT the same post_id as what is triggering this callback, then exit.
-        if ($update
+        if (
+            $update
             && (
                 ! $this->_cpt_model_obj instanceof EE_CPT_Base
                 || $this->_cpt_model_obj->ID() !== $post_id
@@ -1194,7 +1199,8 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
     public function modify_edit_post_link($link, $id, $context)
     {
         $post = get_post($id);
-        if (! isset($this->_req_data['action'])
+        if (
+            ! isset($this->_req_data['action'])
             || ! isset($this->_cpt_routes[ $this->_req_data['action'] ])
             || $post->post_type !== $this->_cpt_routes[ $this->_req_data['action'] ]
         ) {
@@ -1225,7 +1231,8 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
     {
         $post = get_post($post_id);
 
-        if (empty($this->_req_data['action'])
+        if (
+            empty($this->_req_data['action'])
             || ! isset($this->_cpt_routes[ $this->_req_data['action'] ])
             || ! $post instanceof WP_Post
             || $post->post_type !== $this->_cpt_routes[ $this->_req_data['action'] ]
@@ -1423,7 +1430,8 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
             // otherwise EE doesn't support autosave fully, so to prevent user confusion we disable it in edit context.
             if ($creating) {
                 wp_enqueue_script('autosave');
-            } elseif (isset($this->_cpt_routes[ $this->_req_data['action'] ])
+            } elseif (
+                isset($this->_cpt_routes[ $this->_req_data['action'] ])
                 && ! isset($this->_labels['hide_add_button_on_cpt_route'][ $this->_req_data['action'] ])
             ) {
                 $create_new_action = apply_filters(

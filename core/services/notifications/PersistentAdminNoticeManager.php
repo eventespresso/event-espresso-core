@@ -128,12 +128,14 @@ class PersistentAdminNoticeManager
         if (! empty($persistent_admin_notices)) {
             foreach ($persistent_admin_notices as $name => $details) {
                 if (is_array($details)) {
-                    if (! isset(
-                        $details['message'],
-                        $details['capability'],
-                        $details['cap_context'],
-                        $details['dismissed']
-                    )) {
+                    if (
+                        ! isset(
+                            $details['message'],
+                            $details['capability'],
+                            $details['cap_context'],
+                            $details['dismissed']
+                        )
+                    ) {
                         throw new DomainException(
                             sprintf(
                                 esc_html__(

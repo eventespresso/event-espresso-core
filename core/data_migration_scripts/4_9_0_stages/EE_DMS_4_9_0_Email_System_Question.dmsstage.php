@@ -23,7 +23,7 @@ class EE_DMS_4_9_0_Email_System_Question extends EE_Data_Migration_Script_Stage_
     {
         global $wpdb;
         $this->_pretty_name = __('Email - System Question', 'event_espresso');
-        $this->_old_table = $wpdb->prefix.'esp_question';
+        $this->_old_table = $wpdb->prefix . 'esp_question';
         $this->_extra_where_sql = "WHERE QST_system = 'email'";
         parent::__construct();
     }

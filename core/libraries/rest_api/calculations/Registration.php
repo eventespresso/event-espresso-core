@@ -57,7 +57,8 @@ class Registration extends RegistrationCalculationBase
         } else {
             $reg = null;
         }
-        if (! $reg instanceof EE_Registration
+        if (
+            ! $reg instanceof EE_Registration
         ) {
             throw new EE_Error(
                 sprintf(

@@ -250,7 +250,8 @@ abstract class EE_Base_Class
      */
     public function get_original($field_name)
     {
-        if (isset($this->_props_n_values_provided_in_constructor[ $field_name ])
+        if (
+            isset($this->_props_n_values_provided_in_constructor[ $field_name ])
             && $field_settings = $this->get_model()->field_settings_for($field_name)
         ) {
             return $field_settings->prepare_for_get($this->_props_n_values_provided_in_constructor[ $field_name ]);
@@ -288,7 +289,8 @@ abstract class EE_Base_Class
     {
         // if not using default and nothing has changed, and object has already been setup (has ID),
         // then don't do anything
-        if (! $use_default
+        if (
+            ! $use_default
             && $this->_fields[ $field_name ] === $field_value
             && $this->ID()
         ) {
@@ -316,7 +318,8 @@ abstract class EE_Base_Class
                  *
                  * @since 4.6.10+
                  */
-                if ($field_obj instanceof EE_Datetime_Field
+                if (
+                    $field_obj instanceof EE_Datetime_Field
                     && $this->_fields[ $field_name ] !== null
                     && ! $this->_fields[ $field_name ] instanceof DateTime
                 ) {
@@ -329,7 +332,8 @@ abstract class EE_Base_Class
             }
             // if we're not in the constructor...
             // now check if what we set was a primary key
-            if (// note: props_n_values_provided_in_constructor is only set at the END of the constructor
+            if (
+// note: props_n_values_provided_in_constructor is only set at the END of the constructor
                 $this->_props_n_values_provided_in_constructor
                 && $field_value
                 && $field_name === $model->primary_key_name()
@@ -341,7 +345,8 @@ abstract class EE_Base_Class
                 $fields_on_model = self::_get_model(get_class($this))->field_settings();
                 $obj_in_db = self::_get_model(get_class($this))->get_one_by_ID($field_value);
                 foreach ($fields_on_model as $field_obj) {
-                    if (! array_key_exists($field_obj->get_name(), $this->_props_n_values_provided_in_constructor)
+                    if (
+                        ! array_key_exists($field_obj->get_name(), $this->_props_n_values_provided_in_constructor)
                         && $field_obj->get_name() !== $field_name
                     ) {
                         $this->set($field_obj->get_name(), $obj_in_db->get($field_obj->get_name()));
@@ -825,18 +830,21 @@ abstract class EE_Base_Class
             $obj_removed = $this->_model_relations[ $relationName ];
             $this->_model_relations[ $relationName ] = null;
         } else {
-            if ($object_to_remove_or_index_into_array instanceof EE_Base_Class
+            if (
+                $object_to_remove_or_index_into_array instanceof EE_Base_Class
                 && $object_to_remove_or_index_into_array->ID()
             ) {
                 $index_in_cache = $object_to_remove_or_index_into_array->ID();
-                if (is_array($this->_model_relations[ $relationName ])
+                if (
+                    is_array($this->_model_relations[ $relationName ])
                     && ! isset($this->_model_relations[ $relationName ][ $index_in_cache ])
                 ) {
                     $index_found_at = null;
                     // find this object in the array even though it has a different key
                     foreach ($this->_model_relations[ $relationName ] as $index => $obj) {
                         /** @noinspection TypeUnsafeComparisonInspection */
-                        if ($obj instanceof EE_Base_Class
+                        if (
+                            $obj instanceof EE_Base_Class
                             && (
                                 $obj == $object_to_remove_or_index_into_array
                                 || $obj->ID() === $object_to_remove_or_index_into_array->ID()
@@ -912,7 +920,8 @@ abstract class EE_Base_Class
                 return true;
                 // or if it's some kind of sordid feral polyamorous relationship...
             }
-            if (is_array($this->_model_relations[ $relationName ])
+            if (
+                is_array($this->_model_relations[ $relationName ])
                 && isset($this->_model_relations[ $relationName ][ $current_cache_id ])
             ) {
                 // then remove the current cached item
@@ -2048,7 +2057,8 @@ abstract class EE_Base_Class
     {
         // TODO: will not work for Term_Relationships because they have no PK!
         $primary_id_ref = self::_get_primary_key_name($classname);
-        if (array_key_exists($primary_id_ref, $props_n_values)
+        if (
+            array_key_exists($primary_id_ref, $props_n_values)
             && ! empty($props_n_values[ $primary_id_ref ])
         ) {
             $id = $props_n_values[ $primary_id_ref ];
@@ -2084,7 +2094,8 @@ abstract class EE_Base_Class
         $model = self::_get_model($classname, $timezone);
         if ($model->has_primary_key_field()) {
             $primary_id_ref = self::_get_primary_key_name($classname);
-            if (array_key_exists($primary_id_ref, $props_n_values)
+            if (
+                array_key_exists($primary_id_ref, $props_n_values)
                 && ! empty($props_n_values[ $primary_id_ref ])
             ) {
                 $existing = $model->get_one_by_ID(
@@ -2546,7 +2557,8 @@ abstract class EE_Base_Class
             // if they've provided some query parameters, don't bother trying to cache the result
             // also make sure we're not caching the result of get_first_related
             // on a relation which should have an array of objects (because the cache might have an array of objects)
-            if ($query_params
+            if (
+                $query_params
                 || ! $model->related_settings_for($relationName)
                      instanceof
                      EE_Belongs_To_Relation
@@ -3314,7 +3326,8 @@ abstract class EE_Base_Class
         foreach ($model->relation_settings() as $relation_name => $relation_obj) {
             if ($relation_obj instanceof EE_Belongs_To_Relation) {
                 $classname = 'EE_' . $model->get_this_model_name();
-                if ($this->get_one_from_cache($relation_name) instanceof $classname
+                if (
+                    $this->get_one_from_cache($relation_name) instanceof $classname
                     && $this->get_one_from_cache($relation_name)->ID()
                 ) {
                     $this->clear_cache(

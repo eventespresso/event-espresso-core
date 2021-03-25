@@ -1,4 +1,5 @@
 <?php
+
 class EE_Text_Area_Display_Strategy extends EE_Display_Strategy_Base
 {
 
@@ -29,7 +30,8 @@ class EE_Text_Area_Display_Strategy extends EE_Display_Strategy_Base
         $html .= esc_textarea($raw_value);
         $html .= '</textarea>';
         foreach ($this->_input->get_validation_strategies() as $validation_strategy) {
-            if ($validation_strategy instanceof EE_Simple_HTML_Validation_Strategy
+            if (
+                $validation_strategy instanceof EE_Simple_HTML_Validation_Strategy
                 || $validation_strategy instanceof EE_Full_HTML_Validation_Strategy
             ) {
                 $html .= sprintf(

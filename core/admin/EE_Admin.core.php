@@ -284,7 +284,8 @@ final class EE_Admin implements InterminableInterface
         // @todo This needs to stay in core for a bit to catch anyone upgrading from a version without this to a version
         // with this.  But after enough time (indeterminate at this point) we can just remove this notice.
         // this was added with https://events.codebasehq.com/projects/event-espresso/tickets/10626
-        if (apply_filters('FHEE__EE_Admin__maybeSetDatetimeWarningNotice', true)
+        if (
+            apply_filters('FHEE__EE_Admin__maybeSetDatetimeWarningNotice', true)
             && ! get_option('timezone_string')
             && EEM_Event::instance()->count() > 0
         ) {

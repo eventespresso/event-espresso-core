@@ -1,4 +1,5 @@
 <?php
+
 /**
  * EE_Model_Matching_Query_Validation_Strategy
  *

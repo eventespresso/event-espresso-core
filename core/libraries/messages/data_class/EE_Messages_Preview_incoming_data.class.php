@@ -19,13 +19,13 @@
  */
 class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data
 {
-    
+
     // some specific properties we need for this class
     private $_events = array();
     private $_attendees = array();
     private $_registrations = array();
-    
-    
+
+
     /**
      * For the constructor of this special preview class.  We're either looking for an event id or empty data.  If we
      * have an event id (or ids) then we'll use that as the source for the "dummy" data.  If the data is empty then
@@ -39,8 +39,8 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data
         $this->_setup_attendees_events();
         parent::__construct($data);
     }
-    
-    
+
+
     /**
      * Returns database safe representation of the data later used to when instantiating this object.
      *
@@ -52,8 +52,8 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data
     {
         return $data;
     }
-    
-    
+
+
     /**
      * Data that has been stored in persistent storage that was prepped by _convert_data_for_persistent_storage
      * can be sent into this method and converted back into the format used for instantiating with this data handler.
@@ -66,8 +66,8 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data
     {
         return $data;
     }
-    
-    
+
+
     /**
      * This will just setup the _events property in the expected format.
      *
@@ -75,26 +75,26 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data
      */
     private function _setup_attendees_events()
     {
-        
+
         // setup some attendee objects
         $attendees = $this->_get_some_attendees();
-        
+
         // if empty $data we'll do a query to get some events from the server. otherwise we'll retrieve the event data for the given ids.
         $events = $this->_get_some_events($this->_data);
-        
+
         $answers_n_questions = $this->_get_some_q_and_as();
-        
+
         if (count($events) < 1) {
             throw new EE_Error(__(
                 'We can\'t generate a preview for you because there are no active events in your database',
                 'event_espresso'
             ));
         }
-        
-        
+
+
         // now let's loop and set up the _events property.  At the same time we'll set up attendee properties.
-        
-        
+
+
         // we'll actually use the generated line_item identifiers for our loop
         $dtts = $tkts = array();
         foreach ($events as $id => $event) {
@@ -112,7 +112,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data
             $this->_events[ $id ]['reg_objs'] = array();
             $this->_events[ $id ]['tkt_objs'] = $tickets;
             $this->_events[ $id ]['dtt_objs'] = array();
-            
+
             $dttcache = array();
             $tkts     = array();
             foreach ($tickets as $ticket) {
@@ -136,10 +136,10 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data
                     }
                 }
             }
-            
+
             $this->_events[ $id ]['total_attendees'] = count($attendees);
             $this->_events[ $id ]['att_objs']        = $attendees;
-            
+
             // let's also setup the dummy attendees property!
             foreach ($attendees as $att_key => $attendee) {
                 if (! $attendee instanceof EE_Attendee) {
@@ -166,15 +166,15 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data
                 }
             }
         }
-        
+
         $this->tickets            = $tkts;
         $this->datetimes          = $dtts;
         $this->answers            = $answers_n_questions['answers'];
         $this->questions          = $answers_n_questions['questions'];
         $this->total_ticket_count = count($tkts) * count($this->_attendees);
     }
-    
-    
+
+
     /**
      * This just returns an array of dummy attendee objects that we'll use to attach to events for our preview data
      *
@@ -228,7 +228,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data
                 '999999993'
             ),
         );
-        
+
         // let's generate the attendee objects
         $attendees = array();
         $var_array = array(
@@ -245,7 +245,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data
             'deleted',
             'attid'
         );
-        
+
         // EE_Registry::instance()->load_class( 'Attendee', array(), FALSE, false, TRUE );
         foreach ($dummy_attendees as $dummy) {
             $att = array_combine($var_array, $dummy);
@@ -277,11 +277,11 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data
                 )
             );
         }
-        
+
         return $attendees;
     }
-    
-    
+
+
     /**
      * Return an array of dummy question objects indexed by answer id and dummy answer objects indexed by answer id.
      * This will be used in our dummy data setup
@@ -289,8 +289,8 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data
      */
     private function _get_some_q_and_as()
     {
-        
-        
+
+
         $quests_array = array(
             0 => array(
                 555,
@@ -308,8 +308,8 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data
                 0
             )
         );
-        
-        
+
+
         $ans_array = array(
             0 => array(
                 999,
@@ -357,20 +357,20 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data
                 "People less travel me then."
             )
         );
-        
+
         $qst_columns = array('QST_ID', 'QST_display_text', 'QST_system');
         $ans_columns = array('ANS_ID', 'QST_ID', 'ANS_value');
-        
+
         // EE_Registry::instance()->load_class( 'Question', array(), FALSE, TRUE, TRUE );
         // EE_Registry::instance()->load_class( 'Answer', array(), FALSE, TRUE, TRUE );
-        
+
         $qsts = array();
         // first the questions
         foreach ($quests_array as $qst) {
             $qstobj                  = array_combine($qst_columns, $qst);
             $qsts[ $qstobj['QST_ID'] ] = EE_Question::new_instance($qstobj);
         }
-        
+
         // now the answers (and we'll setup our arrays)
         $q_n_as = array();
         foreach ($ans_array as $ans) {
@@ -379,11 +379,11 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data
             $q_n_as['answers'][ $ansobj->ID() ]   = $ansobj;
             $q_n_as['questions'][ $ansobj->ID() ] = $qsts[ $ansobj->get('QST_ID') ];
         }
-        
+
         return $q_n_as;
     }
-    
-    
+
+
     /**
      * Return an array of event objects from the database
      *
@@ -395,32 +395,32 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data
      */
     private function _get_some_events($event_ids = array())
     {
-        
+
         // HEY, if we have an evt_id then we want to make sure we use that for the preview (because a specific event template is being viewed);
         $event_ids = isset($_REQUEST['evt_id']) && ! empty($_REQUEST['evt_id'])
             ? array($_REQUEST['evt_id'])
             : $event_ids;
-        
+
         $limit = ! empty($event_ids)
             ? null
             : apply_filters('FHEE__EE_Messages_Preview_incoming_data___get_some_events__limit', '0,1');
-        
+
         $where = ! empty($event_ids)
             ? array(
                 'EVT_ID'                 => array('IN', $event_ids),
                 'Datetime.Ticket.TKT_ID' => array('>', 1)
             )
             : array('Datetime.Ticket.TKT_ID' => array('>', 1));
-        
+
         $events = EE_Registry::instance()->load_model('Event')->get_all(array($where, 'limit' => $limit));
-        
+
         return $events;
     }
-    
-    
+
+
     protected function _setup_data()
     {
-        
+
         // need to figure out the running total for test purposes so... we're going to create a temp cart and add the tickets to it!
         if (EE_Registry::instance()->SSN instanceof EE_Session) {
             EE_Registry::instance()->SSN->clear_session(__CLASS__, __FUNCTION__);
@@ -429,14 +429,14 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data
             $session = EE_Registry::instance()->load_core('Session');
         }
         $cart = EE_Cart::instance(null, $session);
-        
-        
+
+
         // add tickets to cart
         foreach ($this->tickets as $ticket) {
             $cart->add_ticket_to_cart($ticket['ticket']);
         }
-        
-        
+
+
         // setup txn property
         $this->txn = EE_Transaction::new_instance(
             array(
@@ -449,8 +449,8 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data
                 'TXN_ID'           => 999999
             )
         );
-        
-        
+
+
         // setup reg_objects
         // note we're setting up a reg object for each attendee in each event but ALSO adding to the reg_object array.
         $this->reg_objs = array();
@@ -486,24 +486,24 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data
                     $this->_events[ $evtid ]['reg_objs'][]              = $REG_OBJ;
                     $this->reg_objs[]                                 = $REG_OBJ;
                     $this->tickets[ $ticket->ID() ]['reg_objs'][ $regid ] = $REG_OBJ;
-                    
+
                     $regcnt++;
                     $regid++;
                 }
             }
         }
-        
-        
+
+
         // setup line items!
         $line_item_total = EEH_Line_Item::create_total_line_item($this->txn);
-        
+
         // add tickets
         foreach ($this->tickets as $tktid => $item) {
             $qty    = $item['count'];
             $ticket = $item['ticket'];
             EEH_Line_Item::add_ticket_purchase($line_item_total, $ticket, $qty);
         }
-        
+
         $shipping_line_item = EE_Line_Item::new_instance(array(
             'LIN_name'       => __('Shipping Surcharge', 'event_espresso'),
             'LIN_desc'       => __('Sent via Millenium Falcon', 'event_espresso'),
@@ -515,10 +515,10 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data
         ));
         EEH_Line_Item::add_item($line_item_total, $shipping_line_item);
         $this->additional_line_items = array($shipping_line_item);
-        
+
         // now let's add taxes
         EEH_Line_Item::apply_taxes($line_item_total);
-        
+
         // now we should be able to get the items we need from this object
         $event_line_items = EEH_Line_Item::get_pre_tax_subtotal($line_item_total)->children();
         $line_items       = array();
@@ -537,16 +537,16 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data
                 $line_items[ $ticket_line_item->ID() ]['EE_Ticket']             = $this->tickets[ $ticket_line_item->OBJ_ID() ]['ticket'];
             }
         }
-        
+
         $this->line_items_with_children = $line_items;
         $this->tax_line_items           = $line_item_total->tax_descendants();
-        
+
         // add proper total to transaction object.
         $grand_total                 = $line_item_total->recalculate_total_including_taxes();
         $this->grand_total_line_item = $line_item_total;
         $this->txn->set_total($grand_total);
-        
-        
+
+
         // add additional details for each registration
         foreach ($this->reg_objs as $reg) {
             if (! $reg instanceof EE_Registration) {
@@ -559,42 +559,42 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data
             $this->_registrations[ $reg->ID() ]['att_obj']  = $this->_attendees[ $reg->get('ATT_ID') ]['att_obj'];
             $this->_registrations[ $reg->ID() ]['dtt_objs'] = $this->tickets[ $reg->get('TKT_ID') ]['dtt_objs'];
         }
-        
-        
+
+
         // events and attendees
         $this->events        = $this->_events;
         $this->attendees     = $this->_attendees;
         $this->registrations = $this->_registrations;
-        
+
         $attendees_to_shift = $this->_attendees;
-        
+
         // setup primary attendee property
         $this->primary_attendee_data = array(
             'fname' => $this->_attendees[999999991]['att_obj'] instanceof EE_Attendee
                 ? $this->_attendees[999999991]['att_obj']->fname()
                 : '',
-            
+
             'lname' => $this->_attendees[999999991]['att_obj'] instanceof EE_Attendee
                 ? $this->_attendees[999999991]['att_obj']->lname()
                 : '',
-            
+
             'email' => $this->_attendees[999999991]['att_obj'] instanceof EE_Attendee
                 ? $this->_attendees[999999991]['att_obj']->email()
                 : '',
-            
+
             'att_obj' => $this->_attendees[999999991]['att_obj'],
-            
+
             'reg_obj' => array_shift($attendees_to_shift[999999991]['reg_objs'])
         );
-        
+
         // reg_info property
         // note this isn't referenced by any shortcode parsers so we'll ignore for now.
         $this->reg_info = array();
-        
+
         // let's set a reg_obj for messengers expecting one.
         $this->reg_obj = array_pop($this->_attendees[999999991]['reg_objs']);
-        
-        
+
+
         // the below are just dummy items.
         $this->user_id     = 1;
         $this->ip_address  = '192.0.2.1';

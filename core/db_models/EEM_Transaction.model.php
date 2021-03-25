@@ -385,7 +385,7 @@ class EEM_Transaction extends EEM_Base
 
             // Create IDs placeholder.
             $placeholders = array_fill(0, count($txn_ids), '%d');
-            
+
             // Glue it together to use inside $wpdb->prepare.
             $format = implode(', ', $placeholders);
 

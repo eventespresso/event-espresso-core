@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Event List
  *
@@ -496,7 +497,8 @@ class EED_Events_Archive_Filters extends EED_Module
         add_action('loop_start', array($this, 'event_list_pagination'));
         add_action('loop_end', array($this, 'event_list_pagination'));
         // if NOT a custom template
-        if (EE_Registry::instance()
+        if (
+            EE_Registry::instance()
                        ->load_core('Front_Controller', array(), false, true)
                        ->get_selected_template() != 'archive-espresso_events.php'
         ) {
@@ -686,9 +688,11 @@ class EED_Events_Archive_Filters extends EED_Module
         // get some style
         if (apply_filters('FHEE_enable_default_espresso_css', false)) {
             // first check uploads folder
-            if (is_readable(
-                get_stylesheet_directory() . EE_Config::get_current_theme() . '/archive-espresso_events.css'
-            )) {
+            if (
+                is_readable(
+                    get_stylesheet_directory() . EE_Config::get_current_theme() . '/archive-espresso_events.css'
+                )
+            ) {
                 wp_register_style(
                     'archive-espresso_events',
                     get_stylesheet_directory_uri() . EE_Config::get_current_theme(
@@ -702,9 +706,11 @@ class EED_Events_Archive_Filters extends EED_Module
                     array('dashicons', 'espresso_default')
                 );
             }
-            if (is_readable(
-                get_stylesheet_directory() . EE_Config::get_current_theme() . '/archive-espresso_events.js'
-            )) {
+            if (
+                is_readable(
+                    get_stylesheet_directory() . EE_Config::get_current_theme() . '/archive-espresso_events.js'
+                )
+            ) {
                 wp_register_script(
                     'archive-espresso_events',
                     get_stylesheet_directory_uri() . EE_Config::get_current_theme() . '/archive-espresso_events.js',

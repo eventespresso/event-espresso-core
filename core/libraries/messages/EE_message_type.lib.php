@@ -860,7 +860,8 @@ abstract class EE_message_type extends EE_Messages_Base
         foreach ($this->_data->attendees as $att_id => $details) {
             // set the attendee array to blank on each loop;
             $aee = array();
-            if (isset($this->_data->reg_obj)
+            if (
+                isset($this->_data->reg_obj)
                 && ($this->_data->reg_obj->attendee_ID() != $att_id)
                 && $this->_single_message
             ) {
@@ -874,12 +875,13 @@ abstract class EE_message_type extends EE_Messages_Base
                     continue;
                 }
             }
-            if (apply_filters(
-                'FHEE__EE_message_type___attendee_addressees__prevent_duplicate_email_sends',
-                true,
-                $this->_data,
-                $this
-            )
+            if (
+                apply_filters(
+                    'FHEE__EE_message_type___attendee_addressees__prevent_duplicate_email_sends',
+                    true,
+                    $this->_data,
+                    $this
+                )
                 && in_array($att_id, $already_processed, true)
             ) {
                 continue;

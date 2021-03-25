@@ -21,7 +21,7 @@ class EE_DMS_4_10_0_Event_Question_Group extends EE_Data_Migration_Script_Stage_
     {
         global $wpdb;
         $this->_pretty_name = __('Event-Question Group Relations', 'event_espresso');
-        $this->_old_table = $wpdb->prefix.'esp_event_question_group';
+        $this->_old_table = $wpdb->prefix . 'esp_event_question_group';
         $this->_extra_where_sql = "WHERE EQG_primary = 0 AND EQG_additional=0";
         parent::__construct();
     }

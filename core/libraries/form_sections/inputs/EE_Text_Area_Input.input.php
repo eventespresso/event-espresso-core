@@ -1,4 +1,5 @@
 <?php
+
 /**
  * EE_Text_Area
  *
@@ -57,18 +58,19 @@ class EE_Text_Area_Input extends EE_Form_Input_Base
     {
         $this->_set_display_strategy(new EE_Text_Area_Display_Strategy());
         $this->_set_normalization_strategy(new EE_Text_Normalization());
-        
-        
+
+
         parent::__construct($options_array);
-        
+
         // if the input hasn't specifically mentioned a more lenient validation strategy,
         // apply plaintext validation strategy
-        if (! $this->has_validation_strategy(
-            array(
+        if (
+            ! $this->has_validation_strategy(
+                array(
                     'EE_Full_HTML_Validation_Strategy',
                     'EE_Simple_HTML_Validation_Strategy'
                 )
-        )
+            )
         ) {
             // by default we use the plaintext validation. If you want something else,
             // just remove it after the input is constructed :P using EE_Form_Input_Base::remove_validation_strategy()

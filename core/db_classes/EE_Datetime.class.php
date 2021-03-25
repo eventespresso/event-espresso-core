@@ -1209,12 +1209,14 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
             }
         }
         // first condition is to see if the months are different
-        if (date('m', $this->get_raw('DTT_EVT_start')) !== date('m', $this->get_raw('DTT_EVT_end'))
+        if (
+            date('m', $this->get_raw('DTT_EVT_start')) !== date('m', $this->get_raw('DTT_EVT_end'))
         ) {
             $display_date = $this->start_date('M j\, Y g:i a') . ' - ' . $this->end_date('M j\, Y g:i a');
             // next condition is if its the same month but different day
         } else {
-            if (date('m', $this->get_raw('DTT_EVT_start')) === date('m', $this->get_raw('DTT_EVT_end'))
+            if (
+                date('m', $this->get_raw('DTT_EVT_start')) === date('m', $this->get_raw('DTT_EVT_end'))
                 && date('d', $this->get_raw('DTT_EVT_start')) !== date('d', $this->get_raw('DTT_EVT_end'))
             ) {
                 $display_date = $this->start_date('M j\, g:i a') . ' - ' . $this->end_date('M j\, g:i a Y');

@@ -58,7 +58,7 @@ abstract class AbstractLoader extends AbstractDataLoader
 
         $query = $this->getQuery();
         $result = $query->get_all($args);
-        
+
         $loadedItems = [];
 
         /**
