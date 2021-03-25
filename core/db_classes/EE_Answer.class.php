@@ -11,11 +11,10 @@ class EE_Answer extends EE_Base_Class
 {
 
     /**
-     *
      * @param array $props_n_values
      * @return EE_Answer
      */
-    public static function new_instance($props_n_values = array())
+    public static function new_instance($props_n_values = [])
     {
         $has_object = parent::_check_for_object($props_n_values, __CLASS__);
         return $has_object ? $has_object : new self($props_n_values);
@@ -23,11 +22,10 @@ class EE_Answer extends EE_Base_Class
 
 
     /**
-     *
      * @param array $props_n_values
      * @return EE_Answer
      */
-    public static function new_instance_from_db($props_n_values = array())
+    public static function new_instance_from_db($props_n_values = [])
     {
         return new self($props_n_values, true);
     }
