@@ -141,7 +141,7 @@ abstract class EE_Base_Class
         $className = get_class($this);
         do_action("AHEE__{$className}__construct", $this, $fieldValues);
         $this->_model = $this->get_model();
-        $model_fields = $this->_model->field_settings(false);
+        $model_fields = $this->_model->field_settings();
         // ensure $fieldValues is an array
         $fieldValues = is_array($fieldValues) ? $fieldValues : [$fieldValues];
         // verify client code has not passed any invalid field names
@@ -162,7 +162,7 @@ abstract class EE_Base_Class
         }
         $this->_timezone = EEH_DTT_Helper::get_valid_timezone_string($timezone);
         if (! empty($date_formats) && is_array($date_formats)) {
-            [$this->_dt_frmt, $this->_tm_frmt] = $date_formats;
+            list($this->_dt_frmt, $this->_tm_frmt) = $date_formats;
         } else {
             // set default formats for date and time
             $this->_dt_frmt = (string)get_option('date_format', 'Y-m-d');
@@ -447,7 +447,7 @@ abstract class EE_Base_Class
             $column_value = $this->get($field_name);
         } else {
             // This isn't a column in the main table, let's see if it is in the extra meta.
-            $column_value = $this->get_extra_meta($field_name, true, null);
+            $column_value = $this->get_extra_meta($field_name, true);
         }
         return $column_value;
     }
@@ -474,7 +474,7 @@ abstract class EE_Base_Class
         // make sure we clear all cached properties because they won't be relevant now
         $this->_clear_cached_properties();
         // make sure we update field settings and the date for all EE_Datetime_Fields
-        $model_fields = $this->_model->field_settings(false);
+        $model_fields = $this->_model->field_settings();
         foreach ($model_fields as $field_name => $field_obj) {
             if ($field_obj instanceof EE_Datetime_Field) {
                 $field_obj->set_timezone($this->_timezone);
@@ -699,19 +699,18 @@ abstract class EE_Base_Class
         if (! isset($this->_fields[ $fieldname ])) {
             $this->_fields[ $fieldname ] = null;
         }
-        $value = $pretty
+        return $pretty
             ? $field_obj->prepare_for_pretty_echoing($this->_fields[ $fieldname ], $extra_cache_ref)
             : $field_obj->prepare_for_get($this->_fields[ $fieldname ]);
-        return $value;
     }
 
 
     /**
      * set timezone, formats, and output for EE_Datetime_Field objects
      *
-     * @param \EE_Datetime_Field $datetime_field
-     * @param bool               $pretty
-     * @param null               $date_or_time
+     * @param EE_Datetime_Field $datetime_field
+     * @param bool              $pretty
+     * @param null              $date_or_time
      * @return void
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
@@ -2714,7 +2713,7 @@ abstract class EE_Base_Class
      */
     public function model_field_array()
     {
-        $fields     = $this->_model->field_settings(false);
+        $fields     = $this->_model->field_settings();
         $properties = [];
         // remove prepended underscore
         foreach ($fields as $field_name => $settings) {
@@ -3187,7 +3186,7 @@ abstract class EE_Base_Class
         $fields             = [];
         $set_sql_statements = [];
         foreach ($fields_n_quantities as $field_name => $quantity) {
-            $field       = $this->_model->field_settings_for($field_name, true);
+            $field       = $this->_model->field_settings_for($field_name);
             $fields[]    = $field;
             $column_name = $field->get_table_column();
 
@@ -3243,13 +3242,13 @@ abstract class EE_Base_Class
         $quantity
     ) {
         global $wpdb;
-        $field       = $this->_model->field_settings_for($field_name_to_bump, true);
+        $field       = $this->_model->field_settings_for($field_name_to_bump);
         $column_name = $field->get_table_column();
 
-        $field_affecting_total  = $this->_model->field_settings_for($field_name_affecting_total, true);
+        $field_affecting_total  = $this->_model->field_settings_for($field_name_affecting_total);
         $column_affecting_total = $field_affecting_total->get_table_column();
 
-        $limiting_field  = $this->_model->field_settings_for($limit_field_name, true);
+        $limiting_field  = $this->_model->field_settings_for($limit_field_name);
         $limiting_column = $limiting_field->get_table_column();
         return $this->updateFieldsInDB(
             [$field],
