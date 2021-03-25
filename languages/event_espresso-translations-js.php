@@ -1299,6 +1299,12 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/tpc/src/buttons/ReverseCalculateButton.tsx:17
 	__( 'Ticket total is being calculated normally from top to bottom starting from the base price. Entering a new ticket base price will recalculate the ticket total after applying all price modifiers. Click to turn on reverse calculations', 'event_espresso' ),
 
+	// Reference: packages/tpc/src/buttons/ReverseCalculateButton.tsx:21
+	__( 'Disable reverse calculate', 'event_espresso' ),
+
+	// Reference: packages/tpc/src/buttons/ReverseCalculateButton.tsx:21
+	__( 'Enable reverse calculate', 'event_espresso' ),
+
 	// Reference: packages/tpc/src/buttons/TicketPriceCalculatorButton.tsx:28
 	__( 'ticket price calculator', 'event_espresso' ),
 
