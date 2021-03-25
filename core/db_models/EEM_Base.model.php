@@ -845,7 +845,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     /**
      * Gets all the EE_Base_Class objects which match the $query_params, by querying the DB.
      *
-     * @param array $query_params see github link below for more info
+     * @param array $query_params             see github link below for more info
      * @return EE_Base_Class[]  *note that there is NO option to pass the output type. If you want results different
      *                                        from EE_Base_Class[], use get_all_wpdb_results(). Array keys are object
      *                                        IDs (if there is a primary key on the model. if not, numerically indexed)
@@ -1940,8 +1940,8 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
          *
          * @param EEM_Base $model
          * @param array    $query_params
-         * @param boolean $allow_blocking whether or not to allow related model objects
-         *                                to block (prevent) this deletion
+         * @param boolean  $allow_blocking whether or not to allow related model objects
+         *                                 to block (prevent) this deletion
          * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
          */
         do_action('AHEE__EEM_Base__delete__begin', $this, $query_params, $allow_blocking);
@@ -2619,7 +2619,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      *
      * @param mixed  $id_or_obj    EE_Base_Class child or its ID
      * @param string $model_name   like 'Event', 'Registration', etc. always singular
-     * @param array $query_params see github link below for more info
+     * @param array  $query_params see github link below for more info
      * @return EE_Base_Class[]
      * @throws EE_Error
      * @throws ReflectionException
@@ -2755,7 +2755,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      *
      * @param int | EE_Base_Class $id_or_obj        EE_Base_Class child or its ID
      * @param string              $other_model_name , key in $this->_relatedModels, eg 'Registration', or 'Events'
-     * @param array $query_params see github link below for more info
+     * @param array               $query_params     see github link below for more info
      * @return EE_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
@@ -3687,7 +3687,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      *                                                                  not for this primary model. 'all', the default,
      *                                                                  means default where conditions will apply as
      *                                                                  normal
-     * @param array $where_query_params
+     * @param array                       $where_query_params
      * @return array
      * @throws EE_Error
      * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
@@ -4273,7 +4273,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * Event_Meta.meta_value = 'foo'))"
      *
      * @param array  $where_params
-     * @param string $glue         joins each sub-clause together. Should really only be " AND " or " OR "...
+     * @param string $glue joins each sub-clause together. Should really only be " AND " or " OR "...
      * @return string of SQL
      * @throws EE_Error
      * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
@@ -5494,7 +5494,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
 
 
     /**
-     * @param array $cols_n_values
+     * @param array  $cols_n_values
      * @param string $qualified_column
      * @param string $regular_column
      * @return null
@@ -5916,7 +5916,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * We consider something to be a copy if all the attributes match (except the ID, of course).
      *
      * @param array|EE_Base_Class $model_object_or_attributes_array If its an array, it's field-value pairs
-     * @param array $query_params see github link below for more info
+     * @param array               $query_params                     see github link below for more info
      * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @throws EE_Error
      * @throws ReflectionException
