@@ -4036,7 +4036,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             }
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'Logic query params ("%1$s") are being used incorrectly with the following query param ("%2$s") on model %3$s. %4$sAdditional Info:%4$s%5$s',
                         'event_espresso'
                     ),
@@ -5660,7 +5660,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         if (! has_filter($tagName)) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'Method %1$s on model %2$s does not exist! You can create one with the following code in functions.php or in a plugin: %4$s function my_callback(%4$s \$previousReturnValue, EEM_Base \$object\ $argsArray=NULL ){%4$s     /*function body*/%4$s      return \$whatever;%4$s }%4$s add_filter( \'%3$s\', \'my_callback\', 10, 3 );',
                         'event_espresso'
                     ),
