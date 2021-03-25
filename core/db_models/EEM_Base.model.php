@@ -570,7 +570,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         if (! did_action('AHEE__EE_System__load_espresso_addons')) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'The %1$s model can not be loaded before the "AHEE__EE_System__load_espresso_addons" hook has been called. This gives other addons a chance to extend this model.',
                         'event_espresso'
                     ),
@@ -611,7 +611,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             if (! array_key_exists($table_alias, $this->_tables)) {
                 throw new EE_Error(
                     sprintf(
-                        __(
+                        esc_html__(
                             "Table alias %s does not exist in EEM_Base child's _tables array. Only tables defined are %s",
                             'event_espresso'
                         ),
@@ -694,7 +694,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                 if (! $generator_object instanceof EE_Restriction_Generator_Base) {
                     throw new EE_Error(
                         sprintf(
-                            __(
+                            esc_html__(
                                 'Index "%1$s" in the model %2$s\'s _cap_restriction_generators is not a child of EE_Restriction_Generator_Base. It should be that or NULL.',
                                 'event_espresso'
                             ),
@@ -1082,7 +1082,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                 if (! is_array($selection_and_datatype) || ! isset($selection_and_datatype[1])) {
                     throw new EE_Error(
                         sprintf(
-                            __(
+                            esc_html__(
                                 "Custom selection %s (alias %s) needs to be an array like array('COUNT(REG_ID)','%%d')",
                                 'event_espresso'
                             ),
@@ -1192,7 +1192,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             EE_Error::doing_it_wrong(
                 'EEM_Base::get_one',
                 sprintf(
-                    __('$query_params should be an array, you passed a variable of type %s', 'event_espresso'),
+                    esc_html__('$query_params should be an array, you passed a variable of type %s', 'event_espresso'),
                     gettype($query_params)
                 ),
                 '4.6.0'
@@ -1378,7 +1378,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             } else {
                 if (WP_DEBUG) {
                     throw new EE_Error(
-                        __(
+                        esc_html__(
                             'EEM_Base::_get_consecutive() has been called with no $field_to_order_by argument and there is no primary key on the field.  Please provide the field you would like to use as the base for retrieving the next item(s).',
                             'event_espresso'
                         )
@@ -1392,7 +1392,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             EE_Error::doing_it_wrong(
                 'EEM_Base::_get_consecutive',
                 sprintf(
-                    __('$query_params should be an array, you passed a variable of type %s', 'event_espresso'),
+                    esc_html__('$query_params should be an array, you passed a variable of type %s', 'event_espresso'),
                     gettype($query_params)
                 ),
                 '4.6.0'
@@ -1481,7 +1481,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         if (! $field_settings instanceof EE_Datetime_Field) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'The field sent into EEM_Base::get_formats_for (%s) is not registered as a EE_Datetime_Field. Please check the spelling and make sure you are submitting the right field name to retrieve date_formats for.',
                         'event_espresso'
                     ),
@@ -1633,7 +1633,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             EE_Error::doing_it_wrong(
                 'EEM_Base::update',
                 sprintf(
-                    __('$query_params should be an array, you passed a variable of type %s', 'event_espresso'),
+                    esc_html__('$query_params should be an array, you passed a variable of type %s', 'event_espresso'),
                     gettype($query_params)
                 ),
                 '4.6.0'
@@ -2169,7 +2169,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             // sorry, can't help you
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         "Cannot delete objects of type %s because there is no primary key NOR combined key",
                         "event_espresso"
                     ),
@@ -2337,7 +2337,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         if (! EE_Maintenance_Mode::instance()->models_can_query()) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         "Event Espresso Level 2 Maintenance mode is active. That means EE can not run ANY database queries until the necessary migration scripts have run which will take EE out of maintenance mode level 2. Please inform support of this error.",
                         "event_espresso"
                     )
@@ -2348,7 +2348,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         if (! method_exists($wpdb, $wpdb_method)) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'There is no method named "%s" on Wordpress\' $wpdb object',
                         'event_espresso'
                     ),
@@ -2370,7 +2370,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             if ($result === false) {
                 throw new EE_Error(
                     sprintf(
-                        __(
+                        esc_html__(
                             'WPDB Error occurred, but no error message was logged by wpdb! The wpdb method called was "%1$s" and the arguments were "%2$s"',
                             'event_espresso'
                         ),
@@ -2382,7 +2382,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         } elseif ($result === false) {
             EE_Error::add_error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'A database error has occurred. Turn on WP_DEBUG for more information.||A database error occurred doing wpdb method "%1$s", with arguments "%2$s". The error was "%3$s"',
                         'event_espresso'
                     ),
@@ -2459,7 +2459,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         // ok remember that we've already attempted fixing the core db, in case the problem persists
         EEM_Base::$_db_verification_level = EEM_Base::db_verified_core;
         $error_message                    = sprintf(
-            __(
+            esc_html__(
                 'WPDB Error "%1$s" while running wpdb method "%2$s" with arguments %3$s. Automatically attempting to fix EE Core DB',
                 'event_espresso'
             ),
@@ -2487,7 +2487,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         // ok remember that we've already attempted fixing the addons dbs, in case the problem persists
         EEM_Base::$_db_verification_level = EEM_Base::db_verified_addons;
         $error_message                    = sprintf(
-            __(
+            esc_html__(
                 'WPDB AGAIN: Error "%1$s" while running the same method and arguments as before. Automatically attempting to fix EE Addons DB',
                 'event_espresso'
             ),
@@ -2738,7 +2738,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             EE_Error::doing_it_wrong(
                 'EEM_Base::sum_related',
                 sprintf(
-                    __('$query_params should be an array, you passed a variable of type %s', 'event_espresso'),
+                    esc_html__('$query_params should be an array, you passed a variable of type %s', 'event_espresso'),
                     gettype($query_params)
                 ),
                 '4.6.0'
@@ -2807,7 +2807,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         if (! isset($field_with_model_name) || ! $field_with_model_name) {
             throw new EE_Error(
                 sprintf(
-                    __("There is no EE_Any_Foreign_Model_Name field on model %s", "event_espresso"),
+                    esc_html__("There is no EE_Any_Foreign_Model_Name field on model %s", "event_espresso"),
                     $this->get_this_model_name()
                 )
             );
@@ -2880,7 +2880,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             if ($this->exists([$uniqueness_where_params])) {
                 EE_Error::add_error(
                     sprintf(
-                        __(
+                        esc_html__(
                             "Could not %s %s. %s uniqueness index failed. Fields %s must form a unique set, but an entry already exists with values %s.",
                             "event_espresso"
                         ),
@@ -2927,7 +2927,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         } else {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         "%s get_all_conflicting should be called with a model object or an array of field names and values, you provided %d",
                         "event_espresso"
                     ),
@@ -3139,7 +3139,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         }
         throw new EE_Error(
             sprintf(
-                __(
+                esc_html__(
                     'There are no main tables on %s. They should be added to _tables array in the constructor',
                     'event_espresso'
                 ),
@@ -3319,7 +3319,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                     if (! is_array($possibly_array_of_params)) {
                         throw new EE_Error(
                             sprintf(
-                                __(
+                                esc_html__(
                                     "You used a special where query param %s, but the value isn't an array of where query params, it's just %s'. It should be an array, eg array('EVT_ID'=>23,'OR'=>array('Venue.VNU_ID'=>32,'Venue.VNU_name'=>'monkey_land'))",
                                     "event_espresso"
                                 ),
@@ -3345,7 +3345,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                     if (! isset($possibly_array_of_params[0], $possibly_array_of_params[1])) {
                         throw new EE_Error(
                             sprintf(
-                                __(
+                                esc_html__(
                                     "Improperly formed query parameter %s. It should be numerically indexed like array('<','DTT_sold',true); but you provided %s",
                                     "event_espresso"
                                 ),
@@ -3386,7 +3386,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             if (! is_array($sub_query_params)) {
                 throw new EE_Error(
                     sprintf(
-                        __("Query parameter %s should be an array, but it isn't.", "event_espresso"),
+                        esc_html__("Query parameter %s should be an array, but it isn't.", "event_espresso"),
                         $sub_query_params
                     )
                 );
@@ -3425,7 +3425,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             EE_Error::doing_it_wrong(
                 'EEM_Base::_create_model_query_info_carrier',
                 sprintf(
-                    __(
+                    esc_html__(
                         '$query_params should be an array, you passed a variable of type %s',
                         'event_espresso'
                     ),
@@ -3463,7 +3463,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             if (is_int($key)) {
                 throw new EE_Error(
                     sprintf(
-                        __(
+                        esc_html__(
                             "WHERE query params must NOT be numerically-indexed. You provided the array key '%s' for value '%s' while querying model %s. All the query params provided were '%s' Please read documentation on EEM_Base::get_all.",
                             "event_espresso"
                         ),
@@ -3510,7 +3510,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             if (is_array($query_params['limit'])) {
                 if (! isset($query_params['limit'][0], $query_params['limit'][1])) {
                     $e = sprintf(
-                        __(
+                        esc_html__(
                             "Invalid DB query. You passed '%s' for the LIMIT, but only the following are valid: an integer, string representing an integer, a string like 'int,int', or an array like array(int,int)",
                             "event_espresso"
                         ),
@@ -3533,7 +3533,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                 if (array_key_exists('order', $query_params)) {
                     throw new EE_Error(
                         sprintf(
-                            __(
+                            esc_html__(
                                 "In querying %s, we are using query parameter 'order_by' as an array (keys:%s,values:%s), and so we can't use query parameter 'order' (value %s). You should just use the 'order_by' parameter ",
                                 "event_espresso"
                             ),
@@ -3605,7 +3605,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             if (! in_array($query_key, $this->_allowed_query_params, true)) {
                 throw new EE_Error(
                     sprintf(
-                        __(
+                        esc_html__(
                             "You passed %s as a query parameter to %s, which is illegal! The allowed query parameters are %s",
                             'event_espresso'
                         ),
@@ -3670,7 +3670,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         }
         throw new EE_Error(
             sprintf(
-                __(
+                esc_html__(
                     "While performing a query on '%s', tried to use '%s' as an order parameter. ",
                     "event_espresso"
                 ),
@@ -3709,7 +3709,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         if (! in_array($use_default_where_conditions, $allowed_used_default_where_conditions_values)) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         "You passed an invalid value to the query parameter 'default_where_conditions' of '%s'. Allowed values are %s",
                         "event_espresso"
                     ),
@@ -4018,7 +4018,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             }
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         "Using a field name (%s) on model %s is not allowed on this query param type '%s'. Original query param was %s",
                         "event_espresso"
                     ),
@@ -4333,7 +4333,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                     } else {
                         throw new EE_Error(
                             sprintf(
-                                __(
+                                esc_html__(
                                     "%s is neither a valid model field name, nor a custom selection",
                                     "event_espresso"
                                 ),
@@ -4380,7 +4380,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             : '';
         throw new EE_Error(
             sprintf(
-                __(
+                esc_html__(
                     "%s is not a valid field on this model, nor a custom selection (%s)",
                     "event_espresso"
                 ),
@@ -4429,7 +4429,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                 }
                 throw new EE_Error(
                     sprintf(
-                        __(
+                        esc_html__(
                             "You setup a query parameter like you were going to specify an operator, but didn't. You provided '(%s)', but the operator should be at array key index 0 (eg array('>',32))",
                             "event_espresso"
                         ),
@@ -4458,7 +4458,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             if (count($value) !== 2) {
                 throw new EE_Error(
                     sprintf(
-                        __(
+                        esc_html__(
                             "The '%s' operator must be used with an array of values and there must be exactly TWO values in that array.",
                             'event_espresso'
                         ),
@@ -4473,7 +4473,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             if ($value !== null) {
                 throw new EE_Error(
                     sprintf(
-                        __(
+                        esc_html__(
                             "You attempted to give a value  (%s) while using a NULL-style operator (%s). That isn't valid",
                             "event_espresso"
                         ),
@@ -4495,7 +4495,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         if (in_array($operator, $this->valid_in_style_operators()) && ! is_array($value)) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         "Operator '%s' must be used with an array of values, eg 'Registration.REG_ID' => array('%s',array(1,2,3))",
                         'event_espresso'
                     ),
@@ -4507,7 +4507,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         if (! in_array($operator, $this->valid_in_style_operators()) && is_array($value)) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         "Operator '%s' must be used with a single value, not an array. Eg 'Registration.REG_ID => array('%s',23))",
                         'event_espresso'
                     ),
@@ -4518,7 +4518,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         }
         throw new EE_Error(
             sprintf(
-                __(
+                esc_html__(
                     "It appears you've provided some totally invalid query parameters. Operator and value were:'%s', which isn't right at all",
                     "event_espresso"
                 ),
@@ -4605,7 +4605,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         if (! in_array($field_obj, $this->_valid_wpdb_data_types)) {
             throw new EE_Error(
                 sprintf(
-                    __("%s is not a valid wpdb datatype. Valid ones are %s", "event_espresso"),
+                    esc_html__("%s is not a valid wpdb datatype. Valid ones are %s", "event_espresso"),
                     $field_obj,
                     implode(",", $this->_valid_wpdb_data_types)
                 )
@@ -4630,7 +4630,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         if (empty($query_param_parts)) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         "_extract_column_name is empty when trying to extract column and table name from %s",
                         'event_espresso'
                     ),
@@ -4673,7 +4673,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         }
         throw new EE_Error(
             sprintf(
-                __(
+                esc_html__(
                     "There is no field titled %s on model %s. Either the query trying to use it is bad, or you need to add it to the list of fields on the model.",
                     'event_espresso'
                 ),
@@ -4857,7 +4857,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         if (! class_exists($model_classname)) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         "You specified a related model named %s in your query. No such model exists, if it did, it would have the classname %s",
                         'event_espresso'
                     ),
@@ -4913,7 +4913,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         if (! array_key_exists($relation_name, $relatedModels)) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'Cannot get %s related to %s. There is no model relation of that type. There is, however, %s...',
                         'event_espresso'
                     ),
@@ -4942,7 +4942,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         if (! array_key_exists($fieldName, $fieldSettings)) {
             throw new EE_Error(
                 sprintf(
-                    __("There is no field/column '%s' on '%s'", 'event_espresso'),
+                    esc_html__("There is no field/column '%s' on '%s'", 'event_espresso'),
                     $fieldName,
                     get_class($this)
                 )
@@ -5016,7 +5016,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             if (! $this->_primary_key_field instanceof EE_Primary_Key_Field_Base) {
                 throw new EE_Error(
                     sprintf(
-                        __("There is no Primary Key defined on model %s", 'event_espresso'),
+                        esc_html__("There is no Primary Key defined on model %s", 'event_espresso'),
                         get_class($this)
                     )
                 );
@@ -5086,7 +5086,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             if (! isset($this->_cache_foreign_key_to_fields[ $model_name ])) {
                 throw new EE_Error(
                     sprintf(
-                        __(
+                        esc_html__(
                             "There is no foreign key field pointing to model %s on model %s",
                             'event_espresso'
                         ),
@@ -5191,7 +5191,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             if (! $classInstance) {
                 throw new EE_Error(
                     sprintf(
-                        __('Could not create instance of class %s from row %s', 'event_espresso'),
+                        esc_html__('Could not create instance of class %s from row %s', 'event_espresso'),
                         $this->get_this_model_name(),
                         http_build_query($row)
                     )
@@ -5395,7 +5395,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         if (! $object instanceof $className) {
             throw new EE_Error(
                 sprintf(
-                    __("You tried adding a %s to a mapping of %ss", "event_espresso"),
+                    esc_html__("You tried adding a %s to a mapping of %ss", "event_espresso"),
                     is_object($object) ? get_class($object) : $object,
                     $className
                 )
@@ -5404,7 +5404,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         if (! $object->ID()) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         "You tried storing a model object with NO ID in the %s entity mapper.",
                         "event_espresso"
                     ),
@@ -5715,7 +5715,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             } else {
                 throw new EE_Error(
                     sprintf(
-                        __(
+                        esc_html__(
                             "'%s' is neither an object of type %s, nor an ID! Its full value is '%s'",
                             'event_espresso'
                         ),
@@ -5757,7 +5757,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         } else {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         "'%s' is neither an object of type %s, nor an ID! Its full value is '%s'",
                         'event_espresso'
                     ),
@@ -5940,7 +5940,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         } else {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         "get_all_copies should be provided with either a model object or an array of field-value-pairs, but was given %s",
                         "event_espresso"
                     ),
@@ -5977,7 +5977,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             EE_Error::doing_it_wrong(
                 'EEM_Base::get_one_copy',
                 sprintf(
-                    __('$query_params should be an array, you passed a variable of type %s', 'event_espresso'),
+                    esc_html__('$query_params should be an array, you passed a variable of type %s', 'event_espresso'),
                     gettype($query_params)
                 ),
                 '4.6.0'
@@ -6030,7 +6030,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         }
         throw new EE_Error(
             sprintf(
-                __(
+                esc_html__(
                     "The operator '%s' is not in the list of valid operators: %s",
                     "event_espresso"
                 ),
@@ -6146,7 +6146,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         if (! $this->has_primary_key_field()) {
             if (WP_DEBUG) {
                 EE_Error::add_error(
-                    __('Trying to get IDs from a model than has no primary key', 'event_espresso'),
+                    esc_html__('Trying to get IDs from a model than has no primary key', 'event_espresso'),
                     __FILE__,
                     __FUNCTION__,
                     __LINE__
@@ -6162,7 +6162,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                 }
                 if (WP_DEBUG) {
                     EE_Error::add_error(
-                        __(
+                        esc_html__(
                             'Called %1$s on a model object that has no ID and so probably hasn\'t been saved to the database',
                             'event_espresso'
                         ),
@@ -6294,7 +6294,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         }
         throw new EE_Error(
             sprintf(
-                __('Cannot find capability restrictions for context "%1$s", allowed values are:%2$s', 'event_espresso'),
+                esc_html__('Cannot find capability restrictions for context "%1$s", allowed values are:%2$s', 'event_espresso'),
                 $context,
                 implode(',', array_keys($this->cap_contexts_to_cap_action_map()))
             )
@@ -6356,7 +6356,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         }
         throw new EE_Error(
             sprintf(
-                __(
+                esc_html__(
                     'Context "%1$s" passed into model "%2$s" is not a valid context. They are: %3$s',
                     'event_espresso'
                 ),
