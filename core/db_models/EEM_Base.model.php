@@ -880,7 +880,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         ) {
             $query_params['group_by'] = array_keys($this->get_combined_primary_key_fields());
         }
-        return $this->_create_objects($this->_get_all_wpdb_results($query_params, ARRAY_A, null));
+        return $this->_create_objects($this->_get_all_wpdb_results($query_params));
     }
 
 
@@ -1721,7 +1721,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                 $model_objs_affected_ids = $this->get_col($query_params);
             } else {
                 // we need to select a bunch of columns and then combine them into the the "index primary key string"s
-                $models_affected_key_columns = $this->_get_all_wpdb_results($query_params, ARRAY_A);
+                $models_affected_key_columns = $this->_get_all_wpdb_results($query_params);
                 $model_objs_affected_ids     = [];
                 foreach ($models_affected_key_columns as $row) {
                     $combined_index_key                             = $this->get_index_primary_key_string($row);
@@ -1792,8 +1792,9 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         } elseif ($this->has_primary_key_field()) {
             $field = $this->get_primary_key_field();
         } else {
+            $field_settings = $this->field_settings();
             // no primary key, just grab the first column
-            $field = reset($this->field_settings());
+            $field = reset($field_settings);
         }
         $model_query_info   = $this->_create_model_query_info_carrier($query_params);
         $select_expressions = $field->get_qualified_column();
@@ -1806,12 +1807,13 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     /**
      * Returns a single column value for a single row from the database
      *
-     * @param array  $query_params    @see
-     *                                https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
-     * @param string $field_to_select @see EEM_Base::get_col()
+     * @param array  $query_params
+     * @param string $field_to_select
      * @return string
      * @throws EE_Error
      * @throws ReflectionException
+     * @see EEM_Base::get_col()
+     * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
     public function get_var($query_params = [], $field_to_select = null)
     {
@@ -2126,9 +2128,6 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         $ids_to_delete_indexed_by_column = [];
         if ($this->has_primary_key_field()) {
             $primary_table                   = $this->_get_main_table();
-            $primary_table_pk_field          =
-                $this->get_field_by_column($primary_table->get_fully_qualified_pk_column());
-            $other_tables                    = $this->_get_other_tables();
             $ids_to_delete_indexed_by_column = $query = [];
             foreach ($row_results_for_deleting as $item_to_delete) {
                 // before we mark this item for deletion,
@@ -2351,8 +2350,8 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                 )
             );
         }
+        $old_show_errors_value = $wpdb->show_errors;
         if (WP_DEBUG) {
-            $old_show_errors_value = $wpdb->show_errors;
             $wpdb->show_errors(false);
         }
         $result = $this->_process_wpdb_query($wpdb_method, $arguments_to_provide);
@@ -2462,7 +2461,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             $wpdb_method,
             wp_json_encode($arguments_to_provide)
         );
-        EE_System::instance()->initialize_db_if_no_migrations_required(false, true);
+        EE_System::instance()->initialize_db_if_no_migrations_required();
         return $error_message;
     }
 
@@ -3715,9 +3714,9 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             );
         }
         $universal_query_params = [];
-        if ($this->_should_use_default_where_conditions($use_default_where_conditions, true)) {
+        if ($this->_should_use_default_where_conditions($use_default_where_conditions)) {
             $universal_query_params = $this->_get_default_where_conditions();
-        } elseif ($this->_should_use_minimum_where_conditions($use_default_where_conditions, true)) {
+        } elseif ($this->_should_use_minimum_where_conditions($use_default_where_conditions)) {
             $universal_query_params = $this->_get_minimum_where_conditions();
         }
         foreach ($query_info_carrier->get_model_names_included() as $model_relation_path => $model_name) {
@@ -4402,8 +4401,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         if ($pos_of_star === false) {
             return $condition_query_param_key;
         }
-        $condition_query_param_sans_star = substr($condition_query_param_key, 0, $pos_of_star);
-        return $condition_query_param_sans_star;
+        return substr($condition_query_param_key, 0, $pos_of_star);
     }
 
 
@@ -5291,10 +5289,13 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         foreach ($this->field_settings() as $field_name => $field_obj) {
             $this_model_fields_and_values[ $field_name ] = $field_obj->get_default_value();
         }
-        $className     = $this->_get_class_name();
-        $classInstance = EE_Registry::instance()
-                                    ->load_class($className, [$this_model_fields_and_values], false, false);
-        return $classInstance;
+        $className = $this->_get_class_name();
+        return EE_Registry::instance()->load_class(
+            $className,
+            [$this_model_fields_and_values],
+            false,
+            false
+        );
     }
 
 
@@ -5333,24 +5334,22 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         if ($primary_key) {
             $classInstance = $this->get_from_entity_map($primary_key);
             if (! $classInstance) {
-                $classInstance = EE_Registry::instance()
-                                            ->load_class(
-                                                $className,
-                                                [$this_model_fields_n_values, $this->_timezone],
-                                                true,
-                                                false
-                                            );
+                $classInstance = EE_Registry::instance()->load_class(
+                    $className,
+                    [$this_model_fields_n_values, $this->_timezone],
+                    true,
+                    false
+                );
                 // add this new object to the entity map
                 $classInstance = $this->add_to_entity_map($classInstance);
             }
         } else {
-            $classInstance = EE_Registry::instance()
-                                        ->load_class(
-                                            $className,
-                                            [$this_model_fields_n_values, $this->_timezone],
-                                            true,
-                                            false
-                                        );
+            $classInstance = EE_Registry::instance()->load_class(
+                $className,
+                [$this_model_fields_n_values, $this->_timezone],
+                true,
+                false
+            );
         }
         return $classInstance;
     }
