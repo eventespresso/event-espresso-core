@@ -38,14 +38,83 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
 {
 
     /**
-     * Flag to indicate whether the values provided to EEM_Base have already been prepared
-     * by the model object or not (ie, the model object has used the field's _prepare_for_set function on the values).
-     * They almost always WILL NOT, but it's not necessarily a requirement.
-     * For example, if you want to run EEM_Event::instance()->get_all(array(array('EVT_ID'=>$_GET['event_id'])));
-     *
-     * @var boolean
+     * constants used to categorize capability restrictions on EEM_Base::_caps_restrictions
      */
-    private $_values_already_prepared_by_model_object = 0;
+    const caps_read       = 'read';
+
+    const caps_read_admin = 'read_admin';
+
+    const caps_edit       = 'edit';
+
+    const caps_delete     = 'delete';
+
+
+    /**
+     * constant used to show EEM_Base has not yet verified the db on this http request
+     */
+    const db_verified_none = 0;
+
+    /**
+     * constant used to show EEM_Base has verified the EE core db on this http request,
+     * but not the addons' dbs
+     */
+    const db_verified_core = 1;
+
+    /**
+     * constant used to show EEM_Base has verified the addons' dbs (and implicitly
+     * the EE core db too)
+     */
+    const db_verified_addons = 2;
+
+    /**
+     * @const constant for 'default_where_conditions' to apply default where conditions to ALL queried models
+     *        (eg, if retrieving registrations ordered by their datetimes, this will only return non-trashed
+     *        registrations for non-trashed tickets for non-trashed datetimes)
+     */
+    const default_where_conditions_all = 'all';
+
+    /**
+     * @const constant for 'default_where_conditions' to apply default where conditions to THIS model only, but
+     *        no other models which are joined to (eg, if retrieving registrations ordered by their datetimes, this will
+     *        return non-trashed registrations, regardless of the related datetimes and tickets' statuses).
+     *        It is preferred to use EEM_Base::default_where_conditions_minimum_others because, when joining to
+     *        models which share tables with other models, this can return data for the wrong model.
+     */
+    const default_where_conditions_this_only = 'this_model_only';
+
+    /**
+     * @const constant for 'default_where_conditions' to apply default where conditions to other models queried,
+     *        but not the current model (eg, if retrieving registrations ordered by their datetimes, this will
+     *        return all registrations related to non-trashed tickets and non-trashed datetimes)
+     */
+    const default_where_conditions_others_only = 'other_models_only';
+
+    /**
+     * @const constant for 'default_where_conditions' to apply minimum where conditions to all models queried.
+     *        For most models this the same as EEM_Base::default_where_conditions_none, except for models which share
+     *        their table with other models, like the Event and Venue models. For example, when querying for events
+     *        ordered by their venues' name, this will be sure to only return real events with associated real venues
+     *        (regardless of whether those events and venues are trashed)
+     *        In contrast, using EEM_Base::default_where_conditions_none would could return WP posts other than EE
+     *        events.
+     */
+    const default_where_conditions_minimum_all = 'minimum';
+
+    /**
+     * @const constant for 'default_where_conditions' to apply apply where conditions to other models, and full default
+     *        where conditions for the queried model (eg, when querying events ordered by venues' names, this will
+     *        return non-trashed events for any venues, regardless of whether those associated venues are trashed or
+     *        not)
+     */
+    const default_where_conditions_minimum_others = 'full_this_minimum_others';
+
+    /**
+     * @const constant for 'default_where_conditions' to NOT apply any where conditions. This should very rarely be
+     *        used, because when querying from a model which shares its table with another model (eg Events and Venues)
+     *        it's possible it will return table entries for other models. You should use
+     *        EEM_Base::default_where_conditions_minimum_all instead.
+     */
+    const default_where_conditions_none = 'none';
 
     /**
      * when $_values_already_prepared_by_model_object equals this, we assume
@@ -68,13 +137,31 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      */
     const prepared_for_use_in_db = 2;
 
+    /**
+     * Flag to indicate whether the values provided to EEM_Base have already been prepared
+     * by the model object or not (ie, the model object has used the field's _prepare_for_set function on the values).
+     * They almost always WILL NOT, but it's not necessarily a requirement.
+     * For example, if you want to run EEM_Event::instance()->get_all(array(array('EVT_ID'=>$_GET['event_id'])));
+     *
+     * @var boolean
+     */
+    private $_values_already_prepared_by_model_object = 0;
 
-    protected $singular_item = 'Item';
-
-    protected $plural_item   = 'Items';
 
     /**
-     * @type EE_Table_Base[] $_tables array of EE_Table objects for defining which tables comprise this model.
+     * @var string
+     */
+    protected $singular_item = 'Item';
+
+    /**
+     * @var string
+     */
+    protected $plural_item = 'Items';
+
+    /**
+     * array of EE_Table objects for defining which tables comprise this model.
+     *
+     * @type EE_Table_Base[] $_tables
      */
     protected $_tables;
 
@@ -189,17 +276,6 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * @var EE_Restriction_Generator_Base[]
      */
     protected $_cap_restriction_generators = [];
-
-    /**
-     * constants used to categorize capability restrictions on EEM_Base::_caps_restrictions
-     */
-    const caps_read       = 'read';
-
-    const caps_read_admin = 'read_admin';
-
-    const caps_edit       = 'edit';
-
-    const caps_delete     = 'delete';
 
     /**
      * Keys are all the cap contexts (ie constants EEM_Base::_caps_*) and values are their 'action'
@@ -460,24 +536,6 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      */
     private static $loader;
 
-
-    /**
-     * constant used to show EEM_Base has not yet verified the db on this http request
-     */
-    const db_verified_none = 0;
-
-    /**
-     * constant used to show EEM_Base has verified the EE core db on this http request,
-     * but not the addons' dbs
-     */
-    const db_verified_core = 1;
-
-    /**
-     * constant used to show EEM_Base has verified the addons' dbs (and implicitly
-     * the EE core db too)
-     */
-    const db_verified_addons = 2;
-
     /**
      * indicates whether an EEM_Base child has already re-verified the DB
      * is ok (we don't want to do it repetitively). Should be set to one the constants
@@ -486,56 +544,6 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * @var int - 0 = none, 1 = core, 2 = addons
      */
     protected static $_db_verification_level = EEM_Base::db_verified_none;
-
-    /**
-     * @const constant for 'default_where_conditions' to apply default where conditions to ALL queried models
-     *        (eg, if retrieving registrations ordered by their datetimes, this will only return non-trashed
-     *        registrations for non-trashed tickets for non-trashed datetimes)
-     */
-    const default_where_conditions_all = 'all';
-
-    /**
-     * @const constant for 'default_where_conditions' to apply default where conditions to THIS model only, but
-     *        no other models which are joined to (eg, if retrieving registrations ordered by their datetimes, this will
-     *        return non-trashed registrations, regardless of the related datetimes and tickets' statuses).
-     *        It is preferred to use EEM_Base::default_where_conditions_minimum_others because, when joining to
-     *        models which share tables with other models, this can return data for the wrong model.
-     */
-    const default_where_conditions_this_only = 'this_model_only';
-
-    /**
-     * @const constant for 'default_where_conditions' to apply default where conditions to other models queried,
-     *        but not the current model (eg, if retrieving registrations ordered by their datetimes, this will
-     *        return all registrations related to non-trashed tickets and non-trashed datetimes)
-     */
-    const default_where_conditions_others_only = 'other_models_only';
-
-    /**
-     * @const constant for 'default_where_conditions' to apply minimum where conditions to all models queried.
-     *        For most models this the same as EEM_Base::default_where_conditions_none, except for models which share
-     *        their table with other models, like the Event and Venue models. For example, when querying for events
-     *        ordered by their venues' name, this will be sure to only return real events with associated real venues
-     *        (regardless of whether those events and venues are trashed)
-     *        In contrast, using EEM_Base::default_where_conditions_none would could return WP posts other than EE
-     *        events.
-     */
-    const default_where_conditions_minimum_all = 'minimum';
-
-    /**
-     * @const constant for 'default_where_conditions' to apply apply where conditions to other models, and full default
-     *        where conditions for the queried model (eg, when querying events ordered by venues' names, this will
-     *        return non-trashed events for any venues, regardless of whether those associated venues are trashed or
-     *        not)
-     */
-    const default_where_conditions_minimum_others = 'full_this_minimum_others';
-
-    /**
-     * @const constant for 'default_where_conditions' to NOT apply any where conditions. This should very rarely be
-     *        used, because when querying from a model which shares its table with another model (eg Events and Venues)
-     *        it's possible it will return table entries for other models. You should use
-     *        EEM_Base::default_where_conditions_minimum_all instead.
-     */
-    const default_where_conditions_none = 'none';
 
 
     /**
