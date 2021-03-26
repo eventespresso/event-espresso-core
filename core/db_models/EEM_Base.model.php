@@ -1419,21 +1419,23 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     /**
      * This sets the _timezone property after model object has been instantiated.
      *
-     * @param null | string $timezone valid PHP DateTimeZone timezone string
+     * @param string|null $timezone valid PHP DateTimeZone timezone string
      */
     public function set_timezone($timezone)
     {
-        if ($timezone !== null) {
-            $this->_timezone = $timezone;
+        // don't set the timezone if the incoming value is the same
+        if (! empty($timezone) && $timezone === $this->_timezone) {
+            return;
         }
+        $this->_timezone = EEH_DTT_Helper::get_valid_timezone_string($timezone);
         // note we need to loop through relations and set the timezone on those objects as well.
         foreach ($this->_model_relations as $relation) {
-            $relation->set_timezone($timezone);
+            $relation->set_timezone($this->_timezone);
         }
         // and finally we do the same for any datetime fields
         foreach ($this->_fields as $field) {
             if ($field instanceof EE_Datetime_Field) {
-                $field->set_timezone($timezone);
+                $field->set_timezone($this->_timezone);
             }
         }
     }
