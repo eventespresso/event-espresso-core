@@ -1517,7 +1517,6 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         return [$field_settings->get_date_format($pretty), $field_settings->get_time_format($pretty)];
     }
 
-
     /**
      * This returns the current time in a format setup for a query on this model.
      * Usage of this method makes it easier to setup queries against EE_Datetime_Field columns because
@@ -1529,14 +1528,14 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * the time returned, because it uses that format, will also NOT include seconds. For this reason, if you want
      * the time returned to be the current time down to the exact second, set $timestamp to true.
      *
-     * @param string $field_name    The field the current time is needed for.
-     * @param bool $timestamp       True means to return a unix timestamp.
-     *                              Otherwise a formatted string matching the set format for the field
-     *                              in the set timezone will be returned.
-     * @param string $what          Whether to return the string in just the time format, the date format, or both.
-     * @return string               If the given field_name is not of the EE_Datetime_Field type,
-     *                              then an EE_Error exception is triggered.
-     * @throws EE_Error             If the given field_name is not of the EE_Datetime_Field type.
+     * @param string $field_name       The field the current time is needed for.
+     * @param bool   $timestamp        True means to return a unix timestamp. Otherwise a
+     *                                 formatted string matching the set format for the field in the set timezone will
+     *                                 be returned.
+     * @param string $what             Whether to return the string in just the time format, the date format, or both.
+     * @return int|string  If the given field_name is not of the EE_Datetime_Field type, then an EE_Error
+     *                                 exception is triggered.
+     * @throws EE_Error    If the given field_name is not of the EE_Datetime_Field type.
      * @throws Exception
      * @since 4.6.x
      */
@@ -3301,6 +3300,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * @param array                       $sub_query_params
      * @param EE_Model_Query_Info_Carrier $model_query_info_carrier
      * @param string                      $query_param_type one of $this->_allowed_query_params
+     * @return EE_Model_Query_Info_Carrier
      * @throws EE_Error
      * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#-0-where-conditions
      */
@@ -3381,6 +3381,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * @param array                       $sub_query_params
      * @param EE_Model_Query_Info_Carrier $model_query_info_carrier
      * @param string                      $query_param_type one of $this->_allowed_query_params
+     * @return EE_Model_Query_Info_Carrier
      * @throws EE_Error
      * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
      */
@@ -5756,6 +5757,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * @param EE_Base_Class|int|string $base_class_obj_or_id
      * @return int|string depending on the type of this model object's ID
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function ensure_is_ID($base_class_obj_or_id)
     {
@@ -6153,6 +6155,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      *                                               in the returned array
      * @return array
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_IDs($model_objects, $filter_out_empty_ids = false)
     {
