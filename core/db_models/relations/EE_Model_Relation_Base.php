@@ -16,26 +16,11 @@ use EventEspresso\core\entities\interfaces\HasSchemaInterface;
  */
 abstract class EE_Model_Relation_Base implements HasSchemaInterface
 {
-    /**
-     * The model name of which this relation is a component (ie, the model that called new EE_Model_Relation_Base)
-     *
-     * @var string eg Event, Question_Group, Registration
-     */
-    private $_this_model_name;
-    /**
-     * The model name pointed to by this relation (ie, the model we want to establish a relationship to)
-     *
-     * @var string eg Event, Question_Group, Registration
-     */
-    private $_other_model_name;
 
     /**
-     * this is typically used when calling the relation models to make sure they inherit any set timezone from the
-     * initiating model.
-     *
-     * @var string
+     * @var bool
      */
-    protected $_timezone;
+    protected $_blocking_delete = false;
 
     /**
      * If you try to delete "this_model", and there are related "other_models",
@@ -47,7 +32,28 @@ abstract class EE_Model_Relation_Base implements HasSchemaInterface
      */
     protected $_blocking_delete_error_message;
 
-    protected $_blocking_delete = false;
+    /**
+     * The model name pointed to by this relation (ie, the model we want to establish a relationship to)
+     *
+     * @var string eg Event, Question_Group, Registration
+     */
+    private $_other_model_name;
+
+    /**
+     * The model name of which this relation is a component (ie, the model that called new EE_Model_Relation_Base)
+     *
+     * @var string eg Event, Question_Group, Registration
+     */
+    private $_this_model_name;
+
+    /**
+     * this is typically used when calling the relation models to make sure they inherit any set timezone from the
+     * initiating model.
+     *
+     * @var string
+     */
+    protected $_timezone;
+
 
     /**
      * Object representing the relationship between two models. This knows how to join the models,
@@ -75,61 +81,19 @@ abstract class EE_Model_Relation_Base implements HasSchemaInterface
         $this->_this_model_name  = $this_model_name;
         $this->_other_model_name = $other_model_name;
         if (is_string($this->_blocking_delete)) {
-            throw new EE_Error(sprintf(
-                esc_html__(
-                    "When instantiating the relation of type %s from %s to %s, the \$block_deletes argument should be a boolean, not a string (%s)",
-                    "event_espresso"
-                ),
-                get_class($this),
-                $this_model_name,
-                $other_model_name,
-                $this->_blocking_delete
-            ));
+            throw new EE_Error(
+                sprintf(
+                    esc_html__(
+                        "When instantiating the relation of type %s from %s to %s, the \$block_deletes argument should be a boolean, not a string (%s)",
+                        "event_espresso"
+                    ),
+                    get_class($this),
+                    $this_model_name,
+                    $other_model_name,
+                    $this->_blocking_delete
+                )
+            );
         }
-    }
-
-
-    /**
-     * Gets the model where this relation is defined.
-     *
-     * @return EEM_Base
-     */
-    public function get_this_model()
-    {
-        return $this->_get_model($this->_this_model_name);
-    }
-
-
-    /**
-     * Gets the model which this relation establishes the relation TO (ie,
-     * this relation object was defined on get_this_model(), get_other_model() is the other one)
-     *
-     * @return EEM_Base
-     */
-    public function get_other_model()
-    {
-        return $this->_get_model($this->_other_model_name);
-    }
-
-
-    /**
-     * Internally used by get_this_model() and get_other_model()
-     *
-     * @param string $model_name like Event, Question_Group, etc. omit the EEM_
-     * @return EEM_Base
-     * @throws EE_Error
-     * @throws ReflectionException
-     */
-    protected function _get_model($model_name)
-    {
-        $modelInstance = EE_Registry::instance()->load_model($model_name);
-        // if the timezone is NOT set on the model but IS set for this relation
-        // (which seems really unlikely to ever happen, but whatever)
-        // make sure the model timezone is set
-        if ($this->_timezone && ! $modelInstance->get_timezone()) {
-            $modelInstance->set_timezone($this->_timezone);
-        }
-        return $modelInstance;
     }
 
 
@@ -139,83 +103,11 @@ abstract class EE_Model_Relation_Base implements HasSchemaInterface
      *
      * @param string $timezone timezone to set.
      */
-    public function set_timezone($timezone)
+    public function set_timezone(string $timezone)
     {
         if (! empty($timezone)) {
             $this->_timezone = $timezone;
         }
-    }
-
-
-    /**
-     * @param        $other_table
-     * @param        $other_table_alias
-     * @param        $other_table_column
-     * @param        $this_table_alias
-     * @param        $this_table_join_column
-     * @param string $extra_join_sql
-     * @return string
-     */
-    protected function _left_join(
-        $other_table,
-        $other_table_alias,
-        $other_table_column,
-        $this_table_alias,
-        $this_table_join_column,
-        $extra_join_sql = ''
-    ) {
-        return " LEFT JOIN " . $other_table . " AS " . $other_table_alias . " ON " . $other_table_alias . "." . $other_table_column . "=" . $this_table_alias . "." . $this_table_join_column . ($extra_join_sql ? " AND $extra_join_sql" : '');
-    }
-
-
-    /**
-     * Gets all the model objects of type of other model related to $model_object,
-     * according to this relation. This is the same code for EE_HABTM_Relation and EE_Has_Many_Relation.
-     * For both of those child classes, $model_object must be saved so that it has an ID before querying,
-     * otherwise an error will be thrown. Note: by default we disable default_where_conditions
-     * EE_Belongs_To_Relation doesn't need to be saved before querying.
-     *
-     * @param EE_Base_Class|int $model_object_or_id                      or the primary key of this model
-     * @param array             $query_params                            @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
-     * @param boolean           $values_already_prepared_by_model_object @deprecated since 4.8.1
-     * @return EE_Base_Class[]
-     * @throws EE_Error
-     * @throws ReflectionException
-     */
-    public function get_all_related(
-        $model_object_or_id,
-        $query_params = array(),
-        $values_already_prepared_by_model_object = false
-    ) {
-        if ($values_already_prepared_by_model_object !== false) {
-            EE_Error::doing_it_wrong(
-                'EE_Model_Relation_Base::get_all_related',
-                esc_html__('The argument $values_already_prepared_by_model_object is no longer used.', 'event_espresso'),
-                '4.8.1'
-            );
-        }
-        $query_params                                      = $this->_disable_default_where_conditions_on_query_param($query_params);
-        $query_param_where_this_model_pk                   = $this->get_this_model()->get_this_model_name()
-                                                             . "."
-                                                             . $this->get_this_model()->get_primary_key_field()->get_name();
-        $model_object_id                                   = $this->_get_model_object_id($model_object_or_id);
-        $query_params[0][ $query_param_where_this_model_pk ] = $model_object_id;
-        return $this->get_other_model()->get_all($query_params);
-    }
-
-
-    /**
-     * Alters the $query_params to disable default where conditions, unless otherwise specified
-     *
-     * @param array $query_params
-     * @return array
-     */
-    protected function _disable_default_where_conditions_on_query_param($query_params)
-    {
-        if (! isset($query_params['default_where_conditions'])) {
-            $query_params['default_where_conditions'] = 'none';
-        }
-        return $query_params;
     }
 
 
@@ -231,7 +123,7 @@ abstract class EE_Model_Relation_Base implements HasSchemaInterface
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function delete_all_related($model_object_or_id, $query_params = array())
+    public function delete_all_related($model_object_or_id, $query_params = [])
     {
         // for each thing we would delete,
         $related_model_objects = $this->get_all_related($model_object_or_id, $query_params);
@@ -254,6 +146,148 @@ abstract class EE_Model_Relation_Base implements HasSchemaInterface
 
 
     /**
+     * Gets all the model objects of type of other model related to $model_object,
+     * according to this relation. This is the same code for EE_HABTM_Relation and EE_Has_Many_Relation.
+     * For both of those child classes, $model_object must be saved so that it has an ID before querying,
+     * otherwise an error will be thrown. Note: by default we disable default_where_conditions
+     * EE_Belongs_To_Relation doesn't need to be saved before querying.
+     *
+     * @param EE_Base_Class|int $model_object_or_id                      or the primary key of this model
+     * @param array             $query_params                            @see
+     *                                                                   https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @param boolean           $values_already_prepared_by_model_object @deprecated since 4.8.1
+     * @return EE_Base_Class[]
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function get_all_related(
+        $model_object_or_id,
+        $query_params = [],
+        $values_already_prepared_by_model_object = false
+    ) {
+        if ($values_already_prepared_by_model_object !== false) {
+            EE_Error::doing_it_wrong(
+                'EE_Model_Relation_Base::get_all_related',
+                esc_html__('The argument $values_already_prepared_by_model_object is no longer used.', 'event_espresso'),
+                '4.8.1'
+            );
+        }
+        $query_params                                        =
+            $this->_disable_default_where_conditions_on_query_param($query_params);
+        $query_param_where_this_model_pk                     = $this->get_this_model()->get_this_model_name()
+                                                               .
+                                                               "."
+                                                               .
+                                                               $this->get_this_model()
+                                                                    ->get_primary_key_field()
+                                                                    ->get_name();
+        $model_object_id                                     = $this->_get_model_object_id($model_object_or_id);
+        $query_params[0][ $query_param_where_this_model_pk ] = $model_object_id;
+        return $this->get_other_model()->get_all($query_params);
+    }
+
+
+    /**
+     * Gets the model which this relation establishes the relation TO (ie,
+     * this relation object was defined on get_this_model(), get_other_model() is the other one)
+     *
+     * @return EEM_Base
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function get_other_model()
+    {
+        return $this->_get_model($this->_other_model_name);
+    }
+
+
+    /**
+     * Similar to 'add_relation_to(...)', performs the opposite action of removing the relationship between the two
+     * model objects
+     *
+     * @param       $this_obj_or_id
+     * @param       $other_obj_or_id
+     * @param array $where_query
+     * @return bool
+     */
+    abstract public function remove_relation_to($this_obj_or_id, $other_obj_or_id, $where_query = []);
+
+
+    /**
+     * Alters the $query_params to disable default where conditions, unless otherwise specified
+     *
+     * @param array $query_params
+     * @return array
+     */
+    protected function _disable_default_where_conditions_on_query_param($query_params)
+    {
+        if (! isset($query_params['default_where_conditions'])) {
+            $query_params['default_where_conditions'] = 'none';
+        }
+        return $query_params;
+    }
+
+
+    /**
+     * Gets the model where this relation is defined.
+     *
+     * @return EEM_Base
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function get_this_model()
+    {
+        return $this->_get_model($this->_this_model_name);
+    }
+
+
+    /**
+     * this just returns a model_object_id for incoming item that could be an object or id.
+     *
+     * @param EE_Base_Class|int $model_object_or_id model object or the primary key of this model
+     * @return int
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    protected function _get_model_object_id($model_object_or_id)
+    {
+        $model_object_id = $model_object_or_id;
+        if ($model_object_or_id instanceof EE_Base_Class) {
+            $model_object_id = $model_object_or_id->ID();
+        }
+        if (! $model_object_id) {
+            throw new EE_Error(
+                sprintf(
+                    esc_html__(
+                        "Sorry, we cant get the related %s model objects to %s model object before it has an ID. You can solve that by just saving it before trying to get its related model objects",
+                        "event_espresso"
+                    ),
+                    $this->get_other_model()->get_this_model_name(),
+                    $this->get_this_model()->get_this_model_name()
+                )
+            );
+        }
+        return $model_object_id;
+    }
+
+
+    /**
+     * Internally used by get_this_model() and get_other_model()
+     *
+     * @param string $model_name like Event, Question_Group, etc. omit the EEM_
+     * @return EEM_Base
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    protected function _get_model($model_name)
+    {
+        $modelInstance = EE_Registry::instance()->load_model($model_name);
+        $modelInstance->set_timezone($this->_timezone);
+        return $modelInstance;
+    }
+
+
+    /**
      * Deletes the related model objects which meet the query parameters. If no
      * parameters are specified, then all related model objects will be deleted.
      * Note: If the related model is extends EEM_Soft_Delete_Base, then the related
@@ -265,7 +299,7 @@ abstract class EE_Model_Relation_Base implements HasSchemaInterface
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function delete_related_permanently($model_object_or_id, $query_params = array())
+    public function delete_related_permanently($model_object_or_id, $query_params = [])
     {
         // for each thing we would delete,
         $related_model_objects = $this->get_all_related($model_object_or_id, $query_params);
@@ -301,38 +335,11 @@ abstract class EE_Model_Relation_Base implements HasSchemaInterface
 
 
     /**
-     * this just returns a model_object_id for incoming item that could be an object or id.
-     *
-     * @param  EE_Base_Class|int $model_object_or_id model object or the primary key of this model
-     * @throws EE_Error
-     * @return int
-     */
-    protected function _get_model_object_id($model_object_or_id)
-    {
-        $model_object_id = $model_object_or_id;
-        if ($model_object_or_id instanceof EE_Base_Class) {
-            $model_object_id = $model_object_or_id->ID();
-        }
-        if (! $model_object_id) {
-            throw new EE_Error(sprintf(
-                esc_html__(
-                    "Sorry, we cant get the related %s model objects to %s model object before it has an ID. You can solve that by just saving it before trying to get its related model objects",
-                    "event_espresso"
-                ),
-                $this->get_other_model()->get_this_model_name(),
-                $this->get_this_model()->get_this_model_name()
-            ));
-        }
-        return $model_object_id;
-    }
-
-
-    /**
      * Gets the SQL string for performing the join between this model and the other model.
      *
      * @param string $model_relation_chain like 'Event.Event_Venue.Venue'
      * @return string of SQL, eg "LEFT JOIN table_name AS table_alias ON this_model_primary_table.pk =
-     *                other_model_primary_table.fk" etc
+     *                                     other_model_primary_table.fk" etc
      */
     abstract public function get_join_statement($model_relation_chain);
 
@@ -345,40 +352,30 @@ abstract class EE_Model_Relation_Base implements HasSchemaInterface
      * @param       $this_obj_or_id
      * @param       $other_obj_or_id
      * @param array $extra_join_model_fields_n_values
-     * @return \EE_Base_Class the EE_Base_Class which was added as a relation. (Convenient if you only pass an ID for
+     * @return EE_Base_Class the EE_Base_Class which was added as a relation. (Convenient if you only pass an ID for
      *                        $other_obj_or_id)
      */
     abstract public function add_relation_to(
         $this_obj_or_id,
         $other_obj_or_id,
-        $extra_join_model_fields_n_values = array()
+        $extra_join_model_fields_n_values = []
     );
-
-
-    /**
-     * Similar to 'add_relation_to(...)', performs the opposite action of removing the relationship between the two
-     * model objects
-     *
-     * @param       $this_obj_or_id
-     * @param       $other_obj_or_id
-     * @param array $where_query
-     * @return bool
-     */
-    abstract public function remove_relation_to($this_obj_or_id, $other_obj_or_id, $where_query = array());
 
 
     /**
      * Removes ALL relation instances for this relation obj
      *
      * @param EE_Base_Class|int $this_obj_or_id
-     * @param array             $where_query_param @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
+     * @param array             $where_query_param @see
+     *                                             https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
      * @return EE_Base_Class[]
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function remove_relations($this_obj_or_id, $where_query_param = array())
+    public function remove_relations($this_obj_or_id, $where_query_param = [])
     {
-        $related_things = $this->get_all_related($this_obj_or_id, array($where_query_param));
-        $objs_removed   = array();
+        $related_things = $this->get_all_related($this_obj_or_id, [$where_query_param]);
+        $objs_removed   = [];
         foreach ($related_things as $related_thing) {
             $objs_removed[] = $this->remove_relation_to($this_obj_or_id, $related_thing);
         }
@@ -403,29 +400,64 @@ abstract class EE_Model_Relation_Base implements HasSchemaInterface
      * Gets the error message to show
      *
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_deletion_error_message()
     {
         if ($this->_blocking_delete_error_message) {
             return $this->_blocking_delete_error_message;
-        } else {
-//          return sprintf(__('Cannot delete %1$s when there are related %2$s', "event_espresso"),$this->get_this_model()->item_name(2),$this->get_other_model()->item_name(2));
-            return sprintf(
-                esc_html__(
-                    'This %1$s is currently linked to one or more %2$s records. If this %1$s is incorrect, then please remove it from all %3$s before attempting to delete it.',
-                    "event_espresso"
-                ),
-                $this->get_this_model()->item_name(1),
-                $this->get_other_model()->item_name(1),
-                $this->get_other_model()->item_name(2)
-            );
         }
+        return sprintf(
+            esc_html__(
+                'This %1$s is currently linked to one or more %2$s records. If this %1$s is incorrect, then please remove it from all %3$s before attempting to delete it.',
+                "event_espresso"
+            ),
+            $this->get_this_model()->item_name(),
+            $this->get_other_model()->item_name(),
+            $this->get_other_model()->item_name(2)
+        );
     }
 
+
     /**
-     * Returns whatever is set as the nicename for the object.
+     * This returns elements used to represent this field in the json schema.
+     *
+     * @link http://json-schema.org/
+     * @return array
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function getSchema()
+    {
+        $schema = [
+            'description'   => $this->getSchemaDescription(),
+            'type'          => $this->getSchemaType(),
+            'relation'      => true,
+            'relation_type' => get_class($this),
+            'readonly'      => $this->getSchemaReadonly(),
+        ];
+
+        if ($this instanceof EE_HABTM_Relation) {
+            $schema['joining_model_name'] = $this->get_join_model()->get_this_model_name();
+        }
+
+        if ($this->getSchemaType() === 'array') {
+            $schema['items'] = [
+                'type' => 'object',
+            ];
+        }
+
+        return $schema;
+    }
+
+
+    /**
+     * Returns whatever is set as the nice name for the object.
      *
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function getSchemaDescription()
     {
@@ -439,29 +471,6 @@ abstract class EE_Model_Relation_Base implements HasSchemaInterface
         );
     }
 
-    /**
-     * Returns whatever is set as the $_schema_type property for the object.
-     * Note: this will automatically add 'null' to the schema if the object is_nullable()
-     *
-     * @return string|array
-     */
-    public function getSchemaType()
-    {
-        return $this instanceof EE_Belongs_To_Relation ? 'object' : 'array';
-    }
-
-    /**
-     * This is usually present when the $_schema_type property is 'object'.  Any child classes will need to override
-     * this method and return the properties for the schema.
-     * The reason this is not a property on the class is because there may be filters set on the values for the property
-     * that won't be exposed on construct.  For example enum type schemas may have the enum values filtered.
-     *
-     * @return array
-     */
-    public function getSchemaProperties()
-    {
-        return array();
-    }
 
     /**
      * If a child class has enum values, they should override this method and provide a simple array
@@ -473,18 +482,34 @@ abstract class EE_Model_Relation_Base implements HasSchemaInterface
      */
     public function getSchemaEnum()
     {
-        return array();
+        return [];
     }
+
 
     /**
      * This returns the value of the $_schema_format property on the object.
      *
-     * @return string
+     * @return array
      */
     public function getSchemaFormat()
     {
-        return array();
+        return [];
     }
+
+
+    /**
+     * This is usually present when the $_schema_type property is 'object'.  Any child classes will need to override
+     * this method and return the properties for the schema.
+     * The reason this is not a property on the class is because there may be filters set on the values for the property
+     * that won't be exposed on construct.  For example enum type schemas may have the enum values filtered.
+     *
+     * @return array
+     */
+    public function getSchemaProperties()
+    {
+        return [];
+    }
+
 
     /**
      * This returns the value of the $_schema_readonly property on the object.
@@ -496,32 +521,48 @@ abstract class EE_Model_Relation_Base implements HasSchemaInterface
         return true;
     }
 
+
     /**
-     * This returns elements used to represent this field in the json schema.
+     * Returns whatever is set as the $_schema_type property for the object.
+     * Note: this will automatically add 'null' to the schema if the object is_nullable()
      *
-     * @link http://json-schema.org/
-     * @return array
+     * @return string|array
      */
-    public function getSchema()
+    public function getSchemaType()
     {
-        $schema = array(
-            'description' => $this->getSchemaDescription(),
-            'type' => $this->getSchemaType(),
-            'relation' => true,
-            'relation_type' => get_class($this),
-            'readonly' => $this->getSchemaReadonly()
-        );
+        return $this instanceof EE_Belongs_To_Relation ? 'object' : 'array';
+    }
 
-        if ($this instanceof EE_HABTM_Relation) {
-            $schema['joining_model_name'] = $this->get_join_model()->get_this_model_name();
-        }
 
-        if ($this->getSchemaType() === 'array') {
-            $schema['items'] = array(
-                'type' => 'object'
-            );
-        }
-
-        return $schema;
+    /**
+     * @param        $other_table
+     * @param        $other_table_alias
+     * @param        $other_table_column
+     * @param        $this_table_alias
+     * @param        $this_table_join_column
+     * @param string $extra_join_sql
+     * @return string
+     */
+    protected function _left_join(
+        $other_table,
+        $other_table_alias,
+        $other_table_column,
+        $this_table_alias,
+        $this_table_join_column,
+        $extra_join_sql = ''
+    ) {
+        return " LEFT JOIN " .
+               $other_table .
+               " AS " .
+               $other_table_alias .
+               " ON " .
+               $other_table_alias .
+               "." .
+               $other_table_column .
+               "=" .
+               $this_table_alias .
+               "." .
+               $this_table_join_column .
+               ($extra_join_sql ? " AND $extra_join_sql" : '');
     }
 }
