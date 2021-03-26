@@ -587,7 +587,12 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
     public function save_and_clean_billing_info_for_payment_method($billing_form, $payment_method)
     {
         if (! $billing_form instanceof EE_Billing_Attendee_Info_Form) {
-            EE_Error::add_error(__('Cannot save billing info because there is none.', 'event_espresso'));
+            EE_Error::add_error(
+                __('Cannot save billing info because there is none.', 'event_espresso'),
+                __FILE__,
+                __FUNCTION__,
+                __LINE__
+            );
             return false;
         }
         $billing_form->clean_sensitive_data();
