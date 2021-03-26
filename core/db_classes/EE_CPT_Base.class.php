@@ -2,25 +2,24 @@
 
 /**
  * Class EE_CPT_Base
- *
  * Base class for all models which are really custom post types, as there is much functionality they share
  *
- * @package               Event Espresso
- * @subpackage            core
- * @author                Michael Nelson
- * @since                 EE4
- *
+ * @package     Event Espresso
+ * @subpackage  core
+ * @author      Michael Nelson
+ * @since       EE4
  */
 abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class
 {
 
     /**
-     * This is a property for holding cached feature images on CPT objects.  Cache's are set on the first
-     * "feature_image()" method call.  Each key in the array corresponds to the requested size.
+     * This is a property for holding cached feature images on CPT objects.
+     * Cache's are set on the first "feature_image()" method call.
+     * Each key in the array corresponds to the requested size.
      *
      * @var array
      */
-    protected $_feature_image = array();
+    protected $_feature_image = [];
 
     /**
      * @var WP_Post the WP_Post that corresponds with this CPT model object
@@ -32,88 +31,14 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class
 
 
     /**
-     * Returns the WP post associated with this CPT model object. If this CPT is saved, fetches it
-     * from the DB. Otherwise, create an unsaved WP_POst object. Caches the post internally.
-     *
-     * @return WP_Post
-     */
-    public function wp_post()
-    {
-        global $wpdb;
-        if (! $this->_wp_post instanceof WP_Post) {
-            if ($this->ID()) {
-                $this->_wp_post = get_post($this->ID());
-            } else {
-                $simulated_db_result = new stdClass();
-                foreach ($this->get_model()->field_settings(true) as $field_name => $field_obj) {
-                    if (
-                        $this->get_model()->get_table_obj_by_alias($field_obj->get_table_alias())->get_table_name()
-                        === $wpdb->posts
-                    ) {
-                        $column = $field_obj->get_table_column();
-
-                        if ($field_obj instanceof EE_Datetime_Field) {
-                            $value_on_model_obj = $this->get_DateTime_object($field_name);
-                        } elseif ($field_obj->is_db_only_field()) {
-                            $value_on_model_obj = $field_obj->get_default_value();
-                        } else {
-                            $value_on_model_obj = $this->get_raw($field_name);
-                        }
-                        $simulated_db_result->{$column} = $field_obj->prepare_for_use_in_db($value_on_model_obj);
-                    }
-                }
-                $this->_wp_post = new WP_Post($simulated_db_result);
-            }
-            // and let's make retrieving the EE CPT object easy too
-            $classname = get_class($this);
-            if (! isset($this->_wp_post->{$classname})) {
-                $this->_wp_post->{$classname} = $this;
-            }
-        }
-        return $this->_wp_post;
-    }
-
-    /**
-     * When fetching a new value for a post field that uses the global $post for rendering,
-     * set the global $post temporarily to be this model object; and afterwards restore it
-     *
-     * @param string $fieldname
-     * @param bool   $pretty
-     * @param string $extra_cache_ref
-     * @return mixed
-     */
-    protected function _get_fresh_property($fieldname, $pretty = false, $extra_cache_ref = null)
-    {
-        global $post;
-
-        if (
-            $pretty
-            && (
-                ! (
-                    $post instanceof WP_Post
-                    && $post->ID
-                )
-                || (int) $post->ID !== $this->ID()
-            )
-            && $this->get_model()->field_settings_for($fieldname) instanceof EE_Post_Content_Field
-        ) {
-            $old_post = $post;
-            $post = $this->wp_post();
-            $return_value = parent::_get_fresh_property($fieldname, $pretty, $extra_cache_ref);
-            $post = $old_post;
-        } else {
-            $return_value = parent::_get_fresh_property($fieldname, $pretty, $extra_cache_ref);
-        }
-        return $return_value;
-    }
-
-    /**
      * Adds to the specified event category. If it category doesn't exist, creates it.
      *
      * @param string $category_name
      * @param string $category_description    optional
      * @param int    $parent_term_taxonomy_id optional
      * @return EE_Term_Taxonomy
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function add_event_category($category_name, $category_description = null, $parent_term_taxonomy_id = null)
     {
@@ -131,6 +56,8 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class
      *
      * @param string $category_name
      * @return bool
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function remove_event_category($category_name)
     {
@@ -144,13 +71,15 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class
      *
      * @param EE_Term_Taxonomy $term_taxonomy
      * @return EE_Base_Class the relation was removed from
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function remove_relation_to_term_taxonomy($term_taxonomy)
     {
         if (! $term_taxonomy) {
             EE_Error::add_error(
                 sprintf(
-                    __(
+                    esc_html__(
                         "No Term_Taxonomy provided which to remove from model object of type %s and id %d",
                         "event_espresso"
                     ),
@@ -172,8 +101,9 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class
     /**
      * The main purpose of this method is to return the post type for the model object
      *
-     * @access public
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function post_type()
     {
@@ -184,8 +114,8 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class
     /**
      * The main purpose of this method is to return the parent for the model object
      *
-     * @access public
      * @return int
+     * @throws EE_Error
      */
     public function parent()
     {
@@ -197,6 +127,7 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class
      * return the _status property
      *
      * @return string
+     * @throws EE_Error
      */
     public function status()
     {
@@ -206,32 +137,12 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class
 
     /**
      * @param string $status
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_status($status)
     {
         $this->set('status', $status);
-    }
-
-
-    /**
-     * This calls the equivalent model method for retrieving the feature image which in turn is a wrapper for
-     * WordPress' get_the_post_thumbnail() function.
-     *
-     * @link   http://codex.wordpress.org/Function_Reference/get_the_post_thumbnail
-     * @access protected
-     * @param string|array $size (optional) Image size. Defaults to 'post-thumbnail' but can also be a 2-item array
-     *                           representing width and height in pixels (i.e. array(32,32) ).
-     * @param string|array $attr Optional. Query string or array of attributes.
-     * @return string HTML image element
-     */
-    protected function _get_feature_image($size, $attr)
-    {
-        // first let's see if we already have the _feature_image property set AND if it has a cached element on it FOR the given size
-        $attr_key = is_array($attr) ? implode('_', $attr) : $attr;
-        $cache_key = is_array($size) ? implode('_', $size) . $attr_key : $size . $attr_key;
-        $this->_feature_image[ $cache_key ] = isset($this->_feature_image[ $cache_key ])
-            ? $this->_feature_image[ $cache_key ] : $this->get_model()->get_feature_image($this->ID(), $size, $attr);
-        return $this->_feature_image[ $cache_key ];
     }
 
 
@@ -241,6 +152,8 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class
      * @param string       $size
      * @param string|array $attr
      * @return string of html
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function feature_image($size = 'thumbnail', $attr = '')
     {
@@ -249,12 +162,43 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class
 
 
     /**
+     * This calls the equivalent model method for retrieving the feature image
+     * which in turn is a wrapper for WordPress' get_the_post_thumbnail() function.
+     *
+     * @link   http://codex.wordpress.org/Function_Reference/get_the_post_thumbnail
+     * @access protected
+     * @param string|array $size (optional) Image size. Defaults to 'post-thumbnail' but can also be a 2-item array
+     *                           representing width and height in pixels (i.e. array(32,32) ).
+     * @param string|array $attr Optional. Query string or array of attributes.
+     * @return string HTML image element
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    protected function _get_feature_image($size, $attr)
+    {
+        // first let's see if we already have the _feature_image property set
+        // AND if it has a cached element on it FOR the given size
+        $attr_key                           = is_array($attr)
+            ? implode('_', $attr)
+            : $attr;
+        $cache_key                          = is_array($size)
+            ? implode('_', $size) . $attr_key
+            : $size . $attr_key;
+        $this->_feature_image[ $cache_key ] = isset($this->_feature_image[ $cache_key ])
+            ? $this->_feature_image[ $cache_key ]
+            : $this->get_model()->get_feature_image($this->ID(), $size, $attr);
+        return $this->_feature_image[ $cache_key ];
+    }
+
+
+    /**
      * This uses the wp "wp_get_attachment_image_src()" function to return the feature image for the current class
      * using the given size params.
      *
-     * @param  string|array $size can either be a string: 'thumbnail', 'medium', 'large', 'full' OR 2-item array
+     * @param string|array $size  can either be a string: 'thumbnail', 'medium', 'large', 'full' OR 2-item array
      *                            representing width and height in pixels eg. array(32,32).
      * @return string|boolean          the url of the image or false if not found
+     * @throws EE_Error
      */
     public function feature_image_url($size = 'thumbnail')
     {
@@ -280,8 +224,10 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class
      *                                 This array is INDEXED by RELATED OBJ NAME (so it corresponds with the obj_names
      *                                 sent);
      * @return void
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function restore_revision($revision_id, $related_obj_names = array(), $where_query = array())
+    public function restore_revision($revision_id, $related_obj_names = [], $where_query = [])
     {
         // get revision object
         $revision_obj = $this->get_model()->get_one_by_ID($revision_id);
@@ -298,9 +244,11 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class
             foreach ($related_obj_names as $related_name) {
                 // related_obj_name so we're saving a revision on an object related to this object
                 // do we have $where_query params for this related object?  If we do then we include that.
-                $cols_n_values = isset($where_query[ $related_name ]) ? $where_query[ $related_name ] : array();
-                $where_params = ! empty($cols_n_values) ? array($cols_n_values) : array();
-                $related_objs = $this->get_many_related($related_name, $where_params);
+                $cols_n_values         = isset($where_query[ $related_name ])
+                    ? $where_query[ $related_name ]
+                    : [];
+                $where_params          = ! empty($cols_n_values) ? [$cols_n_values] : [];
+                $related_objs          = $this->get_many_related($related_name, $where_params);
                 $revision_related_objs = $revision_obj->get_many_related($related_name, $where_params);
                 // load helper
                 // remove related objs from this object that are not in revision
@@ -320,14 +268,17 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class
 
     /**
      * Wrapper for get_post_meta, http://codex.wordpress.org/Function_Reference/get_post_meta
+     * If only $id is set:
+     *  it will return all meta values in an associative array.
+     * If $single is set to false, or left blank:
+     *  the function returns an array containing all values of the specified key.
+     * If $single is set to true:
+     *  the function returns the first value of the specified key (not in an array)
      *
      * @param string  $meta_key
      * @param boolean $single
-     * @return mixed <ul><li>If only $id is set it will return all meta values in an associative array.</li>
-     * <li>If $single is set to false, or left blank, the function returns an array containing all values of the
-     * specified key.</li>
-     * <li>If $single is set to true, the function returns the first value of the specified key (not in an
-     * array</li></ul>
+     * @return mixed
+     * @throws EE_Error
      */
     public function get_post_meta($meta_key = null, $single = false)
     {
@@ -337,13 +288,17 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class
 
     /**
      * Wrapper for update_post_meta, http://codex.wordpress.org/Function_Reference/update_post_meta
+     * Returns meta_id if the meta doesn't exist,
+     * otherwise returns true on success and false on failure.
+     * NOTE: If the meta_value passed to this function is the same
+     * as the value that is already in the database, this function returns false.
      *
      * @param string $meta_key
      * @param mixed  $meta_value
      * @param mixed  $prev_value
-     * @return mixed Returns meta_id if the meta doesn't exist, otherwise returns true on success and false on failure.
-     *               NOTE: If the meta_value passed to this function is the same as the value that is already in the
-     *               database, this function returns false.
+     * @return mixed
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function update_post_meta($meta_key, $meta_value, $prev_value = null)
     {
@@ -359,9 +314,13 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class
      *
      * @param mixed $meta_key
      * @param mixed $meta_value
-     * @param bool  $unique . If postmeta for this $meta_key already exists, whether to add an additional item or not
-     * @return boolean Boolean true, except if the $unique argument was set to true and a custom field with the given
-     *                 key already exists, in which case false is returned.
+     * @param bool  $unique     If postmeta for this $meta_key already exists,
+     *                          whether to add an additional item or not
+     * @return boolean          Boolean true, except if the $unique argument was set to true
+     *                          and a custom field with the given key already exists,
+     *                          in which case false is returned.
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function add_post_meta($meta_key, $meta_value, $unique = false)
     {
@@ -378,11 +337,12 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class
      * @param mixed $meta_key
      * @param mixed $meta_value
      * @return boolean False for failure. True for success.
+     * @throws EE_Error
      */
     public function delete_post_meta($meta_key, $meta_value = '')
     {
         if (! $this->ID()) {
-            // there are obviously no postmetas for this if it's not saved
+            // there is obviously no postmeta for this if it's not saved
             // so let's just report this as a success
             return true;
         }
@@ -394,6 +354,7 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class
      * Gets the URL for viewing this event on the front-end
      *
      * @return string
+     * @throws EE_Error
      */
     public function get_permalink()
     {
@@ -405,9 +366,11 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class
      * Gets all the term-taxonomies for this CPT
      *
      * @param array $query_params
-     * @return EE_Term_Taxonomy
+     * @return array[]|EE_Base_Class[]|EE_Term_Taxonomy
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function term_taxonomies($query_params = array())
+    public function term_taxonomies($query_params = [])
     {
         return $this->get_many_related('Term_Taxonomy', $query_params);
     }
@@ -415,6 +378,8 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class
 
     /**
      * @return mixed
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_custom_post_statuses()
     {
@@ -424,6 +389,8 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class
 
     /**
      * @return mixed
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_all_post_statuses()
     {
@@ -432,14 +399,100 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class
 
 
     /**
+     * When fetching a new value for a post field that uses the global $post for rendering,
+     * set the global $post temporarily to be this model object; and afterwards restore it
+     *
+     * @param string $field_name
+     * @param bool   $pretty
+     * @param string $extra_cache_ref
+     * @return mixed
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    protected function _get_fresh_property($field_name, $pretty = false, $extra_cache_ref = null)
+    {
+        global $post;
+
+        if (
+            $pretty
+            && (
+                ! (
+                    $post instanceof WP_Post
+                    && $post->ID
+                )
+                || (int) $post->ID !== $this->ID()
+            )
+            && $this->get_model()->field_settings_for($field_name) instanceof EE_Post_Content_Field
+        ) {
+            $old_post     = $post;
+            $post         = $this->wp_post();
+            $return_value = parent::_get_fresh_property($field_name, $pretty, $extra_cache_ref);
+            $post         = $old_post;
+        } else {
+            $return_value = parent::_get_fresh_property($field_name, $pretty, $extra_cache_ref);
+        }
+        return $return_value;
+    }
+
+
+    /**
+     * Returns the WP post associated with this CPT model object.
+     * If this CPT is saved, fetches it from the DB.
+     * Otherwise, create an unsaved WP_POst object. Caches the post internally.
+     *
+     * @return WP_Post
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function wp_post()
+    {
+        global $wpdb;
+        if (! $this->_wp_post instanceof WP_Post) {
+            if ($this->ID()) {
+                $this->_wp_post = get_post($this->ID());
+            } else {
+                $simulated_db_result = new stdClass();
+                $field_settings      = $this->get_model()->field_settings(true);
+                foreach ($field_settings as $field_name => $field_obj) {
+                    if (
+                        $this->get_model()->get_table_obj_by_alias($field_obj->get_table_alias())
+                             ->get_table_name() === $wpdb->posts
+                    ) {
+                        $column = $field_obj->get_table_column();
+
+                        if ($field_obj instanceof EE_Datetime_Field) {
+                            $value_on_model_obj = $this->get_DateTime_object($field_name);
+                        } elseif ($field_obj->is_db_only_field()) {
+                            $value_on_model_obj = $field_obj->get_default_value();
+                        } else {
+                            $value_on_model_obj = $this->get_raw($field_name);
+                        }
+                        $simulated_db_result->{$column} = $field_obj->prepare_for_use_in_db($value_on_model_obj);
+                    }
+                }
+                $this->_wp_post = new WP_Post($simulated_db_result);
+            }
+            // and let's make retrieving the EE CPT object easy too
+            $classname = get_class($this);
+            if (! isset($this->_wp_post->{$classname})) {
+                $this->_wp_post->{$classname} = $this;
+            }
+        }
+        return $this->_wp_post;
+    }
+
+
+    /**
      * Don't serialize the WP Post. That's just duplicate data and we want to avoid recursion
      *
      * @return array
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function __sleep()
     {
         $properties_to_serialize = parent::__sleep();
-        $properties_to_serialize = array_diff($properties_to_serialize, array('_wp_post'));
+        $properties_to_serialize = array_diff($properties_to_serialize, ['_wp_post']);
         return $properties_to_serialize;
     }
 }
