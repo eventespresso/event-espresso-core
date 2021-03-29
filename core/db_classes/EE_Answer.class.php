@@ -3,19 +3,20 @@
 /**
  * EE_Answer class
  *
- * @package               Event Espresso
- * @subpackage            includes/classes/EE_Answer.class.php
- * @author                Mike Nelson
+ * @package     Event Espresso
+ * @subpackage  includes/classes/EE_Answer.class.php
+ * @author      Mike Nelson
  */
 class EE_Answer extends EE_Base_Class
 {
 
     /**
-     *
      * @param array $props_n_values
      * @return EE_Answer
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public static function new_instance($props_n_values = array())
+    public static function new_instance($props_n_values = [])
     {
         $has_object = parent::_check_for_object($props_n_values, __CLASS__);
         return $has_object ? $has_object : new self($props_n_values);
@@ -23,21 +24,23 @@ class EE_Answer extends EE_Base_Class
 
 
     /**
-     *
      * @param array $props_n_values
      * @return EE_Answer
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public static function new_instance_from_db($props_n_values = array())
+    public static function new_instance_from_db($props_n_values = [])
     {
         return new self($props_n_values, true);
     }
 
 
     /**
-     *    Set Question ID
+     * Set Question ID
      *
-     * @access        public
      * @param int $QST_ID
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_question($QST_ID = 0)
     {
@@ -46,10 +49,11 @@ class EE_Answer extends EE_Base_Class
 
 
     /**
-     *    Set Registration ID
+     * Set Registration ID
      *
-     * @access        public
      * @param int $REG_ID
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_registration($REG_ID = 0)
     {
@@ -58,10 +62,11 @@ class EE_Answer extends EE_Base_Class
 
 
     /**
-     *    Set Answer value
+     * Set Answer value
      *
-     * @access        public
      * @param mixed $ANS_value
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_value($ANS_value = '')
     {
@@ -70,10 +75,10 @@ class EE_Answer extends EE_Base_Class
 
 
     /**
-     *    get Attendee First Name
+     * get Attendee First Name
      *
-     * @access        public
      * @return        int
+     * @throws EE_Error
      */
     public function registration_ID()
     {
@@ -82,10 +87,10 @@ class EE_Answer extends EE_Base_Class
 
 
     /**
-     *    get Attendee Last Name
+     * get Attendee Last Name
      *
-     * @access        public
      * @return        int
+     * @throws EE_Error
      */
     public function question_ID()
     {
@@ -94,10 +99,10 @@ class EE_Answer extends EE_Base_Class
 
 
     /**
-     *    get Attendee Address
+     * get Attendee Address
      *
-     * @access        public
      * @return        string
+     * @throws EE_Error
      */
     public function value()
     {
@@ -110,6 +115,7 @@ class EE_Answer extends EE_Base_Class
      *
      * @param null $schema
      * @return string
+     * @throws EE_Error
      */
     public function pretty_value($schema = null)
     {
@@ -121,6 +127,7 @@ class EE_Answer extends EE_Base_Class
      * Echoes out a pretty value (even for multi-choice options)
      *
      * @param string $schema
+     * @throws EE_Error
      */
     public function e_value($schema = null)
     {
@@ -131,7 +138,9 @@ class EE_Answer extends EE_Base_Class
     /**
      * Gets the related EE_Question to this EE_Answer
      *
-     * @return EE_Question
+     * @return EE_Base_Class|EE_Question
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function question()
     {
@@ -142,13 +151,12 @@ class EE_Answer extends EE_Base_Class
     /**
      * Gets the related EE_Registration to this EE_Answer
      *
-     * @return EE_Registration
+     * @return EE_Base_Class|EE_Registration
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function registration()
     {
         return $this->get_first_related('Registration');
     }
 }
-
-/* End of file EE_Answer.class.php */
-/* Location: /includes/classes/EE_Answer.class.php */
