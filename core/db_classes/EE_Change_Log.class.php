@@ -3,24 +3,24 @@
 /**
  * EE_Change_Log
  *
- * @package               Event Espresso
+ * @package     Event Espresso
  * @subpackage
- * @author                Mike Nelson
- * ------------------------------------------------------------------------
+ * @author      Mike Nelson
  */
 class EE_Change_Log extends EE_Base_Class
 {
 
     /**
-     * @param array  $props_n_values          incoming values
-     * @param string $timezone                incoming timezone (if not set the timezone set for the website will be
-     *                                        used.)
-     * @param array  $date_formats            incoming date_formats in an array where the first value is the
-     *                                        date_format and the second value is the time format
+     * @param array  $props_n_values    incoming values
+     * @param string $timezone          incoming timezone
+     *                                  If not set the timezone for the website will be used.
+     * @param array  $date_formats      incoming date_formats in an array where the first value is the
+     *                                  date_format and the second value is the time format
      * @return EE_Change_Log
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public static function new_instance($props_n_values = array(), $timezone = null, $date_formats = array())
+    public static function new_instance($props_n_values = [], $timezone = null, $date_formats = [])
     {
         $has_object = parent::_check_for_object($props_n_values, __CLASS__, $timezone, $date_formats);
         return $has_object ? $has_object : new self($props_n_values, false, $timezone, $date_formats);
@@ -29,14 +29,17 @@ class EE_Change_Log extends EE_Base_Class
 
     /**
      * @param array  $props_n_values  incoming values from the database
-     * @param string $timezone        incoming timezone as set by the model.  If not set the timezone for
-     *                                the website will be used.
+     * @param string $timezone        incoming timezone as set by the model.
+     *                                If not set the timezone for the website will be used.
      * @return EE_Change_Log
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public static function new_instance_from_db($props_n_values = array(), $timezone = null)
+    public static function new_instance_from_db($props_n_values = [], $timezone = null)
     {
         return new self($props_n_values, true, $timezone);
     }
+
 
     /**
      * Gets message
@@ -49,16 +52,19 @@ class EE_Change_Log extends EE_Base_Class
         return $this->get('LOG_message');
     }
 
+
     /**
      * Sets message
      *
      * @param mixed $message
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_message($message)
     {
         $this->set('LOG_message', $message);
     }
+
 
     /**
      * Gets time
@@ -71,26 +77,17 @@ class EE_Change_Log extends EE_Base_Class
         return $this->get('LOG_time');
     }
 
+
     /**
      * Sets time
      *
      * @param string $time
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_time($time)
     {
         $this->set('LOG_time', $time);
-    }
-
-    /**
-     * Gets log_type
-     *
-     * @return string
-     * @throws EE_Error
-     */
-    public function log_type()
-    {
-        return $this->get('LOG_type');
     }
 
 
@@ -105,38 +102,31 @@ class EE_Change_Log extends EE_Base_Class
         return EEM_Change_Log::get_pretty_label_for_type($this->log_type());
     }
 
+
+    /**
+     * Gets log_type
+     *
+     * @return string
+     * @throws EE_Error
+     */
+    public function log_type()
+    {
+        return $this->get('LOG_type');
+    }
+
+
     /**
      * Sets log_type
      *
      * @param string $log_type
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_log_type($log_type)
     {
         $this->set('LOG_type', $log_type);
     }
 
-    /**
-     * Gets type of the model object related to this log
-     *
-     * @return string
-     * @throws EE_Error
-     */
-    public function OBJ_type()
-    {
-        return $this->get('OBJ_type');
-    }
-
-    /**
-     * Sets type
-     *
-     * @param string $type
-     * @throws EE_Error
-     */
-    public function set_OBJ_type($type)
-    {
-        $this->set('OBJ_type', $type);
-    }
 
     /**
      * Gets OBJ_ID (the ID of the item related to this log)
@@ -149,16 +139,6 @@ class EE_Change_Log extends EE_Base_Class
         return $this->get('OBJ_ID');
     }
 
-    /**
-     * Sets OBJ_ID
-     *
-     * @param mixed $OBJ_ID
-     * @throws EE_Error
-     */
-    public function set_OBJ_ID($OBJ_ID)
-    {
-        $this->set('OBJ_ID', $OBJ_ID);
-    }
 
     /**
      * Gets wp_user
@@ -171,33 +151,49 @@ class EE_Change_Log extends EE_Base_Class
         return $this->get('LOG_wp_user');
     }
 
+
     /**
      * Sets wp_user
      *
      * @param int $wp_user_id
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_wp_user($wp_user_id)
     {
         $this->set('LOG_wp_user', $wp_user_id);
     }
 
+
     /**
      * Gets the model object attached to this log
      *
      * @return EE_Base_Class
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function object()
     {
         $model_name_of_related_obj = $this->OBJ_type();
-        $is_model_name = EE_Registry::instance()->is_model_name($model_name_of_related_obj);
+        $is_model_name             = EE_Registry::instance()->is_model_name($model_name_of_related_obj);
         if (! $is_model_name) {
             return null;
-        } else {
-            return $this->get_first_related($model_name_of_related_obj);
         }
+        return $this->get_first_related($model_name_of_related_obj);
     }
+
+
+    /**
+     * Gets type of the model object related to this log
+     *
+     * @return string
+     * @throws EE_Error
+     */
+    public function OBJ_type()
+    {
+        return $this->get('OBJ_type');
+    }
+
 
     /**
      * Shorthand for setting the OBJ_ID and OBJ_type. Slightly handier than using
@@ -208,6 +204,7 @@ class EE_Change_Log extends EE_Base_Class
      * @param boolean       $save
      * @return bool if $save=true, NULL is $save=false
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_object($object, $save = true)
     {
@@ -220,8 +217,33 @@ class EE_Change_Log extends EE_Base_Class
         }
         if ($save) {
             return $this->save();
-        } else {
-            return null;
         }
+        return null;
+    }
+
+
+    /**
+     * Sets type
+     *
+     * @param string $type
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function set_OBJ_type($type)
+    {
+        $this->set('OBJ_type', $type);
+    }
+
+
+    /**
+     * Sets OBJ_ID
+     *
+     * @param mixed $OBJ_ID
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function set_OBJ_ID($OBJ_ID)
+    {
+        $this->set('OBJ_ID', $OBJ_ID);
     }
 }
