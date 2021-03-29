@@ -170,78 +170,6 @@ abstract class EE_Base_Class
 
 
     /**
-     * @param array  $date_formats
-     * @since $VID:$
-     */
-    private function setDateAndTimeFormats(array $date_formats)
-    {
-        if (! empty($date_formats) && is_array($date_formats)) {
-            list($this->_dt_frmt, $this->_tm_frmt) = $date_formats;
-        } else {
-            // set default formats for date and time
-            $this->_dt_frmt = (string) get_option('date_format', 'Y-m-d');
-            $this->_tm_frmt = (string) get_option('time_format', 'g:i a');
-        }
-    }
-
-
-    /**
-     * @param array $model_fields
-     * @param array $fieldValues
-     * @throws EE_Error
-     * @since $VID:$
-     */
-    private function validateFieldValues(array $model_fields, array $fieldValues)
-    {
-        // verify client code has not passed any invalid field names
-        foreach ($fieldValues as $field_name => $field_value) {
-            if (! isset($model_fields[ $field_name ])) {
-                throw new EE_Error(
-                    sprintf(
-                        esc_html__(
-                            'Invalid field (%s) passed to constructor of %s. Allowed fields are :%s',
-                            'event_espresso'
-                        ),
-                        $field_name,
-                        get_class($this),
-                        implode(', ', array_keys($model_fields))
-                    )
-                );
-            }
-        }
-    }
-
-    /**
-     * @param array $model_fields
-     * @param bool  $set_from_db
-     * @throws EE_Error
-     * @throws ReflectionException
-     * @since $VID:$
-     */
-    private function setFieldValues(array $model_fields, $set_from_db)
-    {
-        foreach ($model_fields as $fieldName => $field) {
-            // if db model is instantiating
-            if ($set_from_db) {
-                // client code has indicated these field values are from the database
-                $this->set_from_db(
-                    $fieldName,
-                    isset($fieldValues[ $fieldName ]) ? $fieldValues[ $fieldName ] : null
-                );
-            } else {
-                // we're constructing a brand new instance of the model object.
-                // Generally, this means we'll need to do more field validation
-                $this->set(
-                    $fieldName,
-                    isset($fieldValues[ $fieldName ]) ? $fieldValues[ $fieldName ] : null,
-                    true
-                );
-            }
-        }
-    }
-
-
-    /**
      * for getting a model while instantiated.
      *
      * @param string|null $timezone
@@ -1256,6 +1184,7 @@ abstract class EE_Base_Class
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function get_extra_meta($meta_key, $single = false, $default = null)
     {
@@ -1609,6 +1538,7 @@ abstract class EE_Base_Class
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws EE_Error
      */
     public function update_cache_after_object_save(
         $relationName,
@@ -3397,5 +3327,78 @@ abstract class EE_Base_Class
             }
         }
         return true;
+    }
+
+
+    /**
+     * @param array $date_formats
+     * @since $VID:$
+     */
+    private function setDateAndTimeFormats(array $date_formats)
+    {
+        if (! empty($date_formats) && is_array($date_formats)) {
+            list($this->_dt_frmt, $this->_tm_frmt) = $date_formats;
+        } else {
+            // set default formats for date and time
+            $this->_dt_frmt = (string)get_option('date_format', 'Y-m-d');
+            $this->_tm_frmt = (string)get_option('time_format', 'g:i a');
+        }
+    }
+
+
+    /**
+     * @param array $model_fields
+     * @param array $fieldValues
+     * @throws EE_Error
+     * @since $VID:$
+     */
+    private function validateFieldValues(array $model_fields, array $fieldValues)
+    {
+        // verify client code has not passed any invalid field names
+        foreach ($fieldValues as $field_name => $field_value) {
+            if (! isset($model_fields[ $field_name ])) {
+                throw new EE_Error(
+                    sprintf(
+                        esc_html__(
+                            'Invalid field (%s) passed to constructor of %s. Allowed fields are :%s',
+                            'event_espresso'
+                        ),
+                        $field_name,
+                        get_class($this),
+                        implode(', ', array_keys($model_fields))
+                    )
+                );
+            }
+        }
+    }
+
+
+    /**
+     * @param array $model_fields
+     * @param bool  $set_from_db
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since $VID:$
+     */
+    private function setFieldValues(array $model_fields, $set_from_db)
+    {
+        foreach ($model_fields as $fieldName => $field) {
+            // if db model is instantiating
+            if ($set_from_db) {
+                // client code has indicated these field values are from the database
+                $this->set_from_db(
+                    $fieldName,
+                    isset($fieldValues[ $fieldName ]) ? $fieldValues[ $fieldName ] : null
+                );
+            } else {
+                // we're constructing a brand new instance of the model object.
+                // Generally, this means we'll need to do more field validation
+                $this->set(
+                    $fieldName,
+                    isset($fieldValues[ $fieldName ]) ? $fieldValues[ $fieldName ] : null,
+                    true
+                );
+            }
+        }
     }
 }
