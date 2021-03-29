@@ -141,7 +141,7 @@ abstract class EE_Base_Class
     {
         // ensure $fieldValues is an array
         $field_values = is_array($field_values) ? $field_values : [$field_values];
-        $className = get_class($this);
+        $className    = get_class($this);
         do_action("AHEE__{$className}__construct", $this, $field_values);
         // remember what values were passed to this constructor
         $this->_props_n_values_provided_in_constructor = $field_values;
@@ -180,7 +180,7 @@ abstract class EE_Base_Class
     public function get_model($timezone = '')
     {
         if (! $this->_model) {
-            $timezone = $timezone ? $timezone : $this->_timezone;
+            $timezone     = $timezone ? $timezone : $this->_timezone;
             $modelName    = self::_get_model_classname(get_class($this));
             $this->_model = self::_get_model_instance_with_name($modelName, $timezone);
             $this->set_timezone($timezone);
@@ -652,8 +652,8 @@ abstract class EE_Base_Class
         if ($existing) {
             $has_date_formats = ! empty($date_formats) && is_array($date_formats)
                                 && isset($date_formats[0], $date_formats[1]);
-            $date_format = $has_date_formats ? $date_formats[0] : (string) get_option('date_format', 'Y-m-d');
-            $time_format = $has_date_formats ? $date_formats[1] : (string) get_option('time_format', 'g:i a');
+            $date_format      = $has_date_formats ? $date_formats[0] : (string) get_option('date_format', 'Y-m-d');
+            $time_format      = $has_date_formats ? $date_formats[1] : (string) get_option('time_format', 'g:i a');
             // set date formats before setting values
             $existing->set_date_format($date_format);
             $existing->set_time_format($time_format);
@@ -890,7 +890,8 @@ abstract class EE_Base_Class
                         $this->_update_cached_related_model_objs_fks();
                     }
                 }
-            } else {// PK is NOT auto-increment
+            } else {
+                // PK is NOT auto-increment
                 // so check if one like it already exists in the db
                 if ($this->_model->exists_by_ID($this->ID())) {
                     if (WP_DEBUG && ! $this->in_entity_map()) {
@@ -913,7 +914,8 @@ abstract class EE_Base_Class
                     $this->_update_cached_related_model_objs_fks();
                 }
             }
-        } else {// there is NO primary key
+        } else {
+            // there is NO primary key
             $already_in_db = false;
             foreach ($this->_model->unique_indexes() as $index) {
                 $uniqueness_where_params = array_intersect_key($save_cols_n_values, $index->fields());
@@ -1226,7 +1228,7 @@ abstract class EE_Base_Class
      * Gets the first (ie, one) related model object of the specified type.
      *
      * @param string $relationName key in the model's _model_relations array
-     * @param array $query_params
+     * @param array  $query_params
      * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Base_Class (not an array, a single object)
      * @throws ReflectionException
@@ -1288,7 +1290,7 @@ abstract class EE_Base_Class
      * because we want to get even deleted items etc.
      *
      * @param string $relationName key in the model's _model_relations array
-     * @param array $query_params
+     * @param array  $query_params
      * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
      * @return EE_Base_Class[]     Results not necessarily indexed by IDs, because some results might not have primary
      *                             keys or might not be saved yet. Consider using EEM_Base::get_IDs() on these
@@ -1573,8 +1575,6 @@ abstract class EE_Base_Class
         }
         return false;
     }
-
-
 
 
     /**
@@ -2475,7 +2475,7 @@ abstract class EE_Base_Class
      * Removes ALL the related things for the $relationName.
      *
      * @param string $relationName
-     * @param array $where_query_params
+     * @param array  $where_query_params
      * @return EE_Base_Class
      * @throws ReflectionException
      * @throws InvalidArgumentException
@@ -2583,7 +2583,7 @@ abstract class EE_Base_Class
      * If this model object doesn't exist yet in the DB, just removes its related things
      *
      * @param string $relationName
-     * @param array $query_params
+     * @param array  $query_params
      * @return int how many deleted
      * @throws ReflectionException
      * @throws InvalidArgumentException
@@ -2616,7 +2616,7 @@ abstract class EE_Base_Class
      * to delete_related(). If this model object doesn't exist in the DB, just remove its related things
      *
      * @param string $relationName
-     * @param array $query_params
+     * @param array  $query_params
      * @return int how many deleted (including those soft deleted)
      * @throws ReflectionException
      * @throws InvalidArgumentException
@@ -3340,8 +3340,8 @@ abstract class EE_Base_Class
             list($this->_dt_frmt, $this->_tm_frmt) = $date_formats;
         } else {
             // set default formats for date and time
-            $this->_dt_frmt = (string)get_option('date_format', 'Y-m-d');
-            $this->_tm_frmt = (string)get_option('time_format', 'g:i a');
+            $this->_dt_frmt = (string) get_option('date_format', 'Y-m-d');
+            $this->_tm_frmt = (string) get_option('time_format', 'g:i a');
         }
     }
 
