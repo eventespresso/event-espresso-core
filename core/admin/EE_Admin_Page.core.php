@@ -692,7 +692,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             $this->{$add_screen_options}();
         }
         // add help tab(s) and tours- set via page_config and qtips.
-        $this->_add_help_tour();
+        // $this->_add_help_tour();
         $this->_add_help_tabs();
         $this->_add_qtips();
         // add feature_pointers - global, page child class, and view specific
@@ -1331,80 +1331,80 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      */
     protected function _add_help_tour()
     {
-        $tours = array();
-        $this->_help_tour = array();
-        // exit early if help tours are turned off globally
-        if ((defined('EE_DISABLE_HELP_TOURS') && EE_DISABLE_HELP_TOURS)
-            || ! EE_Registry::instance()->CFG->admin->help_tour_activation
-        ) {
-            return;
-        }
-        // loop through _page_config to find any help_tour defined
-        foreach ($this->_page_config as $route => $config) {
-            // we're only going to set things up for this route
-            if ($route !== $this->_req_action) {
-                continue;
-            }
-            // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
-            // if (isset($config['help_tour'])) {
-            //     foreach ($config['help_tour'] as $tour) {
-            //         $file_path = $this->_get_dir() . '/help_tours/' . $tour . '.class.php';
-            //         // let's see if we can get that file...
-            //         // if not its possible this is a decaf route not set in caffeinated
-            //         // so lets try and get the caffeinated equivalent
-            //         $file_path = ! is_readable($file_path) ? EE_ADMIN_PAGES
-            //                                                  . basename($this->_get_dir())
-            //                                                  . '/help_tours/'
-            //                                                  . $tour
-            //                                                  . '.class.php' : $file_path;
-            //         // if file is STILL not readable then let's do a EE_Error so its more graceful than a fatal error.
-            //         if (! is_readable($file_path)) {
-            //             EE_Error::add_error(
-            //                 sprintf(
-            //                     esc_html__(
-            //                         'The file path given for the help tour (%s) is not a valid path.  Please check that the string you set for the help tour on this route (%s) is the correct spelling',
-            //                         'event_espresso'
-            //                     ),
-            //                     $file_path,
-            //                     $tour
-            //                 ),
-            //                 __FILE__,
-            //                 __FUNCTION__,
-            //                 __LINE__
-            //             );
-            //             return;
-            //         }
-            //         require_once $file_path;
-            //         if (! class_exists($tour)) {
-            //             $error_msg[] = sprintf(
-            //                 esc_html__('Something went wrong with loading the %s Help Tour Class.', 'event_espresso'),
-            //                 $tour
-            //             );
-            //             $error_msg[] = $error_msg[0] . "\r\n"
-            //                            . sprintf(
-            //                                esc_html__(
-            //                                    'There is no class in place for the %s help tour.%s Make sure you have <strong>%s</strong> defined in the "help_tour" array for the %s route of the % admin page.',
-            //                                    'event_espresso'
-            //                                ),
-            //                                $tour,
-            //                                '<br />',
-            //                                $tour,
-            //                                $this->_req_action,
-            //                                get_class($this)
-            //                            );
-            //             throw new EE_Error(implode('||', $error_msg));
-            //         }
-            //         $tour_obj = new $tour($this->_is_caf);
-            //         $tours[] = $tour_obj;
-            //         $this->_help_tour[ $route ][] = EEH_Template::help_tour_stops_generator($tour_obj);
-            //     }
-            //     // let's inject the end tour stop element common to all pages... this will only get seen once per machine.
-            //     $end_stop_tour = new EE_Help_Tour_final_stop($this->_is_caf);
-            //     $tours[] = $end_stop_tour;
-            //     $this->_help_tour[ $route ][] = EEH_Template::help_tour_stops_generator($end_stop_tour);
-            // }
-        }
         // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
+        // $tours = array();
+        // $this->_help_tour = array();
+        // // exit early if help tours are turned off globally
+        // if ((defined('EE_DISABLE_HELP_TOURS') && EE_DISABLE_HELP_TOURS)
+        //     || ! EE_Registry::instance()->CFG->admin->help_tour_activation
+        // ) {
+        //     return;
+        // }
+        // // loop through _page_config to find any help_tour defined
+        // foreach ($this->_page_config as $route => $config) {
+        //     // we're only going to set things up for this route
+        //     if ($route !== $this->_req_action) {
+        //         continue;
+        //     }
+        //     if (isset($config['help_tour'])) {
+        //         foreach ($config['help_tour'] as $tour) {
+        //             $file_path = $this->_get_dir() . '/help_tours/' . $tour . '.class.php';
+        //             // let's see if we can get that file...
+        //             // if not its possible this is a decaf route not set in caffeinated
+        //             // so lets try and get the caffeinated equivalent
+        //             $file_path = ! is_readable($file_path) ? EE_ADMIN_PAGES
+        //                                                      . basename($this->_get_dir())
+        //                                                      . '/help_tours/'
+        //                                                      . $tour
+        //                                                      . '.class.php' : $file_path;
+        //             // if file is STILL not readable then let's do a EE_Error so its more graceful than a fatal error.
+        //             if (! is_readable($file_path)) {
+        //                 EE_Error::add_error(
+        //                     sprintf(
+        //                         esc_html__(
+        //                             'The file path given for the help tour (%s) is not a valid path.  Please check that the string you set for the help tour on this route (%s) is the correct spelling',
+        //                             'event_espresso'
+        //                         ),
+        //                         $file_path,
+        //                         $tour
+        //                     ),
+        //                     __FILE__,
+        //                     __FUNCTION__,
+        //                     __LINE__
+        //                 );
+        //                 return;
+        //             }
+        //             require_once $file_path;
+        //             if (! class_exists($tour)) {
+        //                 $error_msg[] = sprintf(
+        //                     esc_html__('Something went wrong with loading the %s Help Tour Class.', 'event_espresso'),
+        //                     $tour
+        //                 );
+        //                 $error_msg[] = $error_msg[0] . "\r\n"
+        //                                . sprintf(
+        //                                    esc_html__(
+        //                                        'There is no class in place for the %s help tour.%s Make sure you have <strong>%s</strong> defined in the "help_tour" array for the %s route of the % admin page.',
+        //                                        'event_espresso'
+        //                                    ),
+        //                                    $tour,
+        //                                    '<br />',
+        //                                    $tour,
+        //                                    $this->_req_action,
+        //                                    get_class($this)
+        //                                );
+        //                 throw new EE_Error(implode('||', $error_msg));
+        //             }
+        //             $tour_obj = new $tour($this->_is_caf);
+        //             $tours[] = $tour_obj;
+        //             $this->_help_tour[ $route ][] = EEH_Template::help_tour_stops_generator($tour_obj);
+        //         }
+        //         // let's inject the end tour stop element common to all pages... this will only get seen once per machine.
+        //         $end_stop_tour = new EE_Help_Tour_final_stop($this->_is_caf);
+        //         $tours[] = $end_stop_tour;
+        //         $this->_help_tour[ $route ][] = EEH_Template::help_tour_stops_generator($end_stop_tour);
+        //     }
+        // }
+        //
         // if (! empty($tours)) {
         //     $this->_help_tour['tours'] = $tours;
         // }
@@ -1666,10 +1666,11 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         $d_cont .= '<div class="ee-admin-dialog-container-inner-content"></div>';
         $d_cont .= '</div>';
         echo $d_cont;
+        // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
         // help tour stuff?
-        if (isset($this->_help_tour[ $this->_req_action ])) {
-            echo implode('<br />', $this->_help_tour[ $this->_req_action ]);
-        }
+        // if (isset($this->_help_tour[ $this->_req_action ])) {
+        //     echo implode('<br />', $this->_help_tour[ $this->_req_action ]);
+        // }
         // current set timezone for timezone js
         echo '<span id="current_timezone" class="hidden">' . EEH_DTT_Helper::get_timezone() . '</span>';
     }
