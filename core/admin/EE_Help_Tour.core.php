@@ -175,9 +175,10 @@ abstract class EE_Help_Tour extends EE_Base
             // true/false for whether cookies are used
             'cookieName'            => $this->get_slug(),
             // choose your own cookie name (setup will add the prefix for the specific page joyride)
-            'cookieDomain'          => false,
             // set to false or yoursite.com
-            // 'tipContainer' => 'body',            // Where the tip be attached if not inline
+            'cookieDomain'          => false,
+            // Where the tip be attached if not inline
+            // 'tipContainer' => 'body',
             'modal'                 => false,
             // Whether to cover page with modal during the tour
             'expose'                => false,

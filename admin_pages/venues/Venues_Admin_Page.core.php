@@ -241,7 +241,8 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
                         'filename' => 'venues_overview_views_bulk_actions_search',
                     ),
                 ),
-                'help_tour'     => array('Venues_Overview_Help_Tour'),
+                // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
+                // 'help_tour'     => array('Venues_Overview_Help_Tour'),
                 'metaboxes'     => array('_espresso_news_post_box', '_espresso_links_post_box'),
                 'require_nonce' => false,
             ),
@@ -280,7 +281,8 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
                         'filename' => 'venues_editor_other',
                     ),
                 ),
-                'help_tour'     => array('Venues_Add_Venue_Help_Tour'),
+                // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
+                // 'help_tour'     => array('Venues_Add_Venue_Help_Tour'),
                 'metaboxes'     => array('_venue_editor_metaboxes'),
                 'require_nonce' => false,
             ),
@@ -339,7 +341,8 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
                         'filename' => 'general_settings_google_maps',
                     ),
                 ),
-                'help_tour'     => array('Google_Maps_Help_Tour'),
+                // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
+                // 'help_tour'     => array('Google_Maps_Help_Tour'),
                 'require_nonce' => false,
             ),
             // venue category stuff
@@ -356,7 +359,8 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
                         'filename' => 'venues_add_category',
                     ),
                 ),
-                'help_tour'     => array('Venues_Add_Category_Help_Tour'),
+                // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
+                // 'help_tour'     => array('Venues_Add_Category_Help_Tour'),
                 'require_nonce' => false,
             ),
             'edit_category'       => array(
@@ -403,7 +407,8 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
                         'filename' => 'venues_categories_other',
                     ),
                 ),
-                'help_tour'     => array('Venues_Categories_Help_Tour'),
+                // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
+                // 'help_tour'     => array('Venues_Categories_Help_Tour'),
                 'metaboxes'     => $this->_default_espresso_metaboxes,
                 'require_nonce' => false,
             ),
