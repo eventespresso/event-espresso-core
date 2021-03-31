@@ -412,8 +412,8 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/config.ts:9
 	__( 'Manage Ticket Assignments', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/editable/EditableName.tsx:17
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/editable/EditableName.tsx:28
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/editable/EditableName.tsx:23
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/editable/EditableName.tsx:34
 	__( 'edit title…', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/filterBar/ActiveDatesFilters.tsx:25
