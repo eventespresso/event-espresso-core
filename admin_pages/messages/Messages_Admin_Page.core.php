@@ -561,7 +561,8 @@ class Messages_Admin_Page extends EE_Admin_Page
                         'filename' => 'messages_overview_messengers',
                     ),
                 ),
-                'help_tour'     => array('Messages_Overview_Help_Tour'),
+                // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
+                // 'help_tour'     => array('Messages_Overview_Help_Tour'),
                 'require_nonce' => false,
             ),
             'custom_mtps'              => array(
@@ -570,7 +571,8 @@ class Messages_Admin_Page extends EE_Admin_Page
                     'order' => 30,
                 ),
                 'help_tabs'     => array(),
-                'help_tour'     => array(),
+                // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
+                // 'help_tour'     => array(),
                 'require_nonce' => false,
             ),
             'add_new_message_template' => array(
@@ -596,7 +598,8 @@ class Messages_Admin_Page extends EE_Admin_Page
                 ),
                 'metaboxes'     => array('_publish_post_box', '_register_edit_meta_boxes'),
                 'has_metaboxes' => true,
-                'help_tour'     => array('Message_Templates_Edit_Help_Tour'),
+                // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
+                // 'help_tour'     => array('Message_Templates_Edit_Help_Tour'),
                 'help_tabs'     => array(
                     'edit_message_template'            => array(
                         'title'    => esc_html__('Message Template Editor', 'event_espresso'),
@@ -656,7 +659,8 @@ class Messages_Admin_Page extends EE_Admin_Page
                         'filename' => 'messages_settings_messengers',
                     ),
                 ),
-                'help_tour'     => array('Messages_Settings_Help_Tour'),
+                // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
+                // 'help_tour'     => array('Messages_Settings_Help_Tour'),
                 'require_nonce' => false,
             ),
         );

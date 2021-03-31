@@ -134,7 +134,8 @@ class Payments_Admin_Page extends EE_Admin_Page
                 ),
                 $this->_add_payment_method_help_tabs()
             ),
-            'help_tour'     => array('Payment_Methods_Selection_Help_Tour'),
+            // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
+            // 'help_tour'     => array('Payment_Methods_Selection_Help_Tour'),
             'require_nonce' => false,
         );
         $this->_page_config = array(

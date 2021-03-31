@@ -267,10 +267,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                         'filename' => 'events_overview_other',
                     ),
                 ),
-                'help_tour'     => array(
-                    'Event_Overview_Help_Tour',
-                    // 'New_Features_Test_Help_Tour' for testing multiple help tour
-                ),
+                // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
+                // 'help_tour'     => array(
+                //     'Event_Overview_Help_Tour',
+                //     // 'New_Features_Test_Help_Tour' for testing multiple help tour
+                // ),
                 'qtips'         => array(
                     'EE_Event_List_Table_Tips',
                 ),
@@ -325,9 +326,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                         'filename' => 'event_editor_other',
                     ),
                 ),
-                'help_tour'     => array(
-                    'Event_Editor_Help_Tour',
-                ),
+                // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
+                // 'help_tour'     => array(
+                //     'Event_Editor_Help_Tour',
+                // ),
                 'qtips'         => array('EE_Event_Editor_Decaf_Tips'),
                 'require_nonce' => false,
             ),
@@ -412,7 +414,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                         'filename' => 'events_default_settings_max_tickets',
                     ),
                 ),
-                'help_tour'     => array('Event_Default_Settings_Help_Tour'),
+                // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
+                // 'help_tour'     => array('Event_Default_Settings_Help_Tour'),
                 'require_nonce' => false,
             ),
             // template settings
@@ -428,7 +431,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                         'filename' => 'general_settings_templates',
                     ),
                 ),
-                'help_tour'     => array('Templates_Help_Tour'),
+                // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
+                // 'help_tour'     => array('Templates_Help_Tour'),
                 'require_nonce' => false,
             ),
             // event category stuff
@@ -444,7 +448,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                         'filename' => 'events_add_category',
                     ),
                 ),
-                'help_tour'     => array('Event_Add_Category_Help_Tour'),
+                // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
+                // 'help_tour'     => array('Event_Add_Category_Help_Tour'),
                 'metaboxes'     => array('_publish_post_box'),
                 'require_nonce' => false,
             ),
@@ -494,9 +499,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                         'filename' => 'events_categories_other',
                     ),
                 ),
-                'help_tour'     => array(
-                    'Event_Categories_Help_Tour',
-                ),
+                // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
+                // 'help_tour'     => array(
+                //     'Event_Categories_Help_Tour',
+                // ),
                 'metaboxes'     => $this->_default_espresso_metaboxes,
                 'require_nonce' => false,
             ),
