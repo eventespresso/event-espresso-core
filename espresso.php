@@ -1,4 +1,4 @@
-<?php defined('ABSPATH') || exit('No direct script access allowed');
+<?php defined('ABSPATH') || exit('No direct script access allowed.');
 /*
   Plugin Name:Event Espresso
   Plugin URI: http://eventespresso.com/pricing/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
