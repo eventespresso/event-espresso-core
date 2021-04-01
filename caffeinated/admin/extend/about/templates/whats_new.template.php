@@ -54,69 +54,27 @@
     }
     ?>
 
-    <h2 class="about-headline-callout">Updates &amp; Fixes in EE 4.10</h2>
-    <p>This release brought many background updates/improvements to existing core features, and support for many new
-        add-on & features. Here are the most interesting updates:</p>
+    <h2 class="about-headline-callout">Updates &amp; Fixes in EE 4.11</h2>
+    <p>This release introduces an improved event editor, support for recurring events, and improvements to existing core features. Here are the most interesting updates:</p>
     <h3>New Features</h3>
-    <h4>Attendee Block for WordPress 5 Gutenberg</h4>
-    <p>The Event Attendees block allows you to easily insert a list of attendees from any designated event, datetime, or ticket, from anywhere in your content in a post, page or another post type that supports the new WordPress 5.0 page/post Editor.</p>
-    <p align="right"><a href="https://eventespresso.com/2018/12/event-espresso-and-wordpress-5-0/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=gutenberg_link&ap_id=EEspresso" target="_blank">Read More</a>
+    <h4>Improved Event Editor and Support for Recurring Events</h4>
+    <p>In this version of Event Espresso, we've made significant improvements to the event editor to provide an easier-to-understand datetime editor and to enable the Recurring Events Manager add-on for Event Espresso 4.</p>
+    <p>In previous versions of Event Espresso 4, many users faced issues when adding a lot of datetimes and tickets to a single event, which caused the event editor to break due to common server limitations. The New Event Editor interface was created to solve that issue and give our users an easier-to-use interface for creating events, adding dates, and creating tickets.</p>
+    <p>Using the built-in JavaScript/REACT components in WordPress, our development team has implemented the use of pop-up modal forms for creating events, which uses browser and server resources more efficiently when adding datetimes and assigning tickets to a single event. In addition to pop-up modals, we’ve added functionality to view dates in different formats and filter datetimes and tickets from within the editor. </p>
+    <p align="right"><a href="https://eventespresso.com/?p=322471?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=release_announcement_april_2021_link&ap_id=EEspresso" target="_blank">Read More</a>
     <hr>
-    <h4>New Date and Time Filter Max Checked Option</h4>
-    <p>Do you have events with lots of datetimes, with a number different tickets for each datetime? If so, this feature will help tidy up the event page by reducing the number of ticket options shown. The end user can view more ticket options by selecting more dates.</p>
-    <p align="right"><a href="/wp-admin/admin.php?page=espresso_events&action=template_settings#ticket_selector_settings_tbl-datetime-selector-max-checked" target="_blank">Open Ticket Selector Template Settings</a>
-    <hr>
-    <h4>GDPR Compliance Features</h4>
-    <p>Along with the new GDPR regulations comes new features in WordPress and Event Espresso 4. The<a href="https://wordpress.org/news/2018/05/wordpress-4-9-6-privacy-and-maintenance-release/"> latest Privacy and Maintenance release of WordPress, 4.9.6,</a> comes with many features to help your website become GDPR compliant. Event Espresso has contributed to those new features, and makes use of them in Event Espresso 4.9.62. Below is a list of new features that are shipping with Event Espresso to support the new GDPR regulations.</p>
-    <ol>
-        <li>Export Personal Data<br><a href="https://wordpress.org/news/2018/05/wordpress-4-9-6-privacy-and-maintenance-release/">WordPress 4.9.6 allows admins to generate a report of an individual’s personal information</a> and send it to them. In Event Espresso 4, we <a href="https://eventespresso.com/features/gdpr-compliant/#export-personal-data">add the individual’s registration details</a> to the report automatically when it’s being created.</li>
-        <li>Erase Personal Data<br>Along with the ability to export data, WordPress 4.9.6 adds a tool that allows site admins to erase personal data stored in their WordPress site. When an admin erases an individual’s personal data, <a href="https://eventespresso.com/features/gdpr-compliant/#erase-personal-data">Event Espresso makes sure their registration data is also erased</a>.</li>
-        <li>GDPR/Privacy Policy Content Tool<br>Per GDPR regulations, site owners need to have a Privacy Policy page. By default, WordPress doesn’t collect any data from visitors unless they post a comment. However, some plugins add third-party services that collect visitor data. <a href="https://wordpress.org/news/2018/05/wordpress-4-9-6-privacy-and-maintenance-release/">WordPress 4.9.6 adds a Privacy Policy guide</a> to help you create a comprehensive “Privacy Policy” page. Event Espresso 4.9.62 <a href="https://eventespresso.com/features/gdpr-compliant/#privacy-policy-tool">adds suggested text to this guide page</a>, to help you know what Event Espresso is doing with regards to user privacy.</li>
-    </ol>
-    <p align="right"><a href="https://eventespresso.com/2018/05/gdpr-registration-data-event-ticketing-website/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=gdpr_link&ap_id=EEspresso" target="_blank">Read More</a></p>
-    <hr>   
-    <h4>REST API WRITE Endpoints</h4>
-    <p>With WRITE endpoints in the Event Espresso 4 REST API, developers will find it much easier to create innovative new features for Event Espresso. In fact, we are already starting development of recurring events, and have released the Wait List Manager add-on. Both of these add-ons wouldn’t be possible without the REST API.</p>
-    <p align="right"><a href="https://eventespresso.com/2017/09/api-write-endpoints-event-espresso/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=rest_api_link&ap_id=EEspresso">Read More</a>
+    
+    <h2 class="about-headline-callout">New Add-on Available!</h2>
 
-    <hr>
-
-    <h2 class="about-headline-callout">New Add-ons Available!</h2>
-
-    <h3>
-        <a href="https://eventespresso.com/product/eea-wait-lists/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=wait_list_addon_link&ap_id=EEspresso"
-           target="_blank">Wait List Manager</a></h3>
-    <p><a href="https://eventespresso.com/product/eea-wait-lists/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=wait_list_addon_link&ap_id=EEspresso"
-       rel="attachment" target="_blank"><img style="width: 380px; height: 250px; padding: 5px;" alt="Wait List Manager Add-on" class="alignright" src="https://s3.amazonaws.com/ee-screenshots/ee4/ee4-wait-list-manager.jpg" alt="Wait List Manager Add-on" width="380" height="250" /></a></p>
-    <p>Keep your events full by accepting pre-registrations from interested attendees and automatically promoting them when spots open up for an event.</p>
-    <p>Here is an example to help you understand how the Wait List Manager can work for you:</p>
-    <p>1) The Wait List Manager jumps into action as soon as an event becomes sold out<br>
-    2) It then collects a name and an email address from attendees that are interested (up to a limit that you choose)<br>
-    3) Behind the scenes, it monitors an event for open spots and when a spot opens up, then it reaches out to the next attendee in line through email, and asks them to confirm their registration</p>
-    <p>You can think of the Wait List Manager as a personal assistant that works tirelessly for you to keep your events full!</p>
+    <h3><a href="https://eventespresso.com/product/eea-recurring-events-manager/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=recurring_events_manager_addon_link&ap_id=EEspresso" target="_blank">Recurring Events Manager</a></h3>
+    <p><a href="https://eventespresso.com/product/eea-recurring-events-manager/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=recurring_events_manager_addon_link&ap_id=EEspresso" rel="attachment" target="_blank"><img style="width: 380px; height: 250px; padding: 5px;" alt="Recurring Events Manager Add-on" class="alignright" src="https://cdn.eventespresso.com/wp-content/uploads/2021/04/01091938/recurring-events-manager_380_250.jpg" alt="Recurring Events Manager Add-on" width="380" height="250" /></a></p>
+    <p>Put your events on autopilot by scheduling recurring events weeks, months, or years in advance. With the Recurring Events Manager, Event Espresso will automatically open and close registrations for all of your recurring events.</p>
+    <p>Here is an example to help you understand how the Recurring Events Manager can work for you:</p>
+    <p>The Recurring Events Manager add-on is helpful for build out a set of events that are similar. The add-on works by using a new event as a template and creates additional events based on the schedule that you select (e.g. create events that span across a few weeks, a few months, a year, etc).
+Create as many events in the future as you like. Event Espresso will automatically open and close registrations for all of your recurring events.</p>
     <p><strong>Get Started!</strong><br>
-        Purchase the <a
-            href="https://eventespresso.com/product/eea-wait-lists/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=wait_list_addon_link&ap_id=EEspresso"
-            target="_blank">Wait List Manager Add-on</a> for Event Espresso 4.</p>
+        Purchase the <a href="https://eventespresso.com/product/eea-recurring-events-manager/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=recurring_events_manager_addon_link&ap_id=EEspresso" target="_blank">Recurring Events Manager Add-on</a> for Event Espresso 4.</p>
 
-
-    <h3>
-        <a href="https://eventespresso.com/product/eea-paypal-smart-buttons/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=paypal_smart_buttons_addon_link&ap_id=EEspresso"
-           target="_blank">PayPal Express Checkout Smart Payment Buttons (with Venmo)</a></h3>
-    <a href="https://eventespresso.com/product/eea-paypal-smart-buttons/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=paypal_smart_buttons_addon_link&ap_id=EEspresso"
-       target="_blank"><img style="width: 380px; height: 250px; padding: 5px;" class="alignright " alt="PayPal Express Checkout Smart Payment Buttons (with Venmo) Payment Gateway" src="https://s3.amazonaws.com/ee-screenshots/ee4/event-registrations-with-paypal-express-checkout-smart-payment-buttons.jpg" width="260" height="202"/></a>
-    <p>Accept online payments through credit cards, PayPal funds, and Venmo through PayPal Express Checkout Smart Payment Buttons.</p>
-    <p>PayPal Express Checkout’s Smart Payment Buttons feature gives event organizers a variety of ways to customize payment buttons on the checkout page, including the option to pay for their event registrations with Venmo.</p>
-    <p>With Smart Payment Buttons, you can choose:</p>
-    <ul>
-    <li>The size and shape of not just your PayPal checkout button, but also buttons for other, multiple alternative payment methods such as PayPal Credit, Venmo, and local funding sources.</li>
-    <li>The button layout you prefer: horizontal or vertical.</li>
-    </ul>
-    <p>Based on your specific configuration and a buyer’s location and cookies, Express Checkout dynamically presents the appropriate funding sources to give your buyers more ways to pay.</p>
-    <p><strong>Get Started!</strong><br>
-        Purchase the <a
-            href="https://eventespresso.com/product/eea-paypal-smart-buttons/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=event_espresso_about_page&utm_content=paypal_smart_buttons_addon_link&ap_id=EEspresso"
-            target="_blank">PayPal Express Checkout Smart Payment Buttons (with Venmo) Payment Gateway</a> for Event Espresso 4.</p>
-
+    
     <hr>
 </div><!-- end .changelog -->
