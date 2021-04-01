@@ -8,9 +8,9 @@
     "blocks.js": "/static/js/blocks.e4aca21c.js",
     "blocks.js.map": "/static/js/blocks.e4aca21c.js.map",
     "blocks.php": "/static/js/blocks.f9cdc6b1.asset.php",
-    "constants.js": "/static/js/constants.1b9c70e6.js",
-    "constants.js.map": "/static/js/constants.1b9c70e6.js.map",
-    "constants.php": "/static/js/constants.37cefe04.asset.php",
+    "constants.js": "/static/js/constants.5a83eb33.js",
+    "constants.js.map": "/static/js/constants.5a83eb33.js.map",
+    "constants.php": "/static/js/constants.9571b164.asset.php",
     "data.js": "/static/js/data.e955f520.js",
     "data.js.map": "/static/js/data.e955f520.js.map",
     "data.php": "/static/js/data.ffca8df0.asset.php",
@@ -137,7 +137,7 @@
       "static/js/adapters.a1a8981c.js"
     ],
     "constants": [
-      "static/js/constants.1b9c70e6.js"
+      "static/js/constants.5a83eb33.js"
     ],
     "data": [
       "static/js/data.e955f520.js"
