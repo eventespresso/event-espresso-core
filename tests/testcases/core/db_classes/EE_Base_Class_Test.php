@@ -1,7 +1,11 @@
 <?php
 
+/** @noinspection PhpParamsInspection */
+/** @noinspection PhpUndefinedClassInspection */
+
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+
 
 /**
  * EE_Base_Class_Test
@@ -52,7 +56,9 @@ class EE_Base_Class_Test extends EE_UnitTestCase
 
 
     /**
-     * @return \EE_Attendee
+     * @return EE_Attendee
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     function test_new_instance()
     {
@@ -66,6 +72,8 @@ class EE_Base_Class_Test extends EE_UnitTestCase
     /**
      * @group 9273
      * @see   https://events.codebasehq.com/projects/event-espresso/tickets/9273
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     function test_new_instance_with_existing_object_and_incoming_date_formats()
     {
@@ -88,32 +96,44 @@ class EE_Base_Class_Test extends EE_UnitTestCase
     }
 
 
+    /**
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
     function test_set_and_get()
     {
         $a = EE_Attendee::new_instance();
         $a->set('ATT_fname', 'value1');
-        $this->assertEquals($a->get('ATT_fname'), 'value1');
+        $this->assertEquals('value1', $a->get('ATT_fname'));
         //verify that we can change it
         $a->set('ATT_fname', 'value2');
-        $this->assertEquals($a->get('ATT_fname'), 'value2');
+        $this->assertEquals('value2', $a->get('ATT_fname'));
     }
 
 
+    /**
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
     function test_set_and_get_with_caching()
     {
         $t = EE_Transaction::new_instance();
         $t->set('TXN_total', 10.53);
-        $this->assertEquals($t->get('TXN_total'), 10.53);
-        $this->assertEquals($t->get_pretty('TXN_total'), '$10.53 <span class="currency-code">(USD)</span>');
+        $this->assertEquals(10.53, $t->get('TXN_total'));
+        $this->assertEquals('$10.53 <span class="currency-code">(USD)</span>', $t->get_pretty('TXN_total'));
         //make sure the caching of pretty and normal fields doesn't mess us up
-        $this->assertEquals($t->get('TXN_total'), 10.53);
+        $this->assertEquals(10.53, $t->get('TXN_total'));
         $t->set('TXN_total', 0.00);
-        $this->assertEquals($t->get('TXN_total'), 0);
-        $this->assertEquals($t->get_pretty('TXN_total'), '$0.00 <span class="currency-code">(USD)</span>');
-        $this->assertEquals($t->get('TXN_total'), 0);
+        $this->assertEquals(0, $t->get('TXN_total'));
+        $this->assertEquals('$0.00 <span class="currency-code">(USD)</span>', $t->get_pretty('TXN_total'));
+        $this->assertEquals(0, $t->get('TXN_total'));
     }
 
 
+    /**
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
     function test_save_string_pk()
     {
         //test saving something with an auto-increment PK
@@ -126,6 +146,10 @@ class EE_Base_Class_Test extends EE_UnitTestCase
     }
 
 
+    /**
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
     function test_save_autoincrement_pk()
     {
         //test saving something with an auto-increment PK
@@ -143,6 +167,8 @@ class EE_Base_Class_Test extends EE_UnitTestCase
 
     /**
      * @group 8622
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     function test_save__allow_persist_changed()
     {
@@ -164,7 +190,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase
      * @throws InvalidInterfaceException
      */
    	function test_save_no_pk(){
-        $term_taxonomy = $this->new_model_obj_with_dependencies('Term_Taxonomy', array('taxonomy'=>'monkeys'));
+        $this->new_model_obj_with_dependencies('Term_Taxonomy', array('taxonomy'=>'monkeys'));
         $e = $this->new_model_obj_with_dependencies('Event');
         $tr = EE_Term_Relationship::new_instance(array('object_id'=>$e->ID()));
         $results = $tr->save();
@@ -172,6 +198,8 @@ class EE_Base_Class_Test extends EE_UnitTestCase
     }
     /**
      * @group 8686
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     function test_add_relation_to()
     {
@@ -268,6 +296,8 @@ class EE_Base_Class_Test extends EE_UnitTestCase
 
     /**
      * @group 8686
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     function test_add_relation_to__unsaved()
     {
@@ -283,6 +313,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase
 
     /**
      * @group 7084
+     * @throws EE_Error
      */
     function test_set_defaults_on_unspecified_fields()
     {
@@ -294,6 +325,10 @@ class EE_Base_Class_Test extends EE_UnitTestCase
     }
 
 
+    /**
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
     function test_get_first_related()
     {
         $t = EE_Transaction::new_instance();
@@ -308,6 +343,10 @@ class EE_Base_Class_Test extends EE_UnitTestCase
     }
 
 
+    /**
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
     function test_get_many_related()
     {
         $t = EE_Transaction::new_instance();
@@ -326,14 +365,18 @@ class EE_Base_Class_Test extends EE_UnitTestCase
     }
 
 
+    /**
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
     function test_cache_related()
     {
         $t = EE_Transaction::new_instance();
         //note that we did NOT save it
         $r = EE_Registration::new_instance();
         $t->_add_relation_to($r, 'Registration');
-        $this->assertEquals($t->ID(), 0);
-        $this->assertEquals($r->ID(), 0);
+        $this->assertEquals(0, $t->ID());
+        $this->assertEquals(0, $r->ID());
         //get the registration cached on the transaction
         $r_from_t = $t->get_first_related('Registration');
         $this->assertEquals($r, $r_from_t);
@@ -342,6 +385,8 @@ class EE_Base_Class_Test extends EE_UnitTestCase
 
     /**
      * @group 8686
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     function test_remove_relation_to()
     {
@@ -366,6 +411,8 @@ class EE_Base_Class_Test extends EE_UnitTestCase
 
     /**
      * @group 8686
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     function test_remove_relations()
     {
@@ -387,24 +434,32 @@ class EE_Base_Class_Test extends EE_UnitTestCase
     }
 
 
+    /**
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
     function test_count_related()
     {
         $e1 = EE_Event::new_instance(array('EVT_name' => '1'));
         $e1->save();
-        $this->assertNotEquals($e1->ID(), 0);
+        $this->assertNotEquals(0, $e1->ID());
         $e2 = EE_Event::new_instance(array('EVT_name' => '2'));
         $e2->save();
-        $this->assertNotEquals($e2->ID(), 0);
+        $this->assertNotEquals(0, $e2->ID());
         $e3 = EE_Event::new_instance(array('EVT_name' => '3'));
         $e3->save();
         $v = EE_Venue::new_instance(array('VNU_name' => 'v1'));
         $v->save();
         $v->_add_relation_to($e1, 'Event');
         $v->_add_relation_to($e2, 'Event');
-        $this->assertEquals($v->count_related('Event'), 2);
+        $this->assertEquals(2, $v->count_related('Event'));
     }
 
 
+    /**
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
     function test_sum_related()
     {
         $t = EE_Transaction::new_instance();
@@ -415,12 +470,16 @@ class EE_Base_Class_Test extends EE_UnitTestCase
         $p2->save();
         $p1 = EE_Payment::new_instance(array('PAY_amount' => 1000, 'TXN_ID' => 0));
         $p1->save();
-        $this->assertEquals($t->sum_related('Payment', array(), 'PAY_amount'), 3);
+        $this->assertEquals(3, $t->sum_related('Payment', array(), 'PAY_amount'));
         $t->_remove_relation_to($p2, 'Payment');
-        $this->assertEquals($t->sum_related('Payment', array(), 'PAY_amount'), 1);
+        $this->assertEquals(1, $t->sum_related('Payment', array(), 'PAY_amount'));
     }
 
 
+    /**
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
     function test_cache_specifying_id()
     {
         $t = EE_Transaction::new_instance();
@@ -439,6 +498,10 @@ class EE_Base_Class_Test extends EE_UnitTestCase
     }
 
 
+    /**
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
     function test_update_cache_after_save()
     {
         $t = EE_Transaction::new_instance();
@@ -454,6 +517,10 @@ class EE_Base_Class_Test extends EE_UnitTestCase
     }
 
 
+    /**
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
     function test_is_set()
     {
         $t = EE_Transaction::new_instance();
@@ -464,6 +531,9 @@ class EE_Base_Class_Test extends EE_UnitTestCase
 
     /**
      * tests that clearing all from a cache works as expected
+     *
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     function test_clear_cache__all()
     {
@@ -495,6 +565,9 @@ class EE_Base_Class_Test extends EE_UnitTestCase
     /**
      * test that after we've cached something, we can remove it specifically
      * by only knowing the object
+     *
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     function test_clear_cache__specific_object()
     {
@@ -520,6 +593,9 @@ class EE_Base_Class_Test extends EE_UnitTestCase
     /**
      * test that after we've cached something using a specific index,
      * we can remove it using a specific index
+     *
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     function test_clear_cache__specific_index()
     {
@@ -542,6 +618,9 @@ class EE_Base_Class_Test extends EE_UnitTestCase
 
     /**
      * tests that clearing the cache on a belongsTo relation works
+     *
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     function test_clear_cache__belongs_to()
     {
@@ -558,6 +637,10 @@ class EE_Base_Class_Test extends EE_UnitTestCase
     }
 
 
+    /**
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
     function test_set_and_get_extra_meta()
     {
         $e = EE_Event::new_instance();
@@ -573,10 +656,13 @@ class EE_Base_Class_Test extends EE_UnitTestCase
      * Created to attempt to reproduce a bug found when fixing
      * https://events.codebasehq.com/projects/event-espresso/tickets/6373
      *
+     * @throws EE_Error
+     * @throws ReflectionException
      * @since 4.5.0
      */
     function test_set_primary_key_clear_relations()
     {
+        $this->loadFactories();
         /** @type EE_Event $event */
         $event = $this->factory->event->create();
         /** @type EE_Datetime $datetime */
@@ -620,6 +706,8 @@ class EE_Base_Class_Test extends EE_UnitTestCase
 
     /**
      * @group 7151
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function test_in_entity_map()
     {
@@ -650,6 +738,8 @@ class EE_Base_Class_Test extends EE_UnitTestCase
 
     /**
      * @group 7151
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function test_refresh_from_db()
     {
@@ -670,6 +760,10 @@ class EE_Base_Class_Test extends EE_UnitTestCase
     }
 
 
+    /**
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
     public function test_delete_permanently_with_extra_meta()
     {
         $attendee = EE_Attendee::new_instance(array(
@@ -687,6 +781,8 @@ class EE_Base_Class_Test extends EE_UnitTestCase
 
     /**
      * @group 7358
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function test_get_raw()
     {
@@ -708,6 +804,8 @@ class EE_Base_Class_Test extends EE_UnitTestCase
      * Tests when we set a field to INFINITY, it stays that way even after we re-fetch it from the db
      *
      * @group 7358
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function test_infinite_fields_stay_that_way()
     {
@@ -722,6 +820,9 @@ class EE_Base_Class_Test extends EE_UnitTestCase
 
 
     /**
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @throws Exception
      * @since 4.6.12+
      */
     public function test_get_i18n_datetime()
@@ -729,6 +830,12 @@ class EE_Base_Class_Test extends EE_UnitTestCase
         //setup a datetime object with some known values for testing with.
         $original_timezone = get_option('timezone_string');
         update_option('timezone_string', 'America/Toronto');
+        $this->loadFactories();
+        $this->assertEquals(
+            'America/Toronto',
+            EEM_Datetime::instance()->get_timezone(),
+            'Timezones for EEM_Datetime has not been set correctly'
+        );
         $dateTimeZone = new DateTimeZone('America/Toronto');
         $currentTime = new DateTime("now", $dateTimeZone);
         $futureTime = clone $currentTime;
@@ -738,8 +845,16 @@ class EE_Base_Class_Test extends EE_UnitTestCase
             'DTT_EVT_start' => $currentTime->format('Y-m-d H:i:s'),
             'DTT_EVT_end'   => $futureTime->format('Y-m-d H:i:s'),
             'formats'       => array('Y-m-d', 'H:i:s'),
+            'timezone'      => 'America/Toronto'
         ));
+        $this->assertEquals(
+            'America/Toronto',
+            $datetime->get_timezone(),
+            'Timezone on EE_Datetime factory object has not been set correctly'
+        );
         $this->assertInstanceOf('EE_Datetime', $datetime);
+        $this->assertInstanceOf('DateTime', $datetime->get_DateTime_object('DTT_EVT_start'));
+        $this->assertInstanceOf('DateTime', $datetime->get_DateTime_object('DTT_EVT_end'));
         //test get_i18n_datetime
         $this->assertEquals($currentTime->format('Y-m-d H:i:s'), $datetime->get_i18n_datetime('DTT_EVT_start'));
         $this->assertEquals($futureTime->format('Y-m-d H:i:s'), $datetime->get_i18n_datetime('DTT_EVT_end'));
@@ -758,6 +873,9 @@ class EE_Base_Class_Test extends EE_UnitTestCase
 
 
     /**
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @throws Exception
      * @since 4.7.0
      * Note: in this test we're using EE_Datetime methods that utilize this method on
      * EE_Base_Class
@@ -767,6 +885,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase
         //setup a datetime object with some known values for testing with.
         $original_timezone = get_option('timezone_string');
         update_option('timezone_string', 'America/Toronto');
+        $this->loadFactories();
         $dateTimeZone = new DateTimeZone('America/Toronto');
         $currentTime = new DateTime("now", $dateTimeZone);
         $futureTime = clone $currentTime;
@@ -791,9 +910,9 @@ class EE_Base_Class_Test extends EE_UnitTestCase
         );
         //test setting the time to 8am using a time string.
         $datetime->set_start_time('8:00:00');
-        $this->assertEquals($currentTime->setTime(8, 0, 0)->format('Y-m-d H:i:s'), $datetime->get('DTT_EVT_start'));
+        $this->assertEquals($currentTime->setTime(8, 0)->format('Y-m-d H:i:s'), $datetime->get('DTT_EVT_start'));
         //test setting the time to 11pm using a date object
-        $currentTime->setTime(23, 0, 0);
+        $currentTime->setTime(23, 0);
         $datetime->set_start_time($currentTime);
         $this->assertEquals($currentTime->format('Y-m-d H:i:s'), $datetime->get('DTT_EVT_start'));
         //test setting the date to 12-31-2012 on start date using a date string.
@@ -814,6 +933,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase
      */
     public function test_next_x()
     {
+        $this->loadFactories();
         //create 5 events for testing with.
         $events = $this->factory->event->create_many(5);
         //grab the first event in the list as the reference
@@ -837,7 +957,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase
         //loop through and verify the IDS returned are correct.
         $pointer = 1;
         foreach ($next_events as $next_event) {
-            $this->assertTrue(array_key_exists('EVT_ID', $next_event));
+            $this->assertArrayHasKey('EVT_ID', $next_event);
             $this->assertEquals($event->ID() + $pointer, $next_event['EVT_ID']);
             $pointer++;
         }
@@ -849,6 +969,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase
      */
     public function test_previous_x()
     {
+        $this->loadFactories();
         //create 5 events for testing with.
         $events = $this->factory->event->create_many(5);
         //grab the last event in the list as the reference
@@ -872,7 +993,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase
         //loop through and verify the IDS returned are correct.
         $pointer = 1;
         foreach ($previous_events as $next_event) {
-            $this->assertTrue(array_key_exists('EVT_ID', $next_event));
+            $this->assertArrayHasKey('EVT_ID', $next_event);
             $this->assertEquals($event->ID() - $pointer, $next_event['EVT_ID']);
             $pointer++;
         }
@@ -884,6 +1005,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase
      */
     public function test_next()
     {
+        $this->loadFactories();
         //create 5 events for testing with.
         $events = $this->factory->event->create_many(5);
         //grab the first event in the list as the reference
@@ -898,7 +1020,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase
         $next_event = $event->next('EVT_ID', array(), 'EVT_ID');
         //verify the returned array has the right key and value.
         $this->assertTrue(is_array($next_event));
-        $this->assertTrue(array_key_exists('EVT_ID', $next_event));
+        $this->assertArrayHasKey('EVT_ID', $next_event);
         $this->assertEquals($event->ID() + 1, $next_event['EVT_ID']);
     }
 
@@ -908,6 +1030,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase
      */
     public function test_previous()
     {
+        $this->loadFactories();
         //create 5 events for testing with.
         $events = $this->factory->event->create_many(5);
         //grab the last event in the list as the reference
@@ -922,7 +1045,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase
         $previous_event = $event->previous('EVT_ID', array(), 'EVT_ID');
         //verify the returned array has the right key and value.
         $this->assertTrue(is_array($previous_event));
-        $this->assertTrue(array_key_exists('EVT_ID', $previous_event));
+        $this->assertArrayHasKey('EVT_ID', $previous_event);
         $this->assertEquals($event->ID() - 1, $previous_event['EVT_ID']);
     }
 
@@ -930,6 +1053,8 @@ class EE_Base_Class_Test extends EE_UnitTestCase
     /**
      * @group github-102
      * @group 8589
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function test_get__serialized_data__once()
     {
@@ -956,6 +1081,8 @@ class EE_Base_Class_Test extends EE_UnitTestCase
     /**
      * @group github-102
      * @group 8589
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function test_get__serialized_data__twice()
     {
@@ -981,10 +1108,14 @@ class EE_Base_Class_Test extends EE_UnitTestCase
 
     /**
      * @group 8686
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function test_delete__remove_from_related_items_in_entity_mapper()
     {
+        /** @var EE_Payment $p */
         $p = $this->new_model_obj_with_dependencies('Payment');
+        /** @var EE_Registration $r */
         $r = $this->new_model_obj_with_dependencies('Registration');
         $p->_add_relation_to($r, 'Registration');
         $reg_payments = $p->registration_payments();
@@ -1003,6 +1134,8 @@ class EE_Base_Class_Test extends EE_UnitTestCase
 
     /**
      * @group 8686
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function test_remove_relation_to__reciprocal()
     {
@@ -1019,7 +1152,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase
                 $this->assertEquals($registration, $p->_remove_relation_to($registration, 'Registration'));
             }
         }
-        //now there shoudl eb no more relations between those two right?
+        //now there should eb no more relations between those two right?
         $regs_on_p = $p->get_many_related('Registration');
         $pays_on_r = $r->get_many_related('Payment');
         $this->assertTrue(empty($regs_on_p));
@@ -1032,6 +1165,8 @@ class EE_Base_Class_Test extends EE_UnitTestCase
      *
      * @group 10751
      * @group 10905
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function test_automatically_set_timezone_on_related_model_obj__same_request()
     {
@@ -1039,6 +1174,8 @@ class EE_Base_Class_Test extends EE_UnitTestCase
         $dtt = $this->new_model_obj_with_dependencies('Datetime');
         $event = EEM_Event::instance()->get_one_by_ID($dtt->get('EVT_ID'));
         $event->set_timezone('Europe/London');
+        //first check we haven't accidentally changed the event's timezone
+        $this->assertEquals('Europe/London', $event->get_timezone());
         $dtt = $event->get_first_related('Datetime');
         //first check we haven't accidentally changed the event's timezone
         $this->assertEquals('Europe/London', $event->get_timezone());
@@ -1051,8 +1188,10 @@ class EE_Base_Class_Test extends EE_UnitTestCase
      * Verifies that when we set the timezone on a model object, related objects adopt that same timezone
      *
      * @group 10905
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function setTimezone()
+    public function testSetTimezone()
     {
         $t = $this->new_typical_transaction();
         $datetime = EEM_Datetime::instance()->get_one(array(array('EVT_ID' => $t->primary_registration()->event_ID())));
@@ -1078,6 +1217,8 @@ class EE_Base_Class_Test extends EE_UnitTestCase
      * across multiple requests.
      *
      * @group 10751
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function test_automatically_set_timezone_on_related_model_obj__separate_requests()
     {
@@ -1101,6 +1242,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase
      * Tests that the f() function correctly escapes the value for display in a form input's value.
      *
      * @group 11195
+     * @throws EE_Error
      */
     public function testF()
     {
@@ -1126,6 +1268,8 @@ class EE_Base_Class_Test extends EE_UnitTestCase
      * when the form is submitted, that we end up with the same content that we started with.
      *
      * @group 11195
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function testFThenSetRoundTrip()
     {
@@ -1159,7 +1303,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase
      * @throws ReflectionException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @throws \PHPUnit\Framework\Exception
+     * @throws PHPUnit\Framework\Exception
      */
     public function testGetDateTimeObject()
     {
@@ -1217,6 +1361,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase
     {
         $original_sold_count = 5;
         $original_reserved_count = 10;
+        /** @var EE_Datetime $d */
         $d = $this->new_model_obj_with_dependencies(
             'Datetime',
             [
