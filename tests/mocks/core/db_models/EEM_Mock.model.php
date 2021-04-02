@@ -22,7 +22,7 @@ class EEM_Mock extends EEM_Base
      * @throws EE_Error
      * @throws InvalidArgumentException
      */
-    public function __construct($timezone = null)
+    public function __construct($timezone = '')
     {
         $this->_tables = array(
             'Mock' => new EE_Primary_Table('esp_mock', 'MCK_ID'),

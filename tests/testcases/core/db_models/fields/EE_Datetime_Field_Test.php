@@ -72,7 +72,7 @@ class EE_Datetime_Field_Test extends EE_UnitTestCase
         $nice_name = 'Start Date',
         $nullable = false,
         $default_value = '',
-        $timezone = null,
+        $timezone = '',
         $date_format = null,
         $time_format = null,
         $pretty_date_format = null,
