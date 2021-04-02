@@ -744,7 +744,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      *                                Note this just sends the timezone info to the date time model field objects.
      *                                Default is NULL
      *                                (and will be assumed using the set timezone in the 'timezone_string' wp option)
-     * @return static (as in the concrete child class)
+     * @return EEM_Base (as in the concrete child class)
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -5757,7 +5757,6 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * @param EE_Base_Class|int|string $base_class_obj_or_id
      * @return int|string depending on the type of this model object's ID
      * @throws EE_Error
-     * @throws ReflectionException
      */
     public function ensure_is_ID($base_class_obj_or_id)
     {
@@ -6155,7 +6154,6 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      *                                               in the returned array
      * @return array
      * @throws EE_Error
-     * @throws ReflectionException
      */
     public function get_IDs($model_objects, $filter_out_empty_ids = false)
     {

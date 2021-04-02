@@ -140,9 +140,9 @@ class EEM_Term_Relationship extends EEM_Base
         global $wpdb;
 
         $query = "
-                UPDATE {$wpdb->term_taxonomy} AS tt 
+                UPDATE {$wpdb->term_taxonomy} AS tt
                 SET count = (
-                    select count(*) as proper_count from {$wpdb->term_relationships} AS tr 
+                    select count(*) as proper_count from {$wpdb->term_relationships} AS tr
                     WHERE tt.term_taxonomy_id = tr.term_taxonomy_id
                 )";
 

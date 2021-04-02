@@ -637,7 +637,10 @@ abstract class EE_Base_Class
      * @throws ReflectionException
      */
     protected static function _check_for_object(
-        array $props_n_values, string $classname, string $timezone = '', array $date_formats = []
+        array $props_n_values,
+        string $classname,
+        string $timezone = '',
+        array $date_formats = []
     ) {
         $existing = null;
         $model    = self::_get_model($classname, $timezone);
@@ -1250,34 +1253,40 @@ abstract class EE_Base_Class
             // this doesn't exist in the DB,
             // but maybe the relation type is "belongs to" and the related object might
             if ($model_relation instanceof EE_Belongs_To_Relation) {
-                return $this->_model->get_first_related(
-                    $this,
-                    $relationName,
-                    $query_params
-                );
+				$related_model_object = $this->_model->get_first_related(
+					$this,
+					$relationName,
+					$query_params
+				);
+				$this->updateTimezoneOnRelated($related_model_object);
+				return $related_model_object;
             }
             // this doesn't exist in the DB and apparently the thing it belongs to doesn't either,
             // just get what's cached on this object
-            return $this->get_one_from_cache($relationName);
+			$cached_result = $this->get_one_from_cache($relationName);
+			if ($cached_result) {
+				$this->updateTimezoneOnRelated($cached_result);
+				return $cached_result;
+			}
         }
         // this exists in the DB, get from the cache OR the DB
         // if they've provided some query parameters, don't bother trying to cache the result
         // also make sure we're not caching the result of get_first_related
         // on a relation which should have an array of objects (because the cache might have an array of objects)
-        if (
-            $query_params
-            || ! $model_relation instanceof EE_Belongs_To_Relation
-        ) {
-            return $this->_model->get_first_related(
-                $this,
-                $relationName,
-                $query_params
+        if ($query_params || ! $model_relation instanceof EE_Belongs_To_Relation) {
+            $related_model_object =$this->_model->get_first_related(
+				$this,
+				$relationName,
+				$query_params
             );
+			$this->updateTimezoneOnRelated($related_model_object);
+			return $related_model_object;
         }
         // check if we've already cached the result of this query
         $cached_result = $this->get_one_from_cache($relationName);
         if ($cached_result) {
-            return $cached_result;
+			$this->updateTimezoneOnRelated($cached_result);
+			return $cached_result;
         }
         $related_model_object = $this->_model->get_first_related(
             $this,
@@ -1285,7 +1294,8 @@ abstract class EE_Base_Class
             $query_params
         );
         $this->cache($relationName, $related_model_object);
-        return $related_model_object;
+		$this->updateTimezoneOnRelated($related_model_object);
+		return $related_model_object;
     }
 
 
@@ -1316,15 +1326,18 @@ abstract class EE_Base_Class
         // this exists in the DB, so get the related things from either the cache or the DB
         // if there are query parameters, forget about caching the related model objects.
         if ($query_params) {
-            return $this->_model->get_all_related(
+            $related_model_objects = $this->_model->get_all_related(
                 $this,
                 $relationName,
                 $query_params
             );
+			$this->updateTimezoneOnRelated($related_model_objects);
+			return $related_model_objects;
         }
         // did we already cache the result of this query?
         $cached_results = $this->get_all_from_cache($relationName);
         if ($cached_results) {
+			$this->updateTimezoneOnRelated($cached_results);
             return $cached_results;
         }
         $related_model_objects = $this->_model->get_all_related(
@@ -1332,12 +1345,12 @@ abstract class EE_Base_Class
             $relationName,
             $query_params
         );
+		$this->updateTimezoneOnRelated($related_model_objects);
         // if no query parameters were passed, then we got all the related model objects
         // for that relation. We can cache them then.
         foreach ($related_model_objects as $related_model_object) {
             $this->cache($relationName, $related_model_object);
         }
-        $this->updateTimezoneOnRelated($related_model_objects);
         return $related_model_objects;
     }
 
@@ -1460,7 +1473,7 @@ abstract class EE_Base_Class
      * @param bool   $only_if_not_set if true and $this->_timezone already has a value, then will not do anything
      * @return void
      */
-    public function set_timezone(string $timezone = '', $only_if_not_set = false)
+    public function set_timezone(string $timezone = '', bool $only_if_not_set = false)
     {
         static $set_in_progress = false;
         // don't update the timezone if it's already set ?

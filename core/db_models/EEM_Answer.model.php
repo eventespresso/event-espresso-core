@@ -37,7 +37,6 @@ class EEM_Answer extends EEM_Base
             EEM_Attendee::phone_question_id    => 'ATT_phone',
         ];
 
-
     /**
      *  constructor
      *

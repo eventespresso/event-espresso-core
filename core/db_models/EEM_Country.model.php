@@ -28,7 +28,7 @@ class EEM_Country extends EEM_Base
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function reset($timezone = ''): EEM_Country
+    public static function reset(string $timezone = ''): EEM_Country
     {
         self::$_active_countries = null;
         self::$_all_countries    = null;

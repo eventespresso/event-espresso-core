@@ -1310,7 +1310,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             }
             $DTM->save();
             $DTM = $evtobj->_add_relation_to($DTM, 'Datetime');
-            // load DTT helper
             // before going any further make sure our dates are setup correctly
 			// so that the end date is always equal or greater than the start date.
             if ($DTM->get_raw('DTT_EVT_start') > $DTM->get_raw('DTT_EVT_end')) {
