@@ -31,8 +31,8 @@ class Events_Admin_Page_Mock extends Events_Admin_Page {
 	}
 
 
-	public function default_tickets_update( $evtobj, $data ) {
-		return $this->_default_tickets_update( $evtobj, $data );
+	public function default_tickets_update( EE_Event $event, $data ) {
+		return $this->_default_tickets_update( $event, $data );
 	}
 
 
