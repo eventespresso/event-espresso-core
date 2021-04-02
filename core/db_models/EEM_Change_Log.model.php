@@ -54,7 +54,7 @@ class EEM_Change_Log extends EEM_Base
      * @param null $timezone
      * @throws EE_Error
      */
-    protected function __construct($timezone = null)
+    protected function __construct($timezone = '')
     {
         global $current_user;
         $this->singular_item       = esc_html__('Log', 'event_espresso');

@@ -27,7 +27,7 @@ class EEM_Question_Group extends EEM_Soft_Delete_Base
      *
      * @param string|null $timezone
      */
-    protected function __construct($timezone = null)
+    protected function __construct($timezone = '')
     {
         $this->singular_item = esc_html__('Question Group', 'event_espresso');
         $this->plural_item   = esc_html__('Question Groups', 'event_espresso');

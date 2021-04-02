@@ -25,14 +25,14 @@ class EEM_Country extends EEM_Base
      * Resets the country
      * @return EEM_Country
      */
-    public static function reset($timezone = null)
+    public static function reset($timezone = '')
     {
         self::$_active_countries = null;
         self::$_all_countries = null;
         return parent::reset($timezone);
     }
 
-    protected function __construct($timezone = null)
+    protected function __construct($timezone = '')
     {
         $this->singular_item = esc_html__('Country', 'event_espresso');
         $this->plural_item = esc_html__('Countries', 'event_espresso');

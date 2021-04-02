@@ -66,7 +66,7 @@ class EEM_Price_Type extends EEM_Soft_Delete_Base
      *      @access protected
      *      @return void
      */
-    protected function __construct($timezone = null)
+    protected function __construct($timezone = '')
     {
         $this->base_types = array(
             EEM_Price_Type::base_type_base_price => __('Price', 'event_espresso'),
