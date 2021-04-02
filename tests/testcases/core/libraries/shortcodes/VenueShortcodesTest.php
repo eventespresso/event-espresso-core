@@ -103,6 +103,7 @@ class VenueShortcodesTest extends EE_UnitTestCase
      */
     protected function getDataForShortcodes()
     {
+        $this->loadFactories();
         //setup a venue for the event for our tests.
         $venue = $this->factory->venue->create($this->getVenueTestValues());
         /** @var EE_Event $event */

@@ -151,6 +151,7 @@ class EE_Datetime_Test extends EE_UnitTestCase{
 		//setup some dates we'll use for testing with.
 		$timezone = new DateTimeZone( 'America/Toronto' );
         $now_for_test = new DateTime( 'now', $timezone );
+        $this->loadFactories();
         // set time explicitly
         $now_for_test->setTime(14, 00);
         $upcoming_start_date = clone $now_for_test;
@@ -213,6 +214,7 @@ class EE_Datetime_Test extends EE_UnitTestCase{
 		//setup a datetime for testing
 		$start_date = new DateTime( 'now' );
 		$end_date = new DateTime( 'now + 3 hours' );
+        $this->loadFactories();
 		$datetime = $this->factory->datetime->create(
 			array(
 				'DTT_EVT_start' => $start_date->format( 'Y-m-d H:i:s' ),

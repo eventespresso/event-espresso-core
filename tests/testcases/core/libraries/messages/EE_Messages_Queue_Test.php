@@ -37,6 +37,7 @@ class EE_Messages_Queue_Test extends EE_UnitTestCase {
 	 * @return EE_Messages_Queue
 	 */
 	function test_add_and_get_queue() {
+        $this->loadFactories();
 		$queue = $this->_get_queue();
 		$message = $this->factory->message->create(array('nosave'=> 1));
 
@@ -146,6 +147,7 @@ class EE_Messages_Queue_Test extends EE_UnitTestCase {
 	 * @return EE_Messages_Queue
 	 */
 	function test_get_batch_to_generate() {
+        $this->loadFactories();
 		//grab a bunch of message objects and add to queue.
 		$queue = $this->_get_queue();
 		for ( $i=0;$i<5;$i++ ) {
@@ -174,6 +176,7 @@ class EE_Messages_Queue_Test extends EE_UnitTestCase {
 
 
 	function test_get_to_send_batch_and_send() {
+        $this->loadFactories();
 		//grab a bunch of message objects and add to queue.
 		$queue = $this->_get_queue();
 		for ( $i=0;$i<5;$i++ ) {
@@ -212,6 +215,7 @@ class EE_Messages_Queue_Test extends EE_UnitTestCase {
 	 * @group 9787
 	 */
 	public function test_send_only_ready_to_send_messages() {
+        $this->loadFactories();
 		//get some messages ready for the test and add to queue
 		$queue = $this->_get_queue();
 		for ( $i = 0; $i < 5; $i++ ) {

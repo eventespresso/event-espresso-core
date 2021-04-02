@@ -15,6 +15,16 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
  */
 class EE_Maintenance_Mode_Test extends EE_UnitTestCase{
 
+
+    /**
+     * the DMS manager maintains a bit of state in order to be more efficient, which we want to lose between tests
+     */
+    public function setUp()
+    {
+        parent::setUp();
+        EE_Data_Migration_Manager::reset();
+        $this->loadFactories();
+    }
 	public function test_set_mm_if_db_old__no_need(){
 		//we should start off out of maintenance mode
 		$this->assertEquals( EE_Maintenance_Mode::level_0_not_in_maintenance,  EE_Maintenance_Mode::instance()->level() );
@@ -86,14 +96,6 @@ class EE_Maintenance_Mode_Test extends EE_UnitTestCase{
 		}else{
 			delete_option(EE_Data_Migration_Manager::current_database_state);
 		}
-	}
-
-	/**
-	 * the DMS manager maintains a bit of state in order to be more efficient, which we want to lose between tests
-	 */
-	public function setUp(){
-        parent::setUp();
-	    EE_Data_Migration_Manager::reset();
 	}
 }
 

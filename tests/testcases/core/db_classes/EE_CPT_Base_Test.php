@@ -153,6 +153,7 @@ class EE_CPT_Base_Test extends EE_UnitTestCase{
      */
     public function testAddEventCategoryNoDuplicates()
     {
+        $this->loadFactories();
         $e = $this->new_model_obj_with_dependencies('Event');
         $wp_term = $this->factory()->term->create_and_get(
             array(
