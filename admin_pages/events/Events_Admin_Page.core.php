@@ -34,17 +34,25 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
 
 
     /**
-     * This will hold the event model instance
-     *
      * @var EEM_Event $_event_model
      */
     protected $_event_model;
+
+    /**
+     * @var EEM_Datetime $datetime_model
+     */
+    protected $datetime_model;
+
+    /**
+     * @var EEM_Ticket $ticket_model
+     */
+    protected $ticket_model;
 
 
     /**
      * @var EE_Event
      */
-    protected $_cpt_model_obj = false;
+    protected $_cpt_model_obj;
 
 
     /**
@@ -768,11 +776,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      * When a user is creating a new event, notify them if they haven't set their timezone.
      * Otherwise, do the normal logic
      *
-     * @return string
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      */
     protected function _create_new_cpt_item()
     {
@@ -898,17 +904,41 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     /**
      * @return EEM_Event
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws ReflectionException
      */
-    private function _event_model()
+    private function eventModel()
     {
         if (! $this->_event_model instanceof EEM_Event) {
-            $this->_event_model = EE_Registry::instance()->load_model('Event');
+            $this->_event_model = EEM_Event::instance();
         }
         return $this->_event_model;
+    }
+
+
+    /**
+     * @param string $event_timezone_string
+     * @return EEM_Datetime
+     * @throws EE_Error
+     */
+    private function datetimeModel($event_timezone_string = '')
+    {
+        if (! $this->datetime_model instanceof EEM_Datetime) {
+            $this->datetime_model = EEM_Datetime::instance($event_timezone_string);
+        }
+        return $this->datetime_model;
+    }
+
+
+    /**
+     * @param string $event_timezone_string
+     * @return EEM_Ticket
+     * @throws EE_Error
+     */
+    private function ticketModel($event_timezone_string = '')
+    {
+        if (! $this->ticket_model instanceof EEM_Ticket) {
+            $this->ticket_model = EEM_Ticket::instance($event_timezone_string);
+        }
+        return $this->ticket_model;
     }
 
 
@@ -1049,18 +1079,21 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 : null;
         }
         // update event
-        $success = $this->_event_model()->update_by_ID($event_values, $post_id);
-        // get event_object for other metaboxes... though it would seem to make sense to just use $this->_event_model()->get_one_by_ID( $post_id ).. i have to setup where conditions to override the filters in the model that filter out autodraft and inherit statuses so we GET the inherit id!
+        $success = $this->eventModel()->update_by_ID($event_values, $post_id);
+        // get event_object for other metaboxes...
+        // though it would seem to make sense to just use $this->eventModel()->get_one_by_ID( $post_id )..
+        // i have to setup where conditions to override the filters in the model
+        // that filter out autodraft and inherit statuses so we GET the inherit id!
         $get_one_where = [
-            $this->_event_model()->primary_key_name() => $post_id,
-            'OR'                                      => [
+            $this->eventModel()->primary_key_name() => $post_id,
+            'OR'                                    => [
                 'status'   => $post->post_status,
                 // if trying to "Publish" a sold out event, it's status will get switched back to "sold_out" in the db,
                 // but the returned object here has a status of "publish", so use the original post status as well
                 'status*1' => $this->_req_data['original_post_status'],
             ],
         ];
-        $event = $this->_event_model()->get_one([$get_one_where]);
+        $event = $this->eventModel()->get_one([$get_one_where]);
         // the following are default callbacks for event attachment updates that can be overridden by caffeinated functionality and/or addons.
         $event_update_callbacks = apply_filters(
             'FHEE__Events_Admin_Page___insert_update_cpt_item__event_update_callbacks',
@@ -1112,7 +1145,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     protected function _restore_cpt_item($post_id, $revision_id)
     {
         // copy existing event meta to new post
-        $post_evt = $this->_event_model()->get_one_by_ID($post_id);
+        $post_evt = $this->eventModel()->get_one_by_ID($post_id);
         if ($post_evt instanceof EE_Event) {
             // meta revision restore
             $post_evt->restore_revision($revision_id);
@@ -1137,7 +1170,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     protected function _default_venue_update(EE_Event $evtobj, $data)
     {
         require_once(EE_MODELS . 'EEM_Venue.model.php');
-        $venue_model = EE_Registry::instance()->load_model('Venue');
+        $venue_model = EEM_Venue::instance();
         $rows_affected = null;
         $venue_id = ! empty($data['venue_id']) ? $data['venue_id'] : null;
         // very important.  If we don't have a venue name...
@@ -1200,14 +1233,18 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         if ($this->admin_config->useAdvancedEditor()) {
             return [];
         }
-        $success = true;
         $saved_dtt = null;
         $saved_tickets = [];
         $incoming_date_formats = ['Y-m-d', 'h:i a'];
+        $event_timezone_string = $evtobj->get_timezone();
+        $event_timezone = new DateTimeZone($event_timezone_string);
+        // let's use now in the set timezone.
+        $now = new DateTime('now', $event_timezone);
         foreach ($data['edit_event_datetimes'] as $row => $dtt) {
             // trim all values to ensure any excess whitespace is removed.
             $dtt = array_map('trim', $dtt);
-            $dtt['DTT_EVT_end'] = isset($dtt['DTT_EVT_end']) && ! empty($dtt['DTT_EVT_end']) ? $dtt['DTT_EVT_end']
+            $dtt['DTT_EVT_end'] = isset($dtt['DTT_EVT_end']) && ! empty($dtt['DTT_EVT_end'])
+                ? $dtt['DTT_EVT_end']
                 : $dtt['DTT_EVT_start'];
             $datetime_values = [
                 'DTT_ID'        => ! empty($dtt['DTT_ID']) ? $dtt['DTT_ID'] : null,
@@ -1218,9 +1255,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             ];
             // if we have an id then let's get existing object first and then set the new values.  Otherwise we instantiate a new object for save.
             if (! empty($dtt['DTT_ID'])) {
-                $DTM = EE_Registry::instance()
-                                  ->load_model('Datetime', [$evtobj->get_timezone()])
-                                  ->get_one_by_ID($dtt['DTT_ID']);
+                $DTM = $this->datetimeModel($event_timezone_string)->get_one_by_ID($dtt['DTT_ID']);
                 $DTM->set_date_format($incoming_date_formats[0]);
                 $DTM->set_time_format($incoming_date_formats[1]);
                 foreach ($datetime_values as $field => $value) {
@@ -1231,7 +1266,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             } else {
                 $DTM = EE_Registry::instance()->load_class(
                     'Datetime',
-                    [$datetime_values, $evtobj->get_timezone(), $incoming_date_formats],
+                    [$datetime_values, $event_timezone_string, $incoming_date_formats],
                     false,
                     false
                 );
@@ -1240,17 +1275,17 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 }
             }
             $DTM->save();
-            $DTT = $evtobj->_add_relation_to($DTM, 'Datetime');
+            $DTM = $evtobj->_add_relation_to($DTM, 'Datetime');
             // load DTT helper
             // before going any further make sure our dates are setup correctly so that the end date is always equal or greater than the start date.
-            if ($DTT->get_raw('DTT_EVT_start') > $DTT->get_raw('DTT_EVT_end')) {
-                $DTT->set('DTT_EVT_end', $DTT->get('DTT_EVT_start'));
-                $DTT = EEH_DTT_Helper::date_time_add($DTT, 'DTT_EVT_end', 'days');
-                $DTT->save();
+            if ($DTM->get_raw('DTT_EVT_start') > $DTM->get_raw('DTT_EVT_end')) {
+                $DTM->set('DTT_EVT_end', $DTM->get('DTT_EVT_start'));
+                $DTM = EEH_DTT_Helper::date_time_add($DTM, 'DTT_EVT_end', 'days');
+                $DTM->save();
             }
-            // now we got to make sure we add the new DTT_ID to the $saved_dtts array  because it is possible there was a new one created for the autosave.
-            $saved_dtt = $DTT;
-            $success = ! $success ? $success : $DTT;
+            // now we got to make sure we add the new DTT_ID to the $saved_dtts array
+            //  because it is possible there was a new one created for the autosave.
+            $saved_dtt = $DTM;
             // if ANY of these updates fail then we want the appropriate global error message.
             // //todo this is actually sucky we need a better error message but this is what it is for now.
         }
@@ -1265,8 +1300,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             // trim inputs to ensure any excess whitespace is removed.
             $tkt = array_map('trim', $tkt);
             if (empty($tkt['TKT_start_date'])) {
-                // let's use now in the set timezone.
-                $now = new DateTime('now', new DateTimeZone($evtobj->get_timezone()));
                 $tkt['TKT_start_date'] = $now->format($incoming_date_formats[0] . ' ' . $incoming_date_formats[1]);
             }
             if (empty($tkt['TKT_end_date'])) {
@@ -1303,9 +1336,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             // we actually do our saves a head of doing any add_relations to because its entirely possible that this ticket didn't removed or added to any datetime in the session but DID have it's items modified.
             // keep in mind that if the TKT has been sold (and we have changed pricing information), then we won't be updating the tkt but instead a new tkt will be created and the old one archived.
             if (! empty($tkt['TKT_ID'])) {
-                $TKT = EE_Registry::instance()
-                                  ->load_model('Ticket', [$evtobj->get_timezone()])
-                                  ->get_one_by_ID($tkt['TKT_ID']);
+                $TKT = $this->ticketModel($event_timezone_string)->get_one_by_ID($tkt['TKT_ID']);
                 if ($TKT instanceof EE_Ticket) {
                     $ticket_sold = $TKT->count_related(
                         'Registration',
@@ -1398,7 +1429,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         foreach ($tickets_removed as $id) {
             $id = absint($id);
             // get the ticket for this id
-            $tkt_to_remove = EE_Registry::instance()->load_model('Ticket')->get_one_by_ID($id);
+            $tkt_to_remove = $this->ticketModel($event_timezone_string)->get_one_by_ID($id);
             // need to get all the related datetimes on this ticket and remove from every single one of them (remember this process can ONLY kick off if there are NO tkts_sold)
             $dtts = $tkt_to_remove->get_many_related('Datetime');
             foreach ($dtts as $dtt) {
@@ -1446,7 +1477,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 $PRC_values['PRC_ID'] = 0;
                 $PRC = EE_Registry::instance()->load_class('Price', [$PRC_values], false, false);
             } else {
-                $PRC = EE_Registry::instance()->load_model('Price')->get_one_by_ID($prc['PRC_ID']);
+                $PRC = EEM_Price::instance()->get_one_by_ID($prc['PRC_ID']);
                 // update this price with new values
                 foreach ($PRC_values as $field => $newprc) {
                     $PRC->set($field, $newprc);
@@ -1655,14 +1686,17 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             'trash_icon'               => 'ee-lock-icon',
             'disabled'                 => '',
         ];
-        $event_id = is_object($this->_cpt_model_obj) ? $this->_cpt_model_obj->ID() : null;
+        $event_id = $this->_cpt_model_obj instanceof EE_Event ? $this->_cpt_model_obj->ID() : 0;
+        $event_timezone_string = $this->_cpt_model_obj instanceof EE_Event
+            ? $this->_cpt_model_obj->timezone_string()
+            : '';
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
         /**
          * 1. Start with retrieving Datetimes
          * 2. Fore each datetime get related tickets
          * 3. For each ticket get related prices
          */
-        $times = EE_Registry::instance()->load_model('Datetime')->get_all_event_dates($event_id);
+        $times = $this->datetimeModel($event_timezone_string)->get_all_event_dates($event_id);
         /** @type EE_Datetime $first_datetime */
         $first_datetime = reset($times);
         // do we get related tickets?
@@ -1689,13 +1723,13 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             } else {
                 $template_args['total_ticket_rows'] = 1;
                 /** @type EE_Ticket $ticket */
-                $ticket = EE_Registry::instance()->load_model('Ticket')->create_default_object();
+                $ticket = $this->ticketModel($event_timezone_string)->create_default_object();
                 $template_args['ticket_rows'] .= $this->_get_ticket_row($ticket);
             }
         } else {
             $template_args['time'] = $times[0];
             /** @type EE_Ticket $ticket */
-            $ticket = EE_Registry::instance()->load_model('Ticket')->get_all_default_tickets();
+            $ticket = $this->ticketModel($event_timezone_string)->get_all_default_tickets();
             $template_args['ticket_rows'] .= $this->_get_ticket_row($ticket[1]);
             // NOTE: we're just sending the first default row
             // (decaf can't manage default tickets so this should be sufficient);
@@ -1707,7 +1741,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         $template_args['existing_datetime_ids'] = implode(',', $existing_datetime_ids);
         $template_args['existing_ticket_ids'] = implode(',', $existing_ticket_ids);
         $template_args['ticket_js_structure'] = $this->_get_ticket_row(
-            EE_Registry::instance()->load_model('Ticket')->create_default_object(),
+            $this->ticketModel($event_timezone_string)->create_default_object(),
             true
         );
         $template = apply_filters(
@@ -1756,7 +1790,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         ];
         $price = $ticket->ID() !== 0
             ? $ticket->get_first_related('Price', ['default_where_conditions' => 'none'])
-            : EE_Registry::instance()->load_model('Price')->create_default_object();
+            : EEM_Price::instance()->create_default_object();
         $price_args = [
             'price_currency_symbol' => EE_Registry::instance()->CFG->currency->sign,
             'PRC_amount'            => $price->get('PRC_amount'),
@@ -1873,7 +1907,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      */
     public function get_events($per_page = 10, $current_page = 1, $count = false)
     {
-        $EEME = $this->_event_model();
+        $EEME = $this->eventModel();
         $offset = ($current_page - 1) * $per_page;
         $limit = $count ? null : $offset . ',' . $per_page;
         $orderby = isset($this->_req_data['orderby']) ? $this->_req_data['orderby'] : 'EVT_ID';
