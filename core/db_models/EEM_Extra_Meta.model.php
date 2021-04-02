@@ -20,7 +20,7 @@ class EEM_Extra_Meta extends EEM_Base
     // private instance of the Attendee object
     protected static $_instance = null;
 
-    protected function __construct($timezone = null)
+    protected function __construct($timezone = '')
     {
         $this->singular_item = __('Extra Meta', 'event_espresso');
         $this->plural_item = __('Extra Metas', 'event_espresso');

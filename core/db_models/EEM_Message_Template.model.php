@@ -27,7 +27,7 @@ class EEM_Message_Template extends EEM_Base
      * @param string $timezone
      * @throws \EE_Error
      */
-    protected function __construct($timezone = null)
+    protected function __construct($timezone = '')
     {
         $this->singular_item = __('Message Template', 'event_espresso');
         $this->plural_item = __('Message Templates', 'event_espresso');

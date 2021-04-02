@@ -28,9 +28,10 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base
 {
 
     /**
-     * @param null $timezone
+     * @param string $timezone
+     * @throws EE_Error
      */
-    protected function __construct($timezone = null)
+    protected function __construct($timezone = '')
     {
         if (! $this->_default_where_conditions_strategy instanceof EE_Default_Where_Conditions) {
             $this->_default_where_conditions_strategy = new EE_Soft_Delete_Where_Conditions();

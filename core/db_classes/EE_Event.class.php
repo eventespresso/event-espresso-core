@@ -45,7 +45,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      * @return EE_Event
      * @throws EE_Error
      */
-    public static function new_instance($props_n_values = array(), $timezone = null, $date_formats = array())
+    public static function new_instance($props_n_values = array(), $timezone = '', $date_formats = array())
     {
         $has_object = parent::_check_for_object($props_n_values, __CLASS__, $timezone, $date_formats);
         return $has_object ? $has_object : new self($props_n_values, false, $timezone, $date_formats);
@@ -59,7 +59,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      * @return EE_Event
      * @throws EE_Error
      */
-    public static function new_instance_from_db($props_n_values = array(), $timezone = null)
+    public static function new_instance_from_db($props_n_values = array(), $timezone = '')
     {
         return new self($props_n_values, true, $timezone);
     }

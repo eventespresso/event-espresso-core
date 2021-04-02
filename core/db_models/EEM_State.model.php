@@ -19,7 +19,7 @@ class EEM_State extends EEM_Base
     // array of all active states
     private static $_active_states = false;
 
-    protected function __construct($timezone = null)
+    protected function __construct($timezone = '')
     {
         $this->singular_item = __('State/Province', 'event_espresso');
         $this->plural_item = __('States/Provinces', 'event_espresso');

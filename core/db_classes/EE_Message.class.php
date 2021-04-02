@@ -47,7 +47,7 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links
      *                             format.
      * @return EE_Message
      */
-    public static function new_instance($props_n_values = array(), $timezone = null, $date_formats = array())
+    public static function new_instance($props_n_values = array(), $timezone = '', $date_formats = array())
     {
         $has_object = parent::_check_for_object($props_n_values, __CLASS__);
         // if object doesn't exist, let's generate a unique token on instantiation so that its available even before saving to db.
@@ -64,7 +64,7 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links
      * @param string $timezone
      * @return EE_Message
      */
-    public static function new_instance_from_db($props_n_values = array(), $timezone = null)
+    public static function new_instance_from_db($props_n_values = array(), $timezone = '')
     {
         return new self($props_n_values, true, $timezone);
     }

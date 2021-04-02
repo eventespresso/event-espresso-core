@@ -16,7 +16,7 @@ class EEM_Term_Taxonomy extends EEM_Base
 
 
 
-    protected function __construct($timezone = null)
+    protected function __construct($timezone = '')
     {
         $this->singular_item = __('Term Taxonomy', 'event_espresso');
         $this->plural_item = __('Term Taxonomy', 'event_espresso');

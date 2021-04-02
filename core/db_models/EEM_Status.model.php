@@ -18,7 +18,7 @@ class EEM_Status extends EEM_Base
     /**
      * @return EEM_Status
      */
-    protected function __construct($timezone = null)
+    protected function __construct($timezone = '')
     {
         $this->singular_item    = __('Status', 'event_espresso');
         $this->plural_item      = __('Stati', 'event_espresso');

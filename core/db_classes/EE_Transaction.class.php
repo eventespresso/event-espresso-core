@@ -40,7 +40,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public static function new_instance($props_n_values = array(), $timezone = null, $date_formats = array())
+    public static function new_instance($props_n_values = array(), $timezone = '', $date_formats = array())
     {
         $has_object = parent::_check_for_object($props_n_values, __CLASS__, $timezone, $date_formats);
         $txn = $has_object
@@ -64,7 +64,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public static function new_instance_from_db($props_n_values = array(), $timezone = null)
+    public static function new_instance_from_db($props_n_values = array(), $timezone = '')
     {
         $txn = new self($props_n_values, true, $timezone);
         $txn->set_old_txn_status($txn->status_ID());

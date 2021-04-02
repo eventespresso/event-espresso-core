@@ -17,7 +17,7 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base
 
 
 
-    protected function __construct($timezone = null)
+    protected function __construct($timezone = '')
     {
         $this->singular_item = __('Message Template Group', 'event_espresso');
         $this->plural_item = __('Message Template Groups', 'event_espresso');
