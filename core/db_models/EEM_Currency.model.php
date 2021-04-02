@@ -14,7 +14,7 @@ class EEM_Currency extends EEM_Base
         // private instance of the Attendee object
     protected static $_instance = null;
 
-    protected function __construct($timezone = null)
+    protected function __construct($timezone = '')
     {
         $this->singular_item = __('Currency', 'event_espresso');
         $this->plural_item = __('Currencies', 'event_espresso');

@@ -16,7 +16,7 @@ class EEM_New_Addon_Thing extends EEM_Base{
 	// private instance of the EEM_New_Addon_Thing object
 	protected static $_instance = null;
 
-	protected function __construct($timezone = null) {
+	protected function __construct($timezone = '') {
 		$this->_tables = array(
 			'New_Addon_Thing'=>new EE_Primary_Table('esp_new_addon_thing', 'NEW_ID')
 		);

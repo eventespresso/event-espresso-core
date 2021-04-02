@@ -24,7 +24,7 @@ class EEM_Post_Meta extends EEM_Base
 
 
 
-    protected function __construct($timezone = null)
+    protected function __construct($timezone = '')
     {
         $this->singular_item = __('Post Meta', 'event_espresso');
         $this->plural_item = __('Post Metas', 'event_espresso');

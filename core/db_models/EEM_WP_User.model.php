@@ -29,7 +29,7 @@ class EEM_WP_User extends EEM_Base
      * @throws EE_Error
      * @throws InvalidArgumentException
      */
-    protected function __construct($timezone = null, ModelFieldFactory $model_field_factory)
+    protected function __construct($timezone = '', ModelFieldFactory $model_field_factory)
     {
         $this->singular_item = esc_html__('WP_User', 'event_espresso');
         $this->plural_item = esc_html__('WP_Users', 'event_espresso');

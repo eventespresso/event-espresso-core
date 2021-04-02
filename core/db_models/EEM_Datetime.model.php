@@ -31,7 +31,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @throws InvalidArgumentException
      * @throws InvalidArgumentException
      */
-    protected function __construct($timezone)
+    protected function __construct($timezone = '')
     {
         $this->singular_item           = esc_html__('Datetime', 'event_espresso');
         $this->plural_item             = esc_html__('Datetimes', 'event_espresso');

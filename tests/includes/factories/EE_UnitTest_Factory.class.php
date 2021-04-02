@@ -104,11 +104,16 @@ class EE_UnitTest_Factory extends WP_UnitTest_Factory {
 	 */
 	public $complex_factory;
 
+    /**
+     * @var string
+     */
+    private $timezone;
 
 
 
 
 	public function __construct() {
+        $this->setTimezone(get_option('timezone_string'));
 		parent::__construct();
 
 		//simple factories
@@ -140,6 +145,37 @@ class EE_UnitTest_Factory extends WP_UnitTest_Factory {
 		$this->complex_factory = new EE_UnitTest_Factory_for_Specific_Builds( $this );
 
 	}
+
+
+    /**
+     * @return string
+     */
+    public function timezone()
+    {
+        return $this->timezone;
+    }
+
+
+    /**
+     * @param string $timezone
+     * @throws EE_Error
+     */
+    public function setTimezone($timezone)
+    {
+        if (! $timezone || ($timezone === $this->timezone && $this->timezone)) {
+            return;
+        }
+        $this->timezone = $timezone;
+        EEM_Event::instance()->set_timezone($timezone);
+        EEM_Datetime::instance()->set_timezone($timezone);
+        EEM_Ticket::instance()->set_timezone($timezone);
+        EEM_Registration::instance()->set_timezone($timezone);
+        EEM_Transaction::instance()->set_timezone($timezone);
+        EEM_Payment::instance()->set_timezone($timezone);
+        EEM_Message::instance()->set_timezone($timezone);
+    }
+
+
 }
 
 

@@ -21,9 +21,10 @@ interface HelperInterface
      *
      * @param string $timezone_string  When not provided then attempt to use the timezone_string set in the WP Time
      *                                 settings (or derive from set UTC offset).
+     * @param bool   $throw_error
      * @return string
      */
-    public function getValidTimezoneString($timezone_string = '');
+    public function getValidTimezoneString($timezone_string = '', $throw_error = false);
 
 
     /**

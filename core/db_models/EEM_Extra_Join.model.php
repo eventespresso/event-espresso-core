@@ -26,7 +26,7 @@ class EEM_Extra_Join extends EEM_Base
     // private instance of the Extra Join object
     protected static $_instance = null;
 
-    public function __construct($timezone = null)
+    public function __construct($timezone = '')
     {
         $models_this_can_join = array_keys(EE_Registry::instance()->non_abstract_db_models);
         $this->_tables = array(

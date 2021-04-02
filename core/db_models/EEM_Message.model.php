@@ -107,7 +107,7 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
      *                         timezone in the 'timezone_string' wp option)
      * @return EEM_Message
      */
-    protected function __construct($timezone = null)
+    protected function __construct($timezone = '')
     {
         $this->singular_item = __('Message', 'event_espresso');
         $this->plural_item   = __('Messages', 'event_espresso');

@@ -135,7 +135,7 @@ class EEM_Attendee extends EEM_CPT_Base
      * @throws EE_Error
      * @throws InvalidArgumentException
      */
-    protected function __construct($timezone = null, ModelFieldFactory $model_field_factory)
+    protected function __construct($timezone = '', ModelFieldFactory $model_field_factory)
     {
         $this->singular_item = esc_html__('Attendee', 'event_espresso');
         $this->plural_item = esc_html__('Attendees', 'event_espresso');

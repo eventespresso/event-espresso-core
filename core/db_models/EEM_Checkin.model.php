@@ -26,7 +26,7 @@ class EEM_Checkin extends EEM_Base
      *      @param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).  Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
      *      @return void
      */
-    protected function __construct($timezone = null)
+    protected function __construct($timezone = '')
     {
         $this->singular_item = __('Check-In', 'event_espresso');
         $this->plural_item = __('Check-Ins', 'event_espresso');

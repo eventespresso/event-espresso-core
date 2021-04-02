@@ -106,7 +106,7 @@ class EEM_Question extends EEM_Soft_Delete_Base
      *
      * @param null $timezone
      */
-    protected function __construct($timezone = null)
+    protected function __construct($timezone = '')
     {
         $this->singular_item                  = esc_html__('Question', 'event_espresso');
         $this->plural_item                    = esc_html__('Questions', 'event_espresso');

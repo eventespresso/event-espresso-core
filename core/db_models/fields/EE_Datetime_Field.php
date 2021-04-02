@@ -249,7 +249,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base
      */
     public function set_timezone($timezone_string)
     {
-        if (empty($timezone_string) && $this->_timezone_string !== null) {
+        if (empty($timezone_string) && ! empty($this->_timezone_string)) {
             // leave the timezone AS-IS if we already have one and
             // the function arg didn't provide one
             return;

@@ -16,7 +16,7 @@ class EEM_Venue extends EEM_CPT_Base
 
 
 
-    protected function __construct($timezone = null)
+    protected function __construct($timezone = '')
     {
         $this->singular_item = __('Venue', 'event_espresso');
         $this->plural_item = __('Venues', 'event_espresso');

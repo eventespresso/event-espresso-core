@@ -24,7 +24,7 @@ class EEM_Term extends EEM_Base
      *
      * @param string $timezone
      */
-    protected function __construct($timezone = null)
+    protected function __construct($timezone = '')
     {
         $this->singular_item = __('Term', 'event_espresso');
         $this->plural_item = __('Terms', 'event_espresso');

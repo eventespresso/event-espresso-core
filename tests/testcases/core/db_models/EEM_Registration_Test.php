@@ -18,16 +18,20 @@
 class EEM_Registration_Test extends EE_UnitTestCase {
 
 
+    private $original_timezone = '';
+
 	public function setUp() {
+        $this->original_timezone = get_option('timezone_string');
 		parent::setUp();
         //set timezone string.  NOTE, this is purposely a high positive timezone string because it works better for testing expiry times.
         update_option( 'timezone_string', 'Australia/Sydney' );
+        $this->loadFactories();
 	}
 
 
 	public function tearDown() {
 		//restore the timezone string to the default
-		update_option( 'timezone_string', '' );
+        update_option('timezone_string', $this->original_timezone);
 		parent::tearDown();
 	}
 

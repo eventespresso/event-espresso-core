@@ -110,7 +110,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base
      *                         timezone in the 'timezone_string' wp option)
      * @throws EE_Error
      */
-    protected function __construct($timezone = null)
+    protected function __construct($timezone = '')
     {
         $this->_table_analysis = EE_Registry::instance()->create('TableAnalysis', array(), true);
         $this->singular_item = esc_html__('Registration', 'event_espresso');

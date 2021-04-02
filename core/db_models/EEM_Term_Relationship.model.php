@@ -20,7 +20,7 @@ class EEM_Term_Relationship extends EEM_Base
      *
      * @param string $timezone
      */
-    protected function __construct($timezone = null)
+    protected function __construct($timezone = '')
     {
         $this->singular_item = __('Term Relationship', 'event_espresso');
         $this->plural_item = __('Term Relationships', 'event_espresso');
