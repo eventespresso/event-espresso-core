@@ -16,7 +16,6 @@ use EventEspresso\core\services\loaders\LoaderFactory;
 class EEH_DTT_Helper
 {
 
-
     /**
      * return the timezone set for the WP install
      *
@@ -36,14 +35,21 @@ class EEH_DTT_Helper
      *    ensures that a valid timezone string is returned
      *
      * @param string $timezone_string
+     * @param bool   $throw_error
      * @return string
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public static function get_valid_timezone_string($timezone_string = '')
+    public static function get_valid_timezone_string($timezone_string = '', $throw_error = false)
     {
-        return self::getHelperAdapter()->getValidTimezoneString($timezone_string);
+        return self::getHelperAdapter()->getValidTimezoneString($timezone_string, $throw_error);
+    }
+
+
+    public static function resetDefaultTimezoneString()
+    {
+        self::getHelperAdapter()->resetDefaultTimezoneString();
     }
 
 

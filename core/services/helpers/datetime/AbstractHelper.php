@@ -11,6 +11,28 @@ use Exception;
 
 abstract class AbstractHelper implements HelperInterface
 {
+    /**
+     * @var string
+     */
+    private $default_timezone_string = '';
+
+
+    /**
+     * AbstractHelper constructor.
+     */
+    public function __construct()
+    {
+        add_action('update_option_timezone_string', [$this, 'updateDefaultTimezoneString'], 10, 2);
+    }
+    /**
+     * AbstractHelper destructor.
+     */
+    public function __destruct()
+    {
+        remove_action('update_option_timezone_string', [$this, 'updateDefaultTimezoneString']);
+    }
+
+
 
 
     /**
@@ -18,20 +40,55 @@ abstract class AbstractHelper implements HelperInterface
      *
      * @param string $timezone_string  When not provided then attempt to use the timezone_string set in the WP Time
      *                                 settings (or derive from set UTC offset).
+     * @param bool   $throw_error
      * @return string
      * @throws EE_Error
      */
-    public function getValidTimezoneString($timezone_string = '')
+    public function getValidTimezoneString($timezone_string = '', $throw_error = false)
     {
-        $timezone_string = ! empty($timezone_string) ? $timezone_string : (string) get_option('timezone_string');
-        $timezone_string = ! empty($timezone_string)
-            ? $timezone_string
-            : $this->getTimezoneStringFromGmtOffset();
-        $this->validateTimezone($timezone_string);
-        return $timezone_string;
+        // if a valid TZ is supplied, then just use that, but don't throw errors if it's invalid
+        if (! empty($timezone_string) && $this->validateTimezone($timezone_string, $throw_error)) {
+            return $timezone_string;
+        }
+        // cache whatever gets set as the site default
+        // no default set yet? then let's get to it!
+        if ($this->default_timezone_string === '') {
+            // ignore the incoming TZ string because we already know it's invalid
+            // and just pull the default set for the site
+            $timezone_string = (string) get_option('timezone_string');
+            // if the site admin has not set a valid default,
+            // then derive the TZ from the UTC offset (and hope that that is set)
+            $timezone_string = ! empty($timezone_string)
+                ? $timezone_string
+                : $this->getTimezoneStringFromGmtOffset();
+            // make sure it's all good (and this time blow things up if no TZ can be determined)
+            $this->validateTimezone($timezone_string);
+            // cache the default so that we don't do this a Brazilian times
+            $this->default_timezone_string = $timezone_string;
+        }
+        return $this->default_timezone_string;
     }
 
 
+    public function resetDefaultTimezoneString()
+    {
+        $this->default_timezone_string = '';
+    }
+
+
+    /**
+     * @param $old_value
+     * @param $value
+     * @throws EE_Error
+     * @since   $VID:$
+     */
+    public function updateDefaultTimezoneString($old_value, $value)
+    {
+        if ($value && $value !== $old_value && $value !== $this->default_timezone_string) {
+            $this->resetDefaultTimezoneString();
+            $this->getValidTimezoneString($value);
+        }
+    }
 
     /**
      * The only purpose for this static method is to validate that the incoming timezone is a valid php timezone.
