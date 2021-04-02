@@ -68,7 +68,7 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base
      * @param string $timezone
      * @throws \EE_Error
      */
-    protected function __construct($timezone = null)
+    protected function __construct($timezone = '')
     {
         // adds a relationship to Term_Taxonomy for all these models. For this to work
         // Term_Relationship must have a relation to each model subclassing EE_CPT_Base explicitly

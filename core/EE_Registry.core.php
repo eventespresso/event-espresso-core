@@ -1625,6 +1625,8 @@ class EE_Registry implements ResettableInterface
         $instance->_cache_on = true;
         // reset some "special" classes
         EEH_Activation::reset();
+        EEH_DTT_Helper::resetDefaultTimezoneString();
+
         $hard = apply_filters('FHEE__EE_Registry__reset__hard', $hard);
         $instance->CFG = EE_Config::reset($hard, $reinstantiate);
         $instance->CART = null;

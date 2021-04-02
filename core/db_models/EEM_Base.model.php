@@ -561,10 +561,10 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * the array key ('Event_Post_Table'), instead of repeating it. The model fields and model relations
      * do something similar.
      *
-     * @param null $timezone
+     * @param string $timezone
      * @throws EE_Error
      */
-    protected function __construct($timezone = null)
+    protected function __construct($timezone = '')
     {
         // check that the model has not been loaded too soon
         if (! did_action('AHEE__EE_System__load_espresso_addons')) {
@@ -744,13 +744,13 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      *                                Note this just sends the timezone info to the date time model field objects.
      *                                Default is NULL
      *                                (and will be assumed using the set timezone in the 'timezone_string' wp option)
-     * @return static (as in the concrete child class)
+     * @return EEM_Base (as in the concrete child class)
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public static function instance($timezone = null)
+    public static function instance($timezone = '')
     {
         // check if instance of Espresso_model already exists
         if (! static::$_instance instanceof static) {
@@ -760,9 +760,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                 LoaderFactory::getLoader()->load('EventEspresso\core\services\orm\ModelFieldFactory')
             );
         }
-        // we might have a timezone set, let set_timezone decide what to do with it
-        static::$_instance->set_timezone($timezone);
-        // Espresso_model object
+        // Espresso model object
         return static::$_instance;
     }
 
@@ -770,7 +768,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     /**
      * resets the model and returns it
      *
-     * @param null | string $timezone
+     * @param string $timezone
      * @return EEM_Base|null (if the model was already instantiated, returns it, with
      * all its properties reset; if it wasn't instantiated, returns null)
      * @throws EE_Error
@@ -779,7 +777,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public static function reset($timezone = null)
+    public static function reset($timezone = '')
     {
         if (static::$_instance instanceof EEM_Base) {
             // let's try to NOT swap out the current instance for a new one
@@ -795,12 +793,13 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                     static::$_instance->{$property} = $value;
                 }
             }
+            EEH_DTT_Helper::resetDefaultTimezoneString();
             // and then directly call its constructor again, like we would if we were creating a new one
             static::$_instance->__construct(
                 $timezone,
                 LoaderFactory::getLoader()->load('EventEspresso\core\services\orm\ModelFieldFactory')
             );
-            return self::instance();
+            return static::instance();
         }
         return null;
     }
@@ -1428,13 +1427,29 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      *
      * @param string|null $timezone valid PHP DateTimeZone timezone string
      */
-    public function set_timezone($timezone)
+    public function set_timezone($timezone = '')
     {
-        // don't set the timezone if the incoming value is the same
-        if (! empty($timezone) && $timezone === $this->_timezone) {
+        static $set_in_progress = false;
+        // if incoming timezone string is empty, then use the existing
+        $valid_timezone = ! empty($timezone) && $timezone !== $this->_timezone
+            ? EEH_DTT_Helper::get_valid_timezone_string($timezone)
+            : $this->_timezone;
+        // do NOT set the timezone if we are already in the process of setting the timezone
+        // OR the existing timezone is already set and the incoming value is nothing (which gets set to default TZ)
+        // OR the existing timezone is already set and the validated value is the same as the existing timezone
+        if (
+            $set_in_progress
+            || (
+                ! empty($this->_timezone)
+                && (
+                    empty($timezone) || $valid_timezone === $this->_timezone
+                )
+            )
+        ) {
             return;
         }
-        $this->_timezone = EEH_DTT_Helper::get_valid_timezone_string($timezone);
+        $set_in_progress = true;
+        $this->_timezone = $valid_timezone ? $valid_timezone : EEH_DTT_Helper::get_valid_timezone_string();
         // note we need to loop through relations and set the timezone on those objects as well.
         foreach ($this->_model_relations as $relation) {
             $relation->set_timezone($this->_timezone);
@@ -1445,6 +1460,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                 $field->set_timezone($this->_timezone);
             }
         }
+        $set_in_progress = false;
     }
 
 
@@ -1456,18 +1472,8 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      */
     public function get_timezone()
     {
-        // first validate if timezone is set.  If not, then let's set it be whatever is set on the model fields.
         if (empty($this->_timezone)) {
-            foreach ($this->_fields as $field) {
-                if ($field instanceof EE_Datetime_Field) {
-                    $this->set_timezone($field->get_timezone());
-                    break;
-                }
-            }
-        }
-        // if timezone STILL empty then return the default timezone for the site.
-        if (empty($this->_timezone)) {
-            $this->set_timezone(EEH_DTT_Helper::get_timezone());
+            $this->set_timezone();
         }
         return $this->_timezone;
     }
@@ -1498,9 +1504,16 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                 )
             );
         }
-        // while we are here, let's make sure the timezone internally in EEM_Base matches what is stored on
-        // the field.
-        $this->_timezone = $field_settings->get_timezone();
+        // while we are here, let's make sure the timezone internally in EEM_Base matches what is stored on the field.
+        $field_timezone = $field_settings->get_timezone();
+        if (empty($this->_timezone && $field_timezone)) {
+            $this->set_timezone();
+        } else {
+            // or vice versa if the field TZ isn't set
+            $model_timezone = $this->get_timezone();
+            $field_settings->set_timezone($model_timezone);
+        }
+
         return [$field_settings->get_date_format($pretty), $field_settings->get_time_format($pretty)];
     }
 
@@ -1530,7 +1543,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     public function current_time_for_query($field_name, $timestamp = false, $what = 'both')
     {
         $formats  = $this->get_formats_for($field_name);
-        $DateTime = new DateTime("now", new DateTimeZone($this->_timezone));
+        $DateTime = new DateTime("now", new DateTimeZone($this->get_timezone()));
         if ($timestamp) {
             return $DateTime->format('U');
         }
@@ -1553,25 +1566,24 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * (functionally the equivalent of UTC+0).  So when you send it in, whatever timezone string you include is
      * ignored.
      *
-     * @param string $field_name      The field being setup.
-     * @param string $timestring      The date time string being used.
-     * @param string $incoming_format The format for the time string.
-     * @param string $timezone        By default, it is assumed the incoming time string is in timezone for
-     *                                the blog.  If this is not the case, then it can be specified here.  If incoming
-     *                                format is
-     *                                'U', this is ignored.
-     * @return DateTime
+     * @param string $field_name    The field being setup.
+     * @param string $timestring    The date time string being used.
+     * @param string $format        The format for the time string.
+     * @param string $timezone      By default, it is assumed the incoming time string is in timezone for
+     *                              the blog.  If this is not the case, then it can be specified here.
+     *                              If incoming format is 'U', this is ignored.
+     * @return DbSafeDateTime
      * @throws EE_Error
+     * @throws Exception
      */
-    public function convert_datetime_for_query($field_name, $timestring, $incoming_format, $timezone = '')
+    public function convert_datetime_for_query($field_name, $timestring, $format, $timezone = '')
     {
         // just using this to ensure the timezone is set correctly internally
         $this->get_formats_for($field_name);
-        // load EEH_DTT_Helper
-        $set_timezone     = empty($timezone) ? EEH_DTT_Helper::get_timezone() : $timezone;
-        $incomingDateTime = date_create_from_format($incoming_format, $timestring, new DateTimeZone($set_timezone));
-        EEH_DTT_Helper::setTimezone($incomingDateTime, new DateTimeZone($this->_timezone));
-        return DbSafeDateTime::createFromDateTime($incomingDateTime);
+        $timezone         = ! empty($timezone) ? $timezone : EEH_DTT_Helper::get_timezone();
+        $db_safe_datetime = DbSafeDateTime::createFromFormat($format, $timestring, new DateTimeZone($timezone));
+        EEH_DTT_Helper::setTimezone($db_safe_datetime, new DateTimeZone($this->get_timezone()));
+        return $db_safe_datetime;
     }
 
 
@@ -1718,12 +1730,6 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                     }
                 }
             }
-            //              //and now check that if we have cached any models by that ID on the model, that
-            //              //they also get updated properly
-            //              $model_object = $this->get_from_entity_map( $main_table_pk_value );
-            //              if( $model_object ){
-            //                  foreach( $fields_n_values as $field => $value ){
-            //                      $model_object->set($field, $value);
             // let's make sure default_where strategy is followed now
             $this->_ignore_where_strategy = false;
         }
@@ -1766,12 +1772,10 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             }
         }
         $model_query_info = $this->_create_model_query_info_carrier($query_params);
-        $SQL              = "UPDATE "
-                            . $model_query_info->get_full_join_sql()
-                            . " SET "
-                            . $this->_construct_update_sql($fields_n_values)
-                            . $model_query_info->get_where_sql(
-            );// note: doesn't use _construct_2nd_half_of_select_query() because doesn't accept LIMIT, ORDER BY, etc.
+        $SQL              = "UPDATE " . $model_query_info->get_full_join_sql()
+                            . " SET " . $this->_construct_update_sql($fields_n_values)
+                            . $model_query_info->get_where_sql();
+        // note: doesn't use _construct_2nd_half_of_select_query() because doesn't accept LIMIT, ORDER BY, etc.
         $rows_affected    = $this->_do_wpdb_query('query', [$SQL]);
         /**
          * Action called after a model update call has been made.
@@ -1813,8 +1817,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         }
         $model_query_info   = $this->_create_model_query_info_carrier($query_params);
         $select_expressions = $field->get_qualified_column();
-        $SQL                =
-            "SELECT $select_expressions " . $this->_construct_2nd_half_of_select_query($model_query_info);
+        $SQL = "SELECT $select_expressions " . $this->_construct_2nd_half_of_select_query($model_query_info);
         return $this->_do_wpdb_query('get_col', [$SQL]);
     }
 
@@ -1861,7 +1864,8 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             // if the value is NULL, we want to assign the value to that.
             // wpdb->prepare doesn't really handle that properly
             $prepared_value  = $this->_prepare_value_or_use_default($field_obj, $fields_n_values);
-            $value_sql       = $prepared_value === null ? 'NULL'
+            $value_sql       = $prepared_value === null
+                ? 'NULL'
                 : $wpdb->prepare($field_obj->get_wpdb_data_type(), $prepared_value);
             $cols_n_values[] = $field_obj->get_qualified_column() . "=" . $value_sql;
         }
@@ -1992,13 +1996,10 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         );
         if ($deletion_where_query_part) {
             $model_query_info = $this->_create_model_query_info_carrier($query_params);
-            $table_aliases    = array_keys($this->_tables);
-            $SQL              = "DELETE "
-                                . implode(", ", $table_aliases)
-                                . " FROM "
-                                . $model_query_info->get_full_join_sql()
-                                . " WHERE "
-                                . $deletion_where_query_part;
+            $table_aliases    = implode(', ', array_keys($this->_tables));
+            $SQL              = "DELETE " . $table_aliases
+                                . " FROM " . $model_query_info->get_full_join_sql()
+                                . " WHERE " . $deletion_where_query_part;
             $rows_deleted     = $this->_do_wpdb_query('query', [$SQL]);
         } else {
             $rows_deleted = 0;
@@ -2216,9 +2217,8 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                 foreach ($ids_to_delete_indexed_by_column_for_each_row as $column => $id) {
                     $values_for_each_combined_primary_key_for_a_row[] = $column . '=' . $id;
                 }
-                $ways_to_identify_a_row[] = '('
-                                            . implode(' AND ', $values_for_each_combined_primary_key_for_a_row)
-                                            . ')';
+                $value_and_value_and_value = implode(' AND ', $values_for_each_combined_primary_key_for_a_row);
+                $ways_to_identify_a_row[]  = "({$value_and_value_and_value})";
             }
             $query_part = implode(' OR ', $ways_to_identify_a_row);
         }
@@ -2314,8 +2314,8 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             $field_obj = $this->get_primary_key_field();
         }
         $column_to_count = $field_obj->get_qualified_column();
-        $SQL             =
-            "SELECT SUM(" . $column_to_count . ")" . $this->_construct_2nd_half_of_select_query($model_query_info);
+        $SQL             = "SELECT SUM(" . $column_to_count . ")"
+                           . $this->_construct_2nd_half_of_select_query($model_query_info);
         $return_value    = $this->_do_wpdb_query('get_var', [$SQL]);
         $data_type       = $field_obj->get_wpdb_data_type();
         if ($data_type === '%d' || $data_type === '%s') {
@@ -5203,7 +5203,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                 );
             }
             // set the timezone on the instantiated objects
-            $classInstance->set_timezone($this->_timezone);
+            $classInstance->set_timezone($this->get_timezone(), true);
             // make sure if there is any timezone setting present that we set the timezone for the object
             $key                      = $has_primary_key ? $classInstance->ID() : $count_if_model_has_no_primary_key++;
             $array_of_objects[ $key ] = $classInstance;
@@ -5220,7 +5220,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                     // if we managed to make a model object from the results, cache it on the main model object
                     if ($other_model_obj_maybe) {
                         // set timezone on these other model objects if they are present
-                        $other_model_obj_maybe->set_timezone($this->_timezone);
+                        $other_model_obj_maybe->set_timezone($this->get_timezone(), true);
                         $classInstance->cache($modelName, $other_model_obj_maybe);
                     }
                 }
@@ -5346,7 +5346,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             if (! $classInstance) {
                 $classInstance = EE_Registry::instance()->load_class(
                     $className,
-                    [$this_model_fields_n_values, $this->_timezone],
+                    [$this_model_fields_n_values, $this->get_timezone()],
                     true,
                     false
                 );
@@ -5356,7 +5356,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         } else {
             $classInstance = EE_Registry::instance()->load_class(
                 $className,
-                [$this_model_fields_n_values, $this->_timezone],
+                [$this_model_fields_n_values, $this->get_timezone()],
                 true,
                 false
             );
@@ -5374,7 +5374,8 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     public function get_from_entity_map($id)
     {
         return isset($this->_entity_map[ EEM_Base::$_model_query_blog_id ][ $id ])
-            ? $this->_entity_map[ EEM_Base::$_model_query_blog_id ][ $id ] : null;
+            ? $this->_entity_map[ EEM_Base::$_model_query_blog_id ][ $id ]
+            : null;
     }
 
 
@@ -5392,7 +5393,6 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * @param EE_Base_Class $object
      * @return EE_Base_Class
      * @throws EE_Error
-     * @throws ReflectionException
      */
     public function add_to_entity_map(EE_Base_Class $object)
     {
@@ -5756,7 +5756,6 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * @param EE_Base_Class|int|string $base_class_obj_or_id
      * @return int|string depending on the type of this model object's ID
      * @throws EE_Error
-     * @throws ReflectionException
      */
     public function ensure_is_ID($base_class_obj_or_id)
     {
@@ -6154,7 +6153,6 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      *                                               in the returned array
      * @return array
      * @throws EE_Error
-     * @throws ReflectionException
      */
     public function get_IDs($model_objects, $filter_out_empty_ids = false)
     {

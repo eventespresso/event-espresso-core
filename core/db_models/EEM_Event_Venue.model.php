@@ -11,7 +11,7 @@ class EEM_Event_Venue extends EEM_Base
     // private instance of the Attendee object
     protected static $_instance = null;
 
-    protected function __construct($timezone = null)
+    protected function __construct($timezone = '')
     {
         $this->singular_item = __('Event to Question Group Link', 'event_espresso');
         $this->plural_item = __('Event to Question Group Links', 'event_espresso');

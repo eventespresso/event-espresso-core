@@ -161,7 +161,7 @@ abstract class EE_Base_Class
                 );
             }
         }
-        $this->_timezone = EEH_DTT_Helper::get_valid_timezone_string($timezone);
+        $this->set_timezone($timezone);
         if (! empty($date_formats) && is_array($date_formats)) {
             list($this->_dt_frmt, $this->_tm_frmt) = $date_formats;
         } else {
@@ -411,7 +411,7 @@ abstract class EE_Base_Class
      * Gets the model instance (eg instance of EEM_Attendee) given its classname (eg EE_Attendee)
      *
      * @param string $model_classname
-     * @param null   $timezone
+     * @param string $timezone
      * @return EEM_Base
      * @throws ReflectionException
      * @throws InvalidArgumentException
@@ -419,7 +419,7 @@ abstract class EE_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    protected static function _get_model_instance_with_name($model_classname, $timezone = null)
+    protected static function _get_model_instance_with_name($model_classname, $timezone = '')
     {
         $model_classname = str_replace('EEM_', '', $model_classname);
         $model           = EE_Registry::instance()->load_model($model_classname);
@@ -445,9 +445,8 @@ abstract class EE_Base_Class
     /**
      * Gets the EEM_*_Model for this class
      *
-     * @access public now, as this is more convenient
-     * @param      $classname
-     * @param null $timezone
+     * @param string $classname
+     * @param string $timezone
      * @return EEM_Base
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
@@ -455,7 +454,7 @@ abstract class EE_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    protected static function _get_model($classname, $timezone = null)
+    protected static function _get_model($classname, $timezone = '')
     {
         // find model for this class
         if (! $classname) {
@@ -667,7 +666,7 @@ abstract class EE_Base_Class
      *
      * @param array  $props_n_values    incoming array of properties and their values
      * @param string $classname         the classname of the child class
-     * @param null   $timezone
+     * @param string $timezone
      * @param array  $date_formats      incoming date_formats in an array where the first value is the
      *                                  date_format and the second value is the time format
      * @return mixed (EE_Base_Class|bool)
@@ -679,7 +678,7 @@ abstract class EE_Base_Class
      * @throws ReflectionException
      * @throws ReflectionException
      */
-    protected static function _check_for_object($props_n_values, $classname, $timezone = null, $date_formats = [])
+    protected static function _check_for_object($props_n_values, $classname, $timezone = '', $date_formats = [])
     {
         $existing = null;
         $model    = self::_get_model($classname, $timezone);
@@ -695,9 +694,8 @@ abstract class EE_Base_Class
             }
         } elseif ($model->has_all_combined_primary_key_fields($props_n_values)) {
             // no primary key on this model, but there's still a matching item in the DB
-            $existing = self::_get_model($classname, $timezone)->get_one_by_ID(
-                self::_get_model($classname, $timezone)
-                    ->get_index_primary_key_string($props_n_values)
+            $existing = $model->get_one_by_ID(
+                $model->get_index_primary_key_string($props_n_values)
             );
         }
         if ($existing) {
@@ -1187,6 +1185,7 @@ abstract class EE_Base_Class
                 );
             }
         }
+        $this->updateTimezoneOnRelated($objects);
         return $objects;
     }
 
@@ -1289,7 +1288,8 @@ abstract class EE_Base_Class
     public function get_first_related($relationName, $query_params = [])
     {
         $model_relation = $this->_model->related_settings_for($relationName);
-        if ($this->ID()) {// this exists in the DB, get from the cache OR the DB
+        if ($this->ID()) {
+            // this exists in the DB, get from the cache OR the DB
             // if they've provided some query parameters, don't bother trying to cache the result
             // also make sure we're not caching the result of get_first_related
             // on a relation which should have an array of objects (because the cache might have an array of objects)
@@ -1333,6 +1333,7 @@ abstract class EE_Base_Class
                 $related_model_object = $this->get_one_from_cache($relationName);
             }
         }
+        $this->updateTimezoneOnRelated($related_model_object);
         return $related_model_object;
     }
 
@@ -1388,6 +1389,7 @@ abstract class EE_Base_Class
             // this doesn't exist in the DB, so just get the related things from the cache
             $related_model_objects = $this->get_all_from_cache($relationName);
         }
+        $this->updateTimezoneOnRelated($related_model_objects);
         return $related_model_objects;
     }
 
@@ -1405,8 +1407,9 @@ abstract class EE_Base_Class
             ? $this->_model_relations[ $relationName ]
             : null;
         if (is_array($cached_array_or_object)) {
-            return array_shift($cached_array_or_object);
+            $cached_array_or_object = array_shift($cached_array_or_object);
         }
+        $this->updateTimezoneOnRelated($cached_array_or_object);
         return $cached_array_or_object;
     }
 
@@ -1496,6 +1499,9 @@ abstract class EE_Base_Class
      */
     public function get_timezone()
     {
+        if (empty($this->_timezone)) {
+            $this->set_timezone();
+        }
         return $this->_timezone;
     }
 
@@ -1506,16 +1512,37 @@ abstract class EE_Base_Class
      * (UTC Unix Timestamp) for the object OR when converting FROM the internal timezone (UTC Unix Timestamp). This is
      * available to all child classes that may be using the EE_Datetime_Field for a field data type.
      *
-     * @access public
      * @param string $timezone A valid timezone string as described by @link http://www.php.net/manual/en/timezones.php
+     * @param bool   $only_if_not_set if true and $this->_timezone already has a value, then will not do anything
      * @return void
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
      */
-    public function set_timezone($timezone = '')
+    public function set_timezone($timezone = '', $only_if_not_set = false)
     {
-        $this->_timezone = EEH_DTT_Helper::get_valid_timezone_string($timezone);
+        static $set_in_progress = false;
+        // don't update the timezone if it's already set ?
+        if (($only_if_not_set && $this->_timezone !== '') ) {
+            return;
+        }
+        $valid_timezone = ! empty($timezone) && $this->_timezone && $timezone !== $this->_timezone
+            ? EEH_DTT_Helper::get_valid_timezone_string($timezone)
+            : $this->_timezone;
+        // do NOT set the timezone if we are already in the process of setting the timezone
+        // OR the existing timezone is already set and the incoming value is nothing (which gets set to default TZ)
+        // OR the existing timezone is already set and the validated value is the same as the existing timezone
+        if (
+            $set_in_progress
+            || (
+                ! empty($this->_timezone)
+                && (
+                    empty($timezone) || $valid_timezone === $this->_timezone
+                )
+            )
+        ) {
+            return;
+        }
+        $set_in_progress = true;
+        $this->_timezone = $valid_timezone ? $valid_timezone : EEH_DTT_Helper::get_valid_timezone_string();
+        $TZ = new DateTimeZone($this->_timezone);
         // make sure we clear all cached properties because they won't be relevant now
         $this->_clear_cached_properties();
         // make sure we update field settings and the date for all EE_Datetime_Fields
@@ -1524,8 +1551,27 @@ abstract class EE_Base_Class
             if ($field_obj instanceof EE_Datetime_Field) {
                 $field_obj->set_timezone($this->_timezone);
                 if (isset($this->_fields[ $field_name ]) && $this->_fields[ $field_name ] instanceof DateTime) {
-                    EEH_DTT_Helper::setTimezone($this->_fields[ $field_name ], new DateTimeZone($this->_timezone));
+                    EEH_DTT_Helper::setTimezone($this->_fields[ $field_name ], $TZ);
                 }
+            }
+        }
+        $set_in_progress = false;
+    }
+
+
+    /**
+     * @param array|EE_Base_Class $related
+     * @since $VID:$
+     */
+    private function updateTimezoneOnRelated($related)
+    {
+        if ($related instanceof EE_Base_Class && $related->get_timezone() !== $this->_timezone) {
+            $related->set_timezone($this->_timezone);
+            return;
+        }
+        if (is_array($related)) {
+            foreach ($related as $object) {
+                $this->updateTimezoneOnRelated($object);
             }
         }
     }
@@ -1566,7 +1612,7 @@ abstract class EE_Base_Class
         // verify that incoming object is of the correct type
         $obj_class = 'EE_' . $relationName;
         if ($newly_saved_object instanceof $obj_class) {
-            /* @type EE_Base_Class $newly_saved_object */
+            $this->updateTimezoneOnRelated($newly_saved_object);
             // now get the type of relation
             $relationship_to_model = $this->_model->related_settings_for($relationName);
             // if this is a 1:1 relationship
@@ -1994,7 +2040,7 @@ abstract class EE_Base_Class
             $format,
             EEH_DTT_Helper::get_timestamp_with_offset(
                 $this->get_raw($field_name),
-                $this->_timezone
+                $this->get_timezone()
             )
         );
     }
@@ -3158,9 +3204,13 @@ abstract class EE_Base_Class
      * PLZ NOTE: this will reset the array to whatever fields values were present prior to serialization,
      * and therefore should NOT be used to determine if state change has occurred since initial construction.
      * At best, you would only be able to detect if state change has occurred during THIS request.
+     *
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function __wakeup()
     {
+        $this->_model = $this->get_model();
         $this->_props_n_values_provided_in_constructor = $this->_fields;
     }
 

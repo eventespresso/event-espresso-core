@@ -30,6 +30,7 @@ class EE_Admin_Tests extends EE_UnitTestCase {
         $this->loader->getShared('EE_Admin');
         $this->setupRequest();
         $this->admin = EE_Admin::reset();
+        $this->loadFactories();
     }
 	/**
 	 * test whether EE_Admin is loaded correctly

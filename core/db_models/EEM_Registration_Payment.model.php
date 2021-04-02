@@ -17,7 +17,7 @@ class EEM_Registration_Payment extends EEM_Base
     protected static $_instance = null;
 
 
-    protected function __construct($timezone = null)
+    protected function __construct($timezone = '')
     {
 
         $this->singular_item = __('Registration Payment', 'event_espresso');

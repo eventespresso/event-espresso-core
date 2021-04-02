@@ -81,7 +81,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function new_instance($props_n_values = [], $timezone = null, $date_formats = [])
+    public static function new_instance($props_n_values = [], $timezone = '', $date_formats = [])
     {
         $has_object = parent::_check_for_object($props_n_values, __CLASS__, $timezone, $date_formats);
         return $has_object ? $has_object : new self($props_n_values, false, $timezone, $date_formats);
@@ -96,7 +96,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function new_instance_from_db($props_n_values = [], $timezone = null)
+    public static function new_instance_from_db($props_n_values = [], $timezone = '')
     {
         return new self($props_n_values, true, $timezone);
     }

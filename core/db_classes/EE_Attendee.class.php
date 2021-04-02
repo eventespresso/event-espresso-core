@@ -23,7 +23,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      * @throws EE_Error
      * @throws ReflectionException
      */
-    protected function __construct($fieldValues = null, $bydb = false, $timezone = null, $date_formats = [])
+    protected function __construct($fieldValues = null, $bydb = false, $timezone = '', $date_formats = [])
     {
         if (! isset($fieldValues['ATT_full_name'])) {
             $fname                        = isset($fieldValues['ATT_fname']) ? $fieldValues['ATT_fname'] . ' ' : '';
@@ -51,7 +51,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function new_instance($props_n_values = [], $timezone = null, $date_formats = [])
+    public static function new_instance($props_n_values = [], $timezone = '', $date_formats = [])
     {
         $has_object = parent::_check_for_object($props_n_values, __CLASS__, $timezone, $date_formats);
         return $has_object ? $has_object : new self($props_n_values, false, $timezone, $date_formats);
@@ -67,7 +67,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, EEI_Address, EEI_A
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function new_instance_from_db($props_n_values = [], $timezone = null)
+    public static function new_instance_from_db($props_n_values = [], $timezone = '')
     {
         return new self($props_n_values, true, $timezone);
     }

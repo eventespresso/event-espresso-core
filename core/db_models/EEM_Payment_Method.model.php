@@ -35,7 +35,7 @@ class EEM_Payment_Method extends EEM_Base
      * @param null $timezone
      * @throws EE_Error
      */
-    protected function __construct($timezone = null)
+    protected function __construct($timezone = '')
     {
         $this->singular_item = esc_html__('Payment Method', 'event_espresso');
         $this->plural_item = esc_html__('Payment Methods', 'event_espresso');
