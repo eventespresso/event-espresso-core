@@ -137,6 +137,7 @@ class EE_Ticket_Test extends EE_UnitTestCase
      */
     public function test_get_related_event_exception()
     {
+        $this->loadFactories();
         //create a ticket (it won't have any datetime).
         /** @var EE_Ticket $ticket */
         $ticket = $this->factory->ticket->create();

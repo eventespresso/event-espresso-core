@@ -96,6 +96,7 @@ class EE_Register_Capabilities_Test extends EE_UnitTestCase
      */
     private function setupUser()
     {
+        $this->loadFactories();
         //create a user for checking caps on.
         $user_id     = $this->factory->user->create();
         $this->_user = $this->factory->user->get_object_by_id($user_id);
@@ -322,6 +323,7 @@ class EE_Register_Capabilities_Test extends EE_UnitTestCase
 
     public function test_capability_maps_registered_non_numeric()
     {
+        $this->loadFactories();
         $this->_pretend_capabilities_registered();
         //the best way to test this is to ensure the registered maps work.  So let's author an event by the user.
 
@@ -351,6 +353,7 @@ class EE_Register_Capabilities_Test extends EE_UnitTestCase
 
     public function test_capability_maps_registered_numeric()
     {
+        $this->loadFactories();
         $this->_pretend_capabilities_registered(false);
         //the best way to test this is to ensure the registered maps work.  So let's author an event by the user.
 

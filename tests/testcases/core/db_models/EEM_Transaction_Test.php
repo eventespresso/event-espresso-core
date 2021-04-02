@@ -19,6 +19,7 @@ class EEM_Transaction_Test extends EE_UnitTestCase
      */
     public function test_delete_junk_transactions()
     {
+        $this->loadFactories();
         $pretend_bot_creations    = 9;
         $pretend_real_recent_txns = 3;
         $pretend_real_good_txns   = 5;

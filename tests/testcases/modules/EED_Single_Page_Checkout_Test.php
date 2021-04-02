@@ -27,6 +27,7 @@ class EED_Single_Page_Checkout_Test extends EE_UnitTestCase {
 
 	public function setUp() {
 		parent::setUp();
+        $this->loadFactories();
 		$this->loadModuleMocks( array( 'EED_Single_Page_Checkout' ) );
 		$this->spco_mock = EED_Single_Page_Checkout_Mock::instance();
 		//add filter on permalink to add some noise

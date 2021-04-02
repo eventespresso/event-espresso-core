@@ -21,6 +21,7 @@ class BaseMutationTest extends GraphQLUnitTestCase
         if (!$this->model_name) {
             return;
         }
+        $this->loadFactories();
 
         $this->name               = 'some name';
         $this->description        = 'some description';

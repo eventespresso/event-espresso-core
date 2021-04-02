@@ -31,10 +31,15 @@ class Events_Admin_Page_Test extends EE_UnitTestCase {
 		parent::setUp();
 		$this->delayedAdminPageMocks( 'events' );
 	}
-	
-	
-	
-	protected function _load_requirements( $timezone = 'America/Vancouver' ) {
+
+
+    /**
+     * @param string $timezone
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    protected function _load_requirements( $timezone = 'America/Vancouver' ) {
+        $this->loadFactories();
 		$this->_admin_page = new Events_Admin_Page_Mock();
 		$this->_event = $this->factory->event->create();
 		$this->_event->set_timezone( $timezone );

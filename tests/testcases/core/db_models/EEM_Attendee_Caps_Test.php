@@ -26,6 +26,7 @@ class EEM_Attendee_Caps_Test extends EE_UnitTestCase
      */
     function test_get_all__caps()
     {
+        $this->loadFactories();
         $query_params_with_read_caps = ['caps' => EEM_Base::caps_read];
 
         global $current_user;

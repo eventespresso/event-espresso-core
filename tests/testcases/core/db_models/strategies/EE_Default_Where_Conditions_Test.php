@@ -21,6 +21,7 @@ class EE_Default_Where_Conditions_Test extends EE_UnitTestCase
      */
     function test_add_model_relation_chain_onto_where_conditions()
     {
+        $this->loadFactories();
         global $current_user;
         $current_user             = $this->factory->user->create_and_get();
         $value1                   = 12;
