@@ -16,16 +16,20 @@
  */
 class EEM_Datetime_Test extends EE_UnitTestCase {
 
+    private $original_timezone = '';
+
     public function setUp() {
+        $this->original_timezone = get_option('timezone_string');
         parent::setUp();
         //set timezone string.  NOTE, this is purposely a high positive timezone string because it works better for testing expiry times.
         update_option( 'timezone_string', 'Australia/Sydney' );
+        $this->loadFactories();
     }
 
 
 	public function tearDown(){
 		//restore the timezone string to the default
-		update_option( 'timezone_string', '' );
+		update_option( 'timezone_string', $this->original_timezone );
 		parent::tearDown();
 	}
 
@@ -364,8 +368,10 @@ class EEM_Datetime_Test extends EE_UnitTestCase {
 
 
 	public function test_get_dtt_months_and_years() {
+        $timezone_string = 'America/Toronto';
+        update_option('timezone_string', $timezone_string);
 		//setup some dates we'll use for testing with.
-		$timezone = new DateTimeZone( 'America/Toronto' );
+		$timezone = new DateTimeZone($timezone_string );
 		$upcoming_start_date = new DateTime( "now +2hours", $timezone );
 		$past_start_date = new DateTime( "now -2days", $timezone );
 		$current_end_date = new DateTime( "now +2days", $timezone );
@@ -379,7 +385,6 @@ class EEM_Datetime_Test extends EE_UnitTestCase {
                 array(
                     'DTT_EVT_start' => $past_start_date->format($full_format),
                     'DTT_EVT_end'   => $past_start_date->format($full_format),
-                    'timezone'      => 'America/Toronto',
                     'formats'       => $formats,
                 )
             ),
@@ -387,7 +392,6 @@ class EEM_Datetime_Test extends EE_UnitTestCase {
                 array(
                     'DTT_EVT_start' => $upcoming_start_date->format($full_format),
                     'DTT_EVT_end'   => $upcoming_start_date->format($full_format),
-                    'timezone'      => 'America/Toronto',
                     'formats'       => $formats,
                 )
             ),
@@ -395,7 +399,6 @@ class EEM_Datetime_Test extends EE_UnitTestCase {
                 array(
                     'DTT_EVT_start' => $current->sub(new DateInterval("PT2H"))->format($full_format),
                     'DTT_EVT_end'   => $current_end_date->add(new DateInterval("PT2H"))->format($full_format),
-                    'timezone'      => 'America/Toronto',
                     'formats'       => $formats,
                 )
             ),
@@ -405,7 +408,6 @@ class EEM_Datetime_Test extends EE_UnitTestCase {
                     'DTT_EVT_end'   => $upcoming_start_date->format($full_format),
                     'DTT_reg_limit' => 10,
                     'DTT_sold'      => 10,
-                    'timezone'      => 'America/Toronto',
                     'formats'       => $formats,
                 )
             ),
@@ -413,7 +415,6 @@ class EEM_Datetime_Test extends EE_UnitTestCase {
                 array(
                     'DTT_EVT_start' => $current->format($full_format),
                     'DTT_EVT_end'   => $current_end_date->format($full_format),
-                    'timezone'      => 'America/Toronto',
                     'formats'       => $formats,
                 )
             ),

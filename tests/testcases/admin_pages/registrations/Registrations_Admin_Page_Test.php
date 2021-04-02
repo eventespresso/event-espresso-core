@@ -57,7 +57,11 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
      */
     public function setUp()
     {
+        $this->original_timezone_string = get_option('timezone_string');
+        //set timezone of site to 'America/Vancouver' for tests.
+        update_option('timezone_string', 'America/Vancouver');
         parent::setUp();
+
         EE_Dependency_Map::register_dependencies(
             'EventEspresso\core\domain\services\admin\registrations\list_table\QueryBuilder',
             [
@@ -67,14 +71,12 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
             ]
         );
         $this->setupRequest();
-        $this->original_timezone_string = get_option('timezone_string');
-        //set timezone of site to 'America/Vancouver' for tests.
-        update_option('timezone_string', 'America/Vancouver');
         $this->Vancouver_TZ = new DateTimeZone('America/Vancouver');
         $this->UTC_TZ = new DateTimeZone('UTC');
 
         $this->delayedAdminPageMocks('registrations');
         //need to set a user with registration privileges for default queries in the admin.
+        $this->loadFactories();
         $user = $this->factory->user->create_and_get();
         $user->add_role('administrator');
         wp_set_current_user( $user->ID );
@@ -84,8 +86,8 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
     public function tearDown()
     {
         //restore timezone to original setting
-        update_option('timezone_string', $this->original_timezone_string);
         parent::tearDown();
+        update_option('timezone_string', $this->original_timezone_string);
     }
 
 
@@ -117,28 +119,26 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
         );
     }
 
-
     /**
+     * @return array
      * @throws EE_Error
      * @throws InvalidArgumentException
-     * @throws ReflectionException
      * @throws RuntimeException
      * @throws EntityNotFoundException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @throws \PHPUnit\Framework\Exception
+     * @throws PHPUnit\Framework\Exception
      * @throws Exception
-     * @since 4.6.x
-     *        -- testing today queries
-     *        -- testing this month queries
-     *        -- testing month range queries.
      */
-    public function test_get_registrations()
+    private function setupRegistrations()
     {
         // to view how dates are added or subtracted, uncomment the following
-        /*foreach( array( '01', '15', '31' ) as $day ) {
+        /*
+        $init_year = date('Y');
+        $init_month = date('m');
+        foreach( array( '01', '15', '31' ) as $day ) {
             echo "\n\n\n ADD DATES";
-            $date = "2015-01-{$day}";
+            $date = "{$init_year}-{$init_month}-{$day}";
             $now = DateTime::createFromFormat( 'Y-m-d', $date );
             echo "\n\n starting : " . $now->format( 'M d, Y' );
             for ( $x = 1; $x <= 12; $x++ ) {
@@ -147,12 +147,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
                 echo "\n prev: " . $prev_month->format( 'M d, Y' );
                 $next_month = $this->_get_date_one_month_from_now( $now );
                 echo "\n next: " . $next_month->format( 'M d, Y' );
-                $year = (int)$now->format( 'Y' );
-                $month = (int)$now->format( 'n' );
-                $month++;
-                $days_in_month = (int)$next_month->format( 't' );
-                $now_day = $day > $days_in_month ? $days_in_month : $day;
-                $now = DateTime::createFromFormat( 'Y-m-d', "{$year}-{$month}-{$now_day}" );
+                $now = $next_month;
 
             }
             echo "\n\n\n SUBTRACT DATES";
@@ -164,27 +159,31 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
                 echo "\n prev: " . $prev_month->format( 'M d, Y' );
                 $next_month = $this->_get_date_one_month_from_now( $now );
                 echo "\n next: " . $next_month->format( 'M d, Y' );
-                $year = (int)$now->format( 'Y' );
-                $month = (int)$now->format( 'n' );
-                $month++;
-                $days_in_month = (int)$next_month->format( 't' );
-                $now_day = $day > $days_in_month ? $days_in_month : $day;
-                $now = DateTime::createFromFormat( 'Y-m-d', "{$year}-{$month}-{$now_day}" );
+                $now = $prev_month;
             }
-        }*/
+        }
+        */
+
         // baseline DateTime objects
         $now        = new DateTime('now', $this->Vancouver_TZ);
         $prev_month = $this->_get_date_one_month_ago($now);
         $next_month = $this->_get_date_one_month_from_now($now);
-        // echo "\n\n now : " . $now->format( 'M j, Y g:i a' );
-        // echo "\n prev: " . $prev_month->format( 'M j, Y g:i a' );
-        // echo "\n next: " . $next_month->format( 'M j, Y g:i a' );
+        // echo "\n\n now : " . $now->format('M j, Y g:i a');
+        // echo "\n prev: " . $prev_month->format('M j, Y g:i a');
+        // echo "\n next: " . $next_month->format('M j, Y g:i a');
 
         //let's setup some registrations to test.
         // first create a txn
         /** @var EE_Transaction $transaction */
-        $transaction   = $this->factory->transaction->create();
-        $registrations = $this->factory->registration->create_many(4, array('TXN_ID' => $transaction->ID()));
+        $transaction = $this->factory->transaction->create(['timezone' => 'America/Vancouver']);
+        /** @var EE_Registration[] $registrations */
+        $registrations = $this->factory->registration->create_many(
+            4,
+            [
+                'TXN_ID'   => $transaction->ID(),
+                'timezone' => 'America/Vancouver'
+            ]
+        );
         $this->assertCount(
             4,
             $registrations,
@@ -193,13 +192,13 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
         );
 
         //create an event and add to the registrations
-        $event = $this->factory->event->create(array('EVT_wp_user' => get_current_user_id()));
+        $event = $this->factory->event->create(['EVT_wp_user' => get_current_user_id()]);
         if ($event instanceof EE_Event) {
             foreach ($registrations as $registration) {
                 if ($registration instanceof EE_Registration) {
                     $registration->_add_relation_to($transaction, 'Transaction');
                     $registration->_add_relation_to($event, 'Event');
-                    $registration->set('STS_ID', EEM_Registration::status_id_pending_payment);
+                    $registration->set_status(EEM_Registration::status_id_pending_payment);
                     $registration->save();
                 }
             }
@@ -212,29 +211,61 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
         $last_registration = end($registrations);
         $last_registration->set('REG_date', $next_month->format('U'));
         $last_registration->save();
-        // $this->reg_debug( $registrations );
+        // $this->reg_debug($registrations);
+        return [$now, $prev_month, $next_month];
+    }
+
+    /**
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws RuntimeException
+     * @throws EntityNotFoundException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws PHPUnit\Framework\Exception
+     * @throws Exception
+     * @since 4.6.x
+     */
+    public function test_get_registrations_for_today()
+    {
+        $this->setupRegistrations();
         //let's test queries for today
         $this->go_to(
-            $this->_get_reg_admin_url(array('status'=>'today'))
+            $this->_get_reg_admin_url(['status' => 'today'])
         );
         $this->_load_requirements();
-        $registrations  = $this->_admin_page->get_registrations();
-        $this->request->unSetRequestParams(['page', 'status']);
+        $registrations = $this->_admin_page->get_registrations();
         // echo "\n\n " . __LINE__ . ") " . __METHOD__ . "() STATUS: " . $_GET['status'];
-        // $this->reg_debug( $registrations );
+        // $this->reg_debug($registrations);
         $this->assertCount(
             2,
             $registrations,
             'there should be 2 registrations for today, not ' . count($registrations)
             . "\nHere are the registrations: " . $this->reg_debug($registrations, true)
         );
+        $this->request->unSetRequestParams(['page', 'status']);
+    }
+
+    /**
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws RuntimeException
+     * @throws EntityNotFoundException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws PHPUnit\Framework\Exception
+     * @throws Exception
+     * @since 4.6.x
+     */
+    public function test_get_registrations_for_month()
+    {
+        $this->setupRegistrations();
         //test queries for this month
         $this->go_to(
-            $this->_get_reg_admin_url(array('status'=>'month'))
+            $this->_get_reg_admin_url(['status' => 'month'])
         );
         $this->_load_requirements();
-        $registrations  = $this->_admin_page->get_registrations();
-        $this->request->unSetRequestParams(['page', 'status']);
+        $registrations = $this->_admin_page->get_registrations();
         // echo "\n\n " . __LINE__ . ") " . __METHOD__ . "() STATUS: " . $_GET['status'];
         // $this->reg_debug( $registrations );
         $this->assertCount(
@@ -243,6 +274,23 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
             'there should be 2 registrations for this month, not ' . count($registrations)
             . "\nHere are the registrations: " . $this->reg_debug($registrations, true)
         );
+        $this->request->unSetRequestParams(['page', 'status']);
+    }
+
+    /**
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws RuntimeException
+     * @throws EntityNotFoundException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws PHPUnit\Framework\Exception
+     * @throws Exception
+     * @since 4.6.x
+     */
+    public function test_get_registrations_for_month_range()
+    {
+        [, $prev_month, ] = $this->setupRegistrations();
         // test queries for month range using last month
         $this->go_to(
             $this->_get_reg_admin_url(array('month_range' => $prev_month->format('F Y')))
@@ -582,12 +630,12 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
             'Y-m-d H:i:s',
             $current_year_and_month . '-01 00:00:00',
             $this->Vancouver_TZ
-        )->setTimezone($this->UTC_TZ);
+        );
         $expected_end_date = date_create_from_format(
             'Y-m-d H:i:s',
             $current_year_and_month . '-' . $days_this_month . ' 23:59:59',
             $this->Vancouver_TZ
-        )->setTimezone($this->UTC_TZ);
+        );
         $req = $this->_admin_page->get_request_data();
         $req['status'] = 'month';
         $where = $this->_admin_page->get_registration_query_parameters($req);
@@ -602,9 +650,19 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
         /** @var EventEspresso\core\domain\entities\DbSafeDateTime $actual_end_date */
         list($actual_start_date, $actual_end_date) = $where[0]['REG_date'][1];
         $this->assertEquals(
+            $expected_start_date->getTimezone(),
+            $actual_start_date->getTimezone(),
+            'start date timezones do not match'
+        );
+        $this->assertEquals(
             $expected_start_date->format('Y-m-d H:i'),
             $actual_start_date->format('Y-m-d H:i'),
             'start dates do not match'
+        );
+        $this->assertEquals(
+            $expected_end_date->getTimezone(),
+            $actual_end_date->getTimezone(),
+            'end date timezones do not match'
         );
         $this->assertEquals(
             $expected_end_date->format('Y-m-d H:i'),
