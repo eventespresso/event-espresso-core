@@ -294,13 +294,13 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:38
 	__( 'trash datetime', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:43
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:44
 	__( 'event date main menu', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:57
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:58
 	__( 'edit datetime', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:58
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:59
 	__( 'copy datetime', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:36
