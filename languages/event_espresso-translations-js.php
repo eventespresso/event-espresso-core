@@ -275,32 +275,32 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/AssignTicketsButton.tsx:34
 	__( 'assign tickets', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:24
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:25
 	__( 'Permanently delete Datetime?', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:24
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:25
 	__( 'Move Datetime to Trash?', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:26
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:27
 	__( 'Are you sure you want to permanently delete this datetime? This action is permanent and can not be undone.', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:29
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:30
 	__( 'Are you sure you want to move this datetime to the trash? You can "untrash" this datetime later if you need to.', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:38
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:39
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/DeleteTicket.tsx:44
 	__( 'delete permanently', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:38
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:39
 	__( 'trash datetime', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:44
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:45
 	__( 'event date main menu', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:58
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:59
 	__( 'edit datetime', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:59
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:60
 	__( 'copy datetime', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:36
@@ -776,14 +776,14 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/ee-components/src/SimpleTicketCard/actions/Trash.tsx:6
 	__( 'trash ticket', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:13
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:25
 	__( 'ticket main menu', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:31
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:38
 	// Reference: packages/ee-components/src/SimpleTicketCard/actions/Edit.tsx:15
 	__( 'edit ticket', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:32
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:39
 	__( 'copy ticket', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:43
