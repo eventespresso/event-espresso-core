@@ -49,7 +49,7 @@ class RouteHandler
     /**
      * @var string $route_request_type
      */
-    protected $route_request_type;
+    protected $route_request_type = '';
 
 
     /**
