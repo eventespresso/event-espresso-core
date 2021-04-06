@@ -25,7 +25,7 @@ class RestApiRequests extends Route
      */
     public function matchesCurrentRequest(): bool
     {
-        return $this->request->isApi() || $this->request->isWordPressApi();
+        return $this->request->isAdmin() || $this->request->isApi() || $this->request->isWordPressApi();
     }
 
 
