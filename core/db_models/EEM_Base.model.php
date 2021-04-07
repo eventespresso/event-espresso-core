@@ -590,7 +590,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
          *
          * @var EE_Table_Base[] $_tables
          */
-        $this->_tables = (array)apply_filters('FHEE__' . get_class($this) . '__construct__tables', $this->_tables);
+        $this->_tables = (array) apply_filters('FHEE__' . get_class($this) . '__construct__tables', $this->_tables);
         foreach ($this->_tables as $table_alias => $table_obj) {
             /** @var $table_obj EE_Table_Base */
             $table_obj->_construct_finalize_with_alias($table_alias);
@@ -605,7 +605,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
          *
          * @param EE_Model_Field_Base[] $_fields
          */
-        $this->_fields = (array)apply_filters('FHEE__' . get_class($this) . '__construct__fields', $this->_fields);
+        $this->_fields = (array) apply_filters('FHEE__' . get_class($this) . '__construct__fields', $this->_fields);
         $this->_invalidate_field_caches();
         foreach ($this->_fields as $table_alias => $fields_for_table) {
             if (! array_key_exists($table_alias, $this->_tables)) {
@@ -644,7 +644,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
          *
          * @param EE_Model_Relation_Base[] $_model_relations
          */
-        $this->_model_relations = (array)apply_filters(
+        $this->_model_relations = (array) apply_filters(
             'FHEE__' . get_class($this) . '__construct__model_relations',
             $this->_model_relations
         );
@@ -721,7 +721,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      */
     public static function set_model_query_blog_id($blog_id = 0)
     {
-        EEM_Base::$_model_query_blog_id = $blog_id > 0 ? (int)$blog_id : get_current_blog_id();
+        EEM_Base::$_model_query_blog_id = $blog_id > 0 ? (int) $blog_id : get_current_blog_id();
     }
 
 
@@ -1409,7 +1409,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         $query_params[0][ $field_to_order_by ] = [$operand, $current_field_value];
         $query_params['limit']                 = $limit;
         // set direction
-        $incoming_orderby         = isset($query_params['order_by']) ? (array)$query_params['order_by'] : [];
+        $incoming_orderby         = isset($query_params['order_by']) ? (array) $query_params['order_by'] : [];
         $query_params['order_by'] = $operand === '>'
             ? [$field_to_order_by => 'ASC'] + $incoming_orderby
             : [$field_to_order_by => 'DESC'] + $incoming_orderby;
@@ -1678,7 +1678,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
          * @param array    $query_params
          * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
          */
-        $fields_n_values = (array)apply_filters(
+        $fields_n_values = (array) apply_filters(
             'FHEE__EEM_Base__update__fields_n_values',
             $fields_n_values,
             $this,
@@ -1696,7 +1696,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         $wpdb_select_results          = $this->_get_all_wpdb_results($query_params);
         foreach ($wpdb_select_results as $wpdb_result) {
             // type cast stdClass as array
-            $wpdb_result = (array)$wpdb_result;
+            $wpdb_result = (array) $wpdb_result;
             // get the model object's PK, as we'll want this if we need to insert a row into secondary tables
             if ($this->has_primary_key_field()) {
                 $main_table_pk_value = $wpdb_result[ $this->get_primary_key_field()->get_qualified_column() ];
@@ -1775,7 +1775,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                             . " SET " . $this->_construct_update_sql($fields_n_values)
                             . $model_query_info->get_where_sql();
         // note: doesn't use _construct_2nd_half_of_select_query() because doesn't accept LIMIT, ORDER BY, etc.
-        $rows_affected    = $this->_do_wpdb_query('query', [$SQL]);
+        $rows_affected = $this->_do_wpdb_query('query', [$SQL]);
         /**
          * Action called after a model update call has been made.
          *
@@ -1816,7 +1816,8 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         }
         $model_query_info   = $this->_create_model_query_info_carrier($query_params);
         $select_expressions = $field->get_qualified_column();
-        $SQL = "SELECT $select_expressions " . $this->_construct_2nd_half_of_select_query($model_query_info);
+        $SQL                =
+            "SELECT $select_expressions " . $this->_construct_2nd_half_of_select_query($model_query_info);
         return $this->_do_wpdb_query('get_col', [$SQL]);
     }
 
@@ -2290,7 +2291,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         $column_to_count = $distinct ? "DISTINCT " . $column_to_count : $column_to_count;
         $SQL             =
             "SELECT COUNT(" . $column_to_count . ")" . $this->_construct_2nd_half_of_select_query($model_query_info);
-        return (int)$this->_do_wpdb_query('get_var', [$SQL]);
+        return (int) $this->_do_wpdb_query('get_var', [$SQL]);
     }
 
 
@@ -2318,10 +2319,10 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         $return_value    = $this->_do_wpdb_query('get_var', [$SQL]);
         // $data_type       = $field_obj->get_wpdb_data_type();
         // if ($data_type === '%d' || $data_type === '%s') {
-        //     return (float)$return_value;
+        //     return (float) $return_value;
         // }
         // must be %f
-        return (float)$return_value;
+        return (float) $return_value;
     }
 
 
@@ -2849,7 +2850,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
          * @param array    $fields_n_values keys are the fields and values are their new values
          * @param EEM_Base $model           the model used
          */
-        $field_n_values = (array)apply_filters('FHEE__EEM_Base__insert__fields_n_values', $field_n_values, $this);
+        $field_n_values = (array) apply_filters('FHEE__EEM_Base__insert__fields_n_values', $field_n_values, $this);
         if ($this->_satisfies_unique_indexes($field_n_values)) {
             $main_table = $this->_get_main_table();
             $new_id     = $this->_insert_into_specific_table($main_table, $field_n_values, false);
@@ -3310,7 +3311,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         $query_param_type
     ) {
         if (! empty($sub_query_params)) {
-            $sub_query_params = (array)$sub_query_params;
+            $sub_query_params = (array) $sub_query_params;
             foreach ($sub_query_params as $param => $possibly_array_of_params) {
                 // $param could be simply 'EVT_ID', or it could be 'Registrations.REG_ID', or even 'Registrations.Transactions.Payments.PAY_amount'
                 $this->_extract_related_model_info_from_query_param(
@@ -5172,7 +5173,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         $count_if_model_has_no_primary_key = 0;
         $has_primary_key                   = $this->has_primary_key_field();
         $primary_key_field                 = $has_primary_key ? $this->get_primary_key_field() : null;
-        foreach ((array)$rows as $row) {
+        foreach ((array) $rows as $row) {
             if (empty($row)) {
                 // wp did its weird thing where it returns an array like array(0=>null), which is totally not helpful...
                 return [];
@@ -5270,11 +5271,11 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     {
         switch ($datatype) {
             case '%f':
-                return (float)$value;
+                return (float) $value;
             case '%d':
-                return (int)$value;
+                return (int) $value;
             default:
-                return (string)$value;
+                return (string) $value;
         }
     }
 
@@ -5641,7 +5642,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      */
     public function item_name($quantity = 1)
     {
-        return (int)$quantity === 1 ? $this->singular_item : $this->plural_item;
+        return (int) $quantity === 1 ? $this->singular_item : $this->plural_item;
     }
 
 
@@ -6308,7 +6309,10 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         }
         throw new EE_Error(
             sprintf(
-                esc_html__('Cannot find capability restrictions for context "%1$s", allowed values are:%2$s', 'event_espresso'),
+                esc_html__(
+                    'Cannot find capability restrictions for context "%1$s", allowed values are:%2$s',
+                    'event_espresso'
+                ),
                 $context,
                 implode(',', array_keys($this->cap_contexts_to_cap_action_map()))
             )
