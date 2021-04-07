@@ -4,7 +4,7 @@
 /** @var string|WP_Screen $current_page */
 global $post_type, $post;
 // action for registering metaboxes
-do_action('add_meta_boxes', $post_type, $post);
+do_action('add_meta_boxes', (string) $post_type, $post);
 ?>
 <?php if (! empty($admin_page_header)) : ?>
     <div id="admin-page-header">
