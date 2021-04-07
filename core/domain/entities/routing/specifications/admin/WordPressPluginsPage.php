@@ -20,6 +20,6 @@ class WordPressPluginsPage extends RouteMatchSpecification
      */
     public function isMatchingRoute()
     {
-        return $this->request->currentPageIs('plugins.php');
+        return $this->request->isAdmin() && $this->request->currentPageIs('plugins.php');
     }
 }
