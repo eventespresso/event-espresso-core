@@ -766,14 +766,6 @@ class EE_Dependency_Map
             'EventEspresso\core\services\addon\api\ThirdPartyPluginHandler' => [
                 'EventEspresso\core\services\request\Request'  => EE_Dependency_Map::load_from_cache,
             ],
-            'EventEspresso\core\libraries\rest_api\CalculatedModelFields' => [
-                'EventEspresso\core\libraries\rest_api\calculations\CalculatedModelFieldsFactory' => EE_Dependency_Map::load_from_cache
-            ],
-            'EventEspresso\core\libraries\rest_api\calculations\CalculatedModelFieldsFactory' => [
-                'EventEspresso\core\services\loaders\Loader' => EE_Dependency_Map::load_from_cache
-            ],
-            'EventEspresso\core\libraries\rest_api\controllers\model\Read' => [
-                'EventEspresso\core\libraries\rest_api\CalculatedModelFields' => EE_Dependency_Map::load_from_cache]
         ];
     }
 
@@ -847,6 +839,7 @@ class EE_Dependency_Map
             'EE_DMS_Core_4_8_0'                            => 'load_dms',
             'EE_DMS_Core_4_9_0'                            => 'load_dms',
             'EE_DMS_Core_4_10_0'                           => 'load_dms',
+            'EE_DMS_Core_4_11_0'                           => 'load_dms',
             'EE_Messages_Generator'                        => static function () {
                 return EE_Registry::instance()->load_lib(
                     'Messages_Generator',
