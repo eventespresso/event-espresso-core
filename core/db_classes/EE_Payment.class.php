@@ -689,7 +689,7 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment
 
 
     /**
-     * Converts a 1d array of key-value pairs into html hidden inputs
+     * Converts a 2d array of key-value pairs into html hidden inputs
      * and returns the string of html
      *
      * @param array $args key-value pairs
@@ -700,26 +700,33 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment
         $html = '';
         if ($args !== null && is_array($args)) {
             foreach ($args as $name => $value) {
-                if (is_array($value)) {
-                    foreach ($value as $array_value) {
-                        $html .= EEH_HTML::nl(0)
-                             . '<input type="hidden" name="'
-                             . $name
-                             . '[]" value="'
-                             . esc_attr($array_value)
-                             . '"/>';
-                    }
-                } else {
-                    $html .= EEH_HTML::nl(0)
-                         . '<input type="hidden" name="'
-                         . $name
-                         . '" value="'
-                         . esc_attr($value)
-                         . '"/>';
-                }
+                $html .= $this->generateInput($name, $value);
             }
         }
         return $html;
+    }
+
+    /**
+     * Converts either a single name and value or array of values into html hidden inputs
+     * and returns the string of html
+     *
+     * @param string $name
+     * @param string|array $value
+     * @return string
+     */
+    private function generateInput($name, $value)
+    {
+        if (is_array($value)) {
+            $html = '';
+            $name = "{$name}[]";
+            foreach ($value as $array_value) {
+                $html .= $this->generateInput($name, $array_value);
+            }
+            return $html;
+        }
+        return EEH_HTML::nl()
+            . '<input type="hidden" name="' . $name . '"'
+            . ' value="' . esc_attr($value) . '"/>';
     }
 
 
