@@ -450,7 +450,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
             // fallback sanitization if the above fails
             $request_uri = wp_sanitize_redirect($this->server['REQUEST_URI']);
         }
-        if($remove_query_params) {
+        if ($remove_query_params) {
             $request_uri_parts = explode('?', $request_uri);
             $request_uri = reset($request_uri_parts);
         }
