@@ -33,6 +33,7 @@ jQuery(document).ready(function($) {
 		var dialogLeft =  ( (wndwWidth - ( wndwWidth/dialogWidthFraction ) ) /2 ) - parOff.left;
 		var dialogWidth = wndwWidth / dialogWidthFraction;
 		eedialog.css({ 'top' : dialogTop, 'left' : dialogLeft, 'width' : dialogWidth }).fadeIn('fast');
+		eedialog.removeClass('hidden');
 	};
 
 
@@ -79,9 +80,9 @@ jQuery(document).ready(function($) {
 
 			return this;
 		},
-
+		
 		closeModal: function() {
-			eedialog.fadeOut( 'fast' );
+			eedialog.fadeOut( 'fast' ).addClass('hidden');
 			overlay.fadeOut( 'fast' );
 			overlay.removeClass('active');
 			$('.ee-admin-dialog-container-inner-content').html('');
