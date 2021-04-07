@@ -207,9 +207,10 @@ class RequestMock extends Request
 
     /**
      * @param bool $relativeToWpRoot
+     * @param bool $remove_query_params
      * @return string
      */
-    public function requestUri($relativeToWpRoot = false)
+    public function requestUri($relativeToWpRoot = false, $remove_query_params = false)
     {
         return isset($this->server['REQUEST_URI']) ? $this->server['REQUEST_URI'] : '';
     }

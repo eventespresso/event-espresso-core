@@ -5,19 +5,11 @@ namespace EventEspresso\core\libraries\rest_api\controllers\rpc;
 use EE_Error;
 use EE_UnitTestCase;
 use EED_Core_Rest_Api;
-use EEH_Debug_Tools;
 use EEM_Checkin;
 use EEM_Registration;
 use EventEspresso\tests\mocks\core\domain\entities\routing\handlers\shared\RestApiRequestsMock;
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- * @group rest_api
- */
-
 use EventEspresso\core\domain\entities\contexts\RequestTypeContext;
+use Exception;
 use ReflectionException;
 use WP_REST_Request;
 use WP_REST_Response;
@@ -26,6 +18,7 @@ class Checkin_Test extends EE_UnitTestCase
 {
 
     /**
+     * @throws Exception
      * @since $VID:$
      */
     public function setUp()
@@ -38,7 +31,6 @@ class Checkin_Test extends EE_UnitTestCase
         }
         $this->setupRequest(RequestTypeContext::WP_API);
         RestApiRequestsMock::register();
-        EED_Core_Rest_Api::set_hooks_both();
     }
 
 
@@ -61,7 +53,7 @@ class Checkin_Test extends EE_UnitTestCase
      * @param string $force
      * @return WP_REST_Response
      */
-    protected function executeRestRequest($reg_id, $dtt_id, $force = "false")
+    protected function executeRestRequest(int $reg_id, int $dtt_id, $force = "false"): WP_REST_Response
     {
         $req = new WP_REST_Request(
             'POST',
@@ -78,7 +70,7 @@ class Checkin_Test extends EE_UnitTestCase
                 'force' => $force,
             )
         );
-        return rest_do_request($req);;
+        return rest_do_request($req);
     }
 
 
@@ -181,7 +173,7 @@ class Checkin_Test extends EE_UnitTestCase
         $dtt2 = $this->new_model_obj_with_dependencies('Datetime');
         $dtt2->_add_relation_to($reg->get('TKT_ID'), 'Ticket');
         //create a previous checkin entry, so the reg shouldn't be allowed to checkin more
-        $old_checkin = $this->new_model_obj_with_dependencies(
+        $this->new_model_obj_with_dependencies(
             'Checkin',
             array(
                 'REG_ID' => $reg->ID(),
