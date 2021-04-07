@@ -1,6 +1,7 @@
 <?php
 
 use EventEspresso\core\domain\entities\contexts\RequestTypeContext;
+use EventEspresso\tests\mocks\core\domain\entities\routing\handlers\shared\RestApiRequestsMock;
 
 /**
  * Class EE_Dependency_Map_Test
@@ -80,6 +81,7 @@ class EE_Dependency_Map_Test extends EE_UnitTestCase {
         ];
         $request_types = [
             'EE_Front_Controller' => RequestTypeContext::FRONTEND,
+            'EED_Core_Rest_Api' => RequestTypeContext::WP_API,
         ];
         //loop through and verify the class loader can successfully load the class it is set for
 		foreach ( $this->dependency_map->class_loaders() as $class => $loader ) {
@@ -88,6 +90,9 @@ class EE_Dependency_Map_Test extends EE_UnitTestCase {
 			}
 			if (isset($request_types[ $class ])) {
                 $this->setupRequest($request_types[ $class ]);
+            }
+			if ($class === 'EED_Core_Rest_Api') {
+                RestApiRequestsMock::register();
             }
             $dependency = $loader instanceof Closure ? $loader() : EE_Registry::instance()->$loader( $class );
 			// helpers are simply loaded and do not return an instance

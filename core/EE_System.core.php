@@ -477,6 +477,7 @@ final class EE_System implements ResettableInterface
      *                                       so we prefer to only do it when necessary
      * @return void
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function initialize_db_if_no_migrations_required($initialize_addons_too = false, $verify_schema = true)
     {
@@ -516,6 +517,7 @@ final class EE_System implements ResettableInterface
      * Initializes the db for all registered addons
      *
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function initialize_addons()
     {

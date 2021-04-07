@@ -178,11 +178,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
     public function setRequestParam($key, $value, $override_ee = false)
     {
         // don't allow "ee" to be overwritten unless explicitly instructed to do so
-        if (
-            $key !== 'ee'
-            || ($key === 'ee' && empty($this->request['ee']))
-            || ($key === 'ee' && ! empty($this->request['ee']) && $override_ee)
-        ) {
+        if ($key !== 'ee' || empty($this->request['ee']) || $override_ee) {
             $this->request[ $key ] = $value;
         }
     }
@@ -435,12 +431,14 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
 
     /**
      * Gets the request's literal URI. Related to `requestUriAfterSiteHomeUri`, see its description for a comparison.
-     * @param boolean $relativeToWpRoot If home_url() is "http://mysite.com/wp/", and a request comes to
-     *                                  "http://mysite.com/wp/wp-json", setting $relativeToWpRoot=true will return
-     *                                  "/wp-json", whereas $relativeToWpRoot=false will return "/wp/wp-json/".
+     *
+     * @param boolean $relativeToWpRoot    If home_url() is "http://mysite.com/wp/", and a request comes to
+     *                                     "http://mysite.com/wp/wp-json", setting $relativeToWpRoot=true will return
+     *                                     "/wp-json", whereas $relativeToWpRoot=false will return "/wp/wp-json/".
+     * @param boolean $remove_query_params whether or not to return the uri with all query params removed.
      * @return string
      */
-    public function requestUri($relativeToWpRoot = false)
+    public function requestUri($relativeToWpRoot = false, $remove_query_params = false)
     {
         $request_uri = filter_input(
             INPUT_SERVER,
@@ -451,6 +449,10 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
         if (empty($request_uri)) {
             // fallback sanitization if the above fails
             $request_uri = wp_sanitize_redirect($this->server['REQUEST_URI']);
+        }
+        if ($remove_query_params) {
+            $request_uri_parts = explode('?', $request_uri);
+            $request_uri = reset($request_uri_parts);
         }
         if ($relativeToWpRoot) {
             $home_path = untrailingslashit(
@@ -688,5 +690,32 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
     public function slug()
     {
         return $this->request_type->slug();
+    }
+
+
+    /**
+     * returns the path portion of the current request URI with both the WP Root (home_url()) and query params removed
+     *
+     * @return string
+     * @since   $VID:$
+     */
+    public function requestPath()
+    {
+        return $this->requestUri(true, true);
+    }
+
+
+    /**
+     * returns true if the last segment of the current request path (without params) matches the provided string
+     *
+     * @param string $uri_segment
+     * @return bool
+     * @since   $VID:$
+     */
+    public function currentPageIs($uri_segment)
+    {
+        $request_path = $this->requestPath();
+        $current_page = explode('/', $request_path);
+        return end($current_page) === $uri_segment;
     }
 }

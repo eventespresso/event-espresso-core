@@ -139,10 +139,11 @@ interface RequestInterface extends RequestTypeContextCheckerInterface
 
 
     /**
-     * @param boolean $relativeToWpRoot whether to return the uri relative to WordPress' home URL, or not.
+     * @param boolean $relativeToWpRoot    whether or not to return the uri relative to WordPress' home URL.
+     * @param boolean $remove_query_params whether or not to return the uri with all query params removed.
      * @return string
      */
-    public function requestUri($relativeToWpRoot = false);
+    public function requestUri($relativeToWpRoot = false, $remove_query_params = false);
 
 
     /**
@@ -167,4 +168,23 @@ interface RequestInterface extends RequestTypeContextCheckerInterface
      * @param bool $is_bot
      */
     public function setIsBot($is_bot);
+
+
+    /**
+     * returns the path portion of the current request URI with both the WP Root (home_url()) and query params removed
+     *
+     * @return string
+     * @since   $VID:$
+     */
+    public function requestPath();
+
+
+    /**
+     * returns true if the last segment of the current request path (without params) matches the provided string
+     *
+     * @param string $uri_segment
+     * @return bool
+     * @since   $VID:$
+     */
+    public function currentPageIs($uri_segment);
 }

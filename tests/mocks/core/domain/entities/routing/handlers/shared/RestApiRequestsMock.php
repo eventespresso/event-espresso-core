@@ -27,8 +27,10 @@ class RestApiRequestsMock extends RestApiRequests
                 'EventEspresso\core\domain\entities\routing\specifications\RouteMatchSpecificationInterface' => EE_Dependency_Map::load_from_cache,
             ]
         );
+        /** @var RestApiRequestsMock $self */
         $self = LoaderFactory::getLoader()->getShared(RestApiRequestsMock::class);
         $self->registerDependencies();
+        $self->requestHandler();
     }
 
 
