@@ -1,9 +1,9 @@
 {
   "files": {
     "adapters.css": "/static/css/adapters.cc22d5a3.css",
-    "adapters.js": "/static/js/adapters.a1a8981c.js",
-    "adapters.js.map": "/static/js/adapters.a1a8981c.js.map",
-    "adapters.php": "/static/js/adapters.3947e4d2.asset.php",
+    "adapters.js": "/static/js/adapters.8d977439.js",
+    "adapters.js.map": "/static/js/adapters.8d977439.js.map",
+    "adapters.php": "/static/js/adapters.4d3f6aa9.asset.php",
     "blocks.css": "/static/css/blocks.13a22cf1.css",
     "blocks.js": "/static/js/blocks.e4aca21c.js",
     "blocks.js.map": "/static/js/blocks.e4aca21c.js.map",
@@ -18,11 +18,11 @@
     "dates.js": "/static/js/dates.f3cac10a.js",
     "dates.js.map": "/static/js/dates.f3cac10a.js.map",
     "dates.php": "/static/js/dates.be8b3924.asset.php",
-    "dates-card-view.js": "/static/js/dates-card-view.744fe652.chunk.js",
-    "dates-card-view.js.map": "/static/js/dates-card-view.744fe652.chunk.js.map",
+    "dates-card-view.js": "/static/js/dates-card-view.eccb1f73.chunk.js",
+    "dates-card-view.js.map": "/static/js/dates-card-view.eccb1f73.chunk.js.map",
     "dates-table-view.css": "/static/css/dates-table-view.48145b6c.chunk.css",
-    "dates-table-view.js": "/static/js/dates-table-view.baa38a97.chunk.js",
-    "dates-table-view.js.map": "/static/js/dates-table-view.baa38a97.chunk.js.map",
+    "dates-table-view.js": "/static/js/dates-table-view.05e006b1.chunk.js",
+    "dates-table-view.js.map": "/static/js/dates-table-view.05e006b1.chunk.js.map",
     "edtrServices.js": "/static/js/edtrServices.0df93f0d.js",
     "edtrServices.js.map": "/static/js/edtrServices.0df93f0d.js.map",
     "edtrServices.php": "/static/js/edtrServices.ee58479d.asset.php",
@@ -31,9 +31,9 @@
     "eeComponents.js.map": "/static/js/eeComponents.469592f2.js.map",
     "eeComponents.php": "/static/js/eeComponents.d10b2f95.asset.php",
     "eventEditor.css": "/static/css/eventEditor.07c01923.css",
-    "eventEditor.js": "/static/js/eventEditor.c18b46be.js",
-    "eventEditor.js.map": "/static/js/eventEditor.c18b46be.js.map",
-    "eventEditor.php": "/static/js/eventEditor.5b7e7b8b.asset.php",
+    "eventEditor.js": "/static/js/eventEditor.8b32dc08.js",
+    "eventEditor.js.map": "/static/js/eventEditor.8b32dc08.js.map",
+    "eventEditor.php": "/static/js/eventEditor.93a30435.asset.php",
     "events.js": "/static/js/events.a2e54a0e.js",
     "events.js.map": "/static/js/events.a2e54a0e.js.map",
     "events.php": "/static/js/events.b814cd7a.asset.php",
@@ -78,10 +78,10 @@
     "styles.js": "/static/js/styles.18d21323.js",
     "styles.js.map": "/static/js/styles.18d21323.js.map",
     "styles.php": "/static/js/styles.0038463d.asset.php",
-    "tickets-card-view.js": "/static/js/tickets-card-view.69d73b58.chunk.js",
-    "tickets-card-view.js.map": "/static/js/tickets-card-view.69d73b58.chunk.js.map",
-    "tickets-table-view.js": "/static/js/tickets-table-view.272dc54c.chunk.js",
-    "tickets-table-view.js.map": "/static/js/tickets-table-view.272dc54c.chunk.js.map",
+    "tickets-card-view.js": "/static/js/tickets-card-view.df8bebc4.chunk.js",
+    "tickets-card-view.js.map": "/static/js/tickets-card-view.df8bebc4.chunk.js.map",
+    "tickets-table-view.js": "/static/js/tickets-table-view.af0b4b7e.chunk.js",
+    "tickets-table-view.js.map": "/static/js/tickets-table-view.af0b4b7e.chunk.js.map",
     "toaster.css": "/static/css/toaster.4ee25f92.css",
     "toaster.js": "/static/js/toaster.9c9a90ac.js",
     "toaster.js.map": "/static/js/toaster.9c9a90ac.js.map",
@@ -91,9 +91,9 @@
     "tpc.js.map": "/static/js/tpc.752d5b54.js.map",
     "tpc.php": "/static/js/tpc.afb07c51.asset.php",
     "uiComponents.css": "/static/css/uiComponents.5cfe5dc1.css",
-    "uiComponents.js": "/static/js/uiComponents.653df24e.js",
-    "uiComponents.js.map": "/static/js/uiComponents.653df24e.js.map",
-    "uiComponents.php": "/static/js/uiComponents.bd455ccb.asset.php",
+    "uiComponents.js": "/static/js/uiComponents.e4e81c89.js",
+    "uiComponents.js.map": "/static/js/uiComponents.e4e81c89.js.map",
+    "uiComponents.php": "/static/js/uiComponents.c7e4d181.asset.php",
     "utils.js": "/static/js/utils.5a3b0af2.js",
     "utils.js.map": "/static/js/utils.5a3b0af2.js.map",
     "utils.php": "/static/js/utils.b137ab5a.asset.php",
@@ -113,13 +113,13 @@
     "static/css/tpc.7476c26e.css.map": "/static/css/tpc.7476c26e.css.map",
     "static/css/uiComponents.5cfe5dc1.css.map": "/static/css/uiComponents.5cfe5dc1.css.map",
     "static/css/wpPluginsPage.b0ffc4b1.css.map": "/static/css/wpPluginsPage.b0ffc4b1.css.map",
-    "static/js/adapters.a1a8981c.js.LICENSE.txt": "/static/js/adapters.a1a8981c.js.LICENSE.txt",
+    "static/js/adapters.8d977439.js.LICENSE.txt": "/static/js/adapters.8d977439.js.LICENSE.txt",
     "static/js/blocks.e4aca21c.js.LICENSE.txt": "/static/js/blocks.e4aca21c.js.LICENSE.txt",
     "static/js/data.e955f520.js.LICENSE.txt": "/static/js/data.e955f520.js.LICENSE.txt",
     "static/js/dates.f3cac10a.js.LICENSE.txt": "/static/js/dates.f3cac10a.js.LICENSE.txt",
     "static/js/edtrServices.0df93f0d.js.LICENSE.txt": "/static/js/edtrServices.0df93f0d.js.LICENSE.txt",
     "static/js/eeComponents.469592f2.js.LICENSE.txt": "/static/js/eeComponents.469592f2.js.LICENSE.txt",
-    "static/js/eventEditor.c18b46be.js.LICENSE.txt": "/static/js/eventEditor.c18b46be.js.LICENSE.txt",
+    "static/js/eventEditor.8b32dc08.js.LICENSE.txt": "/static/js/eventEditor.8b32dc08.js.LICENSE.txt",
     "static/js/form.75a18a69.js.LICENSE.txt": "/static/js/form.75a18a69.js.LICENSE.txt",
     "static/js/plugins.5166dbe0.js.LICENSE.txt": "/static/js/plugins.5166dbe0.js.LICENSE.txt",
     "static/js/registry.e1c935f0.js.LICENSE.txt": "/static/js/registry.e1c935f0.js.LICENSE.txt",
@@ -128,13 +128,13 @@
     "static/js/slotFill.0885e1c1.js.LICENSE.txt": "/static/js/slotFill.0885e1c1.js.LICENSE.txt",
     "static/js/toaster.9c9a90ac.js.LICENSE.txt": "/static/js/toaster.9c9a90ac.js.LICENSE.txt",
     "static/js/tpc.752d5b54.js.LICENSE.txt": "/static/js/tpc.752d5b54.js.LICENSE.txt",
-    "static/js/uiComponents.653df24e.js.LICENSE.txt": "/static/js/uiComponents.653df24e.js.LICENSE.txt",
+    "static/js/uiComponents.e4e81c89.js.LICENSE.txt": "/static/js/uiComponents.e4e81c89.js.LICENSE.txt",
     "static/js/wpPluginsPage.85d2cd8b.js.LICENSE.txt": "/static/js/wpPluginsPage.85d2cd8b.js.LICENSE.txt"
   },
   "entrypoints": {
     "adapters": [
       "static/css/adapters.cc22d5a3.css",
-      "static/js/adapters.a1a8981c.js"
+      "static/js/adapters.8d977439.js"
     ],
     "constants": [
       "static/js/constants.5a83eb33.js"
@@ -207,7 +207,7 @@
     ],
     "uiComponents": [
       "static/css/uiComponents.5cfe5dc1.css",
-      "static/js/uiComponents.653df24e.js"
+      "static/js/uiComponents.e4e81c89.js"
     ],
     "utils": [
       "static/js/utils.5a3b0af2.js"
@@ -218,7 +218,7 @@
     ],
     "eventEditor": [
       "static/css/eventEditor.07c01923.css",
-      "static/js/eventEditor.c18b46be.js"
+      "static/js/eventEditor.8b32dc08.js"
     ],
     "wpPluginsPage": [
       "static/css/wpPluginsPage.b0ffc4b1.css",

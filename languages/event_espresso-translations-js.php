@@ -351,7 +351,7 @@ $generated_i18n_strings = array(
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:96
 	__( 'later', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/datetimes/datesList/cardView/DateCapacity.tsx:36
+	// Reference: domains/eventEditor/src/ui/datetimes/datesList/cardView/DateCapacity.tsx:37
 	__( 'edit capacity (registration limit)…', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/datetimes/datesList/cardView/DateCardSidebar.tsx:38
