@@ -878,10 +878,10 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/tpc/src/components/table/Table.tsx:44
 	__( 'Ticket Price Calculator', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/editable/EditablePrice.tsx:37
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/editable/EditablePrice.tsx:39
 	__( 'edit ticket total…', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/editable/EditablePrice.tsx:51
+	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/editable/EditablePrice.tsx:53
 	__( 'set price…', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/IsChainedButton.tsx:23
