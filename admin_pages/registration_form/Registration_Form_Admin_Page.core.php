@@ -347,12 +347,13 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
     /**
      * Extracts the question field's values from the POST request to update or insert them
      *
-     * @param \EEM_Base $model
+     * @param EEM_Base $model
      * @return array where each key is the name of a model's field/db column, and each value is its value.
+     * @throws EE_Error
      */
     protected function _set_column_values_for(EEM_Base $model)
     {
-        do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+        $question_model = EEM_Question::instance();
         $set_column_values = array();
 
         // some initial checks for proper values.
@@ -368,7 +369,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
             )
             || ! in_array(
                 $this->_req_data['QST_type'],
-                EEM_Question::instance()->questionTypesWithMaxLength(),
+                $question_model->questionTypesWithMaxLength(),
                 true
             )
         ) {
@@ -393,7 +394,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
             } elseif ($fieldName === 'QST_admin_only' && (! isset($this->_req_data['QST_admin_only']))) {
                 $set_column_values[ $fieldName ] = 0;
             } elseif ($fieldName === 'QST_max') {
-                $qst_system = EEM_Question::instance()->get_var(
+                $qst_system = $question_model->get_var(
                     array(
                         array(
                             'QST_ID' => isset($this->_req_data['QST_ID']) ? $this->_req_data['QST_ID'] : 0,
@@ -401,7 +402,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
                     ),
                     'QST_system'
                 );
-                $max_max = EEM_Question::instance()->absolute_max_for_system_question($qst_system);
+                $max_max = $question_model->absolute_max_for_system_question((string) $qst_system);
                 if (
                     empty($this->_req_data['QST_max']) ||
                     $this->_req_data['QST_max'] > $max_max
@@ -419,7 +420,8 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
                 $set_column_values[ $fieldName ] = $this->_req_data[ $fieldName ];
             }
         }
-        return $set_column_values;// validation fo this data to be performed by the model before insertion.
+        // validation fo this data to be performed by the model before insertion.
+        return $set_column_values;
     }
 
 
