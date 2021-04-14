@@ -125,17 +125,12 @@ final class WPGraphQL {
 
 		// Plugin version.
 		if ( ! defined( 'WPGRAPHQL_VERSION' ) ) {
-			define( 'WPGRAPHQL_VERSION', '1.1.3' );
+			define( 'WPGRAPHQL_VERSION', '1.3.5' );
 		}
 
 		// Plugin Folder Path.
 		if ( ! defined( 'WPGRAPHQL_PLUGIN_DIR' ) ) {
 			define( 'WPGRAPHQL_PLUGIN_DIR', plugin_dir_path( $main_file_path ) );
-		}
-
-		// Plugin Folder URL.
-		if ( ! defined( 'WPGRAPHQL_PLUGIN_URL' ) ) {
-			define( 'WPGRAPHQL_PLUGIN_URL', plugin_dir_url( $main_file_path ) );
 		}
 
 		// Plugin Root File.
@@ -272,6 +267,10 @@ final class WPGraphQL {
 			}
 		);
 
+		// Initialize the plugin url constant
+		// see: https://developer.wordpress.org/reference/functions/plugins_url/#more-information
+		add_action( 'init', [ $this, 'setup_plugin_url' ] );
+
 		// Prevent WPGraphQL Insights from running
 		// @phpstan-ignore-next-line
 		remove_action( 'init', '\WPGraphQL\Extensions\graphql_insights_init' );
@@ -331,6 +330,20 @@ final class WPGraphQL {
 	}
 
 	/**
+	 * Sets up the plugin url
+	 *
+	 * @return void
+	 */
+	public function setup_plugin_url() {
+
+		// Plugin Folder URL.
+		if ( ! defined( 'WPGRAPHQL_PLUGIN_URL' ) ) {
+			define( 'WPGRAPHQL_PLUGIN_URL', plugin_dir_url( dirname( __DIR__ ) . '/wp-graphql.php' ) );
+		}
+
+	}
+
+	/**
 	 * Determine the post_types and taxonomies, etc that should show in GraphQL
 	 *
 	 * @return void
@@ -377,6 +390,7 @@ final class WPGraphQL {
 
 		// Filter how metadata is retrieved during GraphQL requests
 		add_filter( 'get_post_metadata', [ '\WPGraphQL\Utils\Preview', 'filter_post_meta_for_previews' ], 10, 4 );
+
 	}
 
 	/**
@@ -464,6 +478,7 @@ final class WPGraphQL {
 		 */
 		array_map(
 			function( $post_type ) {
+				/** @var string $post_type */
 				$post_type_object = get_post_type_object( $post_type );
 
 				if ( ! $post_type_object instanceof WP_Post_Type ) {

@@ -40,20 +40,20 @@ class CursorBuilder {
 	 *
 	 * @param string           $key           database column
 	 * @param mixed|string|int $value         value from the current cursor
-	 * @param string           $type          type cast
-	 * @param string           $order         custom order
-	 * @param PostObjectCursor $object_cursor The PostObjectCursor class
+	 * @param string|null      $type          type cast
+	 * @param string|null      $order         custom order
+	 * @param object|null      $object_cursor The Cursor class
 	 *
 	 * @return void
 	 */
-	public function add_field( string $key, $value, string $type = null, string $order = null, PostObjectCursor $object_cursor = null ) {
+	public function add_field( string $key, $value, string $type = null, string $order = null, $object_cursor = null ) {
 
 		/**
 		 * Filters the field used for ordering when cursors are used for pagination
 		 *
-		 * @param array                   $field          The field key, value, type and order
-		 * @param CursorBuilder           $cursor_builder The CursorBuilder class
-		 * @param null | PostObjectCursor $object_cursor  The PostObjectCursor class
+		 * @param array         $field          The field key, value, type and order
+		 * @param CursorBuilder $cursor_builder The CursorBuilder class
+		 * @param object        $object_cursor  The Cursor class
 		 */
 		$field = apply_filters(
 			'graphql_cursor_ordering_field',
@@ -144,6 +144,7 @@ class CursorBuilder {
 		$nest = $this->to_sql( \array_slice( $fields, 1 ) );
 
 		$sql = ' %1$s %2$s= %3$s AND ( %1$s %2$s %3$s OR ( %4$s ) ) ';
+
 		return sprintf( $sql, $key, $compare, $value, $nest );
 	}
 
