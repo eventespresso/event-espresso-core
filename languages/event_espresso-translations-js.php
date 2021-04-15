@@ -627,13 +627,13 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/filters/controls/DatesByMonthControl.tsx:26
 	__( 'dates by month', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/filters/controls/ShowExpiredTicketsControl.tsx:15
+	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/filters/controls/ShowExpiredTicketsControl.tsx:16
 	__( 'show expired tickets', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/filters/controls/ShowTrashedDatesControl.tsx:9
+	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/filters/controls/ShowTrashedDatesControl.tsx:13
 	__( 'show trashed dates', 'event_espresso' ),
 
-	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/filters/controls/ShowTrashedTicketsControl.tsx:15
+	// Reference: domains/eventEditor/src/ui/ticketAssignmentsManager/filters/controls/ShowTrashedTicketsControl.tsx:16
 	__( 'show trashed tickets', 'event_espresso' ),
 
 	// Reference: domains/eventEditor/src/ui/tickets/TicketRegistrationsLink.tsx:13
