@@ -330,9 +330,7 @@ describe('getRelatedEntitiesForIds()', () => {
 				fulfillment.next({ joining_model_name: 'Datetime_Ticket' });
 				const { value } = fulfillment.next(dateTimeFactory);
 				expect(value.request.path).toBe(
-					'/ee/v4.8.36/datetime_tickets/?where' +
-						'%5BTKT_ID%5D%5BIN%5D=10%2C20&include=Datetime.%2A' +
-						'&calculate=Datetime.foo%2CDatetime.bar'
+					'/ee/v4.8.36/datetime_tickets/?where%5BTKT_ID%5D%5BIN%5D=10%2C20&include=Datetime.%2A&calculate=Datetime.foo%2CDatetime.bar'
 				);
 			}
 		);
@@ -429,9 +427,7 @@ describe('getRelatedEntitiesForIds()', () => {
 				fulfillment.next({ relation_type: 'EE_Belongs_To_Relation' });
 				const { value } = fulfillment.next(dateTimeFactory);
 				expect(value.request.path).toBe(
-					'/ee/v4.8.36/events/?where' +
-						'%5BEVT_ID%5D%5BIN%5D=10%2C20&include=Datetime.%2A' +
-						'&calculate=Datetime.foo%2CDatetime.bar'
+					'/ee/v4.8.36/events/?where%5BEVT_ID%5D%5BIN%5D=10%2C20&include=Datetime.*&calculate=Datetime.foo%2CDatetime.bar'
 				);
 			}
 		);
@@ -446,9 +442,7 @@ describe('getRelatedEntitiesForIds()', () => {
 				fulfillment.next({ relation_type: 'EE_Belongs_To_Relation' });
 				const { value } = fulfillment.next(dateTimeFactory);
 				expect(value.request.path).toBe(
-					'/ee/v4.8.36/events/?where' +
-						'%5BEVT_ID%5D%5BIN%5D=10%2C20' +
-						'&include=Datetime.%2A&calculate=Datetime.foo'
+					'/ee/v4.8.36/events/?where%5BEVT_ID%5D%5BIN%5D=10%2C20&include=Datetime.*&calculate=Datetime.foo'
 				);
 			}
 		);
@@ -527,9 +521,7 @@ describe('getRelatedEntitiesForIds()', () => {
 				fulfillment.next({ relation_type: 'EE_Has_Many_Relation' });
 				const { value } = fulfillment.next(dateTimeFactory);
 				expect(value.request.path).toBe(
-					'/ee/v4.8.36/datetimes/?where' +
-						'%5BEVT_ID%5D%5BIN%5D=10%2C20' +
-						'&include=Event.%2A&calculate=foo%2Cbar'
+					'/ee/v4.8.36/datetimes/?where%5BEVT_ID%5D%5BIN%5D=10%2C20&include=Event.*&calculate=foo%2Cbar'
 				);
 			}
 		);
@@ -544,9 +536,7 @@ describe('getRelatedEntitiesForIds()', () => {
 				fulfillment.next({ relation_type: 'EE_Has_Many_Relation' });
 				const { value } = fulfillment.next(dateTimeFactory);
 				expect(value.request.path).toBe(
-					'/ee/v4.8.36/datetimes/?where' +
-						'%5BEVT_ID%5D%5BIN%5D=10%2C20' +
-						'&include=Event.%2A&calculate=foo'
+					'/ee/v4.8.36/datetimes/?where%5BEVT_ID%5D%5BIN%5D=10%2C20&include=Event.*&calculate=foo'
 				);
 			}
 		);

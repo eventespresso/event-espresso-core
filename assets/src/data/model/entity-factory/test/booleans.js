@@ -1,3 +1,5 @@
+/* eslint-disable jest/valid-title */
+/* eslint-disable jest/no-conditional-expect */
 /**
  * Internal imports
  */

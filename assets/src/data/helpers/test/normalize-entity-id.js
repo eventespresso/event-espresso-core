@@ -15,6 +15,7 @@ describe(normalizeEntityId.name + '()', () => {
 		['handles string number', '12', 12],
 		['handles number', 12, 12],
 	].forEach(([description, id, expected]) => {
+		// eslint-disable-next-line jest/valid-title
 		it(description, () => {
 			expect(normalizeEntityId(id)).toBe(expected);
 		});

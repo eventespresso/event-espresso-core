@@ -1,3 +1,4 @@
+/* eslint-disable jest/no-conditional-expect */
 /**
  * External imports
  */
@@ -14,7 +15,7 @@ import { ACTION_TYPES } from '../../actions/action-types';
 const types = { ...ACTION_TYPES.entities, ...ACTION_TYPES.relations };
 
 jest.mock('@eventespresso/model', () => ({
-	...require.requireActual('@eventespresso/model'),
+	...jest.requireActual('@eventespresso/model'),
 	MODEL_NAMES: ['event'],
 }));
 

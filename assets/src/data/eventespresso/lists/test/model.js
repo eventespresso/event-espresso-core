@@ -9,7 +9,7 @@ import * as resolvers from '../resolvers';
 import { select, registerStore } from '@wordpress/data';
 
 jest.mock('../../../model', () => ({
-	...require.requireActual('../../../model'),
+	...jest.requireActual('../../../model'),
 	MODEL_NAMES: ['event', 'datetime'],
 }));
 

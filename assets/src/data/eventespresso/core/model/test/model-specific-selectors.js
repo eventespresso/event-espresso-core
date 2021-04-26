@@ -49,6 +49,7 @@ describe('getLatestCheckin', () => {
 					{ foo: 'bar' },
 				],
 			].forEach(([description, selector, args, expectedValue]) => {
+				// eslint-disable-next-line jest/valid-title
 				it(description, () => {
 					expect(
 						getSelectorValue(mockState, selector, ...args)

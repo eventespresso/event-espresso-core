@@ -1,3 +1,4 @@
+/* eslint-disable jest/no-conditional-expect */
 /**
  * External imports
  */
@@ -17,7 +18,7 @@ import { resolveSelect } from '../../base-controls';
 import { REDUCER_KEY as SCHEMA_REDUCER_KEY } from '../constants';
 
 jest.mock('../../../model', () => ({
-	...require.requireActual('../../../model'),
+	...jest.requireActual('../../../model'),
 	MODEL_NAMES: ['event', 'datetime'],
 }));
 
