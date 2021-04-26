@@ -2,7 +2,7 @@ import { Currency, SiteCurrency } from '../currency';
 import { CURRENCY_CONFIG } from '@eventespresso/eejs';
 
 jest.mock('@eventespresso/eejs', () => ({
-	...require.requireActual('@eventespresso/eejs'),
+	...jest.requireActual('@eventespresso/eejs'),
 	CURRENCY_CONFIG: {
 		code: 'USD',
 		singularLabel: 'dollar',

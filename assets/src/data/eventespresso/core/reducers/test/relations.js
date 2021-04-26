@@ -1,3 +1,5 @@
+/* eslint-disable jest/valid-title */
+
 /**
  * External imports
  */

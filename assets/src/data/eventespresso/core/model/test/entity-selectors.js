@@ -6,7 +6,7 @@ import { createSelectors } from '../entity-selectors';
 import { mockStateForTests } from '../../test/fixtures';
 
 jest.mock('@eventespresso/model', () => ({
-	...require.requireActual('@eventespresso/model'),
+	...jest.requireActual('@eventespresso/model'),
 	MODEL_NAMES: ['event'],
 }));
 

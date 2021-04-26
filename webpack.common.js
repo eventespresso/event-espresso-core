@@ -32,9 +32,8 @@ const rulesConfig = {
 			{
 				loader: 'postcss-loader',
 				options: {
-					// eslint-disable-next-line object-shorthand
-					plugins: function () {
-						return [autoprefixer, cssnano({ preset: 'default' })];
+					postcssOptions: {
+						plugins: [autoprefixer, cssnano({ preset: 'default' })],
 					},
 					sourceMap: true,
 				},
@@ -59,7 +58,7 @@ const config = [
 		module: moduleConfigWithJsRules,
 		output: {
 			filename: '[name].[chunkhash].dist.js',
-			path: path.resolve(__dirname, 'assets/dist'),
+			path: outputPath,
 			library: ['eejs'],
 			libraryTarget: 'this',
 		},
@@ -71,7 +70,7 @@ const config = [
 		module: moduleConfigWithJsRules,
 		output: {
 			filename: '[name].[chunkhash].dist.js',
-			path: path.resolve(__dirname, 'assets/dist'),
+			path: outputPath,
 			library: ['eejs', 'vendor'],
 			libraryTarget: 'this',
 		},
@@ -83,7 +82,7 @@ const config = [
 		module: moduleConfigWithJsRules,
 		output: {
 			filename: '[name].[chunkhash].dist.js',
-			path: path.resolve(__dirname, 'assets/dist'),
+			path: outputPath,
 			library: ['eejs', 'validators'],
 			libraryTarget: 'this',
 		},
@@ -95,7 +94,7 @@ const config = [
 		module: moduleConfigWithJsRules,
 		output: {
 			filename: '[name].[chunkhash].dist.js',
-			path: path.resolve(__dirname, 'assets/dist'),
+			path: outputPath,
 			library: ['eejs', 'helpers'],
 			libraryTarget: 'this',
 		},
@@ -107,7 +106,7 @@ const config = [
 		module: moduleConfigWithJsRules,
 		output: {
 			filename: '[name].[chunkhash].dist.js',
-			path: path.resolve(__dirname, 'assets/dist'),
+			path: outputPath,
 			library: ['eejs', 'model'],
 			libraryTarget: 'this',
 		},
@@ -119,7 +118,7 @@ const config = [
 		module: moduleConfigWithJsRules,
 		output: {
 			filename: '[name].[chunkhash].dist.js',
-			path: path.resolve(__dirname, 'assets/dist'),
+			path: outputPath,
 			library: ['eejs', 'valueObjects'],
 			libraryTarget: 'this',
 		},
@@ -131,7 +130,7 @@ const config = [
 		module: moduleConfigWithJsRules,
 		output: {
 			filename: '[name].[chunkhash].dist.js',
-			path: path.resolve(__dirname, 'assets/dist'),
+			path: outputPath,
 			library: ['eejs', 'hocs'],
 			libraryTarget: 'this',
 		},
@@ -143,7 +142,7 @@ const config = [
 		module: moduleConfigWithJsAndCssRules,
 		output: {
 			filename: '[name].[chunkhash].dist.js',
-			path: path.resolve(__dirname, 'assets/dist'),
+			path: outputPath,
 			library: ['eejs', 'components'],
 			libraryTarget: 'this',
 		},
@@ -155,7 +154,7 @@ const config = [
 		module: moduleConfigWithJsAndCssRules,
 		output: {
 			filename: '[name].[chunkhash].dist.js',
-			path: path.resolve(__dirname, 'assets/dist'),
+			path: outputPath,
 			library: ['eejs', 'editorHocs'],
 			libraryTarget: 'this',
 		},
@@ -166,7 +165,7 @@ const config = [
 		},
 		output: {
 			filename: '[name].[chunkhash].dist.js',
-			path: path.resolve(__dirname, 'assets/dist'),
+			path: outputPath,
 		},
 		module: moduleConfigWithJsAndCssRules,
 		watchOptions: {
@@ -179,7 +178,7 @@ const config = [
 		},
 		output: {
 			filename: '[name].[chunkhash].dist.js',
-			path: path.resolve(__dirname, 'assets/dist'),
+			path: outputPath,
 		},
 		module: moduleConfigWithJsAndCssRules,
 		watchOptions: {
@@ -192,7 +191,7 @@ const config = [
 		},
 		output: {
 			filename: '[name].[chunkhash].dist.js',
-			path: path.resolve(__dirname, 'assets/dist'),
+			path: outputPath,
 		},
 		module: moduleConfigWithJsAndCssRules,
 		watchOptions: {
@@ -207,7 +206,7 @@ const config = [
 		},
 		output: {
 			filename: '[name].[chunkhash].dist.js',
-			path: path.resolve(__dirname, 'assets/dist'),
+			path: outputPath,
 		},
 		module: moduleConfigWithJsAndCssRules,
 		watchOptions: {
@@ -222,7 +221,7 @@ const config = [
 		},
 		output: {
 			filename: '[name].[chunkhash].dist.js',
-			path: path.resolve(__dirname, 'assets/dist'),
+			path: outputPath,
 		},
 		module: moduleConfigWithJsAndCssRules,
 		watchOptions: {

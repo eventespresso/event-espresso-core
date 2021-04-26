@@ -1,3 +1,4 @@
+/* eslint-disable jest/no-conditional-expect */
 /**
  * External imports
  */
@@ -10,7 +11,7 @@ import * as actions from '../../actions';
 import { createActions } from '../relation-actions';
 
 jest.mock('@eventespresso/model', () => ({
-	...require.requireActual('@eventespresso/model'),
+	...jest.requireActual('@eventespresso/model'),
 	MODEL_NAMES: ['event'],
 }));
 
