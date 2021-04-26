@@ -330,7 +330,7 @@ describe('getRelatedEntitiesForIds()', () => {
 				fulfillment.next({ joining_model_name: 'Datetime_Ticket' });
 				const { value } = fulfillment.next(dateTimeFactory);
 				expect(value.request.path).toBe(
-					'/ee/v4.8.36/datetime_tickets/?where%5BTKT_ID%5D%5BIN%5D=10%2C20&include=Datetime.%2A&calculate=Datetime.foo%2CDatetime.bar'
+					'/ee/v4.8.36/datetime_tickets/?where%5BTKT_ID%5D%5BIN%5D=10%2C20&include=Datetime.*&calculate=Datetime.foo%2CDatetime.bar'
 				);
 			}
 		);
@@ -344,9 +344,7 @@ describe('getRelatedEntitiesForIds()', () => {
 				fulfillment.next({ joining_model_name: 'Datetime_Ticket' });
 				const { value } = fulfillment.next(dateTimeFactory);
 				expect(value.request.path).toBe(
-					'/ee/v4.8.36/datetime_tickets/?where' +
-						'%5BTKT_ID%5D%5BIN%5D=10%2C20&include=Datetime.%2A' +
-						'&calculate=Datetime.foo'
+					'/ee/v4.8.36/datetime_tickets/?where%5BTKT_ID%5D%5BIN%5D=10%2C20&include=Datetime.*&calculate=Datetime.foo'
 				);
 			}
 		);
