@@ -1,15 +1,15 @@
-const path = require( 'path' );
+const path = require('path');
 const assets = './assets/src/';
-const miniExtract = require( 'mini-css-extract-plugin' );
-const autoprefixer = require( 'autoprefixer' );
-const cssnano = require( 'cssnano' );
-const del = require( 'del' );
+const miniExtract = require('mini-css-extract-plugin');
+const autoprefixer = require('autoprefixer');
+const cssnano = require('cssnano');
+const del = require('del');
 
-const outputPath = path.resolve( __dirname, 'assets/dist' );
+const outputPath = path.resolve(__dirname, 'assets/dist');
 /**
  * Clean build folder before running build
  */
-del.sync( [ path.resolve( outputPath, '**/*' ) ] );
+del.sync([path.resolve(outputPath, '**/*')]);
 
 const rulesConfig = {
 	jsRulesConfig: {
@@ -32,12 +32,8 @@ const rulesConfig = {
 			{
 				loader: 'postcss-loader',
 				options: {
-					// eslint-disable-next-line object-shorthand
-					plugins: function() {
-						return [
-							autoprefixer,
-							cssnano( { preset: 'default' } ),
-						];
+					postcssOptions: {
+						plugins: [autoprefixer, cssnano({ preset: 'default' })],
 					},
 					sourceMap: true,
 				},
@@ -47,13 +43,10 @@ const rulesConfig = {
 };
 
 const moduleConfigWithJsAndCssRules = {
-	rules: [
-		rulesConfig.jsRulesConfig,
-		rulesConfig.cssRulesConfig,
-	],
+	rules: [rulesConfig.jsRulesConfig, rulesConfig.cssRulesConfig],
 };
 
-const moduleConfigWithJsRules = { rules: [ rulesConfig.jsRulesConfig ] };
+const moduleConfigWithJsRules = { rules: [rulesConfig.jsRulesConfig] };
 
 /** see below for multiple configurations.
  /** https://webpack.js.org/configuration/configuration-types/#exporting-multiple-configurations */
@@ -65,8 +58,8 @@ const config = [
 		module: moduleConfigWithJsRules,
 		output: {
 			filename: '[name].[chunkhash].dist.js',
-			path: path.resolve( __dirname, 'assets/dist' ),
-			library: [ 'eejs' ],
+			path: outputPath,
+			library: ['eejs'],
 			libraryTarget: 'this',
 		},
 	},
@@ -77,8 +70,8 @@ const config = [
 		module: moduleConfigWithJsRules,
 		output: {
 			filename: '[name].[chunkhash].dist.js',
-			path: path.resolve( __dirname, 'assets/dist' ),
-			library: [ 'eejs', 'vendor' ],
+			path: outputPath,
+			library: ['eejs', 'vendor'],
 			libraryTarget: 'this',
 		},
 	},
@@ -89,8 +82,8 @@ const config = [
 		module: moduleConfigWithJsRules,
 		output: {
 			filename: '[name].[chunkhash].dist.js',
-			path: path.resolve( __dirname, 'assets/dist' ),
-			library: [ 'eejs', 'validators' ],
+			path: outputPath,
+			library: ['eejs', 'validators'],
 			libraryTarget: 'this',
 		},
 	},
@@ -101,8 +94,8 @@ const config = [
 		module: moduleConfigWithJsRules,
 		output: {
 			filename: '[name].[chunkhash].dist.js',
-			path: path.resolve( __dirname, 'assets/dist' ),
-			library: [ 'eejs', 'helpers' ],
+			path: outputPath,
+			library: ['eejs', 'helpers'],
 			libraryTarget: 'this',
 		},
 	},
@@ -113,8 +106,8 @@ const config = [
 		module: moduleConfigWithJsRules,
 		output: {
 			filename: '[name].[chunkhash].dist.js',
-			path: path.resolve( __dirname, 'assets/dist' ),
-			library: [ 'eejs', 'model' ],
+			path: outputPath,
+			library: ['eejs', 'model'],
 			libraryTarget: 'this',
 		},
 	},
@@ -125,8 +118,8 @@ const config = [
 		module: moduleConfigWithJsRules,
 		output: {
 			filename: '[name].[chunkhash].dist.js',
-			path: path.resolve( __dirname, 'assets/dist' ),
-			library: [ 'eejs', 'valueObjects' ],
+			path: outputPath,
+			library: ['eejs', 'valueObjects'],
 			libraryTarget: 'this',
 		},
 	},
@@ -137,8 +130,8 @@ const config = [
 		module: moduleConfigWithJsRules,
 		output: {
 			filename: '[name].[chunkhash].dist.js',
-			path: path.resolve( __dirname, 'assets/dist' ),
-			library: [ 'eejs', 'hocs' ],
+			path: outputPath,
+			library: ['eejs', 'hocs'],
 			libraryTarget: 'this',
 		},
 	},
@@ -149,8 +142,8 @@ const config = [
 		module: moduleConfigWithJsAndCssRules,
 		output: {
 			filename: '[name].[chunkhash].dist.js',
-			path: path.resolve( __dirname, 'assets/dist' ),
-			library: [ 'eejs', 'components' ],
+			path: outputPath,
+			library: ['eejs', 'components'],
 			libraryTarget: 'this',
 		},
 	},
@@ -161,20 +154,18 @@ const config = [
 		module: moduleConfigWithJsAndCssRules,
 		output: {
 			filename: '[name].[chunkhash].dist.js',
-			path: path.resolve( __dirname, 'assets/dist' ),
-			library: [ 'eejs', 'editorHocs' ],
+			path: outputPath,
+			library: ['eejs', 'editorHocs'],
 			libraryTarget: 'this',
 		},
 	},
 	{
 		entry: {
-			'ee-wp-plugins-page': [
-				assets + 'wp-plugins-page/index.js',
-			],
+			'ee-wp-plugins-page': [assets + 'wp-plugins-page/index.js'],
 		},
 		output: {
 			filename: '[name].[chunkhash].dist.js',
-			path: path.resolve( __dirname, 'assets/dist' ),
+			path: outputPath,
 		},
 		module: moduleConfigWithJsAndCssRules,
 		watchOptions: {
@@ -183,13 +174,11 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-data-stores': [
-				assets + 'data/index.js',
-			],
+			'eventespresso-data-stores': [assets + 'data/index.js'],
 		},
 		output: {
 			filename: '[name].[chunkhash].dist.js',
-			path: path.resolve( __dirname, 'assets/dist' ),
+			path: outputPath,
 		},
 		module: moduleConfigWithJsAndCssRules,
 		watchOptions: {
@@ -198,13 +187,11 @@ const config = [
 	},
 	{
 		entry: {
-			'eventespresso-core-blocks': [
-				assets + 'blocks/index.js',
-			],
+			'eventespresso-core-blocks': [assets + 'blocks/index.js'],
 		},
 		output: {
 			filename: '[name].[chunkhash].dist.js',
-			path: path.resolve( __dirname, 'assets/dist' ),
+			path: outputPath,
 		},
 		module: moduleConfigWithJsAndCssRules,
 		watchOptions: {
@@ -219,7 +206,7 @@ const config = [
 		},
 		output: {
 			filename: '[name].[chunkhash].dist.js',
-			path: path.resolve( __dirname, 'assets/dist' ),
+			path: outputPath,
 		},
 		module: moduleConfigWithJsAndCssRules,
 		watchOptions: {
@@ -234,7 +221,7 @@ const config = [
 		},
 		output: {
 			filename: '[name].[chunkhash].dist.js',
-			path: path.resolve( __dirname, 'assets/dist' ),
+			path: outputPath,
 		},
 		module: moduleConfigWithJsAndCssRules,
 		watchOptions: {

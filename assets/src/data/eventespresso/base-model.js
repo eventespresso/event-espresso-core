@@ -7,6 +7,7 @@ import { mapReducer } from '@eventespresso/helpers';
 
 /**
  * A helper for getting a method name.
+ *
  * @param {string} modelName
  * @param {string} suffix
  * @param {string} prefix
@@ -19,8 +20,8 @@ export const getMethodName = (
 	prefix = 'get',
 	usePlural = false
 ) => {
-	modelName = usePlural ? pluralize( modelName ) : modelName;
-	return prefix + upperFirst( camelCase( modelName + upperFirst( suffix ) ) );
+	modelName = usePlural ? pluralize(modelName) : modelName;
+	return prefix + upperFirst(camelCase(modelName + upperFirst(suffix)));
 };
 
 /**
@@ -41,22 +42,22 @@ export const getMethodName = (
  */
 export const keepExistingEntitiesInObject = (
 	existingEntities,
-	incomingEntities,
+	incomingEntities
 ) => {
-	const getExistingOrDefaultEntity = ( defaultEntity, entityId ) => {
-		if ( isMap( existingEntities ) && existingEntities.has( entityId ) ) {
-			return existingEntities.get( entityId );
+	const getExistingOrDefaultEntity = (defaultEntity, entityId) => {
+		if (isMap(existingEntities) && existingEntities.has(entityId)) {
+			return existingEntities.get(entityId);
 		}
-		return existingEntities[ entityId ] || defaultEntity;
+		return existingEntities[entityId] || defaultEntity;
 	};
-	const reduceCallback = ( mapped, entity, entityId ) => {
-		entityId = normalizeEntityId( entityId );
-		mapped.set( entityId, getExistingOrDefaultEntity( entity, entityId ) );
+	const reduceCallback = (mapped, entity, entityId) => {
+		entityId = normalizeEntityId(entityId);
+		mapped.set(entityId, getExistingOrDefaultEntity(entity, entityId));
 		return mapped;
 	};
-	return isMap( incomingEntities ) ?
-		mapReducer( incomingEntities, reduceCallback, new Map() ) :
-		reduce( incomingEntities, reduceCallback, new Map() );
+	return isMap(incomingEntities)
+		? mapReducer(incomingEntities, reduceCallback, new Map())
+		: reduce(incomingEntities, reduceCallback, new Map());
 };
 
 /**
@@ -66,8 +67,8 @@ export const keepExistingEntitiesInObject = (
  * @param {*} entityId
  * @return {*} Normalized value
  */
-const normalizeEntityId = ( entityId ) => {
+const normalizeEntityId = (entityId) => {
 	const originalId = entityId;
-	entityId = parseInt( entityId, 10 );
-	return isNaN( entityId ) ? originalId : entityId;
+	entityId = parseInt(entityId, 10);
+	return isNaN(entityId) ? originalId : entityId;
 };

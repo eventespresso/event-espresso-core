@@ -174,7 +174,8 @@ class Transactions_Admin_Page extends EE_Admin_Page
                         'filename' => 'transactions_overview_views_filters_search',
                     ),
                 ),
-                'help_tour'     => array('Transactions_Overview_Help_Tour'),
+                // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
+                // 'help_tour'     => array('Transactions_Overview_Help_Tour'),
                 /**
                  * commented out because currently we are not displaying tips for transaction list table status but this
                  * may change in a later iteration so want to keep the code for then.
@@ -210,7 +211,8 @@ class Transactions_Admin_Page extends EE_Admin_Page
                     ),
                 ),
                 'qtips'     => array('Transaction_Details_Tips'),
-                'help_tour' => array('Transaction_Details_Help_Tour'),
+                // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
+                // 'help_tour' => array('Transaction_Details_Help_Tour'),
                 'metaboxes' => array('_transaction_details_metaboxes'),
 
                 'require_nonce' => false,
@@ -2555,11 +2557,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
         /** @var EE_Transaction $transaction */
         $transaction = EEM_Transaction::instance()->get_one_by_ID($TXN_ID);
         $total_line_item = $transaction->total_line_item(false);
-        $success = false;
-        if ($total_line_item instanceof EE_Line_Item) {
-            EEH_Line_Item::resetIsTaxableForTickets($total_line_item);
-            $success = EEH_Line_Item::apply_taxes($total_line_item, true);
-        }
+        $success = $transaction->recalculateLineItems();
         $this->_redirect_after_action(
             (bool) $success,
             esc_html__('Transaction taxes and totals', 'event_espresso'),

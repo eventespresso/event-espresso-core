@@ -14,13 +14,13 @@ import InvalidType from './invalid-type';
  * @param {mixed} datetime Optional, the datetime string that is invalid
  */
 export default class InvalidDateTime extends InvalidType {
-	constructor( datetime, message, ...args ) {
-		super( message, ...args );
-		if ( Error.captureStackTrace ) {
-			Error.captureStackTrace( this, InvalidDateTime );
+	constructor(datetime, message, ...args) {
+		super(message, ...args);
+		if (Error.captureStackTrace) {
+			Error.captureStackTrace(this, InvalidDateTime);
 		}
-		this.message = 'The value provided is not a valid DateTime. ' +
-			this.message;
+		this.message =
+			'The value provided is not a valid DateTime. ' + this.message;
 		this.datetime = datetime || '';
 		this.name = 'InvalidDateTime';
 	}

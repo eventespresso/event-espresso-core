@@ -1,9 +1,7 @@
 /**
  * Internal Imports
  */
-import {
-	receiveDirtyRelationDeletion,
-} from './receive-relations';
+import { receiveDirtyRelationDeletion } from './receive-relations';
 import {
 	removeDirtyRelationAddition,
 	removeRelatedEntities,
@@ -26,14 +24,14 @@ function* removeDirtyRelationForAddition(
 	modelName,
 	entityId,
 	relationName,
-	relationEntityId,
+	relationEntityId
 ) {
-	modelName = singularModelName( modelName );
+	modelName = singularModelName(modelName);
 	yield removeDirtyRelationAddition(
 		relationName,
 		relationEntityId,
 		modelName,
-		entityId,
+		entityId
 	);
 }
 
@@ -52,19 +50,16 @@ function* removeRelationForEntity(
 	relationName,
 	relationEntityId
 ) {
-	modelName = singularModelName( modelName );
-	relationName = singularModelName( relationName );
-	yield removeRelatedEntities(
-		modelName,
-		entityId,
-		relationName,
-		[ relationEntityId ],
-	);
+	modelName = singularModelName(modelName);
+	relationName = singularModelName(relationName);
+	yield removeRelatedEntities(modelName, entityId, relationName, [
+		relationEntityId,
+	]);
 	yield removeDirtyRelationAddition(
 		modelName,
 		entityId,
 		relationName,
-		relationEntityId,
+		relationEntityId
 	);
 
 	yield receiveDirtyRelationDeletion(

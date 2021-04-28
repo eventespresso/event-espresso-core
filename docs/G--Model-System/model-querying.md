@@ -258,6 +258,7 @@ EEM_Base::get_one_by_ID($id)
 This is exactly like using EEM_Event::instance()->get_one( array( array( 'EVT_ID' => 234 ), 'default_where_conditions' => 'other_models_only' ) );  Eg.
 Because you have the ID of the item you're looking for, default where conditions are not used on the model being queried. This means the item could be trashed and it will be returned just fine.
 
+Note: not all models have a primary key field. Please [read about model primary keys](models-primary-keys.md).
 ##### $id
 int|string The ID of the model object you want to retrieve.
 
@@ -725,4 +726,4 @@ $payments = EEM_Payment::instance()->get_all(
 	
 
 
-Please read [the documentation specifically about dates and times in Event Espresso](https://github.com/eventespresso/event-espresso-core/blob/master/docs/F--Datetime-System/dates-times-timezones-in-models.md) for related information on dealing with datetime fields on model objects, and see ]our developer blog post](http://developer.eventespresso.com/important-changes-to-ee-datetime-system-coming-to-ee/) about helper functions for working with datetimes.
+Please read [the documentation specifically about dates and times in Event Espresso](https://github.com/eventespresso/event-espresso-core/blob/master/docs/F--Datetime-System/dates-times-timezones-in-models.md) for related information on dealing with datetime fields on model objects, and see [our developer blog post](http://developer.eventespresso.com/important-changes-to-ee-datetime-system-coming-to-ee/) about helper functions for working with datetimes.

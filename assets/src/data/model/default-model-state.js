@@ -16,16 +16,14 @@ import { endpoints } from './endpoints.js';
  * @param { Object } modelNameEndpoints
  * @return { Object } An object of { { modelName } : {} }
  */
-const mapToObjectValues = ( modelNameEndpoints ) => {
-	return mapValues( modelNameEndpoints,
-		function() {
-			return {};
-		},
-	);
+const mapToObjectValues = (modelNameEndpoints) => {
+	return mapValues(modelNameEndpoints, function () {
+		return {};
+	});
 };
 
-const getDefaultModelEntitiesObject = memoize(
-	() => mapToObjectValues( endpoints )
+const getDefaultModelEntitiesObject = memoize(() =>
+	mapToObjectValues(endpoints)
 );
 
 /**
@@ -33,7 +31,7 @@ const getDefaultModelEntitiesObject = memoize(
  *
  * @type { Object }
  */
-export const DEFAULT_LISTS_STATE = mapToObjectValues( endpoints );
+export const DEFAULT_LISTS_STATE = mapToObjectValues(endpoints);
 
 /**
  * Provides the default state to be used by the core store.
@@ -58,6 +56,7 @@ export const DEFAULT_CORE_STATE = {
 
 /**
  * Provides the default state to be used by the schema store.
+ *
  * @type {Object}
  */
 export const DEFAULT_SCHEMA_STATE = {

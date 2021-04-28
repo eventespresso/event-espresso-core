@@ -191,7 +191,7 @@ jQuery(document).ready( function($) {
 			// don't cache ajax
 			$.ajaxSetup ({ cache: false });
 			// clear firefox and safari cache
-			$(window).unload( function() {});
+			$(window).on("unload", function() {});
 		},
 
 

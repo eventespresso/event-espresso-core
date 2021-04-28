@@ -15,6 +15,7 @@ const { paths = {} } = data;
 /**
  * The base url for the site this js is loaded on.
  * eg. 'https://mysite.com/'
+ *
  * @type { string }
  */
 export const SITE_URL = paths.site_url || '';
@@ -22,6 +23,7 @@ export const SITE_URL = paths.site_url || '';
 /**
  * The base admin url for the site this js is loaded on.
  * eg. 'https://mysite.com/wp-admin/
+ *
  * @type { string }
  */
 export const ADMIN_URL = paths.admin_url || '';
@@ -136,6 +138,7 @@ export const ADMIN_ROUTE_ACTIONS = {
 
 /**
  * Return the admin url for a given page and action.
+ *
  * @param { string } page  The main ee admin page string
  * @param { string } action This should correspond to the action for the admin
  * 							page.
@@ -145,5 +148,5 @@ export const getAdminUrl = (
 	page = ADMIN_ROUTES.EVENTS,
 	action = ADMIN_ROUTE_ACTION_DEFAULT
 ) => {
-	return `${ ADMIN_URL }admin.php?page=${ page }&action=${ action }`;
+	return `${ADMIN_URL}admin.php?page=${page}&action=${action}`;
 };

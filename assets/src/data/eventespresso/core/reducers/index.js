@@ -17,9 +17,9 @@ import modelSpecific from './model-specific-reducers';
  * Be aware that the root state is a plain object but the slices (entities,
  * relations, dirty) are immutable Maps.
  */
-export default combineReducers( {
+export default combineReducers({
 	entities,
 	relations,
 	dirty,
 	modelSpecific,
-} );
+});

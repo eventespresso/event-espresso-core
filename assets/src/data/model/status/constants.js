@@ -85,12 +85,12 @@ export const CPT_STATUS_ID = {
 export const UNKNOWN_STATUS_ID = 'unknown';
 
 export const ALL_STATUS_IDS = [
-	...values( EMAIL_STATUS_ID ),
-	...values( EVENT_STATUS_ID ),
-	...values( MESSAGE_STATUS_ID ),
-	...values( PAYMENT_STATUS_ID ),
-	...values( REGISTRATION_STATUS_ID ),
-	...values( TRANSACTION_STATUS_ID ),
-	...values( CPT_STATUS_ID ),
+	...values(EMAIL_STATUS_ID),
+	...values(EVENT_STATUS_ID),
+	...values(MESSAGE_STATUS_ID),
+	...values(PAYMENT_STATUS_ID),
+	...values(REGISTRATION_STATUS_ID),
+	...values(TRANSACTION_STATUS_ID),
+	...values(CPT_STATUS_ID),
 	UNKNOWN_STATUS_ID,
 ];

@@ -528,7 +528,7 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
     }
 
     /**
-     * @since $VID:$
+     * @since 4.10.4.p
      * @throws DomainException
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -575,7 +575,7 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
 
     /**
      * Try to release reservations for the ticket, but there is a valid reservation for it.
-     * @since $VID:$
+     * @since 4.10.4.p
      * @throws DomainException
      * @throws EE_Error
      * @throws UnexpectedEntityException

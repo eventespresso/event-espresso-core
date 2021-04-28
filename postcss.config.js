@@ -1,5 +1,5 @@
-module.exports = () => ( {
-	plugins: [
-		require( 'autoprefixer' ),
-	],
-} );
+module.exports = () => ({
+	postcssOptions: {
+		plugins: [require('autoprefixer')],
+	},
+});

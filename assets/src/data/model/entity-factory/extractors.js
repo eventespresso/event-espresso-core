@@ -1,14 +1,7 @@
 /**
  * External imports
  */
-import {
-	isPlainObject,
-	camelCase,
-	last,
-	pick,
-	pickBy,
-	isArray,
-} from 'lodash';
+import { isPlainObject, camelCase, last, pick, pickBy, isArray } from 'lodash';
 import { instanceOf } from '@eventespresso/validators';
 
 /**
@@ -45,18 +38,15 @@ import { VALIDATE_TYPE } from './constants';
  * @return {DateTime|Money|*}  If this is not a value object, the original field
  * value is returned.
  */
-export const maybeConvertToValueObject = ( fieldName, fieldValue, schema ) => {
+export const maybeConvertToValueObject = (fieldName, fieldValue, schema) => {
 	if (
-		isDateTimeField( fieldName, schema ) &&
-		! DateTime.validateIsDateTime( fieldValue )
+		isDateTimeField(fieldName, schema) &&
+		!DateTime.validateIsDateTime(fieldValue)
 	) {
-		return DateTime.fromISO( fieldValue );
+		return DateTime.fromISO(fieldValue);
 	}
-	if (
-		isMoneyField( fieldName, schema ) &&
-		! ( instanceOf( fieldValue, 'Money' ) )
-	) {
-		return new Money( fieldValue, SiteCurrency );
+	if (isMoneyField(fieldName, schema) && !instanceOf(fieldValue, 'Money')) {
+		return new Money(fieldValue, SiteCurrency);
 	}
 	// if more VOs get added, then instead of adding more if else blocks
 	// to this function and the ones below, all VO logic should be extracted
@@ -86,11 +76,11 @@ export const maybeConvertFromValueObjectWithAssertions = (
 	fieldValue,
 	schema
 ) => {
-	if ( isDateTimeField( fieldName, schema ) ) {
-		DateTime.assertIsDateTime( fieldValue );
+	if (isDateTimeField(fieldName, schema)) {
+		DateTime.assertIsDateTime(fieldValue);
 		fieldValue = fieldValue.toISO();
-	} else if ( isMoneyField( fieldName, schema ) ) {
-		Money.assertMoney( fieldValue );
+	} else if (isMoneyField(fieldName, schema)) {
+		Money.assertMoney(fieldValue);
 		fieldValue = fieldValue.toNumber();
 	}
 	return fieldValue;
@@ -104,10 +94,10 @@ export const maybeConvertFromValueObjectWithAssertions = (
  * @param {*|DateTime|Money}fieldValue
  * @return {*} The raw value for the value object or the original value.
  */
-export const maybeConvertFromValueObject = ( fieldValue ) => {
-	if ( DateTime.validateIsDateTime( fieldValue ) ) {
+export const maybeConvertFromValueObject = (fieldValue) => {
+	if (DateTime.validateIsDateTime(fieldValue)) {
 		fieldValue = fieldValue.toISO();
-	} else if ( instanceOf( fieldValue, 'Money' ) ) {
+	} else if (instanceOf(fieldValue, 'Money')) {
 		fieldValue = fieldValue.toNumber();
 	}
 	return fieldValue;
@@ -134,11 +124,11 @@ export const derivePreparedValueForField = (
 	fieldValue,
 	instance
 ) => {
-	const validationType = validateTypeForField( fieldName, instance );
-	fieldValue = isPlainObject( fieldValue ) ?
-		fieldValue[ validationType ] :
-		fieldValue;
-	return maybeConvertToValueObject( fieldName, fieldValue, instance.schema );
+	const validationType = validateTypeForField(fieldName, instance);
+	fieldValue = isPlainObject(fieldValue)
+		? fieldValue[validationType]
+		: fieldValue;
+	return maybeConvertToValueObject(fieldName, fieldValue, instance.schema);
 };
 
 /**
@@ -151,26 +141,26 @@ export const derivePreparedValueForField = (
  * and has no pretty/rendered properties but DOES have a raw property, then that
  * is returned.
  */
-export const deriveRenderedValue = ( value ) => {
-	if ( ! isPlainObject( value ) ) {
+export const deriveRenderedValue = (value) => {
+	if (!isPlainObject(value)) {
 		return value;
 	}
-	value = hasPrettyProperty( value ) ? value.pretty : value;
-	value = hasRenderedProperty( value ) ? value.rendered : value;
-	return hasRawProperty( value ) ? value.raw : value;
+	value = hasPrettyProperty(value) ? value.pretty : value;
+	value = hasRenderedProperty(value) ? value.rendered : value;
+	return hasRawProperty(value) ? value.raw : value;
 };
 
 /**
  * Returns the name of a resource from the given `resourceLink`.
  *
  * eg. "https://api.eventespresso.com/registration" will return 'registration';
-
+ 
  * @param {string} resourceLink
  * @return {string} Returns the name of the resource from a provided resource
  * link.
  */
-export const getRelationNameFromLink = ( resourceLink ) => {
-	return pluralModelName( camelCase( last( resourceLink.split( '/' ) ) ) );
+export const getRelationNameFromLink = (resourceLink) => {
+	return pluralModelName(camelCase(last(resourceLink.split('/'))));
 };
 
 /**
@@ -182,25 +172,23 @@ export const getRelationNameFromLink = ( resourceLink ) => {
  *
  * @return {Object} A plain object
  */
-export const getBaseFieldsAndValuesForCloning = ( entityInstance ) => {
-	return Object.keys( entityInstance ).reduce( (
-		fieldsAndValues,
-		fieldName
-	) => {
+export const getBaseFieldsAndValuesForCloning = (entityInstance) => {
+	return Object.keys(entityInstance).reduce((fieldsAndValues, fieldName) => {
 		if (
-			isEntityField( fieldName, entityInstance.schema ) &&
-			! isPrimaryKeyField( fieldName, entityInstance.schema )
+			isEntityField(fieldName, entityInstance.schema) &&
+			!isPrimaryKeyField(fieldName, entityInstance.schema)
 		) {
-			fieldsAndValues[ fieldName ] = entityInstance[ fieldName ];
+			fieldsAndValues[fieldName] = entityInstance[fieldName];
 			return fieldsAndValues;
 		}
 		return fieldsAndValues;
-	}, {} );
+	}, {});
 };
 
 /**
  * Returns a plain object containing the entity field name and values from the
  * provided entity instance
+ *
  * @param {Object} entityInstance
  * @param {boolean} forInsert  Whether to return the fields and values for
  * insert or for update.
@@ -210,25 +198,22 @@ export const getBaseFieldsAndValuesForPersisting = (
 	entityInstance,
 	forInsert = false
 ) => {
-	const iterator = forInsert ?
-		Array.from( entityInstance.fieldsToPersistOnInsert.values() ) :
-		Object.keys( entityInstance );
+	const iterator = forInsert
+		? Array.from(entityInstance.fieldsToPersistOnInsert.values())
+		: Object.keys(entityInstance);
 
-	return iterator.reduce( (
-		fieldsAndValues,
-		fieldName
-	) => {
+	return iterator.reduce((fieldsAndValues, fieldName) => {
 		if (
-			isEntityField( fieldName, entityInstance.schema ) &&
-			! isPrimaryKeyField( fieldName, entityInstance.schema )
+			isEntityField(fieldName, entityInstance.schema) &&
+			!isPrimaryKeyField(fieldName, entityInstance.schema)
 		) {
-			fieldsAndValues[ fieldName ] = maybeConvertFromValueObject(
-				entityInstance[ fieldName ],
+			fieldsAndValues[fieldName] = maybeConvertFromValueObject(
+				entityInstance[fieldName]
 			);
 			return fieldsAndValues;
 		}
 		return fieldsAndValues;
-	}, {} );
+	}, {});
 };
 
 /**
@@ -237,10 +222,8 @@ export const getBaseFieldsAndValuesForPersisting = (
  * @param {Object} entityInstance
  * @return {Object} an array of values for the primary keys.
  */
-export const getPrimaryKeyValues = ( entityInstance ) => pick(
-	entityInstance,
-	entityInstance.primaryKeys
-);
+export const getPrimaryKeyValues = (entityInstance) =>
+	pick(entityInstance, entityInstance.primaryKeys);
 
 /**
  * This returns a plain object of entity fields from the schema for the entity
@@ -250,13 +233,10 @@ export const getPrimaryKeyValues = ( entityInstance ) => pick(
  * @return {Object} A plain object with fields and schema properties that are
  * entity properties.
  */
-export const getEntityFieldsFromSchema = ( entityInstance ) => pickBy(
-	entityInstance.schema,
-	( fieldValue, fieldName ) => isEntityField(
-		fieldName,
-		entityInstance.schema
-	)
-);
+export const getEntityFieldsFromSchema = (entityInstance) =>
+	pickBy(entityInstance.schema, (fieldValue, fieldName) =>
+		isEntityField(fieldName, entityInstance.schema)
+	);
 
 /**
  * This returns a plain object of extracted primaryKey fields from the schema
@@ -266,13 +246,10 @@ export const getEntityFieldsFromSchema = ( entityInstance ) => pickBy(
  * @return {Object} A plain object with fields and schema properties that
  * 					represent primary key fields.
  */
-export const getPrimaryKeyFieldsFromSchema = ( entityInstance ) => pickBy(
-	entityInstance.schema,
-	( fieldValue, fieldName ) => isPrimaryKeyField(
-		fieldName,
-		entityInstance.schema
-	)
-);
+export const getPrimaryKeyFieldsFromSchema = (entityInstance) =>
+	pickBy(entityInstance.schema, (fieldValue, fieldName) =>
+		isPrimaryKeyField(fieldName, entityInstance.schema)
+	);
 
 /**
  * Derives the default value to use for a given type.
@@ -280,13 +257,13 @@ export const getPrimaryKeyFieldsFromSchema = ( entityInstance ) => pickBy(
  * @param {string} type
  * @return {*}  A value to use for the given type.
  */
-export const deriveDefaultValueForType = ( type ) => {
-	if ( isArray( type ) ) {
-		return type.indexOf( 'null' ) > -1 ?
-			null :
-			deriveDefaultValueForType( type[ 0 ] );
+export const deriveDefaultValueForType = (type) => {
+	if (isArray(type)) {
+		return type.indexOf('null') > -1
+			? null
+			: deriveDefaultValueForType(type[0]);
 	}
-	switch ( type ) {
+	switch (type) {
 		case 'string':
 			return '';
 		case 'number':
@@ -299,7 +276,7 @@ export const deriveDefaultValueForType = ( type ) => {
 		case 'bool':
 			return false;
 		case 'date-time':
-			return ( new Date() ).toISOString();
+			return new Date().toISOString();
 	}
 	return null;
 };
@@ -314,23 +291,23 @@ export const deriveDefaultValueForType = ( type ) => {
  * @param {Object} schema
  * @return {*}  What type the filed is.
  */
-export const deriveTypeForField = ( fieldName, schema ) => {
-	if ( isDateTimeField( fieldName, schema ) ) {
+export const deriveTypeForField = (fieldName, schema) => {
+	if (isDateTimeField(fieldName, schema)) {
 		return 'date-time';
 	}
-	if ( schema[ fieldName ] && schema[ fieldName ].type ) {
-		if ( schema[ fieldName ].type === 'object' ) {
+	if (schema[fieldName] && schema[fieldName].type) {
+		if (schema[fieldName].type === 'object') {
 			if (
-				schema[ fieldName ].properties &&
-				hasRawProperty( schema[ fieldName ].properties )
+				schema[fieldName].properties &&
+				hasRawProperty(schema[fieldName].properties)
 			) {
-				return schema[ fieldName ].properties.raw.type ?
-					schema[ fieldName ].properties.raw.type :
-					null;
+				return schema[fieldName].properties.raw.type
+					? schema[fieldName].properties.raw.type
+					: null;
 			}
 			return null;
 		}
-		return schema[ fieldName ].type;
+		return schema[fieldName].type;
 	}
 	return null;
 };
@@ -353,20 +330,17 @@ export const deriveTypeForField = ( fieldName, schema ) => {
  * @param {string} fieldName
  * @param {*} fieldValue
  * @param {Object} schema
- * @return {Symbol}  The validate type for the field.
+ * @return {symbol}  The validate type for the field.
  */
-export const deriveValidateTypeForField = ( fieldName, fieldValue, schema ) => {
-	if ( hasRawProperty( fieldValue ) ) {
+export const deriveValidateTypeForField = (fieldName, fieldValue, schema) => {
+	if (hasRawProperty(fieldValue)) {
 		return VALIDATE_TYPE.RAW;
 	}
-	if ( schema[ fieldName ] && schema[ fieldName ].type ) {
-		if (
-			schema[ fieldName ].type === 'object' &&
-			isPlainObject( fieldValue )
-		) {
-			return hasRenderedProperty( fieldValue ) ?
-				VALIDATE_TYPE.RENDERED :
-				VALIDATE_TYPE.PRETTY;
+	if (schema[fieldName] && schema[fieldName].type) {
+		if (schema[fieldName].type === 'object' && isPlainObject(fieldValue)) {
+			return hasRenderedProperty(fieldValue)
+				? VALIDATE_TYPE.RENDERED
+				: VALIDATE_TYPE.PRETTY;
 		}
 	}
 	return VALIDATE_TYPE.RAW;
@@ -380,11 +354,11 @@ export const deriveValidateTypeForField = ( fieldName, fieldValue, schema ) => {
  * @return {*} The default value for the field from the schema or if not
  * present in the schema, a derived default value from the schema type.
  */
-export const getDefaultValueForField = ( fieldName, schema ) => {
-	if ( schema[ fieldName ] ) {
-		return schema[ fieldName ].default ?
-			schema[ fieldName ].default :
-			deriveDefaultValueForType( schema[ fieldName ].type );
+export const getDefaultValueForField = (fieldName, schema) => {
+	if (schema[fieldName]) {
+		return schema[fieldName].default
+			? schema[fieldName].default
+			: deriveDefaultValueForType(schema[fieldName].type);
 	}
 	return null;
 };

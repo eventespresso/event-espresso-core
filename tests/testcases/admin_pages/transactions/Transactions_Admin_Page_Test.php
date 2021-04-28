@@ -286,7 +286,7 @@ class Transactions_Admin_Page_Test extends EE_UnitTestCase
         //echo "\n\n " . __METHOD__ . "() \n";
         $transaction  = $this->_generate_transaction_and_registrations();
         $request_data = $this->_generate_request_data_for_new_payment_or_refund($transaction);
-        $payment      = $this->_admin_page->create_payment_from_request_data($request_data['txn_admin_payment']['PAY_ID']);
+        $payment      = $this->_admin_page->create_payment_from_request_data($request_data['txn_admin_payment']);
         $this->assertInstanceOf('EE_Payment', $payment);
     }
 

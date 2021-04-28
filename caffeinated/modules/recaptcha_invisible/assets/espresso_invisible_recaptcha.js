@@ -99,7 +99,8 @@ function espressoLoadRecaptcha() {
                             setTimeout(
                                 function() {
                                     $submit.click();
-                                    if (eeRecaptcha.disable_submit !== true) {
+
+                                    if ($submit.data('ee-disable-after-recaptcha') === true && eeRecaptcha.disable_submit !== true) {
                                         $submit.prop('disabled', true).addClass('disabled ee-button-disabled');
                                     }
                                 },

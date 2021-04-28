@@ -134,7 +134,8 @@ class Payments_Admin_Page extends EE_Admin_Page
                 ),
                 $this->_add_payment_method_help_tabs()
             ),
-            'help_tour'     => array('Payment_Methods_Selection_Help_Tour'),
+            // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
+            // 'help_tour'     => array('Payment_Methods_Selection_Help_Tour'),
             'require_nonce' => false,
         );
         $this->_page_config = array(
@@ -234,12 +235,15 @@ class Payments_Admin_Page extends EE_Admin_Page
 
     public function load_scripts_styles()
     {
+        // styles
+        wp_enqueue_style('espresso-ui-theme');
+        // scripts
         wp_enqueue_script('ee_admin_js');
         wp_enqueue_script('ee-text-links');
         wp_enqueue_script(
             'espresso_payments',
             EE_PAYMENTS_ASSETS_URL . 'espresso_payments_admin.js',
-            array('espresso-ui-theme', 'ee-datepicker'),
+            array('ee-datepicker'),
             EVENT_ESPRESSO_VERSION,
             true
         );

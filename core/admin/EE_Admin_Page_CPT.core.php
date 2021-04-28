@@ -267,7 +267,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         foreach ($current_metaboxes as $box_context) {
             foreach ($box_context as $box_details) {
                 foreach ($box_details as $box) {
-                    if (is_array($box['callback'])
+                    if (is_array($box) && is_array($box['callback'])
                         && (
                             $box['callback'][0] instanceof EE_Admin_Page
                             || $box['callback'][0] instanceof EE_Admin_Hooks

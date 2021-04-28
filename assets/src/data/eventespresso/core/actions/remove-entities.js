@@ -13,7 +13,7 @@ const { entities: types } = ACTION_TYPES;
  * @return {{type: string, modelName: string, entityId: number}} An action
  * object.
  */
-export function removeEntityById( modelName, entityId ) {
+export function removeEntityById(modelName, entityId) {
 	return {
 		type: types.REMOVE_ENTITY_BY_ID,
 		modelName,
@@ -29,7 +29,7 @@ export function removeEntityById( modelName, entityId ) {
  * @return {{type: string, modelName: string, entityId: {number}}} An action
  * object
  */
-export function removeDeleteEntityId( modelName, entityId ) {
+export function removeDeleteEntityId(modelName, entityId) {
 	return {
 		type: types.REMOVE_DELETE_ENTITY_ID,
 		modelName,
@@ -45,7 +45,7 @@ export function removeDeleteEntityId( modelName, entityId ) {
  * @return {{type: string, modelName: string, entityId: number}} An action
  * object.
  */
-export function removeTrashEntityId( modelName, entityId ) {
+export function removeTrashEntityId(modelName, entityId) {
 	return {
 		type: types.REMOVE_TRASH_ENTITY_ID,
 		modelName,

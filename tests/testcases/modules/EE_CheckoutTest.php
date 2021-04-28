@@ -26,7 +26,9 @@ class EE_CheckoutTest extends EE_UnitTestCase {
 	}
 
 
-
+    /**
+     * @doesNotPerformAssertions
+     */
 	public function test_add_reg_step() {
 	}
 

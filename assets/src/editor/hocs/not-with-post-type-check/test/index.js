@@ -1,3 +1,5 @@
+/* eslint-disable jest/valid-title */
+/* eslint-disable jest/no-conditional-expect */
 /**
  * Internal imports
  */
@@ -8,17 +10,17 @@ import { NotWithPostTypeCheck } from '../index';
  */
 import renderer from 'react-test-renderer';
 
-describe( 'NotWithPostTypeCheck Component Test', () => {
+describe('NotWithPostTypeCheck Component Test', () => {
 	const SubComponent = () => {
 		return <div>Hello</div>;
 	};
-	const getTestComponent = ( postTypes ) => {
+	const getTestComponent = (postTypes) => {
 		const props = {
 			postType: 'page',
 			excludedPostTypeSlugs: postTypes,
 		};
 		return (
-			<NotWithPostTypeCheck { ...props }>
+			<NotWithPostTypeCheck {...props}>
 				<SubComponent />
 			</NotWithPostTypeCheck>
 		);
@@ -31,7 +33,7 @@ describe( 'NotWithPostTypeCheck Component Test', () => {
 		],
 		[
 			'returns null if given post types exist for post type as array',
-			[ 'page', 'post' ],
+			['page', 'post'],
 			false,
 		],
 		[
@@ -40,19 +42,15 @@ describe( 'NotWithPostTypeCheck Component Test', () => {
 			true,
 		],
 	];
-	testConditions.forEach( ( [
-		description,
-		postTypes,
-		expectRendered,
-	] ) => {
-		const rendered = renderer.create( getTestComponent( postTypes ) );
+	testConditions.forEach(([description, postTypes, expectRendered]) => {
+		const rendered = renderer.create(getTestComponent(postTypes));
 		const instance = rendered.root;
-		it( description, () => {
-			if ( expectRendered ) {
-				expect( instance.children[ 0 ].type ).toEqual( SubComponent );
+		it(description, () => {
+			if (expectRendered) {
+				expect(instance.children[0].type).toEqual(SubComponent);
 			} else {
-				expect( instance.children ).toEqual( [] );
+				expect(instance.children).toEqual([]);
 			}
-		} );
-	} );
-} );
+		});
+	});
+});

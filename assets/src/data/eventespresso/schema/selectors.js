@@ -19,12 +19,13 @@ import createSelector from 'rememo';
 /**
  * Selector for returning the schema object for a given model name from the
  * state.
+ *
  * @param {Object} state
  * @param {string} modelName
  * @return {Object} The schema object or null if it doesn't exist.
  */
-export function getSchemaForModel( state, modelName ) {
-	return state.schema.get( singularModelName( modelName ), null );
+export function getSchemaForModel(state, modelName) {
+	return state.schema.get(singularModelName(modelName), null);
 }
 
 /**
@@ -35,27 +36,28 @@ export function getSchemaForModel( state, modelName ) {
  * @param {string} modelName
  * @return {boolean}  True means its being requested.
  */
-export function isRequestingSchemaForModel( state, modelName ) {
+export function isRequestingSchemaForModel(state, modelName) {
 	return isResolving(
 		REDUCER_KEY,
 		'getSchemaForModel',
-		singularModelName( modelName )
+		singularModelName(modelName)
 	);
 }
 
 /**
  * Selector for returning whether the schema has been resolved or not for the
  * given model name.
+ *
  * @param {Object} state
  * @param {string} modelName
  * @return {boolean} True means that the schema has finished resolving for this
  * model name.
  */
-export function hasResolvedSchemaForModel( state, modelName ) {
+export function hasResolvedSchemaForModel(state, modelName) {
 	return hasFinishedResolving(
 		REDUCER_KEY,
 		'getSchemaForModel',
-		singularModelName( modelName )
+		singularModelName(modelName)
 	);
 }
 
@@ -68,9 +70,9 @@ export function hasResolvedSchemaForModel( state, modelName ) {
  * @return {Object} Returns the model entity factory or null if it doesn't
  * exist.
  */
-export function getFactoryForModel( state, modelName ) {
-	const factory = state.factory.get( singularModelName( modelName ), null );
-	return ! ( factory instanceof Map ) ? factory : null;
+export function getFactoryForModel(state, modelName) {
+	const factory = state.factory.get(singularModelName(modelName), null);
+	return !(factory instanceof Map) ? factory : null;
 }
 
 /**
@@ -81,11 +83,11 @@ export function getFactoryForModel( state, modelName ) {
  * @param {string} modelName
  * @return {boolean}  True means it is being requested.
  */
-export function isRequestingFactoryForModel( state, modelName ) {
+export function isRequestingFactoryForModel(state, modelName) {
 	return isResolving(
 		REDUCER_KEY,
 		'getFactoryForModel',
-		singularModelName( modelName )
+		singularModelName(modelName)
 	);
 }
 
@@ -98,11 +100,11 @@ export function isRequestingFactoryForModel( state, modelName ) {
  * @return {boolean} True means that the factory has finished resolving for this
  * model name.
  */
-export function hasResolvedFactoryForModel( state, modelName ) {
+export function hasResolvedFactoryForModel(state, modelName) {
 	return hasFinishedResolving(
 		REDUCER_KEY,
 		'getFactoryForModel',
-		singularModelName( modelName )
+		singularModelName(modelName)
 	);
 }
 
@@ -122,17 +124,22 @@ export function getRelationEndpointForEntityId(
 	entityId,
 	relationModelName
 ) {
-	modelName = singularModelName( modelName );
-	relationModelName = singularModelName( relationModelName );
-	entityId = normalizeEntityId( entityId );
-	return state.relationEndpoints.getIn(
-		[ modelName, entityId, relationModelName ]
-	) || '';
+	modelName = singularModelName(modelName);
+	relationModelName = singularModelName(relationModelName);
+	entityId = normalizeEntityId(entityId);
+	return (
+		state.relationEndpoints.getIn([
+			modelName,
+			entityId,
+			relationModelName,
+		]) || ''
+	);
 }
 
 /**
  * Selector for returning whether the relation endpoint is being requested
  * or not for the given model name, entity id, and relation from the state.
+ *
  * @param {Object} state
  * @param {string} modelName
  * @param {number|string} entityId
@@ -145,15 +152,15 @@ export function isRequestingRelationEndpointForEntityId(
 	entityId,
 	relationModelName
 ) {
-	modelName = singularModelName( modelName );
-	entityId = normalizeEntityId( entityId );
-	relationModelName = singularModelName( relationModelName );
+	modelName = singularModelName(modelName);
+	entityId = normalizeEntityId(entityId);
+	relationModelName = singularModelName(relationModelName);
 	return isResolving(
 		REDUCER_KEY,
 		'getRelationEndpointForEntityId',
 		modelName,
 		entityId,
-		relationModelName,
+		relationModelName
 	);
 }
 
@@ -178,29 +185,23 @@ export function isRequestingRelationEndpointForEntityId(
  * type could not be determined.
  */
 export const getRelationPrimaryKeyString = createSelector(
-	(
-		state,
-		modelName,
-		relationName
-	) => {
-		modelName = singularModelName( modelName );
-		relationName = singularModelName( relationName );
-		const relationType = getRelationType( state, modelName, relationName );
-		if ( relationType === '' ) {
+	(state, modelName, relationName) => {
+		modelName = singularModelName(modelName);
+		relationName = singularModelName(relationName);
+		const relationType = getRelationType(state, modelName, relationName);
+		if (relationType === '') {
 			return '';
 		}
-		const relationPrimaryKey = getPrimaryKey( relationName );
-		return relationType === 'EE_Belongs_To_Relation' ?
-			relationPrimaryKey :
-			`${ modelNameForQueryString( relationName ) }.${ relationPrimaryKey }`;
+		const relationPrimaryKey = getPrimaryKey(relationName);
+		return relationType === 'EE_Belongs_To_Relation'
+			? relationPrimaryKey
+			: `${modelNameForQueryString(relationName)}.${relationPrimaryKey}`;
 	},
-	( state, modelName, relationName ) => {
-		modelName = singularModelName( modelName );
-		relationName = singularModelName( relationName );
-		return [
-			state.relationSchema.getIn( [ modelName, relationName ], '' ),
-		];
-	},
+	(state, modelName, relationName) => {
+		modelName = singularModelName(modelName);
+		relationName = singularModelName(relationName);
+		return [state.relationSchema.getIn([modelName, relationName], '')];
+	}
 );
 
 /**
@@ -212,13 +213,11 @@ export const getRelationPrimaryKeyString = createSelector(
  * @return {string} The type for the relation returned for the given model and
  * relation.
  */
-export const getRelationResponseType = ( state, modelName, relationName ) => {
-	modelName = singularModelName( modelName );
-	relationName = singularModelName( relationName );
-	const relationSchema = getRelationSchema( state, modelName, relationName );
-	return relationSchema !== null ?
-		relationSchema.type :
-		'';
+export const getRelationResponseType = (state, modelName, relationName) => {
+	modelName = singularModelName(modelName);
+	relationName = singularModelName(relationName);
+	const relationSchema = getRelationSchema(state, modelName, relationName);
+	return relationSchema !== null ? relationSchema.type : '';
 };
 
 /**
@@ -230,11 +229,11 @@ export const getRelationResponseType = ( state, modelName, relationName ) => {
  * @param {string} relationName
  * @return {boolean} True means there is a join table, false means there isn't.
  */
-export const hasJoinTableRelation = ( state, modelName, relationName ) => {
-	modelName = singularModelName( modelName );
-	relationName = singularModelName( relationName );
-	const relationType = getRelationType( state, modelName, relationName );
-	return JOIN_RELATION_TYPES.indexOf( relationType ) > -1;
+export const hasJoinTableRelation = (state, modelName, relationName) => {
+	modelName = singularModelName(modelName);
+	relationName = singularModelName(relationName);
+	const relationType = getRelationType(state, modelName, relationName);
+	return JOIN_RELATION_TYPES.indexOf(relationType) > -1;
 };
 
 /**
@@ -246,13 +245,11 @@ export const hasJoinTableRelation = ( state, modelName, relationName ) => {
  * @param {string} relationName
  * @return {string}  The relation type (eg. "EE_HABTM_Relation")
  */
-export const getRelationType = ( state, modelName, relationName ) => {
-	modelName = singularModelName( modelName );
-	relationName = singularModelName( relationName );
-	const relationSchema = getRelationSchema( state, modelName, relationName );
-	return relationSchema !== null ?
-		relationSchema.relation_type :
-		'';
+export const getRelationType = (state, modelName, relationName) => {
+	modelName = singularModelName(modelName);
+	relationName = singularModelName(relationName);
+	const relationSchema = getRelationSchema(state, modelName, relationName);
+	return relationSchema !== null ? relationSchema.relation_type : '';
 };
 
 /**
@@ -264,8 +261,8 @@ export const getRelationType = ( state, modelName, relationName ) => {
  * @param {string} relationName
  * @return {Object|null} An object or null if there is no relation schema.
  */
-export const getRelationSchema = ( state, modelName, relationName ) => {
-	modelName = singularModelName( modelName );
-	relationName = singularModelName( relationName );
-	return state.relationSchema.getIn( [ modelName, relationName ], null );
+export const getRelationSchema = (state, modelName, relationName) => {
+	modelName = singularModelName(modelName);
+	relationName = singularModelName(relationName);
+	return state.relationSchema.getIn([modelName, relationName], null);
 };

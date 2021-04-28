@@ -1,4 +1,5 @@
 <?php
+
 // PARAMS THAT MUST BE PASSED ARE:
 assert(isset($QST_ID));
 assert($question);
@@ -11,6 +12,8 @@ echo EEH_Form_Fields::hidden_input('QST_wp_user', $question->wp_user());
 echo EEH_Form_Fields::hidden_input('QST_deleted', $question->deleted());
 $QST_system = $question->system_ID();
 $fields = $question->get_model()->field_settings();
+
+do_action('AHEE__questions_main_meta_box__template__before_admin_page_content', $question);
 
 // does question have any answers? cause if it does then we have to disable type
 $has_answers = $question->has_answers();
@@ -32,9 +35,16 @@ if ($QST_system === 'country') {
 }
 ?>
 
+<?php
+    do_action('AHEE__questions_main_meta_box__template__inner_admin_page_content', $question);
+?>
+
 <div class="padding">
     <table class="form-table">
         <tbody>
+        <?php
+            do_action('AHEE__questions_main_meta_box__template__before_table_form_table', $question);
+        ?>
         <tr>
             <th>
                 <label for="QST_display_text"><?php echo $fields['QST_display_text']->get_nicename(); ?></label>
@@ -120,6 +130,13 @@ if ($QST_system === 'country') {
                 } else {
                     $disabled_attr = '';
                     $id = '';
+                }
+
+                // Only display Confirm email for
+                if (empty($QST_system)
+                    || (! empty($QST_system) && $QST_system !== EEM_Attendee::system_question_email_confirm)
+                ) {
+                    unset($question_types[ EEM_Question::QST_type_email_confirm ]);
                 }
 
                 echo EEH_Form_Fields::select_input(
@@ -382,9 +399,15 @@ if ($QST_system === 'country') {
 
             </td>
         </tr>
-
+        <?php
+            do_action('AHEE__questions_main_meta_box__template__after_table_form_table', $question);
+        ?>
         </tbody>
     </table>
 
     <div class="clear"></div>
 </div>
+
+<?php
+    do_action('AHEE__questions_main_meta_box__template__after_admin_page_content', $question);
+

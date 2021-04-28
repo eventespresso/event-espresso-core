@@ -5,8 +5,8 @@ exports[`EventAttendeesEditor Block block edit matches snapshot for no props 1`]
   <Placeholder>
     <Spinner />
   </Placeholder>
-  <ForwardRef>
-    <ForwardRef(PanelBody)
+  <InspectorControls>
+    <PanelBody
       title="Filter By Settings"
     >
       <WithBaseControl(EventSelect)
@@ -41,7 +41,7 @@ exports[`EventAttendeesEditor Block block edit matches snapshot for no props 1`]
         onLimitChange={[Function]}
         withSlider={false}
       />
-      <WithInstanceId(SelectControl)
+      <ForwardRef(SelectControl)
         label="Order Attendees by:"
         onChange={[Function]}
         options={
@@ -70,7 +70,7 @@ exports[`EventAttendeesEditor Block block edit matches snapshot for no props 1`]
         }
         value="lastThenFirstName"
       />
-      <WithInstanceId(SelectControl)
+      <ForwardRef(SelectControl)
         label="Sort order:"
         onChange={[Function]}
         options={
@@ -87,39 +87,39 @@ exports[`EventAttendeesEditor Block block edit matches snapshot for no props 1`]
         }
         value="ASC"
       />
-    </ForwardRef(PanelBody)>
-    <ForwardRef(PanelBody)
+    </PanelBody>
+    <PanelBody
       title="Gravatar Setttings"
     >
-      <WithInstanceId(ToggleControl)
+      <ToggleControl
         checked={true}
         help="Gravatar images are shown for each attendee."
         label="Display Gravatar"
         onChange={[Function]}
       />
-      <WithInstanceId(WithState(RangeControl))
+      <ForwardRef(RangeControl)
         label="Size of Gravatar"
         max={128}
         min={10}
         onChange={[Function]}
         value={24}
       />
-    </ForwardRef(PanelBody)>
+    </PanelBody>
     <WithSelect(NotWithPostTypeCheck)
       excludedPostTypeSlugs="page"
     >
-      <ForwardRef(PanelBody)
+      <PanelBody
         title="Archive Settings"
       >
-        <WithInstanceId(ToggleControl)
+        <ToggleControl
           checked={false}
           help="Attendees are hidden whenever this post is listed in an archive view."
           label="Display on Archives"
           onChange={[Function]}
         />
-      </ForwardRef(PanelBody)>
+      </PanelBody>
     </WithSelect(NotWithPostTypeCheck)>
-  </ForwardRef>
+  </InspectorControls>
 </Fragment>
 `;
 
@@ -146,8 +146,8 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
     isLoading={false}
     showGravatar={true}
   />
-  <ForwardRef>
-    <ForwardRef(PanelBody)
+  <InspectorControls>
+    <PanelBody
       title="Filter By Settings"
     >
       <WithBaseControl(EventSelect)
@@ -182,7 +182,7 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
         onLimitChange={[Function]}
         withSlider={false}
       />
-      <WithInstanceId(SelectControl)
+      <ForwardRef(SelectControl)
         label="Order Attendees by:"
         onChange={[Function]}
         options={
@@ -211,7 +211,7 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
         }
         value="lastThenFirstName"
       />
-      <WithInstanceId(SelectControl)
+      <ForwardRef(SelectControl)
         label="Sort order:"
         onChange={[Function]}
         options={
@@ -228,39 +228,39 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
         }
         value="ASC"
       />
-    </ForwardRef(PanelBody)>
-    <ForwardRef(PanelBody)
+    </PanelBody>
+    <PanelBody
       title="Gravatar Setttings"
     >
-      <WithInstanceId(ToggleControl)
+      <ToggleControl
         checked={true}
         help="Gravatar images are shown for each attendee."
         label="Display Gravatar"
         onChange={[Function]}
       />
-      <WithInstanceId(WithState(RangeControl))
+      <ForwardRef(RangeControl)
         label="Size of Gravatar"
         max={128}
         min={10}
         onChange={[Function]}
         value={24}
       />
-    </ForwardRef(PanelBody)>
+    </PanelBody>
     <WithSelect(NotWithPostTypeCheck)
       excludedPostTypeSlugs="page"
     >
-      <ForwardRef(PanelBody)
+      <PanelBody
         title="Archive Settings"
       >
-        <WithInstanceId(ToggleControl)
+        <ToggleControl
           checked={false}
           help="Attendees are hidden whenever this post is listed in an archive view."
           label="Display on Archives"
           onChange={[Function]}
         />
-      </ForwardRef(PanelBody)>
+      </PanelBody>
     </WithSelect(NotWithPostTypeCheck)>
-  </ForwardRef>
+  </InspectorControls>
 </Fragment>
 `;
 
@@ -269,8 +269,8 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
   <Placeholder>
     There are no attendees for selected options.
   </Placeholder>
-  <ForwardRef>
-    <ForwardRef(PanelBody)
+  <InspectorControls>
+    <PanelBody
       title="Filter By Settings"
     >
       <WithBaseControl(EventSelect)
@@ -305,7 +305,7 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
         onLimitChange={[Function]}
         withSlider={false}
       />
-      <WithInstanceId(SelectControl)
+      <ForwardRef(SelectControl)
         label="Order Attendees by:"
         onChange={[Function]}
         options={
@@ -334,7 +334,7 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
         }
         value="lastThenFirstName"
       />
-      <WithInstanceId(SelectControl)
+      <ForwardRef(SelectControl)
         label="Sort order:"
         onChange={[Function]}
         options={
@@ -351,38 +351,38 @@ exports[`EventAttendeesEditor Block block edit matches snapshot with isLoading f
         }
         value="ASC"
       />
-    </ForwardRef(PanelBody)>
-    <ForwardRef(PanelBody)
+    </PanelBody>
+    <PanelBody
       title="Gravatar Setttings"
     >
-      <WithInstanceId(ToggleControl)
+      <ToggleControl
         checked={true}
         help="Gravatar images are shown for each attendee."
         label="Display Gravatar"
         onChange={[Function]}
       />
-      <WithInstanceId(WithState(RangeControl))
+      <ForwardRef(RangeControl)
         label="Size of Gravatar"
         max={128}
         min={10}
         onChange={[Function]}
         value={24}
       />
-    </ForwardRef(PanelBody)>
+    </PanelBody>
     <WithSelect(NotWithPostTypeCheck)
       excludedPostTypeSlugs="page"
     >
-      <ForwardRef(PanelBody)
+      <PanelBody
         title="Archive Settings"
       >
-        <WithInstanceId(ToggleControl)
+        <ToggleControl
           checked={false}
           help="Attendees are hidden whenever this post is listed in an archive view."
           label="Display on Archives"
           onChange={[Function]}
         />
-      </ForwardRef(PanelBody)>
+      </PanelBody>
     </WithSelect(NotWithPostTypeCheck)>
-  </ForwardRef>
+  </InspectorControls>
 </Fragment>
 `;

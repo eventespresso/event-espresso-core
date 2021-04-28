@@ -10,6 +10,6 @@ import { upperFirst, camelCase } from 'lodash';
  * @return {string} Receives something like 'message_template' and returns
  * MessageTemplateSelect
  */
-export const modelSelectName = ( modelName ) => {
-	return upperFirst( camelCase( modelName ) ) + 'Select';
+export const modelSelectName = (modelName) => {
+	return upperFirst(camelCase(modelName)) + 'Select';
 };
