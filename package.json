@@ -92,7 +92,7 @@
 		"@wordpress/hooks": "^2.12.2",
 		"@wordpress/is-shallow-equal": "^3.1.2",
 		"@wordpress/jest-preset-default": "^6.3.0",
-		"@wordpress/keycodes": "^2.19.2",
+		"@wordpress/keycodes": "^2.19.3",
 		"@wordpress/plugins": "^2.25.2",
 		"@wordpress/prettier-config": "^0.4.0",
 		"@wordpress/scripts": "^12.1.1",
