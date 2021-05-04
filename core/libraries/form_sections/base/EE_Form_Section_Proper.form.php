@@ -1499,7 +1499,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
                 );
             }
         }
-        return implode('<br', $submission_error_messages);
+        return implode('<br>', $submission_error_messages);
     }
 
 

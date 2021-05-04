@@ -1114,25 +1114,32 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     }
 
 
-
     /**
      * Gets a single item for this model from the DB, given only its ID (or null if none is found).
      * If there is no primary key on this model, $id is treated as primary key string
      *
      * @param mixed $id int or string, depending on the type of the model's primary key
      * @return EE_Base_Class
+     * @throws EE_Error
      */
     public function get_one_by_ID($id)
     {
         if ($this->get_from_entity_map($id)) {
             return $this->get_from_entity_map($id);
         }
-        return $this->get_one(
+        $model_object = $this->get_one(
             $this->alter_query_params_to_restrict_by_ID(
                 $id,
                 array('default_where_conditions' => EEM_Base::default_where_conditions_minimum_all)
             )
         );
+        $className = $this->_get_class_name();
+        if ($model_object instanceof $className) {
+            // make sure valid objects get added to the entity map
+            // so that the next call to this method doesn't trigger another trip to the db
+            $this->add_to_entity_map($model_object);
+        }
+        return $model_object;
     }
 
 
@@ -5431,12 +5438,13 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     }
 
 
-
     /**
      * @param $cols_n_values
      * @param $qualified_column
      * @param $regular_column
      * @return null
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _get_column_value_with_table_alias_or_not($cols_n_values, $qualified_column, $regular_column)
     {
@@ -5455,6 +5463,14 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             foreach ($this->foreign_key_aliases as $FK_alias => $PK_column) {
                 if ($PK_column === $qualified_column && isset($cols_n_values[ $FK_alias ])) {
                     $value = $cols_n_values[ $FK_alias ];
+                    list($pk_class) = explode('.', $PK_column);
+                    $pk_model_name = "EEM_{$pk_class}";
+                    /** @var EEM_Base $pk_model */
+                    $pk_model = EE_Registry::instance()->load_model($pk_model_name);
+                    if ($pk_model instanceof EEM_Base) {
+                        // make sure object is pulled from db and added to entity map
+                        $pk_model->get_one_by_ID($value);
+                    }
                     break;
                 }
             }

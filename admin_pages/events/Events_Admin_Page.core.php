@@ -1,8 +1,12 @@
 <?php
 
+use EventEspresso\admin_pages\events\form_sections\ConfirmEventDeletionForm;
 use EventEspresso\core\domain\services\capabilities\FeatureFlags;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\exceptions\UnexpectedEntityException;
+use EventEspresso\core\services\orm\tree_traversal\NodeGroupDao;
+use EventEspresso\core\services\orm\tree_traversal\ModelObjNode;
 
 /**
  * Events_Admin_Page
@@ -46,6 +50,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      */
     protected $_cpt_model_obj = false;
 
+
+    /**
+     * @var NodeGroupDao
+     */
+    protected $model_obj_node_group_persister;
 
     /**
      * Initialize page props for this admin page group.
@@ -233,6 +242,15 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 'func'       => '_category_list_table',
                 'capability' => 'ee_manage_event_categories',
             ],
+            'preview_deletion' => [
+                'func' => 'previewDeletion',
+                'capability' => 'ee_delete_events',
+            ],
+            'confirm_deletion' => [
+                'func' => 'confirmDeletion',
+                'capability' => 'ee_delete_events',
+                'noheader' => true,
+            ]
         ];
     }
 
@@ -270,11 +288,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                         'title'    => esc_html__('Events Overview Other', 'event_espresso'),
                         'filename' => 'events_overview_other',
                     ],
-                ],
-                'help_tour'     => [
-                    'Event_Overview_Help_Tour',
-                    // 'New_Features_Test_Help_Tour' for testing multiple help tour
-                ],
+               ],
+                // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
+                // 'help_tour'     => [
+                //     'Event_Overview_Help_Tour',
+                //     // 'New_Features_Test_Help_Tour' for testing multiple help tour
+                // ],
                 'require_nonce' => false,
                 'qtips'         => ['EE_Event_List_Table_Tips'],
             ],
@@ -327,9 +346,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                         'filename' => 'event_editor_other',
                     ],
                 ],
-                'help_tour'     => [
-                    'Event_Editor_Help_Tour',
-                ],
+                // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
+                // 'help_tour'     => [
+                //     'Event_Editor_Help_Tour',
+                // ],
                 'require_nonce' => false,
             ],
             'edit'                   => [
@@ -412,7 +432,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                         'filename' => 'events_default_settings_max_tickets',
                     ],
                 ],
-                'help_tour'     => ['Event_Default_Settings_Help_Tour'],
+                // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
+                // 'help_tour'     => ['Event_Default_Settings_Help_Tour'],
                 'require_nonce' => false,
             ],
             // template settings
@@ -428,7 +449,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                         'filename' => 'general_settings_templates',
                     ],
                 ],
-                'help_tour'     => ['Templates_Help_Tour'],
+                // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
+                // 'help_tour'     => ['Templates_Help_Tour'],
                 'require_nonce' => false,
             ],
             // event category stuff
@@ -444,7 +466,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                         'filename' => 'events_add_category',
                     ],
                 ],
-                'help_tour'     => ['Event_Add_Category_Help_Tour'],
+                // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
+                // 'help_tour'     => ['Event_Add_Category_Help_Tour'],
                 'metaboxes'     => ['_publish_post_box'],
                 'require_nonce' => false,
             ],
@@ -466,7 +489,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                         'filename' => 'events_edit_category',
                     ],
                 ],
-                /*'help_tour' => array('Event_Edit_Category_Help_Tour'),*/
+                /*'help_tour' => ['Event_Edit_Category_Help_Tour'],*/
                 'metaboxes'     => ['_publish_post_box'],
                 'require_nonce' => false,
             ],
@@ -494,13 +517,23 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                         'filename' => 'events_categories_other',
                     ],
                 ],
-                'help_tour'     => [
-                    'Event_Categories_Help_Tour',
-                ],
+                // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
+                // 'help_tour'     => [
+                //     'Event_Categories_Help_Tour',
+                // ],
                 'metaboxes'     => $this->_default_espresso_metaboxes,
                 'require_nonce' => false,
-            ],
-        ];
+			],
+            'preview_deletion'           => [
+                'nav'           => [
+                    'label'      => esc_html__('Preview Deletion', 'event_espresso'),
+                    'order'      => 15,
+                    'persistent' => false,
+                    'url'        => '',
+				],
+                'require_nonce' => false
+			]
+		];
         // only load EE_Event_Editor_Decaf_Tips if domain is not caffeinated
         $domain = $this->loader->getShared('EventEspresso\core\domain\Domain');
         if (! $domain->isCaffeinated()) {
@@ -2051,8 +2084,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      */
     public function delete_cpt_item($post_id)
     {
+        throw new EE_Error(esc_html__('Please contact Event Espresso support with the details of the steps taken to produce this error.', 'event_espresso'));
         $this->_req_data['EVT_ID'] = $post_id;
-        $this->_delete_event(false);
+        $this->_delete_event();
     }
 
 
@@ -2231,39 +2265,26 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    protected function _delete_event($redirect_after = true)
+    protected function _delete_event()
     {
-        // determine the event id and set to array.
-        $EVT_ID = isset($this->_req_data['EVT_ID']) ? absint($this->_req_data['EVT_ID']) : null;
-        $EVT_ID = isset($this->_req_data['post']) ? absint($this->_req_data['post']) : $EVT_ID;
-        // loop thru events
-        if ($EVT_ID) {
-            $success = $this->_permanently_delete_event($EVT_ID);
-            // get list of events with no prices
-            $espresso_no_ticket_prices = get_option('ee_no_ticket_prices', []);
-            // remove this event from the list of events with no prices
-            if (isset($espresso_no_ticket_prices[ $EVT_ID ])) {
-                unset($espresso_no_ticket_prices[ $EVT_ID ]);
-            }
-            update_option('ee_no_ticket_prices', $espresso_no_ticket_prices);
-        } else {
-            $success = false;
-            $msg = esc_html__(
-                'An error occurred. An event could not be deleted because a valid event ID was not not supplied.',
-                'event_espresso'
-            );
-            EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
-        }
-        if ($redirect_after) {
-            $this->_redirect_after_action(
-                $success,
-                'Event',
-                'deleted',
-                ['action' => 'default', 'status' => 'trash']
-            );
-        }
+        $this->generateDeletionPreview(isset($this->_req_data['EVT_ID']) ? $this->_req_data['EVT_ID'] : []);
     }
 
+    /**
+     * Gets the tree traversal batch persister.
+     * @since $VID:$
+     * @return NodeGroupDao
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    protected function getModelObjNodeGroupPersister()
+    {
+        if (! $this->model_obj_node_group_persister instanceof NodeGroupDao) {
+            $this->model_obj_node_group_persister = $this->getLoader()->load('\EventEspresso\core\services\orm\tree_traversal\NodeGroupDao');
+        }
+        return $this->model_obj_node_group_persister;
+    }
 
     /**
      * _delete_events
@@ -2278,115 +2299,62 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      */
     protected function _delete_events()
     {
-        $success = true;
-        // get list of events with no prices
-        $espresso_no_ticket_prices = get_option('ee_no_ticket_prices', []);
-        // determine the event id and set to array.
-        $EVT_IDs = isset($this->_req_data['EVT_IDs']) ? (array) $this->_req_data['EVT_IDs'] : [];
-        // loop thru events
-        foreach ($EVT_IDs as $EVT_ID) {
-            $EVT_ID = absint($EVT_ID);
-            if ($EVT_ID) {
-                $results = $this->_permanently_delete_event($EVT_ID);
-                $success = $results !== false ? $success : false;
-                // remove this event from the list of events with no prices
-                unset($espresso_no_ticket_prices[ $EVT_ID ]);
-            } else {
-                $success = false;
-                $msg = esc_html__(
-                    'An error occurred. An event could not be deleted because a valid event ID was not not supplied.',
-                    'event_espresso'
-                );
-                EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
-            }
-        }
-        update_option('ee_no_ticket_prices', $espresso_no_ticket_prices);
-        // in order to force a pluralized result message we need to send back a success status greater than 1
-        $success = $success ? 2 : false;
-        $this->_redirect_after_action($success, 'Events', 'deleted', ['action' => 'default']);
+        $this->generateDeletionPreview(isset($this->_req_data['EVT_IDs']) ? (array) $this->_req_data['EVT_IDs'] : []);
     }
 
+    protected function generateDeletionPreview($event_ids)
+    {
+        $event_ids = (array) $event_ids;
+        // Set a code we can use to reference this deletion task in the batch jobs and preview page.
+        $deletion_job_code = $this->getModelObjNodeGroupPersister()->generateGroupCode();
+        $return_url = EE_Admin_Page::add_query_args_and_nonce(
+            [
+                'action' => 'preview_deletion',
+                'deletion_job_code' => $deletion_job_code,
+            ],
+            $this->_admin_base_url
+        );
+        $event_ids = array_map(
+            'intval',
+            $event_ids
+        );
+
+        EEH_URL::safeRedirectAndExit(
+            EE_Admin_Page::add_query_args_and_nonce(
+                [
+                    'page'        => 'espresso_batch',
+                    'batch'       => EED_Batch::batch_job,
+                    'EVT_IDs'      => $event_ids,
+                    'deletion_job_code' => $deletion_job_code,
+                    'job_handler' => urlencode('EventEspressoBatchRequest\JobHandlers\PreviewEventDeletion'),
+                    'return_url'  => urlencode($return_url),
+				],
+                admin_url()
+            )
+        );
+    }
 
     /**
-     * _permanently_delete_event
-     *
-     * @access  private
-     * @param int $EVT_ID
-     * @return bool
-     * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws ReflectionException
+     * Checks for a POST submission
+     * @since $VID:$
      */
-    private function _permanently_delete_event($EVT_ID = 0)
+    protected function confirmDeletion()
     {
-        // grab event id
-        if (! $EVT_ID) {
-            $msg = esc_html__(
-                'An error occurred. No Event ID or an invalid Event ID was received.',
-                'event_espresso'
-            );
-            EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
-            return false;
-        }
-        if (
-            ! $this->_cpt_model_obj instanceof EE_Event
-            || $this->_cpt_model_obj->ID() !== $EVT_ID
-        ) {
-            $this->_cpt_model_obj = EEM_Event::instance()->get_one_by_ID($EVT_ID);
-        }
-        if (! $this->_cpt_model_obj instanceof EE_Event) {
-            return false;
-        }
-        // need to delete related tickets and prices first.
-        $datetimes = $this->_cpt_model_obj->get_many_related('Datetime');
-        foreach ($datetimes as $datetime) {
-            $this->_cpt_model_obj->_remove_relation_to($datetime, 'Datetime');
-            $tickets = $datetime->get_many_related('Ticket');
-            foreach ($tickets as $ticket) {
-                $ticket->_remove_relation_to($datetime, 'Datetime');
-                $ticket->delete_related_permanently('Price');
-                $ticket->delete_permanently();
-            }
-            $datetime->delete();
-        }
-        // what about related venues or terms?
-        $venues = $this->_cpt_model_obj->get_many_related('Venue');
-        foreach ($venues as $venue) {
-            $this->_cpt_model_obj->_remove_relation_to($venue, 'Venue');
-        }
-        // any attached question groups?
-        $question_groups = $this->_cpt_model_obj->get_many_related('Question_Group');
-        if (! empty($question_groups)) {
-            foreach ($question_groups as $question_group) {
-                $this->_cpt_model_obj->_remove_relation_to($question_group, 'Question_Group');
-            }
-        }
-        // Message Template Groups
-        $this->_cpt_model_obj->_remove_relations('Message_Template_Group');
-        /** @type EE_Term_Taxonomy[] $term_taxonomies */
-        $term_taxonomies = $this->_cpt_model_obj->term_taxonomies();
-        foreach ($term_taxonomies as $term_taxonomy) {
-            $this->_cpt_model_obj->remove_relation_to_term_taxonomy($term_taxonomy);
-        }
-        $success = $this->_cpt_model_obj->delete_permanently();
-        // did it all go as planned ?
-        if ($success) {
-            $msg = sprintf(esc_html__('Event ID # %d has been deleted.', 'event_espresso'), $EVT_ID);
-            EE_Error::add_success($msg);
-        } else {
-            $msg = sprintf(
-                esc_html__('An error occurred. Event ID # %d could not be deleted.', 'event_espresso'),
-                $EVT_ID
-            );
-            EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
-            return false;
-        }
-        do_action('AHEE__Events_Admin_Page___permanently_delete_event__after_event_deleted', $EVT_ID);
-        return true;
+        $deletion_redirect_logic = $this->getLoader()->getShared('\EventEspresso\core\domain\services\admin\events\data\ConfirmDeletion');
+        $deletion_redirect_logic->handle($this->get_request_data(), $this->admin_base_url());
     }
 
+    /**
+     * A page for users to preview what exactly will be deleted, and confirm they want to delete it.
+     * @since $VID:$
+     * @throws EE_Error
+     */
+    protected function previewDeletion()
+    {
+        $preview_deletion_logic = $this->getLoader()->getShared('\EventEspresso\core\domain\services\admin\events\data\PreviewDeletion');
+        $this->set_template_args($preview_deletion_logic->handle($this->get_request_data(), $this->admin_base_url()));
+        $this->display_admin_page_with_no_sidebar();
+    }
 
     /**
      * get total number of events

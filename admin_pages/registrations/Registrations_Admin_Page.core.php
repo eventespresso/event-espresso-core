@@ -564,7 +564,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                         'filename' => 'registrations_overview_other',
                     ),
                 ),
-                'help_tour'     => array('Registration_Overview_Help_Tour'),
+                // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
+                // 'help_tour'     => array('Registration_Overview_Help_Tour'),
                 'qtips'         => array('Registration_List_Table_Tips'),
                 'list_table'    => 'EE_Registrations_List_Table',
                 'require_nonce' => false,
@@ -596,7 +597,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                         'filename' => 'registrations_details_registrant_details',
                     ),
                 ),
-                'help_tour'     => array('Registration_Details_Help_Tour'),
+                // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
+                // 'help_tour'     => array('Registration_Details_Help_Tour'),
                 'metaboxes'     => array_merge(
                     $this->_default_espresso_metaboxes,
                     array('_registration_details_metaboxes')
@@ -664,7 +666,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                         'filename' => 'registrations_contact_list_other',
                     ),
                 ),
-                'help_tour'     => array('Contact_List_Help_Tour'),
+                // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
+                // 'help_tour'     => array('Contact_List_Help_Tour'),
                 'metaboxes'     => array(),
                 'require_nonce' => false,
             ),

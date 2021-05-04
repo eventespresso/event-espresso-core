@@ -145,7 +145,8 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
                         'filename' => 'registration_form_questions_overview_views_bulk_actions_search',
                     ),
                 ),
-                'help_tour'     => array('Registration_Form_Questions_Overview_Help_Tour'),
+                // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
+                // 'help_tour'     => array('Registration_Form_Questions_Overview_Help_Tour'),
                 'require_nonce' => false,
                 'qtips'         => array(
                     'EE_Registration_Form_Tips',
@@ -164,7 +165,8 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
                         'filename' => 'registration_form_question_groups',
                     ),
                 ),
-                'help_tour'     => array('Registration_Form_Question_Groups_Help_Tour'),
+                // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
+                // 'help_tour'     => array('Registration_Form_Question_Groups_Help_Tour'),
                 'require_nonce' => false,
             ),
 
@@ -185,7 +187,8 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
                         'filename' => 'registration_form_edit_question',
                     ),
                 ),
-                'help_tour'     => array('Registration_Form_Edit_Question_Help_Tour'),
+                // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
+                // 'help_tour'     => array('Registration_Form_Edit_Question_Help_Tour'),
                 'require_nonce' => false,
             ),
         );

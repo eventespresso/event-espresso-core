@@ -2653,7 +2653,7 @@ class EE_Admin_Config extends EE_Config_Base
             false
         );
         $this->affiliate_id = 'default';
-        $this->help_tour_activation = true;
+        $this->help_tour_activation = false;
         $this->encode_session_data = false;
     }
 
