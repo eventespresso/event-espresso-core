@@ -152,6 +152,21 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
 
 
     /**
+     * @return LoaderInterface
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    protected function getLoader()
+    {
+        if (! $this->loader instanceof LoaderInterface) {
+            $this->loader = LoaderFactory::getLoader();
+        }
+        return $this->loader;
+    }
+
+
+    /**
      * Just utilizing the method EE_Admin exposes for doing things before page setup.
      *
      * @access protected
