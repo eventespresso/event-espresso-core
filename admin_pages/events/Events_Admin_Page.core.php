@@ -288,7 +288,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                         'title'    => esc_html__('Events Overview Other', 'event_espresso'),
                         'filename' => 'events_overview_other',
                     ],
-               ],
+                ],
                 // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
                 // 'help_tour'     => [
                 //     'Event_Overview_Help_Tour',
@@ -523,17 +523,17 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 // ],
                 'metaboxes'     => $this->_default_espresso_metaboxes,
                 'require_nonce' => false,
-			],
-            'preview_deletion'           => [
+            ],
+            'preview_deletion'       => [
                 'nav'           => [
                     'label'      => esc_html__('Preview Deletion', 'event_espresso'),
                     'order'      => 15,
                     'persistent' => false,
                     'url'        => '',
-				],
-                'require_nonce' => false
-			]
-		];
+                ],
+                'require_nonce' => false,
+            ],
+        ];
         // only load EE_Event_Editor_Decaf_Tips if domain is not caffeinated
         $domain = $this->loader->getShared('EventEspresso\core\domain\Domain');
         if (! $domain->isCaffeinated()) {
@@ -2322,13 +2322,13 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         EEH_URL::safeRedirectAndExit(
             EE_Admin_Page::add_query_args_and_nonce(
                 [
-                    'page'        => 'espresso_batch',
-                    'batch'       => EED_Batch::batch_job,
-                    'EVT_IDs'      => $event_ids,
+                    'page'              => 'espresso_batch',
+                    'batch'             => EED_Batch::batch_job,
+                    'EVT_IDs'           => $event_ids,
                     'deletion_job_code' => $deletion_job_code,
-                    'job_handler' => urlencode('EventEspressoBatchRequest\JobHandlers\PreviewEventDeletion'),
-                    'return_url'  => urlencode($return_url),
-				],
+                    'job_handler'       => urlencode('EventEspressoBatchRequest\JobHandlers\PreviewEventDeletion'),
+                    'return_url'        => urlencode($return_url),
+                ],
                 admin_url()
             )
         );
