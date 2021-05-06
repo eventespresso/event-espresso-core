@@ -307,6 +307,12 @@ class Ticket extends TypeBase
                 null,
                 esc_html__('Ticket Creator ID', 'event_espresso')
             ),
+            new GraphQLField(
+                'visibility',
+                'Int',
+                'visibility',
+                esc_html__('Where the ticket can be viewed throughout the UI', 'event_espresso')
+            ),
         ];
 
         return apply_filters(
