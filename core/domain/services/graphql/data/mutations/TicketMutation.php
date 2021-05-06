@@ -127,6 +127,10 @@ class TicketMutation
             $args['TKT_wp_user'] = (! empty($parts['id']) && is_int($parts['id'])) ? $parts['id'] : null;
         }
 
+        if (array_key_exists('visibility', $input)) {
+            $args['TKT_visibility'] = (int) $input['visibility'];
+        }
+
         return apply_filters(
             'FHEE__EventEspresso_core_domain_services_graphql_data_mutations__ticket_args',
             $args,
