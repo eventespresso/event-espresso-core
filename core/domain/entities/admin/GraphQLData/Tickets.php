@@ -52,6 +52,7 @@ class Tickets extends GraphQLData
                     startDate
                     userId
                     uses
+                    visibility
                     __typename
                 }
                 __typename
