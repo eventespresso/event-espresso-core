@@ -41,7 +41,7 @@ class TicketVisibilityEnum extends EnumBase
 
         foreach ($constants as $constant => $value) {
             // if the constant name starts with 'TICKET_VISIBILITY_'
-            if (0 === strpos($constant, 'TICKET_VISIBILITY_')) {
+            if (strpos($constant, 'TICKET_VISIBILITY_') === 0) {
                 // 'TICKET_VISIBILITY_PUBLIC' becomes 'PUBLIC'
                 $key = str_replace('TICKET_VISIBILITY_', '', $constant);
                 $enum[ $key ] = compact('value');
