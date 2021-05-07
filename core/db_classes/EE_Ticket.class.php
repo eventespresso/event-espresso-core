@@ -1708,6 +1708,81 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 
 
     /**
+     * @return int
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since   $VID:$
+     */
+    public function isHidden(): int
+    {
+        return $this->visibility() === EEM_Ticket::TICKET_VISIBILITY_NONE_VALUE;
+    }
+
+
+    /**
+     * @return int
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since   $VID:$
+     */
+    public function isNotHidden(): int
+    {
+        return $this->visibility() > EEM_Ticket::TICKET_VISIBILITY_NONE_VALUE;
+    }
+
+
+    /**
+     * @return int
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since   $VID:$
+     */
+    public function isPublicOnly(): int
+    {
+        return $this->isNotHidden() && $this->visibility() <= EEM_Ticket::TICKET_VISIBILITY_PUBLIC_VALUE;
+    }
+
+
+    /**
+     * @return int
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since   $VID:$
+     */
+    public function isMembersOnly(): int
+    {
+        return $this->visibility() > EEM_Ticket::TICKET_VISIBILITY_PUBLIC_VALUE
+               && $this->visibility() <= EEM_Ticket::TICKET_VISIBILITY_MEMBERS_ONLY_VALUE;
+    }
+
+
+    /**
+     * @return int
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since   $VID:$
+     */
+    public function isAdminsOnly(): int
+    {
+        return $this->visibility() > EEM_Ticket::TICKET_VISIBILITY_MEMBERS_ONLY_VALUE
+               && $this->visibility() <= EEM_Ticket::TICKET_VISIBILITY_ADMINS_ONLY_VALUE;
+    }
+
+
+    /**
+     * @return int
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since   $VID:$
+     */
+    public function isAdminUiOnly(): int
+    {
+        return $this->visibility() > EEM_Ticket::TICKET_VISIBILITY_ADMINS_ONLY_VALUE
+               && $this->visibility() <= EEM_Ticket::TICKET_VISIBILITY_ADMIN_UI_ONLY_VALUE;
+    }
+
+
+    /**
      * @param int $visibility
      * @throws EE_Error
      * @throws ReflectionException
@@ -1717,7 +1792,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     {
 
         $ticket_visibility_options = $this->_model->ticketVisibilityOptions();
-        $ticket_visibility = -1;
+        $ticket_visibility         = -1;
         foreach ($ticket_visibility_options as $ticket_visibility_option) {
             if ($visibility === $ticket_visibility_option) {
                 $ticket_visibility = $visibility;
