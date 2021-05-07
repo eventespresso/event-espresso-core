@@ -557,6 +557,7 @@ class EE_DMS_Core_4_11_0 extends EE_Data_Migration_Script_Base
 				TKT_wp_user bigint(20) unsigned NULL,
 				TKT_parent int(10) unsigned DEFAULT '0',
 				TKT_deleted tinyint(1) NOT NULL DEFAULT '0',
+				TKT_visibility smallint(6) unsigned NOT NULL DEFAULT 100,
 				PRIMARY KEY  (TKT_ID),
 				KEY TKT_start_date (TKT_start_date)";
         $this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB');

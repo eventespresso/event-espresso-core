@@ -1688,6 +1688,44 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     }
 
 
+    /**
+     * @return int
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since   $VID:$
+     */
+    public function visibility(): int
+    {
+        return $this->get('TKT_visibility');
+    }
+
+
+    /**
+     * @param int $visibility
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since   $VID:$
+     */
+    public function set_visibility(int $visibility)
+    {
+        $ticket_visibility = EEM_Ticket::instance()->ticketVisibility();
+        if (! isset($ticket_visibility[ $visibility ])) {
+            throw new DomainException(
+                sprintf(
+                    esc_html__(
+                        'The supplied ticket visibility setting of "%1$s" is not valid. It needs to match one of the keys in the following array:%2$s %3$s ',
+                        'event_espresso'
+                    ),
+                    $visibility,
+                    '<br />',
+                    var_export($ticket_visibility, true)
+                )
+            );
+        }
+        $this->set('TKT_visibility', $visibility);
+    }
+
+
     /*******************************************************************
      ***********************  DEPRECATED METHODS  **********************
      *******************************************************************/

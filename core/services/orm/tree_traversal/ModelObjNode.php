@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\services\orm\tree_traversal;
 
+use EE_Error;
 use EE_HABTM_Relation;
 use EE_Has_Many_Relation;
 use EE_Registry;
@@ -15,9 +16,9 @@ use ReflectionException;
  * Class ModelObjNode
  * Wraps a model object and stores which of its model's relations have already been traversed and which haven't.
  *
- * @package     Event Espresso
+ * @package        Event Espresso
  * @author         Mike Nelson
- * @since         $VID:$
+ * @since          $VID:$
  *
  */
 class ModelObjNode extends BaseNode
@@ -37,28 +38,32 @@ class ModelObjNode extends BaseNode
      */
     protected $nodes;
 
+
     /**
      * We don't pass the model objects because this needs to serialize to something tiny for effiency.
-     * @param $model_obj_id
+     *
+     * @param          $model_obj_id
      * @param EEM_Base $model
-     * @param array $dont_traverse_models array of model names we DON'T want to traverse.
+     * @param array    $dont_traverse_models array of model names we DON'T want to traverse.
      */
     public function __construct($model_obj_id, EEM_Base $model, array $dont_traverse_models = [])
     {
-        $this->id = $model_obj_id;
-        $this->model = $model;
+        $this->id                   = $model_obj_id;
+        $this->model                = $model;
         $this->dont_traverse_models = $dont_traverse_models;
     }
+
 
     /**
      * Creates a relation node for each relation of this model's relations.
      * Does NOT call `discover` on them yet though.
-     * @since $VID:$
-     * @throws \EE_Error
+     *
+     * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
      * @throws ReflectionException
+     * @since $VID:$
      */
     protected function discover()
     {
@@ -75,11 +80,10 @@ class ModelObjNode extends BaseNode
                     $relation->get_other_model(),
                     $this->dont_traverse_models
                 );
-            } elseif ($relation instanceof EE_HABTM_Relation &&
-                ! in_array(
-                    $relation->get_join_model()->get_this_model_name(),
-                    $this->dont_traverse_models
-                )) {
+            } elseif (
+                $relation instanceof EE_HABTM_Relation
+                && ! in_array($relation->get_join_model()->get_this_model_name(), $this->dont_traverse_models)
+            ) {
                 $this->nodes[ $relation->get_join_model()->get_this_model_name() ] = new RelationNode(
                     $this->id,
                     $this->model,
@@ -100,9 +104,10 @@ class ModelObjNode extends BaseNode
         return $this->nodes !== null && is_array($this->nodes);
     }
 
+
     /**
-     * @since $VID:$
      * @return boolean
+     * @since $VID:$
      */
     public function isComplete()
     {
@@ -112,11 +117,13 @@ class ModelObjNode extends BaseNode
         return $this->complete;
     }
 
+
     /**
      * Triggers working on each child relation node that has work to do.
-     * @since $VID:$
+     *
      * @param $model_objects_to_identify
      * @return int units of work done
+     * @since $VID:$
      */
     protected function work($model_objects_to_identify)
     {
@@ -139,21 +146,22 @@ class ModelObjNode extends BaseNode
         return $num_identified;
     }
 
+
     /**
-     * @since $VID:$
      * @return array
-     * @throws \EE_Error
+     * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
      * @throws ReflectionException
+     * @since $VID:$
      */
     public function toArray()
     {
         $tree = [
-            'id' => $this->id,
+            'id'       => $this->id,
             'complete' => $this->isComplete(),
-            'rels' => []
+            'rels'     => [],
         ];
         if ($this->nodes === null) {
             $tree['rels'] = null;
@@ -165,21 +173,22 @@ class ModelObjNode extends BaseNode
         return $tree;
     }
 
+
     /**
-     * @since $VID:$
      * @return array|mixed
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @since $VID:$
      */
     public function getIds()
     {
         $ids = [
             $this->model->get_this_model_name() => [
-                $this->id => $this->id
-            ]
+                $this->id => $this->id,
+            ],
         ];
         if ($this->nodes && is_array($this->nodes)) {
             foreach ($this->nodes as $relation_node) {
@@ -189,8 +198,10 @@ class ModelObjNode extends BaseNode
         return $ids;
     }
 
+
     /**
      * Don't serialize the models. Just record their names on some dynamic properties.
+     *
      * @since $VID:$
      */
     public function __sleep()
@@ -206,14 +217,16 @@ class ModelObjNode extends BaseNode
         );
     }
 
+
     /**
      * Use the dynamic properties to instantiate the models we use.
-     * @since $VID:$
+     *
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
+     * @since $VID:$
      */
     public function __wakeup()
     {

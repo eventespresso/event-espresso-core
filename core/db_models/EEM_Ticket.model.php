@@ -11,6 +11,33 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
 {
 
     /**
+     * the following constants define where tickets can be viewed throughout the UI
+     *
+     *  TICKET_VISIBILITY_PUBLIC        - displayed basically anywhere
+     *  TICKET_VISIBILITY_MEMBERS_ONLY  - displayed to any logged in user
+     *  TICKET_VISIBILITY_ADMINS_ONLY   - displayed to any logged in user that is an admin
+     *  TICKET_VISIBILITY_ADMIN_UI_ONLY - only displayed in the admin, never publicly
+     *  TICKET_VISIBILITY_NONE          - will not be displayed anywhere
+     */
+    public const TICKET_VISIBILITY_PUBLIC        = 100;
+
+    public const TICKET_VISIBILITY_MEMBERS_ONLY  = 200;
+
+    public const TICKET_VISIBILITY_ADMINS_ONLY   = 300;
+
+    public const TICKET_VISIBILITY_ADMIN_UI_ONLY = 400;
+
+    public const TICKET_VISIBILITY_NONE          = 500;
+
+
+    /**
+     * defines where tickets can be viewed throughout the UI
+     *
+     * @var array
+     */
+    private $ticket_visibility;
+
+    /**
      * private instance of the EEM_Ticket object
      *
      * @var EEM_Ticket $_instance
@@ -36,6 +63,16 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
         $this->plural_item = esc_html__('Tickets', 'event_espresso');
         $this->_tables = array(
             'Ticket' => new EE_Primary_Table('esp_ticket', 'TKT_ID'),
+        );
+        $this->ticket_visibility = (array) apply_filters(
+            'FHEE__EEM_Ticket__construct__ticket_visibility',
+            [
+                EEM_Ticket::TICKET_VISIBILITY_PUBLIC => esc_html__('Public', 'event_espresso'),
+                EEM_Ticket::TICKET_VISIBILITY_MEMBERS_ONLY => esc_html__('Members only', 'event_espresso'),
+                EEM_Ticket::TICKET_VISIBILITY_ADMINS_ONLY => esc_html__('Admins only', 'event_espresso'),
+                EEM_Ticket::TICKET_VISIBILITY_ADMIN_UI_ONLY => esc_html__('Admin UI only', 'event_espresso'),
+                EEM_Ticket::TICKET_VISIBILITY_NONE => esc_html__('None', 'event_espresso'),
+            ]
         );
         $this->_fields = array(
             'Ticket' => array(
@@ -192,6 +229,13 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
                     false,
                     false
                 ),
+                'TKT_visibility' => new EE_Enum_Integer_Field(
+                    'TKT_visibility',
+                    esc_html__('Defines where the ticket can be viewed throughout the UI.', 'event_espresso'),
+                    false,
+                    EEM_Ticket::TICKET_VISIBILITY_PUBLIC,
+                    $this->ticket_visibility
+                ),
             ),
         );
         $this->_model_relations = array(
@@ -336,5 +380,14 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
                 ),
             )
         );
+    }
+
+
+    /**
+     * @return array
+     */
+    public function ticketVisibility(): array
+    {
+        return $this->ticket_visibility;
     }
 }
