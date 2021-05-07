@@ -8,6 +8,7 @@ use EE_Registry;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\libraries\iframe_display\Iframe;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use InvalidArgumentException;
 use ReflectionException;
 
@@ -40,8 +41,10 @@ class TicketSelectorIframe extends Iframe
         $event = $EEM_Event->get_one_by_ID(
             EE_Registry::instance()->REQ->get('event', 0)
         );
-        $ticket_selector = new DisplayTicketSelector();
-        $ticket_selector->setIframe(true);
+        $ticket_selector = LoaderFactory::getLoader()->getShared(
+            DisplayTicketSelector::class,
+            [null, true]
+        );
         parent::__construct(
             esc_html__('Ticket Selector', 'event_espresso'),
             $ticket_selector->display($event)

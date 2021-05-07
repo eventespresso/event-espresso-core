@@ -139,10 +139,13 @@ class EED_Ticket_Selector extends EED_Module
     /**
      * @return DisplayTicketSelector
      */
-    public static function ticketSelector()
+    public static function ticketSelector(): DisplayTicketSelector
     {
         if (! EED_Ticket_Selector::$ticket_selector instanceof DisplayTicketSelector) {
-            EED_Ticket_Selector::$ticket_selector = new DisplayTicketSelector(EED_Events_Archive::is_iframe());
+            EED_Ticket_Selector::$ticket_selector = LoaderFactory::getLoader()->getShared(
+                DisplayTicketSelector::class,
+                [null, EED_Events_Archive::is_iframe()]
+            );
         }
         return EED_Ticket_Selector::$ticket_selector;
     }
