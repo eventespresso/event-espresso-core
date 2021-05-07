@@ -13,12 +13,16 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
     /**
      * the following constants define where tickets can be viewed throughout the UI
      *
+     *  TICKET_VISIBILITY_NONE          - will not be displayed anywhere
      *  TICKET_VISIBILITY_PUBLIC        - displayed basically anywhere
      *  TICKET_VISIBILITY_MEMBERS_ONLY  - displayed to any logged in user
      *  TICKET_VISIBILITY_ADMINS_ONLY   - displayed to any logged in user that is an admin
      *  TICKET_VISIBILITY_ADMIN_UI_ONLY - only displayed in the admin, never publicly
-     *  TICKET_VISIBILITY_NONE          - will not be displayed anywhere
      */
+    public const TICKET_VISIBILITY_NONE_KEY            = 'NONE';
+
+    public const TICKET_VISIBILITY_NONE_VALUE          = 0;
+
     public const TICKET_VISIBILITY_PUBLIC_KEY          = 'PUBLIC';
 
     public const TICKET_VISIBILITY_PUBLIC_VALUE        = 100;
@@ -34,10 +38,6 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
     public const TICKET_VISIBILITY_ADMIN_UI_ONLY_KEY   = 'ADMIN_UI_ONLY';
 
     public const TICKET_VISIBILITY_ADMIN_UI_ONLY_VALUE = 400;
-
-    public const TICKET_VISIBILITY_NONE_KEY            = 'NONE';
-
-    public const TICKET_VISIBILITY_NONE_VALUE          = 500;
 
 
     /**
@@ -286,7 +286,7 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
             [
                 [
                     'TKT_is_default' => 1,
-                    'TKT_visibility' => ['<', EEM_Ticket::TICKET_VISIBILITY_NONE_VALUE],
+                    'TKT_visibility' => ['>', EEM_Ticket::TICKET_VISIBILITY_NONE_VALUE],
                 ],
                 'order_by' => ['TKT_ID' => 'ASC'],
             ]
@@ -340,7 +340,7 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
      */
     public function sum_tickets_currently_available_at_datetime(int $DTT_ID, array $query_params = []): int
     {
-        $query_params += [['TKT_visibility' => ['<', EEM_Ticket::TICKET_VISIBILITY_NONE_VALUE]]];
+        $query_params += [['TKT_visibility' => ['>', EEM_Ticket::TICKET_VISIBILITY_NONE_VALUE]]];
         return EEM_Datetime::instance()->sum_tickets_currently_available_at_datetime($DTT_ID, $query_params);
     }
 
@@ -373,7 +373,7 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
             [
                 [
                     'TKT_reserved'   => ['>', 0],
-                    'TKT_visibility' => ['<', EEM_Ticket::TICKET_VISIBILITY_NONE_VALUE],
+                    'TKT_visibility' => ['>', EEM_Ticket::TICKET_VISIBILITY_NONE_VALUE],
                 ],
             ]
         );
