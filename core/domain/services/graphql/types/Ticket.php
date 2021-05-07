@@ -283,6 +283,12 @@ class Ticket extends TypeBase
                 esc_html__('Number of datetimes this ticket can be used at', 'event_espresso'),
                 [$this, 'parseInfiniteValue']
             ),
+            new GraphQLField(
+                'visibility',
+                $this->namespace . 'TicketVisibilityEnum',
+                'visibility',
+                esc_html__('Where the ticket can be viewed throughout the UI', 'event_espresso')
+            ),
             new GraphQLOutputField(
                 'wpUser',
                 'User',
@@ -300,12 +306,6 @@ class Ticket extends TypeBase
                 'Int',
                 null,
                 esc_html__('Ticket Creator ID', 'event_espresso')
-            ),
-            new GraphQLField(
-                'visibility',
-                'Int',
-                'visibility',
-                esc_html__('Where the ticket can be viewed throughout the UI', 'event_espresso')
             ),
         ];
 
