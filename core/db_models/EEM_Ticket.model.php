@@ -277,11 +277,20 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
      *
      * @return EE_Ticket[]
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function get_all_default_tickets()
+    public function get_all_default_tickets(): array
     {
         /** @type EE_Ticket[] $tickets */
-        $tickets = $this->get_all([['TKT_is_default' => 1], 'order_by' => ['TKT_ID' => 'ASC']]);
+        $tickets = $this->get_all(
+            [
+                [
+                    'TKT_is_default' => 1,
+                    'TKT_visibility' => ['<', EEM_Ticket::TICKET_VISIBILITY_NONE_VALUE],
+                ],
+                'order_by' => ['TKT_ID' => 'ASC'],
+            ]
+        );
         // we need to set the start date and end date to today's date and the start of the default dtt
         return $this->_set_default_dates($tickets);
     }
@@ -293,8 +302,9 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
      * @param EE_Ticket[] $tickets
      * @return EE_Ticket[]
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    private function _set_default_dates($tickets)
+    private function _set_default_dates(array $tickets): array
     {
         foreach ($tickets as $ticket) {
             $ticket->set(
@@ -325,9 +335,12 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
      * @param int   $DTT_ID
      * @param array $query_params
      * @return int
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function sum_tickets_currently_available_at_datetime($DTT_ID, $query_params = [])
+    public function sum_tickets_currently_available_at_datetime(int $DTT_ID, array $query_params = []): int
     {
+        $query_params += [['TKT_visibility' => ['<', EEM_Ticket::TICKET_VISIBILITY_NONE_VALUE]]];
         return EEM_Datetime::instance()->sum_tickets_currently_available_at_datetime($DTT_ID, $query_params);
     }
 
@@ -338,11 +351,11 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
      * @param EE_Ticket[] $tickets
      * @return void
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function update_tickets_sold($tickets)
+    public function update_tickets_sold(array $tickets)
     {
         foreach ($tickets as $ticket) {
-            /* @var  $ticket EE_Ticket */
             $ticket->update_tickets_sold();
         }
     }
@@ -359,7 +372,8 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
         return $this->get_all(
             [
                 [
-                    'TKT_reserved' => ['>', 0],
+                    'TKT_reserved'   => ['>', 0],
+                    'TKT_visibility' => ['<', EEM_Ticket::TICKET_VISIBILITY_NONE_VALUE],
                 ],
             ]
         );
