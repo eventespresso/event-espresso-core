@@ -659,6 +659,9 @@ class EE_Dependency_Map
                 'EE_Registration_Config' => EE_Dependency_Map::load_from_cache,
                 'EE_Session'             => EE_Dependency_Map::load_from_cache,
             ],
+            'EventEspresso\modules\ticket_selector\DisplayTicketSelector'                                                 => [
+                'EventEspresso\core\domain\entities\users\CurrentUser' => EE_Dependency_Map::load_from_cache,
+            ],
             'EventEspresso\modules\ticket_selector\ProcessTicketSelector'                                                 => [
                 'EE_Core_Config'                                                          => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\request\Request'                             => EE_Dependency_Map::load_from_cache,
@@ -780,7 +783,10 @@ class EE_Dependency_Map
             ],
             'EventEspresso\core\domain\services\admin\events\data\ConfirmDeletion' => [
                 'EventEspresso\core\services\orm\tree_traversal\NodeGroupDao' => EE_Dependency_Map::load_from_cache,
-            ]
+            ],
+            'EventEspresso\core\domain\entities\users\CurrentUser' => [
+                'EventEspresso\core\domain\entities\users\EventManagers' => EE_Dependency_Map::load_from_cache,
+            ],
         ];
     }
 
