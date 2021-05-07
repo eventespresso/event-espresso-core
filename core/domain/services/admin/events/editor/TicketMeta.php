@@ -6,7 +6,7 @@ use EEM_Ticket;
 
 /**
  * Class DefaultTickets
- * Description
+ * retrieves additional general information pertaining to tickets for use with GraphQL
  *
  * @package EventEspresso\core\domain\services\admin\events\editor
  * @author  Brent Christensen
@@ -32,6 +32,10 @@ class TicketMeta implements EventEditorDataInterface
     }
 
 
+    /**
+     * @param int $eventId
+     * @return array
+     */
     public function getData(int $eventId): array
     {
         return ['visibilityOptions' => $this->ticket_model->getTicketVisibilityLabels()];
