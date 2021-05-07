@@ -91,6 +91,11 @@ class DisplayTicketSelector
      */
     private $current_user_is_admin;
 
+    /**
+     * @var boolean
+     */
+    private $current_user_is_logged_in;
+
 
     /**
      * DisplayTicketSelector constructor.
@@ -114,6 +119,7 @@ class DisplayTicketSelector
         );
         $this->current_user = wp_get_current_user();
         $this->current_user_is_admin = ! empty(array_intersect($this->admin_roles, $this->current_user->roles));
+        $this->current_user_is_logged_in = $this->current_user->ID !== 0;
     }
 
 
@@ -408,7 +414,7 @@ class DisplayTicketSelector
         $ticket_query_args = [
             [
                 'Datetime.EVT_ID' => $this->event->ID(),
-                'TKT_visibility' => ['<', EEM_Ticket::TICKET_VISIBILITY_NONE_VALUE],
+                'TKT_visibility' => ['>', EEM_Ticket::TICKET_VISIBILITY_NONE_VALUE],
             ],
             'order_by' => [
                 'TKT_order'              => 'ASC',
@@ -433,11 +439,11 @@ class DisplayTicketSelector
 
 
     /**
-     * returns true if ticket visibility:
-     *  - is not NONE
-     *  - is less than MEMBERS_ONLY when user is NOT logged in
-     *  - is less than ADMINS_ONLY when user IS logged in but is NOT an admin
-     *  - is less than ADMIN_UI_ONLY when ticket selector is being viewed via a public UI
+     * returns true if any of the following is true:
+     *  - ticket visibility is PUBLIC
+     *  - ticket visibility is MEMBERS_ONLY and user is logged in
+     *  - ticket visibility is ADMINS_ONLY when user IS logged in as an admin
+     *  - ticket visibility is ADMIN_UI_ONLY when ticket selector is being viewed via an admin page UI
      *
      * @param EE_Ticket $ticket
      * @return bool
@@ -447,13 +453,10 @@ class DisplayTicketSelector
      */
     public function ticketVisibilityFilter(EE_Ticket $ticket): bool
     {
-        $visibility = $ticket->visibility();
-        return $visibility < EEM_Ticket::TICKET_VISIBILITY_NONE
-            && ! (
-               ($visibility >= EEM_Ticket::TICKET_VISIBILITY_MEMBERS_ONLY && $this->current_user->ID === 0)
-               || ($visibility >= EEM_Ticket::TICKET_VISIBILITY_ADMINS_ONLY && ! $this->current_user_is_admin)
-               || ($visibility >= EEM_Ticket::TICKET_VISIBILITY_ADMIN_UI_ONLY && ! is_admin())
-           );
+        return $ticket->isPublicOnly()
+               || ($ticket->isMembersOnly() && $this->current_user_is_logged_in)
+               || ($ticket->isAdminsOnly() && $this->current_user_is_admin)
+               || ($ticket->isAdminUiOnly() && is_admin());
     }
 
 
