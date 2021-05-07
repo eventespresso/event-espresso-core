@@ -19,15 +19,20 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
      *  TICKET_VISIBILITY_ADMIN_UI_ONLY - only displayed in the admin, never publicly
      *  TICKET_VISIBILITY_NONE          - will not be displayed anywhere
      */
-    public const TICKET_VISIBILITY_PUBLIC        = 100;
+    public const TICKET_VISIBILITY_PUBLIC_KEY          = 'PUBLIC';
+    public const TICKET_VISIBILITY_PUBLIC_VALUE        = 100;
 
-    public const TICKET_VISIBILITY_MEMBERS_ONLY  = 200;
+    public const TICKET_VISIBILITY_MEMBERS_ONLY_KEY    = 'MEMBERS_ONLY';
+    public const TICKET_VISIBILITY_MEMBERS_ONLY_VALUE  = 200;
 
-    public const TICKET_VISIBILITY_ADMINS_ONLY   = 300;
+    public const TICKET_VISIBILITY_ADMINS_ONLY_KEY     = 'ADMINS_ONLY';
+    public const TICKET_VISIBILITY_ADMINS_ONLY_VALUE   = 300;
 
-    public const TICKET_VISIBILITY_ADMIN_UI_ONLY = 400;
+    public const TICKET_VISIBILITY_ADMIN_UI_ONLY_KEY   = 'ADMIN_UI_ONLY';
+    public const TICKET_VISIBILITY_ADMIN_UI_ONLY_VALUE = 400;
 
-    public const TICKET_VISIBILITY_NONE          = 500;
+    public const TICKET_VISIBILITY_NONE_KEY            = 'NONE';
+    public const TICKET_VISIBILITY_NONE_VALUE          = 500;
 
 
     /**
@@ -64,16 +69,7 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
         $this->_tables = array(
             'Ticket' => new EE_Primary_Table('esp_ticket', 'TKT_ID'),
         );
-        $this->ticket_visibility = (array) apply_filters(
-            'FHEE__EEM_Ticket__construct__ticket_visibility',
-            [
-                EEM_Ticket::TICKET_VISIBILITY_PUBLIC => esc_html__('Public', 'event_espresso'),
-                EEM_Ticket::TICKET_VISIBILITY_MEMBERS_ONLY => esc_html__('Members only', 'event_espresso'),
-                EEM_Ticket::TICKET_VISIBILITY_ADMINS_ONLY => esc_html__('Admins only', 'event_espresso'),
-                EEM_Ticket::TICKET_VISIBILITY_ADMIN_UI_ONLY => esc_html__('Admin UI only', 'event_espresso'),
-                EEM_Ticket::TICKET_VISIBILITY_NONE => esc_html__('None', 'event_espresso'),
-            ]
-        );
+        $this->parseTicketVisibilityOptions();
         $this->_fields = array(
             'Ticket' => array(
                 'TKT_ID'          => new EE_Primary_Key_Int_Field(
@@ -233,8 +229,8 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
                     'TKT_visibility',
                     esc_html__('Defines where the ticket can be viewed throughout the UI.', 'event_espresso'),
                     false,
-                    EEM_Ticket::TICKET_VISIBILITY_PUBLIC,
-                    $this->ticket_visibility
+                    EEM_Ticket::TICKET_VISIBILITY_PUBLIC_VALUE,
+                    $this->getTicketVisibilityEnumOptions()
                 ),
             ),
         );
@@ -384,9 +380,72 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
 
 
     /**
+     * @return void
+     */
+    private function parseTicketVisibilityOptions()
+    {
+        $this->ticket_visibility = (array) apply_filters(
+            'FHEE__EEM_Ticket__construct__ticket_visibility',
+            [
+                EEM_Ticket::TICKET_VISIBILITY_PUBLIC_KEY        => [
+                    'label' => esc_html__('Public', 'event_espresso'),
+                    'value' => EEM_Ticket::TICKET_VISIBILITY_PUBLIC_VALUE,
+                ],
+                EEM_Ticket::TICKET_VISIBILITY_MEMBERS_ONLY_KEY  => [
+                    'label' => esc_html__('Members only', 'event_espresso'),
+                    'value' => EEM_Ticket::TICKET_VISIBILITY_MEMBERS_ONLY_VALUE,
+                ],
+                EEM_Ticket::TICKET_VISIBILITY_ADMINS_ONLY_KEY   => [
+                    'label' => esc_html__('Admins only', 'event_espresso'),
+                    'value' => EEM_Ticket::TICKET_VISIBILITY_ADMINS_ONLY_VALUE,
+                ],
+                EEM_Ticket::TICKET_VISIBILITY_ADMIN_UI_ONLY_KEY => [
+                    'label' => esc_html__('Admin UI only', 'event_espresso'),
+                    'value' => EEM_Ticket::TICKET_VISIBILITY_ADMIN_UI_ONLY_VALUE,
+                ],
+                EEM_Ticket::TICKET_VISIBILITY_NONE_KEY          => [
+                    'label' => esc_html__('None', 'event_espresso'),
+                    'value' => EEM_Ticket::TICKET_VISIBILITY_NONE_VALUE,
+                ],
+            ]
+        );
+    }
+
+
+    /**
      * @return array
      */
-    public function ticketVisibility(): array
+    public function getTicketVisibilityEnumOptions(): array
+    {
+        $ticket_visibility = [];
+        foreach ($this->ticket_visibility as $visibility) {
+            if (isset($visibility['value'], $visibility['label'])) {
+                $ticket_visibility[ $visibility['value'] ] = $visibility['label'];
+            }
+        }
+        return $ticket_visibility;
+    }
+
+
+    /**
+     * @return array
+     */
+    public function getTicketVisibilityKeyValuePairs(): array
+    {
+        $ticket_visibility = [];
+        foreach ($this->ticket_visibility as $key => $ticket_visibility_option) {
+            if (isset($ticket_visibility_option['value'])) {
+                $ticket_visibility[ $key ] = $ticket_visibility_option['value'];
+            }
+        }
+        return $ticket_visibility;
+    }
+
+
+    /**
+     * @return array
+     */
+    public function ticketVisibilityOptions(): array
     {
         return $this->ticket_visibility;
     }
