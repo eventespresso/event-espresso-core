@@ -2,9 +2,9 @@
 
 namespace EventEspresso\core\domain\services\graphql\enums;
 
+use EE_Error;
 use EEM_Ticket;
 use EventEspresso\core\services\graphql\enums\EnumBase;
-use ReflectionClass;
 
 /**
  * Class TicketVisibilityEnum
@@ -30,23 +30,10 @@ class TicketVisibilityEnum extends EnumBase
 
     /**
      * @return array
+     * @throws EE_Error
      */
     protected function getValues(): array
     {
-        $ticket_model = new ReflectionClass(EEM_Ticket::class);
-
-        $constants = $ticket_model->getConstants();
-
-        $enum = [];
-
-        foreach ($constants as $constant => $value) {
-            // if the constant name starts with 'TICKET_VISIBILITY_'
-            if (strpos($constant, 'TICKET_VISIBILITY_') === 0) {
-                // 'TICKET_VISIBILITY_PUBLIC' becomes 'PUBLIC'
-                $key = str_replace('TICKET_VISIBILITY_', '', $constant);
-                $enum[ $key ] = compact('value');
-            }
-        }
-        return $enum;
+        return EEM_Ticket::instance()->getTicketVisibilityKeyValuePairs();
     }
 }
