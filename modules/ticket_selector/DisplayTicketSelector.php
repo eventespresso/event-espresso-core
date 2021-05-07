@@ -2,11 +2,13 @@
 
 namespace EventEspresso\modules\ticket_selector;
 
+use EE_Base_Class;
 use EE_Datetime;
 use EE_Error;
 use EE_Event;
 use EE_Registry;
 use EE_System;
+use EE_Ticket;
 use EE_Ticket_Selector_Config;
 use EEH_Event_View;
 use EEH_HTML;
@@ -17,8 +19,11 @@ use EEM_Ticket;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
+use Exception;
 use InvalidArgumentException;
+use ReflectionException;
 use WP_Post;
+use WP_User;
 
 // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
 // phpcs:disable WordPress.WP.I18n.UnorderedPlaceholdersText
@@ -71,13 +76,28 @@ class DisplayTicketSelector
      */
     private $display_full_ui;
 
+    /**
+     * @var array
+     */
+    private $admin_roles;
+
+    /**
+     * @var WP_User
+     */
+    private $current_user;
+
+    /**
+     * @var boolean
+     */
+    private $current_user_is_admin;
+
 
     /**
      * DisplayTicketSelector constructor.
      *
      * @param bool $iframe
      */
-    public function __construct($iframe = false)
+    public function __construct(bool $iframe = false)
     {
         $this->iframe = $iframe;
         $this->date_format = apply_filters(
@@ -88,13 +108,19 @@ class DisplayTicketSelector
             'FHEE__EED_Ticket_Selector__display_ticket_selector__time_format',
             get_option('time_format')
         );
+        $this->admin_roles = apply_filters(
+            'FHEE__EED_Ticket_Selector__display_ticket_selector__admin_roles',
+            ['administrator']
+        );
+        $this->current_user = wp_get_current_user();
+        $this->current_user_is_admin = ! empty(array_intersect($this->admin_roles, $this->current_user->roles));
     }
 
 
     /**
      * @return bool
      */
-    public function isIframe()
+    public function isIframe(): bool
     {
         return $this->iframe;
     }
@@ -103,7 +129,7 @@ class DisplayTicketSelector
     /**
      * @param boolean $iframe
      */
-    public function setIframe($iframe = true)
+    public function setIframe(bool $iframe = true)
     {
         $this->iframe = filter_var($iframe, FILTER_VALIDATE_BOOLEAN);
     }
@@ -119,7 +145,7 @@ class DisplayTicketSelector
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
      */
-    protected function setEvent($event = null)
+    protected function setEvent($event = null): bool
     {
         if ($event === null) {
             global $post;
@@ -150,7 +176,7 @@ class DisplayTicketSelector
     /**
      * @return int
      */
-    public function getMaxAttendees()
+    public function getMaxAttendees(): int
     {
         return $this->max_attendees;
     }
@@ -159,7 +185,7 @@ class DisplayTicketSelector
     /**
      * @param int $max_attendees
      */
-    public function setMaxAttendees($max_attendees)
+    public function setMaxAttendees(int $max_attendees)
     {
         $this->max_attendees = absint(
             apply_filters(
@@ -176,7 +202,7 @@ class DisplayTicketSelector
      *
      * @return bool
      */
-    private function display_full_ui()
+    private function display_full_ui(): bool
     {
         if ($this->display_full_ui === null) {
             $this->display_full_ui = ! is_admin() || (defined('DOING_AJAX') && DOING_AJAX);
@@ -195,8 +221,10 @@ class DisplayTicketSelector
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @throws Exception
      */
-    public function display($event = null, $view_details = false)
+    public function display($event = null, bool $view_details = false)
     {
         // reset filter for displaying submit button
         remove_filter('FHEE__EE_Ticket_Selector__display_ticket_selector_submit', '__return_true');
@@ -205,7 +233,7 @@ class DisplayTicketSelector
             return $this->handleMissingEvent();
         }
         // is the event expired ?
-        $template_args['event_is_expired'] = ! is_admin() ? $this->event->is_expired() : false;
+        $template_args['event_is_expired'] = ! is_admin() && $this->event->is_expired();
         if ($template_args['event_is_expired']) {
             return is_single() ? $this->expiredEventMessage() : $this->expiredEventMessage() . $this->displayViewDetailsButton();
         }
@@ -258,8 +286,9 @@ class DisplayTicketSelector
      * @param bool        $view_details
      * @return bool
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    protected function activeEventAndShowTicketSelector($event, $_event_active_status, $view_details)
+    protected function activeEventAndShowTicketSelector($event, string $_event_active_status, bool $view_details): bool
     {
         $event_post = $this->event instanceof EE_Event ? $this->event->ID() : $event;
         return $this->display_full_ui()
@@ -285,9 +314,8 @@ class DisplayTicketSelector
      * notice displayed if event is expired
      *
      * @return string
-     * @throws EE_Error
      */
-    protected function expiredEventMessage()
+    protected function expiredEventMessage(): string
     {
         return '<div class="ee-event-expired-notice"><span class="important-notice">' . esc_html__(
             'We\'re sorry, but all tickets sales have ended because the event is expired.',
@@ -302,8 +330,9 @@ class DisplayTicketSelector
      *
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    protected function noTicketAvailableMessage()
+    protected function noTicketAvailableMessage(): string
     {
         $no_ticket_available_msg = esc_html__('We\'re sorry, but all ticket sales have ended.', 'event_espresso');
         if (current_user_can('edit_post', $this->event->ID())) {
@@ -333,8 +362,9 @@ class DisplayTicketSelector
      *
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    protected function ticketSalesClosedMessage()
+    protected function ticketSalesClosedMessage(): string
     {
         $sales_closed_msg = esc_html__(
             'We\'re sorry, but ticket sales have been closed at this time. Please check back again later.',
@@ -361,11 +391,12 @@ class DisplayTicketSelector
     /**
      * getTickets
      *
-     * @return \EE_Base_Class[]|\EE_Ticket[]
+     * @return EE_Base_Class[]|EE_Ticket[]
      * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
+     * @throws ReflectionException
      */
     protected function getTickets()
     {
@@ -374,16 +405,19 @@ class DisplayTicketSelector
             && EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector->show_expired_tickets
         );
 
-        $ticket_query_args = array(
-            array('Datetime.EVT_ID' => $this->event->ID()),
-            'order_by' => array(
+        $ticket_query_args = [
+            [
+                'Datetime.EVT_ID' => $this->event->ID(),
+                'TKT_visibility' => ['<', EEM_Ticket::TICKET_VISIBILITY_NONE],
+            ],
+            'order_by' => [
                 'TKT_order'              => 'ASC',
                 'TKT_required'           => 'DESC',
                 'TKT_start_date'         => 'ASC',
                 'TKT_end_date'           => 'ASC',
                 'Datetime.DTT_EVT_start' => 'DESC',
-            ),
-        );
+            ],
+        ];
         if (! $show_expired_tickets) {
             // use the correct applicable time query depending on what version of core is being run.
             $current_time = method_exists('EEM_Datetime', 'current_time_for_query')
@@ -391,7 +425,35 @@ class DisplayTicketSelector
                 : current_time('timestamp');
             $ticket_query_args[0]['TKT_end_date'] = array('>', $current_time);
         }
-        return EEM_Ticket::instance()->get_all($ticket_query_args);
+        /** @var EE_Ticket[] $tickets */
+        $tickets = EEM_Ticket::instance()->get_all($ticket_query_args);
+        // remove tickets based on their visibility and the current user's allowed access (crudely based on roles)
+        return array_filter($tickets, [$this, 'ticketVisibilityFilter']);
+    }
+
+
+    /**
+     * returns true if ticket visibility:
+     *  - is not NONE
+     *  - is less than MEMBERS_ONLY when user is NOT logged in
+     *  - is less than ADMINS_ONLY when user IS logged in but is NOT an admin
+     *  - is less than ADMIN_UI_ONLY when ticket selector is being viewed via a public UI
+     *
+     * @param EE_Ticket $ticket
+     * @return bool
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since   $VID:$
+     */
+    public function ticketVisibilityFilter(EE_Ticket $ticket): bool
+    {
+        $visibility = $ticket->visibility();
+        return $visibility < EEM_Ticket::TICKET_VISIBILITY_NONE
+            && ! (
+               ($visibility >= EEM_Ticket::TICKET_VISIBILITY_MEMBERS_ONLY && $this->current_user->ID === 0)
+               || ($visibility >= EEM_Ticket::TICKET_VISIBILITY_ADMINS_ONLY && ! $this->current_user_is_admin)
+               || ($visibility >= EEM_Ticket::TICKET_VISIBILITY_ADMIN_UI_ONLY && ! is_admin())
+           );
     }
 
 
@@ -400,10 +462,11 @@ class DisplayTicketSelector
      * begins to assemble template arguments
      * and decides whether to load a "simple" ticket selector, or the standard
      *
-     * @param \EE_Ticket[] $tickets
-     * @param array        $template_args
-     * @return string
+     * @param EE_Ticket[] $tickets
+     * @param array       $template_args
+     * @return TicketSelector
      * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function loadTicketSelector(array $tickets, array $template_args)
     {
@@ -447,18 +510,19 @@ class DisplayTicketSelector
      * so if the event is free, then this is a "simple" ticket selector
      * a.k.a. "Dude Where's my Ticket Selector?"
      *
-     * @param \EE_Ticket[] $tickets
-     * @param array        $template_args
+     * @param EE_Ticket[] $tickets
+     * @param array       $template_args
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    protected function simpleTicketSelector($tickets, array $template_args)
+    protected function simpleTicketSelector(array $tickets, array $template_args)
     {
         // if there is only ONE ticket with a max qty of ONE
         if (count($tickets) > 1 || $this->getMaxAttendees() !== 1) {
             return '';
         }
-        /** @var \EE_Ticket $ticket */
+        /** @var EE_Ticket $ticket */
         $ticket = reset($tickets);
         // if the ticket is free... then not much need for the ticket selector
         if (
@@ -484,7 +548,7 @@ class DisplayTicketSelector
      *
      * @return string
      */
-    public function externalEventRegistration()
+    public function externalEventRegistration(): string
     {
         // if not we still need to trigger the display of the submit button
         add_filter('FHEE__EE_Ticket_Selector__display_ticket_selector_submit', '__return_true');
@@ -501,11 +565,11 @@ class DisplayTicketSelector
     /**
      * formOpen
      *
-     * @param        int    $ID
-     * @param        string $external_url
+     * @param int    $ID
+     * @param string $external_url
      * @return        string
      */
-    public function formOpen($ID = 0, $external_url = '')
+    public function formOpen(int $ID = 0, string $external_url = ''): string
     {
         // if redirecting, we don't need any anything else
         if ($external_url) {
@@ -549,19 +613,19 @@ class DisplayTicketSelector
         $html .= $this->iframe ? ' target="_blank"' : '';
         $html .= '>';
         $html .= '<input type="hidden" name="ee" value="process_ticket_selections">';
-        $html = apply_filters('FHEE__EE_Ticket_Selector__ticket_selector_form_open__html', $html, $this->event);
-        return $html;
+        return apply_filters('FHEE__EE_Ticket_Selector__ticket_selector_form_open__html', $html, $this->event);
     }
 
 
     /**
      * displaySubmitButton
      *
-     * @param  string $external_url
+     * @param string $external_url
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function displaySubmitButton($external_url = '')
+    public function displaySubmitButton(string $external_url = ''): string
     {
         $html = '';
         if ($this->display_full_ui()) {
@@ -645,8 +709,9 @@ class DisplayTicketSelector
     /**
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function displayRegisterNowButton()
+    public function displayRegisterNowButton(): string
     {
         $btn_text = apply_filters(
             'FHEE__EE_Ticket_Selector__display_ticket_selector_submit__btn_text',
@@ -686,8 +751,9 @@ class DisplayTicketSelector
      *                    In this case, we need to close the form BEFORE adding any closing divs
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function displayViewDetailsButton($DWMTS = false)
+    public function displayViewDetailsButton(bool $DWMTS = false): string
     {
         if (! $this->event->get_permalink()) {
             EE_Error::add_error(
@@ -740,7 +806,7 @@ class DisplayTicketSelector
     /**
      * @return string
      */
-    public function ticketSelectorEndDiv()
+    public function ticketSelectorEndDiv(): string
     {
         return $this->clearTicketSelector() . '</div><!-- ticketSelectorEndDiv -->';
     }
@@ -749,7 +815,7 @@ class DisplayTicketSelector
     /**
      * @return string
      */
-    public function clearTicketSelector()
+    public function clearTicketSelector(): string
     {
         // standard TS displayed, appears after a "Register Now" or "view Details" button
         return '<div class="clear"></div><!-- clearTicketSelector -->';
@@ -760,7 +826,7 @@ class DisplayTicketSelector
      * @access        public
      * @return        string
      */
-    public function formClose()
+    public function formClose(): string
     {
         return '</form>';
     }
@@ -770,9 +836,10 @@ class DisplayTicketSelector
      * handleMissingEvent
      * Returns either false or an error to display when no valid event is passed.
      *
-     * @return mixed
+     * @return false|string
      * @throws ExceptionStackTraceDisplay
      * @throws InvalidInterfaceException
+     * @throws Exception
      */
     protected function handleMissingEvent()
     {
