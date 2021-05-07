@@ -451,6 +451,25 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
     /**
      * @return array
      */
+    public function getTicketVisibilityLabels(): array
+    {
+        $ticket_visibility_options = [];
+        foreach ($this->ticket_visibility as $key => $ticket_visibility_option) {
+            if (isset($ticket_visibility_option['label'])) {
+                // change because we only want the labels tied to the keys
+                $ticket_visibility_options[] = [
+                    'value' => $key,
+                    'label' => $ticket_visibility_option['label']
+                ];
+            }
+        }
+        return $ticket_visibility_options;
+    }
+
+
+    /**
+     * @return array
+     */
     public function ticketVisibilityOptions(): array
     {
         return $this->ticket_visibility;
