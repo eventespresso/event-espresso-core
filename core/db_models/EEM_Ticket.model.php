@@ -255,10 +255,10 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
         );
         // account for default tickets in the caps
         $this->_cap_restriction_generators[ EEM_Base::caps_read_admin ]
-                                                                    = new EE_Restriction_Generator_Default_Protected(
-            'TKT_is_default',
-            $path_to_event
-        );
+            = new EE_Restriction_Generator_Default_Protected(
+                'TKT_is_default',
+                $path_to_event
+            );
         $this->_cap_restriction_generators[ EEM_Base::caps_edit ]   = new EE_Restriction_Generator_Default_Protected(
             'TKT_is_default',
             $path_to_event
