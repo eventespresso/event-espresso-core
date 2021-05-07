@@ -16,6 +16,7 @@ use EEH_Template;
 use EEH_URL;
 use EEM_Event;
 use EEM_Ticket;
+use EventEspresso\core\domain\entities\users\CurrentUser;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
@@ -23,7 +24,6 @@ use Exception;
 use InvalidArgumentException;
 use ReflectionException;
 use WP_Post;
-use WP_User;
 
 // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
 // phpcs:disable WordPress.WP.I18n.UnorderedPlaceholdersText
@@ -77,49 +77,29 @@ class DisplayTicketSelector
     private $display_full_ui;
 
     /**
-     * @var array
-     */
-    private $admin_roles;
-
-    /**
-     * @var WP_User
+     * @var CurrentUser
      */
     private $current_user;
-
-    /**
-     * @var boolean
-     */
-    private $current_user_is_admin;
-
-    /**
-     * @var boolean
-     */
-    private $current_user_is_logged_in;
 
 
     /**
      * DisplayTicketSelector constructor.
      *
-     * @param bool $iframe
+     * @param CurrentUser $current_user
+     * @param bool        $iframe
      */
-    public function __construct(bool $iframe = false)
+    public function __construct(CurrentUser $current_user, bool $iframe = false)
     {
-        $this->iframe = $iframe;
-        $this->date_format = apply_filters(
+        $this->current_user = $current_user;
+        $this->setIframe($iframe);
+        $this->date_format  = apply_filters(
             'FHEE__EED_Ticket_Selector__display_ticket_selector__date_format',
             get_option('date_format')
         );
-        $this->time_format = apply_filters(
+        $this->time_format  = apply_filters(
             'FHEE__EED_Ticket_Selector__display_ticket_selector__time_format',
             get_option('time_format')
         );
-        $this->admin_roles = apply_filters(
-            'FHEE__EED_Ticket_Selector__display_ticket_selector__admin_roles',
-            ['administrator']
-        );
-        $this->current_user = wp_get_current_user();
-        $this->current_user_is_admin = ! empty(array_intersect($this->admin_roles, $this->current_user->roles));
-        $this->current_user_is_logged_in = $this->current_user->ID !== 0;
     }
 
 
@@ -164,14 +144,14 @@ class DisplayTicketSelector
                 $this->event = $event->EE_Event;
             } elseif ($event->post_type === 'espresso_events') {
                 $event->EE_Event = EEM_Event::instance()->instantiate_class_from_post_object($event);
-                $this->event = $event->EE_Event;
+                $this->event     = $event->EE_Event;
             }
         } else {
-            $user_msg = __('No Event object or an invalid Event object was supplied.', 'event_espresso');
-            $dev_msg = $user_msg . __(
-                'In order to generate a ticket selector, please ensure you are passing either an EE_Event object or a WP_Post object of the post type "espresso_event" to the EE_Ticket_Selector class constructor.',
-                'event_espresso'
-            );
+            $user_msg = esc_html__('No Event object or an invalid Event object was supplied.', 'event_espresso');
+            $dev_msg  = $user_msg . esc_html__(
+                    'In order to generate a ticket selector, please ensure you are passing either an EE_Event object or a WP_Post object of the post type "espresso_event" to the EE_Ticket_Selector class constructor.',
+                    'event_espresso'
+                );
             EE_Error::add_error($user_msg . '||' . $dev_msg, __FILE__, __FUNCTION__, __LINE__);
             return false;
         }
@@ -241,16 +221,18 @@ class DisplayTicketSelector
         // is the event expired ?
         $template_args['event_is_expired'] = ! is_admin() && $this->event->is_expired();
         if ($template_args['event_is_expired']) {
-            return is_single() ? $this->expiredEventMessage() : $this->expiredEventMessage() . $this->displayViewDetailsButton();
+            return is_single()
+                ? $this->expiredEventMessage()
+                : $this->expiredEventMessage() . $this->displayViewDetailsButton();
         }
         // begin gathering template arguments by getting event status
-        $template_args = array('event_status' => $this->event->get_active_status());
+        $template_args = ['event_status' => $this->event->get_active_status()];
         if (
-            $this->activeEventAndShowTicketSelector(
-                $event,
-                $template_args['event_status'],
-                $view_details
-            )
+        $this->activeEventAndShowTicketSelector(
+            $event,
+            $template_args['event_status'],
+            $view_details
+        )
         ) {
             return ! is_single() ? $this->displayViewDetailsButton() : '';
         }
@@ -266,7 +248,7 @@ class DisplayTicketSelector
         }
         // redirecting to another site for registration ??
         $external_url = (string) $this->event->external_url()
-            && $this->event->external_url() !== get_the_permalink()
+                        && $this->event->external_url() !== get_the_permalink()
             ? $this->event->external_url()
             : '';
         // if redirecting to another site for registration, then we don't load the TS
@@ -324,9 +306,9 @@ class DisplayTicketSelector
     protected function expiredEventMessage(): string
     {
         return '<div class="ee-event-expired-notice"><span class="important-notice">' . esc_html__(
-            'We\'re sorry, but all tickets sales have ended because the event is expired.',
-            'event_espresso'
-        ) . '</span></div><!-- .ee-event-expired-notice -->';
+                'We\'re sorry, but all tickets sales have ended because the event is expired.',
+                'event_espresso'
+            ) . '</span></div><!-- .ee-event-expired-notice -->';
     }
 
 
@@ -406,15 +388,17 @@ class DisplayTicketSelector
      */
     protected function getTickets()
     {
-        $show_expired_tickets = is_admin() || (
-            EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector instanceof EE_Ticket_Selector_Config
-            && EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector->show_expired_tickets
-        );
+        $ticket_selector_config = EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector;
+        $show_expired_tickets = is_admin()
+            || (
+                $ticket_selector_config instanceof EE_Ticket_Selector_Config
+                && $ticket_selector_config->show_expired_tickets
+            );
 
         $ticket_query_args = [
             [
                 'Datetime.EVT_ID' => $this->event->ID(),
-                'TKT_visibility' => ['>', EEM_Ticket::TICKET_VISIBILITY_NONE_VALUE],
+                'TKT_visibility'  => ['>', EEM_Ticket::TICKET_VISIBILITY_NONE_VALUE],
             ],
             'order_by' => [
                 'TKT_order'              => 'ASC',
@@ -429,7 +413,7 @@ class DisplayTicketSelector
             $current_time = method_exists('EEM_Datetime', 'current_time_for_query')
                 ? time()
                 : current_time('timestamp');
-            $ticket_query_args[0]['TKT_end_date'] = array('>', $current_time);
+            $ticket_query_args[0]['TKT_end_date'] = ['>', $current_time];
         }
         /** @var EE_Ticket[] $tickets */
         $tickets = EEM_Ticket::instance()->get_all($ticket_query_args);
@@ -454,8 +438,8 @@ class DisplayTicketSelector
     public function ticketVisibilityFilter(EE_Ticket $ticket): bool
     {
         return $ticket->isPublicOnly()
-               || ($ticket->isMembersOnly() && $this->current_user_is_logged_in)
-               || ($ticket->isAdminsOnly() && $this->current_user_is_admin)
+               || ($ticket->isMembersOnly() && $this->current_user->isLoggedIn())
+               || ($ticket->isAdminsOnly() && $this->current_user->isEventManager())
                || ($ticket->isAdminUiOnly() && is_admin());
     }
 
@@ -473,27 +457,27 @@ class DisplayTicketSelector
      */
     protected function loadTicketSelector(array $tickets, array $template_args)
     {
-        $template_args['event'] = $this->event;
-        $template_args['EVT_ID'] = $this->event->ID();
+        $template_args['event']            = $this->event;
+        $template_args['EVT_ID']           = $this->event->ID();
         $template_args['event_is_expired'] = $this->event->is_expired();
-        $template_args['max_atndz'] = $this->getMaxAttendees();
-        $template_args['date_format'] = $this->date_format;
-        $template_args['time_format'] = $this->time_format;
+        $template_args['max_atndz']        = $this->getMaxAttendees();
+        $template_args['date_format']      = $this->date_format;
+        $template_args['time_format']      = $this->time_format;
         /**
          * Filters the anchor ID used when redirecting to the Ticket Selector if no quantity selected
          *
-         * @since 4.9.13
-         * @param     string  '#tkt-slctr-tbl-' . $EVT_ID The html ID to anchor to
+         * @param string  '#tkt-slctr-tbl-' . $EVT_ID The html ID to anchor to
          * @param int $EVT_ID The Event ID
+         * @since 4.9.13
          */
-        $template_args['anchor_id'] = apply_filters(
+        $template_args['anchor_id']    = apply_filters(
             'FHEE__EE_Ticket_Selector__redirect_anchor_id',
             '#tkt-slctr-tbl-' . $this->event->ID(),
             $this->event->ID()
         );
-        $template_args['tickets'] = $tickets;
+        $template_args['tickets']      = $tickets;
         $template_args['ticket_count'] = count($tickets);
-        $ticket_selector = $this->simpleTicketSelector($tickets, $template_args);
+        $ticket_selector               = $this->simpleTicketSelector($tickets, $template_args);
         return $ticket_selector instanceof TicketSelectorSimple
             ? $ticket_selector
             : new TicketSelectorStandard(
@@ -529,11 +513,11 @@ class DisplayTicketSelector
         $ticket = reset($tickets);
         // if the ticket is free... then not much need for the ticket selector
         if (
-            apply_filters(
-                'FHEE__ticket_selector_chart_template__hide_ticket_selector',
-                $ticket->is_free(),
-                $this->event->ID()
-            )
+        apply_filters(
+            'FHEE__ticket_selector_chart_template__hide_ticket_selector',
+            $ticket->is_free(),
+            $this->event->ID()
+        )
         ) {
             return new TicketSelectorSimple(
                 $this->event,
@@ -580,14 +564,14 @@ class DisplayTicketSelector
             $html .= 'action="' . EEH_URL::refactor_url($external_url) . '" ';
             $html .= 'name="ticket-selector-form-' . $ID . '"';
             // open link in new window ?
-            $html .= apply_filters(
+            $html       .= apply_filters(
                 'FHEE__EventEspresso_modules_ticket_selector_DisplayTicketSelector__formOpen__external_url_target_blank',
                 $this->isIframe(),
                 $this
             )
                 ? ' target="_blank"'
                 : '';
-            $html .= '>';
+            $html       .= '>';
             $query_args = EEH_URL::get_query_string($external_url);
             foreach ((array) $query_args as $query_arg => $value) {
                 $html .= '<input type="hidden" name="' . $query_arg . '" value="' . $value . '">';
@@ -646,7 +630,7 @@ class DisplayTicketSelector
                     $html .= apply_filters(
                         'FHEE__EE_Ticket_Selector__display_ticket_selector_submit__sold_out_msg',
                         sprintf(
-                            __(
+                            esc_html__(
                                 '%1$s"%2$s" is currently sold out.%4$sPlease check back again later, as spots may become available.%3$s',
                                 'event_espresso'
                             ),
@@ -658,11 +642,11 @@ class DisplayTicketSelector
                         $this->event
                     );
                     if (
-                        apply_filters(
-                            'FHEE__EE_Ticket_Selector__display_ticket_selector_submit__no_tickets_but_display_register_now_button',
-                            false,
-                            $this->event
-                        )
+                    apply_filters(
+                        'FHEE__EE_Ticket_Selector__display_ticket_selector_submit__no_tickets_but_display_register_now_button',
+                        false,
+                        $this->event
+                    )
                     ) {
                         $html .= $this->displayRegisterNowButton();
                     }
@@ -670,7 +654,7 @@ class DisplayTicketSelector
                     $html .= $this->ticketSelectorEndDiv();
                 } elseif (
                     apply_filters('FHEE__EE_Ticket_Selector__hide_ticket_selector', false)
-                          && ! is_single()
+                    && ! is_single()
                 ) {
                     // this is a "Dude Where's my Ticket Selector?" (DWMTS) type event,
                     // but no tickets are available, so display event's "View Details" button.
@@ -685,11 +669,11 @@ class DisplayTicketSelector
                 $html .= $this->displayViewDetailsButton();
             } else {
                 if (
-                    apply_filters(
-                        'FHEE__EE_Ticket_Selector__display_ticket_selector_submit__no_tickets_but_display_register_now_button',
-                        false,
-                        $this->event
-                    )
+                apply_filters(
+                    'FHEE__EE_Ticket_Selector__display_ticket_selector_submit__no_tickets_but_display_register_now_button',
+                    false,
+                    $this->event
+                )
                 ) {
                     $html .= $this->displayRegisterNowButton();
                 }
@@ -697,7 +681,7 @@ class DisplayTicketSelector
                 $html .= $this->ticketSelectorEndDiv();
             }
             if (! $this->iframe && ! is_archive()) {
-                $html .= EEH_Template::powered_by_event_espresso('', '', array('utm_content' => 'ticket_selector'));
+                $html .= EEH_Template::powered_by_event_espresso('', '', ['utm_content' => 'ticket_selector']);
             }
         }
         return apply_filters(
@@ -716,26 +700,26 @@ class DisplayTicketSelector
      */
     public function displayRegisterNowButton(): string
     {
-        $btn_text = apply_filters(
+        $btn_text     = apply_filters(
             'FHEE__EE_Ticket_Selector__display_ticket_selector_submit__btn_text',
-            __('Register Now', 'event_espresso'),
+            esc_html__('Register Now', 'event_espresso'),
             $this->event
         );
         $external_url = (string) $this->event->external_url()
-            && $this->event->external_url() !== get_the_permalink()
+                        && $this->event->external_url() !== get_the_permalink()
             ? $this->event->external_url()
             : '';
-        $html = EEH_HTML::div(
+        $html         = EEH_HTML::div(
             '',
             'ticket-selector-submit-' . $this->event->ID() . '-btn-wrap',
             'ticket-selector-submit-btn-wrap'
         );
-        $html .= '<input id="ticket-selector-submit-' . $this->event->ID() . '-btn"';
-        $html .= ' class="ticket-selector-submit-btn ';
-        $html .= empty($external_url) ? 'ticket-selector-submit-ajax"' : '"';
-        $html .= ' type="submit" value="' . $btn_text . '" data-ee-disable-after-recaptcha="true" />';
-        $html .= EEH_HTML::divx() . '<!-- .ticket-selector-submit-btn-wrap -->';
-        $html .= apply_filters(
+        $html         .= '<input id="ticket-selector-submit-' . $this->event->ID() . '-btn"';
+        $html         .= ' class="ticket-selector-submit-btn ';
+        $html         .= empty($external_url) ? 'ticket-selector-submit-ajax"' : '"';
+        $html         .= ' type="submit" value="' . $btn_text . '" data-ee-disable-after-recaptcha="true" />';
+        $html         .= EEH_HTML::divx() . '<!-- .ticket-selector-submit-btn-wrap -->';
+        $html         .= apply_filters(
             'FHEE__EE_Ticket_Selector__after_ticket_selector_submit',
             '',
             $this->event,
@@ -782,7 +766,7 @@ class DisplayTicketSelector
             ? ' target="_blank"'
             : '';
         $view_details_btn .= '>';
-        $btn_text = apply_filters(
+        $btn_text         = apply_filters(
             'FHEE__EE_Ticket_Selector__display_view_details_btn__btn_text',
             esc_html__('View Details', 'event_espresso'),
             $this->event
