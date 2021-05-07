@@ -57,6 +57,13 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     const META_KEY_TICKET_RESERVATIONS = 'ticket_reservations';
 
     /**
+     * override of parent property
+     *
+     * @var EEM_Ticket
+     */
+    protected $_model;
+
+    /**
      * cached result from method of the same name
      *
      * @var float $_ticket_total_with_taxes
@@ -1708,8 +1715,15 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      */
     public function set_visibility(int $visibility)
     {
-        $ticket_visibility = EEM_Ticket::instance()->ticketVisibility();
-        if (! isset($ticket_visibility[ $visibility ])) {
+
+        $ticket_visibility_options = $this->_model->ticketVisibilityOptions();
+        $ticket_visibility = -1;
+        foreach ($ticket_visibility_options as $ticket_visibility_option) {
+            if ($visibility === $ticket_visibility_option) {
+                $ticket_visibility = $visibility;
+            }
+        }
+        if ($ticket_visibility === -1) {
             throw new DomainException(
                 sprintf(
                     esc_html__(
@@ -1718,11 +1732,11 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
                     ),
                     $visibility,
                     '<br />',
-                    var_export($ticket_visibility, true)
+                    var_export($ticket_visibility_options, true)
                 )
             );
         }
-        $this->set('TKT_visibility', $visibility);
+        $this->set('TKT_visibility', $ticket_visibility);
     }
 
 

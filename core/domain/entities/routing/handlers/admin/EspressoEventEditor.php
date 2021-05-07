@@ -51,6 +51,7 @@ class EspressoEventEditor extends EspressoEventsAdmin
                 'EventEspresso\core\domain\services\admin\events\editor\NewEventDefaultEntities' => EE_Dependency_Map::load_from_cache,
                 '\EventEspresso\core\domain\services\admin\events\editor\EventManagers'          => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\domain\services\admin\events\editor\EventEntityRelations'    => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\services\admin\events\editor\TicketMeta'              => EE_Dependency_Map::load_from_cache,
             ]
         );
         $this->dependency_map->registerDependencies(
@@ -75,6 +76,10 @@ class EspressoEventEditor extends EspressoEventsAdmin
                 'EEM_Ticket'                                                         => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\domain\services\graphql\Utilities'               => EE_Dependency_Map::load_from_cache,
             ]
+        );
+        $this->dependency_map->registerDependencies(
+            'EventEspresso\core\domain\services\admin\events\editor\TicketMeta',
+            ['EEM_Ticket' => EE_Dependency_Map::load_from_cache]
         );
         $this->dependency_map->registerDependencies(
             'EventEspresso\core\domain\services\admin\entities\DefaultDatetimes',

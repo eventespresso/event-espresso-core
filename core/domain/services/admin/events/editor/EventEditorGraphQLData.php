@@ -22,44 +22,49 @@ class EventEditorGraphQLData
 {
 
     /**
-     * @var Event $event
+     * @var Event
      */
     protected $event;
 
     /**
-     * @var Datetimes $datetimes
+     * @var Datetimes
      */
     protected $datetimes;
 
     /**
-     * @var Prices $prices
+     * @var Prices
      */
     protected $prices;
 
     /**
-     * @var PriceTypes $price_types
+     * @var PriceTypes
      */
     protected $price_types;
 
     /**
-     * @var Tickets $tickets
+     * @var Tickets
      */
     protected $tickets;
 
     /**
-     * @var EventEntityRelations $relations
+     * @var EventEntityRelations
      */
     protected $relations;
 
     /**
-     * @var EventManagers $managers
+     * @var EventManagers
      */
     protected $managers;
 
     /**
-     * @var NewEventDefaultEntities $default_entities
+     * @var NewEventDefaultEntities
      */
     protected $default_entities;
+
+    /**
+     * @var TicketMeta
+     */
+    protected $ticket_meta;
 
 
     /**
@@ -73,6 +78,7 @@ class EventEditorGraphQLData
      * @param EventEntityRelations    $relations
      * @param EventManagers           $managers
      * @param NewEventDefaultEntities $default_entities
+     * @param TicketMeta $ticket_meta
      */
     public function __construct(
         Datetimes $datetimes,
@@ -82,7 +88,8 @@ class EventEditorGraphQLData
         Tickets $tickets,
         EventEntityRelations $relations,
         EventManagers $managers,
-        NewEventDefaultEntities $default_entities
+        NewEventDefaultEntities $default_entities,
+        TicketMeta $ticket_meta
     ) {
         $this->datetimes        = $datetimes;
         $this->event            = $event;
@@ -92,6 +99,7 @@ class EventEditorGraphQLData
         $this->managers         = $managers;
         $this->relations        = $relations;
         $this->tickets          = $tickets;
+        $this->ticket_meta      = $ticket_meta;
     }
 
 
@@ -132,6 +140,8 @@ class EventEditorGraphQLData
 
         $relations = $this->relations->getData($eventId);
 
+        $ticketMeta = $this->ticket_meta->getData($eventId);
+
         return compact(
             'datetimes',
             'event',
@@ -139,7 +149,8 @@ class EventEditorGraphQLData
             'prices',
             'priceTypes',
             'relations',
-            'tickets'
+            'tickets',
+            'ticketMeta'
         );
     }
 }
