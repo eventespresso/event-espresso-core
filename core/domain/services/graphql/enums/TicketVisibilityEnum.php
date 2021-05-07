@@ -34,6 +34,6 @@ class TicketVisibilityEnum extends EnumBase
      */
     protected function getValues(): array
     {
-        return EEM_Ticket::instance()->getTicketVisibilityOptionsWithoutLabels();
+        return EEM_Ticket::instance()->getTicketVisibilityValues();
     }
 }

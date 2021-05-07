@@ -436,11 +436,12 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
     /**
      * @return array
      */
-    public function getTicketVisibilityOptionsWithoutLabels(): array
+    public function getTicketVisibilityValues(): array
     {
         // copy ticket_visibility array
         $ticket_visibility_options = $this->ticket_visibility;
         foreach ($ticket_visibility_options as $ticket_visibility_option) {
+            // remove labels because we only want the values
             unset($ticket_visibility_option['label']);
         }
         return $ticket_visibility_options;
