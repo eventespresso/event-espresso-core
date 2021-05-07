@@ -408,7 +408,7 @@ class DisplayTicketSelector
         $ticket_query_args = [
             [
                 'Datetime.EVT_ID' => $this->event->ID(),
-                'TKT_visibility' => ['<', EEM_Ticket::TICKET_VISIBILITY_NONE],
+                'TKT_visibility' => ['<', EEM_Ticket::TICKET_VISIBILITY_NONE_VALUE],
             ],
             'order_by' => [
                 'TKT_order'              => 'ASC',
