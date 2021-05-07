@@ -52,7 +52,7 @@ class EventEditorGraphQLData
     protected $relations;
 
     /**
-     * @var EventManagers
+     * @var EventManagerData
      */
     protected $managers;
 
@@ -76,9 +76,9 @@ class EventEditorGraphQLData
      * @param PriceTypes              $price_types
      * @param Tickets                 $tickets
      * @param EventEntityRelations    $relations
-     * @param EventManagers           $managers
+     * @param EventManagerData        $managers
      * @param NewEventDefaultEntities $default_entities
-     * @param TicketMeta $ticket_meta
+     * @param TicketMeta              $ticket_meta
      */
     public function __construct(
         Datetimes $datetimes,
@@ -87,7 +87,7 @@ class EventEditorGraphQLData
         PriceTypes $price_types,
         Tickets $tickets,
         EventEntityRelations $relations,
-        EventManagers $managers,
+        EventManagerData $managers,
         NewEventDefaultEntities $default_entities,
         TicketMeta $ticket_meta
     ) {
