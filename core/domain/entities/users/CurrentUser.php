@@ -55,7 +55,7 @@ class CurrentUser
             $event_manager_roles    = array_keys($this->event_managers->roles());
             $current_user_roles     = $this->current_user->roles;
             $this->is_event_manager = ! empty(array_intersect($event_manager_roles, $current_user_roles));
-            $this->is_logged_in     = $this->current_user->ID !== 0;
+            $this->is_logged_in     = $this->current_user->exists();
         }
     }
 
