@@ -31,7 +31,7 @@ class FeatureFlags
      *
      * @var boolean[]|CapCheck[]
      */
-    private $feature_flags = [];
+    private $feature_flags;
 
 
     /**
@@ -45,9 +45,13 @@ class FeatureFlags
         $this->feature_flags = apply_filters(
             'FHEE__EventEspresso_core_domain_services_capabilities_FeatureFlags',
             [
-                'use_bulk_edit'             => false,
-                'use_event_description_rte' => false,
-                'use_reg_options_meta_box'  => false,
+                'use_bulk_edit'              => false,
+                'use_default_ticket_manager' => false,
+                'use_reg_form_builder'       => false,
+                'use_event_description_rte'  => false,
+                'use_experimental_rte'       => false,
+                'use_reg_options_meta_box'   => false,
+                'ee_advanced_event_editor'   => false,
             ]
         );
     }
@@ -57,11 +61,11 @@ class FeatureFlags
      * @param string $feature
      * @return bool
      */
-    public function featureAllowed(string $feature)
+    public function featureAllowed(string $feature): bool
     {
-        $flag = isset($this->feature_flags[ $feature ]) ? $this->feature_flags[ $feature ] : false;
+        $flag = isset($this->feature_flags[ $feature ]) ?? false;
         try {
-            return $flag instanceof CapCheck
+            return is_object($flag) && $flag instanceof CapCheck
                 ? $this->capabilities_checker->processCapCheck($flag)
                 : $flag;
         } catch (InsufficientPermissionsException $e) {
@@ -74,7 +78,7 @@ class FeatureFlags
     /**
      * @return array
      */
-    public function getAllowedFeatures()
+    public function getAllowedFeatures(): array
     {
         $allowed = array_filter($this->feature_flags, [$this, 'featureAllowed'], ARRAY_FILTER_USE_KEY);
         return array_keys($allowed);
