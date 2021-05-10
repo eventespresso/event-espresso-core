@@ -49,7 +49,7 @@ class EspressoEventEditor extends EspressoEventsAdmin
                 'EventEspresso\core\domain\entities\admin\GraphQLData\PriceTypes'                => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\domain\entities\admin\GraphQLData\Tickets'                   => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\domain\services\admin\events\editor\NewEventDefaultEntities' => EE_Dependency_Map::load_from_cache,
-                '\EventEspresso\core\domain\services\admin\events\editor\EventManagers'          => EE_Dependency_Map::load_from_cache,
+                '\EventEspresso\core\domain\services\admin\events\editor\EventManagerData'       => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\domain\services\admin\events\editor\EventEntityRelations'    => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\domain\services\admin\events\editor\TicketMeta'              => EE_Dependency_Map::load_from_cache,
             ]
@@ -118,9 +118,10 @@ class EspressoEventEditor extends EspressoEventsAdmin
             ]
         );
         $this->dependency_map->registerDependencies(
-            'EventEspresso\core\domain\services\admin\events\editor\EventManagers',
+            'EventEspresso\core\domain\services\admin\events\editor\EventManagerData',
             [
-                'EventEspresso\core\domain\services\graphql\Utilities' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\entities\users\EventManagers' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\services\graphql\Utilities'   => EE_Dependency_Map::load_from_cache,
             ]
         );
     }
