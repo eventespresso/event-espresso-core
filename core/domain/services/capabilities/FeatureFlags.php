@@ -63,11 +63,11 @@ class FeatureFlags
      */
     public function featureAllowed(string $feature): bool
     {
-        $flag = isset($this->feature_flags[ $feature ]) ?? false;
+        $flag = $this->feature_flags[ $feature ] ?? false;
         try {
             return is_object($flag) && $flag instanceof CapCheck
                 ? $this->capabilities_checker->processCapCheck($flag)
-                : $flag;
+                : filter_var($flag, FILTER_VALIDATE_BOOLEAN);
         } catch (InsufficientPermissionsException $e) {
             // eat the exception
         }
