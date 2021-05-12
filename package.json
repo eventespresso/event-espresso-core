@@ -80,7 +80,7 @@
 		"@wordpress/block-library": "^2.29.3",
 		"@wordpress/blocks": "^6.25.2",
 		"@wordpress/browserslist-config": "^2.7.0",
-		"@wordpress/components": "^11.1.0",
+		"@wordpress/components": "^13.0.3",
 		"@wordpress/compose": "^3.25.3",
 		"@wordpress/core-data": "^2.26.3",
 		"@wordpress/data": "^4.27.3",
