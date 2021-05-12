@@ -61,19 +61,24 @@ abstract class LocaleFloatFormatter implements LocaleFloatFormatterInterface
     /**
      * inserts symbols for the locale's decimal and thousands separator at the appropriate places
      *
-     * @param int    $number
+     * @param float  $number
      * @param int    $precision
      * @param string $decimal_point
      * @param int    $grouping
      * @param string $thousands_separator
      * @return string
      */
-    protected function formatGroupings($number, $precision, $decimal_point, $grouping, $thousands_separator)
-    {
+    protected function formatGroupings(
+        float $number,
+        int $precision,
+        string $decimal_point,
+        int $grouping,
+        string $thousands_separator
+    ): string {
         // remove sign (+-), cast to string, then break apart at the decimal place
         $parts = explode('.', (string) abs($number));
         // separate the integer and decimal portions of the number into separate variables
-        list($integer, $decimal) = $parts + [0, 0];
+        [$integer, $decimal] = $parts + [0, 0];
         // ok this gets a bit crazy, but we need to insert the locale's thousand separator
         // at the correct intervals for the locale, so 123456789 can be something like "123,456,879" or "1.23.45.67.89"
         // so we're first going to reverse the string, then use chunk_split() to give us something like "987,654,321"
@@ -103,7 +108,7 @@ abstract class LocaleFloatFormatter implements LocaleFloatFormatterInterface
      * @param float|int|string $number
      * @return float
      */
-    public function filterNumericValue($number)
+    public function filterNumericValue($number): float
     {
         return (float) filter_var($number, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
     }
@@ -112,30 +117,29 @@ abstract class LocaleFloatFormatter implements LocaleFloatFormatterInterface
     /**
      * formats the provided number to 6 decimal places using the site locale and returns a string
      *
-     * @param float $number    unformatted float, ex: 1.23456789
-     * @param int   $precision the number of decimal places to round to
-     * @return string          formatted number value, ex: '1.234568'
+     * @param float|int|string $number unformatted float, ex: 1.23456789
+     * @return string                  formatted number value, ex: '1.234568'
      */
-    public function precisionFormat($number, $precision = LocaleFloatFormatter::DECIMAL_PRECISION)
+    public function precisionFormat($number): string
     {
         $locale = $this->locales->getLocale($this->locales->getSiteLocaleName());
-        return $this->format($locale, $number, $precision);
+        return $this->format($locale, $number, LocaleFloatFormatter::DECIMAL_PRECISION);
     }
 
 
     /**
      * strips formatting using the site locale, then rounds the provided number to 6 decimal places and returns a float
      *
-     * @param float $number    unformatted number value, ex: 1234.5678956789
-     * @param int   $precision the number of decimal places to round to
-     * @param int   $mode      one of the PHP_ROUND_* constants for round up, round down, etc
-     * @return float           rounded value, ex: 1,234.567896
+     * @param float|int|string $number    unformatted number value, ex: 1234.5678956789
+     * @param int|null         $precision the number of decimal places to round to
+     * @param int              $mode      one of the PHP_ROUND_* constants for round up, round down, etc
+     * @return float                      rounded value, ex: 1,234.567896
      */
     public function precisionRound(
         $number,
-        $precision = LocaleFloatFormatter::DECIMAL_PRECISION,
-        $mode = PHP_ROUND_HALF_UP
-    ) {
+        ?int $precision = LocaleFloatFormatter::DECIMAL_PRECISION,
+        int $mode = PHP_ROUND_HALF_UP
+    ): float {
         return round(
             $this->filterNumericValue($number),
             $precision,
@@ -148,12 +152,12 @@ abstract class LocaleFloatFormatter implements LocaleFloatFormatterInterface
      * strips formatting for the provided locale (defaults to site locale),
      * then rounds the provided number and returns a float
      *
-     * @param float         $number unformatted number value, ex: 1234.56789
-     * @param string|Locale $locale ex: 'en_US' or Locale object
-     * @param int           $mode   one of the PHP_ROUND_* constants for round up, round down, etc
-     * @return float                rounded value, ex: 1,234.57
+     * @param float|int|string $number unformatted number value, ex: 1234.56789
+     * @param string|Locale    $locale ex: 'en_US' or Locale object
+     * @param int              $mode   one of the PHP_ROUND_* constants for round up, round down, etc
+     * @return float                   rounded value, ex: 1,234.57
      */
-    public function roundForLocale($number, $mode = PHP_ROUND_HALF_UP, $locale = '')
+    public function roundForLocale($number, $locale = '', int $mode = PHP_ROUND_HALF_UP): float
     {
         $locale = $this->locales->getLocale($locale);
         return round($this->filterNumericValue($number), $locale->decimalPrecision(), $mode);

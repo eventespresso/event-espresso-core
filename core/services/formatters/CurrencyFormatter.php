@@ -44,12 +44,14 @@ class CurrencyFormatter extends LocaleFloatFormatter
      */
     protected function format(
         Locale $locale,
-        $amount,
-        $format = CurrencyFormatter::FORMAT_LOCALIZED_CURRENCY,
-        $precision = null
-    ) {
+        float $amount,
+        int $format = CurrencyFormatter::FORMAT_LOCALIZED_CURRENCY,
+        ?int $precision = null
+    ): string {
         // if a specific decimal precision has been requested then use that, otherwise set it for the locale
-        $precision = $precision !== null ? absint($precision) : $locale->decimalPrecision();
+        $precision = $precision !== null
+            ? absint($precision)
+            : $locale->decimalPrecision();
         // BUT... if the precision format has been requested, and the currency is just set at the locale
         // then bump the precision up to our max internal value
         $precision = $format === CurrencyFormatter::FORMAT_PRECISION_FLOAT && $precision === $locale->decimalPrecision()
@@ -73,7 +75,9 @@ class CurrencyFormatter extends LocaleFloatFormatter
 
         $is_negative = $amount < 0;
         // set the currency symbol based on the format (no currency symbol for float formats)
-        $currency_symbol = $format >= CurrencyFormatter::FORMAT_LOCALIZED_CURRENCY ? $locale->currencySymbol() : '';
+        $currency_symbol = $format >= CurrencyFormatter::FORMAT_LOCALIZED_CURRENCY
+            ? $locale->currencySymbol()
+            : '';
 
         // inserts the locale's currency symbol, negative sign, and spaces at the appropriate places
         $formatted_amount = $this->formatSymbolAndSignPositions(
@@ -82,8 +86,7 @@ class CurrencyFormatter extends LocaleFloatFormatter
             $is_negative,
             $currency_symbol
         );
-        $formatted_amount = $this->appendCurrencyIsoCode($locale, $formatted_amount, $format);
-        return $formatted_amount;
+        return $this->appendCurrencyIsoCode($locale, $formatted_amount, $format);
     }
 
 
@@ -93,14 +96,14 @@ class CurrencyFormatter extends LocaleFloatFormatter
      * @param int    $format one of the CurrencyFormatter::FORMAT_* constants
      * @return string        fully formatted amount with ISO code, ex: '$ 1,234.57 USD'
      */
-    protected function appendCurrencyIsoCode(Locale $locale, $amount, $format)
+    protected function appendCurrencyIsoCode(Locale $locale, string $amount, int $format): string
     {
         switch ($format) {
             case CurrencyFormatter::FORMAT_LOCALIZED_CURRENCY_RAW_CODE:
                 $iso_code = "&nbsp;{$locale->currencyIsoCode()}";
                 break;
             case CurrencyFormatter::FORMAT_LOCALIZED_CURRENCY_HTML_CODE:
-                $iso_code = "&nbsp;<span class=\"currency-code\">{$locale->currencyIsoCode()}</span>";
+                $iso_code = "&nbsp;<span class=\"currency-code\">({$locale->currencyIsoCode()})</span>";
                 break;
             default:
                 $iso_code = '';
@@ -110,7 +113,9 @@ class CurrencyFormatter extends LocaleFloatFormatter
             'FHEE__EEH_Template__format_currency__display_code',
             $format > CurrencyFormatter::FORMAT_LOCALIZED_CURRENCY
         );
-        $iso_code     = $display_code ? $iso_code : '';
+        $iso_code     = $display_code
+            ? $iso_code
+            : '';
         return "{$amount}{$iso_code}";
     }
 
@@ -119,17 +124,17 @@ class CurrencyFormatter extends LocaleFloatFormatter
      * inserts the locale's currency symbol, negative sign, and spaces at the appropriate places
      *
      * @param Locale $locale
-     * @param int    $number
+     * @param string $number
      * @param bool   $is_negative
      * @param string $currency_symbol
      * @return string partially formatted amount, ex: '$ 1,234.57'
      */
     protected function formatSymbolAndSignPositions(
         Locale $locale,
-        $number,
-        $is_negative,
-        $currency_symbol
-    ) {
+        string $number,
+        bool $is_negative,
+        string $currency_symbol
+    ): string {
         // format for positive or negative values
         if ($is_negative) {
             $add_spacer  = $locale->currencySymbolSpaceB4Negative();
@@ -142,7 +147,9 @@ class CurrencyFormatter extends LocaleFloatFormatter
             $position    = $locale->positiveSignPosition();
             $sign        = $locale->positiveSign();
         }
-        $spacer = $add_spacer ? '&nbsp;' : '';
+        $spacer = $add_spacer
+            ? '&nbsp;'
+            : '';
         switch ($position) {
             case LocaleFloatFormatter::PARENTHESES:
                 return $currency_b4
@@ -178,10 +185,10 @@ class CurrencyFormatter extends LocaleFloatFormatter
      * @return string              formatted value, ex: '1,234.57'
      */
     public function formatForCurrencyISO(
-        $number,
-        $currency_ISO,
-        $format = CurrencyFormatter::FORMAT_LOCALIZED_CURRENCY
-    ) {
+        float $number,
+        string $currency_ISO,
+        int $format = CurrencyFormatter::FORMAT_LOCALIZED_CURRENCY
+    ): string {
         $locale = $this->getLocaleForCurrencyISO($currency_ISO);
         return $this->format($locale, $number, $format);
     }
@@ -190,20 +197,18 @@ class CurrencyFormatter extends LocaleFloatFormatter
     /**
      * formats the provided number for the selected locale (defaults to site locale) and returns a string
      *
-     * @param float         $number    unformatted number value, ex: 1234.56789
-     * @param int           $format    one of the CurrencyFormatter::FORMAT_* constants
-     * @param string|Locale $locale    ex: "en_US" or Locale object
-     * @param int|null      $precision the number of decimal places to round to
-     * @return string                  formatted value, ex: '1,234.57'
+     * @param float|int|string $number    unformatted number value, ex: 1234.56789
+     * @param int|null         $precision the number of decimal places to round to
+     * @param string|Locale    $locale    ex: "en_US" or Locale object
+     * @return string                     formatted value, ex: '1,234.57'
      */
     public function formatForLocale(
         $number,
-        $format = CurrencyFormatter::FORMAT_LOCALIZED_CURRENCY,
-        $locale = '',
-        $precision = null
-    ) {
+        ?int $precision = CurrencyFormatter::FORMAT_LOCALIZED_CURRENCY,
+        $locale = ''
+    ): string {
         $locale = $this->locales->getLocale($locale);
-        return $this->format($locale, $number, $format, $precision);
+        return $this->format($locale, (float) $number, $precision, $precision);
     }
 
 
@@ -211,7 +216,7 @@ class CurrencyFormatter extends LocaleFloatFormatter
      * @param string|Locale $locale locale name ex: en_US or Locale object
      * @return string ex: 'USD'
      */
-    public function getCurrencyIsoCodeForLocale($locale = '')
+    public function getCurrencyIsoCodeForLocale($locale = ''): string
     {
         $locale = $this->locales->getLocale($locale);
         return $locale->currencyIsoCode();
@@ -222,7 +227,7 @@ class CurrencyFormatter extends LocaleFloatFormatter
      * @param string|Locale $locale locale name ex: en_US or Locale object
      * @return string ex: '$'
      */
-    public function getCurrencySymbolForLocale($locale = '')
+    public function getCurrencySymbolForLocale($locale = ''): string
     {
         $locale = $this->locales->getLocale($locale);
         return $locale->currencySymbol();
@@ -238,9 +243,9 @@ class CurrencyFormatter extends LocaleFloatFormatter
      *
      * @param string $schema
      * @param bool   $allow_fractional_subunits
-     * @return string
+     * @return int
      */
-    public function getFormatFromLegacySchema($schema, $allow_fractional_subunits = true)
+    public function getFormatFromLegacySchema(string $schema, bool $allow_fractional_subunits = true): int
     {
         switch ($schema) {
             case 'precision_float';
@@ -264,7 +269,7 @@ class CurrencyFormatter extends LocaleFloatFormatter
      * @param string|Locale $locale locale name ex: en_US or Locale object
      * @return Locale
      */
-    public function getLocale($locale = '')
+    public function getLocale($locale = ''): Locale
     {
         return $this->locales->getLocale($locale);
     }
@@ -276,7 +281,7 @@ class CurrencyFormatter extends LocaleFloatFormatter
      *                                          if a locale can not be identified for the supplied currency ISO
      * @return Locale
      */
-    public function getLocaleForCurrencyISO($currency_ISO, $fallback_to_site_locale = false)
+    public function getLocaleForCurrencyISO(string $currency_ISO, bool $fallback_to_site_locale = false): Locale
     {
         return $this->locales->getLocaleForCurrencyISO($currency_ISO, $fallback_to_site_locale);
     }
@@ -285,7 +290,7 @@ class CurrencyFormatter extends LocaleFloatFormatter
     /**
      * @return Locale
      */
-    public function getSiteLocale()
+    public function getSiteLocale(): Locale
     {
         return $this->locales->getSiteLocale();
     }
@@ -294,11 +299,11 @@ class CurrencyFormatter extends LocaleFloatFormatter
     /**
      * This removes all localized formatting from the incoming value and returns a float
      *
-     * @param string        $number formatted numeric value as string, ex: '1,234,567.89'
-     * @param string|Locale $locale locale name ex: en_US or Locale object
-     * @return float                unformatted number value, ex: 1234567.89
+     * @param float|int|string $number formatted numeric value as string, ex: '1,234,567.89'
+     * @param string|Locale    $locale locale name ex: en_US or Locale object
+     * @return float                   unformatted number value, ex: 1234567.89
      */
-    public function parseForLocale($number, $locale = '')
+    public function parseForLocale($number, $locale = ''): float
     {
         // just return the value if it's not a string
         if (! is_string($number)) {

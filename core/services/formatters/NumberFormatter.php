@@ -14,10 +14,12 @@ class NumberFormatter extends LocaleFloatFormatter
      * @param int|null $precision the number of decimal places to round to
      * @return string             formatted value, ex: '1,234.57'
      */
-    protected function format(Locale $locale, $number, $precision = null)
+    protected function format(Locale $locale, float $number, ?int $precision = null)
     {
         $is_negative = $number < 0;
-        $precision   = $precision !== null ? absint($precision) : $locale->decimalPrecision();
+        $precision   = $precision !== null
+            ? absint($precision)
+            : $locale->decimalPrecision();
         return $this->formatSymbolAndSignPositions(
             $locale,
             $this->formatGroupings(
@@ -38,7 +40,7 @@ class NumberFormatter extends LocaleFloatFormatter
      * @param bool   $is_negative
      * @return string
      */
-    protected function formatSymbolAndSignPositions(Locale $locale, $number, $is_negative)
+    protected function formatSymbolAndSignPositions(Locale $locale, int $number, bool $is_negative)
     {
         // format for positive or negative values
         if ($is_negative) {
@@ -65,26 +67,26 @@ class NumberFormatter extends LocaleFloatFormatter
     /**
      * formats the provided number for the selected locale (defaults to site locale) and returns a string
      *
-     * @param float         $number    unformatted number value, ex: 1234.56789
-     * @param int|null      $precision the number of decimal places to round to
-     * @param string|Locale $locale    ex: 'en_US' or Locale object
-     * @return string                  formatted value, ex: '1,234.57'
+     * @param float|int|string $number    unformatted number value, ex: 1234.56789
+     * @param int|null         $precision the number of decimal places to round to
+     * @param string|Locale    $locale    ex: 'en_US' or Locale object
+     * @return string                     formatted value, ex: '1,234.57'
      */
-    public function formatForLocale($number, $precision = null, $locale = '')
+    public function formatForLocale($number, int $precision = null, $locale = ''): string
     {
         $locale = $this->locales->getLocale($locale);
-        return $this->format($locale, $number, $precision);
+        return $this->format($locale, (float) $number, $precision);
     }
 
 
     /**
      * This removes all localized formatting from the incoming value and returns a float
      *
-     * @param string        $number formatted numeric value as string, ex: '1,234,567.89'
-     * @param string|Locale $locale ex: 'en_US' or Locale object
-     * @return float                unformatted number value, ex: 1234567.89
+     * @param float|int|string $number formatted numeric value as string, ex: '1,234,567.89'
+     * @param string|Locale    $locale ex: 'en_US' or Locale object
+     * @return float                   unformatted number value, ex: 1234567.89
      */
-    public function parseForLocale($number, $locale = '')
+    public function parseForLocale($number, $locale = ''): float
     {
         // just return the value if it's not a string
         if (! is_string($number)) {
@@ -101,7 +103,7 @@ class NumberFormatter extends LocaleFloatFormatter
                     '',  // remove thousands separator
                     '.', // convert decimal mark to what PHP expects
                 ],
-                (string) $number
+                $number
             )
         );
     }
