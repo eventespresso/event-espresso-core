@@ -79,7 +79,7 @@
 		"@wordpress/block-editor": "^5.3.3",
 		"@wordpress/block-library": "^2.29.3",
 		"@wordpress/blocks": "^6.25.2",
-		"@wordpress/browserslist-config": "^2.7.0",
+		"@wordpress/browserslist-config": "^3.0.3",
 		"@wordpress/components": "^11.1.0",
 		"@wordpress/compose": "^3.25.3",
 		"@wordpress/core-data": "^2.26.3",
