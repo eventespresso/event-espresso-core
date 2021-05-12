@@ -15,6 +15,12 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
 class EE_Email_Field extends EE_Text_Field_Base
 {
     /**
+     * @var boolean
+     */
+    private $show_errors = false;
+
+
+    /**
      * @param string $table_column
      * @param string $nice_name
      * @param bool   $nullable
@@ -26,7 +32,6 @@ class EE_Email_Field extends EE_Text_Field_Base
         parent::__construct($table_column, $nice_name, $nullable, $default_value);
         $this->setSchemaFormat('email');
     }
-
 
 
     /**
@@ -44,8 +49,17 @@ class EE_Email_Field extends EE_Text_Field_Base
         try {
             $email_address_obj = EmailAddressFactory::create($email_address);
             return $email_address_obj instanceof EmailAddress ? $email_address_obj->get() : '';
-        } catch (EmailValidationException $e) {
-            return '';
+        } catch (EmailValidationException $exception) {
+            return $this->show_errors ? $exception->getMessage() : '';
         }
+    }
+
+
+    /**
+     * @param bool $show_errors
+     */
+    public function setShowErrors($show_errors = true)
+    {
+        $this->show_errors = filter_var($show_errors, FILTER_VALIDATE_BOOLEAN);
     }
 }
