@@ -242,10 +242,10 @@ class Locale
      * @param array  $locale_info
      * @param array  $defaults
      */
-    public function __construct($locale_name, array $locale_info, array $defaults)
+    public function __construct(string $locale_name, array $locale_info, array $defaults)
     {
-        $this->locale_name = $locale_name;
         $this->locale_info = $locale_info;
+        $this->locale_name = $this->locale_info['locale_name'] ?? $locale_name;
 
         foreach (Locale::$property_key_map as $key => $property) {
             $value = '';
@@ -265,7 +265,7 @@ class Locale
     /**
      * @return string[]
      */
-    private function validLocaleInfoKeys()
+    private function validLocaleInfoKeys(): array
     {
         return array_keys(Locale::$property_key_map);
     }
@@ -275,7 +275,7 @@ class Locale
      * @param string $info_key
      * @throws DomainException
      */
-    private function validateLocaleInfoKeys($info_key)
+    private function validateLocaleInfoKeys(string $info_key)
     {
         if (! in_array($info_key, $this->validLocaleInfoKeys())) {
             throw new DomainException(
@@ -296,7 +296,7 @@ class Locale
      * @param int|float|string $default
      * @return string
      */
-    public function getLocaleInfo($key = '', $default = '')
+    public function getLocaleInfo(string $key = '', $default = '')
     {
         $this->validateLocaleInfoKeys($key);
         return array_key_exists($key, $this->locale_info) ? $this->locale_info[ $key ] : $default;
@@ -306,7 +306,7 @@ class Locale
     /**
      * @return string
      */
-    public function currencyDecimalPoint()
+    public function currencyDecimalPoint(): string
     {
         return $this->currency_decimal_point;
     }
@@ -315,7 +315,7 @@ class Locale
     /**
      * @return int
      */
-    public function currencyGrouping()
+    public function currencyGrouping(): int
     {
         return $this->currency_grouping;
     }
@@ -324,7 +324,7 @@ class Locale
     /**
      * @return string
      */
-    public function currencyIsoCode()
+    public function currencyIsoCode(): string
     {
         return $this->currency_iso_code;
     }
@@ -333,7 +333,7 @@ class Locale
     /**
      * @return string
      */
-    public function currencySymbol()
+    public function currencySymbol(): string
     {
         return $this->currency_symbol;
     }
@@ -342,7 +342,7 @@ class Locale
     /**
      * @return bool
      */
-    public function currencySymbolB4Negative()
+    public function currencySymbolB4Negative(): bool
     {
         return $this->currency_symbol_b4_negative;
     }
@@ -351,7 +351,7 @@ class Locale
     /**
      * @return bool
      */
-    public function currencySymbolB4Positive()
+    public function currencySymbolB4Positive(): bool
     {
         return $this->currency_symbol_b4_positive;
     }
@@ -360,7 +360,7 @@ class Locale
     /**
      * @return bool
      */
-    public function currencySymbolSpaceB4Negative()
+    public function currencySymbolSpaceB4Negative(): bool
     {
         return $this->currency_symbol_space_b4_negative;
     }
@@ -369,7 +369,7 @@ class Locale
     /**
      * @return bool
      */
-    public function currencySymbolSpaceB4Positive()
+    public function currencySymbolSpaceB4Positive(): bool
     {
         return $this->currency_symbol_space_b4_positive;
     }
@@ -378,7 +378,7 @@ class Locale
     /**
      * @return string
      */
-    public function currencyThousandsSeparator()
+    public function currencyThousandsSeparator(): string
     {
         return $this->currency_thousands_separator;
     }
@@ -387,7 +387,7 @@ class Locale
     /**
      * @return string
      */
-    public function decimalPoint()
+    public function decimalPoint(): string
     {
         return $this->number_decimal_point;
     }
@@ -396,7 +396,7 @@ class Locale
     /**
      * @return int
      */
-    public function decimalPrecision()
+    public function decimalPrecision(): int
     {
         return $this->local_decimal_precision;
     }
@@ -405,7 +405,7 @@ class Locale
     /**
      * @return int
      */
-    public function internationalDecimalPrecision()
+    public function internationalDecimalPrecision(): int
     {
         return $this->intl_decimal_precision;
     }
@@ -414,7 +414,7 @@ class Locale
     /**
      * @return int
      */
-    public function grouping()
+    public function grouping(): int
     {
         return $this->number_grouping;
     }
@@ -423,7 +423,7 @@ class Locale
     /**
      * @return string
      */
-    public function name()
+    public function name(): string
     {
         return $this->locale_name;
     }
@@ -432,7 +432,7 @@ class Locale
     /**
      * @return string
      */
-    public function negativeSign()
+    public function negativeSign(): string
     {
         return $this->negative_sign;
     }
@@ -441,7 +441,7 @@ class Locale
     /**
      * @return int
      */
-    public function negativeSignPosition()
+    public function negativeSignPosition(): int
     {
         return $this->negative_sign_position;
     }
@@ -450,7 +450,7 @@ class Locale
     /**
      * @return string
      */
-    public function positiveSign()
+    public function positiveSign(): string
     {
         return $this->positive_sign;
     }
@@ -459,7 +459,7 @@ class Locale
     /**
      * @return int
      */
-    public function positiveSignPosition()
+    public function positiveSignPosition(): int
     {
         return $this->positive_sign_position;
     }
@@ -468,7 +468,7 @@ class Locale
     /**
      * @return string
      */
-    public function thousandsSeparator()
+    public function thousandsSeparator(): string
     {
         return $this->number_thousands_separator;
     }

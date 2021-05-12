@@ -79,7 +79,7 @@ class Locales
      * @param string|Locale $locale locale name ex: en_US or Locale object
      * @return Locale
      */
-    public function getLocale($locale)
+    public function getLocale($locale): Locale
     {
         $locale = ! empty($locale) ? $locale : $this->site_locale;
         if ($locale instanceof Locale) {
@@ -111,7 +111,7 @@ class Locales
      *                                          if a locale can not be identified for the supplied currency ISO
      * @return Locale
      */
-    public function getLocaleForCurrencyISO($currency_ISO, $fallback_to_site_locale = false)
+    public function getLocaleForCurrencyISO(string $currency_ISO, bool $fallback_to_site_locale = false): Locale
     {
         $locale_name = '';
         // first try to find a matching currency in the current list of locales
@@ -155,7 +155,7 @@ class Locales
     /**
      * @return Locale
      */
-    public function getSiteLocale()
+    public function getSiteLocale(): Locale
     {
         return $this->getLocale($this->site_locale);
     }
@@ -164,16 +164,16 @@ class Locales
     /**
      * @return string
      */
-    public function getSiteLocaleName()
+    public function getSiteLocaleName(): string
     {
         return $this->site_locale;
     }
 
 
     /**
-     * @return string
+     * @return Locale
      */
-    public function getUserLocale()
+    public function getUserLocale(): Locale
     {
         return $this->getLocale($this->user_locale);
     }
@@ -182,7 +182,7 @@ class Locales
     /**
      * @return string
      */
-    public function getUserLocaleName()
+    public function getUserLocaleName(): string
     {
         return $this->user_locale;
     }

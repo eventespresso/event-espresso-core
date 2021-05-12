@@ -30,11 +30,13 @@ class LocaleSwitcher
      * @param string $charset
      * @return bool
      */
-    private function changeLocale($locale_name, $charset)
+    private function changeLocale(string $locale_name, string $charset): bool
     {
         $locale_changed = setlocale(LC_ALL, "{$locale_name}.{$charset}");
         if ($locale_changed !== false) {
-            $this->locales[ $locale_name ] = localeconv();
+            $locale = localeconv();
+            $locale['locale_name'] = $locale_name;
+            $this->locales[ $locale_name ] = $locale;
             return true;
         }
         return false;
@@ -44,7 +46,7 @@ class LocaleSwitcher
     /**
      * @return array
      */
-    private function getLocaleCharsets()
+    private function getLocaleCharsets(): array
     {
         return (array) apply_filters(
             'FHEE_EventEspresso_core_services_formatters_Locale__getLocaleCharsets__charsets',
@@ -68,7 +70,7 @@ class LocaleSwitcher
     {
         foreach ($this->current_system_locales as $locale_setting) {
             if (strpos($locale_setting, '=') !== false) {
-                list ($category, $locale) = explode('=', $locale_setting);
+                [$category, $locale] = explode('=', $locale_setting);
             } else {
                 $category = LC_ALL;
                 $locale   = $locale_setting;
@@ -104,7 +106,7 @@ class LocaleSwitcher
      * @param int    $allow_recurse
      * @return array
      */
-    public function getLocale($locale_name, $allow_recurse = 2)
+    public function getLocale(string $locale_name, int $allow_recurse = 2): array
     {
         if (! isset($this->locales[ $locale_name ])) {
             $this->stashCurrentSystemLocales();
