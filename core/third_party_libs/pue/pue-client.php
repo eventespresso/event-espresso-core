@@ -1349,7 +1349,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
             //oh let's generate the download_url otherwise it will be old news...
 
             if (! empty($this->download_query)) {
-                $d_install_key = isset($this->install_key_arr['key']) ? $this->install_key_arr['key'] : NULL;
+                $d_install_key = isset($this->install_key_arr['key']) ? $this->install_key_arr['key'] : null;
                 $this->download_query['pue_install_key'] = $d_install_key;
                 $this->download_query['new_pue_check'] = 1;
                 $pluginInfo->download_url = add_query_arg($this->download_query, $pluginInfo->download_url);
