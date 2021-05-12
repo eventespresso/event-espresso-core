@@ -571,7 +571,10 @@ class EEH_Activation implements ResettableInterface
     {
         global $wpdb;
         if (! empty(self::$_default_creator_id)) {
-            return self::$_default_creator_id;
+            $default_creator = get_user_by('id', self::$_default_creator_id);
+            if ($default_creator instanceof WP_User) {
+                return self::$_default_creator_id;
+            }
         }/**/
         $role_to_check = apply_filters('FHEE__EEH_Activation__get_default_creator_id__role_to_check', 'administrator');
         // let's allow pre_filtering for early exits by alternative methods for getting id.  We check for truthy result and if so then exit early.
