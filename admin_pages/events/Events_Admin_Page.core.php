@@ -20,7 +20,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     /**
      * This will hold the event object for event_details screen.
      *
-     * @access protected
      * @var EE_Event $_event
      */
     protected $_event;
@@ -717,7 +716,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      * @param string   $req_type
      * @return void
      * @throws EE_Error
-     * @access public
      */
     public function verify_event_edit($event = null, $req_type = '')
     {
@@ -782,7 +780,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      * This is the text used for when an event is being edited that is public and has tickets for sale.
      * When needed, hook this into a EE_Error::add_error() notice.
      *
-     * @access protected
      * @return void
      */
     protected function _edit_event_warning()
@@ -1005,7 +1002,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      * _events_overview_list_table
      * This contains the logic for showing the events_overview list
      *
-     * @access protected
      * @return void
      * @throws DomainException
      * @throws EE_Error
@@ -1065,7 +1061,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      * the save_post action is fired but you will NOT have any _POST data containing any extra info you may have from
      * other meta saves. So MAKE sure that you handle this accordingly.
      *
-     * @access protected
      * @abstract
      * @param string $post_id The ID of the cpt that was saved (so you can link relationally)
      * @param object $post    The post object of the cpt that was saved.
@@ -1505,7 +1500,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      * because if there is a change in price information on a ticket, a new ticket is created anyways
      * so the archived ticket will retain the old price info and prices are automatically "archived" via the ticket.
      *
-     * @access  private
      * @param array     $prices     Array of prices from the form.
      * @param EE_Ticket $ticket     EE_Ticket object that prices are being attached to.
      * @param bool      $new_prices Whether attach existing incoming prices or create new ones.
@@ -1810,7 +1804,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     /**
      * Setup an individual ticket form for the decaf event editor page
      *
-     * @access private
      * @param EE_Ticket $ticket   the ticket object
      * @param boolean   $skeleton whether we're generating a skeleton for js manipulation
      * @param int       $row
@@ -1944,13 +1937,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      * _get_events()
      * This method simply returns all the events (for the given _view and paging)
      *
-     * @access public
      * @param int  $per_page     count of items per page (20 default);
      * @param int  $current_page what is the current page being viewed.
      * @param bool $count        if TRUE then we just return a count of ALL events matching the given _view.
      *                           If FALSE then we return an array of event objects
      *                           that match the given _view and paging parameters.
-     * @return array|int an array of event objects.
+     * @return array|int         an array of event objects or count of how many events.
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -2090,8 +2082,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                     return $EEME->get_inactive_events($query_params, $count);
             }
         }
-
-        return $count ? $EEME->count([$where], 'EVT_ID', true) : $EEME->get_all($query_params);
+        return $count
+            ? $EEME->count([$where], 'EVT_ID', true)
+            : $EEME->get_all($query_params);
     }
 
 
@@ -2151,7 +2144,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     /**
      * _trash_or_restore_event
      *
-     * @access protected
      * @param string $event_status
      * @param bool   $redirect_after
      * @throws EE_Error
@@ -2197,7 +2189,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     /**
      * _trash_or_restore_events
      *
-     * @access protected
      * @param string $event_status
      * @return void
      * @throws EE_Error
@@ -2250,7 +2241,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     /**
      * _trash_or_restore_events
      *
-     * @access  private
      * @param int    $EVT_ID
      * @param string $event_status
      * @return bool
@@ -2347,7 +2337,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     /**
      * _delete_events
      *
-     * @access protected
      * @return void
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -2423,7 +2412,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     /**
      * get total number of events
      *
-     * @access public
      * @return int
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -2439,7 +2427,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     /**
      * get total number of draft events
      *
-     * @access public
      * @return int
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -2458,7 +2445,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     /**
      * get total number of trashed events
      *
-     * @access public
      * @return int
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -2629,7 +2615,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     /**
      * set the _category property with the category object for the loaded page.
      *
-     * @access private
      * @return void
      */
     private function _set_category_object()
