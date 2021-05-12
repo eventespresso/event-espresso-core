@@ -689,6 +689,7 @@ class EE_Register_Addon implements EEI_Plugin_API
             }
             return true;
         }
+
         // make sure this was called in the right place!
         if (
             ! did_action('AHEE__EE_System__load_espresso_addons')
@@ -734,6 +735,7 @@ class EE_Register_Addon implements EEI_Plugin_API
             }
         }
     }
+
 
 
     /**
