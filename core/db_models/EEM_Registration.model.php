@@ -371,9 +371,21 @@ class EEM_Registration extends EEM_Soft_Delete_Base
             );
             self::$_reg_status = array();
             foreach ($results as $status) {
-                if (!in_array($status->STS_ID, $exclude, true)) {
+                if (! in_array($status->STS_ID, $exclude, true)) {
                     self::$_reg_status[ $status->STS_ID ] = $status->STS_code;
                 }
+            }
+            // make sure we have something
+            if (empty(self::$_reg_status)) {
+                self::$_reg_status = [
+                    'RAP' => 'APPROVED',
+                    'RCN' => 'CANCELLED',
+                    'RDC' => 'DECLINED',
+                    'RIC' => 'INCOMPLETE',
+                    'RNA' => 'NOT_APPROVED',
+                    'RPP' => 'PENDING_PAYMENT',
+                    'RWL' => 'WAIT_LIST',
+                ];
             }
         }
     }
