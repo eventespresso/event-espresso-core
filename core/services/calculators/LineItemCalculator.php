@@ -20,13 +20,6 @@ class LineItemCalculator
      */
     private $currency_formatter;
 
-    /**
-     * TRUE if tickets have been added to cart
-     *
-     * @var bool
-     */
-    private $has_tickets;
-
 
     /**
      * @param CurrencyFormatter $currency_formatter
@@ -96,6 +89,7 @@ class LineItemCalculator
                 // percentage line items are based on total so far
                 if ($child_line_item->is_percent()) {
                     $percent_total = $calculated_total_so_far * $child_line_item->percent(true);
+                    $percent_total = $this->currency_formatter->roundForLocale($percent_total);
                     $child_line_item->set_total($percent_total);
                     // so far all percent line items should have a quantity of 1
                     // (ie, no double percent discounts. Although that might be requested someday)
@@ -229,9 +223,6 @@ class LineItemCalculator
      */
     public function recalculatePreTaxTotal(EE_Line_Item $line_item)
     {
-        if (! $this->hasTickets($line_item)) {
-            return 0.00;
-        }
         $total        = 0;
         $children     = $line_item->children();
         $has_children = ! empty($children);
@@ -245,21 +236,24 @@ class LineItemCalculator
             // completely ignore tax totals, tax sub-totals, and cancelled line items, when calculating the pre-tax-total
             return 0;
         }
+        $total = $this->currency_formatter->roundForLocale($total);
         // ensure all non-line items and non-sub-line-items have a quantity of 1 (except for Events)
         if (! $line_item->is_line_item() && ! $line_item->is_sub_line_item() && ! $line_item->is_cancellation()) {
             if ($line_item->OBJ_type() !== EEM_Line_Item::OBJ_TYPE_EVENT) {
                 $line_item->set_quantity(1);
             }
             if (! $line_item->is_percent()) {
-                $line_item->set_unit_price($this->currency_formatter->roundForLocale($total));
+                $line_item->set_unit_price($total);
             }
         }
         // we don't want to bother saving grand totals, because that needs to factor in taxes anyways
         if (! $line_item->is_total()) {
-            $line_item->set_total($this->currency_formatter->roundForLocale($total));
+            $line_item->set_total($total);
             // if not a percent line item, make sure we keep the unit price in sync
             if ($has_children && $line_item->is_line_item() && ! $line_item->is_percent()) {
-                $new_unit_price = $line_item->quantity() !== 0 ? $line_item->total() / $line_item->quantity() : 0;
+                $new_unit_price = $line_item->quantity() !== 0
+                    ? $line_item->total() / $line_item->quantity()
+                    : 0;
                 $line_item->set_unit_price($this->currency_formatter->roundForLocale($new_unit_price));
             }
             $line_item->maybe_save();
@@ -380,21 +374,5 @@ class LineItemCalculator
             }
         }
         return max($total, 0);
-    }
-
-
-    /**
-     * @param EE_Line_Item $line_item
-     * @return bool
-     * @throws EE_Error
-     * @throws ReflectionException
-     */
-    public function hasTickets(EE_Line_Item $line_item)
-    {
-        if ($this->has_tickets === null) {
-            $tickets           = EEH_Line_Item::get_ticket_line_items($line_item);
-            $this->has_tickets = is_array($tickets) && count($tickets) > 0;
-        }
-        return $this->has_tickets;
     }
 }

@@ -2,6 +2,8 @@
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\formatters\CurrencyFormatter;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 /**
@@ -21,6 +23,19 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
  */
 class EEH_Line_Item
 {
+    /**
+     * @return CurrencyFormatter
+     * @since   $VID:$
+     */
+    private static function currencyFormatter()
+    {
+        static $currency_formatter;
+        if (! $currency_formatter instanceof CurrencyFormatter) {
+            $currency_formatter = LoaderFactory::getLoader()->getShared(CurrencyFormatter::class);
+        }
+        return $currency_formatter;
+    }
+
     /**
      * Adds a simple item (unrelated to any other model object) to the provided PARENT line item.
      * Does NOT automatically re-calculate the line item totals or update the related transaction.
@@ -61,7 +76,9 @@ class EEH_Line_Item
                 'LIN_percent'    => null,
                 'LIN_is_taxable' => $taxable,
                 'LIN_order'      => $items_subtotal instanceof EE_Line_Item ? count($items_subtotal->children()) : 0,
-                'LIN_total'      => (float) $unit_price * (int) $quantity,
+                'LIN_total'      => EEH_Line_Item::currencyFormatter()->roundForLocale(
+                    (float) $unit_price * (int) $quantity
+                ),
                 'LIN_type'       => EEM_Line_Item::type_line_item,
                 'LIN_code'       => $code,
             ]
@@ -107,7 +124,9 @@ class EEH_Line_Item
                 'LIN_percent'    => $percentage_amount,
                 'LIN_quantity'   => 1,
                 'LIN_is_taxable' => $taxable,
-                'LIN_total'      => (float) ($percentage_amount * $parent_line_item->total() / 100),
+                'LIN_total'      => EEH_Line_Item::currencyFormatter()->roundForLocale(
+                    $percentage_amount * $parent_line_item->total() / 100
+                ),
                 'LIN_type'       => EEM_Line_Item::type_line_item,
                 'LIN_parent'     => $parent_line_item->ID(),
             ]
@@ -341,6 +360,7 @@ class EEH_Line_Item
             $price_total   = $price->is_percent()
                 ? $sign * $running_total_for_ticket * $price->amount() / 100
                 : $sign * $price->amount() * $qty;
+            $price_total = EEH_Line_Item::currencyFormatter()->roundForLocale($price_total);
             $sub_line_item = EE_Line_Item::new_instance(
                 [
                     'LIN_name'       => $price->name(),
@@ -1171,15 +1191,17 @@ class EEH_Line_Item
         }
         if ($new_tax) {
             $new_tax->set_total($new_tax->total() + $amount);
-            $new_tax->set_percent($taxable_total ? $new_tax->total() / $taxable_total * 100 : 0);
+            $percent = $taxable_total ? $new_tax->total() / $taxable_total * 100 : 0;
+            $new_tax->set_percent(EEH_Line_Item::currencyFormatter()->roundForLocale($percent));
         } else {
+            $percent = $taxable_total ? ($amount / $taxable_total * 100) : 0;
             // no existing tax item. Create it
             $new_tax = EE_Line_Item::new_instance(
                 [
                     'TXN_ID'      => $total_line_item->TXN_ID(),
                     'LIN_name'    => $name ? $name : esc_html__('Tax', 'event_espresso'),
                     'LIN_desc'    => $description ? $description : '',
-                    'LIN_percent' => $taxable_total ? ($amount / $taxable_total * 100) : 0,
+                    'LIN_percent' => EEH_Line_Item::currencyFormatter()->roundForLocale($percent),
                     'LIN_total'   => $amount,
                     'LIN_parent'  => $tax_subtotal->ID(),
                     'LIN_type'    => EEM_Line_Item::type_tax,
@@ -1678,7 +1700,10 @@ class EEH_Line_Item
                     if ($child_line_item->percent() !== 0) {
                         $tax_percent_decimal = $child_line_item->percent(true);
                     } else {
-                        $tax_percent_decimal = EE_Taxes::get_total_taxes_percentage() / 100;
+                        $tax_percent_decimal =
+                            EEH_Line_Item::currencyFormatter()->roundForLocale(
+                                EE_Taxes::get_total_taxes_percentage() / 100
+                            );
                     }
                     // and apply to all the taxable totals, and add to the pretax totals
                     foreach ($running_totals as $line_item_id => $this_running_total) {
@@ -1687,7 +1712,9 @@ class EEH_Line_Item
                             continue;
                         }
                         $taxable_total                   = $running_totals['taxable'][ $line_item_id ];
-                        $running_totals[ $line_item_id ] += ($taxable_total * $tax_percent_decimal);
+                        $running_totals[ $line_item_id ] += EEH_Line_Item::currencyFormatter()->roundForLocale(
+                            $taxable_total * $tax_percent_decimal
+                        );
                     }
                     break;
 
@@ -1729,7 +1756,9 @@ class EEH_Line_Item
                         // basically we want to convert it into a PERCENT modifier. Because
                         // more clearly affect all registration's final price equally
                         $line_items_percent_of_running_total = $running_totals['total'] > 0
-                            ? ($child_line_item->total() / $running_totals['total']) + 1
+                            ? EEH_Line_Item::currencyFormatter()->roundForLocale(
+                                $child_line_item->total() / $running_totals['total']
+                            ) + 1
                             : 1;
                         foreach ($running_totals as $line_item_id => $this_running_total) {
                             // the "taxable" array key is an exception
@@ -1738,12 +1767,15 @@ class EEH_Line_Item
                             }
                             // update the running totals
                             // yes this actually even works for the running grand total!
-                            $running_totals[ $line_item_id ] =
-                                $line_items_percent_of_running_total * $this_running_total;
+                            $running_totals[ $line_item_id ] = EEH_Line_Item::currencyFormatter()->roundForLocale(
+                                $line_items_percent_of_running_total * $this_running_total
+                            );
 
                             if ($child_line_item->is_taxable()) {
                                 $running_totals['taxable'][ $line_item_id ] =
-                                    $line_items_percent_of_running_total * $running_totals['taxable'][ $line_item_id ];
+                                    EEH_Line_Item::currencyFormatter()->roundForLocale(
+                                    $line_items_percent_of_running_total * $running_totals['taxable'][ $line_item_id ]
+                                    );
                             }
                         }
                     }
@@ -1848,8 +1880,8 @@ class EEH_Line_Item
     {
         $new_li_fields = $line_item->model_field_array();
         if (
-            $line_item->type() === EEM_Line_Item::type_line_item &&
-            $line_item->OBJ_type() === EEM_Line_Item::OBJ_TYPE_TICKET
+            $line_item->type() === EEM_Line_Item::type_line_item
+            && $line_item->OBJ_type() === EEM_Line_Item::OBJ_TYPE_TICKET
         ) {
             $count = 0;
             foreach ($registrations as $registration) {
@@ -1898,8 +1930,8 @@ class EEH_Line_Item
             if ($child_li_copy !== null) {
                 $copied_li->add_child_line_item($child_li_copy);
                 if (
-                    $child_li_copy->type() === EEM_Line_Item::type_line_item &&
-                    $child_li_copy->OBJ_type() === EEM_Line_Item::OBJ_TYPE_TICKET
+                    $child_li_copy->type() === EEM_Line_Item::type_line_item
+                    && $child_li_copy->OBJ_type() === EEM_Line_Item::OBJ_TYPE_TICKET
                 ) {
                     $ticket_children++;
                 }
