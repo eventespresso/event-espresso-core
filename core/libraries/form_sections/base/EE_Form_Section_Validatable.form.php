@@ -99,7 +99,6 @@ abstract class EE_Form_Section_Validatable extends EE_Form_Section_Base
     abstract protected function _normalize($req_data);
 
 
-
     /**
      * Creates a validation error from the arguments provided, and adds it to the form section's list.
      * If such an EE_Validation_Error object is passed in as the first arg, simply sets this as its form section, and
@@ -110,6 +109,7 @@ abstract class EE_Form_Section_Validatable extends EE_Form_Section_Base
      * @param string    $error_code         a short key which can be used to uniquely identify the error
      * @param Exception $previous_exception if there was an exception that caused the error, that exception
      * @return void
+     * @throws EE_Error
      */
     public function add_validation_error($message_or_object, $error_code = null, $previous_exception = null)
     {
@@ -119,7 +119,7 @@ abstract class EE_Form_Section_Validatable extends EE_Form_Section_Base
         } else {
             $validation_error = new EE_Validation_Error($message_or_object, $error_code, $this, $previous_exception);
         }
-        $this->_validation_errors[] = $validation_error;
+        $this->_validation_errors[ $this->name() ] = $validation_error;
     }
 
 
