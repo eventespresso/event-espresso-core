@@ -115,7 +115,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @throws ReflectionException
      * @throws RuntimeException
      */
-    public function set($field_name, $field_value, $use_default = false)
+    public function set($field_name, $field_value, bool $use_default = false)
     {
         switch ($field_name) {
             case 'REG_code':

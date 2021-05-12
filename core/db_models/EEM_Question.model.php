@@ -70,7 +70,7 @@ class EEM_Question extends EEM_Soft_Delete_Base
 
 
     // private instance of the Attendee object
-    protected static $_instance = null;
+    protected static $_instance;
 
     /**
      * brief descriptions for all the question types
@@ -85,10 +85,10 @@ class EEM_Question extends EEM_Soft_Delete_Base
      * aren't in this array, it is assumed they AREN'T interchangeable with any other question types.
      *
      * @var array   $_question_type_categories {
-     * @type string $text
-     * @type string $single                    -answer-enum
-     * @type string $multi                     -answer-enum
-     *                    }
+     *      @type string $text
+     *      @type string $single -answer-enum
+     *      @type string $multi -answer-enum
+     * }
      */
     protected $_question_type_categories = [];
 
@@ -104,9 +104,10 @@ class EEM_Question extends EEM_Soft_Delete_Base
     /**
      * EEM_Question constructor.
      *
-     * @param null $timezone
+     * @param string $timezone
+     * @throws EE_Error
      */
-    protected function __construct($timezone = '')
+    protected function __construct(string $timezone = '')
     {
         $this->singular_item                  = esc_html__('Question', 'event_espresso');
         $this->plural_item                    = esc_html__('Questions', 'event_espresso');
@@ -326,14 +327,16 @@ class EEM_Question extends EEM_Soft_Delete_Base
             'WP_User'                 => new EE_Belongs_To_Relation(),
         ];
         // this model is generally available for reading
-        $this->_cap_restriction_generators[ EEM_Base::caps_read ]       =
-            new EE_Restriction_Generator_Public();
-        $this->_cap_restriction_generators[ EEM_Base::caps_read_admin ] =
-            new EE_Restriction_Generator_Reg_Form('QST_system');
-        $this->_cap_restriction_generators[ EEM_Base::caps_edit ]       =
-            new EE_Restriction_Generator_Reg_Form('QST_system');
-        $this->_cap_restriction_generators[ EEM_Base::caps_delete ]     =
-            new EE_Restriction_Generator_Reg_Form('QST_system');
+        $this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Public();
+        $this->_cap_restriction_generators[ EEM_Base::caps_read_admin ] = new EE_Restriction_Generator_Reg_Form(
+            'QST_system'
+        );
+        $this->_cap_restriction_generators[ EEM_Base::caps_edit ] = new EE_Restriction_Generator_Reg_Form(
+                'QST_system'
+        );
+        $this->_cap_restriction_generators[ EEM_Base::caps_delete ] = new EE_Restriction_Generator_Reg_Form(
+                'QST_system'
+        );
 
         parent::__construct($timezone);
     }
@@ -360,7 +363,7 @@ class EEM_Question extends EEM_Soft_Delete_Base
     public function question_types_in_same_category(string $question_type): array
     {
         $question_types = [$question_type];
-        foreach ($this->_question_type_categories as $category => $question_types_in_category) {
+        foreach ($this->_question_type_categories as $question_types_in_category) {
             if (in_array($question_type, $question_types_in_category)) {
                 $question_types = $question_types_in_category;
                 break;
@@ -476,7 +479,6 @@ class EEM_Question extends EEM_Soft_Delete_Base
      */
     public function required_system_questions_in_system_question_group(string $system_question_group_id): array
     {
-        $question_system_ids = null;
         switch ($system_question_group_id) {
             case EEM_Question_Group::system_personal:
                 $question_system_ids = [
@@ -503,6 +505,7 @@ class EEM_Question extends EEM_Soft_Delete_Base
      * @param $QST_system
      * @return int of QST_ID for the question that corresponds to that QST_system
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_Question_ID_from_system_string($QST_system): int
     {
@@ -515,6 +518,7 @@ class EEM_Question extends EEM_Soft_Delete_Base
      *
      * @return int
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_latest_question_order(): int
     {
@@ -560,9 +564,7 @@ class EEM_Question extends EEM_Soft_Delete_Base
     public function absolute_max_for_system_question(string $system_question_value)
     {
         $maxes = $this->system_question_maxes();
-        return isset($maxes[ $system_question_value ]) ?
-            $maxes[ $system_question_value ]
-            : EE_INF;
+        return $maxes[ $system_question_value ] ?? EE_INF;
     }
 
 

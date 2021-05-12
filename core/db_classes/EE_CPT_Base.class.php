@@ -33,15 +33,18 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class
     /**
      * Adds to the specified event category. If it category doesn't exist, creates it.
      *
-     * @param string $category_name
-     * @param string $category_description    optional
-     * @param int    $parent_term_taxonomy_id optional
+     * @param string      $category_name
+     * @param string|null $category_description    optional
+     * @param int|null    $parent_term_taxonomy_id optional
      * @return EE_Term_Taxonomy
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function add_event_category($category_name, $category_description = null, $parent_term_taxonomy_id = null)
-    {
+    public function add_event_category(
+        string $category_name,
+        string $category_description = '',
+        int $parent_term_taxonomy_id = 0
+    ): EE_Term_Taxonomy {
         return $this->get_model()->add_event_category(
             $this,
             $category_name,
@@ -59,7 +62,7 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function remove_event_category($category_name)
+    public function remove_event_category(string $category_name): bool
     {
         return $this->get_model()->remove_event_category($this, $category_name);
     }
@@ -74,7 +77,7 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function remove_relation_to_term_taxonomy($term_taxonomy)
+    public function remove_relation_to_term_taxonomy(EE_Term_Taxonomy $term_taxonomy): ?EE_Base_Class
     {
         if (! $term_taxonomy) {
             EE_Error::add_error(
@@ -105,7 +108,7 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function post_type()
+    public function post_type(): string
     {
         return $this->get_model()->post_type();
     }
@@ -117,7 +120,7 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class
      * @return int
      * @throws EE_Error
      */
-    public function parent()
+    public function parent(): int
     {
         return $this->get('parent');
     }
@@ -129,7 +132,7 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class
      * @return string
      * @throws EE_Error
      */
-    public function status()
+    public function status(): string
     {
         return $this->get('status');
     }
@@ -140,7 +143,7 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function set_status($status)
+    public function set_status(string $status)
     {
         $this->set('status', $status);
     }
@@ -155,7 +158,7 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function feature_image($size = 'thumbnail', $attr = '')
+    public function feature_image(string $size = 'thumbnail', $attr = ''): string
     {
         return $this->_get_feature_image($size, $attr);
     }
@@ -174,7 +177,7 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    protected function _get_feature_image($size, $attr)
+    protected function _get_feature_image($size, $attr): string
     {
         // first let's see if we already have the _feature_image property set
         // AND if it has a cached element on it FOR the given size
@@ -184,9 +187,8 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class
         $cache_key                          = is_array($size)
             ? implode('_', $size) . $attr_key
             : $size . $attr_key;
-        $this->_feature_image[ $cache_key ] = isset($this->_feature_image[ $cache_key ])
-            ? $this->_feature_image[ $cache_key ]
-            : $this->get_model()->get_feature_image($this->ID(), $size, $attr);
+        $this->_feature_image[ $cache_key ] = $this->_feature_image[ $cache_key ]
+                                              ?? $this->get_model()->get_feature_image($this->ID(), $size, $attr);
         return $this->_feature_image[ $cache_key ];
     }
 
@@ -203,7 +205,9 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class
     public function feature_image_url($size = 'thumbnail')
     {
         $attachment = wp_get_attachment_image_src(get_post_thumbnail_id($this->ID()), $size);
-        return ! empty($attachment) ? $attachment[0] : false;
+        return ! empty($attachment)
+            ? $attachment[0]
+            : false;
     }
 
 
@@ -227,7 +231,7 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function restore_revision($revision_id, $related_obj_names = [], $where_query = [])
+    public function restore_revision(int $revision_id, array $related_obj_names = [], array $where_query = [])
     {
         // get revision object
         $revision_obj = $this->get_model()->get_one_by_ID($revision_id);
@@ -240,14 +244,13 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class
                 }
                 $this->save();
             }
-            $related_obj_names = (array) $related_obj_names;
             foreach ($related_obj_names as $related_name) {
                 // related_obj_name so we're saving a revision on an object related to this object
                 // do we have $where_query params for this related object?  If we do then we include that.
-                $cols_n_values         = isset($where_query[ $related_name ])
-                    ? $where_query[ $related_name ]
+                $cols_n_values         = $where_query[ $related_name ] ?? [];
+                $where_params          = ! empty($cols_n_values)
+                    ? [$cols_n_values]
                     : [];
-                $where_params          = ! empty($cols_n_values) ? [$cols_n_values] : [];
                 $related_objs          = $this->get_many_related($related_name, $where_params);
                 $revision_related_objs = $revision_obj->get_many_related($related_name, $where_params);
                 // load helper
@@ -275,12 +278,12 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class
      * If $single is set to true:
      *  the function returns the first value of the specified key (not in an array)
      *
-     * @param string  $meta_key
-     * @param boolean $single
+     * @param string $meta_key
+     * @param bool   $single
      * @return mixed
      * @throws EE_Error
      */
-    public function get_post_meta($meta_key = null, $single = false)
+    public function get_post_meta(string $meta_key = '', bool $single = false)
     {
         return get_post_meta($this->ID(), $meta_key, $single);
     }
@@ -296,11 +299,11 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class
      * @param string $meta_key
      * @param mixed  $meta_value
      * @param mixed  $prev_value
-     * @return mixed
+     * @return bool|int
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function update_post_meta($meta_key, $meta_value, $prev_value = null)
+    public function update_post_meta(string $meta_key, $meta_value, $prev_value = null)
     {
         if (! $this->ID()) {
             $this->save();
@@ -312,7 +315,7 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class
     /**
      * Wrapper for add_post_meta, http://codex.wordpress.org/Function_Reference/add_post_meta
      *
-     * @param mixed $meta_key
+     * @param string $meta_key
      * @param mixed $meta_value
      * @param bool  $unique     If postmeta for this $meta_key already exists,
      *                          whether to add an additional item or not
@@ -322,7 +325,7 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function add_post_meta($meta_key, $meta_value, $unique = false)
+    public function add_post_meta(string $meta_key, $meta_value, bool $unique = false): bool
     {
         if ($this->ID()) {
             $this->save();
@@ -334,12 +337,12 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class
     /**
      * Wrapper for delete_post_meta, http://codex.wordpress.org/Function_Reference/delete_post_meta
      *
-     * @param mixed $meta_key
+     * @param string $meta_key
      * @param mixed $meta_value
      * @return boolean False for failure. True for success.
      * @throws EE_Error
      */
-    public function delete_post_meta($meta_key, $meta_value = '')
+    public function delete_post_meta(string $meta_key, $meta_value = ''): bool
     {
         if (! $this->ID()) {
             // there is obviously no postmeta for this if it's not saved
@@ -356,7 +359,7 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class
      * @return string
      * @throws EE_Error
      */
-    public function get_permalink()
+    public function get_permalink(): string
     {
         return get_permalink($this->ID());
     }
@@ -366,33 +369,33 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class
      * Gets all the term-taxonomies for this CPT
      *
      * @param array $query_params
-     * @return array[]|EE_Base_Class[]|EE_Term_Taxonomy
+     * @return EE_Term_Taxonomy[]
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function term_taxonomies($query_params = [])
+    public function term_taxonomies(array $query_params = []): array
     {
         return $this->get_many_related('Term_Taxonomy', $query_params);
     }
 
 
     /**
-     * @return mixed
+     * @return string[]
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function get_custom_post_statuses()
+    public function get_custom_post_statuses(): array
     {
         return $this->get_model()->get_custom_post_statuses();
     }
 
 
     /**
-     * @return mixed
+     * @return string[]
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function get_all_post_statuses()
+    public function get_all_post_statuses(): array
     {
         return $this->get_model()->get_status_array();
     }
@@ -402,25 +405,22 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class
      * When fetching a new value for a post field that uses the global $post for rendering,
      * set the global $post temporarily to be this model object; and afterwards restore it
      *
-     * @param string $field_name
-     * @param bool   $pretty
-     * @param string $extra_cache_ref
+     * @param string      $field_name
+     * @param bool        $pretty
+     * @param string|null $extra_cache_ref
      * @return mixed
      * @throws EE_Error
      * @throws ReflectionException
      */
-    protected function _get_fresh_property($field_name, $pretty = false, $extra_cache_ref = null)
+    protected function _get_fresh_property(string $field_name, bool $pretty = false, string $extra_cache_ref = '')
     {
         global $post;
 
         if (
             $pretty
             && (
-                ! (
-                    $post instanceof WP_Post
-                    && $post->ID
-                )
-                || (int) $post->ID !== $this->ID()
+                ! ($post instanceof WP_Post && $post->ID)
+                || absint($post->ID) !== $this->ID()
             )
             && $this->get_model()->field_settings_for($field_name) instanceof EE_Post_Content_Field
         ) {
@@ -444,7 +444,7 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function wp_post()
+    public function wp_post(): WP_Post
     {
         global $wpdb;
         if (! $this->_wp_post instanceof WP_Post) {
@@ -492,7 +492,6 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class
     public function __sleep()
     {
         $properties_to_serialize = parent::__sleep();
-        $properties_to_serialize = array_diff($properties_to_serialize, ['_wp_post']);
-        return $properties_to_serialize;
+        return array_diff($properties_to_serialize, ['_wp_post']);
     }
 }

@@ -1,6 +1,5 @@
 <?php
 
-use EventEspresso\core\services\loaders\Loader;
 use EventEspresso\core\services\orm\ModelFieldFactory;
 
 /**
@@ -14,7 +13,7 @@ class EEM_Attendee extends EEM_CPT_Base
 {
 
     // private instance of the Attendee object
-    protected static $_instance = null;
+    protected static $_instance;
 
     /**
      * QST_system for questions are strings not integers now,
@@ -83,27 +82,27 @@ class EEM_Attendee extends EEM_CPT_Base
      * look for the question with this QST_system value.
      * These replace the old constants like EEM_Attendee::*_question_id
      */
-    const system_question_fname = 'fname';
+    const system_question_fname         = 'fname';
 
-    const system_question_lname = 'lname';
+    const system_question_lname         = 'lname';
 
-    const system_question_email = 'email';
+    const system_question_email         = 'email';
 
     const system_question_email_confirm = 'email_confirm';
 
-    const system_question_address = 'address';
+    const system_question_address       = 'address';
 
-    const system_question_address2 = 'address2';
+    const system_question_address2      = 'address2';
 
-    const system_question_city = 'city';
+    const system_question_city          = 'city';
 
-    const system_question_state = 'state';
+    const system_question_state         = 'state';
 
-    const system_question_country = 'country';
+    const system_question_country       = 'country';
 
-    const system_question_zip = 'zip';
+    const system_question_zip           = 'zip';
 
-    const system_question_phone = 'phone';
+    const system_question_phone         = 'phone';
 
     /**
      * Keys are all the EEM_Attendee::system_question_* constants, which are
@@ -112,43 +111,43 @@ class EEM_Attendee extends EEM_CPT_Base
      *
      * @var array
      */
-    protected $_system_question_to_attendee_field_name = array(
-        EEM_Attendee::system_question_fname    => 'ATT_fname',
-        EEM_Attendee::system_question_lname    => 'ATT_lname',
-        EEM_Attendee::system_question_email    => 'ATT_email',
-        EEM_Attendee::system_question_address  => 'ATT_address',
-        EEM_Attendee::system_question_address2 => 'ATT_address2',
-        EEM_Attendee::system_question_city     => 'ATT_city',
-        EEM_Attendee::system_question_state    => 'STA_ID',
-        EEM_Attendee::system_question_country  => 'CNT_ISO',
-        EEM_Attendee::system_question_zip      => 'ATT_zip',
-        EEM_Attendee::system_question_phone    => 'ATT_phone',
-    );
-
+    protected $_system_question_to_attendee_field_name
+        = [
+            EEM_Attendee::system_question_fname    => 'ATT_fname',
+            EEM_Attendee::system_question_lname    => 'ATT_lname',
+            EEM_Attendee::system_question_email    => 'ATT_email',
+            EEM_Attendee::system_question_address  => 'ATT_address',
+            EEM_Attendee::system_question_address2 => 'ATT_address2',
+            EEM_Attendee::system_question_city     => 'ATT_city',
+            EEM_Attendee::system_question_state    => 'STA_ID',
+            EEM_Attendee::system_question_country  => 'CNT_ISO',
+            EEM_Attendee::system_question_zip      => 'ATT_zip',
+            EEM_Attendee::system_question_phone    => 'ATT_phone',
+        ];
 
 
     /**
      * EEM_Attendee constructor.
      *
-     * @param null              $timezone
-     * @param ModelFieldFactory $model_field_factory
+     * @param string                 $timezone
+     * @param ModelFieldFactory|null $model_field_factory
      * @throws EE_Error
      * @throws InvalidArgumentException
      */
-    protected function __construct($timezone = '', ModelFieldFactory $model_field_factory)
+    protected function __construct(string $timezone = '', ModelFieldFactory $model_field_factory = null)
     {
-        $this->singular_item = esc_html__('Attendee', 'event_espresso');
-        $this->plural_item = esc_html__('Attendees', 'event_espresso');
-        $this->_tables = array(
+        $this->singular_item           = esc_html__('Attendee', 'event_espresso');
+        $this->plural_item             = esc_html__('Attendees', 'event_espresso');
+        $this->_tables                 = [
             'Attendee_CPT'  => new EE_Primary_Table('posts', 'ID'),
             'Attendee_Meta' => new EE_Secondary_Table(
                 'esp_attendee_meta',
                 'ATTM_ID',
                 'ATT_ID'
             ),
-        );
-        $this->_fields = array(
-            'Attendee_CPT'  => array(
+        ];
+        $this->_fields                 = [
+            'Attendee_CPT'  => [
                 'ATT_ID'        => $model_field_factory->createPrimaryKeyIntField(
                     'ID',
                     esc_html__('Attendee ID', 'event_espresso')
@@ -201,12 +200,12 @@ class EEM_Attendee extends EEM_CPT_Base
                     false,
                     'publish'
                 ),
-                'password' => new EE_Password_Field(
+                'password'      => new EE_Password_Field(
                     'post_password',
-                    __('Password', 'event_espresso'),
+                    esc_html__('Password', 'event_espresso'),
                     false,
                     '',
-                    array(
+                    [
                         'ATT_bio',
                         'ATT_short_bio',
                         'ATT_address',
@@ -216,11 +215,11 @@ class EEM_Attendee extends EEM_CPT_Base
                         'CNT_ISO',
                         'ATT_zip',
                         'ATT_email',
-                        'ATT_phone'
-                    )
-                )
-            ),
-            'Attendee_Meta' => array(
+                        'ATT_phone',
+                    ]
+                ),
+            ],
+            'Attendee_Meta' => [
                 'ATTM_ID'      => $model_field_factory->createDbOnlyIntField(
                     'ATTM_ID',
                     esc_html__('Attendee Meta Row ID', 'event_espresso'),
@@ -277,9 +276,9 @@ class EEM_Attendee extends EEM_CPT_Base
                     'ATT_phone',
                     esc_html__('Phone', 'event_espresso')
                 ),
-            ),
-        );
-        $this->_model_relations = array(
+            ],
+        ];
+        $this->_model_relations        = [
             'Registration'      => new EE_Has_Many_Relation(),
             'State'             => new EE_Belongs_To_Relation(),
             'Country'           => new EE_Belongs_To_Relation(),
@@ -289,12 +288,11 @@ class EEM_Attendee extends EEM_CPT_Base
             // allow deletion of attendees even if they have messages in the queue for them.
             'Term_Relationship' => new EE_Has_Many_Relation(),
             'Term_Taxonomy'     => new EE_HABTM_Relation('Term_Relationship'),
-        );
-        $this->_caps_slug = 'contacts';
+        ];
+        $this->_caps_slug              = 'contacts';
         $this->model_chain_to_password = '';
         parent::__construct($timezone);
     }
-
 
 
     /**
@@ -304,13 +302,10 @@ class EEM_Attendee extends EEM_CPT_Base
      * @param string $system_question_string
      * @return string|null if not found
      */
-    public function get_attendee_field_for_system_question($system_question_string)
+    public function get_attendee_field_for_system_question(string $system_question_string): ?string
     {
-        return isset($this->_system_question_to_attendee_field_name[ $system_question_string ])
-            ? $this->_system_question_to_attendee_field_name[ $system_question_string ]
-            : null;
+        return $this->_system_question_to_attendee_field_name[ $system_question_string ] ?? null;
     }
-
 
 
     /**
@@ -318,127 +313,124 @@ class EEM_Attendee extends EEM_CPT_Base
      *
      * @return array
      */
-    public function system_question_to_attendee_field_mapping()
+    public function system_question_to_attendee_field_mapping(): array
     {
         return $this->_system_question_to_attendee_field_name;
     }
-
 
 
     /**
      * Gets all the attendees for a transaction (by using the esp_registration as a join table)
      *
      * @param EE_Transaction /int $transaction_id_or_obj EE_Transaction or its ID
-     * @return EE_Attendee[]|EE_Base_Class[]
+     * @return EE_Attendee[]|null
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function get_attendees_for_transaction($transaction_id_or_obj)
+    public function get_attendees_for_transaction($transaction_id_or_obj): ?array
     {
         return $this->get_all(
-            array(
-                array(
+            [
+                [
                     'Registration.Transaction.TXN_ID' => $transaction_id_or_obj instanceof EE_Transaction
                         ? $transaction_id_or_obj->ID()
                         : $transaction_id_or_obj,
-                ),
-            )
+                ],
+            ]
         );
     }
-
 
 
     /**
      * retrieve  a single attendee from db via their ID
      *
-     * @param $ATT_ID
-     * @return mixed array on success, FALSE on fail
+     * @param int $ATT_ID
+     * @return EE_Attendee[]|null array on success, FALSE on fail
+     * @throws EE_Error
+     * @throws ReflectionException
      * @deprecated
      */
-    public function get_attendee_by_ID($ATT_ID = false)
+    public function get_attendee_by_ID(int $ATT_ID = 0): ?EE_Attendee
     {
         // retrieve a particular EE_Attendee
         return $this->get_one_by_ID($ATT_ID);
     }
 
 
-
     /**
      * retrieve  a single attendee from db via their ID
      *
      * @param array $where_cols_n_values
-     * @return mixed array on success, FALSE on fail
+     * @return EE_Attendee|null entity on success, null on fail
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function get_attendee($where_cols_n_values = array())
+    public function get_attendee(array $where_cols_n_values = []): ?EE_Attendee
     {
         if (empty($where_cols_n_values)) {
-            return false;
+            return null;
         }
-        $attendee = $this->get_all(array($where_cols_n_values));
+        $attendee = $this->get_all([$where_cols_n_values]);
         if (! empty($attendee)) {
             return array_shift($attendee);
         }
-        return false;
+        return null;
     }
-
 
 
     /**
      * Search for an existing Attendee record in the DB
      *
      * @param array $where_cols_n_values
-     * @return bool|mixed
+     * @return EE_Attendee|null
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function find_existing_attendee($where_cols_n_values = null)
+    public function find_existing_attendee(array $where_cols_n_values = []): ?EE_Attendee
     {
         // search by combo of first and last names plus the email address
-        $attendee_data_keys = array(
+        $attendee_data_keys = [
             'ATT_fname' => $this->_ATT_fname,
             'ATT_lname' => $this->_ATT_lname,
             'ATT_email' => $this->_ATT_email,
-        );
+        ];
         // no search params means attendee object already exists.
         $where_cols_n_values = is_array($where_cols_n_values) && ! empty($where_cols_n_values)
             ? $where_cols_n_values
             : $attendee_data_keys;
-        $valid_data = true;
+        $valid_data          = true;
         // check for required values
-        $valid_data = isset($where_cols_n_values['ATT_fname']) && ! empty($where_cols_n_values['ATT_fname'])
-            ? $valid_data
-            : false;
-        $valid_data = isset($where_cols_n_values['ATT_lname']) && ! empty($where_cols_n_values['ATT_lname'])
-            ? $valid_data
-            : false;
-        $valid_data = isset($where_cols_n_values['ATT_email']) && ! empty($where_cols_n_values['ATT_email'])
-            ? $valid_data
-            : false;
+        $valid_data = isset($where_cols_n_values['ATT_fname'])
+                      && ! empty($where_cols_n_values['ATT_fname'])
+                      && $valid_data;
+        $valid_data = isset($where_cols_n_values['ATT_lname'])
+                      && ! empty($where_cols_n_values['ATT_lname'])
+                      && $valid_data;
+        $valid_data = isset($where_cols_n_values['ATT_email'])
+                      && ! empty($where_cols_n_values['ATT_email'])
+                      && $valid_data;
         if ($valid_data) {
             $attendee = $this->get_attendee($where_cols_n_values);
             if ($attendee instanceof EE_Attendee) {
                 return $attendee;
             }
         }
-        return false;
+        return null;
     }
-
 
 
     /**
      * Takes an incoming array of EE_Registration ids
      * and sends back a list of corresponding non duplicate EE_Attendee objects.
      *
-     * @since  4.3.0
-     * @param  array $ids array of EE_Registration ids
-     * @return EE_Attendee[]|EE_Base_Class[]
+     * @param array $ids array of EE_Registration ids
+     * @return EE_Attendee[]
      * @throws EE_Error
+     * @throws ReflectionException
+     * @since  4.3.0
      */
-    public function get_array_of_contacts_from_reg_ids($ids)
+    public function get_array_of_contacts_from_reg_ids(array $ids): array
     {
-        $ids = (array) $ids;
-        $_where = array(
-            'Registration.REG_ID' => array('in', $ids),
-        );
-        return $this->get_all(array($_where));
+        return $this->get_all([['Registration.REG_ID' => ['in', $ids]]]);
     }
 }

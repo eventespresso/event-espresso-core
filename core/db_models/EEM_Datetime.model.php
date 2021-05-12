@@ -31,7 +31,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @throws InvalidArgumentException
      * @throws InvalidArgumentException
      */
-    protected function __construct($timezone = '')
+    protected function __construct(string $timezone = '')
     {
         $this->singular_item           = esc_html__('Datetime', 'event_espresso');
         $this->plural_item             = esc_html__('Datetimes', 'event_espresso');
@@ -131,23 +131,22 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
         $this->model_chain_to_password = $path_to_event_model;
         $this->_model_chain_to_wp_user = $path_to_event_model;
         // this model is generally available for reading
-        $this->_cap_restriction_generators[ EEM_Base::caps_read ]       =
-            new EE_Restriction_Generator_Event_Related_Public(
-                $path_to_event_model
-            );
-        $this->_cap_restriction_generators[ EEM_Base::caps_read_admin ] =
-            new EE_Restriction_Generator_Event_Related_Protected(
-                $path_to_event_model
-            );
-        $this->_cap_restriction_generators[ EEM_Base::caps_edit ]       =
-            new EE_Restriction_Generator_Event_Related_Protected(
-                $path_to_event_model
-            );
-        $this->_cap_restriction_generators[ EEM_Base::caps_delete ]     =
-            new EE_Restriction_Generator_Event_Related_Protected(
-                $path_to_event_model,
-                EEM_Base::caps_edit
-            );
+        $this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Event_Related_Public(
+            $path_to_event_model
+        );
+        $this->_cap_restriction_generators[ EEM_Base::caps_read_admin ]
+                                                                  = new EE_Restriction_Generator_Event_Related_Protected(
+            $path_to_event_model
+        );
+        $this->_cap_restriction_generators[ EEM_Base::caps_edit ]
+                                                                  = new EE_Restriction_Generator_Event_Related_Protected(
+            $path_to_event_model
+        );
+        $this->_cap_restriction_generators[ EEM_Base::caps_delete ]
+                                                                  = new EE_Restriction_Generator_Event_Related_Protected(
+            $path_to_event_model,
+            EEM_Base::caps_edit
+        );
         parent::__construct($timezone);
     }
 
@@ -156,14 +155,14 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * create new blank datetime
      *
      * @access public
-     * @return EE_Datetime[] array on success, FALSE on fail
+     * @return EE_Datetime[]
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws ReflectionException
      * @throws InvalidInterfaceException
      */
-    public function create_new_blank_datetime()
+    public function create_new_blank_datetime(): array
     {
         // makes sure timezone is always set.
         $timezone_string = $this->get_timezone();
@@ -287,7 +286,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function get_all_event_dates($EVT_ID = 0)
+    public function get_all_event_dates(int $EVT_ID = 0): array
     {
         if (! $EVT_ID) { // on add_new_event event_id gets set to 0
             return $this->create_new_blank_datetime();
@@ -311,13 +310,14 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      *                            the given number
      * @return EE_Datetime[]
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_datetimes_for_event_ordered_by_DTT_order(
         int $EVT_ID,
         bool $include_expired = true,
         bool $include_deleted = true,
-        $limit = 0
-    ) {
+        int $limit = 0
+    ): array {
         $prev_data_prep_value = $this->prepModelForQuery();
         $where_params         = ['Event.EVT_ID' => absint($EVT_ID)];
         $query_params[0]      = $this->addDefaultWhereParams($where_params, $include_deleted, $include_expired);
@@ -335,10 +335,11 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      *
      * @param int $EVT_ID
      * @param int $limit
-     * @return EE_Datetime[]|EE_Base_Class[]
+     * @return EE_Datetime[]
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function get_datetimes_for_event_ordered_by_importance(int $EVT_ID, $limit = 0)
+    public function get_datetimes_for_event_ordered_by_importance(int $EVT_ID, int $limit = 0): array
     {
         $query_params[0] = ['Event.EVT_ID' => absint($EVT_ID)];
         $query_params    = $this->addDefaultWhereConditions($query_params);
@@ -353,12 +354,13 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @param boolean $include_deleted
      * @return EE_Datetime
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_oldest_datetime_for_event(
         int $EVT_ID,
         bool $include_expired = false,
         bool $include_deleted = false
-    ) {
+    ): ?EE_Datetime {
         $results = $this->get_datetimes_for_event_ordered_by_start_time(
             $EVT_ID,
             $include_expired,
@@ -380,14 +382,15 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @param bool $try_to_exclude_deleted
      * @return EE_Datetime
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_primary_datetime_for_event(
         int $EVT_ID,
         bool $try_to_exclude_expired = true,
         bool $try_to_exclude_deleted = true
-    ) {
+    ): ?EE_Datetime {
         if ($try_to_exclude_expired) {
-            $non_expired = $this->get_oldest_datetime_for_event($EVT_ID, false, false);
+            $non_expired = $this->get_oldest_datetime_for_event($EVT_ID);
             if ($non_expired) {
                 return $non_expired;
             }
@@ -412,13 +415,14 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @param int     $limit
      * @return EE_Datetime[]
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_datetimes_for_event_ordered_by_start_time(
         int $EVT_ID,
         bool $include_expired = true,
         bool $include_deleted = true,
-        $limit = 0
-    ) {
+        int $limit = 0
+    ): array {
         $prev_data_prep_value = $this->prepModelForQuery();
         $where_params         = ['Event.EVT_ID' => absint($EVT_ID)];
         $query_params[0]      = $this->addDefaultWhereParams($where_params, $include_deleted, $include_expired);
@@ -441,13 +445,14 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @param int     $limit
      * @return EE_Datetime[]
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_datetimes_for_ticket_ordered_by_start_time(
         int $TKT_ID,
         bool $include_expired = true,
         bool $include_deleted = true,
-        $limit = 0
-    ) {
+        int $limit = 0
+    ): array {
         $prev_data_prep_value = $this->prepModelForQuery();
         $where_params         = ['Ticket.TKT_ID' => absint($TKT_ID)];
         $query_params[0]      = $this->addDefaultWhereParams($where_params, $include_deleted, $include_expired);
@@ -460,20 +465,21 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * Gets all the datetimes for a ticket (including trashed ones, for now), ordered by the DTT_order for the
      * datetimes.
      *
-     * @param int      $TKT_ID           ID of ticket to retrieve the datetimes for
-     * @param boolean  $include_expired  whether to include expired datetimes or not
-     * @param boolean  $include_deleted  whether to include trashed datetimes or not.
-     * @param int|null $limit            if null, no limit, if int then limit results by
+     * @param int     $TKT_ID            ID of ticket to retrieve the datetimes for
+     * @param boolean $include_expired   whether to include expired datetimes or not
+     * @param boolean $include_deleted   whether to include trashed datetimes or not.
+     * @param int     $limit             if null, no limit, if int then limit results by
      *                                   that number
      * @return EE_Datetime[]
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_datetimes_for_ticket_ordered_by_DTT_order(
         int $TKT_ID,
         bool $include_expired = true,
         bool $include_deleted = true,
-        $limit = 0
-    ) {
+        int $limit = 0
+    ): array {
         $prev_data_prep_value = $this->prepModelForQuery();
         $where_params         = ['Ticket.TKT_ID' => absint($TKT_ID)];
         $query_params[0]      = $this->addDefaultWhereParams($where_params, $include_deleted, $include_expired);
@@ -489,8 +495,9 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @param int $EVT_ID
      * @return EE_Datetime
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function get_most_important_datetime_for_event(int $EVT_ID)
+    public function get_most_important_datetime_for_event(int $EVT_ID): ?EE_Datetime
     {
         $results = $this->get_datetimes_for_event_ordered_by_importance($EVT_ID, 1);
         if ($results) {
@@ -518,8 +525,9 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidArgumentException
+     * @throws ReflectionException
      */
-    public function get_dtt_months_and_years(array $where_params, $evt_active_status = '')
+    public function get_dtt_months_and_years(array $where_params, string $evt_active_status = ''): array
     {
         $current_time_for_DTT_EVT_start = $this->current_time_for_query('DTT_EVT_start');
         $current_time_for_DTT_EVT_end   = $this->current_time_for_query('DTT_EVT_end');
@@ -635,7 +643,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function sum_tickets_currently_available_at_datetime(int $DTT_ID, array $query_params = [])
+    public function sum_tickets_currently_available_at_datetime(int $DTT_ID, array $query_params = []): int
     {
         $datetime = $this->get_one_by_ID($DTT_ID);
         if ($datetime instanceof EE_Datetime) {
@@ -648,20 +656,21 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
     /**
      * This returns an array of counts of datetimes in the database for each Datetime status that can be queried.
      *
-     * @param array $stati_to_include  If included you can restrict the statuses we return counts for by including the
-     *                                 stati you want counts for as values in the array.  An empty array returns counts
-     *                                 for all valid stati.
+     * @param array $include           If included you can restrict the statuses we return counts for by including the
+     *                                 statuses you want counts for as values in the array.  An empty array returns
+     *                                 counts for all valid statuses.
      * @param array $query_params      If included can be used to refine the conditions for returning the count (i.e.
      *                                 only for Datetimes connected to a specific event, or specific ticket.
      * @return array  The value returned is an array indexed by Datetime Status and the values are the counts.  The
      * @throws EE_Error
-     *                                 stati used as index keys are: EE_Datetime::active EE_Datetime::upcoming
+     * @throws ReflectionException
+     *                                 statuses used as index keys are: EE_Datetime::active EE_Datetime::upcoming
      *                                 EE_Datetime::expired
      */
-    public function get_datetime_counts_by_status(array $stati_to_include = [], array $query_params = [])
+    public function get_datetime_counts_by_status(array $include = [], array $query_params = []): array
     {
         // only accept where conditions for this query.
-        $_where            = isset($query_params[0]) ? $query_params[0] : [];
+        $_where            = $query_params[0] ?? [];
         $status_query_args = [
             EE_Datetime::active   => array_merge(
                 $_where,
@@ -676,14 +685,14 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
                 ['DTT_EVT_end' => ['<', time()]]
             ),
         ];
-        if (! empty($stati_to_include)) {
+        if (! empty($include)) {
             foreach (array_keys($status_query_args) as $status) {
-                if (! in_array($status, $stati_to_include, true)) {
+                if (! in_array($status, $include, true)) {
                     unset($status_query_args[ $status ]);
                 }
             }
         }
-        // loop through and query counts for each stati.
+        // loop through and query counts for each statuses.
         $status_query_results = [];
         foreach ($status_query_args as $status => $status_where_conditions) {
             $status_query_results[ $status ] = EEM_Datetime::count(
@@ -703,8 +712,9 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @param array  $query_params
      * @return int
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function get_datetime_count_for_status($status = EE_Datetime::active, array $query_params = [])
+    public function get_datetime_count_for_status(string $status = EE_Datetime::active, array $query_params = []): int
     {
         $count = $this->get_datetime_counts_by_status([$status], $query_params);
         return ! empty($count[ $status ]) ? $count[ $status ] : 0;
@@ -726,11 +736,12 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
     /**
      * @param array    $query_params
      * @param bool|int $prev_data_prep_value
-     * @return EE_Base_Class[]|EE_Datetime[]
+     * @return EE_Datetime[]
      * @throws EE_Error
+     * @throws ReflectionException
      * @since   $VID:$
      */
-    private function getDatetimesAndRestoreModel(array $query_params, $prev_data_prep_value)
+    private function getDatetimesAndRestoreModel(array $query_params, $prev_data_prep_value): array
     {
         $result = $this->get_all($query_params);
         $this->assume_values_already_prepared_by_model_object($prev_data_prep_value);
@@ -742,15 +753,16 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @param array  $query_params
      * @param int    $limit
      * @param string $order_by
-     * @param string $order
      * @return array
      * @since   $VID:$
      */
-    private function addDefaultQueryParams(array $query_params, $limit = 0, $order_by = 'DTT_EVT_start', $order = 'ASC')
-    {
-        $query_params = $this->addOrderByQueryParams($query_params, $order_by, $order);
-        $query_params = $this->addLimitQueryParams($query_params, $limit);
-        return $query_params;
+    private function addDefaultQueryParams(
+        array $query_params,
+        int $limit = 0,
+        string $order_by = 'DTT_EVT_start'
+    ): array {
+        $query_params = $this->addOrderByQueryParams($query_params, $order_by);
+        return $this->addLimitQueryParams($query_params, $limit);
     }
 
 
@@ -762,8 +774,8 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      */
     private function addDefaultWhereConditions(
         array $query_params,
-        $default_where_conditions = EEM_Base::default_where_conditions_none
-    ) {
+        string $default_where_conditions = EEM_Base::default_where_conditions_none
+    ): array {
         $query_params['default_where_conditions'] = $default_where_conditions;
         return $query_params;
     }
@@ -776,11 +788,12 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @return array
      * @since   $VID:$
      */
-    private function addDefaultWhereParams(array $where_params, bool $include_deleted = true, bool $include_expired = true)
+    private function addDefaultWhereParams(array $where_params,
+                                           bool $include_deleted = true,
+                                           bool $include_expired = true): array
     {
         $where_params = $this->addExpiredWhereParams($where_params, $include_expired);
-        $where_params = $this->addDeletedWhereParams($where_params, $include_deleted);
-        return $where_params;
+        return $this->addDeletedWhereParams($where_params, $include_deleted);
     }
 
 
@@ -790,7 +803,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @return array
      * @since   $VID:$
      */
-    private function addDeletedWhereParams(array $where_params, bool $include_deleted = true)
+    private function addDeletedWhereParams(array $where_params, bool $include_deleted = true): array
     {
         $deleted                     = $include_deleted ? [true, false] : [false];
         $where_params['DTT_deleted'] = ['IN', $deleted];
@@ -804,7 +817,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @return array
      * @since   $VID:$
      */
-    private function addExpiredWhereParams(array $where_params, bool $include_expired = true)
+    private function addExpiredWhereParams(array $where_params, bool $include_expired = true): array
     {
         if (! $include_expired) {
             $where_params['DTT_EVT_end'] = ['>=', current_time('mysql', true)];
@@ -819,7 +832,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @return array
      * @since   $VID:$
      */
-    private function addLimitQueryParams(array $query_params, $limit = 0)
+    private function addLimitQueryParams(array $query_params, int $limit = 0): array
     {
         if ($limit) {
             $query_params['limit'] = $limit;
@@ -835,11 +848,15 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      * @return array
      * @since   $VID:$
      */
-    private function addOrderByQueryParams(array $query_params, $order_by = 'DTT_EVT_start', $order = 'ASC')
+    private function addOrderByQueryParams(array $query_params,
+                                           string $order_by = 'DTT_EVT_start',
+                                           string $order = 'ASC'): array
     {
         $order                    = $order === 'ASC' ? 'ASC' : 'DESC';
         $valid_order_columns      = ['DTT_ID', 'DTT_EVT_start', 'DTT_EVT_end', 'DTT_order'];
-        $order_by                 = in_array($order_by, $valid_order_columns, true) ? $order_by : 'DTT_EVT_start';
+        $order_by                 = in_array($order_by, $valid_order_columns, true)
+            ? $order_by
+            : 'DTT_EVT_start';
         $query_params['order_by'] = [$order_by => $order];
         return $query_params;
     }

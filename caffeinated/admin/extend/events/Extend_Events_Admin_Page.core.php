@@ -1093,13 +1093,13 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
     {
         // what we need to do is get all PRIMARY datetimes for all events to filter on.
         // Note we need to include any other filters that are set!
-        $status = isset($this->_req_data['status']) ? $this->_req_data['status'] : null;
+        $status = isset($this->_req_data['status']) ? $this->_req_data['status'] : '';
         // categories?
         $category = isset($this->_req_data['EVT_CAT']) && $this->_req_data['EVT_CAT'] > 0
             ? $this->_req_data['EVT_CAT']
-            : null;
+            : '';
         // active status?
-        $active_status = isset($this->_req_data['active_status']) ? $this->_req_data['active_status'] : null;
+        $active_status = isset($this->_req_data['active_status']) ? $this->_req_data['active_status'] : '';
         $cur_date = isset($this->_req_data['month_range']) ? $this->_req_data['month_range'] : '';
         return EEH_Form_Fields::generate_event_months_dropdown($cur_date, $status, $category, $active_status);
     }
@@ -1124,6 +1124,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
 
         return EEH_Form_Fields::select_input($select_name, $values, $current_value, '', 'wide');
     }
+
 
 
     /**

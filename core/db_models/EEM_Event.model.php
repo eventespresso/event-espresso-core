@@ -2,7 +2,6 @@
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
-use EventEspresso\core\services\orm\ModelFieldFactory;
 
 /**
  * EEM_Event Model
@@ -41,6 +40,7 @@ class EEM_Event extends EEM_CPT_Base
 
     /**
      * This is the default for the additional limit field.
+     *
      * @var int
      */
     protected static $_default_additional_limit = 10;
@@ -58,45 +58,45 @@ class EEM_Event extends EEM_CPT_Base
      * Adds a relationship to Term_Taxonomy for each CPT_Base
      *
      * @param string $timezone
-     * @throws \EE_Error
+     * @throws EE_Error
      * @throws ReflectionException
      */
-    protected function __construct($timezone = '')
+    protected function __construct(string $timezone = '')
     {
         EE_Registry::instance()->load_model('Registration');
         $this->singular_item = esc_html__('Event', 'event_espresso');
-        $this->plural_item = esc_html__('Events', 'event_espresso');
+        $this->plural_item   = esc_html__('Events', 'event_espresso');
         // to remove Cancelled events from the frontend, copy the following filter to your functions.php file
         // add_filter( 'AFEE__EEM_Event__construct___custom_stati__cancelled__Public', '__return_false' );
         // to remove Postponed events from the frontend, copy the following filter to your functions.php file
         // add_filter( 'AFEE__EEM_Event__construct___custom_stati__postponed__Public', '__return_false' );
         // to remove Sold Out events from the frontend, copy the following filter to your functions.php file
         //  add_filter( 'AFEE__EEM_Event__construct___custom_stati__sold_out__Public', '__return_false' );
-        $this->_custom_stati = apply_filters(
+        $this->_custom_stati       = apply_filters(
             'AFEE__EEM_Event__construct___custom_stati',
-            array(
-                EEM_Event::cancelled => array(
+            [
+                EEM_Event::cancelled => [
                     'label'  => esc_html__('Cancelled', 'event_espresso'),
                     'public' => apply_filters('AFEE__EEM_Event__construct___custom_stati__cancelled__Public', true),
-                ),
-                EEM_Event::postponed => array(
+                ],
+                EEM_Event::postponed => [
                     'label'  => esc_html__('Postponed', 'event_espresso'),
                     'public' => apply_filters('AFEE__EEM_Event__construct___custom_stati__postponed__Public', true),
-                ),
-                EEM_Event::sold_out  => array(
+                ],
+                EEM_Event::sold_out  => [
                     'label'  => esc_html__('Sold Out', 'event_espresso'),
                     'public' => apply_filters('AFEE__EEM_Event__construct___custom_stati__sold_out__Public', true),
-                ),
-            )
+                ],
+            ]
         );
         self::$_default_reg_status = empty(self::$_default_reg_status) ? EEM_Registration::status_id_pending_payment
             : self::$_default_reg_status;
-        $this->_tables = array(
+        $this->_tables             = [
             'Event_CPT'  => new EE_Primary_Table('posts', 'ID'),
             'Event_Meta' => new EE_Secondary_Table('esp_event_meta', 'EVTM_ID', 'EVT_ID'),
-        );
-        $this->_fields = array(
-            'Event_CPT'  => array(
+        ];
+        $this->_fields             = [
+            'Event_CPT'  => [
                 'EVT_ID'         => new EE_Primary_Key_Int_Field(
                     'ID',
                     esc_html__('Post ID for Event', 'event_espresso')
@@ -163,12 +163,12 @@ class EEM_Event extends EEM_CPT_Base
                     'draft',
                     $this->_custom_stati
                 ),
-                'password' => new EE_Password_Field(
+                'password'       => new EE_Password_Field(
                     'post_password',
-                    __('Password', 'event_espresso'),
+                    esc_html__('Password', 'event_espresso'),
                     false,
                     '',
-                    array(
+                    [
                         'EVT_desc',
                         'EVT_short_desc',
                         'EVT_display_desc',
@@ -181,11 +181,11 @@ class EEM_Event extends EEM_CPT_Base
                         'EVT_allow_overflow',
                         'EVT_timezone_string',
                         'EVT_external_URL',
-                        'EVT_donations'
-                    )
-                )
-            ),
-            'Event_Meta' => array(
+                        'EVT_donations',
+                    ]
+                ),
+            ],
+            'Event_Meta' => [
                 'EVTM_ID'                         => new EE_DB_Only_Float_Field(
                     'EVTM_ID',
                     esc_html__('Event Meta Row ID', 'event_espresso'),
@@ -262,9 +262,9 @@ class EEM_Event extends EEM_CPT_Base
                     false,
                     false
                 ),
-            ),
-        );
-        $this->_model_relations = array(
+            ],
+        ];
+        $this->_model_relations    = [
             'Registration'           => new EE_Has_Many_Relation(),
             'Datetime'               => new EE_Has_Many_Relation(),
             'Question_Group'         => new EE_HABTM_Relation('Event_Question_Group'),
@@ -275,10 +275,10 @@ class EEM_Event extends EEM_CPT_Base
             'Message_Template_Group' => new EE_HABTM_Relation('Event_Message_Template'),
             'Attendee'               => new EE_HABTM_Relation('Registration'),
             'WP_User'                => new EE_Belongs_To_Relation(),
-        );
+        ];
         // this model is generally available for reading
         $this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Public();
-        $this->model_chain_to_password = '';
+        $this->model_chain_to_password                            = '';
         parent::__construct($timezone);
     }
 
@@ -288,7 +288,7 @@ class EEM_Event extends EEM_CPT_Base
      * @throws EE_Error
      * @throws EE_Error
      */
-    public static function set_default_reg_status($default_reg_status)
+    public static function set_default_reg_status(string $default_reg_status)
     {
         self::$_default_reg_status = $default_reg_status;
         // if EEM_Event has already been instantiated,
@@ -313,6 +313,7 @@ class EEM_Event extends EEM_CPT_Base
 
     /**
      * Used to override the default for the additional limit field.
+     *
      * @param $additional_limit
      */
     public static function set_default_additional_limit($additional_limit)
@@ -321,7 +322,7 @@ class EEM_Event extends EEM_CPT_Base
         if (self::$_instance instanceof EEM_Event) {
             self::$_instance->_fields['Event_Meta']['EVT_additional_limit'] = new EE_Integer_Field(
                 'EVT_additional_limit',
-                __('Limit of Additional Registrations on Same Transaction', 'event_espresso'),
+                esc_html__('Limit of Additional Registrations on Same Transaction', 'event_espresso'),
                 true,
                 self::$_default_additional_limit
             );
@@ -336,9 +337,10 @@ class EEM_Event extends EEM_CPT_Base
 
     /**
      * Return what is currently set as the default additional limit for the event.
+     *
      * @return int
      */
-    public static function get_default_additional_limit()
+    public static function get_default_additional_limit(): int
     {
         return apply_filters('FHEE__EEM_Event__get_default_additional_limit', self::$_default_additional_limit);
     }
@@ -348,16 +350,16 @@ class EEM_Event extends EEM_CPT_Base
      * get_question_groups
      *
      * @return array
-     * @throws \EE_Error
+     * @throws EE_Error
      * @throws ReflectionException
      */
-    public function get_all_question_groups()
+    public function get_all_question_groups(): array
     {
         return EE_Registry::instance()->load_model('Question_Group')->get_all(
-            array(
-                array('QSG_deleted' => false),
-                'order_by' => array('QSG_order' => 'ASC'),
-            )
+            [
+                ['QSG_deleted' => false],
+                'order_by' => ['QSG_order' => 'ASC'],
+            ]
         );
     }
 
@@ -367,10 +369,10 @@ class EEM_Event extends EEM_CPT_Base
      *
      * @param int $EVT_ID
      * @return array|bool
-     * @throws \EE_Error
+     * @throws EE_Error
      * @throws ReflectionException
      */
-    public function get_all_event_question_groups($EVT_ID = 0)
+    public function get_all_event_question_groups(int $EVT_ID = 0)
     {
         if (! isset($EVT_ID) || ! absint($EVT_ID)) {
             EE_Error::add_error(
@@ -385,9 +387,9 @@ class EEM_Event extends EEM_CPT_Base
             return false;
         }
         return EE_Registry::instance()->load_model('Event_Question_Group')->get_all(
-            array(
-                array('EVT_ID' => $EVT_ID),
-            )
+            [
+                ['EVT_ID' => $EVT_ID],
+            ]
         );
     }
 
@@ -395,7 +397,7 @@ class EEM_Event extends EEM_CPT_Base
     /**
      * get_question_groups
      *
-     * @param int $EVT_ID
+     * @param int     $EVT_ID
      * @param boolean $for_primary_attendee
      * @return array|bool
      * @throws EE_Error
@@ -404,12 +406,12 @@ class EEM_Event extends EEM_CPT_Base
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public function get_event_question_groups($EVT_ID = 0, $for_primary_attendee = true)
+    public function get_event_question_groups(int $EVT_ID = 0, bool $for_primary_attendee = true)
     {
         if (! isset($EVT_ID) || ! absint($EVT_ID)) {
             EE_Error::add_error(
                 esc_html__(
-                    // @codingStandardsIgnoreStart
+                // @codingStandardsIgnoreStart
                     'An error occurred. No Event Question Groups could be retrieved because an Event ID was not received.',
                     // @codingStandardsIgnoreEnd
                     'event_espresso'
@@ -422,9 +424,9 @@ class EEM_Event extends EEM_CPT_Base
         }
         $query_params = [
             [
-                'EVT_ID' => $EVT_ID,
-                EEM_Event_Question_Group::instance()->fieldNameForContext($for_primary_attendee) => true
-            ]
+                'EVT_ID'                                                                         => $EVT_ID,
+                EEM_Event_Question_Group::instance()->fieldNameForContext($for_primary_attendee) => true,
+            ],
         ];
         if ($for_primary_attendee) {
             $query_params[0]['EQG_primary'] = true;
@@ -438,7 +440,7 @@ class EEM_Event extends EEM_CPT_Base
     /**
      * get_question_groups
      *
-     * @param int $EVT_ID
+     * @param int             $EVT_ID
      * @param EE_Registration $registration
      * @return array|bool
      * @throws EE_Error
@@ -447,7 +449,7 @@ class EEM_Event extends EEM_CPT_Base
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function get_question_groups_for_event($EVT_ID = 0, EE_Registration $registration)
+    public function get_question_groups_for_event(int $EVT_ID, EE_Registration $registration)
     {
         if (! isset($EVT_ID) || ! absint($EVT_ID)) {
             EE_Error::add_error(
@@ -464,11 +466,11 @@ class EEM_Event extends EEM_CPT_Base
         return EE_Registry::instance()->load_model('Question_Group')->get_all(
             [
                 [
-                    'Event_Question_Group.EVT_ID'      => $EVT_ID,
+                    'Event_Question_Group.EVT_ID' => $EVT_ID,
                     'Event_Question_Group.'
-                        . EEM_Event_Question_Group::instance()->fieldNameForContext(
-                            $registration->is_primary_registrant()
-                        ) => true
+                    . EEM_Event_Question_Group::instance()->fieldNameForContext(
+                        $registration->is_primary_registrant()
+                    )                             => true,
                 ],
                 'order_by' => ['QSG_order' => 'ASC'],
             ]
@@ -481,10 +483,10 @@ class EEM_Event extends EEM_CPT_Base
      *
      * @param string $QSG_IDs csv list of $QSG IDs
      * @return array|bool
-     * @throws \EE_Error
+     * @throws EE_Error
      * @throws ReflectionException
      */
-    public function get_questions_in_groups($QSG_IDs = '')
+    public function get_questions_in_groups(string $QSG_IDs = '')
     {
         if (empty($QSG_IDs)) {
             EE_Error::add_error(
@@ -496,14 +498,14 @@ class EEM_Event extends EEM_CPT_Base
             return false;
         }
         return EE_Registry::instance()->load_model('Question')->get_all(
-            array(
-                array(
-                    'Question_Group.QSG_ID' => array('IN', $QSG_IDs),
+            [
+                [
+                    'Question_Group.QSG_ID' => ['IN', $QSG_IDs],
                     'QST_deleted'           => false,
                     'QST_admin_only'        => is_admin(),
-                ),
+                ],
                 'order_by' => 'QST_order',
-            )
+            ]
         );
     }
 
@@ -513,10 +515,10 @@ class EEM_Event extends EEM_CPT_Base
      *
      * @param string $QST_IDs csv list of $QST IDs
      * @return array|bool
-     * @throws \EE_Error
+     * @throws EE_Error
      * @throws ReflectionException
      */
-    public function get_options_for_question($QST_IDs)
+    public function get_options_for_question(string $QST_IDs)
     {
         if (empty($QST_IDs)) {
             EE_Error::add_error(
@@ -528,13 +530,13 @@ class EEM_Event extends EEM_CPT_Base
             return false;
         }
         return EE_Registry::instance()->load_model('Question_Option')->get_all(
-            array(
-                array(
-                    'Question.QST_ID' => array('IN', $QST_IDs),
+            [
+                [
+                    'Question.QST_ID' => ['IN', $QST_IDs],
                     'QSO_deleted'     => false,
-                ),
+                ],
                 'order_by' => 'QSO_ID',
-            )
+            ]
         );
     }
 
@@ -547,16 +549,16 @@ class EEM_Event extends EEM_CPT_Base
      *                             (note that status and DTT_EVT_start and DTT_EVT_end will be overridden)
      * @param bool  $count         whether to return the count or not (default FALSE)
      * @return EE_Event[]|int
-     * @throws \EE_Error
+     * @throws EE_Error
      * @throws ReflectionException
      */
-    public function get_active_events($query_params, $count = false)
+    public function get_active_events(array $query_params, bool $count = false)
     {
         if (array_key_exists(0, $query_params)) {
             $where_params = $query_params[0];
             unset($query_params[0]);
         } else {
-            $where_params = array();
+            $where_params = [];
         }
         // if we have count make sure we don't include group by
         if ($count && isset($query_params['group_by'])) {
@@ -564,35 +566,35 @@ class EEM_Event extends EEM_CPT_Base
         }
         // let's add specific query_params for active_events
         // keep in mind this will override any sent status in the query AND any date queries.
-        $where_params['status'] = array('IN', array('publish', EEM_Event::sold_out));
+        $where_params['status'] = ['IN', ['publish', EEM_Event::sold_out]];
         // if already have where params for DTT_EVT_start or DTT_EVT_end then append these conditions
         if (isset($where_params['Datetime.DTT_EVT_start'])) {
-            $where_params['Datetime.DTT_EVT_start******'] = array(
+            $where_params['Datetime.DTT_EVT_start******'] = [
                 '<',
                 EEM_Datetime::instance()->current_time_for_query('DTT_EVT_start'),
-            );
+            ];
         } else {
-            $where_params['Datetime.DTT_EVT_start'] = array(
+            $where_params['Datetime.DTT_EVT_start'] = [
                 '<',
                 EEM_Datetime::instance()->current_time_for_query('DTT_EVT_start'),
-            );
+            ];
         }
         if (isset($where_params['Datetime.DTT_EVT_end'])) {
-            $where_params['Datetime.DTT_EVT_end*****'] = array(
+            $where_params['Datetime.DTT_EVT_end*****'] = [
                 '>',
                 EEM_Datetime::instance()->current_time_for_query('DTT_EVT_end'),
-            );
+            ];
         } else {
-            $where_params['Datetime.DTT_EVT_end'] = array(
+            $where_params['Datetime.DTT_EVT_end'] = [
                 '>',
                 EEM_Datetime::instance()->current_time_for_query('DTT_EVT_end'),
-            );
+            ];
         }
         $query_params[0] = $where_params;
         // don't use $query_params with count()
         // because we don't want to include additional query clauses like "GROUP BY"
         return $count
-            ? $this->count(array($where_params), 'EVT_ID', true)
+            ? $this->count([$where_params], 'EVT_ID', true)
             : $this->get_all($query_params);
     }
 
@@ -604,16 +606,16 @@ class EEM_Event extends EEM_CPT_Base
      *                             (Note that status and DTT_EVT_start will be overridden)
      * @param bool  $count         whether to return the count or not (default FALSE)
      * @return EE_Event[]|int
-     * @throws \EE_Error
+     * @throws EE_Error
      * @throws ReflectionException
      */
-    public function get_upcoming_events($query_params, $count = false)
+    public function get_upcoming_events(array $query_params, bool $count = false)
     {
         if (array_key_exists(0, $query_params)) {
             $where_params = $query_params[0];
             unset($query_params[0]);
         } else {
-            $where_params = array();
+            $where_params = [];
         }
         // if we have count make sure we don't include group by
         if ($count && isset($query_params['group_by'])) {
@@ -622,29 +624,29 @@ class EEM_Event extends EEM_CPT_Base
         // let's add specific query_params for active_events
         // keep in mind this will override any sent status in the query AND any date queries.
         // we need to pull events with a status of publish and sold_out
-        $event_status = array('publish', EEM_Event::sold_out);
+        $event_status = ['publish', EEM_Event::sold_out];
         // check if the user can read private events and if so add the 'private status to the were params'
         if (EE_Registry::instance()->CAP->current_user_can('ee_read_private_events', 'get_upcoming_events')) {
             $event_status[] = 'private';
         }
-        $where_params['status'] = array('IN', $event_status);
+        $where_params['status'] = ['IN', $event_status];
         // if there are already query_params matching DTT_EVT_start then we need to modify that to add them.
         if (isset($where_params['Datetime.DTT_EVT_start'])) {
-            $where_params['Datetime.DTT_EVT_start*****'] = array(
+            $where_params['Datetime.DTT_EVT_start*****'] = [
                 '>',
                 EEM_Datetime::instance()->current_time_for_query('DTT_EVT_start'),
-            );
+            ];
         } else {
-            $where_params['Datetime.DTT_EVT_start'] = array(
+            $where_params['Datetime.DTT_EVT_start'] = [
                 '>',
                 EEM_Datetime::instance()->current_time_for_query('DTT_EVT_start'),
-            );
+            ];
         }
         $query_params[0] = $where_params;
         // don't use $query_params with count()
         // because we don't want to include additional query clauses like "GROUP BY"
         return $count
-            ? $this->count(array($where_params), 'EVT_ID', true)
+            ? $this->count([$where_params], 'EVT_ID', true)
             : $this->get_all($query_params);
     }
 
@@ -657,16 +659,16 @@ class EEM_Event extends EEM_CPT_Base
      *                             (note that status and DTT_EVT_end will be overridden)
      * @param bool  $count         whether to return the count or not (default FALSE)
      * @return EE_Event[]|int
-     * @throws \EE_Error
+     * @throws EE_Error
      * @throws ReflectionException
      */
-    public function get_active_and_upcoming_events($query_params, $count = false)
+    public function get_active_and_upcoming_events(array $query_params, bool $count = false)
     {
         if (array_key_exists(0, $query_params)) {
             $where_params = $query_params[0];
             unset($query_params[0]);
         } else {
-            $where_params = array();
+            $where_params = [];
         }
         // if we have count make sure we don't include group by
         if ($count && isset($query_params['group_by'])) {
@@ -674,24 +676,24 @@ class EEM_Event extends EEM_CPT_Base
         }
         // let's add specific query_params for active_events
         // keep in mind this will override any sent status in the query AND any date queries.
-        $where_params['status'] = array('IN', array('publish', EEM_Event::sold_out));
+        $where_params['status'] = ['IN', ['publish', EEM_Event::sold_out]];
         // add where params for DTT_EVT_end
         if (isset($where_params['Datetime.DTT_EVT_end'])) {
-            $where_params['Datetime.DTT_EVT_end*****'] = array(
+            $where_params['Datetime.DTT_EVT_end*****'] = [
                 '>',
                 EEM_Datetime::instance()->current_time_for_query('DTT_EVT_end'),
-            );
+            ];
         } else {
-            $where_params['Datetime.DTT_EVT_end'] = array(
+            $where_params['Datetime.DTT_EVT_end'] = [
                 '>',
                 EEM_Datetime::instance()->current_time_for_query('DTT_EVT_end'),
-            );
+            ];
         }
         $query_params[0] = $where_params;
         // don't use $query_params with count()
         // because we don't want to include additional query clauses like "GROUP BY"
         return $count
-            ? $this->count(array($where_params), 'EVT_ID', true)
+            ? $this->count([$where_params], 'EVT_ID', true)
             : $this->get_all($query_params);
     }
 
@@ -704,12 +706,12 @@ class EEM_Event extends EEM_CPT_Base
      *                             (note that status and DTT_EVT_end will be overridden)
      * @param bool  $count         whether to return the count or not (default FALSE)
      * @return EE_Event[]|int
-     * @throws \EE_Error
+     * @throws EE_Error
      * @throws ReflectionException
      */
-    public function get_expired_events($query_params, $count = false)
+    public function get_expired_events(array $query_params, bool $count = false)
     {
-        $where_params = isset($query_params[0]) ? $query_params[0] : array();
+        $where_params = $query_params[0] ?? [];
         // if we have count make sure we don't include group by
         if ($count && isset($query_params['group_by'])) {
             unset($query_params['group_by']);
@@ -723,20 +725,20 @@ class EEM_Event extends EEM_CPT_Base
         if (isset($exclude_query[0])) {
             unset($exclude_query[0]);
         }
-        $exclude_query[0] = array(
-            'Datetime.DTT_EVT_end' => array(
+        $exclude_query[0] = [
+            'Datetime.DTT_EVT_end' => [
                 '>',
                 EEM_Datetime::instance()->current_time_for_query('DTT_EVT_end'),
-            ),
-        );
+            ],
+        ];
         // first get all events that have datetimes where its not expired.
         $event_ids = $this->_get_all_wpdb_results($exclude_query, OBJECT_K, 'Event_CPT.ID');
         $event_ids = array_keys($event_ids);
         // if we have any additional query_params, let's add them to the 'AND' condition
-        $and_condition = array(
-            'Datetime.DTT_EVT_end' => array('<', EEM_Datetime::instance()->current_time_for_query('DTT_EVT_end')),
-            'EVT_ID'               => array('NOT IN', $event_ids),
-        );
+        $and_condition = [
+            'Datetime.DTT_EVT_end' => ['<', EEM_Datetime::instance()->current_time_for_query('DTT_EVT_end')],
+            'EVT_ID'               => ['NOT IN', $event_ids],
+        ];
         if (isset($where_params['OR'])) {
             $and_condition['OR'] = $where_params['OR'];
             unset($where_params['OR']);
@@ -751,11 +753,11 @@ class EEM_Event extends EEM_CPT_Base
         }
         // merge remaining $where params with the and conditions.
         $where_params['AND'] = array_merge($and_condition, $where_params);
-        $query_params[0] = $where_params;
+        $query_params[0]     = $where_params;
         // don't use $query_params with count()
         // because we don't want to include additional query clauses like "GROUP BY"
         return $count
-            ? $this->count(array($where_params), 'EVT_ID', true)
+            ? $this->count([$where_params], 'EVT_ID', true)
             : $this->get_all($query_params);
     }
 
@@ -767,12 +769,12 @@ class EEM_Event extends EEM_CPT_Base
      *                               (note that status will be overwritten)
      * @param boolean $count         whether to return the count or not (default FALSE)
      * @return EE_Event[]|int
-     * @throws \EE_Error
+     * @throws EE_Error
      * @throws ReflectionException
      */
-    public function get_inactive_events($query_params, $count = false)
+    public function get_inactive_events(array $query_params, bool $count = false)
     {
-        $where_params = isset($query_params[0]) ? $query_params[0] : array();
+        $where_params = $query_params[0] ?? [];
         // let's add in specific query_params for inactive events.
         if (isset($where_params['status'])) {
             unset($where_params['status']);
@@ -782,7 +784,7 @@ class EEM_Event extends EEM_CPT_Base
             unset($query_params['group_by']);
         }
         // if we have any additional query_params, let's add them to the 'AND' condition
-        $where_params['AND']['status'] = array('!=', 'publish');
+        $where_params['AND']['status'] = ['!=', 'publish'];
         if (isset($where_params['OR'])) {
             $where_params['AND']['OR'] = $where_params['OR'];
             unset($where_params['OR']);
@@ -799,7 +801,7 @@ class EEM_Event extends EEM_CPT_Base
         // don't use $query_params with count()
         // because we don't want to include additional query clauses like "GROUP BY"
         return $count
-            ? $this->count(array($where_params), 'EVT_ID', true)
+            ? $this->count([$where_params], 'EVT_ID', true)
             : $this->get_all($query_params);
     }
 
@@ -812,26 +814,40 @@ class EEM_Event extends EEM_CPT_Base
      * @param        $id_or_obj
      * @param        $other_model_id_or_obj
      * @param string $relationName
-     * @param array  $where_query
+     * @param array  $extra_join_model_fields_n_values
      * @return EE_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function add_relationship_to($id_or_obj, $other_model_id_or_obj, $relationName, $where_query = array())
-    {
+    public function add_relationship_to(
+        $id_or_obj,
+        $other_model_id_or_obj,
+        $relationName,
+        $extra_join_model_fields_n_values = []
+    ): EE_Base_Class {
         if ($relationName === 'Price') {
             // let's get the PRC object for the given ID to make sure that we aren't dealing with a default
-            $prc_chk = $this->get_related_model_obj($relationName)->ensure_is_obj($other_model_id_or_obj);
+            $price = $this->get_related_model_obj($relationName)->ensure_is_obj($other_model_id_or_obj);
             // if EVT_ID = 0, then this is a default
-            if ((int) $prc_chk->get('EVT_ID') === 0) {
+            if ((int) $price->get('EVT_ID') === 0) {
                 // let's set the prc_id as 0 so we force an insert on the add_relation_to carried out by relation
-                $prc_chk->set('PRC_ID', 0);
+                $price->set('PRC_ID', 0);
             }
             // run parent
-            return parent::add_relationship_to($id_or_obj, $prc_chk, $relationName, $where_query);
+            return parent::add_relationship_to(
+                $id_or_obj,
+                $price,
+                $relationName,
+                $extra_join_model_fields_n_values
+            );
         }
         // otherwise carry on as normal
-        return parent::add_relationship_to($id_or_obj, $other_model_id_or_obj, $relationName, $where_query);
+        return parent::add_relationship_to(
+            $id_or_obj,
+            $other_model_id_or_obj,
+            $relationName,
+            $extra_join_model_fields_n_values
+        );
     }
 
 
@@ -852,55 +868,74 @@ class EEM_Event extends EEM_CPT_Base
      *                                         admin_pages/registrations/form_sections/EE_Registration_Custom_Questions_Form.form.php
      * @access     public
      */
-    public function assemble_array_of_groups_questions_and_options(EE_Registration $registration, $EVT_ID = 0)
-    {
+    public function assemble_array_of_groups_questions_and_options(
+        EE_Registration $registration,
+        int $EVT_ID = 0
+    ): array {
         if (empty($EVT_ID)) {
-            throw new EE_Error(__(
-                'An error occurred. No EVT_ID is included.  Needed to know which question groups to retrieve.',
-                'event_espresso'
-            ));
+            throw new EE_Error(
+                __(
+                    'An error occurred. No EVT_ID is included.  Needed to know which question groups to retrieve.',
+                    'event_espresso'
+                )
+            );
         }
-        $questions = array();
+        $questions = [];
         // get all question groups for event
-        $qgs = $this->get_question_groups_for_event($EVT_ID, $registration);
-        if (! empty($qgs)) {
-            foreach ($qgs as $qg) {
-                $qsts = $qg->questions();
-                $questions[ $qg->ID() ] = $qg->model_field_array();
-                $questions[ $qg->ID() ]['QSG_questions'] = array();
-                foreach ($qsts as $qst) {
-                    if ($qst->is_system_question()) {
+        $question_groups = $this->get_question_groups_for_event($EVT_ID, $registration);
+        if (! empty($question_groups)) {
+            foreach ($question_groups as $question_group) {
+                $QSG_ID = $question_group->ID();
+                $questions[ $QSG_ID ]                  = $question_group->model_field_array();
+                $questions[ $QSG_ID ]['QSG_questions'] = [];
+                $question_groups_questions                           = $question_group->questions();
+                foreach ($question_groups_questions as $question_groups_question) {
+                    if ($question_groups_question->is_system_question()) {
                         continue;
                     }
-                    $answer = EEM_Answer::instance()->get_one(array(
-                        array(
-                            'QST_ID' => $qst->ID(),
-                            'REG_ID' => $registration->ID(),
-                        ),
-                    ));
-                    $answer = $answer instanceof EE_Answer ? $answer : EEM_Answer::instance()->create_default_object();
-                    $qst_name = $qstn_id = $qst->ID();
-                    $ans_id = $answer->ID();
-                    $qst_name = ! empty($ans_id) ? '[' . $qst_name . '][' . $ans_id . ']' : '[' . $qst_name . ']';
+                    $QGQ_ID = $question_groups_question->ID();
+                    $answer = EEM_Answer::instance()->get_one(
+                        [
+                            [
+                                'QST_ID' => $QGQ_ID,
+                                'REG_ID' => $registration->ID(),
+                            ],
+                        ]
+                    );
+                    $answer = $answer instanceof EE_Answer
+                        ? $answer
+                        : EEM_Answer::instance()->create_default_object();
+                    $question_name = $question_id = $QGQ_ID;
+                    $ANS_ID = $answer->ID();
+                    $question_name = ! empty($ANS_ID)
+                        ? '[' . $question_name . '][' . $ANS_ID . ']'
+                        : '[' . $question_name . ']';
                     $input_name = '';
-                    $input_id = sanitize_key($qst->display_text());
-                    $input_class = '';
-                    $questions[ $qg->ID() ]['QSG_questions'][ $qst->ID() ] = $qst->model_field_array();
-                    $questions[ $qg->ID() ]['QSG_questions'][ $qst->ID() ]['QST_input_name'] = 'qstn'
+                    $input_id = sanitize_key($question_groups_question->display_text());
+                    $input_class
+                            = '';
+                    $questions[ $QSG_ID ]['QSG_questions'][ $QGQ_ID ]
+                            = $question_groups_question->model_field_array();
+                    $questions[ $QSG_ID ]['QSG_questions'][ $QGQ_ID ]['QST_input_name'] = 'qstn'
                                                                                            . $input_name
-                                                                                           . $qst_name;
-                    $questions[ $qg->ID() ]['QSG_questions'][ $qst->ID() ]['QST_input_id'] = $input_id . '-' . $qstn_id;
-                    $questions[ $qg->ID() ]['QSG_questions'][ $qst->ID() ]['QST_input_class'] = $input_class;
-                    $questions[ $qg->ID() ]['QSG_questions'][ $qst->ID() ]['QST_options'] = array();
-                    $questions[ $qg->ID() ]['QSG_questions'][ $qst->ID() ]['qst_obj'] = $qst;
-                    $questions[ $qg->ID() ]['QSG_questions'][ $qst->ID() ]['ans_obj'] = $answer;
+                                                                                           . $question_name;
+                    $questions[ $QSG_ID ]['QSG_questions'][ $QGQ_ID ]['QST_input_id'] = $input_id . '-' . $question_id;
+                    $questions[ $QSG_ID ]['QSG_questions'][ $QGQ_ID ]['QST_input_class'] = $input_class;
+                    $questions[ $QSG_ID ]['QSG_questions'][ $QGQ_ID ]['QST_options'] = [];
+                    $questions[ $QSG_ID ]['QSG_questions'][ $QGQ_ID ]['qst_obj'] = $question_groups_question;
+                    $questions[ $QSG_ID ]['QSG_questions'][ $QGQ_ID ]['ans_obj'] = $answer;
                     // leave responses as-is, don't convert stuff into html entities please!
-                    $questions[ $qg->ID() ]['QSG_questions'][ $qst->ID() ]['htmlentities'] = false;
-                    if ($qst->type() == 'RADIO_BTN' || $qst->type() == 'CHECKBOX' || $qst->type() == 'DROPDOWN') {
-                        $QSOs = $qst->options(true, $answer->value());
-                        if (is_array($QSOs)) {
-                            foreach ($QSOs as $QSO_ID => $QSO) {
-                                $questions[ $qg->ID() ]['QSG_questions'][ $qst->ID() ]['QST_options'][ $QSO_ID ] = $QSO->model_field_array();
+                    $questions[ $QSG_ID ]['QSG_questions'][ $QGQ_ID ]['htmlentities'] = false;
+                    if (
+                        $question_groups_question->type() == 'RADIO_BTN'
+                        || $question_groups_question->type() == 'CHECKBOX'
+                        || $question_groups_question->type() == 'DROPDOWN'
+                    ) {
+                        $question_options = $question_groups_question->options(true, $answer->value());
+                        if (is_array($question_options)) {
+                            foreach ($question_options as $QSO_ID => $question_option) {
+                                $questions[ $QSG_ID ]['QSG_questions'][ $QGQ_ID ]['QST_options'][ $QSO_ID ]
+                                    = $question_option->model_field_array();
                             }
                         }
                     }

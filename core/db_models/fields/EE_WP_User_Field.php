@@ -18,12 +18,12 @@ class EE_WP_User_Field extends EE_Foreign_Key_Int_Field
      * always get_current_user_id() and the model pointed to is always WP_User
      *
      * @param string  $table_column name fo column for field
-     * @param string  $nicename     should eb internationalized with __('blah','event_espresso')
+     * @param string  $nice_name     should eb internationalized with esc_html__('blah','event_espresso')
      * @param boolean $nullable
      */
-    public function __construct($table_column, $nicename, $nullable)
+    public function __construct($table_column, $nice_name, $nullable)
     {
-        parent::__construct($table_column, $nicename, $nullable, null, 'WP_User');
+        parent::__construct($table_column, $nice_name, $nullable, get_current_user_id(), 'WP_User');
     }
 
     /**
@@ -39,7 +39,7 @@ class EE_WP_User_Field extends EE_Foreign_Key_Int_Field
         } else {
             EE_Error::doing_it_wrong(
                 'EE_WP_User_Field::get_default_value',
-                __(
+                esc_html__(
                     'You cant get a default value for a wp_User_Field because the "init" action is called, because current_user global hasnt yet been setup. Consider doing your business logic on the "init" hook or later.',
                     'event_espresso'
                 ),

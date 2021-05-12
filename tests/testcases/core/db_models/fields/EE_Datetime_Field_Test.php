@@ -363,7 +363,7 @@ class EE_Datetime_Field_Test extends EE_UnitTestCase
         $this->_get_time_strings_for_testing();
 
         //test if not nullable and datestring is empty, then we should get back current_time in utc in mysql timestamp.
-        $this->assertEquals(date('Y-m-d H:i:s'), $this->_datetime_field->prepare_for_use_in_db(null));
+        $this->assertEquals(date('Y-m-d H:i:s'), $this->_datetime_field->prepare_for_use_in_db());
 
         //test if  nullable and datestring is empty, then we should get null.
         $this->_datetime_field->set_nullable();

@@ -17,16 +17,16 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 class EEM_Payment_Method extends EEM_Base
 {
 
-    const scope_cart = 'CART';
+    const scope_cart  = 'CART';
 
     const scope_admin = 'ADMIN';
 
-    const scope_api = 'API';
+    const scope_api   = 'API';
 
     /**
      * @type EEM_Payment_Method
      */
-    protected static $_instance = null;
+    protected static $_instance;
 
 
     /**
@@ -35,14 +35,14 @@ class EEM_Payment_Method extends EEM_Base
      * @param null $timezone
      * @throws EE_Error
      */
-    protected function __construct($timezone = '')
+    protected function __construct(string $timezone = '')
     {
-        $this->singular_item = esc_html__('Payment Method', 'event_espresso');
-        $this->plural_item = esc_html__('Payment Methods', 'event_espresso');
-        $this->_tables = [
+        $this->singular_item    = esc_html__('Payment Method', 'event_espresso');
+        $this->plural_item      = esc_html__('Payment Methods', 'event_espresso');
+        $this->_tables          = [
             'Payment_Method' => new EE_Primary_Table('esp_payment_method', 'PMD_ID'),
         ];
-        $this->_fields = [
+        $this->_fields          = [
             'Payment_Method' => [
                 'PMD_ID'              => new EE_Primary_Key_Int_Field(
                     'PMD_ID',
@@ -131,10 +131,11 @@ class EEM_Payment_Method extends EEM_Base
      * Gets one by the slug provided
      *
      * @param string $slug
-     * @return EE_Base_Class|EE_Payment_Method|EE_Soft_Delete_Base_Class|NULL
+     * @return EE_Payment_Method|null
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function get_one_by_slug($slug)
+    public function get_one_by_slug(string $slug): ?EE_Payment_Method
     {
         return $this->get_one([['PMD_slug' => $slug]]);
     }
@@ -146,7 +147,7 @@ class EEM_Payment_Method extends EEM_Base
      *
      * @return array
      */
-    public function scopes()
+    public function scopes(): array
     {
         return apply_filters(
             'FHEE__EEM_Payment_Method__scopes',
@@ -167,7 +168,7 @@ class EEM_Payment_Method extends EEM_Base
      * @param string $scope like one of EEM_Payment_Method::instance()->scopes()
      * @return boolean
      */
-    public function is_valid_scope($scope)
+    public function is_valid_scope(string $scope): bool
     {
         $scopes = $this->scopes();
         if (isset($scopes[ $scope ])) {
@@ -182,10 +183,11 @@ class EEM_Payment_Method extends EEM_Base
      *
      * @param string $scope one of
      * @param array  $query_params
-     * @return EE_Base_Class[]|EE_Payment_Method[]
+     * @return EE_Payment_Method[]
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function get_all_active($scope = null, $query_params = [])
+    public function get_all_active(string $scope = '', array $query_params = []): array
     {
         if (! isset($query_params['order_by']) && ! isset($query_params['order'])) {
             $query_params['order_by'] = ['PMD_order' => 'ASC', 'PMD_ID' => 'ASC'];
@@ -201,8 +203,9 @@ class EEM_Payment_Method extends EEM_Base
      * @param array  $query_params
      * @return int
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function count_active($scope = null, $query_params = [])
+    public function count_active(string $scope = '', array $query_params = []): int
     {
         return $this->count($this->_get_query_params_for_all_active($scope, $query_params));
     }
@@ -218,9 +221,9 @@ class EEM_Payment_Method extends EEM_Base
      * @throws EE_Error
      * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
-    protected function _get_query_params_for_all_active($scope = null, $query_params = [])
+    protected function _get_query_params_for_all_active(string $scope = '', array $query_params = []): array
     {
-        if ($scope) {
+        if (! empty($scope)) {
             if ($this->is_valid_scope($scope)) {
                 return array_replace_recursive([['PMD_scope' => ['LIKE', "%$scope%"]]], $query_params);
             }
@@ -232,7 +235,7 @@ class EEM_Payment_Method extends EEM_Base
             );
         }
         $acceptable_scopes = [];
-        $count = 0;
+        $count             = 0;
         foreach ($this->scopes() as $scope_name => $desc) {
             $count++;
             $acceptable_scopes[ 'PMD_scope*' . $count ] = ['LIKE', '%' . $scope_name . '%'];
@@ -251,7 +254,7 @@ class EEM_Payment_Method extends EEM_Base
      * @throws EE_Error
      * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
-    public function get_query_params_for_all_active($scope = null, $query_params = [])
+    public function get_query_params_for_all_active(string $scope = '', array $query_params = []): array
     {
         return $this->_get_query_params_for_all_active($scope, $query_params);
     }
@@ -262,10 +265,11 @@ class EEM_Payment_Method extends EEM_Base
      *
      * @param string $scope
      * @param array  $query_params
-     * @return EE_Base_Class|EE_Payment_Method|EE_Soft_Delete_Base_Class|NULL
+     * @return EE_Payment_Method|null
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function get_one_active($scope = null, $query_params = [])
+    public function get_one_active(string $scope = '', array $query_params = []): ?EE_Payment_Method
     {
         return $this->get_one($this->_get_query_params_for_all_active($scope, $query_params));
     }
@@ -275,25 +279,27 @@ class EEM_Payment_Method extends EEM_Base
      * Gets one payment method of that type, regardless of whether its active or not
      *
      * @param string $type
-     * @return EE_Base_Class|EE_Payment_Method|EE_Soft_Delete_Base_Class|NULL
+     * @return EE_Payment_Method|null
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function get_one_of_type($type)
+    public function get_one_of_type(string $type): ?EE_Payment_Method
     {
         return $this->get_one([['PMD_type' => $type]]);
     }
 
 
     /**
-     * Overrides parent ot also check by the slug
+     * Overrides parent to also check by the slug
      *
      * @param string|int|EE_Payment_Method $base_class_obj_or_id
      * @param boolean                      $ensure_is_in_db
-     * @return EE_Base_Class|EE_Payment_Method|EE_Soft_Delete_Base_Class|int|string
+     * @return EE_Payment_Method|null
      * @throws EE_Error
+     * @throws ReflectionException
      * @see EEM_Base::ensure_is_obj()
      */
-    public function ensure_is_obj($base_class_obj_or_id, $ensure_is_in_db = false)
+    public function ensure_is_obj($base_class_obj_or_id, $ensure_is_in_db = false): ?EE_Payment_Method
     {
         // first: check if it's a slug
         if (is_string($base_class_obj_or_id)) {
@@ -306,14 +312,14 @@ class EEM_Payment_Method extends EEM_Base
         try {
             return parent::ensure_is_obj($base_class_obj_or_id, $ensure_is_in_db);
         } catch (EE_Error $e) {
-            // handle it outside the catch
+            throw new EE_Error(
+                sprintf(
+                    esc_html__("'%s' is neither a Payment Method ID, slug, nor object: %s", 'event_espresso'),
+                    $base_class_obj_or_id,
+                    $e->getMessage()
+                )
+            );
         }
-        throw new EE_Error(
-            sprintf(
-                esc_html__("'%s' is neither a Payment Method ID, slug, nor object.", 'event_espresso'),
-                $base_class_obj_or_id
-            )
-        );
     }
 
 
@@ -321,11 +327,12 @@ class EEM_Payment_Method extends EEM_Base
      * Gets the ID of this object, or if its a string finds the object's id
      * associated with that slug
      *
-     * @param mixed $base_obj_or_id_or_slug
+     * @param int|string $base_obj_or_id_or_slug
      * @return int
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function ensure_is_ID($base_obj_or_id_or_slug)
+    public function ensure_is_ID($base_obj_or_id_or_slug): int
     {
         if (is_string($base_obj_or_id_or_slug)) {
             // assume it's a slug
@@ -339,13 +346,13 @@ class EEM_Payment_Method extends EEM_Base
      * Verifies the button urls on all the passed payment methods have a valid button url.
      * If not, resets them to their default.
      *
-     * @param EE_Payment_Method[] $payment_methods if NULL, defaults to all payment methods active in the cart
+     * @param EE_Payment_Method[]|null $payment_methods if NULL, defaults to all payment methods active in the cart
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function verify_button_urls($payment_methods = null)
+    public function verify_button_urls(array $payment_methods = [])
     {
-        $payment_methods = is_array($payment_methods)
+        $payment_methods = ! empty($payment_methods) && is_array($payment_methods)
             ? $payment_methods
             : $this->get_all_active(EEM_Payment_Method::scope_cart);
         foreach ($payment_methods as $payment_method) {
@@ -384,7 +391,7 @@ class EEM_Payment_Method extends EEM_Base
      * @throws InvalidDataTypeException
      * @throws ReflectionException
      */
-    protected function _create_objects($rows = [])
+    protected function _create_objects($rows = []): array
     {
         EE_Registry::instance()->load_lib('Payment_Method_Manager');
         $payment_methods = parent::_create_objects($rows);
@@ -434,8 +441,9 @@ class EEM_Payment_Method extends EEM_Base
      * @param string         $scope @see EEM_Payment_Method::get_all_for_events
      * @return EE_Payment_Method[]
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function get_all_for_transaction($transaction, $scope)
+    public function get_all_for_transaction(EE_Transaction $transaction, string $scope): array
     {
         // give addons a chance to override what payment methods are chosen based on the transaction
         return apply_filters(
@@ -456,8 +464,9 @@ class EEM_Payment_Method extends EEM_Base
      *                                                    registration.
      * @return EE_Payment|null
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function get_last_used_for_registration($registration_or_reg_id)
+    public function get_last_used_for_registration($registration_or_reg_id): ?EE_Payment
     {
         $registration_id = EEM_Registration::instance()->ensure_is_ID($registration_or_reg_id);
 

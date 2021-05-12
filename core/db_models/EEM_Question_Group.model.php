@@ -9,9 +9,18 @@
  */
 class EEM_Question_Group extends EEM_Soft_Delete_Base
 {
-
+    /**
+     * personal information question group identifier
+     *
+     * @const int
+     */
     const system_personal = 1;
 
+    /**
+     * address information question group identifier
+     *
+     * @const int
+     */
     const system_address = 2;
 
     /**
@@ -19,15 +28,16 @@ class EEM_Question_Group extends EEM_Soft_Delete_Base
      *
      * @var EEM_Question_Group
      */
-    protected static $_instance = null;
+    protected static $_instance;
 
 
     /**
      * EEM_Question_Group constructor.
      *
-     * @param string|null $timezone
+     * @param string $timezone
+     * @throws EE_Error
      */
-    protected function __construct($timezone = '')
+    protected function __construct(string $timezone = '')
     {
         $this->singular_item = esc_html__('Question Group', 'event_espresso');
         $this->plural_item   = esc_html__('Question Groups', 'event_espresso');
@@ -130,6 +140,7 @@ class EEM_Question_Group extends EEM_Soft_Delete_Base
      *
      * @return int
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_latest_question_group_order(): int
     {

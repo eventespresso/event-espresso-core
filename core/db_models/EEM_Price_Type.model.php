@@ -3,51 +3,61 @@
 /**
  * Price Type Model
  *
- * @package         Event Espresso
- * @subpackage      includes/models/
- * @author              Brent Christensen
- *
- * ------------------------------------------------------------------------
+ * @package     Event Espresso
+ * @subpackage  includes/models/
+ * @author      Brent Christensen
  */
 class EEM_Price_Type extends EEM_Soft_Delete_Base
 {
 
-    // private instance of the Price Type object
-    protected static $_instance = null;
-    // An array of the price type objects
-    public $type = null;
-
     /**
-    *   Price Base types
-    *
-    *   @access private
-    *   @var int
-    */
-    public $base_types = null;
-
-    /**
-     * return an array of Base types. Keys are INTs which are used in the database,
-     * values are text-representations of the base type.
-     * @return array
+     * @var EEM_Price_Type
      */
-    public function get_base_types()
+    protected static $_instance;
+
+    // An array of the price type objects
+
+    /**
+     * @var string
+     */
+    public $type;
+
+    /**
+     * Price Base types
+     * Keys are INTs which are used in the database,
+     * values are text-representations of the base type.
+     *
+     * @var string[]
+     */
+    public $base_types;
+
+
+    /**
+     * return an array of Base types.
+     *
+     * @return string[]
+     */
+    public function get_base_types(): array
     {
         return $this->base_types;
     }
 
+
     /**
      * Gets the name of the base
-     * @param type $base_type_int
-     * @return type
+     *
+     * @param int $base_type_int
+     * @return string
      */
-    public function get_base_type_name($base_type_int)
+    public function get_base_type_name(int $base_type_int): string
     {
         return $this->base_types[ $base_type_int ];
     }
 
+
     /**
      * constants for price base types. In the DB, we decided to store the price base type
-     * as an integer. So, to avoid just having magic numbers everwhere (eg, querying for
+     * as an integer. So, to avoid just having magic numbers everywhere (eg, querying for
      * all price types with PBT_ID = 2), we define these constants, to make code more understandable.
      * So, as an example, to query for all price types that are a tax, we'd do
      * EEM_PRice_Type::instance()->get_all(array(array('PBT_ID'=>EEM_Price_Type::base_type_tax)))
@@ -57,43 +67,85 @@ class EEM_Price_Type extends EEM_Soft_Delete_Base
      * change, we can continue to use the constant, by simply change its value.
      */
     const base_type_base_price = 1;
-    const base_type_discount = 2;
-    const base_type_surcharge = 3;
-    const base_type_tax = 4;
-    /**
-     *      private constructor to prevent direct creation
-     *      @Constructor
-     *      @access protected
-     *      @return void
-     */
-    protected function __construct($timezone = '')
-    {
-        $this->base_types = array(
-            EEM_Price_Type::base_type_base_price => __('Price', 'event_espresso'),
-            EEM_Price_Type::base_type_discount => __('Discount', 'event_espresso'),
-            EEM_Price_Type::base_type_surcharge => __('Surcharge', 'event_espresso'),
-            EEM_Price_Type::base_type_tax => __('Tax', 'event_espresso') );
-        $this->singular_item = __('Price Type', 'event_espresso');
-        $this->plural_item = __('Price Types', 'event_espresso');
 
-        $this->_tables = array(
-            'Price_Type' => new EE_Primary_Table('esp_price_type', 'PRT_ID')
-        );
-        $this->_fields = array(
-            'Price_Type' => array(
-                'PRT_ID' => new EE_Primary_Key_Int_Field('PRT_ID', __('Price Type ID', 'event_espresso')),
-                'PRT_name' => new EE_Plain_Text_Field('PRT_name', __('Price Type Name', 'event_espresso'), false, ''),
-                'PBT_ID' => new EE_Enum_Integer_Field('PBT_ID', __('Price Base type ID, 1 = Price , 2 = Discount , 3 = Surcharge , 4 = Tax', 'event_espresso'), false, EEM_Price_Type::base_type_base_price, $this->base_types),
-                'PRT_is_percent' => new EE_Boolean_Field('PRT_is_percent', __('Flag indicating price is a percentage', 'event_espresso'), false, false),
-                'PRT_order' => new EE_Integer_Field('PRT_order', __('Order in which price should be applied. ', 'event_espresso'), false, 0),
-                'PRT_deleted' => new EE_Trashed_Flag_Field('PRT_deleted', __('Flag indicating price type has been trashed', 'event_espresso'), false, false),
-                'PRT_wp_user' => new EE_WP_User_Field('PRT_wp_user', __('Price Type Creator ID', 'event_espresso'), false),
-            )
-        );
-        $this->_model_relations = array(
-            'Price' => new EE_Has_Many_Relation(),
+    const base_type_discount   = 2;
+
+    const base_type_surcharge  = 3;
+
+    const base_type_tax        = 4;
+
+
+    /**
+     * EEM_Price_Type constructor.
+     *
+     * @param string $timezone
+     * @throws EE_Error
+     */
+    protected function __construct(string $timezone = '')
+    {
+        $this->base_types    = [
+            EEM_Price_Type::base_type_base_price => esc_html__('Price', 'event_espresso'),
+            EEM_Price_Type::base_type_discount   => esc_html__('Discount', 'event_espresso'),
+            EEM_Price_Type::base_type_surcharge  => esc_html__('Surcharge', 'event_espresso'),
+            EEM_Price_Type::base_type_tax        => esc_html__('Tax', 'event_espresso'),
+        ];
+        $this->singular_item = esc_html__('Price Type', 'event_espresso');
+        $this->plural_item   = esc_html__('Price Types', 'event_espresso');
+
+        $this->_tables          = [
+            'Price_Type' => new EE_Primary_Table('esp_price_type', 'PRT_ID'),
+        ];
+        $this->_fields          = [
+            'Price_Type' => [
+                'PRT_ID'         => new EE_Primary_Key_Int_Field(
+                    'PRT_ID',
+                    esc_html__('Price Type ID', 'event_espresso')
+                ),
+                'PRT_name'       => new EE_Plain_Text_Field(
+                    'PRT_name',
+                    esc_html__('Price Type Name', 'event_espresso'),
+                    false,
+                    ''
+                ),
+                'PBT_ID'         => new EE_Enum_Integer_Field(
+                    'PBT_ID',
+                    esc_html__(
+                        'Price Base type ID, 1 = Price , 2 = Discount , 3 = Surcharge , 4 = Tax',
+                        'event_espresso'
+                    ),
+                    false,
+                    EEM_Price_Type::base_type_base_price,
+                    $this->base_types
+                ),
+                'PRT_is_percent' => new EE_Boolean_Field(
+                    'PRT_is_percent',
+                    esc_html__('Flag indicating price is a percentage', 'event_espresso'),
+                    false,
+                    false
+                ),
+                'PRT_order'      => new EE_Integer_Field(
+                    'PRT_order',
+                    esc_html__('Order in which price should be applied. ', 'event_espresso'),
+                    false,
+                    0
+                ),
+                'PRT_deleted'    => new EE_Trashed_Flag_Field(
+                    'PRT_deleted',
+                    esc_html__('Flag indicating price type has been trashed', 'event_espresso'),
+                    false,
+                    false
+                ),
+                'PRT_wp_user'    => new EE_WP_User_Field(
+                    'PRT_wp_user',
+                    esc_html__('Price Type Creator ID', 'event_espresso'),
+                    false
+                ),
+            ],
+        ];
+        $this->_model_relations = [
+            'Price'   => new EE_Has_Many_Relation(),
             'WP_User' => new EE_Belongs_To_Relation(),
-        );
+        ];
         // this model is generally available for reading
         $this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Public();
         // all price types are "default" in terms of capability names
@@ -102,62 +154,58 @@ class EEM_Price_Type extends EEM_Soft_Delete_Base
     }
 
 
-
-
     /**
-     *      instantiate a new price type object with blank/empty properties
+     * instantiate a new price type object with blank/empty properties
      *
-     *      @access     public
-     *      @return     mixed       array on success, FALSE on fail
+     * @return EE_Price_Type
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function get_new_price_type()
+    public function get_new_price_type(): EE_Price_Type
     {
         return EE_Price_Type::new_instance();
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-/**
- *
- * @param type $query_params
- * @param boolean $allow_blocking if TRUE, matched objects will only be deleted if there is no related model info
-     * that blocks it (ie, there' sno other data that depends on this data); if false, deletes regardless of other objects
-     * which may depend on it. Its generally advisable to always leave this as TRUE, otherwise you could easily corrupt your DB
- * @return boolean
- */
-    public function delete_permanently($query_params = array(), $allow_blocking = true)
+    /**
+     *
+     * @param array   $query_params
+     * @param boolean $allow_blocking if TRUE, matched objects will only be deleted
+     *                                if there is no related model info that blocks it
+     *                                (ie, there' sno other data that depends on this data);
+     *                                if false, deletes regardless of other objects which may depend on it.
+     *                                Its generally advisable to always leave this as TRUE,
+     *                                otherwise you could easily corrupt your DB
+     * @return boolean
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function delete_permanently($query_params = [], $allow_blocking = true): bool
     {
 
-        $would_be_deleted_price_types = $this->get_all_deleted_and_undeleted($query_params);
+        $would_be_deleted_price_types    = $this->get_all_deleted_and_undeleted($query_params);
         $would_be_deleted_price_type_ids = array_keys($would_be_deleted_price_types);
 
         $ID = $query_params[0][ $this->get_primary_key_field()->get_name() ];
 
         // check if any prices use this price type
-        $prc_query_params = array(array('PRT_ID' => array('IN',$would_be_deleted_price_type_ids)));
+        $prc_query_params = [['PRT_ID' => ['IN', $would_be_deleted_price_type_ids]]];
         if ($prices = $this->get_all_related($ID, 'Price', $prc_query_params)) {
-            $prices_names_and_ids = array();
+            $prices_names_and_ids = [];
             foreach ($prices as $price) {
                 /* @var $price EE_Price */
                 $prices_names_and_ids[] = $price->name() . "(" . $price->ID() . ")";
             }
-            $msg = sprintf(__('The Price Type(s) could not be deleted because there are existing Prices that currently use this Price Type.  If you still wish to delete this Price Type, then either delete those Prices or change them to use other Price Types.The prices are: %s', 'event_espresso'), implode(",", $prices_names_and_ids));
+            $msg = sprintf(
+                    esc_html__(
+                        'The Price Type(s) could not be deleted because there are existing Prices that currently use this Price Type.  If you still wish to delete this Price Type, then either delete those Prices or change them to use other Price Types.The prices are: %s',
+                        'event_espresso'
+                    ),
+                    implode(",", $prices_names_and_ids)
+            );
             EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
             return false;
         }
-
-
 
         return parent::delete_permanently($query_params);
     }

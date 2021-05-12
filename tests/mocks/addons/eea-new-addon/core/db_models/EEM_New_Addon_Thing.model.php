@@ -14,9 +14,9 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  */
 class EEM_New_Addon_Thing extends EEM_Base{
 	// private instance of the EEM_New_Addon_Thing object
-	protected static $_instance = null;
+	protected static $_instance;
 
-	protected function __construct($timezone = '') {
+	protected function __construct(string $timezone = '') {
 		$this->_tables = array(
 			'New_Addon_Thing'=>new EE_Primary_Table('esp_new_addon_thing', 'NEW_ID')
 		);

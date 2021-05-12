@@ -90,7 +90,8 @@ class EE_Transaction_Processor extends EE_Processor_Base
      * @param array          $registration_query_params array of query WHERE params to use
      *                                                  when retrieving cached registrations from a transaction
      * @return    boolean
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function manually_update_registration_statuses(
         EE_Transaction $transaction,
@@ -127,7 +128,7 @@ class EE_Transaction_Processor extends EE_Processor_Base
      * @param array          $registration_query_params array of query WHERE params to use
      *                                                  when retrieving cached registrations from a transaction
      * @return    boolean
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function toggle_registration_statuses_for_default_approved_events(
         EE_Transaction $transaction,
@@ -155,7 +156,7 @@ class EE_Transaction_Processor extends EE_Processor_Base
      * @param array          $registration_query_params array of query WHERE params to use
      *                                                  when retrieving cached registrations from a transaction
      * @return    boolean
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function toggle_registration_statuses_if_no_monies_owing(
         EE_Transaction $transaction,
@@ -179,21 +180,22 @@ class EE_Transaction_Processor extends EE_Processor_Base
      * update_transaction_and_registrations_after_checkout_or_payment
      * cycles thru related registrations and calls update_registration_after_checkout_or_payment() on each
      *
-     * @param EE_Transaction     $transaction
-     * @param \EE_Payment | NULL $payment
-     * @param array              $registration_query_params    array of query WHERE params to use
+     * @param EE_Transaction    $transaction
+     * @param EE_Payment | NULL $payment
+     * @param array             $registration_query_params    array of query WHERE params to use
      *                                                         when retrieving cached registrations from a transaction
-     * @param bool               $trigger_notifications        whether or not to call
+     * @param bool              $trigger_notifications        whether or not to call
      *                                                         \EE_Registration_Processor::trigger_registration_update_notifications()
      * @return array
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function update_transaction_and_registrations_after_checkout_or_payment(
         EE_Transaction $transaction,
         $payment = null,
         $registration_query_params = array(),
         $trigger_notifications = true
-    ) {
+    ): array {
         // make sure some query params are set for retrieving registrations
         $this->_set_registration_query_params($registration_query_params);
         // get final reg step status
@@ -244,11 +246,12 @@ class EE_Transaction_Processor extends EE_Processor_Base
      * readjusts TXN and Line Item totals after a registration is changed from
      * cancelled or declined to another reg status such as pending payment or approved
      *
-     * @param \EE_Registration $registration
-     * @param array            $closed_reg_statuses
-     * @param bool             $update_txn
+     * @param EE_Registration $registration
+     * @param array           $closed_reg_statuses
+     * @param bool            $update_txn
      * @return bool
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function update_transaction_after_reinstating_canceled_registration(
         EE_Registration $registration,
@@ -297,11 +300,12 @@ class EE_Transaction_Processor extends EE_Processor_Base
      * update_transaction_after_canceled_or_declined_registration
      * readjusts TXN and Line Item totals after a registration is cancelled or declined
      *
-     * @param \EE_Registration $registration
-     * @param array            $closed_reg_statuses
-     * @param bool             $update_txn
+     * @param EE_Registration $registration
+     * @param array           $closed_reg_statuses
+     * @param bool            $update_txn
      * @return bool
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function update_transaction_after_canceled_or_declined_registration(
         EE_Registration $registration,
@@ -381,10 +385,11 @@ class EE_Transaction_Processor extends EE_Processor_Base
      * get_ticket_line_item_for_transaction_registration
      *
      * @access    public
-     * @param    EE_Transaction  $transaction
-     * @param    EE_Registration $registration
+     * @param EE_Transaction  $transaction
+     * @param EE_Registration $registration
      * @return    EE_Line_Item
      * @throws    EE_Error
+     * @throws ReflectionException
      */
     public function get_ticket_line_item_for_transaction_registration(
         EE_Transaction $transaction,
@@ -466,8 +471,9 @@ class EE_Transaction_Processor extends EE_Processor_Base
      * @param array          $registration_query_params array of query WHERE params to use
      *                                                  when retrieving cached registrations from a transaction
      * @param string         $additional_param
-     * @throws \EE_Error
      * @return boolean
+     * @throws ReflectionException
+     * @throws EE_Error
      */
     private function _call_method_on_registrations_via_Registration_Processor(
         $method_name,
@@ -511,9 +517,10 @@ class EE_Transaction_Processor extends EE_Processor_Base
      *        the first active Payment Method
      *    whichever is found first.
      *
-     * @param  EE_Registration $edited_registration
+     * @param EE_Registration $edited_registration
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_transaction_payment_method_based_on_registration_statuses(
         EE_Registration $edited_registration
@@ -817,12 +824,12 @@ class EE_Transaction_Processor extends EE_Processor_Base
      * set_reg_step_initiated
      * given a valid TXN_reg_step, this sets it's value to a unix timestamp
      *
+     * @param EE_Transaction $transaction
+     * @param string         $reg_step_slug
+     * @return boolean
+     * @throws EE_Error*@throws ReflectionException
      * @deprecated 4.9.12
      * @access     public
-     * @param \EE_Transaction $transaction
-     * @param string          $reg_step_slug
-     * @return boolean
-     * @throws \EE_Error
      */
     public function set_reg_step_initiated(EE_Transaction $transaction, $reg_step_slug)
     {
@@ -843,12 +850,12 @@ class EE_Transaction_Processor extends EE_Processor_Base
      * set_reg_step_completed
      * given a valid TXN_reg_step, this sets the step as completed
      *
+     * @param EE_Transaction $transaction
+     * @param string         $reg_step_slug
+     * @return boolean
+     * @throws EE_Error*@throws ReflectionException
      * @deprecated 4.9.12
      * @access     public
-     * @param \EE_Transaction $transaction
-     * @param string          $reg_step_slug
-     * @return boolean
-     * @throws \EE_Error
      */
     public function set_reg_step_completed(EE_Transaction $transaction, $reg_step_slug)
     {
@@ -869,12 +876,12 @@ class EE_Transaction_Processor extends EE_Processor_Base
      * set_reg_step_completed
      * given a valid TXN_reg_step slug, this sets the step as NOT completed
      *
+     * @param EE_Transaction $transaction
+     * @param string         $reg_step_slug
+     * @return boolean
+     * @throws EE_Error*@throws ReflectionException
      * @deprecated 4.9.12
      * @access     public
-     * @param \EE_Transaction $transaction
-     * @param string          $reg_step_slug
-     * @return boolean
-     * @throws \EE_Error
      */
     public function set_reg_step_not_completed(EE_Transaction $transaction, $reg_step_slug)
     {
@@ -896,11 +903,11 @@ class EE_Transaction_Processor extends EE_Processor_Base
      * given a valid TXN_reg_step slug, this will remove (unset)
      * the reg step from the TXN reg step array
      *
-     * @deprecated 4.9.12
-     * @access     public
-     * @param \EE_Transaction $transaction
-     * @param string          $reg_step_slug
+     * @param EE_Transaction $transaction
+     * @param string         $reg_step_slug
      * @return void
+     *@deprecated 4.9.12
+     * @access     public
      */
     public function remove_reg_step(EE_Transaction $transaction, $reg_step_slug)
     {
@@ -922,11 +929,11 @@ class EE_Transaction_Processor extends EE_Processor_Base
      * upgrades a TXNs status from failed to abandoned,
      * meaning that contact information has been captured for at least one registrant
      *
-     * @deprecated 4.9.12
-     * @access     public
      * @param EE_Transaction $transaction
      * @return    boolean
-     * @throws \EE_Error
+     * @throws EE_Error*@throws ReflectionException
+     * @deprecated 4.9.12
+     * @access     public
      */
     public function toggle_failed_transaction_status(EE_Transaction $transaction)
     {

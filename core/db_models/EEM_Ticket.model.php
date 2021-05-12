@@ -67,7 +67,7 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
      *                         (and will be assumed using the set timezone in the 'timezone_string' wp option)
      * @throws EE_Error
      */
-    protected function __construct($timezone)
+    protected function __construct(string $timezone = '')
     {
         $this->singular_item = esc_html__('Ticket', 'event_espresso');
         $this->plural_item   = esc_html__('Tickets', 'event_espresso');
@@ -273,6 +273,21 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
 
 
     /**
+     * override parent class get_all() just to fix return types in IDE
+     *
+     * @param array $query_params
+     * @return EE_Ticket[]
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since   $VID:$
+     */
+    public function get_all($query_params = []): array
+    {
+        return parent::get_all($query_params);
+    }
+
+
+    /**
      * This returns all tickets that are defaults from the db
      *
      * @return EE_Ticket[]
@@ -281,7 +296,6 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
      */
     public function get_all_default_tickets(): array
     {
-        /** @type EE_Ticket[] $tickets */
         $tickets = $this->get_all(
             [
                 [
@@ -364,10 +378,11 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
     /**
      * returns an array of EE_Ticket objects with a non-zero value for TKT_reserved
      *
-     * @return EE_Base_Class[]|EE_Ticket[]
+     * @return EE_Ticket[]
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function get_tickets_with_reservations()
+    public function get_tickets_with_reservations(): array
     {
         return $this->get_all(
             [
@@ -384,10 +399,11 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
      * returns an array of EE_Ticket objects matching the supplied list of IDs
      *
      * @param array $ticket_IDs
-     * @return EE_Base_Class[]|EE_Ticket[]
+     * @return EE_Ticket[]
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function get_tickets_with_IDs(array $ticket_IDs)
+    public function get_tickets_with_IDs(array $ticket_IDs): array
     {
         return $this->get_all(
             [

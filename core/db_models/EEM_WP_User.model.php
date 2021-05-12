@@ -6,9 +6,9 @@ use EventEspresso\core\services\orm\ModelFieldFactory;
  * WP User Model. Not intended to replace WP_User, but this just allows
  * for EE model queries to more easily integrate with the WP User table
  *
- * @package               Event Espresso
- * @subpackage            includes/models/
- * @author                Michael Nelson
+ * @package     Event Espresso
+ * @subpackage  includes/models/
+ * @author      Michael Nelson
  */
 class EEM_WP_User extends EEM_Base
 {
@@ -24,12 +24,11 @@ class EEM_WP_User extends EEM_Base
     /**
      *    constructor
      *
-     * @param null              $timezone
-     * @param ModelFieldFactory $model_field_factory
+     * @param string                 $timezone
+     * @param ModelFieldFactory|null $model_field_factory
      * @throws EE_Error
-     * @throws InvalidArgumentException
      */
-    protected function __construct($timezone = '', ModelFieldFactory $model_field_factory)
+    protected function __construct(string $timezone = '', ModelFieldFactory $model_field_factory = null)
     {
         $this->singular_item = esc_html__('WP_User', 'event_espresso');
         $this->plural_item = esc_html__('WP_Users', 'event_espresso');
@@ -127,7 +126,7 @@ class EEM_WP_User extends EEM_Base
      * @return string
      * @throws EE_Error
      */
-    public function wp_user_field_name()
+    public function wp_user_field_name(): string
     {
         return $this->primary_key_name();
     }
@@ -138,7 +137,7 @@ class EEM_WP_User extends EEM_Base
      *
      * @return boolean
      */
-    public function is_owned()
+    public function is_owned(): bool
     {
         return true;
     }

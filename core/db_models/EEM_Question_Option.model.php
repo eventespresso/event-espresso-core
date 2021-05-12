@@ -10,11 +10,19 @@
 class EEM_Question_Option extends EEM_Soft_Delete_Base
 {
 
-    // private instance of the Attendee object
-    protected static $_instance = null;
+    /**
+     * @var EEM_Question_Option
+     */
+    protected static $_instance;
 
 
-    protected function __construct($timezone = '')
+    /**
+     * EEM_Question_Option constructor.
+     *
+     * @param string $timezone
+     * @throws EE_Error
+     */
+    protected function __construct(string $timezone = '')
     {
         $this->singular_item = esc_html__('Question Option', 'event_espresso');
         $this->plural_item   = esc_html__('Question Options', 'event_espresso');
@@ -75,14 +83,16 @@ class EEM_Question_Option extends EEM_Soft_Delete_Base
         $this->_model_chain_to_wp_user = 'Question';
 
         // this model is generally available for reading
-        $this->_cap_restriction_generators[ EEM_Base::caps_read ]       =
-            new EE_Restriction_Generator_Public();
-        $this->_cap_restriction_generators[ EEM_Base::caps_read_admin ] =
-            new EE_Restriction_Generator_Reg_Form('QSO_system');
-        $this->_cap_restriction_generators[ EEM_Base::caps_edit ]       =
-            new EE_Restriction_Generator_Reg_Form('QSO_system');
-        $this->_cap_restriction_generators[ EEM_Base::caps_delete ]     =
-            new EE_Restriction_Generator_Reg_Form('QSO_system');
+        $this->_cap_restriction_generators[ EEM_Base::caps_read ]       = new EE_Restriction_Generator_Public();
+        $this->_cap_restriction_generators[ EEM_Base::caps_read_admin ] = new EE_Restriction_Generator_Reg_Form(
+                'QSO_system'
+            );
+        $this->_cap_restriction_generators[ EEM_Base::caps_edit ]       = new EE_Restriction_Generator_Reg_Form(
+                'QSO_system'
+            );
+        $this->_cap_restriction_generators[ EEM_Base::caps_delete ]     = new EE_Restriction_Generator_Reg_Form(
+                'QSO_system'
+            );
 
         parent::__construct($timezone);
     }

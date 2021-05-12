@@ -588,13 +588,13 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links
     /**
      * Overrides parent::set method so we can capture any sets for priority.
      *
-     * @see parent::set() for phpdocs
      * @param string $field_name
      * @param mixed  $field_value
      * @param bool   $use_default
      * @throws EE_Error
+     * @see parent::set() for phpdocs
      */
-    public function set($field_name, $field_value, $use_default = false)
+    public function set($field_name, $field_value, bool $use_default = false)
     {
         if ($field_name === 'MSG_priority') {
             $this->set_priority($field_value);

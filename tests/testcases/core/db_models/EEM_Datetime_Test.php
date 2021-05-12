@@ -82,7 +82,7 @@ class EEM_Datetime_Test extends EE_UnitTestCase {
 		$this->assertEquals( $dtt_checked->ID(), $dtt1->ID() );
 
 		//now let's run the method excluding expired dtts
-		$datetimes_on_event = EEM_Datetime::instance()->get_datetimes_for_event_ordered_by_DTT_order( $event->ID(), false );
+		$datetimes_on_event = EEM_Datetime::instance()->get_datetimes_for_event_ordered_by_DTT_order( $event->ID(), false);
 		$second_dtt_chk = reset( $datetimes_on_event );
 
 		//only one datetime should be returned

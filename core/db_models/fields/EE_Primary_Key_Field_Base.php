@@ -10,7 +10,7 @@ abstract class EE_Primary_Key_Field_Base extends EE_Field_With_Model_Name
      */
     public function __construct($table_column, $nicename, $default)
     {
-        parent::__construct($table_column, $nicename, false, $default, null);
+        parent::__construct($table_column, $nicename, false, $default, '');
     }
 
     /**
