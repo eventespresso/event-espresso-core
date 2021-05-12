@@ -20,7 +20,7 @@ class EE_Export
 
 
     // instance of the EE_Export object
-    private static $_instance = null;
+    private static $_instance;
 
     // instance of the EE_CSV object
     /**

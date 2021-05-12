@@ -20,7 +20,7 @@ class EEH_Autoloader extends EEH_Base
      *
      * @var    $_instance
      */
-    private static $_instance = null;
+    private static $_instance;
 
     /**
      *   $_autoloaders
