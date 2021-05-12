@@ -106,7 +106,7 @@
 		"codecov": "^3.8.2",
 		"concurrently": "^6.1.0",
 		"core-js": "3.10.1",
-		"cross-env": "7.0.2",
+		"cross-env": "7.0.3",
 		"css-loader": "^5.2.4",
 		"cssnano": "^4.1.11",
 		"deep-freeze": "0.0.1",
