@@ -267,9 +267,10 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base
      * @param boolean $allow_blocking if TRUE, matched objects will only be deleted if there is no related model info
      *                                that blocks it (ie, there' sno other data that depends on this data); if false, deletes regardless of other objects
      *                                which may depend on it. Its generally advisable to always leave this as TRUE, otherwise you could easily corrupt your DB
-     * @return boolean success
+     * @return int                    number of rows deleted
+     * @throws EE_Error
      */
-    public function delete_permanently($query_params = array(), $allow_blocking = true)
+    public function delete_permanently($query_params, $allow_blocking = true)
     {
         $query_params = $this->_alter_query_params_so_deleted_and_undeleted_items_included($query_params);
         return parent::delete_permanently($query_params, $allow_blocking);

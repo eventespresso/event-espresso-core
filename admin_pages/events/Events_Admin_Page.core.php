@@ -2092,7 +2092,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         // use class to change status
         $this->_cpt_model_obj->set_status($event_status);
         $success = $this->_cpt_model_obj->save();
-        if ($success === false) {
+        if (! $success) {
             $msg = sprintf(esc_html__('An error occurred. The event could not be %s.', 'event_espresso'), $action);
             EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
             return false;
@@ -2104,15 +2104,21 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     }
 
 
+    private function getEventIdsFromRequest(): array
+    {
+        $event_ids = $this->_req_data['EVT_ID'] ?? [];
+        return (array) $event_ids;
+    }
+
     /**
      * _delete_event
      *
-     * @access protected
-     * @param bool $redirect_after
+     * @param bool $preview_delete
+     * @throws EE_Error
      */
-    protected function _delete_event()
+    protected function _delete_event(bool $preview_delete = true)
     {
-        $this->generateDeletionPreview(isset($this->_req_data['EVT_ID']) ? $this->_req_data['EVT_ID'] : array());
+        $this->_delete_events($preview_delete);
     }
 
     /**
@@ -2131,20 +2137,27 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         return $this->model_obj_node_group_persister;
     }
 
+
     /**
      * _delete_events
      *
-     * @access protected
+     * @param bool $preview_delete
      * @return void
+     * @throws EE_Error
      */
-    protected function _delete_events()
+    protected function _delete_events(bool $preview_delete = true)
     {
-        $this->generateDeletionPreview(isset($this->_req_data['EVT_IDs']) ? (array) $this->_req_data['EVT_IDs'] : array());
+        $event_ids = $this->getEventIdsFromRequest();
+        $event_ids = array_map('absint', $event_ids);
+        if ($preview_delete) {
+            $this->generateDeletionPreview($event_ids);
+        } else {
+            EEM_Event::instance()->delete_permanently([['EVT_ID' => ['IN', $event_ids]]]);
+        }
     }
 
-    protected function generateDeletionPreview($event_ids)
+    protected function generateDeletionPreview(array $event_ids)
     {
-        $event_ids = (array) $event_ids;
         // Set a code we can use to reference this deletion task in the batch jobs and preview page.
         $deletion_job_code = $this->getModelObjNodeGroupPersister()->generateGroupCode();
         $return_url = EE_Admin_Page::add_query_args_and_nonce(
@@ -2154,21 +2167,17 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             ],
             $this->_admin_base_url
         );
-        $event_ids = array_map(
-            'intval',
-            $event_ids
-        );
-
+        $event_ids = array_map('absint', $event_ids);
         EEH_URL::safeRedirectAndExit(
             EE_Admin_Page::add_query_args_and_nonce(
-                array(
-                    'page'        => 'espresso_batch',
-                    'batch'       => EED_Batch::batch_job,
-                    'EVT_IDs'      => $event_ids,
+                [
+                    'page'              => 'espresso_batch',
+                    'batch'             => EED_Batch::batch_job,
+                    'EVT_IDs'           => $event_ids,
                     'deletion_job_code' => $deletion_job_code,
-                    'job_handler' => urlencode('EventEspressoBatchRequest\JobHandlers\PreviewEventDeletion'),
-                    'return_url'  => urlencode($return_url),
-                ),
+                    'job_handler'       => urlencode('EventEspressoBatchRequest\JobHandlers\PreviewEventDeletion'),
+                    'return_url'        => urlencode($return_url),
+                ],
                 admin_url()
             )
         );
