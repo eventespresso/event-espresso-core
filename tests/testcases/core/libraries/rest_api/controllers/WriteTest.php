@@ -1,8 +1,10 @@
 <?php
 namespace tests\testcases\core\libraries\rest_api\controllers;
 
+use EE_Error;
 use EE_REST_TestCase;
 use EED_Core_Rest_Api;
+use EEH_DTT_Helper;
 use EEM_Datetime;
 use EEM_Event;
 use EEM_Payment;
@@ -62,14 +64,16 @@ class WriteTest extends EE_REST_TestCase
     }
 
 
-
     /**
      * @group 9222
+     * @throws EE_Error
      */
     public function testInsertUtcAndRelativeTimes()
     {
-        //let's set a different WP timezone.
+        // let's set a different WP timezone.
         update_option('gmt_offset', '-1');
+        // and then update the TZ on the model
+        EEM_Datetime::instance()->set_timezone(EEH_DTT_Helper::get_valid_timezone_string());
         $this->authenticate_as_admin();
         $req = new WP_REST_Request(
             'POST',
@@ -91,10 +95,38 @@ class WriteTest extends EE_REST_TestCase
             '$response_data[\'code\'] was not empty and actually contained: ' . $response_data['code']
             . "\n" . ' The full response was: ' . var_export($response_data, true)
         );
-        $this->assertEquals('2016-01-02T00:00:00', $response_data['DTT_EVT_start_gmt']);
-        $this->assertEquals('2016-01-01T23:00:00', $response_data['DTT_EVT_start']);
-        $this->assertEquals('2016-01-03T01:00:00', $response_data['DTT_EVT_end_gmt']);
-        $this->assertEquals('2016-01-03T00:00:00', $response_data['DTT_EVT_end']);
+        $this->assertEquals(
+            '2016-01-02T00:00:00',
+            $response_data['DTT_EVT_start_gmt'],
+            sprintf(
+                'Failed asserting that the %1$s field value matched the expected value',
+                'DTT_EVT_start_gmt'
+            )
+        );
+        $this->assertEquals(
+            '2016-01-01T23:00:00',
+            $response_data['DTT_EVT_start'],
+            sprintf(
+                'Failed asserting that the %1$s field value matched the expected value',
+                'DTT_EVT_start'
+            )
+        );
+        $this->assertEquals(
+            '2016-01-03T01:00:00',
+            $response_data['DTT_EVT_end_gmt'],
+            sprintf(
+                'Failed asserting that the %1$s field value matched the expected value',
+                'DTT_EVT_end_gmt'
+            )
+        );
+        $this->assertEquals(
+            '2016-01-03T00:00:00',
+            $response_data['DTT_EVT_end'],
+            sprintf(
+                'Failed asserting that the %1$s field value matched the expected value',
+                'DTT_EVT_end'
+            )
+        );
     }
 
 
@@ -109,6 +141,8 @@ class WriteTest extends EE_REST_TestCase
     {
         //let's set a different WP timezone.
         update_option('gmt_offset', '-1');
+        // and then update the TZ on the model
+        EEM_Datetime::instance()->set_timezone(EEH_DTT_Helper::get_valid_timezone_string());
         $this->authenticate_as_admin();
         $req = new WP_REST_Request(
             'POST',

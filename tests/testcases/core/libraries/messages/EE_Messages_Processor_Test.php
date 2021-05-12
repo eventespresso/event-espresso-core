@@ -22,6 +22,7 @@ class EE_Messages_Processor_Test extends EE_UnitTestCase
     public function set_up()
     {
         parent::set_up();
+        $this->setCoreConfig();
         $this->loadTestScenarios();
         //setup events etc for previewer to use
         $this->scenarios->get_scenarios_by_type('event');

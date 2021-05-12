@@ -541,10 +541,39 @@ class EE_Line_Item_Test extends EE_UnitTestCase
             ]
         );
         $tax->save();
+        // EEH_Line_Item::get_grand_total_and_recalculate_everything($line_item);
         $total_li->recalculate_total_including_taxes();
-        $this->assertEquals($line_item->total() + $percent_discount->total(), $event_subtotal->total());
-        $this->assertEquals(12.50, round($total_li->total(), 2));
-        $this->assertEquals($pretax_subtotal->total(), $total_li->get_items_total());
+        $subtotal = round($line_item->total() + $percent_discount->total(), 2);
+        $this->assertEqualsWithDelta(
+            21.01,
+            $line_item->total(),
+            EE_UnitTestCase::FLOATING_POINT_DELTA
+        );
+        $this->assertEqualsWithDelta(
+            -10.51,
+            $percent_discount->total(),
+            EE_UnitTestCase::FLOATING_POINT_DELTA
+        );
+        $this->assertEqualsWithDelta(
+            10.50,
+            $event_subtotal->total(),
+            EE_UnitTestCase::FLOATING_POINT_DELTA
+        );
+        $this->assertEqualsWithDelta(
+            10.50,
+            $subtotal,
+            EE_UnitTestCase::FLOATING_POINT_DELTA
+        );
+        $this->assertEqualsWithDelta(
+            12.50,
+            $total_li->total(),
+            EE_UnitTestCase::FLOATING_POINT_DELTA
+        );
+        $this->assertEqualsWithDelta(
+            $pretax_subtotal->total(),
+            $total_li->get_items_total(),
+            EE_UnitTestCase::FLOATING_POINT_DELTA
+        );
     }
 
 
@@ -731,3 +760,4 @@ class EE_Line_Item_Test extends EE_UnitTestCase
         );
     }
 }
+// tests/testcases/core/db_classes/EE_Line_Item_Test.php

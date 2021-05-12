@@ -125,13 +125,15 @@ class EEM_Event_Test extends EE_UnitTestCase {
 	}
 
 
-	/**
-	 * @see https://events.codebasehq.com/projects/event-espresso/tickets/8799
-	 * @group 8799
-	 * @since 4.8.8.rc.019
-	 */
+    /**
+     * @see   https://events.codebasehq.com/projects/event-espresso/tickets/8799
+     * @group 8799
+     * @since 4.8.8.rc.019
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
 	public function test_default_reg_status() {
-		//first verify the default reg status on config is pending payment
+        //first verify the default reg status on config is pending payment
 		$this->assertEquals( EEM_Registration::status_id_pending_payment, EE_Registry::instance()->CFG->registration->default_STS_ID );
 
 		//verify creating default event from the model has that default reg status
@@ -165,6 +167,7 @@ class EEM_Event_Test extends EE_UnitTestCase {
      */
 	public function testGetQuestionGroupsForEvent()
     {
+        /** @var EE_Registration $r */
         $r = $this->new_model_obj_with_dependencies(
             'Registration',
             [
@@ -174,6 +177,7 @@ class EEM_Event_Test extends EE_UnitTestCase {
         $r->event_obj()->add_question_group(EEM_Question_Group::system_personal, true);
         $r->event_obj()->add_question_group(EEM_Question_Group::system_address, true);
         // Just add another question group, but it will only be for additional attendees.
+        /** @var EE_Question_Group $additional_qg */
         $additional_qg = $this->new_model_obj_with_dependencies('Question_Group');
         $r->event_obj()->add_question_group($additional_qg, false);
         $qgs = EEM_Event::instance()->get_question_groups_for_event($r->event_ID(), $r);

@@ -1,10 +1,14 @@
 <?php
+
+// use EventEspresso\core\services\loaders\LoaderFactory;
+
 /**
  * All tests for the Messages_Admin_Page class
  *
  * @since 		4.9.0
  * @package 		Event Espresso
  * @subpackage 	tests
+ * @group         ppt
  */
 class Messages_Admin_Page_Test extends EE_UnitTestCase {
 
@@ -28,10 +32,22 @@ class Messages_Admin_Page_Test extends EE_UnitTestCase {
 	}
 
 
+    public function tearDown()
+    {
+        //lets just reset notices because we don't care about them for this test. This prevents a fail from automatically firing.
+        EE_Error::reset_notices();
+        $this->loader()->remove('Messages_Admin_Page_Mock', $this->_MessagesAdminPage);
+        $this->loader()->remove('EE_Message_Resource_Manager', $this->_MessageResourceManager);
+        unset($this->_MessagesAdminPage);
+        unset($this->_MessageResourceManager);
+        parent::tearDown();
+    }
+
+
 
 	protected function _load_requirements() {
-		$this->_MessagesAdminPage = new Messages_Admin_Page_Mock();
-		$this->_MessageResourceManager = EE_Registry::instance()->load_lib( 'Message_Resource_Manager' );
+		$this->_MessagesAdminPage = $this->loader()->getNew('Messages_Admin_Page_Mock');
+        $this->_MessageResourceManager = $this->loader()->getShared('EE_Message_Resource_Manager');
 	}
 
 
@@ -49,8 +65,7 @@ class Messages_Admin_Page_Test extends EE_UnitTestCase {
 		//verify that the new active_messenger_settings is the same as the original so no corruption.
 		$updated_active_messenger_settings = $this->_MessageResourceManager->get_active_messengers_option( true );
 		$this->assertEquals( $original_active_messenger_settings, $updated_active_messenger_settings );
-		//lets just reset notices because we don't care about them for this test.  This prevents a fail from automatically firing.
-		EE_Error::reset_notices();
+
 	}
 
 
@@ -73,7 +88,6 @@ class Messages_Admin_Page_Test extends EE_UnitTestCase {
 		$updated_active_messenger_settings = $this->_MessageResourceManager->get_active_messengers_option( true );
 
 		$this->assertEquals( $original_active_messenger_settings, $updated_active_messenger_settings );
-		//lets just reset notices because we don't care about them for this test. This prevents a fail from automatically firing.
-		EE_Error::reset_notices();
 	}
 }
+// tests/testcases/admin_pages/messages/Messages_Admin_Page_Test.php

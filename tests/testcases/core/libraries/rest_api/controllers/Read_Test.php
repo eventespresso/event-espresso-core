@@ -1279,7 +1279,7 @@ class Read_Test extends EE_REST_TestCase
         $this->assertArrayHasKey('raw', $PRC_amount_defaults);
         $this->assertArrayHasKey('pretty', $PRC_amount_defaults);
         $this->assertEquals((float)0, $PRC_amount_defaults['raw']);
-        $this->assertEquals('$ 0.00 <span class="currency-code">(USD)</span>', $PRC_amount_defaults['pretty']);
+        $this->assertEquals('$0.00', $PRC_amount_defaults['pretty']);
     }
 
 

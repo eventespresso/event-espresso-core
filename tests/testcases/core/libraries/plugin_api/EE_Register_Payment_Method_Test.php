@@ -30,7 +30,8 @@ class EE_Register_Payment_Method_Test extends EE_UnitTestCase
                 ),
         );
         $this->_pmt_name = 'Mock_Onsite';
-        $this->payment_method_manager = LoaderFactory::getLoader()->getShared('EE_Payment_Method_Manager');
+        $this->payment_method_manager = $this->loader()->getShared('EE_Payment_Method_Manager');
+        $this->payment_method_manager = $this->payment_method_manager->reset();
     }
 
 

@@ -105,13 +105,14 @@ class EE_Cart_Test extends EE_UnitTestCase{
 		$cart = EE_Cart::reset( null, $this->_session );
 		$cart->add_ticket_to_cart( $ticket, $quantity_purchased );
 		$total_line_item = $cart->get_grand_total();
+        $cart->recalculate_all_cart_totals();
 		$subtotals = $total_line_item->children();
 		$this->assertNotEmpty( $subtotals );
 		$items_purchased = $total_line_item->get_items();
 		$this->assertEquals(1, count( $items_purchased ) );
 		$item_purchased = array_shift( $items_purchased );
 		$this->assertEquals( $ticket->name(), $item_purchased->name() );
-		$this->assertEquals( $item_purchased->total(), $total_line_item->total() );
+        $this->assertEquals( $item_purchased->total(), $total_line_item->total() );
 		$sub_line_items = $item_purchased->children();
 		$this->assertEquals( count( $ticket->prices() ), count( $sub_line_items ) );
 		//the first one should be the base price
@@ -130,18 +131,21 @@ class EE_Cart_Test extends EE_UnitTestCase{
 	public function test_get_cart_total_before_tax(){
 		$transaction = $this->new_typical_transaction();
 		$cart = EE_Cart::get_cart_from_txn( $transaction, $this->_session );
+        $cart->recalculate_all_cart_totals();
 		$this->assertEquals( 10, $cart->get_cart_total_before_tax() );
 	}
 
 	public function test_get_applied_taxes(){
 		$transaction = $this->new_typical_transaction();
 		$cart = EE_Cart::get_cart_from_txn( $transaction, $this->_session );
+        $cart->recalculate_all_cart_totals();
 		$this->assertEquals( 1.5, $cart->get_applied_taxes() );
 	}
 
 	public function test_get_cart_grand_total(){
 		$transaction = $this->new_typical_transaction();
 		$cart = EE_Cart::get_cart_from_txn( $transaction, $this->_session );
+        $cart->recalculate_all_cart_totals();
 		$this->assertEquals( 11.5, $cart->get_cart_grand_total() );
 	}
 

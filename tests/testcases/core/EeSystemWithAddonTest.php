@@ -36,3 +36,4 @@ class EeSystemWithAddonTest extends EeAddonTestCase
         $this->assertWPOptionDoesNotExist($this->addon->get_activation_indicator_option_name());
     }
 }
+// tests/testcases/core/EeSystemWithAddonTest.php

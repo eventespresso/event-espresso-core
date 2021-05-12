@@ -141,7 +141,7 @@ class TicketFilterHeaderTest extends TestCase
             // [['TKT_ID' => $this->ticket->ID()], ''],
             [
                 ['TKT_ID' => $this->ticket->ID()],
-                '<h3 style="line-height:1.5em;">Viewing registrations for ticket:&nbsp; &nbsp; <span class="drk-grey-text" style="font-size:.9em;"><span class="dashicons dashicons-tickets-alt"></span><span class="ee-ticket-name">NO FREEBIE FOR YOU!!!</span> <span class="ee-ticket-price">$ 3.50 <span class="currency-code">(USD)</span></span></span></h3>'
+                '<h3 style="line-height:1.5em;">Viewing registrations for ticket:&nbsp; &nbsp; <span class="drk-grey-text" style="font-size:.9em;"><span class="dashicons dashicons-tickets-alt"></span><span class="ee-ticket-name">NO FREEBIE FOR YOU!!!</span> <span class="ee-ticket-price">$3.50&nbsp;<span class="currency-code">(USD)</span></span></span></h3>'
             ],
             [
                 ['TKT_ID' => $this->free_ticket->ID()],
@@ -149,7 +149,7 @@ class TicketFilterHeaderTest extends TestCase
             ],
             [
                 ['ticket_id' => $this->ticket->ID()],
-                '<h3 style="line-height:1.5em;">Viewing registrations for ticket:&nbsp; &nbsp; <span class="drk-grey-text" style="font-size:.9em;"><span class="dashicons dashicons-tickets-alt"></span><span class="ee-ticket-name">NO FREEBIE FOR YOU!!!</span> <span class="ee-ticket-price">$ 3.50 <span class="currency-code">(USD)</span></span></span></h3>'
+                '<h3 style="line-height:1.5em;">Viewing registrations for ticket:&nbsp; &nbsp; <span class="drk-grey-text" style="font-size:.9em;"><span class="dashicons dashicons-tickets-alt"></span><span class="ee-ticket-name">NO FREEBIE FOR YOU!!!</span> <span class="ee-ticket-price">$3.50&nbsp;<span class="currency-code">(USD)</span></span></span></h3>'
             ],
             [
                 ['ticket_id' => $this->free_ticket->ID()],

@@ -290,7 +290,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
     /**
      * Gets item_id
      *
-     * @return string
+     * @return int|string
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -306,7 +306,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
     /**
      * Sets item_id
      *
-     * @param string $item_id
+     * @param int|string $item_id
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
