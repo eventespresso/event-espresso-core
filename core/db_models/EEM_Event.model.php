@@ -89,8 +89,8 @@ class EEM_Event extends EEM_CPT_Base
                 ),
             )
         );
-        self::$_default_reg_status = empty(self::$_default_reg_status) ? EEM_Registration::status_id_pending_payment
-            : self::$_default_reg_status;
+        self::$_default_reg_status = EE_Registry::instance()->CFG->registration->default_STS_ID
+            ?: EEM_Registration::status_id_pending_payment;
         $this->_tables = array(
             'Event_CPT'  => new EE_Primary_Table('posts', 'ID'),
             'Event_Meta' => new EE_Secondary_Table('esp_event_meta', 'EVTM_ID', 'EVT_ID'),
@@ -438,7 +438,7 @@ class EEM_Event extends EEM_CPT_Base
      *
      * @param int $EVT_ID
      * @param EE_Registration $registration
-     * @return array|bool
+     * @return array
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -457,7 +457,7 @@ class EEM_Event extends EEM_CPT_Base
                 __FUNCTION__,
                 __LINE__
             );
-            return false;
+            return [];
         }
         return EE_Registry::instance()->load_model('Question_Group')->get_all(
             [
