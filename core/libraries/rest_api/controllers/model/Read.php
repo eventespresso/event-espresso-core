@@ -14,6 +14,7 @@ use EventEspresso\core\exceptions\ModelConfigurationException;
 use EventEspresso\core\exceptions\RestPasswordIncorrectException;
 use EventEspresso\core\exceptions\RestPasswordRequiredException;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\loaders\LoaderInterface;
 use Exception;
 use InvalidArgumentException;
 use ReflectionException;
@@ -96,6 +97,20 @@ class Read extends Base
 
 
     /**
+     * @return Read
+     * @since $VID:$
+     */
+    private static function controller()
+    {
+        static $loader;
+        if (! $loader instanceof LoaderInterface) {
+            $loader = LoaderFactory::getLoader();
+        }
+        return $loader->getNew(Read::class);
+    }
+
+
+    /**
      * Handles requests to get all (or a filtered subset) of entities for a particular model
      *
      * @param WP_REST_Request $request
@@ -108,33 +123,7 @@ class Read extends Base
      */
     public static function handleRequestGetAll(WP_REST_Request $request, $version, $model_name)
     {
-        $controller =
-            LoaderFactory::getLoader()->getNew('EventEspresso\core\libraries\rest_api\controllers\model\Read');
-        try {
-            $controller->setRequestedVersion($version);
-            if (! $controller->getModelVersionInfo()->isModelNameInThisVersion($model_name)) {
-                return $controller->sendResponse(
-                    new WP_Error(
-                        'endpoint_parsing_error',
-                        sprintf(
-                            esc_html__(
-                                'There is no model for endpoint %s. Please contact event espresso support',
-                                'event_espresso'
-                            ),
-                            $model_name
-                        )
-                    )
-                );
-            }
-            return $controller->sendResponse(
-                $controller->getEntitiesFromModel(
-                    $controller->getModelVersionInfo()->loadModel($model_name),
-                    $request
-                )
-            );
-        } catch (Exception $e) {
-            return $controller->sendResponse($e);
-        }
+        return Read::controller()->getAll($request, $version, $model_name);
     }
 
 
@@ -150,25 +139,117 @@ class Read extends Base
      */
     public static function handleSchemaRequest($version, $model_name)
     {
-        $controller =
-            LoaderFactory::getLoader()->getNew('EventEspresso\core\libraries\rest_api\controllers\model\Read');
+        return Read::controller()->getSchema($version, $model_name);
+    }
+
+
+    /**
+     * Gets a single entity related to the model indicated in the path and its id
+     *
+     * @param WP_REST_Request $request
+     * @param string          $version
+     * @param string          $model_name
+     * @return WP_REST_Response|WP_Error
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     */
+    public static function handleRequestGetOne(WP_REST_Request $request, $version, $model_name)
+    {
+        return Read::controller()->getOne($request, $version, $model_name);
+    }
+
+
+    /**
+     * Gets all the related entities (or if its a belongs-to relation just the one)
+     * to the item with the given id
+     *
+     * @param WP_REST_Request $request
+     * @param string          $version
+     * @param string          $model_name
+     * @param string          $related_model_name
+     * @return WP_REST_Response|WP_Error
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     */
+    public static function handleRequestGetRelated(
+        WP_REST_Request $request,
+        $version,
+        $model_name,
+        $related_model_name
+    ) {
+        return Read::controller()->getRelated($request, $version, $model_name, $related_model_name);
+    }
+
+
+    /**
+     * Handles requests to get all (or a filtered subset) of entities for a particular model
+     *
+     * @param WP_REST_Request $request
+     * @param string          $version
+     * @param string          $model_name
+     * @return WP_REST_Response|WP_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    public function getAll(WP_REST_Request $request, $version, $model_name)
+    {
         try {
-            $controller->setRequestedVersion($version);
-            if (! $controller->getModelVersionInfo()->isModelNameInThisVersion($model_name)) {
+            $this->setRequestedVersion($version);
+            if (! $this->getModelVersionInfo()->isModelNameInThisVersion($model_name)) {
+                return $this->sendResponse(
+                    new WP_Error(
+                        'endpoint_parsing_error',
+                        sprintf(
+                            esc_html__(
+                                'There is no model for endpoint %s. Please contact event espresso support',
+                                'event_espresso'
+                            ),
+                            $model_name
+                        )
+                    )
+                );
+            }
+            return $this->sendResponse(
+                $this->getEntitiesFromModel(
+                    $this->getModelVersionInfo()->loadModel($model_name),
+                    $request
+                )
+            );
+        } catch (Exception $e) {
+            return $this->sendResponse($e);
+        }
+    }
+
+
+    /**
+     * Prepares and returns schema for any OPTIONS request.
+     *
+     * @param string $version    The API endpoint version being used.
+     * @param string $model_name Something like `Event` or `Registration`
+     * @return array
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    public function getSchema($version, $model_name)
+    {
+        try {
+            $this->setRequestedVersion($version);
+            if (! $this->getModelVersionInfo()->isModelNameInThisVersion($model_name)) {
                 return [];
             }
             // get the model for this version
-            $model        = $controller->getModelVersionInfo()->loadModel($model_name);
-            $model_schema = new JsonModelSchema(
-                $model,
-                LoaderFactory::getLoader()->getShared('EventEspresso\core\libraries\rest_api\CalculatedModelFields')
-            );
+            $model        = $this->getModelVersionInfo()->loadModel($model_name);
+            $model_schema = new JsonModelSchema($model, $this->fields_calculator);
             return $model_schema->getModelSchemaForRelations(
-                $controller->getModelVersionInfo()->relationSettings($model),
-                $controller->customizeSchemaForRestResponse(
+                $this->getModelVersionInfo()->relationSettings($model),
+                $this->customizeSchemaForRestResponse(
                     $model,
                     $model_schema->getModelSchemaForFields(
-                        $controller->getModelVersionInfo()->fieldsOnModelInThisVersion($model),
+                        $this->getModelVersionInfo()->fieldsOnModelInThisVersion($model),
                         $model_schema->getInitialSchemaStructure()
                     )
                 )
@@ -299,14 +380,12 @@ class Read extends Base
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
      */
-    public static function handleRequestGetOne(WP_REST_Request $request, $version, $model_name)
+    public function getOne(WP_REST_Request $request, $version, $model_name)
     {
-        $controller =
-            LoaderFactory::getLoader()->getNew('EventEspresso\core\libraries\rest_api\controllers\model\Read');
         try {
-            $controller->setRequestedVersion($version);
-            if (! $controller->getModelVersionInfo()->isModelNameInThisVersion($model_name)) {
-                return $controller->sendResponse(
+            $this->setRequestedVersion($version);
+            if (! $this->getModelVersionInfo()->isModelNameInThisVersion($model_name)) {
+                return $this->sendResponse(
                     new WP_Error(
                         'endpoint_parsing_error',
                         sprintf(
@@ -319,14 +398,14 @@ class Read extends Base
                     )
                 );
             }
-            return $controller->sendResponse(
-                $controller->getEntityFromModel(
-                    $controller->getModelVersionInfo()->loadModel($model_name),
+            return $this->sendResponse(
+                $this->getEntityFromModel(
+                    $this->getModelVersionInfo()->loadModel($model_name),
                     $request
                 )
             );
         } catch (Exception $e) {
-            return $controller->sendResponse($e);
+            return $this->sendResponse($e);
         }
     }
 
@@ -344,27 +423,25 @@ class Read extends Base
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
      */
-    public static function handleRequestGetRelated(
+    public function getRelated(
         WP_REST_Request $request,
         $version,
         $model_name,
         $related_model_name
     ) {
-        $controller =
-            LoaderFactory::getLoader()->getNew('EventEspresso\core\libraries\rest_api\controllers\model\Read');
         try {
-            $controller->setRequestedVersion($version);
-            $main_model = $controller->validateModel($model_name);
-            $controller->validateModel($related_model_name);
-            return $controller->sendResponse(
-                $controller->getEntitiesFromRelation(
+            $this->setRequestedVersion($version);
+            $main_model = $this->validateModel($model_name);
+            $this->validateModel($related_model_name);
+            return $this->sendResponse(
+                $this->getEntitiesFromRelation(
                     $request->get_param('id'),
                     $main_model->related_settings_for($related_model_name),
                     $request
                 )
             );
         } catch (Exception $e) {
-            return $controller->sendResponse($e);
+            return $this->sendResponse($e);
         }
     }
 
