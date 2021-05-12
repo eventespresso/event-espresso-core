@@ -95,7 +95,7 @@
 		"@wordpress/keycodes": "^2.19.3",
 		"@wordpress/plugins": "^2.25.3",
 		"@wordpress/prettier-config": "^0.4.0",
-		"@wordpress/scripts": "^12.1.1",
+		"@wordpress/scripts": "^15.0.1",
 		"@wordpress/server-side-render": "^1.21.3",
 		"@wordpress/url": "^2.22.2",
 		"@wordpress/viewport": "^2.26.3",
