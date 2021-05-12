@@ -1416,6 +1416,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      */
     public function set_timezone($timezone)
     {
+        $timezone = EEH_DTT_Helper::get_valid_timezone_string($timezone);
         if ($timezone !== null) {
             $this->_timezone = $timezone;
         }
