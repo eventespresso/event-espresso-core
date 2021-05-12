@@ -247,7 +247,7 @@ class PreviewEventDeletion extends JobHandler
                 ]
             );
         } else {
-            // Because the job size was a guess, it may have likely been provden wrong. We don't want to show more work
+            // Because the job size was a guess, it may have likely been proven wrong. We don't want to show more work
             // done than we originally said there would be. So adjust the estimate.
             if (($job_parameters->units_processed() / $job_parameters->job_size()) > .8) {
                 $job_parameters->set_job_size($job_parameters->job_size() * 2);
