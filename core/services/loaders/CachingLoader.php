@@ -85,6 +85,24 @@ class CachingLoader extends CachingLoaderDecorator
 
 
     /**
+     * @return void
+     */
+    public function __destruct()
+    {
+        if ($this->identifier !== '') {
+            remove_action(
+                "AHEE__EventEspresso_core_services_loaders_CachingLoader__resetCache__{$this->identifier}",
+                [$this, 'reset']
+            );
+        }
+        remove_action(
+            'AHEE__EventEspresso_core_services_loaders_CachingLoader__resetCache',
+            [$this, 'reset']
+        );
+    }
+
+
+    /**
      * @return string
      */
     public function identifier(): string
@@ -190,18 +208,17 @@ class CachingLoader extends CachingLoaderDecorator
 
 
     /**
-     * @param string $fqcn
-     * @param array  $arguments
+     * @param FullyQualifiedName|string $fqcn
+     * @param object|null               $object
      * @return bool
      * @throws InvalidArgumentException
      */
-    public function remove($fqcn, array $arguments = []): bool
+    public function remove($fqcn, $object = null)
     {
-        $fqcn              = ltrim($fqcn, '\\');
-        $object_identifier = $this->object_identifier->getIdentifier($fqcn, $arguments);
-        $object            = $this->cache->has($object_identifier)
-            ? $this->cache->get($object_identifier)
-            : $this->loader->load($fqcn, $arguments);
-        return $this->cache->remove($object);
+        if (is_object($object)){
+            return $this->cache->remove($object);
+        }
+        $object_identifier = $this->object_identifier->getIdentifier($fqcn);
+        return $this->cache->removeByIdentifier($object_identifier);
     }
 }

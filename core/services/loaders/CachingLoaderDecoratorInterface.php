@@ -20,10 +20,10 @@ interface CachingLoaderDecoratorInterface extends LoaderDecoratorInterface
 
 
     /**
-     * @param string $fqcn
-     * @param array  $arguments
+     * @param string      $fqcn
+     * @param object|null $object
      * @return bool
      * @throws InvalidArgumentException
      */
-    public function remove($fqcn, array $arguments = []);
+    public function remove($fqcn, $object = null);
 }

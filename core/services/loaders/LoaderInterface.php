@@ -50,10 +50,11 @@ interface LoaderInterface
 
     /**
      * @param FullyQualifiedName|string $fqcn
+     * @param object|null               $object
      * @return bool
      * @throws InvalidArgumentException
      */
-    public function remove($fqcn);
+    public function remove($fqcn, $object = null);
 
 
     /**
