@@ -18,7 +18,7 @@ interface FormatterInterface
      * @param array $input accepts a multi-dimensional array, but all "leaf nodes" are easily cast to a string
      * @return array
      */
-    public function formatArray($input);
+    public function formatArray(array $input): array;
 
 
 
@@ -28,5 +28,5 @@ interface FormatterInterface
      * @param string|int|float $input anything easily cast into a string
      * @return string
      */
-    public function format($input);
+    public function format($input): string;
 }

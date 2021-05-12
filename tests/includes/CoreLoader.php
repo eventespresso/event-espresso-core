@@ -5,9 +5,10 @@ namespace EventEspresso\tests\includes;
 use DomainException;
 use EE_Dependency_Map;
 use EE_Error;
+use EE_Psr4AutoloaderInit;
 use EE_Registry;
 use EEH_Activation;
-use EE_Psr4AutoloaderInit;
+use EEH_Autoloader;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\Benchmark;
@@ -328,6 +329,7 @@ class CoreLoader
         //Load the EE_specific testing tools
         require EE_TESTS_DIR . 'includes/EE_UnitTestCase.class.php';
         require EE_TESTS_DIR . 'includes/EE_REST_TestCase.php';
+        EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_TESTS_DIR . 'includes/factories');
     }
 
 

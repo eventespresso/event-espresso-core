@@ -13,6 +13,7 @@ use EE_Model_Field_Base;
 use EE_Registry;
 use EE_Serialized_Text_Field;
 use EED_Core_Rest_Api;
+use EEH_DTT_Helper;
 use EEM_Base;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -49,7 +50,7 @@ class ModelDataTranslator
      * Prepares a possible array of input values from JSON for use by the models
      *
      * @param EE_Model_Field_Base $field_obj
-     * @param mixed               $original_value_maybe_array
+     * @param mixed               $original_value
      * @param string              $requested_version
      * @param string              $timezone_string treat values as being in this timezone
      * @return mixed
@@ -58,17 +59,14 @@ class ModelDataTranslator
      */
     public static function prepareFieldValuesFromJson(
         $field_obj,
-        $original_value_maybe_array,
+        $original_value,
         $requested_version,
         $timezone_string = 'UTC'
     ) {
-        if (
-            is_array($original_value_maybe_array)
-            && ! $field_obj instanceof EE_Serialized_Text_Field
-        ) {
-            $new_value_maybe_array = [];
-            foreach ($original_value_maybe_array as $array_key => $array_item) {
-                $new_value_maybe_array[ $array_key ] = ModelDataTranslator::prepareFieldValueFromJson(
+        if (is_array($original_value) && ! $field_obj instanceof EE_Serialized_Text_Field) {
+            $new_value = [];
+            foreach ($original_value as $array_key => $array_item) {
+                $new_value[ $array_key ] = ModelDataTranslator::prepareFieldValueFromJson(
                     $field_obj,
                     $array_item,
                     $requested_version,
@@ -76,14 +74,14 @@ class ModelDataTranslator
                 );
             }
         } else {
-            $new_value_maybe_array = ModelDataTranslator::prepareFieldValueFromJson(
+            $new_value = ModelDataTranslator::prepareFieldValueFromJson(
                 $field_obj,
-                $original_value_maybe_array,
+                $original_value,
                 $requested_version,
                 $timezone_string
             );
         }
-        return $new_value_maybe_array;
+        return $new_value;
     }
 
 
@@ -91,16 +89,16 @@ class ModelDataTranslator
      * Prepares an array of field values FOR use in JSON/REST API
      *
      * @param EE_Model_Field_Base $field_obj
-     * @param mixed               $original_value_maybe_array
+     * @param mixed               $original_value
      * @param string              $request_version (eg 4.8.36)
      * @return array
      * @throws EE_Error
      */
-    public static function prepareFieldValuesForJson($field_obj, $original_value_maybe_array, $request_version)
+    public static function prepareFieldValuesForJson($field_obj, $original_value, $request_version)
     {
-        if (is_array($original_value_maybe_array)) {
+        if (is_array($original_value)) {
             $new_value = [];
-            foreach ($original_value_maybe_array as $key => $value) {
+            foreach ($original_value as $key => $value) {
                 $new_value[ $key ] = ModelDataTranslator::prepareFieldValuesForJson(
                     $field_obj,
                     $value,
@@ -110,7 +108,7 @@ class ModelDataTranslator
         } else {
             $new_value = ModelDataTranslator::prepareFieldValueForJson(
                 $field_obj,
-                $original_value_maybe_array,
+                $original_value,
                 $request_version
             );
         }
@@ -156,14 +154,15 @@ class ModelDataTranslator
                 ]
             );
         }
+        $timezone_string = EEH_DTT_Helper::get_valid_timezone_string($timezone_string);
+        $new_value = null;
         // double-check for serialized PHP. We never accept serialized PHP. No way Jose.
         ModelDataTranslator::throwExceptionIfContainsSerializedData($original_value);
-        $timezone_string =
-            $timezone_string !== ''
-                ? $timezone_string
-                : get_option('timezone_string', '');
-        // walk through the submitted data and double-check for serialized PHP. We never accept serialized PHP. No
-        // way Jose.
+        $timezone_string = $timezone_string !== ''
+            ? $timezone_string
+            : get_option('timezone_string', '');
+        // walk through the submitted data and double-check for serialized PHP.
+        // We never accept serialized PHP. No way Jose.
         ModelDataTranslator::throwExceptionIfContainsSerializedData($original_value);
         if (
             $field_obj instanceof EE_Infinite_Integer_Field
@@ -171,9 +170,8 @@ class ModelDataTranslator
         ) {
             $new_value = EE_INF;
         } elseif ($field_obj instanceof EE_Datetime_Field) {
-            $new_value = rest_parse_date(
-                self::getTimestampWithTimezoneOffset($original_value, $field_obj, $timezone_string)
-            );
+            $new_value = self::getTimestampWithTimezoneOffset($original_value, $field_obj, $timezone_string);
+            $new_value = rest_parse_date($new_value);
             if ($new_value === false) {
                 throw new RestException(
                     'invalid_format_for_timestamp',
@@ -397,6 +395,7 @@ class ModelDataTranslator
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
+     * @throws ReflectionException
      */
     public static function prepareConditionsQueryParamsForModels(
         $inputted_query_params_of_this_type,
@@ -411,9 +410,11 @@ class ModelDataTranslator
             if ($query_param_meta->getField() instanceof EE_Model_Field_Base) {
                 $translated_value = $query_param_meta->determineConditionsQueryParameterValue();
                 if (
-                    (isset($query_param_for_models[ $query_param_meta->getQueryParamKey() ])
-                     && $query_param_meta->isGmtField())
-                    || $translated_value === null
+                    $translated_value === null
+                    || (
+                        isset($query_param_for_models[ $query_param_meta->getQueryParamKey() ])
+                        && $query_param_meta->isGmtField()
+                    )
                 ) {
                     // they have already provided a non-gmt field, ignore the gmt one. That's what WP core
                     // currently does (they might change it though). See https://core.trac.wordpress.org/ticket/39954
@@ -441,8 +442,11 @@ class ModelDataTranslator
      */
     public static function isGmtDateFieldName($field_name)
     {
-        $field_name = ModelDataTranslator::removeStarsAndAnythingAfterFromConditionQueryParamKey($field_name);
-        return substr($field_name, -4, 4) === '_gmt';
+        return substr(
+                   ModelDataTranslator::removeStarsAndAnythingAfterFromConditionQueryParamKey($field_name),
+                   -4,
+                   4
+               ) === '_gmt';
     }
 
 
@@ -457,9 +461,10 @@ class ModelDataTranslator
         if (! ModelDataTranslator::isGmtDateFieldName($field_name)) {
             return $field_name;
         }
-        $query_param_sans_stars = ModelDataTranslator::removeStarsAndAnythingAfterFromConditionQueryParamKey(
-            $field_name
-        );
+        $query_param_sans_stars              =
+            ModelDataTranslator::removeStarsAndAnythingAfterFromConditionQueryParamKey(
+                $field_name
+            );
         $query_param_sans_gmt_and_sans_stars = substr(
             $query_param_sans_stars,
             0,
@@ -573,9 +578,8 @@ class ModelDataTranslator
      * @param string   $requested_version                   eg "4.8.36"
      * @return array ready for use in the rest api query params
      * @throws EE_Error
-     * @throws RestException if somehow a PHP object were in the query params' values,*@throws
+     * @throws ObjectDetectedException if somehow a PHP object were in the query params' values,
      * @throws ReflectionException
-     *                                                      ReflectionException
      *                                                      (which would be really unusual)
      * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
      */

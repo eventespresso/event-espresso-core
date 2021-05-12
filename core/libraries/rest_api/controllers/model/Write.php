@@ -3,29 +3,31 @@
 namespace EventEspresso\core\libraries\rest_api\controllers\model;
 
 use DomainException;
+use EE_Base_Class;
+use EE_Datetime_Field;
 use EE_DB_Only_Field_Base;
+use EE_Error;
 use EE_HABTM_Relation;
 use EE_Model_Relation_Base;
-use EventEspresso\core\exceptions\InvalidDataTypeException;
-use EventEspresso\core\exceptions\InvalidInterfaceException;
-use EventEspresso\core\services\loaders\LoaderFactory;
-use Exception;
-use InvalidArgumentException;
-use ReflectionException;
-use WP_REST_Request;
-use WP_REST_Response;
-use EventEspresso\core\libraries\rest_api\Capabilities;
-use EventEspresso\core\libraries\rest_api\ModelDataTranslator;
-use EventEspresso\core\libraries\rest_api\RestException;
-use EEM_Base;
-use EE_Base_Class;
 use EE_Registry;
-use EE_Datetime_Field;
-use EEM_Soft_Delete_Base;
 use EE_Restriction_Generator_Base;
 use EED_Core_Rest_Api;
 use EEH_Inflector;
-use EE_Error;
+use EEM_Base;
+use EEM_Soft_Delete_Base;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\libraries\rest_api\Capabilities;
+use EventEspresso\core\libraries\rest_api\ModelDataTranslator;
+use EventEspresso\core\libraries\rest_api\RestException;
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\loaders\LoaderInterface;
+use Exception;
+use InvalidArgumentException;
+use ReflectionException;
+use WP_Error;
+use WP_REST_Request;
+use WP_REST_Response;
 
 /**
  * Write controller for models
@@ -40,7 +42,20 @@ class Write extends Base
     public function __construct()
     {
         parent::__construct();
-        EE_Registry::instance()->load_helper('Inflector');
+    }
+
+
+    /**
+     * @return Write
+     * @since $VID:$
+     */
+    private static function controller()
+    {
+        static $loader;
+        if (! $loader instanceof LoaderInterface) {
+            $loader = LoaderFactory::getLoader();
+        }
+        return $loader->getNew(Write::class);
     }
 
 
@@ -50,11 +65,11 @@ class Write extends Base
      * @param WP_REST_Request $request
      * @param string          $version
      * @param string          $model_name
-     * @return WP_REST_Response|\WP_Error
+     * @return WP_REST_Response|WP_Error
      */
     public static function handleRequestInsert(WP_REST_Request $request, $version, $model_name)
     {
-        $controller = new Write();
+        $controller = Write::controller();
         try {
             $controller->setRequestedVersion($version);
             return $controller->sendResponse(
@@ -75,7 +90,7 @@ class Write extends Base
      * @param WP_REST_Request $request
      * @param string          $version
      * @param string          $model_name
-     * @return WP_REST_Response|\WP_Error
+     * @return WP_REST_Response|WP_Error
      */
     public static function handleRequestUpdate(WP_REST_Request $request, $version, $model_name)
     {
@@ -100,7 +115,7 @@ class Write extends Base
      * @param WP_REST_Request $request
      * @param string          $version
      * @param string          $model_name
-     * @return WP_REST_Response|\WP_Error
+     * @return WP_REST_Response|WP_Error
      */
     public static function handleRequestDelete(WP_REST_Request $request, $version, $model_name)
     {
@@ -127,6 +142,7 @@ class Write extends Base
      * @return array
      * @throws EE_Error
      * @throws RestException
+     * @throws ReflectionException
      */
     public function insert(EEM_Base $model, WP_REST_Request $request)
     {
@@ -144,11 +160,11 @@ class Write extends Base
                     ),
                     $default_cap_to_check_for
                 ),
-                array('status' => 403)
+                ['status' => 403]
             );
         }
         $submitted_json_data = array_merge((array) $request->get_body_params(), (array) $request->get_json_params());
-        $model_data = ModelDataTranslator::prepareConditionsQueryParamsForModels(
+        $model_data          = ModelDataTranslator::prepareConditionsQueryParamsForModels(
             $submitted_json_data,
             $model,
             $this->getModelVersionInfo()->requestedVersion(),
@@ -156,7 +172,7 @@ class Write extends Base
         );
         $model_obj = EE_Registry::instance()->load_class(
             $model->get_this_model_name(),
-            array($model_data, $model->get_timezone()),
+            [$model_data, $model->get_timezone()],
             false,
             false
         );
@@ -179,6 +195,7 @@ class Write extends Base
      * @param WP_REST_Request $request
      * @return array
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function update(EEM_Base $model, WP_REST_Request $request)
     {
@@ -196,7 +213,7 @@ class Write extends Base
                     ),
                     $default_cap_to_check_for
                 ),
-                array('status' => 403)
+                ['status' => 403]
             );
         }
         $obj_id = $request->get_param('id');
@@ -212,7 +229,7 @@ class Write extends Base
             $this->getModelVersionInfo()->requestedVersion(),
             true
         );
-        $model_obj = $model->get_one_by_ID($obj_id);
+        $model_obj  = $model->get_one_by_ID($obj_id);
         if (! $model_obj instanceof EE_Base_Class) {
             $lowercase_model_name = strtolower($model->get_this_model_name());
             throw new RestException(
@@ -233,6 +250,7 @@ class Write extends Base
      * @param WP_REST_Request $request
      * @return array of either the soft-deleted item, or
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function delete(EEM_Base $model, WP_REST_Request $request)
     {
@@ -250,7 +268,7 @@ class Write extends Base
                     ),
                     $default_cap_to_check_for
                 ),
-                array('status' => 403)
+                ['status' => 403]
             );
         }
         $obj_id = $request->get_param('id');
@@ -265,14 +283,14 @@ class Write extends Base
             );
         }
         $requested_permanent_delete = filter_var($request->get_param('force'), FILTER_VALIDATE_BOOLEAN);
-        $requested_allow_blocking = filter_var($request->get_param('allow_blocking'), FILTER_VALIDATE_BOOLEAN);
+        $requested_allow_blocking   = filter_var($request->get_param('allow_blocking'), FILTER_VALIDATE_BOOLEAN);
         if ($requested_permanent_delete) {
             $previous = $this->returnModelObjAsJsonResponse($model_obj, $request);
-            $deleted = (bool) $model->delete_permanently_by_ID($obj_id, $requested_allow_blocking);
-            return array(
+            $deleted  = (bool) $model->delete_permanently_by_ID($obj_id, $requested_allow_blocking);
+            return [
                 'deleted'  => $deleted,
                 'previous' => $previous,
-            );
+            ];
         } else {
             if ($model instanceof EEM_Soft_Delete_Base) {
                 $model->delete_by_ID($obj_id, $requested_allow_blocking);
@@ -297,13 +315,15 @@ class Write extends Base
      * @param EE_Base_Class   $model_obj
      * @param WP_REST_Request $request
      * @return array ready for a response
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function returnModelObjAsJsonResponse(EE_Base_Class $model_obj, WP_REST_Request $request)
     {
         $model = $model_obj->get_model();
         // create an array exactly like the wpdb results row,
         // so we can pass it to controllers/model/Read::create_entity_from_wpdb_result()
-        $simulated_db_row = array();
+        $simulated_db_row = [];
         foreach ($model->field_settings(true) as $field_name => $field_obj) {
             // we need to reconstruct the normal wpdb results, including the db-only fields
             // like a secondary table's primary key. The models expect those (but don't care what value they have)
@@ -316,7 +336,8 @@ class Write extends Base
             }
             $simulated_db_row[ $field_obj->get_qualified_column() ] = $field_obj->prepare_for_use_in_db($raw_value);
         }
-        $read_controller = LoaderFactory::getLoader()->getNew('EventEspresso\core\libraries\rest_api\controllers\model\Read');
+        $read_controller =
+            LoaderFactory::getLoader()->getNew('EventEspresso\core\libraries\rest_api\controllers\model\Read');
         $read_controller->setRequestedVersion($this->getRequestedVersion());
         // the simulates request really doesn't need any info downstream
         $simulated_request = new WP_REST_Request('GET');
@@ -346,13 +367,13 @@ class Write extends Base
      *
      * @param EEM_Base        $model
      * @param WP_REST_Request $request
-     * @param  int|string     $obj_id
-     * @return \WP_Error|array
+     * @param int|string      $obj_id
+     * @return WP_Error|array
      */
     protected function getOneBasedOnRequest(EEM_Base $model, WP_REST_Request $request, $obj_id)
     {
         $requested_version = $this->getRequestedVersion($request->get_route());
-        $get_request = new WP_REST_Request(
+        $get_request       = new WP_REST_Request(
             'GET',
             EED_Core_Rest_Api::ee_api_namespace
             . $requested_version
@@ -362,24 +383,33 @@ class Write extends Base
             . $obj_id
         );
         $get_request->set_url_params(
-            array(
+            [
                 'id'      => $obj_id,
                 'include' => $request->get_param('include'),
-            )
+            ]
         );
-        $read_controller = new Read();
+        $read_controller = LoaderFactory::getLoader()->getShared(Read::class);
         $read_controller->setRequestedVersion($this->getRequestedVersion());
         return $read_controller->getEntityFromModel($model, $get_request);
     }
 
+
     /**
      * Adds a relation between the specified models (if it doesn't already exist.)
-     * @since 4.9.76.p
+     *
      * @param WP_REST_Request $request
+     * @param string          $version
+     * @param string          $model_name
+     * @param string          $related_model_name
      * @return WP_REST_Response
+     * @since 4.9.76.p
      */
-    public static function handleRequestAddRelation(WP_REST_Request $request, $version, $model_name, $related_model_name)
-    {
+    public static function handleRequestAddRelation(
+        WP_REST_Request $request,
+        $version,
+        $model_name,
+        $related_model_name
+    ) {
         $controller = new Write();
         try {
             $controller->setRequestedVersion($version);
@@ -397,12 +427,13 @@ class Write extends Base
         }
     }
 
+
     /**
      * Adds a relation between the two model specified model objects.
-     * @since 4.9.76.p
-     * @param EEM_Base $model
+     *
+     * @param EEM_Base               $model
      * @param EE_Model_Relation_Base $relation
-     * @param WP_REST_Request $request
+     * @param WP_REST_Request        $request
      * @return array
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -410,11 +441,13 @@ class Write extends Base
      * @throws InvalidInterfaceException
      * @throws RestException
      * @throws DomainException
+     * @throws ReflectionException
+     * @since 4.9.76.p
      */
     public function addRelation(EEM_Base $model, EE_Model_Relation_Base $relation, WP_REST_Request $request)
     {
         list($model_obj, $other_obj) = $this->getBothModelObjects($model, $relation, $request);
-        $extra_params = array();
+        $extra_params = [];
         if ($relation instanceof EE_HABTM_Relation) {
             $extra_params = array_intersect_key(
                 ModelDataTranslator::prepareConditionsQueryParamsForModels(
@@ -432,20 +465,31 @@ class Write extends Base
             $relation->get_other_model()->get_this_model_name(),
             $extra_params
         );
-        $response = array(
-            strtolower($model->get_this_model_name()) => $this->returnModelObjAsJsonResponse($model_obj, $request),
-            strtolower($relation->get_other_model()->get_this_model_name()) => $this->returnModelObjAsJsonResponse($related_obj, $request),
-        );
+        $response    = [
+            strtolower($model->get_this_model_name())                       => $this->returnModelObjAsJsonResponse(
+                $model_obj,
+                $request
+            ),
+            strtolower($relation->get_other_model()->get_this_model_name()) => $this->returnModelObjAsJsonResponse(
+                $related_obj,
+                $request
+            ),
+        ];
         if ($relation instanceof EE_HABTM_Relation) {
-            $join_model_obj = $relation->get_join_model()->get_one(
-                array(
-                    array(
-                        $relation->get_join_model()->get_foreign_key_to($model->get_this_model_name())->get_name() => $model_obj->ID(),
-                        $relation->get_join_model()->get_foreign_key_to($relation->get_other_model()->get_this_model_name())->get_name() => $related_obj->ID()
-                    )
-                )
-            );
-            $response['join'][ strtolower($relation->get_join_model()->get_this_model_name()) ] = $this->returnModelObjAsJsonResponse($join_model_obj, $request);
+            $join_model_obj                                                                     =
+                $relation->get_join_model()->get_one(
+                    [
+                        [
+                            $relation->get_join_model()->get_foreign_key_to($model->get_this_model_name())->get_name(
+                            )             => $model_obj->ID(),
+                            $relation->get_join_model()->get_foreign_key_to(
+                                $relation->get_other_model()->get_this_model_name()
+                            )->get_name() => $related_obj->ID(),
+                        ],
+                    ]
+                );
+            $response['join'][ strtolower($relation->get_join_model()->get_this_model_name()) ] =
+                $this->returnModelObjAsJsonResponse($join_model_obj, $request);
         }
         return $response;
     }
@@ -453,12 +497,20 @@ class Write extends Base
 
     /**
      * Removes the relation between the specified models (if it exists).
-     * @since 4.9.76.p
+     *
      * @param WP_REST_Request $request
+     * @param string          $version
+     * @param string          $model_name
+     * @param string          $related_model_name
      * @return WP_REST_Response
+     * @since 4.9.76.p
      */
-    public static function handleRequestRemoveRelation(WP_REST_Request $request, $version, $model_name, $related_model_name)
-    {
+    public static function handleRequestRemoveRelation(
+        WP_REST_Request $request,
+        $version,
+        $model_name,
+        $related_model_name
+    ) {
         $controller = new Write();
         try {
             $controller->setRequestedVersion($version);
@@ -475,12 +527,13 @@ class Write extends Base
         }
     }
 
+
     /**
      * Adds a relation between the two model specified model objects.
-     * @since 4.9.76.p
-     * @param EEM_Base $model
+     *
+     * @param EEM_Base               $model
      * @param EE_Model_Relation_Base $relation
-     * @param WP_REST_Request $request
+     * @param WP_REST_Request        $request
      * @return array
      * @throws DomainException
      * @throws EE_Error
@@ -488,12 +541,14 @@ class Write extends Base
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws RestException
+     * @throws ReflectionException
+     * @since 4.9.76.p
      */
     public function removeRelation(EEM_Base $model, EE_Model_Relation_Base $relation, WP_REST_Request $request)
     {
-        // This endpoint doesn't accept body parameters (it's understandable to think it might, so let developers know
-        // up-front that it doesn't.)
-        if (!empty($request->get_body_params())) {
+        // This endpoint doesn't accept body parameters
+        // (it's understandable to think it might, so let developers know up-front that it doesn't.)
+        if (! empty($request->get_body_params())) {
             $body_params = $request->get_body_params();
             throw new RestException(
                 'invalid_field',
@@ -508,12 +563,12 @@ class Write extends Base
         $join_model_obj = null;
         if ($relation instanceof EE_HABTM_Relation) {
             $join_model_obj = $relation->get_join_model()->get_one(
-                array(
-                    array(
-                        $model->primary_key_name() => $model_obj->ID(),
-                        $relation->get_other_model()->primary_key_name() => $other_obj->ID()
-                    )
-                )
+                [
+                    [
+                        $model->primary_key_name()                       => $model_obj->ID(),
+                        $relation->get_other_model()->primary_key_name() => $other_obj->ID(),
+                    ],
+                ]
             );
         }
         // Remove the relation.
@@ -521,21 +576,28 @@ class Write extends Base
             $other_obj,
             $relation->get_other_model()->get_this_model_name()
         );
-        $response = array(
-            strtolower($model->get_this_model_name()) => $this->returnModelObjAsJsonResponse($model_obj, $request),
-            strtolower($relation->get_other_model()->get_this_model_name()) => $this->returnModelObjAsJsonResponse($related_obj, $request),
-        );
+        $response    = [
+            strtolower($model->get_this_model_name())                       => $this->returnModelObjAsJsonResponse(
+                $model_obj,
+                $request
+            ),
+            strtolower($relation->get_other_model()->get_this_model_name()) => $this->returnModelObjAsJsonResponse(
+                $related_obj,
+                $request
+            ),
+        ];
         if ($relation instanceof EE_HABTM_Relation) {
-            $join_model_obj_after_removal = $relation->get_join_model()->get_one(
-                array(
-                    array(
-                        $model->primary_key_name() => $model_obj->ID(),
-                        $relation->get_other_model()->primary_key_name() => $other_obj->ID()
-                    )
-                )
+            $relation->get_join_model()->get_one(
+                [
+                    [
+                        $model->primary_key_name()                       => $model_obj->ID(),
+                        $relation->get_other_model()->primary_key_name() => $other_obj->ID(),
+                    ],
+                ]
             );
             if ($join_model_obj instanceof EE_Base_Class) {
-                $response['join'][ strtolower($relation->get_join_model()->get_this_model_name()) ] = $this->returnModelObjAsJsonResponse($join_model_obj, $request);
+                $response['join'][ strtolower($relation->get_join_model()->get_this_model_name()) ] =
+                    $this->returnModelObjAsJsonResponse($join_model_obj, $request);
             } else {
                 $response['join'][ strtolower($relation->get_join_model()->get_this_model_name()) ] = null;
             }
@@ -543,19 +605,22 @@ class Write extends Base
         return $response;
     }
 
+
     /**
      * Gets the model objects indicated by the model, relation object, and request.
      * Throws an exception if the first object doesn't exist, and currently if the related object also doesn't exist.
      * However, this behaviour may change, as we may add support for simultaneously creating and relating data.
-     * @since 4.9.76.p
-     * @param EEM_Base $model
+     *
+     * @param EEM_Base               $model
      * @param EE_Model_Relation_Base $relation
-     * @param WP_REST_Request $request
+     * @param WP_REST_Request        $request
      * @return array {
-     * @type EE_Base_Class $model_obj
-     * @type EE_Base_Class|null $other_model_obj
+     * @type EE_Base_Class           $model_obj
+     * @type EE_Base_Class|null      $other_model_obj
      * }
      * @throws RestException
+     * @throws EE_Error
+     * @since 4.9.76.p
      */
     protected function getBothModelObjects(EEM_Base $model, EE_Model_Relation_Base $relation, WP_REST_Request $request)
     {
@@ -567,30 +632,34 @@ class Write extends Base
                 'rest_cannot_edit_' . EEH_Inflector::pluralize_and_lower(($model->get_this_model_name())),
                 sprintf(
                     esc_html__(
-                        // @codingStandardsIgnoreStart
+                    // @codingStandardsIgnoreStart
                         'For now, only those with the admin capability to "%1$s" are allowed to use the REST API to add relations in Event Espresso.',
                         // @codingStandardsIgnoreEnd
                         'event_espresso'
                     ),
                     $default_cap_to_check_for
                 ),
-                array('status' => 403)
+                ['status' => 403]
             );
         }
         // Get the main model object.
         $model_obj = $this->getOneOrThrowException($model, $request->get_param('id'));
         // For now, we require the other model object to exist too. This might be relaxed later.
         $other_obj = $this->getOneOrThrowException($relation->get_other_model(), $request->get_param('related_id'));
-        return array($model_obj,$other_obj);
+        return [$model_obj, $other_obj];
     }
+
 
     /**
      * Gets the model with that ID or throws a REST exception.
-     * @since 4.9.76.p
+     *
      * @param EEM_Base $model
-     * @param $id
+     * @param          $id
      * @return EE_Base_Class
+     * @throws EE_Error
      * @throws RestException
+     * @throws EE_Error
+     * @since 4.9.76.p
      */
     protected function getOneOrThrowException(EEM_Base $model, $id)
     {
@@ -603,7 +672,7 @@ class Write extends Base
         throw new RestException(
             sprintf('rest_%s_invalid_id', $lowercase_model_name),
             sprintf(esc_html__('Invalid %s ID.', 'event_espresso'), $lowercase_model_name),
-            array('status' => 404)
+            ['status' => 404]
         );
     }
 }

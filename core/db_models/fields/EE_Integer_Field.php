@@ -46,8 +46,8 @@ class EE_Integer_Field extends EE_Model_Field_Base
     /**
      * Returns the number formatted according to local custom (set by the country of the blog).
      *
-     * @param float $value
-     * @param null  $schema
+     * @param float        $value
+     * @param null|string  $schema
      * @return string
      */
     public function prepare_for_pretty_echoing($value, $schema = null)

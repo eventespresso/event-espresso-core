@@ -34,7 +34,7 @@ class DefaultLocaleData
     /**
      * @return string
      */
-    public function getDefaultLocale()
+    public function getDefaultLocale(): string
     {
         return $this->currency_config->locale();
     }
@@ -43,7 +43,7 @@ class DefaultLocaleData
     /**
      * @return array
      */
-    public function getDefaults()
+    public function getDefaults(): array
     {
         // if locale info is missing, then fall back to legacy money formatting details
         return [

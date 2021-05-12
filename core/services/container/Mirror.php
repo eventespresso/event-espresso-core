@@ -3,6 +3,7 @@
 namespace EventEspresso\core\services\container;
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\interfaces\InterminableInterface;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
@@ -18,7 +19,7 @@ use ReflectionProperty;
  * @author  Brent Christensen
  * @since   4.9.62.p
  */
-class Mirror
+class Mirror implements InterminableInterface
 {
     /**
      * @var ReflectionClass[] $classes

@@ -21,7 +21,7 @@ abstract class FormatterBase implements FormatterInterface
      * @return array
      * @throws InvalidDataTypeException if $input is not an array
      */
-    public function formatArray($input)
+    public function formatArray(array $input): array
     {
         if (! is_array($input)) {
             throw new InvalidDataTypeException('input', $input, 'array');
@@ -30,7 +30,7 @@ abstract class FormatterBase implements FormatterInterface
         $formatter = $this;
         array_walk_recursive(
             $input,
-            function (&$value, $key) use ($formatter) {
+            function (&$value) use ($formatter) {
                 $value = $formatter->format($value);
             }
         );
