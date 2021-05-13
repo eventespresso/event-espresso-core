@@ -2,7 +2,6 @@
 
 use EventEspresso\core\services\request\RequestInterface;
 
-
 /**
  * Class EEM_Form_Section
  * Model Fields:
@@ -185,7 +184,6 @@ class EEM_Form_Section extends EEM_Soft_Delete_Base
         return $constants_only
             ? array_keys($this->valid_applies_to_options)
             : $this->valid_applies_to_options;
-
     }
 
 
@@ -198,7 +196,6 @@ class EEM_Form_Section extends EEM_Soft_Delete_Base
         return $constants_only
             ? array_keys($this->valid_status_options)
             : $this->valid_status_options;
-
     }
 
 
@@ -284,9 +281,10 @@ class EEM_Form_Section extends EEM_Soft_Delete_Base
      * @param array $query_params
      * @return array
      */
-    private function addDefaultWhereConditions(array $query_params): array {
+    private function addDefaultWhereConditions(array $query_params): array
+    {
         // might need to add a way to identify GQL requests for admin domains
-        $admin_request = $this->request->isAdmin() || $this->request->isAdminAjax();
+        $admin_request                            = $this->request->isAdmin() || $this->request->isAdminAjax();
         $query_params['default_where_conditions'] = $admin_request
             ? EEM_Base::default_where_conditions_none
             : EEM_Base::default_where_conditions_all;
@@ -297,7 +295,7 @@ class EEM_Form_Section extends EEM_Soft_Delete_Base
     /**
      * form sections should always be sorted in ascending order via the FSC_order field
      *
-     * @param array  $query_params
+     * @param array $query_params
      * @return array
      */
     private function addOrderByQueryParams(array $query_params): array
