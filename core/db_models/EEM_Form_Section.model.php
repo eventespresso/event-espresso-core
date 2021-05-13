@@ -18,7 +18,7 @@ use EventEspresso\core\services\request\RequestInterface;
  * @author  Brent Christensen
  * @since   $VID:$
  */
-class EEM_Form_Section extends EEM_Soft_Delete_Base
+class EEM_Form_Section extends EEM_Base
 {
     const APPLIES_TO_ALL         = 'all';
 
