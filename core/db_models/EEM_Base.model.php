@@ -656,7 +656,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             $this->_caps_slug = EEH_Inflector::pluralize_and_lower($this->get_this_model_name());
         }
         // initialize the standard cap restriction generators if none were specified by the child constructor
-        if (! empty($this->_cap_restriction_generators)) {
+        if (is_array($this->_cap_restriction_generators)) {
             foreach ($this->cap_contexts_to_cap_action_map() as $cap_context => $action) {
                 if (! isset($this->_cap_restriction_generators[ $cap_context ])) {
                     $this->_cap_restriction_generators[ $cap_context ] = apply_filters(
@@ -669,7 +669,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             }
         }
         // if there are cap restriction generators, use them to make the default cap restrictions
-        if (! empty($this->_cap_restriction_generators)) {
+        if (is_array($this->_cap_restriction_generators)) {
             foreach ($this->_cap_restriction_generators as $context => $generator_object) {
                 if (! $generator_object) {
                     continue;
