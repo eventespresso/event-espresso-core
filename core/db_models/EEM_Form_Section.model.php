@@ -20,21 +20,21 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 class EEM_Form_Section extends EEM_Base
 {
-    const APPLIES_TO_ALL         = 'all';
+    public const APPLIES_TO_ALL         = 'all';
 
-    const APPLIES_TO_PRIMARY     = 'primary';
+    public const APPLIES_TO_PRIMARY     = 'primary';
 
-    const APPLIES_TO_PURCHASER   = 'purchaser';
+    public const APPLIES_TO_PURCHASER   = 'purchaser';
 
-    const APPLIES_TO_REGISTRANTS = 'registrants';
+    public const APPLIES_TO_REGISTRANTS = 'registrants';
 
-    const STATUS_ACTIVE          = 'active';
+    public const STATUS_ACTIVE          = 'active';
 
-    const STATUS_ARCHIVED        = 'archived';
+    public const STATUS_ARCHIVED        = 'archived';
 
-    const STATUS_DEFAULT         = 'default';
+    public const STATUS_DEFAULT         = 'default';
 
-    const STATUS_TRASHED         = 'trashed';
+    public const STATUS_TRASHED         = 'trashed';
 
     /**
      * @var EEM_Form_Section
@@ -65,7 +65,7 @@ class EEM_Form_Section extends EEM_Base
                 EEM_Form_Section::APPLIES_TO_ALL         => esc_html__('All Registrants', 'event_espresso'),
                 EEM_Form_Section::APPLIES_TO_PRIMARY     => esc_html__('Primary Registrant Only', 'event_espresso'),
                 EEM_Form_Section::APPLIES_TO_PURCHASER   => esc_html__('Purchasing Agent', 'event_espresso'),
-                eem_form_section::APPLIES_TO_REGISTRANTS => esc_html__('Additional Registrants', 'event_espresso'),
+                EEM_Form_Section::APPLIES_TO_REGISTRANTS => esc_html__('Additional Registrants', 'event_espresso'),
             ]
         );
         $this->valid_status_options     = apply_filters(
@@ -74,7 +74,7 @@ class EEM_Form_Section extends EEM_Base
                 EEM_Form_Section::STATUS_ACTIVE   => esc_html__('Active', 'event_espresso'),
                 EEM_Form_Section::STATUS_ARCHIVED => esc_html__('Archived', 'event_espresso'),
                 EEM_Form_Section::STATUS_DEFAULT  => esc_html__('Default', 'event_espresso'),
-                eem_form_section::STATUS_TRASHED  => esc_html__('Trashed', 'event_espresso'),
+                EEM_Form_Section::STATUS_TRASHED  => esc_html__('Trashed', 'event_espresso'),
             ]
         );
 
