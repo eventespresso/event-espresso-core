@@ -120,7 +120,7 @@ class EEM_Change_Log extends EEM_Base
             }
         }
         // use completely custom caps for this
-        $this->_cap_restriction_generators = false;
+        unset($this->_cap_restriction_generators);
         // caps-wise this is all-or-nothing: if you have the default role you can access anything, otherwise nothing
         foreach ($this->_cap_contexts_to_cap_action_map as $cap_context => $action) {
             $this->_cap_restrictions[ $cap_context ][ EE_Restriction_Generator_Base::get_default_restrictions_cap() ]
