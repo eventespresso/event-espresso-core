@@ -7,6 +7,8 @@ use EventEspresso\core\exceptions\ModelConfigurationException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
 use EventEspresso\core\interfaces\ResettableInterface;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\loaders\LoaderInterface;
+use EventEspresso\core\services\request\RequestInterface;
 
 /**
  * Class EEM_Base
@@ -450,7 +452,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     protected $_entity_map;
 
     /**
-     * @var LoaderInterface $loader
+     * @var LoaderInterface
      */
     private static $loader;
 
@@ -634,7 +636,6 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             $relation_obj->_construct_finalize_set_models($this->get_this_model_name(), $model_name);
         }
         foreach ($this->_indexes as $index_name => $index_obj) {
-            /** @var $index_obj EE_Index */
             $index_obj->_construct_finalize($index_name, $this->get_this_model_name());
         }
         $this->set_timezone($timezone);
@@ -655,7 +656,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             $this->_caps_slug = EEH_Inflector::pluralize_and_lower($this->get_this_model_name());
         }
         // initialize the standard cap restriction generators if none were specified by the child constructor
-        if ($this->_cap_restriction_generators !== false) {
+        if (is_array($this->_cap_restriction_generators)) {
             foreach ($this->cap_contexts_to_cap_action_map() as $cap_context => $action) {
                 if (! isset($this->_cap_restriction_generators[ $cap_context ])) {
                     $this->_cap_restriction_generators[ $cap_context ] = apply_filters(
@@ -668,7 +669,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             }
         }
         // if there are cap restriction generators, use them to make the default cap restrictions
-        if ($this->_cap_restriction_generators !== false) {
+        if (is_array($this->_cap_restriction_generators)) {
             foreach ($this->_cap_restriction_generators as $context => $generator_object) {
                 if (! $generator_object) {
                     continue;
@@ -799,7 +800,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    private static function getLoader()
+    protected static function getLoader(): LoaderInterface
     {
         if (! EEM_Base::$loader instanceof LoaderInterface) {
             EEM_Base::$loader = LoaderFactory::getLoader();
@@ -5458,7 +5459,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             foreach ($this->foreign_key_aliases as $FK_alias => $PK_column) {
                 if ($PK_column === $qualified_column && isset($cols_n_values[ $FK_alias ])) {
                     $value = $cols_n_values[ $FK_alias ];
-                    list($pk_class) = explode('.', $PK_column);
+                    [$pk_class] = explode('.', $PK_column);
                     $pk_model_name = "EEM_{$pk_class}";
                     /** @var EEM_Base $pk_model */
                     $pk_model = EE_Registry::instance()->load_model($pk_model_name);
