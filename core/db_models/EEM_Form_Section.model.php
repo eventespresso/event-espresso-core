@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\services\form\meta\Element;
 use EventEspresso\core\services\request\RequestInterface;
 
 /**
@@ -18,7 +19,7 @@ use EventEspresso\core\services\request\RequestInterface;
  * @author  Brent Christensen
  * @since   $VID:$
  */
-class EEM_Form_Section extends EEM_Base
+class EEM_Form_Section extends EEM_Form_Element
 {
     public const APPLIES_TO_ALL         = 'all';
 
@@ -27,14 +28,6 @@ class EEM_Form_Section extends EEM_Base
     public const APPLIES_TO_PURCHASER   = 'purchaser';
 
     public const APPLIES_TO_REGISTRANTS = 'registrants';
-
-    public const STATUS_ACTIVE          = 'active';
-
-    public const STATUS_ARCHIVED        = 'archived';
-
-    public const STATUS_DEFAULT         = 'default';
-
-    public const STATUS_TRASHED         = 'trashed';
 
     /**
      * @var EEM_Form_Section
@@ -51,13 +44,8 @@ class EEM_Form_Section extends EEM_Base
      */
     private $valid_applies_to_options;
 
-    /**
-     * @var array
-     */
-    private $valid_status_options;
 
-
-    protected function __construct($timezone = null)
+    protected function __construct(Element $element, $timezone = null)
     {
         $this->valid_applies_to_options = apply_filters(
             'FHEE__EEM_Form_Section__valid_applies_to_options',
@@ -66,15 +54,6 @@ class EEM_Form_Section extends EEM_Base
                 EEM_Form_Section::APPLIES_TO_PRIMARY     => esc_html__('Primary Registrant Only', 'event_espresso'),
                 EEM_Form_Section::APPLIES_TO_PURCHASER   => esc_html__('Purchasing Agent', 'event_espresso'),
                 EEM_Form_Section::APPLIES_TO_REGISTRANTS => esc_html__('Additional Registrants', 'event_espresso'),
-            ]
-        );
-        $this->valid_status_options     = apply_filters(
-            'FHEE__EEM_Form_Section__valid_status_options',
-            [
-                EEM_Form_Section::STATUS_ACTIVE   => esc_html__('Active', 'event_espresso'),
-                EEM_Form_Section::STATUS_ARCHIVED => esc_html__('Archived', 'event_espresso'),
-                EEM_Form_Section::STATUS_DEFAULT  => esc_html__('Default', 'event_espresso'),
-                EEM_Form_Section::STATUS_TRASHED  => esc_html__('Trashed', 'event_espresso'),
             ]
         );
 
@@ -116,6 +95,15 @@ class EEM_Form_Section extends EEM_Base
                     EEM_Form_Section::APPLIES_TO_ALL,
                     $this->valid_applies_to_options
                 ),
+                'FSC_attributes' => new EE_Serialized_Text_Field(
+                    'FSC_attributes',
+                    esc_html__(
+                        'Array of HTML attributes that apply to this form section.',
+                        'event_espresso'
+                    ),
+                    true,
+                    []
+                ),
                 'FSC_belongsTo' => new EE_Foreign_Key_String_Field(
                     'FSC_belongsTo',
                     esc_html__('UUID or ID of related entity this form section belongs to.', 'event_espresso'),
@@ -149,8 +137,8 @@ class EEM_Form_Section extends EEM_Base
                         'event_espresso'
                     ),
                     false,
-                    EEM_Form_Section::STATUS_ACTIVE,
-                    $this->valid_status_options
+                    Element::STATUS_ACTIVE,
+                    $element->validStatusOptions()
                 ),
                 'FSC_wpUser'    => new EE_WP_User_Field(
                     'FSC_wpUser',
@@ -170,7 +158,7 @@ class EEM_Form_Section extends EEM_Base
         $restrictions[ EEM_Base::caps_edit ]       = new EE_Restriction_Generator_Reg_Form('FSC_applies_to');
         $restrictions[ EEM_Base::caps_delete ]     = new EE_Restriction_Generator_Reg_Form('FSC_applies_to');
         $this->_cap_restriction_generators         = $restrictions;
-        parent::__construct($timezone);
+        parent::__construct($element, $timezone);
         $this->request = $this->getLoader()->getShared('EventEspresso\core\services\request\RequestInterface');
     }
 
@@ -188,25 +176,13 @@ class EEM_Form_Section extends EEM_Base
 
 
     /**
-     * @param bool $constants_only
-     * @return array
-     */
-    public function validStatusOptions(bool $constants_only = false): array
-    {
-        return $constants_only
-            ? array_keys($this->valid_status_options)
-            : $this->valid_status_options;
-    }
-
-
-    /**
-     * returns an array of Form Sections for the specified Form Section
+     * returns an array of Form Sections for the specified parent Form Section
      *
      * @param string $FSC_UUID
      * @return EE_Form_Section[]
      * @throws EE_Error
      */
-    public function getFormSectionChildren(string $FSC_UUID): array
+    public function getChildFormSections(string $FSC_UUID): array
     {
         return $this->getFormSectionsFor('FormSection.FSC_UUID', $FSC_UUID);
     }
