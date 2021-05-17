@@ -31,9 +31,9 @@
     "eeComponents.js.map": "/static/js/eeComponents.baaf3bab.js.map",
     "eeComponents.php": "/static/js/eeComponents.6c9a7abe.asset.php",
     "eventEditor.css": "/static/css/eventEditor.91f2067c.css",
-    "eventEditor.js": "/static/js/eventEditor.2c3feadc.js",
-    "eventEditor.js.map": "/static/js/eventEditor.2c3feadc.js.map",
-    "eventEditor.php": "/static/js/eventEditor.f8876e42.asset.php",
+    "eventEditor.js": "/static/js/eventEditor.d82763e8.js",
+    "eventEditor.js.map": "/static/js/eventEditor.d82763e8.js.map",
+    "eventEditor.php": "/static/js/eventEditor.579d89ac.asset.php",
     "events.js": "/static/js/events.cf48d5da.js",
     "events.js.map": "/static/js/events.cf48d5da.js.map",
     "events.php": "/static/js/events.154c4a28.asset.php",
@@ -123,7 +123,7 @@
     "static/js/dates.309f402d.js.LICENSE.txt": "/static/js/dates.309f402d.js.LICENSE.txt",
     "static/js/edtrServices.1f5bb582.js.LICENSE.txt": "/static/js/edtrServices.1f5bb582.js.LICENSE.txt",
     "static/js/eeComponents.baaf3bab.js.LICENSE.txt": "/static/js/eeComponents.baaf3bab.js.LICENSE.txt",
-    "static/js/eventEditor.2c3feadc.js.LICENSE.txt": "/static/js/eventEditor.2c3feadc.js.LICENSE.txt",
+    "static/js/eventEditor.d82763e8.js.LICENSE.txt": "/static/js/eventEditor.d82763e8.js.LICENSE.txt",
     "static/js/form.3b9fede2.js.LICENSE.txt": "/static/js/form.3b9fede2.js.LICENSE.txt",
     "static/js/plugins.0ad9457c.js.LICENSE.txt": "/static/js/plugins.0ad9457c.js.LICENSE.txt",
     "static/js/registry.902de4d3.js.LICENSE.txt": "/static/js/registry.902de4d3.js.LICENSE.txt",
@@ -247,8 +247,8 @@
     ],
     "eventEditor": [
       "static/css/eventEditor.91f2067c.css",
-      "static/js/eventEditor.2c3feadc.js",
-      "static/js/eventEditor.f8876e42.asset.php"
+      "static/js/eventEditor.d82763e8.js",
+      "static/js/eventEditor.579d89ac.asset.php"
     ],
     "wpPluginsPage": [
       "static/css/wpPluginsPage.c9f19421.css",
