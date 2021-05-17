@@ -249,7 +249,34 @@ class EE_DMS_Core_4_12_0 extends EE_Data_Migration_Script_Base
 				PRIMARY KEY  (FSC_ID),
 				UNIQUE KEY FSC_UUID_UNIQUE (FSC_UUID),
 				KEY FSC_belongsTo (FSC_belongsTo),
-				KEY FSC_order (FSC_order)';
+				KEY FSC_order (FSC_order),
+				KEY FSC_status (FSC_status)';
+        $this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
+
+        $table_name = 'esp_form_input';
+        $sql        = 'FIN_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
+                FIN_UUID binary(16) NOT NULL,
+				FIN_adminLabel tinytext NOT NULL,
+				FIN_adminOnly tinyint(1) unsigned NOT NULL DEFAULT 0,
+				FIN_belongsTo binary(16) NULL,
+				FIN_helpClass text NULL,
+				FIN_helpText text NULL,
+				FIN_htmlClass text NULL,
+				FIN_max smallint(5) NOT NULL DEFAULT -1,
+				FIN_min smallint(5) NULL,
+				FIN_order tinyint(2) unsigned NOT NULL DEFAULT 0,
+				FIN_placeholder tinytext NULL,
+				FIN_publicLabel text NULL,
+				FIN_required tinyint(1) unsigned NOT NULL DEFAULT 0,
+				FIN_requiredText text NULL,
+				FIN_status tinytext NULL,
+				FIN_type tinytext NULL,
+				FIN_wpUser bigint(20) unsigned NULL,
+				PRIMARY KEY  (FIN_ID),
+				UNIQUE KEY FIN_UUID_UNIQUE (FIN_UUID),
+				KEY FIN_belongsTo (FIN_belongsTo),
+				KEY FIN_order (FIN_order),
+				KEY FIN_status (FIN_status)';
         $this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
 
         $now_in_mysql = current_time('mysql', true);
