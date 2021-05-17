@@ -746,9 +746,15 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         $params    = EEM_Base::getMirror()->getParameters($model_class_Name);
         if (count($params) > 1) {
             if ($params[1]->getName() === 'model_field_factory') {
-                $arguments[1] = EEM_Base::getLoader()->getShared(ModelFieldFactory::class);
+                $arguments = [
+                    $timezone,
+                    EEM_Base::getLoader()->getShared(ModelFieldFactory::class)
+                ];
             } elseif ($model_class_Name === 'EEM_Form_Section' || $model_class_Name === 'EEM_Form_Input') {
-                $arguments[1] = EEM_Base::getLoader()->getShared('EventEspresso\core\services\form\meta\Element');
+                $arguments = [
+                    EEM_Base::getLoader()->getShared('EventEspresso\core\services\form\meta\Element'),
+                    $timezone
+                ];
             }
         }
         return $arguments;
