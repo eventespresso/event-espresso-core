@@ -6,8 +6,11 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\ModelConfigurationException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
 use EventEspresso\core\interfaces\ResettableInterface;
+use EventEspresso\core\services\container\Mirror;
+use EventEspresso\core\services\dependencies\DependencyResolver;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
+use EventEspresso\core\services\orm\ModelFieldFactory;
 use EventEspresso\core\services\request\RequestInterface;
 
 /**
@@ -74,7 +77,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     protected $plural_item   = 'Items';
 
     /**
-     * @type \EE_Table_Base[] $_tables array of EE_Table objects for defining which tables comprise this model.
+     * @type EE_Table_Base[] $_tables array of EE_Table objects for defining which tables comprise this model.
      */
     protected $_tables;
 
@@ -83,19 +86,19 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * and the value is an array. Each of those sub-arrays have keys of field names (eg 'ATT_ID', which should also be
      * variable names on the model objects (eg, EE_Attendee), and the keys should be children of EE_Model_Field
      *
-     * @var \EE_Model_Field_Base[][] $_fields
+     * @var EE_Model_Field_Base[][] $_fields
      */
     protected $_fields;
 
     /**
      * array of different kinds of relations
      *
-     * @var \EE_Model_Relation_Base[] $_model_relations
+     * @var EE_Model_Relation_Base[] $_model_relations
      */
-    protected $_model_relations;
+    protected $_model_relations = [];
 
     /**
-     * @var \EE_Index[] $_indexes
+     * @var EE_Index[] $_indexes
      */
     protected $_indexes = array();
 
@@ -456,6 +459,12 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      */
     private static $loader;
 
+    /**
+     * @var Mirror
+     */
+    private static $mirror;
+
+
 
     /**
      * constant used to show EEM_Base has not yet verified the db on this http request
@@ -696,58 +705,82 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     }
 
 
-
     /**
-     * Used to set the $_model_query_blog_id static property.
-     *
-     * @param int $blog_id  If provided then will set the blog_id for the models to this id.  If not provided then the
-     *                      value for get_current_blog_id() will be used.
+     * @return LoaderInterface
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
-    public static function set_model_query_blog_id($blog_id = 0)
+    protected static function getLoader(): LoaderInterface
     {
-        EEM_Base::$_model_query_blog_id = $blog_id > 0 ? (int) $blog_id : get_current_blog_id();
+        if (! EEM_Base::$loader instanceof LoaderInterface) {
+            EEM_Base::$loader = LoaderFactory::getLoader();
+        }
+        return EEM_Base::$loader;
     }
 
 
-
     /**
-     * Returns whatever is set as the internal $model_query_blog_id.
-     *
-     * @return int
+     * @return Mirror
+     * @since   $VID:$
      */
-    public static function get_model_query_blog_id()
+    private static function getMirror(): Mirror
     {
-        return EEM_Base::$_model_query_blog_id;
+        if (! EEM_Base::$mirror instanceof Mirror) {
+            EEM_Base::$mirror = EEM_Base::getLoader()->getShared(Mirror::class);
+        }
+        return EEM_Base::$mirror;
     }
 
+
+    /**
+     * @param string $model_class_Name
+     * @param string $timezone
+     * @return array
+     * @throws ReflectionException
+     * @since   $VID:$
+     */
+    private static function getModelArguments(string $model_class_Name, string $timezone): array
+    {
+        $arguments = [$timezone];
+        $params    = EEM_Base::getMirror()->getParameters($model_class_Name);
+        if (count($params) > 1) {
+            if ($params[1]->getName() === 'model_field_factory') {
+                $arguments[1] = EEM_Base::getLoader()->getShared(ModelFieldFactory::class);
+            } elseif ($model_class_Name === 'EEM_Form_Section' || $model_class_Name === 'EEM_Form_Input') {
+                $arguments[1] = EEM_Base::getLoader()->getShared('EventEspresso\core\services\form\meta\Element');
+            }
+        }
+        return $arguments;
+    }
 
 
     /**
      * This function is a singleton method used to instantiate the Espresso_model object
      *
-     * @param string $timezone string representing the timezone we want to set for returned Date Time Strings
+     * @param string|null $timezone   string representing the timezone we want to set for returned Date Time Strings
      *                                (and any incoming timezone data that gets saved).
      *                                Note this just sends the timezone info to the date time model field objects.
      *                                Default is NULL
      *                                (and will be assumed using the set timezone in the 'timezone_string' wp option)
      * @return static (as in the concrete child class)
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public static function instance($timezone = null)
     {
         // check if instance of Espresso_model already exists
         if (! static::$_instance instanceof static) {
-            // instantiate Espresso_model
-            static::$_instance = new static(
-                $timezone,
-                LoaderFactory::getLoader()->load('EventEspresso\core\services\orm\ModelFieldFactory')
-            );
+            $model_class_Name = get_called_class();
+            $arguments = EEM_Base::getModelArguments($model_class_Name, (string) $timezone);
+            $model = new static(...$arguments);
+            EEM_Base::getLoader()->share($model_class_Name, $model, $arguments);
+            static::$_instance = $model;
         }
         // we might have a timezone set, let set_timezone decide what to do with it
-        static::$_instance->set_timezone($timezone);
+        if ($timezone){
+            static::$_instance->set_timezone($timezone);
+        }
         // Espresso_model object
         return static::$_instance;
     }
@@ -757,7 +790,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     /**
      * resets the model and returns it
      *
-     * @param null | string $timezone
+     * @param string|null $timezone
      * @return EEM_Base|null (if the model was already instantiated, returns it, with
      * all its properties reset; if it wasn't instantiated, returns null)
      * @throws EE_Error
@@ -773,9 +806,9 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             // because if someone has a reference to it, we can't remove their reference
             // so it's best to keep using the same reference, but change the original object
             // reset all its properties to their original values as defined in the class
-            $r = new ReflectionClass(get_class(static::$_instance));
-            $static_properties = $r->getStaticProperties();
-            foreach ($r->getDefaultProperties() as $property => $value) {
+            $model_class_Name = get_called_class();
+            $static_properties = EEM_Base::getMirror()->getStaticProperties($model_class_Name);
+            foreach (EEM_Base::getMirror()->getDefaultProperties($model_class_Name) as $property => $value) {
                 // don't set instance to null like it was originally,
                 // but it's static anyways, and we're ignoring static properties (for now at least)
                 if (! isset($static_properties[ $property ])) {
@@ -783,29 +816,36 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                 }
             }
             // and then directly call its constructor again, like we would if we were creating a new one
-            static::$_instance->__construct(
-                $timezone,
-                LoaderFactory::getLoader()->load('EventEspresso\core\services\orm\ModelFieldFactory')
-            );
+            $arguments = EEM_Base::getModelArguments($model_class_Name, (string) $timezone);
+            static::$_instance->__construct(...$arguments);
             return self::instance();
         }
         return null;
     }
 
 
+    /**
+     * Used to set the $_model_query_blog_id static property.
+     *
+     * @param int $blog_id  If provided then will set the blog_id for the models to this id.  If not provided then the
+     *                      value for get_current_blog_id() will be used.
+     */
+    public static function set_model_query_blog_id($blog_id = 0)
+    {
+        EEM_Base::$_model_query_blog_id = $blog_id > 0
+            ? (int) $blog_id
+            : get_current_blog_id();
+    }
+
 
     /**
-     * @return LoaderInterface
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
+     * Returns whatever is set as the internal $model_query_blog_id.
+     *
+     * @return int
      */
-    protected static function getLoader(): LoaderInterface
+    public static function get_model_query_blog_id()
     {
-        if (! EEM_Base::$loader instanceof LoaderInterface) {
-            EEM_Base::$loader = LoaderFactory::getLoader();
-        }
-        return EEM_Base::$loader;
+        return EEM_Base::$_model_query_blog_id;
     }
 
 
