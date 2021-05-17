@@ -122,8 +122,8 @@ class EEM_Form_Input extends EEM_Form_Element
                         'Maximum numeric value or maximum characters allowed for form input answer.',
                         'event_espresso'
                     ),
-                    true,
-                    null
+                    false,
+                    EE_INF
                 ),
                 'FIN_min'     => new EE_Integer_Field(
                     'FIN_min',
@@ -151,7 +151,7 @@ class EEM_Form_Input extends EEM_Form_Element
                 ),
                 'FIN_publicLabel' => new EE_Plain_Text_Field(
                     'FIN_publicLabel',
-                    esc_html__('HTML classes to be applied to this form input\'s container.', 'event_espresso'),
+                    esc_html__('Input label displayed on public forms, ie: the actual question text.', 'event_espresso'),
                     true,
                     null
                 ),
@@ -176,7 +176,7 @@ class EEM_Form_Input extends EEM_Form_Element
                 'FIN_status'    => new EE_Enum_Text_Field(
                     'FIN_status',
                     esc_html__(
-                        'Whether form input is active, archived, trashed, or used as a default on new forms. Values correspond to the EEM_Form_Input::STATUS_TO_* constants.',
+                        'Whether form input is active, archived, trashed, or used as a default on new forms. Values correspond to the EEM_Form_Input::STATUS_* constants.',
                         'event_espresso'
                     ),
                     false,
