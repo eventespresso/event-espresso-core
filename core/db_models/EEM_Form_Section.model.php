@@ -95,15 +95,15 @@ class EEM_Form_Section extends EEM_Form_Element
                     EEM_Form_Section::APPLIES_TO_ALL,
                     $this->valid_applies_to_options
                 ),
-                'FSC_attributes' => new EE_Serialized_Text_Field(
-                    'FSC_attributes',
-                    esc_html__(
-                        'Array of HTML attributes that apply to this form section.',
-                        'event_espresso'
-                    ),
-                    true,
-                    []
-                ),
+                // 'FSC_attributes' => new EE_Serialized_Text_Field(
+                //     'FSC_attributes',
+                //     esc_html__(
+                //         'Array of HTML attributes that apply to this form section.',
+                //         'event_espresso'
+                //     ),
+                //     true,
+                //     []
+                // ),
                 'FSC_belongsTo' => new EE_Foreign_Key_String_Field(
                     'FSC_belongsTo',
                     esc_html__('UUID or ID of related entity this form section belongs to.', 'event_espresso'),
