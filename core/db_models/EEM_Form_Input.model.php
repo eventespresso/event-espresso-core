@@ -1,6 +1,7 @@
 <?php
 
 use EventEspresso\core\services\form\meta\Element;
+use EventEspresso\core\services\form\meta\inputs\Text;
 use EventEspresso\core\services\form\meta\InputTypes;
 use EventEspresso\core\services\request\RequestInterface;
 
@@ -190,7 +191,7 @@ class EEM_Form_Input extends EEM_Form_Element
                         'event_espresso'
                     ),
                     false,
-                    Element::STATUS_ACTIVE,
+                    Text::TYPE_TEXT,
                     $this->validTypeOptions()
                 ),
                 'FIN_wpUser'    => new EE_WP_User_Field(
