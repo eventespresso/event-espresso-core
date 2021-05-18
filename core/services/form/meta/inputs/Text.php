@@ -22,12 +22,12 @@ class Text
     /**
      * indicates that the input is a TEXTAREA that only allows plain text
      */
-    public const TYPE_TEXTAREA = 'TEXTAREA';
+    public const TYPE_TEXTAREA = 'textarea';
 
     /**
      * indicates that the input is a TEXTAREA that allows simple html
      */
-    public const TYPE_TEXTAREA_HTML = 'TEXTAREA_HTML';
+    public const TYPE_TEXTAREA_HTML = 'textarea-html';
 
 
     /**
