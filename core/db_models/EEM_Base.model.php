@@ -750,9 +750,15 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                     $timezone,
                     EEM_Base::getLoader()->getShared(ModelFieldFactory::class)
                 ];
-            } elseif ($model_class_Name === 'EEM_Form_Section' || $model_class_Name === 'EEM_Form_Input') {
+            } elseif ($model_class_Name === 'EEM_Form_Section') {
                 $arguments = [
                     EEM_Base::getLoader()->getShared('EventEspresso\core\services\form\meta\Element'),
+                    $timezone
+                ];
+            } elseif ($model_class_Name === 'EEM_Form_Input') {
+                $arguments = [
+                    EEM_Base::getLoader()->getShared('EventEspresso\core\services\form\meta\Element'),
+                    EEM_Base::getLoader()->getShared('EventEspresso\core\services\form\meta\InputTypes'),
                     $timezone
                 ];
             }
@@ -777,10 +783,9 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     {
         // check if instance of Espresso_model already exists
         if (! static::$_instance instanceof static) {
-            $model_class_Name = get_called_class();
-            $arguments = EEM_Base::getModelArguments($model_class_Name, (string) $timezone);
+            $arguments = EEM_Base::getModelArguments(static::class, (string) $timezone);
             $model = new static(...$arguments);
-            EEM_Base::getLoader()->share($model_class_Name, $model, $arguments);
+            EEM_Base::getLoader()->share(static::class, $model, $arguments);
             static::$_instance = $model;
         }
         // we might have a timezone set, let set_timezone decide what to do with it
@@ -807,26 +812,25 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      */
     public static function reset($timezone = null)
     {
-        if (static::$_instance instanceof EEM_Base) {
-            // let's try to NOT swap out the current instance for a new one
-            // because if someone has a reference to it, we can't remove their reference
-            // so it's best to keep using the same reference, but change the original object
-            // reset all its properties to their original values as defined in the class
-            $model_class_Name = get_called_class();
-            $static_properties = EEM_Base::getMirror()->getStaticProperties($model_class_Name);
-            foreach (EEM_Base::getMirror()->getDefaultProperties($model_class_Name) as $property => $value) {
-                // don't set instance to null like it was originally,
-                // but it's static anyways, and we're ignoring static properties (for now at least)
-                if (! isset($static_properties[ $property ])) {
-                    static::$_instance->{$property} = $value;
-                }
-            }
-            // and then directly call its constructor again, like we would if we were creating a new one
-            $arguments = EEM_Base::getModelArguments($model_class_Name, (string) $timezone);
-            static::$_instance->__construct(...$arguments);
-            return self::instance();
+        if (! static::$_instance instanceof EEM_Base) {
+            return null;
         }
-        return null;
+        // Let's NOT swap out the current instance for a new one
+        // because if someone has a reference to it, we can't remove their reference.
+        // It's best to keep using the same reference but change the original object instead,
+        // so reset all its properties to their original values as defined in the class.
+        $static_properties = EEM_Base::getMirror()->getStaticProperties(static::class);
+        foreach (EEM_Base::getMirror()->getDefaultProperties(static::class) as $property => $value) {
+            // don't set instance to null like it was originally,
+            // but it's static anyways, and we're ignoring static properties (for now at least)
+            if (! isset($static_properties[ $property ])) {
+                static::$_instance->{$property} = $value;
+            }
+        }
+        // and then directly call its constructor again, like we would if we were creating a new one
+        $arguments = EEM_Base::getModelArguments(static::class, (string) $timezone);
+        static::$_instance->__construct(...$arguments);
+        return self::instance();
     }
 
 
