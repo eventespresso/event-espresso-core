@@ -551,6 +551,12 @@ $generated_i18n_strings = array(
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:98
 	__( 'Sold', 'event_espresso' ),
 
+	// Reference: domains/core/admin/eventEditor/src/ui/registrationForm/RegistrationForm.tsx:128
+	__( 'Registration Form Builder', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/registrationForm/RegistrationForm.tsx:156
+	__( 'Form Elements', 'event_espresso' ),
+
 	// Reference: domains/core/admin/eventEditor/src/ui/ticketAssignmentsManager/components/ErrorMessage.tsx:18
 	__( 'Tickets must always have at least one date assigned to them but one or more of the tickets below does not have any. 
 Please correct the assignments for the highlighted cells.', 'event_espresso' ),
