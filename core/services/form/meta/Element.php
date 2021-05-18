@@ -32,7 +32,7 @@ class Element
     private $valid_status_options;
 
 
-    protected function __construct()
+    public function __construct()
     {
         $this->valid_status_options = apply_filters(
             'FHEE__EventEspresso_core_services_form_meta_Element__valid_status_options',

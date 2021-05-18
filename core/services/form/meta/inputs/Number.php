@@ -27,7 +27,7 @@ class Number
     private $valid_type_options;
 
 
-    protected function __construct()
+    public function __construct()
     {
         $this->valid_type_options = apply_filters(
             'FHEE__EventEspresso_core_services_form_meta_inputs_Number__valid_type_options',
