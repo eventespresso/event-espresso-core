@@ -200,10 +200,10 @@ class Mirror
      * @param ReflectionParameter $param
      * @param string              $class_name
      * @param string              $index
-     * @return string|null
+     * @return array|string|null
      * @throws ReflectionException
      */
-    public function getParameterDefaultValue(ReflectionParameter $param, string $class_name, string $index): ?string
+    public function getParameterDefaultValue(ReflectionParameter $param, string $class_name, string $index)
     {
         if (isset($this->parameter_classes[ $class_name ][ $index ]['param_class_default'])) {
             return $this->parameter_classes[ $class_name ][ $index ]['param_class_default'];
