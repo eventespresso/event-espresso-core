@@ -133,7 +133,7 @@ $generated_i18n_strings = array(
 	// Reference: domains/core/admin/blocks/src/services/utils.ts:9
 	__( 'Loading…', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/EventDescription.tsx:32
+	// Reference: domains/core/admin/eventEditor/src/ui/EventDescription.tsx:33
 	__( 'Event Description', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/EventRegistrationOptions/ActiveStatus.tsx:22
@@ -166,7 +166,7 @@ $generated_i18n_strings = array(
 	// Reference: domains/core/admin/eventEditor/src/ui/EventRegistrationOptions/TicketSelector.tsx:9
 	__( 'Ticket Selector Disabled', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/EventRegistrationOptions/index.tsx:42
+	// Reference: domains/core/admin/eventEditor/src/ui/EventRegistrationOptions/index.tsx:43
 	__( 'Registration Options', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/DateRegistrationsLink.tsx:13
@@ -551,11 +551,8 @@ $generated_i18n_strings = array(
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:98
 	__( 'Sold', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/registrationForm/RegistrationForm.tsx:128
+	// Reference: domains/core/admin/eventEditor/src/ui/registrationForm/RegistrationForm.tsx:47
 	__( 'Registration Form Builder', 'event_espresso' ),
-
-	// Reference: domains/core/admin/eventEditor/src/ui/registrationForm/RegistrationForm.tsx:156
-	__( 'Form Elements', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/ticketAssignmentsManager/components/ErrorMessage.tsx:18
 	__( 'Tickets must always have at least one date assigned to them but one or more of the tickets below does not have any. 
@@ -1544,6 +1541,9 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/EntityList/filterBar/buttons/ToggleFiltersButton.tsx:9
 	__( 'show filters', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:8
+	__( 'Form Elements', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/Legend/ToggleLegendButton.tsx:26
 	__( 'hide legend', 'event_espresso' ),
