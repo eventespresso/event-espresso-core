@@ -1,52 +1,52 @@
 {
   "files": {
     "adapters.css": "/static/css/adapters.4dd7ea48.css",
-    "adapters.js": "/static/js/adapters.8e8b0fbe.js",
-    "adapters.js.map": "/static/js/adapters.8e8b0fbe.js.map",
-    "adapters.php": "/static/js/adapters.8ad49afb.asset.php",
+    "adapters.js": "/static/js/adapters.13c79b1a.js",
+    "adapters.js.map": "/static/js/adapters.13c79b1a.js.map",
+    "adapters.php": "/static/js/adapters.7e35de08.asset.php",
     "blocks.css": "/static/css/blocks.72d5bd34.css",
-    "blocks.js": "/static/js/blocks.a2edaa6c.js",
-    "blocks.js.map": "/static/js/blocks.a2edaa6c.js.map",
-    "blocks.php": "/static/js/blocks.88f7e389.asset.php",
+    "blocks.js": "/static/js/blocks.70ea59e6.js",
+    "blocks.js.map": "/static/js/blocks.70ea59e6.js.map",
+    "blocks.php": "/static/js/blocks.c5644aed.asset.php",
     "constants.js": "/static/js/constants.8ab7a855.js",
     "constants.js.map": "/static/js/constants.8ab7a855.js.map",
     "constants.php": "/static/js/constants.6186f0c0.asset.php",
-    "data.js": "/static/js/data.13f9fc0b.js",
-    "data.js.map": "/static/js/data.13f9fc0b.js.map",
-    "data.php": "/static/js/data.4e279473.asset.php",
+    "data.js": "/static/js/data.64d9a540.js",
+    "data.js.map": "/static/js/data.64d9a540.js.map",
+    "data.php": "/static/js/data.836097d5.asset.php",
     "dates.css": "/static/css/dates.327969d0.css",
-    "dates.js": "/static/js/dates.f014b3c5.js",
-    "dates.js.map": "/static/js/dates.f014b3c5.js.map",
-    "dates.php": "/static/js/dates.bf1494a1.asset.php",
-    "dates-card-view.js": "/static/js/dates-card-view.ea2eaff4.chunk.js",
-    "dates-card-view.js.map": "/static/js/dates-card-view.ea2eaff4.chunk.js.map",
+    "dates.js": "/static/js/dates.b576daf5.js",
+    "dates.js.map": "/static/js/dates.b576daf5.js.map",
+    "dates.php": "/static/js/dates.bf7730b6.asset.php",
+    "dates-card-view.js": "/static/js/dates-card-view.418ecc72.chunk.js",
+    "dates-card-view.js.map": "/static/js/dates-card-view.418ecc72.chunk.js.map",
     "dates-table-view.css": "/static/css/dates-table-view.16f24534.chunk.css",
-    "dates-table-view.js": "/static/js/dates-table-view.277d81b9.chunk.js",
-    "dates-table-view.js.map": "/static/js/dates-table-view.277d81b9.chunk.js.map",
-    "edtrServices.js": "/static/js/edtrServices.e3f8fc5d.js",
-    "edtrServices.js.map": "/static/js/edtrServices.e3f8fc5d.js.map",
-    "edtrServices.php": "/static/js/edtrServices.f4924bc2.asset.php",
+    "dates-table-view.js": "/static/js/dates-table-view.0aa1551f.chunk.js",
+    "dates-table-view.js.map": "/static/js/dates-table-view.0aa1551f.chunk.js.map",
+    "edtrServices.js": "/static/js/edtrServices.7a1068df.js",
+    "edtrServices.js.map": "/static/js/edtrServices.7a1068df.js.map",
+    "edtrServices.php": "/static/js/edtrServices.4028f8ab.asset.php",
     "eeComponents.css": "/static/css/eeComponents.3768f336.css",
-    "eeComponents.js": "/static/js/eeComponents.4398ab6d.js",
-    "eeComponents.js.map": "/static/js/eeComponents.4398ab6d.js.map",
-    "eeComponents.php": "/static/js/eeComponents.efc6c418.asset.php",
+    "eeComponents.js": "/static/js/eeComponents.9ba43a6f.js",
+    "eeComponents.js.map": "/static/js/eeComponents.9ba43a6f.js.map",
+    "eeComponents.php": "/static/js/eeComponents.632d69f2.asset.php",
     "eventEditor.css": "/static/css/eventEditor.91f2067c.css",
-    "eventEditor.js": "/static/js/eventEditor.4b1c96f5.js",
-    "eventEditor.js.map": "/static/js/eventEditor.4b1c96f5.js.map",
-    "eventEditor.php": "/static/js/eventEditor.b699d86f.asset.php",
+    "eventEditor.js": "/static/js/eventEditor.b0d97b98.js",
+    "eventEditor.js.map": "/static/js/eventEditor.b0d97b98.js.map",
+    "eventEditor.php": "/static/js/eventEditor.09da212a.asset.php",
     "events.js": "/static/js/events.509cc84e.js",
     "events.js.map": "/static/js/events.509cc84e.js.map",
     "events.php": "/static/js/events.e23e52e5.asset.php",
     "form.css": "/static/css/form.83d587a1.css",
-    "form.js": "/static/js/form.2bc8d62e.js",
-    "form.js.map": "/static/js/form.2bc8d62e.js.map",
-    "form.php": "/static/js/form.0c440431.asset.php",
+    "form.js": "/static/js/form.b219664b.js",
+    "form.js.map": "/static/js/form.b219664b.js.map",
+    "form.php": "/static/js/form.62f04f3e.asset.php",
     "helpers.js": "/static/js/helpers.32fd36e7.js",
     "helpers.js.map": "/static/js/helpers.32fd36e7.js.map",
     "helpers.php": "/static/js/helpers.5e35719d.asset.php",
-    "hooks.js": "/static/js/hooks.9f93b0d4.js",
-    "hooks.js.map": "/static/js/hooks.9f93b0d4.js.map",
-    "hooks.php": "/static/js/hooks.fa64a68d.asset.php",
+    "hooks.js": "/static/js/hooks.19b7cc8f.js",
+    "hooks.js.map": "/static/js/hooks.19b7cc8f.js.map",
+    "hooks.php": "/static/js/hooks.2e7b6290.asset.php",
     "i18n.js": "/static/js/i18n.f583c2db.js",
     "i18n.js.map": "/static/js/i18n.f583c2db.js.map",
     "i18n.php": "/static/js/i18n.e1a94ca0.asset.php",
@@ -56,53 +56,53 @@
     "plugins.js": "/static/js/plugins.12086f0c.js",
     "plugins.js.map": "/static/js/plugins.12086f0c.js.map",
     "plugins.php": "/static/js/plugins.d53ff470.asset.php",
-    "predicates.js": "/static/js/predicates.1bf5574c.js",
-    "predicates.js.map": "/static/js/predicates.1bf5574c.js.map",
-    "predicates.php": "/static/js/predicates.0e0b7a6b.asset.php",
-    "registry.js": "/static/js/registry.97452a73.js",
-    "registry.js.map": "/static/js/registry.97452a73.js.map",
-    "registry.php": "/static/js/registry.0d1ce033.asset.php",
+    "predicates.js": "/static/js/predicates.71fad0b1.js",
+    "predicates.js.map": "/static/js/predicates.71fad0b1.js.map",
+    "predicates.php": "/static/js/predicates.c7769755.asset.php",
+    "registry.js": "/static/js/registry.2e48a029.js",
+    "registry.js.map": "/static/js/registry.2e48a029.js.map",
+    "registry.php": "/static/js/registry.4c25927a.asset.php",
     "richTextEditor.css": "/static/css/richTextEditor.d1aa5bb1.css",
-    "richTextEditor.js": "/static/js/richTextEditor.b1dbac20.js",
-    "richTextEditor.js.map": "/static/js/richTextEditor.b1dbac20.js.map",
-    "richTextEditor.php": "/static/js/richTextEditor.5d27aa53.asset.php",
-    "services.js": "/static/js/services.37b55bfa.js",
-    "services.js.map": "/static/js/services.37b55bfa.js.map",
-    "services.php": "/static/js/services.2c577305.asset.php",
-    "slotFill.js": "/static/js/slotFill.39e8e3e1.js",
-    "slotFill.js.map": "/static/js/slotFill.39e8e3e1.js.map",
-    "slotFill.php": "/static/js/slotFill.9fddde00.asset.php",
-    "storage.js": "/static/js/storage.aa3451bd.js",
-    "storage.js.map": "/static/js/storage.aa3451bd.js.map",
-    "storage.php": "/static/js/storage.d0e390ab.asset.php",
+    "richTextEditor.js": "/static/js/richTextEditor.21ba8e9d.js",
+    "richTextEditor.js.map": "/static/js/richTextEditor.21ba8e9d.js.map",
+    "richTextEditor.php": "/static/js/richTextEditor.60deadf1.asset.php",
+    "services.js": "/static/js/services.9abf4731.js",
+    "services.js.map": "/static/js/services.9abf4731.js.map",
+    "services.php": "/static/js/services.bb4393e2.asset.php",
+    "slotFill.js": "/static/js/slotFill.841ea350.js",
+    "slotFill.js.map": "/static/js/slotFill.841ea350.js.map",
+    "slotFill.php": "/static/js/slotFill.16bac9c2.asset.php",
+    "storage.js": "/static/js/storage.532fec0e.js",
+    "storage.js.map": "/static/js/storage.532fec0e.js.map",
+    "storage.php": "/static/js/storage.17a9a687.asset.php",
     "styles.js": "/static/js/styles.8180e4bd.js",
     "styles.js.map": "/static/js/styles.8180e4bd.js.map",
     "styles.php": "/static/js/styles.bc5da10d.asset.php",
     "tickets-card-view.css": "/static/css/tickets-card-view.03049824.chunk.css",
-    "tickets-card-view.js": "/static/js/tickets-card-view.917240d7.chunk.js",
-    "tickets-card-view.js.map": "/static/js/tickets-card-view.917240d7.chunk.js.map",
+    "tickets-card-view.js": "/static/js/tickets-card-view.5734be1c.chunk.js",
+    "tickets-card-view.js.map": "/static/js/tickets-card-view.5734be1c.chunk.js.map",
     "tickets-table-view.css": "/static/css/tickets-table-view.03049824.chunk.css",
-    "tickets-table-view.js": "/static/js/tickets-table-view.4ae99772.chunk.js",
-    "tickets-table-view.js.map": "/static/js/tickets-table-view.4ae99772.chunk.js.map",
+    "tickets-table-view.js": "/static/js/tickets-table-view.ffaecdf8.chunk.js",
+    "tickets-table-view.js.map": "/static/js/tickets-table-view.ffaecdf8.chunk.js.map",
     "toaster.css": "/static/css/toaster.08dcd7bb.css",
-    "toaster.js": "/static/js/toaster.5e680e68.js",
-    "toaster.js.map": "/static/js/toaster.5e680e68.js.map",
-    "toaster.php": "/static/js/toaster.533e1f3e.asset.php",
+    "toaster.js": "/static/js/toaster.84c2e949.js",
+    "toaster.js.map": "/static/js/toaster.84c2e949.js.map",
+    "toaster.php": "/static/js/toaster.760cde32.asset.php",
     "tpc.css": "/static/css/tpc.7476c26e.css",
-    "tpc.js": "/static/js/tpc.6d791c48.js",
-    "tpc.js.map": "/static/js/tpc.6d791c48.js.map",
-    "tpc.php": "/static/js/tpc.2bfaa310.asset.php",
-    "uiComponents.css": "/static/css/uiComponents.95d84c60.css",
-    "uiComponents.js": "/static/js/uiComponents.e7056323.js",
-    "uiComponents.js.map": "/static/js/uiComponents.e7056323.js.map",
-    "uiComponents.php": "/static/js/uiComponents.8114f9d5.asset.php",
-    "utils.js": "/static/js/utils.2f3545f3.js",
-    "utils.js.map": "/static/js/utils.2f3545f3.js.map",
-    "utils.php": "/static/js/utils.38fe4584.asset.php",
+    "tpc.js": "/static/js/tpc.72faaa42.js",
+    "tpc.js.map": "/static/js/tpc.72faaa42.js.map",
+    "tpc.php": "/static/js/tpc.018468fe.asset.php",
+    "uiComponents.css": "/static/css/uiComponents.ab320be5.css",
+    "uiComponents.js": "/static/js/uiComponents.60bd19a8.js",
+    "uiComponents.js.map": "/static/js/uiComponents.60bd19a8.js.map",
+    "uiComponents.php": "/static/js/uiComponents.4ee789fb.asset.php",
+    "utils.js": "/static/js/utils.89f883e4.js",
+    "utils.js.map": "/static/js/utils.89f883e4.js.map",
+    "utils.php": "/static/js/utils.2d70e35a.asset.php",
     "wpPluginsPage.css": "/static/css/wpPluginsPage.c9f19421.css",
-    "wpPluginsPage.js": "/static/js/wpPluginsPage.81a8d3b3.js",
-    "wpPluginsPage.js.map": "/static/js/wpPluginsPage.81a8d3b3.js.map",
-    "wpPluginsPage.php": "/static/js/wpPluginsPage.c64f7ada.asset.php",
+    "wpPluginsPage.js": "/static/js/wpPluginsPage.4b20d39c.js",
+    "wpPluginsPage.js.map": "/static/js/wpPluginsPage.4b20d39c.js.map",
+    "wpPluginsPage.php": "/static/js/wpPluginsPage.1a5024ae.asset.php",
     "static/css/adapters.4dd7ea48.css.map": "/static/css/adapters.4dd7ea48.css.map",
     "static/css/blocks.72d5bd34.css.map": "/static/css/blocks.72d5bd34.css.map",
     "static/css/dates-table-view.16f24534.chunk.css.map": "/static/css/dates-table-view.16f24534.chunk.css.map",
@@ -115,53 +115,53 @@
     "static/css/tickets-table-view.03049824.chunk.css.map": "/static/css/tickets-table-view.03049824.chunk.css.map",
     "static/css/toaster.08dcd7bb.css.map": "/static/css/toaster.08dcd7bb.css.map",
     "static/css/tpc.7476c26e.css.map": "/static/css/tpc.7476c26e.css.map",
-    "static/css/uiComponents.95d84c60.css.map": "/static/css/uiComponents.95d84c60.css.map",
+    "static/css/uiComponents.ab320be5.css.map": "/static/css/uiComponents.ab320be5.css.map",
     "static/css/wpPluginsPage.c9f19421.css.map": "/static/css/wpPluginsPage.c9f19421.css.map",
-    "static/js/adapters.8e8b0fbe.js.LICENSE.txt": "/static/js/adapters.8e8b0fbe.js.LICENSE.txt",
-    "static/js/blocks.a2edaa6c.js.LICENSE.txt": "/static/js/blocks.a2edaa6c.js.LICENSE.txt",
-    "static/js/data.13f9fc0b.js.LICENSE.txt": "/static/js/data.13f9fc0b.js.LICENSE.txt",
-    "static/js/dates.f014b3c5.js.LICENSE.txt": "/static/js/dates.f014b3c5.js.LICENSE.txt",
-    "static/js/edtrServices.e3f8fc5d.js.LICENSE.txt": "/static/js/edtrServices.e3f8fc5d.js.LICENSE.txt",
-    "static/js/eeComponents.4398ab6d.js.LICENSE.txt": "/static/js/eeComponents.4398ab6d.js.LICENSE.txt",
-    "static/js/eventEditor.4b1c96f5.js.LICENSE.txt": "/static/js/eventEditor.4b1c96f5.js.LICENSE.txt",
-    "static/js/form.2bc8d62e.js.LICENSE.txt": "/static/js/form.2bc8d62e.js.LICENSE.txt",
+    "static/js/adapters.13c79b1a.js.LICENSE.txt": "/static/js/adapters.13c79b1a.js.LICENSE.txt",
+    "static/js/blocks.70ea59e6.js.LICENSE.txt": "/static/js/blocks.70ea59e6.js.LICENSE.txt",
+    "static/js/data.64d9a540.js.LICENSE.txt": "/static/js/data.64d9a540.js.LICENSE.txt",
+    "static/js/dates.b576daf5.js.LICENSE.txt": "/static/js/dates.b576daf5.js.LICENSE.txt",
+    "static/js/edtrServices.7a1068df.js.LICENSE.txt": "/static/js/edtrServices.7a1068df.js.LICENSE.txt",
+    "static/js/eeComponents.9ba43a6f.js.LICENSE.txt": "/static/js/eeComponents.9ba43a6f.js.LICENSE.txt",
+    "static/js/eventEditor.b0d97b98.js.LICENSE.txt": "/static/js/eventEditor.b0d97b98.js.LICENSE.txt",
+    "static/js/form.b219664b.js.LICENSE.txt": "/static/js/form.b219664b.js.LICENSE.txt",
     "static/js/plugins.12086f0c.js.LICENSE.txt": "/static/js/plugins.12086f0c.js.LICENSE.txt",
-    "static/js/registry.97452a73.js.LICENSE.txt": "/static/js/registry.97452a73.js.LICENSE.txt",
-    "static/js/richTextEditor.b1dbac20.js.LICENSE.txt": "/static/js/richTextEditor.b1dbac20.js.LICENSE.txt",
-    "static/js/services.37b55bfa.js.LICENSE.txt": "/static/js/services.37b55bfa.js.LICENSE.txt",
-    "static/js/slotFill.39e8e3e1.js.LICENSE.txt": "/static/js/slotFill.39e8e3e1.js.LICENSE.txt",
-    "static/js/toaster.5e680e68.js.LICENSE.txt": "/static/js/toaster.5e680e68.js.LICENSE.txt",
-    "static/js/tpc.6d791c48.js.LICENSE.txt": "/static/js/tpc.6d791c48.js.LICENSE.txt",
-    "static/js/uiComponents.e7056323.js.LICENSE.txt": "/static/js/uiComponents.e7056323.js.LICENSE.txt",
-    "static/js/wpPluginsPage.81a8d3b3.js.LICENSE.txt": "/static/js/wpPluginsPage.81a8d3b3.js.LICENSE.txt"
+    "static/js/registry.2e48a029.js.LICENSE.txt": "/static/js/registry.2e48a029.js.LICENSE.txt",
+    "static/js/richTextEditor.21ba8e9d.js.LICENSE.txt": "/static/js/richTextEditor.21ba8e9d.js.LICENSE.txt",
+    "static/js/services.9abf4731.js.LICENSE.txt": "/static/js/services.9abf4731.js.LICENSE.txt",
+    "static/js/slotFill.841ea350.js.LICENSE.txt": "/static/js/slotFill.841ea350.js.LICENSE.txt",
+    "static/js/toaster.84c2e949.js.LICENSE.txt": "/static/js/toaster.84c2e949.js.LICENSE.txt",
+    "static/js/tpc.72faaa42.js.LICENSE.txt": "/static/js/tpc.72faaa42.js.LICENSE.txt",
+    "static/js/uiComponents.60bd19a8.js.LICENSE.txt": "/static/js/uiComponents.60bd19a8.js.LICENSE.txt",
+    "static/js/wpPluginsPage.4b20d39c.js.LICENSE.txt": "/static/js/wpPluginsPage.4b20d39c.js.LICENSE.txt"
   },
   "entrypoints": {
     "adapters": [
       "static/css/adapters.4dd7ea48.css",
-      "static/js/adapters.8e8b0fbe.js",
-      "static/js/adapters.8ad49afb.asset.php"
+      "static/js/adapters.13c79b1a.js",
+      "static/js/adapters.7e35de08.asset.php"
     ],
     "constants": [
       "static/js/constants.8ab7a855.js",
       "static/js/constants.6186f0c0.asset.php"
     ],
     "data": [
-      "static/js/data.13f9fc0b.js",
-      "static/js/data.4e279473.asset.php"
+      "static/js/data.64d9a540.js",
+      "static/js/data.836097d5.asset.php"
     ],
     "dates": [
       "static/css/dates.327969d0.css",
-      "static/js/dates.f014b3c5.js",
-      "static/js/dates.bf1494a1.asset.php"
+      "static/js/dates.b576daf5.js",
+      "static/js/dates.bf7730b6.asset.php"
     ],
     "edtrServices": [
-      "static/js/edtrServices.e3f8fc5d.js",
-      "static/js/edtrServices.f4924bc2.asset.php"
+      "static/js/edtrServices.7a1068df.js",
+      "static/js/edtrServices.4028f8ab.asset.php"
     ],
     "eeComponents": [
       "static/css/eeComponents.3768f336.css",
-      "static/js/eeComponents.4398ab6d.js",
-      "static/js/eeComponents.efc6c418.asset.php"
+      "static/js/eeComponents.9ba43a6f.js",
+      "static/js/eeComponents.632d69f2.asset.php"
     ],
     "events": [
       "static/js/events.509cc84e.js",
@@ -169,16 +169,16 @@
     ],
     "form": [
       "static/css/form.83d587a1.css",
-      "static/js/form.2bc8d62e.js",
-      "static/js/form.0c440431.asset.php"
+      "static/js/form.b219664b.js",
+      "static/js/form.62f04f3e.asset.php"
     ],
     "helpers": [
       "static/js/helpers.32fd36e7.js",
       "static/js/helpers.5e35719d.asset.php"
     ],
     "hooks": [
-      "static/js/hooks.9f93b0d4.js",
-      "static/js/hooks.fa64a68d.asset.php"
+      "static/js/hooks.19b7cc8f.js",
+      "static/js/hooks.2e7b6290.asset.php"
     ],
     "i18n": [
       "static/js/i18n.f583c2db.js",
@@ -193,29 +193,29 @@
       "static/js/plugins.d53ff470.asset.php"
     ],
     "predicates": [
-      "static/js/predicates.1bf5574c.js",
-      "static/js/predicates.0e0b7a6b.asset.php"
+      "static/js/predicates.71fad0b1.js",
+      "static/js/predicates.c7769755.asset.php"
     ],
     "registry": [
-      "static/js/registry.97452a73.js",
-      "static/js/registry.0d1ce033.asset.php"
+      "static/js/registry.2e48a029.js",
+      "static/js/registry.4c25927a.asset.php"
     ],
     "richTextEditor": [
       "static/css/richTextEditor.d1aa5bb1.css",
-      "static/js/richTextEditor.b1dbac20.js",
-      "static/js/richTextEditor.5d27aa53.asset.php"
+      "static/js/richTextEditor.21ba8e9d.js",
+      "static/js/richTextEditor.60deadf1.asset.php"
     ],
     "services": [
-      "static/js/services.37b55bfa.js",
-      "static/js/services.2c577305.asset.php"
+      "static/js/services.9abf4731.js",
+      "static/js/services.bb4393e2.asset.php"
     ],
     "slotFill": [
-      "static/js/slotFill.39e8e3e1.js",
-      "static/js/slotFill.9fddde00.asset.php"
+      "static/js/slotFill.841ea350.js",
+      "static/js/slotFill.16bac9c2.asset.php"
     ],
     "storage": [
-      "static/js/storage.aa3451bd.js",
-      "static/js/storage.d0e390ab.asset.php"
+      "static/js/storage.532fec0e.js",
+      "static/js/storage.17a9a687.asset.php"
     ],
     "styles": [
       "static/js/styles.8180e4bd.js",
@@ -223,37 +223,37 @@
     ],
     "toaster": [
       "static/css/toaster.08dcd7bb.css",
-      "static/js/toaster.5e680e68.js",
-      "static/js/toaster.533e1f3e.asset.php"
+      "static/js/toaster.84c2e949.js",
+      "static/js/toaster.760cde32.asset.php"
     ],
     "tpc": [
       "static/css/tpc.7476c26e.css",
-      "static/js/tpc.6d791c48.js",
-      "static/js/tpc.2bfaa310.asset.php"
+      "static/js/tpc.72faaa42.js",
+      "static/js/tpc.018468fe.asset.php"
     ],
     "uiComponents": [
-      "static/css/uiComponents.95d84c60.css",
-      "static/js/uiComponents.e7056323.js",
-      "static/js/uiComponents.8114f9d5.asset.php"
+      "static/css/uiComponents.ab320be5.css",
+      "static/js/uiComponents.60bd19a8.js",
+      "static/js/uiComponents.4ee789fb.asset.php"
     ],
     "utils": [
-      "static/js/utils.2f3545f3.js",
-      "static/js/utils.38fe4584.asset.php"
+      "static/js/utils.89f883e4.js",
+      "static/js/utils.2d70e35a.asset.php"
     ],
     "blocks": [
       "static/css/blocks.72d5bd34.css",
-      "static/js/blocks.a2edaa6c.js",
-      "static/js/blocks.88f7e389.asset.php"
+      "static/js/blocks.70ea59e6.js",
+      "static/js/blocks.c5644aed.asset.php"
     ],
     "eventEditor": [
       "static/css/eventEditor.91f2067c.css",
-      "static/js/eventEditor.4b1c96f5.js",
-      "static/js/eventEditor.b699d86f.asset.php"
+      "static/js/eventEditor.b0d97b98.js",
+      "static/js/eventEditor.09da212a.asset.php"
     ],
     "wpPluginsPage": [
       "static/css/wpPluginsPage.c9f19421.css",
-      "static/js/wpPluginsPage.81a8d3b3.js",
-      "static/js/wpPluginsPage.c64f7ada.asset.php"
+      "static/js/wpPluginsPage.4b20d39c.js",
+      "static/js/wpPluginsPage.1a5024ae.asset.php"
     ]
   }
 }

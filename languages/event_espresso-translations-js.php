@@ -551,7 +551,7 @@ $generated_i18n_strings = array(
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:98
 	__( 'Sold', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/registrationForm/RegistrationForm.tsx:47
+	// Reference: domains/core/admin/eventEditor/src/ui/registrationForm/RegistrationForm.tsx:88
 	__( 'Registration Form Builder', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/ticketAssignmentsManager/components/ErrorMessage.tsx:18
@@ -1542,8 +1542,167 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/ui-components/src/EntityList/filterBar/buttons/ToggleFiltersButton.tsx:9
 	__( 'show filters', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:8
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:100
+	__( 'adds one or more checkboxes that allow users to select zero or more options from those provided', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:103
+	__( 'Radio Buttons', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:105
+	__( 'adds one or more radio buttons that allow users to only select one option from those provided', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:108
+	__( 'Decimal Number', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:11
+	__( 'Used for creating logical groupings for questions and form elements. Need to add a heading or description? Use the HTML form element.', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:110
+	__( 'adds a text input that only accepts numbers whose value is a decimal (float)', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:113
+	__( 'Whole Number', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:115
+	__( 'adds a text input that only accepts numbers whose value is an integer (whole number)', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:118
+	__( 'Number Range', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:124
+	__( 'Phone Number', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:130
+	__( 'Dropdown', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:132
+	__( 'adds a dropdown selector that accepts a single value', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:135
+	__( 'Multi Select', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:137
+	__( 'adds a dropdown selector that accepts multiple values', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:140
+	__( 'Country Selector', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:142
+	__( 'adds a dropdown selector populated with names of countries that are enabled for the site', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:145
+	__( 'State Selector', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:151
+	__( 'Button', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:153
+	__( 'adds a button to the form that can be used for triggering fucntionality (requires custom coding)', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:156
+	__( 'Reset Button', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:158
+	__( 'adds a button that will reset the form back to its orginial state.', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:16
+	__( 'HTML', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:18
+	__( 'allows you to add HTML like headings or text paragraphs to your form', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:180
 	__( 'Form Elements', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:21
+	__( 'Text Input', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:23
+	__( 'adds a text input that only accepts plain text', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:26
+	__( 'Plain Text Area', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:28
+	__( 'adds a textarea block that only accepts plain text', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:31
+	__( 'HTML Text Area', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:33
+	__( 'adds a textarea block that accepts text including simple HTML markup', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:36
+	__( 'Email Address', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:38
+	__( 'adds a text input that only accets a valid email address', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:41
+	__( 'Email Confirmation', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:47
+	__( 'Password', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:49
+	__( 'adds a text input that accepts text but masks what the user enters', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:52
+	__( 'URL', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:54
+	__( 'adds a text input for entering a URL address', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:57
+	__( 'Date', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:59
+	__( 'adds a text input that allows users to enter a date directly via keyboard or a datepicker', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:62
+	__( 'Local Date', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:68
+	__( 'Month', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:70
+	__( 'adds a text input that allows users to enter a month and year directly via keyboard or a datepicker', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:73
+	__( 'Time', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:75
+	__( 'adds a text input that allows users to enter a time directly via keyboard or a timepicker', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:78
+	__( 'Week', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:80
+	__( 'adds a text input that allows users to enter a week and year directly via keyboard or a datepicker', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:83
+	__( 'Day Selector', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:85
+	__( 'adds a dropdown selector that allows users to select the day of the month (01 to 31)', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:88
+	__( 'Month Selector', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:9
+	__( 'Form Section', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:90
+	__( 'adds a dropdown selector that allows users to select the month of the year (01 to 12)', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:93
+	__( 'Year Selector', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:95
+	__( 'adds a dropdown selector that allows users to select the year from a configurable range', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:98
+	__( 'Checkbox', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/Legend/ToggleLegendButton.tsx:26
 	__( 'hide legend', 'event_espresso' ),
