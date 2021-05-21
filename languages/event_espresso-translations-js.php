@@ -471,6 +471,7 @@ $generated_i18n_strings = array(
 	__( 'start date', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:36
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/Tabs/Settings.tsx:17
 	__( 'name', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:37
@@ -551,7 +552,7 @@ $generated_i18n_strings = array(
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:98
 	__( 'Sold', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/registrationForm/RegistrationForm.tsx:88
+	// Reference: domains/core/admin/eventEditor/src/ui/registrationForm/RegistrationForm.tsx:127
 	__( 'Registration Form Builder', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/ticketAssignmentsManager/components/ErrorMessage.tsx:18
@@ -1132,7 +1133,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'Entry %d', 'event_espresso' ),
 
 	// Reference: packages/form/src/renderers/RepeatableRenderer.tsx:52
-	// Reference: packages/ui-components/src/FormBuilder/FormSectionToolbar.tsx:46
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionToolbar.tsx:47
 	// Reference: packages/ui-components/src/SimpleEntityList/EntityTemplate.tsx:27
 	__( 'Add', 'event_espresso' ),
 
@@ -1546,11 +1547,71 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:26
 	__( 'Form Elements', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormSectionToolbar.tsx:36
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/FormElementTabs.tsx:16
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/Tabs/FormSectionTabs.tsx:15
+	__( 'Settings', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/FormElementTabs.tsx:17
+	__( 'Validation', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/FormElementTabs.tsx:18
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/Tabs/FormSectionTabs.tsx:16
+	__( 'Styles', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/Settings.tsx:14
+	__( 'admin label', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/Settings.tsx:15
+	__( 'public label', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/Settings.tsx:16
+	__( 'placeholder', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/Settings.tsx:17
+	__( 'help text', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/Styles.tsx:16
+	__( 'label css class', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/Styles.tsx:17
+	__( 'input css class', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/Styles.tsx:18
+	__( 'help text css class', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/Styles.tsx:19
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/Tabs/Styles.tsx:17
+	__( 'custom css', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/Validation.tsx:19
+	__( 'required', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/Validation.tsx:20
+	__( 'required text', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/Validation.tsx:23
+	__( 'min', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/Validation.tsx:24
+	__( 'max', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionToolbar.tsx:37
 	__( 'add new', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormSectionToolbar.tsx:42
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionToolbar.tsx:43
 	__( 'to the', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/Tabs/Settings.tsx:18
+	__( 'show name', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/Tabs/Settings.tsx:19
+	__( 'description', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/Tabs/Settings.tsx:20
+	__( 'show description', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/Tabs/Styles.tsx:16
+	__( 'css class', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/FormBuilder/constants.ts:10
 	__( 'Used for creating logical groupings for questions and form elements. Need to add a heading or description? Use the HTML form element.', 'event_espresso' ),
