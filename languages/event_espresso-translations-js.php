@@ -1132,6 +1132,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'Entry %d', 'event_espresso' ),
 
 	// Reference: packages/form/src/renderers/RepeatableRenderer.tsx:52
+	// Reference: packages/ui-components/src/FormBuilder/FormSectionToolbar.tsx:46
 	// Reference: packages/ui-components/src/SimpleEntityList/EntityTemplate.tsx:27
 	__( 'Add', 'event_espresso' ),
 
@@ -1544,6 +1545,12 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:26
 	__( 'Form Elements', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormSectionToolbar.tsx:36
+	__( 'add new', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormSectionToolbar.tsx:42
+	__( 'to the', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/FormBuilder/constants.ts:10
 	__( 'Used for creating logical groupings for questions and form elements. Need to add a heading or description? Use the HTML form element.', 'event_espresso' ),
