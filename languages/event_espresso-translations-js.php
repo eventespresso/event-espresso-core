@@ -1133,7 +1133,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'Entry %d', 'event_espresso' ),
 
 	// Reference: packages/form/src/renderers/RepeatableRenderer.tsx:52
-	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionToolbar.tsx:47
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionToolbar.tsx:46
 	// Reference: packages/ui-components/src/SimpleEntityList/EntityTemplate.tsx:27
 	__( 'Add', 'event_espresso' ),
 
@@ -1278,12 +1278,12 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/rich-text-editor/src/components/RichTextEditor/render/Image/Toolbar.tsx:30
 	__( 'Image toolbar', 'event_espresso' ),
 
-	// Reference: packages/rich-text-editor/src/components/WithEditMode/WithEditMode.tsx:60
-	// Reference: packages/rich-text-editor/src/rte-old/components/RTEWithEditMode/RTEWithEditMode.tsx:33
+	// Reference: packages/rich-text-editor/src/components/WithEditMode/WithEditMode.tsx:59
+	// Reference: packages/rich-text-editor/src/rte-old/components/RTEWithEditMode/RTEWithEditMode.tsx:32
 	__( 'Visual editor', 'event_espresso' ),
 
-	// Reference: packages/rich-text-editor/src/components/WithEditMode/WithEditMode.tsx:61
-	// Reference: packages/rich-text-editor/src/rte-old/components/RTEWithEditMode/RTEWithEditMode.tsx:34
+	// Reference: packages/rich-text-editor/src/components/WithEditMode/WithEditMode.tsx:60
+	// Reference: packages/rich-text-editor/src/rte-old/components/RTEWithEditMode/RTEWithEditMode.tsx:33
 	__( 'HTML editor', 'event_espresso' ),
 
 	// Reference: packages/rich-text-editor/src/rte-old/components/toolbarButtons/WPMedia.tsx:68
@@ -1547,27 +1547,31 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:26
 	__( 'Form Elements', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/FormElementTabs.tsx:16
-	// Reference: packages/ui-components/src/FormBuilder/FormSection/Tabs/FormSectionTabs.tsx:15
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/FormElementTabs.tsx:19
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/Tabs/FormSectionTabs.tsx:18
 	__( 'Settings', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/FormElementTabs.tsx:17
-	__( 'Validation', 'event_espresso' ),
-
-	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/FormElementTabs.tsx:18
-	// Reference: packages/ui-components/src/FormBuilder/FormSection/Tabs/FormSectionTabs.tsx:16
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/FormElementTabs.tsx:23
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/Tabs/FormSectionTabs.tsx:22
 	__( 'Styles', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/Settings.tsx:14
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/FormElementTabs.tsx:27
+	__( 'Validation', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/FormElementTabs.tsx:31
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/Tabs/FormSectionTabs.tsx:26
+	__( 'Rules', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/Settings.tsx:13
 	__( 'admin label', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/Settings.tsx:15
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/Settings.tsx:14
 	__( 'public label', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/Settings.tsx:16
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/Settings.tsx:15
 	__( 'placeholder', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/Settings.tsx:17
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/Settings.tsx:16
 	__( 'help text', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/Styles.tsx:16
@@ -1595,10 +1599,10 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/Validation.tsx:24
 	__( 'max', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionToolbar.tsx:37
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionToolbar.tsx:36
 	__( 'add new', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionToolbar.tsx:43
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionToolbar.tsx:42
 	__( 'to the', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/FormBuilder/FormSection/Tabs/Settings.tsx:18
