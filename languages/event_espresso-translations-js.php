@@ -1544,22 +1544,19 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/ui-components/src/EntityList/filterBar/buttons/ToggleFiltersButton.tsx:9
 	__( 'show filters', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormBuilderSidebar.tsx:26
-	__( 'Form Elements', 'event_espresso' ),
-
-	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/FormElementTabs.tsx:19
-	// Reference: packages/ui-components/src/FormBuilder/FormSection/Tabs/FormSectionTabs.tsx:18
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/FormElementTabs.tsx:21
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/Tabs/FormSectionTabs.tsx:19
 	__( 'Settings', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/FormElementTabs.tsx:23
-	// Reference: packages/ui-components/src/FormBuilder/FormSection/Tabs/FormSectionTabs.tsx:22
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/FormElementTabs.tsx:25
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/Tabs/FormSectionTabs.tsx:23
 	__( 'Styles', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/FormElementTabs.tsx:27
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/FormElementTabs.tsx:29
 	__( 'Validation', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/FormElementTabs.tsx:31
-	// Reference: packages/ui-components/src/FormBuilder/FormSection/Tabs/FormSectionTabs.tsx:26
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/FormElementTabs.tsx:33
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/Tabs/FormSectionTabs.tsx:27
 	__( 'Rules', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/Settings.tsx:13
