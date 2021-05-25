@@ -1133,7 +1133,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'Entry %d', 'event_espresso' ),
 
 	// Reference: packages/form/src/renderers/RepeatableRenderer.tsx:52
-	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionToolbar.tsx:46
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionToolbar.tsx:54
 	// Reference: packages/ui-components/src/SimpleEntityList/EntityTemplate.tsx:27
 	__( 'Add', 'event_espresso' ),
 
@@ -1599,11 +1599,20 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/Validation.tsx:24
 	__( 'max', 'event_espresso' ),
 
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionToolbar.tsx:20
+	__( 'top', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionToolbar.tsx:24
+	__( 'bottom', 'event_espresso' ),
+
 	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionToolbar.tsx:36
 	__( 'add new', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionToolbar.tsx:42
 	__( 'to the', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionToolbar.tsx:52
+	__( 'of this form section', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/FormBuilder/FormSection/Tabs/Settings.tsx:18
 	__( 'show name', 'event_espresso' ),
