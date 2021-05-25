@@ -1225,34 +1225,34 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/blockType/Component.tsx:19
 	__( 'Code', 'event_espresso' ),
 
-	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/colorPicker/Component.tsx:34
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/colorPicker/Component.tsx:36
 	__( 'Set color', 'event_espresso' ),
 
-	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/colorPicker/Component.tsx:40
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/colorPicker/Component.tsx:43
 	__( 'Text color', 'event_espresso' ),
 
-	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/colorPicker/Component.tsx:42
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/colorPicker/Component.tsx:45
 	__( 'Background color', 'event_espresso' ),
 
-	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/image/Component.tsx:33
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/image/Component.tsx:35
 	__( 'Add image', 'event_espresso' ),
 
-	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/image/Component.tsx:42
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/image/Component.tsx:45
 	__( 'Image URL', 'event_espresso' ),
 
-	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/image/Component.tsx:46
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/image/Component.tsx:49
 	__( 'Alt text', 'event_espresso' ),
 
-	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/image/Component.tsx:47
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/image/Component.tsx:50
 	__( 'Width', 'event_espresso' ),
 
-	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/image/Component.tsx:51
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/image/Component.tsx:54
 	__( 'Height', 'event_espresso' ),
 
 	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/link/Component.tsx:48
 	__( 'Edit link', 'event_espresso' ),
 
-	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/link/Component.tsx:54
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/link/Component.tsx:52
 	__( 'URL title', 'event_espresso' ),
 
 	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/list/Component.tsx:11
@@ -1278,12 +1278,12 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/rich-text-editor/src/components/RichTextEditor/render/Image/Toolbar.tsx:30
 	__( 'Image toolbar', 'event_espresso' ),
 
-	// Reference: packages/rich-text-editor/src/components/WithEditMode/WithEditMode.tsx:59
-	// Reference: packages/rich-text-editor/src/rte-old/components/RTEWithEditMode/RTEWithEditMode.tsx:32
+	// Reference: packages/rich-text-editor/src/components/WithEditMode/WithEditMode.tsx:62
+	// Reference: packages/rich-text-editor/src/rte-old/components/RTEWithEditMode/RTEWithEditMode.tsx:35
 	__( 'Visual editor', 'event_espresso' ),
 
-	// Reference: packages/rich-text-editor/src/components/WithEditMode/WithEditMode.tsx:60
-	// Reference: packages/rich-text-editor/src/rte-old/components/RTEWithEditMode/RTEWithEditMode.tsx:33
+	// Reference: packages/rich-text-editor/src/components/WithEditMode/WithEditMode.tsx:66
+	// Reference: packages/rich-text-editor/src/rte-old/components/RTEWithEditMode/RTEWithEditMode.tsx:39
 	__( 'HTML editor', 'event_espresso' ),
 
 	// Reference: packages/rich-text-editor/src/rte-old/components/toolbarButtons/WPMedia.tsx:68
