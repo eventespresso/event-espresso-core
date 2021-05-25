@@ -1124,7 +1124,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'Select Image', 'event_espresso' ),
 
 	// Reference: packages/form/src/adapters/WPMediaImage.tsx:44
-	// Reference: packages/rich-text-editor/src/components/AdvancedTextEditor/toolbarButtons/WPMedia.tsx:10
+	// Reference: packages/rich-text-editor/src/components/AdvancedTextEditor/toolbarButtons/WPMedia.tsx:11
 	// Reference: packages/rich-text-editor/src/rte-old/components/toolbarButtons/WPMedia.tsx:12
 	__( 'Select', 'event_espresso' ),
 
@@ -1188,7 +1188,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/predicates/src/registration/statusOptions.ts:6
 	__( 'Approved', 'event_espresso' ),
 
-	// Reference: packages/rich-text-editor/src/components/AdvancedTextEditor/toolbarButtons/WPMedia.tsx:8
+	// Reference: packages/rich-text-editor/src/components/AdvancedTextEditor/toolbarButtons/WPMedia.tsx:9
 	// Reference: packages/rich-text-editor/src/rte-old/components/toolbarButtons/WPMedia.tsx:10
 	__( 'Select media', 'event_espresso' ),
 
@@ -1228,31 +1228,31 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/colorPicker/Component.tsx:36
 	__( 'Set color', 'event_espresso' ),
 
-	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/colorPicker/Component.tsx:43
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/colorPicker/Component.tsx:45
 	__( 'Text color', 'event_espresso' ),
 
-	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/colorPicker/Component.tsx:45
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/colorPicker/Component.tsx:47
 	__( 'Background color', 'event_espresso' ),
 
 	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/image/Component.tsx:35
 	__( 'Add image', 'event_espresso' ),
 
-	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/image/Component.tsx:45
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/image/Component.tsx:47
 	__( 'Image URL', 'event_espresso' ),
 
-	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/image/Component.tsx:49
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/image/Component.tsx:51
 	__( 'Alt text', 'event_espresso' ),
 
-	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/image/Component.tsx:50
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/image/Component.tsx:52
 	__( 'Width', 'event_espresso' ),
 
-	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/image/Component.tsx:54
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/image/Component.tsx:56
 	__( 'Height', 'event_espresso' ),
 
-	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/link/Component.tsx:48
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/link/Component.tsx:50
 	__( 'Edit link', 'event_espresso' ),
 
-	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/link/Component.tsx:52
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/link/Component.tsx:60
 	__( 'URL title', 'event_espresso' ),
 
 	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/list/Component.tsx:11
@@ -1275,7 +1275,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/textAlign/Component.tsx:12
 	__( 'Ordered textalign', 'event_espresso' ),
 
-	// Reference: packages/rich-text-editor/src/components/RichTextEditor/render/Image/Toolbar.tsx:30
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/render/Image/Toolbar.tsx:31
 	__( 'Image toolbar', 'event_espresso' ),
 
 	// Reference: packages/rich-text-editor/src/components/WithEditMode/WithEditMode.tsx:62

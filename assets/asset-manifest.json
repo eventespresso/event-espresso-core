@@ -63,9 +63,9 @@
     "registry.js.map": "/static/js/registry.ff9f3e78.js.map",
     "registry.php": "/static/js/registry.b47ff980.asset.php",
     "richTextEditor.css": "/static/css/richTextEditor.93d01753.css",
-    "richTextEditor.js": "/static/js/richTextEditor.8f97ed03.js",
-    "richTextEditor.js.map": "/static/js/richTextEditor.8f97ed03.js.map",
-    "richTextEditor.php": "/static/js/richTextEditor.407baf50.asset.php",
+    "richTextEditor.js": "/static/js/richTextEditor.82baa266.js",
+    "richTextEditor.js.map": "/static/js/richTextEditor.82baa266.js.map",
+    "richTextEditor.php": "/static/js/richTextEditor.7222e80f.asset.php",
     "services.js": "/static/js/services.b3a4d8bd.js",
     "services.js.map": "/static/js/services.b3a4d8bd.js.map",
     "services.php": "/static/js/services.a8e7eaac.asset.php",
@@ -127,7 +127,7 @@
     "static/js/form.9f082a53.js.LICENSE.txt": "/static/js/form.9f082a53.js.LICENSE.txt",
     "static/js/plugins.384e74a1.js.LICENSE.txt": "/static/js/plugins.384e74a1.js.LICENSE.txt",
     "static/js/registry.ff9f3e78.js.LICENSE.txt": "/static/js/registry.ff9f3e78.js.LICENSE.txt",
-    "static/js/richTextEditor.8f97ed03.js.LICENSE.txt": "/static/js/richTextEditor.8f97ed03.js.LICENSE.txt",
+    "static/js/richTextEditor.82baa266.js.LICENSE.txt": "/static/js/richTextEditor.82baa266.js.LICENSE.txt",
     "static/js/services.b3a4d8bd.js.LICENSE.txt": "/static/js/services.b3a4d8bd.js.LICENSE.txt",
     "static/js/slotFill.1b93719e.js.LICENSE.txt": "/static/js/slotFill.1b93719e.js.LICENSE.txt",
     "static/js/toaster.5518cd1b.js.LICENSE.txt": "/static/js/toaster.5518cd1b.js.LICENSE.txt",
@@ -202,8 +202,8 @@
     ],
     "richTextEditor": [
       "static/css/richTextEditor.93d01753.css",
-      "static/js/richTextEditor.8f97ed03.js",
-      "static/js/richTextEditor.407baf50.asset.php"
+      "static/js/richTextEditor.82baa266.js",
+      "static/js/richTextEditor.7222e80f.asset.php"
     ],
     "services": [
       "static/js/services.b3a4d8bd.js",
