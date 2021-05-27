@@ -2,6 +2,7 @@
 
 use EventEspresso\core\domain\DomainFactory;
 use EventEspresso\core\exceptions\InvalidAliasException;
+use EventEspresso\core\services\form\meta\inputs\Input;
 use EventEspresso\core\services\loaders\ClassInterfaceCache;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
@@ -791,6 +792,15 @@ class EE_Dependency_Map
             ],
             'EventEspresso\core\domain\entities\users\CurrentUser' => [
                 'EventEspresso\core\domain\entities\users\EventManagers' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\services\form\meta\InputTypes' => [
+                'EventEspresso\core\services\form\meta\inputs\Button'   => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\form\meta\inputs\DateTime' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\form\meta\inputs\Input'    => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\form\meta\inputs\Number'   => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\form\meta\inputs\Phone'    => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\form\meta\inputs\Select'   => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\form\meta\inputs\Text'     => EE_Dependency_Map::load_from_cache,
             ],
         ];
     }
