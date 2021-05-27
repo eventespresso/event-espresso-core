@@ -61,8 +61,7 @@ class EEM_WP_User extends EEM_Base
                 'user_email'          => $model_field_factory->createEmailField(
                     'user_email',
                     esc_html__('User Email', 'event_espresso'),
-                    false,
-                    null
+                    false
                 ),
                 'user_registered'     => $model_field_factory->createDatetimeField(
                     'user_registered',
