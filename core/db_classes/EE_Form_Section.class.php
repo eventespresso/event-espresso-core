@@ -16,7 +16,7 @@
  * @author  Brent Christensen
  * @since   $VID:$
  */
-class EE_Form_Section extends EE_Soft_Delete_Base_Class
+class EE_Form_Section extends EE_Base_Class
 {
 
     /**
@@ -59,6 +59,17 @@ class EE_Form_Section extends EE_Soft_Delete_Base_Class
 
 
     /**
+     * @param string $UUID
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function setUUID(string $UUID)
+    {
+        $this->set('FSC_UUID', $UUID);
+    }
+
+
+    /**
      * Form user types that this form section should be presented to.
      * Values correspond to the EEM_Form_Section::APPLIES_TO_* constants.
      *
@@ -69,6 +80,17 @@ class EE_Form_Section extends EE_Soft_Delete_Base_Class
     public function appliesTo(): string
     {
         return $this->get('FSC_appliesTo');
+    }
+
+
+    /**
+     * @param string $user_type
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function setAppliesTo(string $user_type)
+    {
+        $this->set('FSC_appliesTo', $user_type);
     }
 
 
@@ -86,6 +108,17 @@ class EE_Form_Section extends EE_Soft_Delete_Base_Class
 
 
     /**
+     * @param string $relation_UUID
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function setBelongsTo(string $relation_UUID)
+    {
+        $this->set('FSC_belongsTo', $relation_UUID);
+    }
+
+
+    /**
      * HTML classes to be applied to this form section's container.
      *
      * @return string
@@ -95,6 +128,17 @@ class EE_Form_Section extends EE_Soft_Delete_Base_Class
     public function htmlClass(): string
     {
         return $this->get('FSC_htmlClass');
+    }
+
+
+    /**
+     * @param string $html_class
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function setHtmlClass(string $html_class)
+    {
+        $this->set('FSC_htmlClass', $html_class);
     }
 
 
@@ -112,6 +156,17 @@ class EE_Form_Section extends EE_Soft_Delete_Base_Class
 
 
     /**
+     * @param int $order
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function setOrder(int $order)
+    {
+        $this->set('FSC_order', $order);
+    }
+
+
+    /**
      * Related model type.
      *
      * @return string
@@ -121,6 +176,17 @@ class EE_Form_Section extends EE_Soft_Delete_Base_Class
     public function relation(): string
     {
         return $this->get('FSC_relation');
+    }
+
+
+    /**
+     * @param string $relation
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function setRelation(string $relation)
+    {
+        $this->set('FSC_relation', $relation);
     }
 
 
@@ -135,85 +201,6 @@ class EE_Form_Section extends EE_Soft_Delete_Base_Class
     public function status(): string
     {
         return $this->get('FSC_status');
-    }
-
-
-    /**
-     * returns the id the wordpress user who created this question
-     *
-     * @return int
-     * @throws EE_Error
-     * @throws ReflectionException
-     */
-    public function wpUser(): int
-    {
-        return $this->get('FSC_wpUser');
-    }
-
-
-    /**
-     * Form user types that this form section should be presented to.
-     * Values correspond to the EEM_Form_Section::APPLIES_TO_* constants.
-     *
-     * @param string $user_type
-     * @throws EE_Error
-     * @throws ReflectionException
-     */
-    public function setAppliesTo(string $user_type)
-    {
-        $this->set('FSC_appliesTo', $user_type);
-    }
-
-
-    /**
-     * UUID or ID of related entity this form section belongs to.
-     *
-     * @param string $relation_UUID
-     * @throws EE_Error
-     * @throws ReflectionException
-     */
-    public function setBelongsTo(string $relation_UUID)
-    {
-        $this->set('FSC_belongsTo', $relation_UUID);
-    }
-
-
-    /**
-     * HTML classes to be applied to this form section's container.
-     *
-     * @param string $html_class
-     * @throws EE_Error
-     * @throws ReflectionException
-     */
-    public function setHtmlClass(string $html_class)
-    {
-        $this->set('FSC_htmlClass', $html_class);
-    }
-
-
-    /**
-     * Order in which form section appears in a form.
-     *
-     * @param int $order
-     * @throws EE_Error
-     * @throws ReflectionException
-     */
-    public function setOrder(int $order)
-    {
-        $this->set('FSC_order', $order);
-    }
-
-
-    /**
-     * Related model type.
-     *
-     * @param string $relation
-     * @throws EE_Error
-     * @throws ReflectionException
-     */
-    public function setRelation(string $relation)
-    {
-        $this->set('FSC_relation', $relation);
     }
 
 
@@ -234,6 +221,17 @@ class EE_Form_Section extends EE_Soft_Delete_Base_Class
     /**
      * returns the id the wordpress user who created this question
      *
+     * @return int
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function wpUser(): int
+    {
+        return $this->get('FSC_wpUser');
+    }
+
+
+    /**
      * @param int $wp_user
      * @throws EE_Error
      * @throws ReflectionException
