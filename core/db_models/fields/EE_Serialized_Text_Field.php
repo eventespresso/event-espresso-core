@@ -2,7 +2,7 @@
 
 /**
  * Serialized text field should basically: accept either an array or serialized text as input.
- * When initally set by client code (ie, not EEM_Base or children), the value should remain an array.
+ * When initially set by client code (ie, not EEM_Base or children), the value should remain an array.
  * However, when inserting into the DB, it should be serialized.
  * Upon retrieval from the DB, it should be unserialized back into an array.
  */
