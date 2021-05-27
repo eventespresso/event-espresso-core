@@ -32,11 +32,7 @@ class EE_Boolean_Field extends EE_Integer_Field
      */
     public function prepare_for_set($value_inputted_for_field_on_model_object)
     {
-        if ($value_inputted_for_field_on_model_object) {
-            return true;
-        } else {
-            return false;
-        }
+        return filter_var($value_inputted_for_field_on_model_object, FILTER_VALIDATE_BOOLEAN);
     }
 
     /**
@@ -47,7 +43,7 @@ class EE_Boolean_Field extends EE_Integer_Field
      */
     public function prepare_for_set_from_db($value_inputted_for_field_on_model_object)
     {
-        return intval($value_inputted_for_field_on_model_object) ? true : false;
+        return filter_var($value_inputted_for_field_on_model_object, FILTER_VALIDATE_BOOLEAN);
     }
 
     /**
