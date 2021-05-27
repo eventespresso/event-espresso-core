@@ -552,7 +552,7 @@ $generated_i18n_strings = array(
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:98
 	__( 'Sold', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/registrationForm/RegistrationForm.tsx:127
+	// Reference: domains/core/admin/eventEditor/src/ui/registrationForm/RegistrationForm.tsx:248
 	__( 'Registration Form Builder', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/ticketAssignmentsManager/components/ErrorMessage.tsx:18
@@ -849,6 +849,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/prices/buttons/FooterButtons.tsx:15
 	// Reference: packages/tpc/src/hooks/useLockedTicketAction.ts:76
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionSidebar.tsx:111
 	// Reference: packages/ui-components/src/Modal/useCancelButtonProps.tsx:10
 	__( 'Cancel', 'event_espresso' ),
 
@@ -1133,7 +1134,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'Entry %d', 'event_espresso' ),
 
 	// Reference: packages/form/src/renderers/RepeatableRenderer.tsx:52
-	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionToolbar.tsx:63
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionSidebar.tsx:107
 	// Reference: packages/ui-components/src/SimpleEntityList/EntityTemplate.tsx:27
 	__( 'Add', 'event_espresso' ),
 
@@ -1544,6 +1545,21 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/ui-components/src/EntityList/filterBar/buttons/ToggleFiltersButton.tsx:9
 	__( 'show filters', 'event_espresso' ),
 
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/FormElement.tsx:30
+	__( 'click to view form element toolbar and settings', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/FormElementToolbar.tsx:35
+	__( 'click to copy this form element', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/FormElementToolbar.tsx:43
+	__( 'click to save this form element for use in other forms', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/FormElementToolbar.tsx:51
+	__( 'click to delete this form element', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/FormElementToolbar.tsx:59
+	__( 'click, hold, and drag to reorder this form element', 'event_espresso' ),
+
 	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/FormElementTabs.tsx:21
 	// Reference: packages/ui-components/src/FormBuilder/FormSection/Tabs/FormSectionTabs.tsx:19
 	__( 'Settings', 'event_espresso' ),
@@ -1596,20 +1612,32 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/Validation.tsx:24
 	__( 'max', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionToolbar.tsx:22
-	__( 'top', 'event_espresso' ),
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSection.tsx:32
+	__( 'click to view form section toolbar and settings', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionToolbar.tsx:26
-	__( 'bottom', 'event_espresso' ),
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionSidebar.tsx:103
+	__( 'add new form element', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionToolbar.tsx:45
-	__( 'add new', 'event_espresso' ),
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionSidebar.tsx:123
+	__( 'Add Form Element', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionToolbar.tsx:51
-	__( 'to the', 'event_espresso' ),
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionSidebar.tsx:87
+	__( 'form element order can be changed after adding by using the drag handles in the form element toolbar', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionToolbar.tsx:61
-	__( 'of this form section', 'event_espresso' ),
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionSidebar.tsx:94
+	__( 'load existing form section', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionToolbar.tsx:36
+	__( 'click to copy this form section', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionToolbar.tsx:44
+	__( 'click to save this form section for use in other forms', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionToolbar.tsx:52
+	__( 'click to delete this form section', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionToolbar.tsx:60
+	__( 'click, hold, and drag to reorder this form section', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/FormBuilder/FormSection/Tabs/Settings.tsx:18
 	__( 'show name', 'event_espresso' ),
@@ -1678,7 +1706,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'State Selector', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/FormBuilder/constants.ts:15
-	__( 'HTML', 'event_espresso' ),
+	__( 'HTML Block', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/FormBuilder/constants.ts:155
 	__( 'Button', 'event_espresso' ),
