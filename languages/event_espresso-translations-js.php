@@ -196,61 +196,61 @@ $generated_i18n_strings = array(
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/multiStep/Modal.tsx:30
 	__( 'New Datetime', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:104
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:110
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/details/useBulkEditFormConfig.ts:108
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:120
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:126
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:108
 	__( 'Details', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:108
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:114
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/details/useBulkEditFormConfig.ts:112
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:81
 	__( 'Capacity', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:113
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:119
 	__( 'The maximum number of registrants that can attend the event at this particular date.', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:117
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:123
 	__( 'Set to 0 to close registration or leave blank for no limit.', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:122
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:199
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:129
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:203
 	__( 'Trash', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:67
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:71
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/details/useBulkEditFormConfig.ts:45
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:83
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:87
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:45
 	__( 'Basics', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:71
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:75
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/details/useBulkEditFormConfig.ts:49
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:40
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:87
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:91
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:49
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:40
 	__( 'Name', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:76
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:80
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/details/useBulkEditFormConfig.ts:55
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:92
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:96
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:55
 	// Reference: packages/tpc/src/components/table/useHeaderRowGenerator.ts:47
 	__( 'Description', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:84
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:88
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/details/useBulkEditFormConfig.ts:63
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:63
 	__( 'Dates', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:88
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:92
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:51
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:104
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:108
 	__( 'Start Date', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:94
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:99
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:65
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:110
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:115
 	__( 'End Date', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/DatesList.tsx:34
@@ -699,61 +699,61 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/multiStep/FooterButtons.tsx:50
 	__( 'Save and assign dates', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:100
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:104
 	__( 'Ticket Sales', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:124
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:130
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:112
 	__( 'Quantity For Sale', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:130
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:136
 	__( 'The maximum number of this ticket available for sale.', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:132
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:138
 	__( 'Set to 0 to stop sales, or leave blank for no limit.', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:137
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:144
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:121
 	__( 'Number of Uses', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:143
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:150
 	__( 'Controls the total number of times this ticket can be used, regardless of the number of dates it is assigned to.', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:147
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:154
 	__( 'Example: A ticket might have access to 4 different dates, but setting this field to 2 would mean that the ticket could only be used twice. Leave blank for no limit.', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:154
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:162
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:129
 	__( 'Minimum Quantity', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:159
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:167
 	__( 'The minimum quantity that can be selected for this ticket. Use this to create ticket bundles or graduated pricing.', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:163
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:171
 	__( 'Leave blank for no minimum.', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:168
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:177
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:137
 	__( 'Maximum Quantity', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:174
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:183
 	__( 'The maximum quantity that can be selected for this ticket. Use this to create ticket bundles or graduated pricing.', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:178
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:187
 	__( 'Leave blank for no maximum.', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:183
-	__( 'Visibility', 'event_espresso' ),
-
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:185
-	__( 'Where the ticket can be viewed throughout the UI.', 'event_espresso' ),
-
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:190
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:193
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:146
 	__( 'Required Ticket', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:192
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:195
 	__( 'If enabled, the ticket must be selected and will appear first in frontend ticket lists.', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:209
+	__( 'Visibility', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:211
+	__( 'Where the ticket can be viewed throughout the UI.', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/TicketsList.tsx:35
 	__( 'Available Tickets', 'event_espresso' ),
@@ -849,7 +849,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/prices/buttons/FooterButtons.tsx:15
 	// Reference: packages/tpc/src/hooks/useLockedTicketAction.ts:76
-	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionSidebar.tsx:123
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionSidebar.tsx:139
 	// Reference: packages/ui-components/src/Modal/useCancelButtonProps.tsx:10
 	__( 'Cancel', 'event_espresso' ),
 
@@ -1134,7 +1134,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'Entry %d', 'event_espresso' ),
 
 	// Reference: packages/form/src/renderers/RepeatableRenderer.tsx:52
-	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionSidebar.tsx:120
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionSidebar.tsx:131
 	// Reference: packages/ui-components/src/SimpleEntityList/EntityTemplate.tsx:27
 	__( 'Add', 'event_espresso' ),
 
@@ -1545,20 +1545,20 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/ui-components/src/EntityList/filterBar/buttons/ToggleFiltersButton.tsx:9
 	__( 'show filters', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormElement/FormElement.tsx:33
-	__( 'click to view form element toolbar and settings', 'event_espresso' ),
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/FormElementToolbar.tsx:35
+	__( 'form element settings', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormElement/FormElementToolbar.tsx:34
-	__( 'click to copy this form element', 'event_espresso' ),
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/FormElementToolbar.tsx:44
+	__( 'copy form element', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormElement/FormElementToolbar.tsx:42
-	__( 'click to save this form element for use in other forms', 'event_espresso' ),
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/FormElementToolbar.tsx:53
+	__( 'save form element for use in other forms', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormElement/FormElementToolbar.tsx:50
-	__( 'click to delete this form element', 'event_espresso' ),
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/FormElementToolbar.tsx:62
+	__( 'delete form element', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormElement/FormElementToolbar.tsx:58
-	__( 'click, hold, and drag to reorder this form element', 'event_espresso' ),
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/FormElementToolbar.tsx:71
+	__( 'click, hold, and drag to reorder form element', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/FormElementTabs.tsx:21
 	// Reference: packages/ui-components/src/FormBuilder/FormSection/Tabs/FormSectionTabs.tsx:19
@@ -1613,32 +1613,32 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/Validation.tsx:38
 	__( 'max', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSection.tsx:35
-	__( 'click to view form section toolbar and settings', 'event_espresso' ),
-
-	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionSidebar.tsx:105
-	__( 'load existing form section', 'event_espresso' ),
-
-	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionSidebar.tsx:115
-	__( 'add new form element', 'event_espresso' ),
-
-	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionSidebar.tsx:131
-	__( 'Add Form Element', 'event_espresso' ),
-
-	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionSidebar.tsx:98
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionSidebar.tsx:100
 	__( 'form element order can be changed after adding by using the drag handles in the form element toolbar', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionToolbar.tsx:35
-	__( 'click to copy this form section', 'event_espresso' ),
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionSidebar.tsx:107
+	__( 'load existing form section', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionToolbar.tsx:43
-	__( 'click to save this form section for use in other forms', 'event_espresso' ),
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionSidebar.tsx:124
+	__( 'add new form element', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionToolbar.tsx:51
-	__( 'click to delete this form section', 'event_espresso' ),
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionSidebar.tsx:148
+	__( 'Add Form Element', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionToolbar.tsx:32
+	__( 'form section settings', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionToolbar.tsx:41
+	__( 'copy form section', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionToolbar.tsx:50
+	__( 'save form section for use in other forms', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionToolbar.tsx:59
-	__( 'click, hold, and drag to reorder this form section', 'event_espresso' ),
+	__( 'delete form section', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionToolbar.tsx:68
+	__( 'click, hold, and drag to reorder form section', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/FormBuilder/FormSection/Tabs/Settings.tsx:33
 	__( 'show name', 'event_espresso' ),
