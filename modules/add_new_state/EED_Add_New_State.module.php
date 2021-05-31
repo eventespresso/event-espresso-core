@@ -1,6 +1,8 @@
 <?php
 
 use EventEspresso\core\domain\entities\notifications\PersistentAdminNotice;
+use EventEspresso\core\domain\services\registration\form\CountryOptions;
+use EventEspresso\core\domain\services\registration\form\StateOptions;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -695,7 +697,7 @@ class EED_Add_New_State extends EED_Module
 
     /**
      * @param EE_State[]                            $state_options
-     * @param EE_SPCO_Reg_Step_Attendee_Information $reg_step
+     * @param EE_SPCO_Reg_Step_Attendee_Information|StateOptions $deprecated
      * @param EE_Registration                       $registration
      * @param EE_Question                           $question
      * @param                                       $answer
@@ -707,7 +709,7 @@ class EED_Add_New_State extends EED_Module
      */
     public static function inject_new_reg_state_into_options(
         $state_options = array(),
-        EE_SPCO_Reg_Step_Attendee_Information $reg_step,
+        $deprecated,
         EE_Registration $registration,
         EE_Question $question,
         $answer
@@ -738,7 +740,7 @@ class EED_Add_New_State extends EED_Module
 
     /**
      * @param EE_Country[]                          $country_options
-     * @param EE_SPCO_Reg_Step_Attendee_Information $reg_step
+     * @param EE_SPCO_Reg_Step_Attendee_Information|CountryOptions $deprecated
      * @param EE_Registration                       $registration
      * @param EE_Question                           $question
      * @param                                       $answer
@@ -747,18 +749,18 @@ class EED_Add_New_State extends EED_Module
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public static function inject_new_reg_country_into_options(
         $country_options = array(),
-        EE_SPCO_Reg_Step_Attendee_Information $reg_step,
+        $deprecated,
         EE_Registration $registration,
         EE_Question $question,
         $answer
     ) {
         if (
             $answer instanceof EE_Answer && $question instanceof EE_Question
-            && $question->type()
-               === EEM_Question::QST_type_country
+            && $question->type() === EEM_Question::QST_type_country
         ) {
             $CNT_ISO = $answer->value();
             if (! empty($CNT_ISO)) {
