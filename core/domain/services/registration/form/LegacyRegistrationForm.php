@@ -412,9 +412,10 @@ class LegacyRegistrationForm extends EE_Form_Section_Proper
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    private function questionGroupRegForm(EE_Registration $registration,
-                                          EE_Question_Group $question_group): EE_Form_Section_Proper
-    {
+    private function questionGroupRegForm(
+        EE_Registration $registration,
+        EE_Question_Group $question_group
+    ): EE_Form_Section_Proper {
         // array of params to pass to parent constructor
         $form_args = [
             'html_id'         => 'ee-reg-form-qstn-grp-' . $question_group->identifier() . '-' . $registration->ID(),
