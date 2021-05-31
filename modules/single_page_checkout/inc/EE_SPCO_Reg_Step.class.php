@@ -293,9 +293,18 @@ abstract class EE_SPCO_Reg_Step
     /**
      * @return string
      */
-    public function template()
+    public function template(): string
     {
         return $this->_template;
+    }
+
+
+    /**
+     * @param string $template
+     */
+    public function setTemplate(string $template): void
+    {
+        $this->_template = $template;
     }
 
 
