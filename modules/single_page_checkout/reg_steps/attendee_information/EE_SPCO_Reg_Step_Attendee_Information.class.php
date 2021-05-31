@@ -1,6 +1,9 @@
 <?php
 
 use EventEspresso\core\domain\entities\contexts\Context;
+use EventEspresso\core\domain\services\registration\form\CountryOptions;
+use EventEspresso\core\domain\services\registration\form\LegacyRegistrationForm;
+use EventEspresso\core\domain\services\registration\form\StateOptions;
 use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -19,30 +22,29 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
 {
 
     /**
-     * @type bool $_print_copy_info
+     * @var bool
      */
     private $_print_copy_info = false;
 
     /**
-     * @type array $_attendee_data
+     * @var array
      */
     private $_attendee_data = array();
 
     /**
-     * @type array $_required_questions
+     * @var array
      */
     private $_required_questions = array();
 
     /**
-     * @type array $_registration_answers
+     * @var array
      */
     private $_registration_answers = array();
 
     /**
-     * @type int $reg_form_count
+     * @var int
      */
     protected $reg_form_count = 0;
-
 
     /**
      *    class constructor
@@ -107,742 +109,209 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
     /**
      * @return boolean
      */
-    public function initialize_reg_step()
+    public function initialize_reg_step(): bool
     {
         return true;
     }
 
 
     /**
-     * @return EE_Form_Section_Proper
+     * @return LegacyRegistrationForm
      * @throws DomainException
-     * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws ReflectionException
-     * @throws EntityNotFoundException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     */
-    public function generate_reg_form()
-    {
-        /**
-         * @var $reg_config EE_Registration_Config
-         */
-        $reg_config = LoaderFactory::getLoader()->getShared('EE_Registration_Config');
-
-        $this->_print_copy_info = $reg_config->copyAttendeeInfo();
-
-        // Init reg forms count.
-        $this->reg_form_count = 0;
-
-        $primary_registrant = null;
-        // autoload Line_Item_Display classes
-        EEH_Autoloader::register_line_item_display_autoloaders();
-        $Line_Item_Display = new EE_Line_Item_Display();
-        // calculate taxes
-        $Line_Item_Display->display_line_item(
-            $this->checkout->cart->get_grand_total(),
-            array('set_tax_rate' => true)
-        );
-        /** @var $subsections EE_Form_Section_Proper[] */
-        $extra_inputs_section = $this->reg_step_hidden_inputs();
-        $subsections = array(
-            'default_hidden_inputs' => $extra_inputs_section,
-        );
-
-        // if this isn't a revisit, and they have the privacy consent box enalbed, add it
-        if (! $this->checkout->revisit && $reg_config->isConsentCheckboxEnabled()) {
-            $extra_inputs_section->add_subsections(
-                array(
-                    'consent_box' => new EE_Form_Section_Proper(
-                        array(
-                            'layout_strategy' =>
-                                new EE_Template_Layout(
-                                    array(
-                                        'input_template_file' => SPCO_REG_STEPS_PATH . $this->_slug . '/privacy_consent.template.php',
-                                    )
-                                ),
-                            'subsections'     => array(
-                                'consent' => new EE_Checkbox_Multi_Input(
-                                    array(
-                                        'consent' => $reg_config->getConsentCheckboxLabelText(),
-                                    ),
-                                    array(
-                                        'required'                          => true,
-                                        'required_validation_error_message' => esc_html__(
-                                            'You must consent to these terms in order to register.',
-                                            'event_espresso'
-                                        ),
-                                        'html_label_text'                   => '',
-                                    )
-                                ),
-                            ),
-                        )
-                    ),
-                ),
-                null,
-                false
-            );
-        }
-        $template_args = array(
-            'revisit'       => $this->checkout->revisit,
-            'registrations' => array(),
-            'ticket_count'  => array(),
-        );
-        // grab the saved registrations from the transaction
-        $registrations = $this->checkout->transaction->registrations($this->checkout->reg_cache_where_params);
-        if ($registrations) {
-            foreach ($registrations as $registration) {
-                // can this registration be processed during this visit ?
-                if (
-                    $registration instanceof EE_Registration
-                    && $this->checkout->visit_allows_processing_of_this_registration($registration)
-                ) {
-                    $subsections[ $registration->reg_url_link() ] = $this->_registrations_reg_form($registration);
-                    $template_args['registrations'][ $registration->reg_url_link() ] = $registration;
-                    $template_args['ticket_count'][ $registration->ticket()->ID() ] = isset(
-                        $template_args['ticket_count'][ $registration->ticket()->ID() ]
-                    )
-                        ? $template_args['ticket_count'][ $registration->ticket()->ID() ] + 1
-                        : 1;
-                    $ticket_line_item = EEH_Line_Item::get_line_items_by_object_type_and_IDs(
-                        $this->checkout->cart->get_grand_total(),
-                        'Ticket',
-                        array($registration->ticket()->ID())
-                    );
-                    $ticket_line_item = is_array($ticket_line_item)
-                        ? reset($ticket_line_item)
-                        : $ticket_line_item;
-                    $template_args['ticket_line_item'][ $registration->ticket()->ID() ] =
-                        $Line_Item_Display->display_line_item($ticket_line_item);
-                    if ($registration->is_primary_registrant()) {
-                        $primary_registrant = $registration->reg_url_link();
-                    }
-                }
-            }
-
-            if ($primary_registrant && count($registrations) > 1) {
-                $copy_options['spco_copy_attendee_chk'] = $this->_print_copy_info
-                    ? $this->_copy_attendee_info_form()
-                    : $this->_auto_copy_attendee_info();
-                // generate hidden input
-                if (
-                    isset($subsections[ $primary_registrant ])
-                    && $subsections[ $primary_registrant ] instanceof EE_Form_Section_Proper
-                ) {
-                    $subsections[ $primary_registrant ]->add_subsections(
-                        $copy_options,
-                        'primary_registrant',
-                        false
-                    );
-                }
-            }
-        }
-
-        // Set the registration form template (default: one form per ticket details table).
-        // We decide the template to used based on the number of forms.
-        $this->_template = $this->reg_form_count > 1
-            ? SPCO_REG_STEPS_PATH . $this->_slug . '/attendee_info_main.template.php'
-            : SPCO_REG_STEPS_PATH . $this->_slug . '/attendee_info_single.template.php';
-
-        return new EE_Form_Section_Proper(
-            array(
-                'name'            => $this->reg_form_name(),
-                'html_id'         => $this->reg_form_name(),
-                'subsections'     => $subsections,
-                'layout_strategy' => new EE_Template_Layout(
-                    array(
-                        'layout_template_file' => $this->_template, // layout_template
-                        'template_args'        => $template_args,
-                    )
-                ),
-            )
-        );
-    }
-
-
-    /**
-     * @param EE_Registration $registration
-     * @return EE_Form_Section_Base
-     * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws EntityNotFoundException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @throws ReflectionException
      */
-    private function _registrations_reg_form(EE_Registration $registration)
+    public function generate_reg_form(): LegacyRegistrationForm
     {
-        static $attendee_nmbr = 1;
-        $form_args = array();
-        // verify that registration has valid event
-        if ($registration->event() instanceof EE_Event) {
-            $field_name = 'Event_Question_Group.'
-                . EEM_Event_Question_Group::instance()->fieldNameForContext(
-                    $registration->is_primary_registrant()
-                );
-            $question_groups = $registration->event()->question_groups(
-                apply_filters(
-                    // @codingStandardsIgnoreStart
-                    'FHEE__EE_SPCO_Reg_Step_Attendee_Information___registrations_reg_form__question_groups_query_parameters',
-                    // @codingStandardsIgnoreEnd
-                    [
-                        [
-                            'Event.EVT_ID' => $registration->event()->ID(),
-                            $field_name    => true,
-                        ],
-                        'order_by' => ['QSG_order' => 'ASC'],
-                    ],
-                    $registration,
-                    $this
-                )
-            );
-            if ($question_groups) {
-                // array of params to pass to parent constructor
-                $form_args = array(
-                    'html_id'         => 'ee-registration-' . $registration->reg_url_link(),
-                    'html_class'      => 'ee-reg-form-attendee-dv',
-                    'html_style'      => $this->checkout->admin_request
-                        ? 'padding:0em 2em 1em; margin:3em 0 0; border:1px solid #ddd;'
-                        : '',
-                    'subsections'     => array(),
-                    'layout_strategy' => new EE_Fieldset_Section_Layout(
-                        array(
-                            'legend_class' => 'spco-attendee-lgnd smaller-text lt-grey-text',
-                            'legend_text'  => sprintf(
-                                esc_html_x(
-                                    'Attendee %d',
-                                    'Attendee 123',
-                                    'event_espresso'
-                                ),
-                                $attendee_nmbr
-                            ),
-                        )
-                    ),
-                );
-                foreach ($question_groups as $question_group) {
-                    if ($question_group instanceof EE_Question_Group) {
-                        $form_args['subsections'][ $question_group->identifier() ] = $this->_question_group_reg_form(
-                            $registration,
-                            $question_group
-                        );
-                    }
-                }
-                // add hidden input
-                $form_args['subsections']['additional_attendee_reg_info'] = $this->_additional_attendee_reg_info_input(
-                    $registration
-                );
-
-                /**
-                 * @var $reg_config EE_Registration_Config
-                 */
-                $reg_config = LoaderFactory::getLoader()->getShared('EE_Registration_Config');
-
-                // If we have question groups for additional attendees, then display the copy options
-                $this->_print_copy_info = apply_filters(
-                    'FHEE__EE_SPCO_Reg_Step_Attendee_Information___registrations_reg_form___printCopyInfo',
-                    $attendee_nmbr > 1 ? $reg_config->copyAttendeeInfo() : false,
-                    $attendee_nmbr
-                );
-
-                if ($registration->is_primary_registrant()) {
-                    // generate hidden input
-                    $form_args['subsections']['primary_registrant'] = $this->_additional_primary_registrant_inputs(
-                        $registration
-                    );
-                }
-            }
-        }
-        $attendee_nmbr++;
-
-        // Increment the reg forms number if form is valid.
-        if (!empty($form_args)) {
-            $this->reg_form_count++;
-        }
-
-        return ! empty($form_args)
-            ? new EE_Form_Section_Proper($form_args)
-            : new EE_Form_Section_HTML();
+        // TODO detect if event has a reg form UUID and swap this out for new reg form builder generated form
+        return LoaderFactory::getLoader()->getShared(LegacyRegistrationForm::class, [$this]);
     }
 
 
     /**
-     * @param EE_Registration $registration
-     * @param bool            $additional_attendee_reg_info
-     * @return EE_Form_Input_Base
-     * @throws EE_Error
+     * looking for hooks?
+     * this method has been replaced by:
+     * EventEspresso\core\domain\services\registration\form\LegacyRegistrationForm::getRegForm()
+     *
+     * @deprecated   $VID:$
      */
-    private function _additional_attendee_reg_info_input(
-        EE_Registration $registration,
-        $additional_attendee_reg_info = true
-    ) {
-        // generate hidden input
-        return new EE_Hidden_Input(
-            array(
-                'html_id' => 'additional-attendee-reg-info-' . $registration->reg_url_link(),
-                'default' => $additional_attendee_reg_info,
-            )
-        );
-    }
-
-
-    /**
-     * @param EE_Registration   $registration
-     * @param EE_Question_Group $question_group
-     * @return EE_Form_Section_Proper
-     * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws ReflectionException
-     */
-    private function _question_group_reg_form(EE_Registration $registration, EE_Question_Group $question_group)
+    private function _registrations_reg_form()
     {
-        // array of params to pass to parent constructor
-        $form_args = array(
-            'html_id'         => 'ee-reg-form-qstn-grp-' . $question_group->identifier() . '-' . $registration->ID(),
-            'html_class'      => $this->checkout->admin_request
-                ? 'form-table ee-reg-form-qstn-grp-dv'
-                : 'ee-reg-form-qstn-grp-dv',
-            'html_label_id'   => 'ee-reg-form-qstn-grp-' . $question_group->identifier() . '-'
-                                 . $registration->ID() . '-lbl',
-            'subsections'     => array(
-                'reg_form_qstn_grp_hdr' => $this->_question_group_header($question_group),
-            ),
-            'layout_strategy' => $this->checkout->admin_request
-                ? new EE_Admin_Two_Column_Layout()
-                : new EE_Div_Per_Section_Layout(),
-        );
-        // where params
-        $query_params = array('QST_deleted' => 0);
-        // don't load admin only questions on the frontend
-        if (! $this->checkout->admin_request) {
-            $query_params['QST_admin_only'] = array('!=', true);
-        }
-        $questions = $question_group->get_many_related(
-            'Question',
-            apply_filters(
-                'FHEE__EE_SPCO_Reg_Step_Attendee_Information___question_group_reg_form__related_questions_query_params',
-                array(
-                    $query_params,
-                    'order_by' => array(
-                        'Question_Group_Question.QGQ_order' => 'ASC',
-                    ),
-                ),
-                $question_group,
-                $registration,
-                $this
-            )
-        );
-        // filter for additional content before questions
-        $form_args['subsections']['reg_form_questions_before'] = new EE_Form_Section_HTML(
-            apply_filters(
-                'FHEE__EEH_Form_Fields__generate_question_groups_html__before_question_group_questions',
-                '',
-                $registration,
-                $question_group,
-                $this
-            )
-        );
-        // loop thru questions
-        foreach ($questions as $question) {
-            if ($question instanceof EE_Question) {
-                $identifier = $question->is_system_question()
-                    ? $question->system_ID()
-                    : $question->ID();
-                $form_args['subsections'][ $identifier ] = $this->reg_form_question($registration, $question);
-            }
-        }
-        $form_args['subsections'] = apply_filters(
-            'FHEE__EE_SPCO_Reg_Step_Attendee_Information__question_group_reg_form__subsections_array',
-            $form_args['subsections'],
-            $registration,
-            $question_group,
-            $this
-        );
-        // filter for additional content after questions
-        $form_args['subsections']['reg_form_questions_after'] = new EE_Form_Section_HTML(
-            apply_filters(
-                'FHEE__EEH_Form_Fields__generate_question_groups_html__after_question_group_questions',
-                '',
-                $registration,
-                $question_group,
-                $this
-            )
-        );
-        // d($form_args);
-        $question_group_reg_form = new EE_Form_Section_Proper($form_args);
-        return apply_filters(
-            'FHEE__EE_SPCO_Reg_Step_Attendee_Information___question_group_reg_form__question_group_reg_form',
-            $question_group_reg_form,
-            $registration,
-            $question_group,
-            $this
-        );
     }
 
 
     /**
-     * @param EE_Question_Group $question_group
-     * @return    EE_Form_Section_HTML
+     * looking for hooks?
+     * this method has been replaced by:
+     * EventEspresso\core\domain\services\registration\form\LegacyRegistrationForm::additionalAttendeeRegInfoInput()
+     *
+     * @deprecated   $VID:$
      */
-    private function _question_group_header(EE_Question_Group $question_group)
-    {
-        $html = '';
-        // group_name
-        if ($question_group->show_group_name() && $question_group->name() !== '') {
-            if ($this->checkout->admin_request) {
-                $html .= EEH_HTML::br();
-                $html .= EEH_HTML::h3(
-                    $question_group->name(),
-                    '',
-                    'ee-reg-form-qstn-grp-title title',
-                    'font-size: 1.3em; padding-left:0;'
-                );
-            } else {
-                $html .= EEH_HTML::h4(
-                    $question_group->name(),
-                    '',
-                    'ee-reg-form-qstn-grp-title section-title'
-                );
-            }
-        }
-        // group_desc
-        if ($question_group->show_group_desc() && $question_group->desc() !== '') {
-            $html .= EEH_HTML::p(
-                $question_group->desc(),
-                '',
-                $this->checkout->admin_request
-                    ? 'ee-reg-form-qstn-grp-desc-pg'
-                    : 'ee-reg-form-qstn-grp-desc-pg small-text lt-grey-text'
-            );
-        }
-        return new EE_Form_Section_HTML($html);
+    private function _additional_attendee_reg_info_input() {
     }
 
 
     /**
-     * @return    EE_Form_Section_Proper
-     * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws ReflectionException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
+     * looking for hooks?
+     * this method has been replaced by:
+     * EventEspresso\core\domain\services\registration\form\LegacyRegistrationForm::questionGroupRegForm()
+     *
+     * @deprecated   $VID:$
+     */
+    private function _question_group_reg_form()
+    {
+    }
+
+
+    /**
+     * looking for hooks?
+     * this method has been replaced by:
+     * EventEspresso\core\domain\services\registration\form\LegacyRegistrationForm::questionGroupHeader()
+     *
+     * @deprecated   $VID:$
+     */
+    private function _question_group_header()
+    {
+    }
+
+
+    /**
+     * looking for hooks?
+     * this method has been replaced by:
+     * EventEspresso\core\domain\services\registration\form\LegacyCopyAttendeeInfoForm
+     *
+     * @deprecated   $VID:$
      */
     private function _copy_attendee_info_form()
     {
-        // array of params to pass to parent constructor
-        return new EE_Form_Section_Proper(
-            array(
-                'subsections'     => $this->_copy_attendee_info_inputs(),
-                'layout_strategy' => new EE_Template_Layout(
-                    array(
-                        'layout_template_file'     => SPCO_REG_STEPS_PATH
-                                                      . $this->_slug
-                                                      . '/copy_attendee_info.template.php',
-                        'begin_template_file'      => null,
-                        'input_template_file'      => null,
-                        'subsection_template_file' => null,
-                        'end_template_file'        => null,
-                    )
-                ),
-            )
-        );
     }
 
 
     /**
-     * @return EE_Form_Section_HTML
-     * @throws DomainException
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
+     * looking for hooks?
+     * this method has been replaced by:
+     * EventEspresso\core\domain\services\registration\form\LegacyAutoCopyAttendeeInfoForm
+     *
+     * @deprecated   $VID:$
      */
     private function _auto_copy_attendee_info()
     {
-        return new EE_Form_Section_HTML(
-            EEH_Template::locate_template(
-                SPCO_REG_STEPS_PATH . $this->_slug . '/_auto_copy_attendee_info.template.php',
-                apply_filters(
-                    'FHEE__EE_SPCO_Reg_Step_Attendee_Information__auto_copy_attendee_info__template_args',
-                    array()
-                ),
-                true,
-                true
-            )
-        );
     }
 
 
     /**
-     * @return array
-     * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws ReflectionException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
+     * looking for hooks?
+     * this method has been replaced by:
+     * EventEspresso\core\domain\services\registration\form\LegacyCopyAttendeeInfoForm
+     *
+     * @deprecated   $VID:$
      */
     private function _copy_attendee_info_inputs()
     {
-        $copy_attendee_info_inputs = array();
-        $prev_ticket = null;
-        // grab the saved registrations from the transaction
-        $registrations = $this->checkout->transaction->registrations($this->checkout->reg_cache_where_params);
-        foreach ($registrations as $registration) {
-            // for all  attendees other than the primary attendee
-            if ($registration instanceof EE_Registration && ! $registration->is_primary_registrant()) {
-                // if this is a new ticket OR if this is the very first additional attendee after the primary attendee
-                if ($registration->ticket()->ID() !== $prev_ticket) {
-                    $item_name = $registration->ticket()->name();
-                    $item_name .= $registration->ticket()->description() !== ''
-                        ? ' - ' . $registration->ticket()->description()
-                        : '';
-                    $copy_attendee_info_inputs[ 'spco_copy_attendee_chk[ticket-' . $registration->ticket()->ID(
-                    ) . ']' ] =
-                        new EE_Form_Section_HTML(
-                            '<h6 class="spco-copy-attendee-event-hdr">' . $item_name . '</h6>'
-                        );
-                    $prev_ticket = $registration->ticket()->ID();
-                }
-
-                $copy_attendee_info_inputs[ 'spco_copy_attendee_chk[' . $registration->ID() . ']' ] =
-                    new EE_Checkbox_Multi_Input(
-                        array(
-                            $registration->ID() => sprintf(
-                                esc_html_x('Attendee #%s', 'Attendee #123', 'event_espresso'),
-                                $registration->count()
-                            ),
-                        ),
-                        array(
-                            'html_id'                 => 'spco-copy-attendee-chk-' . $registration->reg_url_link(),
-                            'html_class'              => 'spco-copy-attendee-chk ee-do-not-validate',
-                            'display_html_label_text' => false,
-                        )
-                    );
-            }
-        }
-        return $copy_attendee_info_inputs;
     }
 
 
     /**
-     * @param EE_Registration $registration
-     * @return    EE_Form_Input_Base
-     * @throws EE_Error
-     */
-    private function _additional_primary_registrant_inputs(EE_Registration $registration)
-    {
-        // generate hidden input
-        return new EE_Hidden_Input(
-            array(
-                'html_id' => 'primary_registrant',
-                'default' => $registration->reg_url_link(),
-            )
-        );
-    }
-
-
-    /**
-     * @param EE_Registration $registration
-     * @param EE_Question     $question
-     * @return EE_Form_Input_Base
-     * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws ReflectionException
-     */
-    public function reg_form_question(EE_Registration $registration, EE_Question $question)
-    {
-
-        // if this question was for an attendee detail, then check for that answer
-        $answer_value = EEM_Answer::instance()->get_attendee_property_answer_value(
-            $registration,
-            $question->system_ID()
-        );
-        $answer = $answer_value === null
-            ? EEM_Answer::instance()->get_one(
-                array(array('QST_ID' => $question->ID(), 'REG_ID' => $registration->ID()))
-            )
-            : null;
-        // if NOT returning to edit an existing registration
-        // OR if this question is for an attendee property
-        // OR we still don't have an EE_Answer object
-        if ($answer_value || ! $answer instanceof EE_Answer || ! $registration->reg_url_link()) {
-            // create an EE_Answer object for storing everything in
-            $answer = EE_Answer::new_instance(
-                array(
-                    'QST_ID' => $question->ID(),
-                    'REG_ID' => $registration->ID(),
-                )
-            );
-        }
-        // verify instance
-        if ($answer instanceof EE_Answer) {
-            if (! empty($answer_value)) {
-                $answer->set('ANS_value', $answer_value);
-            }
-            $answer->cache('Question', $question);
-            // remember system ID had a bug where sometimes it could be null
-            $answer_cache_id = $question->is_system_question()
-                ? $question->system_ID() . '-' . $registration->reg_url_link()
-                : $question->ID() . '-' . $registration->reg_url_link();
-            $registration->cache('Answer', $answer, $answer_cache_id);
-        }
-        return $this->_generate_question_input($registration, $question, $answer);
-    }
-
-
-    /**
-     * @param EE_Registration $registration
-     * @param EE_Question     $question
-     * @param                 $answer
-     * @return EE_Form_Input_Base
-     * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws ReflectionException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     */
-    private function _generate_question_input(EE_Registration $registration, EE_Question $question, $answer)
-    {
-        $identifier = $question->is_system_question()
-            ? $question->system_ID()
-            : $question->ID();
-        $this->_required_questions[ $identifier ] = $question->required() ? true : false;
-        add_filter(
-            'FHEE__EE_Question__generate_form_input__country_options',
-            array($this, 'use_cached_countries_for_form_input'),
-            10,
-            4
-        );
-        add_filter(
-            'FHEE__EE_Question__generate_form_input__state_options',
-            array($this, 'use_cached_states_for_form_input'),
-            10,
-            4
-        );
-        $input_constructor_args = array(
-            'html_name'        => 'ee_reg_qstn[' . $registration->ID() . '][' . $identifier . ']',
-            'html_id'          => 'ee_reg_qstn-' . $registration->ID() . '-' . $identifier,
-            'html_class'       => 'ee-reg-qstn ee-reg-qstn-' . $identifier,
-            'html_label_id'    => 'ee_reg_qstn-' . $registration->ID() . '-' . $identifier,
-            'html_label_class' => 'ee-reg-qstn',
-        );
-        $input_constructor_args['html_label_id'] .= '-lbl';
-        if ($answer instanceof EE_Answer && $answer->ID()) {
-            $input_constructor_args['html_name'] .= '[' . $answer->ID() . ']';
-            $input_constructor_args['html_id'] .= '-' . $answer->ID();
-            $input_constructor_args['html_label_id'] .= '-' . $answer->ID();
-        }
-        $form_input = $question->generate_form_input(
-            $registration,
-            $answer,
-            $input_constructor_args
-        );
-        remove_filter(
-            'FHEE__EE_Question__generate_form_input__country_options',
-            array($this, 'use_cached_countries_for_form_input')
-        );
-        remove_filter(
-            'FHEE__EE_Question__generate_form_input__state_options',
-            array($this, 'use_cached_states_for_form_input')
-        );
-        return $form_input;
-    }
-
-
-    /**
-     * Gets the list of countries for the form input
+     * looking for hooks?
+     * this method has been replaced by:
+     * EventEspresso\core\domain\services\registration\form\LegacyRegistrationForm::additionalPrimaryRegistrantInputs()
      *
-     * @param array|null      $countries_list
-     * @param EE_Question     $question
+     * @deprecated   $VID:$
+     */
+    private function _additional_primary_registrant_inputs()
+    {
+    }
+
+
+    /**
+     * looking for hooks?
+     * this method has been replaced by:
+     * EventEspresso\core\domain\services\registration\form\LegacyRegistrationForm::regFormQuestion()
+     *
      * @param EE_Registration $registration
-     * @param EE_Answer       $answer
+     * @param EE_Question     $question
+     * @return EE_Form_Input_Base
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws OutOfRangeException
+     * @throws ReflectionException
+     * @deprecated   $VID:$
+     */
+    public function reg_form_question(EE_Registration $registration, EE_Question $question): EE_Form_Input_Base
+    {
+        $legacy_reg_form = $this->legacy_reg_forms[ $registration->reg_url_link() ] ?? null;
+        if ($legacy_reg_form instanceof LegacyRegistrationForm) {
+            return $legacy_reg_form->regFormQuestion($registration, $question);
+        }
+        throw new OutOfRangeException();
+    }
+
+
+    /**
+     * looking for hooks?
+     * this method has been replaced by:
+     * EventEspresso\core\domain\services\registration\form\LegacyRegistrationForm::generateQuestionInput()
+     *
+     * @deprecated   $VID:$
+     */
+    private function _generate_question_input()
+    {
+    }
+
+
+    /**
+     * looking for hooks?
+     * this method has been replaced by:
+     * EventEspresso\core\domain\services\registration\form\CountryOptions::forLegacyFormInput()
+     *
+     * @param array|null           $countries_list
+     * @param EE_Question|null     $question
+     * @param EE_Registration|null $registration
+     * @param EE_Answer|null       $answer
      * @return array 2d keys are country IDs, values are their names
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
+     * @deprecated   $VID:$
      */
     public function use_cached_countries_for_form_input(
-        $countries_list,
+        array $countries_list = null,
         EE_Question $question = null,
         EE_Registration $registration = null,
         EE_Answer $answer = null
-    ) {
-        $country_options = array('' => '');
-        // get possibly cached list of countries
-        $countries = $this->checkout->action === 'process_reg_step'
-            ? EEM_Country::instance()->get_all_countries()
-            : EEM_Country::instance()->get_all_active_countries();
-        if (! empty($countries)) {
-            foreach ($countries as $country) {
-                if ($country instanceof EE_Country) {
-                    $country_options[ $country->ID() ] = $country->name();
-                }
-            }
-        }
-        if ($question instanceof EE_Question && $registration instanceof EE_Registration) {
-            $answer = EEM_Answer::instance()->get_one(
-                array(array('QST_ID' => $question->ID(), 'REG_ID' => $registration->ID()))
-            );
-        } else {
-            $answer = EE_Answer::new_instance();
-        }
-        $country_options = apply_filters(
-            'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__country_options',
-            $country_options,
-            $this,
-            $registration,
-            $question,
-            $answer
-        );
-        return $country_options;
+    ): array {
+        /** @var CountryOptions $country_options */
+        $country_options = LoaderFactory::getLoader()->getShared(CountryOptions::class, [$this->checkout->action]);
+        return $country_options->forLegacyFormInput($countries_list, $question, $registration, $answer);
     }
 
 
     /**
-     * Gets the list of states for the form input
+     * looking for hooks?
+     * this method has been replaced by:
+     * EventEspresso\core\domain\services\registration\form\StateOptions::forLegacyFormInput()
      *
-     * @param array|null      $states_list
-     * @param EE_Question     $question
-     * @param EE_Registration $registration
-     * @param EE_Answer       $answer
+     * @param array|null           $states_list
+     * @param EE_Question|null     $question
+     * @param EE_Registration|null $registration
+     * @param EE_Answer|null       $answer
      * @return array 2d keys are state IDs, values are their names
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
+     * @deprecated   $VID:$
      */
     public function use_cached_states_for_form_input(
-        $states_list,
+        array $states_list = null,
         EE_Question $question = null,
         EE_Registration $registration = null,
         EE_Answer $answer = null
-    ) {
-        $state_options = array('' => array('' => ''));
-        $states = $this->checkout->action === 'process_reg_step'
-            ? EEM_State::instance()->get_all_states()
-            : EEM_State::instance()->get_all_active_states();
-        if (! empty($states)) {
-            foreach ($states as $state) {
-                if ($state instanceof EE_State) {
-                    $state_options[ $state->country()->name() ][ $state->ID() ] = $state->name();
-                }
-            }
-        }
-        $state_options = apply_filters(
-            'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__state_options',
-            $state_options,
-            $this,
-            $registration,
-            $question,
-            $answer
-        );
-        return $state_options;
+    ): array {
+        /** @var StateOptions $state_options */
+        $state_options = LoaderFactory::getLoader()->getShared(StateOptions::class, [$this->checkout->action]);
+        return $state_options->forLegacyFormInput($states_list, $question, $registration, $answer);
     }
 
 
