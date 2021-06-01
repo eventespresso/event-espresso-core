@@ -420,7 +420,11 @@ class DisplayTicketSelector
         /** @var EE_Ticket[] $tickets */
         $tickets = EEM_Ticket::instance()->get_all($ticket_query_args);
         // remove tickets based on their visibility and the current user's allowed access (crudely based on roles)
-        return array_filter($tickets, [$this, 'ticketVisibilityFilter']);
+        // and filter the returned results
+        return (array) apply_filters(
+            'FHEE__EventEspresso_modules_ticketSelector_DisplayTicketSelector__getTickets',
+            array_filter($tickets, [$this, 'ticketVisibilityFilter'])
+        );
     }
 
 
