@@ -53,8 +53,7 @@ class Url
     {
         if (! filter_var(
             $url,
-            FILTER_VALIDATE_URL,
-            array(FILTER_FLAG_SCHEME_REQUIRED, FILTER_FLAG_HOST_REQUIRED)
+            FILTER_VALIDATE_URL
         )) {
             throw new InvalidArgumentException(
                 esc_html__(
