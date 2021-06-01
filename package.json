@@ -97,7 +97,7 @@
 		"@wordpress/prettier-config": "^1.0.3",
 		"@wordpress/scripts": "^15.0.1",
 		"@wordpress/server-side-render": "^1.21.3",
-		"@wordpress/url": "^2.22.2",
+		"@wordpress/url": "^3.1.1",
 		"@wordpress/viewport": "^2.26.3",
 		"@wp-g2/create-styles": "0.0.164",
 		"autoprefixer": "^10.2.5",
