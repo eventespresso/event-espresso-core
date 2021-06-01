@@ -94,7 +94,7 @@
 		"@wordpress/jest-preset-default": "^7.0.3",
 		"@wordpress/keycodes": "^2.19.3",
 		"@wordpress/plugins": "^2.25.3",
-		"@wordpress/prettier-config": "^1.0.3",
+		"@wordpress/prettier-config": "^1.0.5",
 		"@wordpress/scripts": "^15.0.1",
 		"@wordpress/server-side-render": "^1.21.3",
 		"@wordpress/url": "^2.22.2",
