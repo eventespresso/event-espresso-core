@@ -144,13 +144,15 @@ class RegistrationForm extends EE_Form_Section_Proper
                 );
 
                 // If we have question groups for additional attendees, then display the copy options
-                $enablePrintCopyInfo(
-                    apply_filters(
-                        'FHEE__EE_SPCO_Reg_Step_Attendee_Information___registrations_reg_form___printCopyInfo',
-                        $attendee_nmbr > 1 && $copy_attendee_info,
-                        $attendee_nmbr
-                    )
+                $printCopyInfo = apply_filters(
+                    'FHEE__EE_SPCO_Reg_Step_Attendee_Information___registrations_reg_form___printCopyInfo',
+                    $attendee_nmbr > 1 && $copy_attendee_info,
+                    $attendee_nmbr
                 );
+                if ($printCopyInfo) {
+                    $enablePrintCopyInfo();
+                }
+
 
                 if ($registration->is_primary_registrant()) {
                     // generate hidden input
