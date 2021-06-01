@@ -71,8 +71,8 @@ class RegForm extends EE_Form_Section_Proper
         EE_SPCO_Reg_Step_Attendee_Information $reg_step,
         EE_Registration_Config $reg_config
     ) {
-        $this->reg_step                   = $reg_step;
-        $this->reg_config                 = $reg_config;
+        $this->reg_step   = $reg_step;
+        $this->reg_config = $reg_config;
         LoaderFactory::getShared(CountryOptions::class, [$this->reg_step->checkout->action]);
         LoaderFactory::getShared(StateOptions::class, [$this->reg_step->checkout->action]);
         parent::__construct(
@@ -90,6 +90,7 @@ class RegForm extends EE_Form_Section_Proper
         );
     }
 
+
     /**
      * @return bool
      */
@@ -99,6 +100,9 @@ class RegForm extends EE_Form_Section_Proper
     }
 
 
+    /**
+     * @return void
+     */
     public function enablePrintCopyInfo(): void
     {
         $this->print_copy_info = true;
@@ -165,8 +169,9 @@ class RegForm extends EE_Form_Section_Proper
             'ticket_count'  => [],
         ];
         // grab the saved registrations from the transaction
-        $registrations
-            = $this->reg_step->checkout->transaction->registrations($this->reg_step->checkout->reg_cache_where_params);
+        $registrations = $this->reg_step->checkout->transaction->registrations(
+            $this->reg_step->checkout->reg_cache_where_params
+        );
         if ($registrations) {
             foreach ($registrations as $registration) {
                 // can this registration be processed during this visit ?
@@ -182,7 +187,7 @@ class RegForm extends EE_Form_Section_Proper
                             $registration,
                             $this->reg_step->checkout->admin_request,
                             $this->reg_config->copyAttendeeInfo(),
-                            [$this, 'enablePrintCopyInfo']
+                            [$this, 'enablePrintCopyInfo'],
                         ]
                     );
                     // Increment the reg forms number if form is valid.

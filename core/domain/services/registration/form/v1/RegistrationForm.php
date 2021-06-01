@@ -127,14 +127,8 @@ class RegistrationForm extends EE_Form_Section_Proper
                     if ($question_group instanceof EE_Question_Group) {
                         $question_group_reg_form = LoaderFactory::getNew(
                             QuestionGroupRegForm::class,
-                            [ $registration, $question_group, $admin_request ]
+                            [$registration, $question_group, $admin_request]
                         );
-                        // new QuestionGroupRegForm(
-                        //     $registration,
-                        //     $question_group,
-                        //     $admin_request,
-                        //     $this->reg_form_question_factory
-                        // );
                         $form_args['subsections'][ $question_group->identifier() ] = apply_filters(
                             'FHEE__EE_SPCO_Reg_Step_Attendee_Information___question_group_reg_form__question_group_reg_form',
                             $question_group_reg_form,
@@ -209,5 +203,4 @@ class RegistrationForm extends EE_Form_Section_Proper
             ]
         );
     }
-
 }
