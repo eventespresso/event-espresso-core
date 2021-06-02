@@ -1,15 +1,15 @@
 <?php
 
-namespace EventEspresso\core\domain\services\registration\form;
+namespace EventEspresso\core\domain\services\registration\form\v1;
 
 use EE_Form_Section_HTML;
 use EEH_Template;
 
-class LegacyAutoCopyAttendeeInfoForm extends EE_Form_Section_HTML
+class AutoCopyAttendeeInfoForm extends EE_Form_Section_HTML
 {
 
     /**
-     * LegacyCopyAttendeeInfoForm constructor.
+     * CopyAttendeeInfoForm constructor.
      */
     public function __construct(string $slug)
     {
