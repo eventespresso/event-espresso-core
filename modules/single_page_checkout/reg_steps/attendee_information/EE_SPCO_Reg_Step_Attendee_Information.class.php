@@ -1,9 +1,10 @@
 <?php
 
 use EventEspresso\core\domain\entities\contexts\Context;
-use EventEspresso\core\domain\services\registration\form\CountryOptions;
-use EventEspresso\core\domain\services\registration\form\LegacyRegistrationForm;
-use EventEspresso\core\domain\services\registration\form\StateOptions;
+use EventEspresso\core\domain\services\registration\form\v1\CountryOptions;
+use EventEspresso\core\domain\services\registration\form\v1\RegForm;
+use EventEspresso\core\domain\services\registration\form\v1\RegFormQuestionFactory;
+use EventEspresso\core\domain\services\registration\form\v1\StateOptions;
 use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -116,24 +117,24 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
 
 
     /**
-     * @return LegacyRegistrationForm
+     * @return RegForm
      * @throws DomainException
      * @throws InvalidArgumentException
      * @throws EntityNotFoundException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public function generate_reg_form(): LegacyRegistrationForm
+    public function generate_reg_form(): RegForm
     {
         // TODO detect if event has a reg form UUID and swap this out for new reg form builder generated form
-        return LoaderFactory::getLoader()->getShared(LegacyRegistrationForm::class, [$this]);
+        return LoaderFactory::getShared(RegForm::class, [$this]);
     }
 
 
     /**
      * looking for hooks?
      * this method has been replaced by:
-     * EventEspresso\core\domain\services\registration\form\LegacyRegistrationForm::getRegForm()
+     * EventEspresso\core\domain\services\registration\form\v1\RegForm::getRegForm()
      *
      * @deprecated   $VID:$
      */
@@ -145,7 +146,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
     /**
      * looking for hooks?
      * this method has been replaced by:
-     * EventEspresso\core\domain\services\registration\form\LegacyRegistrationForm::additionalAttendeeRegInfoInput()
+     * EventEspresso\core\domain\services\registration\form\v1\RegForm::additionalAttendeeRegInfoInput()
      *
      * @deprecated   $VID:$
      */
@@ -156,7 +157,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
     /**
      * looking for hooks?
      * this method has been replaced by:
-     * EventEspresso\core\domain\services\registration\form\LegacyRegistrationForm::questionGroupRegForm()
+     * EventEspresso\core\domain\services\registration\form\v1\RegForm::questionGroupRegForm()
      *
      * @deprecated   $VID:$
      */
@@ -168,7 +169,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
     /**
      * looking for hooks?
      * this method has been replaced by:
-     * EventEspresso\core\domain\services\registration\form\LegacyRegistrationForm::questionGroupHeader()
+     * EventEspresso\core\domain\services\registration\form\v1\RegForm::questionGroupHeader()
      *
      * @deprecated   $VID:$
      */
@@ -180,7 +181,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
     /**
      * looking for hooks?
      * this method has been replaced by:
-     * EventEspresso\core\domain\services\registration\form\LegacyCopyAttendeeInfoForm
+     * EventEspresso\core\domain\services\registration\form\v1\CopyAttendeeInfoForm
      *
      * @deprecated   $VID:$
      */
@@ -192,7 +193,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
     /**
      * looking for hooks?
      * this method has been replaced by:
-     * EventEspresso\core\domain\services\registration\form\LegacyAutoCopyAttendeeInfoForm
+     * EventEspresso\core\domain\services\registration\form\v1\AutoCopyAttendeeInfoForm
      *
      * @deprecated   $VID:$
      */
@@ -204,7 +205,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
     /**
      * looking for hooks?
      * this method has been replaced by:
-     * EventEspresso\core\domain\services\registration\form\LegacyCopyAttendeeInfoForm
+     * EventEspresso\core\domain\services\registration\form\v1\CopyAttendeeInfoForm
      *
      * @deprecated   $VID:$
      */
@@ -216,7 +217,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
     /**
      * looking for hooks?
      * this method has been replaced by:
-     * EventEspresso\core\domain\services\registration\form\LegacyRegistrationForm::additionalPrimaryRegistrantInputs()
+     * EventEspresso\core\domain\services\registration\form\v1\RegForm::additionalPrimaryRegistrantInputs()
      *
      * @deprecated   $VID:$
      */
@@ -228,33 +229,27 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
     /**
      * looking for hooks?
      * this method has been replaced by:
-     * EventEspresso\core\domain\services\registration\form\LegacyRegistrationForm::regFormQuestion()
+     * EventEspresso\core\domain\services\registration\form\v1\RegFormQuestionFactory::create()
      *
      * @param EE_Registration $registration
      * @param EE_Question     $question
      * @return EE_Form_Input_Base
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws OutOfRangeException
      * @throws ReflectionException
      * @deprecated   $VID:$
      */
     public function reg_form_question(EE_Registration $registration, EE_Question $question): EE_Form_Input_Base
     {
-        $legacy_reg_form = $this->legacy_reg_forms[ $registration->reg_url_link() ] ?? null;
-        if ($legacy_reg_form instanceof LegacyRegistrationForm) {
-            return $legacy_reg_form->regFormQuestion($registration, $question);
-        }
-        throw new OutOfRangeException();
+        /** @var RegFormQuestionFactory $reg_form_question_factory */
+        $reg_form_question_factory = LoaderFactory::getShared(RegFormQuestionFactory::class);
+        return $reg_form_question_factory->create($registration, $question);
     }
 
 
     /**
      * looking for hooks?
      * this method has been replaced by:
-     * EventEspresso\core\domain\services\registration\form\LegacyRegistrationForm::generateQuestionInput()
+     * EventEspresso\core\domain\services\registration\form\v1\RegForm::generateQuestionInput()
      *
      * @deprecated   $VID:$
      */
@@ -266,7 +261,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
     /**
      * looking for hooks?
      * this method has been replaced by:
-     * EventEspresso\core\domain\services\registration\form\CountryOptions::forLegacyFormInput()
+     * EventEspresso\core\domain\services\registration\form\v1\CountryOptions::forLegacyFormInput()
      *
      * @param array|null           $countries_list
      * @param EE_Question|null     $question
@@ -284,7 +279,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
         EE_Answer $answer = null
     ): array {
         /** @var CountryOptions $country_options */
-        $country_options = LoaderFactory::getLoader()->getShared(CountryOptions::class, [$this->checkout->action]);
+        $country_options = LoaderFactory::getShared(CountryOptions::class, [$this->checkout->action]);
         return $country_options->forLegacyFormInput($countries_list, $question, $registration, $answer);
     }
 
@@ -292,7 +287,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
     /**
      * looking for hooks?
      * this method has been replaced by:
-     * EventEspresso\core\domain\services\registration\form\StateOptions::forLegacyFormInput()
+     * EventEspresso\core\domain\services\registration\form\v1\StateOptions::forLegacyFormInput()
      *
      * @param array|null           $states_list
      * @param EE_Question|null     $question
@@ -310,7 +305,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
         EE_Answer $answer = null
     ): array {
         /** @var StateOptions $state_options */
-        $state_options = LoaderFactory::getLoader()->getShared(StateOptions::class, [$this->checkout->action]);
+        $state_options = LoaderFactory::getShared(StateOptions::class, [$this->checkout->action]);
         return $state_options->forLegacyFormInput($states_list, $question, $registration, $answer);
     }
 
