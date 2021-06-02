@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\core\domain\services\registration\form;
+namespace EventEspresso\core\domain\services\registration\form\v1;
 
 use EE_Checkbox_Multi_Input;
 use EE_Error;
@@ -10,10 +10,10 @@ use EE_Registration;
 use EE_Template_Layout;
 use ReflectionException;
 
-class LegacyCopyAttendeeInfoForm extends EE_Form_Section_Proper
+class CopyAttendeeInfoForm extends EE_Form_Section_Proper
 {
     /**
-     * LegacyCopyAttendeeInfoForm constructor.
+     * CopyAttendeeInfoForm constructor.
      *
      * @param EE_Registration[] $registrations
      * @param string            $slug
