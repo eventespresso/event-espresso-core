@@ -1027,7 +1027,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'end date', 'event_espresso' ),
 
 	// Reference: packages/dates/src/components/DateTimePicker.tsx:13
-	// Reference: packages/dates/src/components/TimePicker.tsx:13
+	// Reference: packages/dates/src/components/TimePicker.tsx:14
 	__( 'time', 'event_espresso' ),
 
 	// Reference: packages/dates/src/constants.ts:5
