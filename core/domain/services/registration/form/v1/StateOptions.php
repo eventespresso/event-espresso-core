@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\core\domain\services\registration\form;
+namespace EventEspresso\core\domain\services\registration\form\v1;
 
 use EE_Answer;
 use EE_Error;
