@@ -3,7 +3,6 @@
 namespace EventEspresso\core\domain\services\registration\form\v1;
 
 use DomainException;
-use EE_Checkbox_Multi_Input;
 use EE_Error;
 use EE_Form_Input_Base;
 use EE_Form_Section_HTML;
