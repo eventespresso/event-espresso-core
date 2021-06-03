@@ -1545,16 +1545,16 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/ui-components/src/EntityList/filterBar/buttons/ToggleFiltersButton.tsx:9
 	__( 'show filters', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormElement/FormElementToolbar.tsx:35
-	__( 'form element settings', 'event_espresso' ),
-
-	// Reference: packages/ui-components/src/FormBuilder/FormElement/FormElementToolbar.tsx:45
-	__( 'copy form element', 'event_espresso' ),
-
-	// Reference: packages/ui-components/src/FormBuilder/FormElement/FormElementToolbar.tsx:55
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/FormElementToolbar.tsx:32
 	__( 'delete form element', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormElement/FormElementToolbar.tsx:64
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/FormElementToolbar.tsx:49
+	__( 'form element settings', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/FormElementToolbar.tsx:59
+	__( 'copy form element', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/FormElementToolbar.tsx:69
 	__( 'click, hold, and drag to reorder form element', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/FormElementTabs.tsx:21
@@ -1622,16 +1622,16 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionSidebar.tsx:150
 	__( 'Add Form Element', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionToolbar.tsx:34
-	__( 'form section settings', 'event_espresso' ),
-
-	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionToolbar.tsx:44
-	__( 'copy form section', 'event_espresso' ),
-
-	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionToolbar.tsx:55
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionToolbar.tsx:32
 	__( 'delete form section', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionToolbar.tsx:64
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionToolbar.tsx:48
+	__( 'form section settings', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionToolbar.tsx:58
+	__( 'copy form section', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionToolbar.tsx:69
 	__( 'click, hold, and drag to reorder form section', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/FormBuilder/FormSection/SaveSection.tsx:45
