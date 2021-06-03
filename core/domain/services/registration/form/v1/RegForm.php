@@ -144,21 +144,6 @@ class RegForm extends EE_Form_Section_Proper
 
 
     /**
-     * @param EE_Registration $registration
-     * @param EE_Question     $question
-     * @return EE_Form_Input_Base
-     * @throws EE_Error
-     * @throws ReflectionException
-     */
-    public function regFormQuestion(EE_Registration $registration, EE_Question $question): EE_Form_Input_Base
-    {
-        /** @var RegFormQuestionFactory $reg_form_question_factory */
-        $reg_form_question_factory = LoaderFactory::getShared(RegFormQuestionFactory::class);
-        return $reg_form_question_factory->create($registration, $question);
-    }
-
-
-    /**
      * @return EE_Form_Section_Proper[]
      * @throws DomainException
      * @throws EE_Error
