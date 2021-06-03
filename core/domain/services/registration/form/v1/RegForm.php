@@ -56,6 +56,11 @@ class RegForm extends EE_Form_Section_Proper
     /**
      * @var array
      */
+    private $required_questions = [];
+
+    /**
+     * @var array
+     */
     private $template_args = [];
 
 
@@ -73,8 +78,10 @@ class RegForm extends EE_Form_Section_Proper
     ) {
         $this->reg_step   = $reg_step;
         $this->reg_config = $reg_config;
+        // setup some classes so that they are ready for loading during construction of other classes
         LoaderFactory::getShared(CountryOptions::class, [$this->reg_step->checkout->action]);
         LoaderFactory::getShared(StateOptions::class, [$this->reg_step->checkout->action]);
+        LoaderFactory::getShared(RegFormQuestionFactory::class, [[$this, 'addRequiredQuestion']]);
         parent::__construct(
             [
                 'name'            => $this->reg_step->reg_form_name(),
@@ -92,15 +99,6 @@ class RegForm extends EE_Form_Section_Proper
 
 
     /**
-     * @return bool
-     */
-    public function printCopyInfo(): bool
-    {
-        return $this->print_copy_info;
-    }
-
-
-    /**
      * @return void
      */
     public function enablePrintCopyInfo(): void
@@ -110,11 +108,39 @@ class RegForm extends EE_Form_Section_Proper
 
 
     /**
+     * @return bool
+     */
+    public function printCopyInfo(): bool
+    {
+        return $this->print_copy_info;
+    }
+
+
+    /**
      * @return int
      */
     public function regFormCount(): int
     {
         return $this->reg_form_count;
+    }
+
+
+    /**
+     * @return array
+     */
+    public function requiredQuestions(): array
+    {
+        return $this->required_questions;
+    }
+
+
+    /**
+     * @param string $identifier
+     * @param string $required_question
+     */
+    public function addRequiredQuestion(string $identifier, string $required_question): void
+    {
+        $this->required_questions[ $identifier] = $required_question;
     }
 
 
@@ -180,9 +206,9 @@ class RegForm extends EE_Form_Section_Proper
                     && $this->reg_step->checkout->visit_allows_processing_of_this_registration($registration)
                 ) {
                     $reg_url_link = $registration->reg_url_link();
-                    /** @var RegistrationForm $registrant_form */
+                    /** @var RegistrantForm $registrant_form */
                     $registrant_form = LoaderFactory::getNew(
-                        RegistrationForm::class,
+                        RegistrantForm::class,
                         [
                             $registration,
                             $this->reg_step->checkout->admin_request,
@@ -223,14 +249,13 @@ class RegForm extends EE_Form_Section_Proper
             }
 
             if ($primary_registrant && count($registrations) > 1) {
-                $copy_options['spco_copy_attendee_chk'] = $this->print_copy_info
-                    ? new CopyAttendeeInfoForm($registrations, $this->reg_step->slug())
-                    : new AutoCopyAttendeeInfoForm($this->reg_step->slug());
-                // generate hidden input
                 if (
                     isset($subsections[ $primary_registrant ])
                     && $subsections[ $primary_registrant ] instanceof EE_Form_Section_Proper
                 ) {
+                    $copy_options['spco_copy_attendee_chk'] = $this->print_copy_info
+                        ? new CopyAttendeeInfoForm($registrations, $this->reg_step->slug())
+                        : new AutoCopyAttendeeInfoForm($this->reg_step->slug());
                     $subsections[ $primary_registrant ]->add_subsections(
                         $copy_options,
                         'primary_registrant',
@@ -261,33 +286,10 @@ class RegForm extends EE_Form_Section_Proper
         if (! $this->reg_step->checkout->revisit && $this->reg_config->isConsentCheckboxEnabled()) {
             $extra_inputs_section->add_subsections(
                 [
-                    'consent_box' => new EE_Form_Section_Proper(
-                        [
-                            'layout_strategy' =>
-                                new EE_Template_Layout(
-                                    [
-                                        'input_template_file' => SPCO_REG_STEPS_PATH
-                                                                 . $this->reg_step->slug()
-                                                                 . '/privacy_consent.template.php',
-                                    ]
-                                ),
-                            'subsections'     => [
-                                'consent' => new EE_Checkbox_Multi_Input(
-                                    [
-                                        'consent' => $this->reg_config->getConsentCheckboxLabelText(),
-                                    ],
-                                    [
-                                        'required'                          => true,
-                                        'required_validation_error_message' => esc_html__(
-                                            'You must consent to these terms in order to register.',
-                                            'event_espresso'
-                                        ),
-                                        'html_label_text'                   => '',
-                                    ]
-                                ),
-                            ],
-                        ]
-                    ),
+                    'consent_box' => new PrivacyConsentCheckboxForm(
+                        $this->reg_step->slug(),
+                        $this->reg_config->getConsentCheckboxLabelText()
+                    )
                 ],
                 null,
                 false
