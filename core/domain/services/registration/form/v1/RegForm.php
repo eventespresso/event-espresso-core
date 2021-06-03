@@ -230,17 +230,16 @@ class RegForm extends EE_Form_Section_Proper
                     )
                         ? $this->template_args['ticket_count'][ $registration->ticket()->ID() ] + 1
                         : 1;
-                    $ticket_line_item
-                                                                                          = EEH_Line_Item::get_line_items_by_object_type_and_IDs(
+                    $ticket_line_item = EEH_Line_Item::get_line_items_by_object_type_and_IDs(
                         $this->reg_step->checkout->cart->get_grand_total(),
                         'Ticket',
                         [$registration->ticket()->ID()]
                     );
-                    $ticket_line_item                                                     = is_array($ticket_line_item)
+                    $ticket_line_item = is_array($ticket_line_item)
                         ? reset($ticket_line_item)
                         : $ticket_line_item;
-                    $this->template_args['ticket_line_item'][ $registration->ticket()->ID() ]
-                                                                                          = $Line_Item_Display->display_line_item($ticket_line_item);
+                    $this->template_args['ticket_line_item'][ $registration->ticket()->ID() ] =
+                        $Line_Item_Display->display_line_item($ticket_line_item);
                     if ($registration->is_primary_registrant()) {
                         $primary_registrant = $reg_url_link;
                     }
