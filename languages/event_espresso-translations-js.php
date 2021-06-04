@@ -849,7 +849,6 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/prices/buttons/FooterButtons.tsx:15
 	// Reference: packages/tpc/src/hooks/useLockedTicketAction.ts:76
-	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionSidebar.tsx:141
 	// Reference: packages/ui-components/src/Modal/useCancelButtonProps.tsx:10
 	__( 'Cancel', 'event_espresso' ),
 
@@ -1134,7 +1133,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'Entry %d', 'event_espresso' ),
 
 	// Reference: packages/form/src/renderers/RepeatableRenderer.tsx:52
-	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionSidebar.tsx:133
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/AddFormElementPopover.tsx:129
 	// Reference: packages/ui-components/src/SimpleEntityList/EntityTemplate.tsx:27
 	__( 'Add', 'event_espresso' ),
 
@@ -1616,17 +1615,17 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/Validation.tsx:30
 	__( 'max', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionSidebar.tsx:102
-	__( 'form element order can be changed after adding by using the drag handles in the form element toolbar', 'event_espresso' ),
-
-	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionSidebar.tsx:109
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/AddFormElementPopover.tsx:105
 	__( 'load existing form section', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionSidebar.tsx:126
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/AddFormElementPopover.tsx:122
 	__( 'add new form element', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionSidebar.tsx:150
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/AddFormElementPopover.tsx:89
 	__( 'Add Form Element', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/AddFormElementPopover.tsx:98
+	__( 'form element order can be changed after adding by using the drag handles in the form element toolbar', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/FormBuilder/FormSection/FormSectionToolbar.tsx:32
 	__( 'delete form section', 'event_espresso' ),
