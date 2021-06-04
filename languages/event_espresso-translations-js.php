@@ -552,7 +552,7 @@ $generated_i18n_strings = array(
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:98
 	__( 'Sold', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/registrationForm/RegistrationForm.tsx:330
+	// Reference: domains/core/admin/eventEditor/src/ui/registrationForm/RegistrationForm.tsx:338
 	__( 'Registration Form Builder', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/ticketAssignmentsManager/components/ErrorMessage.tsx:18
@@ -1556,8 +1556,20 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/ui-components/src/FormBuilder/FormElement/FormElementToolbar.tsx:69
 	__( 'click, hold, and drag to reorder form element', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/FieldOptions.tsx:40
-	__( 'value on each line will become an option for the input.', 'event_espresso' ),
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/FieldOptions.tsx:53
+	__( 'value', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/FieldOptions.tsx:58
+	__( 'label', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/FieldOptions.tsx:60
+	__( 'remove option', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/FieldOptions.tsx:64
+	__( 'add option', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/FieldOptions.tsx:67
+	__( 'Options are the choices you give people to select from. The value is a simple key that will be saved to the database and the label is what is shown to the user.', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/FormElementTabs.tsx:21
 	// Reference: packages/ui-components/src/FormBuilder/FormSection/Tabs/FormSectionTabs.tsx:19
