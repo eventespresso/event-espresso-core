@@ -802,31 +802,8 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\form\meta\inputs\Select'   => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\form\meta\inputs\Text'     => EE_Dependency_Map::load_from_cache,
             ],
-            'EventEspresso\core\domain\services\registration\form\v1\RegForm' => [
-                null,
-                'EE_Registration_Config' => EE_Dependency_Map::load_from_cache,
-            ],
-            'EventEspresso\core\domain\services\registration\form\v1\RegistrationForm' => [
-                null,
-                null,
-                null,
-                null,
-                'EEM_Event_Question_Group' => EE_Dependency_Map::load_from_cache,
-            ],
-            'EventEspresso\core\domain\services\registration\form\v1\QuestionGroupRegForm' => [
-                null,
-                null,
-                null,
-                'EventEspresso\core\domain\services\registration\form\v1\RegFormQuestionFactory' => EE_Dependency_Map::load_from_cache,
-            ],
-            'EventEspresso\core\domain\services\registration\form\v1\CountryOptions' => [
-                null,
-                'EEM_Answer' => EE_Dependency_Map::load_from_cache,
-                'EEM_Country' => EE_Dependency_Map::load_from_cache,
-            ],
-            'EventEspresso\core\domain\services\registration\form\v1\StateOptions' => [
-                null,
-                'EEM_State' => EE_Dependency_Map::load_from_cache,
+            'EventEspresso\core\domain\services\registration\form\v1\RegFormDependencyHandler' => [
+                'EE_Dependency_Map' => EE_Dependency_Map::load_from_cache,
             ],
         ];
     }
