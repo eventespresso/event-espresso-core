@@ -471,7 +471,7 @@ $generated_i18n_strings = array(
 	__( 'start date', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:36
-	// Reference: packages/ui-components/src/FormBuilder/FormSection/Tabs/Settings.tsx:17
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/Tabs/Settings.tsx:14
 	__( 'name', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:37
@@ -1586,36 +1586,36 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/ui-components/src/FormBuilder/FormSection/Tabs/FormSectionTabs.tsx:27
 	__( 'Rules', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/Settings.tsx:18
-	// Reference: packages/ui-components/src/FormBuilder/FormSection/Tabs/Settings.tsx:19
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/Settings.tsx:15
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/Tabs/Settings.tsx:16
 	__( 'admin label', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/Settings.tsx:23
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/Settings.tsx:20
 	__( 'public label', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/Settings.tsx:27
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/Settings.tsx:24
 	__( 'options', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/Settings.tsx:29
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/Settings.tsx:26
 	__( 'placeholder', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/Settings.tsx:33
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/Settings.tsx:31
 	__( 'help text', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/Styles.tsx:19
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/Styles.tsx:15
 	__( 'label css class', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/Styles.tsx:24
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/Styles.tsx:20
 	__( 'input css class', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/Styles.tsx:29
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/Styles.tsx:25
 	__( 'help text css class', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/Styles.tsx:34
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/Styles.tsx:30
 	// Reference: packages/ui-components/src/FormBuilder/FormSection/Tabs/Styles.tsx:20
 	__( 'custom css', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/Validation.tsx:21
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/Validation.tsx:18
 	__( 'required', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/Validation.tsx:23
@@ -1669,10 +1669,10 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/ui-components/src/FormBuilder/FormSection/SaveSection.tsx:62
 	__( 'a copy of this form section will be saved for use in other events but not loaded by default', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormSection/Tabs/Settings.tsx:24
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/Tabs/Settings.tsx:21
 	__( 'show name', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormSection/Tabs/Styles.tsx:18
+	// Reference: packages/ui-components/src/FormBuilder/FormSection/Tabs/Styles.tsx:15
 	__( 'css class', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/FormBuilder/constants.ts:100
