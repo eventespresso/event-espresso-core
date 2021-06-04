@@ -1557,10 +1557,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/ui-components/src/FormBuilder/FormElement/FormElementToolbar.tsx:69
 	__( 'click, hold, and drag to reorder form element', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/FieldOptions.tsx:34
-	__( 'options', 'event_espresso' ),
-
-	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/FieldOptions.tsx:41
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/FieldOptions.tsx:40
 	__( 'value on each line will become an option for the input.', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/FormElementTabs.tsx:21
@@ -1584,6 +1581,9 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/Settings.tsx:23
 	__( 'public label', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/Settings.tsx:27
+	__( 'options', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/Settings.tsx:29
 	__( 'placeholder', 'event_espresso' ),
