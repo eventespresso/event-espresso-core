@@ -14,7 +14,7 @@ use EEM_Event_Question_Group;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use ReflectionException;
 
-class RegistrationForm extends EE_Form_Section_Proper
+class RegistrantForm extends EE_Form_Section_Proper
 {
 
     /**
@@ -29,7 +29,7 @@ class RegistrationForm extends EE_Form_Section_Proper
 
 
     /**
-     * RegistrationForm constructor.
+     * RegistrantForm constructor.
      *
      * @param EE_Registration          $registration
      * @param bool                     $admin_request
@@ -126,7 +126,7 @@ class RegistrationForm extends EE_Form_Section_Proper
                 foreach ($question_groups as $question_group) {
                     if ($question_group instanceof EE_Question_Group) {
                         $question_group_reg_form = LoaderFactory::getNew(
-                            QuestionGroupRegForm::class,
+                            RegFormQuestionGroup::class,
                             [$registration, $question_group, $admin_request]
                         );
                         $form_args['subsections'][ $question_group->identifier() ] = apply_filters(
