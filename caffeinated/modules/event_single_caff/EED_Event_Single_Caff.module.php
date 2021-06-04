@@ -100,7 +100,7 @@ class EED_Event_Single_Caff extends EED_Event_Single
         wp_register_script(
             'eed-event-single-sortable',
             EVENT_SINGLE_CAFF_ASSETS_URL . 'eed_event_single_sortable.js',
-            array('jquery-ui-sortable'),
+            array('espresso_core', 'jquery-ui-sortable'),
             EVENT_ESPRESSO_VERSION,
             true
         );
