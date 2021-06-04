@@ -1799,12 +1799,14 @@ abstract class EE_Base_Class
      * @param array $set_cols_n_values keys are field names, values are their new values,
      *                                 if provided during the save() method (often client code will change the fields'
      *                                 values before calling save)
-     * @throws InvalidArgumentException
+     * @return bool|int|string         1 on a successful update
+     *                                 the ID of the new entry on insert
+     *                                 0 on failure or if the model object isn't allowed to persist
+     *                                 (as determined by EE_Base_Class::allow_persist())
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
-     * @return int , 1 on a successful update, the ID of the new entry on insert; 0 on failure or if the model object
-     *                                 isn't allowed to persist (as determined by EE_Base_Class::allow_persist())
+     * @throws InvalidArgumentException
      * @throws ReflectionException
      * @throws ReflectionException
      * @throws ReflectionException
