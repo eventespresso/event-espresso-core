@@ -15,18 +15,25 @@ use ReflectionException;
 
 class RegFormQuestionFactory
 {
+
     /**
-     * @var array
+     * @var callable
      */
-    private $required_questions = [];
+    protected $addRequiredQuestion;
+
+    /**
+     * @var EEM_Answer
+     */
+    public $answer_model;
 
 
     /**
-     * @return array
+     * @param callable   $addRequiredQuestion
+     * @param EEM_Answer $answer_model
      */
-    public function requiredQuestions(): array
-    {
-        return $this->required_questions;
+    public function __construct(callable $addRequiredQuestion, EEM_Answer $answer_model) {
+        $this->addRequiredQuestion = $addRequiredQuestion;
+        $this->answer_model = $answer_model;
     }
 
 
@@ -40,15 +47,17 @@ class RegFormQuestionFactory
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function create(EE_Registration $registration, EE_Question $question): EE_Form_Input_Base
-    {
+    public function create(
+        EE_Registration $registration,
+        EE_Question $question
+    ): EE_Form_Input_Base {
         // if this question was for an attendee detail, then check for that answer
-        $answer_value = EEM_Answer::instance()->get_attendee_property_answer_value(
+        $answer_value = $this->answer_model->get_attendee_property_answer_value(
             $registration,
             $question->system_ID()
         );
         $answer       = $answer_value === null
-            ? EEM_Answer::instance()->get_one(
+            ? $this->answer_model->get_one(
                 [['QST_ID' => $question->ID(), 'REG_ID' => $registration->ID()]]
             )
             : null;
@@ -99,7 +108,8 @@ class RegFormQuestionFactory
         $identifier                              = $question->is_system_question()
             ? $question->system_ID()
             : $question->ID();
-        $this->required_questions[ $identifier ] = $question->required();
+        $callback = $this->addRequiredQuestion;
+        $callback($identifier, $question->required());
         $input_constructor_args                  = [
             'html_name'        => 'ee_reg_qstn[' . $registration->ID() . '][' . $identifier . ']',
             'html_id'          => 'ee_reg_qstn-' . $registration->ID() . '-' . $identifier,
