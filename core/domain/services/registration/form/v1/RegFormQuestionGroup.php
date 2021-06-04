@@ -13,7 +13,7 @@ use EE_Registration;
 use EEH_HTML;
 use ReflectionException;
 
-class QuestionGroupRegForm extends EE_Form_Section_Proper
+class RegFormQuestionGroup extends EE_Form_Section_Proper
 {
     /**
      * @var RegFormQuestionFactory
@@ -22,7 +22,7 @@ class QuestionGroupRegForm extends EE_Form_Section_Proper
 
 
     /**
-     * QuestionGroupRegForm constructor.
+     * RegFormQuestionGroup constructor.
      *
      * @param EE_Registration        $registration
      * @param EE_Question_Group      $question_group
