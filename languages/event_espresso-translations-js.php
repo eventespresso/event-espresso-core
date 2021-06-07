@@ -552,7 +552,7 @@ $generated_i18n_strings = array(
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:98
 	__( 'Sold', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/registrationForm/RegistrationForm.tsx:338
+	// Reference: domains/core/admin/eventEditor/src/ui/registrationForm/RegistrationForm.tsx:14
 	__( 'Registration Form Builder', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/ticketAssignmentsManager/components/ErrorMessage.tsx:18
@@ -1556,20 +1556,26 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/ui-components/src/FormBuilder/FormElement/FormElementToolbar.tsx:69
 	__( 'click, hold, and drag to reorder form element', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/FieldOptions.tsx:53
-	__( 'value', 'event_espresso' ),
-
-	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/FieldOptions.tsx:58
-	__( 'label', 'event_espresso' ),
-
-	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/FieldOptions.tsx:60
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/FieldOption.tsx:23
 	__( 'remove option', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/FieldOptions.tsx:64
-	__( 'add option', 'event_espresso' ),
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/FieldOption.tsx:45
+	__( 'value', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/FieldOptions.tsx:67
-	__( 'Options are the choices you give people to select from. The value is a simple key that will be saved to the database and the label is what is shown to the user.', 'event_espresso' ),
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/FieldOption.tsx:55
+	__( 'label', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/FieldOption.tsx:66
+	__( 'click, hold, and drag to reorder field option', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/FieldOptions.tsx:49
+	__( 'Options are the choices you give people to select from.', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/FieldOptions.tsx:51
+	__( 'The value is a simple key that will be saved to the database and the label is what is shown to the user.', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/FieldOptions.tsx:84
+	__( 'add new option', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/FormBuilder/FormElement/Tabs/FormElementTabs.tsx:21
 	// Reference: packages/ui-components/src/FormBuilder/FormSection/Tabs/FormSectionTabs.tsx:19

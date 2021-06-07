@@ -1,1 +1,0 @@
-<?php return array('dependencies' => array('eventespresso-i18n'), 'version' => '33df6e5a929099a88be622c07b6c37c2');
