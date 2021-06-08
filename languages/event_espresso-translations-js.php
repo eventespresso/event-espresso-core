@@ -1168,23 +1168,26 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/form-builder/src/FormSection/Tabs/FormSectionTabs.tsx:26
 	__( 'Rules', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:15
+	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:18
 	// Reference: packages/form-builder/src/FormSection/Tabs/Settings.tsx:15
 	__( 'admin label', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:20
+	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:23
 	__( 'admin only', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:25
+	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:30
+	__( 'content', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:39
 	__( 'public label', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:29
+	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:44
 	__( 'options', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:31
+	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:47
 	__( 'placeholder', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:36
+	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:52
 	__( 'help text', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/FormElement/Tabs/Styles.tsx:14
