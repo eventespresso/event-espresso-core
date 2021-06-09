@@ -38,6 +38,10 @@ class CoreAssetManager extends AssetManager
 
     const JS_HANDLE_VENDOR  = 'eventespresso-vendor';
 
+    const JS_HANDLE_RAMDA  = 'ramda';
+
+    const RAMDA_VERSION = '0.27.1';
+
     // EE CSS assets handles
     const CSS_HANDLE_DEFAULT = 'espresso_default';
 
@@ -110,7 +114,7 @@ class CoreAssetManager extends AssetManager
             EE_GLOBAL_ASSETS_URL . 'scripts/espresso_core.js',
             [JqueryAssetManager::JS_HANDLE_JQUERY]
         )->setInlineDataCallback(
-            function() {
+            function () {
                 wp_localize_script(
                     CoreAssetManager::JS_HANDLE_CORE,
                     CoreAssetManager::JS_HANDLE_I18N,
@@ -119,6 +123,12 @@ class CoreAssetManager extends AssetManager
             }
         );
         $this->loadQtipJs();
+        $this->addVendorJavascript(
+            CoreAssetManager::JS_HANDLE_RAMDA,
+            [],
+            true,
+            CoreAssetManager::RAMDA_VERSION
+        );
     }
 
 
