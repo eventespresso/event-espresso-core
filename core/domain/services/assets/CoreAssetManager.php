@@ -183,8 +183,7 @@ class CoreAssetManager extends AssetManager
     {
         // qtip is turned OFF by default, but prior to the wp_enqueue_scripts hook,
         // can be turned back on again via: add_filter('FHEE_load_qtip', '__return_true' );
-        if (apply_filters('FHEE_load_qtip', false)
-        ) {
+        if (apply_filters('FHEE_load_qtip', false)) {
             EEH_Qtip_Loader::instance()->register_and_enqueue();
         }
     }
