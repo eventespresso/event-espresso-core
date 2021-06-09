@@ -3,12 +3,10 @@
 namespace EventEspresso\core\domain\services\assets;
 
 use DomainException;
+use EEH_Qtip_Loader;
 use EE_Currency_Config;
 use EE_Registry;
 use EE_Template_Config;
-use EED_Core_Rest_Api;
-use EEH_DTT_Helper;
-use EventEspresso\core\domain\Domain;
 use EventEspresso\core\domain\DomainInterface;
 use EventEspresso\core\domain\values\assets\JavascriptAsset;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
@@ -120,6 +118,7 @@ class CoreAssetManager extends AssetManager
                 );
             }
         );
+        $this->loadQtipJs();
     }
 
 
@@ -180,7 +179,12 @@ class CoreAssetManager extends AssetManager
      * @param JavascriptAsset $script
      * @deprecated $VID:$
      */
-    public function loadQtipJs(JavascriptAsset $script)
+    public function loadQtipJs(JavascriptAsset $script = null)
     {
+        // qtip is turned OFF by default, but prior to the wp_enqueue_scripts hook,
+        // can be turned back on again via: add_filter('FHEE_load_qtip', '__return_true' );
+        if (apply_filters('FHEE_load_qtip', false)) {
+            EEH_Qtip_Loader::instance()->register_and_enqueue();
+        }
     }
 }
