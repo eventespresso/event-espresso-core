@@ -95,7 +95,7 @@ class EE_Message_To_Generate_From_Queue extends EE_Message_To_Generate
     protected function _get_GRP_ID()
     {
         $this->queue->get_message_repository()->rewind();
-        if($this->queue->get_message_repository()->valid()) {
+        if ($this->queue->get_message_repository()->valid()) {
             return $this->queue->get_message_repository()->current()->GRP_ID();
         }
     }
