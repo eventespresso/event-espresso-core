@@ -1,0 +1,1 @@
+<?php return array('dependencies' => array('ramda', 'react', 'react-dom', 'wp-element'), 'version' => 'd7c66f33fda950a1c79d4f3d5af84070');
