@@ -32,6 +32,7 @@ class EE_Message_To_Generate_From_Queue extends EE_Message_To_Generate
         if ($this->valid()) {
             $this->_message->set_content($this->_get_content());
             $this->_message->set_subject($this->_get_subject($custom_subject));
+            $this->_message->set_GRP_ID($this->_get_GRP_ID());
         }
     }
 
@@ -83,5 +84,19 @@ class EE_Message_To_Generate_From_Queue extends EE_Message_To_Generate
             $count_of_items
         );
         // phpcs:enable
+    }
+
+
+    /**
+     * Uses the EE_Messages_Queue currently set on this object to set the GRP_ID
+     * for the single EE_Message aggregate object returned by get_EE_Message
+     * @return int;
+     */
+    protected function _get_GRP_ID()
+    {
+        $this->queue->get_message_repository()->rewind();
+        if($this->queue->get_message_repository()->valid()) {
+            return $this->queue->get_message_repository()->current()->GRP_ID();
+        }
     }
 }
