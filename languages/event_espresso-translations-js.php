@@ -253,11 +253,11 @@ $generated_i18n_strings = array(
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:115
 	__( 'End Date', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/DatesList.tsx:34
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/DatesList.tsx:35
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/TableView.tsx:33
 	__( 'Event Dates', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/DatesList.tsx:37
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/DatesList.tsx:38
 	__( 'loading event dates…', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/DatesListButtons.tsx:20
@@ -416,8 +416,8 @@ $generated_i18n_strings = array(
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/editable/EditableName.tsx:34
 	__( 'edit title…', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/filterBar/ActiveDatesFilters.tsx:25
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/filterBar/ActiveTicketsFilters.tsx:25
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/filterBar/ActiveDatesFilters.tsx:17
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/filterBar/ActiveTicketsFilters.tsx:17
 	__( 'ON', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:10
@@ -503,7 +503,7 @@ $generated_i18n_strings = array(
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:46
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:54
-	// Reference: packages/ee-components/src/EntityList/EntityListFilterBar.tsx:53
+	// Reference: packages/ee-components/src/EntityList/EntityListFilterBar.tsx:46
 	__( 'search', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:47
@@ -601,7 +601,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: domains/core/admin/eventEditor/src/ui/ticketAssignmentsManager/components/config.ts:29
 	__( 'no relation', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/ticketAssignmentsManager/components/table/BodyCell.tsx:24
+	// Reference: domains/core/admin/eventEditor/src/ui/ticketAssignmentsManager/components/table/BodyCell.tsx:23
 	__( 'assign ticket', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/ticketAssignmentsManager/components/table/useGetHeaderRows.tsx:15
@@ -625,10 +625,10 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/ui-components/src/Stepper/buttons/Submit.tsx:7
 	__( 'Submit', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/ticketAssignmentsManager/filters/controls/DatesByMonthControl.tsx:19
+	// Reference: domains/core/admin/eventEditor/src/ui/ticketAssignmentsManager/filters/controls/DatesByMonthControl.tsx:20
 	__( 'All Dates', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/ticketAssignmentsManager/filters/controls/DatesByMonthControl.tsx:26
+	// Reference: domains/core/admin/eventEditor/src/ui/ticketAssignmentsManager/filters/controls/DatesByMonthControl.tsx:27
 	__( 'dates by month', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/ticketAssignmentsManager/filters/controls/ShowExpiredTicketsControl.tsx:16
@@ -755,10 +755,10 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:211
 	__( 'Where the ticket can be viewed throughout the UI.', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/TicketsList.tsx:35
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/TicketsList.tsx:36
 	__( 'Available Tickets', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/TicketsList.tsx:38
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/TicketsList.tsx:39
 	__( 'loading tickets…', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/actionsMenu/AssignDatesButton.tsx:26
@@ -885,7 +885,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'Manage Date Assignments', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/config.ts:9
-	// Reference: packages/tpc/src/components/table/Table.tsx:44
+	// Reference: packages/tpc/src/components/table/Table.tsx:43
 	__( 'Ticket Price Calculator', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/editable/EditablePrice.tsx:39
@@ -1002,7 +1002,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/adapters/src/Pagination/Pagination.tsx:23
 	__( 'pagination', 'event_espresso' ),
 
-	// Reference: packages/adapters/src/TagSelector/TagSelector.tsx:117
+	// Reference: packages/adapters/src/TagSelector/TagSelector.tsx:112
 	__( 'toggle menu', 'event_espresso' ),
 
 	// Reference: packages/constants/src/datetime.ts:10
@@ -1269,96 +1269,93 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'css class', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/constants.ts:100
-	__( 'Week', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:102
 	__( 'adds a text input that allows users to enter a week and year directly via keyboard or a datepicker', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/constants.ts:105
+	// Reference: packages/form-builder/src/constants.ts:103
 	__( 'Day Selector', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/constants.ts:107
+	// Reference: packages/form-builder/src/constants.ts:105
 	__( 'adds a dropdown selector that allows users to select the day of the month (01 to 31)', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/constants.ts:110
+	// Reference: packages/form-builder/src/constants.ts:108
 	__( 'Month Selector', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/constants.ts:112
+	// Reference: packages/form-builder/src/constants.ts:110
 	__( 'adds a dropdown selector that allows users to select the month of the year (01 to 12)', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/constants.ts:115
+	// Reference: packages/form-builder/src/constants.ts:113
 	__( 'Year Selector', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/constants.ts:117
+	// Reference: packages/form-builder/src/constants.ts:115
 	__( 'adds a dropdown selector that allows users to select the year from a configurable range', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/constants.ts:120
+	// Reference: packages/form-builder/src/constants.ts:118
 	__( 'Radio Buttons', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/constants.ts:122
+	// Reference: packages/form-builder/src/constants.ts:120
 	__( 'adds one or more radio buttons that allow users to only select one option from those provided', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/constants.ts:125
+	// Reference: packages/form-builder/src/constants.ts:123
 	__( 'Decimal Number', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/constants.ts:127
+	// Reference: packages/form-builder/src/constants.ts:125
 	__( 'adds a text input that only accepts numbers whose value is a decimal (float)', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/constants.ts:130
+	// Reference: packages/form-builder/src/constants.ts:128
 	__( 'Whole Number', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/constants.ts:132
+	// Reference: packages/form-builder/src/constants.ts:130
 	__( 'adds a text input that only accepts numbers whose value is an integer (whole number)', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/constants.ts:135
+	// Reference: packages/form-builder/src/constants.ts:133
 	__( 'Number Range', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/constants.ts:141
+	// Reference: packages/form-builder/src/constants.ts:138
 	__( 'Phone Number', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/constants.ts:147
+	// Reference: packages/form-builder/src/constants.ts:143
 	__( 'Dropdown', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/constants.ts:149
+	// Reference: packages/form-builder/src/constants.ts:145
 	__( 'adds a dropdown selector that accepts a single value', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/constants.ts:152
+	// Reference: packages/form-builder/src/constants.ts:148
 	__( 'Multi Select', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/constants.ts:154
+	// Reference: packages/form-builder/src/constants.ts:150
 	__( 'adds a dropdown selector that accepts multiple values', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/constants.ts:157
+	// Reference: packages/form-builder/src/constants.ts:153
 	__( 'Toggle/Switch', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/constants.ts:159
+	// Reference: packages/form-builder/src/constants.ts:155
 	__( 'adds a toggle or a switch to accept true or false value', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/constants.ts:162
+	// Reference: packages/form-builder/src/constants.ts:158
 	__( 'Multi Checkbox', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/constants.ts:164
+	// Reference: packages/form-builder/src/constants.ts:160
 	__( 'adds checkboxes that allow users to select zero or more options from those provided', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/constants.ts:167
+	// Reference: packages/form-builder/src/constants.ts:163
 	__( 'Country Selector', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/constants.ts:169
+	// Reference: packages/form-builder/src/constants.ts:165
 	__( 'adds a dropdown selector populated with names of countries that are enabled for the site', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/constants.ts:172
+	// Reference: packages/form-builder/src/constants.ts:168
 	__( 'State Selector', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/constants.ts:178
+	// Reference: packages/form-builder/src/constants.ts:173
 	__( 'Button', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/constants.ts:180
+	// Reference: packages/form-builder/src/constants.ts:175
 	__( 'adds a button to the form that can be used for triggering fucntionality (requires custom coding)', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/constants.ts:183
+	// Reference: packages/form-builder/src/constants.ts:178
 	__( 'Reset Button', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/constants.ts:185
+	// Reference: packages/form-builder/src/constants.ts:180
 	__( 'adds a button that will reset the form back to its orginial state.', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/constants.ts:31
@@ -1400,38 +1397,41 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/form-builder/src/constants.ts:63
 	__( 'Email Confirmation', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/constants.ts:69
+	// Reference: packages/form-builder/src/constants.ts:68
 	__( 'Password', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/constants.ts:71
+	// Reference: packages/form-builder/src/constants.ts:70
 	__( 'adds a text input that accepts text but masks what the user enters', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/constants.ts:74
+	// Reference: packages/form-builder/src/constants.ts:73
 	__( 'URL', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/constants.ts:76
+	// Reference: packages/form-builder/src/constants.ts:75
 	__( 'adds a text input for entering a URL address', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/constants.ts:79
+	// Reference: packages/form-builder/src/constants.ts:78
 	__( 'Date', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/constants.ts:81
+	// Reference: packages/form-builder/src/constants.ts:80
 	__( 'adds a text input that allows users to enter a date directly via keyboard or a datepicker', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/constants.ts:84
+	// Reference: packages/form-builder/src/constants.ts:83
 	__( 'Local Date', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/constants.ts:90
+	// Reference: packages/form-builder/src/constants.ts:88
 	__( 'Month', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/constants.ts:92
+	// Reference: packages/form-builder/src/constants.ts:90
 	__( 'adds a text input that allows users to enter a month and year directly via keyboard or a datepicker', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/constants.ts:95
+	// Reference: packages/form-builder/src/constants.ts:93
 	__( 'Time', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/constants.ts:97
+	// Reference: packages/form-builder/src/constants.ts:95
 	__( 'adds a text input that allows users to enter a time directly via keyboard or a timepicker', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:98
+	__( 'Week', 'event_espresso' ),
 
 	// Reference: packages/form/src/adapters/WPMediaImage.tsx:12
 	__( 'Select Image', 'event_espresso' ),
@@ -1542,25 +1542,25 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/colorPicker/Component.tsx:47
 	__( 'Background color', 'event_espresso' ),
 
-	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/image/Component.tsx:35
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/image/Component.tsx:39
 	__( 'Add image', 'event_espresso' ),
 
-	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/image/Component.tsx:47
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/image/Component.tsx:51
 	__( 'Image URL', 'event_espresso' ),
 
-	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/image/Component.tsx:51
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/image/Component.tsx:55
 	__( 'Alt text', 'event_espresso' ),
 
-	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/image/Component.tsx:52
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/image/Component.tsx:56
 	__( 'Width', 'event_espresso' ),
 
-	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/image/Component.tsx:56
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/image/Component.tsx:60
 	__( 'Height', 'event_espresso' ),
 
-	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/link/Component.tsx:50
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/link/Component.tsx:54
 	__( 'Edit link', 'event_espresso' ),
 
-	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/link/Component.tsx:60
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/link/Component.tsx:64
 	__( 'URL title', 'event_espresso' ),
 
 	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/list/Component.tsx:11
@@ -1583,7 +1583,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/textAlign/Component.tsx:12
 	__( 'Ordered textalign', 'event_espresso' ),
 
-	// Reference: packages/rich-text-editor/src/components/RichTextEditor/render/Image/Toolbar.tsx:31
+	// Reference: packages/rich-text-editor/src/components/RichTextEditor/render/Image/Toolbar.tsx:32
 	__( 'Image toolbar', 'event_espresso' ),
 
 	// Reference: packages/rich-text-editor/src/components/WithEditMode/WithEditMode.tsx:62
@@ -1698,10 +1698,10 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/tpc/src/hooks/useLockedTicketAction.ts:29
 	__( 'OK', 'event_espresso' ),
 
-	// Reference: packages/tpc/src/inputs/PriceAmountInput.tsx:30
+	// Reference: packages/tpc/src/inputs/PriceAmountInput.tsx:32
 	__( 'amount', 'event_espresso' ),
 
-	// Reference: packages/tpc/src/inputs/PriceAmountInput.tsx:42
+	// Reference: packages/tpc/src/inputs/PriceAmountInput.tsx:44
 	__( 'amount…', 'event_espresso' ),
 
 	// Reference: packages/tpc/src/inputs/PriceDescriptionInput.tsx:14
