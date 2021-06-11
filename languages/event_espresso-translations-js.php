@@ -1120,16 +1120,16 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/ee-components/src/filterBar/SortByControl/index.tsx:26
 	__( 'reorder tickets', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormElement/FormElementToolbar.tsx:31
+	// Reference: packages/form-builder/src/FormElement/FormElementToolbar.tsx:32
 	__( 'delete form element', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormElement/FormElementToolbar.tsx:48
+	// Reference: packages/form-builder/src/FormElement/FormElementToolbar.tsx:49
 	__( 'form element settings', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormElement/FormElementToolbar.tsx:58
+	// Reference: packages/form-builder/src/FormElement/FormElementToolbar.tsx:59
 	__( 'copy form element', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormElement/FormElementToolbar.tsx:68
+	// Reference: packages/form-builder/src/FormElement/FormElementToolbar.tsx:69
 	__( 'click, hold, and drag to reorder form element', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/FormElement/Tabs/FieldOption.tsx:20
@@ -1153,19 +1153,19 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/form-builder/src/FormElement/Tabs/FieldOptions.tsx:96
 	__( 'add new option', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormElement/Tabs/FormElementTabs.tsx:19
-	// Reference: packages/form-builder/src/FormSection/Tabs/FormSectionTabs.tsx:18
+	// Reference: packages/form-builder/src/FormElement/Tabs/FormElementTabs.tsx:22
+	// Reference: packages/form-builder/src/FormSection/Tabs/FormSectionTabs.tsx:21
 	__( 'Settings', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormElement/Tabs/FormElementTabs.tsx:23
-	// Reference: packages/form-builder/src/FormSection/Tabs/FormSectionTabs.tsx:22
+	// Reference: packages/form-builder/src/FormElement/Tabs/FormElementTabs.tsx:26
+	// Reference: packages/form-builder/src/FormSection/Tabs/FormSectionTabs.tsx:25
 	__( 'Styles', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormElement/Tabs/FormElementTabs.tsx:27
+	// Reference: packages/form-builder/src/FormElement/Tabs/FormElementTabs.tsx:30
 	__( 'Validation', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormElement/Tabs/FormElementTabs.tsx:31
-	// Reference: packages/form-builder/src/FormSection/Tabs/FormSectionTabs.tsx:26
+	// Reference: packages/form-builder/src/FormElement/Tabs/FormElementTabs.tsx:34
+	// Reference: packages/form-builder/src/FormSection/Tabs/FormSectionTabs.tsx:29
 	__( 'Rules', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:18
@@ -1232,16 +1232,16 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/form-builder/src/FormSection/AddFormElementPopover.tsx:94
 	__( 'form element order can be changed after adding by using the drag handles in the form element toolbar', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormSection/FormSectionToolbar.tsx:31
+	// Reference: packages/form-builder/src/FormSection/FormSectionToolbar.tsx:32
 	__( 'delete form section', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormSection/FormSectionToolbar.tsx:47
+	// Reference: packages/form-builder/src/FormSection/FormSectionToolbar.tsx:48
 	__( 'form section settings', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormSection/FormSectionToolbar.tsx:57
+	// Reference: packages/form-builder/src/FormSection/FormSectionToolbar.tsx:58
 	__( 'copy form section', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormSection/FormSectionToolbar.tsx:68
+	// Reference: packages/form-builder/src/FormSection/FormSectionToolbar.tsx:69
 	__( 'click, hold, and drag to reorder form section', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/FormSection/SaveSection.tsx:43
