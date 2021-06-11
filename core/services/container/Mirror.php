@@ -158,8 +158,8 @@ class Mirror
         if (! isset($this->parameter_classes[ $class_name ][ $index ])) {
             $this->parameter_classes[ $class_name ][ $index ] = array();
         }
-        $this->parameter_classes[ $class_name ][ $index ]['param_class_name'] = $param->getClass()
-            ? $param->getClass()->name
+        $this->parameter_classes[ $class_name ][ $index ]['param_class_name'] = $param->getType()
+            ? $param->getType()->getName()
             : null;
         return $this->parameter_classes[ $class_name ][ $index ]['param_class_name'];
     }
