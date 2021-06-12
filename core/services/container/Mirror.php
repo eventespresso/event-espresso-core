@@ -160,12 +160,12 @@ class Mirror
         }
         // ReflectionParameter::getClass() is deprecated in PHP 8+
         if (PHP_VERSION_ID >= 80000) {
-            $this->parameter_classes[$class_name][$index]['param_class_name'] =
+            $this->parameter_classes[ $class_name ][ $index ]['param_class_name'] =
                 $param->getType() instanceof ReflectionNamedType
                     ? $param->getType()->getName()
                     : null;
         } else {
-            $this->parameter_classes[$class_name][$index]['param_class_name'] = $param->getClass()
+            $this->parameter_classes[ $class_name ][ $index ]['param_class_name'] = $param->getClass()
                     ? $param->getClass()->getName()
                     : null;
         }
