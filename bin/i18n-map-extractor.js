@@ -47,7 +47,7 @@ class wpi18nExtractor {
 		try {
 			const ast = parse( source );
 			types.visit( ast, {
-				visitCallExpression: function( path ) {
+				visitCallExpression: ( path ) => {
 					const node = path.node;
 					if ( includes( extractor.functionNames,
 						node.callee.name,
@@ -74,7 +74,7 @@ class wpi18nExtractor {
 		const { getStringsFromModule } = extractor;
 		reduce(
 			Array.from( modules ),
-			function( mapped, module ) {
+			( mapped, module ) => {
 				if ( ! ( module instanceof NormalModule ) ||
 					! isFunction( module.originalSource )
 				) {
@@ -83,8 +83,7 @@ class wpi18nExtractor {
 				if ( ! mapped.hasOwnProperty( chunkName ) ) {
 					mapped[ chunkName ] = [];
 				}
-				mapped[ chunkName ] = mapped[ chunkName ]
-					.concat( getStringsFromModule( module, extractor ) );
+				mapped[ chunkName ] = mapped[ chunkName ].concat( getStringsFromModule( module, extractor ) );
 				return mapped;
 			},
 			extractor.translationMap,
@@ -100,10 +99,10 @@ class wpi18nExtractor {
 		 */
 		if ( compiler.hasOwnProperty( 'hooks' ) ) {
 			compiler.hooks.thisCompilation.tap( 'webpack-i18n-map-extractor',
-				compilation => {
+				(compilation) => {
 					compilation.hooks.optimizeChunks.tap(
 						'webpack-i18n-map-extractor',
-						chunks => {
+						(chunks) => {
 							processChunks( chunks, extractor );
 						},
 					);
@@ -128,9 +127,8 @@ class wpi18nExtractor {
 			translationMap,
 			parseSourcesToMap,
 		} = extractor;
-		let chunkName,
-			finalMap;
-		forEach( chunks, function( chunk ) {
+		let chunkName, finalMap;
+		forEach( chunks, ( chunk ) => {
 			// only process if chunk.name is available and not in the list of
 			// chunks to exclude
 			if ( chunk.name && options.excludes.indexOf( chunk.name ) === -1 ) {
@@ -138,7 +136,8 @@ class wpi18nExtractor {
 				chunkName = options.aliases.hasOwnProperty( chunk.name ) ?
 					options.aliases[ chunk.name ] :
 					chunk.name;
-				parseSourcesToMap( chunk._modules, chunkName, extractor );
+				const modules = chunk._groups.values().next().value._modulePreOrderIndices;
+				parseSourcesToMap( modules, chunkName, extractor );
 			}
 		} );
 		//get existing json and merge
@@ -148,7 +147,8 @@ class wpi18nExtractor {
 			finalMap = {};
 		}
 		finalMap = Object.assign( {}, finalMap, translationMap );
-		writeFileSync( './' + options.filename,
+		writeFileSync(
+			 './' + options.filename,
 			JSON.stringify( finalMap, null, 2 ),
 			'utf-8',
 		);
