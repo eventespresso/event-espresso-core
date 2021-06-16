@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitdaff871f095cff82fbce195c2e9c1fd6
+class ComposerStaticInit6d979f7db16fd60e774aea70a704ddcf
 {
     public static $files = array (
         'a3ed03db03d57650e139da3e8903943c' => __DIR__ . '/../..' . '/access-functions.php',
@@ -151,7 +151,9 @@ class ComposerStaticInitdaff871f095cff82fbce195c2e9c1fd6
         'GraphQL\\Type\\Definition\\FieldArgument' => __DIR__ . '/..' . '/webonyx/graphql-php/src/Type/Definition/FieldArgument.php',
         'GraphQL\\Type\\Definition\\FieldDefinition' => __DIR__ . '/..' . '/webonyx/graphql-php/src/Type/Definition/FieldDefinition.php',
         'GraphQL\\Type\\Definition\\FloatType' => __DIR__ . '/..' . '/webonyx/graphql-php/src/Type/Definition/FloatType.php',
+        'GraphQL\\Type\\Definition\\HasFieldsType' => __DIR__ . '/..' . '/webonyx/graphql-php/src/Type/Definition/HasFieldsType.php',
         'GraphQL\\Type\\Definition\\IDType' => __DIR__ . '/..' . '/webonyx/graphql-php/src/Type/Definition/IDType.php',
+        'GraphQL\\Type\\Definition\\ImplementingType' => __DIR__ . '/..' . '/webonyx/graphql-php/src/Type/Definition/ImplementingType.php',
         'GraphQL\\Type\\Definition\\InputObjectField' => __DIR__ . '/..' . '/webonyx/graphql-php/src/Type/Definition/InputObjectField.php',
         'GraphQL\\Type\\Definition\\InputObjectType' => __DIR__ . '/..' . '/webonyx/graphql-php/src/Type/Definition/InputObjectType.php',
         'GraphQL\\Type\\Definition\\InputType' => __DIR__ . '/..' . '/webonyx/graphql-php/src/Type/Definition/InputType.php',
@@ -169,8 +171,10 @@ class ComposerStaticInitdaff871f095cff82fbce195c2e9c1fd6
         'GraphQL\\Type\\Definition\\ScalarType' => __DIR__ . '/..' . '/webonyx/graphql-php/src/Type/Definition/ScalarType.php',
         'GraphQL\\Type\\Definition\\StringType' => __DIR__ . '/..' . '/webonyx/graphql-php/src/Type/Definition/StringType.php',
         'GraphQL\\Type\\Definition\\Type' => __DIR__ . '/..' . '/webonyx/graphql-php/src/Type/Definition/Type.php',
+        'GraphQL\\Type\\Definition\\TypeWithFields' => __DIR__ . '/..' . '/webonyx/graphql-php/src/Type/Definition/TypeWithFields.php',
         'GraphQL\\Type\\Definition\\UnionType' => __DIR__ . '/..' . '/webonyx/graphql-php/src/Type/Definition/UnionType.php',
         'GraphQL\\Type\\Definition\\UnmodifiedType' => __DIR__ . '/..' . '/webonyx/graphql-php/src/Type/Definition/UnmodifiedType.php',
+        'GraphQL\\Type\\Definition\\UnresolvedFieldDefinition' => __DIR__ . '/..' . '/webonyx/graphql-php/src/Type/Definition/UnresolvedFieldDefinition.php',
         'GraphQL\\Type\\Definition\\WrappingType' => __DIR__ . '/..' . '/webonyx/graphql-php/src/Type/Definition/WrappingType.php',
         'GraphQL\\Type\\Introspection' => __DIR__ . '/..' . '/webonyx/graphql-php/src/Type/Introspection.php',
         'GraphQL\\Type\\Schema' => __DIR__ . '/..' . '/webonyx/graphql-php/src/Type/Schema.php',
@@ -184,6 +188,7 @@ class ComposerStaticInitdaff871f095cff82fbce195c2e9c1fd6
         'GraphQL\\Utils\\BreakingChangesFinder' => __DIR__ . '/..' . '/webonyx/graphql-php/src/Utils/BreakingChangesFinder.php',
         'GraphQL\\Utils\\BuildClientSchema' => __DIR__ . '/..' . '/webonyx/graphql-php/src/Utils/BuildClientSchema.php',
         'GraphQL\\Utils\\BuildSchema' => __DIR__ . '/..' . '/webonyx/graphql-php/src/Utils/BuildSchema.php',
+        'GraphQL\\Utils\\InterfaceImplementations' => __DIR__ . '/..' . '/webonyx/graphql-php/src/Utils/InterfaceImplementations.php',
         'GraphQL\\Utils\\MixedStore' => __DIR__ . '/..' . '/webonyx/graphql-php/src/Utils/MixedStore.php',
         'GraphQL\\Utils\\PairSet' => __DIR__ . '/..' . '/webonyx/graphql-php/src/Utils/PairSet.php',
         'GraphQL\\Utils\\SchemaExtender' => __DIR__ . '/..' . '/webonyx/graphql-php/src/Utils/SchemaExtender.php',
@@ -416,6 +421,7 @@ class ComposerStaticInitdaff871f095cff82fbce195c2e9c1fd6
         'WPGraphQL\\Type\\Union\\TermObjectUnion' => __DIR__ . '/../..' . '/src/Type/Union/TermObjectUnion.php',
         'WPGraphQL\\Type\\WPEnumType' => __DIR__ . '/../..' . '/src/Type/WPEnumType.php',
         'WPGraphQL\\Type\\WPInputObjectType' => __DIR__ . '/../..' . '/src/Type/WPInputObjectType.php',
+        'WPGraphQL\\Type\\WPInterfaceTrait' => __DIR__ . '/../..' . '/src/Type/WPInterfaceTrait.php',
         'WPGraphQL\\Type\\WPInterfaceType' => __DIR__ . '/../..' . '/src/Type/WPInterfaceType.php',
         'WPGraphQL\\Type\\WPObjectType' => __DIR__ . '/../..' . '/src/Type/WPObjectType.php',
         'WPGraphQL\\Type\\WPScalar' => __DIR__ . '/../..' . '/src/Type/WPScalar.php',
@@ -433,9 +439,9 @@ class ComposerStaticInitdaff871f095cff82fbce195c2e9c1fd6
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitdaff871f095cff82fbce195c2e9c1fd6::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitdaff871f095cff82fbce195c2e9c1fd6::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInitdaff871f095cff82fbce195c2e9c1fd6::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit6d979f7db16fd60e774aea70a704ddcf::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit6d979f7db16fd60e774aea70a704ddcf::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit6d979f7db16fd60e774aea70a704ddcf::$classMap;
 
         }, null, ClassLoader::class);
     }
