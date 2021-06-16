@@ -1,4 +1,4 @@
-const merge = require('webpack-merge');
+const { merge } = require('webpack-merge');
 const WebpackAssetsManifest = require('webpack-assets-manifest');
 const path = require('path');
 const webpack = require('webpack');
