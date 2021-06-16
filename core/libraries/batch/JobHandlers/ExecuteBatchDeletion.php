@@ -27,7 +27,7 @@ use InvalidArgumentException;
  *
  * @package     Event Espresso
  * @author         Mike Nelson
- * @since         $VID:$
+ * @since         4.10.12.p
  *
  */
 class ExecuteBatchDeletion extends JobHandler

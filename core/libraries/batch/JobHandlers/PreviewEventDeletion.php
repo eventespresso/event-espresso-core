@@ -31,7 +31,7 @@ use ReflectionException;
  *
  * @package     Event Espresso
  * @author         Mike Nelson
- * @since         $VID:$
+ * @since         4.10.12.p
  *
  */
 class PreviewEventDeletion extends JobHandler
@@ -130,7 +130,7 @@ class PreviewEventDeletion extends JobHandler
     }
 
     /**
-     * @since $VID:$
+     * @since 4.10.12.p
      * @param EE_Base_Class[] $model_objs
      * @param array $dont_traverse_models
      * @return array
@@ -156,7 +156,7 @@ class PreviewEventDeletion extends JobHandler
     /**
      * Gets all the transactions related to these events that aren't related to other events. They'll be deleted too.
      * (Ones that are related to other events can stay around until those other events are deleted too.)
-     * @since $VID:$
+     * @since 4.10.12.p
      * @param $event_ids
      * @return array of transaction IDs
      */

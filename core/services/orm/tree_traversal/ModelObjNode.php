@@ -17,7 +17,7 @@ use ReflectionException;
  *
  * @package     Event Espresso
  * @author         Mike Nelson
- * @since         $VID:$
+ * @since         4.10.12.p
  *
  */
 class ModelObjNode extends BaseNode
@@ -53,7 +53,7 @@ class ModelObjNode extends BaseNode
     /**
      * Creates a relation node for each relation of this model's relations.
      * Does NOT call `discover` on them yet though.
-     * @since $VID:$
+     * @since 4.10.12.p
      * @throws \EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
@@ -101,7 +101,7 @@ class ModelObjNode extends BaseNode
     }
 
     /**
-     * @since $VID:$
+     * @since 4.10.12.p
      * @return boolean
      */
     public function isComplete()
@@ -114,7 +114,7 @@ class ModelObjNode extends BaseNode
 
     /**
      * Triggers working on each child relation node that has work to do.
-     * @since $VID:$
+     * @since 4.10.12.p
      * @param $model_objects_to_identify
      * @return int units of work done
      */
@@ -140,7 +140,7 @@ class ModelObjNode extends BaseNode
     }
 
     /**
-     * @since $VID:$
+     * @since 4.10.12.p
      * @return array
      * @throws \EE_Error
      * @throws InvalidDataTypeException
@@ -166,7 +166,7 @@ class ModelObjNode extends BaseNode
     }
 
     /**
-     * @since $VID:$
+     * @since 4.10.12.p
      * @return array|mixed
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -191,7 +191,7 @@ class ModelObjNode extends BaseNode
 
     /**
      * Don't serialize the models. Just record their names on some dynamic properties.
-     * @since $VID:$
+     * @since 4.10.12.p
      */
     public function __sleep()
     {
@@ -208,7 +208,7 @@ class ModelObjNode extends BaseNode
 
     /**
      * Use the dynamic properties to instantiate the models we use.
-     * @since $VID:$
+     * @since 4.10.12.p
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException

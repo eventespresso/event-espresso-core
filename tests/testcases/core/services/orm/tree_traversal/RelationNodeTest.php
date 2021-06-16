@@ -18,7 +18,7 @@ use ReflectionException;
  *
  * @package     Event Espresso
  * @author         Mike Nelson
- * @since         $VID:$
+ * @since         4.10.12.p
  *
  */
 class RelationNodeTest extends EE_UnitTestCase
@@ -26,7 +26,7 @@ class RelationNodeTest extends EE_UnitTestCase
     /**
      * The Term Relationship is the only model with no primary key. And its the bane of my existence.
      * Try it.
-     * @since $VID:$
+     * @since 4.10.12.p
      * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
@@ -72,7 +72,7 @@ class RelationNodeTest extends EE_UnitTestCase
     /**
      * Verifies relation nodes work OK even for a join table across a HABTM relation.
      * Eg, events don't declare a relationship to "event venues"- it's implied by their HABTM relation to venues.
-     * @since $VID:$
+     * @since 4.10.12.p
      * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException

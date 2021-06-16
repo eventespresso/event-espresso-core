@@ -26,7 +26,7 @@ namespace EventEspresso\core\services\orm\tree_traversal;
  *
  * @package     Event Espresso
  * @author         Mike Nelson
- * @since         $VID:$
+ * @since         4.10.12.p
  *
  */
 abstract class BaseNode
@@ -50,7 +50,7 @@ abstract class BaseNode
     /**
      * Determines if the work is done yet or not. Requires you to have first discovered what work exists by calling
      * discover().
-     * @since $VID:$
+     * @since 4.10.12.p
      * @return boolean
      */
     abstract public function isComplete();
@@ -59,14 +59,14 @@ abstract class BaseNode
      * Discovers what work needs to be done to complete traversing this node and its children.
      * Note that this is separate from the constructor, so we can create child nodes without
      * discovering them immediately.
-     * @since $VID:$
+     * @since 4.10.12.p
      * @return mixed
      */
     abstract protected function discover();
 
     /**
      * Identifies model objects, up to the limit $model_objects_to_identify.
-     * @since $VID:$
+     * @since 4.10.12.p
      * @param int $model_objects_to_identify
      * @return int units of work done
      */
@@ -74,7 +74,7 @@ abstract class BaseNode
 
     /**
      * Shows the entity/relation node as an array.
-     * @since $VID:$
+     * @since 4.10.12.p
      * @return array
      */
     abstract public function toArray();
@@ -83,7 +83,7 @@ abstract class BaseNode
      * Discovers how much work there is to do, double-checks the work isn't already finished, and then does the work.
      * Note: do not call when site is in maintenance mode level 2.
      *
-     * @since $VID:$
+     * @since 4.10.12.p
      * @param $model_objects_to_identify
      * @return int number of model objects we want to identify during this call. On subsequent calls we'll continue
      * where we left off.
@@ -101,14 +101,14 @@ abstract class BaseNode
 
     /**
      * Gets the IDs of completely identified model objects that can be deleted.
-     * @since $VID:$
+     * @since 4.10.12.p
      * @return mixed
      */
     abstract public function getIds();
 
     /**
      * Make sure we encode whether its complete or not, but don't use such a long name.
-     * @since $VID:$
+     * @since 4.10.12.p
      * @return array
      */
     public function __sleep()
@@ -123,7 +123,7 @@ abstract class BaseNode
 
     /**
      * Use the dynamic property to set the "complete" property.
-     * @since $VID:$
+     * @since 4.10.12.p
      */
     public function __wakeup()
     {

@@ -16,7 +16,7 @@ use ReflectionException;
  *
  * @package     Event Espresso
  * @author         Mike Nelson
- * @since         $VID:$
+ * @since         4.10.12.p
  *
  */
 class ModelObjNodeTest extends EE_UnitTestCase
@@ -190,7 +190,7 @@ class ModelObjNodeTest extends EE_UnitTestCase
     }
 
     /**
-     * @since $VID:$
+     * @since 4.10.12.p
      * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException

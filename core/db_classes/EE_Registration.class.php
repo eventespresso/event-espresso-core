@@ -752,7 +752,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
     /**
      * Gets the name of the attendee.
-     * @since $VID:$
+     * @since 4.10.12.p
      * @param bool $apply_html_entities set to true if you want to use HTML entities.
      * @return string
      * @throws EE_Error
@@ -2110,7 +2110,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
     /**
      * Returns the contact's name (or "Unknown" if there is no contact.)
-     * @since $VID:$
+     * @since 4.10.12.p
      * @return string
      * @throws EE_Error
      * @throws InvalidArgumentException

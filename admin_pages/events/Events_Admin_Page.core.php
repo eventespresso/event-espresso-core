@@ -2107,7 +2107,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
 
     /**
      * Gets the tree traversal batch persister.
-     * @since $VID:$
+     * @since 4.10.12.p
      * @return NodeGroupDao
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -2166,7 +2166,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
 
     /**
      * Checks for a POST submission
-     * @since $VID:$
+     * @since 4.10.12.p
      */
     protected function confirmDeletion()
     {
@@ -2176,7 +2176,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
 
     /**
      * A page for users to preview what exactly will be deleted, and confirm they want to delete it.
-     * @since $VID:$
+     * @since 4.10.12.p
      * @throws EE_Error
      */
     protected function previewDeletion()

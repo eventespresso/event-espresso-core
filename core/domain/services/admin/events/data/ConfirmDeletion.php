@@ -25,7 +25,7 @@ use ReflectionException;
  *
  * @package     Event Espresso
  * @author         Mike Nelson
- * @since         $VID:$
+ * @since         4.10.12.p
  *
  */
 class ConfirmDeletion
@@ -49,7 +49,7 @@ class ConfirmDeletion
     /**
      * Redirects to the batch job for deleting events if the form submission is valid, otherwise back to the deletion
      * preview page.
-     * @since $VID:$
+     * @since 4.10.12.p
      * @param $request_data
      * @param $admin_base_url
      * @throws EE_Error

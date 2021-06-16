@@ -26,7 +26,7 @@ use ReflectionException;
  *
  * @package     Event Espresso
  * @author         Mike Nelson
- * @since         $VID:$
+ * @since         4.10.12.p
  *
  */
 class PreviewDeletion
@@ -72,7 +72,7 @@ class PreviewDeletion
 
     /**
      * Renders the preview deletion page.
-     * @since $VID:$
+     * @since 4.10.12.p
      * @param $request_data
      * @param $admin_base_url
      * @return array
