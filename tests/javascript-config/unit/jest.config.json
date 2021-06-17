@@ -23,6 +23,9 @@
 	"setupFiles": [
 		"<rootDir>/tests/javascript-config/unit/setup-globals"
 	],
+	"setupFilesAfterEnv": [
+		"<rootDir>/tests/javascript-config/unit/setup-enzyme"
+	],
 	"testPathIgnorePatterns": [
 		"/node_modules/",
 		"/test/e2e"
