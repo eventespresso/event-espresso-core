@@ -62,9 +62,8 @@ export const createActions = (action) =>
 			);
 		actions[getMethodName(modelName, '', 'persistAddRelationsFor')] = () =>
 			action.persistAddRelationsForModel(modelName);
-		actions[
-			getMethodName(modelName, '', 'persistDeleteRelationsFor')
-		] = () => action.persistDeleteRelationsForModel(modelName);
+		actions[getMethodName(modelName, '', 'persistDeleteRelationsFor')] =
+			() => action.persistDeleteRelationsForModel(modelName);
 		actions[getMethodName(modelName, '', 'persistRelationsFor')] = (
 			addRelation = true
 		) => action.persistRelationsForModel(modelName, addRelation);
@@ -129,10 +128,12 @@ export const createActions = (action) =>
 			getMethodName(modelName, 'relations', 'receiveUpdatedEntityIdFor')
 		] = (oldId, newId) =>
 			action.receiveUpdatedEntityIdForRelations(modelName, oldId, newId);
-		actions[
-			getMethodName(modelName, 'id', 'removeAllRelatedEntitiesFor')
-		] = (entityId) =>
-			action.removeAllRelatedEntitiesForModelEntity(modelName, entityId);
+		actions[getMethodName(modelName, 'id', 'removeAllRelatedEntitiesFor')] =
+			(entityId) =>
+				action.removeAllRelatedEntitiesForModelEntity(
+					modelName,
+					entityId
+				);
 		actions[
 			getMethodName(
 				modelName,

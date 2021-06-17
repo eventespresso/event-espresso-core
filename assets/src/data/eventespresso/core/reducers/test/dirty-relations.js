@@ -268,20 +268,22 @@ describe('dirty relations tests', () => {
 		);
 	});
 	describe('dirtyRelations()', () => {
-		const testAction = (actionType) => (
-			relationName = 'datetimes',
-			relationEntityId = 20,
-			modelName = 'event',
-			entityId = 10,
-			queueType = 'delete'
-		) => ({
-			type: actionType,
-			relationName,
-			relationEntityId,
-			modelName,
-			entityId,
-			queueType,
-		});
+		const testAction =
+			(actionType) =>
+			(
+				relationName = 'datetimes',
+				relationEntityId = 20,
+				modelName = 'event',
+				entityId = 10,
+				queueType = 'delete'
+			) => ({
+				type: actionType,
+				relationName,
+				relationEntityId,
+				modelName,
+				entityId,
+				queueType,
+			});
 		describe('testing the normalizeAction behaviour', () => {
 			it('does not duplicate relations in state', () => {
 				expect(

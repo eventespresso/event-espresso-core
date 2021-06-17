@@ -87,18 +87,14 @@ describe('Testing validator functions for model-entity factory', () => {
 		});
 	});
 	describe('isShallowValidValueForField()', () => {
-		const testCall = (
-			fieldName,
-			fieldValue,
-			schema,
-			expectValueObjects
-		) => () =>
-			isShallowValidValueForField(
-				fieldName,
-				fieldValue,
-				schema,
-				expectValueObjects
-			);
+		const testCall =
+			(fieldName, fieldValue, schema, expectValueObjects) => () =>
+				isShallowValidValueForField(
+					fieldName,
+					fieldValue,
+					schema,
+					expectValueObjects
+				);
 		const testEnumSchema = {
 			enumfield: {
 				type: 'string',

@@ -110,9 +110,8 @@ describe('resetStateForModel()', () => {
 			// note this also indirectly tests:
 			// - any selector that does not have model in the selector name or
 			//   in args is used.
-			const { value: eventInSelectorNameDispatch } = fulfillment.next(
-				mockMap
-			);
+			const { value: eventInSelectorNameDispatch } =
+				fulfillment.next(mockMap);
 			expect(eventInSelectorNameDispatch).toEqual(
 				dispatch(
 					'core/data',
