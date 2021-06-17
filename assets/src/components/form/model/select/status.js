@@ -47,6 +47,5 @@ export default StatusSelect;
 /**
  * Enhanced Status Select for the WordPress editor
  */
-export const EditorStatusSelect = withBaseControl('select-status')(
-	StatusSelect
-);
+export const EditorStatusSelect =
+	withBaseControl('select-status')(StatusSelect);

@@ -47,99 +47,104 @@ const validateNextState = (nextStateResponse) => {
  * @return {function(*): EnhancedComponent}  Returns an enhanced component where
  * props that represent money values have been converted to a Money value object
  */
-const withMoney = (propNameMap = []) => (WrappedComponent) => {
-	class EnhancedComponent extends Component {
-		state = {
-			convertedValues: [],
-		};
+const withMoney =
+	(propNameMap = []) =>
+	(WrappedComponent) => {
+		class EnhancedComponent extends Component {
+			state = {
+				convertedValues: [],
+			};
 
-		/**
-		 * This provides the next state on any prop change.
-		 *
-		 * @param {{}} props
-		 * @return {{}} An object representing the nextState for the component.
-		 */
-		getNextState = (props) => {
-			let nextStateResponse,
-				nextState = {},
-				convertedValues = [];
-			if (isFunction(propNameMap)) {
-				nextStateResponse = propNameMap(props, Money);
-				validateNextState(nextStateResponse);
-				if (nextStateResponse && nextStateResponse.props) {
-					nextState = { ...nextStateResponse.props };
-				}
-				convertedValues =
-					nextStateResponse.convertedValues || convertedValues;
-			} else if (isArray(propNameMap)) {
-				propNameMap.forEach((propName) => {
-					if (props[propName]) {
-						nextState[propName] = new Money(
-							props[propName],
-							SiteCurrency
-						);
-						convertedValues.push(nextState[propName].toNumber());
+			/**
+			 * This provides the next state on any prop change.
+			 *
+			 * @param {{}} props
+			 * @return {{}} An object representing the nextState for the component.
+			 */
+			getNextState = (props) => {
+				let nextStateResponse,
+					nextState = {},
+					convertedValues = [];
+				if (isFunction(propNameMap)) {
+					nextStateResponse = propNameMap(props, Money);
+					validateNextState(nextStateResponse);
+					if (nextStateResponse && nextStateResponse.props) {
+						nextState = { ...nextStateResponse.props };
 					}
-				});
-			} else {
-				warning(
-					false,
-					'The propNameMap argument provided to withMoney must be either a' +
-						' function or an array'
+					convertedValues =
+						nextStateResponse.convertedValues || convertedValues;
+				} else if (isArray(propNameMap)) {
+					propNameMap.forEach((propName) => {
+						if (props[propName]) {
+							nextState[propName] = new Money(
+								props[propName],
+								SiteCurrency
+							);
+							convertedValues.push(
+								nextState[propName].toNumber()
+							);
+						}
+					});
+				} else {
+					warning(
+						false,
+						'The propNameMap argument provided to withMoney must be either a' +
+							' function or an array'
+					);
+				}
+				nextState.convertedValues = convertedValues;
+				return nextState;
+			};
+
+			/**
+			 * Calculates whether the state should be updated using the provided
+			 * arguments.
+			 *
+			 * @param {{}} prevProps
+			 * @param {{}} prevState
+			 * @param {{}} nextState
+			 * @return {boolean}  If a shallow compare of prevState.convertedValues
+			 * and nextState.convertedValues is false, then this returns true to
+			 * signal state should be updated.
+			 */
+			shouldUpdateStateWithConvertedValues = (
+				prevProps,
+				prevState,
+				nextState
+			) => {
+				return (
+					!isShallowEqualArrays(
+						nextState.convertedValues,
+						prevState.convertedValues
+					) &&
+					nextState.convertedValues[0] !==
+						prevState.convertedValues[0]
 				);
+			};
+
+			componentDidMount() {
+				this.setState(this.getNextState(this.props));
 			}
-			nextState.convertedValues = convertedValues;
-			return nextState;
-		};
 
-		/**
-		 * Calculates whether the state should be updated using the provided
-		 * arguments.
-		 *
-		 * @param {{}} prevProps
-		 * @param {{}} prevState
-		 * @param {{}} nextState
-		 * @return {boolean}  If a shallow compare of prevState.convertedValues
-		 * and nextState.convertedValues is false, then this returns true to
-		 * signal state should be updated.
-		 */
-		shouldUpdateStateWithConvertedValues = (
-			prevProps,
-			prevState,
-			nextState
-		) => {
-			return (
-				!isShallowEqualArrays(
-					nextState.convertedValues,
-					prevState.convertedValues
-				) &&
-				nextState.convertedValues[0] !== prevState.convertedValues[0]
-			);
-		};
+			componentDidUpdate(prevProps, prevState) {
+				const nextState = this.getNextState(this.props);
+				if (
+					this.shouldUpdateStateWithConvertedValues(
+						prevProps,
+						prevState,
+						nextState
+					)
+				) {
+					this.setState(nextState);
+				}
+			}
 
-		componentDidMount() {
-			this.setState(this.getNextState(this.props));
-		}
-
-		componentDidUpdate(prevProps, prevState) {
-			const nextState = this.getNextState(this.props);
-			if (
-				this.shouldUpdateStateWithConvertedValues(
-					prevProps,
-					prevState,
-					nextState
-				)
-			) {
-				this.setState(nextState);
+			render() {
+				return <WrappedComponent {...this.props} {...this.state} />;
 			}
 		}
 
-		render() {
-			return <WrappedComponent {...this.props} {...this.state} />;
-		}
-	}
-
-	return EnhancedComponent;
-};
+		return EnhancedComponent;
+	};
 
 export default withMoney;

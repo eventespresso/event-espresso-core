@@ -48,6 +48,5 @@ export default DatetimeSelect;
 /**
  * Enhanced Datetime Select for the WordPress editor
  */
-export const EditorDatetimeSelect = withBaseControl('select-datetime')(
-	DatetimeSelect
-);
+export const EditorDatetimeSelect =
+	withBaseControl('select-datetime')(DatetimeSelect);

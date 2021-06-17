@@ -392,9 +392,8 @@ describe('DateTime Value Object', () => {
 						expect(throwsError).toThrow(TypeError);
 					});
 					describe('Has expected unit values on instantiation', () => {
-						const testDateTime = DateTime.fromObject(
-							testDateValues
-						);
+						const testDateTime =
+							DateTime.fromObject(testDateValues);
 						it('returns an instance of DateTime', () => {
 							expect(testDateTime).toBeInstanceOf(DateTime);
 						});

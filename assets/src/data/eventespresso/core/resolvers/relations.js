@@ -251,9 +251,8 @@ export function* getRelatedEntitiesForIds(
 						relationRecord !== null &&
 						!hasSetMap.hasIn([modelId, relationId])
 					) {
-						const relationEntity = factory.fromExisting(
-							relationRecord
-						);
+						const relationEntity =
+							factory.fromExisting(relationRecord);
 						yield dispatch(
 							CORE_REDUCER_KEY,
 							'resolveRelationRecordForRelation',

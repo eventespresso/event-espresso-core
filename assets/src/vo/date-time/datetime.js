@@ -587,9 +587,8 @@ export default class DateTime {
 
 		if (offset !== null) {
 			this.assertIsOffset(offset);
-			valuesForConstruct = this[privateMethods.normalizeUnitObject](
-				valuesForConstruct
-			);
+			valuesForConstruct =
+				this[privateMethods.normalizeUnitObject](valuesForConstruct);
 			const datetime = isEmpty(valuesForConstruct)
 				? moment().utcOffset(offset, true).locale(locale)
 				: moment
@@ -611,9 +610,8 @@ export default class DateTime {
 
 		this.assertTimezoneIsValid(timezone);
 
-		valuesForConstruct = this[privateMethods.normalizeUnitObject](
-			valuesForConstruct
-		);
+		valuesForConstruct =
+			this[privateMethods.normalizeUnitObject](valuesForConstruct);
 		const datetime = moment.tz(valuesForConstruct, timezone).locale(locale);
 		if (datetime.isValid() !== true) {
 			throw new InvalidArgument(
@@ -713,12 +711,12 @@ export default class DateTime {
 			// property (eg. instance.hour)
 			Object.defineProperty(this, unitName, {
 				get() {
-					const methodName = this.constructor[
-						privateMethods.normalizeUnitName
-					](unitName);
-					const unitValue = this[privateProperties.datetime][
-						methodName
-					]();
+					const methodName =
+						this.constructor[privateMethods.normalizeUnitName](
+							unitName
+						);
+					const unitValue =
+						this[privateProperties.datetime][methodName]();
 					return this.constructor[privateMethods.normalizeUnitValue](
 						unitName,
 						unitValue,
@@ -748,9 +746,8 @@ export default class DateTime {
 	 * @return {DateTime|ServerDateTime} A new instance of DateTime.
 	 */
 	set(setObject = {}) {
-		setObject = this.constructor[privateMethods.normalizeUnitObject](
-			setObject
-		);
+		setObject =
+			this.constructor[privateMethods.normalizeUnitObject](setObject);
 		return new this.constructor(
 			this[privateProperties.datetime]
 				.clone()

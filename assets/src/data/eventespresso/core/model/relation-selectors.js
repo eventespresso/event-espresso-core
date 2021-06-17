@@ -17,10 +17,9 @@ import { getMethodName } from '../../base-model';
  */
 export const createSelectors = (selector) =>
 	MODEL_NAMES.reduce((selectors, modelName) => {
-		selectors[
-			getMethodName(modelName, 'additionRelations', 'getQueued')
-		] = (state) =>
-			selector.getRelationAdditionsQueuedForModel(state, modelName);
+		selectors[getMethodName(modelName, 'additionRelations', 'getQueued')] =
+			(state) =>
+				selector.getRelationAdditionsQueuedForModel(state, modelName);
 		selectors[getMethodName(modelName, 'deleteRelations', 'getQueued')] = (
 			state
 		) => selector.getRelationDeletionsQueuedForModel(state, modelName);
