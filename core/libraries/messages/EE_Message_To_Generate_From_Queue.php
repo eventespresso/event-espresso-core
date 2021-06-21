@@ -32,7 +32,7 @@ class EE_Message_To_Generate_From_Queue extends EE_Message_To_Generate
         if ($this->valid()) {
             $this->_message->set_content($this->_get_content());
             $this->_message->set_subject($this->_get_subject($custom_subject));
-            $this->_message->set_GRP_ID($this->_get_GRP_ID());
+            $this->_message->set_GRP_ID($this->getGroupIdFromMessageRepo());
         }
     }
 
@@ -92,7 +92,7 @@ class EE_Message_To_Generate_From_Queue extends EE_Message_To_Generate
      * for the single EE_Message aggregate object returned by get_EE_Message
      * @return int;
      */
-    protected function _get_GRP_ID()
+    protected function getGroupIdFromMessageRepo()
     {
         $this->queue->get_message_repository()->rewind();
         if ($this->queue->get_message_repository()->valid()) {
