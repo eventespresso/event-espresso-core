@@ -26,6 +26,7 @@ class FormSectionConnectionResolver extends AbstractConnectionResolver
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     public function get_query()
@@ -54,9 +55,7 @@ class FormSectionConnectionResolver extends AbstractConnectionResolver
      * handle batch resolution of the posts.
      *
      * @return array
-     * @throws EE_Error
      * @throws InvalidArgumentException
-     * @throws ReflectionException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
