@@ -45,7 +45,7 @@ class Element
                 Element::STATUS_ACTIVE   => esc_html__('Active', 'event_espresso'),
                 Element::STATUS_ARCHIVED => esc_html__('Archived', 'event_espresso'),
                 Element::STATUS_DEFAULT  => esc_html__('Default', 'event_espresso'),
-                Element::STATUS_DEFAULT  => esc_html__('Shared', 'event_espresso'),
+                Element::STATUS_SHARED   => esc_html__('Shared', 'event_espresso'),
                 Element::STATUS_TRASHED  => esc_html__('Trashed', 'event_espresso'),
             ]
         );
