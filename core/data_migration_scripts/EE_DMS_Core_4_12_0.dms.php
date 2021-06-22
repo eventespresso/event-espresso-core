@@ -260,7 +260,7 @@ class EE_DMS_Core_4_12_0 extends EE_Data_Migration_Script_Base
 				FIN_wpUser bigint(20) unsigned DEFAULT NULL,
 				PRIMARY KEY  (FIN_ID),
 				UNIQUE KEY FIN_UUID_UNIQUE (FIN_UUID),
-				KEY FIN_belongsTo (FIN_belongsTo),
+				KEY FSC_UUID (FSC_UUID),
 				KEY FIN_order (FIN_order),
 				KEY FIN_status (FIN_status)";
         $this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
@@ -292,6 +292,7 @@ class EE_DMS_Core_4_12_0 extends EE_Data_Migration_Script_Base
 				FSB_submitted datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
 				PRIMARY KEY  (FSB_ID),
 				UNIQUE KEY FSB_UUID_UNIQUE (FSB_UUID),
+				KEY FSC_UUID (FSC_UUID),
 				KEY TXN_ID (TXN_ID)";
         $this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
 
