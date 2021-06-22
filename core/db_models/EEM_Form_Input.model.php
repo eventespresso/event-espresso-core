@@ -46,7 +46,7 @@ class EEM_Form_Input extends EEM_Form_Element
     private $request;
 
     /**
-     * @var array
+     * @var InputTypes
      */
     private $input_types;
 
@@ -71,6 +71,13 @@ class EEM_Form_Input extends EEM_Form_Element
                     'FIN_UUID',
                     esc_html__('Form Input UUID (universally unique identifier)', 'event_espresso')
                 ),
+                'FSC_UUID' => new EE_Foreign_Key_String_Field(
+                    'FSC_UUID',
+                    esc_html__('UUID of parent form section this form input belongs to.', 'event_espresso'),
+                    false,
+                    null,
+                    ['Form_Section']
+                ),
                 'FIN_adminLabel' => new EE_Plain_Text_Field(
                     'FIN_adminLabel',
                     esc_html__(
@@ -88,13 +95,6 @@ class EEM_Form_Input extends EEM_Form_Element
                     ),
                     false,
                     false
-                ),
-                'FIN_belongsTo' => new EE_Foreign_Key_String_Field(
-                    'FIN_belongsTo',
-                    esc_html__('UUID of parent form section this form input belongs to.', 'event_espresso'),
-                    true,
-                    null,
-                    ['Form_Section']
                 ),
                 'FIN_helpClass' => new EE_Plain_Text_Field(
                     'FIN_helpClass',
@@ -117,6 +117,15 @@ class EEM_Form_Input extends EEM_Form_Element
                     true,
                     null
                 ),
+                'FIN_mapsTo'     => new EE_Plain_Text_Field(
+                    'FIN_mapsTo',
+                    esc_html__(
+                        'Model and Fields name that this input maps to; ex: Attendee.email',
+                        'event_espresso'
+                    ),
+                    true,
+                    null
+                ),
                 'FIN_max'     => new EE_Integer_Field(
                     'FIN_max',
                     esc_html__(
@@ -130,6 +139,15 @@ class EEM_Form_Input extends EEM_Form_Element
                     'FIN_min',
                     esc_html__(
                         'Minimum numeric value or minimum characters allowed for form input answer.',
+                        'event_espresso'
+                    ),
+                    true,
+                    null
+                ),
+                'FIN_options'     => new EE_JSON_Field(
+                    'FIN_options',
+                    esc_html__(
+                        'Options for ENUM type inputs like checkboxes, radio buttons, select inputs, etc',
                         'event_espresso'
                     ),
                     true,
@@ -201,40 +219,20 @@ class EEM_Form_Input extends EEM_Form_Element
                 ),
             ],
         ];
-        $this->_model_relations = [];
-        $this->_model_relations['Form_Section'] = new EE_Belongs_To_Any_Relation();
+
+        $this->_model_relations = [
+            'Form_Section' => new EE_Belongs_To_Relation(),
+            'WP_User'      => new EE_Belongs_To_Relation(),
+        ];
         // this model is generally available for reading
-        $restrictions                              = [];
-        $restrictions[ EEM_Base::caps_read ]       = new EE_Restriction_Generator_Public();
-        $restrictions[ EEM_Base::caps_read_admin ] = new EE_Restriction_Generator_Reg_Form('FIN_applies_to');
-        $restrictions[ EEM_Base::caps_edit ]       = new EE_Restriction_Generator_Reg_Form('FIN_applies_to');
-        $restrictions[ EEM_Base::caps_delete ]     = new EE_Restriction_Generator_Reg_Form('FIN_applies_to');
-        $this->_cap_restriction_generators         = $restrictions;
+        $this->_cap_restriction_generators = [
+            EEM_Base::caps_read       => new EE_Restriction_Generator_Public(),
+            EEM_Base::caps_read_admin => new EE_Restriction_Generator_Reg_Form('FIN_applies_to'),
+            EEM_Base::caps_edit       => new EE_Restriction_Generator_Reg_Form('FIN_applies_to'),
+            EEM_Base::caps_delete     => new EE_Restriction_Generator_Reg_Form('FIN_applies_to'),
+        ];
         parent::__construct($element, $timezone);
         $this->request = $this->getLoader()->getShared('EventEspresso\core\services\request\RequestInterface');
-    }
-
-
-    /**
-     * @param bool $constants_only
-     * @return array
-     */
-    public function validTypeOptions(bool $constants_only = false): array
-    {
-        return $this->input_types->validTypeOptions($constants_only);
-    }
-
-
-    /**
-     * @return EE_Form_Input[]
-     * @throws EE_Error
-     */
-    public function getFormInputsForSection(string $relation, string $related_UUID): array
-    {
-        $where_params = [$relation => $related_UUID];
-        $query_params = $this->addDefaultWhereConditions([$where_params]);
-        $query_params = $this->addOrderByQueryParams($query_params);
-        return $this->get_all($query_params);
     }
 
 
@@ -263,5 +261,49 @@ class EEM_Form_Input extends EEM_Form_Element
     {
         $query_params['order_by'] = ['FIN_order' => 'ASC'];
         return $query_params;
+    }
+
+
+    /**
+     * @param EE_Form_Section $form_section
+     * @param EE_Form_Input[] $all_form_inputs
+     * @return EE_Form_Input[]
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function filterFormInputsForFormSection(EE_Form_Section $form_section, array $all_form_inputs): array
+    {
+        return array_filter($all_form_inputs, $form_section->formInputFilter());
+    }
+
+
+    /**
+     * @param EE_Form_Section[] $form_sections
+     * @return EE_Form_Input[]
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function getAllFormInputsForFormSections(array $form_sections): array
+    {
+        $FSC_UUIDs = [];
+        foreach ($form_sections as $form_section) {
+            if ($form_section instanceof EE_Form_Section) {
+                $FSC_UUIDs[] = $form_section->UUID();
+            }
+        }
+        $where_params = ['FSC_UUID' => ['IN', $FSC_UUIDs]];
+        $query_params = $this->addDefaultWhereConditions([$where_params]);
+        $query_params = $this->addOrderByQueryParams($query_params);
+        return $this->get_all($query_params);
+    }
+
+
+    /**
+     * @param bool $constants_only
+     * @return array
+     */
+    public function validTypeOptions(bool $constants_only = false): array
+    {
+        return $this->input_types->validTypeOptions($constants_only);
     }
 }
