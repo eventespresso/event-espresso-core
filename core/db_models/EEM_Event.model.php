@@ -263,6 +263,13 @@ class EEM_Event extends EEM_CPT_Base
                     false,
                     false
                 ),
+                'FSC_UUID'                        => new EE_Foreign_Key_String_Field(
+                    'FSC_UUID',
+                    esc_html__('Registration Form UUID (universally unique identifier)', 'event_espresso'),
+                    true,
+                    null,
+                    'Form_Section'
+                ),
             ),
         );
         $this->_model_relations = array(
@@ -276,6 +283,7 @@ class EEM_Event extends EEM_CPT_Base
             'Message_Template_Group' => new EE_HABTM_Relation('Event_Message_Template'),
             'Attendee'               => new EE_HABTM_Relation('Registration'),
             'WP_User'                => new EE_Belongs_To_Relation(),
+            'Form_Section'           => new EE_Belongs_To_Relation(),
         );
         // this model is generally available for reading
         $this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Public();
