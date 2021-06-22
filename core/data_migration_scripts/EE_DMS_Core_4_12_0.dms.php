@@ -93,7 +93,7 @@ class EE_DMS_Core_4_12_0 extends EE_Data_Migration_Script_Base
 				REG_ID int(10) unsigned NOT NULL,
 				DTT_ID int(10) unsigned NOT NULL,
 				CHK_in tinyint(1) unsigned NOT NULL DEFAULT 1,
-				CHK_timestamp datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+				CHK_timestamp datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
 				PRIMARY KEY  (CHK_ID),
 				KEY REG_ID (REG_ID),
 				KEY DTT_ID (DTT_ID)";
@@ -192,6 +192,7 @@ class EE_DMS_Core_4_12_0 extends EE_Data_Migration_Script_Base
 				EVT_timezone_string varchar(45) NULL,
 				EVT_external_URL varchar(200) NULL,
 				EVT_donations tinyint(1) NULL,
+				FSC_UUID varchar(25) DEFAULT NULL,
 				PRIMARY KEY  (EVTM_ID),
 				KEY EVT_ID (EVT_ID)";
         $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
@@ -236,54 +237,68 @@ class EE_DMS_Core_4_12_0 extends EE_Data_Migration_Script_Base
 				KEY second_model (EXJ_second_model_name,EXJ_second_model_id)";
         $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB ');
 
-        $table_name = 'esp_form_section';
-        $sql        = 'FSC_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
-                FSC_UUID binary(16) NOT NULL,
-				FSC_appliesTo tinytext NOT NULL,
-				FSC_belongsTo binary(16) NULL,
-				FSC_htmlClass text NULL,
-				FSC_order tinyint(2) unsigned NOT NULL DEFAULT 0,
-				FSC_relation tinytext NULL,
-				FSC_status varchar(32) NULL,
-				FSC_wpUser bigint(20) unsigned NULL,
-				PRIMARY KEY  (FSC_ID),
-				UNIQUE KEY FSC_UUID_UNIQUE (FSC_UUID),
-				KEY FSC_belongsTo (FSC_belongsTo),
-				KEY FSC_order (FSC_order),
-				KEY FSC_status (FSC_status)';
-        $this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
-
         $table_name = 'esp_form_input';
-        $sql        = 'FIN_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
-                FIN_UUID binary(16) NOT NULL,
+        $sql        = "FIN_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
+                FIN_UUID varchar(25) NOT NULL,
+				FSC_UUID varchar(25) NOT NULL,
 				FIN_adminLabel tinytext NOT NULL,
 				FIN_adminOnly tinyint(1) unsigned NOT NULL DEFAULT 0,
-				FIN_belongsTo binary(16) NULL,
-				FIN_helpClass text NULL,
-				FIN_helpText text NULL,
-				FIN_htmlClass text NULL,
+				FIN_helpClass text DEFAULT NULL,
+				FIN_helpText text DEFAULT NULL,
+				FIN_htmlClass text DEFAULT NULL,
+				FIN_mapsTo varchar(45) DEFAULT NULL,
 				FIN_max smallint(5) NOT NULL DEFAULT -1,
-				FIN_min smallint(5) NULL,
+				FIN_min smallint(5) DEFAULT NULL,
+				FIN_options text DEFAULT NULL,
 				FIN_order tinyint(2) unsigned NOT NULL DEFAULT 0,
-				FIN_placeholder tinytext NULL,
-				FIN_publicLabel text NULL,
+				FIN_placeholder tinytext DEFAULT NULL,
+				FIN_publicLabel text NOT NULL,
 				FIN_required tinyint(1) unsigned NOT NULL DEFAULT 0,
-				FIN_requiredText text NULL,
-				FIN_status varchar(32) NULL,
-				FIN_type tinytext NULL,
-				FIN_wpUser bigint(20) unsigned NULL,
+				FIN_requiredText text DEFAULT NULL,
+				FIN_status varchar(32) NOT NULL DEFAULT 'active',
+				FIN_type tinytext DEFAULT NULL,
+				FIN_wpUser bigint(20) unsigned DEFAULT NULL,
 				PRIMARY KEY  (FIN_ID),
 				UNIQUE KEY FIN_UUID_UNIQUE (FIN_UUID),
 				KEY FIN_belongsTo (FIN_belongsTo),
 				KEY FIN_order (FIN_order),
-				KEY FIN_status (FIN_status)';
+				KEY FIN_status (FIN_status)";
         $this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
 
-        $now_in_mysql = current_time('mysql', true);
+        $table_name = 'esp_form_section';
+        $sql        = "FSC_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
+                FSC_UUID varchar(25) NOT NULL,
+				FSC_appliesTo tinytext NOT NULL,
+				FSC_belongsTo varchar(25) DEFAULT NULL,
+				FSC_htmlClass text DEFAULT NULL,
+				FSC_order tinyint(2) unsigned NOT NULL DEFAULT 0,
+				FSC_publicLabel text NOT NULL,
+				FSC_status varchar(32) NOT NULL DEFAULT 'active',
+				FSC_showLabel tinyint(1) unsigned NOT NULL DEFAULT 1,
+				FSC_wpUser bigint(20) unsigned DEFAULT NULL,
+				PRIMARY KEY  (FSC_ID),
+				UNIQUE KEY FSC_UUID_UNIQUE (FSC_UUID),
+				KEY FSC_belongsTo (FSC_belongsTo),
+				KEY FSC_order (FSC_order),
+				KEY FSC_status (FSC_status)";
+        $this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
+
+        $table_name = 'esp_form_submission';
+        $sql        = "FSB_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
+                FSB_UUID varchar(25) NOT NULL,
+                FSC_UUID varchar(25) NOT NULL,
+				TXN_ID int(10) DEFAULT NULL,
+				FSB_data mediumtext DEFAULT NULL,
+				FSB_submitted datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+				PRIMARY KEY  (FSB_ID),
+				UNIQUE KEY FSB_UUID_UNIQUE (FSB_UUID),
+				KEY TXN_ID (TXN_ID)";
+        $this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
+
         $table_name   = 'esp_line_item';
         $sql          = "LIN_ID int(11) NOT NULL AUTO_INCREMENT,
 				LIN_code varchar(245) NOT NULL DEFAULT '',
-				TXN_ID int(11) DEFAULT NULL,
+				TXN_ID int(10) DEFAULT NULL,
 				LIN_name varchar(245) NOT NULL DEFAULT '',
 				LIN_desc text DEFAULT NULL,
 				LIN_unit_price decimal(12,3) DEFAULT NULL,
@@ -296,7 +311,7 @@ class EE_DMS_Core_4_12_0 extends EE_Data_Migration_Script_Base
 				LIN_quantity int(10) DEFAULT NULL,
 				OBJ_ID int(11) DEFAULT NULL,
 				OBJ_type varchar(45) DEFAULT NULL,
-				LIN_timestamp datetime NOT NULL DEFAULT '$now_in_mysql',
+				LIN_timestamp datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
 				PRIMARY KEY  (LIN_ID),
 				KEY parent_order (LIN_parent,LIN_order),
 				KEY txn_type_timestamp (TXN_ID,LIN_type,LIN_timestamp),
@@ -334,8 +349,8 @@ class EE_DMS_Core_4_12_0 extends EE_Data_Migration_Script_Base
 				MSG_subject varchar(255) NULL,
 				MSG_priority tinyint(1) NOT NULL DEFAULT 3,
 				STS_ID varchar(3) NOT NULL DEFAULT 'MIC',
-				MSG_created datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-				MSG_modified datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+				MSG_created datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+				MSG_modified datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
 				PRIMARY KEY  (MSG_ID),
 				KEY GRP_ID (GRP_ID),
 				KEY TXN_ID (TXN_ID),
@@ -382,7 +397,7 @@ class EE_DMS_Core_4_12_0 extends EE_Data_Migration_Script_Base
         $sql        = "PAY_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 				TXN_ID int(10) unsigned DEFAULT NULL,
 				STS_ID varchar(3) DEFAULT NULL,
-				PAY_timestamp datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+				PAY_timestamp datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
 				PAY_source varchar(45) DEFAULT NULL,
 				PAY_amount decimal(12,3) DEFAULT NULL,
 				PMD_ID int(11) DEFAULT NULL,
@@ -525,7 +540,7 @@ class EE_DMS_Core_4_12_0 extends EE_Data_Migration_Script_Base
 				TXN_ID int(10) unsigned NOT NULL,
 				TKT_ID int(10) unsigned NOT NULL,
 				STS_ID varchar(3) NOT NULL DEFAULT 'RPP',
-				REG_date datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+				REG_date datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
 				REG_final_price decimal(12,3) NOT NULL DEFAULT '0.00',
 				REG_paid decimal(12,3) NOT NULL DEFAULT '0.00',
 				REG_session varchar(45) NOT NULL,
@@ -607,7 +622,7 @@ class EE_DMS_Core_4_12_0 extends EE_Data_Migration_Script_Base
 
         $table_name = 'esp_transaction';
         $sql        = "TXN_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
-				TXN_timestamp datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+				TXN_timestamp datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
 				TXN_total decimal(12,3) DEFAULT '0.00',
 				TXN_paid decimal(12,3) NOT NULL DEFAULT '0.00',
 				STS_ID varchar(3) NOT NULL DEFAULT 'TOP',
