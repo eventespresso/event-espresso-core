@@ -15,7 +15,7 @@ use ReflectionException;
 class FormSectionConnectionResolver extends AbstractConnectionResolver
 {
     // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    public function get_loader_name()
+    public function get_loader_name(): string
     {
         return 'espresso_formSection';
     }
@@ -29,7 +29,7 @@ class FormSectionConnectionResolver extends AbstractConnectionResolver
      * @throws ReflectionException
      */
     // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    public function get_query()
+    public function get_query(): EEM_Form_Section
     {
         return EEM_Form_Section::instance();
     }
@@ -41,10 +41,12 @@ class FormSectionConnectionResolver extends AbstractConnectionResolver
      * @return array
      */
     // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    public function get_ids()
+    public function get_ids(): array
     {
+        // \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
+        // \EEH_Debug_Tools::printr($this->query_args, '$this->query_args', __FILE__, __LINE__);
         $results = $this->query->get_col($this->query_args);
-
+        // \EEH_Debug_Tools::printr($results, '$results', __FILE__, __LINE__);
         return ! empty($results) ? $results : [];
     }
 
@@ -60,7 +62,7 @@ class FormSectionConnectionResolver extends AbstractConnectionResolver
      * @throws InvalidInterfaceException
      */
     // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    public function get_query_args()
+    public function get_query_args(): array
     {
         $where_params = [];
         $query_args   = [];

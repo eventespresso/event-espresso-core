@@ -6,6 +6,7 @@ use EEM_Price;
 use EventEspresso\core\domain\services\graphql\connection_resolvers\PriceConnectionResolver;
 use EventEspresso\core\services\graphql\connections\ConnectionBase;
 use Exception;
+use GraphQL\Deferred;
 
 /**
  * Class TicketPricesConnection
@@ -17,8 +18,6 @@ use Exception;
  */
 class TicketPricesConnection extends ConnectionBase
 {
-
-
     /**
      * TicketConnection constructor.
      *
@@ -26,15 +25,14 @@ class TicketPricesConnection extends ConnectionBase
      */
     public function __construct(EEM_Price $model)
     {
-        $this->model = $model;
+        parent::__construct($model);
     }
 
 
     /**
      * @return array
-     * @since $VID:$
      */
-    public function config()
+    public function config(): array
     {
         return [
             'fromType'           => $this->namespace . 'Ticket',
@@ -52,9 +50,8 @@ class TicketPricesConnection extends ConnectionBase
      * @param $args
      * @param $context
      * @param $info
-     * @return array
+     * @return array|Deferred|mixed
      * @throws Exception
-     * @since $VID:$
      */
     public function resolveConnection($entity, $args, $context, $info)
     {
@@ -62,16 +59,15 @@ class TicketPricesConnection extends ConnectionBase
         return $resolver->get_connection();
     }
 
+
     /**
      * Given an optional array of args, this returns the args to be used in the connection
      *
-     * @access public
      * @param array $args The args to modify the defaults
-     *
      * @return array
      */
     // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    public static function get_connection_args($args = [])
+    public static function get_connection_args(array $args = []): array
     {
         $newArgs = [
             'in'              => [

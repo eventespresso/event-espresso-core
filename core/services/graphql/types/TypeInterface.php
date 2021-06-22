@@ -6,6 +6,7 @@ use EE_Error;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
+use EventEspresso\core\services\graphql\fields\GraphQLFieldInterface;
 use GraphQL\Error\UserError;
 use GraphQL\Type\Definition\ResolveInfo;
 use InvalidArgumentException;
@@ -26,20 +27,20 @@ interface TypeInterface
     /**
      * @return string
      */
-    public function name();
+    public function name(): string;
 
 
     /**
      * @return string
      */
-    public function description();
+    public function description(): string;
 
 
     /**
-     * @return \EventEspresso\core\services\graphql\fields\GraphQLFieldInterface[]
+     * @return GraphQLFieldInterface[]
      * @since $VID:$
      */
-    public function fields();
+    public function fields(): array;
 
 
     /**
@@ -48,21 +49,21 @@ interface TypeInterface
      * @return array
      * @since $VID:$
      */
-    public function getFieldsForResolver();
+    public function getFieldsForResolver(): array;
 
 
     /**
      * @return bool
      */
-    public function isCustomPostType();
+    public function isCustomPostType(): bool;
 
 
     /**
-     * @param int $value
+     * @param int|float $value
      * @return int
      * @since $VID:$
      */
-    public function parseInfiniteValue($value);
+    public function parseInfiniteValue($value): int;
 
 
     /**
@@ -80,14 +81,14 @@ interface TypeInterface
      * @throws ReflectionException
      * @since $VID:$
      */
-    public function resolveField($source, $args, AppContext $context, ResolveInfo $info);
+    public function resolveField($source, array $args, AppContext $context, ResolveInfo $info): string;
 
 
     /**
      * @param mixed      $payload The payload returned after mutation
      * @param array      $args    The inputArgs on the field
      * @param AppContext $context The AppContext passed down the GraphQL tree
-     * @return string
+     * @return string|null
      * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
@@ -97,5 +98,5 @@ interface TypeInterface
      * @throws ReflectionException
      * @since $VID:$
      */
-    public function resolveFromPayload($payload, $args, AppContext $context);
+    public function resolveFromPayload($payload, array $args, AppContext $context): ?string;
 }

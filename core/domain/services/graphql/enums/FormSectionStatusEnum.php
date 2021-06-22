@@ -2,7 +2,6 @@
 
 namespace EventEspresso\core\domain\services\graphql\enums;
 
-use EE_Form_Section;
 use EventEspresso\core\services\graphql\enums\EnumBase;
 use EventEspresso\core\services\form\meta\Element;
 

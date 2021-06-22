@@ -29,7 +29,7 @@ abstract class AbstractConnectionResolver extends WPGraphQLConnectionResolver
     /**
      * @return Utilities
      */
-    public function getUtilities()
+    public function getUtilities(): Utilities
     {
         if (! $this->utilities instanceof Utilities) {
             $this->utilities = LoaderFactory::getLoader()->getShared(Utilities::class);
@@ -46,20 +46,25 @@ abstract class AbstractConnectionResolver extends WPGraphQLConnectionResolver
      * @return bool
      */
     // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    public function should_execute()
+    public function should_execute(): bool
     {
         return $this->should_execute;
     }
+
 
     /**
      * Set limit the highest value of first and last, with a (filterable) max of 100
      *
      * @return array
      */
-    protected function getLimit()
+    protected function getLimit(): array
     {
-        $first = ! empty($this->args['first']) ? absint($this->args['first']) : null;
-        $last  = ! empty($this->args['last']) ? absint($this->args['last']) : null;
+        $first = ! empty($this->args['first'])
+            ? absint($this->args['first'])
+            : null;
+        $last  = ! empty($this->args['last'])
+            ? absint($this->args['last'])
+            : null;
 
         $limit = min(
             max($first, $last, 100),
@@ -78,7 +83,7 @@ abstract class AbstractConnectionResolver extends WPGraphQLConnectionResolver
      * @throws Exception
      */
     // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    public function get_amount_requested()
+    public function get_amount_requested(): ?int
     {
         $amount_requested = parent::get_amount_requested();
 
@@ -98,14 +103,11 @@ abstract class AbstractConnectionResolver extends WPGraphQLConnectionResolver
      * offset exists. Offset is equivalent to entity ID. So this function is equivalent to
      * checking if the entity with the given ID exists.
      *
-     * @access public
-     *
      * @param int $offset The ID of the node used for the cursor offset
-     *
      * @return bool
      */
     // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    public function is_valid_offset($offset)
+    public function is_valid_offset($offset): bool
     {
         $entity = $this->get_query()->get_one_by_ID($offset);
 
@@ -115,14 +117,13 @@ abstract class AbstractConnectionResolver extends WPGraphQLConnectionResolver
     /**
      * Validates Model.
      *
-     * @param array $entity Entity node.
-     *
+     * @param array $model Entity node.
      * @return bool
      */
     // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    protected function is_valid_model($entity)
+    protected function is_valid_model($model): bool
     {
-        return $entity instanceof EE_Base_Class;
+        return $model instanceof EE_Base_Class;
     }
 
 
@@ -135,7 +136,7 @@ abstract class AbstractConnectionResolver extends WPGraphQLConnectionResolver
      * @param string $primary_key
      * @return array
      */
-    protected function mapOrderbyInputArgs(array $query_args, array $where_params, $primary_key)
+    protected function mapOrderbyInputArgs(array $query_args, array $where_params, string $primary_key): array
     {
         // ID of the current offset
         $offset = $this->get_offset();
@@ -148,10 +149,10 @@ abstract class AbstractConnectionResolver extends WPGraphQLConnectionResolver
                 $query_args['order_by'][ $orderby_input['field'] ] = $orderby_input['order'];
             }
         } elseif ($offset) {
-            $compare                      = $this->args['last'] ? '<' : '>';
-            $where_params[ $primary_key ] = [ $compare, $offset ];
+            $compare = $this->args['last'] ? '<' : '>';
+            $where_params[ $primary_key ] = [$compare, $offset];
         }
-        return [ $query_args, $where_params ];
+        return [$query_args, $where_params];
     }
 
 
@@ -161,13 +162,15 @@ abstract class AbstractConnectionResolver extends WPGraphQLConnectionResolver
      *
      * @param array $where_args
      * @param array $arg_mapping
-     * @param array $id_fields   The fields to convert from global IDs to DB IDs.
+     * @param array $id_fields The fields to convert from global IDs to DB IDs.
      * @return array
      */
-    protected function sanitizeWhereArgsForInputFields(array $where_args, array $arg_mapping, array $id_fields)
+    protected function sanitizeWhereArgsForInputFields(array $where_args, array $arg_mapping, array $id_fields): array
     {
         $query_args = $this->getUtilities()->sanitizeWhereArgs($where_args, $arg_mapping, $id_fields);
-        return ! empty($query_args) && is_array($query_args) ? $query_args : [];
+        return ! empty($query_args) && is_array($query_args)
+            ? $query_args
+            : [];
     }
 
 
@@ -177,7 +180,7 @@ abstract class AbstractConnectionResolver extends WPGraphQLConnectionResolver
      * @param array $where_args
      * @return string
      */
-    protected function getSearchKeywords(array $where_args)
+    protected function getSearchKeywords(array $where_args): string
     {
         $search = '';
         if (! empty($where_args['search'])) {
