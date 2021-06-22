@@ -225,7 +225,7 @@ class EE_Form_Section extends EE_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function wpUser(): int
+    public function wp_user(): int
     {
         return $this->get('FSC_wpUser');
     }
