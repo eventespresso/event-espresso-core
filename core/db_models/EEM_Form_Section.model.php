@@ -88,7 +88,7 @@ class EEM_Form_Section extends EEM_Form_Element
                 'FSC_appliesTo' => new EE_Enum_Text_Field(
                     'FSC_appliesTo',
                     esc_html__(
-                        'Form user types that this form section should be presented to. Values correspond to the EEM_Form_Section::APPLIES_TO_* constants.',
+                        'Form user type that this form section should be presented to. Values correspond to the EEM_Form_Section::APPLIES_TO_* constants.',
                         'event_espresso'
                     ),
                     false,
@@ -133,7 +133,7 @@ class EEM_Form_Section extends EEM_Form_Element
                 'FSC_status'    => new EE_Enum_Text_Field(
                     'FSC_status',
                     esc_html__(
-                        'Whether form section is active, archived, trashed, or used as a default on new forms. Values correspond to the EEM_Form_Section::STATUS_TO_* constants.',
+                        'Whether form section is active, archived, shared, trashed, or used as a default on new forms. Values correspond to the EEM_Form_Section::STATUS_TO_* constants.',
                         'event_espresso'
                     ),
                     false,
