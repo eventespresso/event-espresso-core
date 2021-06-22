@@ -28,15 +28,10 @@ class EEM_Form_Submission extends EEM_Base
         $this->plural_item   = esc_html__('Form Submissions', 'event_espresso');
 
         $this->_tables          = [
-            'Form_Submission' => new EE_Primary_Table('esp_form_submission', 'FSB_ID'),
+            'Form_Submission' => new EE_Primary_Table('esp_form_submission', 'FSB_UUID'),
         ];
         $this->_fields          = [
             'Form_Submission' => [
-                'FSB_ID'        => new EE_Integer_Field(
-                    'FSB_ID',
-                    esc_html__('Form Submission ID (autoincrement db id)', 'event_espresso'),
-                    false
-                ),
                 'FSB_UUID'      => new EE_Primary_Key_String_Field(
                     'FSB_UUID',
                     esc_html__('Form Submission UUID (universally unique identifier)', 'event_espresso')

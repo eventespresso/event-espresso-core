@@ -3,7 +3,6 @@
 /**
  * Class EE_Form_Input
  * Model Fields:
- *      FIN_ID 
  *      FIN_UUID
  *      FIN_adminLabel
  *      FIN_adminOnly

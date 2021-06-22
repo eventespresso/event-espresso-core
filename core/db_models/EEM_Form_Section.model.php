@@ -61,15 +61,10 @@ class EEM_Form_Section extends EEM_Form_Element
         $this->plural_item   = esc_html__('Form Sections', 'event_espresso');
 
         $this->_tables          = [
-            'Form_Section' => new EE_Primary_Table('esp_form_section', 'FSC_ID'),
+            'Form_Section' => new EE_Primary_Table('esp_form_section', 'FSC_UUID'),
         ];
         $this->_fields          = [
             'Form_Section' => [
-                'FSC_ID'        => new EE_Integer_Field(
-                    'FSC_ID',
-                    esc_html__('Form Section ID (autoincrement db id)', 'event_espresso'),
-                    false
-                ),
                 'FSC_UUID'      => new EE_Primary_Key_String_Field(
                     'FSC_UUID',
                     esc_html__('Form Section UUID (universally unique identifier)', 'event_espresso')

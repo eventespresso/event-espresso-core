@@ -238,8 +238,7 @@ class EE_DMS_Core_4_12_0 extends EE_Data_Migration_Script_Base
         $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB ');
 
         $table_name = 'esp_form_input';
-        $sql        = "FIN_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
-                FIN_UUID varchar(25) NOT NULL,
+        $sql        = "FIN_UUID varchar(25) NOT NULL,
 				FSC_UUID varchar(25) NOT NULL,
 				FIN_adminLabel tinytext NOT NULL,
 				FIN_adminOnly tinyint(1) unsigned NOT NULL DEFAULT 0,
@@ -258,16 +257,14 @@ class EE_DMS_Core_4_12_0 extends EE_Data_Migration_Script_Base
 				FIN_status varchar(32) NOT NULL DEFAULT 'active',
 				FIN_type tinytext DEFAULT NULL,
 				FIN_wpUser bigint(20) unsigned DEFAULT NULL,
-				PRIMARY KEY  (FIN_ID),
-				UNIQUE KEY FIN_UUID_UNIQUE (FIN_UUID),
+				PRIMARY KEY  (FIN_UUID),
 				KEY FSC_UUID (FSC_UUID),
 				KEY FIN_order (FIN_order),
 				KEY FIN_status (FIN_status)";
         $this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
 
         $table_name = 'esp_form_section';
-        $sql        = "FSC_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
-                FSC_UUID varchar(25) NOT NULL,
+        $sql        = "FSC_UUID varchar(25) NOT NULL,
 				FSC_appliesTo tinytext NOT NULL,
 				FSC_belongsTo varchar(25) DEFAULT NULL,
 				FSC_htmlClass text DEFAULT NULL,
@@ -276,22 +273,19 @@ class EE_DMS_Core_4_12_0 extends EE_Data_Migration_Script_Base
 				FSC_status varchar(32) NOT NULL DEFAULT 'active',
 				FSC_showLabel tinyint(1) unsigned NOT NULL DEFAULT 1,
 				FSC_wpUser bigint(20) unsigned DEFAULT NULL,
-				PRIMARY KEY  (FSC_ID),
-				UNIQUE KEY FSC_UUID_UNIQUE (FSC_UUID),
+				PRIMARY KEY  (FSC_UUID),
 				KEY FSC_belongsTo (FSC_belongsTo),
 				KEY FSC_order (FSC_order),
 				KEY FSC_status (FSC_status)";
         $this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
 
         $table_name = 'esp_form_submission';
-        $sql        = "FSB_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
-                FSB_UUID varchar(25) NOT NULL,
+        $sql        = "FSB_UUID varchar(25) NOT NULL,
                 FSC_UUID varchar(25) NOT NULL,
 				TXN_ID int(10) DEFAULT NULL,
 				FSB_data mediumtext DEFAULT NULL,
 				FSB_submitted datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-				PRIMARY KEY  (FSB_ID),
-				UNIQUE KEY FSB_UUID_UNIQUE (FSB_UUID),
+				PRIMARY KEY  (FSB_UUID),
 				KEY FSC_UUID (FSC_UUID),
 				KEY TXN_ID (TXN_ID)";
         $this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB');

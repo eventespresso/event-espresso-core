@@ -7,9 +7,8 @@ use EventEspresso\core\services\request\RequestInterface;
 
 /**
  * Class EEM_Form_Input
- * 
- * FIN_ID    string
- * FIN_UUID
+ *
+ * FIN_UUID         string
  * FIN_adminLabel    string
  * FIN_adminOnly    bool
  * FIN_belongsTo    string    UUID of parent form section
@@ -58,15 +57,10 @@ class EEM_Form_Input extends EEM_Form_Element
         $this->plural_item   = esc_html__('Form Inputs', 'event_espresso');
 
         $this->_tables          = [
-            'Form_Input' => new EE_Primary_Table('esp_form_input', 'FIN_ID'),
+            'Form_Input' => new EE_Primary_Table('esp_form_input', 'FIN_UUID'),
         ];
         $this->_fields          = [
             'Form_Input' => [
-                'FIN_ID'        => new EE_Integer_Field(
-                    'FIN_ID',
-                    esc_html__('Form Input ID (autoincrement db id)', 'event_espresso'),
-                    false
-                ),
                 'FIN_UUID'      => new EE_Primary_Key_String_Field(
                     'FIN_UUID',
                     esc_html__('Form Input UUID (universally unique identifier)', 'event_espresso')
