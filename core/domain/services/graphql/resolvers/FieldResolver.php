@@ -133,9 +133,15 @@ class FieldResolver extends ResolverBase
      */
     public function resolveId($source)
     {
-        $ID = $source instanceof EE_Base_Class ? $source->ID() : 0;
+        if (!$source instanceof EE_Base_Class) {
+            return null;
+        }
+        // If the model has a UUID method
+        if (is_callable([$source, 'UUID'])) {
+            return $source->UUID();
+        }
 
-        return $ID ? Relay::toGlobalId($this->model->item_name(), $ID) : null;
+        return Relay::toGlobalId($this->model->item_name(), $source->ID());
     }
 
 
