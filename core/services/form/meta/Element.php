@@ -22,6 +22,11 @@ class Element
     public const STATUS_DEFAULT = 'default';
 
     /**
+     * indicates that a copy of the form section will be saved for use in other events but not loaded by default
+     */
+    public const STATUS_SHARED = 'shared';
+
+    /**
      * indicates that element is no longer needed, has no existing answers, and can be moved to the trash
      */
     public const STATUS_TRASHED = 'trashed';
@@ -40,6 +45,7 @@ class Element
                 Element::STATUS_ACTIVE   => esc_html__('Active', 'event_espresso'),
                 Element::STATUS_ARCHIVED => esc_html__('Archived', 'event_espresso'),
                 Element::STATUS_DEFAULT  => esc_html__('Default', 'event_espresso'),
+                Element::STATUS_SHARED   => esc_html__('Shared', 'event_espresso'),
                 Element::STATUS_TRASHED  => esc_html__('Trashed', 'event_espresso'),
             ]
         );
