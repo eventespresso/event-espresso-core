@@ -2,7 +2,6 @@
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
-use EventEspresso\core\services\orm\ModelFieldFactory;
 
 /**
  * EEM_Event Model
@@ -54,13 +53,12 @@ class EEM_Event extends EEM_CPT_Base
     protected static $_instance;
 
 
-
-
     /**
      * Adds a relationship to Term_Taxonomy for each CPT_Base
      *
      * @param string $timezone
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function __construct($timezone = null)
     {
@@ -263,18 +261,26 @@ class EEM_Event extends EEM_CPT_Base
                     false,
                     false
                 ),
+                'FSC_UUID'                        => new EE_Foreign_Key_String_Field(
+                    'FSC_UUID',
+                    esc_html__('Registration Form UUID (universally unique identifier)', 'event_espresso'),
+                    true,
+                    null,
+                    'Form_Section'
+                ),
             ),
         );
         $this->_model_relations = array(
-            'Registration'           => new EE_Has_Many_Relation(),
+            'Attendee'               => new EE_HABTM_Relation('Registration'),
             'Datetime'               => new EE_Has_Many_Relation(),
-            'Question_Group'         => new EE_HABTM_Relation('Event_Question_Group'),
             'Event_Question_Group'   => new EE_Has_Many_Relation(),
-            'Venue'                  => new EE_HABTM_Relation('Event_Venue'),
+            'Form_Section'           => new EE_Belongs_To_Relation(),
+            'Message_Template_Group' => new EE_HABTM_Relation('Event_Message_Template'),
+            'Question_Group'         => new EE_HABTM_Relation('Event_Question_Group'),
+            'Registration'           => new EE_Has_Many_Relation(),
             'Term_Relationship'      => new EE_Has_Many_Relation(),
             'Term_Taxonomy'          => new EE_HABTM_Relation('Term_Relationship'),
-            'Message_Template_Group' => new EE_HABTM_Relation('Event_Message_Template'),
-            'Attendee'               => new EE_HABTM_Relation('Registration'),
+            'Venue'                  => new EE_HABTM_Relation('Event_Venue'),
             'WP_User'                => new EE_Belongs_To_Relation(),
         );
         // this model is generally available for reading
@@ -284,9 +290,10 @@ class EEM_Event extends EEM_CPT_Base
     }
 
 
-
     /**
      * @param string $default_reg_status
+     * @throws EE_Error
+     * @throws EE_Error
      */
     public static function set_default_reg_status($default_reg_status)
     {
@@ -348,7 +355,8 @@ class EEM_Event extends EEM_CPT_Base
      * get_question_groups
      *
      * @return array
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_all_question_groups()
     {
@@ -361,13 +369,13 @@ class EEM_Event extends EEM_CPT_Base
     }
 
 
-
     /**
      * get_question_groups
      *
      * @param int $EVT_ID
      * @return array|bool
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_all_event_question_groups($EVT_ID = 0)
     {
@@ -475,13 +483,13 @@ class EEM_Event extends EEM_CPT_Base
     }
 
 
-
     /**
      * get_question_target_db_column
      *
      * @param string $QSG_IDs csv list of $QSG IDs
      * @return array|bool
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_questions_in_groups($QSG_IDs = '')
     {
@@ -507,13 +515,13 @@ class EEM_Event extends EEM_CPT_Base
     }
 
 
-
     /**
      * get_options_for_question
      *
      * @param string $QST_IDs csv list of $QST IDs
      * @return array|bool
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_options_for_question($QST_IDs)
     {
@@ -538,20 +546,16 @@ class EEM_Event extends EEM_CPT_Base
     }
 
 
-
-
-
-
-
     /**
      * Gets all events that are published
      * and have event start time earlier than now and an event end time later than now
      *
-     * @param  array $query_params An array of query params to further filter on
+     * @param array $query_params  An array of query params to further filter on
      *                             (note that status and DTT_EVT_start and DTT_EVT_end will be overridden)
-     * @param bool   $count        whether to return the count or not (default FALSE)
+     * @param bool  $count         whether to return the count or not (default FALSE)
      * @return EE_Event[]|int
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_active_events($query_params, $count = false)
     {
@@ -600,15 +604,15 @@ class EEM_Event extends EEM_CPT_Base
     }
 
 
-
     /**
      * get all events that are published and have an event start time later than now
      *
-     * @param  array $query_params An array of query params to further filter on
+     * @param array $query_params  An array of query params to further filter on
      *                             (Note that status and DTT_EVT_start will be overridden)
-     * @param bool   $count        whether to return the count or not (default FALSE)
+     * @param bool  $count         whether to return the count or not (default FALSE)
      * @return EE_Event[]|int
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_upcoming_events($query_params, $count = false)
     {
@@ -652,16 +656,16 @@ class EEM_Event extends EEM_CPT_Base
     }
 
 
-
     /**
      * Gets all events that are published
      * and have an event end time later than now
      *
-     * @param  array $query_params An array of query params to further filter on
+     * @param array $query_params  An array of query params to further filter on
      *                             (note that status and DTT_EVT_end will be overridden)
-     * @param bool   $count        whether to return the count or not (default FALSE)
+     * @param bool  $count         whether to return the count or not (default FALSE)
      * @return EE_Event[]|int
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_active_and_upcoming_events($query_params, $count = false)
     {
@@ -699,16 +703,16 @@ class EEM_Event extends EEM_CPT_Base
     }
 
 
-
     /**
      * This only returns events that are expired.
      * They may still be published but all their datetimes have expired.
      *
-     * @param  array $query_params An array of query params to further filter on
+     * @param array $query_params  An array of query params to further filter on
      *                             (note that status and DTT_EVT_end will be overridden)
-     * @param bool   $count        whether to return the count or not (default FALSE)
+     * @param bool  $count         whether to return the count or not (default FALSE)
      * @return EE_Event[]|int
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_expired_events($query_params, $count = false)
     {
@@ -771,7 +775,7 @@ class EEM_Event extends EEM_CPT_Base
      *                               (note that status will be overwritten)
      * @param  boolean $count        whether to return the count or not (default FALSE)
      * @return EE_Event[]|int
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function get_inactive_events($query_params, $count = false)
     {
@@ -807,7 +811,6 @@ class EEM_Event extends EEM_CPT_Base
     }
 
 
-
     /**
      * This is just injecting into the parent add_relationship_to so we do special handling on price relationships
      * because we don't want to override any existing global default prices but instead insert NEW prices that get
@@ -819,6 +822,7 @@ class EEM_Event extends EEM_CPT_Base
      * @param array  $where_query
      * @return EE_Base_Class
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function add_relationship_to($id_or_obj, $other_model_id_or_obj, $relationName, $where_query = array())
     {
@@ -842,19 +846,18 @@ class EEM_Event extends EEM_CPT_Base
     /******************** DEPRECATED METHODS ********************/
 
 
-
     /**
      * _get_question_target_db_column
      *
-     * @deprecated as of 4.8.32.rc.001. Instead consider using
-     *             EE_Registration_Custom_Questions_Form located in
-     *             admin_pages/registrations/form_sections/EE_Registration_Custom_Questions_Form.form.php
-     * @access     public
-     * @param    EE_Registration $registration (so existing answers for registration are included)
-     * @param    int             $EVT_ID       so all question groups are included for event (not just answers from
+     * @param EE_Registration $registration    (so existing answers for registration are included)
+     * @param int             $EVT_ID          so all question groups are included for event (not just answers from
      *                                         registration).
-     * @throws EE_Error
      * @return    array
+     * @throws ReflectionException
+     * @throws EE_Error*@deprecated as of 4.8.32.rc.001. Instead consider using
+     *                                         EE_Registration_Custom_Questions_Form located in
+     *                                         admin_pages/registrations/form_sections/EE_Registration_Custom_Questions_Form.form.php
+     * @access     public
      */
     public function assemble_array_of_groups_questions_and_options(EE_Registration $registration, $EVT_ID = 0)
     {
@@ -919,7 +922,7 @@ class EEM_Event extends EEM_CPT_Base
      * @param mixed $cols_n_values either an array of where each key is the name of a field, and the value is its value
      *                             or an stdClass where each property is the name of a column,
      * @return EE_Base_Class
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function instantiate_class_from_array_or_object($cols_n_values)
     {

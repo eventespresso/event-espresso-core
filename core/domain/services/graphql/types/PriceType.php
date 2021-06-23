@@ -8,8 +8,6 @@ use EventEspresso\core\services\graphql\types\TypeBase;
 use EventEspresso\core\services\graphql\fields\GraphQLField;
 use EventEspresso\core\services\graphql\fields\GraphQLInputField;
 use EventEspresso\core\services\graphql\fields\GraphQLOutputField;
-use InvalidArgumentException;
-use ReflectionException;
 
 /**
  * Class PriceType
@@ -29,19 +27,17 @@ class PriceType extends TypeBase
      */
     public function __construct(EEM_Price_Type $price_type_model)
     {
-        $this->model = $price_type_model;
         $this->setName($this->namespace . 'PriceType');
         $this->setDescription(__('A price type.', 'event_espresso'));
         $this->setIsCustomPostType(false);
-        parent::__construct();
+        parent::__construct($price_type_model);
     }
 
 
     /**
      * @return GraphQLFieldInterface[]
-     * @since $VID:$
      */
-    public function getFields()
+    public function getFields(): array
     {
         $fields = [
             new GraphQLField(

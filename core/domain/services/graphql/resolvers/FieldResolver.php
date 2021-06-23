@@ -9,6 +9,7 @@ use EE_Venue;
 use EE_Datetime;
 use EE_Ticket;
 use EE_State;
+use EEM_Base;
 use EEM_State;
 use EEM_Country;
 use EE_Error;
@@ -38,7 +39,7 @@ class FieldResolver extends ResolverBase
 {
 
     /**
-     * @var mixed $model
+     * @var EEM_Base $model
      */
     protected $model;
 
@@ -51,12 +52,12 @@ class FieldResolver extends ResolverBase
     /**
      * FieldResolver constructor.
      *
-     * @param mixed $model  The model instance.
-     * @param array $fields The fields registered for the type.
+     * @param EEM_Base|null $model  The model instance.
+     * @param array         $fields The fields registered for the type.
      */
-    public function __construct($model, array $fields)
+    public function __construct(EEM_Base $model = null, array $fields = [])
     {
-        $this->model = $model;
+        $this->model  = $model;
         $this->fields = $fields;
     }
 
@@ -66,7 +67,7 @@ class FieldResolver extends ResolverBase
      * @param array       $args    The inputArgs on the field
      * @param AppContext  $context The AppContext passed down the GraphQL tree
      * @param ResolveInfo $info    The ResolveInfo passed down the GraphQL tree
-     * @return string
+     * @return EE_Base_Class|Deferred|string
      * @throws EE_Error
      * @throws Exception
      * @throws InvalidArgumentException
@@ -75,12 +76,11 @@ class FieldResolver extends ResolverBase
      * @throws ReflectionException
      * @throws UserError
      * @throws UnexpectedEntityException
-     * @since $VID:$
      */
     public function resolve($source, array $args, AppContext $context, ResolveInfo $info)
     {
         $fieldName = $info->fieldName;
-        $field = isset($this->fields[ $fieldName ]) ? $this->fields[ $fieldName ] : null;
+        $field     = $this->fields[ $fieldName ] ?? null;
         // Field should exist in teh registered fields
         if ($field instanceof GraphQLField) {
             // check if the field should be resolved.
@@ -126,18 +126,17 @@ class FieldResolver extends ResolverBase
     /**
      * Resolve the global ID
      *
-     * @param mixed     $source
+     * @param mixed $source
      * @return string|null
      * @throws Exception
-     * @since $VID:$
      */
-    public function resolveId($source)
+    public function resolveId($source): ?string
     {
-        if (!$source instanceof EE_Base_Class) {
+        if (! $source instanceof EE_Base_Class) {
             return null;
         }
         // If the model has a UUID method
-        if (is_callable([$source, 'UUID'])) {
+        if (method_exists($source, 'UUID')) {
             return $source->UUID();
         }
 
@@ -148,11 +147,10 @@ class FieldResolver extends ResolverBase
     /**
      * Resolve the cache ID
      *
-     * @param mixed     $source
+     * @param mixed $source
      * @return string
-     * @since $VID:$
      */
-    public function resolveCacheId($source)
+    public function resolveCacheId($source): string
     {
         $model_name = $this->model->item_name();
         $ID         = $source->ID();
@@ -169,9 +167,8 @@ class FieldResolver extends ResolverBase
      * @param           $context
      * @return Deferred|null
      * @throws Exception
-     * @since $VID:$
      */
-    public function resolveWpUser($source, $args, $context)
+    public function resolveWpUser($source, $args, $context): ?Deferred
     {
         $user_id = $source->wp_user();
         return $user_id
@@ -184,28 +181,27 @@ class FieldResolver extends ResolverBase
      * @param mixed     $source
      * @param           $args
      * @param           $context
-     * @return Deferred|null
+     * @return string|null
      * @throws Exception
-     * @since $VID:$
      */
-    public function resolveUserId($source, $args, $context)
+    public function resolveUserId($source, $args, $context): ?string
     {
         $user_id = $source->wp_user();
-        return $user_id ? Relay::toGlobalId('user', $user_id) : null;
+        return $user_id
+            ? Relay::toGlobalId('user', $user_id)
+            : null;
     }
 
 
     /**
      * @param mixed $source
      * @return EE_Base_Class|null
-     * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @throws ReflectionException
-     * @since $VID:$
+     * @throws EE_Error
      */
-    public function resolveParent($source)
+    public function resolveParent($source): ?EE_Base_Class
     {
         return $this->model->get_one_by_ID($source->parent());
     }
@@ -223,9 +219,8 @@ class FieldResolver extends ResolverBase
      * @throws ReflectionException
      * @throws UserError
      * @throws UnexpectedEntityException
-     * @since $VID:$
      */
-    public function resolveEvent($source, $args, $context)
+    public function resolveEvent($source, $args, $context): ?Deferred
     {
         switch (true) {
             case $source instanceof EE_Datetime:
@@ -252,9 +247,9 @@ class FieldResolver extends ResolverBase
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @since $VID:$
+     * @throws ReflectionException
      */
-    public function resolveState($source)
+    public function resolveState($source): ?EE_Base_Class
     {
         switch (true) {
             case $source instanceof EE_Attendee:
@@ -278,9 +273,9 @@ class FieldResolver extends ResolverBase
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @since $VID:$
+     * @throws ReflectionException
      */
-    public function resolveCountry($source)
+    public function resolveCountry($source): ?EE_Base_Class
     {
         switch (true) {
             case $source instanceof EE_State:
