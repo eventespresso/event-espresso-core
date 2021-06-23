@@ -3,7 +3,6 @@
 /**
  * Class EE_Form_Input
  * Model Fields:
- *      FIN_ID 
  *      FIN_UUID
  *      FIN_adminLabel
  *      FIN_adminOnly
@@ -85,7 +84,7 @@ class EE_Form_Input extends EE_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function adminLabel(): string
+    public function adminLabel():? string
     {
         return $this->get('FIN_adminLabel');
     }
@@ -135,7 +134,7 @@ class EE_Form_Input extends EE_Base_Class
      */
     public function belongsTo(): string
     {
-        return $this->get('FIN_belongsTo');
+        return $this->get('FSC_UUID');
     }
 
 
@@ -146,7 +145,7 @@ class EE_Form_Input extends EE_Base_Class
      */
     public function setBelongsTo(string $relation_UUID)
     {
-        $this->set('FIN_belongsTo', $relation_UUID);
+        $this->set('FSC_UUID', $relation_UUID);
     }
 
 
@@ -157,7 +156,7 @@ class EE_Form_Input extends EE_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function helpClass(): string
+    public function helpClass():? string
     {
         return $this->get('FIN_helpClass');
     }
@@ -181,7 +180,7 @@ class EE_Form_Input extends EE_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function helpText(): string
+    public function helpText():? string
     {
         return $this->get('FIN_helpText');
     }
@@ -205,7 +204,7 @@ class EE_Form_Input extends EE_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function htmlClass(): string
+    public function htmlClass():? string
     {
         return $this->get('FIN_htmlClass');
     }
@@ -225,24 +224,50 @@ class EE_Form_Input extends EE_Base_Class
 
 
     /**
-     * Maximum numeric value or maximum characters allowed for form input answer.
+     * Model and Fields name that this input maps to; ex: Attendee.email
      *
-     * @return int
+     * @return string
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function max(): int
+    public function mapsTo():? string
     {
-        return $this->get('FIN_max');
+        return $this->get('FIN_mapsTo');
     }
 
 
     /**
-     * @param int $max
+     * @param string $model ex: Attendee
+     * @param string $field ex: email
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function setMax(int $max)
+    public function setMapsTo(string $model, string $field)
+    {
+        $this->set('FIN_mapsTo', "{$model}.{$field}");
+    }
+
+
+    /**
+     * Maximum numeric value or maximum characters allowed for form input answer.
+     *
+     * @return int|float
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function max()
+    {
+        $max = $this->get('FIN_max');
+        return $max > -1 ? $max : EE_INF;
+    }
+
+
+    /**
+     * @param int|float $max
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function setMax($max)
     {
         $this->set('FIN_max', $max);
     }
@@ -252,24 +277,48 @@ class EE_Form_Input extends EE_Base_Class
     /**
      * Minimum numeric value or minimum characters allowed for form input answer.
      *
-     * @return int
+     * @return int|float
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function min(): int
+    public function min()
     {
         return $this->get('FIN_min');
     }
 
 
     /**
-     * @param int $min
+     * @param int|float $min
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function setMin(int $min)
+    public function setMin($min)
     {
         $this->set('FIN_min', $min);
+    }
+
+
+    /**
+     * Options for ENUM type inputs like checkboxes, radio buttons, select inputs, etc
+     *
+     * @return array
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function options(): array
+    {
+        return $this->get('FIN_options');
+    }
+
+
+    /**
+     * @param array $options
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function setOptions(array $options)
+    {
+        $this->set('FIN_options', $options);
     }
 
 
@@ -288,8 +337,6 @@ class EE_Form_Input extends EE_Base_Class
 
 
     /**
-     * Order in which form input appears in a form.
-     *
      * @param int $order
      * @throws EE_Error
      * @throws ReflectionException
@@ -307,7 +354,7 @@ class EE_Form_Input extends EE_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function placeholder(): string
+    public function placeholder():? string
     {
         return $this->get('FIN_placeholder');
     }
@@ -379,7 +426,7 @@ class EE_Form_Input extends EE_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function requiredText(): string
+    public function requiredText():? string
     {
         return $this->get('FIN_requiredText');
     }
@@ -393,6 +440,19 @@ class EE_Form_Input extends EE_Base_Class
     public function setRequiredText(string $requiredText)
     {
         $this->set('FIN_requiredText', $requiredText);
+    }
+
+
+    /**
+     * version of public label for use in identifiers
+     *
+     * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function slug(): string
+    {
+        return sanitize_title($this->publicLabel());
     }
 
 
