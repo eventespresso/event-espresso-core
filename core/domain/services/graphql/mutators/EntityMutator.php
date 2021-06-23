@@ -56,7 +56,14 @@ abstract class EntityMutator
         string $capability = 'ee_edit_events'
     ): EE_Base_Class {
         EntityMutator::checkPermissions($model, $capability);
-        $ID = EntityMutator::getEntityIDFromGlobalId($model, $input);
+        
+        $primaryKey = $model->get_primary_key_field()->get_name();
+        // e.g. "FSC_UUID" will give us "FSC"
+        [$keyPrefix] = explode('_', $primaryKey);
+        $uuid_field  = $keyPrefix . '_UUID'; // e.g. "FSC_UUID"
+
+        // If the model has UUID field, then we will use that in place of ID.
+        $ID = $model->has_field($uuid_field) ? $input['id'] : EntityMutator::getEntityIDFromGlobalId($model, $input);
         return EntityMutator::getEntity($model, $ID);
     }
 
