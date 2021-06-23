@@ -40,9 +40,8 @@ class RootQuery extends TypeBase
 
     /**
      * @return GraphQLFieldInterface[]
-     * @since $VID:$
      */
-    public function getFields()
+    public function getFields(): array
     {
         return [
             new GraphQLOutputField(
@@ -77,7 +76,7 @@ class RootQuery extends TypeBase
      * @throws UnexpectedEntityException
      * @since $VID:$
      */
-    public function getEventRelationalData($source, array $args, AppContext $context, ResolveInfo $info)
+    public function getEventRelationalData($source, array $args, AppContext $context, ResolveInfo $info): string
     {
         /**
          * Throw an exception if there's no event ID
