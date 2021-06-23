@@ -24,4 +24,13 @@ abstract class ConnectionBase implements ConnectionInterface
      * @var string $namespace The graphql namespace/prefix.
      */
     protected $namespace = 'Espresso';
+
+
+    /**
+     * @param EEM_Base $model
+     */
+    public function __construct(EEM_Base $model)
+    {
+        $this->model = $model;
+    }
 }

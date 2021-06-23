@@ -3,6 +3,7 @@
 namespace EventEspresso\core\domain\services\graphql\connections;
 
 use EEM_Attendee;
+use EventEspresso\core\domain\services\graphql\connection_resolvers\AbstractConnectionResolver;
 use EventEspresso\core\domain\services\graphql\connection_resolvers\AttendeeConnectionResolver;
 use EventEspresso\core\domain\services\graphql\abstracts\AbstractRootQueryConnection;
 use Exception;
@@ -26,15 +27,14 @@ class RootQueryAttendeesConnection extends AbstractRootQueryConnection
      */
     public function __construct(EEM_Attendee $model)
     {
-        $this->model = $model;
+        parent::__construct($model);
     }
 
 
     /**
      * @return array
-     * @since $VID:$
      */
-    public function config()
+    public function config(): array
     {
         return [
             'fromType'           => 'RootQuery',
@@ -54,9 +54,8 @@ class RootQueryAttendeesConnection extends AbstractRootQueryConnection
      * @param $info
      * @return AttendeeConnectionResolver
      * @throws Exception
-     * @since $VID:$
      */
-    public function getConnectionResolver($entity, $args, $context, $info)
+    public function getConnectionResolver($entity, $args, $context, $info): AbstractConnectionResolver
     {
         return new AttendeeConnectionResolver($entity, $args, $context, $info);
     }
@@ -64,13 +63,11 @@ class RootQueryAttendeesConnection extends AbstractRootQueryConnection
     /**
      * Given an optional array of args, this returns the args to be used in the connection
      *
-     * @access public
      * @param array $args The args to modify the defaults
-     *
      * @return array
      */
     // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    public static function get_connection_args($args = [])
+    public static function get_connection_args(array $args = []): array
     {
         $newArgs = [
             'datetime' => [

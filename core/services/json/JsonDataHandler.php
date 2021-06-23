@@ -20,6 +20,8 @@ class JsonDataHandler
 
     const DATA_TYPE_USE_FLAGS = 'flags';
 
+    const NO_ERROR_MSG        = 'No error';
+
     /**
      * @var string
      */
@@ -75,12 +77,12 @@ class JsonDataHandler
     /**
      * @var int
      */
-    private $last_error_code;
+    private $last_error_code = JSON_ERROR_NONE;
 
     /**
      * @var string
      */
-    private $last_error_msg;
+    private $last_error_msg = JsonDataHandler::NO_ERROR_MSG;
 
 
     /**
@@ -88,13 +90,13 @@ class JsonDataHandler
      */
     public function __construct()
     {
-        if (!defined('JSON_INVALID_UTF8_IGNORE')) {
+        if (! defined('JSON_INVALID_UTF8_IGNORE')) {
             define('JSON_INVALID_UTF8_IGNORE', 1048576);
         }
-        if (!defined('JSON_INVALID_UTF8_SUBSTITUTE')) {
+        if (! defined('JSON_INVALID_UTF8_SUBSTITUTE')) {
             define('JSON_INVALID_UTF8_SUBSTITUTE', 2097152);
         }
-        if (!defined('JSON_THROW_ON_ERROR')) {
+        if (! defined('JSON_THROW_ON_ERROR')) {
             define('JSON_THROW_ON_ERROR', 4194304);
         }
     }
@@ -167,8 +169,8 @@ class JsonDataHandler
      */
     public function setDepth(int $depth): void
     {
-        $depth = absint($depth);
-        $this->depth = $depth ? $depth : 512;
+        $depth       = absint($depth);
+        $this->depth = $depth ?: 512;
     }
 
 
@@ -223,7 +225,7 @@ class JsonDataHandler
     /**
      * @return bool|null
      */
-    private function asAssociative()
+    private function asAssociative(): ?bool
     {
         switch ($this->data_type) {
             case JsonDataHandler::DATA_TYPE_ARRAY:
@@ -238,28 +240,42 @@ class JsonDataHandler
 
 
     /**
-     * @param string $json
+     * @param array|string $json
      * @return array|mixed|stdClass
      */
-    public function decodeJson(string $json)
+    public function decodeJson($json)
     {
-        $this->decoded_data    = json_decode($json, $this->asAssociative(), $this->depth, $this->decode_flags);
-        $this->last_error_code = json_last_error();
-        $this->last_error_msg  = json_last_error_msg();
+        $this->resetErrors();
+        if ($this->isJson($json)) {
+            $this->decoded_data    = json_decode($json, $this->asAssociative(), $this->depth, $this->decode_flags);
+            $this->last_error_code = json_last_error();
+            $this->last_error_msg  = json_last_error_msg();
+        } else {
+            $this->decoded_data    = $json;
+            $this->last_error_code = JSON_ERROR_NONE;
+            $this->last_error_msg  = JsonDataHandler::NO_ERROR_MSG;
+        }
         return $this->decoded_data;
     }
 
 
     /**
      * @param $data
-     * @return false|string
+     * @return string
      */
-    public function encodeData($data)
+    public function encodeData($data): string
     {
-        $this->encoded_data    = json_encode($data, $this->encode_flags, $this->depth);
-        $this->last_error_code = json_last_error();
-        $this->last_error_msg  = json_last_error_msg();
-        return $this->encoded_data;
+        $this->resetErrors();
+        if ($this->isJson($data)) {
+            $this->encoded_data = $data;
+            $this->last_error_code = JSON_ERROR_NONE;
+            $this->last_error_msg  = JsonDataHandler::NO_ERROR_MSG;
+        } else {
+            $this->encoded_data = json_encode($data, $this->encode_flags, $this->depth);
+            $this->last_error_code = json_last_error();
+            $this->last_error_msg  = json_last_error_msg();
+        }
+        return $this->encoded_data ?: '{}';
     }
 
 
@@ -282,29 +298,53 @@ class JsonDataHandler
 
 
     /**
-     * @param false $reset
+     * @param bool $reset
      * @return int
      */
-    public function getLastErrorCode($reset = false)
+    public function getLastErrorCode(bool $reset = false): int
     {
         $last_error = $this->last_error_code;
         if ($reset) {
-            $this->last_error_code = JSON_ERROR_NONE;
+            $this->resetErrors();
         }
         return $last_error;
     }
 
 
     /**
-     * @param false $reset
+     * @param bool $reset
      * @return string
      */
-    public function getLastErrorMessage($reset = false)
+    public function getLastErrorMessage(bool $reset = false): string
     {
         $last_error = $this->last_error_msg;
         if ($reset) {
-            $this->last_error_msg = '';
+            $this->resetErrors();
         }
         return $last_error;
+    }
+
+
+    /**
+     * @param array|string $maybe_json
+     * @return bool
+     */
+    public function isJson($maybe_json): bool
+    {
+        if (! is_string($maybe_json)) {
+            return false;
+        }
+        $decoded = json_decode($maybe_json, $this->asAssociative(), $this->depth, $this->decode_flags);
+        return json_last_error() === JSON_ERROR_NONE && ! ($decoded === null && ! empty($maybe_json));
+    }
+
+
+    /**
+     * @since $VID:$
+     */
+    public function resetErrors()
+    {
+        $this->last_error_code = JSON_ERROR_NONE;
+        $this->last_error_msg  = JsonDataHandler::NO_ERROR_MSG;
     }
 }

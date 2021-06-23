@@ -2,12 +2,14 @@
 
 namespace EventEspresso\core\domain\services\graphql\mutators;
 
+use EE_Error;
 use EE_Ticket;
 use EEM_Ticket;
 use EventEspresso\core\domain\services\graphql\types\Ticket;
 use EventEspresso\core\domain\services\graphql\data\mutations\TicketMutation;
 use Exception;
 use GraphQL\Type\Definition\ResolveInfo;
+use ReflectionException;
 use WPGraphQL\AppContext;
 
 class TicketUpdate extends EntityMutator
@@ -29,8 +31,10 @@ class TicketUpdate extends EntityMutator
          * @param AppContext  $context The AppContext passed down to all resolvers
          * @param ResolveInfo $info    The ResolveInfo passed down to all resolvers
          * @return array
+         * @throws EE_Error
+         * @throws ReflectionException
          */
-        return static function ($input, AppContext $context, ResolveInfo $info) use ($model, $type) {
+        return static function (array $input, AppContext $context, ResolveInfo $info) use ($model, $type): array {
             try {
                 /** @var EE_Ticket $entity */
                 $entity = EntityMutator::getEntityFromInputData($model, $input);
