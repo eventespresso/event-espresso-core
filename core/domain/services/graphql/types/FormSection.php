@@ -7,6 +7,7 @@ use EventEspresso\core\services\graphql\fields\GraphQLFieldInterface;
 use EventEspresso\core\services\graphql\types\TypeBase;
 use EventEspresso\core\services\graphql\fields\GraphQLField;
 use EventEspresso\core\services\graphql\fields\GraphQLOutputField;
+use EventEspresso\core\services\graphql\fields\GraphQLInputField;
 use EventEspresso\core\domain\services\graphql\mutators\FormSectionCreate;
 use EventEspresso\core\domain\services\graphql\mutators\FormSectionDelete;
 use EventEspresso\core\domain\services\graphql\mutators\FormSectionUpdate;
@@ -58,24 +59,21 @@ class FormSection extends TypeBase
                 'appliesTo',
                 esc_html__('Form user type that this form section should be presented to.', 'event_espresso')
             ),
-            /* new GraphQLField(
+            new GraphQLField(
                 'adminLabel',
                 'String',
                 'adminLabel',
-                esc_html__('The form section label that should be show to the admins.', 'event_espresso')
-            ), */
+                esc_html__(
+                    'Form Section label displayed in the admin to help differentiate it from others.',
+                    'event_espresso'
+                )
+            ),
             new GraphQLField(
                 'belongsTo',
                 'String',
                 'belongsTo',
                 esc_html__('UUID or ID of related entity this form section belongs to.', 'event_espresso')
             ),
-            /* new GraphQLField(
-                'description',
-                'String',
-                'description',
-                esc_html__('Description of the form section.', 'event_espresso')
-            ), */
             new GraphQLField(
                 'htmlClass',
                 'String',
@@ -88,18 +86,21 @@ class FormSection extends TypeBase
                 'order',
                 esc_html__('Order in which form section appears in a form.', 'event_espresso')
             ),
-            /* new GraphQLField(
-                'showDescription',
-                'Boolean',
-                'showDescription',
-                esc_html__('Whether to display description of the form section.', 'event_espresso')
+            new GraphQLField(
+                'publicLabel',
+                'String',
+                'publicLabel',
+                esc_html__('Form Section label displayed on public forms as a heading.', 'event_espresso')
             ),
             new GraphQLField(
-                'showName',
+                'showLabel',
                 'Boolean',
-                'showName',
-                esc_html__('Whether to display the admin label to non-admin users.', 'event_espresso')
-            ), */
+                'showLabel',
+                esc_html__(
+                    'Whether or not to display the Form Section name (Public Label) on public forms.',
+                    'event_espresso'
+                )
+            ),
             new GraphQLField(
                 'status',
                 $this->namespace . 'FormSectionStatusEnum',
@@ -114,6 +115,12 @@ class FormSection extends TypeBase
                 'User',
                 null,
                 esc_html__('WP User that created this form section.', 'event_espresso')
+            ),
+            new GraphQLInputField(
+                'wpUser',
+                'Int',
+                null,
+                esc_html__('ID of the WP User that created the form section.', 'event_espresso')
             ),
         ];
 
