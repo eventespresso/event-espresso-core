@@ -3,6 +3,7 @@
 namespace EventEspresso\core\domain\services\graphql\connections;
 
 use EEM_Ticket;
+use EventEspresso\core\domain\services\graphql\connection_resolvers\AbstractConnectionResolver;
 use EventEspresso\core\domain\services\graphql\connection_resolvers\TicketConnectionResolver;
 use EventEspresso\core\domain\services\graphql\abstracts\AbstractRootQueryConnection;
 use Exception;
@@ -26,15 +27,14 @@ class RootQueryTicketsConnection extends AbstractRootQueryConnection
      */
     public function __construct(EEM_Ticket $model)
     {
-        $this->model = $model;
+        parent::__construct($model);
     }
 
 
     /**
      * @return array
-     * @since $VID:$
      */
-    public function config()
+    public function config(): array
     {
         return [
             'fromType'           => 'RootQuery',
@@ -54,9 +54,8 @@ class RootQueryTicketsConnection extends AbstractRootQueryConnection
      * @param $info
      * @return TicketConnectionResolver
      * @throws Exception
-     * @since $VID:$
      */
-    public function getConnectionResolver($entity, $args, $context, $info)
+    public function getConnectionResolver($entity, $args, $context, $info): AbstractConnectionResolver
     {
         return new TicketConnectionResolver($entity, $args, $context, $info);
     }

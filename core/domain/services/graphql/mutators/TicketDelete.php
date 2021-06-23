@@ -34,7 +34,7 @@ class TicketDelete extends EntityMutator
          * @param ResolveInfo $info    The ResolveInfo passed down to all resolvers
          * @return array
          */
-        return static function ($input, AppContext $context, ResolveInfo $info) use ($model, $type) {
+        return static function (array $input, AppContext $context, ResolveInfo $info) use ($model, $type): array {
             try {
                 /** @var EE_Ticket $entity */
                 $entity = EntityMutator::getEntityFromInputData($model, $input);
@@ -76,7 +76,7 @@ class TicketDelete extends EntityMutator
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public static function deleteTicketAndRelations($entity)
+    public static function deleteTicketAndRelations(EE_Ticket $entity)
     {
         // Remove related non-default prices for the ticket
         $entity->delete_related_permanently('Price', [['PRC_is_default' => false]]);
@@ -85,9 +85,7 @@ class TicketDelete extends EntityMutator
         // Remove relation with datetimes
         $entity->_remove_relations('Datetime');
         // Now delete the ticket permanently
-        $result = $entity->delete_permanently();
-
-        return $result;
+        return $entity->delete_permanently();
     }
 
     /**
@@ -101,7 +99,7 @@ class TicketDelete extends EntityMutator
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public static function trashTicket($entity)
+    public static function trashTicket(EE_Ticket $entity)
     {
         // trash the ticket
         return $entity->delete();
