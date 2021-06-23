@@ -7,6 +7,7 @@ use EEM_Datetime;
 use EEM_Ticket;
 use EEM_Price;
 use EventEspresso\core\services\graphql\enums\EnumBase;
+use ReflectionException;
 
 /**
  * Class ModelNameEnum
@@ -33,6 +34,7 @@ class ModelNameEnum extends EnumBase
     /**
      * @return array
      * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function getValues(): array
     {

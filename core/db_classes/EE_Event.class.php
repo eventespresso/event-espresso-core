@@ -1404,4 +1404,52 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
             admin_url('admin.php')
         );
     }
+
+
+    /**
+     * @return string|null
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function registrationFormUuid():? string
+    {
+        return $this->get('FSC_UUID');
+    }
+
+
+    /**
+     * Gets all the datetimes for this event
+     *
+     * @return EE_Base_Class[]|EE_Form_Section[]
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function registrationForm()
+    {
+        $FSC_UUID = $this->registrationFormUuid();
+        return !empty($FSC_UUID)
+            ? $this->get_many_related(
+                'FormSection',
+                [
+                    [
+                        'OR' => [
+                            'FormSection.FSC_UUID'      => $FSC_UUID, // top level form
+                            'FormSection.FSC_belongsTo' => $FSC_UUID, // child form sections
+                        ]
+                    ],
+                    'order_by' => ['FSC_order' => 'ASC'],
+                ]
+            )
+            : [];
+    }
+
+
+    /**
+     * @param string $UUID
+     * @throws EE_Error
+     */
+    public function setRegistrationFormUuid(string $UUID): void
+    {
+        $this->set('FSC_UUID', $UUID);
+    }
 }

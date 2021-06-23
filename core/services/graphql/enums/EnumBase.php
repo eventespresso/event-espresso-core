@@ -89,7 +89,7 @@ abstract class EnumBase implements EnumInterface
      */
     public function values(): array
     {
-        return (array) $this->values;
+        return $this->values;
     }
 
 

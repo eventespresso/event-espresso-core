@@ -38,7 +38,7 @@ class BulkEntityDelete extends EntityMutator
          * @throws InvalidDataTypeException
          * @throws EE_Error
          */
-        return static function ($input, AppContext $context, ResolveInfo $info) {
+        return static function (array $input, AppContext $context, ResolveInfo $info): array {
             /**
              * Stop now if a user isn't allowed to delete.
              */

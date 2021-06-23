@@ -3,6 +3,7 @@
 namespace EventEspresso\core\domain\services\graphql\connections;
 
 use EEM_Form_Section;
+use EventEspresso\core\domain\services\graphql\connection_resolvers\AbstractConnectionResolver;
 use EventEspresso\core\domain\services\graphql\connection_resolvers\FormSectionConnectionResolver;
 use EventEspresso\core\domain\services\graphql\abstracts\AbstractRootQueryConnection;
 use Exception;
@@ -26,15 +27,14 @@ class RootQueryFormSectionsConnection extends AbstractRootQueryConnection
      */
     public function __construct(EEM_Form_Section $model)
     {
-        $this->model = $model;
+        parent::__construct($model);
     }
 
 
     /**
      * @return array
-     * @since $VID:$
      */
-    public function config()
+    public function config(): array
     {
         return [
             'fromType'           => 'RootQuery',
@@ -53,9 +53,8 @@ class RootQueryFormSectionsConnection extends AbstractRootQueryConnection
      * @param $info
      * @return FormSectionConnectionResolver
      * @throws Exception
-     * @since $VID:$
      */
-    public function getConnectionResolver($entity, $args, $context, $info)
+    public function getConnectionResolver($entity, $args, $context, $info): AbstractConnectionResolver
     {
         return new FormSectionConnectionResolver($entity, $args, $context, $info);
     }
