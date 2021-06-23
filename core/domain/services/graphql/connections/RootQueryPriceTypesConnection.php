@@ -3,6 +3,7 @@
 namespace EventEspresso\core\domain\services\graphql\connections;
 
 use EEM_Price_Type;
+use EventEspresso\core\domain\services\graphql\connection_resolvers\AbstractConnectionResolver;
 use EventEspresso\core\domain\services\graphql\connection_resolvers\PriceTypeConnectionResolver;
 use EventEspresso\core\domain\services\graphql\abstracts\AbstractRootQueryConnection;
 use Exception;
@@ -26,15 +27,14 @@ class RootQueryPriceTypesConnection extends AbstractRootQueryConnection
      */
     public function __construct(EEM_Price_Type $model)
     {
-        $this->model = $model;
+        parent::__construct($model);
     }
 
 
     /**
      * @return array
-     * @since $VID:$
      */
-    public function config()
+    public function config(): array
     {
         return [
             'fromType'           => 'RootQuery',
@@ -53,9 +53,8 @@ class RootQueryPriceTypesConnection extends AbstractRootQueryConnection
      * @param $info
      * @return PriceTypeConnectionResolver
      * @throws Exception
-     * @since $VID:$
      */
-    public function getConnectionResolver($entity, $args, $context, $info)
+    public function getConnectionResolver($entity, $args, $context, $info): AbstractConnectionResolver
     {
         return new PriceTypeConnectionResolver($entity, $args, $context, $info);
     }

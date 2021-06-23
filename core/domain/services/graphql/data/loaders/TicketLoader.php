@@ -8,6 +8,7 @@ use EEM_Ticket;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use InvalidArgumentException;
+use ReflectionException;
 
 /**
  * Class TicketLoader
@@ -20,6 +21,7 @@ class TicketLoader extends AbstractLoader
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     protected function getQuery(): EEM_Base
     {

@@ -15,7 +15,7 @@ class DatetimeBulkUpdate extends EntityMutator
      * @param Datetime     $type
      * @return callable
      */
-    public static function mutateAndGetPayload(EEM_Datetime $model, Datetime $type)
+    public static function mutateAndGetPayload(EEM_Datetime $model, Datetime $type): callable
     {
         $entityMutator = DatetimeUpdate::mutateAndGetPayload($model, $type);
         $bulkMutator = new BulkEntityMutator($entityMutator);

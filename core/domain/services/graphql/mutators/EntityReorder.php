@@ -35,13 +35,12 @@ class EntityReorder
          * @param ResolveInfo $info    The ResolveInfo passed down to all resolvers
          * @return array
          * @throws UserError
-         * @throws ReflectionException
          * @throws InvalidArgumentException
          * @throws InvalidInterfaceException
          * @throws InvalidDataTypeException
-         * @throws EE_Error
+         * @throws Exception
          */
-        return static function ($input, AppContext $context, ResolveInfo $info) {
+        return static function (array $input, AppContext $context, ResolveInfo $info): array {
             /**
              * Stop now if a user isn't allowed to reorder.
              */
@@ -85,13 +84,16 @@ class EntityReorder
         };
     }
 
+
     /**
      * Prepares entity details to use for mutations
-     * @param array       $input   The input for the mutation
      *
+     * @param array $input The input for the mutation
      * @return array
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public static function prepareEntityDetailsFromInput($input)
+    public static function prepareEntityDetailsFromInput(array $input): array
     {
         $entityGuids = ! empty($input['entityIds']) ? array_map('sanitize_text_field', (array) $input['entityIds']) : [];
         $entityType  = ! empty($input['entityType']) ? sanitize_text_field($input['entityType']) : null;
@@ -118,17 +120,20 @@ class EntityReorder
         }
 
         // convert GUIDs to DB IDs
-        $entityDbids = array_map(function ($entityGuid) {
-            $id_parts = Relay::fromGlobalId($entityGuid);
-            return ! empty($id_parts['id']) ? absint($id_parts['id']) : 0;
-        }, (array) $entityGuids);
+        $entity_db_ids = array_map(
+            function ($entityGuid) {
+                $id_parts = Relay::fromGlobalId($entityGuid);
+                return ! empty($id_parts['id']) ? absint($id_parts['id']) : 0;
+            },
+            $entityGuids
+        );
         // remove 0 values
-        $entityDbids = array_filter($entityDbids);
+        $entity_db_ids = array_filter($entity_db_ids);
 
         /**
          * If we could not get DB IDs for some GUIDs
          */
-        if (count($entityDbids) !== count($entityGuids)) {
+        if (count($entity_db_ids) !== count($entityGuids)) {
             throw new UserError(
                 esc_html__('Sorry, operation cancelled due to missing or invalid entity IDs.', 'event_espresso')
             );
@@ -142,7 +147,7 @@ class EntityReorder
 
         $entities = $model::instance()->get_all([
             [
-                $primaryKey => ['IN', $entityDbids],
+                $primaryKey => ['IN', $entity_db_ids],
                 $deletedKey => ['IN', [true, false]],
             ],
         ]);
@@ -150,18 +155,18 @@ class EntityReorder
         /**
          * If we could not get exactly same number of entities for the given DB IDs
          */
-        if (count($entityDbids) !== count($entities)) {
+        if (count($entity_db_ids) !== count($entities)) {
             throw new UserError(esc_html__('Sorry, operation cancelled due to missing entities.', 'event_espresso'));
         }
 
         // Make sure we have an instance for every ID.
-        foreach ($entityDbids as $entityDbid) {
-            if (isset($entities[ $entityDbid ]) && $entities[ $entityDbid ] instanceof EE_Base_Class) {
+        foreach ($entity_db_ids as $entity_db_id) {
+            if (isset($entities[ $entity_db_id ]) && $entities[ $entity_db_id ] instanceof EE_Base_Class) {
                 continue;
             }
             throw new UserError(esc_html__('Sorry, operation cancelled due to invalid entities.', 'event_espresso'));
         }
 
-        return compact('entities', 'entityGuids', 'entityDbids', 'entityType', 'keyPrefix');
+        return compact('entities', 'entityGuids', 'entity_db_ids', 'entityType', 'keyPrefix');
     }
 }
