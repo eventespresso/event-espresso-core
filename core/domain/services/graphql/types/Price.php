@@ -11,6 +11,7 @@ use EventEspresso\core\services\graphql\fields\GraphQLOutputField;
 use EventEspresso\core\domain\services\graphql\mutators\PriceCreate;
 use EventEspresso\core\domain\services\graphql\mutators\PriceDelete;
 use EventEspresso\core\domain\services\graphql\mutators\PriceUpdate;
+use Exception;
 use InvalidArgumentException;
 use ReflectionException;
 
@@ -32,11 +33,10 @@ class Price extends TypeBase
      */
     public function __construct(EEM_Price $price_model)
     {
-        $this->model = $price_model;
         $this->setName($this->namespace . 'Price');
         $this->setDescription(__('A price.', 'event_espresso'));
         $this->setIsCustomPostType(false);
-        parent::__construct();
+        parent::__construct($price_model);
     }
 
 
@@ -44,7 +44,7 @@ class Price extends TypeBase
      * @return GraphQLFieldInterface[]
      * @since $VID:$
      */
-    public function getFields()
+    public function getFields(): array
     {
         $fields = [
             new GraphQLField(
@@ -188,6 +188,7 @@ class Price extends TypeBase
      * @param array $inputFields The mutation input fields.
      * @throws InvalidArgumentException
      * @throws ReflectionException
+     * @throws Exception
      * @since $VID:$
      */
     public function registerMutations(array $inputFields)

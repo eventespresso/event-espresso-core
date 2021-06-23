@@ -5,8 +5,6 @@ namespace EventEspresso\core\domain\services\graphql\inputs;
 use EventEspresso\core\services\graphql\fields\GraphQLFieldInterface;
 use EventEspresso\core\services\graphql\inputs\InputBase;
 use EventEspresso\core\services\graphql\fields\GraphQLField;
-use EventEspresso\core\services\graphql\fields\GraphQLInputField;
-use EventEspresso\core\services\graphql\fields\GraphQLOutputField;
 
 /**
  * Class TicketsConnectionOrderbyInput
@@ -32,9 +30,8 @@ class TicketsConnectionOrderbyInput extends InputBase
 
     /**
      * @return GraphQLFieldInterface[]
-     * @since $VID:$
      */
-    protected function getFields()
+    protected function getFields(): array
     {
         return [
             new GraphQLField(

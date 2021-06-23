@@ -26,19 +26,17 @@ class Country extends TypeBase
      */
     public function __construct(EEM_Country $country_model)
     {
-        $this->model = $country_model;
         $this->setName($this->namespace . 'Country');
         $this->setDescription(__('A country', 'event_espresso'));
         $this->setIsCustomPostType(false);
-        parent::__construct();
+        parent::__construct($country_model);
     }
 
 
     /**
      * @return GraphQLFieldInterface[]
-     * @since $VID:$
      */
-    public function getFields()
+    public function getFields(): array
     {
         $fields = [
             new GraphQLField(

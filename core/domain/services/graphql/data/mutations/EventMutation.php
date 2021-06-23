@@ -19,11 +19,10 @@ class EventMutation
      * Maps the GraphQL input to a format that the model functions can use
      *
      * @param array  $input         Data coming from the GraphQL mutation query input
-     * @param string $mutation_name Name of the mutation being performed
      * @return array
      * @throws Exception
      */
-    public static function prepareFields(array $input, string $mutation_name): array
+    public static function prepareFields(array $input): array
     {
         $args = [];
 
@@ -44,7 +43,7 @@ class EventMutation
         }
 
         if (! empty($input['description'])) {
-            $args['EVT_desc'] = sanitize_post_field('post_content', $input['description'], null, $context = 'db');
+            $args['EVT_desc'] = sanitize_post_field('post_content', $input['description'], null, 'db');
         }
 
         if (array_key_exists('displayDescription', $input)) {
@@ -76,7 +75,7 @@ class EventMutation
         }
 
         if (! empty($input['shortDescription'])) {
-            $args['EVT_short_desc'] = sanitize_post_field('post_excerpt', $input['shortDescription'], null, $context = 'db');
+            $args['EVT_short_desc'] = sanitize_post_field('post_excerpt', $input['shortDescription'], null, 'db');
         }
 
         if (! empty($input['timezoneString'])) {

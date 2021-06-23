@@ -2,12 +2,11 @@
 
 namespace EventEspresso\core\domain\services\graphql\connections;
 
-use EE_Base_Class;
 use EEM_Datetime;
 use EventEspresso\core\domain\services\graphql\connection_resolvers\DatetimeConnectionResolver;
 use EventEspresso\core\services\graphql\connections\ConnectionBase;
 use Exception;
-use WPGraphQL\Type\WPObjectType;
+use GraphQL\Deferred;
 
 /**
  * Class EventDatetimesConnection
@@ -28,15 +27,14 @@ class EventDatetimesConnection extends ConnectionBase
      */
     public function __construct(EEM_Datetime $model)
     {
-        $this->model = $model;
+        parent::__construct($model);
     }
 
 
     /**
      * @return array
-     * @since $VID:$
      */
-    public function config()
+    public function config(): array
     {
         return [
             'fromType'           => $this->namespace . 'Event',
@@ -54,9 +52,8 @@ class EventDatetimesConnection extends ConnectionBase
      * @param $args
      * @param $context
      * @param $info
-     * @return array
+     * @return array|Deferred|mixed
      * @throws Exception
-     * @since $VID:$
      */
     public function resolveConnection($entity, $args, $context, $info)
     {
@@ -67,13 +64,11 @@ class EventDatetimesConnection extends ConnectionBase
     /**
      * Given an optional array of args, this returns the args to be used in the connection
      *
-     * @access public
      * @param array $args The args to modify the defaults
-     *
      * @return array
      */
     // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    public static function get_connection_args($args = [])
+    public static function get_connection_args(array $args = []): array
     {
         $newArgs = [
             'orderby'      => [

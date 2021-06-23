@@ -26,20 +26,18 @@ class FormSection extends TypeBase
      */
     public function __construct(EEM_Form_Section $form_section_model)
     {
-        $this->model = $form_section_model;
         $this->setName($this->namespace . 'FormSection');
         $this->setDescription(__('A form section', 'event_espresso'));
         $this->setIsCustomPostType(false);
 
-        parent::__construct();
+        parent::__construct($form_section_model);
     }
 
 
     /**
      * @return GraphQLFieldInterface[]
-     * @since $VID:$
      */
-    public function getFields()
+    public function getFields(): array
     {
         $fields = [
             new GraphQLField(
@@ -47,12 +45,6 @@ class FormSection extends TypeBase
                 ['non_null' => 'ID'],
                 null,
                 esc_html__('The globally unique ID for the object.', 'event_espresso')
-            ),
-            new GraphQLOutputField(
-                'dbId',
-                ['non_null' => 'Int'],
-                'ID',
-                esc_html__('Form section ID', 'event_espresso')
             ),
             new GraphQLField(
                 'appliesTo',

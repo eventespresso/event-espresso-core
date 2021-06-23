@@ -17,6 +17,7 @@ use EventEspresso\core\domain\services\graphql\mutators\TicketCreate;
 use EventEspresso\core\domain\services\graphql\mutators\TicketDelete;
 use EventEspresso\core\domain\services\graphql\mutators\TicketUpdate;
 use EventEspresso\core\domain\services\graphql\mutators\TicketBulkUpdate;
+use GraphQL\Error\UserError;
 use InvalidArgumentException;
 use ReflectionException;
 use WPGraphQL\AppContext;
@@ -40,19 +41,17 @@ class Ticket extends TypeBase
      */
     public function __construct(EEM_Ticket $ticket_model)
     {
-        $this->model = $ticket_model;
         $this->setName($this->namespace . 'Ticket');
         $this->setDescription(__('A ticket for an event date', 'event_espresso'));
         $this->setIsCustomPostType(false);
-        parent::__construct();
+        parent::__construct($ticket_model);
     }
 
 
     /**
      * @return GraphQLFieldInterface[]
-     * @since $VID:$
      */
-    public function getFields()
+    public function getFields(): array
     {
         $fields = [
             new GraphQLField(
@@ -323,7 +322,7 @@ class Ticket extends TypeBase
      * @param array       $args    The inputArgs on the field
      * @param AppContext  $context The AppContext passed down the GraphQL tree
      * @param ResolveInfo $info    The ResolveInfo passed down the GraphQL tree
-     * @return string
+     * @return bool
      * @throws Exception
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -333,7 +332,7 @@ class Ticket extends TypeBase
      * @throws UnexpectedEntityException
      * @since $VID:$
      */
-    public function getIsSoldOut(EE_Ticket $source, array $args, AppContext $context, ResolveInfo $info)
+    public function getIsSoldOut(EE_Ticket $source, array $args, AppContext $context, ResolveInfo $info): bool
     {
         return $source->ticket_status() === EE_Ticket::sold_out;
     }
@@ -343,7 +342,7 @@ class Ticket extends TypeBase
      * @param array $inputFields The mutation input fields.
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @since $VID:$
+     * @throws Exception
      */
     public function registerMutations(array $inputFields)
     {
