@@ -32,9 +32,9 @@ class DatetimeDelete extends EntityMutator
          * @param array       $input   The input for the mutation
          * @param AppContext  $context The AppContext passed down to all resolvers
          * @param ResolveInfo $info    The ResolveInfo passed down to all resolvers
-         * @return array|void
+         * @return array
          */
-        return static function ($input, AppContext $context, ResolveInfo $info) use ($model, $type) {
+        return static function (array $input, AppContext $context, ResolveInfo $info) use ($model, $type): array {
             try {
                 /** @var EE_Datetime $entity */
                 $entity = EntityMutator::getEntityFromInputData($model, $input);
@@ -75,7 +75,7 @@ class DatetimeDelete extends EntityMutator
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public static function deleteDatetimeAndRelations($entity)
+    public static function deleteDatetimeAndRelations(EE_Datetime $entity)
     {
         // all related tickets
         $tickets = $entity->tickets();
@@ -89,9 +89,7 @@ class DatetimeDelete extends EntityMutator
         // Remove relations with tickets
         $entity->_remove_relations('Ticket');
         // Now delete the datetime permanently
-        $result = $entity->delete_permanently();
-
-        return $result;
+        return $entity->delete_permanently();
     }
 
     /**
@@ -105,7 +103,7 @@ class DatetimeDelete extends EntityMutator
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public static function trashDatetimeAndRelations($entity)
+    public static function trashDatetimeAndRelations(EE_Datetime $entity)
     {
         // non trashed related tickets
         $tickets = $entity->tickets([[
@@ -120,8 +118,6 @@ class DatetimeDelete extends EntityMutator
             }
         }
         // trash the datetime
-        $result = $entity->delete();
-
-        return $result;
+        return $entity->delete();
     }
 }

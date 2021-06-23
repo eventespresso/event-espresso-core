@@ -3,6 +3,7 @@
 namespace EventEspresso\core\domain\services\graphql\mutators;
 
 use EE_Base_Class;
+use EE_Error;
 use EEM_Base;
 use Exception;
 use GraphQL\Error\UserError;
@@ -28,9 +29,13 @@ abstract class EntityMutator
      * @return EE_Base_Class
      * @throws OutOfBoundsException
      * @throws UserError
+     * @throws EE_Error
      */
-    protected static function getEntityFromID(EEM_Base $model, int $ID, $capability = 'ee_edit_events'): EE_Base_Class
-    {
+    protected static function getEntityFromID(
+        EEM_Base $model,
+        int $ID,
+        string $capability = 'ee_edit_events'
+    ): EE_Base_Class {
         EntityMutator::checkPermissions($model, $capability);
         return EntityMutator::getEntity($model, $ID);
     }
@@ -43,11 +48,12 @@ abstract class EntityMutator
      * @return EE_Base_Class
      * @throws OutOfBoundsException
      * @throws UserError
+     * @throws EE_Error
      */
     protected static function getEntityFromInputData(
         EEM_Base $model,
         array $input,
-        $capability = 'ee_edit_events'
+        string $capability = 'ee_edit_events'
     ): EE_Base_Class {
         EntityMutator::checkPermissions($model, $capability);
         $ID = EntityMutator::getEntityIDFromGlobalId($model, $input);
@@ -60,7 +66,7 @@ abstract class EntityMutator
      * @param string   $capability
      * @throws UserError
      */
-    protected static function checkPermissions(EEM_Base $model, $capability = 'ee_edit_events')
+    protected static function checkPermissions(EEM_Base $model, string $capability = 'ee_edit_events')
     {
         /**
          * Stop now if a user isn't allowed to execute mutation
@@ -109,10 +115,11 @@ abstract class EntityMutator
 
 
     /**
-     * @param EEM_Base $model
-     * @param int      $ID
+     * @param EEM_Base   $model
+     * @param int|string $ID
      * @return EE_Base_Class
      * @throws OutOfBoundsException
+     * @throws EE_Error
      */
     protected static function getEntity(EEM_Base $model, $ID = 0): EE_Base_Class
     {
@@ -141,7 +148,7 @@ abstract class EntityMutator
      * @param string $message
      * @throws RuntimeException
      */
-    protected static function validateResults($results, $message = '')
+    protected static function validateResults($results, string $message = '')
     {
         if (empty($results)) {
             $message = $message !== ''
@@ -160,7 +167,7 @@ abstract class EntityMutator
      * @param string    $message_prefix
      * @throws RuntimeException
      */
-    protected static function handleExceptions(Exception $exception, $message_prefix = '')
+    protected static function handleExceptions(Exception $exception, string $message_prefix = '')
     {
         $message_prefix = $message_prefix !== ''
             ? $message_prefix
