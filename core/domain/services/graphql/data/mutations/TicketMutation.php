@@ -8,7 +8,6 @@ use EventEspresso\core\services\loaders\LoaderFactory;
 use Exception;
 use GraphQLRelay\Relay;
 use DateTime;
-use EEM_Ticket;
 use EE_Ticket;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -180,7 +179,7 @@ class TicketMutation
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public static function setRelatedPrices($entity, array $prices)
+    public static function setRelatedPrices(EE_Ticket $entity, array $prices)
     {
         $relationName = 'Price';
         // Remove all the existing related entities
@@ -201,15 +200,13 @@ class TicketMutation
 
     /**
      * @param EE_Ticket  $ticket_entity
-     * @param EEM_Ticket $ticket_model
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
-     * @since $VID:$
      */
-    public static function addDefaultPrices(EE_Ticket $ticket_entity, EEM_Ticket $ticket_model)
+    public static function addDefaultPrices(EE_Ticket $ticket_entity)
     {
         /** @var DefaultPrices $default_prices */
         $default_prices = LoaderFactory::getLoader()->getShared(

@@ -9,7 +9,6 @@
  *      FSC_belongsTo string
  *      FSC_htmlClass string
  *      FSC_order int
- *      FSC_relation string
  *      FSC_status string
  *      FSC_wpUser int
  *
@@ -20,6 +19,13 @@ class EE_Form_Section extends EE_Base_Class
 {
 
     /**
+     * @var EE_Form_Input[]
+     */
+    private $form_inputs = [];
+
+
+
+    /**
      * @param array $props_n_values
      * @return EE_Form_Section
      * @throws EE_Error
@@ -28,8 +34,7 @@ class EE_Form_Section extends EE_Base_Class
     public static function new_instance(array $props_n_values = []): EE_Form_Section
     {
         $has_object = parent::_check_for_object($props_n_values, __CLASS__);
-        return $has_object
-            ?: new self($props_n_values);
+        return $has_object ?: new self($props_n_values);
     }
 
 
@@ -41,7 +46,7 @@ class EE_Form_Section extends EE_Base_Class
      */
     public static function new_instance_from_db(array $props_n_values = []): EE_Form_Section
     {
-        return new self($props_n_values);
+        return new self($props_n_values, true);
     }
 
 
@@ -55,6 +60,19 @@ class EE_Form_Section extends EE_Base_Class
     public function UUID(): string
     {
         return $this->get('FSC_UUID');
+    }
+
+
+    /**
+     * last 8 characters of the UUID
+     *
+     * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function uuidSlug(): string
+    {
+        return substr($this->UUID(), -8);
     }
 
 
@@ -84,6 +102,31 @@ class EE_Form_Section extends EE_Base_Class
 
 
     /**
+     * Form user types that this form section should be presented to.
+     * Values correspond to the EEM_Form_Section::APPLIES_TO_* constants.
+     *
+     * @param EE_Registration|string $registrant
+     * @return bool
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function appliesToRegistrant($registrant): bool
+    {
+        switch ($this->appliesTo()) {
+            case EEM_Form_Section::APPLIES_TO_PRIMARY:
+                return $registrant instanceof EE_Registration && $registrant->is_primary_registrant();
+            case EEM_Form_Section::APPLIES_TO_PURCHASER:
+                return $registrant === 'purchaser';
+            case EEM_Form_Section::APPLIES_TO_REGISTRANTS:
+                return $registrant instanceof EE_Registration && ! $registrant->is_primary_registrant();
+            case EEM_Form_Section::APPLIES_TO_ALL:
+            default:
+                return true;
+        }
+    }
+
+
+    /**
      * @param string $user_type
      * @throws EE_Error
      * @throws ReflectionException
@@ -101,20 +144,20 @@ class EE_Form_Section extends EE_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function belongsTo(): string
+    public function belongsTo(): ?string
     {
         return $this->get('FSC_belongsTo');
     }
 
 
     /**
-     * @param string $relation_UUID
+     * @param string $parent_UUID
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function setBelongsTo(string $relation_UUID)
+    public function setBelongsTo(string $parent_UUID)
     {
-        $this->set('FSC_belongsTo', $relation_UUID);
+        $this->set('FSC_belongsTo', $parent_UUID);
     }
 
 
@@ -125,7 +168,7 @@ class EE_Form_Section extends EE_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function htmlClass(): string
+    public function htmlClass(): ?string
     {
         return $this->get('FSC_htmlClass');
     }
@@ -167,26 +210,64 @@ class EE_Form_Section extends EE_Base_Class
 
 
     /**
-     * Related model type.
+     * Form Section label displayed on public forms as a heading
      *
      * @return string
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function relation(): string
+    public function publicLabel(): ?string
     {
-        return $this->get('FSC_relation');
+        return $this->get('FSC_publicLabel');
     }
 
 
     /**
-     * @param string $relation
+     * @param string $public_label
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function setRelation(string $relation)
+    public function setPublicLabel(string $public_label)
     {
-        $this->set('FSC_relation', $relation);
+        $this->set('FSC_publicLabel', $public_label);
+    }
+
+
+    /**
+     * Form Section label displayed on public forms as a heading
+     *
+     * @return bool
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function showLabel(): ?bool
+    {
+        return $this->get('FSC_showLabel');
+    }
+
+
+    /**
+     * @param bool $show_label
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function setShowLabel(bool $show_label)
+    {
+        $this->set('FSC_showLabel', $show_label);
+    }
+
+
+    /**
+     * combination of public label and UUID slug for use in identifiers
+     *
+     * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function slug(): ?string
+    {
+        $label = sanitize_title($this->publicLabel());
+        return "{$label}-{$this->uuidSlug()}";
     }
 
 
@@ -198,7 +279,7 @@ class EE_Form_Section extends EE_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function status(): string
+    public function status(): ?string
     {
         return $this->get('FSC_status');
     }
@@ -239,5 +320,79 @@ class EE_Form_Section extends EE_Base_Class
     public function setWpUser(int $wp_user)
     {
         $this->set('FSC_wpUser', $wp_user);
+    }
+
+
+    /**
+     * @return EE_Form_Input[]
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function formInputs(): array
+    {
+        return $this->form_inputs ?: $this->getFormInputs();
+    }
+
+
+    /**
+     * @return EE_Form_Input[]
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    private function getFormInputs(): array
+    {
+        $form_inputs = $this->get_many_related('Form_Input', ['order_by' => ['FIN_order' => 'ASC']]);
+        foreach ($form_inputs as $form_input) {
+            if ($form_input instanceof EE_Form_Input) {
+                $this->form_inputs[ $form_input->UUID()] = $form_input;
+            }
+        }
+        return $this->form_inputs;
+    }
+
+
+    /**
+     * @param EE_Form_Input[] $form_inputs
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function setFormInputs(array $form_inputs): void
+    {
+        foreach ($form_inputs as $form_input) {
+            if ($form_input instanceof EE_Form_Input) {
+                $this->form_inputs[ $form_input->UUID()] = $form_input;
+            }
+        }
+    }
+
+
+    /**
+     * @param EE_Form_Input[] $all_form_inputs
+     * @return EE_Form_Input[]
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function filterFormInputs(array $all_form_inputs): array
+    {
+        return array_filter($all_form_inputs, $this->formInputFilter());
+    }
+
+
+    /**
+     * returns a closure that can be used to filter form inputs for this form section
+     * usage:
+     *  $filter = EEM_Form_Input::formInputFilter();
+     *  $filtered_form_inputs = array_filter( $all_form_inputs, $filter );
+     *
+     * @return Closure
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function formInputFilter(): Closure
+    {
+        $FSC_UUID = strtolower($this->UUID());
+        return function ($form_input) use ($FSC_UUID) {
+            return $form_input instanceof EE_Form_Input && strtolower($form_input->belongsTo()) === $FSC_UUID;
+        };
     }
 }

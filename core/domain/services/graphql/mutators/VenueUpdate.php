@@ -32,13 +32,13 @@ class VenueUpdate extends EntityMutator
          * @param string        $mutation_name      The name of the mutation (ex: create, update, delete)
          * @param AppContext    $context            The AppContext passed down to all resolvers
          * @param ResolveInfo   $info               The ResolveInfo passed down to all resolvers
-         * @return array|void
+         * @return void
          */
         return static function (
-            $id,
+            int $id,
             array $input,
             WP_Post_Type $post_type_object,
-            $mutation_name,
+            string $mutation_name,
             AppContext $context,
             ResolveInfo $info
         ) use (
@@ -56,7 +56,7 @@ class VenueUpdate extends EntityMutator
 
                 /** @var EE_Venue $entity */
                 $entity = EntityMutator::getEntityFromID($model, $id);
-                $args = VenueMutation::prepareFields($input, $mutation_name);
+                $args = VenueMutation::prepareFields($input);
 
                 // Update the entity
                 $entity->save($args);
