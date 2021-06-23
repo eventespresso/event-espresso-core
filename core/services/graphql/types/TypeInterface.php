@@ -98,5 +98,5 @@ interface TypeInterface
      * @throws ReflectionException
      * @since $VID:$
      */
-    public function resolveFromPayload($payload, array $args, AppContext $context): ?string;
+    public function resolveFromPayload($payload, array $args, AppContext $context);
 }
