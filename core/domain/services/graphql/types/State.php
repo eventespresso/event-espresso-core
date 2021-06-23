@@ -27,20 +27,18 @@ class State extends TypeBase
      */
     public function __construct(EEM_State $state_model)
     {
-        $this->model = $state_model;
         $this->setName($this->namespace . 'State');
         $this->setDescription(__('A state', 'event_espresso'));
         $this->setIsCustomPostType(false);
 
-        parent::__construct();
+        parent::__construct($state_model);
     }
 
 
     /**
      * @return GraphQLFieldInterface[]
-     * @since $VID:$
      */
-    public function getFields()
+    public function getFields(): array
     {
         $fields = [
             new GraphQLField(

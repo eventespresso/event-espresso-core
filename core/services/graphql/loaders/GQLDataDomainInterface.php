@@ -22,5 +22,5 @@ interface GQLDataDomainInterface
      * @return array
      * @since $VID:$
      */
-    public function registerLoaders(array $loaders, AppContext $context);
+    public function registerLoaders(array $loaders, AppContext $context): array;
 }
