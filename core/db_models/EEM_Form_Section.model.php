@@ -69,6 +69,15 @@ class EEM_Form_Section extends EEM_Form_Element
                     'FSC_UUID',
                     esc_html__('Form Section UUID (universally unique identifier)', 'event_espresso')
                 ),
+                'FSC_adminLabel' => new EE_Plain_Text_Field(
+                    'FSC_adminLabel',
+                    esc_html__(
+                        'Form Section label displayed in the admin to help differentiate it from others.',
+                        'event_espresso'
+                    ),
+                    true,
+                    null
+                ),
                 'FSC_appliesTo' => new EE_Enum_Text_Field(
                     'FSC_appliesTo',
                     esc_html__(
@@ -79,15 +88,6 @@ class EEM_Form_Section extends EEM_Form_Element
                     EEM_Form_Section::APPLIES_TO_ALL,
                     $this->valid_applies_to_options
                 ),
-                // 'FSC_attributes' => new EE_Serialized_Text_Field(
-                //     'FSC_attributes',
-                //     esc_html__(
-                //         'Array of HTML attributes that apply to this form section.',
-                //         'event_espresso'
-                //     ),
-                //     true,
-                //     []
-                // ),
                 'FSC_belongsTo' => new EE_Plain_Text_Field(
                     'FSC_belongsTo',
                     esc_html__('UUID of parent form section that this one belongs to.', 'event_espresso'),
