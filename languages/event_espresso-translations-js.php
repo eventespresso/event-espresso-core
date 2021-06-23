@@ -471,7 +471,6 @@ $generated_i18n_strings = array(
 	__( 'start date', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:36
-	// Reference: packages/form-builder/src/FormSection/Tabs/Settings.tsx:13
 	__( 'name', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:37
@@ -1169,7 +1168,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'Rules', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:18
-	// Reference: packages/form-builder/src/FormSection/Tabs/Settings.tsx:15
+	// Reference: packages/form-builder/src/FormSection/Tabs/Settings.tsx:19
 	__( 'admin label', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:23
@@ -1179,6 +1178,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'content', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:39
+	// Reference: packages/form-builder/src/FormSection/Tabs/Settings.tsx:14
 	__( 'public label', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:44
@@ -1200,7 +1200,6 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'help text css class', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/FormElement/Tabs/Styles.tsx:29
-	// Reference: packages/form-builder/src/FormSection/Tabs/Styles.tsx:19
 	__( 'custom css', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/FormElement/Tabs/Validation.tsx:16
@@ -1215,22 +1214,22 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/form-builder/src/FormElement/Tabs/Validation.tsx:28
 	__( 'max', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormSection/AddFormElementPopover.tsx:101
-	__( 'load existing form section', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/FormSection/AddFormElementPopover.tsx:118
+	// Reference: packages/form-builder/src/FormSection/AddFormElementPopover.tsx:113
 	__( 'add new form element', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormSection/AddFormElementPopover.tsx:125
+	// Reference: packages/form-builder/src/FormSection/AddFormElementPopover.tsx:120
 	// Reference: packages/form/src/renderers/RepeatableRenderer.tsx:52
 	// Reference: packages/ui-components/src/SimpleEntityList/EntityTemplate.tsx:27
 	__( 'Add', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormSection/AddFormElementPopover.tsx:85
+	// Reference: packages/form-builder/src/FormSection/AddFormElementPopover.tsx:80
 	__( 'Add Form Element', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormSection/AddFormElementPopover.tsx:94
+	// Reference: packages/form-builder/src/FormSection/AddFormElementPopover.tsx:89
 	__( 'form element order can be changed after adding by using the drag handles in the form element toolbar', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/FormSection/AddFormElementPopover.tsx:96
+	__( 'load existing form section', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/FormSection/FormSectionToolbar.tsx:32
 	__( 'delete form section', 'event_espresso' ),
@@ -1262,10 +1261,10 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/form-builder/src/FormSection/SaveSection.tsx:60
 	__( 'a copy of this form section will be saved for use in other events but not loaded by default', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormSection/Tabs/Settings.tsx:20
-	__( 'show name', 'event_espresso' ),
+	// Reference: packages/form-builder/src/FormSection/Tabs/Settings.tsx:24
+	__( 'show label', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormSection/Tabs/Styles.tsx:14
+	// Reference: packages/form-builder/src/FormSection/Tabs/Styles.tsx:13
 	__( 'css class', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/constants.ts:100
