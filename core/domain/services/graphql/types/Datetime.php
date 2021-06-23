@@ -43,11 +43,10 @@ class Datetime extends TypeBase
      */
     public function __construct(EEM_Datetime $datetime_model)
     {
-        $this->model = $datetime_model;
         $this->setName($this->namespace . 'Datetime');
         $this->setDescription(__('An event date', 'event_espresso'));
         $this->setIsCustomPostType(false);
-        parent::__construct();
+        parent::__construct($datetime_model);
     }
 
 
@@ -235,7 +234,7 @@ class Datetime extends TypeBase
      * @param array       $args    The inputArgs on the field
      * @param AppContext  $context The AppContext passed down the GraphQL tree
      * @param ResolveInfo $info    The ResolveInfo passed down the GraphQL tree
-     * @return string
+     * @return bool
      * @throws Exception
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -243,9 +242,8 @@ class Datetime extends TypeBase
      * @throws ReflectionException
      * @throws UserError
      * @throws UnexpectedEntityException
-     * @since $VID:$
      */
-    public function getIsTrashed(EE_Datetime $source, array $args, AppContext $context, ResolveInfo $info)
+    public function getIsTrashed(EE_Datetime $source, array $args, AppContext $context, ResolveInfo $info): bool
     {
         return (bool) $source->get('DTT_deleted');
     }
@@ -256,13 +254,13 @@ class Datetime extends TypeBase
      * @param string $base_input
      * @return array
      */
-    public static function bulkUpdateBaseConfig($base_input)
+    public static function bulkUpdateBaseConfig(string $base_input): array
     {
         return [
             'inputFields'     => [
                 /**
                  * represents the input that is unique for each entity
-                 * e.g. dates may be unique for dateimes and tickets
+                 * e.g. dates may be unique for datetimes and tickets
                  */
                 'uniqueInputs' => [
                     'type'        => [
@@ -301,7 +299,7 @@ class Datetime extends TypeBase
      * @param array $inputFields The mutation input fields.
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @since $VID:$
+     * @throws Exception
      */
     public function registerMutations(array $inputFields)
     {
