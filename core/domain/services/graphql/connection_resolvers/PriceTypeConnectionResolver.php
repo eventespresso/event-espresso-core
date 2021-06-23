@@ -15,7 +15,7 @@ use ReflectionException;
 class PriceTypeConnectionResolver extends AbstractConnectionResolver
 {
     // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    public function get_loader_name()
+    public function get_loader_name(): string
     {
         return 'espresso_priceType';
     }
@@ -26,9 +26,10 @@ class PriceTypeConnectionResolver extends AbstractConnectionResolver
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    public function get_query()
+    public function get_query(): EEM_Price_Type
     {
         return EEM_Price_Type::instance();
     }
@@ -40,7 +41,7 @@ class PriceTypeConnectionResolver extends AbstractConnectionResolver
      * @return array
      */
     // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    public function get_ids()
+    public function get_ids(): array
     {
         $results = $this->query->get_col($this->query_args);
 
@@ -54,14 +55,12 @@ class PriceTypeConnectionResolver extends AbstractConnectionResolver
      * handle batch resolution of the posts.
      *
      * @return array
-     * @throws EE_Error
      * @throws InvalidArgumentException
-     * @throws ReflectionException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
     // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    public function get_query_args()
+    public function get_query_args(): array
     {
         $where_params = [];
         $query_args   = [];

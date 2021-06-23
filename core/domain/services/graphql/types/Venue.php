@@ -28,18 +28,16 @@ class Venue extends TypeBase
      */
     public function __construct(EEM_Venue $venue_model)
     {
-        $this->model = $venue_model;
         $this->setName($this->namespace . 'Venue');
         $this->setIsCustomPostType(true);
-        parent::__construct();
+        parent::__construct($venue_model);
     }
 
 
     /**
      * @return GraphQLFieldInterface[]
-     * @since $VID:$
      */
-    public function getFields()
+    public function getFields(): array
     {
         $fields = [
             new GraphQLOutputField(
@@ -207,7 +205,7 @@ class Venue extends TypeBase
     /**
      * Extends the existing WP GraphQL mutations.
      *
-     * @since $VID:$
+     * @return void
      */
     public function extendMutations()
     {

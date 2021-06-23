@@ -3,6 +3,7 @@
 namespace EventEspresso\core\domain\services\graphql\connections;
 
 use EEM_Datetime;
+use EventEspresso\core\domain\services\graphql\connection_resolvers\AbstractConnectionResolver;
 use EventEspresso\core\domain\services\graphql\connection_resolvers\DatetimeConnectionResolver;
 use EventEspresso\core\domain\services\graphql\abstracts\AbstractRootQueryConnection;
 use Exception;
@@ -26,15 +27,14 @@ class RootQueryDatetimesConnection extends AbstractRootQueryConnection
      */
     public function __construct(EEM_Datetime $model)
     {
-        $this->model = $model;
+        parent::__construct($model);
     }
 
 
     /**
      * @return array
-     * @since $VID:$
      */
-    public function config()
+    public function config(): array
     {
         return [
             'fromType'           => 'RootQuery',
@@ -54,9 +54,8 @@ class RootQueryDatetimesConnection extends AbstractRootQueryConnection
      * @param $info
      * @return DatetimeConnectionResolver
      * @throws Exception
-     * @since $VID:$
      */
-    public function getConnectionResolver($entity, $args, $context, $info)
+    public function getConnectionResolver($entity, $args, $context, $info): AbstractConnectionResolver
     {
         return new DatetimeConnectionResolver($entity, $args, $context, $info);
     }
