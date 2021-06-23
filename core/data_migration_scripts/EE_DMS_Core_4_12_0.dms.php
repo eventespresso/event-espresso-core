@@ -265,6 +265,7 @@ class EE_DMS_Core_4_12_0 extends EE_Data_Migration_Script_Base
 
         $table_name = 'esp_form_section';
         $sql        = "FSC_UUID varchar(25) NOT NULL,
+				FSC_adminLabel tinytext NOT NULL,
 				FSC_appliesTo tinytext NOT NULL,
 				FSC_belongsTo varchar(25) DEFAULT NULL,
 				FSC_htmlClass text DEFAULT NULL,
