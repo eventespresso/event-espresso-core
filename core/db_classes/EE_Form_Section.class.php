@@ -112,7 +112,7 @@ class EE_Form_Section extends EE_Base_Class
      */
     public function appliesToRegistrant($registrant): bool
     {
-        switch($this->appliesTo()) {
+        switch ($this->appliesTo()) {
             case EEM_Form_Section::APPLIES_TO_PRIMARY:
                 return $registrant instanceof EE_Registration && $registrant->is_primary_registrant();
             case EEM_Form_Section::APPLIES_TO_PURCHASER:
@@ -144,7 +144,7 @@ class EE_Form_Section extends EE_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function belongsTo(): string
+    public function belongsTo(): ?string
     {
         return $this->get('FSC_belongsTo');
     }
@@ -168,7 +168,7 @@ class EE_Form_Section extends EE_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function htmlClass(): string
+    public function htmlClass(): ?string
     {
         return $this->get('FSC_htmlClass');
     }
@@ -216,7 +216,7 @@ class EE_Form_Section extends EE_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function publicLabel(): string
+    public function publicLabel(): ?string
     {
         return $this->get('FSC_publicLabel');
     }
@@ -240,7 +240,7 @@ class EE_Form_Section extends EE_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function showLabel(): bool
+    public function showLabel(): ?bool
     {
         return $this->get('FSC_showLabel');
     }
@@ -264,8 +264,9 @@ class EE_Form_Section extends EE_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function slug(): string
-    {   $label = sanitize_title($this->publicLabel());
+    public function slug(): ?string
+    {
+        $label = sanitize_title($this->publicLabel());
         return "{$label}-{$this->uuidSlug()}";
     }
 
@@ -278,7 +279,7 @@ class EE_Form_Section extends EE_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function status(): string
+    public function status(): ?string
     {
         return $this->get('FSC_status');
     }
