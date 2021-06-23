@@ -43,10 +43,7 @@ class FormSectionConnectionResolver extends AbstractConnectionResolver
     // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     public function get_ids(): array
     {
-        // \EEH_Debug_Tools::printr(__FUNCTION__, __CLASS__, __FILE__, __LINE__, 2);
-        // \EEH_Debug_Tools::printr($this->query_args, '$this->query_args', __FILE__, __LINE__);
         $results = $this->query->get_col($this->query_args);
-        // \EEH_Debug_Tools::printr($results, '$results', __FILE__, __LINE__);
         return ! empty($results) ? $results : [];
     }
 

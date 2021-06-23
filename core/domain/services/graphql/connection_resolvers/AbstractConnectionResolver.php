@@ -55,9 +55,9 @@ abstract class AbstractConnectionResolver extends WPGraphQLConnectionResolver
     /**
      * Set limit the highest value of first and last, with a (filterable) max of 100
      *
-     * @return array
+     * @return int
      */
-    protected function getLimit(): array
+    protected function getLimit(): int
     {
         $first = ! empty($this->args['first'])
             ? absint($this->args['first'])

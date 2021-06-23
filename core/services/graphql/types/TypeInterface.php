@@ -71,7 +71,7 @@ interface TypeInterface
      * @param array       $args    The inputArgs on the field
      * @param AppContext  $context The AppContext passed down the GraphQL tree
      * @param ResolveInfo $info    The ResolveInfo passed down the GraphQL tree
-     * @return string
+     * @return mixed
      * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
@@ -81,7 +81,7 @@ interface TypeInterface
      * @throws ReflectionException
      * @since $VID:$
      */
-    public function resolveField($source, array $args, AppContext $context, ResolveInfo $info): string;
+    public function resolveField($source, array $args, AppContext $context, ResolveInfo $info);
 
 
     /**

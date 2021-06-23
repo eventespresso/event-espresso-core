@@ -37,7 +37,7 @@ abstract class AbstractRootQueryConnection extends ConnectionBase
      * @return array
      * @throws Exception
      */
-    public function resolveConnection($entity, $args, $context, $info): array
+    public function resolveConnection($entity, $args, $context, $info): object
     {
         $resolver = $this->getConnectionResolver($entity, $args, $context, $info);
         return $resolver->get_connection();
