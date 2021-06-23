@@ -257,9 +257,9 @@ abstract class TypeBase implements TypeInterface
      * @return string|null
      * @throws EE_Error
      */
-    public function resolveFromPayload($payload, array $args, AppContext $context): ?string
+    public function resolveFromPayload($payload, array $args, AppContext $context)
     {
-        if (empty($payload['id']) || ! absint($payload['id'])) {
+        if (empty($payload['id'])) {
             return null;
         }
         return $this->model->get_one_by_ID($payload['id']);

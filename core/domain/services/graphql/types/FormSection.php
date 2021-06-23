@@ -7,6 +7,12 @@ use EventEspresso\core\services\graphql\fields\GraphQLFieldInterface;
 use EventEspresso\core\services\graphql\types\TypeBase;
 use EventEspresso\core\services\graphql\fields\GraphQLField;
 use EventEspresso\core\services\graphql\fields\GraphQLOutputField;
+use EventEspresso\core\domain\services\graphql\mutators\FormSectionCreate;
+use EventEspresso\core\domain\services\graphql\mutators\FormSectionDelete;
+use EventEspresso\core\domain\services\graphql\mutators\FormSectionUpdate;
+use Exception;
+use InvalidArgumentException;
+use ReflectionException;
 
 /**
  * Class FormSection
@@ -116,6 +122,68 @@ class FormSection extends TypeBase
             $fields,
             $this->name,
             $this->model
+        );
+    }
+
+
+    /**
+     * @param array $inputFields The mutation input fields.
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws Exception
+     * @since $VID:$
+     */
+    public function registerMutations(array $inputFields)
+    {
+        // Register mutation to update an entity.
+        register_graphql_mutation(
+            'update' . $this->name(),
+            [
+                'inputFields'         => $inputFields,
+                'outputFields'        => [
+                    lcfirst($this->name()) => [
+                        'type'    => $this->name(),
+                        'resolve' => [$this, 'resolveFromPayload'],
+                    ],
+                ],
+                'mutateAndGetPayload' => FormSectionUpdate::mutateAndGetPayload($this->model),
+            ]
+        );
+        // Register mutation to delete an entity.
+        register_graphql_mutation(
+            'delete' . $this->name(),
+            [
+                'inputFields'         => [
+                    'id' => $inputFields['id'],
+                ],
+                'outputFields'        => [
+                    lcfirst($this->name()) => [
+                        'type'        => $this->name(),
+                        'description' => esc_html__('The object before it was deleted', 'event_espresso'),
+                        'resolve'     => static function ($payload) {
+                            $deleted = (object) $payload['deleted'];
+
+                            return ! empty($deleted) ? $deleted : null;
+                        },
+                    ],
+                ],
+                'mutateAndGetPayload' => FormSectionDelete::mutateAndGetPayload($this->model),
+            ]
+        );
+
+        // Register mutation to update an entity.
+        register_graphql_mutation(
+            'create' . $this->name(),
+            [
+                'inputFields'         => $inputFields,
+                'outputFields'        => [
+                    lcfirst($this->name()) => [
+                        'type'    => $this->name(),
+                        'resolve' => [$this, 'resolveFromPayload'],
+                    ],
+                ],
+                'mutateAndGetPayload' => FormSectionCreate::mutateAndGetPayload($this->model),
+            ]
         );
     }
 }
