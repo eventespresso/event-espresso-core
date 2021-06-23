@@ -8,6 +8,7 @@ use EE_Event;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use InvalidArgumentException;
+use ReflectionException;
 use WPGraphQL\Model\Post;
 
 /**
@@ -16,7 +17,7 @@ use WPGraphQL\Model\Post;
 class VenueConnectionResolver extends AbstractConnectionResolver
 {
     // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    public function get_loader_name()
+    public function get_loader_name(): string
     {
         return 'espresso_venue';
     }
@@ -27,9 +28,10 @@ class VenueConnectionResolver extends AbstractConnectionResolver
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    public function get_query()
+    public function get_query(): EEM_Venue
     {
         return EEM_Venue::instance();
     }
@@ -41,7 +43,7 @@ class VenueConnectionResolver extends AbstractConnectionResolver
      * @return array
      */
     // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    public function get_ids()
+    public function get_ids(): array
     {
         $results = $this->query->get_col($this->query_args);
 
@@ -57,7 +59,7 @@ class VenueConnectionResolver extends AbstractConnectionResolver
      * @return array
      */
     // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    public function get_query_args()
+    public function get_query_args(): array
     {
         $where_params = [];
         $query_args = [];
@@ -102,7 +104,7 @@ class VenueConnectionResolver extends AbstractConnectionResolver
             $where_params = array_merge($where_params, $input_fields);
         }
 
-        list($query_args, $where_params) = $this->mapOrderbyInputArgs($query_args, $where_params, 'VNU_ID');
+        [$query_args, $where_params] = $this->mapOrderbyInputArgs($query_args, $where_params, 'VNU_ID');
 
         $where_params = apply_filters(
             'FHEE__EventEspresso_core_domain_services_graphql_connection_resolvers__venue_where_params',
@@ -132,7 +134,7 @@ class VenueConnectionResolver extends AbstractConnectionResolver
      * @param array $where_args
      * @return array
      */
-    public function sanitizeInputFields(array $where_args)
+    public function sanitizeInputFields(array $where_args): array
     {
         return $this->sanitizeWhereArgsForInputFields(
             $where_args,

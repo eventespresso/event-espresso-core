@@ -8,6 +8,7 @@ use EEM_Price;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use InvalidArgumentException;
+use ReflectionException;
 
 /**
  * Class PriceLoader
@@ -20,6 +21,7 @@ class PriceLoader extends AbstractLoader
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     protected function getQuery(): EEM_Base
     {

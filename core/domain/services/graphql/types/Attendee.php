@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\domain\services\graphql\types;
 
+use EE_Error;
 use EEM_Attendee;
 use EE_Attendee;
 use EventEspresso\core\services\graphql\fields\GraphQLFieldInterface;
@@ -29,18 +30,16 @@ class Attendee extends TypeBase
      */
     public function __construct(EEM_Attendee $attendee_model)
     {
-        $this->model = $attendee_model;
         $this->setName($this->namespace . 'Attendee');
         $this->setIsCustomPostType(false); // Set to false to use our model queries
-        parent::__construct();
+        parent::__construct($attendee_model);
     }
 
 
     /**
      * @return GraphQLFieldInterface[]
-     * @since $VID:$
      */
-    public function getFields()
+    public function getFields(): array
     {
         $fields = [
             new GraphQLField(
@@ -190,21 +189,21 @@ class Attendee extends TypeBase
 
 
     /**
-     * @param EE_Attendee   $source  The source that's passed down the GraphQL queries
+     * @param EE_Attendee $source  The source that's passed down the GraphQL queries
      * @param array       $args    The inputArgs on the field
      * @param AppContext  $context The AppContext passed down the GraphQL tree
      * @param ResolveInfo $info    The ResolveInfo passed down the GraphQL tree
-     * @return string
-     * @since $VID:$
+     * @return string|null
+     * @throws EE_Error
      */
-    public function getAvatar(EE_Attendee $source, array $args, AppContext $context, ResolveInfo $info)
+    public function getAvatar(EE_Attendee $source, array $args, AppContext $context, ResolveInfo $info): ?string
     {
         $email = $source->email();
 
         if (empty($email)) {
-            return get_avatar_url('', array('force_default' => true));
+            return get_avatar_url('', ['force_default' => true]);
         }
         $avatar = get_avatar_url($email);
-        return $avatar ? $avatar : null;
+        return $avatar ?: null;
     }
 }
