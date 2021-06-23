@@ -31,7 +31,8 @@ class PriceCreate extends EntityMutator
          * @param ResolveInfo $info    The ResolveInfo passed down to all resolvers
          * @return array
          */
-        return static function ($input, AppContext $context, ResolveInfo $info) use ($model, $type) {
+        return static function (array $input, AppContext $context, ResolveInfo $info) use ($model, $type): array {
+            $id = null;
             try {
                 EntityMutator::checkPermissions($model);
 

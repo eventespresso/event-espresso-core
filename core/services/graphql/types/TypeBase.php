@@ -17,7 +17,7 @@ use ReflectionException;
 use WPGraphQL\Model\Post;
 use GraphQL\Type\Definition\ResolveInfo;
 use WPGraphQL\AppContext;
-use WPGraphQL\Type\Object\RootQuery;
+use WPGraphQL\Type\ObjectType\RootQuery;
 use DateTime;
 use DateTimeZone;
 
@@ -75,9 +75,12 @@ abstract class TypeBase implements TypeInterface
 
     /**
      * TypeBase constructor.
+     *
+     * @param EEM_Base|null $model
      */
-    public function __construct()
+    public function __construct(EEM_Base $model = null)
     {
+        $this->model = $model;
         $this->setFields($this->getFields());
         $this->field_resolver = new FieldResolver(
             $this->model,
@@ -90,13 +93,13 @@ abstract class TypeBase implements TypeInterface
      * @return GraphQLFieldInterface[]
      * @since $VID:$
      */
-    abstract protected function getFields();
+    abstract protected function getFields(): array;
 
 
     /**
      * @return string
      */
-    public function name()
+    public function name(): string
     {
         return $this->name;
     }
@@ -105,7 +108,7 @@ abstract class TypeBase implements TypeInterface
     /**
      * @param string $name
      */
-    protected function setName($name)
+    protected function setName(string $name)
     {
         $this->name = $name;
     }
@@ -114,7 +117,7 @@ abstract class TypeBase implements TypeInterface
     /**
      * @return string
      */
-    public function description()
+    public function description(): string
     {
         return $this->description;
     }
@@ -123,7 +126,7 @@ abstract class TypeBase implements TypeInterface
     /**
      * @param string $description
      */
-    protected function setDescription($description)
+    protected function setDescription(string $description)
     {
         $this->description = $description;
     }
@@ -133,7 +136,7 @@ abstract class TypeBase implements TypeInterface
      * @return GraphQLFieldInterface[]
      * @since $VID:$
      */
-    public function fields()
+    public function fields(): array
     {
         return (array) $this->fields;
     }
@@ -158,7 +161,7 @@ abstract class TypeBase implements TypeInterface
      * @return array
      * @since $VID:$
      */
-    public function getFieldsForResolver()
+    public function getFieldsForResolver(): array
     {
         $fields = [];
         foreach ($this->fields() as $field) {
@@ -173,7 +176,7 @@ abstract class TypeBase implements TypeInterface
     /**
      * @return bool
      */
-    public function isCustomPostType()
+    public function isCustomPostType(): bool
     {
         return $this->is_custom_post_type;
     }
@@ -182,18 +185,18 @@ abstract class TypeBase implements TypeInterface
     /**
      * @param bool $is_custom_post_type
      */
-    protected function setIsCustomPostType($is_custom_post_type)
+    protected function setIsCustomPostType(bool $is_custom_post_type)
     {
         $this->is_custom_post_type = filter_var($is_custom_post_type, FILTER_VALIDATE_BOOLEAN);
     }
 
 
     /**
-     * @param int $value
+     * @param int|float $value
      * @return int
      * @since $VID:$
      */
-    public function parseInfiniteValue($value)
+    public function parseInfiniteValue($value): int
     {
         $value = trim($value);
         return $value === null
@@ -211,9 +214,9 @@ abstract class TypeBase implements TypeInterface
     /**
      * @param mixed $source
      * @return EE_Base_Class|null
-     * @since $VID:$
+     * @throws EE_Error
      */
-    private function getModel($source)
+    private function getModel($source): ?EE_Base_Class
     {
         // If it comes from a custom connection
         // where the $source is already instantiated.
@@ -229,7 +232,7 @@ abstract class TypeBase implements TypeInterface
      * @param array       $args    The inputArgs on the field
      * @param AppContext  $context The AppContext passed down the GraphQL tree
      * @param ResolveInfo $info    The ResolveInfo passed down the GraphQL tree
-     * @return string
+     * @return mixed
      * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
@@ -239,7 +242,7 @@ abstract class TypeBase implements TypeInterface
      * @throws ReflectionException
      * @since $VID:$
      */
-    public function resolveField($source, $args, AppContext $context, ResolveInfo $info)
+    public function resolveField($source, array $args, AppContext $context, ResolveInfo $info)
     {
         $source = $source instanceof RootQuery ? $source : $this->getModel($source);
 
@@ -251,17 +254,10 @@ abstract class TypeBase implements TypeInterface
      * @param mixed      $payload The payload returned after mutation
      * @param array      $args    The inputArgs on the field
      * @param AppContext $context The AppContext passed down the GraphQL tree
-     * @return string
+     * @return string|null
      * @throws EE_Error
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws UnexpectedEntityException
-     * @throws UserError
-     * @throws InvalidArgumentException
-     * @throws ReflectionException
-     * @since $VID:$
      */
-    public function resolveFromPayload($payload, $args, AppContext $context)
+    public function resolveFromPayload($payload, array $args, AppContext $context): ?string
     {
         if (empty($payload['id']) || ! absint($payload['id'])) {
             return null;
@@ -278,13 +274,8 @@ abstract class TypeBase implements TypeInterface
      * @param string        $datetime The datetime value.
      * @param EE_Base_Class $source   The source object.
      * @return string ISO8601/RFC3339 formatted datetime.
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws InvalidArgumentException
-     * @throws ReflectionException
-     * @since $VID:$
      */
-    public function formatDatetime($datetime, EE_Base_Class $source)
+    public function formatDatetime(string $datetime, EE_Base_Class $source): string
     {
         $format   = $source->get_format();
         // create date object based on local timezone

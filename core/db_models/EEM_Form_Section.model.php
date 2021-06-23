@@ -57,30 +57,14 @@ class EEM_Form_Section extends EEM_Form_Element
             ]
         );
 
-        $related_entity_types = apply_filters(
-            'FHEE__EEM_Form_Section__related_entity_types',
-            [
-                'Datetime',
-                'Event',
-                'Form_Section',
-                'Ticket',
-                'Venue',
-            ]
-        );
-
         $this->singular_item = esc_html__('Form Section', 'event_espresso');
         $this->plural_item   = esc_html__('Form Sections', 'event_espresso');
 
         $this->_tables          = [
-            'Form_Section' => new EE_Primary_Table('esp_form_section', 'FSC_ID'),
+            'Form_Section' => new EE_Primary_Table('esp_form_section', 'FSC_UUID'),
         ];
         $this->_fields          = [
             'Form_Section' => [
-                'FSC_ID'        => new EE_Integer_Field(
-                    'FSC_ID',
-                    esc_html__('Form Section ID (autoincrement db id)', 'event_espresso'),
-                    false
-                ),
                 'FSC_UUID'      => new EE_Primary_Key_String_Field(
                     'FSC_UUID',
                     esc_html__('Form Section UUID (universally unique identifier)', 'event_espresso')
@@ -104,12 +88,11 @@ class EEM_Form_Section extends EEM_Form_Element
                 //     true,
                 //     []
                 // ),
-                'FSC_belongsTo' => new EE_Foreign_Key_String_Field(
+                'FSC_belongsTo' => new EE_Plain_Text_Field(
                     'FSC_belongsTo',
-                    esc_html__('UUID or ID of related entity this form section belongs to.', 'event_espresso'),
+                    esc_html__('UUID of parent form section that this one belongs to.', 'event_espresso'),
                     true,
-                    null,
-                    $related_entity_types
+                    null
                 ),
                 'FSC_htmlClass' => new EE_Plain_Text_Field(
                     'FSC_htmlClass',
@@ -123,12 +106,20 @@ class EEM_Form_Section extends EEM_Form_Element
                     false,
                     0
                 ),
-                'FSC_relation'  => new EE_Any_Foreign_Model_Name_Field(
-                    'FSC_relation',
-                    esc_html__('Related model type.', 'event_espresso'),
+                'FSC_publicLabel' => new EE_Plain_Text_Field(
+                    'FSC_publicLabel',
+                    esc_html__('Form Section label displayed on public forms as a heading.', 'event_espresso'),
                     true,
-                    null,
-                    $related_entity_types
+                    null
+                ),
+                'FSC_showLabel' => new EE_Boolean_Field(
+                    'FSC_showLabel',
+                    esc_html__(
+                        'Whether or not to display the Form Section name (Public Label) on public forms.',
+                        'event_espresso'
+                    ),
+                    false,
+                    true
                 ),
                 'FSC_status'    => new EE_Enum_Text_Field(
                     'FSC_status',
@@ -147,10 +138,11 @@ class EEM_Form_Section extends EEM_Form_Element
                 ),
             ],
         ];
-        $this->_model_relations = [];
-        foreach ($related_entity_types as $model) {
-            $this->_model_relations[ $model ] = new EE_Belongs_To_Any_Relation();
-        }
+        $this->_model_relations = [
+            'Form_Input' => new EE_Has_Many_Relation(),
+            'Form_Submission' => new EE_Has_Many_Relation(),
+            'WP_User'    => new EE_Belongs_To_Relation(),
+        ];
         // this model is generally available for reading
         $restrictions                              = [];
         $restrictions[ EEM_Base::caps_read ]       = new EE_Restriction_Generator_Public();
@@ -160,96 +152,6 @@ class EEM_Form_Section extends EEM_Form_Element
         $this->_cap_restriction_generators         = $restrictions;
         parent::__construct($element, $timezone);
         $this->request = $this->getLoader()->getShared('EventEspresso\core\services\request\RequestInterface');
-    }
-
-
-    /**
-     * @param bool $constants_only
-     * @return array
-     */
-    public function validAppliesToOptions(bool $constants_only = false): array
-    {
-        return $constants_only
-            ? array_keys($this->valid_applies_to_options)
-            : $this->valid_applies_to_options;
-    }
-
-
-    /**
-     * returns an array of Form Sections for the specified parent Form Section
-     *
-     * @param string $FSC_UUID
-     * @return EE_Form_Section[]
-     * @throws EE_Error
-     */
-    public function getChildFormSections(string $FSC_UUID): array
-    {
-        return $this->getFormSectionsFor('FormSection.FSC_UUID', $FSC_UUID);
-    }
-
-
-    /**
-     * returns an array of Form Sections for the specified Event
-     *
-     * @param string $EVT_ID
-     * @return EE_Form_Section[]
-     * @throws EE_Error
-     */
-    public function getFormSectionsForEvent(string $EVT_ID): array
-    {
-        return $this->getFormSectionsFor('Event.EVT_ID', $EVT_ID);
-    }
-
-
-    /**
-     * returns an array of Form Sections for the specified Datetime
-     *
-     * @param string $DTT_ID
-     * @return EE_Form_Section[]
-     * @throws EE_Error
-     */
-    public function getFormSectionsForDatetime(string $DTT_ID): array
-    {
-        return $this->getFormSectionsFor('Datetime.DTT_ID', $DTT_ID);
-    }
-
-
-    /**
-     * returns an array of Form Sections for the specified Ticket
-     *
-     * @param string $TKT_ID
-     * @return EE_Form_Section[]
-     * @throws EE_Error
-     */
-    public function getFormSectionsForTicket(string $TKT_ID): array
-    {
-        return $this->getFormSectionsFor('Ticket.TKT_ID', $TKT_ID);
-    }
-
-
-    /**
-     * returns an array of Form Sections for the specified Venue
-     *
-     * @param string $VNU_ID
-     * @return EE_Form_Section[]
-     * @throws EE_Error
-     */
-    public function getFormSectionsForVenue(string $VNU_ID): array
-    {
-        return $this->getFormSectionsFor('Venue.VNU_ID', $VNU_ID);
-    }
-
-
-    /**
-     * @return EE_Form_Section[]
-     * @throws EE_Error
-     */
-    private function getFormSectionsFor(string $relation, string $related_UUID): array
-    {
-        $where_params = [$relation => $related_UUID];
-        $query_params = $this->addDefaultWhereConditions([$where_params]);
-        $query_params = $this->addOrderByQueryParams($query_params);
-        return $this->get_all($query_params);
     }
 
 
@@ -278,5 +180,66 @@ class EEM_Form_Section extends EEM_Form_Element
     {
         $query_params['order_by'] = ['FSC_order' => 'ASC'];
         return $query_params;
+    }
+
+
+    /**
+     * returns an array of Form Sections for the specified parent Form Section
+     *
+     * @param string $FSC_UUID
+     * @return EE_Form_Section[]
+     * @throws EE_Error
+     */
+    public function getChildFormSections(string $FSC_UUID): array
+    {
+        return $this->getFormSections(['FSC_belongsTo' => $FSC_UUID]);
+    }
+
+
+    /**
+     * @return EE_Form_Section[]
+     * @throws EE_Error
+     */
+    private function getFormSections(array $where_params): array
+    {
+        $query_params = $this->addDefaultWhereConditions([$where_params]);
+        $query_params = $this->addOrderByQueryParams($query_params);
+        return $this->get_all($query_params);
+    }
+
+
+    /**
+     * returns an array of Form Sections for the specified Event
+     *
+     * @param EE_Event $event
+     * @return EE_Form_Section[]
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function getFormSectionsForEvent(EE_Event $event): array
+    {
+        $FSC_UUID = $event->registrationFormUuid();
+        return ! empty($FSC_UUID)
+            ? $this->getFormSections(
+                [
+                    'OR' => [
+                        'FSC_UUID'      => $FSC_UUID, // top level form
+                        'FSC_belongsTo' => $FSC_UUID, // child form sections
+                    ]
+                ]
+            )
+            : [];
+    }
+
+
+    /**
+     * @param bool $constants_only
+     * @return array
+     */
+    public function validAppliesToOptions(bool $constants_only = false): array
+    {
+        return $constants_only
+            ? array_keys($this->valid_applies_to_options)
+            : $this->valid_applies_to_options;
     }
 }

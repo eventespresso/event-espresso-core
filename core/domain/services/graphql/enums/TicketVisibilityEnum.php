@@ -5,6 +5,7 @@ namespace EventEspresso\core\domain\services\graphql\enums;
 use EE_Error;
 use EEM_Ticket;
 use EventEspresso\core\services\graphql\enums\EnumBase;
+use ReflectionException;
 
 /**
  * Class TicketVisibilityEnum
@@ -31,6 +32,7 @@ class TicketVisibilityEnum extends EnumBase
     /**
      * @return array
      * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function getValues(): array
     {

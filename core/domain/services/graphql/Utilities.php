@@ -25,8 +25,12 @@ class Utilities
      *                                  ]
      * @return array
      */
-    public function sanitizeWhereArgs(array $where_args, array $arg_mapping, array $id_fields, array $options = [])
-    {
+    public function sanitizeWhereArgs(
+        array $where_args,
+        array $arg_mapping,
+        array $id_fields,
+        array $options = []
+    ): array {
         // if "include_all_args" is true, then the incoming $where_args array
         // will be copied to the outgoing $where_params prior to sanitizing the fields.
         // so ALL elements in the $where_args array will be present in the $where_params array
@@ -37,8 +41,7 @@ class Utilities
         // will have their values converted to use an SQL "IN" clause format
         // if the value returned from Relay::fromGlobalId() is an array of IDs
         $use_IN_operator = isset($options['use_IN_operator'])
-            ? filter_var($options['use_IN_operator'], FILTER_VALIDATE_BOOLEAN)
-            : false;
+                           && filter_var($options['use_IN_operator'], FILTER_VALIDATE_BOOLEAN);
         $where_params    = $include_all_args ? $where_args : [];
         foreach ($where_args as $arg => $value) {
             if (! array_key_exists($arg, $arg_mapping)) {

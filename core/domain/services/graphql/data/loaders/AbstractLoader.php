@@ -6,6 +6,7 @@ use EE_Error;
 use EEM_Base;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use Exception;
 use InvalidArgumentException;
 use WPGraphQL\Data\Loader\AbstractDataLoader;
 
@@ -44,9 +45,9 @@ abstract class AbstractLoader extends AbstractDataLoader
      * @param array $keys
      *
      * @return array
-     * @throws \Exception
+     * @throws Exception
      */
-    public function loadKeys(array $keys)
+    public function loadKeys(array $keys): array
     {
         if (empty($keys)) {
             return $keys;

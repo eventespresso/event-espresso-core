@@ -3,11 +3,13 @@
 namespace EventEspresso\core\domain\services\graphql\mutators;
 
 use EE_Datetime;
+use EE_Error;
 use EEM_Datetime;
 use EventEspresso\core\domain\services\graphql\types\Datetime;
 use EventEspresso\core\domain\services\graphql\data\mutations\DatetimeMutation;
 use Exception;
 use GraphQL\Type\Definition\ResolveInfo;
+use ReflectionException;
 use WPGraphQL\AppContext;
 
 class DatetimeUpdate extends EntityMutator
@@ -29,8 +31,10 @@ class DatetimeUpdate extends EntityMutator
          * @param AppContext  $context The AppContext passed down to all resolvers
          * @param ResolveInfo $info    The ResolveInfo passed down to all resolvers
          * @return array
+         * @throws EE_Error
+         * @throws ReflectionException
          */
-        return static function (array $input, AppContext $context, ResolveInfo $info) use ($model, $type) {
+        return static function (array $input, AppContext $context, ResolveInfo $info) use ($model, $type): array {
             try {
                 /** @var EE_Datetime $entity */
                 $entity = EntityMutator::getEntityFromInputData($model, $input);
