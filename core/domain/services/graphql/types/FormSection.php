@@ -63,7 +63,10 @@ class FormSection extends TypeBase
                 'adminLabel',
                 'String',
                 'adminLabel',
-                esc_html__('The form section label that should be shown to the admins.', 'event_espresso')
+                esc_html__(
+                    'Form Section label displayed in the admin to help differentiate it from others.',
+                    'event_espresso'
+                )
             ),
             new GraphQLField(
                 'belongsTo',
