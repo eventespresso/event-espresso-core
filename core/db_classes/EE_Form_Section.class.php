@@ -88,6 +88,30 @@ class EE_Form_Section extends EE_Base_Class
 
 
     /**
+     * Form Section label displayed in the admin to help differentiate it from others
+     *
+     * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function adminLabel(): string
+    {
+        return $this->get('FSC_adminLabel');
+    }
+
+
+    /**
+     * @param string $admin_label
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function setAdminLabel(string $admin_label)
+    {
+        $this->set('FSC_adminLabel', $admin_label);
+    }
+
+
+    /**
      * Form user types that this form section should be presented to.
      * Values correspond to the EEM_Form_Section::APPLIES_TO_* constants.
      *
