@@ -136,7 +136,7 @@ class FieldResolver extends ResolverBase
             return null;
         }
         // If the model has a UUID method
-        if (method_exists($source, 'UUID')) {
+        if (method_exists($source, 'UUID') && is_callable([$source, 'UUID'])) {
             return $source->UUID();
         }
 
