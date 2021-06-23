@@ -30,7 +30,8 @@ class TicketCreate extends EntityMutator
          * @param ResolveInfo $info    The ResolveInfo passed down to all resolvers
          * @return array
          */
-        return static function ($input, AppContext $context, ResolveInfo $info) use ($model, $type) {
+        return static function (array $input, AppContext $context, ResolveInfo $info) use ($model, $type): array {
+            $id = null;
             try {
                 EntityMutator::checkPermissions($model);
 
@@ -58,9 +59,6 @@ class TicketCreate extends EntityMutator
                 // if prices are passed.
                 if (! empty($prices)) {
                     TicketMutation::setRelatedPrices($entity, $prices);
-                } else {
-                    // we do this client-side
-                    // TicketMutation::addDefaultPrices($entity, $model);
                 }
 
                 do_action('AHEE__EventEspresso_core_domain_services_graphql_mutators_ticket_create', $entity, $input);

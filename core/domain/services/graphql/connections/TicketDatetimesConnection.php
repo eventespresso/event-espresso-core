@@ -2,12 +2,11 @@
 
 namespace EventEspresso\core\domain\services\graphql\connections;
 
-use EE_Base_Class;
 use EEM_Datetime;
 use EventEspresso\core\domain\services\graphql\connection_resolvers\DatetimeConnectionResolver;
-use EventEspresso\core\domain\services\graphql\connections\EventDatetimesConnection;
 use EventEspresso\core\services\graphql\connections\ConnectionBase;
 use Exception;
+use GraphQL\Deferred;
 
 /**
  * Class TicketDatetimesConnection
@@ -20,7 +19,6 @@ use Exception;
 class TicketDatetimesConnection extends ConnectionBase
 {
 
-
     /**
      * DatetimeConnection constructor.
      *
@@ -28,15 +26,14 @@ class TicketDatetimesConnection extends ConnectionBase
      */
     public function __construct(EEM_Datetime $model)
     {
-        $this->model = $model;
+        parent::__construct($model);
     }
 
 
     /**
      * @return array
-     * @since $VID:$
      */
-    public function config()
+    public function config(): array
     {
         return [
             'fromType'           => $this->namespace . 'Ticket',
@@ -54,9 +51,8 @@ class TicketDatetimesConnection extends ConnectionBase
      * @param $args
      * @param $context
      * @param $info
-     * @return array
+     * @return array|Deferred|mixed
      * @throws Exception
-     * @since $VID:$
      */
     public function resolveConnection($entity, $args, $context, $info)
     {

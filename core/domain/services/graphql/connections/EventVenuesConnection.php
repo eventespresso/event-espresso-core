@@ -2,12 +2,11 @@
 
 namespace EventEspresso\core\domain\services\graphql\connections;
 
-use EE_Base_Class;
 use EEM_Venue;
 use EventEspresso\core\domain\services\graphql\connection_resolvers\VenueConnectionResolver;
 use EventEspresso\core\services\graphql\connections\ConnectionBase;
 use Exception;
-use WPGraphQL\Data\DataSource;
+use GraphQL\Deferred;
 
 /**
  * Class EventVenuesConnection
@@ -28,15 +27,14 @@ class EventVenuesConnection extends ConnectionBase
      */
     public function __construct(EEM_Venue $model)
     {
-        $this->model = $model;
+        parent::__construct($model);
     }
 
 
     /**
      * @return array
-     * @since $VID:$
      */
-    public function config()
+    public function config(): array
     {
         return [
             'fromType'           => $this->namespace . 'Event',
@@ -53,9 +51,8 @@ class EventVenuesConnection extends ConnectionBase
      * @param $args
      * @param $context
      * @param $info
-     * @return array
+     * @return array|Deferred|mixed
      * @throws Exception
-     * @since $VID:$
      */
     public function resolveConnection($entity, $args, $context, $info)
     {
