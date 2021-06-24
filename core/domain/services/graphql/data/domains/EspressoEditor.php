@@ -31,6 +31,7 @@ class EspressoEditor implements GQLDataDomainInterface
             'espresso_price'       => new Loaders\PriceLoader($context),
             'espresso_priceType'   => new Loaders\PriceTypeLoader($context),
             'espresso_formSection' => new Loaders\FormSectionLoader($context),
+            'espresso_formElement' => new Loaders\FormElementLoader($context),
             'espresso_ticket'      => new Loaders\TicketLoader($context),
             'espresso_venue'       => new Loaders\VenueLoader($context),
         ];
