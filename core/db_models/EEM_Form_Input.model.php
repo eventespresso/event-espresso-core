@@ -25,7 +25,7 @@ use EventEspresso\core\services\request\RequestInterface;
  * FIN_status    string    ex: 'archived'
  * FIN_type    string
  * FIN_wpUser    int
- * 
+ *
  * Model Fields:
  *
  * @author  Brent Christensen
@@ -141,7 +141,7 @@ class EEM_Form_Input extends EEM_Form_Element
                 'FIN_options'     => new EE_JSON_Field(
                     'FIN_options',
                     esc_html__(
-                        'Options for ENUM type inputs like checkboxes, radio buttons, select inputs, etc',
+                        'JSON string of options for ENUM type inputs like checkboxes, radio buttons, select inputs, etc.',
                         'event_espresso'
                     ),
                     true,
@@ -188,9 +188,15 @@ class EEM_Form_Input extends EEM_Form_Element
                 ),
                 'FIN_status'    => new EE_Enum_Text_Field(
                     'FIN_status',
-                    esc_html__(
-                        'Whether form input is active, archived, trashed, or used as a default on new forms. Values correspond to the EEM_Form_Input::STATUS_* constants.',
-                        'event_espresso'
+                    esc_html(
+                        sprintf(
+                            /* translators: 1 class name */
+                            __(
+                                'Whether form input is active, archived, trashed, or used as a default on new forms. Values correspond to the %s constants.',
+                                'event_espresso'
+                            ),
+                            'EEM_Form_Input::STATUS_*'
+                        )
                     ),
                     false,
                     Element::STATUS_ACTIVE,
@@ -198,9 +204,15 @@ class EEM_Form_Input extends EEM_Form_Element
                 ),
                 'FIN_type'    => new EE_Enum_Text_Field(
                     'FIN_type',
-                    esc_html__(
-                        'Form input type. Values correspond to the EventEspresso\core\domain\entities\form\Input::TYPE_* constants.',
-                        'event_espresso'
+                    esc_html(
+                        sprintf(
+                            /* translators: 1 class name */
+                            __(
+                                'Form input type. Values correspond to the %s constants.',
+                                'event_espresso'
+                            ),
+                            'EventEspresso\core\domain\entities\form\Input::TYPE_*'
+                        )
                     ),
                     false,
                     Text::TYPE_TEXT,
