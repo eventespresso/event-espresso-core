@@ -61,7 +61,7 @@ class FormElement extends TypeBase
                 'Boolean',
                 'adminOnly',
                 esc_html__(
-                    'Whether or not input is only displayed in the admin. If false, input will appear in public forms',
+                    'Whether or not the element is only displayed in the admin. If false, input will appear in public forms',
                     'event_espresso'
                 )
             ),
