@@ -108,7 +108,7 @@ class EE_Form_Input extends EE_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function adminOnly(): bool
+    public function adminOnly(): ?bool
     {
         return $this->get('FIN_adminOnly');
     }
@@ -305,7 +305,7 @@ class EE_Form_Input extends EE_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function options(): array
+    public function options(): ?array
     {
         return $this->get('FIN_options');
     }
@@ -378,7 +378,7 @@ class EE_Form_Input extends EE_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function publicLabel(): string
+    public function publicLabel(): ?string
     {
         return $this->get('FIN_publicLabel');
     }
@@ -402,7 +402,7 @@ class EE_Form_Input extends EE_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function required(): bool
+    public function required(): ?bool
     {
         return $this->get('FIN_required');
     }
@@ -450,7 +450,7 @@ class EE_Form_Input extends EE_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function slug(): string
+    public function slug(): ?string
     {
         return sanitize_title($this->publicLabel());
     }
@@ -492,7 +492,7 @@ class EE_Form_Input extends EE_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function type(): string
+    public function type(): ?string
     {
         return $this->get('FIN_type');
     }
@@ -516,7 +516,7 @@ class EE_Form_Input extends EE_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function wpUser(): int
+    public function wp_user(): int
     {
         return $this->get('FIN_wpUser');
     }
