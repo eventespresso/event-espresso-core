@@ -80,9 +80,15 @@ class EEM_Form_Section extends EEM_Form_Element
                 ),
                 'FSC_appliesTo' => new EE_Enum_Text_Field(
                     'FSC_appliesTo',
-                    esc_html__(
-                        'Form user type that this form section should be presented to. Values correspond to the EEM_Form_Section::APPLIES_TO_* constants.',
-                        'event_espresso'
+                    esc_html(
+                        sprintf(
+                            /* translators: 1 class name */
+                            __(
+                                'Form user type that this form section should be presented to. Values correspond to the %s constants.',
+                                'event_espresso'
+                            ),
+                            'EEM_Form_Section::APPLIES_TO_*'
+                        )
                     ),
                     false,
                     EEM_Form_Section::APPLIES_TO_ALL,
@@ -123,9 +129,15 @@ class EEM_Form_Section extends EEM_Form_Element
                 ),
                 'FSC_status'    => new EE_Enum_Text_Field(
                     'FSC_status',
-                    esc_html__(
-                        'Whether form section is active, archived, shared, trashed, or used as a default on new forms. Values correspond to the EEM_Form_Section::STATUS_TO_* constants.',
-                        'event_espresso'
+                    esc_html(
+                        sprintf(
+                            /* translators: 1 class name */
+                            __(
+                                'Whether form section is active, archived, shared, trashed, or used as a default on new forms. Values correspond to the %s constants.',
+                                'event_espresso'
+                            ),
+                            'EEM_Form_Section::STATUS_TO_'
+                        )
                     ),
                     false,
                     Element::STATUS_ACTIVE,
