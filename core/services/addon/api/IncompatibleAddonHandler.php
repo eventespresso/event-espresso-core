@@ -28,7 +28,7 @@ class IncompatibleAddonHandler
         $this->deactivateIncompatibleAddon(
             'WP Users Integration',
             'EE_WPUSERS_VERSION',
-            '2.1.1.rc.001',
+            '2.1.0.rc.003',
             'load_ee_core_wpusers',
             'EE_WPUSERS_PLUGIN_FILE'
         );
