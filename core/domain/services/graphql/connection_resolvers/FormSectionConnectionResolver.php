@@ -69,6 +69,32 @@ class FormSectionConnectionResolver extends AbstractConnectionResolver
         // Avoid multiple entries by join.
         $query_args['group_by'] = 'FSC_UUID';
 
+        /**
+         * Collect the input fields and sanitize them to prepare them for sending to the Query
+         */
+        $input_fields = [];
+        if (! empty($this->args['where'])) {
+            $input_fields = $this->sanitizeInputFields($this->args['where']);
+
+            // Use the proper operator.
+            if (! empty($input_fields['FSC_appliesTo']) && is_array($input_fields['FSC_appliesTo'])) {
+                $input_fields['FSC_appliesTo'] = ['IN', $input_fields['FSC_appliesTo']];
+            }
+            if (! empty($input_fields['FSC_belongsTo']) && is_array($input_fields['FSC_belongsTo'])) {
+                $input_fields['FSC_belongsTo'] = ['IN', $input_fields['FSC_belongsTo']];
+            }
+            if (! empty($input_fields['FSC_status']) && is_array($input_fields['FSC_status'])) {
+                $input_fields['FSC_status'] = ['IN', $input_fields['FSC_status']];
+            }
+        }
+
+        /**
+         * Merge the input_fields with the default query_args
+         */
+        if (! empty($input_fields)) {
+            $where_params = array_merge($where_params, $input_fields);
+        }
+
         $where_params = apply_filters(
             'FHEE__EventEspresso_core_domain_services_graphql_connection_resolvers__form_section_where_params',
             $where_params,
@@ -89,6 +115,27 @@ class FormSectionConnectionResolver extends AbstractConnectionResolver
             $query_args,
             $this->source,
             $this->args
+        );
+    }
+
+
+    /**
+     * This sets up the "allowed" args, and translates the GraphQL-friendly keys to model
+     * friendly keys.
+     *
+     * @param array $where_args
+     * @return array
+     */
+    public function sanitizeInputFields(array $where_args): array
+    {
+        $arg_mapping = [
+            'appliesTo' => 'FSC_appliesTo',
+            'belongsTo' => 'FSC_belongsTo',
+            'status'    => 'FSC_status',
+        ];
+        return $this->sanitizeWhereArgsForInputFields(
+            $where_args,
+            $arg_mapping
         );
     }
 }
