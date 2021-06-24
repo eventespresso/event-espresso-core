@@ -3,25 +3,25 @@
 namespace EventEspresso\core\domain\services\graphql\connection_resolvers;
 
 use EE_Error;
-use EEM_Form_Section;
+use EEM_Form_Input;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use InvalidArgumentException;
 use ReflectionException;
 
 /**
- * Class FormSectionConnectionResolver
+ * Class FormElementConnectionResolver
  */
-class FormSectionConnectionResolver extends AbstractConnectionResolver
+class FormElementConnectionResolver extends AbstractConnectionResolver
 {
     // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
     public function get_loader_name(): string
     {
-        return 'espresso_formSection';
+        return 'espresso_formElement';
     }
 
     /**
-     * @return EEM_Form_Section
+     * @return EEM_Form_Input
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -29,9 +29,9 @@ class FormSectionConnectionResolver extends AbstractConnectionResolver
      * @throws ReflectionException
      */
     // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    public function get_query(): EEM_Form_Section
+    public function get_query(): EEM_Form_Input
     {
-        return EEM_Form_Section::instance();
+        return EEM_Form_Input::instance();
     }
 
 
@@ -67,24 +67,21 @@ class FormSectionConnectionResolver extends AbstractConnectionResolver
         $query_args['limit'] = $this->getLimit();
 
         // Avoid multiple entries by join.
-        $query_args['group_by'] = 'FSC_UUID';
+        $query_args['group_by'] = 'FIN_UUID';
 
         /**
-         * Collect the input fields and sanitize them to prepare them for sending to the Query
-         */
+        * Collect the input fields and sanitize them to prepare them for sending to the Query
+        */
         $input_fields = [];
         if (! empty($this->args['where'])) {
             $input_fields = $this->sanitizeInputFields($this->args['where']);
 
             // Use the proper operator.
-            if (! empty($input_fields['FSC_appliesTo']) && is_array($input_fields['FSC_appliesTo'])) {
-                $input_fields['FSC_appliesTo'] = ['IN', $input_fields['FSC_appliesTo']];
+            if (! empty($input_fields['FIN_belongsTo']) && is_array($input_fields['FIN_belongsTo'])) {
+                $input_fields['FIN_belongsTo'] = ['IN', $input_fields['FIN_belongsTo']];
             }
-            if (! empty($input_fields['FSC_belongsTo']) && is_array($input_fields['FSC_belongsTo'])) {
-                $input_fields['FSC_belongsTo'] = ['IN', $input_fields['FSC_belongsTo']];
-            }
-            if (! empty($input_fields['FSC_status']) && is_array($input_fields['FSC_status'])) {
-                $input_fields['FSC_status'] = ['IN', $input_fields['FSC_status']];
+            if (! empty($input_fields['FIN_status']) && is_array($input_fields['FIN_status'])) {
+                $input_fields['FIN_status'] = ['IN', $input_fields['FIN_status']];
             }
         }
 
@@ -96,7 +93,7 @@ class FormSectionConnectionResolver extends AbstractConnectionResolver
         }
 
         $where_params = apply_filters(
-            'FHEE__EventEspresso_core_domain_services_graphql_connection_resolvers__form_section_where_params',
+            'FHEE__EventEspresso_core_domain_services_graphql_connection_resolvers__form_element_where_params',
             $where_params,
             $this->source,
             $this->args
@@ -111,13 +108,12 @@ class FormSectionConnectionResolver extends AbstractConnectionResolver
          * Return the $query_args
          */
         return apply_filters(
-            'FHEE__EventEspresso_core_domain_services_graphql_connection_resolvers__form_section_query_args',
+            'FHEE__EventEspresso_core_domain_services_graphql_connection_resolvers__form_element_query_args',
             $query_args,
             $this->source,
             $this->args
         );
     }
-
 
     /**
      * This sets up the "allowed" args, and translates the GraphQL-friendly keys to model
@@ -131,9 +127,8 @@ class FormSectionConnectionResolver extends AbstractConnectionResolver
         return $this->sanitizeWhereArgsForInputFields(
             $where_args,
             [
-                'appliesTo' => 'FSC_appliesTo',
-                'belongsTo' => 'FSC_belongsTo',
-                'status'    => 'FSC_status',
+                'belongsTo' => 'FIN_belongsTo',
+                'status'    => 'FIN_status',
             ]
         );
     }
