@@ -128,14 +128,13 @@ class FormSectionConnectionResolver extends AbstractConnectionResolver
      */
     public function sanitizeInputFields(array $where_args): array
     {
-        $arg_mapping = [
-            'appliesTo' => 'FSC_appliesTo',
-            'belongsTo' => 'FSC_belongsTo',
-            'status'    => 'FSC_status',
-        ];
         return $this->sanitizeWhereArgsForInputFields(
             $where_args,
-            $arg_mapping
+            [
+                'appliesTo' => 'FSC_appliesTo',
+                'belongsTo' => 'FSC_belongsTo',
+                'status'    => 'FSC_status',
+            ]
         );
     }
 }
