@@ -99,9 +99,7 @@ class Attributes
     public static function fromJson(string $json): Attributes
     {
         $json_data_handler = new JsonDataHandler();
-        $json_data_handler->configure(
-            JsonDataHandler::DATA_TYPE_OBJECT
-        );
+        $json_data_handler->configure(JsonDataHandler::DATA_TYPE_OBJECT);
         $attributes = $json_data_handler->decodeJson($json);
         return LoaderFactory::getNew(Attributes::class, [ $json_data_handler, $attributes ]);
     }

@@ -60,9 +60,7 @@ class HelpText
     public static function fromJson(string $json): HelpText
     {
         $json_data_handler = new JsonDataHandler();
-        $json_data_handler->configure(
-            JsonDataHandler::DATA_TYPE_OBJECT
-        );
+        $json_data_handler->configure(JsonDataHandler::DATA_TYPE_OBJECT);
         $data      = $json_data_handler->decodeJson($json);
         $htmlClass = (array) $data->htmlClass ?? [];
         $helpText  = $data->helpText ?? '';

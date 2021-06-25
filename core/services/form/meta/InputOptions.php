@@ -48,9 +48,7 @@ class InputOptions
     public static function fromJson(string $json): InputOptions
     {
         $json_data_handler = new JsonDataHandler();
-        $json_data_handler->configure(
-            JsonDataHandler::DATA_TYPE_ARRAY
-        );
+        $json_data_handler->configure(JsonDataHandler::DATA_TYPE_ARRAY);
         $data    = $json_data_handler->decodeJson($json);
         $options = $data['options'] ?? [];
         return new InputOptions($json_data_handler, $options);
