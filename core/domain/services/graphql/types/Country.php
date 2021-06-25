@@ -15,6 +15,7 @@ use EventEspresso\core\services\graphql\fields\GraphQLOutputField;
  * @package EventEspresso\core\domain\services\graphql\types
  * @author  Brent Christensen
  * @since   $VID:$
+ * @property EEM_Country $model
  */
 class Country extends TypeBase
 {
