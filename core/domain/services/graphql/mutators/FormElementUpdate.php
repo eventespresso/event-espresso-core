@@ -3,8 +3,8 @@
 namespace EventEspresso\core\domain\services\graphql\mutators;
 
 use EE_Error;
-use EE_Form_Input;
-use EEM_Form_Input;
+use EE_Form_Element;
+use EEM_Form_Element;
 use EventEspresso\core\domain\services\graphql\data\mutations\FormElementMutation;
 use GraphQL\Type\Definition\ResolveInfo;
 use ReflectionException;
@@ -17,10 +17,10 @@ class FormElementUpdate extends EntityMutator
     /**
      * Defines the mutation data modification closure.
      *
-     * @param EEM_Form_Input $model
+     * @param EEM_Form_Element $model
      * @return callable
      */
-    public static function mutateAndGetPayload(EEM_Form_Input $model)
+    public static function mutateAndGetPayload(EEM_Form_Element $model)
     {
         /**
          * Updates an entity.
@@ -34,7 +34,7 @@ class FormElementUpdate extends EntityMutator
          */
         return static function (array $input, AppContext $context, ResolveInfo $info) use ($model): array {
             try {
-                /** @var EE_Form_Input $entity */
+                /** @var EE_Form_Element $entity */
                 $entity = EntityMutator::getEntityFromInputData($model, $input);
 
                 $args = FormElementMutation::prepareFields($input);
