@@ -90,9 +90,7 @@ describe('withLatestCheckin', () => {
 					registration.id,
 					datetimeId
 				);
-				expect(
-					hasFinishedResolution
-				).toHaveBeenCalledWith(
+				expect(hasFinishedResolution).toHaveBeenCalledWith(
 					'eventespresso/core',
 					'getLatestCheckin',
 					[registration.id, datetimeId]

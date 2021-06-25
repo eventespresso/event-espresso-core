@@ -11,12 +11,12 @@ describe('withBaseControl()', () => {
 			' custom id provided',
 		() => {
 			const WrappedComponent = withBaseControl()(TestComponent);
-			const elementInstance = TestRenderer.create(<WrappedComponent />)
-				.root;
+			const elementInstance = TestRenderer.create(
+				<WrappedComponent />
+			).root;
 			const BaseControlInstance = elementInstance.findByType(BaseControl);
-			const TestComponentInstance = elementInstance.findByType(
-				TestComponent
-			);
+			const TestComponentInstance =
+				elementInstance.findByType(TestComponent);
 
 			expect(BaseControlInstance.props.id).toEqual(
 				`inspector--control-${TestComponentInstance.props.instanceId}`
@@ -27,15 +27,14 @@ describe('withBaseControl()', () => {
 		'should generate the expected css id when there is a custom ' +
 			'id provided',
 		() => {
-			const WrappedComponent = withBaseControl('custom-id')(
-				TestComponent
-			);
-			const elementInstance = TestRenderer.create(<WrappedComponent />)
-				.root;
+			const WrappedComponent =
+				withBaseControl('custom-id')(TestComponent);
+			const elementInstance = TestRenderer.create(
+				<WrappedComponent />
+			).root;
 			const BaseControlInstance = elementInstance.findByType(BaseControl);
-			const TestComponentInstance = elementInstance.findByType(
-				TestComponent
-			);
+			const TestComponentInstance =
+				elementInstance.findByType(TestComponent);
 			expect(BaseControlInstance.props.id).toEqual(
 				`inspector-custom-id-control-${TestComponentInstance.props.instanceId}`
 			);

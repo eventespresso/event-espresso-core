@@ -185,17 +185,19 @@ describe('Testing assertions for model-entity factory.', () => {
 		});
 	});
 	describe('assertValidValueForPreparedField()', () => {
-		const assertTest = (
-			fieldName,
-			fieldValue,
-			schema,
-			validationType = VALIDATE_TYPE.RAW
-		) => () =>
-			assertValidValueForPreparedField(
+		const assertTest =
+			(
 				fieldName,
 				fieldValue,
-				getMockInstance(schema, { [fieldName]: validationType })
-			);
+				schema,
+				validationType = VALIDATE_TYPE.RAW
+			) =>
+			() =>
+				assertValidValueForPreparedField(
+					fieldName,
+					fieldValue,
+					getMockInstance(schema, { [fieldName]: validationType })
+				);
 		const tests = [
 			[
 				'Throws a TypeError when a provided primitive value is not ' +
@@ -287,20 +289,22 @@ describe('Testing assertions for model-entity factory.', () => {
 		);
 	});
 	describe('assertValidFieldAndValueAgainstSchema()', () => {
-		const assertTest = (
-			modelName,
-			fieldName,
-			fieldValue,
-			schema,
-			validationType = VALIDATE_TYPE.RAW
-		) => () => {
-			assertValidFieldAndValueAgainstSchema(
+		const assertTest =
+			(
 				modelName,
 				fieldName,
 				fieldValue,
-				getMockInstance(schema, { [fieldName]: validationType })
-			);
-		};
+				schema,
+				validationType = VALIDATE_TYPE.RAW
+			) =>
+			() => {
+				assertValidFieldAndValueAgainstSchema(
+					modelName,
+					fieldName,
+					fieldValue,
+					getMockInstance(schema, { [fieldName]: validationType })
+				);
+			};
 		const tests = [
 			[
 				'Throws a TypeError when a provided primitive value is not ' +

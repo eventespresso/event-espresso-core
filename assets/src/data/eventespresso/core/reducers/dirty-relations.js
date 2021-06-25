@@ -425,12 +425,8 @@ function dirtyRelations(state, action) {
  * @return {Immutable.Map} Immutable collection  either the original state or a new state.
  */
 const clearRelatedEntitiesForEntity = (state, modelData) => {
-	const {
-		modelRemoved,
-		entityIdRemoved,
-		indexType,
-		relationTypes,
-	} = modelData;
+	const { modelRemoved, entityIdRemoved, indexType, relationTypes } =
+		modelData;
 
 	const recordPath = [indexType, modelRemoved, entityIdRemoved];
 

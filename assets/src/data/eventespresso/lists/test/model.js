@@ -87,12 +87,10 @@ describe('createEntityResolvers()', () => {
 						'yields expected result for api fetch action ' +
 							'object',
 						() => {
-							const fulfillment = newResolvers[expectedResolver](
-								queryString
-							);
-							const {
-								value: apiFetchAction,
-							} = fulfillment.next();
+							const fulfillment =
+								newResolvers[expectedResolver](queryString);
+							const { value: apiFetchAction } =
+								fulfillment.next();
 							expect(apiFetchAction.request).toEqual(
 								expectedApiFetchRequestValue
 							);

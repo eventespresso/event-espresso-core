@@ -39,12 +39,8 @@ export default (customId = '') =>
 					};
 
 					render() {
-						const {
-							label,
-							instanceId,
-							className,
-							help,
-						} = this.props;
+						const { label, instanceId, className, help } =
+							this.props;
 						const id = `inspector-${customId}-control-${instanceId}`;
 						return (
 							<BaseControl

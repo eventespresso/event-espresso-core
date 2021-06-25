@@ -32,15 +32,17 @@ function shouldBeAppended(pathType, options) {
  * @param { string } context Defaults to 'read'
  * @return {Function} middleware callback
  */
-const capsMiddleware = (context = CONTEXT_CAPS_READ) => (options, next) => {
-	if (shouldBeAppended('url', options)) {
-		options.url = addQueryArgs(options.url, { caps: context });
-	}
+const capsMiddleware =
+	(context = CONTEXT_CAPS_READ) =>
+	(options, next) => {
+		if (shouldBeAppended('url', options)) {
+			options.url = addQueryArgs(options.url, { caps: context });
+		}
 
-	if (shouldBeAppended('path', options)) {
-		options.path = addQueryArgs(options.path, { caps: context });
-	}
-	return next(options, next);
-};
+		if (shouldBeAppended('path', options)) {
+			options.path = addQueryArgs(options.path, { caps: context });
+		}
+		return next(options, next);
+	};
 
 export default capsMiddleware;

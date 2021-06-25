@@ -28,6 +28,8 @@ module.exports = {
 				'jsdoc/valid-types': 'off',
 				'no-unused-vars': 'off',
 				'jest/expect-expect': 'off',
+				'import/no-unresolved': 'off',
+				'import/no-extraneous-dependencies': 'off',
 			},
 			globals: {
 				eejsdata: true,

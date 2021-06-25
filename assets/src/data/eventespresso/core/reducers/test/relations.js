@@ -143,16 +143,17 @@ describe(normalizedReceiveAndRemoveRelations.name + '()', () => {
 								? expectedReceiveState
 								: expectedRemoveState;
 						it(description, () => {
-							const resultState = normalizedReceiveAndRemoveRelations(
-								originalState,
-								testAction(
-									modelName,
-									relationName,
-									entityId,
-									relationIds,
-									type
-								)
-							);
+							const resultState =
+								normalizedReceiveAndRemoveRelations(
+									originalState,
+									testAction(
+										modelName,
+										relationName,
+										entityId,
+										relationIds,
+										type
+									)
+								);
 							expect(resultState).toEqual(expectedState);
 						});
 					}

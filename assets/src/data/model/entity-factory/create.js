@@ -297,9 +297,8 @@ const populatePrimaryKeys = (instance) => {
  * @param {*} fieldValue
  */
 const setValidateTypeForField = (instance, fieldName, fieldValue) => {
-	instance[PRIVATE_PROPERTIES.VALIDATE_TYPES][
-		fieldName
-	] = deriveValidateTypeForField(fieldName, fieldValue, instance.schema);
+	instance[PRIVATE_PROPERTIES.VALIDATE_TYPES][fieldName] =
+		deriveValidateTypeForField(fieldName, fieldValue, instance.schema);
 };
 
 /**

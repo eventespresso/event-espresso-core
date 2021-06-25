@@ -42,6 +42,5 @@ export default TicketSelect;
 /**
  * Enhanced Ticket Select for the WordPress editor
  */
-export const EditorTicketSelect = withBaseControl('select-ticket')(
-	TicketSelect
-);
+export const EditorTicketSelect =
+	withBaseControl('select-ticket')(TicketSelect);

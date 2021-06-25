@@ -149,9 +149,7 @@ describe('getEntityIdsQueuedForTrash()', () => {
 			'given model in state',
 		() => {
 			expect(getEntityIdsQueuedForTrash(originalState, 'event')).toEqual([
-				44,
-				60,
-				77,
+				44, 60, 77,
 			]);
 		}
 	);
@@ -183,9 +181,9 @@ describe('getEntityIdsQueuedForDelete()', () => {
 		'returns expected entity ids for what is queued for delete for the ' +
 			'given model in state',
 		() => {
-			expect(
-				getEntityIdsQueuedForDelete(originalState, 'event')
-			).toEqual([44, 60, 77]);
+			expect(getEntityIdsQueuedForDelete(originalState, 'event')).toEqual(
+				[44, 60, 77]
+			);
 		}
 	);
 	it('returns expected cached result when called multiple times', () => {

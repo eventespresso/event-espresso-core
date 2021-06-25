@@ -285,8 +285,7 @@ describe('Money Value Object', () => {
 						DefaultCurrency
 					);
 					const testSimpleAllocation = testMoneySimple.allocate([
-						3,
-						2,
+						3, 2,
 					]);
 					expect(testSimpleAllocation).toHaveLength(2);
 					expect(testSimpleAllocation[0].toNumber()).toBe(3);
