@@ -2,34 +2,34 @@
 
 namespace EventEspresso\core\services\form\meta;
 
-class Element
+class FormStatus
 {
 
     /**
      * indicates that element is not archived or trashed
      */
-    public const STATUS_ACTIVE = 'active';
+    public const ACTIVE = 'active';
 
     /**
      * indicates that element is archived and should no longer be displayed on public forms
      * but may still be required due to existing answers when form was completed prior to input being archived
      */
-    public const STATUS_ARCHIVED = 'archived';
+    public const ARCHIVED = 'archived';
 
     /**
      * indicates that element should be automatically added to newly created forms
      */
-    public const STATUS_DEFAULT = 'default';
+    public const DEFAULT = 'default';
 
     /**
      * indicates that a copy of the form section will be saved for use in other events but not loaded by default
      */
-    public const STATUS_SHARED = 'shared';
+    public const SHARED = 'shared';
 
     /**
      * indicates that element is no longer needed, has no existing answers, and can be moved to the trash
      */
-    public const STATUS_TRASHED = 'trashed';
+    public const TRASHED = 'trashed';
 
     /**
      * @var array
@@ -40,13 +40,13 @@ class Element
     public function __construct()
     {
         $this->valid_status_options = apply_filters(
-            'FHEE__EventEspresso_core_services_form_meta_Element__valid_status_options',
+            'FHEE__EventEspresso_core_services_form_meta_FormStatus__valid_status_options',
             [
-                Element::STATUS_ACTIVE   => esc_html__('Active', 'event_espresso'),
-                Element::STATUS_ARCHIVED => esc_html__('Archived', 'event_espresso'),
-                Element::STATUS_DEFAULT  => esc_html__('Default', 'event_espresso'),
-                Element::STATUS_SHARED   => esc_html__('Shared', 'event_espresso'),
-                Element::STATUS_TRASHED  => esc_html__('Trashed', 'event_espresso'),
+                FormStatus::ACTIVE   => esc_html__('Active', 'event_espresso'),
+                FormStatus::ARCHIVED => esc_html__('Archived', 'event_espresso'),
+                FormStatus::DEFAULT  => esc_html__('Default', 'event_espresso'),
+                FormStatus::SHARED   => esc_html__('Shared', 'event_espresso'),
+                FormStatus::TRASHED  => esc_html__('Trashed', 'event_espresso'),
             ]
         );
     }
