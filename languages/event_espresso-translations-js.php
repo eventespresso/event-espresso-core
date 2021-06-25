@@ -1191,15 +1191,13 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'help text', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/FormElement/Tabs/Styles.tsx:14
-	__( 'label css class', 'event_espresso' ),
+	// Reference: packages/form-builder/src/FormSection/Tabs/Styles.tsx:13
+	__( 'css class', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/FormElement/Tabs/Styles.tsx:19
-	__( 'input css class', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/FormElement/Tabs/Styles.tsx:24
 	__( 'help text css class', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormElement/Tabs/Styles.tsx:29
+	// Reference: packages/form-builder/src/FormElement/Tabs/Styles.tsx:24
 	__( 'custom css', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/FormElement/Tabs/Validation.tsx:16
@@ -1263,9 +1261,6 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/FormSection/Tabs/Settings.tsx:24
 	__( 'show label', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/FormSection/Tabs/Styles.tsx:13
-	__( 'css class', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/constants.ts:100
 	__( 'adds a text input that allows users to enter a week and year directly via keyboard or a datepicker', 'event_espresso' ),
