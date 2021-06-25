@@ -4,9 +4,15 @@ namespace EventEspresso\core\domain\services\graphql\mutators;
 
 use EE_Form_Section;
 use EEM_Form_Section;
+use EE_Error;
 use Exception;
+use EventEspresso\core\services\form\meta\Element;
 use GraphQL\Type\Definition\ResolveInfo;
 use WPGraphQL\AppContext;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use InvalidArgumentException;
+use ReflectionException;
 
 class FormSectionDelete extends EntityMutator
 {
@@ -32,7 +38,8 @@ class FormSectionDelete extends EntityMutator
                 /** @var EE_Form_Section $entity */
                 $entity = EntityMutator::getEntityFromInputData($model, $input);
 
-                $result = $entity->delete();
+                $result = FormSectionDelete::deleteSectionAndRelations($entity);
+
                 EntityMutator::validateResults($result);
 
                 do_action(
@@ -54,5 +61,29 @@ class FormSectionDelete extends EntityMutator
                 'deleted' => $entity,
             ];
         };
+    }
+
+    /**
+     * Deletes a form section along with its related form elements.
+     *
+     * @param EE_Form_Section $entity
+     * @return bool | int
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     */
+    public static function deleteSectionAndRelations(EE_Form_Section $entity)
+    {
+        // Remove related non-default form elements
+        $entity->delete_related('Form_Input', [
+            [
+                'FIN_status' => ['NOT IN', [ Element::STATUS_SHARED, Element::STATUS_DEFAULT] ]
+            ]
+        ]);
+
+        // Now delete the form section
+        return $entity->delete();
     }
 }
