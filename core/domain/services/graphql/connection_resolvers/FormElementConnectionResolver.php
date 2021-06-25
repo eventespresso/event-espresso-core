@@ -77,8 +77,8 @@ class FormElementConnectionResolver extends AbstractConnectionResolver
             $input_fields = $this->sanitizeInputFields($this->args['where']);
 
             // Use the proper operator.
-            if (! empty($input_fields['FIN_belongsTo']) && is_array($input_fields['FIN_belongsTo'])) {
-                $input_fields['FIN_belongsTo'] = ['IN', $input_fields['FIN_belongsTo']];
+            if (! empty($input_fields['FSC_UUID']) && is_array($input_fields['FSC_UUID'])) {
+                $input_fields['FSC_UUID'] = ['IN', $input_fields['FSC_UUID']];
             }
             if (! empty($input_fields['FIN_status']) && is_array($input_fields['FIN_status'])) {
                 $input_fields['FIN_status'] = ['IN', $input_fields['FIN_status']];
@@ -127,7 +127,7 @@ class FormElementConnectionResolver extends AbstractConnectionResolver
         return $this->sanitizeWhereArgsForInputFields(
             $where_args,
             [
-                'belongsTo' => 'FIN_belongsTo',
+                'belongsTo' => 'FSC_UUID',
                 'status'    => 'FIN_status',
             ]
         );
