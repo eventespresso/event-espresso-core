@@ -2,45 +2,48 @@
 
 namespace EventEspresso\core\domain\services\graphql\mutators;
 
-use EE_Form_Section;
-use EEM_Form_Section;
-use EventEspresso\core\domain\services\graphql\data\mutations\FormSectionMutation;
+use EE_Error;
+use EE_Form_Input;
+use EEM_Form_Input;
+use EventEspresso\core\domain\services\graphql\data\mutations\FormElementMutation;
 use GraphQL\Type\Definition\ResolveInfo;
+use ReflectionException;
 use WPGraphQL\AppContext;
 use Exception;
 
-class FormSectionCreate extends EntityMutator
+class FormElementUpdate extends EntityMutator
 {
 
     /**
      * Defines the mutation data modification closure.
      *
-     * @param EEM_Form_Section $model
+     * @param EEM_Form_Input $model
      * @return callable
      */
-    public static function mutateAndGetPayload(EEM_Form_Section $model)
+    public static function mutateAndGetPayload(EEM_Form_Input $model)
     {
         /**
-         * Creates an entity.
+         * Updates an entity.
          *
          * @param array       $input   The input for the mutation
          * @param AppContext  $context The AppContext passed down to all resolvers
          * @param ResolveInfo $info    The ResolveInfo passed down to all resolvers
          * @return array
+         * @throws EE_Error
+         * @throws ReflectionException
          */
         return static function (array $input, AppContext $context, ResolveInfo $info) use ($model): array {
-            $id = null;
             try {
-                EntityMutator::checkPermissions($model);
+                /** @var EE_Form_Input $entity */
+                $entity = EntityMutator::getEntityFromInputData($model, $input);
 
-                $args = FormSectionMutation::prepareFields($input);
+                $args = FormElementMutation::prepareFields($input);
 
-                $entity = EE_Form_Section::new_instance($args);
-                $id = $entity->save();
-                EntityMutator::validateResults($id);
+                // Update the entity
+                $entity->save($args);
 
                 do_action(
-                    'AHEE__EventEspresso_core_domain_services_graphql_mutators_form_section_create',
+                    'AHEE__EventEspresso_core_domain_services_graphql_mutators_form_element_update',
                     $entity,
                     $input
                 );
@@ -48,14 +51,14 @@ class FormSectionCreate extends EntityMutator
                 EntityMutator::handleExceptions(
                     $exception,
                     esc_html__(
-                        'The form section could not be created because of the following error(s)',
+                        'The form element could not be updated because of the following error(s)',
                         'event_espresso'
                     )
                 );
             }
 
             return [
-                'id' => $id,
+                'id' => $entity->UUID(),
             ];
         };
     }
