@@ -46,7 +46,7 @@ class FormElementMutation
 
         if (! empty($input['wpUser'])) {
             $parts = Relay::fromGlobalId(sanitize_text_field($input['wpUser']));
-            $args['FIN_wpUser'] = (! empty($parts['id']) && is_int($parts['id'])) ? $parts['id'] : null;
+            $args['FIN_wpUser'] = ! empty($parts['id']) ? $parts['id'] : null;
         }
 
         return apply_filters(
