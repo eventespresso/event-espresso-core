@@ -2,23 +2,23 @@
 
 namespace EventEspresso\core\domain\services\graphql\mutators;
 
-use EE_Form_Section;
-use EEM_Form_Section;
-use EventEspresso\core\domain\services\graphql\data\mutations\FormSectionMutation;
+use EE_Form_Input;
+use EEM_Form_Input;
+use EventEspresso\core\domain\services\graphql\data\mutations\FormElementMutation;
 use GraphQL\Type\Definition\ResolveInfo;
 use WPGraphQL\AppContext;
 use Exception;
 
-class FormSectionCreate extends EntityMutator
+class FormElementCreate extends EntityMutator
 {
 
     /**
      * Defines the mutation data modification closure.
      *
-     * @param EEM_Form_Section $model
+     * @param EEM_Form_Input $model
      * @return callable
      */
-    public static function mutateAndGetPayload(EEM_Form_Section $model)
+    public static function mutateAndGetPayload(EEM_Form_Input $model)
     {
         /**
          * Creates an entity.
@@ -33,14 +33,14 @@ class FormSectionCreate extends EntityMutator
             try {
                 EntityMutator::checkPermissions($model);
 
-                $args = FormSectionMutation::prepareFields($input);
+                $args = FormElementMutation::prepareFields($input);
 
-                $entity = EE_Form_Section::new_instance($args);
+                $entity = EE_Form_Input::new_instance($args);
                 $id = $entity->save();
                 EntityMutator::validateResults($id);
 
                 do_action(
-                    'AHEE__EventEspresso_core_domain_services_graphql_mutators_form_section_create',
+                    'AHEE__EventEspresso_core_domain_services_graphql_mutators_form_element_create',
                     $entity,
                     $input
                 );
@@ -48,7 +48,7 @@ class FormSectionCreate extends EntityMutator
                 EntityMutator::handleExceptions(
                     $exception,
                     esc_html__(
-                        'The form section could not be created because of the following error(s)',
+                        'The form element could not be created because of the following error(s)',
                         'event_espresso'
                     )
                 );
