@@ -2,6 +2,14 @@
 
 namespace EventEspresso\core\services\form\meta;
 
+/**
+ * Class FormStatus
+ * For managing the status for a form element, ie: active, trashed, etc
+ *
+ * @author  Brent Christensen
+ * @package EventEspresso\core\services\form\meta
+ * @since   $VID:$
+ */
 class FormStatus
 {
 
