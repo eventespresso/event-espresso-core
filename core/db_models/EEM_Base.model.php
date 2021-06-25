@@ -2169,9 +2169,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         } elseif ($this->has_primary_key_field()) {
             $query = array();
             foreach ($ids_to_delete_indexed_by_column as $column => $ids) {
-                // make sure we have unique $ids
-                $ids = array_unique($ids);
-                $query[] = $column . ' IN(' . implode(',', $ids) . ')';
+                $query[] = $column . ' IN' . $this->_construct_in_value($ids, $this->_primary_key_field);
             }
             $query_part = ! empty($query) ? implode(' AND ', $query) : $query_part;
         } elseif (count($this->get_combined_primary_key_fields()) > 1) {
@@ -4475,7 +4473,6 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     }
 
 
-
     /**
      * Takes an array or a comma-separated list of $values and cleans them
      * according to $data_type using $wpdb->prepare, and then makes the list a
@@ -4490,29 +4487,27 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      */
     public function _construct_in_value($values, $field_obj)
     {
+        $prepped = [];
         // check if the value is a CSV list
         if (is_string($values)) {
             // in which case, turn it into an array
-            $values = explode(",", $values);
+            $values = explode(',', $values);
         }
-        $cleaned_values = array();
+        // make sure we only have one of each value in the list
+        $values = array_unique($values);
         foreach ($values as $value) {
-            $cleaned_values[] = $this->_wpdb_prepare_using_field($value, $field_obj);
+            $prepped[] = $this->_wpdb_prepare_using_field($value, $field_obj);
         }
         // we would just LOVE to leave $cleaned_values as an empty array, and return the value as "()",
         // but unfortunately that's invalid SQL. So instead we return a string which we KNOW will evaluate to be the empty set
         // which is effectively equivalent to returning "()". We don't return "(0)" because that only works for auto-incrementing columns
-        if (empty($cleaned_values)) {
+        if (empty($prepped)) {
             $all_fields = $this->field_settings();
-            $a_field = array_shift($all_fields);
+            $first_field    = reset($all_fields);
             $main_table = $this->_get_main_table();
-            $cleaned_values[] = "SELECT "
-                                . $a_field->get_table_column()
-                                . " FROM "
-                                . $main_table->get_table_name()
-                                . " WHERE FALSE";
+            $prepped[]  = "SELECT {$first_field->get_table_column()} FROM {$main_table->get_table_name()} WHERE FALSE";
         }
-        return "(" . implode(",", $cleaned_values) . ")";
+        return '(' . implode(',', $prepped) . ')';
     }
 
 
