@@ -752,12 +752,12 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                 ];
             } elseif ($model_class_Name === 'EEM_Form_Section') {
                 $arguments = [
-                    EEM_Base::getLoader()->getShared('EventEspresso\core\services\form\meta\Element'),
+                    EEM_Base::getLoader()->getShared('EventEspresso\core\services\form\meta\FormStatus'),
                     $timezone
                 ];
-            } elseif ($model_class_Name === 'EEM_Form_Input') {
+            } elseif ($model_class_Name === 'EEM_Form_Element') {
                 $arguments = [
-                    EEM_Base::getLoader()->getShared('EventEspresso\core\services\form\meta\Element'),
+                    EEM_Base::getLoader()->getShared('EventEspresso\core\services\form\meta\FormStatus'),
                     EEM_Base::getLoader()->getShared('EventEspresso\core\services\form\meta\InputTypes'),
                     $timezone
                 ];
@@ -925,7 +925,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         ) {
             $query_params['group_by'] = array_keys($this->get_combined_primary_key_fields());
         }
-        return $this->_create_objects($this->_get_all_wpdb_results($query_params, ARRAY_A, null));
+        return $this->_create_objects($this->_get_all_wpdb_results($query_params));
     }
 
 
@@ -1038,7 +1038,6 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     protected function _get_all_wpdb_results($query_params = array(), $output = ARRAY_A, $columns_to_select = null)
     {
         $this->_custom_selections = $this->getCustomSelection($query_params, $columns_to_select);
-        ;
         $model_query_info = $this->_create_model_query_info_carrier($query_params);
         $select_expressions = $columns_to_select === null
             ? $this->_construct_default_select_sql($model_query_info)
@@ -3447,9 +3446,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         if (isset($query_params['caps']) && $query_params['caps'] !== 'none') {
             $query_params[0] = array_replace_recursive(
                 $query_params[0],
-                $this->caps_where_conditions(
-                    $query_params['caps']
-                )
+                $this->caps_where_conditions($query_params['caps'])
             );
         }
 
@@ -4004,17 +4001,15 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             $original_query_param = $query_param;
         }
         $query_param = $this->_remove_stars_and_anything_after_from_condition_query_param_key($query_param);
-        /** @var $allow_logic_query_params bool whether or not to allow logic_query_params like 'NOT','OR', or 'AND' */
-        $allow_logic_query_params = in_array($query_param_type, array('where', 'having', 0, 'custom_selects'), true);
-        $allow_fields = in_array(
-            $query_param_type,
-            array('where', 'having', 'order_by', 'group_by', 'order', 'custom_selects', 0),
-            true
-        );
         // check to see if we have a field on this model
         $this_model_fields = $this->field_settings(true);
         if (array_key_exists($query_param, $this_model_fields)) {
-            if ($allow_fields) {
+            $field_is_allowed = in_array(
+                $query_param_type,
+                [0, 'where', 'having', 'order_by', 'group_by', 'order', 'custom_selects'],
+                true
+            );
+            if ($field_is_allowed) {
                 return;
             }
             throw new EE_Error(
@@ -4032,7 +4027,8 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         }
         // check if this is a special logic query param
         if (in_array($query_param, $this->_logic_query_param_keys, true)) {
-            if ($allow_logic_query_params) {
+            $operator_is_allowed = in_array($query_param_type, ['where', 'having', 0, 'custom_selects'], true);
+            if ($operator_is_allowed) {
                 return;
             }
             throw new EE_Error(
@@ -4288,8 +4284,8 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     {
         $where_clauses = array();
         foreach ($where_params as $query_param => $op_and_value_or_sub_condition) {
-            $query_param = $this->_remove_stars_and_anything_after_from_condition_query_param_key($query_param);// str_replace("*",'',$query_param);
-            if (in_array($query_param, $this->_logic_query_param_keys)) {
+            $query_param = $this->_remove_stars_and_anything_after_from_condition_query_param_key($query_param);
+            if (in_array($query_param, $this->_logic_query_param_keys, true)) {
                 switch ($query_param) {
                     case 'not':
                     case 'NOT':
