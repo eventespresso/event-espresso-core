@@ -99,7 +99,7 @@ class EEM_Form_Section extends EEM_Base
                         'event_espresso'
                     ),
                     true,
-                    null
+                    '{}'
                 ),
                 'FSC_belongsTo' => new EE_Plain_Text_Field(
                     'FSC_belongsTo',
@@ -114,7 +114,7 @@ class EEM_Form_Section extends EEM_Base
                         'event_espresso'
                     ),
                     true,
-                    null
+                    '{}'
                 ),
                 'FSC_order'     => new EE_Integer_Field(
                     'FSC_order',
@@ -146,7 +146,7 @@ class EEM_Form_Section extends EEM_Base
             ],
         ];
         $this->_model_relations = [
-            'Form_Input' => new EE_Has_Many_Relation(),
+            'Form_Element' => new EE_Has_Many_Relation(),
             'Form_Submission' => new EE_Has_Many_Relation(),
             'WP_User'    => new EE_Belongs_To_Relation(),
         ];
