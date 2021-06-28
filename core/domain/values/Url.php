@@ -51,13 +51,7 @@ class Url
      */
     public function __construct($url)
     {
-        if (
-            ! filter_var(
-                $url,
-                FILTER_VALIDATE_URL,
-                array(FILTER_FLAG_SCHEME_REQUIRED, FILTER_FLAG_HOST_REQUIRED)
-            )
-        ) {
+        if (! filter_var($url, FILTER_VALIDATE_URL)) {
             throw new InvalidArgumentException(
                 esc_html__(
                     'Invalid URL. Both the "Scheme" and "Host" are required.',

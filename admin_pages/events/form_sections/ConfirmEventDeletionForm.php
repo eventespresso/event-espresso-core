@@ -17,7 +17,7 @@ use EventEspresso\core\exceptions\UnexpectedEntityException;
  *
  * @package     Event Espresso
  * @author         Mike Nelson
- * @since         $VID:$
+ * @since         4.10.12.p
  *
  */
 class ConfirmEventDeletionForm extends \EE_Form_Section_Proper

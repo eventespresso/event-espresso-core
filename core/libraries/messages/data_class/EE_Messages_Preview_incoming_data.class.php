@@ -14,8 +14,6 @@
  * @package        Event Espresso
  * @subpackage     includes/core/messages/data_class/EE_Messages_Preview_incoming_data.core.php
  * @author         Darren Ethier
- *
- * ------------------------------------------------------------------------
  */
 class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data
 {
@@ -593,7 +591,6 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data
 
         // let's set a reg_obj for messengers expecting one.
         $this->reg_obj = array_shift($this->_attendees[999999991]['reg_objs']);
-
         // the below are just dummy items.
         $this->user_id     = 1;
         $this->ip_address  = '192.0.2.1';

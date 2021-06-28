@@ -191,7 +191,7 @@ class Stats
     public function ajaxHandler()
     {
         // verify nonce
-        if (isset($_POST['nonce']) && ! wp_verify_nonce($_POST['nonce'], 'ee-data-optin')) {
+        if (! isset($_POST['nonce']) || ! wp_verify_nonce($_POST['nonce'], 'ee-data-optin')) {
             exit();
         }
 

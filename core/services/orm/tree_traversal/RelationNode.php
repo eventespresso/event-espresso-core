@@ -22,7 +22,7 @@ use ReflectionException;
  *
  * @package     Event Espresso
  * @author         Mike Nelson
- * @since         $VID:$
+ * @since         4.10.12.p
  *
  */
 class RelationNode extends BaseNode
@@ -77,7 +77,7 @@ class RelationNode extends BaseNode
     /**
      * Here is where most of the work happens. We've counted how many related model objects exist, here we identify
      * them (ie, learn their IDs). But its recursive, so we'll also find their related dependent model objects etc.
-     * @since $VID:$
+	 *
      * @param int $model_objects_to_identify
      * @return int
      * @throws EE_Error
@@ -125,7 +125,7 @@ class RelationNode extends BaseNode
 
     /**
      * Checks if all the identified child nodes are complete or not.
-     * @since $VID:$
+	 *
      * @return bool
      */
     protected function allChildrenComplete()
@@ -140,7 +140,7 @@ class RelationNode extends BaseNode
 
     /**
      * Visits the provided nodes and keeps track of how much work was done, making sure to not go over budget.
-     * @since $VID:$
+	 *
      * @param ModelObjNode[] $model_obj_nodes
      * @param $work_budget
      * @return int
@@ -169,7 +169,6 @@ class RelationNode extends BaseNode
     }
 
     /**
-     * @since $VID:$
      * @return boolean
      */
     public function isComplete()
@@ -186,7 +185,7 @@ class RelationNode extends BaseNode
 
     /**
      * Discovers how many related model objects exist.
-     * @since $VID:$
+	 *
      * @return mixed|void
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -200,7 +199,6 @@ class RelationNode extends BaseNode
     }
 
     /**
-     * @since $VID:$
      * @return array
      * @throws EE_Error
      * @throws InvalidDataTypeException
@@ -228,7 +226,6 @@ class RelationNode extends BaseNode
         return $where_params;
     }
     /**
-     * @since $VID:$
      * @return array
      */
     public function toArray()
@@ -246,7 +243,7 @@ class RelationNode extends BaseNode
 
     /**
      * Gets the IDs of all the model objects to delete; indexed first by model object name.
-     * @since $VID:$
+	 *
      * @return array
      */
     public function getIds()
@@ -268,7 +265,7 @@ class RelationNode extends BaseNode
 
     /**
      * Returns the number of sub-nodes found (ie, related model objects across this relation.)
-     * @since $VID:$
+	 *
      * @return int
      */
     public function countSubNodes()
@@ -278,7 +275,8 @@ class RelationNode extends BaseNode
 
     /**
      * Don't serialize the models. Just record their names on some dynamic properties.
-     * @since $VID:$
+	 *
+     * @return array
      */
     public function __sleep()
     {
@@ -298,7 +296,7 @@ class RelationNode extends BaseNode
 
     /**
      * Use the dynamic properties to instantiate the models we use.
-     * @since $VID:$
+	 *
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException

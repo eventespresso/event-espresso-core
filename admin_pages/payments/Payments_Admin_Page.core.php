@@ -8,10 +8,10 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  * Payments_Admin_Page
  * This contains the logic for setting up the Event Payments related admin pages.  Any methods without
  * phpdoc comments have inline docs with parent class.
+ *
  * @package         Payments_Admin_Page
  * @subpackage      includes/core/admin/Payments_Admin_Page.core.php
  * @author          Darren Ethier
- *                  ------------------------------------------------------------------------
  */
 class Payments_Admin_Page extends EE_Admin_Page
 {

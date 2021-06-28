@@ -16,9 +16,9 @@ use ReflectionException;
  * Class ModelObjNode
  * Wraps a model object and stores which of its model's relations have already been traversed and which haven't.
  *
- * @package        Event Espresso
+ * @package     Event Espresso
  * @author         Mike Nelson
- * @since          $VID:$
+ * @since         4.10.12.p
  *
  */
 class ModelObjNode extends BaseNode
@@ -63,7 +63,7 @@ class ModelObjNode extends BaseNode
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 4.10.12.p
      */
     protected function discover()
     {
@@ -104,10 +104,9 @@ class ModelObjNode extends BaseNode
         return $this->nodes !== null && is_array($this->nodes);
     }
 
-
     /**
+     * @since 4.10.12.p
      * @return boolean
-     * @since $VID:$
      */
     public function isComplete()
     {
@@ -123,7 +122,7 @@ class ModelObjNode extends BaseNode
      *
      * @param $model_objects_to_identify
      * @return int units of work done
-     * @since $VID:$
+     * @since 4.10.12.p
      */
     protected function work($model_objects_to_identify)
     {
@@ -154,7 +153,7 @@ class ModelObjNode extends BaseNode
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 4.10.12.p
      */
     public function toArray()
     {
@@ -181,7 +180,7 @@ class ModelObjNode extends BaseNode
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      * @throws EE_Error
-     * @since $VID:$
+     * @since 4.10.12.p
      */
     public function getIds()
     {
@@ -202,7 +201,7 @@ class ModelObjNode extends BaseNode
     /**
      * Don't serialize the models. Just record their names on some dynamic properties.
      *
-     * @since $VID:$
+     * @since 4.10.12.p
      */
     public function __sleep()
     {
@@ -226,7 +225,7 @@ class ModelObjNode extends BaseNode
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 4.10.12.p
      */
     public function __wakeup()
     {

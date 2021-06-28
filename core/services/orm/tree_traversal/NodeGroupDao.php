@@ -17,13 +17,12 @@ use ReflectionException;
  *
  * @package     Event Espresso
  * @author         Mike Nelson
- * @since         $VID:$
+ * @since         4.10.12.p
  *
  */
 class NodeGroupDao
 {
     /**
-     * @since $VID:$
      * @return mixed|void
      */
     public function generateGroupCode()
@@ -33,7 +32,7 @@ class NodeGroupDao
 
     /**
      * Gets the string we put in front of the WP Option name used to store the jobs.
-     * @since $VID:$
+	 *
      * @return string
      */
     private function getOptionPrefix()
@@ -42,7 +41,6 @@ class NodeGroupDao
     }
 
     /**
-     * @since $VID:$
      * @param $code
      * @return ModelObjNode[]
      * @throws UnexpectedEntityException
@@ -64,7 +62,7 @@ class NodeGroupDao
     /**
      * Gets an array indicating what database rows are contained in the job.
      * Each top-level key is a model name, and its value is an array of IDs.
-     * @since $VID:$
+	 *
      * @param ModelObjNode[] $model_obj_nodes
      * @return array
      * @throws EE_Error
@@ -85,7 +83,7 @@ class NodeGroupDao
     /**
      * Gets an array indicating what database rows are contained in the job.
      * Each top-level key is a model name, and its value is an array of IDs.
-     * @since $VID:$
+	 *
      * @param string $code
      * @return array
      * @throws EE_Error
@@ -103,7 +101,7 @@ class NodeGroupDao
 
     /**
      * Persists the ModelObjNodes for future requests, using the code for reference.
-     * @since $VID:$
+	 *
      * @param ModelObjNode[] $model_obj_nodes
      * @param string $code
      * @return bool
@@ -120,7 +118,7 @@ class NodeGroupDao
 
     /**
      * Forgets about the group of ModelObjNodes. Doesn't delete the rows in the database they reference though.
-     * @since $VID:$
+	 *
      * @param $code
      * @return bool
      */

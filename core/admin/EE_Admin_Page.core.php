@@ -156,7 +156,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     protected $_hook_obj;
 
     // for holding incoming request data
-    protected $_req_data;
+    protected $_req_data = [];
 
     // yes / no array for admin form fields
     protected $_yes_no_values = array();
