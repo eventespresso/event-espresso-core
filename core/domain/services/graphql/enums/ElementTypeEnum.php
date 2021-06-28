@@ -2,11 +2,9 @@
 
 namespace EventEspresso\core\domain\services\graphql\enums;
 
-use EE_Error;
 use EventEspresso\core\services\graphql\enums\EnumBase;
 use EventEspresso\core\services\form\meta\InputTypes;
 use EventEspresso\core\services\loaders\LoaderFactory;
-use ReflectionException;
 
 /**
  * Class ElementTypeEnum
@@ -32,14 +30,11 @@ class ElementTypeEnum extends EnumBase
 
     /**
      * @return array
-     * @throws EE_Error
-     * @throws ReflectionException
      */
     protected function getValues(): array
     {
-        /** @var InputTypes */
-        $element_types = LoaderFactory::getShared('EventEspresso\core\services\form\meta\InputTypes');
-
-        return $element_types->getElementTypesValues();
+        /** @var InputTypes $input_types */
+        $input_types = LoaderFactory::getShared('EventEspresso\core\services\form\meta\InputTypes');
+        return $input_types->getInputTypesValues();
     }
 }
