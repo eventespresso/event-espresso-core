@@ -207,7 +207,7 @@ class EEM_Form_Section extends EEM_Base
      * @return EE_Form_Section[]
      * @throws EE_Error
      */
-    private function getFormSections(array $where_params): array
+    public function getFormSections(array $where_params): array
     {
         $query_params = $this->addDefaultWhereConditions([$where_params]);
         $query_params = $this->addOrderByQueryParams($query_params);
