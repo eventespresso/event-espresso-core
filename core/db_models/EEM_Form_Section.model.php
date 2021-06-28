@@ -110,7 +110,7 @@ class EEM_Form_Section extends EEM_Base
                 'FSC_label' => new EE_JSON_Field(
                     'FSC_label',
                     esc_html__(
-                        'JSON string of properties pertaining to to a form section\'s label.',
+                        'JSON string of properties pertaining to a form section\'s label.',
                         'event_espresso'
                     ),
                     true,
