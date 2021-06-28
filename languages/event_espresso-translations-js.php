@@ -552,7 +552,7 @@ $generated_i18n_strings = array(
 	__( 'Sold', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/registrationForm/RegistrationForm.tsx:11
-	__( 'Registration Form Builder', 'event_espresso' ),
+	__( 'Registration Form', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/ticketAssignmentsManager/components/ErrorMessage.tsx:18
 	__( 'Tickets must always have at least one date assigned to them but one or more of the tickets below does not have any. 
@@ -1232,13 +1232,13 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/form-builder/src/FormSection/FormSectionToolbar.tsx:32
 	__( 'delete form section', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormSection/FormSectionToolbar.tsx:48
+	// Reference: packages/form-builder/src/FormSection/FormSectionToolbar.tsx:47
 	__( 'form section settings', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormSection/FormSectionToolbar.tsx:58
+	// Reference: packages/form-builder/src/FormSection/FormSectionToolbar.tsx:57
 	__( 'copy form section', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormSection/FormSectionToolbar.tsx:69
+	// Reference: packages/form-builder/src/FormSection/FormSectionToolbar.tsx:68
 	__( 'click, hold, and drag to reorder form section', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/FormSection/SaveSection.tsx:43
