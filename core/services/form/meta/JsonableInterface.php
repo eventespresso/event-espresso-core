@@ -13,9 +13,9 @@ interface JsonableInterface
 {
     /**
      * @param string $json
-     * @return JsonableInterface
+     * @return mixed
      */
-    public static function fromJson(string $json): JsonableInterface;
+    public static function fromJson(string $json);
 
 
     /**
