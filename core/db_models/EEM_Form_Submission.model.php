@@ -22,7 +22,13 @@ class EEM_Form_Submission extends EEM_Base
     private $request;
 
 
-    protected function __construct($timezone = null)
+    /**
+     * EEM_Form_Submission constructor.
+     *
+     * @param string|null $timezone
+     * @throws EE_Error
+     */
+    protected function __construct(?string $timezone)
     {
         $this->singular_item = esc_html__('Form Submission', 'event_espresso');
         $this->plural_item   = esc_html__('Form Submissions', 'event_espresso');

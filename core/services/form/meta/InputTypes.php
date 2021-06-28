@@ -10,6 +10,14 @@ use EventEspresso\core\services\form\meta\inputs\Phone;
 use EventEspresso\core\services\form\meta\inputs\Select;
 use EventEspresso\core\services\form\meta\inputs\Text;
 
+/**
+ * Class InputTypes
+ * For managing all of the various HTML input types
+ *
+ * @author  Brent Christensen
+ * @package EventEspresso\core\services\form\meta
+ * @since   $VID:$
+ */
 class InputTypes
 {
     /**
