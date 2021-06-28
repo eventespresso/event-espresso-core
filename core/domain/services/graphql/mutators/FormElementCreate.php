@@ -2,8 +2,8 @@
 
 namespace EventEspresso\core\domain\services\graphql\mutators;
 
-use EE_Form_Input;
-use EEM_Form_Input;
+use EE_Form_Element;
+use EEM_Form_Element;
 use EventEspresso\core\domain\services\graphql\data\mutations\FormElementMutation;
 use GraphQL\Type\Definition\ResolveInfo;
 use WPGraphQL\AppContext;
@@ -15,10 +15,10 @@ class FormElementCreate extends EntityMutator
     /**
      * Defines the mutation data modification closure.
      *
-     * @param EEM_Form_Input $model
+     * @param EEM_Form_Element $model
      * @return callable
      */
-    public static function mutateAndGetPayload(EEM_Form_Input $model)
+    public static function mutateAndGetPayload(EEM_Form_Element $model)
     {
         /**
          * Creates an entity.
@@ -35,7 +35,7 @@ class FormElementCreate extends EntityMutator
 
                 $args = FormElementMutation::prepareFields($input);
 
-                $entity = EE_Form_Input::new_instance($args);
+                $entity = EE_Form_Element::new_instance($args);
                 $id = $entity->save();
                 EntityMutator::validateResults($id);
 

@@ -6,7 +6,7 @@ use EE_Form_Section;
 use EEM_Form_Section;
 use EE_Error;
 use Exception;
-use EventEspresso\core\services\form\meta\Element;
+use EventEspresso\core\services\form\meta\FormStatus;
 use GraphQL\Type\Definition\ResolveInfo;
 use WPGraphQL\AppContext;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
@@ -79,7 +79,7 @@ class FormSectionDelete extends EntityMutator
         // Remove related non-default form elements
         $entity->delete_related('Form_Input', [
             [
-                'FIN_status' => ['NOT IN', [ Element::STATUS_SHARED, Element::STATUS_DEFAULT] ]
+                'FIN_status' => ['NOT IN', [ FormStatus::SHARED, FormStatus::DEFAULT] ]
             ]
         ]);
 
