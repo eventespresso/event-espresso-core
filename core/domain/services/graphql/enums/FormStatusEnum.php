@@ -36,7 +36,7 @@ class FormStatusEnum extends EnumBase
      */
     protected function getValues(): array
     {
-        /** @var FormStatus */
+        /** @var FormStatus $form_status */
         $form_status = LoaderFactory::getShared('EventEspresso\core\services\form\meta\FormStatus');
 
         return $form_status->getFormStatusValues();
