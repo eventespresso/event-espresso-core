@@ -1,60 +1,87 @@
 <?php
 
+use EventEspresso\core\services\form\meta\Attributes;
+use EventEspresso\core\services\form\meta\FormLabel;
+use EventEspresso\core\services\form\meta\HelpText;
+use EventEspresso\core\services\form\meta\InputOptions;
+use EventEspresso\core\services\form\meta\Required;
+
 /**
- * Class EE_Form_Input
+ * Class EE_Form_Element
+ *
  * Model Fields:
- *      FIN_UUID
- *      FIN_adminLabel
- *      FIN_adminOnly
- *      FIN_belongsTo
- *      FIN_helpClass
- *      FIN_helpText
- *      FIN_htmlClass
- *      FIN_max
- *      FIN_min
- *      FIN_order
- *      FIN_placeholder
- *      FIN_publicLabel
- *      FIN_required
- *      FIN_requiredText
- *      FIN_status
- *      FIN_type
- *      FIN_wpUser
+ *  FIN_UUID         string
+ *  FSC_UUID         string    UUID of parent form section
+ *  FIN_adminOnly    bool
+ *  FIN_attributes   JSON string
+ *  FIN_helpText     JSON string
+ *  FIN_label        JSON string
+ *  FIN_mapsTo       string
+ *  FIN_options      JSON string
+ *  FIN_order        int
+ *  FIN_required     JSON string
+ *  FIN_status       string    ex: 'archived'
+ *  FIN_wpUser       int
  *
  * @author  Brent Christensen
  * @since   $VID:$
  */
-class EE_Form_Input extends EE_Base_Class
+class EE_Form_Element extends EE_Base_Class
 {
 
     /**
+     * @var Attributes
+     */
+    private $attributes;
+
+    /**
+     * @var FormLabel
+     */
+    private $label;
+
+    /**
+     * @var HelpText
+     */
+    private $helpText;
+
+    /**
+     * @var InputOptions
+     */
+    private $options;
+
+    /**
+     * @var Required
+     */
+    private $required;
+
+
+    /**
      * @param array $props_n_values
-     * @return EE_Form_Input
+     * @return EE_Form_Element
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function new_instance(array $props_n_values = []): EE_Form_Input
+    public static function new_instance(array $props_n_values = []): EE_Form_Element
     {
         $has_object = parent::_check_for_object($props_n_values, __CLASS__);
-        return $has_object
-            ?: new self($props_n_values);
+        return $has_object ?: new self($props_n_values);
     }
 
 
     /**
      * @param array $props_n_values
-     * @return EE_Form_Input
+     * @return EE_Form_Element
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function new_instance_from_db(array $props_n_values = []): EE_Form_Input
+    public static function new_instance_from_db(array $props_n_values = []): EE_Form_Element
     {
         return new self($props_n_values);
     }
 
 
     /**
-     * Form Input UUID (universally unique identifier)
+     * Form Element UUID (universally unique identifier)
      *
      * @return string
      * @throws EE_Error
@@ -74,30 +101,6 @@ class EE_Form_Input extends EE_Base_Class
     public function setUUID(string $UUID)
     {
         $this->set('FIN_UUID', $UUID);
-    }
-
-
-    /**
-     * Input label displayed in the admin to help differentiate input from others
-     *
-     * @return string
-     * @throws EE_Error
-     * @throws ReflectionException
-     */
-    public function adminLabel():? string
-    {
-        return $this->get('FIN_adminLabel');
-    }
-
-
-    /**
-     * @param string $admin_label
-     * @throws EE_Error
-     * @throws ReflectionException
-     */
-    public function setAdminLabel(string $admin_label)
-    {
-        $this->set('FIN_adminLabel', $admin_label);
     }
 
 
@@ -126,6 +129,36 @@ class EE_Form_Input extends EE_Base_Class
 
 
     /**
+     * JSON string of HTML attributes such as class, max, min, placeholder, type, etc.
+     *
+     * @return Attributes
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function attributes(): ?Attributes
+    {
+        if (! $this->attributes instanceof Attributes) {
+            $this->attributes = Attributes::fromJson($this->get('FIN_attributes'));
+        }
+        return $this->attributes;
+    }
+
+
+    /**
+     * @param Attributes $attributes
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function setAttributes(Attributes $attributes)
+    {
+        // set local object
+        $this->attributes = $attributes;
+        // then pass to model as an array which will get converted to JSON by the model field
+        $this->set('FIN_attributes', $attributes->toArray());
+    }
+
+
+    /**
      * UUID of parent form section this form input belongs to.
      *
      * @return string
@@ -150,76 +183,62 @@ class EE_Form_Input extends EE_Base_Class
 
 
     /**
-     * Custom HTML classes to be applied to this form input's help text.
+     * returns a HelpText object for managing input help text
      *
-     * @return string
+     * @return HelpText
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function helpClass():? string
+    public function helpText(): ?HelpText
     {
-        return $this->get('FIN_helpClass');
+        if (! $this->helpText instanceof HelpText) {
+            $this->helpText = HelpText::fromJson($this->get('FIN_helpText'));
+        }
+        return $this->helpText;
     }
 
 
     /**
-     * @param string $help_class
+     * @param HelpText $helpText
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function setHelpClass(string $help_class)
+    public function setHelpText(HelpText $helpText)
     {
-        $this->set('FIN_helpClass', $help_class);
+        // set local object
+        $this->helpText = $helpText;
+        // then pass to model as an array which will get converted to JSON by the model field
+        $this->set('FIN_helpText', $helpText->toArray());
     }
 
 
     /**
-     * Additional text displayed alongside a form input to assist users with completing the form.
+     * returns a FormLabel object for managing input labels
      *
-     * @return string
+     * @return FormLabel
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function helpText():? string
+    public function label(): ?FormLabel
     {
-        return $this->get('FIN_helpText');
+        if (! $this->label instanceof FormLabel) {
+            $this->label = FormLabel::fromJson($this->get('FIN_label'));
+        }
+        return $this->label;
     }
 
 
     /**
-     * @param string $help_text
+     * @param FormLabel $label
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function setHelpText(string $help_text)
+    public function setLabel(FormLabel $label)
     {
-        $this->set('FIN_helpText', $help_text);
-    }
-
-
-    /**
-     * HTML classes to be applied to this form input's container.
-     *
-     * @return string
-     * @throws EE_Error
-     * @throws ReflectionException
-     */
-    public function htmlClass():? string
-    {
-        return $this->get('FIN_htmlClass');
-    }
-
-
-    /**
-     * HTML classes to be applied to this form input's container.
-     *
-     * @param string $html_class
-     * @throws EE_Error
-     * @throws ReflectionException
-     */
-    public function setHtmlClass(string $html_class)
-    {
-        $this->set('FIN_htmlClass', $html_class);
+        // set local object
+        $this->label = $label;
+        // then pass to model as an array which will get converted to JSON by the model field
+        $this->set('FIN_label', $label->toArray());
     }
 
 
@@ -244,81 +263,49 @@ class EE_Form_Input extends EE_Base_Class
      */
     public function setMapsTo(string $model, string $field)
     {
+        $model_name = strpos($model, 'EEM_') !== 0 ? "EEM_$model" : $model;
+        if (! class_exists($model_name) ) {
+            throw new DomainException(
+              sprintf(
+                  esc_html__(
+                      'The %1$s model does not exist or can not be located. Please verify the spelling and whether it is loaded.',
+                      'event_espresso'
+                  ),
+                  $model_name
+              )
+            );
+        }
         $this->set('FIN_mapsTo', "{$model}.{$field}");
-    }
-
-
-    /**
-     * Maximum numeric value or maximum characters allowed for form input answer.
-     *
-     * @return int|float
-     * @throws EE_Error
-     * @throws ReflectionException
-     */
-    public function max()
-    {
-        $max = $this->get('FIN_max');
-        return $max > -1 ? $max : EE_INF;
-    }
-
-
-    /**
-     * @param int|float $max
-     * @throws EE_Error
-     * @throws ReflectionException
-     */
-    public function setMax($max)
-    {
-        $this->set('FIN_max', $max);
-    }
-
-
-
-    /**
-     * Minimum numeric value or minimum characters allowed for form input answer.
-     *
-     * @return int|float
-     * @throws EE_Error
-     * @throws ReflectionException
-     */
-    public function min()
-    {
-        return $this->get('FIN_min');
-    }
-
-
-    /**
-     * @param int|float $min
-     * @throws EE_Error
-     * @throws ReflectionException
-     */
-    public function setMin($min)
-    {
-        $this->set('FIN_min', $min);
     }
 
 
     /**
      * Options for ENUM type inputs like checkboxes, radio buttons, select inputs, etc
      *
-     * @return array
+     * @return InputOptions
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function options(): ?array
+    public function options(): ?InputOptions
     {
-        return $this->get('FIN_options');
+        if (! $this->options instanceof InputOptions) {
+            $this->options = InputOptions::fromJson($this->get('FIN_options'));
+        }
+        return $this->options;
     }
 
 
     /**
-     * @param array $options
+     * @param InputOptions $options
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function setOptions(array $options)
+    public function setOptions(InputOptions $options)
     {
-        $this->set('FIN_options', $options);
+        // set local object
+        $this->options = $options;
+        // then pass to model as an array which will get converted to JSON by the model field
+        $this->set('FIN_options', $options->toArray());
     }
 
 
@@ -372,74 +359,32 @@ class EE_Form_Input extends EE_Base_Class
 
 
     /**
-     * Input label displayed on public forms, ie: the actual question text.
-     *
-     * @return string
-     * @throws EE_Error
-     * @throws ReflectionException
-     */
-    public function publicLabel(): ?string
-    {
-        return $this->get('FIN_publicLabel');
-    }
-
-
-    /**
-     * @param string $publicLabel
-     * @throws EE_Error
-     * @throws ReflectionException
-     */
-    public function setPublicLabel(string $publicLabel)
-    {
-        $this->set('FIN_publicLabel', $publicLabel);
-    }
-
-
-    /**
      * Whether or not the input must be supplied with a value in order to complete the form.
      *
-     * @return bool
+     * @return Required
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function required(): ?bool
+    public function required(): ?Required
     {
-        return $this->get('FIN_required');
+        if (! $this->required instanceof Required) {
+            $this->required = Required::fromJson($this->get('FIN_required'));
+        }
+        return $this->required;
     }
 
 
     /**
-     * @param bool $required
+     * @param Required $required
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function setRequired(bool $required)
+    public function setRequired(Required $required)
     {
-        $this->set('FIN_required', $required);
-    }
-
-
-    /**
-     * Custom validation text displayed alongside a required form input to assist users with completing the form.
-     *
-     * @return string
-     * @throws EE_Error
-     * @throws ReflectionException
-     */
-    public function requiredText():? string
-    {
-        return $this->get('FIN_requiredText');
-    }
-
-
-    /**
-     * @param string $requiredText
-     * @throws EE_Error
-     * @throws ReflectionException
-     */
-    public function setRequiredText(string $requiredText)
-    {
-        $this->set('FIN_requiredText', $requiredText);
+        // set local object
+        $this->required = $required;
+        // then pass to model as an array which will get converted to JSON by the model field
+        $this->set('FIN_required', $required->toArray());
     }
 
 
@@ -452,13 +397,13 @@ class EE_Form_Input extends EE_Base_Class
      */
     public function slug(): ?string
     {
-        return sanitize_title($this->publicLabel());
+        return sanitize_title($this->label()->publicLabel());
     }
 
 
     /**
      * Whether form input is active, archived, trashed, or used as a default on new forms.
-     * Values correspond to the EEM_Form_Input::STATUS_* constants.
+     * Values correspond to the EEM_Form_Element::STATUS_* constants.
      *
      * @return string
      * @throws EE_Error
@@ -472,7 +417,7 @@ class EE_Form_Input extends EE_Base_Class
 
     /**
      * Whether form input is active, archived, trashed, or used as a default on new forms.
-     * Values correspond to the EEM_Form_Input::STATUS_* constants.
+     * Values correspond to the EEM_Form_Element::STATUS_* constants.
      *
      * @param string $status
      * @throws EE_Error
@@ -532,5 +477,23 @@ class EE_Form_Input extends EE_Base_Class
     public function setWpUser(int $wp_user)
     {
         $this->set('FIN_wpUser', $wp_user);
+    }
+
+
+    /**
+     * @param array $set_cols_n_values
+     * @return bool|int|string
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function save($set_cols_n_values = [])
+    {
+        // make sure internal versions for all composite objects are updated
+        $this->set('FIN_attributes', $this->attributes()->toArray());
+        $this->set('FIN_helpText', $this->helpText()->toArray());
+        $this->set('FIN_label', $this->label()->toArray());
+        $this->set('FIN_options', $this->options()->toArray());
+        $this->set('FIN_required', $this->required()->toArray());
+        return parent::save($set_cols_n_values);
     }
 }

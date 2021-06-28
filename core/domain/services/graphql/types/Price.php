@@ -22,6 +22,7 @@ use ReflectionException;
  * @package EventEspresso\core\domain\services\graphql\types
  * @author  Brent Christensen
  * @since   $VID:$
+ * @property EEM_Price $model
  */
 class Price extends TypeBase
 {
