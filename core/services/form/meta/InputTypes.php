@@ -13,7 +13,7 @@ use EventEspresso\core\services\graphql\Utils as GQLUtils;
 
 /**
  * Class InputTypes
- * For managing all of the various HTML input types
+ * For managing meta data for all of the various HTML <input /> types
  *
  * @author  Brent Christensen
  * @package EventEspresso\core\services\form\meta
