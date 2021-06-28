@@ -4,7 +4,7 @@ namespace EventEspresso\core\domain\services\graphql\data\loaders;
 
 use EE_Error;
 use EEM_Base;
-use EEM_Form_Input;
+use EEM_Form_Element;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use InvalidArgumentException;
@@ -25,7 +25,7 @@ class FormElementLoader extends AbstractLoader
      */
     protected function getQuery(): EEM_Base
     {
-        return EEM_Form_Input::instance();
+        return EEM_Form_Element::instance();
     }
 
     /**

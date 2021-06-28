@@ -2,8 +2,8 @@
 
 namespace EventEspresso\core\domain\services\graphql\mutators;
 
-use EE_Form_Input;
-use EEM_Form_Input;
+use EE_Form_Element;
+use EEM_Form_Element;
 use Exception;
 use GraphQL\Type\Definition\ResolveInfo;
 use WPGraphQL\AppContext;
@@ -14,10 +14,10 @@ class FormElementDelete extends EntityMutator
     /**
      * Defines the mutation data modification closure.
      *
-     * @param EEM_Form_Input $model
+     * @param EEM_Form_Element $model
      * @return callable
      */
-    public static function mutateAndGetPayload(EEM_Form_Input $model)
+    public static function mutateAndGetPayload(EEM_Form_Element $model)
     {
         /**
          * Deletes an entity.
@@ -29,7 +29,7 @@ class FormElementDelete extends EntityMutator
          */
         return static function (array $input, AppContext $context, ResolveInfo $info) use ($model): array {
             try {
-                /** @var EE_Form_Input $entity */
+                /** @var EE_Form_Element $entity */
                 $entity = EntityMutator::getEntityFromInputData($model, $input);
 
                 $result = $entity->delete();
