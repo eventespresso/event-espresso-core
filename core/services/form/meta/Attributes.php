@@ -14,7 +14,7 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  * @package EventEspresso\core\services\form\meta
  * @since   $VID:$
  */
-class Attributes
+class Attributes implements JsonableInterface
 {
 
     /**
@@ -81,13 +81,13 @@ class Attributes
      * Attributes constructor.
      *
      * @param JsonDataHandler $json_data_handler
-     * @param InputTypes      $input_types
+     * @param InputTypes      $element_types
      * @param array           $attributes
      */
-    public function __construct(JsonDataHandler $json_data_handler, array $attributes, InputTypes $input_types)
+    public function __construct(JsonDataHandler $json_data_handler, array $attributes, InputTypes $element_types)
     {
         $this->json_data_handler = $json_data_handler;
-        $this->input_types = $input_types;
+        $this->input_types       = $element_types;
         $this->setAttributes($attributes);
     }
 
@@ -99,9 +99,11 @@ class Attributes
     public static function fromJson(string $json): Attributes
     {
         $json_data_handler = new JsonDataHandler();
-        $json_data_handler->configure(JsonDataHandler::DATA_TYPE_OBJECT);
+        $json_data_handler->configure(JsonDataHandler::DATA_TYPE_ARRAY);
         $attributes = $json_data_handler->decodeJson($json);
-        return LoaderFactory::getNew(Attributes::class, [ $json_data_handler, $attributes ]);
+        /** @var InputTypes */
+        $element_types = LoaderFactory::getShared('EventEspresso\core\services\form\meta\InputTypes');
+        return LoaderFactory::getNew(Attributes::class, [ $json_data_handler, $attributes, $element_types ]);
     }
 
 
@@ -171,7 +173,7 @@ class Attributes
      */
     public function addAttribute(string $attribute, $value): void
     {
-        if (array_key_exists($attribute, $this->attributes)) {
+        if (array_key_exists($attribute, $this->attribute_types)) {
             $this->attributes[ $attribute ] = $this->sanitize($attribute, $value);
         }
     }

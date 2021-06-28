@@ -12,7 +12,7 @@ use EventEspresso\core\services\json\JsonDataHandler;
  * @package EventEspresso\core\services\form\meta
  * @since   $VID:$
  */
-class Required
+class Required implements JsonableInterface
 {
 
     /**

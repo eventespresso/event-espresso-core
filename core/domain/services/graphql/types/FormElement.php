@@ -55,15 +55,6 @@ class FormElement extends TypeBase
                 esc_html__('The globally unique ID for the object.', 'event_espresso')
             ),
             new GraphQLField(
-                'adminLabel',
-                'String',
-                'adminLabel',
-                esc_html__(
-                    'Form Element label displayed in the admin to help differentiate it from others.',
-                    'event_espresso'
-                )
-            ),
-            new GraphQLField(
                 'adminOnly',
                 'Boolean',
                 'adminOnly',
@@ -73,55 +64,46 @@ class FormElement extends TypeBase
                 )
             ),
             new GraphQLField(
+                'attributes',
+                'String',
+                'attributes',
+                esc_html__(
+                    'JSON string of HTML attributes such as class, max, min, placeholder, type, etc.',
+                    'event_espresso'
+                ),
+                [$this, 'toJson']
+            ),
+            new GraphQLField(
                 'belongsTo',
                 'String',
                 'belongsTo',
                 esc_html__('UUID of parent form section this form element belongs to.', 'event_espresso')
             ),
             new GraphQLField(
-                'helpClass',
-                'String',
-                'helpClass',
-                esc_html__("Custom HTML classes to be applied to this form element's help text.", 'event_espresso')
-            ),
-            new GraphQLField(
                 'helpText',
                 'String',
                 'helpText',
                 esc_html__(
-                    'Additional text displayed alongside a form element to assist users with completing the form.',
+                    "JSON string of properties pertaining to any help text required for an input.",
                     'event_espresso'
-                )
+                ),
+                [$this, 'toJson']
             ),
             new GraphQLField(
-                'htmlClass',
+                'label',
                 'String',
-                'htmlClass',
-                esc_html__("HTML classes to be applied to this form element's container.", 'event_espresso')
+                'label',
+                esc_html__(
+                    'JSON string of properties pertaining to an element\'s label.',
+                    'event_espresso'
+                ),
+                [$this, 'toJson']
             ),
             new GraphQLField(
                 'mapsTo',
                 'String',
                 'mapsTo',
-                esc_html__("Model and Fields name that this input maps to; ex: Attendee.email", 'event_espresso')
-            ),
-            new GraphQLField(
-                'max',
-                'Int',
-                'max',
-                esc_html__(
-                    "Maximum numeric value or maximum characters allowed for form input answer.",
-                    'event_espresso'
-                )
-            ),
-            new GraphQLField(
-                'min',
-                'Int',
-                'min',
-                esc_html__(
-                    "Minimum numeric value or minimum characters allowed for form input answer.",
-                    'event_espresso'
-                )
+                esc_html__("Model and Fields name that this element maps to; ex: Attendee.email", 'event_espresso')
             ),
             new GraphQLField(
                 'options',
@@ -130,7 +112,8 @@ class FormElement extends TypeBase
                 esc_html__(
                     "JSON string of options for ENUM type inputs like checkboxes, radio buttons, select inputs, etc.",
                     'event_espresso'
-                )
+                ),
+                [$this, 'toJson']
             ),
             new GraphQLField(
                 'order',
@@ -139,52 +122,29 @@ class FormElement extends TypeBase
                 esc_html__('Order in which form element appears in a form.', 'event_espresso')
             ),
             new GraphQLField(
-                'placeholder',
-                'String',
-                'placeholder',
-                esc_html__(
-                    "Example text displayed within an input to assist users with completing the form.",
-                    'event_espresso'
-                )
-            ),
-            new GraphQLField(
-                'publicLabel',
-                'String',
-                'publicLabel',
-                esc_html__('Element label displayed on public forms, ie: the actual question text.', 'event_espresso')
-            ),
-            new GraphQLField(
                 'required',
-                'Boolean',
+                'String',
                 'required',
                 esc_html__(
-                    'Whether or not the input must be supplied with a value in order to complete the form.',
+                    "properties pertaining to an input\'s required status and the validation text to display.",
                     'event_espresso'
-                )
-            ),
-            new GraphQLField(
-                'requiredText',
-                'String',
-                'requiredText',
-                esc_html__(
-                    'Custom validation text displayed alongside a required form input to assist users with completing the form.',
-                    'event_espresso'
-                )
+                ),
+                [$this, 'toJson']
             ),
             new GraphQLField(
                 'status',
-                $this->namespace . 'FormSectionStatusEnum',
+                $this->namespace . 'FormStatusEnum',
                 'status',
                 esc_html__(
-                    'Whether form input is active, archived, trashed, or used as a default on new forms.',
+                    'Whether form element is active, archived, trashed, or used as a default on new forms.',
                     'event_espresso'
                 )
             ),
             new GraphQLField(
                 'type',
-                'String',
+                $this->namespace . 'ElementTypeEnum',
                 'type',
-                esc_html__('Form input type.', 'event_espresso')
+                esc_html__('Form element type.', 'event_espresso')
             ),
             new GraphQLOutputField(
                 'wpUser',
@@ -194,7 +154,7 @@ class FormElement extends TypeBase
             ),
             new GraphQLInputField(
                 'wpUser',
-                'Int',
+                'ID',
                 null,
                 esc_html__('ID of the WP User that created the form element.', 'event_espresso')
             ),
@@ -253,6 +213,10 @@ class FormElement extends TypeBase
                 'mutateAndGetPayload' => FormElementDelete::mutateAndGetPayload($this->model),
             ]
         );
+
+        // Make element 'type' a required field for create mutations
+        // Yes it's "['type']['type']" 😄 - First one the field name, second one the GQL field type
+        $inputFields['type']['type'] = ['non_null' => $inputFields['type']['type']];
 
         // Register mutation to update an entity.
         register_graphql_mutation(
