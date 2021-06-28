@@ -137,7 +137,7 @@ class GQLRequests extends Route
         );
         $this->dependency_map->registerDependencies(
             'EventEspresso\core\domain\services\graphql\types\FormElement',
-            ['EEM_Form_Input' => EE_Dependency_Map::load_from_cache]
+            ['EEM_Form_Element' => EE_Dependency_Map::load_from_cache]
         );
         $this->dependency_map->registerDependencies(
             'EventEspresso\core\domain\services\graphql\types\FormSection',
@@ -181,7 +181,7 @@ class GQLRequests extends Route
         );
         $this->dependency_map->registerDependencies(
             'EventEspresso\core\domain\services\graphql\connections\RootQueryFormElementsConnection',
-            ['EEM_Form_Input' => EE_Dependency_Map::load_from_cache]
+            ['EEM_Form_Element' => EE_Dependency_Map::load_from_cache]
         );
         $this->dependency_map->registerDependencies(
             'EventEspresso\core\domain\services\graphql\connections\RootQueryFormSectionsConnection',

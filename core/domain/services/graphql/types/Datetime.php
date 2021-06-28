@@ -29,9 +29,10 @@ use GraphQL\Type\Definition\ResolveInfo;
  * Class EventDate
  * Description
  *
+ * @since   $VID:$
  * @package EventEspresso\core\domain\services\graphql\types
  * @author  Manzoor Wani
- * @since   $VID:$
+ * @property EEM_Datetime $model
  */
 class Datetime extends TypeBase
 {

@@ -3,7 +3,7 @@
 namespace EventEspresso\core\domain\services\graphql\connection_resolvers;
 
 use EE_Error;
-use EEM_Form_Input;
+use EEM_Form_Element;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use InvalidArgumentException;
@@ -21,7 +21,7 @@ class FormElementConnectionResolver extends AbstractConnectionResolver
     }
 
     /**
-     * @return EEM_Form_Input
+     * @return EEM_Form_Element
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -29,9 +29,9 @@ class FormElementConnectionResolver extends AbstractConnectionResolver
      * @throws ReflectionException
      */
     // phpcs:ignore PSR1.Methods.CamelCapsMethodName.NotCamelCaps
-    public function get_query(): EEM_Form_Input
+    public function get_query(): EEM_Form_Element
     {
-        return EEM_Form_Input::instance();
+        return EEM_Form_Element::instance();
     }
 
 
