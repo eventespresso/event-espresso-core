@@ -22,6 +22,7 @@ use WPGraphQL\AppContext;
 use WPGraphQL\Type\ObjectType\RootQuery;
 use DateTime;
 use DateTimeZone;
+use EventEspresso\core\services\form\meta\JsonableInterface;
 
 /**
  * Class TypeBase
@@ -286,5 +287,18 @@ abstract class TypeBase implements TypeInterface
         $datetime->setTimezone(new DateTimeZone('UTC'));
 
         return $datetime->format(DateTime::RFC3339);
+    }
+
+
+    /**
+     * Converts an object to JSON. The object must have a "toJson" method.
+     *
+     * @param string        $object   The object/value.
+     * @param EE_Base_Class $source   The source object.
+     * @return string JSON representation of the object.
+     */
+    public function toJson(JsonableInterface $object, EE_Base_Class $source): string
+    {
+        return $object->toJson();
     }
 }

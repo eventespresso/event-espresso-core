@@ -2,6 +2,8 @@
 
 namespace EventEspresso\core\services\form\meta;
 
+use EventEspresso\core\services\graphql\Utils as GQLUtils;
+
 /**
  * Class FormStatus
  * For managing the status for a form element, ie: active, trashed, etc
@@ -57,6 +59,19 @@ class FormStatus
                 FormStatus::TRASHED  => esc_html__('Trashed', 'event_espresso'),
             ]
         );
+    }
+
+
+    /**
+     * @return array
+     */
+    public function getFormStatusValues(): array
+    {
+        $values = [];
+        foreach ($this->valid_status_options as $value => $description) {
+            $values[ GQLUtils::formatEnumKey($value) ] = compact('value', 'description');
+        }
+        return $values;
     }
 
 
