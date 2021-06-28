@@ -17,6 +17,7 @@ use EventEspresso\core\domain\services\graphql\mutators\VenueUpdate;
  * @package EventEspresso\core\domain\services\graphql\types
  * @author  Brent Christensen
  * @since   $VID:$
+ * @property EEM_Venue $model
  */
 class Venue extends TypeBase
 {

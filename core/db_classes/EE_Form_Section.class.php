@@ -1,16 +1,20 @@
 <?php
 
+use EventEspresso\core\services\form\meta\Attributes;
+use EventEspresso\core\services\form\meta\FormLabel;
+
 /**
  * Class EE_Form_Section
+ *
  * Model Fields:
- *      FSC_ID int
- *      FSC_UUID string
- *      FSC_appliesTo string
- *      FSC_belongsTo string
- *      FSC_htmlClass string
- *      FSC_order int
- *      FSC_status string
- *      FSC_wpUser int
+ *  FSC_UUID         string
+ *  FSC_appliesTo    string
+ *  FSC_attributes   JSON string
+ *  FSC_belongsTo    string
+ *  FSC_label        JSON string
+ *  FSC_order        int
+ *  FSC_status       string    ex: 'archived'
+ *  FSC_wpUser       int
  *
  * @author  Brent Christensen
  * @since   $VID:$
@@ -19,9 +23,19 @@ class EE_Form_Section extends EE_Base_Class
 {
 
     /**
-     * @var EE_Form_Input[]
+     * @var Attributes
      */
-    private $form_inputs = [];
+    private $attributes;
+
+    /**
+     * @var EE_Form_Element[]
+     */
+    private $form_elements = [];
+
+    /**
+     * @var FormLabel
+     */
+    private $label;
 
 
 
@@ -88,30 +102,6 @@ class EE_Form_Section extends EE_Base_Class
 
 
     /**
-     * Form Section label displayed in the admin to help differentiate it from others
-     *
-     * @return string
-     * @throws EE_Error
-     * @throws ReflectionException
-     */
-    public function adminLabel(): string
-    {
-        return $this->get('FSC_adminLabel');
-    }
-
-
-    /**
-     * @param string $admin_label
-     * @throws EE_Error
-     * @throws ReflectionException
-     */
-    public function setAdminLabel(string $admin_label)
-    {
-        $this->set('FSC_adminLabel', $admin_label);
-    }
-
-
-    /**
      * Form user types that this form section should be presented to.
      * Values correspond to the EEM_Form_Section::APPLIES_TO_* constants.
      *
@@ -162,6 +152,36 @@ class EE_Form_Section extends EE_Base_Class
 
 
     /**
+     * JSON string of HTML attributes, such as class, to be applied to this form section\'s container.
+     *
+     * @return Attributes
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function attributes(): ?Attributes
+    {
+        if (! $this->attributes instanceof Attributes) {
+            $this->attributes = Attributes::fromJson($this->get('FSC_attributes'));
+        }
+        return $this->attributes;
+    }
+
+
+    /**
+     * @param Attributes $attributes
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function setAttributes(Attributes $attributes)
+    {
+        // set local object
+        $this->attributes = $attributes;
+        // then pass to model as an array which will get converted to JSON by the model field
+        $this->set('FSC_attributes', $attributes->toArray());
+    }
+
+
+    /**
      * UUID or ID of related entity this form section belongs to.
      *
      * @return string
@@ -186,26 +206,106 @@ class EE_Form_Section extends EE_Base_Class
 
 
     /**
-     * HTML classes to be applied to this form section's container.
-     *
-     * @return string
+     * @return EE_Form_Element[]
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function htmlClass(): ?string
+    public function formElements(): array
     {
-        return $this->get('FSC_htmlClass');
+        return $this->form_elements ?: $this->getFormElements();
     }
 
 
     /**
-     * @param string $html_class
+     * @return EE_Form_Element[]
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function setHtmlClass(string $html_class)
+    private function getFormElements(): array
     {
-        $this->set('FSC_htmlClass', $html_class);
+        $form_elements = $this->get_many_related('Form_Element', ['order_by' => ['FIN_order' => 'ASC']]);
+        foreach ($form_elements as $form_element) {
+            if ($form_element instanceof EE_Form_Element) {
+                $this->form_elements[ $form_element->UUID() ] = $form_element;
+            }
+        }
+        return $this->form_elements;
+    }
+
+
+    /**
+     * @param EE_Form_Element[] $form_elements
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function setFormElements(array $form_elements): void
+    {
+        foreach ($form_elements as $form_element) {
+            if ($form_element instanceof EE_Form_Element) {
+                $this->form_elements[ $form_element->UUID() ] = $form_element;
+            }
+        }
+    }
+
+
+    /**
+     * @param EE_Form_Element[] $all_form_elements
+     * @return EE_Form_Element[]
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function filterFormElements(array $all_form_elements): array
+    {
+        return array_filter($all_form_elements, $this->formElementFilter());
+    }
+
+
+    /**
+     * returns a closure that can be used to filter form elements for this form section
+     * usage:
+     *  $filter = EEM_Form_Element::formElementFilter();
+     *  $filtered_form_elements = array_filter( $all_form_elements, $filter );
+     *
+     * @return Closure
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function formElementFilter(): Closure
+    {
+        $FSC_UUID = strtolower($this->UUID());
+        return function ($form_element) use ($FSC_UUID) {
+            return $form_element instanceof EE_Form_Element && strtolower($form_element->belongsTo()) === $FSC_UUID;
+        };
+    }
+
+
+    /**
+     * returns a FormLabel object for managing form section labels, ie: the form section heading
+     *
+     * @return FormLabel
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function label(): ?FormLabel
+    {
+        if (! $this->label instanceof FormLabel) {
+            $this->label = FormLabel::fromJson($this->get('FSC_label'));
+        }
+        return $this->label;
+    }
+
+
+    /**
+     * @param FormLabel $label
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function setLabel(FormLabel $label)
+    {
+        // set local object
+        $this->label = $label;
+        // then pass to model as an array which will get converted to JSON by the model field
+        $this->set('FSC_label', $label->toJson());
     }
 
 
@@ -234,54 +334,6 @@ class EE_Form_Section extends EE_Base_Class
 
 
     /**
-     * Form Section label displayed on public forms as a heading
-     *
-     * @return string
-     * @throws EE_Error
-     * @throws ReflectionException
-     */
-    public function publicLabel(): ?string
-    {
-        return $this->get('FSC_publicLabel');
-    }
-
-
-    /**
-     * @param string $public_label
-     * @throws EE_Error
-     * @throws ReflectionException
-     */
-    public function setPublicLabel(string $public_label)
-    {
-        $this->set('FSC_publicLabel', $public_label);
-    }
-
-
-    /**
-     * Form Section label displayed on public forms as a heading
-     *
-     * @return bool
-     * @throws EE_Error
-     * @throws ReflectionException
-     */
-    public function showLabel(): ?bool
-    {
-        return $this->get('FSC_showLabel');
-    }
-
-
-    /**
-     * @param bool $show_label
-     * @throws EE_Error
-     * @throws ReflectionException
-     */
-    public function setShowLabel(bool $show_label)
-    {
-        $this->set('FSC_showLabel', $show_label);
-    }
-
-
-    /**
      * combination of public label and UUID slug for use in identifiers
      *
      * @return string
@@ -290,7 +342,7 @@ class EE_Form_Section extends EE_Base_Class
      */
     public function slug(): ?string
     {
-        $label = sanitize_title($this->publicLabel());
+        $label = sanitize_title($this->label()->publicLabel());
         return "{$label}-{$this->uuidSlug()}";
     }
 
@@ -348,75 +400,16 @@ class EE_Form_Section extends EE_Base_Class
 
 
     /**
-     * @return EE_Form_Input[]
+     * @param array $set_cols_n_values
+     * @return bool|int|string
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function formInputs(): array
+    public function save($set_cols_n_values = [])
     {
-        return $this->form_inputs ?: $this->getFormInputs();
-    }
-
-
-    /**
-     * @return EE_Form_Input[]
-     * @throws EE_Error
-     * @throws ReflectionException
-     */
-    private function getFormInputs(): array
-    {
-        $form_inputs = $this->get_many_related('Form_Input', ['order_by' => ['FIN_order' => 'ASC']]);
-        foreach ($form_inputs as $form_input) {
-            if ($form_input instanceof EE_Form_Input) {
-                $this->form_inputs[ $form_input->UUID()] = $form_input;
-            }
-        }
-        return $this->form_inputs;
-    }
-
-
-    /**
-     * @param EE_Form_Input[] $form_inputs
-     * @throws EE_Error
-     * @throws ReflectionException
-     */
-    public function setFormInputs(array $form_inputs): void
-    {
-        foreach ($form_inputs as $form_input) {
-            if ($form_input instanceof EE_Form_Input) {
-                $this->form_inputs[ $form_input->UUID()] = $form_input;
-            }
-        }
-    }
-
-
-    /**
-     * @param EE_Form_Input[] $all_form_inputs
-     * @return EE_Form_Input[]
-     * @throws EE_Error
-     * @throws ReflectionException
-     */
-    public function filterFormInputs(array $all_form_inputs): array
-    {
-        return array_filter($all_form_inputs, $this->formInputFilter());
-    }
-
-
-    /**
-     * returns a closure that can be used to filter form inputs for this form section
-     * usage:
-     *  $filter = EEM_Form_Input::formInputFilter();
-     *  $filtered_form_inputs = array_filter( $all_form_inputs, $filter );
-     *
-     * @return Closure
-     * @throws EE_Error
-     * @throws ReflectionException
-     */
-    public function formInputFilter(): Closure
-    {
-        $FSC_UUID = strtolower($this->UUID());
-        return function ($form_input) use ($FSC_UUID) {
-            return $form_input instanceof EE_Form_Input && strtolower($form_input->belongsTo()) === $FSC_UUID;
-        };
+        // make sure internal versions for all composite objects are updated
+        $this->set('FSC_attributes', $this->attributes()->toArray());
+        $this->set('FSC_label', $this->label()->toArray());
+        return parent::save($set_cols_n_values);
     }
 }
