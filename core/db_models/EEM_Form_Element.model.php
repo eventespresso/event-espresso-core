@@ -89,7 +89,7 @@ class EEM_Form_Element extends EEM_Base
                         'event_espresso'
                     ),
                     true,
-                    null
+                    '{}'
                 ),
                 'FIN_helpText' => new EE_JSON_Field(
                     'FIN_helpText',
@@ -98,21 +98,21 @@ class EEM_Form_Element extends EEM_Base
                         'event_espresso'
                     ),
                     true,
-                    null
+                    '{}'
                 ),
                 'FIN_label' => new EE_JSON_Field(
                     'FIN_label',
                     esc_html__(
-                        'JSON string of properties pertaining to to an input\'s label.',
+                        'JSON string of properties pertaining to an element\'s label.',
                         'event_espresso'
                     ),
                     true,
-                    null
+                    '{}'
                 ),
                 'FIN_mapsTo'     => new EE_Plain_Text_Field(
                     'FIN_mapsTo',
                     esc_html__(
-                        'Model and Fields name that this input maps to; ex: Attendee.email',
+                        'Model and Fields name that this element maps to; ex: Attendee.email',
                         'event_espresso'
                     ),
                     true,
@@ -125,7 +125,7 @@ class EEM_Form_Element extends EEM_Base
                         'event_espresso'
                     ),
                     true,
-                    null
+                    '[]'
                 ),
                 'FIN_order'     => new EE_Integer_Field(
                     'FIN_order',
@@ -148,7 +148,7 @@ class EEM_Form_Element extends EEM_Base
                         sprintf(
                             /* translators: 1 class name */
                             __(
-                                'Whether form input is active, archived, trashed, or used as a default on new forms. Values correspond to the %s constants.',
+                                'Whether form element is active, archived, trashed, or used as a default on new forms. Values correspond to the %s constants.',
                                 'event_espresso'
                             ),
                             'EEM_Form_Element::STATUS_*'
