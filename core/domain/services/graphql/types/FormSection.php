@@ -61,13 +61,14 @@ class FormSection extends TypeBase
                 esc_html__('Form user type that this form section should be presented to.', 'event_espresso')
             ),
             new GraphQLField(
-                'adminLabel',
+                'attributes',
                 'String',
-                'adminLabel',
+                'attributes',
                 esc_html__(
-                    'Form Section label displayed in the admin to help differentiate it from others.',
+                    'JSON string of HTML attributes, such as class, to be applied to this form section\'s container.',
                     'event_espresso'
-                )
+                ),
+                [$this, 'toJson']
             ),
             new GraphQLField(
                 'belongsTo',
@@ -76,10 +77,14 @@ class FormSection extends TypeBase
                 esc_html__('UUID or ID of related entity this form section belongs to.', 'event_espresso')
             ),
             new GraphQLField(
-                'htmlClass',
+                'label',
                 'String',
-                'htmlClass',
-                esc_html__('HTML classes to be applied to this form section\'s container.', 'event_espresso')
+                'label',
+                esc_html__(
+                    'JSON string of properties pertaining to a form section\'s label.',
+                    'event_espresso'
+                ),
+                [$this, 'toJson']
             ),
             new GraphQLField(
                 'order',
@@ -88,23 +93,8 @@ class FormSection extends TypeBase
                 esc_html__('Order in which form section appears in a form.', 'event_espresso')
             ),
             new GraphQLField(
-                'publicLabel',
-                'String',
-                'publicLabel',
-                esc_html__('Form Section label displayed on public forms as a heading.', 'event_espresso')
-            ),
-            new GraphQLField(
-                'showLabel',
-                'Boolean',
-                'showLabel',
-                esc_html__(
-                    'Whether or not to display the Form Section name (Public Label) on public forms.',
-                    'event_espresso'
-                )
-            ),
-            new GraphQLField(
                 'status',
-                $this->namespace . 'FormSectionStatusEnum',
+                $this->namespace . 'FormStatusEnum',
                 'status',
                 esc_html__(
                     'Whether form section is active, archived, shared, trashed, or used as a default on new forms.',
@@ -119,7 +109,7 @@ class FormSection extends TypeBase
             ),
             new GraphQLInputField(
                 'wpUser',
-                'Int',
+                'ID',
                 null,
                 esc_html__('ID of the WP User that created the form section.', 'event_espresso')
             ),

@@ -237,7 +237,7 @@ class EE_DMS_Core_4_12_0 extends EE_Data_Migration_Script_Base
 				KEY second_model (EXJ_second_model_name,EXJ_second_model_id)";
         $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB ');
 
-        $table_name = 'esp_form_input';
+        $table_name = 'esp_form_element';
         $sql        = "FIN_UUID varchar(25) NOT NULL,
 				FSC_UUID varchar(25) NOT NULL,
 				FIN_adminOnly tinyint(1) unsigned NOT NULL DEFAULT 0,
@@ -249,6 +249,7 @@ class EE_DMS_Core_4_12_0 extends EE_Data_Migration_Script_Base
 				FIN_order tinyint(2) unsigned NOT NULL DEFAULT 0,
 				FIN_required text DEFAULT NULL,
 				FIN_status varchar(32) NOT NULL DEFAULT 'active',
+				FIN_type tinytext DEFAULT NULL,
 				FIN_wpUser bigint(20) unsigned DEFAULT NULL,
 				PRIMARY KEY  (FIN_UUID),
 				KEY FSC_UUID (FSC_UUID),
