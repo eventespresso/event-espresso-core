@@ -1,41 +1,34 @@
 <?php
 
-use EventEspresso\core\services\form\meta\Element;
-use EventEspresso\core\services\form\meta\inputs\Text;
+use EventEspresso\core\services\form\meta\FormStatus;
 use EventEspresso\core\services\form\meta\InputTypes;
 use EventEspresso\core\services\request\RequestInterface;
 
 /**
- * Class EEM_Form_Input
- *
- * FIN_UUID         string
- * FIN_adminLabel    string
- * FIN_adminOnly    bool
- * FIN_belongsTo    string    UUID of parent form section
- * FIN_helpClass    string
- * FIN_helpText    string
- * FIN_htmlClass    string
- * FIN_max    int
- * FIN_min    int
- * FIN_order    int
- * FIN_placeholder    string
- * FIN_publicLabel    html label text
- * FIN_required    bool
- * FIN_requiredText    string
- * FIN_status    string    ex: 'archived'
- * FIN_type    string
- * FIN_wpUser    int
+ * Class EEM_Form_Element
  *
  * Model Fields:
+ *  FIN_UUID         string
+ *  FSC_UUID         string    UUID of parent form section
+ *  FIN_adminOnly    bool
+ *  FIN_attributes   JSON string
+ *  FIN_helpText     JSON string
+ *  FIN_label        JSON string
+ *  FIN_mapsTo       string
+ *  FIN_options      JSON string
+ *  FIN_order        int
+ *  FIN_required     JSON string
+ *  FIN_status       string    ex: 'archived'
+ *  FIN_wpUser       int
  *
  * @author  Brent Christensen
  * @since   $VID:$
  */
-class EEM_Form_Input extends EEM_Form_Element
+class EEM_Form_Element extends EEM_Base
 {
 
     /**
-     * @var EEM_Form_Input
+     * @var EEM_Form_Element
      */
     protected static $_instance;
 
@@ -50,20 +43,28 @@ class EEM_Form_Input extends EEM_Form_Element
     private $input_types;
 
 
-    protected function __construct(Element $element, InputTypes $input_types, $timezone = null)
+    /**
+     * EEM_Form_Element constructor.
+     *
+     * @param FormStatus  $form_status
+     * @param InputTypes  $input_types
+     * @param string|null $timezone
+     * @throws EE_Error
+     */
+    protected function __construct(FormStatus $form_status, InputTypes $input_types, ?string $timezone)
     {
         $this->input_types = $input_types;
-        $this->singular_item = esc_html__('Form Input', 'event_espresso');
-        $this->plural_item   = esc_html__('Form Inputs', 'event_espresso');
+        $this->singular_item = esc_html__('Form Element', 'event_espresso');
+        $this->plural_item   = esc_html__('Form Elements', 'event_espresso');
 
         $this->_tables          = [
-            'Form_Input' => new EE_Primary_Table('esp_form_input', 'FIN_UUID'),
+            'Form_Element' => new EE_Primary_Table('esp_form_element', 'FIN_UUID'),
         ];
         $this->_fields          = [
-            'Form_Input' => [
+            'Form_Element' => [
                 'FIN_UUID'      => new EE_Primary_Key_String_Field(
                     'FIN_UUID',
-                    esc_html__('Form Input UUID (universally unique identifier)', 'event_espresso')
+                    esc_html__('Form Element UUID (universally unique identifier)', 'event_espresso')
                 ),
                 'FSC_UUID' => new EE_Foreign_Key_String_Field(
                     'FSC_UUID',
@@ -71,15 +72,6 @@ class EEM_Form_Input extends EEM_Form_Element
                     false,
                     null,
                     ['Form_Section']
-                ),
-                'FIN_adminLabel' => new EE_Plain_Text_Field(
-                    'FIN_adminLabel',
-                    esc_html__(
-                        'Input label displayed in the admin to help differentiate input from others.',
-                        'event_espresso'
-                    ),
-                    true,
-                    null
                 ),
                 'FIN_adminOnly' => new EE_Boolean_Field(
                     'FIN_adminOnly',
@@ -90,24 +82,30 @@ class EEM_Form_Input extends EEM_Form_Element
                     false,
                     false
                 ),
-                'FIN_helpClass' => new EE_Plain_Text_Field(
-                    'FIN_helpClass',
-                    esc_html__('Custom HTML classes to be applied to this form input\'s help text.', 'event_espresso'),
-                    true,
-                    null
-                ),
-                'FIN_helpText' => new EE_Plain_Text_Field(
-                    'FIN_helpText',
+                'FIN_attributes' => new EE_JSON_Field(
+                    'FIN_attributes',
                     esc_html__(
-                        'Additional text displayed alongside a form input to assist users with completing the form.',
+                        'JSON string of HTML attributes such as class, max, min, placeholder, type, etc.',
                         'event_espresso'
                     ),
                     true,
                     null
                 ),
-                'FIN_htmlClass' => new EE_Plain_Text_Field(
-                    'FIN_htmlClass',
-                    esc_html__('HTML classes to be applied to this form input\'s container.', 'event_espresso'),
+                'FIN_helpText' => new EE_JSON_Field(
+                    'FIN_helpText',
+                    esc_html__(
+                        'JSON string of properties pertaining to any help text required for an input.',
+                        'event_espresso'
+                    ),
+                    true,
+                    null
+                ),
+                'FIN_label' => new EE_JSON_Field(
+                    'FIN_label',
+                    esc_html__(
+                        'JSON string of properties pertaining to to an input\'s label.',
+                        'event_espresso'
+                    ),
                     true,
                     null
                 ),
@@ -115,24 +113,6 @@ class EEM_Form_Input extends EEM_Form_Element
                     'FIN_mapsTo',
                     esc_html__(
                         'Model and Fields name that this input maps to; ex: Attendee.email',
-                        'event_espresso'
-                    ),
-                    true,
-                    null
-                ),
-                'FIN_max'     => new EE_Integer_Field(
-                    'FIN_max',
-                    esc_html__(
-                        'Maximum numeric value or maximum characters allowed for form input answer.',
-                        'event_espresso'
-                    ),
-                    false,
-                    EE_INF
-                ),
-                'FIN_min'     => new EE_Integer_Field(
-                    'FIN_min',
-                    esc_html__(
-                        'Minimum numeric value or minimum characters allowed for form input answer.',
                         'event_espresso'
                     ),
                     true,
@@ -153,38 +133,14 @@ class EEM_Form_Input extends EEM_Form_Element
                     false,
                     0
                 ),
-                'FIN_placeholder' => new EE_Plain_Text_Field(
-                    'FIN_placeholder',
-                    esc_html__(
-                        'Example text displayed within an input to assist users with completing the form.',
-                        'event_espresso'
-                    ),
-                    true,
-                    null
-                ),
-                'FIN_publicLabel' => new EE_Plain_Text_Field(
-                    'FIN_publicLabel',
-                    esc_html__('Input label displayed on public forms, ie: the actual question text.', 'event_espresso'),
-                    true,
-                    null
-                ),
-                'FIN_required' => new EE_Boolean_Field(
+                'FIN_required' => new EE_JSON_Field(
                     'FIN_required',
                     esc_html__(
-                        'Whether or not the input must be supplied with a value in order to complete the form.',
+                        'properties pertaining to an input\'s required status and the validation text to display.',
                         'event_espresso'
                     ),
                     false,
                     false
-                ),
-                'FIN_requiredText' => new EE_Plain_Text_Field(
-                    'FIN_requiredText',
-                    esc_html__(
-                        'Custom validation text displayed alongside a required form input to assist users with completing the form.',
-                        'event_espresso'
-                    ),
-                    true,
-                    null
                 ),
                 'FIN_status'    => new EE_Enum_Text_Field(
                     'FIN_status',
@@ -195,28 +151,12 @@ class EEM_Form_Input extends EEM_Form_Element
                                 'Whether form input is active, archived, trashed, or used as a default on new forms. Values correspond to the %s constants.',
                                 'event_espresso'
                             ),
-                            'EEM_Form_Input::STATUS_*'
+                            'EEM_Form_Element::STATUS_*'
                         )
                     ),
                     false,
-                    Element::STATUS_ACTIVE,
-                    $element->validStatusOptions()
-                ),
-                'FIN_type'    => new EE_Enum_Text_Field(
-                    'FIN_type',
-                    esc_html(
-                        sprintf(
-                            /* translators: 1 class name */
-                            __(
-                                'Form input type. Values correspond to the %s constants.',
-                                'event_espresso'
-                            ),
-                            'EventEspresso\core\domain\entities\form\Input::TYPE_*'
-                        )
-                    ),
-                    false,
-                    Text::TYPE_TEXT,
-                    $this->validTypeOptions()
+                    FormStatus::ACTIVE,
+                    $form_status->validStatusOptions()
                 ),
                 'FIN_wpUser'    => new EE_WP_User_Field(
                     'FIN_wpUser',
@@ -237,7 +177,7 @@ class EEM_Form_Input extends EEM_Form_Element
             EEM_Base::caps_edit       => new EE_Restriction_Generator_Reg_Form('FIN_applies_to'),
             EEM_Base::caps_delete     => new EE_Restriction_Generator_Reg_Form('FIN_applies_to'),
         ];
-        parent::__construct($element, $timezone);
+        parent::__construct($timezone);
         $this->request = $this->getLoader()->getShared('EventEspresso\core\services\request\RequestInterface');
     }
 
@@ -272,24 +212,24 @@ class EEM_Form_Input extends EEM_Form_Element
 
     /**
      * @param EE_Form_Section $form_section
-     * @param EE_Form_Input[] $all_form_inputs
-     * @return EE_Form_Input[]
+     * @param EE_Form_Element[] $all_form_elements
+     * @return EE_Form_Element[]
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function filterFormInputsForFormSection(EE_Form_Section $form_section, array $all_form_inputs): array
+    public function filterFormElementsForFormSection(EE_Form_Section $form_section, array $all_form_elements): array
     {
-        return array_filter($all_form_inputs, $form_section->formInputFilter());
+        return array_filter($all_form_elements, $form_section->formElementFilter());
     }
 
 
     /**
      * @param EE_Form_Section[] $form_sections
-     * @return EE_Form_Input[]
+     * @return EE_Form_Element[]
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function getAllFormInputsForFormSections(array $form_sections): array
+    public function getAllFormElementsForFormSections(array $form_sections): array
     {
         $FSC_UUIDs = [];
         foreach ($form_sections as $form_section) {

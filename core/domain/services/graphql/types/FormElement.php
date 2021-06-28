@@ -2,7 +2,7 @@
 
 namespace EventEspresso\core\domain\services\graphql\types;
 
-use EEM_Form_Input;
+use EEM_Form_Element;
 use EventEspresso\core\services\graphql\fields\GraphQLFieldInterface;
 use EventEspresso\core\services\graphql\types\TypeBase;
 use EventEspresso\core\services\graphql\fields\GraphQLField;
@@ -22,6 +22,7 @@ use ReflectionException;
  * @package EventEspresso\core\domain\services\graphql\types
  * @author  Manzoor Wani
  * @since   $VID:$
+ * @property EEM_Form_Element $model
  */
 class FormElement extends TypeBase
 {
@@ -29,9 +30,9 @@ class FormElement extends TypeBase
     /**
      * FormElement constructor.
      *
-     * @param EEM_Form_Input $form_element_model
+     * @param EEM_Form_Element $form_element_model
      */
-    public function __construct(EEM_Form_Input $form_element_model)
+    public function __construct(EEM_Form_Element $form_element_model)
     {
         $this->setName($this->namespace . 'FormElement');
         $this->setDescription(__('A form element', 'event_espresso'));

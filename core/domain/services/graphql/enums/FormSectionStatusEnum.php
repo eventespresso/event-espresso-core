@@ -3,7 +3,7 @@
 namespace EventEspresso\core\domain\services\graphql\enums;
 
 use EventEspresso\core\services\graphql\enums\EnumBase;
-use EventEspresso\core\services\form\meta\Element;
+use EventEspresso\core\services\form\meta\FormStatus;
 
 /**
  * Class FormSectionStatusEnum
@@ -37,19 +37,19 @@ class FormSectionStatusEnum extends EnumBase
     {
         return [
             'ACTIVE'   => [
-                'value' => Element::STATUS_ACTIVE,
+                'value' => FormStatus::ACTIVE,
             ],
             'ARCHIVED' => [
-                'value' => Element::STATUS_ARCHIVED,
+                'value' => FormStatus::ARCHIVED,
             ],
             'DEFAULT'  => [
-                'value' => Element::STATUS_DEFAULT,
+                'value' => FormStatus::DEFAULT,
             ],
             'SHARED'   => [
-                'value' => Element::STATUS_SHARED,
+                'value' => FormStatus::SHARED,
             ],
             'TRASHED'  => [
-                'value' => Element::STATUS_TRASHED,
+                'value' => FormStatus::TRASHED,
             ],
         ];
     }

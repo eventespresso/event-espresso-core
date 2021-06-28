@@ -2,7 +2,7 @@
 
 namespace EventEspresso\core\domain\services\graphql\connections;
 
-use EEM_Form_Input;
+use EEM_Form_Element;
 use EventEspresso\core\domain\services\graphql\connection_resolvers\AbstractConnectionResolver;
 use EventEspresso\core\domain\services\graphql\connection_resolvers\FormElementConnectionResolver;
 use EventEspresso\core\domain\services\graphql\abstracts\AbstractRootQueryConnection;
@@ -23,9 +23,9 @@ class RootQueryFormElementsConnection extends AbstractRootQueryConnection
     /**
      * FormElementConnection constructor.
      *
-     * @param EEM_Form_Input               $model
+     * @param EEM_Form_Element $model
      */
-    public function __construct(EEM_Form_Input $model)
+    public function __construct(EEM_Form_Element $model)
     {
         parent::__construct($model);
     }
