@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\services\form\meta;
 
+use EEM_Base;
 use EventEspresso\core\services\form\meta\inputs\Text;
 use EventEspresso\core\services\json\JsonDataHandler;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -14,7 +15,7 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  * @package EventEspresso\core\services\form\meta
  * @since   $VID:$
  */
-class Attributes
+class Attributes implements JsonableInterface
 {
 
     /**
@@ -99,9 +100,10 @@ class Attributes
     public static function fromJson(string $json): Attributes
     {
         $json_data_handler = new JsonDataHandler();
-        $json_data_handler->configure(JsonDataHandler::DATA_TYPE_OBJECT);
+        $json_data_handler->configure(JsonDataHandler::DATA_TYPE_ARRAY);
         $attributes = $json_data_handler->decodeJson($json);
-        return LoaderFactory::getNew(Attributes::class, [ $json_data_handler, $attributes ]);
+        $input_types = LoaderFactory::getShared('EventEspresso\core\services\form\meta\InputTypes');
+        return LoaderFactory::getNew(Attributes::class, [ $json_data_handler, $attributes, $input_types ]);
     }
 
 
@@ -171,7 +173,7 @@ class Attributes
      */
     public function addAttribute(string $attribute, $value): void
     {
-        if (array_key_exists($attribute, $this->attributes)) {
+        if (!array_key_exists($attribute, $this->attributes)) {
             $this->attributes[ $attribute ] = $this->sanitize($attribute, $value);
         }
     }
