@@ -759,7 +759,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                 $arguments = [
                     EEM_Base::getLoader()->getShared('EventEspresso\core\services\form\meta\FormStatus'),
                     EEM_Base::getLoader()->getShared('EventEspresso\core\services\form\meta\InputTypes'),
-                    $timezone
+                    $timezone,
                 ];
             }
         }
@@ -789,7 +789,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             static::$_instance = $model;
         }
         // we might have a timezone set, let set_timezone decide what to do with it
-        if ($timezone){
+        if ($timezone) {
             static::$_instance->set_timezone($timezone);
         }
         // Espresso_model object
@@ -3126,9 +3126,11 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                 case self::not_prepared_by_model_object:
                     $value = $field->prepare_for_set($value);
                 // purposefully left out "return"
+                // no break
                 case self::prepared_by_model_object:
                     /** @noinspection SuspiciousAssignmentsInspection */
                     $value = $field->prepare_for_use_in_db($value);
+                    // no break
                 case self::prepared_for_use_in_db:
                     // leave the value alone
             }
@@ -4161,7 +4163,8 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     {
         if (
             $this->_custom_selections instanceof CustomSelects
-            && ($this->_custom_selections->type() === CustomSelects::TYPE_STRUCTURED
+            && (
+                $this->_custom_selections->type() === CustomSelects::TYPE_STRUCTURED
                 || $this->_custom_selections->type() == CustomSelects::TYPE_COMPLEX
             )
         ) {
