@@ -19,6 +19,7 @@ use EventEspresso\core\services\request\RequestInterface;
  *  FIN_order        int
  *  FIN_required     JSON string
  *  FIN_status       string    ex: 'archived'
+ *  FIN_type    string
  *  FIN_wpUser       int
  *
  * @author  Brent Christensen
@@ -53,7 +54,7 @@ class EEM_Form_Element extends EEM_Base
      */
     protected function __construct(FormStatus $form_status, InputTypes $input_types, ?string $timezone)
     {
-        $this->input_types = $input_types;
+        $this->input_types   = $input_types;
         $this->singular_item = esc_html__('Form Element', 'event_espresso');
         $this->plural_item   = esc_html__('Form Elements', 'event_espresso');
 
@@ -89,7 +90,7 @@ class EEM_Form_Element extends EEM_Base
                         'event_espresso'
                     ),
                     true,
-                    null
+                    '{}'
                 ),
                 'FIN_helpText' => new EE_JSON_Field(
                     'FIN_helpText',
@@ -98,21 +99,21 @@ class EEM_Form_Element extends EEM_Base
                         'event_espresso'
                     ),
                     true,
-                    null
+                    '{}'
                 ),
                 'FIN_label' => new EE_JSON_Field(
                     'FIN_label',
                     esc_html__(
-                        'JSON string of properties pertaining to to an input\'s label.',
+                        'JSON string of properties pertaining to an element\'s label.',
                         'event_espresso'
                     ),
                     true,
-                    null
+                    '{}'
                 ),
                 'FIN_mapsTo'     => new EE_Plain_Text_Field(
                     'FIN_mapsTo',
                     esc_html__(
-                        'Model and Fields name that this input maps to; ex: Attendee.email',
+                        'Model and Fields name that this element maps to; ex: Attendee.email',
                         'event_espresso'
                     ),
                     true,
@@ -125,7 +126,7 @@ class EEM_Form_Element extends EEM_Base
                         'event_espresso'
                     ),
                     true,
-                    null
+                    '[]'
                 ),
                 'FIN_order'     => new EE_Integer_Field(
                     'FIN_order',
@@ -148,15 +149,22 @@ class EEM_Form_Element extends EEM_Base
                         sprintf(
                             /* translators: 1 class name */
                             __(
-                                'Whether form input is active, archived, trashed, or used as a default on new forms. Values correspond to the %s constants.',
+                                'Whether form element is active, archived, trashed, or used as a default on new forms. Values correspond to the %1$s class constants.',
                                 'event_espresso'
                             ),
-                            'EEM_Form_Element::STATUS_*'
+                            'EventEspresso\core\services\form\meta\FormStatus'
                         )
                     ),
                     false,
                     FormStatus::ACTIVE,
                     $form_status->validStatusOptions()
+                ),
+                'FIN_type'    => new EE_Enum_Text_Field(
+                    'FIN_type',
+                    esc_html__('Form element type.', 'event_espresso'),
+                    false,
+                    false,
+                    $input_types->validTypeOptions()
                 ),
                 'FIN_wpUser'    => new EE_WP_User_Field(
                     'FIN_wpUser',

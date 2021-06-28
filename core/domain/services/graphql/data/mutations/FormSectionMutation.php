@@ -2,6 +2,8 @@
 
 namespace EventEspresso\core\domain\services\graphql\data\mutations;
 
+use EventEspresso\core\services\form\meta\Attributes;
+use EventEspresso\core\services\form\meta\FormLabel;
 use GraphQLRelay\Relay;
 
 /**
@@ -27,17 +29,20 @@ class FormSectionMutation
             $args['FSC_UUID'] = sanitize_text_field($input['id']);
         }
 
-
         if (isset($input['appliesTo'])) {
             $args['FSC_appliesTo'] = sanitize_text_field($input['appliesTo']);
+        }
+
+        if (isset($input['attributes'])) {
+            $args['FSC_attributes'] = Attributes::fromJson(sanitize_text_field($input['attributes']))->toJson();
         }
 
         if (isset($input['belongsTo'])) {
             $args['FSC_belongsTo'] = sanitize_text_field($input['belongsTo']);
         }
 
-        if (isset($input['htmlClass'])) {
-            $args['FSC_htmlClass'] = sanitize_text_field($input['htmlClass']);
+        if (isset($input['label'])) {
+            $args['FSC_label'] = FormLabel::fromJson(sanitize_text_field($input['label']))->toJson();
         }
 
         // order can be 0
