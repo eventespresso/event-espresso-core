@@ -19,6 +19,7 @@ use GraphQL\Type\Definition\ResolveInfo;
  * @package EventEspresso\core\domain\services\graphql\types
  * @author  Brent Christensen
  * @since   $VID:$
+ * @property EEM_Attendee $model
  */
 class Attendee extends TypeBase
 {

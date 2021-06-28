@@ -22,6 +22,7 @@ use ReflectionException;
  * @package EventEspresso\core\domain\services\graphql\types
  * @author  Manzoor Wani
  * @since   $VID:$
+ * @property EEM_Form_Section $model
  */
 class FormSection extends TypeBase
 {
