@@ -131,7 +131,7 @@ class EEM_Form_Section extends EEM_Base
                                 'Whether form section is active, archived, shared, trashed, or used as a default on new forms. Values correspond to the %s constants.',
                                 'event_espresso'
                             ),
-                            'EEM_Form_Section::STATUS_TO_'
+                            'EventEspresso\core\services\form\meta\FormStatus'
                         )
                     ),
                     false,

@@ -4,6 +4,7 @@ namespace EventEspresso\core\domain\services\graphql\enums;
 
 use EventEspresso\core\services\graphql\enums\EnumBase;
 use EventEspresso\core\services\form\meta\FormStatus;
+use EventEspresso\core\services\loaders\LoaderFactory;
 
 /**
  * Class FormStatusEnum
@@ -35,22 +36,9 @@ class FormStatusEnum extends EnumBase
      */
     protected function getValues(): array
     {
-        return [
-            'ACTIVE'   => [
-                'value' => FormStatus::ACTIVE,
-            ],
-            'ARCHIVED' => [
-                'value' => FormStatus::ARCHIVED,
-            ],
-            'DEFAULT'  => [
-                'value' => FormStatus::DEFAULT,
-            ],
-            'SHARED'   => [
-                'value' => FormStatus::SHARED,
-            ],
-            'TRASHED'  => [
-                'value' => FormStatus::TRASHED,
-            ],
-        ];
+        /** @var FormStatus */
+        $form_status = LoaderFactory::getShared('EventEspresso\core\services\form\meta\FormStatus');
+
+        return $form_status->getFormStatusValues();
     }
 }

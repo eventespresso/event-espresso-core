@@ -2,7 +2,6 @@
 
 namespace EventEspresso\core\services\form\meta;
 
-use EEM_Base;
 use EventEspresso\core\services\form\meta\inputs\Text;
 use EventEspresso\core\services\json\JsonDataHandler;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -24,9 +23,9 @@ class Attributes implements JsonableInterface
     private $json_data_handler;
 
     /**
-     * @var InputTypes
+     * @var ElementTypes
      */
-    private $input_types;
+    private $element_types;
 
     /**
      * @var array
@@ -82,13 +81,13 @@ class Attributes implements JsonableInterface
      * Attributes constructor.
      *
      * @param JsonDataHandler $json_data_handler
-     * @param InputTypes      $input_types
+     * @param ElementTypes    $element_types
      * @param array           $attributes
      */
-    public function __construct(JsonDataHandler $json_data_handler, array $attributes, InputTypes $input_types)
+    public function __construct(JsonDataHandler $json_data_handler, array $attributes, ElementTypes $element_types)
     {
         $this->json_data_handler = $json_data_handler;
-        $this->input_types = $input_types;
+        $this->element_types = $element_types;
         $this->setAttributes($attributes);
     }
 
@@ -102,8 +101,9 @@ class Attributes implements JsonableInterface
         $json_data_handler = new JsonDataHandler();
         $json_data_handler->configure(JsonDataHandler::DATA_TYPE_ARRAY);
         $attributes = $json_data_handler->decodeJson($json);
-        $input_types = LoaderFactory::getShared('EventEspresso\core\services\form\meta\InputTypes');
-        return LoaderFactory::getNew(Attributes::class, [ $json_data_handler, $attributes, $input_types ]);
+        /** @var ElementTypes */
+        $element_types = LoaderFactory::getShared('EventEspresso\core\services\form\meta\ElementTypes');
+        return LoaderFactory::getNew(Attributes::class, [ $json_data_handler, $attributes, $element_types ]);
     }
 
 

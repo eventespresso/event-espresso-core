@@ -9,16 +9,17 @@ use EventEspresso\core\services\form\meta\inputs\Number;
 use EventEspresso\core\services\form\meta\inputs\Phone;
 use EventEspresso\core\services\form\meta\inputs\Select;
 use EventEspresso\core\services\form\meta\inputs\Text;
+use EventEspresso\core\services\graphql\Utils as GQLUtils;
 
 /**
- * Class InputTypes
+ * Class ElementTypes
  * For managing all of the various HTML input types
  *
  * @author  Brent Christensen
  * @package EventEspresso\core\services\form\meta
  * @since   $VID:$
  */
-class InputTypes
+class ElementTypes
 {
     /**
      * @var Button
@@ -62,7 +63,7 @@ class InputTypes
 
 
     /**
-     * InputTypes constructor.
+     * ElementTypes constructor.
      *
      * @param Button   $button
      * @param DateTime $datetime
@@ -102,9 +103,22 @@ class InputTypes
         $select     = $this->select->validTypeOptions();
         $text       = $this->text->validTypeOptions();
         $this->valid_type_options = apply_filters(
-            'FHEE__EventEspresso_core_services_form_meta_InputTypes__valid_type_options',
+            'FHEE__EventEspresso_core_services_form_meta_ElementTypes__valid_type_options',
             array_merge($button, $datetime, $input, $number, $phone, $select, $text)
         );
+    }
+
+
+    /**
+     * @return array
+     */
+    public function getElementTypesValues(): array
+    {
+        $values = [];
+        foreach ($this->valid_type_options as $value => $description) {
+            $values[ GQLUtils::formatEnumKey($value) ] = compact('value', 'description');
+        }
+        return $values;
     }
 
 
