@@ -173,7 +173,7 @@ class Attributes implements JsonableInterface
      */
     public function addAttribute(string $attribute, $value): void
     {
-        if (!array_key_exists($attribute, $this->attributes)) {
+        if (array_key_exists($attribute, $this->attribute_types)) {
             $this->attributes[ $attribute ] = $this->sanitize($attribute, $value);
         }
     }
