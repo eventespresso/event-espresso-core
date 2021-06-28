@@ -73,6 +73,10 @@ class FormElementMutation
             $args['FIN_status'] = sanitize_text_field($input['status']);
         }
 
+        if (isset($input['type'])) {
+            $args['FIN_type'] = sanitize_text_field($input['type']);
+        }
+
         if (! empty($input['wpUser'])) {
             $parts = Relay::fromGlobalId(sanitize_text_field($input['wpUser']));
             $args['FIN_wpUser'] = ! empty($parts['id']) ? $parts['id'] : null;

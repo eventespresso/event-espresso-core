@@ -140,6 +140,12 @@ class FormElement extends TypeBase
                     'event_espresso'
                 )
             ),
+            new GraphQLField(
+                'type',
+                $this->namespace . 'ElementTypeEnum',
+                'type',
+                esc_html__('Form element type.', 'event_espresso')
+            ),
             new GraphQLOutputField(
                 'wpUser',
                 'User',
@@ -207,6 +213,10 @@ class FormElement extends TypeBase
                 'mutateAndGetPayload' => FormElementDelete::mutateAndGetPayload($this->model),
             ]
         );
+
+        // Make element 'type' a required field for create mutations
+        // Yes it's "['type']['type']" 😄 - First one the field name, second one the GQL field type
+        $inputFields['type']['type'] = ['non_null' => $inputFields['type']['type']];
 
         // Register mutation to update an entity.
         register_graphql_mutation(

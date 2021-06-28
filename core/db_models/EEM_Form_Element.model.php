@@ -1,7 +1,7 @@
 <?php
 
 use EventEspresso\core\services\form\meta\FormStatus;
-use EventEspresso\core\services\form\meta\InputTypes;
+use EventEspresso\core\services\form\meta\ElementTypes;
 use EventEspresso\core\services\request\RequestInterface;
 
 /**
@@ -19,6 +19,7 @@ use EventEspresso\core\services\request\RequestInterface;
  *  FIN_order        int
  *  FIN_required     JSON string
  *  FIN_status       string    ex: 'archived'
+ *  FIN_type    string
  *  FIN_wpUser       int
  *
  * @author  Brent Christensen
@@ -38,22 +39,22 @@ class EEM_Form_Element extends EEM_Base
     private $request;
 
     /**
-     * @var InputTypes
+     * @var ElementTypes
      */
-    private $input_types;
+    private $element_types;
 
 
     /**
      * EEM_Form_Element constructor.
      *
-     * @param FormStatus  $form_status
-     * @param InputTypes  $input_types
-     * @param string|null $timezone
+     * @param FormStatus   $form_status
+     * @param ElementTypes $element_types
+     * @param string|null  $timezone
      * @throws EE_Error
      */
-    protected function __construct(FormStatus $form_status, InputTypes $input_types, ?string $timezone)
+    protected function __construct(FormStatus $form_status, ElementTypes $element_types, ?string $timezone)
     {
-        $this->input_types = $input_types;
+        $this->element_types = $element_types;
         $this->singular_item = esc_html__('Form Element', 'event_espresso');
         $this->plural_item   = esc_html__('Form Elements', 'event_espresso');
 
@@ -151,12 +152,19 @@ class EEM_Form_Element extends EEM_Base
                                 'Whether form element is active, archived, trashed, or used as a default on new forms. Values correspond to the %s constants.',
                                 'event_espresso'
                             ),
-                            'EEM_Form_Element::STATUS_*'
+                            'EventEspresso\core\services\form\meta\FormStatus'
                         )
                     ),
                     false,
                     FormStatus::ACTIVE,
                     $form_status->validStatusOptions()
+                ),
+                'FIN_type'    => new EE_Enum_Text_Field(
+                    'FIN_type',
+                    esc_html__('Form element type.', 'event_espresso'),
+                    false,
+                    false,
+                    $element_types->validTypeOptions()
                 ),
                 'FIN_wpUser'    => new EE_WP_User_Field(
                     'FIN_wpUser',
@@ -250,6 +258,6 @@ class EEM_Form_Element extends EEM_Base
      */
     public function validTypeOptions(bool $constants_only = false): array
     {
-        return $this->input_types->validTypeOptions($constants_only);
+        return $this->element_types->validTypeOptions($constants_only);
     }
 }

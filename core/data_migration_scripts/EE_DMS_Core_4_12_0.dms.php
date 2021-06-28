@@ -249,6 +249,7 @@ class EE_DMS_Core_4_12_0 extends EE_Data_Migration_Script_Base
 				FIN_order tinyint(2) unsigned NOT NULL DEFAULT 0,
 				FIN_required text DEFAULT NULL,
 				FIN_status varchar(32) NOT NULL DEFAULT 'active',
+				FIN_type tinytext DEFAULT NULL,
 				FIN_wpUser bigint(20) unsigned DEFAULT NULL,
 				PRIMARY KEY  (FIN_UUID),
 				KEY FSC_UUID (FSC_UUID),
