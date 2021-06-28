@@ -128,7 +128,7 @@ class EEM_Form_Section extends EEM_Base
                         sprintf(
                             /* translators: 1 class name */
                             __(
-                                'Whether form section is active, archived, shared, trashed, or used as a default on new forms. Values correspond to the %s constants.',
+                                'Whether form section is active, archived, shared, trashed, or used as a default on new forms. Values correspond to the %1$s class constants.',
                                 'event_espresso'
                             ),
                             'EventEspresso\core\services\form\meta\FormStatus'

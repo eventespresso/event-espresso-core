@@ -25,7 +25,7 @@ class Attributes implements JsonableInterface
     /**
      * @var InputTypes
      */
-    private $element_types;
+    private $input_types;
 
     /**
      * @var array
@@ -87,7 +87,7 @@ class Attributes implements JsonableInterface
     public function __construct(JsonDataHandler $json_data_handler, array $attributes, InputTypes $element_types)
     {
         $this->json_data_handler = $json_data_handler;
-        $this->element_types = $element_types;
+        $this->input_types       = $element_types;
         $this->setAttributes($attributes);
     }
 

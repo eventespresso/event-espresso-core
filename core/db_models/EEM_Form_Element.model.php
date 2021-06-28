@@ -41,20 +41,20 @@ class EEM_Form_Element extends EEM_Base
     /**
      * @var InputTypes
      */
-    private $element_types;
+    private $input_types;
 
 
     /**
      * EEM_Form_Element constructor.
      *
      * @param FormStatus  $form_status
-     * @param InputTypes  $element_types
+     * @param InputTypes  $input_types
      * @param string|null $timezone
      * @throws EE_Error
      */
-    protected function __construct(FormStatus $form_status, InputTypes $element_types, ?string $timezone)
+    protected function __construct(FormStatus $form_status, InputTypes $input_types, ?string $timezone)
     {
-        $this->element_types = $element_types;
+        $this->input_types   = $input_types;
         $this->singular_item = esc_html__('Form Element', 'event_espresso');
         $this->plural_item   = esc_html__('Form Elements', 'event_espresso');
 
@@ -149,7 +149,7 @@ class EEM_Form_Element extends EEM_Base
                         sprintf(
                             /* translators: 1 class name */
                             __(
-                                'Whether form element is active, archived, trashed, or used as a default on new forms. Values correspond to the %s constants.',
+                                'Whether form element is active, archived, trashed, or used as a default on new forms. Values correspond to the %1$s class constants.',
                                 'event_espresso'
                             ),
                             'EventEspresso\core\services\form\meta\FormStatus'
@@ -164,7 +164,7 @@ class EEM_Form_Element extends EEM_Base
                     esc_html__('Form element type.', 'event_espresso'),
                     false,
                     false,
-                    $element_types->validTypeOptions()
+                    $input_types->validTypeOptions()
                 ),
                 'FIN_wpUser'    => new EE_WP_User_Field(
                     'FIN_wpUser',
@@ -258,6 +258,6 @@ class EEM_Form_Element extends EEM_Base
      */
     public function validTypeOptions(bool $constants_only = false): array
     {
-        return $this->element_types->validTypeOptions($constants_only);
+        return $this->input_types->validTypeOptions($constants_only);
     }
 }
