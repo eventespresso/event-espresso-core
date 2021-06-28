@@ -57,7 +57,7 @@ class EE_JSON_Field extends EE_Model_Field_Base
      * so it's best to validate it right away).
      *
      * @param mixed $value_inputted_for_field_on_model_object
-     * @return false|string
+     * @return string
      */
     public function prepare_for_set($value_inputted_for_field_on_model_object)
     {
@@ -71,7 +71,7 @@ class EE_JSON_Field extends EE_Model_Field_Base
      * the validated input on the model object into the format used in the DB.
      *
      * @param mixed $value_of_field_on_model_object
-     * @return false|string
+     * @return string
      */
     public function prepare_for_use_in_db($value_of_field_on_model_object)
     {

@@ -5,6 +5,7 @@ namespace EventEspresso\core\domain\services\graphql\abstracts;
 use EventEspresso\core\domain\services\graphql\connection_resolvers\AbstractConnectionResolver;
 use EventEspresso\core\services\graphql\connections\ConnectionBase;
 use Exception;
+use GraphQL\Deferred;
 
 /**
  * Class RootQueryConnection
@@ -34,10 +35,10 @@ abstract class AbstractRootQueryConnection extends ConnectionBase
      * @param $args
      * @param $context
      * @param $info
-     * @return array
+     * @return mixed|array|Deferred
      * @throws Exception
      */
-    public function resolveConnection($entity, $args, $context, $info): object
+    public function resolveConnection($entity, $args, $context, $info)
     {
         $resolver = $this->getConnectionResolver($entity, $args, $context, $info);
         return $resolver->get_connection();

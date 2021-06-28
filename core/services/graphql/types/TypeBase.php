@@ -3,6 +3,7 @@
 namespace EventEspresso\core\services\graphql\types;
 
 use EE_Error;
+use EE_Soft_Delete_Base_Class;
 use EEM_Base;
 use EE_Base_Class;
 use EventEspresso\core\services\graphql\fields\GraphQLField;
@@ -11,6 +12,7 @@ use EventEspresso\core\domain\services\graphql\resolvers\FieldResolver;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
+use GraphQL\Deferred;
 use GraphQL\Error\UserError;
 use InvalidArgumentException;
 use ReflectionException;
@@ -232,7 +234,7 @@ abstract class TypeBase implements TypeInterface
      * @param array       $args    The inputArgs on the field
      * @param AppContext  $context The AppContext passed down the GraphQL tree
      * @param ResolveInfo $info    The ResolveInfo passed down the GraphQL tree
-     * @return mixed
+     * @return EE_Base_Class|Deferred|string|null
      * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
@@ -254,7 +256,7 @@ abstract class TypeBase implements TypeInterface
      * @param mixed      $payload The payload returned after mutation
      * @param array      $args    The inputArgs on the field
      * @param AppContext $context The AppContext passed down the GraphQL tree
-     * @return string|null
+     * @return EE_Base_Class|EE_Soft_Delete_Base_Class|null
      * @throws EE_Error
      */
     public function resolveFromPayload($payload, array $args, AppContext $context)
