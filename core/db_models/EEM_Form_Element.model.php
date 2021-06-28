@@ -1,7 +1,7 @@
 <?php
 
 use EventEspresso\core\services\form\meta\FormStatus;
-use EventEspresso\core\services\form\meta\ElementTypes;
+use EventEspresso\core\services\form\meta\InputTypes;
 use EventEspresso\core\services\request\RequestInterface;
 
 /**
@@ -39,7 +39,7 @@ class EEM_Form_Element extends EEM_Base
     private $request;
 
     /**
-     * @var ElementTypes
+     * @var InputTypes
      */
     private $element_types;
 
@@ -47,12 +47,12 @@ class EEM_Form_Element extends EEM_Base
     /**
      * EEM_Form_Element constructor.
      *
-     * @param FormStatus   $form_status
-     * @param ElementTypes $element_types
-     * @param string|null  $timezone
+     * @param FormStatus  $form_status
+     * @param InputTypes  $element_types
+     * @param string|null $timezone
      * @throws EE_Error
      */
-    protected function __construct(FormStatus $form_status, ElementTypes $element_types, ?string $timezone)
+    protected function __construct(FormStatus $form_status, InputTypes $element_types, ?string $timezone)
     {
         $this->element_types = $element_types;
         $this->singular_item = esc_html__('Form Element', 'event_espresso');

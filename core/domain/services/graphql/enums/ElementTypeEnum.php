@@ -4,7 +4,7 @@ namespace EventEspresso\core\domain\services\graphql\enums;
 
 use EE_Error;
 use EventEspresso\core\services\graphql\enums\EnumBase;
-use EventEspresso\core\services\form\meta\ElementTypes;
+use EventEspresso\core\services\form\meta\InputTypes;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use ReflectionException;
 
@@ -37,8 +37,8 @@ class ElementTypeEnum extends EnumBase
      */
     protected function getValues(): array
     {
-        /** @var ElementTypes */
-        $element_types = LoaderFactory::getShared('EventEspresso\core\services\form\meta\ElementTypes');
+        /** @var InputTypes */
+        $element_types = LoaderFactory::getShared('EventEspresso\core\services\form\meta\InputTypes');
 
         return $element_types->getElementTypesValues();
     }

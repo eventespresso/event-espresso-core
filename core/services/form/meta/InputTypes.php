@@ -12,14 +12,14 @@ use EventEspresso\core\services\form\meta\inputs\Text;
 use EventEspresso\core\services\graphql\Utils as GQLUtils;
 
 /**
- * Class ElementTypes
+ * Class InputTypes
  * For managing all of the various HTML input types
  *
  * @author  Brent Christensen
  * @package EventEspresso\core\services\form\meta
  * @since   $VID:$
  */
-class ElementTypes
+class InputTypes
 {
     /**
      * @var Button
@@ -63,7 +63,7 @@ class ElementTypes
 
 
     /**
-     * ElementTypes constructor.
+     * InputTypes constructor.
      *
      * @param Button   $button
      * @param DateTime $datetime

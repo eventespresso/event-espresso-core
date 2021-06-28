@@ -23,7 +23,7 @@ class Attributes implements JsonableInterface
     private $json_data_handler;
 
     /**
-     * @var ElementTypes
+     * @var InputTypes
      */
     private $element_types;
 
@@ -81,10 +81,10 @@ class Attributes implements JsonableInterface
      * Attributes constructor.
      *
      * @param JsonDataHandler $json_data_handler
-     * @param ElementTypes    $element_types
+     * @param InputTypes      $element_types
      * @param array           $attributes
      */
-    public function __construct(JsonDataHandler $json_data_handler, array $attributes, ElementTypes $element_types)
+    public function __construct(JsonDataHandler $json_data_handler, array $attributes, InputTypes $element_types)
     {
         $this->json_data_handler = $json_data_handler;
         $this->element_types = $element_types;
@@ -101,8 +101,8 @@ class Attributes implements JsonableInterface
         $json_data_handler = new JsonDataHandler();
         $json_data_handler->configure(JsonDataHandler::DATA_TYPE_ARRAY);
         $attributes = $json_data_handler->decodeJson($json);
-        /** @var ElementTypes */
-        $element_types = LoaderFactory::getShared('EventEspresso\core\services\form\meta\ElementTypes');
+        /** @var InputTypes */
+        $element_types = LoaderFactory::getShared('EventEspresso\core\services\form\meta\InputTypes');
         return LoaderFactory::getNew(Attributes::class, [ $json_data_handler, $attributes, $element_types ]);
     }
 
