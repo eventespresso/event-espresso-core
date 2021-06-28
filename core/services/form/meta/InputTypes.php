@@ -9,10 +9,11 @@ use EventEspresso\core\services\form\meta\inputs\Number;
 use EventEspresso\core\services\form\meta\inputs\Phone;
 use EventEspresso\core\services\form\meta\inputs\Select;
 use EventEspresso\core\services\form\meta\inputs\Text;
+use EventEspresso\core\services\graphql\Utils as GQLUtils;
 
 /**
  * Class InputTypes
- * For managing all of the various HTML input types
+ * For managing meta data for all of the various HTML <input /> types
  *
  * @author  Brent Christensen
  * @package EventEspresso\core\services\form\meta
@@ -105,6 +106,19 @@ class InputTypes
             'FHEE__EventEspresso_core_services_form_meta_InputTypes__valid_type_options',
             array_merge($button, $datetime, $input, $number, $phone, $select, $text)
         );
+    }
+
+
+    /**
+     * @return array
+     */
+    public function getInputTypesValues(): array
+    {
+        $values = [];
+        foreach ($this->valid_type_options as $value => $description) {
+            $values[ GQLUtils::formatEnumKey($value) ] = compact('value', 'description');
+        }
+        return $values;
     }
 
 
