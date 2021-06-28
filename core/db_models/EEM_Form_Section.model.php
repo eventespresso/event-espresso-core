@@ -110,7 +110,7 @@ class EEM_Form_Section extends EEM_Base
                 'FSC_label' => new EE_JSON_Field(
                     'FSC_label',
                     esc_html__(
-                        'JSON string of properties pertaining to to a form section\'s label.',
+                        'JSON string of properties pertaining to a form section\'s label.',
                         'event_espresso'
                     ),
                     true,
@@ -128,10 +128,10 @@ class EEM_Form_Section extends EEM_Base
                         sprintf(
                             /* translators: 1 class name */
                             __(
-                                'Whether form section is active, archived, shared, trashed, or used as a default on new forms. Values correspond to the %s constants.',
+                                'Whether form section is active, archived, shared, trashed, or used as a default on new forms. Values correspond to the %1$s class constants.',
                                 'event_espresso'
                             ),
-                            'EEM_Form_Section::STATUS_TO_'
+                            'EventEspresso\core\services\form\meta\FormStatus'
                         )
                     ),
                     false,
@@ -207,7 +207,7 @@ class EEM_Form_Section extends EEM_Base
      * @return EE_Form_Section[]
      * @throws EE_Error
      */
-    private function getFormSections(array $where_params): array
+    public function getFormSections(array $where_params): array
     {
         $query_params = $this->addDefaultWhereConditions([$where_params]);
         $query_params = $this->addOrderByQueryParams($query_params);
