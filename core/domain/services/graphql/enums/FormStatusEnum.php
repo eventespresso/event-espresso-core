@@ -6,24 +6,24 @@ use EventEspresso\core\services\graphql\enums\EnumBase;
 use EventEspresso\core\services\form\meta\FormStatus;
 
 /**
- * Class FormSectionStatusEnum
+ * Class FormStatusEnum
  * Description
  *
  * @package EventEspresso\core\domain\services\graphql\enums
  * @author  Manzoor Wani
  * @since   $VID:$
  */
-class FormSectionStatusEnum extends EnumBase
+class FormStatusEnum extends EnumBase
 {
 
     /**
-     * FormSectionStatusEnum constructor.
+     * FormStatusEnum constructor.
      */
     public function __construct()
     {
-        $this->setName($this->namespace . 'FormSectionStatusEnum');
+        $this->setName($this->namespace . 'FormStatusEnum');
         $this->setDescription(esc_html__(
-            'Whether form section is active, archived, shared, trashed, or used as a default on new forms.',
+            'Whether form section or element is active, archived, shared, trashed, or used as a default on new forms.',
             'event_espresso'
         ));
         parent::__construct();

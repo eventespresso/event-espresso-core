@@ -5,7 +5,7 @@ namespace EventEspresso\core\services\form\meta;
 /**
  * Class JsonableInterface
  *
- * @package EventEspresso\core\services\graphql
+ * @package EventEspresso\core\services\form\meta
  * @author  Manzoor Wani
  * @since   $VID:$
  */

@@ -94,7 +94,7 @@ class FormSection extends TypeBase
             ),
             new GraphQLField(
                 'status',
-                $this->namespace . 'FormSectionStatusEnum',
+                $this->namespace . 'FormStatusEnum',
                 'status',
                 esc_html__(
                     'Whether form section is active, archived, shared, trashed, or used as a default on new forms.',

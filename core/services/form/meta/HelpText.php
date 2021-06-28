@@ -62,7 +62,7 @@ class HelpText implements JsonableInterface
         $json_data_handler = new JsonDataHandler();
         $json_data_handler->configure(JsonDataHandler::DATA_TYPE_OBJECT);
         $data      = $json_data_handler->decodeJson($json);
-        $htmlClass = (array) $data->htmlClass ?? [];
+        $htmlClass = (array) ($data->htmlClass ?? []);
         $helpText  = $data->helpText ?? '';
         return new HelpText($json_data_handler, $htmlClass, $helpText);
     }
