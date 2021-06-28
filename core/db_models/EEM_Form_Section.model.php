@@ -1,25 +1,25 @@
 <?php
 
-use EventEspresso\core\services\form\meta\Element;
+use EventEspresso\core\services\form\meta\FormStatus;
 use EventEspresso\core\services\request\RequestInterface;
 
 /**
  * Class EEM_Form_Section
+ *
  * Model Fields:
- *      FSC_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
- *      FSC_UUID binary(16) NOT NULL,
- *      FSC_appliesTo varchar(255) NOT NULL,
- *      FSC_belongsTo binary(16) NULL,
- *      FSC_htmlClass text NULL,
- *      FSC_order tinyint(2) unsigned NOT NULL DEFAULT 0,
- *      FSC_relation tinytext NULL,
- *      FSC_status tinytext NULL,
- *      FSC_wpUser bigint(20) unsigned NULL,
+ *  FSC_UUID         string
+ *  FSC_appliesTo    string
+ *  FSC_attributes   JSON string
+ *  FSC_belongsTo    string
+ *  FSC_label        JSON string
+ *  FSC_order        int
+ *  FSC_status       string    ex: 'archived'
+ *  FSC_wpUser       int
  *
  * @author  Brent Christensen
  * @since   $VID:$
  */
-class EEM_Form_Section extends EEM_Form_Element
+class EEM_Form_Section extends EEM_Base
 {
     public const APPLIES_TO_ALL         = 'all';
 
@@ -45,7 +45,14 @@ class EEM_Form_Section extends EEM_Form_Element
     private $valid_applies_to_options;
 
 
-    protected function __construct(Element $element, $timezone = null)
+    /**
+     * EEM_Form_Section constructor.
+     *
+     * @param FormStatus  $form_status
+     * @param string|null $timezone
+     * @throws EE_Error
+     */
+    protected function __construct(FormStatus $form_status, ?string $timezone)
     {
         $this->valid_applies_to_options = apply_filters(
             'FHEE__EEM_Form_Section__valid_applies_to_options',
@@ -69,15 +76,6 @@ class EEM_Form_Section extends EEM_Form_Element
                     'FSC_UUID',
                     esc_html__('Form Section UUID (universally unique identifier)', 'event_espresso')
                 ),
-                'FSC_adminLabel' => new EE_Plain_Text_Field(
-                    'FSC_adminLabel',
-                    esc_html__(
-                        'Form Section label displayed in the admin to help differentiate it from others.',
-                        'event_espresso'
-                    ),
-                    true,
-                    null
-                ),
                 'FSC_appliesTo' => new EE_Enum_Text_Field(
                     'FSC_appliesTo',
                     esc_html(
@@ -94,15 +92,27 @@ class EEM_Form_Section extends EEM_Form_Element
                     EEM_Form_Section::APPLIES_TO_ALL,
                     $this->valid_applies_to_options
                 ),
+                'FSC_attributes' => new EE_JSON_Field(
+                    'FSC_attributes',
+                    esc_html__(
+                        'JSON string of HTML attributes, such as class, to be applied to this form section\'s container.',
+                        'event_espresso'
+                    ),
+                    true,
+                    null
+                ),
                 'FSC_belongsTo' => new EE_Plain_Text_Field(
                     'FSC_belongsTo',
                     esc_html__('UUID of parent form section that this one belongs to.', 'event_espresso'),
                     true,
                     null
                 ),
-                'FSC_htmlClass' => new EE_Plain_Text_Field(
-                    'FSC_htmlClass',
-                    esc_html__('HTML classes to be applied to this form section\'s container.', 'event_espresso'),
+                'FSC_label' => new EE_JSON_Field(
+                    'FSC_label',
+                    esc_html__(
+                        'JSON string of properties pertaining to to a form section\'s label.',
+                        'event_espresso'
+                    ),
                     true,
                     null
                 ),
@@ -111,21 +121,6 @@ class EEM_Form_Section extends EEM_Form_Element
                     esc_html__('Order in which form section appears in a form.', 'event_espresso'),
                     false,
                     0
-                ),
-                'FSC_publicLabel' => new EE_Plain_Text_Field(
-                    'FSC_publicLabel',
-                    esc_html__('Form Section label displayed on public forms as a heading.', 'event_espresso'),
-                    true,
-                    null
-                ),
-                'FSC_showLabel' => new EE_Boolean_Field(
-                    'FSC_showLabel',
-                    esc_html__(
-                        'Whether or not to display the Form Section name (Public Label) on public forms.',
-                        'event_espresso'
-                    ),
-                    false,
-                    true
                 ),
                 'FSC_status'    => new EE_Enum_Text_Field(
                     'FSC_status',
@@ -140,8 +135,8 @@ class EEM_Form_Section extends EEM_Form_Element
                         )
                     ),
                     false,
-                    Element::STATUS_ACTIVE,
-                    $element->validStatusOptions()
+                    FormStatus::ACTIVE,
+                    $form_status->validStatusOptions()
                 ),
                 'FSC_wpUser'    => new EE_WP_User_Field(
                     'FSC_wpUser',
@@ -162,7 +157,7 @@ class EEM_Form_Section extends EEM_Form_Element
         $restrictions[ EEM_Base::caps_edit ]       = new EE_Restriction_Generator_Reg_Form('FSC_applies_to');
         $restrictions[ EEM_Base::caps_delete ]     = new EE_Restriction_Generator_Reg_Form('FSC_applies_to');
         $this->_cap_restriction_generators         = $restrictions;
-        parent::__construct($element, $timezone);
+        parent::__construct($timezone);
         $this->request = $this->getLoader()->getShared('EventEspresso\core\services\request\RequestInterface');
     }
 

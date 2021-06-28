@@ -17,6 +17,7 @@ use EventEspresso\core\domain\services\graphql\mutators\EventUpdate;
  * @package EventEspresso\core\domain\services\graphql\types
  * @author  Manzoor Wani
  * @since   $VID:$
+ * @property EEM_Event $model
  */
 class Event extends TypeBase
 {
