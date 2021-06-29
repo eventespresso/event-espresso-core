@@ -77,7 +77,7 @@ class FormSectionDelete extends EntityMutator
     public static function deleteSectionAndRelations(EE_Form_Section $entity)
     {
         // Remove related non-default form elements
-        $entity->delete_related('Form_Input', [
+        $entity->delete_related('Form_Element', [
             [
                 'FIN_status' => ['NOT IN', [ FormStatus::SHARED, FormStatus::DEFAULT] ]
             ]

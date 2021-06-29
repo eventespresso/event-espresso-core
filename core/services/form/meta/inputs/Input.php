@@ -11,6 +11,11 @@ class Input
     public const TYPE_CHECKBOX = 'checkbox';
 
     /**
+     * indicates that the HTML input type is 'multi checkbox'
+     */
+    public const TYPE_CHECKBOX_MULTI = 'checkbox-multi';
+
+    /**
      * indicates that the HTML input type is 'color'
      */
     public const TYPE_COLOR = 'color';
@@ -56,14 +61,15 @@ class Input
         $this->valid_type_options = apply_filters(
             'FHEE__EventEspresso_core_services_form_meta_inputs_Input__valid_type_options',
             [
-                Input::TYPE_CHECKBOX => esc_html__('Checkbox', 'event_espresso'),
-                Input::TYPE_COLOR    => esc_html__('Color Picker', 'event_espresso'),
-                Input::TYPE_FILE     => esc_html__('File Upload', 'event_espresso'),
-                Input::TYPE_HIDDEN   => esc_html__('Hidden', 'event_espresso'),
-                Input::TYPE_IMAGE    => esc_html__('Image Upload', 'event_espresso'),
-                Input::TYPE_PASSWORD => esc_html__('Password', 'event_espresso'),
-                Input::TYPE_RADIO    => esc_html__('Radio Button', 'event_espresso'),
-                Input::TYPE_URL      => esc_html__('URL', 'event_espresso'),
+                Input::TYPE_CHECKBOX       => esc_html__('Checkbox', 'event_espresso'),
+                Input::TYPE_CHECKBOX_MULTI => esc_html__('Multi Checkbox', 'event_espresso'),
+                Input::TYPE_COLOR          => esc_html__('Color Picker', 'event_espresso'),
+                Input::TYPE_FILE           => esc_html__('File Upload', 'event_espresso'),
+                Input::TYPE_HIDDEN         => esc_html__('Hidden', 'event_espresso'),
+                Input::TYPE_IMAGE          => esc_html__('Image Upload', 'event_espresso'),
+                Input::TYPE_PASSWORD       => esc_html__('Password', 'event_espresso'),
+                Input::TYPE_RADIO          => esc_html__('Radio Button', 'event_espresso'),
+                Input::TYPE_URL            => esc_html__('URL', 'event_espresso'),
             ]
         );
     }
