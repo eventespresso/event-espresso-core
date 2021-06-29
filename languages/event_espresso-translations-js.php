@@ -1235,8 +1235,11 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/form-builder/src/FormSection/FormSectionToolbar.tsx:57
 	__( 'copy form section', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormSection/FormSectionToolbar.tsx:68
+	// Reference: packages/form-builder/src/FormSection/FormSectionToolbar.tsx:74
 	__( 'click, hold, and drag to reorder form section', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/FormSection/FormSections.tsx:26
+	__( 'Add Form Section', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/FormSection/SaveSection.tsx:43
 	__( 'save form section for use in other forms', 'event_espresso' ),
