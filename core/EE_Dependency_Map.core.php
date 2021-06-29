@@ -794,6 +794,7 @@ class EE_Dependency_Map
                 'EventEspresso\core\domain\entities\users\EventManagers' => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\services\form\meta\InputTypes' => [
+                'EventEspresso\core\services\form\meta\inputs\Block'   => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\form\meta\inputs\Button'   => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\form\meta\inputs\DateTime' => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\form\meta\inputs\Input'    => EE_Dependency_Map::load_from_cache,
