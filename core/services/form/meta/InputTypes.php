@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\services\form\meta;
 
+use EventEspresso\core\services\form\meta\inputs\Block;
 use EventEspresso\core\services\form\meta\inputs\Button;
 use EventEspresso\core\services\form\meta\inputs\DateTime;
 use EventEspresso\core\services\form\meta\inputs\Input;
@@ -21,6 +22,11 @@ use EventEspresso\core\services\graphql\Utils as GQLUtils;
  */
 class InputTypes
 {
+    /**
+     * @var Block
+     */
+    private $block;
+
     /**
      * @var Button
      */
@@ -65,6 +71,7 @@ class InputTypes
     /**
      * InputTypes constructor.
      *
+     * @param Block   $block
      * @param Button   $button
      * @param DateTime $datetime
      * @param Input    $input
@@ -74,6 +81,7 @@ class InputTypes
      * @param Text     $text
      */
     public function __construct(
+        Block $block,
         Button $button,
         DateTime $datetime,
         Input $input,
@@ -82,6 +90,7 @@ class InputTypes
         Select $select,
         Text $text
     ) {
+        $this->block    = $block;
         $this->button   = $button;
         $this->datetime = $datetime;
         $this->input    = $input;
@@ -95,16 +104,17 @@ class InputTypes
 
     private function assembleValidTypeOptions()
     {
-        $button     = $this->button->validTypeOptions();
-        $datetime   = $this->datetime->validTypeOptions();
-        $input      = $this->input->validTypeOptions();
-        $number     = $this->number->validTypeOptions();
-        $phone      = $this->phone->validTypeOptions();
-        $select     = $this->select->validTypeOptions();
-        $text       = $this->text->validTypeOptions();
+        $block    = $this->block->validTypeOptions();
+        $button   = $this->button->validTypeOptions();
+        $datetime = $this->datetime->validTypeOptions();
+        $input    = $this->input->validTypeOptions();
+        $number   = $this->number->validTypeOptions();
+        $phone    = $this->phone->validTypeOptions();
+        $select   = $this->select->validTypeOptions();
+        $text     = $this->text->validTypeOptions();
         $this->valid_type_options = apply_filters(
             'FHEE__EventEspresso_core_services_form_meta_InputTypes__valid_type_options',
-            array_merge($button, $datetime, $input, $number, $phone, $select, $text)
+            array_merge($block, $button, $datetime, $input, $number, $phone, $select, $text)
         );
     }
 
