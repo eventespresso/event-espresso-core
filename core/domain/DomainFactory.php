@@ -6,7 +6,6 @@ use DomainException;
 use EventEspresso\core\domain\values\FilePath;
 use EventEspresso\core\domain\values\FullyQualifiedName;
 use EventEspresso\core\domain\values\Version;
-use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidFilePathException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -32,7 +31,7 @@ class DomainFactory
      *                                              EventEspresso\core\domain\values\FilePath $plugin_file
      *                                              EventEspresso\core\domain\values\Version $version
      *                                          )
-     * @return mixed
+     * @return DomainInterface
      * @throws DomainException
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -48,6 +47,7 @@ class DomainFactory
                 )
             );
         }
+        /** @var DomainInterface $domain */
         $domain = LoaderFactory::getLoader()->getShared($domain_fqcn, $arguments);
         if (! $domain instanceof $domain_fqcn && ! $domain instanceof DomainBase) {
             throw new DomainException(
