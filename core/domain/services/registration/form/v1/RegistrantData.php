@@ -160,12 +160,10 @@ class RegistrantData
         // bare minimum critical details include first name, last name, email address
         $critical_attendee_details = ['ATT_fname', 'ATT_lname', 'ATT_email'];
         // add address info to critical details?
-        if (
-        apply_filters(
+        if (apply_filters(
             'FHEE__EE_SPCO_Reg_Step_Attendee_Information__merge_address_details_with_critical_attendee_details',
             false
-        )
-        ) {
+        )) {
             $critical_attendee_details += [
                 'ATT_address',
                 'ATT_address2',
