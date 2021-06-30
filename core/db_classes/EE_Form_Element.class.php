@@ -267,12 +267,12 @@ class EE_Form_Element extends EE_Base_Class
         if (! class_exists($model_name)) {
             throw new DomainException(
                 sprintf(
-                  esc_html__(
+                    esc_html__(
                       'The %1$s model does not exist or can not be located. Please verify the spelling and whether it is loaded.',
                       'event_espresso'
                   ),
-                  $model_name
-              )
+                    $model_name
+                )
             );
         }
         $this->set('FIN_mapsTo', "{$model}.{$field}");

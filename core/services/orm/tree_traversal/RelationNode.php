@@ -2,15 +2,12 @@
 
 namespace EventEspresso\core\services\orm\tree_traversal;
 
-use EE_Base_Class;
 use EE_Error;
 use EE_Has_Many_Any_Relation;
-use EE_Model_Relation_Base;
 use EE_Registry;
 use EEM_Base;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
-use EventEspresso\core\services\payment_methods\forms\PayPalSettingsForm;
 use InvalidArgumentException;
 use ReflectionException;
 
@@ -77,7 +74,7 @@ class RelationNode extends BaseNode
     /**
      * Here is where most of the work happens. We've counted how many related model objects exist, here we identify
      * them (ie, learn their IDs). But its recursive, so we'll also find their related dependent model objects etc.
-	 *
+     *
      * @param int $model_objects_to_identify
      * @return int
      * @throws EE_Error
@@ -125,7 +122,7 @@ class RelationNode extends BaseNode
 
     /**
      * Checks if all the identified child nodes are complete or not.
-	 *
+     *
      * @return bool
      */
     protected function allChildrenComplete()
@@ -140,7 +137,7 @@ class RelationNode extends BaseNode
 
     /**
      * Visits the provided nodes and keeps track of how much work was done, making sure to not go over budget.
-	 *
+     *
      * @param ModelObjNode[] $model_obj_nodes
      * @param $work_budget
      * @return int
@@ -185,7 +182,7 @@ class RelationNode extends BaseNode
 
     /**
      * Discovers how many related model objects exist.
-	 *
+     *
      * @return mixed|void
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -243,7 +240,7 @@ class RelationNode extends BaseNode
 
     /**
      * Gets the IDs of all the model objects to delete; indexed first by model object name.
-	 *
+     *
      * @return array
      */
     public function getIds()
@@ -265,7 +262,7 @@ class RelationNode extends BaseNode
 
     /**
      * Returns the number of sub-nodes found (ie, related model objects across this relation.)
-	 *
+     *
      * @return int
      */
     public function countSubNodes()
@@ -275,7 +272,7 @@ class RelationNode extends BaseNode
 
     /**
      * Don't serialize the models. Just record their names on some dynamic properties.
-	 *
+     *
      * @return array
      */
     public function __sleep()
@@ -296,7 +293,7 @@ class RelationNode extends BaseNode
 
     /**
      * Use the dynamic properties to instantiate the models we use.
-	 *
+     *
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException

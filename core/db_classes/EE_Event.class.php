@@ -1411,7 +1411,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function registrationFormUuid():? string
+    public function registrationFormUuid(): ?string
     {
         return $this->get('FSC_UUID');
     }
@@ -1431,7 +1431,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
         if (empty($FSC_UUID)) {
             return [];
         }
-        
+
         return EEM_Form_Section::instance()->get_all([
             [
                 'OR' => [

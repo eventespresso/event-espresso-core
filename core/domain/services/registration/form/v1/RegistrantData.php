@@ -152,7 +152,8 @@ class RegistrantData
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function ensureCriticalRegistrantDataIsSet(string $reg_url_link): void {
+    public function ensureCriticalRegistrantDataIsSet(string $reg_url_link): void
+    {
         if ($this->currentRegistrantIsPrimary()) {
             return;
         }
@@ -337,7 +338,7 @@ class RegistrantData
                 $this->attendeeCount() === 1
                 && $reg_url_link !== ''
                 && $this->getPrimaryRegistrantDataValue('reg_url_link') === $reg_url_link
-           );
+            );
     }
 
 
