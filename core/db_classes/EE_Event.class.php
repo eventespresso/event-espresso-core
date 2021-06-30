@@ -125,7 +125,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
                 // save the previous event status so that we can revert if the event is no longer sold out
                 $this->add_post_meta('_previous_event_status', $old_status);
                 do_action('AHEE__EE_Event__set_status__to_sold_out', $this, $old_status, $new_status);
-                // OR FROM  sold_out
+            // OR FROM  sold_out
             } elseif ($old_status === EEM_Event::sold_out) {
                 $this->delete_post_meta('_previous_event_status');
                 do_action('AHEE__EE_Event__set_status__from_sold_out', $this, $old_status, $new_status);
@@ -1418,7 +1418,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 
 
     /**
-     * Gets all the datetimes for this event
+     * Gets all the form sections for this event
      *
      * @return EE_Base_Class[]|EE_Form_Section[]
      * @throws EE_Error
@@ -1429,12 +1429,12 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
         $FSC_UUID = $this->registrationFormUuid();
         return !empty($FSC_UUID)
             ? $this->get_many_related(
-                'FormSection',
+                'Form_Section',
                 [
                     [
                         'OR' => [
-                            'FormSection.FSC_UUID'      => $FSC_UUID, // top level form
-                            'FormSection.FSC_belongsTo' => $FSC_UUID, // child form sections
+                            'Form_Section.FSC_UUID'      => $FSC_UUID, // top level form
+                            'Form_Section.FSC_belongsTo' => $FSC_UUID, // child form sections
                         ]
                     ],
                     'order_by' => ['FSC_order' => 'ASC'],
