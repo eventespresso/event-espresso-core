@@ -419,7 +419,7 @@ final class EE_System implements ResettableInterface
         foreach ($this->registry->addons as $addon) {
             if ($addon instanceof EE_Addon) {
                 // detect teh request type for that addon
-                $addon->detect_activation_or_upgrade();
+                $addon->detect_req_type();
             }
         }
     }
