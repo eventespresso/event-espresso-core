@@ -72,7 +72,8 @@ class EEM_Form_Element extends EEM_Base
                     esc_html__('UUID of parent form section this form input belongs to.', 'event_espresso'),
                     false,
                     null,
-                    ['Form_Section']
+                    ['Form_Section'],
+                    false
                 ),
                 'FIN_adminOnly' => new EE_Boolean_Field(
                     'FIN_adminOnly',

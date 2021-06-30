@@ -264,9 +264,9 @@ class EE_Form_Element extends EE_Base_Class
     public function setMapsTo(string $model, string $field)
     {
         $model_name = strpos($model, 'EEM_') !== 0 ? "EEM_$model" : $model;
-        if (! class_exists($model_name) ) {
+        if (! class_exists($model_name)) {
             throw new DomainException(
-              sprintf(
+                sprintf(
                   esc_html__(
                       'The %1$s model does not exist or can not be located. Please verify the spelling and whether it is loaded.',
                       'event_espresso'
