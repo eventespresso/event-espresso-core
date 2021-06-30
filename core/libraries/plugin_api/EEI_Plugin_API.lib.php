@@ -23,20 +23,20 @@ interface EEI_Plugin_API
     /**
      * Used to register a component with EE.
      *
-     * @since    4.3.0
-     * @param string $ID         a unique name or ID for the component being registered
+     * @param string $identifier         a unique name for the component being registered
      * @param array  $setup_args an array of key value pairs of info for registering the component
      * @return void
+     * @since 4.3.0
      */
-    public static function register($ID = null, $setup_args = array());
+    public static function register(string $identifier = '', array $setup_args = []);
 
 
     /**
      * Used to deregister a component with EE.
      *
-     * @since 4.3.0
-     * @param string $ID a unique name or ID for the component being registered
+     * @param string $identifier a unique name for the component being registered
      * @return void
+     * @since 4.3.0
      */
-    public static function deregister($ID = null);
+    public static function deregister(string $identifier = '');
 }
