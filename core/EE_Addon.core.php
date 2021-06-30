@@ -597,7 +597,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
      */
     public function detect_req_type()
     {
-        if (! $this->_req_type) {
+        if ($this->_req_type === null) {
             $this->detect_activation_or_upgrade();
         }
         return $this->_req_type;
