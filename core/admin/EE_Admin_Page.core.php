@@ -179,6 +179,13 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      */
     protected $_is_caf = false;
 
+    /**
+     * whether or not initializePage() has run
+     *
+     * @var boolean
+     */
+    protected $initialized = false;
+
 
     /**
      * @Constructor
@@ -225,6 +232,9 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      */
     public function initializePage()
     {
+        if ($this->initialized) {
+            return;
+        }
         // set initial page props (child method)
         $this->_init_page_props();
         // set global defaults
@@ -241,6 +251,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         }
         // set up page dependencies
         $this->_page_setup();
+        $this->initialized = true;
     }
 
 
