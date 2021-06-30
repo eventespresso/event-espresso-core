@@ -86,7 +86,7 @@ class InputOptions implements JsonableInterface
     /**
      * @param array $option
      */
-    public function addOption($option): void
+    public function addOption(array $option): void
     {
         if (isset($option['label'], $option['value'])) {
             $label = sanitize_text_field($option['label']);
@@ -101,7 +101,7 @@ class InputOptions implements JsonableInterface
     /**
      * @param int|float|string $option_value
      */
-    public function removeOption($option_value): void
+    public function removeOption(string $option_value): void
     {
         $option_value = sanitize_key($option_value);
         unset($this->options[ $option_value ]);
