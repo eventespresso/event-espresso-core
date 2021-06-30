@@ -90,7 +90,7 @@ class InputOptions implements JsonableInterface
     {
         if (isset($option['label'], $option['value'])) {
             $label = sanitize_text_field($option['label']);
-            $value = sanitize_text_field($option['value']);
+            $value = sanitize_key($option['value']);
 
             // use `value` as key
             $this->options[ $value ] = compact('label', 'value');
