@@ -102,6 +102,7 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase
         $this->_table_analysis = new TableAnalysis();
         $this->_table_manager  = new TableManager($this->_table_analysis);
         $this->_pretend_addon_hook_time();
+        require_once EE_TESTS_DIR . 'mocks/addons/eea-new-addon/EE_New_Addon.class.php';
         $mock_addon_path                = EE_TESTS_DIR . 'mocks/addons/eea-new-addon/';
         EE_Registry::instance()->addons = new RegistryContainer();
         EE_Register_Addon::register(
@@ -514,7 +515,7 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase
         $this->assertTableExists('esp_new_addon_thing');
         //check for activations/upgrades again. It should be a normal request
         EE_System::reset();
-        $this->assertEquals(EE_System::req_type_normal, $this->_addon->detect_req_type());
+        $this->assertEquals(EE_System::req_type_normal, $this->_addon->detect_req_type(true));
         $this->assertEquals(
             $times_reactivation_hook_fired_before + 1,
             $wp_actions["AHEE__{$this->_addon_classname}__new_install"]
@@ -586,7 +587,7 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase
         $this->assertTableExists('esp_new_addon_thing');
         //check for activations/upgrades again. It should be a normal request
         EE_System::reset();
-        $this->assertEquals(EE_System::req_type_normal, $this->_addon->detect_req_type());
+        $this->assertEquals(EE_System::req_type_normal, $this->_addon->detect_req_type(true));
         $this->assertEquals(
             $times_reactivation_hook_fired_before + 1,
             $wp_actions["AHEE__{$this->_addon_classname}__upgrade"]
