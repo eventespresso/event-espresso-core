@@ -76,6 +76,36 @@ class FormSection extends TypeBase
                 'belongsTo',
                 esc_html__('UUID or ID of related entity this form section belongs to.', 'event_espresso')
             ),
+            new GraphQLOutputField(
+                'isActive',
+                'Boolean',
+                'isActive',
+                esc_html__('Flag indicating whether the section is active.', 'event_espresso')
+            ),
+            new GraphQLOutputField(
+                'isArchived',
+                'Boolean',
+                'isArchived',
+                esc_html__('Flag indicating whether the section is archived.', 'event_espresso')
+            ),
+            new GraphQLOutputField(
+                'isDefault',
+                'Boolean',
+                'isDefault',
+                esc_html__('Flag indicating whether the section is a default one.', 'event_espresso')
+            ),
+            new GraphQLOutputField(
+                'isShared',
+                'Boolean',
+                'isShared',
+                esc_html__('Flag indicating whether the section is a shared one.', 'event_espresso')
+            ),
+            new GraphQLOutputField(
+                'isTrashed',
+                'Boolean',
+                'isTrashed',
+                esc_html__('Flag indicating whether the section is trashed.', 'event_espresso')
+            ),
             new GraphQLField(
                 'label',
                 'String',
