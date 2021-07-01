@@ -292,8 +292,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 //     'Event_Overview_Help_Tour',
                 //     // 'New_Features_Test_Help_Tour' for testing multiple help tour
                 // ],
-                'qtips'         => ['EE_Event_List_Table_Tips'],
                 'require_nonce' => false,
+                'qtips'         => ['EE_Event_List_Table_Tips'],
             ],
             'create_new'             => [
                 'nav'           => [

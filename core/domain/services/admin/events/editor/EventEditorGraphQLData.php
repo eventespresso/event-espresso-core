@@ -66,6 +66,11 @@ class EventEditorGraphQLData
      */
     protected $ticket_meta;
 
+    /**
+     * @var FormBuilder
+     */
+    protected $form_builder;
+
 
     /**
      * EventEditorGraphQLData constructor.
@@ -79,6 +84,7 @@ class EventEditorGraphQLData
      * @param EventManagerData        $managers
      * @param NewEventDefaultEntities $default_entities
      * @param TicketMeta              $ticket_meta
+     * @param FormBuilder             $form_builder
      */
     public function __construct(
         Datetimes $datetimes,
@@ -89,7 +95,8 @@ class EventEditorGraphQLData
         EventEntityRelations $relations,
         EventManagerData $managers,
         NewEventDefaultEntities $default_entities,
-        TicketMeta $ticket_meta
+        TicketMeta $ticket_meta,
+        FormBuilder $form_builder
     ) {
         $this->datetimes        = $datetimes;
         $this->event            = $event;
@@ -100,6 +107,7 @@ class EventEditorGraphQLData
         $this->relations        = $relations;
         $this->tickets          = $tickets;
         $this->ticket_meta      = $ticket_meta;
+        $this->form_builder     = $form_builder;
     }
 
 
@@ -142,10 +150,13 @@ class EventEditorGraphQLData
 
         $ticketMeta = $this->ticket_meta->getData($eventId);
 
+        $formBuilder = $this->form_builder->getData($eventId);
+
         return compact(
             'datetimes',
             'event',
             'eventManagers',
+            'formBuilder',
             'prices',
             'priceTypes',
             'relations',
