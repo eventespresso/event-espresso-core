@@ -1373,10 +1373,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                     $create_new_TKT = $ticket_sold
                                       && ! $TKT->deleted()
                                       && EEH_Money::compare_floats(
-                        $ticket_price,
-                        $TKT->get('TKT_price'),
-                        '!=='
-                    );
+                                          $ticket_price,
+                                          $TKT->get('TKT_price'),
+                                          '!=='
+                                      );
                     $TKT->set_date_format($incoming_date_formats[0]);
                     $TKT->set_time_format($incoming_date_formats[1]);
                     // set new values
@@ -2517,7 +2517,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                                 'html_label_text' => esc_html__('Default Registration Status', 'event_espresso')
                                                         . EEH_Template::get_help_tab_link(
                                                             'default_settings_status_help_tab'
-                                    ),
+                                                        ),
                                 'html_help_text'  => esc_html__(
                                     'This setting allows you to preselect what the default registration status setting is when creating an event.  Note that changing this setting does NOT retroactively apply it to existing events.',
                                     'event_espresso'
@@ -2534,7 +2534,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                                     'event_espresso'
                                 )
                                 . EEH_Template::get_help_tab_link(
-                                'default_maximum_tickets_help_tab"'
+                                    'default_maximum_tickets_help_tab"'
                                 ),
                                 'html_help_text'  => esc_html__(
                                     'This setting allows you to indicate what will be the default for the maximum number of tickets per order when creating new events.',
