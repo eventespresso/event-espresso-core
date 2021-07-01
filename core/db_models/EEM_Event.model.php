@@ -266,7 +266,8 @@ class EEM_Event extends EEM_CPT_Base
                     esc_html__('Registration Form UUID (universally unique identifier)', 'event_espresso'),
                     true,
                     null,
-                    'Form_Section'
+                    'Form_Section',
+                    false
                 ),
             ),
         );
