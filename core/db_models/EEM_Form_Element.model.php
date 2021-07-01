@@ -164,7 +164,7 @@ class EEM_Form_Element extends EEM_Base
                     'FIN_type',
                     esc_html__('Form element type.', 'event_espresso'),
                     false,
-                    'text',
+                    null,
                     $input_types->validTypeOptions()
                 ),
                 'FIN_wpUser'    => new EE_WP_User_Field(
