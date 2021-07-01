@@ -1,7 +1,5 @@
 <?php
 
-
-
 /**
  * Base class for defining the tables that comprise models. This is used to store information
  * about the table\s alias, private key, etc.
@@ -41,45 +39,40 @@ abstract class EE_Table_Base
     protected $_global;
 
 
-
     /**
-     * @global wpdb   $wpdb
      * @param string  $table_name with or without wpdb prefix
      * @param string  $pk_column
      * @param boolean $global     whether the table is "global" as in there is only 1 table on an entire multisite
      *                            install, or whether each site on a multisite install has a copy of this table
+     * @global wpdb   $wpdb
      */
     public function __construct($table_name, $pk_column, $global = false)
     {
         $this->_global = $global;
-        $prefix = $this->get_table_prefix();
+        $prefix        = $this->get_table_prefix();
         // if they added the prefix, let's remove it because we delay adding the prefix until right when its needed.
         if (strpos($table_name, $prefix) === 0) {
-            $table_name = ltrim($table_name, $prefix);
+            $table_name = substr_replace($table_name, '', 0, strlen($prefix));
         }
         $this->_table_name = $table_name;
-        $this->_pk_column = $pk_column;
+        $this->_pk_column  = $pk_column;
     }
-
 
 
     /**
      * This returns the table prefix for the current model state.
      *
-     * @global wpdb $wpdb
      * @return string
+     * @global wpdb $wpdb
      */
     public function get_table_prefix()
     {
         global $wpdb;
         if ($this->_global) {
-            $prefix = $wpdb->base_prefix;
-        } else {
-            $prefix = $wpdb->get_blog_prefix(EEM_Base::get_model_query_blog_id());
+            return $wpdb->base_prefix;
         }
-        return $prefix;
+        return $wpdb->get_blog_prefix(EEM_Base::get_model_query_blog_id());
     }
-
 
 
     /**
@@ -93,7 +86,6 @@ abstract class EE_Table_Base
     }
 
 
-
     /**
      * Returns the fully qualified table name for the database (includes the table prefix current for the blog).
      *
@@ -103,7 +95,6 @@ abstract class EE_Table_Base
     {
         return $this->get_table_prefix() . $this->_table_name;
     }
-
 
 
     /**
@@ -121,7 +112,6 @@ abstract class EE_Table_Base
     }
 
 
-
     /**
      * @return string name of column of PK
      */
@@ -131,7 +121,6 @@ abstract class EE_Table_Base
     }
 
 
-
     /**
      * returns a string with the table alias, a period, and the private key's column.
      *
@@ -139,10 +128,8 @@ abstract class EE_Table_Base
      */
     public function get_fully_qualified_pk_column()
     {
-        $sql = $this->get_table_alias() . "." . $this->get_pk_column();
-        return $sql;
+        return $this->get_table_alias() . "." . $this->get_pk_column();
     }
-
 
 
     /**
@@ -153,10 +140,8 @@ abstract class EE_Table_Base
     public function get_select_join_limit($limit)
     {
         $limit = is_array($limit) ? 'LIMIT ' . implode(',', array_map('intval', $limit)) : 'LIMIT ' . (int) $limit;
-        $SQL = SP . '(SELECT * FROM ' . $this->_table_name . SP . $limit . ') AS ' . $this->_table_alias;
-        return $SQL;
+        return SP . '(SELECT * FROM ' . $this->_table_name . SP . $limit . ') AS ' . $this->_table_alias;
     }
-
 
 
     /**
