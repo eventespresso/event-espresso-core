@@ -3283,17 +3283,16 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
 
 
     /**
-     *    generates HTML for the forms used on admin pages
+     * generates HTML for the forms used on admin pages
      *
-     * @param    array $input_vars - array of input field details
-     * @param string   $generator  (options are 'string' or 'array', basically use this to indicate which generator to
-     *                             use)
-     * @param bool     $id
-     * @return string
+     * @param array  $input_vars - array of input field details
+     * @param string $generator  indicates which generator to use: options are 'string' or 'array'
+     * @param bool   $id
+     * @return array|string
      * @uses   EEH_Form_Fields::get_form_fields (/helper/EEH_Form_Fields.helper.php)
      * @uses   EEH_Form_Fields::get_form_fields_array (/helper/EEH_Form_Fields.helper.php)
      */
-    protected function _generate_admin_form_fields($input_vars = array(), $generator = 'string', $id = false)
+    protected function _generate_admin_form_fields($input_vars = [], $generator = 'string', $id = false)
     {
         return $generator === 'string'
             ? EEH_Form_Fields::get_form_fields($input_vars, $id)
