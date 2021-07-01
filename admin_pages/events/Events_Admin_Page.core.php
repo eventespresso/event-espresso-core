@@ -2045,9 +2045,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
 
 
     /**
-     * _trash_or_restore_events
-     *
-     * @access  private
      * @param  int    $EVT_ID
      * @param  string $event_status
      * @return bool
@@ -2104,22 +2101,37 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     }
 
 
-    private function getEventIdsFromRequest(): array
+    /**
+     * @param array $event_ids
+     * @return array
+     * @since   $VID:$
+     */
+    private function cleanEventIds(array $event_ids)
     {
-        $event_ids = $this->_req_data['EVT_ID'] ?? [];
-        return (array) $event_ids;
+        return array_map('absint', $event_ids);
     }
 
+
     /**
-     * _delete_event
-     *
+     * @return array
+     * @since   $VID:$
+     */
+    private function getEventIdsFromRequest()
+    {
+        $event_ids = isset($this->_req_data['EVT_ID']) ? $this->_req_data['EVT_ID'] : [];
+        return $this->cleanEventIds($event_ids);
+    }
+
+
+    /**
      * @param bool $preview_delete
      * @throws EE_Error
      */
-    protected function _delete_event(bool $preview_delete = true)
+    protected function _delete_event($preview_delete = true)
     {
         $this->_delete_events($preview_delete);
     }
+
 
     /**
      * Gets the tree traversal batch persister.
@@ -2139,16 +2151,13 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
 
 
     /**
-     * _delete_events
-     *
      * @param bool $preview_delete
      * @return void
      * @throws EE_Error
      */
-    protected function _delete_events(bool $preview_delete = true)
+    protected function _delete_events($preview_delete = true)
     {
         $event_ids = $this->getEventIdsFromRequest();
-        $event_ids = array_map('absint', $event_ids);
         if ($preview_delete) {
             $this->generateDeletionPreview($event_ids);
         } else {
@@ -2156,8 +2165,13 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         }
     }
 
+
+    /**
+     * @param array $event_ids
+     */
     protected function generateDeletionPreview(array $event_ids)
     {
+        $event_ids = $this->cleanEventIds($event_ids);
         // Set a code we can use to reference this deletion task in the batch jobs and preview page.
         $deletion_job_code = $this->getModelObjNodeGroupPersister()->generateGroupCode();
         $return_url = EE_Admin_Page::add_query_args_and_nonce(
@@ -2167,7 +2181,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             ],
             $this->_admin_base_url
         );
-        $event_ids = array_map('absint', $event_ids);
         EEH_URL::safeRedirectAndExit(
             EE_Admin_Page::add_query_args_and_nonce(
                 [
