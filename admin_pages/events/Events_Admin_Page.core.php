@@ -2119,7 +2119,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     private function getEventIdsFromRequest()
     {
         $event_ids = isset($this->_req_data['EVT_ID']) ? $this->_req_data['EVT_ID'] : [];
-        $event_ids = is_string($event_ids) ? explode(',', $event_ids) : $event_ids;
+        $event_ids = is_string($event_ids) ? explode(',', $event_ids) : (array) $event_ids;
         return $this->cleanEventIds($event_ids);
     }
 
