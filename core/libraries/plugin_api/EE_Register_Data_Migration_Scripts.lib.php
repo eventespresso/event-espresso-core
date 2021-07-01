@@ -27,7 +27,7 @@ class EE_Register_Data_Migration_Scripts implements EEI_Plugin_API
      * Method for registering new Data Migration Scripts
      *
      * @since 4.3.0
-     * @param string $addon_name EE_Addon class name that this set of data migration scripts belongs to
+     * @param string $identifier EE_Addon class name that this set of data migration scripts belongs to
      *                           If EE_Addon class is namespaced, then this needs to be the Fully Qualified Class Name
      * @param array  $setup_args {
      * @type string  $dms_paths  an array of full server paths to folders that contain data migration scripts
@@ -35,10 +35,10 @@ class EE_Register_Data_Migration_Scripts implements EEI_Plugin_API
      * @throws EE_Error
      * @return void
      */
-    public static function register($addon_name = '', $setup_args = array())
+    public static function register($identifier = '', array $setup_args = [])
     {
         // required fields MUST be present, so let's make sure they are.
-        if (empty($addon_name) || ! is_array($setup_args) || empty($setup_args['dms_paths'])) {
+        if (empty($identifier) || ! is_array($setup_args) || empty($setup_args['dms_paths'])) {
             throw new EE_Error(
                 esc_html__(
                     'In order to register Data Migration Scripts with EE_Register_Data_Migration_Scripts::register(), you must include the EE_Addon class name (used as a unique identifier for this set of data migration scripts), and an array containing the following keys: "dms_paths" (an array of full server paths to folders that contain data migration scripts)',
@@ -47,7 +47,7 @@ class EE_Register_Data_Migration_Scripts implements EEI_Plugin_API
             );
         }
         // make sure we don't register twice
-        if (isset(self::$_settings[ $addon_name ])) {
+        if (isset(self::$_settings[ $identifier ])) {
             return;
         }
         // make sure this was called in the right place!
@@ -64,7 +64,7 @@ class EE_Register_Data_Migration_Scripts implements EEI_Plugin_API
             );
         }
         // setup $_settings array from incoming values.
-        self::$_settings[ $addon_name ] = array(
+        self::$_settings[ $identifier ] = array(
             'dms_paths' => (array) $setup_args['dms_paths'],
         );
         // setup DMS
@@ -79,9 +79,9 @@ class EE_Register_Data_Migration_Scripts implements EEI_Plugin_API
      * @param array $dms_paths
      * @return array
      */
-    public static function add_data_migration_script_folders($dms_paths = array())
+    public static function add_data_migration_script_folders(array $dms_paths = array())
     {
-        foreach (self::$_settings as $addon_name => $settings) {
+        foreach (self::$_settings as $identifier => $settings) {
             $wildcards = 0;
             foreach ($settings['dms_paths'] as $dms_path) {
                 // since we are using the addon name for the array key
@@ -89,7 +89,7 @@ class EE_Register_Data_Migration_Scripts implements EEI_Plugin_API
                 // so if for some reason an addon has multiple dms paths,
                 // we append one or more * to the classname
                 // which will get stripped out later on
-                $dms_paths[ $addon_name . str_repeat('*', $wildcards) ] = $dms_path;
+                $dms_paths[ $identifier . str_repeat('*', $wildcards) ] = $dms_path;
                 $wildcards++;
             }
         }
@@ -101,11 +101,11 @@ class EE_Register_Data_Migration_Scripts implements EEI_Plugin_API
      * This deregisters a set of Data Migration Scripts that were previously registered with a specific dms_id
      *
      * @since 4.3.0
-     * @param string $addon_name EE_Addon class name that this set of data migration scripts belongs to
+     * @param string $identifier EE_Addon class name that this set of data migration scripts belongs to
      * @return void
      */
-    public static function deregister($addon_name = '')
+    public static function deregister($identifier = '')
     {
-        unset(self::$_settings[ $addon_name ]);
+        unset(self::$_settings[ $identifier ]);
     }
 }

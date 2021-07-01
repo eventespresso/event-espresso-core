@@ -17,54 +17,53 @@ class EE_Register_Messages_Shortcode_Library implements EEI_Plugin_API
      *
      * @var array
      */
-    protected static $_ee_messages_shortcode_registry = array();
+    protected static $_ee_messages_shortcode_registry = [];
 
 
     /**
-     * Helper method for registring a new shortcodes library class for the messages system.
+     * Helper method for registering a new shortcodes library class for the messages system.
      *
      * Note this is not used for adding shortcodes to existing libraries.  It's for registering anything
      * related to registering a new EE_{shortcode_library_name}_Shortcodes.lib.php class.
      *
-     * @since    4.3.0
-     *
-     * @param  array $setup_args                    {
-     *                                              An array of arguments provided for registering the new messages
-     *                                              shortcode library.
-     *
-     * @type string  $name                          What is the name of this shortcode library
+     * @param string $identifier                                                    What is the name of this shortcode
+     *                                                                              library
      *                                                                              (e.g. 'question_list');
-     * @type array   $autoloadpaths                 An array of paths to add to the messages
-     *                                                                              autoloader for the new shortcode
-     *                                                                              library class file.
-     * @type string  $msgr_validator_callback       Callback for a method that will register the
-     *                                                                              library with the messenger
+     * @param array  $setup_args                                                    {
+     *                                                                              An array of arguments provided for
+     *                                                                              registering the new messages
+     *                                                                              shortcode library.
+     *
+     * @type array   $autoloadpaths                                                 An array of paths to add to the
+     *       messages autoloader for the new shortcode library class file.
+     * @type string  $msgr_validator_callback                                       Callback for a method that will
+     *       register the library with the messenger
      *                                                                              _validator_config. Optional.
-     * @type string  $msgr_template_fields_callback Callback for changing adding the
+     * @type string  $msgr_template_fields_callback                                 Callback for changing adding the
      *                                                                              _template_fields property for
      *                                                                              messenger. For example, the
      *                                                                              shortcode library may add a new
      *                                                                              field to the message templates.
      *                                                                              Optional.
-     * @type string  $valid_shortcodes_callback     Callback for message types
+     * @type string  $valid_shortcodes_callback                                     Callback for message types
      *                                                                              _valid_shortcodes array setup.
      *                                                                              Optional.
-     * @type array   $list_type_shortcodes          If there are any specific shortcodes with this
-     *                                                                             message shortcode library that
-     *                                                                             should be considered "list type"
-     *                                                                             then include them in an array.  List
-     *                                                                             Type shortcodes are shortcodes that
-     *                                                                             have a corresponding field that
-     *                                                                             indicates how they are parsed.
-     *                                                                             Optional.
+     * @type array   $list_type_shortcodes                                          If there are any specific
+     *       shortcodes with this message shortcode library that should be considered "list type" then include them in
+     *       an array.  List Type shortcodes are shortcodes that have a corresponding field that indicates how they are
+     *       parsed. Optional.
      * }
      * @return void
+     * @throws EE_Error
+     * @throws EE_Error
+     * @since    4.3.0
+     *
      */
-    public static function register($name = null, $setup_args = array())
+    public static function register($identifier = '', array $setup_args = [])
     {
 
         // required fields MUST be present, so let's make sure they are.
-        if (empty($name) || ! is_array($setup_args) || empty($setup_args['autoloadpaths'])) {
+        if (empty($identifier) || ! is_array($setup_args) || empty($setup_args['autoloadpaths'])) {
             throw new EE_Error(
                 __(
                     'In order to register a messages shortcode library with EE_Register_Messages_Shortcode_Library::register, you must include a "name" (a unique identifier for this set of message shortcodes), and an array containing the following keys: : "autoload_paths"',
@@ -74,7 +73,7 @@ class EE_Register_Messages_Shortcode_Library implements EEI_Plugin_API
         }
 
         // make sure we don't register twice
-        if (isset(self::$_ee_messages_shortcode_registry[ $name ])) {
+        if (isset(self::$_ee_messages_shortcode_registry[ $identifier ])) {
             return;
         }
 
@@ -89,23 +88,22 @@ class EE_Register_Messages_Shortcode_Library implements EEI_Plugin_API
                         'Should be only called on the "EE_Brewing_Regular___messages_caf" hook (Trying to register a library named %s).',
                         'event_espresso'
                     ),
-                    $name
+                    $identifier
                 ),
                 '4.3.0'
             );
         }
 
-        $name = (string) $name;
-        self::$_ee_messages_shortcode_registry[ $name ] = array(
+        self::$_ee_messages_shortcode_registry[ $identifier ] = [
             'autoloadpaths'        => (array) $setup_args['autoloadpaths'],
             'list_type_shortcodes' => ! empty($setup_args['list_type_shortcodes'])
-                ? (array) $setup_args['list_type_shortcodes'] : array(),
-        );
+                ? (array) $setup_args['list_type_shortcodes'] : [],
+        ];
 
         // add filters
         add_filter(
             'FHEE__EED_Messages___set_messages_paths___MSG_PATHS',
-            array('EE_Register_Messages_Shortcode_Library', 'register_msgs_autoload_paths'),
+            ['EE_Register_Messages_Shortcode_Library', 'register_msgs_autoload_paths'],
             10
         );
 
@@ -125,7 +123,7 @@ class EE_Register_Messages_Shortcode_Library implements EEI_Plugin_API
         if (! empty($setup_args['list_type_shortcodes'])) {
             add_filter(
                 'FHEE__EEH_Parse_Shortcodes___parse_message_template__list_type_shortcodes',
-                array('EE_Register_Messages_Shortcode_Library', 'register_list_type_shortcodes'),
+                ['EE_Register_Messages_Shortcode_Library', 'register_list_type_shortcodes'],
                 10
             );
         }
@@ -135,27 +133,25 @@ class EE_Register_Messages_Shortcode_Library implements EEI_Plugin_API
     /**
      * This deregisters any messages shortcode library previously registered with the given name.
      *
-     * @since    4.3.0
-     * @param  string $name name used to register the shortcode library.
+     * @param string $identifier name used to register the shortcode library.
      * @return  void
+     * @since    4.3.0
      */
-    public static function deregister($name = null)
+    public static function deregister($identifier = '')
     {
-        if (! empty(self::$_ee_messages_shortcode_registry[ $name ])) {
-            unset(self::$_ee_messages_shortcode_registry[ $name ]);
-        }
+        unset(self::$_ee_messages_shortcode_registry[ $identifier ]);
     }
 
 
     /**
      * callback for FHEE__EED_Messages___set_messages_paths___MSG_PATHS filter.
      *
-     * @since    4.3.0
-     *
      * @param array $paths array of paths to be checked by EE_messages autoloader.
      * @return array
+     * @since    4.3.0
+     *
      */
-    public static function register_msgs_autoload_paths($paths)
+    public static function register_msgs_autoload_paths(array $paths)
     {
 
         if (! empty(self::$_ee_messages_shortcode_registry)) {
@@ -175,12 +171,12 @@ class EE_Register_Messages_Shortcode_Library implements EEI_Plugin_API
      * This is the callback for the FHEE__EEH_Parse_Shortcodes___parse_message_template__list_type_shortcodes
      * filter which is used to add additional list type shortcodes.
      *
+     * @param array $original_shortcodes
+     * @return  array                                   Modifications to original shortcodes.
      * @since 4.3.0
      *
-     * @param  array $original_shortcodes
-     * @return  array                                   Modifications to original shortcodes.
      */
-    public static function register_list_type_shortcodes($original_shortcodes)
+    public static function register_list_type_shortcodes(array $original_shortcodes)
     {
         if (empty(self::$_ee_messages_shortcode_registry)) {
             return $original_shortcodes;

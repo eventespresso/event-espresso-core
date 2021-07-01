@@ -220,7 +220,7 @@ class EE_Message_Resource_Manager
     /**
      * @param string $messenger_name
      * @return \EE_messenger
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function valid_messenger($messenger_name)
     {
@@ -432,7 +432,7 @@ class EE_Message_Resource_Manager
     /**
      * @param string $message_type_name
      * @return \EE_message_type
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function valid_message_type($message_type_name)
     {
@@ -455,7 +455,7 @@ class EE_Message_Resource_Manager
      * @param EE_messenger $messenger
      * @param string       $message_type_name
      * @return boolean
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function valid_message_type_for_messenger(EE_messenger $messenger, $message_type_name)
     {
@@ -654,7 +654,7 @@ class EE_Message_Resource_Manager
      * @param        $messenger_name
      * @param bool   $update_option     Whether to update the option in the db or not.
      * @return bool  Returns true if already is active or if was activated successfully.
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function ensure_message_type_is_active($message_type_name, $messenger_name, $update_option = true)
     {
@@ -666,7 +666,7 @@ class EE_Message_Resource_Manager
             try {
                 if (! $this->is_message_type_active_for_messenger($messenger_name, $message_type_name)) {
                     // all is good so let's just get it active
-                    $this->activate_messenger($messenger_name, array($message_type_name), $update_option);
+                    $this->activate_messenger($messenger, array($message_type_name), $update_option);
                 }
             } catch (EE_Error $e) {
                 EE_Error::add_error(
@@ -708,22 +708,24 @@ class EE_Message_Resource_Manager
     /**
      * Activates the specified messenger.
      *
-     * @param string $messenger_name
+     * @param EE_messenger|string $messenger    Instantiated EE_messenger OR messenger name if not already loaded!
      * @param array  $message_type_names        An array of message type names to activate with this messenger.
      *                                          If included we do NOT setup the default message types
      *                                          (assuming they are already setup.)
      * @param bool   $update_active_messengers_option
      * @return array of generated templates
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function activate_messenger(
-        $messenger_name,
+        $messenger,
         $message_type_names = array(),
         $update_active_messengers_option = true
     ) {
         $templates = array();
         // grab the messenger to work with.
-        $messenger = $this->messenger_collection()->get_by_info($messenger_name);
+        $messenger = $messenger instanceof EE_messenger
+            ? $messenger
+            : $this->messenger_collection()->get_by_info($messenger);
         // it's inactive. Activate it.
         if ($messenger instanceof EE_messenger) {
             $this->_active_messengers[ $messenger->name ] = $messenger;
