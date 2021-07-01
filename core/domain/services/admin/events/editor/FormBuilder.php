@@ -4,10 +4,12 @@ namespace EventEspresso\core\domain\services\admin\events\editor;
 
 use EEM_Event;
 use EE_Event;
+use EEM_Form_Section;
 use EE_Form_Section;
 use EEM_Form_Element;
 use EE_Form_Element;
 use EventEspresso\core\services\graphql\Utils as GQLUtils;
+use EventEspresso\core\services\form\meta\FormStatus;
 
 /**
  * Class FormBuilder
@@ -29,8 +31,19 @@ class FormBuilder implements EventEditorDataInterface
     {
         /** @var EE_Event */
         $event = EEM_Event::instance()->get_one_by_ID($eventId);
+        $topLevelSectionId = $event->registrationFormUuid();
+
         /** @var EE_Form_Section[] */
-        $form_sections = $event->registrationForm();
+        $form_sections = EEM_Form_Section::instance()->get_all([
+            [
+                'OR' => [
+                    'FSC_UUID'      => $topLevelSectionId, // top level form
+                    'FSC_belongsTo' => $topLevelSectionId, // child form sections
+                    'FSC_status'    => FormStatus::SHARED, // shared form sections
+                ]
+                ],
+            'order_by' => ['FSC_order' => 'ASC'],
+        ]);
 
         $sections = [];
         foreach ($form_sections as $section) {
@@ -42,6 +55,11 @@ class FormBuilder implements EventEditorDataInterface
                 'appliesTo'  => GQLUtils::formatEnumKey($section->appliesTo()),
                 'attributes' => $section->attributes()->toJson(),
                 'belongsTo'  => $section->belongsTo(),
+                'isActive'   => $section->isActive(),
+                'isArchived' => $section->isArchived(),
+                'isDefault'  => $section->isDefault(),
+                'isShared'   => $section->isShared(),
+                'isTrashed'  => $section->isTrashed(),
                 'label'      => $section->label()->toJson(),
                 'order'      => $section->order(),
                 'status'     => GQLUtils::formatEnumKey($section->status()),
