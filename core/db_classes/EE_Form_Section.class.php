@@ -2,6 +2,7 @@
 
 use EventEspresso\core\services\form\meta\Attributes;
 use EventEspresso\core\services\form\meta\FormLabel;
+use EventEspresso\core\services\form\meta\FormStatus;
 
 /**
  * Class EE_Form_Section
@@ -411,5 +412,80 @@ class EE_Form_Section extends EE_Base_Class
         $this->set('FSC_attributes', $this->attributes()->toArray());
         $this->set('FSC_label', $this->label()->toArray());
         return parent::save($set_cols_n_values);
+    }
+
+    /**
+     * Whether the section is active.
+     *
+     * @return boolean  TRUE if is active, FALSE if not.
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     */
+    public function isActive()
+    {
+        return $this->status() === FormStatus::ACTIVE;
+    }
+
+    /**
+     * Whether the section is archived.
+     *
+     * @return boolean  TRUE if is archived, FALSE if not.
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     */
+    public function isArchived()
+    {
+        return $this->status() === FormStatus::ARCHIVED;
+    }
+
+    /**
+     * Whether the section is a default one.
+     *
+     * @return boolean  TRUE if is default, FALSE if not.
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     */
+    public function isDefault()
+    {
+        return $this->status() === FormStatus::DEFAULT;
+    }
+
+    /**
+     * Whether the section is a shared one.
+     *
+     * @return boolean  TRUE if is shared, FALSE if not.
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     */
+    public function isShared()
+    {
+        return $this->status() === FormStatus::SHARED;
+    }
+
+    /**
+     * Whether the section is trashed.
+     *
+     * @return boolean  TRUE if is trashed, FALSE if not.
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     */
+    public function isTrashed()
+    {
+        return $this->status() === FormStatus::TRASHED;
     }
 }
