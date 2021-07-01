@@ -102,10 +102,11 @@ class RelationNode extends BaseNode
 
             // Add entity nodes for each of the model objects we fetched.
             foreach ($related_model_objs as $related_model_obj) {
-                $entity_node                                =
-                    new ModelObjNode($related_model_obj->ID(),
-                                     $related_model_obj->get_model(),
-                                     $this->dont_traverse_models);
+                $entity_node                                = new ModelObjNode(
+                    $related_model_obj->ID(),
+                    $related_model_obj->get_model(),
+                    $this->dont_traverse_models
+                );
                 $this->nodes[ $related_model_obj->ID() ]    = $entity_node;
                 $new_item_nodes[ $related_model_obj->ID() ] = $entity_node;
             }
