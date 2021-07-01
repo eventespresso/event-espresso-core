@@ -1,12 +1,9 @@
 <?php
 
-use EventEspresso\admin_pages\events\form_sections\ConfirmEventDeletionForm;
 use EventEspresso\core\domain\services\capabilities\FeatureFlags;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
-use EventEspresso\core\exceptions\UnexpectedEntityException;
 use EventEspresso\core\services\orm\tree_traversal\NodeGroupDao;
-use EventEspresso\core\services\orm\tree_traversal\ModelObjNode;
 
 /**
  * Events_Admin_Page
@@ -56,14 +53,15 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      */
     protected $model_obj_node_group_persister;
 
+
     /**
      * Initialize page props for this admin page group.
      */
     protected function _init_page_props()
     {
-        $this->page_slug = EVENTS_PG_SLUG;
-        $this->page_label = EVENTS_LABEL;
-        $this->_admin_base_url = EVENTS_ADMIN_URL;
+        $this->page_slug        = EVENTS_PG_SLUG;
+        $this->page_label       = EVENTS_LABEL;
+        $this->_admin_base_url  = EVENTS_ADMIN_URL;
         $this->_admin_base_path = EVENTS_ADMIN;
         $this->_cpt_model_names = [
             'create_new' => 'EEM_Event',
@@ -96,7 +94,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     protected function _define_page_props()
     {
         $this->_admin_page_title = EVENTS_LABEL;
-        $this->_labels = [
+        $this->_labels           = [
             'buttons'      => [
                 'add'             => esc_html__('Add New Event', 'event_espresso'),
                 'edit'            => esc_html__('Edit Event', 'event_espresso'),
@@ -127,10 +125,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         // load formatter helper
         // load field generator helper
         // is there a evt_id in the request?
-        $evt_id = ! empty($this->_req_data['EVT_ID']) && ! is_array($this->_req_data['EVT_ID'])
+        $evt_id             = ! empty($this->_req_data['EVT_ID']) && ! is_array($this->_req_data['EVT_ID'])
             ? $this->_req_data['EVT_ID']
             : 0;
-        $evt_id = ! empty($this->_req_data['post']) ? $this->_req_data['post'] : $evt_id;
+        $evt_id             = ! empty($this->_req_data['post']) ? $this->_req_data['post'] : $evt_id;
         $this->_page_routes = [
             'default'                       => [
                 'func'       => '_events_overview_list_table',
@@ -242,15 +240,15 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 'func'       => '_category_list_table',
                 'capability' => 'ee_manage_event_categories',
             ],
-            'preview_deletion' => [
-                'func' => 'previewDeletion',
+            'preview_deletion'              => [
+                'func'       => 'previewDeletion',
                 'capability' => 'ee_delete_events',
             ],
-            'confirm_deletion' => [
-                'func' => 'confirmDeletion',
+            'confirm_deletion'              => [
+                'func'       => 'confirmDeletion',
                 'capability' => 'ee_delete_events',
-                'noheader' => true,
-            ]
+                'noheader'   => true,
+            ],
         ];
     }
 
@@ -294,9 +292,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 //     'Event_Overview_Help_Tour',
                 //     // 'New_Features_Test_Help_Tour' for testing multiple help tour
                 // ],
-                'qtips'         => [
-                    'EE_Event_List_Table_Tips',
-				],
+                'qtips'         => ['EE_Event_List_Table_Tips'],
                 'require_nonce' => false,
                 'qtips'         => ['EE_Event_List_Table_Tips'],
             ],
@@ -542,7 +538,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         $domain = $this->loader->getShared('EventEspresso\core\domain\Domain');
         if (! $domain->isCaffeinated()) {
             $this->_page_config['create_new']['qtips'] = ['EE_Event_Editor_Decaf_Tips'];
-            $this->_page_config['edit']['qtips'] = ['EE_Event_Editor_Decaf_Tips'];
+            $this->_page_config['edit']['qtips']       = ['EE_Event_Editor_Decaf_Tips'];
         }
     }
 
@@ -577,7 +573,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      */
     protected function _add_screen_options_category_list()
     {
-        $page_title = $this->_admin_page_title;
+        $page_title              = $this->_admin_page_title;
         $this->_admin_page_title = esc_html__('Categories', 'event_espresso');
         $this->_per_page_screen_option();
         $this->_admin_page_title = $page_title;
@@ -882,7 +878,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      */
     protected function _event_legend_items()
     {
-        $items = [
+        $items    = [
             'view_details'   => [
                 'class' => 'dashicons dashicons-search',
                 'desc'  => esc_html__('View Event', 'event_espresso'),
@@ -896,7 +892,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 'desc'  => esc_html__('View Registrations for Event', 'event_espresso'),
             ],
         ];
-        $items = apply_filters('FHEE__Events_Admin_Page___event_legend_items__items', $items);
+        $items    = apply_filters('FHEE__Events_Admin_Page___event_legend_items__items', $items);
         $statuses = [
             'sold_out_status'  => [
                 'class' => 'ee-status-legend ee-status-legend-' . EE_Datetime::sold_out,
@@ -963,7 +959,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     {
         // make sure this is only when editing
         if (! empty($id)) {
-            $post = get_post($id);
+            $post   = get_post($id);
             $return .= '<a class="button button-small" onclick="prompt(\'Shortcode:\', jQuery(\'#shortcode\').val()); return false;" href="#"  tabindex="-1">'
                        . esc_html__('Shortcode', 'event_espresso')
                        . '</a> ';
@@ -990,22 +986,25 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     protected function _events_overview_list_table()
     {
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-        $this->_template_args['after_list_table'] = ! empty($this->_template_args['after_list_table'])
-            ? (array) $this->_template_args['after_list_table']
-            : [];
+        $this->_template_args['after_list_table']                           =
+            ! empty($this->_template_args['after_list_table'])
+                ? (array) $this->_template_args['after_list_table']
+                : [];
         $this->_template_args['after_list_table']['view_event_list_button'] = EEH_HTML::br()
-                                                                              . EEH_Template::get_button_or_link(
-                                                                                  get_post_type_archive_link('espresso_events'),
-                                                                                  esc_html__('View Event Archive Page', 'event_espresso'),
-                                                                                  'button'
-                                                                              );
-        $this->_template_args['after_list_table']['legend'] = $this->_display_legend($this->_event_legend_items());
-        $this->_admin_page_title .= ' ' . $this->get_action_link_or_button(
-            'create_new',
-            'add',
-            [],
-            'add-new-h2'
-        );
+            . EEH_Template::get_button_or_link(
+                get_post_type_archive_link('espresso_events'),
+                esc_html__('View Event Archive Page', 'event_espresso'),
+                'button'
+            );
+        $this->_template_args['after_list_table']['legend']                 =
+            $this->_display_legend($this->_event_legend_items());
+        $this->_admin_page_title                                            .= ' '
+            . $this->get_action_link_or_button(
+                'create_new',
+                'add',
+                [],
+                'add-new-h2'
+            );
         $this->display_admin_list_table_page_with_no_sidebar();
     }
 
@@ -1064,11 +1063,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         $flags = $this->loader->getShared('EventEspresso\core\domain\services\capabilities\FeatureFlags');
         // check if the new EDTR reg options meta box is being used, and if so, don't run updates for legacy version
         if (! $this->admin_config->useAdvancedEditor() || ! $flags->featureAllowed('use_reg_options_meta_box')) {
-            $event_values['EVT_display_ticket_selector'] =
+            $event_values['EVT_display_ticket_selector']     =
                 ! empty($this->_req_data['display_ticket_selector'])
                     ? 1
                     : 0;
-            $event_values['EVT_additional_limit'] = min(
+            $event_values['EVT_additional_limit']            = min(
                 apply_filters('FHEE__EE_Events_Admin__insert_update_cpt_item__EVT_additional_limit_max', 255),
                 ! empty($this->_req_data['additional_limit'])
                     ? absint($this->_req_data['additional_limit'])
@@ -1078,16 +1077,19 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 ! empty($this->_req_data['EVT_default_registration_status'])
                     ? sanitize_text_field($this->_req_data['EVT_default_registration_status'])
                     : EE_Registry::instance()->CFG->registration->default_STS_ID;
-            $event_values['EVT_external_URL'] = ! empty($this->_req_data['externalURL'])
+            $event_values['EVT_external_URL']                = ! empty($this->_req_data['externalURL'])
                 ? esc_url_raw($this->_req_data['externalURL'])
                 : null;
-            $event_values['EVT_phone'] = ! empty($this->_req_data['event_phone'])
+            $event_values['EVT_phone']                       = ! empty($this->_req_data['event_phone'])
                 ? sanitize_text_field($this->_req_data['event_phone'])
                 : null;
         }
         // update event
         $success = $this->_event_model()->update_by_ID($event_values, $post_id);
-        // get event_object for other metaboxes... though it would seem to make sense to just use $this->_event_model()->get_one_by_ID( $post_id ).. i have to setup where conditions to override the filters in the model that filter out autodraft and inherit statuses so we GET the inherit id!
+        // get event_object for other metaboxes...
+        // though it would seem to make sense to just use $this->_event_model()->get_one_by_ID( $post_id )..
+        // i have to setup where conditions to override the filters in the model that filter out autodraft
+        // and inherit statuses so we GET the inherit id!
         $get_one_where = [
             $this->_event_model()->primary_key_name() => $post_id,
             'OR'                                      => [
@@ -1097,8 +1099,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 'status*1' => $this->_req_data['original_post_status'],
             ],
         ];
-        $event = $this->_event_model()->get_one([$get_one_where]);
-        // the following are default callbacks for event attachment updates that can be overridden by caffeinated functionality and/or addons.
+        $event         = $this->_event_model()->get_one([$get_one_where]);
+        // the following are default callbacks for event attachment updates
+        // that can be overridden by caffeinated functionality and/or addons.
         $event_update_callbacks = apply_filters(
             'FHEE__Events_Admin_Page___insert_update_cpt_item__event_update_callbacks',
             [
@@ -1106,7 +1109,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 [$this, '_default_tickets_update'],
             ]
         );
-        $att_success = true;
+        $att_success            = true;
         foreach ($event_update_callbacks as $e_callback) {
             $_success = is_callable($e_callback)
                 ? $e_callback($event, $this->_req_data)
@@ -1174,9 +1177,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     protected function _default_venue_update(EE_Event $evtobj, $data)
     {
         require_once(EE_MODELS . 'EEM_Venue.model.php');
-        $venue_model = EE_Registry::instance()->load_model('Venue');
+        $venue_model   = EE_Registry::instance()->load_model('Venue');
         $rows_affected = null;
-        $venue_id = ! empty($data['venue_id']) ? $data['venue_id'] : null;
+        $venue_id      = ! empty($data['venue_id']) ? $data['venue_id'] : null;
         // very important.  If we don't have a venue name...
         // then we'll get out because not necessary to create empty venue
         if (empty($data['venue_title'])) {
@@ -1205,16 +1208,17 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         ];
         // if we've got the venue_id then we're just updating the existing venue so let's do that and then get out.
         if (! empty($venue_id)) {
-            $update_where = [$venue_model->primary_key_name() => $venue_id];
+            $update_where  = [$venue_model->primary_key_name() => $venue_id];
             $rows_affected = $venue_model->update($venue_array, [$update_where]);
-            // we've gotta make sure that the venue is always attached to a revision.. add_relation_to should take care of making sure that the relation is already present.
+            // we've gotta make sure that the venue is always attached to a revision..
+            // add_relation_to should take care of making sure that the relation is already present.
             $evtobj->_add_relation_to($venue_id, 'Venue');
             return $rows_affected > 0;
         }
         // we insert the venue
         $venue_id = $venue_model->insert($venue_array);
         $evtobj->_add_relation_to($venue_id, 'Venue');
-        return ! empty($venue_id) ? true : false;
+        return ! empty($venue_id);
         // when we have the ancestor come in it's already been handled by the revision save.
     }
 
@@ -1237,23 +1241,24 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         if ($this->admin_config->useAdvancedEditor()) {
             return [];
         }
-        $success = true;
-        $saved_dtt = null;
-        $saved_tickets = [];
+        $success               = true;
+        $saved_dtt             = null;
+        $saved_tickets         = [];
         $incoming_date_formats = ['Y-m-d', 'h:i a'];
         foreach ($data['edit_event_datetimes'] as $row => $dtt) {
             // trim all values to ensure any excess whitespace is removed.
-            $dtt = array_map('trim', $dtt);
+            $dtt                = array_map('trim', $dtt);
             $dtt['DTT_EVT_end'] = isset($dtt['DTT_EVT_end']) && ! empty($dtt['DTT_EVT_end']) ? $dtt['DTT_EVT_end']
                 : $dtt['DTT_EVT_start'];
-            $datetime_values = [
+            $datetime_values    = [
                 'DTT_ID'        => ! empty($dtt['DTT_ID']) ? $dtt['DTT_ID'] : null,
                 'DTT_EVT_start' => $dtt['DTT_EVT_start'],
                 'DTT_EVT_end'   => $dtt['DTT_EVT_end'],
                 'DTT_reg_limit' => empty($dtt['DTT_reg_limit']) ? EE_INF : $dtt['DTT_reg_limit'],
                 'DTT_order'     => $row,
             ];
-            // if we have an id then let's get existing object first and then set the new values.  Otherwise we instantiate a new object for save.
+            // if we have an id then let's get existing object first and then set the new values.
+            //  Otherwise we instantiate a new object for save.
             if (! empty($dtt['DTT_ID'])) {
                 $DTM = EE_Registry::instance()
                                   ->load_model('Datetime', [$evtobj->get_timezone()])
@@ -1263,7 +1268,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 foreach ($datetime_values as $field => $value) {
                     $DTM->set($field, $value);
                 }
-                // make sure the $dtt_id here is saved just in case after the add_relation_to() the autosave replaces it.  We need to do this so we dont' TRASH the parent DTT.
+                // make sure the $dtt_id here is saved in case after the add_relation_to() the autosave replaces it.
+                // We need to do this so we dont' TRASH the parent DTT.
                 $saved_dtts[ $DTM->ID() ] = $DTM;
             } else {
                 $DTM = EE_Registry::instance()->load_class(
@@ -1279,15 +1285,17 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             $DTM->save();
             $DTT = $evtobj->_add_relation_to($DTM, 'Datetime');
             // load DTT helper
-            // before going any further make sure our dates are setup correctly so that the end date is always equal or greater than the start date.
+            // before going any further make sure our dates are setup correctly
+            // so that the end date is always equal or greater than the start date.
             if ($DTT->get_raw('DTT_EVT_start') > $DTT->get_raw('DTT_EVT_end')) {
                 $DTT->set('DTT_EVT_end', $DTT->get('DTT_EVT_start'));
                 $DTT = EEH_DTT_Helper::date_time_add($DTT, 'DTT_EVT_end', 'days');
                 $DTT->save();
             }
-            // now we got to make sure we add the new DTT_ID to the $saved_dtts array  because it is possible there was a new one created for the autosave.
+            // now we got to make sure we add the new DTT_ID to the $saved_dtts array
+            //  because it is possible there was a new one created for the autosave.
             $saved_dtt = $DTT;
-            $success = ! $success ? $success : $DTT;
+            $success   = ! $success ? $success : $DTT;
             // if ANY of these updates fail then we want the appropriate global error message.
             // //todo this is actually sucky we need a better error message but this is what it is for now.
         }
@@ -1296,19 +1304,20 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         $old_tickets = isset($data['ticket_IDs']) ? explode(',', $data['ticket_IDs']) : [];
         foreach ($data['edit_tickets'] as $row => $tkt) {
             $incoming_date_formats = ['Y-m-d', 'h:i a'];
-            $update_prices = false;
-            $ticket_price = isset($data['edit_prices'][ $row ][1]['PRC_amount'])
-                ? $data['edit_prices'][ $row ][1]['PRC_amount'] : 0;
+            $update_prices         = false;
+            $ticket_price          = $data['edit_prices'][ $row ][1]['PRC_amount']
+                ? $data['edit_prices'][ $row ][1]['PRC_amount']
+                : 0;
             // trim inputs to ensure any excess whitespace is removed.
             $tkt = array_map('trim', $tkt);
             if (empty($tkt['TKT_start_date'])) {
                 // let's use now in the set timezone.
-                $now = new DateTime('now', new DateTimeZone($evtobj->get_timezone()));
+                $now                   = new DateTime('now', new DateTimeZone($evtobj->get_timezone()));
                 $tkt['TKT_start_date'] = $now->format($incoming_date_formats[0] . ' ' . $incoming_date_formats[1]);
             }
             if (empty($tkt['TKT_end_date'])) {
                 // use the start date of the first datetime
-                $dtt = $evtobj->first_datetime();
+                $dtt                 = $evtobj->first_datetime();
                 $tkt['TKT_end_date'] = $dtt->start_date_and_time(
                     $incoming_date_formats[0],
                     $incoming_date_formats[1]
@@ -1326,27 +1335,30 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 'TKT_min'         => empty($tkt['TKT_min']) ? 0 : $tkt['TKT_min'],
                 'TKT_max'         => empty($tkt['TKT_max']) ? EE_INF : $tkt['TKT_max'],
                 'TKT_row'         => $row,
-                'TKT_order'       => isset($tkt['TKT_order']) ? $tkt['TKT_order'] : $row,
+                'TKT_order'       => $tkt['TKT_order'] ? $tkt['TKT_order'] : $row,
                 'TKT_price'       => $ticket_price,
             ];
-            // if this is a default TKT, then we need to set the TKT_ID to 0 and update accordingly, which means in turn that the prices will become new prices as well.
+            // if this is a default TKT, then we need to set the TKT_ID to 0 and update accordingly,
+            // which means in turn that the prices will become new prices as well.
             if (isset($tkt['TKT_is_default']) && $tkt['TKT_is_default']) {
-                $TKT_values['TKT_ID'] = 0;
+                $TKT_values['TKT_ID']         = 0;
                 $TKT_values['TKT_is_default'] = 0;
-                $TKT_values['TKT_price'] = $ticket_price;
-                $update_prices = true;
+                $TKT_values['TKT_price']      = $ticket_price;
+                $update_prices                = true;
             }
             // if we have a TKT_ID then we need to get that existing TKT_obj and update it
-            // we actually do our saves a head of doing any add_relations to because its entirely possible that this ticket didn't removed or added to any datetime in the session but DID have it's items modified.
-            // keep in mind that if the TKT has been sold (and we have changed pricing information), then we won't be updating the tkt but instead a new tkt will be created and the old one archived.
+            // we actually do our saves a head of doing any add_relations to because its entirely possible
+            // that this ticket didn't removed or added to any datetime in the session but DID have it's items modified.
+            // keep in mind that if the TKT has been sold (and we have changed pricing information),
+            // then we won't be updating the tkt but instead a new tkt will be created and the old one archived.
             if (! empty($tkt['TKT_ID'])) {
                 $TKT = EE_Registry::instance()
                                   ->load_model('Ticket', [$evtobj->get_timezone()])
                                   ->get_one_by_ID($tkt['TKT_ID']);
                 if ($TKT instanceof EE_Ticket) {
                     $ticket_sold = $TKT->count_related(
-                        'Registration',
-                        [
+                            'Registration',
+                            [
                                 [
                                     'STS_ID' => [
                                         'NOT IN',
@@ -1354,16 +1366,16 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                                     ],
                                 ],
                             ]
-                    ) > 0;
+                        ) > 0;
                     // let's just check the total price for the existing ticket and determine if it matches the new
                     // total price.  if they are different then we create a new ticket (if tickets sold)
                     // if they aren't different then we go ahead and modify existing ticket.
                     $create_new_TKT = $ticket_sold && ! $TKT->deleted()
                                       && EEH_Money::compare_floats(
-                                          $ticket_price,
-                                          $TKT->get('TKT_price'),
-                                          '!=='
-                                      );
+                            $ticket_price,
+                            $TKT->get('TKT_price'),
+                            '!=='
+                        );
                     $TKT->set_date_format($incoming_date_formats[0]);
                     $TKT->set_time_format($incoming_date_formats[1]);
                     // set new values
@@ -1374,14 +1386,17 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                             $TKT->set($field, $value);
                         }
                     }
-                    // if $create_new_TKT is false then we can safely update the existing ticket.  Otherwise we have to create a new ticket.
+                    // if $create_new_TKT is false then we can safely update the existing ticket.
+                    //  Otherwise we have to create a new ticket.
                     if ($create_new_TKT) {
                         // archive the old ticket first
                         $TKT->set('TKT_deleted', 1);
                         $TKT->save();
-                        // make sure this ticket is still recorded in our saved_tkts so we don't run it through the regular trash routine.
+                        // make sure this ticket is still recorded in our saved_tkts
+                        // so we don't run it through the regular trash routine.
                         $saved_tickets[ $TKT->ID() ] = $TKT;
-                        // create new ticket that's a copy of the existing except a new id of course (and not archived) AND has the new TKT_price associated with it.
+                        // create new ticket that's a copy of the existing except a new id of course
+                        // (and not archived) AND has the new TKT_price associated with it.
                         $TKT = clone $TKT;
                         $TKT->set('TKT_ID', 0);
                         $TKT->set('TKT_deleted', 0);
@@ -1396,7 +1411,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             } else {
                 // no TKT_id so a new TKT
                 $TKT_values['TKT_price'] = $ticket_price;
-                $TKT = EE_Registry::instance()->load_class('Ticket', [$TKT_values], false, false);
+                $TKT                     = EE_Registry::instance()->load_class('Ticket', [$TKT_values], false, false);
                 if ($TKT instanceof EE_Ticket) {
                     // need to reset values to properly account for the date formats
                     $TKT->set_date_format($incoming_date_formats[0]);
@@ -1417,7 +1432,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             $TKT->set_qty(min($TKT->qty(), $TKT->qty('reg_limit')));
             // update ticket.
             $TKT->save();
-            // before going any further make sure our dates are setup correctly so that the end date is always equal or greater than the start date.
+            // before going any further make sure our dates are setup correctly
+            // so that the end date is always equal or greater than the start date.
             if ($TKT->get_raw('TKT_start_date') > $TKT->get_raw('TKT_end_date')) {
                 $TKT->set('TKT_end_date', $TKT->get('TKT_start_date'));
                 $TKT = EEH_DTT_Helper::date_time_add($TKT, 'TKT_end_date', 'days');
@@ -1429,21 +1445,27 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             // add prices to ticket
             $this->_add_prices_to_ticket($data['edit_prices'][ $row ], $TKT, $update_prices);
         }
-        // however now we need to handle permanently deleting tickets via the ui.  Keep in mind that the ui does not allow deleting/archiving tickets that have ticket sold.  However, it does allow for deleting tickets that have no tickets sold, in which case we want to get rid of permanently because there is no need to save in db.
-        $old_tickets = isset($old_tickets[0]) && $old_tickets[0] === '' ? [] : $old_tickets;
+        // however now we need to handle permanently deleting tickets via the ui.
+        //  Keep in mind that the ui does not allow deleting/archiving tickets that have ticket sold.
+        //  However, it does allow for deleting tickets that have no tickets sold,
+        // in which case we want to get rid of permanently because there is no need to save in db.
+        $old_tickets     = isset($old_tickets[0]) && $old_tickets[0] === '' ? [] : $old_tickets;
         $tickets_removed = array_diff($old_tickets, array_keys($saved_tickets));
         foreach ($tickets_removed as $id) {
             $id = absint($id);
             // get the ticket for this id
             $tkt_to_remove = EE_Registry::instance()->load_model('Ticket')->get_one_by_ID($id);
-            // need to get all the related datetimes on this ticket and remove from every single one of them (remember this process can ONLY kick off if there are NO tkts_sold)
+            // need to get all the related datetimes on this ticket and remove from every single one of them
+            // (remember this process can ONLY kick off if there are NO tkts_sold)
             $dtts = $tkt_to_remove->get_many_related('Datetime');
             foreach ($dtts as $dtt) {
                 $tkt_to_remove->_remove_relation_to($dtt, 'Datetime');
             }
-            // need to do the same for prices (except these prices can also be deleted because again, tickets can only be trashed if they don't have any TKTs sold (otherwise they are just archived))
+            // need to do the same for prices (except these prices can also be deleted because again,
+            // tickets can only be trashed if they don't have any TKTs sold (otherwise they are just archived))
             $tkt_to_remove->delete_related_permanently('Price');
-            // finally let's delete this ticket (which should not be blocked at this point b/c we've removed all our relationships)
+            // finally let's delete this ticket
+            // (which should not be blocked at this point b/c we've removed all our relationships)
             $tkt_to_remove->delete_permanently();
         }
         return [$saved_dtt, $saved_tickets];
@@ -1452,9 +1474,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
 
     /**
      * This attaches a list of given prices to a ticket.
-     * Note we dont' have to worry about ever removing relationships (or archiving prices) because if there is a change
-     * in price information on a ticket, a new ticket is created anyways so the archived ticket will retain the old
-     * price info and prices are automatically "archived" via the ticket.
+     * Note we dont' have to worry about ever removing relationships (or archiving prices)
+     * because if there is a change in price information on a ticket, a new ticket is created anyways
+     * so the archived ticket will retain the old price info and prices are automatically "archived" via the ticket.
      *
      * @access  private
      * @param array     $prices     Array of prices from the form.
@@ -1481,7 +1503,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             ];
             if ($new_prices || empty($PRC_values['PRC_ID'])) {
                 $PRC_values['PRC_ID'] = 0;
-                $PRC = EE_Registry::instance()->load_class('Price', [$PRC_values], false, false);
+                $PRC                  = EE_Registry::instance()->load_class('Price', [$PRC_values], false, false);
             } else {
                 $PRC = EE_Registry::instance()->load_model('Price')->get_one_by_ID($prc['PRC_ID']);
                 // update this price with new values
@@ -1526,13 +1548,13 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     {
         // load formatter helper
         // args for getting related registrations
-        $approved_query_args = [
+        $approved_query_args        = [
             [
                 'REG_deleted' => 0,
                 'STS_ID'      => EEM_Registration::status_id_approved,
             ],
         ];
-        $not_approved_query_args = [
+        $not_approved_query_args    = [
             [
                 'REG_deleted' => 0,
                 'STS_ID'      => EEM_Registration::status_id_not_approved,
@@ -1692,7 +1714,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             'trash_icon'               => 'ee-lock-icon',
             'disabled'                 => '',
         ];
-        $event_id = is_object($this->_cpt_model_obj) ? $this->_cpt_model_obj->ID() : null;
+        $event_id      = is_object($this->_cpt_model_obj) ? $this->_cpt_model_obj->ID() : null;
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
         /**
          * 1. Start with retrieving Datetimes
@@ -1708,8 +1730,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             && $first_datetime->ID() !== 0
         ) {
             $existing_datetime_ids[] = $first_datetime->get('DTT_ID');
-            $template_args['time'] = $first_datetime;
-            $related_tickets = $first_datetime->tickets(
+            $template_args['time']   = $first_datetime;
+            $related_tickets         = $first_datetime->tickets(
                 [
                     ['OR' => ['TKT_deleted' => 1, 'TKT_deleted*' => 0]],
                     'default_where_conditions' => 'none',
@@ -1717,22 +1739,22 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             );
             if (! empty($related_tickets)) {
                 $template_args['total_ticket_rows'] = count($related_tickets);
-                $row = 0;
+                $row                                = 0;
                 foreach ($related_tickets as $ticket) {
-                    $existing_ticket_ids[] = $ticket->get('TKT_ID');
+                    $existing_ticket_ids[]        = $ticket->get('TKT_ID');
                     $template_args['ticket_rows'] .= $this->_get_ticket_row($ticket, false, $row);
                     $row++;
                 }
             } else {
                 $template_args['total_ticket_rows'] = 1;
                 /** @type EE_Ticket $ticket */
-                $ticket = EE_Registry::instance()->load_model('Ticket')->create_default_object();
+                $ticket                       = EE_Registry::instance()->load_model('Ticket')->create_default_object();
                 $template_args['ticket_rows'] .= $this->_get_ticket_row($ticket);
             }
         } else {
             $template_args['time'] = $times[0];
             /** @type EE_Ticket $ticket */
-            $ticket = EE_Registry::instance()->load_model('Ticket')->get_all_default_tickets();
+            $ticket                       = EE_Registry::instance()->load_model('Ticket')->get_all_default_tickets();
             $template_args['ticket_rows'] .= $this->_get_ticket_row($ticket[1]);
             // NOTE: we're just sending the first default row
             // (decaf can't manage default tickets so this should be sufficient);
@@ -1741,13 +1763,13 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             'event_editor_event_datetimes_help_tab'
         );
         $template_args['ticket_options_help_link'] = $this->_get_help_tab_link('ticket_options_info');
-        $template_args['existing_datetime_ids'] = implode(',', $existing_datetime_ids);
-        $template_args['existing_ticket_ids'] = implode(',', $existing_ticket_ids);
-        $template_args['ticket_js_structure'] = $this->_get_ticket_row(
+        $template_args['existing_datetime_ids']    = implode(',', $existing_datetime_ids);
+        $template_args['existing_ticket_ids']      = implode(',', $existing_ticket_ids);
+        $template_args['ticket_js_structure']      = $this->_get_ticket_row(
             EE_Registry::instance()->load_model('Ticket')->create_default_object(),
             true
         );
-        $template = apply_filters(
+        $template                                  = apply_filters(
             'FHEE__Events_Admin_Page__ticket_metabox__template',
             EVENTS_TEMPLATE_PATH . 'event_tickets_metabox_main.template.php'
         );
@@ -1791,10 +1813,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             'disabled'            => $skeleton || (! empty($ticket) && ! $ticket->get('TKT_deleted')) ? ''
                 : ' disabled=disabled',
         ];
-        $price = $ticket->ID() !== 0
+        $price         = $ticket->ID() !== 0
             ? $ticket->get_first_related('Price', ['default_where_conditions' => 'none'])
             : EE_Registry::instance()->load_model('Price')->create_default_object();
-        $price_args = [
+        $price_args    = [
             'price_currency_symbol' => EE_Registry::instance()->CFG->currency->sign,
             'PRC_amount'            => $price->get('PRC_amount'),
             'PRT_ID'                => $price->get('PRT_ID'),
@@ -1825,7 +1847,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             }
         }
         $template_args = array_merge($template_args, $price_args);
-        $template = apply_filters(
+        $template      = apply_filters(
             'FHEE__Events_Admin_Page__get_ticket_row__template',
             EVENTS_TEMPLATE_PATH . 'event_tickets_metabox_ticket_row.template.php',
             $ticket
@@ -1840,7 +1862,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      */
     public function registration_options_meta_box()
     {
-        $yes_no_values = [
+        $yes_no_values             = [
             ['id' => true, 'text' => esc_html__('Yes', 'event_espresso')],
             ['id' => false, 'text' => esc_html__('No', 'event_espresso')],
         ];
@@ -1853,20 +1875,20 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             true
         );
         // $template_args['is_active_select'] = EEH_Form_Fields::select_input('is_active', $yes_no_values, $this->_cpt_model_obj->is_active());
-        $template_args['_event'] = $this->_cpt_model_obj;
-        $template_args['active_status'] = $this->_cpt_model_obj->pretty_active_status(false);
-        $template_args['additional_limit'] = $this->_cpt_model_obj->additional_limit();
-        $template_args['default_registration_status'] = EEH_Form_Fields::select_input(
+        $template_args['_event']                          = $this->_cpt_model_obj;
+        $template_args['active_status']                   = $this->_cpt_model_obj->pretty_active_status(false);
+        $template_args['additional_limit']                = $this->_cpt_model_obj->additional_limit();
+        $template_args['default_registration_status']     = EEH_Form_Fields::select_input(
             'default_reg_status',
             $default_reg_status_values,
             $this->_cpt_model_obj->default_registration_status()
         );
-        $template_args['display_description'] = EEH_Form_Fields::select_input(
+        $template_args['display_description']             = EEH_Form_Fields::select_input(
             'display_desc',
             $yes_no_values,
             $this->_cpt_model_obj->display_description()
         );
-        $template_args['display_ticket_selector'] = EEH_Form_Fields::select_input(
+        $template_args['display_ticket_selector']         = EEH_Form_Fields::select_input(
             'display_ticket_selector',
             $yes_no_values,
             $this->_cpt_model_obj->display_ticket_selector(),
@@ -1910,20 +1932,20 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      */
     public function get_events($per_page = 10, $current_page = 1, $count = false)
     {
-        $EEME = $this->_event_model();
-        $offset = ($current_page - 1) * $per_page;
-        $limit = $count ? null : $offset . ',' . $per_page;
+        $EEME    = $this->_event_model();
+        $offset  = ($current_page - 1) * $per_page;
+        $limit   = $count ? null : $offset . ',' . $per_page;
         $orderby = isset($this->_req_data['orderby']) ? $this->_req_data['orderby'] : 'EVT_ID';
-        $order = isset($this->_req_data['order']) ? $this->_req_data['order'] : 'DESC';
+        $order   = isset($this->_req_data['order']) ? $this->_req_data['order'] : 'DESC';
         if (isset($this->_req_data['month_range'])) {
             $pieces = explode(' ', $this->_req_data['month_range'], 3);
             // simulate the FIRST day of the month, that fixes issues for months like February
             // where PHP doesn't know what to assume for date.
             // @see https://events.codebasehq.com/projects/event-espresso/tickets/10437
             $month_r = ! empty($pieces[0]) ? date('m', EEH_DTT_Helper::first_of_month_timestamp($pieces[0])) : '';
-            $year_r = ! empty($pieces[1]) ? $pieces[1] : '';
+            $year_r  = ! empty($pieces[1]) ? $pieces[1] : '';
         }
-        $where = [];
+        $where  = [];
         $status = isset($this->_req_data['status']) ? $this->_req_data['status'] : null;
         // determine what post_status our condition will have for the query.
         switch ($status) {
@@ -1943,7 +1965,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             ? $this->_req_data['EVT_CAT'] : null;
         if (! empty($category)) {
             $where['Term_Taxonomy.taxonomy'] = EEM_CPT_Base::EVENT_CATEGORY_TAXONOMY;
-            $where['Term_Taxonomy.term_id'] = $category;
+            $where['Term_Taxonomy.term_id']  = $category;
         }
         // date where conditions
         $start_formats = EEM_Datetime::instance()->get_formats_for('DTT_EVT_start');
@@ -1952,34 +1974,36 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 $year_r . '-' . $month_r . '-01 00:00:00',
                 new DateTimeZone('UTC')
             );
-            $start = $DateTime->getTimestamp();
+            $start    = $DateTime->getTimestamp();
             // set the datetime to be the end of the month
             $DateTime->setDate(
                 $year_r,
                 $month_r,
                 $DateTime->format('t')
             )->setTime(23, 59, 59);
-            $end = $DateTime->getTimestamp();
+            $end                             = $DateTime->getTimestamp();
             $where['Datetime.DTT_EVT_start'] = ['BETWEEN', [$start, $end]];
         } elseif (isset($this->_req_data['status']) && $this->_req_data['status'] === 'today') {
-            $DateTime = new DateTime('now', new DateTimeZone(EEM_Event::instance()->get_timezone()));
-            $start = $DateTime->setTime(0, 0, 0)->format(implode(' ', $start_formats));
-            $end = $DateTime->setTime(23, 59, 59)->format(implode(' ', $start_formats));
+            $DateTime                        =
+                new DateTime('now', new DateTimeZone(EEM_Event::instance()->get_timezone()));
+            $start                           = $DateTime->setTime(0, 0, 0)->format(implode(' ', $start_formats));
+            $end                             = $DateTime->setTime(23, 59, 59)->format(implode(' ', $start_formats));
             $where['Datetime.DTT_EVT_start'] = ['BETWEEN', [$start, $end]];
         } elseif (isset($this->_req_data['status']) && $this->_req_data['status'] === 'month') {
-            $now = date('Y-m-01');
-            $DateTime = new DateTime($now, new DateTimeZone(EEM_Event::instance()->get_timezone()));
-            $start = $DateTime->setTime(0, 0, 0)->format(implode(' ', $start_formats));
-            $end = $DateTime->setDate(date('Y'), date('m'), $DateTime->format('t'))
-                            ->setTime(23, 59, 59)
-                            ->format(implode(' ', $start_formats));
+            $now                             = date('Y-m-01');
+            $DateTime                        =
+                new DateTime($now, new DateTimeZone(EEM_Event::instance()->get_timezone()));
+            $start                           = $DateTime->setTime(0, 0, 0)->format(implode(' ', $start_formats));
+            $end                             = $DateTime->setDate(date('Y'), date('m'), $DateTime->format('t'))
+                                                        ->setTime(23, 59, 59)
+                                                        ->format(implode(' ', $start_formats));
             $where['Datetime.DTT_EVT_start'] = ['BETWEEN', [$start, $end]];
         }
         if (! EE_Registry::instance()->CAP->current_user_can('ee_read_others_events', 'get_events')) {
             $where['EVT_wp_user'] = get_current_user_id();
         } elseif (
             ! isset($where['status'])
-                  && ! EE_Registry::instance()->CAP->current_user_can('ee_read_private_events', 'get_events')
+            && ! EE_Registry::instance()->CAP->current_user_can('ee_read_private_events', 'get_events')
         ) {
             $where['OR'] = [
                 'status*restrict_private' => ['!=', 'private'],
@@ -2000,7 +2024,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         // search query handling
         if (isset($this->_req_data['s'])) {
             $search_string = '%' . $this->_req_data['s'] . '%';
-            $where['OR'] = [
+            $where['OR']   = [
                 'EVT_name'       => ['LIKE', $search_string],
                 'EVT_desc'       => ['LIKE', $search_string],
                 'EVT_short_desc' => ['LIKE', $search_string],
@@ -2010,7 +2034,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         if (isset($this->_req_data['venue']) && ! empty($this->_req_data['venue'])) {
             $where['Venue.VNU_ID'] = absint($this->_req_data['venue']);
         }
-        $where = apply_filters('FHEE__Events_Admin_Page__get_events__where', $where, $this->_req_data);
+        $where        = apply_filters('FHEE__Events_Admin_Page__get_events__where', $where, $this->_req_data);
         $query_params = apply_filters(
             'FHEE__Events_Admin_Page__get_events__query_params',
             [
@@ -2088,7 +2112,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      */
     public function delete_cpt_item($post_id)
     {
-        throw new EE_Error(esc_html__('Please contact Event Espresso support with the details of the steps taken to produce this error.', 'event_espresso'));
+        throw new EE_Error(
+            esc_html__(
+                'Please contact Event Espresso support with the details of the steps taken to produce this error.',
+                'event_espresso'
+            )
+        );
         $this->_req_data['EVT_ID'] = $post_id;
         $this->_delete_event();
     }
@@ -2119,7 +2148,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 $success = $this->_change_event_status($EVT_ID, $event_status);
             } else {
                 $success = false;
-                $msg = esc_html__(
+                $msg     = esc_html__(
                     'An error occurred. The event could not be moved to the trash because a valid event status was not not supplied.',
                     'event_espresso'
                 );
@@ -2127,7 +2156,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             }
         } else {
             $success = false;
-            $msg = esc_html__(
+            $msg     = esc_html__(
                 'An error occurred. The event could not be moved to the trash because a valid event ID was not not supplied.',
                 'event_espresso'
             );
@@ -2180,7 +2209,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             }
         } else {
             $success = false;
-            $msg = esc_html__(
+            $msg     = esc_html__(
                 'An error occurred. The event could not be moved to the trash because a valid event status was not not supplied.',
                 'event_espresso'
             );
@@ -2188,7 +2217,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         }
         // in order to force a pluralized result message we need to send back a success status greater than 1
         $success = $success ? 2 : false;
-        $action = $event_status === 'trash' ? 'moved to the trash' : 'restored from the trash';
+        $action  = $event_status === 'trash' ? 'moved to the trash' : 'restored from the trash';
         $this->_redirect_after_action($success, 'Events', $action, ['action' => 'default']);
     }
 
@@ -2233,15 +2262,15 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         switch ($event_status) {
             case 'draft':
                 $action = 'restored from the trash';
-                $hook = 'AHEE_event_restored_from_trash';
+                $hook   = 'AHEE_event_restored_from_trash';
                 break;
             case 'trash':
                 $action = 'moved to the trash';
-                $hook = 'AHEE_event_moved_to_trash';
+                $hook   = 'AHEE_event_moved_to_trash';
                 break;
             default:
                 $action = 'updated';
-                $hook = false;
+                $hook   = false;
         }
         // use class to change status
         $this->_cpt_model_obj->set_status($event_status);
@@ -2274,21 +2303,25 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         $this->generateDeletionPreview(isset($this->_req_data['EVT_ID']) ? $this->_req_data['EVT_ID'] : []);
     }
 
+
     /**
      * Gets the tree traversal batch persister.
-     * @since 4.10.12.p
+     *
      * @return NodeGroupDao
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @since 4.10.12.p
      */
     protected function getModelObjNodeGroupPersister()
     {
         if (! $this->model_obj_node_group_persister instanceof NodeGroupDao) {
-            $this->model_obj_node_group_persister = $this->getLoader()->load('\EventEspresso\core\services\orm\tree_traversal\NodeGroupDao');
+            $this->model_obj_node_group_persister =
+                $this->getLoader()->load('\EventEspresso\core\services\orm\tree_traversal\NodeGroupDao');
         }
         return $this->model_obj_node_group_persister;
     }
+
 
     /**
      * _delete_events
@@ -2306,19 +2339,20 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         $this->generateDeletionPreview(isset($this->_req_data['EVT_IDs']) ? (array) $this->_req_data['EVT_IDs'] : []);
     }
 
+
     protected function generateDeletionPreview($event_ids)
     {
         $event_ids = (array) $event_ids;
         // Set a code we can use to reference this deletion task in the batch jobs and preview page.
         $deletion_job_code = $this->getModelObjNodeGroupPersister()->generateGroupCode();
-        $return_url = EE_Admin_Page::add_query_args_and_nonce(
+        $return_url        = EE_Admin_Page::add_query_args_and_nonce(
             [
-                'action' => 'preview_deletion',
+                'action'            => 'preview_deletion',
                 'deletion_job_code' => $deletion_job_code,
             ],
             $this->_admin_base_url
         );
-        $event_ids = array_map(
+        $event_ids         = array_map(
             'intval',
             $event_ids
         );
@@ -2338,27 +2372,34 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         );
     }
 
+
     /**
      * Checks for a POST submission
+     *
      * @since 4.10.12.p
      */
     protected function confirmDeletion()
     {
-        $deletion_redirect_logic = $this->getLoader()->getShared('\EventEspresso\core\domain\services\admin\events\data\ConfirmDeletion');
+        $deletion_redirect_logic =
+            $this->getLoader()->getShared('\EventEspresso\core\domain\services\admin\events\data\ConfirmDeletion');
         $deletion_redirect_logic->handle($this->get_request_data(), $this->admin_base_url());
     }
 
+
     /**
      * A page for users to preview what exactly will be deleted, and confirm they want to delete it.
-     * @since 4.10.12.p
+     *
      * @throws EE_Error
+     * @since 4.10.12.p
      */
     protected function previewDeletion()
     {
-        $preview_deletion_logic = $this->getLoader()->getShared('\EventEspresso\core\domain\services\admin\events\data\PreviewDeletion');
+        $preview_deletion_logic =
+            $this->getLoader()->getShared('\EventEspresso\core\domain\services\admin\events\data\PreviewDeletion');
         $this->set_template_args($preview_deletion_logic->handle($this->get_request_data(), $this->admin_base_url()));
         $this->display_admin_page_with_no_sidebar();
     }
+
 
     /**
      * get total number of events
@@ -2372,8 +2413,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      */
     public function total_events()
     {
-        $count = EEM_Event::instance()->count(['caps' => 'read_admin'], 'EVT_ID', true);
-        return $count;
+        return EEM_Event::instance()->count(['caps' => 'read_admin'], 'EVT_ID', true);
     }
 
 
@@ -2392,8 +2432,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         $where = [
             'status' => ['IN', ['draft', 'auto-draft']],
         ];
-        $count = EEM_Event::instance()->count([$where, 'caps' => 'read_admin'], 'EVT_ID', true);
-        return $count;
+        return EEM_Event::instance()->count([$where, 'caps' => 'read_admin'], 'EVT_ID', true);
     }
 
 
@@ -2412,8 +2451,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         $where = [
             'status' => 'trash',
         ];
-        $count = EEM_Event::instance()->count([$where, 'caps' => 'read_admin'], 'EVT_ID', true);
-        return $count;
+        return EEM_Event::instance()->count([$where, 'caps' => 'read_admin'], 'EVT_ID', true);
     }
 
 
@@ -2445,7 +2483,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      */
     protected function _default_event_settings_form()
     {
-        $registration_config = EE_Registry::instance()->CFG->registration;
+        $registration_config              = EE_Registry::instance()->CFG->registration;
         $registration_stati_for_selection = EEM_Registration::reg_status_array(
         // exclude
             [
@@ -2477,8 +2515,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                                     : EEM_Registration::status_id_pending_payment,
                                 'html_label_text' => esc_html__('Default Registration Status', 'event_espresso')
                                                      . EEH_Template::get_help_tab_link(
-                                                         'default_settings_status_help_tab'
-                                                     ),
+                                        'default_settings_status_help_tab'
+                                    ),
                                 'html_help_text'  => esc_html__(
                                     'This setting allows you to preselect what the default registration status setting is when creating an event.  Note that changing this setting does NOT retroactively apply it to existing events.',
                                     'event_espresso'
@@ -2491,12 +2529,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                                     ? $registration_config->default_maximum_number_of_tickets
                                     : EEM_Event::get_default_additional_limit(),
                                 'html_label_text' => esc_html__(
-                                    'Default Maximum Tickets Allowed Per Order:',
-                                    'event_espresso'
-                                )
+                                                         'Default Maximum Tickets Allowed Per Order:',
+                                                         'event_espresso'
+                                                     )
                                                      . EEH_Template::get_help_tab_link(
-                                                         'default_maximum_tickets_help_tab"'
-                                                     ),
+                                        'default_maximum_tickets_help_tab"'
+                                    ),
                                 'html_help_text'  => esc_html__(
                                     'This setting allows you to indicate what will be the default for the maximum number of tickets per order when creating new events.',
                                     'event_espresso'
@@ -2524,7 +2562,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             $form->receive_form_submission();
             if ($form->is_valid()) {
                 $registration_config = EE_Registry::instance()->CFG->registration;
-                $valid_data = $form->valid_data();
+                $valid_data          = $form->valid_data();
                 if (isset($valid_data['default_reg_status'])) {
                     $registration_config->default_STS_ID = $valid_data['default_reg_status'];
                 }
@@ -2552,13 +2590,13 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     /*************        Templates        *************/
     protected function _template_settings()
     {
-        $this->_admin_page_title = esc_html__('Template Settings (Preview)', 'event_espresso');
-        $this->_template_args['preview_img'] = '<img src="'
-                                               . EVENTS_ASSETS_URL
-                                               . '/images/'
-                                               . 'caffeinated_template_features.jpg" alt="'
-                                               . esc_attr__('Template Settings Preview screenshot', 'event_espresso')
-                                               . '" />';
+        $this->_admin_page_title              = esc_html__('Template Settings (Preview)', 'event_espresso');
+        $this->_template_args['preview_img']  = '<img src="'
+                                                . EVENTS_ASSETS_URL
+                                                . '/images/'
+                                                . 'caffeinated_template_features.jpg" alt="'
+                                                . esc_attr__('Template Settings Preview screenshot', 'event_espresso')
+                                                . '" />';
         $this->_template_args['preview_text'] = '<strong>'
                                                 . esc_html__(
                                                     'Template Settings is a feature that is only available in the premium version of Event Espresso 4 which is available with a support license purchase on EventEspresso.com. Template Settings allow you to configure some of the appearance options for both the Event List and Event Details pages.',
@@ -2587,13 +2625,13 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             return;
         }
         $category_id = absint($this->_req_data['EVT_CAT_ID']);
-        $term = get_term($category_id, EEM_CPT_Base::EVENT_CATEGORY_TAXONOMY);
+        $term        = get_term($category_id, EEM_CPT_Base::EVENT_CATEGORY_TAXONOMY);
         if (! empty($term)) {
-            $this->_category->category_name = $term->name;
+            $this->_category->category_name       = $term->name;
             $this->_category->category_identifier = $term->slug;
-            $this->_category->category_desc = $term->description;
-            $this->_category->id = $term->term_id;
-            $this->_category->parent = $term->parent;
+            $this->_category->category_desc       = $term->description;
+            $this->_category->id                  = $term->term_id;
+            $this->_category->parent              = $term->parent;
         }
     }
 
@@ -2603,9 +2641,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      */
     private function _set_empty_category_object()
     {
-        $this->_category = new stdClass();
+        $this->_category                = new stdClass();
         $this->_category->category_name = $this->_category->category_identifier = $this->_category->category_desc = '';
-        $this->_category->id = $this->_category->parent = 0;
+        $this->_category->id            = $this->_category->parent = 0;
     }
 
 
@@ -2621,11 +2659,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
         $this->_search_btn_label = esc_html__('Categories', 'event_espresso');
         $this->_admin_page_title .= ' ' . $this->get_action_link_or_button(
-            'add_category',
-            'add_category',
-            [],
-            'add-new-h2'
-        );
+                'add_category',
+                'add_category',
+                [],
+                'add-new-h2'
+            );
         $this->display_admin_list_table_page_with_sidebar();
     }
 
@@ -2647,7 +2685,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         $route = $view === 'edit' ? 'update_category' : 'insert_category';
         $this->_set_add_edit_form_tags($route);
         $this->_set_category_object();
-        $id = ! empty($this->_category->id) ? $this->_category->id : '';
+        $id            = ! empty($this->_category->id) ? $this->_category->id : '';
         $delete_action = 'delete_category';
         // custom redirect
         $redirect = EE_Admin_Page::add_query_args_and_nonce(
@@ -2674,8 +2712,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             'class'         => 'my_editor_custom',
             'wpeditor_args' => ['media_buttons' => false],
         ];
-        $_wp_editor = $this->_generate_admin_form_fields($editor_args, 'array');
-        $all_terms = get_terms(
+        $_wp_editor                   = $this->_generate_admin_form_fields($editor_args, 'array');
+        $all_terms                    = get_terms(
             [EEM_CPT_Base::EVENT_CATEGORY_TAXONOMY],
             ['hide_empty' => 0, 'exclude' => [$this->_category->id]]
         );
@@ -2695,7 +2733,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             $category_select_values,
             $this->_category->parent
         );
-        $template_args = [
+        $template_args   = [
             'category'                 => $this->_category,
             'category_select'          => $category_select,
             'unique_id_info_help_link' => $this->_get_help_tab_link('unique_id_info'),
@@ -2703,7 +2741,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             'disable'                  => '',
             'disabled_message'         => false,
         ];
-        $template = EVENTS_TEMPLATE_PATH . 'event_category_details.template.php';
+        $template        = EVENTS_TEMPLATE_PATH . 'event_category_details.template.php';
         return EEH_Template::display_template($template, $template_args, true);
     }
 
@@ -2749,7 +2787,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      */
     protected function _insert_or_update_category($new_category)
     {
-        $cat_id = $new_category ? $this->_insert_category() : $this->_insert_category(true);
+        $cat_id  = $new_category ? $this->_insert_category() : $this->_insert_category(true);
         $success = 0; // we already have a success message so lets not send another.
         if ($cat_id) {
             $query_args = [
@@ -2771,9 +2809,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      */
     private function _insert_category($update = false)
     {
-        $cat_id = $update ? $this->_req_data['EVT_CAT_ID'] : '';
-        $category_name = isset($this->_req_data['category_name']) ? $this->_req_data['category_name'] : '';
-        $category_desc = isset($this->_req_data['category_desc']) ? $this->_req_data['category_desc'] : '';
+        $cat_id          = $update ? $this->_req_data['EVT_CAT_ID'] : '';
+        $category_name   = isset($this->_req_data['category_name']) ? $this->_req_data['category_name'] : '';
+        $category_desc   = isset($this->_req_data['category_desc']) ? $this->_req_data['category_desc'] : '';
         $category_parent = isset($this->_req_data['category_parent']) ? $this->_req_data['category_parent'] : 0;
         if (empty($category_name)) {
             $msg = esc_html__('You must add a name for the category.', 'event_espresso');
@@ -2800,7 +2838,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
         } else {
             $cat_id = $insert_ids['term_id'];
-            $msg = sprintf(esc_html__('The category %s was successfully saved', 'event_espresso'), $category_name);
+            $msg    = sprintf(esc_html__('The category %s was successfully saved', 'event_espresso'), $category_name);
             EE_Error::add_success($msg);
         }
         return $cat_id;
@@ -2823,11 +2861,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     {
         // testing term stuff
         $orderby = isset($this->_req_data['orderby']) ? $this->_req_data['orderby'] : 'Term.term_id';
-        $order = isset($this->_req_data['order']) ? $this->_req_data['order'] : 'DESC';
-        $limit = ($current_page - 1) * $per_page;
-        $where = ['taxonomy' => EEM_CPT_Base::EVENT_CATEGORY_TAXONOMY];
+        $order   = isset($this->_req_data['order']) ? $this->_req_data['order'] : 'DESC';
+        $limit   = ($current_page - 1) * $per_page;
+        $where   = ['taxonomy' => EEM_CPT_Base::EVENT_CATEGORY_TAXONOMY];
         if (isset($this->_req_data['s'])) {
-            $sstr = '%' . $this->_req_data['s'] . '%';
+            $sstr        = '%' . $this->_req_data['s'] . '%';
             $where['OR'] = [
                 'Term.name'   => ['LIKE', $sstr],
                 'description' => ['LIKE', $sstr],
@@ -2839,10 +2877,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             'limit'      => $limit . ',' . $per_page,
             'force_join' => ['Term'],
         ];
-        $categories = $count
+        return $count
             ? EEM_Term_Taxonomy::instance()->count($query_params, 'term_id')
             : EEM_Term_Taxonomy::instance()->get_all($query_params);
-        return $categories;
     }
 
     /* end category stuff */
