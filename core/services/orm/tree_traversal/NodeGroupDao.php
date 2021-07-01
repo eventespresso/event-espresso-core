@@ -32,7 +32,7 @@ class NodeGroupDao
 
     /**
      * Gets the string we put in front of the WP Option name used to store the jobs.
-	 *
+     *
      * @return string
      */
     private function getOptionPrefix()
@@ -62,7 +62,7 @@ class NodeGroupDao
     /**
      * Gets an array indicating what database rows are contained in the job.
      * Each top-level key is a model name, and its value is an array of IDs.
-	 *
+     *
      * @param ModelObjNode[] $model_obj_nodes
      * @return array
      * @throws EE_Error
@@ -83,7 +83,7 @@ class NodeGroupDao
     /**
      * Gets an array indicating what database rows are contained in the job.
      * Each top-level key is a model name, and its value is an array of IDs.
-	 *
+     *
      * @param string $code
      * @return array
      * @throws EE_Error
@@ -101,7 +101,7 @@ class NodeGroupDao
 
     /**
      * Persists the ModelObjNodes for future requests, using the code for reference.
-	 *
+     *
      * @param ModelObjNode[] $model_obj_nodes
      * @param string $code
      * @return bool
@@ -118,7 +118,7 @@ class NodeGroupDao
 
     /**
      * Forgets about the group of ModelObjNodes. Doesn't delete the rows in the database they reference though.
-	 *
+     *
      * @param $code
      * @return bool
      */

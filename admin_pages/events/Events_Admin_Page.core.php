@@ -296,7 +296,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 // ],
                 'qtips'         => [
                     'EE_Event_List_Table_Tips',
-				],
+                ],
                 'require_nonce' => false,
                 'qtips'         => ['EE_Event_List_Table_Tips'],
             ],

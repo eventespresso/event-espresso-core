@@ -29,9 +29,9 @@ class EspressoEventEditor extends EspressoEventsAdmin
         return parent::matchesCurrentRequest()
                && $this->admin_config->useAdvancedEditor()
                && (
-                $this->request->getRequestParam('action') === 'create_new'
+                   $this->request->getRequestParam('action') === 'create_new'
                 || $this->request->getRequestParam('action') === 'edit'
-            );
+               );
     }
 
 
@@ -52,6 +52,7 @@ class EspressoEventEditor extends EspressoEventsAdmin
                 '\EventEspresso\core\domain\services\admin\events\editor\EventManagerData'       => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\domain\services\admin\events\editor\EventEntityRelations'    => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\domain\services\admin\events\editor\TicketMeta'              => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\services\admin\events\editor\FormBuilder'             => EE_Dependency_Map::load_from_cache,
             ]
         );
         $this->dependency_map->registerDependencies(
