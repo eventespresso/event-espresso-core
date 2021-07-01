@@ -249,7 +249,7 @@ class EE_Form_Element extends EE_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function mapsTo():? string
+    public function mapsTo(): ?string
     {
         return $this->get('FIN_mapsTo');
     }
@@ -264,15 +264,15 @@ class EE_Form_Element extends EE_Base_Class
     public function setMapsTo(string $model, string $field)
     {
         $model_name = strpos($model, 'EEM_') !== 0 ? "EEM_$model" : $model;
-        if (! class_exists($model_name) ) {
+        if (! class_exists($model_name)) {
             throw new DomainException(
-              sprintf(
-                  esc_html__(
-                      'The %1$s model does not exist or can not be located. Please verify the spelling and whether it is loaded.',
-                      'event_espresso'
-                  ),
-                  $model_name
-              )
+                sprintf(
+                    esc_html__(
+                        'The %1$s model does not exist or can not be located. Please verify the spelling and whether it is loaded.',
+                        'event_espresso'
+                    ),
+                    $model_name
+                )
             );
         }
         $this->set('FIN_mapsTo', "{$model}.{$field}");
@@ -341,7 +341,7 @@ class EE_Form_Element extends EE_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function placeholder():? string
+    public function placeholder(): ?string
     {
         return $this->get('FIN_placeholder');
     }
