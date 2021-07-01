@@ -294,7 +294,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 // ],
                 'qtips'         => ['EE_Event_List_Table_Tips'],
                 'require_nonce' => false,
-                'qtips'         => ['EE_Event_List_Table_Tips'],
             ],
             'create_new'             => [
                 'nav'           => [
@@ -801,7 +800,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      * When a user is creating a new event, notify them if they haven't set their timezone.
      * Otherwise, do the normal logic
      *
-     * @return string
+     * @return void
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -1305,7 +1304,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         foreach ($data['edit_tickets'] as $row => $tkt) {
             $incoming_date_formats = ['Y-m-d', 'h:i a'];
             $update_prices         = false;
-            $ticket_price          = $data['edit_prices'][ $row ][1]['PRC_amount']
+            $ticket_price          = isset($data['edit_prices'][ $row ][1]['PRC_amount'])
                 ? $data['edit_prices'][ $row ][1]['PRC_amount']
                 : 0;
             // trim inputs to ensure any excess whitespace is removed.
@@ -1335,7 +1334,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 'TKT_min'         => empty($tkt['TKT_min']) ? 0 : $tkt['TKT_min'],
                 'TKT_max'         => empty($tkt['TKT_max']) ? EE_INF : $tkt['TKT_max'],
                 'TKT_row'         => $row,
-                'TKT_order'       => $tkt['TKT_order'] ? $tkt['TKT_order'] : $row,
+                'TKT_order'       => isset($tkt['TKT_order']) ? $tkt['TKT_order'] : $row,
                 'TKT_price'       => $ticket_price,
             ];
             // if this is a default TKT, then we need to set the TKT_ID to 0 and update accordingly,
@@ -1921,7 +1920,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      * @param bool $count        if TRUE then we just return a count of ALL events matching the given _view.
      *                           If FALSE then we return an array of event objects
      *                           that match the given _view and paging parameters.
-     * @return array an array of event objects.
+     * @return array|int an array of event objects.
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -2053,21 +2052,16 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             switch ($this->_req_data['active_status']) {
                 case 'upcoming':
                     return $EEME->get_upcoming_events($query_params, $count);
-                    break;
                 case 'expired':
                     return $EEME->get_expired_events($query_params, $count);
-                    break;
                 case 'active':
                     return $EEME->get_active_events($query_params, $count);
-                    break;
                 case 'inactive':
                     return $EEME->get_inactive_events($query_params, $count);
-                    break;
             }
         }
 
-        $events = $count ? $EEME->count([$where], 'EVT_ID', true) : $EEME->get_all($query_params);
-        return $events;
+        return $count ? $EEME->count([$where], 'EVT_ID', true) : $EEME->get_all($query_params);
     }
 
 
@@ -2291,13 +2285,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     /**
      * _delete_event
      *
-     * @access protected
-     * @param bool $redirect_after
-     * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @throws ReflectionException
      */
     protected function _delete_event()
     {
@@ -2329,11 +2319,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      *
      * @access protected
      * @return void
-     * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @throws ReflectionException
      */
     protected function _delete_events()
     {
