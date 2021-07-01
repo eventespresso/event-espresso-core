@@ -56,7 +56,7 @@ abstract class EntityMutator
         string $capability = 'ee_edit_events'
     ): EE_Base_Class {
         EntityMutator::checkPermissions($model, $capability);
-        
+
         $primaryKey = $model->get_primary_key_field()->get_name();
         // e.g. "FSC_UUID" will give us "FSC"
         [$keyPrefix] = explode('_', $primaryKey);
