@@ -994,11 +994,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         );
         $after_list_table['legend'] = $this->_display_legend($this->_event_legend_items());
         $this->_admin_page_title    .= ' ' . $this->get_action_link_or_button(
-                'create_new',
-                'add',
-                [],
-                'add-new-h2'
-            );
+            'create_new',
+            'add',
+            [],
+            'add-new-h2'
+        );
         $this->_template_args['after_list_table']   = array_merge(
             $this->_template_args['after_list_table'],
             $after_list_table
@@ -2517,12 +2517,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                                     ? $registration_config->default_maximum_number_of_tickets
                                     : EEM_Event::get_default_additional_limit(),
                                 'html_label_text' => esc_html__(
-                                                         'Default Maximum Tickets Allowed Per Order:',
-                                                         'event_espresso'
-                                                     )
-                                                     . EEH_Template::get_help_tab_link(
-                                                         'default_maximum_tickets_help_tab"'
-                                                     ),
+                                    'Default Maximum Tickets Allowed Per Order:',
+                                    'event_espresso'
+                                )
+                                . EEH_Template::get_help_tab_link(
+                                    'default_maximum_tickets_help_tab"'
+                                ),
                                 'html_help_text'  => esc_html__(
                                     'This setting allows you to indicate what will be the default for the maximum number of tickets per order when creating new events.',
                                     'event_espresso'
