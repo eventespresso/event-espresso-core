@@ -72,7 +72,8 @@ class EEM_Form_Element extends EEM_Base
                     esc_html__('UUID of parent form section this form input belongs to.', 'event_espresso'),
                     false,
                     null,
-                    ['Form_Section']
+                    ['Form_Section'],
+                    false
                 ),
                 'FIN_adminOnly' => new EE_Boolean_Field(
                     'FIN_adminOnly',
@@ -163,7 +164,7 @@ class EEM_Form_Element extends EEM_Base
                     'FIN_type',
                     esc_html__('Form element type.', 'event_espresso'),
                     false,
-                    false,
+                    null,
                     $input_types->validTypeOptions()
                 ),
                 'FIN_wpUser'    => new EE_WP_User_Field(

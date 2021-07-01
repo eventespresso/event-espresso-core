@@ -31,7 +31,8 @@ class RegFormQuestionFactory
      * @param callable   $addRequiredQuestion
      * @param EEM_Answer $answer_model
      */
-    public function __construct(callable $addRequiredQuestion, EEM_Answer $answer_model) {
+    public function __construct(callable $addRequiredQuestion, EEM_Answer $answer_model)
+    {
         $this->addRequiredQuestion = $addRequiredQuestion;
         $this->answer_model = $answer_model;
     }
