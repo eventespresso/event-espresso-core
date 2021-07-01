@@ -21,14 +21,14 @@ class EE_Register_Privacy_Policy implements EEI_Plugin_API
     protected static $privacy_policies = array();
 
 
-    /*
-     * @param string $plugin_id
-     * @param array $FQNSs can be the fully qualified namespaces each containing only privacy policies,
+    /**
+     * @param string $identifier
+     * @param array $setup_args can be the fully qualified namespaces each containing only privacy policies,
      *              OR fully qualified class names of privacy policies
      */
-    public static function register($plugin_id = null, $FQCNs = array())
+    public static function register(string $identifier = '', array $setup_args = [])
     {
-        self::$privacy_policies[ $plugin_id ] = $FQCNs;
+        self::$privacy_policies[ $identifier ] = $setup_args;
         // add to list of modules to be registered
         add_filter(
             'FHEE__EventEspresso_core_services_privacy_policy_PrivacyPolicyManager__privacy_policies',
@@ -38,21 +38,21 @@ class EE_Register_Privacy_Policy implements EEI_Plugin_API
 
 
     /**
-     * @param null $ID
+     * @param string $identifier
      */
-    public static function deregister($ID = null)
+    public static function deregister(string $identifier = '')
     {
-        unset(self::$privacy_policies[ $ID ]);
+        unset(self::$privacy_policies[ $identifier ]);
     }
 
 
     /**
-     * Adds our privacy policiy generators registered by add-ons
+     * Adds our privacy policy generators registered by add-ons
      *
      * @param string[] $privacy_policies
      * @return string[]
      */
-    public static function addPrivacyPolicies(array $privacy_policies)
+    public static function addPrivacyPolicies(array $privacy_policies): array
     {
         foreach (self::$privacy_policies as $privacy_policies_per_addon) {
             $privacy_policies = array_merge(

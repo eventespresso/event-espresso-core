@@ -18,7 +18,7 @@ class EE_Register_Messages_Template_Variations implements EEI_Plugin_API
      *
      * @var array
      */
-    protected static $_registry = array();
+    protected static $_registry = [];
 
 
     /**
@@ -39,7 +39,7 @@ class EE_Register_Messages_Template_Variations implements EEI_Plugin_API
      *    email templates; 'preview', which is the same css only customized for when emails are previewed; and
      *    'wpeditor', which is the same css only customized so that it works with the wpeditor fields for templates to
      *    give a accurate representation of the style in the wysiwyg editor.  This means that for each variation, if
-     *    you want it to be accurately represented in various temlpate contexts you need to have that relevant
+     *    you want it to be accurately represented in various template contexts you need to have that relevant
      *    variation file available.
      *    - $variation_slug  is simply the variation slug for that variation.
      *    - $extension = whatever the extension is for the variation used for the messenger calling it.  In MOST cases
@@ -51,7 +51,7 @@ class EE_Register_Messages_Template_Variations implements EEI_Plugin_API
      * @see /core/libraries/messages/defaults/default/variations/* for example variation files for the email and html
      *      messengers.
      *
-     * @param string $variation_ref                   unique reference used to describe this variation registry. If
+     * @param string $identifier                      unique reference used to describe this variation registry. If
      *                                                this ISN'T unique then this method will make it unique (and it
      *                                                becomes harder to deregister).
      * @param array  $setup_args                      {
@@ -64,7 +64,7 @@ class EE_Register_Messages_Template_Variations implements EEI_Plugin_API
      *                                                api reserves the "default" variation name for the default
      *                                                template pack so you can't register a default variation.  Also,
      *                                                try to use unique variation slugs to reference your variations
-     *                                                because this api checks if any existing varations are in place
+     *                                                because this api checks if any existing variations are in place
      *                                                with that name.  If there are then subsequent variations for that
      *                                                template pack with that same name will fail to register with a
      *                                                persistent notice put up for the user. Required.
@@ -80,21 +80,22 @@ class EE_Register_Messages_Template_Variations implements EEI_Plugin_API
      *                                                )
      *                                                }
      * @type string  $base_path                       The base path for where all your variations are found.  Although
-     *       the full path to your variation files should include '/variations/' in it, do not include the
-     *       'variations/' in this. Required.
+     *                                                the full path to your variation files should include
+     *                                                '/variations/' in it, do not include the
+     *                                                'variations/' in this. Required.
      * @type string  $base_url                        The base url for where all your variations are found. See note
-     *       above about the 'variations/' string. Required.
+     *                                                above about the 'variations/' string. Required.
      *                                                }
      *                                                }
      *
      * @throws EE_Error
      * @return void
      */
-    public static function register($variation_ref = null, $setup_args = array())
+    public static function register(string $identifier = '', array $setup_args = [])
     {
 
         // check for required params
-        if (empty($variation_ref)) {
+        if (empty($identifier)) {
             throw new EE_Error(
                 __(
                     'In order to register variations for a EE_Message_Template_Pack, you must include a value to reference the variations being registered',
@@ -117,13 +118,13 @@ class EE_Register_Messages_Template_Variations implements EEI_Plugin_API
         }
 
         // make sure we don't register twice
-        if (isset(self::$_registry[ $variation_ref ])) {
+        if (isset(self::$_registry[ $identifier ])) {
             return;
         }
 
         // make sure variation ref is unique.
-        if (isset(self::$_registry[ $variation_ref ])) {
-            $variation_ref = uniqid() . '_' . $variation_ref;
+        if (isset(self::$_registry[ $identifier ])) {
+            $identifier = uniqid() . '_' . $identifier;
         }
 
 
@@ -138,33 +139,33 @@ class EE_Register_Messages_Template_Variations implements EEI_Plugin_API
                         'Messages Templates Variations given the reference "%s" has been attempted to be registered with the EE Messages Template Pack System.  It may or may not work because it should be only called on the "EE_Brewing_Regular__messages_caf" hook.',
                         'event_espresso'
                     ),
-                    $variation_ref
+                    $identifier
                 ),
                 '4.5.0'
             );
         }
 
         // validate/sanitize incoming args.
-        $validated = array(
+        $validated = [
             'variations' => (array) $setup_args['variations'],
             'base_path'  => (string) $setup_args['base_path'],
             'base_url'   => (string) $setup_args['base_url'],
-        );
+        ];
 
 
         // check that no reserved variation names are in use and also checks if there are already existing variation names for a given template pack.  The former will throw an error.  The latter will remove the conflicting variation name but still register the others and will add EE_Error notice.
-        $validated = self::_verify_variations($variation_ref, $validated);
-        self::$_registry[ $variation_ref ] = $validated;
+        $validated                      = self::_verify_variations($identifier, $validated);
+        self::$_registry[ $identifier ] = $validated;
 
         add_filter(
             'FHEE__EE_Messages_Template_Pack__get_variations',
-            array('EE_Register_Messages_Template_Variations', 'get_variations'),
+            ['EE_Register_Messages_Template_Variations', 'get_variations'],
             10,
             4
         );
         add_filter(
             'FHEE__EE_Messages_Template_Pack__get_variation',
-            array('EE_Register_Messages_Template_Variations', 'get_variation'),
+            ['EE_Register_Messages_Template_Variations', 'get_variation'],
             10,
             8
         );
@@ -175,17 +176,17 @@ class EE_Register_Messages_Template_Variations implements EEI_Plugin_API
      * Cycles through the variations registered and makes sure there are no reserved variations being registered which
      * throws an error.  Also checks if there is already a
      *
+     * @param string $identifier           the reference for the variations being registered
+     * @param array  $validated_variations The variations setup array that's being registered (and verified).
+     * @return array
+     * @throws EE_Error
      * @since  4.5.0
      *
-     * @param string $variation_ref        the reference for the variations being registered
-     * @param array  $validated_variations The variations setup array that's being registered (and verified).
-     * @throws EE_Error
-     * @return bool
      */
-    private static function _verify_variations($variation_ref, $validated_variations)
+    private static function _verify_variations(string $identifier, array $validated_variations): array
     {
-        foreach (self::$_registry as $variation_ref => $settings) {
-            foreach ($settings['variations'] as $template_pack => $messenger) {
+        foreach (self::$_registry as $identifier => $settings) {
+            foreach ($settings['variations'] as $messenger) {
                 foreach ($messenger as $all_variations) {
                     if (isset($all_variations['default'])) {
                         throw new EE_Error(
@@ -194,7 +195,7 @@ class EE_Register_Messages_Template_Variations implements EEI_Plugin_API
                                     'Variations registered through the EE_Register_Messages_Template_Variations api cannot override the default variation for the default template.  Please check the code registering variations with this reference, "%s" and modify.',
                                     'event_espresso'
                                 ),
-                                $variation_ref
+                                $identifier
                             )
                         );
                     }
@@ -234,8 +235,6 @@ class EE_Register_Messages_Template_Variations implements EEI_Plugin_API
     /**
      * Callback for the FHEE__EE_Messages_Template_Pack__get_variation filter to ensure registered variations are used.
      *
-     * @since 4.5.0
-     *
      * @param string                    $variation_path The path generated for the current variation
      * @param string                    $messenger      The messenger the variation is for
      * @param string                    $message_type   EE_message_type->name
@@ -246,21 +245,22 @@ class EE_Register_Messages_Template_Variations implements EEI_Plugin_API
      * @param EE_Messages_Template_Pack $template_pack
      *
      * @return string                    The path to the requested variation.
+     * @since 4.5.0
+     *
      */
     public static function get_variation(
-        $variation_path,
-        $messenger,
-        $message_type,
-        $type,
-        $variation,
-        $file_extension,
-        $url,
+        string $variation_path,
+        string $messenger,
+        string $message_type,
+        string $type,
+        string $variation,
+        string $file_extension,
+        bool $url,
         EE_Messages_Template_Pack $template_pack
-    ) {
-
+    ): string {
         // so let's loop through our registered variations and then pull any details matching the request.
-        foreach (self::$_registry as $registry_slug => $registry_settings) {
-            $base = $url ? $registry_settings['base_url'] : $registry_settings['base_path'];
+        foreach (self::$_registry as $registry_settings) {
+            $base        = $url ? $registry_settings['base_url'] : $registry_settings['base_path'];
             $file_string = $messenger . '_' . $type . '_' . $variation . $file_extension;
             // see if this file exists
             if (is_readable($registry_settings['base_path'] . $file_string)) {
@@ -277,41 +277,47 @@ class EE_Register_Messages_Template_Variations implements EEI_Plugin_API
      * callback for the FHEE__EE_Messages_Template_Pack__get_variations filter.
      *
      *
-     * @since 4.5.0
-     *
      * @param array                     $variations The original contents for the template pack variations property.
-     *                                              @see $_variation property definition in EE_Messages_Template_Pack
      * @param string                    $messenger  The messenger requesting the variations.
+     * @param string                    $message_type
      * @param EE_Messages_Template_Pack $template_pack
      *
      * @return array                   new variations array (or existing one if nothing registered)
+     * @since 4.5.0
+     *
+     * @see   $_variation property definition in EE_Messages_Template_Pack
      */
     public static function get_variations(
-        $variations,
-        $messenger,
-        $message_type,
+        array $variations,
+        string $messenger,
+        string $message_type,
         EE_Messages_Template_Pack $template_pack
-    ) {
+    ): array {
         // first let's check if we even have registered variations and get out early.
         if (empty(self::$_registry)) {
             return $variations;
         }
 
         // do we have any new variations for the given messenger, $message_type, and template packs
-        foreach (self::$_registry as $registry_slug => $registry_settings) {
+        foreach (self::$_registry as $registry_settings) {
             // allow for different conditions.
             if (empty($messenger)) {
-                $variations = array_merge($registry_settings['variations'], $variations);
-            } elseif (! empty($messenger) && empty($message_type) && ! empty($registry_settings['variations'][ $template_pack->dbref ][ $messenger ])) {
-                $variations = array_merge(
-                    $registry_settings['variations'][ $template_pack->dbref ][ $messenger ],
-                    $variations
-                );
-            } elseif (! empty($messenger) && ! empty($message_type) && ! empty($registry_settings['variations'][ $template_pack->dbref ][ $messenger ][ $message_type ])) {
-                $variations = array_merge(
-                    $registry_settings['variations'][ $template_pack->dbref ][ $messenger ][ $message_type ],
-                    $variations
-                );
+                return array_merge($registry_settings['variations'], $variations);
+            }
+            if (empty($message_type)) {
+                if (! empty($registry_settings['variations'][ $template_pack->dbref ][ $messenger ])) {
+                    return array_merge(
+                        $registry_settings['variations'][ $template_pack->dbref ][ $messenger ],
+                        $variations
+                    );
+                }
+            } else {
+                if (! empty($registry_settings['variations'][ $template_pack->dbref ][ $messenger ][ $message_type ])) {
+                    return array_merge(
+                        $registry_settings['variations'][ $template_pack->dbref ][ $messenger ][ $message_type ],
+                        $variations
+                    );
+                }
             }
         }
         return $variations;
@@ -321,16 +327,14 @@ class EE_Register_Messages_Template_Variations implements EEI_Plugin_API
     /**
      * This deregisters a variation set that was previously registered with the given slug.
      *
-     * @since 4.5.0
-     *
-     * @param string $variation_ref The name for the variation set that was previously registered.
+     * @param string $identifier The name for the variation set that was previously registered.
      *
      * @return void
+     * @since 4.5.0
+     *
      */
-    public static function deregister($variation_ref = null)
+    public static function deregister(string $identifier = '')
     {
-        if (! empty(self::$_registry[ $variation_ref ])) {
-            unset(self::$_registry[ $variation_ref ]);
-        }
+        unset(self::$_registry[ $identifier ]);
     }
 }

@@ -20,17 +20,19 @@ class EE_Register_CPT implements EEI_Plugin_API
      *
      * @var array[][][]
      */
-    protected static $_registry = array();
+    protected static $_registry = [];
 
 
     /**
      * Used to register new CPTs and Taxonomies.
      *
-     * @param string $cpt_ref                 reference used for the addon registering cpts and cts
+     * @param string $identifier              reference used for the addon registering cpts and cts
      * @param array  $setup_args              {
      *                                        An array of required values for registering the cpts and taxonomies
      * @type array   $cpts                    {
      *                                        An array of cpts and their arguments.(short example below)
+     * @return void
+     * @throws  EE_Error
      * @see CustomPostTypeDefinitions::setDefinitions for a more complete example.
      *                                        'people' => array(
      *                                        'singular_name' => __('People', 'event_espresso'),
@@ -57,14 +59,12 @@ class EE_Register_CPT implements EEI_Plugin_API
      *                                        )
      *                                        }
      *                                        }
-     * @throws  EE_Error
-     * @return void
      */
-    public static function register($cpt_ref = null, $setup_args = array())
+    public static function register(string $identifier = '', array $setup_args = [])
     {
 
         // check for required params
-        if (empty($cpt_ref)) {
+        if (empty($identifier)) {
             throw new EE_Error(
                 __(
                     'In order to register custom post types and custom taxonomies, you must include a value to reference what had been registered',
@@ -83,13 +83,13 @@ class EE_Register_CPT implements EEI_Plugin_API
         }
 
         // make sure we don't register twice
-        if (isset(self::$_registry[ $cpt_ref ])) {
+        if (isset(self::$_registry[ $identifier ])) {
             return;
         }
 
         // make sure cpt ref is unique.
-        if (isset(self::$_registry[ $cpt_ref ])) {
-            $cpt_ref = uniqid() . '_' . $cpt_ref;
+        if (isset(self::$_registry[ $identifier ])) {
+            $identifier = uniqid() . '_' . $identifier;
         }
 
         // make sure this was called in the right place!
@@ -101,40 +101,40 @@ class EE_Register_CPT implements EEI_Plugin_API
                         'EE_Register_CPT has been called and given a reference of "%s".  It may or may not work because it should be called on or before "AHEE__EE_System__load_CPTs_and_session__complete" action hook.',
                         'event_espresso'
                     ),
-                    $cpt_ref
+                    $identifier
                 ),
                 '4.5.0'
             );
         }
         // validate incoming args
-        $validated = array(
+        $validated = [
             'cpts'          => isset($setup_args['cpts'])
                 ? (array) $setup_args['cpts']
-                : array(),
+                : [],
             'cts'           => isset($setup_args['cts'])
                 ? (array) $setup_args['cts']
-                : array(),
+                : [],
             'default_terms' => isset($setup_args['default_terms'])
                 ? (array) $setup_args['default_terms']
-                : array(),
-        );
+                : [],
+        ];
 
-        self::$_registry[ $cpt_ref ] = $validated;
+        self::$_registry[ $identifier ] = $validated;
 
         // hook into to cpt system
         add_filter(
             'FHEE__EventEspresso_core_domain_entities_custom_post_types_CustomPostTypeDefinitions__getCustomPostTypes',
-            array(__CLASS__, 'filterCustomPostTypeDefinitions'),
+            [__CLASS__, 'filterCustomPostTypeDefinitions'],
             5
         );
         add_filter(
             'FHEE__EventEspresso_core_domain_entities_custom_post_types_TaxonomyDefinitions__getTaxonomies',
-            array(__CLASS__, 'filterCustomTaxonomyDefinitions'),
+            [__CLASS__, 'filterCustomTaxonomyDefinitions'],
             5
         );
         add_action(
             'AHEE__EventEspresso_core_domain_services_custom_post_types_RegisterCustomTaxonomyTerms__construct_end',
-            array(__CLASS__, 'registerCustomTaxonomyTerm'),
+            [__CLASS__, 'registerCustomTaxonomyTerm'],
             5
         );
     }
@@ -148,7 +148,7 @@ class EE_Register_CPT implements EEI_Plugin_API
      * @param array $custom_post_type_definitions array of cpts that are already set
      * @return array new array of cpts and their registration information
      */
-    public static function filterCustomPostTypeDefinitions($custom_post_type_definitions)
+    public static function filterCustomPostTypeDefinitions(array $custom_post_type_definitions): array
     {
         foreach (self::$_registry as $registries) {
             foreach ($registries['cpts'] as $cpt_name => $cpt_settings) {
@@ -167,7 +167,7 @@ class EE_Register_CPT implements EEI_Plugin_API
      * @param array $custom_taxonomy_definitions array of cts that are already set.
      * @return array new array of cts and their registration information.
      */
-    public static function filterCustomTaxonomyDefinitions($custom_taxonomy_definitions)
+    public static function filterCustomTaxonomyDefinitions(array $custom_taxonomy_definitions): array
     {
         foreach (self::$_registry as $registries) {
             foreach ($registries['cts'] as $ct_name => $ct_settings) {
@@ -203,11 +203,11 @@ class EE_Register_CPT implements EEI_Plugin_API
 
 
     /**
-     * @deprecated 4.9.62.p
      * @param array $cpts array of cpts that are already set
      * @return array new array of cpts and their registration information
+     * @deprecated 4.9.62.p
      */
-    public static function filter_cpts($cpts)
+    public static function filter_cpts(array $cpts): array
     {
         foreach (self::$_registry as $registries) {
             foreach ($registries['cpts'] as $cpt_name => $cpt_settings) {
@@ -219,11 +219,11 @@ class EE_Register_CPT implements EEI_Plugin_API
 
 
     /**
-     * @deprecated 4.9.62.p
      * @param array $cts array of cts that are already set.
      * @return array new array of cts and their registration information.
+     * @deprecated 4.9.62.p
      */
-    public static function filter_cts($cts)
+    public static function filter_cts(array $cts): array
     {
         foreach (self::$_registry as $registries) {
             foreach ($registries['cts'] as $ct_name => $ct_settings) {
@@ -235,9 +235,9 @@ class EE_Register_CPT implements EEI_Plugin_API
 
 
     /**
-     * @deprecated 4.9.62.p
      * @param EE_Register_CPTs $cpt_class
      * @return void
+     * @deprecated 4.9.62.p
      */
     public static function default_terms(EE_Register_CPTs $cpt_class)
     {
@@ -254,16 +254,14 @@ class EE_Register_CPT implements EEI_Plugin_API
     /**
      * This deregisters whats been registered on this class (for the given slug).
      *
-     * @since 4.5.0
-     *
-     * @param string $cpt_ref The reference for the item registered to be removed.
+     * @param string $identifier The reference for the item registered to be removed.
      *
      * @return void
+     * @since 4.5.0
+     *
      */
-    public static function deregister($cpt_ref = null)
+    public static function deregister(string $identifier = '')
     {
-        if (! empty(self::$_registry[ $cpt_ref ])) {
-            unset(self::$_registry[ $cpt_ref ]);
-        }
+        unset(self::$_registry[ $identifier ]);
     }
 }

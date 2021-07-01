@@ -24,33 +24,33 @@ class EE_Register_Payment_Method implements EEI_Plugin_API
      *
      * @var array
      */
-    protected static $_settings = array();
+    protected static $_settings = [];
 
 
     /**
      * Method for registering new EE_PMT_Base children
      *
-     * @since    4.5.0
-     * @param string  $payment_method_id    a unique identifier for this set of modules Required.
-     * @param  array  $setup_args           an array of arguments provided for registering modules Required.{
+     * @param string  $identifier           a unique identifier for this set of modules Required.
+     * @param array   $setup_args           an array of arguments provided for registering modules Required.{
      * @type string[] $payment_method_paths each element is the folder containing the EE_PMT_Base child class
      *                                      (eg, 'public_html/wp-content/plugins/my_plugin/Payomatic/' which contains
      *                                      the files EE_PMT_Payomatic.pm.php)
      *                                      }
+     * @return void
      * @throws EE_Error
      * @type array payment_method_paths    an array of full server paths to folders containing any EE_PMT_Base
      *                                      children, or to the EED_Module files themselves
-     * @return void
      * @throws InvalidDataTypeException
      * @throws DomainException
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
+     * @since    4.5.0
      */
-    public static function register($payment_method_id = null, $setup_args = array())
+    public static function register(string $identifier = '', array $setup_args = [])
     {
         // required fields MUST be present, so let's make sure they are.
-        if (empty($payment_method_id) || ! is_array($setup_args) || empty($setup_args['payment_method_paths'])) {
+        if (empty($identifier) || ! is_array($setup_args) || empty($setup_args['payment_method_paths'])) {
             throw new EE_Error(
                 esc_html__(
                     'In order to register Payment Methods with EE_Register_Payment_Method::register(), you must include a "payment_method_id" (a unique identifier for this set of modules), and an array containing the following keys: "payment_method_paths" (an array of full server paths to folders that contain modules, or to the module files themselves)',
@@ -59,7 +59,7 @@ class EE_Register_Payment_Method implements EEI_Plugin_API
             );
         }
         // make sure we don't register twice
-        if (isset(self::$_settings[ $payment_method_id ])) {
+        if (isset(self::$_settings[ $identifier ])) {
             return;
         }
         // make sure this was called in the right place!
@@ -76,28 +76,28 @@ class EE_Register_Payment_Method implements EEI_Plugin_API
             );
         }
         // setup $_settings array from incoming values.
-        self::$_settings[ $payment_method_id ] = array(
+        self::$_settings[ $identifier ] = [
             // array of full server paths to any EE_PMT_Base children used
             'payment_method_paths' => isset($setup_args['payment_method_paths'])
                 ? (array) $setup_args['payment_method_paths']
-                : array(),
-        );
+                : [],
+        ];
         // add to list of modules to be registered
         add_filter(
             'FHEE__EE_Payment_Method_Manager__register_payment_methods__payment_methods_to_register',
-            array('EE_Register_Payment_Method', 'add_payment_methods')
+            ['EE_Register_Payment_Method', 'add_payment_methods']
         );
         // If EE_Payment_Method_Manager::register_payment_methods has already been called,
         // then we need to add our caps for this payment method manually
         if (did_action('FHEE__EE_Payment_Method_Manager__register_payment_methods__registered_payment_methods')) {
             $payment_method_manager = LoaderFactory::getLoader()->getShared('EE_Payment_Method_Manager');
             // register payment methods directly
-            foreach (self::$_settings[ $payment_method_id ]['payment_method_paths'] as $payment_method_path) {
+            foreach (self::$_settings[ $identifier ]['payment_method_paths'] as $payment_method_path) {
                 $payment_method_manager->register_payment_method($payment_method_path);
             }
             $capabilities = LoaderFactory::getLoader()->getShared('EE_Capabilities');
             $capabilities->addCaps(
-                self::getPaymentMethodCapabilities(self::$_settings[ $payment_method_id ])
+                self::getPaymentMethodCapabilities(self::$_settings[ $identifier ])
             );
         }
     }
@@ -110,7 +110,7 @@ class EE_Register_Payment_Method implements EEI_Plugin_API
      * @param array $payment_method_folders array of paths to all payment methods that require registering
      * @return array
      */
-    public static function add_payment_methods($payment_method_folders)
+    public static function add_payment_methods(array $payment_method_folders): array
     {
         foreach (self::$_settings as $settings) {
             foreach ($settings['payment_method_paths'] as $payment_method_path) {
@@ -122,24 +122,22 @@ class EE_Register_Payment_Method implements EEI_Plugin_API
 
 
     /**
-     * This deregisters a module that was previously registered with a specific $module_id.
+     * This deregisters a module that was previously registered with a specific $identifier.
      *
-     * @since    4.3.0
-     *
-     * @param string $module_id the name for the module that was previously registered
+     * @param string $identifier the name for the module that was previously registered
      * @return void
      * @throws DomainException
-     * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
+     * @since    4.3.0
      */
-    public static function deregister($module_id = null)
+    public static function deregister(string $identifier = '')
     {
-        if (isset(self::$_settings[ $module_id ])) {
+        if (isset(self::$_settings[ $identifier ])) {
             // set action for just this module id to delay deregistration until core is loaded and ready.
-            $module_settings = self::$_settings[ $module_id ];
-            unset(self::$_settings[ $module_id ]);
+            $module_settings = self::$_settings[ $identifier ];
+            unset(self::$_settings[ $identifier ]);
             add_action(
                 'AHEE__EE_System__core_loaded_and_ready',
                 function () use ($module_settings) {
@@ -159,18 +157,16 @@ class EE_Register_Payment_Method implements EEI_Plugin_API
      * @param array $settings
      * @return array
      * @throws DomainException
-     * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @access private  Developers do NOT use this method.  It's only public for PHP5.3 closure support (see deregister)
      *                  When we drop support for PHP5.3 this will be made private again.  You have been warned.
-     *
      */
-    public static function getPaymentMethodCapabilities(array $settings)
+    public static function getPaymentMethodCapabilities(array $settings): array
     {
         $payment_method_manager = LoaderFactory::getLoader()->getShared('EE_Payment_Method_Manager');
-        $payment_method_caps = array('administrator' => array());
+        $payment_method_caps    = ['administrator' => []];
         if (isset($settings['payment_method_paths'])) {
             foreach ($settings['payment_method_paths'] as $payment_method_path) {
                 $payment_method_caps = $payment_method_manager->addPaymentMethodCap(

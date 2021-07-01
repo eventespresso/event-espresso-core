@@ -19,7 +19,7 @@ class EE_Register_Messages_Template_Pack implements EEI_Plugin_API
      *
      * @var array
      */
-    protected static $_registry = array();
+    protected static $_registry = [];
 
 
     /**
@@ -35,15 +35,7 @@ class EE_Register_Messages_Template_Pack implements EEI_Plugin_API
      * Note that this only handles registering the your Template Pack class with the message template pack system.
      * However, there is also a naming schema you must follow for templates you are providing with your template pack.
      *
-     * @see    EE_Messages_Template_Pack_Default for an example class
-     * @see    core/libraries/messages/defaults/default/* for all the example templates the default template pack
-     *         supports.
-     *
-     *
-     * @since  4.5.0
-     * @throws EE_Error
-     *
-     * @param string $ref        The internal reference used to refer to this template pack.  Note, this is first come,
+     * @param string $identifier The internal reference used to refer to this template pack.  Note, this is first come,
      *                           first serve.  If there is already a template pack registered with this name then the
      *                           registry will assign a unique reference for it so it can still be activated (but this
      *                           makes it harder to deregister as it will be unique per load - so its best to try to
@@ -55,12 +47,20 @@ class EE_Register_Messages_Template_Pack implements EEI_Plugin_API
      *                           }
      *
      * @return void
+     * @throws EE_Error
+     *
+     * @see    core/libraries/messages/defaults/default/* for all the example templates the default template pack
+     *         supports.
+     *
+     *
+     * @since  4.5.0
+     * @see    EE_Messages_Template_Pack_Default for an example class
      */
-    public static function register($ref = null, $setup_args = array())
+    public static function register(string $identifier = '', array $setup_args = [])
     {
 
         // check for required params
-        if (empty($ref) || empty($setup_args['path']) || empty($setup_args['classname'])) {
+        if (empty($identifier) || empty($setup_args['path']) || empty($setup_args['classname'])) {
             throw new EE_Error(
                 __(
                     'In order to register a new template pack for the EE Messages system, you must include a value to reference the template pack being registered and the setup_args must have the path for the new template pack class as well as the classname for the new Template Pack Class. ',
@@ -70,13 +70,13 @@ class EE_Register_Messages_Template_Pack implements EEI_Plugin_API
         }
 
         // make sure we don't register twice
-        if (isset(self::$_registry[ $ref ])) {
+        if (isset(self::$_registry[ $identifier ])) {
             return;
         }
 
-        // check that incoming $ref doesn't already exist. If it does then we'll create a unique reference for this template pack.
-        if (isset(self::$_registry[ $ref ])) {
-            $ref = uniqid() . '_' . $ref;
+        // check that incoming $identifier doesn't already exist. If it does then we'll create a unique reference for this template pack.
+        if (isset(self::$_registry[ $identifier ])) {
+            $identifier = uniqid() . '_' . $identifier;
         }
 
 
@@ -91,28 +91,28 @@ class EE_Register_Messages_Template_Pack implements EEI_Plugin_API
                         'A EE Messages Template Pack given the reference "%s" has been attempted to be registered with the EE Messages System.  It may or may not work because it should be only called on the "EE_Brewing_Regular__messages_caf" hook.',
                         'event_espresso'
                     ),
-                    $ref
+                    $identifier
                 ),
                 '4.5.0'
             );
         }
 
         if (self::_verify_class_not_exist($setup_args['classname'])) {
-            self::$_registry[ $ref ] = array(
+            self::$_registry[ $identifier ] = [
                 'path'      => (string) $setup_args['path'],
                 'classname' => (string) $setup_args['classname'],
-            );
+            ];
         }
 
         // hook into the system
         add_filter(
             'FHEE__EED_Messages___set_messages_paths___MSG_PATHS',
-            array('EE_Register_Messages_Template_Pack', 'set_template_pack_path'),
+            ['EE_Register_Messages_Template_Pack', 'set_template_pack_path'],
             10
         );
         add_filter(
             'FHEE__EED_Messages__get_template_packs__template_packs',
-            array('EE_Register_Messages_Template_Pack', 'set_template_pack'),
+            ['EE_Register_Messages_Template_Pack', 'set_template_pack'],
             10
         );
     }
@@ -122,15 +122,15 @@ class EE_Register_Messages_Template_Pack implements EEI_Plugin_API
      * Callback for the FHEE__EED_Messages___set_messages_paths___MSG_PATHS filter.  This adds this template packs path
      * to the messages autoloader paths.
      *
-     * @since  4.5.0
-     *
      * @param array $paths Array of paths already registered with the messages autoloader
      *
      * @return array
+     * @since  4.5.0
+     *
      */
-    public static function set_template_pack_path($paths)
+    public static function set_template_pack_path(array $paths): array
     {
-        foreach (self::$_registry as $ref => $args) {
+        foreach (self::$_registry as $args) {
             $paths[] = $args['path'];
         }
         return $paths;
@@ -141,14 +141,14 @@ class EE_Register_Messages_Template_Pack implements EEI_Plugin_API
      * Callback for the FHEE__EED_Messages__get_template_packs__template_packs filter. This adds the instantiated,
      * registered template pack to the template packs array when requested by client code.
      *
-     * @since 4.5.0
-     *
      * @param EE_Messages_Template_Pack[] $template_packs
      * @return EE_Messages_Template_Pack[]
+     * @since 4.5.0
+     *
      */
-    public static function set_template_pack($template_packs)
+    public static function set_template_pack(array $template_packs): array
     {
-        foreach (self::$_registry as $ref => $args) {
+        foreach (self::$_registry as $args) {
             // verify class_exists
             if (! class_exists($args['classname'])) {
                 require_once($args['path'] . '/' . $args['classname'] . '.class.php');
@@ -156,7 +156,7 @@ class EE_Register_Messages_Template_Pack implements EEI_Plugin_API
 
             // check again!
             if (class_exists($args['classname'])) {
-                $template_pack = new $args['classname'];
+                $template_pack                           = new $args['classname'];
                 $template_packs[ $template_pack->dbref ] = $template_pack;
             }
         }
@@ -172,11 +172,10 @@ class EE_Register_Messages_Template_Pack implements EEI_Plugin_API
      *
      * @return bool
      */
-    private static function _verify_class_not_exist($classname)
+    private static function _verify_class_not_exist(string $classname): bool
     {
-
         // loop through the existing registry and see if the classname is already present.
-        foreach (self::$_registry as $ref => $args) {
+        foreach (self::$_registry as $args) {
             if ($args['classname'] == $classname) {
                 EE_Error::add_error(
                     sprintf(
@@ -184,7 +183,7 @@ class EE_Register_Messages_Template_Pack implements EEI_Plugin_API
                             'The %s template pack that you just activated cannot be registered with the messages system because there is already a template pack active using the same classname.  Contact the author of this template pack to let them know of the conflict.  To stop seeing this message you will need to deactivate this template pack.',
                             'event_espresso'
                         ),
-                        (string) $setup_args['classname']
+                        $classname
                     ),
                     __FILE__,
                     __LINE__,
@@ -200,16 +199,14 @@ class EE_Register_Messages_Template_Pack implements EEI_Plugin_API
     /**
      * This deregisters a variation set that was previously registered with the given slug.
      *
-     * @since 4.5.0
-     *
-     * @param string $variation_ref The name for the variation set that was previously registered.
+     * @param string $identifier The name for the variation set that was previously registered.
      *
      * @return void
+     * @since 4.5.0
+     *
      */
-    public static function deregister($variation_ref = null)
+    public static function deregister(string $identifier = '')
     {
-        if (! empty(self::$_registry[ $variation_ref ])) {
-            unset(self::$_registry[ $variation_ref ]);
-        }
+        unset(self::$_registry[ $identifier ]);
     }
 }

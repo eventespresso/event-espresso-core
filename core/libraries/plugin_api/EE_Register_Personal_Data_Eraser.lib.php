@@ -18,31 +18,31 @@ class EE_Register_Personal_Data_Eraser implements EEI_Plugin_API
      *
      * @var array keys are plugin_ids, and values are an array of FQCNs or FQCNs
      */
-    protected static $erasers = array();
+    protected static $erasers = [];
 
 
-    /*
-     * @param string $plugin_id
-     * @param array $FQNSs can be the fully qualified namespaces each containing only privacy policies,
-     *              OR fully qualified class names of privacy policies
+    /**
+     * @param string $identifier
+     * @param array  $setup_args can be the fully qualified namespaces each containing only privacy policies,
+     *                           OR fully qualified class names of privacy policies
      */
-    public static function register($plugin_id = null, $FQCNs = array())
+    public static function register(string $identifier = '', array $setup_args = [])
     {
-        self::$erasers[ $plugin_id ] = $FQCNs;
+        self::$erasers[ $identifier ] = $setup_args;
         // add to list of modules to be registered
         add_filter(
             'FHEE__EventEspresso_core_services_privacy_erasure_PersonalDataEraserManager__erasers',
-            array('EE_Register_Personal_Data_Eraser', 'addErasers')
+            ['EE_Register_Personal_Data_Eraser', 'addErasers']
         );
     }
 
 
     /**
-     * @param null $ID
+     * @param string $identifier
      */
-    public static function deregister($ID = null)
+    public static function deregister(string $identifier = '')
     {
-        unset(self::$erasers[ $ID ]);
+        unset(self::$erasers[ $identifier ]);
     }
 
 
@@ -52,7 +52,7 @@ class EE_Register_Personal_Data_Eraser implements EEI_Plugin_API
      * @param string[] $erasers
      * @return string[]
      */
-    public static function addErasers(array $erasers)
+    public static function addErasers(array $erasers): array
     {
         foreach (self::$erasers as $erasers_per_addon) {
             $erasers = array_merge(
