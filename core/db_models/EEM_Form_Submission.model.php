@@ -47,7 +47,8 @@ class EEM_Form_Submission extends EEM_Base
                     esc_html__('Form Section UUID (universally unique identifier)', 'event_espresso'),
                     false,
                     '',
-                    'Form_Section'
+                    'Form_Section',
+                    false
                 ),
                 'TXN_ID'        => new EE_Foreign_Key_Int_Field(
                     'TXN_ID',
