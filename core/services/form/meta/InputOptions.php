@@ -25,7 +25,7 @@ class InputOptions implements JsonableInterface
      *
      * @var array
      */
-    private $options;
+    private $options = [];
 
 
     /**
@@ -49,9 +49,8 @@ class InputOptions implements JsonableInterface
     {
         $json_data_handler = new JsonDataHandler();
         $json_data_handler->configure(JsonDataHandler::DATA_TYPE_ARRAY);
-        $data    = $json_data_handler->decodeJson($json);
-        $options = $data['options'] ?? [];
-        return new InputOptions($json_data_handler, $options);
+        $data = $json_data_handler->decodeJson($json);
+        return new InputOptions($json_data_handler, $data ?? []);
     }
 
 
@@ -60,7 +59,7 @@ class InputOptions implements JsonableInterface
      */
     public function toArray(): array
     {
-        return ['options' => $this->options];
+        return array_values($this->options);
     }
 
 
@@ -85,14 +84,16 @@ class InputOptions implements JsonableInterface
 
 
     /**
-     * @param int|float|string $option_value
-     * @param int|float|string $display_text
+     * @param array $option
      */
-    public function addOption($option_value, $display_text): void
+    public function addOption(array $option): void
     {
-        $option_value = sanitize_key($option_value);
-        if (! isset($this->options[ $option_value ])) {
-            $this->options[ $option_value ] = sanitize_text_field($display_text);
+        if (isset($option['label'], $option['value'])) {
+            $label = sanitize_text_field($option['label']);
+            $value = sanitize_key($option['value']);
+
+            // use `value` as key
+            $this->options[ $value ] = compact('label', 'value');
         }
     }
 
@@ -100,7 +101,7 @@ class InputOptions implements JsonableInterface
     /**
      * @param int|float|string $option_value
      */
-    public function removeOption($option_value): void
+    public function removeOption(string $option_value): void
     {
         $option_value = sanitize_key($option_value);
         unset($this->options[ $option_value ]);
@@ -112,13 +113,8 @@ class InputOptions implements JsonableInterface
      */
     public function setOptions(array $options): void
     {
-        // grab all of the keys and sanitize those for use as option values
-        $keys = array_keys($options);
-        $keys = array_map('sanitize_key', $keys);
-        // grab all of the array values and sanitize those for use as option display text
-        $values = array_values($options);
-        $values = array_map('sanitize_text_field', $values);
-        // recombine sanitized values
-        $this->options = array_combine($keys, $values);
+        foreach ($options as $option) {
+            $this->addOption($option);
+        }
     }
 }
