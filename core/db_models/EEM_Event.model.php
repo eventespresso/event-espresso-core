@@ -952,9 +952,9 @@ class EEM_Event extends EEM_CPT_Base
         if ($deleted) {
             // get list of events with no prices
             $espresso_no_ticket_prices = get_option('ee_no_ticket_prices', []);
-            $where = $query_params[0] ?? [];
-            $where_event = $where['EVT_ID'] ?? ['', ''];
-            $where_event_ids = $where_event[1] ?? '';
+            $where = isset($query_params[0]) ? $query_params[0] : [];
+            $where_event = isset($where['EVT_ID']) ? $where['EVT_ID'] : ['', ''];
+            $where_event_ids = isset($where_event[1]) ? $where_event[1] : '';
             $event_ids = is_string($where_event_ids)
                 ? explode(',', $where_event_ids)
                 : (array) $where_event_ids;
