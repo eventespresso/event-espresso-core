@@ -292,8 +292,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 //     'Event_Overview_Help_Tour',
                 //     // 'New_Features_Test_Help_Tour' for testing multiple help tour
                 // ],
-                'qtips'         => ['EE_Event_List_Table_Tips'],
                 'require_nonce' => false,
+                'qtips'         => ['EE_Event_List_Table_Tips'],
             ],
             'create_new'             => [
                 'nav'           => [
@@ -990,7 +990,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 ? (array) $this->_template_args['after_list_table']
                 : [];
         $this->_template_args['after_list_table']['view_event_list_button'] = EEH_HTML::br()
-            . EEH_Template::get_button_or_link(
+                                                                              . EEH_Template::get_button_or_link(
                 get_post_type_archive_link('espresso_events'),
                 esc_html__('View Event Archive Page', 'event_espresso'),
                 'button'
@@ -998,7 +998,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         $this->_template_args['after_list_table']['legend']                 =
             $this->_display_legend($this->_event_legend_items());
         $this->_admin_page_title                                            .= ' '
-            . $this->get_action_link_or_button(
+                                                                               . $this->get_action_link_or_button(
                 'create_new',
                 'add',
                 [],
@@ -1176,9 +1176,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     protected function _default_venue_update(EE_Event $evtobj, $data)
     {
         require_once(EE_MODELS . 'EEM_Venue.model.php');
-        $venue_model   = EE_Registry::instance()->load_model('Venue');
-        $rows_affected = null;
-        $venue_id      = ! empty($data['venue_id']) ? $data['venue_id'] : null;
+        $venue_model = EE_Registry::instance()->load_model('Venue');
+        $venue_id    = ! empty($data['venue_id']) ? $data['venue_id'] : null;
         // very important.  If we don't have a venue name...
         // then we'll get out because not necessary to create empty venue
         if (empty($data['venue_title'])) {
@@ -1356,26 +1355,26 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                                   ->get_one_by_ID($tkt['TKT_ID']);
                 if ($TKT instanceof EE_Ticket) {
                     $ticket_sold = $TKT->count_related(
-                        'Registration',
-                        [
+                            'Registration',
                             [
-                                'STS_ID' => [
-                                    'NOT IN',
-                                    [EEM_Registration::status_id_incomplete],
+                                [
+                                    'STS_ID' => [
+                                        'NOT IN',
+                                        [EEM_Registration::status_id_incomplete],
+                                    ],
                                 ],
-                            ],
-                        ]
-                    ) > 0;
+                            ]
+                        ) > 0;
                     // let's just check the total price for the existing ticket and determine if it matches the new
                     // total price.  if they are different then we create a new ticket (if tickets sold)
                     // if they aren't different then we go ahead and modify existing ticket.
                     $create_new_TKT = $ticket_sold
                                       && ! $TKT->deleted()
                                       && EEH_Money::compare_floats(
-                                          $ticket_price,
-                                          $TKT->get('TKT_price'),
-                                          '!=='
-                                      );
+                            $ticket_price,
+                            $TKT->get('TKT_price'),
+                            '!=='
+                        );
                     $TKT->set_date_format($incoming_date_formats[0]);
                     $TKT->set_time_format($incoming_date_formats[1]);
                     // set new values
@@ -1721,7 +1720,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
          * 2. Fore each datetime get related tickets
          * 3. For each ticket get related prices
          */
-        $times = EE_Registry::instance()->load_model('Datetime')->get_all_event_dates($event_id);
+        /** @var EEM_Datetime $datetime_model */
+        $datetime_model = EE_Registry::instance()->load_model('Datetime');
+        /** @var EEM_Ticket $datetime_model */
+        $ticket_model = EE_Registry::instance()->load_model('Ticket');
+        $times        = $datetime_model->get_all_event_dates($event_id);
         /** @type EE_Datetime $first_datetime */
         $first_datetime = reset($times);
         // do we get related tickets?
@@ -1753,9 +1756,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             }
         } else {
             $template_args['time'] = $times[0];
-            /** @type EE_Ticket $ticket */
-            $ticket                       = EE_Registry::instance()->load_model('Ticket')->get_all_default_tickets();
-            $template_args['ticket_rows'] .= $this->_get_ticket_row($ticket[1]);
+            /** @type EE_Ticket[] $tickets */
+            $tickets                      = $ticket_model->get_all_default_tickets();
+            $template_args['ticket_rows'] .= $this->_get_ticket_row($tickets[1]);
             // NOTE: we're just sending the first default row
             // (decaf can't manage default tickets so this should be sufficient);
         }
@@ -1766,7 +1769,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         $template_args['existing_datetime_ids']    = implode(',', $existing_datetime_ids);
         $template_args['existing_ticket_ids']      = implode(',', $existing_ticket_ids);
         $template_args['ticket_js_structure']      = $this->_get_ticket_row(
-            EE_Registry::instance()->load_model('Ticket')->create_default_object(),
+            $ticket_model->create_default_object(),
             true
         );
         $template                                  = apply_filters(
@@ -1937,6 +1940,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         $limit   = $count ? null : $offset . ',' . $per_page;
         $orderby = isset($this->_req_data['orderby']) ? $this->_req_data['orderby'] : 'EVT_ID';
         $order   = isset($this->_req_data['order']) ? $this->_req_data['order'] : 'DESC';
+        $month_r = '';
+        $year_r  = '';
         if (isset($this->_req_data['month_range'])) {
             $pieces = explode(' ', $this->_req_data['month_range'], 3);
             // simulate the FIRST day of the month, that fixes issues for months like February
@@ -2283,8 +2288,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
 
 
     /**
-     * _delete_event
-     *
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
@@ -2315,9 +2318,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
 
 
     /**
-     * _delete_events
-     *
-     * @access protected
      * @return void
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -2503,9 +2503,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                                     ? sanitize_text_field($registration_config->default_STS_ID)
                                     : EEM_Registration::status_id_pending_payment,
                                 'html_label_text' => esc_html__('Default Registration Status', 'event_espresso')
-                                                        . EEH_Template::get_help_tab_link(
-                                                            'default_settings_status_help_tab'
-                                                        ),
+                                                     . EEH_Template::get_help_tab_link(
+                                        'default_settings_status_help_tab'
+                                    ),
                                 'html_help_text'  => esc_html__(
                                     'This setting allows you to preselect what the default registration status setting is when creating an event.  Note that changing this setting does NOT retroactively apply it to existing events.',
                                     'event_espresso'
@@ -2518,12 +2518,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                                     ? $registration_config->default_maximum_number_of_tickets
                                     : EEM_Event::get_default_additional_limit(),
                                 'html_label_text' => esc_html__(
-                                    'Default Maximum Tickets Allowed Per Order:',
-                                    'event_espresso'
-                                )
-                                . EEH_Template::get_help_tab_link(
-                                    'default_maximum_tickets_help_tab"'
-                                ),
+                                                         'Default Maximum Tickets Allowed Per Order:',
+                                                         'event_espresso'
+                                                     )
+                                                     . EEH_Template::get_help_tab_link(
+                                        'default_maximum_tickets_help_tab"'
+                                    ),
                                 'html_help_text'  => esc_html__(
                                     'This setting allows you to indicate what will be the default for the maximum number of tickets per order when creating new events.',
                                     'event_espresso'
@@ -2576,7 +2576,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     }
 
 
-    /*************        Templates        *************/
+    /*************        Templates        *************
+     *
+     * @throws EE_Error
+     */
     protected function _template_settings()
     {
         $this->_admin_page_title              = esc_html__('Template Settings (Preview)', 'event_espresso');
@@ -2738,6 +2741,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
 
     /**
      * Handles deleting categories.
+     *
+     * @throws EE_Error
      */
     protected function _delete_categories()
     {
@@ -2873,6 +2878,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     }
 
     /* end category stuff */
+
+
     /**************/
 
 
