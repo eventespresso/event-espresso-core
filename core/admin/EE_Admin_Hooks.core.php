@@ -386,6 +386,9 @@ abstract class EE_Admin_Hooks extends EE_Base
      */
     protected function _set_page_object()
     {
+        if ($this->_page_object instanceof EE_Admin_Page) {
+            return;
+        }
         // first make sure $this->_name is set
         if (empty($this->_name)) {
             $msg[] = __('We can\'t load the page object', 'event_espresso');
@@ -422,6 +425,7 @@ abstract class EE_Admin_Hooks extends EE_Base
         }
         $a = new ReflectionClass($ref);
         $this->_page_object = $a->newInstance(false);
+        $this->_page_object->initializePage();
     }
 
 

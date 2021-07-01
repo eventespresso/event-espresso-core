@@ -409,7 +409,9 @@ abstract class EE_Admin_Page_Init extends EE_Base
         $path_to_file = apply_filters(
             "FHEE__EE_Admin_Page_Init___initialize_admin_page__path_to_file__{$hook_suffix}",
             $path_to_file
-        );// so if the file would be in EE_ADMIN/attendees/Attendee_Admin_Page.core.php, the filter would be FHEE__EE_Admin_Page_Init___initialize_admin_page__path_to_file__attendees_Attendee_Admin_Page
+        );
+        // so if the file would be in EE_ADMIN/attendees/Attendee_Admin_Page.core.php,
+        // the filter would be FHEE__EE_Admin_Page_Init___initialize_admin_page__path_to_file__attendees_Attendee_Admin_Page
         if (is_readable($path_to_file)) {
             // This is a place where EE plugins can hook in to make sure their own files are required in the appropriate place
             do_action('AHEE__EE_Admin_Page___initialize_admin_page__before_initialization');

@@ -233,10 +233,6 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
             ? $this->_req_data['custom_template_args']['MTP_description']
             : '';
 
-
-        // set EE_Admin_Page object (see method details in EE_Admin_Hooks parent
-        $this->_set_page_object();
-
         // is this a template switch if so EE_Admin_Page child needs this object
         $this->_page_object->set_hook_object($this);
 

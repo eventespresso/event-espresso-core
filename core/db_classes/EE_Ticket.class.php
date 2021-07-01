@@ -509,7 +509,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     /**
      * Gets ID
      *
-     * @return string
+     * @return int
      * @throws EE_Error
      * @throws ReflectionException
      */

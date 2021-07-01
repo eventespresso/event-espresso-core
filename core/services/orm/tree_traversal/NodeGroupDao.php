@@ -15,9 +15,9 @@ use ReflectionException;
  *
  * Used to store, retrieve, and delete a group of ModelObjNodes.
  *
- * @package     Event Espresso
+ * @package        Event Espresso
  * @author         Mike Nelson
- * @since         4.10.12.p
+ * @since          4.10.12.p
  *
  */
 class NodeGroupDao
@@ -30,9 +30,10 @@ class NodeGroupDao
         return wp_generate_password(6, false);
     }
 
+
     /**
      * Gets the string we put in front of the WP Option name used to store the jobs.
-	 *
+     *
      * @return string
      */
     private function getOptionPrefix()
@@ -40,15 +41,22 @@ class NodeGroupDao
         return 'ee_deletion_';
     }
 
+
     /**
      * @param $code
      * @return ModelObjNode[]
      * @throws UnexpectedEntityException
+     * @throws Exception
      */
     public function getModelObjNodesInGroup($code)
     {
         if (! $code) {
-            throw new Exception(esc_html__('We aren’t sure which job you are performing. Please press back in your browser and try again.', 'event_espresso'));
+            throw new Exception(
+                esc_html__(
+                    'We aren’t sure which job you are performing. Please press back in your browser and try again.',
+                    'event_espresso'
+                )
+            );
         }
         $deletion_data = get_option($this->getOptionPrefix() . $code, []);
         foreach ($deletion_data as $root) {
@@ -59,10 +67,11 @@ class NodeGroupDao
         return $deletion_data;
     }
 
+
     /**
      * Gets an array indicating what database rows are contained in the job.
      * Each top-level key is a model name, and its value is an array of IDs.
-	 *
+     *
      * @param ModelObjNode[] $model_obj_nodes
      * @return array
      * @throws EE_Error
@@ -71,7 +80,7 @@ class NodeGroupDao
      * @throws InvalidArgumentException
      * @throws ReflectionException
      */
-    public function getModelsAndIdsContainedIn($model_obj_nodes)
+    public function getModelsAndIdsContainedIn(array $model_obj_nodes)
     {
         $models_and_ids_to_delete = [];
         foreach ($model_obj_nodes as $root) {
@@ -80,10 +89,11 @@ class NodeGroupDao
         return $models_and_ids_to_delete;
     }
 
+
     /**
      * Gets an array indicating what database rows are contained in the job.
      * Each top-level key is a model name, and its value is an array of IDs.
-	 *
+     *
      * @param string $code
      * @return array
      * @throws EE_Error
@@ -92,6 +102,7 @@ class NodeGroupDao
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      * @throws UnexpectedEntityException
+     * @throws Exception
      */
     public function getModelsAndIdsFromGroup($code)
     {
@@ -99,14 +110,15 @@ class NodeGroupDao
         return $this->getModelsAndIdsContainedIn($model_obj_nodes);
     }
 
+
     /**
      * Persists the ModelObjNodes for future requests, using the code for reference.
-	 *
+     *
      * @param ModelObjNode[] $model_obj_nodes
-     * @param string $code
+     * @param string         $code
      * @return bool
      */
-    public function persistModelObjNodesGroup($model_obj_nodes, $code)
+    public function persistModelObjNodesGroup(array $model_obj_nodes, $code)
     {
         return add_option(
             $this->getOptionPrefix() . $code,
@@ -116,9 +128,10 @@ class NodeGroupDao
         );
     }
 
+
     /**
      * Forgets about the group of ModelObjNodes. Doesn't delete the rows in the database they reference though.
-	 *
+     *
      * @param $code
      * @return bool
      */

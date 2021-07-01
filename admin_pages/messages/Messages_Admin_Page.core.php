@@ -2722,8 +2722,6 @@ class Messages_Admin_Page extends EE_Admin_Page
 
     protected function _insert_or_update_message_template($new = false)
     {
-
-        do_action('AHEE_log', __FILE__, __FUNCTION__, '');
         $success = 0;
         $override = false;
 

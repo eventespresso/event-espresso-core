@@ -115,9 +115,10 @@ class EE_Admin_Hooks_Tests extends EE_UnitTestCase
     {
         $this->assertTrue($this->_eeAdminHookMock->verify_page_object() instanceof Admin_Mock_Valid_Admin_Page);
 
-        //test exception if _name is empty
+        // test exception if _name is empty
         $cached_name = $this->_eeAdminHookMock->get_property('_name');
         $this->_eeAdminHookMock->set_property('_name', null);
+        $this->_eeAdminHookMock->set_property('_page_object', null);
         $this->setExpectedException('EE_Error');
         $this->_eeAdminHookMock->call_method('_set_page_object');
 
