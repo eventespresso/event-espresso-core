@@ -139,7 +139,7 @@ class RegForm extends EE_Form_Section_Proper
      */
     public function addRequiredQuestion(string $identifier, string $required_question): void
     {
-        $this->required_questions[ $identifier] = $required_question;
+        $this->required_questions[ $identifier ] = $required_question;
     }
 
 

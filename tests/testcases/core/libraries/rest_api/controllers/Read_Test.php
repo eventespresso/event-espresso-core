@@ -453,6 +453,7 @@ class Read_Test extends EE_REST_TestCase
                 'EVT_allow_overflow'              => $event->get('EVT_allow_overflow'),
                 'EVT_external_URL'                => $event->get('EVT_external_URL'),
                 'EVT_donations'                   => $event->get('EVT_donations'),
+                'FSC_UUID'                        => $event->get('FSC_UUID'),
                 'featured_image_url'              => null,
                 'EVT_timezone_string'             => '',
                 'password'                        => '',
@@ -506,6 +507,18 @@ class Read_Test extends EE_REST_TestCase
                                                 . '/question_groups'
                                                 ),
                                     'single' => false,
+                                ),
+                        ),
+                    'https://api.eventespresso.com/form_section'         =>
+                        array(
+                            0 =>
+                                array(
+                                    'href'   => rest_url(
+                                        '/ee/v4.8.29/events/'
+                                                . $event_id
+                                                . '/form_section'
+                                    ),
+                                    'single' => true,
                                 ),
                         ),
                     'https://api.eventespresso.com/venues'                  =>
@@ -1220,15 +1233,16 @@ class Read_Test extends EE_REST_TestCase
             array(
                 'self',
                 'collection',
-                'https://api.eventespresso.com/registration',
+                'https://api.eventespresso.com/attendee',
                 'https://api.eventespresso.com/datetime',
-                'https://api.eventespresso.com/question_group',
                 'https://api.eventespresso.com/event_question_group',
-                'https://api.eventespresso.com/venue',
+                'https://api.eventespresso.com/form_section',
+                'https://api.eventespresso.com/message_template_group',
+                'https://api.eventespresso.com/question_group',
+                'https://api.eventespresso.com/registration',
                 'https://api.eventespresso.com/term_relationship',
                 'https://api.eventespresso.com/term_taxonomy',
-                'https://api.eventespresso.com/message_template_group',
-                'https://api.eventespresso.com/attendee',
+                'https://api.eventespresso.com/venue',
                 'https://api.eventespresso.com/wp_user',
                 'https://api.eventespresso.com/post_meta',
                 'https://api.eventespresso.com/extra_meta',

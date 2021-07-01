@@ -36,7 +36,8 @@ class CopyAttendeeInfoForm extends EE_Form_Section_Proper
                         'end_template_file'        => null,
                     ]
                 ),
-            ]);
+            ]
+        );
     }
 
 
@@ -61,25 +62,25 @@ class CopyAttendeeInfoForm extends EE_Form_Section_Proper
                         : '';
                     $copy_attendee_info_inputs[ 'spco_copy_attendee_chk[ticket-' . $registration->ticket()->ID() . ']' ]
                                  = new EE_Form_Section_HTML(
-                        '<h6 class="spco-copy-attendee-event-hdr">' . $item_name . '</h6>'
-                    );
+                                     '<h6 class="spco-copy-attendee-event-hdr">' . $item_name . '</h6>'
+                                 );
                     $prev_ticket = $registration->ticket()->ID();
                 }
 
                 $copy_attendee_info_inputs[ 'spco_copy_attendee_chk[' . $registration->ID() . ']' ]
                     = new EE_Checkbox_Multi_Input(
-                    [
+                        [
                         $registration->ID() => sprintf(
                             esc_html_x('Attendee #%s', 'Attendee #123', 'event_espresso'),
                             $registration->count()
-                        ),
-                    ],
-                    [
-                        'html_id'                 => 'spco-copy-attendee-chk-' . $registration->reg_url_link(),
-                        'html_class'              => 'spco-copy-attendee-chk ee-do-not-validate',
-                        'display_html_label_text' => false,
-                    ]
-                );
+                        )
+                        ],
+                        [
+                            'html_id'                 => 'spco-copy-attendee-chk-' . $registration->reg_url_link(),
+                            'html_class'              => 'spco-copy-attendee-chk ee-do-not-validate',
+                            'display_html_label_text' => false,
+                        ]
+                    );
             }
         }
         return $copy_attendee_info_inputs;
