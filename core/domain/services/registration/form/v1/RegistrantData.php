@@ -152,7 +152,8 @@ class RegistrantData
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function ensureCriticalRegistrantDataIsSet(string $reg_url_link): void {
+    public function ensureCriticalRegistrantDataIsSet(string $reg_url_link): void
+    {
         if ($this->currentRegistrantIsPrimary()) {
             return;
         }
@@ -160,10 +161,10 @@ class RegistrantData
         $critical_attendee_details = ['ATT_fname', 'ATT_lname', 'ATT_email'];
         // add address info to critical details?
         if (
-        apply_filters(
-            'FHEE__EE_SPCO_Reg_Step_Attendee_Information__merge_address_details_with_critical_attendee_details',
-            false
-        )
+            apply_filters(
+                'FHEE__EE_SPCO_Reg_Step_Attendee_Information__merge_address_details_with_critical_attendee_details',
+                false
+            )
         ) {
             $critical_attendee_details += [
                 'ATT_address',
@@ -337,7 +338,7 @@ class RegistrantData
                 $this->attendeeCount() === 1
                 && $reg_url_link !== ''
                 && $this->getPrimaryRegistrantDataValue('reg_url_link') === $reg_url_link
-           );
+            );
     }
 
 

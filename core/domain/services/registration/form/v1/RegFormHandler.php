@@ -85,7 +85,6 @@ class RegFormHandler
             RegFormInputHandler::class,
             [ $this->checkout->reg_url_link, $required_questions ]
         );
-
     }
 
 
