@@ -1411,7 +1411,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function registrationFormUuid():? string
+    public function registrationFormUuid(): ?string
     {
         return $this->get('FSC_UUID');
     }
@@ -1427,20 +1427,20 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     public function registrationForm()
     {
         $FSC_UUID = $this->registrationFormUuid();
-        return !empty($FSC_UUID)
-            ? $this->get_many_related(
-                'Form_Section',
-                [
-                    [
-                        'OR' => [
-                            'Form_Section.FSC_UUID'      => $FSC_UUID, // top level form
-                            'Form_Section.FSC_belongsTo' => $FSC_UUID, // child form sections
-                        ]
-                    ],
-                    'order_by' => ['FSC_order' => 'ASC'],
+
+        if (empty($FSC_UUID)) {
+            return [];
+        }
+
+        return EEM_Form_Section::instance()->get_all([
+            [
+                'OR' => [
+                    'FSC_UUID'      => $FSC_UUID, // top level form
+                    'FSC_belongsTo' => $FSC_UUID, // child form sections
                 ]
-            )
-            : [];
+                ],
+            'order_by' => ['FSC_order' => 'ASC'],
+        ]);
     }
 
 
