@@ -138,7 +138,7 @@ class EE_Register_Model implements EEI_Plugin_API
      * @param array $core_models
      * @return array keys are model names (eg 'Event') and values are their classes (eg 'EE_Event')
      */
-    public static function add_addon_models(array $core_models = []): array
+    public static function add_addon_models(array $core_models = [])
     {
         foreach (self::$_model_name_to_classname_map as $model_name_to_class_map) {
             $core_models = array_merge($core_models, $model_name_to_class_map);
@@ -153,7 +153,7 @@ class EE_Register_Model implements EEI_Plugin_API
      * @param array $folders
      * @return array of folder paths
      */
-    public static function add_model_folders(array $folders = []): array
+    public static function add_model_folders(array $folders = [])
     {
         foreach (self::$_model_registry as $setup_args) {
             if (isset($setup_args['model_paths'])) {
@@ -170,7 +170,7 @@ class EE_Register_Model implements EEI_Plugin_API
      * @param array $folders
      * @return array of folder paths
      */
-    public static function add_class_folders(array $folders = []): array
+    public static function add_class_folders(array $folders = [])
     {
         foreach (self::$_model_registry as $setup_args) {
             if (isset($setup_args['class_paths'])) {

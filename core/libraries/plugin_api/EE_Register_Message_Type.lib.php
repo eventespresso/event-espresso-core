@@ -45,8 +45,7 @@ class EE_Register_Message_Type implements EEI_Plugin_API
     public static function register($identifier = '', array $setup_args = [])
     {
         // required fields MUST be present, so let's make sure they are.
-        if (
-            ! isset($identifier)
+        if (! isset($identifier)
             || ! is_array($setup_args)
             || empty($setup_args['mtfilename'])
             || empty($setup_args['autoloadpaths'])
@@ -161,9 +160,9 @@ class EE_Register_Message_Type implements EEI_Plugin_API
         // add filters but only if they haven't already been set (these filters only need to be registered ONCE because
         // the callback handles all registered message types.
         if (false === has_filter(
-                'FHEE__EED_Messages___set_messages_paths___MSG_PATHS',
-                ['EE_Register_Message_Type', 'register_msgs_autoload_paths']
-            )) {
+            'FHEE__EED_Messages___set_messages_paths___MSG_PATHS',
+            ['EE_Register_Message_Type', 'register_msgs_autoload_paths']
+        )) {
             add_filter(
                 'FHEE__EED_Messages___set_messages_paths___MSG_PATHS',
                 ['EE_Register_Message_Type', 'register_msgs_autoload_paths'],

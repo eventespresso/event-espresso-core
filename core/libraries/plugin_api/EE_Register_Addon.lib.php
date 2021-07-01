@@ -317,7 +317,7 @@ class EE_Register_Addon implements EEI_Plugin_API
      * @return void
      * @throws EE_Error
      */
-    private static function _verify_parameters(string $addon_name, array $setup_args)
+    private static function _verify_parameters($addon_name, array $setup_args)
     {
         // required fields MUST be present, so let's make sure they are.
         if (empty($addon_name) || ! is_array($setup_args)) {
@@ -504,7 +504,7 @@ class EE_Register_Addon implements EEI_Plugin_API
                 : array(),
             // if not empty, inserts a new table row after this plugin's row on the WP Plugins page
             // that can be used for adding upgrading/marketing info
-            'plugins_page_row'      => $setup_args['plugins_page_row'] ?? '',
+            'plugins_page_row'      => isset($setup_args['plugins_page_row']) ? $setup_args['plugins_page_row'] : '',
             'namespace'             => isset(
                 $setup_args['namespace']['FQNS'],
                 $setup_args['namespace']['DIR']
