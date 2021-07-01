@@ -985,25 +985,24 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     protected function _events_overview_list_table()
     {
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-        $this->_template_args['after_list_table']                           =
-            ! empty($this->_template_args['after_list_table'])
-                ? (array) $this->_template_args['after_list_table']
-                : [];
-        $this->_template_args['after_list_table']['view_event_list_button'] = EEH_HTML::br()
-                                                                              . EEH_Template::get_button_or_link(
-                get_post_type_archive_link('espresso_events'),
-                esc_html__('View Event Archive Page', 'event_espresso'),
-                'button'
-            );
-        $this->_template_args['after_list_table']['legend']                 =
-            $this->_display_legend($this->_event_legend_items());
-        $this->_admin_page_title                                            .= ' '
-                                                                               . $this->get_action_link_or_button(
+        $after_list_table                           = [];
+        $after_list_table['view_event_list_button'] = EEH_HTML::br();
+        $after_list_table['view_event_list_button'] .= EEH_Template::get_button_or_link(
+            get_post_type_archive_link('espresso_events'),
+            esc_html__('View Event Archive Page', 'event_espresso'),
+            'button'
+        );
+        $after_list_table['legend'] = $this->_display_legend($this->_event_legend_items());
+        $this->_admin_page_title    .= ' ' . $this->get_action_link_or_button(
                 'create_new',
                 'add',
                 [],
                 'add-new-h2'
             );
+        $this->_template_args['after_list_table']   = array_merge(
+            $this->_template_args['after_list_table'],
+            $after_list_table
+        );
         $this->display_admin_list_table_page_with_no_sidebar();
     }
 
@@ -1355,26 +1354,26 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                                   ->get_one_by_ID($tkt['TKT_ID']);
                 if ($TKT instanceof EE_Ticket) {
                     $ticket_sold = $TKT->count_related(
-                            'Registration',
+                        'Registration',
+                        [
                             [
-                                [
-                                    'STS_ID' => [
-                                        'NOT IN',
-                                        [EEM_Registration::status_id_incomplete],
-                                    ],
+                                'STS_ID' => [
+                                    'NOT IN',
+                                    [EEM_Registration::status_id_incomplete],
                                 ],
-                            ]
-                        ) > 0;
+                            ],
+                        ]
+                    ) > 0;
                     // let's just check the total price for the existing ticket and determine if it matches the new
                     // total price.  if they are different then we create a new ticket (if tickets sold)
                     // if they aren't different then we go ahead and modify existing ticket.
                     $create_new_TKT = $ticket_sold
                                       && ! $TKT->deleted()
                                       && EEH_Money::compare_floats(
-                            $ticket_price,
-                            $TKT->get('TKT_price'),
-                            '!=='
-                        );
+                                          $ticket_price,
+                                          $TKT->get('TKT_price'),
+                                          '!=='
+                                      );
                     $TKT->set_date_format($incoming_date_formats[0]);
                     $TKT->set_time_format($incoming_date_formats[1]);
                     // set new values
@@ -2504,8 +2503,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                                     : EEM_Registration::status_id_pending_payment,
                                 'html_label_text' => esc_html__('Default Registration Status', 'event_espresso')
                                                      . EEH_Template::get_help_tab_link(
-                                        'default_settings_status_help_tab'
-                                    ),
+                                                         'default_settings_status_help_tab'
+                                                     ),
                                 'html_help_text'  => esc_html__(
                                     'This setting allows you to preselect what the default registration status setting is when creating an event.  Note that changing this setting does NOT retroactively apply it to existing events.',
                                     'event_espresso'
@@ -2522,8 +2521,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                                                          'event_espresso'
                                                      )
                                                      . EEH_Template::get_help_tab_link(
-                                        'default_maximum_tickets_help_tab"'
-                                    ),
+                                                         'default_maximum_tickets_help_tab"'
+                                                     ),
                                 'html_help_text'  => esc_html__(
                                     'This setting allows you to indicate what will be the default for the maximum number of tickets per order when creating new events.',
                                     'event_espresso'
