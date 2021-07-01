@@ -59,7 +59,7 @@ class EE_Register_Messages_Shortcode_Library implements EEI_Plugin_API
      * @since    4.3.0
      *
      */
-    public static function register(string $identifier = '', array $setup_args = [])
+    public static function register($identifier = '', array $setup_args = [])
     {
 
         // required fields MUST be present, so let's make sure they are.
@@ -137,7 +137,7 @@ class EE_Register_Messages_Shortcode_Library implements EEI_Plugin_API
      * @return  void
      * @since    4.3.0
      */
-    public static function deregister(string $identifier = '')
+    public static function deregister($identifier = '')
     {
         unset(self::$_ee_messages_shortcode_registry[ $identifier ]);
     }
@@ -151,7 +151,7 @@ class EE_Register_Messages_Shortcode_Library implements EEI_Plugin_API
      * @since    4.3.0
      *
      */
-    public static function register_msgs_autoload_paths(array $paths): array
+    public static function register_msgs_autoload_paths(array $paths)
     {
 
         if (! empty(self::$_ee_messages_shortcode_registry)) {
@@ -176,7 +176,7 @@ class EE_Register_Messages_Shortcode_Library implements EEI_Plugin_API
      * @since 4.3.0
      *
      */
-    public static function register_list_type_shortcodes(array $original_shortcodes): array
+    public static function register_list_type_shortcodes(array $original_shortcodes)
     {
         if (empty(self::$_ee_messages_shortcode_registry)) {
             return $original_shortcodes;

@@ -35,7 +35,7 @@ class EE_Register_Module implements EEI_Plugin_API
      * @throws EE_Error
      * @since    4.3.0
      */
-    public static function register(string $identifier = '', array $setup_args = [])
+    public static function register($identifier = '', array $setup_args = [])
     {
         // required fields MUST be present, so let's make sure they are.
         if (empty($identifier) || ! is_array($setup_args) || empty($setup_args['module_paths'])) {
@@ -87,7 +87,7 @@ class EE_Register_Module implements EEI_Plugin_API
      * @param array $modules_to_register array of paths to all modules that require registering
      * @return array
      */
-    public static function add_modules(array $modules_to_register): array
+    public static function add_modules(array $modules_to_register)
     {
         foreach (self::$_settings as $settings) {
             $modules_to_register = array_merge($modules_to_register, $settings['module_paths']);
@@ -103,7 +103,7 @@ class EE_Register_Module implements EEI_Plugin_API
      * @return void
      * @since    4.3.0
      */
-    public static function deregister(string $identifier = '')
+    public static function deregister($identifier = '')
     {
         unset(self::$_settings[ $identifier ]);
     }

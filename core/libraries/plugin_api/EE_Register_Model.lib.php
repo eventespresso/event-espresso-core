@@ -45,7 +45,7 @@ class EE_Register_Model implements EEI_Plugin_API
      * }
      * @throws EE_Error
      */
-    public static function register(string $identifier = '', array $setup_args = [])
+    public static function register($identifier = '', array $setup_args = [])
     {
         // required fields MUST be present, so let's make sure they are.
         if (empty($identifier) || ! is_array($setup_args) || empty($setup_args['model_paths'])) {
@@ -186,7 +186,7 @@ class EE_Register_Model implements EEI_Plugin_API
      *
      * @param string $identifier
      */
-    public static function deregister(string $identifier = '')
+    public static function deregister($identifier = '')
     {
         unset(self::$_model_registry[ $identifier ], self::$_model_name_to_classname_map[ $identifier ]);
     }

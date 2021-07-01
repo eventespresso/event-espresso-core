@@ -53,7 +53,7 @@ class EE_Register_Capabilities implements EEI_Plugin_API
      *                                                                                    the arguments for the map.
      *                                                                                    }
      */
-    public static function register(string $identifier = '', array $setup_args = [])
+    public static function register($identifier = '', array $setup_args = [])
     {
         // required fields MUST be present, so let's make sure they are.
         if ($identifier === null || ! is_array($setup_args) || empty($setup_args['capabilities'])) {
@@ -89,7 +89,7 @@ class EE_Register_Capabilities implements EEI_Plugin_API
             'caps'     => isset($setup_args['capabilities']) && is_array($setup_args['capabilities'])
                 ? $setup_args['capabilities']
                 : [],
-            'cap_maps' => $setup_args['capability_maps'] ?? [],
+            'cap_maps' => isset($setup_args['capability_maps']) ? $setup_args['capability_maps'] : [],
         ];
         // set initial caps (note that EE_Capabilities takes care of making sure that the caps get added only once)
         add_filter(
@@ -112,7 +112,7 @@ class EE_Register_Capabilities implements EEI_Plugin_API
      * @param array $incoming_caps The original caps map.
      * @return array merged in new caps.
      */
-    public static function register_capabilities(array $incoming_caps): array
+    public static function register_capabilities(array $incoming_caps)
     {
         foreach (self::$_registry as $caps_and_cap_map) {
             $incoming_caps = array_merge_recursive($incoming_caps, $caps_and_cap_map['caps']);
@@ -130,7 +130,7 @@ class EE_Register_Capabilities implements EEI_Plugin_API
      * @throws EE_Error
      * @since 4.5.0
      */
-    public static function register_cap_maps(array $cap_maps): array
+    public static function register_cap_maps(array $cap_maps)
     {
         // loop through and instantiate cap maps.
         foreach (self::$_registry as $identifier => $setup) {
@@ -202,7 +202,7 @@ class EE_Register_Capabilities implements EEI_Plugin_API
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public static function deregister(string $identifier = '')
+    public static function deregister($identifier = '')
     {
         if (! empty(self::$_registry[ $identifier ])) {
             if (! empty(self::$_registry[ $identifier ]['caps'])) {

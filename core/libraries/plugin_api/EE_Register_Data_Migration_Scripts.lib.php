@@ -35,7 +35,7 @@ class EE_Register_Data_Migration_Scripts implements EEI_Plugin_API
      * @throws EE_Error
      * @return void
      */
-    public static function register(string $identifier = '', array $setup_args = [])
+    public static function register($identifier = '', array $setup_args = [])
     {
         // required fields MUST be present, so let's make sure they are.
         if (empty($identifier) || ! is_array($setup_args) || empty($setup_args['dms_paths'])) {
@@ -79,7 +79,7 @@ class EE_Register_Data_Migration_Scripts implements EEI_Plugin_API
      * @param array $dms_paths
      * @return array
      */
-    public static function add_data_migration_script_folders(array $dms_paths = array()): array
+    public static function add_data_migration_script_folders(array $dms_paths = array())
     {
         foreach (self::$_settings as $identifier => $settings) {
             $wildcards = 0;
@@ -104,7 +104,7 @@ class EE_Register_Data_Migration_Scripts implements EEI_Plugin_API
      * @param string $identifier EE_Addon class name that this set of data migration scripts belongs to
      * @return void
      */
-    public static function deregister(string $identifier = '')
+    public static function deregister($identifier = '')
     {
         unset(self::$_settings[ $identifier ]);
     }

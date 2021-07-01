@@ -40,7 +40,7 @@ class EE_Register_Admin_Page implements EEI_Plugin_API
      * @since 4.3.0
      *
      */
-    public static function register(string $identifier = '', array $setup_args = [])
+    public static function register($identifier = '', array $setup_args = [])
     {
 
         // check that an admin_page has not already been registered with that name
@@ -111,7 +111,7 @@ class EE_Register_Admin_Page implements EEI_Plugin_API
      * @since    4.3.0
      *
      */
-    public static function deregister(string $identifier = '')
+    public static function deregister($identifier = '')
     {
         unset(self::$_ee_admin_page_registry[ $identifier ]);
     }

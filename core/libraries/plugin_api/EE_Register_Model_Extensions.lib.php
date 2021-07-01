@@ -51,7 +51,7 @@ class EE_Register_Model_Extensions implements EEI_Plugin_API
      *                                      }
      *
      */
-    public static function register(string $identifier = '', array $setup_args = [])
+    public static function register($identifier = '', array $setup_args = [])
     {
         // required fields MUST be present, so let's make sure they are.
         if (empty($identifier)
@@ -128,7 +128,7 @@ class EE_Register_Model_Extensions implements EEI_Plugin_API
      *
      * @param string $identifier
      */
-    public static function deregister(string $identifier = '')
+    public static function deregister($identifier = '')
     {
         if (isset(self::$_registry[ $identifier ])) {
             unset(self::$_registry[ $identifier ]);

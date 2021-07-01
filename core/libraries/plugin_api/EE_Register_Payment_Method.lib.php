@@ -47,7 +47,7 @@ class EE_Register_Payment_Method implements EEI_Plugin_API
      * @throws InvalidDataTypeException
      * @since    4.5.0
      */
-    public static function register(string $identifier = '', array $setup_args = [])
+    public static function register($identifier = '', array $setup_args = [])
     {
         // required fields MUST be present, so let's make sure they are.
         if (empty($identifier) || ! is_array($setup_args) || empty($setup_args['payment_method_paths'])) {
@@ -110,7 +110,7 @@ class EE_Register_Payment_Method implements EEI_Plugin_API
      * @param array $payment_method_folders array of paths to all payment methods that require registering
      * @return array
      */
-    public static function add_payment_methods(array $payment_method_folders): array
+    public static function add_payment_methods(array $payment_method_folders)
     {
         foreach (self::$_settings as $settings) {
             foreach ($settings['payment_method_paths'] as $payment_method_path) {
@@ -132,7 +132,7 @@ class EE_Register_Payment_Method implements EEI_Plugin_API
      * @throws InvalidDataTypeException
      * @since    4.3.0
      */
-    public static function deregister(string $identifier = '')
+    public static function deregister($identifier = '')
     {
         if (isset(self::$_settings[ $identifier ])) {
             // set action for just this module id to delay deregistration until core is loaded and ready.
@@ -163,7 +163,7 @@ class EE_Register_Payment_Method implements EEI_Plugin_API
      * @access private  Developers do NOT use this method.  It's only public for PHP5.3 closure support (see deregister)
      *                  When we drop support for PHP5.3 this will be made private again.  You have been warned.
      */
-    public static function getPaymentMethodCapabilities(array $settings): array
+    public static function getPaymentMethodCapabilities(array $settings)
     {
         $payment_method_manager = LoaderFactory::getLoader()->getShared('EE_Payment_Method_Manager');
         $payment_method_caps    = ['administrator' => []];

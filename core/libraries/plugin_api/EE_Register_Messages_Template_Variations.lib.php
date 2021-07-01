@@ -91,7 +91,7 @@ class EE_Register_Messages_Template_Variations implements EEI_Plugin_API
      * @throws EE_Error
      * @return void
      */
-    public static function register(string $identifier = '', array $setup_args = [])
+    public static function register($identifier = '', array $setup_args = [])
     {
 
         // check for required params
@@ -183,9 +183,9 @@ class EE_Register_Messages_Template_Variations implements EEI_Plugin_API
      * @since  4.5.0
      *
      */
-    private static function _verify_variations(string $identifier, array $validated_variations): array
+    private static function _verify_variations($identifier, array $validated_variations)
     {
-        foreach (self::$_registry as $identifier => $settings) {
+        foreach (self::$_registry as $settings) {
             foreach ($settings['variations'] as $messenger) {
                 foreach ($messenger as $all_variations) {
                     if (isset($all_variations['default'])) {
@@ -249,15 +249,15 @@ class EE_Register_Messages_Template_Variations implements EEI_Plugin_API
      *
      */
     public static function get_variation(
-        string $variation_path,
-        string $messenger,
-        string $message_type,
-        string $type,
-        string $variation,
-        string $file_extension,
-        bool $url,
+        $variation_path,
+        $messenger,
+        $message_type,
+        $type,
+        $variation,
+        $file_extension,
+        $url,
         EE_Messages_Template_Pack $template_pack
-    ): string {
+    ) {
         // so let's loop through our registered variations and then pull any details matching the request.
         foreach (self::$_registry as $registry_settings) {
             $base        = $url ? $registry_settings['base_url'] : $registry_settings['base_path'];
@@ -289,10 +289,10 @@ class EE_Register_Messages_Template_Variations implements EEI_Plugin_API
      */
     public static function get_variations(
         array $variations,
-        string $messenger,
-        string $message_type,
+        $messenger,
+        $message_type,
         EE_Messages_Template_Pack $template_pack
-    ): array {
+    ) {
         // first let's check if we even have registered variations and get out early.
         if (empty(self::$_registry)) {
             return $variations;
@@ -333,7 +333,7 @@ class EE_Register_Messages_Template_Variations implements EEI_Plugin_API
      * @since 4.5.0
      *
      */
-    public static function deregister(string $identifier = '')
+    public static function deregister($identifier = '')
     {
         unset(self::$_registry[ $identifier ]);
     }

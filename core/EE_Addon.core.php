@@ -595,7 +595,7 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
      * EE_System::req_type_reactivation, EE_System::req_type_upgrade, or EE_System::req_type_downgrade). This is set by
      * EE_System when it is checking for new install or upgrades of addons
      */
-    public function detect_req_type(bool $redetect = false): int
+    public function detect_req_type($redetect = false)
     {
         if ($this->_req_type === null || $redetect) {
             $this->detect_activation_or_upgrade();

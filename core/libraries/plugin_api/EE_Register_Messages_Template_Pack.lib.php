@@ -56,7 +56,7 @@ class EE_Register_Messages_Template_Pack implements EEI_Plugin_API
      * @since  4.5.0
      * @see    EE_Messages_Template_Pack_Default for an example class
      */
-    public static function register(string $identifier = '', array $setup_args = [])
+    public static function register($identifier = '', array $setup_args = [])
     {
 
         // check for required params
@@ -128,7 +128,7 @@ class EE_Register_Messages_Template_Pack implements EEI_Plugin_API
      * @since  4.5.0
      *
      */
-    public static function set_template_pack_path(array $paths): array
+    public static function set_template_pack_path(array $paths)
     {
         foreach (self::$_registry as $args) {
             $paths[] = $args['path'];
@@ -146,7 +146,7 @@ class EE_Register_Messages_Template_Pack implements EEI_Plugin_API
      * @since 4.5.0
      *
      */
-    public static function set_template_pack(array $template_packs): array
+    public static function set_template_pack(array $template_packs)
     {
         foreach (self::$_registry as $args) {
             // verify class_exists
@@ -172,7 +172,7 @@ class EE_Register_Messages_Template_Pack implements EEI_Plugin_API
      *
      * @return bool
      */
-    private static function _verify_class_not_exist(string $classname): bool
+    private static function _verify_class_not_exist($classname)
     {
         // loop through the existing registry and see if the classname is already present.
         foreach (self::$_registry as $args) {
@@ -205,7 +205,7 @@ class EE_Register_Messages_Template_Pack implements EEI_Plugin_API
      * @since 4.5.0
      *
      */
-    public static function deregister(string $identifier = '')
+    public static function deregister($identifier = '')
     {
         unset(self::$_registry[ $identifier ]);
     }

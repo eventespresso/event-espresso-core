@@ -42,7 +42,7 @@ class EE_Register_Shortcode implements EEI_Plugin_API
      * @since    4.3.0
      * @since    4.9.46.rc.025  for the new `shortcode_fqcns` array argument.
      */
-    public static function register(string $identifier = '', array $setup_args = [])
+    public static function register($identifier = '', array $setup_args = [])
     {
         // required fields MUST be present, so let's make sure they are.
         if (empty($identifier)
@@ -108,7 +108,7 @@ class EE_Register_Shortcode implements EEI_Plugin_API
      * @param array $shortcodes_to_register array of paths to all shortcodes that require registering
      * @return array
      */
-    public static function add_shortcodes(array $shortcodes_to_register): array
+    public static function add_shortcodes(array $shortcodes_to_register)
     {
         foreach (self::$_settings as $settings) {
             $shortcodes_to_register = array_merge($shortcodes_to_register, $settings['shortcode_paths']);
@@ -129,7 +129,7 @@ class EE_Register_Shortcode implements EEI_Plugin_API
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public static function instantiateAndAddToShortcodeCollection(CollectionInterface $shortcodes_collection): CollectionInterface
+    public static function instantiateAndAddToShortcodeCollection(CollectionInterface $shortcodes_collection)
     {
         foreach (self::$_settings as $settings) {
             if (! empty($settings['shortcode_fqcns'])) {
@@ -169,7 +169,7 @@ class EE_Register_Shortcode implements EEI_Plugin_API
      * @return void
      * @since    4.3.0
      */
-    public static function deregister(string $identifier = '')
+    public static function deregister($identifier = '')
     {
         unset(self::$_settings[ $identifier ]);
     }

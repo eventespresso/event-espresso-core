@@ -26,7 +26,7 @@ class EE_Register_Personal_Data_Eraser implements EEI_Plugin_API
      * @param array  $setup_args can be the fully qualified namespaces each containing only privacy policies,
      *                           OR fully qualified class names of privacy policies
      */
-    public static function register(string $identifier = '', array $setup_args = [])
+    public static function register($identifier = '', array $setup_args = [])
     {
         self::$erasers[ $identifier ] = $setup_args;
         // add to list of modules to be registered
@@ -40,7 +40,7 @@ class EE_Register_Personal_Data_Eraser implements EEI_Plugin_API
     /**
      * @param string $identifier
      */
-    public static function deregister(string $identifier = '')
+    public static function deregister($identifier = '')
     {
         unset(self::$erasers[ $identifier ]);
     }
@@ -52,7 +52,7 @@ class EE_Register_Personal_Data_Eraser implements EEI_Plugin_API
      * @param string[] $erasers
      * @return string[]
      */
-    public static function addErasers(array $erasers): array
+    public static function addErasers(array $erasers)
     {
         foreach (self::$erasers as $erasers_per_addon) {
             $erasers = array_merge(

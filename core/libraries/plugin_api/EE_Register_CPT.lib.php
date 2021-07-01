@@ -60,7 +60,7 @@ class EE_Register_CPT implements EEI_Plugin_API
      *                                        }
      *                                        }
      */
-    public static function register(string $identifier = '', array $setup_args = [])
+    public static function register($identifier = '', array $setup_args = [])
     {
 
         // check for required params
@@ -148,7 +148,7 @@ class EE_Register_CPT implements EEI_Plugin_API
      * @param array $custom_post_type_definitions array of cpts that are already set
      * @return array new array of cpts and their registration information
      */
-    public static function filterCustomPostTypeDefinitions(array $custom_post_type_definitions): array
+    public static function filterCustomPostTypeDefinitions(array $custom_post_type_definitions)
     {
         foreach (self::$_registry as $registries) {
             foreach ($registries['cpts'] as $cpt_name => $cpt_settings) {
@@ -167,7 +167,7 @@ class EE_Register_CPT implements EEI_Plugin_API
      * @param array $custom_taxonomy_definitions array of cts that are already set.
      * @return array new array of cts and their registration information.
      */
-    public static function filterCustomTaxonomyDefinitions(array $custom_taxonomy_definitions): array
+    public static function filterCustomTaxonomyDefinitions(array $custom_taxonomy_definitions)
     {
         foreach (self::$_registry as $registries) {
             foreach ($registries['cts'] as $ct_name => $ct_settings) {
@@ -207,7 +207,7 @@ class EE_Register_CPT implements EEI_Plugin_API
      * @return array new array of cpts and their registration information
      * @deprecated 4.9.62.p
      */
-    public static function filter_cpts(array $cpts): array
+    public static function filter_cpts(array $cpts)
     {
         foreach (self::$_registry as $registries) {
             foreach ($registries['cpts'] as $cpt_name => $cpt_settings) {
@@ -223,7 +223,7 @@ class EE_Register_CPT implements EEI_Plugin_API
      * @return array new array of cts and their registration information.
      * @deprecated 4.9.62.p
      */
-    public static function filter_cts(array $cts): array
+    public static function filter_cts(array $cts)
     {
         foreach (self::$_registry as $registries) {
             foreach ($registries['cts'] as $ct_name => $ct_settings) {
@@ -260,7 +260,7 @@ class EE_Register_CPT implements EEI_Plugin_API
      * @since 4.5.0
      *
      */
-    public static function deregister(string $identifier = '')
+    public static function deregister($identifier = '')
     {
         unset(self::$_registry[ $identifier ]);
     }

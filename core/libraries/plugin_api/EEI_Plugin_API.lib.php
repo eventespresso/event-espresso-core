@@ -26,7 +26,7 @@ interface EEI_Plugin_API
      * @return void
      * @since 4.3.0
      */
-    public static function register(string $identifier = '', array $setup_args = []);
+    public static function register($identifier = '', array $setup_args = []);
 
 
     /**
@@ -36,5 +36,5 @@ interface EEI_Plugin_API
      * @return void
      * @since 4.3.0
      */
-    public static function deregister(string $identifier = '');
+    public static function deregister($identifier = '');
 }

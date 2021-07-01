@@ -37,7 +37,7 @@ class EE_Register_Config implements EEI_Plugin_API
      *
      * @since    4.3.0
      */
-    public static function register(string $identifier = '', array $setup_args = [])
+    public static function register($identifier = '', array $setup_args = [])
     {
 
         $setup_args['config_name']    = isset($setup_args['config_name']) && ! empty($setup_args['config_name'])
@@ -118,7 +118,7 @@ class EE_Register_Config implements EEI_Plugin_API
     /**
      * @param string $identifier
      */
-    public static function deregister(string $identifier = '')
+    public static function deregister($identifier = '')
     {
         unset(self::$_ee_config_registry[ $identifier ]);
     }
