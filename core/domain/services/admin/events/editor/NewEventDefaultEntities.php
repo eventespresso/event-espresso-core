@@ -5,12 +5,15 @@ namespace EventEspresso\core\domain\services\admin\events\editor;
 use EE_Datetime;
 use EE_Error;
 use EE_Event;
+use EE_Form_Section;
+use EEM_Base;
 use EEM_Datetime;
 use EEM_Event;
 use EEM_Price;
 use EEM_Price_Type;
 use EEM_Ticket;
 use EventEspresso\core\domain\services\admin\entities\DefaultDatetimes;
+use EventEspresso\core\domain\services\admin\entities\DefaultFormSections;
 use EventEspresso\core\domain\services\graphql\Utilities;
 use EventEspresso\core\exceptions\InvalidEntityException;
 use InvalidArgumentException;
@@ -28,15 +31,21 @@ class NewEventDefaultEntities extends EventEditorData
 {
 
     /**
-     * @var DefaultDatetimes $default_datetime
+     * @var DefaultDatetimes
      */
-    protected $default_datetime;
+    protected $default_datetimes;
+
+    /**
+     * @var   DefaultFormSections
+     */
+    protected $default_form_sections;
 
 
     /**
      * NewEventDefaultEntities constructor.
      *
-     * @param DefaultDatetimes $default_datetime
+     * @param DefaultDatetimes $default_datetimes
+     * @param DefaultFormSections $default_form_sections
      * @param EEM_Datetime     $datetime_model
      * @param EEM_Event        $event_model
      * @param EEM_Price        $price_model
@@ -45,7 +54,8 @@ class NewEventDefaultEntities extends EventEditorData
      * @param Utilities        $utilities
      */
     public function __construct(
-        DefaultDatetimes $default_datetime,
+        DefaultDatetimes $default_datetimes,
+        DefaultFormSections $default_form_sections,
         EEM_Datetime $datetime_model,
         EEM_Event $event_model,
         EEM_Price $price_model,
@@ -53,7 +63,8 @@ class NewEventDefaultEntities extends EventEditorData
         EEM_Ticket $ticket_model,
         Utilities $utilities
     ) {
-        $this->default_datetime = $default_datetime;
+        $this->default_datetimes = $default_datetimes;
+        $this->default_form_sections = $default_form_sections;
         parent::__construct(
             $datetime_model,
             $event_model,
@@ -74,9 +85,8 @@ class NewEventDefaultEntities extends EventEditorData
      * @throws ReflectionException
      * @since $VID:$
      */
-    public function getData(int $eventId)
+    public function getData(int $eventId): array
     {
-
         $EVT_ID = absint($eventId);
         if ($EVT_ID < 1) {
             throw new InvalidArgumentException(
@@ -90,6 +100,52 @@ class NewEventDefaultEntities extends EventEditorData
         if (! $event instanceof EE_Event) {
             throw new InvalidEntityException($event, 'EE_Event');
         }
-        return $this->default_datetime->create($event);
+        $new_event = isset($_REQUEST['action']) && $_REQUEST['action'] === 'create_new';
+        return [
+            'datetimes'     => $this->createDefaultDatetimes($event, $new_event),
+            'form_sections' => $this->createDefaultFormSections($event, $new_event)
+        ];
+    }
+
+
+    /**
+     * @param EE_Event $event
+     * @param bool     $new_event
+     * @return EE_Datetime[]
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    private function createDefaultDatetimes(EE_Event $event, bool $new_event): array
+    {
+        $datetime_count = $this->datetime_model->count(
+            [
+                [
+                    'EVT_ID'      => $event->ID(),
+                    'DTT_deleted' => ['IN', [true, false]],
+                ],
+                'default_where_conditions' => EEM_Base::default_where_conditions_none,
+            ],
+            'EVT_ID'
+        );
+        return $new_event || $datetime_count === 0
+            ? $this->default_datetimes->create($event)
+            : [];
+    }
+
+
+    /**
+     * @param EE_Event $event
+     * @param bool     $new_event
+     * @return EE_Form_Section[]
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    private function createDefaultFormSections(EE_Event $event, bool $new_event): array
+    {
+        $reg_form_UUID = $event->registrationFormUuid();
+        // if it's a new event and defaults have not been created yet, OR if there is no reg form at all...
+        return ($new_event && ! $reg_form_UUID) ||  ! $reg_form_UUID
+            ? $this->default_form_sections->create($event)
+            : [];
     }
 }
