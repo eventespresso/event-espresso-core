@@ -24,7 +24,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base
      *
      * @var array
      */
-    private static $_reg_status;
+    private static $_reg_status = [];
 
     /**
      * The value of REG_count for a primary registrant

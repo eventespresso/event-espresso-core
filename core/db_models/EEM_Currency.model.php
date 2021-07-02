@@ -87,12 +87,12 @@ class EEM_Currency extends EEM_Base
     /**
      * Gets all the currencies which can be used by that payment method type
      *
-     * @param EE_PMT_Base $payment_method_type
+     * @param EE_PMT_Base|null $payment_method_type
      * @return EE_Currency[]
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function get_all_currencies_usable_by(EE_PMT_Base $payment_method_type): array
+    public function get_all_currencies_usable_by(?EE_PMT_Base $payment_method_type): array
     {
         if (
             $payment_method_type instanceof EE_PMT_Base

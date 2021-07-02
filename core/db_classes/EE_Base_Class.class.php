@@ -823,7 +823,7 @@ abstract class EE_Base_Class
      * @param array $set_cols_n_values keys are field names, values are their new values,
      *                                 if provided during the save() method
      *                                 (often client code will change the fields' values before calling save)
-     * @return int                     1 on a successful update or the ID of the new entry on insert;
+     * @return boolean|int             1 on a successful update or the ID of the new entry on insert;
      *                                 0 on failure or if the model object isn't allowed to persist
      *                                 (as determined by EE_Base_Class::allow_persist())
      * @throws InvalidInterfaceException
@@ -834,7 +834,7 @@ abstract class EE_Base_Class
      * @throws ReflectionException
      * @throws ReflectionException
      */
-    public function save($set_cols_n_values = [])
+    public function save(array $set_cols_n_values = [])
     {
         /**
          * Filters the fields we're about to save on the model object
@@ -974,7 +974,7 @@ abstract class EE_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function update_extra_meta($meta_key, $meta_value, $previous_value = null)
+    public function update_extra_meta(string $meta_key, $meta_value, $previous_value = null)
     {
         $query_params = [
             [
@@ -1075,7 +1075,7 @@ abstract class EE_Base_Class
      * @throws ReflectionException
      * @throws ReflectionException
      */
-    public function add_extra_meta($meta_key, $meta_value, $unique = false)
+    public function add_extra_meta(string $meta_key, $meta_value, bool $unique = false): bool
     {
         if ($unique) {
             $existing_extra_meta = EEM_Extra_Meta::instance()->get_one(
@@ -1194,7 +1194,7 @@ abstract class EE_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function get_extra_meta($meta_key, $single = false, $default = null)
+    public function get_extra_meta(string $meta_key, bool $single = false, $default = null)
     {
         if ($single) {
             $result = $this->get_first_related(
@@ -1837,7 +1837,7 @@ abstract class EE_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function get_date(string $field_name, $format = '')
+    public function get_date(string $field_name, string $format = '')
     {
         return $this->_get_datetime($field_name, $format, null, 'D');
     }
@@ -1864,10 +1864,10 @@ abstract class EE_Base_Class
      */
     protected function _get_datetime(
         string $field_name,
-        $date_format = '',
-        $time_format = '',
-        $date_or_time = '',
-        $echo = false
+        string $date_format = '',
+        string $time_format = '',
+        string $date_or_time = '',
+        bool $echo = false
     ) {
         // clear cached property
         $this->_clear_cached_property($field_name);
@@ -1883,7 +1883,7 @@ abstract class EE_Base_Class
 
 
     /**
-     * @param        $field_name
+     * @param string $field_name
      * @param string $format
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
@@ -1909,21 +1909,21 @@ abstract class EE_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function get_time(string $field_name, $format = '')
+    public function get_time(string $field_name, string $format = '')
     {
         return $this->_get_datetime($field_name, null, $format, 'T');
     }
 
 
     /**
-     * @param        $field_name
+     * @param string $field_name
      * @param string $format
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function e_time(string $field_name, $format = '')
+    public function e_time(string $field_name, string $format = '')
     {
         $this->_get_datetime($field_name, null, $format, 'T', true);
     }
@@ -2713,7 +2713,7 @@ abstract class EE_Base_Class
      * is specified, only deletes extra meta records with that value.
      *
      * @param string $meta_key
-     * @param mixed  $meta_value
+     * @param mixed|null  $meta_value
      * @return int number of extra meta rows deleted
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
@@ -2721,7 +2721,7 @@ abstract class EE_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function delete_extra_meta($meta_key, $meta_value = null)
+    public function delete_extra_meta(string $meta_key, $meta_value = null): int
     {
         $query_params = [
             [
@@ -2983,7 +2983,7 @@ abstract class EE_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function model_field_array()
+    public function model_field_array(): array
     {
         $fields     = $this->_model->field_settings();
         $properties = [];
