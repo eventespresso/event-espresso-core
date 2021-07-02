@@ -100,9 +100,9 @@
     "uiComponents.js": "/static/js/uiComponents.1e690b40.js",
     "uiComponents.js.map": "/static/js/uiComponents.1e690b40.js.map",
     "uiComponents.php": "/static/js/uiComponents.f47c4671.asset.php",
-    "utils.js": "/static/js/utils.87e35aac.js",
-    "utils.js.map": "/static/js/utils.87e35aac.js.map",
-    "utils.php": "/static/js/utils.ab70dc84.asset.php",
+    "utils.js": "/static/js/utils.e8f474b7.js",
+    "utils.js.map": "/static/js/utils.e8f474b7.js.map",
+    "utils.php": "/static/js/utils.ebcf191c.asset.php",
     "wpPluginsPage.css": "/static/css/wpPluginsPage.c9f19421.css",
     "wpPluginsPage.js": "/static/js/wpPluginsPage.fd75609e.js",
     "wpPluginsPage.js.map": "/static/js/wpPluginsPage.fd75609e.js.map",
@@ -248,8 +248,8 @@
       "static/js/uiComponents.f47c4671.asset.php"
     ],
     "utils": [
-      "static/js/utils.87e35aac.js",
-      "static/js/utils.ab70dc84.asset.php"
+      "static/js/utils.e8f474b7.js",
+      "static/js/utils.ebcf191c.asset.php"
     ],
     "blocks": [
       "static/css/blocks.72d5bd34.css",
