@@ -26,12 +26,12 @@ class EE_Register_CPT implements EEI_Plugin_API
     /**
      * Used to register new CPTs and Taxonomies.
      *
-     * @param string $cpt_ref                 reference used for the addon registering cpts and cts
+     * @param string $addon_name              reference used for the addon registering cpts and cts
      * @param array  $setup_args              {
      *                                        An array of required values for registering the cpts and taxonomies
      * @type array   $cpts                    {
      *                                        An array of cpts and their arguments.(short example below)
-     * @return void
+     * @return bool
      * @throws  EE_Error
      * @see CustomPostTypeDefinitions::setDefinitions for a more complete example.
      *                                        'people' => array(
@@ -60,11 +60,11 @@ class EE_Register_CPT implements EEI_Plugin_API
      *                                        }
      *                                        }
      */
-    public static function register(string $cpt_ref = '', array $setup_args = []): bool
+    public static function register(string $addon_name = '', array $setup_args = []): bool
     {
 
         // check for required params
-        if (empty($cpt_ref)) {
+        if (empty($addon_name)) {
             throw new EE_Error(
                 __(
                     'In order to register custom post types and custom taxonomies, you must include a value to reference what had been registered',
@@ -83,13 +83,13 @@ class EE_Register_CPT implements EEI_Plugin_API
         }
 
         // make sure we don't register twice
-        if (isset(self::$_registry[ $cpt_ref ])) {
+        if (isset(self::$_registry[ $addon_name ])) {
             return true;
         }
 
         // make sure cpt ref is unique.
-        if (isset(self::$_registry[ $cpt_ref ])) {
-            $cpt_ref = uniqid() . '_' . $cpt_ref;
+        if (isset(self::$_registry[ $addon_name ])) {
+            $addon_name = uniqid() . '_' . $addon_name;
         }
 
         // make sure this was called in the right place!
@@ -101,7 +101,7 @@ class EE_Register_CPT implements EEI_Plugin_API
                         'EE_Register_CPT has been called and given a reference of "%s".  It may or may not work because it should be called on or before "AHEE__EE_System__load_CPTs_and_session__complete" action hook.',
                         'event_espresso'
                     ),
-                    $cpt_ref
+                    $addon_name
                 ),
                 '4.5.0'
             );
@@ -119,7 +119,7 @@ class EE_Register_CPT implements EEI_Plugin_API
                 : [],
         ];
 
-        self::$_registry[ $cpt_ref ] = $validated;
+        self::$_registry[ $addon_name ] = $validated;
 
         // hook into to cpt system
         add_filter(
@@ -255,14 +255,14 @@ class EE_Register_CPT implements EEI_Plugin_API
     /**
      * This deregisters whats been registered on this class (for the given slug).
      *
-     * @param string $cpt_ref The reference for the item registered to be removed.
+     * @param string $addon_name The reference for the item registered to be removed.
      *
      * @return void
      * @since 4.5.0
      *
      */
-    public static function deregister(string $cpt_ref = '')
+    public static function deregister(string $addon_name = '')
     {
-        unset(self::$_registry[ $cpt_ref ]);
+        unset(self::$_registry[ $addon_name ]);
     }
 }

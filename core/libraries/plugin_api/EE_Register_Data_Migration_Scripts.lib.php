@@ -34,6 +34,7 @@ class EE_Register_Data_Migration_Scripts implements EEI_Plugin_API
      * @return bool
      * @throws EE_Error
      * @since 4.3.0
+     * @since 4.3.0
      */
     public static function register(string $addon_name = '', array $setup_args = []): bool
     {
@@ -65,9 +66,7 @@ class EE_Register_Data_Migration_Scripts implements EEI_Plugin_API
             );
         }
         // setup $_settings array from incoming values.
-        self::$_settings[ $addon_name ] = [
-            'dms_paths' => (array) $setup_args['dms_paths'],
-        ];
+        self::$_settings[ $addon_name ] = ['dms_paths' => (array) $setup_args['dms_paths']];
         // setup DMS
         $filters_set = has_filter(
             'FHEE__EE_Data_Migration_Manager__get_data_migration_script_folders',
@@ -110,6 +109,7 @@ class EE_Register_Data_Migration_Scripts implements EEI_Plugin_API
      *
      * @param string $addon_name EE_Addon class name that this set of data migration scripts belongs to
      * @return void
+     * @since 4.3.0
      * @since 4.3.0
      */
     public static function deregister(string $addon_name = '')

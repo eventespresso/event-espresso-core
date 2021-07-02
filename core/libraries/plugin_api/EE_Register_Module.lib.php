@@ -26,7 +26,7 @@ class EE_Register_Module implements EEI_Plugin_API
     /**
      *    Method for registering new EED_Modules
      *
-     * @param string $module_id  a unique identifier for this set of modules Required.
+     * @param string $addon_name a unique identifier for this set of modules Required.
      * @param array  $setup_args an array of full server paths to folders containing any EED_Modules, or to the
      *                           EED_Module files themselves Required.
      * @type    array module_paths    an array of full server paths to folders containing any EED_Modules, or to the
@@ -35,10 +35,10 @@ class EE_Register_Module implements EEI_Plugin_API
      * @throws EE_Error
      * @since    4.3.0
      */
-    public static function register(string $module_id = '', array $setup_args = []): bool
+    public static function register(string $addon_name = '', array $setup_args = []): bool
     {
         // required fields MUST be present, so let's make sure they are.
-        if (empty($module_id) || ! is_array($setup_args) || empty($setup_args['module_paths'])) {
+        if (empty($addon_name) || ! is_array($setup_args) || empty($setup_args['module_paths'])) {
             throw new EE_Error(
                 __(
                     'In order to register Modules with EE_Register_Module::register(), you must include a "module_id" (a unique identifier for this set of modules), and an array containing the following keys: "module_paths" (an array of full server paths to folders that contain modules, or to the module files themselves)',
@@ -48,7 +48,7 @@ class EE_Register_Module implements EEI_Plugin_API
         }
 
         // make sure we don't register twice
-        if (isset(self::$_settings[ $module_id ])) {
+        if (isset(self::$_settings[ $addon_name ])) {
             return true;
         }
 
@@ -67,7 +67,7 @@ class EE_Register_Module implements EEI_Plugin_API
             );
         }
         // setup $_settings array from incoming values.
-        self::$_settings[ $module_id ] = [
+        self::$_settings[ $addon_name ] = [
             // array of full server paths to any EED_Modules used by the module
             'module_paths' => isset($setup_args['module_paths']) ? (array) $setup_args['module_paths'] : [],
         ];
@@ -83,7 +83,7 @@ class EE_Register_Module implements EEI_Plugin_API
     /**
      * Filters the list of modules to add ours.
      * and they're just full filepaths to FOLDERS containing a module class file. Eg.
-     * array('espresso_monkey'=>'/public_html/wonder-site/wp-content/plugins/ee4/shortcodes/espresso_monkey', etc)
+     * array('espresso_monkey'=>'/public_html/wonder-site/wp-content/plugins/ee4/shortcodes/espresso_monkey'...)
      *
      * @param array $modules_to_register array of paths to all modules that require registering
      * @return array
@@ -99,17 +99,14 @@ class EE_Register_Module implements EEI_Plugin_API
 
 
     /**
-     * This deregisters a module that was previously registered with a specific $module_id.
+     * This deregisters a module that was previously registered with a specific $addon_name.
      *
-     * @param string $module_id the name for the module that was previously registered
+     * @param string $addon_name the name for the module that was previously registered
      * @return void
      * @since    4.3.0
-     *
      */
-    public static function deregister(string $module_id = '')
+    public static function deregister(string $addon_name = '')
     {
-        if (isset(self::$_settings[ $module_id ])) {
-            unset(self::$_settings[ $module_id ]);
-        }
+        unset(self::$_settings[ $addon_name ]);
     }
 }

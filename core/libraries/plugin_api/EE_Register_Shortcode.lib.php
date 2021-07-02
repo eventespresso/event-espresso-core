@@ -31,25 +31,21 @@ class EE_Register_Shortcode implements EEI_Plugin_API
     /**
      *    Method for registering new EE_Shortcodes
      *
-     * @param string $shortcode_id                      a unique identifier for this set of modules Required.
-     * @param array  $setup_args                        an array of arguments provided for registering shortcodes
-     *                                                  Required.
-     * @type array shortcode_paths        an array of full server paths to folders containing any
-     *                                                  EES_Shortcodes
-     * @type array shortcode_fqcns        an array of fully qualified class names for any new shortcode
-     *                                                  classes to register.  Shortcode classes should extend
-     *                                                  EspressoShortcode and be properly namespaced so they are
-     *                                                  autoloaded.
+     * @param string $addon_name    a unique identifier for this set of modules Required.
+     * @param array  $setup_args    an array of arguments provided for registering shortcodes Required.
+     * @type array shortcode_paths  an array of full server paths to folders containing any EES_Shortcodes
+     * @type array shortcode_fqcns  an array of fully qualified class names for any new shortcode classes to register.
+     *                              Shortcode classes should extend EspressoShortcode
+     *                              and be properly namespaced so they are autoloaded.
      * @return bool
      * @throws EE_Error
      * @since    4.3.0
      * @since    4.9.46.rc.025  for the new `shortcode_fqcns` array argument.
      */
-    public static function register(string $shortcode_id = '', array $setup_args = []): bool
+    public static function register(string $addon_name = '', array $setup_args = []): bool
     {
         // required fields MUST be present, so let's make sure they are.
-        if (
-            empty($shortcode_id)
+        if (empty($addon_name)
             || ! is_array($setup_args)
             || (
                empty($setup_args['shortcode_paths']))
@@ -64,7 +60,7 @@ class EE_Register_Shortcode implements EEI_Plugin_API
         }
 
         // make sure we don't register twice
-        if (isset(self::$_settings[ $shortcode_id ])) {
+        if (isset(self::$_settings[ $addon_name ])) {
             return true;
         }
 
@@ -83,7 +79,7 @@ class EE_Register_Shortcode implements EEI_Plugin_API
             );
         }
         // setup $_settings array from incoming values.
-        self::$_settings[ $shortcode_id ] = [
+        self::$_settings[ $addon_name ] = [
             // array of full server paths to any EES_Shortcodes used by the shortcode
             'shortcode_paths' => isset($setup_args['shortcode_paths'])
                 ? (array) $setup_args['shortcode_paths']
@@ -109,7 +105,7 @@ class EE_Register_Shortcode implements EEI_Plugin_API
     /**
      * Filters the list of shortcodes to add ours.
      * and they're just full filepaths to FOLDERS containing a shortcode class file. Eg.
-     * array('espresso_monkey'=>'/public_html/wonder-site/wp-content/plugins/ee4/shortcodes/espresso_monkey', etc)
+     * array('espresso_monkey'=>'/public_html/wonder-site/wp-content/plugins/ee4/shortcodes/espresso_monkey'...)
      *
      * @param array $shortcodes_to_register array of paths to all shortcodes that require registering
      * @return array
@@ -171,14 +167,14 @@ class EE_Register_Shortcode implements EEI_Plugin_API
 
 
     /**
-     * This deregisters a shortcode that was previously registered with a specific $shortcode_id.
+     * This deregisters a shortcode that was previously registered with a specific $addon_name.
      *
-     * @param string $shortcode_id the name for the shortcode that was previously registered
+     * @param string $addon_name the name for the shortcode that was previously registered
      * @return void
-     * @since 4.3.0
+     * @since    4.3.0
      */
-    public static function deregister(string $shortcode_id = '')
+    public static function deregister(string $addon_name = '')
     {
-        unset(self::$_settings[ $shortcode_id ]);
+        unset(self::$_settings[ $addon_name ]);
     }
 }

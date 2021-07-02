@@ -4029,7 +4029,7 @@ class Messages_Admin_Page extends EE_Admin_Page
             : array();
 
         // ensure is active
-        $this->_message_resource_manager->activate_messenger($messenger_name, $message_types_to_activate);
+        $this->_message_resource_manager->activate_messenger($active_messenger, $message_types_to_activate);
 
         // set response_data for reload
         foreach ($message_types_to_activate as $message_type_name) {
@@ -4097,7 +4097,7 @@ class Messages_Admin_Page extends EE_Admin_Page
         $message_type_to_activate = $this->_message_resource_manager->get_message_type($message_type_name);
 
         // ensure is active
-        $this->_message_resource_manager->activate_messenger($messenger_name, $message_type_name);
+        $this->_message_resource_manager->activate_messenger($active_messenger, $message_type_name);
 
         // set response for load
         if (

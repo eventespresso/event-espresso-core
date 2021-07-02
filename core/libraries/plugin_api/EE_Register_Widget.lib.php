@@ -20,25 +20,25 @@ class EE_Register_Widget implements EEI_Plugin_API
      *
      * @var array
      */
-    protected static $_settings = array();
+    protected static $_settings = [];
 
 
     /**
      *    Method for registering new EED_Widgets
      *
-     * @param string $widget_id a unique identifier for this set of widgets
-     * @param  array $setup_args an array of arguments provided for registering widgets
+     * @param string $addon_name a unique identifier for this set of widgets
+     * @param array  $setup_args an array of arguments provided for registering widgets
      * @type array widget_paths        an array of full server paths to folders containing any EED_Widgets, or to the
-     *       EED_Widget files themselves
+     *                           EED_Widget files themselves
      * @return bool
-     *@throws EE_Error
+     * @throws EE_Error
      * @since    4.3.0
      */
-    public static function register(string $widget_id = '', array $setup_args = array()): bool
+    public static function register(string $addon_name = '', array $setup_args = []): bool
     {
 
         // required fields MUST be present, so let's make sure they are.
-        if (empty($widget_id) || ! is_array($setup_args) || empty($setup_args['widget_paths'])) {
+        if (empty($addon_name) || ! is_array($setup_args) || empty($setup_args['widget_paths'])) {
             throw new EE_Error(
                 __(
                     'In order to register Widgets with EE_Register_Widget::register(), you must include a "widget_id" (a unique identifier for this set of widgets), and an array containing the following keys: "widget_paths" (an array of full server paths to folders that contain widgets, or to the widget files themselves)',
@@ -48,7 +48,7 @@ class EE_Register_Widget implements EEI_Plugin_API
         }
 
         // make sure we don't register twice
-        if (isset(self::$_settings[ $widget_id ])) {
+        if (isset(self::$_settings[ $addon_name ])) {
             return true;
         }
 
@@ -68,14 +68,14 @@ class EE_Register_Widget implements EEI_Plugin_API
             );
         }
         // setup $_settings array from incoming values.
-        self::$_settings[ $widget_id ] = array(
+        self::$_settings[ $addon_name ] = [
             // array of full server paths to any EED_Widgets used by the widget
-            'widget_paths' => isset($setup_args['widget_paths']) ? (array) $setup_args['widget_paths'] : array(),
-        );
+            'widget_paths' => isset($setup_args['widget_paths']) ? (array) $setup_args['widget_paths'] : [],
+        ];
         // add to list of widgets to be registered
         add_filter(
             'FHEE__EE_Config__register_widgets__widgets_to_register',
-            array('EE_Register_Widget', 'add_widgets')
+            ['EE_Register_Widget', 'add_widgets']
         );
         return true;
     }
@@ -84,12 +84,12 @@ class EE_Register_Widget implements EEI_Plugin_API
     /**
      * Filters the list of widgets to add ours.
      * and they're just full filepaths to FOLDERS containing a shortcode class file. Eg.
-     * array('espresso_monkey'=>'/public_html/wonder-site/wp-content/plugins/ee4/widgets/espresso_monkey', etc)
+     * array('espresso_monkey'=>'/public_html/wonder-site/wp-content/plugins/ee4/widgets/espresso_monkey'...)
      *
      * @param array $widgets_to_register array of paths to all widgets that require registering
      * @return array
      */
-    public static function add_widgets(array $widgets_to_register = array()): array
+    public static function add_widgets(array $widgets_to_register = []): array
     {
         $widget_paths = [];
         foreach (self::$_settings as $settings) {
@@ -100,15 +100,15 @@ class EE_Register_Widget implements EEI_Plugin_API
 
 
     /**
-     * This deregisters a widget that was previously registered with a specific $widget_id.
+     * This deregisters a widget that was previously registered with a specific $addon_name.
      *
+     * @param string $addon_name the name for the widget that was previously registered
+     * @return void
      * @since    4.3.0
      *
-     * @param string $widget_id the name for the widget that was previously registered
-     * @return void
      */
-    public static function deregister(string $widget_id = '')
+    public static function deregister(string $addon_name = '')
     {
-        unset(self::$_settings[ $widget_id ]);
+        unset(self::$_settings[ $addon_name ]);
     }
 }

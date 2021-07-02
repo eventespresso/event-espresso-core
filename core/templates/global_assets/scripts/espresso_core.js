@@ -399,12 +399,14 @@ jQuery( document ).ready( function ( $ ) {
                         .hide()
                         .children('option')
                         .prop('selected', false)
-                        .prop('disabled', true);
+                        .prop('disabled', true)
+                        .hide();
                     // then enable all options for selected country, but don't select anything
                     $('optgroup[label="' + selected_country + '"]', $state_select)
                         .show()
                         .children('option')
-                        .prop('disabled', false);
+                        .prop('disabled', false)
+                        .show();
                     // if a valid corresponding state select exists
 					if ( selected_state.length ) {
 						// loop through all of its optgroups

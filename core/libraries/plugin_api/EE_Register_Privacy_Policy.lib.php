@@ -21,14 +21,15 @@ class EE_Register_Privacy_Policy implements EEI_Plugin_API
     protected static $privacy_policies = [];
 
 
-    /*
-     * @param string $plugin_id
-     * @param array $FQNSs can be the fully qualified namespaces each containing only privacy policies,
-     *              OR fully qualified class names of privacy policies
+    /**
+     * @param string $addon_name
+     * @param array  $setup_args can be the fully qualified namespaces each containing only privacy policies,
+     *                           OR fully qualified class names of privacy policies
+     * @return bool
      */
-    public static function register(string $plugin_id = '', array $FQCNs = []): bool
+    public static function register(string $addon_name = '', array $setup_args = []): bool
     {
-        self::$privacy_policies[ $plugin_id ] = $FQCNs;
+        self::$privacy_policies[ $addon_name ] = $setup_args;
         // add to list of modules to be registered
         add_filter(
             'FHEE__EventEspresso_core_services_privacy_policy_PrivacyPolicyManager__privacy_policies',
@@ -39,11 +40,11 @@ class EE_Register_Privacy_Policy implements EEI_Plugin_API
 
 
     /**
-     * @param string $ID
+     * @param string $addon_name
      */
-    public static function deregister(string $ID = '')
+    public static function deregister(string $addon_name = '')
     {
-        unset(self::$privacy_policies[ $ID ]);
+        unset(self::$privacy_policies[ $addon_name ]);
     }
 
 

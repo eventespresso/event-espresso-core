@@ -1355,7 +1355,7 @@ class EEH_Activation implements ResettableInterface
             // passing off to create templates (after the refactor is done).
             // @todo remove this comment when determined not necessary.
             $message_resource_manager->activate_messenger(
-                $messenger_to_generate->name,
+                $messenger_to_generate,
                 $default_message_type_names_for_messenger,
                 false
             );

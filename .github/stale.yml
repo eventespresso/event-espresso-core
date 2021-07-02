@@ -6,6 +6,12 @@ daysUntilClose: 60
 exemptLabels:
   - category:security
   - status:on-hold
+  - "status: planning"
+  - status:in-progress
+  - status:feedback-needed
+  - status:needs-more-info
+  - status:review
+  - status:needs-testing
 
 # Label to use when marking an issue as stale
 staleLabel: status:stale

@@ -27,8 +27,8 @@ class EE_Register_Model implements EEI_Plugin_API
 
 
     /**
-     * @param string $model_id    unique id for it
-     * @param array  $config      {
+     * @param string $addon_name  unique id for it
+     * @param array  $setup_args  {
      * @type array   $model_paths array of folders containing DB models, where each file follows the models naming
      *                            convention, which is: EEM_{model_name}.model.php which contains a single class called
      *                            EEM_{model_name}. Eg. you could pass
@@ -46,10 +46,10 @@ class EE_Register_Model implements EEI_Plugin_API
      * @return bool
      * @throws EE_Error
      */
-    public static function register(string $model_id = '', array $config = []): bool
+    public static function register(string $addon_name = '', array $setup_args = []): bool
     {
         // required fields MUST be present, so let's make sure they are.
-        if (empty($model_id) || ! is_array($config) || empty($config['model_paths'])) {
+        if (empty($addon_name) || ! is_array($setup_args) || empty($setup_args['model_paths'])) {
             throw new EE_Error(
                 __(
                     'In order to register Models with EE_Register_Model::register(), you must include a "model_id" (a unique identifier for this set of models), and an array containing the following keys: "model_paths" (an array of full server paths to folders that contain models)',
@@ -59,7 +59,7 @@ class EE_Register_Model implements EEI_Plugin_API
         }
 
         // make sure we don't register twice
-        if (isset(self::$_model_registry[ $model_id ])) {
+        if (isset(self::$_model_registry[ $addon_name ])) {
             return true;
         }
 
@@ -75,61 +75,59 @@ class EE_Register_Model implements EEI_Plugin_API
                         'An attempt was made to register "%s" as a group models has failed because it was not registered at the correct time.  Please use the "AHEE__EE_System__load_espresso_addons" hook to register models.',
                         'event_espresso'
                     ),
-                    $model_id
+                    $addon_name
                 ),
                 '4.5'
             );
         }
-        self::$_model_registry[ $model_id ] = $config;
+        self::$_model_registry[ $addon_name ] = $setup_args;
 
-        if (
-            (isset($config['model_paths']) && ! isset($config['class_paths']))
-            || (! isset($config['model_paths']) && isset($config['class_paths']))
-        ) {
+        if ((isset($setup_args['model_paths']) && ! isset($setup_args['class_paths']))
+            || (! isset($setup_args['model_paths']) && isset($setup_args['class_paths']))) {
             throw new EE_Error(
                 sprintf(
                     __(
                         'You must register both "model_paths" AND "class_paths", not just one or the other You provided %s',
                         'event_espresso'
                     ),
-                    implode(", ", array_keys($config))
+                    implode(", ", array_keys($setup_args))
                 )
             );
         }
-        if (isset($config['model_paths'])) {
+        if (isset($setup_args['model_paths'])) {
             // make sure they passed in an array
-            if (! is_array($config['model_paths'])) {
-                $config['model_paths'] = [$config['model_paths']];
+            if (! is_array($setup_args['model_paths'])) {
+                $setup_args['model_paths'] = [$setup_args['model_paths']];
             }
             // we want to add this as a model folder
             // and autoload them all
-            $class_to_filepath_map = EEH_File::get_contents_of_folders($config['model_paths']);
+            $class_to_filepath_map = EEH_File::get_contents_of_folders($setup_args['model_paths']);
             EEH_Autoloader::register_autoloader($class_to_filepath_map);
             $model_name_to_classname_map = [];
             foreach (array_keys($class_to_filepath_map) as $classname) {
                 $model_name_to_classname_map[ str_replace("EEM_", "", $classname) ] = $classname;
             }
-            self::$_model_name_to_classname_map[ $model_id ] = $model_name_to_classname_map;
+            self::$_model_name_to_classname_map[ $addon_name ] = $model_name_to_classname_map;
             add_filter('FHEE__EE_System__parse_model_names', ['EE_Register_Model', 'add_addon_models']);
             add_filter(
                 'FHEE__EE_System__parse_implemented_model_names',
                 ['EE_Register_Model', 'add_addon_models']
             );
             add_filter('FHEE__EE_Registry__load_model__paths', ['EE_Register_Model', 'add_model_folders']);
-            unset($config['model_paths']);
+            unset($setup_args['model_paths']);
         }
-        if (isset($config['class_paths'])) {
+        if (isset($setup_args['class_paths'])) {
             // make sure they passed in an array
-            if (! is_array($config['class_paths'])) {
-                $config['class_paths'] = [$config['class_paths']];
+            if (! is_array($setup_args['class_paths'])) {
+                $setup_args['class_paths'] = [$setup_args['class_paths']];
             }
-            $class_to_filepath_map = EEH_File::get_contents_of_folders($config['class_paths']);
+            $class_to_filepath_map = EEH_File::get_contents_of_folders($setup_args['class_paths']);
             EEH_Autoloader::register_autoloader($class_to_filepath_map);
             add_filter('FHEE__EE_Registry__load_class__paths', ['EE_Register_Model', 'add_class_folders']);
-            unset($config['class_paths']);
+            unset($setup_args['class_paths']);
         }
-        foreach ($config as $unknown_key => $unknown_config) {
-            self::deregister($model_id);
+        foreach ($setup_args as $unknown_key => $unknown_config) {
+            self::deregister($addon_name);
             throw new EE_Error(
                 sprintf(__("The key '%s' is not a known key for registering a model", "event_espresso"), $unknown_key)
             );
@@ -144,7 +142,7 @@ class EE_Register_Model implements EEI_Plugin_API
      * @param array $core_models
      * @return array keys are model names (eg 'Event') and values are their classes (eg 'EE_Event')
      */
-    public static function add_addon_models($core_models = []): array
+    public static function add_addon_models(array $core_models = []): array
     {
         $models = [];
         foreach (self::$_model_name_to_classname_map as $model_map) {
@@ -163,9 +161,9 @@ class EE_Register_Model implements EEI_Plugin_API
     public static function add_model_folders(array $folders = []): array
     {
         $model_folders = [];
-        foreach (self::$_model_registry as $config) {
-            if (isset($config['model_paths'])) {
-                $model_folders[] = $config['model_paths'];
+        foreach (self::$_model_registry as $setup_args) {
+            if (isset($setup_args['model_paths'])) {
+                $model_folders[] = (array) $setup_args['model_paths'];
             }
         }
         return array_merge($folders, ...$model_folders);
@@ -181,9 +179,9 @@ class EE_Register_Model implements EEI_Plugin_API
     public static function add_class_folders(array $folders = []): array
     {
         $class_folders = [];
-        foreach (self::$_model_registry as $config) {
-            if (isset($config['class_paths'])) {
-                $class_folders[] = $config['class_paths'];
+        foreach (self::$_model_registry as $setup_args) {
+            if (isset($setup_args['class_paths'])) {
+                $class_folders[] = (array) $setup_args['class_paths'];
             }
         }
         return array_merge($folders, ...$class_folders);
@@ -193,13 +191,10 @@ class EE_Register_Model implements EEI_Plugin_API
     /**
      * deregister
      *
-     * @param string $model_id
+     * @param string $addon_name
      */
-    public static function deregister(string $model_id = '')
+    public static function deregister(string $addon_name = '')
     {
-        if (isset(self::$_model_registry[ $model_id ])) {
-            unset(self::$_model_registry[ $model_id ]);
-            unset(self::$_model_name_to_classname_map[ $model_id ]);
-        }
+        unset(self::$_model_registry[ $addon_name ], self::$_model_name_to_classname_map[ $addon_name ]);
     }
 }

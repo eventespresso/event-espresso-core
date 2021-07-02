@@ -1,7 +1,6 @@
 <?php
 
 use EventEspresso\core\domain\DomainInterface;
-use EventEspresso\core\domain\RequiresDependencyMapInterface;
 use EventEspresso\core\domain\RequiresDomainInterface;
 use EventEspresso\core\exceptions\ExceptionLogger;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
@@ -99,7 +98,7 @@ class EE_Register_Addon implements EEI_Plugin_API
      */
     public static function _meets_min_core_version_requirement(
         string $min_core_version,
-        $actual_core_version = EVENT_ESPRESSO_VERSION
+        string $actual_core_version = EVENT_ESPRESSO_VERSION
     ): bool {
         return version_compare(
             self::_effective_version($actual_core_version),
@@ -292,6 +291,7 @@ class EE_Register_Addon implements EEI_Plugin_API
         $addon_settings = EE_Register_Addon::_get_addon_settings($class_name, $setup_args);
         // setup PUE
         EE_Register_Addon::_parse_pue_options($addon_name, $class_name, $setup_args);
+        // does this addon work with this version of core or WordPress ?
         // does this addon work with this version of core or WordPress ?
         if (! EE_Register_Addon::_addon_is_compatible($addon_name, $addon_settings)) {
             return false;
@@ -870,12 +870,8 @@ class EE_Register_Addon implements EEI_Plugin_API
             EE_Register_Shortcode::register(
                 $addon_name,
                 [
-                    'shortcode_paths' => isset(self::$_settings[ $addon_name ]['shortcode_paths'])
-                        ? self::$_settings[ $addon_name ]['shortcode_paths']
-                        : [],
-                    'shortcode_fqcns' => isset(self::$_settings[ $addon_name ]['shortcode_fqcns'])
-                        ? self::$_settings[ $addon_name ]['shortcode_fqcns']
-                        : [],
+                    'shortcode_paths' => self::$_settings[ $addon_name ]['shortcode_paths'] ?? [],
+                    'shortcode_fqcns' => self::$_settings[ $addon_name ]['shortcode_fqcns'] ?? [],
                 ]
             );
         }
@@ -1033,7 +1029,7 @@ class EE_Register_Addon implements EEI_Plugin_API
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      */
-    private static function _load_and_init_addon_class(string $addon_name)
+    private static function _load_and_init_addon_class(string $addon_name): EE_Addon
     {
         $addon = self::$loader->getShared(
             self::$_settings[ $addon_name ]['class_name'],
@@ -1048,36 +1044,12 @@ class EE_Register_Addon implements EEI_Plugin_API
             );
         }
         // setter inject dep map if required
-        if ($addon instanceof RequiresDependencyMapInterface && $addon->dependencyMap() === null) {
+        if ($addon->dependencyMap() === null) {
             $addon->setDependencyMap(self::$loader->getShared('EE_Dependency_Map'));
         }
         // setter inject domain if required
-        if (
-            $addon instanceof RequiresDomainInterface
-            && $addon->domain() === null
-        ) {
-            // using supplied Domain object
-            $domain = self::$_settings[ $addon_name ]['domain'] instanceof DomainInterface
-                ? self::$_settings[ $addon_name ]['domain']
-                : null;
-            // or construct one using Domain FQCN
-            if ($domain === null && self::$_settings[ $addon_name ]['domain_fqcn'] !== '') {
-                $domain = self::$loader->getShared(
-                    self::$_settings[ $addon_name ]['domain_fqcn'],
-                    [
-                        new EventEspresso\core\domain\values\FilePath(
-                            self::$_settings[ $addon_name ]['main_file_path']
-                        ),
-                        EventEspresso\core\domain\values\Version::fromString(
-                            self::$_settings[ $addon_name ]['version']
-                        ),
-                    ]
-                );
-            }
-            if ($domain instanceof DomainInterface) {
-                $addon->setDomain($domain);
-            }
-        }
+        EE_Register_Addon::injectAddonDomain($addon_name, $addon);
+
         $addon->set_name($addon_name);
         $addon->set_plugin_slug(self::$_settings[ $addon_name ]['plugin_slug']);
         $addon->set_plugin_basename(self::$_settings[ $addon_name ]['plugin_basename']);
@@ -1104,6 +1076,39 @@ class EE_Register_Addon implements EEI_Plugin_API
             );
         }
         return $addon;
+    }
+
+
+    /**
+     * @param string   $addon_name
+     * @param EE_Addon $addon
+     * @since   $VID:$
+     */
+    private static function injectAddonDomain(string $addon_name, EE_Addon $addon)
+    {
+        if ($addon instanceof RequiresDomainInterface && $addon->domain() === null) {
+            // using supplied Domain object
+            $domain = self::$_settings[ $addon_name ]['domain'] instanceof DomainInterface
+                ? self::$_settings[ $addon_name ]['domain']
+                : null;
+            // or construct one using Domain FQCN
+            if ($domain === null && self::$_settings[ $addon_name ]['domain_fqcn'] !== '') {
+                $domain = self::$loader->getShared(
+                    self::$_settings[ $addon_name ]['domain_fqcn'],
+                    [
+                        new EventEspresso\core\domain\values\FilePath(
+                            self::$_settings[ $addon_name ]['main_file_path']
+                        ),
+                        EventEspresso\core\domain\values\Version::fromString(
+                            self::$_settings[ $addon_name ]['version']
+                        ),
+                    ]
+                );
+            }
+            if ($domain instanceof DomainInterface) {
+                $addon->setDomain($domain);
+            }
+        }
     }
 
 
@@ -1158,7 +1163,7 @@ class EE_Register_Addon implements EEI_Plugin_API
      */
     public static function register_message_types()
     {
-        foreach (self::$_settings as $addon_name => $settings) {
+        foreach (self::$_settings as $settings) {
             if (! empty($settings['message_types'])) {
                 foreach ((array) $settings['message_types'] as $message_type => $message_type_settings) {
                     EE_Register_Message_Type::register($message_type, $message_type_settings);
