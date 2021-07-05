@@ -24,5 +24,5 @@ interface DefaultEntityGeneratorInterface
      * @throws ReflectionException
      * @since $VID:$
      */
-    public function create(EE_Base_Class $entity);
+    public function create(EE_Base_Class $entity): array;
 }

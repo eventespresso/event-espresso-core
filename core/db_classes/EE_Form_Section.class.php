@@ -1,5 +1,8 @@
 <?php
 
+use EndyJasmi\Cuid;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\form\meta\Attributes;
 use EventEspresso\core\services\form\meta\FormLabel;
 use EventEspresso\core\services\form\meta\FormStatus;
@@ -98,6 +101,19 @@ class EE_Form_Section extends EE_Base_Class
      */
     public function setUUID(string $UUID)
     {
+        if (! Cuid::isCuid($UUID)) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    /* translators: 1: UUID value, 2: UUID generator function. */
+                    esc_html__(
+                        'The supplied UUID "%1$s" is invalid or missing. Please use %2$s to generate a valid one.',
+                        'event_espresso'
+                    ),
+                    $UUID,
+                    "`Cuid::cuid()`"
+                )
+            );
+        }
         $this->set('FSC_UUID', $UUID);
     }
 
@@ -243,6 +259,7 @@ class EE_Form_Section extends EE_Base_Class
     {
         foreach ($form_elements as $form_element) {
             if ($form_element instanceof EE_Form_Element) {
+                $this->_add_relation_to($form_element->UUID(), 'Form_Element');
                 $this->form_elements[ $form_element->UUID() ] = $form_element;
             }
         }
@@ -424,7 +441,7 @@ class EE_Form_Section extends EE_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function isActive()
+    public function isActive(): bool
     {
         return $this->status() === FormStatus::ACTIVE;
     }
@@ -439,7 +456,7 @@ class EE_Form_Section extends EE_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function isArchived()
+    public function isArchived(): bool
     {
         return $this->status() === FormStatus::ARCHIVED;
     }
@@ -454,7 +471,7 @@ class EE_Form_Section extends EE_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function isDefault()
+    public function isDefault(): bool
     {
         return $this->status() === FormStatus::DEFAULT;
     }
@@ -469,7 +486,7 @@ class EE_Form_Section extends EE_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function isShared()
+    public function isShared(): bool
     {
         return $this->status() === FormStatus::SHARED;
     }
@@ -484,8 +501,19 @@ class EE_Form_Section extends EE_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function isTrashed()
+    public function isTrashed(): bool
     {
         return $this->status() === FormStatus::TRASHED;
+    }
+
+
+    /**
+     * @return bool
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function isTopLevelFormSection(): bool
+    {
+        return empty($this->belongsTo());
     }
 }
