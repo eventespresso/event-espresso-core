@@ -41,6 +41,7 @@ class EE_Psr4AutoloaderInit
             EE_Psr4AutoloaderInit::$psr4_loader->addNamespace('EventEspressoBatchRequest', EE_LIBRARIES . 'batch');
             EE_Psr4AutoloaderInit::$psr4_loader->addNamespace('EventEspressoVendor', EE_THIRD_PARTY);
             EE_Psr4AutoloaderInit::$psr4_loader->addNamespace('EETests', EE_PLUGIN_DIR_PATH . 'tests');
+            EE_Psr4AutoloaderInit::$psr4_loader->addNamespace('EndyJasmi', EE_THIRD_PARTY . 'cuid');
             $initialized = true;
         }
     }

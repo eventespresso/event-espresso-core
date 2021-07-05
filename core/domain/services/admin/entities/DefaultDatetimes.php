@@ -50,7 +50,7 @@ class DefaultDatetimes implements DefaultEntityGeneratorInterface
      * @throws ReflectionException
      * @since $VID:$
      */
-    public function create(EE_Base_Class $entity)
+    public function create(EE_Base_Class $entity): array
     {
         if (! $entity instanceof EE_Event) {
             throw new InvalidEntityException($entity, 'EE_Event');

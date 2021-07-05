@@ -49,7 +49,8 @@ class EE_Register_Shortcode implements EEI_Plugin_API
             empty($addon_name)
             || ! is_array($setup_args)
             || (
-               empty($setup_args['shortcode_paths']))
+                empty($setup_args['shortcode_paths'])
+            )
                && empty($setup_args['shortcode_fqcns'])
         ) {
             throw new EE_Error(

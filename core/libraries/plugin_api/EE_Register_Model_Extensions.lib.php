@@ -11,7 +11,6 @@
  */
 class EE_Register_Model_Extensions implements EEI_Plugin_API
 {
-
     protected static $_registry;
 
     protected static $_extensions = [];
@@ -57,7 +56,10 @@ class EE_Register_Model_Extensions implements EEI_Plugin_API
         if (
             empty($addon_name)
             || ! is_array($setup_args)
-            || (empty($setup_args['model_extension_paths']) && empty($setup_args['class_extension_paths']))
+            || (
+                empty($setup_args['model_extension_paths'])
+                && empty($setup_args['class_extension_paths'])
+            )
         ) {
             throw new EE_Error(
                 __(
