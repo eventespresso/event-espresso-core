@@ -473,8 +473,7 @@ class EE_Register_Message_Type implements EEI_Plugin_API
             return $base_path_or_url;
         }
         foreach (self::$_ee_message_type_registry as $addon_name => $mt_reg) {
-            if ($addon_name === $message_type_slug
-            ) {
+            if ($addon_name === $message_type_slug) {
                 if ($url && ! empty($mt_reg['base_url_for_default_variation'])) {
                     return $mt_reg['base_url_for_default_variation'];
                 } elseif (! $url && ! empty($mt_reg['base_path_for_default_variation'])) {
