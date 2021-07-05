@@ -157,7 +157,7 @@ class EE_Register_Messages_Template_Pack implements EEI_Plugin_API
 
             // check again!
             if (class_exists($args['classname'])) {
-                $template_pack                           = new $args['classname'];
+                $template_pack                           = new $args['classname']();
                 $template_packs[ $template_pack->dbref ] = $template_pack;
             }
         }
