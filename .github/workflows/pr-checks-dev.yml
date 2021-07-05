@@ -5,7 +5,7 @@ on:
     pull_request:
         branches:
             - dev
-            - FET/reg-form-builder/main
+            - 'FET/reg-form-builder/main'
 
 jobs:
     php-lint:
