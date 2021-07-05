@@ -53,7 +53,8 @@ class EE_Register_Model_Extensions implements EEI_Plugin_API
     public static function register(string $addon_name = '', array $setup_args = []): bool
     {
         // required fields MUST be present, so let's make sure they are.
-        if (empty($addon_name)
+        if (
+            empty($addon_name)
             || ! is_array($setup_args)
             || (
                 empty($setup_args['model_extension_paths'])

@@ -82,9 +82,10 @@ class EE_Register_Model implements EEI_Plugin_API
         }
         self::$_model_registry[ $addon_name ] = $setup_args;
 
-        if ((
-            isset($setup_args['model_paths']) && ! isset($setup_args['class_paths'])
-        )
+        if (
+            (
+                isset($setup_args['model_paths']) && ! isset($setup_args['class_paths'])
+            )
             || (! isset($setup_args['model_paths']) && isset($setup_args['class_paths']))
         ) {
             throw new EE_Error(
