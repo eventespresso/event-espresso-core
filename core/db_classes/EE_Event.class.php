@@ -1,5 +1,6 @@
 <?php
 
+use EndyJasmi\Cuid;
 use EventEspresso\core\domain\services\event\EventSpacesCalculator;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -1450,6 +1451,19 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      */
     public function setRegistrationFormUuid(string $UUID): void
     {
+        if (! Cuid::isCuid($UUID)) {
+            throw new InvalidArgumentException(
+                sprintf(
+                /* translators: 1: UUID value, 2: UUID generator function. */
+                    esc_html__(
+                        'The supplied UUID "%1$s" is invalid or missing. Please use %2$s to generate a valid one.',
+                        'event_espresso'
+                    ),
+                    $UUID,
+                    '`Cuid::cuid()`'
+                )
+            );
+        }
         $this->set('FSC_UUID', $UUID);
     }
 }
