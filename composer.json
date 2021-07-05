@@ -41,7 +41,7 @@
 		],
 		"lint": "vendor/bin/phpcs --runtime-set testVersion 7.1-",
 		"lint:skip-warnings": "vendor/bin/phpcs -n --runtime-set testVersion 7.1-",
-		"lint:fix": "vendor/bin/phpcbf"
+		"lint:fix": "\"vendor/bin/phpcbf\" --standard=phpcs.xml --ignore=assets/*,languages/*,*/index.php"
 	},
 	"support": {
 		"issues": "https://github.com/eventespresso/event-espresso-core/issues",

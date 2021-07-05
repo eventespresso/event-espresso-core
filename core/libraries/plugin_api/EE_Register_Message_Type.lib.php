@@ -64,8 +64,7 @@ class EE_Register_Message_Type implements EEI_Plugin_API
         }
 
         // make sure this was called in the right place!
-        if (
-            ! did_action('EE_Brewing_Regular___messages_caf')
+        if (! did_action('EE_Brewing_Regular___messages_caf')
             || did_action('AHEE__EE_System__perform_activations_upgrades_and_migrations')
         ) {
             EE_Error::doing_it_wrong(
@@ -158,9 +157,9 @@ class EE_Register_Message_Type implements EEI_Plugin_API
         // add filters but only if they haven't already been set (these filters only need to be registered ONCE because
         // the callback handles all registered message types.
         if (false === has_filter(
-                'FHEE__EED_Messages___set_messages_paths___MSG_PATHS',
-                ['EE_Register_Message_Type', 'register_msgs_autoload_paths']
-            )) {
+            'FHEE__EED_Messages___set_messages_paths___MSG_PATHS',
+            ['EE_Register_Message_Type', 'register_msgs_autoload_paths']
+        )) {
             add_filter(
                 'FHEE__EED_Messages___set_messages_paths___MSG_PATHS',
                 ['EE_Register_Message_Type', 'register_msgs_autoload_paths'],
@@ -472,13 +471,11 @@ class EE_Register_Message_Type implements EEI_Plugin_API
         foreach (self::$_ee_message_type_registry as $addon_name => $mt_reg) {
             if ($addon_name === $message_type_slug
             ) {
-                if (
-                    $url
+                if ($url
                     && ! empty($mt_reg['base_url_for_default_variation'])
                 ) {
                     return $mt_reg['base_url_for_default_variation'];
-                } elseif (
-                    ! $url
+                } elseif (! $url
                     && ! empty($mt_reg['base_path_for_default_variation'])
                 ) {
                     return $mt_reg['base_path_for_default_variation'];

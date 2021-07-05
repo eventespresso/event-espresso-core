@@ -82,10 +82,10 @@ class FormBuilder implements EventEditorDataInterface
         $elements = [];
         foreach ($form_elements as $element) {
             if ($element instanceof EE_Form_Element) {
-            $UUID = $element->UUID();
+                $UUID = $element->UUID();
 
             // Avoid duplicates
-            $elements[ $UUID ] = [
+                $elements[ $UUID ] = [
                 'id'         => $UUID,
                 'adminOnly'  => $element->adminOnly(),
                 'attributes' => $element->attributes()->toJson(),
@@ -98,8 +98,8 @@ class FormBuilder implements EventEditorDataInterface
                 'required'   => $element->required()->toJson(),
                 'status'     => GQLUtils::formatEnumKey($element->status()),
                 'type'       => GQLUtils::formatEnumKey($element->type()),
-            ];
-        }
+                ];
+            }
         }
 
         return [
