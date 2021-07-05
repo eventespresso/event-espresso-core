@@ -98,14 +98,14 @@ class EEM_Form_Section extends EEM_Base
                         'JSON string of HTML attributes, such as class, to be applied to this form section\'s container.',
                         'event_espresso'
                     ),
-                    true,
+                    false,
                     '{}'
                 ),
                 'FSC_belongsTo' => new EE_Plain_Text_Field(
                     'FSC_belongsTo',
                     esc_html__('UUID of parent form section that this one belongs to.', 'event_espresso'),
-                    true,
-                    null
+                    false,
+                    ''
                 ),
                 'FSC_label' => new EE_JSON_Field(
                     'FSC_label',
@@ -113,7 +113,7 @@ class EEM_Form_Section extends EEM_Base
                         'JSON string of properties pertaining to a form section\'s label.',
                         'event_espresso'
                     ),
-                    true,
+                    false,
                     '{}'
                 ),
                 'FSC_order'     => new EE_Integer_Field(
@@ -187,6 +187,18 @@ class EEM_Form_Section extends EEM_Base
     {
         $query_params['order_by'] = ['FSC_order' => 'ASC'];
         return $query_params;
+    }
+
+
+    /**
+     * returns an array of Form Sections that should be added by default to new Events
+     *
+     * @return EE_Form_Section[]
+     * @throws EE_Error
+     */
+    public function getDefaultFormSections(): array
+    {
+        return $this->getFormSections(['FSC_status' => FormStatus::DEFAULT]);
     }
 
 

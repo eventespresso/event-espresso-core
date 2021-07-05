@@ -120,18 +120,10 @@ class EventEditorGraphQLData
      */
     public function getData(int $eventId)
     {
+        $this->default_entities->getData($eventId);
         $event = $this->event->getData(['id' => $eventId]);
         $datetimes = $this->datetimes->getData(['eventId' => $eventId]);
         $eventManagers = $this->managers ->getData($eventId);
-
-        // Avoid undefined variable warning in PHP >= 7.3
-        $tickets = null;
-        $prices  = null;
-
-        if (empty($datetimes['nodes']) || (isset($_REQUEST['action']) && $_REQUEST['action'] === 'create_new')) {
-            $this->default_entities->getData($eventId);
-            $datetimes = $this->datetimes->getData(['eventId' => $eventId]);
-        }
 
         $tickets = $this->tickets->getData([
             'eventId'               => $eventId,
