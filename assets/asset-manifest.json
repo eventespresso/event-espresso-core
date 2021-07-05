@@ -30,10 +30,10 @@
     "eeComponents.js": "/static/js/eeComponents.8e7361f3.js",
     "eeComponents.js.map": "/static/js/eeComponents.8e7361f3.js.map",
     "eeComponents.php": "/static/js/eeComponents.ae47ac38.asset.php",
-    "eventEditor.css": "/static/css/eventEditor.c48c9b72.css",
+    "eventEditor.css": "/static/css/eventEditor.284ec36a.css",
     "eventEditor.js": "/static/js/eventEditor.cd8b88d0.js",
     "eventEditor.js.map": "/static/js/eventEditor.cd8b88d0.js.map",
-    "eventEditor.php": "/static/js/eventEditor.e7489ca2.asset.php",
+    "eventEditor.php": "/static/js/eventEditor.2fe4652b.asset.php",
     "events.js": "/static/js/events.9d294d23.js",
     "events.js.map": "/static/js/events.9d294d23.js.map",
     "events.php": "/static/js/events.54d61682.asset.php",
@@ -112,7 +112,7 @@
     "static/css/dates-table-view.16f24534.chunk.css.map": "/static/css/dates-table-view.16f24534.chunk.css.map",
     "static/css/dates.f6fe7173.css.map": "/static/css/dates.f6fe7173.css.map",
     "static/css/eeComponents.3768f336.css.map": "/static/css/eeComponents.3768f336.css.map",
-    "static/css/eventEditor.c48c9b72.css.map": "/static/css/eventEditor.c48c9b72.css.map",
+    "static/css/eventEditor.284ec36a.css.map": "/static/css/eventEditor.284ec36a.css.map",
     "static/css/form.ddf46c60.css.map": "/static/css/form.ddf46c60.css.map",
     "static/css/formBuilder.8344af3e.css.map": "/static/css/formBuilder.8344af3e.css.map",
     "static/css/richTextEditor.1267af4c.css.map": "/static/css/richTextEditor.1267af4c.css.map",
@@ -257,9 +257,9 @@
       "static/js/blocks.bc6063fe.asset.php"
     ],
     "eventEditor": [
-      "static/css/eventEditor.c48c9b72.css",
+      "static/css/eventEditor.284ec36a.css",
       "static/js/eventEditor.cd8b88d0.js",
-      "static/js/eventEditor.e7489ca2.asset.php"
+      "static/js/eventEditor.2fe4652b.asset.php"
     ],
     "wpPluginsPage": [
       "static/css/wpPluginsPage.c9f19421.css",
