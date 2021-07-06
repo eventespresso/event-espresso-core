@@ -1206,16 +1206,22 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/form-builder/src/FormElement/Tabs/Styles.tsx:19
 	__( 'help text css class', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormElement/Tabs/Validation.tsx:16
+	// Reference: packages/form-builder/src/FormElement/Tabs/Validation.tsx:24
 	__( 'required', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormElement/Tabs/Validation.tsx:21
+	// Reference: packages/form-builder/src/FormElement/Tabs/Validation.tsx:29
 	__( 'required text', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormElement/Tabs/Validation.tsx:28
+	// Reference: packages/form-builder/src/FormElement/Tabs/Validation.tsx:36
+	__( 'autocomplete', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/FormElement/Tabs/Validation.tsx:41
+	__( 'pattern', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/FormElement/Tabs/Validation.tsx:80
 	__( 'min', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormElement/Tabs/Validation.tsx:33
+	// Reference: packages/form-builder/src/FormElement/Tabs/Validation.tsx:85
 	__( 'max', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/FormSection/AddFormElementPopover.tsx:110
@@ -1272,169 +1278,169 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'show label', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/constants.ts:100
-	__( 'Time', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:102
-	__( 'adds a text input that allows users to enter a time directly via keyboard or a timepicker', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:105
-	__( 'Week', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:107
-	__( 'adds a text input that allows users to enter a week and year directly via keyboard or a datepicker', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:110
-	__( 'Day Selector', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:112
-	__( 'adds a dropdown selector that allows users to select the day of the month (01 to 31)', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:115
-	__( 'Month Selector', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:117
-	__( 'adds a dropdown selector that allows users to select the month of the year (01 to 12)', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:120
-	__( 'Year Selector', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:122
-	__( 'adds a dropdown selector that allows users to select the year from a configurable range', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:125
-	__( 'Radio Buttons', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:127
-	__( 'adds one or more radio buttons that allow users to only select one option from those provided', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:130
-	__( 'Decimal Number', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:132
-	__( 'adds a text input that only accepts numbers whose value is a decimal (float)', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:135
-	__( 'Whole Number', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:137
-	__( 'adds a text input that only accepts numbers whose value is an integer (whole number)', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:140
-	__( 'Number Range', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:145
-	__( 'Phone Number', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:150
-	__( 'Dropdown', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:152
-	__( 'adds a dropdown selector that accepts a single value', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:155
-	__( 'Multi Select', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:157
-	__( 'adds a dropdown selector that accepts multiple values', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:160
-	__( 'Toggle/Switch', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:162
-	__( 'adds a toggle or a switch to accept true or false value', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:165
-	__( 'Multi Checkbox', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:167
-	__( 'adds checkboxes that allow users to select zero or more options from those provided', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:170
-	__( 'Country Selector', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:172
-	__( 'adds a dropdown selector populated with names of countries that are enabled for the site', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:175
-	__( 'State Selector', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:180
-	__( 'Button', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:182
-	__( 'adds a button to the form that can be used for triggering fucntionality (requires custom coding)', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:185
-	__( 'Reset Button', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:187
-	__( 'adds a button that will reset the form back to its orginial state.', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:38
-	__( 'Form Section', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:40
-	__( 'Used for creating logical groupings for questions and form elements. Need to add a heading or description? Use the HTML form element.', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:45
-	__( 'HTML Block', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:47
-	__( 'allows you to add HTML like headings or text paragraphs to your form', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:50
-	__( 'Text Input', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:52
-	__( 'adds a text input that only accepts plain text', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:55
-	__( 'Plain Text Area', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:57
-	__( 'adds a textarea block that only accepts plain text', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:60
-	__( 'HTML Text Area', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:62
-	__( 'adds a textarea block that accepts text including simple HTML markup', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:65
-	__( 'Email Address', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:67
-	__( 'adds a text input that only accets a valid email address', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:70
-	__( 'Email Confirmation', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:75
-	__( 'Password', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:77
-	__( 'adds a text input that accepts text but masks what the user enters', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:80
-	__( 'URL', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:82
-	__( 'adds a text input for entering a URL address', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:85
-	__( 'Date', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:87
 	__( 'adds a text input that allows users to enter a date directly via keyboard or a datepicker', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/constants.ts:90
+	// Reference: packages/form-builder/src/constants.ts:103
 	__( 'Local Date', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/constants.ts:95
+	// Reference: packages/form-builder/src/constants.ts:108
 	__( 'Month', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/constants.ts:97
+	// Reference: packages/form-builder/src/constants.ts:110
 	__( 'adds a text input that allows users to enter a month and year directly via keyboard or a datepicker', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:113
+	__( 'Time', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:115
+	__( 'adds a text input that allows users to enter a time directly via keyboard or a timepicker', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:118
+	__( 'Week', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:120
+	__( 'adds a text input that allows users to enter a week and year directly via keyboard or a datepicker', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:123
+	__( 'Day Selector', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:125
+	__( 'adds a dropdown selector that allows users to select the day of the month (01 to 31)', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:128
+	__( 'Month Selector', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:130
+	__( 'adds a dropdown selector that allows users to select the month of the year (01 to 12)', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:133
+	__( 'Year Selector', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:135
+	__( 'adds a dropdown selector that allows users to select the year from a configurable range', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:138
+	__( 'Radio Buttons', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:140
+	__( 'adds one or more radio buttons that allow users to only select one option from those provided', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:143
+	__( 'Decimal Number', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:145
+	__( 'adds a text input that only accepts numbers whose value is a decimal (float)', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:148
+	__( 'Whole Number', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:150
+	__( 'adds a text input that only accepts numbers whose value is an integer (whole number)', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:153
+	__( 'Number Range', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:158
+	__( 'Phone Number', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:163
+	__( 'Dropdown', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:165
+	__( 'adds a dropdown selector that accepts a single value', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:168
+	__( 'Multi Select', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:170
+	__( 'adds a dropdown selector that accepts multiple values', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:173
+	__( 'Toggle/Switch', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:175
+	__( 'adds a toggle or a switch to accept true or false value', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:178
+	__( 'Multi Checkbox', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:180
+	__( 'adds checkboxes that allow users to select zero or more options from those provided', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:183
+	__( 'Country Selector', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:185
+	__( 'adds a dropdown selector populated with names of countries that are enabled for the site', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:188
+	__( 'State Selector', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:193
+	__( 'Button', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:195
+	__( 'adds a button to the form that can be used for triggering fucntionality (requires custom coding)', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:198
+	__( 'Reset Button', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:200
+	__( 'adds a button that will reset the form back to its orginial state.', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:51
+	__( 'Form Section', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:53
+	__( 'Used for creating logical groupings for questions and form elements. Need to add a heading or description? Use the HTML form element.', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:58
+	__( 'HTML Block', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:60
+	__( 'allows you to add HTML like headings or text paragraphs to your form', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:63
+	__( 'Text Input', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:65
+	__( 'adds a text input that only accepts plain text', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:68
+	__( 'Plain Text Area', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:70
+	__( 'adds a textarea block that only accepts plain text', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:73
+	__( 'HTML Text Area', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:75
+	__( 'adds a textarea block that accepts text including simple HTML markup', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:78
+	__( 'Email Address', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:80
+	__( 'adds a text input that only accets a valid email address', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:83
+	__( 'Email Confirmation', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:88
+	__( 'Password', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:90
+	__( 'adds a text input that accepts text but masks what the user enters', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:93
+	__( 'URL', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:95
+	__( 'adds a text input for entering a URL address', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/constants.ts:98
+	__( 'Date', 'event_espresso' ),
 
 	// Reference: packages/form/src/adapters/WPMediaImage.tsx:12
 	__( 'Select Image', 'event_espresso' ),
