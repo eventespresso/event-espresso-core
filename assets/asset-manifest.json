@@ -42,9 +42,9 @@
     "form.js.map": "/static/js/form.9cdc24c2.js.map",
     "form.php": "/static/js/form.f8670313.asset.php",
     "formBuilder.css": "/static/css/formBuilder.f5117c0d.css",
-    "formBuilder.js": "/static/js/formBuilder.b3acd439.js",
-    "formBuilder.js.map": "/static/js/formBuilder.b3acd439.js.map",
-    "formBuilder.php": "/static/js/formBuilder.bf954918.asset.php",
+    "formBuilder.js": "/static/js/formBuilder.acbee96b.js",
+    "formBuilder.js.map": "/static/js/formBuilder.acbee96b.js.map",
+    "formBuilder.php": "/static/js/formBuilder.021e9cae.asset.php",
     "helpers.js": "/static/js/helpers.b7d94158.js",
     "helpers.js.map": "/static/js/helpers.b7d94158.js.map",
     "helpers.php": "/static/js/helpers.35483502.asset.php",
@@ -130,7 +130,7 @@
     "static/js/eeComponents.ccad7bf1.js.LICENSE.txt": "/static/js/eeComponents.ccad7bf1.js.LICENSE.txt",
     "static/js/eventEditor.e60053a7.js.LICENSE.txt": "/static/js/eventEditor.e60053a7.js.LICENSE.txt",
     "static/js/form.9cdc24c2.js.LICENSE.txt": "/static/js/form.9cdc24c2.js.LICENSE.txt",
-    "static/js/formBuilder.b3acd439.js.LICENSE.txt": "/static/js/formBuilder.b3acd439.js.LICENSE.txt",
+    "static/js/formBuilder.acbee96b.js.LICENSE.txt": "/static/js/formBuilder.acbee96b.js.LICENSE.txt",
     "static/js/plugins.680580ee.js.LICENSE.txt": "/static/js/plugins.680580ee.js.LICENSE.txt",
     "static/js/registry.523a8843.js.LICENSE.txt": "/static/js/registry.523a8843.js.LICENSE.txt",
     "static/js/richTextEditor.5fa68352.js.LICENSE.txt": "/static/js/richTextEditor.5fa68352.js.LICENSE.txt",
@@ -175,8 +175,8 @@
     ],
     "formBuilder": [
       "static/css/formBuilder.f5117c0d.css",
-      "static/js/formBuilder.b3acd439.js",
-      "static/js/formBuilder.bf954918.asset.php"
+      "static/js/formBuilder.acbee96b.js",
+      "static/js/formBuilder.021e9cae.asset.php"
     ],
     "form": [
       "static/css/form.ddf46c60.css",

@@ -1167,27 +1167,36 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/form-builder/src/FormSection/Tabs/FormSectionTabs.tsx:29
 	__( 'Rules', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:18
-	// Reference: packages/form-builder/src/FormSection/Tabs/Settings.tsx:19
-	__( 'admin label', 'event_espresso' ),
+	// Reference: packages/form-builder/src/FormElement/Tabs/InputType.tsx:18
+	__( 'Change input type', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:23
-	__( 'admin only', 'event_espresso' ),
+	// Reference: packages/form-builder/src/FormElement/Tabs/InputType.tsx:19
+	__( 'Some configurations might be lost. Are you sure you want to change the input type?', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:30
-	__( 'content', 'event_espresso' ),
+	// Reference: packages/form-builder/src/FormElement/Tabs/InputType.tsx:40
+	__( 'type', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:39
+	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:22
 	// Reference: packages/form-builder/src/FormSection/Tabs/Settings.tsx:14
 	__( 'public label', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:44
+	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:29
+	// Reference: packages/form-builder/src/FormSection/Tabs/Settings.tsx:19
+	__( 'admin label', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:36
+	__( 'content', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:45
 	__( 'options', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:47
+	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:48
 	__( 'placeholder', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:52
+	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:54
+	__( 'admin only', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:59
 	__( 'help text', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/FormElement/Tabs/Styles.tsx:14
