@@ -1164,10 +1164,6 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/form-builder/src/FormElement/Tabs/FormElementTabs.tsx:30
 	__( 'Validation', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormElement/Tabs/FormElementTabs.tsx:34
-	// Reference: packages/form-builder/src/FormSection/Tabs/FormSectionTabs.tsx:29
-	__( 'Rules', 'event_espresso' ),
-
 	// Reference: packages/form-builder/src/FormElement/Tabs/InputType.tsx:18
 	__( 'Change input type', 'event_espresso' ),
 
