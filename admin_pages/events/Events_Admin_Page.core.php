@@ -1000,7 +1000,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             'add-new-h2'
         );
         $this->_template_args['after_list_table']   = array_merge(
-            $this->_template_args['after_list_table'],
+            (array) $this->_template_args['after_list_table'],
             $after_list_table
         );
         $this->display_admin_list_table_page_with_no_sidebar();
