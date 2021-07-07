@@ -1026,6 +1026,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 
 	// Reference: packages/dates/src/components/DateTimePicker.tsx:13
 	// Reference: packages/dates/src/components/TimePicker.tsx:14
+	// Reference: packages/form-builder/src/state/utils.ts:393
 	__( 'time', 'event_espresso' ),
 
 	// Reference: packages/dates/src/constants.ts:5
@@ -1434,6 +1435,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'adds a text input that accepts text but masks what the user enters', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/constants.ts:93
+	// Reference: packages/form-builder/src/state/utils.ts:396
 	__( 'URL', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/constants.ts:95
@@ -1441,6 +1443,42 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/constants.ts:98
 	__( 'Date', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/state/utils.ts:361
+	__( 'date', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/state/utils.ts:364
+	__( 'day', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/state/utils.ts:368
+	__( 'pick a number', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/state/utils.ts:371
+	__( 'email address', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/state/utils.ts:374
+	__( 'confirm email address', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/state/utils.ts:378
+	__( 'month', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/state/utils.ts:381
+	__( 'password', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/state/utils.ts:384
+	__( 'country', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/state/utils.ts:387
+	__( 'state/province', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/state/utils.ts:390
+	__( 'phone number', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/state/utils.ts:399
+	__( 'week', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/state/utils.ts:402
+	__( 'year', 'event_espresso' ),
 
 	// Reference: packages/form/src/adapters/WPMediaImage.tsx:12
 	__( 'Select Image', 'event_espresso' ),
