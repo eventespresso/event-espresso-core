@@ -169,7 +169,7 @@ class FormLabel implements JsonableInterface
 
 
     /**
-     * @return bool
+     * @return string
      */
     public function html(): string
     {
@@ -178,7 +178,7 @@ class FormLabel implements JsonableInterface
 
 
     /**
-     * @param string $showLabel
+     * @param string $html
      */
     public function setHtml($html): void
     {
