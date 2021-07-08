@@ -180,7 +180,7 @@ class FormLabel implements JsonableInterface
     /**
      * @param string $html
      */
-    public function setHtml($html): void
+    public function setHtml(string $html): void
     {
         $this->html = wp_kses_post($html);
     }
