@@ -1026,7 +1026,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 
 	// Reference: packages/dates/src/components/DateTimePicker.tsx:13
 	// Reference: packages/dates/src/components/TimePicker.tsx:14
-	// Reference: packages/form-builder/src/state/utils.ts:393
+	// Reference: packages/form-builder/src/state/utils.ts:433
 	__( 'time', 'event_espresso' ),
 
 	// Reference: packages/dates/src/constants.ts:5
@@ -1278,6 +1278,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'adds a text input that allows users to enter a date directly via keyboard or a datepicker', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/constants.ts:103
+	// Reference: packages/form-builder/src/state/utils.ts:369
 	__( 'Local Date', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/constants.ts:108
@@ -1323,12 +1324,14 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'adds one or more radio buttons that allow users to only select one option from those provided', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/constants.ts:143
+	// Reference: packages/form-builder/src/state/utils.ts:375
 	__( 'Decimal Number', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/constants.ts:145
 	__( 'adds a text input that only accepts numbers whose value is a decimal (float)', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/constants.ts:148
+	// Reference: packages/form-builder/src/state/utils.ts:378
 	__( 'Whole Number', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/constants.ts:150
@@ -1431,7 +1434,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'adds a text input that accepts text but masks what the user enters', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/constants.ts:93
-	// Reference: packages/form-builder/src/state/utils.ts:396
+	// Reference: packages/form-builder/src/state/utils.ts:436
 	__( 'URL', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/constants.ts:95
@@ -1440,40 +1443,73 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/form-builder/src/constants.ts:98
 	__( 'Date', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/state/utils.ts:361
+	// Reference: packages/form-builder/src/state/utils.ts:360
+	__( 'click', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/state/utils.ts:363
+	__( 'checkboxes', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/state/utils.ts:366
 	__( 'date', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/state/utils.ts:364
+	// Reference: packages/form-builder/src/state/utils.ts:372
 	__( 'day', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/state/utils.ts:368
-	__( 'pick a number', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/state/utils.ts:371
+	// Reference: packages/form-builder/src/state/utils.ts:381
 	__( 'email address', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/state/utils.ts:374
+	// Reference: packages/form-builder/src/state/utils.ts:384
 	__( 'confirm email address', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/state/utils.ts:378
+	// Reference: packages/form-builder/src/state/utils.ts:388
 	__( 'month', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/state/utils.ts:381
+	// Reference: packages/form-builder/src/state/utils.ts:391
 	__( 'password', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/state/utils.ts:384
+	// Reference: packages/form-builder/src/state/utils.ts:394
+	__( 'confirm password', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/state/utils.ts:397
+	__( 'radio buttons', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/state/utils.ts:400
+	__( 'number range', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/state/utils.ts:403
+	__( 'selection dropdown', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/state/utils.ts:406
 	__( 'country', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/state/utils.ts:387
+	// Reference: packages/form-builder/src/state/utils.ts:409
+	__( 'multi-select dropdown', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/state/utils.ts:412
 	__( 'state/province', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/state/utils.ts:390
+	// Reference: packages/form-builder/src/state/utils.ts:415
+	__( 'on/off switch', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/state/utils.ts:418
+	__( 'reset', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/state/utils.ts:421
 	__( 'phone number', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/state/utils.ts:399
+	// Reference: packages/form-builder/src/state/utils.ts:424
+	__( 'text', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/state/utils.ts:427
+	__( 'simple textarea', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/state/utils.ts:430
+	__( 'html textarea', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/state/utils.ts:439
 	__( 'week', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/state/utils.ts:402
+	// Reference: packages/form-builder/src/state/utils.ts:442
 	__( 'year', 'event_espresso' ),
 
 	// Reference: packages/form/src/adapters/WPMediaImage.tsx:12
