@@ -377,7 +377,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data
             $ansobj                             = array_combine($ans_columns, $ans);
             $ansobj                             = EE_Answer::new_instance($ansobj);
             $q_n_as['answers'][ $ansobj->ID() ]   = $ansobj;
-            $q_n_as['questions'][ $ansobj->ID() ] = $qsts[ $ansobj->get('QST_ID') ];
+            $q_n_as['questions'][ $ansobj->get('QST_ID') ] = $qsts[ $ansobj->get('QST_ID') ];
         }
         
         return $q_n_as;
