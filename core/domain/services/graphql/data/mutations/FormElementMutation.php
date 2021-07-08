@@ -37,7 +37,7 @@ class FormElementMutation
         }
 
         if (isset($input['attributes'])) {
-            $args['FIN_attributes'] = Attributes::fromJson($input['attributes'])->toJson();
+            $args['FIN_attributes'] = Attributes::fromJson(sanitize_text_field($input['attributes']))->toJson();
         }
 
         if (isset($input['belongsTo'])) {
@@ -49,7 +49,7 @@ class FormElementMutation
         }
 
         if (isset($input['label'])) {
-            $args['FIN_label'] = FormLabel::fromJson(sanitize_text_field($input['label']))->toJson();
+            $args['FIN_label'] = FormLabel::fromJson($input['label'])->toJson();
         }
 
         if (isset($input['mapsTo'])) {

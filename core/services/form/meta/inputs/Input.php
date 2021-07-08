@@ -73,7 +73,7 @@ class Input
                 Input::TYPE_HIDDEN                => esc_html__('Hidden', 'event_espresso'),
                 Input::TYPE_IMAGE                 => esc_html__('Image Upload', 'event_espresso'),
                 Input::TYPE_PASSWORD              => esc_html__('Password', 'event_espresso'),
-                Input::TYPE_PASSWORD_CONFIRMATION => esc_html__('Password confirmation', 'event_espresso'),
+                Input::TYPE_PASSWORD_CONFIRMATION => esc_html__('Password Confirmation', 'event_espresso'),
                 Input::TYPE_RADIO                 => esc_html__('Radio Button', 'event_espresso'),
                 Input::TYPE_URL                   => esc_html__('URL', 'event_espresso'),
             ]
