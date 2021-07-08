@@ -41,6 +41,11 @@ class Input
     public const TYPE_PASSWORD = 'password';
 
     /**
+     * indicates that the input is used to confirm a password
+     */
+    public const TYPE_PASSWORD_CONFIRMATION = 'password-confirmation';
+
+    /**
      * indicates that the HTML input type is 'radio'
      */
     public const TYPE_RADIO = 'radio';
@@ -61,15 +66,16 @@ class Input
         $this->valid_type_options = apply_filters(
             'FHEE__EventEspresso_core_services_form_meta_inputs_Input__valid_type_options',
             [
-                Input::TYPE_CHECKBOX       => esc_html__('Checkbox', 'event_espresso'),
-                Input::TYPE_CHECKBOX_MULTI => esc_html__('Multi Checkbox', 'event_espresso'),
-                Input::TYPE_COLOR          => esc_html__('Color Picker', 'event_espresso'),
-                Input::TYPE_FILE           => esc_html__('File Upload', 'event_espresso'),
-                Input::TYPE_HIDDEN         => esc_html__('Hidden', 'event_espresso'),
-                Input::TYPE_IMAGE          => esc_html__('Image Upload', 'event_espresso'),
-                Input::TYPE_PASSWORD       => esc_html__('Password', 'event_espresso'),
-                Input::TYPE_RADIO          => esc_html__('Radio Button', 'event_espresso'),
-                Input::TYPE_URL            => esc_html__('URL', 'event_espresso'),
+                Input::TYPE_CHECKBOX              => esc_html__('Checkbox', 'event_espresso'),
+                Input::TYPE_CHECKBOX_MULTI        => esc_html__('Multi Checkbox', 'event_espresso'),
+                Input::TYPE_COLOR                 => esc_html__('Color Picker', 'event_espresso'),
+                Input::TYPE_FILE                  => esc_html__('File Upload', 'event_espresso'),
+                Input::TYPE_HIDDEN                => esc_html__('Hidden', 'event_espresso'),
+                Input::TYPE_IMAGE                 => esc_html__('Image Upload', 'event_espresso'),
+                Input::TYPE_PASSWORD              => esc_html__('Password', 'event_espresso'),
+                Input::TYPE_PASSWORD_CONFIRMATION => esc_html__('Password confirmation', 'event_espresso'),
+                Input::TYPE_RADIO                 => esc_html__('Radio Button', 'event_espresso'),
+                Input::TYPE_URL                   => esc_html__('URL', 'event_espresso'),
             ]
         );
     }
