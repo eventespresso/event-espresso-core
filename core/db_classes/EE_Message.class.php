@@ -870,15 +870,17 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links
     public function set_messenger_is_executing()
     {
         $this->set_STS_ID(EEM_Message::status_messenger_executing);
-        $this->set_error_message(
-            esc_html__(
-                'A message with this status indicates that there was a problem that occurred while the message was being
-                processed by the messenger.  It is still possible that the message was sent successfully, but at some
-                point during the processing there was a failure.  This usually is indicative of a timeout issue with PHP 
-                or memory limits being reached.  If you see this repeatedly you may want to consider upgrading the memory 
-                available to PHP on your server.',
-                'event_espresso'
-            )
-        );
+        if (EEM_Message::debug()) {
+            $this->set_error_message(
+                esc_html__(
+                    'A message with this status indicates that there was a problem that occurred while the message was being
+                    processed by the messenger.  It is still possible that the message was sent successfully, but at some
+                    point during the processing there was a failure.  This usually is indicative of a timeout issue with PHP 
+                    or memory limits being reached.  If you see this repeatedly you may want to consider upgrading the memory 
+                    available to PHP on your server.',
+                    'event_espresso'
+                )
+            );
+        }
     }
 }
