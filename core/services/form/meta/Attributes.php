@@ -74,6 +74,8 @@ class Attributes implements JsonableInterface
         'type'            => 'string',
         'value'           => 'string',
         'width'           => 'string',
+        // HTML content displayed in block type elements
+        'html'            => 'html',
     ];
 
 
@@ -144,6 +146,8 @@ class Attributes implements JsonableInterface
                 return filter_var($value, FILTER_SANITIZE_NUMBER_INT);
             case 'float':
                 return filter_var($value, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+            case 'html':
+                return wp_kses_post($value);
             case 'string':
             default:
                 return filter_var(

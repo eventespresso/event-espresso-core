@@ -37,7 +37,7 @@ class FormElementMutation
         }
 
         if (isset($input['attributes'])) {
-            $args['FIN_attributes'] = Attributes::fromJson(sanitize_text_field($input['attributes']))->toJson();
+            $args['FIN_attributes'] = Attributes::fromJson($input['attributes'])->toJson();
         }
 
         if (isset($input['belongsTo'])) {
