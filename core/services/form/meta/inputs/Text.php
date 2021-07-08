@@ -12,7 +12,7 @@ class Text
     /**
      * indicates that the input is used to confirm an email address
      */
-    public const TYPE_EMAIL_CONFIRM = 'email-confirmation';
+    public const TYPE_EMAIL_CONFIRMATION = 'email-confirmation';
 
     /**
      * indicates that the HTML input type is 'text'
@@ -41,11 +41,11 @@ class Text
         $this->valid_type_options = apply_filters(
             'FHEE__EventEspresso_core_services_form_meta_inputs_Text__valid_type_options',
             [
-                Text::TYPE_EMAIL         => esc_html__('Email', 'event_espresso'),
-                Text::TYPE_EMAIL_CONFIRM => esc_html__('Email Confirmation', 'event_espresso'),
-                Text::TYPE_TEXT          => esc_html__('Plain Text', 'event_espresso'),
-                Text::TYPE_TEXTAREA      => esc_html__('Plain Textarea', 'event_espresso'),
-                Text::TYPE_TEXTAREA_HTML => esc_html__('Simple HTML Textarea', 'event_espresso'),
+                Text::TYPE_EMAIL              => esc_html__('Email', 'event_espresso'),
+                Text::TYPE_EMAIL_CONFIRMATION => esc_html__('Email Confirmation', 'event_espresso'),
+                Text::TYPE_TEXT               => esc_html__('Plain Text', 'event_espresso'),
+                Text::TYPE_TEXTAREA           => esc_html__('Plain Textarea', 'event_espresso'),
+                Text::TYPE_TEXTAREA_HTML      => esc_html__('Simple HTML Textarea', 'event_espresso'),
             ]
         );
     }

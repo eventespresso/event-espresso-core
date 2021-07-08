@@ -39,6 +39,13 @@ class FormLabel implements JsonableInterface
      */
     private $showLabel;
 
+    /**
+     * The HTML block displayed for block elements.
+     *
+     * @var string
+     */
+    private $html;
+
 
     /**
      * FormLabel constructor.
@@ -52,12 +59,14 @@ class FormLabel implements JsonableInterface
         JsonDataHandler $json_data_handler,
         string $adminLabel,
         string $publicLabel,
-        bool $showLabel
+        bool $showLabel,
+        string $html
     ) {
         $this->json_data_handler = $json_data_handler;
         $this->setAdminLabel($adminLabel);
         $this->setPublicLabel($publicLabel);
         $this->setShowLabel($showLabel);
+        $this->setHtml($html);
     }
 
 
@@ -73,7 +82,8 @@ class FormLabel implements JsonableInterface
         $adminLabel  = $data->adminLabel ?? '';
         $publicLabel = $data->publicLabel ?? '';
         $showLabel   = $data->showLabel ?? false;
-        return new FormLabel($json_data_handler, $adminLabel, $publicLabel, $showLabel);
+        $html        = $data->html ?? '';
+        return new FormLabel($json_data_handler, $adminLabel, $publicLabel, $showLabel, $html);
     }
 
 
@@ -86,6 +96,7 @@ class FormLabel implements JsonableInterface
             'adminLabel'  => $this->adminLabel,
             'publicLabel' => $this->publicLabel,
             'showLabel'   => $this->showLabel,
+            'html'        => $this->html,
         ];
     }
 
@@ -154,5 +165,23 @@ class FormLabel implements JsonableInterface
     public function setShowLabel($showLabel): void
     {
         $this->showLabel = filter_var($showLabel, FILTER_VALIDATE_BOOLEAN);
+    }
+
+
+    /**
+     * @return string
+     */
+    public function html(): string
+    {
+        return $this->html;
+    }
+
+
+    /**
+     * @param string $html
+     */
+    public function setHtml(string $html): void
+    {
+        $this->html = wp_kses_post($html);
     }
 }
