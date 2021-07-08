@@ -9,6 +9,8 @@ use EE_Question;
 use EE_Registration;
 use EE_Registration_Payment;
 use EEM_Event_Question_Group;
+use EEH_Line_Item;
+use EED_Promotions;
 use EventEspresso\core\domain\services\DomainService;
 use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
@@ -173,5 +175,46 @@ class CopyRegistrationService extends DomainService
             $registration_to_copy->save();
         }
         return true;
+    }
+
+
+    /**
+     * @param EE_Registration $target_registration
+     * @param EE_Registration $registration_to_copy
+     * @return bool
+     * @throws RuntimeException
+     * @throws UnexpectedEntityException
+     * @throws EE_Error
+     */
+    public function copyPromotionLineItems(
+        EE_Registration $target_registration,
+        EE_Registration $registration_to_copy
+    ) {
+        $transaction = $registration_to_copy->transaction();
+        if ($transaction instanceof \EE_Transaction) {
+            $total_line_item = $transaction->total_line_item();
+            $old_event_line_item = EEH_Line_Item::get_event_line_item_for_ticket($total_line_item, $registration_to_copy->ticket());
+            $new_event_line_item = EEH_Line_Item::get_event_line_item_for_ticket($total_line_item, $target_registration->ticket());
+            $promo_line_items = EEH_Line_Item::get_line_items_of_object_type($old_event_line_item, \EEM_Line_Item::OBJ_TYPE_PROMOTION);
+
+            // Bail if we don't have any promotion line items.
+            if (empty($promo_line_items)) {
+                return;
+            }
+
+            // Don't increment 'usage' for copied promotions
+            add_filter('FHEE__EED_Promotions__add_promotion_line_item__bypass_increment_promotion_scope_uses', '__return_true');
+
+            foreach ($promo_line_items as $promo_line_item) {
+                if ($promo_line_item instanceof \EE_Line_Item) {
+                    $promotion =  EED_Promotions::instance()->get_promotion_from_line_item($promo_line_item);
+                    EED_Promotions::instance()->generate_promotion_line_items(
+                        $promotion,
+                        array($new_event_line_item),
+                        EED_Promotions::instance()->config()->affects_tax()
+                    );
+                }
+            }
+        }
     }
 }
