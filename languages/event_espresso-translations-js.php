@@ -1184,16 +1184,16 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:36
 	__( 'content', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:45
+	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:44
 	__( 'options', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:48
+	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:47
 	__( 'placeholder', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:54
+	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:53
 	__( 'admin only', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:59
+	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:58
 	__( 'help text', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/FormElement/Tabs/Styles.tsx:14
