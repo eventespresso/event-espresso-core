@@ -10,8 +10,8 @@
                 <tr class="header_row">
                     <th class="name-column"><?php _e("Ticket", "event_espresso"); ?></th>
                     <th colspan="2" class="desc-column"><?php _e("Description", "event_espresso"); ?></th>
-                    <th class="number-column item_c"><?php _e("Quantity", "event_espresso"); ?></th>
-                    <th class="number-column item_c"><?php _e("Price", "event_espresso"); ?></th>
+                    <th class="number-column item_r"><?php _e("Quantity", "event_espresso"); ?></th>
+                    <th class="number-column item_r"><?php _e("Price", "event_espresso"); ?></th>
                     <th class="number-column item_r"><?php _e("Total", "event_espresso"); ?></th>
                 </tr>
             </thead>

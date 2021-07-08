@@ -242,19 +242,40 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base
     /**
      *    _set_label_size_class
      *
-     * @param int|string $value
+     * @param array|int|string $value
      * @return void
      */
-    private function _set_label_size($value = '')
+    protected function _set_label_size($value = '')
     {
         // don't change label size if it has already been set and is being enforced
         if ($this->_enforce_label_size && $this->_label_size >  0) {
             return;
         }
         // determine length of option value
-        $val_size = is_int($value) ? $value : strlen($value);
+        $val_size = $this->getLabelSize($value);
         // use new value if bigger than existing
         $this->_label_size = $val_size > $this->_label_size ? $val_size : $this->_label_size;
+    }
+
+
+    /**
+     * @param array|int|string $label
+     * @return int
+     */
+    private function getLabelSize($label)
+    {
+        if (is_int($label)) {
+            $val_size = $label;
+        } elseif (is_array($label)) {
+            $val_size = 0;
+            foreach ($label as $key => $value) {
+                $value = isset($label['display_text']) ? $label['display_text'] : $key;
+                $val_size = max($val_size, $this->getLabelSize($value));
+            }
+        } else {
+            $val_size = strlen((string) $label);
+        }
+        return $val_size;
     }
 
 

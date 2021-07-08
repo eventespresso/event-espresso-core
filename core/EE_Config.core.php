@@ -2049,9 +2049,16 @@ class EE_Currency_Config extends EE_Config_Base
 
     /**
      * @var string $code
-     * eg 'US'
+     * eg 'USD', 'CAD', 'EUR'
      */
     public $code;
+
+    /**
+     * locale to use for currency ex: 'en_US'
+     *
+     * @var string
+     */
+    private $locale = 'en_US';
 
     /**
      * @var string $name
@@ -2149,6 +2156,7 @@ class EE_Currency_Config extends EE_Config_Base
         if (empty($this->code)) {
             // set default currency settings
             $this->code = 'USD';    // currency code: USD, CAD, EUR
+            $this->locale = 'en_US';
             $this->name = __('Dollar', 'event_espresso');    // Dollar
             $this->plural = __('Dollars', 'event_espresso');    // Dollars
             $this->sign = '$';    // currency sign: $
@@ -2157,7 +2165,29 @@ class EE_Currency_Config extends EE_Config_Base
             $this->dec_mrk = '.';    // decimal mark: (comma) ',' = 0,01   or (decimal) '.' = 0.01
             $this->thsnds = ',';    // thousands separator: (comma) ',' = 1,000   or (decimal) '.' = 1.000
         }
+        if (empty($this->locale)) {
+            $this->locale = get_site_option('WPLANG');
+        }
     }
+
+
+    /**
+     * @return string
+     */
+    public function locale()
+    {
+        return $this->locale;
+    }
+
+
+    /**
+     * @param string $locale
+     */
+    public function setLocale($locale)
+    {
+        $this->locale = sanitize_text_field($locale);
+    }
+
 }
 
 /**

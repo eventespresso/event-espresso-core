@@ -1,6 +1,7 @@
 <?php
 
 use EventEspresso\core\domain\DomainFactory;
+use EventEspresso\core\interfaces\InterminableInterface;
 use EventEspresso\core\services\loaders\ClassInterfaceCache;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
@@ -17,7 +18,7 @@ use EventEspresso\core\services\request\ResponseInterface;
  * @author        Brent Christensen
  * @since         4.9.0
  */
-class EE_Dependency_Map
+class EE_Dependency_Map implements InterminableInterface
 {
 
     /**
@@ -299,7 +300,7 @@ class EE_Dependency_Map
         if (strpos($class_name, 'EEM_') === 0) {
             $class_name = 'LEGACY_MODELS';
         }
-        return isset($this->_dependency_map[ $class_name ]) ? true : false;
+        return isset($this->_dependency_map[ $class_name ]);
     }
 
 
@@ -317,9 +318,7 @@ class EE_Dependency_Map
             $class_name = 'LEGACY_MODELS';
         }
         $dependency = $this->getFqnForAlias($dependency, $class_name);
-        return isset($this->_dependency_map[ $class_name ][ $dependency ])
-            ? true
-            : false;
+        return isset($this->_dependency_map[ $class_name ][ $dependency ]);
     }
 
 
@@ -732,12 +731,13 @@ class EE_Dependency_Map
             'EventEspresso\core\services\loaders\ObjectIdentifier'                                                        => array(
                 'EventEspresso\core\services\loaders\ClassInterfaceCache' => EE_Dependency_Map::load_from_cache,
             ),
-            'EventEspresso\core\domain\services\assets\CoreAssetManager'                                                  => array(
-                'EventEspresso\core\services\assets\AssetCollection' => EE_Dependency_Map::load_from_cache,
-                'EE_Currency_Config'                                 => EE_Dependency_Map::load_from_cache,
-                'EE_Template_Config'                                 => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\domain\Domain'                   => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\assets\Registry'        => EE_Dependency_Map::load_from_cache,
+            'EventEspresso\core\domain\services\assets\CoreAssetManager' => array(
+                'EventEspresso\core\services\assets\AssetCollection'       => EE_Dependency_Map::load_from_cache,
+                'EEM_Country'                                              => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\formatters\CurrencyFormatter' => EE_Dependency_Map::load_from_cache,
+                'EE_Template_Config'                                       => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\Domain'                         => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\assets\Registry'              => EE_Dependency_Map::load_from_cache,
             ),
             'EventEspresso\core\domain\services\admin\privacy\policy\PrivacyPolicy' => array(
                 'EEM_Payment_Method' => EE_Dependency_Map::load_from_cache,
@@ -845,6 +845,7 @@ class EE_Dependency_Map
                 'EE_Core_Config'                                          => EE_Dependency_Map::load_from_cache,
                 'EE_Network_Core_Config'                                  => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\address\CountrySubRegionDao' => EE_Dependency_Map::load_from_cache,
+                'EE_Currency_Config'                                      => EE_Dependency_Map::load_from_cache,
             ),
             'EventEspresso\core\services\address\CountrySubRegionDao' => array(
                 'EEM_State'                                            => EE_Dependency_Map::load_from_cache,
@@ -899,8 +900,25 @@ class EE_Dependency_Map
             ],
             'EventEspresso\core\domain\services\admin\events\data\ConfirmDeletion' => [
                 'EventEspresso\core\services\orm\tree_traversal\NodeGroupDao' => EE_Dependency_Map::load_from_cache,
-            ]
+			],
+            'EventEspresso\core\services\locale\Locales'                   => [
+                'EventEspresso\core\services\locale\DefaultLocaleData' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\locale\LocaleSwitcher' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\services\locale\DefaultLocaleData'                   => [
+                'EE_Currency_Config' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\services\formatters\CurrencyFormatter' => [
+                'EventEspresso\core\services\locale\Locales' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\services\formatters\NumberFormatter'       => [
+                'EventEspresso\core\services\locale\Locales' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\services\calculators\LineItemCalculator'   => [
+                'EventEspresso\core\services\formatters\CurrencyFormatter' => EE_Dependency_Map::load_from_cache,
+            ],
         );
+        do_action('AHEE__EE_Dependency_Map___register_core_dependencies', $this);
     }
 
 
@@ -1033,6 +1051,7 @@ class EE_Dependency_Map
                 return EE_Config::instance()->environment;
             },
         );
+        do_action('AHEE__EE_Dependency_Map___register_core_class_loaders', $this);
     }
 
 
@@ -1097,6 +1116,7 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\notices\NoticeConverterInterface'
             );
         }
+        do_action('AHEE__EE_Dependency_Map___register_core_aliases', $this);
     }
 
 

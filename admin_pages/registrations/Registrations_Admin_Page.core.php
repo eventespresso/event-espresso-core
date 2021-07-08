@@ -1332,7 +1332,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             $this->_template_args['reg_datetime']['value'] = $this->_registration->get_i18n_datetime('REG_date');
             $this->_template_args['reg_datetime']['label'] = esc_html__('Date', 'event_espresso');
             $this->_template_args['grand_total'] = $transaction->total();
-            $this->_template_args['currency_sign'] = EE_Registry::instance()->CFG->currency->sign;
             // link back to overview
             $this->_template_args['reg_overview_url'] = REG_ADMIN_URL;
             $this->_template_args['registration'] = $this->_registration;
@@ -2079,7 +2078,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         } else {
             $this->_template_args['resend_registration_button'] = '';
         }
-        $this->_template_args['currency_sign'] = EE_Registry::instance()->CFG->currency->sign;
         $payment = $transaction->get_first_related('Payment');
         $payment = ! $payment instanceof EE_Payment
             ? EE_Payment::new_instance()
@@ -2484,7 +2482,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                     : '';
                 $att_nmbr++;
             }
-            $this->_template_args['currency_sign'] = EE_Registry::instance()->CFG->currency->sign;
         }
         $template_path = REG_TEMPLATE_PATH . 'reg_admin_details_main_meta_box_attendees.template.php';
         echo EEH_Template::display_template($template_path, $this->_template_args, true);

@@ -1,3 +1,27 @@
+<?php
+/**
+ * @var EE_Attendee $attendee
+ * @var EE_Payment[] $payments
+ * @var EE_Payment_Method[] $payment_methods
+ * @var EE_Status[] $payment_status
+ * @var bool $can_delete_payments
+ * @var bool $can_edit_payments
+ * @var string $action_buttons
+ * @var string $apply_payment_form_url
+ * @var string $delete_payment_form_url
+ * @var string $delete_payment_url
+ * @var string $delete_status_change_select
+ * @var string $grand_raw_total
+ * @var string $line_item_table
+ * @var string $REG_code
+ * @var string $registrations_to_apply_payment_to
+ * @var string $status_change_select
+ * @var string $TXN_ID
+ * @var string $TXN_status
+ * @var string[][] $txn_details
+ * @var string[] $txn_nmbr
+ */
+?>
 <div id="admin-primary-mbox-dv" class="admin-primary-mbox-dv">
 
     <h3 class="admin-primary-mbox-h4 hdr-has-icon">
@@ -166,11 +190,7 @@
                                     : 'txn-admin-payment-status-PDC'; ?>
                                 <span class="<?php echo $payment_class; ?>">
                                 <div id="payment-amount-<?php echo $PAY_ID; ?>" style="display:inline;">
-                                <?php echo EEH_Template::format_currency(
-                                    $payment->amount(),
-                                    false,
-                                    false
-                                ); ?></div>
+                                <?php echo $payment->prettyAmount(); ?></div>
                             </span>
                             </td>
                         </tr>
@@ -192,23 +212,20 @@
                     </tr>
                     <tr id="txn-admin-payments-total-tr"
                         class="admin-primary-mbox-total-tr<?php echo $pay_totals_class; ?>">
-                        <th class=" jst-rght" colspan="9"><span
-                                id="payments-total-spn">
+                        <th class=" jst-rght" colspan="9">
+                            <span id="payments-total-spn">
                                 <?php echo $overpaid
                                            . sprintf(
-                                               esc_html__(
-                                                   'Payments Total %s',
-                                                   'event_espresso'
-                                               ),
-                                               '(' . EE_Registry::instance()->CFG->currency->code . ')'
-                                           ); ?></span></th>
-                        <th class=" jst-rght"><span
-                                id="txn-admin-payment-total">
-                                <?php echo EEH_Template::format_currency(
-                                    $payment_total,
-                                    false,
-                                    false
-                                ); ?></span></th>
+                                               esc_html__('Payments Total %s', 'event_espresso'),
+                                               '(' . EEH_Money::getCurrencyIsoCodeForLocale() . ')'
+                                           ); ?>
+                            </span>
+                        </th>
+                        <th class=" jst-rght">
+                            <span id="txn-admin-payment-total">
+                                <?php echo EEH_Money::formatForLocale($payment_total); ?>
+                            </span>
+                        </th>
                     </tr>
                 <?php else : ?>
                     <tr id="txn-admin-no-payments-tr" class="admin-primary-mbox-total-tr">
@@ -217,12 +234,11 @@
                         </td>
                     </tr>
                     <tr id="txn-admin-payments-total-tr" class="admin-primary-mbox-total-tr hidden">
-                        <th class=" jst-rght" colspan="9"><span
-                                id="payments-total-spn">
-                                <?php echo esc_html__(
-                                    'Payments Total',
-                                    'event_espresso'
-                                ); ?></span></th>
+                        <th class=" jst-rght" colspan="9">
+                            <span id="payments-total-spn">
+                                <?php echo esc_html__('Payments Total', 'event_espresso'); ?>
+                            </span>
+                        </th>
                         <th class=" jst-rght"><span id="txn-admin-payment-total"></span></th>
                     </tr>
                 <?php endif; // $payments

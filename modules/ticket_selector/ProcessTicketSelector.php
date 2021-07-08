@@ -14,9 +14,9 @@ use EEH_URL;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
-use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\request\Request;
 use InvalidArgumentException;
+use ReflectionException;
 
 // phpcs:disable WordPress.WP.I18n.UnorderedPlaceholdersSingle
 // phpcs:disable WordPress.WP.I18n.UnorderedPlaceholdersPlural
@@ -86,7 +86,6 @@ class ProcessTicketSelector
         EEM_Ticket $ticket_model = null,
         TicketDatetimeAvailabilityTracker $tracker = null
     ) {
-        /** @var LoaderInterface $loader */
         $loader = LoaderFactory::getLoader();
         $this->core_config = $core_config instanceof EE_Core_Config
             ? $core_config
@@ -113,7 +112,7 @@ class ProcessTicketSelector
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
+     * @throws InvalidDataTypeException|ReflectionException
      */
     public function cancelTicketSelections()
     {
@@ -180,7 +179,7 @@ class ProcessTicketSelector
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
+     * @throws InvalidInterfaceException|ReflectionException
      */
     public function processTicketSelections()
     {
@@ -399,6 +398,7 @@ class ProcessTicketSelector
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     private function addTicketsToCart(array $valid)
     {
@@ -474,11 +474,11 @@ class ProcessTicketSelector
      *
      * @param EE_Ticket $ticket
      * @param int       $qty
-     * @return TRUE on success, FALSE on fail
+     * @return bool TRUE on success, FALSE on fail
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
-     * @throws EE_Error
+     * @throws EE_Error|ReflectionException
      */
     private function addTicketToCart(EE_Ticket $ticket, $qty = 1)
     {
@@ -515,7 +515,7 @@ class ProcessTicketSelector
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
-     * @throws InvalidArgumentException
+     * @throws InvalidArgumentException|ReflectionException
      */
     private function processSuccessfulCart($tickets_added)
     {

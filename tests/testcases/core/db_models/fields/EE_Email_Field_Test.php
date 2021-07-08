@@ -1,4 +1,7 @@
 <?php
+
+use EventEspresso\core\domain\services\validation\email\EmailValidationService;
+
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
 
@@ -20,25 +23,43 @@ class EE_Email_Field_Test extends EE_UnitTestCase
      */
     protected $_field;
 
+    /**
+     * @var EE_Registration_Config
+     */
+    public $registration_config;
+
+
+    /**
+     * @throws EE_Error
+     */
     public function setUp()
     {
         parent::setUp();
         $this->_field = EEM_Attendee::instance()->field_settings_for('ATT_email');
         $this->assertInstanceOf('EE_Email_Field', $this->_field);
+        // $this->registration_config                 = $this->loader()->getShared('EE_Registration_Config');
+        $this->registration_config                 = EE_Config::instance()->registration;
+
+        // $this->loader()->remove('EE_Registration_Config', $this->registration_config);
+        // $this->registration_config = $this->loader()->getShared('EE_Registration_Config');
+        // nuke EmailValidationService so that it gets replaced
+        // $validator = $this->loader()->getShared(EmailValidationService::class);
+        // $this->loader()->remove(EmailValidationService::class, $validator);
     }
 
 
     public function tearDown()
     {
         $this->_field = null;
+        // $this->registration_config = $this->registration_config;
         parent::tearDown();
     }
 
 
-    public function test_getSchemaType()
-    {
-        $this->assertEquals(array('string','null'), $this->_field->getSchemaType());
-    }
+    // public function test_getSchemaType()
+    // {
+    //     $this->assertEquals(array('string','null'), $this->_field->getSchemaType());
+    // }
 
     public function test_prepare_for_set()
     {
@@ -52,22 +73,45 @@ class EE_Email_Field_Test extends EE_UnitTestCase
             $email_validation_levels['i18n_dns'] = true;
         }
         foreach ($email_validation_levels as $email_validation_level => $test_should_pass) {
-            EE_Registry::instance()->CFG->registration->email_validation_level = $email_validation_level;
+            $this->registration_config->email_validation_level = $email_validation_level;
             $this->set_email_field_value($email_validation_level, $test_should_pass);
         }
     }
 
 
     /**
-     * @param bool $test_should_pass
-     * @throws \EE_Error
+     * @param string $validation_being_tested
+     * @param bool   $test_should_pass
      */
     public function set_email_field_value($validation_being_tested, $test_should_pass = true)
     {
+        // echo "\n\n" . strtoupper(__METHOD__);
+        // \EEH_Debug_Tools::printr(spl_object_hash($this->registration_config), ' > spl', __FILE__, __LINE__);
+        // \EEH_Debug_Tools::printr(
+        //     $this->registration_config->email_validation_level,
+        //     ' > email_validation_level',
+        //     __FILE__,
+        //     __LINE__
+        // );
+        // 0000000029632c9d000000007c419ece
+        // 0000000029633ea9000000007c419ece
         $international_email_address = 'jägerjürgen@deutschland.com';
-        /** @var \EE_Email_Field $email_field */
+        /** @var EE_Email_Field $email_field */
         $email_field          = $this->_field;
+        $email_field->setShowErrors();
         $actual_email_address = $email_field->prepare_for_set($international_email_address);
+
+        //
+        // \EEH_Debug_Tools::printr(
+        //     $this->registration_config->email_validation_level,
+        //     '$this->registration_config->email_validation_level',
+        //     __FILE__,
+        //     __LINE__
+        // );
+        $this->assertEquals(
+            $this->registration_config->email_validation_level,
+            $validation_being_tested
+        );
         if ($test_should_pass) {
             $this->assertEquals(
                 $international_email_address,
@@ -96,10 +140,10 @@ class EE_Email_Field_Test extends EE_UnitTestCase
         }
     }
 
-    public function test_get_wpdb_data_type()
-    {
-        $this->assertEquals('%s', $this->_field->get_wpdb_data_type());
-    }
+    // public function test_get_wpdb_data_type()
+    // {
+    //     $this->assertEquals('%s', $this->_field->get_wpdb_data_type());
+    // }
 
 }
 // End of file EE_Email_Field_Test.php

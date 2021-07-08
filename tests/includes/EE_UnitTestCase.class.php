@@ -8,6 +8,7 @@
  */
 
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\loaders\LoaderInterface;
 
 /**
  * This is used to override any existing WP_UnitTestCase methods that need specific handling in EE.  We
@@ -20,6 +21,18 @@ use EventEspresso\core\services\loaders\LoaderFactory;
 class EE_UnitTestCase extends WP_UnitTestCase
 {
 
+    const error_code_undefined_property = 8;
+
+    /**
+     * @var PHPUnit\Framework\float
+     */
+    const FLOATING_POINT_DELTA = 0.000001;
+
+    /**
+     * @var boolean
+     */
+    public static $debug = false;    // true false
+
     /**
      * @var EE_UnitTest_Factory
      */
@@ -31,8 +44,12 @@ class EE_UnitTestCase extends WP_UnitTestCase
      * @var array
      */
     protected $wp_filters_saved = NULL;
-    const error_code_undefined_property = 8;
+
+    /**
+     * @var string
+     */
     protected $_cached_SERVER_NAME = NULL;
+
     /**
      *
      * @var WP_User
@@ -56,7 +73,6 @@ class EE_UnitTestCase extends WP_UnitTestCase
      */
     protected $_default_dates;
 
-
     /**
      * @var EE_Test_Scenario_Factory
      */
@@ -68,25 +84,30 @@ class EE_UnitTestCase extends WP_UnitTestCase
      * this can be helpful if you are getting weird errors happening,
      * but the test name is not being reported anywhere.
      * Just uncomment this method as well as the first line of setUp() below.
-     *
-     * @throws \EE_Error
      */
-    // public static function setUpBeforeClass() {
-    //     echo "\n\n\n" . get_called_class() . "\n\n";
-    //     parent::setUpBeforeClass();
-    //     \EventEspresso\core\services\Benchmark::startTimer(get_called_class());
-    // }
+    public static function setUpBeforeClass() {
+        if (EE_UnitTestCase::$debug) {
+            echo "\n\n\nsetUpBeforeClass: " . strtoupper(get_called_class()) . "\n\n";
+        }
+        parent::setUpBeforeClass();
+        // \EventEspresso\core\services\Benchmark::startTimer(get_called_class());
+    }
 
-    // public static function tearDownAfterClass() {
-    //     // echo "\n\n\n" . get_called_class() . "\n\n";
-    //     \EventEspresso\core\services\Benchmark::stopTimer(get_called_class());
-    //     parent::tearDownAfterClass();
-    // }
+    public static function tearDownAfterClass() {
+        if (EE_UnitTestCase::$debug) {
+            echo "\n\ntearDownAfterClass: " . get_called_class() . "\n";
+        }
+        // \EventEspresso\core\services\Benchmark::stopTimer(get_called_class());
+        parent::tearDownAfterClass();
+    }
 
 
     public function setUp()
     {
-        // echo "\n\n" . strtoupper($this->getName()) . '()';
+        if (EE_UnitTestCase::$debug) {
+            echo "\n\n\n" . strtoupper($this->getName()) . "()\n";
+            echo "\n  BEGIN: " . __METHOD__ . '()';
+        }
         //save the hooks state before WP_UnitTestCase actually gets its hands on it...
         //as it immediately adds a few hooks we might not want to backup
         global $auto_made_thing_seed, $wp_filter, $wp_actions, $merged_filters, $wp_current_filter, $wpdb, $current_user;
@@ -96,6 +117,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
             'merged_filters' => $merged_filters,
             'wp_current_filter' => $wp_current_filter
         );
+        // $wp_filter = $wp_actions = $merged_filters = $wp_current_filter = [];
         $this->_orig_current_user = $current_user instanceof WP_User ? clone $current_user : new WP_User(1);
         parent::setUp();
         $auto_made_thing_seed = 1;
@@ -110,27 +132,18 @@ class EE_UnitTestCase extends WP_UnitTestCase
         add_filter('FHEE__EEH_Activation__create_table__short_circuit', '__return_true');
         add_filter('FHEE__EEH_Activation__add_column_if_it_doesnt_exist__short_circuit', '__return_true');
         add_filter('FHEE__EEH_Activation__drop_index__short_circuit', '__return_true');
-
+        $this->setUserCapsForWp41();
         // load factories
-        EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_TESTS_DIR . 'includes/factories');
         $this->factory = new EE_UnitTest_Factory();
-
-        //IF we detect we're running tests on WP4.1, then we need to make sure current_user_can tests pass by implementing
-        //updating all_caps when `WP_User::add_cap` is run (which is fixed in later wp versions).  So we hook into the
-        // 'user_has_cap' filter to do this
-        $_wp_test_version = getenv('WP_VERSION');
-        if ($_wp_test_version && $_wp_test_version === '4.1') {
-            add_filter('user_has_cap', function ($all_caps, $caps, $args, WP_User $WP_User) {
-                $WP_User->get_role_caps();
-
-                return $WP_User->allcaps;
-            }, 10, 4);
-        }
-        //tell EE_Registry to do a hard reset
-        add_filter( 'FHEE__EE_Registry__reset__hard', '__return_true');
-        do_action('AHEE__EventEspresso_core_services_loaders_CachingLoader__resetCache');
         // turn off caching for any loaders in use during tests
         add_filter('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache', '__return_true');
+        add_filter('FHEE__EE_System__canLoadBlocks', '__return_false');
+        // do_action('AHEE__EE_Bootstrap__load_espresso_addons');
+        EE_Registry::instance()->SSN = $this->loader()->getShared('EE_Session_Mock');
+        // $this->setCoreConfig();
+        if (EE_UnitTestCase::$debug) {
+            echo "\n    FINISH: " . __METHOD__ . '()';
+        }
     }
 
 
@@ -151,14 +164,24 @@ class EE_UnitTestCase extends WP_UnitTestCase
         }
     }
 
+
+    /**
+     * @throws EE_Error
+     */
     public function tearDown()
     {
+        if (EE_UnitTestCase::$debug) {
+            echo "\n  BEGIN: " . __METHOD__ . '()';
+        }
+        $this->scenarios = null;
         parent::tearDown();
-        global $wp_filter, $wp_actions, $merged_filters, $wp_current_filter, $current_user;
-        $wp_filter = $this->wp_filters_saved['wp_filter'];
-        $wp_actions = $this->wp_filters_saved['wp_actions'];
-        $merged_filters = $this->wp_filters_saved['merged_filters'];
-        $wp_current_filter = $this->wp_filters_saved['wp_current_filter'];
+        if ($this->wp_filters_saved !== null) {
+            global $wp_filter, $wp_actions, $merged_filters, $wp_current_filter, $current_user;
+            $wp_filter         = $this->wp_filters_saved['wp_filter'];
+            $wp_actions        = $this->wp_filters_saved['wp_actions'];
+            $merged_filters    = $this->wp_filters_saved['merged_filters'];
+            $wp_current_filter = $this->wp_filters_saved['wp_current_filter'];
+        }
         $current_user = $this->_orig_current_user;
         $this->_detect_accidental_txn_commit();
         $notices = EE_Error::get_notices(false, false, true);
@@ -174,8 +197,49 @@ class EE_UnitTestCase extends WP_UnitTestCase
             // it won't be entirely accurate, but might help
             // throw new Exception( $error_message );
         }
+        //tell EE_Registry to do a hard reset
+        add_filter('FHEE__EE_Registry__reset__hard', '__return_true');
+        do_action('AHEE__EventEspresso_core_services_loaders_CachingLoader__resetCache');
+        remove_filter('FHEE__EE_Registry__reset__hard', '__return_true');
+        remove_filter('FHEE__EE_System__canLoadBlocks', '__return_false');
         // turn caching back on for any loaders in use
         remove_all_filters('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache');
+        if (EE_UnitTestCase::$debug) {
+            echo "\n  FINISH: " . __METHOD__ . '()';
+        }
+    }
+
+
+    /**
+     * @return LoaderInterface
+     * @since   $VID:$
+     */
+    protected function loader()
+    {
+        static $loader;
+        if (! $loader instanceof LoaderInterface) {
+            $loader = LoaderFactory::getLoader();
+        }
+        return $loader;
+    }
+
+    protected function setUserCapsForWp41()
+    {
+        // IF we detect we're running tests on WP4.1,
+        // then we need to make sure current_user_can tests pass by updating all_caps when `WP_User::add_cap` is run
+        // (which is fixed in later wp versions).  So we hook into the 'user_has_cap' filter to do this
+        $_wp_test_version = getenv('WP_VERSION');
+        if ($_wp_test_version && $_wp_test_version === '4.1') {
+            add_filter(
+                'user_has_cap',
+                function ($all_caps, $caps, $args, WP_User $WP_User) {
+                    $WP_User->get_role_caps();
+                    return $WP_User->allcaps;
+                },
+                10,
+                4
+            );
+        }
     }
 
     protected function loadTestScenarios()
@@ -262,17 +326,15 @@ class EE_UnitTestCase extends WP_UnitTestCase
      */
     public function setMaintenanceMode($level = 0)
     {
-        EE_Registry::instance()->load_core('Maintenance_Mode');
+        $this->loader()->getShared('EE_Maintenance_Mode');
         switch ($level) {
-            case EE_Maintenance_Mode::level_0_not_in_maintenance :
-                $level = EE_Maintenance_Mode::level_0_not_in_maintenance;
-                break;
             case EE_Maintenance_Mode::level_1_frontend_only_maintenance :
                 $level = EE_Maintenance_Mode::level_1_frontend_only_maintenance;
                 break;
             case EE_Maintenance_Mode::level_2_complete_maintenance :
                 $level = EE_Maintenance_Mode::level_2_complete_maintenance;
                 break;
+            case EE_Maintenance_Mode::level_0_not_in_maintenance :
             default :
                 $level = EE_Maintenance_Mode::level_0_not_in_maintenance;
                 break;
@@ -289,8 +351,8 @@ class EE_UnitTestCase extends WP_UnitTestCase
      */
     public function setCoreConfig()
     {
-        EE_Registry::instance()->load_core('Config');
-        EE_Registry::instance()->load_core('Network_Config');
+        EE_Registry::instance()->CFG     = $this->loader()->getShared('EE_Config');
+        EE_Registry::instance()->NET_CFG = $this->loader()->getShared('EE_Network_Config');
     }
 
 
@@ -351,14 +413,21 @@ class EE_UnitTestCase extends WP_UnitTestCase
     /**
      * This loads the various admin mock files required for tests.
      *
+     * @param string $page
      * @since  4.3.0
      */
-    public function loadAdminMocks()
+    public function loadAdminMocks($page = '')
     {
         require_once EE_TESTS_DIR . 'mocks/admin/EE_Admin_Mocks.php';
         require_once EE_TESTS_DIR . 'mocks/admin/admin_mock_valid/Admin_Mock_Valid_Admin_Page.core.php';
-        require_once EE_TESTS_DIR . 'mocks/admin/pricing/espresso_events_Pricing_Hooks_Mock.php';
-        require_once EE_TESTS_DIR . 'mocks/admin/registrations/EE_Registrations_List_Table_Mock.php';
+        switch ($page) {
+            case 'events' :
+                require_once EE_TESTS_DIR . 'mocks/admin/pricing/espresso_events_Pricing_Hooks_Mock.php';
+                break;
+            case 'registrations' :
+                require_once EE_TESTS_DIR . 'mocks/admin/registrations/EE_Registrations_List_Table_Mock.php';
+                break;
+        }
     }
 
 
@@ -383,6 +452,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
                 require_once EE_TESTS_DIR . 'mocks/admin/transactions/Transactions_Admin_Page_Mock.php';
                 break;
             case 'messages' :
+                require_once EE_PLUGIN_DIR . 'core/libraries/messages/EE_Message_Resource_Manager.lib.php';
                 require_once EE_TESTS_DIR . 'mocks/admin/messages/Messages_Admin_Page_Mock.php';
                 break;
 
@@ -658,63 +728,66 @@ class EE_UnitTestCase extends WP_UnitTestCase
      *
      * @return array of data in post format from the save action.
      */
-    protected function _get_save_data($format = 'Y-m-d h:i a', $prefix = '', $row = '1', $timezone = 'America/Vancouver')
-    {
-        $data = array(
-            'starting_ticket_datetime_rows' => array(
-                $row => ''
-            ),
-            'ticket_datetime_rows' => array(
-                $row => '1'
-            ),
-            'datetime_IDs' => '',
-            'edit_event_datetimes' => array(
-                $row => array(
-                    'DTT_EVT_end' => $this->_default_dates['DTT_end']->format($format),
-                    'DTT_EVT_start' => $this->_default_dates['DTT_start']->format($format),
-                    'DTT_ID' => '0',
-                    'DTT_name' => $prefix . ' Datetime A',
+    protected function _get_save_data(
+        $format = 'Y-m-d h:i a',
+        $prefix = '',
+        $row = '1',
+        $timezone = 'America/Vancouver'
+    ) {
+        return [
+            'starting_ticket_datetime_rows' => [
+                $row => '',
+            ],
+            'ticket_datetime_rows'          => [
+                $row => '1',
+            ],
+            'datetime_IDs'                  => '',
+            'edit_event_datetimes'          => [
+                $row => [
+                    'DTT_EVT_end'     => $this->_default_dates['DTT_end']->format($format),
+                    'DTT_EVT_start'   => $this->_default_dates['DTT_start']->format($format),
+                    'DTT_ID'          => '0',
+                    'DTT_name'        => $prefix . ' Datetime A',
                     'DTT_description' => $prefix . ' Lorem Ipsum Emitetad',
-                    'DTT_reg_limit' => '',
-                    'DTT_order' => $row
-                )
-            ),
-            'edit_tickets' => array(
-                $row => array(
-                    'TKT_ID' => '0',
-                    'TKT_base_price' => '0',
+                    'DTT_reg_limit'   => '',
+                    'DTT_order'       => $row,
+                ],
+            ],
+            'edit_tickets'                  => [
+                $row => [
+                    'TKT_ID'            => '0',
+                    'TKT_base_price'    => '0',
                     'TKT_base_price_ID' => '1',
-                    'TTM_ID' => '0',
-                    'TKT_name' => $prefix . ' Ticket A',
-                    'TKT_description' => $prefix . ' Lorem Ipsum Tekcit',
-                    'TKT_start_date' => $this->_default_dates['TKT_start']->format($format),
-                    'TKT_end_date' => $this->_default_dates['TKT_end']->format($format),
-                    'TKT_qty' => '',
-                    'TKT_uses' => '',
-                    'TKT_min' => '',
-                    'TKT_max' => '',
-                    'TKT_row' => '',
-                    'TKT_order' => $row,
-                    'TKT_taxable' => '0',
-                    'TKT_required' => '0',
-                    'TKT_price' => '0',
-                    'TKT_is_default' => '0'
-                )
-            ),
-            'edit_prices' => array(
-                $row => array(
-                    'PRT_ID' => '1',
-                    'PRC_ID' => '0',
-                    'PRC_amount' => '0',
-                    'PRC_name' => $prefix . ' Price A',
-                    'PRC_desc' => $prefix . ' Lorem Ipsum Ecirp',
+                    'TTM_ID'            => '0',
+                    'TKT_name'          => $prefix . ' Ticket A',
+                    'TKT_description'   => $prefix . ' Lorem Ipsum Tekcit',
+                    'TKT_start_date'    => $this->_default_dates['TKT_start']->format($format),
+                    'TKT_end_date'      => $this->_default_dates['TKT_end']->format($format),
+                    'TKT_qty'           => '',
+                    'TKT_uses'          => '',
+                    'TKT_min'           => '',
+                    'TKT_max'           => '',
+                    'TKT_row'           => '',
+                    'TKT_order'         => $row,
+                    'TKT_taxable'       => '0',
+                    'TKT_required'      => '0',
+                    'TKT_price'         => '0',
+                    'TKT_is_default'    => '0',
+                ],
+            ],
+            'edit_prices'                   => [
+                $row => [
+                    'PRT_ID'         => '1',
+                    'PRC_ID'         => '0',
+                    'PRC_amount'     => '0',
+                    'PRC_name'       => $prefix . ' Price A',
+                    'PRC_desc'       => $prefix . ' Lorem Ipsum Ecirp',
                     'PRC_is_default' => '1',
-                    'PRC_order' => $row
-                )
-            ),
-            'timezone_string' => $timezone
-        );
-        return $data;
+                    'PRC_order'      => $row,
+                ],
+            ],
+            'timezone_string'               => $timezone,
+        ];
     }
 
 
@@ -1018,6 +1091,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
     {
         global $wp_actions;
         unset(
+            $wp_actions['activate_plugin'],
             $wp_actions['AHEE__EE_System___detect_if_activation_or_upgrade__begin'],
             $wp_actions['FHEE__EE_System__parse_model_names'],
             $wp_actions['FHEE__EE_System__parse_implemented_model_names'],
@@ -1034,6 +1108,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
     protected function _stop_pretending_addon_hook_time()
     {
         global $wp_actions;
+        $wp_actions['activate_plugin'] = 1;
         $wp_actions['AHEE__EE_System___detect_if_activation_or_upgrade__begin'] = 1;
         $wp_actions['FHEE__EE_System__parse_model_names'] = 1;
         $wp_actions['FHEE__EE_System__parse_implemented_model_names'] = 1;
@@ -1300,7 +1375,6 @@ class EE_UnitTestCase extends WP_UnitTestCase
      *
      * @param array $ee_capabilities array of EE CAPS if you don't want the user to have ALL EE CAPS
      * @return WP_User
-     * @throws EE_Error
      */
     public function wp_admin_with_ee_caps($ee_capabilities = array())
     {
@@ -1383,7 +1457,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
     protected function loadShortcodesManagerAndShortcodes()
     {
         // load, register, and add shortcodes the new way
-        LoaderFactory::getLoader()->getShared(
+        $this->loader()->getShared(
             'EventEspresso\core\services\shortcodes\ShortcodesManager',
             array(
                 // and the old way, but we'll put it under control of the new system

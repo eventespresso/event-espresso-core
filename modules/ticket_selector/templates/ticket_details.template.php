@@ -1,4 +1,7 @@
 <?php
+
+use EventEspresso\modules\ticket_selector\TicketDetails;
+
 /** @var boolean $show_ticket_details */
 /** @var boolean $display_ticket_price */
 /** @var boolean $event_is_expired */
@@ -10,7 +13,7 @@
 /** @var string $ticket_details_row_class */
 /** @var string $ticket_details_css_id */
 /** @var string $price_breakdown_heading */
-/** @var \EventEspresso\modules\ticket_selector\TicketDetails $ticket_details */
+/** @var TicketDetails $ticket_details */
 ?>
 <?php if ($show_ticket_details) : ?>
     <tr class="tckt-slctr-tkt-details-tr <?php echo $ticket_details_row_class; ?>">
@@ -87,30 +90,29 @@
                                 <?php echo apply_filters(
                                     'FHEE__ticket_selector_chart_template__ticket_details_purchasable_quantities_min_qty',
                                     esc_html__('Minimum Qty:', 'event_espresso')
-                                ); ?></span><?php echo $ticket->min() > 0 ? $ticket->min() : 0; ?>
-                            <?php
-                            if ($ticket->min() > $remaining) {
-                                ?> &nbsp; <span
-                                class="important-notice small-text">
+                                ); ?>
+                            </span>
+                            <?php echo $ticket->min() > 0 ? $ticket->min() : 0; ?>
+                            <?php if ($ticket->min() > $remaining) { ?>
+                                <span class="important-notice small-text">
                                 <?php echo apply_filters(
                                     'FHEE__ticket_selector_chart_template__ticket_details_purchasable_quantities_min_qty_message',
                                     esc_html__(
                                         'The Minimum Quantity purchasable for this ticket exceeds the number of spaces remaining',
                                         'event_espresso'
                                     )
-                                ); ?></span>
-                            <?php
-                            } ?><br/>
+                                ); ?>
+                                </span>
+                            <?php } ?><br/>
                             <?php // $max = min( $max, $max_atndz );?>
                             <span class="ticket-details-label-spn drk-grey-text">
                                 <?php echo apply_filters(
                                     'FHEE__ticket_selector_chart_template__ticket_details_purchasable_quantities_max_qty',
                                     esc_html__('Maximum Qty:', 'event_espresso')
-                                ); ?></span>
-                            <?php echo $ticket->max() === EE_INF ? esc_html__(
-                                'no limit',
-                                'event_espresso'
-                            )
+                                ); ?>
+                            </span>
+                            <?php echo $ticket->max() === EE_INF
+                                ? esc_html__('no limit', 'event_espresso')
                                 : max($ticket->max(), 1); ?><br/>
                         </section>
                         <br/>
@@ -147,7 +149,7 @@
                     <?php } ?>
 
                     <?php
-                    $datetimes = $ticket->datetimes_ordered($event_is_expired, false);
+                    $datetimes          = $ticket->datetimes_ordered($event_is_expired, false);
                     $chart_column_width = $show_ticket_sale_columns ? ' ee-fourth-width' : ' ee-half-width';
                     if (! empty($datetimes)) { ?>
                         <section class="tckt-slctr-tkt-datetimes-sctn">
@@ -155,7 +157,8 @@
                                 <?php echo apply_filters(
                                     'FHEE__ticket_selector_chart_template__ticket_details_event_access_heading',
                                     esc_html__('Access', 'event_espresso')
-                                ); ?></h5>
+                                ); ?>
+                            </h5>
                             <span class="drk-grey-text small-text no-bold"> -
                                 <?php echo apply_filters(
                                     'FHEE__ticket_selector_chart_template__ticket_details_event_access_message',
@@ -163,57 +166,67 @@
                                         'This option allows access to the following dates and times.',
                                         'event_espresso'
                                     )
-                                ); ?></span>
+                                ); ?>
+                            </span>
                             <div class="tckt-slctr-tkt-details-tbl-wrap-dv">
                                 <table class="tckt-slctr-tkt-details-tbl">
                                     <thead>
                                     <tr>
                                         <th class="tckt-slctr-tkt-details-date-th">
-                                            <span class="dashicons dashicons-calendar"></span><span
-                                                class="small-text">
-                                                <?php echo apply_filters(
-                                                    'FHEE__ticket_selector_chart_template__ticket_details_event_access_table_event_date',
-                                                    esc_html__('Date ', 'event_espresso')
-                                                ); ?></span>
+                                            <span class="dashicons dashicons-calendar"></span>
+                                            <span class="small-text">
+                                                    <?php echo apply_filters(
+                                                        'FHEE__ticket_selector_chart_template__ticket_details_event_access_table_event_date',
+                                                        esc_html__('Date ', 'event_espresso')
+                                                    ); ?>
+                                                </span>
                                         </th>
                                         <th class="tckt-slctr-tkt-details-time-th <?php echo $chart_column_width; ?>">
-                                            <span class="dashicons dashicons-clock"></span><span
-                                                class="small-text">
-                                                <?php esc_html_e(
-                                                    'Time ',
-                                                    'event_espresso'
-                                                ); ?></span>
+                                            <span class="dashicons dashicons-clock"></span>
+                                            <span class="small-text">
+                                                    <?php esc_html_e(
+                                                        'Time ',
+                                                        'event_espresso'
+                                                    ); ?>
+                                                </span>
                                         </th>
                                         <?php if ($show_ticket_sale_columns) : ?>
                                             <th class="tckt-slctr-tkt-details-this-ticket-sold-th ee-fourth-width cntr">
-                                            <span class="smaller-text">
-                                                <?php echo apply_filters(
-                                                    'FHEE__ticket_selector_chart_template__ticket_details_event_access_table_this_ticket_sold',
-                                                    sprintf(esc_html__('Sold', 'event_espresso'), '<br/>')
-                                                ); ?></span>
+                                                <span class="smaller-text">
+                                                    <?php echo apply_filters(
+                                                        'FHEE__ticket_selector_chart_template__ticket_details_event_access_table_this_ticket_sold',
+                                                        sprintf(esc_html__('Sold', 'event_espresso'), '<br/>')
+                                                    ); ?>
+                                                </span>
                                             </th>
                                             <th class="tckt-slctr-tkt-details-this-ticket-left-th ee-fourth-width cntr">
-                                            <span class="smaller-text">
-                                                <?php echo apply_filters(
-                                                    'FHEE__ticket_selector_chart_template__ticket_details_event_access_table_this_ticket_left',
-                                                    sprintf(esc_html__('Remaining', 'event_espresso'), '<br/>')
-                                                ); ?></span>
+                                                <span class="smaller-text">
+                                                    <?php echo apply_filters(
+                                                        'FHEE__ticket_selector_chart_template__ticket_details_event_access_table_this_ticket_left',
+                                                        sprintf(esc_html__('Remaining', 'event_espresso'), '<br/>')
+                                                    ); ?>
+                                                </span>
                                             </th>
                                             <th
                                                 class="tckt-slctr-tkt-details-total-tickets-sold-th ee-fourth-width cntr">
-                                            <span class="smaller-text">
-                                                <?php echo apply_filters(
-                                                    'FHEE__ticket_selector_chart_template__ticket_details_event_access_table_total_ticket_sold',
-                                                    sprintf(esc_html__('Total%sSold', 'event_espresso'), '<br/>')
-                                                ); ?></span>
+                                                <span class="smaller-text">
+                                                    <?php echo apply_filters(
+                                                        'FHEE__ticket_selector_chart_template__ticket_details_event_access_table_total_ticket_sold',
+                                                        sprintf(esc_html__('Total%sSold', 'event_espresso'), '<br/>')
+                                                    ); ?>
+                                                </span>
                                             </th>
                                             <th
                                                 class="tckt-slctr-tkt-details-total-tickets-left-th ee-fourth-width cntr">
-                                            <span class="smaller-text">
-                                                <?php echo apply_filters(
-                                                    'FHEE__ticket_selector_chart_template__ticket_details_event_access_table_total_ticket_left',
-                                                    sprintf(esc_html__('Total Spaces%sLeft', 'event_espresso'), '<br/>')
-                                                ); ?></span>
+                                                <span class="smaller-text">
+                                                    <?php echo apply_filters(
+                                                        'FHEE__ticket_selector_chart_template__ticket_details_event_access_table_total_ticket_left',
+                                                        sprintf(
+                                                            esc_html__('Total Spaces%sLeft', 'event_espresso'),
+                                                            '<br/>'
+                                                        )
+                                                    ); ?>
+                                                </span>
                                             </th>
                                         <?php endif; // end $show_ticket_sale_columns conditional ?>
                                     </tr>
@@ -225,15 +238,19 @@
                                             ?>
 
                                             <tr>
-                                                <td data-th="<?php
-                                                                echo apply_filters(
-                                                                    'FHEE__ticket_selector_chart_template__ticket_details_event_access_table_event_date',
-                                                                    esc_html__('Event Date ', 'event_espresso')
-                                                                ); ?>" class="small-text">
+                                                <?php
+                                                $event_date_label = apply_filters(
+                                                    'FHEE__ticket_selector_chart_template__ticket_details_event_access_table_event_date',
+                                                    esc_html__('Event Date ', 'event_espresso')
+                                                ); ?>
+                                                <td data-th="<?php echo $event_date_label; ?>"
+                                                    class="small-text">
                                                     <?php $datetime_name = $datetime->name(); ?>
-                                                    <?php echo ! empty($datetime_name) ? '<b>'
-                                                                                         . $datetime_name
-                                                                                         . '</b><br/>' : ''; ?>
+                                                    <?php
+                                                    echo ! empty($datetime_name)
+                                                        ? '<b>' . $datetime_name . '</b><br/>'
+                                                        : '';
+                                                    ?>
                                                     <?php echo $datetime->date_range(
                                                         $date_format,
                                                         esc_html__(' to  ', 'event_espresso')
@@ -247,47 +264,57 @@
                                                     ); ?>
                                                 </td>
                                                 <?php if ($show_ticket_sale_columns) : ?>
-                                                    <td data-th="<?php
-                                                                    echo apply_filters(
-                                                                        'FHEE__ticket_selector_chart_template__ticket_details_event_access_table_this_ticket_sold',
-                                                                        esc_html__('Sold', 'event_espresso')
-                                                                    ); ?>" class="cntr small-text">
+                                                    <?php
+                                                    $sold_label = apply_filters(
+                                                        'FHEE__ticket_selector_chart_template__ticket_details_event_access_table_this_ticket_sold',
+                                                        esc_html__('Sold', 'event_espresso')
+                                                    ); ?>
+                                                    <td data-th="<?php echo $sold_label; ?>"
+                                                        class="cntr small-text">
                                                         <?php echo $ticket->sold(); ?>
                                                     </td>
-                                                    <td data-th="<?php
-                                                                    echo apply_filters(
-                                                                        'FHEE__ticket_selector_chart_template__ticket_details_event_access_table_this_ticket_left',
-                                                                        esc_html__('Remaining', 'event_espresso')
-                                                                    ); ?>" class="cntr small-text">
+                                                    <?php
+                                                    $remaining_label = apply_filters(
+                                                        'FHEE__ticket_selector_chart_template__ticket_details_event_access_table_this_ticket_left',
+                                                        esc_html__('Remaining', 'event_espresso')
+                                                    ); ?>
+                                                    <td data-th="<?php echo $remaining_label; ?>" class="cntr small-text">
                                                         <?php echo $remaining === EE_INF
                                                             ? '<span class="smaller-text">' . esc_html__(
                                                                 'unlimited ',
                                                                 'event_espresso'
-                                                            ) . '</span>' : $remaining; ?>
+                                                            ) . '</span>'
+                                                            : $remaining;
+                                                        ?>
                                                     </td>
-                                                    <td data-th="<?php
-                                                                    echo apply_filters(
-                                                                        'FHEE__ticket_selector_chart_template__ticket_details_event_access_table_total_ticket_sold',
-                                                                        esc_html__('Total Sold', 'event_espresso')
-                                                                    ); ?>" class="cntr small-text">
+                                                    <?php
+                                                    $total_sold_label = apply_filters(
+                                                        'FHEE__ticket_selector_chart_template__ticket_details_event_access_table_total_ticket_sold',
+                                                        esc_html__('Total Sold', 'event_espresso')
+                                                    ); ?>
+                                                    <td data-th="<?php echo $total_sold_label; ?>" class="cntr small-text">
                                                         <?php echo $datetime->sold(); ?>
                                                     </td>
                                                     <?php $tkts_left = $datetime->sold_out()
                                                         ? '<span class="sold-out smaller-text">' . esc_html__(
                                                             'Sold&nbsp;Out',
                                                             'event_espresso'
-                                                        ) . '</span>' : $datetime->spaces_remaining(); ?>
-                                                    <td data-th="<?php
-                                                                    echo apply_filters(
-                                                                        'FHEE__ticket_selector_chart_template__ticket_details_event_access_table_total_ticket_left',
-                                                                        esc_html__('Total Spaces Left', 'event_espresso')
-                                                                    ); ?>" class="cntr small-text">
-                                                        <?php echo $tkts_left === EE_INF ? '<span class="smaller-text">'
-                                                                                           . esc_html__(
-                                                                                               'unlimited ',
-                                                                                               'event_espresso'
-                                                                                           )
-                                                                                           . '</span>' : $tkts_left; ?>
+                                                        ) . '</span>'
+                                                        : $datetime->spaces_remaining();
+                                                    ?>
+                                                    <?php
+                                                    $spaces_left_label = apply_filters(
+                                                        'FHEE__ticket_selector_chart_template__ticket_details_event_access_table_total_ticket_left',
+                                                        esc_html__('Total Spaces Left', 'event_espresso')
+                                                    ); ?>
+                                                    <td data-th="<?php echo $spaces_left_label; ?>" class="cntr small-text">
+                                                        <?php
+                                                        echo $tkts_left === EE_INF
+                                                            ? '<span class="smaller-text">'
+                                                              . esc_html__('unlimited ', 'event_espresso')
+                                                              . '</span>'
+                                                            : $tkts_left;
+                                                        ?>
                                                     </td>
                                                 <?php endif; // end $show_ticket_sale_columns conditional ?>
                                             </tr>

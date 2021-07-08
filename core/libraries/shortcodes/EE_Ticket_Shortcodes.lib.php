@@ -113,11 +113,11 @@ class EE_Ticket_Shortcodes extends EE_Shortcodes
                 break;
 
             case '[TICKET_PRICE]':
-                return EEH_Template::format_currency($this->_ticket->get('TKT_price'));
+                return $this->_ticket->pretty_price();
                 break;
 
             case '[TICKET_PRICE_WITH_TAXES]':
-                return EEH_Template::format_currency($this->_ticket->get_ticket_total_with_taxes());
+                return EEH_Money::formatForLocale($this->_ticket->get_ticket_total_with_taxes(), '', 4);
                 break;
 
             case '[TKT_QTY_PURCHASED]':

@@ -196,11 +196,12 @@ abstract class EE_Admin_Hooks extends EE_Base
      * constructor
      *
      * @param EE_Admin_Page $admin_page the calling admin_page_object
+     * @throws EE_Error
      */
-    public function __construct(EE_Admin_Page $adminpage)
+    public function __construct(EE_Admin_Page $admin_page)
     {
 
-        $this->_adminpage_obj = $adminpage;
+        $this->_adminpage_obj = $admin_page;
         $this->_req_data = array_merge($_GET, $_POST);
         $this->_set_defaults();
         $this->_set_hooks_properties();

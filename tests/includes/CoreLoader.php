@@ -2,11 +2,17 @@
 
 namespace EETests\bootstrap;
 
+use DomainException;
 use EE_Dependency_Map;
 use EE_Registry;
 use EEH_Activation;
 use EE_Psr4AutoloaderInit;
+use EEH_Autoloader;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\Benchmark;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use InvalidArgumentException;
 
 class CoreLoader
 {
@@ -21,7 +27,7 @@ class CoreLoader
         $this->requireTestCaseParents();
         $this->bootstrapMockAddon();
         $this->onShutdown();
-        \EventEspresso\core\services\Benchmark::writeResultsAtShutdown(
+        Benchmark::writeResultsAtShutdown(
             EVENT_ESPRESSO_UPLOAD_DIR . 'logs/benchmarking-master.html',  false
         );
     }
@@ -143,10 +149,10 @@ class CoreLoader
 
 
     /**
-     * @throws \DomainException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \InvalidArgumentException
+     * @throws DomainException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
      */
     public function setupDependencyMap()
     {
@@ -199,6 +205,7 @@ class CoreLoader
         //Load the EE_specific testing tools
         require EE_TESTS_DIR . 'includes/EE_UnitTestCase.class.php';
         require EE_TESTS_DIR . 'includes/EE_REST_TestCase.php';
+        EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_TESTS_DIR . 'includes/factories');
     }
 
 

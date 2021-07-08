@@ -50,6 +50,8 @@
 		</listener>
 	</listeners>
 	<php>
-		<ini name="display_errors" value="1" />
+        <ini name="error_reporting" value="E_ALL"/>
+        <ini name="display_errors" value="On"/>
+        <ini name="display_startup_errors" value="On"/>
 	</php>
 </phpunit>

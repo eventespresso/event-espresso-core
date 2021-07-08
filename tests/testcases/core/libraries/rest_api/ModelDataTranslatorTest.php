@@ -1,4 +1,6 @@
 <?php
+
+use EventEspresso\core\domain\entities\DbSafeDateTime;
 use EventEspresso\core\libraries\rest_api\ModelDataTranslator;
 use EventEspresso\core\libraries\rest_api\RestException;
 use PHPUnit\Framework\Exception;
@@ -25,26 +27,26 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
      */
     public function timestampDataProvider()
     {
-        return array(
-            array('2018-02-21T06:09:37+00:00', 1519193377, 'UTC'),
-            array('2018-02-21T06:09:37+10:00', 1519157377, 'UTC'),
-            array('2018-02-21T06:09:37-03:30', 1519205977, 'UTC'),
-            array('2018-02-21T06:09:37', 1519211377, 'America/New_York'),
-            array('2018-02-21T06:09:37-03:30', 1519205977, 'America/New_York'),
-            array('2018-02-21T06:09:37Z', 1519193377, 'UTC'),
-        );
+        return [
+            ['2018-02-21T06:09:37+00:00', 1519193377, 'UTC'],
+            ['2018-02-21T06:09:37+10:00', 1519157377, 'UTC'],
+            ['2018-02-21T06:09:37-03:30', 1519205977, 'UTC'],
+            ['2018-02-21T06:09:37', 1519211377, 'America/New_York'],
+            ['2018-02-21T06:09:37-03:30', 1519205977, 'America/New_York'],
+            ['2018-02-21T06:09:37Z', 1519193377, 'UTC'],
+        ];
     }
 
 
     public function invalidTimestampDataProvider()
     {
-        return array(
-            array('2018-02-21T06:09:37+00', 'UTC'),
-            array('2018-02-21T06:09:37+10:00:12', 'UTC'),
-            array('2018-02-21T06:09:37-3:30', 'UTC'),
-            array('2018-02-21T06:09:37Z+1:00', 'UTC'),
-            array('02-21-2018T06:09:37', 'UTC')
-        );
+        return [
+            ['2018-02-21T06:09:37+00', 'UTC'],
+            ['2018-02-21T06:09:37+10:00:12', 'UTC'],
+            ['2018-02-21T06:09:37-3:30', 'UTC'],
+            ['2018-02-21T06:09:37Z+1:00', 'UTC'],
+            ['02-21-2018T06:09:37', 'UTC'],
+        ];
     }
 
 
@@ -57,7 +59,7 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws RestException
-     * @group 11368
+     * @group        11368
      */
     public function testIncomingTimestampWithTimezoneInformation($timestamp, $expected_unixtimestamp, $timezone_string)
     {
@@ -79,7 +81,7 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
 
 
     /**
-     * @dataProvider invalidTimestampDataProvider
+     * @dataProvider          invalidTimestampDataProvider
      * @expectedException EventEspresso\core\libraries\rest_api\RestException
      * @expectedExceptionCode 400
      * @throws DomainException
@@ -87,7 +89,7 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
      * @throws InvalidArgumentException
      * @throws RestException
      * @throws Exception
-     * @group 11368
+     * @group                 11368
      */
     public function testIncomingInvalidTimestamp($timestamp, $timezone)
     {
@@ -106,23 +108,24 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
 
     public function testPrepareQueryParamsForRestApi()
     {
-        $mysql_date = '2015-01-01 00:00:00';
-        $statuses_in_query = array(
+        $mysql_date        = '2015-01-01 00:00:00';
+        $statuses_in_query = [
             EEM_Registration::status_id_cancelled,
             EEM_Registration::status_id_declined,
-        );
-        $model_query = array(
-            array(
-                'STS_ID'      => array(
+        ];
+        $model_query       = [
+            [
+                'STS_ID'      => [
                     'IN',
                     $statuses_in_query,
-                ),
+                ],
                 'REG_date'    => strtotime($mysql_date),
                 'REG_deleted' => false,
-            ),
+            ],
             'limit' => 10,
-        );
-        $rest_query = ModelDataTranslator::prepareQueryParamsForRestApi($model_query, EEM_Registration::instance());
+        ];
+        $rest_query        =
+            ModelDataTranslator::prepareQueryParamsForRestApi($model_query, EEM_Registration::instance());
         //assert the reg date matches and is in the right format
         $this->assertArrayHasKey('where', $rest_query);
         $this->assertArrayHasKey('REG_date', $rest_query['where']);
@@ -132,11 +135,12 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
         $this->assertEquals($statuses_in_query, $rest_query['where']['STS_ID'][1]);
         //assert limit got translated
         $this->assertArrayHasKey('limit', $rest_query);
-        $this->assertEquals(10, (int)$rest_query['limit']);
+        $this->assertEquals(10, (int) $rest_query['limit']);
         //assert booleans correctly translated
         $this->assertArrayHasKey('REG_deleted', $rest_query['where']);
         $this->assertEquals(false, $rest_query['where']['REG_deleted']);
     }
+
 
     /**
      * @group private-1
@@ -145,14 +149,15 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
     {
         $this->setExceptionExpected(RestException::class);
         // you can't filter by password unless you're an admin
-            ModelDataTranslator::prepareConditionsQueryParamsForModels(
-                array(
-                    'password' => 'imahacker'
-                ),
-                EEM_Event::instance(),
-                '4.8.36'
-            );
+        ModelDataTranslator::prepareConditionsQueryParamsForModels(
+            [
+                'password' => 'imahacker',
+            ],
+            EEM_Event::instance(),
+            '4.8.36'
+        );
     }
+
 
     /**
      * @group private-1
@@ -161,11 +166,11 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
     {
         // you can't filter by password unless you're an admin
         $this->authenticate_as_admin();
-        $password = 'imanadmin';
+        $password     = 'imanadmin';
         $query_params = ModelDataTranslator::prepareConditionsQueryParamsForModels(
-            array(
-                'password' => $password
-            ),
+            [
+                'password' => $password,
+            ],
             EEM_Event::instance(),
             '4.8.36'
         );
@@ -176,7 +181,6 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
     }
 
 
-
     /**
      * Verifies prepare_conditions_query_params_for_models works properly,
      * especially with datetimes which can be in UTC or local time
@@ -184,18 +188,20 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
     public function testPrepareConditionsQueryParamsForModels__gmtDatetimes()
     {
         $data_translator = new ModelDataTranslator();
-        $gmt_offsets = array(-12, -10.5, -9, -7.5, -6, -4.5, -3, -1.5, 0, 1.5, 3, 4.5, 6, 7.5, 9, 10.5, 12);
+        $gmt_offsets     = [-12, -10.5, -9, -7.5, -6, -4.5, -3, -1.5, 0, 1.5, 3, 4.5, 6, 7.5, 9, 10.5, 12];
         foreach ($gmt_offsets as $gmt_offset) {
             //set the offset
             update_option('gmt_offset', $gmt_offset);
             //set the current time from our timezone helper to more closely mimic how dates and times pass through our
             //model.  We can't use WP's `current_time` because wp ALWAYS uses offset directly if its present whereas EE
             //tries to coerce a closest matching timezone string for "invalid" offsets (PHP version < 5.6).
-            $datetime = new DateTime('now', new DateTimeZone(
+            $datetime       = new DateTime(
+                'now', new DateTimeZone(
                 EEH_DTT_Helper::get_timezone_string_from_gmt_offset($gmt_offset)
-            ));
+            )
+            );
             $now_local_time = $datetime->format(EE_Datetime_Field::mysql_timestamp_format);
-            $now_utc_time = current_time('mysql', true);
+            $now_utc_time   = current_time('mysql', true);
             //should always be not equal except when offset is 0
             if ($gmt_offset !== 0) {
                 $this->assertNotEquals($now_local_time, $now_utc_time, sprintf('For gmt offset %d', $gmt_offset));
@@ -203,15 +209,19 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
                 $this->assertEquals($now_local_time, $now_utc_time);
             }
             $model_data = $data_translator::prepareConditionsQueryParamsForModels(
-                array(
+                [
                     'EVT_created'      => mysql_to_rfc3339($now_local_time),
                     'EVT_modified_gmt' => mysql_to_rfc3339($now_utc_time),
-                ),
+                ],
                 \EEM_Event::instance(),
                 '4.8.36'
             );
             //verify the model data being inputted is in UTC
-            $this->assertDateWithinOneMinute($now_utc_time, date('Y-m-d H:i:s', $model_data['EVT_created']), 'Y-m-d H:i:s');
+            $this->assertDateWithinOneMinute(
+                $now_utc_time,
+                date('Y-m-d H:i:s', $model_data['EVT_created']),
+                'Y-m-d H:i:s'
+            );
             //NOT in local time
             $this->assertNotEquals(
                 $now_local_time,
@@ -225,12 +235,10 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
     }
 
 
-
     public function testIsGmtDateFieldName__success()
     {
         $this->assertTrue(ModelDataTranslator::isGmtDateFieldName('Event.EVT_created_gmt'));
     }
-
 
 
     public function testIsGmtDateFieldName__fail()
@@ -239,30 +247,28 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
     }
 
 
-
     public function testIsGmtDateFieldName__failTinyInput()
     {
         $this->assertFalse(ModelDataTranslator::isGmtDateFieldName('foo'));
     }
 
 
-
     public function testRemoveGmtFromFieldName()
     {
         $this->assertEquals(
             'Event.EVT_created',
-            ModelDataTranslator::removeGmtFromFieldName('Event.EVT_created_gmt'));
+            ModelDataTranslator::removeGmtFromFieldName('Event.EVT_created_gmt')
+        );
     }
-
 
 
     public function testRemoveGmtFromFieldName__noGmtAnyways()
     {
         $this->assertEquals(
             'Event.EVT_created',
-            ModelDataTranslator::removeGmtFromFieldName('Event.EVT_created'));
+            ModelDataTranslator::removeGmtFromFieldName('Event.EVT_created')
+        );
     }
-
 
 
     /**
@@ -271,8 +277,8 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
     public function dataProviderForTestPrepareFieldValueFromJsonOk()
     {
         $serialized_field = new EE_Maybe_Serialized_Simple_HTML_Field('whatever', 'Whatever', true);
-        $bool_field = new EE_Boolean_Field('whatever2', 'whatever2', true);
-        return array(
+        $bool_field       = new EE_Boolean_Field('whatever2', 'whatever2', true);
+        return [
             ['1', '1', $serialized_field],
             ['stringy', 'stringy', $serialized_field],
             [['foo' => 'bar'], ['foo' => 'bar'], $serialized_field],
@@ -280,15 +286,14 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
             [false, 0, $bool_field],
             [true, 'true', $bool_field],
             [true, 1, $bool_field],
-        );
+        ];
     }
-
 
 
     /**
      * @dataProvider dataProviderForTestPrepareFieldValueFromJsonOk
-     * @param mixed $expected_result
-     * @param mixed $inputted_json_value
+     * @param mixed               $expected_result
+     * @param mixed               $inputted_json_value
      * @param EE_Model_Field_Base $field_obj
      * @group        9222
      */
@@ -308,7 +313,6 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
     }
 
 
-
     /**
      * @return array where the first item is value that would be retrieved from the request which should throw an
      * exception. The 2nd item is an EE_Model_Field_Base child
@@ -316,46 +320,44 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
     public function dataProviderForTestPrepareFieldValueFromJsonBad()
     {
         $serializable_field = new EE_Maybe_Serialized_Simple_HTML_Field('whatever', 'Whatever', true);
-        $serializable_field->_construct_finalize('Foobar', 'test_serialized_field','Foobar');
+        $serializable_field->_construct_finalize('Foobar', 'test_serialized_field', 'Foobar');
         $text_field = new EE_Plain_Text_Field('whatever', 'whatever', true);
-        $text_field->_construct_finalize('Foobar', 'test_text_field','Foobar');
-        return array(
-            array('s:6:"foobar";', $serializable_field),//that's a serialized string alright!
-            array('O:4:"Evil":0:{}', $serializable_field),//that's a string with a serialized object of class "Evil"
-            array(array('s:6:"foobar";'), $serializable_field),//that's an array with a serialized string in it
-            array(array('s:6:"foobar";' => 1), $serializable_field),//that's an array with a serialized string as a key
-            array('O:4:"Evil":0:{}', $text_field),//double-check we don't even accept serialized text even on normal
+        $text_field->_construct_finalize('Foobar', 'test_text_field', 'Foobar');
+        return [
+            ['s:6:"foobar";', $serializable_field],//that's a serialized string alright!
+            ['O:4:"Evil":0:{}', $serializable_field],//that's a string with a serialized object of class "Evil"
+            [['s:6:"foobar";'], $serializable_field],//that's an array with a serialized string in it
+            [['s:6:"foobar";' => 1], $serializable_field],//that's an array with a serialized string as a key
+            ['O:4:"Evil":0:{}', $text_field],//double-check we don't even accept serialized text even on normal
             // text fields. Theoretically these won't get unserialized, but I don't see much need for anyone to ever
             // submit this kind of malicious junk, and having them sit around in our DB is dangerous
-            array(
-                array(
-                  'error_code' => 'php_object_not_return',
-                  'error_message' => esc_html__(
-                      'The value of this field in the database is a PHP object, which can\'t be represented in JSON.',
-                      'event_espresso'
-                  )
-                ),
-                $serializable_field
-            )
-        );
+            [
+                [
+                    'error_code'    => 'php_object_not_return',
+                    'error_message' => esc_html__(
+                        'The value of this field in the database is a PHP object, which can\'t be represented in JSON.',
+                        'event_espresso'
+                    ),
+                ],
+                $serializable_field,
+            ],
+        ];
     }
-
 
 
     /**
      * @dataProvider dataProviderForTestPrepareFieldValueFromJsonBad
      * @expectedException EventEspresso\core\libraries\rest_api\RestException
-     * @param mixed $expected_result
-     * @param mixed $inputted_json_value
+     * @param mixed               $expected_result
+     * @param mixed               $inputted_json_value
      * @param EE_Model_Field_Base $field_obj
-     * @group 9222
+     * @group        9222
      */
     public function testPrepareFieldValueFromJsonBad($inputted_json_value, EE_Model_Field_Base $field_obj)
     {
         //ok duck and cover! It's gonna blow!
         ModelDataTranslator::prepareFieldValueFromJson($field_obj, $inputted_json_value, '4.8.36');
     }
-
 
 
     /**
@@ -365,114 +367,113 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
     {
         //if we don't have the WP API infrastructure, return a dummy array
         //it doesn't have to work because all the tests will be skipped too
-        if ( ! class_exists( 'WP_Rest_Request' ) ) {
-            return array(
-                array()
-            );
+        if (! class_exists('WP_Rest_Request')) {
+            return [
+                [],
+            ];
         }
-        $field = new EE_Maybe_Serialized_Simple_HTML_Field('whatever', 'whatever', true);
-        $datetime_field = new EE_Datetime_Field('whatever2', 'whatever2', true, EE_Datetime_Field::now);
-        $error_response = array(
-            'error_code' => 'php_object_not_return',
+        $field              = new EE_Maybe_Serialized_Simple_HTML_Field('whatever', 'whatever', true);
+        $datetime_field     = new EE_Datetime_Field('whatever2', 'whatever2', true, EE_Datetime_Field::now);
+        $error_response     = [
+            'error_code'    => 'php_object_not_return',
             'error_message' => esc_html__(
                 'The value of this field in the database is a PHP object, which can\'t be represented in JSON.',
                 'event_espresso'
-            )
-        );
+            ),
+        ];
         $datetime_field_obj = EE_Registry::instance()->load_model('Datetime')->field_settings_for('DTT_EVT_start');
-        return array(
-            array(
-                array('foo' => 'bar'),
-                array('foo' => 'bar'),
-                $field)
-            ,
-            array(
+        return [
+            0                                             => [
+                ['foo' => 'bar'],
+                ['foo' => 'bar'],
+                $field,
+            ],
+            1                                             => [
                 1,
                 1,
-                $field
-            ),
-            array(
+                $field,
+            ],
+            2                                             => [
                 'stringy',
                 'stringy',
-                $field
-            ),
-            array(
+                $field,
+            ],
+            3                                             => [
                 '2016-01-03T00:00:00',
-                new \EventEspresso\core\domain\entities\DbSafeDateTime(
+                new DbSafeDateTime(
                     '2016-01-03 00:00:00',
                     new DateTimeZone('UTC')
                 ),
                 $datetime_field,
-            ),
-            array(
+            ],
+            4                                             => [
                 $error_response,
                 new stdClass(),
-                $field
-            ),
-            array(
-                array('obj' => $error_response),
-                array('obj' => new stdClass()),
-                $field
-            ),
-            array(
+                $field,
+            ],
+            5                                             => [
+                ['obj' => $error_response],
+                ['obj' => new stdClass()],
+                $field,
+            ],
+            6                                             => [
                 $error_response,
                 @unserialize('O:6:"Foobar":0:{}'),
-                $field
-            ),
-            'datetime_object_in_default_timezone'       => array(
+                $field,
+            ],
+            '7 datetime_object_in_default_timezone'       => [
                 mysql_to_rfc3339(current_time('mysql')),
                 new DateTime('now'),
                 $datetime_field_obj,
-            ),
-            'unix_timestamp_in_default_timezone'        => array(
+            ],
+            '8 unix_timestamp_in_default_timezone'        => [
                 mysql_to_rfc3339(date(EE_Datetime_Field::mysql_timestamp_format, 946782245)),
                 946782245,
                 $datetime_field_obj,
-            ),
-            'unix_timestamp_STRING_in_default_timezone' => array(
+            ],
+            '9 unix_timestamp_STRING_in_default_timezone' => [
                 mysql_to_rfc3339(date(EE_Datetime_Field::mysql_timestamp_format, 946782245)),
                 '946782245',
                 $datetime_field_obj,
-            ),
-            'unix_timestamp_FLOAT_in_default_timezone' => array(
+            ],
+            '10 unix_timestamp_FLOAT_in_default_timezone' => [
                 mysql_to_rfc3339(date(EE_Datetime_Field::mysql_timestamp_format, 946782245)),
-                (float)946782245,
+                (float) 946782245,
                 $datetime_field_obj,
-            ),
-            'null_datetime'                             => array(
+            ],
+            '11 null_datetime'                            => [
                 '',
                 null,
                 $datetime_field_obj,
-            ),
-            'mysql_in_default_timezone'                 => array(
+            ],
+            '12 mysql_in_default_timezone'                => [
                 mysql_to_rfc3339('2000-01-02 03:04:05'),
                 '2000-01-02 03:04:05',
                 $datetime_field_obj,
-            ),
-            'datetime_object_in_different_timezone'     => array(
+            ],
+            '13 datetime_object_in_different_timezone'    => [
                 mysql_to_rfc3339('2000-01-02 03:04:05'),
                 new DateTime('2000-01-02 03:04:05', new DateTimeZone('America/Vancouver')),
                 $datetime_field_obj,
                 'America/Vancouver',
-            ),
+            ],
             //the input is a unix timestamp (in GMT)
             //the result should be a RFC3339 string also in GMT
-            'unix_timestamp_in_different_timezone'      => array(
+            '14 unix_timestamp_in_different_timezone'     => [
                 mysql_to_rfc3339('2000-01-02 03:04:05'),
                 946782245,
                 $datetime_field_obj,
                 'America/Vancouver',
-            ),
+            ],
             //so the input is for 3am Vancouver time, and the output should be too
-            'mysql_datetime_in_different_timezone'      => array(
+            '15 mysql_datetime_in_different_timezone'     => [
                 mysql_to_rfc3339('2000-01-02 03:04:05'),
                 '2000-01-02 3:04:05',
                 $datetime_field_obj,
                 'America/Vancouver',
-            ),
-        );
+            ],
+        ];
     }
-
 
 
     /**
@@ -499,7 +500,6 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
     }
 
 
-
     /**
      * @return array {
      * @type array $0 input
@@ -508,236 +508,235 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
      */
     public function dataProviderForTestPrepareConditionsQueryParamsForModelsBad()
     {
-        return array(
-            'array isn\'t numerically indexed' => array(
-                array(
-                    'EVT_ID' => array(
-                        'what_is_this_key_doing_here' => 'its_borked'
-                    )
-                ),
+        return [
+            'array isn\'t numerically indexed'                              => [
+                [
+                    'EVT_ID' => [
+                        'what_is_this_key_doing_here' => 'its_borked',
+                    ],
+                ],
                 'Event',
-                false
-            ),
-            'invalid key while reading' => array(
-                array(
-                    'invalid_key' => 'whatever'
-                ),
+                false,
+            ],
+            'invalid key while reading'                                     => [
+                [
+                    'invalid_key' => 'whatever',
+                ],
                 'Event',
-                false
-            ),
-            'invalid key while writing' => array(
-                array(
-                    'invalid_key' => 'whatever'
-                ),
+                false,
+            ],
+            'invalid key while writing'                                     => [
+                [
+                    'invalid_key' => 'whatever',
+                ],
                 'Registration',
-                true
-            ),
-            'logic parameter while writing' => array(
-                array(
-                    'OR' => array(
-                        'EVT_name' => 'party'
-                    )
-                ),
+                true,
+            ],
+            'logic parameter while writing'                                 => [
+                [
+                    'OR' => [
+                        'EVT_name' => 'party',
+                    ],
+                ],
                 'Event',
-                true
-            ),
-            'nested invalid key while reading' => array(
-                array(
-                    'or*allyourbase' => array(
-                        'EVT_ID' => 123,
-                        'invalid_nested_key' => 'foobar'
-                    )
-                ),
+                true,
+            ],
+            'nested invalid key while reading'                              => [
+                [
+                    'or*allyourbase' => [
+                        'EVT_ID'             => 123,
+                        'invalid_nested_key' => 'foobar',
+                    ],
+                ],
                 'Event',
-                false
-            ),
-            'too few arguments for in operator' => array(
-                array(
-                    'EVT_ID' => array('IN')
-                ),
+                false,
+            ],
+            'too few arguments for in operator'                             => [
+                [
+                    'EVT_ID' => ['IN'],
+                ],
                 'Event',
-                false
-            ),
-            'too many arguments for in operator' => array(
-                array(
-                    'EVT_ID' => array('IN', array('thingy'),'what_is_this_doing_here')
-                ),
+                false,
+            ],
+            'too many arguments for in operator'                            => [
+                [
+                    'EVT_ID' => ['IN', ['thingy'], 'what_is_this_doing_here'],
+                ],
                 'Event',
-                false
-            ),
-            'too few arguments for between operator' => array(
-                array(
-                    'EVT_created' => array(
+                false,
+            ],
+            'too few arguments for between operator'                        => [
+                [
+                    'EVT_created' => [
                         'BETWEEN',
-                        '2017-01-01T00:00:00'
-                    )
-                ),
+                        '2017-01-01T00:00:00',
+                    ],
+                ],
                 'Event',
-                false
-            ),
-            'between with dates separate instead of in array' => array(
-                array(
-                    'EVT_created' => array(
+                false,
+            ],
+            'between with dates separate instead of in array'               => [
+                [
+                    'EVT_created' => [
                         'between',
                         '2017-01-01T00:00:00',
                         '2018-01-01T00:00:00',
-                    )
-                ),
+                    ],
+                ],
                 'Event',
-                false
-            ),
-            'between with too few_dates' => array(
-                array(
-                    'EVT_created' => array(
+                false,
+            ],
+            'between with too few_dates'                                    => [
+                [
+                    'EVT_created' => [
                         'between',
-                        array(
+                        [
                             '2017-01-01T00:00:00',
-                        )
-                    )
-                ),
+                        ],
+                    ],
+                ],
                 'Event',
-                false
-            ),
-            'between with too many dates' => array(
-                array(
-                    'EVT_created' => array(
+                false,
+            ],
+            'between with too many dates'                                   => [
+                [
+                    'EVT_created' => [
                         'between',
-                        array(
+                        [
                             '2017-01-01T00:00:00',
                             '2018-01-01T00:00:00',
                             '2019-01-01T00:00:00',
-                        )
-                    )
-                ),
+                        ],
+                    ],
+                ],
                 'Event',
-                false
-            ),
-            'too few arguments for like operator' => array(
-                array(
-                    'EVT_name' => array(
-                        'LIKE'
-                    )
-                ),
+                false,
+            ],
+            'too few arguments for like operator'                           => [
+                [
+                    'EVT_name' => [
+                        'LIKE',
+                    ],
+                ],
                 'Event',
-                false
-            ),
-            'too many arguments for like operator' => array(
-                array(
-                    'EVT_name' => array(
+                false,
+            ],
+            'too many arguments for like operator'                          => [
+                [
+                    'EVT_name' => [
                         'LIKE',
                         'foobar',
-                        'something_extra'
-                    )
-                ),
+                        'something_extra',
+                    ],
+                ],
                 'Event',
-                false
-            ),
-            'too few arguments for normal operator' => array(
-                array(
-                    'EVT_ID' => array(
-                        '>'
-                    )
-                ),
+                false,
+            ],
+            'too few arguments for normal operator'                         => [
+                [
+                    'EVT_ID' => [
+                        '>',
+                    ],
+                ],
                 'Event',
-                false
-            ),
-            'too many arguments for normal operator' => array(
-                array(
-                    'EVT_ID' => array(
+                false,
+            ],
+            'too many arguments for normal operator'                        => [
+                [
+                    'EVT_ID' => [
                         '<',
                         123,
-                        23452343
-                    )
-                ),
+                        23452343,
+                    ],
+                ],
                 'Event',
-                false
-            ),
-            'too many arguments for null operator' => array(
-                array(
-                    'EVT_ID' => array(
+                false,
+            ],
+            'too many arguments for null operator'                          => [
+                [
+                    'EVT_ID' => [
                         'IS_NULL',
-                        'what_is_this_extra_arg'
-                    )
-                ),
+                        'what_is_this_extra_arg',
+                    ],
+                ],
                 'Event',
-                false
-            ),
-            'quick syntax two operators' => array(
-                array(
-                    'EVT_ID' => array(
+                false,
+            ],
+            'quick syntax two operators'                                    => [
+                [
+                    'EVT_ID' => [
                         'IN' => '1,2',
-                        '<' => 'huh there shouldnt be two operators!'
-                    )
-                ),
+                        '<'  => 'huh there shouldnt be two operators!',
+                    ],
+                ],
                 'Event',
-                false
-            ),
-            'quick syntax too few arguments for between operator with csv' => array(
-                array(
-                    'EVT_created' => array(
-                        'BETWEEN' => '2017-01-01T00:00:00'
-                    )
-                ),
+                false,
+            ],
+            'quick syntax too few arguments for between operator with csv'  => [
+                [
+                    'EVT_created' => [
+                        'BETWEEN' => '2017-01-01T00:00:00',
+                    ],
+                ],
                 'Event',
-                false
-            ),
-            'quick syntax too few arguments for between operator with json' => array(
-                array(
-                    'EVT_created' => array(
-                        'BETWEEN' => array(
-                            '2017-01-01T00:00:00'
-                        )
-                    )
-                ),
-                'Event',
-                false
-            ),
-            'quick syntax between with too many dates' => array(
-                array(
-                    'EVT_created' => array(
-                        'between' =>
-                        array(
+                false,
+            ],
+            'quick syntax too few arguments for between operator with json' => [
+                [
+                    'EVT_created' => [
+                        'BETWEEN' => [
                             '2017-01-01T00:00:00',
-                            '2018-01-01T00:00:00',
-                            '2019-01-01T00:00:00',
-                        )
-                    )
-                ),
+                        ],
+                    ],
+                ],
                 'Event',
-                false
-            ),
-            'quick syntax too many arguments for like operator' => array(
-                array(
-                    'EVT_name' => array(
-                        'LIKE' => array(
+                false,
+            ],
+            'quick syntax between with too many dates'                      => [
+                [
+                    'EVT_created' => [
+                        'between' =>
+                            [
+                                '2017-01-01T00:00:00',
+                                '2018-01-01T00:00:00',
+                                '2019-01-01T00:00:00',
+                            ],
+                    ],
+                ],
+                'Event',
+                false,
+            ],
+            'quick syntax too many arguments for like operator'             => [
+                [
+                    'EVT_name' => [
+                        'LIKE' => [
                             'foobar',
-                            'something_extra'
-                        )
-                    )
-                ),
+                            'something_extra',
+                        ],
+                    ],
+                ],
                 'Event',
-                false
-            ),
-            'quick syntax too many arguments for normal operator' => array(
-                array(
-                    'EVT_ID' => array(
-                        '<' => array(
+                false,
+            ],
+            'quick syntax too many arguments for normal operator'           => [
+                [
+                    'EVT_ID' => [
+                        '<' => [
                             123,
-                            23452343
-                        )
-                    )
-                ),
+                            23452343,
+                        ],
+                    ],
+                ],
                 'Event',
-                false
-            )
-        );
+                false,
+            ],
+        ];
     }
 
 
-
     /**
-     * @param array $input array of data sent to REST API
-     * @param string $model_name eg 'Event'
+     * @param array   $input      array of data sent to REST API
+     * @param string  $model_name eg 'Event'
      * @param boolean $writing
      * @group        9222
      * @dataProvider dataProviderForTestPrepareConditionsQueryParamsForModelsBad
@@ -756,7 +755,6 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
     }
 
 
-
     /**
      * @return array {
      * @type array $0 expected output
@@ -766,259 +764,260 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
      */
     public function dataProviderForTestPrepareConditionsQueryParamsForModelsGood()
     {
-        if( ! function_exists('rest_parse_date')){
-            return array();
+        if (! function_exists('rest_parse_date')) {
+            return [];
         }
-        return array(
-            'empty'=> array(
-                array(),
-                array(),
+        return [
+            'empty'                                => [
+                [],
+                [],
                 'Event',
-                false
-            ),
-            'simple'=> array(
-                array('EVT_name' => 'foobar'),
-                array('EVT_name' => 'foobar'),
+                false,
+            ],
+            'simple'                               => [
+                ['EVT_name' => 'foobar'],
+                ['EVT_name' => 'foobar'],
                 'Event',
-                false
-            ),
-            'nested logic' => array(
-                array(
-                    'or' => array(
-                        'EVT_desc' => 'foobar',
-                        'EVT_short_desc' => 'foobar'
-                    ),
-                    'NOT*' => array(
-                        'EVT_name' => 'foobar'
-                    )
-                ),
-                array(
-                    'or' => array(
-                        'EVT_desc' => 'foobar',
-                        'EVT_short_desc' => 'foobar'
-                    ),
-                    'NOT*' => array(
-                        'EVT_name' => 'foobar'
-                    )
-                ),
+                false,
+            ],
+            'nested logic'                         => [
+                [
+                    'or'   => [
+                        'EVT_desc'       => 'foobar',
+                        'EVT_short_desc' => 'foobar',
+                    ],
+                    'NOT*' => [
+                        'EVT_name' => 'foobar',
+                    ],
+                ],
+                [
+                    'or'   => [
+                        'EVT_desc'       => 'foobar',
+                        'EVT_short_desc' => 'foobar',
+                    ],
+                    'NOT*' => [
+                        'EVT_name' => 'foobar',
+                    ],
+                ],
                 'Event',
-                false
-            ),
-            'between operator' => array(
-                array(
-                    'EVT_created' => array(
+                false,
+            ],
+            'between operator'                     => [
+                [
+                    'EVT_created' => [
                         'between',
-                        array(
+                        [
                             rest_parse_date('2015-01-01 00:00:00'),
                             rest_parse_date('2016-01-01 00:00:00'),
-                        ),
-                    ),
-                ),
-                array(
-                    'EVT_created' => array(
+                        ],
+                    ],
+                ],
+                [
+                    'EVT_created' => [
                         'between',
-                        array(
+                        [
                             '2015-01-01T00:00:00',
                             '2016-01-01T00:00:00',
-                        ),
-                    ),
-                ),
+                        ],
+                    ],
+                ],
                 'Event',
-                false
-            ),
-            'in operator' => array(
-                array(
-                    'TKT_uses' => array(
+                false,
+            ],
+            'in operator'                          => [
+                [
+                    'TKT_uses' => [
                         'IN',
-                        array(
+                        [
                             12,
                             13,
-                            EE_INF
-                        )
-                    )
-                ),
-                array(
-                    'TKT_uses' => array(
+                            EE_INF,
+                        ],
+                    ],
+                ],
+                [
+                    'TKT_uses' => [
                         'IN',
-                        array(
+                        [
                             '12',
                             '13',
-                            ''
-                        )
-                    )
-                ),
+                            '',
+                        ],
+                    ],
+                ],
                 'Ticket',
-                false
-            ),
-            'like operator' => array(
-                array(
-                    'PAY_details' => array(
+                false,
+            ],
+            'like operator'                        => [
+                [
+                    'PAY_details' => [
                         'LIKE',
-                        '%foobar%'
-                    )
-                ),
-                array(
-                    'PAY_details' => array(
+                        '%foobar%',
+                    ],
+                ],
+                [
+                    'PAY_details' => [
                         'LIKE',
-                        '%foobar%'
-                    )
-                ),
+                        '%foobar%',
+                    ],
+                ],
                 'Payment',
-                false
-            ),
-            'null operator' => array(
-                array(
-                    'EVT_name' => array('IS_NULL')
-                ),
-                array(
-                    'EVT_name' => array('IS_NULL')
-                ),
+                false,
+            ],
+            'null operator'                        => [
+                [
+                    'EVT_name' => ['IS_NULL'],
+                ],
+                [
+                    'EVT_name' => ['IS_NULL'],
+                ],
                 'Event',
-                false
-            ),
-            'variety of operators' => array(
-                array(
-                    'RPY_amount' => array(
+                false,
+            ],
+            'variety of operators'                 => [
+                [
+                    'RPY_amount' => [
                         '<',
-                        19
-                    ),
-                    'REG_ID' => array(
+                        19,
+                    ],
+                    'REG_ID'     => [
                         '!=',
-                        12
-                    ),
-                ),
-                array(
-                    'RPY_amount' => array(
+                        12,
+                    ],
+                ],
+                [
+                    'RPY_amount' => [
                         '<',
-                        '19'
-                    ),
-                    'REG_ID' => array(
+                        '19',
+                    ],
+                    'REG_ID'     => [
                         '!=',
-                        '12'
-                    ),
-                ),
+                        '12',
+                    ],
+                ],
                 'Registration_Payment',
-                false
-            ),
-            'related fields' => array(
-                array(
-                    'Ticket.Datetime.DTT_reg_limit' => 12
-                ),
-                array(
-                    'Ticket.Datetime.DTT_reg_limit' => '12'
-                ),
+                false,
+            ],
+            'related fields'                       => [
+                [
+                    'Ticket.Datetime.DTT_reg_limit' => 12,
+                ],
+                [
+                    'Ticket.Datetime.DTT_reg_limit' => '12',
+                ],
                 'Registration',
-                false
-            ),
-            'writing-style test with valid fields' => array(
-                array(
-                    'TKT_uses' => EE_INF
-                ),
-                array(
-                    'TKT_uses' => ''
-                ),
+                false,
+            ],
+            'writing-style test with valid fields' => [
+                [
+                    'TKT_uses' => EE_INF,
+                ],
+                [
+                    'TKT_uses' => '',
+                ],
                 'Ticket',
-                true
-            ),
-            'quick syntax with in csv' => array(
-                array(
-                    'EVT_ID' => array('IN', array('1','2','3'))
-                ),
-                array(
-                    'EVT_ID' => array(
-                        'IN' => '1,2,3'
-                    )
-                ),
+                true,
+            ],
+            'quick syntax with in csv'             => [
+                [
+                    'EVT_ID' => ['IN', ['1', '2', '3']],
+                ],
+                [
+                    'EVT_ID' => [
+                        'IN' => '1,2,3',
+                    ],
+                ],
                 'Event',
-                false
-            ),
-            'quick syntax with in json' => array(
-                array(
-                    'EVT_ID' => array('IN', array(1,2,3))
-                ),
-                array(
-                    'EVT_ID' => array(
-                        'IN' => wp_json_encode(array(1,2,3))
-                    )
-                ),
+                false,
+            ],
+            'quick syntax with in json'            => [
+                [
+                    'EVT_ID' => ['IN', [1, 2, 3]],
+                ],
+                [
+                    'EVT_ID' => [
+                        'IN' => wp_json_encode([1, 2, 3]),
+                    ],
+                ],
                 'Event',
-                false
-            ),
-            'quick syntax with between csv' => array(
-                array(
-                    'DTT_EVT_start' => array(
+                false,
+            ],
+            'quick syntax with between csv'        => [
+                [
+                    'DTT_EVT_start' => [
                         'BETWEEN',
-                        array(
+                        [
                             rest_parse_date('2015-01-01 00:02:00'),
-                            rest_parse_date('2015-01-01 00:05:00')
-                        )
-                    )
-                ),
-                array(
-                    'DTT_EVT_start' => array(
-                        'BETWEEN' => '2015-01-01T00:02:00, 2015-01-01T00:05:00'
-                    )
-                ),
+                            rest_parse_date('2015-01-01 00:05:00'),
+                        ],
+                    ],
+                ],
+                [
+                    'DTT_EVT_start' => [
+                        'BETWEEN' => '2015-01-01T00:02:00, 2015-01-01T00:05:00',
+                    ],
+                ],
                 'Datetime',
-                false
-            ),
-            'quick syntax with between json' => array(
-                array(
-                    'DTT_EVT_start' => array(
+                false,
+            ],
+            'quick syntax with between json'       => [
+                [
+                    'DTT_EVT_start' => [
                         'BETWEEN',
-                        array(
+                        [
                             rest_parse_date('2015-01-01 00:02:00'),
-                            rest_parse_date('2015-01-01 00:05:00')
-                        )
-                    )
-                ),
-                array(
-                    'DTT_EVT_start' => array(
+                            rest_parse_date('2015-01-01 00:05:00'),
+                        ],
+                    ],
+                ],
+                [
+                    'DTT_EVT_start' => [
                         'BETWEEN' => wp_json_encode(
-                            array(
+                            [
                                 '2015-01-01T00:02:00',
-                                '2015-01-01T00:05:00'
-                            )
-                        )
-                    )
-                ),
+                                '2015-01-01T00:05:00',
+                            ]
+                        ),
+                    ],
+                ],
                 'Datetime',
-                false
-            ),
-            'quick syntax with normal' => array(
-                array(
-                    'EVT_name' => array(
+                false,
+            ],
+            'quick syntax with normal'             => [
+                [
+                    'EVT_name' => [
                         'LIKE',
-                        '%foobar%'
-                    )
-                ),
-                array(
-                    'EVT_name' => array(
-                        'LIKE' => '%foobar%'
-                    )
-                ),
+                        '%foobar%',
+                    ],
+                ],
+                [
+                    'EVT_name' => [
+                        'LIKE' => '%foobar%',
+                    ],
+                ],
                 'Event',
-                false
-            ),
-            'quick syntax with null' => array(
-                array(
-                    'EVT_ID' => array('IS_NULL')
-                ),
-                array(
-                    'EVT_ID' => array(
-                        'IS_NULL' => true
-                    )
-                ),
+                false,
+            ],
+            'quick syntax with null'               => [
+                [
+                    'EVT_ID' => ['IS_NULL'],
+                ],
+                [
+                    'EVT_ID' => [
+                        'IS_NULL' => true,
+                    ],
+                ],
                 'Event',
-                false
-            )
-        );
+                false,
+            ],
+        ];
     }
 
+
     /**
-     * @param array $expected_output
-     * @param array $input array of data sent to REST API
-     * @param string $model_name eg 'Event'
+     * @param array   $expected_output
+     * @param array   $input      array of data sent to REST API
+     * @param string  $model_name eg 'Event'
      * @param boolean $writing
      * @group        9222
      * @dataProvider dataProviderForTestPrepareConditionsQueryParamsForModelsGood
@@ -1041,22 +1040,24 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
         );
     }
 
+
     /**
      * Reproduced issue https://events.codebasehq.com/projects/event-espresso/tickets/10869
      * and https://events.codebasehq.com/projects/event-espresso/tickets/10858 by changing
      * the site date format to 'd/m/Y'
      */
-    public function testPrepareFieldValueForJsonUnusualDateFormat(){
+    public function testPrepareFieldValueForJsonUnusualDateFormat()
+    {
         $field_obj = EE_Registry::instance()->load_model('Datetime')->field_settings_for('DTT_EVT_start');
-        if($field_obj instanceof EE_Datetime_Field){
+        if ($field_obj instanceof EE_Datetime_Field) {
             //change the date format because it used to make this not work
             $field_obj->set_date_format('d/m/Y');
             //the default time format excludes seconds,
             $field_obj->set_time_format('g:i a s');
         }
-        $current_time_mysql = current_time('mysql');
-        $datetime = new DateTime( $current_time_mysql );
-        $formats = EE_Registry::instance()->load_model('Datetime')->get_formats_for('DTT_EVT_start');
+        $current_time_mysql  = current_time('mysql');
+        $datetime            = new DateTime($current_time_mysql);
+        $formats             = EE_Registry::instance()->load_model('Datetime')->get_formats_for('DTT_EVT_start');
         $date_in_site_format = $datetime->format(implode(' ', $formats));
         $this->assertEquals(
             mysql_to_rfc3339($current_time_mysql),
@@ -1069,12 +1070,13 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
     }
 
 
-
     /**
      * If you pass in an empty string, it's the same as using the current time in the field's timezone
+     *
      * @group 10869
      */
-    public function testPrepareFieldValueForJsonPassingInEmptyString(){
+    public function testPrepareFieldValueForJsonPassingInEmptyString()
+    {
         $field_obj = EE_Registry::instance()->load_model('Datetime')->field_settings_for('DTT_EVT_start');
         $field_obj->set_timezone('America/Vancouver');
         update_option('timezone_string', 'America/Vancouver');
@@ -1088,7 +1090,5 @@ class ModelDataTranslatorTest extends EE_REST_TestCase
             'Y-m-d\TH:i:s'
         );
     }
-
 }
-
 // Location: tests/testcases/core/libraries/rest_api/ModelDataTranslator_Test.php

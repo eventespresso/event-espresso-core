@@ -733,9 +733,9 @@ class Transactions_Admin_Page_Test extends EE_UnitTestCase
         $this->_apply_payment_to_registrations($registrations);
         $registration_payment_data_array = $this->_admin_page->registration_payment_data_array(array_keys($registrations));
         // format the payment values
-        $ten_dollars  = EEH_Template::format_currency(10.00);
-        $five_dollars = EEH_Template::format_currency(5.00);
-        $no_dollars   = EEH_Template::format_currency(0.00);
+        $ten_dollars  = EEH_Money::formatForLocale(10.00);
+        $five_dollars = EEH_Money::formatForLocale(5.00);
+        $no_dollars   = EEH_Money::formatForLocale(0.00);
         // reg # 1 paid $10, owes 0
         $registration_payment_data = reset($registration_payment_data_array);
         $this->assertEquals($ten_dollars, $registration_payment_data['paid']);

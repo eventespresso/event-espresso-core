@@ -18,12 +18,14 @@ class Support_Admin_Page_Init extends EE_Admin_Page_Init
 
     public function __construct()
     {
-        // define some help/support page related constants
-        define('EE_SUPPORT_PG_SLUG', 'espresso_support');
-        define('EE_SUPPORT_ADMIN_URL', admin_url('admin.php?page=' . EE_SUPPORT_PG_SLUG));
-        define('EE_SUPPORT_ADMIN_TEMPLATE_PATH', EE_ADMIN_PAGES . 'support/templates/');
-        define('EE_SUPPORT_ADMIN', EE_ADMIN_PAGES . 'support/');
-        define('EE_SUPPORT_ASSETS_URL', EE_ADMIN_PAGES_URL . 'support/assets/');
+        if (! defined('EE_SUPPORT_PG_SLUG')) {
+            // define some help/support page related constants
+            define('EE_SUPPORT_PG_SLUG', 'espresso_support');
+            define('EE_SUPPORT_ADMIN_URL', admin_url('admin.php?page=' . EE_SUPPORT_PG_SLUG));
+            define('EE_SUPPORT_ADMIN_TEMPLATE_PATH', EE_ADMIN_PAGES . 'support/templates/');
+            define('EE_SUPPORT_ADMIN', EE_ADMIN_PAGES . 'support/');
+            define('EE_SUPPORT_ASSETS_URL', EE_ADMIN_PAGES_URL . 'support/assets/');
+        }
         parent::__construct();
     }
 

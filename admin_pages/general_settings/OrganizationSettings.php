@@ -27,6 +27,7 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidFormSubmissionException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\libraries\form_sections\form_handlers\FormHandler;
+use EventEspresso\core\libraries\form_sections\inputs\EE_Locale_Select_Input;
 use EventEspresso\core\libraries\form_sections\strategies\filter\VsprintfFilter;
 use EventEspresso\core\services\address\CountrySubRegionDao;
 use InvalidArgumentException;
@@ -53,6 +54,10 @@ class OrganizationSettings extends FormHandler
      * @var EE_Core_Config
      */
     protected $core_config;
+    /**
+     * @var EE_Currency_Config
+     */
+    protected $currency_config;
 
 
     /**
@@ -71,8 +76,9 @@ class OrganizationSettings extends FormHandler
      * @param EE_Registry             $registry
      * @param EE_Organization_Config  $organization_config
      * @param EE_Core_Config          $core_config
-     * @param EE_Network_Core_Config $network_core_config
-     * @param CountrySubRegionDao $countrySubRegionDao
+     * @param EE_Network_Core_Config  $network_core_config
+     * @param CountrySubRegionDao     $countrySubRegionDao
+     * @param EE_Currency_Config      $currency_config
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws DomainException
@@ -82,12 +88,14 @@ class OrganizationSettings extends FormHandler
         EE_Organization_Config $organization_config,
         EE_Core_Config $core_config,
         EE_Network_Core_Config $network_core_config,
-        CountrySubRegionDao $countrySubRegionDao
+        CountrySubRegionDao $countrySubRegionDao,
+        EE_Currency_Config $currency_config
     ) {
         $this->organization_config = $organization_config;
         $this->core_config = $core_config;
         $this->network_core_config = $network_core_config;
         $this->countrySubRegionDao = $countrySubRegionDao;
+        $this->currency_config = $currency_config;
         parent::__construct(
             esc_html__('Your Organization Settings', 'event_espresso'),
             esc_html__('Your Organization Settings', 'event_espresso'),
@@ -175,14 +183,14 @@ class OrganizationSettings extends FormHandler
                             'required'        => false,
                             'html_help_text'  => sprintf(
                                 esc_html__(
-                                    '%1$sThe Country set here will have the effect of setting the currency used for all ticket prices.%2$s',
+                                    '%1$sTo change the currency used for all money values on the site, please see the "Currency Locale" setting further below.%2$s',
                                     'event_espresso'
                                 ),
                                 '<span class="reminder-spn">',
                                 '</span>'
                             ),
                         )
-                    ),
+                    ),#espresso-default-admin #post-body.columns-2
                     'organization_state' => new EE_State_Select_Input(
                         null,
                         array(
@@ -248,6 +256,25 @@ class OrganizationSettings extends FormHandler
                                 'event_espresso'
                             ),
                             'default'         => $this->organization_config->get_pretty('vat'),
+                            'required'        => false,
+                        )
+                    ),
+                    'currency_locale'      => new EE_Locale_Select_Input(
+                        array(
+                            'html_name' => 'currency_locale',
+                            'html_label_text' => esc_html__('Currency Locale', 'event_espresso'),
+                            'html_help_text'  => sprintf(
+                                __(
+                                    'The locale used to set the currency for all money values. Defaults to the website locale.%4$sIf the desired locale does not appear in the above list, then please try the following:%4$s%5$sgo to the %1$sWordPress General Settings admin page%3$s%4$s%5$sselect the locale from the "Site Language" input%4$s%5$sclick "Save Changes" at the bottom of the page.%4$s%5$syou will then need to download the translations for the locale via the %2$sWordPress Updates admin page%3$s.%4$s%5$sthen return to this page and select the desired locale for your currency settings.%4$s%5$safter this is done, you can change the "Site Language" option back to what it was.%4$sIf your currency settings do not look correct or cause errors after doing the above, then you may need to contact your hosting provider and have them generate the desired locale settings and install the appropriate language packs on your server.',
+                                    'event_espresso'
+                                ),
+                                '<a href="' .admin_url('options-general.php') . '" target="_blank">',
+                                '<a href="' .admin_url('update-core.php') . '" target="_blank">',
+                                '</a>',
+                                '<br />',
+                                '&nbsp;&bullet;&nbsp;'
+                            ),
+                            'default'         => $this->currency_config->locale(),
                             'required'        => false,
                         )
                     ),
@@ -460,6 +487,10 @@ class OrganizationSettings extends FormHandler
         $this->organization_config->phone = isset($form_data['organization_phone'])
             ? sanitize_text_field($form_data['organization_phone'])
             : $this->organization_config->phone;
+        $locale = isset($form_data['currency_locale'])
+            ? $form_data['currency_locale']
+            : $this->currency_config->locale();
+        $this->currency_config->setLocale($locale);
         $this->organization_config->logo_url = isset($form_data['organization_logo_url'])
             ? esc_url_raw($form_data['organization_logo_url'])
             : $this->organization_config->logo_url;
@@ -486,9 +517,6 @@ class OrganizationSettings extends FormHandler
             : false;
         $this->core_config->ee_ueip_has_notified = true;
 
-        $this->registry->CFG->currency = new EE_Currency_Config(
-            $this->organization_config->CNT_ISO
-        );
         /** @var EE_Country $country */
         $country = EEM_Country::instance()->get_one_by_ID($this->organization_config->CNT_ISO);
         if ($country instanceof EE_Country) {

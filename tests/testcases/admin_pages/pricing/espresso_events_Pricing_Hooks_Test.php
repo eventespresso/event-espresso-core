@@ -11,6 +11,7 @@ if (! defined('EVENT_ESPRESSO_VERSION')) {
  * @package        Event Espresso
  * @subpackage     tests
  * @author         Darren Ethier
+ * @group          ppt
  */
 class espresso_events_Pricing_Hooks_Test extends EE_UnitTestCase
 {
@@ -36,7 +37,8 @@ class espresso_events_Pricing_Hooks_Test extends EE_UnitTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->loadAdminMocks();
+        $this->loadAdminMocks('events');
+        $this->_load_pricing_mock();
     }
 
 
@@ -50,6 +52,9 @@ class espresso_events_Pricing_Hooks_Test extends EE_UnitTestCase
      */
     protected function _load_pricing_mock($timezone = 'America/Vancouver')
     {
+        // make sure models are set up
+        EEM_Registration::instance();
+        EEM_Event::instance();
         $this->_pricingMock = new espresso_events_Pricing_Hooks_Mock();
         $this->_event = $this->factory->event->create();
         $this->_event->set_timezone($timezone);
@@ -66,13 +71,13 @@ class espresso_events_Pricing_Hooks_Test extends EE_UnitTestCase
      */
     public function test_update_dtts_and_update_tkts()
     {
-        $this->_load_pricing_mock();
         $formats_to_test = $this->date_formats_to_test();
         $saved_dtts_for_tickets = $formats_for_compare = $saved_tkts = array();
         //test each date and time format combination for creating datetime objects
         foreach ($formats_to_test['date'] as $date_format) {
             foreach ($formats_to_test['time'] as $time_format) {
                 $full_format = $date_format . ' ' . $time_format;
+                // echo "\n\n date & time format: " . $full_format . '()';
                 $this->_pricingMock->set_date_format_strings(array('date' => $date_format, 'time' => $time_format));
                 $data = $this->_get_save_data($full_format);
                 $dtts = $this->_pricingMock->update_dtts($this->_event, $data);
@@ -99,6 +104,7 @@ class espresso_events_Pricing_Hooks_Test extends EE_UnitTestCase
         foreach ($formats_to_test['date'] as $date_format) {
             foreach ($formats_to_test['time'] as $time_format) {
                 $full_format = $date_format . ' ' . $time_format;
+                // echo "\n\n date & time format: " . $full_format . '()';
                 $this->_pricingMock->set_date_format_strings(array('date' => $date_format, 'time' => $time_format));
                 $data = $this->_get_save_data($full_format);
                 $dtt_for_ticket['1'] = $saved_dtts_for_tickets[$full_format];
@@ -140,6 +146,7 @@ class espresso_events_Pricing_Hooks_Test extends EE_UnitTestCase
             }
             $formats = $formats_for_compare[$edtt->ID()];
             $format = $formats[0] . ' ' . $formats[1];
+            // echo "\n\n date & time format: " . $format . '()';
             $this->assertEquals(
                 $edtt->start_date_and_time($formats[0], $formats[1]),
                 $this->_default_dates['DTT_start']->format($format),

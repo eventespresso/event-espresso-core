@@ -54,7 +54,7 @@ class EmailAddress
      */
     public function equals(EmailAddress $address)
     {
-        return strtolower((string) $this) === strtolower((string) $address);
+        return strtolower((string) $this->email_address) === strtolower((string) $address);
     }
 
 

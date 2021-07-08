@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\core\services\helpers\datetime;
 
 use DateTime;
@@ -29,7 +30,6 @@ abstract class AbstractHelper implements HelperInterface
         $this->validateTimezone($timezone_string);
         return $timezone_string;
     }
-
 
 
     /**
@@ -116,7 +116,6 @@ abstract class AbstractHelper implements HelperInterface
      * Provide a timezone select input
      *
      * @param string $timezone_string
-     * @return string
      * @throws EE_Error
      */
     public function timezoneSelectInput($timezone_string = '')
@@ -143,32 +142,42 @@ abstract class AbstractHelper implements HelperInterface
         }
         ?>
         <p>
-            <label for="timezone_string"><?php _e('timezone', 'event_espresso'); ?></label>
+            <label for="timezone_string"><?php esc_html_e('timezone', 'event_espresso'); ?></label>
             <select id="timezone_string" name="timezone_string">
                 <?php echo wp_timezone_choice($timezone_string); ?>
             </select>
             <br/>
-            <span class="description"><?php _e('Choose a city in the same timezone as the event.', 'event_espresso'); ?></span>
+            <span class="description">
+                <?php esc_html_e(
+                    'Choose a city in the same timezone as the event.',
+                    'event_espresso'
+                ); ?>
+            </span>
         </p>
 
         <p>
         <span>
+        <?php
+        printf(
+            esc_html__('%1$sUTC%2$s time is %3$s', 'event_espresso'),
+            '<abbr title="Coordinated Universal Time">',
+            '</abbr>',
+            '<code>' . date_i18n($datetime_format, false, true) . '</code>'
+        );
+        ?>
+        </span>
+        <?php if (! empty($timezone_string) || ! empty($gmt_offset)) : ?>
+        <br/>
+        <span>
             <?php
             printf(
-                __('%1$sUTC%2$s time is %3$s', 'event_espresso'),
-                '<abbr title="Coordinated Universal Time">',
-                '</abbr>',
-                '<code>' . date_i18n($datetime_format, false, true) . '</code>'
+                esc_html__('Local time is %1$s', 'event_espresso'),
+                '<code>' . date_i18n($datetime_format) . '</code>'
             );
-            ?></span>
-        <?php
-        if (! empty($timezone_string) || ! empty($gmt_offset)) : ?>
-        <br/><span><?php printf(__('Local time is %1$s', 'event_espresso'), '<code>' . date_i18n($datetime_format) . '</code>'); ?></span>
-    <?php
-        endif; ?>
-
-        <?php
-        if ($check_zone_info && $timezone_string) : ?>
+            ?>
+        </span>
+        <?php endif; ?>
+        <?php if ($check_zone_info && $timezone_string) : ?>
         <br/>
         <span>
                 <?php
@@ -176,9 +185,9 @@ abstract class AbstractHelper implements HelperInterface
                 date_default_timezone_set($timezone_string);
                 $now = localtime(time(), true);
                 if ($now['tm_isdst']) {
-                    _e('This timezone is currently in daylight saving time.', 'event_espresso');
+                    esc_html_e('This timezone is currently in daylight saving time.', 'event_espresso');
                 } else {
-                    _e('This timezone is currently in standard time.', 'event_espresso');
+                    esc_html_e('This timezone is currently in standard time.', 'event_espresso');
                 }
                 ?>
             <br/>
@@ -197,24 +206,25 @@ abstract class AbstractHelper implements HelperInterface
                 }
                 if ($found) {
                     $message = $tr['isdst']
-                        ? __(' Daylight saving time begins on: %s.', 'event_espresso')
-                        : __(' Standard time begins  on: %s.', 'event_espresso');
+                        ? esc_html__(' Daylight saving time begins on: %s.', 'event_espresso')
+                        : esc_html__(' Standard time begins  on: %s.', 'event_espresso');
                     // Add the difference between the current offset and the new offset to ts to get the correct
                     // transition time from date_i18n().
                     printf(
                         $message,
-                        '<code >' . date_i18n($datetime_format, $tr['ts'] + ($tz_offset - $tr['offset'])) . '</code >'
+                        '<code >'
+                        . date_i18n($datetime_format, $tr['ts'] + ($tz_offset - $tr['offset']))
+                        . '</code >'
                     );
                 } else {
-                    _e('This timezone does not observe daylight saving time.', 'event_espresso');
+                    esc_html_e('This timezone does not observe daylight saving time.', 'event_espresso');
                 }
             }
             // Set back to UTC.
             date_default_timezone_set('UTC');
             ?>
         </span></p>
-        <?php
-        endif;
+        <?php endif;
     }
 
 
@@ -230,6 +240,7 @@ abstract class AbstractHelper implements HelperInterface
      *                                site will be used.
      * @return int      unix_timestamp value with the offset applied for the given timezone.
      * @throws EE_Error
+     * @throws Exception
      */
     public function getTimestampWithOffset($unix_timestamp = 0, $timezone_string = '')
     {
@@ -259,7 +270,6 @@ abstract class AbstractHelper implements HelperInterface
     }
 
 
-
     /**
      * Default to just returning the provided $gmt_offset.  Children can override if adjustment needed.
      *
@@ -272,13 +282,13 @@ abstract class AbstractHelper implements HelperInterface
     }
 
 
-
     /**
-     * This receives an incoming gmt_offset and santizes it.  If the provide value is an empty string, then this will
+     * This receives an incoming gmt_offset and sanitizes it.  If the provide value is an empty string, then this will
      * attempt to get the offset from the timezone string.  If this returns a string, then a timezone string was
      * successfully derived from existing timezone_string in the db.  If not, then a float is returned for the provided
      * offset.
-     * @param  float|string $gmt_offset
+     *
+     * @param float|string $gmt_offset
      * @return float|string
      */
     protected function sanitizeInitialIncomingGmtOffsetForGettingTimezoneString($gmt_offset)

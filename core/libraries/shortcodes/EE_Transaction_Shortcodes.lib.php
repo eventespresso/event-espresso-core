@@ -275,13 +275,11 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes
         switch ($shortcode) {
             case '[TXN_ID]':
                 return $transaction->ID();
-                break;
             case '[PAYMENT_URL]':
                 $payment_url = $transaction->payment_overview_url();
                 return empty($payment_url)
                     ? esc_html__('http://dummypaymenturlforpreview.com', 'event_espresso')
                     : $payment_url;
-                break;
             case '[INVOICE_LINK]':
                 $invoice_url = $transaction->invoice_url();
                 $invoice_url = empty($invoice_url) ? 'http://dummyinvoicelinksforpreview.com' : $invoice_url;
@@ -290,76 +288,55 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes
                     '<a href="' . $invoice_url . '">',
                     '</a>'
                 );
-                break;
             case '[INVOICE_URL]':
                 $invoice_url = $transaction->invoice_url();
                 return empty($invoice_url) ? 'http://dummyinvoicelinksforpreview.com' : $invoice_url;
-                break;
             case '[INVOICE_LOGO_URL]':
                 return $this->_get_invoice_logo();
-                break;
             case '[INVOICE_LOGO]':
                 return $this->_get_invoice_logo(true);
-                break;
             case '[INVOICE_PAYEE_NAME]':
                 return $this->_get_invoice_payee_name();
-                break;
             case '[INVOICE_PAYEE_ADDRESS]':
                 return $this->_get_invoice_payee_address();
-                break;
             case '[INVOICE_PAYMENT_INSTRUCTIONS]':
                 return $this->_get_invoice_payment_instructions();
-                break;
             case '[INVOICE_PAYEE_EMAIL]':
                 return $this->_get_invoice_payee_email();
-                break;
             case '[TOTAL_COST]':
                 $total = $transaction->total();
-                return ! empty($total) ? EEH_Template::format_currency($total) : '';
-                break;
+                return ! empty($total) ? EEH_Money::formatForLocale($total, '', 4) : '';
             case '[PAYMENT_STATUS]':
-                $status = $transaction->pretty_status();
-                return ! empty($status) ? $status : esc_html__('Unknown', 'event_espresso');
-                break; /**/
-            // note the [payment_status] shortcode is kind of misleading because payment status might be different
-            // from txn status so I'm adding this here for clarity.
+                // note the [payment_status] shortcode is kind of misleading because payment status might be different
+                // from txn status so I'm adding this here for clarity.
             case '[TXN_STATUS]':
                 $status = $transaction->pretty_status();
                 return ! empty($status) ? $status : esc_html__('Unknown', 'event_espresso');
-                break;
             case '[TXN_STATUS_ID]':
                 return $transaction->status_ID();
-                break;
             case '[PAYMENT_GATEWAY]':
                 return $this->_get_payment_gateway($transaction);
-                break;
             case '[AMOUNT_PAID]':
                 return $payment instanceof EE_Payment
-                    ? EEH_Template::format_currency($payment->amount())
-                    : EEH_Template::format_currency(0);
-                break;
+                    ? EEH_Money::formatForLocale($payment->amount())
+                    : EEH_Money::formatForLocale(0);
             case '[LAST_AMOUNT_PAID]':
                 $last_payment = $transaction->last_payment();
                 return $last_payment instanceof EE_Payment
-                    ? EEH_Template::format_currency($last_payment->amount())
-                    : EEH_Template::format_currency(0);
+                    ? EEH_Money::formatForLocale($last_payment->amount())
+                    : EEH_Money::formatForLocale(0);
             case '[TOTAL_AMOUNT_PAID]':
-                return EEH_Template::format_currency($transaction->paid());
-                break;
+                return EEH_Money::formatForLocale($transaction->paid());
             case '[TOTAL_OWING]':
                 $total_owing = $transaction->remaining();
-                return EEH_Template::format_currency($total_owing);
-                break;
+                return EEH_Money::formatForLocale($total_owing);
             case '[TXN_SUBTOTAL]':
-                return EEH_Template::format_currency($this->_get_subtotal());
-                break;
+                return EEH_Money::formatForLocale($this->_get_subtotal());
             case '[TXN_TAX_SUBTOTAL]':
-                return EEH_Template::format_currency($this->_get_subtotal(true));
-                break;
+                return EEH_Money::formatForLocale($this->_get_subtotal(true));
             case '[TKT_QTY_PURCHASED]':
             case '[TXN_TOTAL_TICKETS]':
                 return $this->_data->total_ticket_count;
-                break;
             case '[TRANSACTION_ADMIN_URL]':
                 require_once EE_CORE . 'admin/EE_Admin_Page.core.php';
                 $query_args = array(
@@ -367,9 +344,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes
                     'action' => 'view_transaction',
                     'TXN_ID' => $transaction->ID(),
                 );
-                $url = EE_Admin_Page::add_query_args_and_nonce($query_args, admin_url('admin.php'));
-                return $url;
-                break;
+                return EE_Admin_Page::add_query_args_and_nonce($query_args, admin_url('admin.php'));
             case '[RECEIPT_URL]':
                 // get primary_registration
                 $reg = $this->_data->primary_reg_obj;
@@ -377,13 +352,10 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes
                     return '';
                 }
                 return $reg->receipt_url();
-                break;
             case '[INVOICE_RECEIPT_SWITCHER_URL]':
                 return $this->_get_invoice_receipt_switcher(false);
-                break;
             case '[INVOICE_RECEIPT_SWITCHER_BUTTON]':
                 return $this->_get_invoice_receipt_switcher();
-                break;
             case '[LAST_PAYMENT_TRANSACTION_ID]':
                 $id = '';
                 $payment = $payment instanceof EE_Payment && $payment->ID() !== 0
@@ -393,7 +365,6 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes
                     $id = $payment->txn_id_chq_nmbr();
                 }
                 return $id;
-                break;
         }
         if (strpos($shortcode, '[OWING_STATUS_MESSAGE_*') !== false) {
             return $this->_get_custom_total_owing($shortcode);
@@ -414,10 +385,10 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes
     /**
      * parser for the [OWING_STATUS_MESSAGE_*] attribute type shortcode
      *
-     * @since 4.5.0
      * @param string $shortcode the incoming shortcode
      * @return string parsed.
-     * @throws EE_Error
+     * @throws EE_Error|ReflectionException
+     * @since 4.5.0
      */
     private function _get_custom_total_owing($shortcode)
     {
@@ -453,7 +424,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes
     /**
      * @param EE_Transaction $transaction
      * @return string
-     * @throws EE_Error
+     * @throws EE_Error|ReflectionException
      */
     private function _get_payment_gateway($transaction)
     {
@@ -470,13 +441,13 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes
      * This retrieves a logo to be used for the invoice from whatever is set on the invoice logo settings page.  If its
      * not present then the organization logo is used if its found (set on the organization settings page).
      *
-     * @since 4.5.0
      * @param bool $img_tags TRUE means to return with the img tag wrappers.  False just returns the url to the image.
      * @return string url or html
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
+     * @throws InvalidInterfaceException|ReflectionException
+     * @since 4.5.0
      */
     private function _get_invoice_logo($img_tags = false)
     {
@@ -510,12 +481,12 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes
     /**
      * Used to retrieve the appropriate content for the invoice payee name shortcode
      *
-     * @since 4.5.0
      * @return string
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
+     * @throws InvalidInterfaceException|ReflectionException
+     * @since 4.5.0
      */
     private function _get_invoice_payee_name()
     {
@@ -561,12 +532,12 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes
     /**
      * Used to retrieve the appropriate content for the invoice payee email shortcode
      *
-     * @since 4.5.0
      * @return string
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
+     * @throws InvalidInterfaceException|ReflectionException
+     * @since 4.5.0
      */
     private function _get_invoice_payee_email()
     {
@@ -584,13 +555,13 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes
     /**
      * Used to retrieve the appropriate content for the invoice payee tax number shortcode
      *
-     * @since 4.5.0
      * @param string $shortcode
      * @return string
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
+     * @throws InvalidInterfaceException|ReflectionException
+     * @since 4.5.0
      */
     private function _get_invoice_payee_tax_number($shortcode)
     {
@@ -651,12 +622,12 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes
     /**
      * Used to retrieve the appropriate content for the invoice payment instructions shortcode.
      *
-     * @since 4.5.0
      * @return string
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
+     * @throws InvalidInterfaceException|ReflectionException
+     * @since 4.5.0
      */
     private function _get_invoice_payment_instructions()
     {
@@ -671,7 +642,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes
      *
      * @param bool $button true (default) returns the html for a button, false just returns the url.
      * @return string
-     * @throws EE_Error
+     * @throws EE_Error|ReflectionException
      */
     protected function _get_invoice_receipt_switcher($button = true)
     {
@@ -680,7 +651,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes
         if (! $reg instanceof EE_Registration || empty($message_type)) {
             return '';
         }
-        $switch_to_invoice = ! $message_type instanceof EE_Invoice_message_type ? true : false;
+        $switch_to_invoice = ! $message_type instanceof EE_Invoice_message_type;
         $switch_to_label = $switch_to_invoice && ! $message_type instanceof EE_Receipt_message_type
             ? esc_html__('View Invoice', 'event_espresso') : esc_html__('Switch to Invoice', 'event_espresso');
         $switch_to_label = ! $switch_to_invoice ? esc_html__('Switch to Receipt', 'event_espresso') : $switch_to_label;
@@ -704,7 +675,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes
      *
      * @param bool $tax if true then return the subtotal for tax otherwise return subtotal.
      * @return int
-     * @throws EE_Error
+     * @throws EE_Error|ReflectionException
      */
     private function _get_subtotal($tax = false)
     {
@@ -719,10 +690,10 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes
     /**
      * parser for the [PAYMENT_LINK_IF_NEEDED_*] attribute type shortcode
      *
-     * @since 4.7.0
      * @param string $shortcode the incoming shortcode
      * @return string parsed.
-     * @throws EE_Error
+     * @throws EE_Error|ReflectionException
+     * @since 4.7.0
      */
     private function _get_payment_link_if_needed($shortcode)
     {
@@ -760,11 +731,11 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes
     /**
      * Parser for the [PAYMENT_DUE_DATE_*] attribute type shortcode
      *
-     * @since 4.8.28.rc.011
      * @param string         $shortcode The shortcode being parsed.
      * @param EE_Transaction $transaction
      * @return string
-     * @throws EE_Error
+     * @throws EE_Error|ReflectionException
+     *@since 4.8.28.rc.011
      */
     protected function _get_payment_due_date($shortcode, EE_Transaction $transaction)
     {

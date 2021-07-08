@@ -15,14 +15,14 @@ class EE_Taxes extends EE_Base
      *
      * @var array
      */
-    private static $_subtotal = array();
+    private static $_subtotal = [];
 
     /**
      * This holds an array of EE_Price objects that are of PRT_ID == 4 (tax price types)
      *
      * @var EE_Price[]
      */
-    private static $_default_taxes = array();
+    private static $_default_taxes = [];
 
 
     /**
@@ -30,13 +30,14 @@ class EE_Taxes extends EE_Base
      * and applying default taxes to it). Note: this is just an intermediary helper method added to facilitate quick
      * calc of taxes for tickets listed in the event editor.
      *
-     * @param  EE_Ticket $ticket incoming EE_Ticket
+     * @param EE_Ticket $ticket incoming EE_Ticket
      * @return float             total taxes to apply to ticket.
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function get_total_taxes_for_admin(EE_Ticket $ticket)
     {
-        $tax = 0;
+        $tax       = 0;
         $total_tax = 0;
         // This first checks to see if the given ticket is taxable.
         if (! $ticket->get('TKT_taxable')) {
@@ -59,14 +60,16 @@ class EE_Taxes extends EE_Base
      * Gets the total percentage of tax that should be applied to taxable line items
      *
      * @return float the percentage of tax that should be added to taxable items
-     * @throws \EE_Error
-     * eg 20 for %20 tax (NOT 0.20, which
+     * @throws EE_Error eg 20 for %20 tax (NOT 0.20, which
+     * @throws ReflectionException
      */
     public static function get_total_taxes_percentage()
     {
         $total_tax_percent = 0;
         foreach (self::get_taxes_for_admin() as $tax_price) {
-            $total_tax_percent += $tax_price->get('PRC_amount');
+            if ($tax_price instanceof EE_Price) {
+                $total_tax_percent += $tax_price->amount();
+            }
         }
         return $total_tax_percent;
     }
@@ -75,7 +78,8 @@ class EE_Taxes extends EE_Base
     /**
      * @param EE_Ticket $ticket
      * @return float
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function get_subtotal_for_admin(EE_Ticket $ticket)
     {
@@ -89,9 +93,10 @@ class EE_Taxes extends EE_Base
     /**
      * simply take an incoming ticket and calculate the subtotal for the ticket
      *
-     * @param  EE_Ticket $ticket
+     * @param EE_Ticket $ticket
      * @return float     subtotal calculated from all EE_Price[] on Ticket.
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     private static function _get_subtotal_for_admin(EE_Ticket $ticket)
     {
@@ -99,10 +104,10 @@ class EE_Taxes extends EE_Base
         // get all prices
         $prices = $ticket->get_many_related(
             'Price',
-            array(
+            [
                 'default_where_conditions' => 'none',
-                'order_by'                 => array('PRC_order' => 'ASC'),
-            )
+                'order_by'                 => ['PRC_order' => 'ASC'],
+            ]
         );
         // let's loop through them (base price is always the first item)
         foreach ($prices as $price) {
@@ -112,19 +117,21 @@ class EE_Taxes extends EE_Base
                     switch ($price->type_obj()->base_type()) {
                         case 1: // base price
                         case 3: // surcharges
-                            $subtotal += $price->is_percent() ? $subtotal * $price->get('PRC_amount') / 100
-                                : $price->get('PRC_amount');
+                            $subtotal += $price->is_percent()
+                                ? $subtotal * $price->amount() / 100
+                                : $price->amount();
                             break;
                         case 2: // discounts
-                            $subtotal -= $price->is_percent() ? $subtotal * $price->get('PRC_amount') / 100
-                                : $price->get('PRC_amount');
+                            $subtotal -= $price->is_percent()
+                                ? $subtotal * $price->amount() / 100
+                                : $price->amount();
                             break;
                     }
                 }
             }
         }
-        $TKT_ID = $ticket->ID();
-        self::$_subtotal = array($TKT_ID => $subtotal);
+        $TKT_ID          = $ticket->ID();
+        self::$_subtotal = [$TKT_ID => $subtotal];
         return $subtotal;
     }
 
@@ -133,13 +140,13 @@ class EE_Taxes extends EE_Base
      * get all default prices that are a Tax price type (PRT_ID = 4) and return
      *
      * @return EE_Price[] EE_Price objects that have PRT_ID == 4
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public static function get_taxes_for_admin()
     {
         if (empty(self::$_default_taxes)) {
-            self::$_default_taxes = EE_Registry::instance()->load_model('Price')->get_all(
-                array(array('Price_Type.PBT_ID' => 4))
+            self::$_default_taxes = EEM_Price::instance()->get_all(
+                [['Price_Type.PBT_ID' => 4]]
             );
         }
         return self::$_default_taxes;

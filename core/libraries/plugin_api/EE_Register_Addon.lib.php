@@ -682,6 +682,7 @@ class EE_Register_Addon implements EEI_Plugin_API
             }
             return true;
         }
+
         // make sure this was called in the right place!
         if (! did_action('AHEE__EE_System__load_espresso_addons')
             || did_action('AHEE__EE_System___detect_if_activation_or_upgrade__begin')
@@ -726,6 +727,7 @@ class EE_Register_Addon implements EEI_Plugin_API
             }
         }
     }
+
 
 
     /**
@@ -1243,6 +1245,8 @@ class EE_Register_Addon implements EEI_Plugin_API
                     );
                 }
                 EE_Registry::instance()->removeAddon($class_name);
+                $loader = EventEspresso\core\services\loaders\LoaderFactory::getLoader();
+                $loader->remove($class_name, $addon);
             } catch (OutOfBoundsException $addon_not_yet_registered_exception) {
                 // the add-on was not yet registered in the registry,
                 // so RegistryContainer::__get() throws this exception.

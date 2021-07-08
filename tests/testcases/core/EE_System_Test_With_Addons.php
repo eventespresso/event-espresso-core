@@ -102,8 +102,8 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase
         $this->_table_analysis = new TableAnalysis();
         $this->_table_manager  = new TableManager($this->_table_analysis);
         $this->_pretend_addon_hook_time();
-        require_once EE_TESTS_DIR . 'mocks/addons/eea-new-addon/EE_New_Addon.class.php';
-        $mock_addon_path                = EE_TESTS_DIR . 'mocks/addons/eea-new-addon/';
+        $mock_addon_path = EE_TESTS_DIR . 'mocks/addons/eea-new-addon/';
+        require_once $mock_addon_path . 'EE_New_Addon.class.php';
         EE_Registry::instance()->addons = new RegistryContainer();
         EE_Register_Addon::register(
             $this->_addon_name,
@@ -131,6 +131,10 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase
         $this->assertInstanceOf('EE_New_Addon', $this->_addon);
         $this->_addon_classname          = get_class($this->_addon);
         $this->_addon_activation_history = $this->_addon->get_activation_history();
+        update_option(
+            $this->_addon->get_activation_history_option_name(),
+            []
+        );
         $this->_current_db_state         = get_option(EE_Data_Migration_Manager::current_database_state);
         delete_option(EE_Data_Migration_Manager::current_database_state);
         update_option(
@@ -160,7 +164,9 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase
             );
             EE_Register_Addon::deregister($this->_addon_name);
             try {
-                EE_Registry::instance()->addons->EE_New_Addon;
+                EE_Registry::instance()->addons->{$this->_addon_name};
+                \EEH_Debug_Tools::printr($this->_addon_name, '$this->_addon_name', __FILE__, __LINE__);
+                \EEH_Debug_Tools::printr(EE_Registry::instance()->addons->{$this->_addon_name}, 'EE_Registry::instance()->addons->{$this->_addon_name}', __FILE__, __LINE__);
                 $this->fail('EE_New_Addon is still registered. Deregister failed');
             } catch (Exception $e) {
                 $this->assertInstanceOf('OutOfBoundsException', $e);

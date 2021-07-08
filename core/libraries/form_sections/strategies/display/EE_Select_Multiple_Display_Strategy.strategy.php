@@ -54,7 +54,7 @@ class EE_Select_Multiple_Display_Strategy extends EE_Select_Display_Strategy
      * @param string|int $value unnormalized value option (string)
      * @return boolean
      */
-    protected function _check_if_option_selected($value)
+    protected function optionIsSelected($value)
     {
         $selected_options = $this->_input->raw_value();
         if (empty($selected_options)) {

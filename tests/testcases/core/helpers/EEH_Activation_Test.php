@@ -149,6 +149,7 @@ class EEH_Activation_Test extends EE_UnitTestCase {
 		//set some users; and just make it interesting by having the first user NOT be an admin
 		$this->factory->user->create_many( 2 );
 		$users = $this->factory->user->create_many( 2 );
+
 		//make users administrators.
 		foreach ( $users as $user_id ) {
 			$user = $this->factory->user->get_object_by_id( $user_id );

@@ -8,7 +8,7 @@
                 <th class="jst-left"><?php _e('#', 'event_espresso'); ?></th>
                 <th class="jst-left"><?php _e('Event Name and Ticket', 'event_espresso'); ?></th>
                 <th class="jst-left"><?php _e('Registrant', 'event_espresso'); ?></th>
-                <th class="jst-left"><?php _e('Ticket Price', 'event_espresso'); ?></th>
+                <th class="jst-rght"><?php _e('Ticket Price', 'event_espresso'); ?></th>
                 <th class="jst-left"><?php _e('Email', 'event_espresso'); ?></th>
                 <th class="jst-left"><?php _e('Address', 'event_espresso'); ?></th>
             </tr>

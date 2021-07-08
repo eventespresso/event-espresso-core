@@ -612,7 +612,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
 
 
             //the following is for install key inclusion (will apply later with PUE addons.)
-            $this->install_key_arr = get_site_option($this->pue_install_key);
+            $this->install_key_arr = get_site_option($this->pue_install_key, []);
             if (isset($this->install_key_arr['key'])) {
                 $this->install_key = $this->install_key_arr['key'];
 
@@ -1365,7 +1365,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
             //oh let's generate the download_url otherwise it will be old news...
 
             if (! empty($this->download_query)) {
-                $d_install_key = $this->install_key_arr['key'];
+                $d_install_key = isset($this->install_key_arr['key']) ? $this->install_key_arr['key'] : '';
                 $this->download_query['pue_install_key'] = $d_install_key;
                 $this->download_query['new_pue_check'] = 1;
                 $pluginInfo->download_url = add_query_arg($this->download_query, $pluginInfo->download_url);

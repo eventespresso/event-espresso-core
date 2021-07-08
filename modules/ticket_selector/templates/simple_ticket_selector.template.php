@@ -1,11 +1,12 @@
 <?php
 /** @var int $EVT_ID */
+
 /** @var int $TKT_ID */
 /** @var string $hidden_inputs */
 /** @var string $ticket_description */
 /** @var string $ticket_status_display */
-/** @var \EE_Event $event */
-/** @var \EE_Ticket $ticket */
+/** @var EE_Event $event */
+/** @var EE_Ticket $ticket */
 ?>
 <?php echo $hidden_inputs; ?>
 <input type="hidden" name="tkt-slctr-qty-<?php echo $EVT_ID; ?>[]" value="1"/>
@@ -19,7 +20,7 @@ if ($ticket instanceof EE_Ticket) {
     if (strpos($ticket_description, '<div') === false) {
         $ticket_description = "<p>{$ticket_description}</p>";
     }
-?>
+    ?>
 <div id="no-tkt-slctr-ticket-dv-<?php echo $EVT_ID; ?>" class="no-tkt-slctr-ticket-dv">
     <div class="no-tkt-slctr-ticket-content-dv">
         <h5><?php echo $ticket->name(); ?></h5>
@@ -30,3 +31,4 @@ if ($ticket instanceof EE_Ticket) {
     <?php
     do_action('AHEE__ticket_selector_chart__template__after_ticket_selector', $EVT_ID, $event);
 }
+// missing </div> tag is on purpose as that is printed in another template

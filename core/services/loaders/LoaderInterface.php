@@ -48,6 +48,14 @@ interface LoaderInterface
      */
     public function share($fqcn, $object);
 
+    /**
+     * @param FullyQualifiedName|string $fqcn
+     * @param mixed                     $object
+     * @return bool
+     * @throws InvalidArgumentException
+     */
+    public function remove($fqcn, $object);
+
 
     /**
      * calls reset() on loader if method exists

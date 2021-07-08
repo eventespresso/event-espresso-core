@@ -4,10 +4,9 @@
     <span id="cur_stat_id"><?php echo $cur_status; ?></span>
     <select name='ee_post_status' id='ee_post_status'>
         <?php foreach ($statuses as $status => $label) : ?>
-            <option<?php selected($cur_status, $status); ?>
-                value='<?php echo $status; ?>'><?php echo $label; ?></option>
-        <?php
-        endforeach;
-        ?>
+            <option<?php selected($cur_status, $status); ?> value='<?php echo $status; ?>'>
+                <?php echo $label; ?>
+            </option>
+        <?php endforeach; ?>
     </select>
 </div>

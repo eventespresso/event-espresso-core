@@ -6,25 +6,45 @@
  * @package               Event Espresso
  * @subpackage
  * @author                Mike Nelson
- *
- * ------------------------------------------------------------------------
  */
 class EE_Currency extends EE_Base_Class
 {
 
-    /** Currency COde @var CUR_code */
+    /**
+     * @var string
+     */
     protected $_CUR_code = null;
-    /** Currency Name Singular @var CUR_single */
+
+    /**
+     * @var string
+     */
     protected $_CUR_single = null;
-    /** Currency Name Plural @var CUR_plural */
+
+    /**
+     * @var string
+     */
     protected $_CUR_plural = null;
-    /** Currency Sign @var CUR_sign */
+
+    /**
+     * @var string
+     */
     protected $_CUR_sign = null;
-    /** Currency Decimal Places @var CUR_dec_plc */
+
+    /**
+     * @var int
+     */
     protected $_CUR_dec_plc = null;
-    /** Active? @var CUR_active */
+
+    /**
+     * @var bool
+     */
     protected $_CUR_active = null;
+
+    /**
+     * @var EE_Payment_Method
+     */
     protected $_Payment_Method;
+
 
     /**
      *
@@ -33,7 +53,9 @@ class EE_Currency extends EE_Base_Class
      *                                        used.)
      * @param array  $date_formats            incoming date_formats in an array where the first value is the
      *                                        date_format and the second value is the time format
-     * @return EE_Attendee
+     * @return EE_Currency
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function new_instance($props_n_values = array(), $timezone = null, $date_formats = array())
     {
@@ -46,146 +68,185 @@ class EE_Currency extends EE_Base_Class
      * @param array  $props_n_values  incoming values from the database
      * @param string $timezone        incoming timezone as set by the model.  If not set the timezone for
      *                                the website will be used.
-     * @return EE_Attendee
+     * @return EE_Currency
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function new_instance_from_db($props_n_values = array(), $timezone = null)
     {
         return new self($props_n_values, true, $timezone);
     }
 
+
     /**
      * Gets code
      *
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function code()
     {
         return $this->get('CUR_code');
     }
 
+
     /**
      * Sets code
      *
      * @param string $code
-     * @return boolean
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_code($code)
     {
-        return $this->set('CUR_code', $code);
+        $this->set('CUR_code', $code);
     }
+
 
     /**
      * Gets active
      *
      * @return boolean
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function active()
     {
         return $this->get('CUR_active');
     }
 
+
     /**
      * Sets active
      *
      * @param boolean $active
-     * @return boolean
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_active($active)
     {
-        return $this->set('CUR_active', $active);
+        $this->set('CUR_active', $active);
     }
+
 
     /**
      * Gets dec_plc
      *
      * @return int
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function dec_plc()
     {
         return $this->get('CUR_dec_plc');
     }
 
+
     /**
      * Sets dec_plc
      *
      * @param int $dec_plc
-     * @return boolean
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_dec_plc($dec_plc)
     {
-        return $this->set('CUR_dec_plc', $dec_plc);
+        $this->set('CUR_dec_plc', $dec_plc);
     }
+
 
     /**
      * Gets plural
      *
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function plural_name()
     {
         return $this->get('CUR_plural');
     }
 
+
     /**
      * Sets plural
      *
      * @param string $plural
-     * @return boolean
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_plural_name($plural)
     {
-        return $this->set('CUR_plural', $plural);
+        $this->set('CUR_plural', $plural);
     }
+
 
     /**
      * Gets sign
      *
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function sign()
     {
         return $this->get('CUR_sign');
     }
 
+
     /**
      * Sets sign
      *
      * @param string $sign
-     * @return boolean
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_sign($sign)
     {
-        return $this->set('CUR_sign', $sign);
+        $this->set('CUR_sign', $sign);
     }
+
 
     /**
      * Gets single
      *
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function singular_name()
     {
         return $this->get('CUR_single');
     }
 
+
     /**
      * Sets single
      *
      * @param string $single
-     * @return boolean
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_singular_name($single)
     {
-        return $this->set('CUR_single', $single);
+        $this->set('CUR_single', $single);
     }
+
 
     /**
      * Gets a prettier name
      *
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function name()
     {
-        return sprintf(__("%s (%s)", "event_espresso"), $this->code(), $this->plural_name());
+        return sprintf(
+            esc_html__('%s (%s)', 'event_espresso'),
+            $this->code(),
+            $this->plural_name()
+        );
     }
 }

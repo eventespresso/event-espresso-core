@@ -722,18 +722,8 @@ class Transactions_Admin_Page extends EE_Admin_Page
 
         $this->_template_args['grand_total'] = $this->_transaction->total();
         $this->_template_args['total_paid'] = $this->_transaction->paid();
+        $this->_template_args['amount_due'] = $this->_transaction->prettyRemaining();
 
-        $amount_due = $this->_transaction->total() - $this->_transaction->paid();
-        $this->_template_args['amount_due'] = EEH_Template::format_currency(
-            $amount_due,
-            true
-        );
-        if (EE_Registry::instance()->CFG->currency->sign_b4) {
-            $this->_template_args['amount_due'] = EE_Registry::instance()->CFG->currency->sign
-                                                  . $this->_template_args['amount_due'];
-        } else {
-            $this->_template_args['amount_due'] .= EE_Registry::instance()->CFG->currency->sign;
-        }
         $this->_template_args['amount_due_class'] = '';
 
         if ($this->_transaction->paid() === $this->_transaction->total()) {
@@ -761,7 +751,6 @@ class Transactions_Admin_Page extends EE_Admin_Page
             ? $payment_method->admin_name()
             : esc_html__('Unknown', 'event_espresso');
 
-        $this->_template_args['currency_sign'] = EE_Registry::instance()->CFG->currency->sign;
         // link back to overview
         $this->_template_args['txn_overview_url'] = ! empty($_SERVER['HTTP_REFERER'])
             ? $_SERVER['HTTP_REFERER']
@@ -1052,11 +1041,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
         $taxes = $this->_transaction->line_items(array(array('LIN_type' => EEM_Line_Item::type_tax)));
         $this->_template_args['taxes'] = ! empty($taxes) ? $taxes : false;
 
-        $this->_template_args['grand_total'] = EEH_Template::format_currency(
-            $this->_transaction->total(),
-            false,
-            false
-        );
+        $this->_template_args['grand_total'] = $this->_transaction->pretty_total();
         $this->_template_args['grand_raw_total'] = $this->_transaction->total();
         $this->_template_args['TXN_status'] = $this->_transaction->status_ID();
 
@@ -1286,7 +1271,6 @@ class Transactions_Admin_Page extends EE_Admin_Page
                 $attendee_name = $registration->attendee() instanceof EE_Attendee
                     ? $registration->attendee()->full_name()
                     : esc_html__('Unknown Attendee', 'event_espresso');
-                $owing = $registration->final_price() - $registration->paid();
                 $taxable = $registration->ticket()->taxable()
                     ? ' <span class="smaller-text lt-grey-text"> ' . esc_html__('+ tax', 'event_espresso') . '</span>'
                     : '';
@@ -1304,7 +1288,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
                     EEH_HTML::td($registration->event_name()) .
                     EEH_HTML::td($registration->pretty_paid(), '', 'txn-admin-payment-paid-td jst-cntr') .
                     EEH_HTML::td(
-                        EEH_Template::format_currency($owing),
+                        $registration->prettyAmountOwing(),
                         '',
                         'txn-admin-payment-owing-td jst-cntr'
                     ) .
@@ -1454,7 +1438,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
                                 $event_name = esc_html__('Unknown Event', 'event_espresso');
                             }
                             $event_name .= ' - ' . $item->name();
-                            $ticket_price = EEH_Template::format_currency($item->unit_price());
+                            $ticket_price = $item->prettyUnitPrice();
                             // now get all of the registrations for this transaction that use this ticket
                             $registrations = $ticket->registrations(
                                 array(array('TXN_ID' => $this->_transaction->ID()))
@@ -1857,9 +1841,9 @@ class Transactions_Admin_Page extends EE_Admin_Page
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    protected function _create_payment_from_request_data($valid_data)
+    protected function _create_payment_from_request_data(array $valid_data)
     {
-        $PAY_ID = $valid_data['PAY_ID'];
+        $PAY_ID = absint($valid_data['PAY_ID']);
         // get payment amount
         $amount = $valid_data['amount'] ? abs($valid_data['amount']) : 0;
         // payments have a type value of 1 and refunds have a type value of -1
@@ -2306,7 +2290,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
                 if ($registration instanceof EE_Registration) {
                     $registration_payment_data[ $registration->ID() ] = array(
                         'paid'  => $registration->pretty_paid(),
-                        'owing' => EEH_Template::format_currency($registration->final_price() - $registration->paid()),
+                        'owing' => $registration->prettyAmountOwing(),
                     );
                 }
             }

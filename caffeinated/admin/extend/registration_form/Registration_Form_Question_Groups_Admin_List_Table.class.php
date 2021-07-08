@@ -12,8 +12,6 @@
  * @link            http://www.eventespresso.com
  * @version         3.2.P
  *
- * ------------------------------------------------------------------------
- *
  * Registration_Form_Question_Groups_Admin_List_Table
  *
  * Class for preparing the table listing all the custom event Question_Groups
@@ -23,11 +21,14 @@
  * @package         Registration_Form_Question_Groups_Admin_List_Table
  * @subpackage      includes/core/admin/events/Registration_Form_Question_Groups_Admin_List_Table.class.php
  * @author          Darren Ethier
- *
- * ------------------------------------------------------------------------
  */
 class Registration_Form_Question_Groups_Admin_List_Table extends EE_Admin_List_Table
 {
+
+    /**
+     * @var Registration_Form_Admin_Page $_admin_page
+     */
+    protected $_admin_page;
 
 
     public function __construct($admin_page)
@@ -39,8 +40,8 @@ class Registration_Form_Question_Groups_Admin_List_Table extends EE_Admin_List_T
     protected function _setup_data()
     {
         $this->_data = $this->_view != 'trash'
-            ? $this->_admin_page->get_question_groups($this->_per_page, $this->_current_page, false)
-            : $this->_admin_page->get_trashed_question_groups($this->_per_page, $this->_current_page, false);
+            ? $this->_admin_page->get_question_groups($this->_per_page, $this->_current_page)
+            : $this->_admin_page->get_trashed_question_groups($this->_per_page, $this->_current_page);
         $this->_all_data_count = $this->_view != 'trash'
             ? $this->_admin_page->get_question_groups($this->_per_page, $this->_current_page, true)
             : $this->_admin_page->get_trashed_question_groups($this->_per_page, $this->_current_page, true);

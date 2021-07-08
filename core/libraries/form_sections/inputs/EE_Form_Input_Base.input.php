@@ -205,10 +205,20 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
         }
         // loop thru incoming options
         foreach ($input_args as $key => $value) {
-            // add underscore to $key to match property names
-            $_key = '_' . $key;
-            if (property_exists($this, $_key)) {
-                $this->{$_key} = $value;
+            // add underscore to $key to match setter or property names
+            $setter = "set_{$key}";
+            if (method_exists($this, $setter)) {
+                $this->{$setter}($value);
+                continue;
+            }
+            $setter = "_set_{$key}";
+            if (method_exists($this, $setter)) {
+                $this->{$setter}($value);
+                continue;
+            }
+            $_prop = "_{$key}";
+            if (property_exists($this, $_prop)) {
+                $this->{$_prop} = $value;
             }
         }
         // ensure that "required" is set correctly
@@ -248,7 +258,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      * Sets the html_name to its default value, if none was specified in teh constructor.
      * Calculation involves using the name and the parent's html_name
      *
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     protected function _set_default_html_name_if_empty()
     {
@@ -265,7 +275,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     /**
      * @param $parent_form_section
      * @param $name
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function _construct_finalize($parent_form_section, $name)
     {
@@ -345,7 +355,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      * Sets sensitive_data_removal_strategy
      *
      * @param EE_Sensitive_Data_Removal_Base $sensitive_data_removal_strategy
-     * @return boolean
+     * @return void
      */
     public function set_sensitive_data_removal_strategy($sensitive_data_removal_strategy)
     {
@@ -486,6 +496,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      * Gets the HTML
      *
      * @return string
+     * @throws EE_Error
      */
     public function get_html()
     {
@@ -500,7 +511,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      * Makes sure the JS and CSS are enqueued for it
      *
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function get_html_for_input()
     {
@@ -612,7 +623,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
             if ($validation_strategy instanceof EE_Validation_Strategy_Base) {
                 try {
                     $validation_strategy->validate($this->normalized_value());
-                } catch (EE_Validation_Error $e) {
+                } catch (Exception $e) {
                     $this->add_validation_error($e);
                 }
             }
@@ -647,7 +658,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      *
      * @param array $req_data like $_POST
      * @return boolean whether or not there was an error
-     * @throws \EE_Error
      */
     protected function _normalize($req_data)
     {
@@ -674,7 +684,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
             // we want to mostly leave the input alone in case we need to re-display it to the user
             $this->_set_normalized_value($this->_normalization_strategy->normalize($this->raw_value()));
             return false;
-        } catch (EE_Validation_Error $e) {
+        } catch (Exception $e) {
             $this->add_validation_error($e);
             return true;
         }
@@ -684,6 +694,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
 
     /**
      * @return string
+     * @throws EE_Error
      */
     public function html_name()
     {
@@ -695,6 +706,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
 
     /**
      * @return string
+     * @throws EE_Error
      */
     public function html_label_id()
     {
@@ -1076,7 +1088,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      *
      * @param array $req_data
      * @return mixed whatever the raw value of this form section is in the request data
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function find_form_data_for_this_section($req_data)
     {
@@ -1095,7 +1107,9 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     /**
      * If this input's name is something like "foo[bar][baz]"
      * returns an array like `array('foo','bar',baz')`
+     *
      * @return array
+     * @throws EE_Error
      */
     protected function getInputNameParts()
     {
@@ -1147,7 +1161,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      *
      * @param array $req_data like $_POST
      * @return boolean
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function form_data_present_in($req_data = null)
     {
@@ -1235,10 +1249,11 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     }
 
 
-
     /**
      * Makes this input disabled. That means it will have the HTML attribute 'disabled="disabled"',
      * and server-side if any input was received it will be ignored
+     *
+     * @param bool $disable
      */
     public function disable($disable = true)
     {

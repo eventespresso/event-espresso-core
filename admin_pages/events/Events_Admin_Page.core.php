@@ -1221,10 +1221,14 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         // update tickets next
         $old_tickets = isset($data['ticket_IDs']) ? explode(',', $data['ticket_IDs']) : array();
         foreach ($data['edit_tickets'] as $row => $tkt) {
+            if (empty($tkt)) {
+                continue;
+            }
             $incoming_date_formats = array('Y-m-d', 'h:i a');
             $update_prices = false;
             $ticket_price = isset($data['edit_prices'][ $row ][1]['PRC_amount'])
-                ? $data['edit_prices'][ $row ][1]['PRC_amount'] : 0;
+                ? $data['edit_prices'][ $row ][1]['PRC_amount']
+                : 0;
             // trim inputs to ensure any excess whitespace is removed.
             $tkt = array_map('trim', $tkt);
             if (empty($tkt['TKT_start_date'])) {
@@ -1266,9 +1270,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             // we actually do our saves a head of doing any add_relations to because its entirely possible that this ticket didn't removed or added to any datetime in the session but DID have it's items modified.
             // keep in mind that if the TKT has been sold (and we have changed pricing information), then we won't be updating the tkt but instead a new tkt will be created and the old one archived.
             if (! empty($tkt['TKT_ID'])) {
-                $TKT = EE_Registry::instance()
-                                  ->load_model('Ticket', array($evtobj->get_timezone()))
-                                  ->get_one_by_ID($tkt['TKT_ID']);
+                $TKT = EEM_Ticket::instance($evtobj->get_timezone())->get_one_by_ID($tkt['TKT_ID']);
                 if ($TKT instanceof EE_Ticket) {
                     $ticket_sold = $TKT->count_related(
                         'Registration',
@@ -1280,7 +1282,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                                 ),
                             ),
                         )
-                    ) > 0 ? true : false;
+                    ) > 0;
                     // let's just check the total price for the existing ticket and determine if it matches the new total price.  if they are different then we create a new ticket (if tkts sold) if they aren't different then we go ahead and modify existing ticket.
                     $create_new_TKT = $ticket_sold && $ticket_price != $TKT->get('TKT_price')
                                       && ! $TKT->get('TKT_deleted');

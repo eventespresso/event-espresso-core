@@ -22,7 +22,7 @@ class LeaveAlone extends FormatterBase
      * @return string
      * @throws InvalidDataTypeException if $input is not a string
      */
-    public function format($input)
+    public function format($input): string
     {
         return $input;
     }
@@ -33,7 +33,7 @@ class LeaveAlone extends FormatterBase
      * @param array $input
      * @return array
      */
-    public function formatArray($input)
+    public function formatArray(array $input): array
     {
         return $input;
     }

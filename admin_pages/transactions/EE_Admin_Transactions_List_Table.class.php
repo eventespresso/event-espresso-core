@@ -266,7 +266,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
             return '<span class="txn-pad-rght">'
                    . apply_filters(
                        'FHEE__EE_Admin_Transactions_List_Table__column_TXN_total__TXN_total',
-                       $transaction->get_pretty('TXN_total'),
+                       $transaction->pretty_total(),
                        $transaction
                    )
                    . '</span>';
@@ -309,7 +309,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
             : esc_html__('Unknown', 'event_espresso');
 
         $content = '<span class="' . $span_class . ' txn-pad-rght">'
-                   . $transaction->get_pretty('TXN_paid')
+                   . $transaction->pretty_paid()
                    . '</span>';
         if ($transaction_paid > 0) {
             $content .= '<br><span class="ee-status-text-small">'

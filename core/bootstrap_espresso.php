@@ -115,3 +115,10 @@ function bootstrap_espresso()
         new EventEspresso\core\exceptions\ExceptionStackTraceDisplay($e);
     }
 }
+
+add_filter(
+    'FHEE__format_percentage_value',
+    function ($value) {
+        return "$value %";
+    }
+);

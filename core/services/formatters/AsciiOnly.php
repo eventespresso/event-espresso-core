@@ -2,8 +2,6 @@
 
 namespace EventEspresso\core\services\formatters;
 
-use EventEspresso\core\exceptions\InvalidDataTypeException;
-
 /**
  * Class AsciiOnly
  * Removes all non-ascii characters from the string
@@ -21,12 +19,11 @@ class AsciiOnly extends FormatterBase
      * @param string|int|float $input anything easily cast into a string
      * @return string
      */
-    public function format($input)
+    public function format($input): string
     {
         // in case an int or float etc was passed in
         $input = (string) $input;
-        $input = $this->convertAscii($input);
-        return $input;
+        return $this->convertAscii($input);
     }
 
 
@@ -36,7 +33,7 @@ class AsciiOnly extends FormatterBase
      * @param $string
      * @return string
      */
-    protected function convertAscii($string)
+    protected function convertAscii($string): string
     {
         // Replace Single Curly Quotes
         $search[] = chr(226) . chr(128) . chr(152);
@@ -66,7 +63,6 @@ class AsciiOnly extends FormatterBase
         // Apply Replacements
         $string = str_replace($search, $replace, $string);
         // Remove any non-ASCII Characters
-        $string = preg_replace("/[^\x01-\x7F]/", "", $string);
-        return $string;
+        return preg_replace("/[^\x01-\x7F]/", "", $string);
     }
 }

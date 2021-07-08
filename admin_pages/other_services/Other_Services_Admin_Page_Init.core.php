@@ -18,12 +18,14 @@ class Other_Services_Admin_Page_Init extends EE_Admin_Page_Init
 
     public function __construct()
     {
-        // define some help/support page related constants
-        define('EE_OTHER_SERVICES_PG_SLUG', 'espresso_packages');
-        define('EE_OTHER_SERVICES_ADMIN_URL', admin_url('admin.php?page=' . EE_OTHER_SERVICES_PG_SLUG));
-        define('EE_OTHER_SERVICES_ADMIN_TEMPLATE_PATH', EE_ADMIN_PAGES . 'other_services/templates/');
-        define('EE_OTHER_SERVICES_ADMIN', EE_ADMIN_PAGES . 'other_services/');
-        define('EE_OTHER_SERVICES_ASSETS_URL', EE_ADMIN_PAGES_URL . 'other_services/assets/');
+        if (! defined('EE_OTHER_SERVICES_PG_SLUG')) {
+            // define some help/support page related constants
+            define('EE_OTHER_SERVICES_PG_SLUG', 'espresso_packages');
+            define('EE_OTHER_SERVICES_ADMIN_URL', admin_url('admin.php?page=' . EE_OTHER_SERVICES_PG_SLUG));
+            define('EE_OTHER_SERVICES_ADMIN_TEMPLATE_PATH', EE_ADMIN_PAGES . 'other_services/templates/');
+            define('EE_OTHER_SERVICES_ADMIN', EE_ADMIN_PAGES . 'other_services/');
+            define('EE_OTHER_SERVICES_ASSETS_URL', EE_ADMIN_PAGES_URL . 'other_services/assets/');
+        }
 
         parent::__construct();
     }

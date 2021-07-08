@@ -87,8 +87,8 @@ class EeAddonTestCase extends EE_UnitTestCase
             } catch (Exception $e) {
                 $this->assertInstanceOf('OutOfBoundsException', $e);
             }
-            $this->stopPretendingAddonHookTime();
         }
+        $this->stopPretendingAddonHookTime();
         parent::tearDown();
     }
 
@@ -141,5 +141,6 @@ class EeAddonTestCase extends EE_UnitTestCase
         //trigger activate_plugin hook
         do_action('activate_plugin');
         $this->registerAddon();
+        $this->stopPretendingAddonHookTime();
     }
 }

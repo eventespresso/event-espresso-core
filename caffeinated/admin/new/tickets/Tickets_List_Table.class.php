@@ -5,61 +5,61 @@
  * Tickets_List_Table
  *
  * Class for preparing the table listing all the default tickets
- *
  * note: anywhere there are no php docs it is because the docs are available in the parent class.
  *
- * @package            Tickets List Table
- * @subpackage         caffeinated/admin/new/tickets/Tickets_List_Table.core.php
- * @author             Darren Ethier
- *
- * ------------------------------------------------------------------------
+ * @package     Tickets List Table
+ * @subpackage  caffeinated/admin/new/tickets/Tickets_List_Table.core.php
+ * @author      Darren Ethier
  */
 class Tickets_List_Table extends EE_Admin_List_Table
 {
-
+    /**
+     * @var Tickets_Admin_Page
+     */
+    protected $_admin_page;
 
     protected function _setup_data()
     {
-        $trashed = $this->_admin_page->get_view() == 'trashed' ? true : false;
-        $this->_data = $this->_admin_page->get_default_tickets($this->_per_page, false, $trashed);
+        $trashed               = $this->_admin_page->get_view() === 'trashed';
+        $this->_data           = $this->_admin_page->get_default_tickets($this->_per_page, false, $trashed);
         $this->_all_data_count = $this->_admin_page->get_default_tickets($this->_per_page, true, false);
-        $this->_trashed_count = $this->_admin_page->get_default_tickets($this->_per_page, true, true);
+        $this->_trashed_count  = $this->_admin_page->get_default_tickets($this->_per_page, true, true);
     }
 
 
     protected function _set_properties()
     {
-        $this->_wp_list_args = array(
-            'singular' => __('ticket', 'event_espresso'),
-            'plural'   => __('tickets', 'event_espresso'),
+        $this->_wp_list_args = [
+            'singular' => esc_html__('ticket', 'event_espresso'),
+            'plural'   => esc_html__('tickets', 'event_espresso'),
             'ajax'     => true,
             'screen'   => $this->_admin_page->get_current_screen()->id,
-        );
+        ];
 
-        $this->_columns = array(
+        $this->_columns = [
             'cb'              => '<input type="checkbox" />', // Render a checkbox instead of text
-            'TKT_name'        => __('Name', 'event_espresso'),
-            'TKT_description' => __('Description', 'event_espresso'),
-            'TKT_qty'         => __('Quantity', 'event_espresso'),
-            'TKT_uses'        => __('Uses', 'event_espresso'),
-            'TKT_min'         => __('Minimum', 'event_espresso'),
-            'TKT_max'         => __('Maximum', 'event_espresso'),
-            'TKT_price'       => __('Price', 'event_espresso'),
-            'TKT_taxable'     => __('Taxable', 'event_espresso'),
-        );
+            'TKT_name'        => esc_html__('Name', 'event_espresso'),
+            'TKT_description' => esc_html__('Description', 'event_espresso'),
+            'TKT_qty'         => esc_html__('Quantity', 'event_espresso'),
+            'TKT_uses'        => esc_html__('Uses', 'event_espresso'),
+            'TKT_min'         => esc_html__('Minimum', 'event_espresso'),
+            'TKT_max'         => esc_html__('Maximum', 'event_espresso'),
+            'TKT_price'       => esc_html__('Price', 'event_espresso'),
+            'TKT_taxable'     => esc_html__('Taxable', 'event_espresso'),
+        ];
 
-        $this->_sortable_columns = array(
+        $this->_sortable_columns = [
             // TRUE means its already sorted
-            'TKT_name'        => array('TKT_name', true),
-            'TKT_description' => array('TKT_description', false),
-            'TKT_qty'         => array('TKT_qty', false),
-            'TKT_uses'        => array('TKT_uses', false),
-            'TKT_min'         => array('TKT_min', false),
-            'TKT_max'         => array('TKT_max', false),
-            'TKT_price'       => array('TKT_price', false),
-        );
+            'TKT_name'        => ['TKT_name', true],
+            'TKT_description' => ['TKT_description', false],
+            'TKT_qty'         => ['TKT_qty', false],
+            'TKT_uses'        => ['TKT_uses', false],
+            'TKT_min'         => ['TKT_min', false],
+            'TKT_max'         => ['TKT_max', false],
+            'TKT_price'       => ['TKT_price', false],
+        ];
 
-        $this->_hidden_columns = array();
+        $this->_hidden_columns = [];
     }
 
 
@@ -88,83 +88,151 @@ class Tickets_List_Table extends EE_Admin_List_Table
     }
 
 
-    public function column_TKT_name($item)
+    /**
+     * @param EE_Ticket $item
+     * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since   $VID:$
+     */
+    public function column_TKT_name(EE_Ticket $item)
     {
         // build row actions
-        $actions = array();
+        $actions = [];
 
         // trash links
         if ($item->ID() !== 1) {
             if ($this->_view == 'all') {
-                $trash_lnk_url = EE_Admin_Page::add_query_args_and_nonce(array(
-                    'action' => 'trash_ticket',
-                    'TKT_ID' => $item->ID(),
-                ), TICKETS_ADMIN_URL);
+                $trash_lnk_url    = EE_Admin_Page::add_query_args_and_nonce(
+                    [
+                        'action' => 'trash_ticket',
+                        'TKT_ID' => $item->ID(),
+                    ],
+                    TICKETS_ADMIN_URL
+                );
                 $actions['trash'] = '<a href="' . $trash_lnk_url . '" title="'
                                     . esc_attr__('Move Ticket to trash', 'event_espresso') . '">'
-                                    . __('Trash', 'event_espresso') . '</a>';
+                                    . esc_html__('Trash', 'event_espresso')
+                                    . '</a>';
             } else {
                 // restore price link
-                $restore_lnk_url = EE_Admin_Page::add_query_args_and_nonce(array(
-                    'action' => 'restore_ticket',
-                    'TKT_ID' => $item->ID(),
-                ), TICKETS_ADMIN_URL);
+                $restore_lnk_url    = EE_Admin_Page::add_query_args_and_nonce(
+                    [
+                        'action' => 'restore_ticket',
+                        'TKT_ID' => $item->ID(),
+                    ],
+                    TICKETS_ADMIN_URL
+                );
                 $actions['restore'] = '<a href="' . $restore_lnk_url . '" title="'
                                       . esc_attr__('Restore Ticket', 'event_espresso') . '">'
-                                      . __('Restore', 'event_espresso') . '</a>';
+                                      . esc_html__('Restore', 'event_espresso')
+                                      . '</a>';
                 // delete price link
-                $delete_lnk_url = EE_Admin_Page::add_query_args_and_nonce(array(
-                    'action' => 'delete_ticket',
-                    'TKT_ID' => $item->ID(),
-                ), TICKETS_ADMIN_URL);
+                $delete_lnk_url    = EE_Admin_Page::add_query_args_and_nonce(
+                    [
+                        'action' => 'delete_ticket',
+                        'TKT_ID' => $item->ID(),
+                    ],
+                    TICKETS_ADMIN_URL
+                );
                 $actions['delete'] = '<a href="' . $delete_lnk_url . '" title="'
                                      . esc_attr__('Delete Ticket Permanently', 'event_espresso') . '">'
-                                     . __('Delete Permanently', 'event_espresso') . '</a>';
+                                     . esc_html__('Delete Permanently', 'event_espresso')
+                                     . '</a>';
             }
         }
 
-        return $item->get('TKT_name') . $this->row_actions($actions);
+        return $item->name() . $this->row_actions($actions);
     }
 
 
-    public function column_TKT_description($item)
+    /**
+     * @param EE_Ticket $item
+     * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since   $VID:$
+     */
+    public function column_TKT_description(EE_Ticket $item)
     {
-        return $item->get('TKT_description');
+        return $item->description();
     }
 
 
-    public function column_TKT_qty($item)
+    /**
+     * @param EE_Ticket $item
+     * @return int
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since   $VID:$
+     */
+    public function column_TKT_qty(EE_Ticket $item)
     {
-        return $item->get_pretty('TKT_qty', 'text');
+        return $item->qty();
     }
 
 
-    public function column_TKT_uses($item)
+    /**
+     * @param EE_Ticket $item
+     * @return int
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since   $VID:$
+     */
+    public function column_TKT_uses(EE_Ticket $item)
     {
-        return $item->get_pretty('TKT_uses', 'text');
+        return $item->uses();
     }
 
 
-    public function column_TKT_min($item)
+    /**
+     * @param EE_Ticket $item
+     * @return int
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since   $VID:$
+     */
+    public function column_TKT_min(EE_Ticket $item)
     {
-        return $item->get('TKT_min');
+        return $item->min();
     }
 
 
-    public function column_TKT_max($item)
+    /**
+     * @param EE_Ticket $item
+     * @return int
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since   $VID:$
+     */
+    public function column_TKT_max(EE_Ticket $item)
     {
-        return $item->get_pretty('TKT_max', 'text');
+        return $item->max();
     }
 
 
-    public function column_TKT_price($item)
+    /**
+     * @param EE_Ticket $item
+     * @return mixed
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since   $VID:$
+     */
+    public function column_TKT_price(EE_Ticket $item)
     {
-        return EEH_Template::format_currency($item->get('TKT_price'));
+        return $item->pretty_price();
     }
 
 
-    public function column_TKT_taxable($item)
+    /**
+     * @param EE_Ticket $item
+     * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since   $VID:$
+     */
+    public function column_TKT_taxable(EE_Ticket $item)
     {
-        return $item->get('TKT_taxable') ? __('Yes', 'event_espresso') : __('No', 'event_espresso');
+        return $item->taxable() ? esc_html__('Yes', 'event_espresso') : esc_html__('No', 'event_espresso');
     }
 }

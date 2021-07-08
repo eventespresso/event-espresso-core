@@ -287,13 +287,13 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase
         $this->assertContains('999999', $parsed);
 
         //testing [TOTAL_COST] and [AMOUNT_DUE]  (should be $125*3 + 20 shipping charge + taxes)
-        $total_cost = EEH_Template::format_currency('398.00');
+        $total_cost = EEH_Money::formatForLocale('398.00');
         $this->assertContains($total_cost, $parsed);
         //but we should also have a count of TWO for this string
         $this->assertEquals(2, substr_count($parsed, $total_cost));
 
         //testing [AMOUNT_PAID]
-        $amount_paid = EEH_Template::format_currency('0');
+        $amount_paid = EEH_Money::formatForLocale('0');
         $this->assertContains($amount_paid, $parsed);
 
 
@@ -304,7 +304,7 @@ class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase
         $this->assertContains('One entry in the event.', $parsed);
 
         //testing [TICKET_PRICE]
-        $this->assertContains(EEH_Template::format_currency('125.00'), $parsed);
+        $this->assertContains(EEH_Money::formatForLocale('125.00'), $parsed);
 
 
         //testing [TKT_QTY_PURCHASED]

@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\interfaces\InterminableInterface;
+
 /**
  * EE_Network_Config
  * This sets up the configuration object for items saved to the db using update_site_option (and retrieved using
@@ -11,7 +13,7 @@
  * @subpackage     core/
  * @author         Darren Ethier
  */
-final class EE_Network_Config
+final class EE_Network_Config implements InterminableInterface
 {
 
     /**

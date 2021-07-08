@@ -1,11 +1,17 @@
 <?php
+
+use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\services\commands\CommandBus;
+use EventEspresso\core\services\commands\InvalidCommandHandlerException;
 use EventEspresso\core\services\commands\middleware\CapChecker;
+use EventEspresso\core\services\commands\middleware\InvalidCommandBusMiddlewareException;
 use EventEspresso\tests\mocks\core\domain\services\capabilities\CapabilitiesCheckerMock;
 use EventEspresso\tests\mocks\core\services\commands\MockCommand;
 use EventEspresso\tests\mocks\core\services\commands\MockTwoCommand;
 use EventEspresso\tests\mocks\core\services\commands\MockCommandHandler;
 use EventEspresso\tests\mocks\core\services\commands\RequiresCapCheckMockCommand;
+use PHPUnit\Framework\AssertionFailedError;
+use PHPUnit\Framework\Exception;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
@@ -17,7 +23,6 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  *
  * @package       Event Espresso
  * @author        Brent Christensen
- *
  * @group         CommandBus
  */
 class CommandBusTest extends EE_UnitTestCase
@@ -32,15 +37,20 @@ class CommandBusTest extends EE_UnitTestCase
 
     public function setUp()
     {
-        EE_Dependency_Map::register_dependencies(
-            'EventEspresso\tests\mocks\core\services\commands\CommandHandlerManagerMock',
-            array('EE_Registry' => EE_Dependency_Map::load_from_cache,)
-        );
-        // need to override the existing alias for the CommandHandlerManagerInterface
-        // or else the REAL class will still get used
-        EE_Dependency_Map::instance()->add_alias(
-            'EventEspresso\tests\mocks\core\services\commands\CommandHandlerManagerMock',
-            'EventEspresso\core\services\commands\CommandHandlerManagerInterface'
+        add_action(
+            'AHEE__EE_Dependency_Map___register_core_dependencies',
+            function (EE_Dependency_Map $dependency_map) {
+                $dependency_map->registerDependencies(
+                    'EventEspresso\tests\mocks\core\services\commands\CommandHandlerManagerMock',
+                    ['EE_Registry' => EE_Dependency_Map::load_from_cache,]
+                );
+                // need to override the existing alias for the CommandHandlerManagerInterface
+                // or else the REAL class will still get used
+                $dependency_map->add_alias(
+                    'EventEspresso\tests\mocks\core\services\commands\CommandHandlerManagerMock',
+                    'EventEspresso\core\services\commands\CommandHandlerManagerInterface'
+                );
+            }
         );
         parent::setUp();
     }
@@ -48,7 +58,7 @@ class CommandBusTest extends EE_UnitTestCase
 
     /**
      * @param array $middleware
-     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      */
     protected function setupCommandBus(array $middleware = array())
     {
@@ -57,15 +67,12 @@ class CommandBusTest extends EE_UnitTestCase
             new EventEspresso\tests\mocks\core\services\commands\CommandHandlerManagerMock(),
             $middleware
         );
-        $this->assertInstanceOf(
-            'EventEspresso\core\services\commands\CommandBus',
-            $this->command_bus
-        );
+        $this->assertInstanceOf('EventEspresso\core\services\commands\CommandBus', $this->command_bus);
     }
 
 
     /**
-     * @throws \PHPUnit\Framework\Exception
+     * @throws Exception
      */
     public function testGetCommandHandlerManager()
     {
@@ -79,10 +86,10 @@ class CommandBusTest extends EE_UnitTestCase
 
     /**
      * @throws InvalidArgumentException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\services\commands\InvalidCommandHandlerException
-     * @throws \EventEspresso\core\services\commands\middleware\InvalidCommandBusMiddlewareException
-     * @throws \PHPUnit\Framework\Exception
+     * @throws InvalidDataTypeException
+     * @throws InvalidCommandHandlerException
+     * @throws InvalidCommandBusMiddlewareException
+     * @throws Exception
      */
     public function testExecute()
     {
@@ -108,10 +115,10 @@ class CommandBusTest extends EE_UnitTestCase
 
     /**
      * @throws InvalidArgumentException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\services\commands\InvalidCommandHandlerException
-     * @throws \EventEspresso\core\services\commands\middleware\InvalidCommandBusMiddlewareException
-     * @throws \PHPUnit\Framework\Exception
+     * @throws InvalidDataTypeException
+     * @throws InvalidCommandHandlerException
+     * @throws InvalidCommandBusMiddlewareException
+     * @throws Exception
      */
     public function testExecuteWithPassingCapCheck()
     {
@@ -139,11 +146,11 @@ class CommandBusTest extends EE_UnitTestCase
 
     /**
      * @throws InvalidArgumentException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\services\commands\InvalidCommandHandlerException
-     * @throws \EventEspresso\core\services\commands\middleware\InvalidCommandBusMiddlewareException
-     * @throws \PHPUnit\Framework\AssertionFailedError
-     * @throws \PHPUnit\Framework\Exception
+     * @throws InvalidDataTypeException
+     * @throws InvalidCommandHandlerException
+     * @throws InvalidCommandBusMiddlewareException
+     * @throws AssertionFailedError
+     * @throws Exception
      */
     public function testExecuteWithFailingCapCheck()
     {
@@ -177,11 +184,11 @@ class CommandBusTest extends EE_UnitTestCase
 
     /**
      * @throws InvalidArgumentException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\services\commands\InvalidCommandHandlerException
-     * @throws \EventEspresso\core\services\commands\middleware\InvalidCommandBusMiddlewareException
-     * @throws \PHPUnit\Framework\AssertionFailedError
-     * @throws \PHPUnit\Framework\Exception
+     * @throws InvalidDataTypeException
+     * @throws InvalidCommandHandlerException
+     * @throws InvalidCommandBusMiddlewareException
+     * @throws AssertionFailedError
+     * @throws Exception
      */
     public function testExecuteWithIncorrectCommand()
     {

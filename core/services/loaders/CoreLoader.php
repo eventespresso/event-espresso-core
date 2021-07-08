@@ -100,6 +100,7 @@ class CoreLoader implements LoaderDecoratorInterface
             $addon = isset($arguments['EE_Registry::create(addon)'])
                 ? filter_var($arguments['EE_Registry::create(addon)'], FILTER_VALIDATE_BOOLEAN)
                 : false;
+
             unset(
                 $arguments['EE_Registry::create(from_db)'],
                 $arguments['EE_Registry::create(load_only)'],

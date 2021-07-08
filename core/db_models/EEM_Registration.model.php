@@ -167,15 +167,11 @@ class EEM_Registration extends EEM_Soft_Delete_Base
                 ),
                 'REG_final_price' => new EE_Money_Field(
                     'REG_final_price',
-                    esc_html__('Registration\'s share of the transaction total', 'event_espresso'),
-                    false,
-                    0
+                    esc_html__('Registration\'s share of the transaction total', 'event_espresso')
                 ),
                 'REG_paid' => new EE_Money_Field(
                     'REG_paid',
-                    esc_html__('Amount paid to date towards registration', 'event_espresso'),
-                    false,
-                    0
+                    esc_html__('Amount paid to date towards registration', 'event_espresso')
                 ),
                 'REG_session' => new EE_Plain_Text_Field(
                     'REG_session',
@@ -375,9 +371,21 @@ class EEM_Registration extends EEM_Soft_Delete_Base
             );
             self::$_reg_status = array();
             foreach ($results as $status) {
-                if (!in_array($status->STS_ID, $exclude, true)) {
+                if (! in_array($status->STS_ID, $exclude, true)) {
                     self::$_reg_status[ $status->STS_ID ] = $status->STS_code;
                 }
+            }
+            // make sure we have something
+            if (empty(self::$_reg_status)) {
+                self::$_reg_status = [
+                    'RAP' => 'APPROVED',
+                    'RCN' => 'CANCELLED',
+                    'RDC' => 'DECLINED',
+                    'RIC' => 'INCOMPLETE',
+                    'RNA' => 'NOT_APPROVED',
+                    'RPP' => 'PENDING_PAYMENT',
+                    'RWL' => 'WAIT_LIST',
+                ];
             }
         }
     }

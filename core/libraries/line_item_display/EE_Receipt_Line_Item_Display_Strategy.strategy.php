@@ -13,7 +13,10 @@
  *
  * ------------------------------------------------------------------------
  */
- /**
+
+use EventEspresso\core\libraries\line_item_display\LineItemDisplayStrategy;
+
+/**
  *
  * Class EE_Receipt_Line_Item_Display_Strategy
  *
@@ -26,13 +29,15 @@
  *
  */
 
-class EE_Receipt_Line_Item_Display_Strategy implements EEI_Line_Item_Display
+class EE_Receipt_Line_Item_Display_Strategy extends LineItemDisplayStrategy
 {
 
     /**
      * @param EE_Line_Item $line_item
      * @param array        $options
      * @return mixed
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function display_line_item(EE_Line_Item $line_item, $options = array())
     {

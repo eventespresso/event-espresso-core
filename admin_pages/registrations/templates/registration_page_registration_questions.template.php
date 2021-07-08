@@ -1,3 +1,13 @@
+<?php
+/**
+ * @var array  $additional_event_attendees
+ * @var array  $event_queue
+ * @var array  $ticket_count
+ * @var string $prmy_att_input_name
+ * @var bool   $print_copy_info
+ */
+?>
+
 <div id="single-page-checkout" class="ui-widget">
     <?php do_action(
         'AHEE__registration_page_registration_questions__template__after_spco_attendee_information_header'
@@ -32,27 +42,21 @@
                         if ($item['ticket']->name() != $prev_event) { ?>
                             <p class="spco-ticket-info-pg">
                                 <?php
-                                echo $item['ticket']->name() . ':  '
-                                     . EEH_Template::format_currency(
-                                         $item['ticket']->price(),
-                                         false,
-                                         false
-                                     );
+                                echo $item['ticket']->name() . ':  ' . $item['ticket']->pretty_price();
                                 echo $item['ticket']->qty()
-                                    ? ' &nbsp; x &nbsp; ' . $ticket_count[ $item['ticket']->ID() ]
-                                                              . __(
-                                                                  ' tickets',
-                                                                  'event_espresso'
-                                                              ) . ' &nbsp; = &nbsp; '
-                                                              . EEH_Template::format_currency(
-                                                                  $item['ticket']->price() * $ticket_count[ $item['ticket']->ID() ]
-                                                              )
+                                    ? ' &nbsp; x &nbsp; '
+                                      . $ticket_count[ $item['ticket']->ID() ]
+                                      . esc_html__(' tickets', 'event_espresso')
+                                      . ' &nbsp; = &nbsp; '
+                                      . EEH_Money::formatForLocale(
+                                          $item['ticket']->price() * $ticket_count[ $item['ticket']->ID() ]
+                                    )
                                     : '';
                                 echo $item['ticket']->description()
-                                    ? '<br/>' . __(
-                                        'Ticket Details: ',
-                                        'event_espresso'
-                                    ) . $item['ticket']->description() : '';
+                                    ? '<br/>'
+                                      . esc_html__('Ticket Details: ', 'event_espresso')
+                                      . $item['ticket']->description()
+                                    : '';
                                 ?>
                             </p>
 
@@ -69,7 +73,7 @@
 
                             <?php
                             // do an action before the questions output, including the item and count
-                            echo do_action(
+                            do_action(
                                 'AHEE__registration_page_registration_questions__template___before_questions',
                                 $item,
                                 $att_nmbr

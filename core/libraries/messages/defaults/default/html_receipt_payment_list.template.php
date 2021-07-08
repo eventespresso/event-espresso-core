@@ -9,7 +9,7 @@
     <td>[PAYMENT_TIMESTAMP]</td>
     <td>[PAYMENT_GATEWAY_TXN_ID]</td>
     <td>[PAYMENT_PO_NUMBER]</td>
-    <td>[PAYMENT_STATUS]</td>
+    <td class='item_c'>[PAYMENT_STATUS]</td>
     <td class='item_r'>[PAYMENT_AMOUNT]</td>
 </tr>
 <tr>

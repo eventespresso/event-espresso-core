@@ -161,8 +161,9 @@ class BlockRegistrationManager extends BlockManager
             foreach ($this->blocks as $block) {
                 $block->initialize();
                 $this->trackAssetManagersForBlocks($block);
-                if (! $this->block_asset_manager_collection->has($block->assetManager())) {
-                    $this->block_asset_manager_collection->add($block->assetManager());
+                $asset_manager = $block->assetManager();
+                if (! $this->block_asset_manager_collection->contains($asset_manager)) {
+                    $this->block_asset_manager_collection->add($asset_manager, get_class($asset_manager));
                     $block->assetManager()->setAssetHandles();
                 }
             }

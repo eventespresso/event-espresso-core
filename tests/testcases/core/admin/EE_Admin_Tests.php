@@ -18,7 +18,7 @@
  */
 class EE_Admin_Tests extends EE_UnitTestCase {
 
-	/**
+    /**
 	 * test whether EE_Admin is loaded correctly
 	 *
 	 * @since 4.3.0
@@ -123,7 +123,7 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 	 */
 	public function test_init() {
 		$admin = EE_Admin::instance();
-
+        remove_action('dashboard_glance_items', [$admin, 'dashboard_glance_items']);
 		//test when maintenance mode is set at level 2
 		$this->setMaintenanceMode(2);
 		$admin->init();

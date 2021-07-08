@@ -3,13 +3,21 @@
 use EventEspresso\core\interfaces\InterminableInterface;
 
 // phpcs:disable PHPCompatibility.PHP.RemovedExtensions.mcryptDeprecatedRemoved
+// phpcs:disable PHPCompatibility.Extensions.RemovedExtensions.mcryptDeprecatedRemoved
 // phpcs:disable PHPCompatibility.PHP.DeprecatedFunctions.mcrypt_get_iv_sizeDeprecatedRemoved
+// phpcs:disable PHPCompatibility.FunctionUse.RemovedFunctions.mcrypt_get_iv_sizeDeprecatedRemoved
 // phpcs:disable PHPCompatibility.PHP.RemovedConstants.mcrypt_rijndael_256DeprecatedRemoved
+// phpcs:disable PHPCompatibility.Constants.RemovedConstants.mcrypt_rijndael_256DeprecatedRemoved
 // phpcs:disable PHPCompatibility.PHP.RemovedConstants.mcrypt_mode_ecbDeprecatedRemoved
+// phpcs:disable PHPCompatibility.Constants.RemovedConstants.mcrypt_mode_ecbDeprecatedRemoved
 // phpcs:disable PHPCompatibility.PHP.DeprecatedFunctions.mcrypt_create_ivDeprecatedRemoved
+// phpcs:disable PHPCompatibility.FunctionUse.RemovedFunctions.mcrypt_create_ivDeprecatedRemoved
 // phpcs:disable PHPCompatibility.PHP.RemovedConstants.mcrypt_randDeprecatedRemoved
+// phpcs:disable PHPCompatibility.Constants.RemovedConstants.mcrypt_randDeprecatedRemoved
 // phpcs:disable PHPCompatibility.PHP.DeprecatedFunctions.mcrypt_encryptDeprecatedRemoved
+// phpcs:disable PHPCompatibility.FunctionUse.RemovedFunctions.mcrypt_encryptDeprecatedRemoved
 // phpcs:disable PHPCompatibility.PHP.DeprecatedFunctions.mcrypt_decryptDeprecatedRemoved
+// phpcs:disable PHPCompatibility.FunctionUse.RemovedFunctions.mcrypt_decryptDeprecatedRemoved
 
 // mcrypt methods are removed in php7.2 but we have a condition in this class that only uses them if they are available.
 
@@ -373,7 +381,7 @@ class EE_Encryption implements InterminableInterface
     /**
      * @param string $cipher_method
      * @return string
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     protected function getAvailableCipherMethod($cipher_method)
     {
@@ -481,7 +489,7 @@ class EE_Encryption implements InterminableInterface
      * with the available values returned from openssl_get_md_methods().
      *
      * @return string
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     protected function getDigestMethod()
     {
@@ -519,8 +527,7 @@ class EE_Encryption implements InterminableInterface
             str_pad(
                 '',
                 strlen($text_string),
-                $this->get_encryption_key(),
-                STR_PAD_RIGHT
+                $this->get_encryption_key()
             )
         );
         $string_bits = str_split($text_string);
@@ -564,8 +571,7 @@ class EE_Encryption implements InterminableInterface
             str_pad(
                 '',
                 strlen($encrypted_text),
-                $this->get_encryption_key(),
-                STR_PAD_RIGHT
+                $this->get_encryption_key()
             )
         );
         $string_bits = str_split($encrypted_text);

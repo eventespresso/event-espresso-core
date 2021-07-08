@@ -93,9 +93,7 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
                 ),
                 'TKT_price'       => new EE_Money_Field(
                     'TKT_price',
-                    esc_html__('Final calculated price for ticket', 'event_espresso'),
-                    false,
-                    0
+                    esc_html__('Final calculated price for ticket', 'event_espresso')
                 ),
                 'TKT_sold'        => new EE_Integer_Field(
                     'TKT_sold',

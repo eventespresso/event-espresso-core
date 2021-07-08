@@ -18,10 +18,14 @@ abstract class EE_Shortcodes extends EE_Base
 {
 
     /**
+     * @var string
+     */
+    public $name;
+
+    /**
      * holds label for library
      * This is used for referencing the library label
      *
-     * @access public
      * @var string
      */
     public $label;
@@ -30,7 +34,6 @@ abstract class EE_Shortcodes extends EE_Base
     /**
      * This property is used for referencing a short description of the library
      *
-     * @access public
      * @var string
      */
     public $description;
@@ -40,7 +43,6 @@ abstract class EE_Shortcodes extends EE_Base
      * This will hold an array of shortcodes with the key as the shortcode ([shortcode]) and the value as a
      * label/description for the shortcode.
      *
-     * @access protected
      * @var array
      */
     protected $_shortcodes;
@@ -49,7 +51,6 @@ abstract class EE_Shortcodes extends EE_Base
     /**
      * This will hold the incoming data item sent to the parser method
      *
-     * @access protected
      * @var mixed (array|object)
      */
     protected $_data;
@@ -128,8 +129,8 @@ abstract class EE_Shortcodes extends EE_Base
      */
     private function _set_defaults()
     {
-        $this->name = $this->description = '';
-        $this->_shortcodes = array();
+        $this->name        = $this->description = '';
+        $this->_shortcodes = [];
         $this->_set_shortcode_helper();
     }
 
@@ -157,26 +158,25 @@ abstract class EE_Shortcodes extends EE_Base
      * This is the public method for kicking of the parser included with each child.  It can be overridden by child
      * classes if necessary (see EE_Questions_Answers for example)
      *
-     * @param  string $shortcode incoming shortcode to be parsed
-     * @param  mixed (object|array) $data       incoming data to be be used for parsing
-     * @param  mixed (object|array) $extra_data extra incoming data (usually EE_Messages_Addressee)
+     * @param string $shortcode incoming shortcode to be parsed
+     * @param mixed (object|array) $data       incoming data to be be used for parsing
+     * @param mixed (object|array) $extra_data extra incoming data (usually EE_Messages_Addressee)
      * @return string            parsed shortcode.
      */
-    public function parser($shortcode, $data, $extra_data = array())
+    public function parser($shortcode, $data, $extra_data = [])
     {
-
         // filter setup shortcodes
         $this->_shortcodes = $this->get_shortcodes();
 
         // we need to setup any dynamic shortcodes so that they work with the array_key_exists
-        $sc = preg_match_all('/(\[[A-Za-z0-9\_]+_\*)/', $shortcode, $matches);
+        $sc           = preg_match_all('/(\[[A-Za-z0-9\_]+_\*)/', $shortcode, $matches);
         $sc_to_verify = ! empty($matches[0]) ? $matches[0][0] . ']' : $shortcode;
 
         // first we want to make sure this is a valid shortcode
         if (! array_key_exists($sc_to_verify, $this->_shortcodes)) {
             return false;
         } //get out, this parser doesn't handle the incoming shortcode.
-        $this->_data = $data;
+        $this->_data       = $data;
         $this->_extra_data = $extra_data;
         $this->_set_messages_properties();
         $parsed = apply_filters(
@@ -187,7 +187,6 @@ abstract class EE_Shortcodes extends EE_Base
             $extra_data,
             $this
         );
-
         // note the below filter applies to ALL shortcode parsers... be careful!
         $parsed = apply_filters('FHEE__EE_Shortcodes__parser_after', $parsed, $shortcode, $data, $extra_data, $this);
         return $parsed;
@@ -203,7 +202,6 @@ abstract class EE_Shortcodes extends EE_Base
     public function get_shortcodes()
     {
         $this->_shortcodes = apply_filters('FHEE__' . get_class($this) . '__shortcodes', $this->_shortcodes, $this);
-
         // note the below filter applies to ALL shortcode parsers... be careful!
         $this->_shortcodes = apply_filters('FHEE__EE_Shortcodes__shortcodes', $this->_shortcodes, $this);
 
@@ -232,7 +230,7 @@ abstract class EE_Shortcodes extends EE_Base
      *                             array because there are some shortcodes that might be replaced by prepared data that
      *                             has multiple items in a list (i.e. list of attendees in an event and we're showing
      *                             fname/lname for each attendee).  In this case data will be in an array.  Otherwise
-     *                             the data shoudl be in a properly formatted object.  The
+     *                             the data should be in a properly formatted object.  The
      *                             EEH_Parse_Shortcodes.helper.php describes the data object we're expecting.
      * @return string parsed shortcode
      */
@@ -243,16 +241,15 @@ abstract class EE_Shortcodes extends EE_Base
      * This just validates incoming data for list type shortcode parsers (and they call this method) to make sure it
      * meets their requirements
      *
-     * @return mixed (void|exception) If validation fails we'll throw an exception.
+     * @throws EE_Error If validation fails we'll throw an exception.
      */
     protected function _validate_list_requirements()
     {
-
         // first test to make sure we've got an array!
         if (! is_array($this->_data)) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'Expecting an array for the data sent to %s. Instead it was %s',
                         'event_espresso'
                     ),
@@ -266,7 +263,7 @@ abstract class EE_Shortcodes extends EE_Base
         if (! isset($this->_data['template'])) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'The incoming data does not have the required template index in its array',
                         'event_espresso'
                     )
@@ -277,7 +274,7 @@ abstract class EE_Shortcodes extends EE_Base
         // next test to make sure we've got got a data index in the incoming data array
         if (! isset($this->_data['data'])) {
             throw new EE_Error(
-                __(
+                esc_html__(
                     'The incoming data does not have the required data index in its array',
                     'event_espresso'
                 )
@@ -287,7 +284,7 @@ abstract class EE_Shortcodes extends EE_Base
         // all is well let's make sure _extra_data always has the values needed.
         // let's make sure that extra_data includes all templates (for later parsing if necessary)
         if (empty($this->_extra_data) || (empty($this->_extra_data['data']) && empty($this->_extra_data['template']))) {
-            $this->_extra_data['data'] = $this->_data['data'];
+            $this->_extra_data['data']     = $this->_data['data'];
             $this->_extra_data['template'] = $this->_data['template'];
         }
     }
@@ -296,9 +293,9 @@ abstract class EE_Shortcodes extends EE_Base
     /**
      * This returns any attributes that may be existing on an EE_Shortcode
      *
-     * @since 4.5.0
      * @param string $shortcode incoming shortcode
      * @return array An array with the attributes
+     * @since 4.5.0
      */
     protected function _get_shortcode_attrs($shortcode)
     {
@@ -320,23 +317,27 @@ abstract class EE_Shortcodes extends EE_Base
      * conditions existed in the opening tag.  This method handles parsing the actual template to show/hide this
      * conditional content.
      *
-     * @since 4.9.32
-     *
      * @param string $shortcode This should be original shortcode as used in the template and passed to the parser.
      * @param bool   $show      true means the opening and closing tags are removed and the content is left showing,
      *                          false means the opening and closing tags and the contained content are removed.
      * @return string     The template for the shortcode is returned.
+     * @since 4.9.32
+     *
      */
     protected function _mutate_conditional_block_in_template($shortcode, $show = true)
     {
         // first let's get all the matches in the template for this particular shortcode.
-        preg_match_all('~' . $this->_get_conditional_block_regex($shortcode) . '~', $this->_data['template'], $matches);
+        preg_match_all(
+            '~' . $this->_get_conditional_block_regex($shortcode) . '~',
+            $this->_data['template'],
+            $matches
+        );
 
         if ($matches && is_array($matches[0]) && ! empty($matches[0])) {
             // we need to hide all instances of the matches
             foreach ($matches[0] as $index => $content_to_show_or_hide) {
                 $content_to_show_or_hide = preg_quote($content_to_show_or_hide);
-                $replacement = $show ? $matches[4][ $index ] : '';
+                $replacement             = $show ? $matches[4][ $index ] : '';
                 $this->_data['template'] = preg_replace(
                     '~' . $content_to_show_or_hide . '~',
                     $replacement,
@@ -355,8 +356,8 @@ abstract class EE_Shortcodes extends EE_Base
      * Note: regex comes in part from the WP `get_shortcode_regex` expression in \wp-includes\shortcodes.php
      *
      * @param $shortcode
-     * @since 4.9.32
      * @return string
+     * @since 4.9.32
      */
     private function _get_conditional_block_regex($shortcode)
     {
@@ -368,35 +369,50 @@ abstract class EE_Shortcodes extends EE_Base
 
         $shortcode_tag = $shortcode_tag_matches[1];
         // get attributes_part_of_tag
-        $attributes_part = preg_quote(str_replace(array($shortcode_tag, '[', ']'), '', $shortcode));
+        $attributes_part = preg_quote(str_replace([$shortcode_tag, '[', ']'], '', $shortcode));
         // escape
         $shortcode_tag = preg_quote($shortcode_tag);
 
         return
-            '\['                                  // Opening Bracket
-            . "($shortcode_tag)$attributes_part"    // 1: Shortcode Name
-            . '(?![\w-])'                           // Not followed by word character or hyphen
-            . '('                                   // 2: Unroll the loop: Inside the opening shortcode tag
-            . '[^\]\/]*'                          // Not a closing bracket or forward slash
+            '\['
+            // Opening Bracket
+            . "($shortcode_tag)$attributes_part"
+            // 1: Shortcode Name
+            . '(?![\w-])'
+            // Not followed by word character or hyphen
+            . '('
+            // 2: Unroll the loop: Inside the opening shortcode tag
+            . '[^\]\/]*'
+            // Not a closing bracket or forward slash
             . '(?:'
-            . '\/(?!\])'                      // A forward slash not followed by a closing bracket
-            . '[^\]\/]*'                      // Not a closing bracket or forward slash.
+            . '\/(?!\])'
+            // A forward slash not followed by a closing bracket
+            . '[^\]\/]*'
+            // Not a closing bracket or forward slash.
             . ')*?'
             . ')'
             . '(?:'
-            . '(\/)'                              // 3. Self closing tag ...
-            . '\]'                                // ... and closing bracket
+            . '(\/)'
+            // 3. Self closing tag ...
+            . '\]'
+            // ... and closing bracket
             . '|'
-            . '\]'                                // Closing bracket
+            . '\]'
+            // Closing bracket
             . '(?:'
-            . '('                             // 4: Unroll the loop: Optionally, anything between the opening and closing brackets
-            . '[^\[]*+'                   // Not an opening bracket
+            . '('
+            // 4: Unroll the loop: Optionally, anything between the opening and closing brackets
+            . '[^\[]*+'
+            // Not an opening bracket
             . '(?:'
-            . '\[(?!\/\1\])'          // An opening bracket not followed by the closing shortcode tag.
-            . '[^\[]*+'               // Not an opening bracket
+            . '\[(?!\/\1\])'
+            // An opening bracket not followed by the closing shortcode tag.
+            . '[^\[]*+'
+            // Not an opening bracket
             . ')*+'
             . ')'
-            . '\[\/\1\]'                      // Closing shortcode tag
+            . '\[\/\1\]'
+            // Closing shortcode tag
             . ')?'
             . ')';
     }
@@ -405,20 +421,23 @@ abstract class EE_Shortcodes extends EE_Base
     /**
      * This sets the properties related to the messages system
      *
-     * @since 4.5.0
      * @return void
+     * @since 4.5.0
      */
     protected function _set_messages_properties()
     {
         // should be in _extra_data
         if (isset($this->_extra_data['messenger'])) {
-            $this->_messenger = $this->_extra_data['messenger'];
+            $this->_messenger    = $this->_extra_data['messenger'];
             $this->_message_type = $this->_extra_data['message_type'];
-            $this->_context = $this->_extra_data['message'] instanceof EE_Message
-                ? $this->_extra_data['message']->context() : '';
-            $this->_GRP_ID = $this->_extra_data['message'] instanceof EE_Message
-                ? $this->_extra_data['message']->GRP_ID() : 0;
-            $this->_message = $this->_extra_data['message'] instanceof EE_Message ? $this->_extra_data['message']
+            $this->_context      = $this->_extra_data['message'] instanceof EE_Message
+                ? $this->_extra_data['message']->context()
+                : '';
+            $this->_GRP_ID       = $this->_extra_data['message'] instanceof EE_Message
+                ? $this->_extra_data['message']->GRP_ID()
+                : 0;
+            $this->_message      = $this->_extra_data['message'] instanceof EE_Message
+                ? $this->_extra_data['message']
                 : null;
         }
     }
@@ -427,8 +446,8 @@ abstract class EE_Shortcodes extends EE_Base
     /**
      * This returns whatever the set message type object is that was set on this shortcode parser.
      *
-     * @since 4.5.0
      * @return EE_message_type
+     * @since 4.5.0
      */
     public function get_set_message_type()
     {
@@ -439,8 +458,8 @@ abstract class EE_Shortcodes extends EE_Base
     /**
      * This returns whatever the set messenger object is that was set on this shortcode parser
      *
-     * @since 4.5.0
      * @return EE_messenger
+     * @since 4.5.0
      */
     public function get_set_messenger()
     {
@@ -451,8 +470,8 @@ abstract class EE_Shortcodes extends EE_Base
     /**
      * This returns whatever the set context string is on this shortcode parser.
      *
-     * @since 4.5.0
      * @return string
+     * @since 4.5.0
      */
     public function get_set_context()
     {
@@ -463,8 +482,8 @@ abstract class EE_Shortcodes extends EE_Base
     /**
      * This returns whatever the set EE_Message object is on this shortcode.
      *
-     * @since 4.9.0
      * @return EE_Message
+     * @since 4.9.0
      */
     public function get_set_message()
     {

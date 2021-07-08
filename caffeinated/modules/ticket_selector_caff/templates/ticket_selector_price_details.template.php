@@ -1,131 +1,117 @@
 <?php
+
 defined('EVENT_ESPRESSO_VERSION') || exit;
 
-/** @var boolean $display_ticket_price */
-/** @var \EE_Ticket $ticket */
+/**
+ * variables used in template
+ *
+ * @var boolean    $display_taxes
+ * @var boolean    $display_ticket_price
+ * @var boolean    $is_valid_base_price
+ * @var string     $pre_tax_subtotal
+ * @var stdClass[] $taxes
+ * @var string     $ticket_base_price_name
+ * @var string     $ticket_base_price_pretty_price
+ * @var stdClass[] $ticket_price_modifiers
+ * @var string     $ticket_total
+ */
+
+// labels
+$ticket_price_heading = apply_filters(
+    'FHEE__ticket_selector_chart_template__ticket_details_price_breakdown_heading',
+    esc_html__('Price', 'event_espresso')
+);
+$name_label           = esc_html__('Name', 'event_espresso');
+$desc_label           = esc_html__('Description', 'event_espresso');
+$amount_label         = esc_html__('Amount', 'event_espresso');
+$subtotal_label       = esc_html__('subtotal', 'event_espresso');
+$total_label          = apply_filters(
+    'FHEE__ticket_selector_chart_template__ticket_details_total_price',
+    esc_html__('Total', 'event_espresso')
+);
 
 if ($display_ticket_price) { ?>
     <section class="tckt-slctr-tkt-price-sctn">
-        <h5><?php
-            echo apply_filters(
-                'FHEE__ticket_selector_chart_template__ticket_details_price_breakdown_heading',
-                esc_html__('Price', 'event_espresso')
-            ); ?></h5>
+        <h5><?php echo $ticket_price_heading ?></h5>
         <div class="tckt-slctr-tkt-details-tbl-wrap-dv">
             <table class="tckt-slctr-tkt-details-tbl">
                 <thead>
                 <tr>
-                    <th class="ee-third-width"><span class="small-text">
-                            <?php
-                            esc_html_e(
-                                'Name',
-                                'event_espresso'
-                            ); ?></span>
+                    <th class="ee-third-width">
+                        <span class="small-text"><?php echo $name_label; ?></span>
                     </th>
-                    <th class="jst-cntr"><span class="small-text">
-                            <?php
-                            esc_html_e(
-                                'Description',
-                                'event_espresso'
-                            ); ?></span>
+                    <th class="jst-cntr">
+                        <span class="small-text"><?php echo $desc_label; ?></span>
                     </th>
-                    <th class="ee-fourth-width jst-rght"><span class="small-text">
-                            <?php
-                            esc_html_e(
-                                'Amount',
-                                'event_espresso'
-                            ); ?></span></th>
+                    <th class="ee-fourth-width jst-rght">
+                        <span class="small-text"><?php echo $amount_label; ?></span>
+                    </th>
                 </tr>
                 </thead>
                 <tbody>
-                <?php
-                if ($ticket->base_price() instanceof EE_Price) { ?>
+                <?php if ($is_valid_base_price) { ?>
                     <tr>
-                        <td data-th="<?php esc_html_e('Name', 'event_espresso'); ?>" class="small-text" colspan="2">
-                            <b><?php echo $ticket->base_price()->name(); ?></b></td>
-                        <td data-th="<?php esc_html_e('Amount', 'event_espresso'); ?>"
-                            class="jst-rght small-text"><?php echo $ticket->base_price()->pretty_price(); ?></td>
+                        <td data-th="<?php echo $name_label; ?>" class="small-text" colspan="2">
+                            <strong>
+                                <?php echo $ticket_base_price_name; ?>
+                            </strong>
+                        </td>
+                        <td data-th="<?php echo $amount_label; ?>" class="jst-rght small-text">
+                            <?php echo $ticket_base_price_pretty_price; ?>
+                        </td>
                     </tr>
-                    <?php
-                    $running_total = $ticket->base_price()->amount();
-                } else {
-                    $running_total = 0;
-                }
-                // now add price modifiers
-                foreach ($ticket->price_modifiers() as $price_mod) { ?>
+                <?php }
+                foreach ($ticket_price_modifiers as $price_modifier) { ?>
                     <tr>
-                        <td data-th="<?php esc_html_e('Name', 'event_espresso'); ?>"
-                            class="jst-rght small-text"><?php echo $price_mod->name(); ?></td>
-                        <?php if ($price_mod->is_percent()) { ?>
-                            <td data-th="<?php esc_html_e('Description', 'event_espresso'); ?>"
-                                class="small-text"><?php echo $price_mod->desc(); ?> <?php echo $price_mod->amount(); ?>
-                                %
-                            </td>
-                            <?php
-                            $new_sub_total = $running_total * ($price_mod->amount() / 100);
-                            $new_sub_total = $price_mod->is_discount() ? $new_sub_total * -1 : $new_sub_total;
-                            ?>
-                        <?php } else { ?>
-                            <?php $new_sub_total = $price_mod->is_discount() ? $price_mod->amount() * -1
-                                : $price_mod->amount(); ?>
-                            <td data-th="<?php esc_html_e('Description', 'event_espresso'); ?>"
-                                class="small-text"><?php echo $price_mod->desc(); ?></td>
-                            <?php $new_sub_total = $price_mod->is_discount() ? $price_mod->amount() * -1
-                                : $price_mod->amount(); ?>
-                        <?php } ?>
-                        <td data-th="<?php esc_html_e('Amount', 'event_espresso'); ?>"
-                            class="jst-rght small-text">
-                            <?php
-                            echo EEH_Template::format_currency(
-                                $new_sub_total
-                            ); ?></td>
-                        <?php $running_total += $new_sub_total; ?>
+                        <td data-th="<?php echo $name_label; ?>" class="jst-rght small-text">
+                            <?php echo $price_modifier->name; ?>
+                        </td>
+                        <td data-th="<?php echo $desc_label; ?>" class="jst-rght small-text">
+                            <?php echo $price_modifier->desc; ?>
+                        </td>
+                        <td data-th="<?php echo $amount_label; ?>" class="jst-rght small-text">
+                            <?php echo $price_modifier->sub_total; ?>
+                        </td>
                     </tr>
                 <?php } ?>
-                <?php if ($ticket->taxable()) { ?>
-                    <?php // $ticket_subtotal =$ticket->get_ticket_subtotal(); ?>
+                <?php if ($display_taxes) { ?>
                     <tr>
-                        <td colspan="2" class="jst-rght small-text sbttl"><b>
-                                <?php
-                                esc_html_e(
-                                    'subtotal',
-                                    'event_espresso'
-                                ); ?></b></td>
-                        <td data-th="<?php esc_html_e('subtotal', 'event_espresso'); ?>" class="jst-rght small-text">
-                            <b><?php echo EEH_Template::format_currency($running_total); ?></b></td>
+                        <td colspan="2" class="jst-rght small-text sbttl">
+                            <strong>
+                                <?php echo $subtotal_label; ?>
+                            </strong>
+                        </td>
+                        <td data-th="<?php echo $subtotal_label; ?>" class="jst-rght small-text">
+                            <strong>
+                                <?php echo $pre_tax_subtotal; ?>
+                            </strong>
+                        </td>
                     </tr>
-
-                    <?php foreach ($ticket->get_ticket_taxes_for_admin() as $tax) { ?>
+                    <?php foreach ($taxes as $tax) { ?>
                         <tr>
-                            <td data-th="<?php esc_html_e('Name', 'event_espresso'); ?>"
-                                class="jst-rght small-text"><?php echo $tax->name(); ?></td>
-                            <td data-th="<?php esc_html_e('Description', 'event_espresso'); ?>"
-                                class="jst-rght small-text"><?php echo $tax->amount(); ?>%
+                            <td data-th="<?php echo $name_label; ?>" class="jst-rght small-text">
+                                <?php echo $tax->name; ?>
                             </td>
-                            <?php $tax_amount = $running_total * ($tax->amount() / 100); ?>
-                            <td data-th="<?php esc_html_e('Amount', 'event_espresso'); ?>"
-                                class="jst-rght small-text">
-                                <?php
-                                echo EEH_Template::format_currency(
-                                    $tax_amount
-                                ); ?></td>
-                            <?php $running_total += $tax_amount; ?>
+                            <td data-th="<?php echo $desc_label; ?>" class="jst-rght small-text">
+                                <?php echo $tax->rate; ?>
+                            </td>
+                            <td data-th="<?php echo $amount_label; ?>" class="jst-rght small-text">
+                                <?php echo $tax->amount; ?>
+                            </td>
                         </tr>
                     <?php } ?>
                 <?php } ?>
                 <tr>
                     <td colspan="2" class="jst-rght small-text ttl-lbl-td">
-                        <b><?php
-                            echo apply_filters(
-                                'FHEE__ticket_selector_chart_template__ticket_details_total_price',
-                                esc_html__('Total', 'event_espresso')
-                            ); ?></b></td>
-                    <td data-th="<?php
-                                    echo apply_filters(
-                                        'FHEE__ticket_selector_chart_template__ticket_details_total_price',
-                                        esc_html__('Total', 'event_espresso')
-                                    ); ?>" class="jst-rght small-text">
-                        <b><?php echo EEH_Template::format_currency($running_total); ?></b></td>
+                        <strong>
+                            <?php echo $total_label; ?>
+                        </strong>
+                    </td>
+                    <td data-th="<?php echo $total_label; ?>" class="jst-rght small-text">
+                        <strong>
+                            <?php echo $ticket_total; ?>
+                        </strong>
+                    </td>
                 </tr>
                 </tbody>
             </table>

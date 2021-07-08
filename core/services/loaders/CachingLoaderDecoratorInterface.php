@@ -18,4 +18,12 @@ interface CachingLoaderDecoratorInterface extends LoaderDecoratorInterface
      * @throws InvalidArgumentException
      */
     public function share($fqcn, $object);
+
+    /**
+     * @param string $fqcn
+     * @param mixed  $object
+     * @return bool
+     * @throws InvalidArgumentException
+     */
+    public function remove($fqcn, $object);
 }

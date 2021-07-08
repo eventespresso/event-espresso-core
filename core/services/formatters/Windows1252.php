@@ -2,8 +2,6 @@
 
 namespace EventEspresso\core\services\formatters;
 
-use EventEspresso\core\exceptions\InvalidDataTypeException;
-
 /**
  * Class Windows1252
  * Converts from utf8 encoding to windows 1252 (aka cp1252, aka ISO-8859-1,
@@ -23,7 +21,7 @@ class Windows1252 extends FormatterBase
      * @param string|int|float $input anything easily cast into a string
      * @return string
      */
-    public function format($input)
+    public function format($input): string
     {
         // in case an int or float etc was passed in
         $input = (string) $input;

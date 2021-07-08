@@ -57,7 +57,7 @@ class CachingLoader extends CachingLoaderDecorator
             // do_action('AHEE__EventEspresso_core_services_loaders_CachingLoader__resetCache__IDENTIFIER');
             // where "IDENTIFIER" = the string that was set during construction
             add_action(
-                "AHEE__EventEspresso_core_services_loaders_CachingLoader__resetCache__{$identifier}",
+                "AHEE__EventEspresso_core_services_loaders_CachingLoader__resetCache__{$this->identifier}",
                 array($this, 'reset')
             );
         }
@@ -66,6 +66,24 @@ class CachingLoader extends CachingLoaderDecorator
         add_action(
             'AHEE__EventEspresso_core_services_loaders_CachingLoader__resetCache',
             array($this, 'reset')
+        );
+    }
+
+
+    /**
+     * @return void
+     */
+    public function __destruct()
+    {
+        if ($this->identifier !== '') {
+            remove_action(
+                "AHEE__EventEspresso_core_services_loaders_CachingLoader__resetCache__{$this->identifier}",
+                [$this, 'reset']
+            );
+        }
+        remove_action(
+            'AHEE__EventEspresso_core_services_loaders_CachingLoader__resetCache',
+            [$this, 'reset']
         );
     }
 
@@ -116,6 +134,21 @@ class CachingLoader extends CachingLoaderDecorator
                 $fqcn
             )
         );
+    }
+
+
+    /**
+     * @param FullyQualifiedName|string $fqcn
+     * @param mixed                     $object
+     * @return bool
+     * @throws InvalidArgumentException
+     */
+    public function remove($fqcn, $object = null)
+    {
+        $object_identifier = $this->object_identifier->getIdentifier($fqcn);
+        return $object !== null && is_object($object)
+            ? $this->cache->remove($object)
+            : $this->cache->removeByIdentifier($object_identifier);
     }
 
 

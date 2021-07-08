@@ -27,6 +27,9 @@ class Registrations_Admin_Page_Mock extends Registrations_Admin_Page
 
     public function __construct($routing = true)
     {
+        if (EE_UnitTestCase::$debug) {
+            echo "\n      " . __METHOD__ . '()';
+        }
         //define any constants that might not be defined yet when using this mock.
         if ( ! defined('REG_PG_SLUG')) {
             define('REG_PG_SLUG', 'espresso_registrations');
@@ -38,8 +41,8 @@ class Registrations_Admin_Page_Mock extends Registrations_Admin_Page
             define('REG_TEMPLATE_PATH', REG_ADMIN . 'templates/');
             define('REG_TEMPLATE_URL', EE_PLUGIN_DIR_URL . 'admin_pages/registrations/templates/');
         }
-
         parent::__construct(false);
+        $this->_current_screen = WP_Screen::get('Registrations_Admin_Page_Mock');
     }
 
 

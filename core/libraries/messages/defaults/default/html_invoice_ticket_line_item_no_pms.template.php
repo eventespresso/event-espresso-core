@@ -7,7 +7,7 @@
     <td class="item_I">[LINE_ITEM_NAME][LINE_ITEM_TAXABLE_*]</td>
     <td class="item_I">[LINE_ITEM_DESCRIPTION]
     </td>
-    <td class="item_I">[LINE_ITEM_QUANTITY]</td>
-    <td class="item_c">[LINE_ITEM_AMOUNT]</td>
+    <td class="item_r">[LINE_ITEM_QUANTITY]</td>
+    <td class="item_r">[LINE_ITEM_AMOUNT]</td>
     <td class="item_r">[LINE_ITEM_TOTAL]</td>
 </tr>

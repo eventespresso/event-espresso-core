@@ -5,6 +5,7 @@ namespace EventEspresso\core\domain\entities\editor;
 use EventEspresso\core\services\assets\BlockAssetManagerInterface;
 use EventEspresso\core\services\request\RequestInterface;
 use WP_Block_Type;
+use WP_Block_Type_Registry;
 
 /**
  * Class Block
@@ -197,13 +198,13 @@ abstract class Block implements BlockInterface
         if ($this->isDynamic()) {
             $args['render_callback'] = array($this, 'renderBlock');
         }
-        $wp_block_type = register_block_type(
-            new WP_Block_Type(
-                $this->namespacedBlockType(),
-                $args
-            )
-        );
-        $this->setWpBlockType($wp_block_type);
+        $block_name = $this->namespacedBlockType();
+        if (! WP_Block_Type_Registry::get_instance()->is_registered($block_name)) {
+            $wp_block_type = register_block_type(new WP_Block_Type($block_name, $args));
+            $this->setWpBlockType($wp_block_type);
+        } else {
+            $wp_block_type = WP_Block_Type_Registry::get_instance()->get_registered($block_name);
+        }
         return $wp_block_type;
     }
 

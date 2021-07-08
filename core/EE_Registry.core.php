@@ -46,7 +46,7 @@ class EE_Registry implements ResettableInterface
     /**
      * @var array $_class_abbreviations
      */
-    protected $_class_abbreviations = array();
+    protected $_class_abbreviations = [];
 
     /**
      * @var CommandBusInterface $BUS
@@ -114,7 +114,7 @@ class EE_Registry implements ResettableInterface
      *
      * @var EEM_Base[] $models
      */
-    public $models = array();
+    public $models = [];
 
     /**
      * @var EED_Module[] $modules
@@ -139,7 +139,7 @@ class EE_Registry implements ResettableInterface
      *
      * @var array $non_abstract_db_models
      */
-    public $non_abstract_db_models = array();
+    public $non_abstract_db_models = [];
 
     /**
      * internationalization for JS strings
@@ -148,7 +148,7 @@ class EE_Registry implements ResettableInterface
      *
      * @var array $i18n_js_strings
      */
-    public static $i18n_js_strings = array();
+    public static $i18n_js_strings = [];
 
     /**
      * $main_file - path to espresso.php
@@ -214,7 +214,7 @@ class EE_Registry implements ResettableInterface
      * protected constructor to prevent direct creation
      *
      * @Constructor
-     * @param  EE_Dependency_Map  $dependency_map
+     * @param EE_Dependency_Map   $dependency_map
      * @param Mirror              $mirror
      * @param ClassInterfaceCache $class_cache
      * @param ObjectIdentifier    $object_identifier
@@ -225,17 +225,17 @@ class EE_Registry implements ResettableInterface
         ClassInterfaceCache $class_cache,
         ObjectIdentifier $object_identifier
     ) {
-        $this->_dependency_map = $dependency_map;
-        $this->mirror = $mirror;
-        $this->class_cache = $class_cache;
+        $this->_dependency_map   = $dependency_map;
+        $this->mirror            = $mirror;
+        $this->class_cache       = $class_cache;
         $this->object_identifier = $object_identifier;
         // $registry_container = new RegistryContainer();
-        $this->LIB = new RegistryContainer();
-        $this->addons = new RegistryContainer();
-        $this->modules = new RegistryContainer();
+        $this->LIB        = new RegistryContainer();
+        $this->addons     = new RegistryContainer();
+        $this->modules    = new RegistryContainer();
         $this->shortcodes = new RegistryContainer();
-        $this->widgets = new RegistryContainer();
-        add_action('EE_Load_Espresso_Core__handle_request__initialize_core_loading', array($this, 'initialize'));
+        $this->widgets    = new RegistryContainer();
+        add_action('EE_Load_Espresso_Core__handle_request__initialize_core_loading', [$this, 'initialize']);
     }
 
 
@@ -253,7 +253,7 @@ class EE_Registry implements ResettableInterface
     {
         $this->_class_abbreviations = apply_filters(
             'FHEE__EE_Registry____construct___class_abbreviations',
-            array(
+            [
                 'EE_Config'                                       => 'CFG',
                 'EE_Session'                                      => 'SSN',
                 'EE_Capabilities'                                 => 'CAP',
@@ -263,9 +263,9 @@ class EE_Registry implements ResettableInterface
                 'EE_Message_Resource_Manager'                     => 'MRM',
                 'EventEspresso\core\services\commands\CommandBus' => 'BUS',
                 'EventEspresso\core\services\assets\Registry'     => 'AssetsRegistry',
-            )
+            ]
         );
-        $this->load_core('Base', array(), true);
+        $this->load_core('Base', [], true);
         // add our request and response objects to the cache
         $request_loader = $this->_dependency_map->class_loader(
             'EventEspresso\core\services\request\Request'
@@ -281,7 +281,7 @@ class EE_Registry implements ResettableInterface
             $response_loader(),
             'EventEspresso\core\services\request\Response'
         );
-        add_action('AHEE__EE_System__set_hooks_for_core', array($this, 'init'));
+        add_action('AHEE__EE_System__set_hooks_for_core', [$this, 'init']);
     }
 
 
@@ -327,7 +327,7 @@ class EE_Registry implements ResettableInterface
     public function add_module($module)
     {
         if ($module instanceof EED_Module) {
-            $module_class = get_class($module);
+            $module_class                   = get_class($module);
             $this->modules->{$module_class} = $module;
         } else {
             if (! class_exists('EE_Module_Request_Router', false)) {
@@ -363,11 +363,11 @@ class EE_Registry implements ResettableInterface
      * @throws ReflectionException
      * @throws InvalidArgumentException
      */
-    public function load_core($class_name, $arguments = array(), $load_only = false)
+    public function load_core($class_name, $arguments = [], $load_only = false)
     {
         $core_paths = apply_filters(
             'FHEE__EE_Registry__load_core__core_paths',
-            array(
+            [
                 EE_CORE,
                 EE_ADMIN,
                 EE_CPTS,
@@ -375,7 +375,7 @@ class EE_Registry implements ResettableInterface
                 EE_CORE . 'capabilities/',
                 EE_CORE . 'request_stack/',
                 EE_CORE . 'middleware/',
-            )
+            ]
         );
         // retrieve instantiated class
         return $this->_load(
@@ -404,13 +404,13 @@ class EE_Registry implements ResettableInterface
      * @throws ReflectionException
      * @throws InvalidArgumentException
      */
-    public function load_service($class_name, $arguments = array(), $load_only = false)
+    public function load_service($class_name, $arguments = [], $load_only = false)
     {
         $service_paths = apply_filters(
             'FHEE__EE_Registry__load_service__service_paths',
-            array(
+            [
                 EE_CORE . 'services/',
-            )
+            ]
         );
         // retrieve instantiated class
         return $this->_load(
@@ -438,7 +438,7 @@ class EE_Registry implements ResettableInterface
      * @throws ReflectionException
      * @throws InvalidArgumentException
      */
-    public function load_dms($class_name, $arguments = array())
+    public function load_dms($class_name, $arguments = [])
     {
         // retrieve instantiated class
         return $this->_load(
@@ -471,15 +471,15 @@ class EE_Registry implements ResettableInterface
      * @throws ReflectionException
      * @throws InvalidArgumentException
      */
-    public function load_class($class_name, $arguments = array(), $from_db = false, $cache = true, $load_only = false)
+    public function load_class($class_name, $arguments = [], $from_db = false, $cache = true, $load_only = false)
     {
         $paths = apply_filters(
             'FHEE__EE_Registry__load_class__paths',
-            array(
+            [
                 EE_CORE,
                 EE_CLASSES,
                 EE_BUSINESS,
-            )
+            ]
         );
         // retrieve instantiated class
         return $this->_load(
@@ -508,10 +508,10 @@ class EE_Registry implements ResettableInterface
      * @throws ReflectionException
      * @throws InvalidArgumentException
      */
-    public function load_helper($class_name, $arguments = array(), $load_only = true)
+    public function load_helper($class_name, $arguments = [], $load_only = true)
     {
         // todo: add doing_it_wrong() in a few versions after all addons have had calls to this method removed
-        $helper_paths = apply_filters('FHEE__EE_Registry__load_helper__helper_paths', array(EE_HELPERS));
+        $helper_paths = apply_filters('FHEE__EE_Registry__load_helper__helper_paths', [EE_HELPERS]);
         // retrieve instantiated class
         return $this->_load(
             $helper_paths,
@@ -540,15 +540,15 @@ class EE_Registry implements ResettableInterface
      * @throws ReflectionException
      * @throws InvalidArgumentException
      */
-    public function load_lib($class_name, $arguments = array(), $load_only = false, $cache = true)
+    public function load_lib($class_name, $arguments = [], $load_only = false, $cache = true)
     {
-        $paths = array(
+        $paths = [
             EE_LIBRARIES,
             EE_LIBRARIES . 'messages/',
             EE_LIBRARIES . 'shortcodes/',
             EE_LIBRARIES . 'qtips/',
             EE_LIBRARIES . 'payment_methods/',
-        );
+        ];
         // retrieve instantiated class
         return $this->_load(
             $paths,
@@ -576,14 +576,14 @@ class EE_Registry implements ResettableInterface
      * @throws ReflectionException
      * @throws InvalidArgumentException
      */
-    public function load_model($class_name, $arguments = array(), $load_only = false)
+    public function load_model($class_name, $arguments = [], $load_only = false)
     {
         $paths = apply_filters(
             'FHEE__EE_Registry__load_model__paths',
-            array(
+            [
                 EE_MODELS,
                 EE_CORE,
-            )
+            ]
         );
         // retrieve instantiated class
         return $this->_load(
@@ -612,14 +612,14 @@ class EE_Registry implements ResettableInterface
      * @throws ReflectionException
      * @throws InvalidArgumentException
      */
-    public function load_model_class($class_name, $arguments = array(), $load_only = true)
+    public function load_model_class($class_name, $arguments = [], $load_only = true)
     {
-        $paths = array(
+        $paths = [
             EE_MODELS . 'fields/',
             EE_MODELS . 'helpers/',
             EE_MODELS . 'relations/',
             EE_MODELS . 'strategies/',
-        );
+        ];
         // retrieve instantiated class
         return $this->_load(
             $paths,
@@ -661,7 +661,7 @@ class EE_Registry implements ResettableInterface
      * @throws ReflectionException
      * @throws InvalidArgumentException
      */
-    public function load_file($path_to_file, $file_name, $type = '', $arguments = array(), $load_only = true)
+    public function load_file($path_to_file, $file_name, $type = '', $arguments = [], $load_only = true)
     {
         // retrieve instantiated class
         return $this->_load(
@@ -690,7 +690,7 @@ class EE_Registry implements ResettableInterface
      * @throws ReflectionException
      * @throws InvalidArgumentException
      */
-    public function load_addon($path_to_file, $class_name, $type = 'class', $arguments = array(), $load_only = false)
+    public function load_addon($path_to_file, $class_name, $type = 'class', $arguments = [], $load_only = false)
     {
         // retrieve instantiated class
         return $this->_load(
@@ -731,14 +731,14 @@ class EE_Registry implements ResettableInterface
      */
     public function create(
         $class_name = false,
-        $arguments = array(),
+        $arguments = [],
         $cache = false,
         $from_db = false,
         $load_only = false,
         $addon = false
     ) {
-        $class_name = ltrim($class_name, '\\');
-        $class_name = $this->class_cache->getFqnForAlias($class_name);
+        $class_name   = ltrim($class_name, '\\');
+        $class_name   = $this->class_cache->getFqnForAlias($class_name);
         $class_exists = $this->loadOrVerifyClassExists($class_name, $arguments);
         // if a non-FQCN was passed, then
         // verifyClassExists() might return an object
@@ -756,14 +756,16 @@ class EE_Registry implements ResettableInterface
         // $this->_cache_on is toggled during the recursive loading that can occur with dependency injection
         // $cache is controlled by individual calls to separate Registry loader methods like load_class()
         // $load_only is also controlled by individual calls to separate Registry loader methods like load_file()
-        if ($this->_cache_on && $cache && ! $load_only) {
+        if ($this->_cache_on && $cache) {
             // return object if it's already cached
             $cached_class = $this->_get_cached_class($class_name, $addon, $arguments);
+
             if ($cached_class !== null) {
                 return $cached_class;
             }
         }// obtain the loader method from the dependency map
-        $loader = $this->_dependency_map->class_loader($class_name);// instantiate the requested object
+        $loader = $this->_dependency_map->class_loader($class_name);
+        // instantiate the requested object
         if ($loader instanceof Closure) {
             $class_obj = $loader($arguments);
         } else {
@@ -846,11 +848,11 @@ class EE_Registry implements ResettableInterface
      * @throws InvalidArgumentException
      */
     protected function _load(
-        $file_paths = array(),
+        $file_paths = [],
         $class_prefix = 'EE_',
         $class_name = false,
         $type = 'class',
-        $arguments = array(),
+        $arguments = [],
         $from_db = false,
         $cache = true,
         $load_only = false
@@ -865,13 +867,13 @@ class EE_Registry implements ResettableInterface
             // add class prefix ONCE!!!
             $class_name = $class_prefix . str_replace($class_prefix, '', $class_name);
         }
-        $class_name = $this->class_cache->getFqnForAlias($class_name);
+        $class_name   = $this->class_cache->getFqnForAlias($class_name);
         $class_exists = class_exists($class_name, false);
         // if we're only loading the class and it already exists, then let's just return true immediately
         if ($load_only && $class_exists) {
             return true;
         }
-        $arguments = is_array($arguments) ? $arguments : array($arguments);
+        $arguments = is_array($arguments) ? $arguments : [$arguments];
         // $this->_cache_on is toggled during the recursive loading that can occur with dependency injection
         // $cache is controlled by individual calls to separate Registry loader methods like load_class()
         // $load_only is also controlled by individual calls to separate Registry loader methods like load_file()
@@ -944,7 +946,7 @@ class EE_Registry implements ResettableInterface
     protected function _get_cached_class(
         $class_name,
         $class_prefix = '',
-        $arguments = array()
+        $arguments = []
     ) {
         if ($class_name === 'EE_Registry') {
             return $this;
@@ -989,7 +991,7 @@ class EE_Registry implements ResettableInterface
     public function clear_cached_class(
         $class_name,
         $addon = false,
-        $arguments = array()
+        $arguments = []
     ) {
         $class_abbreviation = $this->get_class_abbreviation($class_name);
         // check if class has already been loaded, and return it if it has been
@@ -1036,7 +1038,7 @@ class EE_Registry implements ResettableInterface
         $class_name,
         $class_prefix = '',
         $from_db = false,
-        $arguments = array()
+        $arguments = []
     ) {
         if ($class_name === 'EE_Registry' || empty($class_obj)) {
             return;
@@ -1057,7 +1059,7 @@ class EE_Registry implements ResettableInterface
             return;
         }
         if (! $from_db) {
-            $class_name = $this->object_identifier->getIdentifier($class_name, $arguments);
+            $class_name               = $this->object_identifier->getIdentifier($class_name, $arguments);
             $this->LIB->{$class_name} = $class_obj;
         }
     }
@@ -1073,17 +1075,17 @@ class EE_Registry implements ResettableInterface
      * @param array  $file_paths
      * @return string | bool
      */
-    protected function _resolve_path($class_name, $type = '', $file_paths = array())
+    protected function _resolve_path($class_name, $type = '', $file_paths = [])
     {
         // make sure $file_paths is an array
         $file_paths = is_array($file_paths)
             ? $file_paths
-            : array($file_paths);
+            : [$file_paths];
         // cycle thru paths
         foreach ($file_paths as $key => $file_path) {
             // convert all separators to proper /, if no filepath, then use EE_CLASSES
             $file_path = $file_path
-                ? str_replace(array('/', '\\'), '/', $file_path)
+                ? str_replace(['/', '\\'], '/', $file_path)
                 : EE_CLASSES;
             // prep file type
             $type = ! empty($type)
@@ -1104,15 +1106,15 @@ class EE_Registry implements ResettableInterface
      * basically just performs a require_once()
      * but with some error handling
      *
-     * @param  string $path
-     * @param  string $class_name
-     * @param  string $type
-     * @param  array  $file_paths
+     * @param string $path
+     * @param string $class_name
+     * @param string $type
+     * @param array  $file_paths
      * @return bool
      * @throws EE_Error
      * @throws ReflectionException
      */
-    protected function _require_file($path, $class_name, $type = '', $file_paths = array())
+    protected function _require_file($path, $class_name, $type = '', $file_paths = [])
     {
         $this->resolve_legacy_class_parent($class_name);
         // don't give up! you gotta...
@@ -1176,9 +1178,9 @@ class EE_Registry implements ResettableInterface
     protected function resolve_legacy_class_parent($class_name = '')
     {
         try {
-            $legacy_parent_class_map = array(
+            $legacy_parent_class_map = [
                 'EE_Payment_Processor' => 'core/business/EE_Processor_Base.class.php',
-            );
+            ];
             if (isset($legacy_parent_class_map[ $class_name ])) {
                 require_once EE_PLUGIN_DIR_PATH . $legacy_parent_class_map[ $class_name ];
             }
@@ -1213,19 +1215,19 @@ class EE_Registry implements ResettableInterface
      * @throws ReflectionException
      * @throws InvalidDataTypeException
      */
-    protected function _create_object($class_name, $arguments = array(), $type = '', $from_db = false)
+    protected function _create_object($class_name, $arguments = [], $type = '', $from_db = false)
     {
         // create reflection
         $reflector = $this->mirror->getReflectionClass($class_name);
         // make sure arguments are an array
         $arguments = is_array($arguments)
             ? $arguments
-            : array($arguments);
+            : [$arguments];
         // and if arguments array is numerically and sequentially indexed, then we want it to remain as is,
         // else wrap it in an additional array so that it doesn't get split into multiple parameters
         $arguments = $this->_array_is_numerically_and_sequentially_indexed($arguments)
             ? $arguments
-            : array($arguments);
+            : [$arguments];
         // attempt to inject dependencies ?
         if ($this->_dependency_map->has($class_name)) {
             $arguments = $this->_resolve_dependencies($reflector, $class_name, $arguments);
@@ -1247,15 +1249,15 @@ class EE_Registry implements ResettableInterface
         }
         if ($from_db && method_exists($class_name, 'new_instance_from_db')) {
             // $instantiation_mode = "3) new_instance_from_db()";
-            return call_user_func_array(array($class_name, 'new_instance_from_db'), $arguments);
+            return call_user_func_array([$class_name, 'new_instance_from_db'], $arguments);
         }
         if (method_exists($class_name, 'new_instance')) {
             // $instantiation_mode = "4) new_instance()";
-            return call_user_func_array(array($class_name, 'new_instance'), $arguments);
+            return call_user_func_array([$class_name, 'new_instance'], $arguments);
         }
         if (method_exists($class_name, 'instance')) {
             // $instantiation_mode = "5) instance()";
-            return call_user_func_array(array($class_name, 'instance'), $arguments);
+            return call_user_func_array([$class_name, 'instance'], $arguments);
         }
         if ($reflector->isInstantiable()) {
             // $instantiation_mode = "6) constructor";
@@ -1307,7 +1309,7 @@ class EE_Registry implements ResettableInterface
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    protected function _resolve_dependencies(ReflectionClass $reflector, $class_name, array $arguments = array())
+    protected function _resolve_dependencies(ReflectionClass $reflector, $class_name, array $arguments = [])
     {
         // let's examine the constructor
         $constructor = $this->mirror->getConstructorFromReflection($reflector);
@@ -1419,7 +1421,7 @@ class EE_Registry implements ResettableInterface
                 } else {
                     $dependency = LoaderFactory::getLoader()->load(
                         $param_class,
-                        array(),
+                        [],
                         $cache_on
                     );
                 }
@@ -1443,7 +1445,7 @@ class EE_Registry implements ResettableInterface
      * @param array  $arguments
      * @return object
      */
-    public static function factory($classname, $arguments = array())
+    public static function factory($classname, $arguments = [])
     {
         $loader = self::instance()->_dependency_map->class_loader($classname);
         if ($loader instanceof Closure) {
@@ -1465,6 +1467,10 @@ class EE_Registry implements ResettableInterface
     public function getAddon($class_name)
     {
         $class_name = str_replace('\\', '_', $class_name);
+        $addon      = $this->_get_cached_class($class_name);
+        if ($addon) {
+            return $addon;
+        }
         if (isset($this->addons->{$class_name})) {
             return $this->addons->{$class_name};
         } else {
@@ -1477,12 +1483,12 @@ class EE_Registry implements ResettableInterface
      * removes the addon from the internal cache
      *
      * @param string $class_name
-     * @return void
+     * @return bool
      */
     public function removeAddon($class_name)
     {
         $class_name = str_replace('\\', '_', $class_name);
-        unset($this->addons->{$class_name});
+        return $this->clear_cached_class($class_name, true);
     }
 
 
@@ -1521,7 +1527,7 @@ class EE_Registry implements ResettableInterface
      */
     public function get_addons_by_name()
     {
-        $addons = array();
+        $addons = [];
         foreach ($this->addons as $addon) {
             $addons[ $addon->name() ] = $addon;
         }
@@ -1534,8 +1540,8 @@ class EE_Registry implements ResettableInterface
      * a stale copy of it around
      *
      * @param string $model_name
-     * @return \EEM_Base
-     * @throws \EE_Error
+     * @return EEM_Base
+     * @throws EE_Error
      */
     public function reset_model($model_name)
     {
@@ -1547,9 +1553,11 @@ class EE_Registry implements ResettableInterface
         }
         // get that model reset it and make sure we nuke the old reference to it
         if ($this->LIB->{$model_class_name} instanceof $model_class_name
-            && is_callable(
-                array($model_class_name, 'reset')
-            )) {
+            && is_callable([$model_class_name, 'reset'])
+        ) {
+            if (EE_UnitTestCase::$debug) {
+                echo "\n  > " . $model_name;
+            }
             $this->LIB->{$model_class_name} = $this->LIB->{$model_class_name}->reset();
         } else {
             throw new EE_Error(
@@ -1585,7 +1593,7 @@ class EE_Registry implements ResettableInterface
      * @param boolean $reinstantiate    whether to create new instances of EE_Registry's singletons too,
      *                                  or just reset without re-instantiating (handy to set to FALSE if you're not
      *                                  sure if you CAN currently reinstantiate the singletons at the moment)
-     * @param   bool  $reset_models     Defaults to true.  When false, then the models are not reset.  This is so
+     * @param bool    $reset_models     Defaults to true.  When false, then the models are not reset.  This is so
      *                                  client
      *                                  code instead can just change the model context to a different blog id if
      *                                  necessary
@@ -1593,33 +1601,54 @@ class EE_Registry implements ResettableInterface
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
-     * @throws ReflectionException
      * @throws InvalidArgumentException
      */
     public static function reset($hard = false, $reinstantiate = true, $reset_models = true)
     {
-        $instance = self::instance();
-        $instance->_cache_on = true;
-        // reset some "special" classes
-        EEH_Activation::reset();
-        $hard = apply_filters('FHEE__EE_Registry__reset__hard', $hard);
-        $instance->CFG = EE_Config::reset($hard, $reinstantiate);
-        $instance->CART = null;
-        $instance->MRM = null;
-        $instance->AssetsRegistry = LoaderFactory::getLoader()->getShared(
-            'EventEspresso\core\services\assets\Registry'
-        );
-        // messages reset
-        EED_Messages::reset();
-        // handle of objects cached on LIB
-        foreach (array('LIB', 'modules') as $cache) {
-            foreach ($instance->{$cache} as $class_name => $class) {
-                if (self::_reset_and_unset_object($class, $reset_models)) {
-                    unset($instance->{$cache}->{$class_name});
+        $hard              = apply_filters('FHEE__EE_Registry__reset__hard', $hard);
+        $cached_properties = [
+            'BUS',
+            'CART',
+            'CFG',
+            'LIB',
+            'MRM',
+            'REQ',
+            'SSN',
+            'AssetsRegistry',
+            // 'addons',
+            // 'models',
+            'modules',
+            'shortcodes',
+            'widgets',
+        ];
+        foreach ($cached_properties as $cached_property) {
+            if (EE_UnitTestCase::$debug) {
+                echo "\n\n" . strtoupper($cached_property);
+            }
+            if (! property_exists(self::$_instance, $cached_property)
+                || ! isset(self::$_instance->{$cached_property})
+            ) {
+                continue;
+            }
+            $cached = self::$_instance->{$cached_property};
+            if (is_array($cached) || $cached instanceof RegistryContainer) {
+                foreach ($cached as $class_name => $class) {
+                    if (self::_reset_object($class_name, $class, $reset_models, $hard, $reinstantiate)) {
+                        unset(self::$_instance->{$cached_property}->{$class_name});
+                    }
+                }
+                continue;
+            }
+            if (is_object($cached)) {
+                if (self::_reset_object(get_class($cached), $cached, $reset_models, $hard, $reinstantiate)) {
+                    unset(self::$_instance->{$cached_property});
                 }
             }
         }
-        return $instance;
+        if (EE_UnitTestCase::$debug) {
+            echo "\n\n";
+        }
+        return self::$_instance;
     }
 
 
@@ -1628,34 +1657,57 @@ class EE_Registry implements ResettableInterface
      * if passed object implements InterminableInterface, then return false,
      * to indicate that it should NOT be cleared from the Registry cache
      *
-     * @param      $object
-     * @param bool $reset_models
+     * @param string $class_name
+     * @param        $object
+     * @param bool   $reset_models
+     * @param        $hard
+     * @param        $reinstantiate
      * @return bool returns true if cached object should be unset
+     * @throws EE_Error
      */
-    private static function _reset_and_unset_object($object, $reset_models)
+    private static function _reset_object($class_name, $object, $reset_models, $hard, $reinstantiate)
     {
-        if (! is_object($object)) {
-            // don't unset anything that's not an object
+        if (! is_object($object) || $object instanceof InterminableInterface) {
+            // don't unset anything that's not an object or not terminable
             return false;
         }
         if ($object instanceof EED_Module) {
             $object::reset();
+            if (EE_UnitTestCase::$debug) {
+                echo "\n  > " . $class_name;
+            }
             // don't unset modules
             return false;
         }
         if ($object instanceof ResettableInterface) {
-            if ($object instanceof EEM_Base) {
-                if ($reset_models) {
-                    $object->reset();
-                    return true;
+            // reset some "special" classes
+            if ($object instanceof EE_Config) {
+                EE_Config::reset($hard, $reinstantiate);
+                if (EE_UnitTestCase::$debug) {
+                    echo "\n  > " . $class_name;
                 }
                 return false;
             }
-            $object->reset();
-            return true;
-        }
-        if (! $object instanceof InterminableInterface) {
-            return true;
+            if ($object instanceof EEH_Activation) {
+                EEH_Activation::reset();
+                if (EE_UnitTestCase::$debug) {
+                    echo "\n  > " . $class_name;
+                }
+                return false;
+            }
+            if ($object instanceof EEM_Base) {
+                if ($reset_models) {
+                    self::$_instance->reset_model($class_name);
+                }
+                return false;
+            }
+            if (method_exists($object, 'reset') && is_callable([$object, 'reset'])) {
+                if (EE_UnitTestCase::$debug) {
+                    echo "\n  > " . $class_name;
+                }
+                $object->reset();
+            }
+            return false;
         }
         return false;
     }
@@ -1668,7 +1720,7 @@ class EE_Registry implements ResettableInterface
      */
     public function cpt_models()
     {
-        $cpt_models = array();
+        $cpt_models = [];
         foreach ($this->non_abstract_db_models as $short_name => $classname) {
             if (is_subclass_of($classname, 'EEM_CPT_Base')) {
                 $cpt_models[ $short_name ] = $classname;
@@ -1679,7 +1731,7 @@ class EE_Registry implements ResettableInterface
 
 
     /**
-     * @return \EE_Config
+     * @return EE_Config
      */
     public static function CFG()
     {
@@ -1688,11 +1740,11 @@ class EE_Registry implements ResettableInterface
 
 
     /**
-     * @deprecated 4.9.62.p
      * @param string $class_name
      * @return ReflectionClass
      * @throws ReflectionException
      * @throws InvalidDataTypeException
+     * @deprecated 4.9.62.p
      */
     public function get_ReflectionClass($class_name)
     {

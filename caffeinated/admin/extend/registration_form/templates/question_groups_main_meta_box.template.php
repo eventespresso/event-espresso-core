@@ -125,9 +125,9 @@ $id = ! empty($QST_system) ? '_disabled' : '';
                         $values,
                         $question_group->show_group_desc()
                     ); ?>
-                    <p class="description"><?php
-                        _e(' Show Group Description on Registration Page?', 'event_espresso');
-                        ?></p>
+                    <p class="description">
+                        <?php _e(' Show Group Description on Registration Page?', 'event_espresso'); ?>
+                    </p>
                 </label>
                 <input type="hidden" name="QSG_system" value="<?php echo $question_group->system_group(); ?>">
             </td>
@@ -181,7 +181,8 @@ $id = ! empty($QST_system) ? '_disabled' : '';
                                     <input type="checkbox" name="questions[<?php echo $question_ID; ?>]"
                                            id="question-<?php echo $question_ID; ?>"
                                            value="<?php echo $question_ID; ?>"<?php echo $disabled; ?><?php echo $checked; ?>/>
-                                    <span class="question-text"><?php
+                                    <span class="question-text">
+                                        <?php
                                         echo trim($question->display_text())
                                              . (95 <= strlen(trim($question->display_text()))
                                                 ? "&hellip;"

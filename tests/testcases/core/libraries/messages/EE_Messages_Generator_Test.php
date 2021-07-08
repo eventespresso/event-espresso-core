@@ -20,6 +20,11 @@
  */
 class EE_Messages_Generator_Test extends EE_UnitTestCase
 {
+    public function setUp()
+    {
+        parent::setUp();
+        $this->setCoreConfig();
+    }
 
 
     /**

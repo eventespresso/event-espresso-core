@@ -20,13 +20,15 @@ class General_Settings_Admin_Page_Init extends EE_Admin_Page_Init
 
     public function __construct()
     {
-        // define some constants
-        define('GEN_SET_PG_SLUG', 'espresso_general_settings');
-        define('GEN_SET_LABEL', __('General Settings', 'event_espresso'));
-        define('GEN_SET_ADMIN', EE_ADMIN_PAGES . 'general_settings/');
-        define('GEN_SET_ADMIN_URL', admin_url('admin.php?page=' . GEN_SET_PG_SLUG));
-        define('GEN_SET_TEMPLATE_PATH', GEN_SET_ADMIN . 'templates/');
-        define('GEN_SET_ASSETS_URL', EE_ADMIN_PAGES_URL . 'general_settings/assets/');
+        if (! defined('GEN_SET_PG_SLUG')) {
+            // define some constants
+            define('GEN_SET_PG_SLUG', 'espresso_general_settings');
+            define('GEN_SET_LABEL', __('General Settings', 'event_espresso'));
+            define('GEN_SET_ADMIN', EE_ADMIN_PAGES . 'general_settings/');
+            define('GEN_SET_ADMIN_URL', admin_url('admin.php?page=' . GEN_SET_PG_SLUG));
+            define('GEN_SET_TEMPLATE_PATH', GEN_SET_ADMIN . 'templates/');
+            define('GEN_SET_ASSETS_URL', EE_ADMIN_PAGES_URL . 'general_settings/assets/');
+        }
 
         parent::__construct();
     }

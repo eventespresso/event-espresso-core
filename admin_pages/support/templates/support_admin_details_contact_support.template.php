@@ -8,8 +8,10 @@
         ); ?>
     </h4>
     <ol>
-        <li><strong><em><?php esc_html_e('A known issue.', 'event_espresso'); ?></em></strong>
-            <?php printf(
+        <li>
+            <strong><em><?php esc_html_e('A known issue.', 'event_espresso'); ?></em></strong>
+            <?php
+            printf(
                 esc_html__(
                     'Some themes and plugins have %1$sknown conflicts%2$s with Event Espresso. (You can also browse the %3$sEvent Espresso support pages%2$s or %4$sEvent Espresso support forums%2$s to see if other members have experienced and solved the problem.)',
                     'event_espresso'
@@ -18,8 +20,11 @@
                 '</a>',
                 '<a href="https://eventespresso.com/support/documentation/versioned-docs/?doc_ver=ee4" target="_blank">',
                 '<a href="https://eventespresso.com/support/forums/" target="_blank">'
-            ); ?></li>
-        <li><strong><em><?php esc_html_e('A plugin conflict.', 'event_espresso'); ?></em></strong>
+            );
+            ?>
+        </li>
+        <li>
+            <strong><em><?php esc_html_e('A plugin conflict.', 'event_espresso'); ?></em></strong>
             <?php esc_html_e(
                 'You can check to see if there is a plugin conflict by temporarily deactivating all plugins except for Event Espresso. If the problem goes away, then reactivate your plugins one by one until the issue returns. This will help you pinpoint the source of the conflict.',
                 'event_espresso'

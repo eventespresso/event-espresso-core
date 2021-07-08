@@ -5,6 +5,7 @@ use EventEspresso\core\domain\values\session\SessionLifespan;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\InvalidSessionDataException;
+use EventEspresso\core\interfaces\ResettableInterface;
 use EventEspresso\core\services\cache\CacheStorageInterface;
 use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\services\session\SessionStartHandler;
@@ -21,7 +22,7 @@ use EventEspresso\core\services\session\SessionStartHandler;
  * @subpackage includes/classes
  * @author     Brent Christensen
  */
-class EE_Session implements SessionIdentifierInterface
+class EE_Session implements SessionIdentifierInterface, ResettableInterface
 {
 
     const session_id_prefix = 'ee_ssn_';
@@ -1197,6 +1198,26 @@ class EE_Session implements SessionIdentifierInterface
         if ($this->request->requestParamIsSet('clear_session')) {
             $this->clear_session(__CLASS__, __FUNCTION__);
         }
+    }
+
+
+    /**
+     * Used to reset the entire object (for tests).
+     *
+     * @since 4.3.0
+     * @throws EE_Error
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     */
+    public static function reset()
+    {
+        $session = EE_Session::instance();
+        if ($session instanceof EE_Session) {
+            $session->clear_session();
+        }
+        return $session;
     }
 
 

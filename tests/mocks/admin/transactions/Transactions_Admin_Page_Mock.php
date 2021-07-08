@@ -55,8 +55,8 @@ class Transactions_Admin_Page_Mock extends Transactions_Admin_Page {
 	 * @param array $request_data
 	 * @return \EE_Payment
 	 */
-	public function create_payment_from_request_data( $request_data ) {
-        return $this->_create_payment_from_request_data($request_data);
+	public function create_payment_from_request_data( array $request_data = [] ) {
+		return $this->_create_payment_from_request_data($request_data );
 	}
 
 

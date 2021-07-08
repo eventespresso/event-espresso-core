@@ -384,7 +384,7 @@ if ( ! function_exists( 'espresso_event_tickets_available' )) {
 				if ( $ticket instanceof EE_Ticket ) {
 					if ( $format ) {
 						$html .= '<li id="ee-event-tickets-li-' . $ticket->ID() . '" class="ee-event-tickets-li">';
-						$html .= $ticket->name() . ' ' . EEH_Template::format_currency( $ticket->get_ticket_total_with_taxes() );
+						$html .= $ticket->name() . ' ' . EEH_Money::formatForLocale( $ticket->get_ticket_total_with_taxes() );
 						$html .= '</li>';
 					} else {
 						$html[] = $ticket;

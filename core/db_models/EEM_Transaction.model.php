@@ -96,15 +96,11 @@ class EEM_Transaction extends EEM_Base
                 ),
                 'TXN_total'        => new EE_Money_Field(
                     'TXN_total',
-                    __('Total value of Transaction', 'event_espresso'),
-                    false,
-                    0
+                    __('Total value of Transaction', 'event_espresso')
                 ),
                 'TXN_paid'         => new EE_Money_Field(
                     'TXN_paid',
-                    __('Amount paid towards transaction to date', 'event_espresso'),
-                    false,
-                    0
+                    __('Amount paid towards transaction to date', 'event_espresso')
                 ),
                 'STS_ID'           => new EE_Foreign_Key_String_Field(
                     'STS_ID',

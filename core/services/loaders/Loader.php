@@ -120,6 +120,19 @@ class Loader implements LoaderInterface
 
 
     /**
+     * @param FullyQualifiedName|string $fqcn
+     * @param mixed                     $object
+     * @return bool
+     * @throws InvalidArgumentException
+     */
+    public function remove($fqcn, $object = null)
+    {
+        $fqcn = $this->class_cache->getFqn($fqcn);
+        return $this->getSharedLoader()->remove($fqcn, $object);
+    }
+
+
+    /**
      * calls reset() on loaders if that method exists
      */
     public function reset()

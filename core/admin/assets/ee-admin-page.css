@@ -8,9 +8,14 @@
 #espresso-default-admin #post-body.columns-2 {
     margin-right: 300px;
 }
+.rtl #espresso-default-admin #post-body.columns-2 {
+    margin-left: 300px;
+    margin-right: 0;
+}
 
 @media only screen and (max-width: 850px) {
-    #espresso-default-admin #post-body.columns-2 {
+    #espresso-default-admin #post-body.columns-2,
+    .rtl #espresso-default-admin #post-body.columns-2{
         margin: 0;
     }
     #espresso-default-admin {
@@ -823,8 +828,9 @@ div.updated.ee-notices-attention {
 }
 
 .ee-full-textarea-inp {
-	width: 100%;
-	height: 100px;
+    height: auto;
+    min-height: 3rem;
+    width: 100%;
 }
 
 .ee-inp-right {

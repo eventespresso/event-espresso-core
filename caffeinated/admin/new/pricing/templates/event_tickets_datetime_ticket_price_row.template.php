@@ -1,3 +1,30 @@
+<?php
+/**
+ * template args in use
+ *
+ * @var string $tkt_row
+ * @var string $edit_prices_name
+ * @var string $PRC_order
+ * @var string $price_type_selector;
+ * @var string $PRC_ID
+ * @var string $PRC_is_default
+ * @var string $PRC_name
+ * @var string $price_currency_symbol
+ * @var string $show_plus_or_minus
+ * @var string $show_plus
+ * @var string $show_minus
+ * @var string $currency_symbol_before
+ * @var string $currency_symbol_after
+ * @var string $PRC_amount
+ * @var string $show_percentage
+ * @var string $show_trash_icon
+ * @var string $show_lock_icon
+ * @var string $show_create_button
+ * @var string $PRC_desc
+ * @var string $disabled
+ */
+?>
+
 <tr id="price-row-<?php echo $tkt_row; ?>-<?php echo $PRC_order; ?>" class="ee-active-price" valign="top">
     <td>
         <?php echo $price_type_selector; ?>
@@ -22,8 +49,9 @@
         <span class="ticket-price-info-display ticket-price-plus-minus"<?php echo $show_plus_or_minus; ?>>+/-</span>
         <span class="ticket-price-info-display ticket-price-plus"<?php echo $show_plus; ?>>+</span>
         <span class="ticket-price-info-display ticket-price-minus"<?php echo $show_minus; ?>>-</span>
-        <span
-            class="ticket-price-info-display ticket-price-dollar-sign-display"<?php echo $show_currency_symbol; ?>><?php echo $price_currency_symbol; ?></span>
+        <span class="ticket-price-info-display ticket-price-dollar-sign-display"<?php echo $currency_symbol_before; ?>>
+            <?php echo $price_currency_symbol; ?>
+        </span>
     </td>
     <td>
         <?php if ($disabled) : ?>
@@ -40,8 +68,12 @@
         <?php endif; ?>
     </td>
     <td>
-        <span
-            class="ticket-price-info-display ticket-price-percentage-char-display"<?php echo $show_percentage; ?>>%</span>
+        <span class="ticket-price-info-display ticket-price-percentage-char-display"<?php echo $show_percentage; ?>>
+            %
+        </span>
+        <span class='ticket-price-info-display ticket-price-dollar-sign-display'<?php echo $currency_symbol_after; ?>>
+            <?php echo $price_currency_symbol; ?>
+        </span>
     </td>
     <td>
         <?php if ($disabled) : ?>
@@ -63,26 +95,3 @@
 <!-- </section> -->
 <!-- </td> -->
 <!-- </tr> -->
-<?php
-/**
- * template args in use
- *
- * $tkt_row
- * $PRC_order
- * $price_type_selector;
- * $PRC_ID
- * $PRC_is_default
- * $PRC_name
- * $price_currency_symbol
- * $show_plus_or_minus
- * $show_plus
- * $show_minus
- * $show_currency_symbol
- * $PRC_amount
- * $show_percentage
- * $show_trash_icon
- * $show_lock_icon
- * $show_create_button
- * $PRC_desc
- * $disabled
- */

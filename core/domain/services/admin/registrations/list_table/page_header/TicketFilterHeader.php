@@ -62,7 +62,7 @@ class TicketFilterHeader extends AdminPageHeaderDecorator
             if ($ticket instanceof EE_Ticket) {
                 $ticket_details = '<span class="ee-ticket-name">' . $ticket->name() . '</span> ';
                 $ticket_details .= ! $ticket->is_free()
-                    ? '<span class="ee-ticket-price">' . $ticket->pretty_price() . '</span>'
+                    ? '<span class="ee-ticket-price">' . $ticket->pretty_price('') . '</span>'
                     : '<span class="reg-overview-free-event-spn">'
                       . __('free', 'event_espresso')
                       . '</span>';

@@ -31,11 +31,7 @@
                                 <?php echo $attendee['fname'] . ' ' . $attendee['lname']; ?>
                             </a>
                         </td>
-                        <td class="jst-rght">
-                            <?php echo $currency_sign . ' ' . number_format(
-                                $attendee['final_price'],
-                                2
-                            ); ?></td>
+                        <td class="jst-rght"><?php echo EEH_Money::formatForLocale($attendee['final_price']); ?></td>
                         <td class="jst-left"><?php echo $attendee['email']; ?></td>
                         <td class="jst-left"><?php echo $attendee['address']; ?></td>
                         <!--<th class="jst-cntr">view</th>-->

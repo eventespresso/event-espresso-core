@@ -1,4 +1,30 @@
-<tr valign="top" id="edit-ticketrow-<?php echo $ticketrow; ?>" class="edit-ticket-row<?php echo $tkt_archive_class; ?>">
+<?php
+/**
+ * template args
+ *
+ * @var string $edit_ticketrow_name
+ * @var string $tkt_status_class
+ * @var string $tkt_archive_class
+ * @var string $ticketrow
+ * @var string $TKT_ID
+ * @var string $TKT_is_default
+ * @var string $TKT_name
+ * @var string $TKT_start_date
+ * @var string $TKT_end_date
+ * @var string $price_currency_symbol;
+ * @var string $PRC_amount
+ * @var string $PRT_ID
+ * @var string $PRC_ID
+ * @var string $PRC_is_default
+ * @var string $TKT_qty
+ * @var string $TKT_sold
+ * @var string $trash_icon
+ * @var string $disabled
+ */
+?>
+
+<tr valign="top" id="edit-ticketrow-<?php echo $ticketrow; ?>" class="edit-ticket-row<?php echo $tkt_archive_class;
+?>">
     <td class="ee-tkt-status<?php echo $tkt_status_class; ?>">
     <td>
         <input type="hidden" name="<?php echo $edit_ticketrow_name; ?>[<?php echo $ticketrow; ?>][TKT_ID]"
@@ -66,25 +92,3 @@
         <span class="<?php echo $trash_icon; ?>" data-ticket-row="<?php echo $ticketrow; ?>" data-context="ticket">
     </td>
 </tr>
-
-<?php
-/**
- * template args
- *
- * $tkt_status_class
- * $tkt_archive_class
- * $ticketrow
- * $TKT_ID
- * $TKT_is_default
- * $TKT_name
- * $TKT_start_date
- * $TKT_end_date
- * $price_currency_symbol;
- * $PRC_amount
- * $PRT_ID
- * $PRC_ID
- * $PRC_is_default
- * $TKT_qty
- * $trash_icon
- * $disabled
- */

@@ -288,6 +288,28 @@ class Collection extends SplObjectStorage implements CollectionInterface
 
 
     /**
+     * detaches the object matching the supplied identifier from the Collection
+     *
+     * @param mixed $identifier
+     * @return bool
+     */
+    public function removeByIdentifier($identifier)
+    {
+        $this->rewind();
+        while ($this->valid()) {
+            $object = $this->current();
+            $this->next();
+            if ($identifier === $this->getInfo()) {
+                $this->detach($object);
+                unset($object);
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    /**
      * setCurrent
      * advances pointer to the object whose identifier matches that which was provided
      *

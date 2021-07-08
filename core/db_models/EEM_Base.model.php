@@ -1414,6 +1414,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      */
     public function set_timezone($timezone)
     {
+        $timezone = EEH_DTT_Helper::get_valid_timezone_string($timezone);
         if ($timezone !== null) {
             $this->_timezone = $timezone;
         }
@@ -3855,8 +3856,8 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     private function _construct_default_select_sql(EE_Model_Query_Info_Carrier $model_query_info)
     {
         $selects = $this->_get_columns_to_select_for_this_model();
-        foreach ($model_query_info->get_model_names_included() as $model_relation_chain =>
-            $name_of_other_model_included) {
+        $model_names_included = $model_query_info->get_model_names_included();
+        foreach ($model_names_included as $model_relation_chain => $name_of_other_model_included) {
             $other_model_included = $this->get_related_model_obj($name_of_other_model_included);
             $other_model_selects = $other_model_included->_get_columns_to_select_for_this_model($model_relation_chain);
             foreach ($other_model_selects as $key => $value) {
@@ -5214,8 +5215,12 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             $this_model_fields_and_values[ $field_name ] = $field_obj->get_default_value();
         }
         $className = $this->_get_class_name();
-        $classInstance = EE_Registry::instance()
-                                    ->load_class($className, array($this_model_fields_and_values), false, false);
+        $classInstance = EE_Registry::instance()->load_class(
+            $className,
+            array($this_model_fields_and_values),
+            false,
+            false
+        );
         return $classInstance;
     }
 

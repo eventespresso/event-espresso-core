@@ -23,7 +23,7 @@ class EE_Payment_Method extends EE_Base_Class
     /**
      * @param array $props_n_values
      * @return EE_Payment_Method
-     * @throws \EE_Error
+     * @throws EE_Error|ReflectionException
      */
     public static function new_instance($props_n_values = array())
     {
@@ -35,7 +35,7 @@ class EE_Payment_Method extends EE_Base_Class
     /**
      * @param array $props_n_values
      * @return EE_Payment_Method
-     * @throws \EE_Error
+     * @throws EE_Error|ReflectionException
      */
     public static function new_instance_from_db($props_n_values = array())
     {
@@ -67,7 +67,8 @@ class EE_Payment_Method extends EE_Base_Class
     /**
      * Gets whether this payment method can be used anywhere at all (ie frontend cart, admin, etc)
      *
-     * @return boolean
+     * @return array
+     * @throws EE_Error|ReflectionException
      */
     public function active()
     {
@@ -79,7 +80,8 @@ class EE_Payment_Method extends EE_Base_Class
      * Sets this PM as active by making it usable within the CART scope. Offline gateways
      * are also usable from the admin-scope as well. DOES NOT SAVE it
      *
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_active()
     {
@@ -94,6 +96,8 @@ class EE_Payment_Method extends EE_Base_Class
 
     /**
      * Makes this payment method apply to NO scopes at all. DOES NOT SAVE it.
+     *
+     * @throws EE_Error|ReflectionException
      */
     public function deactivate()
     {
@@ -105,6 +109,8 @@ class EE_Payment_Method extends EE_Base_Class
      * Gets button_url
      *
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function button_url()
     {
@@ -116,6 +122,8 @@ class EE_Payment_Method extends EE_Base_Class
      * Sets button_url
      *
      * @param string $button_url
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_button_url($button_url)
     {
@@ -127,6 +135,8 @@ class EE_Payment_Method extends EE_Base_Class
      * Gets debug_mode
      *
      * @return boolean
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function debug_mode()
     {
@@ -138,6 +148,8 @@ class EE_Payment_Method extends EE_Base_Class
      * Sets debug_mode
      *
      * @param boolean $debug_mode
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_debug_mode($debug_mode)
     {
@@ -149,6 +161,8 @@ class EE_Payment_Method extends EE_Base_Class
      * Gets description
      *
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function description()
     {
@@ -160,6 +174,8 @@ class EE_Payment_Method extends EE_Base_Class
      * Sets description
      *
      * @param string $description
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_description($description)
     {
@@ -171,6 +187,8 @@ class EE_Payment_Method extends EE_Base_Class
      * Gets name
      *
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function name()
     {
@@ -182,6 +200,8 @@ class EE_Payment_Method extends EE_Base_Class
      * Sets name
      *
      * @param string $name
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_name($name)
     {
@@ -193,6 +213,8 @@ class EE_Payment_Method extends EE_Base_Class
      * Gets open_by_default
      *
      * @return boolean
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function open_by_default()
     {
@@ -204,6 +226,8 @@ class EE_Payment_Method extends EE_Base_Class
      * Sets open_by_default
      *
      * @param boolean $open_by_default
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_open_by_default($open_by_default)
     {
@@ -215,6 +239,8 @@ class EE_Payment_Method extends EE_Base_Class
      * Gets order
      *
      * @return int
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function order()
     {
@@ -226,6 +252,8 @@ class EE_Payment_Method extends EE_Base_Class
      * Sets order
      *
      * @param int $order
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_order($order)
     {
@@ -237,6 +265,8 @@ class EE_Payment_Method extends EE_Base_Class
      * Gets slug
      *
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function slug()
     {
@@ -248,6 +278,8 @@ class EE_Payment_Method extends EE_Base_Class
      * Sets slug
      *
      * @param string $slug
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_slug($slug)
     {
@@ -259,6 +291,8 @@ class EE_Payment_Method extends EE_Base_Class
      * Gets type
      *
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function type()
     {
@@ -270,6 +304,8 @@ class EE_Payment_Method extends EE_Base_Class
      * Sets type
      *
      * @param string $type
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_type($type)
     {
@@ -281,6 +317,8 @@ class EE_Payment_Method extends EE_Base_Class
      * Gets wp_user
      *
      * @return int
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function wp_user()
     {
@@ -292,20 +330,26 @@ class EE_Payment_Method extends EE_Base_Class
      * Sets wp_user
      *
      * @param int $wp_user_id
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_wp_user($wp_user_id)
     {
         $this->set('PMD_wp_user', $wp_user_id);
     }
 
+
     /**
      * Overrides parent so when PMD_type is changed we refresh the _type_obj
      *
-     * @param string $field_name
-     * @param mixed $field_value
+     * @param string  $field_name
+     * @param mixed   $field_value
      * @param boolean $use_default
+     * @param string  $schema
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function set($field_name, $field_value, $use_default = false)
+    public function set($field_name, $field_value, $use_default = false, $schema = '')
     {
         if ($field_name === 'PMD_type') {
             // the type has probably changed, so forget about its old type object
@@ -319,6 +363,8 @@ class EE_Payment_Method extends EE_Base_Class
      * Gets admin_name
      *
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function admin_name()
     {
@@ -330,6 +376,8 @@ class EE_Payment_Method extends EE_Base_Class
      * Sets admin_name
      *
      * @param string $admin_name
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_admin_name($admin_name)
     {
@@ -341,6 +389,8 @@ class EE_Payment_Method extends EE_Base_Class
      * Gets admin_desc
      *
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function admin_desc()
     {
@@ -352,6 +402,8 @@ class EE_Payment_Method extends EE_Base_Class
      * Sets admin_desc
      *
      * @param string $admin_desc
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_admin_desc($admin_desc)
     {
@@ -363,6 +415,8 @@ class EE_Payment_Method extends EE_Base_Class
      * Gets scope
      *
      * @return array
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function scope()
     {
@@ -374,6 +428,8 @@ class EE_Payment_Method extends EE_Base_Class
      * Sets scope
      *
      * @param array $scope
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_scope($scope)
     {
@@ -385,7 +441,7 @@ class EE_Payment_Method extends EE_Base_Class
      * Gets the payment method type for this payment method instance
      *
      * @return EE_PMT_Base
-     * @throws EE_Error
+     * @throws EE_Error|ReflectionException
      */
     public function type_obj()
     {
@@ -396,7 +452,7 @@ class EE_Payment_Method extends EE_Base_Class
                 if (! class_exists($class_name)) {
                     throw new EE_Error(
                         sprintf(
-                            __(
+                            esc_html__(
                                 'An attempt to use the "%1$s" payment method failed, so it was deactivated.%2$sWas the "%1$s" Plugin recently deactivated? It can be reactivated on the %3$sPlugins Admin Page%4$s',
                                 'event_espresso'
                             ),
@@ -412,7 +468,7 @@ class EE_Payment_Method extends EE_Base_Class
             } else {
                 throw new EE_Error(
                     sprintf(
-                        __(
+                        esc_html__(
                             'A payment method of type "%1$s" does not exist. Only ones existing are: %2$s',
                             'event_espresso'
                         ),
@@ -431,6 +487,8 @@ class EE_Payment_Method extends EE_Base_Class
      * and the extra meta. Mostly used for passing off ot gateways.     *
      *
      * @return array
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function settings_array()
     {
@@ -455,7 +513,7 @@ class EE_Payment_Method extends EE_Base_Class
      * @param string $url
      * @param string $css_class
      * @return string of HTML for displaying the button
-     * @throws \EE_Error
+     * @throws EE_Error|ReflectionException
      */
     public function button_html($url = '', $css_class = '')
     {
@@ -483,7 +541,8 @@ class EE_Payment_Method extends EE_Base_Class
      * (as defined by the gateway and the currently active currencies)
      *
      * @return EE_Currency[]
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_all_usable_currencies()
     {
@@ -496,7 +555,7 @@ class EE_Payment_Method extends EE_Base_Class
      *
      * @param string $currency_code currency ID (code)
      * @return boolean
-     * @throws \EE_Error
+     * @throws EE_Error|ReflectionException
      */
     public function usable_for_currency($currency_code)
     {
@@ -513,7 +572,8 @@ class EE_Payment_Method extends EE_Base_Class
      * Returns TRUE if this payment method's gateway is an instance of EE_Onsite_Gateway
      *
      * @return bool
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function is_on_site()
     {
@@ -525,7 +585,8 @@ class EE_Payment_Method extends EE_Base_Class
      * Returns TRUE if this payment method's gateway is an instance of EE_Offsite_Gateway
      *
      * @return bool
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function is_off_site()
     {
@@ -537,7 +598,8 @@ class EE_Payment_Method extends EE_Base_Class
      * Returns TRUE if this payment method does not utilize a gateway
      *
      * @return bool
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function is_off_line()
     {
@@ -564,7 +626,7 @@ class EE_Payment_Method extends EE_Base_Class
      *
      * @param array $set_cols_n_values
      * @return int @see EE_Base_Class::save()
-     * @throws \EE_Error
+     * @throws EE_Error|ReflectionException
      */
     public function save($set_cols_n_values = array())
     {
@@ -574,7 +636,7 @@ class EE_Payment_Method extends EE_Base_Class
                 __FILE__,
                 __FUNCTION__,
                 sprintf(
-                    __('Set new scope on payment method %1$s to %2$s from %3$s on URL %4$s', 'event_espresso'),
+                    esc_html__('Set new scope on payment method %1$s to %2$s from %3$s on URL %4$s', 'event_espresso'),
                     $this->name(),
                     serialize($this->get_original('PMD_scope')),
                     serialize($this->get('PMD_scope')),
