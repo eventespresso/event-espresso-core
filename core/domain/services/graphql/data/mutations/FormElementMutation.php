@@ -49,7 +49,7 @@ class FormElementMutation
         }
 
         if (isset($input['label'])) {
-            $args['FIN_label'] = FormLabel::fromJson(sanitize_text_field($input['label']))->toJson();
+            $args['FIN_label'] = FormLabel::fromJson($input['label'])->toJson();
         }
 
         if (isset($input['mapsTo'])) {
