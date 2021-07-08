@@ -309,9 +309,11 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
 
         $unsaved_data_msg = array(
             'eventmsg'     => sprintf(
-                __(
-                    "The changes you made to this %s will be lost if you navigate away from this page.",
-                    'event_espresso'
+                wp_strip_all_tags(
+                    __(
+                        "The changes you made to this %s will be lost if you navigate away from this page.",
+                        'event_espresso'
+                    )
                 ),
                 $this->_cpt_object->labels->singular_name
             ),
@@ -941,7 +943,10 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
                 foreach ($statuses as $status => $label) {
                     $ee_cpt_statuses[ $status ] = array(
                         'label'      => $label,
-                        'save_label' => sprintf(__('Save as %s', 'event_espresso'), $label),
+                        'save_label' => sprintf(
+                            wp_strip_all_tags(__('Save as %s', 'event_espresso')),
+                            $label
+                        ),
                     );
                 }
                 wp_localize_script('ee_admin_js', 'eeCPTstatuses', $ee_cpt_statuses);
