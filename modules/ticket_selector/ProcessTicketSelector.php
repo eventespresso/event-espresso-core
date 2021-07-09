@@ -14,7 +14,7 @@ use EEH_URL;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
-use EventEspresso\core\services\request\Request;
+use EventEspresso\core\services\request\RequestInterface;
 use InvalidArgumentException;
 use ReflectionException;
 
@@ -44,7 +44,7 @@ class ProcessTicketSelector
     private $core_config;
 
     /**
-     * @var Request $request
+     * @var RequestInterface $request
      */
     private $request;
 
@@ -71,7 +71,7 @@ class ProcessTicketSelector
      * Null values for parameters are only for backwards compatibility but will be removed later on.
      *
      * @param EE_Core_Config                    $core_config
-     * @param Request                           $request
+     * @param RequestInterface                           $request
      * @param EE_Session                        $session
      * @param EEM_Ticket                        $ticket_model
      * @param TicketDatetimeAvailabilityTracker $tracker
@@ -81,7 +81,7 @@ class ProcessTicketSelector
      */
     public function __construct(
         EE_Core_Config $core_config = null,
-        Request $request = null,
+        RequestInterface $request = null,
         EE_Session $session = null,
         EEM_Ticket $ticket_model = null,
         TicketDatetimeAvailabilityTracker $tracker = null
@@ -90,7 +90,7 @@ class ProcessTicketSelector
         $this->core_config = $core_config instanceof EE_Core_Config
             ? $core_config
             : $loader->getShared('EE_Core_Config');
-        $this->request = $request instanceof Request
+        $this->request = $request instanceof RequestInterface
             ? $request
             : $loader->getShared('EventEspresso\core\services\request\Request');
         $this->session = $session instanceof EE_Session
@@ -125,7 +125,7 @@ class ProcessTicketSelector
         if ($this->request->requestParamIsSet('event_id')) {
             EEH_URL::safeRedirectAndExit(
                 EEH_Event_View::event_link_url(
-                    $this->request->getRequestParam('event_id')
+                    $this->request->getRequestParam('event_id', 0, 'int')
                 )
             );
         }
@@ -148,9 +148,9 @@ class ProcessTicketSelector
         $nonce_name_with_id = ! empty($id) ? "{$nonce_name}_nonce_{$id}" : "{$nonce_name}_nonce";
         if (! $this->request->isAdmin()
             && (
-                ! $this->request->is_set($nonce_name_with_id)
+                ! $this->request->requestParamIsSet($nonce_name_with_id)
                 || ! wp_verify_nonce(
-                    $this->request->get($nonce_name_with_id),
+                    $this->request->getRequestParam($nonce_name_with_id),
                     $nonce_name
                 )
             )
@@ -253,7 +253,7 @@ class ProcessTicketSelector
             );
         }
         // if event id is valid
-        return absint($this->request->getRequestParam('tkt-slctr-event-id'));
+        return $this->request->getRequestParam('tkt-slctr-event-id', 0, 'int');
     }
 
 
@@ -292,7 +292,6 @@ class ProcessTicketSelector
         foreach ($inputs_to_clean as $what => $input_to_clean) {
             // check for POST data
             if ($this->request->requestParamIsSet($input_to_clean . $id)) {
-                // grab value
                 switch ($what) {
                     // integers
                     case 'event_id':

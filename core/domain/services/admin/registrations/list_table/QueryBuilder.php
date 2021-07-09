@@ -127,9 +127,9 @@ class QueryBuilder
     protected function addAttendeeIdToWhereConditions()
     {
         $ATT_ID = $this->request->getRequestParam('attendee_id');
-        $ATT_ID = $this->request->getRequestParam('ATT_ID', $ATT_ID);
+        $ATT_ID = $this->request->getRequestParam('ATT_ID', $ATT_ID, 'int');
         if ($ATT_ID) {
-            $this->where_params['ATT_ID'] = absint($ATT_ID);
+            $this->where_params['ATT_ID'] = $ATT_ID;
         }
     }
 
@@ -140,9 +140,9 @@ class QueryBuilder
     protected function addEventIdToWhereConditions()
     {
         $EVT_ID = $this->request->getRequestParam('event_id');
-        $EVT_ID = $this->request->getRequestParam('EVT_ID', $EVT_ID);
+        $EVT_ID = $this->request->getRequestParam('EVT_ID', $EVT_ID, 'int');
         if ($EVT_ID) {
-            $this->where_params['EVT_ID'] = absint($EVT_ID);
+            $this->where_params['EVT_ID'] = $EVT_ID;
         }
     }
 
@@ -152,9 +152,9 @@ class QueryBuilder
      */
     protected function addCategoryIdToWhereConditions()
     {
-        $EVT_CAT = (int) $this->request->getRequestParam('EVT_CAT');
+        $EVT_CAT = (int) $this->request->getRequestParam('EVT_CAT', 0, 'int');
         if ($EVT_CAT > 0) {
-            $this->where_params['Event.Term_Taxonomy.term_id'] = absint($EVT_CAT);
+            $this->where_params['Event.Term_Taxonomy.term_id'] = $EVT_CAT;
         }
     }
 
@@ -166,9 +166,9 @@ class QueryBuilder
     {
         // first look for 'datetime_id' then 'DTT_ID' using first result as fallback default value
         $DTT_ID = $this->request->getRequestParam('datetime_id');
-        $DTT_ID = $this->request->getRequestParam('DTT_ID', $DTT_ID);
+        $DTT_ID = $this->request->getRequestParam('DTT_ID', $DTT_ID, 'int');
         if ($DTT_ID) {
-            $this->where_params['Ticket.Datetime.DTT_ID'] = absint($DTT_ID);
+            $this->where_params['Ticket.Datetime.DTT_ID'] = $DTT_ID;
         }
     }
 
@@ -180,9 +180,9 @@ class QueryBuilder
     {
         // first look for 'ticket_id' then 'TKT_ID' using first result as fallback default value
         $TKT_ID = $this->request->getRequestParam('ticket_id');
-        $TKT_ID = $this->request->getRequestParam('TKT_ID', $TKT_ID);
+        $TKT_ID = $this->request->getRequestParam('TKT_ID', $TKT_ID, 'int');
         if ($TKT_ID) {
-            $this->where_params['TKT_ID'] = absint($TKT_ID);
+            $this->where_params['TKT_ID'] = $TKT_ID;
         }
     }
 
@@ -390,14 +390,12 @@ class QueryBuilder
      */
     protected function getLimitClause($per_page)
     {
-        $current_page = $this->request->getRequestParam('paged');
-        $current_page = $current_page ? absint($current_page) : 1;
-        $per_page = (int) $this->request->getRequestParam('perpage', $per_page);
+        $current_page = $this->request->getRequestParam('paged', 1, 'int');
+        $per_page = $this->request->getRequestParam('perpage', $per_page, 'int');
         // -1 means return all results so get out if that's set.
         if ($per_page === -1) {
             return [];
         }
-        $per_page = absint($per_page);
         $offset = ($current_page - 1) * $per_page;
         return ['limit' => [$offset, $per_page]];
     }

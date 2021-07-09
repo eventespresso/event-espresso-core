@@ -88,10 +88,10 @@ class RequestTypeContextDetector
         }
         // Detect AJAX
         if ($this->getGlobalRouteCondition('DOING_AJAX', false)) {
-            if (filter_var($this->request->getRequestParam('ee_front_ajax'), FILTER_VALIDATE_BOOLEAN)) {
+            if ($this->request->getRequestParam('ee_front_ajax', 0, 'int')) {
                 return $this->factory->create(RequestTypeContext::AJAX_FRONT);
             }
-            if (filter_var($this->request->getRequestParam('ee_admin_ajax'), FILTER_VALIDATE_BOOLEAN)) {
+            if ($this->request->getRequestParam('ee_admin_ajax', 0, 'int')) {
                 return $this->factory->create(RequestTypeContext::AJAX_ADMIN);
             }
             if ($this->request->getRequestParam('action') === 'heartbeat') {
