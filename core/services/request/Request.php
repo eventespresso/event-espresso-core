@@ -91,15 +91,15 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
      * @param array $server
      * @param array $files
      */
-    public function __construct(array $get, array $post, array $cookie, array $server, array $files = array())
+    public function __construct(array $get, array $post, array $cookie, array $server, array $files = [])
     {
         // grab request vars
-        $this->get = $get;
-        $this->post = $post;
-        $this->cookie = $cookie;
-        $this->server = $server;
-        $this->files = $files;
-        $this->request = array_merge($this->get, $this->post);
+        $this->get        = $get;
+        $this->post       = $post;
+        $this->cookie     = $cookie;
+        $this->server     = $server;
+        $this->files      = $files;
+        $this->request    = array_merge($this->get, $this->post);
         $this->ip_address = $this->visitorIp();
     }
 
@@ -178,10 +178,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
     public function setRequestParam($key, $value, $override_ee = false)
     {
         // don't allow "ee" to be overwritten unless explicitly instructed to do so
-        if ($key !== 'ee'
-            || ($key === 'ee' && empty($this->request['ee']))
-            || ($key === 'ee' && ! empty($this->request['ee']) && $override_ee)
-        ) {
+        if ($override_ee || $key !== 'ee' || empty($this->request['ee'])) {
             $this->request[ $key ] = $value;
         }
     }
@@ -190,13 +187,15 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
     /**
      * returns   the value for a request param if the given key exists
      *
-     * @param       $key
-     * @param null  $default
+     * @param            $key
+     * @param mixed|null $default
+     * @param string     $type
      * @return mixed
      */
-    public function getRequestParam($key, $default = null)
+    public function getRequestParam($key, $default = null, $type = 'text')
     {
-        return $this->requestParameterDrillDown($key, $default, 'get');
+        $param = $this->requestParameterDrillDown($key, $default, 'get');
+        return $this->sanitizeRequestParam($param, $type);
     }
 
 
@@ -208,7 +207,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
      */
     public function requestParamIsSet($key)
     {
-        return $this->requestParameterDrillDown($key);
+        return (bool) $this->requestParameterDrillDown($key);
     }
 
 
@@ -220,12 +219,14 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
      *      * to represent one or more characters of any type
      *
      * @param string     $pattern
-     * @param null|mixed $default
+     * @param mixed|null $default
+     * @param string     $type
      * @return mixed
      */
-    public function getMatch($pattern, $default = null)
+    public function getMatch($pattern, $default = null, $type = 'text')
     {
-        return $this->requestParameterDrillDown($pattern, $default, 'match');
+        $param = $this->requestParameterDrillDown($pattern, $default, 'match');
+        return $this->sanitizeRequestParam($param, $type);
     }
 
 
@@ -241,7 +242,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
      */
     public function matches($pattern)
     {
-        return $this->requestParameterDrillDown($pattern, null, 'match') !== null;
+        return (bool) $this->requestParameterDrillDown($pattern, null, 'match') !== null;
     }
 
 
@@ -263,20 +264,20 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
      */
     private function match($pattern, array $request_params, $default = null, $return = 'value')
     {
-        $return = in_array($return, array('bool', 'key', 'value'), true)
+        $return = in_array($return, ['bool', 'key', 'value'], true)
             ? $return
             : 'is_set';
         // replace wildcard chars with regex chars
         $pattern = str_replace(
-            array("\*", "\?"),
-            array('.*', '.'),
+            ["\*", "\?"],
+            ['.*', '.'],
             preg_quote($pattern, '/')
         );
         foreach ($request_params as $key => $request_param) {
             if (preg_match('/^' . $pattern . '$/is', $key)) {
                 // return value for request param
                 if ($return === 'value') {
-                    return $request_params[ $key ];
+                    return $request_param;
                 }
                 // or actual key or true just to indicate it was found
                 return $return === 'key' ? $key : true;
@@ -314,9 +315,9 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
         $key,
         $default = null,
         $callback = 'is_set',
-        array $request_params = array()
+        array $request_params = []
     ) {
-        $callback = in_array($callback, array('is_set', 'get', 'match'), true)
+        $callback       = in_array($callback, ['is_set', 'get', 'match'], true)
             ? $callback
             : 'is_set';
         $request_params = ! empty($request_params)
@@ -325,12 +326,12 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
         // does incoming key represent an array like 'first[second][third]'  ?
         if (strpos($key, '[') !== false) {
             // turn it into an actual array
-            $key = str_replace(']', '', $key);
+            $key  = str_replace(']', '', $key);
             $keys = explode('[', $key);
-            $key = array_shift($keys);
+            $key  = array_shift($keys);
             if ($callback === 'match') {
                 $real_key = $this->match($key, $request_params, $default, 'key');
-                $key = $real_key ? $real_key : $key;
+                $key      = $real_key ?: $key;
             }
             // check if top level key exists
             if (isset($request_params[ $key ])) {
@@ -409,8 +410,8 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
      */
     private function visitorIp()
     {
-        $visitor_ip = '0.0.0.0';
-        $server_keys = array(
+        $visitor_ip  = '0.0.0.0';
+        $server_keys = [
             'HTTP_CLIENT_IP',
             'HTTP_X_FORWARDED_FOR',
             'HTTP_X_FORWARDED',
@@ -418,7 +419,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
             'HTTP_FORWARDED_FOR',
             'HTTP_FORWARDED',
             'REMOTE_ADDR',
-        );
+        ];
         foreach ($server_keys as $key) {
             if (isset($this->server[ $key ])) {
                 foreach (array_map('trim', explode(',', $this->server[ $key ])) as $ip) {
@@ -434,6 +435,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
 
     /**
      * Gets the request's literal URI. Related to `requestUriAfterSiteHomeUri`, see its description for a comparison.
+     *
      * @param boolean $relativeToWpRoot If home_url() is "http://mysite.com/wp/", and a request comes to
      *                                  "http://mysite.com/wp/wp-json", setting $relativeToWpRoot=true will return
      *                                  "/wp-json", whereas $relativeToWpRoot=false will return "/wp/wp-json/".
@@ -452,7 +454,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
             $request_uri = wp_sanitize_redirect($this->server['REQUEST_URI']);
         }
         if ($relativeToWpRoot) {
-            $home_path = untrailingslashit(
+            $home_path   = untrailingslashit(
                 parse_url(
                     home_url(),
                     PHP_URL_PATH
@@ -466,6 +468,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
         }
         return $request_uri;
     }
+
 
     /**
      * @return string
@@ -502,7 +505,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
      */
     public function setIsBot($is_bot)
     {
-        $this->is_bot = filter_var($is_bot, FILTER_VALIDATE_BOOLEAN);
+        $this->is_bot = $this->sanitizeRequestParam($is_bot, 'bool');
     }
 
 
@@ -642,7 +645,6 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
     }
 
 
-
     /**
      * @return bool
      */
@@ -650,7 +652,6 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
     {
         return $this->request_type->isWordPressHeartbeat();
     }
-
 
 
     /**
@@ -668,5 +669,31 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
     public function slug()
     {
         return $this->request_type->slug();
+    }
+
+
+    /**
+     * @param string $param
+     * @param string $type
+     * @return string
+     * @since   $VID:$
+     */
+    public function sanitizeRequestParam($param, $type = 'text')
+    {
+        switch ($type) {
+            case 'bool':
+                return filter_var($param, FILTER_VALIDATE_BOOLEAN);
+            case 'float':
+                return (float) $param;
+            case 'int':
+                return (int) $param;
+            case 'key':
+                return sanitize_key($param);
+            case 'url':
+                return esc_url_raw($param);
+            case 'text':
+            default:
+                return sanitize_text_field($param);
+        }
     }
 }

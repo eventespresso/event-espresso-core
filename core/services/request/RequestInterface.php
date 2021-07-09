@@ -72,10 +72,11 @@ interface RequestInterface extends RequestTypeContextCheckerInterface
      * returns the value for a request param if the given key exists
      *
      * @param string $key
-     * @param null   $default
+     * @param mixed|null $default
+     * @param string $type
      * @return mixed
      */
-    public function getRequestParam($key, $default = null);
+    public function getRequestParam($key, $default = null, $type = 'text');
 
 
     /**
