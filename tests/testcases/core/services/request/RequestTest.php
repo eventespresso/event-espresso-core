@@ -75,7 +75,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
         );
         $this->assertEquals(
             $this->getParams(),
-            $request->getParams()
+            $request->requestParams()
         );
     }
 
@@ -117,7 +117,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
         );
         $this->assertEquals(
             array_merge($this->getParams(), $this->postParams()),
-            $request->getParams()
+            $request->requestParams()
         );
     }
 
@@ -132,7 +132,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
         $key = 'new-key';
         $value = 'ima noob';
         $request->setRequestParam($key, $value);
-        $params = $request->getParams();
+        $params = $request->requestParams();
         $this->assertArrayHasKey($key, $params);
         $this->assertEquals($value, $params[$key]);
     }
@@ -146,7 +146,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
             array()
         );
         $request->setRequestParam('ee', 'module-route');
-        $params = $request->getParams();
+        $params = $request->requestParams();
         $this->assertArrayHasKey('ee', $params);
         $this->assertEquals('module-route', $params['ee']);
     }
@@ -160,7 +160,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
             array()
         );
         $request->setRequestParam('ee', 'module-route');
-        $params = $request->getParams();
+        $params = $request->requestParams();
         $this->assertArrayHasKey('ee', $params);
         $this->assertNotEquals('module-route', $params['ee']);
         $this->assertEquals('existing-route', $params['ee']);
@@ -175,7 +175,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
             array()
         );
         $request->setRequestParam('ee', 'module-route', true);
-        $params = $request->getParams();
+        $params = $request->requestParams();
         $this->assertArrayHasKey('ee', $params);
         $this->assertEquals('module-route', $params['ee']);
     }
