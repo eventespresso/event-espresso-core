@@ -73,8 +73,8 @@ class RequestTypeContextDetector
     public function detectRequestTypeContext()
     {
         // Detect error scrapes
-        if ($this->request->getRequestParam('wp_scrape_key') !== null
-            && $this->request->getRequestParam('wp_scrape_nonce') !== null
+        if ($this->request->getRequestParam('wp_scrape_key')
+            && $this->request->getRequestParam('wp_scrape_nonce')
         ) {
             return $this->factory->create(RequestTypeContext::WP_SCRAPE);
         }
@@ -131,7 +131,7 @@ class RequestTypeContextDetector
     {
         // Check for URLs like http://mysite.com/?rest_route=/ee... and http://mysite.com/wp-json/ee/...
         return strpos(
-            $this->request->getRequestParam('rest_route', false),
+            $this->request->getRequestParam('rest_route'),
             '/' . Domain::API_NAMESPACE
         ) === 0
             || $this->uriPathMatches(trim(rest_get_url_prefix(), '/') . '/' . Domain::API_NAMESPACE);
@@ -145,7 +145,7 @@ class RequestTypeContextDetector
     private function isWordPressRestApiRequest()
     {
         // Check for URLs like http://mysite.com/?rest_route=/.. and http://mysite.com/wp-json/...
-        return $this->request->getRequestParam('rest_route', false)
+        return $this->request->getRequestParam('rest_route') !== ''
             || $this->uriPathMatches(trim(rest_get_url_prefix(), '/'));
     }
 
