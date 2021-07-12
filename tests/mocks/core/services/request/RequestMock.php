@@ -117,11 +117,13 @@ class RequestMock extends Request
     /**
      * returns the value for a request param if the given key exists
      *
-     * @param string $key
-     * @param null   $default
+     * @param string     $key
+     * @param mixed|null $default
+     * @param string     $type
+     * @param string     $delimiter
      * @return mixed
      */
-    public function getRequestParam($key, $default = null)
+    public function getRequestParam($key, $default = null, $type = 'string', $delimiter = ',')
     {
         return isset($this->request[ $key ]) ? $this->request[ $key ] : $default;
     }
@@ -150,7 +152,7 @@ class RequestMock extends Request
      * @param null|mixed $default
      * @return false|int
      */
-    public function getMatch($pattern, $default = null)
+    public function getMatch($pattern, $default = null, $type = 'string')
     {
         // replace wildcard chars with regex chars
         $pattern = str_replace(

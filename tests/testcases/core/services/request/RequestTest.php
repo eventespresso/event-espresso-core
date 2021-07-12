@@ -17,37 +17,39 @@ use PHPUnit_Framework_TestCase;
 class RequestTest extends PHPUnit_Framework_TestCase
 {
 
-    public function getParams(array $params = array())
+    public function getParams(array $params = [])
     {
-        return $params + array(
-            'action'         => 'edit',
-            'id'             => 123,
-            'event-name-123' => 'Event 123',
-        );
+        return $params + [
+                'action'         => 'edit',
+                'id'             => 123,
+                'event-name-123' => 'Event 123',
+            ];
     }
 
-    public function postParams(array $params = array())
+
+    public function postParams(array $params = [])
     {
-        return $params + array(
-            'input-a' => 'A',
-            'input-b' => 'B',
-            'sub' => array(
-                'sub-a'   => 'AA',
-                'sub-b'   => 'BB',
-                'sub-sub' => array(
-                    'sub-sub-a'   => 'AAA',
-                    'sub-sub-b'   => 'BBB',
-                )
-            ),
-        );
+        return $params + [
+                'input-a' => 'A',
+                'input-b' => 'B',
+                'sub'     => [
+                    'sub-a'   => 'AA',
+                    'sub-b'   => 'BB',
+                    'sub-sub' => [
+                        'sub-sub-a' => 'AAA',
+                        'sub-sub-b' => 'BBB',
+                    ],
+                ],
+            ];
     }
 
-    public function cookieParams(array $params = array())
+
+    public function cookieParams(array $params = [])
     {
-        return $params + array(
-            'PHPSESSID'   => 'abcdefghijklmnopqrstuvwxyz',
-            'cookie_test' => 'a1b2c3d4e5f6g7h8i9j0.12345678',
-        );
+        return $params + [
+                'PHPSESSID'   => 'abcdefghijklmnopqrstuvwxyz',
+                'cookie_test' => 'a1b2c3d4e5f6g7h8i9j0.12345678',
+            ];
     }
 
 
@@ -59,7 +61,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
      * @param array $files
      * @return Request
      */
-    private function getRequest(array $get, array $post, array $cookie, array $server, array $files = array())
+    private function getRequest(array $get, array $post, array $cookie, array $server, array $files = [])
     {
         return new Request($get, $post, $cookie, $server, $files);
     }
@@ -69,9 +71,9 @@ class RequestTest extends PHPUnit_Framework_TestCase
     {
         $request = $this->getRequest(
             $this->getParams(),
-            array(),
-            array(),
-            array()
+            [],
+            [],
+            []
         );
         $this->assertEquals(
             $this->getParams(),
@@ -79,13 +81,14 @@ class RequestTest extends PHPUnit_Framework_TestCase
         );
     }
 
+
     public function testPostParams()
     {
         $request = $this->getRequest(
-            array(),
+            [],
             $this->postParams(),
-            array(),
-            array()
+            [],
+            []
         );
         $this->assertEquals(
             $this->postParams(),
@@ -93,13 +96,14 @@ class RequestTest extends PHPUnit_Framework_TestCase
         );
     }
 
+
     public function testCookieParams()
     {
         $request = $this->getRequest(
-            array(),
-            array(),
+            [],
+            [],
             $this->cookieParams(),
-            array()
+            []
         );
         $this->assertEquals(
             $this->cookieParams(),
@@ -107,13 +111,14 @@ class RequestTest extends PHPUnit_Framework_TestCase
         );
     }
 
+
     public function testParams()
     {
         $request = $this->getRequest(
             $this->getParams(),
             $this->postParams(),
-            array(),
-            array()
+            [],
+            []
         );
         $this->assertEquals(
             array_merge($this->getParams(), $this->postParams()),
@@ -121,29 +126,31 @@ class RequestTest extends PHPUnit_Framework_TestCase
         );
     }
 
+
     public function testSet()
     {
         $request = $this->getRequest(
             $this->getParams(),
-            array(),
-            array(),
-            array()
+            [],
+            [],
+            []
         );
-        $key = 'new-key';
-        $value = 'ima noob';
+        $key     = 'new-key';
+        $value   = 'ima noob';
         $request->setRequestParam($key, $value);
         $params = $request->requestParams();
         $this->assertArrayHasKey($key, $params);
-        $this->assertEquals($value, $params[$key]);
+        $this->assertEquals($value, $params[ $key ]);
     }
+
 
     public function testSetEE()
     {
         $request = $this->getRequest(
             $this->getParams(),
-            array(),
-            array(),
-            array()
+            [],
+            [],
+            []
         );
         $request->setRequestParam('ee', 'module-route');
         $params = $request->requestParams();
@@ -151,13 +158,14 @@ class RequestTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('module-route', $params['ee']);
     }
 
+
     public function testAlreadySetEE()
     {
         $request = $this->getRequest(
-            $this->getParams(array('ee' => 'existing-route')),
-            array(),
-            array(),
-            array()
+            $this->getParams(['ee' => 'existing-route']),
+            [],
+            [],
+            []
         );
         $request->setRequestParam('ee', 'module-route');
         $params = $request->requestParams();
@@ -166,13 +174,14 @@ class RequestTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('existing-route', $params['ee']);
     }
 
+
     public function testOverrideAlreadySetEE()
     {
         $request = $this->getRequest(
-            $this->getParams(array('ee' => 'existing-route')),
-            array(),
-            array(),
-            array()
+            $this->getParams(['ee' => 'existing-route']),
+            [],
+            [],
+            []
         );
         $request->setRequestParam('ee', 'module-route', true);
         $params = $request->requestParams();
@@ -181,20 +190,19 @@ class RequestTest extends PHPUnit_Framework_TestCase
     }
 
 
-
     public function testGet()
     {
         $request = $this->getRequest(
             $this->getParams(),
-            array(),
-            array(),
-            array()
+            [],
+            [],
+            []
         );
         // key exists
         $this->assertEquals('edit', $request->getRequestParam('action'));
         // key does NOT exist and no default value set
         $this->assertNotEquals('edit', $request->getRequestParam('me-no-key'));
-        $this->assertNull($request->getRequestParam('me-no-key'));
+        $this->assertEquals('', $request->getRequestParam('me-no-key'));
         // key does NOT exist but default value set
         $this->assertNotEquals(
             'edit',
@@ -207,14 +215,13 @@ class RequestTest extends PHPUnit_Framework_TestCase
     }
 
 
-
     public function testGetWithDrillDown()
     {
         $request = $this->getRequest(
-            array(),
+            [],
             $this->postParams(),
-            array(),
-            array()
+            [],
+            []
         );
         // our post data looks like this:
         //  array(
@@ -239,34 +246,32 @@ class RequestTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('AAA', $request->getRequestParam('sub[sub-sub][sub-sub-a]'));
         $this->assertEquals('BBB', $request->getRequestParam('sub[sub-sub][sub-sub-b]'));
         // does not exist
-        $this->assertNull($request->getRequestParam('input-c'));
-        $this->assertNull($request->getRequestParam('sub[sub-c]'));
-        $this->assertNull($request->getRequestParam('sub[sub-sub][sub-sub-c]'));
+        $this->assertEquals('', $request->getRequestParam('input-c'));
+        $this->assertEquals('', $request->getRequestParam('sub[sub-c]'));
+        $this->assertEquals('', $request->getRequestParam('sub[sub-sub][sub-sub-c]'));
     }
-
 
 
     public function testIsSet()
     {
         $request = $this->getRequest(
             $this->getParams(),
-            array(),
-            array(),
-            array()
+            [],
+            [],
+            []
         );
         $this->assertTrue($request->requestParamIsSet('action'));
         $this->assertFalse($request->requestParamIsSet('me-no-key'));
     }
 
 
-
     public function testIsSetWithDrillDown()
     {
         $request = $this->getRequest(
-            array(),
+            [],
             $this->postParams(),
-            array(),
-            array()
+            [],
+            []
         );
         // our post data looks like this:
         //  array(
@@ -297,18 +302,17 @@ class RequestTest extends PHPUnit_Framework_TestCase
     }
 
 
-
     public function testUnSet()
     {
         // do the chevy shuffle with the $_REQUEST global
         // in case it's needed by other tests
         $EXISTING_REQUEST = $_REQUEST;
-        $_REQUEST = $this->getParams();
-        $request = $this->getRequest(
+        $_REQUEST         = $this->getParams();
+        $request          = $this->getRequest(
             $_REQUEST,
-            array(),
-            array(),
-            array()
+            [],
+            [],
+            []
         );
         $this->assertTrue($request->requestParamIsSet('action'));
         $request->unSetRequestParam('action');
@@ -324,13 +328,12 @@ class RequestTest extends PHPUnit_Framework_TestCase
     }
 
 
-
     public function testIpAddress()
     {
         // do the chevy shuffle with the $_SERVER global
         // in case it's needed by other tests
         $EXISTING_SERVER = $_SERVER;
-        $server_keys = array(
+        $server_keys     = [
             'HTTP_CLIENT_IP',
             'HTTP_X_FORWARDED_FOR',
             'HTTP_X_FORWARDED',
@@ -338,19 +341,19 @@ class RequestTest extends PHPUnit_Framework_TestCase
             'HTTP_FORWARDED_FOR',
             'HTTP_FORWARDED',
             'REMOTE_ADDR',
-        );
-        $x = 0;
+        ];
+        $x               = 0;
         // let's test 100 random IP addresses
         while ($x < 100) {
             // first clear out entries from previous test
             foreach ($server_keys as $server_key) {
-                unset($_SERVER[$server_key]);
+                unset($_SERVER[ $server_key ]);
             }
             // randomly generate IP address. plz see: https://stackoverflow.com/a/39846883
             $ip_address = long2ip(mt_rand() + mt_rand() + mt_rand(0, 1));
             // then randomly populate one of the $_SERVER keys used to determine the IP
-            $_SERVER[$server_keys[mt_rand(0, 6)]] = $ip_address;
-            $request = $this->getRequest(array(), array(), array(), $_SERVER);
+            $_SERVER[ $server_keys[ mt_rand(0, 6) ] ] = $ip_address;
+            $request                                  = $this->getRequest([], [], [], $_SERVER);
             $this->assertEquals($ip_address, $request->ipAddress());
             unset($request);
             $x++;
@@ -364,9 +367,9 @@ class RequestTest extends PHPUnit_Framework_TestCase
     {
         $request = $this->getRequest(
             $this->getParams(),
-            array(),
-            array(),
-            array()
+            [],
+            [],
+            []
         );
         $this->assertTrue($request->matches('event-*'));
         $this->assertTrue($request->matches('*-name-*'));
@@ -381,10 +384,10 @@ class RequestTest extends PHPUnit_Framework_TestCase
     public function testMatchesWithDrillDown()
     {
         $request = $this->getRequest(
-        array(),
+            [],
             $this->postParams(),
-            array(),
-            array()
+            [],
+            []
         );
         // our post data looks like this:
         //  array(
@@ -414,13 +417,14 @@ class RequestTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($request->matches('sub[sub-sub-*][sub-sub-c]'));
     }
 
+
     public function testGetMatch()
     {
         $request = $this->getRequest(
-        $this->getParams(),
-            array(),
-            array(),
-            array()
+            $this->getParams(),
+            [],
+            [],
+            []
         );
         $this->assertEquals('Event 123', $request->getMatch('event-*'));
         $this->assertEquals('Event 123', $request->getMatch('*-name-*'));
@@ -428,7 +432,7 @@ class RequestTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('Event 123', $request->getMatch('event*name*'));
         $this->assertEquals('Event 123', $request->getMatch('event?name*'));
         $this->assertEquals('Event 123', $request->getMatch('event-name-123'));
-        $this->assertNull($request->getMatch('event-name-?'));
+        $this->assertEquals('', $request->getMatch('event-name-?'));
         // with default
         $this->assertEquals('default', $request->getMatch('event-name-?', 'default'));
     }
@@ -437,10 +441,10 @@ class RequestTest extends PHPUnit_Framework_TestCase
     public function testGetMatchWithDrillDown()
     {
         $request = $this->getRequest(
-        array(),
+            [],
             $this->postParams(),
-            array(),
-            array()
+            [],
+            []
         );
         // our post data looks like this:
         //  array(
@@ -471,9 +475,9 @@ class RequestTest extends PHPUnit_Framework_TestCase
         // with default
         $this->assertEquals('default', $request->getMatch('sub[sub-sub][not-an-input-?]', 'default'));
         // not set
-        $this->assertNull($request->getMatch('input-c-*'));
-        $this->assertNull($request->getMatch('sub[sub-c-*]'));
-        $this->assertNull($request->getMatch('sub[sub-sub-*][sub-sub-c]'));
+        $this->assertEquals('', $request->getMatch('input-c-*'));
+        $this->assertEquals('', $request->getMatch('sub[sub-c-*]'));
+        $this->assertEquals('', $request->getMatch('sub[sub-sub-*][sub-sub-c]'));
     }
 }
 // Location: tests/testcases/core/request_stack/RequestTest.php
