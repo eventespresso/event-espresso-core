@@ -3,8 +3,7 @@
 namespace EventEspresso\core\libraries\form_sections\form_handlers;
 
 use EE_Error;
-use EE_Request;
-use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
+use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidEntityException;
@@ -68,7 +67,7 @@ abstract class SequentialStepFormManager
     private $progress_step_style = '';
 
     /**
-     * @var EE_Request $request
+     * @var RequestInterface $request
      */
     private $request;
 
@@ -96,7 +95,7 @@ abstract class SequentialStepFormManager
      * @param string     $default_form_step
      * @param string     $form_action
      * @param string     $form_config
-     * @param EE_Request $request
+     * @param RequestInterface $request
      * @param string     $progress_step_style
      * @throws InvalidDataTypeException
      * @throws InvalidArgumentException
@@ -107,7 +106,7 @@ abstract class SequentialStepFormManager
         $form_action = '',
         $form_config = FormHandler::ADD_FORM_TAGS_AND_SUBMIT,
         $progress_step_style = 'number_bubbles',
-        EE_Request $request
+        RequestInterface $request = null
     ) {
         $this->setBaseUrl($base_url);
         $this->setDefaultFormStep($default_form_step);
@@ -203,21 +202,18 @@ abstract class SequentialStepFormManager
 
     /**
      * @return void
-     * @throws \EventEspresso\core\exceptions\InvalidIdentifierException
+     * @throws InvalidIdentifierException
      * @throws InvalidDataTypeException
      */
     protected function setCurrentStepFromRequest()
     {
-        $current_step_slug = $this->request()->get($this->formStepUrlKey(), $this->defaultFormStep());
+        $current_step_slug = $this->request()->getRequestParam($this->formStepUrlKey(), $this->defaultFormStep());
         if (! $this->form_steps->setCurrent($current_step_slug)) {
             throw new InvalidIdentifierException(
                 $current_step_slug,
                 $this->defaultFormStep(),
-                $message = sprintf(
-                    esc_html__(
-                        'The "%1$s" form step could not be set.',
-                        'event_espresso'
-                    ),
+                sprintf(
+                    esc_html__('The "%1$s" form step could not be set.', 'event_espresso'),
                     $current_step_slug
                 )
             );
@@ -226,7 +222,7 @@ abstract class SequentialStepFormManager
 
 
     /**
-     * @return object|SequentialStepFormInterface
+     * @return SequentialStepFormInterface|object
      * @throws InvalidFormHandlerException
      */
     public function getCurrentStep()
@@ -321,7 +317,7 @@ abstract class SequentialStepFormManager
 
 
     /**
-     * @return EE_Request
+     * @return RequestInterface
      */
     public function request()
     {
@@ -587,7 +583,6 @@ abstract class SequentialStepFormManager
                 // going somewhere else, so just check out now
                 wp_safe_redirect($redirect_step->redirectUrl());
                 exit();
-                break;
             case SequentialStepForm::REDIRECT_TO_PREV_STEP:
                 $redirect_step = $this->form_steps->previous();
                 break;
