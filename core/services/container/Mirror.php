@@ -24,32 +24,32 @@ class Mirror
     /**
      * @var ReflectionClass[] $classes
      */
-    private $classes = array();
+    private $classes = [];
 
     /**
      * @var ReflectionMethod[] $constructors
      */
-    private $constructors = array();
+    private $constructors = [];
 
     /**
      * @var ReflectionParameter[][] $parameters
      */
-    private $parameters = array();
+    private $parameters = [];
 
     /**
      * @var ReflectionParameter[][] $parameters
      */
-    private $parameter_classes = array();
+    private $parameter_classes = [];
 
     /**
      * @var ReflectionProperty[][] $properties
      */
-    private $properties = array();
+    private $properties = [];
 
     /**
      * @var ReflectionMethod[][] $methods
      */
-    private $methods = array();
+    private $methods = [];
 
 
     /**
@@ -153,23 +153,58 @@ class Mirror
             return $this->parameter_classes[ $class_name ][ $index ]['param_class_name'];
         }
         if (! isset($this->parameter_classes[ $class_name ])) {
-            $this->parameter_classes[ $class_name ] = array();
+            $this->parameter_classes[ $class_name ] = [];
         }
         if (! isset($this->parameter_classes[ $class_name ][ $index ])) {
-            $this->parameter_classes[ $class_name ][ $index ] = array();
+            $this->parameter_classes[ $class_name ][ $index ] = [];
         }
         // ReflectionParameter::getClass() is deprecated in PHP 8+
-        if (PHP_VERSION_ID >= 80000) {
-            $this->parameter_classes[ $class_name ][ $index ]['param_class_name'] =
-                $param->getType() instanceof ReflectionNamedType
-                    ? $param->getType()->getName()
-                    : null;
-        } else {
-            $this->parameter_classes[ $class_name ][ $index ]['param_class_name'] = $param->getClass()
-                    ? $param->getClass()->getName()
-                    : null;
-        }
+        $this->parameter_classes[ $class_name ][ $index ]['param_class_name'] = PHP_VERSION_ID < 80000
+            ? $this->getParameterClassNameLegacy($param)
+            : $this->getParameterClassNamePhp8($param);
         return $this->parameter_classes[ $class_name ][ $index ]['param_class_name'];
+    }
+
+
+    /**
+     * @param ReflectionParameter $param
+     * @return string|null
+     * @since   $VID:$
+     */
+    private function getParameterClassNameLegacy(ReflectionParameter $param)
+    {
+        $reflection_class = $param->getClass();
+        return $reflection_class instanceof ReflectionClass
+            ? $param->getClass()->getName()
+            : null;
+    }
+
+
+    /**
+     * ReflectionParameter::getClass() is deprecated in PHP 8+,
+     * so the class name for a parameter needs to be extracted from the ReflectionType,
+     * which can either be a ReflectionNamedType or ReflectionUnionType
+     *
+     * @param ReflectionParameter $param
+     * @return null
+     * @since   $VID:$
+     */
+    private function getParameterClassNamePhp8(ReflectionParameter $param)
+    {
+        $reflection_type = $param->getType();
+
+        if ($reflection_type instanceof \ReflectionNamedType) {
+            return $reflection_type->getName();
+        }
+
+        if ($reflection_type instanceof \ReflectionUnionType) {
+            $reflection_types = $reflection_type->getTypes();
+            if (is_array($reflection_types)) {
+                $first = reset($reflection_types);
+                return $first->getName();
+            }
+        }
+        return null;
     }
 
 
@@ -178,6 +213,7 @@ class Mirror
      * @param string              $class_name
      * @param string              $index
      * @return string|null
+     * @throws ReflectionException
      */
     public function getParameterDefaultValue(ReflectionParameter $param, $class_name, $index)
     {
@@ -185,10 +221,10 @@ class Mirror
             return $this->parameter_classes[ $class_name ][ $index ]['param_class_default'];
         }
         if (! isset($this->parameter_classes[ $class_name ])) {
-            $this->parameter_classes[ $class_name ] = array();
+            $this->parameter_classes[ $class_name ] = [];
         }
         if (! isset($this->parameter_classes[ $class_name ][ $index ])) {
-            $this->parameter_classes[ $class_name ][ $index ] = array();
+            $this->parameter_classes[ $class_name ][ $index ] = [];
         }
         $this->parameter_classes[ $class_name ][ $index ]['param_class_default'] = $param->isDefaultValueAvailable()
             ? $param->getDefaultValue()
