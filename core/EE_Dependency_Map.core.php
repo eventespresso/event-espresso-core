@@ -444,7 +444,7 @@ class EE_Dependency_Map
     {
         $this->_dependency_map = array(
             'EE_Request_Handler'                                                                                          => array(
-                'EE_Request' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
             ),
             'EE_System'                                                                                                   => array(
                 'EE_Registry'                                 => EE_Dependency_Map::load_from_cache,
@@ -656,10 +656,10 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\database\ModelFieldFactory' => EE_Dependency_Map::load_from_cache,
             ),
             'EE_Module_Request_Router'                                                                                    => array(
-                'EE_Request' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
             ),
             'EE_Registration_Processor'                                                                                   => array(
-                'EE_Request' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
             ),
             'EventEspresso\core\services\notifications\PersistentAdminNoticeManager'                                      => array(
                 null,
