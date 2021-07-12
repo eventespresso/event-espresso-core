@@ -1,6 +1,7 @@
 <?php
 
 use EventEspresso\core\interfaces\InterminableInterface;
+use EventEspresso\core\services\request\RequestInterface;
 
 /**
  *  Class EE_Module_Request_Router
@@ -16,7 +17,7 @@ final class EE_Module_Request_Router implements InterminableInterface
 {
 
     /**
-     * @var EE_Request $request
+     * @var RequestInterface $request
      */
     private $request;
 
@@ -34,9 +35,9 @@ final class EE_Module_Request_Router implements InterminableInterface
     /**
      * EE_Module_Request_Router constructor.
      *
-     * @param EE_Request $request
+     * @param RequestInterface $request
      */
-    public function __construct(EE_Request $request)
+    public function __construct(RequestInterface $request)
     {
         $this->request = $request;
     }
@@ -97,11 +98,11 @@ final class EE_Module_Request_Router implements InterminableInterface
                 // check request for module route
                 $route_found = $uses_wildcards
                     ? $this->request->matches($key)
-                    : $this->request->is_set($key);
+                    : $this->request->requestParamIsSet($key);
                 if ($route_found) {
                     $current_route = $uses_wildcards
                         ? $this->request->getMatch($key)
-                        : $this->request->get($key);
+                        : $this->request->getRequestParam($key);
                     $current_route = sanitize_text_field($current_route);
                     if ($current_route) {
                         $current_route = array($key, $current_route);
@@ -125,7 +126,7 @@ final class EE_Module_Request_Router implements InterminableInterface
      *
      * @param string $key
      * @param string $current_route
-     * @return mixed EED_Module | boolean
+     * @return EED_Module|object|boolean|null
      * @throws EE_Error
      * @throws ReflectionException
      */
@@ -187,7 +188,6 @@ final class EE_Module_Request_Router implements InterminableInterface
      *
      * @param string $module_name
      * @return EED_Module|object|null
-     * @throws ReflectionException
      */
     public static function module_factory($module_name)
     {
@@ -238,7 +238,7 @@ final class EE_Module_Request_Router implements InterminableInterface
         if ($module instanceof EED_Module) {
             // and call whatever action the route was for
             try {
-                call_user_func(array($module, $method), $this->WP_Query);
+                $module->{$method}($this->WP_Query);
             } catch (EE_Error $e) {
                 $e->get_error();
                 return null;

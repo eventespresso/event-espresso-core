@@ -1,6 +1,7 @@
 <?php
 
 use EventEspresso\core\interfaces\InterminableInterface;
+use EventEspresso\core\services\request\RequestInterface;
 
 /**
  * class EE_Request_Handler
@@ -13,7 +14,7 @@ final class EE_Request_Handler implements InterminableInterface
 {
 
     /**
-     * @var EE_Request $request
+     * @var RequestInterface $request
      */
     private $request;
 
@@ -45,13 +46,13 @@ final class EE_Request_Handler implements InterminableInterface
 
 
     /**
-     * @param  EE_Request $request
+     * @param RequestInterface $request
      */
-    public function __construct(EE_Request $request)
+    public function __construct(RequestInterface $request)
     {
         $this->request = $request;
-        $this->ajax = $this->request->ajax;
-        $this->front_ajax = $this->request->front_ajax;
+        $this->ajax = $this->request->isAjax();
+        $this->front_ajax = $this->request->isFrontAjax();
         do_action('AHEE__EE_Request_Handler__construct__complete');
     }
 
@@ -82,11 +83,11 @@ final class EE_Request_Handler implements InterminableInterface
     {
         if (! is_admin()) {
             // set request post_id
-            $this->request->set('post_id', $this->get_post_id_from_request($wp));
+            $this->request->setRequestParam('post_id', $this->get_post_id_from_request($wp));
             // set request post name
-            $this->request->set('post_name', $this->get_post_name_from_request($wp));
+            $this->request->setRequestParam('post_name', $this->get_post_name_from_request($wp));
             // set request post_type
-            $this->request->set('post_type', $this->get_post_type_from_request($wp));
+            $this->request->setRequestParam('post_type', $this->get_post_type_from_request($wp));
             // true or false ? is this page being used by EE ?
             $this->set_espresso_page();
         }
@@ -122,6 +123,7 @@ final class EE_Request_Handler implements InterminableInterface
      */
     public function get_post_name_from_request($wp = null)
     {
+        global $wpdb;
         if (! $wp instanceof WP) {
             global $wp;
         }
@@ -135,10 +137,9 @@ final class EE_Request_Handler implements InterminableInterface
         if (! $post_name && $wp->request !== null && ! empty($wp->request)) {
             $possible_post_name = basename($wp->request);
             if (! is_numeric($possible_post_name)) {
-                /** @type WPDB $wpdb */
-                global $wpdb;
-                $SQL =
-                    "SELECT ID from {$wpdb->posts} WHERE post_status NOT IN ('auto-draft', 'inherit', 'trash') AND post_name=%s";
+                $SQL = "SELECT ID from {$wpdb->posts}";
+                $SQL .= " WHERE post_status NOT IN ('auto-draft', 'inherit', 'trash')";
+                $SQL .= " AND post_name=%s";
                 $possible_post_name = $wpdb->get_var($wpdb->prepare($SQL, $possible_post_name));
                 if ($possible_post_name) {
                     $post_name = $possible_post_name;
@@ -146,10 +147,9 @@ final class EE_Request_Handler implements InterminableInterface
             }
         }
         if (! $post_name && $this->get('post_id')) {
-            /** @type WPDB $wpdb */
-            global $wpdb;
-            $SQL =
-                "SELECT post_name from {$wpdb->posts} WHERE post_status NOT IN ('auto-draft', 'inherit', 'trash') AND ID=%d";
+            $SQL = "SELECT post_name from {$wpdb->posts}";
+            $SQL .= " WHERE post_status NOT IN ('auto-draft', 'inherit', 'trash')";
+            $SQL .= " AND ID=%d";
             $possible_post_name = $wpdb->get_var($wpdb->prepare($SQL, $this->get('post_id')));
             if ($possible_post_name) {
                 $post_name = $possible_post_name;
@@ -303,7 +303,7 @@ final class EE_Request_Handler implements InterminableInterface
      */
     public function set_espresso_page($value = null)
     {
-        $this->request->set(
+        $this->request->setRequestParam(
             'is_espresso_page',
             ! empty($value)
                 ? $value
@@ -313,11 +313,11 @@ final class EE_Request_Handler implements InterminableInterface
 
 
     /**
-     * @return    mixed
+     * @return bool
      */
     public function is_espresso_page()
     {
-        return $this->request->is_set('is_espresso_page');
+        return $this->request->requestParamIsSet('is_espresso_page');
     }
 
 
@@ -328,7 +328,7 @@ final class EE_Request_Handler implements InterminableInterface
      */
     public function params()
     {
-        return $this->request->params();
+        return $this->request->requestParams();
     }
 
 
@@ -340,7 +340,7 @@ final class EE_Request_Handler implements InterminableInterface
      */
     public function set($key, $value, $override_ee = false)
     {
-        $this->request->set($key, $value, $override_ee);
+        $this->request->setRequestParam($key, $value, $override_ee);
     }
 
 
@@ -351,7 +351,7 @@ final class EE_Request_Handler implements InterminableInterface
      */
     public function get($key, $default = null)
     {
-        return $this->request->get($key, $default);
+        return $this->request->getRequestParam($key, $default);
     }
 
 
@@ -363,7 +363,7 @@ final class EE_Request_Handler implements InterminableInterface
      */
     public function is_set($key)
     {
-        return $this->request->is_set($key);
+        return $this->request->requestParamIsSet($key);
     }
 
 
@@ -375,6 +375,6 @@ final class EE_Request_Handler implements InterminableInterface
      */
     public function un_set($key)
     {
-        $this->request->un_set($key);
+        $this->request->unSetRequestParam($key);
     }
 }
