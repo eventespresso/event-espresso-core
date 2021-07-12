@@ -194,8 +194,10 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
      */
     public function getRequestParam($key, $default = null, $type = 'text')
     {
-        $param = $this->requestParameterDrillDown($key, $default, 'get');
-        return $this->sanitizeRequestParam($param, $type);
+        return $this->sanitizeRequestParam(
+            $this->requestParameterDrillDown($key, $default, 'get'),
+            $type
+        );
     }
 
 
@@ -225,8 +227,10 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
      */
     public function getMatch($pattern, $default = null, $type = 'text')
     {
-        $param = $this->requestParameterDrillDown($pattern, $default, 'match');
-        return $this->sanitizeRequestParam($param, $type);
+        return $this->sanitizeRequestParam(
+            $this->requestParameterDrillDown($pattern, $default, 'match'),
+            $type
+        );
     }
 
 
@@ -242,7 +246,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
      */
     public function matches($pattern)
     {
-        return (bool) $this->requestParameterDrillDown($pattern, null, 'match') !== null;
+        return (bool) $this->requestParameterDrillDown($pattern, false, 'match', 'bool');
     }
 
 
@@ -308,6 +312,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
      * @param string $callback
      * @param        $key
      * @param null   $default
+     * @param string $return
      * @param array  $request_params
      * @return bool|mixed|null
      */
@@ -315,6 +320,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
         $key,
         $default = null,
         $callback = 'is_set',
+        $return = 'value',
         array $request_params = []
     ) {
         $callback       = in_array($callback, ['is_set', 'get', 'match'], true)
@@ -345,6 +351,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
                     $key_string,
                     $default,
                     $callback,
+                    $return,
                     $request_params[ $key ]
                 );
             }
@@ -353,7 +360,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
             return isset($request_params[ $key ]);
         }
         if ($callback === 'match') {
-            return $this->match($key, $request_params, $default);
+            return $this->match($key, $request_params, $default, $return);
         }
         return isset($request_params[ $key ])
             ? $request_params[ $key ]
