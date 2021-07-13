@@ -242,10 +242,11 @@ class EE_Dependency_Map
     /**
      * @param string $class_name
      * @param string $loader
+     * @param bool   $overwrite
      * @return bool
      * @throws DomainException
      */
-    public static function register_class_loader($class_name, $loader = 'load_core')
+    public static function register_class_loader($class_name, $loader = 'load_core', $overwrite = false)
     {
         if (! $loader instanceof Closure && strpos($class_name, '\\') !== false) {
             throw new DomainException(
@@ -270,7 +271,7 @@ class EE_Dependency_Map
             );
         }
         $class_name = self::$_instance->getFqnForAlias($class_name);
-        if (! isset(self::$_instance->_class_loaders[ $class_name ])) {
+        if ($overwrite || ! isset(self::$_instance->_class_loaders[ $class_name ])) {
             self::$_instance->_class_loaders[ $class_name ] = $loader;
             return true;
         }
@@ -1109,6 +1110,12 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\notices\NoticeConverterInterface'
             );
         }
+    }
+
+
+    public function debug($for_class = '')
+    {
+        $this->class_cache->debug($for_class);
     }
 
 
