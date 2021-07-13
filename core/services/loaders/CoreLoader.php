@@ -126,6 +126,9 @@ class CoreLoader implements LoaderDecoratorInterface
 
     /**
      * calls reset() on generator if method exists
+     *
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function reset()
     {

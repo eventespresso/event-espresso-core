@@ -22,7 +22,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     /**
      * This will hold the event object for event_details screen.
      *
-     * @access protected
      * @var EE_Event $_event
      */
     protected $_event;

@@ -69,7 +69,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
      * but the test name is not being reported anywhere.
      * Just uncomment this method as well as the first line of setUp() below.
      *
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     // public static function setUpBeforeClass() {
     //     echo "\n\n\n" . get_called_class() . "\n\n";
@@ -502,8 +502,8 @@ class EE_UnitTestCase extends WP_UnitTestCase
      * will result in a date remaining in March.
      * see http://php.net/manual/en/datetime.sub.php#example-2469
      *
-     * @param \DateTime $now
-     * @param bool $adding_interval
+     * @param DateTime $now
+     * @param bool     $adding_interval
      * @return string
      */
     protected function _get_one_month_period_offset_in_days(DateTime $now, $adding_interval = true)
@@ -565,8 +565,9 @@ class EE_UnitTestCase extends WP_UnitTestCase
      *
      * correctly calculates a date that is slightly more than one month in the past from passed date
      *
-     * @param \DateTime $now
-     * @return \DateTime
+     * @param DateTime $now
+     * @return DateTime
+     * @throws Exception
      */
     protected function _get_date_one_month_ago(DateTime $now)
     {
@@ -584,8 +585,8 @@ class EE_UnitTestCase extends WP_UnitTestCase
      *
      * correctly calculates a date that is slightly more than one month in the future from passed date
      *
-     * @param \DateTime $now
-     * @return \DateTime
+     * @param DateTime $now
+     * @return DateTime
      */
     protected function _get_date_one_month_from_now(DateTime $now)
     {
@@ -603,7 +604,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
      * @param string $actual_date The actual date string in the given full_format date string format.
      * @param        $full_format
      * @param string $custom_error_message
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function assertDateWithinOneMinute($expected_date, $actual_date, $full_format, $custom_error_message = '')
     {
@@ -784,7 +785,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
      *
      * @param EE_Base_Class|EE_Base_Class[] $expected_object
      * @param EE_Base_Class|EE_Base_Class[] $actual_object
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function assertEEModelObjectsEquals($expected_object, $actual_object)
     {
@@ -860,7 +861,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
             } elseif ($related_model_name === 'WP_User' && get_current_user_id()) {
                 $fk = $model->get_foreign_key_to($related_model_name);
                 if (! isset($args[$fk->get_name()])) {
-                    $obj = \EEM_WP_User::instance()->get_one_by_ID(get_current_user_id());
+                    $obj = EEM_WP_User::instance()->get_one_by_ID(get_current_user_id());
                     $args[$fk->get_name()] = $obj->ID();
                 }
             } elseif ($related_model_name === 'Country' && ! isset($args['CNT_ISO'])) {
@@ -1056,7 +1057,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
      * @type string/int/Datetime $timestamp to use on the transaction and registration and payments etc
      * }
      * @return EE_Transaction
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     protected function new_typical_transaction($options = array())
     {
@@ -1178,7 +1179,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
      * @type int    $TKT_taxable       set the TKT_taxable to this value.
      *                                 }
      * @return EE_Ticket
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function new_ticket($options = array())
     {
@@ -1321,9 +1322,10 @@ class EE_UnitTestCase extends WP_UnitTestCase
 
     /**
      * increments the ticket and datetime sold values
-     * @param \EE_ticket $ticket
-     * @param int $qty
-     * @throws \EE_Error
+     *
+     * @param EE_ticket $ticket
+     * @param int       $qty
+     * @throws EE_Error
      */
     public function simulate_x_number_ticket_sales(EE_ticket $ticket, $qty = 1)
     {
@@ -1333,9 +1335,10 @@ class EE_UnitTestCase extends WP_UnitTestCase
 
     /**
      * decrements the ticket and datetime sold values
-     * @param \EE_ticket $ticket
+     *
+     * @param EE_ticket $ticket
      * @param int $qty
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function reverse_x_number_ticket_sales(EE_ticket $ticket, $qty = 1)
     {
