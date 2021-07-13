@@ -69,14 +69,15 @@ interface RequestInterface extends RequestTypeContextCheckerInterface
 
 
     /**
-     * returns the value for a request param if the given key exists
+     * returns   the value for a request param if the given key exists
      *
-     * @param string $key
+     * @param string     $key
      * @param mixed|null $default
-     * @param string $type
+     * @param string     $type      the expected data type for the parameter's value, ie: string, int, bool, etc
+     * @param string     $delimiter for CSV type strings that should be returned as an array
      * @return mixed
      */
-    public function getRequestParam($key, $default = null, $type = 'text');
+    public function getRequestParam($key, $default = null, $type = 'string', $delimiter = ',');
 
 
     /**
@@ -96,10 +97,12 @@ interface RequestInterface extends RequestTypeContextCheckerInterface
      *      * to represent one or more characters of any type
      *
      * @param string     $pattern
-     * @param null|mixed $default
-     * @return false|int
+     * @param mixed|null $default
+     * @param string     $type      the expected data type for the parameter's value, ie: string, int, bool, etc
+     * @param string     $delimiter for CSV type strings that should be returned as an array
+     * @return mixed
      */
-    public function getMatch($pattern, $default = null);
+    public function getMatch($pattern, $default = null, $type = 'string', $delimiter = ',');
 
 
     /**

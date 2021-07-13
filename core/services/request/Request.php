@@ -22,66 +22,66 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
      *
      * @var array $get
      */
-    private $get;
+    protected $get;
 
     /**
      * $_POST parameters
      *
      * @var array $post
      */
-    private $post;
+    protected $post;
 
     /**
      * $_COOKIE parameters
      *
      * @var array $cookie
      */
-    private $cookie;
+    protected $cookie;
 
     /**
      * $_SERVER parameters
      *
      * @var array $server
      */
-    private $server;
+    protected $server;
 
     /**
      * $_FILES parameters
      *
      * @var array $files
      */
-    private $files;
+    protected $files;
 
     /**
      * $_REQUEST parameters
      *
      * @var array $request
      */
-    private $request;
+    protected $request;
 
     /**
      * @var RequestTypeContextCheckerInterface
      */
-    private $request_type;
+    protected $request_type;
 
     /**
      * IP address for request
      *
      * @var string $ip_address
      */
-    private $ip_address;
+    protected $ip_address;
 
     /**
      * @var string $user_agent
      */
-    private $user_agent;
+    protected $user_agent;
 
     /**
      * true if current user appears to be some kind of bot
      *
      * @var bool $is_bot
      */
-    private $is_bot;
+    protected $is_bot;
 
 
     /**
@@ -170,9 +170,9 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
 
 
     /**
-     * @param      $key
-     * @param      $value
-     * @param bool $override_ee
+     * @param string     $key
+     * @param mixed|null $value
+     * @param bool       $override_ee
      * @return    void
      */
     public function setRequestParam($key, $value, $override_ee = false)
@@ -187,12 +187,13 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
     /**
      * returns   the value for a request param if the given key exists
      *
-     * @param            $key
+     * @param string     $key
      * @param mixed|null $default
-     * @param string     $type
+     * @param string     $type      the expected data type for the parameter's value, ie: string, int, bool, etc
+     * @param string     $delimiter for CSV type strings that should be returned as an array
      * @return mixed
      */
-    public function getRequestParam($key, $default = null, $type = 'text')
+    public function getRequestParam($key, $default = null, $type = 'string', $delimiter = ',')
     {
         return $this->sanitizeRequestParam(
             $this->requestParameterDrillDown($key, $default, 'get'),
@@ -204,7 +205,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
     /**
      * check if param exists
      *
-     * @param       $key
+     * @param string $key
      * @return bool
      */
     public function requestParamIsSet($key)
@@ -222,10 +223,11 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
      *
      * @param string     $pattern
      * @param mixed|null $default
-     * @param string     $type
+     * @param string     $type      the expected data type for the parameter's value, ie: string, int, bool, etc
+     * @param string     $delimiter for CSV type strings that should be returned as an array
      * @return mixed
      */
-    public function getMatch($pattern, $default = null, $type = 'text')
+    public function getMatch($pattern, $default = null, $type = 'string', $delimiter = ',')
     {
         return $this->sanitizeRequestParam(
             $this->requestParameterDrillDown($pattern, $default, 'match'),
@@ -456,7 +458,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
             FILTER_SANITIZE_URL,
             FILTER_NULL_ON_FAILURE
         );
-        if (empty($request_uri)) {
+        if (empty($request_uri) && isset($this->server['REQUEST_URI'])) {
             // fallback sanitization if the above fails
             $request_uri = wp_sanitize_redirect($this->server['REQUEST_URI']);
         }
@@ -680,12 +682,29 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
 
 
     /**
-     * @param string $param
-     * @param string $type
-     * @return string
-     * @since   $VID:$
+     * @return RequestTypeContextCheckerInterface
      */
-    public function sanitizeRequestParam($param, $type = 'text')
+    public function getRequestType()
+    {
+        return $this->request_type;
+    }
+
+
+
+
+    /**
+     * Will sanitize the supplied request parameter based on the specified data type
+     *
+     * @param mixed  $param     the supplied request parameter
+     * @param string $type      the specified data type (default: "string")
+     *                          valid values: "bool", "float", "int", "key", "url", "string", or "arrayOf|*"
+     *                          where * is any of the other valid values ex: "arrayOf|int", "arrayOf|string"
+     * @param string $delimiter if $param is a CSV like value (ex: 1,2,3,4,5...) then this is the value separator
+     *                          (default: ",")
+     * @return array|string
+     * @since $VID:$
+     */
+    public function sanitizeRequestParam($param, $type = 'string', $delimiter = ',')
     {
         switch ($type) {
             case 'bool':
@@ -698,8 +717,18 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
                 return sanitize_key($param);
             case 'url':
                 return esc_url_raw($param);
-            case 'text':
+            case 'string':
+                return sanitize_text_field($param);
             default:
+                if (strpos($type, 'arrayOf|') === 0) {
+                    $values = [];
+                    $array_of_type = substr($type, 8);
+                    $list = is_string($param) ? explode($delimiter, $param) : (array) $param;
+                    foreach ($list as $item) {
+                        $values[] = $this->sanitizeRequestParam($item, $array_of_type, $delimiter);
+                    }
+                    return $values;
+                }
                 return sanitize_text_field($param);
         }
     }
