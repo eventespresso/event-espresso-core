@@ -104,7 +104,7 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase
         $this->_pretend_addon_hook_time();
         require_once EE_TESTS_DIR . 'mocks/addons/eea-new-addon/EE_New_Addon.class.php';
         $mock_addon_path                = EE_TESTS_DIR . 'mocks/addons/eea-new-addon/';
-        EE_Registry::instance()->addons = new RegistryContainer();
+        EE_Registry::instance()->addons = new RegistryContainer('addons_test');
         EE_Register_Addon::register(
             $this->_addon_name,
             [
