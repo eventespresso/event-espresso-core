@@ -1062,7 +1062,7 @@ class EE_Register_Addon implements EEI_Plugin_API
     /**
      * @param string   $addon_name
      * @param EE_Addon $addon
-     * @since   $VID:$
+     * @since   4.10.13.p
      */
     private static function injectAddonDomain($addon_name, EE_Addon $addon)
     {

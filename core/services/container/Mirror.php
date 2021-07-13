@@ -169,7 +169,7 @@ class Mirror
     /**
      * @param ReflectionParameter $param
      * @return string|null
-     * @since   $VID:$
+     * @since   4.10.13.p
      */
     private function getParameterClassNameLegacy(ReflectionParameter $param)
     {
@@ -187,7 +187,7 @@ class Mirror
      *
      * @param ReflectionParameter $param
      * @return null
-     * @since   $VID:$
+     * @since   4.10.13.p
      */
     private function getParameterClassNamePhp8(ReflectionParameter $param)
     {
