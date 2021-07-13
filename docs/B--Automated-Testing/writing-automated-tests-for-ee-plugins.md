@@ -21,7 +21,7 @@ Event Espresso core provides a handy class for making it _really_ easy to bootst
 /**
  * Bootstrap for my Event Espresso add-on
  */
- use EETests\bootstrap\AddonLoader
+ use EventEspresso\tests\includes\AddonLoader
  //assuming your add-on is installed in the wp-content/plugins/my-addon folder
  //and Event Espresso is installed in the same WordPress instance at wp-
  //content/plugins/event-espresso-core.
@@ -39,7 +39,7 @@ Event Espresso core provides a handy class for making it _really_ easy to bootst
  $addon_loader->init();
 ```
 
-That's it!  The `EETests\bootstrap\AddonLoader` class will take care of all the bootstrapping needed for your add-on against the installed version of Event Espresso.  If you namespace your unit tests and you aren't doing any custom registering of autoloaders for the namespaces (via composer or some other method), this class also exposes a helper for registering a Psr4 Autoloader for your namespace.  Something like this (after the call to `$addon_loader->init()`:
+That's it!  The `EventEspresso\tests\includes\AddonLoader` class will take care of all the bootstrapping needed for your add-on against the installed version of Event Espresso.  If you namespace your unit tests and you aren't doing any custom registering of autoloaders for the namespaces (via composer or some other method), this class also exposes a helper for registering a Psr4 Autoloader for your namespace.  Something like this (after the call to `$addon_loader->init()`:
 
 ```php
 $addon_loader->registerPsr4Path(
