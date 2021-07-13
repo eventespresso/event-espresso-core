@@ -69,7 +69,7 @@ class EE_Registry implements ResettableInterface
     public $NET_CFG;
 
     /**
-     * StdClass object for storing library classes in
+     * RegistryContainer for storing library classes in
      *
      * @var RegistryContainer $LIB
      */
@@ -104,7 +104,7 @@ class EE_Registry implements ResettableInterface
     public $AssetsRegistry;
 
     /**
-     * StdClass object for holding addons which have registered themselves to work with EE core
+     * RegistryContainer for holding addons which have registered themselves to work with EE core
      *
      * @var EE_Addon[] $addons
      */
@@ -295,7 +295,7 @@ class EE_Registry implements ResettableInterface
         $protocol = isset($_SERVER['HTTPS']) ? 'https://' : 'http://';
         // Output admin-ajax.php URL with same protocol as current page
         self::$i18n_js_strings['ajax_url'] = admin_url('admin-ajax.php', $protocol);
-        self::$i18n_js_strings['wp_debug'] = defined('WP_DEBUG') ? WP_DEBUG : false;
+        self::$i18n_js_strings['wp_debug'] = defined('WP_DEBUG') && WP_DEBUG;
     }
 
 
@@ -329,7 +329,7 @@ class EE_Registry implements ResettableInterface
     {
         if ($module instanceof EED_Module) {
             $module_class = get_class($module);
-            $this->modules->{$module_class} = $module;
+            $this->modules->add($module_class, $module);
         } else {
             if (! class_exists('EE_Module_Request_Router', false)) {
                 $this->load_core('Module_Request_Router');
@@ -345,9 +345,7 @@ class EE_Registry implements ResettableInterface
      */
     public function get_module($module_name = '')
     {
-        return isset($this->modules->{$module_name})
-            ? $this->modules->{$module_name}
-            : null;
+        return $this->modules->get($module_name);
     }
 
 
@@ -959,12 +957,12 @@ class EE_Registry implements ResettableInterface
         if (isset($this->{$class_name})) {
             return $this->{$class_name};
         }
-        if ($class_prefix === 'addon' && isset($this->addons->{$class_name})) {
-            return $this->addons->{$class_name};
+        if ($class_prefix === 'addon' && $this->addons->has($class_name)) {
+            return $this->addons->get($class_name);
         }
         $object_identifier = $this->object_identifier->getIdentifier($class_name, $arguments);
-        if (isset($this->LIB->{$object_identifier})) {
-            return $this->LIB->{$object_identifier};
+        if ($this->LIB->has($object_identifier)) {
+            return $this->LIB->get($object_identifier);
         }
         foreach ($this->LIB as $key => $object) {
             if (// request does not contain new arguments and therefore no args identifier
@@ -1003,13 +1001,13 @@ class EE_Registry implements ResettableInterface
             $this->{$class_name} = null;
             return true;
         }
-        if ($addon && isset($this->addons->{$class_name})) {
-            unset($this->addons->{$class_name});
+        if ($addon && $this->addons->has($class_name)) {
+            $this->addons->remove($class_name);
             return true;
         }
         $class_name = $this->object_identifier->getIdentifier($class_name, $arguments);
-        if (isset($this->LIB->{$class_name})) {
-            unset($this->LIB->{$class_name});
+        if ($this->LIB->has($class_name)) {
+            $this->LIB->remove($class_name);
             return true;
         }
         return false;
@@ -1054,12 +1052,12 @@ class EE_Registry implements ResettableInterface
             return;
         }
         if ($class_prefix === 'addon') {
-            $this->addons->{$class_name} = $class_obj;
+            $this->addons->add($class_name, $class_obj);
             return;
         }
         if (! $from_db) {
             $class_name = $this->object_identifier->getIdentifier($class_name, $arguments);
-            $this->LIB->{$class_name} = $class_obj;
+            $this->LIB->add($class_name, $class_obj);
         }
     }
 
@@ -1483,7 +1481,7 @@ class EE_Registry implements ResettableInterface
     public function removeAddon($class_name)
     {
         $class_name = str_replace('\\', '_', $class_name);
-        unset($this->addons->{$class_name});
+        $this->addons->remove($class_name);
     }
 
 
@@ -1543,15 +1541,17 @@ class EE_Registry implements ResettableInterface
         $model_class_name = strpos($model_name, 'EEM_') !== 0
             ? "EEM_{$model_name}"
             : $model_name;
-        if (! isset($this->LIB->{$model_class_name}) || ! $this->LIB->{$model_class_name} instanceof EEM_Base) {
+        if (! $this->LIB->has($model_class_name)) {
+            return null;
+        }
+        $model = $this->LIB->get($model_class_name);
+        if (! $model instanceof EEM_Base) {
             return null;
         }
         // get that model reset it and make sure we nuke the old reference to it
-        if ($this->LIB->{$model_class_name} instanceof $model_class_name
-            && is_callable(
-                array($model_class_name, 'reset')
-            )) {
-            $this->LIB->{$model_class_name} = $this->LIB->{$model_class_name}->reset();
+        if ($model instanceof $model_class_name && is_callable([$model_class_name, 'reset'])) {
+            $this->LIB->remove($model_class_name);
+            $this->LIB->add($model_class_name, $model->reset());
         } else {
             throw new EE_Error(
                 sprintf(
@@ -1560,7 +1560,7 @@ class EE_Registry implements ResettableInterface
                 )
             );
         }
-        return $this->LIB->{$model_class_name};
+        return $model;
     }
 
 
