@@ -3,37 +3,20 @@
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\container\RegistryContainer;
-use EventEspresso\core\services\database\TableAnalysis;
-use EventEspresso\core\services\database\TableManager;
 
-defined('EVENT_ESPRESSO_VERSION') || exit('No direct access allowed.');
 /**
  * EE_System_Test_With_Addons
+ * Tests EE_System's support for addons
  *
  * @package               Event Espresso
  * @subpackage
  * @author                Mike Nelson
- * Tests EE_System's support for addons
- */
-
-
-/**
- * @group core
- * @group addons
- * @group activation
+ * @group                 core
+ * @group                 addons
+ * @group                 activation
  */
 class EE_System_Test_With_Addons extends EE_UnitTestCase
 {
-
-    /**
-     * @var TableAnalysis $_table_analysis
-     */
-    protected $_table_analysis;
-
-    /**
-     * @var TableManager $_table_manager
-     */
-    protected $_table_manager;
 
     /**
      * The mock addon registered
@@ -85,6 +68,21 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase
      */
     protected $_temp_tables_added_by_addon = ['esp_new_addon_thing', 'esp_new_addon_attendee_meta'];
 
+    /**
+     * @var string
+     */
+    protected $new_install_hook_name = '';
+
+    /**
+     * @var string
+     */
+    protected $upgrade_hook_name = '';
+
+    /**
+     * @var string
+     */
+    protected $reactivation_hook_name = '';
+
 
     /**
      * Registers the mock addon so it can be used for testing
@@ -99,28 +97,31 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->_table_analysis = new TableAnalysis();
-        $this->_table_manager  = new TableManager($this->_table_analysis);
+        $this->initTableManager();
         $this->_pretend_addon_hook_time();
-        require_once EE_TESTS_DIR . 'mocks/addons/eea-new-addon/EE_New_Addon.class.php';
-        $mock_addon_path                = EE_TESTS_DIR . 'mocks/addons/eea-new-addon/';
+        global $wp_actions;
+        unset($wp_actions['AHEE__EEM_Attendee__construct__end']);
         EE_Registry::instance()->addons = new RegistryContainer();
+        $mock_addon_path                = EE_TESTS_DIR . 'mocks/addons/eea-new-addon/';
+
+        require_once($mock_addon_path . 'EE_New_Addon.class.php');
         EE_Register_Addon::register(
             $this->_addon_name,
             [
-                'version'          => '1.0.0.dev.000',
-                'min_core_version' => '4.0.0',
-                'main_file_path'   => $mock_addon_path . 'eea-new-addon.php',
-                'dms_paths'        => $mock_addon_path . 'core/data_migration_scripts',
+                'version'               => '1.0.0.dev.000',
+                'min_core_version'      => '4.0.0',
+                'main_file_path'        => $mock_addon_path . 'eea-new-addon.php',
+                'dms_paths'             => $mock_addon_path . 'core/data_migration_scripts',
+                'class_paths'           => $mock_addon_path . 'core/db_classes',
+                'class_extension_paths' => $mock_addon_path . 'core/db_class_extensions',
+                'model_paths'           => $mock_addon_path . 'core/db_models',
+                'model_extension_paths' => $mock_addon_path . 'core/db_model_extensions',
             ]
         );
         // now verify that this is the only addon
         $this->assertCount(1, EE_Registry::instance()->addons);
         //double-check that worked fine
-        $this->assertArrayHasKey(
-            'EE_New_Addon',
-            EE_Registry::instance()->addons
-        );
+        $this->assertTrue(EE_Registry::instance()->addons->offsetExists('EE_New_Addon'));
         $this->assertInstanceOf(
             'EE_New_Addon',
             EE_Registry::instance()->addons->EE_New_Addon
@@ -129,7 +130,11 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase
         $this->assertArrayHasKey('EE_DMS_New_Addon_1_0_0', $DMSs_available);
         $this->_addon = EE_Registry::instance()->addons->EE_New_Addon;
         $this->assertInstanceOf('EE_New_Addon', $this->_addon);
+        // set some properties for use in tests
         $this->_addon_classname          = get_class($this->_addon);
+        $this->new_install_hook_name     = "AHEE__{$this->_addon_classname}__new_install";
+        $this->upgrade_hook_name         = "AHEE__{$this->_addon_classname}__upgrade";
+        $this->reactivation_hook_name    = "AHEE__{$this->_addon_classname}__reactivation";
         $this->_addon_activation_history = $this->_addon->get_activation_history();
         $this->_current_db_state         = get_option(EE_Data_Migration_Manager::current_database_state);
         delete_option(EE_Data_Migration_Manager::current_database_state);
@@ -146,9 +151,13 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase
     }
 
 
+    /**
+     * @throws EE_Error
+     * @since   $VID:$
+     */
     public function tearDown()
     {
-        //if somehow $this->_addon isn't set, we don't need to worry about deregistering it right?
+        //if somehow $this->_addon isn't set, we don't need to worry about de-registering it right?
         if ($this->_addon instanceof EE_Addon) {
             update_option(
                 $this->_addon->get_activation_history_option_name(),
@@ -171,7 +180,7 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase
             $this->_stop_pretending_addon_hook_time();
             // drop all the temporary tables we created during this test,
             // because each subsequent test expects them to be gone
-            $this->_table_manager->dropTables($this->_temp_tables_added_by_addon);
+            $this->table_manager->dropTables($this->_temp_tables_added_by_addon);
         }
         parent::tearDown();
     }
@@ -240,18 +249,20 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase
         $current_db_state = get_option(EE_Data_Migration_Manager::current_database_state);
         //just for assurance, make sure New Addon is the only existing addon
         $this->assertArrayNotHasKey($this->_addon_name, $current_db_state);
-        $times_its_new_install_hook_fired_before = isset($wp_actions["AHEE__{$this->_addon_classname}__new_install"])
-            ? $wp_actions["AHEE__{$this->_addon_classname}__new_install"] : 0;
+        $times_its_new_install_hook_fired_before = isset($wp_actions[ $this->new_install_hook_name ])
+            ? $wp_actions[ $this->new_install_hook_name ]
+            : 0;
         //set the activator option
         update_option($this->_addon->get_activation_indicator_option_name(), true);
         $this->assertWPOptionExists($this->_addon->get_activation_indicator_option_name());
         $this->assertTableDoesNotExist('esp_new_addon_thing');
         //now check for activations/upgrades in addons
         EE_System::reset();
-        $this->assertEquals(EE_System::req_type_new_activation, $this->_addon->detect_req_type());
+        $req_type = $this->_addon->detect_req_type();
+        $this->assertEquals(EE_System::req_type_new_activation, $req_type);
         $this->assertEquals(
             $times_its_new_install_hook_fired_before + 1,
-            $wp_actions["AHEE__{$this->_addon_classname}__new_install"]
+            $wp_actions[ $this->new_install_hook_name ]
         );
         $this->assertWPOptionDoesNotExist($this->_addon->get_activation_indicator_option_name());
         //now we also want to check that the addon will have created the necessary table
@@ -279,8 +290,8 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase
         $current_db_state = get_option(EE_Data_Migration_Manager::current_database_state);
         //just for assurance, make sure New Addon is the only existing addon
         $this->assertArrayNotHasKey($this->_addon_name, $current_db_state);
-        $times_addon_new_install_hook_fired = isset($wp_actions["AHEE__{$this->_addon_classname}__new_install"])
-            ? $wp_actions["AHEE__{$this->_addon_classname}__new_install"]
+        $times_addon_new_install_hook_fired = isset($wp_actions[ $this->new_install_hook_name ])
+            ? $wp_actions[ $this->new_install_hook_name ]
             : 0;
         $times_core_new_install_hook_fired  =
             isset($wp_actions['AHEE__EE_System__detect_if_activation_or_upgrade__new_activation'])
@@ -295,7 +306,7 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase
         $this->assertEquals(EE_System::req_type_new_activation, $this->_addon->detect_req_type());
         $this->assertEquals(
             $times_addon_new_install_hook_fired + 1,
-            $wp_actions["AHEE__{$this->_addon_classname}__new_install"]
+            $wp_actions[ $this->new_install_hook_name ]
         );
         $this->assertEquals(
             $times_core_new_install_hook_fired + 1,
@@ -327,42 +338,7 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase
 
     public function test_detect_activations_or_upgrades__upgrade_on_activation()
     {
-        global $wp_actions;
-        $this->_addon_classname = get_class($this->_addon);
-        //first make sure the mock DMS can migrate from v 0.0.1
-        $dms = new EE_DMS_New_Addon_1_0_0();
-        $this->assertTrue(
-            $dms->can_migrate_from_version(
-                [$this->_addon_name => $this->_pretend_addon_previous_version]
-            )
-        );
-        //it should have an entry in its activation history and db state
-        $activation_history_option_name = $this->_addon->get_activation_history_option_name();
-        update_option($activation_history_option_name, [$this->_pretend_addon_previous_version]);
-        $db_state                       = get_option(EE_Data_Migration_Manager::current_database_state);
-        $db_state[ $this->_addon_name ] = $this->_pretend_addon_previous_version;
-        update_option(EE_Data_Migration_Manager::current_database_state, $db_state);
-        //pretend the activation indicator option was set (by WP calling its activation hook)
-        update_option($this->_addon->get_activation_indicator_option_name(), true);
-        $times_its_new_install_hook_fired_before = isset($wp_actions["AHEE__{$this->_addon_classname}__upgrade"])
-            ? $wp_actions["AHEE__{$this->_addon_classname}__upgrade"] : 0;
-        //the site shouldn't be in MM before
-        $this->assertEquals(
-            EE_Maintenance_Mode::level_0_not_in_maintenance,
-            EE_Maintenance_Mode::instance()->level()
-        );
-        //now check for activations/upgrades in addons
-        EE_System::reset();
-        $this->assertEquals(EE_System::req_type_upgrade, $this->_addon->detect_req_type());
-        $this->assertEquals(
-            $times_its_new_install_hook_fired_before + 1,
-            $wp_actions["AHEE__{$this->_addon_classname}__upgrade"]
-        );
-        //the fact that there's an applicable DMS means the site should be placed in maintenance mode
-        $this->assertEquals(
-            EE_Maintenance_Mode::level_2_complete_maintenance,
-            EE_Maintenance_Mode::instance()->level()
-        );
+        $this->mock_addon_upgrade();
         //check that the activation indicator option was removed
         $this->assertWPOptionDoesNotExist($this->_addon->get_activation_indicator_option_name());
         //ok all done
@@ -371,11 +347,9 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase
 
 
     /**
-     * tests we detect an upgrade even when the plugin isn't newly activated
-     *
      * @global array $wp_actions
      */
-    public function test_detect_activations_or_upgrades__upgrade_on_normal_request()
+    private function mock_addon_upgrade($activation = true)
     {
         global $wp_actions;
         //first make sure the mock DMS can migrate from v 0.0.1
@@ -391,8 +365,12 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase
         $db_state                       = get_option(EE_Data_Migration_Manager::current_database_state);
         $db_state[ $this->_addon_name ] = $this->_pretend_addon_previous_version;
         update_option(EE_Data_Migration_Manager::current_database_state, $db_state);
-        $times_its_new_install_hook_fired_before = isset($wp_actions["AHEE__{$this->_addon_classname}__upgrade"])
-            ? $wp_actions["AHEE__{$this->_addon_classname}__upgrade"] : 0;
+        if ($activation) {
+            //pretend the activation indicator option was set (by WP calling its activation hook)
+            update_option($this->_addon->get_activation_indicator_option_name(), true);
+        }
+        $times_its_new_install_hook_fired_before = isset($wp_actions[ $this->upgrade_hook_name ])
+            ? $wp_actions[ $this->upgrade_hook_name ] : 0;
         //the site shouldn't be in MM before
         $this->assertEquals(
             EE_Maintenance_Mode::level_0_not_in_maintenance,
@@ -403,14 +381,24 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase
         $this->assertEquals(EE_System::req_type_upgrade, $this->_addon->detect_req_type());
         $this->assertEquals(
             $times_its_new_install_hook_fired_before + 1,
-            $wp_actions["AHEE__{$this->_addon_classname}__upgrade"]
+            $wp_actions[ $this->upgrade_hook_name ]
         );
         //the fact that there's an applicable DMS means the site should be placed in maintenance mode
         $this->assertEquals(
             EE_Maintenance_Mode::level_2_complete_maintenance,
             EE_Maintenance_Mode::instance()->level()
         );
-        //ok all done
+    }
+
+
+    /**
+     * tests we detect an upgrade even when the plugin isn't newly activated
+     *
+     * @global array $wp_actions
+     */
+    public function test_detect_activations_or_upgrades__upgrade_on_normal_request()
+    {
+        $this->mock_addon_upgrade(false);
         EE_Maintenance_Mode::instance()->set_maintenance_level(EE_Maintenance_Mode::level_0_not_in_maintenance);
     }
 
@@ -434,14 +422,14 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase
         //set the activator option
         update_option($this->_addon->get_activation_indicator_option_name(), true);
         $this->assertWPOptionExists($this->_addon->get_activation_indicator_option_name());
-        $times_its_new_install_hook_fired_before = isset($wp_actions["AHEE__{$this->_addon_classname}__reactivation"])
-            ? $wp_actions["AHEE__{$this->_addon_classname}__reactivation"] : 0;
+        $times_its_new_install_hook_fired_before = isset($wp_actions[ $this->reactivation_hook_name ])
+            ? $wp_actions[ $this->reactivation_hook_name ] : 0;
         //now check for activations/upgrades in addons
         EE_System::reset();
         $this->assertEquals(EE_System::req_type_reactivation, $this->_addon->detect_req_type());
         $this->assertEquals(
             $times_its_new_install_hook_fired_before + 1,
-            $wp_actions["AHEE__{$this->_addon_classname}__reactivation"]
+            $wp_actions[ $this->reactivation_hook_name ]
         );
         $this->assertEquals(
             EE_Maintenance_Mode::level_0_not_in_maintenance,
@@ -462,25 +450,24 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase
      * @group 6812
      * @group 6910
      */
-    public function test_detect_actiavtions_or_upgrade__activation_during_maintenance_mode()
+    public function test_detect_activations_or_upgrade__activation_during_maintenance_mode()
     {
         global $wp_actions;
-        //its activation history wp option shouldn't exist
+        // its activation history wp option shouldn't exist
         delete_option($this->_addon->get_activation_history_option_name());
-        //and it also shouldn't be in the current db state
+        // and it also shouldn't be in the current db state
         $current_db_state = get_option(EE_Data_Migration_Manager::current_database_state);
-        //just for assurance, make sure New Addon is the only existing addon
+        // just for assurance, make sure New Addon is the only existing addon
         unset($current_db_state[ $this->_addon_name ]);
         update_option(EE_Data_Migration_Manager::current_database_state, $current_db_state);
-        $times_reactivation_hook_fired_before = isset($wp_actions["AHEE__{$this->_addon_classname}__new_install"])
-            ? $wp_actions["AHEE__{$this->_addon_classname}__new_install"]
-            : 0;
-        //set the activator option
+        $times_reactivation_hook_fired_before = isset($wp_actions[ $this->new_install_hook_name ])
+            ? $wp_actions[ $this->new_install_hook_name ] : 0;
+        // set the activator option
         update_option($this->_addon->get_activation_indicator_option_name(), true);
         $this->assertWPOptionExists($this->_addon->get_activation_indicator_option_name());
-        //lastly, and imporatntly ADD A DMS SO MAINTENANCE MODE will be set
+        // lastly, and importantly ADD A DMS SO MAINTENANCE MODE will be set
         $this->_add_mock_dms();
-        //now check for activations/upgrades in addons
+        // now check for activations/upgrades in addons
         EE_System::reset();
         $this->assertEquals(
             EE_Maintenance_Mode::level_2_complete_maintenance,
@@ -489,8 +476,8 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase
         $this->assertEquals(EE_System::req_type_new_activation, $this->_addon->detect_req_type());
         $this->assertEquals(
             $times_reactivation_hook_fired_before + 1,
-            isset($wp_actions["AHEE__{$this->_addon_classname}__new_install"])
-                ? $wp_actions["AHEE__{$this->_addon_classname}__new_install"] : 0
+            isset($wp_actions[ $this->new_install_hook_name ])
+                ? $wp_actions[ $this->new_install_hook_name ] : 0
         );
         $this->assertArrayContains(
             'New_Addon',
@@ -518,7 +505,7 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase
         $this->assertEquals(EE_System::req_type_normal, $this->_addon->detect_req_type(true));
         $this->assertEquals(
             $times_reactivation_hook_fired_before + 1,
-            $wp_actions["AHEE__{$this->_addon_classname}__new_install"]
+            $wp_actions[ $this->new_install_hook_name ]
         );
         $this->assertWPOptionDoesNotExist($this->_addon->get_activation_indicator_option_name());
     }
@@ -546,8 +533,8 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase
         //just for assurance, make sure New Addon is the only existing addon
         unset($current_db_state[ $this->_addon_name ]);
         update_option(EE_Data_Migration_Manager::current_database_state, $current_db_state);
-        $times_reactivation_hook_fired_before = isset($wp_actions["AHEE__{$this->_addon_classname}__upgrade"])
-            ? $wp_actions["AHEE__{$this->_addon_classname}__upgrade"] : 0;
+        $times_reactivation_hook_fired_before = isset($wp_actions[ $this->upgrade_hook_name ])
+            ? $wp_actions[ $this->upgrade_hook_name ] : 0;
         //lastly, and importantly SET MAINTENANCE MODE LEVEL 2
         $this->_add_mock_dms();
         //now check for activations/upgrades in addons
@@ -559,8 +546,8 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase
         $this->assertEquals(EE_System::req_type_upgrade, $this->_addon->detect_req_type());
         $this->assertEquals(
             $times_reactivation_hook_fired_before + 1,
-            isset($wp_actions["AHEE__{$this->_addon_classname}__upgrade"])
-                ? $wp_actions["AHEE__{$this->_addon_classname}__upgrade"] : 0
+            isset($wp_actions[ $this->upgrade_hook_name ])
+                ? $wp_actions[ $this->upgrade_hook_name ] : 0
         );
         $this->assertArrayContains(
             'New_Addon',
@@ -590,7 +577,7 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase
         $this->assertEquals(EE_System::req_type_normal, $this->_addon->detect_req_type(true));
         $this->assertEquals(
             $times_reactivation_hook_fired_before + 1,
-            $wp_actions["AHEE__{$this->_addon_classname}__upgrade"]
+            $wp_actions[ $this->upgrade_hook_name ]
         );
         $this->assertWPOptionDoesNotExist($this->_addon->get_activation_indicator_option_name());
     }

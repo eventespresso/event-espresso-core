@@ -31,17 +31,18 @@ class EE_Addon_Test extends EE_UnitTestCase{
      * @var array
      */
     protected $_temp_tables_added_by_addon = array( 'esp_new_addon_thing', 'esp_new_addon_attendee_meta' );
+
 	public function __construct($name = NULL, array $data = array(), $dataName = '') {
 		$this->_main_file_path = EE_TESTS_DIR . 'mocks/addons/eea-new-addon/eea-new-addon.php';
 		require_once $this->_main_file_path;
 		//loading that file adds a hook, but we want to control when it hooks in
 		remove_action( 'AHEE__EE_System__load_espresso_addons', 'load_espresso_new_addon' );
-        $this->_table_analysis = new \EventEspresso\core\services\database\TableAnalysis();
-        $this->_table_manager = new \EventEspresso\core\services\database\TableManager( $this->_table_analysis );
 		parent::__construct($name, $data, $dataName);
 	}
+
 	public function setUp(){
 		parent::setUp();
+        $this->initTableManager();
 		//let's just make a generic addon, but not bother registering it
         $loader = EventEspresso\core\services\loaders\LoaderFactory::getLoader();
         require_once dirname($this->_main_file_path) . '/EE_New_Addon.class.php';
@@ -62,7 +63,7 @@ class EE_Addon_Test extends EE_UnitTestCase{
 
 	public function tearDown(){
         //drop all the temporary tables we created during this test, because each subsequent test expects them to be gone
-        $this->_table_manager->dropTables( $this->_temp_tables_added_by_addon );
+        $this->table_manager->dropTables( $this->_temp_tables_added_by_addon );
         parent::tearDown();
     }
 
@@ -77,16 +78,11 @@ class EE_Addon_Test extends EE_UnitTestCase{
 	 * @return boolean
 	 */
 	public function dont_short_circuit_new_addon_table( $short_circuit = false, $table_name = '', $create_sql = '' ){
-		if (
-			in_array( $table_name, $this->_temp_tables_added_by_addon )
-		) {
-//			echo "\r\n\r\nDONT short circuit $sql";
-			//it's not altering. it's ok to allow this
+		if (in_array( $table_name, $this->_temp_tables_added_by_addon )) {
+			// it's not altering. it's ok to allow this
 			return false;
-		}else{
-//			echo "3\r\n\r\n short circuit:$sql";
-			return $short_circuit;
 		}
+        return $short_circuit;
 	}
 
 	public function test_update_list_of_installed_versions(){

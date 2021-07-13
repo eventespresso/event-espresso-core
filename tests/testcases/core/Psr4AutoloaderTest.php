@@ -6,17 +6,16 @@ use EventEspresso\Tests\Mocks\Core\Psr4AutoloaderMock;
 class Psr4AutoloaderTest extends \EE_UnitTestCase {
 
 	/**
-	 * @type Psr4AutoloaderMock $loader
+	 * @type Psr4AutoloaderMock $autoloader
 	 */
-	protected $loader;
-
+	protected $autoloader;
 
 
 	public function setUp() {
 		parent::setUp();
 		require_once( EE_TESTS_DIR . 'mocks/core/Psr4AutoloaderMock.php' );
-		$this->loader = new Psr4AutoloaderMock;
-		$this->loader->setFiles( array(
+		$this->autoloader = new Psr4AutoloaderMock;
+		$this->autoloader->setFiles( array(
 			'/vendor/foo.bar/src/ClassName.php',
 			'/vendor/foo.bar/src/DoomClassName.php',
 			'/vendor/foo.bar/tests/ClassNameTest.php',
@@ -24,23 +23,23 @@ class Psr4AutoloaderTest extends \EE_UnitTestCase {
 			'/vendor/foo.bar.baz.dib/src/ClassName.php',
 			'/vendor/foo.bar.baz.dib.zim.gir/src/ClassName.php',
 		) );
-		$this->loader->addNamespace(
+		$this->autoloader->addNamespace(
 			'Foo\Bar',
 			'/vendor/foo.bar/src'
 		);
-		$this->loader->addNamespace(
+		$this->autoloader->addNamespace(
 			'Foo\Bar',
 			'/vendor/foo.bar/tests'
 		);
-		$this->loader->addNamespace(
+		$this->autoloader->addNamespace(
 			'Foo\BarDoom',
 			'/vendor/foo.bardoom/src'
 		);
-		$this->loader->addNamespace(
+		$this->autoloader->addNamespace(
 			'Foo\Bar\Baz\Dib',
 			'/vendor/foo.bar.baz.dib/src'
 		);
-		$this->loader->addNamespace(
+		$this->autoloader->addNamespace(
 			'Foo\Bar\Baz\Dib\Zim\Gir',
 			'/vendor/foo.bar.baz.dib.zim.gir/src'
 		);
@@ -49,10 +48,10 @@ class Psr4AutoloaderTest extends \EE_UnitTestCase {
 
 
 	public function testExistingFile() {
-		$actual = $this->loader->loadClass( 'Foo\Bar\ClassName' );
+		$actual = $this->autoloader->loadClass( 'Foo\Bar\ClassName' );
 		$expect = '/vendor/foo.bar/src/ClassName.php';
 		$this->assertSame( $expect, $actual );
-		$actual = $this->loader->loadClass( 'Foo\Bar\ClassNameTest' );
+		$actual = $this->autoloader->loadClass( 'Foo\Bar\ClassNameTest' );
 		$expect = '/vendor/foo.bar/tests/ClassNameTest.php';
 		$this->assertSame( $expect, $actual );
 	}
@@ -60,14 +59,14 @@ class Psr4AutoloaderTest extends \EE_UnitTestCase {
 
 
 	public function testMissingFile() {
-		$actual = $this->loader->loadClass( 'No_Vendor\No_Package\NoClass' );
+		$actual = $this->autoloader->loadClass( 'No_Vendor\No_Package\NoClass' );
 		$this->assertFalse( $actual );
 	}
 
 
 
 	public function testDeepFile() {
-		$actual = $this->loader->loadClass( 'Foo\Bar\Baz\Dib\Zim\Gir\ClassName' );
+		$actual = $this->autoloader->loadClass( 'Foo\Bar\Baz\Dib\Zim\Gir\ClassName' );
 		$expect = '/vendor/foo.bar.baz.dib.zim.gir/src/ClassName.php';
 		$this->assertSame( $expect, $actual );
 	}
@@ -75,10 +74,10 @@ class Psr4AutoloaderTest extends \EE_UnitTestCase {
 
 
 	public function testConfusion() {
-		$actual = $this->loader->loadClass( 'Foo\Bar\DoomClassName' );
+		$actual = $this->autoloader->loadClass( 'Foo\Bar\DoomClassName' );
 		$expect = '/vendor/foo.bar/src/DoomClassName.php';
 		$this->assertSame( $expect, $actual );
-		$actual = $this->loader->loadClass( 'Foo\BarDoom\ClassName' );
+		$actual = $this->autoloader->loadClass( 'Foo\BarDoom\ClassName' );
 		$expect = '/vendor/foo.bardoom/src/ClassName.php';
 		$this->assertSame( $expect, $actual );
 	}

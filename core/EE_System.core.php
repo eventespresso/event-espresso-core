@@ -439,7 +439,6 @@ final class EE_System implements ResettableInterface
         // check if db has been updated, or if its a brand-new installation
         $espresso_db_update = $this->fix_espresso_db_upgrade_option();
         $request_type = $this->detect_req_type($espresso_db_update);
-        // EEH_Debug_Tools::printr( $request_type, '$request_type', __FILE__, __LINE__ );
         switch ($request_type) {
             case EE_System::req_type_new_activation:
                 do_action('AHEE__EE_System__detect_if_activation_or_upgrade__new_activation');

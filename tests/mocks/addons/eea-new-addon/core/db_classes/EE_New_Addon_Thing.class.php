@@ -1,33 +1,38 @@
 <?php
 
-if (!defined('EVENT_ESPRESSO_VERSION'))
-	exit('No direct script access allowed');
-
 /**
- *
  * EE_Mock
  *
- * @package			Event Espresso
+ * @package               Event Espresso
  * @subpackage
- * @author				Mike Nelson
+ * @author                Mike Nelson
  *
  */
-class EE_New_Addon_Thing extends EE_Base_Class{
-	/**
-	 *
-	 * @param type $props_n_values
-	 * @return EE_Attendee
-	 */
-	public static function new_instance( $props_n_values = array() ) {
-		$classname = __CLASS__;
-		$has_object = parent::_check_for_object( $props_n_values, $classname );
-		return $has_object ? $has_object : new self( $props_n_values );
-	}
+class EE_New_Addon_Thing extends EE_Base_Class
+{
+    /**
+     *
+     * @param array $props_n_values
+     * @return EE_New_Addon_Thing
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public static function new_instance(array $props_n_values = [])
+    {
+        $classname  = __CLASS__;
+        $has_object = parent::_check_for_object($props_n_values, $classname);
+        return $has_object ? $has_object : new self($props_n_values);
+    }
 
 
-	public static function new_instance_from_db ( $props_n_values = array() ) {
-		return new self( $props_n_values, TRUE );
-	}
+    /**
+     * @param array $props_n_values
+     * @return EE_New_Addon_Thing
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public static function new_instance_from_db(array $props_n_values = [])
+    {
+        return new self($props_n_values, true);
+    }
 }
-
-// End of file EE_Base_Class_Mock.class.php

@@ -670,9 +670,7 @@ class EE_Register_Addon implements EEI_Plugin_API
             // Note: the presence of pue_options in the addon registration options will initialize the $_settings
             // property for the add-on, but the add-on is only partially initialized.  Hence, the additional check.
             if (! isset(self::$_settings[ $addon_name ])
-                || (isset(self::$_settings[ $addon_name ])
-                    && ! isset(self::$_settings[ $addon_name ]['class_name'])
-                )
+                || (isset(self::$_settings[ $addon_name ]) && ! isset(self::$_settings[ $addon_name ]['class_name']))
             ) {
                 self::$_settings[ $addon_name ] = $addon_settings;
                 $addon = self::_load_and_init_addon_class($addon_name);
@@ -1005,21 +1003,23 @@ class EE_Register_Addon implements EEI_Plugin_API
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
+     * @throws DomainException
      */
     private static function _load_and_init_addon_class($addon_name)
     {
-        $addon = LoaderFactory::getLoader()->getShared(
-            self::$_settings[ $addon_name ]['class_name'],
-            array('EE_Registry::create(addon)' => true)
-        );
-        if (! $addon instanceof EE_Addon) {
+        $addon_class = self::$_settings[ $addon_name ]['class_name'];
+        $addon = LoaderFactory::getLoader()->getShared($addon_class, ['EE_Registry::create(addon)' => true]);
+        // verify addon has been instantiated correctly
+        if (! $addon instanceof $addon_class) {
             throw new DomainException(
                 sprintf(
-                    esc_html__(
-                        'Failed to instantiate the %1$s class. PLease check that the class exists.',
+                    __(
+                        'An attempt to register an EE_Addon named "%1$s" has failed because the "%2$s" class is either missing or invalid. The following was created instead: %3$s',
                         'event_espresso'
                     ),
-                    $addon_name
+                    $addon_name,
+                    $addon_class,
+                    print_r($addon, true)
                 )
             );
         }
