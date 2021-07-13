@@ -1243,6 +1243,7 @@ class EE_Register_Addon implements EEI_Plugin_API
                     );
                 }
                 EE_Registry::instance()->removeAddon($class_name);
+                LoaderFactory::getLoader()->remove($class_name);
             } catch (OutOfBoundsException $addon_not_yet_registered_exception) {
                 // the add-on was not yet registered in the registry,
                 // so RegistryContainer::__get() throws this exception.
