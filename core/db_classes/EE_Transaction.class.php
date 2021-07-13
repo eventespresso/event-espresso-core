@@ -20,6 +20,13 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     const LOCK_EXPIRATION = 2;
 
     /**
+     * extra meta key for tracking when transactions are deleted and by who
+     *
+     * @type string
+     */
+    const EXTRA_META_KEY_TXN_DELETED = 'transaction-deleted';
+
+    /**
      * txn status upon initial construction.
      *
      * @var string
@@ -95,7 +102,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
                 // but if the lock can not be removed, then throw an exception
                 throw new EE_Error(
                     sprintf(
-                        __(
+                        esc_html__(
                             'Could not lock Transaction %1$d because it is already locked, meaning another part of the system is currently editing it. It should already be unlocked by the time you read this, so please refresh the page and try again.',
                             'event_espresso'
                         ),
@@ -617,7 +624,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     public function pretty_status($show_icons = false)
     {
         $status = EEM_Status::instance()->localized_status(
-            array($this->status_ID() => __('unknown', 'event_espresso')),
+            array($this->status_ID() => esc_html__('unknown', 'event_espresso')),
             false,
             'sentence'
         );
@@ -768,6 +775,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      *
      * @param string $type 'html' or 'pdf' (default is pdf)
      * @return string
+     * @throws DomainException
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -818,6 +826,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      *
      * @param string $type 'pdf' or 'html' (default is 'html')
      * @return string
+     * @throws DomainException
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -1075,7 +1084,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
         $payment_method = $this->payment_method();
         if (! $payment_method) {
             EE_Error::add_error(
-                __(
+                esc_html__(
                     'Could not find billing info for transaction because no gateway has been used for it yet',
                     'event_espresso'
                 ),
@@ -1088,7 +1097,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
         $primary_reg = $this->primary_registration();
         if (! $primary_reg) {
             EE_Error::add_error(
-                __(
+                esc_html__(
                     'Cannot get billing info for gateway %s on transaction because no primary registration exists',
                     'event_espresso'
                 ),
@@ -1101,7 +1110,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
         $attendee = $primary_reg->attendee();
         if (! $attendee) {
             EE_Error::add_error(
-                __(
+                esc_html__(
                     'Cannot get billing info for gateway %s on transaction because the primary registration has no attendee exists',
                     'event_espresso'
                 ),
@@ -1228,7 +1237,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
             $new_txn_status = EEM_Transaction::incomplete_status_code;
         } else {
             throw new RuntimeException(
-                __('The total paid calculation for this transaction is inaccurate.', 'event_espresso')
+                esc_html__('The total paid calculation for this transaction is inaccurate.', 'event_espresso')
             );
         }
         if ($new_txn_status !== $this->status_ID()) {
@@ -1258,7 +1267,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
         EE_Error::doing_it_wrong(
             __CLASS__ . '::' . __FUNCTION__,
             sprintf(
-                __('This method is deprecated. Please use "%s" instead', 'event_espresso'),
+                esc_html__('This method is deprecated. Please use "%s" instead', 'event_espresso'),
                 'EE_Transaction_Processor::update_transaction_and_registrations_after_checkout_or_payment()'
             ),
             '4.6.0'
@@ -1650,9 +1659,10 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      * updates the TXN status based on the amount paid
      *
      * @throws EE_Error
+     * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @throws InvalidArgumentException
+     * @throws ReflectionException
      * @throws RuntimeException
      * @throws ReflectionException
      */
@@ -1710,5 +1720,24 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
             return EEH_Line_Item::apply_taxes($total_line_item, true);
         }
         return false;
+	}
+
+
+    /**
+     * @param string $source function name that called this method
+     * @return boolean | int
+     */
+    public function delete($source = 'unknown')
+    {
+        $current_user = wp_get_current_user();
+        $this->add_extra_meta(
+            EE_Transaction::EXTRA_META_KEY_TXN_DELETED,
+            array(
+                'deleted-by' => $current_user->ID ? $current_user->display_name : 'unauthed user',
+                'timestamp'  => time(),
+                'source'     => $source,
+            )
+        );
+        return parent::delete();
     }
 }

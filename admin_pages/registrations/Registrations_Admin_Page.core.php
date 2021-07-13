@@ -7,6 +7,7 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidFormSubmissionException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\domain\services\attendee\forms\AttendeeContactDetailsMetaboxFormHandler;
+use EventEspresso\core\exceptions\UnexpectedEntityException;
 
 /**
  * Registrations_Admin_Page class
@@ -2561,11 +2562,15 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      *
      * @param  boolean $trash whether to archive or restore
      * @return void
+     * @throws DomainException
      * @throws EE_Error
+     * @throws EntityNotFoundException
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      * @throws RuntimeException
+     * @throws UnexpectedEntityException
      * @access protected
      */
     protected function _trash_or_restore_registrations($trash = true)
@@ -2618,7 +2623,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 // can't trash this registration because it has payments.
                 continue;
             }
-            $updated = $trash ? $REG->delete() : $REG->restore();
+            $updated = $trash ? $REG->delete(__METHOD__) : $REG->restore(__METHOD__);
             if ($updated) {
                 $success++;
             }
