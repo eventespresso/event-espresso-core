@@ -12,7 +12,6 @@
  * @subpackage            core
  * @author                Brent Christensen / Mike Nelson
  * @since                 4.8.0
- *
  */
 class EE_Billable_Line_Item_Filter extends EE_Specific_Registrations_Line_Item_Filter
 {
@@ -22,6 +21,8 @@ class EE_Billable_Line_Item_Filter extends EE_Specific_Registrations_Line_Item_F
      * EE_Billable_Line_Item_Filter constructor.
      *
      * @param EE_Registration[] $registrations
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function __construct($registrations)
     {
@@ -36,6 +37,8 @@ class EE_Billable_Line_Item_Filter extends EE_Specific_Registrations_Line_Item_F
      * @access protected
      * @param EE_Registration[] $registrations
      * @return mixed
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _remove_unbillable_registrations($registrations = array())
     {

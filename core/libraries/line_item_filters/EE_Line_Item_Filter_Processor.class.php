@@ -50,9 +50,9 @@ class EE_Line_Item_Filter_Processor
     /**
      * EE_Line_Item_Filter_Processor constructor.
      *
-     * @param \EE_Line_Item_Filter_Collection $line_item_filters
-     * @param \EEI_Line_Item                  $grand_total_line_item
-     * @throws \EE_Error
+     * @param EE_Line_Item_Filter_Collection $line_item_filters
+     * @param EEI_Line_Item                  $grand_total_line_item
+     * @throws EE_Error
      */
     public function __construct(EE_Line_Item_Filter_Collection $line_item_filters, EEI_Line_Item $grand_total_line_item)
     {
@@ -67,8 +67,9 @@ class EE_Line_Item_Filter_Processor
     /**
      * clone_and_reset_line_item_tree
      *
-     * @param \EEI_Line_Item $line_item
-     * @return \EEI_Line_Item
+     * @param EEI_Line_Item $line_item
+     * @return EEI_Line_Item
+     * @throws EE_Error
      */
     protected function clone_and_reset_line_item_tree(EEI_Line_Item $line_item)
     {
@@ -87,8 +88,9 @@ class EE_Line_Item_Filter_Processor
      * resets any fields that represent database primary keys
      * resets total
      *
-     * @param \EEI_Line_Item $line_item
-     * @return \EEI_Line_Item
+     * @param EEI_Line_Item $line_item
+     * @return EEI_Line_Item
+     * @throws EE_Error
      */
     protected function clone_and_reset_line_item(EEI_Line_Item $line_item)
     {

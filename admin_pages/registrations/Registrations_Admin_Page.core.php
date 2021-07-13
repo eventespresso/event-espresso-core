@@ -2018,7 +2018,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         EEH_Autoloader::register_line_item_display_autoloaders();
         EEH_Autoloader::register_line_item_filter_autoloaders();
         EE_Registry::instance()->load_helper('Line_Item');
-        $transaction = $this->_registration->transaction() ? $this->_registration->transaction()
+        $transaction = $this->_registration->transaction()
+            ? $this->_registration->transaction()
             : EE_Transaction::new_instance();
         $this->_session = $transaction->session_data();
         $filters = new EE_Line_Item_Filter_Collection();

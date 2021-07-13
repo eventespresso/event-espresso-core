@@ -1138,12 +1138,26 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
     /**
+     * calculate the amount remaining for this registration and return;
+     *
+     * @return float amount remaining
+     * @throws EE_Error
+     */
+    public function remaining()
+    {
+        return $this->final_price() - $this->paid();
+    }
+
+
+    /**
      * owes_monies_and_can_pay
      * whether or not this registration has monies owing and it's' status allows payment
+     * will also return true if this is the primary registrant and there are monies owing on the TXN
      *
      * @param array $requires_payment
      * @return bool
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function owes_monies_and_can_pay($requires_payment = array())
     {
@@ -1151,14 +1165,14 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
         $requires_payment = ! empty($requires_payment)
             ? $requires_payment
             : EEM_Registration::reg_statuses_that_allow_payment();
-        if (in_array($this->status_ID(), $requires_payment) &&
-            $this->final_price() != 0 &&
-            $this->final_price() != $this->paid()
-        ) {
-            return true;
-        } else {
-            return false;
-        }
+        // so if this registration has a status that requires payment
+        return in_array($this->status_ID(), $requires_payment)
+               && ( // AND
+                   // ticket was not free and has not been fully paid for
+                   ($this->final_price() > 0 && $this->remaining() > 0)
+                   // OR this is the primary registrant and there are still monies owing on the TXN
+                   || ($this->is_primary_registrant() && $this->transaction()->remaining() > 0)
+               );
     }
 
 

@@ -19,9 +19,11 @@ class EE_Single_Registration_Line_Item_Filter extends EE_Specific_Registrations_
     /**
      *
      * @param EE_Registration $registration
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function __construct($registration)
     {
-        parent::__construct(array($registration));
+        parent::__construct([$registration]);
     }
 }

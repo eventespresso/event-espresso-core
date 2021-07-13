@@ -12,6 +12,13 @@ interface EEI_Line_Item
 {
 
     /**
+     * Gets item_id
+     *
+     * @return string
+     */
+    public function ID();
+
+    /**
      * generic setter
      * @param    string $field_name
      * @param    mixed  $field_value
