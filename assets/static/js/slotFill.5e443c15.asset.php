@@ -1,0 +1,1 @@
+<?php return array('dependencies' => array('ramda', 'react', 'react-dom'), 'version' => '182544deb5b10936c6e066b21b9816c8');

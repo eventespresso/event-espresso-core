@@ -1,1 +1,0 @@
-<?php return array('dependencies' => array('react'), 'version' => '0a51b88b72a6a222a7495b48f4b79742');
