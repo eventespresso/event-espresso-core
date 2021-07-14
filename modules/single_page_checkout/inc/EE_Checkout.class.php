@@ -1389,7 +1389,6 @@ class EE_Checkout
                 'txn_status_updated'      => $this->transaction->txn_status_updated(),
                 'reg_status_updated'      => $this->reg_status_updated,
                 'reg_url_link'            => $this->reg_url_link,
-                'REQ'                     => $display_request ? $_REQUEST : '',
             );
             if ($this->transaction instanceof EE_Transaction) {
                 $default_data['TXN_status'] = $this->transaction->status_ID();
