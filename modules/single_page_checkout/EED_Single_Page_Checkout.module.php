@@ -5,6 +5,7 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\CurrentPage;
 use EventEspresso\core\services\request\RequestInterface;
 
 /**
@@ -521,7 +522,7 @@ class EED_Single_Page_Checkout extends EED_Module
             $clear_session_requested
             || (
                 EE_Registry::instance()->SSN->expired()
-                && $this->request->getRequestParam('e_reg_url_link', '') === ''
+                && $this->request->getRequestParam('e_reg_url_link') === ''
             )
         ) {
             $this->checkout = new EE_Checkout();
@@ -591,17 +592,19 @@ class EED_Single_Page_Checkout extends EED_Module
     private function _get_request_vars()
     {
         // make sure this request is marked as belonging to EE
-        $this->request->setRequestParam('is_espresso_page', true);
+        /** @var CurrentPage $current_page */
+        $current_page = LoaderFactory::getLoader()->getShared(CurrentPage::class);
+        $current_page->setEspressoPage(true);
         // which step is being requested ?
         $this->checkout->step = $this->request->getRequestParam('step', $this->_get_first_step());
         // which step is being edited ?
-        $this->checkout->edit_step = $this->request->getRequestParam('edit_step', '');
+        $this->checkout->edit_step = $this->request->getRequestParam('edit_step');
         // and what we're doing on the current step
         $this->checkout->action = $this->request->getRequestParam('action', 'display_spco_reg_step');
         // timestamp
         $this->checkout->uts = $this->request->getRequestParam('uts', 0, 'int');
         // returning to edit ?
-        $this->checkout->reg_url_link = $this->request->getRequestParam('e_reg_url_link', '');
+        $this->checkout->reg_url_link = $this->request->getRequestParam('e_reg_url_link');
         // add reg url link to registration query params
         if ($this->checkout->reg_url_link && strpos($this->checkout->reg_url_link, '1-') !== 0) {
             $this->checkout->reg_cache_where_params[0]['REG_url_link'] = $this->checkout->reg_url_link;
@@ -636,7 +639,7 @@ class EED_Single_Page_Checkout extends EED_Module
         if (! WP_DEBUG) {
             return;
         }
-        EEH_Debug_Tools::printr($_REQUEST, '$_REQUEST', __FILE__, __LINE__);
+        EEH_Debug_Tools::printr($this->request->requestParams(), 'requestParams', __FILE__, __LINE__);
         EEH_Debug_Tools::printr($this->checkout->step, '$this->checkout->step', __FILE__, __LINE__);
         EEH_Debug_Tools::printr($this->checkout->edit_step, '$this->checkout->edit_step', __FILE__, __LINE__);
         EEH_Debug_Tools::printr($this->checkout->action, '$this->checkout->action', __FILE__, __LINE__);
@@ -1551,7 +1554,7 @@ class EED_Single_Page_Checkout extends EED_Module
                         '<p>',
                         '</p>',
                         '<br />',
-                        '<a href="http://www.whatarecookies.com/enable.asp" target="_blank" rel="noopener noreferrer">',
+                        '<a href="https://www.whatismybrowser.com/guides/how-to-enable-cookies/" target="_blank" rel="noopener noreferrer">',
                         '</a>'
                     )
                 );
