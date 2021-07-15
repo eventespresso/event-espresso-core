@@ -14,9 +14,9 @@ use EEH_URL;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
-use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\request\Request;
 use InvalidArgumentException;
+use ReflectionException;
 
 // phpcs:disable WordPress.WP.I18n.UnorderedPlaceholdersSingle
 // phpcs:disable WordPress.WP.I18n.UnorderedPlaceholdersPlural
@@ -86,7 +86,6 @@ class ProcessTicketSelector
         EEM_Ticket $ticket_model = null,
         TicketDatetimeAvailabilityTracker $tracker = null
     ) {
-        /** @var LoaderInterface $loader */
         $loader = LoaderFactory::getLoader();
         $this->core_config = $core_config instanceof EE_Core_Config
             ? $core_config
@@ -114,6 +113,7 @@ class ProcessTicketSelector
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
+     * @throws ReflectionException
      */
     public function cancelTicketSelections()
     {
@@ -176,11 +176,12 @@ class ProcessTicketSelector
     /**
      * process_ticket_selections
      *
-     * @return array|bool
+     * @return bool
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function processTicketSelections()
     {
@@ -279,7 +280,6 @@ class ProcessTicketSelector
         $valid_data['id'] = $id;
         // array of other form names
         $inputs_to_clean = array(
-            'event_id'   => 'tkt-slctr-event-id',
             'max_atndz'  => 'tkt-slctr-max-atndz-',
             'rows'       => 'tkt-slctr-rows-',
             'qty'        => 'tkt-slctr-qty-',
@@ -293,28 +293,22 @@ class ProcessTicketSelector
             // check for POST data
             if ($this->request->requestParamIsSet($input_to_clean . $id)) {
                 // grab value
-                $input_value = $this->request->getRequestParam($input_to_clean . $id);
                 switch ($what) {
                     // integers
                     case 'event_id':
-                        $valid_data[ $what ] = absint($input_value);
-                        // get event via the event id we put in the form
-                        break;
                     case 'rows':
                     case 'max_atndz':
-                        $valid_data[ $what ] = absint($input_value);
+                        $valid_data[ $what ] = $this->request->getRequestParam($input_to_clean . $id, 0, 'int');
                         break;
                     // arrays of integers
                     case 'qty':
                         /** @var array $row_qty */
-                        $row_qty = $input_value;
+                        $row_qty = $this->request->getRequestParam($input_to_clean . $id, [], 'arrayOf|int');
                         // if qty is coming from a radio button input, then we need to assemble an array of rows
                         if (! is_array($row_qty)) {
                             /** @var string $row_qty */
                             // get number of rows
-                            $rows = $this->request->requestParamIsSet('tkt-slctr-rows-' . $id)
-                                ? absint($this->request->getRequestParam('tkt-slctr-rows-' . $id))
-                                : 1;
+                            $rows = $this->request->getRequestParam('tkt-slctr-rows-' . $id, 1, 'int');
                             // explode integers by the dash
                             $row_qty = explode('-', $row_qty);
                             $row = isset($row_qty[0]) ? absint($row_qty[0]) : 1;
@@ -337,15 +331,16 @@ class ProcessTicketSelector
                         break;
                     // array of integers
                     case 'ticket_id':
+                        $ticket_ids = (array) $this->request->getRequestParam($input_to_clean . $id, [], 'arrayOf|int');
                         // cycle thru values
-                        foreach ((array) $input_value as $key => $value) {
+                        foreach ($ticket_ids as $key => $value) {
                             // allow only integers
                             $valid_data[ $what ][ $key ] = absint($value);
                         }
                         break;
                     case 'return_url':
                         // grab and sanitize return-url
-                        $input_value = esc_url_raw($input_value);
+                        $input_value = $this->request->getRequestParam($input_to_clean . $id, '', 'url');
                         // was the request coming from an iframe ? if so, then:
                         if (strpos($input_value, 'event_list=iframe')) {
                             // get anchor fragment
@@ -407,6 +402,10 @@ class ProcessTicketSelector
         if (! empty($valid) && $valid['total_tickets'] > 0) {
             // load cart using factory because we don't want to do so until actually needed
             $this->cart = CartFactory::getCart();
+            // if the user is an admin that can edit registrations,
+            // then we'll also allow them to add any tickets, even if they are expired
+            $current_user_is_admin = current_user_can('ee_edit_registrations');
+            \EEH_Debug_Tools::printr($current_user_is_admin, '$current_user_is_admin', __FILE__, __LINE__);
             // cycle thru the number of data rows sent from the event listing
             for ($x = 0; $x < $valid['rows']; $x++) {
                 // does this row actually contain a ticket quantity?
@@ -414,15 +413,11 @@ class ProcessTicketSelector
                     // YES we have a ticket quantity
                     $tickets_selected = true;
                     $valid_ticket = false;
-                    // \EEH_Debug_Tools::printr(
-                    //     $valid['ticket_id'][ $x ],
-                    //     '$valid[\'ticket_id\'][ $x ]',
-                    //     __FILE__, __LINE__
-                    // );
                     if (isset($valid['ticket_id'][ $x ])) {
                         // get ticket via the ticket id we put in the form
                         $ticket = $this->ticket_model->get_one_by_ID($valid['ticket_id'][ $x ]);
-                        if ($ticket instanceof EE_Ticket) {
+                        \EEH_Debug_Tools::printr($ticket->is_on_sale(), '$ticket->is_on_sale()', __FILE__, __LINE__);
+                        if ($ticket instanceof EE_Ticket && ($ticket->is_on_sale() || $current_user_is_admin)) {
                             $valid_ticket = true;
                             $tickets_added += $this->addTicketToCart(
                                 $ticket,
@@ -474,7 +469,7 @@ class ProcessTicketSelector
      *
      * @param EE_Ticket $ticket
      * @param int       $qty
-     * @return TRUE on success, FALSE on fail
+     * @return bool TRUE on success, FALSE on fail
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
