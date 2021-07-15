@@ -45,6 +45,7 @@ class NodeGroupDao
     /**
      * @param $code
      * @return ModelObjNode[]
+     * @throws Exception
      * @throws UnexpectedEntityException
      * @throws Exception
      */
@@ -97,6 +98,7 @@ class NodeGroupDao
      * @param string $code
      * @return array
      * @throws EE_Error
+     * @throws Exception
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
