@@ -6,6 +6,7 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\InvalidStatusException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\RequestInterface;
+use EventEspresso\core\services\request\ResponseInterface;
 
 /**
  * Class EE_SPCO_Reg_Step_Payment_Options
@@ -1878,14 +1879,10 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
             // we can also consider the TXN to not have been failed, so temporarily upgrade it's status to abandoned
             $this->checkout->transaction->toggle_failed_transaction_status();
             $payment_status = $payment->status();
-            if ($payment_status === EEM_Payment::status_id_approved
-                || $payment_status === EEM_Payment::status_id_pending
-            ) {
-                return true;
-            } else {
-                return false;
-            }
-        } elseif ($payment === true) {
+            return $payment_status === EEM_Payment::status_id_approved
+                   || $payment_status === EEM_Payment::status_id_pending;
+        }
+        if ($payment === true) {
             // please note that offline payment methods will NOT make a payment,
             // but instead just mark themselves as the PMD_ID on the transaction, and return true
             $this->checkout->payment = $payment;
@@ -1957,7 +1954,9 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
         );
         $html                        = $payment_method_billing_info->get_html();
         $html                        .= $this->checkout->redirect_form;
-        EE_Registry::instance()->REQ->add_output($html);
+        /** @var ResponseInterface $response */
+        $response = LoaderFactory::getLoader()->getShared(ResponseInterface::class);
+        $response->addOutput($html);
         return true;
     }
 

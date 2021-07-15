@@ -328,7 +328,6 @@ class EEH_Debug_Tools
             $debug_data = get_option($debug_key, array());
             $default_data = array(
                 $class => $func . '() : ' . $line,
-                'REQ'  => $display_request ? $_REQUEST : '',
             );
             // don't serialize objects
             $info = self::strip_objects($info);

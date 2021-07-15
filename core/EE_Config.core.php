@@ -2,6 +2,7 @@
 
 use EventEspresso\core\interfaces\ResettableInterface;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\services\shortcodes\LegacyShortcodesManager;
 
 /**
@@ -455,7 +456,9 @@ final class EE_Config implements ResettableInterface
     public function update_espresso_config($add_success = false, $add_error = true)
     {
         // don't allow config updates during WP heartbeats
-        if (\EE_Registry::instance()->REQ->get('action', '') === 'heartbeat') {
+        /** @var RequestInterface $request */
+        $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+        if ($request->isWordPressHeartbeat()) {
             return false;
         }
         // commented out the following re: https://events.codebasehq.com/projects/event-espresso/tickets/8197
@@ -788,7 +791,9 @@ final class EE_Config implements ResettableInterface
     public function update_config($section = '', $name = '', $config_obj = '', $throw_errors = true)
     {
         // don't allow config updates during WP heartbeats
-        if (\EE_Registry::instance()->REQ->get('action', '') === 'heartbeat') {
+        /** @var RequestInterface $request */
+        $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+        if ($request->isWordPressHeartbeat()) {
             return false;
         }
         $config_obj = maybe_unserialize($config_obj);
@@ -1468,10 +1473,9 @@ final class EE_Config implements ResettableInterface
      */
     public static function getLegacyShortcodesManager()
     {
-
         if (! EE_Config::instance()->legacy_shortcodes_manager instanceof LegacyShortcodesManager) {
-            EE_Config::instance()->legacy_shortcodes_manager = new LegacyShortcodesManager(
-                EE_Registry::instance()
+            EE_Config::instance()->legacy_shortcodes_manager = LoaderFactory::getLoader()->getShared(
+                LegacyShortcodesManager::class
             );
         }
         return EE_Config::instance()->legacy_shortcodes_manager;

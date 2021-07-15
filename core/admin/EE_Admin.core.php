@@ -9,6 +9,7 @@ use EventEspresso\core\services\container\exceptions\ServiceNotFoundException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\notifications\PersistentAdminNoticeManager;
 use EventEspresso\core\services\loaders\LoaderInterface;
+use EventEspresso\core\services\request\RequestInterface;
 
 /**
  * EE_Admin
@@ -77,8 +78,6 @@ final class EE_Admin implements InterminableInterface
         EEH_Autoloader::instance()->register_autoloaders_for_each_file_in_folder(EE_ADMIN);
         // admin hooks
         add_filter('plugin_action_links', array($this, 'filter_plugin_actions'), 10, 2);
-        // load EE_Request_Handler early
-        add_action('AHEE__EE_System__core_loaded_and_ready', array($this, 'get_request'));
         add_action('AHEE__EE_System__initialize_last', array($this, 'init'));
         add_action('AHEE__EE_Admin_Page__route_admin_request', array($this, 'route_admin_request'), 100, 2);
         add_action('wp_loaded', array($this, 'wp_loaded'), 100);
@@ -154,18 +153,10 @@ final class EE_Admin implements InterminableInterface
 
 
     /**
-     * _get_request
-     *
-     * @return void
-     * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws ReflectionException
+     * @deprecated $VID:$
      */
     public function get_request()
     {
-        EE_Registry::instance()->load_core('Request_Handler');
     }
 
 
@@ -240,8 +231,10 @@ final class EE_Admin implements InterminableInterface
     /**
      * Method that's fired on admin requests (including admin ajax) but only when the models are usable
      * (ie, the site isn't in maintenance mode)
-     * @since 4.9.63.p
+     *
      * @return void
+     * @throws EE_Error
+     * @since 4.9.63.p
      */
     protected function initModelsReady()
     {
@@ -249,11 +242,13 @@ final class EE_Admin implements InterminableInterface
         $this->persistent_admin_notice_manager = $this->getLoader()->getShared(
             'EventEspresso\core\services\notifications\PersistentAdminNoticeManager'
         );
+        /** @var RequestInterface $request */
+        $request = $this->getLoader()->getShared(RequestInterface::class);
         $this->persistent_admin_notice_manager->setReturnUrl(
             EE_Admin_Page::add_query_args_and_nonce(
                 array(
-                    'page'   => EE_Registry::instance()->REQ->get('page', ''),
-                    'action' => EE_Registry::instance()->REQ->get('action', ''),
+                    'page'   => $request->getRequestParam('page'),
+                    'action' => $request->getRequestParam('action'),
                 ),
                 EE_ADMIN_URL
             )

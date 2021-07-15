@@ -10,9 +10,10 @@ use EventEspresso\core\services\request\RequestInterface;
 /**
  * Single Page Checkout (SPCO)
  *
- * @package               Event Espresso
- * @subpackage            /modules/single_page_checkout/
- * @author                Brent Christensen
+ * @package     Event Espresso
+ * @subpackage  /modules/single_page_checkout/
+ * @author      Brent Christensen
+ * @method EED_Single_Page_Checkout get_instance($module_name)
  */
 class EED_Single_Page_Checkout extends EED_Module
 {
@@ -53,7 +54,9 @@ class EED_Single_Page_Checkout extends EED_Module
 
 
     /**
-     * @return EED_Module|EED_Single_Page_Checkout
+     * @return EED_Single_Page_Checkout|EED_Module
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function instance()
     {
@@ -132,6 +135,8 @@ class EED_Single_Page_Checkout extends EED_Module
      *    process ajax request
      *
      * @param string $ajax_action
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function process_ajax_request($ajax_action)
     {
@@ -142,8 +147,10 @@ class EED_Single_Page_Checkout extends EED_Module
 
 
     /**
-     *    ajax display registration step
+     * ajax display registration step
      *
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function display_reg_step()
     {
@@ -152,8 +159,10 @@ class EED_Single_Page_Checkout extends EED_Module
 
 
     /**
-     *    ajax process registration step
+     * ajax process registration step
      *
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function process_reg_step()
     {
@@ -162,8 +171,10 @@ class EED_Single_Page_Checkout extends EED_Module
 
 
     /**
-     *    ajax process registration step
+     * ajax process registration step
      *
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function update_reg_step()
     {
@@ -172,9 +183,11 @@ class EED_Single_Page_Checkout extends EED_Module
 
 
     /**
-     *   update_checkout
+     * update_checkout
      *
      * @return void
+     * @throws ReflectionException
+     * @throws EE_Error
      */
     public static function update_checkout()
     {
@@ -184,16 +197,10 @@ class EED_Single_Page_Checkout extends EED_Module
 
     /**
      * @return void
-     * @throws EE_Error
-     * @throws ReflectionException
      * @deprecated $VID:$
      */
     public static function load_request_handler()
     {
-        // load core Request_Handler class
-        if (EE_Registry::instance()->REQ !== null) {
-            EE_Registry::instance()->load_core('Request_Handler');
-        }
     }
 
 
@@ -319,14 +326,13 @@ class EED_Single_Page_Checkout extends EED_Module
      */
     public static function registration_checkout_for_admin()
     {
-        EED_Single_Page_Checkout::load_request_handler();
         $request = EED_Single_Page_Checkout::getRequest();
         $request->setRequestParam('step', 'attendee_information');
         $request->setRequestParam('action', 'display_spco_reg_step');
         $request->setRequestParam('process_form_submission', false);
         EED_Single_Page_Checkout::instance()->_initialize();
         EED_Single_Page_Checkout::instance()->_display_spco_reg_form();
-        return EE_Registry::instance()->REQ->get_output();
+        return EED_Single_Page_Checkout::getResponse()->getOutput();
     }
 
 
@@ -411,6 +417,8 @@ class EED_Single_Page_Checkout extends EED_Module
     /**
      * @param WP_Query $wp_query
      * @return    void
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function init($wp_query)
     {
@@ -1518,10 +1526,9 @@ class EED_Single_Page_Checkout extends EED_Module
      */
     private function _display_spco_reg_form()
     {
-        EED_Single_Page_Checkout::load_request_handler();
         // if registering via the admin, just display the reg form for the current step
         if ($this->checkout->admin_request) {
-            EE_Registry::instance()->REQ->add_output($this->checkout->current_step->display_reg_form());
+            EED_Single_Page_Checkout::getResponse()->addOutput($this->checkout->current_step->display_reg_form());
         } else {
             // add powered by EE msg
             add_action('AHEE__SPCO__reg_form_footer', array('EED_Single_Page_Checkout', 'display_registration_footer'));
@@ -1591,7 +1598,7 @@ class EED_Single_Page_Checkout extends EED_Module
                 )
             );
             // load template and add to output sent that gets filtered into the_content()
-            EE_Registry::instance()->REQ->add_output($this->checkout->registration_form->get_html());
+            EED_Single_Page_Checkout::getResponse()->addOutput($this->checkout->registration_form->get_html());
         }
     }
 
