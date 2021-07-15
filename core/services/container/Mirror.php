@@ -159,7 +159,7 @@ class Mirror
             $this->parameter_classes[ $class_name ][ $index ] = [];
         }
         // ReflectionParameter::getClass() is deprecated in PHP 8+
-        $this->parameter_classes[ $class_name ][ $index ]['param_class_name'] = PHP_VERSION_ID < 80000
+        $this->parameter_classes[ $class_name ][ $index ]['param_class_name'] = PHP_VERSION_ID < 70100
             ? $this->getParameterClassNameLegacy($param)
             : $this->getParameterClassNamePhp8($param);
         return $this->parameter_classes[ $class_name ][ $index ]['param_class_name'];
@@ -175,7 +175,7 @@ class Mirror
     {
         $reflection_class = $param->getClass();
         return $reflection_class instanceof ReflectionClass
-            ? $param->getClass()->getName()
+            ? $reflection_class->getName()
             : null;
     }
 
@@ -192,11 +192,9 @@ class Mirror
     private function getParameterClassNamePhp8(ReflectionParameter $param)
     {
         $reflection_type = $param->getType();
-
         if ($reflection_type instanceof \ReflectionNamedType) {
             return $reflection_type->getName();
         }
-
         if ($reflection_type instanceof \ReflectionUnionType) {
             $reflection_types = $reflection_type->getTypes();
             if (is_array($reflection_types)) {
