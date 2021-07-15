@@ -520,6 +520,7 @@ class EE_Registry_Test extends EE_UnitTestCase{
 	 * @author    Mike Nelson
 	 */
 	public function test_reset_model(){
+        $original_timezone = get_option('timezone_string');
 		$model_a = EE_Registry_Mock::instance()->load_model('Event');
 		$model_a2 = EE_Registry_Mock::instance()->load_model('Event');
 		$model_a3 = EEM_Event::instance();
@@ -528,11 +529,12 @@ class EE_Registry_Test extends EE_UnitTestCase{
 		$this->assertNotNull( $model_a->get_from_entity_map( $e->ID() ) );
 		$this->assertEquals($model_a, $model_a2);
 		$this->assertEquals($model_a2, $model_a3);
-		//let's set a differnet WP timezone. When the model is reset, it
+		//let's set a different WP timezone. When the model is reset, it
 		//should automatically use this new timezone
 		$new_timezone_string = 'America/Detroit';
 		update_option( 'timezone_string', $new_timezone_string );
 		$model_b1 = EEM_Event::reset();
+		$this->assertEquals($new_timezone_string, EEH_DTT_Helper::get_valid_timezone_string());
 		$this->assertEquals( $model_a, $model_b1);
 		$model_b2 = EE_Registry_Mock::instance()->reset_model('Event');
 		$this->assertEquals( $model_a, $model_b2);
@@ -540,6 +542,7 @@ class EE_Registry_Test extends EE_UnitTestCase{
 		$this->assertEquals( $new_timezone_string, $model_b1->get_timezone() );
 		//and that the model's entity map has been reset
 		$this->assertNull( $model_b1->get_from_entity_map( $e->ID() ) );
+        update_option('timezone_string', $original_timezone);
 	}
 
 
@@ -780,7 +783,6 @@ class EE_Registry_Test extends EE_UnitTestCase{
         EE_Registry_Mock::instance()->removeAddon('foobar');
         $this->assertTrue(true);
     }
-
 }
 // End of file EE_Registry_Test.php
 // Location: /tests/testcases/core/EE_Registry_Test.php

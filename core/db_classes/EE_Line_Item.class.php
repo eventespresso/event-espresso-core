@@ -42,7 +42,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public static function new_instance($props_n_values = array(), $timezone = null, $date_formats = array())
+    public static function new_instance($props_n_values = array(), $timezone = '', $date_formats = array())
     {
         $has_object = parent::_check_for_object(
             $props_n_values,
@@ -67,7 +67,7 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public static function new_instance_from_db($props_n_values = array(), $timezone = null)
+    public static function new_instance_from_db($props_n_values = array(), $timezone = '')
     {
         return new self($props_n_values, true, $timezone);
     }

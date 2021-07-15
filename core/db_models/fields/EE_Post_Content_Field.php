@@ -118,14 +118,14 @@ class EE_Post_Content_Field extends EE_Text_Field_Base
         return array(
             'raw' => array(
                 'description' =>  sprintf(
-                    __('%s - the content as it exists in the database.', 'event_espresso'),
+                    esc_html__('%s - the content as it exists in the database.', 'event_espresso'),
                     $this->get_nicename()
                 ),
                 'type' => 'string'
             ),
             'rendered' => array(
                 'description' =>  sprintf(
-                    __('%s - the content rendered for display.', 'event_espresso'),
+                    esc_html__('%s - the content rendered for display.', 'event_espresso'),
                     $this->get_nicename()
                 ),
                 'type' => 'string'

@@ -582,6 +582,7 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
      */
     public function testReleaseReservationForTicketsAllValid()
     {
+        $this->loadFactories();
         EEM_Ticket::instance()->delete_permanently(
             [
                 [

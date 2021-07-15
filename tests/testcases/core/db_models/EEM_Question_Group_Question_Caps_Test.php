@@ -25,6 +25,7 @@ class EEM_Question_Group_Question_Caps_Test extends EE_UnitTestCase{
 	 * and then you can edit others if you have that cap
 	 */
 	function test_get_all__caps__edit() {
+        $this->loadFactories();
 		//verify we only start off with NO question gruops or question group questions
 		EEM_Question_Group::instance()->delete_permanently( EEM_Question_Group::instance()->alter_query_params_so_deleted_and_undeleted_items_included(), false );
 		$this->assertEquals( 0, EEM_Question_Group::instance()->count( EEM_Question_Group::instance()->alter_query_params_so_deleted_and_undeleted_items_included() ) );

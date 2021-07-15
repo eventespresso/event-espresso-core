@@ -10,25 +10,6 @@
 class EEM_Payment_Test extends EE_UnitTestCase
 {
 
-
-    public function setUp()
-    {
-        parent::setUp();
-        //set timezone string.  NOTE, this is purposely a high positive timezone string because it works better for testing expiry times.
-        update_option('timezone_string', 'Australia/Sydney');
-    }
-
-
-
-    public function tearDown()
-    {
-        //restore the timezone string to the default
-        update_option('timezone_string', '');
-        parent::tearDown();
-    }
-
-
-
     /**
      * This sets up some payments in the db for testing with.
      *
@@ -38,8 +19,12 @@ class EEM_Payment_Test extends EE_UnitTestCase
      */
     public function _setup_payments(DateTime $now = null, DateTimeZone $timezone = null)
     {
+        // this is purposely a high positive timezone string because it works better for testing expiry times.
+        $timezone_string = 'Australia/Sydney';
+        update_option('timezone_string', $timezone_string);
+        $this->loadFactories();
         // setup DateTimeZone
-        $timezone = $timezone instanceof DateTimeZone ? $timezone : new DateTimeZone('America/Toronto');
+        $timezone = $timezone instanceof DateTimeZone ? $timezone : new DateTimeZone($timezone_string);
         // and base DateTime for now
         $now = $now instanceof DateTime ? $now : new DateTime('now', $timezone);
         //setup some dates we'll use for testing with.
@@ -59,27 +44,22 @@ class EEM_Payment_Test extends EE_UnitTestCase
         $payment_args = array(
             array(
                 'PAY_timestamp' => $two_days_ago->format(\EE_Datetime_Field::mysql_timestamp_format),
-                'timezone'      => 'America/Toronto',
                 'formats'       => $formats,
             ),
             array(
                 'PAY_timestamp' => $one_hour_from_now->format(\EE_Datetime_Field::mysql_timestamp_format),
-                'timezone'      => 'America/Toronto',
                 'formats'       => $formats,
             ),
             array(
                 'PAY_timestamp' => $two_hours_ago->format(\EE_Datetime_Field::mysql_timestamp_format),
-                'timezone'      => 'America/Toronto',
                 'formats'       => $formats,
             ),
             array(
                 'PAY_timestamp' => $two_days_from_now->format(\EE_Datetime_Field::mysql_timestamp_format),
-                'timezone'      => 'America/Toronto',
                 'formats'       => $formats,
             ),
             array(
                 'PAY_timestamp' => $two_days_ago->format(\EE_Datetime_Field::mysql_timestamp_format),
-                'timezone'      => 'America/Toronto',
                 'formats'       => $formats,
             ),
         );
@@ -96,7 +76,10 @@ class EEM_Payment_Test extends EE_UnitTestCase
      */
     public function test_get_payments_between_dates()
     {
-        $timezone = new DateTimeZone('America/Toronto');
+        // this is purposely a high positive timezone string because it works better for testing expiry times.
+        $timezone_string = 'Australia/Sydney';
+        update_option('timezone_string', $timezone_string);
+        $timezone = new DateTimeZone($timezone_string);
         // set $test_time in the timezone being tested.
         $test_time = new DateTime('now', $timezone);
         $test_time->setTime(14, 00);
@@ -109,7 +92,7 @@ class EEM_Payment_Test extends EE_UnitTestCase
             $test_time->sub(new DateInterval('P2D'))->format('d/m/Y'),
             '',
             'd/m/Y',
-            'America/Toronto'
+            $timezone_string
         );
         $this->assertCount(4, $payments);
         //test including a date from past date for end date.
@@ -117,7 +100,7 @@ class EEM_Payment_Test extends EE_UnitTestCase
             '',
             $test_time->format('d/m/Y'),
             'd/m/Y',
-            'America/Toronto'
+            $timezone_string
         );
         $this->assertCount(4, $payments);
         //test including a date from upcoming date for start date
@@ -125,7 +108,7 @@ class EEM_Payment_Test extends EE_UnitTestCase
             $test_time->add(new DateInterval('P4D'))->format('d/m/Y'),
             '',
             'd/m/Y',
-            'America/Toronto'
+            $timezone_string
         );
         $this->assertCount(3, $payments);
         //test including a date from upcoming date for end date
@@ -133,7 +116,7 @@ class EEM_Payment_Test extends EE_UnitTestCase
             '',
             $test_time->format('d/m/Y'),
             'd/m/Y',
-            'America/Toronto'
+            $timezone_string
         );
         $this->assertCount(3, $payments);
         //test exception

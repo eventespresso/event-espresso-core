@@ -32,6 +32,7 @@ class DatetimeOffsetFixTest extends EE_UnitTestCase
      */
     public function testProcessModel()
     {
+        $this->loadFactories();
         $original_date_and_time = new DateTime('now');
         $expected_positive_offset_datetime = clone $original_date_and_time;
         $test_offsets = array(

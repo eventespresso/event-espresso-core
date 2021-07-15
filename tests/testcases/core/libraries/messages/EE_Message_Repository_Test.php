@@ -22,6 +22,7 @@ class EE_Message_Repository_Test extends EE_UnitTestCase {
 	 * @return EE_Message_Repository
 	 */
 	function test_add() {
+        $this->loadFactories();
 		$message = $this->factory->message->create( array( 'nosave' => 1 ) );
 		$test_repo = new EE_Message_Repository();
 		$this->assertInstanceOf( 'EE_Message_Repository', $test_repo );
@@ -67,6 +68,7 @@ class EE_Message_Repository_Test extends EE_UnitTestCase {
 	 * @return EE_Message_Repository
 	 */
 	function test_saveAll() {
+        $this->loadFactories();
 		//create a bunch of message objects and add to repo.
 		$test_repo = new EE_Message_Repository();
 		$generation_data = array( 'MSG_generation_data' => array(
@@ -132,6 +134,7 @@ class EE_Message_Repository_Test extends EE_UnitTestCase {
 
 
 	function test__maybe_persist_generation_data() {
+        $this->loadFactories();
 		$test_repo = new EE_Message_Repository();
 		$message = $this->factory->message->create();
 		$actual_generation_data = array( 'MSG_generation_data' => array(
@@ -151,6 +154,7 @@ class EE_Message_Repository_Test extends EE_UnitTestCase {
 
 
 	function test_count_by_priority_and_status() {
+        $this->loadFactories();
 		$test_repo = new EE_Message_Repository();
 		//let's setup some message objects with a variety of priorities and statuses.
 		//high priority, idle  (invoice is high priority hence it is used as a message type).

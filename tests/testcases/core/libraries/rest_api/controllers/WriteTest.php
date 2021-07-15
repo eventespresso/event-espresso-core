@@ -45,6 +45,7 @@ class WriteTest extends EE_REST_TestCase
      */
     public function testNoInsertLimitedUser()
     {
+        $this->loadFactories();
         $user = $this->factory->user->create_and_get(array('role' => 'subscriber'));
         $user->add_cap('ee_edit_events');
         $user->add_cap('ee_read_events');

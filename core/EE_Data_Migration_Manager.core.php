@@ -151,7 +151,7 @@ class EE_Data_Migration_Manager implements ResettableInterface
      * @var EE_Data_Migration_Manager $_instance
      * @access    private
      */
-    private static $_instance = null;
+    private static $_instance;
 
 
     /**

@@ -18,7 +18,7 @@ class EE_Message_Factory
     /**
      * @type EE_Message_Factory $_instance
      */
-    protected static $_instance = null;
+    protected static $_instance;
 
 
     /**

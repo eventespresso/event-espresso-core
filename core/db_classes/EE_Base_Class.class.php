@@ -14,6 +14,80 @@ abstract class EE_Base_Class
 {
 
     /**
+     * @var boolean indicating whether or not this model object is intended to ever be saved
+     * For example, we might create model objects intended to only be used for the duration
+     * of this request and to be thrown away, and if they were accidentally saved
+     * it would be a bug.
+     */
+    protected $_allow_persist = true;
+
+    /**
+     * This property is for holding a cached array of object properties indexed by property name as the key.
+     * The purpose of this is for setting a cache on properties that may have calculated values after a
+     * prepare_for_get.  That way the cache can be checked first and the calculated property returned instead of having
+     * to recalculate. Used by _set_cached_property() and _get_cached_property() methods.
+     *
+     * @var array
+     */
+    protected $_cached_properties = [];
+
+    /**
+     * This is a cache of results from custom selections done on a query that constructs this entity. The only purpose
+     * for these values is for retrieval of the results, they are not further queryable and they are not persisted to
+     * the db.  They also do not automatically update if there are any changes to the data that produced their results.
+     * The format is a simple array of field_alias => field_value.  So for instance if a custom select was something
+     * like,  "Select COUNT(Registration.REG_ID) as Registration_Count ...", then the resulting value will be in this
+     * array as:
+     * array(
+     *  'Registration_Count' => 24
+     * );
+     * Note: if the custom select configuration for the query included a data type, the value will be in the data type
+     * provided for the query (@see EventEspresso\core\domain\values\model\CustomSelects::__construct phpdocs for more
+     * info)
+     *
+     * @var array
+     */
+    protected $custom_selection_results = [];
+
+    /**
+     * date format
+     * pattern or format for displaying dates
+     *
+     * @var string $_dt_frmt
+     */
+    protected $_dt_frmt;
+
+    /**
+     * Array where keys are field names (see the model's _fields property) and values are their values. To see what
+     * their types should be, look at what that field object returns on its prepare_for_get and prepare_for_set methods)
+     *
+     * @var array
+     */
+    protected $_fields = [];
+
+    /**
+     * @var boolean indicating whether or not this model object's properties have changed since construction
+     */
+    protected $_has_changes = false;
+
+    /**
+     * @var EEM_Base
+     */
+    protected $_model;
+
+
+    /**
+     * An array containing keys of the related model, and values are either an array of related mode objects or a
+     * single
+     * related model object. see the model's _model_relations. The keys should match those specified. And if the
+     * relation is of type EE_Belongs_To (or one of its children), then there should only be ONE related model object,
+     * all others have an array)
+     *
+     * @var array
+     */
+    protected $_model_relations = [];
+
+    /**
      * This is an array of the original properties and values provided during construction
      * of this model object. (keys are model field names, values are their values).
      * This list is important to remember so that when we are merging data from the db, we know
@@ -32,15 +106,7 @@ abstract class EE_Base_Class
      *
      * @var string
      */
-    protected $_timezone;
-
-    /**
-     * date format
-     * pattern or format for displaying dates
-     *
-     * @var string $_dt_frmt
-     */
-    protected $_dt_frmt;
+    protected $_timezone = '';
 
     /**
      * time format
@@ -50,80 +116,15 @@ abstract class EE_Base_Class
      */
     protected $_tm_frmt;
 
-    /**
-     * This property is for holding a cached array of object properties indexed by property name as the key.
-     * The purpose of this is for setting a cache on properties that may have calculated values after a
-     * prepare_for_get.  That way the cache can be checked first and the calculated property returned instead of having
-     * to recalculate. Used by _set_cached_property() and _get_cached_property() methods.
-     *
-     * @var array
-     */
-    protected $_cached_properties = array();
-
-    /**
-     * An array containing keys of the related model, and values are either an array of related mode objects or a
-     * single
-     * related model object. see the model's _model_relations. The keys should match those specified. And if the
-     * relation is of type EE_Belongs_To (or one of its children), then there should only be ONE related model object,
-     * all others have an array)
-     *
-     * @var array
-     */
-    protected $_model_relations = array();
-
-    /**
-     * Array where keys are field names (see the model's _fields property) and values are their values. To see what
-     * their types should be, look at what that field object returns on its prepare_for_get and prepare_for_set methods)
-     *
-     * @var array
-     */
-    protected $_fields = array();
-
-    /**
-     * @var boolean indicating whether or not this model object is intended to ever be saved
-     * For example, we might create model objects intended to only be used for the duration
-     * of this request and to be thrown away, and if they were accidentally saved
-     * it would be a bug.
-     */
-    protected $_allow_persist = true;
-
-    /**
-     * @var boolean indicating whether or not this model object's properties have changed since construction
-     */
-    protected $_has_changes = false;
-
-    /**
-     * @var EEM_Base
-     */
-    protected $_model;
-
-    /**
-     * This is a cache of results from custom selections done on a query that constructs this entity. The only purpose
-     * for these values is for retrieval of the results, they are not further queryable and they are not persisted to
-     * the db.  They also do not automatically update if there are any changes to the data that produced their results.
-     * The format is a simple array of field_alias => field_value.  So for instance if a custom select was something
-     * like,  "Select COUNT(Registration.REG_ID) as Registration_Count ...", then the resulting value will be in this
-     * array as:
-     * array(
-     *  'Registration_Count' => 24
-     * );
-     * Note: if the custom select configuration for the query included a data type, the value will be in the data type
-     * provided for the query (@see EventEspresso\core\domain\values\model\CustomSelects::__construct phpdocs for more
-     * info)
-     *
-     * @var array
-     */
-    protected $custom_selection_results = array();
-
 
     /**
      * basic constructor for Event Espresso classes, performs any necessary initialization, and verifies it's children
      * play nice
      *
-     * @param array   $fieldValues                             where each key is a field (ie, array key in the 2nd
+     * @param array   $field_values                            where each key is a field (ie, array key in the 2nd
      *                                                         layer of the model's _fields array, (eg, EVT_ID,
      *                                                         TXN_amount, QST_name, etc) and values are their values
-     * @param boolean $bydb                                    a flag for setting if the class is instantiated by the
+     * @param bool $set_from_db                             a flag for setting if the class is instantiated by the
      *                                                         corresponding db model or not.
      * @param string  $timezone                                indicate what timezone you want any datetime fields to
      *                                                         be in when instantiating a EE_Base_Class object.
@@ -136,71 +137,32 @@ abstract class EE_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    protected function __construct($fieldValues = array(), $bydb = false, $timezone = '', $date_formats = array())
-    {
-        $className = get_class($this);
-        do_action("AHEE__{$className}__construct", $this, $fieldValues);
-        $model = $this->get_model();
-        $model_fields = $model->field_settings(false);
+    protected function __construct(
+        array $field_values = [],
+        bool $set_from_db = false,
+        string $timezone = '',
+        array $date_formats = []
+    ) {
         // ensure $fieldValues is an array
-        $fieldValues = is_array($fieldValues) ? $fieldValues : array($fieldValues);
-        // verify client code has not passed any invalid field names
-        foreach ($fieldValues as $field_name => $field_value) {
-            if (! isset($model_fields[ $field_name ])) {
-                throw new EE_Error(
-                    sprintf(
-                        esc_html__(
-                            'Invalid field (%s) passed to constructor of %s. Allowed fields are :%s',
-                            'event_espresso'
-                        ),
-                        $field_name,
-                        get_class($this),
-                        implode(', ', array_keys($model_fields))
-                    )
-                );
-            }
-        }
-        $this->_timezone = EEH_DTT_Helper::get_valid_timezone_string($timezone);
-        if (! empty($date_formats) && is_array($date_formats)) {
-            list($this->_dt_frmt, $this->_tm_frmt) = $date_formats;
-        } else {
-            // set default formats for date and time
-            $this->_dt_frmt = (string) get_option('date_format', 'Y-m-d');
-            $this->_tm_frmt = (string) get_option('time_format', 'g:i a');
-        }
-        // if db model is instantiating
-        if ($bydb) {
-            // client code has indicated these field values are from the database
-            foreach ($model_fields as $fieldName => $field) {
-                $this->set_from_db(
-                    $fieldName,
-                    isset($fieldValues[ $fieldName ]) ? $fieldValues[ $fieldName ] : null
-                );
-            }
-        } else {
-            // we're constructing a brand
-            // new instance of the model object. Generally, this means we'll need to do more field validation
-            foreach ($model_fields as $fieldName => $field) {
-                $this->set(
-                    $fieldName,
-                    isset($fieldValues[ $fieldName ]) ? $fieldValues[ $fieldName ] : null,
-                    true
-                );
-            }
-        }
+        $field_values = is_array($field_values) ? $field_values : [$field_values];
+        $className    = get_class($this);
+        do_action("AHEE__{$className}__construct", $this, $field_values);
         // remember what values were passed to this constructor
-        $this->_props_n_values_provided_in_constructor = $fieldValues;
+        $this->_props_n_values_provided_in_constructor = $field_values;
+        $this->setDateAndTimeFormats($date_formats);
+        $this->_model = $this->get_model($timezone);
+        $model_fields = $this->_model->field_settings();
+        $this->validateFieldValues($model_fields, $field_values);
+        $this->setFieldValues($model_fields, $field_values, $set_from_db);
         // remember in entity mapper
-        if (! $bydb && $model->has_primary_key_field() && $this->ID()) {
-            $model->add_to_entity_map($this);
+        if (! $set_from_db && $this->_model->has_primary_key_field() && $this->ID()) {
+            $this->_model->add_to_entity_map($this);
         }
         // setup all the relations
-        foreach ($model->relation_settings() as $relation_name => $relation_obj) {
-            if ($relation_obj instanceof EE_Belongs_To_Relation) {
-                $this->_model_relations[ $relation_name ] = null;
-            } else {
-                $this->_model_relations[ $relation_name ] = array();
-            }
+        foreach ($this->_model->relation_settings() as $relation_name => $relation_obj) {
+            $this->_model_relations[ $relation_name ] = $relation_obj instanceof EE_Belongs_To_Relation
+                ? null
+                : [];
         }
         /**
          * Action done at the end of each model object construction
@@ -212,61 +174,22 @@ abstract class EE_Base_Class
 
 
     /**
-     * Gets whether or not this model object is allowed to persist/be saved to the database.
+     * for getting a model while instantiated.
      *
-     * @return boolean
-     */
-    public function allow_persist()
-    {
-        return $this->_allow_persist;
-    }
-
-
-    /**
-     * Sets whether or not this model object should be allowed to be saved to the DB.
-     * Normally once this is set to FALSE you wouldn't set it back to TRUE, unless
-     * you got new information that somehow made you change your mind.
-     *
-     * @param boolean $allow_persist
-     * @return boolean
-     */
-    public function set_allow_persist($allow_persist)
-    {
-        return $this->_allow_persist = $allow_persist;
-    }
-
-
-    /**
-     * Gets the field's original value when this object was constructed during this request.
-     * This can be helpful when determining if a model object has changed or not
-     *
-     * @param string $field_name
-     * @return mixed|null
-     * @throws ReflectionException
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
+     * @param string $timezone
+     * @return EEM_Base | EEM_CPT_Base
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function get_original($field_name)
+    public function get_model(string $timezone = '')
     {
-        if (
-            isset($this->_props_n_values_provided_in_constructor[ $field_name ])
-            && $field_settings = $this->get_model()->field_settings_for($field_name)
-        ) {
-            return $field_settings->prepare_for_get($this->_props_n_values_provided_in_constructor[ $field_name ]);
+        if (! $this->_model) {
+            $timezone     = $timezone ?? $this->_timezone;
+            $modelName    = self::_get_model_classname(get_class($this));
+            $this->_model = self::_get_model_instance_with_name($modelName, $timezone);
+            $this->set_timezone($timezone);
         }
-        return null;
-    }
-
-
-    /**
-     * @param EE_Base_Class $obj
-     * @return string
-     */
-    public function get_class($obj)
-    {
-        return get_class($obj);
+        return $this->_model;
     }
 
 
@@ -274,9 +197,45 @@ abstract class EE_Base_Class
      * Overrides parent because parent expects old models.
      * This also doesn't do any validation, and won't work for serialized arrays
      *
-     * @param    string $field_name
-     * @param    mixed  $field_value
-     * @param bool      $use_default
+     * @param string $field_name
+     * @param mixed  $field_value_from_db
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     */
+    public function set_from_db(string $field_name, $field_value_from_db)
+    {
+        $field_obj = $this->_model->field_settings_for($field_name);
+        if ($field_obj instanceof EE_Model_Field_Base) {
+            // you would think the DB has no NULLs for non-null label fields right? wrong!
+            // eg, a CPT model object could have an entry in the posts table, but no
+            // entry in the meta table. Meaning that all its columns in the meta table
+            // are null! yikes! so when we find one like that, use defaults for its meta columns
+
+            if ($field_value_from_db === null) {
+                if ($field_obj->is_nullable()) {
+                    // if the field allows nulls, then let it be null
+                    $field_value = null;
+                } else {
+                    $field_value = $field_obj->get_default_value();
+                }
+            } else {
+                $field_value = $field_obj->prepare_for_set_from_db($field_value_from_db);
+            }
+            $this->_fields[ $field_name ] = $field_value;
+            $this->_clear_cached_property($field_name);
+        }
+    }
+
+
+    /**
+     * Overrides parent because parent expects old models.
+     * This also doesn't do any validation, and won't work for serialized arrays
+     *
+     * @param string $field_name
+     * @param mixed  $field_value
+     * @param bool   $use_default
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
@@ -285,7 +244,7 @@ abstract class EE_Base_Class
      * @throws ReflectionException
      * @throws ReflectionException
      */
-    public function set($field_name, $field_value, $use_default = false)
+    public function set(string $field_name, $field_value, bool $use_default = false)
     {
         // if not using default and nothing has changed, and object has already been setup (has ID),
         // then don't do anything
@@ -296,11 +255,9 @@ abstract class EE_Base_Class
         ) {
             return;
         }
-        $model = $this->get_model();
         $this->_has_changes = true;
-        $field_obj = $model->field_settings_for($field_name);
+        $field_obj          = $this->_model->field_settings_for($field_name);
         if ($field_obj instanceof EE_Model_Field_Base) {
-            // if ( method_exists( $field_obj, 'set_timezone' )) {
             if ($field_obj instanceof EE_Datetime_Field) {
                 $field_obj->set_timezone($this->_timezone);
                 $field_obj->set_date_format($this->_dt_frmt);
@@ -333,17 +290,17 @@ abstract class EE_Base_Class
             // if we're not in the constructor...
             // now check if what we set was a primary key
             if (
-// note: props_n_values_provided_in_constructor is only set at the END of the constructor
+                // note: props_n_values_provided_in_constructor is only set at the END of the constructor
                 $this->_props_n_values_provided_in_constructor
                 && $field_value
-                && $field_name === $model->primary_key_name()
+                && $field_name === $this->_model->primary_key_name()
             ) {
                 // if so, we want all this object's fields to be filled either with
                 // what we've explicitly set on this model
                 // or what we have in the db
                 // echo "setting primary key!";
                 $fields_on_model = self::_get_model(get_class($this))->field_settings();
-                $obj_in_db = self::_get_model(get_class($this))->get_one_by_ID($field_value);
+                $obj_in_db       = self::_get_model(get_class($this))->get_one_by_ID($field_value);
                 foreach ($fields_on_model as $field_obj) {
                     if (
                         ! array_key_exists($field_obj->get_name(), $this->_props_n_values_provided_in_constructor)
@@ -353,7 +310,7 @@ abstract class EE_Base_Class
                     }
                 }
                 // oh this model object has an ID? well make sure its in the entity mapper
-                $model->add_to_entity_map($this);
+                $this->_model->add_to_entity_map($this);
             }
             // let's unset any cache for this field_name from the $_cached_properties property.
             $this->_clear_cached_property($field_name);
@@ -368,6 +325,442 @@ abstract class EE_Base_Class
                 )
             );
         }
+    }
+
+
+    /**
+     * Gets the value of the primary key.
+     * If the object hasn't yet been saved, it should be whatever the model field's default was
+     * (eg, if this were the EE_Event class, look at the primary key field on EEM_Event and see what its default value
+     * is. Usually defaults for integer primary keys are 0; string primary keys are usually NULL).
+     *
+     * @return mixed, if the primary key is of type INT it'll be an int. Otherwise it could be a string
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     */
+    public function ID()
+    {
+        // now that we know the name of the variable, use a variable variable to get its value and return its
+        if ($this->_model->has_primary_key_field()) {
+            return $this->_fields[ $this->_model->primary_key_name() ];
+        }
+        return $this->_model->get_index_primary_key_string($this->_fields);
+    }
+
+
+    /**
+     * If a model name is provided (eg Registration), gets the model classname for that model.
+     * Also works if a model class's classname is provided (eg EE_Registration).
+     *
+     * @param string $model_name
+     * @return string like EEM_Attendee
+     */
+    private static function _get_model_classname(string $model_name = ''): string
+    {
+        return strpos($model_name, 'EE_') === 0
+            ? str_replace('EE_', 'EEM_', $model_name)
+            : 'EEM_' . $model_name;
+    }
+
+
+    /**
+     * Gets the model instance (eg instance of EEM_Attendee) given its classname (eg EE_Attendee)
+     *
+     * @param string $model_classname
+     * @param string $timezone
+     * @return EEM_Base
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     */
+    protected static function _get_model_instance_with_name(string $model_classname, string $timezone = ''): EEM_Base
+    {
+        $model_classname = str_replace('EEM_', '', $model_classname);
+        $model           = EE_Registry::instance()->load_model($model_classname);
+        $model->set_timezone($timezone);
+        return $model;
+    }
+
+
+    /**
+     * This just clears out ONE property if it exists in the cache
+     *
+     * @param string $property_name the property to remove if it exists (from the _cached_properties array)
+     * @return void
+     */
+    protected function _clear_cached_property(string $property_name)
+    {
+        unset($this->_cached_properties[ $property_name ]);
+    }
+
+
+    /**
+     * Gets the EEM_*_Model for this class
+     *
+     * @param string $classname
+     * @param string $timezone
+     * @return EEM_Base
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    protected static function _get_model(string $classname, string $timezone = ''): EEM_Base
+    {
+        // find model for this class
+        if (! $classname) {
+            throw new EE_Error(
+                sprintf(
+                    esc_html__(
+                        'What were you thinking calling _get_model(%s)?? You need to specify the class name',
+                        'event_espresso'
+                    ),
+                    $classname
+                )
+            );
+        }
+        $modelName = self::_get_model_classname($classname);
+        return self::_get_model_instance_with_name($modelName, $timezone);
+    }
+
+
+    /**
+     * verifies that the specified field is of the correct type
+     *
+     * @param string $field_name
+     * @param string $extra_cache_ref This allows the user to specify an extra cache ref for the given property
+     *                                (in cases where the same property may be used for different outputs
+     *                                - i.e. datetime, money etc.)
+     * @return mixed
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     */
+    public function get(string $field_name, string $extra_cache_ref = '')
+    {
+        return $this->_get_cached_property($field_name, false, $extra_cache_ref);
+    }
+
+
+    /**
+     * This returns the value cached property if it exists OR the actual property value if the cache doesn't exist.
+     * This also SETS the cache if we return the actual property!
+     *
+     * @param string $field_name       the name of the property we're trying to retrieve
+     * @param bool   $pretty
+     * @param string $extra_cache_ref  This allows the user to specify an extra cache ref for the given property
+     *                                 (in cases where the same property may be used for different outputs
+     *                                 - i.e. datetime, money etc.)
+     *                                 It can also accept certain pre-defined "schema" strings
+     *                                 to define how to output the property.
+     *                                 see the field's prepare_for_pretty_echoing for what strings can be used
+     * @return mixed                   whatever the value for the property is we're retrieving
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     */
+    protected function _get_cached_property(string $field_name, bool $pretty = false, string $extra_cache_ref = '')
+    {
+        // verify the field exists
+        $this->_model->field_settings_for($field_name);
+        $cache_type = $pretty ? 'pretty' : 'standard';
+        $cache_type .= ! empty($extra_cache_ref) ? '_' . $extra_cache_ref : '';
+        if (isset($this->_cached_properties[ $field_name ][ $cache_type ])) {
+            return $this->_cached_properties[ $field_name ][ $cache_type ];
+        }
+        $value = $this->_get_fresh_property($field_name, $pretty, $extra_cache_ref);
+        $this->_set_cached_property($field_name, $value, $cache_type);
+        return $value;
+    }
+
+
+    /**
+     * If the cache didn't fetch the needed item, this fetches it.
+     *
+     * @param string $field_name
+     * @param bool   $pretty
+     * @param string $extra_cache_ref
+     * @return mixed
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     */
+    protected function _get_fresh_property(string $field_name, bool $pretty = false, string $extra_cache_ref = '')
+    {
+        $field_obj = $this->_model->field_settings_for($field_name);
+        // If this is an EE_Datetime_Field we need to make sure timezone, formats, and output are correct
+        if ($field_obj instanceof EE_Datetime_Field) {
+            $this->_prepare_datetime_field($field_obj, $pretty, $extra_cache_ref);
+        }
+        if (! isset($this->_fields[ $field_name ])) {
+            $this->_fields[ $field_name ] = null;
+        }
+        return $pretty
+            ? $field_obj->prepare_for_pretty_echoing($this->_fields[ $field_name ], $extra_cache_ref)
+            : $field_obj->prepare_for_get($this->_fields[ $field_name ]);
+    }
+
+
+    /**
+     * For adding an item to the cached_properties property.
+     *
+     * @param string      $field_name the property item the corresponding value is for.
+     * @param mixed       $value      The value we are caching.
+     * @param string $cache_type
+     * @return void
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     */
+    protected function _set_cached_property(string $field_name, $value, string $cache_type = '')
+    {
+        // first make sure this property exists
+        $this->_model->field_settings_for($field_name);
+        $cache_type = empty($cache_type) ? 'standard' : $cache_type;
+        $this->_cached_properties[ $field_name ][ $cache_type ] = $value;
+    }
+
+
+    /**
+     * set timezone, formats, and output for EE_Datetime_Field objects
+     *
+     * @param EE_Datetime_Field $datetime_field
+     * @param bool              $pretty
+     * @param null              $date_or_time
+     * @return void
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     */
+    protected function _prepare_datetime_field(
+        EE_Datetime_Field $datetime_field,
+        bool $pretty = false,
+        $date_or_time = null
+    ) {
+        $datetime_field->set_timezone($this->_timezone);
+        $datetime_field->set_date_format($this->_dt_frmt, $pretty);
+        $datetime_field->set_time_format($this->_tm_frmt, $pretty);
+        // set the output returned
+        switch ($date_or_time) {
+            case 'D':
+                $datetime_field->set_date_time_output('date');
+                break;
+            case 'T':
+                $datetime_field->set_date_time_output('time');
+                break;
+            default:
+                $datetime_field->set_date_time_output();
+        }
+    }
+
+
+    /**
+     * @param $props_n_values
+     * @param $classname
+     * @return EE_Base_Class|null
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    protected static function _get_object_from_entity_mapper($props_n_values, $classname): ?EE_Base_Class
+    {
+        // TODO: will not work for Term_Relationships because they have no PK!
+        $primary_id_ref = self::_get_primary_key_name($classname);
+        if (
+            array_key_exists($primary_id_ref, $props_n_values)
+            && ! empty($props_n_values[ $primary_id_ref ])
+        ) {
+            $id = $props_n_values[ $primary_id_ref ];
+            return self::_get_model($classname)->get_from_entity_map($id);
+        }
+        return null;
+    }
+
+
+    /**
+     * returns the name of the primary key attribute
+     *
+     * @param null $classname
+     * @return string
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @throws ReflectionException
+     * @throws ReflectionException
+     */
+    protected static function _get_primary_key_name($classname = null): string
+    {
+        if (! $classname) {
+            throw new EE_Error(
+                sprintf(
+                    esc_html__('What were you thinking calling _get_primary_key_name(%s)', 'event_espresso'),
+                    $classname
+                )
+            );
+        }
+        return self::_get_model($classname)->get_primary_key_field()->get_name();
+    }
+
+
+    /**
+     * This is called by child static "new_instance" method and we'll check to see if there is an existing db entry for
+     * the primary key (if present in incoming values). If there is a key in the incoming array that matches the
+     * primary key for the model AND it is not null, then we check the db. If there's a an object we return it.  If not
+     * we return false.
+     *
+     * @param array  $props_n_values    incoming array of properties and their values
+     * @param string $classname         the classname of the child class
+     * @param string $timezone
+     * @param array  $date_formats      incoming date_formats in an array where the first value is the
+     *                                  date_format and the second value is the time format
+     * @return EE_Base_Class|EE_Soft_Delete_Base_Class|null
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @throws ReflectionException
+     * @throws ReflectionException
+     */
+    protected static function _check_for_object(
+        array $props_n_values, string $classname, string $timezone = '', array $date_formats = []
+    ) {
+        $existing = null;
+        $model    = self::_get_model($classname, $timezone);
+        if ($model->has_primary_key_field()) {
+            $primary_id_ref = self::_get_primary_key_name($classname);
+            if (
+                array_key_exists($primary_id_ref, $props_n_values)
+                && ! empty($props_n_values[ $primary_id_ref ])
+            ) {
+                $existing = $model->get_one_by_ID($props_n_values[ $primary_id_ref ]);
+            }
+        } elseif ($model->has_all_combined_primary_key_fields($props_n_values)) {
+            // no primary key on this model, but there's still a matching item in the DB
+            $existing = $model->get_one_by_ID(
+                $model->get_index_primary_key_string($props_n_values)
+            );
+        }
+        if ($existing) {
+            $has_date_formats = ! empty($date_formats) && is_array($date_formats)
+                                && isset($date_formats[0], $date_formats[1]);
+            $date_format      = $has_date_formats ? $date_formats[0] : (string) get_option('date_format', 'Y-m-d');
+            $time_format      = $has_date_formats ? $date_formats[1] : (string) get_option('time_format', 'g:i a');
+            // set date formats before setting values
+            $existing->set_date_format($date_format);
+            $existing->set_time_format($time_format);
+            foreach ($props_n_values as $property => $field_value) {
+                $existing->set($property, $field_value);
+            }
+            return $existing;
+        }
+        return null;
+    }
+
+
+    /**
+     * This sets the internal date format to what is sent in to be used as the new default for the class
+     * internally instead of wp set date format options
+     *
+     * @param string $format should be a format recognizable by PHP date() functions.
+     * @since 4.6
+     */
+    public function set_date_format($format)
+    {
+        if ($format !== $this->_dt_frmt) {
+            $this->_dt_frmt = $format;
+            // clear cached_properties because they won't be relevant now.
+            $this->_clear_cached_properties();
+        }
+    }
+
+
+    /**
+     * This sets the internal time format string to what is sent in to be used as the new default for the
+     * class internally instead of wp set time format options.
+     *
+     * @param string $format should be a format recognizable by PHP date() functions.
+     * @since 4.6
+     */
+    public function set_time_format($format)
+    {
+        if ($format !== $this->_tm_frmt) {
+            $this->_tm_frmt = $format;
+            // clear cached_properties because they won't be relevant now.
+            $this->_clear_cached_properties();
+        }
+    }
+
+
+    /**
+     * This just takes care of clearing out the cached_properties
+     *
+     * @return void
+     */
+    protected function _clear_cached_properties()
+    {
+        $this->_cached_properties = [];
+    }
+
+
+    /**
+     * Sets whether or not this model object should be allowed to be saved to the DB.
+     * Normally once this is set to FALSE you wouldn't set it back to TRUE, unless
+     * you got new information that somehow made you change your mind.
+     *
+     * @param boolean $allow_persist
+     * @return boolean
+     */
+    public function set_allow_persist($allow_persist)
+    {
+        return $this->_allow_persist = $allow_persist;
+    }
+
+
+    /**
+     * Gets the field's original value when this object was constructed during this request.
+     * This can be helpful when determining if a model object has changed or not
+     *
+     * @param string $field_name
+     * @return mixed|null
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     */
+    public function get_original(string $field_name)
+    {
+        if (
+            isset($this->_props_n_values_provided_in_constructor[ $field_name ])
+            && $field_settings = $this->_model->field_settings_for($field_name)
+        ) {
+            return $field_settings->prepare_for_get($this->_props_n_values_provided_in_constructor[ $field_name ]);
+        }
+        return null;
+    }
+
+
+    /**
+     * @param EE_Base_Class $obj
+     * @return string
+     */
+    public function get_class($obj)
+    {
+        return get_class($obj);
     }
 
 
@@ -401,7 +794,6 @@ abstract class EE_Base_Class
      * This sets the field value on the db column if it exists for the given $column_name or
      * saves it to EE_Extra_Meta if the given $column_name does not match a db column.
      *
-     * @see EE_message::get_column_value for related documentation on the necessity of this method.
      * @param string $field_name  Must be the exact column name.
      * @param mixed  $field_value The value to set.
      * @return int|bool @see EE_Base_Class::update_extra_meta() for return docs.
@@ -410,16 +802,352 @@ abstract class EE_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      * @throws ReflectionException
+     * @see EE_message::get_column_value for related documentation on the necessity of this method.
      */
-    public function set_field_or_extra_meta($field_name, $field_value)
+    public function set_field_or_extra_meta(string $field_name, $field_value)
     {
-        if ($this->get_model()->has_field($field_name)) {
+        if ($this->_model->has_field($field_name)) {
             $this->set($field_name, $field_value);
             return true;
         }
         // ensure this object is saved first so that extra meta can be properly related.
         $this->save();
         return $this->update_extra_meta($field_name, $field_value);
+    }
+
+
+    /**
+     *        Saves this object to the database. An array may be supplied to set some values on this
+     * object just before saving.
+     *
+     * @param array $set_cols_n_values keys are field names, values are their new values,
+     *                                 if provided during the save() method
+     *                                 (often client code will change the fields' values before calling save)
+     * @return boolean|int             1 on a successful update or the ID of the new entry on insert;
+     *                                 0 on failure or if the model object isn't allowed to persist
+     *                                 (as determined by EE_Base_Class::allow_persist())
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     * @throws ReflectionException
+     * @throws ReflectionException
+     */
+    public function save(array $set_cols_n_values = [])
+    {
+        /**
+         * Filters the fields we're about to save on the model object
+         *
+         * @param array         $set_cols_n_values
+         * @param EE_Base_Class $model_object
+         */
+        $set_cols_n_values = (array) apply_filters(
+            'FHEE__EE_Base_Class__save__set_cols_n_values',
+            $set_cols_n_values,
+            $this
+        );
+        // set attributes as provided in $set_cols_n_values
+        foreach ($set_cols_n_values as $column => $value) {
+            $this->set($column, $value);
+        }
+        // no changes ? then don't do anything
+        if (! $this->_has_changes && $this->ID() && $this->_model->get_primary_key_field()->is_auto_increment()) {
+            return 0;
+        }
+        /**
+         * Saving a model object.
+         * Before we perform a save, this action is fired.
+         *
+         * @param EE_Base_Class $model_object the model object about to be saved.
+         */
+        do_action('AHEE__EE_Base_Class__save__begin', $this);
+        if (! $this->allow_persist()) {
+            return 0;
+        }
+        // now get current attribute values
+        $save_cols_n_values = $this->_fields;
+        // if the object already has an ID, update it. Otherwise, insert it
+        // also: change the assumption about values passed to the model NOT being prepare dby the model object.
+        // They have been
+        $old_assumption_concerning_value_preparation = $this->_model
+            ->get_assumption_concerning_values_already_prepared_by_model_object();
+        $this->_model->assume_values_already_prepared_by_model_object(true);
+        // does this model have an autoincrement PK?
+        if ($this->_model->has_primary_key_field()) {
+            if ($this->_model->get_primary_key_field()->is_auto_increment()) {
+                // ok check if it's set, if so: update; if not, insert
+                if (! empty($save_cols_n_values[ $this->_model->primary_key_name() ])) {
+                    $results = $this->_model->update_by_ID($save_cols_n_values, $this->ID());
+                } else {
+                    unset($save_cols_n_values[ $this->_model->primary_key_name() ]);
+                    $results = $this->_model->insert($save_cols_n_values);
+                    if ($results) {
+                        // if successful, set the primary key
+                        // but don't use the normal SET method, because it will check if
+                        // an item with the same ID exists in the mapper & db, then
+                        // will find it in the db (because we just added it) and THAT object
+                        // will get added to the mapper before we can add this one!
+                        // but if we just avoid using the SET method, all that headache can be avoided
+                        $pk_field_name                   = $this->_model->primary_key_name();
+                        $this->_fields[ $pk_field_name ] = $results;
+                        $this->_clear_cached_property($pk_field_name);
+                        $this->_model->add_to_entity_map($this);
+                        $this->_update_cached_related_model_objs_fks();
+                    }
+                }
+            } else {
+                // PK is NOT auto-increment
+                // so check if one like it already exists in the db
+                if ($this->_model->exists_by_ID($this->ID())) {
+                    if (WP_DEBUG && ! $this->in_entity_map()) {
+                        throw new EE_Error(
+                            sprintf(
+                                esc_html__(
+                                    'Using a model object %1$s that is NOT in the entity map, can lead to unexpected errors. You should either: %4$s 1. Put it in the entity mapper by calling %2$s %4$s 2. Discard this model object and use what is in the entity mapper %4$s 3. Fetch from the database using %3$s',
+                                    'event_espresso'
+                                ),
+                                get_class($this),
+                                get_class($this->_model) . '::instance()->add_to_entity_map()',
+                                get_class($this->_model) . '::instance()->get_one_by_ID()',
+                                '<br />'
+                            )
+                        );
+                    }
+                    $results = $this->_model->update_by_ID($save_cols_n_values, $this->ID());
+                } else {
+                    $results = $this->_model->insert($save_cols_n_values);
+                    $this->_update_cached_related_model_objs_fks();
+                }
+            }
+        } else {
+            // there is NO primary key
+            $already_in_db = false;
+            foreach ($this->_model->unique_indexes() as $index) {
+                $uniqueness_where_params = array_intersect_key($save_cols_n_values, $index->fields());
+                if ($this->_model->exists([$uniqueness_where_params])) {
+                    $already_in_db = true;
+                }
+            }
+            if ($already_in_db) {
+                $combined_pk_fields_n_values = array_intersect_key(
+                    $save_cols_n_values,
+                    $this->_model->get_combined_primary_key_fields()
+                );
+                $results                     = $this->_model->update(
+                    $save_cols_n_values,
+                    $combined_pk_fields_n_values
+                );
+            } else {
+                $results = $this->_model->insert($save_cols_n_values);
+            }
+        }
+        // restore the old assumption about values being prepared by the model object
+        $this->_model->assume_values_already_prepared_by_model_object(
+            $old_assumption_concerning_value_preparation
+        );
+        /**
+         * After saving the model object this action is called
+         *
+         * @param EE_Base_Class $model_object which was just saved
+         * @param boolean|int   $results      if it were updated, TRUE or FALSE; if it were newly inserted
+         *                                    the new ID (or 0 if an error occurred and it wasn't updated)
+         */
+        do_action('AHEE__EE_Base_Class__save__end', $this, $results);
+        $this->_has_changes = false;
+        return $results;
+    }
+
+
+    /**
+     * Similar to insert_post_meta, adds a record in the Extra_Meta model's table with the given key and value.
+     * A $previous_value can be specified in case there are many meta rows with the same key
+     *
+     * @param string $meta_key
+     * @param mixed  $meta_value
+     * @param mixed  $previous_value
+     * @return bool|int # of records updated (or BOOLEAN if we actually ended up inserting the extra meta row)
+     *                  NOTE: if the values haven't changed, returns 0
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function update_extra_meta(string $meta_key, $meta_value, $previous_value = null)
+    {
+        $query_params = [
+            [
+                'EXM_key'  => $meta_key,
+                'OBJ_ID'   => $this->ID(),
+                'EXM_type' => $this->_model->get_this_model_name(),
+            ],
+        ];
+        if ($previous_value !== null) {
+            $query_params[0]['EXM_value'] = $meta_value;
+        }
+        $existing_rows_like_that = EEM_Extra_Meta::instance()->get_all($query_params);
+        if (! $existing_rows_like_that) {
+            return $this->add_extra_meta($meta_key, $meta_value);
+        }
+        foreach ($existing_rows_like_that as $existing_row) {
+            $existing_row->save(['EXM_value' => $meta_value]);
+        }
+        return count($existing_rows_like_that);
+    }
+
+
+    /**
+     * Gets whether or not this model object is allowed to persist/be saved to the database.
+     *
+     * @return boolean
+     */
+    public function allow_persist()
+    {
+        return $this->_allow_persist;
+    }
+
+
+    /**
+     * Updates the foreign key on related models objects pointing to this to have this model object's ID
+     * as their foreign key.  If the cached related model objects already exist in the db, saves them (so that the DB
+     * is consistent) Especially useful in case we JUST added this model object ot the database and we want to let its
+     * cached relations with foreign keys to it know about that change. Eg: we've created a transaction but haven't
+     * saved it to the db. We also create a registration and don't save it to the DB, but we DO cache it on the
+     * transaction. Now, when we save the transaction, the registration's TXN_ID will be automatically updated, whether
+     * or not they exist in the DB (if they do, their DB records will be automatically updated)
+     *
+     * @return void
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     */
+    protected function _update_cached_related_model_objs_fks()
+    {
+        foreach ($this->_model->relation_settings() as $relation_name => $relation_obj) {
+            if ($relation_obj instanceof EE_Has_Many_Relation) {
+                foreach ($this->get_all_from_cache($relation_name) as $related_model_obj_in_cache) {
+                    $fk_to_this = $related_model_obj_in_cache->get_model()->get_foreign_key_to(
+                        $this->_model->get_this_model_name()
+                    );
+                    $related_model_obj_in_cache->set($fk_to_this->get_name(), $this->ID());
+                    if ($related_model_obj_in_cache->ID()) {
+                        $related_model_obj_in_cache->save();
+                    }
+                }
+            }
+        }
+    }
+
+
+    /**
+     * in_entity_map
+     * Checks if this model object has been proven to already be in the entity map
+     *
+     * @return boolean
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     */
+    public function in_entity_map()
+    {
+        // well, if we looked, did we find it in the entity map?
+        return $this->ID() && $this->_model->get_from_entity_map($this->ID()) === $this;
+    }
+
+
+    /**
+     * Adds a new extra meta record. If $unique is set to TRUE, we'll first double-check
+     * no other extra meta for this model object have the same key. Returns TRUE if the
+     * extra meta row was entered, false if not
+     *
+     * @param string  $meta_key
+     * @param mixed   $meta_value
+     * @param boolean $unique
+     * @return boolean
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @throws ReflectionException
+     */
+    public function add_extra_meta(string $meta_key, $meta_value, bool $unique = false): bool
+    {
+        if ($unique) {
+            $existing_extra_meta = EEM_Extra_Meta::instance()->get_one(
+                [
+                    [
+                        'EXM_key'  => $meta_key,
+                        'OBJ_ID'   => $this->ID(),
+                        'EXM_type' => $this->_model->get_this_model_name(),
+                    ],
+                ]
+            );
+            if ($existing_extra_meta) {
+                return false;
+            }
+        }
+        $new_extra_meta = EE_Extra_Meta::new_instance(
+            [
+                'EXM_key'   => $meta_key,
+                'EXM_value' => $meta_value,
+                'OBJ_ID'    => $this->ID(),
+                'EXM_type'  => $this->_model->get_this_model_name(),
+            ]
+        );
+        $new_extra_meta->save();
+        return true;
+    }
+
+
+    /**
+     * Fetches a single EE_Base_Class on that relation. (If the relation is of type
+     * BelongsTo, it will only ever have 1 object. However, other relations could have an array of objects)
+     *
+     * @param string $relationName
+     * @return EE_Base_Class[] NOT necessarily indexed by primary keys
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function get_all_from_cache($relationName)
+    {
+        $objects = isset($this->_model_relations[ $relationName ]) ? $this->_model_relations[ $relationName ] : [];
+        // if the result is not an array, but exists, make it an array
+        $objects = is_array($objects) ? $objects : [$objects];
+        // bugfix for https://events.codebasehq.com/projects/event-espresso/tickets/7143
+        // basically, if this model object was stored in the session, and these cached model objects
+        // already have IDs, let's make sure they're in their model's entity mapper
+        // otherwise we will have duplicates next time we call
+        // EE_Registry::instance()->load_model( $relationName )->get_one_by_ID( $result->ID() );
+        $related_model = EE_Registry::instance()->load_model($relationName);
+        foreach ($objects as $model_object) {
+            if ($related_model instanceof EEM_Base && $model_object instanceof EE_Base_Class) {
+                // ensure its in the map if it has an ID; otherwise it will be added to the map when its saved
+                if ($model_object->ID()) {
+                    $related_model->add_to_entity_map($model_object);
+                }
+            } else {
+                throw new EE_Error(
+                    sprintf(
+                        esc_html__(
+                            'Error retrieving related model objects. Either $1%s is not a model or $2%s is not a model object',
+                            'event_espresso'
+                        ),
+                        $relationName,
+                        gettype($model_object)
+                    )
+                );
+            }
+        }
+        $this->updateTimezoneOnRelated($objects);
+        return $objects;
     }
 
 
@@ -434,7 +1162,7 @@ abstract class EE_Base_Class
      * fields through the EE_Extra_Meta table.  This method allows for EE_messengers to retrieve the
      * value for those extra fields dynamically via the EE_message object.
      *
-     * @param  string $field_name expecting the fully qualified field name.
+     * @param string $field_name expecting the fully qualified field name.
      * @return mixed|null  value for the field if found.  null if not found.
      * @throws ReflectionException
      * @throws InvalidArgumentException
@@ -442,496 +1170,175 @@ abstract class EE_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function get_field_or_extra_meta($field_name)
+    public function get_field_or_extra_meta(string $field_name)
     {
-        if ($this->get_model()->has_field($field_name)) {
-            $column_value = $this->get($field_name);
-        } else {
-            // This isn't a column in the main table, let's see if it is in the extra meta.
-            $column_value = $this->get_extra_meta($field_name, true, null);
-        }
-        return $column_value;
+        // if this isn't a column in the main table, then see if it is in the extra meta.
+        return $this->_model->has_field($field_name)
+            ? $this->get($field_name)
+            : $this->get_extra_meta($field_name, true);
     }
 
 
     /**
-     * See $_timezone property for description of what the timezone property is for.  This SETS the timezone internally
-     * for being able to reference what timezone we are running conversions on when converting TO the internal timezone
-     * (UTC Unix Timestamp) for the object OR when converting FROM the internal timezone (UTC Unix Timestamp). This is
-     * available to all child classes that may be using the EE_Datetime_Field for a field data type.
+     * Gets the extra meta with the given meta key. If you specify "single" we just return 1, otherwise
+     * an array of everything found. Requires that this model actually have a relation of type EE_Has_Many_Any_Relation.
+     * You can specify $default is case you haven't found the extra meta
      *
-     * @access public
-     * @param string $timezone A valid timezone string as described by @link http://www.php.net/manual/en/timezones.php
-     * @return void
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
-     * @throws EE_Error
-     * @throws ReflectionException
-     */
-    public function set_timezone($timezone = '')
-    {
-        $this->_timezone = EEH_DTT_Helper::get_valid_timezone_string($timezone);
-        // make sure we clear all cached properties because they won't be relevant now
-        $this->_clear_cached_properties();
-        // make sure we update field settings and the date for all EE_Datetime_Fields
-        $model_fields = $this->get_model()->field_settings(false);
-        foreach ($model_fields as $field_name => $field_obj) {
-            if ($field_obj instanceof EE_Datetime_Field) {
-                $field_obj->set_timezone($this->_timezone);
-                if (isset($this->_fields[ $field_name ]) && $this->_fields[ $field_name ] instanceof DateTime) {
-                    EEH_DTT_Helper::setTimezone($this->_fields[ $field_name ], new DateTimeZone($this->_timezone));
-                }
-            }
-        }
-    }
-
-
-    /**
-     * This just returns whatever is set for the current timezone.
-     *
-     * @access public
-     * @return string timezone string
-     */
-    public function get_timezone()
-    {
-        return $this->_timezone;
-    }
-
-
-    /**
-     * This sets the internal date format to what is sent in to be used as the new default for the class
-     * internally instead of wp set date format options
-     *
-     * @since 4.6
-     * @param string $format should be a format recognizable by PHP date() functions.
-     */
-    public function set_date_format($format)
-    {
-        $this->_dt_frmt = $format;
-        // clear cached_properties because they won't be relevant now.
-        $this->_clear_cached_properties();
-    }
-
-
-    /**
-     * This sets the internal time format string to what is sent in to be used as the new default for the
-     * class internally instead of wp set time format options.
-     *
-     * @since 4.6
-     * @param string $format should be a format recognizable by PHP date() functions.
-     */
-    public function set_time_format($format)
-    {
-        $this->_tm_frmt = $format;
-        // clear cached_properties because they won't be relevant now.
-        $this->_clear_cached_properties();
-    }
-
-
-    /**
-     * This returns the current internal set format for the date and time formats.
-     *
-     * @param bool $full           if true (default), then return the full format.  Otherwise will return an array
-     *                             where the first value is the date format and the second value is the time format.
-     * @return mixed string|array
-     */
-    public function get_format($full = true)
-    {
-        return $full ? $this->_dt_frmt . ' ' . $this->_tm_frmt : array($this->_dt_frmt, $this->_tm_frmt);
-    }
-
-
-    /**
-     * cache
-     * stores the passed model object on the current model object.
-     * In certain circumstances, we can use this cached model object instead of querying for another one entirely.
-     *
-     * @param string        $relationName    one of the keys in the _model_relations array on the model. Eg
-     *                                       'Registration' associated with this model object
-     * @param EE_Base_Class $object_to_cache that has a relation to this model object. (Eg, if this is a Transaction,
-     *                                       that could be a payment or a registration)
-     * @param null          $cache_id        a string or number that will be used as the key for any Belongs_To_Many
-     *                                       items which will be stored in an array on this object
+     * @param string  $meta_key
+     * @param boolean $single
+     * @param mixed   $default if we don't find anything, what should we return?
+     * @return mixed single value if $single; array if ! $single
      * @throws ReflectionException
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
-     * @return mixed    index into cache, or just TRUE if the relation is of type Belongs_To (because there's only one
-     *                                       related thing, no array)
      */
-    public function cache($relationName = '', $object_to_cache = null, $cache_id = null)
+    public function get_extra_meta(string $meta_key, bool $single = false, $default = null)
     {
-        // its entirely possible that there IS no related object yet in which case there is nothing to cache.
-        if (! $object_to_cache instanceof EE_Base_Class) {
-            return false;
-        }
-        // also get "how" the object is related, or throw an error
-        if (! $relationship_to_model = $this->get_model()->related_settings_for($relationName)) {
-            throw new EE_Error(
-                sprintf(
-                    esc_html__('There is no relationship to %s on a %s. Cannot cache it', 'event_espresso'),
-                    $relationName,
-                    get_class($this)
-                )
+        if ($single) {
+            $result = $this->get_first_related(
+                'Extra_Meta',
+                [['EXM_key' => $meta_key]]
             );
-        }
-        // how many things are related ?
-        if ($relationship_to_model instanceof EE_Belongs_To_Relation) {
-            // if it's a "belongs to" relationship, then there's only one related model object
-            // eg, if this is a registration, there's only 1 attendee for it
-            // so for these model objects just set it to be cached
-            $this->_model_relations[ $relationName ] = $object_to_cache;
-            $return = true;
+            if ($result instanceof EE_Extra_Meta) {
+                return $result->value();
+            }
         } else {
-            // otherwise, this is the "many" side of a one to many relationship,
-            // so we'll add the object to the array of related objects for that type.
-            // eg: if this is an event, there are many registrations for that event,
-            // so we cache the registrations in an array
-            if (! is_array($this->_model_relations[ $relationName ])) {
-                // if for some reason, the cached item is a model object,
-                // then stick that in the array, otherwise start with an empty array
-                $this->_model_relations[ $relationName ] = $this->_model_relations[ $relationName ]
-                                                           instanceof
-                                                           EE_Base_Class
-                    ? array($this->_model_relations[ $relationName ]) : array();
-            }
-            // first check for a cache_id which is normally empty
-            if (! empty($cache_id)) {
-                // if the cache_id exists, then it means we are purposely trying to cache this
-                // with a known key that can then be used to retrieve the object later on
-                $this->_model_relations[ $relationName ][ $cache_id ] = $object_to_cache;
-                $return = $cache_id;
-            } elseif ($object_to_cache->ID()) {
-                // OR the cached object originally came from the db, so let's just use it's PK for an ID
-                $this->_model_relations[ $relationName ][ $object_to_cache->ID() ] = $object_to_cache;
-                $return = $object_to_cache->ID();
-            } else {
-                // OR it's a new object with no ID, so just throw it in the array with an auto-incremented ID
-                $this->_model_relations[ $relationName ][] = $object_to_cache;
-                // move the internal pointer to the end of the array
-                end($this->_model_relations[ $relationName ]);
-                // and grab the key so that we can return it
-                $return = key($this->_model_relations[ $relationName ]);
+            $results = $this->get_many_related(
+                'Extra_Meta',
+                [['EXM_key' => $meta_key]]
+            );
+            if ($results) {
+                $values = [];
+                foreach ($results as $result) {
+                    if ($result instanceof EE_Extra_Meta) {
+                        $values[ $result->ID() ] = $result->value();
+                    }
+                }
+                return $values;
             }
         }
-        return $return;
-    }
-
-
-    /**
-     * For adding an item to the cached_properties property.
-     *
-     * @access protected
-     * @param string      $fieldname the property item the corresponding value is for.
-     * @param mixed       $value     The value we are caching.
-     * @param string|null $cache_type
-     * @return void
-     * @throws ReflectionException
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
-     * @throws EE_Error
-     */
-    protected function _set_cached_property($fieldname, $value, $cache_type = null)
-    {
-        // first make sure this property exists
-        $this->get_model()->field_settings_for($fieldname);
-        $cache_type = empty($cache_type) ? 'standard' : $cache_type;
-        $this->_cached_properties[ $fieldname ][ $cache_type ] = $value;
-    }
-
-
-    /**
-     * This returns the value cached property if it exists OR the actual property value if the cache doesn't exist.
-     * This also SETS the cache if we return the actual property!
-     *
-     * @param string $fieldname        the name of the property we're trying to retrieve
-     * @param bool   $pretty
-     * @param string $extra_cache_ref  This allows the user to specify an extra cache ref for the given property
-     *                                 (in cases where the same property may be used for different outputs
-     *                                 - i.e. datetime, money etc.)
-     *                                 It can also accept certain pre-defined "schema" strings
-     *                                 to define how to output the property.
-     *                                 see the field's prepare_for_pretty_echoing for what strings can be used
-     * @return mixed                   whatever the value for the property is we're retrieving
-     * @throws ReflectionException
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
-     * @throws EE_Error
-     */
-    protected function _get_cached_property($fieldname, $pretty = false, $extra_cache_ref = null)
-    {
-        // verify the field exists
-        $model = $this->get_model();
-        $model->field_settings_for($fieldname);
-        $cache_type = $pretty ? 'pretty' : 'standard';
-        $cache_type .= ! empty($extra_cache_ref) ? '_' . $extra_cache_ref : '';
-        if (isset($this->_cached_properties[ $fieldname ][ $cache_type ])) {
-            return $this->_cached_properties[ $fieldname ][ $cache_type ];
-        }
-        $value = $this->_get_fresh_property($fieldname, $pretty, $extra_cache_ref);
-        $this->_set_cached_property($fieldname, $value, $cache_type);
-        return $value;
-    }
-
-
-    /**
-     * If the cache didn't fetch the needed item, this fetches it.
-     *
-     * @param string $fieldname
-     * @param bool   $pretty
-     * @param string $extra_cache_ref
-     * @return mixed
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
-     * @throws EE_Error
-     * @throws ReflectionException
-     */
-    protected function _get_fresh_property($fieldname, $pretty = false, $extra_cache_ref = null)
-    {
-        $field_obj = $this->get_model()->field_settings_for($fieldname);
-        // If this is an EE_Datetime_Field we need to make sure timezone, formats, and output are correct
-        if ($field_obj instanceof EE_Datetime_Field) {
-            $this->_prepare_datetime_field($field_obj, $pretty, $extra_cache_ref);
-        }
-        if (! isset($this->_fields[ $fieldname ])) {
-            $this->_fields[ $fieldname ] = null;
-        }
-        $value = $pretty
-            ? $field_obj->prepare_for_pretty_echoing($this->_fields[ $fieldname ], $extra_cache_ref)
-            : $field_obj->prepare_for_get($this->_fields[ $fieldname ]);
-        return $value;
-    }
-
-
-    /**
-     * set timezone, formats, and output for EE_Datetime_Field objects
-     *
-     * @param \EE_Datetime_Field $datetime_field
-     * @param bool               $pretty
-     * @param null               $date_or_time
-     * @return void
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
-     * @throws EE_Error
-     */
-    protected function _prepare_datetime_field(
-        EE_Datetime_Field $datetime_field,
-        $pretty = false,
-        $date_or_time = null
-    ) {
-        $datetime_field->set_timezone($this->_timezone);
-        $datetime_field->set_date_format($this->_dt_frmt, $pretty);
-        $datetime_field->set_time_format($this->_tm_frmt, $pretty);
-        // set the output returned
-        switch ($date_or_time) {
-            case 'D':
-                $datetime_field->set_date_time_output('date');
-                break;
-            case 'T':
-                $datetime_field->set_date_time_output('time');
-                break;
-            default:
-                $datetime_field->set_date_time_output();
-        }
-    }
-
-
-    /**
-     * This just takes care of clearing out the cached_properties
-     *
-     * @return void
-     */
-    protected function _clear_cached_properties()
-    {
-        $this->_cached_properties = array();
-    }
-
-
-    /**
-     * This just clears out ONE property if it exists in the cache
-     *
-     * @param  string $property_name the property to remove if it exists (from the _cached_properties array)
-     * @return void
-     */
-    protected function _clear_cached_property($property_name)
-    {
-        if (isset($this->_cached_properties[ $property_name ])) {
-            unset($this->_cached_properties[ $property_name ]);
-        }
-    }
-
-
-    /**
-     * Ensures that this related thing is a model object.
-     *
-     * @param mixed  $object_or_id EE_base_Class/int/string either a related model object, or its ID
-     * @param string $model_name   name of the related thing, eg 'Attendee',
-     * @return EE_Base_Class
-     * @throws ReflectionException
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
-     * @throws EE_Error
-     */
-    protected function ensure_related_thing_is_model_obj($object_or_id, $model_name)
-    {
-        $other_model_instance = self::_get_model_instance_with_name(
-            self::_get_model_classname($model_name),
-            $this->_timezone
+        // if nothing discovered yet return default.
+        return apply_filters(
+            'FHEE__EE_Base_Class__get_extra_meta__default_value',
+            $default,
+            $meta_key,
+            $single,
+            $this
         );
-        return $other_model_instance->ensure_is_obj($object_or_id);
     }
 
 
     /**
-     * Forgets the cached model of the given relation Name. So the next time we request it,
-     * we will fetch it again from the database. (Handy if you know it's changed somehow).
-     * If a specific object is supplied, and the relationship to it is either a HasMany or HABTM,
-     * then only remove that one object from our cached array. Otherwise, clear the entire list
+     * Gets the first (ie, one) related model object of the specified type.
      *
-     * @param string $relationName                         one of the keys in the _model_relations array on the model.
-     *                                                     Eg 'Registration'
-     * @param mixed  $object_to_remove_or_index_into_array or an index into the array of cached things, or NULL
-     *                                                     if you intend to use $clear_all = TRUE, or the relation only
-     *                                                     has 1 object anyways (ie, it's a BelongsToRelation)
-     * @param bool   $clear_all                            This flags clearing the entire cache relation property if
-     *                                                     this is HasMany or HABTM.
+     * @param string $relationName key in the model's _model_relations array
+     * @param array  $query_params
+     * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @return EE_Base_Class (not an array, a single object)
      * @throws ReflectionException
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
-     * @return EE_Base_Class | boolean from which was cleared from the cache, or true if we requested to remove a
-     *                                                     relation from all
      */
-    public function clear_cache($relationName, $object_to_remove_or_index_into_array = null, $clear_all = false)
+    public function get_first_related($relationName, $query_params = [])
     {
-        $relationship_to_model = $this->get_model()->related_settings_for($relationName);
-        $index_in_cache = '';
-        if (! $relationship_to_model) {
-            throw new EE_Error(
-                sprintf(
-                    esc_html__('There is no relationship to %s on a %s. Cannot clear that cache', 'event_espresso'),
+        $model_relation = $this->_model->related_settings_for($relationName);
+        if (! $this->ID()) {
+            // this doesn't exist in the DB,
+            // but maybe the relation type is "belongs to" and the related object might
+            if ($model_relation instanceof EE_Belongs_To_Relation) {
+                return $this->_model->get_first_related(
+                    $this,
                     $relationName,
-                    get_class($this)
-                )
+                    $query_params
+                );
+            }
+            // this doesn't exist in the DB and apparently the thing it belongs to doesn't either,
+            // just get what's cached on this object
+            return $this->get_one_from_cache($relationName);
+        }
+        // this exists in the DB, get from the cache OR the DB
+        // if they've provided some query parameters, don't bother trying to cache the result
+        // also make sure we're not caching the result of get_first_related
+        // on a relation which should have an array of objects (because the cache might have an array of objects)
+        if (
+            $query_params
+            || ! $model_relation instanceof EE_Belongs_To_Relation
+        ) {
+            return $this->_model->get_first_related(
+                $this,
+                $relationName,
+                $query_params
             );
         }
-        if ($clear_all) {
-            $obj_removed = true;
-            $this->_model_relations[ $relationName ] = null;
-        } elseif ($relationship_to_model instanceof EE_Belongs_To_Relation) {
-            $obj_removed = $this->_model_relations[ $relationName ];
-            $this->_model_relations[ $relationName ] = null;
-        } else {
-            if (
-                $object_to_remove_or_index_into_array instanceof EE_Base_Class
-                && $object_to_remove_or_index_into_array->ID()
-            ) {
-                $index_in_cache = $object_to_remove_or_index_into_array->ID();
-                if (
-                    is_array($this->_model_relations[ $relationName ])
-                    && ! isset($this->_model_relations[ $relationName ][ $index_in_cache ])
-                ) {
-                    $index_found_at = null;
-                    // find this object in the array even though it has a different key
-                    foreach ($this->_model_relations[ $relationName ] as $index => $obj) {
-                        /** @noinspection TypeUnsafeComparisonInspection */
-                        if (
-                            $obj instanceof EE_Base_Class
-                            && (
-                                $obj == $object_to_remove_or_index_into_array
-                                || $obj->ID() === $object_to_remove_or_index_into_array->ID()
-                            )
-                        ) {
-                            $index_found_at = $index;
-                            break;
-                        }
-                    }
-                    if ($index_found_at) {
-                        $index_in_cache = $index_found_at;
-                    } else {
-                        // it wasn't found. huh. well obviously it doesn't need to be removed from teh cache
-                        // if it wasn't in it to begin with. So we're done
-                        return $object_to_remove_or_index_into_array;
-                    }
-                }
-            } elseif ($object_to_remove_or_index_into_array instanceof EE_Base_Class) {
-                // so they provided a model object, but it's not yet saved to the DB... so let's go hunting for it!
-                foreach ($this->get_all_from_cache($relationName) as $index => $potentially_obj_we_want) {
-                    /** @noinspection TypeUnsafeComparisonInspection */
-                    if ($potentially_obj_we_want == $object_to_remove_or_index_into_array) {
-                        $index_in_cache = $index;
-                    }
-                }
-            } else {
-                $index_in_cache = $object_to_remove_or_index_into_array;
-            }
-            // supposedly we've found it. But it could just be that the client code
-            // provided a bad index/object
-            if (isset($this->_model_relations[ $relationName ][ $index_in_cache ])) {
-                $obj_removed = $this->_model_relations[ $relationName ][ $index_in_cache ];
-                unset($this->_model_relations[ $relationName ][ $index_in_cache ]);
-            } else {
-                // that thing was never cached anyways.
-                $obj_removed = null;
-            }
+        // check if we've already cached the result of this query
+        $cached_result = $this->get_one_from_cache($relationName);
+        if ($cached_result) {
+            return $cached_result;
         }
-        return $obj_removed;
+        $related_model_object = $this->_model->get_first_related(
+            $this,
+            $relationName,
+            $query_params
+        );
+        $this->cache($relationName, $related_model_object);
+        return $related_model_object;
     }
 
 
     /**
-     * update_cache_after_object_save
-     * Allows a cached item to have it's cache ID (within the array of cached items) reset using the new ID it has
-     * obtained after being saved to the db
+     * Gets all the related model objects of the specified type. Eg, if the current class if
+     * EE_Event, you could call $this->get_many_related('Registration') to get an array of all the
+     * EE_Registration objects which related to this event. Note: by default, we remove the "default query params"
+     * because we want to get even deleted items etc.
      *
-     * @param string        $relationName       - the type of object that is cached
-     * @param EE_Base_Class $newly_saved_object - the newly saved object to be re-cached
-     * @param string        $current_cache_id   - the ID that was used when originally caching the object
-     * @return boolean TRUE on success, FALSE on fail
+     * @param string $relationName key in the model's _model_relations array
+     * @param array  $query_params
+     * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
+     * @return EE_Base_Class[]     Results not necessarily indexed by IDs, because some results might not have primary
+     *                             keys or might not be saved yet. Consider using EEM_Base::get_IDs() on these
+     *                             results if you want IDs
      * @throws ReflectionException
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function update_cache_after_object_save(
-        $relationName,
-        EE_Base_Class $newly_saved_object,
-        $current_cache_id = ''
-    ) {
-        // verify that incoming object is of the correct type
-        $obj_class = 'EE_' . $relationName;
-        if ($newly_saved_object instanceof $obj_class) {
-            /* @type EE_Base_Class $newly_saved_object */
-            // now get the type of relation
-            $relationship_to_model = $this->get_model()->related_settings_for($relationName);
-            // if this is a 1:1 relationship
-            if ($relationship_to_model instanceof EE_Belongs_To_Relation) {
-                // then just replace the cached object with the newly saved object
-                $this->_model_relations[ $relationName ] = $newly_saved_object;
-                return true;
-                // or if it's some kind of sordid feral polyamorous relationship...
-            }
-            if (
-                is_array($this->_model_relations[ $relationName ])
-                && isset($this->_model_relations[ $relationName ][ $current_cache_id ])
-            ) {
-                // then remove the current cached item
-                unset($this->_model_relations[ $relationName ][ $current_cache_id ]);
-                // and cache the newly saved object using it's new ID
-                $this->_model_relations[ $relationName ][ $newly_saved_object->ID() ] = $newly_saved_object;
-                return true;
-            }
+    public function get_many_related($relationName, $query_params = [])
+    {
+        if (! $this->ID()) {
+            // this doesn't exist in the DB, so just get the related things from the cache
+            return $this->get_all_from_cache($relationName);
         }
-        return false;
+        // this exists in the DB, so get the related things from either the cache or the DB
+        // if there are query parameters, forget about caching the related model objects.
+        if ($query_params) {
+            return $this->_model->get_all_related(
+                $this,
+                $relationName,
+                $query_params
+            );
+        }
+        // did we already cache the result of this query?
+        $cached_results = $this->get_all_from_cache($relationName);
+        if ($cached_results) {
+            return $cached_results;
+        }
+        $related_model_objects = $this->_model->get_all_related(
+            $this,
+            $relationName,
+            $query_params
+        );
+        // if no query parameters were passed, then we got all the related model objects
+        // for that relation. We can cache them then.
+        foreach ($related_model_objects as $related_model_object) {
+            $this->cache($relationName, $related_model_object);
+        }
+        $this->updateTimezoneOnRelated($related_model_objects);
+        return $related_model_objects;
     }
 
 
@@ -948,55 +1355,231 @@ abstract class EE_Base_Class
             ? $this->_model_relations[ $relationName ]
             : null;
         if (is_array($cached_array_or_object)) {
-            return array_shift($cached_array_or_object);
+            $cached_array_or_object = array_shift($cached_array_or_object);
         }
+        $this->updateTimezoneOnRelated($cached_array_or_object);
         return $cached_array_or_object;
     }
 
 
     /**
-     * Fetches a single EE_Base_Class on that relation. (If the relation is of type
-     * BelongsTo, it will only ever have 1 object. However, other relations could have an array of objects)
+     * cache
+     * stores the passed model object on the current model object.
+     * In certain circumstances, we can use this cached model object instead of querying for another one entirely.
      *
-     * @param string $relationName
-     * @throws ReflectionException
+     * @param string        $relationName    one of the keys in the _model_relations array on the model. Eg
+     *                                       'Registration' associated with this model object
+     * @param EE_Base_Class $object_to_cache that has a relation to this model object. (Eg, if this is a Transaction,
+     *                                       that could be a payment or a registration)
+     * @param null          $cache_id        a string or number that will be used as the key for any Belongs_To_Many
+     *                                       items which will be stored in an array on this object
+     * @return mixed    index into cache, or just TRUE if the relation is of type Belongs_To (because there's only one
+     *                                       related thing, no array)
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
-     * @return EE_Base_Class[] NOT necessarily indexed by primary keys
      */
-    public function get_all_from_cache($relationName)
+    public function cache($relationName = '', $object_to_cache = null, $cache_id = null)
     {
-        $objects = isset($this->_model_relations[ $relationName ]) ? $this->_model_relations[ $relationName ] : array();
-        // if the result is not an array, but exists, make it an array
-        $objects = is_array($objects) ? $objects : array($objects);
-        // bugfix for https://events.codebasehq.com/projects/event-espresso/tickets/7143
-        // basically, if this model object was stored in the session, and these cached model objects
-        // already have IDs, let's make sure they're in their model's entity mapper
-        // otherwise we will have duplicates next time we call
-        // EE_Registry::instance()->load_model( $relationName )->get_one_by_ID( $result->ID() );
-        $model = EE_Registry::instance()->load_model($relationName);
-        foreach ($objects as $model_object) {
-            if ($model instanceof EEM_Base && $model_object instanceof EE_Base_Class) {
-                // ensure its in the map if it has an ID; otherwise it will be added to the map when its saved
-                if ($model_object->ID()) {
-                    $model->add_to_entity_map($model_object);
+        // its entirely possible that there IS no related object yet in which case there is nothing to cache.
+        if (! $object_to_cache instanceof EE_Base_Class) {
+            return false;
+        }
+        // also get "how" the object is related, or throw an error
+        if (! $relationship_to_model = $this->_model->related_settings_for($relationName)) {
+            throw new EE_Error(
+                sprintf(
+                    esc_html__('There is no relationship to %s on a %s. Cannot cache it', 'event_espresso'),
+                    $relationName,
+                    get_class($this)
+                )
+            );
+        }
+        // how many things are related ?
+        if ($relationship_to_model instanceof EE_Belongs_To_Relation) {
+            // if it's a "belongs to" relationship, then there's only one related model object
+            // eg, if this is a registration, there's only 1 attendee for it
+            // so for these model objects just set it to be cached
+            $this->_model_relations[ $relationName ] = $object_to_cache;
+            return true;
+        }
+        // otherwise, this is the "many" side of a one to many relationship,
+        // so we'll add the object to the array of related objects for that type.
+        // eg: if this is an event, there are many registrations for that event,
+        // so we cache the registrations in an array
+        if (! is_array($this->_model_relations[ $relationName ])) {
+            // if for some reason, the cached item is a model object,
+            // then stick that in the array, otherwise start with an empty array
+            $this->_model_relations[ $relationName ] = $this->_model_relations[ $relationName ] instanceof EE_Base_Class
+                ? [$this->_model_relations[ $relationName ]]
+                : [];
+        }
+        // first check for a cache_id which is normally empty
+        if (! empty($cache_id)) {
+            // if the cache_id exists, then it means we are purposely trying to cache this
+            // with a known key that can then be used to retrieve the object later on
+            $this->_model_relations[ $relationName ][ $cache_id ] = $object_to_cache;
+            return $cache_id;
+        }
+        if ($object_to_cache->ID()) {
+            // OR the cached object originally came from the db, so let's just use it's PK for an ID
+            $this->_model_relations[ $relationName ][ $object_to_cache->ID() ] = $object_to_cache;
+            return $object_to_cache->ID();
+        }
+        // OR it's a new object with no ID, so just throw it in the array with an auto-incremented ID
+        $this->_model_relations[ $relationName ][] = $object_to_cache;
+        // move the internal pointer to the end of the array
+        end($this->_model_relations[ $relationName ]);
+        // and grab the key so that we can return it
+        return key($this->_model_relations[ $relationName ]);
+    }
+
+
+    /**
+     * This just returns whatever is set for the current timezone.
+     *
+     * @return string timezone string
+     */
+    public function get_timezone()
+    {
+        if (empty($this->_timezone)) {
+            $this->set_timezone();
+        }
+        return $this->_timezone;
+    }
+
+
+    /**
+     * See $_timezone property for description of what the timezone property is for.  This SETS the timezone internally
+     * for being able to reference what timezone we are running conversions on when converting TO the internal timezone
+     * (UTC Unix Timestamp) for the object OR when converting FROM the internal timezone (UTC Unix Timestamp). This is
+     * available to all child classes that may be using the EE_Datetime_Field for a field data type.
+     *
+     * @param string $timezone A valid timezone string as described by @link http://www.php.net/manual/en/timezones.php
+     * @param bool   $only_if_not_set if true and $this->_timezone already has a value, then will not do anything
+     * @return void
+     */
+    public function set_timezone(string $timezone = '', $only_if_not_set = false)
+    {
+        static $set_in_progress = false;
+        // don't update the timezone if it's already set ?
+        if (($only_if_not_set && $this->_timezone !== '') ) {
+            return;
+        }
+        $valid_timezone = ! empty($timezone) && $this->_timezone && $timezone !== $this->_timezone
+            ? EEH_DTT_Helper::get_valid_timezone_string($timezone)
+            : $this->_timezone;
+        // do NOT set the timezone if we are already in the process of setting the timezone
+        // OR the existing timezone is already set and the incoming value is nothing (which gets set to default TZ)
+        // OR the existing timezone is already set and the validated value is the same as the existing timezone
+        if (
+            $set_in_progress
+            || (
+                ! empty($this->_timezone)
+                && (
+                    empty($timezone) || $valid_timezone === $this->_timezone
+                )
+            )
+        ) {
+            return;
+        }
+        $set_in_progress = true;
+        $this->_timezone = $valid_timezone ? $valid_timezone : EEH_DTT_Helper::get_valid_timezone_string();
+        $TZ = new DateTimeZone($this->_timezone);
+        // make sure we clear all cached properties because they won't be relevant now
+        $this->_clear_cached_properties();
+        // make sure we update field settings and the date for all EE_Datetime_Fields
+        $model_fields = $this->_model->field_settings();
+        foreach ($model_fields as $field_name => $field_obj) {
+            if ($field_obj instanceof EE_Datetime_Field) {
+                $field_obj->set_timezone($this->_timezone);
+                if (isset($this->_fields[ $field_name ]) && $this->_fields[ $field_name ] instanceof DateTime) {
+                    EEH_DTT_Helper::setTimezone($this->_fields[ $field_name ], $TZ);
                 }
-            } else {
-                throw new EE_Error(
-                    sprintf(
-                        esc_html__(
-                            'Error retrieving related model objects. Either $1%s is not a model or $2%s is not a model object',
-                            'event_espresso'
-                        ),
-                        $relationName,
-                        gettype($model_object)
-                    )
-                );
             }
         }
-        return $objects;
+        $set_in_progress = false;
+    }
+
+
+    /**
+     * @param array|EE_Base_Class $related
+     * @since $VID:$
+     */
+    private function updateTimezoneOnRelated($related)
+    {
+        if ($related instanceof EE_Base_Class && $related->get_timezone() !== $this->_timezone) {
+            $related->set_timezone($this->_timezone);
+            return;
+        }
+        if (is_array($related)) {
+            foreach ($related as $object) {
+                $this->updateTimezoneOnRelated($object);
+            }
+        }
+    }
+
+
+    /**
+     * This returns the current internal set format for the date and time formats.
+     *
+     * @param bool $full           if true (default), then return the full format.  Otherwise will return an array
+     *                             where the first value is the date format and the second value is the time format.
+     * @return mixed string|array
+     */
+    public function get_format($full = true)
+    {
+        return $full ? $this->_dt_frmt . ' ' . $this->_tm_frmt : [$this->_dt_frmt, $this->_tm_frmt];
+    }
+
+
+    /**
+     * update_cache_after_object_save
+     * Allows a cached item to have it's cache ID (within the array of cached items) reset using the new ID it has
+     * obtained after being saved to the db
+     *
+     * @param string        $relationName       - the type of object that is cached
+     * @param EE_Base_Class $newly_saved_object - the newly saved object to be re-cached
+     * @param string        $current_cache_id   - the ID that was used when originally caching the object
+     * @return boolean TRUE on success, FALSE on fail
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws EE_Error
+     */
+    public function update_cache_after_object_save(
+        $relationName,
+        EE_Base_Class $newly_saved_object,
+        $current_cache_id = ''
+    ) {
+        // verify that incoming object is of the correct type
+        $obj_class = 'EE_' . $relationName;
+        if (! $newly_saved_object instanceof $obj_class) {
+            return false;
+        }
+		$this->updateTimezoneOnRelated($newly_saved_object);
+        /* @type EE_Base_Class $newly_saved_object */
+        // now get the type of relation
+        $relationship_to_model = $this->_model->related_settings_for($relationName);
+        // if this is a 1:1 relationship
+        if ($relationship_to_model instanceof EE_Belongs_To_Relation) {
+            // then just replace the cached object with the newly saved object
+            $this->_model_relations[ $relationName ] = $newly_saved_object;
+            return true;
+        }
+        // or if it's some kind of sordid feral polyamorous relationship...
+        if (
+            is_array($this->_model_relations[ $relationName ])
+            && isset($this->_model_relations[ $relationName ][ $current_cache_id ])
+        ) {
+            // then remove the current cached item
+            unset($this->_model_relations[ $relationName ][ $current_cache_id ]);
+            // and cache the newly saved object using it's new ID
+            $this->_model_relations[ $relationName ][ $newly_saved_object->ID() ] = $newly_saved_object;
+            return true;
+        }
+        return false;
     }
 
 
@@ -1016,17 +1599,16 @@ abstract class EE_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function next_x($field_to_order_by = null, $limit = 1, $query_params = array(), $columns_to_select = null)
+    public function next_x($field_to_order_by = null, $limit = 1, $query_params = [], $columns_to_select = null)
     {
-        $model = $this->get_model();
-        $field = empty($field_to_order_by) && $model->has_primary_key_field()
-            ? $model->get_primary_key_field()->get_name()
+        $field         = empty($field_to_order_by) && $this->_model->has_primary_key_field()
+            ? $this->_model->get_primary_key_field()->get_name()
             : $field_to_order_by;
         $current_value = ! empty($field) ? $this->get($field) : null;
         if (empty($field) || empty($current_value)) {
-            return array();
+            return [];
         }
-        return $model->next_x($current_value, $field, $limit, $query_params, $columns_to_select);
+        return $this->_model->next_x($current_value, $field, $limit, $query_params, $columns_to_select);
     }
 
 
@@ -1049,18 +1631,17 @@ abstract class EE_Base_Class
     public function previous_x(
         $field_to_order_by = null,
         $limit = 1,
-        $query_params = array(),
+        $query_params = [],
         $columns_to_select = null
     ) {
-        $model = $this->get_model();
-        $field = empty($field_to_order_by) && $model->has_primary_key_field()
-            ? $model->get_primary_key_field()->get_name()
+        $field         = empty($field_to_order_by) && $this->_model->has_primary_key_field()
+            ? $this->_model->get_primary_key_field()->get_name()
             : $field_to_order_by;
         $current_value = ! empty($field) ? $this->get($field) : null;
         if (empty($field) || empty($current_value)) {
-            return array();
+            return [];
         }
-        return $model->previous_x($current_value, $field, $limit, $query_params, $columns_to_select);
+        return $this->_model->previous_x($current_value, $field, $limit, $query_params, $columns_to_select);
     }
 
 
@@ -1079,17 +1660,16 @@ abstract class EE_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function next($field_to_order_by = null, $query_params = array(), $columns_to_select = null)
+    public function next($field_to_order_by = null, $query_params = [], $columns_to_select = null)
     {
-        $model = $this->get_model();
-        $field = empty($field_to_order_by) && $model->has_primary_key_field()
-            ? $model->get_primary_key_field()->get_name()
+        $field         = empty($field_to_order_by) && $this->_model->has_primary_key_field()
+            ? $this->_model->get_primary_key_field()->get_name()
             : $field_to_order_by;
         $current_value = ! empty($field) ? $this->get($field) : null;
         if (empty($field) || empty($current_value)) {
-            return array();
+            return [];
         }
-        return $model->next($current_value, $field, $query_params, $columns_to_select);
+        return $this->_model->next($current_value, $field, $query_params, $columns_to_select);
     }
 
 
@@ -1108,93 +1688,16 @@ abstract class EE_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function previous($field_to_order_by = null, $query_params = array(), $columns_to_select = null)
+    public function previous($field_to_order_by = null, $query_params = [], $columns_to_select = null)
     {
-        $model = $this->get_model();
-        $field = empty($field_to_order_by) && $model->has_primary_key_field()
-            ? $model->get_primary_key_field()->get_name()
+        $field         = empty($field_to_order_by) && $this->_model->has_primary_key_field()
+            ? $this->_model->get_primary_key_field()->get_name()
             : $field_to_order_by;
         $current_value = ! empty($field) ? $this->get($field) : null;
         if (empty($field) || empty($current_value)) {
-            return array();
+            return [];
         }
-        return $model->previous($current_value, $field, $query_params, $columns_to_select);
-    }
-
-
-    /**
-     * Overrides parent because parent expects old models.
-     * This also doesn't do any validation, and won't work for serialized arrays
-     *
-     * @param string $field_name
-     * @param mixed  $field_value_from_db
-     * @throws ReflectionException
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
-     * @throws EE_Error
-     */
-    public function set_from_db($field_name, $field_value_from_db)
-    {
-        $field_obj = $this->get_model()->field_settings_for($field_name);
-        if ($field_obj instanceof EE_Model_Field_Base) {
-            // you would think the DB has no NULLs for non-null label fields right? wrong!
-            // eg, a CPT model object could have an entry in the posts table, but no
-            // entry in the meta table. Meaning that all its columns in the meta table
-            // are null! yikes! so when we find one like that, use defaults for its meta columns
-            if ($field_value_from_db === null) {
-                if ($field_obj->is_nullable()) {
-                    // if the field allows nulls, then let it be null
-                    $field_value = null;
-                } else {
-                    $field_value = $field_obj->get_default_value();
-                }
-            } else {
-                $field_value = $field_obj->prepare_for_set_from_db($field_value_from_db);
-            }
-            $this->_fields[ $field_name ] = $field_value;
-            $this->_clear_cached_property($field_name);
-        }
-    }
-
-
-    /**
-     * verifies that the specified field is of the correct type
-     *
-     * @param string $field_name
-     * @param string $extra_cache_ref This allows the user to specify an extra cache ref for the given property
-     *                                (in cases where the same property may be used for different outputs
-     *                                - i.e. datetime, money etc.)
-     * @return mixed
-     * @throws ReflectionException
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
-     * @throws EE_Error
-     */
-    public function get($field_name, $extra_cache_ref = null)
-    {
-        return $this->_get_cached_property($field_name, false, $extra_cache_ref);
-    }
-
-
-    /**
-     * This method simply returns the RAW unprocessed value for the given property in this class
-     *
-     * @param  string $field_name A valid fieldname
-     * @return mixed              Whatever the raw value stored on the property is.
-     * @throws ReflectionException
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
-     * @throws EE_Error if fieldSettings is misconfigured or the field doesn't exist.
-     */
-    public function get_raw($field_name)
-    {
-        $field_settings = $this->get_model()->field_settings_for($field_name);
-        return $field_settings instanceof EE_Datetime_Field && $this->_fields[ $field_name ] instanceof DateTime
-            ? $this->_fields[ $field_name ]->format('U')
-            : $this->_fields[ $field_name ];
+        return $this->_model->previous($current_value, $field, $query_params, $columns_to_select);
     }
 
 
@@ -1211,11 +1714,10 @@ abstract class EE_Base_Class
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @throws ReflectionException
      */
-    public function get_DateTime_object($field_name)
+    public function get_DateTime_object(string $field_name)
     {
-        $field_settings = $this->get_model()->field_settings_for($field_name);
+        $field_settings = $this->_model->field_settings_for($field_name);
         if (! $field_settings instanceof EE_Datetime_Field) {
             EE_Error::add_error(
                 sprintf(
@@ -1237,6 +1739,34 @@ abstract class EE_Base_Class
     }
 
 
+
+
+    /**
+     * NOTE ABOUT BELOW:
+     * These convenience date and time setters are for setting date and time independently.  In other words you might
+     * want to change the time on a datetime_field but leave the date the same (or vice versa). IF on the other hand
+     * you want to set both date and time at the same time, you can just use the models default set($field_name,$value)
+     * method and make sure you send the entire datetime value for setting.
+     */
+
+
+    /**
+     * Exactly like e(), echoes out the field, but sets its schema to 'form_input', so that it
+     * can be easily used as the value of form input.
+     *
+     * @param string string $field_name
+     * @return void
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     */
+    public function f(string $field_name)
+    {
+        $this->e($field_name, 'form_input');
+    }
+
+
     /**
      * To be used in template to immediately echo out the value, and format it for output.
      * Eg, should call stripslashes and whatnot before echoing
@@ -1246,50 +1776,14 @@ abstract class EE_Base_Class
      *                                (in cases where the same property may be used for different outputs
      *                                - i.e. datetime, money etc.)
      * @return void
-     * @throws ReflectionException
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function e($field_name, $extra_cache_ref = null)
+    public function e(string $field_name, string $extra_cache_ref = '')
     {
         echo $this->get_pretty($field_name, $extra_cache_ref);
-    }
-
-
-    /**
-     * Exactly like e(), echoes out the field, but sets its schema to 'form_input', so that it
-     * can be easily used as the value of form input.
-     *
-     * @param string $field_name
-     * @return void
-     * @throws ReflectionException
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
-     * @throws EE_Error
-     */
-    public function f($field_name)
-    {
-        $this->e($field_name, 'form_input');
-    }
-
-
-    /**
-     * Same as `f()` but just returns the value instead of echoing it
-     *
-     * @param string $field_name
-     * @return string
-     * @throws ReflectionException
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
-     * @throws EE_Error
-     */
-    public function get_f($field_name)
-    {
-        return (string) $this->get_pretty($field_name, 'form_input');
     }
 
 
@@ -1303,15 +1797,49 @@ abstract class EE_Base_Class
      *                                (in cases where the same property may be used for different outputs
      *                                - i.e. datetime, money etc.)
      * @return mixed
-     * @throws ReflectionException
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function get_pretty($field_name, $extra_cache_ref = null)
+    public function get_pretty(string $field_name, string $extra_cache_ref = '')
     {
         return $this->_get_cached_property($field_name, true, $extra_cache_ref);
+    }
+
+
+    /**
+     * Same as `f()` but just returns the value instead of echoing it
+     *
+     * @param string $field_name
+     * @return string
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     */
+    public function get_f(string $field_name)
+    {
+        return (string) $this->get_pretty($field_name, 'form_input');
+    }
+
+
+    /**
+     * below are wrapper functions for the various datetime outputs that can be obtained for JUST returning the date
+     * portion of a datetime value. (note the only difference between get_ and e_ is one returns the value and the
+     * other echoes the pretty value for dtt)
+     *
+     * @param string $field_name name of model object datetime field holding the value
+     * @param string $format     format for the date returned (if NULL we use default in dt_frmt property)
+     * @return string            datetime value formatted
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     */
+    public function get_date(string $field_name, string $format = '')
+    {
+        return $this->_get_datetime($field_name, $format, null, 'D');
     }
 
 
@@ -1320,29 +1848,32 @@ abstract class EE_Base_Class
      * Note: this protected function is called by the wrapper get_date or get_time or get_datetime functions
      * (and the equivalent e_date, e_time, e_datetime).
      *
-     * @access   protected
-     * @param string   $field_name   Field on the instantiated EE_Base_Class child object
-     * @param string   $dt_frmt      valid datetime format used for date
+     * @param string  $field_name    Field on the instantiated EE_Base_Class child object
+     * @param string  $date_format   valid datetime format used for date
      *                               (if '' then we just use the default on the field,
      *                               if NULL we use the last-used format)
-     * @param string   $tm_frmt      Same as above except this is for time format
-     * @param string   $date_or_time if NULL then both are returned, otherwise "D" = only date and "T" = only time.
-     * @param  boolean $echo         Whether the dtt is echoing using pretty echoing or just returned using vanilla get
+     * @param string  $time_format   Same as above except this is for time format
+     * @param string  $date_or_time  if NULL then both are returned, otherwise "D" = only date and "T" = only time.
+     * @param boolean $echo          Whether the dtt is echoing using pretty echoing or just returned using vanilla get
      * @return string|bool|EE_Error string on success, FALSE on fail, or EE_Error Exception is thrown
      *                               if field is not a valid dtt field, or void if echoing
-     * @throws ReflectionException
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    protected function _get_datetime($field_name, $dt_frmt = '', $tm_frmt = '', $date_or_time = '', $echo = false)
-    {
+    protected function _get_datetime(
+        string $field_name,
+        string $date_format = '',
+        string $time_format = '',
+        string $date_or_time = '',
+        bool $echo = false
+    ) {
         // clear cached property
         $this->_clear_cached_property($field_name);
         // reset format properties because they are used in get()
-        $this->_dt_frmt = $dt_frmt !== '' ? $dt_frmt : $this->_dt_frmt;
-        $this->_tm_frmt = $tm_frmt !== '' ? $tm_frmt : $this->_tm_frmt;
+        $this->_dt_frmt = $date_format !== '' ? $date_format : $this->_dt_frmt;
+        $this->_tm_frmt = $time_format !== '' ? $time_format : $this->_tm_frmt;
         if ($echo) {
             $this->e($field_name, $date_or_time);
             return '';
@@ -1352,35 +1883,14 @@ abstract class EE_Base_Class
 
 
     /**
-     * below are wrapper functions for the various datetime outputs that can be obtained for JUST returning the date
-     * portion of a datetime value. (note the only difference between get_ and e_ is one returns the value and the
-     * other echoes the pretty value for dtt)
-     *
-     * @param  string $field_name name of model object datetime field holding the value
-     * @param  string $format     format for the date returned (if NULL we use default in dt_frmt property)
-     * @return string            datetime value formatted
-     * @throws ReflectionException
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
-     * @throws EE_Error
-     */
-    public function get_date($field_name, $format = '')
-    {
-        return $this->_get_datetime($field_name, $format, null, 'D');
-    }
-
-
-    /**
-     * @param        $field_name
+     * @param string $field_name
      * @param string $format
-     * @throws ReflectionException
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function e_date($field_name, $format = '')
+    public function e_date(string $field_name, $format = '')
     {
         $this->_get_datetime($field_name, $format, null, 'D', true);
     }
@@ -1391,31 +1901,29 @@ abstract class EE_Base_Class
      * portion of a datetime value. (note the only difference between get_ and e_ is one returns the value and the
      * other echoes the pretty value for dtt)
      *
-     * @param  string $field_name name of model object datetime field holding the value
-     * @param  string $format     format for the time returned ( if NULL we use default in tm_frmt property)
+     * @param string $field_name name of model object datetime field holding the value
+     * @param string $format     format for the time returned ( if NULL we use default in tm_frmt property)
      * @return string             datetime value formatted
-     * @throws ReflectionException
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function get_time($field_name, $format = '')
+    public function get_time(string $field_name, string $format = '')
     {
         return $this->_get_datetime($field_name, null, $format, 'T');
     }
 
 
     /**
-     * @param        $field_name
+     * @param string $field_name
      * @param string $format
-     * @throws ReflectionException
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function e_time($field_name, $format = '')
+    public function e_time(string $field_name, string $format = '')
     {
         $this->_get_datetime($field_name, null, $format, 'T', true);
     }
@@ -1426,210 +1934,105 @@ abstract class EE_Base_Class
      * time portion of a datetime value. (note the only difference between get_ and e_ is one returns the value and the
      * other echoes the pretty value for dtt)
      *
-     * @param  string $field_name name of model object datetime field holding the value
-     * @param  string $dt_frmt    format for the date returned (if NULL we use default in dt_frmt property)
-     * @param  string $tm_frmt    format for the time returned (if NULL we use default in tm_frmt property)
+     * @param string $field_name  name of model object datetime field holding the value
+     * @param string $date_format format for the date returned (if NULL we use default in dt_frmt property)
+     * @param string $time_format format for the time returned (if NULL we use default in tm_frmt property)
      * @return string             datetime value formatted
-     * @throws ReflectionException
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function get_datetime($field_name, $dt_frmt = '', $tm_frmt = '')
+    public function get_datetime(string $field_name, $date_format = '', $time_format = '')
     {
-        return $this->_get_datetime($field_name, $dt_frmt, $tm_frmt);
+        return $this->_get_datetime($field_name, $date_format, $time_format);
     }
 
 
     /**
      * @param string $field_name
-     * @param string $dt_frmt
-     * @param string $tm_frmt
-     * @throws ReflectionException
+     * @param string $date_format
+     * @param string $time_format
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function e_datetime($field_name, $dt_frmt = '', $tm_frmt = '')
+    public function e_datetime(string $field_name, $date_format = '', $time_format = '')
     {
-        $this->_get_datetime($field_name, $dt_frmt, $tm_frmt, null, true);
+        $this->_get_datetime($field_name, $date_format, $time_format, null, true);
     }
 
 
     /**
-     * Get the i8ln value for a date using the WordPress @see date_i18n function.
+     * Get the i8ln value for a date using the WordPress
      *
      * @param string $field_name The EE_Datetime_Field reference for the date being retrieved.
-     * @param string $format     PHP valid date/time string format.  If none is provided then the internal set format
-     *                           on the object will be used.
+     * @param string $format     PHP valid date/time string format.
+     *                           If none is provided then the internal set format on the object will be used.
      * @return string Date and time string in set locale or false if no field exists for the given
-     * @throws ReflectionException
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
      *                           field name.
+     * @see date_i18n function.
      */
-    public function get_i18n_datetime($field_name, $format = '')
+    public function get_i18n_datetime(string $field_name, $format = '')
     {
         $format = empty($format) ? $this->_dt_frmt . ' ' . $this->_tm_frmt : $format;
         return date_i18n(
             $format,
             EEH_DTT_Helper::get_timestamp_with_offset(
                 $this->get_raw($field_name),
-                $this->_timezone
+                $this->get_timezone()
             )
         );
     }
 
 
     /**
-     * This method validates whether the given field name is a valid field on the model object as well as it is of a
-     * type EE_Datetime_Field.  On success there will be returned the field settings.  On fail an EE_Error exception is
-     * thrown.
+     * This method simply returns the RAW unprocessed value for the given property in this class
      *
-     * @param  string $field_name The field name being checked
-     * @throws ReflectionException
+     * @param string $field_name A valid field name
+     * @return mixed              Whatever the raw value stored on the property is.
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
-     * @throws EE_Error
-     * @return EE_Datetime_Field
+     * @throws EE_Error if fieldSettings is misconfigured or the field doesn't exist.
      */
-    protected function _get_dtt_field_settings($field_name)
+    public function get_raw(string $field_name)
     {
-        $field = $this->get_model()->field_settings_for($field_name);
-        // check if field is dtt
-        if ($field instanceof EE_Datetime_Field) {
-            return $field;
-        }
-        throw new EE_Error(
-            sprintf(
-                esc_html__(
-                    'The field name "%s" has been requested for the EE_Base_Class datetime functions and it is not a valid EE_Datetime_Field.  Please check the spelling of the field and make sure it has been setup as a EE_Datetime_Field in the %s model constructor',
-                    'event_espresso'
-                ),
-                $field_name,
-                self::_get_model_classname(get_class($this))
-            )
-        );
-    }
-
-
-
-
-    /**
-     * NOTE ABOUT BELOW:
-     * These convenience date and time setters are for setting date and time independently.  In other words you might
-     * want to change the time on a datetime_field but leave the date the same (or vice versa). IF on the other hand
-     * you want to set both date and time at the same time, you can just use the models default set($fieldname,$value)
-     * method and make sure you send the entire datetime value for setting.
-     */
-    /**
-     * sets the time on a datetime property
-     *
-     * @access protected
-     * @param string|Datetime $time      a valid time string for php datetime functions (or DateTime object)
-     * @param string          $fieldname the name of the field the time is being set on (must match a EE_Datetime_Field)
-     * @throws ReflectionException
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
-     * @throws EE_Error
-     */
-    protected function _set_time_for($time, $fieldname)
-    {
-        $this->_set_date_time('T', $time, $fieldname);
+        $field_settings = $this->_model->field_settings_for($field_name);
+        return $field_settings instanceof EE_Datetime_Field && $this->_fields[ $field_name ] instanceof DateTime
+            ? $this->_fields[ $field_name ]->format('U')
+            : $this->_fields[ $field_name ];
     }
 
 
     /**
-     * sets the date on a datetime property
+     * This will return a timestamp for the website timezone
+     * but ONLY when the current website timezone is different
+     * than the timezone set for the website.
+     * NOTE, this currently only works well with methods that return values.
+     * If you use it with methods that echo values
+     * the $_timestamp property may not get reset to its original value
+     * and that could lead to some unexpected results!
      *
-     * @access protected
-     * @param string|DateTime $date      a valid date string for php datetime functions ( or DateTime object)
-     * @param string          $fieldname the name of the field the date is being set on (must match a EE_Datetime_Field)
-     * @throws ReflectionException
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
-     * @throws EE_Error
-     */
-    protected function _set_date_for($date, $fieldname)
-    {
-        $this->_set_date_time('D', $date, $fieldname);
-    }
-
-
-    /**
-     * This takes care of setting a date or time independently on a given model object property. This method also
-     * verifies that the given fieldname matches a model object property and is for a EE_Datetime_Field field
-     *
-     * @access protected
-     * @param string          $what           "T" for time, 'B' for both, 'D' for Date.
-     * @param string|DateTime $datetime_value A valid Date or Time string (or DateTime object)
-     * @param string          $fieldname      the name of the field the date OR time is being set on (must match a
-     *                                        EE_Datetime_Field property)
-     * @throws ReflectionException
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
-     * @throws EE_Error
-     */
-    protected function _set_date_time($what = 'T', $datetime_value, $fieldname)
-    {
-        $field = $this->_get_dtt_field_settings($fieldname);
-        $field->set_timezone($this->_timezone);
-        $field->set_date_format($this->_dt_frmt);
-        $field->set_time_format($this->_tm_frmt);
-        switch ($what) {
-            case 'T':
-                $this->_fields[ $fieldname ] = $field->prepare_for_set_with_new_time(
-                    $datetime_value,
-                    $this->_fields[ $fieldname ]
-                );
-                $this->_has_changes = true;
-                break;
-            case 'D':
-                $this->_fields[ $fieldname ] = $field->prepare_for_set_with_new_date(
-                    $datetime_value,
-                    $this->_fields[ $fieldname ]
-                );
-                $this->_has_changes = true;
-                break;
-            case 'B':
-                $this->_fields[ $fieldname ] = $field->prepare_for_set($datetime_value);
-                $this->_has_changes = true;
-                break;
-        }
-        $this->_clear_cached_property($fieldname);
-    }
-
-
-    /**
-     * This will return a timestamp for the website timezone but ONLY when the current website timezone is different
-     * than the timezone set for the website. NOTE, this currently only works well with methods that return values.  If
-     * you use it with methods that echo values the $_timestamp property may not get reset to its original value and
-     * that could lead to some unexpected results!
-     *
-     * @access public
-     * @param string $field_name               This is the name of the field on the object that contains the date/time
-     *                                         value being returned.
-     * @param string $callback                 must match a valid method in this class (defaults to get_datetime)
-     * @param mixed (array|string) $args       This is the arguments that will be passed to the callback.
-     * @param string $prepend                  You can include something to prepend on the timestamp
-     * @param string $append                   You can include something to append on the timestamp
-     * @throws ReflectionException
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
-     * @throws EE_Error
+     * @param string       $field_name  This is the name of the field on the object that contains the date/time
+     *                                  value being returned.
+     * @param string       $callback    must match a valid method in this class (defaults to get_datetime)
+     * @param array|string $args        This is the arguments that will be passed to the callback.
+     * @param string       $prepend     You can include something to prepend on the timestamp
+     * @param string       $append      You can include something to append on the timestamp
      * @return string timestamp
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
      */
     public function display_in_my_timezone(
-        $field_name,
+        string $field_name,
         $callback = 'get_datetime',
         $args = null,
         $prepend = '',
@@ -1641,7 +2044,7 @@ abstract class EE_Base_Class
         }
         $original_timezone = $this->_timezone;
         $this->set_timezone($timezone);
-        $fn = (array) $field_name;
+        $fn   = (array) $field_name;
         $args = array_merge($fn, (array) $args);
         if (! method_exists($this, $callback)) {
             throw new EE_Error(
@@ -1654,8 +2057,8 @@ abstract class EE_Base_Class
                 )
             );
         }
-        $args = (array) $args;
-        $return = $prepend . call_user_func_array(array($this, $callback), $args) . $append;
+        $args   = (array) $args;
+        $return = $prepend . call_user_func_array([$this, $callback], $args) . $append;
         $this->set_timezone($original_timezone);
         return $return;
     }
@@ -1742,8 +2145,7 @@ abstract class EE_Base_Class
          * @param EE_Base_Class $model_object about to be 'deleted'
          */
         do_action('AHEE__EE_Base_Class__delete_permanently__before', $this);
-        $model = $this->get_model();
-        $result = $model->delete_permanently_by_ID($this->ID());
+        $result = $this->_model->delete_permanently_by_ID($this->ID());
         $this->refresh_cache_of_related_objects();
         /**
          * Called just after HARD deleting a model object
@@ -1768,20 +2170,19 @@ abstract class EE_Base_Class
      */
     public function refresh_cache_of_related_objects()
     {
-        $model = $this->get_model();
-        foreach ($model->relation_settings() as $relation_name => $relation_obj) {
+        foreach ($this->_model->relation_settings() as $relation_name => $relation_obj) {
             if (! empty($this->_model_relations[ $relation_name ])) {
                 $related_objects = $this->_model_relations[ $relation_name ];
                 if ($relation_obj instanceof EE_Belongs_To_Relation) {
                     // this relation only stores a single model object, not an array
                     // but let's make it consistent
-                    $related_objects = array($related_objects);
+                    $related_objects = [$related_objects];
                 }
                 foreach ($related_objects as $related_object) {
                     // only refresh their cache if they're in memory
                     if ($related_object instanceof EE_Base_Class) {
                         $related_object->clear_cache(
-                            $model->get_this_model_name(),
+                            $this->_model->get_this_model_name(),
                             $this
                         );
                     }
@@ -1792,179 +2193,100 @@ abstract class EE_Base_Class
 
 
     /**
-     *        Saves this object to the database. An array may be supplied to set some values on this
-     * object just before saving.
+     * Forgets the cached model of the given relation Name. So the next time we request it,
+     * we will fetch it again from the database. (Handy if you know it's changed somehow).
+     * If a specific object is supplied, and the relationship to it is either a HasMany or HABTM,
+     * then only remove that one object from our cached array. Otherwise, clear the entire list
      *
-     * @access public
-     * @param array $set_cols_n_values keys are field names, values are their new values,
-     *                                 if provided during the save() method (often client code will change the fields'
-     *                                 values before calling save)
+     * @param string $relationName                         one of the keys in the _model_relations array on the model.
+     *                                                     Eg 'Registration'
+     * @param mixed  $object_to_remove_or_index_into_array or an index into the array of cached things, or NULL
+     *                                                     if you intend to use $clear_all = TRUE, or the relation only
+     *                                                     has 1 object anyways (ie, it's a BelongsToRelation)
+     * @param bool   $clear_all                            This flags clearing the entire cache relation property if
+     *                                                     this is HasMany or HABTM.
+     * @return EE_Base_Class | boolean from which was cleared from the cache, or true if we requested to remove a
+     *                                                     relation from all
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
-     * @return int , 1 on a successful update, the ID of the new entry on insert; 0 on failure or if the model object
-     *                                 isn't allowed to persist (as determined by EE_Base_Class::allow_persist())
-     * @throws ReflectionException
-     * @throws ReflectionException
      * @throws ReflectionException
      */
-    public function save($set_cols_n_values = array())
+    public function clear_cache($relationName, $object_to_remove_or_index_into_array = null, $clear_all = false)
     {
-        $model = $this->get_model();
-        /**
-         * Filters the fields we're about to save on the model object
-         *
-         * @param array         $set_cols_n_values
-         * @param EE_Base_Class $model_object
-         */
-        $set_cols_n_values = (array) apply_filters(
-            'FHEE__EE_Base_Class__save__set_cols_n_values',
-            $set_cols_n_values,
-            $this
-        );
-        // set attributes as provided in $set_cols_n_values
-        foreach ($set_cols_n_values as $column => $value) {
-            $this->set($column, $value);
+        $relationship_to_model = $this->_model->related_settings_for($relationName);
+        $index_in_cache        = '';
+        if (! $relationship_to_model) {
+            throw new EE_Error(
+                sprintf(
+                    esc_html__('There is no relationship to %s on a %s. Cannot clear that cache', 'event_espresso'),
+                    $relationName,
+                    get_class($this)
+                )
+            );
         }
-        // no changes ? then don't do anything
-        if (! $this->_has_changes && $this->ID() && $model->get_primary_key_field()->is_auto_increment()) {
-            return 0;
-        }
-        /**
-         * Saving a model object.
-         * Before we perform a save, this action is fired.
-         *
-         * @param EE_Base_Class $model_object the model object about to be saved.
-         */
-        do_action('AHEE__EE_Base_Class__save__begin', $this);
-        if (! $this->allow_persist()) {
-            return 0;
-        }
-        // now get current attribute values
-        $save_cols_n_values = $this->_fields;
-        // if the object already has an ID, update it. Otherwise, insert it
-        // also: change the assumption about values passed to the model NOT being prepare dby the model object.
-        // They have been
-        $old_assumption_concerning_value_preparation = $model
-            ->get_assumption_concerning_values_already_prepared_by_model_object();
-        $model->assume_values_already_prepared_by_model_object(true);
-        // does this model have an autoincrement PK?
-        if ($model->has_primary_key_field()) {
-            if ($model->get_primary_key_field()->is_auto_increment()) {
-                // ok check if it's set, if so: update; if not, insert
-                if (! empty($save_cols_n_values[ $model->primary_key_name() ])) {
-                    $results = $model->update_by_ID($save_cols_n_values, $this->ID());
-                } else {
-                    unset($save_cols_n_values[ $model->primary_key_name() ]);
-                    $results = $model->insert($save_cols_n_values);
-                    if ($results) {
-                        // if successful, set the primary key
-                        // but don't use the normal SET method, because it will check if
-                        // an item with the same ID exists in the mapper & db, then
-                        // will find it in the db (because we just added it) and THAT object
-                        // will get added to the mapper before we can add this one!
-                        // but if we just avoid using the SET method, all that headache can be avoided
-                        $pk_field_name = $model->primary_key_name();
-                        $this->_fields[ $pk_field_name ] = $results;
-                        $this->_clear_cached_property($pk_field_name);
-                        $model->add_to_entity_map($this);
-                        $this->_update_cached_related_model_objs_fks();
-                    }
-                }
-            } else {// PK is NOT auto-increment
-                // so check if one like it already exists in the db
-                if ($model->exists_by_ID($this->ID())) {
-                    if (WP_DEBUG && ! $this->in_entity_map()) {
-                        throw new EE_Error(
-                            sprintf(
-                                esc_html__(
-                                    'Using a model object %1$s that is NOT in the entity map, can lead to unexpected errors. You should either: %4$s 1. Put it in the entity mapper by calling %2$s %4$s 2. Discard this model object and use what is in the entity mapper %4$s 3. Fetch from the database using %3$s',
-                                    'event_espresso'
-                                ),
-                                get_class($this),
-                                get_class($model) . '::instance()->add_to_entity_map()',
-                                get_class($model) . '::instance()->get_one_by_ID()',
-                                '<br />'
+        if ($clear_all) {
+            $obj_removed                             = true;
+            $this->_model_relations[ $relationName ] = null;
+        } elseif ($relationship_to_model instanceof EE_Belongs_To_Relation) {
+            $obj_removed                             = $this->_model_relations[ $relationName ];
+            $this->_model_relations[ $relationName ] = null;
+        } else {
+            if (
+                $object_to_remove_or_index_into_array instanceof EE_Base_Class
+                && $object_to_remove_or_index_into_array->ID()
+            ) {
+                $index_in_cache = $object_to_remove_or_index_into_array->ID();
+                if (
+                    is_array($this->_model_relations[ $relationName ])
+                    && ! isset($this->_model_relations[ $relationName ][ $index_in_cache ])
+                ) {
+                    $index_found_at = null;
+                    // find this object in the array even though it has a different key
+                    foreach ($this->_model_relations[ $relationName ] as $index => $obj) {
+                        /** @noinspection TypeUnsafeComparisonInspection */
+                        if (
+                            $obj instanceof EE_Base_Class
+                            && (
+                                $obj == $object_to_remove_or_index_into_array
+                                || $obj->ID() === $object_to_remove_or_index_into_array->ID()
                             )
-                        );
+                        ) {
+                            $index_found_at = $index;
+                            break;
+                        }
                     }
-                    $results = $model->update_by_ID($save_cols_n_values, $this->ID());
-                } else {
-                    $results = $model->insert($save_cols_n_values);
-                    $this->_update_cached_related_model_objs_fks();
+                    if ($index_found_at) {
+                        $index_in_cache = $index_found_at;
+                    } else {
+                        // it wasn't found. huh. well obviously it doesn't need to be removed from teh cache
+                        // if it wasn't in it to begin with. So we're done
+                        return $object_to_remove_or_index_into_array;
+                    }
                 }
-            }
-        } else {// there is NO primary key
-            $already_in_db = false;
-            foreach ($model->unique_indexes() as $index) {
-                $uniqueness_where_params = array_intersect_key($save_cols_n_values, $index->fields());
-                if ($model->exists(array($uniqueness_where_params))) {
-                    $already_in_db = true;
+            } elseif ($object_to_remove_or_index_into_array instanceof EE_Base_Class) {
+                // so they provided a model object, but it's not yet saved to the DB... so let's go hunting for it!
+                foreach ($this->get_all_from_cache($relationName) as $index => $potentially_obj_we_want) {
+                    /** @noinspection TypeUnsafeComparisonInspection */
+                    if ($potentially_obj_we_want == $object_to_remove_or_index_into_array) {
+                        $index_in_cache = $index;
+                    }
                 }
-            }
-            if ($already_in_db) {
-                $combined_pk_fields_n_values = array_intersect_key(
-                    $save_cols_n_values,
-                    $model->get_combined_primary_key_fields()
-                );
-                $results = $model->update(
-                    $save_cols_n_values,
-                    $combined_pk_fields_n_values
-                );
             } else {
-                $results = $model->insert($save_cols_n_values);
+                $index_in_cache = $object_to_remove_or_index_into_array;
+            }
+            // supposedly we've found it. But it could just be that the client code
+            // provided a bad index/object
+            if (isset($this->_model_relations[ $relationName ][ $index_in_cache ])) {
+                $obj_removed = $this->_model_relations[ $relationName ][ $index_in_cache ];
+                unset($this->_model_relations[ $relationName ][ $index_in_cache ]);
+            } else {
+                // that thing was never cached anyways.
+                $obj_removed = null;
             }
         }
-        // restore the old assumption about values being prepared by the model object
-        $model->assume_values_already_prepared_by_model_object(
-            $old_assumption_concerning_value_preparation
-        );
-        /**
-         * After saving the model object this action is called
-         *
-         * @param EE_Base_Class $model_object which was just saved
-         * @param boolean|int   $results      if it were updated, TRUE or FALSE; if it were newly inserted
-         *                                    the new ID (or 0 if an error occurred and it wasn't updated)
-         */
-        do_action('AHEE__EE_Base_Class__save__end', $this, $results);
-        $this->_has_changes = false;
-        return $results;
-    }
-
-
-    /**
-     * Updates the foreign key on related models objects pointing to this to have this model object's ID
-     * as their foreign key.  If the cached related model objects already exist in the db, saves them (so that the DB
-     * is consistent) Especially useful in case we JUST added this model object ot the database and we want to let its
-     * cached relations with foreign keys to it know about that change. Eg: we've created a transaction but haven't
-     * saved it to the db. We also create a registration and don't save it to the DB, but we DO cache it on the
-     * transaction. Now, when we save the transaction, the registration's TXN_ID will be automatically updated, whether
-     * or not they exist in the DB (if they do, their DB records will be automatically updated)
-     *
-     * @return void
-     * @throws ReflectionException
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
-     * @throws EE_Error
-     */
-    protected function _update_cached_related_model_objs_fks()
-    {
-        $model = $this->get_model();
-        foreach ($model->relation_settings() as $relation_name => $relation_obj) {
-            if ($relation_obj instanceof EE_Has_Many_Relation) {
-                foreach ($this->get_all_from_cache($relation_name) as $related_model_obj_in_cache) {
-                    $fk_to_this = $related_model_obj_in_cache->get_model()->get_foreign_key_to(
-                        $model->get_this_model_name()
-                    );
-                    $related_model_obj_in_cache->set($fk_to_this->get_name(), $this->ID());
-                    if ($related_model_obj_in_cache->ID()) {
-                        $related_model_obj_in_cache->save();
-                    }
-                }
-            }
-        }
+        return $obj_removed;
     }
 
 
@@ -1992,7 +2314,7 @@ abstract class EE_Base_Class
             $id = $this->ID();
         }
         // now save all the NEW cached model objects  (ie they don't exist in the DB)
-        foreach ($this->get_model()->relation_settings() as $relationName => $relationObj) {
+        foreach ($this->_model->relation_settings() as $relationName => $relationObj) {
             if ($this->_model_relations[ $relationName ]) {
                 // is this a relation where we should expect just ONE related object (ie, EE_Belongs_To_relation)
                 // or MANY related objects (ie, EE_HABTM_Relation or EE_Has_Many_Relation)?
@@ -2022,233 +2344,6 @@ abstract class EE_Base_Class
 
 
     /**
-     * for getting a model while instantiated.
-     *
-     * @return EEM_Base | EEM_CPT_Base
-     * @throws ReflectionException
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
-     * @throws EE_Error
-     */
-    public function get_model()
-    {
-        if (! $this->_model) {
-            $modelName = self::_get_model_classname(get_class($this));
-            $this->_model = self::_get_model_instance_with_name($modelName, $this->_timezone);
-        } else {
-            $this->_model->set_timezone($this->_timezone);
-        }
-        return $this->_model;
-    }
-
-
-    /**
-     * @param $props_n_values
-     * @param $classname
-     * @return mixed bool|EE_Base_Class|EEM_CPT_Base
-     * @throws ReflectionException
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
-     * @throws EE_Error
-     */
-    protected static function _get_object_from_entity_mapper($props_n_values, $classname)
-    {
-        // TODO: will not work for Term_Relationships because they have no PK!
-        $primary_id_ref = self::_get_primary_key_name($classname);
-        if (
-            array_key_exists($primary_id_ref, $props_n_values)
-            && ! empty($props_n_values[ $primary_id_ref ])
-        ) {
-            $id = $props_n_values[ $primary_id_ref ];
-            return self::_get_model($classname)->get_from_entity_map($id);
-        }
-        return false;
-    }
-
-
-    /**
-     * This is called by child static "new_instance" method and we'll check to see if there is an existing db entry for
-     * the primary key (if present in incoming values). If there is a key in the incoming array that matches the
-     * primary key for the model AND it is not null, then we check the db. If there's a an object we return it.  If not
-     * we return false.
-     *
-     * @param  array  $props_n_values   incoming array of properties and their values
-     * @param  string $classname        the classname of the child class
-     * @param null    $timezone
-     * @param array   $date_formats     incoming date_formats in an array where the first value is the
-     *                                  date_format and the second value is the time format
-     * @return mixed (EE_Base_Class|bool)
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
-     * @throws EE_Error
-     * @throws ReflectionException
-     * @throws ReflectionException
-     * @throws ReflectionException
-     */
-    protected static function _check_for_object($props_n_values, $classname, $timezone = null, $date_formats = array())
-    {
-        $existing = null;
-        $model = self::_get_model($classname, $timezone);
-        if ($model->has_primary_key_field()) {
-            $primary_id_ref = self::_get_primary_key_name($classname);
-            if (
-                array_key_exists($primary_id_ref, $props_n_values)
-                && ! empty($props_n_values[ $primary_id_ref ])
-            ) {
-                $existing = $model->get_one_by_ID(
-                    $props_n_values[ $primary_id_ref ]
-                );
-            }
-        } elseif ($model->has_all_combined_primary_key_fields($props_n_values)) {
-            // no primary key on this model, but there's still a matching item in the DB
-            $existing = self::_get_model($classname, $timezone)->get_one_by_ID(
-                self::_get_model($classname, $timezone)
-                    ->get_index_primary_key_string($props_n_values)
-            );
-        }
-        if ($existing) {
-            // set date formats if present before setting values
-            if (! empty($date_formats) && is_array($date_formats)) {
-                $existing->set_date_format($date_formats[0]);
-                $existing->set_time_format($date_formats[1]);
-            } else {
-                // set default formats for date and time
-                $existing->set_date_format(get_option('date_format'));
-                $existing->set_time_format(get_option('time_format'));
-            }
-            foreach ($props_n_values as $property => $field_value) {
-                $existing->set($property, $field_value);
-            }
-            return $existing;
-        }
-        return false;
-    }
-
-
-    /**
-     * Gets the EEM_*_Model for this class
-     *
-     * @access public now, as this is more convenient
-     * @param      $classname
-     * @param null $timezone
-     * @throws ReflectionException
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
-     * @throws EE_Error
-     * @return EEM_Base
-     */
-    protected static function _get_model($classname, $timezone = null)
-    {
-        // find model for this class
-        if (! $classname) {
-            throw new EE_Error(
-                sprintf(
-                    esc_html__(
-                        'What were you thinking calling _get_model(%s)?? You need to specify the class name',
-                        'event_espresso'
-                    ),
-                    $classname
-                )
-            );
-        }
-        $modelName = self::_get_model_classname($classname);
-        return self::_get_model_instance_with_name($modelName, $timezone);
-    }
-
-
-    /**
-     * Gets the model instance (eg instance of EEM_Attendee) given its classname (eg EE_Attendee)
-     *
-     * @param string $model_classname
-     * @param null   $timezone
-     * @return EEM_Base
-     * @throws ReflectionException
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
-     * @throws EE_Error
-     */
-    protected static function _get_model_instance_with_name($model_classname, $timezone = null)
-    {
-        $model_classname = str_replace('EEM_', '', $model_classname);
-        $model = EE_Registry::instance()->load_model($model_classname);
-        $model->set_timezone($timezone);
-        return $model;
-    }
-
-
-    /**
-     * If a model name is provided (eg Registration), gets the model classname for that model.
-     * Also works if a model class's classname is provided (eg EE_Registration).
-     *
-     * @param null $model_name
-     * @return string like EEM_Attendee
-     */
-    private static function _get_model_classname($model_name = null)
-    {
-        if (strpos($model_name, 'EE_') === 0) {
-            $model_classname = str_replace('EE_', 'EEM_', $model_name);
-        } else {
-            $model_classname = 'EEM_' . $model_name;
-        }
-        return $model_classname;
-    }
-
-
-    /**
-     * returns the name of the primary key attribute
-     *
-     * @param null $classname
-     * @throws ReflectionException
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
-     * @throws EE_Error
-     * @return string
-     */
-    protected static function _get_primary_key_name($classname = null)
-    {
-        if (! $classname) {
-            throw new EE_Error(
-                sprintf(
-                    esc_html__('What were you thinking calling _get_primary_key_name(%s)', 'event_espresso'),
-                    $classname
-                )
-            );
-        }
-        return self::_get_model($classname)->get_primary_key_field()->get_name();
-    }
-
-
-    /**
-     * Gets the value of the primary key.
-     * If the object hasn't yet been saved, it should be whatever the model field's default was
-     * (eg, if this were the EE_Event class, look at the primary key field on EEM_Event and see what its default value
-     * is. Usually defaults for integer primary keys are 0; string primary keys are usually NULL).
-     *
-     * @return mixed, if the primary key is of type INT it'll be an int. Otherwise it could be a string
-     * @throws ReflectionException
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
-     * @throws EE_Error
-     */
-    public function ID()
-    {
-        $model = $this->get_model();
-        // now that we know the name of the variable, use a variable variable to get its value and return its
-        if ($model->has_primary_key_field()) {
-            return $this->_fields[ $model->primary_key_name() ];
-        }
-        return $model->get_index_primary_key_string($this->_fields);
-    }
-
-
-    /**
      * Adds a relationship to the specified EE_Base_Class object, given the relationship's name. Eg, if the current
      * model is related to a group of events, the $relationName should be 'Event', and should be a key in the EE
      * Model's $_model_relations array. If this model object doesn't exist in the DB, just caches the related thing
@@ -2266,23 +2361,22 @@ abstract class EE_Base_Class
      *                                                 exact match isn't found for these extra cols/val pairs, then a
      *                                                 NEW row is created in the join table.
      * @param null   $cache_id
+     * @return EE_Base_Class the object the relation was added to
      * @throws ReflectionException
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
-     * @return EE_Base_Class the object the relation was added to
      */
     public function _add_relation_to(
         $otherObjectModelObjectOrID,
         $relationName,
-        $extra_join_model_fields_n_values = array(),
+        $extra_join_model_fields_n_values = [],
         $cache_id = null
     ) {
-        $model = $this->get_model();
         // if this thing exists in the DB, save the relation to the DB
         if ($this->ID()) {
-            $otherObject = $model->add_relationship_to(
+            $otherObject = $this->_model->add_relationship_to(
                 $this,
                 $otherObjectModelObjectOrID,
                 $relationName,
@@ -2291,7 +2385,7 @@ abstract class EE_Base_Class
             // clear cache so future get_many_related and get_first_related() return new results.
             $this->clear_cache($relationName, $otherObject, true);
             if ($otherObject instanceof EE_Base_Class) {
-                $otherObject->clear_cache($model->get_this_model_name(), $this);
+                $otherObject->clear_cache($this->_model->get_this_model_name(), $this);
             }
         } else {
             // this thing doesn't exist in the DB,  so just cache it
@@ -2316,13 +2410,13 @@ abstract class EE_Base_Class
                 // its saved so assumed relations exist in the DB, so we can just
                 // clear the cache so future queries use the updated info in the DB
                 $otherObject->clear_cache(
-                    $model->get_this_model_name(),
+                    $this->_model->get_this_model_name(),
                     null,
                     true
                 );
             } else {
                 // it's not saved, so it caches relations like this
-                $otherObject->cache($model->get_this_model_name(), $this);
+                $otherObject->cache($this->_model->get_this_model_name(), $this);
             }
         }
         return $otherObject;
@@ -2352,11 +2446,11 @@ abstract class EE_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function _remove_relation_to($otherObjectModelObjectOrID, $relationName, $where_query = array())
+    public function _remove_relation_to($otherObjectModelObjectOrID, $relationName, $where_query = [])
     {
         if ($this->ID()) {
             // if this exists in the DB, save the relation change to the DB too
-            $otherObject = $this->get_model()->remove_relationship_to(
+            $otherObject = $this->_model->remove_relationship_to(
                 $this,
                 $otherObjectModelObjectOrID,
                 $relationName,
@@ -2375,7 +2469,7 @@ abstract class EE_Base_Class
         }
         if ($otherObject instanceof EE_Base_Class) {
             $otherObject->clear_cache(
-                $this->get_model()->get_this_model_name(),
+                $this->_model->get_this_model_name(),
                 $this
             );
         }
@@ -2387,19 +2481,20 @@ abstract class EE_Base_Class
      * Removes ALL the related things for the $relationName.
      *
      * @param string $relationName
-     * @param array  $where_query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
+     * @param array  $where_query_params
      * @return EE_Base_Class
      * @throws ReflectionException
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
+     * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
      */
-    public function _remove_relations($relationName, $where_query_params = array())
+    public function _remove_relations($relationName, $where_query_params = [])
     {
         if ($this->ID()) {
             // if this exists in the DB, save the relation change to the DB too
-            $otherObjects = $this->get_model()->remove_relations(
+            $otherObjects = $this->_model->remove_relations(
                 $this,
                 $relationName,
                 $where_query_params
@@ -2420,7 +2515,7 @@ abstract class EE_Base_Class
         if (is_array($otherObjects)) {
             foreach ($otherObjects as $otherObject) {
                 $otherObject->clear_cache(
-                    $this->get_model()->get_this_model_name(),
+                    $this->_model->get_this_model_name(),
                     $this
                 );
             }
@@ -2430,65 +2525,11 @@ abstract class EE_Base_Class
 
 
     /**
-     * Gets all the related model objects of the specified type. Eg, if the current class if
-     * EE_Event, you could call $this->get_many_related('Registration') to get an array of all the
-     * EE_Registration objects which related to this event. Note: by default, we remove the "default query params"
-     * because we want to get even deleted items etc.
-     *
-     * @param string $relationName key in the model's _model_relations array
-     * @param array  $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
-     * @return EE_Base_Class[]     Results not necessarily indexed by IDs, because some results might not have primary
-     *                             keys or might not be saved yet. Consider using EEM_Base::get_IDs() on these
-     *                             results if you want IDs
-     * @throws ReflectionException
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
-     * @throws EE_Error
-     */
-    public function get_many_related($relationName, $query_params = array())
-    {
-        if ($this->ID()) {
-            // this exists in the DB, so get the related things from either the cache or the DB
-            // if there are query parameters, forget about caching the related model objects.
-            if ($query_params) {
-                $related_model_objects = $this->get_model()->get_all_related(
-                    $this,
-                    $relationName,
-                    $query_params
-                );
-            } else {
-                // did we already cache the result of this query?
-                $cached_results = $this->get_all_from_cache($relationName);
-                if (! $cached_results) {
-                    $related_model_objects = $this->get_model()->get_all_related(
-                        $this,
-                        $relationName,
-                        $query_params
-                    );
-                    // if no query parameters were passed, then we got all the related model objects
-                    // for that relation. We can cache them then.
-                    foreach ($related_model_objects as $related_model_object) {
-                        $this->cache($relationName, $related_model_object);
-                    }
-                } else {
-                    $related_model_objects = $cached_results;
-                }
-            }
-        } else {
-            // this doesn't exist in the DB, so just get the related things from the cache
-            $related_model_objects = $this->get_all_from_cache($relationName);
-        }
-        return $related_model_objects;
-    }
-
-
-    /**
      * Instead of getting the related model objects, simply counts them. Ignores default_where_conditions by default,
      * unless otherwise specified in the $query_params
      *
      * @param string $relation_name  model_name like 'Event', or 'Registration'
-     * @param array  $query_params   @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @param array  $query_params
      * @param string $field_to_count name of field to count by. By default, uses primary key
      * @param bool   $distinct       if we want to only count the distinct values for the column then you can trigger
      *                               that by the setting $distinct to TRUE;
@@ -2498,10 +2539,11 @@ abstract class EE_Base_Class
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
+     * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
-    public function count_related($relation_name, $query_params = array(), $field_to_count = null, $distinct = false)
+    public function count_related($relation_name, $query_params = [], $field_to_count = null, $distinct = false)
     {
-        return $this->get_model()->count_related(
+        return $this->_model->count_related(
             $this,
             $relation_name,
             $query_params,
@@ -2516,7 +2558,7 @@ abstract class EE_Base_Class
      * Note: ignores default_where_conditions by default, unless otherwise specified in the $query_params
      *
      * @param string $relation_name model_name like 'Event', or 'Registration'
-     * @param array  $query_params  @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @param array  $query_params
      * @param string $field_to_sum  name of field to count by.
      *                              By default, uses primary key
      *                              (which doesn't make much sense, so you should probably change it)
@@ -2526,80 +2568,16 @@ abstract class EE_Base_Class
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
+     * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
-    public function sum_related($relation_name, $query_params = array(), $field_to_sum = null)
+    public function sum_related($relation_name, $query_params = [], $field_to_sum = null)
     {
-        return $this->get_model()->sum_related(
+        return $this->_model->sum_related(
             $this,
             $relation_name,
             $query_params,
             $field_to_sum
         );
-    }
-
-
-    /**
-     * Gets the first (ie, one) related model object of the specified type.
-     *
-     * @param string $relationName key in the model's _model_relations array
-     * @param array  $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
-     * @return EE_Base_Class (not an array, a single object)
-     * @throws ReflectionException
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
-     * @throws EE_Error
-     */
-    public function get_first_related($relationName, $query_params = array())
-    {
-        $model = $this->get_model();
-        if ($this->ID()) {// this exists in the DB, get from the cache OR the DB
-            // if they've provided some query parameters, don't bother trying to cache the result
-            // also make sure we're not caching the result of get_first_related
-            // on a relation which should have an array of objects (because the cache might have an array of objects)
-            if (
-                $query_params
-                || ! $model->related_settings_for($relationName)
-                     instanceof
-                     EE_Belongs_To_Relation
-            ) {
-                $related_model_object = $model->get_first_related(
-                    $this,
-                    $relationName,
-                    $query_params
-                );
-            } else {
-                // first, check if we've already cached the result of this query
-                $cached_result = $this->get_one_from_cache($relationName);
-                if (! $cached_result) {
-                    $related_model_object = $model->get_first_related(
-                        $this,
-                        $relationName,
-                        $query_params
-                    );
-                    $this->cache($relationName, $related_model_object);
-                } else {
-                    $related_model_object = $cached_result;
-                }
-            }
-        } else {
-            $related_model_object = null;
-            // this doesn't exist in the Db,
-            // but maybe the relation is of type belongs to, and so the related thing might
-            if ($model->related_settings_for($relationName) instanceof EE_Belongs_To_Relation) {
-                $related_model_object = $model->get_first_related(
-                    $this,
-                    $relationName,
-                    $query_params
-                );
-            }
-            // this doesn't exist in the DB and apparently the thing it belongs to doesn't either,
-            // just get what's cached on this object
-            if (! $related_model_object) {
-                $related_model_object = $this->get_one_from_cache($relationName);
-            }
-        }
-        return $related_model_object;
     }
 
 
@@ -2611,18 +2589,19 @@ abstract class EE_Base_Class
      * If this model object doesn't exist yet in the DB, just removes its related things
      *
      * @param string $relationName
-     * @param array  $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @param array  $query_params
      * @return int how many deleted
      * @throws ReflectionException
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
+     * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
-    public function delete_related($relationName, $query_params = array())
+    public function delete_related($relationName, $query_params = [])
     {
         if ($this->ID()) {
-            $count = $this->get_model()->delete_related(
+            $count = $this->_model->delete_related(
                 $this,
                 $relationName,
                 $query_params
@@ -2643,18 +2622,19 @@ abstract class EE_Base_Class
      * to delete_related(). If this model object doesn't exist in the DB, just remove its related things
      *
      * @param string $relationName
-     * @param array  $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @param array  $query_params
      * @return int how many deleted (including those soft deleted)
      * @throws ReflectionException
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
+     * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
-    public function delete_related_permanently($relationName, $query_params = array())
+    public function delete_related_permanently($relationName, $query_params = [])
     {
         if ($this->ID()) {
-            $count = $this->get_model()->delete_related_permanently(
+            $count = $this->_model->delete_related_permanently(
                 $this,
                 $relationName,
                 $query_params
@@ -2671,63 +2651,12 @@ abstract class EE_Base_Class
      * is_set
      * Just a simple utility function children can use for checking if property exists
      *
-     * @access  public
-     * @param  string $field_name property to check
-     * @return bool                              TRUE if existing,FALSE if not.
+     * @param string $field_name property to check
+     * @return bool              TRUE if existing, FALSE if not.
      */
-    public function is_set($field_name)
+    public function is_set(string $field_name)
     {
         return isset($this->_fields[ $field_name ]);
-    }
-
-
-    /**
-     * Just a simple utility function children can use for checking if property (or properties) exists and throwing an
-     * EE_Error exception if they don't
-     *
-     * @param  mixed (string|array) $properties properties to check
-     * @throws EE_Error
-     * @return bool                              TRUE if existing, throw EE_Error if not.
-     */
-    protected function _property_exists($properties)
-    {
-        foreach ((array) $properties as $property_name) {
-            // first make sure this property exists
-            if (! $this->_fields[ $property_name ]) {
-                throw new EE_Error(
-                    sprintf(
-                        esc_html__(
-                            'Trying to retrieve a non-existent property (%s).  Double check the spelling please',
-                            'event_espresso'
-                        ),
-                        $property_name
-                    )
-                );
-            }
-        }
-        return true;
-    }
-
-
-    /**
-     * This simply returns an array of model fields for this object
-     *
-     * @return array
-     * @throws ReflectionException
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
-     * @throws EE_Error
-     */
-    public function model_field_array()
-    {
-        $fields = $this->get_model()->field_settings(false);
-        $properties = array();
-        // remove prepended underscore
-        foreach ($fields as $field_name => $settings) {
-            $properties[ $field_name ] = $this->get($field_name);
-        }
-        return $properties;
     }
 
 
@@ -2755,13 +2684,13 @@ abstract class EE_Base_Class
      *
      * @param string $methodName name of method which was called on a child of EE_Base_Class, but which
      * @param array  $args       array of original arguments passed to the function
-     * @throws EE_Error
      * @return mixed whatever the plugin which calls add_filter decides
+     * @throws EE_Error
      */
     public function __call($methodName, $args)
     {
         $className = get_class($this);
-        $tagName = "FHEE__{$className}__{$methodName}";
+        $tagName   = "FHEE__{$className}__{$methodName}";
         if (! has_filter($tagName)) {
             throw new EE_Error(
                 sprintf(
@@ -2780,94 +2709,11 @@ abstract class EE_Base_Class
 
 
     /**
-     * Similar to insert_post_meta, adds a record in the Extra_Meta model's table with the given key and value.
-     * A $previous_value can be specified in case there are many meta rows with the same key
-     *
-     * @param string $meta_key
-     * @param mixed  $meta_value
-     * @param mixed  $previous_value
-     * @return bool|int # of records updated (or BOOLEAN if we actually ended up inserting the extra meta row)
-     *                  NOTE: if the values haven't changed, returns 0
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
-     * @throws EE_Error
-     * @throws ReflectionException
-     */
-    public function update_extra_meta($meta_key, $meta_value, $previous_value = null)
-    {
-        $query_params = array(
-            array(
-                'EXM_key'  => $meta_key,
-                'OBJ_ID'   => $this->ID(),
-                'EXM_type' => $this->get_model()->get_this_model_name(),
-            ),
-        );
-        if ($previous_value !== null) {
-            $query_params[0]['EXM_value'] = $meta_value;
-        }
-        $existing_rows_like_that = EEM_Extra_Meta::instance()->get_all($query_params);
-        if (! $existing_rows_like_that) {
-            return $this->add_extra_meta($meta_key, $meta_value);
-        }
-        foreach ($existing_rows_like_that as $existing_row) {
-            $existing_row->save(array('EXM_value' => $meta_value));
-        }
-        return count($existing_rows_like_that);
-    }
-
-
-    /**
-     * Adds a new extra meta record. If $unique is set to TRUE, we'll first double-check
-     * no other extra meta for this model object have the same key. Returns TRUE if the
-     * extra meta row was entered, false if not
-     *
-     * @param string  $meta_key
-     * @param mixed   $meta_value
-     * @param boolean $unique
-     * @return boolean
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
-     * @throws EE_Error
-     * @throws ReflectionException
-     * @throws ReflectionException
-     */
-    public function add_extra_meta($meta_key, $meta_value, $unique = false)
-    {
-        if ($unique) {
-            $existing_extra_meta = EEM_Extra_Meta::instance()->get_one(
-                array(
-                    array(
-                        'EXM_key'  => $meta_key,
-                        'OBJ_ID'   => $this->ID(),
-                        'EXM_type' => $this->get_model()->get_this_model_name(),
-                    ),
-                )
-            );
-            if ($existing_extra_meta) {
-                return false;
-            }
-        }
-        $new_extra_meta = EE_Extra_Meta::new_instance(
-            array(
-                'EXM_key'   => $meta_key,
-                'EXM_value' => $meta_value,
-                'OBJ_ID'    => $this->ID(),
-                'EXM_type'  => $this->get_model()->get_this_model_name(),
-            )
-        );
-        $new_extra_meta->save();
-        return true;
-    }
-
-
-    /**
      * Deletes all the extra meta rows for this record as specified by key. If $meta_value
      * is specified, only deletes extra meta records with that value.
      *
      * @param string $meta_key
-     * @param mixed  $meta_value
+     * @param mixed|null  $meta_value
      * @return int number of extra meta rows deleted
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
@@ -2875,70 +2721,19 @@ abstract class EE_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function delete_extra_meta($meta_key, $meta_value = null)
+    public function delete_extra_meta(string $meta_key, $meta_value = null): int
     {
-        $query_params = array(
-            array(
+        $query_params = [
+            [
                 'EXM_key'  => $meta_key,
                 'OBJ_ID'   => $this->ID(),
-                'EXM_type' => $this->get_model()->get_this_model_name(),
-            ),
-        );
+                'EXM_type' => $this->_model->get_this_model_name(),
+            ],
+        ];
         if ($meta_value !== null) {
             $query_params[0]['EXM_value'] = $meta_value;
         }
         return EEM_Extra_Meta::instance()->delete($query_params);
-    }
-
-
-    /**
-     * Gets the extra meta with the given meta key. If you specify "single" we just return 1, otherwise
-     * an array of everything found. Requires that this model actually have a relation of type EE_Has_Many_Any_Relation.
-     * You can specify $default is case you haven't found the extra meta
-     *
-     * @param string  $meta_key
-     * @param boolean $single
-     * @param mixed   $default if we don't find anything, what should we return?
-     * @return mixed single value if $single; array if ! $single
-     * @throws ReflectionException
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
-     * @throws EE_Error
-     */
-    public function get_extra_meta($meta_key, $single = false, $default = null)
-    {
-        if ($single) {
-            $result = $this->get_first_related(
-                'Extra_Meta',
-                array(array('EXM_key' => $meta_key))
-            );
-            if ($result instanceof EE_Extra_Meta) {
-                return $result->value();
-            }
-        } else {
-            $results = $this->get_many_related(
-                'Extra_Meta',
-                array(array('EXM_key' => $meta_key))
-            );
-            if ($results) {
-                $values = array();
-                foreach ($results as $result) {
-                    if ($result instanceof EE_Extra_Meta) {
-                        $values[ $result->ID() ] = $result->value();
-                    }
-                }
-                return $values;
-            }
-        }
-        // if nothing discovered yet return default.
-        return apply_filters(
-            'FHEE__EE_Base_Class__get_extra_meta__default_value',
-            $default,
-            $meta_key,
-            $single,
-            $this
-        );
     }
 
 
@@ -2962,11 +2757,11 @@ abstract class EE_Base_Class
      */
     public function all_extra_meta_array($one_of_each_key = true)
     {
-        $return_array = array();
+        $return_array = [];
         if ($one_of_each_key) {
             $extra_meta_objs = $this->get_many_related(
                 'Extra_Meta',
-                array('group_by' => 'EXM_key')
+                ['group_by' => 'EXM_key']
             );
             foreach ($extra_meta_objs as $extra_meta_obj) {
                 if ($extra_meta_obj instanceof EE_Extra_Meta) {
@@ -2978,58 +2773,13 @@ abstract class EE_Base_Class
             foreach ($extra_meta_objs as $extra_meta_obj) {
                 if ($extra_meta_obj instanceof EE_Extra_Meta) {
                     if (! isset($return_array[ $extra_meta_obj->key() ])) {
-                        $return_array[ $extra_meta_obj->key() ] = array();
+                        $return_array[ $extra_meta_obj->key() ] = [];
                     }
                     $return_array[ $extra_meta_obj->key() ][ $extra_meta_obj->ID() ] = $extra_meta_obj->value();
                 }
             }
         }
         return $return_array;
-    }
-
-
-    /**
-     * Gets a pretty nice displayable nice for this model object. Often overridden
-     *
-     * @return string
-     * @throws ReflectionException
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
-     * @throws EE_Error
-     */
-    public function name()
-    {
-        // find a field that's not a text field
-        $field_we_can_use = $this->get_model()->get_a_field_of_type('EE_Text_Field_Base');
-        if ($field_we_can_use) {
-            return $this->get($field_we_can_use->get_name());
-        }
-        $first_few_properties = $this->model_field_array();
-        $first_few_properties = array_slice($first_few_properties, 0, 3);
-        $name_parts = array();
-        foreach ($first_few_properties as $name => $value) {
-            $name_parts[] = "$name:$value";
-        }
-        return implode(',', $name_parts);
-    }
-
-
-    /**
-     * in_entity_map
-     * Checks if this model object has been proven to already be in the entity map
-     *
-     * @return boolean
-     * @throws ReflectionException
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
-     * @throws EE_Error
-     */
-    public function in_entity_map()
-    {
-        // well, if we looked, did we find it in the entity map?
-        return $this->ID() && $this->get_model()->get_from_entity_map($this->ID()) === $this;
     }
 
 
@@ -3047,7 +2797,7 @@ abstract class EE_Base_Class
     public function refresh_from_db()
     {
         if ($this->ID() && $this->in_entity_map()) {
-            $this->get_model()->refresh_entity_map_from_db($this->ID());
+            $this->_model->refresh_entity_map_from_db($this->ID());
         } else {
             // if it doesn't have ID, you shouldn't be asking to refresh it from teh database (because its not in the database)
             // if it has an ID but it's not in the map, and you're asking me to refresh it
@@ -3071,108 +2821,9 @@ abstract class EE_Base_Class
 
 
     /**
-     * Change $fields' values to $new_value_sql (which is a string of raw SQL)
-     *
-     * @since 4.9.80.p
-     * @param EE_Model_Field_Base[] $fields
-     * @param string $new_value_sql
-     *      example: 'column_name=123',
-     *      or 'column_name=column_name+1',
-     *      or 'column_name= CASE
-     *          WHEN (`column_name` + `other_column` + 5) <= `yet_another_column`
-     *          THEN `column_name` + 5
-     *          ELSE `column_name`
-     *      END'
-     *      Also updates $field on this model object with the latest value from the database.
-     * @return bool
-     * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws ReflectionException
-     */
-    protected function updateFieldsInDB($fields, $new_value_sql)
-    {
-        // First make sure this model object actually exists in the DB. It would be silly to try to update it in the DB
-        // if it wasn't even there to start off.
-        if (! $this->ID()) {
-            $this->save();
-        }
-        global $wpdb;
-        if (empty($fields)) {
-            throw new InvalidArgumentException(
-                esc_html__(
-                    'EE_Base_Class::updateFieldsInDB was passed an empty array of fields.',
-                    'event_espresso'
-                )
-            );
-        }
-        $first_field = reset($fields);
-        $table_alias = $first_field->get_table_alias();
-        foreach ($fields as $field) {
-            if ($table_alias !== $field->get_table_alias()) {
-                throw new InvalidArgumentException(
-                    sprintf(
-                        esc_html__(
-                            // @codingStandardsIgnoreStart
-                            'EE_Base_Class::updateFieldsInDB was passed fields for different tables ("%1$s" and "%2$s"), which is not supported. Instead, please call the method multiple times.',
-                            // @codingStandardsIgnoreEnd
-                            'event_espresso'
-                        ),
-                        $table_alias,
-                        $field->get_table_alias()
-                    )
-                );
-            }
-        }
-        // Ok the fields are now known to all be for the same table. Proceed with creating the SQL to update it.
-        $table_obj = $this->get_model()->get_table_obj_by_alias($table_alias);
-        $table_pk_value = $this->ID();
-        $table_name = $table_obj->get_table_name();
-        if ($table_obj instanceof EE_Secondary_Table) {
-            $table_pk_field_name = $table_obj->get_fk_on_table();
-        } else {
-            $table_pk_field_name = $table_obj->get_pk_column();
-        }
-
-        $query =
-            "UPDATE `{$table_name}`
-            SET "
-            . $new_value_sql
-            . $wpdb->prepare(
-                "
-            WHERE `{$table_pk_field_name}` = %d;",
-                $table_pk_value
-            );
-        $result = $wpdb->query($query);
-        foreach ($fields as $field) {
-            // If it was successful, we'd like to know the new value.
-            // If it failed, we'd also like to know the new value.
-            $new_value = $this->get_model()->get_var(
-                $this->get_model()->alter_query_params_to_restrict_by_ID(
-                    $this->get_model()->get_index_primary_key_string(
-                        $this->model_field_array()
-                    ),
-                    array(
-                        'default_where_conditions' => 'minimum',
-                    )
-                ),
-                $field->get_name()
-            );
-            $this->set_from_db(
-                $field->get_name(),
-                $new_value
-            );
-        }
-        return (bool) $result;
-    }
-
-
-    /**
      * Nudges $field_name's value by $quantity, without any conditionals (in comparison to bumpConditionally()).
      * Does not allow negative values, however.
      *
-     * @since 4.9.80.p
      * @param array $fields_n_quantities keys are the field names, and values are the amount by which to bump them
      *                                   (positive or negative). One important gotcha: all these values must be
      *                                   on the same table (eg don't pass in one field for the posts table and
@@ -3183,6 +2834,7 @@ abstract class EE_Base_Class
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
+     * @since 4.9.80.p
      */
     public function adjustNumericFieldsInDb(array $fields_n_quantities)
     {
@@ -3191,11 +2843,11 @@ abstract class EE_Base_Class
             // No fields to update? Well sure, we updated them to that value just fine.
             return true;
         }
-        $fields = [];
+        $fields             = [];
         $set_sql_statements = [];
         foreach ($fields_n_quantities as $field_name => $quantity) {
-            $field = $this->get_model()->field_settings_for($field_name, true);
-            $fields[] = $field;
+            $field       = $this->_model->field_settings_for($field_name);
+            $fields[]    = $field;
             $column_name = $field->get_table_column();
 
             $abs_qty = absint($quantity);
@@ -3225,13 +2877,131 @@ abstract class EE_Base_Class
 
 
     /**
+     * Change $fields' values to $new_value_sql (which is a string of raw SQL)
+     *
+     * @param EE_Model_Field_Base[] $fields
+     * @param string                $new_value_sql
+     *          example: 'column_name=123',
+     *          or 'column_name=column_name+1',
+     *          or 'column_name= CASE
+     *          WHEN (`column_name` + `other_column` + 5) <= `yet_another_column`
+     *          THEN `column_name` + 5
+     *          ELSE `column_name`
+     *          END'
+     *          Also updates $field on this model object with the latest value from the database.
+     * @return bool
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @since 4.9.80.p
+     */
+    protected function updateFieldsInDB($fields, $new_value_sql)
+    {
+        // First make sure this model object actually exists in the DB. It would be silly to try to update it in the DB
+        // if it wasn't even there to start off.
+        if (! $this->ID()) {
+            $this->save();
+        }
+        global $wpdb;
+        if (empty($fields)) {
+            throw new InvalidArgumentException(
+                esc_html__(
+                    'EE_Base_Class::updateFieldsInDB was passed an empty array of fields.',
+                    'event_espresso'
+                )
+            );
+        }
+        $first_field = reset($fields);
+        $table_alias = $first_field->get_table_alias();
+        foreach ($fields as $field) {
+            if ($table_alias !== $field->get_table_alias()) {
+                throw new InvalidArgumentException(
+                    sprintf(
+                        esc_html__(
+                        // @codingStandardsIgnoreStart
+                            'EE_Base_Class::updateFieldsInDB was passed fields for different tables ("%1$s" and "%2$s"), which is not supported. Instead, please call the method multiple times.',
+                            // @codingStandardsIgnoreEnd
+                            'event_espresso'
+                        ),
+                        $table_alias,
+                        $field->get_table_alias()
+                    )
+                );
+            }
+        }
+        // Ok the fields are now known to all be for the same table. Proceed with creating the SQL to update it.
+        $table_obj      = $this->_model->get_table_obj_by_alias($table_alias);
+        $table_pk_value = $this->ID();
+        $table_name     = $table_obj->get_table_name();
+        if ($table_obj instanceof EE_Secondary_Table) {
+            $table_pk_field_name = $table_obj->get_fk_on_table();
+        } else {
+            $table_pk_field_name = $table_obj->get_pk_column();
+        }
+
+        $query  =
+            "UPDATE `{$table_name}`
+            SET "
+            . $new_value_sql
+            . $wpdb->prepare(
+                "
+            WHERE `{$table_pk_field_name}` = %d;",
+                $table_pk_value
+            );
+        $result = $wpdb->query($query);
+        foreach ($fields as $field) {
+            // If it was successful, we'd like to know the new value.
+            // If it failed, we'd also like to know the new value.
+            $new_value = $this->_model->get_var(
+                $this->_model->alter_query_params_to_restrict_by_ID(
+                    $this->_model->get_index_primary_key_string(
+                        $this->model_field_array()
+                    ),
+                    [
+                        'default_where_conditions' => 'minimum',
+                    ]
+                ),
+                $field->get_name()
+            );
+            $this->set_from_db(
+                $field->get_name(),
+                $new_value
+            );
+        }
+        return (bool) $result;
+    }
+
+
+    /**
+     * This simply returns an array of model fields for this object
+     *
+     * @return array
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     */
+    public function model_field_array(): array
+    {
+        $fields     = $this->_model->field_settings();
+        $properties = [];
+        // remove prepended underscore
+        foreach ($fields as $field_name => $settings) {
+            $properties[ $field_name ] = $this->get($field_name);
+        }
+        return $properties;
+    }
+
+
+    /**
      * Increases the value of the field $field_name_to_bump by $quantity, but only if the values of
      * $field_name_to_bump plus $field_name_affecting_total and $quantity won't exceed $limit_field_name's value.
      * For example, this is useful when bumping the value of TKT_reserved, TKT_sold, DTT_reserved or DTT_sold.
      * Returns true if the value was successfully bumped, and updates the value on this model object.
      * Otherwise returns false.
      *
-     * @since 4.9.80.p
      * @param string $field_name_to_bump
      * @param string $field_name_affecting_total
      * @param string $limit_field_name
@@ -3242,17 +3012,22 @@ abstract class EE_Base_Class
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
+     * @since 4.9.80.p
      */
-    public function incrementFieldConditionallyInDb($field_name_to_bump, $field_name_affecting_total, $limit_field_name, $quantity)
-    {
+    public function incrementFieldConditionallyInDb(
+        $field_name_to_bump,
+        $field_name_affecting_total,
+        $limit_field_name,
+        $quantity
+    ) {
         global $wpdb;
-        $field = $this->get_model()->field_settings_for($field_name_to_bump, true);
+        $field       = $this->_model->field_settings_for($field_name_to_bump);
         $column_name = $field->get_table_column();
 
-        $field_affecting_total = $this->get_model()->field_settings_for($field_name_affecting_total, true);
+        $field_affecting_total  = $this->_model->field_settings_for($field_name_affecting_total);
         $column_affecting_total = $field_affecting_total->get_table_column();
 
-        $limiting_field = $this->get_model()->field_settings_for($limit_field_name, true);
+        $limiting_field  = $this->_model->field_settings_for($limit_field_name);
         $limiting_column = $limiting_field->get_table_column();
         return $this->updateFieldsInDB(
             [$field],
@@ -3285,6 +3060,32 @@ abstract class EE_Base_Class
             EE_Error::add_error($e->getMessage(), __FILE__, __FUNCTION__, __LINE__);
             return '';
         }
+    }
+
+
+    /**
+     * Gets a pretty nice displayable nice for this model object. Often overridden
+     *
+     * @return string
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     */
+    public function name()
+    {
+        // find a field that's not a text field
+        $field_we_can_use = $this->_model->get_a_field_of_type('EE_Text_Field_Base');
+        if ($field_we_can_use) {
+            return $this->get($field_we_can_use->get_name());
+        }
+        $first_few_properties = $this->model_field_array();
+        $first_few_properties = array_slice($first_few_properties, 0, 3);
+        $name_parts           = [];
+        foreach ($first_few_properties as $name => $value) {
+            $name_parts[] = "$name:$value";
+        }
+        return implode(',', $name_parts);
     }
 
 
@@ -3322,10 +3123,9 @@ abstract class EE_Base_Class
      */
     public function __sleep()
     {
-        $model = $this->get_model();
-        foreach ($model->relation_settings() as $relation_name => $relation_obj) {
+        foreach ($this->_model->relation_settings() as $relation_name => $relation_obj) {
             if ($relation_obj instanceof EE_Belongs_To_Relation) {
-                $classname = 'EE_' . $model->get_this_model_name();
+                $classname = 'EE_' . $this->_model->get_this_model_name();
                 if (
                     $this->get_one_from_cache($relation_name) instanceof $classname
                     && $this->get_one_from_cache($relation_name)->ID()
@@ -3337,8 +3137,8 @@ abstract class EE_Base_Class
                 }
             }
         }
-        $this->_props_n_values_provided_in_constructor = array();
-        $properties_to_serialize = get_object_vars($this);
+        $this->_props_n_values_provided_in_constructor = [];
+        $properties_to_serialize                       = get_object_vars($this);
         // don't serialize the model. It's big and that risks recursion
         unset($properties_to_serialize['_model']);
         return array_keys($properties_to_serialize);
@@ -3350,9 +3150,13 @@ abstract class EE_Base_Class
      * PLZ NOTE: this will reset the array to whatever fields values were present prior to serialization,
      * and therefore should NOT be used to determine if state change has occurred since initial construction.
      * At best, you would only be able to detect if state change has occurred during THIS request.
+     *
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function __wakeup()
     {
+        $this->_model = $this->get_model();
         $this->_props_n_values_provided_in_constructor = $this->_fields;
     }
 
@@ -3367,6 +3171,240 @@ abstract class EE_Base_Class
         foreach ($this->_fields as $field => $value) {
             if ($value instanceof DateTime) {
                 $this->_fields[ $field ] = clone $value;
+            }
+        }
+    }
+
+
+    /**
+     * Ensures that this related thing is a model object.
+     *
+     * @param mixed  $object_or_id EE_base_Class/int/string either a related model object, or its ID
+     * @param string $model_name   name of the related thing, eg 'Attendee',
+     * @return EE_Base_Class
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     */
+    protected function ensure_related_thing_is_model_obj($object_or_id, $model_name)
+    {
+        $other_model_instance = self::_get_model_instance_with_name(
+            self::_get_model_classname($model_name),
+            $this->_timezone
+        );
+        return $other_model_instance->ensure_is_obj($object_or_id);
+    }
+
+
+    /**
+     * sets the time on a datetime property
+     *
+     * @param string|Datetime $time       a valid time string for php datetime functions (or DateTime object)
+     * @param string          $field_name the name of the field the time is being set on (must match a
+     *                                    EE_Datetime_Field)
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     */
+    protected function _set_time_for($time, string $field_name)
+    {
+        $this->_set_date_time('T', $time, $field_name);
+    }
+
+
+    /**
+     * This takes care of setting a date or time independently on a given model object property. This method also
+     * verifies that the given field name matches a model object property and is for a EE_Datetime_Field field
+     *
+     * @param string          $what           "T" for time, 'B' for both, 'D' for Date.
+     * @param string|DateTime $datetime_value A valid Date or Time string (or DateTime object)
+     * @param string          $field_name     the name of the field the date OR time is being set on (must match a
+     *                                        EE_Datetime_Field property)
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     */
+    protected function _set_date_time($what, $datetime_value, string $field_name)
+    {
+        $field = $this->_get_dtt_field_settings($field_name);
+        $field->set_timezone($this->_timezone);
+        $field->set_date_format($this->_dt_frmt);
+        $field->set_time_format($this->_tm_frmt);
+        $what = in_array($what, ['T', 'D', 'B']) ? $what : 'T';
+        switch ($what) {
+            case 'T':
+                $this->_fields[ $field_name ] = $field->prepare_for_set_with_new_time(
+                    $datetime_value,
+                    $this->_fields[ $field_name ]
+                );
+                $this->_has_changes           = true;
+                break;
+            case 'D':
+                $this->_fields[ $field_name ] = $field->prepare_for_set_with_new_date(
+                    $datetime_value,
+                    $this->_fields[ $field_name ]
+                );
+                $this->_has_changes           = true;
+                break;
+            case 'B':
+                $this->_fields[ $field_name ] = $field->prepare_for_set($datetime_value);
+                $this->_has_changes           = true;
+                break;
+        }
+        $this->_clear_cached_property($field_name);
+    }
+
+
+    /**
+     * This method validates whether the given field name is a valid field on the model object as well as it is of a
+     * type EE_Datetime_Field.  On success there will be returned the field settings.  On fail an EE_Error exception is
+     * thrown.
+     *
+     * @param string string $field_name The field name being checked
+     * @return EE_Datetime_Field
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     */
+    protected function _get_dtt_field_settings($field_name)
+    {
+        $field = $this->_model->field_settings_for($field_name);
+        // check if field is dtt
+        if ($field instanceof EE_Datetime_Field) {
+            return $field;
+        }
+        throw new EE_Error(
+            sprintf(
+                esc_html__(
+                    'The field name "%s" has been requested for the EE_Base_Class datetime functions and it is not a valid EE_Datetime_Field.  Please check the spelling of the field and make sure it has been setup as a EE_Datetime_Field in the %s model constructor',
+                    'event_espresso'
+                ),
+                $field_name,
+                self::_get_model_classname(get_class($this))
+            )
+        );
+    }
+
+
+    /**
+     * sets the date on a datetime property
+     *
+     * @param string|DateTime $date       a valid date string for php datetime functions ( or DateTime object)
+     * @param string          $field_name the name of the field the date is being set on (must match a
+     *                                    EE_Datetime_Field)
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     */
+    protected function _set_date_for($date, string $field_name)
+    {
+        $this->_set_date_time('D', $date, $field_name);
+    }
+
+
+    /**
+     * Just a simple utility function children can use for checking if property (or properties) exists and throwing an
+     * EE_Error exception if they don't
+     *
+     * @param mixed (string|array) $properties properties to check
+     * @return bool                              TRUE if existing, throw EE_Error if not.
+     * @throws EE_Error
+     */
+    protected function _property_exists($properties)
+    {
+        foreach ((array) $properties as $property_name) {
+            // first make sure this property exists
+            if (! $this->_fields[ $property_name ]) {
+                throw new EE_Error(
+                    sprintf(
+                        esc_html__(
+                            'Trying to retrieve a non-existent property (%s).  Double check the spelling please',
+                            'event_espresso'
+                        ),
+                        $property_name
+                    )
+                );
+            }
+        }
+        return true;
+    }
+
+
+    /**
+     * @param array $date_formats
+     * @since $VID:$
+     */
+    private function setDateAndTimeFormats(array $date_formats)
+    {
+        if (! empty($date_formats) && is_array($date_formats)) {
+            [$this->_dt_frmt, $this->_tm_frmt] = $date_formats;
+        } else {
+            // set default formats for date and time
+            $this->_dt_frmt = (string) get_option('date_format', 'Y-m-d');
+            $this->_tm_frmt = (string) get_option('time_format', 'g:i a');
+        }
+    }
+
+
+    /**
+     * @param array $model_fields
+     * @param array $fieldValues
+     * @throws EE_Error
+     * @since $VID:$
+     */
+    private function validateFieldValues(array $model_fields, array $fieldValues)
+    {
+        // verify client code has not passed any invalid field names
+        foreach ($fieldValues as $field_name => $field_value) {
+            if (! isset($model_fields[ $field_name ])) {
+                throw new EE_Error(
+                    sprintf(
+                        esc_html__(
+                            'Invalid field (%s) passed to constructor of %s. Allowed fields are :%s',
+                            'event_espresso'
+                        ),
+                        $field_name,
+                        get_class($this),
+                        implode(', ', array_keys($model_fields))
+                    )
+                );
+            }
+        }
+    }
+
+
+    /**
+     * @param array $model_fields
+     * @param array $fieldValues
+     * @param bool  $set_from_db
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since $VID:$
+     */
+    private function setFieldValues(array $model_fields, array $fieldValues, bool $set_from_db)
+    {
+        foreach ($model_fields as $fieldName => $field) {
+            // if db model is instantiating
+            if ($set_from_db) {
+                // client code has indicated these field values are from the database
+                $this->set_from_db(
+                    $fieldName,
+                    $fieldValues[ $fieldName ] ?? null
+                );
+            } else {
+                // we're constructing a brand new instance of the model object.
+                // Generally, this means we'll need to do more field validation
+                $this->set(
+                    $fieldName,
+                    $fieldValues[ $fieldName ] ?? null,
+                    true
+                );
             }
         }
     }

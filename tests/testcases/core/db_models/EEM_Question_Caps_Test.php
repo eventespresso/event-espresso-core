@@ -31,6 +31,7 @@ class EEM_Question_Caps_Test extends EE_UnitTestCase{
 	 * and then you can edit others if you have that cap
 	 */
 	function test_get_all__caps__edit() {
+        $this->loadFactories();
 		//remove all questions currently existing
 		EEM_Question::instance()->delete_permanently( EEM_Question::instance()->alter_query_params_so_deleted_and_undeleted_items_included(), false );
 		$this->assertEquals( 0, EEM_Question::instance()->count( EEM_Question::instance()->alter_query_params_so_deleted_and_undeleted_items_included() ) );

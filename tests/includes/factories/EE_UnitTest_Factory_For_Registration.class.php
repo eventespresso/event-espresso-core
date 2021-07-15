@@ -180,7 +180,7 @@ class EE_UnitTest_Factory_For_Registration extends WP_UnitTest_Factory_For_Thing
             $timezone = $args['timezone'];
             unset($args['timezone']);
         } else {
-            $timezone = null;
+            $timezone = '';
         }
         //date_formats?
         if (isset($args['formats']) && is_array($args['formats'])) {
@@ -197,10 +197,11 @@ class EE_UnitTest_Factory_For_Registration extends WP_UnitTest_Factory_For_Thing
         //only run finalize if $chained because it requires EE_Transaction
         if ($this->_chained) {
             $att_nmbr++;
-            $registration->set_reg_url_link(new RegUrlLink($att_nmbr, md5('ticket' . $registrationID . time())));
+            $reg_url_link = new RegUrlLink($att_nmbr, md5('ticket' . $registrationID . time()));
+            $registration->set_reg_url_link($reg_url_link);
             $registration->set_reg_code(
                 new RegCode(
-                    RegUrlLink::fromRegistration($registration),
+                    $reg_url_link,
                     $registration->transaction(),
                     $registration->ticket()
                 )

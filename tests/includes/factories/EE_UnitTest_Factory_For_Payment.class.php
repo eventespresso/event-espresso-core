@@ -35,7 +35,7 @@ class EE_UnitTest_Factory_For_Payment extends WP_UnitTest_Factory_For_Thing {
 			$timezone = $args[ 'timezone' ];
 			unset( $args[ 'timezone' ] );
 		} else {
-			$timezone = null;
+			$timezone = '';
 		}
 		//date_formats?
 		if ( isset( $args[ 'formats' ] ) && is_array( $args[ 'formats' ] ) ) {

@@ -19,16 +19,17 @@ interface EEI_Base
      *
      * @return array
      */
-    public function model_field_array();
+    public function model_field_array(): array;
 
 
 
     /**
      * Saves the thing to the database and returns success (or an ID)
      *
-     * @return boolean success on insert; or int on update (ID of newly inserted thing)
+     * @param array $set_cols_n_values
+     * @return boolean|int success on insert; or int on update (ID of newly inserted thing)
      */
-    public function save();
+    public function save(array $set_cols_n_values = []);
 
 
 
@@ -36,13 +37,13 @@ interface EEI_Base
      * Similar to insert_post_meta, adds a record in the Extra_Meta model's table with the given key and value.
      * A $previous_value can be specified in case there are many meta rows with the same key
      *
-     * @param string $meta_key
-     * @param string $meta_value
-     * @param string $previous_value
-     * @return int records updated (or BOOLEAN if we actually ended up inserting the extra meta row)
+     * @param string      $meta_key
+     * @param mixed      $meta_value
+     * @param mixed|null $previous_value
+     * @return bool|int records updated (or BOOLEAN if we actually ended up inserting the extra meta row)
      * NOTE: if the values haven't changed, returns 0
      */
-    public function update_extra_meta($meta_key, $meta_value, $previous_value = null);
+    public function update_extra_meta(string $meta_key, $meta_value, $previous_value = null);
 
 
 
@@ -52,11 +53,11 @@ interface EEI_Base
      * extra meta row was entered, false if not
      *
      * @param string  $meta_key
-     * @param string  $meta_value
+     * @param mixed  $meta_value
      * @param boolean $unique
      * @return boolean
      */
-    public function add_extra_meta($meta_key, $meta_value, $unique = false);
+    public function add_extra_meta(string $meta_key, $meta_value, bool $unique = false): bool;
 
 
 
@@ -64,11 +65,11 @@ interface EEI_Base
      * Deletes all the extra meta rows for this record as specified by key. If $meta_value
      * is specified, only deletes extra meta records with that value.
      *
-     * @param string $meta_key
-     * @param string $meta_value
+     * @param string      $meta_key
+     * @param mixed|null $meta_value
      * @return int number of extra meta rows deleted
      */
-    public function delete_extra_meta($meta_key, $meta_value = null);
+    public function delete_extra_meta(string $meta_key, $meta_value = null): int;
 
 
 
@@ -82,7 +83,7 @@ interface EEI_Base
      * @param mixed   $default if we don't find anything, what should we return?
      * @return mixed single value if $single; array if ! $single
      */
-    public function get_extra_meta($meta_key, $single = false, $default = null);
+    public function get_extra_meta(string $meta_key, bool $single = false, $default = null);
 
 
 
@@ -96,7 +97,7 @@ interface EEI_Base
      *                                (in cases where the same property may be used for different outputs
      *                                - i.e. datetime, money etc.)
      * @return mixed
-     * @throws \EE_Error
+     * @throws EE_Error
      */
-    public function get_pretty($field_name, $extra_cache_ref);
+    public function get_pretty(string $field_name, string $extra_cache_ref = '');
 }

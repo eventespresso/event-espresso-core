@@ -125,7 +125,7 @@ class EE_Belongs_To_Relation extends EE_Model_Relation_Base
         if ($values_already_prepared_by_model_object !== false) {
             EE_Error::doing_it_wrong(
                 'EE_Model_Relation_Base::get_all_related',
-                __('The argument $values_already_prepared_by_model_object is no longer used.', 'event_espresso'),
+                esc_html__('The argument $values_already_prepared_by_model_object is no longer used.', 'event_espresso'),
                 '4.8.1'
             );
         }

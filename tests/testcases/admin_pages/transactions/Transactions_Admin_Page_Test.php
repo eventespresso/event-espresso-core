@@ -42,6 +42,7 @@ class Transactions_Admin_Page_Test extends EE_UnitTestCase
     {
         parent::setUp();
         $this->delayedAdminPageMocks('transactions');
+        $this->loadFactories();
     }
 
 

@@ -31,6 +31,7 @@ class EEM_Term_Caps_Test extends EE_UnitTestCase{
 
 	public function setUp(){
 		parent::setUp();
+        $this->loadFactories();
 		$this->event_term = $this->new_model_obj_with_dependencies('Term' );
 		$this->new_model_obj_with_dependencies( 'Term_Taxonomy', array(
 			'term_id' => $this->event_term->ID(),

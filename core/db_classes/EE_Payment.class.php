@@ -19,7 +19,7 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment
      * @return EE_Payment
      * @throws \EE_Error
      */
-    public static function new_instance($props_n_values = array(), $timezone = null, $date_formats = array())
+    public static function new_instance($props_n_values = array(), $timezone = '', $date_formats = array())
     {
         $has_object = parent::_check_for_object($props_n_values, __CLASS__, $timezone, $date_formats);
         return $has_object ? $has_object : new self($props_n_values, false, $timezone, $date_formats);
@@ -33,7 +33,7 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment
      * @return EE_Payment
      * @throws \EE_Error
      */
-    public static function new_instance_from_db($props_n_values = array(), $timezone = null)
+    public static function new_instance_from_db($props_n_values = array(), $timezone = '')
     {
         return new self($props_n_values, true, $timezone);
     }

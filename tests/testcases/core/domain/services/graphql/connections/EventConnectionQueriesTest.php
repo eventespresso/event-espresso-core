@@ -30,6 +30,7 @@ class EventConnectionQueriesTest extends BaseQueriesTest
 
     public function createPostObject($args)
     {
+        $this->loadFactories();
 
         /**
          * Set up the $defaults

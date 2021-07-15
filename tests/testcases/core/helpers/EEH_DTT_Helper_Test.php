@@ -42,7 +42,7 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase
         $nice_name = 'Start Date',
         $nullable = false,
         $default_value = '',
-        $timezone = null,
+        $timezone = '',
         $date_format = null,
         $time_format = null,
         $pretty_date_format = null,
@@ -68,7 +68,6 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase
      */
     public function test_get_valid_timezone_string()
     {
-
         $original_timezone_string = get_option('timezone_string');
         // TEST 1: retrieval of WP timezone string
         $expected_timezone_string = 'UTC';
@@ -82,7 +81,10 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase
         $this->assertEquals($timezone_string, $expected_timezone_string);
         // TEST 3: bogus timezone string
         try {
-            $timezone_string = EEH_DTT_Helper::get_valid_timezone_string('me got funky pants and like to dance');
+            $timezone_string = EEH_DTT_Helper::get_valid_timezone_string(
+                'me got funky pants and like to dance',
+                true
+            );
             $this->fail(
                 sprintf(
                     __(

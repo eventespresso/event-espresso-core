@@ -43,6 +43,7 @@ class EE_Messages_Generator_Test extends EE_UnitTestCase
      */
     function test_generate_only_incomplete_messages()
     {
+        $this->loadFactories();
         $message_processor = EE_Registry::instance()->load_lib('Messages_Processor');
         //make sure there is nothing in the queue
         $this->assertFalse($message_processor->batch_generate_from_queue(array(), true));

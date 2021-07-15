@@ -24,6 +24,7 @@ class BaseQueriesTest extends GraphQLUnitTestCase
         if (!$this->model_name) {
             return;
         }
+        $this->loadFactories();
 
         $this->admin      = $this->factory()->user->create(
             [

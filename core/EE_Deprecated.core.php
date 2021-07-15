@@ -385,7 +385,7 @@ function ee_deprecated_update_attendee_registration_form_old($admin_page)
     foreach ($qstns as $QST_ID => $qstn) {
         // if $qstn isn't an array then it doesn't already have an answer, so let's create the answer
         if (! is_array($qstn)) {
-            $success = $this->_save_new_answer($REG_ID, $QST_ID, $qstn);
+            $success = EE_Answer::new_instance([ 'QST_ID' => $QST_ID, 'REG_ID' => $REG_ID ]);
             continue;
         }
 
@@ -463,9 +463,7 @@ function ee_deprecated_reg_questions_meta_box_old($do_default_action, $admin_pag
 
     $question_groups = EEM_Event::instance()->assemble_array_of_groups_questions_and_options(
         $registration,
-        $registration->get(
-            'EVT_ID'
-        )
+        $registration->get('EVT_ID')
     );
 
     EE_Registry::instance()->load_helper('Form_Fields');
