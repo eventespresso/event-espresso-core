@@ -1246,10 +1246,11 @@ class EED_Single_Page_Checkout extends EED_Module
                     // clear out any old data in case this step is being run again
                     $this->checkout->current_step->set_valid_data(array());
                     // capture submitted form data
+                    $request_data = $this->request->requestParams();
                     $this->checkout->current_step->reg_form->receive_form_submission(
                         (array) apply_filters(
                             'FHEE__Single_Page_Checkout___check_form_submission__request_params',
-                            $this->request->requestParams(),
+                            $request_data,
                             $this->checkout
                         )
                     );
