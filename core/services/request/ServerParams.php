@@ -21,7 +21,7 @@ class ServerParams
     protected $sanitizer;
 
     /**
-     * $_SERVER parameters
+     * sanitized $_SERVER parameters
      *
      * @var array
      */
