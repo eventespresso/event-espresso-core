@@ -442,6 +442,9 @@ class EE_Dependency_Map
     protected function _register_core_dependencies()
     {
         $this->_dependency_map = [
+            'EE_Admin'                                                                                          => [
+                'EventEspresso\core\services\request\Request'     => EE_Dependency_Map::load_from_cache,
+            ],
             'EE_Request_Handler'                                                                                          => [
                 'EventEspresso\core\services\request\CurrentPage' => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\request\Request'     => EE_Dependency_Map::load_from_cache,
