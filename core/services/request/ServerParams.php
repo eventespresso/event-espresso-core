@@ -76,11 +76,21 @@ class ServerParams
 
 
     /**
-     * @return array
+     * @param string $key
+     * @return array|int|float|string
      */
     public function getServerParam($key)
     {
-        return isset($this->server[ $key ]) ? $this->server[ $key ] : null;
+        return $this->serverParamIsSet($key) ? $this->server[ $key ] : null;
+    }
+
+
+    /**
+     * @return bool
+     */
+    public function serverParamIsSet($key)
+    {
+        return isset($this->server[ $key ]);
     }
 
 

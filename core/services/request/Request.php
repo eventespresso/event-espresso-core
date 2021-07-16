@@ -5,8 +5,6 @@ namespace EventEspresso\core\services\request;
 use EventEspresso\core\domain\services\contexts\RequestTypeContextCheckerInterface;
 use EventEspresso\core\interfaces\InterminableInterface;
 use EventEspresso\core\interfaces\ReservedInstanceInterface;
-use EventEspresso\core\services\request\sanitizers\RequestSanitizer;
-use EventEspresso\core\services\request\sanitizers\ServerSanitizer;
 
 /**
  * Class Request
@@ -118,11 +116,21 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
 
     /**
      * @param string $key
-     * @return array
+     * @return array|int|float|string
      */
     public function getServerParam($key)
     {
         return $this->server_params->getServerParam($key);
+    }
+
+
+    /**
+     * @param string $key
+     * @return bool
+     */
+    public function serverParamIsSet($key)
+    {
+        return $this->server_params->serverParamIsSet($key);
     }
 
 
@@ -136,7 +144,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
 
 
     /**
-     * returns contents of $_REQUEST
+     * returns sanitized contents of $_REQUEST
      *
      * @return array
      */
@@ -150,7 +158,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
      * @param string     $key
      * @param mixed|null $value
      * @param bool       $override_ee
-     * @return    void
+     * @return void
      */
     public function setRequestParam($key, $value, $override_ee = false)
     {
@@ -159,13 +167,13 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
 
 
     /**
-     * returns   the value for a request param if the given key exists
+     * returns sanitized value for a request param if the given key exists
      *
      * @param string     $key
      * @param mixed|null $default
      * @param string     $type      the expected data type for the parameter's value, ie: string, int, bool, etc
      * @param string     $delimiter for CSV type strings that should be returned as an array
-     * @return mixed
+     * @return array|bool|float|int|string
      */
     public function getRequestParam($key, $default = null, $type = 'string', $delimiter = ',')
     {
@@ -187,7 +195,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
 
     /**
      * check if a request parameter exists whose key that matches the supplied wildcard pattern
-     * and return the value for the first match found
+     * and return the sanitized value for the first match found
      * wildcards can be either of the following:
      *      ? to represent a single character of any type
      *      * to represent one or more characters of any type
@@ -196,7 +204,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
      * @param mixed|null $default
      * @param string     $type      the expected data type for the parameter's value, ie: string, int, bool, etc
      * @param string     $delimiter for CSV type strings that should be returned as an array
-     * @return mixed
+     * @return array|bool|float|int|string
      */
     public function getMatch($pattern, $default = null, $type = 'string', $delimiter = ',')
     {
