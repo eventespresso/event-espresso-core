@@ -185,7 +185,7 @@ class EE_Log
 
     /**
      * write_debug
-     * writes the contents of the current request's $_GET and $_POST arrays to a log file.
+     * writes the contents of the current request's data to a log file.
      * previous entries are overwritten
      */
     public function write_debug()

@@ -587,7 +587,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
 
 
     /**
-     * This is run on all WordPress autosaves AFTER the autosave is complete and sends along a $_POST object (available
+     * This is run on all WordPress autosaves AFTER the autosave is complete and sends along a post object (available
      * in $this->_req_data) containing: post_ID of the saved post autosavenonce for the saved post We'll do the check
      * for the nonce in here, but then this method looks for two things:
      * 1. Execute a method (if exists) matching 'ee_autosave_' and appended with the given route. OR

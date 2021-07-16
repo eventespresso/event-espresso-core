@@ -96,7 +96,7 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base
 
 
     /**
-     * This simply adds on any messenger/message type filters that may be present in the $_POST global
+     * This simply adds on any messenger/message type filters that may be present in the request
      * @param  array  $_where any existing where conditions to append these to.
      * @return array          original where conditions or original with additional filters.
      */

@@ -291,7 +291,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      * After the form section is initially created, call this to sanitize the data in the submission
      * which relates to this form section, validate it, and set it as properties on the form.
      *
-     * @param array|null $req_data should usually be $_POST (the default).
+     * @param array|null $req_data should usually be post data (the default).
      *                             However, you CAN supply a different array.
      *                             Consider using set_defaults() instead however.
      *                             (If you rendered the form in the page using echo $form_x->get_html()
@@ -924,7 +924,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
     /**
      * Sanitizes all the data and sets the sanitized value of each field
      *
-     * @param array $req_data like $_POST
+     * @param array $req_data
      * @return void
      * @throws EE_Error
      */
