@@ -1,13 +1,15 @@
 <?php
 
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\RequestInterface;
+
 /**
  * EEH_URL helper
  * Helper class for URL-related PHP functions
  *
- * @package               Event Espresso
- * @subpackage            /helper/EEH_URL.helper.php
- * @author                Brent Christensen, Michael Nelson
- * ------------------------------------------------------------------------
+ * @package     Event Espresso
+ * @subpackage  /helper/EEH_URL.helper.php
+ * @author      Brent Christensen, Michael Nelson
  */
 class EEH_URL
 {
@@ -22,31 +24,33 @@ class EEH_URL
      * @param bool   $exclude_nonce If true then the nonce will be excluded from the generated url.
      * @return string
      */
-    public static function add_query_args_and_nonce($args = array(), $url = '', $exclude_nonce = false)
+    public static function add_query_args_and_nonce($args = [], $url = '', $exclude_nonce = false)
     {
         // check that an action exists and add nonce
         if (! $exclude_nonce) {
             if (isset($args['action']) && ! empty($args['action'])) {
                 $args = array_merge(
                     $args,
-                    array(
-                        $args['action'] . '_nonce' => wp_create_nonce($args['action'] . '_nonce')
-                    )
+                    [
+                        $args['action'] . '_nonce' => wp_create_nonce($args['action'] . '_nonce'),
+                    ]
                 );
             } else {
                 $args = array_merge(
                     $args,
-                    array(
-                        'action' => 'default', 'default_nonce' => wp_create_nonce('default_nonce')
-                    )
+                    [
+                        'action'        => 'default',
+                        'default_nonce' => wp_create_nonce('default_nonce'),
+                    ]
                 );
             }
         }
 
+        $action  = EEH_URL::getRequest()->getRequestParam('action');
         // finally, let's always add a return address (if present) :)
-        $args = ! empty($_REQUEST['action']) && ! isset($_REQUEST['return'])
-            ? array_merge($args, array('return' => $_REQUEST['action']))
-            : $args;
+        if ($action !== '') {
+            $args['return'] = $action;
+        }
 
         return add_query_arg($args, $url);
     }
@@ -56,30 +60,29 @@ class EEH_URL
      * Returns whether not the remote file exists.
      * Checking via GET because HEAD requests are blocked on some server configurations.
      *
-     * @param string  $url
-     * @param array $args  the arguments that should be passed through to the wp_remote_request call.
+     * @param string $url
+     * @param array  $args the arguments that should be passed through to the wp_remote_request call.
      * @return boolean
      */
-    public static function remote_file_exists($url, $args = array())
+    public static function remote_file_exists($url, $args = [])
     {
         $results = wp_remote_request(
             $url,
             array_merge(
-                array(
+                [
                     'method'      => 'GET',
                     'redirection' => 1,
-                ),
+                ],
                 $args
             )
         );
-        if (! $results instanceof WP_Error &&
-            isset($results['response']) &&
-            isset($results['response']['code']) &&
-            $results['response']['code'] == '200') {
+        if (! $results instanceof WP_Error
+            && isset($results['response'])
+            && isset($results['response']['code'])
+            && $results['response']['code'] == '200') {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
 
@@ -97,7 +100,7 @@ class EEH_URL
         // break apart incoming URL
         $url_bits = parse_url($url);
         // HTTP or HTTPS ?
-        $scheme = isset($url_bits['scheme']) ? $url_bits['scheme'] . '://' : 'http://';
+        $scheme = isset($url_bits['scheme']) ? $url_bits['scheme'] . '://' : 'https://';
         // domain
         $host = isset($url_bits['host']) ? $url_bits['host'] : '';
         // if only the base URL is requested, then return that now
@@ -140,10 +143,10 @@ class EEH_URL
         }
         // if no query string exists then just return an empty array now
         if (empty($query)) {
-            return array();
+            return [];
         }
         // empty array to hold results
-        $query_params = array();
+        $query_params = [];
         // now break apart the query string into separate params
         $query = explode('&', $query);
         // loop thru our query params
@@ -175,7 +178,7 @@ class EEH_URL
      * An example usage for this string would be to save as a unique identifier for a record in the db for usage in
      * urls.
      *
-     * @param   string $prefix Use this to prefix the string with something.
+     * @param string $prefix Use this to prefix the string with something.
      * @return string
      */
     public static function generate_unique_token($prefix = '')
@@ -196,11 +199,11 @@ class EEH_URL
     public static function filter_input_server_url($server_variable = 'REQUEST_URI')
     {
         $URL              = '';
-        $server_variables = array(
+        $server_variables = [
             'REQUEST_URI' => 1,
             'HTTP_HOST'   => 1,
             'PHP_SELF'    => 1,
-        );
+        ];
         $server_variable  = strtoupper($server_variable);
         // whitelist INPUT_SERVER var
         if (isset($server_variables[ $server_variable ])) {
@@ -222,10 +225,13 @@ class EEH_URL
     public static function current_url()
     {
         $url = '';
-        if (isset($_SERVER['HTTP_HOST'], $_SERVER['REQUEST_URI'])) {
+        if (
+            EEH_URL::getRequest()->serverParamIsSet('HTTP_HOST')
+            && EEH_URL::getRequest()->serverParamIsSet('REQUEST_URI')
+        ) {
             $url = is_ssl() ? 'https://' : 'http://';
-            $url .= \EEH_URL::filter_input_server_url('HTTP_HOST');
-            $url .= \EEH_URL::filter_input_server_url('REQUEST_URI');
+            $url .= EEH_URL::filter_input_server_url('HTTP_HOST');
+            $url .= EEH_URL::filter_input_server_url();
         }
         return $url;
     }
@@ -235,8 +241,8 @@ class EEH_URL
      * Identical in functionality to EEH_current_url except it removes any provided query_parameters from it.
      *
      * @param array $query_parameters An array of query_parameters to remove from the current url.
-     * @since 4.9.46.rc.029
      * @return string
+     * @since 4.9.46.rc.029
      */
     public static function current_url_without_query_paramaters(array $query_parameters)
     {
@@ -256,26 +262,36 @@ class EEH_URL
         exit($exit_notice);
     }
 
+
     /**
      * Slugifies text for usage in a URL.
      *
      * Currently, this isn't just calling `sanitize_title()` on it, because that percent-encodes unicode characters,
      * and WordPress chokes on them when used as CPT and custom taxonomy slugs.
      *
-     * @since 4.9.66.p
      * @param string $text
      * @param string $fallback
      * @return string which can be used in a URL
+     * @since 4.9.66.p
      */
     public static function slugify($text, $fallback)
     {
         // url decode after sanitizing title to restore unicode characters,
         // see https://github.com/eventespresso/event-espresso-core/issues/575
-        return urldecode(
-            sanitize_title(
-                $text,
-                $fallback
-            )
-        );
+        return urldecode(sanitize_title($text, $fallback));
+    }
+
+
+    /**
+     * @return RequestInterface
+     * @since   $VID:$
+     */
+    protected static function getRequest()
+    {
+        static $request;
+        if (! $request instanceof RequestInterface) {
+            $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+        }
+        return $request;
     }
 }
