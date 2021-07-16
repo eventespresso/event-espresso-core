@@ -161,7 +161,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      * If it's disabled while rendering, an extra hidden input is added that indicates it has been knowingly disabled.
      * (Client-side code that wants to dynamically disable it must also add this hidden input).
      * When the form is submitted, if the input is disabled in the PHP form section, then input is ignored.
-     * If the input is missing from the $_REQUEST data but the hidden input indicating the input is disabled, then the input is again ignored.
+     * If the input is missing from the request data but the hidden input indicating the input is disabled, then the input is again ignored.
      *
      * @var boolean
      */
@@ -1073,9 +1073,9 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      * find_form_data_for_this_section
      * using this section's name and its parents, finds the value of the form data that corresponds to it.
      * For example, if this form section's HTML name is my_form[subform][form_input_1],
-     * then it's value should be in $_REQUEST at $_REQUEST['my_form']['subform']['form_input_1'].
+     * then it's value should be in request at request['my_form']['subform']['form_input_1'].
      * (If that doesn't exist, we also check for this subsection's name
-     * at the TOP LEVEL of the request data. Eg $_REQUEST['form_input_1'].)
+     * at the TOP LEVEL of the request data. Eg request['form_input_1'].)
      * This function finds its value in the form.
      *
      * @param array $req_data

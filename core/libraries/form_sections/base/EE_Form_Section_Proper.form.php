@@ -54,7 +54,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
     protected $_form_submission_error_message = '';
 
     /**
-     * @var array like $_REQUEST
+     * @var array like post / request
      */
     protected $cached_request_data;
 

@@ -202,7 +202,7 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
      * However, if not, we'll give all payment methods a chance to claim it and process it.
      * If a payment is found for the IPN info, it is saved.
      *
-     * @param array              $_req_data            eg $_REQUEST
+     * @param array              $_req_data            form post data
      * @param EE_Transaction|int $transaction          optional (or a transactions id)
      * @param EE_Payment_Method  $payment_method       (or a slug or id of one)
      * @param boolean            $update_txn           whether or not to call

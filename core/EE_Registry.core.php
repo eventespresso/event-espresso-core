@@ -292,7 +292,7 @@ class EE_Registry implements ResettableInterface
     public function init()
     {
         // Get current page protocol
-        $protocol = isset($_SERVER['HTTPS']) ? 'https://' : 'http://';
+        $protocol = is_ssl() ? 'https://' : 'http://';
         // Output admin-ajax.php URL with same protocol as current page
         self::$i18n_js_strings['ajax_url'] = admin_url('admin-ajax.php', $protocol);
         self::$i18n_js_strings['wp_debug'] = defined('WP_DEBUG') && WP_DEBUG;

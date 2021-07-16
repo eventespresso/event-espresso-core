@@ -209,7 +209,7 @@ class JobParameters
 
 
     /**
-     * Gets the original array of $_REQUEST data for this job
+     * Gets the original array of request data for this job
      *
      * @return array
      */

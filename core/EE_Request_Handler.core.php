@@ -218,7 +218,7 @@ final class EE_Request_Handler implements InterminableInterface
 
 
     /**
-     * returns contents of $_REQUEST
+     * returns sanitized contents of $_REQUEST
      *
      * @return array
      * @deprecated  $VID:$

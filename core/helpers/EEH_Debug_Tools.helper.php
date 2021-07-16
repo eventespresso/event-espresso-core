@@ -52,7 +52,11 @@ class EEH_Debug_Tools
     private function __construct()
     {
         // load Kint PHP debugging library
-        if (! class_exists('Kint') && file_exists(EE_PLUGIN_DIR_PATH . 'tests/kint/Kint.class.php')) {
+        if (
+            defined('EE_LOAD_KINT')
+            && ! class_exists('Kint')
+            && file_exists(EE_PLUGIN_DIR_PATH . 'tests/kint/Kint.class.php')
+        ) {
             // despite EE4 having a check for an existing copy of the Kint debugging class,
             // if another plugin was loaded AFTER EE4 and they did NOT perform a similar check,
             // then hilarity would ensue as PHP throws a "Cannot redeclare class Kint" error
@@ -60,9 +64,6 @@ class EEH_Debug_Tools
             // plz use https://wordpress.org/plugins/kint-debugger/  if testing production versions of EE
             require_once(EE_PLUGIN_DIR_PATH . 'tests/kint/Kint.class.php');
         }
-        // if ( ! defined('DOING_AJAX') || $_REQUEST['noheader'] !== 'true' || ! isset( $_REQUEST['noheader'], $_REQUEST['TB_iframe'] ) ) {
-        // add_action( 'shutdown', array($this,'espresso_session_footer_dump') );
-        // }
         $plugin = basename(EE_PLUGIN_DIR_PATH);
         add_action("activate_{$plugin}", array('EEH_Debug_Tools', 'ee_plugin_activation_errors'));
         add_action('activated_plugin', array('EEH_Debug_Tools', 'ee_plugin_activation_errors'));

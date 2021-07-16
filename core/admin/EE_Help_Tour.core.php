@@ -77,7 +77,7 @@ abstract class EE_Help_Tour extends EE_Base
 
 
     /**
-     * holds anything found in the $_REQUEST object (however we override any _gets with _post data).
+     * holds anything found in the request object (however we override any _gets with _post data).
      *
      * @access protected
      * @var array

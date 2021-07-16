@@ -117,7 +117,7 @@ class ModelDataTranslator
 
 
     /**
-     * Prepares incoming data from the json or $_REQUEST parameters for the models'
+     * Prepares incoming data from the json or request parameters for the models'
      * "$query_params".
      *
      * @param EE_Model_Field_Base $field_obj
