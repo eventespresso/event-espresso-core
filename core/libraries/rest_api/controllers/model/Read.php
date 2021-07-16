@@ -12,6 +12,7 @@ use EventEspresso\core\exceptions\RestPasswordIncorrectException;
 use EventEspresso\core\exceptions\RestPasswordRequiredException;
 use EventEspresso\core\libraries\rest_api\ObjectDetectedException;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\RequestInterface;
 use Exception;
 use InvalidArgumentException;
 use ReflectionException;
@@ -237,7 +238,9 @@ class Read extends Base
         ) {
             return $GLOBALS['wp']->query_vars['rest_route'];
         } else {
-            return isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : '/';
+            /** @var RequestInterface $request */
+            $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+            return $request->serverParamIsSet('PATH_INFO') ? $request->getServerParam('PATH_INFO') : '/';
         }
     }
 

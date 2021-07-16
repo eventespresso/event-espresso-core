@@ -996,11 +996,13 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         if (! did_action('AHEE__EE_Admin_Page__route_admin_request')) {
             do_action('AHEE__EE_Admin_Page__route_admin_request', $this->_current_view, $this);
         }
-        // right before calling the route, let's remove _wp_http_referer from the
-        // $_SERVER[REQUEST_URI] global (its now in _req_data for route processing).
-        $_SERVER['REQUEST_URI'] = remove_query_arg(
-            '_wp_http_referer',
-            wp_unslash($_SERVER['REQUEST_URI'])
+        // right before calling the route, let's clean the _wp_http_referer
+        $this->request->setServerParam(
+            'REQUEST_URI',
+            remove_query_arg(
+                '_wp_http_referer',
+                wp_unslash($this->request->getServerParam('REQUEST_URI'))
+            )
         );
         if (! empty($func)) {
             if (is_array($func)) {
@@ -3300,7 +3302,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         $actions       = (array) $actions;
         $referrer_url  = empty($referrer)
             ? '<input type="hidden" id="save_and_close_referrer" name="save_and_close_referrer" value="'
-              . $_SERVER['REQUEST_URI']
+              . $this->request->getServerParam('REQUEST_URI')
               . '" />'
             : '<input type="hidden" id="save_and_close_referrer" name="save_and_close_referrer" value="'
               . $referrer
