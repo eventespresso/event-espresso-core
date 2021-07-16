@@ -59,8 +59,8 @@ class ServerParams
     {
         $cleaned = [];
         $server  = ! empty($server) ? $server : $_SERVER;
-        foreach (array_keys($server) as $key) {
-            $cleaned[ $key ] = $this->sanitizer->clean($key);
+        foreach (array_keys($server) as $key => $value) {
+            $cleaned[ $key ] = $this->sanitizer->clean($key, $value);
         }
         return $cleaned;
     }
@@ -82,6 +82,17 @@ class ServerParams
     public function getServerParam($key)
     {
         return $this->serverParamIsSet($key) ? $this->server[ $key ] : null;
+    }
+
+
+    /**
+     * @param string                 $key
+     * @param array|int|float|string $value
+     * @return void
+     */
+    public function setServerParam($key, $value)
+    {
+        $this->server[ $key ] = $this->sanitizer->clean($key, $value);
     }
 
 
@@ -115,11 +126,11 @@ class ServerParams
         $visitor_ip  = '0.0.0.0';
         $server_keys = [
             'HTTP_CLIENT_IP',
-            'HTTP_X_FORWARDED_FOR',
-            'HTTP_X_FORWARDED',
-            'HTTP_X_CLUSTER_CLIENT_IP',
-            'HTTP_FORWARDED_FOR',
             'HTTP_FORWARDED',
+            'HTTP_FORWARDED_FOR',
+            'HTTP_X_CLUSTER_CLIENT_IP',
+            'HTTP_X_FORWARDED',
+            'HTTP_X_FORWARDED_FOR',
             'REMOTE_ADDR',
         ];
         foreach ($server_keys as $key) {

@@ -125,6 +125,17 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
 
 
     /**
+     * @param string                 $key
+     * @param array|int|float|string $value
+     * @return void
+     */
+    public function setServerParam($key, $value)
+    {
+        $this->server_params->setServerParam($key, $value);
+    }
+
+
+    /**
      * @param string $key
      * @return bool
      */
