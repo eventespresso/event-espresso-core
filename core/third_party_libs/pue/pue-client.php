@@ -1157,9 +1157,10 @@ if (! class_exists('PluginUpdateEngineChecker')):
          */
         public function dismiss_persistent_notice()
         {
+            /** @var RequestInterface $request */
+            $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+            $type  = $request->getRequestParam('type');
             //if no $type in the request then exit
-            $type = isset($_REQUEST['type']) ? $_REQUEST['type'] : null;
-
             if (empty($type)) {
                 return;
             }

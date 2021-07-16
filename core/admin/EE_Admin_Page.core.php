@@ -1127,10 +1127,10 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     ) {
         // if there is a _wp_http_referer include the values from the request but only if sticky = true
         if ($sticky) {
-            $request = $_REQUEST;
-            unset($request['_wp_http_referer']);
-            unset($request['wp_referer']);
-            foreach ($request as $key => $value) {
+            /** @var RequestInterface $request */
+            $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+            $request->unSetRequestParams(['_wp_http_referer', 'wp_referer']);
+            foreach ($request->requestParams() as $key => $value) {
                 // do not add nonces
                 if (strpos($key, 'nonce') !== false) {
                     continue;

@@ -1,5 +1,8 @@
 <?php
 
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\RequestInterface;
+
 /**
  * EE_Admin_Page_Init
  * This is utilizes by all Admin_Page_Init child classes in order to define their require methods
@@ -59,6 +62,11 @@ abstract class EE_Admin_Page_Init extends EE_Base
     // load_page?
     private $_load_page;
 
+    /**
+     * @var RequestInterface
+     */
+    protected $request;
+
 
     /**
      * @Constructor
@@ -67,6 +75,7 @@ abstract class EE_Admin_Page_Init extends EE_Base
      */
     public function __construct()
     {
+        $this->request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
         // set global defaults
         $this->_set_defaults();
         // set properties that are always available with objects.
@@ -359,9 +368,9 @@ abstract class EE_Admin_Page_Init extends EE_Base
      */
     protected function _initialize_admin_page()
     {
-
         // JUST CHECK WE'RE ON RIGHT PAGE.
-        if ((! isset($_REQUEST['page']) || $_REQUEST['page'] != $this->_menu_map->menu_slug) && $this->_routing) {
+        $page = $this->request->getRequestParam('page');
+        if ($page === '' || $page !== $this->_menu_map->menu_slug && $this->_routing) {
             return;
         } //not on the right page so let's get out.
         $this->_load_page = true;

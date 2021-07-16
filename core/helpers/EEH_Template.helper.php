@@ -578,16 +578,10 @@ class EEH_Template
         $icon_style = false,
         $help_text = false
     ) {
-
-        if (! $page) {
-            $page = isset($_REQUEST['page']) && ! empty($_REQUEST['page']) ? sanitize_key($_REQUEST['page']) : $page;
-        }
-
-        if (! $action) {
-            $action = isset($_REQUEST['action']) && ! empty($_REQUEST['action']) ? sanitize_key($_REQUEST['action']) : $action;
-        }
-
-        $action = empty($action) ? 'default' : $action;
+        /** @var RequestInterface $request */
+        $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+        $page = $page ?: $request->getRequestParam('page', '', 'key');
+        $action = $action ?: $request->getRequestParam('action', 'default', 'key');
 
 
         $help_tab_lnk = $page . '-' . $action . '-' . $help_tab_id;

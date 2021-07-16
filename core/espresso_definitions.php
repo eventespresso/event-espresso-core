@@ -72,15 +72,6 @@ define('EE_LANGUAGES_SAFE_DIR', EVENT_ESPRESSO_UPLOAD_DIR . 'languages/');
 if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . 'fonts/')) {
     define('DOMPDF_FONT_DIR', EVENT_ESPRESSO_UPLOAD_DIR . 'fonts/');
 }
-// ajax constants
-define(
-    'EE_FRONT_AJAX',
-    isset($_REQUEST['ee_front_ajax']) || isset($_REQUEST['data']['ee_front_ajax'])
-);
-define(
-    'EE_ADMIN_AJAX',
-    isset($_REQUEST['ee_admin_ajax']) || isset($_REQUEST['data']['ee_admin_ajax'])
-);
 // just a handy constant occasionally needed for finding values representing infinity in the DB
 // you're better to use this than its straight value (currently -1) in case you ever
 // want to change its default value! or find when -1 means infinity

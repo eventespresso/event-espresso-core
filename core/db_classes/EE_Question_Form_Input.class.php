@@ -1,5 +1,8 @@
 <?php
 
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\RequestInterface;
+
 /**
  * EE_Question_Form_Input class
  *    a conglomerate type object that combines an EE_Question object with an EE_Answer object
@@ -34,7 +37,7 @@ class EE_Question_Form_Input
      * @access private
      * @var array
      */
-    private $_QST_meta = array();
+    private $_QST_meta = [];
 
     /**
      *    $QST_input_name
@@ -62,18 +65,30 @@ class EE_Question_Form_Input
      */
     private $QST_disabled = false;
 
+    /**
+     * @var RequestInterface
+     */
+    protected $request;
+
+    /**
+     * @var array
+     */
+    protected $form_data;
+
 
     /**
      * constructor for questions
      *
-     * @param \EE_Question $QST EE_Question object
-     * @param \EE_Answer   $ANS EE_Answer object
-     * @param array        $q_meta
-     * @access public
-     * @return \EE_Question_Form_Input
+     * @param EE_Question $QST EE_Question object
+     * @param EE_Answer   $ANS EE_Answer object
+     * @param array       $q_meta
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function __construct(EE_Question $QST = null, EE_Answer $ANS = null, $q_meta = array())
+    public function __construct(EE_Question $QST = null, EE_Answer $ANS = null, $q_meta = [])
     {
+        $this->request   = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+        $this->form_data = $this->request->requestParams();
         if (empty($QST) || empty($ANS)) {
             EE_Error::add_error(
                 __('An error occurred. A valid EE_Question or EE_Answer object was not received.', 'event_espresso'),
@@ -97,9 +112,9 @@ class EE_Question_Form_Input
      * @param array $q_meta
      * @return void
      */
-    public function set_question_form_input_meta($q_meta = array())
+    public function set_question_form_input_meta($q_meta = [])
     {
-        $default_q_meta = array(
+        $default_q_meta  = [
             'att_nmbr'       => 1,
             'ticket_id'      => '',
             'date'           => '',
@@ -111,7 +126,7 @@ class EE_Question_Form_Input
             'append_qstn_id' => true,
             'htmlentities'   => true,
             'allow_null'     => false,
-        );
+        ];
         $this->_QST_meta = array_merge($default_q_meta, $q_meta);
     }
 
@@ -121,13 +136,15 @@ class EE_Question_Form_Input
      *
      * @access public
      * @return void
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_question_form_input_init()
     {
         $qstn_id = $this->_QST->system_ID() ? $this->_QST->system_ID() : $this->_QST->ID();
         $this->_set_input_name($qstn_id);
         $this->_set_input_id($qstn_id);
-        $this->_set_input_class($qstn_id);
+        $this->_set_input_class();
         $this->set_question_form_input_answer($qstn_id);
     }
 
@@ -138,11 +155,13 @@ class EE_Question_Form_Input
      * @access private
      * @param $qstn_id
      * @return void
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     private function _set_input_name($qstn_id)
     {
         if (! empty($qstn_id)) {
-            $ANS_ID = $this->get('ANS_ID');
+            $ANS_ID  = $this->get('ANS_ID');
             $qstn_id = ! empty($ANS_ID) ? '[' . $qstn_id . '][' . $ANS_ID . ']' : '[' . $qstn_id . ']';
         }
         $this->QST_input_name = $this->_QST_meta['append_qstn_id'] && ! empty($qstn_id)
@@ -155,8 +174,10 @@ class EE_Question_Form_Input
      * get property values for question form input
      *
      * @access public
-     * @param    string $property
+     * @param string $property
      * @return mixed
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get($property = null)
     {
@@ -177,9 +198,10 @@ class EE_Question_Form_Input
      *    _question_form_input_property_exists
      *
      * @access private
-     * @param    string $classname
-     * @param    string $property
+     * @param string $classname
+     * @param string $property
      * @return boolean
+     * @throws ReflectionException
      */
     private function _question_form_input_property_exists($classname, $property)
     {
@@ -188,7 +210,7 @@ class EE_Question_Form_Input
         if (! $prop) {
             // use reflection for < PHP 5.3 as a double check when property is not found, possible due to access restriction
             $reflector = new ReflectionClass($classname);
-            $prop = $reflector->hasProperty($property);
+            $prop      = $reflector->hasProperty($property);
         }
         return $prop;
     }
@@ -200,10 +222,12 @@ class EE_Question_Form_Input
      * @access private
      * @param $qstn_id
      * @return void
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     private function _set_input_id($qstn_id)
     {
-        $input_id = isset($this->_QST_meta['input_id']) && ! empty($this->_QST_meta['input_id'])
+        $input_id           = isset($this->_QST_meta['input_id']) && ! empty($this->_QST_meta['input_id'])
             ? $this->_QST_meta['input_id']
             : sanitize_key(strip_tags($this->_QST->get('QST_display_text')));
         $this->QST_input_id = $this->_QST_meta['append_qstn_id'] && ! empty($qstn_id)
@@ -230,19 +254,25 @@ class EE_Question_Form_Input
      * @access public
      * @param mixed    int | string    $qstn_id
      * @return void
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_question_form_input_answer($qstn_id)
     {
-        // check for answer in $_REQUEST in case we are reprocessing a form after an error
+        // check for answer in $this->form_data in case we are reprocessing a form after an error
         if (isset($this->_QST_meta['EVT_ID'])
             && isset($this->_QST_meta['att_nmbr'])
             && isset($this->_QST_meta['date'])
             && isset($this->_QST_meta['time'])
             && isset($this->_QST_meta['price_id'])
         ) {
-            if (isset($_REQUEST['qstn'][ $this->_QST_meta['EVT_ID'] ][ $this->_QST_meta['att_nmbr'] ][ $this->_QST_meta['date'] ][ $this->_QST_meta['time'] ][ $this->_QST_meta['price_id'] ][ $qstn_id ])
-            ) {
-                $answer = $_REQUEST['qstn'][ $this->_QST_meta['EVT_ID'] ][ $this->_QST_meta['att_nmbr'] ][ $this->_QST_meta['date'] ][ $this->_QST_meta['time'] ][ $this->_QST_meta['price_id'] ][ $qstn_id ];
+            $EVT_ID = $this->_QST_meta['EVT_ID'];
+            $att_nmbr = $this->_QST_meta['att_nmbr'];
+            $date = $this->_QST_meta['date'];
+            $time = $this->_QST_meta['time'];
+            $price_id = $this->_QST_meta['price_id'];
+            if (isset($this->form_data['qstn'][ $EVT_ID ][ $att_nmbr ][ $date ][ $time ][ $price_id ][ $qstn_id ])) {
+                $answer = $this->form_data['qstn'][ $EVT_ID ][ $att_nmbr ][ $date ][ $time ][ $price_id ][ $qstn_id ];
                 $this->_ANS->set('ANS_value', $answer);
             }
         }
@@ -254,32 +284,25 @@ class EE_Question_Form_Input
      *
      * @access    protected
      * @param bool|object $object $object
-     * @param    array    $input_types
+     * @param array       $input_types
      * @return        array
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public static function generate_question_form_inputs_for_object($object = false, $input_types = array())
+    public static function generate_question_form_inputs_for_object($object = false, $input_types = [])
     {
         if (! is_object($object)) {
-            return false;
+            return [];
         }
-        $inputs = array();
+        $inputs = [];
         $fields = $object->get_model()->field_settings(false);
-        // $pk = $object->ID(); <<< NO!
-        // EEH_Debug_Tools::printr( $object, get_class( $object ) . '<br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-        // EEH_Debug_Tools::printr( $fields, '$fields  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-        // EEH_Debug_Tools::printr( $input_types, '$input_types  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
         foreach ($fields as $field_ID => $field) {
             if ($field instanceof EE_Model_Field_Base) {
-                // echo '<h4>$field_ID : ' . $field_ID . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-                // EEH_Debug_Tools::printr( $field, '$field  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
                 if (isset($input_types[ $field_ID ])) {
                     // get saved value for field
                     $value = $object->get($field_ID);
-                    // echo '<h4>$value : ' . $value . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
                     // if no saved value, then use default
                     $value = $value !== null ? $value : $field->get_default_value();
-                    // if ( $field_ID == 'CNT_active' )
-                    // echo '<h4>$value : ' . $value . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
                     // determine question type
                     $type = isset($input_types[ $field_ID ]) ? $input_types[ $field_ID ]['type'] : 'TEXT';
                     // input name
@@ -303,28 +326,26 @@ class EE_Question_Form_Input
                         ? $input_types[ $field_ID ]['use_desc_4_label']
                         : false;
                     // whether input is disabled
-                    $disabled = isset($input_types[ $field_ID ]['disabled'])
-                        ? $input_types[ $field_ID ]['disabled']
-                        : false;
+                    $disabled = isset($input_types[ $field_ID ]['disabled']) && $input_types[ $field_ID ]['disabled'];
 
                     // create EE_Question_Form_Input object
                     $QFI = new EE_Question_Form_Input(
                         EE_Question::new_instance(
-                            array(
+                            [
                                 'QST_ID'           => 0,
                                 'QST_display_text' => $field->get_nicename(),
                                 'QST_type'         => $type,
-                            )
+                            ]
                         ),
                         EE_Answer::new_instance(
-                            array(
+                            [
                                 'ANS_ID'    => 0,
                                 'QST_ID'    => 0,
                                 'REG_ID'    => 0,
                                 'ANS_value' => $value,
-                            )
+                            ]
                         ),
-                        array(
+                        [
                             'input_id'         => $field_ID . '-' . $object->ID(),
                             'input_name'       => $input_name,
                             'input_class'      => $field_ID . $class,
@@ -333,22 +354,22 @@ class EE_Question_Form_Input
                             'htmlentities'     => $htmlentities,
                             'label_b4'         => $label_b4,
                             'use_desc_4_label' => $use_desc_4_label,
-                        )
+                        ]
                     );
                     // does question type have options ?
-                    if (in_array($type, array('DROPDOWN', 'RADIO_BTN', 'CHECKBOX'))
+                    if (in_array($type, ['DROPDOWN', 'RADIO_BTN', 'CHECKBOX'])
                         && isset($input_types[ $field_ID ])
                         && isset($input_types[ $field_ID ]['options'])
                     ) {
                         foreach ($input_types[ $field_ID ]['options'] as $option) {
-                            $option = stripslashes_deep($option);
+                            $option    = stripslashes_deep($option);
                             $option_id = ! empty($option['id']) ? $option['id'] : 0;
-                            $QSO = EE_Question_Option::new_instance(
-                                array(
+                            $QSO       = EE_Question_Option::new_instance(
+                                [
                                     'QSO_value'   => (string) $option_id,
                                     'QSO_desc'    => $option['text'],
                                     'QSO_deleted' => false,
-                                )
+                                ]
                             );
                             // all QST (and ANS) properties can be accessed indirectly thru QFI
                             $QFI->add_temp_option($QSO);
@@ -358,11 +379,7 @@ class EE_Question_Form_Input
                     if ($disabled || $field_ID == $object->get_model()->primary_key_name()) {
                         $QFI->set('QST_disabled', true);
                     }
-                    // EEH_Debug_Tools::printr( $QFI, '$QFI  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
                     $inputs[ $field_ID ] = $QFI;
-                    // if ( $field_ID == 'CNT_active' ) {
-                    // EEH_Debug_Tools::printr( $QFI, '$QFI  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-                    // }
                 }
             }
         }
@@ -374,8 +391,8 @@ class EE_Question_Form_Input
      *    add_temp_option
      *
      * @access public
-     * @param \EE_Question_Option $QSO EE_Question_Option
-     * @return boolean
+     * @param EE_Question_Option $QSO EE_Question_Option
+     * @return void
      */
     public function add_temp_option(EE_Question_Option $QSO)
     {
@@ -387,9 +404,11 @@ class EE_Question_Form_Input
      * set property values for question form input
      *
      * @access public
-     * @param    string $property
-     * @param    mixed  $value
-     * @return mixed
+     * @param string $property
+     * @param mixed  $value
+     * @return void
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set($property = null, $value = null)
     {
@@ -399,12 +418,9 @@ class EE_Question_Form_Input
             } elseif (EEM_Answer::instance()->has_field($property)) {
                 $this->_ANS->set($property, $value);
             } elseif ($this->_question_form_input_property_exists(__CLASS__, $property)) {
-                // echo "<hr>$property is a prop of QFI";
                 $this->{$property} = $value;
-                return true;
             }
         }
-        return null;
     }
 
 

@@ -84,7 +84,9 @@ class EspressoTxnPage extends EspressoShortcode
                 ) {
                     /** @type EE_Payment_Processor $payment_processor */
                     $payment_processor = EE_Registry::instance()->load_core('Payment_Processor');
-                    $payment_processor->process_ipn($_REQUEST, $transaction, $payment_method);
+                    /** @var RequestInterface $request */
+                    $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+                    $payment_processor->process_ipn($request->requestParams(), $transaction, $payment_method);
                 }
             }
             // allow gateways to add a filter to stop rendering the page

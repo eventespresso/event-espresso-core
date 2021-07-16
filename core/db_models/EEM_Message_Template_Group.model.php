@@ -1,4 +1,8 @@
 <?php
+
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\RequestInterface;
+
 /**
  * EEM_Message_Template_Group
  *
@@ -94,26 +98,25 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base
     }
 
 
-
     /**
      * This simply adds on any messenger/message type filters that may be present in the request
-     * @param  array  $_where any existing where conditions to append these to.
+     *
+     * @param array $_where any existing where conditions to append these to.
      * @return array          original where conditions or original with additional filters.
      */
     protected function _maybe_mtp_filters($_where = array())
     {
+        /** @var RequestInterface $request */
+        $request   = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+        $messenger = $request->getRequestParam('ee_messenger_filter_by');
         // account for messenger or message type filters
-        if (isset($_REQUEST['ee_messenger_filter_by'])
-            && $_REQUEST['ee_messenger_filter_by'] != 'none_selected'
-            && $_REQUEST['ee_messenger_filter_by'] != 'all'
-        ) {
-            $_where['MTP_messenger'] =  $_REQUEST['ee_messenger_filter_by'] ;
+        if ($messenger !== '' && $messenger !== 'none_selected' && $messenger !== 'all') {
+            $_where['MTP_messenger'] = $messenger;
         }
-
-        if (isset($_REQUEST['ee_message_type_filter_by'])
-            && $_REQUEST['ee_message_type_filter_by'] != 'none_selected'
+        $message_type = $request->getRequestParam('ee_message_type_filter_by');
+        if ($message_type !== '' && $message_type !== 'none_selected'
         ) {
-            $_where['MTP_message_type'] = $_REQUEST['ee_message_type_filter_by'];
+            $_where['MTP_message_type'] = $message_type;
         }
 
         return $_where;

@@ -3,6 +3,7 @@
 use EventEspresso\core\interfaces\ResettableInterface;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\RequestInterface;
+use EventEspresso\core\services\request\RequestParams;
 use EventEspresso\core\services\shortcodes\LegacyShortcodesManager;
 
 /**
@@ -924,12 +925,11 @@ final class EE_Config implements ResettableInterface
     {
         if (EE_Config::logging_enabled() && ! empty($config_option_name)) {
             $config_log = get_option(EE_Config::LOG_NAME, array());
-            // copy incoming $_REQUEST and sanitize it so we can save it
-            $_request = $_REQUEST;
-            array_walk_recursive($_request, 'sanitize_text_field');
+            /** @var RequestParams $request */
+            $request = LoaderFactory::getLoader()->getShared(RequestParams::class);
             $config_log[ (string) microtime(true) ] = array(
                 'config_name' => $config_option_name,
-                'request'     => $_request,
+                'request'     => $request->requestParams(),
             );
             update_option(EE_Config::LOG_NAME, $config_log);
         }
@@ -969,7 +969,6 @@ final class EE_Config implements ResettableInterface
         if (! $page_for_posts) {
             return 'posts';
         }
-        /** @type WPDB $wpdb */
         global $wpdb;
         $SQL = "SELECT post_name from $wpdb->posts WHERE post_type='posts' OR post_type='page' AND post_status='publish' AND ID=%d";
         return $wpdb->get_var($wpdb->prepare($SQL, $page_for_posts));
