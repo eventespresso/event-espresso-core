@@ -128,6 +128,7 @@ $generated_i18n_strings = array(
 
 	// Reference: domains/core/admin/blocks/src/services/utils.ts:24
 	// Reference: packages/ui-components/src/SimpleEntityList/EntityTemplate.tsx:16
+	// Reference: packages/utils/src/list/index.ts:14
 	__( 'Select…', 'event_espresso' ),
 
 	// Reference: domains/core/admin/blocks/src/services/utils.ts:9
@@ -989,6 +990,22 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:88
 	__( 'Quantity', 'event_espresso' ),
 
+	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:17
+	__( 'Venue Details', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:43
+	__( 'Select from Venue Manager List', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:53
+	__( 'Edit this Venue', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:54
+	// Reference: packages/ui-components/src/SimpleEntityList/EntityOptionsRow/index.tsx:27
+	__( 'or', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:57
+	__( 'Add new Venue', 'event_espresso' ),
+
 	// Reference: domains/core/admin/wpPluginsPage/src/exitSurvey/Popup.tsx:29
 	__( 'Do you have a moment to share why you are deactivating Event Espresso?', 'event_espresso' ),
 
@@ -1847,6 +1864,21 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	/* translators: %s filter name */
 	__( 'remove filter - %s', 'event_espresso' ),
 
+	// Reference: packages/ui-components/src/AddressView/AddressView.tsx:19
+	__( 'Address:', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/AddressView/AddressView.tsx:25
+	__( 'City:', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/AddressView/AddressView.tsx:29
+	__( 'State:', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/AddressView/AddressView.tsx:33
+	__( 'Country:', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/AddressView/AddressView.tsx:37
+	__( 'Zip:', 'event_espresso' ),
+
 	// Reference: packages/ui-components/src/CalendarDateRange/CalendarDateRange.tsx:37
 	__( 'to', 'event_espresso' ),
 
@@ -2009,9 +2041,6 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/SimpleEntityList/EntityOptionsRow/index.tsx:23
 	__( 'Select an existing one to use as a template.', 'event_espresso' ),
-
-	// Reference: packages/ui-components/src/SimpleEntityList/EntityOptionsRow/index.tsx:27
-	__( 'or', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/SimpleEntityList/EntityOptionsRow/index.tsx:30
 	__( 'Add new and insert details manually', 'event_espresso' ),
