@@ -3754,21 +3754,20 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      */
     private function _set_per_page_screen_options()
     {
-        if (isset($_POST['wp_screen_options']) && is_array($_POST['wp_screen_options'])) {
+        if ($this->request->requestParamIsSet('wp_screen_options')) {
             check_admin_referer('screen-options-nonce', 'screenoptionnonce');
             if (! $user = wp_get_current_user()) {
                 return;
             }
-            $option = $_POST['wp_screen_options']['option'];
-            $value  = $_POST['wp_screen_options']['value'];
-            if ($option != sanitize_key($option)) {
+            $option = $this->request->getRequestParam('wp_screen_options[option]', '', 'key');
+            if (! $option) {
                 return;
             }
+            $value  = $this->request->getRequestParam('wp_screen_options[value]', 0, 'int');
             $map_option = $option;
             $option     = str_replace('-', '_', $option);
             switch ($map_option) {
                 case $this->_current_page . '_' . $this->_current_view . '_per_page':
-                    $value     = (int) $value;
                     $max_value = apply_filters(
                         'FHEE__EE_Admin_Page___set_per_page_screen_options__max_value',
                         999,
