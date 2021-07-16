@@ -2,6 +2,8 @@
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\RequestInterface;
 
 /**
  * For containing info about a non-field form section, which contains other form sections/fields.
@@ -270,7 +272,9 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
                 $this
             );
             if ($req_data === null) {
-                $req_data = array_merge($_GET, $_POST);
+                /** @var RequestInterface $request */
+                $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+                $req_data = $request->requestParams();
             }
             $req_data = apply_filters(
                 'FHEE__EE_Form_Section_Proper__receive_form_submission__request_data',

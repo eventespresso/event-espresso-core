@@ -7,7 +7,6 @@
  * @package         EE_Admin_Hooks
  * @subpackage      includes/core/admin/EE_Admin_Hooks.class.php
  * @author          Darren Ethier
- * ------------------------------------------------------------------------
  */
 abstract class EE_Admin_Hooks extends EE_Base
 {
@@ -161,7 +160,7 @@ abstract class EE_Admin_Hooks extends EE_Base
 
 
     /**
-     * This just holds a merged array of the $_POST and $_GET vars in favor of $_POST
+     * This just holds a merged array of the request vars
      *
      * @var array
      */
@@ -195,22 +194,20 @@ abstract class EE_Admin_Hooks extends EE_Base
     /**
      * constructor
      *
-     * @param EE_Admin_Page $admin_page the calling admin_page_object
+     * @param EE_Admin_Page $admin_page
+     * @throws EE_Error
      */
-    public function __construct(EE_Admin_Page $adminpage)
+    public function __construct(EE_Admin_Page $admin_page)
     {
-
-        $this->_adminpage_obj = $adminpage;
-        $this->_req_data = array_merge($_GET, $_POST);
+        $this->_adminpage_obj = $admin_page;
+        $this->_req_data = $admin_page->get_request_data();
         $this->_set_defaults();
         $this->_set_hooks_properties();
         // first let's verify we're on the right page
-        if (! isset($this->_req_data['page'])
-            || (isset($this->_req_data['page'])
-                && $this->_adminpage_obj->page_slug
-                   != $this->_req_data['page'])) {
+        if (! isset($this->_req_data['page']) || $this->_req_data['page'] !== $this->_adminpage_obj->page_slug) {
             return;
-        } //get out nothing more to be done here.
+        }
+        //get out nothing more to be done here.
         // allow for extends to modify properties
         if (method_exists($this, '_extend_properties')) {
             $this->_extend_properties();

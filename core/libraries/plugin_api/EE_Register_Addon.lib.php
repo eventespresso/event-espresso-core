@@ -6,6 +6,7 @@ use EventEspresso\core\exceptions\ExceptionLogger;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\RequestInterface;
 
 /**
  * Class EE_Register_Addon
@@ -584,7 +585,9 @@ class EE_Register_Addon implements EEI_Plugin_API
         if (! empty($incompatibility_message)) {
             // remove 'activate' from the REQUEST
             // so WP doesn't erroneously tell the user the plugin activated fine when it didn't
-            unset($_GET['activate'], $_REQUEST['activate']);
+            /** @var RequestInterface $request */
+            $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+            $request->unSetRequestParam('activate', true);
             if (current_user_can('activate_plugins')) {
                 // show an error message indicating the plugin didn't activate properly
                 EE_Error::add_error($incompatibility_message, __FILE__, __FUNCTION__, __LINE__);

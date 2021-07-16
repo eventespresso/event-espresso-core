@@ -335,7 +335,7 @@ final class EE_System implements ResettableInterface
                 require_once ABSPATH . 'wp-admin/includes/plugin.php';
             }
             deactivate_plugins(plugin_basename(constant($plugin_file_constant)));
-            unset($_GET['activate'], $_REQUEST['activate'], $_GET['activate-multi'], $_REQUEST['activate-multi']);
+            $this->request->unSetRequestParams(['activate', 'activate-multi'], true);
             EE_Error::add_error(
                 sprintf(
                     esc_html__(
@@ -1074,7 +1074,7 @@ final class EE_System implements ResettableInterface
             foreach ($active_plugins as $active_plugin) {
                 foreach ($incompatible_addons as $incompatible_addon) {
                     if (strpos($active_plugin, $incompatible_addon) !== false) {
-                        unset($_GET['activate']);
+                        $this->request->unSetRequestParams(['activate'], true);
                         espresso_deactivate_plugin($active_plugin);
                     }
                 }

@@ -505,10 +505,15 @@ class EEH_Form_Fields
 
                             $answer = null;
 
-                            if (isset($_GET['qstn']) && isset($q_meta['input_id']) && isset($q_meta['att_nmbr'])) {
-                                // check for answer in $_GET in case we are reprocessing a form after an error
-                                if (isset($_GET['qstn'][ $q_meta['input_id'] ][ $qstn_id ])) {
-                                    $answer = is_array($_GET['qstn'][ $q_meta['input_id'] ][ $qstn_id ]) ? $_GET['qstn'][ $q_meta['input_id'] ][ $qstn_id ] : sanitize_text_field($_GET['qstn'][ $q_meta['input_id'] ][ $qstn_id ]);
+                            /** @var RequestInterface $request */
+                            $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+                            $request_qstn = $request->getRequestParam('qstn', [], 'arrayOf|string');
+                            if (! empty($request_qstn) && isset($q_meta['input_id']) && isset($q_meta['att_nmbr'])) {
+                                // check for answer in $request_qstn in case we are reprocessing a form after an error
+                                if (isset($request_qstn[ $q_meta['input_id'] ][ $qstn_id ])) {
+                                    $answer = is_array($request_qstn[ $q_meta['input_id'] ][ $qstn_id ])
+                                        ? $request_qstn[ $q_meta['input_id'] ][ $qstn_id ]
+                                        : sanitize_text_field($request_qstn[ $q_meta['input_id'] ][ $qstn_id ]);
                                 }
                             } elseif (isset($q_meta['attendee']) && $q_meta['attendee']) {
                                 // attendee data from the session
