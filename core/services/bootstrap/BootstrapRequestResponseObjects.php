@@ -9,8 +9,12 @@ use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\request\LegacyRequestInterface;
 use EventEspresso\core\services\request\Request;
 use EventEspresso\core\services\request\RequestInterface;
+use EventEspresso\core\services\request\RequestParams;
 use EventEspresso\core\services\request\Response;
 use EventEspresso\core\services\request\ResponseInterface;
+use EventEspresso\core\services\request\sanitizers\RequestSanitizer;
+use EventEspresso\core\services\request\sanitizers\ServerSanitizer;
+use EventEspresso\core\services\request\ServerParams;
 use InvalidArgumentException;
 
 /**
@@ -63,7 +67,10 @@ class BootstrapRequestResponseObjects
     public function buildRequestResponse()
     {
         // load our Request and Response objects
-        $this->request = new Request($_GET, $_POST, $_COOKIE, $_SERVER, $_FILES);
+        $this->request = new Request(
+            new RequestParams(new RequestSanitizer()),
+            new ServerParams(new ServerSanitizer())
+        );
         $this->response = new Response();
     }
 
