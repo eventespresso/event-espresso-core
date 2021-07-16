@@ -379,10 +379,12 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
     public function unSetRequestParam($key, $unset_from_global_too = false)
     {
         // because unset may not actually remove var
+        $this->get[ $key ] = null;
+        $this->post[ $key ] = null;
         $this->request[ $key ] = null;
-        unset($this->request[ $key ]);
+        unset($this->get[ $key ], $this->post[ $key ], $this->request[ $key ]);
         if ($unset_from_global_too) {
-            unset($_REQUEST[ $key ]);
+            unset($_GET[ $key ], $_POST[ $key ], $_REQUEST[ $key ]);
         }
     }
 
