@@ -1,4 +1,5 @@
 <?php
+
 use EventEspresso\core\services\database\TableAnalysis;
 use EventEspresso\core\services\database\TableManager;
 
@@ -10,6 +11,7 @@ use EventEspresso\core\services\database\TableManager;
  * which is especially convenient for applying event-wide promotions
  * -does NOT actually make any database schema changes
  */
+
 // make sure we have all the stages loaded too
 // unfortunately, this needs to be done upon INCLUSION of this file,
 // instead of construction, because it only gets constructed on first page load

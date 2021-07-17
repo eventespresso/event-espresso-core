@@ -1,4 +1,5 @@
 <?php
+
 /**
  * EE_Fixed_Hidden_Input
  *

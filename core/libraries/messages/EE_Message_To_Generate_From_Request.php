@@ -80,14 +80,17 @@ class EE_Message_To_Generate_From_Request extends EE_Message_To_Generate impleme
      */
     protected function _validate_request()
     {
-        if (! $this->_sending_messenger instanceof EE_messenger
+        if (
+            ! $this->_sending_messenger instanceof EE_messenger
             || ! $this->_messenger instanceof EE_messenger
             || ! $this->_message_type instanceof EE_message_type
             || empty($this->_context)
             || empty($this->token)
         ) {
-            throw new EE_Error(__('The request for the "msg_url_trigger" route has a malformed url.',
-                                  'event_espresso'));
+            throw new EE_Error(__(
+                'The request for the "msg_url_trigger" route has a malformed url.',
+                'event_espresso'
+            ));
         }
     }
 

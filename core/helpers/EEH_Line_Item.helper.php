@@ -183,7 +183,8 @@ class EEH_Line_Item
         if ($total_line_item instanceof EE_Line_Item && $total_line_item->is_total()) {
             $ticket_line_items = EEH_Line_Item::get_ticket_line_items($total_line_item);
             foreach ((array) $ticket_line_items as $ticket_line_item) {
-                if ($ticket_line_item instanceof EE_Line_Item
+                if (
+                    $ticket_line_item instanceof EE_Line_Item
                     && (int) $ticket_line_item->OBJ_ID() === (int) $ticket->ID()
                 ) {
                     $line_item = $ticket_line_item;
@@ -434,7 +435,8 @@ class EEH_Line_Item
         // decrement ticket quantity; don't rely on auto-fixing when recalculating totals to do this
         $ticket_line_item->set_quantity($ticket_line_item->quantity() - $qty);
         foreach ($ticket_line_item->children() as $child_line_item) {
-            if ($child_line_item->is_sub_line_item()
+            if (
+                $child_line_item->is_sub_line_item()
                 && ! $child_line_item->is_percent()
                 && ! $child_line_item->is_cancellation()
             ) {
@@ -476,7 +478,8 @@ class EEH_Line_Item
         if ($ticket_line_item->save_this_and_descendants() > 0) {
             // decrement parent line item quantity
             $event_line_item = $ticket_line_item->parent();
-            if ($event_line_item instanceof EE_Line_Item
+            if (
+                $event_line_item instanceof EE_Line_Item
                 && $event_line_item->OBJ_type() === EEM_Line_Item::OBJ_TYPE_EVENT
             ) {
                 $event_line_item->set_quantity($event_line_item->quantity() - $qty);
@@ -556,7 +559,8 @@ class EEH_Line_Item
         if ($ticket_line_item->save_this_and_descendants() > 0) {
             // increment parent line item quantity
             $event_line_item = $ticket_line_item->parent();
-            if ($event_line_item instanceof EE_Line_Item
+            if (
+                $event_line_item instanceof EE_Line_Item
                 && $event_line_item->OBJ_type() === EEM_Line_Item::OBJ_TYPE_EVENT
             ) {
                 $event_line_item->set_quantity($event_line_item->quantity() + $qty);
@@ -1348,7 +1352,8 @@ class EEH_Line_Item
         $objects = array();
         foreach ($parent_line_item->children() as $child_line_item) {
             if ($child_line_item instanceof EE_Line_Item) {
-                if ($child_line_item->type() === $line_item_type
+                if (
+                    $child_line_item->type() === $line_item_type
                     && (
                         $child_line_item->OBJ_type() === $obj_type || $obj_type === null
                     )
@@ -1412,7 +1417,8 @@ class EEH_Line_Item
         $objects = array();
         foreach ($parent_line_item->children() as $child_line_item) {
             if ($child_line_item instanceof EE_Line_Item) {
-                if ($child_line_item->OBJ_type() === $OBJ_type
+                if (
+                    $child_line_item->OBJ_type() === $OBJ_type
                     && is_array($OBJ_IDs)
                     && in_array($child_line_item->OBJ_ID(), $OBJ_IDs)
                 ) {
@@ -1815,12 +1821,14 @@ class EEH_Line_Item
     public static function billable_line_item(EE_Line_Item $line_item, $registrations)
     {
         $new_li_fields = $line_item->model_field_array();
-        if ($line_item->type() === EEM_Line_Item::type_line_item &&
+        if (
+            $line_item->type() === EEM_Line_Item::type_line_item &&
             $line_item->OBJ_type() === EEM_Line_Item::OBJ_TYPE_TICKET
         ) {
             $count = 0;
             foreach ($registrations as $registration) {
-                if ($line_item->OBJ_ID() === $registration->ticket_ID() &&
+                if (
+                    $line_item->OBJ_ID() === $registration->ticket_ID() &&
                     in_array(
                         $registration->status_ID(),
                         EEM_Registration::reg_statuses_that_allow_payment(),
@@ -1863,7 +1871,8 @@ class EEH_Line_Item
             $child_li_copy = EEH_Line_Item::non_empty_line_items($child_li);
             if ($child_li_copy !== null) {
                 $copied_li->add_child_line_item($child_li_copy);
-                if ($child_li_copy->type() === EEM_Line_Item::type_line_item &&
+                if (
+                    $child_li_copy->type() === EEM_Line_Item::type_line_item &&
                     $child_li_copy->OBJ_type() === EEM_Line_Item::OBJ_TYPE_TICKET
                 ) {
                     $ticket_children++;
@@ -1872,7 +1881,8 @@ class EEH_Line_Item
         }
         // if this is an event subtotal with NO ticket children
         // we basically want to ignore it
-        if ($ticket_children === 0
+        if (
+            $ticket_children === 0
             && $line_item->type() === EEM_Line_Item::type_sub_total
             && $line_item->OBJ_type() === EEM_Line_Item::OBJ_TYPE_EVENT
             && $line_item->total() === 0
@@ -1897,7 +1907,8 @@ class EEH_Line_Item
      */
     public static function non_empty_line_item(EE_Line_Item $line_item)
     {
-        if ($line_item->type() === EEM_Line_Item::type_line_item
+        if (
+            $line_item->type() === EEM_Line_Item::type_line_item
             && $line_item->OBJ_type() === EEM_Line_Item::OBJ_TYPE_TICKET
             && $line_item->quantity() === 0
         ) {
@@ -1926,7 +1937,8 @@ class EEH_Line_Item
     {
         $ticket_line_items = self::get_ticket_line_items($total_line_item);
         foreach ($ticket_line_items as $ticket_line_item) {
-            if ($ticket_line_item instanceof EE_Line_Item
+            if (
+                $ticket_line_item instanceof EE_Line_Item
                 && $ticket_line_item->OBJ_type() === EEM_Line_Item::OBJ_TYPE_TICKET
             ) {
                 $ticket = $ticket_line_item->ticket();

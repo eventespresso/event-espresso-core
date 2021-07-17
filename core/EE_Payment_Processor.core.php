@@ -520,7 +520,8 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
         } else {
             // verify payment and that it has been saved
             if ($payment instanceof EE_Payment && $payment->ID()) {
-                if ($payment->payment_method() instanceof EE_Payment_Method
+                if (
+                    $payment->payment_method() instanceof EE_Payment_Method
                     && $payment->payment_method()->type_obj() instanceof EE_PMT_Base
                 ) {
                     $payment->payment_method()->type_obj()->update_txn_based_on_payment($payment);
@@ -623,11 +624,13 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
                 }
             }
         }
-        if ($available_payment_amount > 0
+        if (
+            $available_payment_amount > 0
             && apply_filters(
                 'FHEE__EE_Payment_Processor__process_registration_payments__display_notifications',
                 false
-            )) {
+            )
+        ) {
             EE_Error::add_attention(
                 sprintf(
                     __(
@@ -784,7 +787,8 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
         // then this is kinda sorta a revisit with regards to payments at least
         $transaction_processor->set_revisit($revisit);
         // if this is an IPN, let's consider the Payment Options Reg Step completed if not already
-        if ($IPN
+        if (
+            $IPN
             && $payment_options_step_completed !== true
             && ($payment->is_approved() || $payment->is_pending())
         ) {

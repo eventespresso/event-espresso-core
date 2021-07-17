@@ -1,4 +1,5 @@
 <?php
+
 use EventEspresso\core\services\database\TableAnalysis;
 use EventEspresso\core\services\database\TableManager;
 
@@ -8,6 +9,7 @@ use EventEspresso\core\services\database\TableManager;
  * -adds QGQ_order to the question-group_question table;
  * -adds DTT_name and DTT_description to the datetime table;
  */
+
 // make sure we have all the stages loaded too
 // unfortunately, this needs to be done upon INCLUSION of this file,
 // instead of construction, because it only gets constructed on first page load

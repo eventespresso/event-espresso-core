@@ -22,8 +22,8 @@
                 'Enter your API Username for PayPal. Learn how to find your %1$sAPI Username%2$s.',
                 'event_espresso'
             ),
-            '<a href="https://www.paypal.com/us/cgi-bin/webscr?cmd=xpt/cps/merchant/wppro/WPProIntegrationSteps-outside#SectionB" target="_blank" rel="noopener noreferrer">',
-            '</a>'
+                '<a href="https://www.paypal.com/us/cgi-bin/webscr?cmd=xpt/cps/merchant/wppro/WPProIntegrationSteps-outside#SectionB" target="_blank" rel="noopener noreferrer">',
+                '</a>'
         ); ?>
     </li>
     <li>
@@ -33,8 +33,8 @@
                 'Enter your API Password for PayPal. Learn how to find your %1$sAPI Password%2$s.',
                 'event_espresso'
             ),
-            '<a href="https://www.paypal.com/us/cgi-bin/webscr?cmd=xpt/cps/merchant/wppro/WPProIntegrationSteps-outside#SectionB" target="_blank" rel="noopener noreferrer">',
-            '</a>'
+                '<a href="https://www.paypal.com/us/cgi-bin/webscr?cmd=xpt/cps/merchant/wppro/WPProIntegrationSteps-outside#SectionB" target="_blank" rel="noopener noreferrer">',
+                '</a>'
         ); ?>
     </li>
     <li>
@@ -44,8 +44,8 @@
                 'Enter your API Signature for PayPal. Learn how to find your %1$sAPI Signature%2$s.',
                 'event_espresso'
             ),
-            '<a href="https://www.paypal.com/us/cgi-bin/webscr?cmd=xpt/cps/merchant/wppro/WPProIntegrationSteps-outside#SectionB" target="_blank" rel="noopener noreferrer">',
-            '</a>'
+                '<a href="https://www.paypal.com/us/cgi-bin/webscr?cmd=xpt/cps/merchant/wppro/WPProIntegrationSteps-outside#SectionB" target="_blank" rel="noopener noreferrer">',
+                '</a>'
         ); ?>
     </li>
     <li>

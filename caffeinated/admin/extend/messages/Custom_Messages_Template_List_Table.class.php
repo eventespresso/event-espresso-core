@@ -109,10 +109,12 @@ class Custom_Messages_Template_List_Table extends Messages_Template_List_Table
      */
     public function column_actions($item)
     {
-        if (EE_Registry::instance()->CAP->current_user_can(
-            'ee_edit_messages',
-            'espresso_messages_add_new_message_template'
-        )) {
+        if (
+            EE_Registry::instance()->CAP->current_user_can(
+                'ee_edit_messages',
+                'espresso_messages_add_new_message_template'
+            )
+        ) {
             $create_args = array(
                 'GRP_ID'       => $item->ID(),
                 'messenger'    => $item->messenger(),
@@ -189,7 +191,8 @@ class Custom_Messages_Template_List_Table extends Messages_Template_List_Table
             'noheader' => true,
         ), EE_MSG_ADMIN_URL);
 
-        if (! $item->get('MTP_deleted')
+        if (
+            ! $item->get('MTP_deleted')
             && EE_Registry::instance()->CAP->current_user_can(
                 'ee_delete_message',
                 'espresso_messages_trash_message_template',
@@ -204,11 +207,13 @@ class Custom_Messages_Template_List_Table extends Messages_Template_List_Table
                                 . esc_html__('Move to Trash', 'event_espresso')
                                 . '</a>';
         } else {
-            if (EE_Registry::instance()->CAP->current_user_can(
-                'ee_delete_message',
-                'espresso_messages_restore_message_template',
-                $item->ID()
-            )) {
+            if (
+                EE_Registry::instance()->CAP->current_user_can(
+                    'ee_delete_message',
+                    'espresso_messages_restore_message_template',
+                    $item->ID()
+                )
+            ) {
                 $actions['restore'] = '<a href="'
                                       . $restore_lnk_url
                                       . '" title="'
@@ -217,12 +222,14 @@ class Custom_Messages_Template_List_Table extends Messages_Template_List_Table
                                       . esc_html__('Restore', 'event_espresso') . '</a>';
             }
 
-            if ($this->_view === 'trashed'
+            if (
+                $this->_view === 'trashed'
                 && EE_Registry::instance()->CAP->current_user_can(
                     'ee_delete_message',
                     'espresso_messages_delete_message_template',
                     $item->ID()
-                )) {
+                )
+            ) {
                 $actions['delete'] = '<a href="'
                                      . $delete_lnk_url
                                      . '" title="'

@@ -215,7 +215,7 @@ class EED_Thank_You_Page extends EED_Module
      */
     private function _get_reg_url_link()
     {
-        if ($this->_reg_url_link){
+        if ($this->_reg_url_link) {
             return;
         }
         // check for reg_url_link
@@ -379,7 +379,8 @@ class EED_Thank_You_Page extends EED_Module
         // txn status ?
         if ($this->_current_txn->is_completed()) {
             $this->_show_try_pay_again_link = $show_try_pay_again_link_default;
-        } elseif ($this->_current_txn->is_incomplete()
+        } elseif (
+            $this->_current_txn->is_incomplete()
             && ($this->_primary_registrant->is_approved()
                 || $this->_primary_registrant->is_pending_payment())
         ) {
@@ -396,7 +397,8 @@ class EED_Thank_You_Page extends EED_Module
         }
         $this->_payments_closed = ! $this->_current_txn->payment_method() instanceof EE_Payment_Method;
         $this->_is_offline_payment_method = false;
-        if (// if payment method is unknown
+        if (
+// if payment method is unknown
             ! $this->_current_txn->payment_method() instanceof EE_Payment_Method
             || (
                 // or is an offline payment method
@@ -734,7 +736,8 @@ class EED_Thank_You_Page extends EED_Module
     {
         $html = '';
         if ($payment instanceof EE_Payment) {
-            if ($payment->payment_method() instanceof EE_Payment_Method
+            if (
+                $payment->payment_method() instanceof EE_Payment_Method
                 && $payment->status() === EEM_Payment::status_id_failed
                 && $payment->payment_method()->is_off_site()
             ) {

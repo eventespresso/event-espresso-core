@@ -73,7 +73,8 @@ class RequestTypeContextDetector
     public function detectRequestTypeContext()
     {
         // Detect error scrapes
-        if ($this->request->getRequestParam('wp_scrape_key')
+        if (
+            $this->request->getRequestParam('wp_scrape_key')
             && $this->request->getRequestParam('wp_scrape_nonce')
         ) {
             return $this->factory->create(RequestTypeContext::WP_SCRAPE);
@@ -125,7 +126,7 @@ class RequestTypeContextDetector
             || $this->request->getRequestParam('data[ee_front_ajax]', 0, 'int')
         ) {
             if (! defined('EE_FRONT_AJAX')) {
-                define( 'EE_FRONT_AJAX', true);
+                define('EE_FRONT_AJAX', true);
             }
             return $this->factory->create(RequestTypeContext::AJAX_FRONT);
         }

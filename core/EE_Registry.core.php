@@ -194,7 +194,8 @@ class EE_Registry implements ResettableInterface
         ObjectIdentifier $object_identifier = null
     ) {
         // check if class object is instantiated
-        if (! self::$_instance instanceof EE_Registry
+        if (
+            ! self::$_instance instanceof EE_Registry
             && $dependency_map instanceof EE_Dependency_Map
             && $mirror instanceof Mirror
             && $class_cache instanceof ClassInterfaceCache
@@ -965,7 +966,8 @@ class EE_Registry implements ResettableInterface
             return $this->LIB->get($object_identifier);
         }
         foreach ($this->LIB as $key => $object) {
-            if (// request does not contain new arguments and therefore no args identifier
+            if (
+// request does not contain new arguments and therefore no args identifier
                 ! $this->object_identifier->hasArguments($object_identifier)
                 // but previously cached class with args was found
                 && $this->object_identifier->fqcnMatchesObjectIdentifier($class_name, $key)
@@ -1236,7 +1238,8 @@ class EE_Registry implements ResettableInterface
             // $instantiation_mode = "1) no constructor abstract class";
             return true;
         }
-        if (empty($arguments)
+        if (
+            empty($arguments)
             && $this->mirror->getConstructorFromReflection($reflector) === null
             && $reflector->isInstantiable()
         ) {
@@ -1336,7 +1339,8 @@ class EE_Registry implements ResettableInterface
             $param_class = $this->class_cache->isAlias($param_class, $class_name)
                 ? $this->class_cache->getFqnForAlias($param_class, $class_name)
                 : $param_class;
-            if (// param is not even a class
+            if (
+// param is not even a class
                 $param_class === null
                 // and something already exists in the incoming arguments for this param
                 && array_key_exists($index, $argument_keys)
@@ -1345,7 +1349,8 @@ class EE_Registry implements ResettableInterface
                 // so let's skip this argument and move on to the next
                 continue;
             }
-            if (// parameter is type hinted as a class, exists as an incoming argument, AND it's the correct class
+            if (
+// parameter is type hinted as a class, exists as an incoming argument, AND it's the correct class
                 $param_class !== null
                 && isset($argument_keys[ $index ], $arguments[ $argument_keys[ $index ] ])
                 && $arguments[ $argument_keys[ $index ] ] instanceof $param_class
@@ -1353,7 +1358,8 @@ class EE_Registry implements ResettableInterface
                 // skip this argument and move on to the next
                 continue;
             }
-            if (// parameter is type hinted as a class, and should be injected
+            if (
+// parameter is type hinted as a class, and should be injected
                 $param_class !== null
                 && $this->_dependency_map->has_dependency_for_class($class_name, $param_class)
             ) {

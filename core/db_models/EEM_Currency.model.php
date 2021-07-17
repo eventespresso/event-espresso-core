@@ -19,19 +19,19 @@ class EEM_Currency extends EEM_Base
         $this->singular_item = __('Currency', 'event_espresso');
         $this->plural_item = __('Currencies', 'event_espresso');
         $this->_tables = array(
-            'Currency'=> new EE_Primary_Table('esp_currency', 'CUR_code')
+            'Currency' => new EE_Primary_Table('esp_currency', 'CUR_code')
         );
         $this->_fields = array(
-            'Currency'=>array(
-                'CUR_code'=> new EE_Primary_Key_String_Field('CUR_code', __('Currency Code', 'event_espresso')),
+            'Currency' => array(
+                'CUR_code' => new EE_Primary_Key_String_Field('CUR_code', __('Currency Code', 'event_espresso')),
                 'CUR_single' => new EE_Plain_Text_Field('CUR_single', __('Currency Name Singular', 'event_espresso'), false),
                 'CUR_plural' => new EE_Plain_Text_Field('CUR_plural', __('Currency Name Plural', 'event_espresso'), false),
                 'CUR_sign' => new EE_Plain_Text_Field('CUR_sign', __('Currency Sign', 'event_espresso'), false),
                 'CUR_dec_plc' => new EE_Integer_Field('CUR_dec_plc', __('Currency Decimal Places', 'event_espresso'), false, 2),
-                'CUR_active'=>new EE_Boolean_Field('CUR_active', __('Active?', 'event_espresso'), false, true),
+                'CUR_active' => new EE_Boolean_Field('CUR_active', __('Active?', 'event_espresso'), false, true),
             ));
         $this->_model_relations = array(
-            'Payment_Method'=>new EE_HABTM_Relation('Currency_Payment_Method'),
+            'Payment_Method' => new EE_HABTM_Relation('Currency_Payment_Method'),
         );
         // this model is generally available for reading
         $this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Public();
@@ -49,7 +49,7 @@ class EEM_Currency extends EEM_Base
     {
         $query_params[0]['CUR_active'] = true;
         if (! isset($query_params['order_by'])) {
-            $query_params['order_by'] = array('CUR_code'=>'ASC','CUR_single'=>'ASC');
+            $query_params['order_by'] = array('CUR_code' => 'ASC','CUR_single' => 'ASC');
         }
         return $this->get_all($query_params);
     }
@@ -60,8 +60,10 @@ class EEM_Currency extends EEM_Base
      */
     public function get_all_currencies_usable_by($payment_method_type)
     {
-        if ($payment_method_type instanceof EE_PMT_Base &&
-                $payment_method_type->get_gateway()) {
+        if (
+            $payment_method_type instanceof EE_PMT_Base &&
+                $payment_method_type->get_gateway()
+        ) {
             $currencies_supported = $payment_method_type->get_gateway()->currencies_supported();
         } else {
             $currencies_supported = EE_Gateway::all_currencies_supported;
@@ -69,7 +71,7 @@ class EEM_Currency extends EEM_Base
         if ($currencies_supported == EE_Gateway::all_currencies_supported || empty($currencies_supported)) {
             $currencies = $this->get_all_active();
         } else {
-            $currencies = $this->get_all_active(array(array('CUR_code'=>array('IN',$currencies_supported))));
+            $currencies = $this->get_all_active(array(array('CUR_code' => array('IN',$currencies_supported))));
         }
         return $currencies;
     }

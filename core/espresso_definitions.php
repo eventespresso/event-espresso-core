@@ -1,4 +1,5 @@
 <?php
+
 // define versions
 define('EVENT_ESPRESSO_VERSION', espresso_version());
 define('EE_MIN_WP_VER_REQUIRED', '4.5');

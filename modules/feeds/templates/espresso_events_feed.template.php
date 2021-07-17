@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This template will display event details for your RSS feed
  *
@@ -9,6 +10,7 @@
  * @ link            http://www.eventespresso.com
  * @ version        4+
  */
+
 ?>
 <p><?php _e('Event Organizer: ', 'event_espresso') . espresso_organization_name($EVT_ID); ?><br/>
     <?php _e('Organizer Email: ', 'event_espresso') . espresso_organization_email($EVT_ID); ?><br/>

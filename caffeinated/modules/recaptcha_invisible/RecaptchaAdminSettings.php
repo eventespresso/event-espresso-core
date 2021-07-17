@@ -339,7 +339,8 @@ class RecaptchaAdminSettings
                     // grab validated data from form
                     $valid_data = $recaptcha_settings_form->valid_data();
                     // user proofing recaptcha:  If Use reCAPTCHA is set to yes but we dont' have site or secret keys then set Use reCAPTCHA to FALSE and give error message.
-                    if ($valid_data['main_settings']['use_captcha']
+                    if (
+                        $valid_data['main_settings']['use_captcha']
                         && (
                             ! $EE_Registration_Config->use_captcha
                             && (

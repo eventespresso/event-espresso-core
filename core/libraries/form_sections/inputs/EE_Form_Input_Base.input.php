@@ -455,7 +455,8 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     public function remove_validation_strategy($validation_strategy_classname)
     {
         foreach ($this->_validation_strategies as $key => $validation_strategy) {
-            if ($validation_strategy instanceof $validation_strategy_classname
+            if (
+                $validation_strategy instanceof $validation_strategy_classname
                 || is_subclass_of($validation_strategy, $validation_strategy_classname)
             ) {
                 unset($this->_validation_strategies[ $key ]);
@@ -1004,7 +1005,8 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     {
         // if we do ANY kind of sensitive data removal on this, then just clear out the raw value
         // if we need more logic than this we'll make a strategy for it
-        if ($this->_sensitive_data_removal_strategy
+        if (
+            $this->_sensitive_data_removal_strategy
             && ! $this->_sensitive_data_removal_strategy instanceof EE_No_Sensitive_Data_Removal
         ) {
             $this->_set_raw_value(null);

@@ -105,15 +105,15 @@ class EE_DMS_4_1_0_prices extends EE_Data_Migration_Script_Stage_Table
     {
         global $wpdb;
         $this->_pretty_name = __("Prices", "event_espresso");
-        $this->_old_table = $wpdb->prefix."events_prices";
+        $this->_old_table = $wpdb->prefix . "events_prices";
         $this->select_expression = 'p.*, e.event_status';
         $this->_extra_where_sql = ' AS p 
             INNER JOIN ' . $wpdb->prefix . 'events_detail AS e ON p.event_id=e.id
             WHERE e.event_status!="D"';
-        $this->_new_price_table = $wpdb->prefix."esp_price";
-        $this->_new_ticket_table = $wpdb->prefix."esp_ticket";
-        $this->_new_ticket_price_table = $wpdb->prefix."esp_ticket_price";
-        $this->_new_datetime_ticket_table = $wpdb->prefix."esp_datetime_ticket";
+        $this->_new_price_table = $wpdb->prefix . "esp_price";
+        $this->_new_ticket_table = $wpdb->prefix . "esp_ticket";
+        $this->_new_ticket_price_table = $wpdb->prefix . "esp_ticket_price";
+        $this->_new_datetime_ticket_table = $wpdb->prefix . "esp_datetime_ticket";
         parent::__construct();
     }
     protected function _migrate_old_row($old_row)
@@ -171,14 +171,14 @@ class EE_DMS_4_1_0_prices extends EE_Data_Migration_Script_Stage_Table
     {
         global $wpdb;
         $cols_n_values = array(
-            'PRT_ID'=>self::price_type_base,
-            'PRC_amount'=>floatval($old_price['event_cost']),
-            'PRC_name'=>$old_price['price_type'],
-            'PRC_is_default'=>false,
-            'PRC_overrides'=>false,
-            'PRC_order'=>0,
-            'PRC_deleted'=>false,
-            'PRC_parent'=>null
+            'PRT_ID' => self::price_type_base,
+            'PRC_amount' => floatval($old_price['event_cost']),
+            'PRC_name' => $old_price['price_type'],
+            'PRC_is_default' => false,
+            'PRC_overrides' => false,
+            'PRC_order' => 0,
+            'PRC_deleted' => false,
+            'PRC_parent' => null
 
         );
         $datatypes = array(
@@ -253,14 +253,14 @@ class EE_DMS_4_1_0_prices extends EE_Data_Migration_Script_Stage_Table
         }
         global $wpdb;
         $cols_n_values = array(
-            'PRT_ID'=>$price_type,
-            'PRC_amount'=>floatval($old_price['surcharge']),
-            'PRC_name'=>  __("Surcharge", "event_espresso"),
-            'PRC_is_default'=>false,
-            'PRC_overrides'=>false,
-            'PRC_order'=>20,
-            'PRC_deleted'=>false,
-            'PRC_parent'=>null
+            'PRT_ID' => $price_type,
+            'PRC_amount' => floatval($old_price['surcharge']),
+            'PRC_name' =>  __("Surcharge", "event_espresso"),
+            'PRC_is_default' => false,
+            'PRC_overrides' => false,
+            'PRC_order' => 20,
+            'PRC_deleted' => false,
+            'PRC_parent' => null
 
         );
         $datatypes = array(
@@ -296,30 +296,30 @@ class EE_DMS_4_1_0_prices extends EE_Data_Migration_Script_Stage_Table
         if ($old_price_row['surcharge_type'] == 'flat_rate') {
             $final_ticket_price = floatval($old_price_row['event_cost']) + floatval($old_price_row['surcharge']);
         } else {// percent surcharge
-            $final_ticket_price = floatval($old_price_row['event_cost']) * (1 + floatval($old_price_row['surcharge'])/100);
+            $final_ticket_price = floatval($old_price_row['event_cost']) * (1 + floatval($old_price_row['surcharge']) / 100);
         }
-        $start_date = $event_row['registration_start']." ".$this->get_migration_script()->convertTimeFromAMPM($event_row['registration_startT']);
+        $start_date = $event_row['registration_start'] . " " . $this->get_migration_script()->convertTimeFromAMPM($event_row['registration_startT']);
         $start_date_utc = $this->get_migration_script()->convert_date_string_to_utc($this, $old_price_row, $start_date, $event_row['timezone_string']);
-        $end_date = $event_row['registration_end']." ".$this->get_migration_script()->convertTimeFromAMPM($event_row['registration_endT']);
+        $end_date = $event_row['registration_end'] . " " . $this->get_migration_script()->convertTimeFromAMPM($event_row['registration_endT']);
         $end_date_utc = $this->get_migration_script()->convert_date_string_to_utc($this, $old_price_row, $end_date, $event_row['timezone_string']);
         $cols_n_values = array(
-            'TTM_ID'=>0,
-            'TKT_name'=>$old_price_row['price_type'],
-            'TKT_description'=>'',
-            'TKT_start_date'=>$start_date_utc,
-            'TKT_end_date'=>$end_date_utc,
-            'TKT_min'=>0,
-            'TKT_max'=>-1,
-            'TKT_price'=>$final_ticket_price,
-            'TKT_sold'=> 0,// note: this will get calculated as we actually add registrations during the migration
-            'TKT_qty'=> -1,
-            'TKT_uses'=> 1,
-            'TKT_taxable'=>false,// so by default, old prices are NOT taxable. This way they don't suddenly have a sudden spike in prices
-            'TKT_is_default'=>false,
-            'TKT_order'=>$this->_get_ticket_count(),
-            'TKT_row'=>0,// doesn't matter because UI reset this on first save anyways
-            'TKT_deleted'=>false,
-            'TKT_parent'=>0
+            'TTM_ID' => 0,
+            'TKT_name' => $old_price_row['price_type'],
+            'TKT_description' => '',
+            'TKT_start_date' => $start_date_utc,
+            'TKT_end_date' => $end_date_utc,
+            'TKT_min' => 0,
+            'TKT_max' => -1,
+            'TKT_price' => $final_ticket_price,
+            'TKT_sold' => 0,// note: this will get calculated as we actually add registrations during the migration
+            'TKT_qty' => -1,
+            'TKT_uses' => 1,
+            'TKT_taxable' => false,// so by default, old prices are NOT taxable. This way they don't suddenly have a sudden spike in prices
+            'TKT_is_default' => false,
+            'TKT_order' => $this->_get_ticket_count(),
+            'TKT_row' => 0,// doesn't matter because UI reset this on first save anyways
+            'TKT_deleted' => false,
+            'TKT_parent' => 0
 
         );
         $datatypes = array(
@@ -361,8 +361,8 @@ class EE_DMS_4_1_0_prices extends EE_Data_Migration_Script_Stage_Table
     {
         global $wpdb;
         $cols_n_values = array(
-            'TKT_ID'=>$new_ticket_id,
-            'PRC_ID'=>$new_price_id,
+            'TKT_ID' => $new_ticket_id,
+            'PRC_ID' => $new_price_id,
         );
         $datatypes = array(
             '%d',// TKT_ID
@@ -370,7 +370,7 @@ class EE_DMS_4_1_0_prices extends EE_Data_Migration_Script_Stage_Table
         );
         $success = $wpdb->insert($this->_new_ticket_price_table, $cols_n_values, $datatypes);
         if (! $success) {
-            $this->add_error($this->get_migration_script()->_create_error_message_for_db_insertion($this->_old_table, array('ticket id'=>$new_ticket_id,'price id'=>$new_price_id), $this->_new_ticket_price_table, $cols_n_values, $datatypes));
+            $this->add_error($this->get_migration_script()->_create_error_message_for_db_insertion($this->_old_table, array('ticket id' => $new_ticket_id,'price id' => $new_price_id), $this->_new_ticket_price_table, $cols_n_values, $datatypes));
             return 0;
         }
         $new_id = $wpdb->insert_id;
@@ -388,8 +388,8 @@ class EE_DMS_4_1_0_prices extends EE_Data_Migration_Script_Stage_Table
     {
         global $wpdb;
         $cols_n_values = array(
-            'TKT_ID'=>$new_ticket_id,
-            'DTT_ID'=>$new_datetime_id,
+            'TKT_ID' => $new_ticket_id,
+            'DTT_ID' => $new_datetime_id,
         );
         $datatypes = array(
             '%d',// TKT_ID
@@ -397,7 +397,7 @@ class EE_DMS_4_1_0_prices extends EE_Data_Migration_Script_Stage_Table
         );
         $success = $wpdb->insert($this->_new_datetime_ticket_table, $cols_n_values, $datatypes);
         if (! $success) {
-            $this->add_error($this->get_migration_script()->_create_error_message_for_db_insertion($this->_old_table, array('ticket id'=>$new_ticket_id,'datetime id'=>$new_datetime_id), $this->_new_datetime_ticket_table, $cols_n_values, $datatypes));
+            $this->add_error($this->get_migration_script()->_create_error_message_for_db_insertion($this->_old_table, array('ticket id' => $new_ticket_id,'datetime id' => $new_datetime_id), $this->_new_datetime_ticket_table, $cols_n_values, $datatypes));
             return 0;
         }
         $new_id = $wpdb->insert_id;
@@ -413,7 +413,7 @@ class EE_DMS_4_1_0_prices extends EE_Data_Migration_Script_Stage_Table
     private function _get_event_row($event_id)
     {
         global $wpdb;
-        $old_event_table = $wpdb->prefix."events_detail";
+        $old_event_table = $wpdb->prefix . "events_detail";
         return $wpdb->get_row($wpdb->prepare("SELECT * FROM $old_event_table WHERE id=%d", $event_id), ARRAY_A);
     }
     /**
@@ -434,7 +434,7 @@ class EE_DMS_4_1_0_prices extends EE_Data_Migration_Script_Stage_Table
     private function _get_datetime_ids_for_old_event_id($old_event_id)
     {
         global $wpdb;
-        $new_cpt_id = $this->get_migration_script()->get_mapping_new_pk($wpdb->prefix."events_detail", $old_event_id, $wpdb->posts);
+        $new_cpt_id = $this->get_migration_script()->get_mapping_new_pk($wpdb->prefix . "events_detail", $old_event_id, $wpdb->posts);
         $datetime_ids = $wpdb->get_col($wpdb->prepare("SELECT DTT_ID FROM {$wpdb->prefix}esp_datetime WHERE EVT_ID=%d", $new_cpt_id));
         return $datetime_ids;
     }

@@ -1,5 +1,6 @@
-<?php use EventEspresso\core\exceptions\EntityNotFoundException;
+<?php
 
+use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 
@@ -9,8 +10,8 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  * @ package        Event Espresso
  * @ author            Seth Shoultes
  * @ copyright        (c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license            {@link http://eventespresso.com/support/terms-conditions/}   * see Plugin Licensing *
- * @ link            {@link http://www.eventespresso.com}
+ * @linkense            {@link http://eventespresso.com/support/terms-conditions/}   * see Plugin Licensing *
+ * @linkk            {@link http://www.eventespresso.com}
  * @ since            4.0
  * ------------------------------------------------------------------------
  * Registrations Table class
@@ -294,10 +295,12 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         $this->_views['all']['count'] = $this->_total_registrations();
         $this->_views['month']['count'] = $this->_total_registrations_this_month();
         $this->_views['today']['count'] = $this->_total_registrations_today();
-        if (EE_Registry::instance()->CAP->current_user_can(
-            'ee_delete_registrations',
-            'espresso_registrations_trash_registrations'
-        )) {
+        if (
+            EE_Registry::instance()->CAP->current_user_can(
+                'ee_delete_registrations',
+                'espresso_registrations_trash_registrations'
+            )
+        ) {
             $this->_views['incomplete']['count'] = $this->_total_registrations('incomplete');
             $this->_views['trash']['count'] = $this->_total_registrations('trash');
         }
@@ -673,13 +676,15 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         }
         // trash/restore/delete actions
         $actions = array();
-        if ($this->_view !== 'trash'
+        if (
+            $this->_view !== 'trash'
             && $payment_count === 0
             && EE_Registry::instance()->CAP->current_user_can(
                 'ee_delete_registration',
                 'espresso_registrations_trash_registrations',
                 $item->ID()
-            )) {
+            )
+        ) {
             $action['action'] = 'trash_registrations';
             $trash_lnk_url = EE_Admin_Page::add_query_args_and_nonce(
                 $action,
@@ -692,11 +697,13 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                                 . '">' . __('Trash', 'event_espresso') . '</a>';
         } elseif ($this->_view === 'trash') {
             // restore registration link
-            if (EE_Registry::instance()->CAP->current_user_can(
-                'ee_delete_registration',
-                'espresso_registrations_restore_registrations',
-                $item->ID()
-            )) {
+            if (
+                EE_Registry::instance()->CAP->current_user_can(
+                    'ee_delete_registration',
+                    'espresso_registrations_restore_registrations',
+                    $item->ID()
+                )
+            ) {
                 $action['action'] = 'restore_registrations';
                 $restore_lnk_url = EE_Admin_Page::add_query_args_and_nonce(
                     $action,
@@ -708,11 +715,13 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                                       . esc_attr__('Restore Registration', 'event_espresso') . '">'
                                       . __('Restore', 'event_espresso') . '</a>';
             }
-            if (EE_Registry::instance()->CAP->current_user_can(
-                'ee_delete_registration',
-                'espresso_registrations_ee_delete_registrations',
-                $item->ID()
-            )) {
+            if (
+                EE_Registry::instance()->CAP->current_user_can(
+                    'ee_delete_registration',
+                    'espresso_registrations_ee_delete_registrations',
+                    $item->ID()
+                )
+            ) {
                 $action['action'] = 'delete_registrations';
                 $delete_lnk_url = EE_Admin_Page::add_query_args_and_nonce(
                     $action,
@@ -1038,7 +1047,8 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         $actions['dl_invoice_lnk'] = '';
         $dl_invoice_lnk_url = $item->invoice_url();
         // only show invoice link if message type is active.
-        if ($attendee instanceof EE_Attendee
+        if (
+            $attendee instanceof EE_Attendee
             && $item->is_primary_registrant()
             && EEH_MSG_Template::is_mt_active('invoice')
         ) {

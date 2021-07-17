@@ -82,14 +82,15 @@ class TableAnalysis extends \EE_Base
         $EZSQL_ERROR = $ezsql_error_cache;
         // if there was a table doesn't exist error
         if (! empty($new_error)) {
-            if (in_array(
-                \EEH_Activation::last_wpdb_error_code(),
-                array(
+            if (
+                in_array(
+                    \EEH_Activation::last_wpdb_error_code(),
+                    array(
                     1051, // bad table
                     1109, // unknown table
                     117, // no such table
+                    )
                 )
-            )
                 ||
                 preg_match(
                     '~^Table .* doesn\'t exist~',

@@ -376,10 +376,11 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
      */
     public function add_newsletter_action_buttons(EE_Admin_List_Table $list_table)
     {
-        if (! EE_Registry::instance()->CAP->current_user_can(
-            'ee_send_message',
-            'espresso_registrations_newsletter_selected_send'
-        )
+        if (
+            ! EE_Registry::instance()->CAP->current_user_can(
+                'ee_send_message',
+                'espresso_registrations_newsletter_selected_send'
+            )
         ) {
             return;
         }
@@ -389,7 +390,8 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
             'default',
         );
         if ($this->_current_page === 'espresso_registrations' && in_array($this->_req_action, $routes_to_add_to)) {
-            if (($this->_req_action === 'event_registrations' && empty($this->_req_data['event_id']))
+            if (
+                ($this->_req_action === 'event_registrations' && empty($this->_req_data['event_id']))
                 || (isset($this->_req_data['status']) && $this->_req_data['status'] === 'trash')
             ) {
                 echo '';

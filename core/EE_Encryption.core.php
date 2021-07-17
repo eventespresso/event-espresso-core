@@ -554,7 +554,8 @@ class EE_Encryption implements InterminableInterface
         $encrypted_text = $this->valid_base_64($encrypted_text)
             ? $this->base64_url_decode($encrypted_text)
             : $encrypted_text;
-        if ($this->_use_mcrypt
+        if (
+            $this->_use_mcrypt
             && strpos($encrypted_text, EE_Encryption::ACME_ENCRYPTION_FLAG) === false
         ) {
             return $this->m_decrypt($encrypted_text);

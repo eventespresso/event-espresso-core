@@ -13,7 +13,7 @@ class EE_DMS_4_5_0_update_wp_user_for_price_types extends EE_Data_Migration_Scri
     {
         global $wpdb;
         $this->_pretty_name = __("Price Types", "event_espresso");
-        $this->_old_table = $wpdb->prefix."esp_price_type";
+        $this->_old_table = $wpdb->prefix . "esp_price_type";
         parent::__construct();
     }
     protected function _migrate_old_row($old_row)
@@ -23,8 +23,8 @@ class EE_DMS_4_5_0_update_wp_user_for_price_types extends EE_Data_Migration_Scri
         $user_id = EEH_Activation::get_default_creator_id();
         $updated = $wpdb->update(
             $this->_old_table,
-            array('PRT_wp_user'=>$user_id),
-            array('PRT_ID'=>$old_row['PRT_ID']),
+            array('PRT_wp_user' => $user_id),
+            array('PRT_ID' => $old_row['PRT_ID']),
             array('%d',// PRT_wp_user
                     ),
             array('%d',// PRT_ID

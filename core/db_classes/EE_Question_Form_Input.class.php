@@ -260,7 +260,8 @@ class EE_Question_Form_Input
     public function set_question_form_input_answer($qstn_id)
     {
         // check for answer in $this->form_data in case we are reprocessing a form after an error
-        if (isset($this->_QST_meta['EVT_ID'])
+        if (
+            isset($this->_QST_meta['EVT_ID'])
             && isset($this->_QST_meta['att_nmbr'])
             && isset($this->_QST_meta['date'])
             && isset($this->_QST_meta['time'])
@@ -357,7 +358,8 @@ class EE_Question_Form_Input
                         ]
                     );
                     // does question type have options ?
-                    if (in_array($type, ['DROPDOWN', 'RADIO_BTN', 'CHECKBOX'])
+                    if (
+                        in_array($type, ['DROPDOWN', 'RADIO_BTN', 'CHECKBOX'])
                         && isset($input_types[ $field_ID ])
                         && isset($input_types[ $field_ID ]['options'])
                     ) {

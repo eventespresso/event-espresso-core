@@ -244,10 +244,11 @@ class EE_Message_Repository extends EE_Base_Class_Repository
         $count = 0;
         $this->rewind();
         while ($this->valid()) {
-            if ($this->current()->priority() === $priority && (($status && in_array(
-                $this->current()->STS_ID(),
-                $status
-            )) || ! $status)
+            if (
+                $this->current()->priority() === $priority && (($status && in_array(
+                    $this->current()->STS_ID(),
+                    $status
+                )) || ! $status)
             ) {
                 $count++;
             }

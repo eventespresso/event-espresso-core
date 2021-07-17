@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Event Attendees shortcode class
  *

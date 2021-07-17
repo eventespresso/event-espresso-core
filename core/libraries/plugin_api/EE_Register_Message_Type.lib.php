@@ -45,7 +45,8 @@ class EE_Register_Message_Type implements EEI_Plugin_API
     public static function register($identifier = '', array $setup_args = [])
     {
         // required fields MUST be present, so let's make sure they are.
-        if (! isset($identifier)
+        if (
+            ! isset($identifier)
             || ! is_array($setup_args)
             || empty($setup_args['mtfilename'])
             || empty($setup_args['autoloadpaths'])
@@ -64,7 +65,8 @@ class EE_Register_Message_Type implements EEI_Plugin_API
         }
 
         // make sure this was called in the right place!
-        if (! did_action('EE_Brewing_Regular___messages_caf')
+        if (
+            ! did_action('EE_Brewing_Regular___messages_caf')
             || did_action('AHEE__EE_System__perform_activations_upgrades_and_migrations')
         ) {
             EE_Error::doing_it_wrong(
@@ -159,10 +161,12 @@ class EE_Register_Message_Type implements EEI_Plugin_API
         ];
         // add filters but only if they haven't already been set (these filters only need to be registered ONCE because
         // the callback handles all registered message types.
-        if (false === has_filter(
-            'FHEE__EED_Messages___set_messages_paths___MSG_PATHS',
-            ['EE_Register_Message_Type', 'register_msgs_autoload_paths']
-        )) {
+        if (
+            false === has_filter(
+                'FHEE__EED_Messages___set_messages_paths___MSG_PATHS',
+                ['EE_Register_Message_Type', 'register_msgs_autoload_paths']
+            )
+        ) {
             add_filter(
                 'FHEE__EED_Messages___set_messages_paths___MSG_PATHS',
                 ['EE_Register_Message_Type', 'register_msgs_autoload_paths'],
@@ -236,10 +240,11 @@ class EE_Register_Message_Type implements EEI_Plugin_API
             if ($settings['force_activation']) {
                 foreach ($settings['messengers_to_activate_with'] as $messenger) {
                     // DO not force activation if this message type has already been activated in the system
-                    if (! $message_resource_manager->has_message_type_been_activated_for_messenger(
-                        $identifier,
-                        $messenger
-                    )
+                    if (
+                        ! $message_resource_manager->has_message_type_been_activated_for_messenger(
+                            $identifier,
+                            $messenger
+                        )
                     ) {
                         $message_resource_manager->ensure_message_type_is_active($identifier, $messenger);
                     }
@@ -423,13 +428,15 @@ class EE_Register_Message_Type implements EEI_Plugin_API
         $context,
         EE_Messages_Template_Pack $template_pack
     ) {
-        if (! $template_pack instanceof EE_Messages_Template_Pack_Default
+        if (
+            ! $template_pack instanceof EE_Messages_Template_Pack_Default
             || ! $message_type instanceof EE_message_type
         ) {
             return $base_path;
         }
         foreach (self::$_ee_message_type_registry as $identifier => $mt_reg) {
-            if ($message_type->name === $identifier
+            if (
+                $message_type->name === $identifier
                 && ! empty($mt_reg['base_path_for_default_templates'])
             ) {
                 return $mt_reg['base_path_for_default_templates'];
@@ -470,13 +477,16 @@ class EE_Register_Message_Type implements EEI_Plugin_API
             return $base_path_or_url;
         }
         foreach (self::$_ee_message_type_registry as $identifier => $mt_reg) {
-            if ($identifier === $message_type_slug
+            if (
+                $identifier === $message_type_slug
             ) {
-                if ($url
+                if (
+                    $url
                     && ! empty($mt_reg['base_url_for_default_variation'])
                 ) {
                     return $mt_reg['base_url_for_default_variation'];
-                } elseif (! $url
+                } elseif (
+                    ! $url
                           && ! empty($mt_reg['base_path_for_default_variation'])
                 ) {
                     return $mt_reg['base_path_for_default_variation'];

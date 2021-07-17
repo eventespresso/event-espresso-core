@@ -1,4 +1,5 @@
 <?php
+
 /**
  * EES_Espresso_Checkout
  *

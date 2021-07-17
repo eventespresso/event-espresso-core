@@ -14,6 +14,7 @@
     </div>
 </div>
 <?php
+
 /**
  * Template vars in use:
  *

@@ -176,7 +176,8 @@ class RecommendedVersions extends Middleware
      */
     private function displayUpcomingRequiredVersion()
     {
-        if ($this->request->isAdmin()
+        if (
+            $this->request->isAdmin()
             && apply_filters('FHEE__EE_Recommended_Versions__displayUpcomingRequiredVersion', true, $this->request)
             && current_user_can('update_plugins')
         ) {

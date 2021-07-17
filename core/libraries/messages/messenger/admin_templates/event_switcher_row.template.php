@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is the wrapper template for the messages-custom-template-switcher rows
  * This template is content for event_switcher_wrapper.template.php

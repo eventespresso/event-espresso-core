@@ -339,7 +339,8 @@ class EE_Message_List_Table extends EE_Admin_List_Table
         }
 
         // account for filters
-        if (! $all
+        if (
+            ! $all
             && isset($this->_req_data['ee_messenger_filter_by'])
             && $this->_req_data['ee_messenger_filter_by'] !== 'none_selected'
         ) {
@@ -347,7 +348,8 @@ class EE_Message_List_Table extends EE_Admin_List_Table
                 'MSG_messenger' => $this->_req_data['ee_messenger_filter_by'],
             );
         }
-        if (! $all
+        if (
+            ! $all
             && ! empty($this->_req_data['ee_message_type_filter_by'])
             && $this->_req_data['ee_message_type_filter_by'] !== 'none_selected'
         ) {
@@ -356,7 +358,8 @@ class EE_Message_List_Table extends EE_Admin_List_Table
             );
         }
 
-        if (! $all
+        if (
+            ! $all
             && ! empty($this->_req_data['ee_context_filter_by'])
             && $this->_req_data['ee_context_filter_by'] !== 'none_selected'
         ) {

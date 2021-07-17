@@ -112,10 +112,12 @@ class Iframe
                 $this
             )
         );
-        if (apply_filters(
-            'FHEE___EventEspresso_core_libraries_iframe_display_Iframe__construct__load_default_theme_stylesheet',
-            false
-        )) {
+        if (
+            apply_filters(
+                'FHEE___EventEspresso_core_libraries_iframe_display_Iframe__construct__load_default_theme_stylesheet',
+                false
+            )
+        ) {
             $this->addStylesheets(
                 apply_filters(
                     'FHEE___EventEspresso_core_libraries_iframe_display_Iframe__construct__default_theme_stylesheet',

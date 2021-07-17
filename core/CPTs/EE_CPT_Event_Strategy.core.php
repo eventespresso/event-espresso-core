@@ -112,7 +112,8 @@ class EE_CPT_Event_Strategy
      */
     public function posts_fields($SQL, WP_Query $wp_query)
     {
-        if ($wp_query instanceof WP_Query
+        if (
+            $wp_query instanceof WP_Query
             &&
             (
                 $wp_query->is_espresso_event_single
@@ -145,7 +146,8 @@ class EE_CPT_Event_Strategy
      */
     public function posts_join($SQL, WP_Query $wp_query)
     {
-        if ($wp_query instanceof WP_Query
+        if (
+            $wp_query instanceof WP_Query
             &&
             (
                 $wp_query->is_espresso_event_single
@@ -175,14 +177,16 @@ class EE_CPT_Event_Strategy
      */
     public function posts_where($SQL, WP_Query $wp_query)
     {
-        if ($wp_query instanceof WP_Query
+        if (
+            $wp_query instanceof WP_Query
             &&
             (
                 $wp_query->is_espresso_event_archive
                 || $wp_query->is_espresso_event_taxonomy
             )
         ) {
-            if (! isset(EE_Registry::instance()->CFG->template_settings->EED_Events_Archive)
+            if (
+                ! isset(EE_Registry::instance()->CFG->template_settings->EED_Events_Archive)
                 || ! isset(EE_Registry::instance()->CFG->template_settings->EED_Events_Archive->display_expired_events)
                 || ! EE_Registry::instance()->CFG->template_settings->EED_Events_Archive->display_expired_events
             ) {
@@ -201,7 +205,8 @@ class EE_CPT_Event_Strategy
      */
     public function posts_orderby($SQL, WP_Query $wp_query)
     {
-        if ($wp_query instanceof WP_Query
+        if (
+            $wp_query instanceof WP_Query
             &&
             (
                 $wp_query->is_espresso_event_archive
@@ -221,7 +226,8 @@ class EE_CPT_Event_Strategy
      */
     public function posts_groupby($SQL, WP_Query $wp_query)
     {
-        if ($wp_query instanceof WP_Query
+        if (
+            $wp_query instanceof WP_Query
             &&
             (
                 $wp_query->is_espresso_event_archive

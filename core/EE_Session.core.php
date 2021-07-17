@@ -203,7 +203,8 @@ class EE_Session implements SessionIdentifierInterface
         // check if class object is instantiated
         // session loading is turned ON by default, but prior to the init hook, can be turned back OFF via:
         // add_filter( 'FHEE_load_EE_Session', '__return_false' );
-        if (! self::$_instance instanceof EE_Session
+        if (
+            ! self::$_instance instanceof EE_Session
             && $cache_storage instanceof CacheStorageInterface
             && $lifespan instanceof SessionLifespan
             && $request instanceof RequestInterface
@@ -966,7 +967,8 @@ class EE_Session implements SessionIdentifierInterface
     {
         // don't save sessions for crawlers
         // and unless we're deleting the session data, don't save anything if there isn't a cart
-        if ($this->request->isBot()
+        if (
+            $this->request->isBot()
             || (
                 ! $clear_session
                 && ! $this->sessionHasStuffWorthSaving()

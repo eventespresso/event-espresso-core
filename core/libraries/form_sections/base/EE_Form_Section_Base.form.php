@@ -400,7 +400,7 @@ abstract class EE_Form_Section_Base
     protected function get_html_id_for_form($html_id)
     {
         $strlen = strlen($html_id);
-        $html_id = strpos($html_id, '-form') === $strlen-5 || strpos($html_id, '-frm') === $strlen - 4
+        $html_id = strpos($html_id, '-form') === $strlen - 5 || strpos($html_id, '-frm') === $strlen - 4
             ? $html_id
             : $html_id . '-frm';
         return $html_id;

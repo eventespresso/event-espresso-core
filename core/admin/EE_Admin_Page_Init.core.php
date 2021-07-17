@@ -434,10 +434,12 @@ abstract class EE_Admin_Page_Init extends EE_Base
      */
     private function _check_user_access()
     {
-        if (! EE_Registry::instance()->CAP->current_user_can(
-            $this->_menu_map->capability,
-            $this->_menu_map->menu_slug
-        )) {
+        if (
+            ! EE_Registry::instance()->CAP->current_user_can(
+                $this->_menu_map->capability,
+                $this->_menu_map->menu_slug
+            )
+        ) {
             wp_die(__('You don\'t have access to this page.', 'event_espresso'), '', array('back_link' => true));
         }
         return true;

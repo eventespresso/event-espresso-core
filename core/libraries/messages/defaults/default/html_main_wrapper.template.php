@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This is the wrapper template for the html messenger
  *
@@ -13,6 +14,7 @@
  * @package Event Espresso
  * @subpackage messages
  */
+
 ?>
 <!doctype html>
 <html>

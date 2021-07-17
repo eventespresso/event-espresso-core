@@ -1,4 +1,5 @@
 <?php
+
 /**
  * EE_Admin_Page_CPT_Init
  * This is utilized by all child EE_Admin_Init classes who use core WordPress Custom Post Type views for adding/editing

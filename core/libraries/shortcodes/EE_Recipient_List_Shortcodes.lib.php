@@ -1,4 +1,5 @@
 <?php
+
 /**
  * EE_Recipient_List_Shortcodes
  *

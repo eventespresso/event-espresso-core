@@ -98,8 +98,8 @@
             "%s Important: %s Before migrating, please back up your database and files.",
             "event_espresso"
         ),
-        "<b>",
-        "</b>"
+                        "<b>",
+                        "</b>"
     ); ?></span>
                         <p>
                             <?php
@@ -175,7 +175,7 @@
                                 esc_html__("Just Start %s and Delete Existing Data", "event_espresso"),
                                 $ultimate_db_state
                             ),
-                            $ultimate_db_state
+                             $ultimate_db_state
                         ); ?></a>
                 </td>
             </tr>

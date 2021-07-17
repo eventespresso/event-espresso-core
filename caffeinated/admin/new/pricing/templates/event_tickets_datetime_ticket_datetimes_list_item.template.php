@@ -9,6 +9,7 @@
           data-context="ticket-datetime" data-ticket-row="<?php echo $tkt_row; ?>"></span>
 </li>
 <?php
+
 /**
  * template args in use
  *

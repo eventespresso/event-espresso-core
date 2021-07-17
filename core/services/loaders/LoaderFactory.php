@@ -92,7 +92,8 @@ class LoaderFactory
         ClassInterfaceCache $class_cache = null,
         ObjectIdentifier $object_identifier = null
     ) {
-        if (! LoaderFactory::$loader instanceof LoaderInterface
+        if (
+            ! LoaderFactory::$loader instanceof LoaderInterface
             && ($generator instanceof EE_Registry || $generator instanceof CoffeeShop)
             && $class_cache instanceof ClassInterfaceCache
             && $object_identifier instanceof ObjectIdentifier

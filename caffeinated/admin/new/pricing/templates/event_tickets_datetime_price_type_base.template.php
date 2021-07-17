@@ -7,6 +7,7 @@
        class="ee-price-selected-is-percent" value="<?php echo $price_selected_is_percent; ?>">
 
 <?php
+
 /**
  * template args in use
  *

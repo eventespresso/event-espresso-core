@@ -1,4 +1,5 @@
 <?php
+
 use EventEspresso\core\services\database\TableAnalysis;
 use EventEspresso\core\services\database\TableManager;
 
@@ -7,6 +8,7 @@ use EventEspresso\core\services\database\TableManager;
  * mostly just
  * -move payment methods from EE_Config into a separate table just for them
  */
+
 // make sure we have all the stages loaded too
 // unfortunately, this needs to be done upon INCLUSION of this file,
 // instead of construction, because it only gets constructed on first page load

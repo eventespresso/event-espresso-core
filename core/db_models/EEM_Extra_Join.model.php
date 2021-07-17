@@ -25,7 +25,7 @@ class EEM_Extra_Join extends EEM_Base
 {
     // private instance of the Extra Join object
     protected static $_instance = null;
-    
+
     public function __construct($timezone = null)
     {
         $models_this_can_join = array_keys(EE_Registry::instance()->non_abstract_db_models);
@@ -39,7 +39,7 @@ class EEM_Extra_Join extends EEM_Base
                 'EXJ_first_model_name' => new EE_Any_Foreign_Model_Name_Field('EXJ_first_model_name', __('First Model Name', 'event_espresso'), true, '', $models_this_can_join),
                 'EXJ_second_model_ID' => new EE_Foreign_Key_String_Field('EXJ_second_model_ID', __('Second Model ID', 'event_espresso'), true, 0, $models_this_can_join),
                 'EXJ_second_model_name' => new EE_Any_Foreign_Model_Name_Field('EXJ_second_model_name', __('Second Model Name', 'event_espresso'), true, '', $models_this_can_join),
-                
+
             )
         );
         // this model is weird in that it has two foreign key columns which can point to any model/table.

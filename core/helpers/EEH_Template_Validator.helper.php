@@ -1,4 +1,5 @@
 <?php
+
 /**
  * EEH_Template_Validator
  *
@@ -23,11 +24,11 @@
  */
 class EEH_Template_Validator
 {
-    
-    
-    
-    
-    
+
+
+
+
+
     /**
      * Throws an EE_Error if $variabel_to_test isn't an array of objects of class $class_name
      * @param mixed $variable_to_test
@@ -51,11 +52,11 @@ class EEH_Template_Validator
             self::verify_instanceof($array_element, $key, $class_name);
         }
     }
-    
-    
-    
-    
-    
+
+
+
+
+
     /**
      * throws an EE_Error if $variable_to_test is null
      * @param mixed $variable_to_test
@@ -68,13 +69,13 @@ class EEH_Template_Validator
         if (!WP_DEBUG) {
             return;
         }
-        if ($variable_to_test==null && $variable_to_test!=0 && $variable_to_test!=false) {
-            $error[]=__('Variable named %s is null.', 'event_espresso');
-            $error[]=__("Consider looking at the stack trace to see why it wasn't set.", 'event_espresso');
+        if ($variable_to_test == null && $variable_to_test != 0 && $variable_to_test != false) {
+            $error[] = __('Variable named %s is null.', 'event_espresso');
+            $error[] = __("Consider looking at the stack trace to see why it wasn't set.", 'event_espresso');
             throw new EE_Error(sprintf(implode(",", $error), $name_of_variable, $name_of_variable));
         }
     }
-    
+
     /**
      * When WP_DEBUG is activted, throws an error if $expression_to_test is false.
      * @param boolean $expression_to_test
@@ -89,16 +90,16 @@ class EEH_Template_Validator
             return;
         }
         if (!$expression_to_test) {
-            $error[]=__('Template error.', 'event_espresso');
-            $error[]=__("%s evaluated to false, but it must be true!", 'event_espresso');
+            $error[] = __('Template error.', 'event_espresso');
+            $error[] = __("%s evaluated to false, but it must be true!", 'event_espresso');
             throw new EE_Error(sprintf(implode(",", $error), $expression_string_representation));
         }
     }
-    
-    
-    
-    
-    
+
+
+
+
+
     /**
      * For verifying that a variable is indeed an object of class $class_name
      * @param mixed $variable_to_test
@@ -117,16 +118,16 @@ class EEH_Template_Validator
             return;
         }
         if ($variable_to_test == null ||  ! ( $variable_to_test instanceof $class_name )) {
-            $msg[]=__('Variable %s is not of the correct type.', 'event_espresso');
-            $msg[]=__("It should be of type %s", 'event_espresso');
+            $msg[] = __('Variable %s is not of the correct type.', 'event_espresso');
+            $msg[] = __("It should be of type %s", 'event_espresso');
             throw new EE_Error(sprintf(implode(",", $msg), $name_of_variable, $name_of_variable, $class_name));
         }
     }
-    
-    
-    
-    
-    
+
+
+
+
+
     /**
      * For verifying that a variable is indeed an array, else throw an EE_Error
      * @param type $variable_to_test
@@ -141,22 +142,22 @@ class EEH_Template_Validator
             return;
         }
         self::verify_argument_is_one_of($allow_empty, $variable_name, array('allow_empty','do_not_allow_empty'));
-        if (empty($variable_to_test) && 'allow_empty'==$allow_empty) {
+        if (empty($variable_to_test) && 'allow_empty' == $allow_empty) {
             return;
         }
         if (!is_array($variable_to_test)) {
-            $error[]=__('Variable %s should be an array, but it is not.', 'event_espresso');
-            $error[]=__("Its value is, instead '%s'", 'event_espresso');
+            $error[] = __('Variable %s should be an array, but it is not.', 'event_espresso');
+            $error[] = __("Its value is, instead '%s'", 'event_espresso');
             throw new EE_Error(sprintf(implode(",", $error), $variable_name, $variable_name, $variable_to_test));
         }
     }
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
     /**
      * for verifying that a variable is one of the string optiosn supplied
      * @param mixed $variable_to_test
@@ -171,8 +172,8 @@ class EEH_Template_Validator
             return;
         }
         if (!in_array($variable_to_test, $string_options)) {
-            $msg[0]=__('Malconfigured template.', 'event_espresso');
-            $msg[1]=__("Variable named '%s' was set to '%s'. It can only be one of '%s'", 'event_espresso');
+            $msg[0] = __('Malconfigured template.', 'event_espresso');
+            $msg[1] = __("Variable named '%s' was set to '%s'. It can only be one of '%s'", 'event_espresso');
             throw new EE_Error(sprintf(implode("||", $msg), $variable_name, $variable_to_test, implode("', '", $string_options)));
         }
     }

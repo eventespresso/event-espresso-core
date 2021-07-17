@@ -215,7 +215,8 @@ class EEH_Activation implements ResettableInterface
                 /**
                  * This allows client code to define the initial start timestamp for this schedule.
                  */
-                if (is_array($frequency)
+                if (
+                    is_array($frequency)
                     && count($frequency) === 2
                     && isset($frequency[0], $frequency[1])
                 ) {
@@ -262,7 +263,8 @@ class EEH_Activation implements ResettableInterface
         foreach ($crons as $timestamp => $hooks_to_fire_at_time) {
             if (is_array($hooks_to_fire_at_time)) {
                 foreach ($hooks_to_fire_at_time as $hook_name => $hook_actions) {
-                    if (isset($ee_cron_tasks_to_remove[ $hook_name ])
+                    if (
+                        isset($ee_cron_tasks_to_remove[ $hook_name ])
                         && is_array($ee_cron_tasks_to_remove[ $hook_name ])
                     ) {
                         unset($crons[ $timestamp ][ $hook_name ]);
@@ -339,7 +341,8 @@ class EEH_Activation implements ResettableInterface
             $plugin = basename($plugin_path);
             // drill down to Espresso plugins
             // then to calendar related plugins
-            if (strpos($plugin, 'espresso') !== false
+            if (
+                strpos($plugin, 'espresso') !== false
                 || strpos($plugin, 'Espresso') !== false
                 || strpos($plugin, 'ee4') !== false
                 || strpos($plugin, 'EE4') !== false
@@ -468,7 +471,8 @@ class EEH_Activation implements ResettableInterface
                 }
             }
             // check that Post ID matches critical page ID in config
-            if (isset($critical_page['post']->ID)
+            if (
+                isset($critical_page['post']->ID)
                 && $critical_page['post']->ID !== $EE_Core_Config->{$critical_page['id']}
             ) {
                 // update Config with post ID
@@ -1279,10 +1283,11 @@ class EEH_Activation implements ResettableInterface
                 // if already active or has already been activated before we skip
                 // (otherwise we might reactivate something user's intentionally deactivated.)
                 // we also skip if the message type is not installed.
-                if ($message_resource_manager->has_message_type_been_activated_for_messenger(
-                    $default_message_type_name_for_messenger,
-                    $active_messenger->name
-                )
+                if (
+                    $message_resource_manager->has_message_type_been_activated_for_messenger(
+                        $default_message_type_name_for_messenger,
+                        $active_messenger->name
+                    )
                     || $message_resource_manager->is_message_type_active_for_messenger(
                         $active_messenger->name,
                         $default_message_type_name_for_messenger
@@ -1334,7 +1339,8 @@ class EEH_Activation implements ResettableInterface
             $default_message_type_names_for_messenger = $messenger_to_generate->get_default_message_types();
             // verify the default message types match an installed message type.
             foreach ($default_message_type_names_for_messenger as $key => $name) {
-                if (! isset($installed_message_types[ $name ])
+                if (
+                    ! isset($installed_message_types[ $name ])
                     || $message_resource_manager->has_message_type_been_activated_for_messenger(
                         $name,
                         $messenger_to_generate->name
@@ -1389,7 +1395,8 @@ class EEH_Activation implements ResettableInterface
             // if installed messenger is a messenger that should be activated on install
             // and is not already active
             // and has never been activated
-            if (! $installed_messenger->activate_on_install
+            if (
+                ! $installed_messenger->activate_on_install
                 || isset($active_messengers[ $installed_messenger->name ])
                 || isset($has_activated[ $installed_messenger->name ])
             ) {
@@ -1494,7 +1501,8 @@ class EEH_Activation implements ResettableInterface
                 $model_obj = call_user_func(array($model_name, 'instance'));
                 if ($model_obj instanceof EEM_Base) {
                     foreach ($model_obj->get_tables() as $table) {
-                        if (strpos($table->get_table_name(), 'esp_')
+                        if (
+                            strpos($table->get_table_name(), 'esp_')
                             &&
                             (
                                 is_main_site()// main site? nuke them all

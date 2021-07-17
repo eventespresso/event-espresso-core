@@ -516,10 +516,14 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data
 
         $shipping_line_item = EE_Line_Item::new_instance(
             [
-                'LIN_name'       => __('Shipping Surcharge',
-                                       'event_espresso'),
-                'LIN_desc'       => __('Sent via Millenium Falcon',
-                                       'event_espresso'),
+                'LIN_name'       => __(
+                    'Shipping Surcharge',
+                    'event_espresso'
+                ),
+                'LIN_desc'       => __(
+                    'Sent via Millenium Falcon',
+                    'event_espresso'
+                ),
                 'LIN_unit_price' => 20,
                 'LIN_quantity'   => 1,
                 'LIN_is_taxable' => true,

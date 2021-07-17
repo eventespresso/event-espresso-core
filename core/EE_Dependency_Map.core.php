@@ -122,7 +122,8 @@ class EE_Dependency_Map
     public static function instance(ClassInterfaceCache $class_cache = null)
     {
         // check if class object is instantiated, and instantiated properly
-        if (! self::$_instance instanceof EE_Dependency_Map
+        if (
+            ! self::$_instance instanceof EE_Dependency_Map
             && $class_cache instanceof ClassInterfaceCache
         ) {
             self::$_instance = new EE_Dependency_Map($class_cache);
@@ -210,7 +211,8 @@ class EE_Dependency_Map
         // get resolved to the correct class name
         foreach ($dependencies as $dependency => $load_source) {
             $alias = self::$_instance->getFqnForAlias($dependency);
-            if ($overwrite === EE_Dependency_Map::OVERWRITE_DEPENDENCIES
+            if (
+                $overwrite === EE_Dependency_Map::OVERWRITE_DEPENDENCIES
                 || ! isset(self::$_instance->_dependency_map[ $class ][ $alias ])
             ) {
                 unset($dependencies[ $dependency ]);
@@ -254,7 +256,8 @@ class EE_Dependency_Map
             );
         }
         // check that loader is callable or method starts with "load_" and exists in EE_Registry
-        if (! is_callable($loader)
+        if (
+            ! is_callable($loader)
             && (
                 strpos($loader, 'load_') !== 0
                 || ! method_exists('EE_Registry', $loader)
@@ -354,7 +357,8 @@ class EE_Dependency_Map
         }
         // EE_CPT_*_Strategy classes like EE_CPT_Event_Strategy, EE_CPT_Venue_Strategy, etc
         // perform strpos() first to avoid loading regex every time we load a class
-        if (strpos($class_name, 'EE_CPT_') === 0
+        if (
+            strpos($class_name, 'EE_CPT_') === 0
             && preg_match('/^EE_CPT_([a-zA-Z]+)_Strategy$/', $class_name)
         ) {
             return 'load_core';

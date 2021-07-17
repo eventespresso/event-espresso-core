@@ -90,10 +90,12 @@ class CountrySubRegionDao
                 __LINE__
             );
         }
-        if (! $has_sub_regions
+        if (
+            ! $has_sub_regions
             || (isset($data->version) && version_compare($data->version, $this->data_version))
         ) {
-            if (isset($data->countries)
+            if (
+                isset($data->countries)
                 && $this->processCountryData($CNT_ISO, $data->countries) > 0
             ) {
                 $this->countries = $data->countries;
@@ -144,7 +146,8 @@ class CountrySubRegionDao
     {
         if (! empty($countries)) {
             foreach ($countries as $key => $country) {
-                if ($country instanceof stdClass
+                if (
+                    $country instanceof stdClass
                     && $country->code === $CNT_ISO
                     && empty($country->sub_regions)
                     && ! empty($country->filename)
@@ -220,7 +223,8 @@ class CountrySubRegionDao
                 if (absint($abbrev) !== 0) {
                     $abbrev = sanitize_text_field($sub_region->code);
                 }
-                if (! in_array($abbrev, $existing_sub_regions, true)
+                if (
+                    ! in_array($abbrev, $existing_sub_regions, true)
                     && $this->state_model->insert(
                         [
                             // STA_ID CNT_ISO STA_abbrev STA_name STA_active

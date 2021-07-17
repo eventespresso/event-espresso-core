@@ -1,4 +1,5 @@
 <?php
+
 /**
  * EE_Button_Input
  * Similar to EE_Submit_Input, but renders a button element, and its text being displayed
@@ -40,7 +41,7 @@ class EE_Button_Input extends EE_Form_Input_Base
     {
         $this->_button_content = $new_content;
     }
-    
+
     /**
      * Gets the button content
      * @return string

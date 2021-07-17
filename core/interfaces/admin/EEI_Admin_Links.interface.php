@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Admin Links interface
  * This interface is implemented on classes for returning links to things in the admin.

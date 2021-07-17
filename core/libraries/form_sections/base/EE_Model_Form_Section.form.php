@@ -1,7 +1,5 @@
 <?php
 
-
-
 /**
  * Class EE_Model_Form_Section
  * For auto-generating form sections based off a model.
@@ -104,7 +102,8 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper
             $input = null;
             switch (get_class($relation_obj)) {
                 case 'EE_HABTM_Relation':
-                    if (isset($subsection_args[ $relation_name ])
+                    if (
+                        isset($subsection_args[ $relation_name ])
                         && isset($subsection_args[ $relation_name ]['model_objects'])
                     ) {
                         $model_objects = $subsection_args[ $relation_name ]['model_objects'];

@@ -22,10 +22,12 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
         /**
          * Add cap restriction ... metaboxes should not show if user does not have the ability to edit_custom_messages
          */
-        if (! EE_Registry::instance()->CAP->current_user_can(
-            'ee_edit_messages',
-            'messages_events_editor_metabox'
-        )) {
+        if (
+            ! EE_Registry::instance()->CAP->current_user_can(
+                'ee_edit_messages',
+                'messages_events_editor_metabox'
+            )
+        ) {
             return;
         }
         add_filter(

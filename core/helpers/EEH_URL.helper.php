@@ -76,10 +76,12 @@ class EEH_URL
                 $args
             )
         );
-        if (! $results instanceof WP_Error
+        if (
+            ! $results instanceof WP_Error
             && isset($results['response'])
             && isset($results['response']['code'])
-            && $results['response']['code'] == '200') {
+            && $results['response']['code'] == '200'
+        ) {
             return true;
         }
         return false;

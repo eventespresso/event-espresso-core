@@ -1,4 +1,5 @@
 <?php
+
 /**
  * EE_All_Caps_Normalization
  * Just makes sure the string is all upper case. If the user didn't provide an all

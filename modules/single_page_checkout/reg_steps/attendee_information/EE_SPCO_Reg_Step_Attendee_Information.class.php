@@ -197,7 +197,8 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
         if ($registrations) {
             foreach ($registrations as $registration) {
                 // can this registration be processed during this visit ?
-                if ($registration instanceof EE_Registration
+                if (
+                    $registration instanceof EE_Registration
                     && $this->checkout->visit_allows_processing_of_this_registration($registration)
                 ) {
                     $subsections[ $registration->reg_url_link() ]                       =
@@ -230,7 +231,8 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
                     ? $this->_copy_attendee_info_form()
                     : $this->_auto_copy_attendee_info();
                 // generate hidden input
-                if (isset($subsections[ $primary_registrant ])
+                if (
+                    isset($subsections[ $primary_registrant ])
                     && $subsections[ $primary_registrant ] instanceof EE_Form_Section_Proper
                 ) {
                     $subsections[ $primary_registrant ]->add_subsections(
@@ -282,8 +284,8 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
         if ($registration->event() instanceof EE_Event) {
             $field_name      = 'Event_Question_Group.'
                                . EEM_Event_Question_Group::instance()->fieldNameForContext(
-                    $registration->is_primary_registrant()
-                );
+                                   $registration->is_primary_registrant()
+                               );
             $question_groups = $registration->event()->question_groups(
                 apply_filters(
                 // @codingStandardsIgnoreStart
@@ -1034,15 +1036,17 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
                      * @var bool   if true is returned by the plugin then the
                      *            registration processing is halted.
                      */
-                    if (apply_filters(
-                        'FHEE__EE_SPCO_Reg_Step_Attendee_Information___process_registrations__pre_registration_process',
-                        false,
-                        $att_nmbr,
-                        $registration,
-                        $registrations,
-                        $valid_data,
-                        $this
-                    )) {
+                    if (
+                        apply_filters(
+                            'FHEE__EE_SPCO_Reg_Step_Attendee_Information___process_registrations__pre_registration_process',
+                            false,
+                            $att_nmbr,
+                            $registration,
+                            $registrations,
+                            $valid_data,
+                            $this
+                        )
+                    ) {
                         return false;
                     }
 
@@ -1072,31 +1076,35 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
                             if (! in_array($form_section, $non_input_form_sections, true)) {
                                 foreach ($form_inputs as $form_input => $input_value) {
                                     // check for critical inputs
-                                    if (! $this->_verify_critical_attendee_details_are_set_and_validate_email(
-                                        $form_input,
-                                        $input_value
-                                    )
+                                    if (
+                                        ! $this->_verify_critical_attendee_details_are_set_and_validate_email(
+                                            $form_input,
+                                            $input_value
+                                        )
                                     ) {
                                         return false;
                                     }
                                     // store a bit of data about the primary attendee
-                                    if ($att_nmbr === 1
+                                    if (
+                                        $att_nmbr === 1
                                         && ! empty($input_value)
                                         && $reg_url_link === $primary_registrant['line_item_id']
                                     ) {
                                         $primary_registrant[ $form_input ] = $input_value;
-                                    } elseif ($copy_primary
+                                    } elseif (
+                                        $copy_primary
                                               && $input_value === null
                                               && isset($primary_registrant[ $form_input ])
                                     ) {
                                         $input_value = $primary_registrant[ $form_input ];
                                     }
                                     // now attempt to save the input data
-                                    if (! $this->_save_registration_form_input(
-                                        $registration,
-                                        $form_input,
-                                        $input_value
-                                    )
+                                    if (
+                                        ! $this->_save_registration_form_input(
+                                            $registration,
+                                            $form_input,
+                                            $input_value
+                                        )
                                     ) {
                                         EE_Error::add_error(
                                             sprintf(
@@ -1119,7 +1127,8 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
                         }  // end of foreach ( $valid_data[ $reg_url_link ] as $form_section => $form_inputs )
                     }
                     // this registration does not require additional attendee information ?
-                    if ($copy_primary
+                    if (
+                        $copy_primary
                         && $att_nmbr > 1
                         && $this->checkout->primary_attendee_obj instanceof EE_Attendee
                     ) {
@@ -1229,14 +1238,16 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
 
         // allow for plugins to hook in and do their own processing of the form input.
         // For plugins to bypass normal processing here, they just need to return a boolean value.
-        if (apply_filters(
-            'FHEE__EE_SPCO_Reg_Step_Attendee_Information___save_registration_form_input',
-            false,
-            $registration,
-            $form_input,
-            $input_value,
-            $this
-        )) {
+        if (
+            apply_filters(
+                'FHEE__EE_SPCO_Reg_Step_Attendee_Information___save_registration_form_input',
+                false,
+                $registration,
+                $form_input,
+                $input_value,
+                $this
+            )
+        ) {
             return true;
         }
         /*
@@ -1399,10 +1410,12 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
         // bare minimum critical details include first name, last name, email address
         $critical_attendee_details = ['ATT_fname', 'ATT_lname', 'ATT_email'];
         // add address info to critical details?
-        if (apply_filters(
-            'FHEE__EE_SPCO_Reg_Step_Attendee_Information__merge_address_details_with_critical_attendee_details',
-            false
-        )) {
+        if (
+            apply_filters(
+                'FHEE__EE_SPCO_Reg_Step_Attendee_Information__merge_address_details_with_critical_attendee_details',
+                false
+            )
+        ) {
             $address_details           = [
                 'ATT_address',
                 'ATT_address2',
@@ -1415,7 +1428,8 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
             $critical_attendee_details = array_merge($critical_attendee_details, $address_details);
         }
         foreach ($critical_attendee_details as $critical_attendee_detail) {
-            if (! isset($attendee_data[ $critical_attendee_detail ])
+            if (
+                ! isset($attendee_data[ $critical_attendee_detail ])
                 || empty($attendee_data[ $critical_attendee_detail ])
             ) {
                 $attendee_data[ $critical_attendee_detail ] = $this->checkout->primary_attendee_obj->get(

@@ -215,7 +215,7 @@ abstract class EE_Admin_Hooks extends EE_Base
         if (! isset($this->_req_data['page']) || $this->_req_data['page'] !== $this->_adminpage_obj->page_slug) {
             return;
         }
-        //get out nothing more to be done here.
+        // get out nothing more to be done here.
         // allow for extends to modify properties
         if (method_exists($this, '_extend_properties')) {
             $this->_extend_properties();
@@ -592,7 +592,7 @@ abstract class EE_Admin_Hooks extends EE_Base
         if (empty($this->_init_func)) {
             return;
         }
-        //get out there's nothing to take care of.
+        // get out there's nothing to take care of.
         // We need to determine what page_route we are on!
         foreach ($this->_init_func as $route => $method) {
             // make sure method exists

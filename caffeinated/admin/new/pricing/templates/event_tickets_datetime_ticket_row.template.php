@@ -208,22 +208,22 @@ if (WP_DEBUG) {
                 </div>
                 <div class="ticket-is-taxable-container">
                     <?php if (! empty($tax_rows)) { ?>
-                    <?php if ($disabled) : ?>
-                        <?php
-                        $tax_value = ! empty($TKT_taxable) ? 1 : 0;
-                        ?>
+                        <?php if ($disabled) : ?>
+                            <?php
+                            $tax_value = ! empty($TKT_taxable) ? 1 : 0;
+                            ?>
                         <input class="TKT-taxable-checkbox" type="hidden"
                                name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_taxable]"
                                value="<?php echo $tax_value; ?>">
                         <input class="TKT-taxable-checkbox" id="edit-ticket-TKT_taxable-<?php echo $tkt_row; ?>"
                                type="checkbox" name="archived_ticket[<?php echo $tkt_row; ?>][TKT_taxable]"
                                value="1"<?php echo $TKT_taxable; ?> disabled>
-                    <?php else : ?>
+                        <?php else : ?>
                         <input class="TKT-taxable-checkbox" id="edit-ticket-TKT_taxable-<?php echo $tkt_row; ?>"
                                type="checkbox"
                                name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_taxable]"
                                value="1"<?php echo $TKT_taxable; ?>>
-                    <?php endif; ?>
+                        <?php endif; ?>
                     <label for="edit-ticket-TKT_taxable-<?php echo $tkt_row; ?>"> <?php
                         esc_html_e('This ticket is taxable.', 'event_espresso'); ?>
                     <?php } //end tax_rows check ?>
@@ -311,7 +311,7 @@ if (WP_DEBUG) {
                                 esc_html__('Ticket ID: %d', 'event_espresso'),
                                 $TKT_ID
                             )
-                            : ''; ?></span>
+                                             : ''; ?></span>
                 </div>
                 <div class="save-cancel-button-container">
                     <label for="edit-ticket-TKT_is_default_selector"><?php
@@ -355,6 +355,7 @@ if (WP_DEBUG) {
     </td>
 </tr>
 <?php
+
 /**
  * template args in use
  *

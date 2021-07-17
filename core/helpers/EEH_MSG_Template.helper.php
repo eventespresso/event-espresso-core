@@ -501,8 +501,10 @@ class EEH_MSG_Template
         // valid sending messenger but only if sending messenger set.  Otherwise generating messenger is used.
         if (! empty($sending_messenger)) {
             $with_messengers = $message_type->with_messengers();
-            if (! isset($with_messengers[ $message->messenger() ])
-                 || ! in_array($sending_messenger, $with_messengers[ $message->messenger() ]) ) {
+            if (
+                ! isset($with_messengers[ $message->messenger() ])
+                 || ! in_array($sending_messenger, $with_messengers[ $message->messenger() ])
+            ) {
                 throw new EE_Error(
                     sprintf(
                         __(
@@ -762,7 +764,8 @@ class EEH_MSG_Template
                 ),
             )
         );
-        if ($message->TXN_ID() > 0
+        if (
+            $message->TXN_ID() > 0
             && EE_Registry::instance()->CAP->current_user_can(
                 'ee_read_transaction',
                 'espresso_transactions_default',
@@ -933,7 +936,7 @@ class EEH_MSG_Template
         if (! class_exists($pack_class_name) && $template_pack_name !== 'default') {
             return self::get_template_pack('default');
         } else {
-            $template_pack = new $pack_class_name;
+            $template_pack = new $pack_class_name();
             self::$_template_pack_collection->add($template_pack);
             return $template_pack;
         }
@@ -986,7 +989,7 @@ class EEH_MSG_Template
             if (! class_exists($template_pack_class_name)) {
                 continue;
             }
-            self::$_template_pack_collection->add(new $template_pack_class_name);
+            self::$_template_pack_collection->add(new $template_pack_class_name());
         }
 
         /**
@@ -995,9 +998,10 @@ class EEH_MSG_Template
          */
         $additional_template_packs = apply_filters('FHEE__EED_Messages__get_template_packs__template_packs', array());
         foreach ((array) $additional_template_packs as $template_pack) {
-            if (self::$_template_pack_collection->get_by_name(
-                $template_pack->dbref
-            ) instanceof EE_Messages_Template_Pack
+            if (
+                self::$_template_pack_collection->get_by_name(
+                    $template_pack->dbref
+                ) instanceof EE_Messages_Template_Pack
             ) {
                 continue;
             }

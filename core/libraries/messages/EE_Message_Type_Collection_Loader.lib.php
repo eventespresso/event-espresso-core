@@ -96,7 +96,7 @@ class EE_Message_Type_Collection_Loader
                 );
             }
 
-            $this->_load_message_type(new $message_type_class_name);
+            $this->_load_message_type(new $message_type_class_name());
         }
     }
 

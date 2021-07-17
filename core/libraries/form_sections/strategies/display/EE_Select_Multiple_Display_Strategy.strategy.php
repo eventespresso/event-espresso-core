@@ -40,10 +40,10 @@ class EE_Select_Multiple_Display_Strategy extends EE_Select_Display_Strategy
         if (EEH_Array::is_multi_dimensional_array($this->_input->options())) {
             throw new EE_Error(sprintf(__("Select multiple display strategy does not allow for nested arrays of options.", "event_espresso")));
         } else {
-            $html.=$this->_display_options($this->_input->options());
+            $html .= $this->_display_options($this->_input->options());
         }
 
-        $html.= EEH_HTML::nl(-1, 'select') . "</select>";
+        $html .= EEH_HTML::nl(-1, 'select') . "</select>";
         return $html;
     }
 

@@ -178,7 +178,8 @@ class CalculatedModelFields
         Base $controller
     ) {
         $mapping = $this->mapping();
-        if (isset($mapping[ $model->get_this_model_name() ])
+        if (
+            isset($mapping[ $model->get_this_model_name() ])
             && isset($mapping[ $model->get_this_model_name() ][ $field_name ])
         ) {
             $classname = $mapping[ $model->get_this_model_name() ][ $field_name ];

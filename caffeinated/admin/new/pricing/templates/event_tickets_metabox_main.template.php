@@ -151,6 +151,7 @@
 
 <?php echo $ticket_js_structure; ?>
 <?php
+
 /**
  * template vars in use
  *

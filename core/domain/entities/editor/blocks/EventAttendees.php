@@ -42,7 +42,7 @@ class EventAttendees extends Block
         EventAttendeesBlockRenderer $renderer
     ) {
         parent::__construct($block_asset_manager, $request);
-        $this->renderer= $renderer;
+        $this->renderer = $renderer;
     }
 
 

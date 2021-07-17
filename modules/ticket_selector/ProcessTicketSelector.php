@@ -146,7 +146,8 @@ class ProcessTicketSelector
     private function processTicketSelectorNonce($nonce_name, $id = '')
     {
         $nonce_name_with_id = ! empty($id) ? "{$nonce_name}_nonce_{$id}" : "{$nonce_name}_nonce";
-        if (! $this->request->isAdmin()
+        if (
+            ! $this->request->isAdmin()
             && (
                 ! $this->request->requestParamIsSet($nonce_name_with_id)
                 || ! wp_verify_nonce(
@@ -481,13 +482,15 @@ class ProcessTicketSelector
         // compare available spaces against the number of tickets being purchased
         if ($available_spaces >= $qty) {
             // allow addons to prevent a ticket from being added to cart
-            if (! apply_filters(
-                'FHEE__EE_Ticket_Selector___add_ticket_to_cart__allow_add_to_cart',
-                true,
-                $ticket,
-                $qty,
-                $available_spaces
-            )) {
+            if (
+                ! apply_filters(
+                    'FHEE__EE_Ticket_Selector___add_ticket_to_cart__allow_add_to_cart',
+                    true,
+                    $ticket,
+                    $qty,
+                    $available_spaces
+                )
+            ) {
                 return false;
             }
             $qty = absint(apply_filters('FHEE__EE_Ticket_Selector___add_ticket_to_cart__ticket_qty', $qty, $ticket));

@@ -34,9 +34,9 @@
                           name="ee_msg_non_global_fields[MTP_description]"><?php echo $MTP->description(); ?></textarea>
             </p>
         </div>
-    <?php
+        <?php
     else :
-    ?>
+        ?>
         <input type="hidden" name="ee_msg_non_global_fields[MTP_name]" value="<?php echo $MTP->name(); ?>">
         <input type="hidden" name="ee_msg_non_global_fields[MTP_description]"
                value="<?php echo $MTP->description(); ?>">
