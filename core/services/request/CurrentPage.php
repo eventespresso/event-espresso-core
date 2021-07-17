@@ -143,18 +143,20 @@ class CurrentPage
     private function getPostId(WP $WP = null)
     {
         $post_id = null;
-        // look for the post ID in the aptly named 'p' query var
-        if (isset($WP->query_vars['p'])) {
-            $post_id = $WP->query_vars['p'];
-        }
-        // not a post? what about a page?
-        if (! $post_id && isset($WP->query_vars['page_id'])) {
-            $post_id = $WP->query_vars['page_id'];
-        }
-        // ok... maybe pretty permalinks are off and the ID is set in the raw request...
-        // but hasn't been processed yet ie: this method is being called too early :\
-        if (! $post_id && $WP instanceof WP && $WP->request !== null && is_numeric(basename($WP->request))) {
-            $post_id = basename($WP->request);
+		if ($WP instanceof WP) {
+			// look for the post ID in the aptly named 'p' query var
+			if (isset($WP->query_vars['p'])) {
+				$post_id = $WP->query_vars['p'];
+			}
+			// not a post? what about a page?
+			if (! $post_id && isset($WP->query_vars['page_id'])) {
+				$post_id = $WP->query_vars['page_id'];
+			}
+			// ok... maybe pretty permalinks are off and the ID is set in the raw request...
+			// but hasn't been processed yet ie: this method is being called too early :\
+			if (! $post_id && $WP->request !== null && is_numeric(basename($WP->request))) {
+				$post_id = basename($WP->request);
+			}
         }
         // none of the above? ok what about an explicit "post_id" URL parameter?
         if (! $post_id && $this->request->requestParamIsSet('post_id')) {
@@ -174,25 +176,27 @@ class CurrentPage
     {
         global $wpdb;
         $post_name = null;
-        // if this is a post, then is the post name set?
-        if (isset($WP->query_vars['name']) && ! empty($WP->query_vars['name'])) {
-            $post_name = $WP->query_vars['name'];
-        }
-        // what about the page name?
-        if (! $post_name && isset($WP->query_vars['pagename']) && ! empty($WP->query_vars['pagename'])) {
-            $post_name = $WP->query_vars['pagename'];
-        }
-        // this stinks but let's run a query to try and get the post name from the URL
-        // (assuming pretty permalinks are on)
-        if (! $post_name && $WP instanceof WP && $WP->request !== null && ! empty($WP->request)) {
-            $possible_post_name = basename($WP->request);
-            if (! is_numeric($possible_post_name)) {
-                $SQL                = "SELECT ID from {$wpdb->posts}";
-                $SQL                .= " WHERE post_status NOT IN ('auto-draft', 'inherit', 'trash')";
-                $SQL                .= ' AND post_name=%s';
-                $possible_post_name = $wpdb->get_var($wpdb->prepare($SQL, $possible_post_name));
-                if ($possible_post_name) {
-                    $post_name = $possible_post_name;
+        if ($WP instanceof WP) {
+            // if this is a post, then is the post name set?
+            if (isset($WP->query_vars['name']) && ! empty($WP->query_vars['name'])) {
+                $post_name = $WP->query_vars['name'];
+            }
+            // what about the page name?
+            if (! $post_name && isset($WP->query_vars['pagename']) && ! empty($WP->query_vars['pagename'])) {
+                $post_name = $WP->query_vars['pagename'];
+            }
+            // this stinks but let's run a query to try and get the post name from the URL
+            // (assuming pretty permalinks are on)
+            if (! $post_name && $WP->request !== null && ! empty($WP->request)) {
+                $possible_post_name = basename($WP->request);
+                if (! is_numeric($possible_post_name)) {
+                    $SQL                = "SELECT ID from {$wpdb->posts}";
+                    $SQL                .= " WHERE post_status NOT IN ('auto-draft', 'inherit', 'trash')";
+                    $SQL                .= ' AND post_name=%s';
+                    $possible_post_name = $wpdb->get_var($wpdb->prepare($SQL, $possible_post_name));
+                    if ($possible_post_name) {
+                        $post_name = $possible_post_name;
+                    }
                 }
             }
         }
@@ -223,9 +227,12 @@ class CurrentPage
      */
     private function getPostType(WP $WP = null)
     {
-        $post_types = isset($WP->query_vars['post_type'])
-            ? (array) $WP->query_vars['post_type']
-            : [];
+        $post_types = [];
+        if ($WP instanceof WP) {
+            $post_types = isset($WP->query_vars['post_type'])
+                ? (array) $WP->query_vars['post_type']
+                : [];
+        }
         if (empty($post_types) && $this->request->requestParamIsSet('post_type')) {
             $post_types = $this->request->getRequestParam('post_type');
         }
