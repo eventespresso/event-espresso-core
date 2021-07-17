@@ -104,6 +104,17 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
 
 
     /**
+     * @param array $url_params
+     * @since   $VID:$
+     */
+    private function goToRegAdmin(array $url_params = [])
+    {
+        $this->go_to($this->_get_reg_admin_url($url_params));
+        $this->_load_requirements();
+    }
+
+
+    /**
      * This is a utility method for this test suite to generate a url to use with the _GOTO method for testing
      * functionality.
      *
@@ -218,10 +229,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
         $last_registration->save();
         // $this->reg_debug( $registrations );
         //let's test queries for today
-        $this->go_to(
-            $this->_get_reg_admin_url(['status' => 'today'])
-        );
-        $this->_load_requirements();
+        $this->goToRegAdmin(['status' => 'today']);
         $registrations = $this->_admin_page->get_registrations();
         $this->request->unSetRequestParams(['page', 'status']);
         // $this->reg_debug( $registrations );
@@ -232,10 +240,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
             . "\nHere are the registrations: " . $this->reg_debug($registrations, true)
         );
         //test queries for this month
-        $this->go_to(
-            $this->_get_reg_admin_url(['status' => 'month'])
-        );
-        $this->_load_requirements();
+        $this->goToRegAdmin(['status' => 'month']);
         $registrations = $this->_admin_page->get_registrations();
         $this->request->unSetRequestParams(['page', 'status']);
         // $this->reg_debug( $registrations );
@@ -246,10 +251,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
             . "\nHere are the registrations: " . $this->reg_debug($registrations, true)
         );
         // test queries for month range using last month
-        $this->go_to(
-            $this->_get_reg_admin_url(['month_range' => $prev_month->format('F Y')])
-        );
-        $this->_load_requirements();
+        $this->goToRegAdmin(['month_range' => $prev_month->format('F Y')]);
         $this->_admin_page->get_registrations();
         $registrations = $this->_admin_page->get_registrations();
         // $this->reg_debug( $registrations );
@@ -405,10 +407,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
      */
     public function test_add_event_id_to_where_conditions()
     {
-        $this->go_to(
-            $this->_get_reg_admin_url(['event_id' => 42])
-        );
-        $this->_load_requirements();
+        $this->goToRegAdmin(['event_id' => 42]);
         $where = $this->_admin_page->get_registration_query_parameters($this->_admin_page->get_request_data());
         $this->assertCount(2, $where[0]);
         $this->assertArrayHasKey('EVT_ID', $where[0]);
@@ -427,10 +426,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
      */
     public function test_add_category_id_to_where_conditions()
     {
-        $this->go_to(
-            $this->_get_reg_admin_url(['EVT_CAT' => 42])
-        );
-        $this->_load_requirements();
+        $this->goToRegAdmin(['EVT_CAT' => 42]);
         $where = $this->_admin_page->get_registration_query_parameters($this->_admin_page->get_request_data());
         $this->assertCount(2, $where[0]);
         $this->assertArrayHasKey('Event.Term_Taxonomy.term_id', $where[0]);
@@ -449,10 +445,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
      */
     public function test_add_datetime_id_to_where_conditions()
     {
-        $this->go_to(
-            $this->_get_reg_admin_url(['datetime_id' => 42])
-        );
-        $this->_load_requirements();
+        $this->goToRegAdmin(['datetime_id' => 42]);
         $where = $this->_admin_page->get_registration_query_parameters($this->_admin_page->get_request_data());
         $this->assertCount(2, $where[0]);
         $this->assertArrayHasKey('Ticket.Datetime.DTT_ID', $where[0]);
@@ -510,10 +503,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
      */
     public function test_add_registration_status_to_where_conditions_with_status_and_incomplete_view()
     {
-        $this->go_to(
-            $this->_get_reg_admin_url(['_reg_status' => EEM_Registration::status_id_approved])
-        );
-        $this->_load_requirements();
+        $this->goToRegAdmin(['_reg_status' => EEM_Registration::status_id_approved]);
         $req           = $this->_admin_page->get_request_data();
         $req['status'] = 'incomplete';
         $where         = $this->_admin_page->get_registration_query_parameters($req);
@@ -555,10 +545,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
      */
     public function test_add_registration_status_to_where_conditions_with_status()
     {
-        $this->go_to(
-            $this->_get_reg_admin_url(['_reg_status' => EEM_Registration::status_id_approved])
-        );
-        $this->_load_requirements();
+        $this->goToRegAdmin(['_reg_status' => EEM_Registration::status_id_approved]);
         $where = $this->_admin_page->get_registration_query_parameters($this->_admin_page->get_request_data());
         $this->assertCount(1, $where[0]);
         $this->assertArrayHasKey('STS_ID', $where[0]);
@@ -627,10 +614,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
      */
     public function test_add_search_to_where_conditions()
     {
-        $this->go_to(
-            $this->_get_reg_admin_url(['s' => 'gogogo'])
-        );
-        $this->_load_requirements();
+        $this->goToRegAdmin(['s' => 'gogogo']);
         $where = $this->_admin_page->get_registration_query_parameters(
             $this->_admin_page->get_request_data()
         );
@@ -678,10 +662,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
      */
     public function test_get_orderby_for_registrations_query_specified_orderby_and_order()
     {
-        $this->go_to(
-            $this->_get_reg_admin_url(['orderby' => '_Reg_status', 'order' => 'ASC'])
-        );
-        $this->_load_requirements();
+        $this->goToRegAdmin(['orderby' => '_Reg_status', 'order' => 'ASC']);
         $query_params = $this->_admin_page->get_registration_query_parameters(
             $this->_admin_page->get_request_data()
         );

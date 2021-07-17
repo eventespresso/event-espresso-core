@@ -3,6 +3,10 @@
 namespace EventEspresso\tests\testcases\core\services\request;
 
 use EventEspresso\core\services\request\Request;
+use EventEspresso\core\services\request\RequestParams;
+use EventEspresso\core\services\request\sanitizers\RequestSanitizer;
+use EventEspresso\core\services\request\sanitizers\ServerSanitizer;
+use EventEspresso\core\services\request\ServerParams;
 use PHPUnit_Framework_TestCase;
 
 
@@ -56,14 +60,16 @@ class RequestTest extends PHPUnit_Framework_TestCase
     /**
      * @param array $get
      * @param array $post
-     * @param array $cookie
+     * @param array $cookies
      * @param array $server
      * @param array $files
      * @return Request
      */
-    private function getRequest(array $get, array $post, array $cookie, array $server, array $files = [])
+    private function getRequest(array $get, array $post, array $cookies, array $server, array $files = [])
     {
-        return new Request($get, $post, $cookie, $server, $files);
+        $request_params = new RequestParams(new RequestSanitizer(), $get, $post);
+        $server_params  = new ServerParams(new ServerSanitizer(), $server);
+        return new Request($request_params, $server_params, $cookies, $files);
     }
 
 

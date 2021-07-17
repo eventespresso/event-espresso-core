@@ -2,8 +2,12 @@
 
 namespace EventEspresso\tests\mocks\core\services\request;
 
-use EventEspresso\core\domain\services\contexts\RequestTypeContextCheckerInterface;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\Request;
+use EventEspresso\core\services\request\RequestParams;
+use EventEspresso\core\services\request\sanitizers\RequestSanitizer;
+use EventEspresso\core\services\request\sanitizers\ServerSanitizer;
+use EventEspresso\core\services\request\ServerParams;
 
 /**
  * Class RequestMock
@@ -17,33 +21,42 @@ class RequestMock extends Request
 {
 
 	public function __construct(
-        array $get,
-        array $post,
-        array $cookie,
-        array $server,
-        array $files = [],
-        $ip_address = '0.0.0.0'
+        array $get = [],
+        array $post = [],
+        array $cookies = [],
+        array $server = [],
+        array $files = []
     ) {
-        $this->resetRequestParams($get, $post, $cookie, $server, $files, $ip_address);
-        parent::__construct($get, $post, $cookie, $server);
+        $request_params = new RequestParams(new RequestSanitizer(), $get, $post);
+        $server_params  = new ServerParams(new ServerSanitizer(), $server);
+        parent::__construct($request_params, $server_params);
+        $request = LoaderFactory::getLoader()->getShared('EventEspresso\core\services\request\Request');
+        $this->setRequestTypeContextChecker($request->getRequestType());
+        $this->cookies = ! empty($cookies) ? $cookies : $this->cookies;
+        $this->files   = ! empty($files) ? $files : $this->files;
     }
 
 
 	public function resetRequestParams(
         array $get = [],
         array $post = [],
-        array $cookie = [],
+        array $cookies = [],
         array $server = [],
-        array $files = [],
-        $ip_address = '0.0.0.0'
+        array $files = []
     ) {
-        $this->get        = $get;
-        $this->post       = $post;
-        $this->cookie     = $cookie;
-        $this->server     = $server;
-        $this->files      = $files;
-        $this->request    = array_merge($this->get, $this->post);
-        $this->ip_address = $this->visitorIp($ip_address);
+        $existing = $this->requestParams();
+        $this->unSetRequestParams(array_keys($existing));
+        foreach ($get as $key => $value) {
+            $this->setRequestParam($key, $value);
+	    }
+        foreach ($post as $key => $value) {
+            $this->setRequestParam($key, $value);
+	    }
+        foreach ($server as $key => $value) {
+            $this->setServerParam($key, $value);
+        }
+        $this->cookies = ! empty($cookies) ? $cookies : $this->cookies;
+        $this->files = ! empty($files) ? $files : $this->files;
     }
 
 

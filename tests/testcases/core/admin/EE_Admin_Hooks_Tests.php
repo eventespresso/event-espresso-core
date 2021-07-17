@@ -7,6 +7,8 @@
  * @subpackage 	tests
  */
 
+use EventEspresso\core\services\loaders\LoaderFactory;
+
 /**
  * All tests for the EE_Admin_Hooks class.
  *
@@ -17,9 +19,16 @@
  */
 class EE_Admin_Hooks_Tests extends EE_UnitTestCase {
 
-	private $_eeAdminMock;
-	private $_eeAdminHookMock;
-	private $_testRoute;
+
+    /**
+     * @var Admin_Mock_Valid_Admin_Page
+     */
+    private $_eeAdminMock;
+
+    /**
+     * @var mock_valid_admin_page_Admin_Mock_Valid_Hooks
+     */
+    private $_eeAdminHookMock;
 
 
 	/**
@@ -29,10 +38,11 @@ class EE_Admin_Hooks_Tests extends EE_UnitTestCase {
 		parent::setUp();
 		$this->loadAdminMocks();
 		$this->_eeAdminMock = new Admin_Mock_Valid_Admin_Page(false);
-		$this->_testRoute = admin_url('admin.php?page=mock_valid_admin_page');
 
 		//go to mock_valid_admin_page route for test
-		$this->go_to($this->_testRoute);
+		$this->go_to(admin_url('admin.php?page=mock_valid_admin_page'));
+		$this->resetRequestParams();
+
 		$this->defineAdminConstants();
 		$this->_eeAdminHookMock = new mock_valid_admin_page_Admin_Mock_Valid_Hooks( $this->_eeAdminMock );
 	}
@@ -49,7 +59,7 @@ class EE_Admin_Hooks_Tests extends EE_UnitTestCase {
 	 */
 	public function test_valid_constructor() {
 		//test things setup after construct
-		$this->assertTrue( $this->_eeAdminHookMock->verify_adminpage_obj() instanceof Admin_Mock_Valid_Admin_Page );
+		$this->assertInstanceOf('Admin_Mock_Valid_Admin_Page', $this->_eeAdminHookMock->verify_adminpage_obj());
 		$this->assertFalse( $this->_eeAdminHookMock->verify_extend() );
 	}
 
@@ -104,7 +114,7 @@ class EE_Admin_Hooks_Tests extends EE_UnitTestCase {
 	 * @depends test_valid_constructor
 	 */
 	public function test__set_page_object() {
-		$this->assertTrue( $this->_eeAdminHookMock->verify_page_object() instanceof Admin_Mock_Valid_Admin_Page );
+        $this->assertInstanceOf('Admin_Mock_Valid_Admin_Page', $this->_eeAdminHookMock->verify_adminpage_obj());
 
 		//test exception if _name is empty
 		$cached_name = $this->_eeAdminHookMock->get_property( '_name' );
@@ -207,6 +217,7 @@ class EE_Admin_Hooks_Tests extends EE_UnitTestCase {
 	 */
 	public function test_invalid_constructor() {
 		$this->go_to( admin_url() );
+        $this->resetRequestParams();
 		//go to mock_valid_admin_page route for test
 		$this->_eeAdminHookMock = new dummy_not_exist_Hooks( $this->_eeAdminMock );
 

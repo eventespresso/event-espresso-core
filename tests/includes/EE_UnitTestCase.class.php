@@ -8,6 +8,11 @@
  */
 
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\Request;
+use EventEspresso\core\services\request\RequestParams;
+use EventEspresso\core\services\request\sanitizers\RequestSanitizer;
+use EventEspresso\core\services\request\sanitizers\ServerSanitizer;
+use EventEspresso\core\services\request\ServerParams;
 
 /**
  * This is used to override any existing WP_UnitTestCase methods that need specific handling in EE.  We
@@ -1481,5 +1486,14 @@ class EE_UnitTestCase extends WP_UnitTestCase
     protected function assertFilterNotSet($filter, callable $callback)
     {
         $this->assertHookIsSet($filter, $callback, false, false);
+    }
+
+
+    protected function resetRequestParams()
+    {
+        $request = LoaderFactory::getLoader()->getShared(
+            'EventEspresso\tests\mocks\core\services\request\RequestMock'
+        );
+        $request->resetRequestParams($_GET, $_POST, $_COOKIE, $_SERVER, $_FILES);
     }
 }

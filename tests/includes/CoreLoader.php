@@ -11,6 +11,10 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\Benchmark;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\RequestParams;
+use EventEspresso\core\services\request\sanitizers\RequestSanitizer;
+use EventEspresso\core\services\request\sanitizers\ServerSanitizer;
+use EventEspresso\core\services\request\ServerParams;
 use EventEspresso\tests\mocks\core\services\request\RequestMock;
 use InvalidArgumentException;
 
@@ -147,13 +151,8 @@ class CoreLoader
      */
     public function setupDependencyMap()
     {
-        $request = LoaderFactory::getLoader()->getShared('EventEspresso\core\services\request\Request');
         /** @var RequestMock $mock */
-        $mock = LoaderFactory::getLoader()->getShared(
-            RequestMock::class,
-            [$_GET, $_POST, $_COOKIE, $_SERVER, $_FILES]
-        );
-        $mock->setRequestTypeContextChecker($request->getRequestType());
+        $mock = LoaderFactory::getLoader()->getShared( RequestMock::class );
         $getRequestMock = function () use ($mock) {
             return $mock;
         };

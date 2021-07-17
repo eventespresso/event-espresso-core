@@ -35,11 +35,7 @@ class QueryBuilderTest extends TestCase
         /** @var RequestMock $request */
         $request = LoaderFactory::getLoader()->getShared(RequestMock::class);
         $request->resetRequestParams($get_params, [], [], [], []);
-        return new QueryBuilderMock(
-            [],
-            $request,
-            EEM_Registration::instance()
-        );
+        return new QueryBuilderMock($request, EEM_Registration::instance());
     }
 
 

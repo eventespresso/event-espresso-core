@@ -4,6 +4,10 @@ namespace EventEspresso\tests\testcases\core\request_stack;
 
 use EE_Request;
 use EventEspresso\core\services\request\Request;
+use EventEspresso\core\services\request\RequestParams;
+use EventEspresso\core\services\request\sanitizers\RequestSanitizer;
+use EventEspresso\core\services\request\sanitizers\ServerSanitizer;
+use EventEspresso\core\services\request\ServerParams;
 use PHPUnit_Framework_TestCase;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
@@ -59,14 +63,16 @@ class RequestTest extends PHPUnit_Framework_TestCase
     /**
      * @param array $get
      * @param array $post
-     * @param array $cookie
+     * @param array $cookies
      * @param array $server
      * @param array $files
      * @return EE_Request
      */
-    private function getLegacyRequest(array $get, array $post, array $cookie, array $server, array $files = [])
+    private function getLegacyRequest(array $get, array $post, array $cookies, array $server, array $files = [])
     {
-        $request        = new Request($get, $post, $cookie, $server, $files);
+        $request_params = new RequestParams(new RequestSanitizer(), $get, $post);
+        $server_params  = new ServerParams(new ServerSanitizer(), $server);
+        $request        = new Request($request_params, $server_params, $cookies, $files);
         $legacy_request = new EE_Request([], [], []);
         $legacy_request->setRequest($request);
         return $legacy_request;
