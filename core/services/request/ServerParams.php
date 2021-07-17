@@ -59,8 +59,9 @@ class ServerParams
     {
         $cleaned = [];
         $server  = ! empty($server) ? $server : $_SERVER;
-        foreach (array_keys($server) as $key => $value) {
+        foreach ($server as $key => $value) {
             $cleaned[ $key ] = $this->sanitizer->clean($key, $value);
+            // \EEH_Debug_Tools::printr($cleaned[ $key ], $key, __FILE__, __LINE__);
         }
         return $cleaned;
     }
@@ -156,37 +157,11 @@ class ServerParams
      */
     public function requestUri($relativeToWpRoot = false)
     {
-        if (empty($this->request_uri)) {
-            $this->setRequestUri();
-        }
         if ($relativeToWpRoot) {
             $home_path = untrailingslashit(parse_url(home_url(), PHP_URL_PATH));
-            return str_replace($home_path, '', $this->request_uri);
+            return str_replace($home_path, '', $this->server['REQUEST_URI']);
         }
-        return $this->request_uri;
-    }
-
-
-    /**
-     * Gets the request's literal URI. Related to `requestUriAfterSiteHomeUri`, see its description for a comparison.
-     *
-     * @return void
-     */
-    public function setRequestUri()
-    {
-        $this->request_uri = filter_input(
-            INPUT_SERVER,
-            'REQUEST_URI',
-            FILTER_SANITIZE_URL,
-            FILTER_NULL_ON_FAILURE
-        );
-        if (empty($this->request_uri) && isset($this->server['REQUEST_URI'])) {
-            // fallback sanitization if the above fails
-            $this->request_uri = wp_sanitize_redirect($this->server['REQUEST_URI']);
-        }
-        if (empty($this->server['REQUEST_URI'])) {
-            $this->server['REQUEST_URI'] = $this->request_uri;
-        }
+        return $this->server['REQUEST_URI'];
     }
 
 
@@ -208,7 +183,7 @@ class ServerParams
     public function setUserAgent($user_agent = '')
     {
         $this->user_agent = $user_agent === '' || ! is_string($user_agent)
-            ? $this->server['HTTP_USER_AGENT']
+            ? $this->getServerParam('HTTP_USER_AGENT')
             : esc_attr($user_agent);
     }
 }
