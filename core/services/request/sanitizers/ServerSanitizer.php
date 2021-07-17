@@ -11,53 +11,12 @@ namespace EventEspresso\core\services\request\sanitizers;
  */
 class ServerSanitizer
 {
-
-    private static $valid_keys = [
-        'argc',
-        'argv',
-        'COMSPEC',
-        'DOCUMENT_ROOT',
-        'GATEWAY_INTERFACE',
-        'HTTP_ACCEPT',
-        'HTTP_ACCEPT_ENCODING',
-        'HTTP_ACCEPT_LANGUAGE',
-        'HTTP_CONNECTION',
-        'HTTP_HOST',
-        'HTTP_USER_AGENT',
-        'PATH',
-        'PATHEXT',
-        'PHP_SELF',
-        'QUERY_STRING',
-        'REMOTE_ADDR',
-        'REMOTE_PORT',
-        'REQUEST_METHOD',
-        'REQUEST_TIME',
-        'REQUEST_URI',
-        'SCRIPT_FILENAME',
-        'SCRIPT_NAME',
-        'SERVER_ADDR',
-        'SERVER_ADMIN',
-        'SERVER_NAME',
-        'SERVER_PORT',
-        'SERVER_PROTOCOL',
-        'SERVER_SIGNATURE',
-        'SERVER_SOFTWARE',
-        'SystemRoot',
-        'UNIQUE_ID',
-        'WINDIR',
-    ];
-
-
     /**
      * @param string $value
      * @return mixed|string
      */
     public function clean($key, $value)
     {
-        if (! $this->isValidServerKey($key)) {
-            return null;
-        }
-
         switch ($key) {
             case 'AUTH_TYPE':
                 $valid_types = [
@@ -79,9 +38,9 @@ class ServerSanitizer
             case 'SERVER_PORT':
             case 'REMOTE_PORT':
             case 'REQUEST_TIME':
-                return filter_var($value, FILTER_SANITIZE_NUMBER_INT);
+                return (int) filter_var($value, FILTER_SANITIZE_NUMBER_INT);
             case 'REQUEST_TIME_FLOAT':
-                return filter_var($value, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+                return (float) filter_var($value, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
             case 'REQUEST_METHOD':
                 $valid_types = [
                     'CONNECT',
@@ -106,15 +65,5 @@ class ServerSanitizer
             default:
                 return filter_var($value, FILTER_SANITIZE_STRING);
         }
-    }
-
-
-    /**
-     * @param string $key
-     * @return bool
-     */
-    public function isValidServerKey($key)
-    {
-        return array_key_exists($key, ServerSanitizer::$valid_keys);
     }
 }
