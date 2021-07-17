@@ -869,9 +869,9 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\loaders\Loader' => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\domain\services\admin\registrations\list_table\QueryBuilder'                              => [
-                null,
                 'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
                 'EEM_Registration'                            => EE_Dependency_Map::load_from_cache,
+                null,
             ],
             'EventEspresso\core\domain\services\admin\registrations\list_table\page_header\AttendeeFilterHeader'          => [
                 'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,

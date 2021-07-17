@@ -1290,7 +1290,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         /** @var EventEspresso\core\domain\services\admin\registrations\list_table\QueryBuilder $list_table_query_builder */
         $list_table_query_builder = $this->getLoader()->getNew(
             'EventEspresso\core\domain\services\admin\registrations\list_table\QueryBuilder',
-            [ $request ]
+            [ null, null, $request ]
         );
         return $list_table_query_builder->getQueryParams($per_page, $count);
     }

@@ -45,14 +45,14 @@ class QueryBuilder
     /**
      * QueryBuilder constructor.
      *
-     * @param array            $extra_request_params
      * @param RequestInterface $request
      * @param EEM_Registration $registration_model
+     * @param array            $extra_request_params
      */
     public function __construct(
-        array $extra_request_params,
         RequestInterface $request,
-        EEM_Registration $registration_model
+        EEM_Registration $registration_model,
+        array $extra_request_params = []
     ) {
         $this->request = $request;
         $this->registration_model = $registration_model;
