@@ -18,7 +18,9 @@ class EED_Add_New_State extends EED_Module
 
 
     /**
-     * @return EED_Module|EED_Add_New_State
+     * @return EED_Add_New_State|EED_Module
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function instance()
     {
@@ -33,48 +35,48 @@ class EED_Add_New_State extends EED_Module
      */
     public static function set_hooks()
     {
-        add_action('wp_loaded', array('EED_Add_New_State', 'set_definitions'), 2);
-        add_action('wp_enqueue_scripts', array('EED_Add_New_State', 'translate_js_strings'), 0);
-        add_action('wp_enqueue_scripts', array('EED_Add_New_State', 'wp_enqueue_scripts'), 10);
+        add_action('wp_loaded', ['EED_Add_New_State', 'set_definitions'], 2);
+        add_action('wp_enqueue_scripts', ['EED_Add_New_State', 'translate_js_strings'], 0);
+        add_action('wp_enqueue_scripts', ['EED_Add_New_State', 'wp_enqueue_scripts'], 10);
         add_filter(
             'FHEE__EE_SPCO_Reg_Step_Attendee_Information___question_group_reg_form__question_group_reg_form',
-            array('EED_Add_New_State', 'display_add_new_state_micro_form'),
+            ['EED_Add_New_State', 'display_add_new_state_micro_form'],
             1,
             1
         );
         add_filter(
             'FHEE__EE_SPCO_Reg_Step_Payment_Options___get_billing_form_for_payment_method__billing_form',
-            array('EED_Add_New_State', 'display_add_new_state_micro_form'),
+            ['EED_Add_New_State', 'display_add_new_state_micro_form'],
             1,
             1
         );
         add_filter(
             'FHEE__EE_Single_Page_Checkout__process_attendee_information__valid_data_line_item',
-            array('EED_Add_New_State', 'unset_new_state_request_params'),
+            ['EED_Add_New_State', 'unset_new_state_request_params'],
             10,
             1
         );
         add_filter(
             'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__state_options',
-            array('EED_Add_New_State', 'inject_new_reg_state_into_options'),
+            ['EED_Add_New_State', 'inject_new_reg_state_into_options'],
             10,
             5
         );
         add_filter(
             'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__country_options',
-            array('EED_Add_New_State', 'inject_new_reg_country_into_options'),
+            ['EED_Add_New_State', 'inject_new_reg_country_into_options'],
             10,
             5
         );
         add_filter(
             'FHEE__EE_State_Select_Input____construct__state_options',
-            array('EED_Add_New_State', 'state_options'),
+            ['EED_Add_New_State', 'state_options'],
             10,
             1
         );
         add_filter(
             'FHEE__EE_Country_Select_Input____construct__country_options',
-            array('EED_Add_New_State', 'country_options'),
+            ['EED_Add_New_State', 'country_options'],
             10,
             1
         );
@@ -88,66 +90,66 @@ class EED_Add_New_State extends EED_Module
      */
     public static function set_hooks_admin()
     {
-        add_action('wp_loaded', array('EED_Add_New_State', 'set_definitions'), 2);
+        add_action('wp_loaded', ['EED_Add_New_State', 'set_definitions'], 2);
         add_filter(
             'FHEE__EE_SPCO_Reg_Step_Attendee_Information___question_group_reg_form__question_group_reg_form',
-            array('EED_Add_New_State', 'display_add_new_state_micro_form'),
+            ['EED_Add_New_State', 'display_add_new_state_micro_form'],
             1,
             1
         );
         add_filter(
             'FHEE__EE_SPCO_Reg_Step_Payment_Options___get_billing_form_for_payment_method__billing_form',
-            array('EED_Add_New_State', 'display_add_new_state_micro_form'),
+            ['EED_Add_New_State', 'display_add_new_state_micro_form'],
             1,
             1
         );
-        add_action('wp_ajax_espresso_add_new_state', array('EED_Add_New_State', 'add_new_state'));
-        add_action('wp_ajax_nopriv_espresso_add_new_state', array('EED_Add_New_State', 'add_new_state'));
+        add_action('wp_ajax_espresso_add_new_state', ['EED_Add_New_State', 'add_new_state']);
+        add_action('wp_ajax_nopriv_espresso_add_new_state', ['EED_Add_New_State', 'add_new_state']);
         add_filter(
             'FHEE__EE_Single_Page_Checkout__process_attendee_information__valid_data_line_item',
-            array('EED_Add_New_State', 'unset_new_state_request_params'),
+            ['EED_Add_New_State', 'unset_new_state_request_params'],
             10,
             1
         );
         add_action(
             'AHEE__General_Settings_Admin_Page__update_country_settings__state_saved',
-            array('EED_Add_New_State', 'update_country_settings'),
+            ['EED_Add_New_State', 'update_country_settings'],
             10,
             3
         );
         add_action(
             'AHEE__General_Settings_Admin_Page__delete_state__state_deleted',
-            array('EED_Add_New_State', 'update_country_settings'),
+            ['EED_Add_New_State', 'update_country_settings'],
             10,
             3
         );
         add_filter(
             'FHEE__EE_State_Select_Input____construct__state_options',
-            array('EED_Add_New_State', 'state_options'),
+            ['EED_Add_New_State', 'state_options'],
             10,
             1
         );
         add_filter(
             'FHEE__EE_Country_Select_Input____construct__country_options',
-            array('EED_Add_New_State', 'country_options'),
+            ['EED_Add_New_State', 'country_options'],
             10,
             1
         );
         add_filter(
             'FHEE__EE_Form_Section_Proper__receive_form_submission__request_data',
-            array('EED_Add_New_State', 'filter_checkout_request_params'),
+            ['EED_Add_New_State', 'filter_checkout_request_params'],
             10,
             1
         );
         add_filter(
             'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__state_options',
-            array('EED_Add_New_State', 'inject_new_reg_state_into_options'),
+            ['EED_Add_New_State', 'inject_new_reg_state_into_options'],
             10,
             5
         );
         add_filter(
             'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__country_options',
-            array('EED_Add_New_State', 'inject_new_reg_country_into_options'),
+            ['EED_Add_New_State', 'inject_new_reg_country_into_options'],
             10,
             5
         );
@@ -185,19 +187,19 @@ class EED_Add_New_State extends EED_Module
      */
     public static function translate_js_strings()
     {
-        EE_Registry::$i18n_js_strings['ans_no_country'] = esc_html__(
+        EE_Registry::$i18n_js_strings['ans_no_country']        = esc_html__(
             'In order to proceed, you need to select the Country that your State/Province belongs to.',
             'event_espresso'
         );
-        EE_Registry::$i18n_js_strings['ans_no_name'] = esc_html__(
+        EE_Registry::$i18n_js_strings['ans_no_name']           = esc_html__(
             'In order to proceed, you need to enter the name of your State/Province.',
             'event_espresso'
         );
-        EE_Registry::$i18n_js_strings['ans_no_abbreviation'] = esc_html__(
+        EE_Registry::$i18n_js_strings['ans_no_abbreviation']   = esc_html__(
             'In order to proceed, you need to enter an abbreviation for the name of your State/Province.',
             'event_espresso'
         );
-        EE_Registry::$i18n_js_strings['ans_save_success'] = esc_html__(
+        EE_Registry::$i18n_js_strings['ans_save_success']      = esc_html__(
             'The new state was successfully saved to the database.',
             'event_espresso'
         );
@@ -217,7 +219,7 @@ class EED_Add_New_State extends EED_Module
             wp_register_script(
                 'add_new_state',
                 ANS_ASSETS_URL . 'add_new_state.js',
-                array('espresso_core', 'single_page_checkout'),
+                ['espresso_core', 'single_page_checkout'],
                 EVENT_ESPRESSO_VERSION,
                 true
             );
@@ -226,22 +228,20 @@ class EED_Add_New_State extends EED_Module
     }
 
 
-
     /**
      * display_add_new_state_micro_form
      *
      * @param EE_Form_Section_Proper $question_group_reg_form
-     * @return string
+     * @return EE_Form_Section_Proper
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public static function display_add_new_state_micro_form(EE_Form_Section_Proper $question_group_reg_form)
     {
+        $request = self::getRequest();
         // only add the 'new_state_micro_form' when displaying reg forms,
         // not during processing since we process the 'new_state_micro_form' in it's own AJAX request
-        $action = EE_Registry::instance()->REQ->get('action', '');
+        $action = $request->getRequestParam('action');
         // is the "state" question in this form section?
         $input = $question_group_reg_form->get_subsection('state');
         if ($action === 'process_reg_step' || $action === 'update_reg_step') {
@@ -257,12 +257,12 @@ class EED_Add_New_State extends EED_Module
             && ! $input->get_display_strategy() instanceof EE_Hidden_Display_Strategy
         ) {
             // grab any set values from the request
-            $country_name = str_replace('state', 'nsmf_new_state_country', $input->html_name());
-            $state_name = str_replace('state', 'nsmf_new_state_name', $input->html_name());
-            $abbrv_name = str_replace('state', 'nsmf_new_state_abbrv', $input->html_name());
+            $country_name        = str_replace('state', 'nsmf_new_state_country', $input->html_name());
+            $state_name          = str_replace('state', 'nsmf_new_state_name', $input->html_name());
+            $abbrv_name          = str_replace('state', 'nsmf_new_state_abbrv', $input->html_name());
             $new_state_submit_id = str_replace('state', 'new_state', $input->html_id());
-            $country_options = array();
-            $countries = EEM_Country::instance()->get_all_countries();
+            $country_options     = [];
+            $countries           = EEM_Country::instance()->get_all_countries();
             if (! empty($countries)) {
                 foreach ($countries as $country) {
                     if ($country instanceof EE_Country) {
@@ -271,14 +271,14 @@ class EED_Add_New_State extends EED_Module
                 }
             }
             $new_state_micro_form = new EE_Form_Section_Proper(
-                array(
+                [
                     'name'            => 'new_state_micro_form',
                     'html_id'         => 'new_state_micro_form',
                     'layout_strategy' => new EE_Div_Per_Section_Layout(),
-                    'subsections'     => array(
+                    'subsections'     => [
                         // add hidden input to indicate that a new state is being added
                         'add_new_state'               => new EE_Hidden_Input(
-                            array(
+                            [
                                 'html_name' => str_replace(
                                     'state',
                                     'nsmf_add_new_state',
@@ -290,7 +290,7 @@ class EED_Add_New_State extends EED_Module
                                     $input->html_id()
                                 ),
                                 'default'   => 0,
-                            )
+                            ]
                         ),
                         // add link for displaying hidden container
                         'click_here_link'             => new EE_Form_Section_HTML(
@@ -346,7 +346,7 @@ class EED_Add_New_State extends EED_Module
                         // NEW STATE COUNTRY
                         'new_state_country'           => new EE_Country_Select_Input(
                             $country_options,
-                            array(
+                            [
                                 'html_name'       => $country_name,
                                 'html_id'         => str_replace(
                                     'state',
@@ -355,13 +355,13 @@ class EED_Add_New_State extends EED_Module
                                 ),
                                 'html_class'      => $input->html_class() . ' new-state-country',
                                 'html_label_text' => esc_html__('New State/Province Country', 'event_espresso'),
-                                'default'         => EE_Registry::instance()->REQ->get($country_name, ''),
+                                'default'         => $request->getRequestParam($country_name),
                                 'required'        => false,
-                            )
+                            ]
                         ),
                         // NEW STATE NAME
                         'new_state_name'              => new EE_Text_Input(
-                            array(
+                            [
                                 'html_name'       => $state_name,
                                 'html_id'         => str_replace(
                                     'state',
@@ -373,14 +373,14 @@ class EED_Add_New_State extends EED_Module
                                     'New State/Province Name',
                                     'event_espresso'
                                 ),
-                                'default'         => EE_Registry::instance()->REQ->get($state_name, ''),
+                                'default'         => $request->getRequestParam($state_name),
                                 'required'        => false,
-                            )
+                            ]
                         ),
                         'spacer'                      => new EE_Form_Section_HTML(EEH_HTML::br()),
                         // NEW STATE NAME
                         'new_state_abbrv'             => new EE_Text_Input(
-                            array(
+                            [
                                 'html_name'             => $abbrv_name,
                                 'html_id'               => str_replace(
                                     'state',
@@ -389,13 +389,13 @@ class EED_Add_New_State extends EED_Module
                                 ),
                                 'html_class'            => $input->html_class() . ' new-state-abbrv',
                                 'html_label_text'       => esc_html__(
-                                    'New State/Province Abbreviation',
-                                    'event_espresso'
-                                ) . ' *',
+                                                               'New State/Province Abbreviation',
+                                                               'event_espresso'
+                                                           ) . ' *',
                                 'other_html_attributes' => 'size="24"',
-                                'default'               => EE_Registry::instance()->REQ->get($abbrv_name, ''),
+                                'default'               => $request->getRequestParam($abbrv_name),
                                 'required'              => false,
-                            )
+                            ]
                         ),
                         // "submit" button
                         'add_new_state_submit_button' => new EE_Form_Section_HTML(
@@ -409,7 +409,11 @@ class EED_Add_New_State extends EED_Module
                                     'submit-' . $new_state_submit_id,
                                     'ee-form-add-new-state-submit button button-secondary',
                                     '',
-                                    'data-target="' . $new_state_submit_id . '" data-value-field-name="' . $input->valueFieldName(). '"'
+                                    'data-target="'
+                                    . $new_state_submit_id
+                                    . '" data-value-field-name="'
+                                    . $input->valueFieldName()
+                                    . '"'
                                 )
                             )
                         ),
@@ -437,8 +441,8 @@ class EED_Add_New_State extends EED_Module
                                         'event_espresso'
                                     ),
                                     EEH_HTML::link(
-                                        'http://en.wikipedia.org/wiki/ISO_3166-2',
-                                        'http://en.wikipedia.org/wiki/ISO_3166-2',
+                                        'https://en.wikipedia.org/wiki/ISO_3166-2',
+                                        'https://en.wikipedia.org/wiki/ISO_3166-2',
                                         '',
                                         '',
                                         'ee-form-add-new-state-wiki-lnk',
@@ -466,11 +470,11 @@ class EED_Add_New_State extends EED_Module
                                 EEH_HTML::br()
                             )
                         ),
-                    ),
-                )
+                    ],
+                ]
             );
             $question_group_reg_form->add_subsections(
-                array('new_state_micro_form' => $new_state_micro_form),
+                ['new_state_micro_form' => $new_state_micro_form],
                 'state',
                 false
             );
@@ -491,52 +495,48 @@ class EED_Add_New_State extends EED_Module
      */
     public static function add_new_state()
     {
-        $REQ = EE_Registry::instance()->load_core('Request_Handler');
-        if (absint($REQ->get('nsmf_add_new_state')) === 1) {
+        $request = self::getRequest();
+        if ($request->getRequestParam('nsmf_add_new_state', 0, 'int') === 1) {
             EE_Registry::instance()->load_model('State');
             // grab country ISO code, new state name, and new state abbreviation
-            $state_country = $REQ->is_set('nsmf_new_state_country')
-                ? sanitize_text_field($REQ->get('nsmf_new_state_country'))
-                : false;
-            $state_name = $REQ->is_set('nsmf_new_state_name')
-                ? sanitize_text_field($REQ->get('nsmf_new_state_name'))
-                : false;
-            $state_abbr = $REQ->is_set('nsmf_new_state_abbrv')
-                ? sanitize_text_field($REQ->get('nsmf_new_state_abbrv'))
-                : false;
+            $state_country = $request->getRequestParam('nsmf_new_state_country');
+            $state_name    = $request->getRequestParam('nsmf_new_state_name');
+            $state_abbr    = $request->getRequestParam('nsmf_new_state_abbrv');
             if ($state_country && $state_name && $state_abbr) {
                 $new_state = EED_Add_New_State::save_new_state_to_db(
-                    array(
+                    [
                         'CNT_ISO'    => strtoupper($state_country),
                         'STA_abbrev' => strtoupper($state_abbr),
                         'STA_name'   => ucwords($state_name),
                         'STA_active' => false,
-                    )
+                    ]
                 );
                 if ($new_state instanceof EE_State) {
                     // clean house
-                    EE_Registry::instance()->REQ->un_set('nsmf_add_new_state');
-                    EE_Registry::instance()->REQ->un_set('nsmf_new_state_country');
-                    EE_Registry::instance()->REQ->un_set('nsmf_new_state_name');
-                    EE_Registry::instance()->REQ->un_set('nsmf_new_state_abbrv');
-                    // get any existing new states
-                    $new_states = EE_Registry::instance()->SSN->get_session_data(
-                        'nsmf_new_states'
+                    $request->unSetRequestParams(
+                        [
+                            'nsmf_add_new_state',
+                            'nsmf_new_state_country',
+                            'nsmf_new_state_name',
+                            'nsmf_new_state_abbrv',
+                        ]
                     );
+                    // get any existing new states
+                    $new_states                     = EE_Registry::instance()->SSN->get_session_data('nsmf_new_states');
                     $new_states[ $new_state->ID() ] = $new_state;
                     EE_Registry::instance()->SSN->set_session_data(
-                        array('nsmf_new_states' => $new_states)
+                        ['nsmf_new_states' => $new_states]
                     );
-                    if (EE_Registry::instance()->REQ->ajax) {
+                    if ($request->isAjax()) {
                         echo wp_json_encode(
-                            array(
+                            [
                                 'success'      => true,
                                 'id'           => $new_state->ID(),
                                 'name'         => $new_state->name(),
                                 'abbrev'       => $new_state->abbrev(),
                                 'country_iso'  => $new_state->country_iso(),
                                 'country_name' => $new_state->country()->name(),
-                            )
+                            ]
                         );
                         exit();
                     }
@@ -547,8 +547,8 @@ class EED_Add_New_State extends EED_Module
                     'A new State/Province could not be added because invalid or missing data was received.',
                     'event_espresso'
                 );
-                if (EE_Registry::instance()->REQ->ajax) {
-                    echo wp_json_encode(array('error' => $error));
+                if ($request->isAjax()) {
+                    echo wp_json_encode(['error' => $error]);
                     exit();
                 }
                 EE_Error::add_error($error, __FILE__, __FUNCTION__, __LINE__);
@@ -595,26 +595,25 @@ class EED_Add_New_State extends EED_Module
 
     /**
      * @param array $props_n_values
-     * @return bool
+     * @return EE_State|null
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
-    public static function save_new_state_to_db($props_n_values = array())
+    public static function save_new_state_to_db($props_n_values = [])
     {
-        $existing_state = EEM_State::instance()->get_all(array($props_n_values, 'limit' => 1));
+        /** @var EE_State[] $existing_state */
+        $existing_state = EEM_State::instance()->get_all([$props_n_values, 'limit' => 1]);
         if (! empty($existing_state)) {
             return array_pop($existing_state);
         }
         $new_state = EE_State::new_instance($props_n_values);
         if ($new_state instanceof EE_State) {
             $country_settings_url = add_query_arg(
-                array(
+                [
                     'page'    => 'espresso_general_settings',
                     'action'  => 'country_settings',
                     'country' => $new_state->country_iso(),
-                ),
+                ],
                 admin_url('admin.php')
             );
             // if not non-ajax admin
@@ -643,7 +642,7 @@ class EED_Add_New_State extends EED_Module
             EEM_State::instance()->reset_cached_states();
             return $new_state;
         }
-        return false;
+        return null;
     }
 
 
@@ -658,7 +657,7 @@ class EED_Add_New_State extends EED_Module
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public static function update_country_settings($CNT_ISO = '', $STA_ID = '', $cols_n_values = array())
+    public static function update_country_settings($CNT_ISO = '', $STA_ID = '', $cols_n_values = [])
     {
         if (! $CNT_ISO) {
             EE_Error::add_error(
@@ -700,12 +699,10 @@ class EED_Add_New_State extends EED_Module
      * @param                                       $answer
      * @return array
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public static function inject_new_reg_state_into_options(
-        $state_options = array(),
+        array $state_options,
         EE_SPCO_Reg_Step_Attendee_Information $reg_step,
         EE_Registration $registration,
         EE_Question $question,
@@ -721,7 +718,7 @@ class EED_Add_New_State extends EED_Module
                     $country = $state->country();
                     if ($country instanceof EE_Country) {
                         if (! isset($state_options[ $country->name() ])) {
-                            $state_options[ $country->name() ] = array();
+                            $state_options[ $country->name() ] = [];
                         }
                         if (! isset($state_options[ $country->name() ][ $STA_ID ])) {
                             $state_options[ $country->name() ][ $STA_ID ] = $state->name();
@@ -742,12 +739,10 @@ class EED_Add_New_State extends EED_Module
      * @param                                       $answer
      * @return array
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public static function inject_new_reg_country_into_options(
-        $country_options = array(),
+        array $country_options,
         EE_SPCO_Reg_Step_Attendee_Information $reg_step,
         EE_Registration $registration,
         EE_Question $question,
@@ -775,11 +770,9 @@ class EED_Add_New_State extends EED_Module
      * @param EE_State[] $state_options
      * @return array
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
-    public static function state_options($state_options = array())
+    public static function state_options($state_options = [])
     {
         $new_states = EED_Add_New_State::_get_new_states();
         foreach ($new_states as $new_state) {
@@ -801,13 +794,13 @@ class EED_Add_New_State extends EED_Module
      */
     protected static function _get_new_states()
     {
-        $new_states = array();
+        $new_states = [];
         if (EE_Registry::instance()->SSN instanceof EE_Session) {
             $new_states = EE_Registry::instance()->SSN->get_session_data(
                 'nsmf_new_states'
             );
         }
-        return is_array($new_states) ? $new_states : array();
+        return is_array($new_states) ? $new_states : [];
     }
 
 
@@ -815,11 +808,9 @@ class EED_Add_New_State extends EED_Module
      * @param EE_Country[] $country_options
      * @return array
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
-    public static function country_options($country_options = array())
+    public static function country_options($country_options = [])
     {
         $new_states = EED_Add_New_State::_get_new_states();
         foreach ($new_states as $new_state) {

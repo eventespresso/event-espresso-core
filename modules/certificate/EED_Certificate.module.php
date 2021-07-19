@@ -5,15 +5,16 @@
  * @package               Event Espresso
  * @subpackage            /modules/certificate/
  * @author                Brent Christensen
- *
- * ------------------------------------------------------------------------
+ * @method EED_Certificate get_instance($module_name)
  */
 class EED_Certificate extends EED_Module
 {
 
 
     /**
-     * @return EED_Module
+     * @return EED_Module|EED_Certificate
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function instance()
     {
@@ -61,10 +62,11 @@ class EED_Certificate extends EED_Module
      */
     public function certificate_launch()
     {
-        if (EE_Registry::instance()->REQ->is_set('id') && EE_Registry::instance()->REQ->is_set('r_id')) {
+        $request = self::getRequest();
+        if ($request->requestParamIsSet('id') && $request->requestParamIsSet('r_id')) {
             echo espresso_certificate_launch(
-                EE_Registry::instance()->REQ->get('id'),
-                EE_Registry::instance()->REQ->get('r_id')
+                $request->getRequestParam('id'),
+                $request->getRequestParam('r_id')
             );
         }
     }
@@ -96,7 +98,7 @@ class EED_Certificate extends EED_Module
      *    the_content
      *
      * @access    public
-     * @return    void
+     * @return    string
      */
     public function the_content($content)
     {

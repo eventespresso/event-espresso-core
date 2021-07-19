@@ -11,7 +11,7 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  * @package        Event Espresso
  * @subpackage     modules, messages
  * @author         Darren Ethier
- * ------------------------------------------------------------------------
+ * @method EED_Messages get_instance($module_name)
  */
 class EED_Messages extends EED_Module
 {
@@ -58,7 +58,9 @@ class EED_Messages extends EED_Module
 
 
     /**
-     * @return EED_Messages
+     * @return EED_Messages|EED_Module
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function instance()
     {
@@ -192,7 +194,7 @@ class EED_Messages extends EED_Module
     {
         // ensure controller is loaded
         self::_load_controller();
-        $token = EE_Registry::instance()->REQ->get('token');
+        $token = self::getRequest()->getRequestParam('token');
         try {
             $mtg = new EE_Message_Generated_From_Token($token, 'html', self::$_message_resource_manager);
             self::$_MSG_PROCESSOR->generate_and_send_now($mtg);
@@ -222,7 +224,7 @@ class EED_Messages extends EED_Module
      */
     public function browser_error_trigger($WP)
     {
-        $token = EE_Registry::instance()->REQ->get('token');
+        $token = self::getRequest()->getRequestParam('token');
         if ($token) {
             $message = EEM_Message::instance()->get_one_by_token($token);
             if ($message instanceof EE_Message) {
@@ -315,9 +317,10 @@ class EED_Messages extends EED_Module
     public function run_cron()
     {
         self::_load_controller();
+        $request = self::getRequest();
         // get required vars
-        $cron_type = EE_Registry::instance()->REQ->get('type');
-        $transient_key = EE_Registry::instance()->REQ->get('key');
+        $cron_type = $request->getRequestParam('type');
+        $transient_key = $request->getRequestParam('key');
 
         // now let's verify transient, if not valid exit immediately
         if (! get_transient($transient_key)) {
@@ -626,12 +629,12 @@ class EED_Messages extends EED_Module
         if (! $registration->is_primary_registrant()) {
             return false;
         }
+        $request = self::getRequest();
         // first we check if we're in admin and not doing front ajax
-        if (is_admin() && ! EE_FRONT_AJAX) {
+        if ($request->isAdmin() && ! $request->isFrontAjax()) {
+            $status_change = $request->getRequestParam('txn_reg_status_change', [], 'arrayOf|int');
             // make sure appropriate admin params are set for sending messages
-            if (empty($_REQUEST['txn_reg_status_change']['send_notifications'])
-                || ! absint($_REQUEST['txn_reg_status_change']['send_notifications'])
-            ) {
+            if (! $status_change['send_notifications']) {
                 // no messages sent please.
                 return false;
             }
@@ -719,16 +722,16 @@ class EED_Messages extends EED_Module
     public static function process_resend($req_data)
     {
         self::_load_controller();
-
+        $request = self::getRequest();
         // if $msgID in this request then skip to the new resend_message
-        if (EE_Registry::instance()->REQ->get('MSG_ID')) {
+        if ($request->getRequestParam('MSG_ID')) {
             return self::resend_message();
         }
 
-        // make sure any incoming request data is set on the REQ so that it gets picked up later.
+        // make sure any incoming request data is set on the request so that it gets picked up later.
         $req_data = (array) $req_data;
         foreach ($req_data as $request_key => $request_value) {
-            EE_Registry::instance()->REQ->set($request_key, $request_value);
+            $request->setRequestParam($request_key, $request_value);
         }
 
         if (! $messages_to_send = self::$_MSG_PROCESSOR->setup_messages_to_generate_from_registration_ids_in_request(
@@ -764,7 +767,7 @@ class EED_Messages extends EED_Module
     {
         self::_load_controller();
 
-        $msgID = EE_Registry::instance()->REQ->get('MSG_ID');
+        $msgID = self::getRequest()->getRequestParam('MSG_ID', 0, 'int');
         if (! $msgID) {
             EE_Error::add_error(
                 __(
@@ -894,8 +897,8 @@ class EED_Messages extends EED_Module
      */
     public static function send_newsletter_message($registrations, $grp_id)
     {
-        // make sure mtp is id and set it in the EE_Request Handler later messages setup.
-        EE_Registry::instance()->REQ->set('GRP_ID', (int) $grp_id);
+        // make sure mtp is id and set it in the request later messages setup.
+        self::getRequest()->setRequestParam('GRP_ID', (int) $grp_id);
         self::_load_controller();
         self::$_MSG_PROCESSOR->generate_for_all_active_messengers('newsletter', $registrations);
     }

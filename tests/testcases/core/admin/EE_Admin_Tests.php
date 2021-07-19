@@ -96,23 +96,6 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 
 
 
-	/**
-	 * ensure that Request Handler and CPT_Strategy classes are loaded by the get_request method
-	 * as expected.
-	 *
-	 * @since 4.3.0
-	 *
-	 * @depends test_loading_admin
-	 */
-	public function test_get_request() {
-		EE_Admin::instance()->get_request();
-		$this->assertTrue( class_exists('EE_Request_Handler') );
-		$this->assertTrue( class_exists('EE_CPT_Strategy') );
-	}
-
-
-
-
 
 	/**
 	 * This tests the init callback in EE_Admin.

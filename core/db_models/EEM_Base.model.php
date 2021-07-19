@@ -7,6 +7,7 @@ use EventEspresso\core\exceptions\ModelConfigurationException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
 use EventEspresso\core\interfaces\ResettableInterface;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\loaders\LoaderInterface;
 
 /**
  * Class EEM_Base
@@ -452,7 +453,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     /**
      * @var LoaderInterface $loader
      */
-    private static $loader;
+    protected static $loader;
 
 
     /**
@@ -742,7 +743,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             // instantiate Espresso_model
             static::$_instance = new static(
                 $timezone,
-                LoaderFactory::getLoader()->load('EventEspresso\core\services\orm\ModelFieldFactory')
+                EEM_Base::getLoader()->load('EventEspresso\core\services\orm\ModelFieldFactory')
             );
         }
         // we might have a timezone set, let set_timezone decide what to do with it
@@ -784,7 +785,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             // and then directly call its constructor again, like we would if we were creating a new one
             static::$_instance->__construct(
                 $timezone,
-                LoaderFactory::getLoader()->load('EventEspresso\core\services\orm\ModelFieldFactory')
+                EEM_Base::getLoader()->load('EventEspresso\core\services\orm\ModelFieldFactory')
             );
             return self::instance();
         }

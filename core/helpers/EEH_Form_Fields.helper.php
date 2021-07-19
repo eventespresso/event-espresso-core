@@ -1,5 +1,8 @@
 <?php
 
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\RequestInterface;
+
 /**
  * EEH_Form_Fields
  *
@@ -552,6 +555,8 @@ class EEH_Form_Fields
         if (isset($QFI->QST_admin_only) && $QFI->QST_admin_only && ! is_admin()) {
             return '';
         }
+        /** @var RequestInterface $request */
+        $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
 
         $QFI = self::_load_system_dropdowns($QFI);
         $QFI = self::_load_specialized_dropdowns($QFI);
@@ -560,17 +565,19 @@ class EEH_Form_Fields
 
         $display_text = $QFI->get('QST_display_text');
         $input_name = $QFI->get('QST_input_name');
-        $answer = EE_Registry::instance()->REQ->is_set($input_name) ? EE_Registry::instance()->REQ->get($input_name) : $QFI->get('ANS_value');
+        $answer = $request->getRequestParam($input_name, $QFI->get('ANS_value'));
         $input_id = $QFI->get('QST_input_id');
         $input_class = $QFI->get('QST_input_class');
 //      $disabled = $QFI->get('QST_disabled') ? ' disabled="disabled"' : '';
-        $disabled = $QFI->get('QST_disabled') ? true : false;
+        $disabled = $QFI->get('QST_disabled');
         $required_label = apply_filters(' FHEE__EEH_Form_Fields__generate_form_input__required_label', '<em>*</em>');
         $QST_required = $QFI->get('QST_required');
         $required = $QST_required ? array( 'label' => $required_label, 'class' => 'required needs-value', 'title' => $QST_required ) : array();
         $use_html_entities = $QFI->get_meta('htmlentities');
         $required_text = $QFI->get('QST_required_text') != '' ? $QFI->get('QST_required_text') : __('This field is required', 'event_espresso');
-        $required_text = $QST_required ? "\n\t\t\t" . '<div class="required-text hidden">' . self::prep_answer($required_text, $use_html_entities) . '</div>' : '';
+        $required_text = $QST_required
+            ? "\n\t\t\t" . '<div class="required-text hidden">' . self::prep_answer($required_text, $use_html_entities) . '</div>'
+            : '';
         $label_class = 'espresso-form-input-lbl';
         $QST_options = $QFI->options(true, $answer);
         $options = is_array($QST_options) ? self::prep_answer_options($QST_options) : array();

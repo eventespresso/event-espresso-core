@@ -9,15 +9,18 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  * and also checks that the form is not being submitted either too fast or too slow
  * which can be an indication that the form was submitted by a bot
  *
- * @package               Event Espresso
- * @subpackage            /modules/bot_trap/
- * @author                Brent Christensen
+ * @package     Event Espresso
+ * @subpackage  /modules/bot_trap/
+ * @author      Brent Christensen
+ * @method EED_Bot_Trap get_instance($module_name)
  */
 class EED_Bot_Trap extends EED_Module
 {
 
     /**
-     * @return EED_Bot_Trap|EED_Module
+     * @return EED_Module|EED_Bot_Trap
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function instance()
     {
@@ -206,7 +209,7 @@ class EED_Bot_Trap extends EED_Module
         $bot_notice = isset($_REQUEST['ee-notice']) && $_REQUEST['ee-notice'] !== ''
             ? sanitize_text_field(stripslashes($_REQUEST['ee-notice']))
             : $bot_notice;
-        EE_Registry::instance()->REQ->add_output(EEH_HTML::div($bot_notice, '', 'ee-attention'));
+        EED_Bot_Trap::getResponse()->addOutput(EEH_HTML::div($bot_notice, '', 'ee-attention'));
     }
 
 

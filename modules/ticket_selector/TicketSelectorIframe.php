@@ -2,14 +2,12 @@
 
 namespace EventEspresso\modules\ticket_selector;
 
-use DomainException;
 use EE_Error;
-use EE_Registry;
-use EventEspresso\core\exceptions\InvalidDataTypeException;
-use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EEM_Event;
 use EventEspresso\core\libraries\iframe_display\Iframe;
-use InvalidArgumentException;
-use ReflectionException;
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\CurrentPage;
+use EventEspresso\core\services\request\RequestInterface;
 
 /**
  * Class TicketSelectorIframe
@@ -21,27 +19,20 @@ use ReflectionException;
  */
 class TicketSelectorIframe extends Iframe
 {
-
     /**
      * TicketSelectorIframe constructor.
      *
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
-     * @throws DomainException
+     * @param EEM_Event        $event_model
+     * @param CurrentPage      $current_page
+     * @param RequestInterface $request
      * @throws EE_Error
-     * @throws ReflectionException
      */
-    public function __construct()
+    public function __construct(EEM_Event $event_model, CurrentPage $current_page, RequestInterface $request)
     {
-        EE_Registry::instance()->REQ->set_espresso_page(true);
-        /** @type \EEM_Event $EEM_Event */
-        $EEM_Event = EE_Registry::instance()->load_model('Event');
-        $event = $EEM_Event->get_one_by_ID(
-            EE_Registry::instance()->REQ->get('event', 0)
-        );
-        $ticket_selector = new DisplayTicketSelector();
-        $ticket_selector->setIframe(true);
+        $current_page->setEspressoPage(true);
+        $ticket_selector = LoaderFactory::getLoader()->getNew(DisplayTicketSelector::class);
+        $ticket_selector->setIframe();
+        $event = $event_model->get_one_by_ID($request->getRequestParam('event', 0, 'int'));
         parent::__construct(
             esc_html__('Ticket Selector', 'event_espresso'),
             $ticket_selector->display($event)

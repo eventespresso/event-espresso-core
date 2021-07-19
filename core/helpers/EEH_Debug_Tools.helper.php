@@ -1,4 +1,8 @@
-<?php use EventEspresso\core\services\Benchmark;
+<?php
+
+use EventEspresso\core\services\Benchmark;
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\RequestInterface;
 
 /**
  * Class EEH_Debug_Tools
@@ -279,8 +283,9 @@ class EEH_Debug_Tools
                 'This is a doing_it_wrong message that was triggered during an ajax request.  The request params on this request were: ',
                 'event_espresso'
             );
+            $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
             $error_message .= '<ul><li>';
-            $error_message .= implode('</li><li>', EE_Registry::instance()->REQ->params());
+            $error_message .= implode('</li><li>', $request->requestParams());
             $error_message .= '</ul>';
             EE_Error::add_error($error_message, 'debug::doing_it_wrong', $function, '42');
             // now we set this on the transient so it shows up on the next request.
@@ -323,7 +328,6 @@ class EEH_Debug_Tools
             $debug_data = get_option($debug_key, array());
             $default_data = array(
                 $class => $func . '() : ' . $line,
-                'REQ'  => $display_request ? $_REQUEST : '',
             );
             // don't serialize objects
             $info = self::strip_objects($info);

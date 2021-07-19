@@ -3,6 +3,7 @@
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\RequestInterface;
 
 if (! function_exists('espresso_get_template_part')) {
     /**
@@ -196,10 +197,13 @@ class EEH_Template
         if (empty($template_path)) {
             // not even a template to look for ?
             if (empty($templates)) {
+                $loader = LoaderFactory::getLoader();
+                /** @var RequestInterface $request */
+                $request = $loader->getShared(RequestInterface::class);
                 // get post_type
-                $post_type = EE_Registry::instance()->REQ->get('post_type');
+                $post_type = $request->getRequestParam('post_type');
                 /** @var EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions $custom_post_types */
-                $custom_post_types = LoaderFactory::getLoader()->getShared(
+                $custom_post_types = $loader->getShared(
                     'EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions'
                 );
                 // get array of EE Custom Post Types
