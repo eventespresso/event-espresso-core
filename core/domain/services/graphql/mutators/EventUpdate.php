@@ -58,15 +58,24 @@ class EventUpdate extends EntityMutator
                 $entity = EntityMutator::getEntityFromID($model, $id);
                 $args = EventMutation::prepareFields($input);
 
+                if (isset($args['venue'])) {
+                    $venue = $args['venue'];
+                    unset($args['venue']);
+                }
+
                 // Update the entity
                 $entity->save($args);
+
+                if (isset($venue)) {
+                    EventMutation::setEventVenue($entity, $venue);
+                }
 
                 do_action('AHEE__EventEspresso_core_domain_services_graphql_mutators_event_update', $entity, $input);
             } catch (Exception $exception) {
                 EntityMutator::handleExceptions(
                     $exception,
                     esc_html__(
-                        'The datetime could not be updated because of the following error(s)',
+                        'The event could not be updated because of the following error(s)',
                         'event_espresso'
                     )
                 );
