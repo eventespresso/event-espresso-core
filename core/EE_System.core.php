@@ -305,6 +305,7 @@ final class EE_System implements ResettableInterface
         // set autoloaders for all of the classes implementing EEI_Plugin_API
         // which provide helpers for EE plugin authors to more easily register certain components with EE.
         EEH_Autoloader::instance()->register_autoloaders_for_each_file_in_folder(EE_LIBRARIES . 'plugin_api');
+        // load legacy EE_Request_Handler in case add-ons still need it
         $this->loader->getShared('EE_Request_Handler');
     }
 
@@ -964,18 +965,8 @@ final class EE_System implements ResettableInterface
     public function register_shortcodes_modules_and_widgets()
     {
         if ($this->request->isFrontend() || $this->request->isIframe() || $this->request->isAjax()) {
-            try {
-                // load, register, and add shortcodes the new way
-                $this->loader->getShared(
-                    'EventEspresso\core\services\shortcodes\ShortcodesManager',
-                    array(
-                        // and the old way, but we'll put it under control of the new system
-                        EE_Config::getLegacyShortcodesManager(),
-                    )
-                );
-            } catch (Exception $exception) {
-                new ExceptionStackTraceDisplay($exception);
-            }
+            // load, register, and add shortcodes the new way
+            $this->loader->getShared('EventEspresso\core\services\shortcodes\ShortcodesManager');
         }
         do_action('AHEE__EE_System__register_shortcodes_modules_and_widgets');
         // check for addons using old hook point

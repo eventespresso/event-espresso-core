@@ -102,7 +102,7 @@ class EED_Recaptcha extends EED_Module
         // use_captcha ?
         if (EED_Recaptcha::useRecaptcha()
             && EED_Recaptcha::notPaymentOptionsRevisit()
-            && EE_Registry::instance()->REQ->get('step', '') !== ''
+            && EED_Recaptcha::getRequest()->getRequestParam('step', '') !== ''
         ) {
             EED_Recaptcha::enqueue_styles_and_scripts();
             add_filter(
@@ -167,9 +167,10 @@ class EED_Recaptcha extends EED_Module
      */
     public static function notPaymentOptionsRevisit()
     {
+        $request = EED_Recaptcha::getRequest();
         return ! (
-            EE_Registry::instance()->REQ->get('step', '') === 'payment_options'
-            && (boolean) EE_Registry::instance()->REQ->get('revisit', false) === true
+            $request->getRequestParam('step', '') === 'payment_options'
+            && $request->getRequestParam('revisit', false, 'bool') === true
         );
     }
 
@@ -212,7 +213,7 @@ class EED_Recaptcha extends EED_Module
 
 
     /**
-     * @param \WP $WP
+     * @param WP $WP
      */
     public function run($WP)
     {
@@ -227,10 +228,9 @@ class EED_Recaptcha extends EED_Module
      */
     public static function not_a_robot()
     {
-        $not_a_robot = is_bool(EED_Recaptcha::$_not_a_robot)
+        return is_bool(EED_Recaptcha::$_not_a_robot)
             ? EED_Recaptcha::$_not_a_robot
             : EED_Recaptcha::recaptcha_passed();
-        return $not_a_robot;
     }
 
 
@@ -357,9 +357,8 @@ class EED_Recaptcha extends EED_Module
      */
     private static function _get_recaptcha_response()
     {
-        EED_Recaptcha::$_recaptcha_response = EE_Registry::instance()->REQ->get(
-            'g-recaptcha-response',
-            false
+        EED_Recaptcha::$_recaptcha_response = EED_Recaptcha::getRequest()->getRequestParam(
+            'g-recaptcha-response'
         );
     }
 

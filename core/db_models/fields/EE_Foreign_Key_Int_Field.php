@@ -9,7 +9,7 @@ class EE_Foreign_Key_Int_Field extends EE_Foreign_Key_Field_Base
      * @param boolean $nullable
      * @param mixed   $default_value if this is a integer field, it shoudl be an int. if it's a string field, it shoul
      *                               dbe a string
-     * @param string  $model_name    eg 'Event','Answer','Term', etc. Basically its the model class's name without the
+     * @param string|string[]  $model_name    eg 'Event','Answer','Term', etc. Basically its the model class's name without the
      *                               "EEM_"
      */
     public function __construct($table_column, $nicename, $nullable, $default_value, $model_name)

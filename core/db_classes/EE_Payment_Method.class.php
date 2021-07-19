@@ -1,5 +1,8 @@
 <?php
 
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\CurrentPage;
+
 /**
  * EE_Payment_Method class
  * Should be parent of all payment method classes
@@ -570,6 +573,8 @@ class EE_Payment_Method extends EE_Base_Class
     {
         $results = parent::save($set_cols_n_values);
         if ($this->get_original('PMD_scope') !== $this->get('PMD_scope')) {
+            /** @var CurrentPage $current_page */
+            $current_page = LoaderFactory::getLoader()->getShared(CurrentPage::class);
             EE_Log::instance()->log(
                 __FILE__,
                 __FUNCTION__,
@@ -578,7 +583,7 @@ class EE_Payment_Method extends EE_Base_Class
                     $this->name(),
                     serialize($this->get_original('PMD_scope')),
                     serialize($this->get('PMD_scope')),
-                    EE_Registry::instance()->REQ->get_current_page_permalink()
+                    $current_page->getPermalink()
                 ),
                 'payment_method_change'
             );

@@ -1,7 +1,9 @@
 <?php
 
 use EventEspresso\core\interfaces\InterminableInterface;
+use EventEspresso\core\services\request\CurrentPage;
 use EventEspresso\core\services\request\RequestInterface;
+use EventEspresso\core\services\request\ResponseInterface;
 
 /**
  * class EE_Request_Handler
@@ -9,283 +11,182 @@ use EventEspresso\core\services\request\RequestInterface;
  * @package     Event Espresso
  * @subpackage  /core/
  * @author      Brent Christensen
+ * @deprecated  $VID:$
  */
 final class EE_Request_Handler implements InterminableInterface
 {
 
     /**
-     * @var RequestInterface $request
+     * @var CurrentPage
+     */
+    private $current_page;
+
+    /**
+     * @var RequestInterface
      */
     private $request;
 
     /**
-     * @var array $_notice
+     * @var ResponseInterface
      */
-    private $_notice = array();
-
-    /**
-     * rendered output to be returned to WP
-     *
-     * @var string $_output
-     */
-    private $_output = '';
+    private $response;
 
     /**
      * whether current request is via AJAX
      *
-     * @var boolean $ajax
+     * @var boolean
      */
     public $ajax = false;
 
     /**
      * whether current request is via AJAX from the frontend of the site
      *
-     * @var boolean $front_ajax
+     * @var boolean
      */
     public $front_ajax = false;
 
 
     /**
-     * @param RequestInterface $request
+     * @param CurrentPage       $current_page
+     * @param RequestInterface  $request
+     * @param ResponseInterface $response
      */
-    public function __construct(RequestInterface $request)
+    public function __construct(CurrentPage $current_page, RequestInterface $request, ResponseInterface $response)
     {
-        $this->request = $request;
-        $this->ajax = $this->request->isAjax();
-        $this->front_ajax = $this->request->isFrontAjax();
+        $this->current_page = $current_page;
+        $this->request      = $request;
+        $this->response     = $response;
+        $this->ajax         = $this->request->isAjax();
+        $this->front_ajax   = $this->request->isFrontAjax();
         do_action('AHEE__EE_Request_Handler__construct__complete');
     }
 
 
     /**
-     * @param WP $wp
+     * @param WP $WP
      * @return void
-     * @throws EE_Error
-     * @throws ReflectionException
+     * @deprecated  $VID:$
      */
-    public function parse_request($wp = null)
+    public function parse_request($WP = null)
     {
-        // if somebody forgot to provide us with WP, that's ok because its global
-        if (! $wp instanceof WP) {
-            global $wp;
-        }
-        $this->set_request_vars($wp);
     }
 
 
     /**
-     * @param WP $wp
+     * @param WP $WP
      * @return void
-     * @throws EE_Error
-     * @throws ReflectionException
+     * @deprecated  $VID:$
      */
-    public function set_request_vars($wp = null)
+    public function set_request_vars($WP = null)
     {
-        if (! is_admin()) {
-            // set request post_id
-            $this->request->setRequestParam('post_id', $this->get_post_id_from_request($wp));
-            // set request post name
-            $this->request->setRequestParam('post_name', $this->get_post_name_from_request($wp));
-            // set request post_type
-            $this->request->setRequestParam('post_type', $this->get_post_type_from_request($wp));
-            // true or false ? is this page being used by EE ?
-            $this->set_espresso_page();
-        }
+        $this->current_page->parseQueryVars($WP);
     }
 
 
     /**
-     * @param WP $wp
+     * @param WP $WP
      * @return int
+     * @deprecated  $VID:$
      */
-    public function get_post_id_from_request($wp = null)
+    public function get_post_id_from_request($WP = null)
     {
-        if (! $wp instanceof WP) {
-            global $wp;
-        }
-        $post_id = null;
-        if (isset($wp->query_vars['p'])) {
-            $post_id = $wp->query_vars['p'];
-        }
-        if (! $post_id && isset($wp->query_vars['page_id'])) {
-            $post_id = $wp->query_vars['page_id'];
-        }
-        if (! $post_id && $wp->request !== null && is_numeric(basename($wp->request))) {
-            $post_id = basename($wp->request);
-        }
-        return $post_id;
+        return $this->current_page->postId();
     }
 
 
     /**
-     * @param WP $wp
+     * @param WP $WP
      * @return string
+     * @deprecated  $VID:$
      */
-    public function get_post_name_from_request($wp = null)
+    public function get_post_name_from_request($WP = null)
     {
-        global $wpdb;
-        if (! $wp instanceof WP) {
-            global $wp;
-        }
-        $post_name = null;
-        if (isset($wp->query_vars['name']) && ! empty($wp->query_vars['name'])) {
-            $post_name = $wp->query_vars['name'];
-        }
-        if (! $post_name && isset($wp->query_vars['pagename']) && ! empty($wp->query_vars['pagename'])) {
-            $post_name = $wp->query_vars['pagename'];
-        }
-        if (! $post_name && $wp->request !== null && ! empty($wp->request)) {
-            $possible_post_name = basename($wp->request);
-            if (! is_numeric($possible_post_name)) {
-                $SQL = "SELECT ID from {$wpdb->posts}";
-                $SQL .= " WHERE post_status NOT IN ('auto-draft', 'inherit', 'trash')";
-                $SQL .= " AND post_name=%s";
-                $possible_post_name = $wpdb->get_var($wpdb->prepare($SQL, $possible_post_name));
-                if ($possible_post_name) {
-                    $post_name = $possible_post_name;
-                }
-            }
-        }
-        if (! $post_name && $this->get('post_id')) {
-            $SQL = "SELECT post_name from {$wpdb->posts}";
-            $SQL .= " WHERE post_status NOT IN ('auto-draft', 'inherit', 'trash')";
-            $SQL .= " AND ID=%d";
-            $possible_post_name = $wpdb->get_var($wpdb->prepare($SQL, $this->get('post_id')));
-            if ($possible_post_name) {
-                $post_name = $possible_post_name;
-            }
-        }
-        return $post_name;
+        return $this->current_page->postName();
     }
 
 
     /**
-     * @param WP $wp
-     * @return mixed
+     * @param WP $WP
+     * @return array
+     * @deprecated  $VID:$
      */
-    public function get_post_type_from_request($wp = null)
+    public function get_post_type_from_request($WP = null)
     {
-        if (! $wp instanceof WP) {
-            global $wp;
-        }
-        return isset($wp->query_vars['post_type'])
-            ? $wp->query_vars['post_type']
-            : null;
+        return $this->current_page->postType();
     }
 
 
     /**
      * Just a helper method for getting the url for the displayed page.
      *
-     * @param  WP $wp
+     * @param WP $WP
      * @return string
+     * @deprecated  $VID:$
      */
-    public function get_current_page_permalink($wp = null)
+    public function get_current_page_permalink($WP = null)
     {
-        $post_id = $this->get_post_id_from_request($wp);
-        if ($post_id) {
-            $current_page_permalink = get_permalink($post_id);
-        } else {
-            if (! $wp instanceof WP) {
-                global $wp;
-            }
-            if ($wp->request) {
-                $current_page_permalink = site_url($wp->request);
-            } else {
-                $current_page_permalink = esc_url(site_url($_SERVER['REQUEST_URI']));
-            }
-        }
-        return $current_page_permalink;
+        return $this->current_page->getPermalink($WP);
     }
 
 
     /**
      * @return bool
-     * @throws EE_Error
-     * @throws ReflectionException
+     * @deprecated  $VID:$
      */
     public function test_for_espresso_page()
     {
-        global $wp;
-        /** @type EE_CPT_Strategy $EE_CPT_Strategy */
-        $EE_CPT_Strategy = EE_Registry::instance()->load_core('CPT_Strategy');
-        $espresso_CPT_taxonomies = $EE_CPT_Strategy->get_CPT_taxonomies();
-        if (is_array($espresso_CPT_taxonomies)) {
-            foreach ($espresso_CPT_taxonomies as $espresso_CPT_taxonomy => $details) {
-                if (isset($wp->query_vars, $wp->query_vars[ $espresso_CPT_taxonomy ])) {
-                    return true;
-                }
-            }
-        }
-        // load espresso CPT endpoints
-        $espresso_CPT_endpoints = $EE_CPT_Strategy->get_CPT_endpoints();
-        $post_type_CPT_endpoints = array_flip($espresso_CPT_endpoints);
-        $post_types = (array) $this->get('post_type');
-        foreach ($post_types as $post_type) {
-            // was a post name passed ?
-            if (isset($post_type_CPT_endpoints[ $post_type ])) {
-                // kk we know this is an espresso page, but is it a specific post ?
-                if (! $this->get('post_name')) {
-                    // there's no specific post name set, so maybe it's one of our endpoints like www.domain.com/events
-                    $post_name = isset($post_type_CPT_endpoints[ $this->get('post_type') ])
-                        ? $post_type_CPT_endpoints[ $this->get('post_type') ]
-                        : '';
-                    // if the post type matches on of our then set the endpoint
-                    if ($post_name) {
-                        $this->set('post_name', $post_name);
-                    }
-                }
-                return true;
-            }
-        }
-        return false;
+        return $this->current_page->isEspressoPage();
     }
+
 
     /**
      * @param $key
      * @param $value
-     * @return    void
+     * @return void
+     * @deprecated  $VID:$
      */
     public function set_notice($key, $value)
     {
-        $this->_notice[ $key ] = $value;
+        $this->response->setNotice($key, $value);
     }
 
 
     /**
      * @param $key
-     * @return    mixed
+     * @return mixed
+     * @deprecated  $VID:$
      */
     public function get_notice($key)
     {
-        return isset($this->_notice[ $key ])
-            ? $this->_notice[ $key ]
-            : null;
+        return $this->response->getNotice($key);
     }
 
 
     /**
      * @param $string
      * @return void
+     * @deprecated  $VID:$
      */
     public function add_output($string)
     {
-        $this->_output .= $string;
+        $this->response->addOutput($string);
     }
 
 
     /**
      * @return string
+     * @deprecated  $VID:$
      */
     public function get_output()
     {
-        return $this->_output;
+        return $this->response->getOutput();
     }
 
 
     /**
      * @param $item
      * @param $key
+     * @deprecated  $VID:$
      */
     public function sanitize_text_field_for_array_walk(&$item, &$key)
     {
@@ -298,26 +199,21 @@ final class EE_Request_Handler implements InterminableInterface
     /**
      * @param null|bool $value
      * @return void
-     * @throws EE_Error
-     * @throws ReflectionException
+     * @deprecated  $VID:$
      */
     public function set_espresso_page($value = null)
     {
-        $this->request->setRequestParam(
-            'is_espresso_page',
-            ! empty($value)
-                ? $value
-                : $this->test_for_espresso_page()
-        );
+        $this->current_page->setEspressoPage($value);
     }
 
 
     /**
      * @return bool
+     * @deprecated  $VID:$
      */
     public function is_espresso_page()
     {
-        return $this->request->requestParamIsSet('is_espresso_page');
+        return $this->current_page->isEspressoPage();
     }
 
 
@@ -325,6 +221,7 @@ final class EE_Request_Handler implements InterminableInterface
      * returns contents of $_REQUEST
      *
      * @return array
+     * @deprecated  $VID:$
      */
     public function params()
     {
@@ -337,6 +234,7 @@ final class EE_Request_Handler implements InterminableInterface
      * @param      $value
      * @param bool $override_ee
      * @return    void
+     * @deprecated  $VID:$
      */
     public function set($key, $value, $override_ee = false)
     {
@@ -348,6 +246,7 @@ final class EE_Request_Handler implements InterminableInterface
      * @param      $key
      * @param null $default
      * @return    mixed
+     * @deprecated  $VID:$
      */
     public function get($key, $default = null)
     {
@@ -360,6 +259,7 @@ final class EE_Request_Handler implements InterminableInterface
      *
      * @param $key
      * @return    boolean
+     * @deprecated  $VID:$
      */
     public function is_set($key)
     {
@@ -372,6 +272,7 @@ final class EE_Request_Handler implements InterminableInterface
      *
      * @param $key
      * @return    void
+     * @deprecated  $VID:$
      */
     public function un_set($key)
     {

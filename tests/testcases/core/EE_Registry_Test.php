@@ -402,7 +402,6 @@ class EE_Registry_Test extends EE_UnitTestCase{
 		//var_dump( $class_object->Request_Handler() );
 		//echo "\n Module_Request_Router: \n";
 		//var_dump( $class_object->Module_Request_Router() );
-		$this->assertInstanceOf( 'EE_Request_Handler', $class_object->Request_Handler() );
 		$this->assertInstanceOf( 'EE_Module_Request_Router', $class_object->Module_Request_Router() );
 	}
 

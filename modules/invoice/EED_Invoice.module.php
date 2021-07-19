@@ -5,15 +5,16 @@
  * @package               Event Espresso
  * @subpackage            /modules/invoice/
  * @author                Brent Christensen
- *
- * ------------------------------------------------------------------------
+ * @method EED_Invoice get_instance($module_name)
  */
 class EED_Invoice extends EED_Module
 {
 
 
     /**
-     * @return EED_Invoice
+     * @return EED_Invoice|EED_Module
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function instance()
     {
@@ -71,8 +72,9 @@ class EED_Invoice extends EED_Module
     public function launch_invoice()
     {
         $this->run(null);
-        if (EE_Registry::instance()->REQ->is_set('id')) {
-            $id = sanitize_key(EE_Registry::instance()->REQ->get('id'));
+        $request = self::getRequest();
+        if ($request->requestParamIsSet('id')) {
+            $id = $request->getRequestParam('id', '', 'key');
             $invoice = new Invoice($id);
             $invoice->send_invoice();
         }
@@ -88,8 +90,9 @@ class EED_Invoice extends EED_Module
     public function download_invoice()
     {
         $this->run(null);
-        if (EE_Registry::instance()->REQ->is_set('id')) {
-            $id = sanitize_key(EE_Registry::instance()->REQ->get('id'));
+        $request = self::getRequest();
+        if ($request->requestParamIsSet('id')) {
+            $id = $request->getRequestParam('id', '', 'key');
             $invoice = new Invoice($_REQUEST['id']);
             // send invoice but force download
             $invoice->send_invoice(true);
