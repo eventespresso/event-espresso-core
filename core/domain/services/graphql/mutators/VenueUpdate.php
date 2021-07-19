@@ -66,7 +66,7 @@ class VenueUpdate extends EntityMutator
                 EntityMutator::handleExceptions(
                     $exception,
                     esc_html__(
-                        'The datetime could not be updated because of the following error(s)',
+                        'The venue could not be updated because of the following error(s)',
                         'event_espresso'
                     )
                 );

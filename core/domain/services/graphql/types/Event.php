@@ -2,6 +2,8 @@
 
 namespace EventEspresso\core\domain\services\graphql\types;
 
+use EE_Event;
+use EE_Venue;
 use EEM_Event;
 use EventEspresso\core\services\graphql\fields\GraphQLFieldInterface;
 use EventEspresso\core\services\graphql\types\TypeBase;
@@ -9,6 +11,7 @@ use EventEspresso\core\services\graphql\fields\GraphQLField;
 use EventEspresso\core\services\graphql\fields\GraphQLInputField;
 use EventEspresso\core\services\graphql\fields\GraphQLOutputField;
 use EventEspresso\core\domain\services\graphql\mutators\EventUpdate;
+use GraphQLRelay\Relay;
 
 /**
  * Class Event
@@ -205,6 +208,23 @@ class Event extends TypeBase
                 'String',
                 'visible_on',
                 esc_html__('Event Visible Date', 'event_espresso')
+            ),
+            new GraphQLField(
+                'venue',
+                'String',
+                null,
+                esc_html__('Event venue ID', 'event_espresso'),
+                null,
+                function (EE_Event $source) {
+                    $venues = $source->venues();
+                    /** @var EE_Venue $venue */
+                    $venue = reset($venues);
+
+                    return $venue instanceof EE_Venue
+                    // Since venue is a CPT, $type will be 'post'
+                    ? Relay::toGlobalId('post', $venue->ID())
+                    : null;
+                }
             ),
         ];
 
