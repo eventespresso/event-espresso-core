@@ -125,6 +125,12 @@ class Venue extends TypeBase
                 null,
                 esc_html__('Venue state', 'event_espresso')
             ),
+            new GraphQLOutputField(
+                'stateName',
+                'String',
+                'state_name',
+                esc_html__('Venue state name', 'event_espresso')
+            ),
             new GraphQLInputField(
                 'state',
                 'Int',
@@ -136,6 +142,12 @@ class Venue extends TypeBase
                 $this->namespace . 'Country',
                 null,
                 esc_html__('Venue country', 'event_espresso')
+            ),
+            new GraphQLOutputField(
+                'countryName',
+                'String',
+                'country_name',
+                esc_html__('Venue country name', 'event_espresso')
             ),
             new GraphQLInputField(
                 'country',

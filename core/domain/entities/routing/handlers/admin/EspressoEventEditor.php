@@ -52,6 +52,7 @@ class EspressoEventEditor extends EspressoEventsAdmin
                 'EventEspresso\core\domain\services\admin\events\editor\EventEntityRelations'    => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\domain\services\admin\events\editor\TicketMeta'              => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\domain\services\admin\events\editor\FormBuilder'             => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\entities\admin\GraphQLData\Venues'                   => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\domain\services\admin\events\editor\EventEntityRelations' => [
                 'EEM_Datetime'                                         => EE_Dependency_Map::load_from_cache,

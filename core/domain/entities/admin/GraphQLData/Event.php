@@ -44,6 +44,7 @@ class Event extends GraphQLData
                 shortDescription
                 status
                 timezoneString
+                venue
                 visibleOn
                 __typename
             }
