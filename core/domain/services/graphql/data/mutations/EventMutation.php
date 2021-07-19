@@ -3,8 +3,14 @@
 namespace EventEspresso\core\domain\services\graphql\data\mutations;
 
 use DateTime;
+use EE_Error;
+use EE_Event;
 use Exception;
 use GraphQLRelay\Relay;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use InvalidArgumentException;
+use ReflectionException;
 
 /**
  * Class EventMutation
@@ -74,11 +80,11 @@ class EventMutation
             $args['EVT_phone'] = sanitize_text_field($input['phoneNumber']);
         }
 
-        if (! empty($input['shortDescription'])) {
+        if (array_key_exists('shortDescription', $input)) {
             $args['EVT_short_desc'] = sanitize_post_field('post_excerpt', $input['shortDescription'], null, 'db');
         }
 
-        if (! empty($input['timezoneString'])) {
+        if (array_key_exists('timezoneString', $input)) {
             $args['EVT_timezone_string'] = sanitize_text_field($input['timezoneString']);
         }
 
@@ -91,10 +97,38 @@ class EventMutation
             $args['EVT_wp_user'] = ! empty($parts['id']) ? $parts['id'] : null;
         }
 
+        if (array_key_exists('venue', $input)) {
+            $parts = Relay::fromGlobalId(sanitize_text_field($input['venue']));
+            $args['venue'] = ! empty($parts['id']) ? $parts['id'] : 0;
+        }
+
         return apply_filters(
             'FHEE__EventEspresso_core_domain_services_graphql_data_mutations__event_args',
             $args,
             $input
         );
+    }
+
+
+    /**
+     * Sets the venue for the event.
+     *
+     * @param EE_Event $entity The event instance.
+     * @param int      $venue  The venue ID
+     * @throws EE_Error
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     */
+    public static function setEventVenue(EE_Event $entity, int $venue)
+    {
+        $relationName = 'Venue';
+        // Remove the existing venues
+        $entity->_remove_relations($relationName);
+
+        if ($venue) {
+            $entity->add_venue($venue);
+        }
     }
 }
