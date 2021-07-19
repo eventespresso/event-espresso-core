@@ -1,11 +1,36 @@
+<?php
+
+/**
+ * template vars in use
+ *
+ * @var string $event_datetime_help_link
+ * @var string $existing_datetime_ids
+ * @var string $total_dtt_rows
+ * @var string $add_new_dtt_help_link
+ * @var string $datetime_rows
+ * @var string $show_tickets_container
+ * @var string $ticket_rows
+ * @var string $existing_ticket_ids
+ * @var string $total_ticket_rows
+ * @var string $ticket_js_structure
+ * @var string $ee_collapsible_status
+ */
+?>
+
 <div id="event-and-ticket-form-content">
-    <h3 class="event-tickets-datetimes-title"><span data-target=".event-datetimes-container"
-                                                    class="clickable ee-collapsible<?php echo $ee_collapsible_status; ?>"><span
-                class="dashicons dashicons-clock ee-icon-size-20"></span><?php
+    <h3 class="event-tickets-datetimes-title">
+        <span data-target=".event-datetimes-container"
+              class="clickable ee-collapsible<?php echo $ee_collapsible_status; ?>">
+            <span class="dashicons dashicons-clock ee-icon-size-20"></span>
+            <?php
                 _e(
                     'Event Datetimes',
                     'event_espresso'
-                ); ?></span></h3><?php echo $event_datetime_help_link; ?>
+                );
+                ?>
+        </span>
+    </h3>
+    <?php echo $event_datetime_help_link; ?>
     <div class="event-datetimes-container">
         <div class="save-cancel-button-container">
             <button class="button-secondary ee-create-button datetime-create-button" data-context="datetime">
@@ -150,20 +175,3 @@
 </div> <!-- end #event-and-ticket-form-content -->
 
 <?php echo $ticket_js_structure; ?>
-<?php
-
-/**
- * template vars in use
- *
- * $event_datetime_help_link
- * $existing_datetime_ids
- * $total_dtt_rows
- * $add_new_dtt_help_link
- * $datetime_rows
- * $show_tickets_container
- * $ticket_rows
- * $existing_ticket_ids
- * $total_ticket_rows
- * $ticket_js_structure
- * $ee_collapsible_status
- */

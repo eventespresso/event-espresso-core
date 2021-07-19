@@ -17,36 +17,42 @@
     </li>
     <li>
         <strong><?php esc_html_e('PayPal API Username', 'event_espresso'); ?></strong><br/>
-        <?php printf(
+        <?php
+        printf(
             esc_html__(
                 'Enter your API Username for PayPal. Learn how to find your %1$sAPI Username%2$s.',
                 'event_espresso'
             ),
-                '<a href="https://www.paypal.com/us/cgi-bin/webscr?cmd=xpt/cps/merchant/wppro/WPProIntegrationSteps-outside#SectionB" target="_blank" rel="noopener noreferrer">',
-                '</a>'
-        ); ?>
+            '<a href="https://www.paypal.com/us/cgi-bin/webscr?cmd=xpt/cps/merchant/wppro/WPProIntegrationSteps-outside#SectionB" target="_blank" rel="noopener noreferrer">',
+            '</a>'
+        );
+        ?>
     </li>
     <li>
         <strong><?php esc_html_e('PayPal API Password', 'event_espresso'); ?></strong><br/>
-        <?php printf(
+        <?php
+        printf(
             esc_html__(
                 'Enter your API Password for PayPal. Learn how to find your %1$sAPI Password%2$s.',
                 'event_espresso'
             ),
-                '<a href="https://www.paypal.com/us/cgi-bin/webscr?cmd=xpt/cps/merchant/wppro/WPProIntegrationSteps-outside#SectionB" target="_blank" rel="noopener noreferrer">',
-                '</a>'
-        ); ?>
+            '<a href="https://www.paypal.com/us/cgi-bin/webscr?cmd=xpt/cps/merchant/wppro/WPProIntegrationSteps-outside#SectionB" target="_blank" rel="noopener noreferrer">',
+            '</a>'
+        );
+        ?>
     </li>
     <li>
         <strong><?php esc_html_e('PayPal API Signature', 'event_espresso'); ?></strong><br/>
-        <?php printf(
+        <?php
+        printf(
             esc_html__(
                 'Enter your API Signature for PayPal. Learn how to find your %1$sAPI Signature%2$s.',
                 'event_espresso'
             ),
-                '<a href="https://www.paypal.com/us/cgi-bin/webscr?cmd=xpt/cps/merchant/wppro/WPProIntegrationSteps-outside#SectionB" target="_blank" rel="noopener noreferrer">',
-                '</a>'
-        ); ?>
+            '<a href="https://www.paypal.com/us/cgi-bin/webscr?cmd=xpt/cps/merchant/wppro/WPProIntegrationSteps-outside#SectionB" target="_blank" rel="noopener noreferrer">',
+            '</a>'
+        );
+        ?>
     </li>
     <li>
         <strong><?php esc_html_e('Country Currency', 'event_espresso'); ?></strong><br/>

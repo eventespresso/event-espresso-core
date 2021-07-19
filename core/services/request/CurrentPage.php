@@ -94,7 +94,7 @@ class CurrentPage
         // true or false ? is this page being used by EE ?
         $this->setEspressoPage();
         remove_action('parse_request', [$this, 'parseRequest'], 2);
-        $this->initialized   = true;
+        $this->initialized = true;
     }
 
 
@@ -143,20 +143,20 @@ class CurrentPage
     private function getPostId(WP $WP = null)
     {
         $post_id = null;
-		if ($WP instanceof WP) {
-			// look for the post ID in the aptly named 'p' query var
-			if (isset($WP->query_vars['p'])) {
-				$post_id = $WP->query_vars['p'];
-			}
-			// not a post? what about a page?
-			if (! $post_id && isset($WP->query_vars['page_id'])) {
-				$post_id = $WP->query_vars['page_id'];
-			}
-			// ok... maybe pretty permalinks are off and the ID is set in the raw request...
-			// but hasn't been processed yet ie: this method is being called too early :\
-			if (! $post_id && $WP->request !== null && is_numeric(basename($WP->request))) {
-				$post_id = basename($WP->request);
-			}
+        if ($WP instanceof WP) {
+            // look for the post ID in the aptly named 'p' query var
+            if (isset($WP->query_vars['p'])) {
+                $post_id = $WP->query_vars['p'];
+            }
+            // not a post? what about a page?
+            if (! $post_id && isset($WP->query_vars['page_id'])) {
+                $post_id = $WP->query_vars['page_id'];
+            }
+            // ok... maybe pretty permalinks are off and the ID is set in the raw request...
+            // but hasn't been processed yet ie: this method is being called too early :\
+            if (! $post_id && $WP->request !== null && is_numeric(basename($WP->request))) {
+                $post_id = basename($WP->request);
+            }
         }
         // none of the above? ok what about an explicit "post_id" URL parameter?
         if (! $post_id && $this->request->requestParamIsSet('post_id')) {

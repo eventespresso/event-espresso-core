@@ -456,27 +456,29 @@ final class EE_Admin implements InterminableInterface
         ?>
         <div id="posttype-extra-nav-menu-pages" class="posttypediv">
             <ul id="posttype-extra-nav-menu-pages-tabs" class="posttype-tabs add-menu-item-tabs">
-                <li <?php echo('event-archives' === $current_tab ? ' class="tabs"' : ''); ?>>
-                    <a class="nav-tab-link" data-type="tabs-panel-posttype-extra-nav-menu-pages-event-archives"
-                       href="<?php
-                        if ($nav_menu_selected_id) {
-                            echo esc_url(
-                                add_query_arg(
-                                    'extra-nav-menu-pages-tab',
-                                    'event-archives',
-                                    remove_query_arg($removed_args)
-                                )
-                            );
-                        }
-                        ?>#tabs-panel-posttype-extra-nav-menu-pages-event-archives">
+                <li <?php echo 'event-archives' === $current_tab ? ' class="tabs"' : ''; ?>>
+                    <?php
+                    $href = $nav_menu_selected_id
+                        ? esc_url(
+                            add_query_arg(
+                                'extra-nav-menu-pages-tab',
+                                'event-archives',
+                                remove_query_arg($removed_args)
+                            )
+                        )
+                        : '';
+                    ?>
+                    <a class="nav-tab-link"
+                       data-type="tabs-panel-posttype-extra-nav-menu-pages-event-archives"
+                       href="<?php echo $href; ?>#tabs-panel-posttype-extra-nav-menu-pages-event-archives">
                         <?php esc_html_e('Event Archive Pages', 'event_espresso'); ?>
                     </a>
                 </li>
             </ul><!-- .posttype-tabs -->
-
-            <div id="tabs-panel-posttype-extra-nav-menu-pages-event-archives" class="tabs-panel <?php
-            echo('event-archives' === $current_tab ? 'tabs-panel-active' : 'tabs-panel-inactive');
-            ?>">
+            <?php $tabs_status = 'event-archives' === $current_tab ? 'tabs-panel-active' : 'tabs-panel-inactive'; ?>
+            <div id="tabs-panel-posttype-extra-nav-menu-pages-event-archives"
+                 class="tabs-panel <?php echo $tabs_status;?>"
+            >
                 <ul id="extra-nav-menu-pageschecklist-event-archives" class="categorychecklist form-no-clear">
                     <?php
                     $pages          = $this->_get_extra_nav_menu_pages_items();
@@ -495,8 +497,8 @@ final class EE_Admin implements InterminableInterface
 
             <p class="button-controls">
                 <span class="list-controls">
-                    <a href="<?php
-                    echo esc_url(
+                    <?php
+                    $href = esc_url(
                         add_query_arg(
                             [
                                 'extra-nav-menu-pages-tab' => 'event-archives',
@@ -505,10 +507,10 @@ final class EE_Admin implements InterminableInterface
                             remove_query_arg($removed_args)
                         )
                     );
-                                ?>#posttype-extra-nav-menu-pages" class="select-all"><?php esc_html_e(
-                                    'Select All',
-                                    'event_espresso'
-                                ); ?></a>
+                    ?>
+                    <a href="<?php echo $href?>#posttype-extra-nav-menu-pages" class="select-all">
+                        <?php esc_html_e('Select All', 'event_espresso'); ?>
+                    </a>
                 </span>
                 <span class="add-to-menu">
                     <input type="submit"<?php wp_nav_menu_disabled_check($nav_menu_selected_id); ?>

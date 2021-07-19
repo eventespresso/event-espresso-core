@@ -1,13 +1,73 @@
+<?php
+
+/**
+ * template args in use
+ *
+ * @var $tkt_row
+ * @var $tkt_status_class
+ * @var $TKT_name
+ * @var $TKT_start_date
+ * @var $TKT_end_date
+ * @var $TKT_status
+ * @var $TKT_price
+ * @var $TKT_qty
+ * @var $TKT_uses
+ * @var $TKT_min
+ * @var $TKT_max
+ * @var $TKT_sold
+ * @var $TKT_registrations
+ * @var $TKT_ID
+ * @var $ticket_datetime_rows
+ * @var $TKT_description
+ * @var $TKT_is_default
+ * @var $TKT_price_amount
+ * @var $TKT_price_code
+ * @var $TKT_price_rows
+ * @var $TKT_base_price
+ * @var $TKT_base_price_ID
+ * @var $TKT_order
+ * @var $ticket_price_rows
+ * @var $TKT_required
+ * @var $TKT_reserved
+ * @var $TKT_qty_for_input
+ * @var $TKT_subtotal_amount_display
+ * @var $disabled
+ * @var $ticket_archive_class
+ * @var $trash_icon
+ * @var $trash_hidden
+ * @var $clone_icon
+ * @var $display_edit_tkt_row
+ * @var $edit_tickets_name
+ * @var $edit_tkt_expanded
+ *
+ * @var $TKT_taxable
+ * @var $display_subtotal
+ * @var $TKT_subtotal_amount
+ * @var $tax_rows
+ *
+ * @var $show_price_modifier;
+ * @var $total_price_rows
+ * @var $ticket_datetimes_list
+ * @var $starting_ticket_datetime_rows (datetimes attached to ticket on page load)
+ * @var $existing_ticket_price_ids;
+ * @var $ticket_template_id;
+ * @var $show_price_modifier
+ * @var $show_price_mod_button
+ */
+
+?>
 <tr valign="top" class="ee-ticket-sortable ticket-row<?php echo $ticket_archive_class;
 if (WP_DEBUG) {
     echo ' ee-wp-debug';
 } ?>" id="display-ticketrow-<?php echo $tkt_row; ?>">
-    <!--<td class="ee-tkt-order-field"><span class="dashicons dashicons-sort<?php echo $tkt_status_class; ?>"><input type="hidden" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_order]" class="edit-ticket-TKT_order" value ="<?php echo $TKT_order; ?>" ></span></td>-->
+    <!--<td class="ee-tkt-order-field"><span class="dashicons dashicons-sort<?php echo $tkt_status_class; ?>">
+    <input type="hidden" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_order]" class="edit-ticket-TKT_order" value ="<?php echo $TKT_order; ?>" ></span></td>-->
     <td class="ee-tkt-order-field"><span
-            class="ee-status-strip-td ee-status-strip<?php echo $tkt_status_class; ?>"></span><input type="hidden"
-                                                                                                     name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_order]"
-                                                                                                     class="edit-ticket-TKT_order"
-                                                                                                     value="<?php echo $TKT_order; ?>">
+            class="ee-status-strip-td ee-status-strip<?php echo $tkt_status_class; ?>"></span>
+        <input type="hidden"
+               name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_order]"
+               class="edit-ticket-TKT_order"
+               value="<?php echo $TKT_order; ?>">
     </td>
     <td><input maxlength="245" type="text" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_name]"
                class="edit-ticket-TKT_name ee-large-text-inp" placeholder="Ticket Title"
@@ -354,50 +414,3 @@ if (WP_DEBUG) {
         </fieldset>
     </td>
 </tr>
-<?php
-
-/**
- * template args in use
- *
- * $tkt_row
- * $tkt_status_class
- * $TKT_name
- * $TKT_start_date
- * $TKT_end_date
- * $TKT_status
- * $TKT_price
- * $TKT_qty
- * $TKT_uses
- * $TKT_min
- * $TKT_max
- * $TKT_sold
- * $TKT_registrations
- * $TKT_ID
- * $TKT_description
- * $TKT_is_default
- * $TKT_price_rows
- * $TKT_base_price
- * $TKT_base_price_ID
- * $TKT_order
- * $disabled
- * $ticket_archive_class
- * $trash_icon
- * $trash_hidden
- * $clone_icon
- * $display_edit_tkt_row
- * $edit_tkt_expanded
- *
- * $TKT_taxable
- * $display_subtotal
- * $TKT_subtotal_amount
- * $tax_rows
- *
- * $show_price_modifier;
- * $total_price_rows
- * $ticket_datetimes_list
- * $starting_ticket_datetime_rows (datetimes attached to ticket on page load)
- * $existing_ticket_price_ids;
- * $ticket_template_id;
- * $show_price_modifier
- * $show_price_mod_button
- */

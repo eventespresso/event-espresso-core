@@ -1,8 +1,5 @@
 <?php
 
-use EventEspresso\core\services\database\TableAnalysis;
-use EventEspresso\core\services\database\TableManager;
-
 /**
  * meant to convert DBs between 4.3 and 4.5
  * mostly just
@@ -10,6 +7,9 @@ use EventEspresso\core\services\database\TableManager;
  * -adds DTT_name and DTT_description to the datetime table;
  * -adds users onto prices, price types, question groups, and tickets
  */
+
+use EventEspresso\core\services\database\TableAnalysis;
+use EventEspresso\core\services\database\TableManager;
 
 // make sure we have all the stages loaded too
 // unfortunately, this needs to be done upon INCLUSION of this file,

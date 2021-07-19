@@ -1,3 +1,30 @@
+<?php
+
+/**
+ * template args in use
+ *
+ * @var int $tkt_row
+ * @var int $PRC_order
+ * @var int $PRC_ID
+ * @var float $PRC_amount
+ * @var bool $PRC_is_default
+ * @var bool $show_plus
+ * @var bool $show_minus
+ * @var bool $show_currency_symbol
+ * @var bool $show_percentage
+ * @var bool $show_trash_icon
+ * @var bool $show_lock_icon
+ * @var bool $show_create_button
+ * @var bool $disabled
+ * @var bool $show_plus_or_minus
+ * @var string $edit_prices_name
+ * @var string $PRC_desc
+ * @var string $price_type_selector;
+ * @var string $PRC_name
+ * @var string $price_currency_symbol
+ */
+?>
+
 <tr id="price-row-<?php echo $tkt_row; ?>-<?php echo $PRC_order; ?>" class="ee-active-price" valign="top">
     <td>
         <?php echo $price_type_selector; ?>
@@ -22,8 +49,9 @@
         <span class="ticket-price-info-display ticket-price-plus-minus"<?php echo $show_plus_or_minus; ?>>+/-</span>
         <span class="ticket-price-info-display ticket-price-plus"<?php echo $show_plus; ?>>+</span>
         <span class="ticket-price-info-display ticket-price-minus"<?php echo $show_minus; ?>>-</span>
-        <span
-            class="ticket-price-info-display ticket-price-dollar-sign-display"<?php echo $show_currency_symbol; ?>><?php echo $price_currency_symbol; ?></span>
+        <span class="ticket-price-info-display ticket-price-dollar-sign-display"<?php echo $show_currency_symbol; ?>>
+            <?php echo $price_currency_symbol; ?>
+        </span>
     </td>
     <td>
         <?php if ($disabled) : ?>
@@ -63,27 +91,3 @@
 <!-- </section> -->
 <!-- </td> -->
 <!-- </tr> -->
-<?php
-
-/**
- * template args in use
- *
- * $tkt_row
- * $PRC_order
- * $price_type_selector;
- * $PRC_ID
- * $PRC_is_default
- * $PRC_name
- * $price_currency_symbol
- * $show_plus_or_minus
- * $show_plus
- * $show_minus
- * $show_currency_symbol
- * $PRC_amount
- * $show_percentage
- * $show_trash_icon
- * $show_lock_icon
- * $show_create_button
- * $PRC_desc
- * $disabled
- */

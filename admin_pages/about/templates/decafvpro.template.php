@@ -9,11 +9,6 @@
     ); ?><br>
 
     <?php
-
-    /**
-     * Features
-     */
-
     $features = array(
         'pricing-options'        => array(
             'label'   => esc_html__('Handle multiple dates and pricing options', 'event_espresso'),

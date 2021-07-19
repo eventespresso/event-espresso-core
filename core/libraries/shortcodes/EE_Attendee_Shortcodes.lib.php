@@ -12,8 +12,6 @@
  * @package        Event Espresso
  * @subpackage     libraries/shortcodes/EE_Attendee_Shortcodes.lib.php
  * @author         Darren Ethier
- *
- * ------------------------------------------------------------------------
  */
 class EE_Attendee_Shortcodes extends EE_Shortcodes
 {
@@ -23,7 +21,7 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes
      *
      * @var array
      */
-    protected $_xtra;
+    protected $_extra;
 
 
     /**
@@ -37,9 +35,9 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes
 
     protected function _init_props()
     {
-        $this->label = esc_html__('Attendee Shortcodes', 'event_espresso');
+        $this->label       = esc_html__('Attendee Shortcodes', 'event_espresso');
         $this->description = esc_html__('All shortcodes specific to attendee related data', 'event_espresso');
-        $this->_shortcodes = array(
+        $this->_shortcodes = [
             '[FNAME]'                          => esc_html__('First Name of an attendee.', 'event_espresso'),
             '[LNAME]'                          => esc_html__('Last Name of an attendee.', 'event_espresso'),
             '[ATTENDEE_EMAIL]'                 => esc_html__('Email address for the attendee.', 'event_espresso'),
@@ -90,7 +88,7 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes
                 'event_espresso'
             ),
             '[COUNTRY]'                        => esc_html__('The country for the registration.', 'event_espresso'),
-        );
+        ];
     }
 
 
@@ -98,15 +96,16 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes
      * handles shortcode parsing
      *
      * @access protected
-     * @param  string $shortcode the shortcode to be parsed.
+     * @param string $shortcode the shortcode to be parsed.
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _parser($shortcode)
     {
 
 
-        $this->_xtra = ! empty($this->_extra_data) && $this->_extra_data['data'] instanceof EE_Messages_Addressee
+        $this->_extra = ! empty($this->_extra_data) && $this->_extra_data['data'] instanceof EE_Messages_Addressee
             ? $this->_extra_data['data']
             : null;
 
@@ -117,10 +116,10 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes
 
         if (! $registration instanceof EE_Registration) {
             // let's attempt to get the txn_id for the error message.
-            $txn_id = isset($this->_xtra->txn) && $this->_xtra->txn instanceof EE_Transaction
-                ? $this->_xtra->txn->ID()
+            $txn_id  = isset($this->_extra->txn) && $this->_extra->txn instanceof EE_Transaction
+                ? $this->_extra->txn->ID()
                 : esc_html__('Unknown', 'event_espresso');
-            $msg = esc_html__(
+            $msg     = esc_html__(
                 'There is no EE_Registration object in the data sent to the EE_Attendee Shortcode Parser for the messages system.',
                 'event_espresso'
             );
@@ -132,12 +131,12 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes
         }
 
         // attendee obj for this registration
-        $attendee = isset($this->_xtra->registrations[ $registration->ID() ]['att_obj'])
-            ? $this->_xtra->registrations[ $registration->ID() ]['att_obj']
+        $attendee = isset($this->_extra->registrations[ $registration->ID() ]['att_obj'])
+            ? $this->_extra->registrations[ $registration->ID() ]['att_obj']
             : null;
 
         if (! $attendee instanceof EE_Attendee) {
-            $msg = esc_html__(
+            $msg     = esc_html__(
                 'There is no EE_Attendee object in the data sent to the EE_Attendee_Shortcode parser for the messages system.',
                 'event_espresso'
             );
@@ -151,73 +150,56 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes
         switch ($shortcode) {
             case '[FNAME]':
                 return $attendee->fname();
-                break;
 
             case '[LNAME]':
                 return $attendee->lname();
-                break;
 
             case '[ATTENDEE_EMAIL]':
                 return $attendee->email();
-                break;
 
             case '[EDIT_ATTENDEE_LINK]':
                 return $registration->get_admin_edit_url();
-                break;
 
             case '[REGISTRATION_CODE]':
                 return $registration->reg_code();
-                break;
 
             case '[REGISTRATION_ID]':
                 return $registration->ID();
-                break;
 
             case '[FRONTEND_EDIT_REG_LINK]':
                 return $registration->edit_attendee_information_url();
-                break;
 
             case '[PHONE_NUMBER]':
                 return $attendee->phone();
-                break;
 
             case '[ADDRESS]':
                 return $attendee->address();
-                break;
 
             case '[ADDRESS2]':
                 return $attendee->address2();
-                break;
 
             case '[CITY]':
                 return $attendee->city();
-                break;
 
             case '[ZIP_PC]':
                 return $attendee->zip();
-                break;
 
             case '[ADDRESS_STATE]':
                 $state_obj = $attendee->state_obj();
                 return $state_obj instanceof EE_State ? $state_obj->name() : '';
-                break;
 
             case '[COUNTRY]':
                 $country_obj = $attendee->country_obj();
                 return $country_obj instanceof EE_Country ? $country_obj->name() : '';
-                break;
 
             case '[REGISTRATION_STATUS_ID]':
                 return $registration->status_ID();
-                break;
 
             case '[REGISTRATION_STATUS_LABEL]':
                 return $registration->pretty_status();
-                break;
 
             case '[REGISTRATION_TOTAL_AMOUNT_PAID]':
                 return $registration->pretty_paid();
-                break;
         }
 
         return '';
