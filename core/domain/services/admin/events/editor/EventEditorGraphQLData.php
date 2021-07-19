@@ -8,6 +8,7 @@ use EventEspresso\core\domain\entities\admin\GraphQLData\Event;
 use EventEspresso\core\domain\entities\admin\GraphQLData\Prices;
 use EventEspresso\core\domain\entities\admin\GraphQLData\PriceTypes;
 use EventEspresso\core\domain\entities\admin\GraphQLData\Tickets;
+use EventEspresso\core\domain\entities\admin\GraphQLData\Venues;
 use ReflectionException;
 
 /**
@@ -71,6 +72,11 @@ class EventEditorGraphQLData
      */
     protected $form_builder;
 
+    /**
+     * @var Venues
+     */
+    protected $venues;
+
 
     /**
      * EventEditorGraphQLData constructor.
@@ -85,6 +91,7 @@ class EventEditorGraphQLData
      * @param NewEventDefaultEntities $default_entities
      * @param TicketMeta              $ticket_meta
      * @param FormBuilder             $form_builder
+     * @param Venues                  $venues
      */
     public function __construct(
         Datetimes $datetimes,
@@ -96,7 +103,8 @@ class EventEditorGraphQLData
         EventManagerData $managers,
         NewEventDefaultEntities $default_entities,
         TicketMeta $ticket_meta,
-        FormBuilder $form_builder
+        FormBuilder $form_builder,
+        Venues $venues
     ) {
         $this->datetimes        = $datetimes;
         $this->event            = $event;
@@ -108,6 +116,7 @@ class EventEditorGraphQLData
         $this->tickets          = $tickets;
         $this->ticket_meta      = $ticket_meta;
         $this->form_builder     = $form_builder;
+        $this->venues           = $venues;
     }
 
 
@@ -144,6 +153,8 @@ class EventEditorGraphQLData
 
         $formBuilder = $this->form_builder->getData($eventId);
 
+        $venues = $this->venues->getData();
+
         return compact(
             'datetimes',
             'event',
@@ -153,7 +164,8 @@ class EventEditorGraphQLData
             'priceTypes',
             'relations',
             'tickets',
-            'ticketMeta'
+            'ticketMeta',
+            'venues'
         );
     }
 }
