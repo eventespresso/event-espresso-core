@@ -377,7 +377,7 @@ abstract class EE_Admin_Hooks extends EE_Base
     {
         $action = $this->request->getRequestParam('action');
         // list tables do something else with 'action' for bulk actions.
-        $action = $action !== '-1' && $action !== ''  ? $action : 'default';
+        $action = $action !== '-1' && $action !== '' ? $action : 'default';
         $route = $this->request->getRequestParam('route');
         // we set a 'route' variable in some cases where action is being used by something else.
         return $action === 'default' && $route !== '' ? $route : $action;
