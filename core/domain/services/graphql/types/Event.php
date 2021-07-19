@@ -219,7 +219,7 @@ class Event extends TypeBase
                     $venues = $source->venues();
                     /** @var EE_Venue $venue */
                     $venue = reset($venues);
-                    
+
                     return $venue instanceof EE_Venue
                     // Since venue is a CPT, $type will be 'post'
                     ? Relay::toGlobalId('post', $venue->ID())
