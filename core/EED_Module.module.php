@@ -1,6 +1,9 @@
 <?php
 
 use EventEspresso\core\interfaces\ResettableInterface;
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\RequestInterface;
+use EventEspresso\core\services\request\ResponseInterface;
 
 /**
  * * EED_Module
@@ -82,8 +85,10 @@ abstract class EED_Module extends EE_Configurable implements ResettableInterface
 
 
     /**
-     * @param $module_name
+     * @param string $module_name
      * @return EED_Module
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected static function get_instance($module_name = '')
     {
@@ -117,5 +122,33 @@ abstract class EED_Module extends EE_Configurable implements ResettableInterface
     public function theme()
     {
         return $this->theme;
+    }
+
+
+    /**
+     * @return RequestInterface
+     * @since   $VID:$
+     */
+    protected static function getRequest()
+    {
+        static $request;
+        if (! $request instanceof RequestInterface) {
+            $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+        }
+        return $request;
+    }
+
+
+    /**
+     * @return ResponseInterface
+     * @since   $VID:$
+     */
+    protected static function getResponse()
+    {
+        static $response;
+        if (! $response instanceof RequestInterface) {
+            $response = LoaderFactory::getLoader()->getShared(ResponseInterface::class);
+        }
+        return $response;
     }
 }

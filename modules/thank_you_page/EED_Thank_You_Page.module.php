@@ -6,6 +6,7 @@
  *
  * @package       Event Espresso
  * @author        Brent Christensen
+ * @method EED_Thank_You_Page get_instance($module_name)
  */
 class EED_Thank_You_Page extends EED_Module
 {
@@ -79,6 +80,8 @@ class EED_Thank_You_Page extends EED_Module
 
     /**
      * @return EED_Module|EED_Thank_You_Page
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function instance()
     {
@@ -135,6 +138,8 @@ class EED_Thank_You_Page extends EED_Module
      * get_txn
      *
      * @return EE_Transaction
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_txn()
     {
@@ -174,13 +179,14 @@ class EED_Thank_You_Page extends EED_Module
      * get_txn_payments
      *
      * @param int $since
-     * @return mixed array of EE_Payment || FALSE
-     * @throws \EE_Error
+     * @return EE_Payment[]
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_txn_payments($since = 0)
     {
         if (! $this->get_txn()) {
-            return false;
+            return [];
         }
         $args = array('order_by' => array('PAY_timestamp' => 'ASC'));
         if ($since > 0) {
@@ -209,11 +215,13 @@ class EED_Thank_You_Page extends EED_Module
      */
     private function _get_reg_url_link()
     {
-        if (! empty($this->_reg_url_link)) {
+        if ($this->_reg_url_link){
             return;
         }
+        // check for reg_url_link
+        $reg_url_link = self::getRequest()->getRequestParam('e_reg_url_link');
         // only do thank you page stuff if we have a REG_url_link in the url
-        if (WP_DEBUG && ! EE_Registry::instance()->REQ->is_set('e_reg_url_link')) {
+        if (WP_DEBUG && ! $reg_url_link) {
             EE_Error::add_error(
                 __(
                     'No transaction information could be retrieved because the registration URL link is missing or invalid.',
@@ -223,10 +231,8 @@ class EED_Thank_You_Page extends EED_Module
                 __FUNCTION__,
                 __LINE__
             );
-            return;
         }
-        // check for reg_url_link
-        $this->_reg_url_link = EE_Registry::instance()->REQ->get('e_reg_url_link');
+        $this->set_reg_url_link($reg_url_link);
     }
 
 
@@ -247,7 +253,6 @@ class EED_Thank_You_Page extends EED_Module
      *
      * @param WP $WP
      * @return void
-     * @throws \EE_Error
      */
     public function run($WP)
     {
@@ -258,13 +263,14 @@ class EED_Thank_You_Page extends EED_Module
      * load_resources
      *
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function load_resources()
     {
         $this->_get_reg_url_link();
         // resend_reg_confirmation_email ?
-        if (EE_Registry::instance()->REQ->is_set('resend')) {
+        if (self::getRequest()->requestParamIsSet('resend')) {
             EED_Thank_You_Page::resend_reg_confirmation_email();
         }
         EE_Registry::instance()->SSN->clear_session(__CLASS__, __FUNCTION__);
@@ -335,14 +341,15 @@ class EED_Thank_You_Page extends EED_Module
      * init
      *
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function init()
     {
         $this->_get_reg_url_link();
         if (! $this->get_txn()) {
             echo EEH_HTML::div(
-                EEH_HTML::h4(__('We\'re sorry...', 'event_espresso'), '', '') .
+                EEH_HTML::h4(__('We\'re sorry...', 'event_espresso')) .
                 sprintf(
                     __(
                         'This is a system page for displaying transaction information after a purchase.%1$sYou are most likely seeing this notice because you have navigated to this page%1$sthrough some means other than completing a transaction.%1$sSorry for the disappointment, but you will most likely find nothing of interest here.%1$s%1$s',
@@ -353,7 +360,7 @@ class EED_Thank_You_Page extends EED_Module
                 '',
                 'ee-attention'
             );
-            return null;
+            return;
         }
         // if we've made it to the Thank You page, then let's toggle any "Failed" transactions to "Incomplete"
         if ($this->_current_txn->status_ID() === EEM_Transaction::failed_status_code) {
@@ -363,7 +370,7 @@ class EED_Thank_You_Page extends EED_Module
         $this->_primary_registrant = $this->_current_txn->primary_registration() instanceof EE_Registration
             ? $this->_current_txn->primary_registration()
             : null;
-        $this->_is_primary = $this->_primary_registrant->reg_url_link() === $this->_reg_url_link ? true : false;
+        $this->_is_primary = $this->_primary_registrant->reg_url_link() === $this->_reg_url_link;
         $show_try_pay_again_link_default = apply_filters(
             'AFEE__EED_Thank_You_Page__init__show_try_pay_again_link_default',
             true
@@ -387,9 +394,7 @@ class EED_Thank_You_Page extends EED_Module
                 ? true
                 : $show_try_pay_again_link_default;
         }
-        $this->_payments_closed = ! $this->_current_txn->payment_method() instanceof EE_Payment_Method
-            ? true
-            : false;
+        $this->_payments_closed = ! $this->_current_txn->payment_method() instanceof EE_Payment_Method;
         $this->_is_offline_payment_method = false;
         if (// if payment method is unknown
             ! $this->_current_txn->payment_method() instanceof EE_Payment_Method
@@ -427,7 +432,8 @@ class EED_Thank_You_Page extends EED_Module
      * display_thank_you_page_results
      *
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function thank_you_page_results()
     {
@@ -436,7 +442,7 @@ class EED_Thank_You_Page extends EED_Module
             return EE_Error::get_notices();
         }
         // link to receipt
-        $template_args['TXN_receipt_url'] = $this->_current_txn->receipt_url('html');
+        $template_args['TXN_receipt_url'] = $this->_current_txn->receipt_url();
         if (! empty($template_args['TXN_receipt_url'])) {
             $template_args['order_conf_desc'] = __(
                 '%1$sCongratulations%2$sYour registration has been successfully processed.%3$sCheck your email for your registration confirmation or click the button below to view / download / print a full description of your purchases and registration information.',
@@ -449,19 +455,16 @@ class EED_Thank_You_Page extends EED_Module
             );
         }
         $template_args['transaction'] = $this->_current_txn;
-        $template_args['revisit'] = EE_Registry::instance()->REQ->get('revisit', false);
+        $template_args['revisit'] = self::getRequest()->getRequestParam('revisit', false, 'bool');
         add_action('AHEE__thank_you_page_overview_template__content', array($this, 'get_registration_details'));
         if ($this->_is_primary && ! $this->_current_txn->is_free()) {
             add_action('AHEE__thank_you_page_overview_template__content', array($this, 'get_ajax_content'));
         }
         return EEH_Template::locate_template(
             THANK_YOU_TEMPLATES_PATH . 'thank-you-page-overview.template.php',
-            $template_args,
-            true,
-            true
+            $template_args
         );
     }
-
 
 
     /**
@@ -469,7 +472,8 @@ class EED_Thank_You_Page extends EED_Module
      *
      * @param array $thank_you_page_data thank you page portion of the incoming JSON array from the WP heartbeat data
      * @return array
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     private function _update_server_wait_time($thank_you_page_data = array())
     {
@@ -486,7 +490,7 @@ class EED_Thank_You_Page extends EED_Module
     /**
      * get_registration_details
      *
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function get_registration_details()
     {
@@ -508,9 +512,7 @@ class EED_Thank_You_Page extends EED_Module
         );
         echo EEH_Template::locate_template(
             THANK_YOU_TEMPLATES_PATH . 'thank-you-page-registration-details.template.php',
-            $template_args,
-            true,
-            true
+            $template_args
         );
     }
 
@@ -518,15 +520,15 @@ class EED_Thank_You_Page extends EED_Module
     /**
      * resend_reg_confirmation_email
      *
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function resend_reg_confirmation_email()
     {
-        EE_Registry::instance()->load_core('Request_Handler');
-        $reg_url_link = EE_Registry::instance()->REQ->get('token');
+        $reg_url_link = self::getRequest()->getRequestParam('token');
         // was a REG_ID passed ?
         if ($reg_url_link) {
-            $registration = EE_Registry::instance()->load_model('Registration')->get_one(
+            $registration = EEM_Registration::instance()->get_one(
                 array(array('REG_url_link' => $reg_url_link))
             );
             if ($registration instanceof EE_Registration) {
@@ -576,7 +578,8 @@ class EED_Thank_You_Page extends EED_Module
      * get_ajax_content
      *
      * @return void
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_ajax_content()
     {
@@ -652,6 +655,8 @@ class EED_Thank_You_Page extends EED_Module
      *
      * @param EE_Event[] $events
      * @return void
+     * @throws EE_Error
+     * @throws EE_Error
      */
     public function display_details_for_events_requiring_pre_approval($events = array())
     {
@@ -689,7 +694,7 @@ class EED_Thank_You_Page extends EED_Module
      * get_transaction_details
      *
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function get_transaction_details()
     {
@@ -713,9 +718,7 @@ class EED_Thank_You_Page extends EED_Module
         );
         return EEH_Template::locate_template(
             THANK_YOU_TEMPLATES_PATH . 'thank-you-page-transaction-details.template.php',
-            $template_args,
-            true,
-            true
+            $template_args
         );
     }
 
@@ -725,7 +728,7 @@ class EED_Thank_You_Page extends EED_Module
      *
      * @param EE_Payment $payment
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function get_payment_row_html($payment = null)
     {
@@ -773,7 +776,8 @@ class EED_Thank_You_Page extends EED_Module
      *
      * @param array $payments
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_payment_details($payments = array())
     {
@@ -818,9 +822,7 @@ class EED_Thank_You_Page extends EED_Module
         );
         return EEH_Template::locate_template(
             THANK_YOU_TEMPLATES_PATH . 'thank-you-page-payment-details.template.php',
-            $template_args,
-            true,
-            true
+            $template_args
         );
     }
 
@@ -830,7 +832,7 @@ class EED_Thank_You_Page extends EED_Module
      *
      * @param array $payments
      * @return string
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function get_new_payments($payments = array())
     {

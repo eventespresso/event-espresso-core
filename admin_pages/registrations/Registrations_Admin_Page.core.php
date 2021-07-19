@@ -7,6 +7,7 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidFormSubmissionException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\domain\services\attendee\forms\AttendeeContactDetailsMetaboxFormHandler;
+use EventEspresso\core\services\request\CurrentPage;
 
 /**
  * Registrations_Admin_Page class
@@ -2808,7 +2809,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 )
             );
         }
-        EE_Registry::instance()->REQ->set_espresso_page(true);
+        /** @var CurrentPage $current_page */
+        $current_page = $this->loader->getShared(CurrentPage::class);
+        $current_page->setEspressoPage(true);
         // gotta start with a clean slate if we're not coming here via ajax
         if (! defined('DOING_AJAX')
             && (! isset($this->_req_data['processing_registration']) || isset($this->_req_data['step_error']))
@@ -3002,8 +3005,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     {
         EE_System::do_not_cache();
         $this->_set_reg_event();
-        EE_Registry::instance()->REQ->set_espresso_page(true);
-        EE_Registry::instance()->REQ->set('uts', time());
+        /** @var CurrentPage $current_page */
+        $current_page = $this->loader->getShared(CurrentPage::class);
+        $current_page->setEspressoPage(true);
+        $this->request->setRequestParam('uts', time());
         // what step are we on?
         $cart = EE_Registry::instance()->SSN->cart();
         $step = ! $cart instanceof EE_Cart ? 'ticket' : 'questions';

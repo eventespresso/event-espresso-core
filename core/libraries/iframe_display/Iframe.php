@@ -357,7 +357,7 @@ class Iframe
     public function localizeJsonVars()
     {
         $JSON = '';
-        foreach ((array) $this->localized_vars as $var_name => $vars) {
+        foreach ($this->localized_vars as $var_name => $vars) {
             $this->localized_vars[ $var_name ] = $this->encodeJsonVars($vars);
             $JSON .= "/* <![CDATA[ */ var {$var_name} = ";
             $JSON .= wp_json_encode($this->localized_vars[ $var_name ]);
@@ -369,7 +369,7 @@ class Iframe
 
     /**
      * @param bool|int|float|string|array $var
-     * @return array
+     * @return array|string|null
      */
     public function encodeJsonVars($var)
     {

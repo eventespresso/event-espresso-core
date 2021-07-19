@@ -174,7 +174,8 @@ class ClassInterfaceCache
             return $this->getFqnForAlias($this->aliases[ (string) $for_class ][ (string) $alias ], $for_class);
         }
         if ($this->isDirectAlias($alias)) {
-            return $this->getFqnForAlias($this->aliases[ (string) $alias ], '');
+            // note: changed '' to $for_class
+            return $this->getFqnForAlias($this->aliases[ (string) $alias ], $for_class);
         }
         return $alias;
     }

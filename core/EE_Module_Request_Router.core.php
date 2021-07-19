@@ -44,9 +44,9 @@ final class EE_Module_Request_Router implements InterminableInterface
 
 
     /**
-     * on the first call  to this method, it checks the EE_Request_Handler for a "route"
+     * on the first call  to this method, it checks the Request for a "route"
      * on subsequent calls to this method,
-     * instead of checking the EE_Request_Handler for a route, it checks the previous routes array,
+     * instead of checking the Request for a route, it checks the previous routes array,
      * and checks if the last called route has any forwarding routes registered for it
      *
      * @param WP_Query $WP_Query

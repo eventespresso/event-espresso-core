@@ -283,7 +283,8 @@ class EE_Checkout
         $this->thank_you_page_url = EE_Registry::instance()->CFG->core->thank_you_page_url();
         $this->cancel_page_url = EE_Registry::instance()->CFG->core->cancel_page_url();
         $this->continue_reg = apply_filters('FHEE__EE_Checkout___construct___continue_reg', true);
-        $this->admin_request = is_admin() && ! EE_Registry::instance()->REQ->ajax;
+
+        $this->admin_request = is_admin() && ! EED_Single_Page_Checkout::getRequest()->isAjax();
         $this->reg_cache_where_params = array(
             0          => array('REG_deleted' => false),
             'order_by' => array('REG_count' => 'ASC'),
@@ -360,11 +361,12 @@ class EE_Checkout
     {
         $this->process_form_submission = false;
         $this->continue_reg = apply_filters('FHEE__EE_Checkout___construct___continue_reg', true);
-        $this->admin_request = is_admin() && ! EE_Registry::instance()->REQ->front_ajax;
+        $this->admin_request = is_admin() && ! EED_Single_Page_Checkout::getRequest()->isFrontAjax();
         $this->continue_reg = true;
         $this->redirect = false;
         // don't reset the cached redirect form if we're about to be asked to display it !!!
-        if (EE_Registry::instance()->REQ->get('action', 'display_spco_reg_step') !== 'redirect_form') {
+        $action = EED_Single_Page_Checkout::getRequest()->getRequestParam('action', 'display_spco_reg_step');
+        if ($action !== 'redirect_form') {
             $this->redirect_form = '';
         }
         $this->redirect_url = '';
@@ -406,7 +408,7 @@ class EE_Checkout
             // advance to the next step
             $this->set_current_step($this->next_step->slug());
             // also reset the step param in the request in case any other code references that directly
-            EE_Registry::instance()->REQ->set('step', $this->current_step->slug());
+            EED_Single_Page_Checkout::getRequest()->setRequestParam('step', $this->current_step->slug());
             // since we are skipping a step and setting the current step to be what was previously the next step,
             // we need to check that the next step is now correct, and not still set to the current step.
             if ($this->current_step->slug() === $this->next_step->slug()) {
@@ -683,7 +685,7 @@ class EE_Checkout
     public function reset_reg_steps()
     {
         $this->sort_reg_steps();
-        $this->set_current_step(EE_Registry::instance()->REQ->get('step'));
+        $this->set_current_step(EED_Single_Page_Checkout::getRequest()->getRequestParam('step'));
         $this->set_next_step();
         // the text that appears on the reg step form submit button
         $this->current_step->set_submit_button_text();
@@ -1389,7 +1391,6 @@ class EE_Checkout
                 'txn_status_updated'      => $this->transaction->txn_status_updated(),
                 'reg_status_updated'      => $this->reg_status_updated,
                 'reg_url_link'            => $this->reg_url_link,
-                'REQ'                     => $display_request ? $_REQUEST : '',
             );
             if ($this->transaction instanceof EE_Transaction) {
                 $default_data['TXN_status'] = $this->transaction->status_ID();

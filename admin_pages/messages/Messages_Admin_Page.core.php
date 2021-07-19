@@ -90,7 +90,8 @@ class Messages_Admin_Page extends EE_Admin_Page
         $this->_admin_base_url = EE_MSG_ADMIN_URL;
         $this->_admin_base_path = EE_MSG_ADMIN;
 
-        $this->_activate_state = isset($this->_req_data['activate_state']) ? (array) $this->_req_data['activate_state']
+        $this->_activate_state = isset($this->_req_data['activate_state'])
+            ? (array) $this->_req_data['activate_state']
             : array();
 
         $this->_active_messenger = isset($this->_req_data['messenger']) ? $this->_req_data['messenger'] : null;
@@ -1228,18 +1229,9 @@ class Messages_Admin_Page extends EE_Admin_Page
     protected function _add_message_template($message_type = '', $messenger = '', $GRP_ID = '')
     {
         // set values override any request data
-        $message_type = ! empty($message_type) ? $message_type : '';
-        $message_type = empty($message_type) && ! empty($this->_req_data['message_type'])
-            ? $this->_req_data['message_type']
-            : $message_type;
-
-        $messenger = ! empty($messenger) ? $messenger : '';
-        $messenger = empty($messenger) && ! empty($this->_req_data['messenger'])
-            ? $this->_req_data['messenger']
-            : $messenger;
-
-        $GRP_ID = ! empty($GRP_ID) ? $GRP_ID : '';
-        $GRP_ID = empty($GRP_ID) && ! empty($this->_req_data['GRP_ID']) ? $this->_req_data['GRP_ID'] : $GRP_ID;
+        $message_type = ! empty($message_type) ? $message_type : $this->request->getRequestParam('message_type');
+        $messenger = ! empty($messenger) ? $messenger : $this->request->getRequestParam('messenger');
+        $GRP_ID = ! empty($GRP_ID) ? $GRP_ID : $this->request->getRequestParam('GRP_ID', 0, 'int');
 
         // we need messenger and message type.  They should be coming from the event editor. If not here then return error
         if (empty($message_type) || empty($messenger)) {
@@ -2128,12 +2120,13 @@ class Messages_Admin_Page extends EE_Admin_Page
     public function _preview_message($send = false)
     {
         // first make sure we've got the necessary parameters
-        if (! isset(
-            $this->_req_data['message_type'],
-            $this->_req_data['messenger'],
-            $this->_req_data['messenger'],
-            $this->_req_data['GRP_ID']
-        )) {
+        if (
+            ! (
+                $this->request->requestParamIsSet('message_type')
+                && $this->request->requestParamIsSet('messenger')
+                && $this->request->requestParamIsSet('GRP_ID')
+            )
+        ) {
             EE_Error::add_error(
                 esc_html__('Missing necessary parameters for displaying preview', 'event_espresso'),
                 __FILE__,
@@ -2142,21 +2135,12 @@ class Messages_Admin_Page extends EE_Admin_Page
             );
         }
 
-        EE_Registry::instance()->REQ->set('GRP_ID', $this->_req_data['GRP_ID']);
-        
-        // if we have an evt_id set on the request, use it.
-        $EVT_ID = isset($this->_req_data['evt_id']) && ! empty($this->_req_data['evt_id'])
-        ? absint($this->_req_data['evt_id'])
-        : false;
-
+        $context = $this->request->getRequestParam('context');
+        $messenger = $this->request->getRequestParam('messenger');
+        $message_type = $this->request->getRequestParam('message_type');
 
         // get the preview!
-        $preview = EED_Messages::preview_message(
-            $this->_req_data['message_type'],
-            $this->_req_data['context'],
-            $this->_req_data['messenger'],
-            $send
-        );
+        $preview = EED_Messages::preview_message($message_type, $context, $messenger, $send);
 
         if ($send) {
             return $preview;
@@ -2164,9 +2148,9 @@ class Messages_Admin_Page extends EE_Admin_Page
 
         // let's add a button to go back to the edit view
         $query_args = array(
-            'id'      => $this->_req_data['GRP_ID'],
-            'evt_id'  => $EVT_ID,
-            'context' => $this->_req_data['context'],
+            'id'      => $this->request->getRequestParam('GRP_ID', 0, 'int'),
+            'evt_id'  => $this->request->getRequestParam('evt_id', 0, 'int'),
+            'context' => $context,
             'action'  => 'edit_message_template',
         );
         $go_back_url = parent::add_query_args_and_nonce($query_args, $this->_admin_base_url);
@@ -2176,9 +2160,7 @@ class Messages_Admin_Page extends EE_Admin_Page
                           . esc_html__('Go Back to Edit', 'event_espresso')
                           . '</a>';
         $message_types = $this->get_installed_message_types();
-        $active_messenger = $this->_message_resource_manager->get_active_messenger(
-            $this->_req_data['messenger']
-        );
+        $active_messenger = $this->_message_resource_manager->get_active_messenger($messenger);
         $active_messenger_label = $active_messenger instanceof EE_messenger
             ? ucwords($active_messenger->label['singular'])
             : esc_html__('Unknown Messenger', 'event_espresso');
@@ -2186,7 +2168,7 @@ class Messages_Admin_Page extends EE_Admin_Page
         $preview_title = sprintf(
             esc_html__('Viewing Preview for %s %s Message Template', 'event_espresso'),
             $active_messenger_label,
-            ucwords($message_types[ $this->_req_data['message_type'] ]->label['singular'])
+            ucwords($message_types[ $message_type ]->label['singular'])
         );
         if (empty($preview)) {
             $this->noEventsErrorMessage();

@@ -1,6 +1,8 @@
 <?php
 
 use EventEspresso\core\interfaces\ResettableInterface;
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\CurrentPage;
 
 /**
  * EE_Maintenance_Mode Class
@@ -144,7 +146,7 @@ class EE_Maintenance_Mode implements ResettableInterface
      */
     public function set_maintenance_mode_if_db_old()
     {
-        EE_Registry::instance()->load_core('Data_Migration_Manager');
+        LoaderFactory::getLoader()->getShared('Data_Migration_Manager');
         if (EE_Data_Migration_Manager::instance()->check_for_applicable_data_migration_scripts()) {
             update_option(self::option_name_maintenance_mode, self::level_2_complete_maintenance);
             return true;
@@ -175,7 +177,7 @@ class EE_Maintenance_Mode implements ResettableInterface
     /**
      * returns TRUE if M-Mode is engaged and the current request is not for the admin
      *
-     * @return    string
+     * @return bool
      */
     public static function disable_frontend_for_maintenance()
     {
@@ -255,12 +257,14 @@ class EE_Maintenance_Mode implements ResettableInterface
      */
     public function display_maintenance_mode_notice()
     {
+        /** @var CurrentPage $current_page */
+        $current_page = LoaderFactory::getLoader()->getShared(CurrentPage::class);
         // check if M-mode is engaged and for EE shortcode
         if (! (defined('DOING_AJAX') && DOING_AJAX)
             && $this->real_level()
             && ! is_admin()
             && current_user_can('administrator')
-            && EE_Registry::instance()->REQ->is_espresso_page()
+            && $current_page->isEspressoPage()
         ) {
             printf(
                 esc_html__(
