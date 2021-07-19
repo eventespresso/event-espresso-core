@@ -90,7 +90,9 @@ class DisplayTicketSelector
     /**
      * DisplayTicketSelector constructor.
      *
-     * @param bool $iframe
+     * @param RequestInterface          $request
+     * @param EE_Ticket_Selector_Config $config
+     * @param bool                      $iframe
      */
     public function __construct(RequestInterface $request, EE_Ticket_Selector_Config $config, $iframe = false)
     {

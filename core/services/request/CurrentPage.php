@@ -5,6 +5,22 @@ namespace EventEspresso\core\services\request;
 use EE_CPT_Strategy;
 use WP;
 
+/**
+ * Class CurrentPage
+ *
+ * Primarily an extraction of logic from the legacy EE_Request_Handler class
+ * pertaining to details about the current WordPress page/post such as:
+ * - post ID
+ * - post name
+ * - post type
+ * and most importantly:
+ * - whether the current page/post is for an EE CPT or has EE content in it
+ * this is important when deciding whether to run additional EE logic and/or load EE assets
+ *
+ * @author  Brent Christensen
+ * @package EventEspresso\core\services\request
+ * @since   $VID:$
+ */
 class CurrentPage
 {
     /**
@@ -97,7 +113,7 @@ class CurrentPage
         if (! $WP instanceof WP) {
             global $WP;
         }
-        if ($WP->request) {
+        if ($WP instanceof WP && $WP->request) {
             return site_url($WP->request);
         }
         return esc_url_raw(site_url($_SERVER['REQUEST_URI']));
@@ -119,21 +135,28 @@ class CurrentPage
 
 
     /**
+     * pokes and prods the WP object query_vars in an attempt to shake out a page/post ID
+     *
      * @param WP $WP
      * @return int
      */
-    private function getPostId(WP $WP)
+    private function getPostId(WP $WP = null)
     {
         $post_id = null;
+        // look for the post ID in the aptly named 'p' query var
         if (isset($WP->query_vars['p'])) {
             $post_id = $WP->query_vars['p'];
         }
+        // not a post? what about a page?
         if (! $post_id && isset($WP->query_vars['page_id'])) {
             $post_id = $WP->query_vars['page_id'];
         }
-        if (! $post_id && $WP->request !== null && is_numeric(basename($WP->request))) {
+        // ok... maybe pretty permalinks are off and the ID is set in the raw request...
+        // but hasn't been processed yet ie: this method is being called too early :\
+        if (! $post_id && $WP instanceof WP && $WP->request !== null && is_numeric(basename($WP->request))) {
             $post_id = basename($WP->request);
         }
+        // none of the above? ok what about an explicit "post_id" URL parameter?
         if (! $post_id && $this->request->requestParamIsSet('post_id')) {
             $post_id = $this->request->getRequestParam('post_id');
         }
@@ -142,20 +165,26 @@ class CurrentPage
 
 
     /**
+     * similar to getPostId() above but attempts to obtain the "name" for the current page/post
+     *
      * @param WP $WP
      * @return string
      */
-    private function getPostName(WP $WP)
+    private function getPostName(WP $WP = null)
     {
         global $wpdb;
         $post_name = null;
+        // if this is a post, then is the post name set?
         if (isset($WP->query_vars['name']) && ! empty($WP->query_vars['name'])) {
             $post_name = $WP->query_vars['name'];
         }
+        // what about the page name?
         if (! $post_name && isset($WP->query_vars['pagename']) && ! empty($WP->query_vars['pagename'])) {
             $post_name = $WP->query_vars['pagename'];
         }
-        if (! $post_name && $WP->request !== null && ! empty($WP->request)) {
+        // this stinks but let's run a query to try and get the post name from the URL
+        // (assuming pretty permalinks are on)
+        if (! $post_name && $WP instanceof WP && $WP->request !== null && ! empty($WP->request)) {
             $possible_post_name = basename($WP->request);
             if (! is_numeric($possible_post_name)) {
                 $SQL                = "SELECT ID from {$wpdb->posts}";
@@ -167,6 +196,8 @@ class CurrentPage
                 }
             }
         }
+        // ug... ok... nothing yet... but do we have a post ID?
+        // if so then... sigh... run a query to get the post name :\
         if (! $post_name && $this->post_id) {
             $SQL                = "SELECT post_name from {$wpdb->posts}";
             $SQL                .= " WHERE post_status NOT IN ('auto-draft', 'inherit', 'trash')";
@@ -176,6 +207,7 @@ class CurrentPage
                 $post_name = $possible_post_name;
             }
         }
+        // still nothing? ok what about an explicit 'post_name' URL parameter?
         if (! $post_name && $this->request->requestParamIsSet('post_name')) {
             $post_name = $this->request->getRequestParam('post_name');
         }
@@ -184,10 +216,12 @@ class CurrentPage
 
 
     /**
+     * also similar to getPostId() and getPostName() above but not as insane
+     *
      * @param WP $WP
      * @return array
      */
-    private function getPostType(WP $WP)
+    private function getPostType(WP $WP = null)
     {
         $post_types = isset($WP->query_vars['post_type'])
             ? (array) $WP->query_vars['post_type']
@@ -200,6 +234,8 @@ class CurrentPage
 
 
     /**
+     * if TRUE, then the current page is somehow utilizing EE logic
+     *
      * @return bool
      */
     public function isEspressoPage()
@@ -236,6 +272,8 @@ class CurrentPage
 
 
     /**
+     * for manually indicating the current page will utilize EE logic
+     *
      * @param null|bool $value
      * @return void
      */
@@ -248,6 +286,9 @@ class CurrentPage
 
 
     /**
+     * attempts to determine if the current page/post is an EE related page/post
+     * because it utilizes one of our CPT taxonomies, endpoints, or post types
+     *
      * @return bool
      */
     private function testForEspressoPage()
