@@ -993,17 +993,17 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:17
 	__( 'Venue Details', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:43
+	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:56
 	__( 'Select from Venue Manager List', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:53
+	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:67
 	__( 'Edit this Venue', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:54
+	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:68
 	// Reference: packages/ui-components/src/SimpleEntityList/EntityOptionsRow/index.tsx:27
 	__( 'or', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:57
+	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:71
 	__( 'Add new Venue', 'event_espresso' ),
 
 	// Reference: domains/core/admin/wpPluginsPage/src/exitSurvey/Popup.tsx:29
@@ -1067,17 +1067,17 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/dates/src/utils/misc.ts:20
 	__( 'minute(s)', 'event_espresso' ),
 
-	// Reference: packages/edtr-services/src/apollo/initialization/useCacheRehydration.ts:105
+	// Reference: packages/edtr-services/src/apollo/initialization/useCacheRehydration.ts:107
+	__( 'price types initialized', 'event_espresso' ),
+
+	// Reference: packages/edtr-services/src/apollo/initialization/useCacheRehydration.ts:117
 	__( 'datetimes initialized', 'event_espresso' ),
 
-	// Reference: packages/edtr-services/src/apollo/initialization/useCacheRehydration.ts:115
+	// Reference: packages/edtr-services/src/apollo/initialization/useCacheRehydration.ts:127
 	__( 'tickets initialized', 'event_espresso' ),
 
-	// Reference: packages/edtr-services/src/apollo/initialization/useCacheRehydration.ts:125
+	// Reference: packages/edtr-services/src/apollo/initialization/useCacheRehydration.ts:137
 	__( 'prices initialized', 'event_espresso' ),
-
-	// Reference: packages/edtr-services/src/apollo/initialization/useCacheRehydration.ts:95
-	__( 'price types initialized', 'event_espresso' ),
 
 	// Reference: packages/edtr-services/src/apollo/mutations/useReorderEntities.ts:72
 	__( 'reordering has been applied', 'event_espresso' ),
@@ -1864,19 +1864,19 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	/* translators: %s filter name */
 	__( 'remove filter - %s', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/AddressView/AddressView.tsx:19
+	// Reference: packages/ui-components/src/AddressView/AddressView.tsx:20
 	__( 'Address:', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/AddressView/AddressView.tsx:25
+	// Reference: packages/ui-components/src/AddressView/AddressView.tsx:28
 	__( 'City:', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/AddressView/AddressView.tsx:29
+	// Reference: packages/ui-components/src/AddressView/AddressView.tsx:34
 	__( 'State:', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/AddressView/AddressView.tsx:33
+	// Reference: packages/ui-components/src/AddressView/AddressView.tsx:40
 	__( 'Country:', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/AddressView/AddressView.tsx:37
+	// Reference: packages/ui-components/src/AddressView/AddressView.tsx:46
 	__( 'Zip:', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/CalendarDateRange/CalendarDateRange.tsx:37
