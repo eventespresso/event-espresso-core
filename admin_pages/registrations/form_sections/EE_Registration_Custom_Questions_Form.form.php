@@ -2,6 +2,8 @@
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\RequestInterface;
 
 /**
  *
@@ -24,10 +26,13 @@ class EE_Registration_Custom_Questions_Form extends EE_Form_Section_Proper
      */
     protected $_registration = null;
 
+
     /**
      *
      * @param EE_Registration $reg
-     * @param array $options
+     * @param array           $options
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function __construct(EE_Registration $reg, $options = array())
     {
@@ -95,13 +100,13 @@ class EE_Registration_Custom_Questions_Form extends EE_Form_Section_Proper
     }
 
 
-
     /**
      *
      * @param EE_Question_Group $question_group
      * @param EE_Registration   $registration
-     * @return \EE_Form_Section_Proper
-     * @throws \EE_Error
+     * @return EE_Form_Section_Proper
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function build_subform_from_question_group($question_group, $registration)
     {
@@ -148,7 +153,7 @@ class EE_Registration_Custom_Questions_Form extends EE_Form_Section_Proper
 		  			<div class="dashicons dashicons-edit"></div>
 		  		</a></td>'
                     ) .
-                    EEH_HTML::no_row('', 2)
+                    EEH_HTML::no_row()
                 )
             );
         }
@@ -160,11 +165,14 @@ class EE_Registration_Custom_Questions_Form extends EE_Form_Section_Proper
         );
     }
 
+
     /**
      * Overrides parent so if inputs were disabled, we leave those with their defaults
      * from the answers in the DB
+     *
      * @param array $req_data like $_POST
      * @return void
+     * @throws EE_Error
      */
     protected function _normalize($req_data)
     {
@@ -182,17 +190,21 @@ class EE_Registration_Custom_Questions_Form extends EE_Form_Section_Proper
     }
 
 
-
     /**
      * Performs validation on this form section and its subsections. For each subsection,
-     * calls _validate_{subsection_name} on THIS form (if the function exists) and passes it the subsection, then calls _validate on that subsection.
-     * If you need to perform validation on the form as a whole (considering multiple) you would be best to override this _validate method,
-     * calling parent::_validate() first.
+     * calls _validate_{subsection_name} on THIS form (if the function exists) and passes it the subsection, then calls
+     * _validate on that subsection. If you need to perform validation on the form as a whole (considering multiple)
+     * you would be best to override this _validate method, calling parent::_validate() first.
+     *
+     * @throws EE_Error
      */
     protected function _validate()
     {
+        /** @var RequestInterface $request */
+        $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+        $form_data = $request->requestParams();
         foreach ($this->get_validatable_subsections() as $subsection_name => $subsection) {
-            if ($subsection->form_data_present_in(array_merge($_GET, $_POST))) {
+            if ($subsection->form_data_present_in($form_data)) {
                 if (method_exists($this, '_validate_' . $subsection_name)) {
                     call_user_func_array(array($this,'_validate_' . $subsection_name), array($subsection));
                 }

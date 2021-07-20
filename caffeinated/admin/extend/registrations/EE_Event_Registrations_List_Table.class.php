@@ -61,6 +61,8 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
 
     protected function _set_properties()
     {
+        $return_url = $this->getReturnUrl();
+
         $evt_id = isset($this->_req_data['event_id']) ? $this->_req_data['event_id'] : null;
         $this->_wp_list_args = array(
             'singular' => esc_html__('registrant', 'event_espresso'),
@@ -104,7 +106,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
                     'extra_request' =>
                         array(
                             'EVT_ID'     => $evt_id,
-                            'return_url' => urlencode("//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}"),
+                            'return_url' => $return_url,
                         ),
                 ),
             );
@@ -128,7 +130,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
                         )
                     )
                 ),
-                'return_url'  => urlencode("//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}"),
+                'return_url'  => $return_url,
             ),
         );
         $this->_sortable_columns = array(

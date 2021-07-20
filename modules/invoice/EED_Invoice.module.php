@@ -94,7 +94,7 @@ class EED_Invoice extends EED_Module
         $request = self::getRequest();
         if ($request->requestParamIsSet('id')) {
             $id = $request->getRequestParam('id', '', 'key');
-            $invoice = new Invoice($_REQUEST['id']);
+            $invoice = new Invoice($id);
             // send invoice but force download
             $invoice->send_invoice(true);
         }

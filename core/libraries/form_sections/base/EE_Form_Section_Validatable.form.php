@@ -13,10 +13,9 @@
  * for all fields within a form section. So this means that a Form Input is considered a subsection of form section in
  * its own right.
  *
- * @package               Event Espresso
- * @subpackage
- * @author                Mike Nelson
- *                        ------------------------------------------------------------------------
+ * @package     Event Espresso
+ * @subpackage  core/libraries/form_sections/base/
+ * @author      Mike Nelson
  */
 abstract class EE_Form_Section_Validatable extends EE_Form_Section_Base
 {
@@ -96,6 +95,7 @@ abstract class EE_Form_Section_Validatable extends EE_Form_Section_Base
      *
      * @param array $req_data is the full request data
      * @return boolean of whether a normalization error occurred
+     * @throws EE_Validation_Error
      */
     abstract protected function _normalize($req_data);
 

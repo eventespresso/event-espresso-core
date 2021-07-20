@@ -214,7 +214,7 @@ class EED_Event_Single_Caff extends EED_Event_Single
     public static function update_event_single_order()
     {
         $config_saved = false;
-        $template_parts = sanitize_text_field($_POST['elements']);
+        $template_parts = EED_Event_Single_Caff::getRequest()->getRequestParam('elements');
         if (! empty($template_parts)) {
             $template_parts = explode(',', trim($template_parts, ','));
             foreach ($template_parts as $key => $template_part) {

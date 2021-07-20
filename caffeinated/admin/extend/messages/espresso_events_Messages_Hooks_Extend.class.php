@@ -1,5 +1,8 @@
 <?php
 
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\RequestInterface;
+
 /**
  * espresso_events_Messages_Hooks_Extend
  * Hooks various messages logic so that it runs on indicated Events Admin Pages.
@@ -225,13 +228,19 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
             wp_die(esc_html__('You don\'t have privileges to do this action', 'event_espresso'));
         }
 
-        // let's clean up the _POST global a bit for downstream usage of name and description.
-        $_POST['templateName'] = ! empty($this->_req_data['custom_template_args']['MTP_name'])
+        /** @var RequestInterface $request */
+        $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+
+        // let's clean up the request data a bit for downstream usage of name and description.
+        $templateName = ! empty($this->_req_data['custom_template_args']['MTP_name'])
             ? $this->_req_data['custom_template_args']['MTP_name']
             : '';
-        $_POST['templateDescription'] = ! empty($this->_req_data['custom_template_args']['MTP_description'])
+        $request->setRequestParam('templateName', $templateName);
+
+        $templateDescription = ! empty($this->_req_data['custom_template_args']['MTP_description'])
             ? $this->_req_data['custom_template_args']['MTP_description']
             : '';
+        $request->setRequestParam('templateDescription', $templateDescription);
 
 
         // set EE_Admin_Page object (see method details in EE_Admin_Hooks parent
