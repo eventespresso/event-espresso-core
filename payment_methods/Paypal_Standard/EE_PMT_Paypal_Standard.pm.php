@@ -26,7 +26,7 @@ class EE_PMT_Paypal_Standard extends EE_PMT_Base
      */
     public function __construct($pm_instance = null)
     {
-        require_once($this->file_folder().'EEG_Paypal_Standard.gateway.php');
+        require_once($this->file_folder() . 'EEG_Paypal_Standard.gateway.php');
         $this->_gateway = new EEG_Paypal_Standard();
         $this->_pretty_name = __("PayPal Standard", 'event_espresso');
         $this->_default_description = sprintf(
@@ -38,7 +38,7 @@ class EE_PMT_Paypal_Standard extends EE_PMT_Base
             '</strong>'
         );
         parent::__construct($pm_instance);
-        $this->_default_button_url = $this->file_url().'lib/paypal-logo.png';
+        $this->_default_button_url = $this->file_url() . 'lib/paypal-logo.png';
     }
 
 
@@ -85,8 +85,8 @@ class EE_PMT_Paypal_Standard extends EE_PMT_Base
     {
         return array(
             $this->get_help_tab_name() => array(
-                'title'=>  __("PayPal Standard Settings", 'event_espresso'),
-                'filename'=>'payment_methods_overview_paypalstandard'
+                'title' =>  __("PayPal Standard Settings", 'event_espresso'),
+                'filename' => 'payment_methods_overview_paypalstandard'
             )
         );
     }

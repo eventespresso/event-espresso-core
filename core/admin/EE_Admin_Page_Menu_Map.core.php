@@ -202,7 +202,8 @@ abstract class EE_Admin_Page_Menu_Map
         $this->capability = apply_filters('FHEE_' . $this->menu_slug . '_capability', $this->capability, null);
 
         // Might need to change parent slug depending on maintenance mode.
-        if (! empty($this->maintenance_mode_parent)
+        if (
+            ! empty($this->maintenance_mode_parent)
             && EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance
         ) {
             $this->parent_slug = $this->maintenance_mode_parent;
@@ -236,7 +237,8 @@ abstract class EE_Admin_Page_Menu_Map
     {
 
         $show_on_menu_int = (int) $this->show_on_menu;
-        if (($network_admin
+        if (
+            ($network_admin
              && in_array(
                  $show_on_menu_int,
                  array(self::BLOG_AND_NETWORK_ADMIN, self::NETWORK_ADMIN_ONLY),
@@ -248,7 +250,8 @@ abstract class EE_Admin_Page_Menu_Map
                  $show_on_menu_int,
                  array(self::BLOG_AND_NETWORK_ADMIN, self::BLOG_ADMIN_ONLY),
                  true
-             ))) {
+             ))
+        ) {
             $wp_page_slug = $this->_add_menu_page();
         } else {
             $wp_page_slug = '';
@@ -261,159 +264,5 @@ abstract class EE_Admin_Page_Menu_Map
                 $e->get_error();
             }
         }
-    }
-}
-
-
-/**
- * This defines the menu map structure for a main menu item.
- *
- * @since       4.4.0
- * @package     Event Espresso
- * @subpackage  admin
- */
-class EE_Admin_Page_Main_Menu extends EE_Admin_Page_Menu_Map
-{
-
-    /**
-     * If included int incoming params, then this class will also register a Sub Menue Admin page with a different
-     * subtitle than the main menu item.
-     *
-     * @since 4.4.0
-     *
-     * @var string
-     */
-    public $subtitle;
-
-    /**
-     * The page to a icon used for this menu.
-     *
-     * @since  4.4.0
-     * @see    http://codex.wordpress.org/Function_Reference/add_menu_page#Parameters
-     *        for what can be set for this property.
-     * @var string
-     */
-    public $icon_url;
-
-
-    /**
-     * What position in the main menu order for the WP admin menu this menu item
-     * should show.
-     *
-     * @since  4.4.0
-     * @see    http://codex.wordpress.org/Function_Reference/add_menu_page#Parameters
-     *        for what can be set for this property.
-     * @var integer
-     */
-    public $position;
-
-
-    public function __construct($menu_args)
-    {
-        $required = array('menu_label', 'parent_slug', 'menu_slug', 'menu_group', 'menu_order', 'admin_init_page');
-
-        parent::__construct($menu_args, $required);
-
-        $this->position = ! empty($this->position) ? (int) $this->position : $this->position;
-    }
-
-
-    /**
-     * Uses the proper WP utility for registering a menu page for the main WP pages.
-     */
-    protected function _add_menu_page()
-    {
-        $main = add_menu_page(
-            $this->title,
-            $this->menu_label,
-            $this->capability,
-            $this->parent_slug,
-            $this->menu_callback,
-            $this->icon_url,
-            $this->position
-        );
-        if (! empty($this->subtitle)) {
-            add_submenu_page(
-                $this->parent_slug,
-                $this->subtitle,
-                $this->subtitle,
-                $this->capability,
-                $this->menu_slug,
-                $this->menu_callback
-            );
-        }
-        return $main;
-    }
-} //end EE_Admin_Page_Main_Menu
-
-
-/**
- * Defines the menu map structure for sub menu pages.
- *
- * @since      4.4.0
- * @package    Event Espresso
- * @subpackage admin
- */
-class EE_Admin_Page_Sub_Menu extends EE_Admin_Page_Main_Menu
-{
-
-    public function __construct($menu_args)
-    {
-        parent::__construct($menu_args);
-    }
-
-
-    protected function _add_menu_page()
-    {
-        return add_submenu_page(
-            $this->parent_slug,
-            $this->title,
-            $this->menu_label,
-            $this->capability,
-            $this->menu_slug,
-            $this->menu_callback
-        );
-    }
-}
-
-
-/**
- * Defines the EE_Admin page menu group object used in EE_Admin_Page Loader for setting up EE
- * Admin menu groups.
- *
- * A menu group is a special heading that does not link to anything but allows for logical separate of
- * submenu elements.
- *
- * @since          4.4.0
- * @package        Event Espresso
- * @subpackage     admin
- */
-class EE_Admin_Page_Menu_Group extends EE_Admin_Page_Menu_Map
-{
-
-
-    public function __construct($menu_args = array())
-    {
-        $required = array('menu_label', 'menu_slug', 'menu_order', 'parent_slug');
-        parent::__construct($menu_args, $required);
-    }
-
-
-    protected function _add_menu_page()
-    {
-        return add_submenu_page(
-            $this->parent_slug,
-            $this->menu_label,
-            $this->_group_link(),
-            $this->capability,
-            $this->menu_slug,
-            '__return_false'
-        );
-    }
-
-
-    private function _group_link()
-    {
-        return '<span class="ee_menu_group"  onclick="return false;">' . $this->menu_label . '</span>';
     }
 }

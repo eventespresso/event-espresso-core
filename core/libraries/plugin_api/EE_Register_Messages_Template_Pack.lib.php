@@ -81,7 +81,8 @@ class EE_Register_Messages_Template_Pack implements EEI_Plugin_API
 
 
         // make sure this was called in the right place!
-        if (! did_action('EE_Brewing_Regular___messages_caf')
+        if (
+            ! did_action('EE_Brewing_Regular___messages_caf')
             || did_action('AHEE__EE_System__perform_activations_upgrades_and_migrations')
         ) {
             EE_Error::doing_it_wrong(
@@ -156,7 +157,7 @@ class EE_Register_Messages_Template_Pack implements EEI_Plugin_API
 
             // check again!
             if (class_exists($args['classname'])) {
-                $template_pack                           = new $args['classname'];
+                $template_pack                           = new $args['classname']();
                 $template_packs[ $template_pack->dbref ] = $template_pack;
             }
         }

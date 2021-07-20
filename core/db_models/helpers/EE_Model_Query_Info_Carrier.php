@@ -1,6 +1,5 @@
 <?php
 
-
 /**
 * Internal class for simply carrying data during the EEMerimental_Base::_extract_related_model_info_from_query_param method.
  * We want to temporarily store the information gathered (between method calls only) because that information is sometimes
@@ -22,7 +21,7 @@ class EE_Model_Query_Info_Carrier extends EE_Base
     * (eg, "Registration.Transaction.Payment"), and valuesare model names (eg "Payment")
     */
     private $_models_included;
-   
+
    /**
     * After we've acquired all the data types, we can create this sql.
     * @var string
@@ -34,21 +33,21 @@ class EE_Model_Query_Info_Carrier extends EE_Base
     * @var string
     */
     private $_main_join_sql;
-   
-   
+
+
     private $_limit_sql;
-   
+
     private $_order_by_sql;
-   
+
     private $_having_sql;
-   
+
     private $_group_by_sql;
-   
+
     public function set_limit_sql($limit_sql)
     {
         $this->_limit_sql = $limit_sql;
     }
-    
+
     public function set_order_by_sql($order_by_sql)
     {
         $this->_order_by_sql = $order_by_sql;
@@ -88,7 +87,7 @@ class EE_Model_Query_Info_Carrier extends EE_Base
         $this->_models_included = $model_included_name;
         $this->_join_sql = $join_sql;
     }
-   
+
    /**
     * Merges info from the other EEM_Related_Model_Info_Carrier into this one.
     * @param EE_Model_Query_Info_Carrier $other_model_query_info_carrier

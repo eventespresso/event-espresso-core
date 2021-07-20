@@ -1,9 +1,6 @@
 <?php
+
 namespace EventEspresso\core\domain;
-
-
-
-
 
 interface EnqueueAssetsInterface
 {
@@ -47,7 +44,6 @@ interface EnqueueAssetsInterface
      * @return void
      */
     public function enqueueAdminScripts();
-
 }
 // End of file EnqueueAssetsInterface.php
 // Location: EventEspresso\core\domain/EnqueueAssetsInterface.php

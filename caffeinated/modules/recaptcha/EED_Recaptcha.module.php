@@ -55,7 +55,8 @@ class EED_Recaptcha extends EED_Module
     {
         EED_Recaptcha::$config = EE_Registry::instance()->CFG->registration;
         // use_captcha ?
-        if (EED_Recaptcha::useRecaptcha()
+        if (
+            EED_Recaptcha::useRecaptcha()
             && EED_Recaptcha::notPaymentOptionsRevisit()
         ) {
             EED_Recaptcha::set_definitions();
@@ -100,7 +101,8 @@ class EED_Recaptcha extends EED_Module
         EED_Recaptcha::$config = EE_Registry::instance()->CFG->registration;
         EED_Recaptcha::set_definitions();
         // use_captcha ?
-        if (EED_Recaptcha::useRecaptcha()
+        if (
+            EED_Recaptcha::useRecaptcha()
             && EED_Recaptcha::notPaymentOptionsRevisit()
             && EED_Recaptcha::getRequest()->getRequestParam('step', '') !== ''
         ) {

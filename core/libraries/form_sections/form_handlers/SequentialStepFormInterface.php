@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\core\libraries\form_sections\form_handlers;
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;

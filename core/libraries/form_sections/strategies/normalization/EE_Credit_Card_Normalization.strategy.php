@@ -1,4 +1,5 @@
 <?php
+
 /**
  * EE_Credit_Card_Normalization
  *

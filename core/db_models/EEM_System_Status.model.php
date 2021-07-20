@@ -41,19 +41,19 @@ class EEM_System_Status
         return apply_filters(
             'FHEE__EEM_System_Status__get_system_stati',
             array(
-                'ee_version'=>$this->get_ee_version(),
-                'ee_activation_history'=>$this->get_ee_activation_history(),
-                'ee_config'=>$this->get_ee_config(),
-                'ee_migration_history'=>$this->get_ee_migration_history(),
-                'active_plugins'=>$this->get_active_plugins(),
-                'wp_settings'=>$this->get_wp_settings(),
+                'ee_version' => $this->get_ee_version(),
+                'ee_activation_history' => $this->get_ee_activation_history(),
+                'ee_config' => $this->get_ee_config(),
+                'ee_migration_history' => $this->get_ee_migration_history(),
+                'active_plugins' => $this->get_active_plugins(),
+                'wp_settings' => $this->get_wp_settings(),
                 'wp_maintenance_mode' => $this->get_wp_maintenance_mode(),
-                'https_enabled'=>$this->get_https_enabled(),
+                'https_enabled' => $this->get_https_enabled(),
                 'logging_enabled' => $this->get_logging_enabled(),
                 'remote_posting' => $this->get_remote_posting(),
-                'php_version'=>$this->php_version(),
-                'php.ini_settings'=>$this->get_php_ini_all(),
-                'php_info'=>$this->get_php_info(),
+                'php_version' => $this->php_version(),
+                'php.ini_settings' => $this->get_php_ini_all(),
+                'php_info' => $this->get_php_info(),
             ),
             $this
         );
@@ -117,18 +117,18 @@ class EEM_System_Status
             $wp_memory_to_display = '<mark class="yes">' . size_format($wp_memory_int) . '</mark>';
         }
         return array(
-            'name'=>get_bloginfo('name', 'display'),
-            'is_multisite'=>is_multisite(),
-            'version'=>  get_bloginfo('version', 'display'),
-            'home_url'=>home_url(),
-            'site_url'=>site_url(),
-            'WP_DEBUG'=>WP_DEBUG,
-            'permalink_structure'=>get_option('permalink_structure'),
-            'theme'=>wp_get_theme(),
-            'gmt_offset'=>get_option('gmt_offset'),
-            'timezone_string'=>get_option('timezone_string'),
-            'admin_email'=>  get_bloginfo('admin_email', 'display'),
-            'language'=>get_bloginfo('language', 'display'),
+            'name' => get_bloginfo('name', 'display'),
+            'is_multisite' => is_multisite(),
+            'version' =>  get_bloginfo('version', 'display'),
+            'home_url' => home_url(),
+            'site_url' => site_url(),
+            'WP_DEBUG' => WP_DEBUG,
+            'permalink_structure' => get_option('permalink_structure'),
+            'theme' => wp_get_theme(),
+            'gmt_offset' => get_option('gmt_offset'),
+            'timezone_string' => get_option('timezone_string'),
+            'admin_email' =>  get_bloginfo('admin_email', 'display'),
+            'language' => get_bloginfo('language', 'display'),
             'wp_max_upload_size' => size_format(wp_max_upload_size()),
             'wp_memory' => $wp_memory_to_display
             );
@@ -182,13 +182,13 @@ class EEM_System_Status
             '#<h1>Configuration</h1>#',  "#\r?\n#", "#</(h1|h2|h3|tr)>#", '# +<#',
             "#[ \t]+#", '#&nbsp;#', '#  +#', '# class=".*?"#', '%&#039;%',
             '#<tr>(?:.*?)" src="(?:.*?)=(.*?)" alt="PHP Logo" /></a>'
-            .'<h1>PHP Version (.*?)</h1>(?:\n+?)</td></tr>#',
+            . '<h1>PHP Version (.*?)</h1>(?:\n+?)</td></tr>#',
             '#<h1><a href="(?:.*?)\?=(.*?)">PHP Credits</a></h1>#',
             '#<tr>(?:.*?)" src="(?:.*?)=(.*?)"(?:.*?)Zend Engine (.*?),(?:.*?)</tr>#',
             "# +#", '#<tr>#', '#</tr>#'),
             array('$1', '', '', '', '</$1>' . "\n", '<', ' ', ' ', ' ', '', ' ',
-            '<h2>PHP Configuration</h2>'."\n".'<tr><td>PHP Version</td><td>$2</td></tr>'.
-            "\n".'<tr><td>PHP Egg</td><td>$1</td></tr>',
+            '<h2>PHP Configuration</h2>' . "\n" . '<tr><td>PHP Version</td><td>$2</td></tr>' .
+            "\n" . '<tr><td>PHP Egg</td><td>$1</td></tr>',
             '<tr><td>PHP Credits Egg</td><td>$1</td></tr>',
             '<tr><td>Zend Engine</td><td>$2</td></tr>' . "\n" .
             '<tr><td>Zend Egg</td><td>$1</td></tr>', ' ', '%S%', '%E%'),
@@ -210,7 +210,7 @@ class EEM_System_Status
             foreach ($askapache as $m) {
                 $m2 = isset($m[2]) ? $m[2] : null;
             }
-              $pi[ $n ][ $m[1] ]=(!isset($m[3])||$m2==$m[3]) ? $m2 : array_slice($m, 2);
+              $pi[ $n ][ $m[1] ] = (!isset($m[3]) || $m2 == $m[3]) ? $m2 : array_slice($m, 2);
         }
 
         return $pi;
@@ -227,7 +227,7 @@ class EEM_System_Status
         if ($response instanceof WP_Error) {
             $error_string = '';
             foreach ($response->errors as $short_name => $description_array) {
-                $error_string .= "<b>$short_name</b>: ".implode(", ", $description_array);
+                $error_string .= "<b>$short_name</b>: " . implode(", ", $description_array);
             }
             return $error_string;
         }
@@ -266,7 +266,7 @@ class EEM_System_Status
         } elseif ($curl_works) {
             $status = __('Your server has cURL enabled, fsockopen is disabled.', 'event_espresso');
         } else {
-            $status = __('Your server does not have fsockopen or cURL enabled - PayPal IPN and other scripts which communicate with other servers will not work. Contact your hosting provider.', 'event_espresso'). '</mark>';
+            $status = __('Your server does not have fsockopen or cURL enabled - PayPal IPN and other scripts which communicate with other servers will not work. Contact your hosting provider.', 'event_espresso') . '</mark>';
         }
         return $status;
     }

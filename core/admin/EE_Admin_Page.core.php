@@ -996,11 +996,13 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         if (! did_action('AHEE__EE_Admin_Page__route_admin_request')) {
             do_action('AHEE__EE_Admin_Page__route_admin_request', $this->_current_view, $this);
         }
-        // right before calling the route, let's remove _wp_http_referer from the
-        // $_SERVER[REQUEST_URI] global (its now in _req_data for route processing).
-        $_SERVER['REQUEST_URI'] = remove_query_arg(
-            '_wp_http_referer',
-            wp_unslash($_SERVER['REQUEST_URI'])
+        // right before calling the route, let's clean the _wp_http_referer
+        $this->request->setServerParam(
+            'REQUEST_URI',
+            remove_query_arg(
+                '_wp_http_referer',
+                wp_unslash($this->request->getServerParam('REQUEST_URI'))
+            )
         );
         if (! empty($func)) {
             if (is_array($func)) {
@@ -1015,7 +1017,8 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                 // send along this admin page object for access by addons.
                 $args['admin_page_object'] = $this;
             }
-            if (// is it a method on a class that doesn't work?
+            if (
+// is it a method on a class that doesn't work?
                 (
                     (
                         method_exists($class, $method)
@@ -1025,9 +1028,9 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                         // is it a standalone function that doesn't work?
                         function_exists($method)
                         && call_user_func_array(
-                               $func,
-                               array_merge(['admin_page_object' => $this], $args)
-                           ) === false
+                            $func,
+                            array_merge(['admin_page_object' => $this], $args)
+                        ) === false
                     )
                 )
                 || (
@@ -1058,7 +1061,8 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         // if we've routed and this route has a no headers route AND a sent_headers_route,
         // then we need to reset the routing properties to the new route.
         // now if UI request is FALSE and noheader is true AND we have a headers_sent_route in the route array then let's set UI_request to true because the no header route has a second func after headers have been sent.
-        if ($this->_is_UI_request === false
+        if (
+            $this->_is_UI_request === false
             && is_array($this->_route)
             && ! empty($this->_route['headers_sent_route'])
         ) {
@@ -1127,10 +1131,10 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     ) {
         // if there is a _wp_http_referer include the values from the request but only if sticky = true
         if ($sticky) {
-            $request = $_REQUEST;
-            unset($request['_wp_http_referer']);
-            unset($request['wp_referer']);
-            foreach ($request as $key => $value) {
+            /** @var RequestInterface $request */
+            $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+            $request->unSetRequestParams(['_wp_http_referer', 'wp_referer']);
+            foreach ($request->requestParams() as $key => $value) {
                 // do not add nonces
                 if (strpos($key, 'nonce') !== false) {
                     continue;
@@ -1296,7 +1300,8 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                     $content = '';
                 }
                 // check if callback is valid
-                if (empty($content)
+                if (
+                    empty($content)
                     && (
                         ! isset($cfg['callback']) || ! method_exists($this, $cfg['callback'])
                     )
@@ -1562,7 +1567,8 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             $capability = empty($capability) ? 'manage_options' : $capability;
         }
         $id = is_array($this->_route) && ! empty($this->_route['obj_id']) ? $this->_route['obj_id'] : 0;
-        if (! defined('DOING_AJAX')
+        if (
+            ! defined('DOING_AJAX')
             && (
                 ! function_exists('is_admin')
                 || ! EE_Registry::instance()->CAP->current_user_can(
@@ -1644,7 +1650,8 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         $this->_add_admin_page_ajax_loading_img();
         $this->_add_admin_page_overlay();
         // if metaboxes are present we need to add the nonce field
-        if (isset($this->_route_config['metaboxes'])
+        if (
+            isset($this->_route_config['metaboxes'])
             || isset($this->_route_config['list_table'])
             || (isset($this->_route_config['has_metaboxes']) && $this->_route_config['has_metaboxes'])
         ) {
@@ -1968,7 +1975,8 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         wp_enqueue_script('ee-accounting');
         wp_enqueue_script('jquery-validate');
         // taking care of metaboxes
-        if (empty($this->_cpt_route)
+        if (
+            empty($this->_cpt_route)
             && (isset($this->_route_config['metaboxes']) || isset($this->_route_config['has_metaboxes']))
         ) {
             wp_enqueue_script('dashboard');
@@ -2276,7 +2284,8 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     {
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
         // we only add meta boxes if the page_route calls for it
-        if (is_array($this->_route_config) && isset($this->_route_config['metaboxes'])
+        if (
+            is_array($this->_route_config) && isset($this->_route_config['metaboxes'])
             && is_array(
                 $this->_route_config['metaboxes']
             )
@@ -2324,7 +2333,8 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      */
     private function _add_screen_columns()
     {
-        if (is_array($this->_route_config)
+        if (
+            is_array($this->_route_config)
             && isset($this->_route_config['columns'])
             && is_array($this->_route_config['columns'])
             && count($this->_route_config['columns']) === 2
@@ -3300,7 +3310,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         $actions       = (array) $actions;
         $referrer_url  = empty($referrer)
             ? '<input type="hidden" id="save_and_close_referrer" name="save_and_close_referrer" value="'
-              . $_SERVER['REQUEST_URI']
+              . $this->request->getServerParam('REQUEST_URI')
               . '" />'
             : '<input type="hidden" id="save_and_close_referrer" name="save_and_close_referrer" value="'
               . $referrer
@@ -3754,21 +3764,20 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      */
     private function _set_per_page_screen_options()
     {
-        if (isset($_POST['wp_screen_options']) && is_array($_POST['wp_screen_options'])) {
+        if ($this->request->requestParamIsSet('wp_screen_options')) {
             check_admin_referer('screen-options-nonce', 'screenoptionnonce');
             if (! $user = wp_get_current_user()) {
                 return;
             }
-            $option = $_POST['wp_screen_options']['option'];
-            $value  = $_POST['wp_screen_options']['value'];
-            if ($option != sanitize_key($option)) {
+            $option = $this->request->getRequestParam('wp_screen_options[option]', '', 'key');
+            if (! $option) {
                 return;
             }
+            $value  = $this->request->getRequestParam('wp_screen_options[value]', 0, 'int');
             $map_option = $option;
             $option     = str_replace('-', '_', $option);
             switch ($map_option) {
                 case $this->_current_page . '_' . $this->_current_view . '_per_page':
-                    $value     = (int) $value;
                     $max_value = apply_filters(
                         'FHEE__EE_Admin_Page___set_per_page_screen_options__max_value',
                         999,

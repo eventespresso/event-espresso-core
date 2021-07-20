@@ -1,6 +1,5 @@
 <?php
 
-
 /**
  * EEM_CPT_Base
  * For shared functionality between models internally implemented
@@ -476,7 +475,8 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base
         foreach ($this->_get_other_tables() as $table_obj) {
             $fields_for_that_table = $this->_get_fields_for_table($table_obj->get_table_alias());
             foreach ($fields_for_that_table as $field_obj) {
-                if (! isset($post[ $field_obj->get_table_column() ])
+                if (
+                    ! isset($post[ $field_obj->get_table_column() ])
                     && ! isset($post[ $field_obj->get_qualified_column() ])
                 ) {
                     $has_all_necessary_fields_for_table = false;
@@ -507,7 +507,8 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base
         foreach ($this->get_tables() as $table_obj) {
             $fields_for_that_table = $this->_get_fields_for_table($table_obj->get_table_alias());
             foreach ($fields_for_that_table as $field_obj) {
-                if (! isset($post[ $field_obj->get_table_column() ])
+                if (
+                    ! isset($post[ $field_obj->get_table_column() ])
                     && ! isset($post[ $field_obj->get_qualified_column() ])
                 ) {
                     $tables_needing_to_be_queried[ $table_obj->get_table_alias() ] = $table_obj;
@@ -516,7 +517,8 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base
         }
         // if we don't have all the fields we need, then just fetch the proper model from the DB
         if ($tables_needing_to_be_queried) {
-            if (count($tables_needing_to_be_queried) == 1
+            if (
+                count($tables_needing_to_be_queried) == 1
                 && reset($tables_needing_to_be_queried)
                    instanceof
                    EE_Secondary_Table

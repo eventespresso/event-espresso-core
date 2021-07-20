@@ -1,5 +1,8 @@
 <?php
 
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\RequestInterface;
+
 /**
  * EE_Admin_Hooks
  * This is the abstract parent class used by children to contains any hooks that run on different EE Admin pages.
@@ -7,7 +10,6 @@
  * @package         EE_Admin_Hooks
  * @subpackage      includes/core/admin/EE_Admin_Hooks.class.php
  * @author          Darren Ethier
- * ------------------------------------------------------------------------
  */
 abstract class EE_Admin_Hooks extends EE_Base
 {
@@ -161,7 +163,7 @@ abstract class EE_Admin_Hooks extends EE_Base
 
 
     /**
-     * This just holds a merged array of the $_POST and $_GET vars in favor of $_POST
+     * This just holds a merged array of the request vars
      *
      * @var array
      */
@@ -191,26 +193,29 @@ abstract class EE_Admin_Hooks extends EE_Base
      */
     protected $EE = null;
 
+    /**
+     * @var RequestInterface
+     */
+    protected $request;
 
     /**
      * constructor
      *
-     * @param EE_Admin_Page $admin_page the calling admin_page_object
+     * @param EE_Admin_Page $admin_page
+     * @throws EE_Error
      */
-    public function __construct(EE_Admin_Page $adminpage)
+    public function __construct(EE_Admin_Page $admin_page)
     {
-
-        $this->_adminpage_obj = $adminpage;
-        $this->_req_data = array_merge($_GET, $_POST);
+        $this->_adminpage_obj = $admin_page;
+        $this->request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+        $this->_req_data = $this->request->requestParams();
         $this->_set_defaults();
         $this->_set_hooks_properties();
         // first let's verify we're on the right page
-        if (! isset($this->_req_data['page'])
-            || (isset($this->_req_data['page'])
-                && $this->_adminpage_obj->page_slug
-                   != $this->_req_data['page'])) {
+        if (! isset($this->_req_data['page']) || $this->_req_data['page'] !== $this->_adminpage_obj->page_slug) {
             return;
-        } //get out nothing more to be done here.
+        }
+        // get out nothing more to be done here.
         // allow for extends to modify properties
         if (method_exists($this, '_extend_properties')) {
             $this->_extend_properties();
@@ -370,11 +375,12 @@ abstract class EE_Admin_Hooks extends EE_Base
      */
     private function getCurrentRoute()
     {
+        $action = $this->request->getRequestParam('action');
         // list tables do something else with 'action' for bulk actions.
-        $action = ! empty($_REQUEST['action']) && $_REQUEST['action'] !== '-1' ? $_REQUEST['action'] : 'default';
+        $action = $action !== '-1' && $action !== '' ? $action : 'default';
+        $route = $this->request->getRequestParam('route');
         // we set a 'route' variable in some cases where action is being used by something else.
-        $action = $action === 'default' && isset($_REQUEST['route']) ? $_REQUEST['route'] : $action;
-        return sanitize_key($action);
+        return $action === 'default' && $route !== '' ? $route : $action;
     }
 
 
@@ -383,6 +389,7 @@ abstract class EE_Admin_Hooks extends EE_Base
      *
      * @access protected
      * @return void
+     * @throws EE_Error
      */
     protected function _set_page_object()
     {
@@ -395,33 +402,32 @@ abstract class EE_Admin_Hooks extends EE_Base
             );
             throw new EE_Error(implode('||', $msg));
         }
-        $ref = str_replace('_', ' ', $this->_name); // take the_message -> the message
-        $ref = str_replace(' ', '_', ucwords($ref)) . '_Admin_Page'; // take the message -> The_Message
+        $class_name = str_replace('_', ' ', $this->_name); // take the_message -> the message
+        $class_name = str_replace(' ', '_', ucwords($class_name)) . '_Admin_Page'; // take the message -> The_Message
         // first default file (if exists)
-        $decaf_file = EE_ADMIN_PAGES . $this->_name . '/' . $ref . '.core.php';
+        $decaf_file = EE_ADMIN_PAGES . $this->_name . '/' . $class_name . '.core.php';
         if (is_readable($decaf_file)) {
             require_once($decaf_file);
         }
         // now we have to do require for extended file (if needed)
         if ($this->_extend) {
-            require_once(EE_CORE_CAF_ADMIN_EXTEND . $this->_name . '/Extend_' . $ref . '.core.php');
+            require_once(EE_CORE_CAF_ADMIN_EXTEND . $this->_name . '/Extend_' . $class_name . '.core.php');
         }
         // if we've got an extended class we use that!
-        $ref = $this->_extend ? 'Extend_' . $ref : $ref;
+        $class_name = $this->_extend ? 'Extend_' . $class_name : $class_name;
         // let's make sure the class exists
-        if (! class_exists($ref)) {
+        if (! class_exists($class_name)) {
             $msg[] = __('We can\'t load the page object', 'event_espresso');
             $msg[] = sprintf(
                 __(
                     'The class name that was given is %s. Check the spelling and make sure its correct, also there needs to be an autoloader setup for the class',
                     'event_espresso'
                 ),
-                $ref
+                $class_name
             );
             throw new EE_Error(implode('||', $msg));
         }
-        $a = new ReflectionClass($ref);
-        $this->_page_object = $a->newInstance(false);
+        LoaderFactory::getLoader()->getShared($class_name);
     }
 
 
@@ -585,9 +591,9 @@ abstract class EE_Admin_Hooks extends EE_Base
     {
         if (empty($this->_init_func)) {
             return;
-        } //get out there's nothing to take care of.
+        }
+        // get out there's nothing to take care of.
         // We need to determine what page_route we are on!
-        $current_route = isset($_REQUEST['action']) ? $_REQUEST['action'] : 'default';
         foreach ($this->_init_func as $route => $method) {
             // make sure method exists
             if (! method_exists($this, $method)) {

@@ -19,7 +19,7 @@ if ($ticket instanceof EE_Ticket) {
     if (strpos($ticket_description, '<div') === false) {
         $ticket_description = "<p>{$ticket_description}</p>";
     }
-?>
+    ?>
 <div id="no-tkt-slctr-ticket-dv-<?php echo $EVT_ID; ?>" class="no-tkt-slctr-ticket-dv">
     <div class="no-tkt-slctr-ticket-content-dv">
         <h5><?php echo $ticket->name(); ?></h5>

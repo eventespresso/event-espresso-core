@@ -188,11 +188,13 @@ class EE_Registration_CheckIn_List_Table extends EE_Admin_List_Table
         $DTT_ID = isset($this->_req_data['DTT_ID']) ? $this->_req_data['DTT_ID'] : false;
 
         // if user does not have the capability for the checkins for this registration then get out!
-        if (! EE_Registry::instance()->CAP->current_user_can(
-            'ee_read_checkin',
-            'espresso_registrations_registration_checkins',
-            $REG_ID
-        )) {
+        if (
+            ! EE_Registry::instance()->CAP->current_user_can(
+                'ee_read_checkin',
+                'espresso_registrations_registration_checkins',
+                $REG_ID
+            )
+        ) {
             return $count ? 0 : array();
         }
 

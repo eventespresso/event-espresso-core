@@ -1,5 +1,8 @@
 <?php
-use EETests\bootstrap\CoreLoader;
+
+namespace EventEspresso\tests;
+
+use EventEspresso\tests\includes\CoreLoader;
 
 /**
  * Bootstrap for EE Unit Tests

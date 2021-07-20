@@ -1,7 +1,5 @@
 <?php
 
-
-
 /**
  * Class EE_Model_Form_Section
  * For auto-generating form sections based off a model.
@@ -104,7 +102,8 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper
             $input = null;
             switch (get_class($relation_obj)) {
                 case 'EE_HABTM_Relation':
-                    if (isset($subsection_args[ $relation_name ])
+                    if (
+                        isset($subsection_args[ $relation_name ])
                         && isset($subsection_args[ $relation_name ]['model_objects'])
                     ) {
                         $model_objects = $subsection_args[ $relation_name ]['model_objects'];
@@ -330,7 +329,7 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper
      * After we've normalized the data as normal, set the corresponding model object
      * on the form.
      *
-     * @param array $req_data should usually be $_REQUEST (the default).
+     * @param array $req_data should usually be the form post/request data (the default).
      * @return void
      */
     public function _normalize($req_data)

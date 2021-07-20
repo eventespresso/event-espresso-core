@@ -5,6 +5,10 @@ namespace EventEspresso\tests\testcases\core\services\route_match;
 use EventEspresso\core\domain\entities\route_match\specifications\admin\EspressoEventEditorEdit;
 use EventEspresso\core\services\request\Request;
 use EventEspresso\core\services\request\RequestInterface;
+use EventEspresso\core\services\request\RequestParams;
+use EventEspresso\core\services\request\sanitizers\RequestSanitizer;
+use EventEspresso\core\services\request\sanitizers\ServerSanitizer;
+use EventEspresso\core\services\request\ServerParams;
 use EventEspresso\core\services\route_match\RouteMatchSpecificationCollection;
 use EventEspresso\tests\mocks\core\services\dependencies\composites\Oof;
 use PHPUnit_Framework_TestCase;
@@ -34,7 +38,9 @@ class RouteMatchSpecificationCollectionTest extends PHPUnit_Framework_TestCase
      */
     protected function getRequest()
     {
-        return new Request(array(), array(), array(), array(), array());
+        $request_params = new RequestParams(new RequestSanitizer());
+        $server_params  = new ServerParams(new ServerSanitizer());
+        return new Request($request_params, $server_params);
     }
 
     /**

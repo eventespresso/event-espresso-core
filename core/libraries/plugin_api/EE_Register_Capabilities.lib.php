@@ -69,7 +69,8 @@ class EE_Register_Capabilities implements EEI_Plugin_API
             return;
         }
         // make sure this is not registered too late or too early.
-        if (! did_action('AHEE__EE_System__load_espresso_addons')
+        if (
+            ! did_action('AHEE__EE_System__load_espresso_addons')
             || did_action('AHEE__EE_System___detect_if_activation_or_upgrade__begin')
         ) {
             EE_Error::doing_it_wrong(

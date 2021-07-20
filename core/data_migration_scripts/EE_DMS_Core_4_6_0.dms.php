@@ -1,12 +1,14 @@
 <?php
-use EventEspresso\core\services\database\TableAnalysis;
-use EventEspresso\core\services\database\TableManager;
 
 /**
  * meant to convert DBs between 4.6 and 4.6
  * mostly just
  * -move payment methods from EE_Config into a separate table just for them
  */
+
+use EventEspresso\core\services\database\TableAnalysis;
+use EventEspresso\core\services\database\TableManager;
+
 // make sure we have all the stages loaded too
 // unfortunately, this needs to be done upon INCLUSION of this file,
 // instead of construction, because it only gets constructed on first page load

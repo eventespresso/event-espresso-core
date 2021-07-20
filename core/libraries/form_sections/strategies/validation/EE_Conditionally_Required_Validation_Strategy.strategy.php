@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class EE_Conditionally_Required_Validation_Strategy
  * For having inputs' requirement depend on the value of another input in the form
@@ -47,7 +48,8 @@ class EE_Conditionally_Required_Validation_Strategy extends EE_Validation_Strate
      */
     public function validate($normalized_value)
     {
-        if ((
+        if (
+            (
                 $normalized_value === ''
                 || $normalized_value === null
                 || $normalized_value === array()
@@ -69,7 +71,7 @@ class EE_Conditionally_Required_Validation_Strategy extends EE_Validation_Strate
     public function get_jquery_validation_rule_array()
     {
         return array(
-            'required'=> $this->_get_jquery_requirement_value(),
+            'required' => $this->_get_jquery_requirement_value(),
             'messages' => array(
                 'required' => $this->get_validation_error_message()
             )

@@ -1,5 +1,7 @@
 <?php
+
 use EventEspresso\core\domain\Domain;
+
 ?>
 <p><strong><?php esc_html_e('Venues Overview Table Column Headings', 'event_espresso'); ?></strong></p>
 <ul>

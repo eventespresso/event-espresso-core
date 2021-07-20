@@ -197,7 +197,8 @@ class TransientCacheStorage implements CacheStorageInterface
             // this should trigger the cache content to be regenerated during this request,
             // while allowing any following requests to still access the existing cache
             // until it gets replaced with the refreshed content
-            if ($standard_cache
+            if (
+                $standard_cache
                 && $this->transients[ $transient_key ] - time() <= MINUTE_IN_SECONDS
             ) {
                 unset($this->transients[ $transient_key ]);

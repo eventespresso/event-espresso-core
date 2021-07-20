@@ -98,10 +98,11 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
                     // item row
                     $html .= $this->_item_row($line_item, $options);
                 }
-                if (apply_filters(
-                    'FHEE__EE_SPCO_Line_Item_Display_Strategy__display_line_item__display_sub_line_items',
-                    true
-                )
+                if (
+                    apply_filters(
+                        'FHEE__EE_SPCO_Line_Item_Display_Strategy__display_line_item__display_sub_line_items',
+                        true
+                    )
                 ) {
                     // got any kids?
                     foreach ($line_item->children() as $child_line_item) {
@@ -121,7 +122,8 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
                     if (! isset($this->_events[ $options['event_id'] ])) {
                         $event = EEM_Event::instance()->get_one_by_ID($options['event_id']);
                         // if event has default reg status of Not Approved, then don't display info on it
-                        if ($event instanceof EE_Event
+                        if (
+                            $event instanceof EE_Event
                             && $event->default_registration_status() === EEM_Registration::status_id_not_approved
                         ) {
                             $display_event = false;
@@ -154,7 +156,8 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
                 }
                 $event_sub_total += isset($options['event_id']) ? $this->_events[ $options['event_id'] ] : 0;
                 $sub_total += $event_sub_total;
-                if ((
+                if (
+                    (
                         // event subtotals
                         $line_item->code() !== 'pre-tax-subtotal' && count($child_line_items) > 1
                     )
@@ -387,7 +390,8 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
      */
     private function _sub_item_row(EE_Line_Item $line_item, $options = array(), EE_Line_Item $parent_line_item = null)
     {
-        if ($parent_line_item instanceof  EE_Line_Item
+        if (
+            $parent_line_item instanceof  EE_Line_Item
             && $line_item->children() === array()
             && $line_item->name() === $parent_line_item->name()
             && apply_filters(

@@ -203,7 +203,8 @@ class EE_Session implements SessionIdentifierInterface
         // check if class object is instantiated
         // session loading is turned ON by default, but prior to the init hook, can be turned back OFF via:
         // add_filter( 'FHEE_load_EE_Session', '__return_false' );
-        if (! self::$_instance instanceof EE_Session
+        if (
+            ! self::$_instance instanceof EE_Session
             && $cache_storage instanceof CacheStorageInterface
             && $lifespan instanceof SessionLifespan
             && $request instanceof RequestInterface
@@ -409,7 +410,6 @@ class EE_Session implements SessionIdentifierInterface
     /**
      * This just sets some defaults for the _session data property
      *
-     * @access private
      * @return void
      */
     private function _set_defaults()
@@ -427,7 +427,6 @@ class EE_Session implements SessionIdentifierInterface
 
     /**
      * @retrieve  session data
-     * @access    public
      * @return    string
      */
     public function id()
@@ -609,8 +608,7 @@ class EE_Session implements SessionIdentifierInterface
 
     /**
      * @initiate session
-     * @access   private
-     * @return TRUE on success, FALSE on fail
+     * @return bool TRUE on success, FALSE on fail
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -643,9 +641,9 @@ class EE_Session implements SessionIdentifierInterface
             // set initial site access time and the session expiration
             $this->_set_init_access_and_expiration();
             // set referer
-            $this->_session_data['pages_visited'][ $this->_session_data['init_access'] ] = isset($_SERVER['HTTP_REFERER'])
-                ? esc_attr($_SERVER['HTTP_REFERER'])
-                : '';
+            $this->_session_data['pages_visited'][ $this->_session_data['init_access'] ] = esc_attr(
+                $this->request->getServerParam('HTTP_REFERER')
+            );
             // no previous session = go back and create one (on top of the data above)
             return false;
         }
@@ -778,20 +776,18 @@ class EE_Session implements SessionIdentifierInterface
     /**
      * _generate_session_id
      * Retrieves the PHP session id either directly from the PHP session,
-     * or from the $_REQUEST array if it was passed in from an AJAX request.
+     * or from the request array if it was passed in from an AJAX request.
      * The session id is then salted and hashed (mmm sounds tasty)
-     * so that it can be safely used as a $_REQUEST param
+     * so that it can be safely used as a request param
      *
      * @return string
      */
     protected function _generate_session_id()
     {
         // check if the SID was passed explicitly, otherwise get from session, then add salt and hash it to reduce length
-        if (isset($_REQUEST['EESID'])) {
-            $session_id = sanitize_text_field($_REQUEST['EESID']);
-        } else {
-            $session_id = md5(session_id() . get_current_blog_id() . $this->_get_sid_salt());
-        }
+        $session_id = $this->request->requestParamIsSet('EESID')
+            ? $this->request->getRequestParam('EESID')
+            : md5(session_id() . get_current_blog_id() . $this->_get_sid_salt());
         return apply_filters('FHEE__EE_Session___generate_session_id__session_id', $session_id);
     }
 
@@ -839,7 +835,6 @@ class EE_Session implements SessionIdentifierInterface
 
     /**
      * @update session data  prior to saving to the db
-     * @access public
      * @param bool $new_session
      * @return TRUE on success, FALSE on fail
      * @throws EE_Error
@@ -920,7 +915,6 @@ class EE_Session implements SessionIdentifierInterface
 
     /**
      * @create session data array
-     * @access public
      * @return bool
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -973,7 +967,8 @@ class EE_Session implements SessionIdentifierInterface
     {
         // don't save sessions for crawlers
         // and unless we're deleting the session data, don't save anything if there isn't a cart
-        if ($this->request->isBot()
+        if (
+            $this->request->isBot()
             || (
                 ! $clear_session
                 && ! $this->sessionHasStuffWorthSaving()
@@ -1016,35 +1011,30 @@ class EE_Session implements SessionIdentifierInterface
 
     /**
      * @get    the full page request the visitor is accessing
-     * @access public
      * @return string
      */
     public function _get_page_visit()
     {
         $page_visit = home_url('/') . 'wp-admin/admin-ajax.php';
         // check for request url
-        if (isset($_SERVER['REQUEST_URI'])) {
-            $http_host = '';
+        if ($this->request->serverParamIsSet('REQUEST_URI')) {
             $page_id = '?';
             $e_reg = '';
-            $request_uri = esc_url($_SERVER['REQUEST_URI']);
+            $request_uri = $this->request->getServerParam('REQUEST_URI');
             $ru_bits = explode('?', $request_uri);
             $request_uri = $ru_bits[0];
-            // check for and grab host as well
-            if (isset($_SERVER['HTTP_HOST'])) {
-                $http_host = esc_url($_SERVER['HTTP_HOST']);
-            }
+            $http_host = $this->request->getServerParam('HTTP_HOST');
             // check for page_id in SERVER REQUEST
-            if (isset($_REQUEST['page_id'])) {
+            if ($this->request->requestParamIsSet('page_id')) {
                 // rebuild $e_reg without any of the extra parameters
-                $page_id = '?page_id=' . esc_attr($_REQUEST['page_id']) . '&amp;';
+                $page_id .= 'page_id=' . $this->request->getRequestParam('page_id', 0, 'int') . '&amp;';
             }
             // check for $e_reg in SERVER REQUEST
-            if (isset($_REQUEST['ee'])) {
+            if ($this->request->requestParamIsSet('ee')) {
                 // rebuild $e_reg without any of the extra parameters
-                $e_reg = 'ee=' . esc_attr($_REQUEST['ee']);
+                $e_reg = 'ee=' . $this->request->getRequestParam('ee');
             }
-            $page_visit = rtrim($http_host . $request_uri . $page_id . $e_reg, '?');
+            $page_visit = esc_url(rtrim($http_host . $request_uri . $page_id . $e_reg, '?'));
         }
         return $page_visit !== home_url('/wp-admin/admin-ajax.php') ? $page_visit : '';
     }
@@ -1052,7 +1042,6 @@ class EE_Session implements SessionIdentifierInterface
 
     /**
      * @the    current wp user id
-     * @access public
      * @return int
      */
     public function _wp_user_id()
@@ -1066,7 +1055,6 @@ class EE_Session implements SessionIdentifierInterface
     /**
      * Clear EE_Session data
      *
-     * @access public
      * @param string $class
      * @param string $function
      * @return void
@@ -1185,7 +1173,6 @@ class EE_Session implements SessionIdentifierInterface
     /**
      *   wp_loaded
      *
-     * @access public
      * @throws EE_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException

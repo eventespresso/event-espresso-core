@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Post Meta Model
  * Model for accessing the wp core postmeta table. Generally it's better to use the

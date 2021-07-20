@@ -376,7 +376,8 @@ class EE_Cart implements ResettableInterface
         if ($apply_taxes && $this->_grand_total instanceof EE_Line_Item) {
             EEH_Line_Item::ensure_taxes_applied($this->_grand_total);
             // make sure we don't cache the transaction because it can get stale
-            if ($this->_grand_total->get_one_from_cache('Transaction') instanceof EE_Transaction
+            if (
+                $this->_grand_total->get_one_from_cache('Transaction') instanceof EE_Transaction
                 && $this->_grand_total->get_one_from_cache('Transaction')->ID()
             ) {
                 $this->_grand_total->clear_cache('Transaction', null, true);

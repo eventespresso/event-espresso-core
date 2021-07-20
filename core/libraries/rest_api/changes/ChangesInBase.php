@@ -1,4 +1,6 @@
-<?php namespace EventEspresso\core\libraries\rest_api\changes;
+<?php
+
+namespace EventEspresso\core\libraries\rest_api\changes;
 
 use EE_Error;
 

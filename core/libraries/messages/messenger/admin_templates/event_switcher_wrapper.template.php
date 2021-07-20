@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is the wrapper template for the messages-custom-template-switcher content
  * @package Event Espresso

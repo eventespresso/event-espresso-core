@@ -1,6 +1,5 @@
 <?php
 
-
 /**
  * Used to initialize all EE messages caffeinated functionality.
  *
@@ -362,7 +361,8 @@ class EE_Caf_Messages
     public function additional_attendee_parser($parsed, $shortcode, $data, $extra_data, $shortcode_parser)
     {
 
-        if (strpos($shortcode, '[ANSWER_*') === false
+        if (
+            strpos($shortcode, '[ANSWER_*') === false
             || ! isset($extra_data['data']->questions)
             || ! isset($extra_data['data']->registrations)
         ) {
@@ -389,7 +389,8 @@ class EE_Caf_Messages
 
         // now let's figure out which question has this text.
         foreach ($aee->questions as $ansid => $question) {
-            if ($question instanceof EE_Question
+            if (
+                $question instanceof EE_Question
                 && trim($question->display_text()) == trim($shortcode)
                 && isset($aee->registrations[ $registration->ID() ]['ans_objs'][ $ansid ])
             ) {
@@ -794,7 +795,8 @@ class EE_Caf_Messages
                 // first see if the question is in our $questions array. If not then try to get from answer object.
                 $question = isset($questions[ $answer->ID() ]) ? $questions[ $answer->ID() ] : null;
                 $question = ! $question instanceof EE_Question ? $answer->question() : $question;
-                if (! $question instanceof EE_Question
+                if (
+                    ! $question instanceof EE_Question
                     || (
                         $question instanceof EE_Question
                         && $question->admin_only()

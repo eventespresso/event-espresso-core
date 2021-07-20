@@ -345,7 +345,8 @@ class CustomSelects
      */
     public function getDataTypeForAlias($column_alias)
     {
-        if (isset($this->original_selects[ $column_alias ])
+        if (
+            isset($this->original_selects[ $column_alias ])
             && in_array($column_alias, $this->columnAliases(), true)
         ) {
             return $this->getDataTypeForSelectType($this->original_selects[ $column_alias ]);

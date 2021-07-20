@@ -199,7 +199,8 @@ class EE_Payment_Method_Manager implements ResettableInterface
      */
     public function payment_method_type_exists($payment_method_name, $force_recheck = false)
     {
-        if ($force_recheck
+        if (
+            $force_recheck
             || ! is_array($this->_payment_method_types)
             || ! isset($this->_payment_method_types[ $payment_method_name ])
         ) {
@@ -249,7 +250,7 @@ class EE_Payment_Method_Manager implements ResettableInterface
             $this->maybe_register_payment_methods($force_recheck);
             foreach ($this->payment_method_type_names(true) as $classname) {
                 if (! isset($this->payment_method_objects[ $classname ])) {
-                    $this->payment_method_objects[ $classname ] = new $classname;
+                    $this->payment_method_objects[ $classname ] = new $classname();
                 }
             }
         }
@@ -298,7 +299,7 @@ class EE_Payment_Method_Manager implements ResettableInterface
             $pm_type_class = $this->payment_method_class_from_type($payment_method_type);
             if (class_exists($pm_type_class)) {
                 /** @var $pm_type_obj EE_PMT_Base */
-                $pm_type_obj = new $pm_type_class;
+                $pm_type_obj = new $pm_type_class();
                 $payment_method = EEM_Payment_Method::instance()->get_one_by_slug($pm_type_obj->system_name());
                 if (! $payment_method) {
                     $payment_method = $this->create_payment_method_of_type($pm_type_obj);
@@ -321,7 +322,8 @@ class EE_Payment_Method_Manager implements ResettableInterface
         $payment_method->save();
         /** @type EE_Message_Resource_Manager $message_resource_manager */
         // if this was the invoice message type, make sure users can view their invoices
-        if ($payment_method->type() === 'Invoice'
+        if (
+            $payment_method->type() === 'Invoice'
             && (
             ! EEH_MSG_Template::is_mt_active('invoice')
             )

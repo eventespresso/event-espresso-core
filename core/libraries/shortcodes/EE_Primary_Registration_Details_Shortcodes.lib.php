@@ -184,29 +184,30 @@ class EE_Primary_Registration_Details_Shortcodes extends EE_Shortcodes
             }
 
             foreach ($primary_registration->questions as $ansid => $question) {
-                if ($question instanceof EE_Question
+                if (
+                    $question instanceof EE_Question
                     && trim($question->get('QST_display_text')) === trim($shortcode)
                     && isset($primary_registration->registrations[ $primary_reg->ID() ]['ans_objs'][ $ansid ])
                 ) {
                     $primary_reg_ansid = $primary_registration->registrations[ $primary_reg->ID() ]['ans_objs'][ $ansid ];
-                    
+
                     // what we show for the answer depends on the question type!
                     switch ($question->get('QST_type')) {
                         case EEM_Question::QST_type_state:
                             $state = EEM_State::instance()->get_one_by_ID($primary_reg_ansid->get('ANS_value'));
                             $answer = $state instanceof EE_State ? $state->name() : '';
                             break;
-    
+
                         case EEM_Question::QST_type_country:
                             $country = EEM_Country::instance()->get_one_by_ID($primary_reg_ansid->get('ANS_value'));
                             $answer = $country instanceof EE_Country ? $country->name() : '';
                             break;
-    
+
                         default:
                             $answer = $primary_reg_ansid->get_pretty('ANS_value', 'no_wpautop');
                             break;
                     }
-                    
+
                     return $answer;
                     break;
                 }

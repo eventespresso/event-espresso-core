@@ -1,4 +1,5 @@
 <?php
+
 /**
  *
  * EE_Currency_Input
@@ -18,7 +19,7 @@ class EE_Currency_Input extends EE_Select_Input
      */
     public function __construct($only_specific_currency_codes = array(), $input_settings = array())
     {
-        $query_params = array('order_by'=>array('CNT_name'=>'asc'));
+        $query_params = array('order_by' => array('CNT_name' => 'asc'));
         if ($only_specific_currency_codes) {
             $query_params[0]['CNT_cur_code'] = array('IN',$only_specific_currency_codes);
         }
@@ -26,7 +27,7 @@ class EE_Currency_Input extends EE_Select_Input
         $country_options = array();
         foreach ($all_countries as $country) {
             /* @var $country EE_Country */
-            $country_options[ $country->currency_code() ] = $country->name().": ".$country->currency_name_single() ." (".$country->currency_sign().")";
+            $country_options[ $country->currency_code() ] = $country->name() . ": " . $country->currency_name_single() . " (" . $country->currency_sign() . ")";
         }
         parent::__construct($country_options, 'int', $input_settings);
     }

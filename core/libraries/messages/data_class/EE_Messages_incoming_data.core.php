@@ -315,7 +315,8 @@ abstract class EE_Messages_incoming_data
     protected function _assemble_data()
     {
         // verify that reg_objs is set
-        if (! is_array($this->reg_objs)
+        if (
+            ! is_array($this->reg_objs)
             && ! reset($this->reg_objs) instanceof EE_Registration
         ) {
             throw new EE_Error(
@@ -335,7 +336,8 @@ abstract class EE_Messages_incoming_data
             $event_attendee_count = array();
             /** @var EE_Registration $reg */
             foreach ($this->reg_objs as $reg) {
-                if ($this->_skip_registration_for_processing($reg)
+                if (
+                    $this->_skip_registration_for_processing($reg)
                 ) {
                     continue;
                 }
@@ -347,7 +349,8 @@ abstract class EE_Messages_incoming_data
                 $event = $reg->event();
                 // if none of the following entities are available, then we can't setup other data reliably,
                 // so let's just skip.
-                if (! $ticket instanceof EE_Ticket
+                if (
+                    ! $ticket instanceof EE_Ticket
                     || ! $attendee instanceof EE_Attendee
                     || ! $event instanceof EE_Event
                 ) {

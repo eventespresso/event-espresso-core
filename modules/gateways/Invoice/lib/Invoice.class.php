@@ -44,9 +44,11 @@ class Invoice
             '4.9.12',
             '5.0.0'
         );
-        if ($this->registration = EE_Registry::instance()->load_model(
-            'Registration'
-        )->get_registration_for_reg_url_link($url_link)) {
+        if (
+            $this->registration = EE_Registry::instance()->load_model(
+                'Registration'
+            )->get_registration_for_reg_url_link($url_link)
+        ) {
             $this->transaction = $this->registration->transaction();
             // get_user_meta(EE_Registry::instance()->CFG->wp_user, 'payment_settings', TRUE);
             $payment_settings = EE_Config::instance()->gateway->payment_settings;

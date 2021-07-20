@@ -280,7 +280,8 @@ class CptQueryModifier
     protected function initializeTaxonomies()
     {
         // check if taxonomies have already been set and that this CPT has taxonomies registered for it
-        if (empty($this->taxonomies)
+        if (
+            empty($this->taxonomies)
             && isset($this->cpt_details['args']['taxonomies'])
         ) {
             // if so then grab them, but we want the taxonomy name as the key
@@ -359,7 +360,8 @@ class CptQueryModifier
         // requested post name
         $this->cpt_details['post_name'] = $this->request->getRequestParam('post_name');
         // add support for viewing 'private', 'draft', or 'pending' posts
-        if (isset($this->wp_query->query_vars['p'])
+        if (
+            isset($this->wp_query->query_vars['p'])
             && $this->wp_query->query_vars['p'] !== 0
             && is_user_logged_in()
             && current_user_can('edit_post', $this->wp_query->query_vars['p'])
@@ -427,7 +429,8 @@ class CptQueryModifier
         $this->setModelTables($this->model->get_tables());
         $meta_model = $model_name . '_Meta';
         // is there a Meta Table for this CPT?
-        if (isset($this->cpt_details['tables'][ $meta_model ])
+        if (
+            isset($this->cpt_details['tables'][ $meta_model ])
             && $this->cpt_details['tables'][ $meta_model ] instanceof EE_Secondary_Table
         ) {
             $this->setMetaTable($this->cpt_details['tables'][ $meta_model ]);
@@ -542,7 +545,8 @@ class CptQueryModifier
         global $post;
         // notice if the cpt is registered with `show_ee_ui` set to false, we take that to mean that the WordPress core ui
         // for interacting with the CPT is desired and there is no EE UI for interacting with the CPT in the admin.
-        if (! $post instanceof WP_Post
+        if (
+            ! $post instanceof WP_Post
             || $post->post_type !== $this->post_type
             || (
                 isset($this->cpt_details['args']['show_ee_ui'])
@@ -594,7 +598,8 @@ class CptQueryModifier
         // does this called object HAVE a page template set that is something other than the default.
         $template = get_post_meta($object->ID, '_wp_page_template', true);
         // exit early if default or not set or invalid path (accounts for theme changes)
-        if ($template === 'default'
+        if (
+            $template === 'default'
             || empty($template)
             || ! is_readable(get_stylesheet_directory() . '/' . $template)
         ) {

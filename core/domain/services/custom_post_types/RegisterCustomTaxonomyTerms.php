@@ -88,7 +88,8 @@ class RegisterCustomTaxonomyTerms
         // no default terms set so lets just exit.
         foreach ($this->custom_taxonomy_terms as $custom_taxonomy_terms) {
             foreach ($custom_taxonomy_terms as $custom_taxonomy_term) {
-                if ($post->post_status === 'publish'
+                if (
+                    $post->post_status === 'publish'
                     && $custom_taxonomy_term instanceof CustomTaxonomyTerm
                     && in_array($post->post_type, $custom_taxonomy_term->customPostTypeSlugs(), true)
                 ) {

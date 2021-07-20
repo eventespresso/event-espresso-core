@@ -1,4 +1,6 @@
-<?php use EventEspresso\core\domain\entities\notifications\PersistentAdminNotice;
+<?php
+
+use EventEspresso\core\domain\entities\notifications\PersistentAdminNotice;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 
 /**
@@ -75,8 +77,10 @@ class EE_DMS_4_5_0_invoice_settings extends EE_Data_Migration_Script_Stage
             // message templates are only initialized AFTER migrations and those two are new in 4.5. So if we wanted to
             // update them from a DMS, we'd need to have the DMS create the message templates which is quite a lot of code;
             // also we don't want to build a dependency on the messages code because it is likely to change soon
-            if (isset($invoice_settings['invoice_css'])
-                && ! in_array($invoice_settings['invoice_css'], ['', 'simple.css'])) {
+            if (
+                isset($invoice_settings['invoice_css'])
+                && ! in_array($invoice_settings['invoice_css'], ['', 'simple.css'])
+            ) {
                 new PersistentAdminNotice(
                     'invoice_css_not_updated',
                     sprintf(
@@ -90,7 +94,7 @@ class EE_DMS_4_5_0_invoice_settings extends EE_Data_Migration_Script_Stage
             }
             $templates_relative_path = 'modules/gateways/Invoice/lib/templates/';
             $overridden_invoice_body = EEH_Template::locate_template($templates_relative_path . 'invoice_body.template.php', null, false, false, true);
-            $overridden_receipt_body= EEH_Template::locate_template($templates_relative_path . 'receipt_body.template.php', null, false, false, true);
+            $overridden_receipt_body = EEH_Template::locate_template($templates_relative_path . 'receipt_body.template.php', null, false, false, true);
             if ($overridden_invoice_body || $overridden_receipt_body) {
                 new PersistentAdminNotice(
                     'invoice_overriding_templates',

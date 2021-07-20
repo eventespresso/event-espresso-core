@@ -48,10 +48,12 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
     {
         $this->_name = 'pricing';
         // capability check
-        if (! EE_Registry::instance()->CAP->current_user_can(
-            'ee_read_default_prices',
-            'advanced_ticket_datetime_metabox'
-        )) {
+        if (
+            ! EE_Registry::instance()->CAP->current_user_can(
+                'ee_read_default_prices',
+                'advanced_ticket_datetime_metabox'
+            )
+        ) {
             return;
         }
         $this->_setup_metaboxes();
@@ -1096,7 +1098,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                 // temporary cache of this ticket info for this datetime for later processing of datetime rows.
                 $datetime_tickets[ $DTT_ID ][] = $ticket_row;
                 // temporary cache of this datetime info for this ticket for later processing of ticket rows.
-                if (! isset($ticket_datetimes[ $TKT_ID ])
+                if (
+                    ! isset($ticket_datetimes[ $TKT_ID ])
                     || ! in_array($datetime_row, $ticket_datetimes[ $TKT_ID ], true)
                 ) {
                     $ticket_datetimes[ $TKT_ID ][] = $datetime_row;

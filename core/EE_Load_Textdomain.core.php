@@ -82,7 +82,7 @@ class EE_Load_Textdomain extends EE_Base
         // load sideloader and sideload the .POT file as this should always be included.
         $sideloader_args = array(
             '_upload_to'     => EE_PLUGIN_DIR_PATH . 'languages/',
-            '_download_from'   => $repo_base_URL .'.pot?raw=true',
+            '_download_from'   => $repo_base_URL . '.pot?raw=true',
             '_new_file_name' => 'event_espresso.pot',
         );
         /** @var EEH_Sideloader $sideloader */

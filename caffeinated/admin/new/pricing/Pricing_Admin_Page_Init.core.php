@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Pricing_Admin_Page_Init class
  *

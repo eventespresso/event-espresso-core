@@ -11,8 +11,8 @@ class EE_DMS_4_2_0_question_group_questions extends EE_Data_Migration_Script_Sta
     {
         global $wpdb;
         $this->_pretty_name = __("Question Group Questions", "event_espresso");
-        $this->_old_table = $wpdb->prefix."esp_question";
-        $this->_qgq_table = $wpdb->prefix."esp_question_group_question";
+        $this->_old_table = $wpdb->prefix . "esp_question";
+        $this->_qgq_table = $wpdb->prefix . "esp_question_group_question";
         parent::__construct();
     }
     protected function _migrate_old_row($old_row)
@@ -22,8 +22,8 @@ class EE_DMS_4_2_0_question_group_questions extends EE_Data_Migration_Script_Sta
         global $wpdb;
         $updated = $wpdb->update(
             $this->_qgq_table,
-            array('QGQ_order'=>$old_row['QST_order']),
-            array('QST_ID'=>$old_row['QST_ID']),
+            array('QGQ_order' => $old_row['QST_order']),
+            array('QST_ID' => $old_row['QST_ID']),
             array('%d',// QGQ_order
                     ),
             array('%d',// QST_ID

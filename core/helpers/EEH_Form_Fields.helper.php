@@ -60,7 +60,7 @@ class EEH_Form_Fields
      */
     public static function get_form_fields($input_vars = array(), $id = false)
     {
-        
+
         if (empty($input_vars)) {
             EE_Error::add_error(__('missing required variables for the form field generator', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__);
             return false;
@@ -130,7 +130,7 @@ class EEH_Form_Fields
                     foreach ($options as $key => $value) {
                         $selected = isset($input_value['value']) && $input_value['value'] == $key ? 'selected=selected' : '';
                         // $key = str_replace( ' ', '_', sanitize_key( $value ));
-                        $output .= "\n\t\t\t\t" . '<option '. $selected . ' value="' . $key . '">' . $value . '</option>';
+                        $output .= "\n\t\t\t\t" . '<option ' . $selected . ' value="' . $key . '">' . $value . '</option>';
                     }
                     $output .= "\n\t\t\t" . '</select>';
 
@@ -138,7 +138,7 @@ class EEH_Form_Fields
 
                 case 'textarea':
                     $output .= "\n\t\t\t" . '<label for="' . $field_id . '">' . $input_value['label'] . $required . '</label>';
-                    $output .= "\n\t\t\t" . '<textarea id="' . $field_id . '" class="' . $styles . '" rows="'.$rows.'" cols="'.$cols.'" name="' . $input_value['name'] . '"' . $tabindex . '>' . esc_textarea($input_value['value']) . '</textarea>';
+                    $output .= "\n\t\t\t" . '<textarea id="' . $field_id . '" class="' . $styles . '" rows="' . $rows . '" cols="' . $cols . '" name="' . $input_value['name'] . '"' . $tabindex . '>' . esc_textarea($input_value['value']) . '</textarea>';
                     break;
 
                 case 'hidden':
@@ -150,7 +150,7 @@ class EEH_Form_Fields
                 case 'checkbox':
                     $checked = ( $input_value['value'] == 1 ) ? 'checked="checked"' : '';
                     $output .= "\n\t\t\t" . '<label for="' . $field_id . '">' . $input_value['label'] . $required . '</label>';
-                    $output .= "\n\t\t\t" . '<input id="' . $field_id. '" type="checkbox" name="' . $input_value['name'] . '" value="1"' . $checked . $tabindex . ' />';
+                    $output .= "\n\t\t\t" . '<input id="' . $field_id . '" type="checkbox" name="' . $input_value['name'] . '" value="1"' . $checked . $tabindex . ' />';
                     break;
 
                 case 'wp_editor':
@@ -262,7 +262,7 @@ class EEH_Form_Fields
                         $fld = $c_input;
                     } else {
                         $checked = !empty($default) && $default == $val ? 'checked="checked" ' : '';
-                        $fld = '<input name="'. $f_name . '" type="checkbox" id="' . $id . '" class="' . $class . '" value="' . $value . '"' . $checked . $tabindex_str . ' />' . "\n";
+                        $fld = '<input name="' . $f_name . '" type="checkbox" id="' . $id . '" class="' . $class . '" value="' . $value . '"' . $checked . $tabindex_str . ' />' . "\n";
                     }
                     break;
 
@@ -279,7 +279,7 @@ class EEH_Form_Fields
                         $fld = $c_input;
                     } else {
                         $checked = !empty($default) && $default == $val ? 'checked="checked" ' : '';
-                        $fld = '<input name="'. $f_name . '" type="checkbox" id="' . $id . '" class="' . $class . '" value="' . $value . '"' . $checked . $tabindex_str . ' />' . "\n";
+                        $fld = '<input name="' . $f_name . '" type="checkbox" id="' . $id . '" class="' . $class . '" value="' . $value . '"' . $checked . $tabindex_str . ' />' . "\n";
                     }
                     break;
 
@@ -347,11 +347,11 @@ class EEH_Form_Fields
     {
         // if $values was submitted in the wrong format, convert it over
         if (!empty($values) && (!array_key_exists(0, $values) || !is_array($values[0]))) {
-            $converted_values=array();
+            $converted_values = array();
             foreach ($values as $id => $text) {
-                $converted_values[]=array('id'=>$id,'text'=>$text);
+                $converted_values[] = array('id' => $id,'text' => $text);
             }
-            $values=$converted_values;
+            $values = $converted_values;
         }
 
         $field = '<select id="' . EEH_Formatter::ee_tep_output_string($name) . '" name="' . EEH_Formatter::ee_tep_output_string($name) . '"';
@@ -505,10 +505,15 @@ class EEH_Form_Fields
 
                             $answer = null;
 
-                            if (isset($_GET['qstn']) && isset($q_meta['input_id']) && isset($q_meta['att_nmbr'])) {
-                                // check for answer in $_GET in case we are reprocessing a form after an error
-                                if (isset($_GET['qstn'][ $q_meta['input_id'] ][ $qstn_id ])) {
-                                    $answer = is_array($_GET['qstn'][ $q_meta['input_id'] ][ $qstn_id ]) ? $_GET['qstn'][ $q_meta['input_id'] ][ $qstn_id ] : sanitize_text_field($_GET['qstn'][ $q_meta['input_id'] ][ $qstn_id ]);
+                            /** @var RequestInterface $request */
+                            $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+                            $request_qstn = $request->getRequestParam('qstn', [], 'arrayOf|string');
+                            if (! empty($request_qstn) && isset($q_meta['input_id']) && isset($q_meta['att_nmbr'])) {
+                                // check for answer in $request_qstn in case we are reprocessing a form after an error
+                                if (isset($request_qstn[ $q_meta['input_id'] ][ $qstn_id ])) {
+                                    $answer = is_array($request_qstn[ $q_meta['input_id'] ][ $qstn_id ])
+                                        ? $request_qstn[ $q_meta['input_id'] ][ $qstn_id ]
+                                        : sanitize_text_field($request_qstn[ $q_meta['input_id'] ][ $qstn_id ]);
                                 }
                             } elseif (isset($q_meta['attendee']) && $q_meta['attendee']) {
                                 // attendee data from the session
@@ -520,10 +525,10 @@ class EEH_Form_Fields
                             $QFI = new EE_Question_Form_Input(
                                 $QST,
                                 EE_Answer::new_instance(array(
-                                            'ANS_ID'=> 0,
-                                            'QST_ID'=> 0,
-                                            'REG_ID'=> 0,
-                                            'ANS_value'=> $answer
+                                            'ANS_ID' => 0,
+                                            'QST_ID' => 0,
+                                            'REG_ID' => 0,
+                                            'ANS_value' => $answer
                                     )),
                                 $q_meta
                             );
@@ -655,7 +660,7 @@ class EEH_Form_Fields
         // filter label but ensure required text comes before it
         $label_html = apply_filters('FHEE__EEH_Form_Fields__label_html', $label_html, $required_text);
 
-        $input_html = "\n\t\t\t" . '<input type="text" name="' . $name . '" id="' . $id . '" class="' . $class . ' ' . $required['class'] . '" value="' . esc_attr($answer) . '"  title="' . esc_attr($required['msg']) . '" ' . $disabled .' ' . $extra . '/>';
+        $input_html = "\n\t\t\t" . '<input type="text" name="' . $name . '" id="' . $id . '" class="' . $class . ' ' . $required['class'] . '" value="' . esc_attr($answer) . '"  title="' . esc_attr($required['msg']) . '" ' . $disabled . ' ' . $extra . '/>';
 
         $input_html =  apply_filters('FHEE__EEH_Form_Fields__input_html', $input_html, $label_html, $id);
         return  $label_html . $input_html;
@@ -1049,7 +1054,7 @@ class EEH_Form_Fields
     public static function hidden_input($name, $value, $id = '')
     {
         $id = ! empty($id) ? $id : $name;
-        return '<input id="' . $id . '" type="hidden" name="'.$name.'" value="' .  $value . '"/>';
+        return '<input id="' . $id . '" type="hidden" name="' . $name . '" value="' .  $value . '"/>';
     }
 
 
@@ -1374,7 +1379,7 @@ class EEH_Form_Fields
             );
 
         foreach ($regdtts as $regdtt) {
-            $date = $regdtt->reg_month. ' ' . $regdtt->reg_year;
+            $date = $regdtt->reg_month . ' ' . $regdtt->reg_year;
             $options[] = array(
                 'text' => $date,
                 'id' => $date

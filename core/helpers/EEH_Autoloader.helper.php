@@ -264,11 +264,11 @@ class EEH_Autoloader extends EEH_Base
             EEH_Debug_Tools::instance()->start_timer(basename($folder));
         }
         // make sure last char is a /
-        $folder .= $folder[ strlen($folder)-1 ] !== '/' ? '/' : '';
+        $folder .= $folder[ strlen($folder) - 1 ] !== '/' ? '/' : '';
         $class_to_filepath_map = array();
         $exclude = array( 'index' );
         // get all the files in that folder that end in php
-        $filepaths = glob($folder.'*');
+        $filepaths = glob($folder . '*');
 
         if (empty($filepaths)) {
             return;

@@ -134,7 +134,8 @@ class EE_Primary_Registration_List_Shortcodes extends EE_Shortcodes
             $adj_tkts = array();
             // return only tickets for the given attendee
             foreach ($evt_tkts as $tkt) {
-                if (isset($this->_extra_data['data']->registrations[ $reg->ID() ]['tkt_obj'])
+                if (
+                    isset($this->_extra_data['data']->registrations[ $reg->ID() ]['tkt_obj'])
                     && $this->_extra_data['data']->registrations[ $reg->ID() ]['tkt_obj']->ID() == $tkt->ID()
                 ) {
                     $adj_tkts[] = $tkt;

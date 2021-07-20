@@ -544,7 +544,8 @@ class EE_Html_messenger extends EE_messenger
         $content_again = '',
         EE_message_type $incoming_message_type
     ) {
-        if (($incoming_message_type->name === 'invoice' || $incoming_message_type->name === 'receipt')
+        if (
+            ($incoming_message_type->name === 'invoice' || $incoming_message_type->name === 'receipt')
             && apply_filters('FHEE_EE_Html_messenger__add_powered_by_credit_link_to_receipt_and_invoice', true)
         ) {
             $content .= \EEH_Template::powered_by_event_espresso(

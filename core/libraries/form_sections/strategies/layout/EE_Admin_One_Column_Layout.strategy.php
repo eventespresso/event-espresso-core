@@ -41,7 +41,8 @@ class EE_Admin_One_Column_Layout extends EE_Form_Section_Layout_Base
      */
     public function layout_input($input)
     {
-        if ($input->get_display_strategy() instanceof EE_Text_Area_Display_Strategy
+        if (
+            $input->get_display_strategy() instanceof EE_Text_Area_Display_Strategy
             || $input->get_display_strategy() instanceof EE_Text_Input_Display_Strategy
             || $input->get_display_strategy() instanceof EE_Admin_File_Uploader_Display_Strategy
         ) {
@@ -80,7 +81,8 @@ class EE_Admin_One_Column_Layout extends EE_Form_Section_Layout_Base
      */
     public function layout_subsection($form_section)
     {
-        if ($form_section instanceof EE_Form_Section_Proper
+        if (
+            $form_section instanceof EE_Form_Section_Proper
             || $form_section instanceof EE_Form_Section_HTML
         ) {
             return EEH_HTML::no_row($form_section->get_html());

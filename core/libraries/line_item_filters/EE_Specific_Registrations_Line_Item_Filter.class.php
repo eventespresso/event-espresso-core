@@ -110,7 +110,8 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
             // If this line item is a normal line item that isn't for a ticket,
             // we want to modify its total (and unit price if not a percentage line item)
             // so it reflects only that portion of the surcharge/discount shared by these registrations
-            if ($child_line_item->type() === EEM_Line_Item::type_line_item
+            if (
+                $child_line_item->type() === EEM_Line_Item::type_line_item
                 && $child_line_item->OBJ_type() !== 'Ticket'
             ) {
                 $percent_of_running_total = $running_total_of_children
@@ -122,7 +123,8 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
                 if (! $child_line_item->is_percent()) {
                     $child_line_item->set_unit_price($child_line_item->total() / $child_line_item->quantity());
                 }
-            } elseif (// make sure this item's quantity and total matches its parent
+            } elseif (
+// make sure this item's quantity and total matches its parent
                 $line_item->type() === EEM_Line_Item::type_line_item
                 && $line_item->OBJ_type() === 'Ticket'
                 // but not if it's a percentage modifier
@@ -174,12 +176,14 @@ class EE_Specific_Registrations_Line_Item_Filter extends EE_Line_Item_Filter_Bas
             $this->_current_registration = null;
             $quantity = 0;
             // if this ticket is billable at this moment, then we should have a positive quantity
-            if (isset($this->_line_item_registrations[ $line_item->code() ])
+            if (
+                isset($this->_line_item_registrations[ $line_item->code() ])
                 && is_array($this->_line_item_registrations[ $line_item->code() ])
             ) {
                 // set quantity based on number of open registrations for this ticket
                 foreach ($this->_line_item_registrations[ $line_item->code() ] as $registration) {
-                    if ($registration instanceof EE_Registration
+                    if (
+                        $registration instanceof EE_Registration
                     ) {
                         $quantity++;
                         $this->_current_registration = $registration;

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Line Item Object Interface
  * This interface is implemented on classes that could be represented as related objects on a EE_Line_Item.

@@ -94,10 +94,12 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
     protected function _add_view_counts()
     {
         $this->_views['in_use']['count'] = $this->_admin_page->get_attendees($this->_per_page, true);
-        if (EE_Registry::instance()->CAP->current_user_can(
-            'ee_delete_contacts',
-            'espresso_registrations_delete_registration'
-        )) {
+        if (
+            EE_Registry::instance()->CAP->current_user_can(
+                'ee_delete_contacts',
+                'espresso_registrations_delete_registration'
+            )
+        ) {
             $this->_views['trash']['count'] = $this->_admin_page->get_attendees($this->_per_page, true, true);
         }
     }
@@ -200,10 +202,12 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
         // Build row actions
         $actions = array();
         // edit attendee link
-        if (EE_Registry::instance()->CAP->current_user_can(
-            'ee_edit_contacts',
-            'espresso_registrations_edit_attendee'
-        )) {
+        if (
+            EE_Registry::instance()->CAP->current_user_can(
+                'ee_edit_contacts',
+                'espresso_registrations_edit_attendee'
+            )
+        ) {
             $edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce(
                 array(
                     'action' => 'edit_attendee',
@@ -218,10 +222,12 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
 
         if ($this->_view === 'in_use') {
             // trash attendee link
-            if (EE_Registry::instance()->CAP->current_user_can(
-                'ee_delete_contacts',
-                'espresso_registrations_trash_attendees'
-            )) {
+            if (
+                EE_Registry::instance()->CAP->current_user_can(
+                    'ee_delete_contacts',
+                    'espresso_registrations_trash_attendees'
+                )
+            ) {
                 $trash_lnk_url = EE_Admin_Page::add_query_args_and_nonce(
                     array(
                         'action' => 'trash_attendee',
@@ -234,10 +240,12 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
                                     . '">' . esc_html__('Trash', 'event_espresso') . '</a>';
             }
         } else {
-            if (EE_Registry::instance()->CAP->current_user_can(
-                'ee_delete_contacts',
-                'espresso_registrations_restore_attendees'
-            )) {
+            if (
+                EE_Registry::instance()->CAP->current_user_can(
+                    'ee_delete_contacts',
+                    'espresso_registrations_restore_attendees'
+                )
+            ) {
                 // restore attendee link
                 $restore_lnk_url = EE_Admin_Page::add_query_args_and_nonce(
                     array(

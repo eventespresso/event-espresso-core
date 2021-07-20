@@ -6,6 +6,7 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\container\exceptions\ServiceNotFoundException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\notifications\PersistentAdminNoticeManager;
+use EventEspresso\core\services\request\RequestInterface;
 
 // if you're a dev and want to receive all errors via email
 // add this to your wp-config.php: define( 'EE_ERROR_EMAILS', TRUE );
@@ -853,8 +854,10 @@ class EE_Error extends Exception
         $success_messages = '';
         $attention_messages = '';
         $error_messages = '';
+        /** @var RequestInterface $request */
+        $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
         // either save notices to the db
-        if ($save_to_transient || isset($_REQUEST['activate-selected'])) {
+        if ($save_to_transient || $request->requestParamIsSet('activate-selected')) {
             self::$_espresso_notices = array_merge(
                 EE_Error::getStoredNotices(),
                 self::$_espresso_notices

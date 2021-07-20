@@ -1,4 +1,5 @@
 <?php
+
 /**
  * EE_Soft_Delete_Base_Class
  * Class for handling soft-delete logic (ie, use a column in the DB to indicate deletion of the model, instead of

@@ -1,4 +1,5 @@
 <?php
+
 $closing_tag = '</a>';
 // if this is decaf, which is put on WordPress.org, we need to inform users that
 // we just put an affiliate link there. See https://developer.wordpress.org/plugins/wordpress-org/detailed-plugin-guidelines/ section 12

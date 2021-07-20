@@ -24,8 +24,8 @@ class EE_DMS_4_3_0_event_message_templates extends EE_Data_Migration_Script_Stag
     {
         global $wpdb;
         $this->_pretty_name = __('Event Message Templates', 'event_espresso');
-        $this->_old_table = $wpdb->prefix."esp_message_template_group";
-        $this->_emt_table = $wpdb->prefix."esp_event_message_template";
+        $this->_old_table = $wpdb->prefix . "esp_message_template_group";
+        $this->_emt_table = $wpdb->prefix . "esp_event_message_template";
         parent::__construct();
     }
 
@@ -43,7 +43,7 @@ class EE_DMS_4_3_0_event_message_templates extends EE_Data_Migration_Script_Stag
                                     $updated = $wpdb->update(
                                         $this->_old_table,
                                         array(
-                                            'MTP_name' =>$event_name
+                                            'MTP_name' => $event_name
                                             ),
                                         array( 'GRP_ID' => (int) $old_row['GRP_ID'] ),
                                         array( '%s' ),

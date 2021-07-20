@@ -55,8 +55,7 @@ class TicketFilterHeader extends AdminPageHeaderDecorator
     public function getHeaderText($text = '')
     {
         $TKT_ID = $this->request->getRequestParam('TKT_ID');
-        $TKT_ID = $this->request->getRequestParam('ticket_id', $TKT_ID);
-        $TKT_ID = absint($TKT_ID);
+        $TKT_ID = $this->request->getRequestParam('ticket_id', $TKT_ID, 'int');
         if ($TKT_ID) {
             $ticket = $this->ticket_model->get_one_by_ID($TKT_ID);
             if ($ticket instanceof EE_Ticket) {

@@ -1,7 +1,9 @@
 <?php
+
 /**
  * This is the template for the html messenger and invoice message type ticket_line_item_no_pms field.
  */
+
 ?>
 <tr class="item">
     <td class="item_I">[LINE_ITEM_NAME][LINE_ITEM_TAXABLE_*]</td>

@@ -54,7 +54,8 @@ class EE_CPT_Venue_Strategy
     public function the_posts($posts, WP_Query $wp_query)
     {
         // automagically load the EEH_Venue_View helper so that it's functions are available
-        if (isset(EE_Registry::instance()->CFG->map_settings->use_google_maps)
+        if (
+            isset(EE_Registry::instance()->CFG->map_settings->use_google_maps)
             && EE_Registry::instance()->CFG->map_settings->use_google_maps
         ) {
             EEH_Maps::espresso_google_map_js();

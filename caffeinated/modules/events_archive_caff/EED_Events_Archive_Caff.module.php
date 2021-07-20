@@ -180,7 +180,8 @@ class EED_Events_Archive_Caff extends EED_Events_Archive
             ? $CFG->EED_Events_Archive
             : new EE_Events_Archive_Config();
         // unless we are resetting the config...
-        if (! isset($REQ['EED_Events_Archive_reset_event_list_settings'])
+        if (
+            ! isset($REQ['EED_Events_Archive_reset_event_list_settings'])
             || absint($REQ['EED_Events_Archive_reset_event_list_settings']) !== 1
         ) {
             $config->display_status_banner = isset($REQ['EED_Events_Archive_display_status_banner'])
@@ -244,7 +245,8 @@ class EED_Events_Archive_Caff extends EED_Events_Archive
             foreach ($template_parts as $key => $template_part) {
                 $template_part = "display_order_$template_part";
                 $priority = ($key * 10) + EED_Events_Archive::EVENT_DETAILS_PRIORITY;
-                if ($config->template_settings->EED_Events_Archive instanceof EE_Events_Archive_Config
+                if (
+                    $config->template_settings->EED_Events_Archive instanceof EE_Events_Archive_Config
                     && property_exists(
                         $config->template_settings->EED_Events_Archive,
                         $template_part

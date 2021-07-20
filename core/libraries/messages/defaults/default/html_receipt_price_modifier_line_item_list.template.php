@@ -1,7 +1,9 @@
 <?php
+
 /**
  * This is the template for the html messenger and receipt message type price_modifier_line_item_list field.
  */
+
 ?>
 <tr class="subitem-row">
     <td class="subitem">[LINE_ITEM_NAME]</td>

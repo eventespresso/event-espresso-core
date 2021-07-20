@@ -9,6 +9,7 @@
  *
  * ------------------------------------------------------------------------
  */
+
 /*@var EE_Change_Log $payment_Log */
 /*@var EE_Payment_Method $payment_Method*/
 /*@var EE_Transaction $transaction*/

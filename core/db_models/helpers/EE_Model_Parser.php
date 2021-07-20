@@ -1,4 +1,5 @@
 <?php
+
 /**
  * EE_Model_Parser
  *
@@ -22,7 +23,7 @@ class EE_Model_Parser
      */
     public static function pad_with_periods($string_to_pad)
     {
-        return ".".$string_to_pad.".";
+        return "." . $string_to_pad . ".";
     }
     /**
      * Basically undoes _pad_with_periods
@@ -58,8 +59,8 @@ class EE_Model_Parser
         // replace periods with double-underscores
         $model_relation_chain = str_replace(".", self::table_alias_model_relation_chain_separator, $model_relation_chain);
         // eg 'Venue__Event_Venue'
-        if ($model_relation_chain !='') {
-            $model_relation_chain = $model_relation_chain.self::table_alias_model_relation_chain_prefix_end;
+        if ($model_relation_chain != '') {
+            $model_relation_chain = $model_relation_chain . self::table_alias_model_relation_chain_prefix_end;
         }
         // eg 'Venue_Event_Venue___'
         return $model_relation_chain;
@@ -134,7 +135,7 @@ class EE_Model_Parser
         // eg, if we're looking for the model relation chain from Event to Payment, the original query param is probably something like
         // "Registration.Transaction.Payment.PAY_ID", $pos_of_model_string points to the 'P' or Payment. We want the string
         // "Registration.Transaction.Payment"
-        $model_relation_chain = substr($original_query_param, 0, $pos_of_model_string+strlen($model_name));
+        $model_relation_chain = substr($original_query_param, 0, $pos_of_model_string + strlen($model_name));
         return EE_Model_Parser::trim_periods($model_relation_chain);
     }
 

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Event Relation interface.
  * This is used on EE Base Class children that you can retrieve a related event from.

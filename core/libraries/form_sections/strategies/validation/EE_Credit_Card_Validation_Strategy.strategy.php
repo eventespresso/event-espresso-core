@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class EE_Credit_Card_Validation_Strategy
  *

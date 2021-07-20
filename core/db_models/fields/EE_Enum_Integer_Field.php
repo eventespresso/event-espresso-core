@@ -55,7 +55,8 @@ class EE_Enum_Integer_Field extends EE_Integer_Field
     public function prepare_for_set($value_inputted_for_field_on_model_object)
     {
         $allowed_enum_values = $this->_allowed_enum_values();
-        if ($value_inputted_for_field_on_model_object !== null
+        if (
+            $value_inputted_for_field_on_model_object !== null
             && ! array_key_exists($value_inputted_for_field_on_model_object, $allowed_enum_values)
         ) {
             if (defined('WP_DEBUG') && WP_DEBUG) {

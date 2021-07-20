@@ -1,4 +1,5 @@
 <?php
+
 /**
  * bank_payment_overview_content
  *
@@ -8,6 +9,7 @@
  *
  * ------------------------------------------------------------------------
  */
+
 ?>
     <div class="event-display-boxes">
     <h4 id="page_title" class="payment_type_title section-heading"><?php echo $page_title ?></h4>

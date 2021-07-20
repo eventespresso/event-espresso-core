@@ -3,35 +3,41 @@
 namespace EventEspresso\core\libraries\rest_api\controllers\model;
 
 use DateTimeZone;
-use EE_Model_Field_Base;
-use EEH_DTT_Helper;
-use EEM_Soft_Delete_Base;
-use EventEspresso\core\exceptions\InvalidDataTypeException;
-use EventEspresso\core\exceptions\InvalidInterfaceException;
-use EventEspresso\core\exceptions\RestPasswordIncorrectException;
-use EventEspresso\core\exceptions\RestPasswordRequiredException;
-use EventEspresso\core\libraries\rest_api\ObjectDetectedException;
-use EventEspresso\core\services\loaders\LoaderFactory;
-use Exception;
-use InvalidArgumentException;
-use ReflectionException;
-use stdClass;
-use WP_Error;
-use WP_REST_Request;
-use EventEspresso\core\libraries\rest_api\Capabilities;
-use EventEspresso\core\libraries\rest_api\CalculatedModelFields;
-use EventEspresso\core\libraries\rest_api\RestException;
-use EventEspresso\core\libraries\rest_api\ModelDataTranslator;
-use EventEspresso\core\entities\models\JsonModelSchema;
-use EE_Belongs_To_Relation;
-use EE_Datetime_Field;
-use EE_Error;
-use EE_Registry;
 use EED_Core_Rest_Api;
+use EEH_DTT_Helper;
 use EEH_Inflector;
 use EEM_Base;
 use EEM_CPT_Base;
+use EEM_Soft_Delete_Base;
+use EE_Belongs_To_Relation;
+use EE_Datetime_Field;
+use EE_Error;
+use EE_HABTM_Relation;
+use EE_Model_Field_Base;
+use EE_Model_Relation_Base;
+use EE_Registry;
+use EventEspresso\core\entities\models\JsonModelSchema;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\exceptions\ModelConfigurationException;
+use EventEspresso\core\exceptions\RestPasswordIncorrectException;
+use EventEspresso\core\exceptions\RestPasswordRequiredException;
+use EventEspresso\core\libraries\rest_api\CalculatedModelFields;
+use EventEspresso\core\libraries\rest_api\Capabilities;
+use EventEspresso\core\libraries\rest_api\ModelDataTranslator;
+use EventEspresso\core\libraries\rest_api\RestException;
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\RequestInterface;
+use Exception;
+use InvalidArgumentException;
+use ReflectionException;
+use WP;
+use WP_Error;
+use WP_Post;
+use WP_REST_Request;
 use WP_REST_Response;
+use WP_REST_Server;
+use stdClass;
 
 /**
  * Read controller for models
@@ -53,6 +59,7 @@ class Read extends Base
 
     /**
      * Read constructor.
+     *
      * @param CalculatedModelFields $fields_calculator
      */
     public function __construct(CalculatedModelFields $fields_calculator)
@@ -66,8 +73,8 @@ class Read extends Base
      * Handles requests to get all (or a filtered subset) of entities for a particular model
      *
      * @param WP_REST_Request $request
-     * @param string $version
-     * @param string $model_name
+     * @param string          $version
+     * @param string          $model_name
      * @return WP_REST_Response|WP_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -75,7 +82,8 @@ class Read extends Base
      */
     public static function handleRequestGetAll(WP_REST_Request $request, $version, $model_name)
     {
-        $controller = LoaderFactory::getLoader()->getNew('EventEspresso\core\libraries\rest_api\controllers\model\Read');
+        $controller =
+            LoaderFactory::getLoader()->getNew('EventEspresso\core\libraries\rest_api\controllers\model\Read');
         try {
             $controller->setRequestedVersion($version);
             if (! $controller->getModelVersionInfo()->isModelNameInThisVersion($model_name)) {
@@ -107,7 +115,7 @@ class Read extends Base
     /**
      * Prepares and returns schema for any OPTIONS request.
      *
-     * @param string $version The API endpoint version being used.
+     * @param string $version    The API endpoint version being used.
      * @param string $model_name Something like `Event` or `Registration`
      * @return array
      * @throws InvalidArgumentException
@@ -116,15 +124,19 @@ class Read extends Base
      */
     public static function handleSchemaRequest($version, $model_name)
     {
-        $controller = LoaderFactory::getLoader()->getNew('EventEspresso\core\libraries\rest_api\controllers\model\Read');
+        $controller =
+            LoaderFactory::getLoader()->getNew('EventEspresso\core\libraries\rest_api\controllers\model\Read');
         try {
             $controller->setRequestedVersion($version);
             if (! $controller->getModelVersionInfo()->isModelNameInThisVersion($model_name)) {
-                return array();
+                return [];
             }
             // get the model for this version
-            $model = $controller->getModelVersionInfo()->loadModel($model_name);
-            $model_schema = new JsonModelSchema($model, LoaderFactory::getLoader()->getShared('EventEspresso\core\libraries\rest_api\CalculatedModelFields'));
+            $model        = $controller->getModelVersionInfo()->loadModel($model_name);
+            $model_schema = new JsonModelSchema(
+                $model,
+                LoaderFactory::getLoader()->getShared('EventEspresso\core\libraries\rest_api\CalculatedModelFields')
+            );
             return $model_schema->getModelSchemaForRelations(
                 $controller->getModelVersionInfo()->relationSettings($model),
                 $controller->customizeSchemaForRestResponse(
@@ -136,7 +148,7 @@ class Read extends Base
                 )
             );
         } catch (Exception $e) {
-            return array();
+            return [];
         }
     }
 
@@ -149,6 +161,8 @@ class Read extends Base
      * @param EEM_Base $model
      * @param array    $schema
      * @return array  The final schema.
+     * @throws EE_Error
+     * @throws EE_Error
      */
     protected function customizeSchemaForRestResponse(EEM_Base $model, array $schema)
     {
@@ -171,8 +185,10 @@ class Read extends Base
      * @param EE_Model_Field_Base  $field
      * @param array                $schema
      * @return array
-     * @throws ObjectDetectedException if a default value has a PHP object, which should never do (and if we
-     * did, let's know about it ASAP, so let the exception bubble up)
+     * @throws RestException  if a default value has a PHP object, which we should never do
+     *                                  (but if we did, let's know about it ASAP, so let the exception bubble up)
+     * @throws EE_Error
+     *
      */
     protected function translateDefaultsForRestResponse($field_name, EE_Model_Field_Base $field, array $schema)
     {
@@ -231,13 +247,18 @@ class Read extends Base
      */
     protected function getRouteFromRequest()
     {
-        if (isset($GLOBALS['wp'])
-            && $GLOBALS['wp'] instanceof \WP
+        if (
+            isset($GLOBALS['wp'])
+            && $GLOBALS['wp'] instanceof WP
             && isset($GLOBALS['wp']->query_vars['rest_route'])
         ) {
             return $GLOBALS['wp']->query_vars['rest_route'];
         } else {
-            return isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : '/';
+            /** @var RequestInterface $request */
+            $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+            return $request->serverParamIsSet('PATH_INFO')
+                ? $request->getServerParam('PATH_INFO')
+                : '/';
         }
     }
 
@@ -246,8 +267,8 @@ class Read extends Base
      * Gets a single entity related to the model indicated in the path and its id
      *
      * @param WP_REST_Request $request
-     * @param string $version
-     * @param string $model_name
+     * @param string          $version
+     * @param string          $model_name
      * @return WP_REST_Response|WP_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
@@ -255,7 +276,8 @@ class Read extends Base
      */
     public static function handleRequestGetOne(WP_REST_Request $request, $version, $model_name)
     {
-        $controller = LoaderFactory::getLoader()->getNew('EventEspresso\core\libraries\rest_api\controllers\model\Read');
+        $controller =
+            LoaderFactory::getLoader()->getNew('EventEspresso\core\libraries\rest_api\controllers\model\Read');
         try {
             $controller->setRequestedVersion($version);
             if (! $controller->getModelVersionInfo()->isModelNameInThisVersion($model_name)) {
@@ -289,9 +311,9 @@ class Read extends Base
      * to the item with the given id
      *
      * @param WP_REST_Request $request
-     * @param string $version
-     * @param string $model_name
-     * @param string $related_model_name
+     * @param string          $version
+     * @param string          $model_name
+     * @param string          $related_model_name
      * @return WP_REST_Response|WP_Error
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
@@ -303,7 +325,8 @@ class Read extends Base
         $model_name,
         $related_model_name
     ) {
-        $controller = LoaderFactory::getLoader()->getNew('EventEspresso\core\libraries\rest_api\controllers\model\Read');
+        $controller =
+            LoaderFactory::getLoader()->getNew('EventEspresso\core\libraries\rest_api\controllers\model\Read');
         try {
             $controller->setRequestedVersion($version);
             $main_model = $controller->validateModel($model_name);
@@ -324,7 +347,7 @@ class Read extends Base
     /**
      * Gets a collection for the given model and filters
      *
-     * @param EEM_Base $model
+     * @param EEM_Base        $model
      * @param WP_REST_Request $request
      * @return array
      * @throws EE_Error
@@ -346,17 +369,17 @@ class Read extends Base
                     $model_name_plural,
                     Capabilities::getMissingPermissionsString($model, $query_params['caps'])
                 ),
-                array('status' => 403)
+                ['status' => 403]
             );
         }
         if (! $request->get_header('no_rest_headers')) {
             $this->setHeadersFromQueryParams($model, $query_params);
         }
         /** @type array $results */
-        $results = $model->get_all_wpdb_results($query_params);
-        $nice_results = array();
+        $results      = $model->get_all_wpdb_results($query_params);
+        $nice_results = [];
         foreach ($results as $result) {
-            $nice_results[] =  $this->createEntityFromWpdbResult(
+            $nice_results[] = $this->createEntityFromWpdbResult(
                 $model,
                 $result,
                 $request
@@ -372,10 +395,10 @@ class Read extends Base
      * is a HABTM relation, in which case it merges any non-foreign-key fields from
      * the join-model-object into the results
      *
-     * @param array $primary_model_query_params query params for finding the item from which
+     * @param array                  $primary_model_query_params  query params for finding the item from which
      *                                                            relations will be based
-     * @param \EE_Model_Relation_Base $relation
-     * @param WP_REST_Request $request
+     * @param EE_Model_Relation_Base $relation
+     * @param WP_REST_Request        $request
      * @return array
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -383,40 +406,41 @@ class Read extends Base
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      * @throws RestException
-     * @throws \EventEspresso\core\exceptions\ModelConfigurationException
+     * @throws ModelConfigurationException
      */
     protected function getEntitiesFromRelationUsingModelQueryParams($primary_model_query_params, $relation, $request)
     {
-        $context = $this->validateContext($request->get_param('caps'));
-        $model = $relation->get_this_model();
+        $context       = $this->validateContext($request->get_param('caps'));
+        $model         = $relation->get_this_model();
         $related_model = $relation->get_other_model();
         if (! isset($primary_model_query_params[0])) {
-            $primary_model_query_params[0] = array();
+            $primary_model_query_params[0] = [];
         }
         // check if they can access the 1st model object
-        $primary_model_query_params = array(
+        $primary_model_query_params = [
             0       => $primary_model_query_params[0],
             'limit' => 1,
-        );
+        ];
         if ($model instanceof EEM_Soft_Delete_Base) {
             $primary_model_query_params = $model->alter_query_params_so_deleted_and_undeleted_items_included(
                 $primary_model_query_params
             );
         }
-        $restricted_query_params = $primary_model_query_params;
-        $restricted_query_params['caps'] = $context;
+        $restricted_query_params          = $primary_model_query_params;
+        $restricted_query_params['caps']  = $context;
         $restricted_query_params['limit'] = 1;
         $this->setDebugInfo('main model query params', $restricted_query_params);
         $this->setDebugInfo('missing caps', Capabilities::getMissingPermissionsString($related_model, $context));
         $primary_model_rows = $model->get_all_wpdb_results($restricted_query_params);
-        $primary_model_row = null;
+        $primary_model_row  = null;
         if (is_array($primary_model_rows)) {
             $primary_model_row = reset($primary_model_rows);
         }
-        if (! (
-            Capabilities::currentUserHasPartialAccessTo($related_model, $context)
-            && $primary_model_row
-        )
+        if (
+            ! (
+                $primary_model_row
+                && Capabilities::currentUserHasPartialAccessTo($related_model, $context)
+            )
         ) {
             if ($relation instanceof EE_Belongs_To_Relation) {
                 $related_model_name_maybe_plural = strtolower($related_model->get_this_model_name());
@@ -441,7 +465,7 @@ class Read extends Base
                         )
                     )
                 ),
-                array('status' => 403)
+                ['status' => 403]
             );
         }
 
@@ -458,20 +482,20 @@ class Read extends Base
                               . $where_condition_key ] = $where_condition_value;
         }
         $query_params['default_where_conditions'] = 'none';
-        $query_params['caps'] = $context;
+        $query_params['caps']                     = $context;
         if (! $request->get_header('no_rest_headers')) {
             $this->setHeadersFromQueryParams($relation->get_other_model(), $query_params);
         }
         /** @type array $results */
-        $results = $relation->get_other_model()->get_all_wpdb_results($query_params);
-        $nice_results = array();
+        $results      = $relation->get_other_model()->get_all_wpdb_results($query_params);
+        $nice_results = [];
         foreach ($results as $result) {
             $nice_result = $this->createEntityFromWpdbResult(
                 $relation->get_other_model(),
                 $result,
                 $request
             );
-            if ($relation instanceof \EE_HABTM_Relation) {
+            if ($relation instanceof EE_HABTM_Relation) {
                 // put the unusual stuff (properties from the HABTM relation) first, and make sure
                 // if there are conflicts we prefer the properties from the main model
                 $join_model_result = $this->createEntityFromWpdbResult(
@@ -479,7 +503,7 @@ class Read extends Base
                     $result,
                     $request
                 );
-                $joined_result = array_merge($join_model_result, $nice_result);
+                $joined_result     = array_merge($join_model_result, $nice_result);
                 // but keep the meta stuff from the main model
                 if (isset($nice_result['meta'])) {
                     $joined_result['meta'] = $nice_result['meta'];
@@ -502,11 +526,12 @@ class Read extends Base
      * is a HABTM relation, in which case it merges any non-foreign-key fields from
      * the join-model-object into the results
      *
-     * @param string                  $id the ID of the thing we are fetching related stuff from
-     * @param \EE_Model_Relation_Base $relation
-     * @param WP_REST_Request         $request
+     * @param string                 $id the ID of the thing we are fetching related stuff from
+     * @param EE_Model_Relation_Base $relation
+     * @param WP_REST_Request        $request
      * @return array
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function getEntitiesFromRelation($id, $relation, $request)
     {
@@ -527,11 +552,11 @@ class Read extends Base
         // if not, show nothing but an error
         // otherwise, please proceed
         return $this->getEntitiesFromRelationUsingModelQueryParams(
-            array(
-                array(
+            [
+                [
                     $relation->get_this_model()->primary_key_name() => $id,
-                ),
-            ),
+                ],
+            ],
             $relation,
             $request
         );
@@ -546,6 +571,8 @@ class Read extends Base
      * @param EEM_Base $model
      * @param array    $query_params
      * @return void
+     * @throws EE_Error
+     * @throws EE_Error
      */
     protected function setHeadersFromQueryParams($model, $query_params)
     {
@@ -563,7 +590,7 @@ class Read extends Base
         } else {
             $limit_parts = explode(',', $query_params['limit']);
             if (count($limit_parts) == 1) {
-                $limit_parts = array(0, $limit_parts[0]);
+                $limit_parts = [0, $limit_parts[0]];
             }
         }
         // remove the group by and having parts of the query, as those will
@@ -580,10 +607,10 @@ class Read extends Base
     /**
      * Changes database results into REST API entities
      *
-     * @param EEM_Base $model
-     * @param array $db_row like results from $wpdb->get_results()
+     * @param EEM_Base        $model
+     * @param array           $db_row     like results from $wpdb->get_results()
      * @param WP_REST_Request $rest_request
-     * @param string $deprecated no longer used
+     * @param string          $deprecated no longer used
      * @return array ready for being converted into json for sending to client
      * @throws EE_Error
      * @throws RestException
@@ -610,9 +637,9 @@ class Read extends Base
             EEM_Base::caps_read_admin,
             $model->deduce_fields_n_values_from_cols_n_values($db_row)
         );
-        $entity_array = $this->createBareEntityFromWpdbResults($model, $db_row);
-        $entity_array = $this->addExtraFields($model, $db_row, $entity_array);
-        $entity_array['_links'] = $this->getEntityLinks($model, $db_row, $entity_array);
+        $entity_array                       = $this->createBareEntityFromWpdbResults($model, $db_row);
+        $entity_array                       = $this->addExtraFields($model, $db_row, $entity_array);
+        $entity_array['_links']             = $this->getEntityLinks($model, $db_row, $entity_array);
         // when it's a regular read request for a model with a password and the password wasn't provided
         // remove the password protected fields
         $has_protected_fields = false;
@@ -631,7 +658,7 @@ class Read extends Base
             if ($model->hasPassword()) {
                 // just remove protected fields
                 $has_protected_fields = true;
-                $entity_array = Capabilities::filterOutPasswordProtectedFields(
+                $entity_array         = Capabilities::filterOutPasswordProtectedFields(
                     $entity_array,
                     $model,
                     $this->getModelVersionInfo()
@@ -642,8 +669,9 @@ class Read extends Base
             }
         }
 
-        $entity_array['_calculated_fields'] = $this->getEntityCalculations($model, $db_row, $rest_request, $has_protected_fields);
-        $entity_array = apply_filters(
+        $entity_array['_calculated_fields'] =
+            $this->getEntityCalculations($model, $db_row, $rest_request, $has_protected_fields);
+        $entity_array                       = apply_filters(
             'FHEE__Read__create_entity_from_wpdb_results__entity_before_including_requested_models',
             $entity_array,
             $model,
@@ -653,10 +681,11 @@ class Read extends Base
         );
         // add an empty protected property for now. If it's still around after we remove everything the request didn't
         // want, we'll populate it then. k?
-        $entity_array['_protected'] = array();
+        $entity_array['_protected'] = [];
         // remove any properties the request didn't want. This way _protected won't bother mentioning them
         $entity_array = $this->includeOnlyRequestedProperties($model, $rest_request, $entity_array);
-        $entity_array = $this->includeRequestedModels($model, $rest_request, $entity_array, $db_row, $has_protected_fields);
+        $entity_array =
+            $this->includeRequestedModels($model, $rest_request, $entity_array, $db_row, $has_protected_fields);
         // if they still wanted the _protected property, add it.
         if (isset($entity_array['_protected'])) {
             $entity_array = $this->addProtectedProperty($model, $entity_array, $has_protected_fields);
@@ -691,22 +720,25 @@ class Read extends Base
         );
     }
 
+
     /**
      * Returns an array describing which fields can be protected, and which actually were removed this request
-     * @since 4.9.74.p
-     * @param $model
-     * @param $results_so_far
-     * @param $protected
+     *
+     * @param EEM_Base $model
+     * @param array    $results_so_far
+     * @param bool     $protected
      * @return array results
+     * @throws EE_Error
+     * @since 4.9.74.p
      */
     protected function addProtectedProperty(EEM_Base $model, $results_so_far, $protected)
     {
         if (! $model->hasPassword() || ! $protected) {
             return $results_so_far;
         }
-        $password_field = $model->getPasswordField();
-        $all_protected = array_merge(
-            array($password_field->get_name()),
+        $password_field  = $model->getPasswordField();
+        $all_protected   = array_merge(
+            [$password_field->get_name()],
             $password_field->protectedFields()
         );
         $fields_included = array_keys($results_so_far);
@@ -715,10 +747,11 @@ class Read extends Base
             $fields_included
         );
         foreach ($fields_included as $field_name) {
-            $results_so_far['_protected'][] = $field_name ;
+            $results_so_far['_protected'][] = $field_name;
         }
         return $results_so_far;
     }
+
 
     /**
      * Creates a REST entity array (JSON object we're going to return in the response, but
@@ -728,6 +761,9 @@ class Read extends Base
      * @param EEM_Base $model
      * @param array    $db_row
      * @return array entity mostly ready for converting to JSON and sending in the response
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @throws RestException
      */
     protected function createBareEntityFromWpdbResults(EEM_Base $model, $db_row)
     {
@@ -738,7 +774,7 @@ class Read extends Base
         );
         // if this is a CPT, we need to set the global $post to it,
         // otherwise shortcodes etc won't work properly while rendering it
-        if ($model instanceof \EEM_CPT_Base) {
+        if ($model instanceof EEM_CPT_Base) {
             $do_chevy_shuffle = true;
         } else {
             $do_chevy_shuffle = false;
@@ -746,8 +782,8 @@ class Read extends Base
         if ($do_chevy_shuffle) {
             global $post;
             $old_post = $post;
-            $post = get_post($result[ $model->primary_key_name() ]);
-            if (! $post instanceof \WP_Post) {
+            $post     = get_post($result[ $model->primary_key_name() ]);
+            if (! $post instanceof WP_Post) {
                 // well that's weird, because $result is what we JUST fetched from the database
                 throw new RestException(
                     'error_fetching_post_from_database_results',
@@ -757,8 +793,8 @@ class Read extends Base
                     )
                 );
             }
-            $model_object_classname = 'EE_' . $model->get_this_model_name();
-            $post->{$model_object_classname} = \EE_Registry::instance()->load_class(
+            $model_object_classname          = 'EE_' . $model->get_this_model_name();
+            $post->{$model_object_classname} = EE_Registry::instance()->load_class(
                 $model_object_classname,
                 $result,
                 false,
@@ -769,25 +805,27 @@ class Read extends Base
             $field_obj = $model->field_settings_for($field_name);
             if ($this->isSubclassOfOne($field_obj, $this->getModelVersionInfo()->fieldsIgnored())) {
                 unset($result[ $field_name ]);
-            } elseif ($this->isSubclassOfOne(
-                $field_obj,
-                $this->getModelVersionInfo()->fieldsThatHaveRenderedFormat()
-            )
+            } elseif (
+                $this->isSubclassOfOne(
+                    $field_obj,
+                    $this->getModelVersionInfo()->fieldsThatHaveRenderedFormat()
+                )
             ) {
-                $result[ $field_name ] = array(
+                $result[ $field_name ] = [
                     'raw'      => $this->prepareFieldObjValueForJson($field_obj, $field_value),
                     'rendered' => $this->prepareFieldObjValueForJson($field_obj, $field_value, 'pretty'),
-                );
-            } elseif ($this->isSubclassOfOne(
-                $field_obj,
-                $this->getModelVersionInfo()->fieldsThatHavePrettyFormat()
-            )
+                ];
+            } elseif (
+                $this->isSubclassOfOne(
+                    $field_obj,
+                    $this->getModelVersionInfo()->fieldsThatHavePrettyFormat()
+                )
             ) {
-                $result[ $field_name ] = array(
+                $result[ $field_name ] = [
                     'raw'    => $this->prepareFieldObjValueForJson($field_obj, $field_value),
                     'pretty' => $this->prepareFieldObjValueForJson($field_obj, $field_value, 'pretty'),
-                );
-            } elseif ($field_obj instanceof \EE_Datetime_Field) {
+                ];
+            } elseif ($field_obj instanceof EE_Datetime_Field) {
                 $field_value = $field_obj->prepare_for_set_from_db($field_value);
                 // if the value is null, but we're not supposed to permit null, then set to the field's default
                 if (is_null($field_value)) {
@@ -815,7 +853,7 @@ class Read extends Base
                     );
                 }
                 $result[ $field_name . '_gmt' ] = $gmt_date;
-                $result[ $field_name ] = $local_date;
+                $result[ $field_name ]          = $local_date;
             } else {
                 $result[ $field_name ] = $this->prepareFieldObjValueForJson($field_obj, $field_value);
             }
@@ -835,8 +873,9 @@ class Read extends Base
      * @param EE_Model_Field_Base $field_obj
      * @param mixed               $value  as it's stored on a model object
      * @param string              $format valid values are 'normal' (default), 'pretty', 'datetime_obj'
-     * @return mixed
-     * @throws ObjectDetectedException if $value contains a PHP object
+     * @return array
+     * @throws RestException if $value contains a PHP object
+     * @throws EE_Error
      */
     protected function prepareFieldObjValueForJson(EE_Model_Field_Base $field_obj, $value, $format = 'normal')
     {
@@ -865,6 +904,8 @@ class Read extends Base
      * @param array    $db_row
      * @param array    $entity_array
      * @return array modified entity
+     * @throws EE_Error
+     * @throws EE_Error
      */
     protected function addExtraFields(EEM_Base $model, $db_row, $entity_array)
     {
@@ -878,40 +919,43 @@ class Read extends Base
     /**
      * Gets links we want to add to the response
      *
-     * @global \WP_REST_Server $wp_rest_server
-     * @param EEM_Base         $model
-     * @param array            $db_row
-     * @param array            $entity_array
+     * @param EEM_Base        $model
+     * @param array           $db_row
+     * @param array           $entity_array
      * @return array the _links item in the entity
+     * @throws EE_Error
+     * @throws EE_Error
+     * @global WP_REST_Server $wp_rest_server
      */
     protected function getEntityLinks($model, $db_row, $entity_array)
     {
         // add basic links
-        $links = array();
+        $links = [];
         if ($model->has_primary_key_field()) {
-            $links['self'] = array(
-                array(
+            $links['self'] = [
+                [
                     'href' => $this->getVersionedLinkTo(
                         EEH_Inflector::pluralize_and_lower($model->get_this_model_name())
                         . '/'
                         . $entity_array[ $model->primary_key_name() ]
                     ),
-                ),
-            );
+                ],
+            ];
         }
-        $links['collection'] = array(
-            array(
+        $links['collection'] = [
+            [
                 'href' => $this->getVersionedLinkTo(
                     EEH_Inflector::pluralize_and_lower($model->get_this_model_name())
                 ),
-            ),
-        );
+            ],
+        ];
         // add links to related models
         if ($model->has_primary_key_field()) {
             foreach ($this->getModelVersionInfo()->relationSettings($model) as $relation_name => $relation_obj) {
-                $related_model_part = Read::getRelatedEntityName($relation_name, $relation_obj);
-                $links[ EED_Core_Rest_Api::ee_api_link_namespace . $related_model_part ] = array(
-                    array(
+                $related_model_part                                                      =
+                    Read::getRelatedEntityName($relation_name, $relation_obj);
+                $links[ EED_Core_Rest_Api::ee_api_link_namespace . $related_model_part ] = [
+                    [
                         'href'   => $this->getVersionedLinkTo(
                             EEH_Inflector::pluralize_and_lower($model->get_this_model_name())
                             . '/'
@@ -919,9 +963,9 @@ class Read extends Base
                             . '/'
                             . $related_model_part
                         ),
-                        'single' => $relation_obj instanceof EE_Belongs_To_Relation ? true : false,
-                    ),
-                );
+                        'single' => $relation_obj instanceof EE_Belongs_To_Relation,
+                    ],
+                ];
             }
         }
         return $links;
@@ -931,19 +975,21 @@ class Read extends Base
     /**
      * Adds the included models indicated in the request to the entity provided
      *
-     * @param EEM_Base $model
+     * @param EEM_Base        $model
      * @param WP_REST_Request $rest_request
-     * @param array $entity_array
-     * @param array $db_row
-     * @param boolean $included_items_protected if the original item is password protected, don't include any related models.
+     * @param array           $entity_array
+     * @param array           $db_row
+     * @param boolean         $included_items_protected if the original item is password protected, don't include any
+     *                                                  related models.
      * @return array the modified entity
-     * @throws RestException
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function includeRequestedModels(
         EEM_Base $model,
         WP_REST_Request $rest_request,
         $entity_array,
-        $db_row = array(),
+        $db_row = [],
         $included_items_protected = false
     ) {
         // if $db_row not included, hope the entity array has what we need
@@ -952,7 +998,7 @@ class Read extends Base
         }
         $relation_settings = $this->getModelVersionInfo()->relationSettings($model);
         foreach ($relation_settings as $relation_name => $relation_obj) {
-            $related_fields_to_include = $this->explodeAndGetItemsPrefixedWith(
+            $related_fields_to_include   = $this->explodeAndGetItemsPrefixedWith(
                 $rest_request->get_param('include'),
                 $relation_name
             );
@@ -967,12 +1013,12 @@ class Read extends Base
                 // if so, we should include at least some part of the related model
                 $pretend_related_request = new WP_REST_Request();
                 $pretend_related_request->set_query_params(
-                    array(
+                    [
                         'caps'      => $rest_request->get_param('caps'),
                         'include'   => $related_fields_to_include,
                         'calculate' => $related_fields_to_calculate,
-                        'password' => $rest_request->get_param('password')
-                    )
+                        'password'  => $rest_request->get_param('password'),
+                    ]
                 );
                 $pretend_related_request->add_header('no_rest_headers', true);
                 $primary_model_query_params = $model->alter_query_params_to_restrict_by_ID(
@@ -992,11 +1038,14 @@ class Read extends Base
                     }
                 } else {
                     // they're protected, hide them.
-                    $related_results = null;
+                    $related_results              = null;
                     $entity_array['_protected'][] = Read::getRelatedEntityName($relation_name, $relation_obj);
                 }
                 if ($related_results instanceof WP_Error || $related_results === null) {
-                    $related_results = $relation_obj instanceof EE_Belongs_To_Relation ? null : array();
+                    $related_results =
+                        $relation_obj instanceof EE_Belongs_To_Relation
+                            ? null
+                            : [];
                 }
                 $entity_array[ Read::getRelatedEntityName($relation_name, $relation_obj) ] = $related_results;
             }
@@ -1004,15 +1053,17 @@ class Read extends Base
         return $entity_array;
     }
 
+
     /**
      * If the user has requested only specific properties (including meta properties like _links or _protected)
      * remove everything else.
-     * @since 4.9.74.p
-     * @param EEM_Base $model
+     *
+     * @param EEM_Base        $model
      * @param WP_REST_Request $rest_request
-     * @param $entity_array
+     * @param                 $entity_array
      * @return array
      * @throws EE_Error
+     * @since 4.9.74.p
      */
     protected function includeOnlyRequestedProperties(
         EEM_Base $model,
@@ -1023,7 +1074,8 @@ class Read extends Base
         $includes_for_this_model = $this->explodeAndGetItemsPrefixedWith($rest_request->get_param('include'), '');
         $includes_for_this_model = $this->removeModelNamesFromArray($includes_for_this_model);
         // if they passed in * or didn't specify any includes, return everything
-        if (! in_array('*', $includes_for_this_model)
+        if (
+            ! in_array('*', $includes_for_this_model)
             && ! empty($includes_for_this_model)
         ) {
             if ($model->has_primary_key_field()) {
@@ -1058,10 +1110,11 @@ class Read extends Base
      * @param EEM_Base        $model
      * @param array           $wpdb_row
      * @param WP_REST_Request $rest_request
-     * @param boolean $row_is_protected whether this row is password protected or not
-     * @return \stdClass the _calculations item in the entity
-     * @throws ObjectDetectedException if a default value has a PHP object, which should never do (and if we
-     * did, let's know about it ASAP, so let the exception bubble up)
+     * @param boolean         $row_is_protected whether this row is password protected or not
+     * @return stdClass the _calculations item in the entity
+     * @throws RestException if a default value has a PHP object, which should never do (and if we
+     * @throws EE_Error
+     *                                          did, let's know about it ASAP, so let the exception bubble up)
      */
     protected function getEntityCalculations($model, $wpdb_row, $rest_request, $row_is_protected = false)
     {
@@ -1070,16 +1123,18 @@ class Read extends Base
             ''
         );
         // note: setting calculate=* doesn't do anything
-        $calculated_fields_to_return = new \stdClass();
-        $protected_fields = array();
+        $calculated_fields_to_return = new stdClass();
+        $protected_fields            = [];
         foreach ($calculated_fields as $field_to_calculate) {
             try {
                 // it's password protected, so they shouldn't be able to read this. Remove the value
                 $schema = $this->fields_calculator->getJsonSchemaForModel($model);
-                if ($row_is_protected
+                if (
+                    $row_is_protected
                     && isset($schema['properties'][ $field_to_calculate ]['protected'])
-                    && $schema['properties'][ $field_to_calculate ]['protected']) {
-                    $calculated_value = null;
+                    && $schema['properties'][ $field_to_calculate ]['protected']
+                ) {
+                    $calculated_value   = null;
                     $protected_fields[] = $field_to_calculate;
                     if ($schema['properties'][ $field_to_calculate ]['type']) {
                         switch ($schema['properties'][ $field_to_calculate ]['type']) {
@@ -1093,7 +1148,7 @@ class Read extends Base
                                 $calculated_value = '';
                                 break;
                             case 'array':
-                                $calculated_value = array();
+                                $calculated_value = [];
                                 break;
                             case 'object':
                                 $calculated_value = new stdClass();
@@ -1139,6 +1194,8 @@ class Read extends Base
      *
      * @param string $link_part_after_version_and_slash eg "events/10/datetimes"
      * @return string url eg "http://mysite.com/wp-json/ee/v4.6/events/10/datetimes"
+     * @throws EE_Error
+     * @throws EE_Error
      */
     public function getVersionedLinkTo($link_part_after_version_and_slash)
     {
@@ -1155,8 +1212,8 @@ class Read extends Base
      * Gets the correct lowercase name for the relation in the API according
      * to the relation's type
      *
-     * @param string                  $relation_name
-     * @param \EE_Model_Relation_Base $relation_obj
+     * @param string                 $relation_name
+     * @param EE_Model_Relation_Base $relation_obj
      * @return string
      */
     public static function getRelatedEntityName($relation_name, $relation_obj)
@@ -1175,6 +1232,9 @@ class Read extends Base
      * @param EEM_Base        $model
      * @param WP_REST_Request $request
      * @return array
+     * @throws EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function getEntityFromModel($model, $request)
     {
@@ -1212,42 +1272,45 @@ class Read extends Base
      */
     public function validateDefaultQueryParams($default_query_params)
     {
-        $valid_default_where_conditions_for_api_calls = array(
+        $valid_default_where_conditions_for_api_calls = [
             EEM_Base::default_where_conditions_all,
             EEM_Base::default_where_conditions_minimum_all,
             EEM_Base::default_where_conditions_minimum_others,
-        );
+        ];
         if (! $default_query_params) {
             $default_query_params = EEM_Base::default_where_conditions_all;
         }
-        if (in_array(
-            $default_query_params,
-            $valid_default_where_conditions_for_api_calls,
-            true
-        )) {
+        if (
+            in_array(
+                $default_query_params,
+                $valid_default_where_conditions_for_api_calls,
+                true
+            )
+        ) {
             return $default_query_params;
-        } else {
-            return EEM_Base::default_where_conditions_all;
         }
+        return EEM_Base::default_where_conditions_all;
     }
 
 
     /**
-     * Translates API filter get parameter into model query params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions.
-     * Note: right now the query parameter keys for fields (and related fields)
-     * can be left as-is, but it's quite possible this will change someday.
-     * Also, this method's contents might be candidate for moving to Model_Data_Translator
+     * Translates API filter get parameter into model query params @see
+     * https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions.
+     * Note: right now the query parameter keys for fields (and related fields) can be left as-is, but it's quite
+     * possible this will change someday. Also, this method's contents might be candidate for moving to
+     * Model_Data_Translator
      *
      * @param EEM_Base $model
-     * @param array    $query_parameters  from $_GET parameter @see Read:handle_request_get_all
-     * @return array model query params (@see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions)
-     *                                    or FALSE to indicate that absolutely no results should be returned
+     * @param array    $query_params
+     * @return array model query params (@see
+     *               https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions)
+     *               or FALSE to indicate that absolutely no results should be returned
      * @throws EE_Error
      * @throws RestException
      */
     public function createModelQueryParams($model, $query_params)
     {
-        $model_query_params = array();
+        $model_query_params = [];
         if (isset($query_params['where'])) {
             $model_query_params[0] = ModelDataTranslator::prepareConditionsQueryParamsForModels(
                 $query_params['where'],
@@ -1305,8 +1368,8 @@ class Read extends Base
             } else {
                 $limit_array = $query_params['limit'];
             }
-            $sanitized_limit = array();
-            foreach ($limit_array as $key => $limit_part) {
+            $sanitized_limit = [];
+            foreach ($limit_array as $limit_part) {
                 if ($this->debug_mode && (! is_numeric($limit_part) || count($sanitized_limit) > 2)) {
                     throw new EE_Error(
                         sprintf(
@@ -1339,9 +1402,11 @@ class Read extends Base
         // if this is a model protected by a password on another model, exclude the password protected
         // entities by default. But if they passed in a password, try to show them all. If the password is wrong,
         // though, they'll get an error (see Read::createEntityFromWpdbResult() which calls Read::checkPassword)
-        if (! $model->hasPassword()
+        if (
+            ! $model->hasPassword()
             && $model->restrictedByRelatedModelPassword()
-            && $model_query_params['caps'] === EEM_Base::caps_read) {
+            && $model_query_params['caps'] === EEM_Base::caps_read
+        ) {
             if (empty($query_params['password'])) {
                 $model_query_params['exclude_protected'] = true;
             }
@@ -1354,34 +1419,32 @@ class Read extends Base
     /**
      * Changes the REST-style query params for use in the models
      *
-     * @deprecated
      * @param EEM_Base $model
      * @param array    $query_params sub-array from @see EEM_Base::get_all()
      * @return array
+     * @deprecated
      */
     public function prepareRestQueryParamsKeyForModels($model, $query_params)
     {
-        $model_ready_query_params = array();
+        $model_ready_query_params = [];
         foreach ($query_params as $key => $value) {
-            if (is_array($value)) {
-                $model_ready_query_params[ $key ] = $this->prepareRestQueryParamsKeyForModels($model, $value);
-            } else {
-                $model_ready_query_params[ $key ] = $value;
-            }
+            $model_ready_query_params[ $key ] = is_array($value)
+                ? $this->prepareRestQueryParamsKeyForModels($model, $value)
+                : $value;
         }
         return $model_ready_query_params;
     }
 
 
     /**
-     * @deprecated instead use ModelDataTranslator::prepareFieldValuesFromJson()
      * @param $model
      * @param $query_params
      * @return array
+     * @deprecated instead use ModelDataTranslator::prepareFieldValuesFromJson()
      */
     public function prepareRestQueryParamsValuesForModels($model, $query_params)
     {
-        $model_ready_query_params = array();
+        $model_ready_query_params = [];
         foreach ($query_params as $key => $value) {
             if (is_array($value)) {
                 $model_ready_query_params[ $key ] = $this->prepareRestQueryParamsValuesForModels($model, $value);
@@ -1410,11 +1473,11 @@ class Read extends Base
         } elseif (is_array($string_to_explode)) {
             $exploded_contents = $string_to_explode;
         } else {
-            $exploded_contents = array();
+            $exploded_contents = [];
         }
         // if the string was empty, we want an empty array
-        $exploded_contents = array_filter($exploded_contents);
-        $contents_with_prefix = array();
+        $exploded_contents    = array_filter($exploded_contents);
+        $contents_with_prefix = [];
         foreach ($exploded_contents as $item) {
             $item = trim($item);
             // if no prefix was provided, so we look for items with no "." in them
@@ -1441,18 +1504,21 @@ class Read extends Base
 
 
     /**
-     * @deprecated since 4.8.36.rc.001 You should instead use Read::explode_and_get_items_prefixed_with.
-     * Deprecated because its return values were really quite confusing- sometimes it returned
-     * an empty array (when the include string was blank or '*') or sometimes it returned
-     * array('*') (when you provided a model and a model of that kind was found).
-     * Parses the $include_string so we fetch all the field names relating to THIS model
-     * (ie have NO period in them), or for the provided model (ie start with the model
-     * name and then a period).
      * @param string $include_string @see Read:handle_request_get_all
      * @param string $model_name
      * @return array of fields for this model. If $model_name is provided, then
      *                               the fields for that model, with the model's name removed from each.
      *                               If $include_string was blank or '*' returns an empty array
+     * @throws EE_Error
+     * @throws EE_Error
+     * @deprecated since 4.8.36.rc.001 You should instead use Read::explode_and_get_items_prefixed_with.
+     *                               Deprecated because its return values were really quite confusing- sometimes it
+     *                               returned an empty array (when the include string was blank or '*') or sometimes it
+     *                               returned array('*') (when you provided a model and a model of that kind was
+     *                               found). Parses the $include_string so we fetch all the field names relating to
+     *                               THIS model
+     *                               (ie have NO period in them), or for the provided model (ie start with the model
+     *                               name and then a period).
      */
     public function extractIncludesForThisModel($include_string, $model_name = null)
     {
@@ -1460,16 +1526,16 @@ class Read extends Base
             $include_string = implode(',', $include_string);
         }
         if ($include_string === '*' || $include_string === '') {
-            return array();
+            return [];
         }
-        $includes = explode(',', $include_string);
-        $extracted_fields_to_include = array();
+        $includes                    = explode(',', $include_string);
+        $extracted_fields_to_include = [];
         if ($model_name) {
             foreach ($includes as $field_to_include) {
                 $field_to_include = trim($field_to_include);
                 if (strpos($field_to_include, $model_name . '.') === 0) {
                     // found the model name at the exact start
-                    $field_sans_model_name = str_replace($model_name . '.', '', $field_to_include);
+                    $field_sans_model_name         = str_replace($model_name . '.', '', $field_to_include);
                     $extracted_fields_to_include[] = $field_sans_model_name;
                 } elseif ($field_to_include == $model_name) {
                     $extracted_fields_to_include[] = '*';
@@ -1479,7 +1545,8 @@ class Read extends Base
             // look for ones with no period
             foreach ($includes as $field_to_include) {
                 $field_to_include = trim($field_to_include);
-                if (strpos($field_to_include, '.') === false
+                if (
+                    strpos($field_to_include, '.') === false
                     && ! $this->getModelVersionInfo()->isModelNameInThisVersion($field_to_include)
                 ) {
                     $extracted_fields_to_include[] = $field_to_include;
@@ -1494,19 +1561,20 @@ class Read extends Base
      * Gets the single item using the model according to the request in the context given, otherwise
      * returns that it's inaccessible to the current user
      *
-     * @param EEM_Base $model
+     * @param EEM_Base        $model
      * @param WP_REST_Request $request
-     * @param null $context
+     * @param null            $context
      * @return array
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function getOneOrReportPermissionError(EEM_Base $model, WP_REST_Request $request, $context = null)
     {
-        $query_params = array(array($model->primary_key_name() => $request->get_param('id')), 'limit' => 1);
+        $query_params = [[$model->primary_key_name() => $request->get_param('id')], 'limit' => 1];
         if ($model instanceof EEM_Soft_Delete_Base) {
             $query_params = $model->alter_query_params_so_deleted_and_undeleted_items_included($query_params);
         }
-        $restricted_query_params = $query_params;
+        $restricted_query_params         = $query_params;
         $restricted_query_params['caps'] = $context;
         $this->setDebugInfo('model query params', $restricted_query_params);
         $model_rows = $model->get_all_wpdb_results($restricted_query_params);
@@ -1532,26 +1600,27 @@ class Read extends Base
                             $context
                         )
                     ),
-                    array('status' => 403)
+                    ['status' => 403]
                 );
             } else {
                 // it's not you. It just doesn't exist
                 throw new RestException(
                     sprintf('rest_%s_invalid_id', $lowercase_model_name),
                     sprintf(__('Invalid %s ID.', 'event_espresso'), $lowercase_model_name),
-                    array('status' => 404)
+                    ['status' => 404]
                 );
             }
         }
     }
 
+
     /**
      * Checks that if this content requires a password to be read, that it's been provided and is correct.
-     * @since 4.9.74.p
-     * @param EEM_Base $model
-     * @param $model_row
-     * @param $query_params Adds 'default_where_conditions' => 'minimum' to ensure we don't confuse trashed with
-     *                      password protected.
+     *
+     * @param EEM_Base        $model
+     * @param array           $model_row
+     * @param array           $query_params Adds 'default_where_conditions' => 'minimum'
+     *                                      to ensure we don't confuse trashed with password protected.
      * @param WP_REST_Request $request
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -1559,8 +1628,9 @@ class Read extends Base
      * @throws InvalidInterfaceException
      * @throws RestPasswordRequiredException
      * @throws RestPasswordIncorrectException
-     * @throws \EventEspresso\core\exceptions\ModelConfigurationException
+     * @throws ModelConfigurationException
      * @throws ReflectionException
+     * @since 4.9.74.p
      */
     protected function checkPassword(EEM_Base $model, $model_row, $query_params, WP_REST_Request $request)
     {
@@ -1572,28 +1642,35 @@ class Read extends Base
             return;
         }
         // if this entity requires a password, they better give it and it better be right!
-        if ($model->hasPassword()
-            && $model_row[ $model->getPasswordField()->get_qualified_column() ] !== '') {
+        if (
+            $model->hasPassword()
+            && $model_row[ $model->getPasswordField()->get_qualified_column() ] !== ''
+        ) {
             if (empty($request['password'])) {
                 throw new RestPasswordRequiredException();
-            } elseif (!hash_equals(
-                $model_row[ $model->getPasswordField()->get_qualified_column() ],
-                $request['password']
-            )) {
+            }
+            if (
+                ! hash_equals(
+                    $model_row[ $model->getPasswordField()->get_qualified_column() ],
+                    $request['password']
+                )
+            ) {
                 throw new RestPasswordIncorrectException();
             }
-        } // wait! maybe this content is password protected
-        elseif ($model->restrictedByRelatedModelPassword()
-            && $request->get_param('caps') === EEM_Base::caps_read) {
+        } elseif (
+            // wait! maybe this content is password protected
+            $model->restrictedByRelatedModelPassword()
+            && $request->get_param('caps') === EEM_Base::caps_read
+        ) {
             $password_supplied = $request->get_param('password');
             if (empty($password_supplied)) {
                 $query_params['exclude_protected'] = true;
-                if (!$model->exists($query_params)) {
+                if (! $model->exists($query_params)) {
                     throw new RestPasswordRequiredException();
                 }
             } else {
                 $query_params[0][ $model->modelChainAndPassword() ] = $password_supplied;
-                if (!$model->exists($query_params)) {
+                if (! $model->exists($query_params)) {
                     throw new RestPasswordIncorrectException();
                 }
             }

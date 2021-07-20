@@ -446,7 +446,8 @@ class EventSpacesCalculator
                     );
                 }
             }
-            if (isset($this->ticket_datetimes[ $ticket_identifier ])
+            if (
+                isset($this->ticket_datetimes[ $ticket_identifier ])
                 && is_array($this->ticket_datetimes[ $ticket_identifier ])
             ) {
                 foreach ($this->ticket_datetimes[ $ticket_identifier ] as $ticket_datetime) {
@@ -642,7 +643,8 @@ class EventSpacesCalculator
             }
             // then all of it's tickets are now unavailable
             foreach ($datetime_tickets as $datetime_ticket) {
-                if (($ticket_identifier === $datetime_ticket || $at_capacity)
+                if (
+                    ($ticket_identifier === $datetime_ticket || $at_capacity)
                     && isset($this->ticket_quantities[ $datetime_ticket ])
                     && $this->ticket_quantities[ $datetime_ticket ] > 0
                 ) {
@@ -674,7 +676,8 @@ class EventSpacesCalculator
                 }
                 // but we also need to adjust spaces for any other datetimes this ticket has access to
                 if ($datetime_ticket === $ticket_identifier) {
-                    if (isset($this->ticket_datetimes[ $datetime_ticket ])
+                    if (
+                        isset($this->ticket_datetimes[ $datetime_ticket ])
                         && is_array($this->ticket_datetimes[ $datetime_ticket ])
                     ) {
                         if ($this->debug) {
@@ -705,7 +708,8 @@ class EventSpacesCalculator
     {
         // does datetime have spaces available?
         // and does the supplied ticket have access to this datetime ?
-        if ($this->datetime_spaces[ $datetime_identifier ] > 0
+        if (
+            $this->datetime_spaces[ $datetime_identifier ] > 0
             && isset($this->datetime_spaces[ $datetime_identifier ], $this->datetime_tickets[ $datetime_identifier ])
             && in_array($ticket_identifier, $this->datetime_tickets[ $datetime_identifier ], true)
         ) {

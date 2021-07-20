@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Template for EventAttendees block render
  * Template variables passed in:
@@ -7,6 +8,7 @@
  * @type array         $attributes  Original attributes saved for the block.
  * @throws EE_Error
  */
+
 ?>
 <div id="ee-block-event-attendees" class="ee-core-blocks event-espresso-blocks event-attendees">
     <ul>

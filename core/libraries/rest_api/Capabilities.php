@@ -27,12 +27,14 @@ class Capabilities
      */
     public static function currentUserHasPartialAccessTo($model, $model_context = EEM_Base::caps_read)
     {
-        if (apply_filters(
-            'FHEE__Capabilities__current_user_has_partial_access_to__override_begin',
-            false,
-            $model,
-            $model
-        )) {
+        if (
+            apply_filters(
+                'FHEE__Capabilities__current_user_has_partial_access_to__override_begin',
+                false,
+                $model,
+                $model
+            )
+        ) {
             return true;
         }
         foreach ($model->caps_missing($model_context) as $capability_name => $restriction_obj) {
@@ -40,12 +42,14 @@ class Capabilities
                 return false;
             }
         }
-        if (apply_filters(
-            'FHEE__Capabilities__current_user_has_partial_access_to__override_end',
-            false,
-            $model,
-            $model
-        )) {
+        if (
+            apply_filters(
+                'FHEE__Capabilities__current_user_has_partial_access_to__override_end',
+                false,
+                $model,
+                $model
+            )
+        ) {
             return false;
         }
         return true;
@@ -102,9 +106,11 @@ class Capabilities
             );
         }
         foreach ($model->field_settings() as $field_name => $field_obj) {
-            if ($has_password
+            if (
+                $has_password
                 && $model->getPasswordField()->fieldIsProtected($field_name)
-                && $entity[ $field_name ]) {
+                && $entity[ $field_name ]
+            ) {
                 $replacement_value = ModelDataTranslator::prepareFieldValueForJson(
                     $field_obj,
                     $field_obj->get_default_value(),
@@ -152,7 +158,8 @@ class Capabilities
         $primary_key_string = null
     ) {
         foreach ($model->field_settings() as $field_name => $field_obj) {
-            if ($model_version_info->fieldHasRenderedFormat($field_obj)
+            if (
+                $model_version_info->fieldHasRenderedFormat($field_obj)
                 && isset($entity[ $field_name ])
                 && is_array($entity[ $field_name ])
                 && isset($entity[ $field_name ]['raw'])

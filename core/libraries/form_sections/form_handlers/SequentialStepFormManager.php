@@ -553,7 +553,8 @@ abstract class SequentialStepFormManager
             // something went wrong, convert the Exception to an EE_Error
             EE_Error::add_error($e->getMessage(), __FILE__, __FUNCTION__, __LINE__);
             // prevent redirect to next step or other if exception was thrown
-            if ($current_step->redirectTo() === SequentialStepForm::REDIRECT_TO_NEXT_STEP
+            if (
+                $current_step->redirectTo() === SequentialStepForm::REDIRECT_TO_NEXT_STEP
                 || $current_step->redirectTo() === SequentialStepForm::REDIRECT_TO_OTHER
             ) {
                 $current_step->setRedirectTo(SequentialStepForm::REDIRECT_TO_CURRENT_STEP);
