@@ -117,7 +117,7 @@ class InvalidCheckoutAccess
                     ),
                     'track_invalid_checkout_access' => new EE_Yes_No_Input(
                         array(
-                            'html_label_text'         => __('Track Invalid Checkout Access?', 'event_espresso'),
+                            'html_label_text'         => esc_html__('Track Invalid Checkout Access?', 'event_espresso'),
                             'html_help_text'          => esc_html__(
                                 'Controls whether or not invalid attempts to directly access the registration checkout page should be tracked. Setting this to "No" means that the above data will no longer be collected.',
                                 'event_espresso'
@@ -130,7 +130,7 @@ class InvalidCheckoutAccess
                     ),
                     'delete_invalid_checkout_data'  => new EE_Yes_No_Input(
                         array(
-                            'html_label_text'         => __('Reset Invalid Checkout Data', 'event_espresso'),
+                            'html_label_text'         => esc_html__('Reset Invalid Checkout Data', 'event_espresso'),
                             'html_help_text'          => esc_html__(
                                 'Setting this to "Yes" will delete all existing invalid checkout access data.',
                                 'event_espresso'

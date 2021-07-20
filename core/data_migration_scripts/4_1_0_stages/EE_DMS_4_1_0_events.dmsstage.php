@@ -96,33 +96,33 @@ CREATE TABLE `wp_events_detail` (
 
         $this->_fields = array(
             'Event_CPT'=>array(
-                'EVT_ID'=>new EE_Primary_Key_Int_Field('ID', __('Post ID for Event','event_espresso')),
-                'EVT_name'=>new EE_Plain_Text_Field('post_title', __('Event Name','event_espresso'), false, ''),
-                'EVT_desc'=>new EE_Simple_HTML_Field('post_content', __("Event Description", "event_espresso"), false, ''),
-                'EVT_slug'=>new EE_Slug_Field('post_name', __("Event Slug", "event_espresso"), false, ''),
-                'EVT_created'=>new EE_Datetime_Field('post_date', __("Date/Time Event Created", "event_espresso"), false, time()),
-                'EVT_short_desc'=>new EE_Simple_HTML_Field('post_excerpt', __("Event Short Description", "event_espresso"), false,''),
-                'EVT_modified'=>new EE_Datetime_Field('post_modified', __("Date/Time Event Modified", "event_espresso"), true, time()),
-                'EVT_wp_user'=>new EE_Integer_Field('post_author', __("Wordpress User ID", "event_espresso"), false,1),
-                'parent'=>new EE_Integer_Field('post_parent', __("Event Parent ID", "event_espresso"), true),
-                'EVT_order'=>new EE_Integer_Field('menu_order', __("Event Menu Order", "event_espresso"), false, 1),
-                'post_type'=>new EE_Plain_Text_Field('post_type', __("Event Post Type", "event_espresso"), false, 'espresso_events'),
-                'status' => new EE_WP_Post_Status_Field('post_status', __("Event Status", "event_espresso"), false, 'draft', $custom_stati)
+                'EVT_ID'=>new EE_Primary_Key_Int_Field('ID', esc_html__('Post ID for Event','event_espresso')),
+                'EVT_name'=>new EE_Plain_Text_Field('post_title', esc_html__('Event Name','event_espresso'), false, ''),
+                'EVT_desc'=>new EE_Simple_HTML_Field('post_content', esc_html__("Event Description", "event_espresso"), false, ''),
+                'EVT_slug'=>new EE_Slug_Field('post_name', esc_html__("Event Slug", "event_espresso"), false, ''),
+                'EVT_created'=>new EE_Datetime_Field('post_date', esc_html__("Date/Time Event Created", "event_espresso"), false, time()),
+                'EVT_short_desc'=>new EE_Simple_HTML_Field('post_excerpt', esc_html__("Event Short Description", "event_espresso"), false,''),
+                'EVT_modified'=>new EE_Datetime_Field('post_modified', esc_html__("Date/Time Event Modified", "event_espresso"), true, time()),
+                'EVT_wp_user'=>new EE_Integer_Field('post_author', esc_html__("Wordpress User ID", "event_espresso"), false,1),
+                'parent'=>new EE_Integer_Field('post_parent', esc_html__("Event Parent ID", "event_espresso"), true),
+                'EVT_order'=>new EE_Integer_Field('menu_order', esc_html__("Event Menu Order", "event_espresso"), false, 1),
+                'post_type'=>new EE_Plain_Text_Field('post_type', esc_html__("Event Post Type", "event_espresso"), false, 'espresso_events'),
+                'status' => new EE_WP_Post_Status_Field('post_status', esc_html__("Event Status", "event_espresso"), false, 'draft', $custom_stati)
             ),
             'Event_Meta'=>array(
-                'EVTM_ID'=> new EE_DB_Only_Float_Field('EVTM_ID', __('Event Meta Row ID','event_espresso'), false),
-                'EVT_ID_fk'=>new EE_DB_Only_Int_Field('EVT_ID', __("Foreign key to Event ID from Event Meta table", "event_espresso"), false),
-                'EVT_display_desc'=>new EE_Boolean_Field('EVT_display_desc', __("Display Description Flag", "event_espresso"), false, 1),
-                'EVT_display_ticket_selector'=>new EE_Boolean_Field('EVT_display_ticket_selector', __("Display Display Ticket Selector Flag", "event_espresso"), false, 1),
-                'EVT_visible_on'=>new EE_Datetime_Field('EVT_visible_on', __("Event Visible Date", "event_espresso"), true, time()),
-                'EVT_additional_limit'=>new EE_Integer_Field('EVT_additional_limit', __("Limit of Additional Registrations on Same Transaction", "event_espresso"), true),
-                'EVT_default_registration_status'=>new EE_Enum_Text_Field('EVT_default_registration_status', __("Default Registration Status on this Event", "event_espresso"), false, EEM_Registration::status_id_pending_payment, EEM_Registration::reg_status_array()),
-                'EVT_member_only'=>new EE_Boolean_Field('EVT_member_only', __("Member-Only Event Flag", "event_espresso"), false, false),
-                'EVT_phone'=> new EE_Plain_Text_Field('EVT_phone', __('Event Phone Number', 'event_espresso'), false ),
-                'EVT_allow_overflow'=>new EE_Boolean_Field('EVT_allow_overflow', __("Allow Overflow on Event", "event_espresso"), false, false),
-                'EVT_timezone_string'=>new EE_Plain_Text_Field('EVT_timezone_string', __("Timezone (name) for Event times", "event_espresso"), false),
-                'EVT_external_URL'=>new EE_Plain_Text_Field('EVT_external_URL', __("URL of Event Page if hosted elsewhere", "event_espresso"), true),
-                'EVT_donations'=>new EE_Boolean_Field('EVT_donations', __("Accept Donations?", "event_espresso"), false, false)
+                'EVTM_ID'=> new EE_DB_Only_Float_Field('EVTM_ID', esc_html__('Event Meta Row ID','event_espresso'), false),
+                'EVT_ID_fk'=>new EE_DB_Only_Int_Field('EVT_ID', esc_html__("Foreign key to Event ID from Event Meta table", "event_espresso"), false),
+                'EVT_display_desc'=>new EE_Boolean_Field('EVT_display_desc', esc_html__("Display Description Flag", "event_espresso"), false, 1),
+                'EVT_display_ticket_selector'=>new EE_Boolean_Field('EVT_display_ticket_selector', esc_html__("Display Display Ticket Selector Flag", "event_espresso"), false, 1),
+                'EVT_visible_on'=>new EE_Datetime_Field('EVT_visible_on', esc_html__("Event Visible Date", "event_espresso"), true, time()),
+                'EVT_additional_limit'=>new EE_Integer_Field('EVT_additional_limit', esc_html__("Limit of Additional Registrations on Same Transaction", "event_espresso"), true),
+                'EVT_default_registration_status'=>new EE_Enum_Text_Field('EVT_default_registration_status', esc_html__("Default Registration Status on this Event", "event_espresso"), false, EEM_Registration::status_id_pending_payment, EEM_Registration::reg_status_array()),
+                'EVT_member_only'=>new EE_Boolean_Field('EVT_member_only', esc_html__("Member-Only Event Flag", "event_espresso"), false, false),
+                'EVT_phone'=> new EE_Plain_Text_Field('EVT_phone', esc_html__('Event Phone Number', 'event_espresso'), false ),
+                'EVT_allow_overflow'=>new EE_Boolean_Field('EVT_allow_overflow', esc_html__("Allow Overflow on Event", "event_espresso"), false, false),
+                'EVT_timezone_string'=>new EE_Plain_Text_Field('EVT_timezone_string', esc_html__("Timezone (name) for Event times", "event_espresso"), false),
+                'EVT_external_URL'=>new EE_Plain_Text_Field('EVT_external_URL', esc_html__("URL of Event Page if hosted elsewhere", "event_espresso"), true),
+                'EVT_donations'=>new EE_Boolean_Field('EVT_donations', esc_html__("Accept Donations?", "event_espresso"), false, false)
 
             ));
 
@@ -147,16 +147,16 @@ CREATE TABLE `wp_events_start_end` (
         );
         $this->_fields = array(
             'Datetime'=>array(
-                'DTT_ID'=> new EE_Primary_Key_Int_Field('DTT_ID', __('Datetime ID','event_espresso')),
-                'EVT_ID'=>new EE_Foreign_Key_Int_Field('EVT_ID', __('Event ID','event_espresso'), false, 0, 'Event'),
-                'DTT_EVT_start'=>new EE_Datetime_Field('DTT_EVT_start', __('Start time/date of Event','event_espresso'), false, time(), $timezone ),
-                'DTT_EVT_end'=>new EE_Datetime_Field('DTT_EVT_end', __('End time/date of Event','event_espresso'), false, time(), $timezone ),
-                'DTT_reg_limit'=>new EE_Integer_Field('DTT_reg_limit', __('Registration Limit for this time','event_espresso'), true, 999999),
-                'DTT_sold'=>new EE_Integer_Field('DTT_sold', __('How many sales for this Datetime that have occurred', 'event_espresso'), true, 0 ),
-                'DTT_is_primary'=>new EE_Boolean_Field('DTT_is_primary', __("Flag indicating datetime is primary one for event", "event_espresso"), false,false),
-                'DTT_order' => new EE_Integer_Field('DTT_order', __('The order in which the Datetime is displayed', 'event_espresso'), false, 0),
-                'DTT_parent' => new EE_Integer_Field('DTT_parent', __('Indicates what DTT_ID is the parent of this DTT_ID'), true, 0 ),
-                'DTT_deleted' => new EE_Trashed_Flag_Field('DTT_deleted', __('Flag indicating datetime is archived', 'event_espresso'), false, false ),
+                'DTT_ID'=> new EE_Primary_Key_Int_Field('DTT_ID', esc_html__('Datetime ID','event_espresso')),
+                'EVT_ID'=>new EE_Foreign_Key_Int_Field('EVT_ID', esc_html__('Event ID','event_espresso'), false, 0, 'Event'),
+                'DTT_EVT_start'=>new EE_Datetime_Field('DTT_EVT_start', esc_html__('Start time/date of Event','event_espresso'), false, time(), $timezone ),
+                'DTT_EVT_end'=>new EE_Datetime_Field('DTT_EVT_end', esc_html__('End time/date of Event','event_espresso'), false, time(), $timezone ),
+                'DTT_reg_limit'=>new EE_Integer_Field('DTT_reg_limit', esc_html__('Registration Limit for this time','event_espresso'), true, 999999),
+                'DTT_sold'=>new EE_Integer_Field('DTT_sold', esc_html__('How many sales for this Datetime that have occurred', 'event_espresso'), true, 0 ),
+                'DTT_is_primary'=>new EE_Boolean_Field('DTT_is_primary', esc_html__("Flag indicating datetime is primary one for event", "event_espresso"), false,false),
+                'DTT_order' => new EE_Integer_Field('DTT_order', esc_html__('The order in which the Datetime is displayed', 'event_espresso'), false, 0),
+                'DTT_parent' => new EE_Integer_Field('DTT_parent', esc_html__('Indicates what DTT_ID is the parent of this DTT_ID'), true, 0 ),
+                'DTT_deleted' => new EE_Trashed_Flag_Field('DTT_deleted', esc_html__('Flag indicating datetime is archived', 'event_espresso'), false, false ),
             ));
  */
 class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage
@@ -181,7 +181,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage
         $this->_new_table = $wpdb->prefix . "posts";
         $this->_new_meta_table = $wpdb->prefix . "esp_event_meta";
         $this->_new_datetime_table = $wpdb->prefix . "esp_datetime";
-        $this->_pretty_name = __("Events", "event_espresso");
+        $this->_pretty_name = esc_html__("Events", "event_espresso");
         parent::__construct();
     }
 
@@ -272,7 +272,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage
             if ($meta_key) {// if the meta key is just an empty string, ignore it
                 $success = add_post_meta($post_id, $meta_key, $meta_value, true);
                 if (! $success) {
-                    $this->add_error(sprintf(__("Could not add post meta for CPT with ID #%d. Meta key: '%s',meta value:'%d' for 3.1 event: %s", "event_espresso"), $post_id, $meta_key, $meta_value, implode(",", $old_event)));
+                    $this->add_error(sprintf(esc_html__("Could not add post meta for CPT with ID #%d. Meta key: '%s',meta value:'%d' for 3.1 event: %s", "event_espresso"), $post_id, $meta_key, $meta_value, implode(",", $old_event)));
                 }
             }
         }
@@ -327,7 +327,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage
         global $wpdb;
         // convert 3.1 event status to 4.1 CPT status
         // for reference, 3.1 event stati available for setting are:
-//      $status = array(array('id' => 'A', 'text' => __('Public', 'event_espresso')), array('id' => 'S', 'text' => __('Waitlist', 'event_espresso')), array('id' => 'O', 'text' => __('Ongoing', 'event_espresso')), array('id' => 'R', 'text' => __('Draft', 'event_espresso')), array('id' => 'D', 'text' => __('Deleted', 'event_espresso')));
+//      $status = array(array('id' => 'A', 'text' => esc_html__('Public', 'event_espresso')), array('id' => 'S', 'text' => esc_html__('Waitlist', 'event_espresso')), array('id' => 'O', 'text' => esc_html__('Ongoing', 'event_espresso')), array('id' => 'R', 'text' => esc_html__('Draft', 'event_espresso')), array('id' => 'D', 'text' => esc_html__('Deleted', 'event_espresso')));
 //      and the json api uses the following to convert from 3.1 to 4.0
 //      'S'=>'secondary/waitlist',
 //      'A'=>'active',
@@ -561,7 +561,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage
      */
     protected function _get_venue_title_for_event($event_data_array)
     {
-        return $event_data_array['venue_title'] ? stripslashes($event_data_array['venue_title']) : stripslashes(sprintf(__('Venue of %s', 'event_espresso'), $event_data_array['event_name']));
+        return $event_data_array['venue_title'] ? stripslashes($event_data_array['venue_title']) : stripslashes(sprintf(esc_html__('Venue of %s', 'event_espresso'), $event_data_array['event_name']));
     }
 
     /**
@@ -703,11 +703,11 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage
     {
         global $wpdb;
         if (! $new_event_id) {
-            $this->add_error(sprintf(__("Could not find 4.1 event id for 3.1 event #%d.", "event_espresso"), $new_event_id));
+            $this->add_error(sprintf(esc_html__("Could not find 4.1 event id for 3.1 event #%d.", "event_espresso"), $new_event_id));
             return 0;
         }
         if (! $new_venue_id) {
-            $this->add_error(sprintf(__("Could not find 4.1 venue id for 3.1 venue #%d.", "event_espresso"), $new_venue_id));
+            $this->add_error(sprintf(esc_html__("Could not find 4.1 venue id for 3.1 venue #%d.", "event_espresso"), $new_venue_id));
             return 0;
         }
         $cols_n_values = array(

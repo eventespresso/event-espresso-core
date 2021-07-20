@@ -74,7 +74,7 @@ final class EE_Module_Request_Router implements InterminableInterface
                 if (isset(self::$_previous_routes[ $current_route ])) {
                     throw new EE_Error(
                         sprintf(
-                            __(
+                            esc_html__(
                                 'An error occurred. The %s route has already been called, and therefore can not be forwarded to, because an infinite loop would be created and break the interweb.',
                                 'event_espresso'
                             ),
@@ -137,7 +137,7 @@ final class EE_Module_Request_Router implements InterminableInterface
         // verify result was returned
         if (empty($module_method)) {
             $msg = sprintf(
-                __('The requested route %s could not be mapped to any registered modules.', 'event_espresso'),
+                esc_html__('The requested route %s could not be mapped to any registered modules.', 'event_espresso'),
                 $current_route
             );
             EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
@@ -145,7 +145,7 @@ final class EE_Module_Request_Router implements InterminableInterface
         }
         // verify that result is an array
         if (! is_array($module_method)) {
-            $msg = sprintf(__('The %s  route has not been properly registered.', 'event_espresso'), $current_route);
+            $msg = sprintf(esc_html__('The %s  route has not been properly registered.', 'event_espresso'), $current_route);
             EE_Error::add_error($msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__);
             return false;
         }
@@ -154,7 +154,7 @@ final class EE_Module_Request_Router implements InterminableInterface
         // verify that a class method was registered properly
         if (! isset($module_method[1])) {
             $msg = sprintf(
-                __('A class method for the %s  route has not been properly registered.', 'event_espresso'),
+                esc_html__('A class method for the %s  route has not been properly registered.', 'event_espresso'),
                 $current_route
             );
             EE_Error::add_error($msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__);
@@ -164,14 +164,14 @@ final class EE_Module_Request_Router implements InterminableInterface
         $method = $module_method[1];
         // verify that class exists
         if (! class_exists($module_name)) {
-            $msg = sprintf(__('The requested %s class could not be found.', 'event_espresso'), $module_name);
+            $msg = sprintf(esc_html__('The requested %s class could not be found.', 'event_espresso'), $module_name);
             EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
             return false;
         }
         // verify that method exists
         if (! method_exists($module_name, $method)) {
             $msg = sprintf(
-                __('The class method %s for the %s route is in invalid.', 'event_espresso'),
+                esc_html__('The class method %s for the %s route is in invalid.', 'event_espresso'),
                 $method,
                 $current_route
             );
@@ -194,7 +194,7 @@ final class EE_Module_Request_Router implements InterminableInterface
         if ($module_name === 'EED_Module') {
             EE_Error::add_error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'EED_Module is an abstract parent class an can not be instantiated. Please provide a proper module name.',
                         'event_espresso'
                     ),
@@ -211,7 +211,7 @@ final class EE_Module_Request_Router implements InterminableInterface
         // ensure that class is actually a module
         if (! $module instanceof EED_Module) {
             EE_Error::add_error(
-                sprintf(__('The requested %s module is not of the class EED_Module.', 'event_espresso'), $module_name),
+                sprintf(esc_html__('The requested %s module is not of the class EED_Module.', 'event_espresso'), $module_name),
                 __FILE__,
                 __FUNCTION__,
                 __LINE__

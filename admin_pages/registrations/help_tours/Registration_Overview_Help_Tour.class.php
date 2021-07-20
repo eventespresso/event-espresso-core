@@ -17,7 +17,7 @@ class Registration_Overview_Help_Tour extends EE_Help_Tour
 
     protected function _set_tour_properties()
     {
-        $this->_label = __('Registrations Overview Tour', 'event_espresso');
+        $this->_label = esc_html__('Registrations Overview Tour', 'event_espresso');
         if (isset($this->_req_data['event_id'])) {
             $this->_slug = 'registration-per-event-overview-joyride';
         } else {
@@ -164,16 +164,16 @@ class Registration_Overview_Help_Tour extends EE_Help_Tour
 
     protected function _start()
     {
-        $content = '<h3>' . __('Registration Overview', 'event_espresso') . '</h3>';
+        $content = '<h3>' . esc_html__('Registration Overview', 'event_espresso') . '</h3>';
         if (isset($this->_req_data['event_id'])) {
             $content .= '<p>'
-                        . __(
+                        . esc_html__(
                             'An introduction to the Registration Overview page for a single event. This view is pretty much the same as the default overview registration page except you are only seeing registrations for a specific event.  There are also some changes to the available columns in this view.',
                             'event_espresso'
                         ) . '</p>';
         } else {
             $content .= '<p>'
-                        . __(
+                        . esc_html__(
                             'This tour of the Registration Overview page will go over different areas of the screen to help you understand what they are used for.',
                             'event_espresso'
                         ) . '</p>';
@@ -184,7 +184,7 @@ class Registration_Overview_Help_Tour extends EE_Help_Tour
     protected function _reg_id_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'View the registration ID. Can be sorted in ascending or descending order.',
                    'event_espresso'
                ) . '</p>';
@@ -192,13 +192,13 @@ class Registration_Overview_Help_Tour extends EE_Help_Tour
 
     protected function _reg_count_stop()
     {
-        return '<p>' . __('View registration number.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('View registration number.', 'event_espresso') . '</p>';
     }
 
     protected function _attendee_name_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'View the name of the registrant. Can be sorted in ascending or descending order.',
                    'event_espresso'
                ) . '</p>';
@@ -207,7 +207,7 @@ class Registration_Overview_Help_Tour extends EE_Help_Tour
     protected function _reg_date_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'View registration date. Can be sorted in ascending or descending order.',
                    'event_espresso'
                ) . '</p>';
@@ -216,7 +216,7 @@ class Registration_Overview_Help_Tour extends EE_Help_Tour
     protected function _event_name_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'View the name of the event. Can be sorted in ascending or descending order.',
                    'event_espresso'
                ) . '</p>';
@@ -225,7 +225,7 @@ class Registration_Overview_Help_Tour extends EE_Help_Tour
     protected function _dtt_evt_start_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'View the date of the event. Can be sorted in ascending or descending order.',
                    'event_espresso'
                ) . '</p>';
@@ -233,18 +233,18 @@ class Registration_Overview_Help_Tour extends EE_Help_Tour
 
     protected function _reg_code_stop()
     {
-        return '<p>' . __('View registration code for a registrant.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('View registration code for a registrant.', 'event_espresso') . '</p>';
     }
 
     protected function _txn_total_stop()
     {
-        return '<p>' . __('View price of registration.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('View price of registration.', 'event_espresso') . '</p>';
     }
 
     protected function _actions_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'Perform an action to a registration. See legend in bottom left corner.',
                    'event_espresso'
                ) . '</p>';
@@ -253,7 +253,7 @@ class Registration_Overview_Help_Tour extends EE_Help_Tour
     protected function _legend_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'This is the legend that describes the actions available in the actions column. Also shows available statuses for a registration.',
                    'event_espresso'
                ) . '</p>';
@@ -262,7 +262,7 @@ class Registration_Overview_Help_Tour extends EE_Help_Tour
     protected function _views_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'You can select different views by time period or look at registrations which have been moved to the trash.',
                    'event_espresso'
                ) . '</p>';
@@ -270,18 +270,18 @@ class Registration_Overview_Help_Tour extends EE_Help_Tour
 
     protected function _bulkactions_stop()
     {
-        return '<p>' . __('Perform a bulk action to multiple registrations.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Perform a bulk action to multiple registrations.', 'event_espresso') . '</p>';
     }
 
     protected function _stop_about_filters()
     {
-        return '<p>' . __('Registrations can be filtered by date, categories, or status.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Registrations can be filtered by date, categories, or status.', 'event_espresso') . '</p>';
     }
 
     protected function _search_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'Search through registrations. The following sources will be searched: Event Name, Event Description, First Name, Last Name, Biography, Email Address, Address, Comments, Notes, Registration Final Price, Registration Code, Registration Group Size, Ticket Name, and Ticket Description.',
                    'event_espresso'
                ) . '</p>';

@@ -20,9 +20,9 @@ CREATE TABLE `wp_events_qst_group_rel` (
         );
         $this->_fields = array(
             'Question_Group_Question'=>array(
-                'QGQ_ID'=>new EE_Primary_Key_Int_Field('QGQ_ID', __('Question Group to Question Link ID','event_espresso')),
-                'QSG_ID'=>new EE_Foreign_Key_Int_Field('QSG_ID', __('Question Group ID','event_espresso'), false, 0, 'Question_Group'),
-                'QST_ID'=>new EE_Foreign_Key_Int_Field('QST_ID', __('Question Id','event_espresso'), false, 0, 'Question')
+                'QGQ_ID'=>new EE_Primary_Key_Int_Field('QGQ_ID', esc_html__('Question Group to Question Link ID','event_espresso')),
+                'QSG_ID'=>new EE_Foreign_Key_Int_Field('QSG_ID', esc_html__('Question Group ID','event_espresso'), false, 0, 'Question_Group'),
+                'QST_ID'=>new EE_Foreign_Key_Int_Field('QST_ID', esc_html__('Question Id','event_espresso'), false, 0, 'Question')
             )
         );
  *
@@ -58,7 +58,7 @@ class EE_DMS_4_1_0_question_group_question extends EE_Data_Migration_Script_Stag
         global $wpdb;
         $this->_old_table = $wpdb->prefix . "events_qst_group_rel";
         $this->_new_table = $wpdb->prefix . "esp_question_group_question";
-        $this->_pretty_name = __("Question Group to Question Relations", "event_espresso");
+        $this->_pretty_name = esc_html__("Question Group to Question Relations", "event_espresso");
         parent::__construct();
     }
 
@@ -74,11 +74,11 @@ class EE_DMS_4_1_0_question_group_question extends EE_Data_Migration_Script_Stag
         $new_question_id = $this->get_migration_script()->get_mapping_new_pk($wpdb->prefix . "events_question", $old_question_group_question['question_id'], $wpdb->prefix . "esp_question");
         $new_question_group_id = $this->get_migration_script()->get_mapping_new_pk($wpdb->prefix . "events_qst_group", $old_question_group_question['group_id'], $wpdb->prefix . "esp_question_group");
         if (! $new_question_id) {
-            $this->add_error(sprintf(__("Could not find 4.1 question id for 3.1 question #%d.", "event_espresso"), $old_question_group_question['question_id']));
+            $this->add_error(sprintf(esc_html__("Could not find 4.1 question id for 3.1 question #%d.", "event_espresso"), $old_question_group_question['question_id']));
             return 0;
         }
         if (! $new_question_group_id) {
-            $this->add_error(sprintf(__("Could not find 4.1 question group id for 3.1 question group #%d.", "event_espresso"), $old_question_group_question['group_id']));
+            $this->add_error(sprintf(esc_html__("Could not find 4.1 question group id for 3.1 question group #%d.", "event_espresso"), $old_question_group_question['group_id']));
             return 0;
         }
         // if it's a system question, it needs to be in the right system group. otherwise no dice!

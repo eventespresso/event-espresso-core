@@ -841,7 +841,7 @@ class EEH_Line_Item
         if (! $first_datetime instanceof EE_Datetime) {
             throw new EE_Error(
                 sprintf(
-                    __('The supplied ticket (ID %d) has no datetimes', 'event_espresso'),
+                    esc_html__('The supplied ticket (ID %d) has no datetimes', 'event_espresso'),
                     $ticket->ID()
                 )
             );

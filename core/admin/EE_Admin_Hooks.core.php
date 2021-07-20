@@ -76,7 +76,7 @@ abstract class EE_Admin_Hooks extends EE_Base
      *        'id' => 'identifier_for_metabox', //so it can be removed by addons (optional, class will set it
      *        automatically)
      *        'priority' => 'default', //default 'default' (optional)
-     *        'label' => __('Localized Title', 'event_espresso'),
+     *        'label' => esc_html__('Localized Title', 'event_espresso'),
      *        'context' => 'advanced' //advanced is default (optional),
      *    'callback_args' => array() //any callback args to include (optional)
      * )
@@ -130,7 +130,7 @@ abstract class EE_Admin_Hooks extends EE_Base
      *    the object.
      *        'scrip_ref' => array(
      *            'NAME_OF_JS_OBJECT' => array(
-     *                'translate_ref' => __('localized_string', 'event_espresso'),
+     *                'translate_ref' => esc_html__('localized_string', 'event_espresso'),
      *                'some_data' => 5
      *            )
      *        )
@@ -264,12 +264,12 @@ abstract class EE_Admin_Hooks extends EE_Base
         if (! empty($this->_scripts_styles)) {
             // first let's do all the registrations
             if (! isset($this->_scripts_styles['registers'])) {
-                $msg[] = __(
+                $msg[] = esc_html__(
                     'There is no "registers" index in the <code>$this->_scripts_styles</code> property.',
                     'event_espresso'
                 );
                 $msg[] = sprintf(
-                    __(
+                    esc_html__(
                         'Make sure you read the phpdoc comments above the definition of the $_scripts_styles property in the <code>EE_Admin_Hooks</code> class and modify according in the %s child',
                         'event_espresso'
                     ),
@@ -292,11 +292,11 @@ abstract class EE_Admin_Hooks extends EE_Base
                 // let's make sure we're not missing any REQUIRED parameters
                 if (empty($url)) {
                     $msg[] = sprintf(
-                        __('Missing the url for the requested %s', 'event_espresso'),
+                        esc_html__('Missing the url for the requested %s', 'event_espresso'),
                         $type == 'js' ? 'script' : 'stylesheet'
                     );
                     $msg[] = sprintf(
-                        __(
+                        esc_html__(
                             'Doublecheck your <code>$this->_scripts_styles</code> array in %s and make sure that there is a "url" set for the %s ref',
                             'event_espresso'
                         ),
@@ -395,9 +395,9 @@ abstract class EE_Admin_Hooks extends EE_Base
     {
         // first make sure $this->_name is set
         if (empty($this->_name)) {
-            $msg[] = __('We can\'t load the page object', 'event_espresso');
+            $msg[] = esc_html__('We can\'t load the page object', 'event_espresso');
             $msg[] = sprintf(
-                __("This is because the %s child class has not set the '_name' property", 'event_espresso'),
+                esc_html__("This is because the %s child class has not set the '_name' property", 'event_espresso'),
                 $this->caller
             );
             throw new EE_Error(implode('||', $msg));
@@ -417,9 +417,9 @@ abstract class EE_Admin_Hooks extends EE_Base
         $class_name = $this->_extend ? 'Extend_' . $class_name : $class_name;
         // let's make sure the class exists
         if (! class_exists($class_name)) {
-            $msg[] = __('We can\'t load the page object', 'event_espresso');
+            $msg[] = esc_html__('We can\'t load the page object', 'event_espresso');
             $msg[] = sprintf(
-                __(
+                esc_html__(
                     'The class name that was given is %s. Check the spelling and make sure its correct, also there needs to be an autoloader setup for the class',
                     'event_espresso'
                 ),
@@ -563,12 +563,12 @@ abstract class EE_Admin_Hooks extends EE_Base
         foreach ($this->_ajax_func as $action => $method) {
             // make sure method exists
             if (! method_exists($this, $method)) {
-                $msg[] = __(
+                $msg[] = esc_html__(
                     'There is no corresponding method for the hook labeled in the _ajax_func array',
                     'event_espresso'
                 ) . '<br />';
                 $msg[] = sprintf(
-                    __(
+                    esc_html__(
                         'The method name given in the array is %s, check the spelling and make sure it exists in the %s class',
                         'event_espresso'
                     ),
@@ -597,12 +597,12 @@ abstract class EE_Admin_Hooks extends EE_Base
         foreach ($this->_init_func as $route => $method) {
             // make sure method exists
             if (! method_exists($this, $method)) {
-                $msg[] = __(
+                $msg[] = esc_html__(
                     'There is no corresponding method for the hook labeled in the _init_func array',
                     'event_espresso'
                 ) . '<br />';
                 $msg[] = sprintf(
-                    __(
+                    esc_html__(
                         'The method name given in the array is %s, check the spelling and make sure it exists in the %s class',
                         'event_espresso'
                     ),
@@ -698,9 +698,9 @@ abstract class EE_Admin_Hooks extends EE_Base
         extract($args);
         // make sure method exists
         if (! method_exists($this, $func)) {
-            $msg[] = __('There is no corresponding method to display the metabox content', 'event_espresso') . '<br />';
+            $msg[] = esc_html__('There is no corresponding method to display the metabox content', 'event_espresso') . '<br />';
             $msg[] = sprintf(
-                __(
+                esc_html__(
                     'The method name given in the array is %s, check the spelling and make sure it exists in the %s class',
                     'event_espresso'
                 ),

@@ -47,7 +47,7 @@ class EE_Soft_Delete_Where_Conditions extends EE_Default_Where_Conditions
         if ($field) {
             return $field->get_name();
         } else {
-            throw new EE_Error(sprintf(__('We are trying to find the deleted flag field on %s, but none was found. Are you sure there is a field of type EE_Trashed_Flag_Field in %s constructor?', 'event_espresso'), get_class($this), get_class($this)));
+            throw new EE_Error(sprintf(esc_html__('We are trying to find the deleted flag field on %s, but none was found. Are you sure there is a field of type EE_Trashed_Flag_Field in %s constructor?', 'event_espresso'), get_class($this), get_class($this)));
         }
     }
 }

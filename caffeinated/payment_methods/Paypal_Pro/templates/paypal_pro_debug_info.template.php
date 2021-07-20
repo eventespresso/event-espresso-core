@@ -33,7 +33,7 @@
             ); ?></li>
         <li><?php
             printf(
-                __(
+                esc_html__(
                     'To find the sandbox account\'s credit card, go to %1$s, then "Dashboard", then under Sandbox click "Accounts", then click your account and click "Profile", then in the popup that appears click on the "Funding" tab. Your testing card is listed there.',
                     'event_espresso'
                 ),
@@ -74,7 +74,7 @@
         <strong><?php _e('Testing Result Code Responses', 'event_espresso'); ?></strong><br/>
         <span class="small-text"><?php
             printf(
-                __(
+                esc_html__(
                     'You can use the amount of the transaction to generate a particular result code (see %s PayPal\'s documentation%s). The table below lists the general guidelines for specifying amounts. IMPORTANT: before you attempt any of these, ensure your sandbox PayPal account has %s "Negative Testing" set to on%s. Also be aware that you can generate AVS errors by using certain strings in your address field, and CVV errors using certain CVV values. See %s this PayPal doc %s',
                     'event_espresso'
                 ),

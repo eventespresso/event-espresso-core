@@ -33,7 +33,7 @@
 <tbody>
 <tr>
 <td>
-<h2><?php printf( __('Hello, %s:', 'ee-new-messages-template-pack-test'),  '[PRIMARY_REGISTRANT_FNAME] [PRIMARY_REGISTRANT_LNAME]' ); ?></h2>
+<h2><?php printf( esc_html__('Hello, %s:', 'ee-new-messages-template-pack-test'),  '[PRIMARY_REGISTRANT_FNAME] [PRIMARY_REGISTRANT_LNAME]' ); ?></h2>
 <p class="lead"><?php _e("We're just notifying you of a refund issued for the following transaction and tickets:", 'ee-new-messages-template-pack-test'); ?></p>
 <h3><?php _e('Refund Details:', 'ee-new-messages-template-pack-test'); ?></h3>
 <ul>

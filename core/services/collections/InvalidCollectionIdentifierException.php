@@ -28,7 +28,7 @@ class InvalidCollectionIdentifierException extends OutOfBoundsException
     {
         if (empty($message)) {
             $message = sprintf(
-                __(
+                esc_html__(
                     'The supplied identifier "%1$s" does not exist within this collection. 
                     You may need to delay adding this asset until the required dependency has been added.',
                     'event_espresso'

@@ -47,7 +47,7 @@ class Payments_Admin_Page_Init extends EE_Admin_Page_Init
 
     protected function _set_init_properties()
     {
-        $this->label = __('Payment Methods', 'event_espresso');
+        $this->label = esc_html__('Payment Methods', 'event_espresso');
     }
 
 
@@ -65,7 +65,7 @@ class Payments_Admin_Page_Init extends EE_Admin_Page_Init
                 'show_on_menu'    => EE_Admin_Page_Menu_Map::BLOG_ADMIN_ONLY,
                 'parent_slug'     => 'espresso_events',
                 'menu_slug'       => EE_PAYMENTS_PG_SLUG,
-                'menu_label'      => __('Payment Methods', 'event_espresso'),
+                'menu_label'      => esc_html__('Payment Methods', 'event_espresso'),
                 'capability'      => 'ee_manage_gateways',
                 'admin_init_page' => $this,
             )
@@ -99,7 +99,7 @@ class Payments_Admin_Page_Init extends EE_Admin_Page_Init
             echo '<div class="error">
 				 <p>'
                  . sprintf(
-                     __(
+                     esc_html__(
                          "There are no Active Payment Methods setup for Event Espresso. Please %s activate at least one.%s",
                          "event_espresso"
                      ),
@@ -123,7 +123,7 @@ class Payments_Admin_Page_Init extends EE_Admin_Page_Init
         } else {
             throw new \EE_Error(
                 sprintf(
-                    __('Table analysis class on class %1$s is not set properly.', 'event_espresso'),
+                    esc_html__('Table analysis class on class %1$s is not set properly.', 'event_espresso'),
                     get_class($this)
                 )
             );

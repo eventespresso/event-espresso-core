@@ -62,7 +62,7 @@ class EE_Register_Messages_Template_Pack implements EEI_Plugin_API
         // check for required params
         if (empty($identifier) || empty($setup_args['path']) || empty($setup_args['classname'])) {
             throw new EE_Error(
-                __(
+                esc_html__(
                     'In order to register a new template pack for the EE Messages system, you must include a value to reference the template pack being registered and the setup_args must have the path for the new template pack class as well as the classname for the new Template Pack Class. ',
                     'event_espresso'
                 )
@@ -88,7 +88,7 @@ class EE_Register_Messages_Template_Pack implements EEI_Plugin_API
             EE_Error::doing_it_wrong(
                 __METHOD__,
                 sprintf(
-                    __(
+                    esc_html__(
                         'A EE Messages Template Pack given the reference "%s" has been attempted to be registered with the EE Messages System.  It may or may not work because it should be only called on the "EE_Brewing_Regular__messages_caf" hook.',
                         'event_espresso'
                     ),
@@ -180,7 +180,7 @@ class EE_Register_Messages_Template_Pack implements EEI_Plugin_API
             if ($args['classname'] == $classname) {
                 EE_Error::add_error(
                     sprintf(
-                        __(
+                        esc_html__(
                             'The %s template pack that you just activated cannot be registered with the messages system because there is already a template pack active using the same classname.  Contact the author of this template pack to let them know of the conflict.  To stop seeing this message you will need to deactivate this template pack.',
                             'event_espresso'
                         ),

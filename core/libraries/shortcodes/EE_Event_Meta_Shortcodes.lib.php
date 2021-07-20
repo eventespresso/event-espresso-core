@@ -40,8 +40,8 @@ class EE_Event_Meta_Shortcodes extends EE_Shortcodes
 
     protected function _init_props()
     {
-        $this->label = __('Event Meta Shortcodes', 'event_espresso');
-        $this->description = __('All shortcodes related to Event Meta data', 'event_espresso');
+        $this->label = esc_html__('Event Meta Shortcodes', 'event_espresso');
+        $this->description = esc_html__('All shortcodes related to Event Meta data', 'event_espresso');
         $this->_shortcodes = array();
     }
 

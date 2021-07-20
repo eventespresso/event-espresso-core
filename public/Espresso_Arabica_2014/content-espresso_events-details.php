@@ -9,10 +9,10 @@ global $post;
 	<?php
 		if ( ! post_password_required() && ( comments_open() || get_comments_number() ) ) :
 	?>
-	<span class="comments-link"><?php comments_popup_link( __( 'Leave a comment', 'event_espresso' ), __( '1 Comment', 'event_espresso' ), __( '% Comments', 'event_espresso' ) ); ?></span>
+	<span class="comments-link"><?php comments_popup_link( esc_html__( 'Leave a comment', 'event_espresso' ), esc_html__( '1 Comment', 'event_espresso' ), esc_html__( '% Comments', 'event_espresso' ) ); ?></span>
 	<?php
 		endif;
-		edit_post_link( __( 'Edit', 'event_espresso' ), '<span class="edit-link">', '</span>' );
+		edit_post_link( esc_html__( 'Edit', 'event_espresso' ), '<span class="edit-link">', '</span>' );
 	?>
 	</div>
 <?php endif;

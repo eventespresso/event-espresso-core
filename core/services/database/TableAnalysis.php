@@ -102,7 +102,7 @@ class TableAnalysis extends \EE_Base
                 // log this because that's weird. Just use the normal PHP error log
                 error_log(
                     sprintf(
-                        __(
+                        esc_html__(
                             'Event Espresso error detected when checking if table existed: %1$s (it wasn\'t just that the table didn\'t exist either)',
                             'event_espresso'
                         ),

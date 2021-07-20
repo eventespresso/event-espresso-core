@@ -12,28 +12,28 @@
         $line_items_can_be_for = array('Ticket','Price');
         $this->_fields = array(
             'Line_Item'=> array(
-                'LIN_ID'=>new EE_Primary_Key_Int_Field('LIN_ID', __("ID", "event_espresso")),
-                'LIN_code'=>new EE_Slug_Field('LIN_code', __("Code for index into Cart", "event_espresso"), true),
-                'TXN_ID'=>new EE_Foreign_Key_Int_Field('TXN_ID', __("Transaction ID", "event_espresso"), true, null, 'Transaction'),
-                'LIN_name'=>new EE_Full_HTML_Field('LIN_name', __("Line Item Name", "event_espresso"), false, ''),
-                'LIN_desc'=>new EE_Full_HTML_Field('LIN_desc', __("Line Item Description", "event_espresso"), true),
-                'LIN_unit_price'=>new EE_Money_Field('LIN_unit_price',  __("Unit Price", "event_espresso"),false,0),
-                'LIN_percent'=>new EE_Float_Field('LIN_percent', __("Percent", "event_espresso"), false, false),
-                'LIN_is_taxable'=>new EE_Boolean_Field('LIN_is_taxable', __("Taxable", "event_espresso"), false, false),
-                'LIN_order'=>new EE_Integer_Field('LIN_order', __("Order of Application towards total of parent", "event_espresso"), false,1),
-                'LIN_total'=>new EE_Money_Field('LIN_total', __("Total (unit price x quantity)", "event_espresso"), false, 0),
-                'LIN_quantity'=>new EE_Integer_Field('LIN_quantity', __("Quantity", "event_espresso"), true, null),
-                'LIN_parent'=>new EE_Integer_Field('LIN_parent', __("Parent ID (this item goes towards that Line Item's total)", "event_espresso"), true, null),
-                'LIN_type'=>new EE_Enum_Text_Field('LIN_type', __("Type", "event_espresso"), false, 'line-item',
+                'LIN_ID'=>new EE_Primary_Key_Int_Field('LIN_ID', esc_html__("ID", "event_espresso")),
+                'LIN_code'=>new EE_Slug_Field('LIN_code', esc_html__("Code for index into Cart", "event_espresso"), true),
+                'TXN_ID'=>new EE_Foreign_Key_Int_Field('TXN_ID', esc_html__("Transaction ID", "event_espresso"), true, null, 'Transaction'),
+                'LIN_name'=>new EE_Full_HTML_Field('LIN_name', esc_html__("Line Item Name", "event_espresso"), false, ''),
+                'LIN_desc'=>new EE_Full_HTML_Field('LIN_desc', esc_html__("Line Item Description", "event_espresso"), true),
+                'LIN_unit_price'=>new EE_Money_Field('LIN_unit_price',  esc_html__("Unit Price", "event_espresso"),false,0),
+                'LIN_percent'=>new EE_Float_Field('LIN_percent', esc_html__("Percent", "event_espresso"), false, false),
+                'LIN_is_taxable'=>new EE_Boolean_Field('LIN_is_taxable', esc_html__("Taxable", "event_espresso"), false, false),
+                'LIN_order'=>new EE_Integer_Field('LIN_order', esc_html__("Order of Application towards total of parent", "event_espresso"), false,1),
+                'LIN_total'=>new EE_Money_Field('LIN_total', esc_html__("Total (unit price x quantity)", "event_espresso"), false, 0),
+                'LIN_quantity'=>new EE_Integer_Field('LIN_quantity', esc_html__("Quantity", "event_espresso"), true, null),
+                'LIN_parent'=>new EE_Integer_Field('LIN_parent', esc_html__("Parent ID (this item goes towards that Line Item's total)", "event_espresso"), true, null),
+                'LIN_type'=>new EE_Enum_Text_Field('LIN_type', esc_html__("Type", "event_espresso"), false, 'line-item',
                         array(
-                            self::type_line_item=>  __("Line Item", "event_espresso"),
-                            self::type_sub_line_item=>  __("Sub-Item", "event_espresso"),
-                            self::type_sub_total=>  __("Subtotal", "event_espresso"),
-                            self::type_tax_sub_total => __("Tax Subtotal", "event_espresso"),
-                            self::type_tax=>  __("Tax", "event_espresso"),
-                            self::type_total=>  __("Total", "event_espresso"))),
-                'OBJ_ID'=>new EE_Foreign_Key_Int_Field('OBJ_ID', __("ID of Item purchased.", "event_espresso"), true,null,$line_items_can_be_for),
-                'OBJ_type'=>new EE_Any_Foreign_Model_Name_Field('OBJ_type', __("Model Name this Line Item is for", "event_espresso"), true,null,$line_items_can_be_for),
+                            self::type_line_item=>  esc_html__("Line Item", "event_espresso"),
+                            self::type_sub_line_item=>  esc_html__("Sub-Item", "event_espresso"),
+                            self::type_sub_total=>  esc_html__("Subtotal", "event_espresso"),
+                            self::type_tax_sub_total => esc_html__("Tax Subtotal", "event_espresso"),
+                            self::type_tax=>  esc_html__("Tax", "event_espresso"),
+                            self::type_total=>  esc_html__("Total", "event_espresso"))),
+                'OBJ_ID'=>new EE_Foreign_Key_Int_Field('OBJ_ID', esc_html__("ID of Item purchased.", "event_espresso"), true,null,$line_items_can_be_for),
+                'OBJ_type'=>new EE_Any_Foreign_Model_Name_Field('OBJ_type', esc_html__("Model Name this Line Item is for", "event_espresso"), true,null,$line_items_can_be_for),
             )
         );
  */
@@ -45,7 +45,7 @@ class EE_DMS_4_1_0_line_items extends EE_Data_Migration_Script_Stage_Table
     public function __construct()
     {
         global $wpdb;
-        $this->_pretty_name = __("Line Items", "event_espresso");
+        $this->_pretty_name = esc_html__("Line Items", "event_espresso");
         $this->_old_table = $wpdb->prefix . "events_attendee";
         $this->select_expression = 'att.*, e.event_status';
         $this->_extra_where_sql = ' AS att
@@ -63,7 +63,7 @@ class EE_DMS_4_1_0_line_items extends EE_Data_Migration_Script_Stage_Table
         if (intval($old_row['is_primary'])) {
             $txn_id = $this->get_migration_script()->get_mapping_new_pk($this->_old_table, $old_row['id'], $this->_new_transaction_table);
             if (! $txn_id) {
-                $this->add_error(sprintf(__("Could not find the transaction for the 3.1 attendee %d from row %s", "event_espresso"), $old_row['id'], $this->_json_encode($old_row)));
+                $this->add_error(sprintf(esc_html__("Could not find the transaction for the 3.1 attendee %d from row %s", "event_espresso"), $old_row['id'], $this->_json_encode($old_row)));
                 return;
             }
             $txn = $this->_get_txn($txn_id);
@@ -95,7 +95,7 @@ class EE_DMS_4_1_0_line_items extends EE_Data_Migration_Script_Stage_Table
         $total_line_item_id = $this->_insert_new_line_item(array(
             'LIN_code' => 'total',
             'TXN_ID' => $transaction['TXN_ID'],
-            'LIN_name' =>  __("Total", "event_espresso"),
+            'LIN_name' =>  esc_html__("Total", "event_espresso"),
             'LIN_total' => $transaction['TXN_total'],
             'LIN_type' => 'total',
             'OBJ_ID' => $transaction['TXN_ID'],
@@ -110,7 +110,7 @@ class EE_DMS_4_1_0_line_items extends EE_Data_Migration_Script_Stage_Table
         $subtotal_line_item_id = $this->_insert_new_line_item(array(
             'LIN_code' => 'sub-total',
             'TXN_ID' => $transaction['TXN_ID'],
-            'LIN_name' =>  __("Subtotal", "event_espresso"),
+            'LIN_name' =>  esc_html__("Subtotal", "event_espresso"),
             'LIN_total' => $reg_total,
             'LIN_parent' => $total_line_item_id,
             'LIN_type' => 'sub-total',

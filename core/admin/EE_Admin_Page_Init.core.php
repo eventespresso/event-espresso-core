@@ -89,7 +89,7 @@ abstract class EE_Admin_Page_Init extends EE_Base
             EE_Error::doing_it_wrong(
                 get_class($this) . '::$_menu_map',
                 sprintf(
-                    __(
+                    esc_html__(
                         'The EE4 addon with the class %s is setting up the _menu_map property incorrectly for this version of EE core.  Please see Admin_Page_Init class examples in core for the new way of setting this property up.',
                         'event_espresso'
                     ),
@@ -211,13 +211,13 @@ abstract class EE_Admin_Page_Init extends EE_Base
             return;
         }
         if (! is_object($this->_loaded_page_object)) {
-            $msg[] = __(
+            $msg[] = esc_html__(
                 'We can\'t load the page because we\'re missing a valid page object that tells us what to load',
                 'event_espresso'
             );
             $msg[] = $msg[0] . "\r\n"
                      . sprintf(
-                         __(
+                         esc_html__(
                              'The custom slug you have set for this page is %s. This means we\'re looking for the class %s_Admin_Page (found in %s_Admin_Page.core.php) within your %s directory',
                              'event_espresso'
                          ),
@@ -440,7 +440,7 @@ abstract class EE_Admin_Page_Init extends EE_Base
                 $this->_menu_map->menu_slug
             )
         ) {
-            wp_die(__('You don\'t have access to this page.', 'event_espresso'), '', array('back_link' => true));
+            wp_die(esc_html__('You don\'t have access to this page.', 'event_espresso'), '', array('back_link' => true));
         }
         return true;
     }

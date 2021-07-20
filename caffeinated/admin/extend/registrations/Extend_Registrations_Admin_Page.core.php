@@ -1051,13 +1051,13 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
         }
         if ($errors > 0) {
             EE_Error::add_error(
-                sprintf(__('There were %d records that did not delete successfully', 'event_espresso'), $errors),
+                sprintf(esc_html__('There were %d records that did not delete successfully', 'event_espresso'), $errors),
                 __FILE__,
                 __FUNCTION__,
                 __LINE__
             );
         } else {
-            EE_Error::add_success(__('Records were successfully deleted', 'event_espresso'));
+            EE_Error::add_success(esc_html__('Records were successfully deleted', 'event_espresso'));
         }
         $this->_redirect_after_action(false, '', '', $query_args, true);
     }
@@ -1088,7 +1088,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
                     __LINE__
                 );
             } else {
-                EE_Error::add_success(__('Check-In record successfully deleted', 'event_espresso'));
+                EE_Error::add_success(esc_html__('Check-In record successfully deleted', 'event_espresso'));
             }
         } else {
             EE_Error::add_error(

@@ -22,9 +22,9 @@ class EEM_New_Addon_Thing extends EEM_Base{
 		);
 		$this->_fields = array(
 			'New_Addon_Thing'=>array(
-				'NEW_ID'=>new EE_Primary_Key_Int_Field('NEW_ID', __("New Addon Thing ID", 'event_espresso')),
-				'NEW_name' => new EE_Plain_Text_Field('NEW_name', __('Name', 'event_espresso'), false),
-				'NEW_wp_user' => new EE_WP_User_Field( 'NEW_wp_user', __( 'Things Creator', 'event_espresso' ), false )
+				'NEW_ID'=>new EE_Primary_Key_Int_Field('NEW_ID', esc_html__("New Addon Thing ID", 'event_espresso')),
+				'NEW_name' => new EE_Plain_Text_Field('NEW_name', esc_html__('Name', 'event_espresso'), false),
+				'NEW_wp_user' => new EE_WP_User_Field( 'NEW_wp_user', esc_html__( 'Things Creator', 'event_espresso' ), false )
 			)
 		);
 		$this->_model_relations = array(

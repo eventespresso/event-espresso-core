@@ -24,7 +24,7 @@ class EE_DMS_4_6_0_question_types extends EE_Data_Migration_Script_Stage_Table
     public function __construct()
     {
         global $wpdb;
-        $this->_pretty_name = __('Question Types', 'event_espresso');
+        $this->_pretty_name = esc_html__('Question Types', 'event_espresso');
         $this->_old_table = $wpdb->prefix . 'esp_question';
         $this->_question_type_conversions = array(
             'MULTIPLE'          => 'CHECKBOX',
@@ -56,7 +56,7 @@ class EE_DMS_4_6_0_question_types extends EE_Data_Migration_Script_Stage_Table
             if (! $success) {
                 $this->add_error(
                     sprintf(
-                        __('Could not update question type %1$s for question ID=%2$d because "%3$s"', 'event_espresso'),
+                        esc_html__('Could not update question type %1$s for question ID=%2$d because "%3$s"', 'event_espresso'),
                         wp_json_encode($question['QST_type']),
                         $question['QST_ID'],
                         $wpdb->last_error

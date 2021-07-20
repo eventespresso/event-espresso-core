@@ -107,7 +107,7 @@ class EE_Export
 
                     default:
                         EE_Error::add_error(
-                            __('An error occurred! The requested export report could not be found.', 'event_espresso'),
+                            esc_html__('An error occurred! The requested export report could not be found.', 'event_espresso'),
                             __FILE__,
                             __FUNCTION__,
                             __LINE__
@@ -167,7 +167,7 @@ class EE_Export
                 $value_to_equal = $EVT_ID;
                 $event = EE_Registry::instance()->load_model('Event')->get_one_by_ID($EVT_ID);
 
-                $filename = 'event-' . ($event instanceof EE_Event ? $event->slug() : __('unknown', 'event_espresso'));
+                $filename = 'event-' . ($event instanceof EE_Event ? $event->slug() : esc_html__('unknown', 'event_espresso'));
             }
             $event_query_params[0]['EVT_ID'] = $value_to_equal;
             $related_models_query_params[0]['Event.EVT_ID'] = $value_to_equal;
@@ -218,7 +218,7 @@ class EE_Export
 
         if (! $this->EE_CSV->export_multiple_model_data_to_csv($filename, $model_data)) {
             EE_Error::add_error(
-                __(
+                esc_html__(
                     "'An error occurred and the Event details could not be exported from the database.'",
                     "event_espresso"
                 ),
@@ -243,11 +243,11 @@ class EE_Export
             foreach (EEM_Attendee::instance()->field_settings() as $field_name => $field_obj) {
                 if ($field_name == 'STA_ID') {
                     $state_name_field = EEM_State::instance()->field_settings_for('STA_name');
-                    $csv_row[ __('State', 'event_espresso') ] = $attendee_row[ $state_name_field->get_qualified_column(
+                    $csv_row[ esc_html__('State', 'event_espresso') ] = $attendee_row[ $state_name_field->get_qualified_column(
                     ) ];
                 } elseif ($field_name == 'CNT_ISO') {
                     $country_name_field = EEM_Country::instance()->field_settings_for('CNT_name');
-                    $csv_row[ __(
+                    $csv_row[ esc_html__(
                         'Country',
                         'event_espresso'
                     ) ] = $attendee_row[ $country_name_field->get_qualified_column() ];
@@ -293,7 +293,7 @@ class EE_Export
 
         if (! $this->EE_CSV->export_multiple_model_data_to_csv($filename, $model_data)) {
             EE_Error::add_error(
-                __(
+                esc_html__(
                     'An error occurred and the Attendee data could not be exported from the database.',
                     'event_espresso'
                 ),
@@ -411,8 +411,8 @@ class EE_Export
                 $reg_csv_array = array();
                 if (! $event_id) {
                     // get the event's name and Id
-                    $reg_csv_array[ __('Event', 'event_espresso') ] = sprintf(
-                        __('%1$s (%2$s)', 'event_espresso'),
+                    $reg_csv_array[ esc_html__('Event', 'event_espresso') ] = sprintf(
+                        esc_html__('%1$s (%2$s)', 'event_espresso'),
                         $this->_prepare_value_from_db_for_display(
                             EEM_Event::instance(),
                             'EVT_name',
@@ -434,7 +434,7 @@ class EE_Export
                         );
                     } elseif ($field_name == 'REG_count') {
                         $value = sprintf(
-                            __('%s of %s', 'event_espresso'),
+                            esc_html__('%s of %s', 'event_espresso'),
                             $this->_prepare_value_from_db_for_display(
                                 $reg_model,
                                 'REG_count',
@@ -463,35 +463,35 @@ class EE_Export
                     $reg_csv_array[ $this->_get_column_name_for_field($field) ] = $value;
                     if ($field_name == 'REG_final_price') {
                         // add a column named Currency after the final price
-                        $reg_csv_array[ __("Currency", "event_espresso") ] = EE_Config::instance()->currency->code;
+                        $reg_csv_array[ esc_html__("Currency", "event_espresso") ] = EE_Config::instance()->currency->code;
                     }
                 }
                 // get pretty status
                 $stati = EEM_Status::instance()->localized_status(
                     array(
-                        $reg_row['Registration.STS_ID']     => __('unknown', 'event_espresso'),
-                        $reg_row['TransactionTable.STS_ID'] => __('unknown', 'event_espresso'),
+                        $reg_row['Registration.STS_ID']     => esc_html__('unknown', 'event_espresso'),
+                        $reg_row['TransactionTable.STS_ID'] => esc_html__('unknown', 'event_espresso'),
                     ),
                     false,
                     'sentence'
                 );
-                $reg_csv_array[ __(
+                $reg_csv_array[ esc_html__(
                     "Registration Status",
                     'event_espresso'
                 ) ] = $stati[ $reg_row['Registration.STS_ID'] ];
                 // get pretty trnasaction status
-                $reg_csv_array[ __(
+                $reg_csv_array[ esc_html__(
                     "Transaction Status",
                     'event_espresso'
                 ) ] = $stati[ $reg_row['TransactionTable.STS_ID'] ];
-                $reg_csv_array[ __('Transaction Amount Due', 'event_espresso') ] = $is_primary_reg
+                $reg_csv_array[ esc_html__('Transaction Amount Due', 'event_espresso') ] = $is_primary_reg
                     ? $this->_prepare_value_from_db_for_display(
                         EEM_Transaction::instance(),
                         'TXN_total',
                         $reg_row['TransactionTable.TXN_total'],
                         'localized_float'
                     ) : '0.00';
-                $reg_csv_array[ __('Amount Paid', 'event_espresso') ] = $is_primary_reg
+                $reg_csv_array[ esc_html__('Amount Paid', 'event_espresso') ] = $is_primary_reg
                     ? $this->_prepare_value_from_db_for_display(
                         EEM_Transaction::instance(),
                         'TXN_paid',
@@ -516,22 +516,22 @@ class EE_Export
 
                     foreach ($payments_info as $payment_method_and_gateway_txn_id) {
                         $payment_methods[] = isset($payment_method_and_gateway_txn_id['name'])
-                            ? $payment_method_and_gateway_txn_id['name'] : __('Unknown', 'event_espresso');
+                            ? $payment_method_and_gateway_txn_id['name'] : esc_html__('Unknown', 'event_espresso');
                         $gateway_txn_ids_etc[] = isset($payment_method_and_gateway_txn_id['gateway_txn_id'])
                             ? $payment_method_and_gateway_txn_id['gateway_txn_id'] : '';
                         $payment_times[] = isset($payment_method_and_gateway_txn_id['payment_time'])
                             ? $payment_method_and_gateway_txn_id['payment_time'] : '';
                     }
                 }
-                $reg_csv_array[ __('Payment Date(s)', 'event_espresso') ] = implode(',', $payment_times);
-                $reg_csv_array[ __('Payment Method(s)', 'event_espresso') ] = implode(",", $payment_methods);
-                $reg_csv_array[ __('Gateway Transaction ID(s)', 'event_espresso') ] = implode(
+                $reg_csv_array[ esc_html__('Payment Date(s)', 'event_espresso') ] = implode(',', $payment_times);
+                $reg_csv_array[ esc_html__('Payment Method(s)', 'event_espresso') ] = implode(",", $payment_methods);
+                $reg_csv_array[ esc_html__('Gateway Transaction ID(s)', 'event_espresso') ] = implode(
                     ',',
                     $gateway_txn_ids_etc
                 );
 
                 // get whether or not the user has checked in
-                $reg_csv_array[ __("Check-Ins", "event_espresso") ] = $reg_model->count_related(
+                $reg_csv_array[ esc_html__("Check-Ins", "event_espresso") ] = $reg_model->count_related(
                     $reg_row['Registration.REG_ID'],
                     'Checkin'
                 );
@@ -560,11 +560,11 @@ class EE_Export
                         );
                     }
                 } else {
-                    $ticket_name = __('Unknown', 'event_espresso');
-                    $datetimes_strings = array(__('Unknown', 'event_espresso'));
+                    $ticket_name = esc_html__('Unknown', 'event_espresso');
+                    $datetimes_strings = array(esc_html__('Unknown', 'event_espresso'));
                 }
                 $reg_csv_array[ $ticket_model->field_settings_for('TKT_name')->get_nicename() ] = $ticket_name;
-                $reg_csv_array[ __("Datetimes of Ticket", "event_espresso") ] = implode(", ", $datetimes_strings);
+                $reg_csv_array[ esc_html__("Datetimes of Ticket", "event_espresso") ] = implode(", ", $datetimes_strings);
                 // get datetime(s) of registration
 
                 // add attendee columns
@@ -615,7 +615,7 @@ class EE_Export
                             $answer_row['Question.QST_admin_label']
                         );
                     } else {
-                        $question_label = sprintf(__('Question $s', 'event_espresso'), $answer_row['Answer.QST_ID']);
+                        $question_label = sprintf(esc_html__('Question $s', 'event_espresso'), $answer_row['Answer.QST_ID']);
                     }
                     if (isset($answer_row['Question.QST_type']) && $answer_row['Question.QST_type'] == EEM_Question::QST_type_state) {
                         $reg_csv_array[ $question_label ] = EEM_State::instance()->get_state_name_by_ID(
@@ -658,10 +658,10 @@ class EE_Export
         if ($event_id) {
             $event_slug = EEM_Event::instance()->get_var(array(array('EVT_ID' => $event_id)), 'EVT_slug');
             if (! $event_slug) {
-                $event_slug = __('unknown', 'event_espresso');
+                $event_slug = esc_html__('unknown', 'event_espresso');
             }
         } else {
-            $event_slug = __('all', 'event_espresso');
+            $event_slug = esc_html__('all', 'event_espresso');
         }
         $filename = sprintf("registrations-for-%s", $event_slug);
 
@@ -718,7 +718,7 @@ class EE_Export
 
         if (! $this->EE_CSV->export_multiple_model_data_to_csv($filename, $table_data)) {
             EE_Error::add_error(
-                __(
+                esc_html__(
                     'An error occurred and the Category details could not be exported from the database.',
                     'event_espresso'
                 ),
@@ -743,7 +743,7 @@ class EE_Export
             $filename = sanitize_key($filename) . '-' . $this->today;
             return $filename;
         } else {
-            EE_Error::add_error(__("No filename was provided", "event_espresso"), __FILE__, __FUNCTION__, __LINE__);
+            EE_Error::add_error(esc_html__("No filename was provided", "event_espresso"), __FILE__, __FUNCTION__, __LINE__);
         }
         return false;
     }

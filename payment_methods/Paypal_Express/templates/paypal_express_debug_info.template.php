@@ -17,7 +17,7 @@
     </p>
     <p>
         <?php printf(
-            __('More details can be found here: %1$s Testing Error Conditions %2$s.', 'event_espresso'),
+            esc_html__('More details can be found here: %1$s Testing Error Conditions %2$s.', 'event_espresso'),
             '<a href="https://developer.paypal.com/docs/classic/lifecycle/sb_error-conditions">',
             '</a>'
         ); ?>

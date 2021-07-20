@@ -210,7 +210,7 @@ abstract class EE_Qtip_Config extends EE_Base
             if (! isset($qt['content_id']) || ! isset($qt['target']) || ! isset($qt['content'])) {
                 throw new EE_Error(
                     sprintf(
-                        __(
+                        esc_html__(
                             'There is something wrong with the _qtipsa property setup for the %s qtip config class.  The dump of the current array index is: %s.<br /><br />Please check that it is setup correctly.',
                             'event_espresso'
                         ),

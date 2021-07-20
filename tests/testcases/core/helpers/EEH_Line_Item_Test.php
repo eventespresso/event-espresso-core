@@ -563,7 +563,7 @@ class EEH_Line_Item_Test extends EE_UnitTestCase{
 		$grand_total = EE_Line_Item::new_instance(
 			array(
 				'LIN_code' => 'total',
-				'LIN_name' => __( 'Grand Total', 'event_espresso' ),
+				'LIN_name' => esc_html__( 'Grand Total', 'event_espresso' ),
 				'LIN_type' => EEM_Line_Item::type_total,
 				'OBJ_type' => 'Transaction'
 			)
@@ -671,7 +671,7 @@ class EEH_Line_Item_Test extends EE_UnitTestCase{
 		$grand_total = EE_Line_Item::new_instance(
 			array(
 				'LIN_code' => 'total',
-				'LIN_name' => __( 'Grand Total', 'event_espresso' ),
+				'LIN_name' => esc_html__( 'Grand Total', 'event_espresso' ),
 				'LIN_type' => EEM_Line_Item::type_total,
 				'OBJ_type' => 'Transaction'
 			)
@@ -768,7 +768,7 @@ class EEH_Line_Item_Test extends EE_UnitTestCase{
 		$grand_total = EE_Line_Item::new_instance(
 			array(
 				'LIN_code' => 'total',
-				'LIN_name' => __( 'Grand Total', 'event_espresso' ),
+				'LIN_name' => esc_html__( 'Grand Total', 'event_espresso' ),
 				'LIN_type' => EEM_Line_Item::type_total,
 				'OBJ_type' => 'Transaction'
 			)

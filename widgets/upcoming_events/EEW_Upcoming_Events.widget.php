@@ -34,8 +34,8 @@ class EEW_Upcoming_Events extends EspressoWidget
     public function __construct()
     {
         parent::__construct(
-            __('Event Espresso Upcoming Events', 'event_espresso'),
-            array( 'description' => __('A widget to display your upcoming events.', 'event_espresso'))
+            esc_html__('Event Espresso Upcoming Events', 'event_espresso'),
+            array( 'description' => esc_html__('A widget to display your upcoming events.', 'event_espresso'))
         );
     }
 
@@ -54,7 +54,7 @@ class EEW_Upcoming_Events extends EspressoWidget
         EE_Registry::instance()->load_class('Question_Option', array(), false, false, true);
         // Set up some default widget settings.
         $defaults = array(
-            'title' => __('Upcoming Events', 'event_espresso'),
+            'title' => esc_html__('Upcoming Events', 'event_espresso'),
             'category_name' => '',
             'show_expired' => 0,
             'show_desc' => true,
@@ -71,12 +71,12 @@ class EEW_Upcoming_Events extends EspressoWidget
         // don't add HTML labels for EE_Form_Fields generated inputs
         add_filter('FHEE__EEH_Form_Fields__label_html', '__return_empty_string');
         $yes_no_values = array(
-            EE_Question_Option::new_instance(array( 'QSO_value' => false, 'QSO_desc' => __('No', 'event_espresso'))),
-            EE_Question_Option::new_instance(array( 'QSO_value' => true, 'QSO_desc' => __('Yes', 'event_espresso')))
+            EE_Question_Option::new_instance(array( 'QSO_value' => false, 'QSO_desc' => esc_html__('No', 'event_espresso'))),
+            EE_Question_Option::new_instance(array( 'QSO_value' => true, 'QSO_desc' => esc_html__('Yes', 'event_espresso')))
         );
         $sort_values = array(
-            EE_Question_Option::new_instance(array( 'QSO_value' => 'ASC', 'QSO_desc' => __('ASC', 'event_espresso'))),
-            EE_Question_Option::new_instance(array( 'QSO_value' => 'DESC', 'QSO_desc' => __('DESC', 'event_espresso')))
+            EE_Question_Option::new_instance(array( 'QSO_value' => 'ASC', 'QSO_desc' => esc_html__('ASC', 'event_espresso'))),
+            EE_Question_Option::new_instance(array( 'QSO_value' => 'DESC', 'QSO_desc' => esc_html__('DESC', 'event_espresso')))
         );
 
         ?>
@@ -105,9 +105,9 @@ class EEW_Upcoming_Events extends EspressoWidget
                     }
                 }
             }
-            array_unshift($event_categories, EE_Question_Option::new_instance(array( 'QSO_value' => '', 'QSO_desc' => __(' - display all - ', 'event_espresso'))));
+            array_unshift($event_categories, EE_Question_Option::new_instance(array( 'QSO_value' => '', 'QSO_desc' => esc_html__(' - display all - ', 'event_espresso'))));
             echo EEH_Form_Fields::select(
-                __('Event Category:', 'event_espresso'),
+                esc_html__('Event Category:', 'event_espresso'),
                 $instance['category_name'],
                 $event_categories,
                 $this->get_field_name('category_name'),
@@ -127,12 +127,12 @@ class EEW_Upcoming_Events extends EspressoWidget
             </label>
             <?php
             echo EEH_Form_Fields::select(
-                __('Show Expired Events:', 'event_espresso'),
+                esc_html__('Show Expired Events:', 'event_espresso'),
                 $instance['show_expired'],
                 array(
-                    EE_Question_Option::new_instance(array( 'QSO_value' => 0, 'QSO_desc' => __('No', 'event_espresso'))),
-                    EE_Question_Option::new_instance(array( 'QSO_value' => 1, 'QSO_desc' => __('Yes', 'event_espresso'))),
-                    EE_Question_Option::new_instance(array( 'QSO_value' => 2, 'QSO_desc' => __('Show Only Expired', 'event_espresso'))),
+                    EE_Question_Option::new_instance(array( 'QSO_value' => 0, 'QSO_desc' => esc_html__('No', 'event_espresso'))),
+                    EE_Question_Option::new_instance(array( 'QSO_value' => 1, 'QSO_desc' => esc_html__('Yes', 'event_espresso'))),
+                    EE_Question_Option::new_instance(array( 'QSO_value' => 2, 'QSO_desc' => esc_html__('Show Only Expired', 'event_espresso'))),
                 ),
                 $this->get_field_name('show_expired'),
                 $this->get_field_id('show_expired')
@@ -145,7 +145,7 @@ class EEW_Upcoming_Events extends EspressoWidget
             </label>
             <?php
             echo EEH_Form_Fields::select(
-                __('Sort Events:', 'event_espresso'),
+                esc_html__('Sort Events:', 'event_espresso'),
                 $instance['sort'],
                 $sort_values,
                 $this->get_field_name('sort'),
@@ -169,10 +169,10 @@ class EEW_Upcoming_Events extends EspressoWidget
                         $image_sizes[] = EE_Question_Option::new_instance(array( 'QSO_value' => $image_size, 'QSO_desc' => $image_size ));
                     }
                 }
-                $image_sizes[] = EE_Question_Option::new_instance(array( 'QSO_value' => 'none', 'QSO_desc' =>  __('don\'t show images', 'event_espresso') ));
+                $image_sizes[] = EE_Question_Option::new_instance(array( 'QSO_value' => 'none', 'QSO_desc' =>  esc_html__('don\'t show images', 'event_espresso') ));
             }
             echo EEH_Form_Fields::select(
-                __('Image Size:', 'event_espresso'),
+                esc_html__('Image Size:', 'event_espresso'),
                 $instance['image_size'],
                 $image_sizes,
                 $this->get_field_name('image_size'),
@@ -187,7 +187,7 @@ class EEW_Upcoming_Events extends EspressoWidget
             </label>
             <?php
             echo EEH_Form_Fields::select(
-                __('Show Description:', 'event_espresso'),
+                esc_html__('Show Description:', 'event_espresso'),
                 $instance['show_desc'],
                 $yes_no_values,
                 $this->get_field_name('show_desc'),
@@ -201,7 +201,7 @@ class EEW_Upcoming_Events extends EspressoWidget
             </label>
             <?php
             echo EEH_Form_Fields::select(
-                __('Show Dates:', 'event_espresso'),
+                esc_html__('Show Dates:', 'event_espresso'),
                 $instance['show_dates'],
                 $yes_no_values,
                 $this->get_field_name('show_dates'),
@@ -215,7 +215,7 @@ class EEW_Upcoming_Events extends EspressoWidget
             </label>
             <?php
             echo EEH_Form_Fields::select(
-                __('Show on all Pages:', 'event_espresso'),
+                esc_html__('Show on all Pages:', 'event_espresso'),
                 $instance['show_everywhere'],
                 $yes_no_values,
                 $this->get_field_name('show_everywhere'),
@@ -235,7 +235,7 @@ class EEW_Upcoming_Events extends EspressoWidget
             </label>
             <?php
             echo EEH_Form_Fields::select(
-                __('Show Date Range:', 'event_espresso'),
+                esc_html__('Show Date Range:', 'event_espresso'),
                 $instance['date_range'],
                 $yes_no_values,
                 $this->get_field_name('date_range'),

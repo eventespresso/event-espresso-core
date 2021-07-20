@@ -5,7 +5,7 @@
     <?php // $type = 'major'; ?>
     <p><?php
         printf(
-            __('<strong>Version %1$s</strong> is a %2$s bug fix/enhancement release.', 'event_espresso'),
+            esc_html__('<strong>Version %1$s</strong> is a %2$s bug fix/enhancement release.', 'event_espresso'),
             EVENT_ESPRESSO_VERSION,
             $type
         ); ?>
@@ -16,7 +16,7 @@
         ?>
         <?php
         printf(
-            __('For more information, see <a href="%s">the release notes</a>.', 'event_espresso'),
+            esc_html__('For more information, see <a href="%s">the release notes</a>.', 'event_espresso'),
             'http://eventespresso.com/wiki/ee4-changelog/#' . $ver
         ); ?>
     </p>
@@ -37,7 +37,7 @@
             <p>
                 <?php
                 printf(
-                    __(
+                    esc_html__(
                         'A previous version of Event Espresso has detected. But before anything else can happen, we need to know whether or not to migrate (copy over) your existing event data so that it can be utilized by EE4. For more instructions on what to do, please visit the %sEvent Espresso Maintenance%s page.',
                         'event_espresso'
                     ),

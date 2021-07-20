@@ -1497,7 +1497,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
                     $label = esc_html__('Unknown', 'event_espresso');
                 }
                 $submission_error_messages[] = sprintf(
-                    __('%s : %s', 'event_espresso'),
+                    esc_html__('%s : %s', 'event_espresso'),
                     $label,
                     $validation_error->getMessage()
                 );

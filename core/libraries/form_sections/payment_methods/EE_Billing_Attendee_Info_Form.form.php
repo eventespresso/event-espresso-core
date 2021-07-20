@@ -23,16 +23,16 @@ class EE_Billing_Attendee_Info_Form extends EE_Billing_Info_Form
     {
         $options_array['subsections'] = array_merge(
             array(
-                'first_name'    => new EE_Text_Input(array( 'required' => true, 'html_class' => 'ee-billing-qstn ee-billing-qstn-fname', 'html_label_text' => __('First Name', 'event_espresso') )),
-                'last_name'     => new EE_Text_Input(array( 'required' => true, 'html_class' => 'ee-billing-qstn ee-billing-qstn-lname', 'html_label_text' => __('Last Name', 'event_espresso') )),
-                'email'             => new EE_Email_Input(array( 'required' => true, 'html_class' => 'ee-billing-qstn ee-billing-qstn-email', 'html_label_text' => __('Email', 'event_espresso') )),
-                'address'           => new EE_Text_Input(array( 'html_label_text' =>  __('Address', 'event_espresso'), 'required' => true, 'html_class' => 'ee-billing-qstn ee-billing-qstn-address' )),
-                'address2'      => new EE_Text_Input(array( 'html_label_text' => __('Address 2', 'event_espresso'), 'html_class' => 'ee-billing-qstn ee-billing-qstn-address2' )),
-                'city'                  => new EE_Text_Input(array( 'required' => true, 'html_class' => 'ee-billing-qstn ee-billing-qstn-city', 'html_label_text' => __('City', 'event_espresso') )),
-                'state'                 => apply_filters('FHEE__EE_Billing_Attendee_Info_Form__state_field', new EE_State_Select_Input(null, array( 'required' => true, 'html_class' => 'ee-billing-qstn ee-billing-qstn-state', 'html_label_text' => __('State', 'event_espresso') ))),
-                'country'           => apply_filters('FHEE__EE_Billing_Attendee_Info_Form__country_field', new EE_Country_Select_Input(null, array( 'required' => true, 'html_class' => 'ee-billing-qstn ee-billing-qstn-country', 'html_label_text' => __('Country', 'event_espresso') ))),
-                'zip'                   => new EE_Text_Input(array( 'required' => true, 'html_class' => 'ee-billing-qstn ee-billing-qstn-zip', 'html_label_text' => __('Zip', 'event_espresso') )),
-                'phone'         => new EE_Text_Input(array( 'html_class' => 'ee-billing-qstn ee-billing-qstn-phone', 'html_label_text' => __('Phone', 'event_espresso') )),
+                'first_name'    => new EE_Text_Input(array( 'required' => true, 'html_class' => 'ee-billing-qstn ee-billing-qstn-fname', 'html_label_text' => esc_html__('First Name', 'event_espresso') )),
+                'last_name'     => new EE_Text_Input(array( 'required' => true, 'html_class' => 'ee-billing-qstn ee-billing-qstn-lname', 'html_label_text' => esc_html__('Last Name', 'event_espresso') )),
+                'email'             => new EE_Email_Input(array( 'required' => true, 'html_class' => 'ee-billing-qstn ee-billing-qstn-email', 'html_label_text' => esc_html__('Email', 'event_espresso') )),
+                'address'           => new EE_Text_Input(array( 'html_label_text' =>  esc_html__('Address', 'event_espresso'), 'required' => true, 'html_class' => 'ee-billing-qstn ee-billing-qstn-address' )),
+                'address2'      => new EE_Text_Input(array( 'html_label_text' => esc_html__('Address 2', 'event_espresso'), 'html_class' => 'ee-billing-qstn ee-billing-qstn-address2' )),
+                'city'                  => new EE_Text_Input(array( 'required' => true, 'html_class' => 'ee-billing-qstn ee-billing-qstn-city', 'html_label_text' => esc_html__('City', 'event_espresso') )),
+                'state'                 => apply_filters('FHEE__EE_Billing_Attendee_Info_Form__state_field', new EE_State_Select_Input(null, array( 'required' => true, 'html_class' => 'ee-billing-qstn ee-billing-qstn-state', 'html_label_text' => esc_html__('State', 'event_espresso') ))),
+                'country'           => apply_filters('FHEE__EE_Billing_Attendee_Info_Form__country_field', new EE_Country_Select_Input(null, array( 'required' => true, 'html_class' => 'ee-billing-qstn ee-billing-qstn-country', 'html_label_text' => esc_html__('Country', 'event_espresso') ))),
+                'zip'                   => new EE_Text_Input(array( 'required' => true, 'html_class' => 'ee-billing-qstn ee-billing-qstn-zip', 'html_label_text' => esc_html__('Zip', 'event_espresso') )),
+                'phone'         => new EE_Text_Input(array( 'html_class' => 'ee-billing-qstn ee-billing-qstn-phone', 'html_label_text' => esc_html__('Phone', 'event_espresso') )),
             ),
             isset($options_array['subsections']) ? $options_array['subsections'] : array()
         );

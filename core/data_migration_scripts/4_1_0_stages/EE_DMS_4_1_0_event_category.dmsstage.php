@@ -20,9 +20,9 @@ in 4.1, the model's Term_Relationship tables and fields are:
         );
         $this->_fields = array(
             'Term_Relationship'=>array(
-                'object_id'=> new EE_Foreign_Key_Int_Field('object_id', __('Object(Post) ID','event_espresso'), false,0,array('Event','Venue','Attendee')),
-                'term_taxonomy_id'=>new EE_Foreign_Key_Int_Field('term_taxonomy_id', __('Term (in context of a taxonomy) ID','event_espresso'), false, 0, 'Term_Taxonomy'),
-                'term_order'=>new EE_Integer_Field('term_order', __('Term Order','event_espresso'), false, 0)
+                'object_id'=> new EE_Foreign_Key_Int_Field('object_id', esc_html__('Object(Post) ID','event_espresso'), false,0,array('Event','Venue','Attendee')),
+                'term_taxonomy_id'=>new EE_Foreign_Key_Int_Field('term_taxonomy_id', esc_html__('Term (in context of a taxonomy) ID','event_espresso'), false, 0, 'Term_Taxonomy'),
+                'term_order'=>new EE_Integer_Field('term_order', esc_html__('Term Order','event_espresso'), false, 0)
             ));
 
 
@@ -61,7 +61,7 @@ class EE_DMS_4_1_0_event_category extends EE_Data_Migration_Script_Stage
         global $wpdb;
         $this->_old_table = $wpdb->prefix . "events_category_rel";
         $this->_new_table = $wpdb->prefix . "term_relationships";
-        $this->_pretty_name = __("Event to Category (4.1 Term Relationships)", "event_espresso");
+        $this->_pretty_name = esc_html__("Event to Category (4.1 Term Relationships)", "event_espresso");
         parent::__construct();
     }
 
@@ -77,11 +77,11 @@ class EE_DMS_4_1_0_event_category extends EE_Data_Migration_Script_Stage
         $new_event_id = $this->get_migration_script()->get_mapping_new_pk($wpdb->prefix . "events_detail", intval($old_event_cat_relation['event_id']), $wpdb->prefix . "posts");
         $new_term_taxonomy_id = $this->get_migration_script()->get_mapping_new_pk($wpdb->prefix . "events_category_detail", intval($old_event_cat_relation['cat_id']), $wpdb->prefix . "term_taxonomy");
         if (! $new_event_id) {
-            $this->add_error(sprintf(__("Could not find 4.1 event id for 3.1 event #%d.", "event_espresso"), $old_event_cat_relation['event_id']));
+            $this->add_error(sprintf(esc_html__("Could not find 4.1 event id for 3.1 event #%d.", "event_espresso"), $old_event_cat_relation['event_id']));
             return 0;
         }
         if (! $new_term_taxonomy_id) {
-            $this->add_error(sprintf(__("Could not find 4.1 term-taxonomy id for 3.1 category #%d.", "event_espresso"), $old_event_cat_relation['cat_id']));
+            $this->add_error(sprintf(esc_html__("Could not find 4.1 term-taxonomy id for 3.1 category #%d.", "event_espresso"), $old_event_cat_relation['cat_id']));
             return 0;
         }
         $cols_n_values = array(
@@ -102,7 +102,7 @@ class EE_DMS_4_1_0_event_category extends EE_Data_Migration_Script_Stage
             // increment the term-taxonomie's count
             $success = $wpdb->query($wpdb->prepare("UPDATE {$wpdb->term_taxonomy} SET count = count +1 WHERE term_taxonomy_id=%d", $new_term_taxonomy_id));
             if (! $success) {
-                $this->add_error(sprintf(__('Could not increment term_taxonomy\'s count because %s', 'event_espresso'), $wpdb->last_error));
+                $this->add_error(sprintf(esc_html__('Could not increment term_taxonomy\'s count because %s', 'event_espresso'), $wpdb->last_error));
             }
         }
         return $wpdb->insert_id;

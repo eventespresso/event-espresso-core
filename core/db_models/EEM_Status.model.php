@@ -20,32 +20,32 @@ class EEM_Status extends EEM_Base
      */
     protected function __construct($timezone = null)
     {
-        $this->singular_item    = __('Status', 'event_espresso');
-        $this->plural_item      = __('Stati', 'event_espresso');
+        $this->singular_item    = esc_html__('Status', 'event_espresso');
+        $this->plural_item      = esc_html__('Stati', 'event_espresso');
         $this->_tables          = array(
             'StatusTable' => new EE_Primary_Table('esp_status', 'STS_ID'),
         );
         $this->_fields          = array(
             'StatusTable' => array(
-                'STS_ID'       => new EE_Primary_Key_String_Field('STS_ID', __('Status ID', 'event_espresso')),
-                'STS_code'     => new EE_Plain_Text_Field('STS_code', __('Status Code', 'event_espresso'), false, ''),
+                'STS_ID'       => new EE_Primary_Key_String_Field('STS_ID', esc_html__('Status ID', 'event_espresso')),
+                'STS_code'     => new EE_Plain_Text_Field('STS_code', esc_html__('Status Code', 'event_espresso'), false, ''),
                 'STS_type'     => new EE_Enum_Text_Field(
                     'STS_type',
-                    __("Type", "event_espresso"),
+                    esc_html__("Type", "event_espresso"),
                     false,
                     'event',
                     array(
-                        'event'        => __("Event", "event_espresso"),// deprecated
-                        'registration' => __("Registration", "event_espresso"),
-                        'transaction'  => __("Transaction", "event_espresso"),
-                        'payment'      => __("Payment", "event_espresso"),
-                        'email'        => __("Email", "event_espresso"),
-                        'message'      => __("Message", "event_espresso"),
+                        'event'        => esc_html__("Event", "event_espresso"),// deprecated
+                        'registration' => esc_html__("Registration", "event_espresso"),
+                        'transaction'  => esc_html__("Transaction", "event_espresso"),
+                        'payment'      => esc_html__("Payment", "event_espresso"),
+                        'email'        => esc_html__("Email", "event_espresso"),
+                        'message'      => esc_html__("Message", "event_espresso"),
                     )
                 ),
-                'STS_can_edit' => new EE_Boolean_Field('STS_can_edit', __('Editable?', 'event_espresso'), false, false),
-                'STS_desc'     => new EE_Simple_HTML_Field('STS_desc', __("Description", "event_espresso"), false, ''),
-                'STS_open'     => new EE_Boolean_Field('STS_open', __("Open?", "event_espresso"), false, false),
+                'STS_can_edit' => new EE_Boolean_Field('STS_can_edit', esc_html__('Editable?', 'event_espresso'), false, false),
+                'STS_desc'     => new EE_Simple_HTML_Field('STS_desc', esc_html__("Description", "event_espresso"), false, ''),
+                'STS_open'     => new EE_Boolean_Field('STS_open', esc_html__("Open?", "event_espresso"), false, false),
             ),
         );
         $this->_model_relations = array(
@@ -78,197 +78,197 @@ class EEM_Status extends EEM_Base
         // note these are all in lower case because ucwords() on upper case will NOT convert.
         $translation_array = array(
             EEM_Registration::status_id_pending_payment => array(
-                __('pending payment', 'event_espresso'), // singular
-                __('pending payments', 'event_espresso') // plural
+                esc_html__('pending payment', 'event_espresso'), // singular
+                esc_html__('pending payments', 'event_espresso') // plural
             ),
             EEM_Registration::status_id_approved        => array(
-                __('approved', 'event_espresso'), // singular
-                __('approved', 'event_espresso') // plural
+                esc_html__('approved', 'event_espresso'), // singular
+                esc_html__('approved', 'event_espresso') // plural
             ),
             EEM_Registration::status_id_not_approved    => array(
-                __('not approved', 'event_espresso'),
-                __('not approved', 'event_espresso'),
+                esc_html__('not approved', 'event_espresso'),
+                esc_html__('not approved', 'event_espresso'),
             ),
             EEM_Registration::status_id_cancelled       => array(
-                __('cancelled', 'event_espresso'),
-                __('cancelled', 'event_espresso'),
+                esc_html__('cancelled', 'event_espresso'),
+                esc_html__('cancelled', 'event_espresso'),
             ),
             EEM_Registration::status_id_incomplete      => array(
-                __('incomplete', 'event_espresso'),
-                __('incomplete', 'event_espresso'),
+                esc_html__('incomplete', 'event_espresso'),
+                esc_html__('incomplete', 'event_espresso'),
             ),
             EEM_Registration::status_id_declined        => array(
-                __('declined', 'event_espresso'),
-                __('declined', 'event_espresso'),
+                esc_html__('declined', 'event_espresso'),
+                esc_html__('declined', 'event_espresso'),
             ),
             EEM_Registration::status_id_wait_list       => array(
-                __('wait list', 'event_espresso'),
-                __('wait list', 'event_espresso'),
+                esc_html__('wait list', 'event_espresso'),
+                esc_html__('wait list', 'event_espresso'),
             ),
             EEM_Transaction::overpaid_status_code       => array(
-                __('overpaid', 'event_espresso'),
-                __('overpaid', 'event_espresso'),
+                esc_html__('overpaid', 'event_espresso'),
+                esc_html__('overpaid', 'event_espresso'),
             ),
             EEM_Transaction::complete_status_code       => array(
-                __('complete', 'event_espresso'),
-                __('complete', 'event_espresso'),
+                esc_html__('complete', 'event_espresso'),
+                esc_html__('complete', 'event_espresso'),
             ),
             EEM_Transaction::incomplete_status_code     => array(
-                __('incomplete', 'event_espresso'),
-                __('incomplete', 'event_espresso'),
+                esc_html__('incomplete', 'event_espresso'),
+                esc_html__('incomplete', 'event_espresso'),
             ),
             EEM_Transaction::failed_status_code         => array(
-                __('failed', 'event_espresso'),
-                __('failed', 'event_espresso'),
+                esc_html__('failed', 'event_espresso'),
+                esc_html__('failed', 'event_espresso'),
             ),
             EEM_Transaction::abandoned_status_code      => array(
-                __('abandoned', 'event_espresso'),
-                __('abandoned', 'event_espresso'),
+                esc_html__('abandoned', 'event_espresso'),
+                esc_html__('abandoned', 'event_espresso'),
             ),
             EEM_Payment::status_id_approved             => array(
-                __('accepted', 'event_espresso'),
-                __('accepted', 'event_espresso'),
+                esc_html__('accepted', 'event_espresso'),
+                esc_html__('accepted', 'event_espresso'),
             ),
             EEM_Payment::status_id_pending              => array(
-                __('pending', 'event_espresso'),
-                __('pending', 'event_espresso'),
+                esc_html__('pending', 'event_espresso'),
+                esc_html__('pending', 'event_espresso'),
             ),
             EEM_Payment::status_id_cancelled            => array(
-                __('cancelled', 'event_espresso'),
-                __('cancelled', 'event_espresso'),
+                esc_html__('cancelled', 'event_espresso'),
+                esc_html__('cancelled', 'event_espresso'),
             ),
             EEM_Payment::status_id_declined             => array(
-                __('declined', 'event_espresso'),
-                __('declined', 'event_espresso'),
+                esc_html__('declined', 'event_espresso'),
+                esc_html__('declined', 'event_espresso'),
             ),
             EEM_Payment::status_id_failed               => array(
-                __('failed', 'event_espresso'),
-                __('failed', 'event_espresso'),
+                esc_html__('failed', 'event_espresso'),
+                esc_html__('failed', 'event_espresso'),
             ),
             // following statuses are NOT part of the EEM_Status but to keep things centralized we include in here.
             EEM_Event::sold_out                         => array(
-                __('sold out', 'event_espresso'),
-                __('sold out', 'event_espresso'),
+                esc_html__('sold out', 'event_espresso'),
+                esc_html__('sold out', 'event_espresso'),
             ),
             EEM_Event::postponed                        => array(
-                __('postponed', 'event_espresso'),
-                __('Postponed', 'event_espresso'),
+                esc_html__('postponed', 'event_espresso'),
+                esc_html__('Postponed', 'event_espresso'),
             ),
             EEM_Event::cancelled                        => array(
-                __('cancelled', 'event_espresso'),
-                __('cancelled', 'event_espresso'),
+                esc_html__('cancelled', 'event_espresso'),
+                esc_html__('cancelled', 'event_espresso'),
             ),
             EE_Ticket::archived                         => array(
-                __('archived', 'event_espresso'),
-                __('archived', 'event_espresso'),
+                esc_html__('archived', 'event_espresso'),
+                esc_html__('archived', 'event_espresso'),
             ),
             EE_Ticket::expired                          => array(
-                __('expired', 'event_espresso'),
-                __('expired', 'event_espresso'),
+                esc_html__('expired', 'event_espresso'),
+                esc_html__('expired', 'event_espresso'),
             ),
             EE_Ticket::sold_out                         => array(
-                __('sold out', 'event_espresso'),
-                __('sold out', 'event_espresso'),
+                esc_html__('sold out', 'event_espresso'),
+                esc_html__('sold out', 'event_espresso'),
             ),
             EE_Ticket::pending                          => array(
-                __('upcoming', 'event_espresso'),
-                __('upcoming', 'event_espresso'),
+                esc_html__('upcoming', 'event_espresso'),
+                esc_html__('upcoming', 'event_espresso'),
             ),
             EE_Ticket::onsale                           => array(
-                __('on sale', 'event_espresso'),
-                __('on sale', 'event_espresso'),
+                esc_html__('on sale', 'event_espresso'),
+                esc_html__('on sale', 'event_espresso'),
             ),
             EE_Datetime::cancelled                      => array(
-                __('cancelled', 'event_espresso'),
-                __('cancelled', 'event_espresso'),
+                esc_html__('cancelled', 'event_espresso'),
+                esc_html__('cancelled', 'event_espresso'),
             ),
             EE_Datetime::sold_out                       => array(
-                __('sold out', 'event_espresso'),
-                __('sold out', 'event_espresso'),
+                esc_html__('sold out', 'event_espresso'),
+                esc_html__('sold out', 'event_espresso'),
             ),
             EE_Datetime::expired                        => array(
-                __('expired', 'event_espresso'),
-                __('expired', 'event_espresso'),
+                esc_html__('expired', 'event_espresso'),
+                esc_html__('expired', 'event_espresso'),
             ),
             EE_Datetime::inactive                       => array(
-                __('inactive', 'event_espresso'),
-                __('inactive', 'event_espresso'),
+                esc_html__('inactive', 'event_espresso'),
+                esc_html__('inactive', 'event_espresso'),
             ),
             EE_Datetime::upcoming                       => array(
-                __('upcoming', 'event_espresso'),
-                __('upcoming', 'event_espresso'),
+                esc_html__('upcoming', 'event_espresso'),
+                esc_html__('upcoming', 'event_espresso'),
             ),
             EE_Datetime::active                         => array(
-                __('active', 'event_espresso'),
-                __('active', 'event_espresso'),
+                esc_html__('active', 'event_espresso'),
+                esc_html__('active', 'event_espresso'),
             ),
             EE_Datetime::postponed                      => array(
-                __('postponed', 'event_espresso'),
-                __('postponed', 'event_espresso'),
+                esc_html__('postponed', 'event_espresso'),
+                esc_html__('postponed', 'event_espresso'),
             ),
             // messages related
             EEM_Message::status_sent                    => array(
-                __('sent', 'event_espresso'),
-                __('sent', 'event_espresso'),
+                esc_html__('sent', 'event_espresso'),
+                esc_html__('sent', 'event_espresso'),
             ),
             EEM_Message::status_idle                    => array(
-                __('queued for sending', 'event_espresso'),
-                __('queued for sending', 'event_espresso'),
+                esc_html__('queued for sending', 'event_espresso'),
+                esc_html__('queued for sending', 'event_espresso'),
             ),
             EEM_Message::status_failed                  => array(
-                __('failed', 'event_espresso'),
-                __('failed', 'event_espresso'),
+                esc_html__('failed', 'event_espresso'),
+                esc_html__('failed', 'event_espresso'),
             ),
             EEM_Message::status_debug_only              => array(
-                __('debug only', 'event_espresso'),
-                __('debug only', 'event_espresso'),
+                esc_html__('debug only', 'event_espresso'),
+                esc_html__('debug only', 'event_espresso'),
             ),
             EEM_Message::status_messenger_executing     => array(
-                __('messenger is executing', 'event_espresso'),
-                __('messenger is executing', 'event_espresso'),
+                esc_html__('messenger is executing', 'event_espresso'),
+                esc_html__('messenger is executing', 'event_espresso'),
             ),
             EEM_Message::status_resend                  => array(
-                __('queued for resending', 'event_espresso'),
-                __('queued for resending', 'event_espresso'),
+                esc_html__('queued for resending', 'event_espresso'),
+                esc_html__('queued for resending', 'event_espresso'),
             ),
             EEM_Message::status_incomplete              => array(
-                __('queued for generating', 'event_espresso'),
-                __('queued for generating', 'event_espresso'),
+                esc_html__('queued for generating', 'event_espresso'),
+                esc_html__('queued for generating', 'event_espresso'),
             ),
             EEM_Message::status_retry                   => array(
-                __('failed sending, can be retried', 'event_espresso'),
-                __('failed sending, can be retried', 'event_espresso'),
+                esc_html__('failed sending, can be retried', 'event_espresso'),
+                esc_html__('failed sending, can be retried', 'event_espresso'),
             ),
             EEM_CPT_Base::post_status_publish           => array(
-                __('published', 'event_espresso'),
-                __('published', 'event_espresso'),
+                esc_html__('published', 'event_espresso'),
+                esc_html__('published', 'event_espresso'),
             ),
             EEM_CPT_Base::post_status_future            => array(
-                __('scheduled', 'event_espresso'),
-                __('scheduled', 'event_espresso'),
+                esc_html__('scheduled', 'event_espresso'),
+                esc_html__('scheduled', 'event_espresso'),
             ),
             EEM_CPT_Base::post_status_draft             => array(
-                __('draft', 'event_espresso'),
-                __('draft', 'event_espresso'),
+                esc_html__('draft', 'event_espresso'),
+                esc_html__('draft', 'event_espresso'),
             ),
             EEM_CPT_Base::post_status_pending           => array(
-                __('pending', 'event_espresso'),
-                __('pending', 'event_espresso'),
+                esc_html__('pending', 'event_espresso'),
+                esc_html__('pending', 'event_espresso'),
             ),
             EEM_CPT_Base::post_status_private           => array(
-                __('private', 'event_espresso'),
-                __('private', 'event_espresso'),
+                esc_html__('private', 'event_espresso'),
+                esc_html__('private', 'event_espresso'),
             ),
             EEM_CPT_Base::post_status_trashed           => array(
-                __('trashed', 'event_espresso'),
-                __('trashed', 'event_espresso'),
+                esc_html__('trashed', 'event_espresso'),
+                esc_html__('trashed', 'event_espresso'),
             ),
         );
 
         $translation_array = apply_filters('FHEE__EEM_Status__localized_status__translation_array', $translation_array);
 
         if (! is_array($statuses)) {
-            throw new EE_Error(__(
+            throw new EE_Error(esc_html__(
                 'The incoming statuses argument must be an array with keys as the $status_id and values as the $status_code',
                 'event_espresso'
             ));

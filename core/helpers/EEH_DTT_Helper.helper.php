@@ -840,7 +840,7 @@ class EEH_DTT_Helper
             $hour_fraction = (float) ('0.' . $parts[1]);
             $parts[1]      = (string) $hour_fraction * 60;
         }
-        return sprintf(__('UTC%1$s', 'event_espresso'), $prefix . implode(':', $parts));
+        return sprintf(esc_html__('UTC%1$s', 'event_espresso'), $prefix . implode(':', $parts));
     }
 
 
@@ -967,7 +967,7 @@ class EEH_DTT_Helper
         usort($zone_data, '_wp_timezone_choice_usort_callback');
         $structure = array();
         if (empty($selected_zone)) {
-            $structure[] = '<option selected="selected" value="">' . __('Select a city', 'event_espresso') . '</option>';
+            $structure[] = '<option selected="selected" value="">' . esc_html__('Select a city', 'event_espresso') . '</option>';
         }
         foreach ($zone_data as $key => $zone) {
             // Build value in an array to join later

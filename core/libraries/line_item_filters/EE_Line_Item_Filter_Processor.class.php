@@ -58,7 +58,7 @@ class EE_Line_Item_Filter_Processor
     {
         $this->line_item_filters = $line_item_filters;
         if ($grand_total_line_item->type() !== EEM_Line_Item::type_total) {
-            throw new EE_Error(__('A Line Item of the type total is required', 'event_espresso'));
+            throw new EE_Error(esc_html__('A Line Item of the type total is required', 'event_espresso'));
         }
         $this->grand_total_line_item = $this->clone_and_reset_line_item_tree($grand_total_line_item);
     }

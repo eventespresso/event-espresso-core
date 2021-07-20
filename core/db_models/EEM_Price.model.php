@@ -25,8 +25,8 @@ class EEM_Price extends EEM_Soft_Delete_Base
     protected function __construct($timezone)
     {
         require_once(EE_MODELS . 'EEM_Price_Type.model.php');
-        $this->singular_item = __('Price', 'event_espresso');
-        $this->plural_item = __('Prices', 'event_espresso');
+        $this->singular_item = esc_html__('Price', 'event_espresso');
+        $this->plural_item = esc_html__('Prices', 'event_espresso');
 
         $this->_tables = array(
             'Price' => new EE_Primary_Table('esp_price', 'PRC_ID')
@@ -42,8 +42,8 @@ class EEM_Price extends EEM_Soft_Delete_Base
                 'PRC_overrides' => new EE_Integer_Field('PRC_overrides', 'Price ID for a global Price that will be overridden by this Price  ( for replacing default prices )', true, 0),
                 'PRC_order' => new EE_Integer_Field('PRC_order', 'Order of Application of Price (lower numbers apply first?)', false, 1),
                 'PRC_deleted' => new EE_Trashed_Flag_Field('PRC_deleted', 'Flag Indicating if this has been deleted or not', false, false),
-                'PRC_parent' => new EE_Integer_Field('PRC_parent', __('Indicates what PRC_ID is the parent of this PRC_ID', 'event_espresso'), true, 0),
-                'PRC_wp_user' => new EE_WP_User_Field('PRC_wp_user', __('Price Creator ID', 'event_espresso'), false),
+                'PRC_parent' => new EE_Integer_Field('PRC_parent', esc_html__('Indicates what PRC_ID is the parent of this PRC_ID', 'event_espresso'), true, 0),
+                'PRC_wp_user' => new EE_WP_User_Field('PRC_wp_user', esc_html__('Price Creator ID', 'event_espresso'), false),
             )
         );
         $this->_model_relations = array(

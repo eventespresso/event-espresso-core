@@ -82,7 +82,7 @@ class DbSafeDateTime extends DateTime
             }
             $this->writeToErrorLog(
                 sprintf(
-                    __(
+                    esc_html__(
                         'A valid DateTime could not be generated from "%1$s" because the following errors occurred: %2$s %3$s %2$s PHP version: %4$s %2$s Stack Trace: %5$s',
                         'event_espresso'
                     ),
@@ -118,7 +118,7 @@ class DbSafeDateTime extends DateTime
         if (! $date instanceof DateTime) {
             $this->writeToErrorLog(
                 sprintf(
-                    __(
+                    esc_html__(
                         'A valid DateTime could not be recreated from "%1$s" because the following errors occurred: %2$s %3$s %2$s PHP version: %4$s',
                         'event_espresso'
                     ),

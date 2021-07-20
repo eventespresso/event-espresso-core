@@ -20,18 +20,18 @@ class EE_Line_Item_Shortcodes extends EE_Shortcodes
 
     protected function _init_props()
     {
-        $this->label = __('Line Item Shortcodes', 'event_espresso');
-        $this->description = __('All shortcodes specific to line items', 'event_espresso');
+        $this->label = esc_html__('Line Item Shortcodes', 'event_espresso');
+        $this->description = esc_html__('All shortcodes specific to line items', 'event_espresso');
         $this->_shortcodes = array(
-            '[LINE_ITEM_NAME]' => __('Outputs the line item name.', 'event_espresso'),
-            '[LINE_ITEM_DESCRIPTION]' => __('Outputs a the description for the line item.', 'event_espresso'),
-            '[LINE_ITEM_QUANTITY]' => __('Outputs the quantity for this line item.', 'event_espresso'),
-            '[LINE_ITEM_AMOUNT]' => __(
+            '[LINE_ITEM_NAME]' => esc_html__('Outputs the line item name.', 'event_espresso'),
+            '[LINE_ITEM_DESCRIPTION]' => esc_html__('Outputs a the description for the line item.', 'event_espresso'),
+            '[LINE_ITEM_QUANTITY]' => esc_html__('Outputs the quantity for this line item.', 'event_espresso'),
+            '[LINE_ITEM_AMOUNT]' => esc_html__(
                 'This will either output the unit price for a line item if its not a percent, or the percent of the line item (if it is percent).',
                 'event_espresso'
             ),
-            '[LINE_ITEM_TOTAL]' => __('This outputs the line item total.', 'event_espresso'),
-            '[LINE_ITEM_TAXABLE_*]' => __(
+            '[LINE_ITEM_TOTAL]' => esc_html__('This outputs the line item total.', 'event_espresso'),
+            '[LINE_ITEM_TAXABLE_*]' => esc_html__(
                 'This attribute type shortcode allows users to indicate what to output if a line item is taxable or not.  One can use the key "symbol=" with the shortcode to indicate what they\'d like to represent a taxable line item.  So doing something like <code>[LINE_ITEM_TAXABLE_* symbol="*"]</code> means that when the line item is parsed, if it\'s taxable the "*" symbol will be returned.  The default symbol if no attribute is included is the "*" symbol.',
                 'event_espresso'
             ),

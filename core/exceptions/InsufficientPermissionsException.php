@@ -24,7 +24,7 @@ class InsufficientPermissionsException extends \RuntimeException
     {
         if (empty($message)) {
             $message = sprintf(
-                __(
+                esc_html__(
                     'We\'re sorry, but you do not have the required permissions to perform the following action: %1$s',
                     'event_espresso'
                 ),

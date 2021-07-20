@@ -27,7 +27,7 @@ class EE_DMS_4_1_0_category_details extends EE_Data_Migration_Script_Stage
                 )
             );
             if ($term_and_taxonomy_ids instanceof WP_Error) {
-                $this->add_error(sprintf(__("Could not create WP Term_Taxonomy from old category: %s. The Error was: %s", "event_espresso"), $this->_json_encode($category_detail_row), $term_and_taxonomy_ids->get_error_message()));
+                $this->add_error(sprintf(esc_html__("Could not create WP Term_Taxonomy from old category: %s. The Error was: %s", "event_espresso"), $this->_json_encode($category_detail_row), $term_and_taxonomy_ids->get_error_message()));
                 $items_actually_migrated++;
                 continue;
             }
@@ -50,7 +50,7 @@ class EE_DMS_4_1_0_category_details extends EE_Data_Migration_Script_Stage
     }
     public function __construct()
     {
-        $this->_pretty_name = __("Category Details", "event_espresso");
+        $this->_pretty_name = esc_html__("Category Details", "event_espresso");
         global $wpdb;
         $this->_old_table = $wpdb->prefix . "events_category_detail";
         $this->_new_table = $wpdb->prefix . "term_taxonomy";

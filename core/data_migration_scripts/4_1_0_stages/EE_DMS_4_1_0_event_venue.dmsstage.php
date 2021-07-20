@@ -18,10 +18,10 @@ CREATE TABLE `wp_events_venue_rel` (
         );
         $this->_fields = array(
             'Event_Venue'=>array(
-                'EVV_ID'=>new EE_Primary_Key_Int_Field('EVV_ID', __('Event to Venue Link ID','event_espresso')),
-                'EVT_ID'=>new EE_Foreign_Key_Int_Field('EVT_ID', __('Event ID','event_espresso'), false, 0, 'Event'),
-                'VNU_ID'=>new EE_Foreign_Key_Int_Field('VNU_ID', __('Venue ID','event_espresso'), false, 0, 'Venue'),
-                'EVV_primary'=>new EE_Boolean_Field('EVV_primary', __("Flag indicating venue is primary one for event", "event_espresso"), false,true)
+                'EVV_ID'=>new EE_Primary_Key_Int_Field('EVV_ID', esc_html__('Event to Venue Link ID','event_espresso')),
+                'EVT_ID'=>new EE_Foreign_Key_Int_Field('EVT_ID', esc_html__('Event ID','event_espresso'), false, 0, 'Event'),
+                'VNU_ID'=>new EE_Foreign_Key_Int_Field('VNU_ID', esc_html__('Venue ID','event_espresso'), false, 0, 'Venue'),
+                'EVV_primary'=>new EE_Boolean_Field('EVV_primary', esc_html__("Flag indicating venue is primary one for event", "event_espresso"), false,true)
 
             )
         );
@@ -74,7 +74,7 @@ class EE_DMS_4_1_0_event_venue extends EE_Data_Migration_Script_Stage
         global $wpdb;
         $this->_old_table = $wpdb->prefix . "events_venue_rel";
         $this->_new_table = $wpdb->prefix . "esp_event_venue";
-        $this->_pretty_name = __("Event to Venue Relations", "event_espresso");
+        $this->_pretty_name = esc_html__("Event to Venue Relations", "event_espresso");
         parent::__construct();
     }
 
@@ -90,11 +90,11 @@ class EE_DMS_4_1_0_event_venue extends EE_Data_Migration_Script_Stage
         $new_event_id = $this->get_migration_script()->get_mapping_new_pk($wpdb->prefix . "events_detail", $old_event_venue_rel['event_id'], $wpdb->prefix . "posts");
         $new_venue_id = $this->get_migration_script()->get_mapping_new_pk($wpdb->prefix . "events_venue", $old_event_venue_rel['venue_id'], $wpdb->prefix . "posts");
         if (! $new_event_id) {
-            $this->add_error(sprintf(__("Could not find 4.1 event id for 3.1 event #%d.", "event_espresso"), $old_event_venue_rel['event_id']));
+            $this->add_error(sprintf(esc_html__("Could not find 4.1 event id for 3.1 event #%d.", "event_espresso"), $old_event_venue_rel['event_id']));
             return 0;
         }
         if (! $new_venue_id) {
-            $this->add_error(sprintf(__("Could not find 4.1 venue id for 3.1 venue #%d.", "event_espresso"), $old_event_venue_rel['venue_id']));
+            $this->add_error(sprintf(esc_html__("Could not find 4.1 venue id for 3.1 venue #%d.", "event_espresso"), $old_event_venue_rel['venue_id']));
             return 0;
         }
         // first ensure there are no other relation entries for this event

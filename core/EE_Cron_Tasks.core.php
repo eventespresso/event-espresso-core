@@ -163,7 +163,7 @@ class EE_Cron_Tasks extends EE_Base
         if (! method_exists('EE_Cron_Tasks', $cron_task)) {
             throw new DomainException(
                 sprintf(
-                    __('"%1$s" is not valid method on EE_Cron_Tasks.', 'event_espresso'),
+                    esc_html__('"%1$s" is not valid method on EE_Cron_Tasks.', 'event_espresso'),
                     $cron_task
                 )
             );

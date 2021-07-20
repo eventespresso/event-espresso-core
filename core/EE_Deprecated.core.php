@@ -52,7 +52,7 @@ function deprecated_espresso_action_or_filter_doing_it_wrong(
     EE_Error::doing_it_wrong(
         $deprecated_filter,
         sprintf(
-            __(
+            esc_html__(
                 'This %1$s is deprecated.  It *may* work as an attempt to build in backwards compatibility.  However, it is recommended to use the following new %1$s: %4$s"%2$s" found in "%3$s"',
                 'event_espresso'
             ),
@@ -95,7 +95,7 @@ function ee_deprecated__registration_checkout__button_text($submit_button_text, 
                 EE_Error::doing_it_wrong(
                     'FHEE__EED_Single_Page_Checkout__registration_checkout__button_text__' . $deprecated_filter,
                     sprintf(
-                        __(
+                        esc_html__(
                             'The %1$s filter is deprecated.  It *may* work as an attempt to build in backwards compatibility.  However, it is recommended to use the following new filter: %2$s"%3$s" found in "%4$s"',
                             'event_espresso'
                         ),
@@ -180,7 +180,7 @@ function ee_deprecated_finalize_transaction(EE_Checkout $checkout, $status_updat
         EE_Error::doing_it_wrong(
             $action_ref,
             sprintf(
-                __(
+                esc_html__(
                     'This action is deprecated.  It *may* work as an attempt to build in backwards compatibility.  However, it is recommended to use one of the following new actions: %1$s"%3$s" found in "%2$s" %1$s"%4$s" found in "%2$s" %1$s"%5$s" found in "%2$s" %1$s"%6$s" found in "%2$s"',
                     'event_espresso'
                 ),
@@ -232,7 +232,7 @@ function ee_deprecated_finalize_registration(EE_Registration $registration)
         EE_Error::doing_it_wrong(
             $action_ref,
             sprintf(
-                __(
+                esc_html__(
                     'This action is deprecated.  It *may* work as an attempt to build in backwards compatibility.  However, it is recommended to use the following new action: %1$s"%3$s" found in "%2$s"',
                     'event_espresso'
                 ),
@@ -274,7 +274,7 @@ function ee_deprecated_hooks()
     $hooks = array(
         'AHEE__EE_System___do_setup_validations' => array(
             'version'     => '4.6.0',
-            'alternative' => __(
+            'alternative' => esc_html__(
                 'Instead use "AHEE__EEH_Activation__validate_messages_system" which is called after validating messages (done on every new install, upgrade, reactivation, and downgrade)',
                 'event_espresso'
             ),
@@ -286,19 +286,19 @@ function ee_deprecated_hooks()
             EE_Error::doing_it_wrong(
                 $name,
                 sprintf(
-                    __('This filter is deprecated. %1$s%2$s', 'event_espresso'),
-                    $deprecation_info['still_works'] ? __(
+                    esc_html__('This filter is deprecated. %1$s%2$s', 'event_espresso'),
+                    $deprecation_info['still_works'] ? esc_html__(
                         'It *may* work as an attempt to build in backwards compatibility.',
                         'event_espresso'
-                    ) : __('It has been completely removed.', 'event_espresso'),
+                    ) : esc_html__('It has been completely removed.', 'event_espresso'),
                     isset($deprecation_info['alternative'])
                         ? $deprecation_info['alternative']
-                        : __(
+                        : esc_html__(
                         'Please read the current EE4 documentation further or contact Support.',
                         'event_espresso'
                     )
                 ),
-                isset($deprecation_info['version']) ? $deprecation_info['version'] : __('recently', 'event_espresso')
+                isset($deprecation_info['version']) ? $deprecation_info['version'] : esc_html__('recently', 'event_espresso')
             );
         }
     }
@@ -321,7 +321,7 @@ function ee_deprecated_using_old_registration_admin_custom_questions_form_hooks(
                   'AHEE__Registrations_Admin_Page___save_attendee_registration_form__after_reg_and_attendee_save'
               );
     if ($in_use) {
-        $msg = __(
+        $msg = esc_html__(
             'We detected you are using the filter FHEE__Registrations_Admin_Page___update_attendee_registration_form__qstns or AHEE__Registrations_Admin_Page___save_attendee_registration_form__after_reg_and_attendee_save.'
             . 'Both of these have been deprecated and should not be used anymore. You should instead use FHEE__EE_Form_Section_Proper___construct__options_array to customize the contents of the form,'
             . 'use FHEE__EE_Form_Section_Proper__receive_form_submission__req_data to customize the submission data, or AHEE__EE_Form_Section_Proper__receive_form_submission__end '
@@ -366,7 +366,7 @@ function ee_deprecated_update_attendee_registration_form_old($admin_page)
     $qstns = apply_filters('FHEE__Registrations_Admin_Page___update_attendee_registration_form__qstns', $qstns);
     if (! $REG_ID || ! $qstns) {
         EE_Error::add_error(
-            __('An error occurred. No registration ID and/or registration questions were received.', 'event_espresso'),
+            esc_html__('An error occurred. No registration ID and/or registration questions were received.', 'event_espresso'),
             __FILE__,
             __FUNCTION__,
             __LINE__
@@ -415,9 +415,9 @@ function ee_deprecated_update_attendee_registration_form_old($admin_page)
             $success = $answer->save();
         }
     }
-    $what = __('Registration Form', 'event_espresso');
+    $what = esc_html__('Registration Form', 'event_espresso');
     $route = $REG_ID ? array('action' => 'view_registration', '_REG_ID' => $REG_ID) : array('action' => 'default');
-    $admin_page->redirect_after_action($success, $what, __('updated', 'event_espresso'), $route);
+    $admin_page->redirect_after_action($success, $what, esc_html__('updated', 'event_espresso'), $route);
     exit;
 }
 
@@ -518,7 +518,7 @@ class EE_Message_Template_Defaults extends EE_Base
     ) {
         EE_Error::doing_it_wrong(
             __FUNCTION__,
-            __(
+            esc_html__(
                 'The class EE_Message_Template_Defaults has been deprecated and replaced by EE_Messages_Template_Defaults.',
                 'event_espresso'
             ),
@@ -593,7 +593,7 @@ class EE_messages
     {
         EE_Error::doing_it_wrong(
             'EE_messages::' . $method,
-            __('EE_messages has been deprecated.  Please use EE_Message_Resource_Manager instead.'),
+            esc_html__('EE_messages has been deprecated.  Please use EE_Message_Resource_Manager instead.'),
             '4.9.0',
             '4.10.0.p'
         );
@@ -739,7 +739,7 @@ class EE_messages
                 $mtg = EE_Registry::instance()->load_lib('Message_To_Generate_From_Request');
                 $processor->generate_and_send_now($mtg);
             } catch (EE_Error $e) {
-                $error_msg = __(
+                $error_msg = esc_html__(
                     'Please note that a system message failed to send due to a technical issue.',
                     'event_espresso'
                 );
@@ -761,7 +761,7 @@ class EE_messages
                 $error = true;
                 if ($count_errors > 1 && $count_retry > 1 && $count_queued > 1) {
                     $message = sprintf(
-                        __(
+                        esc_html__(
                             'There were %d errors and %d messages successfully queued for generation and sending',
                             'event_espresso'
                         ),
@@ -770,7 +770,7 @@ class EE_messages
                     );
                 } elseif ($count_errors > 1 && $count_queued === 1) {
                     $message = sprintf(
-                        __(
+                        esc_html__(
                             'There were %d errors and %d message successfully queued for generation.',
                             'event_espresso'
                         ),
@@ -779,7 +779,7 @@ class EE_messages
                     );
                 } elseif ($count_errors === 1 && $count_queued > 1) {
                     $message = sprintf(
-                        __(
+                        esc_html__(
                             'There was %d error and %d messages successfully queued for generation.',
                             'event_espresso'
                         ),
@@ -788,7 +788,7 @@ class EE_messages
                     );
                 } else {
                     $message = sprintf(
-                        __(
+                        esc_html__(
                             'There was %d message that failed to be queued for generation.',
                             'event_espresso'
                         ),
@@ -799,7 +799,7 @@ class EE_messages
             } else {
                 if ($count_queued === 1) {
                     $message = sprintf(
-                        __(
+                        esc_html__(
                             '%d message successfully queued for generation.',
                             'event_espresso'
                         ),
@@ -807,7 +807,7 @@ class EE_messages
                     );
                 } else {
                     $message = sprintf(
-                        __(
+                        esc_html__(
                             '%d messages were successfully queued for generation.',
                             'event_espresso'
                         ),
@@ -1238,7 +1238,7 @@ class EE_Event_List_Query extends WP_Query
     {
         \EE_Error::doing_it_wrong(
             __METHOD__,
-            __(
+            esc_html__(
                 'Usage is deprecated. Please use \EventEspresso\core\domain\services\wp_queries\EventListQuery instead.',
                 'event_espresso'
             ),

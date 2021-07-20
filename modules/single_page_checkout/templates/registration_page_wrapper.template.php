@@ -7,7 +7,7 @@
                 <?php echo sprintf(
                     apply_filters(
                         'FHEE__registration_page_wrapper_template___time_limit',
-                        __('You have %1$s to complete your registration.', 'event_espresso')
+                        esc_html__('You have %1$s to complete your registration.', 'event_espresso')
                     ),
                     '<span id="spco-registration-time-limit-spn" class="spco-registration-time-limit-spn">' . $registration_time_limit . '</span>'
                 );

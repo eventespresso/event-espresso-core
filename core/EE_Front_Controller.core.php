@@ -469,7 +469,7 @@ final class EE_Front_Controller
     {
         EE_Error::doing_it_wrong(
             __METHOD__,
-            __(
+            esc_html__(
                 'Usage is deprecated. Please use \EventEspresso\core\services\shortcodes\LegacyShortcodesManager::initializeShortcode() instead.',
                 'event_espresso'
             ),

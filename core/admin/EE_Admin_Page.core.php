@@ -1584,7 +1584,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                 return false;
             }
             if (is_user_logged_in()) {
-                wp_die(__('You do not have access to this route.', 'event_espresso'));
+                wp_die(esc_html__('You do not have access to this route.', 'event_espresso'));
             } else {
                 return false;
             }
@@ -2436,7 +2436,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     public static function cached_rss_display($rss_id, $url)
     {
         $loading   = '<p class="widget-loading hide-if-no-js">'
-                     . __('Loading&#8230;', 'event_espresso')
+                     . esc_html__('Loading&#8230;', 'event_espresso')
                      . '</p><p class="hide-if-js">'
                      . esc_html__('This widget requires JavaScript.', 'event_espresso')
                      . '</p>';
@@ -3699,7 +3699,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         if (! isset($this->_labels['buttons'][ $type ])) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'There is no label for the given button type (%s). Labels are set in the <code>_page_config</code> property.',
                         'event_espresso'
                     ),
@@ -4057,10 +4057,10 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         $net_saved    = is_main_site() ? EE_Network_Config::instance()->update_config(false, false) : true;
         $config_saved = EE_Config::instance()->update_espresso_config(false, false);
         if ($config_saved && $net_saved) {
-            EE_Error::add_success(sprintf(__('"%s" have been successfully updated.', 'event_espresso'), $tab));
+            EE_Error::add_success(sprintf(esc_html__('"%s" have been successfully updated.', 'event_espresso'), $tab));
             return true;
         }
-        EE_Error::add_error(sprintf(__('The "%s" were not updated.', 'event_espresso'), $tab), $file, $func, $line);
+        EE_Error::add_error(sprintf(esc_html__('The "%s" were not updated.', 'event_espresso'), $tab), $file, $func, $line);
         return false;
     }
 

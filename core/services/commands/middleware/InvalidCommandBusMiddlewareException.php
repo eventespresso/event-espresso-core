@@ -31,7 +31,7 @@ class InvalidCommandBusMiddlewareException extends InvalidDataTypeException
 
         if (empty($message)) {
             $message = sprintf(
-                __(
+                esc_html__(
                     'The supplied Command Bus Middleware "%1$s" does not have a valid name. It should be in the following format: "{CommandName}Handler" ',
                     'event_espresso'
                 ),

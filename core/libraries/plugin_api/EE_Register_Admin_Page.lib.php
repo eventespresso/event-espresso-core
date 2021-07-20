@@ -47,7 +47,7 @@ class EE_Register_Admin_Page implements EEI_Plugin_API
         if (isset(self::$_ee_admin_page_registry[ $identifier ])) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'An Admin Page with the name "%s" has already been registered and each Admin Page requires a unique name.',
                         'event_espresso'
                     ),
@@ -59,7 +59,7 @@ class EE_Register_Admin_Page implements EEI_Plugin_API
         // required fields MUST be present, so let's make sure they are.
         if (empty($identifier) || ! is_array($setup_args) || empty($setup_args['page_path'])) {
             throw new EE_Error(
-                __(
+                esc_html__(
                     'In order to register an Admin Page with EE_Register_Admin_Page::register(), you must include the "page_basename" (the class name of the page), and an array containing the following keys: "page_path" (the path where the registered admin pages reside)',
                     'event_espresso'
                 )
@@ -75,7 +75,7 @@ class EE_Register_Admin_Page implements EEI_Plugin_API
             EE_Error::doing_it_wrong(
                 __METHOD__,
                 sprintf(
-                    __(
+                    esc_html__(
                         'An attempt was made to register "%s" as an EE Admin page has failed because it was not registered at the correct time.  Please use the "AHEE__EE_Admin__loaded" hook to register Admin pages.',
                         'event_espresso'
                     ),

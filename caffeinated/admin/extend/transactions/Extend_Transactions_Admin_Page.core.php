@@ -62,12 +62,12 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page
         $new_page_config = array(
             'reports' => array(
                 'nav'           => array(
-                    'label' => __('Reports', 'event_espresso'),
+                    'label' => esc_html__('Reports', 'event_espresso'),
                     'order' => 20,
                 ),
                 'help_tabs'     => array(
                     'transactions_reports_help_tab' => array(
-                        'title'    => __('Transaction Reports', 'event_espresso'),
+                        'title'    => esc_html__('Transaction Reports', 'event_espresso'),
                         'filename' => 'transactions_reports',
                     ),
                 ),
@@ -120,7 +120,7 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page
     protected function _transaction_reports()
     {
         $template_path = EE_ADMIN_TEMPLATE . 'admin_reports.template.php';
-        $this->_admin_page_title = __('Transactions', 'event_espresso');
+        $this->_admin_page_title = esc_html__('Transactions', 'event_espresso');
         $this->_template_args['admin_page_content'] = EEH_Template::display_template(
             $template_path,
             $this->_reports_template_data,
@@ -154,8 +154,8 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page
 
         if ($results) {
             $revenue[] = array(
-                __('Date (only shows dates that have a revenue greater than 1)', 'event_espresso'),
-                __('Total Revenue', 'event_espresso'),
+                esc_html__('Date (only shows dates that have a revenue greater than 1)', 'event_espresso'),
+                esc_html__('Total Revenue', 'event_espresso'),
             );
             foreach ($results as $result) {
                 $revenue[] = array($result->txnDate, (float) $result->revenue);
@@ -216,8 +216,8 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page
 
         if ($results) {
             $revenue[] = array(
-                __('Event (only events that have a revenue greater than 1 are shown)', 'event_espresso'),
-                __('Total Revenue', 'event_espresso'),
+                esc_html__('Event (only events that have a revenue greater than 1 are shown)', 'event_espresso'),
+                esc_html__('Total Revenue', 'event_espresso'),
             );
             foreach ($results as $result) {
                 if ($result->revenue > 1) {

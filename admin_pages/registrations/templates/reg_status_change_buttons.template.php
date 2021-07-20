@@ -1,13 +1,13 @@
 <div id="reg-admin-approve-decline-reg-status-dv">
 
     <h2 id="reg-admin-reg-details-reg-status-hdr">
-        <?php echo __('Current Registration Status : ', 'event_espresso'); ?>
+        <?php echo esc_html__('Current Registration Status : ', 'event_espresso'); ?>
         <span class="<?php echo $reg_status_class; ?> bigger-text"><?php echo $reg_status_value; ?></span>
     </h2>
     <?php do_action('AHEE__reg_status_change_buttons__after_header', $REG_ID); ?>
 
     <h3 id="reg-admin-reg-details-reg-status-hdr">
-        <?php echo __('Change Registration Status to :', 'event_espresso'); ?>
+        <?php echo esc_html__('Change Registration Status to :', 'event_espresso'); ?>
     </h3>
 
     <form id="reg_status_change_form" method="POST" action="<?php echo $form_url; ?>">

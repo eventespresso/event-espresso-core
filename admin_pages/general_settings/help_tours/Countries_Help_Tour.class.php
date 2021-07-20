@@ -17,7 +17,7 @@ class Countries_Help_Tour extends EE_Help_Tour
 
     protected function _set_tour_properties()
     {
-        $this->_label = __('Countries Tour', 'event_espresso');
+        $this->_label = esc_html__('Countries Tour', 'event_espresso');
         $this->_slug = 'countries-joyride';
     }
 
@@ -60,9 +60,9 @@ class Countries_Help_Tour extends EE_Help_Tour
 
     protected function _start()
     {
-        $content = '<h3>' . __('Countries Settings', 'event_espresso') . '</h3>';
+        $content = '<h3>' . esc_html__('Countries Settings', 'event_espresso') . '</h3>';
         $content .= '<p>'
-                    . __(
+                    . esc_html__(
                         'This tour of the Countries Page will go over different areas of the screen to help you understand what they are used for.',
                         'event_espresso'
                     ) . '</p>';
@@ -72,7 +72,7 @@ class Countries_Help_Tour extends EE_Help_Tour
     protected function _country_selector_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'Select the country where your business or organization is located. This affects the currency that is used in Event Espresso.',
                    'event_espresso'
                ) . '</p>';
@@ -80,13 +80,13 @@ class Countries_Help_Tour extends EE_Help_Tour
 
     protected function _country_details_stop()
     {
-        return '<p>' . __('Here you can fine tune country and currency settings.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Here you can fine tune country and currency settings.', 'event_espresso') . '</p>';
     }
 
     protected function _country_states_settings_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'Used in certain areas of the plugin, here you can define what states/provinces will be displayed in case you do not do business in certain areas.',
                    'event_espresso'
                ) . '</p>';

@@ -30,7 +30,7 @@ class ServiceExistsException extends \OutOfRangeException
     ) {
         if (empty($message)) {
             $message = sprintf(
-                __('The "%1$s" service already exists in the CoffeeShop and can not be added again.', 'event_espresso'),
+                esc_html__('The "%1$s" service already exists in the CoffeeShop and can not be added again.', 'event_espresso'),
                 $service_name
             );
         }

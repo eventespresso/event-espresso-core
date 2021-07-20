@@ -268,7 +268,7 @@ class EED_Batch extends EED_Module
     {
         add_submenu_page(
             '', // parent slug. we don't want this to actually appear in the menu
-            __('Batch Job', 'event_espresso'), // page title
+            esc_html__('Batch Job', 'event_espresso'), // page title
             'n/a', // menu title
             'read', // we want this page to actually be accessible to anyone,
             'espresso_batch', // menu slug

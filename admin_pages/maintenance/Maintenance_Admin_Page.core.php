@@ -189,7 +189,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page
                 // unfortunately this message appears to be echoed on the NEXT page load...
                 // oh well, we should really be checking for this on addon deactivation anyways
                 EE_Error::add_attention(
-                    __(
+                    esc_html__(
                         'Site taken out of maintenance mode because no data migration scripts are required',
                         'event_espresso'
                     )
@@ -284,12 +284,12 @@ class Maintenance_Admin_Page extends EE_Admin_Page
                     $this->_template_args,
                     array(
                         'current_db_state' => sprintf(
-                            __("EE%s (%s)", "event_espresso"),
+                            esc_html__("EE%s (%s)", "event_espresso"),
                             isset($current_db_state[ $plugin_slug ]) ? $current_db_state[ $plugin_slug ] : 3,
                             $plugin_slug
                         ),
                         'next_db_state'    => isset($current_script) ? sprintf(
-                            __("EE%s (%s)", 'event_espresso'),
+                            esc_html__("EE%s (%s)", 'event_espresso'),
                             $new_version,
                             $plugin_slug
                         ) : null,
@@ -328,7 +328,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page
                         EE_MAINTENANCE_ADMIN_URL
                     ),
                     'ultimate_db_state'                      => sprintf(
-                        __("EE%s", 'event_espresso'),
+                        esc_html__("EE%s", 'event_espresso'),
                         espresso_version()
                     ),
                 )
@@ -441,14 +441,14 @@ class Maintenance_Admin_Page extends EE_Admin_Page
     {
         if (\EED_Ticket_Sales_Monitor::reset_reservation_counts()) {
             EE_Error::add_success(
-                __(
+                esc_html__(
                     'Ticket and datetime reserved counts have been successfully reset.',
                     'event_espresso'
                 )
             );
         } else {
             EE_Error::add_success(
-                __(
+                esc_html__(
                     'Ticket and datetime reserved counts were correct and did not need resetting.',
                     'event_espresso'
                 )
@@ -462,7 +462,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page
     {
         EE_Registry::instance()->CAP->init_caps(true);
         EE_Error::add_success(
-            __(
+            esc_html__(
                 'Default Event Espresso capabilities have been restored for all current roles.',
                 'event_espresso'
             )

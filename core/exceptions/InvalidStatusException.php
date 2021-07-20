@@ -19,7 +19,7 @@ class InvalidStatusException extends InvalidArgumentException
     {
         if (empty($message)) {
             $message = sprintf(
-                __(
+                esc_html__(
                     '"%1$s" is not a valid %2$s status',
                     'event_espresso'
                 ),

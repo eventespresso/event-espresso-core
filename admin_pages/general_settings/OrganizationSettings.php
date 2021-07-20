@@ -363,7 +363,7 @@ class OrganizationSettings extends FormHandler
                     ),
                     'ueip_optin' => new EE_Checkbox_Multi_Input(
                         array(
-                            true => __('Yes! I want to help improve Event Espresso!', 'event_espresso')
+                            true => esc_html__('Yes! I want to help improve Event Espresso!', 'event_espresso')
                         ),
                         array(
                             'html_name' => EE_Core_Config::OPTION_NAME_UXIP,

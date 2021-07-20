@@ -59,8 +59,8 @@ function ee_new_variations_test_register_new_variation() {
 	$vtions = array();
 	foreach ( $message_types as $message_type ) {
 		$vtions[$message_type] = array(
-						'new_variation_test_blue_lagoon' => __('Blue Lagoon', 'ee-new-variations-test' ),
-						'new_variation_test_sunset_red' => __('Sunset Red', 'ee-new-variations-test' )
+						'new_variation_test_blue_lagoon' => esc_html__('Blue Lagoon', 'ee-new-variations-test' ),
+						'new_variation_test_sunset_red' => esc_html__('Sunset Red', 'ee-new-variations-test' )
 						);
 	}
 

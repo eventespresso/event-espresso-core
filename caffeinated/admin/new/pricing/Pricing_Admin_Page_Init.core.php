@@ -28,7 +28,7 @@ class Pricing_Admin_Page_Init extends EE_Admin_Page_Init
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
         define('PRICING_PG_SLUG', 'pricing');
-        define('PRICING_LABEL', __('Pricing', 'event_espresso'));
+        define('PRICING_LABEL', esc_html__('Pricing', 'event_espresso'));
         define('PRICING_PG_NAME', ucwords(str_replace('_', '', PRICING_PG_SLUG)));
         define('PRICING_ADMIN', EE_CORE_CAF_ADMIN . 'new/' . PRICING_PG_SLUG . '/');
         define('PRICING_ADMIN_URL', admin_url('admin.php?page=' . PRICING_PG_SLUG));

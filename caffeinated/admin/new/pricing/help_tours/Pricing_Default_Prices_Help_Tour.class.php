@@ -17,7 +17,7 @@ class Pricing_Default_Prices_Help_Tour extends EE_Help_Tour
 
     protected function _set_tour_properties()
     {
-        $this->_label = __('Default Pricing Tour', 'event_espresso');
+        $this->_label = esc_html__('Default Pricing Tour', 'event_espresso');
         $this->_slug = 'default-prices-joyride';
     }
 
@@ -88,9 +88,9 @@ class Pricing_Default_Prices_Help_Tour extends EE_Help_Tour
 
     protected function _start()
     {
-        $content = '<h3>' . __('Default Pricing', 'event_espresso') . '</h3>';
+        $content = '<h3>' . esc_html__('Default Pricing', 'event_espresso') . '</h3>';
         $content .= '<p>'
-                    . __(
+                    . esc_html__(
                         'This tour of the Default Pricing page will go over different areas of the screen to help you understand what they are used for.',
                         'event_espresso'
                     ) . '</p>';
@@ -100,7 +100,7 @@ class Pricing_Default_Prices_Help_Tour extends EE_Help_Tour
     protected function _name_column_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'The name of the price, discount, tax, or surcharge that will be seen by your customers. Can be sorted in ascending or descending order.',
                    'event_espresso'
                ) . '</p>';
@@ -109,7 +109,7 @@ class Pricing_Default_Prices_Help_Tour extends EE_Help_Tour
     protected function _type_column_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'Price Types are a way of categorizing a price, discount, tax, or surcharge and indicating how it gets applied to a running total when a transaction occurs. Can be sorted in ascending or descending order.',
                    'event_espresso'
                ) . '</p>';
@@ -118,7 +118,7 @@ class Pricing_Default_Prices_Help_Tour extends EE_Help_Tour
     protected function _description_column_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'View the price type (price, discount, tax or surcharge) description.',
                    'event_espresso'
                ) . '</p>';
@@ -127,7 +127,7 @@ class Pricing_Default_Prices_Help_Tour extends EE_Help_Tour
     protected function _amount_column_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'The ticket amount before any deductions. Can be sorted in ascending or descending order.',
                    'event_espresso'
                ) . '</p>';
@@ -135,13 +135,13 @@ class Pricing_Default_Prices_Help_Tour extends EE_Help_Tour
 
     protected function _bulk_actions_stop()
     {
-        return '<p>' . __('Perform bulk actions to multiple price types.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Perform bulk actions to multiple price types.', 'event_espresso') . '</p>';
     }
 
     protected function _search_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'Search through default pricing. The following sources will be searched: Price Name, Price Type, Price Description, and Price Amount.',
                    'event_espresso'
                ) . '</p>';

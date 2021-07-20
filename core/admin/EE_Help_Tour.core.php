@@ -113,7 +113,7 @@ abstract class EE_Help_Tour extends EE_Base
 
         // make sure the last tour stop has "end tour" for its button
         $end = array_pop($this->_stops);
-        $end['button_text'] = __('End Tour', 'event_espresso');
+        $end['button_text'] = esc_html__('End Tour', 'event_espresso');
         // add back to stops
         $this->_stops[] = $end;
     }
@@ -169,7 +169,7 @@ abstract class EE_Help_Tour extends EE_Base
             // true/false to start timer on first click
             'nextButton'            => true,
             // true/false for next button visibility
-            'button_text'           => __('Next', 'event_espresso'),
+            'button_text'           => esc_html__('Next', 'event_espresso'),
             'tipAnimation'          => 'fade',
             // 'pop' or 'fade' in each tip
             'pauseAfter'            => array(),
@@ -220,7 +220,7 @@ abstract class EE_Help_Tour extends EE_Base
         if (empty($this->_slug)) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'There is no slug set for the help tour class (%s). Make sure that the $_slug property is set in the class constructor',
                         'event_espresso'
                     ),
@@ -242,7 +242,7 @@ abstract class EE_Help_Tour extends EE_Base
         if (empty($this->_label)) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'There is no label set for the help tour class (%s). Make sure that the $_label property is set in the class constructor',
                         'event_espresso'
                     ),

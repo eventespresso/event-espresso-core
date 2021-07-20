@@ -25,7 +25,7 @@ class InvalidFormSubmissionException extends \OutOfBoundsException
     {
         if (empty($message)) {
             $message = sprintf(
-                __(
+                esc_html__(
                     'The data for the "%1$s" form, is either missing or was not submitted properly.',
                     'event_espresso'
                 ),

@@ -23,11 +23,11 @@ class EE_Radio_Button_Input_Test extends EE_UnitTestCase{
 				'subsections' => array(
 					'use_captcha' => new EE_Radio_Button_Input(
 						array(
-							1 => __( 'Yes', 'event_espresso' ),
-							0  => __( 'No', 'event_espresso' )
+							1 => esc_html__( 'Yes', 'event_espresso' ),
+							0  => esc_html__( 'No', 'event_espresso' )
 						),
 						array(
-							'html_label_text'       => __( 'Use reCAPTCHA', 'event_espresso' ),
+							'html_label_text'       => esc_html__( 'Use reCAPTCHA', 'event_espresso' ),
 							'default'               => isset( EE_Registry::instance()->CFG->registration->use_captcha ) ? EE_Registry::instance()->CFG->registration->use_captcha : FALSE,
 							'normalization_strategy' => new EE_Int_Normalization()
 						)

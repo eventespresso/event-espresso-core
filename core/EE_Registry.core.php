@@ -1277,7 +1277,7 @@ class EE_Registry implements ResettableInterface
         // heh ? something's not right !
         throw new EE_Error(
             sprintf(
-                __('The %s file %s could not be instantiated.', 'event_espresso'),
+                esc_html__('The %s file %s could not be instantiated.', 'event_espresso'),
                 $type,
                 $class_name
             )

@@ -152,10 +152,10 @@ class EEH_Tabbed_Content
      *
      * @param  array $item_array      formatted array of items.  Format:
      * array(
-     *      'label' => __('localized label displayed'),
+     *      'label' => esc_html__('localized label displayed'),
      *      'class' => 'class_for_item',
      *      'href' => '#some_item_id', //url/bookmark for item.  If you include a bookmark the js will used this to show the container div.
-     *      'title' => __('localized text for the title attribute of the link'),
+     *      'title' => esc_html__('localized text for the title attribute of the link'),
      *      'slug' => 'slug_used_for_reference'
      * )
      * @param  string $container_class class used for main container

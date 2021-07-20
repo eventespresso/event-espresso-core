@@ -25,17 +25,17 @@ class EEM_Datetime_Ticket extends EEM_Base
      */
     protected function __construct($timezone)
     {
-        $this->singular_item = __('Datetime Ticket', 'event_espresso');
-        $this->plural_item = __('Datetime Tickets', 'event_espresso');
+        $this->singular_item = esc_html__('Datetime Ticket', 'event_espresso');
+        $this->plural_item = esc_html__('Datetime Tickets', 'event_espresso');
 
         $this->_tables = array(
             'Datetime_Ticket' => new EE_Primary_Table('esp_datetime_ticket', 'DTK_ID')
         );
         $this->_fields = array(
             'Datetime_Ticket' => array(
-                'DTK_ID' => new EE_Primary_Key_Int_Field('DTK_ID', __('Datetime Ticket ID', 'event_espresso')),
-                'DTT_ID' => new EE_Foreign_Key_Int_Field('DTT_ID', __('The ID to the Datetime', 'event_espresso'), false, 0, 'Datetime'),
-                'TKT_ID' => new EE_Foreign_Key_Int_Field('TKT_ID', __('The ID to the Ticket', 'event_espresso'), false, 0, 'Ticket')
+                'DTK_ID' => new EE_Primary_Key_Int_Field('DTK_ID', esc_html__('Datetime Ticket ID', 'event_espresso')),
+                'DTT_ID' => new EE_Foreign_Key_Int_Field('DTT_ID', esc_html__('The ID to the Datetime', 'event_espresso'), false, 0, 'Datetime'),
+                'TKT_ID' => new EE_Foreign_Key_Int_Field('TKT_ID', esc_html__('The ID to the Ticket', 'event_espresso'), false, 0, 'Ticket')
             ));
         $this->_model_relations = array(
             'Ticket' => new EE_Belongs_To_Relation(),

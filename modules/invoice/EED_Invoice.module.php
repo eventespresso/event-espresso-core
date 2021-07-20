@@ -58,7 +58,7 @@ class EED_Invoice extends EED_Module
         if (is_readable(EE_MODULES . 'gateways/Invoice/lib/Invoice.class.php')) {
             require_once(EE_MODULES . 'gateways/Invoice/lib/Invoice.class.php');
         } else {
-            $msg = __('The Invoice.class.php file could not be loaded.', 'event_espresso');
+            $msg = esc_html__('The Invoice.class.php file could not be loaded.', 'event_espresso');
             EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
         }
     }

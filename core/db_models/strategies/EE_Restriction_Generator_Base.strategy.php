@@ -66,7 +66,7 @@ abstract class EE_Restriction_Generator_Base
     public function model()
     {
         if (! $this->_model instanceof EEM_Base) {
-            throw new EE_Error(sprintf(__('Cannot generate capability restrictions because model has not yet been set on the %s. Please ensure _construct_finalize() was called', 'event_espresso'), get_class($this)));
+            throw new EE_Error(sprintf(esc_html__('Cannot generate capability restrictions because model has not yet been set on the %s. Please ensure _construct_finalize() was called', 'event_espresso'), get_class($this)));
         }
         return $this->_model;
     }
@@ -81,7 +81,7 @@ abstract class EE_Restriction_Generator_Base
     public function action()
     {
         if (! $this->_action) {
-            throw new EE_Error(sprintf(__('Cannot generate capability restrictions because model has not yet been set on the %s. Please ensure _construct_finalize() was called', 'event_espresso'), get_class($this)));
+            throw new EE_Error(sprintf(esc_html__('Cannot generate capability restrictions because model has not yet been set on the %s. Please ensure _construct_finalize() was called', 'event_espresso'), get_class($this)));
         }
         return $this->_action;
     }

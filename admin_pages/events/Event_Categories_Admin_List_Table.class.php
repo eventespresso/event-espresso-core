@@ -122,7 +122,7 @@ class Event_Categories_Admin_List_Table extends EE_Admin_List_Table
             esc_attr(
                 sprintf(
                     /* translators: %s: event category name */
-                    __('View &#8220;%s&#8221; archive', 'event_espresso'),
+                    esc_html__('View &#8220;%s&#8221; archive', 'event_espresso'),
                     $item->get_first_related('Term')->get('name')
                 )
             ),

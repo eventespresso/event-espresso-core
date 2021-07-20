@@ -104,7 +104,7 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base
     public function get_join_statement($model_relation_chain)
     {
         if ($this->_model_relation_chain_to_join_model === null) {
-            throw new EE_Error(sprintf(__(
+            throw new EE_Error(sprintf(esc_html__(
                 'When using EE_HABTM_Relation to create a join, you must call get_join_to_intermediate_model_statement BEFORE get_join_statement',
                 'event_espresso'
             )));

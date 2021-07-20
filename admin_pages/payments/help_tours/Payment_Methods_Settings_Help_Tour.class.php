@@ -17,7 +17,7 @@ class Payment_Methods_Settings_Help_Tour extends EE_Help_Tour
 
     protected function _set_tour_properties()
     {
-        $this->_label = __('Payment Settings Tour', 'event_espresso');
+        $this->_label = esc_html__('Payment Settings Tour', 'event_espresso');
         $this->_slug = 'payment-settings-joyride';
     }
 
@@ -42,9 +42,9 @@ class Payment_Methods_Settings_Help_Tour extends EE_Help_Tour
 
     protected function _start()
     {
-        $content = '<h3>' . __('Payment Settings', 'event_espresso') . '</h3>';
+        $content = '<h3>' . esc_html__('Payment Settings', 'event_espresso') . '</h3>';
         $content .= '<p>'
-                    . __(
+                    . esc_html__(
                         'This tour of the Payment Settings page will go over different areas of the screen to help you understand what they are used for.',
                         'event_espresso'
                     ) . '</p>';
@@ -54,7 +54,7 @@ class Payment_Methods_Settings_Help_Tour extends EE_Help_Tour
     protected function _show_pending_options_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'Specify whether to provide your registrants with the option to retry payments.',
                    'event_espresso'
                ) . '</p>';

@@ -41,7 +41,7 @@ class EE_Messages_REG_incoming_data extends EE_Messages_incoming_data
         if (! $this->reg_obj instanceof EE_Registration) {
             throw new EE_Error(
                 sprintf(
-                    __('%1$s requires the incoming data argument to be an instance of %2$s or an array where the first value is an instance of %2$s', 'event_espresso'),
+                    esc_html__('%1$s requires the incoming data argument to be an instance of %2$s or an array where the first value is an instance of %2$s', 'event_espresso'),
                     'EE_Messages_REG_incoming_data',
                     'EE_Registration'
                 )

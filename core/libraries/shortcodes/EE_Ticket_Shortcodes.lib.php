@@ -29,35 +29,35 @@ class EE_Ticket_Shortcodes extends EE_Shortcodes
 
     protected function _init_props()
     {
-        $this->label = __('Ticket Shortcodes', 'event_espresso');
-        $this->description = __('All shortcodes specific to ticket related data', 'event_espresso');
+        $this->label = esc_html__('Ticket Shortcodes', 'event_espresso');
+        $this->description = esc_html__('All shortcodes specific to ticket related data', 'event_espresso');
         $this->_shortcodes = array(
-            '[TICKET_ID]'               => __('Will be replaced by the ticket ID of a ticket', 'event_espresso'),
-            '[TICKET_NAME]'             => __('The name of the ticket', 'event_espresso'),
-            '[TICKET_DESCRIPTION]'      => __('The description of the ticket', 'event_espresso'),
-            '[TICKET_PRICE]'            => __('The price of the ticket', 'event_espresso'),
-            '[TICKET_PRICE_WITH_TAXES]' => __(
+            '[TICKET_ID]'               => esc_html__('Will be replaced by the ticket ID of a ticket', 'event_espresso'),
+            '[TICKET_NAME]'             => esc_html__('The name of the ticket', 'event_espresso'),
+            '[TICKET_DESCRIPTION]'      => esc_html__('The description of the ticket', 'event_espresso'),
+            '[TICKET_PRICE]'            => esc_html__('The price of the ticket', 'event_espresso'),
+            '[TICKET_PRICE_WITH_TAXES]' => esc_html__(
                 'The price of the ticket including any taxes that might be on the ticket',
                 'event_espresso'
             ),
-            '[TKT_QTY_PURCHASED]'       => __(
+            '[TKT_QTY_PURCHASED]'       => esc_html__(
                 'The total quantity of the current ticket in the list that has been purchased in this transaction',
                 'event_espresso'
             ),
-            '[TKT_USES_*]'              => __(
+            '[TKT_USES_*]'              => esc_html__(
                 'This attribute based shortcode parses to show the number of uses the ticket has.  The optional "schema" attribute can be used to indicate what schema is used when the uses is infinite.  Options are:',
                 'event_espresso'
             ) .
                                            '<p><ul>' .
-                                           '<li><strong>symbol</strong>:' . __(
+                                           '<li><strong>symbol</strong>:' . esc_html__(
                                                'This returns the &infin; symbol.',
                                                'event_espresso'
                                            ) . '</li>' .
-                                           '<li><strong>text</strong>:' . __(
+                                           '<li><strong>text</strong>:' . esc_html__(
                                                'This returns the word, "Unlimited". This is also the default if the "schema" attribute is not used.',
                                                'event_espresso'
                                            ) . '</li>' .
-                                           '<li><strong>{custom}</strong>:' . __(
+                                           '<li><strong>{custom}</strong>:' . esc_html__(
                                                'You can put anything you want as a string instead and that will be used.  So you could have the world "any" and whenever uses for a ticket is infinity, this shortcode will parse to "any".',
                                                'event_espresso'
                                            ) . '</li>' .

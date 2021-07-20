@@ -8,12 +8,12 @@ class EE_Sample_Form extends EE_Form_Section_Proper
             'h1' => new EE_Form_Section_HTML('hello wordl'),
             'name' => new EE_Text_Input(array('required' => true,'default' => 'your name here')),
             'email' => new EE_Email_Input(array('required' => false)),
-            'shirt_size' => new EE_Select_Input(array('' => 'Please select...', 's' =>  __("Small", "event_espresso"),'m' =>  __("Medium", "event_espresso"),'l' =>  __("Large", "event_espresso")), array('required' => true,'default' => 's')),
+            'shirt_size' => new EE_Select_Input(array('' => 'Please select...', 's' =>  esc_html__("Small", "event_espresso"),'m' =>  esc_html__("Medium", "event_espresso"),'l' =>  esc_html__("Large", "event_espresso")), array('required' => true,'default' => 's')),
             'month_normal' => new EE_Month_Input(),
             'month_leading_zero' => new EE_Month_Input(true),
             'year_2' => new EE_Year_Input(false, 1, 1),
             'year_4' => new EE_Year_Input(true, 0, 10, array('default' => '2017')),
-            'yes_no' => new EE_Yes_No_Input(array('html_label_text' =>  __("Yes or No", "event_espresso"))),
+            'yes_no' => new EE_Yes_No_Input(array('html_label_text' =>  esc_html__("Yes or No", "event_espresso"))),
             'credit_card' => new EE_Credit_Card_Input(),
             'image_1' => new EE_Admin_File_Uploader_Input(),
             'image_2' => new EE_Admin_File_Uploader_Input(),
@@ -46,7 +46,7 @@ class EE_Sample_Form extends EE_Form_Section_Proper
     public function _validate_name($form_input)
     {
         if ($form_input->raw_value() != 'Mike') {
-            $form_input->add_validation_error(__("You are not mike. You must be brent or darren. Thats ok, I guess", 'event_espresso'), 'not-mike');
+            $form_input->add_validation_error(esc_html__("You are not mike. You must be brent or darren. Thats ok, I guess", 'event_espresso'), 'not-mike');
         }
     }
 
@@ -57,7 +57,7 @@ class EE_Sample_Form extends EE_Form_Section_Proper
             $this->_subsections['shirt_size']->normalized_value() == 's'
                 && $this->_subsections['year_4']->normalized_value() < 2010
         ) {
-            $this->add_validation_error(__("If you want a small shirt, you should be born after 2010. Otherwise theyre just too big", 'event_espresso'), 'too-old');
+            $this->add_validation_error(esc_html__("If you want a small shirt, you should be born after 2010. Otherwise theyre just too big", 'event_espresso'), 'too-old');
         }
     }
 }

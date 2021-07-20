@@ -22,8 +22,8 @@ abstract class EE_message_type extends EE_Messages_Base
      * format:
      * array(
      * 'context' => array(
-     *        'label' => __('Context Label', 'event_espresso'),
-     *        'description' => __('Context description (for help popups)', 'event_espresso')
+     *        'label' => esc_html__('Context Label', 'event_espresso'),
+     *        'description' => esc_html__('Context description (for help popups)', 'event_espresso')
      *    ));
      *
      * @var array
@@ -411,7 +411,7 @@ abstract class EE_message_type extends EE_Messages_Base
         if (! isset($this->_contexts[ $context ])) {
             throw new EE_Error(
                 sprintf(
-                    __('The context %s is not a valid context for %s.', 'event_espresso'),
+                    esc_html__('The context %s is not a valid context for %s.', 'event_espresso'),
                     $context,
                     get_class($this)
                 )
@@ -427,7 +427,7 @@ abstract class EE_message_type extends EE_Messages_Base
         if ($not_valid_msgr) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'The given sending messenger string (%s) does not match a valid sending messenger with the %s.  If this is incorrect, make sure that the message type has defined this messenger as a sending messenger in its $_with_messengers array.',
                         'event_espresso'
                     ),
@@ -467,7 +467,7 @@ abstract class EE_message_type extends EE_Messages_Base
         if (! isset($this->_contexts[ $context ])) {
             throw new EE_Error(
                 sprintf(
-                    __('The context %s is not a valid context for %s.', 'event_espresso'),
+                    esc_html__('The context %s is not a valid context for %s.', 'event_espresso'),
                     $context,
                     get_class($this)
                 )
@@ -484,7 +484,7 @@ abstract class EE_message_type extends EE_Messages_Base
         if (empty($data)) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'There is no data retrieved, it is possible that the id given (%d) does not match any value in the database for the corresponding EE_Base_Class used by the data handler for the %s message type.',
                         'event_espresso'
                     ),
@@ -662,7 +662,7 @@ abstract class EE_message_type extends EE_Messages_Base
             if (! method_exists($this, $xpctd_method)) {
                 throw new EE_Error(
                     sprintf(
-                        __(
+                        esc_html__(
                             'The data for %1$s message type cannot be prepared because there is no set method for doing so.  The expected method name is "%2$s" please doublecheck the %1$s message type class and make sure that method is present',
                             'event_espresso'
                         ),

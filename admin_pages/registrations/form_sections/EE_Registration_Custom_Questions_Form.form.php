@@ -64,7 +64,7 @@ class EE_Registration_Custom_Questions_Form extends EE_Form_Section_Proper
     {
         $reg = $this->get_registration();
         if (! $reg instanceof EE_Registration) {
-            throw new EE_Error(__('We cannot build the registration custom questions form because there is no registration set on it yet', 'event_espresso'));
+            throw new EE_Error(esc_html__('We cannot build the registration custom questions form because there is no registration set on it yet', 'event_espresso'));
         }
         // we want to get all their question groups
         $question_groups = EEM_Question_Group::instance()->get_all(
@@ -109,7 +109,7 @@ class EE_Registration_Custom_Questions_Form extends EE_Form_Section_Proper
             ! $question_group instanceof EE_Question_Group ||
             ! $registration instanceof EE_Registration
         ) {
-            throw new EE_Error(__('A valid question group and registration must be passed to EE_Registration_Custom_Question_Form', 'event_espresso'));
+            throw new EE_Error(esc_html__('A valid question group and registration must be passed to EE_Registration_Custom_Question_Form', 'event_espresso'));
         }
         $parts_of_subsection = array(
             'title' => new EE_Form_Section_HTML(
@@ -144,7 +144,7 @@ class EE_Registration_Custom_Questions_Form extends EE_Form_Section_Proper
                 EEH_HTML::table(
                     EEH_HTML::tr(
                         '<th/><td class="reg-admin-edit-attendee-question-td"><a class="reg-admin-edit-attendee-question-lnk" href="#" aria-label="' . esc_attr__('click to edit question', 'event_espresso') . '">
-		  			<span class="reg-admin-edit-question-group-spn">' . __('edit the above question group', 'event_espresso') . '</span>
+		  			<span class="reg-admin-edit-question-group-spn">' . esc_html__('edit the above question group', 'event_espresso') . '</span>
 		  			<div class="dashicons dashicons-edit"></div>
 		  		</a></td>'
                     ) .

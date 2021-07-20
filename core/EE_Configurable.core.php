@@ -123,7 +123,7 @@ abstract class EE_Configurable extends EE_Base
         if (! $config_obj instanceof $config_class) {
             throw new EE_Error(
                 sprintf(
-                    __('The "%1$s" class is not an instance of %2$s.', 'event_espresso'),
+                    esc_html__('The "%1$s" class is not an instance of %2$s.', 'event_espresso'),
                     print_r($config_obj, true),
                     $config_class
                 )

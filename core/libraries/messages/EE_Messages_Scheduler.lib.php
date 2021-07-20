@@ -59,7 +59,7 @@ class EE_Messages_Scheduler extends EE_Base
     {
         $schedules['ee_message_cron'] = array(
             'interval' => self::message_cron_schedule,
-            'display'  => __(
+            'display'  => esc_html__(
                 'This is the cron time interval for EE Message schedules (defaults to once every 5 minutes)',
                 'event_espresso'
             ),

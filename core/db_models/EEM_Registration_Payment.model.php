@@ -20,8 +20,8 @@ class EEM_Registration_Payment extends EEM_Base
     protected function __construct($timezone = null)
     {
 
-        $this->singular_item = __('Registration Payment', 'event_espresso');
-        $this->plural_item  = __('Registration Payments', 'event_espresso');
+        $this->singular_item = esc_html__('Registration Payment', 'event_espresso');
+        $this->plural_item  = esc_html__('Registration Payments', 'event_espresso');
 
         $this->_tables = array(
             'Registration_Payment' => new EE_Primary_Table('esp_registration_payment', 'RPY_ID')
@@ -29,10 +29,10 @@ class EEM_Registration_Payment extends EEM_Base
 
         $this->_fields = array(
             'Registration_Payment' => array(
-                'RPY_ID'                => new EE_Primary_Key_Int_Field('RPY_ID', __('Registration Payment ID', 'event_espresso')),
-                'REG_ID'                => new EE_Foreign_Key_Int_Field('REG_ID', __('Registration ID', 'event_espresso'), false, 0, 'Registration'),
-                'PAY_ID'                => new EE_Foreign_Key_Int_Field('PAY_ID', __('Payment ID', 'event_espresso'), true, null, 'Payment'),
-                'RPY_amount'    => new EE_Money_Field('RPY_amount', __('Amount attributed to the registration', 'event_espresso'), false, 0),
+                'RPY_ID'                => new EE_Primary_Key_Int_Field('RPY_ID', esc_html__('Registration Payment ID', 'event_espresso')),
+                'REG_ID'                => new EE_Foreign_Key_Int_Field('REG_ID', esc_html__('Registration ID', 'event_espresso'), false, 0, 'Registration'),
+                'PAY_ID'                => new EE_Foreign_Key_Int_Field('PAY_ID', esc_html__('Payment ID', 'event_espresso'), true, null, 'Payment'),
+                'RPY_amount'    => new EE_Money_Field('RPY_amount', esc_html__('Amount attributed to the registration', 'event_espresso'), false, 0),
             )
         );
 

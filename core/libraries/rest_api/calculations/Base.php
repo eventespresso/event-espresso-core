@@ -27,7 +27,7 @@ class Base
             throw new RestException(
                 'permission_denied',
                 sprintf(
-                    __(
+                    esc_html__(
                     // @codingStandardsIgnoreStart
                         'Permission denied, you cannot calculate %1$s on %2$s because you do not have the capability "%3$s"',
                         // @codingStandardsIgnoreEnd

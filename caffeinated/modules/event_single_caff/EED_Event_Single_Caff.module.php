@@ -226,10 +226,10 @@ class EED_Event_Single_Caff extends EED_Event_Single
             $config_saved = EE_Registry::instance()->CFG->update_espresso_config(false, false);
         }
         if ($config_saved) {
-            EE_Error::add_success(__('Display Order has been successfully updated.', 'event_espresso'));
+            EE_Error::add_success(esc_html__('Display Order has been successfully updated.', 'event_espresso'));
         } else {
             EE_Error::add_error(
-                __('Display Order was not updated.', 'event_espresso'),
+                esc_html__('Display Order was not updated.', 'event_espresso'),
                 __FILE__,
                 __FUNCTION__,
                 __LINE__

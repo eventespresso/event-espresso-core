@@ -33,7 +33,7 @@ class EE_Messages_Gateways_incoming_data extends EE_Messages_incoming_data
 
         // test for valid params
         if (! ( $data[0] instanceof EE_Transaction )) {
-            throw new EE_Error(__('Incoming data for the Gateways data handler must have an EE_Transaction object as the value for the first array index.', 'event_espresso'));
+            throw new EE_Error(esc_html__('Incoming data for the Gateways data handler must have an EE_Transaction object as the value for the first array index.', 'event_espresso'));
         }
 
         if (empty($data[1]) || ! $data[1] instanceof  EE_Payment) {

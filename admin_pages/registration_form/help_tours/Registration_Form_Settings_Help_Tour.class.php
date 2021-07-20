@@ -17,7 +17,7 @@ class Registration_Form_Settings_Help_Tour extends EE_Help_Tour
 
     protected function _set_tour_properties()
     {
-        $this->_label = __('Registration Form Settings Tour', 'event_espresso');
+        $this->_label = esc_html__('Registration Form Settings Tour', 'event_espresso');
         $this->_slug = $this->_is_caf ? 'reg-form-settings-caf-joyride' : 'reg-form-settings-joyride';
     }
 
@@ -87,9 +87,9 @@ class Registration_Form_Settings_Help_Tour extends EE_Help_Tour
 
     protected function _start()
     {
-        $content = '<h3>' . __('Registration Form Settings', 'event_espresso') . '</h3>';
+        $content = '<h3>' . esc_html__('Registration Form Settings', 'event_espresso') . '</h3>';
         $content .= '<p>'
-                    . __(
+                    . esc_html__(
                         'This tour of the Registration Form Settings page will go over different areas of the screen to help you understand what they are used for.',
                         'event_espresso'
                     ) . '</p>';
@@ -99,31 +99,31 @@ class Registration_Form_Settings_Help_Tour extends EE_Help_Tour
 
     protected function _use_recaptcha_stop()
     {
-        return '<p>' . __('Specify whether reCAPTCHA should be enabled.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Specify whether reCAPTCHA should be enabled.', 'event_espresso') . '</p>';
     }
 
     protected function _recaptcha_public_key_stop()
     {
-        return '<p>' . __('Enter your public key for reCAPTCHA.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Enter your public key for reCAPTCHA.', 'event_espresso') . '</p>';
     }
 
     protected function _recaptcha_private_key_stop()
     {
-        return '<p>' . __('Enter your private key for reCAPTCHA.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Enter your private key for reCAPTCHA.', 'event_espresso') . '</p>';
     }
 
     protected function _recaptcha_theme_stop()
     {
-        return '<p>' . __('Select a theme (style) for your reCAPTCHA.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Select a theme (style) for your reCAPTCHA.', 'event_espresso') . '</p>';
     }
 
     protected function _recaptcha_language_stop()
     {
-        return '<p>' . __('Specify the language that should be used for reCAPTCHA.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Specify the language that should be used for reCAPTCHA.', 'event_espresso') . '</p>';
     }
 
     protected function _recaptcha_width_stop()
     {
-        return '<p>' . __('Specify how wide (in pixels) the reCAPTCHA form should be.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Specify how wide (in pixels) the reCAPTCHA form should be.', 'event_espresso') . '</p>';
     }
 }

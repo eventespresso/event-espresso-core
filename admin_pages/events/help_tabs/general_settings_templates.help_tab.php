@@ -42,7 +42,7 @@
 <li>
 <strong><?php _e('Display Descriptions', 'event_espresso'); ?></strong><br />
 <?php printf(
-    __(
+    esc_html__(
         'Whether descriptions should be shown on the event list page.%1$sSelecting "none" will NOT display any of the text content you entered into the main text editor on the event admin page.%1$sSelecting "excerpt" will display the text you entered into the "Excerpt" textarea on the event admin page, OR, any text in the main text editor above the %2$s tag.%1$sSelecting "full description" will display ALL of the text content you entered into the main text editor on the event admin page.',
         'event_espresso'
     ),

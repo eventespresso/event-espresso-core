@@ -17,7 +17,7 @@ class Event_Default_Settings_Help_Tour extends EE_Help_Tour
 
     protected function _set_tour_properties()
     {
-        $this->_label = __('Default Settings Tour', 'event_espresso');
+        $this->_label = esc_html__('Default Settings Tour', 'event_espresso');
         $this->_slug = $this->_is_caf ? 'event-default-settings-caf-joyride' : 'event-default-settings-joyride';
     }
 
@@ -43,9 +43,9 @@ class Event_Default_Settings_Help_Tour extends EE_Help_Tour
 
     protected function _stop_one()
     {
-        $content = '<h3>' . __('Event Default Settings', 'event_espresso') . '</h3>';
+        $content = '<h3>' . esc_html__('Event Default Settings', 'event_espresso') . '</h3>';
         $content .= '<p>'
-                    . __(
+                    . esc_html__(
                         'This tour of the Default Settings page will go over different areas of the screen to help you understand what they are used for.',
                         'event_espresso'
                     ) . '</p>';
@@ -57,7 +57,7 @@ class Event_Default_Settings_Help_Tour extends EE_Help_Tour
     {
         return '<p>'
                . sprintf(
-                   __(
+                   esc_html__(
                        'Specify whether the default registration status be set to Approved, Not Approved, or Pending Payment.',
                        'event_espresso'
                    ),

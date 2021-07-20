@@ -265,7 +265,7 @@ class EE_Data_Migration_Manager implements ResettableInterface
                 // just leave it as an array (which will probably just get ignored)
                 throw new EE_Error(
                     sprintf(
-                        __(
+                        esc_html__(
                             "Trying to retrieve DMS class from wp option. No DMS by the name '%s' exists",
                             'event_espresso'
                         ),
@@ -276,7 +276,7 @@ class EE_Data_Migration_Manager implements ResettableInterface
         } else {
             // so the data doesn't specify a class. So it must either be a legacy array of info or some array (which we'll probably just ignore), or a class that no longer exists
             throw new EE_Error(
-                sprintf(__("The wp option  with key '%s' does not represent a DMS", 'event_espresso'), $dms_option_name)
+                sprintf(esc_html__("The wp option  with key '%s' does not represent a DMS", 'event_espresso'), $dms_option_name)
             );
         }
     }
@@ -413,7 +413,7 @@ class EE_Data_Migration_Manager implements ResettableInterface
         if (! $matches || ! (isset($matches[1]) && isset($matches[2]) && isset($matches[3]))) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         "%s is not a valid Data Migration Script. The classname should be like EE_DMS_w_x_y_z, where w is either 'Core' or the slug of an addon and x, y and z are numbers, ",
                         "event_espresso"
                     ),
@@ -620,8 +620,8 @@ class EE_Data_Migration_Manager implements ResettableInterface
                         'records_to_migrate' => 1,
                         'records_migrated'   => 1,
                         'status'             => self::status_no_more_migration_scripts,
-                        'script'             => __("Data Migration Completed Successfully", "event_espresso"),
-                        'message'            => __("All done!", "event_espresso"),
+                        'script'             => esc_html__("Data Migration Completed Successfully", "event_espresso"),
+                        'message'            => esc_html__("All done!", "event_espresso"),
                     );
                 }
                 $currently_executing_script = array_shift($scripts);
@@ -637,20 +637,20 @@ class EE_Data_Migration_Manager implements ResettableInterface
             // an exception occurred while trying to get migration scripts
 
             $message = sprintf(
-                __("Error Message: %sStack Trace:%s", "event_espresso"),
+                esc_html__("Error Message: %sStack Trace:%s", "event_espresso"),
                 $e->getMessage() . '<br>',
                 $e->getTraceAsString()
             );
             // record it on the array of data migration scripts ran. This will be overwritten next time we try and try to run data migrations
             // but that's ok-- it's just an FYI to support that we couldn't even run any data migrations
             $this->add_error_to_migrations_ran(
-                sprintf(__("Could not run data migrations because: %s", "event_espresso"), $message)
+                sprintf(esc_html__("Could not run data migrations because: %s", "event_espresso"), $message)
             );
             return array(
                 'records_to_migrate' => 1,
                 'records_migrated'   => 0,
                 'status'             => self::status_fatal_error,
-                'script'             => __("Error loading data migration scripts", "event_espresso"),
+                'script'             => esc_html__("Error loading data migration scripts", "event_espresso"),
                 'message'            => $message,
             );
         }
@@ -684,7 +684,7 @@ class EE_Data_Migration_Manager implements ResettableInterface
                         'status'             => EE_Data_Migration_Manager::status_completed,
                         'message'            => $currently_executing_script->get_feedback_message(),
                         'script'             => sprintf(
-                            __("%s Completed", 'event_espresso'),
+                            esc_html__("%s Completed", 'event_espresso'),
                             $currently_executing_script->pretty_name()
                         ),
                     );
@@ -707,7 +707,7 @@ class EE_Data_Migration_Manager implements ResettableInterface
                         'records_migrated'   => $currently_executing_script->count_records_migrated(),
                         'status'             => $currently_executing_script->get_status(),
                         'message'            => sprintf(
-                            __("Minor errors occurred during %s: %s", "event_espresso"),
+                            esc_html__("Minor errors occurred during %s: %s", "event_espresso"),
                             $currently_executing_script->pretty_name(),
                             implode(", ", $currently_executing_script->get_errors())
                         ),
@@ -723,14 +723,14 @@ class EE_Data_Migration_Manager implements ResettableInterface
                 $currently_executing_script->set_broken();
                 $currently_executing_script->add_error($e->getMessage());
             } else {
-                $script_name = __("Error getting Migration Script", "event_espresso");
+                $script_name = esc_html__("Error getting Migration Script", "event_espresso");
             }
             $response_array = array(
                 'records_to_migrate' => 1,
                 'records_migrated'   => 0,
                 'status'             => self::status_fatal_error,
                 'message'            => sprintf(
-                    __("A fatal error occurred during the migration: %s", "event_espresso"),
+                    esc_html__("A fatal error occurred during the migration: %s", "event_espresso"),
                     $e->getMessage()
                 ),
                 'script'             => $script_name,
@@ -744,7 +744,7 @@ class EE_Data_Migration_Manager implements ResettableInterface
             // won't have as much info in it, and it may be able to save
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         "The error '%s' occurred updating the status of the migration. This is a FATAL ERROR, but the error is preventing the system from remembering that. Please contact event espresso support.",
                         "event_espresso"
                     ),
@@ -785,7 +785,7 @@ class EE_Data_Migration_Manager implements ResettableInterface
                 'records_migrated'   => 0,
                 'status'             => EE_Data_Migration_Manager::status_fatal_error,
                 'message'            => sprintf(
-                    __("Unknown fatal error occurred: %s", "event_espresso"),
+                    esc_html__("Unknown fatal error occurred: %s", "event_espresso"),
                     $e->getMessage()
                 ),
                 'script'             => 'Unknown',
@@ -1035,20 +1035,20 @@ class EE_Data_Migration_Manager implements ResettableInterface
         if (! isset($properties_array['class'])) {
             throw new EE_Error(
                 sprintf(
-                    __("Properties array  has no 'class' properties. Here's what it has: %s", "event_espresso"),
+                    esc_html__("Properties array  has no 'class' properties. Here's what it has: %s", "event_espresso"),
                     implode(",", $properties_array)
                 )
             );
         }
         $class_name = $properties_array['class'];
         if (! class_exists($class_name)) {
-            throw new EE_Error(sprintf(__("There is no migration script named %s", "event_espresso"), $class_name));
+            throw new EE_Error(sprintf(esc_html__("There is no migration script named %s", "event_espresso"), $class_name));
         }
         $class = new $class_name();
         if (! $class instanceof EE_Data_Migration_Script_Base) {
             throw new EE_Error(
                 sprintf(
-                    __("Class '%s' is supposed to be a migration script. Its not, its a '%s'", "event_espresso"),
+                    esc_html__("Class '%s' is supposed to be a migration script. Its not, its a '%s'", "event_espresso"),
                     $class_name,
                     get_class($class)
                 )
@@ -1144,7 +1144,7 @@ class EE_Data_Migration_Manager implements ResettableInterface
         } else {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'Unable to reattempt the last ran migration script because it was not a valid migration script. || It was %s',
                         'event_espresso'
                     ),
@@ -1244,7 +1244,7 @@ class EE_Data_Migration_Manager implements ResettableInterface
         } else {
             throw new EE_Error(
                 sprintf(
-                    __('Table analysis class on class %1$s is not set properly.', 'event_espresso'),
+                    esc_html__('Table analysis class on class %1$s is not set properly.', 'event_espresso'),
                     get_class($this)
                 )
             );
@@ -1264,7 +1264,7 @@ class EE_Data_Migration_Manager implements ResettableInterface
         } else {
             throw new EE_Error(
                 sprintf(
-                    __('Table manager class on class %1$s is not set properly.', 'event_espresso'),
+                    esc_html__('Table manager class on class %1$s is not set properly.', 'event_espresso'),
                     get_class($this)
                 )
             );

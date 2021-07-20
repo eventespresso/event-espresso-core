@@ -17,7 +17,7 @@ class EE_Help_Tour_final_stop extends EE_Help_Tour
 
     protected function _set_tour_properties()
     {
-        $this->_label = __('Final Stop Tour', 'event_espresso');
+        $this->_label = esc_html__('Final Stop Tour', 'event_espresso');
         $this->_slug = 'final-stop-tour';
     }
 
@@ -28,7 +28,7 @@ class EE_Help_Tour_final_stop extends EE_Help_Tour
             10 => array(
                 'id'          => 'contextual-help-link',
                 'content'     => $this->_end(),
-                'button_text' => __('Quit', 'event_espresso'),
+                'button_text' => esc_html__('Quit', 'event_espresso'),
                 'options'     => array(
                     'tipLocation'    => 'left',
                     'tipAdjustmentY' => -20,
@@ -53,7 +53,7 @@ class EE_Help_Tour_final_stop extends EE_Help_Tour
         );
         return '<p>'
                . sprintf(
-                   __(
+                   esc_html__(
                        'That\'s it for the tour!  At any time you can restart a tour by clicking on this help dropdown and then clicking one of the Tour buttons.  There are help tours available on all Event Espresso Admin pages.  If you want to turn off help tours for all pages, %sgo here%s. All the best with your events!',
                        'event_espresso'
                    ),

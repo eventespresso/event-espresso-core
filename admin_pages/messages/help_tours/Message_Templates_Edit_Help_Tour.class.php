@@ -17,7 +17,7 @@ class Message_Templates_Edit_Help_Tour extends EE_Help_Tour
 
     protected function _set_tour_properties()
     {
-        $this->_label = __('Message Template Editor Tour', 'event_espresso');
+        $this->_label = esc_html__('Message Template Editor Tour', 'event_espresso');
         $this->_slug = 'messages-templates-edit-joyride';
     }
 
@@ -85,9 +85,9 @@ class Message_Templates_Edit_Help_Tour extends EE_Help_Tour
 
     protected function _start()
     {
-        $content = '<h3>' . __('Message Template Editor', 'event_espresso') . '</h3>';
+        $content = '<h3>' . esc_html__('Message Template Editor', 'event_espresso') . '</h3>';
         $content .= '<p>'
-                    . __(
+                    . esc_html__(
                         'This tour of the Message Template Editor page will go over different areas of the screen to help you understand what they are used for.',
                         'event_espresso'
                     ) . '</p>';
@@ -98,7 +98,7 @@ class Message_Templates_Edit_Help_Tour extends EE_Help_Tour
     protected function _context_switcher_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'This dropdown allows you to swap between the different recipients templates that are available in this message type. Be sure to save changes befor switching to a different context.',
                    'event_espresso'
                ) . '</p>';
@@ -108,7 +108,7 @@ class Message_Templates_Edit_Help_Tour extends EE_Help_Tour
     protected function _preview_button_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'Clicking this button will show you a preview of how your message will look.',
                    'event_espresso'
                ) . '</p>';
@@ -118,7 +118,7 @@ class Message_Templates_Edit_Help_Tour extends EE_Help_Tour
     protected function _template_area_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'Depending on the messenger (recipient) and the message type, the main screen can show different boxes. Overall the screen allows you to confirm who the messages go to and who from, and the actual content of the message.',
                    'event_espresso'
                ) . '</p>';
@@ -127,7 +127,7 @@ class Message_Templates_Edit_Help_Tour extends EE_Help_Tour
     protected function _mtp_valid_shortcodes_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'These shortcodes allow you to quickly add data into your messages, without touching code. From emails, to ticket details, to your company logo, building messages with shortcodes is easy and fast.',
                    'event_espresso'
                ) . '</p>';
@@ -137,7 +137,7 @@ class Message_Templates_Edit_Help_Tour extends EE_Help_Tour
     protected function _mtp_extra_actions_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'Here you will find miscellaneous options to assist you, including a test send button and a reset button.',
                    'event_espresso'
                ) . '</p>';
@@ -146,6 +146,6 @@ class Message_Templates_Edit_Help_Tour extends EE_Help_Tour
 
     protected function _update_metabox_stop()
     {
-        return '<p>' . __('When done creating your message, click here to save it.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('When done creating your message, click here to save it.', 'event_espresso') . '</p>';
     }
 }

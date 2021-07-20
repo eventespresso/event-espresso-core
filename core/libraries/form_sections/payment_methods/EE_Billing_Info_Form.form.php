@@ -68,7 +68,7 @@ class EE_Billing_Info_Form extends EE_Form_Section_Proper
     {
         return  new EE_Form_Section_HTML(
             EEH_HTML::p(
-                apply_filters('FHEE__EE_Billing_Info_Form__payment_fields_autofilled_notice_html_text', __('Payment fields have been autofilled because you are in debug mode', 'event_espresso')),
+                apply_filters('FHEE__EE_Billing_Info_Form__payment_fields_autofilled_notice_html_text', esc_html__('Payment fields have been autofilled because you are in debug mode', 'event_espresso')),
                 '',
                 'important-notice'
             )

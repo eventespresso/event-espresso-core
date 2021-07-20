@@ -98,7 +98,7 @@ function espresso_new_addon_activation_error() {
   deactivate_plugins( plugin_basename( EE_NEW_ADDON_PLUGIN_FILE ) );
   ?>
   <div class="error">
-    <p><?php printf( __( 'Event Espresso New Addon could not be activated. Please ensure that Event Espresso version %1$s or higher is running', 'event_espresso' ), EE_NEW_ADDON_CORE_VERSION_REQUIRED ); ?></p>
+    <p><?php printf( esc_html__( 'Event Espresso New Addon could not be activated. Please ensure that Event Espresso version %1$s or higher is running', 'event_espresso' ), EE_NEW_ADDON_CORE_VERSION_REQUIRED ); ?></p>
   </div>
 <?php
 }

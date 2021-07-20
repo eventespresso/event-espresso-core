@@ -37,7 +37,7 @@
                     <p class="description">
                         <?php
                         printf(
-                            __(
+                            esc_html__(
                                 'An API key is now required to use the Google Maps API: %1$sclick here to get an API key%2$s',
                                 'event_espresso'
                             ),

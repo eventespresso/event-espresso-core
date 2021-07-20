@@ -30,7 +30,7 @@ class Registration_Form_Questions_Overview_Help_Tour extends EE_Help_Tour
 
     protected function _set_tour_properties()
     {
-        $this->_label = __('Questions Overview Tour', 'event_espresso');
+        $this->_label = esc_html__('Questions Overview Tour', 'event_espresso');
         $this->_slug = $this->_is_caf ? 'questions-overview-caf-joyride' : 'questions-overview-joyride';
     }
 
@@ -118,9 +118,9 @@ class Registration_Form_Questions_Overview_Help_Tour extends EE_Help_Tour
 
     protected function _start()
     {
-        $content = '<h3>' . __('Questions Overview', 'event_espresso') . '</h3>';
+        $content = '<h3>' . esc_html__('Questions Overview', 'event_espresso') . '</h3>';
         $content .= '<p>'
-                    . __(
+                    . esc_html__(
                         'This tour of the Questions Overview page will go over different areas of the screen to help you understand what they are used for.',
                         'event_espresso'
                     ) . '</p>';
@@ -130,18 +130,18 @@ class Registration_Form_Questions_Overview_Help_Tour extends EE_Help_Tour
 
     protected function _display_text_stop()
     {
-        return '<p>' . __('View available questions.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('View available questions.', 'event_espresso') . '</p>';
     }
 
     protected function _admin_label_stop()
     {
-        return '<p>' . __('View the admin label for your questions.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('View the admin label for your questions.', 'event_espresso') . '</p>';
     }
 
     protected function _type_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'View the type of question. Available options are Text, Textarea, Checkboxes, Radio Buttons, Dropdown, State/Province Dropdown, Country Dropdown, and Date Picker.',
                    'event_espresso'
                ) . '</p>';
@@ -150,7 +150,7 @@ class Registration_Form_Questions_Overview_Help_Tour extends EE_Help_Tour
     protected function _values_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'View stored values for checkboxes, radio buttons, and select boxes.',
                    'event_espresso'
                ) . '</p>';
@@ -158,18 +158,18 @@ class Registration_Form_Questions_Overview_Help_Tour extends EE_Help_Tour
 
     protected function _required_stop()
     {
-        return '<p>' . __('View if a question is required.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('View if a question is required.', 'event_espresso') . '</p>';
     }
 
     protected function _bulk_actions_stop()
     {
-        return '<p>' . __('Perform bulk actions to multiple questions.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Perform bulk actions to multiple questions.', 'event_espresso') . '</p>';
     }
 
     protected function _search_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'Search through questions. The following sources will be searched: Name of Question (display text).',
                    'event_espresso'
                ) . '</p>';
@@ -177,6 +177,6 @@ class Registration_Form_Questions_Overview_Help_Tour extends EE_Help_Tour
 
     protected function _add_new_question_stop()
     {
-        return '<p>' . __('Click here to add a new question.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Click here to add a new question.', 'event_espresso') . '</p>';
     }
 }

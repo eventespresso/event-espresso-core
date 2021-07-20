@@ -17,7 +17,7 @@ class Registration_Form_Edit_Question_Group_Help_Tour extends EE_Help_Tour
 
     protected function _set_tour_properties()
     {
-        $this->_label = __('Edit Question Group Tour', 'event_espresso');
+        $this->_label = esc_html__('Edit Question Group Tour', 'event_espresso');
         $this->_slug = $this->_is_caf ? 'edit-question-caf-joyride' : 'edit-question-joyride';
     }
 
@@ -87,9 +87,9 @@ class Registration_Form_Edit_Question_Group_Help_Tour extends EE_Help_Tour
 
     protected function _start()
     {
-        $content = '<h3>' . __('Edit Question Group', 'event_espresso') . '</h3>';
+        $content = '<h3>' . esc_html__('Edit Question Group', 'event_espresso') . '</h3>';
         $content .= '<p>'
-                    . __(
+                    . esc_html__(
                         'This tour of the Edit Question Group page will go over different areas of the screen to help you understand what they are used for.',
                         'event_espresso'
                     ) . '</p>';
@@ -99,28 +99,28 @@ class Registration_Form_Edit_Question_Group_Help_Tour extends EE_Help_Tour
 
     protected function _qsg_name_stop()
     {
-        return '<p>' . __('The name of the question group.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('The name of the question group.', 'event_espresso') . '</p>';
     }
 
     protected function _qsg_identifier_stop()
     {
-        return '<p>' . __('A unique name for your question group.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('A unique name for your question group.', 'event_espresso') . '</p>';
     }
 
     protected function _qsg_desc_stop()
     {
-        return '<p>' . __('A description of the question group.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('A description of the question group.', 'event_espresso') . '</p>';
     }
 
     protected function _qsg_order_stop()
     {
-        return '<p>' . __('Set the order that you want your question group to appear in.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Set the order that you want your question group to appear in.', 'event_espresso') . '</p>';
     }
 
     protected function _qsg_show_group_name_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'Specify whether the group name should be shown on the registration page.',
                    'event_espresso'
                ) . '</p>';
@@ -129,7 +129,7 @@ class Registration_Form_Edit_Question_Group_Help_Tour extends EE_Help_Tour
     protected function _qsg_show_group_desc_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'Specify whether the group description should be shown on the registration page.',
                    'event_espresso'
                ) . '</p>';
