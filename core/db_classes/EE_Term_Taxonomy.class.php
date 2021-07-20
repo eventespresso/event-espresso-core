@@ -1,4 +1,5 @@
 <?php
+
 /**
  * EE_Term_Taxonomy class
  *

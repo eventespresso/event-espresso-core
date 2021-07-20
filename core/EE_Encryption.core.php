@@ -2,14 +2,28 @@
 
 use EventEspresso\core\interfaces\InterminableInterface;
 
-// phpcs:disable PHPCompatibility.PHP.RemovedExtensions.mcryptDeprecatedRemoved
-// phpcs:disable PHPCompatibility.PHP.DeprecatedFunctions.mcrypt_get_iv_sizeDeprecatedRemoved
-// phpcs:disable PHPCompatibility.PHP.RemovedConstants.mcrypt_rijndael_256DeprecatedRemoved
-// phpcs:disable PHPCompatibility.PHP.RemovedConstants.mcrypt_mode_ecbDeprecatedRemoved
-// phpcs:disable PHPCompatibility.PHP.DeprecatedFunctions.mcrypt_create_ivDeprecatedRemoved
-// phpcs:disable PHPCompatibility.PHP.RemovedConstants.mcrypt_randDeprecatedRemoved
-// phpcs:disable PHPCompatibility.PHP.DeprecatedFunctions.mcrypt_encryptDeprecatedRemoved
-// phpcs:disable PHPCompatibility.PHP.DeprecatedFunctions.mcrypt_decryptDeprecatedRemoved
+// phpcs:disable PHPCompatibility.Extensions.RemovedExtensions.mcryptDeprecatedRemoved
+// phpcs:disable PHPCompatibility.FunctionUse.RemovedFunctions.mcrypt_get_iv_sizeDeprecatedRemoved
+// phpcs:disable PHPCompatibility.Constants.RemovedConstants.mcrypt_rijndael_256DeprecatedRemoved
+// phpcs:disable PHPCompatibility.Constants.RemovedConstants.mcrypt_mode_ecbDeprecatedRemoved
+// phpcs:disable PHPCompatibility.Extensions.RemovedExtensions.mcryptDeprecatedRemoved
+// phpcs:disable PHPCompatibility.FunctionUse.RemovedFunctions.mcrypt_create_ivDeprecatedRemoved
+// phpcs:disable PHPCompatibility.Constants.RemovedConstants.mcrypt_randDeprecatedRemoved
+// phpcs:disable PHPCompatibility.Extensions.RemovedExtensions.mcryptDeprecatedRemoved
+// phpcs:disable PHPCompatibility.FunctionUse.RemovedFunctions.mcrypt_encryptDeprecatedRemoved
+// phpcs:disable PHPCompatibility.Constants.RemovedConstants.mcrypt_rijndael_256DeprecatedRemoved
+// phpcs:disable PHPCompatibility.Constants.RemovedConstants.mcrypt_mode_ecbDeprecatedRemoved
+// phpcs:disable PHPCompatibility.Extensions.RemovedExtensions.mcryptDeprecatedRemoved
+// phpcs:disable PHPCompatibility.FunctionUse.RemovedFunctions.mcrypt_get_iv_sizeDeprecatedRemoved
+// phpcs:disable PHPCompatibility.Constants.RemovedConstants.mcrypt_rijndael_256DeprecatedRemoved
+// phpcs:disable PHPCompatibility.Constants.RemovedConstants.mcrypt_mode_ecbDeprecatedRemoved
+// phpcs:disable PHPCompatibility.Extensions.RemovedExtensions.mcryptDeprecatedRemoved
+// phpcs:disable PHPCompatibility.FunctionUse.RemovedFunctions.mcrypt_create_ivDeprecatedRemoved
+// phpcs:disable PHPCompatibility.Constants.RemovedConstants.mcrypt_randDeprecatedRemoved
+// phpcs:disable PHPCompatibility.Extensions.RemovedExtensions.mcryptDeprecatedRemoved
+// phpcs:disable PHPCompatibility.FunctionUse.RemovedFunctions.mcrypt_decryptDeprecatedRemoved
+// phpcs:disable PHPCompatibility.Constants.RemovedConstants.mcrypt_rijndael_256DeprecatedRemoved
+// phpcs:disable PHPCompatibility.Constants.RemovedConstants.mcrypt_mode_ecbDeprecatedRemoved
 
 // mcrypt methods are removed in php7.2 but we have a condition in this class that only uses them if they are available.
 
@@ -554,7 +568,8 @@ class EE_Encryption implements InterminableInterface
         $encrypted_text = $this->valid_base_64($encrypted_text)
             ? $this->base64_url_decode($encrypted_text)
             : $encrypted_text;
-        if ($this->_use_mcrypt
+        if (
+            $this->_use_mcrypt
             && strpos($encrypted_text, EE_Encryption::ACME_ENCRYPTION_FLAG) === false
         ) {
             return $this->m_decrypt($encrypted_text);

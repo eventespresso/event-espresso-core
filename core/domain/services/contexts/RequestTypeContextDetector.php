@@ -73,7 +73,8 @@ class RequestTypeContextDetector
     public function detectRequestTypeContext()
     {
         // Detect error scrapes
-        if ($this->request->getRequestParam('wp_scrape_key')
+        if (
+            $this->request->getRequestParam('wp_scrape_key')
             && $this->request->getRequestParam('wp_scrape_nonce')
         ) {
             return $this->factory->create(RequestTypeContext::WP_SCRAPE);
@@ -88,16 +89,7 @@ class RequestTypeContextDetector
         }
         // Detect AJAX
         if ($this->getGlobalRouteCondition('DOING_AJAX', false)) {
-            if (filter_var($this->request->getRequestParam('ee_front_ajax'), FILTER_VALIDATE_BOOLEAN)) {
-                return $this->factory->create(RequestTypeContext::AJAX_FRONT);
-            }
-            if (filter_var($this->request->getRequestParam('ee_admin_ajax'), FILTER_VALIDATE_BOOLEAN)) {
-                return $this->factory->create(RequestTypeContext::AJAX_ADMIN);
-            }
-            if ($this->request->getRequestParam('action') === 'heartbeat') {
-                return $this->factory->create(RequestTypeContext::AJAX_HEARTBEAT);
-            }
-            return $this->factory->create(RequestTypeContext::AJAX_OTHER);
+            return $this->isAjaxRequest();
         }
         // Detect WP_Cron
         if ($this->isCronRequest()) {
@@ -121,6 +113,36 @@ class RequestTypeContextDetector
         }
         // and by process of elimination...
         return $this->factory->create(RequestTypeContext::FRONTEND);
+    }
+
+
+    /**
+     * @return RequestTypeContext
+     */
+    private function isAjaxRequest()
+    {
+        if (
+            $this->request->getRequestParam('ee_front_ajax', 0, 'int')
+            || $this->request->getRequestParam('data[ee_front_ajax]', 0, 'int')
+        ) {
+            if (! defined('EE_FRONT_AJAX')) {
+                define('EE_FRONT_AJAX', true);
+            }
+            return $this->factory->create(RequestTypeContext::AJAX_FRONT);
+        }
+        if (
+            $this->request->getRequestParam('ee_admin_ajax', 0, 'int')
+            || $this->request->getRequestParam('data[ee_admin_ajax]', 0, 'int')
+        ) {
+            if (! defined('EE_ADMIN_AJAX')) {
+                define('EE_ADMIN_AJAX', true);
+            }
+            return $this->factory->create(RequestTypeContext::AJAX_ADMIN);
+        }
+        if ($this->request->getRequestParam('action') === 'heartbeat') {
+            return $this->factory->create(RequestTypeContext::AJAX_HEARTBEAT);
+        }
+        return $this->factory->create(RequestTypeContext::AJAX_OTHER);
     }
 
 

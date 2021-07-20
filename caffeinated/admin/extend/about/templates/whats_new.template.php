@@ -36,7 +36,7 @@
         <div class="ee-attention">
             <h2 class="ee-maintenance-mode-callout"><?php
                 esc_html_e('Event Espresso is in full maintenance mode.', 'event_espresso');
-                ?></h2>
+            ?></h2>
             <p>
                 <?php
                 printf(

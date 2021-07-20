@@ -197,10 +197,12 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class implements EEI_Duplic
     {
         $new_question_option = clone $this;
         $new_question_option->set('QSO_ID', null);
-        if (array_key_exists(
-            'QST_ID',
-            $options
-        )) {// use array_key_exists instead of isset because NULL might be a valid value
+        if (
+            array_key_exists(
+                'QST_ID',
+                $options
+            )
+        ) {// use array_key_exists instead of isset because NULL might be a valid value
             $new_question_option->set_question_ID($options['QST_ID']);
         }
         $new_question_option->save();

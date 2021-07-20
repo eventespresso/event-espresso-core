@@ -66,7 +66,8 @@ class EE_Paypal_Standard_Form extends EE_Payment_Method_Form
         $paypal_calculates_shipping = $this->get_input_value('paypal_shipping');
         $paypal_calculates_taxes = $this->get_input_value('paypal_taxes');
         $paypal_requests_address_info = $this->get_input_value('shipping_details');
-        if (( $paypal_calculates_shipping || $paypal_calculates_taxes ) &&
+        if (
+            ( $paypal_calculates_shipping || $paypal_calculates_taxes ) &&
             $paypal_requests_address_info == EE_PMT_Paypal_Standard::shipping_info_none
         ) {
             // they want paypal to calculate taxes or shipping. They need to ask for

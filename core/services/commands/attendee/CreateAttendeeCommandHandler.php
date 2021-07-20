@@ -122,7 +122,8 @@ class CreateAttendeeCommandHandler extends CommandHandler
         $dont_set = array('ATT_fname', 'ATT_lname', 'ATT_email');
         // now loop thru what's left and add to attendee CPT
         foreach ($attendee_data as $property_name => $property_value) {
-            if (! in_array($property_name, $dont_set, true)
+            if (
+                ! in_array($property_name, $dont_set, true)
                 && $this->attendee_model->has_field($property_name)
             ) {
                 $existing_attendee->set($property_name, $property_value);

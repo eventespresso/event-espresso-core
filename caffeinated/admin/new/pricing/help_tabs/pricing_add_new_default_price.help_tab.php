@@ -1,5 +1,7 @@
 <?php
+
 use EventEspresso\core\domain\Domain;
+
 ?>
 <p><strong><?php esc_html_e('Add New Default Price', 'event_espresso'); ?></strong></p>
 <p>

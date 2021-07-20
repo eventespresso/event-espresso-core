@@ -1,5 +1,7 @@
 <?php
+
 /** @type string $events_requiring_pre_approval */
+
 /** @type string $events_requiring_pre_approval_msg */
 ?>
 

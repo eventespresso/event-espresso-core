@@ -1,4 +1,5 @@
 <?php
+
  /**
  *
  * Class EE_Default_Line_Item_Display_Strategy

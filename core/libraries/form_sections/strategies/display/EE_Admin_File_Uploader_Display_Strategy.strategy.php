@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class EE_Admin_File_Uploader_Display_Strategy
  *
@@ -26,9 +27,9 @@ class EE_Admin_File_Uploader_Display_Strategy extends EE_Display_Strategy_Base
         EE_Error::doing_it_wrong(__FUNCTION__, __('EE_Admin_File_Uploader_Display_Strategy::enqueue_scripts() no longer needs to be called in order to display the admin uploader input correctly. This is handled now by EE_Admin_File_Uploader_Display_Strategy::enqueue_js() which is called automatically when enqueueing JS and CSS for the form', 'event_espresso'), '4.9.8.rc.015');
         wp_enqueue_media();
         wp_enqueue_script('media-upload');
-        wp_enqueue_script('ee-payments', EE_GLOBAL_ASSETS_URL.'scripts/ee-media-uploader.js');
+        wp_enqueue_script('ee-payments', EE_GLOBAL_ASSETS_URL . 'scripts/ee-media-uploader.js');
     }
-    
+
     /**
      * Enqueues the JS and CSS needed to display this input
      */
@@ -36,7 +37,7 @@ class EE_Admin_File_Uploader_Display_Strategy extends EE_Display_Strategy_Base
     {
         wp_enqueue_media();
         wp_enqueue_script('media-upload');
-        wp_enqueue_script('ee-payments', EE_GLOBAL_ASSETS_URL.'scripts/ee-media-uploader.js');
+        wp_enqueue_script('ee-payments', EE_GLOBAL_ASSETS_URL . 'scripts/ee-media-uploader.js');
         parent::enqueue_js();
     }
 

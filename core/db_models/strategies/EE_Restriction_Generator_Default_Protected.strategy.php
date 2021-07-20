@@ -75,7 +75,7 @@ class EE_Restriction_Generator_Default_Protected extends EE_Restriction_Generato
                     $this->_default_field_name => true )),
             // if they have basic and others, but not private, they can't access others' private non-default items
             EE_Restriction_Generator_Base::get_cap_name($event_model, $this->action() . '_private') => new EE_Default_Where_Conditions(array(
-                'OR*no_' .EE_Restriction_Generator_Base::get_cap_name($event_model, $this->action() . '_private') => array(
+                'OR*no_' . EE_Restriction_Generator_Base::get_cap_name($event_model, $this->action() . '_private') => array(
                 $this->_path_to_event_model . 'EVT_wp_user' => EE_Default_Where_Conditions::current_user_placeholder,
                 $this->_path_to_event_model . 'status' => array( '!=', 'private' ),
                 $this->_default_field_name => true ) )),

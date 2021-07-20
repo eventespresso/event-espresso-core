@@ -17,11 +17,13 @@
         <?php echo $nonce; ?>
         <?php echo $status_buttons; ?>
         <?php
-        if ($attendee instanceof EE_Attendee
+        if (
+            $attendee instanceof EE_Attendee
             && EE_Registry::instance()->CAP->current_user_can(
                 'ee_send_message',
                 'registration_message_type'
-            )) : ?>
+            )
+        ) : ?>
             <span id="send-related-messages-dv">
                 <label for="txn-reg-status-send-notifications-inp" class="important-notice">
                 <?php _e(

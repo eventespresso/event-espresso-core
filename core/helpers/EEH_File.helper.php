@@ -1,4 +1,5 @@
 <?php
+
 /**
  *
  * Class EEH_File
@@ -40,11 +41,13 @@ class EEH_File extends EEH_Base implements EEHI_File
      */
     private static function _get_wp_filesystem($filepath = null)
     {
-        if (apply_filters(
-            'FHEE__EEH_File___get_wp_filesystem__allow_using_filesystem_direct',
-            $filepath && EEH_File::is_in_uploads_folder($filepath),
-            $filepath
-        ) ) {
+        if (
+            apply_filters(
+                'FHEE__EEH_File___get_wp_filesystem__allow_using_filesystem_direct',
+                $filepath && EEH_File::is_in_uploads_folder($filepath),
+                $filepath
+            )
+        ) {
             if (! EEH_File::$_wp_filesystem_direct instanceof WP_Filesystem_Direct) {
                 require_once(ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php');
                 $method = 'direct';
@@ -643,11 +646,13 @@ class EEH_File extends EEH_Base implements EEHI_File
         // load WP_Filesystem and set file permissions
         $wp_filesystem = EEH_File::_get_wp_filesystem($destination_file);
         // write the file
-        if (! $wp_filesystem->copy(
-            EEH_File::convert_local_filepath_to_remote_filepath($full_source_path),
-            EEH_File::convert_local_filepath_to_remote_filepath($full_dest_path),
-            $overwrite
-        )) {
+        if (
+            ! $wp_filesystem->copy(
+                EEH_File::convert_local_filepath_to_remote_filepath($full_source_path),
+                EEH_File::convert_local_filepath_to_remote_filepath($full_dest_path),
+                $overwrite
+            )
+        ) {
             if (defined('WP_DEBUG') && WP_DEBUG) {
                 $msg = sprintf(__('Attempted writing to file %1$s, but could not, probably because of permissions issues', 'event_espresso'), $full_source_path);
                 $msg .= EEH_File::_permissions_error_for_unreadable_filepath($full_source_path, 'f');

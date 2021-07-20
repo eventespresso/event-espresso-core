@@ -1,5 +1,6 @@
 <?php
-use \EventEspresso\core\exceptions\SendMessageException;
+
+use EventEspresso\core\exceptions\SendMessageException;
 
 /**
  * EE_messenger class
@@ -621,7 +622,7 @@ abstract class EE_messenger extends EE_Messages_Base
     {
         if (array_key_exists($item, $this->_template_fields)) {
             $prop = '_' . $item;
-            $this->{$prop}= $value;
+            $this->{$prop} = $value;
         }
     }
 

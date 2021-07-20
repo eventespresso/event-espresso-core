@@ -25,6 +25,6 @@ class EE_Primary_Table extends EE_Table_Base
      */
     public function get_table_sql()
     {
-        return " ".$this->get_table_name()." AS ".$this->get_table_alias()." ";
+        return " " . $this->get_table_name() . " AS " . $this->get_table_alias() . " ";
     }
 }

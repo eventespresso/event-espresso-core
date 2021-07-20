@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class EE_Enum_Validation_Strategy
  *

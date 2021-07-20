@@ -131,7 +131,7 @@ class EE_Messages_Template_Defaults extends EE_Base
             $class_name = 'EE_Messages_Template_Pack_Default';
         }
         /** @type EE_Messages_Template_Pack $template_pack */
-        $template_pack = new $class_name;
+        $template_pack = new $class_name();
 
         // get all the templates from the template pack.
         $this->_templates = $template_pack->get_templates($this->_messenger, $this->_message_type);

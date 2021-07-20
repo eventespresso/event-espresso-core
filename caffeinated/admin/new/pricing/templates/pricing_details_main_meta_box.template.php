@@ -52,7 +52,7 @@
             <td>
                     <textarea class="regular-text" id="PRC_desc" name="PRC_desc" rows="5"><?php
                         $price->f('PRC_desc');
-                        ?></textarea><br/>
+                    ?></textarea><br/>
             </td>
         </tr>
         <tr valign="top">

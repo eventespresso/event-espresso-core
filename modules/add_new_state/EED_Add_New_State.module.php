@@ -253,7 +253,8 @@ class EED_Add_New_State extends EED_Module
             return $question_group_reg_form;
         }
         // we're only doing this for state select inputs
-        if ($input instanceof EE_State_Select_Input
+        if (
+            $input instanceof EE_State_Select_Input
             && ! $input->get_display_strategy() instanceof EE_Hidden_Display_Strategy
         ) {
             // grab any set values from the request
@@ -389,9 +390,9 @@ class EED_Add_New_State extends EED_Module
                                 ),
                                 'html_class'            => $input->html_class() . ' new-state-abbrv',
                                 'html_label_text'       => esc_html__(
-                                                               'New State/Province Abbreviation',
-                                                               'event_espresso'
-                                                           ) . ' *',
+                                    'New State/Province Abbreviation',
+                                    'event_espresso'
+                                ) . ' *',
                                 'other_html_attributes' => 'size="24"',
                                 'default'               => $request->getRequestParam($abbrv_name),
                                 'required'              => false,
@@ -708,7 +709,8 @@ class EED_Add_New_State extends EED_Module
         EE_Question $question,
         $answer
     ) {
-        if ($answer instanceof EE_Answer && $question instanceof EE_Question
+        if (
+            $answer instanceof EE_Answer && $question instanceof EE_Question
             && $question->type() === EEM_Question::QST_type_state
         ) {
             $STA_ID = $answer->value();
@@ -748,7 +750,8 @@ class EED_Add_New_State extends EED_Module
         EE_Question $question,
         $answer
     ) {
-        if ($answer instanceof EE_Answer && $question instanceof EE_Question
+        if (
+            $answer instanceof EE_Answer && $question instanceof EE_Question
             && $question->type()
                === EEM_Question::QST_type_country
         ) {
@@ -776,7 +779,8 @@ class EED_Add_New_State extends EED_Module
     {
         $new_states = EED_Add_New_State::_get_new_states();
         foreach ($new_states as $new_state) {
-            if ($new_state instanceof EE_State
+            if (
+                $new_state instanceof EE_State
                 && $new_state->country() instanceof EE_Country
             ) {
                 $state_options[ $new_state->country()->name() ][ $new_state->ID() ] = $new_state->name();
@@ -814,7 +818,8 @@ class EED_Add_New_State extends EED_Module
     {
         $new_states = EED_Add_New_State::_get_new_states();
         foreach ($new_states as $new_state) {
-            if ($new_state instanceof EE_State
+            if (
+                $new_state instanceof EE_State
                 && $new_state->country() instanceof EE_Country
             ) {
                 $country_options[ $new_state->country()->ID() ] = $new_state->country()->name();

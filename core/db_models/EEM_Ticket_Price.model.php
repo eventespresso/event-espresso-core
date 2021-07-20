@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Ticket Price Model
  *
@@ -27,18 +28,18 @@ class EEM_Ticket_Price extends EEM_Base
         $this->plural_item = __('Ticket Prices', 'event_espresso');
 
         $this->_tables = array(
-            'Ticket_Price'=>new EE_Primary_Table('esp_ticket_price', 'TKP_ID')
+            'Ticket_Price' => new EE_Primary_Table('esp_ticket_price', 'TKP_ID')
         );
         $this->_fields = array(
-            'Ticket_Price'=> array(
-                'TKP_ID'=>new EE_Primary_Key_Int_Field('TKP_ID', 'Ticket Price ID'),
-                'TKT_ID'=>new EE_Foreign_Key_Int_Field('TKT_ID', 'Ticket Id', false, 0, 'Ticket'),
-                'PRC_ID'=>new EE_Foreign_Key_Int_Field('PRC_ID', 'Price ID', false, 0, 'Price'),
+            'Ticket_Price' => array(
+                'TKP_ID' => new EE_Primary_Key_Int_Field('TKP_ID', 'Ticket Price ID'),
+                'TKT_ID' => new EE_Foreign_Key_Int_Field('TKT_ID', 'Ticket Id', false, 0, 'Ticket'),
+                'PRC_ID' => new EE_Foreign_Key_Int_Field('PRC_ID', 'Price ID', false, 0, 'Price'),
             )
         );
         $this->_model_relations = array(
-            'Ticket'=>new EE_Belongs_To_Relation(),
-            'Price'=>new EE_Belongs_To_Relation()
+            'Ticket' => new EE_Belongs_To_Relation(),
+            'Price' => new EE_Belongs_To_Relation()
         );
         $this->_model_chain_to_wp_user = 'Ticket';
         $this->_cap_restriction_generators[ EEM_Base::caps_read ] = new EE_Restriction_Generator_Default_Public('Ticket.TKT_is_default', 'Ticket.Datetime.Event');

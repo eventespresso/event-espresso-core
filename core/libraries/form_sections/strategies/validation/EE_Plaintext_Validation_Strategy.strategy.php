@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class EE_Plaintext_Validation_Strategy
  *

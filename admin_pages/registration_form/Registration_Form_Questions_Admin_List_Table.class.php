@@ -1,6 +1,5 @@
 <?php
 
-
 /**
  * Registration_Form_Questions_Admin_List_Table
  *
@@ -73,10 +72,12 @@ class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table
     protected function _add_view_counts()
     {
         $this->_views['all']['count'] = $this->_admin_page->get_questions($this->_per_page, $this->_current_page, true);
-        if (EE_Registry::instance()->CAP->current_user_can(
-            'ee_delete_questions',
-            'espresso_registration_form_trash_question'
-        )) {
+        if (
+            EE_Registry::instance()->CAP->current_user_can(
+                'ee_delete_questions',
+                'espresso_registration_form_trash_question'
+            )
+        ) {
             $this->_views['trash']['count'] = $this->_admin_page->get_trashed_questions(-1, $this->_current_page, true);
         }
     }
@@ -117,11 +118,13 @@ class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table
             'QST_ID' => $item->ID(),
         );
 
-        if (EE_Registry::instance()->CAP->current_user_can(
-            'ee_edit_question',
-            'espresso_registration_form_edit_question',
-            $item->ID()
-        )) {
+        if (
+            EE_Registry::instance()->CAP->current_user_can(
+                'ee_edit_question',
+                'espresso_registration_form_edit_question',
+                $item->ID()
+            )
+        ) {
             $edit_link = EE_Admin_Page::add_query_args_and_nonce($edit_query_args, EE_FORMS_ADMIN_URL);
 
             $actions = array(

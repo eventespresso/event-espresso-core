@@ -1,7 +1,9 @@
 <?php
+
 /**
  * Template for General Settings Template Tab
  */
+
 ?>
 <div class="padding">
 

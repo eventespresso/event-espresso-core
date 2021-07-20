@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\caffeinated\payment_methods\PayPal_Pro\forms;
 
 use EE_Checkbox_Multi_Input;

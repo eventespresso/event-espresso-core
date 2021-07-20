@@ -70,7 +70,7 @@ class EE_DMS_4_1_0_venues extends EE_Data_Migration_Script_Stage
     {
         global $wpdb;
         $start_at_record = $this->count_records_migrated();
-        $rows = $wpdb->get_results($wpdb->prepare("SELECT * FROM ".$this->_old_table." LIMIT %d,%d", $start_at_record, $num_items), ARRAY_A);
+        $rows = $wpdb->get_results($wpdb->prepare("SELECT * FROM " . $this->_old_table . " LIMIT %d,%d", $start_at_record, $num_items), ARRAY_A);
         $items_actually_migrated = 0;
         foreach ($rows as $old_venue) {
             if (! $new_id = $this->_insert_into_posts($old_venue)) {
@@ -108,16 +108,16 @@ class EE_DMS_4_1_0_venues extends EE_Data_Migration_Script_Stage
     public function _count_records_to_migrate()
     {
         global $wpdb;
-        $count = $wpdb->get_var("SELECT COUNT(id) FROM ".$this->_old_table);
+        $count = $wpdb->get_var("SELECT COUNT(id) FROM " . $this->_old_table);
         return $count;
     }
     public function __construct()
     {
         $this->_pretty_name = __("Venues", "event_espresso");
         global $wpdb;
-        $this->_old_table = $wpdb->prefix."events_venue";
+        $this->_old_table = $wpdb->prefix . "events_venue";
         $this->_new_table = $wpdb->posts;
-        $this->_new_meta_table = $wpdb->prefix."esp_venue_meta";
+        $this->_new_meta_table = $wpdb->prefix . "esp_venue_meta";
         parent::__construct();
     }
 
@@ -132,18 +132,18 @@ class EE_DMS_4_1_0_venues extends EE_Data_Migration_Script_Stage
         $meta = maybe_unserialize($old_venue['meta']);
         $slug = $this->_find_unique_slug($old_venue['name'], $old_venue['identifier']);
         $insertion_array = array(
-                    'post_title'=>stripslashes($old_venue['name']),// VNU_name
-                    'post_content'=>isset($meta['description']) ? stripslashes(strip_tags($meta['description'])) : '',// VNU_desc
-                    'post_name'=> $slug,// VNU_identifier
-                    'post_date'=>current_time('mysql'),// VNU_created
-                    'post_date_gmt'=>  current_time('mysql', true),
-                    'post_excerpt'=>'',// wp_trim_words($meta['description'] ? $meta['description'] : '',50),//VNU_short_desc arbitraty only 50 characters
-                    'post_modified'=>current_time('mysql'),// VNU_modified
-                    'post_modified_gmt'=>current_time('mysql', true),
-                    'post_author'=>$old_venue['wp_user'],// VNU_wp_user
-                    'post_parent'=>0,// parent
-                    'menu_order'=>0,// VNU_order
-                    'post_type'=>'espresso_venues'// post_type
+                    'post_title' => stripslashes($old_venue['name']),// VNU_name
+                    'post_content' => isset($meta['description']) ? stripslashes(strip_tags($meta['description'])) : '',// VNU_desc
+                    'post_name' => $slug,// VNU_identifier
+                    'post_date' => current_time('mysql'),// VNU_created
+                    'post_date_gmt' =>  current_time('mysql', true),
+                    'post_excerpt' => '',// wp_trim_words($meta['description'] ? $meta['description'] : '',50),//VNU_short_desc arbitraty only 50 characters
+                    'post_modified' => current_time('mysql'),// VNU_modified
+                    'post_modified_gmt' => current_time('mysql', true),
+                    'post_author' => $old_venue['wp_user'],// VNU_wp_user
+                    'post_parent' => 0,// parent
+                    'menu_order' => 0,// VNU_order
+                    'post_type' => 'espresso_venues'// post_type
                 );
         $datatypes_array = array(
                     '%s',// VNU_name
@@ -183,8 +183,8 @@ class EE_DMS_4_1_0_venues extends EE_Data_Migration_Script_Stage
         $count = 0;
         $original_name = $post_name ? sanitize_title($post_name) : $old_identifier;
         $event_slug = $original_name;
-        while ($this->_other_post_exists_with_that_slug($event_slug) && $count<50) {
-            $event_slug = sanitize_title($original_name."-".++$count);
+        while ($this->_other_post_exists_with_that_slug($event_slug) && $count < 50) {
+            $event_slug = sanitize_title($original_name . "-" . ++$count);
         }
         return $event_slug;
     }
@@ -198,9 +198,9 @@ class EE_DMS_4_1_0_venues extends EE_Data_Migration_Script_Stage
     private function _other_post_exists_with_that_slug($slug)
     {
         global $wpdb;
-        $query = $wpdb->prepare("SELECT COUNT(ID) FROM ".$this->_new_table." WHERE post_name = %s", $slug);
+        $query = $wpdb->prepare("SELECT COUNT(ID) FROM " . $this->_new_table . " WHERE post_name = %s", $slug);
         $count = $wpdb->get_var($query);
-        return (boolean) intval($count);
+        return (bool) intval($count);
     }
 
     /**
@@ -231,20 +231,20 @@ class EE_DMS_4_1_0_venues extends EE_Data_Migration_Script_Stage
         $meta = maybe_unserialize($old_venue['meta']);
         // now insert into meta table
         $insertion_array = array(
-            'VNU_ID'=>$cpt_id,// VNU_ID_fk
-            'VNU_address'=>stripslashes($old_venue['address']),// VNU_address
-            'VNU_address2'=>stripslashes($old_venue['address2']),// VNU_address2
-            'VNU_city'=>stripslashes($old_venue['city']),// VNU_city
-            'STA_ID'=>$state_id,// STA_ID
-            'CNT_ISO'=>$country_iso,// CNT_ISO
-            'VNU_zip'=>stripslashes($old_venue['zip']),// VNU_zip
-            'VNU_phone'=>isset($meta['phone']) ? stripslashes($meta['phone']) : '',// VNU_phone
-            'VNU_capacity'=>-1,// VNU_capacity
-            'VNU_url'=>isset($meta['website']) ? stripslashes($meta['website']) : '',// VNU_url
-            'VNU_virtual_phone'=>'',// VNU_virtual_phone
-            'VNU_virtual_url'=>'',// VNU_virtual_url
-            'VNU_google_map_link'=>'',// VNU_google_map_link
-            'VNU_enable_for_gmap'=>true // VNU_enable_for_gmap
+            'VNU_ID' => $cpt_id,// VNU_ID_fk
+            'VNU_address' => stripslashes($old_venue['address']),// VNU_address
+            'VNU_address2' => stripslashes($old_venue['address2']),// VNU_address2
+            'VNU_city' => stripslashes($old_venue['city']),// VNU_city
+            'STA_ID' => $state_id,// STA_ID
+            'CNT_ISO' => $country_iso,// CNT_ISO
+            'VNU_zip' => stripslashes($old_venue['zip']),// VNU_zip
+            'VNU_phone' => isset($meta['phone']) ? stripslashes($meta['phone']) : '',// VNU_phone
+            'VNU_capacity' => -1,// VNU_capacity
+            'VNU_url' => isset($meta['website']) ? stripslashes($meta['website']) : '',// VNU_url
+            'VNU_virtual_phone' => '',// VNU_virtual_phone
+            'VNU_virtual_url' => '',// VNU_virtual_url
+            'VNU_google_map_link' => '',// VNU_google_map_link
+            'VNU_enable_for_gmap' => true // VNU_enable_for_gmap
         );
         $datatypes = array(
             '%d',// VNU_ID_fk

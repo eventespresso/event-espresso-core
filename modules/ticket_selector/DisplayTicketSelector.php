@@ -156,9 +156,9 @@ class DisplayTicketSelector
         } else {
             $user_msg = __('No Event object or an invalid Event object was supplied.', 'event_espresso');
             $dev_msg  = $user_msg . __(
-                    'In order to generate a ticket selector, please ensure you are passing either an EE_Event object or a WP_Post object of the post type "espresso_event" to the EE_Ticket_Selector class constructor.',
-                    'event_espresso'
-                );
+                'In order to generate a ticket selector, please ensure you are passing either an EE_Event object or a WP_Post object of the post type "espresso_event" to the EE_Ticket_Selector class constructor.',
+                'event_espresso'
+            );
             EE_Error::add_error($user_msg . '||' . $dev_msg, __FILE__, __FUNCTION__, __LINE__);
             return false;
         }
@@ -235,11 +235,13 @@ class DisplayTicketSelector
         }
         // begin gathering template arguments by getting event status
         $template_args = ['event_status' => $this->event->get_active_status()];
-        if ($this->activeEventAndShowTicketSelector(
-            $event,
-            $template_args['event_status'],
-            $view_details
-        )) {
+        if (
+            $this->activeEventAndShowTicketSelector(
+                $event,
+                $template_args['event_status'],
+                $view_details
+            )
+        ) {
             return ! is_single() ? $this->displayViewDetailsButton() : '';
         }
         // filter the maximum qty that can appear in the Ticket Selector qty dropdowns
@@ -312,9 +314,9 @@ class DisplayTicketSelector
     protected function expiredEventMessage()
     {
         return '<div class="ee-event-expired-notice"><span class="important-notice">' . esc_html__(
-                'We\'re sorry, but all tickets sales have ended because the event is expired.',
-                'event_espresso'
-            ) . '</span></div><!-- .ee-event-expired-notice -->';
+            'We\'re sorry, but all tickets sales have ended because the event is expired.',
+            'event_espresso'
+        ) . '</span></div><!-- .ee-event-expired-notice -->';
     }
 
 
@@ -488,11 +490,13 @@ class DisplayTicketSelector
         /** @var EE_Ticket $ticket */
         $ticket = reset($tickets);
         // if the ticket is free... then not much need for the ticket selector
-        if (apply_filters(
-            'FHEE__ticket_selector_chart_template__hide_ticket_selector',
-            $ticket->is_free(),
-            $this->event->ID()
-        )) {
+        if (
+            apply_filters(
+                'FHEE__ticket_selector_chart_template__hide_ticket_selector',
+                $ticket->is_free(),
+                $this->event->ID()
+            )
+        ) {
             return new TicketSelectorSimple(
                 $this->event,
                 $ticket,
@@ -615,16 +619,19 @@ class DisplayTicketSelector
                         ),
                         $this->event
                     );
-                    if (apply_filters(
-                        'FHEE__EE_Ticket_Selector__display_ticket_selector_submit__no_tickets_but_display_register_now_button',
-                        false,
-                        $this->event
-                    )) {
+                    if (
+                        apply_filters(
+                            'FHEE__EE_Ticket_Selector__display_ticket_selector_submit__no_tickets_but_display_register_now_button',
+                            false,
+                            $this->event
+                        )
+                    ) {
                         $html .= $this->displayRegisterNowButton();
                     }
                     // sold out DWMTS event, no TS, no submit or view details button, but has additional content
                     $html .= $this->ticketSelectorEndDiv();
-                } elseif (apply_filters('FHEE__EE_Ticket_Selector__hide_ticket_selector', false)
+                } elseif (
+                    apply_filters('FHEE__EE_Ticket_Selector__hide_ticket_selector', false)
                           && ! is_single()
                 ) {
                     // this is a "Dude Where's my Ticket Selector?" (DWMTS) type event,
@@ -639,11 +646,13 @@ class DisplayTicketSelector
                 $html .= $this->ticketSelectorEndDiv();
                 $html .= $this->displayViewDetailsButton();
             } else {
-                if (apply_filters(
-                    'FHEE__EE_Ticket_Selector__display_ticket_selector_submit__no_tickets_but_display_register_now_button',
-                    false,
-                    $this->event
-                )) {
+                if (
+                    apply_filters(
+                        'FHEE__EE_Ticket_Selector__display_ticket_selector_submit__no_tickets_but_display_register_now_button',
+                        false,
+                        $this->event
+                    )
+                ) {
                     $html .= $this->displayRegisterNowButton();
                 }
                 // no submit or view details button, and no additional content

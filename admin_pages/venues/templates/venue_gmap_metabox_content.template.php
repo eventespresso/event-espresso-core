@@ -3,7 +3,8 @@
         <td valign="top">
             <fieldset>
                 <?php
-                if (isset(EE_Registry::instance()->CFG->map_settings)
+                if (
+                    isset(EE_Registry::instance()->CFG->map_settings)
                     && isset(EE_Registry::instance()->CFG->map_settings->use_google_maps)
                     && EE_Registry::instance()->CFG->map_settings->use_google_maps
                 ) { ?>
@@ -19,7 +20,8 @@
                     </p> -->
                 <?php } ?>
                 <?php
-                if (! isset(EE_Registry::instance()->CFG->map_settings)
+                if (
+                    ! isset(EE_Registry::instance()->CFG->map_settings)
                     || ! isset(EE_Registry::instance()->CFG->map_settings->use_google_maps)
                     || ! EE_Registry::instance()->CFG->map_settings->use_google_maps
                 ) { ?>

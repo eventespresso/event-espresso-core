@@ -1,7 +1,9 @@
 <?php
+
 /**
  * This is the template for the html messenger and receipt message type ticket_list field.
  */
+
 ?>
 <li class="event-ticket">
     <div class="ticket-details">

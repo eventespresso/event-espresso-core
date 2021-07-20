@@ -29,7 +29,6 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 
 		//tests filters have been added that are expected here.  Remember the has_{filter/action} returns the priority set by the caller.
 		$this->assertEquals( has_filter('plugin_action_links', array($admin_instance, 'filter_plugin_actions') ), 10 );
-		$this->assertEquals( has_action('AHEE__EE_System__core_loaded_and_ready', array($admin_instance, 'get_request') ), 10 );
 		$this->assertEquals( has_action('AHEE__EE_System__initialize_last', array($admin_instance, 'init') ), 10 );
 		$this->assertEquals( has_action('AHEE__EE_Admin_Page__route_admin_request', array($admin_instance, 'route_admin_request') ), 100 );
 		$this->assertEquals( has_action('wp_loaded', array($admin_instance, 'wp_loaded') ), 100 );

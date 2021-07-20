@@ -578,16 +578,10 @@ class EEH_Template
         $icon_style = false,
         $help_text = false
     ) {
-
-        if (! $page) {
-            $page = isset($_REQUEST['page']) && ! empty($_REQUEST['page']) ? sanitize_key($_REQUEST['page']) : $page;
-        }
-
-        if (! $action) {
-            $action = isset($_REQUEST['action']) && ! empty($_REQUEST['action']) ? sanitize_key($_REQUEST['action']) : $action;
-        }
-
-        $action = empty($action) ? 'default' : $action;
+        /** @var RequestInterface $request */
+        $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+        $page = $page ?: $request->getRequestParam('page', '', 'key');
+        $action = $action ?: $request->getRequestParam('action', 'default', 'key');
 
 
         $help_tab_lnk = $page . '-' . $action . '-' . $help_tab_id;
@@ -826,7 +820,8 @@ class EEH_Template
             $items_label
         );
 
-        if (empty($items_label)
+        if (
+            empty($items_label)
             || ! is_array($items_label)
             || ! isset($items_label['single'])
             || ! isset($items_label['plural'])
@@ -934,7 +929,8 @@ class EEH_Template
     public static function powered_by_event_espresso($wrap_class = '', $wrap_id = '', array $query_args = array())
     {
         $admin = is_admin() && ! (defined('DOING_AJAX') && DOING_AJAX);
-        if (! $admin &&
+        if (
+            ! $admin &&
             ! apply_filters(
                 'FHEE__EEH_Template__powered_by_event_espresso__show_reg_footer',
                 EE_Registry::instance()->CFG->admin->show_reg_footer

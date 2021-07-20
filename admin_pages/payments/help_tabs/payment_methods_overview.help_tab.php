@@ -47,13 +47,15 @@
     </li>
     <li>
         <strong><?php _e('Button URL', 'event_espresso'); ?></strong><br/>
-        <?php printf(
+        <?php
+        printf(
             __(
                 'The URL of the button image for this payment method in the registration process. You may use any uploaded image on your website (click %s next to the field to select). If left blank, the default button image will be used.',
                 'event_espresso'
             ),
             '<img src="' . admin_url('images/media-button-image.gif') . '">'
-        ); ?>
+        );
+        ?>
     </li>
     <li><strong><?php _e('Usable From', 'event_espresso'); ?></strong><br/>
         <?php _e('Where this payment method can be used from.', 'event_espresso'); ?>
@@ -76,7 +78,6 @@
     'Want to see a tour of this screen? Click on the Payment Methods Overview Tour button which appears on the right side of the page. <br />To learn more about the options on this page, take a look at the different tabs that appear on the left side of the page.',
     'event_espresso'
 ); ?>
-</p>
 <p>
     <strong><?php _e('Screen Options', 'event_espresso'); ?></strong><br/>
     <?php _e(

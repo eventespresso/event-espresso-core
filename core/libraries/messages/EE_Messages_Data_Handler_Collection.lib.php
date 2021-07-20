@@ -31,7 +31,7 @@ class EE_Messages_Data_Handler_Collection extends EE_Object_Collection
         $info['key'] = $this->get_key(get_class($data_handler), $data);
         return parent::add($data_handler, $info);
     }
-    
+
 
 
 

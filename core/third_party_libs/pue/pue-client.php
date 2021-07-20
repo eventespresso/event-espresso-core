@@ -34,6 +34,10 @@
  *    class and start the plugin update engine!
  * }
  */
+
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\RequestInterface;
+
 if (! class_exists('PluginUpdateEngineChecker')):
     /**
      * A custom plugin update checker.
@@ -878,23 +882,26 @@ if (! class_exists('PluginUpdateEngineChecker')):
          */
         private function trigger_update_check()
         {
-            //we're just using this to trigger a PUE ping whenever an option matching the given $this->option_key
-            // is saved..
-            $has_triggered = false;
+            // we're just using this to trigger a PUE ping
+            // whenever an option matching the given $this->option_key is saved..
 
             if ((defined('DOING_WP_CRON') && DOING_WP_CRON)
                 || (defined('DOING_AJAX') && DOING_AJAX)
             ) {
-                return $has_triggered;
+                return false;
             }
 
-            if (! empty($_POST) && ! empty($this->option_key)) {
-                foreach ($_POST as $key => $value) {
+            /** @var RequestInterface $request */
+            $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+            $post_params = $request->postParams();
+
+            $has_triggered = false;
+            if (! empty($post_params) && ! empty($this->option_key)) {
+                foreach ($post_params as $key => $value) {
                     $triggered = $this->maybe_trigger_update($value, $key, $this->option_key);
                     $has_triggered = $triggered && ! $has_triggered ? true : $has_triggered;
                 }
             }
-
             return $has_triggered;
         }
 
@@ -1150,9 +1157,10 @@ if (! class_exists('PluginUpdateEngineChecker')):
          */
         public function dismiss_persistent_notice()
         {
+            /** @var RequestInterface $request */
+            $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+            $type  = $request->getRequestParam('type');
             //if no $type in the request then exit
-            $type = isset($_REQUEST['type']) ? $_REQUEST['type'] : null;
-
             if (empty($type)) {
                 return;
             }
@@ -1626,7 +1634,9 @@ if (! class_exists('PluginUpdateEngineChecker')):
                 $os_ary = array();
             }
 
-            $os_ary[] = $_POST['version'];
+            /** @var RequestInterface $request */
+            $request  = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+            $os_ary[] = $request->getRequestParam('version');
             update_site_option($this->dismiss_upgrade, $os_ary);
         }
 

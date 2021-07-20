@@ -1,4 +1,5 @@
 <?php
+
 use EventEspresso\core\exceptions\InvalidIdentifierException;
 use EventEspresso\core\exceptions\InvalidStatusException;
 use EventEspresso\core\services\database\TableAnalysis;
@@ -593,10 +594,11 @@ class EEM_Registration extends EEM_Soft_Delete_Base
             'REG_date' => array('>=', $date_sql),
             'STS_ID' => array('!=', EEM_Registration::status_id_incomplete),
         );
-        if (!EE_Registry::instance()->CAP->current_user_can(
-            'ee_read_others_registrations',
-            'reg_per_event_report'
-        )
+        if (
+            !EE_Registry::instance()->CAP->current_user_can(
+                'ee_read_others_registrations',
+                'reg_per_event_report'
+            )
         ) {
             $where['Event.EVT_wp_user'] = get_current_user_id();
         }

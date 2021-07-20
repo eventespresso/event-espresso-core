@@ -28,11 +28,12 @@ class DetectLogin extends Middleware
         $this->request = $request;
         $this->response = $response;
         global $pagenow;
-        if (in_array(
-            $pagenow,
-            array('wp-login.php', 'wp-register.php'),
-            true
-        )
+        if (
+            in_array(
+                $pagenow,
+                array('wp-login.php', 'wp-register.php'),
+                true
+            )
             && ! filter_var($request->getRequestParam('ee_load_on_login'), FILTER_VALIDATE_BOOLEAN)
         ) {
             $this->response->terminateRequest();

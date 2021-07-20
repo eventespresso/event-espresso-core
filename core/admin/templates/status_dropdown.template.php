@@ -6,7 +6,7 @@
         <?php foreach ($statuses as $status => $label) : ?>
             <option<?php selected($cur_status, $status); ?>
                 value='<?php echo $status; ?>'><?php echo $label; ?></option>
-        <?php
+            <?php
         endforeach;
         ?>
     </select>

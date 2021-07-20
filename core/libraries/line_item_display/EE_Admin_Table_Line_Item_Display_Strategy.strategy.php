@@ -1,4 +1,5 @@
 <?php
+
 /**
  *
  * Display Strategy for line item tables in the admin.

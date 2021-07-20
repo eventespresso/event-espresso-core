@@ -63,7 +63,7 @@ abstract class EE_Offsite_Gateway extends EE_Gateway
 
     /**
      * Often used for IPNs. But applies the info in $update_info to the payment.
-     * What is $update_info? Often the contents of $_REQUEST, but not necessarily. Whatever
+     * What is $update_info? Often the contents of request, but not necessarily. Whatever
      * the payment method passes in. Saving the payment from within this method is unnecessary,
      * as it is the responsibility of client code to save it.
      *

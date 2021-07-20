@@ -79,16 +79,16 @@ class EE_DMS_4_1_0_questions extends EE_Data_Migration_Script_Stage
     public function _count_records_to_migrate()
     {
         global $wpdb;
-        $count = $wpdb->get_var("SELECT COUNT(id) FROM ".$this->_old_table);
+        $count = $wpdb->get_var("SELECT COUNT(id) FROM " . $this->_old_table);
         return $count;
     }
     public function __construct()
     {
         global $wpdb;
         $this->_pretty_name = __("Questions", "event_espresso");
-        $this->_old_table = $wpdb->prefix."events_question";
-        $this->_new_table = $wpdb->prefix."esp_question";
-        $this->_option_table = $wpdb->prefix."esp_question_option";
+        $this->_old_table = $wpdb->prefix . "events_question";
+        $this->_new_table = $wpdb->prefix . "esp_question";
+        $this->_option_table = $wpdb->prefix . "esp_question_option";
         parent::__construct();
     }
     private function _insert_new_question($old_question)
@@ -156,18 +156,18 @@ class EE_DMS_4_1_0_questions extends EE_Data_Migration_Script_Stage
         $option = trim($option);
         global $wpdb;
         $cols_n_values = array(
-            'QST_ID'=>$question_id,
-            'QSO_value'=>$option,
-            'QSO_deleted'=>false
+            'QST_ID' => $question_id,
+            'QSO_value' => $option,
+            'QSO_deleted' => false
         );
-        $datatypes= array(
+        $datatypes = array(
             '%d',// QST_ID
             '%s',// QSO_value
             '%d',// QSO_deleted
         );
         $success = $wpdb->insert($this->_option_table, $cols_n_values, $datatypes);
         if (! $success) {
-            $this->add_error($this->get_migration_script()->_create_error_message_for_db_insertion($this->_old_table, array('option'=>$option,'new_question_id'=>$question_id), $this->_option_table, $cols_n_values, $datatypes));
+            $this->add_error($this->get_migration_script()->_create_error_message_for_db_insertion($this->_old_table, array('option' => $option,'new_question_id' => $question_id), $this->_option_table, $cols_n_values, $datatypes));
             return 0;
         }
         return $wpdb->insert_id;

@@ -304,7 +304,8 @@ class EED_Events_Archive extends EED_Module
                 add_filter('the_title', array('EED_Events_Archive', 'the_title'), 100, 2);
             }
             // if NOT a custom template
-            if (apply_filters('FHEE__EED_Event_Archive__template_include__allow_custom_selected_template', false)
+            if (
+                apply_filters('FHEE__EED_Event_Archive__template_include__allow_custom_selected_template', false)
                 || EE_Registry::instance()
                               ->load_core('Front_Controller')
                               ->get_selected_template() !== 'archive-espresso_events.php'
@@ -411,7 +412,8 @@ class EED_Events_Archive extends EED_Module
     {
         global $post;
         static $current_post_ID = 0;
-        if ($current_post_ID !== $post->ID
+        if (
+            $current_post_ID !== $post->ID
             && $post->post_type === 'espresso_events'
             && ! EED_Events_Archive::$using_get_the_excerpt
             && ! post_password_required()
@@ -833,7 +835,8 @@ class EED_Events_Archive extends EED_Module
     {
         $CFG->EED_Events_Archive = new EE_Events_Archive_Config();
         // unless we are resetting the config...
-        if (! isset($REQ['EED_Events_Archive_reset_event_list_settings'])
+        if (
+            ! isset($REQ['EED_Events_Archive_reset_event_list_settings'])
             || absint($REQ['EED_Events_Archive_reset_event_list_settings']) !== 1
         ) {
             $CFG->EED_Events_Archive->display_status_banner = isset($REQ['EED_Events_Archive_display_status_banner'])

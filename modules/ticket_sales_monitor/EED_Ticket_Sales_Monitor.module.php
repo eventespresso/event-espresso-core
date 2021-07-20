@@ -605,7 +605,8 @@ class EED_Ticket_Sales_Monitor extends EED_Module
             }
             if (! empty($registrations)) {
                 foreach ($registrations as $registration) {
-                    if ($registration instanceof EE_Registration
+                    if (
+                        $registration instanceof EE_Registration
                         && $this->_release_reserved_ticket_for_registration($registration, $transaction)
                     ) {
                         $count++;
@@ -644,7 +645,8 @@ class EED_Ticket_Sales_Monitor extends EED_Module
             echo self::$nl . ' . . registration->status_ID: ' . $registration->status_ID();
             echo self::$nl . ' . . transaction->status_ID(): ' . $STS_ID;
         }
-        if (// release Tickets for Failed Transactions and Abandoned Transactions
+        if (
+// release Tickets for Failed Transactions and Abandoned Transactions
             $STS_ID === EEM_Transaction::failed_status_code
             || $STS_ID === EEM_Transaction::abandoned_status_code
             || (
@@ -1008,7 +1010,8 @@ class EED_Ticket_Sales_Monitor extends EED_Module
             $expired_reservations_count = $ticket_with_reservations->reserved();
             // Now reduce that number using the list of current valid reservations.
             foreach ($valid_reserved_ticket_line_items as $valid_reserved_ticket_line_item) {
-                if ($valid_reserved_ticket_line_item instanceof EE_Line_Item
+                if (
+                    $valid_reserved_ticket_line_item instanceof EE_Line_Item
                     && $valid_reserved_ticket_line_item->OBJ_ID() === $ticket_with_reservations->ID()
                 ) {
                     $expired_reservations_count -= $valid_reserved_ticket_line_item->quantity();

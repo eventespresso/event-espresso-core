@@ -18,14 +18,19 @@ class CachingLoader extends CachingLoaderDecorator
 {
 
     /**
-     * @var string $identifier
+     * @var bool
      */
-    protected $identifier;
+    protected $bypass;
 
     /**
-     * @var CollectionInterface $cache
+     * @var CollectionInterface
      */
     protected $cache;
+
+    /**
+     * @var string
+     */
+    protected $identifier;
 
     /**
      * @var ObjectIdentifier
@@ -66,6 +71,16 @@ class CachingLoader extends CachingLoaderDecorator
         add_action(
             'AHEE__EventEspresso_core_services_loaders_CachingLoader__resetCache',
             array($this, 'reset')
+        );
+        // caching can be turned off via the following code:
+        // add_filter('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache', '__return_true');
+        $this->bypass = filter_var(
+            apply_filters(
+                'FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache',
+                false,
+                $this
+            ),
+            FILTER_VALIDATE_BOOLEAN
         );
     }
 
@@ -131,11 +146,7 @@ class CachingLoader extends CachingLoaderDecorator
         $fqcn = ltrim($fqcn, '\\');
         // caching can be turned off via the following code:
         // add_filter('FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache', '__return_true');
-        if (apply_filters(
-            'FHEE__EventEspresso_core_services_loaders_CachingLoader__load__bypass_cache',
-            false,
-            $this
-        )) {
+        if ($this->bypass) {
             // even though $shared might be true, caching could be bypassed for whatever reason,
             // so we don't want the core loader to cache anything, therefore caching is turned off
             return $this->loader->load($fqcn, $arguments, false);
@@ -170,5 +181,22 @@ class CachingLoader extends CachingLoaderDecorator
     public function clearCache()
     {
         $this->cache->trashAndDetachAll();
+    }
+
+
+    /**
+     * @param string $fqcn
+     * @param array  $arguments
+     * @return bool
+     * @throws InvalidArgumentException
+     */
+    public function remove($fqcn, array $arguments = [])
+    {
+        $fqcn = ltrim($fqcn, '\\');
+        $object_identifier = $this->object_identifier->getIdentifier($fqcn, $arguments);
+        $object = $this->cache->has($object_identifier)
+            ? $this->cache->get($object_identifier)
+            : $this->loader->load($fqcn, $arguments);
+        return $this->cache->remove($object);
     }
 }

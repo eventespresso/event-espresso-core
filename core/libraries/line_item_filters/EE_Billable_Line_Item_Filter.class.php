@@ -47,7 +47,8 @@ class EE_Billable_Line_Item_Filter extends EE_Specific_Registrations_Line_Item_F
                     continue;
                 }
                 // are we billing for this registration at this moment ?
-                if (!
+                if (
+                    !
                     $registration->owes_monies_and_can_pay($requires_payment) &&
                     ! (
                         // free registration with valid reg status

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class EE_Float_Validation_Strategy
  *
@@ -41,6 +42,6 @@ class EE_Float_Validation_Strategy extends EE_Validation_Strategy_Base
      */
     public function get_jquery_validation_rule_array()
     {
-        return array('number'=>true, 'messages' => array( 'number' => $this->get_validation_error_message() ) );
+        return array('number' => true, 'messages' => array( 'number' => $this->get_validation_error_message() ) );
     }
 }

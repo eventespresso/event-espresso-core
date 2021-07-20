@@ -802,7 +802,8 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
         );
         foreach ($registrations as $registration) {
             // valid registration that is NOT cancelled or declined ?
-            if ($registration instanceof EE_Registration
+            if (
+                $registration instanceof EE_Registration
                 && ! in_array($registration->status_ID(), EEM_Registration::closed_reg_statuses(), true)
             ) {
                 return $registration;
@@ -1627,11 +1628,13 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     {
         // if TXN status has not been updated already due to a payment, and is still set as "failed" or "abandoned"...
         $txn_status = $this->status_ID();
-        if ($txn_status === EEM_Transaction::failed_status_code
+        if (
+            $txn_status === EEM_Transaction::failed_status_code
             || $txn_status === EEM_Transaction::abandoned_status_code
         ) {
             // if a contact record for the primary registrant has been created
-            if ($this->primary_registration() instanceof EE_Registration
+            if (
+                $this->primary_registration() instanceof EE_Registration
                 && $this->primary_registration()->attendee() instanceof EE_Attendee
             ) {
                 $this->set_status(EEM_Transaction::incomplete_status_code);

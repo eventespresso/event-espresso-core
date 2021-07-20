@@ -163,7 +163,8 @@ class EE_Messages_Generator
             }
 
             // don't persist debug_only messages if the messages system is not in debug mode.
-            if ($msg->STS_ID() === EEM_Message::status_debug_only
+            if (
+                $msg->STS_ID() === EEM_Message::status_debug_only
                 && ! EEM_Message::debug()
             ) {
                 do_action(
@@ -364,7 +365,8 @@ class EE_Messages_Generator
         $global_message_template_group =
             $this->_get_global_message_template_group_for_current_messenger_and_message_type();
 
-        if ($global_message_template_group instanceof EE_Message_Template_Group
+        if (
+            $global_message_template_group instanceof EE_Message_Template_Group
             && $global_message_template_group->get('MTP_is_override')
         ) {
             return $global_message_template_group;
@@ -704,7 +706,8 @@ class EE_Messages_Generator
         $m_shortcodes  = $this->_current_messenger->get_valid_shortcodes();
 
         // if the 'to' field is empty or the context is inactive we skip EXCEPT if we're previewing
-        if (! $this->_generation_queue->get_message_repository()->is_preview()
+        if (
+            ! $this->_generation_queue->get_message_repository()->is_preview()
             && (
                             (
                                 empty($templates['to'][ $context ])
@@ -846,7 +849,8 @@ class EE_Messages_Generator
         /**
          * Check if there is any generation data, but only if this is not for a preview.
          */
-        if (! $this->_generation_queue->get_message_repository()->get_generation_data()
+        if (
+            ! $this->_generation_queue->get_message_repository()->get_generation_data()
             && (
                 ! $this->_generation_queue->get_message_repository()->is_preview()
                 && $this->_generation_queue->get_message_repository()->get_data_handler()

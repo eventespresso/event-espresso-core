@@ -1,4 +1,5 @@
 <?php
+
 /**
  * EE_Password_Input
  *

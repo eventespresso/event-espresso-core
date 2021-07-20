@@ -645,13 +645,15 @@ class EED_Messages extends EED_Module
                 return false;
             }
             // return visit but nothing changed ???
-            if (isset($extra_details['revisit'], $extra_details['status_updates']) &&
+            if (
+                isset($extra_details['revisit'], $extra_details['status_updates']) &&
                 $extra_details['revisit'] && ! $extra_details['status_updates']
             ) {
                 return false;
             }
             // NOT sending messages && reg status is something other than "Not-Approved"
-            if (! apply_filters('FHEE__EED_Messages___maybe_registration__deliver_notifications', false) &&
+            if (
+                ! apply_filters('FHEE__EED_Messages___maybe_registration__deliver_notifications', false) &&
                 $registration->status_ID() !== EEM_Registration::status_id_not_approved
             ) {
                 return false;
@@ -734,8 +736,10 @@ class EED_Messages extends EED_Module
             $request->setRequestParam($request_key, $request_value);
         }
 
-        if (! $messages_to_send = self::$_MSG_PROCESSOR->setup_messages_to_generate_from_registration_ids_in_request(
-        )) {
+        if (
+            ! $messages_to_send = self::$_MSG_PROCESSOR->setup_messages_to_generate_from_registration_ids_in_request(
+            )
+        ) {
             return false;
         }
 
@@ -947,7 +951,8 @@ class EED_Messages extends EED_Module
                 break;
         }
         // verify that both the messenger AND the message type are active
-        if (EEH_MSG_Template::is_messenger_active($sending_messenger)
+        if (
+            EEH_MSG_Template::is_messenger_active($sending_messenger)
             && EEH_MSG_Template::is_mt_active($message_type)
         ) {
             // need to get the correct message template group for this (i.e. is there a custom invoice for the event this registration is registered for?)
@@ -1246,7 +1251,8 @@ class EED_Messages extends EED_Module
         // get queue and count
         $queue_count = self::$_MSG_PROCESSOR->get_queue()->count_STS_in_queue(EEM_Message::status_resend);
 
-        if ($queue_count > 0
+        if (
+            $queue_count > 0
         ) {
             EE_Error::add_success(
                 sprintf(
@@ -1262,7 +1268,8 @@ class EED_Messages extends EED_Module
             /**
              * @see filter usage in EE_Messages_Queue::initiate_request_by_priority
              */
-        } elseif (apply_filters('FHEE__EE_Messages_Processor__initiate_request_by_priority__do_immediate_processing', true)
+        } elseif (
+            apply_filters('FHEE__EE_Messages_Processor__initiate_request_by_priority__do_immediate_processing', true)
             || EE_Registry::instance()->NET_CFG->core->do_messages_on_same_request
         ) {
             $queue_count = self::$_MSG_PROCESSOR->get_queue()->count_STS_in_queue(EEM_Message::status_sent);

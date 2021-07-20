@@ -57,7 +57,8 @@ class EE_Cron_Tasks extends EE_Base
     {
         do_action('AHEE_log', __CLASS__, __FUNCTION__);
         // verify that WP Cron is enabled
-        if (defined('DISABLE_WP_CRON')
+        if (
+            defined('DISABLE_WP_CRON')
             && DISABLE_WP_CRON
             && is_admin()
             && ! get_option('ee_disabled_wp_cron_check')
@@ -277,7 +278,8 @@ class EE_Cron_Tasks extends EE_Base
     public static function update_transaction_with_payment()
     {
         do_action('AHEE_log', __CLASS__, __FUNCTION__);
-        if (// are there any TXNs that need cleaning up ?
+        if (
+// are there any TXNs that need cleaning up ?
             empty(self::$_update_transactions_with_payment)
             // reschedule the cron if we can't hit the db right now
             || EE_Cron_Tasks::reschedule_cron_for_transactions_if_maintenance_mode(
@@ -396,7 +398,8 @@ class EE_Cron_Tasks extends EE_Base
      */
     public static function process_expired_transactions()
     {
-        if (// are there any TXNs that need cleaning up ?
+        if (
+// are there any TXNs that need cleaning up ?
             empty(self::$_expired_transactions)
             // reschedule the cron if we can't hit the db right now
             || EE_Cron_Tasks::reschedule_cron_for_transactions_if_maintenance_mode(
@@ -421,7 +424,8 @@ class EE_Cron_Tasks extends EE_Base
                     case EEM_Transaction::complete_status_code:
                         // Don't update the transaction/registrations if the Primary Registration is Not Approved.
                         $primary_registration = $transaction->primary_registration();
-                        if ($primary_registration instanceof EE_Registration
+                        if (
+                            $primary_registration instanceof EE_Registration
                             && $primary_registration->status_ID() !== EEM_Registration::status_id_not_approved
                         ) {
                             /** @type EE_Transaction_Processor $transaction_processor */
@@ -595,7 +599,8 @@ class EE_Cron_Tasks extends EE_Base
     public static function finalize_abandoned_transactions()
     {
         do_action('AHEE_log', __CLASS__, __FUNCTION__);
-        if (// are there any TXNs that need cleaning up ?
+        if (
+// are there any TXNs that need cleaning up ?
             empty(self::$_abandoned_transactions)
             // reschedule the cron if we can't hit the db right now
             || EE_Cron_Tasks::reschedule_cron_for_transactions_if_maintenance_mode(

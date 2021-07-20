@@ -83,7 +83,8 @@ class Payments_Admin_Page_Init extends EE_Admin_Page_Init
         // ONLY do this check if models can query
         // and avoid a bug where when we nuke EE4's data that this causes a fatal error
         // because the tables are deleted just before this request runs. see https://events.codebasehq.com/projects/event-espresso/tickets/7539
-        if (! EE_Maintenance_Mode::instance()->models_can_query()
+        if (
+            ! EE_Maintenance_Mode::instance()->models_can_query()
             || ! $this->_get_table_analysis()->tableExists(EEM_Payment_Method::instance()->table())
         ) {
             return;
@@ -147,10 +148,12 @@ class Payments_Admin_Page_Init extends EE_Admin_Page_Init
         }
 
         // Not using PP Standard? Then display only PayPal Express, do not show PayPal Standard.
-        if (apply_filters(
-            'FHEE__EE_PMT_Paypal_Express__register_payment_methods__hide_paypal_standard',
-            ! $ppstandard_active && ! $ppstandard_active_before
-        )) {
+        if (
+            apply_filters(
+                'FHEE__EE_PMT_Paypal_Express__register_payment_methods__hide_paypal_standard',
+                ! $ppstandard_active && ! $ppstandard_active_before
+            )
+        ) {
             unset($payment_method_types['paypal_standard']);
         }
         return $payment_method_types;

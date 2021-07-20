@@ -141,7 +141,8 @@ class CopyRegistrationService extends DomainService
         $new_registration_payment_total = 0;
         $registration_to_copy_total = $registration_to_copy->paid();
         foreach ($previous_registration_payments as $previous_registration_payment) {
-            if ($previous_registration_payment instanceof EE_Registration_Payment
+            if (
+                $previous_registration_payment instanceof EE_Registration_Payment
                 && $previous_registration_payment->payment() instanceof EE_Payment
                 && $previous_registration_payment->payment()->is_approved()
             ) {

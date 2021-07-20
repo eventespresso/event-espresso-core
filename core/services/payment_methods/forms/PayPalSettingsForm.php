@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\core\services\payment_methods\forms;
 
 use EE_Error;
@@ -129,14 +130,15 @@ class PayPalSettingsForm extends EE_Payment_Method_Form
                 __LINE__
             );
         }
-        if (in_array(
-            $response_args['ACK'],
-            array(
+        if (
+            in_array(
+                $response_args['ACK'],
+                array(
                 'Success',
                 'SuccessWithWarning'
-            ),
-            true
-        )
+                ),
+                true
+            )
         ) {
             return '';
         } else {

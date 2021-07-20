@@ -1030,24 +1030,29 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
         // if event is published:
         if ($this->status() === EEM_Event::post_status_publish || $this->status() === EEM_Event::post_status_private) {
             // active?
-            if (EEM_Datetime::instance()->get_datetime_count_for_status(
-                EE_Datetime::active,
-                $where_params_for_event
-            ) > 0) {
+            if (
+                EEM_Datetime::instance()->get_datetime_count_for_status(
+                    EE_Datetime::active,
+                    $where_params_for_event
+                ) > 0
+            ) {
                 $this->_active_status = EE_Datetime::active;
             } else {
                 // upcoming?
-                if (EEM_Datetime::instance()->get_datetime_count_for_status(
-                    EE_Datetime::upcoming,
-                    $where_params_for_event
-                ) > 0) {
+                if (
+                    EEM_Datetime::instance()->get_datetime_count_for_status(
+                        EE_Datetime::upcoming,
+                        $where_params_for_event
+                    ) > 0
+                ) {
                     $this->_active_status = EE_Datetime::upcoming;
                 } else {
                     // expired?
-                    if (EEM_Datetime::instance()->get_datetime_count_for_status(
-                        EE_Datetime::expired,
-                        $where_params_for_event
-                    ) > 0
+                    if (
+                        EEM_Datetime::instance()->get_datetime_count_for_status(
+                            EE_Datetime::expired,
+                            $where_params_for_event
+                        ) > 0
                     ) {
                         $this->_active_status = EE_Datetime::expired;
                     } else {

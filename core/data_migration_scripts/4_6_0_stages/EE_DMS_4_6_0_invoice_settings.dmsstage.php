@@ -67,7 +67,7 @@ class EE_DMS_4_6_0_invoice_settings extends EE_Data_Migration_Script_Stage
 
         $templates_relative_path = 'modules/gateways/Invoice/lib/templates/';
         $overridden_invoice_body = EEH_Template::locate_template($templates_relative_path . 'invoice_body.template.php', null, false, false, true);
-        $overridden_receipt_body= EEH_Template::locate_template($templates_relative_path . 'receipt_body.template.php', null, false, false, true);
+        $overridden_receipt_body = EEH_Template::locate_template($templates_relative_path . 'receipt_body.template.php', null, false, false, true);
         if ($overridden_invoice_body || $overridden_receipt_body) {
             new PersistentAdminNotice(
                 'invoice_overriding_templates',

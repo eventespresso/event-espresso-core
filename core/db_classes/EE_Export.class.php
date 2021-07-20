@@ -544,13 +544,15 @@ class EE_Export
                         $reg_row['Ticket.TKT_name']
                     );
                     $datetimes_strings = array();
-                    foreach (EEM_Datetime::instance()->get_all_wpdb_results(
-                        array(
+                    foreach (
+                        EEM_Datetime::instance()->get_all_wpdb_results(
+                            array(
                             array('Ticket.TKT_ID' => $reg_row['Ticket.TKT_ID']),
                             'order_by'                 => array('DTT_EVT_start' => 'ASC'),
                             'default_where_conditions' => 'none',
-                        )
-                    ) as $datetime) {
+                            )
+                        ) as $datetime
+                    ) {
                         $datetimes_strings[] = $this->_prepare_value_from_db_for_display(
                             EEM_Datetime::instance(),
                             'DTT_EVT_start',
@@ -600,9 +602,11 @@ class EE_Export
                     }
                 }
                 // now fill out the questions THEY answered
-                foreach (EEM_Answer::instance()->get_all_wpdb_results(
-                    array(array('REG_ID' => $reg_row['Registration.REG_ID']), 'force_join' => array('Question'))
-                ) as $answer_row) {
+                foreach (
+                    EEM_Answer::instance()->get_all_wpdb_results(
+                        array(array('REG_ID' => $reg_row['Registration.REG_ID']), 'force_join' => array('Question'))
+                    ) as $answer_row
+                ) {
                     /* @var $answer EE_Answer */
                     if ($answer_row['Question.QST_ID']) {
                         $question_label = $this->_prepare_value_from_db_for_display(

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Events_Admin_Page_Init
  *

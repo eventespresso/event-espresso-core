@@ -1,4 +1,5 @@
 <?php
+
 /**
  *
  * Display Strategy for line item tables in the admin on the Registration Details page..
@@ -97,7 +98,7 @@ class EE_Admin_Table_Registration_Line_Item_Display_Strategy extends EE_Admin_Ta
             $line_item,
             $options
         );
-        
+
         $html .= EEH_HTML::td($name_html, '', 'jst-left');
         // Type Column
         $type_html = $line_item->OBJ_type() ? $line_item->OBJ_type_i18n() : '';

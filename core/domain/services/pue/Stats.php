@@ -6,6 +6,9 @@ use Closure;
 use EEH_URL;
 use EE_Maintenance_Mode;
 use EEH_Template;
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\Request;
+use EventEspresso\core\services\request\RequestInterface;
 
 /**
  * Stats
@@ -190,8 +193,11 @@ class Stats
      */
     public function ajaxHandler()
     {
+        /** @var RequestInterface $request */
+        $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+        $nonce = $request->getRequestParam('nonce');
         // verify nonce
-        if (! isset($_POST['nonce']) || ! wp_verify_nonce($_POST['nonce'], 'ee-data-optin')) {
+        if (! $nonce || ! wp_verify_nonce($nonce, 'ee-data-optin')) {
             exit();
         }
 

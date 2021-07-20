@@ -1,4 +1,5 @@
 <?php
+
 /**
  * EEH_Event_View Helper
  *
@@ -45,7 +46,8 @@ class EEH_Event_View extends EEH_Base
         }
         // if the post type is for an event and it has a cached event and we don't have a different incoming $EVT_ID
         // then let's just use that cached event on the $post object.
-        if ($post instanceof WP_Post
+        if (
+            $post instanceof WP_Post
             && $post->post_type === 'espresso_events'
             && isset($post->EE_Event)
             && (
@@ -244,7 +246,7 @@ class EEH_Event_View extends EEH_Base
                         $category_links[] = '<a href="' . esc_url($url)
                                             . '" rel="tag"'
                                             . \EED_Events_Archive::link_target()
-                                            .'>'
+                                            . '>'
                                             . $term->name
                                             . '</a>';
                     }
@@ -339,12 +341,12 @@ class EEH_Event_View extends EEH_Base
     {
         $datetime = EEH_Event_View::get_primary_date_obj($EVT_ID);
         if ($datetime instanceof EE_Datetime) {
-    ?>
+            ?>
         <div class="event-date-calendar-page-dv">
             <div class="event-date-calendar-page-month-dv"><?php echo $datetime->get_i18n_datetime('DTT_EVT_start', 'M');?></div>
             <div class="event-date-calendar-page-day-dv"><?php echo $datetime->start_date('d');?></div>
         </div>
-    <?php
+            <?php
         }
     }
 
@@ -568,7 +570,7 @@ class EEH_Event_View extends EEH_Base
                 $link = '<a class="post-edit-link" href="' . $url . '" ';
                 $link .= ' title="' . esc_attr($post_type_obj->labels->edit_item) . '"';
                 $link .= \EED_Events_Archive::link_target();
-                $link .='>' . $link_text . '</a>';
+                $link .= '>' . $link_text . '</a>';
                 // put it all together
                 return $before . apply_filters('edit_post_link', $link, $event->ID()) . $after;
             }

@@ -1,10 +1,11 @@
 <?php
+
 EE_Registry::instance()->load_lib('Gateway');
 EE_Registry::instance()->load_lib('Onsite_Gateway');
 EE_Registry::instance()->load_lib('Offsite_Gateway');
 
-use \EventEspresso\core\services\payment_methods\gateways\GatewayDataFormatter;
-use \EventEspresso\core\services\formatters\AsciiOnly;
+use EventEspresso\core\services\payment_methods\gateways\GatewayDataFormatter;
+use EventEspresso\core\services\formatters\AsciiOnly;
 
 /**
  *
@@ -297,16 +298,18 @@ abstract class EE_PMT_Base
         }
         // if we know who the attendee is, and this is a billing form
         // that uses attendee info, populate it
-        if (apply_filters(
-            'FHEE__populate_billing_form_fields_from_attendee',
-            ($this->_billing_form instanceof EE_Billing_Attendee_Info_Form
+        if (
+            apply_filters(
+                'FHEE__populate_billing_form_fields_from_attendee',
+                ($this->_billing_form instanceof EE_Billing_Attendee_Info_Form
                 && $transaction instanceof EE_Transaction
                 && $transaction->primary_registration() instanceof EE_Registration
                 && $transaction->primary_registration()->attendee() instanceof EE_Attendee
-            ),
-            $this->_billing_form,
-            $transaction
-        )) {
+                ),
+                $this->_billing_form,
+                $transaction
+            )
+        ) {
             $this->_billing_form->populate_from_attendee($transaction->primary_registration()->attendee());
         }
         return $this->_billing_form;
