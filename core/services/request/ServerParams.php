@@ -78,11 +78,12 @@ class ServerParams
 
     /**
      * @param string $key
+     * @param mixed|null $default
      * @return array|int|float|string
      */
-    public function getServerParam($key)
+    public function getServerParam($key, $default = null)
     {
-        return $this->serverParamIsSet($key) ? $this->server[ $key ] : null;
+        return $this->serverParamIsSet($key) ? $this->server[ $key ] : $default;
     }
 
 
@@ -136,7 +137,8 @@ class ServerParams
         ];
         foreach ($server_keys as $key) {
             if (isset($this->server[ $key ])) {
-                foreach (array_map('trim', explode(',', $this->server[ $key ])) as $ip) {
+                $potential_ip = array_map('trim', explode(',', $this->server[ $key ]));
+                foreach ($potential_ip as $ip) {
                     if ($ip === '127.0.0.1' || filter_var($ip, FILTER_VALIDATE_IP) !== false) {
                         $visitor_ip = $ip;
                     }

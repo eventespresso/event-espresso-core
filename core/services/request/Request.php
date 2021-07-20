@@ -116,11 +116,12 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
 
     /**
      * @param string $key
+     * @param mixed|null $default
      * @return array|int|float|string
      */
-    public function getServerParam($key)
+    public function getServerParam($key, $default = null)
     {
-        return $this->server_params->getServerParam($key);
+        return $this->server_params->getServerParam($key, $default);
     }
 
 
