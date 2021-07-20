@@ -2,7 +2,9 @@
 
 namespace EventEspresso\core\services\request\files;
 
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\collections\Collection;
+use EventEspresso\core\services\collections\CollectionInterface;
 use EventEspresso\core\services\request\Request;
 use InvalidArgumentException;
 use UnexpectedValueException;
@@ -31,9 +33,9 @@ use UnexpectedValueException;
  *
  *
  *
- * @package     Event Espresso
+ * @package        Event Espresso
  * @author         Mike Nelson
- * @since         4.9.80.p
+ * @since          4.9.80.p
  *
  */
 class FilesDataHandler
@@ -53,8 +55,10 @@ class FilesDataHandler
      */
     protected $initialized = false;
 
+
     /**
      * FilesDataHandler constructor.
+     *
      * @param Request $request
      */
     public function __construct(Request $request)
@@ -62,11 +66,12 @@ class FilesDataHandler
         $this->request = $request;
     }
 
+
     /**
-     * @since 4.9.80.p
      * @return CollectionInterface | FileSubmissionInterface[]
      * @throws UnexpectedValueException
      * @throws InvalidArgumentException
+     * @since 4.9.80.p
      */
     protected function getFileObjects()
     {
@@ -74,12 +79,14 @@ class FilesDataHandler
         return $this->file_objects;
     }
 
+
     /**
      * Sets up the file objects from the request's $_FILES data.
-     * @since 4.9.80.p
+     *
      * @throws UnexpectedValueException
      * @throws InvalidArgumentException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidInterfaceException
+     * @since 4.9.80.p
      */
     protected function initialize()
     {
@@ -87,12 +94,12 @@ class FilesDataHandler
             return;
         }
         $this->file_objects = new Collection(
-            // collection interface
+        // collection interface
             'EventEspresso\core\services\request\files\FileSubmissionInterface',
             // collection name
             'submitted_files'
         );
-        $files_raw_data = $this->request->filesParams();
+        $files_raw_data     = $this->request->filesParams();
         if (empty($files_raw_data)) {
             return;
         }
@@ -105,16 +112,18 @@ class FilesDataHandler
         $this->initialized = true;
     }
 
+
     /**
      * Detects if $_FILES is a weird multi-dimensional array that needs fixing or not.
-     * @since 4.9.80.p
+     *
      * @param $files_data
      * @return bool
      * @throws UnexpectedValueException
+     * @since 4.9.80.p
      */
     protected function isStrangeFilesArray($files_data)
     {
-        if (!is_array($files_data)) {
+        if (! is_array($files_data)) {
             throw new UnexpectedValueException(
                 sprintf(
                     esc_html__(
@@ -126,7 +135,7 @@ class FilesDataHandler
             );
         }
         $first_value = reset($files_data);
-        if (!is_array($first_value)) {
+        if (! is_array($first_value)) {
             throw new UnexpectedValueException(
                 sprintf(
                     esc_html__(
@@ -146,20 +155,22 @@ class FilesDataHandler
         return false;
     }
 
+
     /**
      * Takes into account that $_FILES does a weird thing when you have hierarchical form names (eg `<input type="file"
      * name="my[hierarchical][form]">`): it leaves the top-level form part alone, but replaces the SECOND part with
      * "name", "size", "tmp_name", etc. So that file's data is located at "my[name][hierarchical][form]",
      * "my[size][hierarchical][form]", "my[tmp_name][hierarchical][form]", etc. It's really weird.
-     * @since 4.9.80.p
+     *
      * @param $files_data
      * @return array
+     * @since 4.9.80.p
      */
     protected function fixFilesDataArray($files_data)
     {
         $sane_files_array = [];
         foreach ($files_data as $top_level_name => $top_level_children) {
-            $sub_array = [];
+            $sub_array                           = [];
             $sane_files_array[ $top_level_name ] = [];
             foreach ($top_level_children as $file_data_part => $second_level_children) {
                 foreach ($second_level_children as $next_level_name => $sub_values) {
@@ -174,19 +185,20 @@ class FilesDataHandler
         return $sane_files_array;
     }
 
+
     /**
      * Recursively explores the array until it finds a leaf node, and tacks `$type` as a final index in front of it.
-     * @since 4.9.80.p
+     *
      * @param $data array|string
      * @param $type 'name', 'tmp_name', 'size', or 'error'
-     * @param $name string
-     * @return array|string
+     * @return array
+     * @since 4.9.80.p
      */
     protected function organizeFilesData($data, $type)
     {
         if (! is_array($data)) {
             return [
-                $type => $data
+                $type => $data,
             ];
         }
         $organized_data = [];
@@ -200,19 +212,21 @@ class FilesDataHandler
         return $organized_data;
     }
 
+
     /**
      * Takes the organized $_FILES array (where all file info is located at the same spot as you'd expect an input
-     * to be in $_GET or $_POST, with all the file's data located side-by-side in an array) and creates a
+     * to be in post data, with all the file's data located side-by-side in an array) and creates a
      * multi-dimensional array of FileSubmissionInterface objects. Stores it in `$this->file_objects`.
-     * @since 4.9.80.p
-     * @param array $organized_files $_FILES but organized like $_POST
+     *
+     * @param array $organized_files   $_FILES but organized like $_POST
      * @param array $name_parts_so_far for multidimensional HTML form names,
      * @throws UnexpectedValueException
      * @throws InvalidArgumentException
+     * @since 4.9.80.p
      */
     protected function createFileObjects($organized_files, $name_parts_so_far = [])
     {
-        if (!is_array($organized_files)) {
+        if (! is_array($organized_files)) {
             throw new UnexpectedValueException(
                 sprintf(
                     esc_html__(
@@ -246,51 +260,54 @@ class FilesDataHandler
         }
     }
 
+
     /**
      * Takes the input name parts, like `['my', 'great', 'file', 'input1']`
      * and returns the HTML name for it, "my[great][file][input1]"
-     * @since 4.9.80.p
-     * @param $parts
+     *
      * @throws UnexpectedValueException
+     * @since 4.9.80.p
      */
     protected function inputNameFromParts($parts)
     {
-        if (!is_array($parts)) {
+        if (! is_array($parts)) {
             throw new UnexpectedValueException(esc_html__('Name parts should be an array.', 'event_espresso'));
         }
         $generated_string = '';
         foreach ($parts as $part) {
-            if ($generated_string === '') {
-                $generated_string = (string) $part;
-            } else {
-                $generated_string .= '[' . (string) $part . ']';
-            }
+            $part = (string) $part;
+            // wrap all but the first part in []
+            $generated_string .= $generated_string === '' ? $part : '[' . $part . ']';
         }
         return $generated_string;
     }
+
 
     /**
      * Gets the input by the indicated $name_parts.
      * Eg if you're looking for an input named "my[great][file][input1]", $name_parts
      * should be `['my', 'great', 'file', 'input1']`.
      * Alternatively, you could use `FileDataHandler::getFileObject('my[great][file][input1]');`
-     * @since 4.9.80.p
+     *
      * @param $name_parts
-     * @throws UnexpectedValueException
      * @return FileSubmissionInterface
+     * @throws UnexpectedValueException
+     * @since 4.9.80.p
      */
     public function getFileObjectFromNameParts($name_parts)
     {
         return $this->getFileObjects()->get($this->inputNameFromParts($name_parts));
     }
 
+
     /**
      * Gets the FileSubmissionInterface corresponding to the HTML name provided.
-     * @since 4.9.80.p
+     *
      * @param $html_name
      * @return mixed
      * @throws InvalidArgumentException
      * @throws UnexpectedValueException
+     * @since 4.9.80.p
      */
     public function getFileObject($html_name)
     {

@@ -1,6 +1,4 @@
 <?php
-use EventEspresso\core\services\database\TableAnalysis;
-use EventEspresso\core\services\database\TableManager;
 
 /**
  * meant to convert DBs from 4.6 (OR 4.7, which basically supports MER and wasn't clear if it was
@@ -10,6 +8,10 @@ use EventEspresso\core\services\database\TableManager;
  * which is especially convenient for applying event-wide promotions
  * -does NOT actually make any database schema changes
  */
+
+use EventEspresso\core\services\database\TableAnalysis;
+use EventEspresso\core\services\database\TableManager;
+
 // make sure we have all the stages loaded too
 // unfortunately, this needs to be done upon INCLUSION of this file,
 // instead of construction, because it only gets constructed on first page load

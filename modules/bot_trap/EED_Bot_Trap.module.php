@@ -35,7 +35,8 @@ class EED_Bot_Trap extends EED_Module
      */
     public static function set_hooks()
     {
-        if (apply_filters('FHEE__EED_Bot_Trap__set_hooks__use_bot_trap', true) &&
+        if (
+            apply_filters('FHEE__EED_Bot_Trap__set_hooks__use_bot_trap', true) &&
             EE_Registry::instance()->CFG->registration->use_bot_trap
         ) {
             EED_Bot_Trap::set_trap();
@@ -79,7 +80,8 @@ class EED_Bot_Trap extends EED_Module
      */
     public static function set_hooks_admin()
     {
-        if (defined('DOING_AJAX')
+        if (
+            defined('DOING_AJAX')
             && DOING_AJAX
             && apply_filters('FHEE__EED_Bot_Trap__set_hooks__use_bot_trap', true)
             && EE_Registry::instance()->CFG->registration->use_bot_trap

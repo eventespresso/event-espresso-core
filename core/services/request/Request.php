@@ -18,46 +18,30 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
 {
 
     /**
-     * $_GET parameters
-     *
-     * @var array $get
-     */
-    protected $get;
-
-    /**
-     * $_POST parameters
-     *
-     * @var array $post
-     */
-    protected $post;
-
-    /**
      * $_COOKIE parameters
      *
-     * @var array $cookie
+     * @var array
      */
-    protected $cookie;
-
-    /**
-     * $_SERVER parameters
-     *
-     * @var array $server
-     */
-    protected $server;
+    protected $cookies;
 
     /**
      * $_FILES parameters
      *
-     * @var array $files
+     * @var array
      */
     protected $files;
 
     /**
-     * $_REQUEST parameters
+     * true if current user appears to be some kind of bot
      *
-     * @var array $request
+     * @var bool
      */
-    protected $request;
+    protected $is_bot;
+
+    /**
+     * @var RequestParams
+     */
+    protected $request_params;
 
     /**
      * @var RequestTypeContextCheckerInterface
@@ -65,42 +49,23 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
     protected $request_type;
 
     /**
-     * IP address for request
-     *
-     * @var string $ip_address
+     * @var ServerParams
      */
-    protected $ip_address;
-
-    /**
-     * @var string $user_agent
-     */
-    protected $user_agent;
-
-    /**
-     * true if current user appears to be some kind of bot
-     *
-     * @var bool $is_bot
-     */
-    protected $is_bot;
+    protected $server_params;
 
 
-    /**
-     * @param array $get
-     * @param array $post
-     * @param array $cookie
-     * @param array $server
-     * @param array $files
-     */
-    public function __construct(array $get, array $post, array $cookie, array $server, array $files = [])
-    {
-        // grab request vars
-        $this->get        = $get;
-        $this->post       = $post;
-        $this->cookie     = $cookie;
-        $this->server     = $server;
-        $this->files      = $files;
-        $this->request    = array_merge($this->get, $this->post);
-        $this->ip_address = $this->visitorIp();
+    public function __construct(
+        RequestParams $request_params,
+        ServerParams $server_params,
+        array $cookies = [],
+        array $files = []
+    ) {
+        $this->cookies = ! empty($cookies)
+            ? $cookies
+            : filter_input_array(INPUT_COOKIE, FILTER_SANITIZE_STRING);
+        $this->files          = ! empty($files) ? $files : $_FILES;
+        $this->request_params = $request_params;
+        $this->server_params  = $server_params;
     }
 
 
@@ -118,7 +83,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
      */
     public function getParams()
     {
-        return $this->get;
+        return $this->request_params->getParams();
     }
 
 
@@ -127,7 +92,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
      */
     public function postParams()
     {
-        return $this->post;
+        return $this->request_params->postParams();
     }
 
 
@@ -136,7 +101,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
      */
     public function cookieParams()
     {
-        return $this->cookie;
+        return $this->cookies;
     }
 
 
@@ -145,7 +110,38 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
      */
     public function serverParams()
     {
-        return $this->server;
+        return $this->server_params->getAllServerParams();
+    }
+
+
+    /**
+     * @param string $key
+     * @return array|int|float|string
+     */
+    public function getServerParam($key)
+    {
+        return $this->server_params->getServerParam($key);
+    }
+
+
+    /**
+     * @param string                 $key
+     * @param array|int|float|string $value
+     * @return void
+     */
+    public function setServerParam($key, $value)
+    {
+        $this->server_params->setServerParam($key, $value);
+    }
+
+
+    /**
+     * @param string $key
+     * @return bool
+     */
+    public function serverParamIsSet($key)
+    {
+        return $this->server_params->serverParamIsSet($key);
     }
 
 
@@ -159,13 +155,13 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
 
 
     /**
-     * returns contents of $_REQUEST
+     * returns sanitized contents of $_REQUEST
      *
      * @return array
      */
     public function requestParams()
     {
-        return $this->request;
+        return $this->request_params->requestParams();
     }
 
 
@@ -173,32 +169,26 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
      * @param string     $key
      * @param mixed|null $value
      * @param bool       $override_ee
-     * @return    void
+     * @return void
      */
     public function setRequestParam($key, $value, $override_ee = false)
     {
-        // don't allow "ee" to be overwritten unless explicitly instructed to do so
-        if ($override_ee || $key !== 'ee' || empty($this->request['ee'])) {
-            $this->request[ $key ] = $value;
-        }
+        $this->request_params->setRequestParam($key, $value, $override_ee);
     }
 
 
     /**
-     * returns   the value for a request param if the given key exists
+     * returns sanitized value for a request param if the given key exists
      *
      * @param string     $key
      * @param mixed|null $default
      * @param string     $type      the expected data type for the parameter's value, ie: string, int, bool, etc
      * @param string     $delimiter for CSV type strings that should be returned as an array
-     * @return mixed
+     * @return array|bool|float|int|string
      */
     public function getRequestParam($key, $default = null, $type = 'string', $delimiter = ',')
     {
-        return $this->sanitizeRequestParam(
-            $this->requestParameterDrillDown($key, $default, 'get'),
-            $type
-        );
+        return $this->request_params->getRequestParam($key, $default, $type, $delimiter);
     }
 
 
@@ -210,13 +200,13 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
      */
     public function requestParamIsSet($key)
     {
-        return (bool) $this->requestParameterDrillDown($key);
+        return $this->request_params->requestParamIsSet($key);
     }
 
 
     /**
      * check if a request parameter exists whose key that matches the supplied wildcard pattern
-     * and return the value for the first match found
+     * and return the sanitized value for the first match found
      * wildcards can be either of the following:
      *      ? to represent a single character of any type
      *      * to represent one or more characters of any type
@@ -225,14 +215,11 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
      * @param mixed|null $default
      * @param string     $type      the expected data type for the parameter's value, ie: string, int, bool, etc
      * @param string     $delimiter for CSV type strings that should be returned as an array
-     * @return mixed
+     * @return array|bool|float|int|string
      */
     public function getMatch($pattern, $default = null, $type = 'string', $delimiter = ',')
     {
-        return $this->sanitizeRequestParam(
-            $this->requestParameterDrillDown($pattern, $default, 'match'),
-            $type
-        );
+        return $this->request_params->getMatch($pattern, $default, $type, $delimiter);
     }
 
 
@@ -248,125 +235,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
      */
     public function matches($pattern)
     {
-        return (bool) $this->requestParameterDrillDown($pattern, false, 'match', 'bool');
-    }
-
-
-    /**
-     * @see https://stackoverflow.com/questions/6163055/php-string-matching-with-wildcard
-     * @param string $pattern               A string including wildcards to be converted to a regex pattern
-     *                                      and used to search through the current request's parameter keys
-     * @param array  $request_params        The array of request parameters to search through
-     * @param mixed  $default               [optional] The value to be returned if no match is found.
-     *                                      Default is null
-     * @param string $return                [optional] Controls what kind of value is returned.
-     *                                      Options are:
-     *                                      'bool' will return true or false if match is found or not
-     *                                      'key' will return the first key found that matches the supplied pattern
-     *                                      'value' will return the value for the first request parameter
-     *                                      whose key matches the supplied pattern
-     *                                      Default is 'value'
-     * @return boolean|string
-     */
-    private function match($pattern, array $request_params, $default = null, $return = 'value')
-    {
-        $return = in_array($return, ['bool', 'key', 'value'], true)
-            ? $return
-            : 'is_set';
-        // replace wildcard chars with regex chars
-        $pattern = str_replace(
-            ["\*", "\?"],
-            ['.*', '.'],
-            preg_quote($pattern, '/')
-        );
-        foreach ($request_params as $key => $request_param) {
-            if (preg_match('/^' . $pattern . '$/is', $key)) {
-                // return value for request param
-                if ($return === 'value') {
-                    return $request_param;
-                }
-                // or actual key or true just to indicate it was found
-                return $return === 'key' ? $key : true;
-            }
-        }
-        // match not found so return default value or false
-        return $return === 'value' ? $default : false;
-    }
-
-
-    /**
-     * the supplied key can be a simple string to represent a "top-level" request parameter
-     * or represent a key for a request parameter that is nested deeper within the request parameter array,
-     * by using square brackets to surround keys for deeper array elements.
-     * For example :
-     * if the supplied $key was: "first[second][third]"
-     * then this will attempt to drill down into the request parameter array to find a value.
-     * Given the following request parameters:
-     *  array(
-     *      'first' => array(
-     *          'second' => array(
-     *              'third' => 'has a value'
-     *          )
-     *      )
-     *  )
-     * would return true if default parameters were set
-     *
-     * @param string $callback
-     * @param        $key
-     * @param null   $default
-     * @param string $return
-     * @param array  $request_params
-     * @return bool|mixed|null
-     */
-    private function requestParameterDrillDown(
-        $key,
-        $default = null,
-        $callback = 'is_set',
-        $return = 'value',
-        array $request_params = []
-    ) {
-        $callback       = in_array($callback, ['is_set', 'get', 'match'], true)
-            ? $callback
-            : 'is_set';
-        $request_params = ! empty($request_params)
-            ? $request_params
-            : $this->request;
-        // does incoming key represent an array like 'first[second][third]'  ?
-        if (strpos($key, '[') !== false) {
-            // turn it into an actual array
-            $key  = str_replace(']', '', $key);
-            $keys = explode('[', $key);
-            $key  = array_shift($keys);
-            if ($callback === 'match') {
-                $real_key = $this->match($key, $request_params, $default, 'key');
-                $key      = $real_key ?: $key;
-            }
-            // check if top level key exists
-            if (isset($request_params[ $key ])) {
-                // build a new key to pass along like: 'second[third]'
-                // or just 'second' depending on depth of keys
-                $key_string = array_shift($keys);
-                if (! empty($keys)) {
-                    $key_string .= '[' . implode('][', $keys) . ']';
-                }
-                return $this->requestParameterDrillDown(
-                    $key_string,
-                    $default,
-                    $callback,
-                    $return,
-                    $request_params[ $key ]
-                );
-            }
-        }
-        if ($callback === 'is_set') {
-            return isset($request_params[ $key ]);
-        }
-        if ($callback === 'match') {
-            return $this->match($key, $request_params, $default, $return);
-        }
-        return isset($request_params[ $key ])
-            ? $request_params[ $key ]
-            : $default;
+        return $this->request_params->matches($pattern);
     }
 
 
@@ -378,12 +247,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
      */
     public function unSetRequestParam($key, $unset_from_global_too = false)
     {
-        // because unset may not actually remove var
-        $this->request[ $key ] = null;
-        unset($this->request[ $key ]);
-        if ($unset_from_global_too) {
-            unset($_REQUEST[ $key ]);
-        }
+        $this->request_params->unSetRequestParam($key, $unset_from_global_too);
     }
 
 
@@ -395,9 +259,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
      */
     public function unSetRequestParams(array $keys, $unset_from_global_too = false)
     {
-        foreach ($keys as $key) {
-            $this->unSetRequestParam($key, $unset_from_global_too);
-        }
+        $this->request_params->unSetRequestParams($keys, $unset_from_global_too);
     }
 
 
@@ -406,39 +268,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
      */
     public function ipAddress()
     {
-        return $this->ip_address;
-    }
-
-
-    /**
-     * attempt to get IP address of current visitor from server
-     * plz see: http://stackoverflow.com/a/2031935/1475279
-     *
-     * @access public
-     * @return string
-     */
-    private function visitorIp()
-    {
-        $visitor_ip  = '0.0.0.0';
-        $server_keys = [
-            'HTTP_CLIENT_IP',
-            'HTTP_X_FORWARDED_FOR',
-            'HTTP_X_FORWARDED',
-            'HTTP_X_CLUSTER_CLIENT_IP',
-            'HTTP_FORWARDED_FOR',
-            'HTTP_FORWARDED',
-            'REMOTE_ADDR',
-        ];
-        foreach ($server_keys as $key) {
-            if (isset($this->server[ $key ])) {
-                foreach (array_map('trim', explode(',', $this->server[ $key ])) as $ip) {
-                    if ($ip === '127.0.0.1' || filter_var($ip, FILTER_VALIDATE_IP) !== false) {
-                        $visitor_ip = $ip;
-                    }
-                }
-            }
-        }
-        return $visitor_ip;
+        return $this->server_params->ipAddress();
     }
 
 
@@ -452,30 +282,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
      */
     public function requestUri($relativeToWpRoot = false)
     {
-        $request_uri = filter_input(
-            INPUT_SERVER,
-            'REQUEST_URI',
-            FILTER_SANITIZE_URL,
-            FILTER_NULL_ON_FAILURE
-        );
-        if (empty($request_uri) && isset($this->server['REQUEST_URI'])) {
-            // fallback sanitization if the above fails
-            $request_uri = wp_sanitize_redirect($this->server['REQUEST_URI']);
-        }
-        if ($relativeToWpRoot) {
-            $home_path   = untrailingslashit(
-                parse_url(
-                    home_url(),
-                    PHP_URL_PATH
-                )
-            );
-            $request_uri = str_replace(
-                $home_path,
-                '',
-                $request_uri
-            );
-        }
-        return $request_uri;
+        return $this->server_params->requestUri();
     }
 
 
@@ -484,7 +291,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
      */
     public function userAgent()
     {
-        return $this->user_agent;
+        return $this->server_params->userAgent();
     }
 
 
@@ -493,10 +300,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
      */
     public function setUserAgent($user_agent = '')
     {
-        if ($user_agent === '' || ! is_string($user_agent)) {
-            $user_agent = isset($_SERVER['HTTP_USER_AGENT']) ? (string) esc_attr($_SERVER['HTTP_USER_AGENT']) : '';
-        }
-        $this->user_agent = $user_agent;
+        $this->server_params->setUserAgent($user_agent);
     }
 
 
@@ -514,7 +318,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
      */
     public function setIsBot($is_bot)
     {
-        $this->is_bot = $this->sanitizeRequestParam($is_bot, 'bool');
+        $this->is_bot = filter_var($is_bot, FILTER_VALIDATE_BOOLEAN);
     }
 
 
@@ -687,49 +491,5 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
     public function getRequestType()
     {
         return $this->request_type;
-    }
-
-
-
-
-    /**
-     * Will sanitize the supplied request parameter based on the specified data type
-     *
-     * @param mixed  $param     the supplied request parameter
-     * @param string $type      the specified data type (default: "string")
-     *                          valid values: "bool", "float", "int", "key", "url", "string", or "arrayOf|*"
-     *                          where * is any of the other valid values ex: "arrayOf|int", "arrayOf|string"
-     * @param string $delimiter if $param is a CSV like value (ex: 1,2,3,4,5...) then this is the value separator
-     *                          (default: ",")
-     * @return array|string
-     * @since $VID:$
-     */
-    public function sanitizeRequestParam($param, $type = 'string', $delimiter = ',')
-    {
-        switch ($type) {
-            case 'bool':
-                return filter_var($param, FILTER_VALIDATE_BOOLEAN);
-            case 'float':
-                return (float) $param;
-            case 'int':
-                return (int) $param;
-            case 'key':
-                return sanitize_key($param);
-            case 'url':
-                return esc_url_raw($param);
-            case 'string':
-                return sanitize_text_field($param);
-            default:
-                if (strpos($type, 'arrayOf|') === 0) {
-                    $values = [];
-                    $array_of_type = substr($type, 8);
-                    $list = is_string($param) ? explode($delimiter, $param) : (array) $param;
-                    foreach ($list as $item) {
-                        $values[] = $this->sanitizeRequestParam($item, $array_of_type, $delimiter);
-                    }
-                    return $values;
-                }
-                return sanitize_text_field($param);
-        }
     }
 }

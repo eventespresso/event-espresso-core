@@ -1,8 +1,9 @@
 <?php
 namespace EventEspresso\tests\testcases\core\domain\entities\route_match;
 
-use EventEspresso\core\services\request\Request;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\tests\mocks\core\domain\entities\route_match\RouteMatchSpecificationMock;
+use EventEspresso\tests\mocks\core\services\request\RequestMock;
 use PHPUnit_Framework_TestCase;
 
 /**
@@ -31,8 +32,8 @@ class RouteMatchSpecificationTestBase extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @return RequestMock
      * @since 4.9.71.p
-     * @return Request
      */
     protected function getRequest(
         array $get = array(),
@@ -41,7 +42,12 @@ class RouteMatchSpecificationTestBase extends PHPUnit_Framework_TestCase
         array $server = array(),
         array $files = array()
     ) {
-        return new Request($get, $post, $cookie, $server, $files);
+        /** @var RequestMock $request */
+        $request = LoaderFactory::getLoader()->getNew(
+            'EventEspresso\tests\mocks\core\services\request\RequestMock'
+        );
+        $request->resetRequestParams($get, $post, $cookie, $server, $files);
+        return $request;
     }
 
     /**

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * EE_Max_Length_Validation_Strategy
  *
@@ -27,10 +28,12 @@ class EE_Max_Length_Validation_Strategy extends EE_Validation_Strategy_Base
      */
     public function validate($normalized_value)
     {
-        if ($this->_max_length !== EE_INF &&
+        if (
+            $this->_max_length !== EE_INF &&
                 $normalized_value &&
                 is_string($normalized_value) &&
-                 strlen($normalized_value) > $this->_max_length) {
+                 strlen($normalized_value) > $this->_max_length
+        ) {
             throw new EE_Validation_Error($this->get_validation_error_message(), 'maxlength');
         }
     }
@@ -41,7 +44,7 @@ class EE_Max_Length_Validation_Strategy extends EE_Validation_Strategy_Base
     public function get_jquery_validation_rule_array()
     {
         if ($this->_max_length !== EE_INF) {
-            return array( 'maxlength'=> $this->_max_length, 'messages' => array( 'maxlength' => $this->get_validation_error_message() ) );
+            return array( 'maxlength' => $this->_max_length, 'messages' => array( 'maxlength' => $this->get_validation_error_message() ) );
         } else {
             return array();
         }

@@ -29,7 +29,13 @@ class CachingLoaderMock extends CachingLoader
     }
 
 
-
+    /**
+     * @param bool $bypass
+     */
+    public function setBypass($bypass)
+    {
+        $this->bypass = $bypass;
+    }
 }
 // End of file CachingLoaderMock.php
 // Location: EventEspresso\tests\mocks\core\services\loaders/CachingLoaderMock.php

@@ -1,7 +1,9 @@
 <?php
+
 /**
  * This is the template for the html messenger and receipt message type main content field.
  */
+
 ?>
 <div class="print_button_div noPrint">
     [INVOICE_RECEIPT_SWITCHER_BUTTON] [DISPLAY_PDF_BUTTON]

@@ -1,5 +1,8 @@
 <?php
 
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\RequestInterface;
+
 /**
  * EE_Messenger_Shortcodes
  *
@@ -53,8 +56,11 @@ class EE_Messenger_Shortcodes extends EE_Shortcodes
             'event_espresso'
         );
 
+        /** @var RequestInterface $request */
+        $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+        $action = $request->getRequestParam('action');
         // show error message about buttons/urls not working as expected if messenger deactivated.
-        if (is_admin() && isset($_REQUEST['action']) && $_REQUEST['action'] == 'update_message_template') {
+        if ($action === 'update_message_template' && is_admin()) {
             if (! isset($this->_active_messengers['pdf'])) {
                 EE_Error::add_attention(
                     __(

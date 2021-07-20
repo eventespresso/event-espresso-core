@@ -1,4 +1,5 @@
 <?php
+
 /**
  * EE_Submit_Input
  *

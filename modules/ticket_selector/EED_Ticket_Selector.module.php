@@ -146,7 +146,8 @@ class EED_Ticket_Selector extends EED_Module
         // initialize config
         EED_Ticket_Selector::instance()->set_config();
         // if config is not set, initialize
-        if (! EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector instanceof EE_Ticket_Selector_Config
+        if (
+            ! EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector instanceof EE_Ticket_Selector_Config
         ) {
             EED_Ticket_Selector::instance()->set_config();
             EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector =

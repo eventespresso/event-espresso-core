@@ -1,5 +1,8 @@
 <?php
 
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\RequestInterface;
+
 /**
  * EE_Help_Tour
  *
@@ -74,7 +77,7 @@ abstract class EE_Help_Tour extends EE_Base
 
 
     /**
-     * holds anything found in the $_REQUEST object (however we override any _gets with _post data).
+     * holds anything found in the request object (however we override any _gets with _post data).
      *
      * @access protected
      * @var array
@@ -101,7 +104,9 @@ abstract class EE_Help_Tour extends EE_Base
     public function __construct($caf = false)
     {
         $this->_is_caf = $caf;
-        $this->_req_data = array_merge($_GET, $_POST);
+        /** @var RequestInterface $request */
+        $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+        $this->_req_data = $request->requestParams();
         $this->_set_tour_properties();
         $this->_set_tour_stops();
         $this->_set_tour_options();

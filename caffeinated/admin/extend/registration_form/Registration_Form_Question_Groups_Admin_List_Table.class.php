@@ -92,10 +92,12 @@ class Registration_Form_Question_Groups_Admin_List_Table extends EE_Admin_List_T
             $this->_current_page,
             true
         );
-        if (EE_Registry::instance()->CAP->current_user_can(
-            'ee_delete_question_groups',
-            'espresso_registration_form_trash_question_group'
-        )) {
+        if (
+            EE_Registry::instance()->CAP->current_user_can(
+                'ee_delete_question_groups',
+                'espresso_registration_form_trash_question_group'
+            )
+        ) {
             $this->_views['trash']['count'] = $this->_admin_page->get_trashed_question_groups(
                 $this->_per_page,
                 $this->_current_page,
@@ -177,46 +179,54 @@ class Registration_Form_Question_Groups_Admin_List_Table extends EE_Admin_List_T
         $restore_link = EE_Admin_Page::add_query_args_and_nonce($restore_query_args, EE_FORMS_ADMIN_URL);
         $delete_link = EE_Admin_Page::add_query_args_and_nonce($delete_query_args, EE_FORMS_ADMIN_URL);
 
-        if (EE_Registry::instance()->CAP->current_user_can(
-            'ee_edit_question_group',
-            'espresso_registration_form_edit_question_group',
-            $item->ID()
-        )) {
+        if (
+            EE_Registry::instance()->CAP->current_user_can(
+                'ee_edit_question_group',
+                'espresso_registration_form_edit_question_group',
+                $item->ID()
+            )
+        ) {
             $actions = array(
                 'edit' => '<a href="' . $edit_link . '" title="'
                           . esc_attr__('Edit Question Group', 'event_espresso') . '">'
                           . __('Edit', 'event_espresso') . '</a>',
             );
         }
-        if ($item->get('QSG_system') < 1
+        if (
+            $item->get('QSG_system') < 1
             && $this->_view != 'trash'
             && EE_Registry::instance()->CAP->current_user_can(
                 'ee_delete_question_group',
                 'espresso_registration_form_trash_question_group',
                 $item->ID()
-            )) {
+            )
+        ) {
             $actions['delete'] = '<a href="' . $trash_link . '" title="'
                                  . esc_attr__('Delete Question Group', 'event_espresso') . '">'
                                  . __('Trash', 'event_espresso') . '</a>';
         }
 
         if ($this->_view == 'trash') {
-            if (EE_Registry::instance()->CAP->current_user_can(
-                'ee_delete_question_group',
-                'espresso_registration_form_restore_question_group',
-                $item->ID()
-            )) {
+            if (
+                EE_Registry::instance()->CAP->current_user_can(
+                    'ee_delete_question_group',
+                    'espresso_registration_form_restore_question_group',
+                    $item->ID()
+                )
+            ) {
                 $actions['restore'] = '<a href="' . $restore_link . '" title="'
                                       . esc_attr__('Restore Question Group', 'event_espresso') . '">'
                                       . __('Restore', 'event_espresso') . '</a>';
             }
 
-            if (! $item->has_questions_with_answers()
+            if (
+                ! $item->has_questions_with_answers()
                 && EE_Registry::instance()->CAP->current_user_can(
                     'ee_delete_question_group',
                     'espresso_registration_form_delete_question_group',
                     $item->ID()
-                )) {
+                )
+            ) {
                     $actions['delete'] = '<a href="' . $delete_link . '" title="'
                                          . esc_attr__('Delete Question Group Permanently', 'event_espresso') . '">'
                                          . __('Delete Permanently', 'event_espresso') . '</a>';

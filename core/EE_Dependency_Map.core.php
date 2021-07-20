@@ -122,7 +122,8 @@ class EE_Dependency_Map
     public static function instance(ClassInterfaceCache $class_cache = null)
     {
         // check if class object is instantiated, and instantiated properly
-        if (! self::$_instance instanceof EE_Dependency_Map
+        if (
+            ! self::$_instance instanceof EE_Dependency_Map
             && $class_cache instanceof ClassInterfaceCache
         ) {
             self::$_instance = new EE_Dependency_Map($class_cache);
@@ -210,7 +211,8 @@ class EE_Dependency_Map
         // get resolved to the correct class name
         foreach ($dependencies as $dependency => $load_source) {
             $alias = self::$_instance->getFqnForAlias($dependency);
-            if ($overwrite === EE_Dependency_Map::OVERWRITE_DEPENDENCIES
+            if (
+                $overwrite === EE_Dependency_Map::OVERWRITE_DEPENDENCIES
                 || ! isset(self::$_instance->_dependency_map[ $class ][ $alias ])
             ) {
                 unset($dependencies[ $dependency ]);
@@ -242,10 +244,11 @@ class EE_Dependency_Map
     /**
      * @param string $class_name
      * @param string $loader
+     * @param bool   $overwrite
      * @return bool
      * @throws DomainException
      */
-    public static function register_class_loader($class_name, $loader = 'load_core')
+    public static function register_class_loader($class_name, $loader = 'load_core', $overwrite = false)
     {
         if (! $loader instanceof Closure && strpos($class_name, '\\') !== false) {
             throw new DomainException(
@@ -253,7 +256,8 @@ class EE_Dependency_Map
             );
         }
         // check that loader is callable or method starts with "load_" and exists in EE_Registry
-        if (! is_callable($loader)
+        if (
+            ! is_callable($loader)
             && (
                 strpos($loader, 'load_') !== 0
                 || ! method_exists('EE_Registry', $loader)
@@ -270,7 +274,7 @@ class EE_Dependency_Map
             );
         }
         $class_name = self::$_instance->getFqnForAlias($class_name);
-        if (! isset(self::$_instance->_class_loaders[ $class_name ])) {
+        if ($overwrite || ! isset(self::$_instance->_class_loaders[ $class_name ])) {
             self::$_instance->_class_loaders[ $class_name ] = $loader;
             return true;
         }
@@ -353,7 +357,8 @@ class EE_Dependency_Map
         }
         // EE_CPT_*_Strategy classes like EE_CPT_Event_Strategy, EE_CPT_Venue_Strategy, etc
         // perform strpos() first to avoid loading regex every time we load a class
-        if (strpos($class_name, 'EE_CPT_') === 0
+        if (
+            strpos($class_name, 'EE_CPT_') === 0
             && preg_match('/^EE_CPT_([a-zA-Z]+)_Strategy$/', $class_name)
         ) {
             return 'load_core';
@@ -441,6 +446,9 @@ class EE_Dependency_Map
     protected function _register_core_dependencies()
     {
         $this->_dependency_map = [
+            'EE_Admin'                                                                                          => [
+                'EventEspresso\core\services\request\Request'     => EE_Dependency_Map::load_from_cache,
+            ],
             'EE_Request_Handler'                                                                                          => [
                 'EventEspresso\core\services\request\CurrentPage' => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\request\Request'     => EE_Dependency_Map::load_from_cache,
@@ -865,9 +873,9 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\loaders\Loader' => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\domain\services\admin\registrations\list_table\QueryBuilder'                              => [
-                null,
                 'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
                 'EEM_Registration'                            => EE_Dependency_Map::load_from_cache,
+                null,
             ],
             'EventEspresso\core\domain\services\admin\registrations\list_table\page_header\AttendeeFilterHeader'          => [
                 'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
@@ -1109,6 +1117,12 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\notices\NoticeConverterInterface'
             );
         }
+    }
+
+
+    public function debug($for_class = '')
+    {
+        $this->class_cache->debug($for_class);
     }
 
 

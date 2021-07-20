@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Datetime Ticket Model
  *
@@ -28,17 +29,17 @@ class EEM_Datetime_Ticket extends EEM_Base
         $this->plural_item = __('Datetime Tickets', 'event_espresso');
 
         $this->_tables = array(
-            'Datetime_Ticket'=> new EE_Primary_Table('esp_datetime_ticket', 'DTK_ID')
+            'Datetime_Ticket' => new EE_Primary_Table('esp_datetime_ticket', 'DTK_ID')
         );
         $this->_fields = array(
-            'Datetime_Ticket'=>array(
-                'DTK_ID'=>new EE_Primary_Key_Int_Field('DTK_ID', __('Datetime Ticket ID', 'event_espresso')),
-                'DTT_ID'=>new EE_Foreign_Key_Int_Field('DTT_ID', __('The ID to the Datetime', 'event_espresso'), false, 0, 'Datetime'),
-                'TKT_ID'=>new EE_Foreign_Key_Int_Field('TKT_ID', __('The ID to the Ticket', 'event_espresso'), false, 0, 'Ticket')
+            'Datetime_Ticket' => array(
+                'DTK_ID' => new EE_Primary_Key_Int_Field('DTK_ID', __('Datetime Ticket ID', 'event_espresso')),
+                'DTT_ID' => new EE_Foreign_Key_Int_Field('DTT_ID', __('The ID to the Datetime', 'event_espresso'), false, 0, 'Datetime'),
+                'TKT_ID' => new EE_Foreign_Key_Int_Field('TKT_ID', __('The ID to the Ticket', 'event_espresso'), false, 0, 'Ticket')
             ));
         $this->_model_relations = array(
-            'Ticket'=>new EE_Belongs_To_Relation(),
-            'Datetime'=>new EE_Belongs_To_Relation()
+            'Ticket' => new EE_Belongs_To_Relation(),
+            'Datetime' => new EE_Belongs_To_Relation()
         );
         // this model is generally available for reading
         $path_to_event = 'Datetime.Event';

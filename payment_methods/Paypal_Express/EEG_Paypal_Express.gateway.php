@@ -1,4 +1,5 @@
 <?php
+
 /**
  * ----------------------------------------------
  * Class  EEG_Paypal_Express
@@ -9,6 +10,7 @@
  *
  * ----------------------------------------------
  */
+
 // Quickfix to address https://events.codebasehq.com/projects/event-espresso/tickets/11089 ASAP
 if (! function_exists('mb_strcut')) {
     /**
@@ -399,12 +401,14 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
         $itemized_list = array();
         $gateway_formatter = $this->_get_gateway_formatter();
         // If we have data from a previous communication with PP (on this transaction) we may use that for our list...
-        if (! empty($request_response_args)
+        if (
+            ! empty($request_response_args)
             && array_key_exists('L_PAYMENTREQUEST_0_AMT0', $request_response_args)
             && array_key_exists('PAYMENTREQUEST_0_ITEMAMT', $request_response_args)
         ) {
             foreach ($request_response_args as $arg_key => $arg_val) {
-                if (strpos($arg_key, 'PAYMENTREQUEST_') !== false
+                if (
+                    strpos($arg_key, 'PAYMENTREQUEST_') !== false
                     && strpos($arg_key, 'NOTIFYURL') === false
                 ) {
                     $itemized_list[ $arg_key ] = $arg_val;
@@ -607,7 +611,8 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
         if (! isset($response_args['ACK'])) {
             return array('status' => false, 'args' => $request_response);
         }
-        if ((
+        if (
+            (
                 isset($response_args['PAYERID'])
                 || isset($response_args['TOKEN'])
                 || isset($response_args['PAYMENTINFO_0_TRANSACTIONID'])

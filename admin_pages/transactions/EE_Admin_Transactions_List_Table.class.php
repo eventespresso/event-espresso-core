@@ -192,7 +192,8 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
     protected function _get_txn_timestamp(EE_Transaction $transaction)
     {
         // is TXN less than 2 hours old ?
-        if (($transaction->failed() || $transaction->is_abandoned())
+        if (
+            ($transaction->failed() || $transaction->is_abandoned())
             && $this->session_lifespan->expiration() < $transaction->datetime(false, true)
         ) {
             $timestamp = esc_html__('TXN in progress...', 'event_espresso');
@@ -420,7 +421,8 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
                     'EVT_ID' => $event->ID(),
                 )
             );
-            if (empty($this->_req_data['EVT_ID'])
+            if (
+                empty($this->_req_data['EVT_ID'])
                 && EE_Registry::instance()->CAP->current_user_can(
                     'ee_edit_event',
                     'espresso_events_edit',
@@ -531,7 +533,8 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
         if ($registration instanceof EE_Registration) {
             $url = $registration->invoice_url();
             // only show invoice link if message type is active.
-            if ($registration->attendee() instanceof EE_Attendee
+            if (
+                $registration->attendee() instanceof EE_Attendee
                 && EEH_MSG_Template::is_mt_active('invoice')
             ) {
                 return '
@@ -560,8 +563,10 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
         if ($registration instanceof EE_Registration) {
             $url = $registration->receipt_url();
             // only show receipt link if message type is active.
-            if ($registration->attendee() instanceof EE_Attendee
-                && EEH_MSG_Template::is_mt_active('receipt')) {
+            if (
+                $registration->attendee() instanceof EE_Attendee
+                && EEH_MSG_Template::is_mt_active('receipt')
+            ) {
                 return '
 			<li>
 				<a title="' . esc_attr__('View Transaction Receipt', 'event_espresso') . '"'
@@ -627,7 +632,8 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
     protected function get_send_payment_reminder_trigger_link(EE_Transaction $transaction)
     {
         $registration = $transaction->primary_registration();
-        if ($registration instanceof EE_Registration
+        if (
+            $registration instanceof EE_Registration
             && $registration->attendee() instanceof EE_Attendee
             && EEH_MSG_Template::is_mt_active('payment_reminder')
             && ! in_array(
@@ -695,7 +701,8 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
     protected function get_payment_overview_link(EE_Transaction $transaction)
     {
         $registration = $transaction->primary_registration();
-        if ($registration instanceof EE_Registration
+        if (
+            $registration instanceof EE_Registration
             && $transaction->status_ID() !== EEM_Transaction::complete_status_code
             && $registration->owes_monies_and_can_pay()
         ) {

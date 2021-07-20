@@ -46,7 +46,8 @@ class InvalidCheckoutAccess
      */
     public function checkoutAccessIsInvalid(EE_Checkout $checkout)
     {
-        if (! ($checkout->uts || $checkout->reg_url_link)
+        if (
+            ! ($checkout->uts || $checkout->reg_url_link)
             && ! (defined('DOING_AJAX') && DOING_AJAX)
             && EE_Config::instance()->registration->track_invalid_checkout_access()
         ) {
@@ -165,10 +166,12 @@ class InvalidCheckoutAccess
                     // grab validated data from form
                     $valid_data = $invalid_checkout_access_form->valid_data();
                     // ensure form inputs we want are set
-                    if (isset(
-                        $valid_data['track_invalid_checkout_access'],
-                        $valid_data['delete_invalid_checkout_data']
-                    )) {
+                    if (
+                        isset(
+                            $valid_data['track_invalid_checkout_access'],
+                            $valid_data['delete_invalid_checkout_data']
+                        )
+                    ) {
                         $EE_Registration_Config->set_track_invalid_checkout_access(
                             $valid_data['track_invalid_checkout_access']
                         );

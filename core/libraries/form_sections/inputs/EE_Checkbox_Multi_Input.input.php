@@ -1,4 +1,5 @@
 <?php
+
 /**
  *
  * Class EE_Checkbox_Multi_Input

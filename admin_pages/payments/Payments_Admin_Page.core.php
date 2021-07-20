@@ -183,10 +183,11 @@ class Payments_Admin_Page extends EE_Admin_Page
         $payment_method_types = EE_Payment_Method_Manager::instance()->payment_method_types();
         $all_pmt_help_tabs_config = array();
         foreach ($payment_method_types as $payment_method_type) {
-            if (! EE_Registry::instance()->CAP->current_user_can(
-                $payment_method_type->cap_name(),
-                'specific_payment_method_type_access'
-            )
+            if (
+                ! EE_Registry::instance()->CAP->current_user_can(
+                    $payment_method_type->cap_name(),
+                    'specific_payment_method_type_access'
+                )
             ) {
                 continue;
             }
@@ -284,10 +285,11 @@ class Payments_Admin_Page extends EE_Admin_Page
                 continue;
             }
             // check access
-            if (! EE_Registry::instance()->CAP->current_user_can(
-                $pmt_obj->cap_name(),
-                'specific_payment_method_type_access'
-            )
+            if (
+                ! EE_Registry::instance()->CAP->current_user_can(
+                    $pmt_obj->cap_name(),
+                    'specific_payment_method_type_access'
+                )
             ) {
                 continue;
             }
@@ -386,7 +388,8 @@ class Payments_Admin_Page extends EE_Admin_Page
      */
     protected function _verify_payment_method($payment_method)
     {
-        if ($payment_method instanceof EE_Payment_Method && $payment_method->type_obj() instanceof EE_PMT_Base
+        if (
+            $payment_method instanceof EE_Payment_Method && $payment_method->type_obj() instanceof EE_PMT_Base
             && EE_Registry::instance()->CAP->current_user_can(
                 $payment_method->type_obj()->cap_name(),
                 'specific_payment_method_type_access'
@@ -1052,7 +1055,8 @@ class Payments_Admin_Page extends EE_Admin_Page
             $query_params[0]['OR*s']['Payment_Method.PMD_type'] = $similarity_string;
             $query_params[0]['OR*s']['LOG_message'] = $similarity_string;
         }
-        if (isset($this->_req_data['payment-filter-start-date'])
+        if (
+            isset($this->_req_data['payment-filter-start-date'])
             && isset($this->_req_data['payment-filter-end-date'])
         ) {
             // add date

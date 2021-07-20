@@ -159,7 +159,8 @@ class JobParameters
     public static function load($job_id)
     {
         $job_parameter_vars = get_option(JobParameters::wp_option_prefix . $job_id);
-        if (! is_array($job_parameter_vars) ||
+        if (
+            ! is_array($job_parameter_vars) ||
             ! isset($job_parameter_vars['_classname']) ||
             ! isset($job_parameter_vars['_request_data'])
         ) {
@@ -209,7 +210,7 @@ class JobParameters
 
 
     /**
-     * Gets the original array of $_REQUEST data for this job
+     * Gets the original array of request data for this job
      *
      * @return array
      */

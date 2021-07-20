@@ -1,4 +1,5 @@
 <?php
+
 /**
  * EEH_Venue_View Helper
  *
@@ -119,7 +120,8 @@ class EEH_Venue_View extends EEH_Base
     protected static function _get_venue($privacy_check = true, $password_check = true)
     {
         // check for private venues.
-        if (EEH_Venue_View::$_venue instanceof EE_Venue
+        if (
+            EEH_Venue_View::$_venue instanceof EE_Venue
             && EEH_Venue_View::$_venue->status() == 'private'
             && $privacy_check
             && ! EE_Registry::instance()->CAP->current_user_can('ee_read_private_venues', 'get_venues')
@@ -127,7 +129,8 @@ class EEH_Venue_View extends EEH_Base
             return null;
         }
         // check for password protected venues
-        if (EEH_Venue_View::$_venue instanceof EE_Venue
+        if (
+            EEH_Venue_View::$_venue instanceof EE_Venue
             && $password_check
             && post_password_required(EEH_Venue_View::$_venue->ID())
         ) {
@@ -189,7 +192,8 @@ class EEH_Venue_View extends EEH_Base
     public static function is_venue_password_protected($VNU_ID = false)
     {
         $venue = EEH_Venue_View::get_venue($VNU_ID, true, true, false);
-        if ($venue instanceof EE_Venue
+        if (
+            $venue instanceof EE_Venue
             && post_password_required($venue->ID())
         ) {
             return true;
@@ -210,7 +214,8 @@ class EEH_Venue_View extends EEH_Base
     public static function password_protected_venue_form($VNU_ID = false)
     {
         $venue = EEH_Venue_View::get_venue($VNU_ID, true, true, false);
-        if ($venue instanceof EE_Venue
+        if (
+            $venue instanceof EE_Venue
             && post_password_required($venue->ID())
         ) {
             return get_the_password_form($venue->ID());
@@ -468,13 +473,13 @@ class EEH_Venue_View extends EEH_Base
                 ;
 
                 $options['ee_map_nav_size'] = $details_page ? $map_cfg->event_details_nav_size : $map_cfg->event_list_nav_size;
-                $options['ee_map_nav_size'] =  isset($gmap['ee_map_nav_size']) && ! empty($gmap['ee_map_nav_size'])? $gmap['ee_map_nav_size'] : $options['ee_map_nav_size'];
+                $options['ee_map_nav_size'] =  isset($gmap['ee_map_nav_size']) && ! empty($gmap['ee_map_nav_size']) ? $gmap['ee_map_nav_size'] : $options['ee_map_nav_size'];
 
                 $options['ee_map_type_control'] = $details_page ? $map_cfg->event_details_control_type : $map_cfg->event_list_control_type;
-                $options['ee_map_type_control'] =  isset($gmap['ee_map_type_control']) && ! empty($gmap['ee_map_type_control'])? $gmap['ee_map_type_control'] : $options['ee_map_type_control'];
+                $options['ee_map_type_control'] =  isset($gmap['ee_map_type_control']) && ! empty($gmap['ee_map_type_control']) ? $gmap['ee_map_type_control'] : $options['ee_map_type_control'];
 
                 $options['ee_map_align'] = $details_page ? $map_cfg->event_details_map_align : $map_cfg->event_list_map_align;
-                $options['ee_map_align'] =  isset($gmap['ee_map_align']) && ! empty($gmap['ee_map_align'])? $gmap['ee_map_align'] : $options['ee_map_align'];
+                $options['ee_map_align'] =  isset($gmap['ee_map_align']) && ! empty($gmap['ee_map_align']) ? $gmap['ee_map_align'] : $options['ee_map_align'];
 
                 $options['ee_static_url'] =  isset($gmap['ee_static_url']) && ! empty($gmap['ee_static_url']) ? (bool) absint($gmap['ee_static_url']) : $venue->google_map_link();
 

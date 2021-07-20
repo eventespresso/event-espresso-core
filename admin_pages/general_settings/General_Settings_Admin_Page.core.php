@@ -1209,7 +1209,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page
             }
         }
         // check if country being edited matches org option country, and if so, then  update EE_Config with new settings
-        if (isset(EE_Registry::instance()->CFG->organization->CNT_ISO)
+        if (
+            isset(EE_Registry::instance()->CFG->organization->CNT_ISO)
             && $CNT_ISO == EE_Registry::instance()->CFG->organization->CNT_ISO
         ) {
             EE_Registry::instance()->CFG->currency = new EE_Currency_Config($CNT_ISO);

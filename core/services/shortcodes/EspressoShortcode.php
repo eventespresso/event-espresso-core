@@ -7,6 +7,7 @@ use EE_Event;
 use EEH_Event_View;
 use EventEspresso\core\domain\EnqueueAssetsInterface;
 use EventEspresso\core\services\cache\PostRelatedCacheManager;
+use ReflectionException;
 use WP_Post;
 
 /**
@@ -66,6 +67,7 @@ abstract class EspressoShortcode implements ShortcodeInterface
      * @param array $attributes
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
     final public function processShortcodeCallback($attributes = array())
     {
@@ -91,6 +93,7 @@ abstract class EspressoShortcode implements ShortcodeInterface
      * @param array $attributes
      * @return mixed|string
      * @throws EE_Error
+     * @throws ReflectionException
      */
     private function shortcodeContent(array $attributes)
     {
@@ -124,6 +127,7 @@ abstract class EspressoShortcode implements ShortcodeInterface
     /**
      * @return int
      * @throws EE_Error
+     * @throws ReflectionException
      */
     private function currentPostID()
     {
@@ -144,7 +148,6 @@ abstract class EspressoShortcode implements ShortcodeInterface
     /**
      * @param int $post_ID
      * @return string
-     * @throws EE_Error
      */
     private function shortcodeCacheID($post_ID)
     {

@@ -124,7 +124,8 @@ class EED_Batch extends EED_Module
      */
     public function enqueue_scripts()
     {
-        if (isset($_REQUEST['espresso_batch'])
+        if (
+            isset($_REQUEST['espresso_batch'])
             ||
             (
                 isset($_REQUEST['page'])

@@ -31,18 +31,18 @@ class EE_DMS_4_1_0_checkins extends EE_Data_Migration_Script_Stage_Table
     {
         global $wpdb;
         $this->_pretty_name = esc_html__('Checkins', 'event_espresso');
-        $this->_old_table = $wpdb->prefix."events_attendee";
+        $this->_old_table = $wpdb->prefix . "events_attendee";
         $this->select_expression = 'att.*, e.event_status';
         $this->_extra_where_sql = 'AS att
             INNER JOIN ' . $wpdb->prefix . 'events_detail AS e ON att.event_id=e.id
             WHERE e.event_status!="D"';
-        $this->_new_table = $wpdb->prefix."esp_checkin";
+        $this->_new_table = $wpdb->prefix . "esp_checkin";
         parent::__construct();
     }
     protected function _migrate_old_row($old_row)
     {
         global $wpdb;
-        $new_reg_table = $wpdb->prefix."esp_registration";
+        $new_reg_table = $wpdb->prefix . "esp_registration";
 
         $num_to_checkin_at_this_time = max(array(intval($old_row['checked_in_quantity']),intval($old_row['checked_in']))) ;
 
@@ -55,7 +55,7 @@ class EE_DMS_4_1_0_checkins extends EE_Data_Migration_Script_Stage_Table
         // make sure registrations array is numerically indexed starting at 0 (it probably already is)
         $new_registrations_for_attendee = array_values($new_registrations_for_attendee);
         $new_checkin_ids = array();
-        for ($i = 0; $i<abs($num_to_checkin_at_this_time); $i++) {
+        for ($i = 0; $i < abs($num_to_checkin_at_this_time); $i++) {
             $new_reg_id = $new_registrations_for_attendee[ $i ];
             if (! $new_reg_id) {
                 $this->add_error(sprintf(
@@ -84,7 +84,7 @@ class EE_DMS_4_1_0_checkins extends EE_Data_Migration_Script_Stage_Table
             if (! $existing_checkin_record) {
                 $new_id = $this->_insert_checkin_record($new_reg_id, $new_datetime);
                 if ($new_id) {
-                    $new_checkin_ids[]= $new_id;
+                    $new_checkin_ids[] = $new_id;
                 }
             }
         }
@@ -111,7 +111,7 @@ class EE_DMS_4_1_0_checkins extends EE_Data_Migration_Script_Stage_Table
     {
         global $wpdb;
 
-        $new_event_id = $this->get_migration_script()->get_mapping_new_pk($wpdb->prefix."events_detail", $old_attendee['event_id'], $wpdb->posts);
+        $new_event_id = $this->get_migration_script()->get_mapping_new_pk($wpdb->prefix . "events_detail", $old_attendee['event_id'], $wpdb->posts);
         if (! $new_event_id) {
             $this->add_error(
                 sprintf(
@@ -132,7 +132,7 @@ class EE_DMS_4_1_0_checkins extends EE_Data_Migration_Script_Stage_Table
         $old_att_start_time = $this->get_migration_script()->convertTimeFromAMPM($old_attendee['event_time']);
         $old_att_datetime = $this->get_migration_script()->convert_date_string_to_utc($this, $old_attendee, "$old_att_start_date $old_att_start_time:00");
 
-        $datetime_table = $wpdb->prefix."esp_datetime";
+        $datetime_table = $wpdb->prefix . "esp_datetime";
         // add all conditions to an array from which we can SHIFT conditions off in order to widen our search
         // the most important condition should be last, as it will be array_shift'ed off last
         $conditions = array(
@@ -142,7 +142,7 @@ class EE_DMS_4_1_0_checkins extends EE_Data_Migration_Script_Stage_Table
         // start running queries, widening search each time by removing a condition
         $datetime_found = null;
         do {
-            $full_query = "SELECT * FROM $datetime_table WHERE ".implode(" AND ", $conditions)." LIMIT 1";
+            $full_query = "SELECT * FROM $datetime_table WHERE " . implode(" AND ", $conditions) . " LIMIT 1";
             $datetime_found = $wpdb->get_row($full_query, ARRAY_A);
             array_shift($conditions);
         } while (! $datetime_found && $conditions);
@@ -163,10 +163,10 @@ class EE_DMS_4_1_0_checkins extends EE_Data_Migration_Script_Stage_Table
 
         // ok we can actually do what we set out to do: add a checkin/checkout record
         $cols_n_values = array(
-            'REG_ID'=>$new_reg_id,
-            'DTT_ID'=>$new_datetime['DTT_ID'],
-            'CHK_in'=>true,
-            'CHK_timestamp'=>$new_datetime['DTT_EVT_start']
+            'REG_ID' => $new_reg_id,
+            'DTT_ID' => $new_datetime['DTT_ID'],
+            'CHK_in' => true,
+            'CHK_timestamp' => $new_datetime['DTT_EVT_start']
         );
         $datatypes = array(
             '%d',// REG_ID

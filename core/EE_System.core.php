@@ -335,7 +335,7 @@ final class EE_System implements ResettableInterface
                 require_once ABSPATH . 'wp-admin/includes/plugin.php';
             }
             deactivate_plugins(plugin_basename(constant($plugin_file_constant)));
-            unset($_GET['activate'], $_REQUEST['activate'], $_GET['activate-multi'], $_REQUEST['activate-multi']);
+            $this->request->unSetRequestParams(['activate', 'activate-multi'], true);
             EE_Error::add_error(
                 sprintf(
                     esc_html__(
@@ -387,7 +387,8 @@ final class EE_System implements ResettableInterface
         // also, don't load the basic auth when a plugin is getting activated, because
         // it could be the basic auth plugin, and it doesn't check if its methods are already defined
         // and causes a fatal error
-        if (($this->request->isWordPressApi() || $this->request->isApi())
+        if (
+            ($this->request->isWordPressApi() || $this->request->isApi())
             && $this->request->getRequestParam('activate') !== 'true'
             && ! function_exists('json_basic_auth_handler')
             && ! function_exists('json_basic_auth_error')
@@ -572,7 +573,8 @@ final class EE_System implements ResettableInterface
         } else {
             EE_Data_Migration_Manager::instance()->enqueue_db_initialization_for('Core');
         }
-        if ($request_type === EE_System::req_type_new_activation
+        if (
+            $request_type === EE_System::req_type_new_activation
             || $request_type === EE_System::req_type_reactivation
             || (
                 $request_type === EE_System::req_type_upgrade
@@ -790,9 +792,11 @@ final class EE_System implements ResettableInterface
                     $times_activated = array($times_activated);
                 }
                 foreach ($times_activated as $an_activation) {
-                    if ($an_activation !== 'unknown-date'
+                    if (
+                        $an_activation !== 'unknown-date'
                         && $an_activation
-                           > $most_recently_active_version_activation) {
+                           > $most_recently_active_version_activation
+                    ) {
                         $most_recently_active_version = $version;
                         $most_recently_active_version_activation = $an_activation === 'unknown-date'
                             ? '1970-01-01 00:00:00'
@@ -814,7 +818,8 @@ final class EE_System implements ResettableInterface
     {
         $notices = EE_Error::get_notices(false);
         // if current user is an admin and it's not an ajax or rest request
-        if (! isset($notices['errors'])
+        if (
+            ! isset($notices['errors'])
             && $this->request->isAdmin()
             && apply_filters(
                 'FHEE__EE_System__redirect_to_about_ee__do_redirect',
@@ -1074,7 +1079,7 @@ final class EE_System implements ResettableInterface
             foreach ($active_plugins as $active_plugin) {
                 foreach ($incompatible_addons as $incompatible_addon) {
                     if (strpos($active_plugin, $incompatible_addon) !== false) {
-                        unset($_GET['activate']);
+                        $this->request->unSetRequestParams(['activate'], true);
                         espresso_deactivate_plugin($active_plugin);
                     }
                 }
@@ -1136,7 +1141,8 @@ final class EE_System implements ResettableInterface
     {
         do_action('AHEE__EE_System__load_controllers__start');
         // let's get it started
-        if (! $this->maintenance_mode->level()
+        if (
+            ! $this->maintenance_mode->level()
             && ($this->request->isFrontend() || $this->request->isFrontAjax())
         ) {
             do_action('AHEE__EE_System__load_controllers__load_front_controllers');
@@ -1161,7 +1167,8 @@ final class EE_System implements ResettableInterface
      */
     public function core_loaded_and_ready()
     {
-        if ($this->request->isAdmin()
+        if (
+            $this->request->isAdmin()
             || $this->request->isFrontend()
             || $this->request->isIframe()
             || $this->request->isWordPressApi()
@@ -1178,7 +1185,8 @@ final class EE_System implements ResettableInterface
                 new ExceptionStackTraceDisplay($exception);
             }
         }
-        if ($this->request->isAdmin()
+        if (
+            $this->request->isAdmin()
             || $this->request->isEeAjax()
             || $this->request->isFrontend()
         ) {
@@ -1224,8 +1232,10 @@ final class EE_System implements ResettableInterface
         );
         $rewrite_rules->flushRewriteRules();
         add_action('admin_bar_init', array($this, 'addEspressoToolbar'));
-        if (($this->request->isAjax() || $this->request->isAdmin())
-            && $this->maintenance_mode->models_can_query()) {
+        if (
+            ($this->request->isAjax() || $this->request->isAdmin())
+            && $this->maintenance_mode->models_can_query()
+        ) {
             $this->loader->getShared('EventEspresso\core\services\privacy\export\PersonalDataExporterManager');
             $this->loader->getShared('EventEspresso\core\services\privacy\erasure\PersonalDataEraserManager');
         }

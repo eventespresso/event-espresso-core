@@ -116,7 +116,8 @@ class EE_Default_Where_Conditions
             $where_conditions = array();
         }
         foreach ($where_conditions as $key => $value) {
-            if (in_array($key, array( 'OR', 'AND', 'NOT' ))
+            if (
+                in_array($key, array( 'OR', 'AND', 'NOT' ))
                 || strpos($key, 'OR*') !== false
                 || strpos($key, 'AND*') !== false
                 || strpos($key, 'NOT*') !== false
@@ -126,7 +127,8 @@ class EE_Default_Where_Conditions
                     $model_relation_chain
                 );
             } else {
-                if ($model_relation_chain != ''
+                if (
+                    $model_relation_chain != ''
                     && $model_relation_chain[ strlen($model_relation_chain) - 1 ] != '.'
                 ) {
                     $model_relation_chain = $model_relation_chain . ".";

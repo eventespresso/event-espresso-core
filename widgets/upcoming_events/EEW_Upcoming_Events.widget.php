@@ -79,7 +79,7 @@ class EEW_Upcoming_Events extends EspressoWidget
             EE_Question_Option::new_instance(array( 'QSO_value' => 'DESC', 'QSO_desc' => __('DESC', 'event_espresso')))
         );
 
-    ?>
+        ?>
 
         <!-- Widget Title: Text Input -->
 

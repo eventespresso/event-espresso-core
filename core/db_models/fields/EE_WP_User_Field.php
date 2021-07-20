@@ -1,4 +1,5 @@
 <?php
+
 /**
  * EE_WP_User_Field
  *

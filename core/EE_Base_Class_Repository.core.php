@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class EE_Base_Class_Repository
  *

@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\core\domain;
 
 interface SetHooksInterface

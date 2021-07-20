@@ -631,7 +631,8 @@ class EE_Checkout
     public function set_reg_step_initiated(EE_SPCO_Reg_Step $reg_step)
     {
         // call set_reg_step_initiated ???
-        if (// first time visiting SPCO ?
+        if (
+// first time visiting SPCO ?
             ! $this->revisit
             && (
                 // and displaying the reg step form for the first time ?

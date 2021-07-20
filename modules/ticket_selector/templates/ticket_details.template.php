@@ -99,7 +99,7 @@
                                         'event_espresso'
                                     )
                                 ); ?></span>
-                            <?php
+                                <?php
                             } ?><br/>
                             <?php // $max = min( $max, $max_atndz );?>
                             <span class="ticket-details-label-spn drk-grey-text">

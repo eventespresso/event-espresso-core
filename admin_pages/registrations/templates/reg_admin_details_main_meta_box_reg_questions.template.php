@@ -15,11 +15,13 @@
         <input type="hidden" name="noheader" id="reg-admin-noheader-inp" value="true"/>
         <?php echo $att_questions; ?>
         <?php if (! empty($att_questions)) : ?>
-            <?php if (EE_Registry::instance()->CAP->current_user_can(
+            <?php if (
+            EE_Registry::instance()->CAP->current_user_can(
                 'ee_edit_registration',
                 'edit-reg-questions-mbox',
                 $REG_ID
-            )) : ?>
+            )
+) : ?>
             <input id="reg-admin-attendee-questions-submit" class="button-primary" value="Update Registration Questions"
                    type="submit"/>
             <?php endif; ?>

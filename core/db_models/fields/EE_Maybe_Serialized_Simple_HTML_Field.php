@@ -1,4 +1,5 @@
 <?php
+
 /**
  * EE_Maybe_Serialized_Simple_HTML_Field
  *

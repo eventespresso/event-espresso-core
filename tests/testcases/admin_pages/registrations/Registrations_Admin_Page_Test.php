@@ -4,10 +4,10 @@ use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
-use EventEspresso\core\services\request\RequestInterface;
+use EventEspresso\tests\mocks\core\services\request\RequestMock;
 use PHPUnit\Framework\AssertionFailedError;
 
-if ( ! defined('EVENT_ESPRESSO_VERSION')) {
+if (! defined('EVENT_ESPRESSO_VERSION')) {
     exit('No direct script access allowed');
 }
 
@@ -39,7 +39,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
     protected $original_timezone_string;
 
     /**
-     * @var RequestInterface $request
+     * @var RequestMock
      */
     protected $request;
 
@@ -68,16 +68,17 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
         //set timezone of site to 'America/Vancouver' for tests.
         update_option('timezone_string', 'America/Vancouver');
         $this->Vancouver_TZ = new DateTimeZone('America/Vancouver');
-        $this->UTC_TZ = new DateTimeZone('UTC');
+        $this->UTC_TZ       = new DateTimeZone('UTC');
 
         $this->delayedAdminPageMocks('registrations');
         //need to set a user with registration privileges for default queries in the admin.
         $user = $this->factory->user->create_and_get();
         $user->add_role('administrator');
-        wp_set_current_user( $user->ID );
+        wp_set_current_user($user->ID);
         $this->request = LoaderFactory::getLoader()->getShared(
-            'EventEspresso\core\services\request\RequestInterface'
+            'EventEspresso\tests\mocks\core\services\request\RequestMock'
         );
+        $this->request->resetRequestParams($_GET, $_POST, $_COOKIE, $_SERVER, $_FILES);
     }
 
 
@@ -96,7 +97,20 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
      */
     protected function _load_requirements()
     {
+        $this->request->resetRequestParams($_GET, $_POST, $_COOKIE, $_SERVER, $_FILES);
         $this->_admin_page = new Registrations_Admin_Page_Mock();
+        $this->_admin_page->setReqData($this->request->requestParams());
+    }
+
+
+    /**
+     * @param array $url_params
+     * @since   $VID:$
+     */
+    private function goToRegAdmin(array $url_params = [])
+    {
+        $this->go_to($this->_get_reg_admin_url($url_params));
+        $this->_load_requirements();
     }
 
 
@@ -107,10 +121,11 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
      * @param array $extra_query_params
      * @return string
      */
-    protected function _get_reg_admin_url( $extra_query_params = array() ) {
+    protected function _get_reg_admin_url($extra_query_params = [])
+    {
         return add_query_arg(
             array_merge(
-                array( 'page' => 'espresso_registrations' ),
+                ['page' => 'espresso_registrations'],
                 $extra_query_params
             ),
             admin_url()
@@ -184,7 +199,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
         // first create a txn
         /** @var EE_Transaction $transaction */
         $transaction   = $this->factory->transaction->create();
-        $registrations = $this->factory->registration->create_many(4, array('TXN_ID' => $transaction->ID()));
+        $registrations = $this->factory->registration->create_many(4, ['TXN_ID' => $transaction->ID()]);
         $this->assertCount(
             4,
             $registrations,
@@ -193,7 +208,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
         );
 
         //create an event and add to the registrations
-        $event = $this->factory->event->create(array('EVT_wp_user' => get_current_user_id()));
+        $event = $this->factory->event->create(['EVT_wp_user' => get_current_user_id()]);
         if ($event instanceof EE_Event) {
             foreach ($registrations as $registration) {
                 if ($registration instanceof EE_Registration) {
@@ -214,13 +229,9 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
         $last_registration->save();
         // $this->reg_debug( $registrations );
         //let's test queries for today
-        $this->go_to(
-            $this->_get_reg_admin_url(array('status'=>'today'))
-        );
-        $this->_load_requirements();
-        $registrations  = $this->_admin_page->get_registrations();
+        $this->goToRegAdmin(['status' => 'today']);
+        $registrations = $this->_admin_page->get_registrations();
         $this->request->unSetRequestParams(['page', 'status']);
-        // echo "\n\n " . __LINE__ . ") " . __METHOD__ . "() STATUS: " . $_GET['status'];
         // $this->reg_debug( $registrations );
         $this->assertCount(
             2,
@@ -229,13 +240,9 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
             . "\nHere are the registrations: " . $this->reg_debug($registrations, true)
         );
         //test queries for this month
-        $this->go_to(
-            $this->_get_reg_admin_url(array('status'=>'month'))
-        );
-        $this->_load_requirements();
-        $registrations  = $this->_admin_page->get_registrations();
+        $this->goToRegAdmin(['status' => 'month']);
+        $registrations = $this->_admin_page->get_registrations();
         $this->request->unSetRequestParams(['page', 'status']);
-        // echo "\n\n " . __LINE__ . ") " . __METHOD__ . "() STATUS: " . $_GET['status'];
         // $this->reg_debug( $registrations );
         $this->assertCount(
             2,
@@ -244,13 +251,9 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
             . "\nHere are the registrations: " . $this->reg_debug($registrations, true)
         );
         // test queries for month range using last month
-        $this->go_to(
-            $this->_get_reg_admin_url(array('month_range' => $prev_month->format('F Y')))
-        );
-        $this->_load_requirements();
+        $this->goToRegAdmin(['month_range' => $prev_month->format('F Y')]);
         $this->_admin_page->get_registrations();
-        $registrations       = $this->_admin_page->get_registrations();
-        // echo "\n\n " . __LINE__ . ") " . __METHOD__ . "() MONTH_RANGE: " . $_GET[ 'month_range' ];
+        $registrations = $this->_admin_page->get_registrations();
         // $this->reg_debug( $registrations );
         $this->assertCount(
             1,
@@ -285,8 +288,6 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
 
 
     /**
-     * @since 4.8.10.rc.10
-     * @group integration
      * @throws DomainException
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -297,17 +298,19 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
      * @throws InvalidInterfaceException
      * @throws AssertionFailedError
      * @throws \PHPUnit\Framework\Exception
+     * @since 4.8.10.rc.10
+     * @group integration
      */
     public function test__set_registration_status_from_request_for_single_registration()
     {
         //first setup a registration
         /** @var EE_Registration $testing_registration */
         $testing_registration = $this->factory->registration->create(
-            array('STS_ID' => EEM_Registration::status_id_pending_payment)
+            ['STS_ID' => EEM_Registration::status_id_pending_payment]
         );
         // and a txn
         $testing_registration->_add_relation_to($this->factory->transaction->create(), 'Transaction');
-        $_REQUEST['_REG_ID'] = $testing_registration->ID();
+        $_GET['_REG_ID'] = $testing_registration->ID();
         $this->_load_requirements();
         $success = $this->_admin_page->set_registration_status_from_request(EEM_Registration::status_id_not_approved);
         $this->assertArrayHasKey('success', $success);
@@ -323,8 +326,6 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
 
 
     /**
-     * @since 4.8.10.rc.10
-     * @group integration
      * @throws DomainException
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -335,6 +336,8 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
      * @throws InvalidInterfaceException
      * @throws AssertionFailedError
      * @throws \PHPUnit\Framework\Exception
+     * @since 4.8.10.rc.10
+     * @group integration
      */
     public function test__set_registration_status_from_request_for_multiple_registrations()
     {
@@ -349,34 +352,34 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
         //basically the same as the prior test except here we're testing multiple registrations.
         /** @var EE_Registration $registration_a */
         $registration_a = $this->factory->registration->create(
-            array(
+            [
                 'STS_ID' => EEM_Registration::status_id_cancelled,
                 'TXN_ID' => $txn->ID(),
                 'TKT_ID' => $tkt->ID(),
-            )
+            ]
         );
         $registration_a->save();
         /** @var EE_Registration $registration_b */
         $registration_b = $this->factory->registration->create(
-            array(
+            [
                 'STS_ID' => EEM_Registration::status_id_pending_payment,
                 'TXN_ID' => $txn->ID(),
                 'TKT_ID' => $tkt->ID(),
-            )
+            ]
         );
         $registration_b->save();
         /** @var EE_Registration $registration_c */
         $registration_c = $this->factory->registration->create(
-            array(
+            [
                 'STS_ID' => EEM_Registration::status_id_not_approved,
                 'TXN_ID' => $txn->ID(),
                 'TKT_ID' => $tkt->ID(),
-            )
+            ]
         );
         $registration_c->save();
 
-        $expected_ids        = array($registration_a->ID(), $registration_b->ID(), $registration_c->ID());
-        $_REQUEST['_REG_ID'] = $expected_ids;
+        $expected_ids    = [$registration_a->ID(), $registration_b->ID(), $registration_c->ID()];
+        $_GET['_REG_ID'] = $expected_ids;
         $this->_load_requirements();
         $success = $this->_admin_page->set_registration_status_from_request(EEM_Registration::status_id_not_approved);
         $this->assertArrayHasKey('success', $success);
@@ -387,7 +390,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
 
         //verify registrations got changed to approved (or stayed there).
         $registrations = EEM_Registration::reset()->instance()->get_all(
-            array(array('STS_ID' => EEM_Registration::status_id_not_approved))
+            [['STS_ID' => EEM_Registration::status_id_not_approved]]
         );
         $this->assertCount(3, $registrations);
         $this->assertEquals($expected_ids, array_keys($registrations));
@@ -404,10 +407,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
      */
     public function test_add_event_id_to_where_conditions()
     {
-        $this->go_to(
-            $this->_get_reg_admin_url(array('event_id' => 42))
-        );
-        $this->_load_requirements();
+        $this->goToRegAdmin(['event_id' => 42]);
         $where = $this->_admin_page->get_registration_query_parameters($this->_admin_page->get_request_data());
         $this->assertCount(2, $where[0]);
         $this->assertArrayHasKey('EVT_ID', $where[0]);
@@ -426,10 +426,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
      */
     public function test_add_category_id_to_where_conditions()
     {
-        $this->go_to(
-            $this->_get_reg_admin_url(array('EVT_CAT' => 42))
-        );
-        $this->_load_requirements();
+        $this->goToRegAdmin(['EVT_CAT' => 42]);
         $where = $this->_admin_page->get_registration_query_parameters($this->_admin_page->get_request_data());
         $this->assertCount(2, $where[0]);
         $this->assertArrayHasKey('Event.Term_Taxonomy.term_id', $where[0]);
@@ -448,10 +445,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
      */
     public function test_add_datetime_id_to_where_conditions()
     {
-        $this->go_to(
-            $this->_get_reg_admin_url(array('datetime_id' => 42))
-        );
-        $this->_load_requirements();
+        $this->goToRegAdmin(['datetime_id' => 42]);
         $where = $this->_admin_page->get_registration_query_parameters($this->_admin_page->get_request_data());
         $this->assertCount(2, $where[0]);
         $this->assertArrayHasKey('Ticket.Datetime.DTT_ID', $where[0]);
@@ -475,7 +469,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
         $where = $this->_admin_page->get_registration_query_parameters($this->_admin_page->get_request_data());
         $this->assertCount(1, $where[0]);
         $this->assertArrayHasKey('STS_ID', $where[0]);
-        $this->assertInternalType('array',$where[0]['STS_ID']);
+        $this->assertInternalType('array', $where[0]['STS_ID']);
         $this->assertArrayContains('!=', $where[0]['STS_ID']);
         $this->assertArrayContains(EEM_Registration::status_id_incomplete, $where[0]['STS_ID']);
     }
@@ -488,12 +482,13 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
      * @throws InvalidInterfaceException
      * @since 4.10.2.p
      */
-    public function test_add_registration_status_to_where_conditions_no_status_trash_view(){
+    public function test_add_registration_status_to_where_conditions_no_status_trash_view()
+    {
         $this->_load_requirements();
-        $req = $this->_admin_page->get_request_data();
+        $req           = $this->_admin_page->get_request_data();
         $req['status'] = 'trash';
-        $where = $this->_admin_page->get_registration_query_parameters($req);
-        $this->assertEquals(array( 'REG_deleted' => true ), $where[0]);
+        $where         = $this->_admin_page->get_registration_query_parameters($req);
+        $this->assertEquals(['REG_deleted' => true], $where[0]);
         $this->request->unSetRequestParam('status', true);
     }
 
@@ -508,13 +503,10 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
      */
     public function test_add_registration_status_to_where_conditions_with_status_and_incomplete_view()
     {
-        $this->go_to(
-            $this->_get_reg_admin_url(array('_reg_status'=>EEM_Registration::status_id_approved))
-        );
-        $this->_load_requirements();
-        $req = $this->_admin_page->get_request_data();
+        $this->goToRegAdmin(['_reg_status' => EEM_Registration::status_id_approved]);
+        $req           = $this->_admin_page->get_request_data();
         $req['status'] = 'incomplete';
-        $where = $this->_admin_page->get_registration_query_parameters($req);
+        $where         = $this->_admin_page->get_registration_query_parameters($req);
         $this->assertCount(1, $where[0]);
         $this->assertArrayHasKey('STS_ID', $where[0]);
         $this->assertEquals(EEM_Registration::status_id_approved, $where[0]['STS_ID']);
@@ -533,9 +525,9 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
     public function test_add_registration_status_to_where_conditions_no_status_and_incomplete_view()
     {
         $this->_load_requirements();
-        $req = $this->_admin_page->get_request_data();
+        $req           = $this->_admin_page->get_request_data();
         $req['status'] = 'incomplete';
-        $where = $this->_admin_page->get_registration_query_parameters($req);
+        $where         = $this->_admin_page->get_registration_query_parameters($req);
         $this->assertCount(1, $where[0]);
         $this->assertArrayHasKey('STS_ID', $where[0]);
         $this->assertEquals(EEM_Registration::status_id_incomplete, $where[0]['STS_ID']);
@@ -553,14 +545,11 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
      */
     public function test_add_registration_status_to_where_conditions_with_status()
     {
-        $this->go_to(
-            $this->_get_reg_admin_url(array('_reg_status'=>EEM_Registration::status_id_approved))
-        );
-        $this->_load_requirements();
+        $this->goToRegAdmin(['_reg_status' => EEM_Registration::status_id_approved]);
         $where = $this->_admin_page->get_registration_query_parameters($this->_admin_page->get_request_data());
         $this->assertCount(1, $where[0]);
-        $this->assertArrayHasKey('STS_ID',$where[0]);
-        $this->assertEquals(EEM_Registration::status_id_approved,$where[0]['STS_ID']);
+        $this->assertArrayHasKey('STS_ID', $where[0]);
+        $this->assertEquals(EEM_Registration::status_id_approved, $where[0]['STS_ID']);
         $this->request->unSetRequestParam('_reg_status', true);
     }
 
@@ -577,27 +566,27 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
     {
         $this->_load_requirements();
         $current_year_and_month = date('Y-m', current_time('timestamp'));
-        $days_this_month = date('t', current_time('timestamp'));
-        $expected_start_date = date_create_from_format(
+        $days_this_month        = date('t', current_time('timestamp'));
+        $expected_start_date    = date_create_from_format(
             'Y-m-d H:i:s',
             $current_year_and_month . '-01 00:00:00',
             $this->Vancouver_TZ
         )->setTimezone($this->UTC_TZ);
-        $expected_end_date = date_create_from_format(
+        $expected_end_date      = date_create_from_format(
             'Y-m-d H:i:s',
             $current_year_and_month . '-' . $days_this_month . ' 23:59:59',
             $this->Vancouver_TZ
         )->setTimezone($this->UTC_TZ);
-        $req = $this->_admin_page->get_request_data();
-        $req['status'] = 'month';
-        $where = $this->_admin_page->get_registration_query_parameters($req);
+        $req                    = $this->_admin_page->get_request_data();
+        $req['status']          = 'month';
+        $where                  = $this->_admin_page->get_registration_query_parameters($req);
         $this->request->unSetRequestParam('status', true);
-        $this->assertCount(2,$where[0]);
-        $this->assertArrayHasKey('REG_date',$where[0]);
-        $this->assertCount(2,$where[0]['REG_date']);
-        $this->assertContains('BETWEEN',$where[0]['REG_date']);
-        $this->assertInstanceOf('Datetime',$where[0]['REG_date'][1][0]);
-        $this->assertInstanceOf('Datetime',$where[0]['REG_date'][1][1]);
+        $this->assertCount(2, $where[0]);
+        $this->assertArrayHasKey('REG_date', $where[0]);
+        $this->assertCount(2, $where[0]['REG_date']);
+        $this->assertContains('BETWEEN', $where[0]['REG_date']);
+        $this->assertInstanceOf('Datetime', $where[0]['REG_date'][1][0]);
+        $this->assertInstanceOf('Datetime', $where[0]['REG_date'][1][1]);
         /** @var EventEspresso\core\domain\entities\DbSafeDateTime $actual_start_date */
         /** @var EventEspresso\core\domain\entities\DbSafeDateTime $actual_end_date */
         list($actual_start_date, $actual_end_date) = $where[0]['REG_date'][1];
@@ -625,18 +614,15 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
      */
     public function test_add_search_to_where_conditions()
     {
-        $this->go_to(
-            $this->_get_reg_admin_url(array('s'=>'gogogo'))
-        );
-        $this->_load_requirements();
+        $this->goToRegAdmin(['s' => 'gogogo']);
         $where = $this->_admin_page->get_registration_query_parameters(
             $this->_admin_page->get_request_data()
         );
-        $this->assertCount(2,$where[0]);
-        $this->assertArrayHasKey('OR*search_conditions',$where[0]);
-        $this->assertArrayHasKey('Event.EVT_name',$where[0]['OR*search_conditions']);
+        $this->assertCount(2, $where[0]);
+        $this->assertArrayHasKey('OR*search_conditions', $where[0]);
+        $this->assertArrayHasKey('Event.EVT_name', $where[0]['OR*search_conditions']);
         $this->assertInternalType('array', $where[0]['OR*search_conditions']['Event.EVT_name']);
-        $this->assertEquals('%gogogo%',$where[0]['OR*search_conditions']['Event.EVT_name'][1]);
+        $this->assertEquals('%gogogo%', $where[0]['OR*search_conditions']['Event.EVT_name'][1]);
         $this->request->unSetRequestParam('s', true);
     }
 
@@ -658,7 +644,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
         );
         $this->assertArrayHasKey('order_by', $query_params);
         $orderby = $query_params['order_by'];
-        $this->assertCount(2,$orderby);
+        $this->assertCount(2, $orderby);
         $this->assertInternalType('array', $orderby);
         $this->assertArrayHasKey('REG_date', $orderby);
         $this->assertEquals('DESC', $orderby['REG_date']);
@@ -676,21 +662,18 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
      */
     public function test_get_orderby_for_registrations_query_specified_orderby_and_order()
     {
-        $this->go_to(
-            $this->_get_reg_admin_url(array('orderby' => '_Reg_status', 'order' => 'ASC'))
-        );
-        $this->_load_requirements();
+        $this->goToRegAdmin(['orderby' => '_Reg_status', 'order' => 'ASC']);
         $query_params = $this->_admin_page->get_registration_query_parameters(
             $this->_admin_page->get_request_data()
         );
         $this->assertArrayHasKey('order_by', $query_params);
         $orderby = $query_params['order_by'];
-        $this->assertCount(2,$orderby);
+        $this->assertCount(2, $orderby);
         $this->assertInternalType('array', $orderby);
-        $this->assertArrayHasKey('STS_ID',$orderby);
-        $this->assertEquals('ASC',$orderby['STS_ID']);
-        $this->assertArrayHasKey('REG_ID',$orderby);
-        $this->assertEquals('ASC',$orderby['REG_ID']);
+        $this->assertArrayHasKey('STS_ID', $orderby);
+        $this->assertEquals('ASC', $orderby['STS_ID']);
+        $this->assertArrayHasKey('REG_ID', $orderby);
+        $this->assertEquals('ASC', $orderby['REG_ID']);
         $this->request->unSetRequestParams(['orderby', 'order'], true);
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * EE_Form_Input_With_Options_Base
  * For form inputs which are meant to only have a limit set of options that can be used
@@ -100,7 +101,8 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base
         $select_option_keys = array_keys($this->_options);
         // attempt to determine data type for values in order to set normalization type
         // purposefully only
-        if (count($this->_options) === 2
+        if (
+            count($this->_options) === 2
             && (
                 (in_array(true, $select_option_keys, true) && in_array(false, $select_option_keys, true))
                 || (in_array(1, $select_option_keys, true) && in_array(0, $select_option_keys, true))
@@ -115,10 +117,12 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base
                 $this->_options,
                 function ($value, $key) use (&$all_ints) {
                     // is this a top-level key? ignore it
-                    if (! is_array($value)
+                    if (
+                        ! is_array($value)
                         && ! is_int($key)
-                       && $key !== ''
-                       && $key !== null) {
+                        && $key !== ''
+                        && $key !== null
+                    ) {
                         $all_ints = false;
                     }
                 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Extra Meta Model
  *
@@ -24,16 +25,16 @@ class EEM_Extra_Meta extends EEM_Base
         $this->singular_item = __('Extra Meta', 'event_espresso');
         $this->plural_item = __('Extra Metas', 'event_espresso');
         $this->_tables = array(
-            'Extra_Meta'=> new EE_Primary_Table('esp_extra_meta', 'EXM_ID')
+            'Extra_Meta' => new EE_Primary_Table('esp_extra_meta', 'EXM_ID')
         );
         $models_this_can_attach_to = array_keys(EE_Registry::instance()->non_abstract_db_models);
         $this->_fields = array(
-            'Extra_Meta'=>array(
-                'EXM_ID'=>new EE_Primary_Key_Int_Field('EXM_ID', __("Extra Meta ID", "event_espresso")),
-                'OBJ_ID'=>new EE_Foreign_Key_Int_Field('OBJ_ID', __("Primary Key of Attached Thing", "event_espresso"), false, 0, $models_this_can_attach_to),
-                'EXM_type'=>new EE_Any_Foreign_Model_Name_Field('EXM_type', __("Model of Attached Thing", "event_espresso"), false, 'Transaction', $models_this_can_attach_to),
-                'EXM_key'=>new EE_Plain_Text_Field('EXM_key', __("Meta Key", "event_espresso"), false, ''),
-                'EXM_value'=>new EE_Maybe_Serialized_Text_Field('EXM_value', __("Meta Value", "event_espresso"), true)
+            'Extra_Meta' => array(
+                'EXM_ID' => new EE_Primary_Key_Int_Field('EXM_ID', __("Extra Meta ID", "event_espresso")),
+                'OBJ_ID' => new EE_Foreign_Key_Int_Field('OBJ_ID', __("Primary Key of Attached Thing", "event_espresso"), false, 0, $models_this_can_attach_to),
+                'EXM_type' => new EE_Any_Foreign_Model_Name_Field('EXM_type', __("Model of Attached Thing", "event_espresso"), false, 'Transaction', $models_this_can_attach_to),
+                'EXM_key' => new EE_Plain_Text_Field('EXM_key', __("Meta Key", "event_espresso"), false, ''),
+                'EXM_value' => new EE_Maybe_Serialized_Text_Field('EXM_value', __("Meta Value", "event_espresso"), true)
 
             ));
         $this->_model_relations = array();

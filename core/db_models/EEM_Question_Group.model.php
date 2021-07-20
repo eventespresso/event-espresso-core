@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Question Group Model
  *
@@ -14,34 +15,34 @@ class EEM_Question_Group extends EEM_Soft_Delete_Base
     const system_address = 2;
     // private instance of the Attendee object
     protected static $_instance = null;
-        
-        
+
+
     protected function __construct($timezone = null)
     {
         $this->singular_item = __('Question Group', 'event_espresso');
         $this->plural_item = __('Question Groups', 'event_espresso');
 
         $this->_tables = array(
-            'Question_Group'=>new EE_Primary_Table('esp_question_group', 'QSG_ID')
+            'Question_Group' => new EE_Primary_Table('esp_question_group', 'QSG_ID')
         );
         $this->_fields = array(
-            'Question_Group'=>array(
-                'QSG_ID'=>new EE_Primary_Key_Int_Field('QSG_ID', __('Question Group ID', 'event_espresso')),
-                'QSG_name'=>new EE_Plain_Text_Field('QSG_name', __('Question Group Name', 'event_espresso'), false, ''),
-                'QSG_identifier'=>new EE_Plain_Text_Field('QSG_identifier', __('Text ID for question Group', 'event_espresso'), false, ''),
-                'QSG_desc'=>new EE_Post_Content_Field('QSG_desc', __('Description of Question Group', 'event_espresso'), true, ''),
-                'QSG_order'=>new EE_Integer_Field('QSG_order', __('Order in which to show the question group', 'event_espresso'), true, 0),
-                'QSG_show_group_name'=>new EE_Boolean_Field('QSG_show_group_name', __('Flag indicating whether to show the group\'s name on the registration page', 'event_espresso'), false, true),
-                'QSG_show_group_desc'=>new EE_Boolean_Field('QSG_show_group_desc', __('Flag indicating whether to show the group\s description on the registration page', 'event_espresso'), false, false),
+            'Question_Group' => array(
+                'QSG_ID' => new EE_Primary_Key_Int_Field('QSG_ID', __('Question Group ID', 'event_espresso')),
+                'QSG_name' => new EE_Plain_Text_Field('QSG_name', __('Question Group Name', 'event_espresso'), false, ''),
+                'QSG_identifier' => new EE_Plain_Text_Field('QSG_identifier', __('Text ID for question Group', 'event_espresso'), false, ''),
+                'QSG_desc' => new EE_Post_Content_Field('QSG_desc', __('Description of Question Group', 'event_espresso'), true, ''),
+                'QSG_order' => new EE_Integer_Field('QSG_order', __('Order in which to show the question group', 'event_espresso'), true, 0),
+                'QSG_show_group_name' => new EE_Boolean_Field('QSG_show_group_name', __('Flag indicating whether to show the group\'s name on the registration page', 'event_espresso'), false, true),
+                'QSG_show_group_desc' => new EE_Boolean_Field('QSG_show_group_desc', __('Flag indicating whether to show the group\s description on the registration page', 'event_espresso'), false, false),
                 'QSG_wp_user' => new EE_WP_User_Field('QSG_wp_user', __('Question Group Creator ID', 'event_espresso'), false),
-                'QSG_system'=>new EE_Integer_Field('QSG_system', __('Indicate IF this is a system group and if it is what system group it corresponds to.', 'event_espresso'), false, 0),
-                'QSG_deleted'=>new EE_Trashed_Flag_Field('QSG_deleted', __('Flag indicating this question group was deleted', 'event_espresso'), false, false)
+                'QSG_system' => new EE_Integer_Field('QSG_system', __('Indicate IF this is a system group and if it is what system group it corresponds to.', 'event_espresso'), false, 0),
+                'QSG_deleted' => new EE_Trashed_Flag_Field('QSG_deleted', __('Flag indicating this question group was deleted', 'event_espresso'), false, false)
             )
         );
         $this->_model_relations = array(
-            'Question'=>new EE_HABTM_Relation('Question_Group_Question'),
-            'Event'=>new EE_HABTM_Relation('Event_Question_Group'),
-            'Event_Question_Group'=>new EE_Has_Many_Relation(),
+            'Question' => new EE_HABTM_Relation('Question_Group_Question'),
+            'Event' => new EE_HABTM_Relation('Event_Question_Group'),
+            'Event_Question_Group' => new EE_Has_Many_Relation(),
             'WP_User' => new EE_Belongs_To_Relation(),
         );
         // this model is generally available for reading

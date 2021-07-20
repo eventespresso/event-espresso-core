@@ -746,7 +746,8 @@ class EEH_DTT_Helper
     public static function dates_represent_one_24_hour_date($date_1, $date_2)
     {
 
-        if ((! $date_1 instanceof DateTime || ! $date_2 instanceof DateTime)
+        if (
+            (! $date_1 instanceof DateTime || ! $date_2 instanceof DateTime)
             || ($date_1->format(EE_Datetime_Field::mysql_time_format) !== '00:00:00'
                 || $date_2->format(
                     EE_Datetime_Field::mysql_time_format
@@ -997,7 +998,8 @@ class EEH_DTT_Helper
                            . esc_html($display)
                            . '</option>';
             // Close continent optgroup
-            if (! empty($zone['city'])
+            if (
+                ! empty($zone['city'])
                 && (
                     ! isset($zone_data[ $key + 1 ])
                     || (isset($zone_data[ $key + 1 ]) && $zone_data[ $key + 1 ]['continent'] !== $zone['continent'])

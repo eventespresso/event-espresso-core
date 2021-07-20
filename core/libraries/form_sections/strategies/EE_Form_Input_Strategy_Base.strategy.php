@@ -1,7 +1,5 @@
 <?php
 
-
-
 /**
  * base class for all strategies which operate on form inputs. Generally, they
  * all need to know about the form input they are operating on.

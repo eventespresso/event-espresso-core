@@ -216,7 +216,7 @@ class EEG_Aim extends EE_Onsite_Gateway
         $this->setField('last_name', $billing_info['last_name']);
         $this->setField('email', $billing_info['email']);
         $this->setField('company', $billing_info['company']);
-        $this->setField('address', $billing_info['address'].' '.$billing_info['address2']);
+        $this->setField('address', $billing_info['address'] . ' ' . $billing_info['address2']);
         $this->setField('city', $billing_info['city']);
         $this->setField('state', $billing_info['state']);
         $this->setField('country', $billing_info['country']);

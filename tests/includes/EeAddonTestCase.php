@@ -80,9 +80,10 @@ class EeAddonTestCase extends EE_UnitTestCase
         if ($this->addon instanceof EE_Addon) {
             update_option($this->addon->get_activation_history_option_name(), $this->addon_activation_history);
             update_option(EE_Data_Migration_Manager::current_database_state, $this->current_db_state);
-            EE_Register_Addon::deregister(EE_NewAddonMock::getCurrentName());
+            $addon_name = EE_NewAddonMock::getCurrentName();
+            EE_Register_Addon::deregister($addon_name);
             try {
-                EE_Registry::instance()->addons->{EE_NewAddonMock::getCurrentName()};
+                EE_Registry::instance()->addons->{$addon_name};
                 $this->fail('The addon is still registered. Deregistering the addon failed.');
             } catch (Exception $e) {
                 $this->assertInstanceOf('OutOfBoundsException', $e);
@@ -95,21 +96,23 @@ class EeAddonTestCase extends EE_UnitTestCase
 
     protected function registerAddon($addon_name = 'EE_NewAddonMock', $options = array())
     {
+        $addon_count = EE_Registry::instance()->addons->count();
         //register addon with default options.
         EE_NewAddonMock::registerWithGivenOptions($addon_name, $options);
         //ensure the addon has been registered
-        $this->assertArrayHasKey($addon_name, EE_Registry::instance()->addons);
-        $this->assertInstanceOf($addon_name, EE_Registry::instance()->addons->{$addon_name});
-        //assert is the only addon setup
-        $this->assertCount(1, EE_Registry::instance()->addons);
-        $this->addon                    = EE_Registry::instance()->addons->{$addon_name};
+        $this->assertCount(absint($addon_count + 1), EE_Registry::instance()->addons);
+        $this->assertTrue(EE_Registry::instance()->addons->has($addon_name));
+        $this->addon = EE_Registry::instance()->addons->get($addon_name);
+        $this->assertInstanceOf($addon_name, $this->addon);
         $this->addon_activation_history = $this->addon->get_activation_history();
     }
 
 
     protected function deRegisterAddon($addon_name = 'EE_NewAddonMock')
     {
+        $addon_count = EE_Registry::instance()->addons->count();
         EE_Register_Addon::deregister($addon_name);
+        $this->assertCount(absint($addon_count - 1), EE_Registry::instance()->addons);
     }
 
 

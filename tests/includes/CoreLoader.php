@@ -1,12 +1,22 @@
 <?php
 
-namespace EETests\bootstrap;
+namespace EventEspresso\tests\includes;
 
+use DomainException;
 use EE_Dependency_Map;
 use EE_Registry;
 use EEH_Activation;
 use EE_Psr4AutoloaderInit;
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\Benchmark;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\RequestParams;
+use EventEspresso\core\services\request\sanitizers\RequestSanitizer;
+use EventEspresso\core\services\request\sanitizers\ServerSanitizer;
+use EventEspresso\core\services\request\ServerParams;
+use EventEspresso\tests\mocks\core\services\request\RequestMock;
+use InvalidArgumentException;
 
 class CoreLoader
 {
@@ -21,9 +31,9 @@ class CoreLoader
         $this->requireTestCaseParents();
         $this->bootstrapMockAddon();
         $this->onShutdown();
-        \EventEspresso\core\services\Benchmark::writeResultsAtShutdown(
-            EVENT_ESPRESSO_UPLOAD_DIR . 'logs/benchmarking-master.html',  false
-        );
+        // Benchmark::writeResultsAtShutdown(
+        //     EVENT_ESPRESSO_UPLOAD_DIR . 'logs/benchmarking-master.html',  false
+        // );
     }
 
 
@@ -120,7 +130,7 @@ class CoreLoader
         );
         // and this stuff needs to happen just AFTER the Registry initializes
         tests_add_filter(
-            'EE_Load_Espresso_Core__handle_request__initialize_core_loading',
+            'EE_EventEspresso_core_services_request_RequestStackCoreApp__handle_request__initialize_core_loading',
             array($this, 'setupDependencyMap'),
             15
         );
@@ -130,33 +140,34 @@ class CoreLoader
         if (! defined('SAVEQUERIES')) {
             define('SAVEQUERIES', true);
         }
-        add_action(
-            'AHEE__EE_System__core_loaded_and_ready',
-            function ()
-            {
-                LoaderFactory::getLoader()->getShared(
-                    'EventEspresso\core\services\notifications\PersistentAdminNoticeManager'
-                );
-            }
-        );
     }
 
 
     /**
-     * @throws \DomainException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
-     * @throws \InvalidArgumentException
+     * @throws DomainException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
      */
     public function setupDependencyMap()
     {
+        /** @var RequestMock $mock */
+        $mock = LoaderFactory::getLoader()->getShared( RequestMock::class );
+        $getRequestMock = function () use ($mock) {
+            return $mock;
+        };
+        EE_Dependency_Map::register_class_loader(
+            'EventEspresso\core\services\request\Request',
+            $getRequestMock,
+            true
+        );
         EE_Dependency_Map::register_class_loader('EE_Session_Mock');
         EE_Dependency_Map::register_dependencies(
             'EE_Session_Mock',
             array(
                 'EventEspresso\core\services\cache\TransientCacheStorage'  => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\domain\values\session\SessionLifespan' => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\request\Request'              => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\request\RequestInterface'     => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\session\SessionStartHandler'  => EE_Dependency_Map::load_from_cache,
                 'EE_Encryption'                                            => EE_Dependency_Map::load_from_cache,
             )

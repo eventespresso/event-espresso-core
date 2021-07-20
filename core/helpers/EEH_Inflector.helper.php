@@ -102,8 +102,10 @@ class EEH_Inflector
         $lowercased_word = strtolower($word);
 
         foreach ($uncountable as $_uncountable) {
-            if (substr($lowercased_word, (-1 * strlen($_uncountable))) == $_uncountable && // even though the word "price" ends in "rice", it can be pluralized, so check the previous character isnt a letter
-                    ! ctype_alpha($lowercased_word[ strlen($lowercased_word) - strlen($_uncountable) ]) ) {
+            if (
+                substr($lowercased_word, (-1 * strlen($_uncountable))) == $_uncountable && // even though the word "price" ends in "rice", it can be pluralized, so check the previous character isnt a letter
+                    ! ctype_alpha($lowercased_word[ strlen($lowercased_word) - strlen($_uncountable) ])
+            ) {
                 return $word;
             }
         }

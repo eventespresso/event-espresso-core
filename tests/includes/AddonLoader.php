@@ -1,5 +1,5 @@
 <?php
-namespace EETests\bootstrap;
+namespace EventEspresso\tests\includes;
 
 class AddonLoader extends CoreLoader
 {

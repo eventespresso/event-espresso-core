@@ -1,4 +1,5 @@
 <?php
+
 /**
  * For defining the "secondary" table for models. Secondary tables are an extra
  * table that has a one-to-one relationship between this table's rows and the primary
@@ -66,7 +67,7 @@ class EE_Secondary_Table extends EE_Table_Base
         $fk = $this->get_fk_on_table();
         $join_sql = " LEFT JOIN $table_name AS $secondary_table_alias ON $primary_table_alias_with_model_chain_prefix.$other_table_pk = $secondary_table_alias.$fk ";
         if ($this->get_extra_join_conditions()) {
-            $join_sql.="AND ".$this->get_extra_join_conditions();
+            $join_sql .= "AND " . $this->get_extra_join_conditions();
         }
         return $join_sql;
     }
@@ -82,13 +83,13 @@ class EE_Secondary_Table extends EE_Table_Base
      */
     public function get_inverse_join_sql($secondary_table_alias_with_model_chain_prefix)
     {
-        $primary_table_name =$this->get_table_to_join_with()->get_table_name();
+        $primary_table_name = $this->get_table_to_join_with()->get_table_name();
         $primary_table_alias = EE_Model_Parser::get_prefix_from_table_alias_with_model_relation_chain_prefix($secondary_table_alias_with_model_chain_prefix) . $this->get_table_to_join_with()->get_table_alias();
         $primary_table_pk = $this->get_table_to_join_with()->get_pk_column();// $this->get_pk_column();
         $fk = $this->get_fk_on_table();
         $join_sql = " LEFT JOIN $primary_table_name AS $primary_table_alias ON $primary_table_alias.$primary_table_pk = $secondary_table_alias_with_model_chain_prefix.$fk ";
         if ($this->get_extra_join_conditions()) {
-            $join_sql.="AND ".$this->get_extra_join_conditions();
+            $join_sql .= "AND " . $this->get_extra_join_conditions();
         }
         return $join_sql;
     }

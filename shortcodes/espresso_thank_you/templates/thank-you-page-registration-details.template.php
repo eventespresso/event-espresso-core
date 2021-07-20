@@ -1,5 +1,7 @@
 <?php
+
 /** @type EE_Transaction $transaction */
+
 /** @type boolean $is_primary */
 /** @type string $reg_url_link */
 /** @type string $SPCO_attendee_information_url */

@@ -98,14 +98,14 @@ if ($show_backup_db_text) { ?>
                             $most_recent_migration->pretty_name()
                         ); ?>
                     </h3>
-                <?php
+                    <?php
                 } elseif ($most_recent_migration->is_broken()) {
                     // tell the user the migration failed and they should notify EE?>
                     <h3 class="espresso-header">
                         <span class="dashicons dashicons-no ee-icon-size-22"></span>
                         <?php echo $most_recent_migration->get_feedback_message() ?>
                     </h3>
-                <?php
+                    <?php
                 }
                 // display errors or not of the most recent migration ran
                 if ($most_recent_migration->get_errors()) {
@@ -130,7 +130,7 @@ if ($show_backup_db_text) { ?>
                             <?php } ?>
                         </ul>
                     </div>
-                <?php
+                    <?php
                 } else {
                     // there were no errors during the last migration, just say so?>
                     <h2>
@@ -141,7 +141,7 @@ if ($show_backup_db_text) { ?>
                             ),
                             $most_recent_migration->pretty_name()
                         ) ?></h2>
-                <?php
+                    <?php
                 }
             }
         }
@@ -164,7 +164,7 @@ if ($show_backup_db_text) { ?>
                     <br/>
 
                 </p>
-            <?php
+                <?php
             } ?>
             <div id='progress-area'>
                 <h3 class="espresso-header">
@@ -246,7 +246,7 @@ if ($show_backup_db_text) { ?>
 
         </div>
 
-    <?php
+        <?php
     }
     if ($show_maintenance_switch) {
         ?>

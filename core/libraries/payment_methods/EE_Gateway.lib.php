@@ -1,9 +1,9 @@
 <?php
 
 use EventEspresso\core\services\loaders\LoaderFactory;
-use \EventEspresso\core\services\payment_methods\gateways\GatewayDataFormatterInterface;
-use \EventEspresso\core\exceptions\InvalidEntityException;
-use \EventEspresso\core\services\formatters\FormatterInterface;
+use EventEspresso\core\services\payment_methods\gateways\GatewayDataFormatterInterface;
+use EventEspresso\core\exceptions\InvalidEntityException;
+use EventEspresso\core\services\formatters\FormatterInterface;
 
 /**
  * EE_Gateway

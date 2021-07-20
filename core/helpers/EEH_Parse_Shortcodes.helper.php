@@ -273,7 +273,7 @@ class EEH_Parse_Shortcodes
             $ref       = str_replace(' ', '_', $ref);
             $classname = 'EE_' . $ref . '_Shortcodes';
             if (class_exists($classname)) {
-                $this->_shortcode_objs[] = new $classname;
+                $this->_shortcode_objs[] = new $classname();
             }
         }
     }

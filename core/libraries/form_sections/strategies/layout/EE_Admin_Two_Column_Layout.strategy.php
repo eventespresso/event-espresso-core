@@ -30,7 +30,8 @@ class EE_Admin_Two_Column_Layout extends EE_Two_Column_Layout
      */
     public function layout_input($input)
     {
-        if ($input->get_display_strategy() instanceof EE_Text_Area_Display_Strategy
+        if (
+            $input->get_display_strategy() instanceof EE_Text_Area_Display_Strategy
             || $input->get_display_strategy() instanceof EE_Text_Input_Display_Strategy
             || $input->get_display_strategy() instanceof EE_Admin_File_Uploader_Display_Strategy
         ) {

@@ -156,11 +156,13 @@ class RegistrationsReport extends JobHandlerFile
             'QST_system' => '',
             'QST_system*null' => ['IS_NULL']
         ];
-        if (apply_filters(
-            'FHEE__EventEspressoBatchRequest__JobHandlers__RegistrationsReport___get_question_labels__only_include_answered_questions',
-            false,
-            $registration_query_params
-        )) {
+        if (
+            apply_filters(
+                'FHEE__EventEspressoBatchRequest__JobHandlers__RegistrationsReport___get_question_labels__only_include_answered_questions',
+                false,
+                $registration_query_params
+            )
+        ) {
             $question_query_params[0]['Answer.ANS_ID'] = array('IS_NOT_NULL');
         }
         $question_query_params['group_by'] = array('QST_ID');
@@ -404,13 +406,15 @@ class RegistrationsReport extends JobHandlerFile
                         $reg_row['Ticket.TKT_name']
                     );
                     $datetimes_strings = array();
-                    foreach (EEM_Datetime::instance()->get_all_wpdb_results(
-                        array(
+                    foreach (
+                        EEM_Datetime::instance()->get_all_wpdb_results(
+                            array(
                             array('Ticket.TKT_ID' => $reg_row['Ticket.TKT_ID']),
                             'order_by'                 => array('DTT_EVT_start' => 'ASC'),
                             'default_where_conditions' => 'none',
-                        )
-                    ) as $datetime) {
+                            )
+                        ) as $datetime
+                    ) {
                         $datetimes_strings[] = EEH_Export::prepare_value_from_db_for_display(
                             EEM_Datetime::instance(),
                             'DTT_EVT_start',
@@ -476,7 +480,8 @@ class RegistrationsReport extends JobHandlerFile
                     } else {
                         $question_label = sprintf(__('Question $s', 'event_espresso'), $answer_row['Answer.QST_ID']);
                     }
-                    if (isset($answer_row['Question.QST_type'])
+                    if (
+                        isset($answer_row['Question.QST_type'])
                         && $answer_row['Question.QST_type'] == EEM_Question::QST_type_state
                     ) {
                         $reg_csv_array[ $question_label ] = EEM_State::instance()->get_state_name_by_ID(

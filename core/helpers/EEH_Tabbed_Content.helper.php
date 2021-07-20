@@ -65,7 +65,7 @@ class EEH_Tabbed_Content
 
         $tab_container_class = $small_tabs ? 'ee-nav-tabs ee-nav-tabs-small' : 'ee-nav-tabs';
 
-        return '<div class="'. $tab_container_class . '">' . "\n\t" . $all_tabs . $all_tabs_content . "\n" . '</div>';
+        return '<div class="' . $tab_container_class . '">' . "\n\t" . $all_tabs . $all_tabs_content . "\n" . '</div>';
     }
 
 
@@ -136,7 +136,7 @@ class EEH_Tabbed_Content
     {
         $class = $active ? 'nav-tab-content' : 'nav-tab-content hidden';
         $name = str_replace(' ', '-', $name);
-        $content = "\t" . '<div class="'. $class . '" id="ee-tab-' . $name . '">' . "\n";
+        $content = "\t" . '<div class="' . $class . '" id="ee-tab-' . $name . '">' . "\n";
         $content .= "\t" . $tab_content . "\n";
         $content .= '<div style="clear:both"></div></div>';
         return $content;

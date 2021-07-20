@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file contains the template for the Messages Shortcode selector.
  *
@@ -8,6 +9,7 @@
  * @type    string $fieldname       The name of the field the chooser is associated with.
  * @type    string $linked_input_id The name of the input that the shortcode gets inserted to.
  */
+
 if (! empty($shortcodes)) : ?>
     <span class="ee-messages-shortcodes-chooser js-open-list-trigger dashicons dashicons-menu">
         <ul id="ee_shortcode_chooser_<?php echo $fieldname; ?>" class="ee_shortcode_chooser_container hidden">

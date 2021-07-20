@@ -236,12 +236,12 @@ class EEM_Change_Log extends EEM_Base
         return apply_filters(
             'FHEE__EEM_Change_Log__get_pretty_label_map_for_registered_types',
             array(
-                self::type_create=>  esc_html__("Create", "event_espresso"),
-                self::type_update=>  esc_html__("Update", "event_espresso"),
+                self::type_create =>  esc_html__("Create", "event_espresso"),
+                self::type_update =>  esc_html__("Update", "event_espresso"),
                 self::type_delete => esc_html__("Delete", "event_espresso"),
-                self::type_debug=>  esc_html__("Debug", "event_espresso"),
-                self::type_error=>  esc_html__("Error", "event_espresso"),
-                self::type_gateway=> esc_html__("Gateway Interaction (IPN or Direct Payment)", 'event_espresso')
+                self::type_debug =>  esc_html__("Debug", "event_espresso"),
+                self::type_error =>  esc_html__("Error", "event_espresso"),
+                self::type_gateway => esc_html__("Gateway Interaction (IPN or Direct Payment)", 'event_espresso')
             )
         );
     }

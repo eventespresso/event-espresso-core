@@ -278,7 +278,7 @@ class EEM_Transaction extends EEM_Base
 
     /**
      * Gets the current transaction given the reg_url_link, or assumes the reg_url_link is in the
-     * $_REQUEST global variable. Either way, tries to find the current transaction (through
+     * request global variable. Either way, tries to find the current transaction (through
      * the registration pointed to by reg_url_link), if not returns null
      *
      * @param string $reg_url_link

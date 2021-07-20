@@ -17,12 +17,18 @@
     <li><?php esc_html_e('Mailing address', 'event_espresso'); ?></li>
     <li><?php esc_html_e('Email address', 'event_espresso'); ?></li>
     <li><?php esc_html_e('Phone number', 'event_espresso'); ?></li>
-    <li><?php esc_html_e('Location and traffic data (including partial IP address and browser type)', 'event_espresso'); ?></li>
+    <li><?php
+        esc_html_e(
+            'Location and traffic data (including partial IP address and browser type)',
+            'event_espresso'
+        ); ?>
+    </li>
     <li><?php
         esc_html_e(
             'Any other details that might be requested from you for the purpose of processing your registration or ticket purchase',
             'event_espresso'
-        ); ?></li>
+        ); ?>
+    </li>
 </ul>
 
 <p><?php esc_html_e('Handling this data also allows us to:', 'event_espresso'); ?></p>
@@ -44,7 +50,7 @@
 <?php if (! empty($active_onsite_payment_methods) || ! empty($active_offsite_payment_methods)) { ?>
     <h2><?php esc_html_e('Billing Information', 'event_espresso'); ?> </h2>
     <?php
-// if onsite or offsite payment methods are active
+    // if onsite or offsite payment methods are active
     if (! empty($active_onsite_payment_methods)) { ?>
         <p><?php
             esc_html_e(
@@ -71,8 +77,7 @@
                 'Masked billing information may be stored on our servers (eg only the last 4 digits of credit card numbers are stored: **** **** **** 1234).',
                 'event_espresso'
             ); ?></p>
-    <?php } // IF OFFSITE PAYMENT METHOD ACTIVE
-    elseif (! empty($active_offsite_payment_methods)) { ?>
+    <?php } elseif (! empty($active_offsite_payment_methods)) { // IF OFFSITE PAYMENT METHOD ACTIVE ?>
         <p><?php
             printf(
                 esc_html_x(

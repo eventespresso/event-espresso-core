@@ -1,7 +1,5 @@
 <?php
 
-
-
 /**
  * Class EE_Submit_Input_Display_Strategy
  * Description

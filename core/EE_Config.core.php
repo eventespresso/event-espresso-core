@@ -3,6 +3,7 @@
 use EventEspresso\core\interfaces\ResettableInterface;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\RequestInterface;
+use EventEspresso\core\services\request\RequestParams;
 use EventEspresso\core\services\shortcodes\LegacyShortcodesManager;
 
 /**
@@ -573,7 +574,8 @@ final class EE_Config implements ResettableInterface
                         break;
                     // TEST #3 : check that section is the proper format
                     case 3:
-                        if (! ($this->{$section} instanceof EE_Config_Base || $this->{$section} instanceof stdClass)
+                        if (
+                            ! ($this->{$section} instanceof EE_Config_Base || $this->{$section} instanceof stdClass)
                         ) {
                             if ($display_errors) {
                                 throw new EE_Error(
@@ -800,13 +802,14 @@ final class EE_Config implements ResettableInterface
         // get class name of the incoming object
         $config_class = get_class($config_obj);
         // run tests 1-5 and 9 to verify config
-        if (! $this->_verify_config_params(
-            $section,
-            $name,
-            $config_class,
-            $config_obj,
-            array(1, 2, 3, 4, 7, 9)
-        )
+        if (
+            ! $this->_verify_config_params(
+                $section,
+                $name,
+                $config_class,
+                $config_obj,
+                array(1, 2, 3, 4, 7, 9)
+            )
         ) {
             return false;
         }
@@ -924,12 +927,11 @@ final class EE_Config implements ResettableInterface
     {
         if (EE_Config::logging_enabled() && ! empty($config_option_name)) {
             $config_log = get_option(EE_Config::LOG_NAME, array());
-            // copy incoming $_REQUEST and sanitize it so we can save it
-            $_request = $_REQUEST;
-            array_walk_recursive($_request, 'sanitize_text_field');
+            /** @var RequestParams $request */
+            $request = LoaderFactory::getLoader()->getShared(RequestParams::class);
             $config_log[ (string) microtime(true) ] = array(
                 'config_name' => $config_option_name,
-                'request'     => $_request,
+                'request'     => $request->requestParams(),
             );
             update_option(EE_Config::LOG_NAME, $config_log);
         }
@@ -969,7 +971,6 @@ final class EE_Config implements ResettableInterface
         if (! $page_for_posts) {
             return 'posts';
         }
-        /** @type WPDB $wpdb */
         global $wpdb;
         $SQL = "SELECT post_name from $wpdb->posts WHERE post_type='posts' OR post_type='page' AND post_status='publish' AND ID=%d";
         return $wpdb->get_var($wpdb->prepare($SQL, $page_for_posts));
@@ -1016,7 +1017,8 @@ final class EE_Config implements ResettableInterface
     {
         // only init widgets on admin pages when not in complete maintenance, and
         // on frontend when not in any maintenance mode
-        if (! EE_Maintenance_Mode::instance()->level()
+        if (
+            ! EE_Maintenance_Mode::instance()->level()
             || (
                 is_admin()
                 && EE_Maintenance_Mode::instance()->level() !== EE_Maintenance_Mode::level_2_complete_maintenance
@@ -1126,7 +1128,8 @@ final class EE_Config implements ResettableInterface
             // loop through folders
             foreach ($modules_to_register as $module_path) {
                 /**TEMPORARILY EXCLUDE gateways from modules for time being**/
-                if ($module_path !== EE_MODULES . 'zzz-copy-this-module-template'
+                if (
+                    $module_path !== EE_MODULES . 'zzz-copy-this-module-template'
                     && $module_path !== EE_MODULES . 'gateways'
                 ) {
                     // add to list of installed modules
@@ -1544,7 +1547,7 @@ class EE_Config_Base
     {
         // grab defaults via a new instance of this class.
         $class_name = get_class($this);
-        $defaults = new $class_name;
+        $defaults = new $class_name();
         // loop through the properties for this class and see if they are set.  If they are NOT, then grab the
         // default from our $defaults object.
         foreach (get_object_vars($defaults) as $property => $value) {
@@ -2129,7 +2132,8 @@ class EE_Currency_Config extends EE_Config_Base
         // but override if requested
         $CNT_ISO = ! empty($CNT_ISO) ? $CNT_ISO : $ORG_CNT;
         // so if that all went well, and we are not in M-Mode (cuz you can't query the db in M-Mode) and double-check the countries table exists
-        if (! empty($CNT_ISO)
+        if (
+            ! empty($CNT_ISO)
             && EE_Maintenance_Mode::instance()->models_can_query()
             && $table_analysis->tableExists(EE_Registry::instance()->load_model('Country')->table())
         ) {
@@ -2420,8 +2424,10 @@ class EE_Registration_Config extends EE_Config_Base
      */
     public function setDefaultCheckboxLabelText()
     {
-        if ($this->getConsentCheckboxLabelText() === null
-            || $this->getConsentCheckboxLabelText() === '') {
+        if (
+            $this->getConsentCheckboxLabelText() === null
+            || $this->getConsentCheckboxLabelText() === ''
+        ) {
             $opening_a_tag = '';
             $closing_a_tag = '';
             if (function_exists('get_privacy_policy_url')) {
@@ -3206,7 +3212,8 @@ class EE_Environment_Config extends EE_Config_Base
      */
     public function max_input_vars_limit_check($input_count = 0)
     {
-        if (! empty($this->php->max_input_vars)
+        if (
+            ! empty($this->php->max_input_vars)
             && ($input_count >= $this->php->max_input_vars)
         ) {
             // check the server setting because the config value could be stale

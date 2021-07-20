@@ -1,7 +1,9 @@
 <?php
+
 /**
  * This is the template for the html messenger and receipt message type payment_list field.
  */
+
 ?>
     </td></tr>
 <tr class='item'>

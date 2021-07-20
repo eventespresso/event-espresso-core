@@ -8,8 +8,6 @@
  * @package     Event Espresso
  * @subpackage  /helpers/EEH_Sideloader.helper.php
  * @author      Darren Ethier
- *
- * ------------------------------------------------------------------------
  */
 class EEH_Sideloader extends EEH_Base
 {
@@ -338,4 +336,4 @@ class EEH_Sideloader extends EEH_Base
         );
         return $this->_download_from;
     }
-} //end EEH_Sideloader class
+}

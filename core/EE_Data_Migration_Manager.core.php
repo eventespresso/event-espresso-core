@@ -3,7 +3,6 @@
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\ResettableInterface;
-
 use EventEspresso\core\services\database\TableManager;
 use EventEspresso\core\services\database\TableAnalysis;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -498,9 +497,11 @@ class EE_Data_Migration_Manager implements ResettableInterface
                 $script_converts_plugin_slug = $migrates_to_version['slug'];
                 $script_converts_to_version = $migrates_to_version['version'];
                 // check if this version script is DONE or not; or if it's never been ran
-                if (! $scripts_ran ||
+                if (
+                    ! $scripts_ran ||
                     ! isset($scripts_ran[ $script_converts_plugin_slug ]) ||
-                    ! isset($scripts_ran[ $script_converts_plugin_slug ][ $script_converts_to_version ])) {
+                    ! isset($scripts_ran[ $script_converts_plugin_slug ][ $script_converts_to_version ])
+                ) {
                     // we haven't ran this conversion script before
                     // now check if it applies... note that we've added an autoloader for it on get_all_data_migration_scripts_available
                     $script = LoaderFactory::getLoader()->load($classname);
@@ -1043,7 +1044,7 @@ class EE_Data_Migration_Manager implements ResettableInterface
         if (! class_exists($class_name)) {
             throw new EE_Error(sprintf(__("There is no migration script named %s", "event_espresso"), $class_name));
         }
-        $class = new $class_name;
+        $class = new $class_name();
         if (! $class instanceof EE_Data_Migration_Script_Base) {
             throw new EE_Error(
                 sprintf(
@@ -1081,12 +1082,14 @@ class EE_Data_Migration_Manager implements ResettableInterface
             } else {
                 $champion_migrates_to = $this->script_migrates_to_version($most_up_to_date_dms_classname);
                 $contender_migrates_to = $this->script_migrates_to_version($classname);
-                if ($contender_migrates_to['slug'] == $plugin_slug
+                if (
+                    $contender_migrates_to['slug'] == $plugin_slug
                     && version_compare(
                         $champion_migrates_to['version'],
                         $contender_migrates_to['version'],
                         '<'
-                    )) {
+                    )
+                ) {
                     // so the contenders version is higher and its for Core
                     $most_up_to_date_dms_classname = $classname;
                 }

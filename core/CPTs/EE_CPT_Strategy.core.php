@@ -72,7 +72,8 @@ class EE_CPT_Strategy extends EE_Base
         CustomTaxonomyDefinitions $taxonomies = null
     ) {
         // check if class object is instantiated
-        if (! self::$_instance instanceof EE_CPT_Strategy
+        if (
+            ! self::$_instance instanceof EE_CPT_Strategy
             && $custom_post_types instanceof CustomPostTypeDefinitions
             && $taxonomies instanceof CustomTaxonomyDefinitions
         ) {
@@ -263,7 +264,8 @@ class EE_CPT_Strategy extends EE_Base
                     // but which CPT does that correspond to??? hmmm... guess we gotta go looping
                     foreach ($this->_CPTs as $post_type => $CPT) {
                         // verify our CPT has args, is public and has taxonomies set
-                        if (isset($CPT['args']['public'])
+                        if (
+                            isset($CPT['args']['public'])
                             && $CPT['args']['public']
                             && ! empty($CPT['args']['taxonomies'])
                             && in_array($CPT_taxonomy, $CPT['args']['taxonomies'], true)

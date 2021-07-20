@@ -1,4 +1,5 @@
 <?php
+
 use EventEspresso\core\domain\entities\DbSafeDateTime;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;

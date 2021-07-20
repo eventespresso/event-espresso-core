@@ -1,4 +1,5 @@
 <?php
+
 /**
  * EEH_Export Helper
  *
@@ -21,12 +22,14 @@ class EEH_Export
     public static function get_column_name_for_field(EE_Model_Field_Base $field)
     {
         $column_name = wp_specialchars_decode($field->get_nicename(), ENT_QUOTES);
-        if (apply_filters(
-            'FHEE__EEH_Export__get_column_name_for_field__add_field_name',
-            false,
-            $column_name,
-            $field
-        )) {
+        if (
+            apply_filters(
+                'FHEE__EEH_Export__get_column_name_for_field__add_field_name',
+                false,
+                $column_name,
+                $field
+            )
+        ) {
             $column_name .= "["
                 . wp_specialchars_decode($field->get_name(), ENT_QUOTES)
                 . "]";
@@ -65,8 +68,10 @@ class EEH_Export
             }
             $item_in_top_level_array = EEH_Array::get_one_item_from_array($data);
             // now, is the last item in the top-level array of $data an associative or numeric array?
-            if ($write_column_headers &&
-                    EEH_Array::is_associative_array($item_in_top_level_array)) {
+            if (
+                $write_column_headers &&
+                    EEH_Array::is_associative_array($item_in_top_level_array)
+            ) {
                 // its associative, so we want to output its keys as column headers
                 $keys = array_keys($item_in_top_level_array);
                 $new_file_contents .=  EEH_Export::get_csv_row($keys);

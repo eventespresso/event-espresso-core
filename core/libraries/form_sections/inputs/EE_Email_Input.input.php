@@ -1,4 +1,5 @@
 <?php
+
 /**
  * EE_Email_Input
  *

@@ -14,7 +14,7 @@
     <?php
     if ($states) {
         foreach ($states as $STA_ID => $state) {
-        ?>
+            ?>
         <tr id="state-<?php echo $STA_ID; ?>-tr" class="country-state-columns">
             <?php
             foreach ($state['inputs'] as $ID => $input) {
@@ -30,18 +30,18 @@
                    href="<?php echo $state['delete_state_url']; ?>"></a>
             </td>
         </tr>
-        <?php
+            <?php
         }
-    ?>
+        ?>
     </tbody>
 </table>
 <br/>
 <input id="country_settings_save3" class="button-primary save right" type="submit" name="save"
        value="<?php _e('Save States/Provinces', 'event_espresso'); ?>"/><br/>
 
-<?php
+        <?php
     }
-?>
+    ?>
 <table class="form-table add-new-state-tbl">
     <tbody>
     <tr>

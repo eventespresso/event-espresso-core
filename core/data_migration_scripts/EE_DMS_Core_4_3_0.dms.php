@@ -1,12 +1,14 @@
 <?php
-use EventEspresso\core\services\database\TableAnalysis;
-use EventEspresso\core\services\database\TableManager;
 
 /**
  * meant to convert DBs between 4.2.x to 4.3.0
  * mostly just
  * -adds QSO_order to the Question_Option table;
  */
+
+use EventEspresso\core\services\database\TableAnalysis;
+use EventEspresso\core\services\database\TableManager;
+
 // make sure we have all the stages loaded too
 // unfortunately, this needs to be done upon INCLUSION of this file,
 // instead of construction, because it only gets constructed on first page load

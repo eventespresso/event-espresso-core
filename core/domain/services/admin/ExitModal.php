@@ -1,4 +1,5 @@
 <?php
+
 namespace EventEspresso\core\domain\services\admin;
 
 use EventEspresso\core\services\assets\Registry;

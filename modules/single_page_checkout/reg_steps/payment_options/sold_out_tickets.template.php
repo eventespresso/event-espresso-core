@@ -1,5 +1,7 @@
 <?php
+
 /** @type string $sold_out_tickets */
+
 /** @type string $sold_out_tickets_msg */
 ?>
 

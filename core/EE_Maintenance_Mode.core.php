@@ -129,7 +129,8 @@ class EE_Maintenance_Mode implements ResettableInterface
     {
         $maintenance_mode_level = $this->real_level();
         // if this is an admin request, we'll be honest... except if it's ajax, because that might be from the frontend
-        if ($maintenance_mode_level === EE_Maintenance_Mode::level_1_frontend_only_maintenance// we're in level 1
+        if (
+            $maintenance_mode_level === EE_Maintenance_Mode::level_1_frontend_only_maintenance// we're in level 1
             && ((defined('DOING_AJAX') && DOING_AJAX) || ! is_admin()) // on non-ajax frontend requests
             && current_user_can('administrator') // when the user is an admin
         ) {
@@ -190,7 +191,8 @@ class EE_Maintenance_Mode implements ResettableInterface
      */
     public function load_assets_required_for_m_mode()
     {
-        if ($this->real_level() === EE_Maintenance_Mode::level_2_complete_maintenance
+        if (
+            $this->real_level() === EE_Maintenance_Mode::level_2_complete_maintenance
             && ! wp_script_is('espresso_core')
         ) {
             wp_register_style(
@@ -260,7 +262,8 @@ class EE_Maintenance_Mode implements ResettableInterface
         /** @var CurrentPage $current_page */
         $current_page = LoaderFactory::getLoader()->getShared(CurrentPage::class);
         // check if M-mode is engaged and for EE shortcode
-        if (! (defined('DOING_AJAX') && DOING_AJAX)
+        if (
+            ! (defined('DOING_AJAX') && DOING_AJAX)
             && $this->real_level()
             && ! is_admin()
             && current_user_can('administrator')

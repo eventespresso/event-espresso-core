@@ -170,13 +170,15 @@ class TicketDatetimeAvailabilityTracker
         $available_spaces = $this->ticketDatetimeAvailability($ticket, true);
         // greedy greedy greedy eh?
         if ($available_spaces > 0) {
-            if (apply_filters(
-                'FHEE__EE_Ticket_Selector___add_ticket_to_cart__allow_display_availability_error',
-                true,
-                $ticket,
-                $qty,
-                $available_spaces
-            )) {
+            if (
+                apply_filters(
+                    'FHEE__EE_Ticket_Selector___add_ticket_to_cart__allow_display_availability_error',
+                    true,
+                    $ticket,
+                    $qty,
+                    $available_spaces
+                )
+            ) {
                 $this->availabilityError(
                     $available_spaces,
                     $total_ticket_count

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * check_payment_details_content
  *
@@ -8,6 +9,7 @@
  *
  * ------------------------------------------------------------------------
  */
+
 ?>
     <div class="event-display-boxes">
         <h4 id="check_title" class="payment_type_title section-heading"><?php echo $check_title ?></h4>

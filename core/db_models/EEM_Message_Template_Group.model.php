@@ -1,4 +1,8 @@
 <?php
+
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\RequestInterface;
+
 /**
  * EEM_Message_Template_Group
  *
@@ -28,13 +32,13 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base
                 'GRP_ID' => new EE_Primary_Key_Int_Field('GRP_ID', __('Message Template Group ID', 'event_espresso')),
                 'MTP_name' => new EE_Plain_Text_Field('MTP_name', __('The name of the template group', 'event_espresso'), false, ''),
                 'MTP_description' => new EE_Simple_HTML_Field('MTP_description', __('A brief description about this template.', 'event_espresso'), false, ''),
-                'MTP_user_id'=> new EE_WP_User_Field('MTP_user_id', __('Template Creator ID', 'event_espresso'), false, get_current_user_id()),
-                'MTP_messenger'=>new EE_Plain_Text_Field('MTP_messenger', __('Messenger Used for Template', 'event_espresso'), false, 'email'),
-                'MTP_message_type'=>new EE_Plain_Text_Field('MTP_message_type', __('Message Type', 'event_espresso'), false, 'registration'),
-                'MTP_is_global'=>new EE_Boolean_Field('MTP_is_global', __('Flag indicating if Template Group is Global', 'event_espresso'), false, true),
-                'MTP_is_override'=>new EE_Boolean_Field('MTP_is_override', __('Flag indicating if Template Group overrides any other Templates for the messenger/messagetype combination', 'event_espresso'), false, false),
-                'MTP_deleted'=>new EE_Trashed_Flag_Field('MTP_deleted', __('Flag indicating whether this has been trashed', 'event_espresso'), false, false),
-                'MTP_is_active'=>new EE_Boolean_Field('MTP_is_active', __('Flag indicating whether template group is active', 'event_espresso'), false, true)
+                'MTP_user_id' => new EE_WP_User_Field('MTP_user_id', __('Template Creator ID', 'event_espresso'), false, get_current_user_id()),
+                'MTP_messenger' => new EE_Plain_Text_Field('MTP_messenger', __('Messenger Used for Template', 'event_espresso'), false, 'email'),
+                'MTP_message_type' => new EE_Plain_Text_Field('MTP_message_type', __('Message Type', 'event_espresso'), false, 'registration'),
+                'MTP_is_global' => new EE_Boolean_Field('MTP_is_global', __('Flag indicating if Template Group is Global', 'event_espresso'), false, true),
+                'MTP_is_override' => new EE_Boolean_Field('MTP_is_override', __('Flag indicating if Template Group overrides any other Templates for the messenger/messagetype combination', 'event_espresso'), false, false),
+                'MTP_deleted' => new EE_Trashed_Flag_Field('MTP_deleted', __('Flag indicating whether this has been trashed', 'event_espresso'), false, false),
+                'MTP_is_active' => new EE_Boolean_Field('MTP_is_active', __('Flag indicating whether template group is active', 'event_espresso'), false, true)
             )
         );
         $this->_model_relations = array(
@@ -94,26 +98,26 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base
     }
 
 
-
     /**
-     * This simply adds on any messenger/message type filters that may be present in the $_POST global
-     * @param  array  $_where any existing where conditions to append these to.
+     * This simply adds on any messenger/message type filters that may be present in the request
+     *
+     * @param array $_where any existing where conditions to append these to.
      * @return array          original where conditions or original with additional filters.
      */
     protected function _maybe_mtp_filters($_where = array())
     {
+        /** @var RequestInterface $request */
+        $request   = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+        $messenger = $request->getRequestParam('ee_messenger_filter_by');
         // account for messenger or message type filters
-        if (isset($_REQUEST['ee_messenger_filter_by'])
-            && $_REQUEST['ee_messenger_filter_by'] != 'none_selected'
-            && $_REQUEST['ee_messenger_filter_by'] != 'all'
-        ) {
-            $_where['MTP_messenger'] =  $_REQUEST['ee_messenger_filter_by'] ;
+        if ($messenger !== '' && $messenger !== 'none_selected' && $messenger !== 'all') {
+            $_where['MTP_messenger'] = $messenger;
         }
-
-        if (isset($_REQUEST['ee_message_type_filter_by'])
-            && $_REQUEST['ee_message_type_filter_by'] != 'none_selected'
+        $message_type = $request->getRequestParam('ee_message_type_filter_by');
+        if (
+            $message_type !== '' && $message_type !== 'none_selected'
         ) {
-            $_where['MTP_message_type'] = $_REQUEST['ee_message_type_filter_by'];
+            $_where['MTP_message_type'] = $message_type;
         }
 
         return $_where;
@@ -145,7 +149,8 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base
         $_where['MTP_is_active'] = true;
         $_where = $this->_maybe_mtp_filters($_where);
 
-        if ($user_check
+        if (
+            $user_check
             && ! $global
             && ! EE_Registry::instance()->CAP->current_user_can(
                 'ee_read_others_messages',
@@ -265,7 +270,7 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base
             'MTP_is_active' => $active
         );
 
-        $query_params = array( $_where, 'order_by' => array($orderby=>$order), 'limit' => $limit );
+        $query_params = array( $_where, 'order_by' => array($orderby => $order), 'limit' => $limit );
 
         return $count ? $this->count($query_params, 'GRP_ID', true) : $this->get_all($query_params);
     }
