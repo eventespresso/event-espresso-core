@@ -145,7 +145,7 @@ class EE_Admin_Page_Loader
         $groups = array(
             'main'       => new EE_Admin_Page_Menu_Group(
                 array(
-                    'menu_label'   => __('Main', 'event_espresso'),
+                    'menu_label'   => esc_html__('Main', 'event_espresso'),
                     'show_on_menu' => EE_Admin_Page_Menu_Map::NONE,
                     'menu_slug'    => 'main',
                     'capability'   => 'ee_read_ee',
@@ -155,7 +155,7 @@ class EE_Admin_Page_Loader
             ),
             'management' => new EE_Admin_Page_Menu_Group(
                 array(
-                    'menu_label'   => __('Management', 'event_espresso'),
+                    'menu_label'   => esc_html__('Management', 'event_espresso'),
                     'show_on_menu' => EE_Admin_Page_Menu_Map::BLOG_ADMIN_ONLY,
                     'menu_slug'    => 'management',
                     'capability'   => 'ee_read_ee',
@@ -165,7 +165,7 @@ class EE_Admin_Page_Loader
             ),
             'settings'   => new EE_Admin_Page_Menu_Group(
                 array(
-                    'menu_label'   => __('Settings', 'event_espresso'),
+                    'menu_label'   => esc_html__('Settings', 'event_espresso'),
                     'show_on_menu' => EE_Admin_Page_Menu_Map::BLOG_ADMIN_ONLY,
                     'menu_slug'    => 'settings',
                     'capability'   => 'ee_read_ee',
@@ -175,7 +175,7 @@ class EE_Admin_Page_Loader
             ),
             'templates'  => new EE_Admin_Page_Menu_Group(
                 array(
-                    'menu_label'   => __('Templates', 'event_espresso'),
+                    'menu_label'   => esc_html__('Templates', 'event_espresso'),
                     'show_on_menu' => EE_Admin_Page_Menu_Map::BLOG_ADMIN_ONLY,
                     'menu_slug'    => 'templates',
                     'capability'   => 'ee_read_ee',
@@ -185,7 +185,7 @@ class EE_Admin_Page_Loader
             ),
             'extras'     => new EE_Admin_Page_Menu_Group(
                 array(
-                    'menu_label'              => __('Extras', 'event_espresso'),
+                    'menu_label'              => esc_html__('Extras', 'event_espresso'),
                     'show_on_menu'            => EE_Admin_Page_Menu_Map::BLOG_AND_NETWORK_ADMIN,
                     'menu_slug'               => 'extras',
                     'capability'              => 'ee_read_ee',
@@ -196,7 +196,7 @@ class EE_Admin_Page_Loader
             ),
             'tools'      => new EE_Admin_Page_Menu_Group(
                 array(
-                    'menu_label'   => __("Tools", "event_espresso"),
+                    'menu_label'   => esc_html__("Tools", "event_espresso"),
                     'show_on_menu' => EE_Admin_Page_Menu_Map::BLOG_ADMIN_ONLY,
                     'menu_slug'    => 'tools',
                     'capability'   => 'ee_read_ee',
@@ -207,7 +207,7 @@ class EE_Admin_Page_Loader
             'addons'     => new EE_Admin_Page_Menu_Group(
                 array(
                     'show_on_menu' => EE_Admin_Page_Menu_Map::BLOG_AND_NETWORK_ADMIN,
-                    'menu_label'   => __('Add-ons', 'event_espresso'),
+                    'menu_label'   => esc_html__('Add-ons', 'event_espresso'),
                     'menu_slug'    => 'addons',
                     'capability'   => 'ee_read_ee',
                     'menu_order'   => 20,
@@ -240,7 +240,7 @@ class EE_Admin_Page_Loader
             if (! $group instanceof EE_Admin_Page_Menu_Group) {
                 throw new EE_Error(
                     sprintf(
-                        __(
+                        esc_html__(
                             'Unable to continue sorting the menu groups array because there is an invalid value for the menu groups.  All values in this array are required to be a EE_Admin_Page_Menu_Group object.  Instead there was: %s',
                             'event_espresso'
                         ),
@@ -278,13 +278,13 @@ class EE_Admin_Page_Loader
             }
         }
         if (empty($installed_refs)) {
-            $error_msg[] = __(
+            $error_msg[] = esc_html__(
                 'There are no EE_Admin pages detected, it looks like EE did not install properly',
                 'event_espresso'
             );
             $error_msg[] = $error_msg[0] . "\r\n"
                            . sprintf(
-                               __(
+                               esc_html__(
                                    'Check that the %s folder exists and is writable. Maybe try deactivating, then reactivating Event Espresso again.',
                                    'event_espresso'
                                ),
@@ -439,7 +439,7 @@ class EE_Admin_Page_Loader
                                    '<strong>' . $class_name . '</strong>'
                                );
             $error_msg[] = sprintf(
-                __('Something went wrong with loading the %s admin page.', 'event_espresso'),
+                esc_html__('Something went wrong with loading the %s admin page.', 'event_espresso'),
                 $page
             );
             $error_msg[] = $error_msg[0]
@@ -518,7 +518,7 @@ class EE_Admin_Page_Loader
                     new PersistentAdminNotice(
                         'menu_map_warning_' . str_replace(' ', '_', $page->label) . '_' . EVENT_ESPRESSO_VERSION,
                         sprintf(
-                            __(
+                            esc_html__(
                                 'The admin page for %s was not correctly setup because it is using an older method for integrating with Event Espresso Core.  This means that full functionality for this component is not available.  This error message usually appears with an Add-on that is out of date.  Make sure you update all your Event Espresso 4 add-ons to the latest version to ensure they have necessary compatibility updates in place.',
                                 'event_espresso'
                             ),
@@ -531,7 +531,7 @@ class EE_Admin_Page_Loader
                 if (! $page_map instanceof EE_Admin_Page_Menu_Map) {
                     throw new EE_Error(
                         sprintf(
-                            __(
+                            esc_html__(
                                 'The menu map for %s must be an EE_Admin_Page_Menu_Map object.  Instead it is %s.  Please double check that the menu map has been configured correctly.',
                                 'event_espresso'
                             ),
@@ -553,7 +553,7 @@ class EE_Admin_Page_Loader
             }
         }
         if (empty($pages_array)) {
-            throw new EE_Error(__('Something went wrong when prepping the admin pages', 'event_espresso'));
+            throw new EE_Error(esc_html__('Something went wrong when prepping the admin pages', 'event_espresso'));
         }
         // let's sort the groups, make sure it's a valid group, add header (if to show).
         foreach ($pages_array as $group => $menu_maps) {

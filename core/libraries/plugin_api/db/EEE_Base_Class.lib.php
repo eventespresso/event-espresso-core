@@ -52,7 +52,7 @@ class EEE_Base_Class
         if (! $this->_model_name_extended) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         "When declaring a class extension, you must define its _model_name_extended property. It should be a model name like 'Attendee' or 'Event'",
                         "event_espresso"
                     )
@@ -62,7 +62,7 @@ class EEE_Base_Class
         if (did_action('AHEE__EE_' . $this->_model_name_extended . '__construct__end')) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         "Hooked in model object extension '%s' too late! The model object %s has already been used!",
                         "event_espresso"
                     ),
@@ -133,7 +133,7 @@ class EEE_Base_Class
             } else {
                 throw new EE_Error(
                     sprintf(
-                        __(
+                        esc_html__(
                             "An odd error occurred. Model '%s' had a method called on it that it didn't recognize. So it passed it onto the model extension '%s' (because it had a function named '%s' which should be able to handle it), but the function '%s' doesnt exist!)",
                             "event_espresso"
                         ),
@@ -147,7 +147,7 @@ class EEE_Base_Class
         } else {
             throw new EE_Error(
                 sprintf(
-                    __("There is no method named '%s' on '%s'", "event_espresso"),
+                    esc_html__("There is no method named '%s' on '%s'", "event_espresso"),
                     $callback_method_name,
                     get_class($this)
                 )

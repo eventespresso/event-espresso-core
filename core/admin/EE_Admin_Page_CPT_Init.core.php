@@ -44,8 +44,10 @@ abstract class EE_Admin_Page_CPT_Init extends EE_Admin_Page_Init
             'autosaveL10n',
             array(
                 'autosaveInterval' => 172800,
-                'savingText'       => __('Saving Draft&#8230;', 'event_espresso'),
-                'saveAlert'        => __('The changes you made will be lost if you navigate away from this page.', 'event_espresso'),
+                'savingText'       => wp_strip_all_tags(__('Saving Draft&#8230;', 'event_espresso')),
+                'saveAlert'        => wp_strip_all_tags(
+                    __('The changes you made will be lost if you navigate away from this page.', 'event_espresso')
+                ),
             )
         );
     }

@@ -2,8 +2,8 @@
 add_filter('FHEE__EEH_Form_Fields__label_html', '__return_empty_string');
 $values = EEH_Form_Fields::prep_answer_options(
     array(
-        array('id' => 1, 'text' => __('Yes', 'event_espresso')),
-        array('id' => 0, 'text' => __('No', 'event_espresso')),
+        array('id' => 1, 'text' => esc_html__('Yes', 'event_espresso')),
+        array('id' => 0, 'text' => esc_html__('No', 'event_espresso')),
     )
 );
 ?>

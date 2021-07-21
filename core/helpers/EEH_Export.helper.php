@@ -64,7 +64,7 @@ class EEH_Export
             // make sure top level is numerically indexed,
 
             if (EEH_Array::is_associative_array($data)) {
-                throw new EE_Error(sprintf(__("top-level array must be numerically indexed. Does these look like numbers to you? %s", "event_espresso"), implode(",", array_keys($data))));
+                throw new EE_Error(sprintf(esc_html__("top-level array must be numerically indexed. Does these look like numbers to you? %s", "event_espresso"), implode(",", array_keys($data))));
             }
             $item_in_top_level_array = EEH_Array::get_one_item_from_array($data);
             // now, is the last item in the top-level array of $data an associative or numeric array?

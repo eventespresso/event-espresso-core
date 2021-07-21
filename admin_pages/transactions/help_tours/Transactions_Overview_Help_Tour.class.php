@@ -17,7 +17,7 @@ class Transactions_Overview_Help_Tour extends EE_Help_Tour
 
     protected function _set_tour_properties()
     {
-        $this->_label = __('Transactions Overview Tour', 'event_espresso');
+        $this->_label = esc_html__('Transactions Overview Tour', 'event_espresso');
         $this->_slug = 'transaction-overview-joyride';
     }
 
@@ -133,9 +133,9 @@ class Transactions_Overview_Help_Tour extends EE_Help_Tour
 
     protected function _start()
     {
-        $content = '<h3>' . __('Transactions Overview', 'event_espresso') . '</h3>';
+        $content = '<h3>' . esc_html__('Transactions Overview', 'event_espresso') . '</h3>';
         $content .= '<p>'
-                    . __(
+                    . esc_html__(
                         'This tour of the Transactions Overview page will go over different areas of the screen to help you understand what they are used for.',
                         'event_espresso'
                     ) . '</p>';
@@ -145,7 +145,7 @@ class Transactions_Overview_Help_Tour extends EE_Help_Tour
     protected function _txn_id_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'View transaction ID. Can be sorted in ascending or descending order.',
                    'event_espresso'
                ) . '</p>';
@@ -154,7 +154,7 @@ class Transactions_Overview_Help_Tour extends EE_Help_Tour
     protected function _txn_timestamp_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'View transaction date. Can be sorted in ascending or descending order.',
                    'event_espresso'
                ) . '</p>';
@@ -162,18 +162,18 @@ class Transactions_Overview_Help_Tour extends EE_Help_Tour
 
     protected function _txn_total_stop()
     {
-        return '<p>' . __('View total for transaction.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('View total for transaction.', 'event_espresso') . '</p>';
     }
 
     protected function _txn_paid_stop()
     {
-        return '<p>' . __('View amount paid for transaction.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('View amount paid for transaction.', 'event_espresso') . '</p>';
     }
 
     protected function _attendee_name_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'View name for the primary registrant. Can be sorted in ascending or descending order.',
                    'event_espresso'
                ) . '</p>';
@@ -182,7 +182,7 @@ class Transactions_Overview_Help_Tour extends EE_Help_Tour
     protected function _att_email_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'View email address for primary registrant. Can be sorted in ascending or descending order.',
                    'event_espresso'
                ) . '</p>';
@@ -191,7 +191,7 @@ class Transactions_Overview_Help_Tour extends EE_Help_Tour
     protected function _event_name_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'View name of event. Can be sorted in ascending or descending order.',
                    'event_espresso'
                ) . '</p>';
@@ -200,7 +200,7 @@ class Transactions_Overview_Help_Tour extends EE_Help_Tour
     protected function _actions_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'Perform an action to a transaction. See legend in bottom left corner.',
                    'event_espresso'
                ) . '</p>';
@@ -209,7 +209,7 @@ class Transactions_Overview_Help_Tour extends EE_Help_Tour
     protected function _legend_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'This legend that describes the actions available in the actions column. Also shows available statuses for a transaction.',
                    'event_espresso'
                ) . '</p>';
@@ -218,7 +218,7 @@ class Transactions_Overview_Help_Tour extends EE_Help_Tour
     protected function _stop_about_filters()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'Filter transactions by date by selecting two dates and clicking on the filter button. You can clear your current date selection by clicking on the reset filters button.',
                    'event_espresso'
                ) . '</p>';
@@ -227,7 +227,7 @@ class Transactions_Overview_Help_Tour extends EE_Help_Tour
     protected function _search_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'Search through transactions. The following sources will be searched: Event Name, Event Description, First Name, Last Name, Biography, Email Address, Address, Comments, Notes, Registration Final Price, Registration Code, Registration Group Size, Ticket Name, Ticket Description, Payment Method, Payment Gateway, Transaction Details, and Transaction Session.',
                    'event_espresso'
                ) . '</p>';

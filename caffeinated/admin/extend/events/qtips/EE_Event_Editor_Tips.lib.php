@@ -25,7 +25,7 @@ class EE_Event_Editor_Tips extends EE_Qtip_Config
                 'options'    => array(
                     'show_only_once' => true,
                     'content'        => array(
-                        'title' => __('Taxable Ticket Toggle', 'event_espresso'),
+                        'title' => esc_html__('Taxable Ticket Toggle', 'event_espresso'),
                         'button' => true,
                     ),
                     'show'           => array(
@@ -42,32 +42,32 @@ class EE_Event_Editor_Tips extends EE_Qtip_Config
             1  => array(
                 'content_id' => 'ticket-icon-help',
                 'target'     => '.ticket-icon',
-                'content'    => __('Assigned Tickets', 'event_espresso'),
+                'content'    => esc_html__('Assigned Tickets', 'event_espresso'),
             ),
             2  => array(
                 'content_id' => 'clone-icon-help',
                 'target'     => '.clone-icon',
-                'content'    => __('Duplicate this Item', 'event_espresso'),
+                'content'    => esc_html__('Duplicate this Item', 'event_espresso'),
             ),
             3  => array(
                 'content_id' => 'trash-datetime-help',
                 'target'     => '.datetime-edit-table .trash-icon',
-                'content'    => __('Trash Datetime', 'event_espresso'),
+                'content'    => esc_html__('Trash Datetime', 'event_espresso'),
             ),
             4  => array(
                 'content_id' => 'trash-ticket-help',
                 'target'     => '.ticket-row .trash-icon',
-                'content'    => __('Trash Ticket', 'event_espresso'),
+                'content'    => esc_html__('Trash Ticket', 'event_espresso'),
             ),
             5  => array(
                 'content_id' => 'trash-price-modifier-help',
                 'target'     => '.ticket-price-rows .trash-icon',
-                'content'    => __('Trash Price Modifier', 'event_espresso'),
+                'content'    => esc_html__('Trash Price Modifier', 'event_espresso'),
             ),
             6  => array(
                 'content_id' => 'gear-icon-help',
                 'target'     => '.gear-icon',
-                'content'    => __('Advanced Settings', 'event_espresso'),
+                'content'    => esc_html__('Advanced Settings', 'event_espresso'),
             ),
             7  => array(
                 'content_id' => 'tkt-status-archived',
@@ -137,7 +137,7 @@ class EE_Event_Editor_Tips extends EE_Qtip_Config
             12 => array(
                 'content_id' => 'sortable-tkt-drag-handle-tip',
                 'target'     => '.ee-ticket-sortable .sortable-drag-handle',
-                'content'    => __('Click and drag-n-drop to reorder tickets.', 'event_espresso'),
+                'content'    => esc_html__('Click and drag-n-drop to reorder tickets.', 'event_espresso'),
                 'options'    => array(
                     'position' => array(
                         'adjust' => array(
@@ -150,7 +150,7 @@ class EE_Event_Editor_Tips extends EE_Qtip_Config
             13 => array(
                 'content_id' => 'sortable-dtt-drag-handle-tip',
                 'target'     => '.ee-dtt-sortable .sortable-drag-handle',
-                'content'    => __('Click and drag-n-drop to reorder datetimes.', 'event_espresso'),
+                'content'    => esc_html__('Click and drag-n-drop to reorder datetimes.', 'event_espresso'),
                 'options'    => array(
                     'position' => array(
                         'adjust' => array(
@@ -169,7 +169,7 @@ class EE_Event_Editor_Tips extends EE_Qtip_Config
         $price_admin_link = EE_Admin_Page::add_query_args_and_nonce(array('action' => 'default'), PRICING_ADMIN_URL);
         return '<p>'
                . sprintf(
-                   __(
+                   esc_html__(
                        'Clicking the taxable ticket toggle checkbox has enabled taxes for this ticket. What this means is that when a person purchases this ticket, the tax will be applied to all prices on this ticket. You can edit the existing tax price modifier that was setup in Event Espresso by going to  %sDefault Pricing Admin Page%s (labelled "Pricing" in the Event Espresso Menu)',
                        'event_espresso'
                    ),

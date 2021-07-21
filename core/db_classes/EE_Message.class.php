@@ -195,7 +195,7 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links
         if ($throw_exceptions) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'The "%1$s" messenger set for this message is missing or invalid. Please double-check the spelling and verify that the correct files exist.',
                         'event_espresso'
                     ),
@@ -287,7 +287,7 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links
         if ($throw_exceptions) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'The %1$s message type set for this message is missing or invalid. Please double-check the spelling and verify that the correct files exist.',
                         'event_espresso'
                     ),
@@ -339,7 +339,7 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links
             if (! $valid && $throw_exceptions) {
                 throw new EE_Error(
                     sprintf(
-                        __(
+                        esc_html__(
                             'The %1$s message type is not a valid message type for the %2$s messenger so it will not be sent.',
                             'event_espresso'
                         ),
@@ -523,7 +523,7 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links
     public function to()
     {
         $to = $this->get('MSG_to');
-        return empty($to) ? __('No recipient', 'event_espresso') : $to;
+        return empty($to) ? esc_html__('No recipient', 'event_espresso') : $to;
     }
 
 

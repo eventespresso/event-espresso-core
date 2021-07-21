@@ -81,7 +81,7 @@
                             ? '*'
                             : '';
                     $subitems     = $line_item->children();
-                    $ticket_uses  = $ticket->get_pretty('TKT_uses', __("any", "event_espresso"));
+                    $ticket_uses  = $ticket->get_pretty('TKT_uses', esc_html__("any", "event_espresso"));
                     ?>
                     <li class="event-ticket">
                         <div class="ticket-details">
@@ -110,7 +110,7 @@
                                             <p class="ticket-note">
                                                 <?php
                                                 echo sprintf(
-                                                    __(
+                                                    esc_html__(
                                                         'This ticket can be used once at %s of the dates/times below.',
                                                         'event_espresso'
                                                     ),
@@ -130,7 +130,7 @@
                                             <p class="ticket-note">
                                                 <?php
                                                 echo sprintf(
-                                                    __(
+                                                    esc_html__(
                                                         'This ticket can be used once at %s of the dates/times below.',
                                                         'event_espresso'
                                                     ),
@@ -195,7 +195,7 @@
                                                     ? '<b>' . $datetime->name() . ' </b>'
                                                     : '';
                                                 echo sprintf(
-                                                    __("%s - %s (%s)", "event_espresso"),
+                                                    esc_html__("%s - %s (%s)", "event_espresso"),
                                                     $datetime->start_date_and_time(),
                                                     $datetime->end_date_and_time(),
                                                     $datetime->get_timezone()
@@ -247,7 +247,7 @@
                                     <img class="icon" src="<?php
                                     echo EE_IMAGES_URL . 'users-16x16.png'; ?>">
                                     <?php
-                                    echo __("Registration Details", "event_espresso"); ?>
+                                    echo esc_html__("Registration Details", "event_espresso"); ?>
                                     <span class="small-text link">[
                                 <a class="print_button noPrint" href="<?php echo $edit_reg_info_url; ?>">
                                     <?php _e('edit', 'event_espresso'); ?>
@@ -306,7 +306,7 @@
                                                             <td>
                                                                 <?php
                                                                 echo sprintf(
-                                                                    __('%s (%s)', "event_espresso"),
+                                                                    esc_html__('%s (%s)', "event_espresso"),
                                                                     $attendee->full_name(),
                                                                     $attendee->email()
                                                                 ) ?>
@@ -364,7 +364,7 @@
         <h2 class="grand-total">
             <?php
             printf(
-                __("Grand Total: %s", "event_espresso"),
+                esc_html__("Grand Total: %s", "event_espresso"),
                 EEH_Template::format_currency($total_cost)
             ); ?>
         </h2>

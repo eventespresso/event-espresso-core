@@ -301,18 +301,29 @@ class EE_Registry implements ResettableInterface
 
 
     /**
+     * @return array
+     */
+    public static function sanitize_i18n_js_strings()
+    {
+        $i18n_js_strings = (array) self::$i18n_js_strings;
+        foreach ($i18n_js_strings as $key => $value) {
+            if (is_scalar($value)) {
+                $decoded_value           = html_entity_decode((string) $value, ENT_QUOTES, 'UTF-8');
+                $i18n_js_strings[ $key ] = wp_strip_all_tags($decoded_value);
+            }
+        }
+        return $i18n_js_strings;
+    }
+
+
+    /**
      * localize_i18n_js_strings
      *
      * @return string
      */
     public static function localize_i18n_js_strings()
     {
-        $i18n_js_strings = (array) self::$i18n_js_strings;
-        foreach ($i18n_js_strings as $key => $value) {
-            if (is_scalar($value)) {
-                $i18n_js_strings[ $key ] = html_entity_decode((string) $value, ENT_QUOTES, 'UTF-8');
-            }
-        }
+        $i18n_js_strings = EE_Registry::sanitize_i18n_js_strings();
         return '/* <![CDATA[ */ var eei18n = ' . wp_json_encode($i18n_js_strings) . '; /* ]]> */';
     }
 
@@ -1266,7 +1277,7 @@ class EE_Registry implements ResettableInterface
         // heh ? something's not right !
         throw new EE_Error(
             sprintf(
-                __('The %s file %s could not be instantiated.', 'event_espresso'),
+                esc_html__('The %s file %s could not be instantiated.', 'event_espresso'),
                 $type,
                 $class_name
             )

@@ -401,7 +401,7 @@ class EE_Payment_Method extends EE_Base_Class
                 if (! class_exists($class_name)) {
                     throw new EE_Error(
                         sprintf(
-                            __(
+                            esc_html__(
                                 'An attempt to use the "%1$s" payment method failed, so it was deactivated.%2$sWas the "%1$s" Plugin recently deactivated? It can be reactivated on the %3$sPlugins Admin Page%4$s',
                                 'event_espresso'
                             ),
@@ -417,7 +417,7 @@ class EE_Payment_Method extends EE_Base_Class
             } else {
                 throw new EE_Error(
                     sprintf(
-                        __(
+                        esc_html__(
                             'A payment method of type "%1$s" does not exist. Only ones existing are: %2$s',
                             'event_espresso'
                         ),
@@ -581,7 +581,7 @@ class EE_Payment_Method extends EE_Base_Class
                 __FILE__,
                 __FUNCTION__,
                 sprintf(
-                    __('Set new scope on payment method %1$s to %2$s from %3$s on URL %4$s', 'event_espresso'),
+                    esc_html__('Set new scope on payment method %1$s to %2$s from %3$s on URL %4$s', 'event_espresso'),
                     $this->name(),
                     serialize($this->get_original('PMD_scope')),
                     serialize($this->get('PMD_scope')),

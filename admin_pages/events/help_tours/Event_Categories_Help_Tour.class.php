@@ -18,7 +18,7 @@ class Event_Categories_Help_Tour extends EE_Help_Tour
 
     protected function _set_tour_properties()
     {
-        $this->_label = __('Event Categories Tour', 'event_espresso');
+        $this->_label = esc_html__('Event Categories Tour', 'event_espresso');
         $this->_slug = 'event-categories-joyride';
     }
 
@@ -97,9 +97,9 @@ class Event_Categories_Help_Tour extends EE_Help_Tour
 
     protected function _start()
     {
-        $content = '<h3>' . __('Event Categories', 'event_espresso') . '</h3>';
+        $content = '<h3>' . esc_html__('Event Categories', 'event_espresso') . '</h3>';
         $content .= '<p>'
-                    . __(
+                    . esc_html__(
                         'This tour of the Event Categories page will provide an overview of the different areas of the screen to help you understand what they are used for.',
                         'event_espresso'
                     ) . '</p>';
@@ -109,7 +109,7 @@ class Event_Categories_Help_Tour extends EE_Help_Tour
     protected function _id_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'View the event category ID. Can be sorted by ascending or descending order.',
                    'event_espresso'
                ) . '</p>';
@@ -118,7 +118,7 @@ class Event_Categories_Help_Tour extends EE_Help_Tour
     protected function _name_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'View the name of each event category. Can be sorted by ascending or descending order.',
                    'event_espresso'
                ) . '</p>';
@@ -127,7 +127,7 @@ class Event_Categories_Help_Tour extends EE_Help_Tour
     protected function _shortcode_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'View the shortcode for an event. This shortcode can be added to a WordPress post or WordPress page. ',
                    'event_espresso'
                ) . '</p>';
@@ -136,7 +136,7 @@ class Event_Categories_Help_Tour extends EE_Help_Tour
     protected function _count_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'View the number of events that are associated with an event category.',
                    'event_espresso'
                ) . '</p>';
@@ -144,13 +144,13 @@ class Event_Categories_Help_Tour extends EE_Help_Tour
 
     protected function _bulk_actions_stop()
     {
-        return '<p>' . __('Perform bulk actions to multiple event categories.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Perform bulk actions to multiple event categories.', 'event_espresso') . '</p>';
     }
 
     protected function _search_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'Search through event categories. The following sources will be searched: Event Category Name, Event Category Description.',
                    'event_espresso'
                ) . '</p>';
@@ -158,6 +158,6 @@ class Event_Categories_Help_Tour extends EE_Help_Tour
 
     protected function _new_category_stop()
     {
-        return '<p>' . __('Click here to add a new event category.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Click here to add a new event category.', 'event_espresso') . '</p>';
     }
 }

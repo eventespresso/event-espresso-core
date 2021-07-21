@@ -28,9 +28,9 @@ class EE_PMT_Paypal_Standard extends EE_PMT_Base
     {
         require_once($this->file_folder() . 'EEG_Paypal_Standard.gateway.php');
         $this->_gateway = new EEG_Paypal_Standard();
-        $this->_pretty_name = __("PayPal Standard", 'event_espresso');
+        $this->_pretty_name = esc_html__("PayPal Standard", 'event_espresso');
         $this->_default_description = sprintf(
-            __(
+            esc_html__(
                 'Upon submitting this form, you will be forwarded to PayPal to make your payment. %1$sMake sure you return to this site in order to properly finalize your registration.%2$s',
                 'event_espresso'
             ),
@@ -66,10 +66,10 @@ class EE_PMT_Paypal_Standard extends EE_PMT_Base
         require_once($this->file_folder() . 'EE_Paypal_Standard_Form.form.php');
         $form =  new EE_Paypal_Standard_Form($this);
         $form->get_input('PMD_debug_mode')->set_html_label_text(
-            sprintf(__("Use PayPal Sandbox %s", 'event_espresso'), $this->get_help_tab_link())
+            sprintf(esc_html__("Use PayPal Sandbox %s", 'event_espresso'), $this->get_help_tab_link())
         );
         $form->get_input('shipping_details')->set_html_label_text(
-            sprintf(__("Shipping Address Options %s", "event_espresso"), $this->get_help_tab_link())
+            sprintf(esc_html__("Shipping Address Options %s", "event_espresso"), $this->get_help_tab_link())
         );
         return $form;
     }
@@ -85,7 +85,7 @@ class EE_PMT_Paypal_Standard extends EE_PMT_Base
     {
         return array(
             $this->get_help_tab_name() => array(
-                'title' =>  __("PayPal Standard Settings", 'event_espresso'),
+                'title' =>  esc_html__("PayPal Standard Settings", 'event_espresso'),
                 'filename' => 'payment_methods_overview_paypalstandard'
             )
         );

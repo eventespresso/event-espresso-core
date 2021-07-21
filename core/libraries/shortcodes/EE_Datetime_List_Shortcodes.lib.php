@@ -22,10 +22,10 @@ class EE_Datetime_List_Shortcodes extends EE_Shortcodes
 
     protected function _init_props()
     {
-        $this->label       = __('Datetime List Shortcodes', 'event_espresso');
-        $this->description = __('All shortcodes specific to datetime lists', 'event_espresso');
+        $this->label       = esc_html__('Datetime List Shortcodes', 'event_espresso');
+        $this->description = esc_html__('All shortcodes specific to datetime lists', 'event_espresso');
         $this->_shortcodes = [
-            '[DATETIME_LIST]' => __(
+            '[DATETIME_LIST]' => esc_html__(
                 'Will output a list of datetimes according to the layout specified in the datetime list field.',
                 'event_espresso'
             ),

@@ -22,16 +22,16 @@ class EE_Line_Item_List_Shortcodes extends EE_Shortcodes
 
     protected function _init_props()
     {
-        $this->label = __('Line Item List Shortcodes', 'event_espresso');
-        $this->description = __('All shortcodes specific to line item lists', 'event_espresso');
+        $this->label = esc_html__('Line Item List Shortcodes', 'event_espresso');
+        $this->description = esc_html__('All shortcodes specific to line item lists', 'event_espresso');
         $this->_shortcodes = array(
-            '[TICKET_LINE_ITEM_LIST]'         => __('Outputs a list of ticket line items.', 'event_espresso'),
-            '[TAX_LINE_ITEM_LIST]'            => __('Outputs a list of tax line items.', 'event_espresso'),
-            '[ADDITIONAL_LINE_ITEM_LIST]'     => __(
+            '[TICKET_LINE_ITEM_LIST]'         => esc_html__('Outputs a list of ticket line items.', 'event_espresso'),
+            '[TAX_LINE_ITEM_LIST]'            => esc_html__('Outputs a list of tax line items.', 'event_espresso'),
+            '[ADDITIONAL_LINE_ITEM_LIST]'     => esc_html__(
                 'Outputs a list of additional line items (other charges or discounts)',
                 'event_espresso'
             ),
-            '[PRICE_MODIFIER_LINE_ITEM_LIST]' => __('Outputs a list of price modifier line items', 'event_espresso'),
+            '[PRICE_MODIFIER_LINE_ITEM_LIST]' => esc_html__('Outputs a list of price modifier line items', 'event_espresso'),
         );
     }
 

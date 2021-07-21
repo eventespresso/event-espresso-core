@@ -68,7 +68,7 @@ class Event extends EventCalculationBase
         }
         throw new EE_Error(
             sprintf(
-                __(
+                esc_html__(
                 // @codingStandardsIgnoreStart
                     'Cannot calculate optimum_sales_at_start because the event with ID %1$s (from database row %2$s) was not found',
                     // @codingStandardsIgnoreEnd
@@ -108,7 +108,7 @@ class Event extends EventCalculationBase
         }
         throw new EE_Error(
             sprintf(
-                __(
+                esc_html__(
                 // @codingStandardsIgnoreStart
                     'Cannot calculate optimum_sales_now because the event with ID %1$s (from database row %2$s) was not found',
                     // @codingStandardsIgnoreEnd
@@ -147,7 +147,7 @@ class Event extends EventCalculationBase
         }
         throw new EE_Error(
             sprintf(
-                __(
+                esc_html__(
                 // @codingStandardsIgnoreStart
                     'Cannot calculate spaces_remaining because the event with ID %1$s (from database row %2$s) was not found',
                     // @codingStandardsIgnoreEnd
@@ -178,7 +178,7 @@ class Event extends EventCalculationBase
         if (! Event::wpdbRowHasEventId($wpdb_row)) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                     // @codingStandardsIgnoreStart
                         'Cannot calculate spots_taken because the database row %1$s does not have a valid entry for "Event_CPT.ID"',
                         // @codingStandardsIgnoreEnd
@@ -220,7 +220,7 @@ class Event extends EventCalculationBase
         if (! Event::wpdbRowHasEventId($wpdb_row)) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                     // @codingStandardsIgnoreStart
                         'Cannot calculate spots_taken_pending_payment because the database row %1$s does not have an entry for "Event_CPT.ID"',
                         // @codingStandardsIgnoreEnd
@@ -263,7 +263,7 @@ class Event extends EventCalculationBase
         if (! Event::wpdbRowHasEventId($wpdb_row)) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                     // @codingStandardsIgnoreStart
                         'Cannot calculate registrations_checked_in_count because the database row %1$s does not have an entry for "Event_CPT.ID"',
                         // @codingStandardsIgnoreEnd
@@ -297,7 +297,7 @@ class Event extends EventCalculationBase
         if (! Event::wpdbRowHasEventId($wpdb_row)) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                     // @codingStandardsIgnoreStart
                         'Cannot calculate registrations_checked_out_count because the database row %1$s does not have an entry for "Event_CPT.ID"',
                         // @codingStandardsIgnoreEnd
@@ -416,7 +416,7 @@ class Event extends EventCalculationBase
         if (! Event::wpdbRowHasEventId($wpdb_row)) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                     // @codingStandardsIgnoreStart
                         'Cannot calculate image because the database row %1$s does not have an entry for "Event_CPT.ID"',
                         // @codingStandardsIgnoreEnd

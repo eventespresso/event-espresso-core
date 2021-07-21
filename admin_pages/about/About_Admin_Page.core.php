@@ -72,7 +72,7 @@ class About_Admin_Page extends EE_Admin_Page
         $this->_page_config = array(
             /*'default' => array(
                 'nav' => array(
-                    'label' => __('What\'s New', 'event_espresso'),
+                    'label' => esc_html__('What\'s New', 'event_espresso'),
                     'order' => 10),
                 'require_nonce' => FALSE
                 ),*/
@@ -140,9 +140,9 @@ class About_Admin_Page extends EE_Admin_Page
     {
         /*$steps = EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance ? $this->_get_started_steps() : FALSE;
         $steps = $steps !== FALSE ? $steps : '';
-        $this->_admin_page_title = sprintf( __('Welcome to Event Espresso %s', 'event_espresso'), EVENT_ESPRESSO_VERSION );
+        $this->_admin_page_title = sprintf( esc_html__('Welcome to Event Espresso %s', 'event_espresso'), EVENT_ESPRESSO_VERSION );
         $settings_message = $steps;
-        $this->_template_args['admin_page_subtitle'] = __('Thank you for choosing Event Espresso, the most powerful, and free, Event Management plugin for WordPress.', 'event_espresso' ) . $settings_message;
+        $this->_template_args['admin_page_subtitle'] = esc_html__('Thank you for choosing Event Espresso, the most powerful, and free, Event Management plugin for WordPress.', 'event_espresso' ) . $settings_message;
         $template = EE_ABOUT_TEMPLATE_PATH . 'whats_new.template.php';
         $this->_template_args['about_admin_page_content'] = EEH_Template::display_template( $template, $this->_template_args, TRUE );
         $this->display_about_admin_page();*/
@@ -151,8 +151,8 @@ class About_Admin_Page extends EE_Admin_Page
 
     protected function _overview()
     {
-        /*$this->_template_args['admin_page_title'] = __('About Event Espresso', 'event_espresso');
-        $this->_template_args['admin_page_subtitle'] = __('Thank you for choosing Event Espresso Decaf, the most powerful, and free, Event Management plugin for WordPress.', 'event_espresso');
+        /*$this->_template_args['admin_page_title'] = esc_html__('About Event Espresso', 'event_espresso');
+        $this->_template_args['admin_page_subtitle'] = esc_html__('Thank you for choosing Event Espresso Decaf, the most powerful, and free, Event Management plugin for WordPress.', 'event_espresso');
         $template = EE_ABOUT_TEMPLATE_PATH . 'ee4-overview.template.php';
         $this->_template_args['about_admin_page_content'] = EEH_Template::display_template( $template, $this->_template_args, TRUE );
         $this->display_about_admin_page();*/
@@ -253,10 +253,10 @@ class About_Admin_Page extends EE_Admin_Page
     protected function _credits()
     {
         $this->_template_args['admin_page_title'] = sprintf(
-            __('Welcome to Event Espresso %s', 'event_espresso'),
+            esc_html__('Welcome to Event Espresso %s', 'event_espresso'),
             EVENT_ESPRESSO_VERSION
         );
-        $this->_template_args['admin_page_subtitle'] = __(
+        $this->_template_args['admin_page_subtitle'] = esc_html__(
             'Thank you for choosing Event Espresso Decaf, the most powerful, and free, Event Management plugin for WordPress.',
             'event_espresso'
         );
@@ -273,11 +273,11 @@ class About_Admin_Page extends EE_Admin_Page
     protected function _decafvpro()
     {
         $this->_template_args['admin_page_title'] = sprintf(
-            __('Welcome to Event Espresso %s', 'event_espresso'),
+            esc_html__('Welcome to Event Espresso %s', 'event_espresso'),
             EVENT_ESPRESSO_VERSION
         );
         $this->_template_args['admin_page_subtitle'] = sprintf(
-            __(
+            esc_html__(
                 'Event Espresso lets you focus on doing %swhat you love%s — %sorganizing your events%s',
                 'event_espresso'
             ),
@@ -297,8 +297,8 @@ class About_Admin_Page extends EE_Admin_Page
 
     protected function _reviews()
     {
-        $this->_template_args['admin_page_title'] = __('Rave Reviews About Event Espresso 4', 'event_espresso');
-        $this->_template_args['admin_page_subtitle'] = __(
+        $this->_template_args['admin_page_title'] = esc_html__('Rave Reviews About Event Espresso 4', 'event_espresso');
+        $this->_template_args['admin_page_subtitle'] = esc_html__(
             'At Event Espresso, customer satisfaction is our ultimate goal.',
             'event_espresso'
         );

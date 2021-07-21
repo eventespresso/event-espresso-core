@@ -26,8 +26,8 @@ class EEM_Post_Meta extends EEM_Base
 
     protected function __construct($timezone = null)
     {
-        $this->singular_item = __('Post Meta', 'event_espresso');
-        $this->plural_item = __('Post Metas', 'event_espresso');
+        $this->singular_item = esc_html__('Post Meta', 'event_espresso');
+        $this->plural_item = esc_html__('Post Metas', 'event_espresso');
         $this->_tables = array(
             'Post_Meta' => new EE_Primary_Table('postmeta', 'meta_id'),
         );
@@ -36,24 +36,24 @@ class EEM_Post_Meta extends EEM_Base
             'Post_Meta' => array(
                 'meta_id'    => new EE_Primary_Key_Int_Field(
                     'meta_id',
-                    __("Meta ID", "event_espresso")
+                    esc_html__("Meta ID", "event_espresso")
                 ),
                 'post_id'    => new EE_Foreign_Key_Int_Field(
                     'post_id',
-                    __("Primary Key of Post", "event_espresso"),
+                    esc_html__("Primary Key of Post", "event_espresso"),
                     false,
                     0,
                     $models_this_can_attach_to
                 ),
                 'meta_key'   => new EE_Plain_Text_Field(
                     'meta_key',
-                    __("Meta Key", "event_espresso"),
+                    esc_html__("Meta Key", "event_espresso"),
                     false,
                     ''
                 ),
                 'meta_value' => new EE_Maybe_Serialized_Text_Field(
                     'meta_value',
-                    __("Meta Value", "event_espresso"),
+                    esc_html__("Meta Value", "event_espresso"),
                     true
                 ),
             ),

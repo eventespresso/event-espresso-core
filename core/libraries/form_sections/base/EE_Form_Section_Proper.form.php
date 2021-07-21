@@ -878,8 +878,8 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
     private static function _get_localized_error_messages()
     {
         return array(
-            'validUrl' => esc_html__('This is not a valid absolute URL. Eg, http://domain.com/monkey.jpg', 'event_espresso'),
-            'regex'    => esc_html__('Please check your input', 'event_espresso'),
+            'validUrl' => wp_strip_all_tags(__('This is not a valid absolute URL. Eg, http://domain.com/monkey.jpg', 'event_espresso')),
+            'regex'    => wp_strip_all_tags(__('Please check your input', 'event_espresso'))
         );
     }
 
@@ -1497,7 +1497,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
                     $label = esc_html__('Unknown', 'event_espresso');
                 }
                 $submission_error_messages[] = sprintf(
-                    __('%s : %s', 'event_espresso'),
+                    esc_html__('%s : %s', 'event_espresso'),
                     $label,
                     $validation_error->getMessage()
                 );

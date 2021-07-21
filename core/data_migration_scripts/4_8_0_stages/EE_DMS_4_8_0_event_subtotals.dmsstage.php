@@ -16,7 +16,7 @@ class EE_DMS_4_8_0_event_subtotals extends EE_Data_Migration_Script_Stage_Table
         global $wpdb;
         $this->_old_table = $wpdb->prefix . 'esp_line_item';
         $this->_extra_where_sql = ' WHERE LIN_type="sub-total" AND LIN_code="pre-tax-subtotal"';
-        $this->_pretty_name = __('Event Sub-total line items', 'event_espresso');
+        $this->_pretty_name = esc_html__('Event Sub-total line items', 'event_espresso');
         parent::__construct();
     }
     protected function _migrate_old_row($line_item_row)
@@ -27,7 +27,7 @@ class EE_DMS_4_8_0_event_subtotals extends EE_Data_Migration_Script_Stage_Table
         $new_line_item_data = array(
                     'LIN_code' => 'event-' . $event_id,
                     'TXN_ID' => $line_item_row['TXN_ID'],
-                    'LIN_name' => __('Event', 'event_espresso'),
+                    'LIN_name' => esc_html__('Event', 'event_espresso'),
                     'LIN_desc' => $line_item_row['LIN_desc'],
                     'LIN_unit_price' => $line_item_row['LIN_unit_price'],
                     'LIN_percent' => $line_item_row['LIN_percent'],
@@ -73,7 +73,7 @@ class EE_DMS_4_8_0_event_subtotals extends EE_Data_Migration_Script_Stage_Table
         if ($success === false) {
             $this->add_error(
                 sprintf(
-                    __('Error updating rows to new event subtotal %1$s from %2$s. Error was: %3$s, while using query %4$s which had a result of %5$s', 'event_espresso'),
+                    esc_html__('Error updating rows to new event subtotal %1$s from %2$s. Error was: %3$s, while using query %4$s which had a result of %5$s', 'event_espresso'),
                     $new_line_item_id,
                     $line_item_row['LIN_ID'],
                     $wpdb->last_error,

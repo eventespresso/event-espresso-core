@@ -28,17 +28,17 @@ CREATE TABLE `wp_events_question` (
         );
         $this->_fields = array(
             'Question'=>array(
-                'QST_ID'=>new EE_Primary_Key_Int_Field('QST_ID', __('Question ID','event_espresso')),
-                'QST_display_text'=>new EE_Full_HTML_Field('QST_display_text', __('Question Text','event_espresso'), true, ''),
-                'QST_admin_label'=>new EE_Simple_HTML_Field('QST_admin_label', __('Question Label (admin-only)','event_espresso'), true, ''),
-                'QST_system'=>new EE_Plain_Text_Field('QST_system', __('Internal string ID for question','event_espresso'), TRUE, NULL ),
-                'QST_type'=>new EE_Enum_Text_Field('QST_type', __('Question Type','event_espresso'),false, 'TEXT',$this->_allowed_question_types),
-                'QST_required'=>new EE_Boolean_Field('QST_required', __('Required Question?','event_espresso'), false, false),
-                'QST_required_text'=>new EE_Simple_HTML_Field('QST_required_text', __('Text to Display if Not Provided','event_espresso'), true, ''),
-                'QST_order'=>new EE_Integer_Field('QST_order', __('Question Order','event_espresso'), false, 0),
-                'QST_admin_only'=>new EE_Boolean_Field('QST_admin_only', __('Admin-Only Question?','event_espresso'), false, false),
-                'QST_wp_user'=>new EE_Integer_Field('QST_wp_user', __('Wp User ID who created question','event_espresso'), false, 1),
-                'QST_deleted'=>new EE_Trashed_Flag_Field('QST_deleted', __('Flag Indicating question was deleted','event_espresso'), false, false)
+                'QST_ID'=>new EE_Primary_Key_Int_Field('QST_ID', esc_html__('Question ID','event_espresso')),
+                'QST_display_text'=>new EE_Full_HTML_Field('QST_display_text', esc_html__('Question Text','event_espresso'), true, ''),
+                'QST_admin_label'=>new EE_Simple_HTML_Field('QST_admin_label', esc_html__('Question Label (admin-only)','event_espresso'), true, ''),
+                'QST_system'=>new EE_Plain_Text_Field('QST_system', esc_html__('Internal string ID for question','event_espresso'), TRUE, NULL ),
+                'QST_type'=>new EE_Enum_Text_Field('QST_type', esc_html__('Question Type','event_espresso'),false, 'TEXT',$this->_allowed_question_types),
+                'QST_required'=>new EE_Boolean_Field('QST_required', esc_html__('Required Question?','event_espresso'), false, false),
+                'QST_required_text'=>new EE_Simple_HTML_Field('QST_required_text', esc_html__('Text to Display if Not Provided','event_espresso'), true, ''),
+                'QST_order'=>new EE_Integer_Field('QST_order', esc_html__('Question Order','event_espresso'), false, 0),
+                'QST_admin_only'=>new EE_Boolean_Field('QST_admin_only', esc_html__('Admin-Only Question?','event_espresso'), false, false),
+                'QST_wp_user'=>new EE_Integer_Field('QST_wp_user', esc_html__('Wp User ID who created question','event_espresso'), false, 1),
+                'QST_deleted'=>new EE_Trashed_Flag_Field('QST_deleted', esc_html__('Flag Indicating question was deleted','event_espresso'), false, false)
             )
         );
  *
@@ -48,11 +48,11 @@ CREATE TABLE `wp_events_question` (
         );
         $this->_fields = array(
             'Question_Option'=>array(
-                    'QSO_ID'=>new EE_Primary_Key_Int_Field('QSO_ID', __('Question Option ID','event_espresso')),
-                    'QST_ID'=>new EE_Foreign_Key_Int_Field('QST_ID', __('Question ID','event_espresso'), false, 0, 'Question'),
-                    'QSO_value'=>new EE_Simple_HTML_Field('QSO_value', __('Question Option Name','event_espresso'), false, ''),
+                    'QSO_ID'=>new EE_Primary_Key_Int_Field('QSO_ID', esc_html__('Question Option ID','event_espresso')),
+                    'QST_ID'=>new EE_Foreign_Key_Int_Field('QST_ID', esc_html__('Question ID','event_espresso'), false, 0, 'Question'),
+                    'QSO_value'=>new EE_Simple_HTML_Field('QSO_value', esc_html__('Question Option Name','event_espresso'), false, ''),
                     'QSO_desc'=>new EE_Simple_HTML_Field('QSO_desc','Question Option Value',false,''),
-                    'QSO_deleted'=>new EE_Trashed_Flag_Field('QSO_deleted', __('Flag indicating Option was trashed','event_espresso'), false, false)
+                    'QSO_deleted'=>new EE_Trashed_Flag_Field('QSO_deleted', esc_html__('Flag indicating Option was trashed','event_espresso'), false, false)
                 )
  */
 class EE_DMS_4_1_0_questions extends EE_Data_Migration_Script_Stage
@@ -85,7 +85,7 @@ class EE_DMS_4_1_0_questions extends EE_Data_Migration_Script_Stage
     public function __construct()
     {
         global $wpdb;
-        $this->_pretty_name = __("Questions", "event_espresso");
+        $this->_pretty_name = esc_html__("Questions", "event_espresso");
         $this->_old_table = $wpdb->prefix . "events_question";
         $this->_new_table = $wpdb->prefix . "esp_question";
         $this->_option_table = $wpdb->prefix . "esp_question_option";

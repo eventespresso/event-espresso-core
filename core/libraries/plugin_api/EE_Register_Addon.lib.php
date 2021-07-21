@@ -323,7 +323,7 @@ class EE_Register_Addon implements EEI_Plugin_API
         // required fields MUST be present, so let's make sure they are.
         if (empty($addon_name) || ! is_array($setup_args)) {
             throw new EE_Error(
-                __(
+                esc_html__(
                     'In order to register an EE_Addon with EE_Register_Addon::register(), you must include the "addon_name" (the name of the addon), and an array of arguments.',
                     'event_espresso'
                 )
@@ -332,7 +332,7 @@ class EE_Register_Addon implements EEI_Plugin_API
         if (! isset($setup_args['main_file_path']) || empty($setup_args['main_file_path'])) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'When registering an addon, you didn\'t provide the "main_file_path", which is the full path to the main file loaded directly by Wordpress. You only provided %s',
                         'event_espresso'
                     ),
@@ -344,7 +344,7 @@ class EE_Register_Addon implements EEI_Plugin_API
         if (isset(self::$_settings[ $addon_name ]) && ! did_action('activate_plugin')) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'An EE_Addon with the name "%s" has already been registered and each EE_Addon requires a unique name.',
                         'event_espresso'
                     ),
@@ -546,7 +546,7 @@ class EE_Register_Addon implements EEI_Plugin_API
             )
         ) {
             $incompatibility_message = sprintf(
-                __(
+                esc_html__(
                     '%4$sIMPORTANT!%5$sThe Event Espresso "%1$s" addon is not compatible with this version of Event Espresso.%2$sPlease upgrade your "%1$s" addon to version %3$s or newer to resolve this issue.',
                     'event_espresso'
                 ),
@@ -560,7 +560,7 @@ class EE_Register_Addon implements EEI_Plugin_API
             ! self::_meets_min_core_version_requirement($addon_settings['min_core_version'], espresso_version())
         ) {
             $incompatibility_message = sprintf(
-                __(
+                esc_html__(
                     '%5$sIMPORTANT!%6$sThe Event Espresso "%1$s" addon requires Event Espresso Core version "%2$s" or higher in order to run.%4$sYour version of Event Espresso Core is currently at "%3$s". Please upgrade Event Espresso Core first and then re-activate "%1$s".',
                     'event_espresso'
                 ),
@@ -573,7 +573,7 @@ class EE_Register_Addon implements EEI_Plugin_API
             );
         } elseif (version_compare($wp_version, $addon_settings['min_wp_version'], '<')) {
             $incompatibility_message = sprintf(
-                __(
+                esc_html__(
                     '%4$sIMPORTANT!%5$sThe Event Espresso "%1$s" addon requires WordPress version "%2$s" or greater.%3$sPlease update your version of WordPress to use the "%1$s" addon and to keep your site secure.',
                     'event_espresso'
                 ),
@@ -698,7 +698,7 @@ class EE_Register_Addon implements EEI_Plugin_API
             EE_Error::doing_it_wrong(
                 __METHOD__,
                 sprintf(
-                    __(
+                    esc_html__(
                         'An attempt to register an EE_Addon named "%s" has failed because it was not registered at the correct time.  Please use the "AHEE__EE_System__load_espresso_addons" hook to register addons.',
                         'event_espresso'
                     ),

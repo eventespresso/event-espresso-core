@@ -17,7 +17,7 @@ class Registration_Form_Add_Question_Help_Tour extends EE_Help_Tour
 
     protected function _set_tour_properties()
     {
-        $this->_label = __('Add New Question Tour', 'event_espresso');
+        $this->_label = esc_html__('Add New Question Tour', 'event_espresso');
         $this->_slug = $this->_is_caf ? 'add-question-caf-joyride' : 'add-question-joyride';
     }
 
@@ -87,9 +87,9 @@ class Registration_Form_Add_Question_Help_Tour extends EE_Help_Tour
 
     protected function _start()
     {
-        $content = '<h3>' . __('Add New Question', 'event_espresso') . '</h3>';
+        $content = '<h3>' . esc_html__('Add New Question', 'event_espresso') . '</h3>';
         $content .= '<p>'
-                    . __(
+                    . esc_html__(
                         'This tour of the Add New Question page will go over different areas of the screen to help you understand what they are used for.',
                         'event_espresso'
                     ) . '</p>';
@@ -100,7 +100,7 @@ class Registration_Form_Add_Question_Help_Tour extends EE_Help_Tour
     protected function _qst_display_text_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'This is the question that is displayed to registrants who are signing up for events.',
                    'event_espresso'
                ) . '</p>';
@@ -109,7 +109,7 @@ class Registration_Form_Add_Question_Help_Tour extends EE_Help_Tour
     protected function _qst_admin_label_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'Helps you understand the difference between questions that may appear similar but are actually different.',
                    'event_espresso'
                ) . '</p>';
@@ -117,13 +117,13 @@ class Registration_Form_Add_Question_Help_Tour extends EE_Help_Tour
 
     protected function _qst_admin_only_stop()
     {
-        return '<p>' . __('Specify whether this question should be shown only to admins.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Specify whether this question should be shown only to admins.', 'event_espresso') . '</p>';
     }
 
     protected function _qst_type_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'Select the type of question. Available options are Text, Textarea, Single, Multiple, Dropdown, and Date.',
                    'event_espresso'
                ) . '</p>';
@@ -131,13 +131,13 @@ class Registration_Form_Add_Question_Help_Tour extends EE_Help_Tour
 
     protected function _qst_required_stop()
     {
-        return '<p>' . __('Specify whether this question should be required.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Specify whether this question should be required.', 'event_espresso') . '</p>';
     }
 
     protected function _qst_required_text_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'Text to display when registrant does not answer question but is required to.',
                    'event_espresso'
                ) . '</p>';

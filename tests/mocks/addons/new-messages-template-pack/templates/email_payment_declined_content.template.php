@@ -33,7 +33,7 @@
 <tbody>
 <tr>
 <td>
-<h2><?php printf( __('Hello, %s:', 'ee-new-messages-template-pack-test'),  '[PRIMARY_REGISTRANT_FNAME] [PRIMARY_REGISTRANT_LNAME]' ); ?></h2>
+<h2><?php printf( esc_html__('Hello, %s:', 'ee-new-messages-template-pack-test'),  '[PRIMARY_REGISTRANT_FNAME] [PRIMARY_REGISTRANT_LNAME]' ); ?></h2>
 <p class="lead"><?php _e('Your payment was <strong>DECLINED</strong> for the following transaction and ticket purchases:', 'ee-new-messages-template-pack-test'); ?></p>
 <h3><?php _e('Payment Details:', 'ee-new-messages-template-pack-test'); ?></h3>
 <ul>
@@ -46,11 +46,11 @@
 	<li><strong><?php _e('Amount Due:', 'ee-new-messages-template-pack-test'); ?></strong> [TOTAL_OWING]</li>
 </ul>
 <!-- Callout Panel -->
-<p class="callout"><?php printf( __( 'Please %sretry your payment%s, or choose an alternate payment method to reserve your space.', 'ee-new-messages-template-pack-test'), '<a href="[PAYMENT_URL]">', '</a>' ); ?></p>
+<p class="callout"><?php printf( esc_html__( 'Please %sretry your payment%s, or choose an alternate payment method to reserve your space.', 'ee-new-messages-template-pack-test'), '<a href="[PAYMENT_URL]">', '</a>' ); ?></p>
 <!-- /Callout Panel -->
 [EVENT_LIST]
 <!-- Callout Panel -->
-<p class="callout"><?php printf( __( 'Please %sretry your payment%s, or choose an alternate payment method to reserve your space.', 'ee-new-messages-template-pack-test'), '<a href="[PAYMENT_URL]">', '</a>' ); ?></p>
+<p class="callout"><?php printf( esc_html__( 'Please %sretry your payment%s, or choose an alternate payment method to reserve your space.', 'ee-new-messages-template-pack-test'), '<a href="[PAYMENT_URL]">', '</a>' ); ?></p>
 <!-- /Callout Panel --></td>
 </tr>
 </tbody>

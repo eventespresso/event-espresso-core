@@ -78,9 +78,11 @@ class TicketSelectorIframe extends Iframe
                 'FHEE__EventEspresso_modules_ticket_selector_TicketSelectorIframe__construct__localized_vars',
                 array(
                     'ticket_selector_iframe' => true,
-                    'EEDTicketSelectorMsg'   => __(
-                        'Please choose at least one ticket before continuing.',
-                        'event_espresso'
+                    'EEDTicketSelectorMsg'   => wp_strip_all_tags(
+                        __(
+                            'Please choose at least one ticket before continuing.',
+                            'event_espresso'
+                        )
                     ),
                 )
             )

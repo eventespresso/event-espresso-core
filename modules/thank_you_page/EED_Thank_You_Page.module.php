@@ -149,7 +149,7 @@ class EED_Thank_You_Page extends EED_Module
         $TXN_model = EE_Registry::instance()->load_model('Transaction');
         if (! $TXN_model instanceof EEM_Transaction) {
             EE_Error::add_error(
-                __('The transaction model could not be established.', 'event_espresso'),
+                esc_html__('The transaction model could not be established.', 'event_espresso'),
                 __FILE__,
                 __FUNCTION__,
                 __LINE__
@@ -161,7 +161,7 @@ class EED_Thank_You_Page extends EED_Module
         // verify TXN
         if (WP_DEBUG && ! $this->_current_txn instanceof EE_Transaction) {
             EE_Error::add_error(
-                __(
+                esc_html__(
                     'No transaction information could be retrieved or the transaction data is not of the correct type.',
                     'event_espresso'
                 ),
@@ -223,7 +223,7 @@ class EED_Thank_You_Page extends EED_Module
         // only do thank you page stuff if we have a REG_url_link in the url
         if (WP_DEBUG && ! $reg_url_link) {
             EE_Error::add_error(
-                __(
+                esc_html__(
                     'No transaction information could be retrieved because the registration URL link is missing or invalid.',
                     'event_espresso'
                 ),
@@ -349,9 +349,9 @@ class EED_Thank_You_Page extends EED_Module
         $this->_get_reg_url_link();
         if (! $this->get_txn()) {
             echo EEH_HTML::div(
-                EEH_HTML::h4(__('We\'re sorry...', 'event_espresso')) .
+                EEH_HTML::h4(esc_html__('We\'re sorry...', 'event_espresso')) .
                 sprintf(
-                    __(
+                    esc_html__(
                         'This is a system page for displaying transaction information after a purchase.%1$sYou are most likely seeing this notice because you have navigated to this page%1$sthrough some means other than completing a transaction.%1$sSorry for the disappointment, but you will most likely find nothing of interest here.%1$s%1$s',
                         'event_espresso'
                     ),
@@ -446,12 +446,12 @@ class EED_Thank_You_Page extends EED_Module
         // link to receipt
         $template_args['TXN_receipt_url'] = $this->_current_txn->receipt_url();
         if (! empty($template_args['TXN_receipt_url'])) {
-            $template_args['order_conf_desc'] = __(
+            $template_args['order_conf_desc'] = esc_html__(
                 '%1$sCongratulations%2$sYour registration has been successfully processed.%3$sCheck your email for your registration confirmation or click the button below to view / download / print a full description of your purchases and registration information.',
                 'event_espresso'
             );
         } else {
-            $template_args['order_conf_desc'] = __(
+            $template_args['order_conf_desc'] = esc_html__(
                 '%1$sCongratulations%2$sYour registration has been successfully processed.%3$sCheck your email for your registration confirmation.',
                 'event_espresso'
             );
@@ -538,7 +538,7 @@ class EED_Thank_You_Page extends EED_Module
                 EED_Messages::process_resend(array('_REG_ID' => $registration->ID()));
             } else {
                 EE_Error::add_error(
-                    __(
+                    esc_html__(
                         'The Registration Confirmation email could not be sent because a valid Registration could not be retrieved from the database.',
                         'event_espresso'
                     ),
@@ -549,7 +549,7 @@ class EED_Thank_You_Page extends EED_Module
             }
         } else {
             EE_Error::add_error(
-                __(
+                esc_html__(
                     'The Registration Confirmation email could not be sent because a registration token is missing or invalid.',
                     'event_espresso'
                 ),
@@ -633,7 +633,7 @@ class EED_Thank_You_Page extends EED_Module
                         <p id="ee-ajax-loading-pg" class="highlight-bg small-text clear">
                             <?php echo apply_filters(
                                 'EED_Thank_You_Page__get_ajax_content__waiting_for_IPN_msg',
-                                __(
+                                esc_html__(
                                     'Some payment gateways can take 15 minutes or more to return their payment notification, so please be patient if you require payment confirmation as soon as possible. Please note that as soon as everything is finalized, we will send your full payment and registration confirmation results to you via email.',
                                     'event_espresso'
                                 )
@@ -669,7 +669,7 @@ class EED_Thank_You_Page extends EED_Module
                 <p id="events-requiring-pre-approval-pg" class="small-text">
                     <?php echo apply_filters(
                         'AHEE__EED_Thank_You_Page__get_ajax_content__not_approved_message',
-                        __(
+                        esc_html__(
                             'The following Event(s) you have registered for do not require payment at this time and will not be billed for during this transaction. Billing will only occur after all attendees have been approved by the event organizer. You will be notified when your registration has been processed. If this is a free event, then no billing will occur.',
                             'event_espresso'
                         )
@@ -758,7 +758,7 @@ class EED_Thank_You_Page extends EED_Module
 						' . (
                 $payment->payment_method() instanceof EE_Payment_Method
                     ? $payment->payment_method()->name()
-                    : __('Unknown', 'event_espresso')
+                    : esc_html__('Unknown', 'event_espresso')
                 ) . '
 					</td>
 					<td class="jst-rght">

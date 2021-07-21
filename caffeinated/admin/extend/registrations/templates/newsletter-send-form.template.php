@@ -36,7 +36,7 @@
             <input id="newsletter-batch-ids" type="hidden" name="batch_message[ids]" value="">
             <h3 class="newsletter-send-form-title"><?php
                 printf(
-                    __('Sending batch message to %s people...', 'event_espresso'),
+                    esc_html__('Sending batch message to %s people...', 'event_espresso'),
                     '[NUMPEOPLE]'
                 ); ?></h3>
             <label for="batch-message-template-selector"><?php _e('Select Template:', 'event_espresso'); ?></label>

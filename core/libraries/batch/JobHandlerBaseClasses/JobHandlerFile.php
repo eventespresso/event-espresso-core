@@ -100,13 +100,13 @@ abstract class JobHandlerFile extends JobHandler
             );
             // those methods normally fail with an exception, but if not, let's do it
             if (! $success) {
-                throw new \EE_Error(__('Could not create temporary file, an unknown error occurred', 'event_espresso'));
+                throw new \EE_Error(esc_html__('Could not create temporary file, an unknown error occurred', 'event_espresso'));
             }
         } catch (\EE_Error $e) {
             throw new BatchRequestException(
                 sprintf(
                     // phpcs:disable WordPress.WP.I18n.MissingTranslatorsComment
-                    __('Could not create temporary file for job %1$s, because: %2$s ', 'event_espresso'),
+                    esc_html__('Could not create temporary file for job %1$s, because: %2$s ', 'event_espresso'),
                     $job_id,
                     $e->getMessage()
                 ),

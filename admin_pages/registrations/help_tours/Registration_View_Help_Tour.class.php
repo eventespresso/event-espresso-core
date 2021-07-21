@@ -17,7 +17,7 @@ class Registration_View_Help_Tour extends EE_Help_Tour
 
     public function _set_tour_properties()
     {
-        $this->_label = __('Registration View Tour', 'event_espresso');
+        $this->_label = esc_html__('Registration View Tour', 'event_espresso');
         $this->_slug = 'registration-view-joyride';
     }
 
@@ -86,22 +86,22 @@ class Registration_View_Help_Tour extends EE_Help_Tour
 
     protected function _start()
     {
-        $content = '<h3>' . __('Welcome to the Registration Details page!', 'event_espresso') . '</h3>';
-        $content .= '<p>' . __('An introduction to the registration details page', 'event_espresso') . '</p>';
+        $content = '<h3>' . esc_html__('Welcome to the Registration Details page!', 'event_espresso') . '</h3>';
+        $content .= '<p>' . esc_html__('An introduction to the registration details page', 'event_espresso') . '</p>';
         return $content;
     }
 
 
     protected function _reg_date_title()
     {
-        return '<p>' . __('About the reg date', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('About the reg date', 'event_espresso') . '</p>';
     }
 
 
     protected function _reg_details_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'About the reg details area (pending, buttons they can push and what happens)',
                    'event_espresso'
                ) . '</p>';
@@ -110,26 +110,26 @@ class Registration_View_Help_Tour extends EE_Help_Tour
 
     protected function _reg_details_table()
     {
-        return '<p>' . __('about the registration details metabox', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('about the registration details metabox', 'event_espresso') . '</p>';
     }
 
 
     protected function _display_additional_info_stop()
     {
-        return '<p>' . __('what happens when they click this link?  What\'s it here for', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('what happens when they click this link?  What\'s it here for', 'event_espresso') . '</p>';
     }
 
 
     protected function _attendee_details_stop()
     {
-        return '<p>' . __('details on the registrant attached to this registration', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('details on the registrant attached to this registration', 'event_espresso') . '</p>';
     }
 
 
     protected function _edit_reg_question_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'info about how they can edit the questions related to this registration here',
                    'event_espresso'
                ) . '</p>';

@@ -17,7 +17,7 @@ class Google_Maps_Help_Tour extends EE_Help_Tour
 
     protected function _set_tour_properties()
     {
-        $this->_label = __('Google Maps Tour', 'event_espresso');
+        $this->_label = esc_html__('Google Maps Tour', 'event_espresso');
         $this->_slug = 'google-maps-settings-joyride';
     }
 
@@ -60,9 +60,9 @@ class Google_Maps_Help_Tour extends EE_Help_Tour
 
     protected function _start()
     {
-        $content = '<h3>' . __('Google Maps Settings', 'event_espresso') . '</h3>';
+        $content = '<h3>' . esc_html__('Google Maps Settings', 'event_espresso') . '</h3>';
         $content .= '<p>'
-                    . __(
+                    . esc_html__(
                         'This tour of the Google Maps page will go over different areas of the screen to help you understand what they are used for.',
                         'event_espresso'
                     ) . '</p>';
@@ -71,16 +71,16 @@ class Google_Maps_Help_Tour extends EE_Help_Tour
 
     protected function _use_google_maps_stop()
     {
-        return '<p>' . __('Turn Google maps on or off site wide for Event Espresso.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Turn Google maps on or off site wide for Event Espresso.', 'event_espresso') . '</p>';
     }
 
     protected function _reg_page_map_settings_stop()
     {
-        return '<p>' . __('These settings affect the single registration page maps only.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('These settings affect the single registration page maps only.', 'event_espresso') . '</p>';
     }
 
     protected function _event_list_map_stop()
     {
-        return '<p>' . __('These setting affect the event list page maps.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('These setting affect the event list page maps.', 'event_espresso') . '</p>';
     }
 }

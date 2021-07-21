@@ -63,7 +63,7 @@
     </div>
     <div class="taxes">
         <h3 class="section-title"><?php _e("Taxes", 'event_espresso') ?></h3>
-        <p><?php printf(__('%s*%s Taxable items. The total amount collected for taxes is reflected in the total(s) below.', 'event_espresso'), '<strong>', '</strong>'); ?></p>
+        <p><?php printf(esc_html__('%s*%s Taxable items. The total amount collected for taxes is reflected in the total(s) below.', 'event_espresso'), '<strong>', '</strong>'); ?></p>
         <table class="invoice-amount">
             <thead>
                 <tr class="header_row">
@@ -81,7 +81,7 @@
         </table>
     </div>
     <div class="grand-total-dv">
-        <h2 class="grand-total"><?php printf(__("Grand Total: %s", "event_espresso"), '[TOTAL_COST]'); ?></h2>
+        <h2 class="grand-total"><?php printf(esc_html__("Grand Total: %s", "event_espresso"), '[TOTAL_COST]'); ?></h2>
     </div>
     <div class="payment-dv">
         <h3 class="section-title"><?php _e("Payments", 'event_espresso') ?></h3>

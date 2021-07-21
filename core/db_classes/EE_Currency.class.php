@@ -186,6 +186,6 @@ class EE_Currency extends EE_Base_Class
      */
     public function name()
     {
-        return sprintf(__("%s (%s)", "event_espresso"), $this->code(), $this->plural_name());
+        return sprintf(esc_html__("%s (%s)", "event_espresso"), $this->code(), $this->plural_name());
     }
 }

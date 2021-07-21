@@ -15,7 +15,7 @@
         <?php echo apply_filters(
             'FHEE__registration_page_attendee_information__copy_attendee_pg',
             sprintf(
-                __(
+                esc_html__(
                     'This option allows you to use the above information for all additional attendee question fields. %sPlease note:%s some events may have additional questions that you may still be required to answer in order to complete your registration.',
                     'event_espresso'
                 ),

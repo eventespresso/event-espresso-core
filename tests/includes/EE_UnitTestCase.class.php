@@ -208,7 +208,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
         if (!self::$accidental_txn_commit_noted && get_option('accidental_txn_commit_indicator', FALSE)) {
             global $wpdb;
             self::$accidental_txn_commit_noted = TRUE;
-            throw new EE_Error(sprintf(__("Accidental MySQL Commit was issued sometime during the previous test. This means we couldn't properly restore database to its pre-test state. If this doesnt create problems now it probably will later! Read up on MySQL commits, especially Implicit Commits. Queries executed were: \r\n%s. \r\nThis accidental commit happened during %s", 'event_espresso'), print_r($wpdb->queries, TRUE), $this->getName()));
+            throw new EE_Error(sprintf(esc_html__("Accidental MySQL Commit was issued sometime during the previous test. This means we couldn't properly restore database to its pre-test state. If this doesnt create problems now it probably will later! Read up on MySQL commits, especially Implicit Commits. Queries executed were: \r\n%s. \r\nThis accidental commit happened during %s", 'event_espresso'), print_r($wpdb->queries, TRUE), $this->getName()));
         }
     }
 
@@ -619,14 +619,14 @@ class EE_UnitTestCase extends WP_UnitTestCase
         $date_parsing_error = '';
         if (!$expected_date_obj instanceof DateTime) {
             $date_parsing_error = sprintf(
-                __('Expected date %1$s could not be parsed into format %2$s', 'event_espresso'),
+                esc_html__('Expected date %1$s could not be parsed into format %2$s', 'event_espresso'),
                 print_r($expected_date, true),
                 $full_format
             );
         }
         if (!$actual_date_obj instanceof DateTime) {
             $date_parsing_error = sprintf(
-                __('Actual date %1$s could not be parsed into format %2$s', 'event_espresso'),
+                esc_html__('Actual date %1$s could not be parsed into format %2$s', 'event_espresso'),
                 print_r($actual_date, true),
                 $full_format
             );
@@ -638,7 +638,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
         $custom_error_message = !empty($custom_error_message)
             ? $custom_error_message
             : sprintf(
-                __(
+                esc_html__(
                     'The expected date "%1$s" differs from the actual date "%2$s" by more than one minute',
                     'event_espresso'
                 ),
@@ -735,7 +735,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
         if ($in_there) {
             $this->assertTrue(true);
         } else {
-            $this->assertTrue($in_there, sprintf(__('Array %1$s does not contain %2$s', 'event_espresso'), print_r($haystack, true), print_r($item, true)));
+            $this->assertTrue($in_there, sprintf(esc_html__('Array %1$s does not contain %2$s', 'event_espresso'), print_r($haystack, true), print_r($item, true)));
         }
     }
 
@@ -750,7 +750,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
         if ($not_in_there) {
             $this->assertTrue($not_in_there);
         } else {
-            $this->assertTrue($not_in_there, sprintf(__('Array %1$s DOES contain %2$s when it shouldn\'t', 'event_espresso'), print_r($haystack, true), print_r($item, true)));
+            $this->assertTrue($not_in_there, sprintf(esc_html__('Array %1$s DOES contain %2$s when it shouldn\'t', 'event_espresso'), print_r($haystack, true), print_r($item, true)));
         }
     }
 
@@ -764,7 +764,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
         if ($option) {
             $this->assertTrue(true);
         } else {
-            $this->assertNotNull($option, sprintf(__('The WP Option "%s" does not exist but should', 'event_espresso'), $option_name));
+            $this->assertNotNull($option, sprintf(esc_html__('The WP Option "%s" does not exist but should', 'event_espresso'), $option_name));
         }
     }
 
@@ -776,7 +776,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
     {
         $option = get_option($option_name, NULL);
         if ($option) {
-            $this->assertNull($option, sprintf(__('The WP Option "%s" exists but shouldn\'t', 'event_espresso'), $option_name));
+            $this->assertNull($option, sprintf(esc_html__('The WP Option "%s" exists but shouldn\'t', 'event_espresso'), $option_name));
         } else {
             $this->assertTrue(true);
         }
@@ -808,7 +808,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
                 if ($expected_value !== $actual_value) {
                     $this->fail(
                         sprintf(
-                            __('EE objects for the field %4$s of class "%1$s" did not match. They were: %2$s and %3$s.  The values for the field were %5$s and %6$s', 'event_espresso'),
+                            esc_html__('EE objects for the field %4$s of class "%1$s" did not match. They were: %2$s and %3$s.  The values for the field were %5$s and %6$s', 'event_espresso'),
                             get_class($expected_object),
                             print_r($expected_object->model_field_array(), true),
                             print_r($actual_object->model_field_array(), true),
@@ -961,7 +961,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
                 global $wpdb;
                 throw new EE_Error(
                     sprintf(
-                        __('Could not save %1$s using %2$s. Error was %3$s', 'event_espresso'),
+                        esc_html__('Could not save %1$s using %2$s. Error was %3$s', 'event_espresso'),
                         $model_name,
                         wp_json_encode($args),
                         $wpdb->last_error
@@ -1006,7 +1006,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
         if ($table_analysis->tableExists($table_name)) {
             $this->fail(
                 sprintf(
-                    __('Table like %1$s SHOULD NOT exist. It was apparently defined on the model "%2$s"', 'event_espresso'),
+                    esc_html__('Table like %1$s SHOULD NOT exist. It was apparently defined on the model "%2$s"', 'event_espresso'),
                     $table_name,
                     $model_name
                 )

@@ -24,7 +24,7 @@ class EE_Admin_File_Uploader_Display_Strategy extends EE_Display_Strategy_Base
      */
     public static function enqueue_scripts()
     {
-        EE_Error::doing_it_wrong(__FUNCTION__, __('EE_Admin_File_Uploader_Display_Strategy::enqueue_scripts() no longer needs to be called in order to display the admin uploader input correctly. This is handled now by EE_Admin_File_Uploader_Display_Strategy::enqueue_js() which is called automatically when enqueueing JS and CSS for the form', 'event_espresso'), '4.9.8.rc.015');
+        EE_Error::doing_it_wrong(__FUNCTION__, esc_html__('EE_Admin_File_Uploader_Display_Strategy::enqueue_scripts() no longer needs to be called in order to display the admin uploader input correctly. This is handled now by EE_Admin_File_Uploader_Display_Strategy::enqueue_js() which is called automatically when enqueueing JS and CSS for the form', 'event_espresso'), '4.9.8.rc.015');
         wp_enqueue_media();
         wp_enqueue_script('media-upload');
         wp_enqueue_script('ee-payments', EE_GLOBAL_ASSETS_URL . 'scripts/ee-media-uploader.js');
@@ -57,9 +57,9 @@ class EE_Admin_File_Uploader_Display_Strategy extends EE_Display_Strategy_Base
         $input .= 'value="' . $this->_input->raw_value_in_form() . '" ';
         $input .= $this->_input->other_html_attributes() . '>';
         // image uploader
-        $uploader = EEH_HTML::link('#', '<img src="' . admin_url('images/media-button-image.gif') . '" >', __('click to add an image', 'event_espresso'), '', 'ee_media_upload');
+        $uploader = EEH_HTML::link('#', '<img src="' . admin_url('images/media-button-image.gif') . '" >', esc_html__('click to add an image', 'event_espresso'), '', 'ee_media_upload');
         // only attempt to show the image if it at least exists
-        $image = $this->src_exists($this->_input->raw_value()) ? EEH_HTML::br(2) . EEH_HTML::img($this->_input->raw_value(), __('logo', 'event_espresso'), '', 'ee_media_image') : '';
+        $image = $this->src_exists($this->_input->raw_value()) ? EEH_HTML::br(2) . EEH_HTML::img($this->_input->raw_value(), esc_html__('logo', 'event_espresso'), '', 'ee_media_image') : '';
         // html string
         return EEH_HTML::div($input . EEH_HTML::nbsp() . $uploader . $image, '', 'ee_media_uploader_area');
     }

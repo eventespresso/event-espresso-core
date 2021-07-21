@@ -31,8 +31,8 @@ if ( ! function_exists( 'espresso_pagination' ) ) {
 				'end_size'     => 10,
 				'mid_size'     => 6,
 				'prev_next'    => true,
-				'prev_text'    => __( '&lsaquo; PREV', 'event_espresso' ),
-				'next_text'    => __( 'NEXT &rsaquo;', 'event_espresso' ),
+				'prev_text'    => esc_html__( '&lsaquo; PREV', 'event_espresso' ),
+				'next_text'    => esc_html__( 'NEXT &rsaquo;', 'event_espresso' ),
 				'type'         => 'plain',
 				'add_args'     => false,
 				'add_fragment' => ''

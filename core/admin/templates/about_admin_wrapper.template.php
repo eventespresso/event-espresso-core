@@ -8,7 +8,7 @@
                                                             esc_attr__('%s Logo', 'event_espresso'),
                                                             'Event Espresso'
                                                         ); ?>"/>
-        <br/><?php printf(__('Version %s', 'event_espresso'), EVENT_ESPRESSO_VERSION); ?></div>
+        <br/><?php printf(esc_html__('Version %s', 'event_espresso'), EVENT_ESPRESSO_VERSION); ?></div>
 
     <?php echo $nav_tabs; ?>
 

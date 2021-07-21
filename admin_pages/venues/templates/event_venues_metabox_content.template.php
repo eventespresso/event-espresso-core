@@ -4,7 +4,7 @@
             <fieldset id="venue-manager">
                 <?php echo $no_venues_info; ?>
                 <p><a href="admin.php?page=espresso_venues" target="_blank">
-                        <?php echo __(
+                        <?php echo esc_html__(
                             'Add venues to the Venue Manager',
                             'event_espresso'
                         ) ?></a></p>

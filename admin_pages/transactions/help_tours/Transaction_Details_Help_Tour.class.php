@@ -17,7 +17,7 @@ class Transaction_Details_Help_Tour extends EE_Help_Tour
 
     protected function _set_tour_properties()
     {
-        $this->_label = __('View Transaction Tour', 'event_espresso');
+        $this->_label = esc_html__('View Transaction Tour', 'event_espresso');
         $this->_slug = 'transaction-details-joyride';
     }
 
@@ -106,9 +106,9 @@ class Transaction_Details_Help_Tour extends EE_Help_Tour
 
     protected function _start()
     {
-        $content = '<h3>' . __('View Transaction', 'event_espresso') . '</h3>';
+        $content = '<h3>' . esc_html__('View Transaction', 'event_espresso') . '</h3>';
         $content .= '<p>'
-                    . __(
+                    . esc_html__(
                         'This tour of the View Transaction page will go over different areas of the screen to help you understand what they are used for.',
                         'event_espresso'
                     ) . '</p>';
@@ -117,13 +117,13 @@ class Transaction_Details_Help_Tour extends EE_Help_Tour
 
     protected function _txn_date_h2_stop()
     {
-        return '<p>' . __('This is the date that the transaction occurred on.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('This is the date that the transaction occurred on.', 'event_espresso') . '</p>';
     }
 
     protected function _txn_status_h2_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'View current status of the transaction. Available statuses are Complete, Failed, Incomplete, and Overpaid.',
                    'event_espresso'
                ) . '</p>';
@@ -132,7 +132,7 @@ class Transaction_Details_Help_Tour extends EE_Help_Tour
     protected function _txn_amount_due_h2_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'View the amount due for a transaction (will not appear if the transaction has been paid in full).',
                    'event_espresso'
                ) . '</p>';
@@ -141,7 +141,7 @@ class Transaction_Details_Help_Tour extends EE_Help_Tour
     protected function _txn_details_metabox_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'The transaction details area displays various information including Line Item ID, Event Name, Event Date, Ticket Option, Price, Quantity, Line Total, Sales Tax, and the Grand Total. You can also view details about any payments made towards this transaction.',
                    'event_espresso'
                ) . '</p>';
@@ -150,7 +150,7 @@ class Transaction_Details_Help_Tour extends EE_Help_Tour
     protected function _txn_session_info_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'You can view additional information about the transaction by clicking on the link below. Examples of available information includes IP Address and User Agent.',
                    'event_espresso'
                ) . '</p>';
@@ -159,7 +159,7 @@ class Transaction_Details_Help_Tour extends EE_Help_Tour
     protected function _txn_attendees_metabox_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'View information about registrants that are linked to this transaction.',
                    'event_espresso'
                ) . '</p>';
@@ -168,7 +168,7 @@ class Transaction_Details_Help_Tour extends EE_Help_Tour
     protected function _txn_primary_reg_metabox_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'View contact details on the primary registrant who is linked to this transaction.',
                    'event_espresso'
                ) . '</p>';
@@ -176,11 +176,11 @@ class Transaction_Details_Help_Tour extends EE_Help_Tour
 
     protected function _txn_billing_metabox_stop()
     {
-        return '<p>' . __('View billing information for this transaction.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('View billing information for this transaction.', 'event_espresso') . '</p>';
     }
 
     protected function _event_name_stop()
     {
-        return '<p>' . __('event name', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('event name', 'event_espresso') . '</p>';
     }
 }

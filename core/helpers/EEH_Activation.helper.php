@@ -195,7 +195,7 @@ class EEH_Activation implements ResettableInterface
         } elseif (WP_DEBUG && $which_to_include !== 'all') {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'Invalid argument of "%1$s" passed to EEH_Activation::get_cron_tasks. Valid values are "all", "old" and "current".',
                         'event_espresso'
                     ),
@@ -405,25 +405,25 @@ class EEH_Activation implements ResettableInterface
         $critical_pages        = [
             [
                 'id'   => 'reg_page_id',
-                'name' => __('Registration Checkout', 'event_espresso'),
+                'name' => esc_html__('Registration Checkout', 'event_espresso'),
                 'post' => null,
                 'code' => 'ESPRESSO_CHECKOUT',
             ],
             [
                 'id'   => 'txn_page_id',
-                'name' => __('Transactions', 'event_espresso'),
+                'name' => esc_html__('Transactions', 'event_espresso'),
                 'post' => null,
                 'code' => 'ESPRESSO_TXN_PAGE',
             ],
             [
                 'id'   => 'thank_you_page_id',
-                'name' => __('Thank You', 'event_espresso'),
+                'name' => esc_html__('Thank You', 'event_espresso'),
                 'post' => null,
                 'code' => 'ESPRESSO_THANK_YOU',
             ],
             [
                 'id'   => 'cancel_page_id',
-                'name' => __('Registration Cancelled', 'event_espresso'),
+                'name' => esc_html__('Registration Cancelled', 'event_espresso'),
                 'post' => null,
                 'code' => 'ESPRESSO_CANCELLED',
             ],
@@ -444,7 +444,7 @@ class EEH_Activation implements ResettableInterface
                     $critical_page = EEH_Activation::create_critical_page($critical_page);
                     // REALLY? Still nothing ??!?!?
                     if ($critical_page['post'] === null) {
-                        $msg = __(
+                        $msg = esc_html__(
                             'The Event Espresso critical page configuration settings could not be updated.',
                             'event_espresso'
                         );
@@ -461,7 +461,7 @@ class EEH_Activation implements ResettableInterface
                 // update Config with post ID
                 $EE_Core_Config->{$critical_page['id']} = $critical_page['post']->ID;
                 if (! EE_Config::instance()->update_espresso_config(false, false)) {
-                    $msg = __(
+                    $msg = esc_html__(
                         'The Event Espresso critical page configuration settings could not be updated.',
                         'event_espresso'
                     );
@@ -484,7 +484,7 @@ class EEH_Activation implements ResettableInterface
                         'event_espresso'
                     ),
                     '<a href="' . admin_url('admin.php?page=espresso_general_settings&action=critical_pages') . '">'
-                    . __('Event Espresso Critical Pages Settings', 'event_espresso')
+                    . esc_html__('Event Espresso Critical Pages Settings', 'event_espresso')
                     . '</a>'
                 )
             );
@@ -539,7 +539,7 @@ class EEH_Activation implements ResettableInterface
         $post_id = wp_insert_post($post_args);
         if (! $post_id) {
             $msg = sprintf(
-                __('The Event Espresso  critical page entitled "%s" could not be created.', 'event_espresso'),
+                esc_html__('The Event Espresso  critical page entitled "%s" could not be created.', 'event_espresso'),
                 $critical_page['name']
             );
             EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
@@ -548,7 +548,7 @@ class EEH_Activation implements ResettableInterface
         // get newly created post's details
         if (! $critical_page['post'] = get_post($post_id)) {
             $msg = sprintf(
-                __('The Event Espresso critical page entitled "%s" could not be retrieved.', 'event_espresso'),
+                esc_html__('The Event Espresso critical page entitled "%s" could not be retrieved.', 'event_espresso'),
                 $critical_page['name']
             );
             EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
@@ -640,7 +640,7 @@ class EEH_Activation implements ResettableInterface
                 // so we should be more cautious rather than just dropping tables so easily
                 error_log(
                     sprintf(
-                        __(
+                        esc_html__(
                             'It appears that database table "%1$s" exists when it shouldn\'t, and therefore may contain erroneous data. If you have previously restored your database from a backup that didn\'t remove the old tables, then we recommend: %2$s 1. create a new COMPLETE backup of your database, %2$s 2. delete ALL tables from your database, %2$s 3. restore to your previous backup. %2$s If, however, you have not restored to a backup, then somehow your "%3$s" WordPress option could not be read. You can probably ignore this message, but should investigate why that option is being removed.',
                             'event_espresso'
                         ),
@@ -759,7 +759,7 @@ class EEH_Activation implements ResettableInterface
         $dms_name = EE_Data_Migration_Manager::instance()->get_most_up_to_date_dms();
         if (! $dms_name) {
             EE_Error::add_error(
-                __(
+                esc_html__(
                     'Could not determine most up-to-date data migration script from which to pull database schema
                      structure. So database is probably not setup properly',
                     'event_espresso'
@@ -781,7 +781,7 @@ class EEH_Activation implements ResettableInterface
                 }
             } else {
                 EE_Error::add_error(
-                    __(
+                    esc_html__(
                         'There were errors creating the Event Espresso database tables and Event Espresso has been 
                             deactivated. To view the errors, please enable WP_DEBUG in your wp-config.php file.',
                         'event_espresso'
@@ -822,7 +822,7 @@ class EEH_Activation implements ResettableInterface
                 switch ($QSG_system) {
                     case 1:
                         $QSG_values = [
-                            'QSG_name'            => __('Personal Information', 'event_espresso'),
+                            'QSG_name'            => esc_html__('Personal Information', 'event_espresso'),
                             'QSG_identifier'      => 'personal-information-' . time(),
                             'QSG_desc'            => '',
                             'QSG_order'           => 1,
@@ -834,7 +834,7 @@ class EEH_Activation implements ResettableInterface
                         break;
                     case 2:
                         $QSG_values = [
-                            'QSG_name'            => __('Address Information', 'event_espresso'),
+                            'QSG_name'            => esc_html__('Address Information', 'event_espresso'),
                             'QSG_identifier'      => 'address-information-' . time(),
                             'QSG_desc'            => '',
                             'QSG_order'           => 2,
@@ -885,12 +885,12 @@ class EEH_Activation implements ResettableInterface
                 switch ($QST_system) {
                     case 'fname':
                         $QST_values = [
-                            'QST_display_text'  => __('First Name', 'event_espresso'),
-                            'QST_admin_label'   => __('First Name - System Question', 'event_espresso'),
+                            'QST_display_text'  => esc_html__('First Name', 'event_espresso'),
+                            'QST_admin_label'   => esc_html__('First Name - System Question', 'event_espresso'),
                             'QST_system'        => 'fname',
                             'QST_type'          => 'TEXT',
                             'QST_required'      => 1,
-                            'QST_required_text' => __('This field is required', 'event_espresso'),
+                            'QST_required_text' => esc_html__('This field is required', 'event_espresso'),
                             'QST_order'         => 1,
                             'QST_admin_only'    => 0,
                             'QST_max'           => EEM_Question::instance()
@@ -901,12 +901,12 @@ class EEH_Activation implements ResettableInterface
                         break;
                     case 'lname':
                         $QST_values = [
-                            'QST_display_text'  => __('Last Name', 'event_espresso'),
-                            'QST_admin_label'   => __('Last Name - System Question', 'event_espresso'),
+                            'QST_display_text'  => esc_html__('Last Name', 'event_espresso'),
+                            'QST_admin_label'   => esc_html__('Last Name - System Question', 'event_espresso'),
                             'QST_system'        => 'lname',
                             'QST_type'          => 'TEXT',
                             'QST_required'      => 1,
-                            'QST_required_text' => __('This field is required', 'event_espresso'),
+                            'QST_required_text' => esc_html__('This field is required', 'event_espresso'),
                             'QST_order'         => 2,
                             'QST_admin_only'    => 0,
                             'QST_max'           => EEM_Question::instance()
@@ -917,12 +917,12 @@ class EEH_Activation implements ResettableInterface
                         break;
                     case 'email':
                         $QST_values = [
-                            'QST_display_text'  => __('Email Address', 'event_espresso'),
-                            'QST_admin_label'   => __('Email Address - System Question', 'event_espresso'),
+                            'QST_display_text'  => esc_html__('Email Address', 'event_espresso'),
+                            'QST_admin_label'   => esc_html__('Email Address - System Question', 'event_espresso'),
                             'QST_system'        => 'email',
                             'QST_type'          => 'EMAIL',
                             'QST_required'      => 1,
-                            'QST_required_text' => __('This field is required', 'event_espresso'),
+                            'QST_required_text' => esc_html__('This field is required', 'event_espresso'),
                             'QST_order'         => 3,
                             'QST_admin_only'    => 0,
                             'QST_max'           => EEM_Question::instance()
@@ -933,12 +933,12 @@ class EEH_Activation implements ResettableInterface
                         break;
                     case 'email_confirm':
                         $QST_values = [
-                            'QST_display_text'  => __('Confirm Email Address', 'event_espresso'),
-                            'QST_admin_label'   => __('Confirm Email Address - System Question', 'event_espresso'),
+                            'QST_display_text'  => esc_html__('Confirm Email Address', 'event_espresso'),
+                            'QST_admin_label'   => esc_html__('Confirm Email Address - System Question', 'event_espresso'),
                             'QST_system'        => 'email_confirm',
                             'QST_type'          => 'EMAIL_CONFIRM',
                             'QST_required'      => 1,
-                            'QST_required_text' => __('This field is required', 'event_espresso'),
+                            'QST_required_text' => esc_html__('This field is required', 'event_espresso'),
                             'QST_order'         => 4,
                             'QST_admin_only'    => 0,
                             'QST_max'           => EEM_Question::instance()
@@ -949,12 +949,12 @@ class EEH_Activation implements ResettableInterface
                         break;
                     case 'address':
                         $QST_values = [
-                            'QST_display_text'  => __('Address', 'event_espresso'),
-                            'QST_admin_label'   => __('Address - System Question', 'event_espresso'),
+                            'QST_display_text'  => esc_html__('Address', 'event_espresso'),
+                            'QST_admin_label'   => esc_html__('Address - System Question', 'event_espresso'),
                             'QST_system'        => 'address',
                             'QST_type'          => 'TEXT',
                             'QST_required'      => 0,
-                            'QST_required_text' => __('This field is required', 'event_espresso'),
+                            'QST_required_text' => esc_html__('This field is required', 'event_espresso'),
                             'QST_order'         => 5,
                             'QST_admin_only'    => 0,
                             'QST_max'           => EEM_Question::instance()
@@ -965,12 +965,12 @@ class EEH_Activation implements ResettableInterface
                         break;
                     case 'address2':
                         $QST_values = [
-                            'QST_display_text'  => __('Address2', 'event_espresso'),
-                            'QST_admin_label'   => __('Address2 - System Question', 'event_espresso'),
+                            'QST_display_text'  => esc_html__('Address2', 'event_espresso'),
+                            'QST_admin_label'   => esc_html__('Address2 - System Question', 'event_espresso'),
                             'QST_system'        => 'address2',
                             'QST_type'          => 'TEXT',
                             'QST_required'      => 0,
-                            'QST_required_text' => __('This field is required', 'event_espresso'),
+                            'QST_required_text' => esc_html__('This field is required', 'event_espresso'),
                             'QST_order'         => 6,
                             'QST_admin_only'    => 0,
                             'QST_max'           => EEM_Question::instance()
@@ -981,12 +981,12 @@ class EEH_Activation implements ResettableInterface
                         break;
                     case 'city':
                         $QST_values = [
-                            'QST_display_text'  => __('City', 'event_espresso'),
-                            'QST_admin_label'   => __('City - System Question', 'event_espresso'),
+                            'QST_display_text'  => esc_html__('City', 'event_espresso'),
+                            'QST_admin_label'   => esc_html__('City - System Question', 'event_espresso'),
                             'QST_system'        => 'city',
                             'QST_type'          => 'TEXT',
                             'QST_required'      => 0,
-                            'QST_required_text' => __('This field is required', 'event_espresso'),
+                            'QST_required_text' => esc_html__('This field is required', 'event_espresso'),
                             'QST_order'         => 7,
                             'QST_admin_only'    => 0,
                             'QST_max'           => EEM_Question::instance()
@@ -997,12 +997,12 @@ class EEH_Activation implements ResettableInterface
                         break;
                     case 'country':
                         $QST_values = [
-                            'QST_display_text'  => __('Country', 'event_espresso'),
-                            'QST_admin_label'   => __('Country - System Question', 'event_espresso'),
+                            'QST_display_text'  => esc_html__('Country', 'event_espresso'),
+                            'QST_admin_label'   => esc_html__('Country - System Question', 'event_espresso'),
                             'QST_system'        => 'country',
                             'QST_type'          => 'COUNTRY',
                             'QST_required'      => 0,
-                            'QST_required_text' => __('This field is required', 'event_espresso'),
+                            'QST_required_text' => esc_html__('This field is required', 'event_espresso'),
                             'QST_order'         => 8,
                             'QST_admin_only'    => 0,
                             'QST_wp_user'       => self::get_default_creator_id(),
@@ -1011,12 +1011,12 @@ class EEH_Activation implements ResettableInterface
                         break;
                     case 'state':
                         $QST_values = [
-                            'QST_display_text'  => __('State/Province', 'event_espresso'),
-                            'QST_admin_label'   => __('State/Province - System Question', 'event_espresso'),
+                            'QST_display_text'  => esc_html__('State/Province', 'event_espresso'),
+                            'QST_admin_label'   => esc_html__('State/Province - System Question', 'event_espresso'),
                             'QST_system'        => 'state',
                             'QST_type'          => 'STATE',
                             'QST_required'      => 0,
-                            'QST_required_text' => __('This field is required', 'event_espresso'),
+                            'QST_required_text' => esc_html__('This field is required', 'event_espresso'),
                             'QST_order'         => 9,
                             'QST_admin_only'    => 0,
                             'QST_wp_user'       => self::get_default_creator_id(),
@@ -1025,12 +1025,12 @@ class EEH_Activation implements ResettableInterface
                         break;
                     case 'zip':
                         $QST_values = [
-                            'QST_display_text'  => __('Zip/Postal Code', 'event_espresso'),
-                            'QST_admin_label'   => __('Zip/Postal Code - System Question', 'event_espresso'),
+                            'QST_display_text'  => esc_html__('Zip/Postal Code', 'event_espresso'),
+                            'QST_admin_label'   => esc_html__('Zip/Postal Code - System Question', 'event_espresso'),
                             'QST_system'        => 'zip',
                             'QST_type'          => 'TEXT',
                             'QST_required'      => 0,
-                            'QST_required_text' => __('This field is required', 'event_espresso'),
+                            'QST_required_text' => esc_html__('This field is required', 'event_espresso'),
                             'QST_order'         => 10,
                             'QST_admin_only'    => 0,
                             'QST_max'           => EEM_Question::instance()
@@ -1041,12 +1041,12 @@ class EEH_Activation implements ResettableInterface
                         break;
                     case 'phone':
                         $QST_values = [
-                            'QST_display_text'  => __('Phone Number', 'event_espresso'),
-                            'QST_admin_label'   => __('Phone Number - System Question', 'event_espresso'),
+                            'QST_display_text'  => esc_html__('Phone Number', 'event_espresso'),
+                            'QST_admin_label'   => esc_html__('Phone Number - System Question', 'event_espresso'),
                             'QST_system'        => 'phone',
                             'QST_type'          => 'TEXT',
                             'QST_required'      => 0,
-                            'QST_required_text' => __('This field is required', 'event_espresso'),
+                            'QST_required_text' => esc_html__('This field is required', 'event_espresso'),
                             'QST_order'         => 11,
                             'QST_admin_only'    => 0,
                             'QST_max'           => EEM_Question::instance()
@@ -1087,7 +1087,7 @@ class EEH_Activation implements ResettableInterface
                                 __FILE__,
                                 __FUNCTION__,
                                 sprintf(
-                                    __(
+                                    esc_html__(
                                         'Could not associate question %1$s to a question group because no system question
                                          group existed',
                                         'event_espresso'
@@ -1592,7 +1592,7 @@ class EEH_Activation implements ResettableInterface
         $errors = '';
         if (! empty($undeleted_options)) {
             $errors .= sprintf(
-                __('The following wp-options could not be deleted: %s%s', 'event_espresso'),
+                esc_html__('The following wp-options could not be deleted: %s%s', 'event_espresso'),
                 '<br/>',
                 implode(',<br/>', $undeleted_options)
             );

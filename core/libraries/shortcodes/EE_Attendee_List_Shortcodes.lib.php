@@ -27,10 +27,10 @@ class EE_Attendee_List_Shortcodes extends EE_Shortcodes
 
     protected function _init_props()
     {
-        $this->label       = __('Attendee List Shortcodes', 'event_espresso');
-        $this->description = __('All shortcodes specific to attendee lists', 'event_espresso');
+        $this->label       = esc_html__('Attendee List Shortcodes', 'event_espresso');
+        $this->description = esc_html__('All shortcodes specific to attendee lists', 'event_espresso');
         $this->_shortcodes = [
-            '[ATTENDEE_LIST]' => __('Will output a list of attendees', 'event_espresso'),
+            '[ATTENDEE_LIST]' => esc_html__('Will output a list of attendees', 'event_espresso'),
         ];
     }
 

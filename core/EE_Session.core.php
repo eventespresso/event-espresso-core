@@ -694,7 +694,7 @@ class EE_Session implements SessionIdentifierInterface
                 if ($hash_check && $hash_check !== md5($session_data)) {
                     EE_Error::add_error(
                         sprintf(
-                            __(
+                            esc_html__(
                                 'The stored data for session %1$s failed to pass a hash check and therefore appears to be invalid.',
                                 'event_espresso'
                             ),
@@ -1100,7 +1100,7 @@ class EE_Session implements SessionIdentifierInterface
         // nothing ??? go home!
         if (empty($data_to_reset)) {
             EE_Error::add_error(
-                __(
+                esc_html__(
                     'No session data could be reset, because no session var name was provided.',
                     'event_espresso'
                 ),
@@ -1123,7 +1123,7 @@ class EE_Session implements SessionIdentifierInterface
                     if ($show_all_notices) {
                         EE_Error::add_success(
                             sprintf(
-                                __('The session variable %s was removed.', 'event_espresso'),
+                                esc_html__('The session variable %s was removed.', 'event_espresso'),
                                 $reset
                             ),
                             __FILE__,
@@ -1136,7 +1136,7 @@ class EE_Session implements SessionIdentifierInterface
                     if ($show_all_notices) {
                         EE_Error::add_error(
                             sprintf(
-                                __(
+                                esc_html__(
                                     'Sorry! %s is a default session datum and can not be reset.',
                                     'event_espresso'
                                 ),
@@ -1153,7 +1153,7 @@ class EE_Session implements SessionIdentifierInterface
                 // oops! that session var does not exist!
                 EE_Error::add_error(
                     sprintf(
-                        __(
+                        esc_html__(
                             'The session item provided, %s, is invalid or does not exist.',
                             'event_espresso'
                         ),

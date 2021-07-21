@@ -115,7 +115,7 @@ class RecommendedVersions extends Middleware
             <p>
                 <?php
                 printf(
-                    __(
+                    esc_html__(
                         'We\'re sorry, but Event Espresso requires WordPress version %1$s or greater in order to operate. You are currently running version %2$s.%3$sFor information on how to update your version of WordPress, please go to %4$s.',
                         'event_espresso'
                     ),

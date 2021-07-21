@@ -17,7 +17,7 @@ class Venues_Edit_Venue_Help_Tour extends EE_Help_Tour
 
     protected function _set_tour_properties()
     {
-        $this->_label = __('Venue Editor Tour', 'event_espresso');
+        $this->_label = esc_html__('Venue Editor Tour', 'event_espresso');
         $this->_slug = 'venue-edit-venue-joyride';
     }
 
@@ -98,9 +98,9 @@ class Venues_Edit_Venue_Help_Tour extends EE_Help_Tour
 
     protected function _stop_one()
     {
-        $content = '<h3>' . __('Edit Venue', 'event_espresso') . '</h3>';
+        $content = '<h3>' . esc_html__('Edit Venue', 'event_espresso') . '</h3>';
         $content .= '<p>'
-                    . __(
+                    . esc_html__(
                         'This tour of the Venue Editor page will provide an overview of the different areas of the screen to help you understand what they are used for.',
                         'event_espresso'
                     ) . '</p>';
@@ -115,7 +115,7 @@ class Venues_Edit_Venue_Help_Tour extends EE_Help_Tour
     protected function _venue_editor_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'The rich text editor can be used to edit information about your venue. Images and links can also be added or removed along with your text.',
                    'event_espresso'
                ) . '</p>';
@@ -123,38 +123,38 @@ class Venues_Edit_Venue_Help_Tour extends EE_Help_Tour
 
     protected function _venue_tags_stop()
     {
-        return '<p>' . __('Quickly edit tags for your venue.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Quickly edit tags for your venue.', 'event_espresso') . '</p>';
     }
 
     protected function _venue_categories_stop()
     {
-        return '<p>' . __('Venues can also be categorized if you wish.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Venues can also be categorized if you wish.', 'event_espresso') . '</p>';
     }
 
     protected function _venue_physical_location_stop()
     {
-        return '<p>' . __('Edit the physical address for your venue.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Edit the physical address for your venue.', 'event_espresso') . '</p>';
     }
 
     protected function _venue_gmap_stop()
     {
-        return '<p>' . __('Enable or disable a Google Map for your venue.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Enable or disable a Google Map for your venue.', 'event_espresso') . '</p>';
     }
 
     protected function _venue_virtual_location_stop()
     {
-        return '<p>' . __('Setup a virtual location for your venue.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Setup a virtual location for your venue.', 'event_espresso') . '</p>';
     }
 
     protected function _stop_featured_image()
     {
-        return '<p>' . __('Set a feature image for your venue here.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Set a feature image for your venue here.', 'event_espresso') . '</p>';
     }
 
     protected function _stop_publish_box()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'Easily control the status of your venue. The main options are Published, Pending Review, and Draft.',
                    'event_espresso'
                ) . '</p>';

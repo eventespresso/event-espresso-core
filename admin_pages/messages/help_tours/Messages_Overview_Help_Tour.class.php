@@ -17,7 +17,7 @@ class Messages_Overview_Help_Tour extends EE_Help_Tour
 
     protected function _set_tour_properties()
     {
-        $this->_label = __('Messages Overview Tour', 'event_espresso');
+        $this->_label = esc_html__('Messages Overview Tour', 'event_espresso');
         $this->_slug = 'messages-overview-joyride';
     }
 
@@ -88,9 +88,9 @@ class Messages_Overview_Help_Tour extends EE_Help_Tour
 
     protected function _start()
     {
-        $content = '<h3>' . __('Messages Overview', 'event_espresso') . '</h3>';
+        $content = '<h3>' . esc_html__('Messages Overview', 'event_espresso') . '</h3>';
         $content .= '<p>'
-                    . __(
+                    . esc_html__(
                         'This tour of the Messages Overview page will go over different areas of the screen to help you understand what they are used for.',
                         'event_espresso'
                     ) . '</p>';
@@ -100,7 +100,7 @@ class Messages_Overview_Help_Tour extends EE_Help_Tour
     protected function event_column_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'View if a message is associated with one event or multiple events. Can be sorted in ascending and descending order.',
                    'event_espresso'
                ) . '</p>';
@@ -109,7 +109,7 @@ class Messages_Overview_Help_Tour extends EE_Help_Tour
     protected function _message_type_column_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'View the type of message. Can be sorted in ascending or descending order.',
                    'event_espresso'
                ) . '</p>';
@@ -118,7 +118,7 @@ class Messages_Overview_Help_Tour extends EE_Help_Tour
     protected function _messenger_column_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'View who messages will be sent to. Can be sorted in ascending or descending order.',
                    'event_espresso'
                ) . '</p>';
@@ -126,18 +126,18 @@ class Messages_Overview_Help_Tour extends EE_Help_Tour
 
     protected function _description_column_stop()
     {
-        return '<p>' . __('View the description for each message type.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('View the description for each message type.', 'event_espresso') . '</p>';
     }
 
     protected function _bulk_actions_stop()
     {
-        return '<p>' . __('Perform bulk actions to multiple message types.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Perform bulk actions to multiple message types.', 'event_espresso') . '</p>';
     }
 
     protected function _filters_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'You can filter by different notifications by making a selection below and clicking on the filter button. To reset your selection, just click on the reset filters button.',
                    'event_espresso'
                ) . '</p>';

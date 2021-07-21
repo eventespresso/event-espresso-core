@@ -55,7 +55,7 @@ class Invoice
             $this->invoice_payment_method = EEM_Payment_Method::instance()->get_one_of_type('Invoice');
         } else {
             EE_Error::add_error(
-                __(
+                esc_html__(
                     'Your request appears to be missing some required data, and no information for your transaction could be retrieved.',
                     'event_espresso'
                 ),
@@ -149,7 +149,7 @@ class Invoice
             $this->transaction->total_line_item()
         );
         if ($template_args['amount_pd'] != $template_args['total_cost']) {
-            // $template_args['net_total'] = $this->espressoInvoiceTotals( __('SubTotal', 'event_espresso'), $this->transaction->total());//$this->session_data['cart']['REG']['sub_total']);
+            // $template_args['net_total'] = $this->espressoInvoiceTotals( esc_html__('SubTotal', 'event_espresso'), $this->transaction->total());//$this->session_data['cart']['REG']['sub_total']);
             $tax_items = $this->transaction->tax_items();
             if (! empty($tax_items)) {
                 foreach ($tax_items as $tax) {
@@ -159,9 +159,9 @@ class Invoice
 
             $difference = $template_args['amount_pd'] - $template_args['total_cost'];
             if ($difference < 0) {
-                $text = __('Discount', 'event_espresso');
+                $text = esc_html__('Discount', 'event_espresso');
             } else {
-                $text = __('Extra', 'event_espresso');
+                $text = esc_html__('Extra', 'event_espresso');
             }
             $template_args['discount'] = $this->espressoInvoiceTotals($text, $difference);
         }
@@ -263,10 +263,10 @@ class Invoice
             echo $content;
             exit(0);
         }
-        $invoice_name = $template_args['organization'] . ' ' . __(
+        $invoice_name = $template_args['organization'] . ' ' . esc_html__(
             'Invoice #',
             'event_espresso'
-        ) . $template_args['registration_code'] . __(' for ', 'event_espresso') . $template_args['name'];
+        ) . $template_args['registration_code'] . esc_html__(' for ', 'event_espresso') . $template_args['name'];
         $invoice_name = str_replace(' ', '_', $invoice_name);
         // Create the PDF
         if (array_key_exists('html', $_GET)) {

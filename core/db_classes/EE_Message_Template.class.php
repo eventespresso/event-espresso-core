@@ -43,7 +43,7 @@ class EE_Message_Template extends EE_Base_Class
     public function set_group_template_id($GRP_ID = false)
     {
         if (! $GRP_ID) {
-            throw new EE_Error(__('Missing required value for the message template group id', 'event_espresso'));
+            throw new EE_Error(esc_html__('Missing required value for the message template group id', 'event_espresso'));
         }
         $this->set('GRP_ID', $GRP_ID);
     }

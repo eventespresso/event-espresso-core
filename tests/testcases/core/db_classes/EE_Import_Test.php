@@ -445,7 +445,7 @@ if( ! function_exists( '_split_shared_term' ) ){
 		);
 
 		if ( false === $wpdb->insert( $wpdb->terms, $new_term_data ) ) {
-			return new WP_Error( 'db_insert_error', __( 'Could not split shared term.' ), $wpdb->last_error );
+			return new WP_Error( 'db_insert_error', esc_html__( 'Could not split shared term.' ), $wpdb->last_error );
 		}
 
 		$new_term_id = (int) $wpdb->insert_id;

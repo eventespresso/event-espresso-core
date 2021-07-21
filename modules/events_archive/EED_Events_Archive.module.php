@@ -178,25 +178,25 @@ class EED_Events_Archive extends EED_Module
         $template_parts = new EE_Template_Part_Manager();
         $template_parts->add_template_part(
             'tickets',
-            __('Ticket Selector', 'event_espresso'),
+            esc_html__('Ticket Selector', 'event_espresso'),
             'content-espresso_events-tickets.php',
             $config->display_order_tickets
         );
         $template_parts->add_template_part(
             'datetimes',
-            __('Dates and Times', 'event_espresso'),
+            esc_html__('Dates and Times', 'event_espresso'),
             'content-espresso_events-datetimes.php',
             $config->display_order_datetimes
         );
         $template_parts->add_template_part(
             'event',
-            __('Event Description', 'event_espresso'),
+            esc_html__('Event Description', 'event_espresso'),
             'content-espresso_events-details.php',
             $config->display_order_event
         );
         $template_parts->add_template_part(
             'venue',
-            __('Venue Information', 'event_espresso'),
+            esc_html__('Venue Information', 'event_espresso'),
             'content-espresso_events-venues.php',
             $config->display_order_venue
         );
@@ -949,7 +949,7 @@ class EED_Events_Archive extends EED_Module
     {
         return apply_filters(
             'FHEE__archive_espresso_events_template__upcoming_events_h1',
-            __('Upcoming Events', 'event_espresso')
+            esc_html__('Upcoming Events', 'event_espresso')
         );
     }
 
@@ -965,7 +965,7 @@ class EED_Events_Archive extends EED_Module
         EE_Error::doing_it_wrong(
             __FUNCTION__,
             sprintf(
-                __(
+                esc_html__(
                     'EED_Events_Archive::%1$s was moved to EEH_Event_Query::%1$s:%2$sPlease update your existing code because the method it calls will be removed in version %3$s',
                     'event_espresso'
                 ),

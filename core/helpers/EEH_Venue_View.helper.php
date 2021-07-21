@@ -255,7 +255,7 @@ class EEH_Venue_View extends EEH_Base
         $venue = EEH_Venue_View::get_venue($VNU_ID);
         if ($venue instanceof EE_Venue) {
             $excerpt = $venue->excerpt() != null && $venue->excerpt() ? $venue->excerpt() : $venue->description();
-            $venue_link = ' ' . EEH_Venue_View::venue_details_link($venue->ID(), __('more', 'event_espresso') . '&hellip;');
+            $venue_link = ' ' . EEH_Venue_View::venue_details_link($venue->ID(), esc_html__('more', 'event_espresso') . '&hellip;');
             return ! empty($excerpt) ? wp_trim_words($excerpt, 25, '') . $venue_link : '';
         }
         return '';
@@ -281,7 +281,7 @@ class EEH_Venue_View extends EEH_Base
                 // loop thru terms and create links
                 foreach ($venue_categories as $term) {
                     $url = get_term_link($term, 'espresso_venue_categories');
-                    if (! is_wp_error($url) && (( $hide_uncategorized && strtolower($term->name) != __('uncategorized', 'event_espresso')) || ! $hide_uncategorized )) {
+                    if (! is_wp_error($url) && (( $hide_uncategorized && strtolower($term->name) != esc_html__('uncategorized', 'event_espresso')) || ! $hide_uncategorized )) {
                         $category_links[] = '<a href="' . esc_url($url) . '" rel="tag">' . $term->name . '</a> ';
                     }
                 }
@@ -346,7 +346,7 @@ class EEH_Venue_View extends EEH_Base
             $venue_name = apply_filters(
                 'FHEE__EEH_Venue__venue_name__append_private_venue_name',
                 EEH_Venue_View::is_venue_private()
-                    ? EEH_Venue_View::$_venue->name() . "&nbsp;" . __('(Private)', 'event_espresso')
+                    ? EEH_Venue_View::$_venue->name() . "&nbsp;" . esc_html__('(Private)', 'event_espresso')
                     : EEH_Venue_View::$_venue->name(),
                 EEH_Venue_View::$_venue
             );
@@ -536,7 +536,7 @@ class EEH_Venue_View extends EEH_Base
             // can the user edit this post ?
             if (current_user_can('edit_post', $venue->ID())) {
                 // set link text
-                $link = ! empty($link) ? $link : __('edit this venue', 'event_espresso');
+                $link = ! empty($link) ? $link : esc_html__('edit this venue', 'event_espresso');
                 // generate nonce
                 $nonce = wp_create_nonce('edit_nonce');
                 // generate url to venue editor for this venue

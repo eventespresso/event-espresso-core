@@ -199,7 +199,7 @@ class EED_Messages extends EED_Module
             $mtg = new EE_Message_Generated_From_Token($token, 'html', self::$_message_resource_manager);
             self::$_MSG_PROCESSOR->generate_and_send_now($mtg);
         } catch (EE_Error $e) {
-            $error_msg = __(
+            $error_msg = esc_html__(
                 'Please note that a system message failed to send due to a technical issue.',
                 'event_espresso'
             );
@@ -286,7 +286,7 @@ class EED_Messages extends EED_Module
             $message_to_generate = EE_Registry::instance()->load_lib('Message_To_Generate_From_Request');
             self::$_MSG_PROCESSOR->generate_and_send_now($message_to_generate);
         } catch (EE_Error $e) {
-            $error_msg = __(
+            $error_msg = esc_html__(
                 'Please note that a system message failed to send due to a technical issue.',
                 'event_espresso'
             );
@@ -347,7 +347,7 @@ class EED_Messages extends EED_Module
                 trigger_error(
                     esc_attr(
                         sprintf(
-                            __('There is no task corresponding to this route %s', 'event_espresso'),
+                            esc_html__('There is no task corresponding to this route %s', 'event_espresso'),
                             $cron_type
                         )
                     )
@@ -751,7 +751,7 @@ class EED_Messages extends EED_Module
             return false;
         }
         EE_Error::add_success(
-            __('Messages have been successfully queued for generation and sending.', 'event_espresso')
+            esc_html__('Messages have been successfully queued for generation and sending.', 'event_espresso')
         );
         return true; // everything got queued.
     }
@@ -774,7 +774,7 @@ class EED_Messages extends EED_Module
         $msgID = self::getRequest()->getRequestParam('MSG_ID', 0, 'int');
         if (! $msgID) {
             EE_Error::add_error(
-                __(
+                esc_html__(
                     'Something went wrong because there is no "MSG_ID" value in the request',
                     'event_espresso'
                 ),
@@ -1105,7 +1105,7 @@ class EED_Messages extends EED_Module
 
         if (! $generated_queue instanceof EE_Messages_Queue) {
             EE_Error::add_error(
-                __(
+                esc_html__(
                     'The messages were not generated. This could mean there is already a batch being generated on a separate request, or because the selected messages are not ready for generation. Please wait a minute or two and try again.',
                     'event_espresso'
                 ),
@@ -1152,7 +1152,7 @@ class EED_Messages extends EED_Module
 
         if (! $sent_queue instanceof EE_Messages_Queue) {
             EE_Error::add_error(
-                __(
+                esc_html__(
                     'The messages were not sent. This could mean there is already a batch being sent on a separate request, or because the selected messages are not sendable. Please wait a minute or two and try again.',
                     'event_espresso'
                 ),
@@ -1178,7 +1178,7 @@ class EED_Messages extends EED_Module
             } else {
                 EE_Error::overwrite_errors();
                 EE_Error::add_error(
-                    __(
+                    esc_html__(
                         'No message was sent because of problems with sending. Either all the messages you selected were not a sendable message, they were ALREADY sent on a different scheduled task, or there was an error.
 					If there was an error, you can look at the messages in the message activity list table for any error messages.',
                         'event_espresso'
@@ -1287,7 +1287,7 @@ class EED_Messages extends EED_Module
                 );
             } else {
                 EE_Error::add_error(
-                    __(
+                    esc_html__(
                         'No messages were queued for resending. This usually only happens when all the messages flagged for resending are not a status that can be resent.',
                         'event_espresso'
                     ),
@@ -1298,7 +1298,7 @@ class EED_Messages extends EED_Module
             }
         } else {
             EE_Error::add_error(
-                __(
+                esc_html__(
                     'No messages were queued for resending. This usually only happens when all the messages flagged for resending are not a status that can be resent.',
                     'event_espresso'
                 ),

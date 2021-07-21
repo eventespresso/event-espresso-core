@@ -156,7 +156,7 @@ abstract class AbstractHelper implements HelperInterface
         <span>
             <?php
             printf(
-                __('%1$sUTC%2$s time is %3$s', 'event_espresso'),
+                esc_html__('%1$sUTC%2$s time is %3$s', 'event_espresso'),
                 '<abbr title="Coordinated Universal Time">',
                 '</abbr>',
                 '<code>' . date_i18n($datetime_format, false, true) . '</code>'
@@ -164,7 +164,7 @@ abstract class AbstractHelper implements HelperInterface
             ?></span>
         <?php
         if (! empty($timezone_string) || ! empty($gmt_offset)) : ?>
-        <br/><span><?php printf(__('Local time is %1$s', 'event_espresso'), '<code>' . date_i18n($datetime_format) . '</code>'); ?></span>
+        <br/><span><?php printf(esc_html__('Local time is %1$s', 'event_espresso'), '<code>' . date_i18n($datetime_format) . '</code>'); ?></span>
             <?php
         endif; ?>
 
@@ -198,8 +198,8 @@ abstract class AbstractHelper implements HelperInterface
                 }
                 if ($found) {
                     $message = $tr['isdst']
-                        ? __(' Daylight saving time begins on: %s.', 'event_espresso')
-                        : __(' Standard time begins  on: %s.', 'event_espresso');
+                        ? esc_html__(' Daylight saving time begins on: %s.', 'event_espresso')
+                        : esc_html__(' Standard time begins  on: %s.', 'event_espresso');
                     // Add the difference between the current offset and the new offset to ts to get the correct
                     // transition time from date_i18n().
                     printf(

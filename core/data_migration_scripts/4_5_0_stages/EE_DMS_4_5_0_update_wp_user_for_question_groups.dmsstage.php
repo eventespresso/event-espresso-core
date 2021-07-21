@@ -12,7 +12,7 @@ class EE_DMS_4_5_0_update_wp_user_for_question_groups extends EE_Data_Migration_
     public function __construct()
     {
         global $wpdb;
-        $this->_pretty_name = __("Question Groups", "event_espresso");
+        $this->_pretty_name = esc_html__("Question Groups", "event_espresso");
         $this->_old_table = $wpdb->prefix . "esp_question_group";
         parent::__construct();
     }
@@ -33,7 +33,7 @@ class EE_DMS_4_5_0_update_wp_user_for_question_groups extends EE_Data_Migration_
         if (false === $updated) {
             $this->add_error(
                 sprintf(
-                    __(
+                    esc_html__(
                         "Error in updating table %s setting QSG_wp_user = %d where QSG_ID = %d",
                         'event_espresso'
                     ),

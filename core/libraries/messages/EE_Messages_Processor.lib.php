@@ -381,7 +381,7 @@ class EE_Messages_Processor
     {
         if (! $message_to_generate->valid()) {
             EE_Error::add_error(
-                __('Unable to generate preview because of invalid data', 'event_espresso'),
+                esc_html__('Unable to generate preview because of invalid data', 'event_espresso'),
                 __FILE__,
                 __FUNCTION__,
                 __LINE__
@@ -451,7 +451,7 @@ class EE_Messages_Processor
             $sending_messenger = $message_to_generate->sending_messenger() instanceof EE_messenger
                 ? $message_to_generate->sending_messenger()
                 : new EE_Error(
-                    __(
+                    esc_html__(
                         'There was a specific sending messenger requested for the send action, but it was either invalid or not active at time of sending.',
                         'event_espresso'
                     )
@@ -571,7 +571,7 @@ class EE_Messages_Processor
         $regs_to_send = array();
         $regIDs = $request->getRequestParam($registration_ids_key);
         if (empty($regIDs)) {
-            EE_Error::add_error(__('Something went wrong because we\'re missing the registration ID', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__);
+            EE_Error::add_error(esc_html__('Something went wrong because we\'re missing the registration ID', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__);
             return false;
         }
 
@@ -581,7 +581,7 @@ class EE_Messages_Processor
         foreach ($regIDs as $regID) {
             $reg = EEM_Registration::instance()->get_one_by_ID($regID);
             if (! $reg instanceof EE_Registration) {
-                EE_Error::add_error(sprintf(__('Unable to retrieve a registration object for the given reg id (%s)', 'event_espresso'), $regID));
+                EE_Error::add_error(sprintf(esc_html__('Unable to retrieve a registration object for the given reg id (%s)', 'event_espresso'), $regID));
                 return false;
             }
             $regs_to_send[ $reg->transaction_ID() ][ $reg->status_ID() ][] = $reg;

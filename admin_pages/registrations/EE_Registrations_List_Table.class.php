@@ -88,27 +88,27 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
     protected function _set_properties()
     {
         $this->_wp_list_args = array(
-            'singular' => __('registration', 'event_espresso'),
-            'plural'   => __('registrations', 'event_espresso'),
+            'singular' => esc_html__('registration', 'event_espresso'),
+            'plural'   => esc_html__('registrations', 'event_espresso'),
             'ajax'     => true,
             'screen'   => $this->_admin_page->get_current_screen()->id,
         );
-        $ID_column_name = __('ID', 'event_espresso');
+        $ID_column_name = esc_html__('ID', 'event_espresso');
         $ID_column_name .= ' : <span class="show-on-mobile-view-only" style="float:none">';
-        $ID_column_name .= __('Registrant Name', 'event_espresso');
+        $ID_column_name .= esc_html__('Registrant Name', 'event_espresso');
         $ID_column_name .= '</span> ';
         if (isset($_GET['event_id'])) {
             $this->_columns = array(
                 'cb'               => '<input type="checkbox" />', // Render a checkbox instead of text
                 '_REG_ID'          => $ID_column_name,
-                'ATT_fname'        => __('Name', 'event_espresso'),
-                'ATT_email'        => __('Email', 'event_espresso'),
-                '_REG_date'        => __('Reg Date', 'event_espresso'),
-                'PRC_amount'       => __('TKT Price', 'event_espresso'),
-                '_REG_final_price' => __('Final Price', 'event_espresso'),
-                'TXN_total'        => __('Total Txn', 'event_espresso'),
-                'TXN_paid'         => __('Paid', 'event_espresso'),
-                'actions'          => __('Actions', 'event_espresso'),
+                'ATT_fname'        => esc_html__('Name', 'event_espresso'),
+                'ATT_email'        => esc_html__('Email', 'event_espresso'),
+                '_REG_date'        => esc_html__('Reg Date', 'event_espresso'),
+                'PRC_amount'       => esc_html__('TKT Price', 'event_espresso'),
+                '_REG_final_price' => esc_html__('Final Price', 'event_espresso'),
+                'TXN_total'        => esc_html__('Total Txn', 'event_espresso'),
+                'TXN_paid'         => esc_html__('Paid', 'event_espresso'),
+                'actions'          => esc_html__('Actions', 'event_espresso'),
             );
             $this->_bottom_buttons = array(
                 'report' => array(
@@ -123,13 +123,13 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             $this->_columns = array(
                 'cb'               => '<input type="checkbox" />', // Render a checkbox instead of text
                 '_REG_ID'          => $ID_column_name,
-                'ATT_fname'        => __('Name', 'event_espresso'),
-                '_REG_date'        => __('TXN Date', 'event_espresso'),
-                'event_name'       => __('Event', 'event_espresso'),
-                'DTT_EVT_start'    => __('Event Date', 'event_espresso'),
-                '_REG_final_price' => __('Price', 'event_espresso'),
-                '_REG_paid'        => __('Paid', 'event_espresso'),
-                'actions'          => __('Actions', 'event_espresso'),
+                'ATT_fname'        => esc_html__('Name', 'event_espresso'),
+                '_REG_date'        => esc_html__('TXN Date', 'event_espresso'),
+                'event_name'       => esc_html__('Event', 'event_espresso'),
+                'DTT_EVT_start'    => esc_html__('Event Date', 'event_espresso'),
+                '_REG_final_price' => esc_html__('Price', 'event_espresso'),
+                '_REG_paid'        => esc_html__('Paid', 'event_espresso'),
+                'actions'          => esc_html__('Actions', 'event_espresso'),
             );
             $this->_bottom_buttons = array(
                 'report_all' => array(
@@ -222,7 +222,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             'status'      => $status,
             'id'          => $transaction instanceof EE_Transaction ? $transaction->ID() : 0,
             'title_attr'  => sprintf(
-                __('View Transaction Details (%s)', 'event_espresso'),
+                esc_html__('View Transaction Details (%s)', 'event_espresso'),
                 EEH_Template::pretty_status($status, false, 'sentence')
             ),
         );
@@ -237,7 +237,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             'status'     => $status,
             'id'         => $event instanceof EE_Event ? $event->ID() : 0,
             'title_attr' => sprintf(
-                __('Edit Event (%s)', 'event_espresso'),
+                esc_html__('Edit Event (%s)', 'event_espresso'),
                 EEH_Template::pretty_status($status, false, 'sentence')
             ),
         );
@@ -261,7 +261,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         $filters[] = EEH_Form_Fields::generate_registration_months_dropdown($cur_date, $reg_status, $cur_category);
         $filters[] = EEH_Form_Fields::generate_event_category_dropdown($cur_category);
         $status = array();
-        $status[] = array('id' => 0, 'text' => __('Select Status', 'event_espresso'));
+        $status[] = array('id' => 0, 'text' => esc_html__('Select Status', 'event_espresso'));
         foreach ($this->_status as $key => $value) {
             $status[] = array('id' => $key, 'text' => $value);
         }
@@ -468,8 +468,8 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         $content .= '<div class="show-on-mobile-view-only">';
         $content .= '<br>';
         $content .= $attendee instanceof EE_Attendee ? $attendee->full_name() : '';
-        $content .= '&nbsp;' . sprintf(__('(%1$s / %2$s)', 'event_espresso'), $item->count(), $item->group_size());
-        $content .= '<br>' . sprintf(__('Reg Code: %s', 'event_espresso'), $item->get('REG_code'));
+        $content .= '&nbsp;' . sprintf(esc_html__('(%1$s / %2$s)', 'event_espresso'), $item->count(), $item->group_size());
+        $content .= '<br>' . sprintf(esc_html__('Reg Code: %s', 'event_espresso'), $item->get('REG_code'));
         $content .= '</div>';
         return $content;
     }
@@ -536,7 +536,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         // page=espresso_events&action=edit_event&EVT_ID=2&edit_event_nonce=cf3a7e5b62
         $EVT_ID = $item->event_ID();
         $event_name = $item->event_name();
-        $event_name = $event_name ? $event_name : __("No Associated Event", 'event_espresso');
+        $event_name = $event_name ? $event_name : esc_html__("No Associated Event", 'event_espresso');
         $event_name = wp_trim_words($event_name, 30, '...');
         if ($EVT_ID) {
             $edit_event_url = EE_Admin_Page::add_query_args_and_nonce(
@@ -559,7 +559,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                 esc_attr__('Filter this list to only show registrations for %s', 'event_espresso'),
                 $event_name
             );
-            $actions['event_filter'] .= '">' . __('View Registrations', 'event_espresso') . '</a>';
+            $actions['event_filter'] .= '">' . esc_html__('View Registrations', 'event_espresso') . '</a>';
         } else {
             $edit_event = $event_name;
             $actions['event_filter'] = '';
@@ -592,7 +592,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             }
             return $this->generateDisplayForDatetimes($datetime_strings);
         }
-        return __('There is no ticket on this registration', 'event_espresso');
+        return esc_html__('There is no ticket on this registration', 'event_espresso');
     }
 
 
@@ -663,9 +663,9 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         $t = $item->get_first_related('Transaction');
         $payment_count = $t instanceof EE_Transaction ? $t->count_related('Payment') : 0;
         // append group count to name
-        $link .= '&nbsp;' . sprintf(__('(%1$s / %2$s)', 'event_espresso'), $item->count(), $item->group_size());
+        $link .= '&nbsp;' . sprintf(esc_html__('(%1$s / %2$s)', 'event_espresso'), $item->count(), $item->group_size());
         // append reg_code
-        $link .= '<br>' . sprintf(__('Reg Code: %s', 'event_espresso'), $item->get('REG_code'));
+        $link .= '<br>' . sprintf(esc_html__('Reg Code: %s', 'event_espresso'), $item->get('REG_code'));
         // reg status text for accessibility
         $link .= '<br><span class="ee-status-text-small">'
                  . EEH_Template::pretty_status($item->status_ID(), false, 'sentence')
@@ -694,7 +694,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                                 . $trash_lnk_url
                                 . '" title="'
                                 . esc_attr__('Trash Registration', 'event_espresso')
-                                . '">' . __('Trash', 'event_espresso') . '</a>';
+                                . '">' . esc_html__('Trash', 'event_espresso') . '</a>';
         } elseif ($this->_view === 'trash') {
             // restore registration link
             if (
@@ -713,7 +713,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                                       . $restore_lnk_url
                                       . '" title="'
                                       . esc_attr__('Restore Registration', 'event_espresso') . '">'
-                                      . __('Restore', 'event_espresso') . '</a>';
+                                      . esc_html__('Restore', 'event_espresso') . '</a>';
             }
             if (
                 EE_Registry::instance()->CAP->current_user_can(
@@ -732,7 +732,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                                      . '" title="'
                                      . esc_attr__('Delete Registration Permanently', 'event_espresso')
                                      . '">'
-                                     . __('Delete', 'event_espresso')
+                                     . esc_html__('Delete', 'event_espresso')
                                      . '</a>';
             }
         }
@@ -755,7 +755,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
     public function column_ATT_email(EE_Registration $item)
     {
         $attendee = $item->get_first_related('Attendee');
-        return ! $attendee instanceof EE_Attendee ? __('No attached contact record.', 'event_espresso')
+        return ! $attendee instanceof EE_Attendee ? esc_html__('No attached contact record.', 'event_espresso')
             : $attendee->email();
     }
 
@@ -769,7 +769,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
      */
     public function column__REG_count(EE_Registration $item)
     {
-        return sprintf(__('%1$s / %2$s', 'event_espresso'), $item->count(), $item->group_size());
+        return sprintf(esc_html__('%1$s / %2$s', 'event_espresso'), $item->count(), $item->group_size());
     }
 
 
@@ -792,7 +792,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         } else {
             // free event
             $content .= '<span class="reg-overview-free-event-spn reg-pad-rght">'
-                        . __('free', 'event_espresso')
+                        . esc_html__('free', 'event_espresso')
                         . '</span>';
         }
         return $content;
@@ -832,12 +832,12 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
     {
         $payment_method = $item->payment_method();
         $payment_method_name = $payment_method instanceof EE_Payment_Method ? $payment_method->admin_name()
-            : __('Unknown', 'event_espresso');
+            : esc_html__('Unknown', 'event_espresso');
         $content = '<span class="reg-pad-rght">' . $item->pretty_paid() . '</span>';
         if ($item->paid() > 0) {
             $content .= '<br><span class="ee-status-text-small">'
                         . sprintf(
-                            __('...via %s', 'event_espresso'),
+                            esc_html__('...via %s', 'event_espresso'),
                             $payment_method_name
                         )
                         . '</span>';
@@ -883,7 +883,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                   . $item->transaction()->pretty_total()
                   . '</a></span>' : '<span class="reg-pad-rght">' . $item->transaction()->pretty_total() . '</span>';
         } else {
-            return __("None", "event_espresso");
+            return esc_html__("None", "event_espresso");
         }
     }
 

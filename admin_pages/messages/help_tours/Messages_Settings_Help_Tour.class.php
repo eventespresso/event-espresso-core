@@ -17,7 +17,7 @@ class Messages_Settings_Help_Tour extends EE_Help_Tour
 
     protected function _set_tour_properties()
     {
-        $this->_label = __('Messages Settings Tour', 'event_espresso');
+        $this->_label = esc_html__('Messages Settings Tour', 'event_espresso');
         $this->_slug = 'messages-settings-joyride';
     }
 
@@ -78,9 +78,9 @@ class Messages_Settings_Help_Tour extends EE_Help_Tour
 
     protected function _start()
     {
-        $content = '<h3>' . __('Messages Settings', 'event_espresso') . '</h3>';
+        $content = '<h3>' . esc_html__('Messages Settings', 'event_espresso') . '</h3>';
         $content .= '<p>'
-                    . __(
+                    . esc_html__(
                         'This tour of the Messages Settings page will go over different areas of the screen to help you understand what they are used for.',
                         'event_espresso'
                     ) . '</p>';
@@ -89,18 +89,18 @@ class Messages_Settings_Help_Tour extends EE_Help_Tour
 
     protected function _messenger_links_stop()
     {
-        return '<p>' . __('Available messengers are shown above.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Available messengers are shown above.', 'event_espresso') . '</p>';
     }
 
     protected function _email_settings_metabox_stop()
     {
-        return '<p>' . __('View the different message types that are currently active.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('View the different message types that are currently active.', 'event_espresso') . '</p>';
     }
 
     protected function _on_off_toggle_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'This toggle will turn all messages on or off for this message type.',
                    'event_espresso'
                ) . '</p>';
@@ -109,7 +109,7 @@ class Messages_Settings_Help_Tour extends EE_Help_Tour
     protected function _active_mts_container_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'These are your active message types. Click them to see a description and settings for each one.',
                    'event_espresso'
                ) . '</p>';
@@ -118,7 +118,7 @@ class Messages_Settings_Help_Tour extends EE_Help_Tour
     protected function _inactive_mts_container_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'Drag message types here to deactivate them. Drag them from here to the active box to reactivate them.',
                    'event_espresso'
                ) . '</p>';

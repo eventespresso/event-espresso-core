@@ -410,7 +410,7 @@ class CoffeeShop implements CoffeePotInterface
         }
         throw new OutOfBoundsException(
             sprintf(
-                __('Could not brew coffee because no recipes were found for class "%1$s".', 'event_espresso'),
+                esc_html__('Could not brew coffee because no recipes were found for class "%1$s".', 'event_espresso'),
                 $identifier
             )
         );
@@ -512,7 +512,7 @@ class CoffeeShop implements CoffeePotInterface
     {
         if (! $this->coffee_makers->has($type)) {
             throw new OutOfBoundsException(
-                __('The requested coffee maker is either missing or invalid.', 'event_espresso')
+                esc_html__('The requested coffee maker is either missing or invalid.', 'event_espresso')
             );
         }
         return $this->coffee_makers->get($type);

@@ -15,7 +15,7 @@
  * @type bool       $show_gravatar  whether to show gravatar or not.
  */
 
-$no_attendees_message =  apply_filters( 'FHEE__loop-espresso_attendees-shortcode__template__no_attendees_message', __('No Attendees Yet', 'event_espresso' ) );
+$no_attendees_message =  apply_filters( 'FHEE__loop-espresso_attendees-shortcode__template__no_attendees_message', esc_html__('No Attendees Yet', 'event_espresso' ) );
 
 
 ?>

@@ -108,7 +108,7 @@ class EEH_Formatter
     {
         EE_Error::doing_it_wrong(
             __METHOD__,
-            __(
+            esc_html__(
                 'This method is deprecated as of EE 4.6.12.  Currently it does not reformat as with prior behaviour but just returns the incoming string.  Please use the EE_Datetime helpers for Datetime on the event to display as desired.',
                 'event_espresso'
             ),

@@ -994,7 +994,7 @@ final class EE_System implements ResettableInterface
             'AHEE__EE_System__register_shortcodes_modules_and_addons'
         );
         if (! empty($class_names)) {
-            $msg = __(
+            $msg = esc_html__(
                 'The following plugins, addons, or modules appear to be incompatible with this version of Event Espresso and were automatically deactivated to avoid fatal errors:',
                 'event_espresso'
             );
@@ -1008,7 +1008,7 @@ final class EE_System implements ResettableInterface
                         ) . '</b></li>';
             }
             $msg .= '</ul>';
-            $msg .= __(
+            $msg .= esc_html__(
                 'Compatibility issues can be avoided and/or resolved by keeping addons and plugins updated to the latest version.',
                 'event_espresso'
             );

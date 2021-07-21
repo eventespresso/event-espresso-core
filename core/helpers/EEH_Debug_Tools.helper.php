@@ -203,7 +203,7 @@ class EEH_Debug_Tools
                 } catch (EE_Error $e) {
                     EE_Error::add_error(
                         sprintf(
-                            __(
+                            esc_html__(
                                 'The Event Espresso activation errors file could not be setup because: %s',
                                 'event_espresso'
                             ),
@@ -267,7 +267,7 @@ class EEH_Debug_Tools
         $version = $version === null
             ? ''
             : sprintf(
-                __('(This message was added in version %s of Event Espresso)', 'event_espresso'),
+                esc_html__('(This message was added in version %s of Event Espresso)', 'event_espresso'),
                 $version
             );
         $error_message = sprintf(

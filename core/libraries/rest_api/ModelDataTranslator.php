@@ -659,7 +659,7 @@ class ModelDataTranslator
         if (empty($query_param_parts)) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         '_extract_column_name is empty when trying to extract column and table name from %s',
                         'event_espresso'
                     ),

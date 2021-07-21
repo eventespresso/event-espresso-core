@@ -260,7 +260,7 @@ class ModelVersionInfo
         } else {
             throw new \EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'Cannot load model "%1$s" because it does not exist in version %2$s of Event Espresso',
                         'event_espresso'
                     ),

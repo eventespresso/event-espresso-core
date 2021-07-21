@@ -166,7 +166,7 @@ class EEM_Event extends EEM_CPT_Base
                 ),
                 'password' => new EE_Password_Field(
                     'post_password',
-                    __('Password', 'event_espresso'),
+                    esc_html__('Password', 'event_espresso'),
                     false,
                     '',
                     array(
@@ -321,7 +321,7 @@ class EEM_Event extends EEM_CPT_Base
         if (self::$_instance instanceof EEM_Event) {
             self::$_instance->_fields['Event_Meta']['EVT_additional_limit'] = new EE_Integer_Field(
                 'EVT_additional_limit',
-                __('Limit of Additional Registrations on Same Transaction', 'event_espresso'),
+                esc_html__('Limit of Additional Registrations on Same Transaction', 'event_espresso'),
                 true,
                 self::$_default_additional_limit
             );
@@ -859,7 +859,7 @@ class EEM_Event extends EEM_CPT_Base
     public function assemble_array_of_groups_questions_and_options(EE_Registration $registration, $EVT_ID = 0)
     {
         if (empty($EVT_ID)) {
-            throw new EE_Error(__(
+            throw new EE_Error(esc_html__(
                 'An error occurred. No EVT_ID is included.  Needed to know which question groups to retrieve.',
                 'event_espresso'
             ));

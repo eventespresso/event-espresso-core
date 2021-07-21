@@ -24,10 +24,10 @@ class EE_Question_List_Shortcodes extends EE_Shortcodes
 
     protected function _init_props()
     {
-        $this->label       = __('Questions and Answers Shortcodes', 'event_espresso');
-        $this->description = __('All shortcodes related to custom questions and answers', 'event_espresso');
+        $this->label       = esc_html__('Questions and Answers Shortcodes', 'event_espresso');
+        $this->description = esc_html__('All shortcodes related to custom questions and answers', 'event_espresso');
         $this->_shortcodes = [
-            '[QUESTION_LIST]' => __(
+            '[QUESTION_LIST]' => esc_html__(
                 'This is used to indicate where you want the list of questions and answers to show for the registrant.  You place this within the "[attendee_list]" field.',
                 'event_espresso'
             ),

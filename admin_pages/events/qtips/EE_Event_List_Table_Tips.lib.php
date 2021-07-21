@@ -22,7 +22,7 @@ class EE_Event_List_Table_Tips extends EE_Qtip_Config
                 'content_id' => 'attendee-column-tip',
                 'target'     => '.column-attendees .dashicons-groups',
                 'content'    => sprintf(
-                    __('%s Registrations', 'event_espresso'),
+                    esc_html__('%s Registrations', 'event_espresso'),
                     EEH_Template::pretty_status(
                         EEM_Registration::status_id_approved,
                         false,

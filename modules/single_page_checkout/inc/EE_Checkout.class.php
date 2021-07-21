@@ -488,7 +488,7 @@ class EE_Checkout
             $this->current_step->set_is_current_step(true);
         } else {
             EE_Error::add_error(
-                __('The current step could not be set.', 'event_espresso'),
+                esc_html__('The current step could not be set.', 'event_espresso'),
                 __FILE__,
                 __FUNCTION__,
                 __LINE__
@@ -646,7 +646,7 @@ class EE_Checkout
                 if (WP_DEBUG) {
                     EE_Error::add_error(
                         sprintf(
-                            __('The "%1$s" registration step was not initialized properly.', 'event_espresso'),
+                            esc_html__('The "%1$s" registration step was not initialized properly.', 'event_espresso'),
                             $reg_step->name()
                         ),
                         __FILE__,
@@ -899,7 +899,7 @@ class EE_Checkout
         } else {
             if ($show_errors) {
                 EE_Error::add_error(
-                    __(
+                    esc_html__(
                         'A valid Transaction was not found when attempting to save your registration information.',
                         'event_espresso'
                     ),
@@ -942,7 +942,7 @@ class EE_Checkout
                 if (! $this->transaction->update_cache_after_object_save('Registration', $registration)) {
                     if ($show_errors) {
                         EE_Error::add_error(
-                            __(
+                            esc_html__(
                                 'The newly saved Registration object could not be cached on the Transaction.',
                                 'event_espresso'
                             ),
@@ -956,7 +956,7 @@ class EE_Checkout
         } else {
             if ($show_errors) {
                 EE_Error::add_error(
-                    __(
+                    esc_html__(
                         'An invalid Registration object was discovered when attempting to save your registration information.',
                         'event_espresso'
                     ),
@@ -985,7 +985,7 @@ class EE_Checkout
             if (! $registration->update_cache_after_object_save('Attendee', $registration->attendee())) {
                 if ($show_errors) {
                     EE_Error::add_error(
-                        __(
+                        esc_html__(
                             'The newly saved Attendee object could not be cached on the registration.',
                             'event_espresso'
                         ),
@@ -1000,7 +1000,7 @@ class EE_Checkout
                 EE_Error::add_error(
                     sprintf(
                         '%1$s||%1$s $attendee = %2$s',
-                        __(
+                        esc_html__(
                             'Either no Attendee information was found, or an invalid Attendee object was discovered when attempting to save your registration information.',
                             'event_espresso'
                         ),
@@ -1034,7 +1034,7 @@ class EE_Checkout
                 if (! $registration->update_cache_after_object_save('Answer', $answer, $cache_key)) {
                     if ($show_errors) {
                         EE_Error::add_error(
-                            __(
+                            esc_html__(
                                 'The newly saved Answer object could not be cached on the registration.',
                                 'event_espresso'
                             ),
@@ -1047,7 +1047,7 @@ class EE_Checkout
             } else {
                 if ($show_errors) {
                     EE_Error::add_error(
-                        __(
+                        esc_html__(
                             'An invalid Answer object was discovered when attempting to save your registration information.',
                             'event_espresso'
                         ),
@@ -1113,7 +1113,7 @@ class EE_Checkout
             $this->cart = $this->get_cart_for_transaction($this->transaction);
         } else {
             EE_Error::add_error(
-                __(
+                esc_html__(
                     'A valid Transaction was not found when attempting to update the model entity mapper.',
                     'event_espresso'
                 ),
@@ -1149,7 +1149,7 @@ class EE_Checkout
                 }
             } else {
                 EE_Error::add_error(
-                    __(
+                    esc_html__(
                         'An invalid Registration object was discovered when attempting to update the model entity mapper.',
                         'event_espresso'
                     ),
@@ -1196,7 +1196,7 @@ class EE_Checkout
             );
         } else {
             EE_Error::add_error(
-                __(
+                esc_html__(
                     'A valid Transaction was not found when attempting to update the model entity mapper.',
                     'event_espresso'
                 ),
@@ -1220,7 +1220,7 @@ class EE_Checkout
                 $this->cart = EE_Cart::instance($grand_total);
             } else {
                 EE_Error::add_error(
-                    __(
+                    esc_html__(
                         'A valid Cart was not found when attempting to update the model entity mapper.',
                         'event_espresso'
                     ),
@@ -1256,7 +1256,7 @@ class EE_Checkout
             $registration->get_model()->refresh_entity_map_with($reg_cache_ID, $registration);
         } else {
             EE_Error::add_error(
-                __(
+                esc_html__(
                     'An invalid Registration object was discovered when attempting to update the model entity mapper.',
                     'event_espresso'
                 ),
@@ -1311,7 +1311,7 @@ class EE_Checkout
                 }
             } else {
                 EE_Error::add_error(
-                    __(
+                    esc_html__(
                         'An invalid Answer object was discovered when attempting to update the model entity mapper.',
                         'event_espresso'
                     ),

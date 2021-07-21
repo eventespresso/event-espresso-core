@@ -64,7 +64,7 @@ class mock_valid_admin_page_Admin_Mock_Valid_Hooks extends EE_Admin_Hooks {
 			0 => array(
 				'page_route' => array('default'),
 				'func' => 'test_metabox',
-				'label' => __('Test Metabox', 'event_espresso'),
+				'label' => esc_html__('Test Metabox', 'event_espresso'),
 				'priority' => 'high',
 				'context' => 'normal'
 				)

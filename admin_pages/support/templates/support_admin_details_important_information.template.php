@@ -9,25 +9,25 @@
 
     if (! version_compare($wp_version, $wp_req_version, '>=')) {
         echo '<p class="red_alert">'
-             . __(
+             . esc_html__(
                  'This version of Event Espresso requires WordPress version',
                  'event_espresso'
              ) . ' ' . $wp_req_version . '+. '
-             . __(
+             . esc_html__(
                  'Please upgrade to the latest version of WordPress.',
                  'event_espresso'
              ) . '</p>';
     }
     if (! $is_php_valid) {
         echo '<p class="red_alert">'
-             . __(
+             . esc_html__(
                  'Your version of PHP is out of date, please update to the latest version of PHP. <br>Required version of PHP:',
                  'event_espresso'
              ) . ' ' . $php_req_version . '</p>';
     }
     if (! $is_mysql_valid) {
         echo '<p class="red_alert">'
-             . __(
+             . esc_html__(
                  'Your version of MySQL is out of date, please update to the latest version of MySQL. <br>Required version of MySQL:',
                  'event_espresso'
              ) . ' ' . $mysql_req_version . '</p>';

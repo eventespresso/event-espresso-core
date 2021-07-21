@@ -33,7 +33,7 @@ class InternationalDNS extends International
         if (! checkdnsrr($domain, 'MX')) {
             // domain not found in MX records
             throw new EmailValidationException(
-                __(
+                esc_html__(
                 // @codingStandardsIgnoreStart
                     'Although the email address provided is formatted correctly, a valid "MX record" could not be located for that address and domain. Please enter a valid email address.',
                     // @codingStandardsIgnoreEnd
@@ -44,7 +44,7 @@ class InternationalDNS extends International
         if (! checkdnsrr($domain, 'A')) {
             // domain not found in A records
             throw new EmailValidationException(
-                __(
+                esc_html__(
                 // @codingStandardsIgnoreStart
                     'Although the email address provided is formatted correctly, a valid "A record" could not be located for that address and domain. Please enter a valid email address.',
                     // @codingStandardsIgnoreEnd

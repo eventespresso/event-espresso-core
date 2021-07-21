@@ -118,8 +118,8 @@ class EE_Import implements ResettableInterface
 
             <p class="ee-attention">
                 <b><?php _e('Attention', 'event_espresso'); ?></b><br/>
-                <?php echo sprintf(__('Accepts .%s file types only.', 'event_espresso'), $type); ?>
-                <?php echo __(
+                <?php echo sprintf(esc_html__('Accepts .%s file types only.', 'event_espresso'), $type); ?>
+                <?php echo esc_html__(
                     'Please only import CSV files exported from Event Espresso, or compatible 3rd-party software.',
                     'event_espresso'
                 ); ?>
@@ -154,34 +154,34 @@ class EE_Import implements ResettableInterface
                     $error_msg = false;
                     break;
                 case UPLOAD_ERR_INI_SIZE:
-                    $error_msg = __(
+                    $error_msg = esc_html__(
                         "'The uploaded file exceeds the upload_max_filesize directive in php.ini.'",
                         "event_espresso"
                     );
                     break;
                 case UPLOAD_ERR_FORM_SIZE:
-                    $error_msg = __(
+                    $error_msg = esc_html__(
                         'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form.',
                         "event_espresso"
                     );
                     break;
                 case UPLOAD_ERR_PARTIAL:
-                    $error_msg = __('The uploaded file was only partially uploaded.', "event_espresso");
+                    $error_msg = esc_html__('The uploaded file was only partially uploaded.', "event_espresso");
                     break;
                 case UPLOAD_ERR_NO_FILE:
-                    $error_msg = __('No file was uploaded.', "event_espresso");
+                    $error_msg = esc_html__('No file was uploaded.', "event_espresso");
                     break;
                 case UPLOAD_ERR_NO_TMP_DIR:
-                    $error_msg = __('Missing a temporary folder.', "event_espresso");
+                    $error_msg = esc_html__('Missing a temporary folder.', "event_espresso");
                     break;
                 case UPLOAD_ERR_CANT_WRITE:
-                    $error_msg = __('Failed to write file to disk.', "event_espresso");
+                    $error_msg = esc_html__('Failed to write file to disk.', "event_espresso");
                     break;
                 case UPLOAD_ERR_EXTENSION:
-                    $error_msg = __('File upload stopped by extension.', "event_espresso");
+                    $error_msg = esc_html__('File upload stopped by extension.', "event_espresso");
                     break;
                 default:
-                    $error_msg = __(
+                    $error_msg = esc_html__(
                         'An unknown error occurred and the file could not be uploaded',
                         "event_espresso"
                     );
@@ -233,7 +233,7 @@ class EE_Import implements ResettableInterface
                             } else {
                                 // no array? must be an error
                                 EE_Error::add_error(
-                                    sprintf(__("No file seems to have been uploaded", "event_espresso")),
+                                    sprintf(esc_html__("No file seems to have been uploaded", "event_espresso")),
                                     __FILE__,
                                     __FUNCTION__,
                                     __LINE__
@@ -242,7 +242,7 @@ class EE_Import implements ResettableInterface
                             }
                         } else {
                             EE_Error::add_error(
-                                sprintf(__("%s was not successfully uploaded", "event_espresso"), $filename),
+                                sprintf(esc_html__("%s was not successfully uploaded", "event_espresso"), $filename),
                                 __FILE__,
                                 __FUNCTION__,
                                 __LINE__
@@ -252,7 +252,7 @@ class EE_Import implements ResettableInterface
                     } else {
                         EE_Error::add_error(
                             sprintf(
-                                __(
+                                esc_html__(
                                     "%s was too large of a file and could not be uploaded. The max filesize is %s' KB.",
                                     "event_espresso"
                                 ),
@@ -267,7 +267,7 @@ class EE_Import implements ResettableInterface
                     }
                 } else {
                     EE_Error::add_error(
-                        sprintf(__("%s  had an invalid file extension, not uploaded", "event_espresso"), $filename),
+                        sprintf(esc_html__("%s  had an invalid file extension, not uploaded", "event_espresso"), $filename),
                         __FILE__,
                         __FUNCTION__,
                         __LINE__
@@ -340,7 +340,7 @@ class EE_Import implements ResettableInterface
             if (isset($csv_metadata['site_url']) && $csv_metadata['site_url'] == site_url()) {
                 EE_Error::add_attention(
                     sprintf(
-                        __(
+                        esc_html__(
                             "CSV Data appears to be from the same database, so attempting to update data",
                             "event_espresso"
                         )
@@ -351,7 +351,7 @@ class EE_Import implements ResettableInterface
                 $old_site_url = isset($csv_metadata['site_url']) ? $csv_metadata['site_url'] : $old_site_url;
                 EE_Error::add_attention(
                     sprintf(
-                        __(
+                        esc_html__(
                             "CSV Data appears to be from a different database (%s instead of %s), so we assume IDs in the CSV data DO NOT correspond to IDs in this database",
                             "event_espresso"
                         ),
@@ -371,7 +371,7 @@ class EE_Import implements ResettableInterface
         if ($old_db_to_new_db_mapping) {
             EE_Error::add_attention(
                 sprintf(
-                    __(
+                    esc_html__(
                         "We noticed you have imported data via CSV from %s before. Because of this, IDs in your CSV have been mapped to their new IDs in %s",
                         "event_espresso"
                     ),
@@ -392,7 +392,7 @@ class EE_Import implements ResettableInterface
         if ($this->_total_updates > 0) {
             EE_Error::add_success(
                 sprintf(
-                    __("%s existing records in the database were updated.", "event_espresso"),
+                    esc_html__("%s existing records in the database were updated.", "event_espresso"),
                     $this->_total_updates
                 )
             );
@@ -400,7 +400,7 @@ class EE_Import implements ResettableInterface
         }
         if ($this->_total_inserts > 0) {
             EE_Error::add_success(
-                sprintf(__("%s new records were added to the database.", "event_espresso"), $this->_total_inserts)
+                sprintf(esc_html__("%s new records were added to the database.", "event_espresso"), $this->_total_inserts)
             );
             $success = true;
         }
@@ -408,7 +408,7 @@ class EE_Import implements ResettableInterface
         if ($this->_total_update_errors > 0) {
             EE_Error::add_error(
                 sprintf(
-                    __(
+                    esc_html__(
                         "'One or more errors occurred, and a total of %s existing records in the database were <strong>not</strong> updated.'",
                         "event_espresso"
                     ),
@@ -423,7 +423,7 @@ class EE_Import implements ResettableInterface
         if ($this->_total_insert_errors > 0) {
             EE_Error::add_error(
                 sprintf(
-                    __(
+                    esc_html__(
                         "One or more errors occurred, and a total of %s new records were <strong>not</strong> added to the database.'",
                         "event_espresso"
                     ),
@@ -482,7 +482,7 @@ class EE_Import implements ResettableInterface
             } else {
                 // no table info in the array and no table name passed to the function?? FAIL
                 EE_Error::add_error(
-                    __(
+                    esc_html__(
                         'No table information was specified and/or found, therefore the import could not be completed',
                         'event_espresso'
                     ),
@@ -585,7 +585,7 @@ class EE_Import implements ResettableInterface
                 } else {
                     throw new EE_Error(
                         sprintf(
-                            __(
+                            esc_html__(
                                 'Programming error. We shoudl be inserting or updating, but instead we are being told to "%s", whifh is invalid',
                                 'event_espresso'
                             ),
@@ -819,7 +819,7 @@ class EE_Import implements ResettableInterface
                 $this->_total_inserts++;
                 EE_Error::add_success(
                     sprintf(
-                        __("Successfully added new %s (with id %s) with csv data %s", "event_espresso"),
+                        esc_html__("Successfully added new %s (with id %s) with csv data %s", "event_espresso"),
                         $model->get_this_model_name(),
                         $new_id,
                         implode(",", $model_object_data)
@@ -833,7 +833,7 @@ class EE_Import implements ResettableInterface
                 }
                 EE_Error::add_error(
                     sprintf(
-                        __("Could not insert new %s with the csv data: %s", "event_espresso"),
+                        esc_html__("Could not insert new %s with the csv data: %s", "event_espresso"),
                         $model->get_this_model_name(),
                         http_build_query($model_object_data)
                     ),
@@ -849,7 +849,7 @@ class EE_Import implements ResettableInterface
             }
             EE_Error::add_error(
                 sprintf(
-                    __("Could not insert new %s with the csv data: %s because %s", "event_espresso"),
+                    esc_html__("Could not insert new %s with the csv data: %s because %s", "event_espresso"),
                     $model->get_this_model_name(),
                     implode(",", $model_object_data),
                     $e->getMessage()
@@ -896,7 +896,7 @@ class EE_Import implements ResettableInterface
                 $this->_total_updates++;
                 EE_Error::add_success(
                     sprintf(
-                        __("Successfully updated %s with csv data %s", "event_espresso"),
+                        esc_html__("Successfully updated %s with csv data %s", "event_espresso"),
                         $model->get_this_model_name(),
                         implode(",", $model_object_data_for_update)
                     )
@@ -919,7 +919,7 @@ class EE_Import implements ResettableInterface
                     $this->_total_update_errors++;
                     EE_Error::add_error(
                         sprintf(
-                            __(
+                            esc_html__(
                                 "Could not update %s with the csv data: '%s' for an unknown reason (using WHERE conditions %s)",
                                 "event_espresso"
                             ),
@@ -935,7 +935,7 @@ class EE_Import implements ResettableInterface
                     $this->_total_updates++;
                     EE_Error::add_success(
                         sprintf(
-                            __(
+                            esc_html__(
                                 "%s with csv data '%s' was found in the database and didn't need updating because all the data is identical.",
                                 "event_espresso"
                             ),
@@ -948,7 +948,7 @@ class EE_Import implements ResettableInterface
         } catch (EE_Error $e) {
             $this->_total_update_errors++;
             $basic_message = sprintf(
-                __("Could not update %s with the csv data: %s because %s", "event_espresso"),
+                esc_html__("Could not update %s with the csv data: %s because %s", "event_espresso"),
                 $model->get_this_model_name(),
                 implode(",", $model_object_data),
                 $e->getMessage()

@@ -29,7 +29,7 @@ class InvalidAliasException extends DomainException
     {
         if (empty($message)) {
             $message = sprintf(
-                __(
+                esc_html__(
                     '"%1$s" can not be used as an alias because the "%2$s"  class does not extend or implement it.',
                     'event_espresso'
                 ),

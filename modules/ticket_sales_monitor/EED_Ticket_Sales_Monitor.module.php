@@ -494,18 +494,18 @@ class EED_Ticket_Sales_Monitor extends EED_Module
         $refresh_msg = '';
         $none_added_msg = '';
         if (defined('DOING_AJAX') && DOING_AJAX) {
-            $refresh_msg = __(
+            $refresh_msg = esc_html__(
                 'Please refresh the page to view updated ticket quantities.',
                 'event_espresso'
             );
-            $none_added_msg = __('No tickets were added for the event.', 'event_espresso');
+            $none_added_msg = esc_html__('No tickets were added for the event.', 'event_espresso');
         }
         if (! empty($this->sold_out_tickets)) {
             EE_Error::add_attention(
                 sprintf(
                     apply_filters(
                         'FHEE__EED_Ticket_Sales_Monitor___post_notices__sold_out_tickets_notice',
-                        __(
+                        esc_html__(
                             'We\'re sorry...%1$sThe following items have sold out since you first viewed this page, and can no longer be registered for:%1$s%1$s%2$s%1$s%1$sPlease note that availability can change at any time due to cancellations, so please check back again later if registration for this event(s) is important to you.%1$s%1$s%3$s%1$s%4$s%1$s',
                             'event_espresso'
                         )
@@ -528,7 +528,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
                 sprintf(
                     apply_filters(
                         'FHEE__EED_Ticket_Sales_Monitor___ticket_quantity_decremented__notice',
-                        __(
+                        esc_html__(
                             'We\'re sorry...%1$sDue to sales that have occurred since you first viewed the last page, the following items have had their quantities adjusted to match the current available amount:%1$s%1$s%2$s%1$s%1$sPlease note that availability can change at any time due to cancellations, so please check back again later if registration for this event(s) is important to you.%1$s%1$s%3$s%1$s%4$s%1$s',
                             'event_espresso'
                         )
