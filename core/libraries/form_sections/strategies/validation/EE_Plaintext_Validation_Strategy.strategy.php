@@ -20,7 +20,7 @@ class EE_Plaintext_Validation_Strategy extends EE_Validation_Strategy_Base
     public function __construct($validation_error_message = null)
     {
         if (! $validation_error_message) {
-            $validation_error_message = __("HTML tags are not permitted in this field", "event_espresso");
+            $validation_error_message = esc_html__("HTML tags are not permitted in this field", "event_espresso");
         }
         parent::__construct($validation_error_message);
     }

@@ -53,7 +53,7 @@ class Payment_Log_Admin_List_Table extends EE_Admin_List_Table
     public function add_download_logs_checkbox()
     {
         echo "<input type='submit' class='button-primary' id='download_results' name='download_results' value='"
-             . __(
+             . esc_html__(
                  'Download Results',
                  'event_espresso'
              ) . "'>";
@@ -68,17 +68,17 @@ class Payment_Log_Admin_List_Table extends EE_Admin_List_Table
     protected function _set_properties()
     {
         $this->_wp_list_args = array(
-            'singular' => __('payment log', 'event_espresso'),
-            'plural'   => __('payment logs', 'event_espresso'),
+            'singular' => esc_html__('payment log', 'event_espresso'),
+            'plural'   => esc_html__('payment logs', 'event_espresso'),
             'ajax'     => true, // for now,
             'screen'   => $this->_admin_page->get_current_screen()->id,
         );
         $this->_columns = array(
             'cb'       => '<input type="checkbox" />',
-            'id'       => __('ID', 'event_espresso'),
-            'LOG_time' => __('Time', 'event_espresso'),
-            'PMD_ID'   => __('Payment Method', 'event_espresso'),
-            'TXN_ID'   => __('Transaction ID', 'event_espresso'),
+            'id'       => esc_html__('ID', 'event_espresso'),
+            'LOG_time' => esc_html__('Time', 'event_espresso'),
+            'PMD_ID'   => esc_html__('Payment Method', 'event_espresso'),
+            'TXN_ID'   => esc_html__('Transaction ID', 'event_espresso'),
         );
         $this->_sortable_columns = array(
             'LOG_time' => array('LOG_time' => true),
@@ -98,8 +98,8 @@ class Payment_Log_Admin_List_Table extends EE_Admin_List_Table
         // todo we're currently using old functions here. We need to move things into the Events_Admin_Page() class as methods.
         $payment_methods = EEM_Payment_Method::instance()->get_all();
         $payment_method_names = array(
-            array('id' => 'all', 'text' => __("All", 'event_espresso')),
-            array('id' => '0', 'text' => __("Unknown Payment Method", 'event_espresso')),
+            array('id' => 'all', 'text' => esc_html__("All", 'event_espresso')),
+            array('id' => '0', 'text' => esc_html__("Unknown Payment Method", 'event_espresso')),
         );
         foreach ($payment_methods as $payment_method) {
             $payment_method_names[] = array('id' => $payment_method->ID(), 'text' => $payment_method->admin_name());
@@ -245,6 +245,6 @@ class Payment_Log_Admin_List_Table extends EE_Admin_List_Table
                    . '</a>';
         }
         // No transaction id or use can not view the transaction.
-        return __("Unable to find transaction", 'event_espresso');
+        return esc_html__("Unable to find transaction", 'event_espresso');
     }
 }

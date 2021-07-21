@@ -5,7 +5,7 @@ class EE_Foreign_Key_Int_Field extends EE_Foreign_Key_Field_Base
 
     /**
      * @param string  $table_column  name fo column for field
-     * @param string  $nicename      should eb internationalized with __('blah','event_espresso')
+     * @param string  $nicename      should eb internationalized with esc_html__('blah','event_espresso')
      * @param boolean $nullable
      * @param mixed   $default_value if this is a integer field, it shoudl be an int. if it's a string field, it shoul
      *                               dbe a string

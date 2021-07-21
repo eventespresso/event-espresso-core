@@ -33,7 +33,7 @@ class espresso_events_Venues_Hooks extends EE_Admin_Hooks
             0 => array(
                 'page_route' => array('edit', 'create_new'),
                 'func'       => 'venue_metabox',
-                'label'      => __('Venue Details', 'event_espresso'),
+                'label'      => esc_html__('Venue Details', 'event_espresso'),
                 'priority'   => 'high',
                 'context'    => 'normal',
             ),
@@ -110,7 +110,7 @@ class espresso_events_Venues_Hooks extends EE_Admin_Hooks
         $venues = $vnumdl->get_all(array($vnu_where, 'order_by' => array('VNU_name' => 'ASC')));
 
         $ven_select = array();
-        $ven_select[0] = __('Select a Venue', 'event_espresso');
+        $ven_select[0] = esc_html__('Select a Venue', 'event_espresso');
         // setup venues for selector
         foreach ($venues as $venue) {
             $ven_select[ $venue->ID() ] = $venue->name();

@@ -87,7 +87,7 @@ class EE_Message_To_Generate_From_Request extends EE_Message_To_Generate impleme
             || empty($this->_context)
             || empty($this->token)
         ) {
-            throw new EE_Error(__(
+            throw new EE_Error(esc_html__(
                 'The request for the "msg_url_trigger" route has a malformed url.',
                 'event_espresso'
             ));
@@ -109,7 +109,7 @@ class EE_Message_To_Generate_From_Request extends EE_Message_To_Generate impleme
         $registration = EEM_Registration::instance()->get_one([['REG_url_link' => $this->token]]);
         // if no registration then bail early.
         if (! $registration instanceof EE_Registration) {
-            throw new EE_Error(__('Unable to complete the request because the token is invalid.', 'event_espresso'));
+            throw new EE_Error(esc_html__('Unable to complete the request because the token is invalid.', 'event_espresso'));
         }
 
         return $this->_get_data_to_use($registration, $id);

@@ -15,7 +15,7 @@
 
                 <a id="activate_<?php echo $payment_method->slug() ?>" class="espresso-button-green button-primary"
                    href="<?php echo $activate_url ?>">
-                    <?php printf(__("Activate %s Payment Method?", "event_espresso"), $payment_method->admin_name()); ?>
+                    <?php printf(esc_html__("Activate %s Payment Method?", "event_espresso"), $payment_method->admin_name()); ?>
                 </a>
             </td>
         </tr>

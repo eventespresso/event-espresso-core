@@ -24,12 +24,12 @@ class AttendeesReport extends JobHandlerFile
     {
         if (! \EE_Capabilities::instance()->current_user_can('ee_read_contacts', 'generating_report')) {
             throw new BatchRequestException(
-                __('You do not have permission to view contacts', 'event_espresso')
+                esc_html__('You do not have permission to view contacts', 'event_espresso')
             );
         }
         $filepath = $this->create_file_from_job_with_name(
             $job_parameters->job_id(),
-            __('contact-list-report.csv', 'event_espresso')
+            esc_html__('contact-list-report.csv', 'event_espresso')
         );
         $job_parameters->add_extra_data('filepath', $filepath);
         $job_parameters->set_job_size($this->count_units_to_process());
@@ -42,7 +42,7 @@ class AttendeesReport extends JobHandlerFile
         }
         return new JobStepResponse(
             $job_parameters,
-            __('Contacts report started successfully...', 'event_espresso')
+            esc_html__('Contacts report started successfully...', 'event_espresso')
         );
     }
 
@@ -67,7 +67,7 @@ class AttendeesReport extends JobHandlerFile
         return new JobStepResponse(
             $job_parameters,
             sprintf(
-                __('Wrote %1$s rows to report CSV file...', 'event_espresso'),
+                esc_html__('Wrote %1$s rows to report CSV file...', 'event_espresso'),
                 count($csv_data)
             ),
             $extra_response_data
@@ -82,7 +82,7 @@ class AttendeesReport extends JobHandlerFile
             true,
             'd'
         );
-        return new JobStepResponse($job_parameters, __('Cleaned up temporary file', 'event_espresso'));
+        return new JobStepResponse($job_parameters, esc_html__('Cleaned up temporary file', 'event_espresso'));
     }
 
     public function count_units_to_process()
@@ -105,10 +105,10 @@ class AttendeesReport extends JobHandlerFile
             foreach (\EEM_Attendee::instance()->field_settings() as $field_name => $field_obj) {
                 if ($field_name == 'STA_ID') {
                     $state_name_field = \EEM_State::instance()->field_settings_for('STA_name');
-                    $csv_row[ __('State', 'event_espresso') ] = $attendee_row[ $state_name_field->get_qualified_column() ];
+                    $csv_row[ esc_html__('State', 'event_espresso') ] = $attendee_row[ $state_name_field->get_qualified_column() ];
                 } elseif ($field_name == 'CNT_ISO') {
                     $country_name_field = \EEM_Country::instance()->field_settings_for('CNT_name');
-                    $csv_row[ __('Country', 'event_espresso') ] = $attendee_row[ $country_name_field->get_qualified_column() ];
+                    $csv_row[ esc_html__('Country', 'event_espresso') ] = $attendee_row[ $country_name_field->get_qualified_column() ];
                 } else {
                     $csv_row[ wp_specialchars_decode($field_obj->get_nicename(), ENT_QUOTES) ] = $attendee_row[ $field_obj->get_qualified_column() ];
                 }

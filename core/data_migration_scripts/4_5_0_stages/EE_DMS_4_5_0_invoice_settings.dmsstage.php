@@ -22,7 +22,7 @@ class EE_DMS_4_5_0_invoice_settings extends EE_Data_Migration_Script_Stage
      */
     public function __construct()
     {
-        $this->_pretty_name = __('Update Invoice Gateway Settings', 'event_espresso');
+        $this->_pretty_name = esc_html__('Update Invoice Gateway Settings', 'event_espresso');
         parent::__construct();
     }
 
@@ -55,11 +55,11 @@ class EE_DMS_4_5_0_invoice_settings extends EE_Data_Migration_Script_Stage
     {
         // if this isn't set then something is really wrong
         if (! EE_Config::instance()->gateway instanceof EE_Gateway_Config) {
-            throw new EE_Error(__('It appears the Event Espresso Core Configuration is not setup correctly.', 'event_espresso'));
+            throw new EE_Error(esc_html__('It appears the Event Espresso Core Configuration is not setup correctly.', 'event_espresso'));
         }
         $invoice_settings = isset(EE_Config::instance()->gateway->payment_settings['Invoice']) ? EE_Config::instance()->gateway->payment_settings['Invoice'] : null;
         if (! $invoice_settings) {
-            $this->add_error(__('Could not migrate EE4.4 invoice settings to EE4.5 because they didnt exist', 'event_espresso'));
+            $this->add_error(esc_html__('Could not migrate EE4.4 invoice settings to EE4.5 because they didnt exist', 'event_espresso'));
         } else {
             $invoice_settings['template_payment_instructions'] = $invoice_settings['pdf_instructions'];
             $invoice_settings['template_invoice_payee_name'] = $invoice_settings['payable_to'];

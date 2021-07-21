@@ -12,7 +12,7 @@ class EE_DMS_4_5_0_update_wp_user_for_price_types extends EE_Data_Migration_Scri
     public function __construct()
     {
         global $wpdb;
-        $this->_pretty_name = __("Price Types", "event_espresso");
+        $this->_pretty_name = esc_html__("Price Types", "event_espresso");
         $this->_old_table = $wpdb->prefix . "esp_price_type";
         parent::__construct();
     }
@@ -33,7 +33,7 @@ class EE_DMS_4_5_0_update_wp_user_for_price_types extends EE_Data_Migration_Scri
         if (false === $updated) {
             $this->add_error(
                 sprintf(
-                    __("Error in updating table %s setting PRT_wp_user = %d where PRT_ID = %d", 'event_espresso'),
+                    esc_html__("Error in updating table %s setting PRT_wp_user = %d where PRT_ID = %d", 'event_espresso'),
                     $this->_old_table,
                     $user_id,
                     $old_row['PRT_ID']

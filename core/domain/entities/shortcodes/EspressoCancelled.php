@@ -85,7 +85,7 @@ class EspressoCancelled extends EspressoShortcode
         // phpcs:disable WordPress.WP.I18n.UnorderedPlaceholdersText
         EE_Registry::instance()->SSN->clear_session(__CLASS__, __FUNCTION__);
         return sprintf(
-            __(
+            esc_html__(
                 '%sAll unsaved registration information entered during this session has been deleted.%s',
                 'event_espresso'
             ),

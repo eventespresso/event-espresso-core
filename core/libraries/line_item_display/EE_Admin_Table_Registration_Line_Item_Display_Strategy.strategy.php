@@ -25,10 +25,10 @@ class EE_Admin_Table_Registration_Line_Item_Display_Strategy extends EE_Admin_Ta
         $html = EEH_HTML::table('', '', $options['table_css_class']);
         $html .= EEH_HTML::thead();
         $html .= EEH_HTML::tr();
-        $html .= EEH_HTML::th(__('Name', 'event_espresso'), '', 'jst-left');
-        $html .= EEH_HTML::th(__('Type', 'event_espresso'), '', 'jst-left');
-        $html .= EEH_HTML::th(__('Date(s)', 'event_espresso'), '', 'jst-left');
-        $html .= EEH_HTML::th(__('Amount', 'event_espresso'), '', 'jst-cntr');
+        $html .= EEH_HTML::th(esc_html__('Name', 'event_espresso'), '', 'jst-left');
+        $html .= EEH_HTML::th(esc_html__('Type', 'event_espresso'), '', 'jst-left');
+        $html .= EEH_HTML::th(esc_html__('Date(s)', 'event_espresso'), '', 'jst-left');
+        $html .= EEH_HTML::th(esc_html__('Amount', 'event_espresso'), '', 'jst-cntr');
         $html .= EEH_HTML::tbody();
         return $html;
     }
@@ -85,7 +85,7 @@ class EE_Admin_Table_Registration_Line_Item_Display_Strategy extends EE_Admin_Ta
             '<span class="ee-line-item-related-parent-object">',
             $line_item->parent() instanceof EE_Line_Item
                 ? $line_item->parent()->OBJ_type_i18n()
-                : __('Item:', 'event_espresso'),
+                : esc_html__('Item:', 'event_espresso'),
             $parent_related_object_link
                 ? '<a href="' . $parent_related_object_link . '">' . $parent_related_object_name . '</a>'
                 : $parent_related_object_name,
@@ -105,7 +105,7 @@ class EE_Admin_Table_Registration_Line_Item_Display_Strategy extends EE_Admin_Ta
         $type_html .= $this->_get_cancellations($line_item);
         $type_html .= $line_item->OBJ_type() ? '<br />' : '';
         $code = $line_item_related_object instanceof EEI_Has_Code ? $line_item_related_object->code() : '';
-        $type_html .= ! empty($code) ? '<span class="ee-line-item-id">' . sprintf(__('Code: %s', 'event_espresso'), $code) . '</span>' : '';
+        $type_html .= ! empty($code) ? '<span class="ee-line-item-id">' . sprintf(esc_html__('Code: %s', 'event_espresso'), $code) . '</span>' : '';
         $html .= EEH_HTML::td($type_html, '', 'jst-left');
 
         // Date column
@@ -180,13 +180,13 @@ class EE_Admin_Table_Registration_Line_Item_Display_Strategy extends EE_Admin_Ta
         $html = EEH_HTML::tr('', '', 'admin-primary-mbox-total-tr');
         // Total th label
         if ($total_match) {
-            $total_label = sprintf(__('This registration\'s total %s:', 'event_espresso'), '(' . EE_Registry::instance()->CFG->currency->code . ')');
+            $total_label = sprintf(esc_html__('This registration\'s total %s:', 'event_espresso'), '(' . EE_Registry::instance()->CFG->currency->code . ')');
         } else {
-            $total_label = sprintf(__('This registration\'s approximate total %s', 'event_espresso'), '(' . EE_Registry::instance()->CFG->currency->code . ')');
+            $total_label = sprintf(esc_html__('This registration\'s approximate total %s', 'event_espresso'), '(' . EE_Registry::instance()->CFG->currency->code . ')');
             $total_label .= '<br>';
             $total_label .= '<p class="ee-footnote-text">'
                             . sprintf(
-                                __('The registrations\' share of the transaction total is approximate because it might not be possible to evenly divide the transaction total among each registration, and so some registrations may need to pay a penny more than others.  This registration\'s final share is actually %1$s%2$s%3$s.', 'event_espresso'),
+                                esc_html__('The registrations\' share of the transaction total is approximate because it might not be possible to evenly divide the transaction total among each registration, and so some registrations may need to pay a penny more than others.  This registration\'s final share is actually %1$s%2$s%3$s.', 'event_espresso'),
                                 '<strong>',
                                 $registration_total,
                                 '</strong>'

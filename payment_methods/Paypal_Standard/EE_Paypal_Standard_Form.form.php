@@ -26,28 +26,28 @@ class EE_Paypal_Standard_Form extends EE_Payment_Method_Form
                 'payment_method_type'          => $payment_method_type,
                 'extra_meta_inputs'            => array(
                     'paypal_id'        => new EE_Text_Input(array(
-                        'html_label_text' => sprintf(__("Paypal Email %s", 'event_espresso'), $payment_method_type->get_help_tab_link()),
-                        'html_help_text'  => __("Typically payment@example-domain.com", 'event_espresso'),
+                        'html_label_text' => sprintf(esc_html__("Paypal Email %s", 'event_espresso'), $payment_method_type->get_help_tab_link()),
+                        'html_help_text'  => esc_html__("Typically payment@example-domain.com", 'event_espresso'),
                         'required'        => true
                     )),
                     'image_url'        => new EE_Admin_File_Uploader_Input(array(
-                        'html_help_text'  => __("Used for your business/personal logo on the PayPal page", 'event_espresso'),
-                        'html_label_text' => __('Image URL', 'event_espresso')
+                        'html_help_text'  => esc_html__("Used for your business/personal logo on the PayPal page", 'event_espresso'),
+                        'html_label_text' => esc_html__('Image URL', 'event_espresso')
                     )),
                     'paypal_taxes'     => new EE_Yes_No_Input(array(
-                        'html_label_text' => sprintf(__('Paypal Calculates Taxes %s', 'event_espresso'), $payment_method_type->get_help_tab_link()),
-                        'html_help_text'  => __('Whether Paypal should add taxes to the order', 'event_espresso'),
+                        'html_label_text' => sprintf(esc_html__('Paypal Calculates Taxes %s', 'event_espresso'), $payment_method_type->get_help_tab_link()),
+                        'html_help_text'  => esc_html__('Whether Paypal should add taxes to the order', 'event_espresso'),
                         'default'         => false
                     )),
                     'paypal_shipping'  => new EE_Yes_No_Input(array(
-                        'html_label_text' => sprintf(__('Paypal Calculates Shipping %s', 'event_espresso'), $payment_method_type->get_help_tab_link()),
-                        'html_help_text'  => __('Whether Paypal should add shipping surcharges', 'event_espresso'),
+                        'html_label_text' => sprintf(esc_html__('Paypal Calculates Shipping %s', 'event_espresso'), $payment_method_type->get_help_tab_link()),
+                        'html_help_text'  => esc_html__('Whether Paypal should add shipping surcharges', 'event_espresso'),
                         'default'         => false
                     )),
                     'shipping_details' => new EE_Select_Input(array(
-                        EE_PMT_Paypal_Standard::shipping_info_none     => __("Do not prompt for an address", 'event_espresso'),
-                        EE_PMT_Paypal_Standard::shipping_info_optional => __("Prompt for an address, but do not require it", 'event_espresso'),
-                        EE_PMT_Paypal_Standard::shipping_info_required => __("Prompt for an address, and require it", 'event_espresso')
+                        EE_PMT_Paypal_Standard::shipping_info_none     => esc_html__("Do not prompt for an address", 'event_espresso'),
+                        EE_PMT_Paypal_Standard::shipping_info_optional => esc_html__("Prompt for an address, but do not require it", 'event_espresso'),
+                        EE_PMT_Paypal_Standard::shipping_info_required => esc_html__("Prompt for an address, and require it", 'event_espresso')
                     ))
                 )
             )
@@ -78,11 +78,11 @@ class EE_Paypal_Standard_Form extends EE_Payment_Method_Form
             $shipping_details_input_options = $shipping_details_input->options();
             EE_Error::add_attention(
                 sprintf(
-                    __('Automatically set "%s" to "%s" because Paypal requires address info in order to calculate shipping or taxes.', 'event_espresso'),
+                    esc_html__('Automatically set "%s" to "%s" because Paypal requires address info in order to calculate shipping or taxes.', 'event_espresso'),
                     strip_tags($shipping_details_input->html_label_text()),
                     isset($shipping_details_input_options[ EE_PMT_Paypal_Standard::shipping_info_optional ])
                         ? $shipping_details_input_options[ EE_PMT_Paypal_Standard::shipping_info_optional ]
-                        : __('Unknown', 'event_espresso')
+                        : esc_html__('Unknown', 'event_espresso')
                 ),
                 __FILE__,
                 __FUNCTION__,

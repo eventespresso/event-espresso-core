@@ -252,7 +252,7 @@ abstract class EE_Shortcodes extends EE_Base
         if (! is_array($this->_data)) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'Expecting an array for the data sent to %s. Instead it was %s',
                         'event_espresso'
                     ),
@@ -266,7 +266,7 @@ abstract class EE_Shortcodes extends EE_Base
         if (! isset($this->_data['template'])) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'The incoming data does not have the required template index in its array',
                         'event_espresso'
                     )
@@ -277,7 +277,7 @@ abstract class EE_Shortcodes extends EE_Base
         // next test to make sure we've got got a data index in the incoming data array
         if (! isset($this->_data['data'])) {
             throw new EE_Error(
-                __(
+                esc_html__(
                     'The incoming data does not have the required data index in its array',
                     'event_espresso'
                 )

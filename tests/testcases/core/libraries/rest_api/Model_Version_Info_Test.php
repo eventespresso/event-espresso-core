@@ -82,7 +82,7 @@ class Model_Version_Info_Test extends \EE_UnitTestCase{
 
 	public function _add_reg_paid_field( $reg_fields ) {
 		if( ! isset( $reg_fields[ 'Registration'][ 'REG_paid' ] ) ) {
-			$reg_fields[ 'Registration'][ 'REG_paid' ] = new \EE_Money_Field( 'REG_paid', __( 'Amount paid for registration', 'event_espresso' ), true );
+			$reg_fields[ 'Registration'][ 'REG_paid' ] = new \EE_Money_Field( 'REG_paid', esc_html__( 'Amount paid for registration', 'event_espresso' ), true );
 		}
 		return $reg_fields;
 	}

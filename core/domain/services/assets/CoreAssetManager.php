@@ -269,7 +269,7 @@ class CoreAssetManager extends AssetManager
                 wp_localize_script(
                     CoreAssetManager::JS_HANDLE_CORE,
                     CoreAssetManager::JS_HANDLE_I18N,
-                    EE_Registry::$i18n_js_strings
+                    EE_Registry::sanitize_i18n_js_strings()
                 );
             }
         );

@@ -3,16 +3,16 @@ add_filter('FHEE__EEH_Form_Fields__label_html', '__return_empty_string');
 
 $values = EEH_Form_Fields::prep_answer_options(
     array(
-        array('id' => 1, 'text' => __('Yes', 'event_espresso')),
-        array('id' => 0, 'text' => __('No', 'event_espresso')),
+        array('id' => 1, 'text' => esc_html__('Yes', 'event_espresso')),
+        array('id' => 0, 'text' => esc_html__('No', 'event_espresso')),
     )
 );
 
 $description = EEH_Form_Fields::prep_answer_options(
     array(
-        array('id' => 0, 'text' => __('none', 'event_espresso')),
-        array('id' => 1, 'text' => __('excerpt (short desc)', 'event_espresso')),
-        array('id' => 2, 'text' => __('full description', 'event_espresso')),
+        array('id' => 0, 'text' => esc_html__('none', 'event_espresso')),
+        array('id' => 1, 'text' => esc_html__('excerpt (short desc)', 'event_espresso')),
+        array('id' => 2, 'text' => esc_html__('full description', 'event_espresso')),
     )
 );
 
@@ -67,7 +67,7 @@ $description = EEH_Form_Fields::prep_answer_options(
                 <p class="important-notice">
                     <?php
                     sprintf(
-                        __(
+                        esc_html__(
                             'Usage of the %1$s FHEE__EE_Register_CPTs__register_CPT__rewrite %2$s filter has been detected.  Please be aware that while this filter is being used, this setting has no affect.',
                             'event_espresso'
                         ),

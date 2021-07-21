@@ -21,7 +21,7 @@ class EE_Full_HTML_Validation_Strategy extends EE_Validation_Strategy_Base
     {
         if (! $validation_error_message) {
             $validation_error_message = sprintf(
-                __('Only the following HTML tags are allowed:%1$s%2$s', "event_espresso"),
+                esc_html__('Only the following HTML tags are allowed:%1$s%2$s', "event_espresso"),
                 '<br />',
                 $this->get_list_of_allowed_tags()
             );

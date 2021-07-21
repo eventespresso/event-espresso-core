@@ -154,8 +154,8 @@ class DisplayTicketSelector
                 $this->event     = $event->EE_Event;
             }
         } else {
-            $user_msg = __('No Event object or an invalid Event object was supplied.', 'event_espresso');
-            $dev_msg  = $user_msg . __(
+            $user_msg = esc_html__('No Event object or an invalid Event object was supplied.', 'event_espresso');
+            $dev_msg  = $user_msg . esc_html__(
                 'In order to generate a ticket selector, please ensure you are passing either an EE_Event object or a WP_Post object of the post type "espresso_event" to the EE_Ticket_Selector class constructor.',
                 'event_espresso'
             );
@@ -608,7 +608,7 @@ class DisplayTicketSelector
                     $html .= apply_filters(
                         'FHEE__EE_Ticket_Selector__display_ticket_selector_submit__sold_out_msg',
                         sprintf(
-                            __(
+                            esc_html__(
                                 '%1$s"%2$s" is currently sold out.%4$sPlease check back again later, as spots may become available.%3$s',
                                 'event_espresso'
                             ),
@@ -680,7 +680,7 @@ class DisplayTicketSelector
     {
         $btn_text     = apply_filters(
             'FHEE__EE_Ticket_Selector__display_ticket_selector_submit__btn_text',
-            __('Register Now', 'event_espresso'),
+            esc_html__('Register Now', 'event_espresso'),
             $this->event
         );
         $external_url = (string) $this->event->external_url()

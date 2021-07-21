@@ -6,7 +6,7 @@
 
         <p id="spco-attendee_information-pg" class="spco-steps-pg small-text drk-grey-text">
             <?php printf(
-                __(
+                esc_html__(
                     'In order to process your registration, we ask you to provide the following information.%1$sPlease note that all fields marked with an asterisk (%2$s) are required.',
                     'event_espresso'
                 ),
@@ -40,7 +40,7 @@
                                      );
                                 echo $item['ticket']->qty()
                                     ? ' &nbsp; x &nbsp; ' . $ticket_count[ $item['ticket']->ID() ]
-                                                              . __(
+                                                              . esc_html__(
                                                                   ' tickets',
                                                                   'event_espresso'
                                                               ) . ' &nbsp; = &nbsp; '
@@ -49,7 +49,7 @@
                                                               )
                                     : '';
                                 echo $item['ticket']->description()
-                                    ? '<br/>' . __(
+                                    ? '<br/>' . esc_html__(
                                         'Ticket Details: ',
                                         'event_espresso'
                                     ) . $item['ticket']->description() : '';
@@ -62,7 +62,7 @@
 
                         <fieldset id="spco-attendee-wrap-<?php echo $line_item; ?>" class="spco-attendee-wrap-fs">
                             <legend class="spco-attendee-lgnd smaller-text lt-grey-text">
-                                <?php echo __(
+                                <?php echo esc_html__(
                                     'Registrant #',
                                     'event_espresso'
                                 ) . $att_nmbr; ?></legend>
@@ -132,7 +132,7 @@
 
                                                 <p class="event_form_field spco-copy-attendee-chk-pg">
                                                     <label>
-                                                        <?php echo __(
+                                                        <?php echo esc_html__(
                                                             'Attendee #',
                                                             'event_espresso'
                                                         ) . $attendee['att_nmbr']; ?>

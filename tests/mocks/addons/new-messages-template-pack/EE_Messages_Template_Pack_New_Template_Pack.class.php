@@ -18,9 +18,9 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed'
 class  EE_Messages_Template_Pack_New_Template_Pack extends EE_Messages_Template_Pack {
 
     public function _set_props() {
-        $this->label = __('Test Pack', 'event_espresso');
+        $this->label = esc_html__('Test Pack', 'event_espresso');
         $this->dbref = 'new_template_pack';
-        $this->description = __('This is a new template pack included as part of an example template pack for demonstration purposes.', 'event_espresso');
+        $this->description = esc_html__('This is a new template pack included as part of an example template pack for demonstration purposes.', 'event_espresso');
         $this->_base_url = EE_NEW_TP_URL . 'templates/';
         $this->_base_path = EE_NEW_TP_PATH . 'templates/';
 
@@ -36,6 +36,6 @@ class  EE_Messages_Template_Pack_New_Template_Pack extends EE_Messages_Template_
         $this->_variations = array();
 
         //all template packs can define the default variation.  You may want to override the label that describes this default, and you do so via this property.  Indexes are the messenger you wish to override the default label for and values are the new label.
-        $this->_default_variation_labels = array( 'email' => __('New Pack Default', 'event_espresso' ) );
+        $this->_default_variation_labels = array( 'email' => esc_html__('New Pack Default', 'event_espresso' ) );
     }
 }

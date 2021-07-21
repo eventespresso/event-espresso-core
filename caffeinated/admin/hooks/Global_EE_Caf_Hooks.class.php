@@ -40,7 +40,7 @@ class Global_EE_Caf_Hooks
 
     public function extra_news_box_content($content)
     {
-        echo '<h3 style="margin:0">' . __('From the Forums', 'event_espresso') . '</h3>';
+        echo '<h3 style="margin:0">' . esc_html__('From the Forums', 'event_espresso') . '</h3>';
         echo '<div id="ee_forum_posts_content">';
         $url = 'http://eventespresso.com/forum/event-espresso-support/feed/';
         EE_Admin_Page::cached_rss_display('ee_forum_posts_content', $url);

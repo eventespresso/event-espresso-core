@@ -28,8 +28,8 @@ class EEM_Checkin extends EEM_Base
      */
     protected function __construct($timezone = null)
     {
-        $this->singular_item = __('Check-In', 'event_espresso');
-        $this->plural_item = __('Check-Ins', 'event_espresso');
+        $this->singular_item = esc_html__('Check-In', 'event_espresso');
+        $this->plural_item = esc_html__('Check-Ins', 'event_espresso');
 
         $this->_tables = array(
             'Checkin' => new EE_Primary_Table('esp_checkin', 'CHK_ID')
@@ -40,7 +40,7 @@ class EEM_Checkin extends EEM_Base
                 'REG_ID' => new EE_Foreign_Key_Int_Field('REG_ID', 'Registration Id', false, 0, 'Registration'),
                 'DTT_ID' => new EE_Foreign_Key_Int_Field('DTT_ID', 'Datetime Id', false, 0, 'Datetime'),
                 'CHK_in' => new EE_Boolean_Field('CHK_in', 'Whether a person has checked in or checked out', false, true),
-                'CHK_timestamp' => new EE_Datetime_Field('CHK_timestamp', __('When the row was modified', 'event_espresso'), false, EE_Datetime_Field::now, $timezone)
+                'CHK_timestamp' => new EE_Datetime_Field('CHK_timestamp', esc_html__('When the row was modified', 'event_espresso'), false, EE_Datetime_Field::now, $timezone)
             )
         );
         $this->_model_relations = array(

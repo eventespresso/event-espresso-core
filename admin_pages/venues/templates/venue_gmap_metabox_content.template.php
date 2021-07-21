@@ -28,7 +28,7 @@
                     <p class="ee-notice">
                         <?php
                         echo sprintf(
-                            __(
+                            esc_html__(
                                 'To display a Google Map for event venues, go to %sEvent Espresso General Settings%sGoogle Maps%s, and set "Activate Google Maps" to "Yes"',
                                 'event_espresso'
                             ),

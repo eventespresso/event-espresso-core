@@ -17,7 +17,7 @@ class Contact_List_Help_Tour extends EE_Help_Tour
 
     protected function _set_tour_properties()
     {
-        $this->_label = __('Contact List Tour', 'event_espresso');
+        $this->_label = esc_html__('Contact List Tour', 'event_espresso');
         $this->_slug = 'contact-list-overview-joyride';
     }
 
@@ -142,9 +142,9 @@ class Contact_List_Help_Tour extends EE_Help_Tour
 
     protected function _start()
     {
-        $content = '<h3>' . __('Contact List', 'event_espresso') . '</h3>';
+        $content = '<h3>' . esc_html__('Contact List', 'event_espresso') . '</h3>';
         $content .= '<p>'
-                    . __(
+                    . esc_html__(
                         'This tour of the Contact List page will go over different areas of the screen to help you understand what they are used for.',
                         'event_espresso'
                     ) . '</p>';
@@ -154,7 +154,7 @@ class Contact_List_Help_Tour extends EE_Help_Tour
     protected function _attendee_id_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'View ID for registrants. Can be sorted in ascending or descending order.',
                    'event_espresso'
                ) . '</p>';
@@ -163,7 +163,7 @@ class Contact_List_Help_Tour extends EE_Help_Tour
     protected function _attendee_name_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'View first name for registrants. Can be sorted in ascending or descending order.',
                    'event_espresso'
                ) . '</p>';
@@ -172,7 +172,7 @@ class Contact_List_Help_Tour extends EE_Help_Tour
     protected function _att_lname_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'View last name for registrants. Can be sorted in ascending or descending order.',
                    'event_espresso'
                ) . '</p>';
@@ -181,7 +181,7 @@ class Contact_List_Help_Tour extends EE_Help_Tour
     protected function _att_email_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'View email address for registrants. Can be sorted in ascending or descending order.',
                    'event_espresso'
                ) . '</p>';
@@ -189,23 +189,23 @@ class Contact_List_Help_Tour extends EE_Help_Tour
 
     protected function _att_phone_stop()
     {
-        return '<p>' . __('View phone number for registrants.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('View phone number for registrants.', 'event_espresso') . '</p>';
     }
 
     protected function _att_address_stop()
     {
-        return '<p>' . __('View address for registrants.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('View address for registrants.', 'event_espresso') . '</p>';
     }
 
     protected function _att_city_stop()
     {
-        return '<p>' . __('View city for registrants.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('View city for registrants.', 'event_espresso') . '</p>';
     }
 
     protected function _sta_id_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'View state/province for registrants. Can be sorted in ascending or descending order.',
                    'event_espresso'
                ) . '</p>';
@@ -214,7 +214,7 @@ class Contact_List_Help_Tour extends EE_Help_Tour
     protected function _cnt_iso_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'View country for registrants. Can be sorted in ascending or descending order.',
                    'event_espresso'
                ) . '</p>';
@@ -222,13 +222,13 @@ class Contact_List_Help_Tour extends EE_Help_Tour
 
     protected function _bulkactions_stop()
     {
-        return '<p>' . __('Perform a bulk action to multiple registrants.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Perform a bulk action to multiple registrants.', 'event_espresso') . '</p>';
     }
 
     protected function _search_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'Search through contacts. The following sources will be searched: Event Name, Event Description, First Name, Last Name, Biography, Email Address, Address, Comments, Notes, Registration Final Price, and Registration Code.',
                    'event_espresso'
                ) . '</p>';
@@ -236,6 +236,6 @@ class Contact_List_Help_Tour extends EE_Help_Tour
 
     protected function _contact_list_csv_export_stop()
     {
-        return '<p>' . __('Export your contact list to a CSV file.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Export your contact list to a CSV file.', 'event_espresso') . '</p>';
     }
 }

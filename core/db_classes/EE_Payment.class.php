@@ -142,13 +142,13 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment
     {
         EE_Error::doing_it_wrong(
             'EE_Payment::gateway',
-            __(
+            esc_html__(
                 'The method EE_Payment::gateway() has been deprecated. Consider instead using EE_Payment::payment_method()->name()',
                 'event_espresso'
             ),
             '4.6.0'
         );
-        return $this->payment_method() ? $this->payment_method()->name() : __('Unknown', 'event_espresso');
+        return $this->payment_method() ? $this->payment_method()->name() : esc_html__('Unknown', 'event_espresso');
     }
 
 
@@ -455,7 +455,7 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment
     public function pretty_status($show_icons = false)
     {
         $status = EEM_Status::instance()->localized_status(
-            array($this->STS_ID() => __('unknown', 'event_espresso')),
+            array($this->STS_ID() => esc_html__('unknown', 'event_espresso')),
             false,
             'sentence'
         );
@@ -633,7 +633,7 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment
             if ($inside_form_html === null) {
                 $inside_form_html = EEH_HTML::p(
                     sprintf(
-                        __(
+                        esc_html__(
                             'If you are not automatically redirected to the payment website within 10 seconds... %1$s %2$s Click Here %3$s',
                             'event_espresso'
                         ),
@@ -804,7 +804,7 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment
     public function get_pretty($field_name, $extra_cache_ref = null)
     {
         if ($field_name === 'PAY_gateway') {
-            return $this->payment_method() ? $this->payment_method()->name() : __('Unknown', 'event_espresso');
+            return $this->payment_method() ? $this->payment_method()->name() : esc_html__('Unknown', 'event_espresso');
         }
         return $this->_get_cached_property($field_name, true, $extra_cache_ref);
     }
@@ -849,7 +849,7 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment
     public function get_first_event_name()
     {
         $event = $this->get_first_event();
-        return $event instanceof EE_Event ? $event->name() : __('Event', 'event_espresso');
+        return $event instanceof EE_Event ? $event->name() : esc_html__('Event', 'event_espresso');
     }
 
 

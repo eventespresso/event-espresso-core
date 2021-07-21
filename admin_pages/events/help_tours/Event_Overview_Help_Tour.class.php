@@ -17,7 +17,7 @@ class Event_Overview_Help_Tour extends EE_Help_Tour
 
     protected function _set_tour_properties()
     {
-        $this->_label = __('Event Overview Tour', 'event_espresso');
+        $this->_label = esc_html__('Event Overview Tour', 'event_espresso');
         $this->_slug = $this->_is_caf ? 'event-overview-caf-joyride' : 'event-overview-joyride';
     }
 
@@ -159,9 +159,9 @@ class Event_Overview_Help_Tour extends EE_Help_Tour
 
     protected function _start()
     {
-        $content = '<h3>' . __('Events Overview', 'event_espresso') . '</h3>';
+        $content = '<h3>' . esc_html__('Events Overview', 'event_espresso') . '</h3>';
         $content .= '<p>'
-                    . __(
+                    . esc_html__(
                         'This tour of the Events Overview page will go over different areas of the screen to help you understand what they are used for.',
                         'event_espresso'
                     ) . '</p>';
@@ -172,7 +172,7 @@ class Event_Overview_Help_Tour extends EE_Help_Tour
     protected function _event_id_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'View an ID for an event. Can be sorted in ascending or descending order.',
                    'event_espresso'
                ) . '</p>';
@@ -181,7 +181,7 @@ class Event_Overview_Help_Tour extends EE_Help_Tour
     protected function _event_name_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'View the name (title) of an event. Can be sorted in ascending or descending order.',
                    'event_espresso'
                ) . '</p>';
@@ -190,7 +190,7 @@ class Event_Overview_Help_Tour extends EE_Help_Tour
     protected function _event_venue_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'View the venue for an event. Can be sorted in ascending or descending order.',
                    'event_espresso'
                ) . '</p>';
@@ -199,7 +199,7 @@ class Event_Overview_Help_Tour extends EE_Help_Tour
     protected function _event_start_date_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'View the date and time that an event begins on. Can be sorted in ascending or descending order.',
                    'event_espresso'
                ) . '</p>';
@@ -208,7 +208,7 @@ class Event_Overview_Help_Tour extends EE_Help_Tour
     protected function _event_onsale_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'View the datetime that the first ticket for an event is available for purchase. Can be sorted in ascending or descending order.',
                    'event_espresso'
                ) . '</p>';
@@ -216,13 +216,13 @@ class Event_Overview_Help_Tour extends EE_Help_Tour
 
     protected function _event_registrations_stop()
     {
-        return '<p>' . __('View the number of approved registrations for an event.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('View the number of approved registrations for an event.', 'event_espresso') . '</p>';
     }
 
     protected function _actions_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'Perform an action to an event. See legend in bottom left corner.',
                    'event_espresso'
                ) . '</p>';
@@ -231,7 +231,7 @@ class Event_Overview_Help_Tour extends EE_Help_Tour
     protected function _legend_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'This is the legend that describes the actions available in the actions column. Also shows the statuses that are available for an event.',
                    'event_espresso'
                ) . '</p>';
@@ -245,7 +245,7 @@ class Event_Overview_Help_Tour extends EE_Help_Tour
     protected function _views_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'You can select different views by draft, time period, or look at events which have been moved to the trash.',
                    'event_espresso'
                ) . '</p>';
@@ -253,18 +253,18 @@ class Event_Overview_Help_Tour extends EE_Help_Tour
 
     protected function _bulkactions_stop()
     {
-        return '<p>' . __('Perform a bulk action to multiple events.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Perform a bulk action to multiple events.', 'event_espresso') . '</p>';
     }
 
     protected function _stop_about_filters()
     {
-        return '<p>' . __('Events can be filtered by status, date, or category.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Events can be filtered by status, date, or category.', 'event_espresso') . '</p>';
     }
 
     protected function _search_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'Search through events. The following sources will be searched: Event Name, Event Description, and Event Short Description.',
                    'event_espresso'
                ) . '</p>';
@@ -272,6 +272,6 @@ class Event_Overview_Help_Tour extends EE_Help_Tour
 
     protected function _add_new_event_stop()
     {
-        return '<p>' . __('Click this button to add a new event.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Click this button to add a new event.', 'event_espresso') . '</p>';
     }
 }

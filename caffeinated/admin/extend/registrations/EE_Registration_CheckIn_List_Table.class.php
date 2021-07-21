@@ -45,16 +45,16 @@ class EE_Registration_CheckIn_List_Table extends EE_Admin_List_Table
     protected function _set_properties()
     {
         $this->_wp_list_args = array(
-            'singular' => __('check-in', 'event_espresso'),
-            'plural'   => __('check-ins', 'event_espresso'),
+            'singular' => esc_html__('check-in', 'event_espresso'),
+            'plural'   => esc_html__('check-ins', 'event_espresso'),
             'ajax'     => true,
             'screen'   => $this->_admin_page->get_current_screen()->id,
         );
 
         $this->_columns = array(
             'cb'            => '<input type="checkbox" />', // Render a checkbox instead of text
-            'CHK_in'        => __('Check-In', 'event_espresso'),
-            'CHK_timestamp' => __('Timestamp', 'event_espresso'),
+            'CHK_in'        => esc_html__('Check-In', 'event_espresso'),
+            'CHK_timestamp' => esc_html__('Timestamp', 'event_espresso'),
         );
 
         $this->_sortable_columns = array(
@@ -159,7 +159,7 @@ class EE_Registration_CheckIn_List_Table extends EE_Admin_List_Table
         )
             ? '<a href="' . $delete_url . '" title="'
               . esc_attr__('Click here to delete this check-in record', 'event_espresso') . '">'
-              . __('Delete', 'event_espresso') . '</a>'
+              . esc_html__('Delete', 'event_espresso') . '</a>'
             : '';
 
         return sprintf(
@@ -201,7 +201,7 @@ class EE_Registration_CheckIn_List_Table extends EE_Admin_List_Table
         // if no reg id then get out cause need a reg id
         if (empty($REG_ID) || empty($DTT_ID)) {
             throw new EE_Error(
-                __(
+                esc_html__(
                     'This route cannot be viewed unless registration and datetime IDs are included in the request (via REG_ID and DTT_ID parameters)',
                     'event_espresso'
                 )

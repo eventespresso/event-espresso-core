@@ -1793,7 +1793,7 @@ class Messages_Admin_Page extends EE_Admin_Page
 
 
         // finally, let's set the admin_page title
-        $this->_admin_page_title = sprintf(__('Editing %s', 'event_espresso'), $title);
+        $this->_admin_page_title = sprintf(esc_html__('Editing %s', 'event_espresso'), $title);
 
 
         // we need to take care of setting the shortcodes property for use elsewhere.
@@ -2090,7 +2090,7 @@ class Messages_Admin_Page extends EE_Admin_Page
             // the info for the template we generated is the first element in the returned array
             // $templates = $templates[0];
             EE_Error::overwrite_success();
-            EE_Error::add_success(__('Templates have been reset to defaults.', 'event_espresso'));
+            EE_Error::add_success(esc_html__('Templates have been reset to defaults.', 'event_espresso'));
         }
 
 
@@ -2203,11 +2203,11 @@ class Messages_Admin_Page extends EE_Admin_Page
             admin_url('admin.php')
         );
         $message = $test_send
-            ? __(
+            ? esc_html__(
                 'A test message could not be sent for this message template because there are no events created yet. The preview system uses actual events for generating the test message. %1$sGo see your events%2$s!',
                 'event_espresso'
             )
-            : __(
+            : esc_html__(
                 'There is no preview for this message template available because there are no events created yet. The preview system uses actual events for generating the preview. %1$sGo see your events%2$s!',
                 'event_espresso'
             );
@@ -2644,7 +2644,7 @@ class Messages_Admin_Page extends EE_Admin_Page
                         <?php endforeach;
                     endif; ?>
                 </select>
-                <?php $button_text = sprintf(__('Switch %s', 'event_espresso'), ucwords($context_label['label'])); ?>
+                <?php $button_text = sprintf(esc_html__('Switch %s', 'event_espresso'), ucwords($context_label['label'])); ?>
                 <input id="submit-msg-context-switcher-sbmt" class="button-secondary" type="submit"
                        value="<?php echo $button_text; ?>">
             </form>
@@ -3043,7 +3043,7 @@ class Messages_Admin_Page extends EE_Admin_Page
             if (EEM_Event::instance()->count() > 0) {
                 $success = $this->_preview_message(true);
                 if ($success) {
-                    EE_Error::add_success(__('Test message sent', 'event_espresso'));
+                    EE_Error::add_success(esc_html__('Test message sent', 'event_espresso'));
                 } else {
                     EE_Error::add_error(
                         esc_html__('The test message was not sent', 'event_espresso'),
@@ -3694,7 +3694,7 @@ class Messages_Admin_Page extends EE_Admin_Page
                 EE_Registry::instance()->NET_CFG->update_config(true, false);
                 EE_Registry::instance()->CFG->update_espresso_config();
                 EE_Error::overwrite_success();
-                EE_Error::add_success(__('Global message settings were updated', 'event_espresso'));
+                EE_Error::add_success(esc_html__('Global message settings were updated', 'event_espresso'));
             }
         }
         $this->_redirect_after_action(0, '', '', array('action' => 'settings'), true);
@@ -4422,7 +4422,7 @@ class Messages_Admin_Page extends EE_Admin_Page
         $success = $this->_message_resource_manager->update_active_messengers_option();
 
         if ($success) {
-            EE_Error::add_success(__('Settings updated', 'event_espresso'));
+            EE_Error::add_success(esc_html__('Settings updated', 'event_espresso'));
         } else {
             EE_Error::add_error(
                 esc_html__(

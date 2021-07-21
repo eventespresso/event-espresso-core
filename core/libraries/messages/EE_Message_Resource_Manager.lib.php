@@ -230,7 +230,7 @@ class EE_Message_Resource_Manager
         }
         throw new EE_Error(
             sprintf(
-                __('The "%1$s" messenger is either invalid or not installed', 'event_espresso'),
+                esc_html__('The "%1$s" messenger is either invalid or not installed', 'event_espresso'),
                 $messenger_name
             )
         );
@@ -442,7 +442,7 @@ class EE_Message_Resource_Manager
         }
         throw new EE_Error(
             sprintf(
-                __('The "%1$s" message type is either invalid or not installed', 'event_espresso'),
+                esc_html__('The "%1$s" message type is either invalid or not installed', 'event_espresso'),
                 $message_type_name
             )
         );
@@ -463,7 +463,7 @@ class EE_Message_Resource_Manager
         if (! in_array($message_type_name, $valid_message_types)) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'The message type (%1$s) sent to "%2$s" is not valid for the "%3$s" messenger.  Double-check the spelling and verify that message type has been registered as a valid type with the messenger.',
                         'event_espresso'
                     ),
@@ -634,7 +634,7 @@ class EE_Message_Resource_Manager
         if (! empty($not_installed)) {
             EE_Error::add_error(
                 sprintf(
-                    __('The following messengers are either not installed or are invalid:%1$s %2$s', 'event_espresso'),
+                    esc_html__('The following messengers are either not installed or are invalid:%1$s %2$s', 'event_espresso'),
                     '<br />',
                     implode(', ', $not_installed)
                 ),

@@ -686,7 +686,7 @@ class EED_Core_Rest_Api extends \EED_Module
                     'force' => array(
                         'required'    => false,
                         'default'     => false,
-                        'description' => __(
+                        'description' => esc_html__(
                         // @codingStandardsIgnoreStart
                             'Whether to force toggle checkin, or to verify the registration status and allowed ticket uses',
                             // @codingStandardsIgnoreEnd

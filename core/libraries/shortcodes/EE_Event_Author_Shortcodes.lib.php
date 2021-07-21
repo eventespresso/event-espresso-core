@@ -28,16 +28,16 @@ class EE_Event_Author_Shortcodes extends EE_Shortcodes
 
     protected function _init_props()
     {
-        $this->label = __('Event Author Details Shortcodes', 'event_espresso');
-        $this->description = __('All shortcodes specific to event_author data', 'event_espresso');
+        $this->label = esc_html__('Event Author Details Shortcodes', 'event_espresso');
+        $this->description = esc_html__('All shortcodes specific to event_author data', 'event_espresso');
         $this->_shortcodes = array(
-            '[EVENT_AUTHOR_FNAME]' => __('Parses to the first name of the event author.', 'event_espresso'),
-            '[EVENT_AUTHOR_LNAME]' => __('Parses to the last name of the event author.', 'event_espresso'),
-            '[EVENT_AUTHOR_FORMATTED_EMAIL]' => __(
+            '[EVENT_AUTHOR_FNAME]' => esc_html__('Parses to the first name of the event author.', 'event_espresso'),
+            '[EVENT_AUTHOR_LNAME]' => esc_html__('Parses to the last name of the event author.', 'event_espresso'),
+            '[EVENT_AUTHOR_FORMATTED_EMAIL]' => esc_html__(
                 'Parses to a formatted email address of the event author (fname lname &lt;email@address.com&gt;).  <strong>NOTE:</strong> If the event author has not filled out their WordPress user profile then the organization name will be used as the "From" name.',
                 'event_espresso'
             ),
-            '[EVENT_AUTHOR_EMAIL]' => __(
+            '[EVENT_AUTHOR_EMAIL]' => esc_html__(
                 'Parses to the unformatted email address of the event author',
                 'event_espresso'
             ),

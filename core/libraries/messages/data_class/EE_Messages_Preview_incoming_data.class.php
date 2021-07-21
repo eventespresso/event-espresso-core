@@ -94,7 +94,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data
 
         if (count($events) < 1) {
             throw new EE_Error(
-                __(
+                esc_html__(
                     'We can\'t generate a preview for you because there are no active events in your database',
                     'event_espresso'
                 )
@@ -306,17 +306,17 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data
         $quests_array = [
             0 => [
                 555,
-                __('What is your favorite planet?', 'event_espresso'),
+                esc_html__('What is your favorite planet?', 'event_espresso'),
                 0,
             ],
             1 => [
                 556,
-                __('What is your favorite food?', 'event_espresso'),
+                esc_html__('What is your favorite food?', 'event_espresso'),
                 0,
             ],
             2 => [
                 557,
-                __('How many lightyears have you travelled', 'event_espresso'),
+                esc_html__('How many lightyears have you travelled', 'event_espresso'),
                 0,
             ],
         ];
@@ -516,11 +516,11 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data
 
         $shipping_line_item = EE_Line_Item::new_instance(
             [
-                'LIN_name'       => __(
+                'LIN_name'       => esc_html__(
                     'Shipping Surcharge',
                     'event_espresso'
                 ),
-                'LIN_desc'       => __(
+                'LIN_desc'       => esc_html__(
                     'Sent via Millenium Falcon',
                     'event_espresso'
                 ),

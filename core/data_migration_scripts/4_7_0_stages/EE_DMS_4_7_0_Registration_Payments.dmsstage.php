@@ -22,7 +22,7 @@ class EE_DMS_4_7_0_Registration_Payments extends EE_Data_Migration_Script_Stage_
     {
         /** @type WPDB $wpdb */
         global $wpdb;
-        $this->_pretty_name = __('Registration Payment Record Generation', 'event_espresso');
+        $this->_pretty_name = esc_html__('Registration Payment Record Generation', 'event_espresso');
         // define tables
         $this->_old_table                                   = $wpdb->prefix . 'esp_transaction';
         $this->_payment_table                       = $wpdb->prefix . 'esp_payment';
@@ -47,7 +47,7 @@ class EE_DMS_4_7_0_Registration_Payments extends EE_Data_Migration_Script_Stage_
         if (! $TXN_ID) {
             $this->add_error(
                 sprintf(
-                    __('Invalid transaction with ID=%1$d. Error: "%2$s"', 'event_espresso'),
+                    esc_html__('Invalid transaction with ID=%1$d. Error: "%2$s"', 'event_espresso'),
                     $TXN_ID,
                     $wpdb->last_error
                 )
@@ -191,7 +191,7 @@ class EE_DMS_4_7_0_Registration_Payments extends EE_Data_Migration_Script_Stage_
         if ($success === false) {
             $this->add_error(
                 sprintf(
-                    __('Could not update registration paid value for registration ID=%1$d because "%2$s"', 'event_espresso'),
+                    esc_html__('Could not update registration paid value for registration ID=%1$d because "%2$s"', 'event_espresso'),
                     $REG_ID,
                     $wpdb->last_error
                 )
@@ -224,7 +224,7 @@ class EE_DMS_4_7_0_Registration_Payments extends EE_Data_Migration_Script_Stage_
         if ($success === false) {
             $this->add_error(
                 sprintf(
-                    __('Could not update registration paid value for registration ID=%1$d because "%2$s"', 'event_espresso'),
+                    esc_html__('Could not update registration paid value for registration ID=%1$d because "%2$s"', 'event_espresso'),
                     $REG_ID,
                     $wpdb->last_error
                 )

@@ -22,23 +22,23 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base
 
     protected function __construct($timezone = null)
     {
-        $this->singular_item = __('Message Template Group', 'event_espresso');
-        $this->plural_item = __('Message Template Groups', 'event_espresso');
+        $this->singular_item = esc_html__('Message Template Group', 'event_espresso');
+        $this->plural_item = esc_html__('Message Template Groups', 'event_espresso');
         $this->_tables = array(
             'Message_Template_Group' => new EE_Primary_Table('esp_message_template_group', 'GRP_ID')
         );
         $this->_fields = array(
             'Message_Template_Group' => array(
-                'GRP_ID' => new EE_Primary_Key_Int_Field('GRP_ID', __('Message Template Group ID', 'event_espresso')),
-                'MTP_name' => new EE_Plain_Text_Field('MTP_name', __('The name of the template group', 'event_espresso'), false, ''),
-                'MTP_description' => new EE_Simple_HTML_Field('MTP_description', __('A brief description about this template.', 'event_espresso'), false, ''),
-                'MTP_user_id' => new EE_WP_User_Field('MTP_user_id', __('Template Creator ID', 'event_espresso'), false, get_current_user_id()),
-                'MTP_messenger' => new EE_Plain_Text_Field('MTP_messenger', __('Messenger Used for Template', 'event_espresso'), false, 'email'),
-                'MTP_message_type' => new EE_Plain_Text_Field('MTP_message_type', __('Message Type', 'event_espresso'), false, 'registration'),
-                'MTP_is_global' => new EE_Boolean_Field('MTP_is_global', __('Flag indicating if Template Group is Global', 'event_espresso'), false, true),
-                'MTP_is_override' => new EE_Boolean_Field('MTP_is_override', __('Flag indicating if Template Group overrides any other Templates for the messenger/messagetype combination', 'event_espresso'), false, false),
-                'MTP_deleted' => new EE_Trashed_Flag_Field('MTP_deleted', __('Flag indicating whether this has been trashed', 'event_espresso'), false, false),
-                'MTP_is_active' => new EE_Boolean_Field('MTP_is_active', __('Flag indicating whether template group is active', 'event_espresso'), false, true)
+                'GRP_ID' => new EE_Primary_Key_Int_Field('GRP_ID', esc_html__('Message Template Group ID', 'event_espresso')),
+                'MTP_name' => new EE_Plain_Text_Field('MTP_name', esc_html__('The name of the template group', 'event_espresso'), false, ''),
+                'MTP_description' => new EE_Simple_HTML_Field('MTP_description', esc_html__('A brief description about this template.', 'event_espresso'), false, ''),
+                'MTP_user_id' => new EE_WP_User_Field('MTP_user_id', esc_html__('Template Creator ID', 'event_espresso'), false, get_current_user_id()),
+                'MTP_messenger' => new EE_Plain_Text_Field('MTP_messenger', esc_html__('Messenger Used for Template', 'event_espresso'), false, 'email'),
+                'MTP_message_type' => new EE_Plain_Text_Field('MTP_message_type', esc_html__('Message Type', 'event_espresso'), false, 'registration'),
+                'MTP_is_global' => new EE_Boolean_Field('MTP_is_global', esc_html__('Flag indicating if Template Group is Global', 'event_espresso'), false, true),
+                'MTP_is_override' => new EE_Boolean_Field('MTP_is_override', esc_html__('Flag indicating if Template Group overrides any other Templates for the messenger/messagetype combination', 'event_espresso'), false, false),
+                'MTP_deleted' => new EE_Trashed_Flag_Field('MTP_deleted', esc_html__('Flag indicating whether this has been trashed', 'event_espresso'), false, false),
+                'MTP_is_active' => new EE_Boolean_Field('MTP_is_active', esc_html__('Flag indicating whether template group is active', 'event_espresso'), false, true)
             )
         );
         $this->_model_relations = array(
@@ -393,9 +393,9 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base
         $classname = 'EE_Messages_' . $m_ref . '_' . $mt_ref . '_Validator';
 
         if (!class_exists($classname)) {
-            $msg[] = __('The Validator class was unable to load', 'event_espresso');
+            $msg[] = esc_html__('The Validator class was unable to load', 'event_espresso');
             $msg[] = sprintf(
-                __(
+                esc_html__(
                     'The class name compiled was %s. Please check and make sure the spelling and case is correct for the class name and that there is an autoloader in place for this class',
                     'event_espresso'
                 ),

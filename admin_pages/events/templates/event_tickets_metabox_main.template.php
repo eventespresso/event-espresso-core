@@ -71,7 +71,7 @@
                         </td>
                         <td class="datetime-tickets-sold">
                             <?php printf(
-                                __('Tickets Sold: %s', 'event_espresso'),
+                                esc_html__('Tickets Sold: %s', 'event_espresso'),
                                 $time->get('DTT_sold')
                             ); ?></td>
                     </tr>

@@ -60,7 +60,7 @@ abstract class EE_Compound_Input_Display_Strategy extends EE_Display_Strategy_Ba
         if (! $this->_input instanceof EE_Form_Input_With_Options_Base) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'Can not use a Compound Input Display Strategy (eg checkbox or radio) with an input that doesn\'t have options',
                         'event_espresso'
                     )

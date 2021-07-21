@@ -192,7 +192,7 @@ class Recipe implements RecipeInterface
         if (! is_string($identifier) || empty($identifier)) {
             throw new InvalidIdentifierException(
                 is_object($identifier) ? get_class($identifier) : gettype($identifier),
-                __('class identifier (typically a \Fully\Qualified\ClassName)', 'event_espresso')
+                esc_html__('class identifier (typically a \Fully\Qualified\ClassName)', 'event_espresso')
             );
         }
         $this->identifier = $identifier;
@@ -220,7 +220,7 @@ class Recipe implements RecipeInterface
             throw new InvalidDataTypeException(
                 '$fqcn',
                 is_object($fqcn) ? get_class($fqcn) : gettype($fqcn),
-                __('string (Fully\Qualified\ClassName)', 'event_espresso')
+                esc_html__('string (Fully\Qualified\ClassName)', 'event_espresso')
             );
         }
         $fqcn = ltrim($fqcn, '\\');
@@ -251,7 +251,7 @@ class Recipe implements RecipeInterface
             throw new InvalidDataTypeException(
                 '$ingredients',
                 is_object($ingredients) ? get_class($ingredients) : gettype($ingredients),
-                __('array of class dependencies', 'event_espresso')
+                esc_html__('array of class dependencies', 'event_espresso')
             );
         }
         $this->ingredients = array_merge($this->ingredients, $ingredients);
@@ -283,7 +283,7 @@ class Recipe implements RecipeInterface
             throw new InvalidDataTypeException(
                 '$filters',
                 is_object($filters) ? get_class($filters) : gettype($filters),
-                __('array of class aliases', 'event_espresso')
+                esc_html__('array of class aliases', 'event_espresso')
             );
         }
         $this->filters = array_merge($this->filters, $filters);
@@ -310,7 +310,7 @@ class Recipe implements RecipeInterface
             throw new InvalidDataTypeException(
                 '$path',
                 is_object($paths) ? get_class($paths) : gettype($paths),
-                __('string or array of strings (full server filepath(s))', 'event_espresso')
+                esc_html__('string or array of strings (full server filepath(s))', 'event_espresso')
             );
         }
         $paths = (array) $paths;
@@ -318,7 +318,7 @@ class Recipe implements RecipeInterface
             if (strpos($path, '*') === false && ! is_readable($path)) {
                 throw new RuntimeException(
                     sprintf(
-                        __('The following filepath is not readable: "%1$s"', 'event_espresso'),
+                        esc_html__('The following filepath is not readable: "%1$s"', 'event_espresso'),
                         $path
                     )
                 );

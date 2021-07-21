@@ -59,12 +59,12 @@ class EEH_MSG_Template
         $templates = array();
 
         if (empty($messenger)) {
-            throw new EE_Error(__('We need a messenger to generate templates!', 'event_espresso'));
+            throw new EE_Error(esc_html__('We need a messenger to generate templates!', 'event_espresso'));
         }
 
         // if we STILL have empty $message_types then we need to generate an error message b/c we NEED message types to do the template files.
         if (empty($message_types)) {
-            throw new EE_Error(__('We need at least one message type to generate templates!', 'event_espresso'));
+            throw new EE_Error(esc_html__('We need at least one message type to generate templates!', 'event_espresso'));
         }
 
         EEH_MSG_Template::_set_autoloader();
@@ -249,9 +249,9 @@ class EEH_MSG_Template
         // validate class for getting our list of shortcodes
         $classname = 'EE_Messages_' . $messenger_name . '_' . $mt_name . '_Validator';
         if (! class_exists($classname)) {
-            $msg[] = __('The Validator class was unable to load', 'event_espresso');
+            $msg[] = esc_html__('The Validator class was unable to load', 'event_espresso');
             $msg[] = sprintf(
-                __('The class name compiled was %s. Please check and make sure the spelling and case is correct for the class name and that there is an autoloader in place for this class', 'event_espresso'),
+                esc_html__('The class name compiled was %s. Please check and make sure the spelling and case is correct for the class name and that there is an autoloader in place for this class', 'event_espresso'),
                 $classname
             );
             throw new EE_Error(implode('||', $msg));
@@ -421,7 +421,7 @@ class EEH_MSG_Template
     {
         EE_Error::doing_it_wrong(
             __METHOD__,
-            __('Please use EE_Message_Resource_Manager::get_active_messengers_option() instead.', 'event_espresso'),
+            esc_html__('Please use EE_Message_Resource_Manager::get_active_messengers_option() instead.', 'event_espresso'),
             '4.9.0'
         );
         /** @var EE_Message_Resource_Manager $Message_Resource_Manager */
@@ -446,7 +446,7 @@ class EEH_MSG_Template
     {
         EE_Error::doing_it_wrong(
             __METHOD__,
-            __('Please use EE_Message_Resource_Manager::update_active_messengers_option() instead.', 'event_espresso'),
+            esc_html__('Please use EE_Message_Resource_Manager::update_active_messengers_option() instead.', 'event_espresso'),
             '4.9.0'
         );
         /** @var EE_Message_Resource_Manager $Message_Resource_Manager */
@@ -482,7 +482,7 @@ class EEH_MSG_Template
         // if $registration object is not valid then exit early because there's nothing that can be generated.
         if (! $registration instanceof EE_Registration) {
             throw new EE_Error(
-                __('Incoming value for registration is not a valid EE_Registration object.', 'event_espresso')
+                esc_html__('Incoming value for registration is not a valid EE_Registration object.', 'event_espresso')
             );
         }
 
@@ -491,7 +491,7 @@ class EEH_MSG_Template
         if ($message->context() !== '' && ! isset($contexts[ $message->context() ])) {
             throw new EE_Error(
                 sprintf(
-                    __('The context %s is not a valid context for %s.', 'event_espresso'),
+                    esc_html__('The context %s is not a valid context for %s.', 'event_espresso'),
                     $message->context(),
                     get_class($message_type)
                 )
@@ -507,7 +507,7 @@ class EEH_MSG_Template
             ) {
                 throw new EE_Error(
                     sprintf(
-                        __(
+                        esc_html__(
                             'The given sending messenger string (%1$s) does not match a valid sending messenger with the %2$s.  If this is incorrect, make sure that the message type has defined this messenger as a sending messenger in its $_with_messengers array.',
                             'event_espresso'
                         ),
@@ -653,31 +653,31 @@ class EEH_MSG_Template
             'FHEE__EEH_MSG_Template__message_action_icons',
             array(
                 'view' => array(
-                    'label' => __('View Message', 'event_espresso'),
+                    'label' => esc_html__('View Message', 'event_espresso'),
                     'css_class' => 'dashicons dashicons-welcome-view-site',
                 ),
                 'error' => array(
-                    'label' => __('View Error Message', 'event_espresso'),
+                    'label' => esc_html__('View Error Message', 'event_espresso'),
                     'css_class' => 'dashicons dashicons-info',
                 ),
                 'see_notifications_for' => array(
-                    'label' => __('View Related Messages', 'event_espresso'),
+                    'label' => esc_html__('View Related Messages', 'event_espresso'),
                     'css_class' => 'dashicons dashicons-megaphone',
                 ),
                 'generate_now' => array(
-                    'label' => __('Generate the message now.', 'event_espresso'),
+                    'label' => esc_html__('Generate the message now.', 'event_espresso'),
                     'css_class' => 'dashicons dashicons-admin-tools',
                 ),
                 'send_now' => array(
-                    'label' => __('Send Immediately', 'event_espresso'),
+                    'label' => esc_html__('Send Immediately', 'event_espresso'),
                     'css_class' => 'dashicons dashicons-controls-forward',
                 ),
                 'queue_for_resending' => array(
-                    'label' => __('Queue for Resending', 'event_espresso'),
+                    'label' => esc_html__('Queue for Resending', 'event_espresso'),
                     'css_class' => 'dashicons dashicons-controls-repeat',
                 ),
                 'view_transaction' => array(
-                    'label' => __('View related Transaction', 'event_espresso'),
+                    'label' => esc_html__('View related Transaction', 'event_espresso'),
                     'css_class' => 'dashicons dashicons-cart',
                 )
             )
@@ -1114,7 +1114,7 @@ class EEH_MSG_Template
         if (! $Message_Template_Group instanceof EE_Message_Template_Group) {
             EE_Error::add_error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'Something went wrong with generating the custom template from this group id: %s.  This usually happens when there is no matching message template group in the db.',
                         'event_espresso'
                     ),
@@ -1137,11 +1137,11 @@ class EEH_MSG_Template
         $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
         $template_name = $request->isAjax() && $request->requestParamIsSet('templateName')
             ? $request->getRequestParam('templateName')
-            : __('New Custom Template', 'event_espresso');
+            : esc_html__('New Custom Template', 'event_espresso');
         $template_description = $request->isAjax() && $request->requestParamIsSet('templateDescription')
             ? $request->getRequestParam('templateDescription')
             : sprintf(
-                __(
+                esc_html__(
                     'This is a custom template that was created for the %s messenger and %s message type.',
                     'event_espresso'
                 ),
@@ -1204,7 +1204,7 @@ class EEH_MSG_Template
         }
         EE_Error::add_error(
             sprintf(
-                __(
+                esc_html__(
                     'The %1$s message type is not registered with the %2$s messenger. Please visit the Messenger activation page to assign this message type first if you want to use it.',
                     'event_espresso'
                 ),
@@ -1253,7 +1253,7 @@ class EEH_MSG_Template
         }
         if (empty($template_fields)) {
             EE_Error::add_error(
-                __('Something went wrong and we couldn\'t get any templates assembled', 'event_espresso'),
+                esc_html__('Something went wrong and we couldn\'t get any templates assembled', 'event_espresso'),
                 __FILE__,
                 __FUNCTION__,
                 __LINE__

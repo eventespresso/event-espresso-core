@@ -91,7 +91,7 @@ class EE_Question_Form_Input
         $this->form_data = $this->request->requestParams();
         if (empty($QST) || empty($ANS)) {
             EE_Error::add_error(
-                __('An error occurred. A valid EE_Question or EE_Answer object was not received.', 'event_espresso'),
+                esc_html__('An error occurred. A valid EE_Question or EE_Answer object was not received.', 'event_espresso'),
                 __FILE__,
                 __FUNCTION__,
                 __LINE__

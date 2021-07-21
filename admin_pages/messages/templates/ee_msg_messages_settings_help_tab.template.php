@@ -28,7 +28,7 @@
 ); ?></p>
 <p><?php echo $img3;
     printf(
-        __('On means of course that the messenger is active and %s means the messenger is inactive.', 'event_espresso'),
+        esc_html__('On means of course that the messenger is active and %s means the messenger is inactive.', 'event_espresso'),
         $img4
     ); ?></p>
 <p><?php _e(
@@ -44,7 +44,7 @@
     'event_espresso'
 ); ?></p>
 <p><?php printf(
-    __(
+    esc_html__(
         '%sVery important!%s Although customizations made to global templates are preserved when a messenger is deactivated, any settings for that messenger (or the message types that were attached to it) are lost on deactivation.  Keep that in mind. Also, once you deactivate a messenger, no more messages will be delivered using that messenger for any of your events.',
         'event_espresso'
     ),

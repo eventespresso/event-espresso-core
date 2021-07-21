@@ -41,7 +41,7 @@ class Tickets_Admin_Page_Init extends EE_Admin_Page_Init
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
         define('TICKETS_PG_SLUG', 'tickets');
-        define('TICKETS_LABEL', __('Default Tickets', 'event_espresso'));
+        define('TICKETS_LABEL', esc_html__('Default Tickets', 'event_espresso'));
         define('TICKETS_ADMIN', EE_CORE_CAF_ADMIN . 'new/' . TICKETS_PG_SLUG . '/');
         define('TICKETS_ADMIN_URL', admin_url('admin.php?page=' . TICKETS_PG_SLUG));
         define('TICKETS_ASSETS_PATH', TICKETS_ADMIN . 'assets/');

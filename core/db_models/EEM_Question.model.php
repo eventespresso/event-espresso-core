@@ -111,50 +111,50 @@ class EEM_Question extends EEM_Soft_Delete_Base
      */
     protected function __construct($timezone = null)
     {
-        $this->singular_item = __('Question', 'event_espresso');
-        $this->plural_item = __('Questions', 'event_espresso');
+        $this->singular_item = esc_html__('Question', 'event_espresso');
+        $this->plural_item = esc_html__('Questions', 'event_espresso');
         $this->_allowed_question_types = apply_filters(
             'FHEE__EEM_Question__construct__allowed_question_types',
             array(
-                EEM_Question::QST_type_text => __('Text', 'event_espresso'),
-                EEM_Question::QST_type_textarea => __('Textarea', 'event_espresso'),
-                EEM_Question::QST_type_checkbox => __('Checkboxes', 'event_espresso'),
-                EEM_Question::QST_type_radio => __('Radio Buttons', 'event_espresso'),
-                EEM_Question::QST_type_dropdown => __('Dropdown', 'event_espresso'),
-                EEM_Question::QST_type_state => __('State/Province Dropdown', 'event_espresso'),
-                EEM_Question::QST_type_country => __('Country Dropdown', 'event_espresso'),
-                EEM_Question::QST_type_date => __('Date Picker', 'event_espresso'),
-                EEM_Question::QST_type_html_textarea => __('HTML Textarea', 'event_espresso'),
-                EEM_Question::QST_type_email => __('Email', 'event_espresso'),
-                EEM_Question::QST_type_email_confirm => __('Confirm Email', 'event_espresso'),
-                EEM_Question::QST_type_us_phone => __('USA - Format Phone', 'event_espresso'),
-                EEM_Question::QST_type_decimal => __('Number', 'event_espresso'),
-                EEM_Question::QST_type_int => __('Whole Number', 'event_espresso'),
-                EEM_Question::QST_type_url => __('URL', 'event_espresso'),
-                EEM_Question::QST_type_year => __('Year', 'event_espresso'),
-                EEM_Question::QST_type_multi_select => __('Multi Select', 'event_espresso')
+                EEM_Question::QST_type_text => esc_html__('Text', 'event_espresso'),
+                EEM_Question::QST_type_textarea => esc_html__('Textarea', 'event_espresso'),
+                EEM_Question::QST_type_checkbox => esc_html__('Checkboxes', 'event_espresso'),
+                EEM_Question::QST_type_radio => esc_html__('Radio Buttons', 'event_espresso'),
+                EEM_Question::QST_type_dropdown => esc_html__('Dropdown', 'event_espresso'),
+                EEM_Question::QST_type_state => esc_html__('State/Province Dropdown', 'event_espresso'),
+                EEM_Question::QST_type_country => esc_html__('Country Dropdown', 'event_espresso'),
+                EEM_Question::QST_type_date => esc_html__('Date Picker', 'event_espresso'),
+                EEM_Question::QST_type_html_textarea => esc_html__('HTML Textarea', 'event_espresso'),
+                EEM_Question::QST_type_email => esc_html__('Email', 'event_espresso'),
+                EEM_Question::QST_type_email_confirm => esc_html__('Confirm Email', 'event_espresso'),
+                EEM_Question::QST_type_us_phone => esc_html__('USA - Format Phone', 'event_espresso'),
+                EEM_Question::QST_type_decimal => esc_html__('Number', 'event_espresso'),
+                EEM_Question::QST_type_int => esc_html__('Whole Number', 'event_espresso'),
+                EEM_Question::QST_type_url => esc_html__('URL', 'event_espresso'),
+                EEM_Question::QST_type_year => esc_html__('Year', 'event_espresso'),
+                EEM_Question::QST_type_multi_select => esc_html__('Multi Select', 'event_espresso')
             )
         );
         $this->_question_descriptions = apply_filters(
             'FHEE__EEM_Question__construct__question_descriptions',
             array(
-                EEM_Question::QST_type_text => __('A single line text input field', 'event_espresso'),
-                EEM_Question::QST_type_textarea => __('A multi line text input field', 'event_espresso'),
-                EEM_Question::QST_type_checkbox => __('Allows multiple preset options to be selected', 'event_espresso'),
-                EEM_Question::QST_type_radio => __('Allows a single preset option to be selected', 'event_espresso'),
-                EEM_Question::QST_type_dropdown => __('A dropdown that allows a single selection', 'event_espresso'),
-                EEM_Question::QST_type_state => __('A dropdown that lists states/provinces', 'event_espresso'),
-                EEM_Question::QST_type_country => __('A dropdown that lists countries', 'event_espresso'),
-                EEM_Question::QST_type_date => __('A popup calendar that allows date selections', 'event_espresso'),
-                EEM_Question::QST_type_html_textarea => __('A multi line text input field that allows HTML', 'event_espresso'),
-                EEM_Question::QST_type_email => __('A text field that must contain a valid Email address', 'event_espresso'),
-                EEM_Question::QST_type_email_confirm => __('A text field that must contain a valid Email address and be equal to Email field', 'event_espresso'),
-                EEM_Question::QST_type_us_phone => __('A text field that must contain a valid US phone number', 'event_espresso'),
-                EEM_Question::QST_type_decimal => __('A text field that allows number values with decimals', 'event_espresso'),
-                EEM_Question::QST_type_int => __('A text field that only allows whole numbers (no decimals)', 'event_espresso'),
-                EEM_Question::QST_type_url => __('A text field that must contain a valid URL', 'event_espresso'),
-                EEM_Question::QST_type_year => __('A dropdown that lists the last 100 years', 'event_espresso'),
-                EEM_Question::QST_type_multi_select => __('A dropdown that allows multiple selections', 'event_espresso')
+                EEM_Question::QST_type_text => esc_html__('A single line text input field', 'event_espresso'),
+                EEM_Question::QST_type_textarea => esc_html__('A multi line text input field', 'event_espresso'),
+                EEM_Question::QST_type_checkbox => esc_html__('Allows multiple preset options to be selected', 'event_espresso'),
+                EEM_Question::QST_type_radio => esc_html__('Allows a single preset option to be selected', 'event_espresso'),
+                EEM_Question::QST_type_dropdown => esc_html__('A dropdown that allows a single selection', 'event_espresso'),
+                EEM_Question::QST_type_state => esc_html__('A dropdown that lists states/provinces', 'event_espresso'),
+                EEM_Question::QST_type_country => esc_html__('A dropdown that lists countries', 'event_espresso'),
+                EEM_Question::QST_type_date => esc_html__('A popup calendar that allows date selections', 'event_espresso'),
+                EEM_Question::QST_type_html_textarea => esc_html__('A multi line text input field that allows HTML', 'event_espresso'),
+                EEM_Question::QST_type_email => esc_html__('A text field that must contain a valid Email address', 'event_espresso'),
+                EEM_Question::QST_type_email_confirm => esc_html__('A text field that must contain a valid Email address and be equal to Email field', 'event_espresso'),
+                EEM_Question::QST_type_us_phone => esc_html__('A text field that must contain a valid US phone number', 'event_espresso'),
+                EEM_Question::QST_type_decimal => esc_html__('A text field that allows number values with decimals', 'event_espresso'),
+                EEM_Question::QST_type_int => esc_html__('A text field that only allows whole numbers (no decimals)', 'event_espresso'),
+                EEM_Question::QST_type_url => esc_html__('A text field that must contain a valid URL', 'event_espresso'),
+                EEM_Question::QST_type_year => esc_html__('A dropdown that lists the last 100 years', 'event_espresso'),
+                EEM_Question::QST_type_multi_select => esc_html__('A dropdown that allows multiple selections', 'event_espresso')
             )
         );
         $this->_question_type_categories = (array) apply_filters(
@@ -197,18 +197,18 @@ class EEM_Question extends EEM_Soft_Delete_Base
         );
         $this->_fields = array(
             'Question' => array(
-                'QST_ID' => new EE_Primary_Key_Int_Field('QST_ID', __('Question ID', 'event_espresso')),
-                'QST_display_text' => new EE_Post_Content_Field('QST_display_text', __('Question Text', 'event_espresso'), true, ''),
-                'QST_admin_label' => new EE_Plain_Text_Field('QST_admin_label', __('Question Label (admin-only)', 'event_espresso'), true, ''),
-                'QST_system' => new EE_Plain_Text_Field('QST_system', __('Internal string ID for question', 'event_espresso'), false, ''),
-                'QST_type' => new EE_Enum_Text_Field('QST_type', __('Question Type', 'event_espresso'), false, 'TEXT', $this->_allowed_question_types),
-                'QST_required' => new EE_Boolean_Field('QST_required', __('Required Question?', 'event_espresso'), false, false),
-                'QST_required_text' => new EE_Simple_HTML_Field('QST_required_text', __('Text to Display if Not Provided', 'event_espresso'), true, ''),
-                'QST_order' => new EE_Integer_Field('QST_order', __('Question Order', 'event_espresso'), false, 0),
-                'QST_admin_only' => new EE_Boolean_Field('QST_admin_only', __('Admin-Only Question?', 'event_espresso'), false, false),
-                'QST_max' => new EE_Infinite_Integer_Field('QST_max', __('Max Size', 'event_espresso'), false, EE_INF),
-                'QST_wp_user' => new EE_WP_User_Field('QST_wp_user', __('Question Creator ID', 'event_espresso'), false),
-                'QST_deleted' => new EE_Trashed_Flag_Field('QST_deleted', __('Flag Indicating question was deleted', 'event_espresso'), false, false)
+                'QST_ID' => new EE_Primary_Key_Int_Field('QST_ID', esc_html__('Question ID', 'event_espresso')),
+                'QST_display_text' => new EE_Post_Content_Field('QST_display_text', esc_html__('Question Text', 'event_espresso'), true, ''),
+                'QST_admin_label' => new EE_Plain_Text_Field('QST_admin_label', esc_html__('Question Label (admin-only)', 'event_espresso'), true, ''),
+                'QST_system' => new EE_Plain_Text_Field('QST_system', esc_html__('Internal string ID for question', 'event_espresso'), false, ''),
+                'QST_type' => new EE_Enum_Text_Field('QST_type', esc_html__('Question Type', 'event_espresso'), false, 'TEXT', $this->_allowed_question_types),
+                'QST_required' => new EE_Boolean_Field('QST_required', esc_html__('Required Question?', 'event_espresso'), false, false),
+                'QST_required_text' => new EE_Simple_HTML_Field('QST_required_text', esc_html__('Text to Display if Not Provided', 'event_espresso'), true, ''),
+                'QST_order' => new EE_Integer_Field('QST_order', esc_html__('Question Order', 'event_espresso'), false, 0),
+                'QST_admin_only' => new EE_Boolean_Field('QST_admin_only', esc_html__('Admin-Only Question?', 'event_espresso'), false, false),
+                'QST_max' => new EE_Infinite_Integer_Field('QST_max', esc_html__('Max Size', 'event_espresso'), false, EE_INF),
+                'QST_wp_user' => new EE_WP_User_Field('QST_wp_user', esc_html__('Question Creator ID', 'event_espresso'), false),
+                'QST_deleted' => new EE_Trashed_Flag_Field('QST_deleted', esc_html__('Flag Indicating question was deleted', 'event_espresso'), false, false)
             )
         );
         $this->_model_relations = array(

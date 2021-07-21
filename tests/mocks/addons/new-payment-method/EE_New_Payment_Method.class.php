@@ -76,7 +76,7 @@ Class  EE_New_Payment_Method extends EE_Addon {
 	public function plugin_actions( $links, $file ) {
 		if ( $file == EE_NEW_PAYMENT_METHOD_BASENAME ) {
 			// before other links
-			array_unshift( $links, '<a href="admin.php?page=espresso_payment_settings">' . __('Settings', 'event_espresso') . '</a>' );
+			array_unshift( $links, '<a href="admin.php?page=espresso_payment_settings">' . esc_html__('Settings', 'event_espresso') . '</a>' );
 		}
 		return $links;
 	}

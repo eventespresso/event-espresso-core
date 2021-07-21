@@ -90,7 +90,7 @@ class EE_Messenger_Collection_Loader
             if (! class_exists($messenger_class_name)) {
                 throw new EE_Error(
                     sprintf(
-                        __('The "%1$s" messenger class can\'t be loaded from %2$s.  Likely there is a typo in the class name or the file name.', 'event_espresso'),
+                        esc_html__('The "%1$s" messenger class can\'t be loaded from %2$s.  Likely there is a typo in the class name or the file name.', 'event_espresso'),
                         $messenger_class_name,
                         $file_path
                     )

@@ -85,7 +85,7 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase
             $timezone_string = EEH_DTT_Helper::get_valid_timezone_string('me got funky pants and like to dance');
             $this->fail(
                 sprintf(
-                    __(
+                    esc_html__(
                         'The timezone string %1$s should have thrown an Exception, but did not!',
                         'event_espresso'
                     ),
@@ -175,7 +175,7 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase
                 $this->assertNotEmpty(
                     $timezone_string,
                     sprintf(
-                        __(
+                        esc_html__(
                             'The WP GMT offset setting %1$s has resulted in an invalid timezone_string!',
                             'event_espresso'
                         ),
@@ -188,7 +188,7 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase
                 $gmt_offset = 'UTC' . $gmt_offset;
                 $this->fail(
                     sprintf(
-                        __(
+                        esc_html__(
                             'The WP GMT offset setting %1$s has thrown the following Exception, but should not have! %2$s %3$s',
                             'event_espresso'
                         ),
@@ -351,7 +351,7 @@ class EEH_DTT_Helper_Test extends EE_UnitTestCase
                         $actual,
                         EE_Datetime_Field::mysql_timestamp_format,
                         sprintf(
-                            __(
+                            esc_html__(
                                 'The %1$s method failed to produce correct results for the the period interval %2$s for timezone "%6$s" and UTC offset "%7$s" .%3$sExpected value: %4$s%3$sActual value: %5$s%3$s',
                                 'event_espresso'
                             ),

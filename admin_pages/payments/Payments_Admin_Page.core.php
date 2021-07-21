@@ -44,7 +44,7 @@ class Payments_Admin_Page extends EE_Admin_Page
     protected function _init_page_props()
     {
         $this->page_slug = EE_PAYMENTS_PG_SLUG;
-        $this->page_label = __('Payment Methods', 'event_espresso');
+        $this->page_label = esc_html__('Payment Methods', 'event_espresso');
         $this->_admin_base_url = EE_PAYMENTS_ADMIN_URL;
         $this->_admin_base_path = EE_PAYMENTS_ADMIN;
     }
@@ -60,7 +60,7 @@ class Payments_Admin_Page extends EE_Admin_Page
     {
         $this->_admin_page_title = $this->page_label;
         $this->_labels = array(
-            'publishbox' => __('Update Settings', 'event_espresso'),
+            'publishbox' => esc_html__('Update Settings', 'event_espresso'),
         );
     }
 
@@ -121,14 +121,14 @@ class Payments_Admin_Page extends EE_Admin_Page
     {
         $payment_method_list_config = array(
             'nav'           => array(
-                'label' => __('Payment Methods', 'event_espresso'),
+                'label' => esc_html__('Payment Methods', 'event_espresso'),
                 'order' => 10,
             ),
             'metaboxes'     => $this->_default_espresso_metaboxes,
             'help_tabs'     => array_merge(
                 array(
                     'payment_methods_overview_help_tab' => array(
-                        'title'    => __('Payment Methods Overview', 'event_espresso'),
+                        'title'    => esc_html__('Payment Methods Overview', 'event_espresso'),
                         'filename' => 'payment_methods_overview',
                     ),
                 ),
@@ -142,12 +142,12 @@ class Payments_Admin_Page extends EE_Admin_Page
             'default'          => $payment_method_list_config,
             'payment_settings' => array(
                 'nav'           => array(
-                    'label' => __('Settings', 'event_espresso'),
+                    'label' => esc_html__('Settings', 'event_espresso'),
                     'order' => 20,
                 ),
                 'help_tabs'     => array(
                     'payment_methods_settings_help_tab' => array(
-                        'title'    => __('Payment Method Settings', 'event_espresso'),
+                        'title'    => esc_html__('Payment Method Settings', 'event_espresso'),
                         'filename' => 'payment_methods_settings',
                     ),
                 ),
@@ -157,7 +157,7 @@ class Payments_Admin_Page extends EE_Admin_Page
             ),
             'payment_log'      => array(
                 'nav'           => array(
-                    'label' => __("Logs", 'event_espresso'),
+                    'label' => esc_html__("Logs", 'event_espresso'),
                     'order' => 30,
                 ),
                 'list_table'    => 'Payment_Log_Admin_List_Table',
@@ -317,7 +317,7 @@ class Payments_Admin_Page extends EE_Admin_Page
                     // html id
                     'espresso_' . $payment_method->slug() . '_payment_settings',
                     // title
-                    sprintf(__('%s Settings', 'event_espresso'), $payment_method->admin_name()),
+                    sprintf(esc_html__('%s Settings', 'event_espresso'), $payment_method->admin_name()),
                     // callback
                     array($this, 'payment_method_settings_meta_box'),
                     // post type
@@ -334,7 +334,7 @@ class Payments_Admin_Page extends EE_Admin_Page
                     'label' => $payment_method->admin_name(),
                     'class' => $payment_method->active() ? 'gateway-active' : '',
                     'href'  => 'espresso_' . $payment_method->slug() . '_payment_settings',
-                    'title' => __('Modify this Payment Method', 'event_espresso'),
+                    'title' => esc_html__('Modify this Payment Method', 'event_espresso'),
                     'slug'  => $payment_method->slug(),
                 );
             }
@@ -417,7 +417,7 @@ class Payments_Admin_Page extends EE_Admin_Page
         if (! $payment_method instanceof EE_Payment_Method) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'Payment method metabox setup incorrectly. No Payment method object was supplied',
                         'event_espresso'
                     )
@@ -494,12 +494,12 @@ class Payments_Admin_Page extends EE_Admin_Page
                     EEH_HTML::tr(
                         EEH_HTML::th(
                             EEH_HTML::label(
-                                EEH_HTML::strong(__('IMPORTANT', 'event_espresso'), '', 'important-notice')
+                                EEH_HTML::strong(esc_html__('IMPORTANT', 'event_espresso'), '', 'important-notice')
                             )
                         ) .
                         EEH_HTML::td(
                             EEH_HTML::strong(
-                                __(
+                                esc_html__(
                                     'You are responsible for your own website security and Payment Card Industry Data Security Standards (PCI DSS) compliance.',
                                     'event_espresso'
                                 )
@@ -507,10 +507,10 @@ class Payments_Admin_Page extends EE_Admin_Page
                             .
                             EEH_HTML::br()
                             .
-                            __('Learn more about ', 'event_espresso')
+                            esc_html__('Learn more about ', 'event_espresso')
                             . EEH_HTML::link(
                                 'https://www.pcisecuritystandards.org/merchants/index.php',
-                                __('PCI DSS compliance', 'event_espresso')
+                                esc_html__('PCI DSS compliance', 'event_espresso')
                             )
                         )
                     )
@@ -537,13 +537,13 @@ class Payments_Admin_Page extends EE_Admin_Page
                     EEH_HTML::tr(
                         EEH_HTML::th(
                             EEH_HTML::label(
-                                EEH_HTML::strong(__('IMPORTANT', 'event_espresso'), '', 'important-notice')
+                                EEH_HTML::strong(esc_html__('IMPORTANT', 'event_espresso'), '', 'important-notice')
                             )
                         ) .
                         EEH_HTML::td(
                             EEH_HTML::strong(
                                 sprintf(
-                                    __(
+                                    esc_html__(
                                         'This payment method does not support the currency set on your site (%1$s). Please activate a different payment method or change your site\'s country and associated currency.',
                                         'event_espresso'
                                     ),
@@ -597,7 +597,7 @@ class Payments_Admin_Page extends EE_Admin_Page
         } else {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'The EE_Payment_Method_Form for the "%1$s" payment method is missing or invalid.',
                         'event_espresso'
                     ),
@@ -622,7 +622,7 @@ class Payments_Admin_Page extends EE_Admin_Page
                 'name'       => 'submit',
                 'html_id'    => 'save_' . $payment_method->slug() . '_settings',
                 'default'    => sprintf(
-                    __('Update %s Payment Settings', 'event_espresso'),
+                    esc_html__('Update %s Payment Settings', 'event_espresso'),
                     $payment_method->admin_name()
                 ),
                 'html_label' => EEH_HTML::nbsp(),
@@ -632,7 +632,7 @@ class Payments_Admin_Page extends EE_Admin_Page
             EEH_HTML::table(
                 EEH_HTML::no_row(EEH_HTML::br(2)) .
                 EEH_HTML::tr(
-                    EEH_HTML::th(__('Update Settings', 'event_espresso')) .
+                    EEH_HTML::th(esc_html__('Update Settings', 'event_espresso')) .
                     EEH_HTML::td(
                         $update_button->get_html_for_input()
                     )
@@ -652,13 +652,13 @@ class Payments_Admin_Page extends EE_Admin_Page
     protected function _deactivate_payment_method_button(EE_Payment_Method $payment_method)
     {
         $link_text_and_title = sprintf(
-            __('Deactivate %1$s Payments?', 'event_espresso'),
+            esc_html__('Deactivate %1$s Payments?', 'event_espresso'),
             $payment_method->admin_name()
         );
         return new EE_Form_Section_HTML(
             EEH_HTML::table(
                 EEH_HTML::tr(
-                    EEH_HTML::th(__('Deactivate Payment Method', 'event_espresso')) .
+                    EEH_HTML::th(esc_html__('Deactivate Payment Method', 'event_espresso')) .
                     EEH_HTML::td(
                         EEH_HTML::link(
                             EE_Admin_Page::add_query_args_and_nonce(
@@ -690,7 +690,7 @@ class Payments_Admin_Page extends EE_Admin_Page
     protected function _activate_payment_method_button(EE_Payment_Method $payment_method)
     {
         $link_text_and_title = sprintf(
-            __('Activate %1$s Payment Method?', 'event_espresso'),
+            esc_html__('Activate %1$s Payment Method?', 'event_espresso'),
             $payment_method->admin_name()
         );
         return new EE_Form_Section_Proper(
@@ -715,7 +715,7 @@ class Payments_Admin_Page extends EE_Admin_Page
                                 ) .
                                 EEH_HTML::tr(
                                     EEH_HTML::th(
-                                        EEH_HTML::label(__('Click to Activate ', 'event_espresso'))
+                                        EEH_HTML::label(esc_html__('Click to Activate ', 'event_espresso'))
                                     ) .
                                     EEH_HTML::td(
                                         EEH_HTML::link(
@@ -756,7 +756,7 @@ class Payments_Admin_Page extends EE_Admin_Page
                 EEH_HTML::tr(
                     EEH_HTML::th() .
                     EEH_HTML::td(
-                        EEH_HTML::p(__('All fields marked with a * are required fields', 'event_espresso'), '', 'grey-text')
+                        EEH_HTML::p(esc_html__('All fields marked with a * are required fields', 'event_espresso'), '', 'grey-text')
                     )
                 )
             )
@@ -840,7 +840,7 @@ class Payments_Admin_Page extends EE_Admin_Page
             // if we couldn't find the correct payment method type...
             if (! $correct_pmt_form_to_use) {
                 EE_Error::add_error(
-                    __(
+                    esc_html__(
                         "We could not find which payment method type your form submission related to. Please contact support",
                         'event_espresso'
                     ),
@@ -856,7 +856,7 @@ class Payments_Admin_Page extends EE_Admin_Page
                 if (! $payment_settings_subform instanceof EE_Payment_Method_Form) {
                     throw new EE_Error(
                         sprintf(
-                            __(
+                            esc_html__(
                                 'The payment method could not be saved because the form sections were misnamed. We expected to find %1$s, but did not.',
                                 'event_espresso'
                             ),
@@ -875,12 +875,12 @@ class Payments_Admin_Page extends EE_Admin_Page
             } else {
                 EE_Error::add_error(
                     sprintf(
-                        __(
+                        esc_html__(
                             'Payment method of type %s was not saved because there were validation errors. They have been marked in the form',
                             'event_espresso'
                         ),
                         $payment_method instanceof EE_Payment_Method ? $payment_method->type_obj()->pretty_name()
-                            : __('"(unknown)"', 'event_espresso')
+                            : esc_html__('"(unknown)"', 'event_espresso')
                     ),
                     __FILE__,
                     __FUNCTION__,
@@ -943,7 +943,7 @@ class Payments_Admin_Page extends EE_Admin_Page
 
         $cfg =  EE_Registry::instance()->CFG ;
 
-        $what = __('Payment Settings', 'event_espresso');
+        $what = esc_html__('Payment Settings', 'event_espresso');
         $success = $this->_update_espresso_configuration(
             $what,
             EE_Registry::instance()->CFG,
@@ -954,7 +954,7 @@ class Payments_Admin_Page extends EE_Admin_Page
         $this->_redirect_after_action(
             $success,
             $what,
-            __('updated', 'event_espresso'),
+            esc_html__('updated', 'event_espresso'),
             array('action' => 'payment_settings')
         );
     }
@@ -1015,7 +1015,7 @@ class Payments_Admin_Page extends EE_Admin_Page
         $this->_views = array(
             'all' => array(
                 'slug'  => 'all',
-                'label' => __('View All Logs', 'event_espresso'),
+                'label' => esc_html__('View All Logs', 'event_espresso'),
                 'count' => 0,
             ),
         );

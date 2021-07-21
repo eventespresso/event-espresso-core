@@ -1052,7 +1052,7 @@ abstract class EE_Meta_Capability_Map
         if (count($map_values) !== 4) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'Incoming $map_values array should have a count of four values in it.  This is what was given: %s',
                         'event_espresso'
                     ),
@@ -1099,7 +1099,7 @@ abstract class EE_Meta_Capability_Map
         if (! $this->_model instanceof EEM_Base) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'This string passed in to %s to represent a EEM_Base model class was not able to be used to instantiate the class.   Please ensure that the string is a match for the EEM_Base model name (not including the EEM_ part). This was given: %s',
                         'event_espresso'
                     ),

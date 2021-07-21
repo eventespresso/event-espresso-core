@@ -114,7 +114,7 @@ class ProgressStepManager
             throw new InvalidClassException(
                 $display_strategy_class,
                 sprintf(
-                    __('The "%1$s" Class needs to be an implementation of the "%1$s" Interface.', 'event_espresso'),
+                    esc_html__('The "%1$s" Class needs to be an implementation of the "%1$s" Interface.', 'event_espresso'),
                     $display_strategy_class,
                     '\EventEspresso\core\services\progress_steps\display_strategies\ProgressStepsDisplayInterface'
                 )

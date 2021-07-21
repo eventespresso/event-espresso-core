@@ -341,7 +341,7 @@ abstract class EE_Form_Section_Base
     public function name()
     {
         if (! $this->_construction_finalized) {
-            throw new EE_Error(sprintf(__(
+            throw new EE_Error(sprintf(esc_html__(
                 'You cannot use the form section\s name until _construct_finalize has been called on it (when we set the name). It was called on a form section of type \'s\'',
                 'event_espresso'
             ), get_class($this)));

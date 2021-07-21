@@ -10,7 +10,7 @@ class EE_DMS_4_2_0_question_group_questions extends EE_Data_Migration_Script_Sta
     public function __construct()
     {
         global $wpdb;
-        $this->_pretty_name = __("Question Group Questions", "event_espresso");
+        $this->_pretty_name = esc_html__("Question Group Questions", "event_espresso");
         $this->_old_table = $wpdb->prefix . "esp_question";
         $this->_qgq_table = $wpdb->prefix . "esp_question_group_question";
         parent::__construct();
@@ -32,7 +32,7 @@ class EE_DMS_4_2_0_question_group_questions extends EE_Data_Migration_Script_Sta
         if (false === $updated) {
             $this->add_error(
                 sprintf(
-                    __(
+                    esc_html__(
                         "Error in updating table %s setting QGQ_order = %d where QST_ID = %d",
                         'event_espresso'
                     ),

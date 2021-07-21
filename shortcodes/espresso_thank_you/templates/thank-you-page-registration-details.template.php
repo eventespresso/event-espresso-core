@@ -134,7 +134,7 @@
         echo apply_filters(
             'AFEE__thank_you_page_registration_details_template__wait_list_notice',
             sprintf(
-                __(
+                esc_html__(
                     '%1$sre: Wait List Registrations%2$sPlease note that the total cost listed below in the Transaction Details is for ALL registrations, including those that are on the wait list, even though they can not be currently paid for. If any spaces become available however, you may be notified by the Event admin and have the opportunity to secure the remaining tickets by making a payment for them.%3$s',
                     'event_espresso'
                 ),

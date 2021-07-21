@@ -211,6 +211,6 @@ class EE_Log
      */
     public function __clone()
     {
-        trigger_error(__('Clone is not allowed.', 'event_espresso'), E_USER_ERROR);
+        trigger_error(esc_html__('Clone is not allowed.', 'event_espresso'), E_USER_ERROR);
     }
 }

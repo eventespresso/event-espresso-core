@@ -139,11 +139,11 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         $html = EEH_HTML::table('', '', $options['table_css_class']);
         $html .= EEH_HTML::thead();
         $html .= EEH_HTML::tr();
-        $html .= EEH_HTML::th(__('Name', 'event_espresso'), '', 'jst-left');
-        $html .= EEH_HTML::th(__('Type', 'event_espresso'), '', 'jst-left');
-        $html .= EEH_HTML::th(__('Amount', 'event_espresso'), '', 'jst-cntr');
-        $html .= EEH_HTML::th(__('Qty', 'event_espresso'), '', 'jst-cntr');
-        $html .= EEH_HTML::th(__('Line Total', 'event_espresso'), '', 'jst-cntr');
+        $html .= EEH_HTML::th(esc_html__('Name', 'event_espresso'), '', 'jst-left');
+        $html .= EEH_HTML::th(esc_html__('Type', 'event_espresso'), '', 'jst-left');
+        $html .= EEH_HTML::th(esc_html__('Amount', 'event_espresso'), '', 'jst-cntr');
+        $html .= EEH_HTML::th(esc_html__('Qty', 'event_espresso'), '', 'jst-cntr');
+        $html .= EEH_HTML::th(esc_html__('Line Total', 'event_espresso'), '', 'jst-cntr');
         $html .= EEH_HTML::tbody();
         return $html;
     }
@@ -196,7 +196,7 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         $name_html .=  sprintf(
             _x('%1$sfor the %2$s: %3$s%4$s', 'eg. "for the Event: My Cool Event"', 'event_espresso'),
             '<span class="ee-line-item-related-parent-object">',
-            $line_item->parent() instanceof EE_Line_Item ? $line_item->parent()->OBJ_type_i18n() : __('Item:', 'event_espresso'),
+            $line_item->parent() instanceof EE_Line_Item ? $line_item->parent()->OBJ_type_i18n() : esc_html__('Item:', 'event_espresso'),
             $parent_related_object_link ? '<a href="' . $parent_related_object_link . '">' . $parent_related_object_name . '</a>' : $parent_related_object_name,
             '</span>'
         );
@@ -214,7 +214,7 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         $type_html .= $this->_get_cancellations($line_item);
         $type_html .= $line_item->OBJ_type() ? '<br />' : '';
         $code = $line_item_related_object instanceof EEI_Has_Code ? $line_item_related_object->code() : '';
-        $type_html .= ! empty($code) ? '<span class="ee-line-item-id">' . sprintf(__('Code: %s', 'event_espresso'), $code) . '</span>' : '';
+        $type_html .= ! empty($code) ? '<span class="ee-line-item-id">' . sprintf(esc_html__('Code: %s', 'event_espresso'), $code) . '</span>' : '';
         $html .= EEH_HTML::td($type_html, '', 'jst-left');
 
 
@@ -334,7 +334,7 @@ class EE_Admin_Table_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         // start of row
         $html = EEH_HTML::tr('', '', 'admin-primary-mbox-total-tr');
         // Total th label
-        $total_label = sprintf(__('Transaction Total %s', 'event_espresso'), '(' . EE_Registry::instance()->CFG->currency->code . ')');
+        $total_label = sprintf(esc_html__('Transaction Total %s', 'event_espresso'), '(' . EE_Registry::instance()->CFG->currency->code . ')');
         $html .= EEH_HTML::th($total_label, '', 'jst-rght', '', ' colspan="4"');
         // total th
 

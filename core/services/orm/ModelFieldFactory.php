@@ -538,7 +538,7 @@ class ModelFieldFactory
      *                                                  statuses, then they can be registered via this property. The
      *                                                  format of the array should be as follows: array(
      *                                                  'status_reference' => array(
-     *                                                  'label' => __('Status Reference Label', 'event_espresso'),
+     *                                                  'label' => esc_html__('Status Reference Label', 'event_espresso'),
      *                                                  'public' => true,                 // whether this status should
      *                                                  be shown on the frontend of the site
      *                                                  'exclude_from_search' => false,   // whether this status should

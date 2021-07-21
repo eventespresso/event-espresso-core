@@ -28,7 +28,7 @@ class Factory
     {
         if (empty($class_name)) {
             throw new EE_Error(
-                __('You must provide a class name in order to instantiate it.', 'event_espresso')
+                esc_html__('You must provide a class name in order to instantiate it.', 'event_espresso')
             );
         }
         switch ($class_name) {

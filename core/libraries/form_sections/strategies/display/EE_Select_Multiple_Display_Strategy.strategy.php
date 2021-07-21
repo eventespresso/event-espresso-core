@@ -21,7 +21,7 @@ class EE_Select_Multiple_Display_Strategy extends EE_Select_Display_Strategy
     {
 
         if (! $this->_input instanceof EE_Form_Input_With_Options_Base) {
-            throw new EE_Error(sprintf(__('Cannot use Select Multiple Display Strategy with an input that doesn\'t have options', "event_espresso")));
+            throw new EE_Error(sprintf(esc_html__('Cannot use Select Multiple Display Strategy with an input that doesn\'t have options', "event_espresso")));
         }
 
         $html = EEH_HTML::nl(0, 'select');
@@ -38,7 +38,7 @@ class EE_Select_Multiple_Display_Strategy extends EE_Select_Display_Strategy
 
         EEH_HTML::indent(1, 'select');
         if (EEH_Array::is_multi_dimensional_array($this->_input->options())) {
-            throw new EE_Error(sprintf(__("Select multiple display strategy does not allow for nested arrays of options.", "event_espresso")));
+            throw new EE_Error(sprintf(esc_html__("Select multiple display strategy does not allow for nested arrays of options.", "event_espresso")));
         } else {
             $html .= $this->_display_options($this->_input->options());
         }

@@ -62,13 +62,13 @@ class EE_Register_Model_Extensions_Test extends EE_UnitTestCase{
 			$att->reset()->foobar();
 			if( ! $att->has_field('ATT_foobar')){
 				if( $throw_error ){
-					throw new EE_Error(sprintf( __( 'The field ATT_foobar is not on EEM_Attendee, but the extension should have added it. fields are: %s', 'event_espresso' ), implode(",",array_keys(EEM_Attendee::instance()->field_settings()))));
+					throw new EE_Error(sprintf( esc_html__( 'The field ATT_foobar is not on EEM_Attendee, but the extension should have added it. fields are: %s', 'event_espresso' ), implode(",",array_keys(EEM_Attendee::instance()->field_settings()))));
 				}
 				return FALSE;
 			}
 			if( ! $att->has_relation('Transaction')){
 				if( $throw_error ){
-					throw new EE_Error(sprintf( __( 'The relation of type Transaction on EEM_Attendee, but the extension should have added it. fields are: %s', 'event_espresso' ), implode(",",array_keys(EEM_Attendee::instance()->field_settings()))));
+					throw new EE_Error(sprintf( esc_html__( 'The relation of type Transaction on EEM_Attendee, but the extension should have added it. fields are: %s', 'event_espresso' ), implode(",",array_keys(EEM_Attendee::instance()->field_settings()))));
 				}
 				return FALSE;
 			}

@@ -17,7 +17,7 @@ class Registration_Details_Help_Tour extends EE_Help_Tour
 
     protected function _set_tour_properties()
     {
-        $this->_label = __('Registration Details Tour', 'event_espresso');
+        $this->_label = esc_html__('Registration Details Tour', 'event_espresso');
         $this->_slug = 'registration-view-joyride';
     }
 
@@ -88,9 +88,9 @@ class Registration_Details_Help_Tour extends EE_Help_Tour
 
     protected function _start()
     {
-        $content = '<h3>' . __('Registration Details', 'event_espresso') . '</h3>';
+        $content = '<h3>' . esc_html__('Registration Details', 'event_espresso') . '</h3>';
         $content .= '<p>'
-                    . __(
+                    . esc_html__(
                         'This tour of the Registration Details page will go over different areas of the screen to help you understand what they are used for.',
                         'event_espresso'
                     ) . '</p>';
@@ -99,13 +99,13 @@ class Registration_Details_Help_Tour extends EE_Help_Tour
 
     protected function _reg_date_title()
     {
-        return '<p>' . __('This is the date that the registration occurred on.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('This is the date that the registration occurred on.', 'event_espresso') . '</p>';
     }
 
     protected function _reg_details_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'The buttons below allow you to perform an action with a registration. The options are Approved, Not Approved, Declined, and Cancelled.',
                    'event_espresso'
                ) . '</p>';
@@ -114,7 +114,7 @@ class Registration_Details_Help_Tour extends EE_Help_Tour
     protected function _reg_details_table()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'The registration items area displays various information including Line Item ID, Event Name, Event Date, Ticket Option, Price, Quantity, Line Total, Sales Tax, and the Grand Total.',
                    'event_espresso'
                ) . '</p>';
@@ -123,7 +123,7 @@ class Registration_Details_Help_Tour extends EE_Help_Tour
     protected function _display_additional_info_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'You can view additional information about the registration by clicking on the link below. Examples of available information includes Registration ID, IP Address, and User Agent.',
                    'event_espresso'
                ) . '</p>';
@@ -131,11 +131,11 @@ class Registration_Details_Help_Tour extends EE_Help_Tour
 
     protected function _edit_reg_question_stop()
     {
-        return '<p>' . __('View the answers to your custom questions below.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('View the answers to your custom questions below.', 'event_espresso') . '</p>';
     }
 
     protected function _attendee_details_stop()
     {
-        return '<p>' . __('View details on the registrant attached to this registration.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('View details on the registrant attached to this registration.', 'event_espresso') . '</p>';
     }
 }

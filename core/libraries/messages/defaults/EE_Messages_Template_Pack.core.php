@@ -126,7 +126,7 @@ abstract class EE_Messages_Template_Pack
     /**
      * Template Packs must ALWAYS have a default variation defined.  This property allow one to override the default variation labels per messenger.
      * example:
-     * $this->_default_variation_labels = array( 'email' =>  __('Default', 'event_espresso' ) );
+     * $this->_default_variation_labels = array( 'email' =>  esc_html__('Default', 'event_espresso' ) );
      *
      * @var array
      */
@@ -167,13 +167,13 @@ abstract class EE_Messages_Template_Pack
 
         // if label is empty then throw an error because we should have it defined by now.
         if (! isset($this->label)) {
-            throw new EE_Error(sprintf(__('The label property is not set for %s.  Please ensure that is set for the class.', 'event_espresso'), $classname));
+            throw new EE_Error(sprintf(esc_html__('The label property is not set for %s.  Please ensure that is set for the class.', 'event_espresso'), $classname));
         }
 
 
         // the reference for this template pack
         if (! isset($this->dbref)) {
-            throw new EE_Error(sprintf(__('The dbref property is not set for %s.  Please ensure that is set for the class.', 'event_espresso'), $classname));
+            throw new EE_Error(sprintf(esc_html__('The dbref property is not set for %s.  Please ensure that is set for the class.', 'event_espresso'), $classname));
         }
 
         // make sure dbref is safe
@@ -182,24 +182,24 @@ abstract class EE_Messages_Template_Pack
         $should_be = 'EE_Messages_Template_Pack_' . str_replace(' ', '_', ucwords(str_replace('_', ' ', $this->dbref)));
 
         if ($should_be !== $classname) {
-            throw new EE_Error(sprintf(__('The name of the template pack instantiated class is "%s".  It should be "%s".  Make sure that the name of the template pack class matches is prepended with "EE_Messages_Template_Pack_" and appended with a sentence case iteration of the value for your template pack\'s dbref property.', 'event_espresso'), $classname, $should_be));
+            throw new EE_Error(sprintf(esc_html__('The name of the template pack instantiated class is "%s".  It should be "%s".  Make sure that the name of the template pack class matches is prepended with "EE_Messages_Template_Pack_" and appended with a sentence case iteration of the value for your template pack\'s dbref property.', 'event_espresso'), $classname, $should_be));
         }
 
         // if _base_path is not set then throw an error because a base path string is needed.
         if (empty($this->_base_path)) {
-            throw new EE_Error(sprintf(__('The _base_path property is not set for %s.  Please ensure that is set for the class.', 'event_espresso'), $classname));
+            throw new EE_Error(sprintf(esc_html__('The _base_path property is not set for %s.  Please ensure that is set for the class.', 'event_espresso'), $classname));
         }
 
 
         // if _base_url is not set then throw an error because a  string is needed for variations.
         if (empty($this->_base_url)) {
-            throw new EE_Error(sprintf(__('The _base_url property is not set for %s.  Please ensure that is set for the class.', 'event_espresso'), $classname));
+            throw new EE_Error(sprintf(esc_html__('The _base_url property is not set for %s.  Please ensure that is set for the class.', 'event_espresso'), $classname));
         }
 
 
         // if $supports is not set then throw an error because that effectively means this template_pack does not have any templates!
         if (empty($this->_supports)) {
-            throw new EE_Error(sprintf(__('The supports property is not set for %s.  Please ensure that is set for the class.', 'event_espresso'), $classname));
+            throw new EE_Error(sprintf(esc_html__('The supports property is not set for %s.  Please ensure that is set for the class.', 'event_espresso'), $classname));
         }
     }
 
@@ -392,14 +392,14 @@ abstract class EE_Messages_Template_Pack
      *
      * @since 4.5.0
      *
-     * @param string $messenger if the messenger slug is returned then the default label for the specific messenger is retrieved.  If it doesn't exist then the __('Default', 'event_espresso') is returned.  If NO value is provided then whatever is set on the _default_variation_labels property is returned.
+     * @param string $messenger if the messenger slug is returned then the default label for the specific messenger is retrieved.  If it doesn't exist then the esc_html__('Default', 'event_espresso') is returned.  If NO value is provided then whatever is set on the _default_variation_labels property is returned.
      *
      * @return array|string
      */
     public function get_default_variation_labels($messenger = '')
     {
         $label = empty($messenger) ? $this->_default_variation_labels : array();
-        $label = empty($label) && ! empty($this->_default_variation_labels[ $messenger ]) ? $this->_default_variation_labels[ $messenger ] : __('Default', 'event_espresso');
+        $label = empty($label) && ! empty($this->_default_variation_labels[ $messenger ]) ? $this->_default_variation_labels[ $messenger ] : esc_html__('Default', 'event_espresso');
 
         return apply_filters('FHEE__EE_Messages_Template_Pack__get_default_variation_labels', $label, $this->_default_variation_labels, $messenger);
     }

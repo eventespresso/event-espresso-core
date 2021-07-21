@@ -10,7 +10,7 @@ class EE_DMS_4_1_0_shortcodes extends EE_Data_Migration_Script_Stage
     public function __construct()
     {
         global $wpdb;
-        $this->_pretty_name = __("Shortcodes", "event_espresso");
+        $this->_pretty_name = esc_html__("Shortcodes", "event_espresso");
         $this->_old_table = $wpdb->posts;
         parent::__construct();
     }

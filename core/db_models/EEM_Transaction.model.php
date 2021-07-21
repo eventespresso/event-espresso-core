@@ -81,63 +81,63 @@ class EEM_Transaction extends EEM_Base
      */
     protected function __construct($timezone)
     {
-        $this->singular_item = __('Transaction', 'event_espresso');
-        $this->plural_item   = __('Transactions', 'event_espresso');
+        $this->singular_item = esc_html__('Transaction', 'event_espresso');
+        $this->plural_item   = esc_html__('Transactions', 'event_espresso');
 
         $this->_tables                 = [
             'TransactionTable' => new EE_Primary_Table('esp_transaction', 'TXN_ID'),
         ];
         $this->_fields                 = [
             'TransactionTable' => [
-                'TXN_ID'           => new EE_Primary_Key_Int_Field('TXN_ID', __('Transaction ID', 'event_espresso')),
+                'TXN_ID'           => new EE_Primary_Key_Int_Field('TXN_ID', esc_html__('Transaction ID', 'event_espresso')),
                 'TXN_timestamp'    => new EE_Datetime_Field(
                     'TXN_timestamp',
-                    __('date when transaction was created', 'event_espresso'),
+                    esc_html__('date when transaction was created', 'event_espresso'),
                     false,
                     EE_Datetime_Field::now,
                     $timezone
                 ),
                 'TXN_total'        => new EE_Money_Field(
                     'TXN_total',
-                    __('Total value of Transaction', 'event_espresso'),
+                    esc_html__('Total value of Transaction', 'event_espresso'),
                     false,
                     0
                 ),
                 'TXN_paid'         => new EE_Money_Field(
                     'TXN_paid',
-                    __('Amount paid towards transaction to date', 'event_espresso'),
+                    esc_html__('Amount paid towards transaction to date', 'event_espresso'),
                     false,
                     0
                 ),
                 'STS_ID'           => new EE_Foreign_Key_String_Field(
                     'STS_ID',
-                    __('Status ID', 'event_espresso'),
+                    esc_html__('Status ID', 'event_espresso'),
                     false,
                     EEM_Transaction::failed_status_code,
                     'Status'
                 ),
                 'TXN_session_data' => new EE_Serialized_Text_Field(
                     'TXN_session_data',
-                    __('Serialized session data', 'event_espresso'),
+                    esc_html__('Serialized session data', 'event_espresso'),
                     true,
                     ''
                 ),
                 'TXN_hash_salt'    => new EE_Plain_Text_Field(
                     'TXN_hash_salt',
-                    __('Transaction Hash Salt', 'event_espresso'),
+                    esc_html__('Transaction Hash Salt', 'event_espresso'),
                     true,
                     ''
                 ),
                 'PMD_ID'           => new EE_Foreign_Key_Int_Field(
                     'PMD_ID',
-                    __("Last Used Payment Method", 'event_espresso'),
+                    esc_html__("Last Used Payment Method", 'event_espresso'),
                     true,
                     null,
                     'Payment_Method'
                 ),
                 'TXN_reg_steps'    => new EE_Serialized_Text_Field(
                     'TXN_reg_steps',
-                    __('Registration Steps', 'event_espresso'),
+                    esc_html__('Registration Steps', 'event_espresso'),
                     false,
                     []
                 ),
@@ -320,7 +320,7 @@ class EEM_Transaction extends EEM_Base
         EE_Error::doing_it_wrong(
             __CLASS__ . '::' . __FUNCTION__,
             sprintf(
-                __('This method is deprecated. Please use "%s" instead', 'event_espresso'),
+                esc_html__('This method is deprecated. Please use "%s" instead', 'event_espresso'),
                 'EE_Transaction_Processor::update_transaction_and_registrations_after_checkout_or_payment()'
             ),
             '4.6.0'

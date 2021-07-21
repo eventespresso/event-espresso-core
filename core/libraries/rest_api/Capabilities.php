@@ -195,7 +195,7 @@ class Capabilities
             throw new RestException(
                 sprintf('rest_cannot_%s_%s', strtolower($action_name), $model_name_plural),
                 sprintf(
-                    __('Sorry, you are not allowed to %1$s %2$s. Missing permissions: %3$s', 'event_espresso'),
+                    esc_html__('Sorry, you are not allowed to %1$s %2$s. Missing permissions: %3$s', 'event_espresso'),
                     $action_name,
                     $model_name_plural,
                     Capabilities::getMissingPermissionsString($model, $model_action_context)

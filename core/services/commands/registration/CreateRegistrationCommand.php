@@ -84,7 +84,7 @@ class CreateRegistrationCommand extends Command implements CommandRequiresCapChe
                 is_object($this->ticket) ? get_class($this->ticket) : gettype($this->ticket),
                 'EE_Ticket',
                 sprintf(
-                    __('Line item %s did not contain a valid ticket', 'event_espresso'),
+                    esc_html__('Line item %s did not contain a valid ticket', 'event_espresso'),
                     $ticket_line_item->ID()
                 )
             );

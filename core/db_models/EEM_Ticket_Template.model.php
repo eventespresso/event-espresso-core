@@ -26,18 +26,18 @@ class EEM_Ticket_Template extends EEM_Base
      */
     protected function __construct($timezone)
     {
-        $this->singular_item = __('Ticket Template', 'event_espresso');
-        $this->plural_item = __('Ticket Templates', 'event_espresso');
+        $this->singular_item = esc_html__('Ticket Template', 'event_espresso');
+        $this->plural_item = esc_html__('Ticket Templates', 'event_espresso');
 
         $this->_tables = array(
             'Ticket_Template' => new EE_Primary_Table('esp_ticket_template', 'TTM_ID')
         );
         $this->_fields = array(
             'Ticket_Template' => array(
-                'TTM_ID' => new EE_Primary_Key_Int_Field('TTM_ID', __('Ticket Template ID', 'event_espresso')),
-                'TTM_name' => new EE_Plain_Text_Field('TTM_name', __('The name of the ticket template', 'event_espresso'), false, ''),
-                'TTM_description' => new EE_Plain_Text_Field('TTM_description', __('The description for the ticket template', 'event_espresso'), true, ''),
-                'TTM_file' => new EE_Plain_Text_Field('TTM_file', __('The file name for the actual template file saved on disk', 'event_espresso'), true, ''),
+                'TTM_ID' => new EE_Primary_Key_Int_Field('TTM_ID', esc_html__('Ticket Template ID', 'event_espresso')),
+                'TTM_name' => new EE_Plain_Text_Field('TTM_name', esc_html__('The name of the ticket template', 'event_espresso'), false, ''),
+                'TTM_description' => new EE_Plain_Text_Field('TTM_description', esc_html__('The description for the ticket template', 'event_espresso'), true, ''),
+                'TTM_file' => new EE_Plain_Text_Field('TTM_file', esc_html__('The file name for the actual template file saved on disk', 'event_espresso'), true, ''),
             ));
         $this->_model_relations = array(
             'Ticket' => new EE_Has_Many_Relation()

@@ -190,7 +190,7 @@ class CalculatedModelFields
         throw new RestException(
             'calculated_field_does_not_exist',
             sprintf(
-                __('There is no calculated field %1$s on resource %2$s', 'event_espresso'),
+                esc_html__('There is no calculated field %1$s on resource %2$s', 'event_espresso'),
                 $field_name,
                 $model->get_this_model_name()
             )

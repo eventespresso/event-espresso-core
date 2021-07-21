@@ -6,7 +6,7 @@
     <p class="ee-attention">
         <?php
         echo sprintf(
-            __(
+            esc_html__(
                 'The following shortcodes and page settings are required for Event Espresso to function properly. These shortcodes should not be replaced with any other shortcodes. Please view %sthis page%s for a list of optional shortcodes you can use on other pages.',
                 'event_espresso'
             ),
@@ -47,7 +47,7 @@
                 <p class="description">
                     <?php
                     echo sprintf(
-                        __(
+                        esc_html__(
                             'This page can be hidden from navigation if desired, but should always contain the %s shortcode.',
                             'event_espresso'
                         ),
@@ -92,7 +92,7 @@
                 <p class="description">
                     <?php
                     echo sprintf(
-                        __(
+                        esc_html__(
                             'This page should be hidden from your navigation, but still viewable to the public (not password protected), and should always contain the %s shortcode.',
                             'event_espresso'
                         ),
@@ -132,7 +132,7 @@
                 <p class="description">
                     <?php
                     echo sprintf(
-                        __(
+                        esc_html__(
                             'This page should be hidden from your navigation, but still viewable to the public (not password protected), and should always contain the %s shortcode.',
                             'event_espresso'
                         ),
@@ -172,7 +172,7 @@
                 <p class="description">
                     <?php
                     echo sprintf(
-                        __(
+                        esc_html__(
                             'This page should be hidden from your navigation, but still viewable to the public (not password protected), and should always contain a "cancelled transaction" message and the %s shortcode.',
                             'event_espresso'
                         ),
@@ -201,14 +201,14 @@
             </th>
             <td>
                 <p class="description">
-                    <?php echo __(
+                    <?php echo esc_html__(
                         'Events are custom post types and use WordPress\' normal archive pages for displaying events.',
                         'event_espresso'
                     ) ?>
                 </p>
                 <p class="description">
                     <?php printf(
-                        __(
+                        esc_html__(
                             'If you would still like your events on a page like in Event Espresso 3.1 or earlier, simply create a page and place a shortcode to display them on the page, as described %s here %s',
                             'event_espresso'
                         ),
@@ -237,14 +237,14 @@
             </th>
             <td>
                 <p class="description">
-                    <?php echo __(
+                    <?php echo esc_html__(
                         'Venues are custom post types and use WordPress\' normal archive pages for displaying events.',
                         'event_espresso'
                     ) ?>
                 </p>
                 <p class="description">
                     <?php printf(
-                        __(
+                        esc_html__(
                             'If you would still like your venues on a page like in Event Espresso 3.1 or earlier, simply create a page and place a shortcode to display them on the page, as described %s here %s',
                             'event_espresso'
                         ),

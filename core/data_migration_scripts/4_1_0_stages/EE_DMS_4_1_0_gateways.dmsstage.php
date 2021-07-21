@@ -73,7 +73,7 @@ class EE_DMS_4_1_0_gateways extends EE_Data_Migration_Script_Stage
     }
     public function __construct()
     {
-        $this->_pretty_name = __("Gateways", "event_espresso");
+        $this->_pretty_name = esc_html__("Gateways", "event_espresso");
         parent::__construct();
     }
 
@@ -121,7 +121,7 @@ class EE_DMS_4_1_0_gateways extends EE_Data_Migration_Script_Stage
         $option_name = $this->_get_old_gateway_option_name($new_gateway_slug);
         $settings =  get_option($option_name, null);
     //  if( ! $settings){
-    //      $this->add_error(sprintf(__("There is no wordpress option named %s for gateway %s", "event_espresso"),$option_name,$new_gateway_slug));
+    //      $this->add_error(sprintf(esc_html__("There is no wordpress option named %s for gateway %s", "event_espresso"),$option_name,$new_gateway_slug));
     //  }
         return $settings;
     }
@@ -175,7 +175,7 @@ class EE_DMS_4_1_0_gateways extends EE_Data_Migration_Script_Stage
         $new_active_gateways = EE_Config::instance()->gateway->active_gateways;
         foreach ($old_active_gateways as $old_gateway_slug => $filepath) {
             if (! isset($this->_gateways_we_know_how_to_migrate[ $old_gateway_slug ])) {
-                $this->add_error(sprintf(__("The %s gateway does not exist in EE 4.1", "event_espresso"), $old_gateway_slug));
+                $this->add_error(sprintf(esc_html__("The %s gateway does not exist in EE 4.1", "event_espresso"), $old_gateway_slug));
                 continue;
             }
             $new_gateway_slug = $this->_gateways_we_know_how_to_migrate[ $old_gateway_slug ];

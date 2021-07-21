@@ -2,7 +2,7 @@
     <span class="dashicons dashicons-groups ee-icon-color-ee-green ee-icon-size-20"></span>
     <a href="<?php echo $view_approved_reg_url; ?>">
         <?php printf(
-            __('%s Registrations', 'event_espresso'),
+            esc_html__('%s Registrations', 'event_espresso'),
             EEH_Template::pretty_status(EEM_Registration::status_id_approved, false, 'sentence')
         ); ?>
     </a>:
@@ -12,7 +12,7 @@
     <span class="dashicons dashicons-groups ee-icon-color-ee-blue ee-icon-size-20"></span>
     <a href="<?php echo $view_pending_payment_reg_url; ?>">
         <?php printf(
-            __('%s Registrations', 'event_espresso'),
+            esc_html__('%s Registrations', 'event_espresso'),
             EEH_Template::pretty_status(EEM_Registration::status_id_pending_payment, false, 'sentence')
         ); ?>
     </a>:
@@ -22,7 +22,7 @@
     <span class="dashicons dashicons-groups ee-icon-color-ee-orange ee-icon-size-20"></span>
     <a href="<?php echo $view_not_approved_reg_url; ?>">
         <?php printf(
-            __('%s Registrations', 'event_espresso'),
+            esc_html__('%s Registrations', 'event_espresso'),
             EEH_Template::pretty_status(EEM_Registration::status_id_not_approved, false, 'sentence')
         ); ?>
     </a>:

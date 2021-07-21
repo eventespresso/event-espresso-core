@@ -16,10 +16,10 @@ class EE_Newsletter_Shortcodes extends EE_Shortcodes
 
     protected function _init_props()
     {
-        $this->label = __("Batch Messages Shortcodes", 'event_espresso');
-        $this->description = __('All shortcodes used for the batch message type', 'event_espresso');
+        $this->label = esc_html__("Batch Messages Shortcodes", 'event_espresso');
+        $this->description = esc_html__('All shortcodes used for the batch message type', 'event_espresso');
         $this->_shortcodes = array(
-            '[NEWSLETTER_CONTENT]' => __(
+            '[NEWSLETTER_CONTENT]' => esc_html__(
                 'This will parse to whatever is found in the related [newsletter_content] field.  Note that when triggering a batch message, whatever is added for the custom message will be inserted where this shortcode is placed.',
                 'event_espresso'
             ),

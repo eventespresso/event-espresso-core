@@ -43,7 +43,7 @@ class TableManager extends \EE_Base
         } else {
             throw new \EE_Error(
                 sprintf(
-                    __('Table analysis class on class %1$s is not set properly.', 'event_espresso'),
+                    esc_html__('Table analysis class on class %1$s is not set properly.', 'event_espresso'),
                     get_class($this)
                 )
             );
@@ -214,7 +214,7 @@ class TableManager extends \EE_Base
         } else {
             throw new \EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'The following table creation SQL does not contain valid information about the table columns: %1$s %2$s',
                         'event_espresso'
                     ),
