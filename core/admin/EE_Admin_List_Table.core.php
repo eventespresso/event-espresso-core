@@ -867,8 +867,8 @@ abstract class EE_Admin_List_Table extends WP_List_Table
 
     protected function getReturnUrl()
     {
-        $host       = $this->_admin_page->get_request()->getServerParam('HTTP_HOST');
-        $uri        = $this->_admin_page->get_request()->getServerParam('REQUEST_URI');
+        $host = $this->_admin_page->get_request()->getServerParam('HTTP_HOST');
+        $uri  = $this->_admin_page->get_request()->getServerParam('REQUEST_URI');
         return urlencode("//{$host}{$uri}");
     }
 }
