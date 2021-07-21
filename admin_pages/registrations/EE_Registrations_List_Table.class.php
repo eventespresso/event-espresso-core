@@ -299,10 +299,10 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         $this->_views['month']['count'] = $this->_total_registrations_this_month();
         $this->_views['today']['count'] = $this->_total_registrations_today();
         if (
-        EE_Registry::instance()->CAP->current_user_can(
-            'ee_delete_registrations',
-            'espresso_registrations_trash_registrations'
-        )
+            EE_Registry::instance()->CAP->current_user_can(
+                'ee_delete_registrations',
+                'espresso_registrations_trash_registrations'
+            )
         ) {
             $this->_views['incomplete']['count'] = $this->_total_registrations('incomplete');
             $this->_views['trash']['count']      = $this->_total_registrations('trash');
@@ -438,9 +438,9 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             ? $transaction->count_related('Payment')
             : 0;
         return $payment_count > 0 || ! EE_Registry::instance()->CAP->current_user_can(
-           'ee_edit_registration',
-           'registration_list_table_checkbox_input',
-           $item->ID()
+            'ee_edit_registration',
+            'registration_list_table_checkbox_input',
+            $item->ID()
         )
             ? sprintf('<input type="checkbox" name="_REG_ID[]" value="%1$d" />', $item->ID())
               . '<span class="ee-lock-icon"></span>'
@@ -1024,11 +1024,11 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         );
         $actions['view_txn_lnk'] = '';
         if (
-        EE_Registry::instance()->CAP->current_user_can(
-            'ee_read_transaction',
-            'espresso_transactions_view_transaction',
-            $this->_transaction_details['id']
-        )
+            EE_Registry::instance()->CAP->current_user_can(
+                'ee_read_transaction',
+                'espresso_transactions_view_transaction',
+                $this->_transaction_details['id']
+            )
         ) {
             $actions['view_txn_lnk'] = '
 			<li>
