@@ -1149,7 +1149,7 @@ class EED_Core_Rest_Api extends \EED_Module
         // they want to discover particular endpoints
         // also, we don't have access to the request so we have to just grab it from the superglobal
         $force_show_ee_namespace = ltrim(
-            EEH_Array::is_set($_REQUEST, 'force_show_ee_namespace', ''),
+            EED_Core_Rest_Api::getRequest()->getRequestParam('force_show_ee_namespace'),
             '/'
         );
         foreach (EED_Core_Rest_Api::get_ee_route_data() as $namespace => $relative_urls) {

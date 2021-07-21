@@ -3978,6 +3978,17 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
 
 
     /**
+     * just returns the Request
+     *
+     * @return RequestInterface
+     */
+    public function get_request()
+    {
+        return $this->request;
+    }
+
+
+    /**
      * just returns the _req_data property
      *
      * @return array

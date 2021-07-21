@@ -48,9 +48,10 @@ interface RequestInterface extends RequestTypeContextCheckerInterface
 
     /**
      * @param string $key
+     * @param mixed|null $default
      * @return array|int|float|string
      */
-    public function getServerParam($key);
+    public function getServerParam($key, $default = null);
 
 
     /**
