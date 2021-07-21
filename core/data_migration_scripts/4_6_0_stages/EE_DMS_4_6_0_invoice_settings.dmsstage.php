@@ -33,7 +33,7 @@ class EE_DMS_4_6_0_invoice_settings extends EE_Data_Migration_Script_Stage
      */
     public function __construct()
     {
-        $this->_pretty_name = __('Update Invoice Settings', 'event_espresso');
+        $this->_pretty_name = esc_html__('Update Invoice Settings', 'event_espresso');
         parent::__construct();
     }
 

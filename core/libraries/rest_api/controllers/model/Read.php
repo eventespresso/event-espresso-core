@@ -91,7 +91,7 @@ class Read extends Base
                     new WP_Error(
                         'endpoint_parsing_error',
                         sprintf(
-                            __(
+                            esc_html__(
                                 'There is no model for endpoint %s. Please contact event espresso support',
                                 'event_espresso'
                             ),
@@ -285,7 +285,7 @@ class Read extends Base
                     new WP_Error(
                         'endpoint_parsing_error',
                         sprintf(
-                            __(
+                            esc_html__(
                                 'There is no model for endpoint %s. Please contact event espresso support',
                                 'event_espresso'
                             ),
@@ -365,7 +365,7 @@ class Read extends Base
             throw new RestException(
                 sprintf('rest_%s_cannot_list', $model_name_plural),
                 sprintf(
-                    __('Sorry, you are not allowed to list %1$s. Missing permissions: %2$s', 'event_espresso'),
+                    esc_html__('Sorry, you are not allowed to list %1$s. Missing permissions: %2$s', 'event_espresso'),
                     $model_name_plural,
                     Capabilities::getMissingPermissionsString($model, $query_params['caps'])
                 ),
@@ -452,7 +452,7 @@ class Read extends Base
             throw new RestException(
                 sprintf('rest_%s_cannot_list', $related_model_name_maybe_plural),
                 sprintf(
-                    __(
+                    esc_html__(
                         'Sorry, you are not allowed to list %1$s related to %2$s. Missing permissions: %3$s',
                         'event_espresso'
                     ),
@@ -538,7 +538,7 @@ class Read extends Base
         if (! $relation->get_this_model()->has_primary_key_field()) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                     // @codingStandardsIgnoreStart
                         'Read::get_entities_from_relation should only be called from a model with a primary key, it was called from %1$s',
                         // @codingStandardsIgnoreEnd
@@ -1373,7 +1373,7 @@ class Read extends Base
                 if ($this->debug_mode && (! is_numeric($limit_part) || count($sanitized_limit) > 2)) {
                     throw new EE_Error(
                         sprintf(
-                            __(
+                            esc_html__(
                             // @codingStandardsIgnoreStart
                                 'An invalid limit filter was provided. It was: %s. If the EE4 JSON REST API weren\'t in debug mode, this message would not appear.',
                                 // @codingStandardsIgnoreEnd
@@ -1592,7 +1592,7 @@ class Read extends Base
                 throw new RestException(
                     'rest_user_cannot_' . $context,
                     sprintf(
-                        __('Sorry, you cannot %1$s this %2$s. Missing permissions are: %3$s', 'event_espresso'),
+                        esc_html__('Sorry, you cannot %1$s this %2$s. Missing permissions are: %3$s', 'event_espresso'),
                         $context,
                         $lowercase_model_name,
                         Capabilities::getMissingPermissionsString(
@@ -1606,7 +1606,7 @@ class Read extends Base
                 // it's not you. It just doesn't exist
                 throw new RestException(
                     sprintf('rest_%s_invalid_id', $lowercase_model_name),
-                    sprintf(__('Invalid %s ID.', 'event_espresso'), $lowercase_model_name),
+                    sprintf(esc_html__('Invalid %s ID.', 'event_espresso'), $lowercase_model_name),
                     ['status' => 404]
                 );
             }

@@ -8,8 +8,8 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html>
 <head>
-    <title>[organization]<?php __(' Invoice #', 'event_espresso'); ?>[registration_code]
-        <?php __(
+    <title>[organization]<?php esc_html__(' Invoice #', 'event_espresso'); ?>[registration_code]
+        <?php esc_html__(
             ' for ',
             'event_espresso'
         ); ?>[name]</title>

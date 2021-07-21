@@ -189,7 +189,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page
                 // unfortunately this message appears to be echoed on the NEXT page load...
                 // oh well, we should really be checking for this on addon deactivation anyways
                 EE_Error::add_attention(
-                    __(
+                    esc_html__(
                         'Site taken out of maintenance mode because no data migration scripts are required',
                         'event_espresso'
                     )
@@ -284,12 +284,12 @@ class Maintenance_Admin_Page extends EE_Admin_Page
                     $this->_template_args,
                     array(
                         'current_db_state' => sprintf(
-                            __("EE%s (%s)", "event_espresso"),
+                            esc_html__("EE%s (%s)", "event_espresso"),
                             isset($current_db_state[ $plugin_slug ]) ? $current_db_state[ $plugin_slug ] : 3,
                             $plugin_slug
                         ),
                         'next_db_state'    => isset($current_script) ? sprintf(
-                            __("EE%s (%s)", 'event_espresso'),
+                            esc_html__("EE%s (%s)", 'event_espresso'),
                             $new_version,
                             $plugin_slug
                         ) : null,
@@ -328,7 +328,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page
                         EE_MAINTENANCE_ADMIN_URL
                     ),
                     'ultimate_db_state'                      => sprintf(
-                        __("EE%s", 'event_espresso'),
+                        esc_html__("EE%s", 'event_espresso'),
                         espresso_version()
                     ),
                 )
@@ -441,14 +441,14 @@ class Maintenance_Admin_Page extends EE_Admin_Page
     {
         if (\EED_Ticket_Sales_Monitor::reset_reservation_counts()) {
             EE_Error::add_success(
-                __(
+                esc_html__(
                     'Ticket and datetime reserved counts have been successfully reset.',
                     'event_espresso'
                 )
             );
         } else {
             EE_Error::add_success(
-                __(
+                esc_html__(
                     'Ticket and datetime reserved counts were correct and did not need resetting.',
                     'event_espresso'
                 )
@@ -462,7 +462,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page
     {
         EE_Registry::instance()->CAP->init_caps(true);
         EE_Error::add_success(
-            __(
+            esc_html__(
                 'Default Event Espresso capabilities have been restored for all current roles.',
                 'event_espresso'
             )
@@ -687,23 +687,29 @@ class Maintenance_Admin_Page extends EE_Admin_Page
             'ee-maintenance',
             'ee_maintenance',
             array(
-                'migrating'                        => esc_html__("Updating Database...", "event_espresso"),
-                'next'                             => esc_html__("Next", "event_espresso"),
-                'fatal_error'                      => esc_html__("A Fatal Error Has Occurred", "event_espresso"),
-                'click_next_when_ready'            => esc_html__(
-                    "The current Database Update has ended. Click 'next' when ready to proceed",
-                    "event_espresso"
+                'migrating'                        => wp_strip_all_tags(__("Updating Database...", "event_espresso")),
+                'next'                             => wp_strip_all_tags(__("Next", "event_espresso")),
+                'fatal_error'                      => wp_strip_all_tags(__("A Fatal Error Has Occurred", "event_espresso")),
+                'click_next_when_ready'            => wp_strip_all_tags(
+                    __(
+                        "The current Database Update has ended. Click 'next' when ready to proceed",
+                        "event_espresso"
+                    )
                 ),
                 'status_no_more_migration_scripts' => EE_Data_Migration_Manager::status_no_more_migration_scripts,
                 'status_fatal_error'               => EE_Data_Migration_Manager::status_fatal_error,
                 'status_completed'                 => EE_Data_Migration_Manager::status_completed,
-                'confirm'                          => esc_html__(
-                    'Are you sure you want to do this? It CANNOT be undone!',
-                    'event_espresso'
+                'confirm'                          => wp_strip_all_tags(
+                    __(
+                        'Are you sure you want to do this? It CANNOT be undone!',
+                        'event_espresso'
+                    )
                 ),
-                'confirm_skip_migration'           => esc_html__(
-                    'You have chosen to NOT migrate your existing data. Are you sure you want to continue?',
-                    'event_espresso'
+                'confirm_skip_migration'           => wp_strip_all_tags(
+                    __(
+                        'You have chosen to NOT migrate your existing data. Are you sure you want to continue?',
+                        'event_espresso'
+                    )
                 ),
             )
         );

@@ -33,7 +33,7 @@ class RegUrlLink
     {
         if (empty($reg_url_link) || ! is_string($reg_url_link)) {
             throw new InvalidArgumentException(
-                __(
+                esc_html__(
                     'You must supply a valid non-empty string to generate a reg_url_link.',
                     'event_espresso'
                 )
@@ -86,7 +86,7 @@ class RegUrlLink
         $base_code = $base_code instanceof \EE_Line_Item ? $base_code->code() : $base_code;
         if (empty($base_code) || ! is_string($base_code)) {
             throw new InvalidArgumentException(
-                __(
+                esc_html__(
                     'You must supply a valid EE_Line_Item or a non-empty string to generate a reg_url_link.',
                     'event_espresso'
                 )

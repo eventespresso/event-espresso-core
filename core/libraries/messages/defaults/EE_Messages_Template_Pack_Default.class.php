@@ -13,9 +13,9 @@ class EE_Messages_Template_Pack_Default extends EE_Messages_Template_Pack
 
     public function _set_props()
     {
-        $this->label = __('Default', 'event_espresso');
+        $this->label = esc_html__('Default', 'event_espresso');
         $this->dbref = 'default';
-        $this->description = __('This is the default template pack included with Event Espresso core messages system.', 'event_espresso');
+        $this->description = esc_html__('This is the default template pack included with Event Espresso core messages system.', 'event_espresso');
         $this->_base_url = EE_PLUGIN_DIR_URL . 'core/libraries/messages/defaults/default/';
         $this->_base_path = EE_LIBRARIES . 'messages/defaults/default/';
         $this->_supports = array(
@@ -29,28 +29,28 @@ class EE_Messages_Template_Pack_Default extends EE_Messages_Template_Pack
                 )
             );
         $this->_default_variation_labels = array(
-            'email' => __('Default', 'event_espresso'),
-            'html' =>  __('Simple', 'event_espresso')
+            'email' => esc_html__('Default', 'event_espresso'),
+            'html' =>  esc_html__('Simple', 'event_espresso')
              );
         $this->_variations = array(
             'html' => array(
                 'receipt' =>
                     array(
-                    'bauhaus' => __('Bauhaus', 'event_espresso'),
-                    'ejs' => __('Elliot Jay Stocks', 'event_espresso'),
-                    'horizon' => __('Horizon', 'event_espresso'),
-                    'lola' => __('Lola', 'event_espresso'),
-                    'tranquility' => __('Tranquility', 'event_espresso'),
-                    'union' => __('Union', 'event_espresso'),
+                    'bauhaus' => esc_html__('Bauhaus', 'event_espresso'),
+                    'ejs' => esc_html__('Elliot Jay Stocks', 'event_espresso'),
+                    'horizon' => esc_html__('Horizon', 'event_espresso'),
+                    'lola' => esc_html__('Lola', 'event_espresso'),
+                    'tranquility' => esc_html__('Tranquility', 'event_espresso'),
+                    'union' => esc_html__('Union', 'event_espresso'),
                     ),
                 'invoice' =>
                     array(
-                    'bauhaus' => __('Bauhaus', 'event_espresso'),
-                    'ejs' => __('Elliot Jay Stocks', 'event_espresso'),
-                    'horizon' => __('Horizon', 'event_espresso'),
-                    'lola' => __('Lola', 'event_espresso'),
-                    'tranquility' => __('Tranquility', 'event_espresso'),
-                    'union' => __('Union', 'event_espresso'),
+                    'bauhaus' => esc_html__('Bauhaus', 'event_espresso'),
+                    'ejs' => esc_html__('Elliot Jay Stocks', 'event_espresso'),
+                    'horizon' => esc_html__('Horizon', 'event_espresso'),
+                    'lola' => esc_html__('Lola', 'event_espresso'),
+                    'tranquility' => esc_html__('Tranquility', 'event_espresso'),
+                    'union' => esc_html__('Union', 'event_espresso'),
                     )
                 )
             );

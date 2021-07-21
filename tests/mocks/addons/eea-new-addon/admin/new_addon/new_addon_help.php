@@ -16,7 +16,7 @@
 				<?php _e('More Option Information.', 'event_espresso'); ?>
 			</p>
 			<p>
-				<?php printf( __('%sIf you are uncertain as to what this setting does, please do not modify the default value.', 'event_espresso'), '<em class="important">', '</em>' ); ?>
+				<?php printf( esc_html__('%sIf you are uncertain as to what this setting does, please do not modify the default value.', 'event_espresso'), '<em class="important">', '</em>' ); ?>
 			</p>
 		</div>
 	</div>

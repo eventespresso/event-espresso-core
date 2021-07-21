@@ -19,7 +19,7 @@ class About_Admin_Page_Init extends EE_Admin_Page_Init
     {
         // define some events related constants
         define('EE_ABOUT_PG_SLUG', 'espresso_about');
-        define('EE_ABOUT_LABEL', __('About', 'event_espresso'));
+        define('EE_ABOUT_LABEL', esc_html__('About', 'event_espresso'));
         define('EE_ABOUT_ADMIN', EE_ADMIN_PAGES . 'about/');
         define('EE_ABOUT_ADMIN_URL', admin_url('admin.php?page=' . EE_ABOUT_PG_SLUG));
         define('EE_ABOUT_TEMPLATE_PATH', EE_ABOUT_ADMIN . 'templates/');
@@ -29,7 +29,7 @@ class About_Admin_Page_Init extends EE_Admin_Page_Init
 
     protected function _set_init_properties()
     {
-        $this->label = __('About Event Espresso', 'event_espresso');
+        $this->label = esc_html__('About Event Espresso', 'event_espresso');
     }
 
     protected function _set_menu_map()

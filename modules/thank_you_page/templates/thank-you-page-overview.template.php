@@ -29,7 +29,7 @@ do_action('AHEE__thank_you_page_overview_template__top', $transaction);
                                 class="ee-icon ee-icon-PDF-file-type"></span>
                             <?php echo apply_filters(
                                 'FHEE__thank_you_page_overview_template__order_conf_button_text',
-                                __('View Full Order Confirmation Receipt', 'event_espresso')
+                                esc_html__('View Full Order Confirmation Receipt', 'event_espresso')
                             ); ?></a>
                     </div>
                 <?php endif; ?>

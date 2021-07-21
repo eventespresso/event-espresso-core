@@ -8,7 +8,7 @@
         <?php echo apply_filters(
             'FHEE__registration_page_attendee_information__attendee_information_pg',
             sprintf(
-                __(
+                esc_html__(
                     'In order to process your registration, we ask you to provide the following information.%1$sPlease note that all fields marked with an asterisk (%2$s) are required.',
                     'event_espresso'
                 ),

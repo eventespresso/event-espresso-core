@@ -20,7 +20,7 @@ class EE_DMS_4_7_0_Add_Taxes_To_REG_Final_Price extends EE_Data_Migration_Script
     {
         /** @type WPDB $wpdb */
         global $wpdb;
-        $this->_pretty_name = __('Registration Final Price Tax Calculations', 'event_espresso');
+        $this->_pretty_name = esc_html__('Registration Final Price Tax Calculations', 'event_espresso');
         // define tables
         $this->_old_table               = $wpdb->prefix . 'esp_registration';
         $this->_ticket_table            = $wpdb->prefix . 'esp_ticket';
@@ -112,7 +112,7 @@ class EE_DMS_4_7_0_Add_Taxes_To_REG_Final_Price extends EE_Data_Migration_Script
         if (! isset($row['REG_ID'], $row['REG_final_price'], $row['LIN_ID'])) {
             $this->add_error(
                 sprintf(
-                    __('Invalid query results returned with the following data:%1$s REG_ID=%2$d, REG_final_price=%3$d, LIN_ID=%4$f. Error: "%5$s"', 'event_espresso'),
+                    esc_html__('Invalid query results returned with the following data:%1$s REG_ID=%2$d, REG_final_price=%3$d, LIN_ID=%4$f. Error: "%5$s"', 'event_espresso'),
                     '<br />',
                     isset($row['REG_ID']) ? $row['REG_ID'] : '',
                     isset($row['REG_final_price']) ? $row['REG_final_price'] : '',
@@ -127,7 +127,7 @@ class EE_DMS_4_7_0_Add_Taxes_To_REG_Final_Price extends EE_Data_Migration_Script
         if (! $tax_subtotal_line_item_ID) {
             $this->add_error(
                 sprintf(
-                    __('Invalid line item ID returned. Error: "%1$s"', 'event_espresso'),
+                    esc_html__('Invalid line item ID returned. Error: "%1$s"', 'event_espresso'),
                     $wpdb->last_error
                 )
             );
@@ -221,7 +221,7 @@ class EE_DMS_4_7_0_Add_Taxes_To_REG_Final_Price extends EE_Data_Migration_Script
         if ($success === false) {
             $this->add_error(
                 sprintf(
-                    __('Could not update registration final price value for registration ID=%1$d because "%2$s"', 'event_espresso'),
+                    esc_html__('Could not update registration final price value for registration ID=%1$d because "%2$s"', 'event_espresso'),
                     $REG_ID,
                     $wpdb->last_error
                 )

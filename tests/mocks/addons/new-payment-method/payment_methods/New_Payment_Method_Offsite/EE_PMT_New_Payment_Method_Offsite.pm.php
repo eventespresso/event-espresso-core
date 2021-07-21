@@ -24,7 +24,7 @@ class EE_PMT_New_Payment_Method_Offsite extends EE_PMT_Base{
 	public function __construct($pm_instance = NULL) {
 		require_once($this->file_folder().'EEG_New_Payment_Method_Offsite.gateway.php');
 		$this->_gateway = new EEG_New_Payment_Method_Offsite();
-		$this->_pretty_name = __("New Payment Method Offsite", 'event_espresso');
+		$this->_pretty_name = esc_html__("New Payment Method Offsite", 'event_espresso');
 		parent::__construct($pm_instance);
 	}
 
@@ -36,7 +36,7 @@ class EE_PMT_New_Payment_Method_Offsite extends EE_PMT_Base{
 	public function help_tabs_config(){
 		return array(
 			$this->get_help_tab_name() => array(
-				'title' => __('New Payment Method Offsite Settings', 'event_espresso'),
+				'title' => esc_html__('New Payment Method Offsite Settings', 'event_espresso'),
 				'filename' => 'new_payment_method_offsite',
 				'template_args' => array(
 					'variable_x' => 'VARIABLE X',
@@ -64,11 +64,11 @@ class EE_PMT_New_Payment_Method_Offsite extends EE_PMT_Base{
 		$form = new EE_Payment_Method_Form(array(
 			'extra_meta_inputs'=>array(
 				'login_id'=>new EE_Text_Input(array(
-					'html_label_text'=>  sprintf(__("Login ID %s", "event_espresso"),  $this->get_help_tab_link() )
+					'html_label_text'=>  sprintf(esc_html__("Login ID %s", "event_espresso"),  $this->get_help_tab_link() )
 				)),
 				'override_use_separate_IPN_request' => new EE_Yes_No_Input( array(
-					'html_label_text' => __('Use Separate IPN', 'event_espresso'),
-					'html_help_text' => __( 'Instruct the gateway to send a separate IPN request, or send payment data back with the user upon return.', 'event_espresso' ),
+					'html_label_text' => esc_html__('Use Separate IPN', 'event_espresso'),
+					'html_help_text' => esc_html__( 'Instruct the gateway to send a separate IPN request, or send payment data back with the user upon return.', 'event_espresso' ),
 				)))));
 		return $form;
 	}

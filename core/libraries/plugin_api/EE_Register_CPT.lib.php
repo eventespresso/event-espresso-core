@@ -35,10 +35,10 @@ class EE_Register_CPT implements EEI_Plugin_API
      * @throws  EE_Error
      * @see CustomPostTypeDefinitions::setDefinitions for a more complete example.
      *                                        'people' => array(
-     *                                        'singular_name' => __('People', 'event_espresso'),
-     *                                        'plural_name' => __('People', 'event_espresso'),
-     *                                        'singular_slug' => __('people', 'event_espresso'),
-     *                                        'plural_slug' => __('peoples', 'event_espresso'),
+     *                                        'singular_name' => esc_html__('People', 'event_espresso'),
+     *                                        'plural_name' => esc_html__('People', 'event_espresso'),
+     *                                        'singular_slug' => esc_html__('people', 'event_espresso'),
+     *                                        'plural_slug' => esc_html__('peoples', 'event_espresso'),
      *                                        'class_name' => 'EE_People'
      *                                        )
      *                                        },
@@ -46,8 +46,8 @@ class EE_Register_CPT implements EEI_Plugin_API
      *                                        An array of custom taxonomies and their arguments (short example below).
      * @see CustomTaxonomyDefinitions::setTaxonomies() for a more complete example.
      *                                        'espresso_people_type' => array(
-     *                                        'singular_name' => __('People Type', 'event_espresso'),
-     *                                        'plural_name' => __('People Types', 'event_espresso'),
+     *                                        'singular_name' => esc_html__('People Type', 'event_espresso'),
+     *                                        'plural_name' => esc_html__('People Types', 'event_espresso'),
      *                                        'args' => array()
      *                                        )
      *                                        },
@@ -66,7 +66,7 @@ class EE_Register_CPT implements EEI_Plugin_API
         // check for required params
         if (empty($identifier)) {
             throw new EE_Error(
-                __(
+                esc_html__(
                     'In order to register custom post types and custom taxonomies, you must include a value to reference what had been registered',
                     'event_espresso'
                 )
@@ -75,7 +75,7 @@ class EE_Register_CPT implements EEI_Plugin_API
 
         if (! is_array($setup_args) || (empty($setup_args['cpts']) && empty($setup_args['cts']))) {
             throw new EE_Error(
-                __(
+                esc_html__(
                     'In order to register custom post types or custom taxonomies, you must include an array containing either an array of custom post types to register (key "cpts"), an array of custom taxonomies ("cts") or both.',
                     'event_espresso'
                 )
@@ -97,7 +97,7 @@ class EE_Register_CPT implements EEI_Plugin_API
             EE_Error::doing_it_wrong(
                 __METHOD__,
                 sprintf(
-                    __(
+                    esc_html__(
                         'EE_Register_CPT has been called and given a reference of "%s".  It may or may not work because it should be called on or before "AHEE__EE_System__load_CPTs_and_session__complete" action hook.',
                         'event_espresso'
                     ),

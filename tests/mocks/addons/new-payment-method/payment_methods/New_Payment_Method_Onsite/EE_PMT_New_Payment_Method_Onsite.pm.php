@@ -24,7 +24,7 @@ class EE_PMT_New_Payment_Method_Onsite extends EE_PMT_Base{
 	public function __construct($pm_instance = NULL) {
 		require_once($this->file_folder().'EEG_New_Payment_Method_Onsite.gateway.php');
 		$this->_gateway = new EEG_New_Payment_Method_Onsite();
-		$this->_pretty_name = __("New Payment Method Onsite", 'event_espresso');
+		$this->_pretty_name = esc_html__("New Payment Method Onsite", 'event_espresso');
 		$this->_requires_https = true;
 		parent::__construct($pm_instance);
 	}
@@ -37,7 +37,7 @@ class EE_PMT_New_Payment_Method_Onsite extends EE_PMT_Base{
 	public function help_tabs_config(){
 		return array(
 			$this->get_help_tab_name() => array(
-				'title' => __('New Payment Method Onsite Settings', 'event_espresso'),
+				'title' => esc_html__('New Payment Method Onsite Settings', 'event_espresso'),
 				'filename' => 'new_payment_method_onsite'
 				),
 		);
@@ -59,23 +59,23 @@ class EE_PMT_New_Payment_Method_Onsite extends EE_PMT_Base{
 						'Declined' => 'Declined',
 						'Failed'   => 'Failed'
 					),
-					array( 'html_help_text' => __( 'What the payment status will be set to', 'event_espresso' ) )
+					array( 'html_help_text' => esc_html__( 'What the payment status will be set to', 'event_espresso' ) )
 				),
 				'credit_card' => new EE_Credit_Card_Input( array(
 					'required'        => false,
-					'html_label_text' => __( 'Credit Card', 'event_espresso' ),
+					'html_label_text' => esc_html__( 'Credit Card', 'event_espresso' ),
 				) ),
 				'exp_month'   => new EE_Credit_Card_Month_Input( true, array(
 					'required'        => false,
-					'html_label_text' => __( 'Expiry Month', 'event_espresso' )
+					'html_label_text' => esc_html__( 'Expiry Month', 'event_espresso' )
 				) ),
 				'exp_year'    => new EE_Credit_Card_Year_Input( array(
 					'required'        => false,
-					'html_label_text' => __( 'Expiry Year', 'event_espresso' ),
+					'html_label_text' => esc_html__( 'Expiry Year', 'event_espresso' ),
 				) ),
 				'cvv'         => new EE_CVV_Input( array(
 					'required'        => false,
-					'html_label_text' => __( 'CVV', 'event_espresso' )
+					'html_label_text' => esc_html__( 'CVV', 'event_espresso' )
 				) ),
 			)
 		) );
@@ -90,7 +90,7 @@ class EE_PMT_New_Payment_Method_Onsite extends EE_PMT_Base{
 		$form = new EE_Payment_Method_Form(array(
 			'extra_meta_inputs'=>array(
 				'login_id'=>new EE_Text_Input(array(
-					'html_label_text'=>  sprintf(__("Login ID %s", "event_espresso"), $this->get_help_tab_link() )
+					'html_label_text'=>  sprintf(esc_html__("Login ID %s", "event_espresso"), $this->get_help_tab_link() )
 				)))));
 		return $form;
 	}

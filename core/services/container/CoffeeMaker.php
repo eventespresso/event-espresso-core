@@ -71,7 +71,7 @@ abstract class CoffeeMaker implements CoffeeMakerInterface
         if (! in_array($type, $types, true)) {
             throw new InvalidIdentifierException(
                 is_object($type) ? get_class($type) : gettype($type),
-                __(
+                esc_html__(
                     'recipe type (one of the class constants on \EventEspresso\core\services\container\CoffeeMaker)',
                     'event_espresso'
                 )

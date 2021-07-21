@@ -310,9 +310,11 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
 
         $unsaved_data_msg = [
             'eventmsg'     => sprintf(
-                __(
-                    "The changes you made to this %s will be lost if you navigate away from this page.",
-                    'event_espresso'
+                wp_strip_all_tags(
+                    __(
+                        "The changes you made to this %s will be lost if you navigate away from this page.",
+                        'event_espresso'
+                    )
                 ),
                 $this->_cpt_object->labels->singular_name
             ),
@@ -383,7 +385,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         if ($this->_supports_page_templates($this->_cpt_object->name)) {
             add_meta_box(
                 'page_templates',
-                __('Page Template', 'event_espresso'),
+                esc_html__('Page Template', 'event_espresso'),
                 [$this, 'page_template_meta_box'],
                 $this->_cpt_routes[ $this->_req_action ],
                 'side',
@@ -543,7 +545,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
             $return .= '<span_id="view-post-btn"><a target="_blank" href="'
                        . get_preview_post_link($id)
                        . '" class="button button-small">'
-                       . __('Preview', 'event_espresso')
+                       . esc_html__('Preview', 'event_espresso')
                        . '</a></span>'
                        . "\n";
         }
@@ -567,12 +569,12 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
             'cur_status'            => $this->_cpt_model_obj->status(),
             'statuses'              => $statuses,
             'cur_status_label'      => $cur_status_label,
-            'localized_status_save' => sprintf(__('Save %s', 'event_espresso'), $cur_status_label),
+            'localized_status_save' => sprintf(esc_html__('Save %s', 'event_espresso'), $cur_status_label),
         ];
         // we'll add a trash post status (WP doesn't add one for some reason)
         if ($this->_cpt_model_obj->status() === 'trash') {
-            $template_args['cur_status_label'] = __('Trashed', 'event_espresso');
-            $statuses['trash']                 = __('Trashed', 'event_espresso');
+            $template_args['cur_status_label'] = esc_html__('Trashed', 'event_espresso');
+            $statuses['trash']                 = esc_html__('Trashed', 'event_espresso');
             $template_args['statuses']         = $statuses;
         }
 
@@ -688,7 +690,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         // add_action('FHEE__EE_Admin_Page___load_page_dependencies__after_load', array( $this, 'modify_current_screen') );
         if (empty($this->_cpt_object)) {
             $msg = sprintf(
-                __(
+                esc_html__(
                     'This page has been set as being related to a registered custom post type, however, the custom post type object could not be retrieved. There are two possible reasons for this:  1. The "%s" does not match a registered post type. or 2. The custom post type is not registered for the "%s" action as indexed in the "$_cpt_routes" property on this class (%s).',
                     'event_espresso'
                 ),
@@ -884,7 +886,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         if (! $this->_cpt_model_obj instanceof EE_CPT_Base) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'Something has gone wrong with the page load because we are unable to set up the object for the %1$s.  This usually happens when the given id for the page route is NOT for the correct custom post type for this page',
                         'event_espresso'
                     ),
@@ -897,7 +899,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
             EE_Error::overwrite_errors();
             EE_Error::add_error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'This %1$s was saved without a title, description, or excerpt which means that none of the extra details you added were saved properly.  All autodrafts will show up in the "draft" view of your event list table.  You can delete them from there. Please click the "Add %1$s" button to refresh and restart.',
                         'event_espresso'
                     ),
@@ -945,7 +947,10 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
                 foreach ($statuses as $status => $label) {
                     $ee_cpt_statuses[ $status ] = [
                         'label'      => $label,
-                        'save_label' => sprintf(__('Save as %s', 'event_espresso'), $label),
+                        'save_label' => sprintf(
+                            wp_strip_all_tags(__('Save as %s', 'event_espresso')),
+                            $label
+                        ),
                     ];
                 }
                 wp_localize_script('ee_admin_js', 'eeCPTstatuses', $ee_cpt_statuses);
@@ -1011,7 +1016,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
                 'default' != $this->_req_data['page_template']
                 && ! isset($page_templates[ $this->_req_data['page_template'] ])
             ) {
-                EE_Error::add_error(__('Invalid Page Template.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__);
+                EE_Error::add_error(esc_html__('Invalid Page Template.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__);
             } else {
                 update_post_meta($post_id, '_wp_page_template', $this->_req_data['page_template']);
             }
@@ -1360,43 +1365,43 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         $messages[ $post->post_type ] = [
             0  => '', // Unused. Messages start at index 1.
             1  => sprintf(
-                __('%1$s updated. %2$sView %1$s%3$s', 'event_espresso'),
+                esc_html__('%1$s updated. %2$sView %1$s%3$s', 'event_espresso'),
                 $this->_cpt_object->labels->singular_name,
                 '<a href="' . esc_url(get_permalink($id)) . '">',
                 '</a>'
             ),
-            2  => __('Custom field updated', 'event_espresso'),
-            3  => __('Custom field deleted.', 'event_espresso'),
-            4  => sprintf(__('%1$s updated.', 'event_espresso'), $this->_cpt_object->labels->singular_name),
+            2  => esc_html__('Custom field updated', 'event_espresso'),
+            3  => esc_html__('Custom field deleted.', 'event_espresso'),
+            4  => sprintf(esc_html__('%1$s updated.', 'event_espresso'), $this->_cpt_object->labels->singular_name),
             5  => $revision
                 ? sprintf(
-                    __('%s restored to revision from %s', 'event_espresso'),
+                    esc_html__('%s restored to revision from %s', 'event_espresso'),
                     $this->_cpt_object->labels->singular_name,
                     wp_post_revision_title($revision, false)
                 )
                 : false,
             6  => sprintf(
-                __('%1$s published. %2$sView %1$s%3$s', 'event_espresso'),
+                esc_html__('%1$s published. %2$sView %1$s%3$s', 'event_espresso'),
                 $this->_cpt_object->labels->singular_name,
                 '<a href="' . esc_url(get_permalink($id)) . '">',
                 '</a>'
             ),
-            7  => sprintf(__('%1$s saved.', 'event_espresso'), $this->_cpt_object->labels->singular_name),
+            7  => sprintf(esc_html__('%1$s saved.', 'event_espresso'), $this->_cpt_object->labels->singular_name),
             8  => sprintf(
-                __('%1$s submitted. %2$sPreview %1$s%3$s', 'event_espresso'),
+                esc_html__('%1$s submitted. %2$sPreview %1$s%3$s', 'event_espresso'),
                 $this->_cpt_object->labels->singular_name,
                 '<a target="_blank" href="' . esc_url(add_query_arg('preview', 'true', get_permalink($id))) . '">',
                 '</a>'
             ),
             9  => sprintf(
-                __('%1$s scheduled for: %2$s. %3$s">Preview %1$s%3$s', 'event_espresso'),
+                esc_html__('%1$s scheduled for: %2$s. %3$s">Preview %1$s%3$s', 'event_espresso'),
                 $this->_cpt_object->labels->singular_name,
                 '<strong>' . date_i18n('M j, Y @ G:i', strtotime($post->post_date)) . '</strong>',
                 '<a target="_blank" href="' . esc_url(get_permalink($id)),
                 '</a>'
             ),
             10 => sprintf(
-                __('%1$s draft updated. %2$s">Preview page%3$s', 'event_espresso'),
+                esc_html__('%1$s draft updated. %2$s">Preview page%3$s', 'event_espresso'),
                 $this->_cpt_object->labels->singular_name,
                 '<a target="_blank" href="' . esc_url(add_query_arg('preview', 'true', get_permalink($id))),
                 '</a>'
@@ -1492,7 +1497,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         $post_id = isset($this->_req_data['post']) ? $this->_req_data['post'] : null;
         $post    = ! empty($post_id) ? get_post($post_id, OBJECT, 'edit') : null;
         if (empty($post)) {
-            wp_die(__(
+            wp_die(esc_html__(
                 'You attempted to edit an item that doesn&#8217;t exist. Perhaps it was deleted?',
                 'event_espresso'
             ));

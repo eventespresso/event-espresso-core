@@ -48,7 +48,7 @@ class EE_Register_Config implements EEI_Plugin_API
         // required fields MUST be present, so let's make sure they are.
         if (empty($identifier) || ! is_array($setup_args) || empty($setup_args['config_name'])) {
             throw new EE_Error(
-                __(
+                esc_html__(
                     'In order to register a Config Class with EE_Register_Config::register(), you must include a "config_class" (the actual class name for this config class). As well, you can supply an array containing the following keys: "config_section" the main section of the config object the settings will be saved under (by default the new config will be registered under EE_Config::instance()->modules or EE_Config::instance()->addons depending on what type of class is calling this), "config_name" (by default the new config will be registered to EE_Config::instance()->{config_section}->{config_class}, but supplying a "config_name" will set the property name that this variable is accessible by. ie: EE_Config::instance()->{config_section}->{config_name})',
                     'event_espresso'
                 )
@@ -66,7 +66,7 @@ class EE_Register_Config implements EEI_Plugin_API
             EE_Error::doing_it_wrong(
                 __METHOD__,
                 sprintf(
-                    __(
+                    esc_html__(
                         'An attempt to register "%s" as an EE_Config object has failed because it was not registered at the correct hookpoint.  Please register before the "AHEE__EE_System__load_core_configuration__begin" hook has fired',
                         'event_espresso'
                     ),
@@ -102,7 +102,7 @@ class EE_Register_Config implements EEI_Plugin_API
             if (! class_exists($identifier)) {
                 throw new EE_Error(
                     sprintf(
-                        __(
+                        esc_html__(
                             'The "%s" config class can not be registered with EE_Config because it does not exist.  Verify that an autoloader has been set for this class',
                             'event_espresso'
                         ),

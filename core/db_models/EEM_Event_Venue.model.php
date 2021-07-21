@@ -13,17 +13,17 @@ class EEM_Event_Venue extends EEM_Base
 
     protected function __construct($timezone = null)
     {
-        $this->singular_item = __('Event to Question Group Link', 'event_espresso');
-        $this->plural_item = __('Event to Question Group Links', 'event_espresso');
+        $this->singular_item = esc_html__('Event to Question Group Link', 'event_espresso');
+        $this->plural_item = esc_html__('Event to Question Group Links', 'event_espresso');
         $this->_tables = array(
             'Event_Venue' => new EE_Primary_Table('esp_event_venue', 'EVV_ID')
         );
         $this->_fields = array(
             'Event_Venue' => array(
-                'EVV_ID' => new EE_Primary_Key_Int_Field('EVV_ID', __('Event to Venue Link ID', 'event_espresso')),
-                'EVT_ID' => new EE_Foreign_Key_Int_Field('EVT_ID', __('Event ID', 'event_espresso'), false, 0, 'Event'),
-                'VNU_ID' => new EE_Foreign_Key_Int_Field('VNU_ID', __('Venue ID', 'event_espresso'), false, 0, 'Venue'),
-                'EVV_primary' => new EE_Boolean_Field('EVV_primary', __("Flag indicating venue is primary one for event", "event_espresso"), false, true)
+                'EVV_ID' => new EE_Primary_Key_Int_Field('EVV_ID', esc_html__('Event to Venue Link ID', 'event_espresso')),
+                'EVT_ID' => new EE_Foreign_Key_Int_Field('EVT_ID', esc_html__('Event ID', 'event_espresso'), false, 0, 'Event'),
+                'VNU_ID' => new EE_Foreign_Key_Int_Field('VNU_ID', esc_html__('Venue ID', 'event_espresso'), false, 0, 'Venue'),
+                'EVV_primary' => new EE_Boolean_Field('EVV_primary', esc_html__("Flag indicating venue is primary one for event", "event_espresso"), false, true)
 
             )
         );

@@ -18,7 +18,7 @@ class PostShortcodeTracking
      */
     public static function set_hooks_admin()
     {
-        \EE_Error::doing_it_wrong(__METHOD__, __('Usage is deprecated.', 'event_espresso'), '4.9.26');
+        \EE_Error::doing_it_wrong(__METHOD__, esc_html__('Usage is deprecated.', 'event_espresso'), '4.9.26');
     }
 
 
@@ -30,7 +30,7 @@ class PostShortcodeTracking
      */
     public static function parse_post_content_on_save($post_ID, $post)
     {
-        \EE_Error::doing_it_wrong(__METHOD__, __('Usage is deprecated.', 'event_espresso'), '4.9.26');
+        \EE_Error::doing_it_wrong(__METHOD__, esc_html__('Usage is deprecated.', 'event_espresso'), '4.9.26');
     }
 
 
@@ -41,7 +41,7 @@ class PostShortcodeTracking
      */
     protected static function set_post_shortcodes_for_posts_page($page_for_posts)
     {
-        \EE_Error::doing_it_wrong(__METHOD__, __('Usage is deprecated.', 'event_espresso'), '4.9.26');
+        \EE_Error::doing_it_wrong(__METHOD__, esc_html__('Usage is deprecated.', 'event_espresso'), '4.9.26');
     }
 
 
@@ -54,7 +54,7 @@ class PostShortcodeTracking
      */
     protected static function set_post_shortcode_for_posts_page($page_for_posts, $EES_Shortcode, $post_ID)
     {
-        \EE_Error::doing_it_wrong(__METHOD__, __('Usage is deprecated.', 'event_espresso'), '4.9.26');
+        \EE_Error::doing_it_wrong(__METHOD__, esc_html__('Usage is deprecated.', 'event_espresso'), '4.9.26');
     }
 
 
@@ -65,7 +65,7 @@ class PostShortcodeTracking
      */
     public static function unset_post_shortcodes_on_delete($ID)
     {
-        \EE_Error::doing_it_wrong(__METHOD__, __('Usage is deprecated.', 'event_espresso'), '4.9.26');
+        \EE_Error::doing_it_wrong(__METHOD__, esc_html__('Usage is deprecated.', 'event_espresso'), '4.9.26');
     }
 
 
@@ -85,7 +85,7 @@ class PostShortcodeTracking
         $page_for_posts,
         $update_post_shortcodes = false
     ) {
-        \EE_Error::doing_it_wrong(__METHOD__, __('Usage is deprecated.', 'event_espresso'), '4.9.26');
+        \EE_Error::doing_it_wrong(__METHOD__, esc_html__('Usage is deprecated.', 'event_espresso'), '4.9.26');
     }
 
 
@@ -96,7 +96,7 @@ class PostShortcodeTracking
      */
     public static function update_post_shortcodes($page_for_posts = '')
     {
-        \EE_Error::doing_it_wrong(__METHOD__, __('Usage is deprecated.', 'event_espresso'), '4.9.26');
+        \EE_Error::doing_it_wrong(__METHOD__, esc_html__('Usage is deprecated.', 'event_espresso'), '4.9.26');
     }
 
 
@@ -108,7 +108,7 @@ class PostShortcodeTracking
      */
     public static function reset_page_for_posts_on_initial_set($option, $value)
     {
-        \EE_Error::doing_it_wrong(__METHOD__, __('Usage is deprecated.', 'event_espresso'), '4.9.26');
+        \EE_Error::doing_it_wrong(__METHOD__, esc_html__('Usage is deprecated.', 'event_espresso'), '4.9.26');
     }
 
 
@@ -121,7 +121,7 @@ class PostShortcodeTracking
      */
     public static function reset_page_for_posts_on_change($option, $old_value = '', $value = '')
     {
-        \EE_Error::doing_it_wrong(__METHOD__, __('Usage is deprecated.', 'event_espresso'), '4.9.26');
+        \EE_Error::doing_it_wrong(__METHOD__, esc_html__('Usage is deprecated.', 'event_espresso'), '4.9.26');
     }
 
 
@@ -132,7 +132,7 @@ class PostShortcodeTracking
      */
     public static function reset_page_for_posts_on_delete($option)
     {
-        \EE_Error::doing_it_wrong(__METHOD__, __('Usage is deprecated.', 'event_espresso'), '4.9.26');
+        \EE_Error::doing_it_wrong(__METHOD__, esc_html__('Usage is deprecated.', 'event_espresso'), '4.9.26');
     }
 
 
@@ -144,6 +144,6 @@ class PostShortcodeTracking
      */
     public static function get_post_ids_for_shortcode($shortcodes, $index_results = true)
     {
-        \EE_Error::doing_it_wrong(__METHOD__, __('Usage is deprecated.', 'event_espresso'), '4.9.26');
+        \EE_Error::doing_it_wrong(__METHOD__, esc_html__('Usage is deprecated.', 'event_espresso'), '4.9.26');
     }
 }

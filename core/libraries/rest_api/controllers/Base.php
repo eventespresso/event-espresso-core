@@ -328,7 +328,7 @@ class Base
         }
         if (! $success) {
             throw new EE_Error(
-                __('We could not parse the URL. Please contact Event Espresso Support', 'event_espresso'),
+                esc_html__('We could not parse the URL. Please contact Event Espresso Support', 'event_espresso'),
                 'endpoint_parsing_error'
             );
         }

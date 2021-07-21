@@ -11,7 +11,7 @@
 			<tr>
 				<th><?php _e("Reset New Addon Settings?", 'event_espresso');?></th>
 				<td>
-					<?php echo EEH_Form_Fields::select( __('Reset New Addon Settings?', 'event_espresso'), 0, $yes_no_values, 'reset_new_addon', 'reset_new_addon' ); ?><br/>
+					<?php echo EEH_Form_Fields::select( esc_html__('Reset New Addon Settings?', 'event_espresso'), 0, $yes_no_values, 'reset_new_addon', 'reset_new_addon' ); ?><br/>
 					<span class="description">
 						<?php _e('Set to \'Yes\' and then click \'Save\' to confirm reset all basic and advanced Event Espresso New Addon settings to their plugin defaults.', 'event_espresso'); ?>
 					</span>

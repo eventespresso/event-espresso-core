@@ -22,7 +22,7 @@ class EE_DMS_4_6_0_country_system_question extends EE_Data_Migration_Script_Stag
     public function __construct()
     {
         global $wpdb;
-        $this->_pretty_name = __('Country - System Question', 'event_espresso');
+        $this->_pretty_name = esc_html__('Country - System Question', 'event_espresso');
         $this->_old_table = $wpdb->prefix . 'esp_question';
         $this->_extra_where_sql = "WHERE QST_system = 'country'";
         parent::__construct();
@@ -49,7 +49,7 @@ class EE_DMS_4_6_0_country_system_question extends EE_Data_Migration_Script_Stag
             if (! $success) {
                 $this->add_error(
                     sprintf(
-                        __('Could not update question system name "%1$s" for question ID=%2$d because "%3$s"', 'event_espresso'),
+                        esc_html__('Could not update question system name "%1$s" for question ID=%2$d because "%3$s"', 'event_espresso'),
                         wp_json_encode($question['QST_system']),
                         $question['QST_ID'],
                         $wpdb->last_error

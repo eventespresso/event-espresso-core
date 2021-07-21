@@ -294,7 +294,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
         if (! $this->_display_strategy || ! $this->_display_strategy instanceof EE_Display_Strategy_Base) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         "Cannot get display strategy for form input with name %s and id %s, because it has not been set in the constructor",
                         "event_espresso"
                     ),

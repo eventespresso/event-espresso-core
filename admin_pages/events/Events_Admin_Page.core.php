@@ -794,7 +794,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         if (! $has_timezone_string && ! EEM_Event::instance()->exists(array())) {
             EE_Error::add_attention(
                 sprintf(
-                    __(
+                    esc_html__(
                         'Your website\'s timezone is currently set to a UTC offset. We recommend updating your timezone to a city or region near you before you create an event. Change your timezone now:%1$s%2$s%3$sChange Timezone%4$s',
                         'event_espresso'
                     ),
@@ -2347,7 +2347,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 EE_Registry::instance()->CFG->update_espresso_config();
                 EE_Error::overwrite_success();
                 EE_Error::add_success(
-                    __('Default Event Settings were updated', 'event_espresso')
+                    esc_html__('Default Event Settings were updated', 'event_espresso')
                 );
             }
         }

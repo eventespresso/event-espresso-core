@@ -104,7 +104,7 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
         if ((float) $amount < 0) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'Attempting to make a payment for a negative amount of %1$d for transaction %2$d. That should be a refund',
                         'event_espresso'
                     ),
@@ -141,7 +141,7 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
         }
         EE_Error::add_error(
             sprintf(
-                __(
+                esc_html__(
                     'A valid payment method could not be determined due to a technical issue.%sPlease try again or contact %s for assistance.',
                     'event_espresso'
                 ),
@@ -173,7 +173,7 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
         if (! $primary_reg instanceof EE_Registration) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'Cannot get IPN URL for transaction with ID %d because it has no primary registration',
                         'event_espresso'
                     ),
@@ -278,7 +278,7 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
                     // not a payment
                     EE_Error::add_error(
                         sprintf(
-                            __(
+                            esc_html__(
                                 'A valid payment method could not be determined due to a technical issue.%sPlease refresh your browser and try again or contact %s for assistance.',
                                 'event_espresso'
                             ),
@@ -355,7 +355,7 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
                 __FILE__,
                 __FUNCTION__,
                 sprintf(
-                    __(
+                    esc_html__(
                         'Error occurred while receiving IPN. Transaction: %1$s, req data: %2$s. The error was "%3$s"',
                         'event_espresso'
                     ),
@@ -633,7 +633,7 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
         ) {
             EE_Error::add_attention(
                 sprintf(
-                    __(
+                    esc_html__(
                         'A remainder of %1$s exists after applying this payment to Registration(s) %2$s.%3$sPlease verify that the original payment amount of %4$s is correct. If so, you should edit this payment and select at least one additional registration in the "Registrations to Apply Payment to" section, so that the remainder of this payment can be applied to the additional registration(s).',
                         'event_espresso'
                     ),
@@ -825,7 +825,7 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
                 if ($gateway instanceof EE_Gateway) {
                     $gateway->log(
                         array(
-                            'message'               => (string) __('Post Payment Transaction Details', 'event_espresso'),
+                            'message'               => (string) esc_html__('Post Payment Transaction Details', 'event_espresso'),
                             'transaction'           => $transaction->model_field_array(),
                             'finalized'             => $finalized,
                             'IPN'                   => $IPN,

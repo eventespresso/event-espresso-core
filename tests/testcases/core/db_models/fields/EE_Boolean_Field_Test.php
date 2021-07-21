@@ -44,8 +44,8 @@ class EE_Boolean_Field_Test extends EE_UnitTestCase
 
     public function test_prepare_for_pretty_echoing()
     {
-        $this->assertEquals(__('Yes', 'event_espresso'), $this->_field->prepare_for_pretty_echoing(true));
-        $this->assertEquals(__('No', 'event_espresso'), $this->_field->prepare_for_pretty_echoing(false));
+        $this->assertEquals(esc_html__('Yes', 'event_espresso'), $this->_field->prepare_for_pretty_echoing(true));
+        $this->assertEquals(esc_html__('No', 'event_espresso'), $this->_field->prepare_for_pretty_echoing(false));
     }
 
     public function test_get_wpdb_data_type()

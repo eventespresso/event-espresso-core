@@ -46,12 +46,12 @@ class Pricing_Admin_Page extends EE_Admin_Page
         $this->_admin_page_title = PRICING_LABEL;
         $this->_labels = array(
             'buttons' => array(
-                'add'         => __('Add New Default Price', 'event_espresso'),
-                'edit'        => __('Edit Default Price', 'event_espresso'),
-                'delete'      => __('Delete Default Price', 'event_espresso'),
-                'add_type'    => __('Add New Default Price Type', 'event_espresso'),
-                'edit_type'   => __('Edit Price Type', 'event_espresso'),
-                'delete_type' => __('Delete Price Type', 'event_espresso'),
+                'add'         => esc_html__('Add New Default Price', 'event_espresso'),
+                'edit'        => esc_html__('Edit Default Price', 'event_espresso'),
+                'delete'      => esc_html__('Delete Default Price', 'event_espresso'),
+                'add_type'    => esc_html__('Add New Default Price Type', 'event_espresso'),
+                'edit_type'   => esc_html__('Edit Price Type', 'event_espresso'),
+                'delete_type' => esc_html__('Delete Price Type', 'event_espresso'),
             ),
         );
     }
@@ -189,21 +189,21 @@ class Pricing_Admin_Page extends EE_Admin_Page
         $this->_page_config = array(
             'default'            => array(
                 'nav'           => array(
-                    'label' => __('Default Pricing', 'event_espresso'),
+                    'label' => esc_html__('Default Pricing', 'event_espresso'),
                     'order' => 10,
                 ),
                 'list_table'    => 'Prices_List_Table',
                 'help_tabs'     => array(
                     'pricing_default_pricing_help_tab'                           => array(
-                        'title'    => __('Default Pricing', 'event_espresso'),
+                        'title'    => esc_html__('Default Pricing', 'event_espresso'),
                         'filename' => 'pricing_default_pricing',
                     ),
                     'pricing_default_pricing_table_column_headings_help_tab'     => array(
-                        'title'    => __('Default Pricing Table Column Headings', 'event_espresso'),
+                        'title'    => esc_html__('Default Pricing Table Column Headings', 'event_espresso'),
                         'filename' => 'pricing_default_pricing_table_column_headings',
                     ),
                     'pricing_default_pricing_views_bulk_actions_search_help_tab' => array(
-                        'title'    => __('Default Pricing Views & Bulk Actions & Search', 'event_espresso'),
+                        'title'    => esc_html__('Default Pricing Views & Bulk Actions & Search', 'event_espresso'),
                         'filename' => 'pricing_default_pricing_views_bulk_actions_search',
                     ),
                 ),
@@ -213,13 +213,13 @@ class Pricing_Admin_Page extends EE_Admin_Page
             ),
             'add_new_price'      => array(
                 'nav'           => array(
-                    'label'      => __('Add New Default Price', 'event_espresso'),
+                    'label'      => esc_html__('Add New Default Price', 'event_espresso'),
                     'order'      => 20,
                     'persistent' => false,
                 ),
                 'help_tabs'     => array(
                     'add_new_default_price_help_tab' => array(
-                        'title'    => __('Add New Default Price', 'event_espresso'),
+                        'title'    => esc_html__('Add New Default Price', 'event_espresso'),
                         'filename' => 'pricing_add_new_default_price',
                     ),
                 ),
@@ -230,7 +230,7 @@ class Pricing_Admin_Page extends EE_Admin_Page
             ),
             'edit_price'         => array(
                 'nav'           => array(
-                    'label'      => __('Edit Default Price', 'event_espresso'),
+                    'label'      => esc_html__('Edit Default Price', 'event_espresso'),
                     'order'      => 20,
                     'url'        => isset($this->_req_data['id']) ? add_query_arg(
                         array('id' => $this->_req_data['id']),
@@ -241,7 +241,7 @@ class Pricing_Admin_Page extends EE_Admin_Page
                 'metaboxes'     => array('_publish_post_box', '_espresso_news_post_box', '_price_details_meta_boxes'),
                 'help_tabs'     => array(
                     'edit_default_price_help_tab' => array(
-                        'title'    => __('Edit Default Price', 'event_espresso'),
+                        'title'    => esc_html__('Edit Default Price', 'event_espresso'),
                         'filename' => 'pricing_edit_default_price',
                     ),
                 ),
@@ -251,21 +251,21 @@ class Pricing_Admin_Page extends EE_Admin_Page
             ),
             'price_types'        => array(
                 'nav'           => array(
-                    'label' => __('Price Types', 'event_espresso'),
+                    'label' => esc_html__('Price Types', 'event_espresso'),
                     'order' => 30,
                 ),
                 'list_table'    => 'Price_Types_List_Table',
                 'help_tabs'     => array(
                     'pricing_price_types_help_tab'                           => array(
-                        'title'    => __('Price Types', 'event_espresso'),
+                        'title'    => esc_html__('Price Types', 'event_espresso'),
                         'filename' => 'pricing_price_types',
                     ),
                     'pricing_price_types_table_column_headings_help_tab'     => array(
-                        'title'    => __('Price Types Table Column Headings', 'event_espresso'),
+                        'title'    => esc_html__('Price Types Table Column Headings', 'event_espresso'),
                         'filename' => 'pricing_price_types_table_column_headings',
                     ),
                     'pricing_price_types_views_bulk_actions_search_help_tab' => array(
-                        'title'    => __('Price Types Views & Bulk Actions & Search', 'event_espresso'),
+                        'title'    => esc_html__('Price Types Views & Bulk Actions & Search', 'event_espresso'),
                         'filename' => 'pricing_price_types_views_bulk_actions_search',
                     ),
                 ),
@@ -276,13 +276,13 @@ class Pricing_Admin_Page extends EE_Admin_Page
             ),
             'add_new_price_type' => array(
                 'nav'           => array(
-                    'label'      => __('Add New Price Type', 'event_espresso'),
+                    'label'      => esc_html__('Add New Price Type', 'event_espresso'),
                     'order'      => 40,
                     'persistent' => false,
                 ),
                 'help_tabs'     => array(
                     'add_new_price_type_help_tab' => array(
-                        'title'    => __('Add New Price Type', 'event_espresso'),
+                        'title'    => esc_html__('Add New Price Type', 'event_espresso'),
                         'filename' => 'pricing_add_new_price_type',
                     ),
                 ),
@@ -297,13 +297,13 @@ class Pricing_Admin_Page extends EE_Admin_Page
             ),
             'edit_price_type'    => array(
                 'nav'       => array(
-                    'label'      => __('Edit Price Type', 'event_espresso'),
+                    'label'      => esc_html__('Edit Price Type', 'event_espresso'),
                     'order'      => 40,
                     'persistent' => false,
                 ),
                 'help_tabs' => array(
                     'edit_price_type_help_tab' => array(
-                        'title'    => __('Edit Price Type', 'event_espresso'),
+                        'title'    => esc_html__('Edit Price Type', 'event_espresso'),
                         'filename' => 'pricing_edit_price_type',
                     ),
                 ),
@@ -350,7 +350,7 @@ class Pricing_Admin_Page extends EE_Admin_Page
     protected function _add_screen_options_price_types()
     {
         $page_title = $this->_admin_page_title;
-        $this->_admin_page_title = __('Price Types', 'event_espresso');
+        $this->_admin_page_title = esc_html__('Price Types', 'event_espresso');
         $this->_per_page_screen_option();
         $this->_admin_page_title = $page_title;
     }
@@ -415,10 +415,10 @@ class Pricing_Admin_Page extends EE_Admin_Page
         $this->_views = array(
             'all' => array(
                 'slug'        => 'all',
-                'label'       => __('View All Default Pricing', 'event_espresso'),
+                'label'       => esc_html__('View All Default Pricing', 'event_espresso'),
                 'count'       => 0,
                 'bulk_action' => array(
-                    'trash_price' => __('Move to Trash', 'event_espresso'),
+                    'trash_price' => esc_html__('Move to Trash', 'event_espresso'),
                 ),
             ),
         );
@@ -426,11 +426,11 @@ class Pricing_Admin_Page extends EE_Admin_Page
         if (EE_Registry::instance()->CAP->current_user_can('ee_delete_default_prices', 'pricing_trash_price')) {
             $this->_views['trashed'] = array(
                 'slug'        => 'trashed',
-                'label'       => __('Trash', 'event_espresso'),
+                'label'       => esc_html__('Trash', 'event_espresso'),
                 'count'       => 0,
                 'bulk_action' => array(
-                    'restore_price' => __('Restore from Trash', 'event_espresso'),
-                    'delete_price'  => __('Delete Permanently', 'event_espresso'),
+                    'restore_price' => esc_html__('Restore from Trash', 'event_espresso'),
+                    'delete_price'  => esc_html__('Delete Permanently', 'event_espresso'),
                 ),
             );
         }
@@ -442,10 +442,10 @@ class Pricing_Admin_Page extends EE_Admin_Page
         $this->_views = array(
             'all' => array(
                 'slug'        => 'all',
-                'label'       => __('All', 'event_espresso'),
+                'label'       => esc_html__('All', 'event_espresso'),
                 'count'       => 0,
                 'bulk_action' => array(
-                    'trash_price_type' => __('Move to Trash', 'event_espresso'),
+                    'trash_price_type' => esc_html__('Move to Trash', 'event_espresso'),
                 ),
             ),
         );
@@ -458,11 +458,11 @@ class Pricing_Admin_Page extends EE_Admin_Page
         ) {
             $this->_views['trashed'] = array(
                 'slug'        => 'trashed',
-                'label'       => __('Trash', 'event_espresso'),
+                'label'       => esc_html__('Trash', 'event_espresso'),
                 'count'       => 0,
                 'bulk_action' => array(
-                    'restore_price_type' => __('Restore from Trash', 'event_espresso'),
-                    'delete_price_type'  => __('Delete Permanently', 'event_espresso'),
+                    'restore_price_type' => esc_html__('Restore from Trash', 'event_espresso'),
+                    'delete_price_type'  => esc_html__('Delete Permanently', 'event_espresso'),
                 ),
             );
         }
@@ -484,7 +484,7 @@ class Pricing_Admin_Page extends EE_Admin_Page
             'add-new-h2'
         );
         $this->admin_page_title .= $this->_learn_more_about_pricing_link();
-        $this->_search_btn_label = __('Default Prices', 'event_espresso');
+        $this->_search_btn_label = esc_html__('Default Prices', 'event_espresso');
         $this->display_admin_list_table_page_with_no_sidebar();
     }
 
@@ -616,7 +616,7 @@ class Pricing_Admin_Page extends EE_Admin_Page
         $price_types = $PRT->get_all(array(array('PBT_ID' => array('!=', 1))));
         $price_type_names = array();
         if (empty($price_types)) {
-            $msg = __(
+            $msg = esc_html__(
                 'You have no price types defined. Please add a price type before adding a price.',
                 'event_espresso'
             );
@@ -649,7 +649,7 @@ class Pricing_Admin_Page extends EE_Admin_Page
     {
         add_meta_box(
             'edit-price-details-mbox',
-            __('Default Price Details', 'event_espresso'),
+            esc_html__('Default Price Details', 'event_espresso'),
             array($this, '_edit_price_details_meta_box'),
             $this->wp_page_slug,
             'normal',
@@ -840,15 +840,15 @@ class Pricing_Admin_Page extends EE_Admin_Page
         if ($success) {
             if ($trash) {
                 $msg = $success == 2
-                    ? __('The Prices have been trashed.', 'event_espresso')
-                    : __(
+                    ? esc_html__('The Prices have been trashed.', 'event_espresso')
+                    : esc_html__(
                         'The Price has been trashed.',
                         'event_espresso'
                     );
             } else {
                 $msg = $success == 2
-                    ? __('The Prices have been restored.', 'event_espresso')
-                    : __(
+                    ? esc_html__('The Prices have been restored.', 'event_espresso')
+                    : esc_html__(
                         'The Price has been restored.',
                         'event_espresso'
                     );
@@ -901,7 +901,7 @@ class Pricing_Admin_Page extends EE_Admin_Page
 
     public function update_price_order()
     {
-        $success = __('Price order was updated successfully.', 'event_espresso');
+        $success = esc_html__('Price order was updated successfully.', 'event_espresso');
 
         // grab our row IDs
         $row_ids = isset($this->_req_data['row_ids']) && ! empty($this->_req_data['row_ids']) ? explode(
@@ -929,7 +929,7 @@ class Pricing_Admin_Page extends EE_Admin_Page
             $success = false;
         }
 
-        $errors = ! $success ? __('An error occurred. The price order was not updated.', 'event_espresso') : false;
+        $errors = ! $success ? esc_html__('An error occurred. The price order was not updated.', 'event_espresso') : false;
 
         echo wp_json_encode(array('return_data' => false, 'success' => $success, 'errors' => $errors));
         die();
@@ -960,7 +960,7 @@ class Pricing_Admin_Page extends EE_Admin_Page
             'add-new-h2'
         );
         $this->admin_page_title .= $this->_learn_more_about_pricing_link();
-        $this->_search_btn_label = __('Price Types', 'event_espresso');
+        $this->_search_btn_label = esc_html__('Price Types', 'event_espresso');
         $this->display_admin_list_table_page_with_no_sidebar();
     }
 
@@ -1103,7 +1103,7 @@ class Pricing_Admin_Page extends EE_Admin_Page
     {
         add_meta_box(
             'edit-price-details-mbox',
-            __('Price Type Details', 'event_espresso'),
+            esc_html__('Price Type Details', 'event_espresso'),
             array($this, '_edit_price_type_details_meta_box'),
             $this->wp_page_slug,
             'normal',
@@ -1255,15 +1255,15 @@ class Pricing_Admin_Page extends EE_Admin_Page
         if ($success) {
             if ($trash) {
                 $msg = $success > 1
-                    ? __('The Price Types have been trashed.', 'event_espresso')
-                    : __(
+                    ? esc_html__('The Price Types have been trashed.', 'event_espresso')
+                    : esc_html__(
                         'The Price Type has been trashed.',
                         'event_espresso'
                     );
             } else {
                 $msg = $success > 1
-                    ? __('The Price Types have been restored.', 'event_espresso')
-                    : __(
+                    ? esc_html__('The Price Types have been restored.', 'event_espresso')
+                    : esc_html__(
                         'The Price Type has been restored.',
                         'event_espresso'
                     );
@@ -1315,7 +1315,7 @@ class Pricing_Admin_Page extends EE_Admin_Page
      */
     protected function _learn_more_about_pricing_link()
     {
-        return '<a class="hidden" style="margin:0 20px; cursor:pointer; font-size:12px;" >' . __(
+        return '<a class="hidden" style="margin:0 20px; cursor:pointer; font-size:12px;" >' . esc_html__(
             'learn more about how pricing works',
             'event_espresso'
         ) . '</a>';
@@ -1354,11 +1354,11 @@ class Pricing_Admin_Page extends EE_Admin_Page
                                 'subsections'     => array(
                                     'prices_displayed_including_taxes' => new EE_Yes_No_Input(
                                         array(
-                                            'html_label_text'         => __(
+                                            'html_label_text'         => esc_html__(
                                                 "Show Prices With Taxes Included?",
                                                 'event_espresso'
                                             ),
-                                            'html_help_text'          => __(
+                                            'html_help_text'          => esc_html__(
                                                 'Indicates whether or not to display prices with the taxes included',
                                                 'event_espresso'
                                             ),

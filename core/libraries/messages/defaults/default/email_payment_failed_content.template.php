@@ -55,11 +55,11 @@
                                         </li>
                                     </ul>
                                     <p class="callout">
-                                        <?php printf(__('Please %sretry your payment%s, or choose an alternate payment method to reserve your space.', 'event_espresso'), '<a href="[PAYMENT_URL]">', '</a>'); ?>
+                                        <?php printf(esc_html__('Please %sretry your payment%s, or choose an alternate payment method to reserve your space.', 'event_espresso'), '<a href="[PAYMENT_URL]">', '</a>'); ?>
                                     </p>
                                     [EVENT_LIST]
                                     <p class="callout">
-                                        <?php printf(__('Please %sretry your payment%s, or choose an alternate payment method to reserve your space.', 'event_espresso'), '<a href="[PAYMENT_URL]">', '</a>'); ?>
+                                        <?php printf(esc_html__('Please %sretry your payment%s, or choose an alternate payment method to reserve your space.', 'event_espresso'), '<a href="[PAYMENT_URL]">', '</a>'); ?>
                                     </p>
                                 </td>
                             </tr>

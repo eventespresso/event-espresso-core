@@ -13,7 +13,7 @@
 class Admin_Mock_Valid_Admin_Page extends EE_Admin_Page {
 	protected function _init_page_props() {
 		$this->page_slug = 'mock_valid_admin_page';
-		$this->page_label = __('Mock Valid Admin Page');
+		$this->page_label = esc_html__('Mock Valid Admin Page');
 		$this->_admin_base_url = admin_url('admin.php?page=mock_valid_admin_page');
 		$this->_admin_base_path = dirname( __FILE__  );
 	}
@@ -21,7 +21,7 @@ class Admin_Mock_Valid_Admin_Page extends EE_Admin_Page {
 	protected function _define_page_props() {
 		$this->_admin_page_title = $this->page_label;
 		$this->_labels = array(
-			'label' => __('Some Label')
+			'label' => esc_html__('Some Label')
 			);
 	}
 
@@ -37,7 +37,7 @@ class Admin_Mock_Valid_Admin_Page extends EE_Admin_Page {
 	protected function _set_page_config() {
 		$this->_page_config = array(
 			'nav' => array(
-				'label' => __('Mock Valid Admin Page'),
+				'label' => esc_html__('Mock Valid Admin Page'),
 				'order' => 10
 				)
 			);

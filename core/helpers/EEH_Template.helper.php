@@ -451,7 +451,7 @@ class EEH_Template
     ) {
         // ensure amount was received
         if ($amount === null) {
-            $msg = __('In order to format currency, an amount needs to be passed.', 'event_espresso');
+            $msg = esc_html__('In order to format currency, an amount needs to be passed.', 'event_espresso');
             EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
             return '';
         }
@@ -523,7 +523,7 @@ class EEH_Template
         /** @type EEM_Status $EEM_Status */
         $EEM_Status = EE_Registry::instance()->load_model('Status');
         $status     = $EEM_Status->localized_status(
-            array($status_id => __('unknown', 'event_espresso')),
+            array($status_id => esc_html__('unknown', 'event_espresso')),
             $plural,
             $schema
         );
@@ -827,8 +827,8 @@ class EEH_Template
             || ! isset($items_label['plural'])
         ) {
             $items_label = array(
-                'single' => __('1 item', 'event_espresso'),
-                'plural' => __('%s items', 'event_espresso'),
+                'single' => esc_html__('1 item', 'event_espresso'),
+                'plural' => esc_html__('%s items', 'event_espresso'),
             );
         } else {
             $items_label = array(
@@ -1001,8 +1001,8 @@ if (! function_exists('espresso_pagination')) {
                 'end_size'     => 10,
                 'mid_size'     => 6,
                 'prev_next'    => true,
-                'prev_text'    => __('&lsaquo; PREV', 'event_espresso'),
-                'next_text'    => __('NEXT &rsaquo;', 'event_espresso'),
+                'prev_text'    => esc_html__('&lsaquo; PREV', 'event_espresso'),
+                'next_text'    => esc_html__('NEXT &rsaquo;', 'event_espresso'),
                 'type'         => 'plain',
                 'add_args'     => false,
                 'add_fragment' => '',

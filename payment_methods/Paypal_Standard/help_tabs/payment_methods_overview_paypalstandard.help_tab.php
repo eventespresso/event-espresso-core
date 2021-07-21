@@ -1,10 +1,10 @@
 <p><strong><?php _e('PayPal Standard', 'event_espresso'); ?></strong></p>
-<p><span class="required"><?php _e('Please Note! This gateway has been deprecated and replaced with the PayPal Express payment method. ', 'event_espresso'); ?> <?php printf(__('If you still want to use this gateway, please follow the directions to %1$sactivate it here%2$s.', 'event_espresso'), "<a href='https://eventespresso.com/wiki/paypal-standard-payment-gateway/#deprecated' target='_blank'>", '</a>'); ?></span></p>
+<p><span class="required"><?php _e('Please Note! This gateway has been deprecated and replaced with the PayPal Express payment method. ', 'event_espresso'); ?> <?php printf(esc_html__('If you still want to use this gateway, please follow the directions to %1$sactivate it here%2$s.', 'event_espresso'), "<a href='https://eventespresso.com/wiki/paypal-standard-payment-gateway/#deprecated' target='_blank'>", '</a>'); ?></span></p>
 <p>
 <?php _e('Adjust the settings for the PayPal Standard payment gateway.', 'event_espresso'); ?>
 </p>
 <p>
-<?php printf(__('See %1$shere%2$s for list of currencies supported by Paypal Standard.', 'event_espresso'), "<a href='https://www.paypal.com/multicurrency' target='_blank'>", "</a>"); ?>
+<?php printf(esc_html__('See %1$shere%2$s for list of currencies supported by Paypal Standard.', 'event_espresso'), "<a href='https://www.paypal.com/multicurrency' target='_blank'>", "</a>"); ?>
 </p>
 <p><strong><?php _e('PayPal Standard Settings', 'event_espresso'); ?></strong></p>
 <ul>
@@ -22,7 +22,7 @@
 </li>
 <li>
 <strong><?php _e('PayPal Calculates Taxes', 'event_espresso'); ?></strong><br />
-<?php printf(__('If set to "Yes", we will indicate to PayPal that it should calculate the taxes on the order and add it. This means PayPal\'s tax calculations will be used on the order instead of Event Espresso\'s. %1$sRead here for more information.%2$s', 'event_espresso'), "<a href='https://www.paypal.com/ca/cgi-bin/webscr?cmd=xpt/Marketing/shipping/EasyCalculateShipAndTax-outside' target='_blank'>", '</a>'); ?><br/>
+<?php printf(esc_html__('If set to "Yes", we will indicate to PayPal that it should calculate the taxes on the order and add it. This means PayPal\'s tax calculations will be used on the order instead of Event Espresso\'s. %1$sRead here for more information.%2$s', 'event_espresso'), "<a href='https://www.paypal.com/ca/cgi-bin/webscr?cmd=xpt/Marketing/shipping/EasyCalculateShipAndTax-outside' target='_blank'>", '</a>'); ?><br/>
 <?php _e('Note: It may confuse users if Event Espresso initially calculates taxes on the order, and then they go to PayPal and it calculates taxes differently. So it is recommended that if PayPal is calculating taxes, that you do not set any taxes in Event Espresso.', 'event_espresso');?>
 </li>
 <li>

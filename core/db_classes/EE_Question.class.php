@@ -451,8 +451,8 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
     {
         $new_question = clone $this;
         $new_question->set('QST_ID', null);
-        $new_question->set_display_text(sprintf(__('%s **Duplicate**', 'event_espresso'), $this->display_text()));
-        $new_question->set_admin_label(sprintf(__('%s **Duplicate**', 'event_espresso'), $this->admin_label()));
+        $new_question->set_display_text(sprintf(esc_html__('%s **Duplicate**', 'event_espresso'), $this->display_text()));
+        $new_question->set_admin_label(sprintf(esc_html__('%s **Duplicate**', 'event_espresso'), $this->admin_label()));
         $new_question->set_system_ID(null);
         $new_question->set_wp_user(get_current_user_id());
         // if we're duplicating a trashed question, assume we don't want the new one to be trashed

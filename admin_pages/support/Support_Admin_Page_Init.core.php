@@ -29,7 +29,7 @@ class Support_Admin_Page_Init extends EE_Admin_Page_Init
 
     protected function _set_init_properties()
     {
-        $this->label = __('Help & Support', 'event_espresso');
+        $this->label = esc_html__('Help & Support', 'event_espresso');
     }
 
     protected function _set_menu_map()
@@ -41,7 +41,7 @@ class Support_Admin_Page_Init extends EE_Admin_Page_Init
                 'show_on_menu'            => EE_Admin_Page_Menu_Map::BLOG_AND_NETWORK_ADMIN,
                 'parent_slug'             => 'espresso_events',
                 'menu_slug'               => EE_SUPPORT_PG_SLUG,
-                'menu_label'              => __('Help & Support', 'event_espresso'),
+                'menu_label'              => esc_html__('Help & Support', 'event_espresso'),
                 'capability'              => 'ee_read_ee',
                 'maintenance_mode_parent' => 'espresso_maintenance_settings',
                 'admin_init_page'         => $this,

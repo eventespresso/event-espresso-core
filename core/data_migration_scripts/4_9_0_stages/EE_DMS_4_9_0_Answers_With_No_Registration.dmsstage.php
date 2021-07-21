@@ -22,7 +22,7 @@ class EE_DMS_4_9_0_Answers_With_No_Registration extends EE_Data_Migration_Script
      */
     public function __construct()
     {
-        $this->_pretty_name = __('Answer Cleanup', 'event_espresso');
+        $this->_pretty_name = esc_html__('Answer Cleanup', 'event_espresso');
         parent::__construct();
     }
 

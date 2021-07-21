@@ -88,7 +88,7 @@ abstract class EE_Registration_Base_message_type extends EE_message_type
 
             // bail early if no transaction
             if (! $transaction instanceof EE_Transaction) {
-                throw new EE_Error(__('The given registration does not have an associated transaction. Something is wrong.', 'event_espresso'));
+                throw new EE_Error(esc_html__('The given registration does not have an associated transaction. Something is wrong.', 'event_espresso'));
             }
 
             $payment = !empty($id) ? EEM_Payment::instance()->get_one(array( array( 'PAY_ID' => $id, 'TXN_ID' => $transaction->ID() ) )) : 0;

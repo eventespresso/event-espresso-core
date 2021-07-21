@@ -17,7 +17,7 @@ class Event_Add_Category_Help_Tour extends EE_Help_Tour
 
     protected function _set_tour_properties()
     {
-        $this->_label = __('Add New Category Tour', 'event_espresso');
+        $this->_label = esc_html__('Add New Category Tour', 'event_espresso');
         $this->_slug = 'event-add-category-joyride';
     }
 
@@ -61,9 +61,9 @@ class Event_Add_Category_Help_Tour extends EE_Help_Tour
 
     protected function _stop_one()
     {
-        $content = '<h3>' . __('Add New Event Category', 'event_espresso') . '</h3>';
+        $content = '<h3>' . esc_html__('Add New Event Category', 'event_espresso') . '</h3>';
         $content .= '<p>'
-                    . __(
+                    . esc_html__(
                         'This tour of the Add New Event Category page will go over different areas of the screen to help you understand what they are used for.',
                         'event_espresso'
                     ) . '</p>';
@@ -72,18 +72,18 @@ class Event_Add_Category_Help_Tour extends EE_Help_Tour
 
     protected function _stop_two()
     {
-        return '<p>' . __('Enter a name for your new category.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Enter a name for your new category.', 'event_espresso') . '</p>';
     }
 
     protected function _stop_three()
     {
-        return '<p>' . __('Enter a unique ID for your new category.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Enter a unique ID for your new category.', 'event_espresso') . '</p>';
     }
 
     protected function _stop_four()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'The rich text editor can be used to add information about your category. Images and links can also be added along with your text.',
                    'event_espresso'
                ) . '</p>';

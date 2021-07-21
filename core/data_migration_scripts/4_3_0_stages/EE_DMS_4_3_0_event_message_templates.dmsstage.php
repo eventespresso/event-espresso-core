@@ -23,7 +23,7 @@ class EE_DMS_4_3_0_event_message_templates extends EE_Data_Migration_Script_Stag
     public function __construct()
     {
         global $wpdb;
-        $this->_pretty_name = __('Event Message Templates', 'event_espresso');
+        $this->_pretty_name = esc_html__('Event Message Templates', 'event_espresso');
         $this->_old_table = $wpdb->prefix . "esp_message_template_group";
         $this->_emt_table = $wpdb->prefix . "esp_event_message_template";
         parent::__construct();
@@ -60,11 +60,11 @@ class EE_DMS_4_3_0_event_message_templates extends EE_Data_Migration_Script_Stag
             );
 
             if (false === $updated) {
-                $this->add_error(sprintf(__("Error in updating the row in %s setting 'MTP_name = %s", 'event_espresso'), $this->_old_table, $event_name));
+                $this->add_error(sprintf(esc_html__("Error in updating the row in %s setting 'MTP_name = %s", 'event_espresso'), $this->_old_table, $event_name));
             }
 
             if (false === $inserted) {
-                $this->add_error(sprintf(__("Error in inserting a row into  setting EVT_ID = %d and GRP_ID = %d", "event_espresso"), $this->_emt_table, $old_row['EVT_ID'], $old_row['GRP_ID']));
+                $this->add_error(sprintf(esc_html__("Error in inserting a row into  setting EVT_ID = %d and GRP_ID = %d", "event_espresso"), $this->_emt_table, $old_row['EVT_ID'], $old_row['GRP_ID']));
             }
         }
     }

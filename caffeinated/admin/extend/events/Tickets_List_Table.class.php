@@ -29,22 +29,22 @@ class Tickets_List_Table extends EE_Admin_List_Table
     protected function _set_properties()
     {
         $this->_wp_list_args = array(
-            'singular' => __('ticket', 'event_espresso'),
-            'plural'   => __('tickets', 'event_espresso'),
+            'singular' => esc_html__('ticket', 'event_espresso'),
+            'plural'   => esc_html__('tickets', 'event_espresso'),
             'ajax'     => true,
             'screen'   => $this->_admin_page->get_current_screen()->id,
         );
 
         $this->_columns = array(
             'cb'              => '<input type="checkbox" />', // Render a checkbox instead of text
-            'TKT_name'        => __('Name', 'event_espresso'),
-            'TKT_description' => __('Description', 'event_espresso'),
-            'TKT_qty'         => __('Quantity', 'event_espresso'),
-            'TKT_uses'        => __('Datetimes', 'event_espresso'),
-            'TKT_min'         => __('Minimum', 'event_espresso'),
-            'TKT_max'         => __('Maximum', 'event_espresso'),
-            'TKT_price'       => __('Price', 'event_espresso'),
-            'TKT_taxable'     => __('Taxable', 'event_espresso'),
+            'TKT_name'        => esc_html__('Name', 'event_espresso'),
+            'TKT_description' => esc_html__('Description', 'event_espresso'),
+            'TKT_qty'         => esc_html__('Quantity', 'event_espresso'),
+            'TKT_uses'        => esc_html__('Datetimes', 'event_espresso'),
+            'TKT_min'         => esc_html__('Minimum', 'event_espresso'),
+            'TKT_max'         => esc_html__('Maximum', 'event_espresso'),
+            'TKT_price'       => esc_html__('Price', 'event_espresso'),
+            'TKT_taxable'     => esc_html__('Taxable', 'event_espresso'),
         );
 
         $this->_sortable_columns = array(
@@ -99,7 +99,7 @@ class Tickets_List_Table extends EE_Admin_List_Table
                 ), EVENTS_ADMIN_URL);
                 $actions['trash'] = '<a href="' . $trash_lnk_url . '" title="'
                                     . esc_attr__('Move Ticket to trash', 'event_espresso') . '">'
-                                    . __('Trash', 'event_espresso') . '</a>';
+                                    . esc_html__('Trash', 'event_espresso') . '</a>';
             } else {
                 // restore price link
                 $restore_lnk_url = EE_Admin_Page::add_query_args_and_nonce(array(
@@ -108,7 +108,7 @@ class Tickets_List_Table extends EE_Admin_List_Table
                 ), EVENTS_ADMIN_URL);
                 $actions['restore'] = '<a href="' . $restore_lnk_url . '" title="'
                                       . esc_attr__('Restore Ticket', 'event_espresso') . '">'
-                                      . __('Restore', 'event_espresso') . '</a>';
+                                      . esc_html__('Restore', 'event_espresso') . '</a>';
                 // delete price link
                 $delete_lnk_url = EE_Admin_Page::add_query_args_and_nonce(array(
                     'action' => 'delete_ticket',
@@ -116,7 +116,7 @@ class Tickets_List_Table extends EE_Admin_List_Table
                 ), EVENTS_ADMIN_URL);
                 $actions['delete'] = '<a href="' . $delete_lnk_url . '" title="'
                                      . esc_attr__('Delete Ticket Permanently', 'event_espresso') . '">'
-                                     . __('Delete Permanently', 'event_espresso') . '</a>';
+                                     . esc_html__('Delete Permanently', 'event_espresso') . '</a>';
             }
         }
 
@@ -162,6 +162,6 @@ class Tickets_List_Table extends EE_Admin_List_Table
 
     public function column_TKT_taxable($item)
     {
-        return $item->get('TKT_taxable') ? __('Yes', 'event_espresso') : __('No', 'event_espresso');
+        return $item->get('TKT_taxable') ? esc_html__('Yes', 'event_espresso') : esc_html__('No', 'event_espresso');
     }
 }

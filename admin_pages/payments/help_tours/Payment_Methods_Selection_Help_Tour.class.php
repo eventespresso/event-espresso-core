@@ -17,7 +17,7 @@ class Payment_Methods_Selection_Help_Tour extends EE_Help_Tour
 
     protected function _set_tour_properties()
     {
-        $this->_label = __('Payment Methods Tour', 'event_espresso');
+        $this->_label = esc_html__('Payment Methods Tour', 'event_espresso');
         $this->_slug = 'payment-methods-joyride';
     }
 
@@ -57,9 +57,9 @@ class Payment_Methods_Selection_Help_Tour extends EE_Help_Tour
 
     protected function _start()
     {
-        $content = '<h3>' . __('Payment Methods', 'event_espresso') . '</h3>';
+        $content = '<h3>' . esc_html__('Payment Methods', 'event_espresso') . '</h3>';
         $content .= '<p>'
-                    . __(
+                    . esc_html__(
                         'This tour of the Payment Methods page will go over different areas of the screen to help you understand what they are used for.',
                         'event_espresso'
                     )
@@ -70,7 +70,7 @@ class Payment_Methods_Selection_Help_Tour extends EE_Help_Tour
     protected function _gateway_links_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'Available payment methods are shown here. Clicking on a payment method will provide you with an option to activate that payment gateway.',
                    'event_espresso'
                )
@@ -80,7 +80,7 @@ class Payment_Methods_Selection_Help_Tour extends EE_Help_Tour
     protected function _gateway_settings_metabox_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'A payment gateway must first be enabled. You will then be able to configure the payment gateway. Be sure to save settings after configuring your payment gateway.',
                    'event_espresso'
                )
@@ -90,7 +90,7 @@ class Payment_Methods_Selection_Help_Tour extends EE_Help_Tour
     protected function _end_tour_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'After configuring your payment gateway, go to the Event Editor to create your first event with Event Espresso.',
                    'event_espresso'
                ) . '</p>';

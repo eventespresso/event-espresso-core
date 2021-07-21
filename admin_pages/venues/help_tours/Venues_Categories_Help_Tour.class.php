@@ -17,7 +17,7 @@ class Venues_Categories_Help_Tour extends EE_Help_Tour
 
     protected function _set_tour_properties()
     {
-        $this->_label = __('Venue Categories Tour', 'event_espresso');
+        $this->_label = esc_html__('Venue Categories Tour', 'event_espresso');
         $this->_slug = 'venue-categories-joyride';
     }
 
@@ -96,9 +96,9 @@ class Venues_Categories_Help_Tour extends EE_Help_Tour
 
     protected function _start()
     {
-        $content = '<h3>' . __('Venue Overview', 'event_espresso') . '</h3>';
+        $content = '<h3>' . esc_html__('Venue Overview', 'event_espresso') . '</h3>';
         $content .= '<p>'
-                    . __(
+                    . esc_html__(
                         'This tour of the Venues Overview page will provide an overview of the different areas of the screen to help you understand what they are used for.',
                         'event_espresso'
                     ) . '</p>';
@@ -108,7 +108,7 @@ class Venues_Categories_Help_Tour extends EE_Help_Tour
     protected function _id_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'View the venue category ID. Can be sorted by ascending or descending order.',
                    'event_espresso'
                ) . '</p>';
@@ -117,7 +117,7 @@ class Venues_Categories_Help_Tour extends EE_Help_Tour
     protected function _name_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'View the name of each venue category. Can be sorted by ascending or descending order.',
                    'event_espresso'
                ) . '</p>';
@@ -126,7 +126,7 @@ class Venues_Categories_Help_Tour extends EE_Help_Tour
     protected function _shortcode_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'View the shortcode for a venue category. This shortcode can be added to an event, WordPress post, or WordPress page. ',
                    'event_espresso'
                ) . '</p>';
@@ -134,18 +134,18 @@ class Venues_Categories_Help_Tour extends EE_Help_Tour
 
     protected function _count_stop()
     {
-        return '<p>' . __('View the number of venues that are associated with a category.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('View the number of venues that are associated with a category.', 'event_espresso') . '</p>';
     }
 
     protected function _bulk_actions_stop()
     {
-        return '<p>' . __('Perform bulk actions to multiple venue categories.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Perform bulk actions to multiple venue categories.', 'event_espresso') . '</p>';
     }
 
     protected function _search_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'Search through venues categories. The following sources will be searched: Venue Category ID, Venue Category Name, Venue Shortcode, and Venue Count.',
                    'event_espresso'
                ) . '</p>';
@@ -153,6 +153,6 @@ class Venues_Categories_Help_Tour extends EE_Help_Tour
 
     protected function _new_category_stop()
     {
-        return '<p>' . __('Click here to add a new venue category.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Click here to add a new venue category.', 'event_espresso') . '</p>';
     }
 }

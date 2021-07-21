@@ -417,7 +417,7 @@ class CptQueryModifier
         if (! $model instanceof EEM_Base) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'The "%1$s" model could not be loaded.',
                         'event_espresso'
                     ),

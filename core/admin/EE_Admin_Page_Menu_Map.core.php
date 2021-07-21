@@ -146,7 +146,7 @@ abstract class EE_Admin_Page_Menu_Map
         if (! empty($missing)) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         '%s is missing some expected keys in the argument array.  The following keys are missing: %s',
                         'event_espresso'
                     ),
@@ -166,7 +166,7 @@ abstract class EE_Admin_Page_Menu_Map
                     if (in_array('admin_init_page', $required) && ! $value instanceof EE_Admin_Page_Init) {
                         throw new EE_Error(
                             sprintf(
-                                __(
+                                esc_html__(
                                     'The value for the "admin_init_page" argument must be an instance of an EE_Admin_Page_Init object.  Instead %s was given as the value.',
                                     'event_espresso'
                                 ),
@@ -185,7 +185,7 @@ abstract class EE_Admin_Page_Menu_Map
             if (! EEH_Class_Tools::has_property($this, $prop)) {
                 throw new EE_Error(
                     sprintf(
-                        __(
+                        esc_html__(
                             'The $menu_args coming into %s has a index key (%s) representing a property that is not defined by the class.  Perhaps there is a typo?',
                             'event_espresso'
                         ),

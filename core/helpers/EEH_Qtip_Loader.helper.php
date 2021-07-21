@@ -53,7 +53,7 @@ class EEH_Qtip_Loader extends EEH_Base
     {
         // let's just make sure this is instantiated in the right place.
         if (did_action('wp_print_styles') || did_action('admin_head')) {
-            EE_Error::doing_it_wrong('EEH_Qtip_Loader', __('This helper must be instantiated before or within a callback for the WordPress wp_enqueue_scripts hook action hook.', 'event_espresso'), '4.1');
+            EE_Error::doing_it_wrong('EEH_Qtip_Loader', esc_html__('This helper must be instantiated before or within a callback for the WordPress wp_enqueue_scripts hook action hook.', 'event_espresso'), '4.1');
         }
     }
 
@@ -122,7 +122,7 @@ class EEH_Qtip_Loader extends EEH_Base
 
         // let's just make sure this is instantiated in the right place.
         if (did_action('wp_enqueue_scripts') || did_action('admin_enqueue_scripts')) {
-            EE_Error::doing_it_wrong('EEH_Qtip_Loader->register()', __('EE_Qtip_Config objects must be registered before wp_enqueue_scripts is called.', 'event_espresso'), '4.1');
+            EE_Error::doing_it_wrong('EEH_Qtip_Loader->register()', esc_html__('EE_Qtip_Config objects must be registered before wp_enqueue_scripts is called.', 'event_espresso'), '4.1');
         }
 
         $configname = (array) $configname; // typecast to array
@@ -170,7 +170,7 @@ class EEH_Qtip_Loader extends EEH_Base
         if (!class_exists($config)) {
             $path = EE_LIBRARIES . 'qtips/' . $config . '.lib.php';
             if (!is_readable($path)) {
-                throw new EE_Error(sprintf(__('Unable to load the Qtip Config registered for this page (%s) because none of the file paths attempted are readable.  Please check the spelling of the paths you\'ve used in the registration', 'event_espresso'), $config));
+                throw new EE_Error(sprintf(esc_html__('Unable to load the Qtip Config registered for this page (%s) because none of the file paths attempted are readable.  Please check the spelling of the paths you\'ve used in the registration', 'event_espresso'), $config));
             } else {
                 require_once $path;
             }
@@ -178,7 +178,7 @@ class EEH_Qtip_Loader extends EEH_Base
 
         // now we attempt a class_exists one more time.
         if (!class_exists($config)) {
-            throw new EE_Error(sprintf(__('The Qtip_Config class being registered (%s) does not exist, please check the spelling.', 'event_espresso'), $config));
+            throw new EE_Error(sprintf(esc_html__('The Qtip_Config class being registered (%s) does not exist, please check the spelling.', 'event_espresso'), $config));
         }
 
         // made it HERE?  FINALLY, let's get things setup.

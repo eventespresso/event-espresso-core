@@ -20,7 +20,7 @@ class Other_Services_Admin_Page extends EE_Admin_Page
     protected function _init_page_props()
     {
         $this->page_slug = EE_OTHER_SERVICES_PG_SLUG;
-        $this->page_label = __('Extensions & Services', 'event_espresso');
+        $this->page_label = esc_html__('Extensions & Services', 'event_espresso');
         $this->_admin_base_url = EE_OTHER_SERVICES_ADMIN_URL;
         $this->_admin_base_path = EE_OTHER_SERVICES_ADMIN;
     }
@@ -55,7 +55,7 @@ class Other_Services_Admin_Page extends EE_Admin_Page
         $this->_page_config = array(
             'default' => array(
                 'nav'           => array(
-                    'label' => __('Other Available Services', 'event_espresso'),
+                    'label' => esc_html__('Other Available Services', 'event_espresso'),
                     'order' => 10,
                 ),
                 'require_nonce' => false,

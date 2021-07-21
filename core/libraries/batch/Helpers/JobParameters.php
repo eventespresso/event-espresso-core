@@ -166,7 +166,7 @@ class JobParameters
         ) {
             throw new BatchRequestException(
                 sprintf(
-                    __(
+                    esc_html__(
                         'Could not retrieve job %1$s from the Wordpress options table, and so the job could not continue. The wordpress option was %2$s',
                         'event_espresso'
                     ),

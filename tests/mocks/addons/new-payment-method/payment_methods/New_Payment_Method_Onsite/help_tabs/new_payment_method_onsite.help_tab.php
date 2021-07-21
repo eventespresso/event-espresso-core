@@ -3,7 +3,7 @@
 <?php _e('Adjust the settings for the New Payment Method payment gateway.', 'event_espresso'); ?>
 </p>
 <p>
-<?php printf( __( 'Please contact New Payment Method to find what currencies are supported', 'event_espresso' ) ); ?>
+<?php printf( esc_html__( 'Please contact New Payment Method to find what currencies are supported', 'event_espresso' ) ); ?>
 </p>
 <p><strong><?php _e('New Payment Method Settings', 'event_espresso'); ?></strong></p>
 <ul>

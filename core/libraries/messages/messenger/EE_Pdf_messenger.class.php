@@ -42,10 +42,10 @@ class EE_Pdf_messenger extends EE_messenger
     {
         // set properties
         $this->name = 'pdf';
-        $this->description = __('This messenger is used for generating a pdf version of the message.', 'event_espresso');
+        $this->description = esc_html__('This messenger is used for generating a pdf version of the message.', 'event_espresso');
         $this->label = array(
-            'singular' => __('PDF', 'event_espresso'),
-            'plural' => __('PDFs', 'event_espresso')
+            'singular' => esc_html__('PDF', 'event_espresso'),
+            'plural' => esc_html__('PDFs', 'event_espresso')
         );
         $this->activate_on_install = true;
 
@@ -152,7 +152,7 @@ class EE_Pdf_messenger extends EE_messenger
         $this->_template_fields = array(
             'subject' => array(
                 'input' => 'text',
-                'label' => __('Page Title', 'event_espresso'),
+                'label' => esc_html__('Page Title', 'event_espresso'),
                 'type' => 'string',
                 'required' => true,
                 'validation' => true,
@@ -164,7 +164,7 @@ class EE_Pdf_messenger extends EE_messenger
                 'content' => array(
                     'main' => array(
                         'input' => 'wp_editor',
-                        'label' => __('Main Content', 'event_espresso'),
+                        'label' => esc_html__('Main Content', 'event_espresso'),
                         'type' => 'string',
                         'required' => true,
                         'validation' => true,

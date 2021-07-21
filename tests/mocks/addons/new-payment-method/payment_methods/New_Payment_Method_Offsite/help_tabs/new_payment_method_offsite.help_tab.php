@@ -3,7 +3,7 @@
 <?php _e('Adjust the settings for the New Payment Method payment gateway.', 'event_espresso'); ?>
 </p>
 <p>
-<?php printf( __( 'Please contact New Payment Method to find what currencies are supported', 'event_espresso' ) ); ?>
+<?php printf( esc_html__( 'Please contact New Payment Method to find what currencies are supported', 'event_espresso' ) ); ?>
 </p>
 <p><strong><?php _e('New Payment Method Settings', 'event_espresso'); ?></strong></p>
 <ul>
@@ -18,7 +18,7 @@
 <li>
 <strong><?php _e('Other Important Information', 'event_espresso'); ?></strong><br />
 <?php printf( 
-		__('This is a good place to mention how to setup an account with the payment gateway, and any important gotchas. You can use variables set from EE_PMT_New_Payment_method_Offsite::help_tabs_config() in here. Like this: %1$s', 'event_espresso'),
+		esc_html__('This is a good place to mention how to setup an account with the payment gateway, and any important gotchas. You can use variables set from EE_PMT_New_Payment_method_Offsite::help_tabs_config() in here. Like this: %1$s', 'event_espresso'),
 		$variable_x );?>
 </li>
 <li>

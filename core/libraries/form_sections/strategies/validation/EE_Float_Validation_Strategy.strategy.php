@@ -18,7 +18,7 @@ class EE_Float_Validation_Strategy extends EE_Validation_Strategy_Base
     public function __construct($validation_error_message = null)
     {
         if (! $validation_error_message) {
-            $validation_error_message = sprintf(__("Only numeric characters, commas, periods, and spaces, please!", "event_espresso"));
+            $validation_error_message = sprintf(esc_html__("Only numeric characters, commas, periods, and spaces, please!", "event_espresso"));
         }
         parent::__construct($validation_error_message);
     }

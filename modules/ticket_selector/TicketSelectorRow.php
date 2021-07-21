@@ -229,7 +229,7 @@ abstract class TicketSelectorRow
         return EEH_HTML::span(
             apply_filters(
                 'FHEE__ticket_selector_chart_template__ticket_closed_msg',
-                __('Closed', 'event_espresso')
+                esc_html__('Closed', 'event_espresso')
             ),
             '',
             'sold-out'
@@ -245,7 +245,7 @@ abstract class TicketSelectorRow
         return EEH_HTML::span(
             apply_filters(
                 'FHEE__ticket_selector_chart_template__ticket_sold_out_msg',
-                __('Sold&nbsp;Out', 'event_espresso')
+                esc_html__('Sold&nbsp;Out', 'event_espresso')
             ),
             '',
             'sold-out'
@@ -264,7 +264,7 @@ abstract class TicketSelectorRow
             EEH_HTML::span(
                 apply_filters(
                     'FHEE__ticket_selector_chart_template__ticket_goes_on_sale_msg',
-                    __('Goes&nbsp;On&nbsp;Sale', 'event_espresso')
+                    esc_html__('Goes&nbsp;On&nbsp;Sale', 'event_espresso')
                 ),
                 '',
                 'ticket-pending'
@@ -296,7 +296,7 @@ abstract class TicketSelectorRow
             EEH_HTML::span(
                 apply_filters(
                     'FHEE__ticket_selector_chart_template__ticket_not_available_msg',
-                    __('Not Available', 'event_espresso')
+                    esc_html__('Not Available', 'event_espresso')
                 ),
                 '',
                 'archived-ticket small-text'

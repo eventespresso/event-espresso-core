@@ -27,7 +27,7 @@ class InvalidFilePathException extends InvalidArgumentException
     {
         if (empty($message)) {
             $message = sprintf(
-                __(
+                esc_html__(
                     'The "%1$s" file is either missing or could not be read due to permissions. Please ensure that the following path is correct and verify that the file permissions are correct:%2$s %3$s',
                     'event_espresso'
                 ),

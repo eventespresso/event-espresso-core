@@ -121,7 +121,7 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage
 
         $success = EE_Config::instance()->update_espresso_config(false, true);
         if (! $success) {
-            $this->add_error(sprintf(__('Could not save EE Config during org options stage. Reason: %s', 'event_espresso'), EE_Error::get_notices(false)));
+            $this->add_error(sprintf(esc_html__('Could not save EE Config during org options stage. Reason: %s', 'event_espresso'), EE_Error::get_notices(false)));
             EE_Error::overwrite_errors();
         }
         EE_Network_Config::instance()->update_config(false, false);
@@ -139,7 +139,7 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage
     }
     public function __construct()
     {
-        $this->_pretty_name = __("Organization Options/Config", "event_espresso");
+        $this->_pretty_name = esc_html__("Organization Options/Config", "event_espresso");
         $this->_org_options_we_know_how_to_migrate = apply_filters('FHEE__EE_DMS_4_1_0_org_options__org_options_we_know_how_to_migrate', $this->_org_options_we_know_how_to_migrate);
         parent::__construct();
     }
@@ -183,7 +183,7 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage
                 $c->organization->CNT_ISO = $iso;
                 $country_row = $this->get_migration_script()->get_or_create_country($iso);
                 if (! $country_row) {
-                    $this->add_error(sprintf(__("Could not set country's currency config because no country exists for ISO %s", "event_espresso"), $iso));
+                    $this->add_error(sprintf(esc_html__("Could not set country's currency config because no country exists for ISO %s", "event_espresso"), $iso));
                 }
                 // can't use EE_Currency_Config's handy constructor because the models are off-limits right now (and it uses them)
                 $c->currency->code = $country_row['CNT_cur_code'];          // currency code: USD, CAD, EUR

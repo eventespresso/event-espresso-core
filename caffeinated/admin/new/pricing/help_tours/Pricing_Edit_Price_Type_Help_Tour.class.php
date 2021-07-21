@@ -17,7 +17,7 @@ class Pricing_Edit_Price_Type_Help_Tour extends EE_Help_Tour
 
     protected function _set_tour_properties()
     {
-        $this->_label = __('Edit Price Type Tour', 'event_espresso');
+        $this->_label = esc_html__('Edit Price Type Tour', 'event_espresso');
         $this->_slug = 'edit-price-type-joyride';
     }
 
@@ -67,9 +67,9 @@ class Pricing_Edit_Price_Type_Help_Tour extends EE_Help_Tour
 
     protected function _start()
     {
-        $content = '<h3>' . __('Edit Price Type', 'event_espresso') . '</h3>';
+        $content = '<h3>' . esc_html__('Edit Price Type', 'event_espresso') . '</h3>';
         $content .= '<p>'
-                    . __(
+                    . esc_html__(
                         'This tour of the Edit Price Type page will go over different areas of the screen to help you understand what they are used for.',
                         'event_espresso'
                     ) . '</p>';
@@ -78,21 +78,21 @@ class Pricing_Edit_Price_Type_Help_Tour extends EE_Help_Tour
 
     protected function _basic_type_stop()
     {
-        return '<p>' . __('Set a price type to be a discount, surcharge, or tax.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Set a price type to be a discount, surcharge, or tax.', 'event_espresso') . '</p>';
     }
 
     protected function _price_type_name_stop()
     {
-        return '<p>' . __('The name of the price type.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('The name of the price type.', 'event_espresso') . '</p>';
     }
 
     protected function _percentage_dollar_amount_stop()
     {
-        return '<p>' . __('Set a price type to be percentage-based or a fixed amount.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Set a price type to be percentage-based or a fixed amount.', 'event_espresso') . '</p>';
     }
 
     protected function _order_of_application_stop()
     {
-        return '<p>' . __('Set the order of application for a price type.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Set the order of application for a price type.', 'event_espresso') . '</p>';
     }
 }

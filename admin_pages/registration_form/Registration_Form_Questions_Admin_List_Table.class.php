@@ -37,20 +37,20 @@ class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table
     protected function _set_properties()
     {
         $this->_wp_list_args = array(
-            'singular' => __('question', 'event_espresso'),
-            'plural'   => __('questions', 'event_espresso'),
+            'singular' => esc_html__('question', 'event_espresso'),
+            'plural'   => esc_html__('questions', 'event_espresso'),
             'ajax'     => true, // for now,
             'screen'   => $this->_admin_page->get_current_screen()->id,
         );
 
         $this->_columns = array(
             'cb'           => '<input type="checkbox" />',
-            'id'           => __('ID', 'event_espresso'),
-            'display_text' => __('Question', 'event_espresso'),
-            'admin_label'  => __('Admin Label', 'event_espresso'),
-            'type'         => __('Type', 'event_espresso'),
-            'values'       => __('Values', 'event_espresso'),
-            'required'     => __('Req', 'event_espresso'),
+            'id'           => esc_html__('ID', 'event_espresso'),
+            'display_text' => esc_html__('Question', 'event_espresso'),
+            'admin_label'  => esc_html__('Admin Label', 'event_espresso'),
+            'type'         => esc_html__('Type', 'event_espresso'),
+            'values'       => esc_html__('Values', 'event_espresso'),
+            'required'     => esc_html__('Req', 'event_espresso'),
         );
 
         $this->_sortable_columns = array(
@@ -131,7 +131,7 @@ class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table
                 'edit' => '<a href="' . $edit_link . '" title="' . esc_attr__(
                     'Edit Event',
                     'event_espresso'
-                ) . '">' . __('Edit', 'event_espresso') . '</a>',
+                ) . '">' . esc_html__('Edit', 'event_espresso') . '</a>',
             );
         }
 

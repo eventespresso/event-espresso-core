@@ -233,12 +233,12 @@ abstract class EE_SPCO_Reg_Step
         } elseif ($this->checkout->next_step instanceof EE_SPCO_Reg_Step) {
             if ($this->checkout->revisit) {
                 $this->_submit_button_text = sprintf(
-                    __('Update %s', 'event_espresso'),
+                    esc_html__('Update %s', 'event_espresso'),
                     $this->checkout->current_step->name()
                 );
             } else {
                 $this->_submit_button_text = sprintf(
-                    __('Proceed to %s', 'event_espresso'),
+                    esc_html__('Proceed to %s', 'event_espresso'),
                     $this->checkout->next_step->name()
                 );
             }

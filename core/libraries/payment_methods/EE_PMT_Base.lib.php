@@ -130,7 +130,7 @@ abstract class EE_PMT_Base
         if (! $this->_pretty_name) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         "You must set the pretty name for the Payment Method Type in the constructor (_pretty_name), and please make it internationalized",
                         "event_espresso"
                     )
@@ -437,7 +437,7 @@ abstract class EE_PMT_Base
             } else {
                 throw new EE_Error(
                     sprintf(
-                        __(
+                        esc_html__(
                             'Gateway for payment method type "%s" is "%s", not a subclass of either EE_Offsite_Gateway or EE_Onsite_Gateway, or null (to indicate NO gateway)',
                             'event_espresso'
                         ),
@@ -501,7 +501,7 @@ abstract class EE_PMT_Base
         if (! $this->_gateway instanceof EE_Offsite_Gateway) {
             throw new EE_Error(
                 sprintf(
-                    __("Could not handle IPN because '%s' is not an offsite gateway", "event_espresso"),
+                    esc_html__("Could not handle IPN because '%s' is not an offsite gateway", "event_espresso"),
                     print_r($this->_gateway, true)
                 )
             );
@@ -523,7 +523,7 @@ abstract class EE_PMT_Base
     {
         if (! $transaction || ! $transaction instanceof EE_Transaction) {
             EE_Error::add_error(
-                __("Cannot save billing info because no transaction was specified", "event_espresso"),
+                esc_html__("Cannot save billing info because no transaction was specified", "event_espresso"),
                 __FILE__,
                 __FUNCTION__,
                 __LINE__
@@ -533,7 +533,7 @@ abstract class EE_PMT_Base
         $primary_reg = $transaction->primary_registration();
         if (! $primary_reg) {
             EE_Error::add_error(
-                __("Cannot save billing info because the transaction has no primary registration", "event_espresso"),
+                esc_html__("Cannot save billing info because the transaction has no primary registration", "event_espresso"),
                 __FILE__,
                 __FUNCTION__,
                 __LINE__
@@ -543,7 +543,7 @@ abstract class EE_PMT_Base
         $attendee = $primary_reg->attendee();
         if (! $attendee) {
             EE_Error::add_error(
-                __(
+                esc_html__(
                     "Cannot save billing info because the transaction's primary registration has no attendee!",
                     "event_espresso"
                 ),
@@ -586,7 +586,7 @@ abstract class EE_PMT_Base
     public function handle_unclaimed_ipn($req_data = array())
     {
         throw new EE_Error(
-            sprintf(__("Payment Method '%s' cannot handle unclaimed IPNs", "event_espresso"), get_class($this))
+            sprintf(esc_html__("Payment Method '%s' cannot handle unclaimed IPNs", "event_espresso"), get_class($this))
         );
     }
 
@@ -637,7 +637,7 @@ abstract class EE_PMT_Base
         } else {
             throw new EE_Error(
                 sprintf(
-                    __('Payment Method Type "%s" does not support sending refund requests', 'event_espresso'),
+                    esc_html__('Payment Method Type "%s" does not support sending refund requests', 'event_espresso'),
                     get_class($this)
                 )
             );
@@ -663,7 +663,7 @@ abstract class EE_PMT_Base
         } else {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         "Payment method type '%s's gateway isn't an instance of EE_Onsite_Gateway, EE_Offsite_Gateway, or null. It must be one of those",
                         "event_espresso"
                     ),

@@ -522,13 +522,13 @@ class EE_Messages_Queue
             // error checking
             if (! $message->valid_messenger()) {
                 $error_messages[] = sprintf(
-                    __('The %s messenger is not active at time of sending.', 'event_espresso'),
+                    esc_html__('The %s messenger is not active at time of sending.', 'event_espresso'),
                     $message->messenger()
                 );
             }
             if (! $message->valid_message_type()) {
                 $error_messages[] = sprintf(
-                    __('The %s message type is not active at the time of sending.', 'event_espresso'),
+                    esc_html__('The %s message type is not active at the time of sending.', 'event_espresso'),
                     $message->message_type()
                 );
             }
@@ -694,7 +694,7 @@ class EE_Messages_Queue
         $error_messages = (array) $error_messages;
         if (in_array($message->STS_ID(), EEM_Message::instance()->stati_indicating_failed_sending())) {
             $notices          = EE_Error::has_notices();
-            $error_messages[] = __(
+            $error_messages[] = esc_html__(
                 'Messenger and Message Type were valid and active, but the messenger send method failed.',
                 'event_espresso'
             );
@@ -705,7 +705,7 @@ class EE_Messages_Queue
             }
         }
         if (count($error_messages) > 0) {
-            $msg = __('Message was not executed successfully.', 'event_espresso');
+            $msg = esc_html__('Message was not executed successfully.', 'event_espresso');
             $msg = $msg . "\n" . implode("\n", $error_messages);
             $message->set_error_message($msg);
         }

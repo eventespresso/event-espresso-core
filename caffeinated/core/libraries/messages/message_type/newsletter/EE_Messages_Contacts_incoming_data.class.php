@@ -27,7 +27,7 @@ class EE_Messages_Contacts_incoming_data extends EE_Messages_incoming_data
         // validate that the first element in the array is an EE_Attendee object.  Note that the array may be indexed by REG_ID so we will just shift off the first element.
         $ctc_chk = reset($data);
         if (! $ctc_chk instanceof EE_Attendee) {
-            throw new EE_Error(__('The EE_Message_Contacts_incoming_data class expects an array of EE_Attendee objects.', 'event_espresso'));
+            throw new EE_Error(esc_html__('The EE_Message_Contacts_incoming_data class expects an array of EE_Attendee objects.', 'event_espresso'));
         }
 
         parent::__construct($data);

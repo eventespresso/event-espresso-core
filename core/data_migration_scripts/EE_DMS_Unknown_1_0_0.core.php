@@ -51,7 +51,7 @@ class EE_DMS_Unknown_1_0_0 extends EE_Data_Migration_Script_Base
     public function __construct(TableManager $table_manager = null, TableAnalysis $table_analysis = null)
     {
         $this->_migration_stages = array();
-        $this->_pretty_name = __("Fatal Uncatchable Error Occurred", "event_espresso");
+        $this->_pretty_name = esc_html__("Fatal Uncatchable Error Occurred", "event_espresso");
         parent::__construct($table_manager, $table_analysis);
     }
 

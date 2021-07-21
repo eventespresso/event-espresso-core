@@ -112,15 +112,15 @@ class EEH_Autoloader extends EEH_Base
             // don't give up! you gotta...
             // get some class
             if (empty($class)) {
-                throw new EE_Error(sprintf(__('No Class name was specified while registering an autoloader for the following path: %s.', 'event_espresso'), $path));
+                throw new EE_Error(sprintf(esc_html__('No Class name was specified while registering an autoloader for the following path: %s.', 'event_espresso'), $path));
             }
             // one day you will find the path young grasshopper
             if (empty($path)) {
-                throw new EE_Error(sprintf(__('No path was specified while registering an autoloader for the %s class.', 'event_espresso'), $class));
+                throw new EE_Error(sprintf(esc_html__('No path was specified while registering an autoloader for the %s class.', 'event_espresso'), $class));
             }
             // is file readable ?
             if ($read_check && ! is_readable($path)) {
-                throw new EE_Error(sprintf(__('The file for the %s class could not be found or is not readable due to file permissions. Please ensure the following path is correct: %s', 'event_espresso'), $class, $path));
+                throw new EE_Error(sprintf(esc_html__('The file for the %s class could not be found or is not readable due to file permissions. Please ensure the following path is correct: %s', 'event_espresso'), $class, $path));
             }
             if (! isset(self::$_autoloaders[ $class ])) {
                 self::$_autoloaders[ $class ] = str_replace(array( '/', '\\' ), '/', $path);

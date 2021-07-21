@@ -10,10 +10,10 @@
         );
     $this->_fields = array(
         'Event_Question_Group'=>array(
-            'EQG_ID'=>new EE_Primary_Key_Int_Field('EQG_ID', __('Event to Question Group Link ID','event_espresso')),
-            'EVT_ID'=>new EE_Foreign_Key_Int_Field('EVT_ID', __('Event ID','event_espresso'), false, 0, 'Event'),
-            'QSG_ID'=>new EE_Foreign_Key_Int_Field('QSG_ID', __('QUestion Group Id','event_espresso'), false, 0, 'Question_Group'),
-            'EQG_primary'=>new EE_Boolean_Field('EQG_primary', __('Flag indicating question is only for primary attendees','event_espresso'), false, false)
+            'EQG_ID'=>new EE_Primary_Key_Int_Field('EQG_ID', esc_html__('Event to Question Group Link ID','event_espresso')),
+            'EVT_ID'=>new EE_Foreign_Key_Int_Field('EVT_ID', esc_html__('Event ID','event_espresso'), false, 0, 'Event'),
+            'QSG_ID'=>new EE_Foreign_Key_Int_Field('QSG_ID', esc_html__('QUestion Group Id','event_espresso'), false, 0, 'Question_Group'),
+            'EQG_primary'=>new EE_Boolean_Field('EQG_primary', esc_html__('Flag indicating question is only for primary attendees','event_espresso'), false, false)
         )
     );
 
@@ -27,7 +27,7 @@ class EE_DMS_4_1_0_event_question_group extends EE_Data_Migration_Script_Stage_T
     {
 //      $txn_id = $this->get_migration_script()->get_mapping_new_pk($this->_old_table, $old_row['id'], $this->_new_transaction_table);
 //          if ( ! $txn_id ){
-//              $this->add_error(sprintf(__("Could not find the transaction for the 3.1 attendee %d from row %s", "event_espresso"),$old_row['id'],$this->_json_encode($old_row)));
+//              $this->add_error(sprintf(esc_html__("Could not find the transaction for the 3.1 attendee %d from row %s", "event_espresso"),$old_row['id'],$this->_json_encode($old_row)));
 //              return;
 //          }
 //          $txn = $this->_get_txn($txn_id);
@@ -61,7 +61,7 @@ class EE_DMS_4_1_0_event_question_group extends EE_Data_Migration_Script_Stage_T
         $this->_old_table = $wpdb->prefix . "events_detail";
         $this->_extra_where_sql = 'WHERE event_status!="D"';
         $this->_new_table = $wpdb->prefix . "esp_event_question_group";
-        $this->_pretty_name = __("Question Groups in each Event", "event_espresso");
+        $this->_pretty_name = esc_html__("Question Groups in each Event", "event_espresso");
         parent::__construct();
     }
 
@@ -112,7 +112,7 @@ class EE_DMS_4_1_0_event_question_group extends EE_Data_Migration_Script_Stage_T
             $this->add_error(
                 sprintf(
                     // translators: %s question ID, %s event ID
-                    __("Could not find 4.1 question ID for 3.1 question id #%s on event $%s", "event_espresso"),
+                    esc_html__("Could not find 4.1 question ID for 3.1 question id #%s on event $%s", "event_espresso"),
                     $old_question_group_id,
                     $old_event['id']
                 )
@@ -128,7 +128,7 @@ class EE_DMS_4_1_0_event_question_group extends EE_Data_Migration_Script_Stage_T
             $this->add_error(
                 sprintf(
                     // translators: %s event ID
-                    __("Could not find 4.1 event 3.1 event id #%s", "event_espresso"),
+                    esc_html__("Could not find 4.1 event 3.1 event id #%s", "event_espresso"),
                     $old_event['id']
                 )
             );

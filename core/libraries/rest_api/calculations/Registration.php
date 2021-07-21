@@ -62,7 +62,7 @@ class Registration extends RegistrationCalculationBase
         ) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                     // @codingStandardsIgnoreStart
                         'Cannot calculate datetime_checkin_stati because the registration with ID %1$s (from database row %2$s) was not found',
                         // @codingStandardsIgnoreEnd

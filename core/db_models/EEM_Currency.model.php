@@ -16,19 +16,19 @@ class EEM_Currency extends EEM_Base
 
     protected function __construct($timezone = null)
     {
-        $this->singular_item = __('Currency', 'event_espresso');
-        $this->plural_item = __('Currencies', 'event_espresso');
+        $this->singular_item = esc_html__('Currency', 'event_espresso');
+        $this->plural_item = esc_html__('Currencies', 'event_espresso');
         $this->_tables = array(
             'Currency' => new EE_Primary_Table('esp_currency', 'CUR_code')
         );
         $this->_fields = array(
             'Currency' => array(
-                'CUR_code' => new EE_Primary_Key_String_Field('CUR_code', __('Currency Code', 'event_espresso')),
-                'CUR_single' => new EE_Plain_Text_Field('CUR_single', __('Currency Name Singular', 'event_espresso'), false),
-                'CUR_plural' => new EE_Plain_Text_Field('CUR_plural', __('Currency Name Plural', 'event_espresso'), false),
-                'CUR_sign' => new EE_Plain_Text_Field('CUR_sign', __('Currency Sign', 'event_espresso'), false),
-                'CUR_dec_plc' => new EE_Integer_Field('CUR_dec_plc', __('Currency Decimal Places', 'event_espresso'), false, 2),
-                'CUR_active' => new EE_Boolean_Field('CUR_active', __('Active?', 'event_espresso'), false, true),
+                'CUR_code' => new EE_Primary_Key_String_Field('CUR_code', esc_html__('Currency Code', 'event_espresso')),
+                'CUR_single' => new EE_Plain_Text_Field('CUR_single', esc_html__('Currency Name Singular', 'event_espresso'), false),
+                'CUR_plural' => new EE_Plain_Text_Field('CUR_plural', esc_html__('Currency Name Plural', 'event_espresso'), false),
+                'CUR_sign' => new EE_Plain_Text_Field('CUR_sign', esc_html__('Currency Sign', 'event_espresso'), false),
+                'CUR_dec_plc' => new EE_Integer_Field('CUR_dec_plc', esc_html__('Currency Decimal Places', 'event_espresso'), false, 2),
+                'CUR_active' => new EE_Boolean_Field('CUR_active', esc_html__('Active?', 'event_espresso'), false, true),
             ));
         $this->_model_relations = array(
             'Payment_Method' => new EE_HABTM_Relation('Currency_Payment_Method'),

@@ -25,7 +25,7 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step
     {
         $this->request             = EED_Single_Page_Checkout::getRequest();
         $this->_slug               = 'finalize_registration';
-        $this->_name               = __('Finalize Registration', 'event_espresso');
+        $this->_name               = esc_html__('Finalize Registration', 'event_espresso');
         $this->_submit_button_text = $this->_name;
         $this->_template           = '';
         $this->checkout            = $checkout;
@@ -231,7 +231,7 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step
     {
         if (! $this->checkout->transaction_has_primary_registrant()) {
             EE_Error::add_error(
-                __('A valid Primary Registration for this Transaction could not be found.', 'event_espresso'),
+                esc_html__('A valid Primary Registration for this Transaction could not be found.', 'event_espresso'),
                 __FILE__,
                 __FUNCTION__,
                 __LINE__
@@ -256,7 +256,7 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step
     {
         EE_Error::doing_it_wrong(
             __CLASS__ . '::' . __FILE__,
-            __(
+            esc_html__(
                 'Can not call update_reg_step() on the Finalize Registration reg step.',
                 'event_espresso'
             ),

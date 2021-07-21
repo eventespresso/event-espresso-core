@@ -19,10 +19,10 @@
  * 'Mock_Attendee_Meta' => new EE_Secondary_Table('esp_mock_attendee_meta', 'MATTM_ID', 'ATT_ID' )
  * );
  * $this->_extra_fields = array('Mock_Attendee_Meta'=>array(
- * 'MATTM_ID'=> new EE_DB_Only_Int_Field('MATTM_ID', __('Mock Attendee Meta Row ID','event_espresso'), false),
- * 'MATT_ID_fk'=>new EE_DB_Only_Int_Field('ATT_ID', __("Foreign Key to Attendee in Post Table", "event_espresso"),
+ * 'MATTM_ID'=> new EE_DB_Only_Int_Field('MATTM_ID', esc_html__('Mock Attendee Meta Row ID','event_espresso'), false),
+ * 'MATT_ID_fk'=>new EE_DB_Only_Int_Field('ATT_ID', esc_html__("Foreign Key to Attendee in Post Table", "event_espresso"),
  * false),
- * 'ATT_foobar'=>new EE_Foreign_Key_Int_Field('ATT_foobar', __("Foobar", 'event_espresso'), true,0,'Transaction')));
+ * 'ATT_foobar'=>new EE_Foreign_Key_Int_Field('ATT_foobar', esc_html__("Foobar", 'event_espresso'), true,0,'Transaction')));
  * $this->_extra_relations = array('Transaction'=>new EE_Belongs_To_Relation());
  * parent::__construct();
  * }
@@ -73,7 +73,7 @@ abstract class EEME_Base
     {
         if (! $this->_model_name_extended) {
             throw new EE_Error(
-                __(
+                esc_html__(
                     "When declaring a model extension, you must define its _model_name_extended property. It should be a model name like 'Attendee' or 'Event'",
                     "event_espresso"
                 )
@@ -83,7 +83,7 @@ abstract class EEME_Base
         if (did_action($construct_end_action)) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         "Hooked in model extension '%s' too late! The model %s has already been used! We know because the action %s has been fired",
                         "event_espresso"
                     ),
@@ -230,7 +230,7 @@ abstract class EEME_Base
             } else {
                 throw new EE_Error(
                     sprintf(
-                        __(
+                        esc_html__(
                             "An odd error occurred. Model '%s' had a method called on it that it didn't recognize. So it passed it onto the model extension '%s' (because it had a function named '%s' which should be able to handle it), but the function '%s' doesnt exist!)",
                             "event_espresso"
                         ),
@@ -244,7 +244,7 @@ abstract class EEME_Base
         } else {
             throw new EE_Error(
                 sprintf(
-                    __("There is no method named '%s' on '%s'", "event_espresso"),
+                    esc_html__("There is no method named '%s' on '%s'", "event_espresso"),
                     $callback_method_name,
                     get_class($this)
                 )

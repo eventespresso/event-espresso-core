@@ -22,7 +22,7 @@ class Registration_Form_Admin_Page_Init extends EE_Admin_Page_Init
     {
         // define some constants
         define('REGISTRATION_FORM_PG_SLUG', 'espresso_registration_form');
-        define('REGISTRATION_FORM_LABEL', __('Registration Form', 'event_espresso'));
+        define('REGISTRATION_FORM_LABEL', esc_html__('Registration Form', 'event_espresso'));
         define('REGISTRATION_FORM_PG_NAME', REGISTRATION_FORM_LABEL);
         define('REGISTRATION_FORM_ADMIN', EE_ADMIN_PAGES . 'registration_form/');
         define('REGISTRATION_FORM_ADMIN_URL', admin_url('admin.php?page=' . REGISTRATION_FORM_PG_SLUG));
@@ -36,7 +36,7 @@ class Registration_Form_Admin_Page_Init extends EE_Admin_Page_Init
 
     protected function _set_init_properties()
     {
-        $this->label = __('Registration Form Overview', 'event_espresso');
+        $this->label = esc_html__('Registration Form Overview', 'event_espresso');
     }
 
 
@@ -49,7 +49,7 @@ class Registration_Form_Admin_Page_Init extends EE_Admin_Page_Init
                 'show_on_menu'    => EE_Admin_Page_Menu_Map::BLOG_ADMIN_ONLY,
                 'parent_slug'     => 'espresso_events',
                 'menu_slug'       => REGISTRATION_FORM_PG_SLUG,
-                'menu_label'      => __('Registration Form', 'event_espresso'),
+                'menu_label'      => esc_html__('Registration Form', 'event_espresso'),
                 'capability'      => 'ee_read_questions',
                 'admin_init_page' => $this,
             )

@@ -59,7 +59,7 @@ class Datetime extends DatetimeCalculationBase
         }
         throw new EE_Error(
             sprintf(
-                __(
+                esc_html__(
                 // @codingStandardsIgnoreStart
                     'Cannot calculate spaces_remaining_considering_tickets because the datetime with ID %1$s (from database row %2$s) was not found',
                     // @codingStandardsIgnoreEnd
@@ -90,7 +90,7 @@ class Datetime extends DatetimeCalculationBase
         if (! is_array($wpdb_row) || ! isset($wpdb_row['Datetime.DTT_ID'])) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                     // @codingStandardsIgnoreStart
                         'Cannot calculate registrations_checked_in_count because the database row %1$s does not have an entry for "Datetime.DTT_ID"',
                         // @codingStandardsIgnoreEnd
@@ -124,7 +124,7 @@ class Datetime extends DatetimeCalculationBase
         if (! is_array($wpdb_row) || ! isset($wpdb_row['Datetime.DTT_ID'])) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                     // @codingStandardsIgnoreStart
                         'Cannot calculate registrations_checked_out_count because the database row %1$s does not have an entry for "Datetime.DTT_ID"',
                         // @codingStandardsIgnoreEnd
@@ -159,7 +159,7 @@ class Datetime extends DatetimeCalculationBase
         if (! is_array($wpdb_row) || ! isset($wpdb_row['Datetime.DTT_ID'])) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                     // @codingStandardsIgnoreStart
                         'Cannot calculate spots_taken_pending_payment because the database row %1$s does not have an entry for "Datetime.DTT_ID"',
                         // @codingStandardsIgnoreEnd

@@ -25,15 +25,15 @@ CREATE TABLE `wp_events_qst_group` (
         );
         $this->_fields = array(
             'Question_Group'=>array(
-                'QSG_ID'=>new EE_Primary_Key_Int_Field('QSG_ID', __('Question Group ID','event_espresso')),
-                'QSG_name'=>new EE_Plain_Text_Field('QSG_name', __('Question Group Name','event_espresso'), false, ''),
-                'QSG_identifier'=>new EE_Plain_Text_Field('QSG_identifier', __('Text ID for question Group','event_espresso'), false, ''),
-                'QSG_desc'=>new EE_Full_HTML_Field('QSG_desc', __('Description of Question Group','event_espresso'), true, ''),
-                'QSG_order'=>new EE_Integer_Field('QSG_order', __('Order in which to show the question group','event_espresso'), true, 0),
-                'QSG_show_group_name'=>new EE_Boolean_Field('QSG_show_group_name', __('Flag indicating whether to show the group\'s name on the registration page','event_espresso'), false, false),
-                'QSG_show_group_desc'=>new EE_Boolean_Field('QSG_show_group_desc', __('Flag indicating whether to show the group\s description on the registration apge','event_espresso'), false, false),
-                'QSG_system'=>new EE_Integer_Field('QSG_system', __('Indicate IF this is a system group and if it is what system group it corresponds to.','event_espresso'), false, 0),
-                'QSG_deleted'=>new EE_Trashed_Flag_Field('QSG_deleted', __('Flag indicating this question group was deleted','event_espresso'), false, false)
+                'QSG_ID'=>new EE_Primary_Key_Int_Field('QSG_ID', esc_html__('Question Group ID','event_espresso')),
+                'QSG_name'=>new EE_Plain_Text_Field('QSG_name', esc_html__('Question Group Name','event_espresso'), false, ''),
+                'QSG_identifier'=>new EE_Plain_Text_Field('QSG_identifier', esc_html__('Text ID for question Group','event_espresso'), false, ''),
+                'QSG_desc'=>new EE_Full_HTML_Field('QSG_desc', esc_html__('Description of Question Group','event_espresso'), true, ''),
+                'QSG_order'=>new EE_Integer_Field('QSG_order', esc_html__('Order in which to show the question group','event_espresso'), true, 0),
+                'QSG_show_group_name'=>new EE_Boolean_Field('QSG_show_group_name', esc_html__('Flag indicating whether to show the group\'s name on the registration page','event_espresso'), false, false),
+                'QSG_show_group_desc'=>new EE_Boolean_Field('QSG_show_group_desc', esc_html__('Flag indicating whether to show the group\s description on the registration apge','event_espresso'), false, false),
+                'QSG_system'=>new EE_Integer_Field('QSG_system', esc_html__('Indicate IF this is a system group and if it is what system group it corresponds to.','event_espresso'), false, 0),
+                'QSG_deleted'=>new EE_Trashed_Flag_Field('QSG_deleted', esc_html__('Flag indicating this question group was deleted','event_espresso'), false, false)
             )
         );
  *
@@ -79,7 +79,7 @@ class EE_DMS_4_1_0_question_groups extends EE_Data_Migration_Script_Stage
         global $wpdb;
         $this->_old_table = $wpdb->prefix . "events_qst_group";
         $this->_new_table = $wpdb->prefix . "esp_question_group";
-        $this->_pretty_name = __("Question Groups", "event_espresso");
+        $this->_pretty_name = esc_html__("Question Groups", "event_espresso");
         parent::__construct();
     }
 

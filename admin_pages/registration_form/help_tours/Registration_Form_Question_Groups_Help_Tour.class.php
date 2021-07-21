@@ -17,7 +17,7 @@ class Registration_Form_Question_Groups_Help_Tour extends EE_Help_Tour
 
     protected function _set_tour_properties()
     {
-        $this->_label = __('Question Groups Tour', 'event_espresso');
+        $this->_label = esc_html__('Question Groups Tour', 'event_espresso');
         $this->_slug = $this->_is_caf ? 'question-groups-caf-overview-joyride' : 'question-groups-overview-joyride';
     }
 
@@ -91,16 +91,16 @@ class Registration_Form_Question_Groups_Help_Tour extends EE_Help_Tour
 
     protected function _start()
     {
-        $content = '<h3>' . __('Question Groups', 'event_espresso') . '</h3>';
+        $content = '<h3>' . esc_html__('Question Groups', 'event_espresso') . '</h3>';
         if ($this->_is_caf) {
             $content .= '<p>'
-                        . __(
+                        . esc_html__(
                             'This tour of the Question Groups page will go over different areas of the screen to help you understand what they are used for.',
                             'event_espresso'
                         ) . '</p>';
         } else {
             $content .= '<p>'
-                        . __(
+                        . esc_html__(
                             'Sorry, Event Espresso Decaf does not have this feature. Please purchase a support license to get access to this feature.',
                             'event_espresso'
                         ) . '</p>';
@@ -112,7 +112,7 @@ class Registration_Form_Question_Groups_Help_Tour extends EE_Help_Tour
     protected function _name_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'View available questions groups. You can reorder your questions by dragging and dropping them.',
                    'event_espresso'
                ) . '</p>';
@@ -120,13 +120,13 @@ class Registration_Form_Question_Groups_Help_Tour extends EE_Help_Tour
 
     protected function _description_stop()
     {
-        return '<p>' . __('View the question group description.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('View the question group description.', 'event_espresso') . '</p>';
     }
 
     protected function _show_group_name_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'View if the name of the question group should be shown to customers.',
                    'event_espresso'
                ) . '</p>';
@@ -135,7 +135,7 @@ class Registration_Form_Question_Groups_Help_Tour extends EE_Help_Tour
     protected function _show_group_description_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'View if the description of the question group should be shown to customers.',
                    'event_espresso'
                ) . '</p>';
@@ -143,13 +143,13 @@ class Registration_Form_Question_Groups_Help_Tour extends EE_Help_Tour
 
     protected function _bulk_actions_stop()
     {
-        return '<p>' . __('Perform bulk actions to multiple question groups.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Perform bulk actions to multiple question groups.', 'event_espresso') . '</p>';
     }
 
     protected function _search_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'Search through questions. The following sources will be searched: question group name and question group description.',
                    'event_espresso'
                ) . '</p>';
@@ -157,6 +157,6 @@ class Registration_Form_Question_Groups_Help_Tour extends EE_Help_Tour
 
     protected function _add_new_question_group_stop()
     {
-        return '<p>' . __('Click here to create a new question group.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Click here to create a new question group.', 'event_espresso') . '</p>';
     }
 }

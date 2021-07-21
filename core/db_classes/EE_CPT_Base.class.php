@@ -150,7 +150,7 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class
         if (! $term_taxonomy) {
             EE_Error::add_error(
                 sprintf(
-                    __(
+                    esc_html__(
                         "No Term_Taxonomy provided which to remove from model object of type %s and id %d",
                         "event_espresso"
                     ),

@@ -26,17 +26,17 @@ class EEM_Term extends EEM_Base
      */
     protected function __construct($timezone = null)
     {
-        $this->singular_item = __('Term', 'event_espresso');
-        $this->plural_item = __('Terms', 'event_espresso');
+        $this->singular_item = esc_html__('Term', 'event_espresso');
+        $this->plural_item = esc_html__('Terms', 'event_espresso');
         $this->_tables = array(
             'Term' => new EE_Primary_Table('terms', 'term_id'),
         );
         $this->_fields = array(
             'Term' => array(
-                'term_id'    => new EE_Primary_Key_Int_Field('term_id', __('Term ID', 'event_espresso')),
-                'name'       => new EE_Plain_Text_Field('name', __('Term Name', 'event_espresso'), false, ''),
-                'slug'       => new EE_Slug_Field('slug', __('Term Slug', 'event_espresso'), false),
-                'term_group' => new EE_Integer_Field('term_group', __("Term Group", "event_espresso"), false, 0),
+                'term_id'    => new EE_Primary_Key_Int_Field('term_id', esc_html__('Term ID', 'event_espresso')),
+                'name'       => new EE_Plain_Text_Field('name', esc_html__('Term Name', 'event_espresso'), false, ''),
+                'slug'       => new EE_Slug_Field('slug', esc_html__('Term Slug', 'event_espresso'), false),
+                'term_group' => new EE_Integer_Field('term_group', esc_html__("Term Group", "event_espresso"), false, 0),
             ),
         );
         $this->_model_relations = array(
@@ -100,7 +100,7 @@ class EEM_Term extends EEM_Base
     {
         $where_params = array(
             'Term_Taxonomy.taxonomy' => 'espresso_event_categories',
-            'NOT'                    => array('name' => __('Uncategorized', 'event_espresso')),
+            'NOT'                    => array('name' => esc_html__('Uncategorized', 'event_espresso')),
         );
         if ($show_uncategorized) {
             unset($where_params['NOT']);

@@ -29,7 +29,7 @@ class InvalidIdentifierException extends InvalidArgumentException
     {
         if (empty($message)) {
             $message = sprintf(
-                __(
+                esc_html__(
                     'The supplied identifier "%1$s" is invalid. A value like "%2$s" was expected.',
                     'event_espresso'
                 ),

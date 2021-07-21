@@ -162,7 +162,7 @@ class EEH_Event_View extends EEH_Base
                 // but NO excerpt actually exists, so we need to create one
                 if (! empty($num_words)) {
                     if (empty($more)) {
-                        $more_link_text = __('(more&hellip;)', 'event_espresso');
+                        $more_link_text = esc_html__('(more&hellip;)', 'event_espresso');
                         $more = ' <a href="' . get_permalink() . '"';
                         $more .= ' class="more-link"';
                         $more .= \EED_Events_Archive::link_target();
@@ -242,7 +242,7 @@ class EEH_Event_View extends EEH_Base
                 // loop thru terms and create links
                 foreach ($event_categories as $term) {
                     $url = get_term_link($term, 'espresso_venue_categories');
-                    if (! is_wp_error($url) && (( $hide_uncategorized && strtolower($term->name) != __('uncategorized', 'event_espresso')) || ! $hide_uncategorized )) {
+                    if (! is_wp_error($url) && (( $hide_uncategorized && strtolower($term->name) != esc_html__('uncategorized', 'event_espresso')) || ! $hide_uncategorized )) {
                         $category_links[] = '<a href="' . esc_url($url)
                                             . '" rel="tag"'
                                             . \EED_Events_Archive::link_target()
@@ -559,7 +559,7 @@ class EEH_Event_View extends EEH_Base
             // can the user edit this post ?
             if (current_user_can('edit_post', $event->ID())) {
                 // set link text
-                $link_text = ! empty($link) ? $link : __('edit this event', 'event_espresso');
+                $link_text = ! empty($link) ? $link : esc_html__('edit this event', 'event_espresso');
                 // generate nonce
                 $nonce = wp_create_nonce('edit_nonce');
                 // generate url to event editor for this event

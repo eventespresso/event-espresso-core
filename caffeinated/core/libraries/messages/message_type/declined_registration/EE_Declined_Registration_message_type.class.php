@@ -18,10 +18,10 @@ class EE_Declined_Registration_message_type extends EE_Registration_Base_message
     public function __construct()
     {
         $this->name = 'declined_registration';
-        $this->description = __('This message type is for messages sent to registrants when their registration is declined.', 'event_espresso');
+        $this->description = esc_html__('This message type is for messages sent to registrants when their registration is declined.', 'event_espresso');
         $this->label = array(
-            'singular' => __('registration declined', 'event_espresso'),
-            'plural' => __('registrations declined', 'event_espresso')
+            'singular' => esc_html__('registration declined', 'event_espresso'),
+            'plural' => esc_html__('registrations declined', 'event_espresso')
             );
         $this->_master_templates = array(
             'email' => 'not_approved_registration'
@@ -42,19 +42,19 @@ class EE_Declined_Registration_message_type extends EE_Registration_Base_message
     protected function _set_contexts()
     {
         $this->_context_label = array(
-            'label' => __('recipient', 'event_espresso'),
-            'plural' => __('recipients', 'event_espresso'),
-            'description' => __('Recipient\'s are who will receive the template.  You may want different registration details sent out depending on who the recipient is', 'event_espresso')
+            'label' => esc_html__('recipient', 'event_espresso'),
+            'plural' => esc_html__('recipients', 'event_espresso'),
+            'description' => esc_html__('Recipient\'s are who will receive the template.  You may want different registration details sent out depending on who the recipient is', 'event_espresso')
             );
 
         $this->_contexts = array(
             'admin' => array(
-                'label' => __('Event Admin', 'event_espresso'),
-                'description' => __('This template is what event administrators will receive with an declined registration', 'event_espresso')
+                'label' => esc_html__('Event Admin', 'event_espresso'),
+                'description' => esc_html__('This template is what event administrators will receive with an declined registration', 'event_espresso')
                 ),
             'attendee' => array(
-                'label' => __('Registrant', 'event_espresso'),
-                'description' => __('This template is what each registrant for the event will receive when their registration is declined.', 'event_espresso')
+                'label' => esc_html__('Registrant', 'event_espresso'),
+                'description' => esc_html__('This template is what each registrant for the event will receive when their registration is declined.', 'event_espresso')
                 )
             );
     }

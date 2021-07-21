@@ -297,7 +297,7 @@ class EE_Message_To_Generate
         if (! class_exists($class_name)) {
             EE_Error::add_error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'The included data handler reference (%s) does not match any valid, accessible, "EE_Messages_incoming_data" classes.  Looking for %s.',
                         'event_espresso'
                     ),

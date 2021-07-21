@@ -37,7 +37,7 @@
             echo apply_filters(
                 'FHEE__payment_overview_template__no_payments_made',
                 sprintf(
-                    __('%sNo payments towards this transaction have been received.%s', 'event_espresso'),
+                    esc_html__('%sNo payments towards this transaction have been received.%s', 'event_espresso'),
                     '<p class="important-notice">',
                     '</p>'
                 )
@@ -47,7 +47,7 @@
             echo apply_filters(
                 'FHEE__payment_overview_template__no_payment_required',
                 sprintf(
-                    __('%sNo payment is required for this transaction.%s', 'event_espresso'),
+                    esc_html__('%sNo payment is required for this transaction.%s', 'event_espresso'),
                     '<p>',
                     '</p>'
                 )

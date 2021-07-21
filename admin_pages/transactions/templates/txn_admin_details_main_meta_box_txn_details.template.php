@@ -394,7 +394,7 @@
             <div class="ee-icon ee-icon-cash-edit float-left"></div>
             <?php
             echo sprintf(
-                __('Edit Payment #%s for Transaction #%s', 'event_espresso'),
+                esc_html__('Edit Payment #%s for Transaction #%s', 'event_espresso'),
                 '<span></span>',
                 $txn_nmbr['value']
             );
@@ -405,7 +405,7 @@
             <div class="ee-icon ee-icon-cash-edit float-left"></div>
             <?php
             echo sprintf(
-                __('Edit Refund #%s for Transaction #%s', 'event_espresso'),
+                esc_html__('Edit Refund #%s for Transaction #%s', 'event_espresso'),
                 '<span></span>',
                 $txn_nmbr['value']
             );

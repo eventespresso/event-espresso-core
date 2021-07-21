@@ -17,7 +17,7 @@ class Pricing_Edit_Default_Price_Help_Tour extends EE_Help_Tour
 
     protected function _set_tour_properties()
     {
-        $this->_label = __('Edit Default Price Tour', 'event_espresso');
+        $this->_label = esc_html__('Edit Default Price Tour', 'event_espresso');
         $this->_slug = 'edit-default-price-joyride';
     }
 
@@ -67,9 +67,9 @@ class Pricing_Edit_Default_Price_Help_Tour extends EE_Help_Tour
 
     protected function _start()
     {
-        $content = '<h3>' . __('Edit Default Price', 'event_espresso') . '</h3>';
+        $content = '<h3>' . esc_html__('Edit Default Price', 'event_espresso') . '</h3>';
         $content .= '<p>'
-                    . __(
+                    . esc_html__(
                         'This tour of the Edit Default Price page will go over different areas of the screen to help you understand what they are used for.',
                         'event_espresso'
                     ) . '</p>';
@@ -79,7 +79,7 @@ class Pricing_Edit_Default_Price_Help_Tour extends EE_Help_Tour
     protected function _price_type_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'Price Types are a way of categorizing a price, discount, tax, or surcharge and indicating how it gets applied to a running total when a transaction occurs.',
                    'event_espresso'
                ) . '</p>';
@@ -88,7 +88,7 @@ class Pricing_Edit_Default_Price_Help_Tour extends EE_Help_Tour
     protected function _price_name_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'The name of the price, discount, tax, or surcharge that will be seen by your customers.',
                    'event_espresso'
                ) . '</p>';
@@ -97,7 +97,7 @@ class Pricing_Edit_Default_Price_Help_Tour extends EE_Help_Tour
     protected function _price_description_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'View the price type (price, discount, tax or surcharge) description.',
                    'event_espresso'
                ) . '</p>';
@@ -105,6 +105,6 @@ class Pricing_Edit_Default_Price_Help_Tour extends EE_Help_Tour
 
     protected function _price_amount_stop()
     {
-        return '<p>' . __('The ticket amount before any deductions.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('The ticket amount before any deductions.', 'event_espresso') . '</p>';
     }
 }

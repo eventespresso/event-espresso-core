@@ -20,9 +20,9 @@ class EEME_New_Addon_Attendee extends EEME_Base{
 			'New_Addon_Attendee_Meta' => new EE_Secondary_Table('esp_new_addon_attendee_meta', 'NATT_ID', 'ATT_ID')
 		);
 		$this->_extra_fields = array('New_Addon_Attendee_Meta'=>array(
-			'NATT_ID'=> new EE_DB_Only_Int_Field('NATT_ID', __('New Addon Attendee Meta Row ID','event_espresso'), false),
-			'NATT_ID_fk'=>new EE_DB_Only_Int_Field('ATT_ID', __("Foreign Key to Attendee in Post Table", "event_espresso"), false),
-			'ATT_foobar'=>new EE_Foreign_Key_Int_Field('ATT_foobar', __("Foobar", 'event_espresso'), true,0,'New_Addon_Thing')));
+			'NATT_ID'=> new EE_DB_Only_Int_Field('NATT_ID', esc_html__('New Addon Attendee Meta Row ID','event_espresso'), false),
+			'NATT_ID_fk'=>new EE_DB_Only_Int_Field('ATT_ID', esc_html__("Foreign Key to Attendee in Post Table", "event_espresso"), false),
+			'ATT_foobar'=>new EE_Foreign_Key_Int_Field('ATT_foobar', esc_html__("Foobar", 'event_espresso'), true,0,'New_Addon_Thing')));
 		$this->_extra_relations = array('New_Addon_Thing'=>new EE_Belongs_To_Relation());
 		parent::__construct();
 	}

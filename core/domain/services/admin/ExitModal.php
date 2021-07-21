@@ -58,24 +58,20 @@ class ExitModal
             'exitModali18n',
             array(
                 'introText' => htmlspecialchars(
-                    __(
-                        'Do you have a moment to share why you are deactivating Event Espresso?',
-                        'event_espresso'
+                    wp_strip_all_tags(
+                        __(
+                            'Do you have a moment to share why you are deactivating Event Espresso?',
+                            'event_espresso'
+                        )
                     ),
                     ENT_NOQUOTES
                 ),
                 'doSurveyButtonText' => htmlspecialchars(
-                    __(
-                        'Sure I\'ll help',
-                        'event_espresso'
-                    ),
+                    wp_strip_all_tags(__('Sure I\'ll help', 'event_espresso')),
                     ENT_NOQUOTES
                 ),
                 'skipButtonText' => htmlspecialchars(
-                    __(
-                        'Skip',
-                        'event_espresso'
-                    ),
+                    wp_strip_all_tags(__('Skip', 'event_espresso')),
                     ENT_NOQUOTES
                 )
             )

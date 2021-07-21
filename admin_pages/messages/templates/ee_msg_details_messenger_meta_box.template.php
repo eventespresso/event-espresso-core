@@ -2,7 +2,7 @@
     <?php
     if (empty($inactive_message_types) && empty($active_message_types)) :
         echo '<p>'
-             . __(
+             . esc_html__(
                  'This messenger is not currently used with any message types for templates but merely adds to the shortcodes available for templates on other messenger and message types.',
                  'event_espresso'
              ) . '</p>';

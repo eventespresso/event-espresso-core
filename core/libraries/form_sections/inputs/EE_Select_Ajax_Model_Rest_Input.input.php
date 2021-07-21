@@ -191,7 +191,7 @@ class EE_Select_Ajax_Model_Rest_Input extends EE_Form_Input_With_Options_Base
         if (! EE_Registry::instance()->is_model_name($this->_model_name)) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         '%1$s is not a proper model name. Please provide a model name in the "model_name" form input argument',
                         'event_espresso'
                     ),

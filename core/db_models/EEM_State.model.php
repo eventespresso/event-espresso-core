@@ -21,8 +21,8 @@ class EEM_State extends EEM_Base
 
     protected function __construct($timezone = null)
     {
-        $this->singular_item = __('State/Province', 'event_espresso');
-        $this->plural_item = __('States/Provinces', 'event_espresso');
+        $this->singular_item = esc_html__('State/Province', 'event_espresso');
+        $this->plural_item = esc_html__('States/Provinces', 'event_espresso');
 
         $this->_tables = array(
             'State' => new EE_Primary_Table('esp_state', 'STA_ID')
@@ -30,11 +30,11 @@ class EEM_State extends EEM_Base
 
         $this->_fields = array(
             'State' => array(
-                'STA_ID' => new EE_Primary_Key_Int_Field('STA_ID', __('State ID', 'event_espresso')),
-                'CNT_ISO' => new EE_Foreign_Key_String_Field('CNT_ISO', __('Country ISO Code', 'event_espresso'), false, null, 'Country'),
-                'STA_abbrev' => new EE_Plain_Text_Field('STA_abbrev', __('State Abbreviation', 'event_espresso'), false, ''),
-                'STA_name' => new EE_Plain_Text_Field('STA_name', __('State Name', 'event_espresso'), false, ''),
-                'STA_active' => new EE_Boolean_Field('STA_active', __('State Active Flag', 'event_espresso'), false, false)
+                'STA_ID' => new EE_Primary_Key_Int_Field('STA_ID', esc_html__('State ID', 'event_espresso')),
+                'CNT_ISO' => new EE_Foreign_Key_String_Field('CNT_ISO', esc_html__('Country ISO Code', 'event_espresso'), false, null, 'Country'),
+                'STA_abbrev' => new EE_Plain_Text_Field('STA_abbrev', esc_html__('State Abbreviation', 'event_espresso'), false, ''),
+                'STA_name' => new EE_Plain_Text_Field('STA_name', esc_html__('State Name', 'event_espresso'), false, ''),
+                'STA_active' => new EE_Boolean_Field('STA_active', esc_html__('State Active Flag', 'event_espresso'), false, false)
                 ));
         $this->_model_relations = array(
             'Attendee' => new EE_Has_Many_Relation(),

@@ -36,22 +36,22 @@ class EE_Messenger_Shortcodes extends EE_Shortcodes
 
     protected function _init_props()
     {
-        $this->label = __('Messenger Shortcodes', 'event_espresso');
-        $this->description = __('All shortcodes that are messenger specific.', 'event_espresso');
+        $this->label = esc_html__('Messenger Shortcodes', 'event_espresso');
+        $this->description = esc_html__('All shortcodes that are messenger specific.', 'event_espresso');
         /** @type EE_Message_Resource_Manager $message_resource_manager */
         $message_resource_manager = EE_Registry::instance()->load_lib('Message_Resource_Manager');
         // add messages about what happens  when the messenger is active.
         $this->_active_messengers = $message_resource_manager->active_messengers();
 
-        $this->_shortcodes['[DISPLAY_HTML_URL]'] = __(
+        $this->_shortcodes['[DISPLAY_HTML_URL]'] = esc_html__(
             'This will return a link to view the template in a browser if the html messenger is active.',
             'event_espresso'
         );
-        $this->_shortcodes['[DISPLAY_PDF_URL]'] = __(
+        $this->_shortcodes['[DISPLAY_PDF_URL]'] = esc_html__(
             'This will return a link to generate a pdf for the template if the pdf messenger is active.',
             'event_espresso'
         );
-        $this->_shortcodes['[DISPLAY_PDF_BUTTON]'] = __(
+        $this->_shortcodes['[DISPLAY_PDF_BUTTON]'] = esc_html__(
             'This will return html for a download pdf button trigger if the pdf messenger is active.',
             'event_espresso'
         );
@@ -63,7 +63,7 @@ class EE_Messenger_Shortcodes extends EE_Shortcodes
         if ($action === 'update_message_template' && is_admin()) {
             if (! isset($this->_active_messengers['pdf'])) {
                 EE_Error::add_attention(
-                    __(
+                    esc_html__(
                         'Be aware that the pdf messenger is inactive.  This means that any pdf related shortcodes will parse to an empty string.',
                         'event_espresso'
                     )
@@ -72,7 +72,7 @@ class EE_Messenger_Shortcodes extends EE_Shortcodes
 
             if (! isset($this->_active_messengers['html'])) {
                 EE_Error::add_attention(
-                    __(
+                    esc_html__(
                         'Be aware that the html messenger is inactive. This means that any html related shortcodes will parse to an empty string.',
                         'event_espresso'
                     )
@@ -126,8 +126,8 @@ class EE_Messenger_Shortcodes extends EE_Shortcodes
     private function _get_button(EE_Messages_Addressee $recipient, $sending_messenger)
     {
         $download_text = $sending_messenger == 'pdf'
-            ? __('Download PDF', 'event_espresso')
-            : __(
+            ? esc_html__('Download PDF', 'event_espresso')
+            : esc_html__(
                 'Show HTML',
                 'event_espresso'
             );

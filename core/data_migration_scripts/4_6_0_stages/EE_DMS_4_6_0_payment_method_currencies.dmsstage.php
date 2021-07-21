@@ -88,7 +88,7 @@ class EE_DMS_4_6_0_payment_method_currencies extends EE_Data_Migration_Script_St
     public function __construct()
     {
         global $wpdb;
-        $this->_pretty_name = __('Payment Method Currencies', 'event_espresso');
+        $this->_pretty_name = esc_html__('Payment Method Currencies', 'event_espresso');
         $this->_payment_method_table_name = $wpdb->prefix . 'esp_payment_method';
         $this->_currency_payment_method_table_name = $wpdb->prefix . 'esp_currency_payment_method';
         $this->_currency_table_name = $wpdb->prefix . 'esp_currency';
@@ -181,7 +181,7 @@ class EE_DMS_4_6_0_payment_method_currencies extends EE_Data_Migration_Script_St
                 )
         );
         if (! $success) {
-            $this->add_error(sprintf(__('Could not add currency relation %s because %s', "event_espresso"), wp_json_encode($cur_pm_relation), $wpdb->last_error));
+            $this->add_error(sprintf(esc_html__('Could not add currency relation %s because %s', "event_espresso"), wp_json_encode($cur_pm_relation), $wpdb->last_error));
         }
     }
 }

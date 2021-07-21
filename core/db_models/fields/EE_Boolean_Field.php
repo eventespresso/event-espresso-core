@@ -60,7 +60,7 @@ class EE_Boolean_Field extends EE_Integer_Field
     {
         return apply_filters(
             'FHEE__EE_Boolean_Field__prepare_for_pretty_echoing__return',
-            $value_on_field_to_be_outputted ? __('Yes', 'event_espresso') : __('No', 'event_espresso'),
+            $value_on_field_to_be_outputted ? esc_html__('Yes', 'event_espresso') : esc_html__('No', 'event_espresso'),
             $value_on_field_to_be_outputted
         );
     }

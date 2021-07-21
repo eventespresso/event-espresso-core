@@ -155,7 +155,7 @@ class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
                 $wpdb->insert(
                     $price_type_table,
                     [
-                        'PRT_name'       => __("Regional Tax", "event_espresso"),
+                        'PRT_name'       => esc_html__("Regional Tax", "event_espresso"),
                         'PBT_ID'         => 4,
                         'PRT_is_percent' => true,
                         'PRT_order'      => 60,
@@ -175,7 +175,7 @@ class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
                 $result = $wpdb->insert(
                     $price_type_table,
                     [
-                        'PRT_name'       => __("Federal Tax", "event_espresso"),
+                        'PRT_name'       => esc_html__("Federal Tax", "event_espresso"),
                         'PBT_ID'         => 4,
                         'PRT_is_percent' => true,
                         'PRT_order'      => 70,
@@ -197,7 +197,7 @@ class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
                         [
                             'PRT_ID'         => $wpdb->insert_id,
                             'PRC_amount'     => 15.00,
-                            'PRC_name'       => __("Sales Tax", "event_espresso"),
+                            'PRC_name'       => esc_html__("Sales Tax", "event_espresso"),
                             'PRC_desc'       => '',
                             'PRC_is_default' => true,
                             'PRC_overrides'  => null,
@@ -315,9 +315,9 @@ class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
     public function nav_metabox_items(array $menuitems)
     {
         $menuitems[] = [
-            'title'       => __('Venue List', 'event_espresso'),
+            'title'       => esc_html__('Venue List', 'event_espresso'),
             'url'         => get_post_type_archive_link('espresso_venues'),
-            'description' => __('Archive page for all venues.', 'event_espresso'),
+            'description' => esc_html__('Archive page for all venues.', 'event_espresso'),
         ];
         return $menuitems;
     }
@@ -336,7 +336,7 @@ class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
         } else {
             throw new \EE_Error(
                 sprintf(
-                    __('Table analysis class on class %1$s is not set properly.', 'event_espresso'),
+                    esc_html__('Table analysis class on class %1$s is not set properly.', 'event_espresso'),
                     get_class($this)
                 )
             );

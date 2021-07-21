@@ -72,7 +72,7 @@ class BatchRequestProcessor
             if (! $response instanceof JobStepResponse) {
                 throw new BatchRequestException(
                     sprintf(
-                        __(
+                        esc_html__(
                             'The class implementing JobHandlerInterface did not return a JobStepResponse when create_job was called with %1$s. It needs to return one or throw an Exception',
                             'event_espresso'
                         ),
@@ -84,7 +84,7 @@ class BatchRequestProcessor
             if (! $success) {
                 throw new BatchRequestException(
                     sprintf(
-                        __(
+                        esc_html__(
                             'Could not save job %1$s to the Wordpress Options table. These were the arguments used: %2$s',
                             'event_espresso'
                         ),
@@ -120,7 +120,7 @@ class BatchRequestProcessor
             if (! $response instanceof JobStepResponse) {
                 throw new BatchRequestException(
                     sprintf(
-                        __(
+                        esc_html__(
                             'The class implementing JobHandlerInterface did not return a JobStepResponse when continue_job was called with job %1$s. It needs to return one or throw an Exception',
                             'event_espresso'
                         ),
@@ -149,7 +149,7 @@ class BatchRequestProcessor
         if (! class_exists($classname)) {
             throw new BatchRequestException(
                 sprintf(
-                    __(
+                    esc_html__(
                         'The class %1$s does not exist, and so could not be used for running a job. It should implement JobHandlerInterface.',
                         'event_espresso'
                     ),
@@ -161,7 +161,7 @@ class BatchRequestProcessor
         if (! $obj instanceof JobHandlerInterface) {
             throw new BatchRequestException(
                 sprintf(
-                    __(
+                    esc_html__(
                         'The class %1$s does not implement JobHandlerInterface and so could not be used for running a job',
                         'event_espresso'
                     ),
@@ -191,7 +191,7 @@ class BatchRequestProcessor
             if (! $response instanceof JobStepResponse) {
                 throw new BatchRequestException(
                     sprintf(
-                        __(
+                        esc_html__(
                             'The class implementing JobHandlerInterface did not return a JobStepResponse when cleanup_job was called with job %1$s. It needs to return one or throw an Exception',
                             'event_espresso'
                         ),
@@ -219,13 +219,13 @@ class BatchRequestProcessor
     protected function _get_error_response(\Exception $exception, $method_name)
     {
         if (! $this->_job_parameters instanceof JobParameters) {
-            $this->_job_parameters = new JobParameters($this->_job_id, __('__Unknown__', 'event_espresso'), array());
+            $this->_job_parameters = new JobParameters($this->_job_id, esc_html__('__Unknown__', 'event_espresso'), array());
         }
         $this->_job_parameters->set_status(JobParameters::status_error);
         return new JobStepResponse(
             $this->_job_parameters,
             sprintf(
-                __(
+                esc_html__(
                     'An exception of type %1$s occurred while running %2$s. Its message was %3$s and had trace %4$s',
                     'event_espresso'
                 ),

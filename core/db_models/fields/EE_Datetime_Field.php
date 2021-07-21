@@ -475,7 +475,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base
                 if (WP_DEBUG) {
                     throw new EE_Error(
                         sprintf(
-                            __(
+                            esc_html__(
                                 'EE_Datetime_Field::_prepare_for_display requires a DateTime class to be the value for the $DateTime argument because the %s field is not nullable.',
                                 'event_espresso'
                             ),
@@ -486,7 +486,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base
                     $DateTime = new DbSafeDateTime(\EE_Datetime_Field::now);
                     EE_Error::add_error(
                         sprintf(
-                            __(
+                            esc_html__(
                                 'EE_Datetime_Field::_prepare_for_display requires a DateTime class to be the value for the $DateTime argument because the %s field is not nullable.  When WP_DEBUG is false, the value is set to "now" instead of throwing an exception.',
                                 'event_espresso'
                             ),
@@ -530,7 +530,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base
         if (! empty($datetime_value) && ! $datetime_value instanceof DateTime) {
             throw new EE_Error(
                 sprintf(
-                    __(
+                    esc_html__(
                         'The incoming value being prepared for setting in the database must either be empty or a php 
             		    DateTime object, instead of: %1$s %2$s',
                         'event_espresso'
@@ -664,7 +664,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base
             if (! $DateTime instanceof DbSafeDateTime) {
                 throw new EE_Error(
                     sprintf(
-                        __('"%1$s" does not represent a valid Date Time in the format "%2$s".', 'event_espresso'),
+                        esc_html__('"%1$s" does not represent a valid Date Time in the format "%2$s".', 'event_espresso'),
                         $date_string,
                         $format
                     )

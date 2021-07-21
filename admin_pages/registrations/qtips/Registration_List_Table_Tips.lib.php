@@ -81,7 +81,7 @@ class Registration_List_Table_Tips extends EE_Qtip_Config
     private function _registration_trash_message()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'This lock-icon means that this registration cannot be trashed.  Registrations that belong to a transaction that has payments cannot be trashed.  If you wish to trash this registration then you must delete all payments attached to the related transaction first.',
                    'event_espresso'
                ) . '</p>';

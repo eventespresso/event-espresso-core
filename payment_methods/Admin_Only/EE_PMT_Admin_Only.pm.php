@@ -23,7 +23,7 @@ class EE_PMT_Admin_Only extends EE_PMT_Base
      */
     public function __construct($pm_instance = null)
     {
-        $this->_pretty_name = __("Admin Only", 'event_espresso');
+        $this->_pretty_name = esc_html__("Admin Only", 'event_espresso');
         $this->_default_button_url = '';
         parent::__construct($pm_instance);
     }

@@ -17,7 +17,7 @@ class Pricing_Price_Types_Default_Help_Tour extends EE_Help_Tour
 
     protected function _set_tour_properties()
     {
-        $this->_label = __('Price Types Tour', 'event_espresso');
+        $this->_label = esc_html__('Price Types Tour', 'event_espresso');
         $this->_slug = 'default-price-types-joyride';
     }
 
@@ -88,9 +88,9 @@ class Pricing_Price_Types_Default_Help_Tour extends EE_Help_Tour
 
     protected function _start()
     {
-        $content = '<h3>' . __('Price Types', 'event_espresso') . '</h3>';
+        $content = '<h3>' . esc_html__('Price Types', 'event_espresso') . '</h3>';
         $content .= '<p>'
-                    . __(
+                    . esc_html__(
                         'This tour of the Price Types page will go over different areas of the screen to help you understand what they are used for.',
                         'event_espresso'
                     ) . '</p>';
@@ -100,7 +100,7 @@ class Pricing_Price_Types_Default_Help_Tour extends EE_Help_Tour
     protected function _name_column_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'The name of the price type. Can be sorted in ascending or descending order.',
                    'event_espresso'
                ) . '</p>';
@@ -108,13 +108,13 @@ class Pricing_Price_Types_Default_Help_Tour extends EE_Help_Tour
 
     protected function _base_type_stop()
     {
-        return '<p>' . __('View if a price type is a discount, surcharge, or tax.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('View if a price type is a discount, surcharge, or tax.', 'event_espresso') . '</p>';
     }
 
     protected function _member_column_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'Here you can see if the discount/surcharge is percentage based or a flat monetary amount.',
                    'event_espresso'
                ) . '</p>';
@@ -123,7 +123,7 @@ class Pricing_Price_Types_Default_Help_Tour extends EE_Help_Tour
     protected function _percent_column_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'View if the discount, surcharge, or tax is percentage-based or a fixed amount.',
                    'event_espresso'
                ) . '</p>';
@@ -132,7 +132,7 @@ class Pricing_Price_Types_Default_Help_Tour extends EE_Help_Tour
     protected function _order_column_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'View the order in which each discount, surcharge, or tax will be applied to the base ticket cost. Zero (0) means it will be applied first.',
                    'event_espresso'
                ) . '</p>';
@@ -140,13 +140,13 @@ class Pricing_Price_Types_Default_Help_Tour extends EE_Help_Tour
 
     protected function _bulk_actions_stop()
     {
-        return '<p>' . __('Perform bulk actions to multiple price types.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Perform bulk actions to multiple price types.', 'event_espresso') . '</p>';
     }
 
     protected function _search_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'Search through price types. The following source will be searched: Price Type Name.',
                    'event_espresso'
                ) . '</p>';

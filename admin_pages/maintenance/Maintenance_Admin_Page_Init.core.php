@@ -27,7 +27,7 @@ class Maintenance_Admin_Page_Init extends EE_Admin_Page_Init
     public function __construct()
     {
         // define some page related constants
-        define('EE_MAINTENANCE_LABEL', __('Maintenance', 'event_espresso'));
+        define('EE_MAINTENANCE_LABEL', esc_html__('Maintenance', 'event_espresso'));
         define('EE_MAINTENANCE_PG_SLUG', 'espresso_maintenance_settings');
         define('EE_MAINTENANCE_ADMIN_URL', admin_url('admin.php?page=' . EE_MAINTENANCE_PG_SLUG));
         define('EE_MAINTENANCE_ADMIN', EE_ADMIN_PAGES . 'maintenance/');
@@ -69,7 +69,7 @@ class Maintenance_Admin_Page_Init extends EE_Admin_Page_Init
         if (EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance) {
             $map['menu_group'] = 'main';
             $map['subtitle'] = EE_MAINTENANCE_LABEL;
-            $map['menu_label'] = __('Event Espresso', 'event_espresso');
+            $map['menu_label'] = esc_html__('Event Espresso', 'event_espresso');
         }
         return $map;
     }
@@ -90,7 +90,7 @@ class Maintenance_Admin_Page_Init extends EE_Admin_Page_Init
                     $notice = '<div class="update-nag">
 						'
                               . sprintf(
-                                  __(
+                                  esc_html__(
                                       "Event Espresso is in Frontend-Only MAINTENANCE MODE. This means the front-end (ie, non-wp-admin pages) is disabled for ALL users except site admins. Visit the %s Maintenance Page %s to disable maintenance mode.",
                                       "event_espresso"
                                   ),
@@ -104,7 +104,7 @@ class Maintenance_Admin_Page_Init extends EE_Admin_Page_Init
                     $notice = '<div class="error">
 						<p>'
                               . sprintf(
-                                  __(
+                                  esc_html__(
                                       "As part of the process for updating Event Espresso, your database also
 needs to be updated. Event Espresso is in COMPLETE MAINTENANCE MODE (both WordPress admin pages and front-end event registration pages are disabled) until you run the database update script. %s Visit the Maintenance Page to get started,%s it only takes a moment.",
                                       "event_espresso"

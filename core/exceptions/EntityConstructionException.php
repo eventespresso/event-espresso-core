@@ -25,7 +25,7 @@ class EntityConstructionException extends \DomainException
     {
         if (empty($message)) {
             $message = sprintf(
-                __(
+                esc_html__(
                     'The "%1$s" entity could not be instantiated for an unknown reason',
                     'event_espresso'
                 ),

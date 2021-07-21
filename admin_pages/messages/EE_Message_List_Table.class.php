@@ -31,22 +31,22 @@ class EE_Message_List_Table extends EE_Admin_List_Table
     protected function _set_properties()
     {
         $this->_wp_list_args = array(
-            'singular' => __('Message', 'event_espresso'),
-            'plural'   => __('Messages', 'event_espresso'),
+            'singular' => esc_html__('Message', 'event_espresso'),
+            'plural'   => esc_html__('Messages', 'event_espresso'),
             'ajax'     => true,
             'screen'   => $this->get_admin_page()->get_current_screen()->id,
         );
 
         $this->_columns = array(
             'cb'           => '<input type="checkbox" />',
-            'to'           => __('To', 'event_espresso'),
-            'from'         => __('From', 'event_espresso'),
-            'messenger'    => __('Messenger', 'event_espresso'),
-            'message_type' => __('Message Type', 'event_espresso'),
-            'context'      => __('Context', 'event_espresso'),
-            'modified'     => __('Modified', 'event_espresso'),
-            'action'       => __('Actions', 'event_espresso'),
-            'msg_id'       => __('ID', 'event_espresso'),
+            'to'           => esc_html__('To', 'event_espresso'),
+            'from'         => esc_html__('From', 'event_espresso'),
+            'messenger'    => esc_html__('Messenger', 'event_espresso'),
+            'message_type' => esc_html__('Message Type', 'event_espresso'),
+            'context'      => esc_html__('Context', 'event_espresso'),
+            'modified'     => esc_html__('Modified', 'event_espresso'),
+            'action'       => esc_html__('Actions', 'event_espresso'),
+            'msg_id'       => esc_html__('ID', 'event_espresso'),
         );
 
         $this->_sortable_columns = array(
@@ -165,7 +165,7 @@ class EE_Message_List_Table extends EE_Admin_List_Table
                                  ),
                                  admin_url('admin.php')
                              )
-                             . '">' . __('Delete', 'event_espresso') . '</a>';
+                             . '">' . esc_html__('Delete', 'event_espresso') . '</a>';
         return esc_html($message->to()) . $this->row_actions($actions);
     }
 

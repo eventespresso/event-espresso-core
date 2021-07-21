@@ -17,7 +17,7 @@ class EE_DMS_4_6_0_payments extends EE_Data_Migration_Script_Stage_Table
         global $wpdb;
         $this->_old_table = $wpdb->prefix . 'esp_payment';
         $this->_payment_method_table = $wpdb->prefix . 'esp_payment_method';
-        $this->_pretty_name = __('Payment-Payment Method Relations', 'event_espresso');
+        $this->_pretty_name = esc_html__('Payment-Payment Method Relations', 'event_espresso');
         parent::__construct();
     }
     protected function _migrate_old_row($payment_row)
@@ -26,7 +26,7 @@ class EE_DMS_4_6_0_payments extends EE_Data_Migration_Script_Stage_Table
         // get the payment method's ID
         $PMD_ID = apply_filters('FHEE__EE_DMS_4_6_0_payments__migrate_old_row__PMD_ID', $this->_get_payment_method_id_by_gateway_name($payment_row['PAY_gateway'], $payment_row['PAY_method']));
         if (! $PMD_ID) {
-            $this->add_error(sprintf(__('Could not find payment method with PMD_type = \'%1$s\' when migrating payment row %2$s so just assigned it an unknown payment method', 'event_espresso'), $payment_row['PAY_gateway'], $this->_json_encode($payment_row)));
+            $this->add_error(sprintf(esc_html__('Could not find payment method with PMD_type = \'%1$s\' when migrating payment row %2$s so just assigned it an unknown payment method', 'event_espresso'), $payment_row['PAY_gateway'], $this->_json_encode($payment_row)));
             $PMD_ID = 0;
         }
         $new_values = array(
@@ -43,20 +43,20 @@ class EE_DMS_4_6_0_payments extends EE_Data_Migration_Script_Stage_Table
             $where_datatypes
         );
         if (! $success) {
-            $this->add_error(sprintf(__('Couldnt set %1$s row in table %2$s where %3$s', 'event_espresso'), $this->_json_encode($new_values), $this->_old_table, $this->_json_encode($wheres)));
+            $this->add_error(sprintf(esc_html__('Couldnt set %1$s row in table %2$s where %3$s', 'event_espresso'), $this->_json_encode($new_values), $this->_old_table, $this->_json_encode($wheres)));
         }
     }
     /**
      *
      *  array(
-            'PP' => __( 'PayPal', 'event_espresso' ),
-            'CC' => __( 'Credit Card', 'event_espresso' ),
-            'DB'=>  __("Debit Card", 'event_espresso'),
-            'CHQ' => __( 'Cheque', 'event_espresso' ),
-            'CSH' => __( 'Cash', 'event_espresso' ),
-            'BK'=>  __("Bank", 'event_espresso'),
-            'IV'=>  __("Invoice", 'event_espresso'),
-            'MO'=>  __("Money Order", 'event_espresso'),
+            'PP' => esc_html__( 'PayPal', 'event_espresso' ),
+            'CC' => esc_html__( 'Credit Card', 'event_espresso' ),
+            'DB'=>  esc_html__("Debit Card", 'event_espresso'),
+            'CHQ' => esc_html__( 'Cheque', 'event_espresso' ),
+            'CSH' => esc_html__( 'Cash', 'event_espresso' ),
+            'BK'=>  esc_html__("Bank", 'event_espresso'),
+            'IV'=>  esc_html__("Invoice", 'event_espresso'),
+            'MO'=>  esc_html__("Money Order", 'event_espresso'),
      * @global type $wpdb
      * @param int $id
      * @return string

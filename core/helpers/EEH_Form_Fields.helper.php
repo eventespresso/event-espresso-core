@@ -42,7 +42,7 @@ class EEH_Form_Fields
      *  format:
      *  $template_form_fields['field-id'] = array(
      *      'name' => 'name_attribute',
-     *      'label' => __('Field Label', 'event_espresso'), //or false
+     *      'label' => esc_html__('Field Label', 'event_espresso'), //or false
      *      'input' => 'hidden', //field input type can be 'text', 'select', 'textarea', 'hidden', 'checkbox', 'wp_editor'
      *      'type' => 'int', //what "type" the value is (i.e. string, int etc)
      *      'required' => false, //boolean for whether the field is required
@@ -62,7 +62,7 @@ class EEH_Form_Fields
     {
 
         if (empty($input_vars)) {
-            EE_Error::add_error(__('missing required variables for the form field generator', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__);
+            EE_Error::add_error(esc_html__('missing required variables for the form field generator', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__);
             return false;
         }
 
@@ -74,7 +74,7 @@ class EEH_Form_Fields
         foreach ($input_vars as $input_key => $input_value) {
             $defaults = array(
                 'name' => $input_key,
-                'label' => __('No label', 'event_espresso'),
+                'label' => esc_html__('No label', 'event_espresso'),
                 'input' => 'hidden',
                 'type' => 'int',
                 'required' => false,
@@ -579,7 +579,7 @@ class EEH_Form_Fields
         $QST_required = $QFI->get('QST_required');
         $required = $QST_required ? array( 'label' => $required_label, 'class' => 'required needs-value', 'title' => $QST_required ) : array();
         $use_html_entities = $QFI->get_meta('htmlentities');
-        $required_text = $QFI->get('QST_required_text') != '' ? $QFI->get('QST_required_text') : __('This field is required', 'event_espresso');
+        $required_text = $QFI->get('QST_required_text') != '' ? $QFI->get('QST_required_text') : esc_html__('This field is required', 'event_espresso');
         $required_text = $QST_required
             ? "\n\t\t\t" . '<div class="required-text hidden">' . self::prep_answer($required_text, $use_html_entities) . '</div>'
             : '';
@@ -764,7 +764,7 @@ class EEH_Form_Fields
         if (! $only_option) {
             // if there is NO answer set and there are multiple options to choose from, then set the "please select" message as selected
             $selected = $answer === null ? ' selected="selected"' : '';
-            $input_html .= $add_please_select_option ? "\n\t\t\t\t" . '<option value=""' . $selected . '>' . __(' - please select - ', 'event_espresso') . '</option>' : '';
+            $input_html .= $add_please_select_option ? "\n\t\t\t\t" . '<option value=""' . $selected . '>' . esc_html__(' - please select - ', 'event_espresso') . '</option>' : '';
         }
         foreach ($options as $key => $value) {
             // if value is an array, then create option groups, else create regular ol' options
@@ -1373,7 +1373,7 @@ class EEH_Form_Fields
         // setup vals for select input helper
         $options = array(
             0 => array(
-                'text' => __('Select a Month/Year', 'event_espresso'),
+                'text' => esc_html__('Select a Month/Year', 'event_espresso'),
                 'id' => ''
                 )
             );
@@ -1437,7 +1437,7 @@ class EEH_Form_Fields
         // let's setup vals for select input helper
         $options = array(
             0 => array(
-                'text' => __('Select a Month/Year', 'event_espresso'),
+                'text' => esc_html__('Select a Month/Year', 'event_espresso'),
                 'id' => ""
                 )
             );
@@ -1473,7 +1473,7 @@ class EEH_Form_Fields
         $categories = EEM_Term::instance()->get_all_ee_categories(true);
         $options = array(
             '0' => array(
-                'text' => __('All Categories', 'event_espresso'),
+                'text' => esc_html__('All Categories', 'event_espresso'),
                 'id' => -1
                 )
             );
@@ -1511,7 +1511,7 @@ class EEH_Form_Fields
         if (empty($url) || empty($ID)) {
             return $btn;
         }
-        $text = ! empty($text) ? $text : __('Submit', 'event_espresso');
+        $text = ! empty($text) ? $text : esc_html__('Submit', 'event_espresso');
         $btn .= '<input id="' . $ID . '-btn" class="' . $class . '" type="submit" value="' . $text . '" ' . $extra_attributes . '/>';
         if (! $input_only) {
             $btn_frm = '<form id="' . $ID . '-frm" method="POST" action="' . $url . '">';

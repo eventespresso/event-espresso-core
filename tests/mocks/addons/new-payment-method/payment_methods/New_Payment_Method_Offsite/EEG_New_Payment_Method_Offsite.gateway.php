@@ -78,13 +78,13 @@ class EEG_New_Payment_Method_Offsite extends EE_Offsite_Gateway{
 		if($payment instanceof EEI_Payment &&  isset( $update_info[ 'status' ] ) ){
 			if( $update_info[ 'status' ] == $this->_pay_model->approved_status() ){
 				$payment->set_status( $this->_pay_model->approved_status() );
-				$payment->set_gateway_response( __( 'Payment Approved', 'event_espresso' ));
+				$payment->set_gateway_response( esc_html__( 'Payment Approved', 'event_espresso' ));
 			}elseif( $update_info[ 'status' ] == $this->_pay_model->pending_status() ){
 				$payment->set_status( $this->_pay_model->pending_status() );
-				$payment->set_gateway_response( __( 'Payment Pending', 'event_espresso' ));
+				$payment->set_gateway_response( esc_html__( 'Payment Pending', 'event_espresso' ));
 			}else{
 				$payment->set_status( $this->_pay_model->failed_status() );
-				$payment->set_gateway_response( __( 'Payment Failed', 'event_espresso' ) );
+				$payment->set_gateway_response( esc_html__( 'Payment Failed', 'event_espresso' ) );
 			}
 		}
 		return $payment;

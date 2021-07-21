@@ -41,17 +41,17 @@ class EEM_Answer extends EEM_Base
      */
     protected function __construct($timezone = null)
     {
-        $this->singular_item = __('Answer', 'event_espresso');
-        $this->plural_item = __('Answers', 'event_espresso');
+        $this->singular_item = esc_html__('Answer', 'event_espresso');
+        $this->plural_item = esc_html__('Answers', 'event_espresso');
         $this->_tables = array(
             'Answer' => new EE_Primary_Table('esp_answer', 'ANS_ID')
         );
         $this->_fields = array(
             'Answer' => array(
-                'ANS_ID' => new EE_Primary_Key_Int_Field('ANS_ID', __('Answer ID', 'event_espresso')),
-                'REG_ID' => new EE_Foreign_Key_Int_Field('REG_ID', __('Registration ID', 'event_espresso'), false, 0, 'Registration'),
-                'QST_ID' => new EE_Foreign_Key_Int_Field('QST_ID', __('Question ID', 'event_espresso'), false, 0, 'Question'),
-                'ANS_value' => new EE_Maybe_Serialized_Simple_HTML_Field('ANS_value', __('Answer Value', 'event_espresso'), false, '')
+                'ANS_ID' => new EE_Primary_Key_Int_Field('ANS_ID', esc_html__('Answer ID', 'event_espresso')),
+                'REG_ID' => new EE_Foreign_Key_Int_Field('REG_ID', esc_html__('Registration ID', 'event_espresso'), false, 0, 'Registration'),
+                'QST_ID' => new EE_Foreign_Key_Int_Field('QST_ID', esc_html__('Question ID', 'event_espresso'), false, 0, 'Question'),
+                'ANS_value' => new EE_Maybe_Serialized_Simple_HTML_Field('ANS_value', esc_html__('Answer Value', 'event_espresso'), false, '')
             ));
         $this->_model_relations = array(
             'Registration' => new EE_Belongs_To_Relation(),
@@ -132,10 +132,10 @@ class EEM_Answer extends EEM_Base
                 if ($pretty_answer) {
                     if ($field_name === 'STA_ID') {
                         $state = $registration->attendee()->state_obj();
-                        $value = $state instanceof EE_State ? $state->name() : sprintf(__('Unknown State (%s)', 'event_espresso'), $registration->attendee()->state_ID());
+                        $value = $state instanceof EE_State ? $state->name() : sprintf(esc_html__('Unknown State (%s)', 'event_espresso'), $registration->attendee()->state_ID());
                     } elseif ($field_name === 'CNT_ISO') {
                         $country = $registration->attendee()->country_obj();
-                        $value = $country instanceof EE_Country ? $country->name() : sprintf(__('Unknown Country (%s)', "event_espresso"), $registration->attendee()->country_ID());
+                        $value = $country instanceof EE_Country ? $country->name() : sprintf(esc_html__('Unknown Country (%s)', "event_espresso"), $registration->attendee()->country_ID());
                     } else {
                         $value = $registration->attendee()->get_pretty($field_name);
                     }

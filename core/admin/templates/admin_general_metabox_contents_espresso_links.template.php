@@ -3,12 +3,12 @@
         <li>
             <?php
             echo '<a href="http://eventespresso.com/wiki/installation/" target="_blank">'
-                 . __(
+                 . esc_html__(
                      'Installation',
                      'event_espresso'
                  )
                  . '</a>  &amp; <a href="http://eventespresso.com/wiki/setting-up-event-espresso/" target="_blank">'
-                 . __(
+                 . esc_html__(
                      'Usage Guide',
                      'event_espresso'
                  ) . '</a>'; ?>
@@ -41,12 +41,12 @@
         </li>
         <li>
             <?php echo '<a href="http://eventespresso.com/pricing/" target="_blank">'
-                       . __(
+                       . esc_html__(
                            'Plugins',
                            'event_espresso'
                        )
                        . '</a> &amp; <a href="http://eventespresso.com/add-ons/" target="_blank">'
-                       . __(
+                       . esc_html__(
                            'Add-ons',
                            'event_espresso'
                        ) . '</a>'; ?><br/>

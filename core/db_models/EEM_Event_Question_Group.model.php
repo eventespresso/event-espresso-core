@@ -23,18 +23,18 @@ class EEM_Event_Question_Group extends EEM_Base
 
     protected function __construct($timezone = null)
     {
-        $this->singular_item = __('Event to Question Group Link', 'event_espresso');
-        $this->plural_item = __('Event to Question Group Links', 'event_espresso');
+        $this->singular_item = esc_html__('Event to Question Group Link', 'event_espresso');
+        $this->plural_item = esc_html__('Event to Question Group Links', 'event_espresso');
         $this->_tables = array(
             'Event_Question_Group' => new EE_Primary_Table('esp_event_question_group', 'EQG_ID')
         );
         $this->_fields = array(
             'Event_Question_Group' => array(
-                'EQG_ID' => new EE_Primary_Key_Int_Field('EQG_ID', __('Event to Question Group Link ID', 'event_espresso')),
-                'EVT_ID' => new EE_Foreign_Key_Int_Field('EVT_ID', __('Event ID', 'event_espresso'), false, 0, 'Event'),
-                'QSG_ID' => new EE_Foreign_Key_Int_Field('QSG_ID', __('Question Group Id', 'event_espresso'), false, 0, 'Question_Group'),
-                'EQG_primary' => new EE_Boolean_Field('EQG_primary', __('Flag indicating question is only for primary attendees', 'event_espresso'), false, false),
-                'EQG_additional' => new EE_Boolean_Field('EQG_additional', __('Flag indicating question is only for additional attendees', 'event_espresso'), false, false)
+                'EQG_ID' => new EE_Primary_Key_Int_Field('EQG_ID', esc_html__('Event to Question Group Link ID', 'event_espresso')),
+                'EVT_ID' => new EE_Foreign_Key_Int_Field('EVT_ID', esc_html__('Event ID', 'event_espresso'), false, 0, 'Event'),
+                'QSG_ID' => new EE_Foreign_Key_Int_Field('QSG_ID', esc_html__('Question Group Id', 'event_espresso'), false, 0, 'Question_Group'),
+                'EQG_primary' => new EE_Boolean_Field('EQG_primary', esc_html__('Flag indicating question is only for primary attendees', 'event_espresso'), false, false),
+                'EQG_additional' => new EE_Boolean_Field('EQG_additional', esc_html__('Flag indicating question is only for additional attendees', 'event_espresso'), false, false)
             )
         );
         $this->_model_relations = array(

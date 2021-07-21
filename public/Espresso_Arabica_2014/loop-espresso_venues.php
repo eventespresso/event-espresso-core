@@ -14,7 +14,7 @@ if ( have_posts() ) : ?>
 
 	<header class="page-header">
 		<h1 class="page-title">
-			<?php echo __( 'Event Venues', 'event_espresso' ); ?>
+			<?php echo esc_html__( 'Event Venues', 'event_espresso' ); ?>
 		</h1>
 	</header><!-- .page-header -->
 	

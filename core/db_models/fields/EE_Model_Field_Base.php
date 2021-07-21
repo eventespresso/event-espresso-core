@@ -169,7 +169,7 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
         if ($this->_name) {
             return $this->_name;
         } else {
-            throw new EE_Error(sprintf(__(
+            throw new EE_Error(sprintf(esc_html__(
                 "Model field '%s' has no name set. Did you make a model and forget to call the parent model constructor?",
                 "event_espresso"
             ), get_class($this)));

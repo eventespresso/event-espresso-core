@@ -25,7 +25,7 @@ class UnexpectedEntityException extends \UnexpectedValueException
     {
         if (empty($message)) {
             $message = sprintf(
-                __(
+                esc_html__(
                     'The retrieved entity is an instance of "%1$s", but an instance of "%2$s" was expected.',
                     'event_espresso'
                 ),

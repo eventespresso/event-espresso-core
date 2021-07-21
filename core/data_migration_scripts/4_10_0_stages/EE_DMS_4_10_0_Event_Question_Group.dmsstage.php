@@ -20,7 +20,7 @@ class EE_DMS_4_10_0_Event_Question_Group extends EE_Data_Migration_Script_Stage_
     public function __construct()
     {
         global $wpdb;
-        $this->_pretty_name = __('Event-Question Group Relations', 'event_espresso');
+        $this->_pretty_name = esc_html__('Event-Question Group Relations', 'event_espresso');
         $this->_old_table = $wpdb->prefix . 'esp_event_question_group';
         $this->_extra_where_sql = "WHERE EQG_primary = 0 AND EQG_additional=0";
         parent::__construct();
@@ -64,7 +64,7 @@ class EE_DMS_4_10_0_Event_Question_Group extends EE_Data_Migration_Script_Stage_
                 if (! $successful_delete) {
                     $this->add_error(
                         sprintf(
-                            __('Could not delete old event-question group relation row "%1$s" because "%2$s"', 'event_espresso'),
+                            esc_html__('Could not delete old event-question group relation row "%1$s" because "%2$s"', 'event_espresso'),
                             wp_json_encode($event_question_group),
                             $wpdb->last_error
                         )

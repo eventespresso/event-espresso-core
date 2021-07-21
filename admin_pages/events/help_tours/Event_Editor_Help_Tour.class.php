@@ -17,7 +17,7 @@ class Event_Editor_Help_Tour extends EE_Help_Tour
 
     protected function _set_tour_properties()
     {
-        $this->_label = __('Event Editor Tour', 'event_espresso');
+        $this->_label = esc_html__('Event Editor Tour', 'event_espresso');
         $this->_slug = $this->_is_caf ? 'event-editor-caf-joyride' : 'event-editor-joyride';
     }
 
@@ -125,9 +125,9 @@ class Event_Editor_Help_Tour extends EE_Help_Tour
 
     protected function _start()
     {
-        $content = '<h3>' . __('Event Editor', 'event_espresso') . '</h3>';
+        $content = '<h3>' . esc_html__('Event Editor', 'event_espresso') . '</h3>';
         $content .= '<p>'
-                    . __(
+                    . esc_html__(
                         'This tour of the Event Editor will provide an overview of the different areas of the screen to help you understand what they are used for. Let\'s get started on setting up your first event with Event Espresso!',
                         'event_espresso'
                     ) . '</p>';
@@ -142,7 +142,7 @@ class Event_Editor_Help_Tour extends EE_Help_Tour
     protected function _event_description_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'The rich text editor can be used to add information about your event. Images and links can also be added along with your text.',
                    'event_espresso'
                ) . '</p>';
@@ -151,7 +151,7 @@ class Event_Editor_Help_Tour extends EE_Help_Tour
     protected function _event_venues_caf()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'In this section, you can select the venue that is hosting your event.',
                    'event_espresso'
                ) . '</p>';
@@ -160,7 +160,7 @@ class Event_Editor_Help_Tour extends EE_Help_Tour
     protected function _event_venues_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'In this section, you can enter information about the venue that is hosting your event.',
                    'event_espresso'
                ) . '</p>';
@@ -169,7 +169,7 @@ class Event_Editor_Help_Tour extends EE_Help_Tour
     protected function _event_pricing_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'Use the Event Datetime & Ticket section to enter details about when the event is happening and what tickets you want to offer for access to the event.',
                    'event_espresso'
                ) . '</p>';
@@ -178,7 +178,7 @@ class Event_Editor_Help_Tour extends EE_Help_Tour
     protected function _event_pricing_caf()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'Use the Event Datetimes & Ticket section to enter details about when the event is happening and what tickets you want to offer for access to the event.',
                    'event_espresso'
                ) . '</p>';
@@ -186,23 +186,23 @@ class Event_Editor_Help_Tour extends EE_Help_Tour
 
     protected function _event_registration_options_stop()
     {
-        return '<p>' . __('Setup custom options for your event registration.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Setup custom options for your event registration.', 'event_espresso') . '</p>';
     }
 
     protected function _event_post_tag_stop()
     {
-        return '<p>' . __('Quickly add tags to your event.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Quickly add tags to your event.', 'event_espresso') . '</p>';
     }
 
     protected function _event_categories_stop()
     {
-        return '<p>' . __('Events can also be categorized if you wish.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Events can also be categorized if you wish.', 'event_espresso') . '</p>';
     }
 
     protected function _primary_question_stop_caf()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'Use the questions group to request information from your primary registrant.',
                    'event_espresso'
                ) . '</p>';
@@ -211,7 +211,7 @@ class Event_Editor_Help_Tour extends EE_Help_Tour
     protected function _additional_questions_stop_caf()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'Use the questions group to request information from your additional registrant.',
                    'event_espresso'
                ) . '</p>';
@@ -219,13 +219,13 @@ class Event_Editor_Help_Tour extends EE_Help_Tour
 
     protected function _featured_image_stop()
     {
-        return '<p>' . __('Set a feature image for your event here.', 'event_espresso') . '</p>';
+        return '<p>' . esc_html__('Set a feature image for your event here.', 'event_espresso') . '</p>';
     }
 
     protected function _publish_event_stop()
     {
         return '<p>'
-               . __(
+               . esc_html__(
                    'Easily control the state of your event. The main states are Published, Pending Review, and Draft. Additional states are Cancelled, Postponed, and Sold Out.',
                    'event_espresso'
                ) . '</p>';
