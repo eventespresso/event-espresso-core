@@ -81,8 +81,7 @@ class EED_Bot_Trap extends EED_Module
     public static function set_hooks_admin()
     {
         if (
-            defined('DOING_AJAX')
-            && DOING_AJAX
+            EED_Bot_Trap::getRequest()->isAjax()
             && apply_filters('FHEE__EED_Bot_Trap__set_hooks__use_bot_trap', true)
             && EE_Registry::instance()->CFG->registration->use_bot_trap
         ) {
@@ -144,8 +143,7 @@ class EED_Bot_Trap extends EED_Module
     public static function process_bot_trap($triggered_trap_callback = array())
     {
         // what's your email address Mr. Bot ?
-        $empty_trap = isset($_REQUEST['tkt-slctr-request-processor-email'])
-                      && $_REQUEST['tkt-slctr-request-processor-email'] === '';
+        $empty_trap = EED_Bot_Trap::getRequest()->getRequestParam('tkt-slctr-request-processor-email') === '';
         // are we human ?
         if ($empty_trap) {
             do_action('AHEE__EED_Bot_Trap__process_bot_trap__trap_not_triggered');
@@ -178,7 +176,7 @@ class EED_Bot_Trap extends EED_Module
             )
         );
         // if AJAX, return the redirect URL
-        if (defined('DOING_AJAX') && DOING_AJAX) {
+        if (EED_Bot_Trap::getRequest()->isAjax()) {
             echo wp_json_encode(
                 array_merge(
                     EE_Error::get_notices(false),
@@ -204,13 +202,13 @@ class EED_Bot_Trap extends EED_Module
     public static function display_bot_trap_success()
     {
         add_filter('FHEE__EED_Single_Page_Checkout__run', '__return_false');
-        $bot_notice = esc_html__(
-            'Thank you so much. Your ticket selections have been received for consideration.',
-            'event_espresso'
+        $bot_notice = EED_Bot_Trap::getRequest()->getRequestParam(
+            'ee-notice',
+            esc_html__(
+                'Thank you so much. Your ticket selections have been received for consideration.',
+                'event_espresso'
+            )
         );
-        $bot_notice = isset($_REQUEST['ee-notice']) && $_REQUEST['ee-notice'] !== ''
-            ? sanitize_text_field(stripslashes($_REQUEST['ee-notice']))
-            : $bot_notice;
         EED_Bot_Trap::getResponse()->addOutput(EEH_HTML::div($bot_notice, '', 'ee-attention'));
     }
 

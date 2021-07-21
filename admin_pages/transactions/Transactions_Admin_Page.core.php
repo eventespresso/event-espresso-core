@@ -770,9 +770,10 @@ class Transactions_Admin_Page extends EE_Admin_Page
 
         $this->_template_args['currency_sign'] = EE_Registry::instance()->CFG->currency->sign;
         // link back to overview
-        $this->_template_args['txn_overview_url'] = ! empty($_SERVER['HTTP_REFERER'])
-            ? $_SERVER['HTTP_REFERER']
-            : TXN_ADMIN_URL;
+        $this->_template_args['txn_overview_url'] = $this->request->getServerParam(
+            'HTTP_REFERER',
+            TXN_ADMIN_URL
+        );
 
 
         // next link
@@ -2255,7 +2256,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
                         $this->_req_data['txn_reg_status_change'] = $delete_txn_reg_status_change;
                         // MAKE sure we also add the delete_txn_req_status_change to the
                         // $_REQUEST global because that's how messages will be looking for it.
-                        $_REQUEST['txn_reg_status_change'] = $delete_txn_reg_status_change;
+                        $this->request->setRequestParam('txn_reg_status_change', $delete_txn_reg_status_change);
                         $this->_maybe_send_notifications();
                         $this->_process_registration_status_change($payment->transaction(), $REG_IDs);
                     }

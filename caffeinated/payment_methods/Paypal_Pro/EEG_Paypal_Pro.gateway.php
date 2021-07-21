@@ -1,5 +1,8 @@
 <?php
 
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\RequestInterface;
+
 /**
  * EEG_Paypal_Pro
  *
@@ -179,6 +182,10 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway
                 'l_qty'    => 1,
             ));
         }
+
+
+        /** @var RequestInterface $request */
+        $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
         // Populate data arrays with order data.
         $DPFields = array(
             // How you want to obtain payment ?
@@ -186,7 +193,7 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway
             // Sale indicates that this is a final sale for which you are requesting payment.  Default is Sale.
             'paymentaction'    => 'Sale',
             // Required.  IP address of the payer's browser.
-            'ipaddress'        => $_SERVER['REMOTE_ADDR'],
+            'ipaddress'        => $request->ipAddress(),
             // Flag to determine whether you want the results returned by FMF.  1 or 0.  Default is 0.
             'returnfmfdetails' => '1',
         );

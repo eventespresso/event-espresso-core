@@ -239,7 +239,7 @@ class EED_Events_Archive_Caff extends EED_Events_Archive
         /** @var EE_Config $config */
         $config = EE_Registry::instance()->CFG;
         $config_saved = false;
-        $template_parts = sanitize_text_field($_POST['elements']);
+        $template_parts = EED_Events_Archive_Caff::getRequest()->getRequestParam('elements');
         if (! empty($template_parts)) {
             $template_parts = explode(',', trim($template_parts, ','));
             foreach ($template_parts as $key => $template_part) {

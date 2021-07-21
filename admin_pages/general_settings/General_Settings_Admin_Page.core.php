@@ -1,11 +1,10 @@
 <?php
 
 use EventEspresso\admin_pages\general_settings\AdminOptionsSettings;
-use EventEspresso\admin_pages\general_settings\OrganizationSettings;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
-use EventEspresso\core\exceptions\InvalidFormSubmissionException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\RequestInterface;
 
 /**
  * General_Settings_Admin_Page
@@ -265,7 +264,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
             'Are you sure you want to delete this State / Province?',
             'event_espresso'
         ));
-        $protocol = isset($_SERVER['HTTPS']) ? 'https://' : 'http://';
+        $protocol = is_ssl() ? 'https://' : 'http://';
         EE_Registry::$i18n_js_strings['ajax_url'] = admin_url(
             'admin-ajax.php?page=espresso_general_settings',
             $protocol
