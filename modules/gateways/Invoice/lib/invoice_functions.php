@@ -13,27 +13,28 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 function espresso_invoice_template_files($class_file)
 {
+    $files = [];
     // read our template dir and build an array of files
     $directory_handle = opendir(dirname($class_file) . '/lib/templates/css/');
-
-    /** @var RequestInterface $request */
-    $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
-
-    $files = [];
-    if ($directory_handle) { //if we managed to open the directory
+    //if we managed to open the directory
+    if ($directory_handle) {
+        /** @var RequestInterface $request */
+        $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+        $skip = [
+            '.',
+            '..',
+            '.DS_Store',
+            '.svn',
+            'images',
+            'index.php',
+            'print',
+            basename($request->getServerParam('PHP_SELF')),
+        ];
         // loop through all of the files
         while (false !== ($fname = readdir($directory_handle))) {
             // if the file is not this file, and does not start with a '.' or '..',
             // then store it for later display
-            if ($fname !== '.'
-                && $fname !== 'index.php'
-                && $fname !== '..'
-                && $fname !== '.svn'
-                && $fname !== basename($request->getServerParam('PHP_SELF'))
-                && $fname !== '.DS_Store'
-                && $fname !== 'images'
-                && $fname !== 'print') {
-                // store the filename
+            if (! in_array($fname, $skip, true)) {
                 $files[] = $fname;
             }
         }
@@ -57,7 +58,6 @@ function espresso_invoice_is_selected($input_item, $selected = '')
 {
     if ($input_item === $selected) {
         return 'selected="selected"';
-    } else {
-        return '';
     }
+    return '';
 }
