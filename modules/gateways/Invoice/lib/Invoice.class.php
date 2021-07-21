@@ -281,10 +281,10 @@ class Invoice
             echo $content;
             exit(0);
         }
-        $invoice_name = $template_args['organization'] . ' ' . esc_html__(
-                'Invoice #',
-                'event_espresso'
-            ) . $template_args['registration_code'] . esc_html__(' for ', 'event_espresso') . $template_args['name'];
+        $invoice_name = $template_args['organization'] . ' ';
+        $invoice_name .= esc_html__('Invoice #', 'event_espresso');
+        $invoice_name .= $template_args['registration_code'];
+        $invoice_name .= esc_html__(' for ', 'event_espresso') . $template_args['name'];
         $invoice_name = str_replace(' ', '_', $invoice_name);
         // Create the PDF
         if ($request->requestParamIsSet('html')) {
