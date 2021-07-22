@@ -15,7 +15,9 @@
 class espresso_events_Venues_Hooks extends EE_Admin_Hooks
 {
 
-
+    /**
+     * @var EE_Event
+     */
     protected $_event;
 
 
@@ -27,8 +29,14 @@ class espresso_events_Venues_Hooks extends EE_Admin_Hooks
 
     protected function _set_hooks_properties()
     {
+
         $this->_name = 'venues';
 
+        if (EE_Config::instance()->admin->useAdvancedEditor()) {
+            $this->_metaboxes = [];
+            $this->_scripts_styles = [];
+            return;
+        }
         $this->_metaboxes = array(
             0 => array(
                 'page_route' => array('edit', 'create_new'),
@@ -37,7 +45,7 @@ class espresso_events_Venues_Hooks extends EE_Admin_Hooks
                 'priority'   => 'high',
                 'context'    => 'normal',
             ),
-        );/**/
+        );
 
         $this->_scripts_styles = array(
             'registers' => array(
