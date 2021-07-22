@@ -34,6 +34,7 @@ class Venues extends GraphQLData
                     dbId
                     name
                     stateName
+                    thumbnail
                     zip
                     __typename
                 }
