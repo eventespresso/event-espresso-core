@@ -195,6 +195,13 @@ class EEM_Event extends EEM_CPT_Base
                     esc_html__('Foreign key to Event ID from Event Meta table', 'event_espresso'),
                     false
                 ),
+                'VNU_ID' => new EE_Foreign_Key_Int_Field(
+                    'VNU_ID',
+                    __('Venue ID', 'event_espresso'),
+                    false,
+                    0,
+                    'Venue'
+                ),
                 'EVT_display_desc'                => new EE_Boolean_Field(
                     'EVT_display_desc',
                     esc_html__('Display Description Flag', 'event_espresso'),
@@ -281,7 +288,7 @@ class EEM_Event extends EEM_CPT_Base
             'Registration'           => new EE_Has_Many_Relation(),
             'Term_Relationship'      => new EE_Has_Many_Relation(),
             'Term_Taxonomy'          => new EE_HABTM_Relation('Term_Relationship'),
-            'Venue'                  => new EE_HABTM_Relation('Event_Venue'),
+            'Venue'                  => new EE_Belongs_To_Relation(),
             'WP_User'                => new EE_Belongs_To_Relation(),
         );
         // this model is generally available for reading
