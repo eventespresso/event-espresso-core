@@ -671,13 +671,18 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     /**
      * Adds a venue to this event
      *
-     * @param EE_Venue /int $venue_id_or_obj
+     * @param int|EE_Venue /int $venue_id_or_obj
      * @return EE_Base_Class|EE_Venue
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function add_venue($venue_id_or_obj)
+    public function add_venue($venue_id_or_obj): EE_Venue
     {
-        return $this->_add_relation_to($venue_id_or_obj, 'Venue');
+        $VNU_ID = $venue_id_or_obj instanceof EE_Venue ? $venue_id_or_obj->ID() : $venue_id_or_obj;
+        $this->set('VNU_ID', $VNU_ID);
+        return $venue_id_or_obj instanceof EE_Venue
+            ? $venue_id_or_obj
+            : $this->get_first_related('Venue');
     }
 
 
@@ -687,23 +692,57 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      * @param EE_Venue /int $venue_id_or_obj
      * @return EE_Base_Class|EE_Venue
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function remove_venue($venue_id_or_obj)
+    public function remove_venue($venue_id_or_obj): EE_Venue
     {
-        return $this->_remove_relation_to($venue_id_or_obj, 'Venue');
+        $venue = $venue_id_or_obj instanceof EE_Venue
+            ? $venue_id_or_obj
+            : $this->get_first_related('Venue');
+        $this->set('VNU_ID', 0);
+        return $venue;
     }
 
 
     /**
-     * Gets all the venues related ot the event. May provide additional $query_params if desired
+     * Gets the venue related to the event. May provide additional $query_params if desired
      *
      * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @return int
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function venue_ID(array $query_params = array()): int
+    {
+        $venue = $this->get_first_related('Venue', $query_params);
+        return $venue instanceof EE_Venue ? $venue->ID() : 0;
+    }
+
+
+    /**
+     * Gets the venue related to the event. May provide additional $query_params if desired
+     *
+     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @return EE_Base_Class|EE_Venue
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function venue(array $query_params = array())
+    {
+        return $this->get_first_related('Venue', $query_params);
+    }
+
+
+    /**
+     * @param array $query_params
      * @return EE_Base_Class[]|EE_Venue[]
      * @throws EE_Error
+     * @throws ReflectionException
+     * @deprecated $VID:$
      */
-    public function venues($query_params = array())
+    public function venues(array $query_params = array()): array
     {
-        return $this->get_many_related('Venue', $query_params);
+        return (array) $this->venue($query_params);
     }
 
 
