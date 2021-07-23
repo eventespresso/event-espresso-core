@@ -76,6 +76,7 @@ $generated_i18n_strings = array(
 	__( 'Select Datetime', 'event_espresso' ),
 
 	// Reference: domains/core/admin/blocks/src/event-attendees/controls/SelectEvent.tsx:22
+	// Reference: domains/core/admin/blocks/src/event/controls/SelectEvent.tsx:21
 	__( 'Select Event', 'event_espresso' ),
 
 	// Reference: domains/core/admin/blocks/src/event-attendees/controls/SelectOrderBy.tsx:11
@@ -115,6 +116,7 @@ $generated_i18n_strings = array(
 	__( 'Displays a list of people that have registered for the specified event', 'event_espresso' ),
 
 	// Reference: domains/core/admin/blocks/src/event-attendees/index.tsx:14
+	// Reference: domains/core/admin/blocks/src/event/index.tsx:11
 	__( 'event', 'event_espresso' ),
 
 	// Reference: domains/core/admin/blocks/src/event-attendees/index.tsx:14
@@ -123,13 +125,57 @@ $generated_i18n_strings = array(
 	// Reference: domains/core/admin/blocks/src/event-attendees/index.tsx:14
 	__( 'list', 'event_espresso' ),
 
-	// Reference: domains/core/admin/blocks/src/services/utils.ts:17
-	__( 'Error', 'event_espresso' ),
+	// Reference: domains/core/admin/blocks/src/event/DisplayField.tsx:44
+	__( 'An unknown error occurred while fetching event details.', 'event_espresso' ),
 
+	// Reference: domains/core/admin/blocks/src/event/controls/SelectField.tsx:14
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:75
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/details/useBulkEditFormConfig.ts:49
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:40
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:91
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:49
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:40
+	__( 'Name', 'event_espresso' ),
+
+	// Reference: domains/core/admin/blocks/src/event/controls/SelectField.tsx:18
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:80
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/details/useBulkEditFormConfig.ts:55
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:96
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:55
+	// Reference: packages/tpc/src/components/table/useHeaderRowGenerator.ts:47
+	__( 'Description', 'event_espresso' ),
+
+	// Reference: domains/core/admin/blocks/src/event/controls/SelectField.tsx:22
+	__( 'Short description', 'event_espresso' ),
+
+	// Reference: domains/core/admin/blocks/src/event/controls/SelectField.tsx:34
+	__( 'Select Field', 'event_espresso' ),
+
+	// Reference: domains/core/admin/blocks/src/event/controls/SelectField.tsx:9
 	// Reference: domains/core/admin/blocks/src/services/utils.ts:24
 	// Reference: packages/ui-components/src/SimpleEntityList/EntityTemplate.tsx:16
 	// Reference: packages/utils/src/list/index.ts:14
 	__( 'Select…', 'event_espresso' ),
+
+	// Reference: domains/core/admin/blocks/src/event/controls/index.tsx:18
+	// Reference: packages/form-builder/src/FormElement/Tabs/FormElementTabs.tsx:22
+	// Reference: packages/form-builder/src/FormSection/Tabs/FormSectionTabs.tsx:21
+	__( 'Settings', 'event_espresso' ),
+
+	// Reference: domains/core/admin/blocks/src/event/controls/index.tsx:22
+	__( 'Style', 'event_espresso' ),
+
+	// Reference: domains/core/admin/blocks/src/event/index.tsx:11
+	__( 'field', 'event_espresso' ),
+
+	// Reference: domains/core/admin/blocks/src/event/index.tsx:7
+	__( 'Event Field', 'event_espresso' ),
+
+	// Reference: domains/core/admin/blocks/src/event/index.tsx:8
+	__( 'Displays the selected field of an event', 'event_espresso' ),
+
+	// Reference: domains/core/admin/blocks/src/services/utils.ts:17
+	__( 'Error', 'event_espresso' ),
 
 	// Reference: domains/core/admin/blocks/src/services/utils.ts:9
 	__( 'Loading…', 'event_espresso' ),
@@ -223,21 +269,6 @@ $generated_i18n_strings = array(
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:87
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:45
 	__( 'Basics', 'event_espresso' ),
-
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:75
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/details/useBulkEditFormConfig.ts:49
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:40
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:91
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:49
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:40
-	__( 'Name', 'event_espresso' ),
-
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:80
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/details/useBulkEditFormConfig.ts:55
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:96
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:55
-	// Reference: packages/tpc/src/components/table/useHeaderRowGenerator.ts:47
-	__( 'Description', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:88
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/details/useBulkEditFormConfig.ts:63
@@ -1169,10 +1200,6 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/FormElement/Tabs/FieldOptions.tsx:96
 	__( 'add new option', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/FormElement/Tabs/FormElementTabs.tsx:22
-	// Reference: packages/form-builder/src/FormSection/Tabs/FormSectionTabs.tsx:21
-	__( 'Settings', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/FormElement/Tabs/FormElementTabs.tsx:26
 	// Reference: packages/form-builder/src/FormSection/Tabs/FormSectionTabs.tsx:25
