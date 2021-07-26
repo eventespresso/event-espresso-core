@@ -35,10 +35,14 @@ class Venues extends GraphQLData
                     countryName
                     dbId
                     name
+                    description
+                    googleMapLink
                     phone
+                    shortDescription
                     stateAbbrev
                     stateName
                     thumbnail
+                    url
                     zip
                     __typename
                 }
