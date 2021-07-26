@@ -136,6 +136,12 @@ class Venue extends TypeBase
                 'state_name',
                 esc_html__('Venue state name', 'event_espresso')
             ),
+            new GraphQLOutputField(
+                'stateAbbrev',
+                'String',
+                'state_abbrev',
+                esc_html__('Venue state abbreviation', 'event_espresso')
+            ),
             new GraphQLInputField(
                 'state',
                 'Int',
@@ -153,6 +159,12 @@ class Venue extends TypeBase
                 'String',
                 'country_name',
                 esc_html__('Venue country name', 'event_espresso')
+            ),
+            new GraphQLOutputField(
+                'countryISO',
+                'String',
+                'country_ID',
+                esc_html__('Venue Country ISO Code', 'event_espresso')
             ),
             new GraphQLInputField(
                 'country',
@@ -255,6 +267,6 @@ class Venue extends TypeBase
      */
     public function getThumbnail(EE_Venue $venue, array $args, AppContext $context, ResolveInfo $info): string
     {
-        return get_the_post_thumbnail($venue->ID(), 'medium');
+        return wp_get_attachment_url(get_post_thumbnail_id($venue->ID()));
     }
 }

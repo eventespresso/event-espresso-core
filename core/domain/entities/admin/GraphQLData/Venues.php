@@ -29,10 +29,14 @@ class Venues extends GraphQLData
                     address
                     address2
                     cacheId
+                    capacity
                     city
+                    countryISO
                     countryName
                     dbId
                     name
+                    phone
+                    stateAbbrev
                     stateName
                     thumbnail
                     zip
