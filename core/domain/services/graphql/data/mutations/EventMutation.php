@@ -123,10 +123,6 @@ class EventMutation
      */
     public static function setEventVenue(EE_Event $entity, int $venue)
     {
-        $relationName = 'Venue';
-        // Remove the existing venues
-        $entity->_remove_relations($relationName);
-
         if ($venue) {
             $entity->add_venue($venue);
         }
