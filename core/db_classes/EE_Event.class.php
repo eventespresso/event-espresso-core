@@ -678,11 +678,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      */
     public function add_venue($venue_id_or_obj): EE_Venue
     {
-        $VNU_ID = $venue_id_or_obj instanceof EE_Venue ? $venue_id_or_obj->ID() : $venue_id_or_obj;
-        $this->set('VNU_ID', $VNU_ID);
-        return $venue_id_or_obj instanceof EE_Venue
-            ? $venue_id_or_obj
-            : $this->get_first_related('Venue');
+        return $this->_add_relation_to($venue_id_or_obj, 'Venue');
     }
 
 
@@ -696,11 +692,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      */
     public function remove_venue($venue_id_or_obj): EE_Venue
     {
-        $venue = $venue_id_or_obj instanceof EE_Venue
-            ? $venue_id_or_obj
-            : $this->get_first_related('Venue');
-        $this->set('VNU_ID', 0);
-        return $venue;
+        return $this->_remove_relation_to($venue_id_or_obj, 'Venue');
     }
 
 
