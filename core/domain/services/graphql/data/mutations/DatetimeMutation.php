@@ -48,7 +48,7 @@ class DatetimeMutation
             $args['EVT_ID'] = absint($input['eventId']);
         } elseif (! empty($input['event'])) {
             $parts = Relay::fromGlobalId(sanitize_text_field($input['event']));
-            $args['EVT_ID'] = (! empty($parts['id']) && is_int($parts['id'])) ? $parts['id'] : null;
+            $args['EVT_ID'] = ! empty($parts['id']) ? $parts['id'] : null;
         }
 
         if (array_key_exists('isPrimary', $input)) {
@@ -69,7 +69,7 @@ class DatetimeMutation
 
         if (! empty($input['parent'])) {
             $parts = Relay::fromGlobalId(sanitize_text_field($input['parent']));
-            $args['DTT_parent'] = (! empty($parts['id']) && is_int($parts['id'])) ? $parts['id'] : null;
+            $args['DTT_parent'] = ! empty($parts['id']) ? $parts['id'] : null;
         }
 
         if (array_key_exists('reserved', $input)) {
@@ -86,6 +86,11 @@ class DatetimeMutation
 
         if (! empty($input['tickets'])) {
             $args['tickets'] = array_map('sanitize_text_field', (array) $input['tickets']);
+        }
+
+        if (! empty($input['venue'])) {
+            $parts = Relay::fromGlobalId(sanitize_text_field($input['venue']));
+            $args['venue'] = ! empty($parts['id']) ? $parts['id'] : null;
         }
 
         return apply_filters(

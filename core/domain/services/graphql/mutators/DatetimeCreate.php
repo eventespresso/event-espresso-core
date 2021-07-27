@@ -43,12 +43,21 @@ class DatetimeCreate extends EntityMutator
                     unset($args['tickets']);
                 }
 
+                if (isset($args['venue'])) {
+                    $venue = $args['venue'];
+                    unset($args['venue']);
+                }
+
                 $entity = EE_Datetime::new_instance($args);
                 $id = $entity->save();
                 EntityMutator::validateResults($id);
 
                 if (! empty($tickets)) {
                     DatetimeMutation::setRelatedTickets($entity, $tickets);
+                }
+
+                if (isset($venue)) {
+                    DatetimeMutation::setVenue($entity, $venue);
                 }
 
                 do_action('AHEE__EventEspresso_core_domain_services_graphql_mutators_datetime_create', $entity, $input);
