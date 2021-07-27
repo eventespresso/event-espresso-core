@@ -363,12 +363,10 @@
 	line-height: 1.4em !important;
 }
 .ee-upcoming-events-widget-li .ee-event-datetimes-ul {
-	/*margin-left:0 !important;*/
 	padding: 10px 0;
 }
 .espresso_events .ee-event-datetimes-ul li {
  	list-style-type: none;
- 	margin: 0 0 1em;
 }
 
 
@@ -1104,24 +1102,28 @@ article .espresso_venues {
 	margin-bottom: 48px;
 }
 
-.ee-event-datetimes-ul.ee-clearfix {
+.ee-event-datetimes-ul {
     display: flex;
-    justify-content: space-between;
-    margin-block-end: 1.5rem;
-    margin-block-start: 0;
-    margin-inline: 0;
+    flex-flow: row wrap;
+    justify-content: space-around;
     margin: 0;
-    padding-inline-end: 0;
-    padding-inline-start: 0;
+    margin-inline: 0;
+    margin-block-start: 0;
+    margin-block-end: 1.5rem;
     padding: 0;
+    padding-inline: 0;
     width: 100%;
 }
 
-.ee-event-datetimes-ul.ee-clearfix .ee-event-datetimes-li {
-	float: unset;
+.ee-event-datetimes-ul .ee-event-datetimes-li {
     margin: 0;
     margin-block-end: 1rem;
-	width: 45%;
+    margin-inline-start: 1rem;
+	width: 30%;
+}
+
+.ee-event-datetimes-ul--small .ee-event-datetimes-li {
+    width: 47.5%;
 }
 
 
