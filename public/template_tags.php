@@ -491,18 +491,18 @@ if ( ! function_exists( 'espresso_list_of_event_dates' )) {
                         $inner_html .= $add_breaks ? '<br />' : '';
                     }
                     // add date
-                    $inner_html .= '<span class="dashicons dashicons-calendar"></span>';
                     $inner_html .= '<span class="ee-event-datetimes-li-daterange">';
+                    $inner_html .= '<span class="dashicons dashicons-calendar"></span>&nbsp;';
                     $inner_html .= $datetime->date_range( $date_format ) . '</span><br/>';
                     // add time
-                    $inner_html .= '<span class="dashicons dashicons-clock"></span>';
                     $inner_html .= '<span class="ee-event-datetimes-li-timerange">';
+                    $inner_html .= '<span class="dashicons dashicons-clock"></span>&nbsp;';
                     $inner_html .= $datetime->time_range( $time_format ) . '</span>';
 
                     $venue = $datetime->venue();
                     if ($venue instanceof EE_Venue) {
-                        $inner_html .= '<br /><span class="dashicons dashicons-admin-home"></span>';
-                        $inner_html .= '<span class="ee-event-datetimes-li-venue">';
+                        $inner_html .= '<br /><span class="ee-event-datetimes-li-venue">';
+                        $inner_html .= '<span class="dashicons dashicons-admin-home"></span>&nbsp;';
                         $inner_html .= '<a href="'. $venue->get_permalink() .'" ';
                         $inner_html .= 'alt="'. $venue->name() .'" target="_blank">';
                         $inner_html .= $venue->name() . '</a></span>';

@@ -1109,7 +1109,7 @@ article .espresso_venues {
     margin: 0;
     margin-inline: 0;
     margin-block-start: 0;
-    margin-block-end: 1.5rem;
+    margin-block-end: 1rem;
     padding: 0;
     padding-inline: 0;
     width: 100%;
@@ -1123,7 +1123,17 @@ article .espresso_venues {
 }
 
 .ee-event-datetimes-ul--small .ee-event-datetimes-li {
-    width: 47.5%;
+    width: 45%;
+}
+
+.ee-event-datetimes-ul .ee-event-datetimes-li span {
+    display: inline-block;
+    margin-block: .25rem;
+}
+
+.ee-event-datetimes-ul .ee-event-datetimes-li .dashicons {
+    position: relative;
+    top: -1px;
 }
 
 
