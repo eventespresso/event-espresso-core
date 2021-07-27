@@ -123,4 +123,21 @@ class DatetimeMutation
             }
         }
     }
+
+
+    /**
+     * Sets the venue for the datetime.
+     *
+     * @param EE_Datetime $entity The datetime instance.
+     * @param int      $venue  The venue ID
+     * @throws EE_Error
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     */
+    public static function setVenue(EE_Datetime $entity, int $venue)
+    {
+        $entity->add_venue($venue);
+    }
 }

@@ -47,11 +47,20 @@ class DatetimeUpdate extends EntityMutator
                     unset($args['tickets']);
                 }
 
+                if (isset($args['venue'])) {
+                    $venue = $args['venue'];
+                    unset($args['venue']);
+                }
+
                 // Update the entity
                 $entity->save($args);
 
                 if (! empty($tickets)) {
                     DatetimeMutation::setRelatedTickets($entity, $tickets);
+                }
+
+                if (isset($venue)) {
+                    DatetimeMutation::setVenue($entity, $venue);
                 }
 
                 do_action('AHEE__EventEspresso_core_domain_services_graphql_mutators_datetime_update', $entity, $input);

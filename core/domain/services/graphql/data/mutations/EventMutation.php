@@ -123,8 +123,6 @@ class EventMutation
      */
     public static function setEventVenue(EE_Event $entity, int $venue)
     {
-        if ($venue) {
-            $entity->add_venue($venue);
-        }
+        $entity->add_venue($venue);
     }
 }

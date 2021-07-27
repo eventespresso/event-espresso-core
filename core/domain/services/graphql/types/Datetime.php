@@ -20,6 +20,7 @@ use EventEspresso\core\domain\services\graphql\mutators\DatetimeBulkUpdate;
 use EventEspresso\core\domain\services\graphql\mutators\BulkEntityDelete;
 use EventEspresso\core\domain\services\graphql\mutators\EntityReorder;
 use GraphQL\Error\UserError;
+use GraphQLRelay\Relay;
 use InvalidArgumentException;
 use ReflectionException;
 use WPGraphQL\AppContext;
@@ -218,6 +219,20 @@ class Datetime extends TypeBase
                     esc_html__('Globally unique IDs of the tickets related to the datetime.', 'event_espresso'),
                     esc_html__('Ignored if empty.', 'event_espresso')
                 )
+            ),
+            new GraphQLField(
+                'venue',
+                'String',
+                null,
+                esc_html__('Datetime venue ID', 'event_espresso'),
+                null,
+                function (EE_Datetime $source) {
+                    $venue_ID = $source->venue_ID();
+                    return $venue_ID
+                        // Since venue is a CPT, $type will be 'post'
+                        ? Relay::toGlobalId('post', $venue_ID)
+                        : null;
+                }
             ),
         ];
 
