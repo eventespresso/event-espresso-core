@@ -1104,10 +1104,27 @@ article .espresso_venues {
 	margin-bottom: 48px;
 }
 
-.ee-clearfix .ee-event-datetimes-li {
-	float: left;
-	width: 50%;
+.ee-event-datetimes-ul.ee-clearfix {
+    display: flex;
+    justify-content: space-between;
+    margin-block-end: 1.5rem;
+    margin-block-start: 0;
+    margin-inline: 0;
+    margin: 0;
+    padding-inline-end: 0;
+    padding-inline-start: 0;
+    padding: 0;
+    width: 100%;
 }
+
+.ee-event-datetimes-ul.ee-clearfix .ee-event-datetimes-li {
+	float: unset;
+    margin: 0;
+    margin-block-end: 1rem;
+	width: 45%;
+}
+
+
 
 /******************* iCal ****************** */
 

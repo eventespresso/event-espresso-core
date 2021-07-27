@@ -464,7 +464,7 @@ if ( ! function_exists( 'espresso_list_of_event_dates' )) {
             'FHEE__espresso_list_of_event_dates__arguments',
             [ $EVT_ID, $date_format, $time_format, $echo, $show_expired, $format, $add_breaks, $limit ]
         );
-        list($EVT_ID, $date_format, $time_format, $echo, $show_expired, $format, $add_breaks, $limit) = $arguments;
+        [$EVT_ID, $date_format, $time_format, $echo, $show_expired, $format, $add_breaks, $limit] = $arguments;
 	    $datetimes = EEH_Event_View::get_all_date_obj( $EVT_ID, $show_expired, FALSE, $limit );
 		$date_format = ! empty( $date_format ) ? $date_format : get_option( 'date_format' );
 		$time_format = ! empty( $time_format ) ? $time_format : get_option( 'time_format' );
@@ -489,15 +489,24 @@ if ( ! function_exists( 'espresso_list_of_event_dates' )) {
                     }
                     // add date
                     $inner_html .= '<span class="dashicons dashicons-calendar"></span>';
-                    $inner_html .= '</span><span class="ee-event-datetimes-li-daterange">';
+                    $inner_html .= '<span class="ee-event-datetimes-li-daterange">';
                     $inner_html .= $datetime->date_range( $date_format ) . '</span><br/>';
                     // add time
                     $inner_html .= '<span class="dashicons dashicons-clock"></span>';
                     $inner_html .= '<span class="ee-event-datetimes-li-timerange">';
                     $inner_html .= $datetime->time_range( $time_format ) . '</span>';
+
+                    $venue = $datetime->venue();
+                    if ($venue instanceof EE_Venue) {
+                        $inner_html .= '<br /><span class="dashicons dashicons-admin-home"></span>';
+                        $inner_html .= '<span class="ee-event-datetimes-li-venue">';
+                        $inner_html .= '<a href="'. $venue->get_permalink() .'" ';
+                        $inner_html .= 'alt="'. $venue->name() .'" target="_blank">';
+                        $inner_html .= $venue->name() . '</a></span>';
+                    }
                     if (! empty( $datetime_description )) {
                         $inner_html .= $add_breaks ? '<br />' : '';
-                        $inner_html .= ' - ' . $datetime_description;
+                        $inner_html .= $datetime_description;
                     }
                     $inner_html = apply_filters(
                         'FHEE__espresso_list_of_event_dates__datetime_html',
