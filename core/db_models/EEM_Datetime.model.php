@@ -51,6 +51,13 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
                     0,
                     'Event'
                 ),
+                'VNU_ID' => new EE_Foreign_Key_Int_Field(
+                    'VNU_ID',
+                    __('Venue ID', 'event_espresso'),
+                    false,
+                    0,
+                    'Venue'
+                ),
                 'DTT_name'        => new EE_Plain_Text_Field(
                     'DTT_name',
                     esc_html__('Datetime Name', 'event_espresso'),
@@ -126,6 +133,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
             'Event'           => new EE_Belongs_To_Relation(),
             'Checkin'         => new EE_Has_Many_Relation(),
             'Datetime_Ticket' => new EE_Has_Many_Relation(),
+            'Venue'           => new EE_Belongs_To_Relation(),
         ];
         $path_to_event_model           = 'Event';
         $this->model_chain_to_password = $path_to_event_model;

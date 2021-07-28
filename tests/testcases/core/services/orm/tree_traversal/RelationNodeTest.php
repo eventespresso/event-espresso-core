@@ -5,6 +5,7 @@ namespace EventEspresso\core\services\orm\tree_traversal;
 use EE_Error;
 use EE_UnitTestCase;
 use EEM_Event_Venue;
+use EEM_Registration_Payment;
 use EEM_Term_Relationship;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -81,31 +82,31 @@ class RelationNodeTest extends EE_UnitTestCase
      */
     public function testVisitHABTM()
     {
-        $e = $this->new_model_obj_with_dependencies('Event');
-        $v = $this->new_model_obj_with_dependencies('Venue');
-        $ev = $this->new_model_obj_with_dependencies('Event_Venue',
+        $reg = $this->new_model_obj_with_dependencies('Registration');
+        $payment = $this->new_model_obj_with_dependencies('Payment');
+        $date_payment = $this->new_model_obj_with_dependencies('Registration_Payment',
             [
-                'EVT_ID' => $e->ID(),
-                'VNU_ID' => $v->ID()
+                'REG_ID' => $reg->ID(),
+                'PAY_ID' => $payment->ID()
             ]
         );
 
-        $e_node = new RelationNode($e->ID(), $e->get_model(), EEM_Event_Venue::instance());
-        $e_node->visit(2);
-        $tree = $e_node->toArray();
+        $node = new RelationNode($reg->ID(), $reg->get_model(), EEM_Registration_Payment::instance());
+        $node->visit(2);
+        $tree = $node->toArray();
         $this->assertEquals(1, $tree['count']);
         $this->assertNotEmpty($tree['objs']);
-        $this->assertArrayHasKey($ev->ID(), $tree['objs']);
-        $this->assertEquals($ev->ID(), $tree['objs'][$ev->ID()]['id']);
+        $this->assertArrayHasKey($date_payment->ID(), $tree['objs']);
+        $this->assertEquals($date_payment->ID(), $tree['objs'][ $date_payment->ID()]['id']);
         $this->assertEquals(true, $tree['complete']);
     }
 
     public function testSerializesSmall()
     {
-        $e = $this->new_model_obj_with_dependencies('Event');
-        $e_node = new RelationNode($e->ID(), $e->get_model(), EEM_Event_Venue::instance());
+        $reg = $this->new_model_obj_with_dependencies('Registration');
+        $node = new RelationNode($reg->ID(), $reg->get_model(), EEM_Registration_Payment::instance());
         // echo serialize($e_node);
-        $this->assertLessThanOrEqual(202, strlen(serialize($e_node)));
+        $this->assertLessThanOrEqual(256, strlen(serialize($node)));
     }
 }
 // End of file RelationNodeTest.php

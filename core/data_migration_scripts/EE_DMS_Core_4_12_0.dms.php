@@ -3,6 +3,21 @@
 use EventEspresso\core\services\database\TableAnalysis;
 use EventEspresso\core\services\database\TableManager;
 
+// make sure we have all the stages loaded too
+// unfortunately, this needs to be done upon INCLUSION of this file,
+// instead of construction, because it only gets constructed on first page load
+// (all other times it gets resurrected from a wordpress option)
+$stages            = glob(EE_CORE . 'data_migration_scripts/4_12_0_stages/*');
+$class_to_filepath = [];
+foreach ($stages as $filepath) {
+    $matches = [];
+    preg_match('~4_12_0_stages/(.*).dmsstage.php~', $filepath, $matches);
+    $class_to_filepath[ $matches[1] ] = $filepath;
+}
+// give addons a chance to autoload their stages too
+$class_to_filepath = apply_filters('FHEE__EE_DMS_4_12_0__autoloaded_stages', $class_to_filepath);
+EEH_Autoloader::register_autoloader($class_to_filepath);
+
 /**
  * Class EE_DMS_Core_4_12_0
  *
@@ -28,7 +43,7 @@ class EE_DMS_Core_4_12_0 extends EE_Data_Migration_Script_Base
         $this->_pretty_name      = esc_html__("Data Update to Event Espresso 4.12.0", "event_espresso");
         $this->_priority         = 10;
         $this->_migration_stages = [
-
+            new EE_DMS_4_12_0_Event_Venues(),
         ];
         parent::__construct($table_manager, $table_analysis);
     }
@@ -40,7 +55,7 @@ class EE_DMS_Core_4_12_0 extends EE_Data_Migration_Script_Base
      * @param array $version_array
      * @return bool
      */
-    public function can_migrate_from_version($version_array)
+    public function can_migrate_from_version($version_array): bool
     {
         $version_string = $version_array['Core'];
         return $version_string
@@ -54,7 +69,7 @@ class EE_DMS_Core_4_12_0 extends EE_Data_Migration_Script_Base
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function schema_changes_before_migration()
+    public function schema_changes_before_migration(): bool
     {
         require_once EE_HELPERS . 'EEH_Activation.helper.php';
 
@@ -143,6 +158,7 @@ class EE_DMS_Core_4_12_0 extends EE_Data_Migration_Script_Base
         $table_name = 'esp_datetime';
         $sql        = "DTT_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 				EVT_ID bigint(20) unsigned NOT NULL,
+			    VNU_ID bigint(20) unsigned NOT NULL DEFAULT 0,
 				DTT_name varchar(255) NOT NULL DEFAULT '',
 				DTT_description text NOT NULL,
 				DTT_EVT_start datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -158,7 +174,7 @@ class EE_DMS_Core_4_12_0 extends EE_Data_Migration_Script_Base
 				KEY DTT_EVT_start (DTT_EVT_start),
 				KEY EVT_ID (EVT_ID),
 				KEY DTT_is_primary (DTT_is_primary)";
-        $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
+        $this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
 
         $table_name = "esp_datetime_ticket";
         $sql        = "DTK_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -181,9 +197,10 @@ class EE_DMS_Core_4_12_0 extends EE_Data_Migration_Script_Base
         $table_name = 'esp_event_meta';
         $sql        = "EVTM_ID int(10) NOT NULL AUTO_INCREMENT,
 				EVT_ID bigint(20) unsigned NOT NULL,
+			    VNU_ID bigint(20) unsigned NOT NULL DEFAULT 0,
 				EVT_display_desc tinyint(1) unsigned NOT NULL DEFAULT 1,
 				EVT_display_ticket_selector tinyint(1) unsigned NOT NULL DEFAULT 1,
-				EVT_visible_on datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+				EVT_visible_on datetime NULL DEFAULT NULL,
 				EVT_default_registration_status varchar(3),
 				EVT_phone varchar(45) DEFAULT NULL,
 				EVT_additional_limit tinyint(2) unsigned NULL,
@@ -195,7 +212,7 @@ class EE_DMS_Core_4_12_0 extends EE_Data_Migration_Script_Base
 				FSC_UUID varchar(25) DEFAULT NULL,
 				PRIMARY KEY  (EVTM_ID),
 				KEY EVT_ID (EVT_ID)";
-        $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
+        $this->_table_is_changed_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
 
         $table_name = 'esp_event_question_group';
         $sql        = "EQG_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -645,34 +662,16 @@ class EE_DMS_Core_4_12_0 extends EE_Data_Migration_Script_Base
 			KEY CNT_ISO (CNT_ISO)";
         $this->_table_has_not_changed_since_previous($table_name, $sql, 'ENGINE=InnoDB');
 
-        $this->insert_default_data();
-        return true;
-    }
-
-
-    /**
-     * Inserts default data on new installs
-     *
-     * @throws EE_Error
-     * @throws ReflectionException
-     * @since 4.10.0.p
-     */
-    public function insert_default_data()
-    {
         $this->previous_dms->insert_default_data();
+        return true;
     }
 
 
     /**
      * @return boolean
      */
-    public function schema_changes_after_migration()
+    public function schema_changes_after_migration(): bool
     {
         return true;
-    }
-
-
-    public function migration_page_hooks()
-    {
     }
 }

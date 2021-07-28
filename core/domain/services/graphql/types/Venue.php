@@ -2,6 +2,8 @@
 
 namespace EventEspresso\core\domain\services\graphql\types;
 
+use EE_Error;
+use EE_Venue;
 use EEM_Venue;
 use EventEspresso\core\services\graphql\fields\GraphQLFieldInterface;
 use EventEspresso\core\services\graphql\types\TypeBase;
@@ -9,6 +11,9 @@ use EventEspresso\core\services\graphql\fields\GraphQLField;
 use EventEspresso\core\services\graphql\fields\GraphQLOutputField;
 use EventEspresso\core\services\graphql\fields\GraphQLInputField;
 use EventEspresso\core\domain\services\graphql\mutators\VenueUpdate;
+use GraphQL\Type\Definition\ResolveInfo;
+use ReflectionException;
+use WPGraphQL\AppContext;
 
 /**
  * Class Venue
@@ -131,6 +136,12 @@ class Venue extends TypeBase
                 'state_name',
                 esc_html__('Venue state name', 'event_espresso')
             ),
+            new GraphQLOutputField(
+                'stateAbbrev',
+                'String',
+                'state_abbrev',
+                esc_html__('Venue state abbreviation', 'event_espresso')
+            ),
             new GraphQLInputField(
                 'state',
                 'Int',
@@ -148,6 +159,12 @@ class Venue extends TypeBase
                 'String',
                 'country_name',
                 esc_html__('Venue country name', 'event_espresso')
+            ),
+            new GraphQLOutputField(
+                'countryISO',
+                'String',
+                'country_ID',
+                esc_html__('Venue Country ISO Code', 'event_espresso')
             ),
             new GraphQLInputField(
                 'country',
@@ -204,6 +221,14 @@ class Venue extends TypeBase
                 'enable_for_gmap',
                 esc_html__('Show Google Map?', 'event_espresso')
             ),
+            new GraphQLOutputField(
+                'thumbnail',
+                'String',
+                'thumbnail',
+                esc_html__('Venue Thumbnail', 'event_espresso'),
+                null,
+                [$this, 'getThumbnail']
+            ),
         ];
 
         return apply_filters(
@@ -228,5 +253,20 @@ class Venue extends TypeBase
             10,
             6
         );
+    }
+
+
+    /**
+     * @param EE_Venue    $venue
+     * @param array       $args
+     * @param AppContext  $context
+     * @param ResolveInfo $info
+     * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function getThumbnail(EE_Venue $venue, array $args, AppContext $context, ResolveInfo $info): string
+    {
+        return wp_get_attachment_url(get_post_thumbnail_id($venue->ID()));
     }
 }

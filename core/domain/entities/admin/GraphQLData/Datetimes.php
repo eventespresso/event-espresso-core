@@ -44,6 +44,7 @@ class Datetimes extends GraphQLData
                     sold
                     status
                     startDate
+                    venue
                     __typename
                 }
                 __typename
