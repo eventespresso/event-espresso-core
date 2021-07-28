@@ -200,7 +200,7 @@ class Read_Test extends EE_REST_TestCase
             $result
         );
         $this->assertArrayHasKey(
-            'venues',
+            'venue',
             $result
         );
     }
@@ -521,12 +521,12 @@ class Read_Test extends EE_REST_TestCase
                                     'single' => true,
                                 ),
                         ),
-                    'https://api.eventespresso.com/venues'                  =>
+                    'https://api.eventespresso.com/venue'                  =>
                         array(
                             0 =>
                                 array(
-                                    'href'   => rest_url( '/ee/v4.8.29/events/' . $event_id . '/venues'),
-                                    'single' => false,
+                                    'href'   => rest_url( '/ee/v4.8.29/events/' . $event_id . '/venue'),
+                                    'single' => true,
                                 ),
                         ),
                     'https://api.eventespresso.com/term_taxonomies'         =>
@@ -634,7 +634,8 @@ class Read_Test extends EE_REST_TestCase
                                 ),
                         ),
                 ),
-                '_protected' => array()
+                '_protected' => array(),
+                'VNU_ID' => $event->get('VNU_ID')
             ),
             $result
         );

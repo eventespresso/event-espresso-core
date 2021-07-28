@@ -98,8 +98,9 @@ class EventMutation
         }
 
         if (array_key_exists('venue', $input)) {
-            $parts = Relay::fromGlobalId(sanitize_text_field($input['venue']));
-            $args['venue'] = ! empty($parts['id']) ? $parts['id'] : 0;
+            $venue_id = sanitize_text_field($input['venue']);
+            $parts = Relay::fromGlobalId($venue_id);
+            $args['venue'] = ! empty($parts['id']) ? $parts['id'] : $venue_id;
         }
 
         return apply_filters(
@@ -123,11 +124,9 @@ class EventMutation
      */
     public static function setEventVenue(EE_Event $entity, int $venue)
     {
-        $relationName = 'Venue';
-        // Remove the existing venues
-        $entity->_remove_relations($relationName);
-
-        if ($venue) {
+        if (empty($venue)) {
+            $entity->remove_venue($venue);
+        } else {
             $entity->add_venue($venue);
         }
     }

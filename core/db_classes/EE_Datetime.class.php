@@ -1321,6 +1321,66 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
     }
 
 
+    /**
+     * Adds a venue to this event
+     *
+     * @param int|EE_Venue /int $venue_id_or_obj
+     * @return EE_Base_Class|EE_Venue
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function add_venue($venue_id_or_obj): EE_Venue
+    {
+        return $this->_add_relation_to($venue_id_or_obj, 'Venue');
+    }
+
+
+    /**
+     * Removes a venue from the event
+     *
+     * @param EE_Venue /int $venue_id_or_obj
+     * @return EE_Base_Class|EE_Venue
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function remove_venue($venue_id_or_obj): EE_Venue
+    {
+        $venue_id_or_obj = ! empty($venue_id_or_obj) ? $venue_id_or_obj : $this->venue();
+        return $this->_remove_relation_to($venue_id_or_obj, 'Venue');
+    }
+
+
+    /**
+     * Gets the venue related to the event. May provide additional $query_params if desired
+     *
+     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @return int
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function venue_ID(array $query_params = []): int
+    {
+        $venue = $this->get_first_related('Venue', $query_params);
+        return $venue instanceof EE_Venue
+            ? $venue->ID()
+            : 0;
+    }
+
+
+    /**
+     * Gets the venue related to the event. May provide additional $query_params if desired
+     *
+     * @param array $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @return EE_Base_Class|EE_Venue
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function venue(array $query_params = [])
+    {
+        return $this->get_first_related('Venue', $query_params);
+    }
+
+
     /*******************************************************************
      ***********************  DEPRECATED METHODS  **********************
      *******************************************************************/

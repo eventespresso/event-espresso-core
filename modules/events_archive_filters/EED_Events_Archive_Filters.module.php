@@ -264,14 +264,14 @@ class EED_Events_Archive_Filters extends EED_Module
 
 
     /**
-     *    posts_join_for_orderby
-     *    usage:  $SQL .= EED_Events_Archive_Filters::posts_join_for_orderby( $orderby_params );
+     * usage:  $SQL .= EED_Events_Archive_Filters::posts_join_for_orderby( $orderby_params );
      *
-     * @access    public
-     * @param    array $orderby_params
-     * @return    string
+     * @param array $orderby_params
+     * @return  string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public static function posts_join_for_orderby($orderby_params = array())
+    public static function posts_join_for_orderby(array $orderby_params = array()): string
     {
         global $wpdb;
         $SQL = '';
@@ -288,21 +288,15 @@ class EED_Events_Archive_Filters extends EED_Module
                             . EEM_Ticket::instance()->table() . '.TKT_ID )';
                     break;
 
-                case 'venue_title':
                 case 'city':
-                    $SQL .= ' LEFT JOIN ' . EEM_Event_Venue::instance()->table() . ' ON (' . $wpdb->posts . '.ID = '
-                            . EEM_Event_Venue::instance()->table() . '.EVT_ID )';
-                    $SQL .= ' LEFT JOIN ' . EEM_Venue::instance()->table() . ' ON ('
-                            . EEM_Event_Venue::instance()->table() . '.VNU_ID = '
-                            . EEM_Venue::instance()->table() . '.VNU_ID )';
-                    break;
-
                 case 'state':
-                    $SQL .= ' LEFT JOIN ' . EEM_Event_Venue::instance()->table() . ' ON (' . $wpdb->posts . '.ID = '
-                            . EEM_Event_Venue::instance()->table() . '.EVT_ID )';
-                    $SQL .= ' LEFT JOIN ' . EEM_Event_Venue::instance()->second_table() . ' ON ('
-                            . EEM_Event_Venue::instance()->table() . '.VNU_ID = '
-                            . EEM_Event_Venue::instance()->second_table() . '.VNU_ID )';
+                case 'venue_title':
+                    // grab wp_posts (event), venue, and event_meta table names
+                    $wp_posts = $wpdb->posts;
+                    $venue = EEM_Venue::instance()->table();
+                    $event_meta = EEM_Event::instance()->second_table();
+                    $SQL .= " LEFT JOIN $event_meta ON ( $wp_posts.ID = $event_meta.EVT_ID )";
+                    $SQL .= " LEFT JOIN $venue ON ( $event_meta.VNU_ID = $venue.VNU_ID )";
                     break;
             }
         }
