@@ -88,9 +88,10 @@ class DatetimeMutation
             $args['tickets'] = array_map('sanitize_text_field', (array) $input['tickets']);
         }
 
-        if (! empty($input['venue'])) {
-            $parts = Relay::fromGlobalId(sanitize_text_field($input['venue']));
-            $args['venue'] = ! empty($parts['id']) ? $parts['id'] : null;
+        if (array_key_exists('venue', $input)) {
+            $venue_id = sanitize_text_field($input['venue']);
+            $parts = Relay::fromGlobalId($venue_id);
+            $args['venue'] = ! empty($parts['id']) ? $parts['id'] : $venue_id;
         }
 
         return apply_filters(
@@ -143,6 +144,10 @@ class DatetimeMutation
      */
     public static function setVenue(EE_Datetime $entity, int $venue)
     {
-        $entity->add_venue($venue);
+        if (empty($venue)) {
+            $entity->remove_venue($venue);
+        } else {
+            $entity->add_venue($venue);
+        }
     }
 }
