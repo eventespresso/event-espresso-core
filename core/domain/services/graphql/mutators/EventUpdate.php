@@ -58,7 +58,8 @@ class EventUpdate extends EntityMutator
                 $entity = EntityMutator::getEntityFromID($model, $id);
                 $args = EventMutation::prepareFields($input);
 
-                if (isset($args['venue'])) {
+                $venue = 'NO_VENUE_SET';
+                if (array_key_exists('venue', $args)) {
                     $venue = $args['venue'];
                     unset($args['venue']);
                 }
@@ -66,7 +67,7 @@ class EventUpdate extends EntityMutator
                 // Update the entity
                 $entity->save($args);
 
-                if (isset($venue)) {
+                if ($venue !== 'NO_VENUE_SET') {
                     EventMutation::setEventVenue($entity, $venue);
                 }
 
