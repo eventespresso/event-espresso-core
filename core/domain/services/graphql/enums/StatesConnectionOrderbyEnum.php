@@ -36,7 +36,7 @@ class StatesConnectionOrderbyEnum extends EnumBase
                 'value'       => 'CNT_name',
                 'description' => esc_html__('Order by state name', 'event_espresso'),
             ],
-            'COUNRY_ISO'     => [
+            'COUNTRY_ISO'     => [
                 'value'       => 'CNT_ISO',
                 'description' => esc_html__('Order by country ISO', 'event_espresso'),
             ],
