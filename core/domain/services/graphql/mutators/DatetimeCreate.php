@@ -43,7 +43,9 @@ class DatetimeCreate extends EntityMutator
                     unset($args['tickets']);
                 }
 
-                if (isset($args['venue'])) {
+
+                $venue = 'NO_VENUE_SET';
+                if (array_key_exists('venue', $args)) {
                     $venue = $args['venue'];
                     unset($args['venue']);
                 }
@@ -56,7 +58,7 @@ class DatetimeCreate extends EntityMutator
                     DatetimeMutation::setRelatedTickets($entity, $tickets);
                 }
 
-                if (isset($venue)) {
+                if ($venue !== 'NO_VENUE_SET') {
                     DatetimeMutation::setVenue($entity, $venue);
                 }
 
