@@ -27,11 +27,13 @@ class EspressoEditor implements GQLDataDomainInterface
     {
         $newLoaders = [
             'espresso_attendee'    => new Loaders\AttendeeLoader($context),
+            'espresso_country'     => new Loaders\CountryLoader($context),
             'espresso_datetime'    => new Loaders\DatetimeLoader($context),
             'espresso_price'       => new Loaders\PriceLoader($context),
             'espresso_priceType'   => new Loaders\PriceTypeLoader($context),
             'espresso_formSection' => new Loaders\FormSectionLoader($context),
             'espresso_formElement' => new Loaders\FormElementLoader($context),
+            'espresso_state'       => new Loaders\StateLoader($context),
             'espresso_ticket'      => new Loaders\TicketLoader($context),
             'espresso_venue'       => new Loaders\VenueLoader($context),
         ];
