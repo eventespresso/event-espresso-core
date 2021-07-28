@@ -125,8 +125,25 @@ class Event_Edit_Help_Tour extends EE_Help_Tour
                     'tipLocation' => 'left',
                 ),
             ),
-
         );
+
+        if (EE_Config::instance()->admin->useAdvancedEditor()) {
+            unset(
+                // description
+                $this->_stops[30],
+                // tickets
+                $this->_stops[35],
+                // venues
+                $this->_stops[40],
+                $this->_stops[45],
+                // pricing
+                $this->_stops[50],
+                // questions
+                $this->_stops[90],
+                // reg options
+                $this->_stops[110]
+            );
+        }
     }
 
 

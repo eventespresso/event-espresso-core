@@ -954,6 +954,11 @@ class EE_UnitTestCase extends WP_UnitTestCase
                     $args[$fk->get_name()] = $fk->get_default_value();
                 }
             } elseif ($relation instanceof EE_Belongs_To_Relation) {
+                // despite Venue being added as an EE_Belongs_To_Relation to both the Event and Datetime models,
+                // let's not automagically create those dependencies because none of our tests are expecting that
+                if ($related_model_name === 'Venue' && ($model_name === 'Event' || $model_name === 'Datetime')) {
+                    continue;
+                }
                 $fk = $model->get_foreign_key_to($related_model_name);
                 if (!isset($args[$fk->get_name()])) {
                     $obj = $this->new_model_obj_with_dependencies($related_model_name);

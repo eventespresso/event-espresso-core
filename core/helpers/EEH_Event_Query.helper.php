@@ -422,7 +422,6 @@ class EEH_Event_Query
     }
 
 
-
     /**
      * @param string $SQL
      * @return string
@@ -430,32 +429,32 @@ class EEH_Event_Query
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
-    protected static function _posts_join_for_event_venue($SQL = '')
+    protected static function _posts_join_for_event_venue(string $SQL = ''): string
     {
-        // Event Venue table name
-        $event_venue_table = EEM_Event_Venue::instance()->table();
-        // generate conditions for:  Event <=> Event Venue  JOIN clause
-        $event_to_event_venue_join = EEM_Event::instance()->table() . '.ID = ';
-        $event_to_event_venue_join .= $event_venue_table . '.' . EEM_Event::instance()->primary_key_name();
+        // grab venue table PK name & event_meta table name
+        $VNU_ID = EEM_Venue::instance()->primary_key_name();
+        $event_meta = EEM_Event::instance()->second_table();
+        // generate conditions for:  Event <=> Venue  JOIN clause
+        $event_venue_join = "Venue.ID = $event_meta.$VNU_ID";
         // don't add joins if they have already been added
-        if (strpos($SQL, $event_to_event_venue_join) === false) {
-            // Venue table name
-            $venue_table = EEM_Venue::instance()->table();
-            // Venue table pk
-            $venue_table_pk = EEM_Venue::instance()->primary_key_name();
-            // Venue Meta table name
-            $venue_meta_table = EEM_Venue::instance()->second_table();
-            // generate JOIN clause for: Event <=> Event Venue
-            $venue_SQL = " LEFT JOIN $event_venue_table ON ( $event_to_event_venue_join )";
-            // generate JOIN clause for: Event Venue <=> Venue
-            $venue_SQL .= " LEFT JOIN $venue_table as Venue ON ( $event_venue_table.$venue_table_pk = Venue.ID )";
+        if (strpos($SQL, $event_venue_join) === false) {
+            global $wpdb;
+            // grab wp_posts (event), venue, and venue_meta table names
+            $wp_posts = $wpdb->posts;
+            $venue = EEM_Venue::instance()->table();
+            $venue_meta = EEM_Venue::instance()->second_table();
+            // generate JOIN clause for: Event <=> Event Meta
+            $venue_SQL = " LEFT JOIN $event_meta ON ( $wp_posts.ID = $event_meta.EVT_ID )";
+            // generate JOIN clause for: Event Meta <=> Venue
+            $venue_SQL .= " LEFT JOIN $venue AS Venue ON ( $event_venue_join )";
             // generate JOIN clause for: Venue <=> Venue Meta
-            $venue_SQL .= " LEFT JOIN $venue_meta_table ON ( Venue.ID = $venue_meta_table.$venue_table_pk )";
-            unset($event_venue_table, $event_to_event_venue_join, $venue_table, $venue_table_pk, $venue_meta_table);
+            $venue_SQL .= " LEFT JOIN $venue_meta ON ( Venue.ID = $venue_meta.$VNU_ID )";
+            unset($venue, $VNU_ID, $event_meta, $venue_meta, $event_venue_join);
             return $venue_SQL;
         }
-        unset($event_venue_table, $event_to_event_venue_join);
+        unset($VNU_ID, $event_meta, $event_venue_join);
         return '';
     }
 

@@ -48,7 +48,7 @@ class DatetimeMutation
             $args['EVT_ID'] = absint($input['eventId']);
         } elseif (! empty($input['event'])) {
             $parts = Relay::fromGlobalId(sanitize_text_field($input['event']));
-            $args['EVT_ID'] = (! empty($parts['id']) && is_int($parts['id'])) ? $parts['id'] : null;
+            $args['EVT_ID'] = ! empty($parts['id']) ? $parts['id'] : null;
         }
 
         if (array_key_exists('isPrimary', $input)) {
@@ -69,7 +69,7 @@ class DatetimeMutation
 
         if (! empty($input['parent'])) {
             $parts = Relay::fromGlobalId(sanitize_text_field($input['parent']));
-            $args['DTT_parent'] = (! empty($parts['id']) && is_int($parts['id'])) ? $parts['id'] : null;
+            $args['DTT_parent'] = ! empty($parts['id']) ? $parts['id'] : null;
         }
 
         if (array_key_exists('reserved', $input)) {
@@ -86,6 +86,12 @@ class DatetimeMutation
 
         if (! empty($input['tickets'])) {
             $args['tickets'] = array_map('sanitize_text_field', (array) $input['tickets']);
+        }
+
+        if (array_key_exists('venue', $input)) {
+            $venue_id = sanitize_text_field($input['venue']);
+            $parts = Relay::fromGlobalId($venue_id);
+            $args['venue'] = ! empty($parts['id']) ? $parts['id'] : $venue_id;
         }
 
         return apply_filters(
@@ -121,6 +127,27 @@ class DatetimeMutation
                     $relationName
                 );
             }
+        }
+    }
+
+
+    /**
+     * Sets the venue for the datetime.
+     *
+     * @param EE_Datetime $entity The datetime instance.
+     * @param int      $venue  The venue ID
+     * @throws EE_Error
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws InvalidArgumentException
+     * @throws ReflectionException
+     */
+    public static function setVenue(EE_Datetime $entity, int $venue)
+    {
+        if (empty($venue)) {
+            $entity->remove_venue($venue);
+        } else {
+            $entity->add_venue($venue);
         }
     }
 }

@@ -216,13 +216,10 @@ class Event extends TypeBase
                 esc_html__('Event venue ID', 'event_espresso'),
                 null,
                 function (EE_Event $source) {
-                    $venues = $source->venues();
-                    /** @var EE_Venue $venue */
-                    $venue = reset($venues);
-
-                    return $venue instanceof EE_Venue
+                    $venue_ID = $source->venue_ID();
+                    return $venue_ID
                     // Since venue is a CPT, $type will be 'post'
-                    ? Relay::toGlobalId('post', $venue->ID())
+                    ? Relay::toGlobalId('post', $venue_ID)
                     : null;
                 }
             ),
