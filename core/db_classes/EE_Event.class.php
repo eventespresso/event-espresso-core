@@ -692,6 +692,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      */
     public function remove_venue($venue_id_or_obj): EE_Venue
     {
+        $venue_id_or_obj = ! empty($venue_id_or_obj) ? $venue_id_or_obj : $this->venue();
         return $this->_remove_relation_to($venue_id_or_obj, 'Venue');
     }
 

@@ -1345,6 +1345,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      */
     public function remove_venue($venue_id_or_obj): EE_Venue
     {
+        $venue_id_or_obj = ! empty($venue_id_or_obj) ? $venue_id_or_obj : $this->venue();
         return $this->_remove_relation_to($venue_id_or_obj, 'Venue');
     }
 
