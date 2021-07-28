@@ -55,7 +55,7 @@ class Country extends TypeBase
             new GraphQLField(
                 'isActive',
                 'Boolean',
-                null, // 'active',
+                'is_active',
                 esc_html__(
                     'Flag that indicates if the country should appear in dropdown select lists',
                     'event_espresso'
@@ -64,13 +64,13 @@ class Country extends TypeBase
             new GraphQLField(
                 'ISO',
                 'String',
-                null, // 'ISO',
+                'ID',
                 esc_html__('Country ISO Code', 'event_espresso')
             ),
             new GraphQLField(
                 'ISO3',
                 'String',
-                null, // 'ISO3',
+                'ISO3',
                 esc_html__('Country ISO3 Code', 'event_espresso')
             ),
             new GraphQLField(

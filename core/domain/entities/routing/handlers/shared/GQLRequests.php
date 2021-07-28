@@ -180,12 +180,20 @@ class GQLRequests extends Route
             ['EEM_Attendee' => EE_Dependency_Map::load_from_cache]
         );
         $this->dependency_map->registerDependencies(
+            'EventEspresso\core\domain\services\graphql\connections\RootQueryCountriesConnection',
+            ['EEM_Country' => EE_Dependency_Map::load_from_cache]
+        );
+        $this->dependency_map->registerDependencies(
             'EventEspresso\core\domain\services\graphql\connections\RootQueryFormElementsConnection',
             ['EEM_Form_Element' => EE_Dependency_Map::load_from_cache]
         );
         $this->dependency_map->registerDependencies(
             'EventEspresso\core\domain\services\graphql\connections\RootQueryFormSectionsConnection',
             ['EEM_Form_Section' => EE_Dependency_Map::load_from_cache]
+        );
+        $this->dependency_map->registerDependencies(
+            'EventEspresso\core\domain\services\graphql\connections\RootQueryStatesConnection',
+            ['EEM_State' => EE_Dependency_Map::load_from_cache]
         );
         $this->dependency_map->registerDependencies(
             'EventEspresso\core\domain\services\graphql\connections\DatetimeTicketsConnection',

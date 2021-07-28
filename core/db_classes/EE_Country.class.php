@@ -43,6 +43,28 @@ class EE_Country extends EE_Base_Class
 
 
     /**
+     * Whether the country is active/enabled
+     *
+     * @return bool
+     */
+    public function is_active(): bool
+    {
+        return $this->get('CNT_active');
+    }
+
+
+    /**
+     * Gets the country ISO3
+     *
+     * @return string
+     */
+    public function ISO3(): string
+    {
+        return $this->get('CNT_ISO3');
+    }
+
+
+    /**
      * gets the country's currency code
      *
      * @return string
