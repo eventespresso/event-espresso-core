@@ -412,11 +412,11 @@ $generated_i18n_strings = array(
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/TicketDetailsPanel.tsx:33
 	__( 'reg list', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/Details.tsx:46
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/Details.tsx:53
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/Details.tsx:45
 	__( 'Edit description', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/Details.tsx:47
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/Details.tsx:54
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/Details.tsx:46
 	__( 'edit description…', 'event_espresso' ),
 
@@ -1030,21 +1030,24 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:88
 	__( 'Quantity', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:17
+	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:105
+	__( 'Select a Venue for the Event', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:21
 	__( 'Venue Details', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:56
-	__( 'Select from Venue Manager List', 'event_espresso' ),
+	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:38
+	__( 'unlimited space', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:67
+	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:41
+	/* translators: %d venue capacity */
+	__( 'Space for up to %d people', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:60
+	__( 'no image', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:96
 	__( 'Edit this Venue', 'event_espresso' ),
-
-	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:68
-	// Reference: packages/ui-components/src/SimpleEntityList/EntityOptionsRow/index.tsx:27
-	__( 'or', 'event_espresso' ),
-
-	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:71
-	__( 'Add new Venue', 'event_espresso' ),
 
 	// Reference: domains/core/admin/wpPluginsPage/src/exitSurvey/Popup.tsx:29
 	__( 'Do you have a moment to share why you are deactivating Event Espresso?', 'event_espresso' ),
@@ -1900,19 +1903,19 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	/* translators: %s filter name */
 	__( 'remove filter - %s', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/AddressView/AddressView.tsx:20
+	// Reference: packages/ui-components/src/Address/Address.tsx:72
 	__( 'Address:', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/AddressView/AddressView.tsx:28
+	// Reference: packages/ui-components/src/Address/Address.tsx:80
 	__( 'City:', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/AddressView/AddressView.tsx:34
+	// Reference: packages/ui-components/src/Address/Address.tsx:86
 	__( 'State:', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/AddressView/AddressView.tsx:40
+	// Reference: packages/ui-components/src/Address/Address.tsx:92
 	__( 'Country:', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/AddressView/AddressView.tsx:46
+	// Reference: packages/ui-components/src/Address/Address.tsx:98
 	__( 'Zip:', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/CalendarDateRange/CalendarDateRange.tsx:37
@@ -2078,6 +2081,9 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/ui-components/src/SimpleEntityList/EntityOptionsRow/index.tsx:23
 	__( 'Select an existing one to use as a template.', 'event_espresso' ),
 
+	// Reference: packages/ui-components/src/SimpleEntityList/EntityOptionsRow/index.tsx:27
+	__( 'or', 'event_espresso' ),
+
 	// Reference: packages/ui-components/src/SimpleEntityList/EntityOptionsRow/index.tsx:30
 	__( 'Add new and insert details manually', 'event_espresso' ),
 
@@ -2093,7 +2099,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/ui-components/src/Steps/Steps.tsx:31
 	__( 'Steps', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/TabbableText/index.tsx:19
+	// Reference: packages/ui-components/src/TabbableText/index.tsx:21
 	__( 'Click to edit…', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/TimezoneTimeInfo/Content.tsx:14
@@ -2110,6 +2116,18 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/TimezoneTimeInfo/TimezoneTimeInfo.tsx:32
 	__( 'This Date Converted To:', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/VenueSelector/VenueSelector.tsx:120
+	__( 'Add New Venue', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/VenueSelector/VenueSelector.tsx:36
+	__( '~ no venue ~', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/VenueSelector/VenueSelector.tsx:43
+	__( 'assign venue…', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/VenueSelector/VenueSelector.tsx:44
+	__( 'click to select a venue…', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/bulkEdit/BulkActions.tsx:51
 	__( 'select all', 'event_espresso' ),
