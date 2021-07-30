@@ -27,8 +27,8 @@
             <td></td>
             <td class="container" bgcolor="#FFFFFF">
                 <div class="content">
-                    <h1><?php _e('Registration Notification', 'event_espresso'); ?></h1>
-                    <?php _e('The following attendee(s) have registered for the following event:', 'event_espresso'); ?>
+                    <h1><?php esc_html_e('Registration Notification', 'event_espresso'); ?></h1>
+                    <?php esc_html_e('The following attendee(s) have registered for the following event:', 'event_espresso'); ?>
                     <table>
                         <tbody>
                             <tr>

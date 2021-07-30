@@ -7,7 +7,7 @@
     if (! $MTP->is_global()) : ?>
         <div class="non-global-mtp-fields">
             <p>
-                <?php _e(
+                <?php esc_html_e(
                     'This is a custom template.  Custom Templates have an editable name and description to help you differentiate between templates.',
                     'event_espresso'
                 ); ?>
@@ -15,7 +15,7 @@
             <div id="titlediv">
                 <div id="titlewrap">
                     <label for="title" class="label-MTP_name" style="visibility:hidden">
-                        <?php _e(
+                        <?php esc_html_e(
                             'Message Template Name:',
                             'event_espresso'
                         ); ?></label>
@@ -26,7 +26,7 @@
             <p>
                 <label for="ee-msg-non-global-fields-MTP_description" class="label-MTP_description"
                        style="visibility:hidden;">
-                    <?php _e(
+                    <?php esc_html_e(
                         'Message Template Description:',
                         'event_espresso'
                     ); ?></label>
@@ -47,7 +47,7 @@
         echo $template_fields;
     } else {
         ?>
-        <p><?php _e('Something has gone wrong, there are no template fields to output.', 'event_espresso'); ?></p>
+        <p><?php esc_html_e('Something has gone wrong, there are no template fields to output.', 'event_espresso'); ?></p>
         <?php
     }
 

@@ -39,28 +39,28 @@
                     esc_html__('Sending batch message to %s people...', 'event_espresso'),
                     '[NUMPEOPLE]'
                 ); ?></h3>
-            <label for="batch-message-template-selector"><?php _e('Select Template:', 'event_espresso'); ?></label>
+            <label for="batch-message-template-selector"><?php esc_html_e('Select Template:', 'event_espresso'); ?></label>
             <?php echo $template_selector; ?>
             <div class="batch-message-edit-fields" style="display:none;">
                 <section>
-                    <label for="batch-message-from"><?php _e('From:', 'event_espresso'); ?></label>
+                    <label for="batch-message-from"><?php esc_html_e('From:', 'event_espresso'); ?></label>
                     <span id="shortcode-toggle-from"
                           class="alignright dashicons dashicons-menu shortcodes-info ee-icon-size-22 clickable"></span><br>
                     <div id="shortcode-container-from" class="shortcodes-info-container ee_shortcode_chooser_container"
                          style="display:none">
-                        <p><?php _e('The following shortcodes can be used in the from field:', 'event_espresso'); ?></p>
+                        <p><?php esc_html_e('The following shortcodes can be used in the from field:', 'event_espresso'); ?></p>
                         <p><?php echo $shortcodes['From']; ?></p>
                     </div>
                     <input type="text" name="batch_message[from]" id="batch-message-from" class="batch-message-input">
                 </section>
                 <section>
-                    <label for="batch-message-subject"><?php _e('Subject:', 'event_espresso'); ?></label>
+                    <label for="batch-message-subject"><?php esc_html_e('Subject:', 'event_espresso'); ?></label>
                     <span id="shortcode-toggle-subject"
                           class="alignright dashicons dashicons-menu shortcodes-info ee-icon-size-22 clickable"></span><br>
                     <div id="shortcode-container-subject"
                          class="shortcodes-info-container ee_shortcode_chooser_container" style="display:none">
                         <p><?php
-                            _e(
+                            esc_html_e(
                                 'The following shortcodes can be used in the subject field:',
                                 'event_espresso'
                             ); ?></p>
@@ -70,13 +70,13 @@
                            class="batch-message-input">
                 </section>
                 <section>
-                    <label for="batch-message-content"><?php _e('Message Content:', 'event_espresso'); ?></label>
+                    <label for="batch-message-content"><?php esc_html_e('Message Content:', 'event_espresso'); ?></label>
                     <span id="shortcode-toggle-content"
                           class="alignright dashicons dashicons-menu shortcodes-info ee-icon-size-22 clickable"></span><br>
                     <div id="shortcode-container-content"
                          class="shortcodes-info-container ee_shortcode_chooser_container" style="display:none">
                         <p><?php
-                            _e(
+                            esc_html_e(
                                 'The following shortcodes can be used in the content area:',
                                 'event_espresso'
                             ); ?></p>
@@ -86,9 +86,9 @@
                               class="batch-message-textarea"></textarea>
                 </section>
                 <input type="submit" class="batch-message-submit button button-primary alignright"
-                       name="batch-message-submit" value="<?php _e('Send', 'event_espresso'); ?>">
+                       name="batch-message-submit" value="<?php esc_html_e('Send', 'event_espresso'); ?>">
                 <button class="batch-message-cancel button button-secondary alignright"><?php
-                    _e(
+                    esc_html_e(
                         'Cancel',
                         'event_espresso'
                     ); ?></button>

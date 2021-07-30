@@ -26,7 +26,7 @@
         ) : ?>
             <span id="send-related-messages-dv">
                 <label for="txn-reg-status-send-notifications-inp" class="important-notice">
-                <?php _e(
+                <?php esc_html_e(
                     '...and send related messages ?',
                     'event_espresso'
                 ); ?>
@@ -37,7 +37,7 @@
             </span>
             <br/>
             <p class="description">
-                <?php _e(
+                <?php esc_html_e(
                     'If the "send related messages"checkbox is checked when changing status, then the related messages will be sent to the registrant.',
                     'event_espresso'
                 ); ?></p>

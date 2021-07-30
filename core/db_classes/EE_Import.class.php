@@ -113,11 +113,11 @@ class EE_Import implements ResettableInterface
                 <input type="hidden" name="csv_submitted" value="TRUE" id="<?php echo time(); ?>">
                 <input name="import" type="hidden" value="<?php echo $type; ?>"/>
                 <input type="file" name="file[]" size="90">
-                <input class="button-primary" type="submit" value="<?php _e('Upload File', 'event_espresso'); ?>">
+                <input class="button-primary" type="submit" value="<?php esc_html_e('Upload File', 'event_espresso'); ?>">
             </form>
 
             <p class="ee-attention">
-                <b><?php _e('Attention', 'event_espresso'); ?></b><br/>
+                <b><?php esc_html_e('Attention', 'event_espresso'); ?></b><br/>
                 <?php echo sprintf(esc_html__('Accepts .%s file types only.', 'event_espresso'), $type); ?>
                 <?php echo esc_html__(
                     'Please only import CSV files exported from Event Espresso, or compatible 3rd-party software.',

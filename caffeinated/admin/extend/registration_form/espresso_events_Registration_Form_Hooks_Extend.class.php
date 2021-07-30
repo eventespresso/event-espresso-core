@@ -105,7 +105,7 @@ class espresso_events_Registration_Form_Hooks_Extend extends espresso_events_Reg
         ?>
         <div class="inside">
             <p><strong>
-                    <?php _e('Question Groups', 'event_espresso'); ?>
+                    <?php esc_html_e('Question Groups', 'event_espresso'); ?>
                 </strong><br/>
                 <?php
                 printf(

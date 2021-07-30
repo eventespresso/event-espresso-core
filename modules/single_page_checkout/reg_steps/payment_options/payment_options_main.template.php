@@ -10,17 +10,17 @@
 ?>
 
 <h4 id="reg-page-totals-hdr" class="">
-    <span class="drk-grey-text"><?php _e('Registrations:', 'event_espresso'); ?></span> <?php echo $reg_count; ?>
+    <span class="drk-grey-text"><?php esc_html_e('Registrations:', 'event_espresso'); ?></span> <?php echo $reg_count; ?>
 </h4>
 
 <div class="spco-payment-info-dv">
     <table id="spco-payment-info-table">
         <thead>
         <tr>
-            <th scope="col" width=""><?php _e('Name and Description', 'event_espresso'); ?></th>
-            <th scope="col" width="15%" class="jst-cntr"><?php _e('Price', 'event_espresso'); ?></th>
-            <th scope="col" width="5%" class="jst-cntr"><?php _e('Qty', 'event_espresso'); ?></th>
-            <th scope="col" width="15%" class="jst-cntr"><?php _e('Total', 'event_espresso'); ?></th>
+            <th scope="col" width=""><?php esc_html_e('Name and Description', 'event_espresso'); ?></th>
+            <th scope="col" width="15%" class="jst-cntr"><?php esc_html_e('Price', 'event_espresso'); ?></th>
+            <th scope="col" width="5%" class="jst-cntr"><?php esc_html_e('Qty', 'event_espresso'); ?></th>
+            <th scope="col" width="15%" class="jst-cntr"><?php esc_html_e('Total', 'event_espresso'); ?></th>
             <?php do_action('AHEE__registration_page_payment_options__payment_info_table_thead_row_end'); ?>
         </tr>
         </thead>

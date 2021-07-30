@@ -9,7 +9,7 @@
         <tbody>
         <tr>
             <th>
-                <label><?php _e('Click to Activate', 'event_espresso'); ?></label>
+                <label><?php esc_html_e('Click to Activate', 'event_espresso'); ?></label>
             </th>
             <td>
 

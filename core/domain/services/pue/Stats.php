@@ -108,7 +108,7 @@ class Stats
                 <span class="data-optin-text"><?php echo self::optinText(); ?></span>
                 <span style="display: none" id="data-optin-nonce"><?php echo wp_create_nonce('ee-data-optin'); ?></span>
                 <button class="button-secondary data-optin-button" value="no">
-                    <?php _e('Dismiss', 'event_espresso'); ?>
+                    <?php esc_html_e('Dismiss', 'event_espresso'); ?>
                 </button>
                 <div style="clear:both"></div>
             </div>

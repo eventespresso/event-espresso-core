@@ -1,6 +1,6 @@
 <div id="admin-primary-mbox-questions-dv" class="admin-primary-mbox-dv">
     <p>
-        <?php _e(
+        <?php esc_html_e(
             'This displays the custom questions and answers for this registrant.  Please note that any answers to system questions have been saved with the contact record.  You can edit those answers via the "View/Edit this Contact" link in the Contact Details metabox in the sidebar.',
             'event_espresso'
         ); ?></p>
@@ -27,7 +27,7 @@
             <?php endif; ?>
         <?php else : ?>
             <p class="ee-attention">
-                <?php _e(
+                <?php esc_html_e(
                     'There were no custom questions asked for this registration.',
                     'event_espresso'
                 ); ?></p>

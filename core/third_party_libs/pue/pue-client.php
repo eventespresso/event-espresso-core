@@ -1235,7 +1235,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
                     <?php echo $this->_sanitize_notices($errors); ?>
                     <a class="button-secondary" href="javascript:void(0);" onclick="PUEDismissNotice( 'error' );"
                        style="float:right; margin-bottom: 10px;">
-                        <?php _e('Dismiss'); ?>
+                        <?php esc_html_e('Dismiss'); ?>
                     </a>
                     <div style="clear:both"></div>
                 </div>
@@ -1251,7 +1251,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
                     <?php echo $this->_sanitize_notices($attentions); ?>
                     <a class="button-secondary" href="javascript:void(0);" onclick="PUEDismissNotice( 'attention' );"
                        style="float:right; margin-bottom: 10px;">
-                        <?php _e('Dismiss'); ?>
+                        <?php esc_html_e('Dismiss'); ?>
                     </a>
                     <div style="clear:both"></div>
                 </div>
@@ -1267,7 +1267,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
                     <?php echo $this->_sanitize_notices($successes); ?>
                     <a class="button-secondary" href="javascript:void(0);" onclick="PUEDismissNotice( 'success' );"
                        style="float:right; margin-bottom: 10px;">
-                        <?php _e('Dismiss'); ?>
+                        <?php esc_html_e('Dismiss'); ?>
                     </a>
                     <div style="clear:both"></div>
                 </div>
@@ -1477,7 +1477,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
                 <div class="updated" style="padding:15px; position:relative;"
                      id="pu_dashboard_message"><?php echo $this->_sanitize_notices($msg); ?>
                     <a class="button-secondary" href="javascript:void(0);" onclick="PUDismissUpgrade();"
-                       style='float:right;'><?php _e("Dismiss") ?></a>
+                       style='float:right;'><?php esc_html_e("Dismiss") ?></a>
                     <div style="clear:both;"></div>
                 </div>
                 <script type="text/javascript">

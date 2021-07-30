@@ -8,13 +8,13 @@
             <table id="reg-admin-transaction-attendees-table" class="admin-primary-mbox-tbl">
                 <thead>
                 <tr>
-                    <th class="jst-left"><?php _e('#', 'event_espresso'); ?></th>
-                    <th class="jst-left"><?php _e('Event Name', 'event_espresso'); ?></th>
-                    <th class="jst-left"><?php _e('Attendee', 'event_espresso'); ?></th>
-                    <th class="jst-rght"><?php _e('Price Paid', 'event_espresso'); ?></th>
-                    <th class="jst-left"><?php _e('Email', 'event_espresso'); ?></th>
-                    <th class="jst-left"><?php _e('Address', 'event_espresso'); ?></th>
-                    <!--<th class="jst-cntr"><?php _e('Actions', 'event_espresso'); ?></th>-->
+                    <th class="jst-left"><?php esc_html_e('#', 'event_espresso'); ?></th>
+                    <th class="jst-left"><?php esc_html_e('Event Name', 'event_espresso'); ?></th>
+                    <th class="jst-left"><?php esc_html_e('Attendee', 'event_espresso'); ?></th>
+                    <th class="jst-rght"><?php esc_html_e('Price Paid', 'event_espresso'); ?></th>
+                    <th class="jst-left"><?php esc_html_e('Email', 'event_espresso'); ?></th>
+                    <th class="jst-left"><?php esc_html_e('Address', 'event_espresso'); ?></th>
+                    <!--<th class="jst-cntr"><?php esc_html_e('Actions', 'event_espresso'); ?></th>-->
                 </tr>
                 </thead>
                 <tbody>

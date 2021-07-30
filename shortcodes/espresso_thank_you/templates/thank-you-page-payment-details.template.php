@@ -1,5 +1,5 @@
 <h2 class="section-heading display-box-heading">
-    <?php _e('Payment Overview', 'event_espresso'); ?>
+    <?php esc_html_e('Payment Overview', 'event_espresso'); ?>
 </h2>
 <?php do_action('AHEE__thank_you_page_payment_details_template__after_heading'); ?>
 
@@ -10,16 +10,16 @@
             <thead>
             <tr>
                 <th width="35%" class="jst-left">
-                    <?php _e('Payment Date', 'event_espresso') ?>
+                    <?php esc_html_e('Payment Date', 'event_espresso') ?>
                 </th>
                 <th width="17.5%" class="jst-left">
-                    <?php _e('Type', 'event_espresso'); ?>
+                    <?php esc_html_e('Type', 'event_espresso'); ?>
                 </th>
                 <th width="17.5%" class="jst-rght">
-                    <?php _e('Amount', 'event_espresso'); ?>
+                    <?php esc_html_e('Amount', 'event_espresso'); ?>
                 </th>
                 <th width="30%" class="jst-rght">
-                    <?php _e('Status', 'event_espresso'); ?>
+                    <?php esc_html_e('Status', 'event_espresso'); ?>
                 </th>
             </tr>
             </thead>

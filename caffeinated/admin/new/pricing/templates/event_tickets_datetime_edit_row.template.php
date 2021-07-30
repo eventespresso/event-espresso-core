@@ -28,7 +28,7 @@
                value="<?php echo $DTT_order; ?>">
         <input type="text" name="<?php echo $event_datetimes_name; ?>[<?php echo $dtt_row; ?>][DTT_name]"
                id="event-datetime-DTT_name-<?php echo $dtt_row; ?>" class="ee-large-text-inp event-datetime-DTT_name"
-               value="<?php echo $DTT_name; ?>" placeholder="<?php _e('Add Title (optional)', 'event_espresso'); ?>">
+               value="<?php echo $DTT_name; ?>" placeholder="<?php esc_html_e('Add Title (optional)', 'event_espresso'); ?>">
     </td>
     <td class="event-datetime-column date-column">
         <input type="text" name="<?php echo $event_datetimes_name; ?>[<?php echo $dtt_row; ?>][DTT_EVT_start]"
@@ -73,7 +73,7 @@
               class="<?php echo $trash_icon; ?> clickable"<?php echo $show_trash; ?>></span>
         <?php if ($reg_list_url !== '') : ?>
             <a href="<?php echo $reg_list_url; ?>"
-               title="<?php _e('View registrations for this datetime.', 'event_espresso'); ?>"
+               title="<?php esc_html_e('View registrations for this datetime.', 'event_espresso'); ?>"
                style="text-decoration: none;">
                 <span data-context="datetime" data-datetime-row="<?php echo $dtt_row; ?>"
                       class="dashicons dashicons-groups clickable"></span>

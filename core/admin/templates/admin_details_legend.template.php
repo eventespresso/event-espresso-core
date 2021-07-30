@@ -6,7 +6,7 @@ $per_col = isset($per_column) ? $per_column : 5;
 $count = 1;
 ?>
 <div class="ee-list-table-legend-container">
-    <h3><?php _e('Legend', 'event_espresso'); ?></h3>
+    <h3><?php esc_html_e('Legend', 'event_espresso'); ?></h3>
     <dl class="alignleft ee-list-table-legend">
         <?php foreach ($items as $item => $details) : ?>
             <?php

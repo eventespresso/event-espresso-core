@@ -20,8 +20,8 @@
         <td></td>
         <td class="container" bgcolor="#FFFFFF">
             <div class="content">
-                <h1><?php _e('Registration(s) Pending Payment', 'event_espresso'); ?></h1>
-                <p><?php _e('The following registration(s) are awaiting payment for the following event(s).', 'event_espresso'); ?></p>
+                <h1><?php esc_html_e('Registration(s) Pending Payment', 'event_espresso'); ?></h1>
+                <p><?php esc_html_e('The following registration(s) are awaiting payment for the following event(s).', 'event_espresso'); ?></p>
                 <table>
                     <tr>
                         <td>

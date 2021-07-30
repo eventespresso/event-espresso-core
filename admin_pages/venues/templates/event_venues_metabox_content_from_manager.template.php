@@ -1,7 +1,7 @@
 <table class="form-table">
     <tr>
         <td valign="top" class="use-ven-manager">
-            <label><?php _e('Select from Venue Manager List', 'event_espresso'); ?></label>
+            <label><?php esc_html_e('Select from Venue Manager List', 'event_espresso'); ?></label>
             <?php echo $venue_selector; ?>
             <?php echo $new_venue_link; ?>
             <?php foreach ($venues as $venue) :
@@ -16,17 +16,17 @@
                 <fieldset id="eebox_<?php echo $venue->ID(); ?>" class="eebox"<?php echo $selected; ?>>
                     <ul class="address-view">
                         <li>
-                            <p><span><?php _e('Address:', 'event_espresso'); ?></span> <?php echo $venue->address(); ?>
+                            <p><span><?php esc_html_e('Address:', 'event_espresso'); ?></span> <?php echo $venue->address(); ?>
                                 <br/>
                                 <span></span> <?php echo $venue->address2(); ?><br/>
-                                <span><?php _e('City:', 'event_espresso'); ?></span> <?php echo $venue->city(); ?><br/>
-                                <span><?php _e('State:', 'event_espresso'); ?></span> <?php echo $state_name; ?><br/>
-                                <span><?php _e('Country:', 'event_espresso'); ?></span> <?php echo $country_name; ?>
+                                <span><?php esc_html_e('City:', 'event_espresso'); ?></span> <?php echo $venue->city(); ?><br/>
+                                <span><?php esc_html_e('State:', 'event_espresso'); ?></span> <?php echo $state_name; ?><br/>
+                                <span><?php esc_html_e('Country:', 'event_espresso'); ?></span> <?php echo $country_name; ?>
                                 <br/>
-                                <span><?php _e('Venue ID:', 'event_espresso'); ?></span> <?php echo $venue->ID(); ?>
+                                <span><?php esc_html_e('Venue ID:', 'event_espresso'); ?></span> <?php echo $venue->ID(); ?>
                                 <br/></p>
                             <a href="<?php echo $edit_url; ?>" target="_blank">
-                                <?php _e(
+                                <?php esc_html_e(
                                     'Edit this Venue',
                                     'event_espresso'
                                 ); ?></a>

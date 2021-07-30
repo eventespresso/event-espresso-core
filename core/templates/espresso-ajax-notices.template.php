@@ -1,6 +1,6 @@
 <div id="espresso-ajax-loading" style="display:none;">
     <span class="ee-spinner ee-spin"></span><span style="display:none;">
-        <?php _e(
+        <?php esc_html_e(
             'loading...',
             'event_espresso'
         ); ?></span>

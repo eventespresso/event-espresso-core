@@ -10,7 +10,7 @@
             echo $hidden_fields;
         } ?>
         <!--active_messengers -->
-        <label for="MTP_messenger"><?php _e('Select Messenger', 'event_espresso'); ?></label>
+        <label for="MTP_messenger"><?php esc_html_e('Select Messenger', 'event_espresso'); ?></label>
         <select name="MTP_messenger" id="MTP-messenger">
             <?php
             foreach ($active_messengers as $messenger => $values) : ?>
@@ -21,7 +21,7 @@
             <?php endforeach; ?>
         </select>
 
-        <label for="MTP_message_type"><?php _e('Select Message Type', 'event_espresso'); ?></label>
+        <label for="MTP_message_type"><?php esc_html_e('Select Message Type', 'event_espresso'); ?></label>
         <select name="MTP_message_type" id="MTP-message-type">
             <?php foreach ($active_message_types as $message_type => $values) : ?>
                 <option value="<?php echo $message_type; ?>">
@@ -33,7 +33,7 @@
 
         <!-- events if we don't have an EVENT_ID -->
         <?php if (! empty($active_events)) : ?>
-            <label for="EVT_ID_select"><?php _e('Select Event', 'event_espresso'); ?></label>
+            <label for="EVT_ID_select"><?php esc_html_e('Select Event', 'event_espresso'); ?></label>
             <select name="EVT_ID" id="EVT_ID_select">
                 <?php foreach ($active_events as $event) : ?>
                     <option value="<?php echo $event->event_id; ?>"><?php echo $event->event_name; ?></option>

@@ -106,7 +106,7 @@ class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks
         ?>
         <div class="inside">
             <p><strong>
-                    <?php _e('Question Groups', 'event_espresso'); ?>
+                    <?php esc_html_e('Question Groups', 'event_espresso'); ?>
                 </strong><br/>
                 <?php
                 printf(
