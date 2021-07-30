@@ -23,7 +23,7 @@ if (! empty($invoice_url)) {
     ?>
     <p>
         <a href="<?php echo $invoice_url; ?>" class="ee-button-lnk inline-button ee-invoice-lnk" target="_blank">
-            <?php _e('View Invoice', 'event_espresso'); ?>
+            <?php esc_html_e('View Invoice', 'event_espresso'); ?>
         </a>
     </p>
     <?php

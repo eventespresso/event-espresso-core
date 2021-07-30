@@ -1,7 +1,7 @@
 <div class="padding">
 
     <h2 class="ee-admin-settings-hdr">
-        <?php _e('Critical Pages & Shortcodes', 'event_espresso'); ?>
+        <?php esc_html_e('Critical Pages & Shortcodes', 'event_espresso'); ?>
     </h2>
     <p class="ee-attention">
         <?php
@@ -23,7 +23,7 @@
             <th>
                 <label for="reg_page_id">
                     <strong>
-                        <?php _e('Registration Checkout Page', 'event_espresso'); ?>
+                        <?php esc_html_e('Registration Checkout Page', 'event_espresso'); ?>
                     </strong>
                     <?php echo EEH_Template::get_help_tab_link('registration_page_info'); ?>
                     <br/>
@@ -33,7 +33,7 @@
             <td>
                 <select id="reg_page_id" name="reg_page_id" data-placeholder="Choose a page...">
                     <option value="0">
-                        <?php _e('Main Page', 'event_espresso'); ?>
+                        <?php esc_html_e('Main Page', 'event_espresso'); ?>
                     </option>
                     <?php General_Settings_Admin_Page::page_settings_dropdown($reg_page_id); ?>
                 </select>
@@ -63,12 +63,12 @@
             <th>
                 <label for="txn_page_id">
                     <strong>
-                        <?php _e('Transactions Page', 'event_espresso'); ?>
+                        <?php esc_html_e('Transactions Page', 'event_espresso'); ?>
                     </strong>
                     <?php echo EEH_Template::get_help_tab_link('notify_url_info'); ?>
                     <br/>
                     <span class="lt-grey-text">
-                        <?php _e(
+                        <?php esc_html_e(
                             'Notify URL (processes payments)',
                             'event_espresso'
                         ); ?></span><br/>
@@ -78,7 +78,7 @@
             <td>
                 <select id="txn_page_id" name="txn_page_id" data-placeholder="Choose a page...">
                     <option value="0">
-                        <?php _e('Main Page', 'event_espresso'); ?>
+                        <?php esc_html_e('Main Page', 'event_espresso'); ?>
                     </option>
                     <?php General_Settings_Admin_Page::page_settings_dropdown($txn_page_id); ?>
                 </select>
@@ -108,7 +108,7 @@
             <th>
                 <label for="thank_you_page_id">
                     <strong>
-                        <?php _e('Thank You Page', 'event_espresso'); ?>
+                        <?php esc_html_e('Thank You Page', 'event_espresso'); ?>
                     </strong>
                     <?php echo EEH_Template::get_help_tab_link('return_url_info'); ?>
                     <br/>
@@ -118,7 +118,7 @@
             <td>
                 <select id="thank_you_page_id" name="thank_you_page_id" data-placeholder="Choose a page...">
                     <option value="0">
-                        <?php _e('Main Page', 'event_espresso'); ?>
+                        <?php esc_html_e('Main Page', 'event_espresso'); ?>
                     </option>
                     <?php General_Settings_Admin_Page::page_settings_dropdown($thank_you_page_id); ?>
                 </select>
@@ -148,7 +148,7 @@
             <th>
                 <label for="cancel_page_id">
                     <strong>
-                        <?php _e('Cancel/Return Page', 'event_espresso'); ?>
+                        <?php esc_html_e('Cancel/Return Page', 'event_espresso'); ?>
                     </strong>
                     <?php echo EEH_Template::get_help_tab_link('cancel_return_info'); ?>
                     <br/>
@@ -158,7 +158,7 @@
             <td>
                 <select id="cancel_page_id" name="cancel_page_id" data-placeholder="Choose a page...">
                     <option value="0">
-                        <?php _e('Main Page', 'event_espresso'); ?>
+                        <?php esc_html_e('Main Page', 'event_espresso'); ?>
                     </option>
                     <?php General_Settings_Admin_Page::page_settings_dropdown($cancel_page_id); ?>
                 </select>
@@ -188,12 +188,12 @@
             <th>
                 <label for="event_list_id">
                     <strong>
-                        <?php _e('Event List', 'event_espresso'); ?>
+                        <?php esc_html_e('Event List', 'event_espresso'); ?>
                     </strong>
                     <?php echo EEH_Template::get_help_tab_link('event_list_cpt_info'); ?>
                     <br/>
                     <a href='<?php echo get_post_type_archive_link('espresso_events') ?>'>
-                        <?php _e(
+                        <?php esc_html_e(
                             'View',
                             'event_espresso'
                         ); ?></a>
@@ -224,12 +224,12 @@
             <th>
                 <label for="venue_list_id">
                     <strong>
-                        <?php _e('Venue List', 'event_espresso'); ?>
+                        <?php esc_html_e('Venue List', 'event_espresso'); ?>
                     </strong>
                     <?php echo EEH_Template::get_help_tab_link('venue_list_cpt_info'); ?>
                     <br/>
                     <a href='<?php echo get_post_type_archive_link('espresso_venues') ?>'>
-                        <?php _e(
+                        <?php esc_html_e(
                             'View',
                             'event_espresso'
                         ); ?></a>
@@ -243,14 +243,16 @@
                     ) ?>
                 </p>
                 <p class="description">
-                    <?php printf(
-                        esc_html__(
+                    <?php echo esc_html(
+                        sprintf(
+                        __(
                             'If you would still like your venues on a page like in Event Espresso 3.1 or earlier, simply create a page and place a shortcode to display them on the page, as described %s here %s',
                             'event_espresso'
                         ),
                         '<a href="admin.php?page=espresso_support">',
                         '</a>'
-                    ) ?>
+                    )
+                    );?>
                 </p>
             </td>
         </tr>

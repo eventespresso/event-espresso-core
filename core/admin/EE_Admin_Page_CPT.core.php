@@ -517,11 +517,11 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
             $template      = ! empty($page_template) ? $page_template : '';
         }
         ?>
-        <p><strong><?php _e('Template', 'event_espresso') ?></strong></p>
-        <label class="screen-reader-text" for="page_template"><?php _e('Page Template', 'event_espresso') ?></label>
+        <p><strong><?php esc_html_e('Template', 'event_espresso') ?></strong></p>
+        <label class="screen-reader-text" for="page_template"><?php esc_html_e('Page Template', 'event_espresso') ?></label>
         <select
             name="page_template" id="page_template">
-            <option value='default'><?php _e('Default Template', 'event_espresso'); ?></option>
+            <option value='default'><?php esc_html_e('Default Template', 'event_espresso'); ?></option>
             <?php page_template_dropdown($template); ?>
         </select>
         <?php

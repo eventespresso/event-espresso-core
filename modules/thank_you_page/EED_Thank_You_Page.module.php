@@ -624,7 +624,7 @@ class EED_Thank_You_Page extends EED_Module
                 <div id="espresso-thank-you-page-ajax-loading-dv">
                     <div id="ee-ajax-loading-dv" class="float-left lt-blue-text">
                         <span class="dashicons dashicons-upload"></span><span id="ee-ajax-loading-msg-spn">
-                            <?php _e(
+                            <?php esc_html_e(
                                 'loading transaction and payment information...',
                                 'event_espresso'
                             ); ?></span>
@@ -640,7 +640,7 @@ class EED_Thank_You_Page extends EED_Module
                             ); ?>
                             <br/>
                             <span class="jst-rght ee-block small-text lt-grey-text">
-                                <?php _e('current wait time ', 'event_espresso'); ?>
+                                <?php esc_html_e('current wait time ', 'event_espresso'); ?>
                                 <span id="espresso-thank-you-page-ajax-time-dv">00:00:00</span></span>
                         </p>
                     <?php endif; ?>
@@ -665,7 +665,7 @@ class EED_Thank_You_Page extends EED_Module
         if (! empty($events)) {
             ?>
             <div id="espresso-thank-you-page-not-approved-message-dv">
-                <h4 class="orange-text"><?php _e('Important Notice:', 'event_espresso'); ?></h4>
+                <h4 class="orange-text"><?php esc_html_e('Important Notice:', 'event_espresso'); ?></h4>
                 <p id="events-requiring-pre-approval-pg" class="small-text">
                     <?php echo apply_filters(
                         'AHEE__EED_Thank_You_Page__get_ajax_content__not_approved_message',

@@ -5,12 +5,12 @@
         <table id="txn-admin-transaction-attendees-table" class="admin-primary-mbox-tbl">
             <thead>
             <tr>
-                <th class="jst-left"><?php _e('#', 'event_espresso'); ?></th>
-                <th class="jst-left"><?php _e('Event Name and Ticket', 'event_espresso'); ?></th>
-                <th class="jst-left"><?php _e('Registrant', 'event_espresso'); ?></th>
-                <th class="jst-left"><?php _e('Ticket Price', 'event_espresso'); ?></th>
-                <th class="jst-left"><?php _e('Email', 'event_espresso'); ?></th>
-                <th class="jst-left"><?php _e('Address', 'event_espresso'); ?></th>
+                <th class="jst-left"><?php esc_html_e('#', 'event_espresso'); ?></th>
+                <th class="jst-left"><?php esc_html_e('Event Name and Ticket', 'event_espresso'); ?></th>
+                <th class="jst-left"><?php esc_html_e('Registrant', 'event_espresso'); ?></th>
+                <th class="jst-left"><?php esc_html_e('Ticket Price', 'event_espresso'); ?></th>
+                <th class="jst-left"><?php esc_html_e('Email', 'event_espresso'); ?></th>
+                <th class="jst-left"><?php esc_html_e('Address', 'event_espresso'); ?></th>
             </tr>
             </thead>
             <tbody>
@@ -28,7 +28,7 @@
                             );
                             ?>
                             <a href="<?php echo $att_link; ?>"
-                               title="<?php _e('View details for this registrant', 'event_espresso'); ?>">
+                               title="<?php esc_html_e('View details for this registrant', 'event_espresso'); ?>">
                                 <?php echo $attendee['attendee'] ?>
                             </a>
                         </td>

@@ -7,7 +7,7 @@ foreach ($all_questions as $question_option) {
     assert($question_option instanceof EE_Question);
 }
 ?>
-<h4><?php _e('Check off all questions that you wish to appear in this group.', 'event_espresso'); ?></h4>
+<h4><?php esc_html_e('Check off all questions that you wish to appear in this group.', 'event_espresso'); ?></h4>
 <ul>
     <?php
     foreach ($all_questions as $question_ID => $question) {

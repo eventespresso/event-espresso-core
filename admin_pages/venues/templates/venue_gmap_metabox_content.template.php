@@ -10,12 +10,12 @@
                 ) { ?>
                     <p>
                         <label for="enable_for_gmap">
-                            <?php _e('Display Google Map for this venue? ', 'event_espresso') ?>
+                            <?php esc_html_e('Display Google Map for this venue? ', 'event_espresso') ?>
                         </label>
                         <?php echo $vnu_enable_for_gmap; ?>
                     </p>
                     <!-- <p>
-                    <?php _e('Google Map Link (for email):', 'event_espresso'); ?>
+                    <?php esc_html_e('Google Map Link (for email):', 'event_espresso'); ?>
                     <input type="text" name="vnu_google_map_link" value="<?php echo $vnu_google_map_link; ?>" class="all-options" />
                     </p> -->
                 <?php } ?>

@@ -85,13 +85,13 @@ class EEW_Upcoming_Events extends EspressoWidget
 
         <p>
             <label for="<?php echo $this->get_field_id('title'); ?>">
-                <?php _e('Title:', 'event_espresso'); ?>
+                <?php esc_html_e('Title:', 'event_espresso'); ?>
             </label>
             <input id="<?php echo $this->get_field_id('title'); ?>" class="widefat" name="<?php echo $this->get_field_name('title'); ?>" value="<?php echo esc_attr($instance['title']); ?>" type="text" />
         </p>
         <p>
             <label for="<?php echo $this->get_field_id('category_name'); ?>">
-                <?php _e('Event Category:', 'event_espresso'); ?>
+                <?php esc_html_e('Event Category:', 'event_espresso'); ?>
             </label>
             <?php
             $event_categories = array();
@@ -117,13 +117,13 @@ class EEW_Upcoming_Events extends EspressoWidget
         </p>
         <p>
             <label for="<?php echo $this->get_field_id('limit'); ?>">
-                <?php _e('Number of Events to Display:', 'event_espresso'); ?>
+                <?php esc_html_e('Number of Events to Display:', 'event_espresso'); ?>
             </label>
             <input id="<?php echo $this->get_field_id('limit'); ?>" name="<?php echo $this->get_field_name('limit'); ?>" value="<?php echo $instance['limit']; ?>" size="3" type="text" />
         </p>
         <p>
             <label for="<?php echo $this->get_field_id('show_expired'); ?>">
-                <?php _e('Show Expired Events:', 'event_espresso'); ?>
+                <?php esc_html_e('Show Expired Events:', 'event_espresso'); ?>
             </label>
             <?php
             echo EEH_Form_Fields::select(
@@ -141,7 +141,7 @@ class EEW_Upcoming_Events extends EspressoWidget
         </p>
         <p>
             <label for="<?php echo $this->get_field_id('sort'); ?>">
-                <?php _e('Sort Events:', 'event_espresso'); ?>
+                <?php esc_html_e('Sort Events:', 'event_espresso'); ?>
             </label>
             <?php
             echo EEH_Form_Fields::select(
@@ -155,7 +155,7 @@ class EEW_Upcoming_Events extends EspressoWidget
         </p>
         <p>
             <label for="<?php echo $this->get_field_id('image_size'); ?>">
-                <?php _e('Image Size:', 'event_espresso'); ?>
+                <?php esc_html_e('Image Size:', 'event_espresso'); ?>
             </label>
             <?php
             $image_sizes = array();
@@ -183,7 +183,7 @@ class EEW_Upcoming_Events extends EspressoWidget
         </p>
         <p>
             <label for="<?php echo $this->get_field_id('show_desc'); ?>">
-                <?php _e('Show Description:', 'event_espresso'); ?>
+                <?php esc_html_e('Show Description:', 'event_espresso'); ?>
             </label>
             <?php
             echo EEH_Form_Fields::select(
@@ -197,7 +197,7 @@ class EEW_Upcoming_Events extends EspressoWidget
         </p>
         <p>
             <label for="<?php echo $this->get_field_id('show_dates'); ?>">
-                <?php _e('Show Dates:', 'event_espresso'); ?>
+                <?php esc_html_e('Show Dates:', 'event_espresso'); ?>
             </label>
             <?php
             echo EEH_Form_Fields::select(
@@ -211,7 +211,7 @@ class EEW_Upcoming_Events extends EspressoWidget
         </p>
         <p>
             <label for="<?php echo $this->get_field_id('show_everywhere'); ?>">
-                <?php _e('Show on all Pages:', 'event_espresso'); ?>
+                <?php esc_html_e('Show on all Pages:', 'event_espresso'); ?>
             </label>
             <?php
             echo EEH_Form_Fields::select(
@@ -225,13 +225,13 @@ class EEW_Upcoming_Events extends EspressoWidget
         </p>
         <p>
             <label for="<?php echo $this->get_field_id('date_limit'); ?>">
-                <?php _e('Number of Dates to Display:', 'event_espresso'); ?>
+                <?php esc_html_e('Number of Dates to Display:', 'event_espresso'); ?>
             </label>
             <input id="<?php echo $this->get_field_id('date_limit'); ?>" name="<?php echo $this->get_field_name('date_limit'); ?>" value="<?php echo esc_attr($instance['date_limit']); ?>" size="3" type="text" />
         </p>
         <p>
             <label for="<?php echo $this->get_field_id('date_range'); ?>">
-                <?php _e('Show Date Range:', 'event_espresso'); ?>
+                <?php esc_html_e('Show Date Range:', 'event_espresso'); ?>
             </label>
             <?php
             echo EEH_Form_Fields::select(
@@ -241,7 +241,7 @@ class EEW_Upcoming_Events extends EspressoWidget
                 $this->get_field_name('date_range'),
                 $this->get_field_id('date_range')
             );
-            ?><span class="description"><br /><?php _e('This setting will replace the list of dates in the widget.', 'event_espresso'); ?></span>
+            ?><span class="description"><br /><?php esc_html_e('This setting will replace the list of dates in the widget.', 'event_espresso'); ?></span>
         </p>
 
         <?php

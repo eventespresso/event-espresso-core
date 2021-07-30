@@ -31,26 +31,26 @@
                         <tbody>
                             <tr>
                                 <td>
-                                    <h1><?php _e('Payment Declined Notification', 'event_espresso'); ?></h1>
-                                    <?php _e('The following message was sent to the Primary Registrant of this transaction:', 'event_espresso'); ?>
-                                    <h3><?php _e('Payment Details:', 'event_espresso'); ?></h3>
+                                    <h1><?php esc_html_e('Payment Declined Notification', 'event_espresso'); ?></h1>
+                                    <?php esc_html_e('The following message was sent to the Primary Registrant of this transaction:', 'event_espresso'); ?>
+                                    <h3><?php esc_html_e('Payment Details:', 'event_espresso'); ?></h3>
                                     <ul>
                                         <li>
-                                            <strong><?php _e('Payment Status:', 'event_espresso'); ?></strong> [PAYMENT_STATUS]
+                                            <strong><?php esc_html_e('Payment Status:', 'event_espresso'); ?></strong> [PAYMENT_STATUS]
                                         </li>
-                                        <li><strong><?php _e('Transaction ID:', 'event_espresso'); ?></strong>
+                                        <li><strong><?php esc_html_e('Transaction ID:', 'event_espresso'); ?></strong>
                                             <a href="[TRANSACTION_ADMIN_URL]">[TXN_ID]</a></li>
                                         <li>
-                                            <strong><?php _e('Payment Gateway:', 'event_espresso'); ?></strong> [PAYMENT_GATEWAY]
+                                            <strong><?php esc_html_e('Payment Gateway:', 'event_espresso'); ?></strong> [PAYMENT_GATEWAY]
                                         </li>
                                         <li>
-                                            <strong><?php _e('Total Cost:', 'event_espresso'); ?></strong> [TOTAL_COST]
+                                            <strong><?php esc_html_e('Total Cost:', 'event_espresso'); ?></strong> [TOTAL_COST]
                                         </li>
                                         <li>
-                                            <strong><?php _e('Payment Amount:', 'event_espresso'); ?></strong> [AMOUNT_PAID]
+                                            <strong><?php esc_html_e('Payment Amount:', 'event_espresso'); ?></strong> [AMOUNT_PAID]
                                         </li>
                                         <li>
-                                            <strong><?php _e('Amount Due:', 'event_espresso'); ?></strong> [TOTAL_OWING]
+                                            <strong><?php esc_html_e('Amount Due:', 'event_espresso'); ?></strong> [TOTAL_OWING]
                                         </li>
                                     </ul>
                                 </td>
@@ -59,7 +59,7 @@
                     </table>
                 </div>
                 <div class="content">
-                    <h2><?php _e('Registrant Details:', 'event_espresso'); ?></h2>
+                    <h2><?php esc_html_e('Registrant Details:', 'event_espresso'); ?></h2>
                     <p class="callout"><strong>[PRIMARY_REGISTRANT_FNAME] [PRIMARY_REGISTRANT_LNAME]:</strong>
                         <a href="mailto:[PRIMARY_REGISTRANT_EMAIL]">[PRIMARY_REGISTRANT_EMAIL]</a></p>
                 </div>

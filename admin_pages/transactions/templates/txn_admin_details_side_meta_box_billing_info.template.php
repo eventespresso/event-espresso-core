@@ -1,7 +1,7 @@
 <div id="admin-side-mbox-billing-info-dv" class="admin-side-mbox-dv">
     <?php if (empty($billing_form)) : ?>
         <div class="clearfix">
-            <?php _e('There is no billing info for this transaction.', 'event_espresso'); ?><br/>
+            <?php esc_html_e('There is no billing info for this transaction.', 'event_espresso'); ?><br/>
         </div>
     <?php else :
         function ee_show_billing_info_cleaned(EE_Form_Section_Proper $form_section, $found_cc_data = false)
@@ -40,7 +40,7 @@
             )
         ) { ?>
             <p class="help">
-                <?php _e(
+                <?php esc_html_e(
                     'Note: Card expiry dates and CCV are not stored. Only the last 4 digits of card numbers are stored.',
                     'event_espresso'
                 ); ?></p>

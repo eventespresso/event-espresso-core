@@ -41,7 +41,7 @@
 
     ?>
     <a href="<?php echo $system_status_link; ?>" class="button-secondary right">
-        <?php _e(
+        <?php esc_html_e(
             'System Information',
             'event_espresso'
         ); ?></a>

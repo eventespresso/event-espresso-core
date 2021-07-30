@@ -17,17 +17,17 @@
 <?php  endif; ?>
 	
 	<h3 class="event-venues-h3 ee-event-h3">
-		<?php _e( 'Details', 'event_espresso' ); ?>
+		<?php esc_html_e( 'Details', 'event_espresso' ); ?>
 	</h3>
 
 	<?php if ( $venue_phone = espresso_venue_phone( $post->ID, FALSE )) : ?>
 	<p>
-		<span class="small-text"><strong><?php _e( 'Venue Phone:', 'event_espresso' ); ?> </strong></span><?php echo $venue_phone; ?>
+		<span class="small-text"><strong><?php esc_html_e( 'Venue Phone:', 'event_espresso' ); ?> </strong></span><?php echo $venue_phone; ?>
 	</p>
 	<?php endif; ?>
 	<?php if ( $venue_website = espresso_venue_website( $post->ID, FALSE )) : ?>
 	<p>
-		<span class="small-text"><strong><?php _e( 'Venue Website:', 'event_espresso' ); ?> </strong></span><?php echo $venue_website; ?>
+		<span class="small-text"><strong><?php esc_html_e( 'Venue Website:', 'event_espresso' ); ?> </strong></span><?php echo $venue_website; ?>
 	</p>
 	<?php endif; ?>
 	<?php 

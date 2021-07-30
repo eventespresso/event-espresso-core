@@ -3,7 +3,7 @@
     <?php do_action('AHEE__reg_admin_details_main_meta_box_reg_details__top', $REG_ID); ?>
 
     <h3 class="admin-primary-mbox-h4 hdr-has-icon"><span class="dashicons dashicons-clipboard"></span>
-        <?php _e(
+        <?php esc_html_e(
             'Registration Items',
             'event_espresso'
         ); ?></h3>
@@ -23,7 +23,7 @@
 
     <a id="display-additional-registration-session-info" class="display-the-hidden smaller-text"
        rel="additional-registration-session-info">
-        <span class="dashicons dashicons-plus-alt"></span><?php _e(
+        <span class="dashicons dashicons-plus-alt"></span><?php esc_html_e(
             'view additional registration session details',
             'event_espresso'
         ); ?>
@@ -33,14 +33,14 @@
 
         <a id="hide-additional-registration-session-info" class="hide-the-displayed hidden smaller-text"
            rel="additional-registration-session-info">
-            <span class="dashicons dashicons-dismiss"></span><?php _e(
+            <span class="dashicons dashicons-dismiss"></span><?php esc_html_e(
                 'hide additional registration session details',
                 'event_espresso'
             ); ?>
         </a>
         <br class="clear"/>
 
-        <h3 class="admin-primary-mbox-h4"><?php _e('Registration Session Details', 'event_espresso'); ?></h3>
+        <h3 class="admin-primary-mbox-h4"><?php esc_html_e('Registration Session Details', 'event_espresso'); ?></h3>
 
         <table id="admin-primary-mbox-reg-extra-session-info-tbl" class="form-table skinny-rows">
             <tbody>

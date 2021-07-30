@@ -84,7 +84,7 @@
 
                                     <p class="spco-copy-all-attendee-pg">
                                         <label class="wide">
-                                            <?php _e(
+                                            <?php esc_html_e(
                                                 'Use Registrant #1\'s information for ALL registrants',
                                                 'event_espresso'
                                             ); ?>
@@ -95,7 +95,7 @@
                                     </p>
 
                                     <p class="spco-copy-attendee-pg">
-                                        <?php _e(
+                                        <?php esc_html_e(
                                             'This option allows you to use the above information for all additional registrant question fields. <span>(&nbsp;Please note that some events may have additional questions that you may still be required to answer in order to complete your registration.&nbsp;)</span>',
                                             'event_espresso'
                                         ); ?></p>
@@ -103,7 +103,7 @@
                                     <a id="display-more-attendee-copy-options"
                                        class="display-the-hidden smaller-text float-right"
                                        rel="more-attendee-copy-options">
-                                        <?php _e(
+                                        <?php esc_html_e(
                                             'more options',
                                             'event_espresso'
                                         ); ?></a>
@@ -112,12 +112,12 @@
                                         <a id="hide-more-attendee-copy-options"
                                            class="hide-the-displayed smaller-text float-right"
                                            rel="more-attendee-copy-options">
-                                            <?php _e(
+                                            <?php esc_html_e(
                                                 'less options',
                                                 'event_espresso'
                                             ); ?></a>
                                         <p class="spco-copy-attendee-pg">
-                                            <?php _e(
+                                            <?php esc_html_e(
                                                 'The following checkboxes allow you to use the above information for only the selected additional event registrants.',
                                                 'event_espresso'
                                             ); ?>
@@ -157,7 +157,7 @@
                             } elseif ($att_nmbr == 1) {
                                 ?>
                                 <p id="spco-auto-copy-attendee-pg" class="smaller-text lt-grey-text">
-                                    <?php _e(
+                                    <?php esc_html_e(
                                         'The above information will be used for any additional tickets/registrants.',
                                         'event_espresso'
                                     ); ?>
@@ -178,7 +178,7 @@
                             </h3>
                             <fieldset id="spco-attendee-wrap-<?php echo $line_item; ?>" class="spco-attendee-wrap-fs">
                                 <h6>
-                                    <?php _e(
+                                    <?php esc_html_e(
                                         'No information is required to attend this event. Please proceed to the next Step',
                                         'event_espresso'
                                     ); ?></h6>
@@ -194,7 +194,7 @@
         } // $event_queue['total_items']
         ?>
         <div><a id="spco-display-event-questions-lnk"
-                class="act-like-link smaller-text hidden hide-if-no-js float-right"><?php _e(
+                class="act-like-link smaller-text hidden hide-if-no-js float-right"><?php esc_html_e(
                     'show&nbsp;event&nbsp;questions',
                     'event_espresso'
                 ); ?></a></div>

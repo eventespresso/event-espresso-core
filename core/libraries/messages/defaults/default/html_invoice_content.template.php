@@ -25,14 +25,14 @@
             </td>
             <td>
                 <div id="invoice-info">
-                    <h2 id="invoice-hdr"><?php _e('Invoice', 'event_espresso') ?></h2>
+                    <h2 id="invoice-hdr"><?php esc_html_e('Invoice', 'event_espresso') ?></h2>
                     <h3>
-                        <?php _e('Date:', 'event_espresso') ?> <span>[PRIMARY_REGISTRANT_REGISTRATION_DATE]</span>
+                        <?php esc_html_e('Date:', 'event_espresso') ?> <span>[PRIMARY_REGISTRANT_REGISTRATION_DATE]</span>
                     </h3>
-                    <h3><?php _e('Registration Code:', 'event_espresso') ?>
+                    <h3><?php esc_html_e('Registration Code:', 'event_espresso') ?>
                         <span>[PRIMARY_REGISTRANT_REGISTRATION_CODE]</span></h3>
 
-                    <h3><?php _e('Transaction ID:', 'event_espresso') ?> <span>[TXN_ID]</span></h3>
+                    <h3><?php esc_html_e('Transaction ID:', 'event_espresso') ?> <span>[TXN_ID]</span></h3>
                 </div>
             </td>
         </tr>
@@ -43,7 +43,7 @@
         </tr>
     </table>
 
-    <h2><?php _e('Bill To:', 'event_espresso') ?></h2>
+    <h2><?php esc_html_e('Bill To:', 'event_espresso') ?></h2>
     <div class="vcard" id="client-details">
         <div class="fn">[PRIMARY_REGISTRANT_FNAME] [PRIMARY_REGISTRANT_LNAME]</div>
         <div class="adr">
@@ -56,15 +56,15 @@
         </div>
     </div>
 
-    <h2><?php _e("Purchases", 'event_espresso') ?></h2>
+    <h2><?php esc_html_e("Purchases", 'event_espresso') ?></h2>
     <table class="invoice-amount">
         <thead>
             <tr class="header_row">
-                <th class="left ticket_th"><?php _e('Item', 'event_espresso'); ?></th>
-                <th class="left event_th"><?php _e('Description', 'event_espresso'); ?></th>
-                <th class="quantity_th"><?php _e('Qty', 'event_espresso'); ?></th>
-                <th class="left event_th"><?php _e('Price', 'event_espresso'); ?></th>
-                <th class="subtotal_th item_r"><?php _e('Total', 'event_espresso'); ?></th>
+                <th class="left ticket_th"><?php esc_html_e('Item', 'event_espresso'); ?></th>
+                <th class="left event_th"><?php esc_html_e('Description', 'event_espresso'); ?></th>
+                <th class="quantity_th"><?php esc_html_e('Qty', 'event_espresso'); ?></th>
+                <th class="left event_th"><?php esc_html_e('Price', 'event_espresso'); ?></th>
+                <th class="subtotal_th item_r"><?php esc_html_e('Total', 'event_espresso'); ?></th>
             </tr>
         </thead>
         <tbody>
@@ -73,7 +73,7 @@
             </tr>
             <tr class="total_tr odd">
                 <td colspan="2">&nbsp;</td>
-                <td colspan="2" class="total" id="total_currency"><?php _e('Sub-Total', 'event_espresso'); ?></td>
+                <td colspan="2" class="total" id="total_currency"><?php esc_html_e('Sub-Total', 'event_espresso'); ?></td>
                 <td class="total">[TXN_SUBTOTAL]</td>
             </tr>
             <tr>
@@ -82,24 +82,24 @@
 
             <tr class="total_tr odd">
                 <td colspan="2">&nbsp;</td>
-                <td colspan="2" class="total" id="total_currency"><?php _e('Total', 'event_espresso'); ?></td>
+                <td colspan="2" class="total" id="total_currency"><?php esc_html_e('Total', 'event_espresso'); ?></td>
                 <td class="total">[TOTAL_COST]</td>
             </tr>
         </tbody>
     </table>
 
-    <p><?php _e("* taxable items", "event_espresso"); ?></p>
+    <p><?php esc_html_e("* taxable items", "event_espresso"); ?></p>
 
-    <h2><?php _e("Payments", 'event_espresso') ?></h2>
+    <h2><?php esc_html_e("Payments", 'event_espresso') ?></h2>
     <table class="invoice-amount">
         <thead>
             <tr class="header_row">
-                <th><span class=""><?php _e('Payment Method', 'event_espresso'); ?></span></th>
-                <th class='left datetime_th'><?php _e("Date", 'event_espresso') ?></th>
-                <th><span class=""><?php _e('Transaction Id / Cheque #', 'event_espresso'); ?></span></th>
-                <th><span class=""><?php _e('P.O. / S.O.#', 'event_espresso'); ?></span></th>
-                <th><span class=""><?php _e('Status', 'event_espresso'); ?></span></th>
-                <th><?php _e('Amount', 'event_espresso'); ?></th>
+                <th><span class=""><?php esc_html_e('Payment Method', 'event_espresso'); ?></span></th>
+                <th class='left datetime_th'><?php esc_html_e("Date", 'event_espresso') ?></th>
+                <th><span class=""><?php esc_html_e('Transaction Id / Cheque #', 'event_espresso'); ?></span></th>
+                <th><span class=""><?php esc_html_e('P.O. / S.O.#', 'event_espresso'); ?></span></th>
+                <th><span class=""><?php esc_html_e('Status', 'event_espresso'); ?></span></th>
+                <th><?php esc_html_e('Amount', 'event_espresso'); ?></th>
             </tr>
         </thead>
         <tbody>
@@ -110,12 +110,12 @@
         <tfoot>
             <tr class='total_tr'>
                 <td colspan="4"></td>
-                <td class="item_r"><?php _e('Total Paid', 'event_espresso') ?></td>
+                <td class="item_r"><?php esc_html_e('Total Paid', 'event_espresso') ?></td>
                 <td class="item_r">[TOTAL_AMOUNT_PAID]</td>
             </tr>
             <tr class="total_tr">
                 <td colspan="4"></td>
-                <td class="total" id="total_currency"><?php _e('Amount Owed', 'event_espresso'); ?></td>
+                <td class="total" id="total_currency"><?php esc_html_e('Amount Owed', 'event_espresso'); ?></td>
                 <td class="total">[TOTAL_OWING]</td>
             </tr>
         </tfoot>

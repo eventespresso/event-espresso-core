@@ -8,13 +8,13 @@
              ) . '</p>';
     else : ?>
         <p class="inactive-on-message <?php echo $hide_on_message; ?>">
-            <?php _e(
+            <?php esc_html_e(
                 'Below are message types that are currently inactive with this messenger.  Drag them over to the messenger box to activate them.',
                 'event_espresso'
             ); ?>
         <p>
         <p class="inactive-off-message <?php echo $hide_off_message; ?>">
-            <?php _e(
+            <?php esc_html_e(
                 'This messenger is currently inactive.  Once the messenger is activated any inactive message types associated with the messenger will be shown here.',
                 'event_espresso'
             ); ?>

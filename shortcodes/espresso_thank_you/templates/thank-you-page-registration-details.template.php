@@ -6,7 +6,7 @@
 /** @type string $reg_url_link */
 /** @type string $SPCO_attendee_information_url */
 ?>
-<h3 class="ee-registration-details-h3"><?php _e('Registration Details', 'event_espresso'); ?></h3>
+<h3 class="ee-registration-details-h3"><?php esc_html_e('Registration Details', 'event_espresso'); ?></h3>
 <?php do_action('AHEE__thank_you_page_registration_details_template__after_heading'); ?>
 
 <div class="ee-registration-details-dv">
@@ -28,20 +28,20 @@
             if ($event_name != $registration->event_name()) {
                 ?>
                 <h5>
-                    <span class="smaller-text grey-text"><?php _e('for', 'event_espresso'); ?>
+                    <span class="smaller-text grey-text"><?php esc_html_e('for', 'event_espresso'); ?>
                         : </span> <?php echo htmlentities($registration->event_name(), ENT_QUOTES, 'UTF-8'); ?>
                 </h5>
                 <table class='ee-table ee-registrations-list'>
                 <thead>
                 <tr>
                     <th width="40%">
-                        <?php _e("Registrant Name", 'event_espresso') ?>
+                        <?php esc_html_e("Registrant Name", 'event_espresso') ?>
                     </th>
                     <th width="25%" class="jst-left">
-                        <?php _e("REG Code", 'event_espresso'); ?>
+                        <?php esc_html_e("REG Code", 'event_espresso'); ?>
                     </th>
                     <th width="35%" class="jst-left">
-                        <?php _e("REG Status", 'event_espresso'); ?>
+                        <?php esc_html_e("REG Status", 'event_espresso'); ?>
                     </th>
                 </tr>
                 </thead>
@@ -68,7 +68,7 @@
                                                    'event_espresso'
                                                ); ?>"><span class="ee-icon ee-icon-user-edit"></span>
                                     <?php
-                                    _e(
+                                    esc_html_e(
                                         'edit info',
                                         'event_espresso'
                                     ); ?></a>
@@ -85,7 +85,7 @@
                                                         ); ?>" rel="<?php echo $registration->reg_url_link(); ?>"><span
                                                                 class="dashicons dashicons-email-alt"></span>
                                 <?php
-                                _e(
+                                esc_html_e(
                                     'resend email',
                                     'event_espresso'
                                 ); ?></a>
@@ -123,7 +123,7 @@
         <p class="small-text jst-rght">
             <a href='<?php echo $SPCO_attendee_information_url ?>'>
                 <?php
-                _e(
+                esc_html_e(
                     "Click here to edit All Attendee Information",
                     'event_espresso'
                 ); ?></a>

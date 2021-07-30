@@ -12,7 +12,7 @@
             <td>[FNAME] [LNAME] ([ATTENDEE_EMAIL])</td>
         </tr>
         <tr>
-            <th><?php _e("Registration Code:", "event_espresso");?></th>
+            <th><?php esc_html_e("Registration Code:", "event_espresso");?></th>
             <td>[REGISTRATION_CODE] - <span class="[REGISTRATION_STATUS_ID]">[REGISTRATION_STATUS_LABEL]</span></td>
         </tr>
     </table>

@@ -15,28 +15,28 @@
         </li>
         <li>
             <a href="http://eventespresso.com/wiki/put-custom-templates/" target="_blank">
-                <?php _e('Template Customization', 'event_espresso'); ?>
+                <?php esc_html_e('Template Customization', 'event_espresso'); ?>
             </a>
         </li>
         <li>
             <a href="http://eventespresso.com/support/forums/" target="_blank">
-                <?php _e('Support Forums', 'event_espresso'); ?>
+                <?php esc_html_e('Support Forums', 'event_espresso'); ?>
             </a>
         </li>
 
         <li>
             <a href="http://eventespresso.com/wiki/change-log/" target="_blank">
-                <?php _e('Changelog', 'event_espresso'); ?>
+                <?php esc_html_e('Changelog', 'event_espresso'); ?>
             </a>
         </li>
         <li>
             <a href="http://eventespresso.com/about/" target="_blank">
-                <?php _e('Meet the Team', 'event_espresso'); ?>
+                <?php esc_html_e('Meet the Team', 'event_espresso'); ?>
             </a>
         </li>
         <li>
             <a href="http://eventespresso.com/rich-features/sponsor-new-features/" target="_blank">
-                <?php _e('Sponsor New Features!', 'event_espresso'); ?>
+                <?php esc_html_e('Sponsor New Features!', 'event_espresso'); ?>
             </a>
         </li>
         <li>
@@ -54,22 +54,22 @@
             <ol>
                 <li>
                     <a href="http://eventespresso.com/product/espresso-ticketing/" target="_blank">
-                        <?php _e('Ticket Scanning', 'event_espresso'); ?>
+                        <?php esc_html_e('Ticket Scanning', 'event_espresso'); ?>
                     </a>
                 </li>
                 <li>
                     <a href="http://eventespresso.com/product/espresso-multiple/" target="_blank">
-                        <?php _e('Multiple Event Registration', 'event_espresso'); ?>
+                        <?php esc_html_e('Multiple Event Registration', 'event_espresso'); ?>
                     </a>
                 </li>
                 <li>
                     <a href="http://eventespresso.com/product/espresso-members/" target="_blank">
-                        <?php _e('WP User Integration', 'event_espresso'); ?>
+                        <?php esc_html_e('WP User Integration', 'event_espresso'); ?>
                     </a>
                 </li>
                 <li>
                     <a href="http://eventespresso.com/product/espresso-seating/" target="_blank">
-                        <?php _e('Seating Chart', 'event_espresso'); ?>
+                        <?php esc_html_e('Seating Chart', 'event_espresso'); ?>
                     </a>
                 </li>
             </ol>

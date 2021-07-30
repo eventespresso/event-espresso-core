@@ -59,7 +59,7 @@ function ee_recurse_into_array_for_display($data)
 
 ?>
 <h1>
-    <?php _e("System Information", "event_espresso"); ?> <a href="<?php echo $download_system_status_url; ?>"
+    <?php esc_html_e("System Information", "event_espresso"); ?> <a href="<?php echo $download_system_status_url; ?>"
                                                             class="button-secondary">
         <?php esc_html_e(
             'Download to File',

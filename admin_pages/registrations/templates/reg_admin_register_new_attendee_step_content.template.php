@@ -12,7 +12,7 @@
         ) : ?>
             <div class="ee-attention">
                 <label for="txn_reg_status_change" class="last">
-                    <?php _e(
+                    <?php esc_html_e(
                         'Send Related Messages?',
                         'event_espresso'
                     ); ?></label>
@@ -20,7 +20,7 @@
                 <br/>
                 <br/>
                 <p class="description">
-                    <?php _e(
+                    <?php esc_html_e(
                         'Send a notification to registrants after processing?',
                         'event_espresso'
                     ); ?></p><br/>

@@ -144,12 +144,12 @@ abstract class AbstractHelper implements HelperInterface
         }
         ?>
         <p>
-            <label for="timezone_string"><?php _e('timezone', 'event_espresso'); ?></label>
+            <label for="timezone_string"><?php esc_html_e('timezone', 'event_espresso'); ?></label>
             <select id="timezone_string" name="timezone_string">
                 <?php echo wp_timezone_choice($timezone_string); ?>
             </select>
             <br/>
-            <span class="description"><?php _e('Choose a city in the same timezone as the event.', 'event_espresso'); ?></span>
+            <span class="description"><?php esc_html_e('Choose a city in the same timezone as the event.', 'event_espresso'); ?></span>
         </p>
 
         <p>
@@ -177,9 +177,9 @@ abstract class AbstractHelper implements HelperInterface
                 date_default_timezone_set($timezone_string);
                 $now = localtime(time(), true);
                 if ($now['tm_isdst']) {
-                    _e('This timezone is currently in daylight saving time.', 'event_espresso');
+                    esc_html_e('This timezone is currently in daylight saving time.', 'event_espresso');
                 } else {
-                    _e('This timezone is currently in standard time.', 'event_espresso');
+                    esc_html_e('This timezone is currently in standard time.', 'event_espresso');
                 }
                 ?>
             <br/>
@@ -207,7 +207,7 @@ abstract class AbstractHelper implements HelperInterface
                         '<code >' . date_i18n($datetime_format, $tr['ts'] + ($tz_offset - $tr['offset'])) . '</code >'
                     );
                 } else {
-                    _e('This timezone does not observe daylight saving time.', 'event_espresso');
+                    esc_html_e('This timezone does not observe daylight saving time.', 'event_espresso');
                 }
             }
             // Set back to UTC.

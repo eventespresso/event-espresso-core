@@ -61,13 +61,13 @@ class EEW_New_Addon extends WP_Widget {
 
 		<p>
 			<label for="<?php echo $this->get_field_id('title'); ?>">
-				<?php _e('Title:', 'event_espresso'); ?>
+				<?php esc_html_e('Title:', 'event_espresso'); ?>
 			</label>
 			<input type="text" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" width="20" value="<?php echo $instance['title']; ?>" />
 		</p>
 		<p>
 			<label for="<?php echo $this->get_field_id('yes_or_no_question'); ?>">
-				<?php _e('Yes or No?', 'event_espresso'); ?>
+				<?php esc_html_e('Yes or No?', 'event_espresso'); ?>
 			</label>
 			<?php
 				echo EEH_Form_Fields::select(

@@ -1,1 +1,1 @@
-<?php _e('Event Payment Reminder', 'event_espresso'); ?>
+<?php esc_html_e('Event Payment Reminder', 'event_espresso'); ?>

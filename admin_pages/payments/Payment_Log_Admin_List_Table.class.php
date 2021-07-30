@@ -118,10 +118,10 @@ class Payment_Log_Admin_List_Table extends EE_Admin_List_Table
         ) : date('m/d/Y');
         ob_start();
         ?>
-        <label for="txn-filter-start-date"><?php _e('Display Transactions from ', 'event_espresso'); ?></label>
+        <label for="txn-filter-start-date"><?php esc_html_e('Display Transactions from ', 'event_espresso'); ?></label>
         <input id="payment-filter-start-date" class="datepicker" type="text" value="<?php echo $start_date; ?>"
                name="payment-filter-start-date" size="15"/>
-        <label for="txn-filter-end-date"><?php _e(' until ', 'event_espresso'); ?></label>
+        <label for="txn-filter-end-date"><?php esc_html_e(' until ', 'event_espresso'); ?></label>
         <input id="payment-filter-end-date" class="datepicker" type="text" value="<?php echo $end_date; ?>"
                name="payment-filter-end-date" size="15"/>
         <?php

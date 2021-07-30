@@ -3,7 +3,7 @@
         <div id="espresso-ajax-loading" class="ajax-loader-grey">
             <span class="ee-spinner ee-spin"></span><span class="hidden">
                 <?php
-                _e(
+                esc_html_e(
                     'loading...',
                     'event_espresso'
                 ); ?></span>
@@ -30,7 +30,7 @@
             foreach ($hidden_fields as $name => $field) {
                 echo $field['field'];
             } ?>
-            <input type="submit" value="<?php _e('Submit', 'event_espresso'); ?>" class="button-secondary no-drag"/>
+            <input type="submit" value="<?php esc_html_e('Submit', 'event_espresso'); ?>" class="button-secondary no-drag"/>
         </form>
     </div>
 </div>

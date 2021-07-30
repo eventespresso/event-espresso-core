@@ -32,7 +32,7 @@ $id = ! empty($QST_system) ? '_disabled' : '';
         <tr>
             <th>
                 <label for="QSG_name">
-                    <?php _e('Group Name', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link(
+                    <?php esc_html_e('Group Name', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link(
                         'group_name_info'
                     ); ?>
                 </label>
@@ -47,7 +47,7 @@ $id = ! empty($QST_system) ? '_disabled' : '';
         <tr>
             <th>
                 <label for="QSG_identifier">
-                    <?php _e('Group Identifier', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link(
+                    <?php esc_html_e('Group Identifier', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link(
                         'group_identifier_info'
                     ); ?>
                 </label>
@@ -58,7 +58,7 @@ $id = ! empty($QST_system) ? '_disabled' : '';
                        class="regular-text"<?php echo $disabled; ?>>
                 <?php if (! empty($QSG_system)) { ?>
                     <p><span class="description" style="color:#D54E21;">
-                            <?php _e('System question group! This field cannot be changed.', 'event_espresso') ?>
+                            <?php esc_html_e('System question group! This field cannot be changed.', 'event_espresso') ?>
                     </span><br/></p>
                 <?php } ?>
 
@@ -67,7 +67,7 @@ $id = ! empty($QST_system) ? '_disabled' : '';
         <tr>
             <th>
                 <label for="QSG_desc">
-                    <?php _e('Description', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link(
+                    <?php esc_html_e('Description', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link(
                         'group_description_info'
                     ); ?>
                 </label>
@@ -81,7 +81,7 @@ $id = ! empty($QST_system) ? '_disabled' : '';
         <tr>
             <th>
                 <label for="QSG_order">
-                    <?php _e('Question Group Order', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link(
+                    <?php esc_html_e('Question Group Order', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link(
                         'group_order_info'
                     ); ?>
                 </label>
@@ -95,7 +95,7 @@ $id = ! empty($QST_system) ? '_disabled' : '';
         <tr>
             <th>
                 <label>
-                    <?php _e('Show Name', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link(
+                    <?php esc_html_e('Show Name', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link(
                         'show_group_name_info'
                     ); ?>
                 </label>
@@ -107,7 +107,7 @@ $id = ! empty($QST_system) ? '_disabled' : '';
                         $values,
                         $question_group->show_group_name()
                     ); ?>
-                    <p class="description"><?php _e('Show Group Name on Registration Page?', 'event_espresso'); ?></p>
+                    <p class="description"><?php esc_html_e('Show Group Name on Registration Page?', 'event_espresso'); ?></p>
                 </label>
             </td>
         </tr>
@@ -115,7 +115,7 @@ $id = ! empty($QST_system) ? '_disabled' : '';
         <tr>
             <th>
                 <label>
-                    <?php _e(' Show Description', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link(
+                    <?php esc_html_e(' Show Description', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link(
                         'show_group_description_info'
                     ); ?>
                 </label>
@@ -128,7 +128,7 @@ $id = ! empty($QST_system) ? '_disabled' : '';
                         $question_group->show_group_desc()
                     ); ?>
                     <p class="description"><?php
-                        _e(' Show Group Description on Registration Page?', 'event_espresso');
+                        esc_html_e(' Show Group Description on Registration Page?', 'event_espresso');
                     ?></p>
                 </label>
                 <input type="hidden" name="QSG_system" value="<?php echo $question_group->system_group(); ?>">
@@ -141,11 +141,11 @@ $id = ! empty($QST_system) ? '_disabled' : '';
 
 <div id="group-questions" class="edit-group padding question-group-questions-container postbox">
     <div class="handlediv" title="<?php esc_attr_e('Click to toggle', 'event_espresso'); ?>"><br></div>
-    <h2 class="handle"><?php _e('Questions', 'event_espresso'); ?></h2>
+    <h2 class="handle"><?php esc_html_e('Questions', 'event_espresso'); ?></h2>
     <div class="form-table question-group-questions inside">
         <div class="padding">
             <p><span class="description"><?php
-                    _e(
+                    esc_html_e(
                         'Select which questions should be shown in this group by checking or unchecking boxes. You can drag and drop questions to reorder them. Your changes will be updated when you save.',
                         'event_espresso'
                     ); ?></span></p>

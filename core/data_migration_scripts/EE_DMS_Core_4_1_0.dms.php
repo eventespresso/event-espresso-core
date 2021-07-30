@@ -1789,12 +1789,12 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base
     {
         ?><p class="ee-attention">
         <strong><span class="reminder-spn">
-                <?php _e(
+                <?php esc_html_e(
                     "Important note to those using Event Espresso 3 addons: ",
                     "event_espresso"
                 ); ?></span></strong>
         <br/>
-        <?php _e(
+        <?php esc_html_e(
             "Unless an addon's description on our website explicitly states that it is compatible with EE4, you should consider it incompatible and know that it WILL NOT WORK correctly with this new version of Event Espresso 4 (EE4). As well, any data for incompatible addons will NOT BE MIGRATED until an updated EE4 compatible version of the addon is available. If you want, or need to keep using your EE3 addons, you should simply continue using EE3 until EE4 compatible versions of your addons become available. To continue using EE3 for now, just deactivate EE4 and reactivate EE3.",
             "event_espresso"
         ); ?>

@@ -17,6 +17,6 @@
 [PRICE_MODIFIER_LINE_ITEM_LIST]
 <tr class="total_tr odd">
     <td colspan="4"></td>
-    <td class="total" nowrap="nowrap"><?php _e("Ticket Total:", "event_espresso"); ?></td>
+    <td class="total" nowrap="nowrap"><?php esc_html_e("Ticket Total:", "event_espresso"); ?></td>
     <td class="item_r">[LINE_ITEM_TOTAL]</td>
 </tr>

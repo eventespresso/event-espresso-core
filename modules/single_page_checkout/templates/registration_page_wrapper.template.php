@@ -17,7 +17,7 @@
         <?php }
         if (! $revisit && apply_filters('FHEE__registration_page_wrapper_template__steps_display', true)) {
             ?>
-            <h2 id="spco-steps-big-hdr" class="spco-steps-big-hdr"><?php _e(' Steps', 'event_espresso'); ?></h2>
+            <h2 id="spco-steps-big-hdr" class="spco-steps-big-hdr"><?php esc_html_e(' Steps', 'event_espresso'); ?></h2>
 
             <div id="spco-steps-display-dv">
                 <?php

@@ -2,7 +2,7 @@
 
     <p class="spco-copy-all-attendee-pg">
         <label class="ee-checkbox-label-before ee-checkbox-label-wide">
-            <?php _e(
+            <?php esc_html_e(
                 'Use Attendee #1\'s information for ALL attendees',
                 'event_espresso'
             ); ?>
@@ -26,18 +26,18 @@
 
     <a id="display-more-attendee-copy-options" class="display-the-hidden smaller-text float-right"
        rel="more-attendee-copy-options"><span class="dashicons dashicons-arrow-right"></span>
-        <?php _e(
+        <?php esc_html_e(
             'advanced copy options',
             'event_espresso'
         ); ?></a>
     <a id="hide-more-attendee-copy-options" class="hide-the-displayed smaller-text float-right"
        rel="more-attendee-copy-options" style="display: none;"><span
-            class="dashicons dashicons-arrow-down"></span><?php _e('basic copy options', 'event_espresso'); ?></a>
+            class="dashicons dashicons-arrow-down"></span><?php esc_html_e('basic copy options', 'event_espresso'); ?></a>
 
     <div id="more-attendee-copy-options-dv" class="" style="display: none;">
 
         <p class="spco-copy-attendee-pg">
-            <?php _e(
+            <?php esc_html_e(
                 'Only copy the above information to the following selected additional attendees.',
                 'event_espresso'
             ); ?>

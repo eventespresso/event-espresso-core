@@ -8,16 +8,16 @@
 /** @type EE_Data_Migration_Script_Base $most_recent_migration */
 ?>
 <?php if ($success) { ?>
-    <h1><?php _e("Database Update Crash Report Sent", "event_espresso"); ?></h1>
+    <h1><?php esc_html_e("Database Update Crash Report Sent", "event_espresso"); ?></h1>
     <p>
-        <?php _e(
+        <?php esc_html_e(
             "A crash report email was sent to Event Espresso. You should hear back from us soon.",
             "event_espresso"
         ); ?></p>
 <?php } else {// didn't send email properly ?>
-    <h1><?php _e("Migration Report not sent", "event_espresso"); ?></h1>
+    <h1><?php esc_html_e("Migration Report not sent", "event_espresso"); ?></h1>
     <p>
-        <?php _e(
+        <?php esc_html_e(
             "An error occurred and we were not able to automatically send a report to Event Espresso support.",
             "event_espresso"
         ); ?></p>
@@ -27,7 +27,7 @@
             '<a href="mailto:' . EE_SUPPORT_EMAIL . '">' . EE_SUPPORT_EMAIL . "</a>"
         ); ?></p>
     <label>
-        <?php _e("system status info", "event_espresso"); ?>
+        <?php esc_html_e("system status info", "event_espresso"); ?>
         <textarea name="system_status_info" class="system_status_info">
             <?php print_r(
                 EEM_System_Status::instance()->get_system_stati()
@@ -36,19 +36,19 @@
 <?php } ?>
 
 
-<h1><?php _e("What's next?", 'event_espresso'); ?></h1>
-<p><?php _e("Well, it depends on your situation:", 'event_espresso'); ?></p>
+<h1><?php esc_html_e("What's next?", 'event_espresso'); ?></h1>
+<p><?php esc_html_e("Well, it depends on your situation:", 'event_espresso'); ?></p>
 <div class='ee-table-wrap'>
     <table>
         <thead>
         <tr>
-            <th><?php _e("Your Situation", 'event_espresso'); ?></th>
-            <th><?php _e("Suggested Action", 'event_espresso'); ?></th>
+            <th><?php esc_html_e("Your Situation", 'event_espresso'); ?></th>
+            <th><?php esc_html_e("Suggested Action", 'event_espresso'); ?></th>
         </tr>
         </thead>
         <tbody>
         <tr>
-            <td><p class='big-text'><?php _e("I want to retry migrating my data", 'event_espresso'); ?></p></td>
+            <td><p class='big-text'><?php esc_html_e("I want to retry migrating my data", 'event_espresso'); ?></p></td>
             <td>
                 <p>
                     <?php
@@ -83,7 +83,7 @@
         </tr>
         <tr>
             <td>
-                <p class='big-text'><?php _e("I want to hear from Support before proceeding", 'event_espresso'); ?></p>
+                <p class='big-text'><?php esc_html_e("I want to hear from Support before proceeding", 'event_espresso'); ?></p>
             </td>
             <td>
                 <?php
@@ -143,7 +143,7 @@
                     ?>
                 </p>
                 <p>
-                    <?php _e(
+                    <?php esc_html_e(
                         "If you ever decide to re-attempt using EE4, you will again be given the option to migrate your EE3 data or not.",
                         'event_espresso'
                     ); ?></p>
