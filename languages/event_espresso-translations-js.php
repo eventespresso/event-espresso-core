@@ -392,13 +392,30 @@ $generated_i18n_strings = array(
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:96
 	__( 'later', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/DateCapacity.tsx:37
-	__( 'edit capacity (registration limit)…', 'event_espresso' ),
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/DateCapacity.tsx:34
+	/* translators: click to edit capacity<linebreak>(registration limit)… */
+	__( 'click to edit capacity%s(registration limit)…', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/DateCardSidebar.tsx:38
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/DateCardSidebar.tsx:31
+	// Reference: packages/ee-components/src/SimpleTicketCard/SimpleTicketCard.tsx:27
+	// Reference: packages/ui-components/src/CalendarDateSwitcher/CalendarDateSwitcher.tsx:34
+	__( 'starts', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/DateCardSidebar.tsx:32
+	// Reference: packages/ee-components/src/SimpleTicketCard/SimpleTicketCard.tsx:34
+	// Reference: packages/ui-components/src/CalendarDateSwitcher/CalendarDateSwitcher.tsx:47
+	__( 'ends', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/DateCardSidebar.tsx:32
+	__( 'started', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/DateCardSidebar.tsx:32
+	__( 'ended', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/DateCardSidebar.tsx:46
 	__( 'Edit Event Date', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/DateCardSidebar.tsx:42
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/DateCardSidebar.tsx:50
 	__( 'edit start and end dates', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/DateDetailsPanel.tsx:15
@@ -412,13 +429,17 @@ $generated_i18n_strings = array(
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/TicketDetailsPanel.tsx:33
 	__( 'reg list', 'event_espresso' ),
 
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/Details.tsx:52
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/Details.tsx:44
+	__( 'add description…', 'event_espresso' ),
+
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/Details.tsx:53
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/Details.tsx:45
 	__( 'Edit description', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/Details.tsx:54
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/Details.tsx:46
-	__( 'edit description…', 'event_espresso' ),
+	__( 'click to edit description…', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/config.ts:10
 	__( 'Move Date to Trash', 'event_espresso' ),
@@ -453,9 +474,13 @@ $generated_i18n_strings = array(
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/config.ts:9
 	__( 'Manage Ticket Assignments', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/editable/EditableName.tsx:23
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/editable/EditableName.tsx:34
-	__( 'edit title…', 'event_espresso' ),
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/editable/EditableName.tsx:41
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/editable/EditableName.tsx:41
+	__( 'click to edit title…', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/editable/EditableName.tsx:42
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/editable/EditableName.tsx:42
+	__( 'add title…', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/filterBar/ActiveDatesFilters.tsx:17
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/filterBar/ActiveTicketsFilters.tsx:17
@@ -896,10 +921,22 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	/* translators: %s ticket name */
 	__( 'Edit prices for Ticket: %s', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/TicketCardSidebar.tsx:37
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/TicketCardSidebar.tsx:30
+	__( 'sales start', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/TicketCardSidebar.tsx:33
+	__( 'sales began', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/TicketCardSidebar.tsx:35
+	__( 'sales ended', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/TicketCardSidebar.tsx:36
+	__( 'sales end', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/TicketCardSidebar.tsx:50
 	__( 'Edit Ticket Sale Dates', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/TicketCardSidebar.tsx:41
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/TicketCardSidebar.tsx:54
 	__( 'edit ticket sales start and end dates', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/TicketDetailsPanel.tsx:28
@@ -1144,14 +1181,6 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/ee-components/src/EntityList/EntityList.tsx:32
 	__( 'try changing filter settings', 'event_espresso' ),
 
-	// Reference: packages/ee-components/src/SimpleTicketCard/SimpleTicketCard.tsx:27
-	// Reference: packages/ui-components/src/CalendarDateSwitcher/CalendarDateSwitcher.tsx:34
-	__( 'starts', 'event_espresso' ),
-
-	// Reference: packages/ee-components/src/SimpleTicketCard/SimpleTicketCard.tsx:34
-	// Reference: packages/ui-components/src/CalendarDateSwitcher/CalendarDateSwitcher.tsx:47
-	__( 'ends', 'event_espresso' ),
-
 	// Reference: packages/ee-components/src/bulkEdit/ActionCheckbox.tsx:38
 	/* translators: %d entity id */
 	__( 'select entity with id %d', 'event_espresso' ),
@@ -1174,10 +1203,10 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/ee-components/src/bulkEdit/details/Submit.tsx:18
 	__( 'Bulk update details', 'event_espresso' ),
 
-	// Reference: packages/ee-components/src/filterBar/SortByControl/index.tsx:26
+	// Reference: packages/ee-components/src/filterBar/SortByControl/index.tsx:27
 	__( 'reorder dates', 'event_espresso' ),
 
-	// Reference: packages/ee-components/src/filterBar/SortByControl/index.tsx:26
+	// Reference: packages/ee-components/src/filterBar/SortByControl/index.tsx:27
 	__( 'reorder tickets', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/FormElement/FormElementToolbar.tsx:32
@@ -2017,10 +2046,10 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/ui-components/src/EntityDetailsPanel/EntityDetailsPanelSold.tsx:38
 	__( 'view approved registrations for this ticket.', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/EntityList/filterBar/buttons/CardViewFilterButton.tsx:21
+	// Reference: packages/ui-components/src/EntityList/filterBar/buttons/CardViewFilterButton.tsx:22
 	__( 'card view', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/EntityList/filterBar/buttons/TableViewFilterButton.tsx:20
+	// Reference: packages/ui-components/src/EntityList/filterBar/buttons/TableViewFilterButton.tsx:21
 	__( 'table view', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/EntityList/filterBar/buttons/ToggleBulkActionsButton.tsx:8
@@ -2100,7 +2129,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'Steps', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/TabbableText/index.tsx:21
-	__( 'Click to edit…', 'event_espresso' ),
+	__( 'click to edit…', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/TimezoneTimeInfo/Content.tsx:14
 	__( 'The Website\'s Time Zone', 'event_espresso' ),
