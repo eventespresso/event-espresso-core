@@ -114,7 +114,7 @@
 		"del": "git+https://github.com/sindresorhus/del.git",
 		"equivalent-key-map": "^0.2.2",
 		"eslint": "^7.28.0",
-		"eslint-plugin-jest": "24.3.6",
+		"eslint-plugin-jest": "24.4.0",
 		"eslint-plugin-react-hooks": "^4.2.0",
 		"handlebars": "^4.7.7",
 		"license-checker": "^25.0.1",
