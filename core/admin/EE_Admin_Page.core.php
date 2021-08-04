@@ -512,7 +512,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         global $ee_menu_slugs;
         $ee_menu_slugs = (array) $ee_menu_slugs;
         if (
-            ! defined('DOING_AJAX')
+            ! $this->request->isAjax()
             && (! $this->_current_page || ! isset($ee_menu_slugs[ $this->_current_page ]))
         ) {
             return;
@@ -590,7 +590,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             );
         }
         // next route only if routing enabled
-        if ($this->_routing && ! defined('DOING_AJAX')) {
+        if ($this->_routing && ! $this->request->isAjax()) {
             $this->_verify_routes();
             // next let's just check user_access and kill if no access
             $this->check_user_access();
@@ -811,7 +811,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     protected function _verify_routes()
     {
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-        if (! $this->_current_page && ! defined('DOING_AJAX')) {
+        if (! $this->_current_page && ! $this->request->isAjax()) {
             return false;
         }
         $this->_route = false;
@@ -949,7 +949,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                     __CLASS__
                 );
             }
-            if (! defined('DOING_AJAX')) {
+            if (! $this->request->isAjax()) {
                 wp_die($msg);
             }
             EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
@@ -1568,7 +1568,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         }
         $id = is_array($this->_route) && ! empty($this->_route['obj_id']) ? $this->_route['obj_id'] : 0;
         if (
-            ! defined('DOING_AJAX')
+            ! $this->request->isAjax()
             && (
                 ! function_exists('is_admin')
                 || ! EE_Registry::instance()->CAP->current_user_can(
@@ -1787,7 +1787,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      */
     protected function _set_help_trigger($trigger_id, $display = true, $dimensions = ['400', '640'])
     {
-        if (defined('DOING_AJAX')) {
+        if ($this->request->isAjax()) {
             return '';
         }
         // let's check and see if there is any content set for this popup.  If there isn't then we'll include a default title and content so that developers know something needs to be corrected
@@ -2866,7 +2866,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         $template_path                                     = $sidebar
             ? EE_ADMIN_TEMPLATE . 'admin_details_wrapper.template.php'
             : EE_ADMIN_TEMPLATE . 'admin_details_wrapper_no_sidebar.template.php';
-        if (defined('DOING_AJAX') && DOING_AJAX) {
+        if ($this->request->isAjax()) {
             $template_path = EE_ADMIN_TEMPLATE . 'admin_details_wrapper_no_sidebar_ajax.template.php';
         }
         $template_path                                     = ! empty($this->_column_template_path)
@@ -2982,7 +2982,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         $this->_set_search_attributes();
         $this->_template_args['current_page']     = $this->_wp_page_slug;
         $template_path                            = EE_ADMIN_TEMPLATE . 'admin_list_wrapper.template.php';
-        $this->_template_args['table_url']        = defined('DOING_AJAX')
+        $this->_template_args['table_url']        = $this->request->isAjax()
             ? add_query_arg(['noheader' => 'true', 'route' => $this->_req_action], $this->_admin_base_url)
             : add_query_arg(['route' => $this->_req_action], $this->_admin_base_url);
         $this->_template_args['list_table']       = $this->_list_table_object;
@@ -3166,7 +3166,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      */
     public function return_json()
     {
-        if (defined('DOING_AJAX') && DOING_AJAX) {
+        if ($this->request->isAjax()) {
             $this->_return_json();
         } else {
             throw new EE_Error(
@@ -3219,15 +3219,14 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         );
         $this->_template_args['after_admin_page_content']  .= $this->_set_help_popup_content();
         // load settings page wrapper template
-        $template_path = ! defined('DOING_AJAX')
+        $template_path = ! $this->request->isAjax()
             ? EE_ADMIN_TEMPLATE . 'admin_wrapper.template.php'
-            : EE_ADMIN_TEMPLATE
-              . 'admin_wrapper_ajax.template.php';
+            : EE_ADMIN_TEMPLATE . 'admin_wrapper_ajax.template.php';
         // about page?
         $template_path = $about
             ? EE_ADMIN_TEMPLATE . 'about_admin_wrapper.template.php'
             : $template_path;
-        if (defined('DOING_AJAX')) {
+        if ($this->request->isAjax()) {
             $this->_template_args['admin_page_content'] = EEH_Template::display_template(
                 $template_path,
                 $this->_template_args,
@@ -3597,7 +3596,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             $query_args
         );
         // check if we're doing ajax.  If we are then lets just return the results and js can handle how it wants.
-        if (defined('DOING_AJAX')) {
+        if ($this->request->isAjax()) {
             $default_data                    = [
                 'close'        => true,
                 'redirect_url' => $redirect_url,
@@ -3631,7 +3630,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     protected function _process_notices($query_args = [], $skip_route_verify = false, $sticky_notices = true)
     {
         // first let's set individual error properties if doing_ajax and the properties aren't already set.
-        if (defined('DOING_AJAX') && DOING_AJAX) {
+        if ($this->request->isAjax()) {
             $notices = EE_Error::get_notices(false);
             if (empty($this->_template_args['success'])) {
                 $this->_template_args['success'] = isset($notices['success']) ? $notices['success'] : false;
@@ -3645,7 +3644,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         }
         $this->_template_args['notices'] = EE_Error::get_notices();
         // IF this isn't ajax we need to create a transient for the notices using the route (however, overridden if $sticky_notices == true)
-        if (! defined('DOING_AJAX') || $sticky_notices) {
+        if (! $this->request->isAjax() || $sticky_notices) {
             $route = isset($query_args['action']) ? $query_args['action'] : 'default';
             $this->_add_transient(
                 $route,
