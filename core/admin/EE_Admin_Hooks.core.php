@@ -427,7 +427,7 @@ abstract class EE_Admin_Hooks extends EE_Base
             );
             throw new EE_Error(implode('||', $msg));
         }
-        LoaderFactory::getLoader()->getShared($class_name);
+        $this->_page_object =LoaderFactory::getLoader()->getShared($class_name, [false]);
     }
 
 
