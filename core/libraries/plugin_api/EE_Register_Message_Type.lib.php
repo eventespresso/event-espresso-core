@@ -45,7 +45,8 @@ class EE_Register_Message_Type implements EEI_Plugin_API
     public static function register(string $addon_name = '', array $setup_args = []): bool
     {
         // required fields MUST be present, so let's make sure they are.
-        if (! isset($addon_name)
+        if (
+            ! isset($addon_name)
             || ! is_array($setup_args)
             || empty($setup_args['mtfilename'])
             || empty($setup_args['autoloadpaths'])
@@ -157,10 +158,12 @@ class EE_Register_Message_Type implements EEI_Plugin_API
         ];
         // add filters but only if they haven't already been set (these filters only need to be registered ONCE because
         // the callback handles all registered message types.
-        if (false === has_filter(
+        if (
+            has_filter(
                 'FHEE__EED_Messages___set_messages_paths___MSG_PATHS',
                 ['EE_Register_Message_Type', 'register_msgs_autoload_paths']
-            )) {
+            ) === false
+        ) {
             add_filter(
                 'FHEE__EED_Messages___set_messages_paths___MSG_PATHS',
                 ['EE_Register_Message_Type', 'register_msgs_autoload_paths'],
@@ -235,10 +238,11 @@ class EE_Register_Message_Type implements EEI_Plugin_API
             if ($settings['force_activation']) {
                 foreach ($settings['messengers_to_activate_with'] as $messenger) {
                     // DO not force activation if this message type has already been activated in the system
-                    if (! $message_resource_manager->has_message_type_been_activated_for_messenger(
-                        $addon_name,
-                        $messenger
-                    )
+                    if (
+                        ! $message_resource_manager->has_message_type_been_activated_for_messenger(
+                            $addon_name,
+                            $messenger
+                        )
                     ) {
                         $message_resource_manager->ensure_message_type_is_active($addon_name, $messenger);
                     }
@@ -423,13 +427,15 @@ class EE_Register_Message_Type implements EEI_Plugin_API
         string $context,
         EE_Messages_Template_Pack $template_pack
     ): string {
-        if (! $template_pack instanceof EE_Messages_Template_Pack_Default
+        if (
+            ! $template_pack instanceof EE_Messages_Template_Pack_Default
             || ! $message_type instanceof EE_message_type
         ) {
             return $base_path;
         }
         foreach (self::$_ee_message_type_registry as $addon_name => $mt_reg) {
-            if ($message_type->name === $addon_name
+            if (
+                $message_type->name === $addon_name
                 && ! empty($mt_reg['base_path_for_default_templates'])
             ) {
                 return $mt_reg['base_path_for_default_templates'];
@@ -470,17 +476,11 @@ class EE_Register_Message_Type implements EEI_Plugin_API
             return $base_path_or_url;
         }
         foreach (self::$_ee_message_type_registry as $addon_name => $mt_reg) {
-            if ($addon_name === $message_type_slug
-            ) {
-                if (
-                    $url
-                    && ! empty($mt_reg['base_url_for_default_variation'])
-                ) {
+            if ($addon_name === $message_type_slug) {
+                if ($url && ! empty($mt_reg['base_url_for_default_variation'])) {
                     return $mt_reg['base_url_for_default_variation'];
-                } elseif (
-                    ! $url
-                    && ! empty($mt_reg['base_path_for_default_variation'])
-                ) {
+                }
+                if (! $url && ! empty($mt_reg['base_path_for_default_variation'])) {
                     return $mt_reg['base_path_for_default_variation'];
                 }
             }
