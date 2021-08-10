@@ -44,21 +44,21 @@
             'event_espresso'
         ),
         '<div class="switch">'
-            . '<input class="ee-on-off-toggle ee-toggle-round-flat" type="checkbox" checked="checked" disabled>'
-            . '<label for="ee-on-off-toggle-on"></label>'
+        . '<input class="ee-on-off-toggle ee-toggle-round-flat" type="checkbox" checked="checked" disabled>'
+        . '<label for="ee-on-off-toggle-on"></label>'
         . '</div>',
         '<div class="switch">'
-            . '<input class="ee-on-off-toggle ee-toggle-round-flat" type="checkbox" disabled>'
-            . '<label for="ee-on-off-toggle-on"></label>'
+        . '<input class="ee-on-off-toggle ee-toggle-round-flat" type="checkbox" disabled>'
+        . '<label for="ee-on-off-toggle-on"></label>'
         . '</div>'
     ); ?>
 </p>
 <p>
     <?php
-        esc_html_e(
-            'The on/off toggle is also what you use to activate or deactivate a messenger.',
-            'event_espresso'
-        ); ?>
+    esc_html_e(
+        'The on/off toggle is also what you use to activate or deactivate a messenger.',
+        'event_espresso'
+    ); ?>
 </p>
 <p>
     <?php esc_html_e(
@@ -73,7 +73,7 @@
     ); ?>
 </p>
 <p>
-    <strong><?php esc_html_e('Important', 'event_espresso'); ?></strong><br/>
+    <strong><?php esc_html_e('Important', 'event_espresso'); ?></strong><br />
     <?php esc_html_e(
         'Although customizations made to global templates are preserved when a messenger is deactivated, any settings for that messenger (or the message types that were attached to it) are lost on deactivation.  Also, once you deactivate a messenger, no more messages will be delivered using that messenger for any of your events.',
         'event_espresso'

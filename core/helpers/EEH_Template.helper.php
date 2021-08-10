@@ -986,6 +986,18 @@ class EEH_Template
             $wrap_id
         );
     }
+
+
+    /**
+     * @param string $image_name
+     * @return string|null
+     * @since   $VID:$
+     */
+    public static function getScreenshotUrl($image_name)
+    {
+        return esc_url_raw(EE_GLOBAL_ASSETS_URL . 'images/screenshots/' . $image_name . '.jpg');
+    }
+
 }
 
 
