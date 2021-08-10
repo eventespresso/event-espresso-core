@@ -131,11 +131,21 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table
         ob_start();
         ?>
         <label for="txn-filter-start-date">Display Transactions from </label>
-        <input id="txn-filter-start-date" class="datepicker" type="text" value="<?php echo $start_date; ?>"
-               name="txn-filter-start-date" size="15"/>
+        <input class="datepicker"
+               id="txn-filter-start-date"
+               name="txn-filter-start-date"
+               size="15"
+               type="text"
+               value="<?php echo esc_html($start_date); ?>"
+        />
         <label for="txn-filter-end-date"> until </label>
-        <input id="txn-filter-end-date" class="datepicker" type="text" value="<?php echo $end_date; ?>"
-               name="txn-filter-end-date" size="15"/>
+        <input class="datepicker"
+               id="txn-filter-end-date"
+               name="txn-filter-end-date"
+               size="15"
+               type="text"
+               value="<?php echo esc_html($end_date); ?>"
+        />
         <?php
         $filters[] = ob_get_contents();
         ob_end_clean();

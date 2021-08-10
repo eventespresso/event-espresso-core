@@ -7,9 +7,11 @@
         ),
         '<strong>',
         '</strong>'
-    ); ?></p>
+    ); ?>
+</p>
 <p>
     <?php esc_html_e(
         'We\'ve intentionally created this framework so that we have as much flexibility as possible for future ideas that we think of (or customers think of) for the kinds of messages that get sent out related to your events.',
         'event_espresso'
-    ); ?></p>
+    ); ?>
+</p>

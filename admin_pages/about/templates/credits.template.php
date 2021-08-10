@@ -137,10 +137,11 @@
 <?php
 function esp_gravatar_profile($email)
 {
-    echo 'https://www.gravatar.com/' . md5($email);
+    echo esc_url_raw('https://www.gravatar.com/' . md5($email));
 }
 
 function esp_gravatar_image($email, $name)
 {
-    echo '<img src="https://0.gravatar.com/avatar/' . md5($email) . '?s=60" class="gravatar" alt="' . $name . '"/>';
+    echo '<img src="https://0.gravatar.com/avatar/' . md5($email) .
+         '?s=60" class="gravatar" alt="' . esc_attr($name) . '"/>';
 }

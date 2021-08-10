@@ -98,8 +98,9 @@
 
 #ee-msg-edit-frm h4 {
     font-size: 1.5em;
-    margin-top: 40px;
-    margin-bottom: 10px;
+    margin: 0;
+    margin-block-start: 1rem;
+    margin-block-end: .5rem;
 
 }
 
@@ -249,13 +250,32 @@ h4 + .ee-messages-shortcodes-chooser {
     padding-bottom: 15px;
 }
 
-#ee-msg-edit-frm .admin-primary-mbox-dv input[type="text"], #ee-msg-edit-frm .admin-primary-mbox-dv .wp-editor-wrap, #ee-msg-edit-frm .admin-primary-mbox-dv textarea {
+#ee-msg-edit-frm .admin-primary-mbox-dv ul,
+#ee-msg-edit-frm .admin-primary-mbox-dv li {
+    margin-block: 0;
+    margin-inline: 0;
+    padding-block: 1px;
+}
+#ee-msg-edit-frm .admin-primary-mbox-dv li {
+    margin-block-end: 1rem;
+}
+#ee-msg-edit-frm .admin-primary-mbox-dv li ul {
+    margin-block-start: 1rem;
+}
+
+#ee-msg-edit-frm .admin-primary-mbox-dv label {
+    display: block;
+}
+
+#ee-msg-edit-frm .admin-primary-mbox-dv input[type="text"],
+#ee-msg-edit-frm .admin-primary-mbox-dv .wp-editor-wrap,
+#ee-msg-edit-frm .admin-primary-mbox-dv textarea {
     width: 94%;
 }
 
-#ee-msg-edit-frm #to-content {
-    width: 90%
-}
+/*#ee-msg-edit-frm #to-content {*/
+/*    width: 90%*/
+/*}*/
 
 /** context toggle **/
 .context-active-control-container {

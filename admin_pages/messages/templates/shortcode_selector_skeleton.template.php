@@ -12,12 +12,16 @@
 
 if (! empty($shortcodes)) : ?>
     <span class="ee-messages-shortcodes-chooser js-open-list-trigger dashicons dashicons-menu">
-        <ul id="ee_shortcode_chooser_<?php echo $fieldname; ?>" class="ee_shortcode_chooser_container hidden">
+        <ul id="ee_shortcode_chooser_<?php echo esc_attr($fieldname); ?>" class="ee_shortcode_chooser_container hidden">
         <?php
-        foreach ($shortcodes as $shortcode => $label) : ?>
+        foreach (array_keys($shortcodes) as $shortcode ) : ?>
             <li>
-                <span class="js-shortcode-selection" data-value="<?php echo esc_attr($shortcode); ?>"
-                      data-linked-input-id="<?php echo esc_attr($linked_input_id); ?>"><?php echo $shortcode; ?></span>
+                <span class="js-shortcode-selection"
+                      data-linked-input-id="<?php echo esc_attr($linked_input_id); ?>"
+                      data-value="<?php echo esc_attr($shortcode); ?>"
+                >
+                    <?php echo esc_html($shortcode); ?>
+                </span>
             </li>
         <?php endforeach; ?>
         </ul>

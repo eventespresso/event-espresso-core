@@ -1,9 +1,21 @@
+<?php $reg_status_array = EEM_Registration::reg_status_array([], true); ?>
+
 <div class="padding">
     <p>
-        <strong>Note:</strong> The <code>[ESPRESSO_EVENT_ATTENDEES]</code> shortcode is not used to represent the
-        attendees post type directly, but is instead used to represent the intersection of attendees with events. So
-        it's always returning a list of attendees <em>in relation to</em> an event.
+        <?php printf(
+            esc_html__(
+                '%1$sNote:%2$s The %3$s[ESPRESSO_EVENT_ATTENDEES]%4$s shortcode is not used to represent the attendees post type directly, but is instead used to represent the intersection of attendees with events. So it\'s always returning a list of attendees %5$sin relation to%6$s an event.',
+                'event_espresso'
+            ),
+            '<strong>',
+            '</strong>',
+            '<code>',
+            '</code>',
+            '<em>',
+            '</em>'
+        ); ?>
     </p>
+
     <ul>
         <li>
             <strong>[ESPRESSO_EVENT_ATTENDEES]</strong><br>
@@ -48,8 +60,8 @@
                 <?php esc_html_e('The statuses you can use are:', 'event_espresso'); ?>
                 <br>
                 <?php
-                foreach (EEM_Registration::reg_status_array(array(), true) as $status_code => $status_label) {
-                    echo '<strong>' . $status_code . ':</strong>' . ' ' . $status_label . '<br>';
+                foreach ($reg_status_array as $status_code => $status_label) {
+                    echo esc_html("<strong>$status_code</strong>:&nbsp;$status_label<br>");
                 }
                 ?>
 
