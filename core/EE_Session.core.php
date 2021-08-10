@@ -836,7 +836,7 @@ class EE_Session implements SessionIdentifierInterface
     /**
      * @update session data  prior to saving to the db
      * @param bool $new_session
-     * @return TRUE on success, FALSE on fail
+     * @return bool TRUE on success, FALSE on fail
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -845,9 +845,7 @@ class EE_Session implements SessionIdentifierInterface
      */
     public function update($new_session = false)
     {
-        $this->_session_data = $this->_session_data !== null
-                               && is_array($this->_session_data)
-                               && isset($this->_session_data['id'])
+        $this->_session_data = is_array($this->_session_data) && isset($this->_session_data['id'])
             ? $this->_session_data
             : array();
         if (empty($this->_session_data)) {
@@ -915,7 +913,6 @@ class EE_Session implements SessionIdentifierInterface
 
     /**
      * @create session data array
-     * @return bool
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -926,7 +923,7 @@ class EE_Session implements SessionIdentifierInterface
     {
         do_action('AHEE_log', __CLASS__, __FUNCTION__, '');
         // use the update function for now with $new_session arg set to TRUE
-        return $this->update(true) ? true : false;
+        $this->update(true);
     }
 
     /**
@@ -956,7 +953,7 @@ class EE_Session implements SessionIdentifierInterface
      * _save_session_to_db
      *
      * @param bool $clear_session
-     * @return string
+     * @return bool
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException

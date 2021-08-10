@@ -405,7 +405,8 @@ label.error { display : block; color : #FE2A00 !important; }
 .button-primary + .button-secondary,
 .button-secondary + .button-primary,
 .button-secondary + .button-secondary {
-	margin-left : 2em; margin-right : 2em;
+    margin-inline-end: .25rem;
+    margin-inline-start: 1.5rem;
 }
 
 .espresso-admin .button .dashicons::before {
@@ -1141,3 +1142,107 @@ input.ee-register-button {
     color: #FE2a00;
     vertical-align: middle;
 }
+
+body.espresso-admin #screen-meta {
+ background: unset;
+ border: none;
+}
+
+body.espresso-admin #screen-meta-links .screen-meta-toggle {
+    z-index: 3;
+}
+
+body.espresso-admin #screen-meta-links .show-settings {
+    border-color: #c3c4c7 !important;
+    box-shadow: none !important;
+}
+
+body.espresso-admin #screen-options-wrap,
+body.espresso-admin #contextual-help-back {
+    background: #fff;
+    border: 1px solid #c3c4c7 !important;
+    z-index: 2;
+}
+body.espresso-admin #contextual-help-back {
+    left: 220px;
+}
+
+body.espresso-admin #contextual-help-wrap {
+    background: unset;
+    border: none;
+}
+
+body.espresso-admin .contextual-help-tabs-wrap {
+    padding: .75rem 1.5rem;
+    overflow: auto;
+    z-index: 2;
+    position: relative;
+}
+
+body.espresso-admin .contextual-help-tabs {
+    width: 220px;
+}
+
+body.espresso-admin .contextual-help-tabs ul {
+    margin: 0 -1px 0 0;
+    padding: 0;
+    position: relative;
+    z-index: 3;
+}
+
+body.espresso-admin .contextual-help-tabs li {
+    border: none transparent;
+    box-shadow: none !important;
+    margin: .25rem 0 !important;
+    padding: 0 !important;
+}
+
+body.espresso-admin .contextual-help-tabs a {
+    background: #ddd;
+    border: 1px solid #ddd;
+    border-left: 5px solid #ddd;
+    border-right: 1px solid #c3c4c7;
+    box-shadow: none !important;
+    color: #666;
+    font-size: 1rem;
+    outline: none !important;
+    padding: .5rem .5rem .5rem 1rem;
+}
+
+body.espresso-admin .contextual-help-tabs a:focus,
+body.espresso-admin .contextual-help-tabs a:hover {
+    background: #fff;
+    border-color: #fff;
+    border-right: 1px solid #c3c4c7;
+    color: #2271b1;
+}
+
+body.espresso-admin .contextual-help-tabs .active a {
+    background: #fff;
+    border-bottom: 1px solid #c3c4c7;
+    border-left: 5px solid #018cca;
+    border-right: 1px solid #fff;
+    border-top: 1px solid #c3c4c7;
+}
+
+body.espresso-admin #contextual-help-wrap h5 {
+    font-size: .95rem;
+    font-weight: 700;
+    margin-block-start: 1rem;
+    margin-block-end: .125rem;
+    padding: 0;
+}
+body.espresso-admin #contextual-help-wrap p {
+    font-size: 1rem;
+    font-weight: normal;
+}
+body.espresso-admin #contextual-help-wrap p:not(.ee-attention) {
+    margin-block-start: 0;
+    margin-block-end: 1rem;
+    padding: 0;
+}
+body.espresso-admin #contextual-help-wrap strong {
+    color: #72626c;
+    font-weight: 700;
+}
+/*box-shadow*/

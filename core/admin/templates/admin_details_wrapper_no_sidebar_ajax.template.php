@@ -1,3 +1,10 @@
+<?php
+/**
+ * @var string $admin_page_header
+ * @var string $post_body_content
+ */
+?>
+
 <div id="poststuff">
     <div id="post-body" class="metabox-holder columns-1">
 
@@ -10,7 +17,6 @@
             <?php echo $post_body_content; ?>
         </div>
         <!-- post-body-content -->
-
 
         <div id="postbox-container-2" class="postbox-container">
         </div>

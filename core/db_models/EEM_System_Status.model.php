@@ -112,7 +112,17 @@ class EEM_System_Status
     {
         $wp_memory_int = $this->let_to_num(WP_MEMORY_LIMIT);
         if ($wp_memory_int < 67108864) {
-            $wp_memory_to_display = '<mark class="error">' . sprintf(esc_html__('%s - We recommend setting memory to at least 64MB. See: %s Increasing memory allocated to PHP %s', 'event_espresso'), WP_MEMORY_LIMIT, '<a href="http://codex.wordpress.org/Editing_wp-config.php#Increasing_memory_allocated_to_PHP">', '</a>"') . '</mark>';
+            $wp_memory_to_display = '<mark class="error">';
+            $wp_memory_to_display .= sprintf(
+                esc_html__(
+                    '%s - We recommend setting memory to at least 64MB. See: %s Increasing memory allocated to PHP %s',
+                    'event_espresso'
+                ),
+                WP_MEMORY_LIMIT,
+                '<a href="http://codex.wordpress.org/Editing_wp-config.php#Increasing_memory_allocated_to_PHP">',
+                '</a>"'
+                );
+            $wp_memory_to_display .= '</mark>';
         } else {
             $wp_memory_to_display = '<mark class="yes">' . size_format($wp_memory_int) . '</mark>';
         }

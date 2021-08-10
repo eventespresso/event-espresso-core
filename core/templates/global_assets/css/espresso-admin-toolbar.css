@@ -82,3 +82,17 @@
 .ee-select2{
     min-width:75%;
 }
+
+.ee-update-nag.update-nag {
+    background: #fff;
+    border-inline-start: .5rem solid #ef2974;
+    box-sizing: border-box;
+    display: block;
+    font-size: .9rem;
+    font-weight: 400;
+    line-height: 1.6;
+    margin-block-start: 1rem;
+    margin-inline-end: 2rem;
+    padding-block: 1rem;
+    padding-inline: 2rem;
+}

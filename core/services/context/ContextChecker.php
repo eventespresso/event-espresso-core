@@ -82,9 +82,21 @@ class ContextChecker
     {
         $this->evaluation_callback = $evaluation_callback instanceof Closure
             ? $evaluation_callback
-            : function (ContextInterface $context, $acceptable_values) {
-                return in_array($context->slug(), $acceptable_values, true);
-            };
+            : [$this, 'evaluateContext'];
+    }
+
+
+    /**
+     * default callback for evaluating whether the supplied context exists within the supplied values
+     *
+     * @param ContextInterface $context
+     * @param array            $acceptable_values
+     * @return bool
+     * @since   $VID:$
+     */
+    public function evaluateContext(ContextInterface $context, array $acceptable_values = [])
+    {
+        return in_array($context->slug(), $acceptable_values, true);
     }
 
 

@@ -1,6 +1,9 @@
 <?php
 
+use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\ResettableInterface;
+use EventEspresso\core\services\database\TableAnalysis;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\services\request\RequestParams;
@@ -1519,7 +1522,7 @@ class EE_Config_Base
      *
      * @param string $property property name (checks to see if exists).
      * @return mixed if a detected type found return the escaped value, otherwise just the raw value is returned.
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function get_pretty($property)
     {
@@ -1888,7 +1891,7 @@ class EE_Core_Config extends EE_Config_Base
      *
      * @param string $property property name (checks to see if exists).
      * @return mixed if a detected type found return the escaped value, otherwise just the raw value is returned.
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function get_pretty($property)
     {
@@ -2118,11 +2121,12 @@ class EE_Currency_Config extends EE_Config_Base
      *
      * @access    public
      * @param string $CNT_ISO
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function __construct($CNT_ISO = '')
     {
-        /** @var \EventEspresso\core\services\database\TableAnalysis $table_analysis */
+        /** @var TableAnalysis $table_analysis */
         $table_analysis = EE_Registry::instance()->create('TableAnalysis', array(), true);
         // get country code from organization settings or use default
         $ORG_CNT = isset(EE_Registry::instance()->CFG->organization)
@@ -2419,8 +2423,8 @@ class EE_Registration_Config extends EE_Config_Base
      * constructed because that happens before we can get the privacy policy page's permalink.
      *
      * @throws InvalidArgumentException
-     * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
-     * @throws \EventEspresso\core\exceptions\InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
      */
     public function setDefaultCheckboxLabelText()
     {
@@ -3046,7 +3050,7 @@ class EE_Ticket_Selector_Config extends EE_Config_Base
         $this->show_ticket_sale_columns = true;
         $this->show_ticket_details = true;
         $this->show_expired_tickets = true;
-        $this->show_datetime_selector = \EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR;
+        $this->show_datetime_selector = EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR;
         $this->datetime_selector_threshold = 3;
         $this->datetime_selector_max_checked = 10;
     }
@@ -3062,9 +3066,9 @@ class EE_Ticket_Selector_Config extends EE_Config_Base
     {
         // if the settings are NOT: don't show OR below threshold, THEN active = true
         return ! (
-            $this->getShowDatetimeSelector() === \EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR
+            $this->getShowDatetimeSelector() === EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR
             || (
-                $this->getShowDatetimeSelector() === \EE_Ticket_Selector_Config::MAYBE_SHOW_DATETIME_SELECTOR
+                $this->getShowDatetimeSelector() === EE_Ticket_Selector_Config::MAYBE_SHOW_DATETIME_SELECTOR
                 && count($datetimes) < $this->getDatetimeSelectorThreshold()
             )
         );
@@ -3088,15 +3092,15 @@ class EE_Ticket_Selector_Config extends EE_Config_Base
     {
         return $keys_only
             ? array(
-                \EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR,
-                \EE_Ticket_Selector_Config::MAYBE_SHOW_DATETIME_SELECTOR,
+                EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR,
+                EE_Ticket_Selector_Config::MAYBE_SHOW_DATETIME_SELECTOR,
             )
             : array(
-                \EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR => esc_html__(
+                EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR => esc_html__(
                     'Do not show date & time filter',
                     'event_espresso'
                 ),
-                \EE_Ticket_Selector_Config::MAYBE_SHOW_DATETIME_SELECTOR  => esc_html__(
+                EE_Ticket_Selector_Config::MAYBE_SHOW_DATETIME_SELECTOR  => esc_html__(
                     'Maybe show date & time filter',
                     'event_espresso'
                 ),
@@ -3115,7 +3119,7 @@ class EE_Ticket_Selector_Config extends EE_Config_Base
             true
         )
             ? $show_datetime_selector
-            : \EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR;
+            : EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR;
     }
 
 
