@@ -151,9 +151,9 @@
             </li>
             <li style="list-style-type: none;">
                 <strong>
-                    <?php esc_html_e(
-                        'Send Payment Reminder <span class="dashicons dashicons-email-alt"></span>',
-                        'event_espresso'
+                    <?php printf(
+                        esc_html__('Send Payment Reminder %1$s', 'event_espresso'),
+                        '<span class="dashicons dashicons-email-alt"></span>'
                     ); ?>
                 </strong>
                 <br />
