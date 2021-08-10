@@ -11,7 +11,6 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  * @package         espresso_events_Registration_Form_Hooks
  * @subpackage      includes/core/admin/messages/espresso_events_Registration_Form_Hooks.class.php
  * @author          Darren Ethier
- * ------------------------------------------------------------------------
  */
 class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks
 {
@@ -169,7 +168,7 @@ class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks
                 }
                 $html .= count($QSGs) > 10 ? '</div>' : '';
 
-                echo $html;
+                echo esc_html($html);
             } else {
                 esc_html_e(
                     'There seems to be a problem with your questions. Please contact support@eventespresso.com',

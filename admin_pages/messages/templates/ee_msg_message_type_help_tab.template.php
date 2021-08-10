@@ -7,12 +7,14 @@
         ),
         '<em>',
         '</em>'
-    ); ?></p>
+    ); ?>
+</p>
 <p>
     <?php esc_html_e(
         'Future iterations of Event Espresso 4.0 (premium versions), will include more and more different message types that can be attached to the various messengers that are available',
         'event_espresso'
-    ); ?></p>
+    ); ?>
+</p>
 
 <h3><?php esc_html_e('Contexts', 'event_espresso'); ?></h3>
 <p>
@@ -23,9 +25,11 @@
         ),
         '<em>',
         '</em>'
-    ); ?></p>
+    ); ?>
+</p>
 <p>
     <?php esc_html_e(
         'You will most likely never see the word "context" in any of the Messages system labelling because they are dynamic per message type.  Usually, contexts will be labelled "Recipients" but there may be cases down the road where a message type might use contexts to represent something totally different',
         'event_espresso'
-    ); ?></p>
+    ); ?>
+</p>

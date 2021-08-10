@@ -1,24 +1,43 @@
 .use-ven-manager {
-	width: 50%;
-	vertical-align: top;
+    width: 50%;
+    vertical-align: top;
 }
+
 .manual-venue {
-	width: 33.3%;
+    width: 33.3%;
 }
+
 .use-ven-manager table {
-	width:99%;
+    width: 99%;
 }
-.use-ven-manager textarea, .use-ven-manager input, .use-ven-manager .eebox ul, .use-ven-manager fieldset#venue-manager select, .use-ven-manager fieldset#venue-manager .eebox ul, .manual-venue #url-event, .manual-venue input {
-	width: 80%;
+
+.manual-venue input,
+.manual-venue #url-event,
+.use-ven-manager .eebox,
+.use-ven-manager .eebox input,
+.use-ven-manager .eebox select,
+.use-ven-manager .eebox textarea {
+    width: 80%;
 }
 
 .use-ven-manager #venue-manager label {
-	margin: 5px 0;
+    margin: 5px 0;
 }
-.use-ven-manager .address-view p span {
-	display: inline-block;
-	font-weight: bold;
-	width: 6em;
+
+.use-ven-manager .ee-venue-not-selected {
+    display: none
+}
+
+.use-ven-manager .address-view {
+    line-height: 1.5;
+    margin: 0;
+    margin-block: 1rem;
+}
+
+.use-ven-manager .address-view span {
+    display: inline-block;
+    font-weight: bold;
+    width: 6em;
 }
 
 .highlight {
