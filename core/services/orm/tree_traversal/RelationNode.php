@@ -51,6 +51,7 @@ class RelationNode extends BaseNode
     protected $related_model;
 
 
+
     /**
      * RelationNode constructor.
      *
@@ -199,7 +200,6 @@ class RelationNode extends BaseNode
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @throws ReflectionException
      */
     protected function discover()
     {

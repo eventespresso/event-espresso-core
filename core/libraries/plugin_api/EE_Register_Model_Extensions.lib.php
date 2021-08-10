@@ -54,7 +54,8 @@ class EE_Register_Model_Extensions implements EEI_Plugin_API
     public static function register(string $addon_name = '', array $setup_args = []): bool
     {
         // required fields MUST be present, so let's make sure they are.
-        if (empty($addon_name)
+        if (
+            empty($addon_name)
             || ! is_array($setup_args)
             || (empty($setup_args['model_extension_paths']) && empty($setup_args['class_extension_paths']))
         ) {
@@ -102,7 +103,7 @@ class EE_Register_Model_Extensions implements EEI_Plugin_API
             }
             EEH_Autoloader::register_autoloader($class_to_filepath_map);
             foreach (array_keys($class_to_filepath_map) as $classname) {
-                self::$_extensions[ $addon_name ]['models'][ $classname ] = new $classname;
+                self::$_extensions[ $addon_name ]['models'][ $classname ] = new $classname();
             }
             unset($setup_args['model_extension_paths']);
         }
@@ -111,7 +112,7 @@ class EE_Register_Model_Extensions implements EEI_Plugin_API
             $class_to_filepath_map = EEH_File::get_contents_of_folders($setup_args['class_extension_paths']);
             EEH_Autoloader::register_autoloader($class_to_filepath_map);
             foreach (array_keys($class_to_filepath_map) as $classname) {
-                self::$_extensions[ $addon_name ]['classes'][ $classname ] = new $classname;
+                self::$_extensions[ $addon_name ]['classes'][ $classname ] = new $classname();
             }
             unset($setup_args['class_extension_paths']);
         }
