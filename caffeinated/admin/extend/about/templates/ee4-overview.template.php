@@ -74,7 +74,7 @@
                 ); ?></p>
         </div>
         <div class="column col last-feature about-colors-img">
-            <img src="<?php echo EE_GLOBAL_ASSETS_URL; ?>images/screenshots/registrtation-page-large.jpg">
+            <img src="<?php echo EE_GLOBAL_ASSETS_URL; ?>images/screenshots/registration-page-large.jpg">
         </div>
     </div>
 

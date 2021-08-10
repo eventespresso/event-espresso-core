@@ -1,3 +1,10 @@
+<?php
+/**
+ * @var EE_Price_Type $price_type
+ * @var string $base_type_select
+ */
+?>
+
 <div style="padding:1em;">
 
     <table class="form-table">
@@ -8,12 +15,17 @@
                 <label for="basic_type"><?php esc_html_e('Basic Type', 'event_espresso'); ?></label>
             </th>
             <td>
-                <?php echo $base_type_select; ?><br/>
-                <p class="description"><?php
-                    esc_html_e(
-                        'Choosing a basic type allows us to quickly configure a bunch of other options for you.<br/>All events need to have at least one Base Price type option.<br/>Discounts reduce the price of an event, Surcharges increase the price.<br/>Taxes are applied to the final total.',
-                        'event_espresso'
-                    ); ?></p>
+                <?php echo $base_type_select; // already escaped ?><br/>
+                <p class="description">
+                    <?php
+                    printf(
+                        esc_html__(
+                            'Choosing a basic type allows us to quickly configure a bunch of other options for you.%1$sAll events need to have at least one Base Price type option.%1$sDiscounts reduce the price of an event, Surcharges increase the price.%1$sTaxes are applied to the final total.',
+                            'event_espresso'
+                        ),
+                        '<br/>'
+                    ); ?>
+                </p>
             </td>
         </tr>
 
@@ -70,11 +82,16 @@
                        value="<?php echo $price_type->order(); ?>"/>
                 <p class="description">
                     <?php esc_html_e('The order that Price Types are applied.', 'event_espresso'); ?></p>
-                <p class="description"><?php
-                    esc_html_e(
-                        'Price types are applied sequentially according to their Order, where higher ordered Price Types will affect lower ordered Price Types.<br/>Price types with equal Orders will be applied in parallel to whatever total precedes them and will not affect each other. Actual Prices will be set to "0" so that they are processed first. Taxes will be always be applied last but their order will still determine if they are applied in parallel or as compound taxes (one tax on top of the other).',
-                        'event_espresso'
-                    ); ?></p>
+                <p class="description">
+                    <?php
+                    printf(
+                        esc_html__(
+                            'Price types are applied sequentially according to their Order, where higher ordered Price Types will affect lower ordered Price Types.%1$sPrice types with equal Orders will be applied in parallel to whatever total precedes them and will not affect each other. Actual Prices will be set to "0" so that they are processed first. Taxes will be always be applied last but their order will still determine if they are applied in parallel or as compound taxes (one tax on top of the other).',
+                            'event_espresso'
+                        ),
+                        '<br/>'
+                    ); ?>
+                </p>
             </td>
         </tr>
 

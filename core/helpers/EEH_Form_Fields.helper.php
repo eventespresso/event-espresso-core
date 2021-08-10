@@ -19,14 +19,10 @@ use EventEspresso\core\services\request\RequestInterface;
  * Once we have removed all usage of this from EE core, it's expected that we will
  * start issuing deprecation notices
  *
- * @deprecated 4.8.30.rc.009
- *
  * @since     3.2.P
  * @package     Event Espresso
  * @subpackage  /helper/EEH_Form_Fields.helper.php
  * @author      Darren Ethier, Brent Christensen
- *
- * ------------------------------------------------------------------------
  */
 class EEH_Form_Fields
 {
@@ -66,8 +62,9 @@ class EEH_Form_Fields
             return false;
         }
 
+        $spacer = "\n\t\t\t";
+
         // if you don't behave - this is what you're gonna get !!!
-        $close = true;
         $output = '<ul>'; // this is for using built-in wp styles... watch carefully...
 
         // cycle thru inputs
@@ -105,21 +102,31 @@ class EEH_Form_Fields
             // any content?
             $append_content = $input_value['append_content'];
 
-            $output .= (!$close) ? '<ul>' : '';
+            if ($input_value['input'] === 'hidden') {
+                $output .= $spacer
+                           . '<input id="' . $field_id
+                           . '" type="hidden" name="'
+                           . $input_value['name']
+                           . '" value="'
+                           . $input_value['value']
+                           . '">';
+                continue;
+            }
+
             $output .= '<li>';
 
             // what type of input are we dealing with ?
             switch ($input_value['input']) {
                 // text inputs
                 case 'text':
-                    $output .= "\n\t\t\t" . '<label for="' . $field_id . '">' . $input_value['label'] . $required . '</label>';
-                    $output .= "\n\t\t\t" . '<input id="' . $field_id . '" class="' . $styles . '" type="text" value="' . esc_textarea($input_value['value']) . '" name="' . $input_value['name'] . '"' . $tabindex . '>';
+                    $output .= $spacer . '<label for="' . $field_id . '">' . $input_value['label'] . $required . '</label>';
+                    $output .= $spacer . '<input id="' . $field_id . '" class="' . $styles . '" type="text" value="' . esc_textarea($input_value['value']) . '" name="' . $input_value['name'] . '"' . $tabindex . '>';
                     break;
 
                 // dropdowns
                 case 'select':
-                    $output .= "\n\t\t\t" . '<label for="' . $field_id . '">' . $input_value['label'] . $required . '</label>';
-                    $output .= "\n\t\t\t" . '<select id="' . $field_id . '" class="' . $styles . '" name="' . $input_value['name'] . '"' . $tabindex . '>';
+                    $output .= $spacer . '<label for="' . $field_id . '">' . $input_value['label'] . $required . '</label>';
+                    $output .= $spacer . '<select id="' . $field_id . '" class="' . $styles . '" name="' . $input_value['name'] . '"' . $tabindex . '>';
 
                     if (is_array($input_value['options'])) {
                         $options = $input_value['options'];
@@ -130,39 +137,30 @@ class EEH_Form_Fields
                     foreach ($options as $key => $value) {
                         $selected = isset($input_value['value']) && $input_value['value'] == $key ? 'selected=selected' : '';
                         // $key = str_replace( ' ', '_', sanitize_key( $value ));
-                        $output .= "\n\t\t\t\t" . '<option ' . $selected . ' value="' . $key . '">' . $value . '</option>';
+                        $output .= "{$spacer}\t" . '<option ' . $selected . ' value="' . $key . '">' . $value . '</option>';
                     }
-                    $output .= "\n\t\t\t" . '</select>';
+                    $output .= $spacer . '</select>';
 
                     break;
 
                 case 'textarea':
-                    $output .= "\n\t\t\t" . '<label for="' . $field_id . '">' . $input_value['label'] . $required . '</label>';
-                    $output .= "\n\t\t\t" . '<textarea id="' . $field_id . '" class="' . $styles . '" rows="' . $rows . '" cols="' . $cols . '" name="' . $input_value['name'] . '"' . $tabindex . '>' . esc_textarea($input_value['value']) . '</textarea>';
-                    break;
-
-                case 'hidden':
-                    $close = false;
-                    $output .= "</li></ul>";
-                    $output .= "\n\t\t\t" . '<input id="' . $field_id . '" type="hidden" name="' . $input_value['name'] . '" value="' . $input_value['value'] . '">';
+                    $output .= $spacer . '<label for="' . $field_id . '">' . $input_value['label'] . $required . '</label>';
+                    $output .= $spacer . '<textarea id="' . $field_id . '" class="' . $styles . '" rows="' . $rows . '" cols="' . $cols . '" name="' . $input_value['name'] . '"' . $tabindex . '>' . esc_textarea($input_value['value']) . '</textarea>';
                     break;
 
                 case 'checkbox':
                     $checked = ( $input_value['value'] == 1 ) ? 'checked="checked"' : '';
-                    $output .= "\n\t\t\t" . '<label for="' . $field_id . '">' . $input_value['label'] . $required . '</label>';
-                    $output .= "\n\t\t\t" . '<input id="' . $field_id . '" type="checkbox" name="' . $input_value['name'] . '" value="1"' . $checked . $tabindex . ' />';
+                    $output .= $spacer . '<label for="' . $field_id . '">' . $input_value['label'] . $required . '</label>';
+                    $output .= $spacer . '<input id="' . $field_id . '" type="checkbox" name="' . $input_value['name'] . '" value="1"' . $checked . $tabindex . ' />';
                     break;
 
                 case 'wp_editor':
-                    $close = false;
                     $editor_settings = array(
                         'textarea_name' => $input_value['name'],
                         'textarea_rows' => $rows,
                         'editor_class' => $styles,
                         'tabindex' => $input_value['tabindex']
                     );
-                    $output .= '</li>';
-                    $output .= '</ul>';
                     $output .= '<h4>' . $input_value['label'] . '</h4>';
                     if ($append_content) {
                         $output .= $append_content;
@@ -177,9 +175,9 @@ class EEH_Form_Fields
             if ($append_content && $input_value['input'] !== 'wp_editor') {
                 $output .= $append_content;
             }
-                $output .= ($close) ? '</li>' : '';
+            $output .= '</li>';
         } // end foreach( $input_vars as $input_key => $input_value )
-        $output .= ($close) ? '</ul>' : '';
+        $output .= '</ul>';
 
         return $output;
     }

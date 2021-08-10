@@ -1,7 +1,9 @@
 <?php
-/** @var string $admin_page_wrapper_div_id */
-/** @var string $post_body_content */
-/** @var string|WP_Screen $current_page */
+/**
+ * @var string           $admin_page_wrapper_div_id
+ * @var string           $post_body_content
+ * @var string|WP_Screen $current_page
+ */
 ?>
 
 <div id="<?php echo $admin_page_wrapper_div_id; ?>">
@@ -18,7 +20,6 @@
             <?php echo $post_body_content; ?>
         </div>
         <!-- post-body-content -->
-
 
         <div id="postbox-container-2" class="postbox-container">
             <?php do_meta_boxes($current_page, 'normal', null); ?>

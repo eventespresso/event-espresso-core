@@ -13,7 +13,6 @@ if (! function_exists('espresso_get_template_part')) {
      *
      * @param string $slug The slug name for the generic template.
      * @param string $name The name of the specialised template.
-     * @return string        the html output for the formatted money value
      */
     function espresso_get_template_part($slug = null, $name = null)
     {
@@ -27,9 +26,11 @@ if (! function_exists('espresso_get_object_css_class')) {
      * espresso_get_object_css_class - attempts to generate a css class based on the type of EE object passed
      *
      * @param EE_Base_Class $object the EE object the css class is being generated for
-     * @param  string       $prefix added to the beginning of the generated class
-     * @param  string       $suffix added to the end of the generated class
+     * @param string        $prefix added to the beginning of the generated class
+     * @param string        $suffix added to the end of the generated class
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     function espresso_get_object_css_class($object = null, $prefix = '', $suffix = '')
     {
@@ -59,12 +60,12 @@ class EEH_Template
      */
     public static function is_espresso_theme()
     {
-        return wp_get_theme()->get('TextDomain') == 'event_espresso' ? true : false;
+        return wp_get_theme()->get('TextDomain') === 'event_espresso';
     }
 
     /**
      *    load_espresso_theme_functions - if current theme is an espresso theme, or uses ee theme template parts, then
-     *    load it's functions.php file ( if not already loaded )
+     *    load its functions.php file ( if not already loaded )
      *
      * @return void
      */
@@ -128,8 +129,9 @@ class EEH_Template
         }
         // allow template parts to be turned off via something like: add_filter( 'FHEE__content_espresso_events_tickets_template__display_datetimes', '__return_false' );
         if (apply_filters("FHEE__EEH_Template__get_template_part__display__{$slug}_{$name}", true)) {
-            EEH_Template::locate_template($templates, $template_args, true, $return_string);
+            return EEH_Template::locate_template($templates, $template_args, true, $return_string);
         }
+        return '';
     }
 
 
@@ -248,6 +250,7 @@ class EEH_Template
             $template_folder_paths = is_array($template_folder_paths) ? $template_folder_paths : array($template_folder_paths);
             // array to hold all possible template paths
             $full_template_paths = array();
+            $file_name = '';
 
             // loop through $templates
             foreach ($templates as $template) {
@@ -300,9 +303,8 @@ class EEH_Template
         if ($template_path && $load && ! $check_if_custom) {
             if ($return_string) {
                 return EEH_Template::display_template($template_path, $template_args, true);
-            } else {
-                EEH_Template::display_template($template_path, $template_args, false);
             }
+            EEH_Template::display_template($template_path, $template_args);
         }
         return $check_if_custom && ! empty($template_path) ? true : $template_path;
     }
@@ -342,8 +344,8 @@ class EEH_Template
      * @param  boolean    $return_string whether to send output immediately to screen, or capture and return as a string
      * @param bool        $throw_exceptions if set to true, will throw an exception if the template is either
      *                                      not found or is not readable
-     * @return mixed string
-     * @throws \DomainException
+     * @return string
+     * @throws DomainException
      */
     public static function display_template(
         $template_path = false,
@@ -366,6 +368,12 @@ class EEH_Template
 
         // you gimme nuttin - YOU GET NUTTIN !!
         if (! $template_path || ! is_readable($template_path)) {
+            // ignore whether template is accessible ?
+            if ($throw_exceptions) {
+                throw new DomainException(
+                    esc_html__('Invalid, unreadable, or missing file.', 'event_espresso')
+                );
+            }
             return '';
         }
         // if $template_args are not in an array, then make it so
@@ -373,25 +381,14 @@ class EEH_Template
             $template_args = array($template_args);
         }
         extract($template_args, EXTR_SKIP);
-        // ignore whether template is accessible ?
-        if ($throw_exceptions && ! is_readable($template_path)) {
-            throw new \DomainException(
-                esc_html__(
-                    'Invalid, unreadable, or missing file.',
-                    'event_espresso'
-                )
-            );
-        }
-
 
         if ($return_string) {
             // because we want to return a string, we are going to capture the output
             ob_start();
             include($template_path);
             return ob_get_clean();
-        } else {
-            include($template_path);
         }
+        include($template_path);
         return '';
     }
 
@@ -400,9 +397,11 @@ class EEH_Template
      * get_object_css_class - attempts to generate a css class based on the type of EE object passed
      *
      * @param EE_Base_Class $object the EE object the css class is being generated for
-     * @param  string       $prefix added to the beginning of the generated class
-     * @param  string       $suffix added to the end of the generated class
+     * @param string        $prefix added to the beginning of the generated class
+     * @param string        $suffix added to the end of the generated class
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function get_object_css_class($object = null, $prefix = '', $suffix = '')
     {
@@ -440,7 +439,6 @@ class EEH_Template
      * @param string   $CNT_ISO      2 letter ISO code for a country
      * @param string   $cur_code_span_class
      * @return string        the html output for the formatted money value
-     * @throws \EE_Error
      */
     public static function format_currency(
         $amount = null,
@@ -456,50 +454,61 @@ class EEH_Template
             return '';
         }
         // ensure amount is float
-        $amount  = apply_filters('FHEE__EEH_Template__format_currency__raw_amount', (float) $amount);
+        $amount  = (float) apply_filters('FHEE__EEH_Template__format_currency__raw_amount', (float) $amount);
         $CNT_ISO = apply_filters('FHEE__EEH_Template__format_currency__CNT_ISO', $CNT_ISO, $amount);
         // filter raw amount (allows 0.00 to be changed to "free" for example)
         $amount_formatted = apply_filters('FHEE__EEH_Template__format_currency__amount', $amount, $return_raw);
-        // still a number or was amount converted to a string like "free" ?
-        if (is_float($amount_formatted)) {
+        // still a number, or was amount converted to a string like "free" ?
+        if (! is_float($amount_formatted)) {
+            return esc_html($amount_formatted);
+        }
+        try {
             // was a country ISO code passed ? if so generate currency config object for that country
             $mny = $CNT_ISO !== '' ? new EE_Currency_Config($CNT_ISO) : null;
-            // verify results
-            if (! $mny instanceof EE_Currency_Config) {
-                // set default config country currency settings
-                $mny = EE_Registry::instance()->CFG->currency instanceof EE_Currency_Config
-                    ? EE_Registry::instance()->CFG->currency
-                    : new EE_Currency_Config();
-            }
-            // format float
-            $amount_formatted = number_format($amount, $mny->dec_plc, $mny->dec_mrk, $mny->thsnds);
-            // add formatting ?
-            if (! $return_raw) {
-                // add currency sign
-                if ($mny->sign_b4) {
-                    if ($amount >= 0) {
-                        $amount_formatted = $mny->sign . $amount_formatted;
-                    } else {
-                        $amount_formatted = '-' . $mny->sign . str_replace('-', '', $amount_formatted);
-                    }
-                } else {
-                    $amount_formatted = $amount_formatted . $mny->sign;
-                }
-
-                // filter to allow global setting of display_code
-                $display_code = apply_filters('FHEE__EEH_Template__format_currency__display_code', $display_code);
-
-                // add currency code ?
-                $amount_formatted = $display_code ? $amount_formatted . ' <span class="' . $cur_code_span_class . '">(' . $mny->code . ')</span>' : $amount_formatted;
-            }
-            // filter results
-            $amount_formatted = apply_filters(
-                'FHEE__EEH_Template__format_currency__amount_formatted',
-                $amount_formatted,
-                $mny,
-                $return_raw
-            );
+        } catch (Exception $e) {
+            // eat exception
+            $mny = null;
         }
+        // verify results
+        if (! $mny instanceof EE_Currency_Config) {
+            // set default config country currency settings
+            $mny = EE_Registry::instance()->CFG->currency instanceof EE_Currency_Config
+                ? EE_Registry::instance()->CFG->currency
+                : new EE_Currency_Config();
+        }
+        // format float
+        $amount_formatted = number_format($amount, $mny->dec_plc, $mny->dec_mrk, $mny->thsnds);
+        // add formatting ?
+        if (! $return_raw) {
+            // add currency sign
+            if ($mny->sign_b4) {
+                if ($amount >= 0) {
+                    $amount_formatted = $mny->sign . $amount_formatted;
+                } else {
+                    $amount_formatted = '-' . $mny->sign . str_replace('-', '', $amount_formatted);
+                }
+            } else {
+                $amount_formatted = $amount_formatted . $mny->sign;
+            }
+
+            // filter to allow global setting of display_code
+            $display_code = (bool) apply_filters(
+                'FHEE__EEH_Template__format_currency__display_code',
+                $display_code
+            );
+
+            // add currency code ?
+            $amount_formatted = $display_code
+                ? $amount_formatted . ' <span class="' . $cur_code_span_class . '">(' . $mny->code . ')</span>'
+                : $amount_formatted;
+        }
+        // filter results
+        $amount_formatted = apply_filters(
+            'FHEE__EEH_Template__format_currency__amount_formatted',
+            $amount_formatted,
+            $mny,
+            $return_raw
+        );
         // clean up vars
         unset($mny);
         // return formatted currency amount
@@ -512,11 +521,13 @@ class EEH_Template
      * possibly plural).  The intended use of this function is only for cases where wanting a label outside of a
      * related status model or model object (i.e. in documentation etc.)
      *
-     * @param  string  $status_id Status ID matching a registered status in the esp_status table.  If there is no
+     * @param string  $status_id  Status ID matching a registered status in the esp_status table.  If there is no
      *                            match, then 'Unknown' will be returned.
-     * @param  boolean $plural    Whether to return plural or not
-     * @param  string  $schema    'UPPER', 'lower', or 'Sentence'
+     * @param boolean $plural     Whether to return plural or not
+     * @param string  $schema     'UPPER', 'lower', or 'Sentence'
      * @return string             The localized label for the status id.
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function pretty_status($status_id, $plural = false, $schema = 'upper')
     {
@@ -556,8 +567,7 @@ class EEH_Template
             $icon_html .= $count > 1 ? '</span>' : '';
         }
         $label  = ! empty($icon) ? $icon_html . $label : $label;
-        $button = '<a id="' . sanitize_title_with_dashes($label) . '" href="' . esc_url($url) . '" class="' . $class . '" title="' . $title . '">' . $label . '</a>';
-        return $button;
+        return '<a id="' . sanitize_title_with_dashes($label) . '" href="' . esc_url($url) . '" class="' . $class . '" title="' . $title . '">' . $label . '</a>';
     }
 
 
@@ -601,6 +611,7 @@ class EEH_Template
      * @see  EE_Admin_Page->_stop_callback() for the construct expected for the $stops param.
      * @param EE_Help_Tour
      * @return string         html
+     * @throws EE_Error
      */
     public static function help_tour_stops_generator(EE_Help_Tour $tour)
     {
@@ -648,14 +659,15 @@ class EEH_Template
      * Note this will only work if the incoming statuses have a key in the EEM_Status->localized_status() methods
      * status_array.
      *
-     * @param  array  $status_array  array of statuses that will make up the legend. In format:
+     * @param array  $status_array   array of statuses that will make up the legend. In format:
      *                               array(
      *                               'status_item' => 'status_name'
      *                               )
-     * @param  string $active_status This is used to indicate what the active status is IF that is to be highlighted in
+     * @param string $active_status  This is used to indicate what the active status is IF that is to be highlighted in
      *                               the legend.
-     * @throws EE_Error
      * @return string               html structure for status.
+     * @throws ReflectionException
+     * @throws EE_Error
      */
     public static function status_legend($status_array, $active_status = '')
     {
@@ -757,7 +769,6 @@ class EEH_Template
      * @param bool   $show_num_field
      * @param string $paged_arg_name
      * @param array  $items_label
-     * @return string
      */
     public static function paging_html(
         $total_items,

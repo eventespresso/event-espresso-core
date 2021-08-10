@@ -2014,6 +2014,16 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         //     wp_localize_script('ee-help-tour', 'EE_HELP_TOUR', array('tours' => $tours));
         //     // admin_footer_global will take care of making sure our help_tour skeleton gets printed via the info stored in $this->_help_tour
         // }
+
+        add_filter(
+            'admin_body_class',
+            function ($classes) {
+                if (strpos($classes, 'espresso-admin') === false) {
+                    $classes .= ' espresso-admin';
+                }
+                return $classes;
+            }
+        );
     }
 
 
@@ -2212,7 +2222,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
 
     /**
      * _entries_per_page_dropdown
-     * generates a drop down box for selecting the number of visible rows in an admin page list table
+     * generates a dropdown box for selecting the number of visible rows in an admin page list table
      *
      * @param int $max_entries total number of rows in the table
      * @return string
@@ -2847,7 +2857,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * contains the code for actually displaying an admin page
      *
      * @param boolean $sidebar true with sidebar, false without
-     * @param boolean $about   use the about admin wrapper instead of the default.
+     * @param boolean $about   use the about_admin_wrapper instead of the default.
      * @return void
      * @throws DomainException
      * @throws EE_Error
@@ -3283,10 +3293,9 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      */
     protected function _generate_admin_form_fields($input_vars = [], $generator = 'string', $id = false)
     {
-        $content = $generator === 'string'
+        return $generator === 'string'
             ? EEH_Form_Fields::get_form_fields($input_vars, $id)
             : EEH_Form_Fields::get_form_fields_array($input_vars);
-        return $content;
     }
 
 
