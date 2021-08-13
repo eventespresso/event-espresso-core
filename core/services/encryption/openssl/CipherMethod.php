@@ -43,7 +43,7 @@ class CipherMethod
      *
      * @var array
      */
-    private $weak_algorithms = [ 'des', 'ecb', 'md5', 'rc2', 'rc4' ];
+    private $weak_algorithms = ['des', 'ecb', 'md5', 'rc2', 'rc4'];
 
 
     /**
@@ -52,7 +52,7 @@ class CipherMethod
      */
     public function __construct($default_cipher_method, $cipher_method_option_name)
     {
-        $this->default_cipher_method = $default_cipher_method;
+        $this->default_cipher_method     = $default_cipher_method;
         $this->cipher_method_option_name = $cipher_method_option_name;
     }
 
@@ -85,6 +85,23 @@ class CipherMethod
             $this->validated_cipher_method = $cipher_method;
         }
         return $this->validated_cipher_method;
+    }
+
+
+    /**
+     * returns true if the selected cipher method either uses Galois/Counter Mode (GCM)
+     * or Counter with CBC-MAC (CCM) authenticated encryption modes
+     * (also need to be using PHP 7.1 or greater to actually use authenticated encryption modes)
+     *
+     * @return bool
+     */
+    public function usesAuthenticatedEncryptionMode()
+    {
+        return PHP_VERSION_ID >= 70100
+               && (
+                   stripos($this->validated_cipher_method, 'gcm') !== false
+                   || stripos($this->validated_cipher_method, 'ccm') !== false
+               );
     }
 
 
