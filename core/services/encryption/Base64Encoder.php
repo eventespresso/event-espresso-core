@@ -56,10 +56,21 @@ class Base64Encoder
     public function decodeString($encoded_string = '')
     {
         // you give me nothing??? GET OUT !
-        if (empty($encoded_string) || ! $this->isValidBase64($encoded_string)) {
+        if (empty($encoded_string)) {
             return $encoded_string;
         }
-        // decode
+        $this->isValidBase64OrFail($encoded_string);
+        return $this->decode($encoded_string);
+    }
+
+
+    /**
+     * @param string $encoded_string the text to be decoded
+     * @return string
+     * @throws RuntimeException
+     */
+    private function decode($encoded_string)
+    {
         $decoded_string = base64_decode($encoded_string);
         if ($decoded_string === false) {
             throw new RuntimeException(
@@ -85,8 +96,8 @@ class Base64Encoder
         }
         // encode
         $encoded_string = base64_encode($text_string);
-        // remove chars to make encoding more URL friendly
-        return strtr($encoded_string, '+/=', '-_,');
+        // remove some chars to make encoding more URL friendly
+        return rtrim(strtr($encoded_string, '+/', '-_'), '=');
     }
 
 
@@ -101,43 +112,55 @@ class Base64Encoder
     public function decodeUrl($encoded_string = '')
     {
         // you give me nothing??? GET OUT !
-        if (empty($encoded_string) || ! $this->isValidBase64($encoded_string)) {
+        if (empty($encoded_string)) {
             return $encoded_string;
         }
         // replace previously removed characters
-        $encoded_string = strtr($encoded_string, '-_,', '+/=');
-        // decode
-        $decoded_string = base64_decode($encoded_string);
-        if ($decoded_string === false) {
-            throw new RuntimeException(
-                esc_html__('Base 64 decoding failed.', 'event_espresso')
-            );
-        }
-        return $decoded_string;
+        $encoded_string = strtr($encoded_string, '-_', '+/');
+        $encoded_string .= str_repeat('=', 3 - (3 + strlen($encoded_string)) % 4);
+        $this->isValidBase64OrFail($encoded_string);
+        return $this->decode($encoded_string);
     }
 
 
     /**
-     * @see http://stackoverflow.com/questions/2556345/detect-base64-encoding-in-php#30231906
+     * @param string $encoded_string the text to be decoded
+     * @throws RuntimeException
+     */
+    public function isValidBase64OrFail($encoded_string)
+    {
+        if (! $this->isValidBase64($encoded_string)) {
+            throw new RuntimeException(
+                esc_html__(
+                    'Base 64 decoding failed because the supplied string is not valid or was not base64 encoded.',
+                    'event_espresso'
+                )
+            );
+        }
+    }
+
+
+    /**
+     * @see https://stackoverflow.com/a/51877882
      * @param $string
+     * @param array $encodings
      * @return bool
      */
-    public function isValidBase64($string)
+    public function isValidBase64($string, $encodings = [])
     {
         // ensure data is a string
         if (! is_string($string) || ! $this->use_base64_encode) {
             return false;
         }
+        // first check if we're dealing with an actual valid base64 encoded string
         $decoded = base64_decode($string, true);
-        // Check if there is no invalid character in string
-        if (! preg_match('/^[a-zA-Z0-9\/\r\n+]*={0,2}$/', $string)) {
+        // also re-encode and compare it to original one
+        if ($decoded === false || base64_encode($decoded) !== $string) {
             return false;
         }
-        // Decode the string in strict mode and send the response
-        if (! base64_decode($string, true)) {
-            return false;
-        }
-        // Encode and compare it to original one
-        return base64_encode($decoded) === $string;
+        // finally, check whether the decoded data is actual text
+        $encodings = ! empty($encodings) ?: ['UTF-8', 'ASCII'];
+        $encoding = mb_detect_encoding($decoded);
+        return in_array($encoding, $encodings);
     }
 }
