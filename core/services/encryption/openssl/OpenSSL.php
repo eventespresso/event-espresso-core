@@ -11,7 +11,7 @@ use RuntimeException;
  * Encryption Method using the OpenSSL library
  *
  * @package    Event Espresso
- * @subpackage core\services\encryption\method
+ * @subpackage core\services\encryption\openssl
  * @author     Brent Christensen
  * @since      $VID:$
  */
@@ -58,6 +58,11 @@ abstract class OpenSSL implements EncryptionMethodInterface
      */
     private $min_php_version;
 
+    /**
+     * @var string
+     */
+    private $hash_algorithm;
+
 
     /**
      * To use custom a cipher method and/or encryption keys:
@@ -79,10 +84,10 @@ abstract class OpenSSL implements EncryptionMethodInterface
      * @param string                             $min_php_version
      */
     protected function __construct(
-        Base64Encoder $base64_encoder,
-        CipherMethod $cipher_method,
+        Base64Encoder                 $base64_encoder,
+        CipherMethod                  $cipher_method,
         EncryptionKeyManagerInterface $encryption_key_manager,
-        $min_php_version
+                                      $min_php_version
     ) {
         $this->base64_encoder         = $base64_encoder;
         $this->cipher_method          = $cipher_method;
@@ -144,12 +149,16 @@ abstract class OpenSSL implements EncryptionMethodInterface
      *
      * @param string $encryption_key
      * @param string $digest_method
+     * @param bool   $return_raw_data
      * @return string
      * @throws RuntimeException
      */
-    protected function getDigestHashValue($encryption_key, $digest_method = OpenSSL::DEFAULT_DIGEST_METHOD)
-    {
-        $digest_hash_value = openssl_digest($encryption_key, $digest_method);
+    protected function getDigestHashValue(
+        $encryption_key,
+        $digest_method = OpenSSL::DEFAULT_DIGEST_METHOD,
+        $return_raw_data = false
+    ) {
+        $digest_hash_value = openssl_digest($encryption_key, $digest_method, $return_raw_data);
         if ($digest_hash_value === false) {
             return $this->getDigestHashValue($this->getDigestMethod());
         }
@@ -181,5 +190,50 @@ abstract class OpenSSL implements EncryptionMethodInterface
             );
         }
         return $digest_method;
+    }
+
+
+    /**
+     * @param string $encryption_key
+     * @return int
+     */
+    protected function calculateHashLength($encryption_key)
+    {
+        // get existing key length
+        $prev_key_length = $this->encryption_key_manager->keyLength();
+        // set it to something HUGE
+        $this->encryption_key_manager->setKeyLength(512);
+        // generate a new weak key, which should just be a really long random string
+        $test_text = $this->encryption_key_manager->generateEncryptionKey(false);
+        // generate a hash using our test string and our real $encryption_key
+        $hash = hash_hmac($this->getHashAlgorithm(), $test_text, $encryption_key, true);
+        // reset key length back to original value
+        $this->encryption_key_manager->setKeyLength($prev_key_length);
+        // return the length of the hash
+        return strlen($hash);
+    }
+
+
+    /**
+     * @return string
+     */
+    protected function getHashAlgorithm()
+    {
+        if (! $this->hash_algorithm) {
+            // get installed hashing algorithms
+            $hash_algorithms = hash_algos();
+            // filter array for "sha" algorithms
+            $hash_algorithms = preg_grep('/^sha\d{3}$/gi', $hash_algorithms);
+            // if no sha algorithms are installed, then just use md5
+            if (empty($hash_algorithms)) {
+                $this->hash_algorithm = 'md5';
+                return $this->hash_algorithm;
+            }
+            // sort ascending using "natural ordering"
+            sort($hash_algorithms, SORT_NATURAL);
+            // return last item from array, which should be the strongest installed sha hash
+            $this->hash_algorithm = array_pop($hash_algorithms);
+        }
+        return $this->hash_algorithm;
     }
 }
