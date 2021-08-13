@@ -54,6 +54,7 @@ class EncryptionKeyManager implements EncryptionKeyManagerInterface
      * @param string $encryption_key            - cryptographically secure passphrase. will generate if necessary
      * @param bool   $overwrite                 - prevents accidental overwriting of an existing key which would be bad
      * @return bool
+     * @throws Exception
      */
     public function addEncryptionKey($encryption_key_identifier, $encryption_key = '', $overwrite = false)
     {
@@ -82,6 +83,7 @@ class EncryptionKeyManager implements EncryptionKeyManagerInterface
      * @param string $encryption_key_identifier - used for saving encryption key. will use default if necessary
      * @param string $generate                  - will generate a new key if the requested one does not exist
      * @return string
+     * @throws Exception
      */
     public function getEncryptionKey($encryption_key_identifier = '', $generate = false)
     {
@@ -136,6 +138,7 @@ class EncryptionKeyManager implements EncryptionKeyManagerInterface
      * retrieves encryption keys from db
      *
      * @return string
+     * @throws Exception
      */
     protected function retrieveEncryptionKeys()
     {
