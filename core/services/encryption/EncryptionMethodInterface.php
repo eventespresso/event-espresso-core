@@ -19,6 +19,7 @@ interface EncryptionMethodInterface
      */
     public function isCryptographicallySecure();
 
+
     /**
      * returns true if the method can be used on the current server
      *
@@ -38,7 +39,7 @@ interface EncryptionMethodInterface
     /**
      * encrypts data
      *
-     * @param string $text_to_encrypt    - the text to be encrypted
+     * @param string $text_to_encrypt           - the text to be encrypted
      * @param string $encryption_key_identifier - name of the encryption key to use
      * @return string
      */
@@ -48,7 +49,7 @@ interface EncryptionMethodInterface
     /**
      * decrypts data
      *
-     * @param string $encrypted_text - the text to be decrypted
+     * @param string $encrypted_text            - the text to be decrypted
      * @param string $encryption_key_identifier - name of the encryption key to use
      * @return string
      */
