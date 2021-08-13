@@ -46,7 +46,7 @@ class EncryptionKeyManager implements EncryptionKeyManagerInterface
     /**
      * @var int[]
      */
-    private $bit_depth_options = [128, 192, 256];
+    private $bit_depth_options = [64, 128, 192, 256];
 
     /**
      * number of characters used when generating cryptographically weak keys
@@ -150,7 +150,8 @@ class EncryptionKeyManager implements EncryptionKeyManagerInterface
      */
     protected function generateStrongEncryptionKey()
     {
-        return random_bytes($this->bit_depth);
+        // bit_depth needs to be divided by 8
+        return random_bytes($this->bit_depth / 8);
     }
 
 
@@ -173,12 +174,30 @@ class EncryptionKeyManager implements EncryptionKeyManagerInterface
 
 
     /**
-     * @param int $bit_depth options are 128, 192, or 256
+     * @return int
+     */
+    public function bitDepth()
+    {
+        return $this->bit_depth;
+    }
+
+
+    /**
+     * @param int $bit_depth options are 64, 128, 192, or 256
      */
     public function setBitDepth($bit_depth)
     {
         $bit_depth       = absint($bit_depth);
         $this->bit_depth = in_array($bit_depth, $this->bit_depth_options) ? $bit_depth : 128;
+    }
+
+
+    /**
+     * @return int
+     */
+    public function keyLength()
+    {
+        return $this->key_length;
     }
 
 

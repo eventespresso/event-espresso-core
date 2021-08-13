@@ -42,9 +42,21 @@ interface EncryptionKeyManagerInterface
 
 
     /**
+     * @return int
+     */
+    public function bitDepth();
+
+
+    /**
      * @param int $bit_depth options are 128, 192, or 256
      */
     public function setBitDepth($bit_depth);
+
+
+    /**
+     * @return int
+     */
+    public function keyLength();
 
 
     /**
