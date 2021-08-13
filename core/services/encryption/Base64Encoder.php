@@ -122,7 +122,7 @@ class Base64Encoder
      * @param $string
      * @return bool
      */
-    protected function isValidBase64($string)
+    public function isValidBase64($string)
     {
         // ensure data is a string
         if (! is_string($string) || ! $this->use_base64_encode) {
