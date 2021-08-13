@@ -16,6 +16,7 @@ use RuntimeException;
  */
 class EncryptionKeyManager implements EncryptionKeyManagerInterface
 {
+
     /**
      * name used for a default encryption key in case no others are set
      *
@@ -34,6 +35,25 @@ class EncryptionKeyManager implements EncryptionKeyManagerInterface
      * @var array
      */
     private $encryption_keys = null;
+
+    /**
+     * number of bits used when generating cryptographically secure keys
+     *
+     * @var int
+     */
+    private $bit_depth = 128;
+
+    /**
+     * @var int[]
+     */
+    private $bit_depth_options = [128, 192, 256];
+
+    /**
+     * number of characters used when generating cryptographically weak keys
+     *
+     * @var int
+     */
+    private $key_length = 40;
 
 
     /**
@@ -110,27 +130,65 @@ class EncryptionKeyManager implements EncryptionKeyManagerInterface
     /**
      * creates a new encryption key
      *
-     * @param int $length number of characters for random string
+     * @param bool $strong if true (default) will attempt to generate a cryptographically secure key
      * @return string
      * @throws Exception
      */
-    public function generateEncryptionKey($length = 64)
+    public function generateEncryptionKey($strong = true)
     {
-        if (PHP_VERSION_ID >= 70100) {
-            // default length is 64, which will get chopped down to 32 resulting in a 256 bit key
-            // for a 128 byte key, just pass 32 for the length, which will get chopped down to 16
-            $length = ceil($length / 2);
-            // let's not let length go below 16 (128 bit key) or above 64 (512 bit key)
-            $length = min(max($length, 16), 64);
-            return random_bytes($length);
-        }
+        return $strong && PHP_VERSION_ID >= 70100
+            ? $this->generateStrongEncryptionKey()
+            : $this->generateWeakEncryptionKey();
+    }
+
+
+    /**
+     * creates a new cryptographically secure encryption key
+     *
+     * @return string
+     * @throws Exception
+     */
+    protected function generateStrongEncryptionKey()
+    {
+        return random_bytes($this->bit_depth);
+    }
+
+
+    /**
+     * creates a new encryption key that should not be trusted to be cryptographically secure
+     *
+     * @return string
+     * @throws Exception
+     */
+    protected function generateWeakEncryptionKey()
+    {
         // @see http://stackoverflow.com/questions/637278/what-is-the-best-way-to-generate-a-random-key-within-php
-        $iterations    = ceil($length / 40);
+        $iterations    = ceil($this->key_length / 40);
         $random_string = '';
         for ($i = 0; $i < $iterations; $i++) {
             $random_string .= sha1(microtime(true) . mt_rand(10000, 90000));
         }
-        return substr($random_string, 0, $length);
+        return substr($random_string, 0, $this->key_length);
+    }
+
+
+    /**
+     * @param int $bit_depth options are 128, 192, or 256
+     */
+    public function setBitDepth($bit_depth)
+    {
+        $bit_depth       = absint($bit_depth);
+        $this->bit_depth = in_array($bit_depth, $this->bit_depth_options) ? $bit_depth : 128;
+    }
+
+
+    /**
+     * @param int $key_length
+     */
+    public function setKeyLength($key_length)
+    {
+        // let's not let the key length go below 8 or above 128
+        $this->key_length = min(max($key_length, 8), 128);
     }
 
 

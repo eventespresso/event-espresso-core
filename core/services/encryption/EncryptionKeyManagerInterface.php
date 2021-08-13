@@ -36,8 +36,19 @@ interface EncryptionKeyManagerInterface
     /**
      * creates a new encryption key
      *
-     * @param int $length number of characters for random string
      * @return string
      */
-    public function generateEncryptionKey($length = 64);
+    public function generateEncryptionKey();
+
+
+    /**
+     * @param int $bit_depth options are 128, 192, or 256
+     */
+    public function setBitDepth($bit_depth);
+
+
+    /**
+     * @param int $key_length
+     */
+    public function setKeyLength($key_length);
 }
