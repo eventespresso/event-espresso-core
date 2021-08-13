@@ -21,10 +21,7 @@ class Base64Encoder
     protected $use_base64_encode;
 
 
-    /**
-     * protected constructor to prevent direct creation
-     */
-    protected function __construct()
+    public function __construct()
     {
         $this->use_base64_encode = function_exists('base64_encode');
     }
