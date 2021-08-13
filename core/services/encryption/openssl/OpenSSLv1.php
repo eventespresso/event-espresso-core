@@ -11,7 +11,7 @@ use RuntimeException;
  * Encryption Method using the OpenSSL library for use with older PHP versions
  *
  * @package    Event Espresso
- * @subpackage core\services\encryption\method
+ * @subpackage core\services\encryption\openssl
  * @author     Brent Christensen
  * @since      $VID:$
  */
@@ -31,7 +31,7 @@ class OpenSSLv1 extends OpenSSL
     /**
      * the OPENSSL cipher method used
      */
-    const CIPHER_METHOD = 'AES-128-CBC';
+    const CIPHER_METHOD = 'aes-128-cbc';
 
     /**
      * WP "options_name" used to store a verified available cipher method
@@ -93,32 +93,34 @@ class OpenSSLv1 extends OpenSSL
      */
     public function encrypt($text_to_encrypt, $encryption_key_identifier = '')
     {
-        $encryption_key      = $this->encryption_key_manager->getEncryptionKey($encryption_key_identifier);
-        $this->cipher_method = $this->cipher_method->getCipherMethod();
+        $cipher_method  = $this->cipher_method->getCipherMethod();
+        $encryption_key = $this->encryption_key_manager->getEncryptionKey($encryption_key_identifier);
         // get initialization vector size
-        $iv_size = openssl_cipher_iv_length($this->cipher_method);
+        $iv_length = openssl_cipher_iv_length($cipher_method);
         // generate initialization vector.
         // The second parameter ("crypto_strong") is passed by reference,
         // and is used to determines if the algorithm used was "cryptographically strong"
         // openssl_random_pseudo_bytes() will toggle it to either true or false
-        $iv = openssl_random_pseudo_bytes($iv_size, $is_strong);
+        $iv = openssl_random_pseudo_bytes($iv_length, $is_strong);
         if ($iv === false || $is_strong === false) {
             throw new RuntimeException(
                 esc_html__('Failed to generate OpenSSL initialization vector.', 'event_espresso')
             );
         }
+        $key = $this->getDigestHashValue($encryption_key);
         // encrypt it
         $encrypted_text = openssl_encrypt(
             $text_to_encrypt,
-            $this->cipher_method,
-            $this->getDigestHashValue($encryption_key),
-            0,
+            $cipher_method,
+            $key,
+            OPENSSL_RAW_DATA,
             $iv
         );
-        // append the initialization vector
-        $encrypted_text .= OpenSSL::IV_DELIMITER . $iv;
-        // trim and maybe encode
-        return $this->base64_encoder->encodeString(trim($encrypted_text));
+        $encrypted_text = trim($encrypted_text);
+        // hash the raw encrypted text
+        $hmac = hash_hmac($this->getHashAlgorithm(), $encrypted_text, $key, true);
+        // concatenate everything into one big string and encode it
+        return $this->base64_encoder->encodeString($iv . $hmac . $encrypted_text);
     }
 
 
@@ -131,22 +133,38 @@ class OpenSSLv1 extends OpenSSL
      */
     public function decrypt($encrypted_text, $encryption_key_identifier = '')
     {
+        $cipher_method  = $this->cipher_method->getCipherMethod();
         $encryption_key = $this->encryption_key_manager->getEncryptionKey($encryption_key_identifier);
-        // maybe decode
-        $encrypted_text       = $this->base64_encoder->decodeString($encrypted_text);
-        $encrypted_components = explode(
-            OpenSSL::IV_DELIMITER,
-            $encrypted_text,
-            2
+        $key            = $this->getDigestHashValue($encryption_key);
+        // decode our concatenated string
+        $encrypted_text = $this->base64_encoder->decodeString($encrypted_text);
+        // get the string lengths used for the hash and iv
+        $hash_length = $this->calculateHashLength($encryption_key);
+        $iv_length   = openssl_cipher_iv_length($cipher_method);
+        // use the above lengths to snip the required values from the decoded string
+        $iv                 = substr($encrypted_text, 0, $iv_length);
+        $hmac               = substr($encrypted_text, $iv_length, $hash_length);
+        $encrypted_text_raw = substr($encrypted_text, $iv_length + $hash_length);
+        // rehash the original raw encrypted text
+        $rehash_mac = hash_hmac($this->getHashAlgorithm(), $encrypted_text_raw, $key, true);
+        // timing attack safe comparison to determine if anything has changed
+        if (hash_equals($hmac, $rehash_mac)) {
+            // looks good, decrypt it, trim it, and return it
+            return trim(
+                openssl_decrypt(
+                    $encrypted_text_raw,
+                    $this->cipher_method->getCipherMethod(),
+                    $key,
+                    OPENSSL_RAW_DATA,
+                    $iv
+                )
+            );
+        }
+        throw new RuntimeException(
+            esc_html__(
+                'Decryption failed because a hash comparison of the original text and the decrypted text was not the same, meaning something in the system or the encrypted data has changed.',
+                'event_espresso'
+            )
         );
-        // decrypt it
-        $decrypted_text = openssl_decrypt(
-            $encrypted_components[0],
-            $this->cipher_method->getCipherMethod(),
-            $this->getDigestHashValue($encryption_key),
-            0,
-            $encrypted_components[1]
-        );
-        return trim($decrypted_text);
     }
 }
