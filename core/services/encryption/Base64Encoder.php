@@ -143,10 +143,9 @@ class Base64Encoder
     /**
      * @see https://stackoverflow.com/a/51877882
      * @param $string
-     * @param array $encodings
      * @return bool
      */
-    public function isValidBase64($string, $encodings = [])
+    public function isValidBase64($string)
     {
         // ensure data is a string
         if (! is_string($string) || ! $this->use_base64_encode) {
@@ -154,13 +153,10 @@ class Base64Encoder
         }
         // first check if we're dealing with an actual valid base64 encoded string
         $decoded = base64_decode($string, true);
-        // also re-encode and compare it to original one
-        if ($decoded === false || base64_encode($decoded) !== $string) {
+        if ($decoded === false) {
             return false;
         }
-        // finally, check whether the decoded data is actual text
-        $encodings = ! empty($encodings) ?: ['UTF-8', 'ASCII'];
-        $encoding = mb_detect_encoding($decoded);
-        return in_array($encoding, $encodings);
+        // finally, re-encode and compare it to original one
+        return base64_encode($decoded) === $string;
     }
 }
