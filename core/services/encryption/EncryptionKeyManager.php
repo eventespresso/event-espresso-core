@@ -217,7 +217,7 @@ class EncryptionKeyManager implements EncryptionKeyManagerInterface
     public function setKeyLength($key_length)
     {
         // let's not let the key length go below 8 or above 128
-        $this->key_length = min(max($key_length, 8), 128);
+        $this->key_length = min(max(absint($key_length), 8), 128);
     }
 
 
