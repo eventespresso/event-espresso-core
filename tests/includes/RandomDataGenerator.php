@@ -4,10 +4,26 @@ namespace EventEspresso\tests\includes;
 
 use stdClass;
 
+/**
+ * Class RandomDataGenerator
+ *
+ * @author  Brent Christensen
+ * @package EventEspresso\tests\includes
+ * @since   $VID:$
+ */
 class RandomDataGenerator
 {
     /**
-     * @param int $length
+     * @return bool
+     */
+    public function coinToss()
+    {
+        return mt_rand(0, 100) < 50;
+    }
+
+
+    /**
+     * @param int  $length
      * @param bool $include_symbols
      * @return string
      */
@@ -19,17 +35,17 @@ class RandomDataGenerator
         $include_spaces = false
     ) {
         // ensure at least one char type is turned on
-        if(! $include_letters && ! $include_numbers && ! $include_symbols) {
+        if (! $include_letters && ! $include_numbers && ! $include_symbols) {
             $include_letters = true;
         }
-        $characters       = '';
-        if($include_letters) {
+        $characters = '';
+        if ($include_letters) {
             $characters .= 'abcd efg hijk lmnop qrs tuv wxyz ABCD EFG HIJK LMNOP QRS TUV WXYZ';
         }
-        if($include_numbers) {
+        if ($include_numbers) {
             $characters .= '0123456789';
         }
-        if($include_symbols) {
+        if ($include_symbols) {
             $characters .= '`~!@#$%^&*()-_=+[{]}\\|;:\'"<>,.?/';
         }
         $charactersLength = strlen($characters) - 1;
@@ -49,7 +65,7 @@ class RandomDataGenerator
      */
     public function generateRandomURL($add_query_args = false)
     {
-        $url = mt_rand(0, 1) ? 'https://www.' : 'https://';
+        $url = $this->coinToss() ? 'https://www.' : 'https://';
         $url .= $this->generateRandomString(mt_rand(5, 15));
         $url .= '.' . $this->generateRandomString(mt_rand(2, 4));
         for ($i = 0; $i < mt_rand(0, 4); $i++) {
@@ -58,13 +74,13 @@ class RandomDataGenerator
         if (! $add_query_args) {
             return $url;
         }
-        $url .= '?';
+        $url        .= '?';
         $query_args = [];
         for ($i = 0; $i < mt_rand(1, 4); $i++) {
-            $key = $this->generateRandomString(mt_rand(1, 12));
-            $yes = mt_rand(0, 1);
-            $maybe = mt_rand(0, 1) ? $yes : ! $yes;
-            $value = $this->generateRandomString(mt_rand(1, 12), $maybe, $maybe);
+            $key          = $this->generateRandomString(mt_rand(1, 12));
+            $yes          = $this->coinToss();
+            $maybe        = $this->coinToss() ? $yes : ! $yes;
+            $value        = $this->generateRandomString(mt_rand(1, 12), $maybe, $maybe);
             $query_args[] = "{$key}={$value}";
         }
         $url .= implode('&', $query_args);
@@ -102,7 +118,7 @@ class RandomDataGenerator
         $array      = [];
         $array_size = mt_rand(5, 10);
         for ($x = 0; $x <= $array_size; $x++) {
-            $key           = mt_rand(0, 1)
+            $key           = $this->coinToss()
                 ? $this->generatePropertyOrKeyName()
                 : count($array);
             $array[ $key ] = $this->generateRandomString(mt_rand(10, 50));
