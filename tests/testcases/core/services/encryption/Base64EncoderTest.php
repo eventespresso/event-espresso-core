@@ -11,6 +11,8 @@ use RuntimeException;
 
 /**
  * tests/testcases/core/services/encryption/Base64EncoderTest.php
+ *
+ * @group encryption
  */
 class Base64EncoderTest extends TestCase
 {
@@ -24,10 +26,16 @@ class Base64EncoderTest extends TestCase
      */
     protected $rdg;
 
-    
+
     public function setUp()
     {
         parent::setUp();
+        $this->setUpDependencies();
+    }
+
+
+    private function setUpDependencies()
+    {
         $this->b64 = new Base64Encoder;
         $this->rdg = new RandomDataGenerator();
     }
@@ -35,7 +43,7 @@ class Base64EncoderTest extends TestCase
 
     public function validBase64DataProvider()
     {
-        $this->rdg = new RandomDataGenerator();
+        $this->setUpDependencies();
         return [
             [$this->rdg->getString()],
             [$this->rdg->generateRandomString(mt_rand(5, 100))],
@@ -48,6 +56,7 @@ class Base64EncoderTest extends TestCase
             [$this->rdg->generateRandomString(mt_rand(5, 100), false, false, true)],
         ];
     }
+
 
     /**
      * @dataProvider validBase64DataProvider
@@ -71,6 +80,7 @@ class Base64EncoderTest extends TestCase
         );
     }
 
+
     /**
      * @dataProvider validBase64DataProvider
      * @return void
@@ -88,9 +98,10 @@ class Base64EncoderTest extends TestCase
         );
     }
 
+
     public function base64UrlDataProvider()
     {
-        $this->rdg = new RandomDataGenerator();
+        $this->setUpDependencies();
         return [
             ['https://eventespresso.com'],
             [$this->rdg->generateRandomURL()],
