@@ -83,6 +83,7 @@ class OpenSSLv2 extends OpenSSL
             $encryption_key_manager instanceof EncryptionKeyManager
                 ? $encryption_key_manager
                 : new EncryptionKeyManager(
+                $base64_encoder,
                 OpenSSLv2::DEFAULT_ENCRYPTION_KEY_ID,
                 OpenSSLv2::ENCRYPTION_KEYS_OPTION_NAME
             ),

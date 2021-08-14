@@ -16,6 +16,10 @@ use RuntimeException;
  */
 class EncryptionKeyManager implements EncryptionKeyManagerInterface
 {
+    /**
+     * @var Base64Encoder
+     */
+    protected $base64_encoder;
 
     /**
      * name used for a default encryption key in case no others are set
@@ -57,11 +61,13 @@ class EncryptionKeyManager implements EncryptionKeyManagerInterface
 
 
     /**
-     * @param string $default_encryption_key_id
-     * @param string $encryption_keys_option_name
+     * @param Base64Encoder $base64_encoder
+     * @param string        $default_encryption_key_id
+     * @param string        $encryption_keys_option_name
      */
-    public function __construct($default_encryption_key_id, $encryption_keys_option_name)
+    public function __construct(Base64Encoder $base64_encoder, $default_encryption_key_id, $encryption_keys_option_name)
     {
+        $this->base64_encoder              = $base64_encoder;
         $this->default_encryption_key_id   = $default_encryption_key_id;
         $this->encryption_keys_option_name = $encryption_keys_option_name;
     }
@@ -80,6 +86,7 @@ class EncryptionKeyManager implements EncryptionKeyManagerInterface
     {
         // ensure keys are loaded
         $this->retrieveEncryptionKeys();
+        $encryption_key_identifier = $encryption_key_identifier ?: $this->default_encryption_key_id;
         if (isset($this->encryption_keys[ $encryption_key_identifier ]) && ! $overwrite) {
             // WOAH!!! that key already exists and we don't want to overwrite it
             throw new RuntimeException (
@@ -104,8 +111,9 @@ class EncryptionKeyManager implements EncryptionKeyManagerInterface
      * @param string $generate                  - will generate a new key if the requested one does not exist
      * @return string
      * @throws Exception
+     * @throws OutOfBoundsException
      */
-    public function getEncryptionKey($encryption_key_identifier = '', $generate = false)
+    public function getEncryptionKey($encryption_key_identifier = '', $generate = true)
     {
         $encryption_key_identifier = $encryption_key_identifier ?: $this->default_encryption_key_id;
         // ensure keys are loaded
@@ -150,8 +158,8 @@ class EncryptionKeyManager implements EncryptionKeyManagerInterface
      */
     protected function generateStrongEncryptionKey()
     {
-        // bit_depth needs to be divided by 8
-        return random_bytes($this->bit_depth / 8);
+        // bit_depth needs to be divided by 8 to convert to bytes
+        return $this->base64_encoder->encodeString(random_bytes($this->bit_depth / 8));
     }
 
 
@@ -169,7 +177,9 @@ class EncryptionKeyManager implements EncryptionKeyManagerInterface
         for ($i = 0; $i < $iterations; $i++) {
             $random_string .= sha1(microtime(true) . mt_rand(10000, 90000));
         }
-        return substr($random_string, 0, $this->key_length);
+        $random_string = (string) substr($random_string, 0, $this->key_length);
+        return $this->base64_encoder->encodeString($random_string);
+
     }
 
 
@@ -214,19 +224,34 @@ class EncryptionKeyManager implements EncryptionKeyManagerInterface
     /**
      * retrieves encryption keys from db
      *
-     * @return string
+     * @return array
      * @throws Exception
+     * @throws RuntimeException
      */
     protected function retrieveEncryptionKeys()
     {
         // if encryption key has not been set
-        if (! empty($this->encryption_keys)) {
+        if (empty($this->encryption_keys)) {
             // retrieve encryption_key from db
             $this->encryption_keys = get_option($this->encryption_keys_option_name, null);
-            // WHAT?? No encryption_key in the db ??
+            // WHAT?? No encryption keys in the db ??
             if ($this->encryption_keys === null) {
-                // let's make one. And md5 it to make it just the right size for a key
-                $this->addEncryptionKey($this->default_encryption_key_id);
+                $this->encryption_keys = [];
+                // let's create the default key and save it
+                $new_key                                                   = $this->generateEncryptionKey();
+                $this->encryption_keys[ $this->default_encryption_key_id ] = $new_key;
+                if (! $this->saveEncryptionKeys(true)) {
+                    throw new RuntimeException (
+                        sprintf(
+                            esc_html__(
+                                'Failed to save the "%1$s" encryption keys array to the database.',
+                                'event_espresso'
+                            ),
+                            $this->encryption_keys_option_name
+                        )
+                    );
+                }
+
             }
         }
         return $this->encryption_keys;
@@ -238,10 +263,10 @@ class EncryptionKeyManager implements EncryptionKeyManagerInterface
      *
      * @return bool
      */
-    protected function saveEncryptionKeys()
+    protected function saveEncryptionKeys($initialize = false)
     {
-        return $this->encryption_keys === null
-            ? add_option($this->encryption_keys_option_name, $this->encryption_keys)
-            : update_option($this->encryption_keys_option_name, $this->encryption_keys);
+        return $initialize
+            ? add_option($this->encryption_keys_option_name, $this->encryption_keys, '', false)
+            : update_option($this->encryption_keys_option_name, $this->encryption_keys, false);
     }
 }
