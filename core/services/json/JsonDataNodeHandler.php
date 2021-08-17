@@ -65,27 +65,24 @@ class JsonDataNodeHandler
      * @param int                $depth
      * @return array
      */
-    private function initializeDataNodes(JsonDataNode $data_node, $depth = 0): array
+    private function initializeDataNodes(JsonDataNode $data_node, int $depth = 0): array
     {
         $depth++;
         $data = [];
         // initialize the data node if not done already
         if ($data_node->isNotInitialized()) {
             $data_node->initialize();
-            // grab the data node's data array
-            $data_node_data = $data_node->data();
-            foreach ($data_node_data as $child_node_name => $child_node) {
+            // loop thru the data node's data array
+            foreach ($data_node->data(true) as $child_node_name => $child_node) {
                 // don't parse node if it's the primary, OR if depth has exceeded wp_json_encode() limit
                 if ($child_node instanceof PrimaryJsonDataNode || $depth > 512) {
                     continue;
                 }
-                if ($child_node instanceof JsonDataNode) {
+                $data[ $child_node_name ] = $child_node instanceof JsonDataNode
                     // feed data node back into this function
-                    $data[ $child_node_name ] = $this->initializeDataNodes($child_node, $depth);
-                } else {
+                    ? $this->initializeDataNodes($child_node, $depth)
                     // or assign data directly
-                    $data[ $child_node_name ] = $child_node;
-                }
+                    : $child_node;
             }
         }
         return $data;

@@ -34,9 +34,9 @@ class EEH_Array extends EEH_Base
      * @param array $array
      * @return boolean
      */
-    public static function is_associative_array(array $array)
+    public static function is_associative_array(array $array): bool
     {
-        return array_keys($array) !== range(0, count($array) - 1);
+        return ! empty($array) && array_keys($array) !== range(0, count($array) - 1);
     }
 
     /**
