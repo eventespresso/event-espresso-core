@@ -3,6 +3,7 @@
 namespace EventEspresso\core\services\json;
 
 use DomainException;
+use EEH_Array;
 
 /**
  * Class JsonDataNode
@@ -19,29 +20,34 @@ abstract class JsonDataNode implements JsonDataNodeInterface
 {
 
     /**
-     * @var JsonDataNodeValidator $validator
+     * @var JsonDataNodeValidator
      */
     protected $validator;
 
     /**
-     * @var array $data
+     * @var array
      */
     private $data = [];
 
     /**
-     * @var string $domain
+     * @var string
      */
-    private $domain;
+    private $domain = '';
 
     /**
-     * @var boolean $initialized
+     * @var boolean
      */
     private $initialized = false;
 
     /**
-     * @var string $node_name
+     * @var string
      */
-    private $node_name;
+    private $node_name = '';
+
+    /**
+     * @var int
+     */
+    private $order = 50;
 
 
     /**
@@ -61,7 +67,7 @@ abstract class JsonDataNode implements JsonDataNodeInterface
      * @param mixed  $data
      * @throws DomainException
      */
-    protected function addData($key, $data)
+    protected function addData(string $key, $data)
     {
         if ($this->validator->propertyNotSet($this->data, $key)) {
             $this->data[ $key ] = $data;
@@ -97,7 +103,7 @@ abstract class JsonDataNode implements JsonDataNodeInterface
             $this->addData($key, $data_node);
             // if the node being added specifies a domain (use case)
             // and this is the primary data node, then set the domain
-            if ($this instanceof PrimaryJsonDataNode && $data_node->domain() !== null) {
+            if ($this instanceof PrimaryJsonDataNode && $data_node->domain()) {
                 $this->setDomain($data_node->domain());
             }
         }
@@ -110,9 +116,9 @@ abstract class JsonDataNode implements JsonDataNodeInterface
      * @param string $domain
      * @throws DomainException
      */
-    protected function setDomain($domain)
+    protected function setDomain(string $domain)
     {
-        if ($this->domain !== null) {
+        if ($this->domain !== '') {
             $this->validator->overwriteError($domain, 'domain route');
         }
         $this->domain = $domain;
@@ -124,7 +130,7 @@ abstract class JsonDataNode implements JsonDataNodeInterface
      *
      * @param bool $initialized
      */
-    protected function setInitialized($initialized)
+    protected function setInitialized(bool $initialized)
     {
         $this->initialized = filter_var($initialized, FILTER_VALIDATE_BOOLEAN);
     }
@@ -136,20 +142,52 @@ abstract class JsonDataNode implements JsonDataNodeInterface
      * @param string $node_name
      * @throws DomainException
      */
-    protected function setNodeName($node_name)
+    protected function setNodeName(string $node_name)
     {
         $this->validator->validateCriticalProperty($node_name, 'node name');
         $this->node_name = $node_name;
+        // by default set the data node order property by the alphabetical position of the first letter of its name
+        // we do this by passing the node name (in UPPERCASE) to ord() to get its ASCII position
+        // then we subtract 64 (cuz A has a position of 65) then multiply by 10 just to space things out a bit.
+        // this allows a data node to set its order upon construction to some other value
+        // so that it can squeak into whatever position it needs to be in, like 55
+        $this->setOrder((ord(strtoupper($this->node_name)) - 64) * 10);
     }
 
 
     /**
      * the actual data in key value array format
      *
+     * @param bool $sort
      * @return array
      */
-    public function data()
+    public function data(bool $sort = false): array
     {
+        if ($sort) {
+            // check if data array has non-numerical keys and use a custom sort algorithm, else sort by keys
+            EEH_Array::is_associative_array($this->data)
+                ? uasort(
+                $this->data,
+                function ($a, $b) {
+                    // check if each incoming argument is a node and if they have an order set
+                    // if so, then use that for our sorting comparison. otherwise use the node's name...
+                    // unless it's NOT a node, in which case use the arg value if it is scalar, or 0 if not.
+                    if ($a instanceof JsonDataNode) {
+                        $a_ord = $a->order() ?: $a->nodeName();
+                    } else {
+                        $a_ord = is_scalar($a) ?: 0;
+                    }
+                    if ($b instanceof JsonDataNode) {
+                        $b_ord = $b->order() ?: $b->nodeName();
+                    } else {
+                        $b_ord = is_scalar($b) ?: 0;
+                    }
+                    return $a_ord <=> $b_ord;
+                }
+            )
+                // sort numerically indexed arrays by their keys
+                : ksort($this->data);
+        }
         return $this->data;
     }
 
@@ -159,7 +197,7 @@ abstract class JsonDataNode implements JsonDataNodeInterface
      *
      * @return string
      */
-    public function domain()
+    public function domain(): string
     {
         return $this->domain;
     }
@@ -171,7 +209,7 @@ abstract class JsonDataNode implements JsonDataNodeInterface
      *
      * @return bool
      */
-    public function isInitialized()
+    public function isInitialized(): bool
     {
         return $this->initialized;
     }
@@ -182,7 +220,7 @@ abstract class JsonDataNode implements JsonDataNodeInterface
      *
      * @return bool
      */
-    public function isNotInitialized()
+    public function isNotInitialized(): bool
     {
         return ! $this->initialized;
     }
@@ -192,9 +230,9 @@ abstract class JsonDataNode implements JsonDataNodeInterface
      * Specify data which should be serialized to JSON
      *
      * @link  https://php.net/manual/en/jsonserializable.jsonserialize.php
-     * @return mixed data which can be serialized by json_encode
+     * @return array data which can be serialized by json_encode
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->data;
     }
@@ -205,8 +243,26 @@ abstract class JsonDataNode implements JsonDataNodeInterface
      *
      * @return string
      */
-    public function nodeName()
+    public function nodeName(): string
     {
         return $this->node_name;
+    }
+
+
+    /**
+     * @return int
+     */
+    public function order(): ?int
+    {
+        return $this->order;
+    }
+
+
+    /**
+     * @param int $order
+     */
+    protected function setOrder(int $order): void
+    {
+        $this->order = absint($order);
     }
 }
