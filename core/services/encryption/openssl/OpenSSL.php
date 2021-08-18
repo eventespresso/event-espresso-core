@@ -87,7 +87,7 @@ abstract class OpenSSL implements EncryptionMethodInterface
         Base64Encoder                 $base64_encoder,
         CipherMethod                  $cipher_method,
         EncryptionKeyManagerInterface $encryption_key_manager,
-                                      $min_php_version
+        $min_php_version
     ) {
         $this->base64_encoder         = $base64_encoder;
         $this->cipher_method          = $cipher_method;

@@ -64,7 +64,7 @@ class CipherMethod
     {
         $this->default_cipher_method     = $default_cipher_method;
         $this->cipher_method_option_name = $cipher_method_option_name;
-        $this->installed_cipher_methods = openssl_get_cipher_methods();
+        $this->installed_cipher_methods  = openssl_get_cipher_methods();
     }
 
 
@@ -159,7 +159,7 @@ class CipherMethod
             update_option($this->cipher_method_option_name, $cipher_method_to_test);
         }
         // if we previously removed this cipher method from the list of valid ones, then let's put it back
-        if ( ! in_array($cipher_method_to_test, $this->cipher_methods)) {
+        if (! in_array($cipher_method_to_test, $this->cipher_methods)) {
             array_unshift($this->cipher_methods, $cipher_method_to_test);
         }
         return $cipher_method_to_test;

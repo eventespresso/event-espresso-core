@@ -89,7 +89,7 @@ class EncryptionKeyManager implements EncryptionKeyManagerInterface
         $encryption_key_identifier = $encryption_key_identifier ?: $this->default_encryption_key_id;
         if (isset($this->encryption_keys[ $encryption_key_identifier ]) && ! $overwrite) {
             // WOAH!!! that key already exists and we don't want to overwrite it
-            throw new RuntimeException (
+            throw new RuntimeException(
                 sprintf(
                     esc_html__(
                         'The "%1$s" encryption key already exists and can not be overwritten because previously encrypted values would no longer be capable of being decrypted.',
@@ -179,7 +179,6 @@ class EncryptionKeyManager implements EncryptionKeyManagerInterface
         }
         $random_string = (string) substr($random_string, 0, $this->key_length);
         return $this->base64_encoder->encodeString($random_string);
-
     }
 
 
@@ -241,7 +240,7 @@ class EncryptionKeyManager implements EncryptionKeyManagerInterface
                 $new_key                                                   = $this->generateEncryptionKey();
                 $this->encryption_keys[ $this->default_encryption_key_id ] = $new_key;
                 if (! $this->saveEncryptionKeys(true)) {
-                    throw new RuntimeException (
+                    throw new RuntimeException(
                         sprintf(
                             esc_html__(
                                 'Failed to save the "%1$s" encryption keys array to the database.',
@@ -251,7 +250,6 @@ class EncryptionKeyManager implements EncryptionKeyManagerInterface
                         )
                     );
                 }
-
             }
         }
         return $this->encryption_keys;

@@ -63,23 +63,23 @@ class OpenSSLv1 extends OpenSSL
         Base64Encoder                 $base64_encoder,
         CipherMethod                  $cipher_method = null,
         EncryptionKeyManagerInterface $encryption_key_manager = null,
-                                      $min_php_version = '5.3.0'
+        $min_php_version = '5.3.0'
     ) {
         parent::__construct(
             $base64_encoder,
             $cipher_method instanceof CipherMethod
                 ? $cipher_method
                 : new CipherMethod(
-                OpenSSLv1::CIPHER_METHOD,
-                OpenSSLv1::CIPHER_METHOD_OPTION_NAME
-            ),
+                    OpenSSLv1::CIPHER_METHOD,
+                    OpenSSLv1::CIPHER_METHOD_OPTION_NAME
+                ),
             $encryption_key_manager instanceof EncryptionKeyManager
                 ? $encryption_key_manager
                 : new EncryptionKeyManager(
-                $base64_encoder,
-                OpenSSLv1::DEFAULT_ENCRYPTION_KEY_ID,
-                OpenSSLv1::ENCRYPTION_KEYS_OPTION_NAME
-            ),
+                    $base64_encoder,
+                    OpenSSLv1::DEFAULT_ENCRYPTION_KEY_ID,
+                    OpenSSLv1::ENCRYPTION_KEYS_OPTION_NAME
+                ),
             $min_php_version
         );
     }

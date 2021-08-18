@@ -6,7 +6,12 @@ use EventEspresso\core\services\encryption\Base64Encoder;
 use EventEspresso\core\services\encryption\EncryptionKeyManager;
 use EventEspresso\core\services\encryption\EncryptionKeyManagerInterface;
 use Exception;
-use RuntimeException;
+
+// phpcs:disable PHPCompatibility.PHP.NewFunctionParameters.openssl_decrypt_aadFound
+// phpcs:disable PHPCompatibility.PHP.NewFunctionParameters.openssl_decrypt_tagFound
+// phpcs:disable PHPCompatibility.PHP.NewFunctionParameters.openssl_encrypt_aadFound
+// phpcs:disable PHPCompatibility.PHP.NewFunctionParameters.openssl_encrypt_tagFound
+// phpcs:disable PHPCompatibility.PHP.NewFunctionParameters.openssl_encrypt_tag_lengthFound
 
 /**
  * Encryption Method using the OpenSSL library for use with PHP 7.1 or greater
@@ -70,23 +75,23 @@ class OpenSSLv2 extends OpenSSL
         Base64Encoder                 $base64_encoder,
         CipherMethod                  $cipher_method = null,
         EncryptionKeyManagerInterface $encryption_key_manager = null,
-                                      $min_php_version = '7.1.0'
+        $min_php_version = '7.1.0'
     ) {
         parent::__construct(
             $base64_encoder,
             $cipher_method instanceof CipherMethod
                 ? $cipher_method
                 : new CipherMethod(
-                OpenSSLv2::CIPHER_METHOD,
-                OpenSSLv2::CIPHER_METHOD_OPTION_NAME
-            ),
+                    OpenSSLv2::CIPHER_METHOD,
+                    OpenSSLv2::CIPHER_METHOD_OPTION_NAME
+                ),
             $encryption_key_manager instanceof EncryptionKeyManager
                 ? $encryption_key_manager
                 : new EncryptionKeyManager(
-                $base64_encoder,
-                OpenSSLv2::DEFAULT_ENCRYPTION_KEY_ID,
-                OpenSSLv2::ENCRYPTION_KEYS_OPTION_NAME
-            ),
+                    $base64_encoder,
+                    OpenSSLv2::DEFAULT_ENCRYPTION_KEY_ID,
+                    OpenSSLv2::ENCRYPTION_KEYS_OPTION_NAME
+                ),
             $min_php_version
         );
     }
@@ -109,7 +114,7 @@ class OpenSSLv2 extends OpenSSL
         $iv = random_bytes(openssl_cipher_iv_length($cipher_method));
         // encrypt it (encode to remove special characters)
         $text_to_encrypt = $this->base64_encoder->encodeString($text_to_encrypt);
-        $encrypted_text = $this->cipher_method->usesAuthenticatedEncryptionMode()
+        $encrypted_text  = $this->cipher_method->usesAuthenticatedEncryptionMode()
             ? $this->authenticatedEncrypt($text_to_encrypt, $cipher_method, $encryption_key, $iv, $aad)
             : $this->nonAuthenticatedEncrypt($text_to_encrypt, $cipher_method, $encryption_key, $iv);
         return $this->base64_encoder->encodeString($encrypted_text);
