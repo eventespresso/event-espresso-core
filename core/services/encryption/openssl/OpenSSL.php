@@ -223,7 +223,7 @@ abstract class OpenSSL implements EncryptionMethodInterface
             // get installed hashing algorithms
             $hash_algorithms = hash_algos();
             // filter array for "sha" algorithms
-            $hash_algorithms = preg_grep('/^sha\d{3}$/gi', $hash_algorithms);
+            $hash_algorithms = preg_grep('/^sha\d{3}$/i', $hash_algorithms);
             // if no sha algorithms are installed, then just use md5
             if (empty($hash_algorithms)) {
                 $this->hash_algorithm = 'md5';
@@ -235,5 +235,49 @@ abstract class OpenSSL implements EncryptionMethodInterface
             $this->hash_algorithm = array_pop($hash_algorithms);
         }
         return $this->hash_algorithm;
+    }
+
+
+    /**
+     * @param string $encrypted_text
+     * @throws RuntimeException
+     */
+    protected function validateEncryption($encrypted_text)
+    {
+        if ($encrypted_text === false) {
+            throw new RuntimeException(
+                sprintf(
+                    esc_html__('The following error occurred during OpenSSL encryption: %1$S', 'event_espresso'),
+                    $this->getOpenSslError()
+                )
+            );
+        }
+    }
+
+
+    /**
+     * @return false|string
+     */
+    private function getOpenSslError()
+    {
+        $error = openssl_error_string();
+        return $error ?: esc_html__('Unknown Error', 'event_espresso');
+    }
+
+
+    /**
+     * @param string $encrypted_text
+     * @throws RuntimeException
+     */
+    protected function validateDecryption($encrypted_text)
+    {
+        if ($encrypted_text === false) {
+            throw new RuntimeException(
+                sprintf(
+                    esc_html__('OpenSSL decryption failed for the following reason: %1$S', 'event_espresso'),
+                    $this->getOpenSslError()
+                )
+            );
+        }
     }
 }
