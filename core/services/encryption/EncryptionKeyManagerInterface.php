@@ -36,9 +36,10 @@ interface EncryptionKeyManagerInterface
     /**
      * creates a new encryption key
      *
+     * @param bool $strong if true (default) will attempt to generate a cryptographically secure key
      * @return string
      */
-    public function generateEncryptionKey();
+    public function generateEncryptionKey($strong = true);
 
 
     /**
