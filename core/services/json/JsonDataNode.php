@@ -169,21 +169,21 @@ abstract class JsonDataNode implements JsonDataNodeInterface
                 ? uasort(
                     $this->data,
                     function ($a, $b) {
-                    // check if each incoming argument is a node and if they have an order set
-                    // if so, then use that for our sorting comparison. otherwise use the node's name...
-                    // unless it's NOT a node, in which case use the arg value if it is scalar, or 0 if not.
-                    if ($a instanceof JsonDataNode) {
-                        $a_ord = $a->order() ?: $a->nodeName();
-                    } else {
-                        $a_ord = is_scalar($a) ?: 0;
+                        // check if each incoming argument is a node and if they have an order set
+                        // if so, then use that for our sorting comparison. otherwise use the node's name...
+                        // unless it's NOT a node, in which case use the arg value if it is scalar, or 0 if not.
+                        if ($a instanceof JsonDataNode) {
+                            $a_ord = $a->order() ?: $a->nodeName();
+                        } else {
+                            $a_ord = is_scalar($a) ?: 0;
+                        }
+                        if ($b instanceof JsonDataNode) {
+                            $b_ord = $b->order() ?: $b->nodeName();
+                        } else {
+                            $b_ord = is_scalar($b) ?: 0;
+                        }
+                        return $a_ord <=> $b_ord;
                     }
-                    if ($b instanceof JsonDataNode) {
-                        $b_ord = $b->order() ?: $b->nodeName();
-                    } else {
-                        $b_ord = is_scalar($b) ?: 0;
-                    }
-                    return $a_ord <=> $b_ord;
-                }
                 )
                 // sort numerically indexed arrays by their keys
                 : ksort($this->data);
