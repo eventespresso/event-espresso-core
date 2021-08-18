@@ -69,7 +69,7 @@ class RegFormHandler
         $this->registration_processor  = $registration_processor;
         // reg form sections that do not contain inputs
         $this->non_input_form_sections = [
-            'primary_registrant_data',
+            'primary_registrant',
             'additional_attendee_reg_info',
             'spco_copy_attendee_chk',
         ];
