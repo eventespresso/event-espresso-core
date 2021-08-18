@@ -183,8 +183,7 @@ class CipherMethod
     protected function validateCipherMethod($cipher_method, $throw_exception = false)
     {
         // verify that the requested cipher method is actually installed and can produce an initialization vector
-        if (
-            in_array($cipher_method, $this->installed_cipher_methods, true)
+        if (in_array($cipher_method, $this->installed_cipher_methods, true)
             && openssl_cipher_iv_length($cipher_method) !== false
         ) {
             return true;
