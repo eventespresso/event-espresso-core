@@ -75,7 +75,6 @@ class Base64EncoderTest extends TestCase
      * @dataProvider validBase64DataProvider
      * @throws PHPUnit_Framework_AssertionFailedError
      * @throws AssertionFailedError
-     * @throws AssertionFailedError
      */
     public function testValidBase64($string)
     {
