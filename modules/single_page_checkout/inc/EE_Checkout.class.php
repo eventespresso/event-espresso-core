@@ -18,63 +18,63 @@ class EE_Checkout
     /**
      *    whether current request originated from the EE admin
      *
-     * @type bool
+     * @var bool
      */
     public $admin_request = false;
 
     /**
      * whether returning to edit attendee information or to retry a payment
      *
-     * @type bool
+     * @var bool
      */
     public $revisit = false;
 
     /**
      * whether the primary registrant is returning to edit attendee information or to retry a payment
      *
-     * @type bool
+     * @var bool
      */
     public $primary_revisit = false;
 
     /**
      * is registration allowed to progress or halted for some reason such as failing to pass recaptcha?
      *
-     * @type bool
+     * @var bool
      */
     public $continue_reg = true;
 
     /**
      * redirect to thank you page ?
      *
-     * @type bool
+     * @var bool
      */
     public $redirect = false;
 
     /**
      * generate the reg form or not ?
      *
-     * @type bool
+     * @var bool
      */
     public $generate_reg_form = true;
 
     /**
      * process a reg form submission or not ?
      *
-     * @type bool
+     * @var bool
      */
     public $process_form_submission = false;
 
     /**
      * tracks whether the TXN status modified during this checkout
      *
-     * @type bool
+     * @var bool
      */
     public $txn_status_updated = false;
 
     /**
      * only triggered to true after absolutely everything has finished.
      *
-     * @type bool
+     * @var bool
      */
     protected $exit_spco = false;
 
@@ -82,21 +82,21 @@ class EE_Checkout
      * tracks whether any of the TXN's Registrations statuses modified during this checkout
      * indexed by registration ID
      *
-     * @type array
+     * @var array
      */
     protected $reg_status_updated = array();
 
     /**
      * timestamp when redirected from Ticket Selector to the checkout
      *
-     * @type int
+     * @var int
      */
     public $uts = 0;
 
     /**
      * total number of tickets that were in the cart
      *
-     * @type int
+     * @var int
      */
     public $total_ticket_count = 0;
 
@@ -104,84 +104,84 @@ class EE_Checkout
      * corresponds loosely to EE_Transaction::remaining()
      * but can be modified by SPCO
      *
-     * @type float
+     * @var float
      */
     public $amount_owing = 0;
 
     /**
      * the reg step slug from the incoming request
      *
-     * @type string
+     * @var string
      */
     public $step = '';
 
     /**
      * the reg step slug for a step being edited
      *
-     * @type string
+     * @var string
      */
     public $edit_step = '';
 
     /**
      * the action being performed on the current step
      *
-     * @type string
+     * @var string
      */
     public $action = '';
 
     /**
      * reg_url_link for a previously saved registration
      *
-     * @type string
+     * @var string
      */
     public $reg_url_link = '';
 
     /**
      * string slug for the payment method that was selected during the payment options step
      *
-     * @type string
+     * @var string
      */
     public $selected_method_of_payment = '';
 
     /**
      * base url for the site's registration checkout page - additional url params will be added to this
      *
-     * @type string
+     * @var string
      */
     public $reg_page_base_url = '';
 
     /**
      * base url for the site's registration cancelled page - additional url params will be added to this
      *
-     * @type string
+     * @var string
      */
     public $cancel_page_url = '';
 
     /**
      * base url for the site's thank you page - additional url params will be added to this
      *
-     * @type string
+     * @var string
      */
     public $thank_you_page_url = '';
 
     /**
      * base url for any redirects - additional url params will be added to this
      *
-     * @type string
+     * @var string
      */
     public $redirect_url = '';
 
     /**
      * form of POST data for use with off-site gateways
      *
-     * @type string
+     * @var string
      */
     public $redirect_form = '';
 
     /**
      * array of query where params to use when retrieving cached registrations from $this->checkout->transaction
      *
-     * @type array
+     * @var array
      */
     public $reg_cache_where_params = array();
 
@@ -189,21 +189,21 @@ class EE_Checkout
      * a class for managing and creating the JSON encoded array of data that gets passed back to the client during AJAX
      * requests
      *
-     * @type EE_SPCO_JSON_Response
+     * @var EE_SPCO_JSON_Response
      */
     public $json_response;
 
     /**
      * where we are going next in the reg process
      *
-     * @type EE_SPCO_Reg_Step
+     * @var EE_SPCO_Reg_Step
      */
     public $next_step;
 
     /**
      * where we are in the reg process
      *
-     * @type EE_SPCO_Reg_Step
+     * @var EE_SPCO_Reg_Step
      */
     public $current_step;
 
@@ -224,14 +224,14 @@ class EE_Checkout
     /**
      *    the related attendee object for the primary registrant
      *
-     * @type EE_Attendee
+     * @var EE_Attendee
      */
     public $primary_attendee_obj;
 
     /**
      *    $payment_method - the payment method object for the selected method of payment
      *
-     * @type EE_Payment_Method
+     * @var EE_Payment_Method
      */
     public $payment_method;
 
@@ -239,35 +239,35 @@ class EE_Checkout
      *    $payment - if a payment was successfully made during the reg process,
      *    then here it is !!!
      *
-     * @type EE_Payment
+     * @var EE_Payment
      */
     public $payment;
 
     /**
      *    if a payment method was selected that uses an on-site gateway, then this is the billing form
      *
-     * @type EE_Billing_Info_Form | EE_Billing_Attendee_Info_Form
+     * @var EE_Billing_Info_Form | EE_Billing_Attendee_Info_Form
      */
     public $billing_form;
 
     /**
      *    the entire registration form composed of ALL of the subsections generated by the various reg steps
      *
-     * @type EE_Form_Section_Proper
+     * @var EE_Form_Section_Proper
      */
     public $registration_form;
 
     /**
      * array of EE_SPCO_Reg_Step objects
      *
-     * @type EE_SPCO_Reg_Step[]
+     * @var EE_SPCO_Reg_Step[]
      */
     public $reg_steps = array();
 
     /**
      * array of EE_Payment_Method objects
      *
-     * @type EE_Payment_Method[]
+     * @var EE_Payment_Method[]
      */
     public $available_payment_methods = array();
 
@@ -700,7 +700,6 @@ class EE_Checkout
      */
     public function get_registration_time_limit()
     {
-
         $registration_time_limit = (float) (EE_Registry::instance()->SSN->expiration() - time());
         $time_limit_format = $registration_time_limit > 60 * MINUTE_IN_SECONDS ? 'H:i:s' : 'i:s';
         $registration_time_limit = date($time_limit_format, $registration_time_limit);
@@ -1134,7 +1133,6 @@ class EE_Checkout
      */
     protected function _refresh_primary_attendee_obj_from_db(EE_Transaction $transaction)
     {
-
         $primary_attendee_obj = null;
         // grab the saved registrations from the transaction
         foreach ($transaction->registrations($this->reg_cache_where_params, true) as $registration) {
@@ -1275,7 +1273,6 @@ class EE_Checkout
      */
     protected function _refresh_registration_attendee($registration)
     {
-
         $attendee = $registration->attendee();
         // verify object
         if ($attendee instanceof EE_Attendee && $attendee->ID()) {
