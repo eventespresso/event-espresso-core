@@ -48,15 +48,30 @@ class EncryptionKeyManagerTest extends TestCase
     }
 
 
+    public function tearDown()
+    {
+        $this->b64 = null;
+        $this->ekm = null;
+        $this->rdg = null;
+        parent::tearDown();
+    }
+
+
     private function setUpDependencies()
     {
-        $this->b64 = new Base64Encoder;
+        $this->b64 = $this->b64 instanceof Base64Encoder
+            ? $this->b64
+            : new Base64Encoder;
+
         $this->ekm = new EncryptionKeyManagerMock(
             $this->b64,
             self::TEST_KEY_ID,
             self::TEST_KEYS_OPTION_NAME
         );
-        $this->rdg = new RandomDataGenerator();
+
+        $this->rdg = $this->rdg instanceof RandomDataGenerator
+            ? $this->rdg
+            : new RandomDataGenerator();
     }
 
 

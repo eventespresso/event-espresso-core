@@ -34,10 +34,23 @@ class Base64EncoderTest extends TestCase
     }
 
 
+    public function tearDown()
+    {
+        $this->b64 = null;
+        $this->rdg = null;
+        parent::tearDown();
+    }
+
+
     private function setUpDependencies()
     {
-        $this->b64 = new Base64Encoder;
-        $this->rdg = new RandomDataGenerator();
+        $this->b64 = $this->b64 instanceof Base64Encoder
+            ? $this->b64
+            : new Base64Encoder;
+
+        $this->rdg = $this->rdg instanceof RandomDataGenerator
+            ? $this->rdg
+            : new RandomDataGenerator();
     }
 
 
