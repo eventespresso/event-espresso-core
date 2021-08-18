@@ -159,7 +159,7 @@ class CipherMethod
             update_option($this->cipher_method_option_name, $cipher_method_to_test);
         }
         // if we previously removed this cipher method from the list of valid ones, then let's put it back
-        if (! in_array($cipher_method_to_test, $this->cipher_methods)) {
+        if (! in_array($cipher_method_to_test, $this->cipher_methods, true)) {
             array_unshift($this->cipher_methods, $cipher_method_to_test);
         }
         return $cipher_method_to_test;
@@ -184,7 +184,7 @@ class CipherMethod
     {
         // verify that the requested cipher method is actually installed and can produce an initialization vector
         if (
-            in_array($cipher_method, $this->installed_cipher_methods)
+            in_array($cipher_method, $this->installed_cipher_methods, true)
             && openssl_cipher_iv_length($cipher_method) !== false
         ) {
             return true;

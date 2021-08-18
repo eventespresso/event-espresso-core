@@ -197,7 +197,7 @@ class EncryptionKeyManager implements EncryptionKeyManagerInterface
     public function setBitDepth($bit_depth)
     {
         $bit_depth       = absint($bit_depth);
-        $this->bit_depth = in_array($bit_depth, $this->bit_depth_options) ? $bit_depth : 128;
+        $this->bit_depth = in_array($bit_depth, $this->bit_depth_options, true) ? $bit_depth : 128;
     }
 
 
