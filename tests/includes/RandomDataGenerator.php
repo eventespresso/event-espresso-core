@@ -46,7 +46,7 @@ class RandomDataGenerator
             $characters .= '0123456789';
         }
         if ($include_symbols) {
-            $characters .= '`~!@#$%^&*()-_=+[{]}\\|;:\'"<>,.?/';
+            $characters .= '`~!@#$%^&*()-_=+[{]}\\|;:\'"<>,.?/\\n\\r\\t';
         }
         $charactersLength = strlen($characters) - 1;
         $randomString     = '';
