@@ -167,8 +167,8 @@ abstract class JsonDataNode implements JsonDataNodeInterface
             // check if data array has non-numerical keys and use a custom sort algorithm, else sort by keys
             EEH_Array::is_associative_array($this->data)
                 ? uasort(
-                $this->data,
-                function ($a, $b) {
+                    $this->data,
+                    function ($a, $b) {
                     // check if each incoming argument is a node and if they have an order set
                     // if so, then use that for our sorting comparison. otherwise use the node's name...
                     // unless it's NOT a node, in which case use the arg value if it is scalar, or 0 if not.
@@ -184,7 +184,7 @@ abstract class JsonDataNode implements JsonDataNodeInterface
                     }
                     return $a_ord <=> $b_ord;
                 }
-            )
+                )
                 // sort numerically indexed arrays by their keys
                 : ksort($this->data);
         }
