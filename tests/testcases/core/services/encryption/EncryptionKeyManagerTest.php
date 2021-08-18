@@ -65,8 +65,8 @@ class EncryptionKeyManagerTest extends TestCase
 
         $this->ekm = new EncryptionKeyManagerMock(
             $this->b64,
-            self::TEST_KEY_ID,
-            self::TEST_KEYS_OPTION_NAME
+            EncryptionKeyManagerTest::TEST_KEY_ID,
+            EncryptionKeyManagerTest::TEST_KEYS_OPTION_NAME
         );
 
         $this->rdg = $this->rdg instanceof RandomDataGenerator

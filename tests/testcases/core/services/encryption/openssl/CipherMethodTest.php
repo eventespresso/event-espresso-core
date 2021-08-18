@@ -58,7 +58,10 @@ class CipherMethodTest extends TestCase
     {
         $this->cmm = $this->cmm instanceof CipherMethodMock
             ? $this->cmm
-            : new CipherMethodMock(self::TEST_DEFAULT_CM, self::TEST_CM_OPTION_NAME);
+            : new CipherMethodMock(
+                CipherMethodTest::TEST_DEFAULT_CM,
+                CipherMethodTest::TEST_CM_OPTION_NAME
+            );
 
         $this->rdg = $this->rdg instanceof RandomDataGenerator
             ? $this->rdg
@@ -68,8 +71,8 @@ class CipherMethodTest extends TestCase
 
     public function testConstructor()
     {
-        $this->assertEquals(self::TEST_DEFAULT_CM, $this->cmm->defaultCipherMethod());
-        $this->assertEquals(self::TEST_CM_OPTION_NAME, $this->cmm->cipherMethodOptionName());
+        $this->assertEquals(CipherMethodTest::TEST_DEFAULT_CM, $this->cmm->defaultCipherMethod());
+        $this->assertEquals(CipherMethodTest::TEST_CM_OPTION_NAME, $this->cmm->cipherMethodOptionName());
         $this->assertNotEmpty($this->cmm->installedCipherMethods());
     }
 
