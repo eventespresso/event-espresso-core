@@ -111,16 +111,17 @@ class OpenSSLv1 extends OpenSSL
         $key = $this->getDigestHashValue($encryption_key);
         // encrypt it
         $encrypted_text = openssl_encrypt(
-            $text_to_encrypt,
+            $this->base64_encoder->encodeString($text_to_encrypt), // encode to remove special characters
             $cipher_method,
             $key,
-            OPENSSL_RAW_DATA,
+            0,
             $iv
         );
+        $this->validateEncryption($encrypted_text);
         $encrypted_text = trim($encrypted_text);
         // hash the raw encrypted text
         $hmac = hash_hmac($this->getHashAlgorithm(), $encrypted_text, $key, true);
-        // concatenate everything into one big string and encode it
+        // concatenate everything into one big string and encode it again
         return $this->base64_encoder->encodeString($iv . $hmac . $encrypted_text);
     }
 
@@ -151,15 +152,15 @@ class OpenSSLv1 extends OpenSSL
         // timing attack safe comparison to determine if anything has changed
         if (hash_equals($hmac, $rehash_mac)) {
             // looks good, decrypt it, trim it, and return it
-            return trim(
-                openssl_decrypt(
-                    $encrypted_text_raw,
-                    $this->cipher_method->getCipherMethod(),
-                    $key,
-                    OPENSSL_RAW_DATA,
-                    $iv
-                )
+            $decrypted_text = openssl_decrypt(
+                $encrypted_text_raw,
+                $this->cipher_method->getCipherMethod(),
+                $key,
+                0,
+                $iv
             );
+            $this->validateDecryption($decrypted_text);
+            return trim($this->base64_encoder->decodeString($decrypted_text));
         }
         throw new RuntimeException(
             esc_html__(

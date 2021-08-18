@@ -107,10 +107,12 @@ class OpenSSLv2 extends OpenSSL
         $encryption_key = $this->encryption_key_manager->getEncryptionKey($encryption_key_identifier);
         // generate initialization vector for the cipher method.
         $iv = random_bytes(openssl_cipher_iv_length($cipher_method));
-        // encrypt it
-        return $this->cipher_method->usesAuthenticatedEncryptionMode()
+        // encrypt it (encode to remove special characters)
+        $text_to_encrypt = $this->base64_encoder->encodeString($text_to_encrypt);
+        $encrypted_text = $this->cipher_method->usesAuthenticatedEncryptionMode()
             ? $this->authenticatedEncrypt($text_to_encrypt, $cipher_method, $encryption_key, $iv, $aad)
             : $this->nonAuthenticatedEncrypt($text_to_encrypt, $cipher_method, $encryption_key, $iv);
+        return $this->base64_encoder->encodeString($encrypted_text);
     }
 
 
@@ -128,14 +130,15 @@ class OpenSSLv2 extends OpenSSL
             $text_to_encrypt,
             $cipher_method,
             $this->getDigestHashValue($encryption_key, OpenSSL::DEFAULT_DIGEST_METHOD, OPENSSL_RAW_DATA),
-            OPENSSL_RAW_DATA,
+            0,
             $iv,
             $tag,
             $aad,
             OpenSSLv2::AUTH_TAG_LENGTH
         );
-        // concatenate everything into one big string and encode it
-        return $this->base64_encoder->encodeString($iv . $tag . $encrypted_text);
+        $this->validateEncryption($encrypted_text);
+        // concatenate everything into one big string
+        return $iv . $tag . $encrypted_text;
     }
 
 
@@ -152,11 +155,12 @@ class OpenSSLv2 extends OpenSSL
             $text_to_encrypt,
             $cipher_method,
             $this->getDigestHashValue($encryption_key),
-            OPENSSL_RAW_DATA,
+            0,
             $iv
         );
-        // prepend the initialization vector and encode it
-        return $this->base64_encoder->encodeString($iv . $encrypted_text);
+        $this->validateEncryption($encrypted_text);
+        // prepend the initialization vector
+        return $iv . $encrypted_text;
     }
 
 
@@ -184,19 +188,8 @@ class OpenSSLv2 extends OpenSSL
             ? $this->authenticatedDecrypt($encrypted_text, $cipher_method, $encryption_key, $iv, $aad)
             : $this->nonAuthenticatedDecrypt($encrypted_text, $cipher_method, $encryption_key, $iv);
 
-        if ($decrypted_text === false) {
-            throw new RuntimeException(
-                sprintf(
-                    esc_html__(
-                        'The following error occurred during decryption: %1$s%2$s',
-                        'event_espresso'
-                    ),
-                    '<br />',
-                    openssl_error_string()
-                )
-            );
-        }
-        return trim($decrypted_text);
+        $this->validateDecryption($decrypted_text);
+        return trim($this->base64_encoder->decodeString($decrypted_text));
     }
 
 
@@ -218,7 +211,7 @@ class OpenSSLv2 extends OpenSSL
             $encrypted_text,
             $cipher_method,
             $this->getDigestHashValue($encryption_key, OpenSSL::DEFAULT_DIGEST_METHOD, OPENSSL_RAW_DATA),
-            OPENSSL_RAW_DATA,
+            0,
             $iv,
             $tag,
             $aad
@@ -239,7 +232,7 @@ class OpenSSLv2 extends OpenSSL
             $encrypted_text,
             $cipher_method,
             $this->getDigestHashValue($encryption_key),
-            OPENSSL_RAW_DATA,
+            0,
             $iv
         );
     }
