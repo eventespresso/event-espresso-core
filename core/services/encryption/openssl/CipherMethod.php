@@ -18,24 +18,34 @@ class CipherMethod
     /**
      * @var string
      */
-    private $cipher_method_option_name;
+    protected $cipher_method_option_name;
 
     /**
+     * list of cipher methods that we consider usable,
+     * essentially all of the installed_cipher_methods minus weak_algorithms
+     *
      * @var array
      */
-    private $cipher_methods = [];
+    protected $cipher_methods = [];
 
     /**
      * @var string
      */
-    private $default_cipher_method;
+    protected $default_cipher_method;
+
+    /**
+     * list of ALL cipher methods available on the server
+     *
+     * @var array
+     */
+    protected $installed_cipher_methods;
 
     /**
      * the OpenSSL cipher method to use. default: AES-128-CBC
      *
      * @var string
      */
-    private $validated_cipher_method;
+    protected $validated_cipher_method;
 
     /**
      * as early as Aug 2016, Openssl declared the following weak: RC2, RC4, DES, 3DES, MD5 based
@@ -43,7 +53,7 @@ class CipherMethod
      *
      * @var array
      */
-    private $weak_algorithms = ['des', 'ecb', 'md5', 'rc2', 'rc4'];
+    protected $weak_algorithms = ['des', 'ecb', 'md5', 'rc2', 'rc4'];
 
 
     /**
@@ -54,6 +64,7 @@ class CipherMethod
     {
         $this->default_cipher_method     = $default_cipher_method;
         $this->cipher_method_option_name = $cipher_method_option_name;
+        $this->installed_cipher_methods = openssl_get_cipher_methods();
     }
 
 
@@ -66,25 +77,33 @@ class CipherMethod
      * to see what is available on the server, and returns the results.
      *
      * @param string $cipher_method
+     * @param bool   $load_alternate [optional] if TRUE, will load the default cipher method (or any strong algorithm)
+     *                               if the requested cipher method is not installed or invalid.
+     *                               if FALSE, will throw an exception if the requested cipher method is not valid.
      * @return string
      * @throws RuntimeException
      */
-    public function getCipherMethod($cipher_method = null)
+    public function getCipherMethod($cipher_method = null, $load_alternate = true)
     {
-        $cipher_method = $cipher_method ?: $this->default_cipher_method;
+        if (empty($cipher_method) && $this->validated_cipher_method !== null) {
+            return $this->validated_cipher_method;
+        }
+        // if nothing specific was requested and it's ok to load an alternate, then grab the system default
+        if (empty($cipher_method) && $load_alternate) {
+            $cipher_method = $this->default_cipher_method;
+        }
+        // verify that the cipher method can produce an initialization vector.
+        // but if the requested is invalid and we don't want to load an alternate, then throw an exception
+        $throw_exception = ! $load_alternate;
+        if ($this->validateCipherMethod($cipher_method, $throw_exception) === false) {
+            // nope? ... ok let's see what we can find
+            $cipher_method = $this->getAvailableCipherMethod();
+        }
+        // if nothing has been previously validated, then save the currently requested cipher which appears to be good
         if ($this->validated_cipher_method === null) {
-            // verify that the default cipher method can produce an initialization vector
-            if (openssl_cipher_iv_length($cipher_method) === false) {
-                // nope? okay let's get what we found in the past to work
-                $cipher_method = get_option($this->cipher_method_option_name, '');
-                // oops... haven't tested available cipher methods yet
-                if ($cipher_method === '' || openssl_cipher_iv_length($cipher_method) === false) {
-                    $cipher_method = $this->getAvailableCipherMethod($cipher_method);
-                }
-            }
             $this->validated_cipher_method = $cipher_method;
         }
-        return $this->validated_cipher_method;
+        return $cipher_method;
     }
 
 
@@ -110,21 +129,20 @@ class CipherMethod
      * @return string
      * @throws RuntimeException
      */
-    private function getAvailableCipherMethod($cipher_method)
+    protected function getAvailableCipherMethod($cipher_method = null)
     {
-        // verify that the incoming cipher method can produce an initialization vector
-        if (openssl_cipher_iv_length($cipher_method) === false) {
+        // if nothing was supplied, the get what we found in the past to work
+        $cipher_method_to_test = $cipher_method ?: get_option($this->cipher_method_option_name, '');
+        // verify that the incoming cipher method exists and can produce an initialization vector
+        if ($this->validateCipherMethod($cipher_method_to_test) === false) {
             // what? there's no list?
             if (empty($this->cipher_methods)) {
                 // generate that list and cache it
                 $this->cipher_methods = $this->getAvailableStrongCipherMethods();
-                // then grab the first item from the list
-                $cipher_method = reset($this->cipher_methods);
-            } else {
-                // check the next cipher in the list of available cipher methods
-                $cipher_method = next($this->cipher_methods);
             }
-            if ($cipher_method === false) {
+            // then grab the first item from the list (we'll add it back later if it is good)
+            $cipher_method_to_test = array_shift($this->cipher_methods);
+            if ($cipher_method_to_test === null) {
                 throw new RuntimeException(
                     esc_html__(
                         'OpenSSL support appears to be enabled on the server, but no cipher methods are available. Please contact the server administrator.',
@@ -133,22 +151,56 @@ class CipherMethod
                 );
             }
             // verify that the next cipher method works
-            return $this->getAvailableCipherMethod($cipher_method);
+            return $this->getAvailableCipherMethod($cipher_method_to_test);
         }
         // if we've gotten this far, then we found an available cipher method that works
-        // so save that for next time
-        update_option($this->cipher_method_option_name, $cipher_method);
-        return $cipher_method;
+        // so save that for next time, if it's not the same as what's there already
+        if ($cipher_method_to_test !== $cipher_method) {
+            update_option($this->cipher_method_option_name, $cipher_method_to_test);
+        }
+        // if we previously removed this cipher method from the list of valid ones, then let's put it back
+        if ( ! in_array($cipher_method_to_test, $this->cipher_methods)) {
+            array_unshift($this->cipher_methods, $cipher_method_to_test);
+        }
+        return $cipher_method_to_test;
     }
 
 
     /**
      * @return array
      */
-    private function getAvailableStrongCipherMethods()
+    protected function getAvailableStrongCipherMethods()
     {
-        $cipher_methods = openssl_get_cipher_methods();
-        return array_filter($cipher_methods, [$this, 'weakAlgorithmFilter']);
+        return array_filter($this->installed_cipher_methods, [$this, 'weakAlgorithmFilter']);
+    }
+
+
+    /**
+     * @param string $cipher_method
+     * @param false  $throw_exception
+     * @return bool
+     */
+    protected function validateCipherMethod($cipher_method, $throw_exception = false)
+    {
+        // verify that the requested cipher method is actually installed and can produce an initialization vector
+        if (
+            in_array($cipher_method, $this->installed_cipher_methods)
+            && openssl_cipher_iv_length($cipher_method) !== false
+        ) {
+            return true;
+        }
+        if (! $throw_exception) {
+            return false;
+        }
+        throw new RuntimeException(
+            sprintf(
+                esc_html__(
+                    'The requested OpenSSL cipher method "%1$s" is invalid or not installed on the server. Please contact the server administrator.',
+                    'event_espresso'
+                ),
+                $cipher_method
+            )
+        );
     }
 
 
@@ -156,7 +208,7 @@ class CipherMethod
      * @see https://www.php.net/manual/en/function.openssl-get-cipher-methods.php#example-890
      * @param string $cipher_method
      */
-    private function weakAlgorithmFilter($cipher_method)
+    protected function weakAlgorithmFilter($cipher_method)
     {
         foreach ($this->weak_algorithms as $weak_algorithm) {
             if (stripos($cipher_method, $weak_algorithm) !== false) {
