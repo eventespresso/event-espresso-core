@@ -24,6 +24,15 @@ interface EncryptionKeyManagerInterface
 
 
     /**
+     * returns true if encryption key has already been generated
+     *
+     * @param string $encryption_key_identifier - encryption key name
+     * @return bool
+     */
+    public function encryptionKeyExists($encryption_key_identifier = '');
+
+
+    /**
      * returns cryptographically secure passphrase. will use default if necessary
      *
      * @param string $encryption_key_identifier - used for saving encryption key. will use default if necessary
