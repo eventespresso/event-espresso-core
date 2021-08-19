@@ -35,11 +35,12 @@ interface EncryptionKeyManagerInterface
     /**
      * returns cryptographically secure passphrase. will use default if necessary
      *
-     * @param string $encryption_key_identifier - used for saving encryption key. will use default if necessary
-     * @param string $generate                  - will generate a new key if the requested one does not exist
+     * @param string $encryption_key_identifier - encryption key name. will use default if necessary
+     * @param bool   $generate                  - will generate a new key if the requested one does not exist
+     * @param bool   $throw_exception           - if TRUE (default), will throw an exception if key is not found
      * @return string
      */
-    public function getEncryptionKey($encryption_key_identifier = '', $generate = false);
+    public function getEncryptionKey($encryption_key_identifier = '', $generate = false, $throw_exception = true);
 
 
     /**
@@ -58,7 +59,7 @@ interface EncryptionKeyManagerInterface
 
 
     /**
-     * @param int $bit_depth options are 128, 192, or 256
+     * @param int $bit_depth options are 64, 128, 192, or 256
      */
     public function setBitDepth($bit_depth);
 
@@ -73,4 +74,23 @@ interface EncryptionKeyManagerInterface
      * @param int $key_length
      */
     public function setKeyLength($key_length);
+
+
+    /**
+     * deletes ALL existing encryption keys from the db
+     *
+     * @return bool true if keys successfully deleted, false otherwise.
+     */
+    public function removeAllEncryptionKeys();
+
+
+    /**
+     * deletes an existing encryption key from those saved in the db
+     *
+     * @param string $encryption_key_identifier encryption key name
+     * @return int  1: key removed successfully.
+     *              0: key did not exist.
+     *             -1: failed to remove key
+     */
+    public function removeEncryptionKey($encryption_key_identifier = '');
 }

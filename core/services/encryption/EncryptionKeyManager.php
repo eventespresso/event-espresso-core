@@ -236,6 +236,37 @@ class EncryptionKeyManager implements EncryptionKeyManagerInterface
 
 
     /**
+     * deletes ALL existing encryption keys from the db
+     *
+     * @return bool true if keys successfully deleted, false otherwise.
+     */
+    public function removeAllEncryptionKeys()
+    {
+        return delete_option($this->encryption_keys_option_name);
+    }
+
+
+    /**
+     * deletes an existing encryption key from those saved in the db
+     *
+     * @param string $encryption_key_identifier encryption key name
+     * @return int  1: key removed successfully.
+     *              0: key did not exist.
+     *             -1: failed to remove key
+     * @throws Exception
+     */
+    public function removeEncryptionKey($encryption_key_identifier = '')
+    {
+        // if encryption key has not been set
+        if (! $this->encryptionKeyExists($encryption_key_identifier)) {
+            return 0;
+        }
+        unset($this->encryption_keys[ $encryption_key_identifier ]);
+        return $this->saveEncryptionKeys() ? 1 : -1;
+    }
+
+
+    /**
      * retrieves encryption keys from db
      *
      * @return array
