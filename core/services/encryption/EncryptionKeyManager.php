@@ -84,10 +84,8 @@ class EncryptionKeyManager implements EncryptionKeyManagerInterface
      */
     public function addEncryptionKey($encryption_key_identifier, $encryption_key = '', $overwrite = false)
     {
-        // ensure keys are loaded
-        $this->retrieveEncryptionKeys();
         $encryption_key_identifier = $encryption_key_identifier ?: $this->default_encryption_key_id;
-        if (isset($this->encryption_keys[ $encryption_key_identifier ]) && ! $overwrite) {
+        if ($this->encryptionKeyExists($encryption_key_identifier) && ! $overwrite) {
             // WOAH!!! that key already exists and we don't want to overwrite it
             throw new RuntimeException(
                 sprintf(
@@ -105,24 +103,41 @@ class EncryptionKeyManager implements EncryptionKeyManagerInterface
 
 
     /**
-     * returns cryptographically secure passphrase. will use default if necessary
+     * returns true if encryption key has already been generated
      *
-     * @param string $encryption_key_identifier - used for saving encryption key. will use default if necessary
-     * @param string $generate                  - will generate a new key if the requested one does not exist
-     * @return string
+     * @param string $encryption_key_identifier - encryption key name
+     * @return bool
      * @throws Exception
      * @throws OutOfBoundsException
      */
-    public function getEncryptionKey($encryption_key_identifier = '', $generate = true)
+    public function encryptionKeyExists($encryption_key_identifier = '')
     {
-        $encryption_key_identifier = $encryption_key_identifier ?: $this->default_encryption_key_id;
         // ensure keys are loaded
         $this->retrieveEncryptionKeys();
+        return isset($this->encryption_keys[ $encryption_key_identifier ]);
+    }
+
+
+    /**
+     * returns cryptographically secure passphrase. will use default if necessary
+     *
+     * @param string $encryption_key_identifier - encryption key name. will use default if necessary
+     * @param bool   $generate                  - will generate a new key if the requested one does not exist
+     * @param bool   $throw_exception           - if TRUE (default), will throw an exception if key is not found
+     * @return string
+     * @throws Exception
+     */
+    public function getEncryptionKey($encryption_key_identifier = '', $generate = true, $throw_exception = true)
+    {
+        $encryption_key_identifier = $encryption_key_identifier ?: $this->default_encryption_key_id;
         // if encryption key has not been set
-        if (! isset($this->encryption_keys[ $encryption_key_identifier ])) {
+        if (! $this->encryptionKeyExists($encryption_key_identifier)) {
             if ($generate) {
                 $this->addEncryptionKey($encryption_key_identifier);
             } else {
+                if (! $throw_exception) {
+                    return '';
+                }
                 throw new OutOfBoundsException(
                     sprintf(
                         esc_html__('The "%1$s" encryption key was not found or is invalid.', 'event_espresso'),
