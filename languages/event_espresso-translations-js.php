@@ -586,10 +586,10 @@ $generated_i18n_strings = array(
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/newDateOptions/AddSingleDate.tsx:26
 	__( 'Add Single Date', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/newDateOptions/AddSingleDate.tsx:43
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/newDateOptions/AddSingleDate.tsx:44
 	__( 'Add a single date that only occurs once', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/newDateOptions/AddSingleDate.tsx:45
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/newDateOptions/AddSingleDate.tsx:46
 	__( 'Single Date', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:106
