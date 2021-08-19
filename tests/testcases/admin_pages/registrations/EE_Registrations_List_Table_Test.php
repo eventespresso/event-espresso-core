@@ -25,6 +25,7 @@ class EE_Registrations_List_Table_Test extends EE_UnitTestCase {
 
 	public function setUp() {
 		parent::setUp();
+        $this->loadFactories();
 		$this->loadAdminMocks();
 	}
 

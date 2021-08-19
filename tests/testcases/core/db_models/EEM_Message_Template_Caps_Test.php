@@ -24,6 +24,7 @@ class EEM_Message_Template_Caps_Test extends EE_UnitTestCase{
 	 * and then you can edit others if you have that cap
 	 */
 	function test_get_all__caps() {
+        $this->loadFactories();
 		//remove all questions currently existing
 		EEM_Message_Template::instance()->delete( array(), false );
 		$this->assertEquals( 0, EEM_Message_Template::instance()->count() );

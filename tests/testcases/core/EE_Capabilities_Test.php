@@ -33,6 +33,7 @@ class EE_Capabilities_Test extends EE_UnitTestCase
     {
         parent::setUp();
         $this->CAPS = EE_Registry::instance()->CAP;
+        $this->loadFactories();
     }
 
 

@@ -20,7 +20,7 @@ class EE_Import implements ResettableInterface
 
 
     // instance of the EE_Import object
-    private static $_instance = null;
+    private static $_instance;
 
     private static $_csv_array = array();
 

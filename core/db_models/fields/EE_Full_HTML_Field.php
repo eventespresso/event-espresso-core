@@ -52,14 +52,14 @@ class EE_Full_HTML_Field extends EE_Text_Field_Base
         return array(
             'raw' => array(
                 'description' =>  sprintf(
-                    __('%s - the value in the database.', 'event_espresso'),
+                    esc_html__('%s - the value in the database.', 'event_espresso'),
                     $this->get_nicename()
                 ),
                 'type' => 'string'
             ),
             'rendered' => array(
                 'description' =>  sprintf(
-                    __('%s - transformed for display.', 'event_espresso'),
+                    esc_html__('%s - transformed for display.', 'event_espresso'),
                     $this->get_nicename()
                 ),
                 'type' => 'string',

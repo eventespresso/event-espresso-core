@@ -30,6 +30,7 @@ class EE_Restriction_Generator_Protected_Test extends EE_UnitTestCase {
 	}
 
 	function test_generate_restrictions__basic_and_others() {
+        $this->loadFactories();
 		global $current_user;
 		$current_user = $this->factory->user->create_and_get();
 		//currently registrations have the 'ee_read_registrations' and 'ee_read_others_registrations' permissions

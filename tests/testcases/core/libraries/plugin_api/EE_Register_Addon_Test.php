@@ -163,6 +163,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase
 
     public function test_register_mock_addon_success()
     {
+        $this->loadFactories();
         //ensure model and class extensions weren't setup beforehand
         $this->assertFalse($this->_class_has_been_extended());
         $this->assertFalse($this->_model_has_been_extended());

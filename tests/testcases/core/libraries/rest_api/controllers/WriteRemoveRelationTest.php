@@ -301,6 +301,7 @@ class WriteRemoveRelationTest extends EE_REST_TestCase
      */
     public function testRemoveRelationInsufficientPrivileges()
     {
+        $this->loadFactories();
         global $current_user;
         //setup our user and set as current user.
         $current_user = $this->factory->user->create_and_get();

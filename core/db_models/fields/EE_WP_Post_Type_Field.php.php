@@ -11,6 +11,6 @@ class EE_WP_Post_Type_Field extends EE_DB_Only_Text_Field
      */
     public function __construct($post_type)
     {
-        parent::__construct('post_type', __("Post Type", 'event_espresso'), false, $post_type);
+        parent::__construct('post_type', esc_html__("Post Type", 'event_espresso'), false, $post_type);
     }
 }

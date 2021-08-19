@@ -45,6 +45,7 @@ class EE_Messages_Scheduler_Test extends EE_UnitTestCase
 
     protected function addSomeMessagesForTesting()
     {
+        $this->loadFactories();
         $messages_to_create = array(
             array(
                 'STS_ID' => EEM_Message::status_idle,

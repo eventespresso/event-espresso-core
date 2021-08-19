@@ -21,7 +21,7 @@ class EE_Data_Mapper
      *
      * @private _instance
      */
-    private static $_instance = null;
+    private static $_instance;
 
 
     public $data = array();

@@ -28,6 +28,7 @@ class PhpCompatGreaterFiveSixHelper extends AbstractHelper
                 )
             );
         }
+        parent::__construct();
     }
 
     /**

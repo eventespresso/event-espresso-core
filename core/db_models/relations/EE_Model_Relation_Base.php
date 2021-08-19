@@ -76,7 +76,7 @@ abstract class EE_Model_Relation_Base implements HasSchemaInterface
         $this->_other_model_name = $other_model_name;
         if (is_string($this->_blocking_delete)) {
             throw new EE_Error(sprintf(
-                __(
+                esc_html__(
                     "When instantiating the relation of type %s from %s to %s, the \$block_deletes argument should be a boolean, not a string (%s)",
                     "event_espresso"
                 ),
@@ -117,11 +117,18 @@ abstract class EE_Model_Relation_Base implements HasSchemaInterface
      *
      * @param string $model_name like Event, Question_Group, etc. omit the EEM_
      * @return EEM_Base
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _get_model($model_name)
     {
         $modelInstance = EE_Registry::instance()->load_model($model_name);
-        $modelInstance->set_timezone($this->_timezone);
+        // if the timezone is NOT set on the model but IS set for this relation
+        // (which seems really unlikely to ever happen, but whatever)
+        // make sure the model timezone is set
+        if ($this->_timezone && ! $modelInstance->get_timezone()) {
+            $modelInstance->set_timezone($this->_timezone);
+        }
         return $modelInstance;
     }
 
@@ -134,7 +141,7 @@ abstract class EE_Model_Relation_Base implements HasSchemaInterface
      */
     public function set_timezone($timezone)
     {
-        if ($timezone !== null) {
+        if (! empty($timezone)) {
             $this->_timezone = $timezone;
         }
     }
@@ -169,10 +176,11 @@ abstract class EE_Model_Relation_Base implements HasSchemaInterface
      * EE_Belongs_To_Relation doesn't need to be saved before querying.
      *
      * @param EE_Base_Class|int $model_object_or_id                      or the primary key of this model
-     * @param array             $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @param array             $query_params                            @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @param boolean           $values_already_prepared_by_model_object @deprecated since 4.8.1
      * @return EE_Base_Class[]
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_all_related(
         $model_object_or_id,
@@ -182,7 +190,7 @@ abstract class EE_Model_Relation_Base implements HasSchemaInterface
         if ($values_already_prepared_by_model_object !== false) {
             EE_Error::doing_it_wrong(
                 'EE_Model_Relation_Base::get_all_related',
-                __('The argument $values_already_prepared_by_model_object is no longer used.', 'event_espresso'),
+                esc_html__('The argument $values_already_prepared_by_model_object is no longer used.', 'event_espresso'),
                 '4.8.1'
             );
         }
@@ -199,7 +207,7 @@ abstract class EE_Model_Relation_Base implements HasSchemaInterface
     /**
      * Alters the $query_params to disable default where conditions, unless otherwise specified
      *
-     * @param string $query_params
+     * @param array $query_params
      * @return array
      */
     protected function _disable_default_where_conditions_on_query_param($query_params)
@@ -220,7 +228,8 @@ abstract class EE_Model_Relation_Base implements HasSchemaInterface
      * @param EE_Base_Class|int|string $model_object_or_id
      * @param array                    $query_params
      * @return int of how many related models got deleted
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function delete_all_related($model_object_or_id, $query_params = array())
     {
@@ -253,7 +262,8 @@ abstract class EE_Model_Relation_Base implements HasSchemaInterface
      * @param EE_Base_Class|int|string $model_object_or_id
      * @param array                    $query_params
      * @return int of how many related models got deleted
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function delete_related_permanently($model_object_or_id, $query_params = array())
     {
@@ -305,7 +315,7 @@ abstract class EE_Model_Relation_Base implements HasSchemaInterface
         }
         if (! $model_object_id) {
             throw new EE_Error(sprintf(
-                __(
+                esc_html__(
                     "Sorry, we cant get the related %s model objects to %s model object before it has an ID. You can solve that by just saving it before trying to get its related model objects",
                     "event_espresso"
                 ),
@@ -401,7 +411,7 @@ abstract class EE_Model_Relation_Base implements HasSchemaInterface
         } else {
 //          return sprintf(__('Cannot delete %1$s when there are related %2$s', "event_espresso"),$this->get_this_model()->item_name(2),$this->get_other_model()->item_name(2));
             return sprintf(
-                __(
+                esc_html__(
                     'This %1$s is currently linked to one or more %2$s records. If this %1$s is incorrect, then please remove it from all %3$s before attempting to delete it.',
                     "event_espresso"
                 ),

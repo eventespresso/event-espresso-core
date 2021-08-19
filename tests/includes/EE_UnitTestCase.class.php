@@ -102,9 +102,12 @@ class EE_UnitTestCase extends WP_UnitTestCase
     // }
 
 
+    /**
+     * @throws EE_Error
+     */
     public function setUp()
     {
-        // echo "\n\n" . strtoupper($this->getName()) . '()';
+        // echo "\n\n" . strtoupper($this->getName()) . "()\n";
         //save the hooks state before WP_UnitTestCase actually gets its hands on it...
         //as it immediately adds a few hooks we might not want to backup
         global $auto_made_thing_seed, $wp_filter, $wp_actions, $merged_filters, $wp_current_filter, $wpdb, $current_user;
@@ -129,10 +132,6 @@ class EE_UnitTestCase extends WP_UnitTestCase
         add_filter('FHEE__EEH_Activation__add_column_if_it_doesnt_exist__short_circuit', '__return_true');
         add_filter('FHEE__EEH_Activation__drop_index__short_circuit', '__return_true');
 
-        // load factories
-        EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_TESTS_DIR . 'includes/factories');
-        $this->factory = new EE_UnitTest_Factory();
-
         //IF we detect we're running tests on WP4.1, then we need to make sure current_user_can tests pass by implementing
         //updating all_caps when `WP_User::add_cap` is run (which is fixed in later wp versions).  So we hook into the
         // 'user_has_cap' filter to do this
@@ -156,12 +155,24 @@ class EE_UnitTestCase extends WP_UnitTestCase
 
 
     /**
+     * @throws EE_Error
+     * @since   $VID:$
+     */
+    public function loadFactories()
+    {
+        if (! class_exists('EE_UnitTest_Factory')) {
+            EEH_Autoloader::register_autoloaders_for_each_file_in_folder(EE_TESTS_DIR . 'includes/factories');
+        }
+        $this->factory = new EE_UnitTest_Factory();
+    }
+
+    /**
      * @param bool $short_circuit
      * @param string $table_name
      * @param string $sql
      * @return bool
      */
-    public function _short_circuit_db_implicit_commits($short_circuit = FALSE, $table_name, $sql)
+    public function _short_circuit_db_implicit_commits($short_circuit, $table_name, $sql)
     {
         $whitelisted_tables = apply_filters('FHEE__EE_UnitTestCase__short_circuit_db_implicit_commits__whitelisted_tables', array());
         if (in_array($table_name, $whitelisted_tables, true)) {
@@ -260,6 +271,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
 
     protected function loadTestScenarios()
     {
+        $this->loadFactories();
         // load scenarios
         require_once EE_TESTS_DIR . 'includes/scenarios/EE_Test_Scenario_Classes.php';
         $this->scenarios = new EE_Test_Scenario_Factory($this);
@@ -707,16 +719,14 @@ class EE_UnitTestCase extends WP_UnitTestCase
             throw new EE_Error($date_parsing_error);
         }
         $difference = $actual_date_obj->format('U') - $expected_date_obj->format('U');
-        $custom_error_message = !empty($custom_error_message)
-            ? $custom_error_message
-            : sprintf(
-                __(
-                    'The expected date "%1$s" differs from the actual date "%2$s" by more than one minute',
-                    'event_espresso'
-                ),
-                print_r($expected_date, true),
-                print_r($actual_date, true)
-            );
+        $custom_error_message .= PHP_EOL . sprintf(
+            __(
+                'The expected date "%1$s" differs from the actual date "%2$s" by more than one minute',
+                'event_espresso'
+            ),
+            print_r($expected_date, true),
+            print_r($actual_date, true)
+        );
         $this->assertTrue($difference < 60, $custom_error_message);
     }
 
@@ -738,7 +748,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
      */
     protected function _get_save_data($format = 'Y-m-d h:i a', $prefix = '', $row = '1', $timezone = 'America/Vancouver')
     {
-        $data = array(
+        return array(
             'starting_ticket_datetime_rows' => array(
                 $row => ''
             ),
@@ -792,7 +802,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
             ),
             'timezone_string' => $timezone
         );
-        return $data;
+        // return $data;
     }
 
 
@@ -1382,6 +1392,7 @@ class EE_UnitTestCase extends WP_UnitTestCase
      */
     public function wp_admin_with_ee_caps($ee_capabilities = array())
     {
+        $this->loadFactories();
         //if caps were provided then just add the caps to a default user role (non admin user).
         if ($ee_capabilities) {
             /** @type WP_User $user */

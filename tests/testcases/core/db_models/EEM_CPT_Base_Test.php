@@ -26,6 +26,7 @@ class EEM_CPT_Base_Test extends EE_UnitTestCase
      */
     public function test_get_minimum_where_conditions_during_query()
     {
+        $this->loadFactories();
         $this->assertEquals(0, EEM_Event::instance()->count(array('default_where_conditions' => 'none')));
         $e_normal = $this->new_model_obj_with_dependencies('Event',
             array('status' => EEM_CPT_Base::post_status_publish));

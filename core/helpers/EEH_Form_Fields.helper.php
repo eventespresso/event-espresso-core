@@ -1244,8 +1244,10 @@ class EEH_Form_Fields
      */
     public static function generate_state_dropdown($QST, $get_all = false)
     {
-        $states = $get_all ? EEM_State::instance()->get_all_states() : EEM_State::instance()->get_all_states_of_active_countries();
-        if ($states && count($states) != count($QST->options())) {
+        $states = $get_all
+            ? EEM_State::instance()->get_all_states()
+            : EEM_State::instance()->get_all_states_of_active_countries();
+        if (! empty($states) && count($states) != count($QST->options())) {
             $QST->set('QST_type', 'DROPDOWN');
             // if multiple countries, we'll create option groups within the dropdown
             foreach ($states as $state) {
@@ -1388,7 +1390,7 @@ class EEH_Form_Fields
      * @param  string $evt_active_status "upcoming", "expired", "active", or "inactive"
      * @return string                    html
      */
-    public static function generate_event_months_dropdown($cur_date = '', $status = null, $evt_category = null, $evt_active_status = null)
+    public static function generate_event_months_dropdown($cur_date = '', $status = '', $evt_category = '', $evt_active_status = '')
     {
         // determine what post_status our condition will have for the query.
         // phpcs:disable PSR2.ControlStructures.SwitchDeclaration.TerminatingComment

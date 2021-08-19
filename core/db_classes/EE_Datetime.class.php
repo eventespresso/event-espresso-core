@@ -62,7 +62,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public static function new_instance($props_n_values = array(), $timezone = null, $date_formats = array())
+    public static function new_instance($props_n_values = array(), $timezone = '', $date_formats = array())
     {
         $has_object = parent::_check_for_object(
             $props_n_values,
@@ -87,7 +87,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public static function new_instance_from_db($props_n_values = array(), $timezone = null)
+    public static function new_instance_from_db($props_n_values = array(), $timezone = '')
     {
         return new self($props_n_values, true, $timezone);
     }

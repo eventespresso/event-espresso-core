@@ -303,11 +303,11 @@ class EE_Payment_Method extends EE_Base_Class
     /**
      * Overrides parent so when PMD_type is changed we refresh the _type_obj
      *
-     * @param string $field_name
-     * @param mixed $field_value
+     * @param string  $field_name
+     * @param mixed   $field_value
      * @param boolean $use_default
      */
-    public function set($field_name, $field_value, $use_default = false)
+    public function set($field_name, $field_value, bool $use_default = false)
     {
         if ($field_name === 'PMD_type') {
             // the type has probably changed, so forget about its old type object
@@ -568,7 +568,7 @@ class EE_Payment_Method extends EE_Base_Class
      * @return int @see EE_Base_Class::save()
      * @throws \EE_Error
      */
-    public function save($set_cols_n_values = array())
+    public function save(array $set_cols_n_values = array())
     {
         $results = parent::save($set_cols_n_values);
         if ($this->get_original('PMD_scope') !== $this->get('PMD_scope')) {

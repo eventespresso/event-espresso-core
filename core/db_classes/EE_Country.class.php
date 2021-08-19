@@ -3,9 +3,9 @@
 /**
  * EE_Country class
  *
- * @package               Event Espresso
- * @subpackage            includes/classes/EE_Country.class.php
- * @author                Brent Christensen
+ * @package     Event Espresso
+ * @subpackage  includes/classes/EE_Country.class.php
+ * @author      Brent Christensen
  */
 class EE_Country extends EE_Base_Class
 {
@@ -13,8 +13,10 @@ class EE_Country extends EE_Base_Class
     /**
      * @param array $props_n_values
      * @return EE_Country|mixed
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public static function new_instance($props_n_values = array())
+    public static function new_instance($props_n_values = [])
     {
         $has_object = parent::_check_for_object($props_n_values, __CLASS__);
         return $has_object ? $has_object : new self($props_n_values);
@@ -24,8 +26,10 @@ class EE_Country extends EE_Base_Class
     /**
      * @param array $props_n_values
      * @return EE_Country
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public static function new_instance_from_db($props_n_values = array())
+    public static function new_instance_from_db($props_n_values = [])
     {
         return new self($props_n_values, true);
     }
@@ -35,6 +39,7 @@ class EE_Country extends EE_Base_Class
      * Gets the country name
      *
      * @return string
+     * @throws EE_Error
      */
     public function name()
     {
@@ -46,6 +51,7 @@ class EE_Country extends EE_Base_Class
      * gets the country's currency code
      *
      * @return string
+     * @throws EE_Error
      */
     public function currency_code()
     {
@@ -57,6 +63,7 @@ class EE_Country extends EE_Base_Class
      * gets the country's currency sign/symbol
      *
      * @return string
+     * @throws EE_Error
      */
     public function currency_sign()
     {
@@ -69,6 +76,7 @@ class EE_Country extends EE_Base_Class
      * Currency name singular
      *
      * @return string
+     * @throws EE_Error
      */
     public function currency_name_single()
     {
@@ -80,6 +88,7 @@ class EE_Country extends EE_Base_Class
      * Currency name plural
      *
      * @return string
+     * @throws EE_Error
      */
     public function currency_name_plural()
     {
@@ -91,6 +100,7 @@ class EE_Country extends EE_Base_Class
      * currency_sign_before - ie: $TRUE  or  FALSE$
      *
      * @return boolean
+     * @throws EE_Error
      */
     public function currency_sign_before()
     {
@@ -102,6 +112,7 @@ class EE_Country extends EE_Base_Class
      * currency_decimal_places : 2 = 0.00   3 = 0.000
      *
      * @return integer
+     * @throws EE_Error
      */
     public function currency_decimal_places()
     {
@@ -113,6 +124,7 @@ class EE_Country extends EE_Base_Class
      * currency_decimal_mark :   (comma) ',' = 0,01   or   (decimal) '.' = 0.01
      *
      * @return string
+     * @throws EE_Error
      */
     public function currency_decimal_mark()
     {
@@ -124,6 +136,7 @@ class EE_Country extends EE_Base_Class
      * currency thousands separator:   (comma) ',' = 1,000   or   (decimal) '.' = 1.000
      *
      * @return string
+     * @throws EE_Error
      */
     public function currency_thousands_separator()
     {

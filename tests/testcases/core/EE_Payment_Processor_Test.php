@@ -94,6 +94,7 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase {
 	 * @return \WP_User
 	 */
 	public function get_wp_user_mock( $role = 'administrator' ) {
+        $this->loadFactories();
 		/** @type WP_User $user */
 		$user = $this->factory->user->create_and_get();
 		$user->add_role( $role );

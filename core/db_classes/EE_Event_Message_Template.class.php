@@ -17,7 +17,7 @@ class EE_Event_Message_Template extends EE_Base_Class
      * @param null  $timezone
      * @return EE_Event_Message_Template|mixed
      */
-    public static function new_instance($props_n_values = array(), $timezone = null)
+    public static function new_instance($props_n_values = array(), $timezone = '')
     {
         $has_object = parent::_check_for_object($props_n_values, __CLASS__, $timezone);
         return $has_object ? $has_object : new self($props_n_values, false, $timezone);
@@ -29,7 +29,7 @@ class EE_Event_Message_Template extends EE_Base_Class
      * @param null  $timezone
      * @return EE_Event_Message_Template
      */
-    public static function new_instance_from_db($props_n_values = array(), $timezone = null)
+    public static function new_instance_from_db($props_n_values = array(), $timezone = '')
     {
         return new self($props_n_values, true, $timezone);
     }

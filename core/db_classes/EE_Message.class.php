@@ -47,7 +47,7 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links
      *                             format.
      * @return EE_Message
      */
-    public static function new_instance($props_n_values = array(), $timezone = null, $date_formats = array())
+    public static function new_instance($props_n_values = array(), $timezone = '', $date_formats = array())
     {
         $has_object = parent::_check_for_object($props_n_values, __CLASS__);
         // if object doesn't exist, let's generate a unique token on instantiation so that its available even before saving to db.
@@ -64,7 +64,7 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links
      * @param string $timezone
      * @return EE_Message
      */
-    public static function new_instance_from_db($props_n_values = array(), $timezone = null)
+    public static function new_instance_from_db($props_n_values = array(), $timezone = '')
     {
         return new self($props_n_values, true, $timezone);
     }
@@ -588,13 +588,13 @@ class EE_Message extends EE_Base_Class implements EEI_Admin_Links
     /**
      * Overrides parent::set method so we can capture any sets for priority.
      *
-     * @see parent::set() for phpdocs
      * @param string $field_name
      * @param mixed  $field_value
      * @param bool   $use_default
      * @throws EE_Error
+     * @see parent::set() for phpdocs
      */
-    public function set($field_name, $field_value, $use_default = false)
+    public function set($field_name, $field_value, bool $use_default = false)
     {
         if ($field_name === 'MSG_priority') {
             $this->set_priority($field_value);

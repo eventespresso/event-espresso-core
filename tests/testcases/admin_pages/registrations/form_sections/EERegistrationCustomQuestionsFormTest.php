@@ -16,6 +16,7 @@ class EERegistrationCustomQuestionsFormTest extends EE_UnitTestCase
     {
         parent::setUp();
         $this->delayedAdminPageMocks('registrations');
+        $this->loadFactories();
 
     }
 
