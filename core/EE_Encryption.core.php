@@ -75,12 +75,12 @@ class EE_Encryption implements InterminableInterface
     /**
      * @var array $cipher_methods
      */
-    private $cipher_methods = array();
+    private $cipher_methods = [];
 
     /**
      * @var array $digest_methods
      */
-    private $digest_methods = array();
+    private $digest_methods = [];
 
     /**
      * @var boolean $_use_openssl_encrypt
@@ -275,12 +275,12 @@ class EE_Encryption implements InterminableInterface
      */
     public function base64_url_decode($encoded_string = '')
     {
+        // replace previously removed characters
+        $encoded_string = strtr($encoded_string, '-_,', '+/=');
         // you give me nothing??? GET OUT !
         if (empty($encoded_string) || ! $this->valid_base_64($encoded_string)) {
             return $encoded_string;
         }
-        // replace previously removed characters
-        $encoded_string = strtr($encoded_string, '-_,', '+/=');
         // decode
         $decoded_string = base64_decode($encoded_string);
         if ($decoded_string === false) {
@@ -427,7 +427,7 @@ class EE_Encryption implements InterminableInterface
             return $encrypted_text;
         }
         // decode
-        $encrypted_text = $this->valid_base_64($encrypted_text)
+        $encrypted_text       = $this->valid_base_64($encrypted_text)
             ? $this->base64_url_decode($encrypted_text)
             : $encrypted_text;
         $encrypted_components = explode(
@@ -464,7 +464,7 @@ class EE_Encryption implements InterminableInterface
      */
     protected function getDigestHashValue($digest_method = EE_Encryption::OPENSSL_DIGEST_METHOD, $encryption_key = '')
     {
-        $encryption_key = $encryption_key !== ''
+        $encryption_key    = $encryption_key !== ''
             ? $encryption_key
             : $this->get_encryption_key();
         $digest_hash_value = openssl_digest($encryption_key, $digest_method);
@@ -488,7 +488,7 @@ class EE_Encryption implements InterminableInterface
         $digest_method = prev($this->digest_methods);
         if (empty($this->digest_methods)) {
             $this->digest_methods = openssl_get_md_methods();
-            $digest_method = end($this->digest_methods);
+            $digest_method        = end($this->digest_methods);
         }
         if ($digest_method === false) {
             throw new RuntimeException(
@@ -515,7 +515,7 @@ class EE_Encryption implements InterminableInterface
         if (empty($text_string)) {
             return $text_string;
         }
-        $key_bits = str_split(
+        $key_bits    = str_split(
             str_pad(
                 '',
                 strlen($text_string),
@@ -525,7 +525,7 @@ class EE_Encryption implements InterminableInterface
         );
         $string_bits = str_split($text_string);
         foreach ($string_bits as $k => $v) {
-            $temp = ord($v) + ord($key_bits[ $k ]);
+            $temp              = ord($v) + ord($key_bits[ $k ]);
             $string_bits[ $k ] = chr($temp > 255 ? ($temp - 256) : $temp);
         }
         $encrypted_text = implode('', $string_bits);
@@ -560,7 +560,7 @@ class EE_Encryption implements InterminableInterface
             return $this->m_decrypt($encrypted_text);
         }
         $encrypted_text = substr($encrypted_text, 0, -4);
-        $key_bits = str_split(
+        $key_bits       = str_split(
             str_pad(
                 '',
                 strlen($encrypted_text),
@@ -568,9 +568,9 @@ class EE_Encryption implements InterminableInterface
                 STR_PAD_RIGHT
             )
         );
-        $string_bits = str_split($encrypted_text);
+        $string_bits    = str_split($encrypted_text);
         foreach ($string_bits as $k => $v) {
-            $temp = ord($v) - ord($key_bits[ $k ]);
+            $temp              = ord($v) - ord($key_bits[ $k ]);
             $string_bits[ $k ] = chr($temp < 0 ? ($temp + 256) : $temp);
         }
         return implode('', $string_bits);
@@ -611,7 +611,7 @@ class EE_Encryption implements InterminableInterface
      */
     public function generate_random_string($length = 40)
     {
-        $iterations = ceil($length / 40);
+        $iterations    = ceil($length / 40);
         $random_string = '';
         for ($i = 0; $i < $iterations; $i++) {
             $random_string .= sha1(microtime(true) . mt_rand(10000, 90000));
@@ -624,11 +624,11 @@ class EE_Encryption implements InterminableInterface
     /**
      * encrypts data using PHP's mcrypt functions
      *
-     * @deprecated 4.9.39
      * @param string $text_string
-     * @internal   param $string - the text to be encrypted
      * @return string
      * @throws RuntimeException
+     * @deprecated 4.9.39
+     * @internal   param $string - the text to be encrypted
      */
     protected function m_encrypt($text_string = '')
     {
@@ -663,10 +663,10 @@ class EE_Encryption implements InterminableInterface
     /**
      * decrypts data that has been encrypted with PHP's mcrypt functions
      *
-     * @deprecated 4.9.39
      * @param string $encrypted_text the text to be decrypted
      * @return string
      * @throws RuntimeException
+     * @deprecated 4.9.39
      */
     protected function m_decrypt($encrypted_text = '')
     {
@@ -680,7 +680,7 @@ class EE_Encryption implements InterminableInterface
             : $encrypted_text;
         // get the initialization vector size
         $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
-        $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
+        $iv      = mcrypt_create_iv($iv_size, MCRYPT_RAND);
         if ($iv === false) {
             throw new RuntimeException(
                 esc_html__('Failed to generate mcrypt initialization vector.', 'event_espresso')
