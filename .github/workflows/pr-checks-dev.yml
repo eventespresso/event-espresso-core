@@ -34,7 +34,7 @@ jobs:
         if: ${{ needs.what_has_changed.outputs.php == 'true' }}
         strategy:
             matrix:
-                php-version: ['7.1', '7.2', '7.3', '7.4']
+                php-version: ['7.1', '7.2', '7.3', '7.4', '8.0', '8.1']
         name: PHP ${{ matrix.php-version }} Unit tests
         steps:
             - name: Checkout and set up LAMP
@@ -53,6 +53,8 @@ jobs:
 
             - name: Run PHP Unit Tests
               run: phpunit --configuration tests/phpunit.xml
+              # Allow failure for PHP 8.x
+              continue-on-error: ${{ startsWith( matrix.php-version, '8.' ) }}
 
               # run multisite test only with 1 PHP version
             - if: ${{ matrix.php-version == '7.4' }}
