@@ -19,28 +19,10 @@ jobs:
                 php-versions: ['7.3'] #, '7.4', '8.0', '8.1']
         name: Lint with PHP ${{ matrix.php-versions }}
         steps:
-            - name: Checkout
-              uses: actions/checkout@v2
-
-            - name: Setup PHP
-              uses: shivammathur/setup-php@v2
+            - name: Checkout and set up LAMP
+              uses: eventespresso/actions/packages/checkout-and-LAMP@checkout-and-lamp-action
               with:
                   php-version: ${{ matrix.php-versions }}
-
-            - name: Get composer cache directory
-              id: composercache
-              run: echo "::set-output name=dir::$(composer config cache-files-dir)"
-
-            - name: Cache composer dependencies
-              uses: actions/cache@v2
-              with:
-                  path: ${{ steps.composercache.outputs.dir }}
-                  # Use composer-lock.json for key
-                  key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-                  restore-keys: ${{ runner.os }}-composer-
-
-            - name: Install dependencies
-              run: composer install
 
             - name: PHP Lint
               run: composer config-eventespressocs && composer run-script lint:skip-warnings
@@ -58,46 +40,19 @@ jobs:
                 php-versions: ['7.1', '7.2', '7.3', '7.4']
         name: PHP ${{ matrix.php-versions }} Test on ${{ matrix.operating-system }}
         steps:
-            - name: Checkout
-              uses: actions/checkout@v2
-
-            - name: Setup PHP
-              uses: shivammathur/setup-php@v2
+            - name: Checkout and set up LAMP
+              uses: eventespresso/actions/packages/checkout-and-LAMP@checkout-and-lamp-action
               with:
                   php-version: ${{ matrix.php-versions }}
-                  tools: phpunit:v7
-
-            - name: Start mysql service
-              run: sudo systemctl start mysql.service
-
-            - name: Get composer cache directory
-              id: composercache
-              run: echo "::set-output name=dir::$(composer config cache-files-dir)"
-
-            - name: Cache composer dependencies
-              uses: actions/cache@v2
-              with:
-                  path: ${{ steps.composercache.outputs.dir }}
-                  # Use composer.lock for key.
-                  key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-                  restore-keys: ${{ runner.os }}-composer-
-
-            - name: Check PHP Version
-              run: php -v
-
-            - name: Composer install
-              run: composer install --optimize-autoloader --prefer-dist
+                  php-tools: phpunit:v7
 
             - name: Install WP Tests
-              uses: eventespresso/actions/packages/install-wp-tests@main
+              uses: eventespresso/actions/packages/install-wp-tests@checkout-and-lamp-action
               with:
                   database: wordpress_test
                   username: root
                   password: root
                   host: localhost
-
-            - name: Fix MySQL authentication for PHP < 7.4
-              run: mysql --user="root" --password="root" --database="wordpress_test" --execute="ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'root';"
 
             - name: Run PHP Unit Tests
               run: phpunit --configuration tests/phpunit.xml
