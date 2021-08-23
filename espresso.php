@@ -40,7 +40,7 @@ if (function_exists('espresso_version')) {
     if (! function_exists('espresso_duplicate_plugin_error')) {
         /**
          *    espresso_duplicate_plugin_error
-         *    displays if more than one version of EE is activated at the same time
+         *    displays if more than one version of EE is activated at the same time.
          */
         function espresso_duplicate_plugin_error()
         {
