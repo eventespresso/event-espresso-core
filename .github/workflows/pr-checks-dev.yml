@@ -35,7 +35,7 @@ jobs:
         strategy:
             matrix:
                 php-version: ['7.1', '7.2', '7.3', '7.4']
-        name: PHP ${{ matrix.php-version }}
+        name: PHP ${{ matrix.php-version }} Unit tests
         steps:
             - name: Checkout and set up LAMP
               uses: eventespresso/actions/packages/checkout-and-LAMP@checkout-and-lamp-action
