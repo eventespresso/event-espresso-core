@@ -20,7 +20,7 @@ jobs:
         name: Lint with PHP ${{ matrix.php-version }}
         steps:
             - name: Checkout and set up LAMP
-              uses: eventespresso/actions/packages/checkout-and-LAMP@checkout-and-lamp-action
+              uses: eventespresso/actions/packages/checkout-and-LAMP@main
               with:
                   php-version: ${{ matrix.php-version }}
 
@@ -38,13 +38,13 @@ jobs:
         name: PHP ${{ matrix.php-version }} Unit tests
         steps:
             - name: Checkout and set up LAMP
-              uses: eventespresso/actions/packages/checkout-and-LAMP@checkout-and-lamp-action
+              uses: eventespresso/actions/packages/checkout-and-LAMP@main
               with:
                   php-version: ${{ matrix.php-version }}
                   php-tools: phpunit:v7
 
             - name: Install WP Tests
-              uses: eventespresso/actions/packages/install-wp-tests@checkout-and-lamp-action
+              uses: eventespresso/actions/packages/install-wp-tests@main
               with:
                   database: wordpress_test
                   username: root
