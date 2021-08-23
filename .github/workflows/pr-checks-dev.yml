@@ -16,77 +16,32 @@ jobs:
         strategy:
             matrix:
                 operating-system: [ubuntu-latest]
-                php-versions: ['7.3'] #, '7.4', '8.0', '8.1']
-        name: Lint with PHP ${{ matrix.php-versions }}
+                php-version: ['7.3']
+        name: Lint with PHP ${{ matrix.php-version }}
         steps:
-            - name: Checkout
-              uses: actions/checkout@v2
-
-            - name: Setup PHP
-              uses: shivammathur/setup-php@v2
+            - name: Checkout and set up LAMP
+              uses: eventespresso/actions/packages/checkout-and-LAMP@main
               with:
-                  php-version: ${{ matrix.php-versions }}
-
-            - name: Get composer cache directory
-              id: composercache
-              run: echo "::set-output name=dir::$(composer config cache-files-dir)"
-
-            - name: Cache composer dependencies
-              uses: actions/cache@v2
-              with:
-                  path: ${{ steps.composercache.outputs.dir }}
-                  # Use composer-lock.json for key
-                  key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-                  restore-keys: ${{ runner.os }}-composer-
-
-            - name: Install dependencies
-              run: composer install
+                  php-version: ${{ matrix.php-version }}
 
             - name: PHP Lint
               run: composer config-eventespressocs && composer run-script lint:skip-warnings
-              # Allow failure for PHP > 7.3
-              # continue-on-error: ${{ matrix.php-versions != '7.3' }}
 
     php-unit-tests:
-        runs-on: ${{ matrix.operating-system }}
+        runs-on: ubuntu-latest
         needs: what_has_changed
         # Run only if PHP files have changed
         if: ${{ needs.what_has_changed.outputs.php == 'true' }}
         strategy:
             matrix:
-                operating-system: [ubuntu-latest]
-                php-versions: ['7.1', '7.2', '7.3', '7.4']
-        name: PHP ${{ matrix.php-versions }} Test on ${{ matrix.operating-system }}
+                php-version: ['7.1', '7.2', '7.3', '7.4', '8.0', '8.1']
+        name: PHP ${{ matrix.php-version }} Unit tests
         steps:
-            - name: Checkout
-              uses: actions/checkout@v2
-
-            - name: Setup PHP
-              uses: shivammathur/setup-php@v2
+            - name: Checkout and set up LAMP
+              uses: eventespresso/actions/packages/checkout-and-LAMP@main
               with:
-                  php-version: ${{ matrix.php-versions }}
-                  tools: phpunit:v7
-
-            - name: Start mysql service
-              run: sudo systemctl start mysql.service
-
-            - name: Get composer cache directory
-              id: composercache
-              run: echo "::set-output name=dir::$(composer config cache-files-dir)"
-
-            - name: Cache composer dependencies
-              uses: actions/cache@v2
-              with:
-                  path: ${{ steps.composercache.outputs.dir }}
-                  # Use composer.lock for key.
-                  key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-                  restore-keys: ${{ runner.os }}-composer-
-
-            - name: Check PHP Version
-              run: php -v
-
-            - name: Composer install
-              run: composer install --optimize-autoloader --prefer-dist
+                  php-version: ${{ matrix.php-version }}
+                  php-tools: phpunit:v7
 
             - name: Install WP Tests
               uses: eventespresso/actions/packages/install-wp-tests@main
@@ -96,14 +51,13 @@ jobs:
                   password: root
                   host: localhost
 
-            - name: Fix MySQL authentication for PHP < 7.4
-              run: mysql --user="root" --password="root" --database="wordpress_test" --execute="ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'root';"
-
             - name: Run PHP Unit Tests
               run: phpunit --configuration tests/phpunit.xml
+              # Allow failure for PHP 8.x
+              continue-on-error: ${{ startsWith( matrix.php-version, '8.' ) }}
 
               # run multisite test only with 1 PHP version
-            - if: ${{ matrix.php-versions == '7.4' }}
+            - if: ${{ matrix.php-version == '7.4' }}
               name: Run PHP Unit Tests - WP Multisite
               env:
                   WP_MULTISITE: 1
