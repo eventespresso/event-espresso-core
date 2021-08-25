@@ -11,5 +11,5 @@ if (! defined('EVENT_ESPRESSO_VERSION')) {
  */
 $gateway_response = $payment->gateway_response();
 if (! empty($gateway_response)) {
-    echo '<span class="error payment-problem">' . $gateway_response . '</span>';
+    echo '<span class="error payment-problem">' . esc_html($gateway_response) . '</span>';
 }

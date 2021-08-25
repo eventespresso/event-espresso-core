@@ -10,8 +10,6 @@
  * @package                   Event Espresso
  * @subpackage                includes/functions
  * @author                    Brent Christensen
- *
- * ------------------------------------------------------------------------
  */
 class EE_CSV
 {

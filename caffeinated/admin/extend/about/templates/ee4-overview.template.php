@@ -22,7 +22,7 @@
                 'Event Espresso is a %sWordPress event manager%s which makes it easy for you to register attendees for classes, workshops, events, trainings, conferences or concerts, all from your WordPress website. Event Espresso events are created from the WordPress admin area. You can create signup forms to collect information about your attendees, accept payments, and create reports. The lite version of the plugin provides everything that you need to manage your event using WordPress.',
                 'event_espresso'
             ),
-            '<a href="http://eventespresso.com/?utm_source=wordpress_org&amp;utm_medium=link&amp;utm_campaign=espresso_about_tab&amp;utm_content=EE4+Decaf" rel="nofollow">',
+            '<a href="https://eventespresso.com/?utm_source=wordpress_org&amp;utm_medium=link&amp;utm_campaign=espresso_about_tab&amp;utm_content=EE4+Decaf" rel="nofollow">',
             '</a>'
         ); ?>
     </p>
@@ -184,7 +184,7 @@
         <p>
             <?php echo sprintf(
                 esc_html__('%sLearn more >>%s', 'event_espresso'),
-                '<a href="http://eventespresso.com/wiki/setup-event-espresso-arabica-theme/">',
+                '<a href="https://eventespresso.com/wiki/setup-event-espresso-arabica-theme/">',
                 '</a>'
             ); ?>
         </p>

@@ -25,7 +25,7 @@
 ```
 
 
-Event Espresso 4 core has a collection of powerful subsystems that enhance the flexibility and extensibility of the event management system.  One of these subsystems is the Messages system which is used to send notifications.  You can go here for a [good overview of the system](http://eventespresso.com/2014/03/messages-systemyour-tool-getting-word/).
+Event Espresso 4 core has a collection of powerful subsystems that enhance the flexibility and extensibility of the event management system.  One of these subsystems is the Messages system which is used to send notifications.  You can go here for a [good overview of the system](https://eventespresso.com/2014/03/messages-systemyour-tool-getting-word/).
 
 Beginning with the release of 4.6.0, it has become super easy to add a new message type to the messages system.
 

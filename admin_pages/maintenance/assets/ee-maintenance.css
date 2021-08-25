@@ -148,28 +148,20 @@ textarea.system_status_info {
     display: flex;
 }
 
-
 .ee-system-stati > tbody > li:nth-child(odd),
-.ee-system-stati > tbody > tr:nth-child(odd) {
+.ee-system-stati > tbody > tr:nth-child(odd),
+.ee-system-stati tr:nth-child(even) > td > .ee-system-stati {
     background-color: #fff;
     border-block: .25rem solid #fff;
 }
 
 .ee-system-stati > tbody > li:nth-child(even),
-.ee-system-stati > tbody > tr:nth-child(even) {
-    background-color: #f0f3f3;
-    border-block: .25rem solid #f0f3f3;
-}
-
+.ee-system-stati > tbody > tr:nth-child(even),
 .ee-system-stati tr:nth-child(odd) > td > .ee-system-stati {
     background-color: #f0f3f3;
     border-block: .25rem solid #f0f3f3;
 }
 
-.ee-system-stati tr:nth-child(even) > td > .ee-system-stati {
-    background-color: #fff;
-    border-block: .25rem solid #fff;
-}
 
 .ee-system-stati-1,
 .ee-system-stati-3,
@@ -179,6 +171,17 @@ textarea.system_status_info {
 .ee-system-stati-4 tr:nth-child(odd),
 .ee-system-stati-6 tr:nth-child(odd) {
     background-color: #fff;
+    border-block: .25rem solid #fff;
+}
+
+.ee-system-stati-1,
+.ee-system-stati-3,
+.ee-system-stati-5,
+.ee-system-stati li:nth-child(even),
+.ee-system-stati-2 tr:nth-child(even),
+.ee-system-stati-4 tr:nth-child(even),
+.ee-system-stati-6 tr:nth-child(even) {
+    background-color: #f0f3f3;
     border-block: .25rem solid #fff;
 }
 

@@ -1256,7 +1256,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
          */
         $answer_cache_id = $this->checkout->reg_url_link
             ? $form_input . '-' . $registration->reg_url_link()
-            : $form_input;
+            : (string) $form_input;
         $answer_is_obj   = isset($this->_registration_answers[ $answer_cache_id ])
                            && $this->_registration_answers[ $answer_cache_id ] instanceof EE_Answer;
         // rename form_inputs if they are EE_Attendee properties

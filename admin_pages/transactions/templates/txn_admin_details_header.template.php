@@ -13,11 +13,10 @@
 
 <h3 class="txn-navigation-strip">
     <?php
-    // prev & next txn vars already escaped
-    echo $previous_transaction . '&nbsp;';
+    echo $previous_transaction . '&nbsp;'; // already escaped
     echo esc_html__('Transaction # ', 'event_espresso');
     echo esc_html($txn_nmbr['value']);
-    echo '&nbsp;' . $next_transaction;
+    echo '&nbsp;' . $next_transaction; // already escaped
     ?>
 </h3>
 

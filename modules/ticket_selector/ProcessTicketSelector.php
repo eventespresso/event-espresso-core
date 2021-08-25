@@ -227,7 +227,7 @@ class ProcessTicketSelector
         if ($id) {
             EEH_URL::safeRedirectAndExit(get_permalink($id));
         }
-        echo EE_Error::get_notices();
+        echo EE_Error::get_notices(); // already escaped
         return false;
     }
 

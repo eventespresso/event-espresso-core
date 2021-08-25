@@ -2449,7 +2449,7 @@ class Messages_Admin_Page extends EE_Admin_Page
             'button-primary reset-default-button'
         );
         $test_settings_html .= '</div><div style="clear:both"></div>';
-        echo $test_settings_html;
+        echo $test_settings_html; // already escaped
     }
 
 
@@ -3418,23 +3418,23 @@ class Messages_Admin_Page extends EE_Admin_Page
 
         $settings_template_args['description'] = $message_type->description;
         // we also need some hidden fields
-        $settings_template_args['hidden_fields'] = [
-            'message_type_settings[messenger]'    => [
+        $hidden_fields = [
+            'message_type_settings[messenger]' . $message_type->name   => [
                 'type'  => 'hidden',
                 'value' => $messenger->name,
             ],
-            'message_type_settings[message_type]' => [
+            'message_type_settings[message_type]'. $message_type->name => [
                 'type'  => 'hidden',
                 'value' => $message_type->name,
             ],
-            'type'                                => [
+            'type'   . $message_type->name                             => [
                 'type'  => 'hidden',
                 'value' => 'message_type',
             ],
         ];
 
         $settings_template_args['hidden_fields'] = $this->_generate_admin_form_fields(
-            $settings_template_args['hidden_fields'],
+            $hidden_fields,
             'array'
         );
         $settings_template_args['show_form']     = empty($settings_template_args['template_form_fields'])
@@ -3785,11 +3785,11 @@ class Messages_Admin_Page extends EE_Admin_Page
 
         // we also need some hidden fields
         $settings_template_args['hidden_fields'] = [
-            'messenger_settings[messenger]' => [
+            'messenger_settings[messenger]' . $messenger->name => [
                 'type'  => 'hidden',
                 'value' => $messenger->name,
             ],
-            'type'                          => [
+            'type' . $messenger->name                          => [
                 'type'  => 'hidden',
                 'value' => 'messenger',
             ],

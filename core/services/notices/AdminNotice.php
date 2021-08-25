@@ -53,7 +53,7 @@ class AdminNotice
      */
     public function displayNotice()
     {
-        echo $this->getNotice();
+        echo $this->getNotice(); // sanitized
     }
 
 
@@ -86,17 +86,13 @@ class AdminNotice
         switch ($this->notice->type()) {
             case Notice::ERROR:
                 return AdminNotice::ERROR;
-                break;
             case Notice::ATTENTION:
                 return AdminNotice::WARNING;
-                break;
             case Notice::SUCCESS:
                 return AdminNotice::SUCCESS;
-                break;
             case Notice::INFORMATION:
             default:
                 return AdminNotice::INFORMATION;
-                break;
         }
     }
 

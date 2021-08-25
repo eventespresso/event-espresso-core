@@ -1,35 +1,44 @@
 <?php
-// this displays any legends with an array of $items that are indexed by id for each item and each item itself is an array of 'icon' and 'desc'.
+/**
+ * displays legends with an array of $items
+ * that are indexed by id for each item
+ * where each item itself is an array of 'icon' and 'desc'.
+ *
+ * @var string[][] $items
+ * @var int|null $per_column
+ */
 
 // figure out the columns based on the count of items (we want a max of 6 items per column).
-$per_col = isset($per_column) ? $per_column : 5;
+$per_col = isset($per_column) ? absint($per_column) : 5;
 $count = 1;
 ?>
+
 <div class="ee-list-table-legend-container">
     <h3><?php esc_html_e('Legend', 'event_espresso'); ?></h3>
     <dl class="alignleft ee-list-table-legend">
         <?php foreach ($items as $item => $details) : ?>
-            <?php
-            if ($per_col < $count) : ?>
+            <?php if ($per_col < $count) : ?>
     </dl>
     <dl class="alignleft ee-list-table-legend">
                 <?php $count = 1;
             endif; ?>
-        <dt id="ee-legend-item-<?php echo $item; ?>">
+        <dt id="ee-legend-item-<?php echo esc_attr($item); ?>">
             <?php $class = ! empty($details['class']) ? $details['class'] : 'ee-legend-img-container'; ?>
             <?php
             if (strpos($details['class'], '<span') !== false) {
-                echo $class;
+                echo $class; // already escaped
             } else { ?>
-            <span class="<?php echo $class; ?>">
+            <span class="<?php echo esc_attr($class); ?>">
                 <?php if (! empty($details['icon'])) : ?>
-                    <img src="<?php echo $details['icon']; ?>" class="ee-legend-icon"
-                         alt="<?php echo esc_attr($details['desc']); ?>"/>
+                    <img alt="<?php echo esc_attr($details['desc']); ?>"
+                         class="ee-legend-icon"
+                         src="<?php echo esc_url_raw($details['icon']); ?>"
+                    />
                 <?php endif; ?>
             </span>
                 <?php
             } ?>
-            <span class="ee-legend-description"><?php echo $details['desc']; ?></span>
+            <span class="ee-legend-description"><?php echo esc_html($details['desc']); ?></span>
         </dt>
             <?php $count++;
         endforeach; ?>

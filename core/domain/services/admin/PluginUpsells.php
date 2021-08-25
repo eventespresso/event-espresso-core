@@ -62,12 +62,12 @@ class PluginUpsells
                     <div class="notice inline notice-alt">
                         <div class="ee-upsell-container">
                             <div class="ee-upsell-inner-container">
-                                <a href="' . $button_url . '">
-                                    ' . $button_text . '
+                                <a href="' . esc_url_raw($button_url) . '">
+                                    ' . $button_text /* already escaped */ . '
                                 </a>
                             </div>
                             <div class="ee-upsell-inner-container">
-                                <p>' . $upsell_text . '</p>
+                                <p>' . $upsell_text /* already escaped */ . '</p>
                             </div>
                             <div style="clear:both"></div>
                         </div>

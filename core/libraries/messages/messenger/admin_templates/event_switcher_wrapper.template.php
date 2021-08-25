@@ -9,7 +9,7 @@
 
 /**
  * Template args in this template
- * $selector_rows   contains all the rows for the table.
+ * @var string $selector_rows   contains all the rows for the table.
  */
 ?>
 <table class="messages-custom-template-switcher">
@@ -21,6 +21,6 @@
         </tr>
     </thead>
     <tbody>
-        <?php echo $selector_rows; ?>
+        <?php echo $selector_rows; // already escaped ?>
     </tbody>
 </table>

@@ -173,7 +173,9 @@ class EE_Message_Type_Collection extends EE_Object_Collection
         if (WP_DEBUG) {
             $this->rewind();
             while ($this->valid()) {
-                echo '<h5 style="color:#2EA2CC;">' . __CLASS__ . ' class : <span style="color:#E76700">' . $this->getInfo() . '</span></h5>';
+                echo '<h5 style="color:#2EA2CC;">
+                    ' . __CLASS__ . ' class : <span style="color:#E76700">' . esc_html($this->getInfo()) . '</span>
+                    </h5>';
                 $this->next();
             }
         }

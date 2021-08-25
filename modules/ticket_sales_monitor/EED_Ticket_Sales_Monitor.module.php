@@ -181,6 +181,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
      */
     public static function release_tickets_for_expired_carts()
     {
+        // self::debug hardcoded to false
         if (self::debug) {
             echo self::$nl . self::$nl . __LINE__ . ') ' . __METHOD__ . '()';
         }
@@ -252,6 +253,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
         if ($qty > 0) {
             $qty = EED_Ticket_Sales_Monitor::instance()->_validate_ticket_sale($ticket, $qty);
         }
+        // self::debug hardcoded to false
         if (self::debug) {
             echo self::$nl . self::$nl . __LINE__ . ') ' . __METHOD__ . '()';
             echo self::$nl . self::$nl . '<b> RETURNED QTY: ' . $qty . '</b>';
@@ -271,6 +273,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
      */
     protected function _validate_ticket_sale(EE_Ticket $ticket, $qty = 1)
     {
+        // self::debug hardcoded to false
         if (self::debug) {
             echo self::$nl . self::$nl . __LINE__ . ') ' . __METHOD__ . '() ';
         }
@@ -323,6 +326,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
      */
     protected function _reserve_ticket(EE_Ticket $ticket, $quantity = 1)
     {
+        // self::debug hardcoded to false
         if (self::debug) {
             echo self::$nl . self::$nl . ' . . . INCREASE RESERVED: ' . $quantity;
         }
@@ -338,6 +342,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
      */
     protected function _release_reserved_ticket(EE_Ticket $ticket, $quantity = 1)
     {
+        // self::debug hardcoded to false
         if (self::debug) {
             echo self::$nl . ' . . . ticket->ID: ' . $ticket->ID();
             echo self::$nl . ' . . . ticket->reserved before: ' . $ticket->reserved();
@@ -360,6 +365,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
      */
     protected function _ticket_sold_out(EE_Ticket $ticket)
     {
+        // self::debug hardcoded to false
         if (self::debug) {
             echo self::$nl . self::$nl . __LINE__ . ') ' . __METHOD__ . '() ';
             echo self::$nl . ' . . ticket->name: ' . $this->_get_ticket_and_event_name($ticket);
@@ -378,6 +384,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
      */
     protected function _ticket_quantity_decremented(EE_Ticket $ticket)
     {
+        // self::debug hardcoded to false
         if (self::debug) {
             echo self::$nl . self::$nl . __LINE__ . ') ' . __METHOD__ . '() ';
             echo self::$nl . ' . . ticket->name: ' . $this->_get_ticket_and_event_name($ticket);
@@ -488,6 +495,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
      */
     protected function _post_notices()
     {
+        // self::debug hardcoded to false
         if (self::debug) {
             echo self::$nl . self::$nl . __LINE__ . ') ' . __METHOD__ . '() ';
         }
@@ -559,6 +567,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
      */
     protected function _release_all_reserved_tickets_for_transaction(EE_Transaction $transaction)
     {
+        // self::debug hardcoded to false
         if (self::debug) {
             echo self::$nl . self::$nl . __LINE__ . ') ' . __METHOD__ . '() ';
             echo self::$nl . ' . transaction->ID: ' . $transaction->ID();
@@ -639,6 +648,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
         EE_Transaction $transaction
     ) {
         $STS_ID = $transaction->status_ID();
+        // self::debug hardcoded to false
         if (self::debug) {
             echo self::$nl . self::$nl . __LINE__ . ') ' . __METHOD__ . '() ';
             echo self::$nl . ' . . registration->ID: ' . $registration->ID();
@@ -689,6 +699,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
         if (did_action('AHEE__EE_Session__reset_checkout__before_reset')) {
             return;
         }
+        // self::debug hardcoded to false
         if (self::debug) {
             echo self::$nl . self::$nl . __LINE__ . ') ' . __METHOD__ . '() ';
         }
@@ -727,6 +738,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
      */
     protected function _session_cart_reset(EE_Cart $cart, EE_Session $session)
     {
+        // self::debug hardcoded to false
         if (self::debug) {
             echo self::$nl . self::$nl . __LINE__ . ') ' . __METHOD__ . '() ';
         }
@@ -800,6 +812,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
      */
     protected function _session_checkout_reset(EE_Checkout $checkout)
     {
+        // self::debug hardcoded to false
         if (self::debug) {
             echo self::$nl . self::$nl . __LINE__ . ') ' . __METHOD__ . '() ';
         }
@@ -841,6 +854,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
     {
         // is this TXN free or has any money been paid towards this TXN? If so, then leave it alone
         if ($transaction->is_free() || $transaction->paid() > 0) {
+            // self::debug hardcoded to false
             if (self::debug) {
                 // DEBUG LOG
                 EEH_Debug_Tools::log(

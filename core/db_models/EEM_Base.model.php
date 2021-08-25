@@ -2503,7 +2503,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     public function show_db_query_if_previously_requested($sql_query)
     {
         if ($this->_show_next_x_db_queries > 0) {
-            echo $sql_query;
+            echo esc_html($sql_query);
             $this->_show_next_x_db_queries--;
         }
     }

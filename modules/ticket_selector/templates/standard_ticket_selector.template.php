@@ -24,15 +24,15 @@ use EventEspresso\modules\ticket_selector\TicketDetails;
  * @var string                    $time_format
  */
 ?>
-<div id="tkt-slctr-tbl-wrap-dv-<?php echo $EVT_ID; ?>" class="tkt-slctr-tbl-wrap-dv">
+<div id="tkt-slctr-tbl-wrap-dv-<?php echo esc_attr($EVT_ID); ?>" class="tkt-slctr-tbl-wrap-dv">
 
 <?php do_action('AHEE__ticket_selector_chart__template__before_ticket_selector', $event); ?>
-<?php echo $datetime_selector; ?>
+<?php echo $datetime_selector; // already escaped ?>
 
-    <table id="tkt-slctr-tbl-<?php echo $EVT_ID; ?>" class="tkt-slctr-tbl">
+    <table id="tkt-slctr-tbl-<?php echo esc_attr($EVT_ID); ?>" class="tkt-slctr-tbl">
         <thead>
         <tr>
-            <th id="details-<?php echo $EVT_ID; ?>" scope="col" class="ee-ticket-selector-ticket-details-th">
+            <th id="details-<?php echo esc_attr($EVT_ID); ?>" scope="col" class="ee-ticket-selector-ticket-details-th">
                 <?php
                 echo apply_filters(
                     'FHEE__ticket_selector_chart_template__table_header_available_tickets',
@@ -42,7 +42,7 @@ use EventEspresso\modules\ticket_selector\TicketDetails;
                 ?>
             </th>
             <?php if (apply_filters('FHEE__ticket_selector_chart_template__display_ticket_price_details', true)) { ?>
-                <th id="price-<?php echo $EVT_ID; ?>" scope="col" class="ee-ticket-selector-ticket-price-th cntr">
+                <th id="price-<?php echo esc_attr($EVT_ID); ?>" scope="col" class="ee-ticket-selector-ticket-price-th cntr">
                     <?php
                     /**
                      * Filters the text printed for the header of the price column in the ticket selector table
@@ -60,7 +60,7 @@ use EventEspresso\modules\ticket_selector\TicketDetails;
                     ?>
                 </th>
             <?php } ?>
-            <th id="quantity-<?php echo $EVT_ID; ?>" scope="col" class="ee-ticket-selector-ticket-qty-th cntr">
+            <th id="quantity-<?php echo esc_attr($EVT_ID); ?>" scope="col" class="ee-ticket-selector-ticket-qty-th cntr">
                 <?php
                 /**
                  * Filters the text printed for the header of the quantity column in the ticket selector table
@@ -80,7 +80,7 @@ use EventEspresso\modules\ticket_selector\TicketDetails;
         </tr>
         </thead>
         <tbody>
-        <?php echo $ticket_row_html; ?>
+        <?php echo $ticket_row_html; // already escaped ?>
         </tbody>
     </table>
 <?php
@@ -90,11 +90,13 @@ if ($taxable_tickets && apply_filters('FHEE__ticket_selector_chart_template__dis
     } else {
         $ticket_price_includes_taxes = esc_html__('* price does not include taxes', 'event_espresso');
     }
-    echo '<p class="small-text lt-grey-text" style="text-align:right; margin: -1em 0 1em;">' . $ticket_price_includes_taxes . '</p>';
+    echo '<p class="small-text lt-grey-text" style="text-align:right; margin: -1em 0 1em;">
+        ' . $ticket_price_includes_taxes . '
+        </p>';
 }
 ?>
 
-<?php echo $hidden_inputs; ?>
+<?php echo $hidden_inputs; // already escaped ?>
 
 <?php
 if ($max_atndz > 0) {

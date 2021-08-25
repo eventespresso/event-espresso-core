@@ -5,7 +5,7 @@
  * @ package		Event Espresso
  * @ author		Seth Shoultes
  * @ copyright	(c) 2008-2013 Event Espresso  All Rights Reserved.
- * @ license		http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
+ * @ license		https://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
  * @ link			http://www.eventespresso.com
  * @ version		4+
  */
@@ -23,7 +23,6 @@
  ************************** IMPORTANT **************************/
 add_filter( 'FHEE__content_espresso_events__template_loaded', '__return_false' );
 
-//echo '<br/><h6 style="color:#2EA2CC;">'. __FILE__ . ' &nbsp; <span style="font-weight:normal;color:#E76700"> Line #: ' . __LINE__ . '</span></h6>';
 
 global $post;
 $event_class = has_excerpt( $post->ID ) ? ' has-excerpt' : '';
@@ -34,7 +33,7 @@ $event_class = apply_filters( 'FHEE__content_espresso_events__event_class', $eve
 
 <?php if ( is_single() ) : ?>
 
-	<div id="espresso-event-header-dv-<?php echo $post->ID;?>" class="espresso-event-header-dv">
+	<div id="espresso-event-header-dv-<?php echo esc_attr($post->ID);?>" class="espresso-event-header-dv">
 		<?php espresso_get_template_part( 'content', 'espresso_events-thumbnail' ); ?>
 		<?php espresso_get_template_part( 'content', 'espresso_events-header' ); ?>
 	</div>

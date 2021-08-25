@@ -261,7 +261,6 @@ class EED_Messages extends EED_Module
                 exit;
             }
         }
-        return;
     }
 
 

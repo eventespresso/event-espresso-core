@@ -86,7 +86,7 @@ class PreProductionVersionWarning extends Middleware
     public function preProductionVersionWarningNotice()
     {
         echo '<div id="ee-release-candidate-notice-dv" class="ee-really-important-notice-dv"><p>';
-        echo $this->warningNotice();
+        echo $this->warningNotice(); // already escaped
         echo '</p></div>';
     }
 

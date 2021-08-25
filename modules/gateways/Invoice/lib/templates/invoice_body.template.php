@@ -2,6 +2,13 @@
 
 /**
  * @deprecated 4.9.13
+ * @var string $attendee_address
+ * @var string $attendee_city
+ * @var string $attendee_state
+ * @var string $attendee_zip
+ * @var string $show_line_item_description
+ * @var string $amount_pd
+ * @var string $total_cost
  */
 
 ?>
@@ -44,9 +51,9 @@
     <div class="vcard" id="client-details">
         <div class="fn">[name]</div>
         <div class="adr">
-            <div class="street-address"><?php echo $attendee_address; ?></div>
-            <div class="locality"><?php echo $attendee_city; ?><?php echo $attendee_state; ?></div>
-            <div id="client-postcode"><?php echo $attendee_zip; ?></div>
+            <div class="street-address"><?php echo $attendee_address; // already escaped ?></div>
+            <div class="locality"><?php echo $attendee_city . ' ' . $attendee_state; // already escaped ?></div>
+            <div id="client-postcode"><?php echo $attendee_zip; // already escaped ?></div>
         </div>
     </div>
     <!--#client-details vcard-->
@@ -89,7 +96,7 @@
                     <tr class="total_tr odd">
                         <td colspan="<?php echo $show_line_item_description ? 2 : 1 ?>">&nbsp;</td>
                         <td colspan="2" class="total" id="total_currency"><?php esc_html_e('Total', 'event_espresso'); ?></td>
-                        <td class="total"><?php echo $line_item->total_no_code(); ?></td>
+                        <td class="total"><?php echo $line_item->total_no_code(); // already escaped ?></td>
                     </tr>
                     <?php
                     break;
@@ -107,7 +114,7 @@
                                 'Sub-Total',
                                 'event_espresso'
                             ); ?></td>
-                        <td class="total"><?php echo $line_item->total_no_code(); ?></td>
+                        <td class="total"><?php echo $line_item->total_no_code(); // already escaped ?></td>
                     </tr>
                     <?php
                     break;
@@ -125,7 +132,7 @@
                                 'Tax Total',
                                 'event_espresso'
                             ); ?></td>
-                        <td class="total"><?php echo $line_item->total_no_code(); ?></td>
+                        <td class="total"><?php echo $line_item->total_no_code(); // already escaped ?></td>
                     </tr>
                     <?php
                     break;
@@ -137,15 +144,15 @@
                     if ($has_subitems) {
                         ?>
                         <tr class="item <?php echo $odd ? 'odd' : ''; ?>">
-                            <td class="item_l"><?php echo $line_item->name() ?></td>
+                            <td class="item_l"><?php echo esc_html($line_item->name()) ?></td>
                             <?php if ($show_line_item_description) { ?>
-                                <td class="item_l"><?php echo $line_item->desc() ?></td>
+                                <td class="item_l"><?php echo esc_html($line_item->desc()) ?></td>
                             <?php } ?>
-                            <td class="item_l"><?php echo $line_item->quantity(); ?></td>
+                            <td class="item_l"><?php echo esc_html($line_item->quantity()); ?></td>
 
-                            <td class="item_c"><?php echo $line_item->unit_price_no_code() ?></td>
+                            <td class="item_c"><?php echo esc_html($line_item->unit_price_no_code()) ?></td>
 
-                            <td class="item_r"> <?php echo $line_item->total_no_code();
+                            <td class="item_r"> <?php echo $line_item->total_no_code(); // already escaped
                                 echo $line_item->is_taxable() ? '*' : '' ?> </td>
                             <?php // <td class="item_l"><?php  $datetimes_strings = array(); foreach($datetimes as $datetime){ $datetimes_strings[]= $datetime->start_date_and_time();} echo implode(", ",$datetimes_strings);
                             ?>
@@ -159,13 +166,13 @@
                     } else {// no subitems - just show this line item
                         ?>
                         <tr class="item <?php echo $odd ? 'odd' : ''; ?>">
-                            <td class="item_l"><?php echo $line_item->name() ?></td>
+                            <td class="item_l"><?php echo esc_html($line_item->name()); ?></td>
                             <?php if ($show_line_item_description) { ?>
-                                <td class="item_l"><?php echo $line_item->desc() ?></td>
+                                <td class="item_l"><?php echo esc_html($line_item->desc()); ?></td>
                             <?php } ?>
-                            <td class="item_l"><?php echo $line_item->quantity() ?></td>
-                            <td class="item_c"><?php echo $line_item->unit_price_no_code() ?></td>
-                            <td class="item_r"> <?php echo $line_item->total_no_code();
+                            <td class="item_l"><?php echo esc_html($line_item->quantity()); ?></td>
+                            <td class="item_c"><?php echo $line_item->unit_price_no_code(); // already escaped ?></td>
+                            <td class="item_r"> <?php echo $line_item->total_no_code(); // already escaped;
                                 echo $line_item->is_taxable() ? '*' : '' ?> </td>
                             <?php // <td class="item_l"><?php  $datetimes_strings = array(); foreach($datetimes as $datetime){ $datetimes_strings[]= $datetime->start_date_and_time();} echo implode(", ",$datetimes_strings);
                             ?>
@@ -176,31 +183,31 @@
                 case EEM_Line_Item::type_sub_line_item:
                     ?>
                     <tr class="item subitem-row">
-                        <td class="item_l subitem"><?php echo $line_item->name(); ?></td>
+                        <td class="item_l subitem"><?php echo esc_html($line_item->name()); ?></td>
                         <?php if ($show_line_item_description) { ?>
-                            <td class="item_l"><?php echo $line_item->desc() ?></td>
+                            <td class="item_l"><?php echo esc_html($line_item->desc()); ?></td>
                         <?php } ?>
                         <?php if ($line_item->is_percent()) { ?>
                             <td></td>
-                            <td class="item_c"><?php echo $line_item->percent(); ?>%</td>
+                            <td class="item_c"><?php echo esc_html($line_item->percent()); ?>%</td>
                         <?php } else {// flat discount/surcharge ?>
                             <td></td>
-                            <td class="item_c"><?php echo $line_item->unit_price_no_code(); ?></td>
+                            <td class="item_c"><?php echo $line_item->unit_price_no_code(); // already escaped ?></td>
                         <?php } ?>
-                        <td class="item_r"><?php echo $line_item->total_no_code(); ?></td>
+                        <td class="item_r"><?php echo $line_item->total_no_code(); // already escaped ?></td>
                     </tr>
                     <?php
                     break;
                 case EEM_Line_Item::type_tax:
                     ?>
                     <tr class="item sub-item tax-total">
-                    <td class="item_l"><?php echo $line_item->name(); ?></td>
+                    <td class="item_l"><?php echo esc_html($line_item->name()); ?></td>
                     <?php if ($show_line_item_description) { ?>
-                        <td class="item_l"><?php echo $line_item->desc() ?></td>
+                        <td class="item_l"><?php echo esc_html($line_item->desc()); ?></td>
                     <?php } ?>
-                    <td colspan="2" class="item_c"><?php echo $line_item->percent(); ?>%</td>
+                    <td colspan="2" class="item_c"><?php echo esc_html($line_item->percent()); ?>%</td>
 
-                    <td class="item_r"><?php echo $line_item->total_no_code(); ?></td>
+                    <td class="item_r"><?php echo $line_item->total_no_code(); // already escaped ?></td>
                     </tr><?php
                     break;
             }
@@ -246,7 +253,7 @@
                 ?>
                 <tr class='item <?php echo(($c = ! $c) ? ' odd' : '') ?>'>
                     <td><?php $payment->e('PAY_gateway') ?></td>
-                    <td><?php echo $payment->timestamp('D M j, Y') ?></td>
+                    <td><?php echo $payment->timestamp('D M j, Y'); // already escaped ?></td>
                     <td><?php $payment->e('PAY_txn_id_chq_nmbr') ?></td>
                     <td><?php $payment->e('PAY_po_number') ?></td>
                     <td><?php $payment->e_pretty_status() ?></td>

@@ -25,7 +25,7 @@ do_action('AHEE__thank_you_page_overview_template__top', $transaction);
                     <br/>
                     <div class="jst-rght">
                         <a class="ee-button ee-roundish indented-text big-text"
-                           href="<?php echo $TXN_receipt_url; ?>"><span
+                           href="<?php echo esc_url_raw($TXN_receipt_url); ?>"><span
                                 class="ee-icon ee-icon-PDF-file-type"></span>
                             <?php
                             echo apply_filters(

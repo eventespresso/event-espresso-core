@@ -61,7 +61,6 @@ class ServerParams
         $server  = ! empty($server) ? $server : $_SERVER;
         foreach ($server as $key => $value) {
             $cleaned[ $key ] = $this->sanitizer->clean($key, $value);
-            // \EEH_Debug_Tools::printr($cleaned[ $key ], $key, __FILE__, __LINE__);
         }
         return $cleaned;
     }

@@ -26,7 +26,7 @@ class URLValidatorTest extends EE_UnitTestCase
     {
         return array(
             'localhost' => array('http://localhost', true),
-            'http' => array('http://eventespresso.com', true),
+            'http' => array('https://eventespresso.com', true),
             'https' => array('https://eventespresso.com', true),
             'underscore' => array('http://event_espresso.com', true),
             'subsite' => array('http://dev.eventespresso.com', true),

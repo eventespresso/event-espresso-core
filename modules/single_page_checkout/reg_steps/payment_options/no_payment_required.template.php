@@ -36,4 +36,3 @@ if (is_array($registrations_for_free_events) && ! empty($registrations_for_free_
         }
     }
 }
-?>

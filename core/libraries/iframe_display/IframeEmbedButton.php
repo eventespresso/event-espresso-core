@@ -133,7 +133,7 @@ abstract class IframeEmbedButton
      */
     public function addActionIframeEmbedButtonCallback()
     {
-        echo $this->embedButtonHtml();
+        echo $this->embedButtonHtml(); // already escaped
     }
 
 
@@ -207,20 +207,20 @@ abstract class IframeEmbedButton
                 ),
                 \EEH_Inflector::add_indefinite_article($this->iframe_name)
             ),
-            "{$this->route_name}-iframe-embed-trigger-js",
-            'iframe-embed-trigger-js button ' . $button_class,
+            esc_attr($this->route_name) . "-iframe-embed-trigger-js",
+            'iframe-embed-trigger-js button ' . esc_attr($button_class),
             '',
-            ' data-iframe_embed_button="#' . $this->route_name . '-iframe-js" tabindex="-1"'
+            ' data-iframe_embed_button="#' . esc_attr($this->route_name) . '-iframe-js" tabindex="-1"'
         );
         $iframe_embed_html .= \EEH_HTML::div(
             '',
-            "{$this->route_name}-iframe-js",
+            esc_attr($this->route_name) . "-iframe-js",
             'iframe-embed-wrapper-js',
             'display:none;'
         );
         $iframe_embed_html .= esc_html(
             \EEH_HTML::div(
-                '<iframe src="' . add_query_arg($query_args, site_url()) . '" width="100%" height="100%"></iframe>',
+                '<iframe src="' . esc_url_raw(add_query_arg($query_args, site_url())) . '" width="100%" height="100%"></iframe>',
                 '',
                 '',
                 'width:100%; height: 500px;'

@@ -1,16 +1,19 @@
 <?php
 
-/** @type string $transaction_details */
-
-/** @type string $before_payment_options */
-/** @type string $payment_options */
-/** @type string $after_payment_options */
-/** @type string $default_hidden_inputs */
-/** @type string $extra_hidden_inputs */
+/**
+ * @type int $reg_count
+ * @type string $transaction_details
+ * @type string $before_payment_options
+ * @type string $payment_options
+ * @type string $after_payment_options
+ * @type string $default_hidden_inputs
+ * @type string $extra_hidden_inputs
+ */
 ?>
 
 <h4 id="reg-page-totals-hdr" class="">
-    <span class="drk-grey-text"><?php esc_html_e('Registrations:', 'event_espresso'); ?></span> <?php echo $reg_count; ?>
+    <span class="drk-grey-text"><?php esc_html_e('Registrations:', 'event_espresso'); ?></span>
+    <?php echo absint($reg_count); ?>
 </h4>
 
 <div class="spco-payment-info-dv">
@@ -25,19 +28,19 @@
         </tr>
         </thead>
         <tbody>
-        <?php echo $transaction_details; ?>
+        <?php echo $transaction_details; // already escaped ?>
         <?php do_action('AHEE__registration_page_payment_options__payment_info_table_tbody_end'); ?>
         </tbody>
     </table>
 </div>
 <div class="clear-float"></div>
 
-<?php echo $before_payment_options; ?>
+<?php echo $before_payment_options; // already escaped ?>
 
 <div id="methods-of-payment">
-    <?php echo $payment_options; ?>
+    <?php echo $payment_options; // already escaped ?>
 </div>
 <!-- end #methods-of-payment -->
 
-<?php echo $after_payment_options; ?>
+<?php echo $after_payment_options; // already escaped ?>
 

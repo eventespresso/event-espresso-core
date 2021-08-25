@@ -11,7 +11,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * @ package			Event Espresso
  * @ author			Seth Shoultes
  * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
+ * @ license			https://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
  * @ link					http://www.eventespresso.com
  * @ version		 	4.3
  *

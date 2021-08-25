@@ -72,9 +72,9 @@
                                         '%1$sClick Here to Learn How To Backup your Database Yourself%2$s. Or have one of our dedicated support technicians help you by %3$spurchasing a Priority Support Token.%2$s',
                                         "event_espresso"
                                     ),
-                                    '<a target="_blank" href="http://eventespresso.com/wiki/how-to-back-up-your-site/">',
+                                    '<a target="_blank" href="https://eventespresso.com/wiki/how-to-back-up-your-site/">',
                                     "</a>",
-                                    "<a target=\"_blank\" href='http://eventespresso.com/product/priority-support-tokens/'>"
+                                    "<a target=\"_blank\" href='https://eventespresso.com/product/priority-support-tokens/'>"
                                 );
                                 ?>
                             </p>

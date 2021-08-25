@@ -251,7 +251,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
     {
         // TODO: if /when we implement donations, then this will need overriding
         if (
-// don't need payment options for:
+            // don't need payment options for:
             // registrations made via the admin
             // completed transactions
             // overpaid transactions
