@@ -106,12 +106,12 @@ class EE_Import implements ResettableInterface
         ob_start();
         ?>
         <div class="ee-upload-form-dv">
-            <h3><?php echo $title; ?></h3>
-            <p><?php echo $intro; ?></p>
+            <h3><?php echo esc_html($title); ?></h3>
+            <p><?php echo esc_html($intro); ?></p>
 
-            <form action="<?php echo $form_url ?>" method="post" enctype="multipart/form-data">
-                <input type="hidden" name="csv_submitted" value="TRUE" id="<?php echo time(); ?>">
-                <input name="import" type="hidden" value="<?php echo $type; ?>"/>
+            <form action="<?php echo esc_url_raw($form_url) ?>" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="csv_submitted" value="TRUE" id="<?php echo esc_attr(time()); ?>">
+                <input name="import" type="hidden" value="<?php echo esc_attr($type); ?>"/>
                 <input type="file" name="file[]" size="90">
                 <input class="button-primary" type="submit" value="<?php esc_html_e('Upload File', 'event_espresso'); ?>">
             </form>

@@ -649,4 +649,13 @@ abstract class EE_SPCO_Reg_Step
         // remove the reg form and the checkout
         return array_diff(array_keys(get_object_vars($this)), ['reg_form', 'checkout']);
     }
+
+
+    /**
+     * @param RequestInterface $request
+     */
+    public function setRequest(RequestInterface $request)
+    {
+        $this->request = $request;
+    }
 }

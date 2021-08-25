@@ -121,13 +121,13 @@ class EED_Bot_Trap extends EED_Module
     public static function generate_bot_trap()
     {
         $do_not_enter = esc_html__('please do not enter anything in this input', 'event_espresso');
-        $time = microtime(true);
+        $time = esc_attr(microtime(true));
         $html = '<div class="tkt-slctr-request-processor-dv" style="float:left; margin:0 0 0 -999em; height: 0;">';
         $html .= '<label for="tkt-slctr-request-processor-email-' . $time . '">' . $do_not_enter . '</label>';
         $html .= '<input type="email" id="tkt-slctr-request-processor-email-';
         $html .= $time . '" name="tkt-slctr-request-processor-email" value=""/>';
         $html .= '</div><!-- .tkt-slctr-request-processor-dv -->';
-        echo $html;
+        echo $html; // already escaped
     }
 
 
@@ -229,7 +229,7 @@ class EED_Bot_Trap extends EED_Module
     public static function bot_trap_settings_form()
     {
         EED_Bot_Trap::_bot_trap_settings_form()->enqueue_js();
-        echo EED_Bot_Trap::_bot_trap_settings_form()->get_html();
+        echo EED_Bot_Trap::_bot_trap_settings_form()->get_html(); // already escaped
     }
 
 

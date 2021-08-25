@@ -8,7 +8,7 @@
  * @package         Event Espresso
  * @author          Seth Shoultes
  * @copyright    (c)2009-2012 Event Espresso All Rights Reserved.
- * @license         http://eventespresso.com/support/terms-conditions/  ** see Plugin Licensing **
+ * @license         https://eventespresso.com/support/terms-conditions/  ** see Plugin Licensing **
  * @link            http://www.eventespresso.com
  * @version         3.2.P
  *

@@ -680,7 +680,7 @@ class EED_Thank_You_Page extends EED_Module
                     foreach ($events as $event) {
                         if ($event instanceof EE_Event) {
                             echo '<li><span class="dashicons dashicons-marker ee-icon-size-16 orange-text"></span>',
-                            $event->name(),
+                            esc_html($event->name()),
                             '</li>';
                         }
                     } ?>
@@ -732,44 +732,45 @@ class EED_Thank_You_Page extends EED_Module
      * @return string
      * @throws EE_Error
      */
-    public function get_payment_row_html($payment = null)
+    public function get_payment_row_html(EE_Payment $payment = null)
     {
         $html = '';
-        if ($payment instanceof EE_Payment) {
-            if (
-                $payment->payment_method() instanceof EE_Payment_Method
-                && $payment->status() === EEM_Payment::status_id_failed
-                && $payment->payment_method()->is_off_site()
-            ) {
-                // considering the registrant has made it to the Thank You page,
-                // any failed payments may actually be pending and the IPN is just slow
-                // so let's
-                $payment->set_status(EEM_Payment::status_id_pending);
-            }
-            $payment_declined_msg = $payment->STS_ID() === EEM_Payment::status_id_declined
-                ? '<br /><span class="small-text">' . $payment->gateway_response() . '</span>'
-                : '';
-            $html .= '
-				<tr>
-					<td>
-						' . $payment->timestamp() . '
-					</td>
-					<td>
-						' . (
-                $payment->payment_method() instanceof EE_Payment_Method
-                    ? $payment->payment_method()->name()
-                    : esc_html__('Unknown', 'event_espresso')
-                ) . '
-					</td>
-					<td class="jst-rght">
-						' . EEH_Template::format_currency($payment->amount()) . '
-					</td>
-					<td class="jst-rght" style="line-height:1;">
-						' . $payment->pretty_status(true) . $payment_declined_msg . '
-					</td>
-				</tr>';
-            do_action('AHEE__thank_you_page_payment_details_template__after_each_payment', $payment);
+        if (! $payment instanceof EE_Payment) {
+            return '';
         }
+        if (
+            $payment->payment_method() instanceof EE_Payment_Method
+            && $payment->status() === EEM_Payment::status_id_failed
+            && $payment->payment_method()->is_off_site()
+        ) {
+            // considering the registrant has made it to the Thank You page,
+            // any failed payments may actually be pending and the IPN is just slow
+            // so let's
+            $payment->set_status(EEM_Payment::status_id_pending);
+        }
+        $payment_declined_msg = $payment->STS_ID() === EEM_Payment::status_id_declined
+            ? '<br /><span class="small-text">' . esc_html($payment->gateway_response()) . '</span>'
+            : '';
+        $html .= '
+            <tr>
+                <td>
+                    ' . esc_html($payment->timestamp()) . '
+                </td>
+                <td>
+                    ' . (
+            $payment->payment_method() instanceof EE_Payment_Method
+                ? esc_html($payment->payment_method()->name())
+                : esc_html__('Unknown', 'event_espresso')
+            ) . '
+                </td>
+                <td class="jst-rght">
+                    ' . EEH_Template::format_currency($payment->amount()) . '
+                </td>
+                <td class="jst-rght" style="line-height:1;">
+                    ' . $payment->pretty_status(true) . $payment_declined_msg . '
+                </td>
+            </tr>';
+        do_action('AHEE__thank_you_page_payment_details_template__after_each_payment', $payment);
         return $html;
     }
 
@@ -777,7 +778,7 @@ class EED_Thank_You_Page extends EED_Module
     /**
      * get_payment_details
      *
-     * @param array $payments
+     * @param EE_Payment[] $payments
      * @return string
      * @throws EE_Error
      * @throws ReflectionException

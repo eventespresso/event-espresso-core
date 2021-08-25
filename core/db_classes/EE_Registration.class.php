@@ -924,7 +924,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      */
     public function e_invoice_url($type = 'launch')
     {
-        echo $this->invoice_url($type);
+        echo esc_url_raw($this->invoice_url($type));
     }
 
 
@@ -933,7 +933,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      */
     public function e_payment_overview_url()
     {
-        echo $this->payment_overview_url();
+        echo esc_url_raw($this->payment_overview_url());
     }
 
 
@@ -1177,7 +1177,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      */
     public function e_pretty_status($show_icons = false)
     {
-        echo $this->pretty_status($show_icons);
+        echo $this->pretty_status($show_icons); // already escaped
     }
 
 

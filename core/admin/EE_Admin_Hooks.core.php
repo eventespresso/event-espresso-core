@@ -421,8 +421,10 @@ abstract class EE_Admin_Hooks extends EE_Base
             );
             throw new EE_Error(implode('||', $msg));
         }
-        $class_name = str_replace('_', ' ', $this->_name);                         // take the_message -> the message
-        $class_name = str_replace(' ', '_', ucwords($class_name)) . '_Admin_Page'; // take the message -> The_Message
+        // change "the_message" to "the message"
+        $class_name = str_replace('_', ' ', $this->_name);
+        // change "the message" to "The_Message_Admin_Page"
+        $class_name = str_replace(' ', '_', ucwords($class_name)) . '_Admin_Page';
         // first default file (if exists)
         $decaf_file = EE_ADMIN_PAGES . $this->_name . '/' . $class_name . '.core.php';
         if (is_readable($decaf_file)) {
@@ -431,9 +433,9 @@ abstract class EE_Admin_Hooks extends EE_Base
         // now we have to do require for extended file (if needed)
         if ($this->_extend) {
             require_once(EE_CORE_CAF_ADMIN_EXTEND . $this->_name . '/Extend_' . $class_name . '.core.php');
+            // and extend the class name as well
+            $class_name = 'Extend_' . $class_name;
         }
-        // if we've got an extended class we use that!
-        $class_name = $this->_extend ? 'Extend_' . $class_name : $class_name;
         // let's make sure the class exists
         if (! class_exists($class_name)) {
             $msg[] = esc_html__('We can\'t load the page object', 'event_espresso');

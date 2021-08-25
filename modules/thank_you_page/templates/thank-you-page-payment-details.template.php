@@ -1,3 +1,11 @@
+<?php
+/**
+ * @var EE_Transaction $transaction
+ * @var string $gateway_content
+ * @var string[] $payments
+ */
+?>
+
 <h2 class="section-heading display-box-heading">
     <?php esc_html_e('Payment Overview', 'event_espresso'); ?>
 </h2>
@@ -26,7 +34,7 @@
             <tbody>
             <?php
             foreach ($payments as $payment) {
-                echo $payment;
+                echo $payment; // already escaped
             }
             ?>
             </tbody>
@@ -55,10 +63,7 @@
             do_action('AHEE__thank_you_page_payment_details_template__no_payment_required');
         }
     }
-    echo $gateway_content;
+    echo $gateway_content; // already escaped
     do_action('AHEE__thank_you_page_payment_details_template__after_gateway_content', $gateway_content);
-
-    ?>
-
-    <br/>
-    <?php do_action('AHEE__thank_you_page_payment_details_template__after_payment_details');
+    echo '<br/>';
+    do_action('AHEE__thank_you_page_payment_details_template__after_payment_details');

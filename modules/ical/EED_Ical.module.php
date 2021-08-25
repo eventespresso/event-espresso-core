@@ -82,6 +82,7 @@ class EED_Ical extends EED_Module
             $iCal_type = apply_filters('FHEE__EED_Ical__generate_add_to_iCal_button__iCal_type', 'submit');
             // generate a link to the route we registered in set_hooks()
             $URL = add_query_arg(['ee' => 'download_ics_file', 'ics_id' => $datetime->ID()], site_url());
+            $URL = esc_url_Raw($URL);
             // what type ?
             switch ($iCal_type) {
                 // submit buttons appear as buttons and are very compatible with a theme's style
@@ -181,7 +182,9 @@ class EED_Ical extends EED_Module
                     }
 
                     // Pull the organizer name from ics_data and remove it from the array.
-                    $organizer_name = isset($ics_data['ORGANIZER_NAME']) ? $ics_data['ORGANIZER_NAME'] : '';
+                    $organizer_name = isset($ics_data['ORGANIZER_NAME'])
+                        ? $ics_data['ORGANIZER_NAME']
+                        : '';
                     unset($ics_data['ORGANIZER_NAME']);
 
                     // set headers
@@ -204,7 +207,7 @@ class EED_Ical extends EED_Module
 
                     // Output all remaining values from ics_data.
                     foreach ($ics_data as $key => $value) {
-                        echo $key . ':' . $value . "\r\n";
+                        echo $key . ':' . $value . "\r\n"; // already escaped
                     }
 
                     echo "END:VEVENT\r\n";

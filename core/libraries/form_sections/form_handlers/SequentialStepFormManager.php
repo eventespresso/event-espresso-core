@@ -514,7 +514,7 @@ abstract class SequentialStepFormManager
         if ($return_as_string) {
             return $progress_steps;
         }
-        echo $progress_steps;
+        echo $progress_steps; // already escaped
         return '';
     }
 
@@ -529,7 +529,7 @@ abstract class SequentialStepFormManager
         if ($return_as_string) {
             return $this->getCurrentStep()->display();
         }
-        echo $this->getCurrentStep()->display();
+        echo $this->getCurrentStep()->display(); // already escaped
         return '';
     }
 

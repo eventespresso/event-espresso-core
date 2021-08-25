@@ -128,26 +128,45 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
 
     protected $_current_page_view_url;
 
-    // sanitized request action (and nonce)
-
     /**
-     * @var string $_req_action
-     */
-    protected $_req_action;
-
-    /**
-     * @var string $_req_nonce
-     */
-    protected $_req_nonce;
-
-    // search related
-    protected $_search_btn_label;
-
-    protected $_search_box_callback;
-
-    /**
-     * WP Current Screen object
+     * unprocessed value for the 'action' request param (default '')
      *
+     * @var string
+     */
+    protected $raw_req_action = '';
+
+    /**
+     * unprocessed value for the 'page' request param (default '')
+     *
+     * @var string
+     */
+    protected $raw_req_page = '';
+
+    /**
+     * sanitized request action (and nonce)
+     *
+     * @var string
+     */
+    protected $_req_action = '';
+
+    /**
+     * sanitized request action nonce
+     *
+     * @var string
+     */
+    protected $_req_nonce = '';
+
+    /**
+     * @var string
+     */
+    protected $_search_btn_label = '';
+
+    /**
+     * @var string
+     */
+    protected $_search_box_callback = '';
+
+    /**
      * @var WP_Screen
      */
     protected $_current_screen;
@@ -165,9 +184,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     protected $_default_espresso_metaboxes;
 
     /**
-     *    EE_Registry Object
-     *
-     * @var    EE_Registry
+     * @var EE_Registry
      */
     protected $EE = null;
 
@@ -193,6 +210,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     {
         $this->loader  = LoaderFactory::getLoader();
         $this->request = $this->loader->getShared(RequestInterface::class);
+        $this->_routing = $routing;
 
         if (strpos($this->_get_dir(), 'caffeinated') !== false) {
             $this->_is_caf = true;
@@ -203,8 +221,6 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         ];
         // set the _req_data property.
         $this->_req_data = $this->request->requestParams();
-        // routing enabled?
-        $this->_routing = $routing;
         // set initial page props (child method)
         $this->_init_page_props();
         // set global defaults
@@ -214,13 +230,10 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         $this->_ajax_hooks();
         // other_page_hooks have to be early too.
         $this->_do_other_page_hooks();
-        // This just allows us to have extending classes do something specific
-        // before the parent constructor runs _page_setup().
-        if (method_exists($this, '_before_page_setup')) {
-            $this->_before_page_setup();
-        }
         // set up page dependencies
+        $this->_before_page_setup();
         $this->_page_setup();
+        // die();
     }
 
 
@@ -485,9 +498,19 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
 
 
     /**
-     * _page_setup
-     * Makes sure any things that need to be loaded early get handled.  We also escape early here if the page requested
-     * doesn't match the object.
+     * allows extending classes do something specific before the parent constructor runs _page_setup().
+     *
+     * @return void
+     */
+    protected function _before_page_setup()
+    {
+        // default is to do nothing
+    }
+
+
+    /**
+     * Makes sure any things that need to be loaded early get handled.
+     * We also escape early here if the page requested doesn't match the object.
      *
      * @final
      * @return void
@@ -531,6 +554,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         $this->_req_action = $route && ($req_action === 'default' || $this->request->isAjax())
             ? $route
             : $req_action;
+
         $this->_current_view = $this->_req_action;
         $this->_req_nonce    = $this->_req_action . '_nonce';
         $this->_define_page_props();
@@ -613,7 +637,6 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * Provides a way for related child admin pages to load stuff on the loaded admin page.
      *
      * @return void
-     * @throws ReflectionException
      * @throws EE_Error
      */
     private function _do_other_page_hooks()
@@ -644,9 +667,8 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                                );
                 throw new EE_Error(implode('||', $error_msg));
             }
-            $a = new ReflectionClass($classname);
             // notice we are passing the instance of this class to the hook object.
-            $hookobj[] = $a->newInstance($this);
+            $this->loader->getShared($classname, [$this]);
         }
     }
 
@@ -834,7 +856,8 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         if (array_key_exists($this->_req_action, $this->_page_routes)) {
             $this->_route        = $this->_page_routes[ $this->_req_action ];
             $this->_route_config = isset($this->_page_config[ $this->_req_action ])
-                ? $this->_page_config[ $this->_req_action ] : [];
+                ? $this->_page_config[ $this->_req_action ]
+                : [];
         } else {
             // user error msg
             $error_msg = sprintf(
@@ -1671,18 +1694,20 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     public function admin_footer_global()
     {
         // dialog container for dialog helper
-        $d_cont = '<div class="ee-admin-dialog-container auto-hide hidden">' . "\n";
-        $d_cont .= '<div class="ee-notices"></div>';
-        $d_cont .= '<div class="ee-admin-dialog-container-inner-content"></div>';
-        $d_cont .= '</div>';
-        echo $d_cont;
+        echo '
+        <div class="ee-admin-dialog-container auto-hide hidden">
+            <div class="ee-notices"></div>
+            <div class="ee-admin-dialog-container-inner-content"></div>
+        </div>
+        ';
+
         // disabled temporarily. see: https://github.com/eventespresso/eventsmart.com-website/issues/836
         // help tour stuff?
         // if (isset($this->_help_tour[ $this->_req_action ])) {
         //     echo implode('<br />', $this->_help_tour[ $this->_req_action ]);
         // }
         // current set timezone for timezone js
-        echo '<span id="current_timezone" class="hidden">' . EEH_DTT_Helper::get_timezone() . '</span>';
+        echo '<span id="current_timezone" class="hidden">' . esc_html(EEH_DTT_Helper::get_timezone()) . '</span>';
     }
 
 
@@ -1737,7 +1762,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             );
         }
         if ($display) {
-            echo $content;
+            echo $content; // already escaped
             return '';
         }
         return $content;
@@ -1805,15 +1830,15 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         }
         // let's setup the trigger
         $content = '<a class="ee-dialog" href="?height='
-                   . $dimensions[0]
+                   . esc_attr($dimensions[0])
                    . '&width='
-                   . $dimensions[1]
+                   . esc_attr($dimensions[1])
                    . '&inlineId='
-                   . $trigger_id
+                   . esc_attr($trigger_id)
                    . '" target="_blank"><span class="question ee-help-popup-question"></span></a>';
         $content .= $help_content;
         if ($display) {
-            echo $content;
+            echo $content; // already escaped
             return '';
         }
         return $content;
@@ -2451,16 +2476,16 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                      . esc_html__('This widget requires JavaScript.', 'event_espresso')
                      . '</p>';
         $pre       = '<div class="espresso-rss-display">' . "\n\t";
-        $pre       .= '<span id="' . $rss_id . '_url" class="hidden">' . $url . '</span>';
+        $pre       .= '<span id="' . esc_attr($rss_id) . '_url" class="hidden">' . esc_url_raw($url) . '</span>';
         $post      = '</div>' . "\n";
         $cache_key = 'ee_rss_' . md5($rss_id);
         $output    = get_transient($cache_key);
         if ($output !== false) {
-            echo $pre . $output . $post;
+            echo $pre . $output . $post; // already escaped
             return true;
         }
         if (! (defined('DOING_AJAX') && DOING_AJAX)) {
-            echo $pre . $loading . $post;
+            echo $pre . $loading . $post; // already escaped
             return false;
         }
         ob_start();
@@ -2482,7 +2507,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                     urlencode(
                         apply_filters(
                             'FHEE__EE_Admin_Page__espresso_news_post_box__feed_url',
-                            'http://eventespresso.com/feed/'
+                            'https://eventespresso.com/feed/'
                         )
                     )
                 );
@@ -2929,7 +2954,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                 'utm_campaign' => $utm_campaign_source,
                 'utm_content'  => 'buy_now_button',
             ],
-            'http://eventespresso.com/pricing/'
+            'https://eventespresso.com/pricing/'
         );
         $this->_template_args['preview_action_button'] = ! isset($this->_template_args['preview_action_button'])
             ? $this->get_action_link_or_button(
@@ -2937,7 +2962,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                 'buy_now',
                 [],
                 'button-primary button-large',
-                $buy_now_url,
+                esc_url_raw($buy_now_url),
                 true
             )
             : $this->_template_args['preview_action_button'];

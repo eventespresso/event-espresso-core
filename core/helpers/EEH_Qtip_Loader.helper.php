@@ -232,7 +232,8 @@ class EEH_Qtip_Loader extends EEH_Base
             if (! $qt instanceof EE_Qtip) {
                 continue;
             }
-            $content[] = '<div class="ee-qtip-helper-content hidden" id="' . $qt->content_id . '">' . $qt->content . '</div>';
+            $content[] = '<div class="ee-qtip-helper-content hidden" id="' . esc_attr($qt->content_id) . '">' .
+                         $qt->content . '</div>';
         }
 
         return implode('<br />', $content);

@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions;
 use EventEspresso\core\domain\entities\notifications\PersistentAdminNotice;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -79,6 +80,7 @@ final class EE_Admin implements InterminableInterface
     protected function __construct(RequestInterface $request)
     {
         $this->request = $request;
+        $this->loader = LoaderFactory::getLoader();
         // define global EE_Admin constants
         $this->_define_all_constants();
         // set autoloaders for our admin page classes based on included path information
@@ -134,7 +136,7 @@ final class EE_Admin implements InterminableInterface
         static $main_file;
         // if $main_file is not set yet
         if (! $main_file) {
-            $main_file = plugin_basename(EVENT_ESPRESSO_MAIN_FILE);
+            $main_file = EE_PLUGIN_BASENAME;
         }
         if ($plugin === $main_file) {
             // compare current plugin to this one
@@ -201,14 +203,15 @@ final class EE_Admin implements InterminableInterface
         if (EE_Maintenance_Mode::instance()->models_can_query()) {
             $this->initModelsReady();
         }
-        // run the admin page factory but ONLY if we are doing an ee admin ajax request
-        if (! defined('DOING_AJAX') || EE_ADMIN_AJAX) {
-            try {
-                // this loads the controller for the admin pages which will setup routing etc
-                EE_Registry::instance()->load_core('Admin_Page_Loader');
-            } catch (EE_Error $e) {
-                $e->get_error();
-            }
+        // run the admin page factory but ONLY if:
+        // - it is a regular non ajax admin request
+        // - we are doing an ee admin ajax request
+        if ($this->request->isAdmin() || $this->request->isAdminAjax()) {
+            // this loads the controller for the admin pages which will setup routing etc
+            $this->loader->getShared('EE_Admin_Page_Loader', [$this->loader]);
+        }
+        if ($this->request->isAdminAjax()) {
+            return;
         }
         add_filter('content_save_pre', [$this, 'its_eSpresso'], 10, 1);
         // make sure our CPTs and custom taxonomy metaboxes get shown for first time users
@@ -229,9 +232,6 @@ final class EE_Admin implements InterminableInterface
      */
     protected function getLoader()
     {
-        if (! $this->loader instanceof LoaderInterface) {
-            $this->loader = LoaderFactory::getLoader();
-        }
         return $this->loader;
     }
 
@@ -247,16 +247,14 @@ final class EE_Admin implements InterminableInterface
     protected function initModelsReady()
     {
         // ok so we want to enable the entire admin
-        $this->persistent_admin_notice_manager = $this->getLoader()->getShared(
+        $this->persistent_admin_notice_manager = $this->loader->getShared(
             'EventEspresso\core\services\notifications\PersistentAdminNoticeManager'
         );
-        /** @var RequestInterface $request */
-        $request = $this->getLoader()->getShared(RequestInterface::class);
         $this->persistent_admin_notice_manager->setReturnUrl(
             EE_Admin_Page::add_query_args_and_nonce(
                 [
-                    'page'   => $request->getRequestParam('page'),
-                    'action' => $request->getRequestParam('action'),
+                    'page'   => $this->request->getRequestParam('page'),
+                    'action' => $this->request->getRequestParam('action'),
                 ],
                 EE_ADMIN_URL
             )
@@ -442,9 +440,6 @@ final class EE_Admin implements InterminableInterface
     public function ee_cpt_archive_pages()
     {
         global $nav_menu_selected_id;
-        $db_fields    = false;
-        $walker       = new Walker_Nav_Menu_Checklist($db_fields);
-        $current_tab  = 'event-archives';
         $removed_args = [
             'action',
             'customlink-tab',
@@ -453,76 +448,43 @@ final class EE_Admin implements InterminableInterface
             'page-tab',
             '_wpnonce',
         ];
-        ?>
-        <div id="posttype-extra-nav-menu-pages" class="posttypediv">
-            <ul id="posttype-extra-nav-menu-pages-tabs" class="posttype-tabs add-menu-item-tabs">
-                <li <?php echo 'event-archives' === $current_tab ? ' class="tabs"' : ''; ?>>
-                    <?php
-                    $href = $nav_menu_selected_id
-                        ? esc_url(
-                            add_query_arg(
-                                'extra-nav-menu-pages-tab',
-                                'event-archives',
-                                remove_query_arg($removed_args)
-                            )
-                        )
-                        : '';
-                    ?>
-                    <a class="nav-tab-link"
-                       data-type="tabs-panel-posttype-extra-nav-menu-pages-event-archives"
-                       href="<?php echo $href; ?>#tabs-panel-posttype-extra-nav-menu-pages-event-archives">
-                        <?php esc_html_e('Event Archive Pages', 'event_espresso'); ?>
-                    </a>
-                </li>
-            </ul><!-- .posttype-tabs -->
-            <?php $tabs_status = 'event-archives' === $current_tab ? 'tabs-panel-active' : 'tabs-panel-inactive'; ?>
-            <div id="tabs-panel-posttype-extra-nav-menu-pages-event-archives"
-                 class="tabs-panel <?php echo $tabs_status;?>"
-            >
-                <ul id="extra-nav-menu-pageschecklist-event-archives" class="categorychecklist form-no-clear">
-                    <?php
-                    $pages          = $this->_get_extra_nav_menu_pages_items();
-                    $args['walker'] = $walker;
-                    echo walk_nav_menu_tree(
-                        array_map(
-                            [$this, '_setup_extra_nav_menu_pages_items'],
-                            $pages
-                        ),
-                        0,
-                        (object) $args
-                    );
-                    ?>
-                </ul>
-            </div><!-- /.tabs-panel -->
+        $nav_tab_link = $nav_menu_selected_id
+            ? esc_url(
+                add_query_arg(
+                    'extra-nav-menu-pages-tab',
+                    'event-archives',
+                    remove_query_arg($removed_args)
+                )
+            )
+            : '';
+        $select_all_link = esc_url(
+            add_query_arg(
+                [
+                    'extra-nav-menu-pages-tab' => 'event-archives',
+                    'selectall'                => 1,
+                ],
+                remove_query_arg($removed_args)
+            )
+        );
+        $pages = $this->_get_extra_nav_menu_pages_items();
+        $args['walker'] = new Walker_Nav_Menu_Checklist(false);;
+        $nav_menu_pages_items = walk_nav_menu_tree(
+            array_map(
+                [$this, '_setup_extra_nav_menu_pages_items'],
+                $pages
+            ),
+            0,
+            (object) $args
+        );
 
-            <p class="button-controls">
-                <span class="list-controls">
-                    <?php
-                    $href = esc_url(
-                        add_query_arg(
-                            [
-                                'extra-nav-menu-pages-tab' => 'event-archives',
-                                'selectall'                => 1,
-                            ],
-                            remove_query_arg($removed_args)
-                        )
-                    );
-                    ?>
-                    <a href="<?php echo $href?>#posttype-extra-nav-menu-pages" class="select-all">
-                        <?php esc_html_e('Select All', 'event_espresso'); ?>
-                    </a>
-                </span>
-                <span class="add-to-menu">
-                    <input type="submit"<?php wp_nav_menu_disabled_check($nav_menu_selected_id); ?>
-                           class="button-secondary submit-add-to-menu right"
-                           value="<?php esc_attr_e('Add to Menu', 'event_espresso'); ?>" name="add-post-type-menu-item"
-                           id="<?php echo esc_attr('submit-posttype-extra-nav-menu-pages'); ?>"/>
-                    <span class="spinner"></span>
-                </span>
-            </p>
-
-        </div><!-- /.posttypediv -->
-        <?php
+        EEH_Template::display_template(
+            EE_ADMIN_TEMPLATE . 'cpt_archive_page.template.php',
+            [
+                $nav_menu_pages_items,
+                $nav_tab_link,
+                $select_all_link,
+            ]
+        );
     }
 
 
@@ -621,10 +583,8 @@ final class EE_Admin implements InterminableInterface
         $action    = $this->request->getRequestParam('action');
         $post_type = $this->request->getRequestParam('post_type');
         if ($post_type && $action === 'editpost') {
-            /** @var EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions $custom_post_types */
-            $custom_post_types = $this->getLoader()->getShared(
-                'EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions'
-            );
+            /** @var CustomPostTypeDefinitions $custom_post_types */
+            $custom_post_types = $this->loader->getShared(CustomPostTypeDefinitions::class);
             $custom_post_types->getCustomPostTypeModels($post_type);
         }
 
@@ -648,7 +608,7 @@ final class EE_Admin implements InterminableInterface
     protected function adminInitModelsReady()
     {
         if (function_exists('wp_add_privacy_policy_content')) {
-            $this->getLoader()->getShared('EventEspresso\core\services\privacy\policy\PrivacyPolicyManager');
+            $this->loader->getShared('EventEspresso\core\services\privacy\policy\PrivacyPolicyManager');
         }
     }
 
@@ -750,7 +710,7 @@ final class EE_Admin implements InterminableInterface
      */
     public function display_admin_notices()
     {
-        echo EE_Error::get_notices();
+        echo EE_Error::get_notices(); // already escaped
     }
 
 
@@ -1021,8 +981,8 @@ final class EE_Admin implements InterminableInterface
      */
     public function hookIntoWpPluginsPage()
     {
-        $this->getLoader()->getShared('EventEspresso\core\domain\services\admin\ExitModal');
-        $this->getLoader()
+        $this->loader->getShared('EventEspresso\core\domain\services\admin\ExitModal');
+        $this->loader
              ->getShared('EventEspresso\core\domain\services\admin\PluginUpsells')
              ->decafUpsells();
     }
@@ -1045,7 +1005,7 @@ final class EE_Admin implements InterminableInterface
             return $post_states;
         }
         /** @var EE_Core_Config $config */
-        $config = $this->getLoader()->getShared('EE_Config')->core;
+        $config = $this->loader->getShared('EE_Config')->core;
         if (in_array($post->ID, $config->get_critical_pages_array(), true)) {
             $post_states[] = sprintf(
             /* Translators: Using company name - Event Espresso Critical Page */

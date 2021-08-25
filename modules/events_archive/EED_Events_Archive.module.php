@@ -42,7 +42,7 @@ class EED_Events_Archive extends EED_Module
     protected static $iframe = false;
 
     /**
-     * @var \EventEspresso\core\libraries\iframe_display\EventListIframeEmbedButton $_iframe_embed_button
+     * @var EventListIframeEmbedButton $_iframe_embed_button
      */
     private static $_iframe_embed_button;
 
@@ -155,11 +155,11 @@ class EED_Events_Archive extends EED_Module
      * event_list_iframe_embed_button
      *
      * @return    void
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public static function event_list_iframe_embed_button()
     {
-        $iframe_embed_button = \EED_Events_Archive::get_iframe_embed_button();
+        $iframe_embed_button = EED_Events_Archive::get_iframe_embed_button();
         $iframe_embed_button->addEmbedButton();
     }
 
@@ -168,8 +168,8 @@ class EED_Events_Archive extends EED_Module
      *    initialize_template_parts
      *
      * @access    public
-     * @param \EE_Events_Archive_Config $config
-     * @return \EE_Template_Part_Manager
+     * @param EE_Events_Archive_Config $config
+     * @return EE_Template_Part_Manager
      */
     public function initialize_template_parts(EE_Events_Archive_Config $config = null)
     {
@@ -255,13 +255,13 @@ class EED_Events_Archive extends EED_Module
     /**
      * @access    public
      * @return    void
-     * @throws \EE_Error
-     * @throws \DomainException
+     * @throws EE_Error
+     * @throws DomainException
      */
     public function event_list_iframe()
     {
-        \EED_Events_Archive::$iframe = true;
-        $event_list_iframe = new EventsArchiveIframe($this);
+        EED_Events_Archive::$iframe = true;
+        $event_list_iframe          = new EventsArchiveIframe($this);
         $event_list_iframe->display();
     }
 
@@ -272,7 +272,7 @@ class EED_Events_Archive extends EED_Module
      */
     public static function is_iframe()
     {
-        return \EED_Events_Archive::$iframe;
+        return EED_Events_Archive::$iframe;
     }
 
 
@@ -282,7 +282,7 @@ class EED_Events_Archive extends EED_Module
      */
     public static function link_target()
     {
-        return \EED_Events_Archive::$iframe ? ' target="_blank"' : '';
+        return EED_Events_Archive::$iframe ? ' target="_blank"' : '';
     }
 
 
@@ -430,9 +430,9 @@ class EED_Events_Archive extends EED_Module
             // so the following allows this filter to be applied multiple times, but only once for real
             $current_post_ID = did_action('loop_start') ? $post->ID : 0;
             if (EE_Registry::instance()->CFG->template_settings->EED_Events_Archive->use_sortable_display_order) {
-                $content = \EED_Events_Archive::use_sortable_display_order();
+                $content = EED_Events_Archive::use_sortable_display_order();
             } else {
-                $content = \EED_Events_Archive::use_filterable_display_order();
+                $content = EED_Events_Archive::use_filterable_display_order();
             }
         }
         return $content;

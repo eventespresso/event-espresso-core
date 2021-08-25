@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\exceptions;
 
+use EEH_File;
 use Exception;
 use ReflectionClass;
 use ReflectionException;
@@ -71,11 +72,11 @@ class ExceptionStackTraceDisplay
 					<th scope="col" align="right" style="width:2.5%;">#</th>
 					<th scope="col" align="right" style="width:3.5%;">Line</th>
 					<th scope="col" align="left" style="width:40%;">File</th>
-					<th scope="col" align="left">' . esc_html__('Class', 'event_espresso') . '->'
-                              . esc_html__(
-                                  'Method( arguments )',
-                                  'event_espresso'
-                              ) . '</th>
+					<th scope="col" align="left">
+					' . esc_html__('Class', 'event_espresso')
+                      . '->'
+                      . esc_html__('Method( arguments )', 'event_espresso') . '
+					</th>
 				</tr>';
             $last_on_stack = count($trace) - 1;
             // reverse array so that stack is in proper chronological order
@@ -107,7 +108,7 @@ class ExceptionStackTraceDisplay
                     $line = $exception->getLine() !== '' ? $exception->getLine() : $line;
                     $error_code = $this->generate_error_code($file, $trace['function'], $line);
                 }
-                $file = \EEH_File::standardise_directory_separators($file);
+                $file = EEH_File::standardise_directory_separators($file);
                 $nmbr = ! empty($nmbr) ? $nmbr : '&nbsp;';
                 $line = ! empty($line) ? $line : '&nbsp;';
                 $file = ! empty($file) ? $file : '&nbsp;';
@@ -224,7 +225,7 @@ class ExceptionStackTraceDisplay
             echo wp_json_encode(array('error' => $output));
             exit();
         }
-        echo $output;
+        echo $output; // already escaped
     }
 
 
@@ -413,9 +414,9 @@ class ExceptionStackTraceDisplay
 var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
 /* ]]> */
 </script>
-<script src="' . includes_url() . 'js/jquery/jquery.js" type="text/javascript"></script>
-<script src="' . EE_GLOBAL_ASSETS_URL . 'scripts/espresso_core.js' . '?ver=' . espresso_version() . '" type="text/javascript"></script>
-<script src="' . EE_GLOBAL_ASSETS_URL . 'scripts/EE_Error.js' . '?ver=' . espresso_version() . '" type="text/javascript"></script>
+<script src="' . esc_url_raw(includes_url() . 'js/jquery/jquery.js') . '" type="text/javascript"></script>
+<script src="' . esc_url_raw(EE_GLOBAL_ASSETS_URL . 'scripts/espresso_core.js' . '?ver=' . espresso_version()) . '" type="text/javascript"></script>
+<script src="' . esc_url_raw(EE_GLOBAL_ASSETS_URL . 'scripts/EE_Error.js' . '?ver=' . espresso_version()) . '" type="text/javascript"></script>
 ';
         }
         return '';

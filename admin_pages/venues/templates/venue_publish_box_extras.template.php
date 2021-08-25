@@ -10,7 +10,7 @@
     <label>
         <span class='ee-icon ee-icon-venue ee-icon-color-grey ee-icon-size-18'></span>&nbsp;
         <?php esc_html_e('Capacity', 'event_espresso'); ?>: &nbsp;
-        <input name="vnu_capacity" type="text" class="small-text" value="<?php echo esc_html($vnu_capacity); ?>" />
+        <input name="vnu_capacity" type="text" class="small-text" value="<?php echo esc_attr($vnu_capacity); ?>" />
     </label>
 </div>
 <div class="misc-pub-section">
@@ -24,6 +24,6 @@
     <label>
         <span class="ee-dashicons dashicons-phone ee-icon-color-grey ee-icon-size-18"></span>
         <?php esc_html_e('Venue Phone #', 'event_espresso'); ?>: &nbsp;
-        <input name="vnu_phone" type="text" class="all-options" value="<?php echo esc_html($vnu_phone); ?>" />
+        <input name="vnu_phone" type="text" class="all-options" value="<?php echo esc_attr($vnu_phone); ?>" />
     </label>
 </div>

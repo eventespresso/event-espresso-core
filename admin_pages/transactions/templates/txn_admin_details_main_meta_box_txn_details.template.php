@@ -1,28 +1,29 @@
 <?php
 
 /**
- * @var EE_Attendee $attendee
- * @var array       $payment_methods
- * @var array       $payment_status
- * @var array       $payments
- * @var array       $registrations_to_apply_payment_to
- * @var array       $txn_details
- * @var array       $txn_nmbr
- * @var int         $TXN_ID
- * @var string      $REG_code
- * @var string      $TXN_status
- * @var string      $action_buttons
- * @var string      $apply_payment_form_url
- * @var string      $can_delete_payments
- * @var string      $can_edit_payments
- * @var string      $delete_payment_form_url
- * @var string      $delete_payment_url
- * @var string      $delete_status_change_select
- * @var string      $grand_raw_total
- * @var string      $line_item_table
- * @var string      $status_change_select
+ * @var EE_Attendee  $attendee
+ * @var EE_Payment[] $payments
+ * @var array        $payment_methods
+ * @var array        $payment_status
+ * @var array        $registrations_to_apply_payment_to
+ * @var array        $txn_details
+ * @var array        $txn_nmbr
+ * @var int          $TXN_ID
+ * @var string       $REG_code
+ * @var string       $TXN_status
+ * @var string       $action_buttons
+ * @var string       $apply_payment_form_url
+ * @var string       $can_delete_payments
+ * @var string       $can_edit_payments
+ * @var string       $delete_payment_form_url
+ * @var string       $delete_payment_url
+ * @var string       $delete_status_change_select
+ * @var string       $grand_raw_total
+ * @var string       $line_item_table
+ * @var string       $status_change_select
  */
 ?>
+
 <div id="admin-primary-mbox-dv" class="admin-primary-mbox-dv">
 
     <h3 class="admin-primary-mbox-h4 hdr-has-icon">
@@ -122,6 +123,9 @@
                     <?php if ($payments) : ?>
                         <?php $payment_total = 0; ?>
                         <?php foreach ($payments as $PAY_ID => $payment) :
+                            if (! $payment instanceof EE_Payment) {
+                                continue;
+                            }
                             $PAY_ID = absint($PAY_ID);
                             $existing_reg_payment_json = isset($existing_reg_payments[ $PAY_ID ])
                                 ? wp_json_encode($existing_reg_payments[ $PAY_ID ])
@@ -181,14 +185,14 @@
                                         <?php echo esc_html($payment->source()); ?>
                                     </div>
                                     <div id="payment-gateway-<?php echo $escaped_pay_id; ?>">
-                                        <?php echo $payment->payment_method()
+                                        <?php echo $payment->payment_method() instanceof EE_Payment_Method
                                             ? esc_html($payment->payment_method()->admin_name())
                                             : esc_html__("Unknown", 'event_espresso'); ?>
                                     </div>
                                     <div id="payment-gateway-id-<?php echo $escaped_pay_id; ?>"
                                          class="hidden"
                                     >
-                                        <?php echo $payment->payment_method()
+                                        <?php echo $payment->payment_method() instanceof EE_Payment_Method
                                             ? esc_html($payment->payment_method()->ID())
                                             : 0; ?>
                                     </div>
@@ -393,7 +397,7 @@
             >
                 <div class="ee-icon ee-icon-cash-add float-left"></div>
                 <?php
-                echo esc_html__('Apply a Payment to Transaction #', 'event_espresso') . $txn_nmbr['value']; ?>
+                echo esc_html__('Apply a Payment to Transaction #', 'event_espresso') . esc_html($txn_nmbr['value']); ?>
             </h2>
 
             <h2 id="admin-modal-dialog-edit-payment-h2" class="admin-modal-dialog-h2 hdr-has-icon"

@@ -473,7 +473,7 @@ class EE_Html_messenger extends EE_messenger
         );
         $this->_deregister_wp_hooks();
         add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts_styles'));
-        echo $this->_get_main_template();
+        echo $this->_get_main_template(); // already escaped
         exit();
     }
 

@@ -6,20 +6,23 @@
  * @package               Event Espresso
  * @subpackage
  * @author                Mike Nelson
- *
- * ------------------------------------------------------------------------
+ * @var string $address_to_send_payment
+ * @var string $check_title
+ * @var string $payable_to
+ * @var string $payment_instructions
  */
+global $allowedtags;
 
 ?>
-    <div class="event-display-boxes">
-        <h4 id="check_title" class="payment_type_title section-heading"><?php echo $check_title ?></h4>
-        <p class="instruct"><?php echo $payment_instructions; ?></p>
-        <p>
-            <span class="section-title"><?php esc_html_e('Payable to:', 'event_espresso'); ?></span>
-            <span class="highlight"><?php echo $payable_to; ?></span>
-        </p>
-        <p class="section-title"><?php esc_html_e('Payment Address: ', 'event_espresso'); ?></p>
-        <div class="address-block">
-            <?php echo wpautop($address_to_send_payment); ?>
-        </div>
+<div class="event-display-boxes">
+    <h4 id="check_title" class="payment_type_title section-heading"><?php echo esc_html($check_title) ?></h4>
+    <p class="instruct"><?php echo wpautop(wp_kses($payment_instructions, $allowedtags)); ?></p>
+    <p>
+        <span class="section-title"><?php esc_html_e('Payable to:', 'event_espresso'); ?></span>
+        <span class="highlight"><?php echo wp_kses($payable_to, $allowedtags); ?></span>
+    </p>
+    <p class="section-title"><?php esc_html_e('Payment Address: ', 'event_espresso'); ?></p>
+    <div class="address-block">
+        <?php echo wpautop(wp_kses($address_to_send_payment, $allowedtags)); ?>
     </div>
+</div>

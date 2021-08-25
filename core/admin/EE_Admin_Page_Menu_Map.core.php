@@ -91,10 +91,13 @@ abstract class EE_Admin_Page_Menu_Map
     public $menu_order;
 
 
-    const NONE = 0;
-    const BLOG_ADMIN_ONLY = 1;
+    const NONE                   = 0;
+
+    const BLOG_ADMIN_ONLY        = 1;
+
     const BLOG_AND_NETWORK_ADMIN = 2;
-    const NETWORK_ADMIN_ONLY = 3;
+
+    const NETWORK_ADMIN_ONLY     = 3;
 
 
     /**
@@ -118,16 +121,15 @@ abstract class EE_Admin_Page_Menu_Map
 
 
     /**
-     * Constructor.
-     *
-     * @since 4.4.0
-     *
-     * @param  array $menu_args           An array of arguments used to setup the menu
+     * @param array $menu_args            An array of arguments used to setup the menu
      *                                    properties on construct.
-     * @param  array $required            An array of keys that should be in the $menu_args, this
+     * @param array $required             An array of keys that should be in the $menu_args, this
      *                                    is used to validate that the items that should be defined
      *                                    are present.
      * @return void
+     * @throws EE_Error
+     * @since 4.4.0
+     *
      */
     public function __construct($menu_args, $required)
     {
@@ -211,7 +213,7 @@ abstract class EE_Admin_Page_Menu_Map
 
         // if empty menu_callback let's set default (but only if we have admin page init object)
         if (empty($this->menu_callback) && $this->admin_init_page instanceof EE_Admin_Page_Init) {
-            $this->menu_callback = array($this->admin_init_page, 'initialize_admin_page');
+            $this->menu_callback = [$this->admin_init_page, 'initialize_admin_page'];
         }
     }
 
@@ -221,8 +223,8 @@ abstract class EE_Admin_Page_Menu_Map
      * and go ahead and define it.  Note that child classes MUST also return the result of
      * the function used to register the WordPress admin page (the wp_page_slug string)
      *
-     * @since  4.4.0
      * @return string wp_page_slug.
+     * @since  4.4.0
      */
     abstract protected function _add_menu_page();
 
@@ -231,26 +233,26 @@ abstract class EE_Admin_Page_Menu_Map
      * Called by client code to use this menu map for registering a WordPress admin page
      *
      * @param boolean $network_admin whether this is being added to the network admin page or not
+     * @throws EE_Error
+     * @throws ReflectionException
      * @since  4.4.0
      */
     public function add_menu_page($network_admin = false)
     {
-
         $show_on_menu_int = (int) $this->show_on_menu;
         if (
             ($network_admin
              && in_array(
                  $show_on_menu_int,
-                 array(self::BLOG_AND_NETWORK_ADMIN, self::NETWORK_ADMIN_ONLY),
+                 [self::BLOG_AND_NETWORK_ADMIN, self::NETWORK_ADMIN_ONLY],
                  true
              ))
-            ||
-            (! $network_admin
-             && in_array(
-                 $show_on_menu_int,
-                 array(self::BLOG_AND_NETWORK_ADMIN, self::BLOG_ADMIN_ONLY),
-                 true
-             ))
+            || (! $network_admin
+                && in_array(
+                    $show_on_menu_int,
+                    [self::BLOG_AND_NETWORK_ADMIN, self::BLOG_ADMIN_ONLY],
+                    true
+                ))
         ) {
             $wp_page_slug = $this->_add_menu_page();
         } else {

@@ -76,8 +76,8 @@
                                 $item,
                                 $att_nmbr
                             );
-                            echo '*******************************';
-                            echo $item['attendee_questions'];
+
+                            echo esc_html($item['attendee_questions']);
 
                             if ($att_nmbr == 1 && $print_copy_info) { ?>
                                 <input id='primary-attendee'

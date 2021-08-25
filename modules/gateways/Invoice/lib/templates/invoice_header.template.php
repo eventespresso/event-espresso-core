@@ -2,6 +2,8 @@
 
 /**
  * @deprecated 4.9.13
+ * @var string $invoice_css
+ * @var string $download_link
  */
 
 ?>
@@ -45,7 +47,7 @@
         <input class="print_button noPrint" type="button" value="<?php esc_html_e('Print', 'event_espresso'); ?>"
                onClick="window.print();return false;"/>
     </form>
-    <form method="post" action="<?php echo $download_link; ?>">
+    <form method="post" action="<?php echo esc_url_raw($download_link); ?>">
         <input class="print_button noPrint" type="submit" value="<?php esc_html_e('Download PDF', 'event_espresso'); ?>"/>
     </form>
     <div class="clear"></div>

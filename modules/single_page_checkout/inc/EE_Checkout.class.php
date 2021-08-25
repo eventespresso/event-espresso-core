@@ -1072,6 +1072,7 @@ class EE_Checkout
      */
     public function refresh_all_entities($from_db = false)
     {
+        $this->current_step->setRequest(EED_Single_Page_Checkout::getRequest());
         $from_db = $this->current_step->is_final_step() || $this->action === 'process_gateway_response'
             ? true
             : $from_db;

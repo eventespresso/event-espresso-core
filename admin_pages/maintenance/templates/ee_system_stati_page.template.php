@@ -34,20 +34,15 @@ function ee_recurse_into_array_for_display($data, $depth = 0, $td = true)
                     <?php foreach ($data as $data_key => $data_value) {
                         // if the value is a single element array with no key,
                         // and the value is a primitive (not an array, object, etc.)
-                        if (
-                            /*empty($data_key)
-                            &&*/ is_array($data_value)
+                        if (is_array($data_value)
                             && count($data_value) === 1
                             && empty(key($data_value))
                             && is_scalar(reset($data_value))
                         ) {
-                            if (! empty($data_key)) {
-                                \EEH_Debug_Tools::printr($data_key, '$data_key', __FILE__, __LINE__, 1);
-                            }
                             ?>
                             <tr>
                                 <td class="ee-system-stati-value" colspan="2">
-                                    <?php echo reset($data_value); ?>
+                                    <?php echo esc_html(reset($data_value)); ?>
                                 </td>
                             </tr>
                             <?php
@@ -67,9 +62,6 @@ function ee_recurse_into_array_for_display($data, $depth = 0, $td = true)
                             </td>
                             <?php if (is_scalar($data_value)) { ?>
                                 <?php ee_recurse_into_array_for_display($data_value, $depth); ?>
-                                <!--<td class="ee-system-stati-value">
-                                    <?php /*echo $data_value; */?>
-                                </td>-->
                             <?php } else {
                                 if (is_array($data_value) && count($data_value) === 1) {
                                     // verify that values have been set
@@ -123,7 +115,7 @@ function ee_recurse_into_array_for_display($data, $depth = 0, $td = true)
     } else {
         echo $td ? '<td class="ee-system-stati-value">' : '';
         // simple value
-        echo $data;
+        echo esc_html($data);
         echo $td ? '</td>' : '';
     }
 }

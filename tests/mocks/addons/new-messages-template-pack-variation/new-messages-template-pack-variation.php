@@ -30,7 +30,7 @@
  * @ package		New Messages Template Pack Variation
  * @ author			Event Espresso
  * @ copyright	(c) 2008-2014 Event Espresso  All Rights Reserved.
- * @ license		http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
+ * @ license		https://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
  * @ link			http://www.eventespresso.com
  * @ version	 	4.5.0
  *

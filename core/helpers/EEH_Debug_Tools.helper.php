@@ -134,17 +134,18 @@ class EEH_Debug_Tools
                 trigger_error("Nothing found for '$tag' hook", E_USER_WARNING);
                 return;
             }
-            echo '<h5>For Tag: ' . $tag . '</h5>';
+            echo '<h5>For Tag: ' . esc_html($tag) . '</h5>';
         } else {
             $hook = is_array($wp_filter) ? $wp_filter : array($wp_filter);
             ksort($hook);
         }
         foreach ($hook as $tag_name => $priorities) {
-            echo "<br />&gt;&gt;&gt;&gt;&gt;\t<strong>$tag_name</strong><br />";
+            echo "<br />&gt;&gt;&gt;&gt;&gt;\t<strong>esc_html($tag_name)</strong><br />";
             ksort($priorities);
             foreach ($priorities as $priority => $function) {
-                echo $priority;
+                echo esc_html($priority);
                 foreach ($function as $name => $properties) {
+                    $name = esc_html($name);
                     echo "\t$name<br />";
                 }
             }
@@ -313,8 +314,6 @@ class EEH_Debug_Tools
      * @param bool   $display_request
      * @param string $debug_index
      * @param string $debug_key
-     * @throws EE_Error
-     * @throws \EventEspresso\core\exceptions\InvalidSessionDataException
      */
     public static function log(
         $class = '',
@@ -418,12 +417,17 @@ class EEH_Debug_Tools
         return $heading_tag > 0 && $heading_tag < 7 ? "h{$heading_tag}" : 'h5';
     }
 
-
     protected static function headingSpacer($heading_tag)
     {
         return EEH_Debug_Tools::plainOutput() && ($heading_tag === 'h1' || $heading_tag === 'h2')
-            ? "\n"
+            ? self::lineBreak()
             : '';
+    }
+
+
+    protected static function lineBreak()
+    {
+        return defined('DOING_AJAX') && DOING_AJAX ? '<br />' : "\n";
     }
 
 
@@ -450,9 +454,9 @@ class EEH_Debug_Tools
         if (EEH_Debug_Tools::plainOutput()) {
             $heading = '';
             if ($heading_tag === 'h1' || $heading_tag === 'h2') {
-                $heading .= "\n";
+                $heading .= self::lineBreak();
             }
-            $heading .= "\n{$line}) {$var_name}";
+            $heading .= self::lineBreak() . "{$line}) {$var_name}";
             return $heading;
         }
         $margin = "25px 0 0 {$margin}";
@@ -539,7 +543,7 @@ class EEH_Debug_Tools
         var_dump($var);
         $var = ob_get_clean();
         if (EEH_Debug_Tools::plainOutput()) {
-            return $var;
+            return str_replace("\n", '', $var);
         }
         return '<pre style="color:#999; padding:1em; background: #fff">' . $var . '</pre>';
     }
@@ -565,17 +569,14 @@ class EEH_Debug_Tools
         // return;
         $file = str_replace(rtrim(ABSPATH, '\\/'), '', $file);
         $margin = is_admin() ? ' 180px' : '0';
-        // $print_r = false;
         if (is_string($var)) {
             EEH_Debug_Tools::printv($var, $var_name, $file, $line, $heading_tag, $die, $margin);
             return;
         }
         if (is_object($var)) {
             $var_name = ! $var_name ? 'object' : $var_name;
-            // $print_r = true;
         } elseif (is_array($var)) {
             $var_name = ! $var_name ? 'array' : $var_name;
-            // $print_r = true;
         } elseif (is_numeric($var)) {
             $var_name = ! $var_name ? 'numeric' : $var_name;
         } elseif ($var === null) {

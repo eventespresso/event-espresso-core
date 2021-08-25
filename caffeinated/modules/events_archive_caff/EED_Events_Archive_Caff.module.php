@@ -2,6 +2,7 @@
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderFactory;
 
 /**
  * EED_Events_Archive_Caff
@@ -98,8 +99,10 @@ class EED_Events_Archive_Caff extends EED_Events_Archive
      */
     public static function template_settings_form()
     {
+        /** @var EE_Admin_Page_Loader $admin_page_loader */
+        $admin_page_loader = LoaderFactory::getLoader()->getShared('EE_Admin_Page_Loader');
         // grab general settings admin page and remove the existing hook callback
-        $gen_set_admin = EE_Registry::instance()->LIB->EE_Admin_Page_Loader->get_admin_page_object('general_settings');
+        $gen_set_admin = $admin_page_loader->get_admin_page_object('general_settings');
         if ($gen_set_admin instanceof General_Settings_Admin_Page) {
             remove_action(
                 'AHEE__template_settings__template__before_settings_form',

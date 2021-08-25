@@ -147,7 +147,7 @@ class ProgressStep implements ProgressStepInterface
         if (! is_int($order)) {
             throw new InvalidDataTypeException('$order', $order, 'integer');
         }
-        $this->order = $order;
+        $this->order = absint($order);
     }
 
 
@@ -202,6 +202,6 @@ class ProgressStep implements ProgressStepInterface
         if (! is_string($text)) {
             throw new InvalidDataTypeException('$text', $text, 'string');
         }
-        $this->text = $text;
+        $this->text = sanitize_text_field($text);
     }
 }

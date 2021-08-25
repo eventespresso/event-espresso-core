@@ -786,12 +786,13 @@ class EED_Single_Page_Checkout extends EED_Module
             ) {
                 return true;
             }
+
             // instantiate step class using file path and class name
             $reg_step_obj = EE_Registry::instance()->load_file(
                 $reg_step['file_path'],
                 $reg_step['class_name'],
                 'class',
-                $this->checkout,
+                [$this->checkout],
                 false
             );
             // did we gets the goods ?
@@ -1545,8 +1546,9 @@ class EED_Single_Page_Checkout extends EED_Module
         } else {
             // add powered by EE msg
             add_action('AHEE__SPCO__reg_form_footer', array('EED_Single_Page_Checkout', 'display_registration_footer'));
-            $empty_cart = count($this->checkout->transaction
-                                    ->registrations($this->checkout->reg_cache_where_params)) < 1;
+            $empty_cart = count(
+                $this->checkout->transaction->registrations($this->checkout->reg_cache_where_params)
+                          ) < 1;
             EE_Registry::$i18n_js_strings['empty_cart'] = $empty_cart;
             $cookies_not_set_msg = '';
             if ($empty_cart) {

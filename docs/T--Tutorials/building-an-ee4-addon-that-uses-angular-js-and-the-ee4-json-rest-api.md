@@ -1,6 +1,6 @@
 # Building an EE4 Addon that uses Angular.js and the EE4 REST API
 
-The EE4 REST API (in EE4 core since version 4.8.29) can be used to fetch nearly any data you want from EE4 ([and if it can't get some data for you, please let us know](http://eventespresso.com/developers/event-espresso-4-rest-api-survey/)), so an application that uses that data does not need to be a EE4 Addon, or even a Wordpress plugin for that matter, and it certainly doesn't need to use Angular.js. This is just a tutorial about how to give an example of a real application that combines these technologies in a fairly straightforward way (it was inspired by [this article by wptheming](http://wptheming.com/2015/03/angular-json-api-example/).)
+The EE4 REST API (in EE4 core since version 4.8.29) can be used to fetch nearly any data you want from EE4 ([and if it can't get some data for you, please let us know](https://eventespresso.com/developers/event-espresso-4-rest-api-survey/)), so an application that uses that data does not need to be a EE4 Addon, or even a Wordpress plugin for that matter, and it certainly doesn't need to use Angular.js. This is just a tutorial about how to give an example of a real application that combines these technologies in a fairly straightforward way (it was inspired by [this article by wptheming](http://wptheming.com/2015/03/angular-json-api-example/).)
 
 ## What this sample addon does:
 
@@ -125,7 +125,7 @@ This mostly just informs EE core about our shortcode. Here's the shortcode's cod
  * @ package			Event Espresso
  * @ author				Seth Shoultes
  * @ copyright		(c) 2008-2014 Event Espresso  All Rights Reserved.
- * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
+ * @ license			https://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
  * @ link					http://www.eventespresso.com
  * @ version		 	EE4
  *

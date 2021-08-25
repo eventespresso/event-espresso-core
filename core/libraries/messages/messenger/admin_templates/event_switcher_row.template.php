@@ -3,23 +3,25 @@
 /**
  * This file is the wrapper template for the messages-custom-template-switcher rows
  * This template is content for event_switcher_wrapper.template.php
+ *
  * @package Event Espresso
  * @subpackage Admin
  * @since 4.3.0
- */
-
-/**
+ *
  * Template args in this template
- * $mt_name         Message Type Name
- * $mt_slug             Message Type Slug
- * $messenger_slug  Messenger Name
- * $selector            Selector for choosing what template gets used for this message type
- * $create_button       To create a new custom template based off the selected template
- * $edit_button         To edit the selected template.
+ *
+ * @var string $mt_name         Message Type Name
+ * @var string $mt_slug         Message Type Slug
+ * @var string $messenger_slug  Messenger Name
+ * @var string $selector        Selector for choosing what template gets used for this message type
+ * @var string $create_button   To create a new custom template based off the selected template
+ * @var string $edit_button     To edit the selected template.
  */
 ?>
-<tr id="<?php echo $messenger_slug; ?>-message-selector-row-<?php echo $mt_slug; ?>">
-    <td><?php echo $mt_name; ?></td>
-    <td><?php echo $selector; ?></td>
-    <td class="message-selector-action-column"><?php echo $create_button; ?><?php echo $edit_button; ?></td>
+<tr id="<?php echo esc_attr($messenger_slug); ?>-message-selector-row-<?php echo esc_attr($mt_slug); ?>">
+    <td><?php echo esc_html($mt_name); ?></td>
+    <td><?php echo $selector; // already escaped ?></td>
+    <td class="message-selector-action-column">
+        <?php echo $create_button . $edit_button; // already escaped ?>
+    </td>
 </tr>

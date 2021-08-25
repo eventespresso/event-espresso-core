@@ -9,7 +9,7 @@
 </p>
 <p>
     <?php esc_html_e(
-        'Enter your support license key in this field to benefit from one-click updates. To manage your support license key, please <a href="http://eventespresso.com/wp-login.php">login to your Event Espresso account</a>. Then click on Edit Account Details which appears in the left sidebar menu.',
+        'Enter your support license key in this field to benefit from one-click updates. To manage your support license key, please <a href="https://eventespresso.com/wp-login.php">login to your Event Espresso account</a>. Then click on Edit Account Details which appears in the left sidebar menu.',
         'event_espresso'
     ); ?>
 </p>

@@ -599,7 +599,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      */
     public function e_pretty_status($show_icons = false)
     {
-        echo $this->pretty_status($show_icons);
+        echo $this->pretty_status($show_icons); // already escaped
     }
 
 

@@ -244,7 +244,7 @@ class Benchmark
         $results = Benchmark::generateResults($formatted);
         if ($echo) {
             echo $results;
-            $results = '';
+            return '';
         }
         return $results;
     }

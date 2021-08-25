@@ -280,7 +280,7 @@ class Iframe
             ! empty($utm_content) ? array('utm_content' => $utm_content) : array()
         );
         EE_System::do_not_cache();
-        echo $this->getTemplate();
+        echo $this->getTemplate(); // already escaped
         exit;
     }
 
