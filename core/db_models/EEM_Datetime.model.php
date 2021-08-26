@@ -573,7 +573,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      *                                   - active = Events that are published and have at least one datetime that
      *                                   starts before now and ends after now.
      *                                   - inactive = Events that are either not published.
-     * @return EE_Base_Class[]
+     * @return stdClass[]
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidArgumentException
