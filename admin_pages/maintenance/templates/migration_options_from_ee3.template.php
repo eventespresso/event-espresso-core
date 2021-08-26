@@ -56,7 +56,7 @@
                                 $next_db_state
                             )
                         );
-                        ?>
+                            ?>
                         <a id="display-migration-details"
                            class="display-the-hidden lt-grey-text smaller-text hide-if-no-js"
                            rel="migration-details"
@@ -105,7 +105,7 @@
                                 "<b>",
                                 "</b>"
                             );
-                            ?>
+?>
                             </span>
                             <p>
                                 <?php printf(
@@ -126,7 +126,7 @@
                                     "</a>",
                                     '<br/>'
                                 );
-                                ?>
+?>
                             </p>
                             <?php do_action('AHEE__ee_migration_page__option_1_extra_details'); ?>
                         </div>
@@ -154,7 +154,7 @@
                                 $ultimate_db_state
                             )
                         );
-                        ?>
+                            ?>
                         <br />
                         <span class="reminder-spn">
                             <?php esc_html_e(
@@ -177,7 +177,7 @@
                                 esc_html__('hide%1$sdetails%1$s-', 'event_espresso'),
                                 '&nbsp;'
                             );
-                            ?>
+?>
                         </a>
                     </td>
                     <td>
@@ -195,7 +195,7 @@
                                     $ultimate_db_state
                                 )
                             );
-                            ?>
+                                    ?>
                         </a>
                     </td>
                 </tr>

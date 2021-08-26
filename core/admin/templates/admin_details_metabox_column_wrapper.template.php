@@ -23,7 +23,7 @@
         for ($i = 1; $i <= $num_columns; $i++) {
             $context = ($i === 1) ? 'normal' : 'side';
             $context = ($i > 2) ? 'column' . $i : $context;
-        ?>
+            ?>
         <div id='postbox-container-<?php echo $i; ?>' class='postbox-container'>
             <?php do_meta_boxes($current_page, $context, null); ?>
         </div>

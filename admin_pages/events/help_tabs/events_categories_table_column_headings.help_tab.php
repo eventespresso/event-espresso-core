@@ -13,8 +13,10 @@
     </li>
     <li>
         <strong><?php esc_html_e('Shortcode', 'event_espresso'); ?></strong><br />
-        <?php esc_html_e('This category shortcode can be entered on a event page, WordPress page, or WordPress post.',
-                         'event_espresso'); ?>
+        <?php esc_html_e(
+            'This category shortcode can be entered on a event page, WordPress page, or WordPress post.',
+            'event_espresso'
+        ); ?>
     </li>
     <li>
         <strong><?php esc_html_e('Events', 'event_espresso'); ?></strong><br />

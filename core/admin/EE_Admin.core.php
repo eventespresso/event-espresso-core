@@ -467,7 +467,8 @@ final class EE_Admin implements InterminableInterface
             )
         );
         $pages = $this->_get_extra_nav_menu_pages_items();
-        $args['walker'] = new Walker_Nav_Menu_Checklist(false);;
+        $args['walker'] = new Walker_Nav_Menu_Checklist(false);
+        ;
         $nav_menu_pages_items = walk_nav_menu_tree(
             array_map(
                 [$this, '_setup_extra_nav_menu_pages_items'],

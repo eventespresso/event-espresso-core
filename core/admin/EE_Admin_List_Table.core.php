@@ -615,7 +615,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table
                 $filter = "<li";
                 $filter .= $view['class'] ? " class='" . esc_attr($view['class']) . "'" : '';
                 $filter .= ">";
-                $filter .= '<a href="' . esc_url_raw($view['url']) . '">' . esc_html( $view['label'] ) . '</a>';
+                $filter .= '<a href="' . esc_url_raw($view['url']) . '">' . esc_html($view['label']) . '</a>';
                 $filter .= '<span class="count">(' . $count . ')</span>';
                 $filter .= '</li>';
                 $assembled_views[ $view['slug'] ] = $filter;

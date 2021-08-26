@@ -84,8 +84,8 @@ abstract class OpenSSL implements EncryptionMethodInterface
      * @param string                             $min_php_version
      */
     protected function __construct(
-        Base64Encoder                 $base64_encoder,
-        CipherMethod                  $cipher_method,
+        Base64Encoder $base64_encoder,
+        CipherMethod $cipher_method,
         EncryptionKeyManagerInterface $encryption_key_manager,
         $min_php_version
     ) {

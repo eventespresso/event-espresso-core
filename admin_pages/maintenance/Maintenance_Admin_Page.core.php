@@ -546,9 +546,9 @@ class Maintenance_Admin_Page extends EE_Admin_Page
         header("Content-Disposition: attachment; filename=system_status_" . sanitize_key(site_url()) . ".html");
         $output = '<style>table{border:1px solid darkgrey;}td{vertical-align:top}</style>';
         $output .= '<h1>' . sprintf(
-                __('System Information for %1$s', 'event_espresso'),
-                esc_url_raw(site_url())
-            ) . '</h1>';
+            __('System Information for %1$s', 'event_espresso'),
+            esc_url_raw(site_url())
+        ) . '</h1>';
         $output .= EEH_Template::layout_array_as_table($status_info);
         echo esc_html($output);
         die;
@@ -741,8 +741,10 @@ class Maintenance_Admin_Page extends EE_Admin_Page
             [
                 'migrating'                        => wp_strip_all_tags(__("Updating Database...", "event_espresso")),
                 'next'                             => wp_strip_all_tags(__("Next", "event_espresso")),
-                'fatal_error'                      => wp_strip_all_tags(__("A Fatal Error Has Occurred",
-                                                                           "event_espresso")),
+                'fatal_error'                      => wp_strip_all_tags(__(
+                    "A Fatal Error Has Occurred",
+                    "event_espresso"
+                )),
                 'click_next_when_ready'            => wp_strip_all_tags(
                     __(
                         "The current Database Update has ended. Click 'next' when ready to proceed",

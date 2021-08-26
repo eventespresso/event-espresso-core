@@ -115,7 +115,6 @@ class EEH_Form_Fields
 
             // what type of input are we dealing with ?
             switch ($type) {
-
                 case 'checkbox':
                 case 'radio':
                     $field = self::adminMulti($value, $class, $id, $name, $required, $tab_index, $type, 1, $label);
@@ -162,7 +161,6 @@ class EEH_Form_Fields
             if ($field) {
                 $inputs[] = $field;
             }
-
         } // end foreach( $input_vars as $input_key => $input_value )
 
         if (! empty($inputs)) {
@@ -264,7 +262,6 @@ class EEH_Form_Fields
 
             // we determine what we're building based on the type
             switch ($type) {
-
                 case 'checkbox':
                 case 'radio':
                     if (is_array($value)) {
@@ -1101,9 +1098,9 @@ class EEH_Form_Fields
             is_array($answer)
                 ? self::prep_answer(array_shift($answer), $use_html_entities)
                 : self::prep_answer(
-                $answer,
-                $use_html_entities
-            );
+                    $answer,
+                    $use_html_entities
+                );
         // prep the required array
         $required = self::prep_required($required);
         // set disabled tag

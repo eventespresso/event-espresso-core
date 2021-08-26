@@ -327,11 +327,11 @@ abstract class EE_Admin_Hooks extends EE_Base
                 $type == 'js'
                     ? wp_register_script($ref, $url, $depends, $version, $footer)
                     : wp_register_style(
-                    $ref,
-                    $url,
-                    $depends,
-                    $version
-                );
+                        $ref,
+                        $url,
+                        $depends,
+                        $version
+                    );
             }
             // k now let's do the enqueues
             if (! isset($this->_scripts_styles['enqueues'])) {
@@ -585,9 +585,9 @@ abstract class EE_Admin_Hooks extends EE_Base
             // make sure method exists
             if (! method_exists($this, $method)) {
                 $msg[] = esc_html__(
-                             'There is no corresponding method for the hook labeled in the _ajax_func array',
-                             'event_espresso'
-                         ) . '<br />';
+                    'There is no corresponding method for the hook labeled in the _ajax_func array',
+                    'event_espresso'
+                ) . '<br />';
                 $msg[] = sprintf(
                     esc_html__(
                         'The method name given in the array is %s, check the spelling and make sure it exists in the %s class',
@@ -620,9 +620,9 @@ abstract class EE_Admin_Hooks extends EE_Base
             // make sure method exists
             if (! method_exists($this, $method)) {
                 $msg[] = esc_html__(
-                             'There is no corresponding method for the hook labeled in the _init_func array',
-                             'event_espresso'
-                         ) . '<br />';
+                    'There is no corresponding method for the hook labeled in the _init_func array',
+                    'event_espresso'
+                ) . '<br />';
                 $msg[] = sprintf(
                     esc_html__(
                         'The method name given in the array is %s, check the spelling and make sure it exists in the %s class',

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var boolean       $show_ticket_details
  * @var boolean       $display_ticket_price
@@ -104,7 +105,8 @@ use EventEspresso\modules\ticket_selector\TicketDetails;
                             <?php
                             echo $ticket->min() > 0 ? $ticket->min() : 0;
 
-                            if ($ticket->min() > $remaining) { ?> &nbsp;
+                            if ($ticket->min() > $remaining) {
+                                ?> &nbsp;
                                 <span class="important-notice small-text">
                                 <?php echo apply_filters(
                                     'FHEE__ticket_selector_chart_template__ticket_details_purchasable_quantities_min_qty_message',
@@ -244,8 +246,7 @@ use EventEspresso\modules\ticket_selector\TicketDetails;
                                 </thead>
                                 <tbody>
                                 <?php foreach ($datetimes as $datetime) {
-                                        if ($datetime instanceof EE_Datetime) { ?>
-
+                                    if ($datetime instanceof EE_Datetime) { ?>
                                     <tr>
                                         <td data-th="<?php echo apply_filters(
                                             'FHEE__ticket_selector_chart_template__ticket_details_event_access_table_event_date',
@@ -255,8 +256,8 @@ use EventEspresso\modules\ticket_selector\TicketDetails;
                                         >
                                             <?php $datetime_name = $datetime->name(); ?>
                                             <?php echo ! empty($datetime_name)
-                                                ? '<b>' . esc_html($datetime_name) . '</b><br/>'
-                                                : ''; ?>
+                                            ? '<b>' . esc_html($datetime_name) . '</b><br/>'
+                                            : ''; ?>
                                             <?php echo $datetime->date_range(
                                                 $date_format,
                                                 esc_html__(' to  ', 'event_espresso')
@@ -299,7 +300,7 @@ use EventEspresso\modules\ticket_selector\TicketDetails;
                                         >
                                             <?php echo $datetime->sold(); ?>
                                         </td>
-                                        <?php $tkts_left = $datetime->sold_out()
+                                            <?php $tkts_left = $datetime->sold_out()
                                             ? '<span class="sold-out smaller-text">'
                                               . esc_html__('Sold&nbsp;Out', 'event_espresso')
                                               . '</span>'
@@ -316,7 +317,7 @@ use EventEspresso\modules\ticket_selector\TicketDetails;
                                                   . '</span>'
                                                 : $tkts_left; ?>
                                         </td>
-                                    <?php endif; // end $show_ticket_sale_columns conditional ?>
+                                        <?php endif; // end $show_ticket_sale_columns conditional ?>
                                     </tr>
                                     <?php } ?>
                                 <?php } ?>

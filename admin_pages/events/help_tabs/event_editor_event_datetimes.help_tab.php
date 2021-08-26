@@ -14,19 +14,19 @@
 <p>
 <?php printf(
     esc_html__(
-    'You can create a new event datetime by clicking on the add datetime button. Then set a start date for your event, an end date for your event, and a event datetimes limit (optional). You can also save time by clicking on the Duplicate this item icon %1$s to create a copy of an existing datetime.',
-    'event_espresso'
+        'You can create a new event datetime by clicking on the add datetime button. Then set a start date for your event, an end date for your event, and a event datetimes limit (optional). You can also save time by clicking on the Duplicate this item icon %1$s to create a copy of an existing datetime.',
+        'event_espresso'
     ),
     '<span class="clone-icon ee-icon ee-icon-clone" style="margin: 0;"></span>'
 ); ?>
 </p>
 <p>
 <?php printf(
-    esc_html__('You can view and create Assigned Tickets by clicking on the Assign Ticket icon %1$s. This will open a panel that shows existing tickets that have been assigned. New tickets can also be added from this panel.',
-               'event_espresso'
+    esc_html__(
+        'You can view and create Assigned Tickets by clicking on the Assign Ticket icon %1$s. This will open a panel that shows existing tickets that have been assigned. New tickets can also be added from this panel.',
+        'event_espresso'
     ),
     '<span class="ticket-icon ee-icon ee-icon-tickets" style="margin: 0;"></span>'
-
 );?>
 </p>
 <h5><?php esc_html_e('Using Datetimes Limit Field & Ticket Quantities', 'event_espresso'); ?></h5>

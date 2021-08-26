@@ -72,8 +72,8 @@ class OpenSSLv2 extends OpenSSL
      *                                                            (when openssl auth tag and random_bytes() were added)
      */
     public function __construct(
-        Base64Encoder                 $base64_encoder,
-        CipherMethod                  $cipher_method = null,
+        Base64Encoder $base64_encoder,
+        CipherMethod $cipher_method = null,
         EncryptionKeyManagerInterface $encryption_key_manager = null,
         $min_php_version = '7.1.0'
     ) {

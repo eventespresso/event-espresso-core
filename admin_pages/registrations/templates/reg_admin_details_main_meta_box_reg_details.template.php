@@ -13,7 +13,7 @@
     <?php do_action('AHEE__reg_admin_details_main_meta_box_reg_details__top', $REG_ID); ?>
 
     <h3 class="admin-primary-mbox-h4 hdr-has-icon"><span class="dashicons dashicons-clipboard"></span>
-        <?php esc_html_e( 'Registration Items', 'event_espresso' ); ?>
+        <?php esc_html_e('Registration Items', 'event_espresso'); ?>
     </h3>
 
     <?php echo $line_item_table; // already escaped ?>
@@ -33,7 +33,7 @@
        rel="additional-registration-session-info"
     >
         <span class="dashicons dashicons-plus-alt"></span>
-        <?php esc_html_e( 'view additional registration session details', 'event_espresso' ); ?>
+        <?php esc_html_e('view additional registration session details', 'event_espresso'); ?>
     </a>
 
     <div id="additional-registration-session-info-dv" class="hidden">
@@ -41,7 +41,7 @@
            rel="additional-registration-session-info"
         >
             <span class="dashicons dashicons-dismiss"></span>
-            <?php esc_html_e( 'hide additional registration session details', 'event_espresso' ); ?>
+            <?php esc_html_e('hide additional registration session details', 'event_espresso'); ?>
         </a>
         <br class="clear" />
 

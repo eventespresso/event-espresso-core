@@ -35,7 +35,7 @@ if (count($registrations) > 0) {
 
             <div id="spco-attendee-panel-dv-<?php echo esc_url_raw($registration->reg_url_link()); ?>"
                  class="spco-attendee-panel-dv spco-attendee-ticket-<?php echo esc_attr($registration->ticket()->ID());
-                 ?>"
+                    ?>"
             >
 
                 <?php if (! is_admin() && $registration->event()->ID() !== $prev_event) { ?>

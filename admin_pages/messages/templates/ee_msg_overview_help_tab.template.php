@@ -1,8 +1,8 @@
 <h2><?php esc_html_e('More about the Messages Overview Table', 'event_espresso'); ?></h2>
 <p><?php esc_html_e(
-        'This table represents all the various message templates that have been created.',
-        'event_espresso'
-    ); ?>
+    'This table represents all the various message templates that have been created.',
+    'event_espresso'
+); ?>
 </p>
 
 <h3><?php esc_html_e('Views', 'event_espresso'); ?></h3>

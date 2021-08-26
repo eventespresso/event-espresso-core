@@ -14,7 +14,7 @@
 <p>
     <?php esc_html_e(
         'An excerpt can be thought of as a short description for your event. HTML tags are supported here.',
-                     'event_espresso'
+        'event_espresso'
     ); ?>
 </p>
 <p><strong><?php esc_html_e('Event Custom Fields', 'event_espresso'); ?></strong></p>

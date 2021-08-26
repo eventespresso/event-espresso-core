@@ -8,7 +8,7 @@
 <p>
     <?php printf(
         esc_html__('Venues can be managed through the %sVenues page%s.', 'event_espresso'),
-            '<a href="admin.php?page=espresso_venues">',
-            '</a>'
+        '<a href="admin.php?page=espresso_venues">',
+        '</a>'
     ); ?>
 </p>

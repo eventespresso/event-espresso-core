@@ -51,7 +51,7 @@
                 </textarea>
             </p>
         </div>
-    <?php
+        <?php
     else :
         ?>
         <input type="hidden" name="ee_msg_non_global_fields[MTP_name]" value="<?php echo esc_attr($MTP->name()); ?>">

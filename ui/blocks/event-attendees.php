@@ -14,7 +14,6 @@
     <ul>
         <?php
         foreach ($attendees as $attendee) {
-
             $attendee_name = esc_html($attendee->full_name());
 
             $gravatar = $attributes['showGravatar']

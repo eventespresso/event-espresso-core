@@ -31,7 +31,7 @@
         <p>
         <div<?php if ($active) : ?>
             id="active-message-types"
-        <?php endif; ?>
+            <?php endif; ?>
             class="mt-tab-container <?php echo esc_attr($hide_on_message); ?>"
         >
             <ul class="messenger-activation">

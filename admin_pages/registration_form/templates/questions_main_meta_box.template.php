@@ -103,7 +103,7 @@ if ($QST_system === 'country') {
                         <p class="description">
                             <?php if (! empty($QST_system)) { ?>
                                 <span class="description" style="color:#D54E21;">
-                        <?php esc_html_e('System question! This field cannot be changed.', 'event_espresso') ?>
+                                <?php esc_html_e('System question! This field cannot be changed.', 'event_espresso') ?>
                         </span>
                             <?php } ?>
 
@@ -174,10 +174,10 @@ if ($QST_system === 'country') {
                         }
 
                         echo EEH_Form_Fields::select_input(
-                                'QST_type' . $id,
-                                $question_types,
-                                $question->type(),
-                                'id="QST_type' . $id . '"' . $disabled_attr
+                            'QST_type' . $id,
+                            $question_types,
+                            $question->type(),
+                            'id="QST_type' . $id . '"' . $disabled_attr
                         ); // already escaped
                         if ($disabled) { ?>
                             <input id='QST_type'
@@ -343,12 +343,12 @@ if ($QST_system === 'country') {
                                             </td>
                                             <?php
                                             echo EEH_Form_Fields::hidden_input(
-                                                    "question_options[{$count}][QST_ID])",
-                                                    $option->question_ID()
+                                                "question_options[{$count}][QST_ID])",
+                                                $option->question_ID()
                                             ); // already escaped
                                             echo EEH_Form_Fields::hidden_input(
-                                                    "question_options[{$count}][QSO_ID])",
-                                                    $option->ID()
+                                                "question_options[{$count}][QSO_ID])",
+                                                $option->ID()
                                             ); // already escaped
                                             $count++;
                                             ?>
@@ -437,10 +437,10 @@ if ($QST_system === 'country') {
                             ['text' => esc_html__('Required', 'event_espresso'), 'id' => 1],
                         ];
                         echo EEH_Form_Fields::select_input(
-                                'QST_required' . $id,
-                                $requiredOptions,
-                                $question->required(),
-                                'id="QST_required' . $id . '"' . $disabled_attr
+                            'QST_required' . $id,
+                            $requiredOptions,
+                            $question->required(),
+                            'id="QST_required' . $id . '"' . $disabled_attr
                         ); // already escaped
                         ?>
                         <p>

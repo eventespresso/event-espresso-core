@@ -24,7 +24,7 @@
             '<a href="admin.php?page=espresso_support">',
             '</a>'
         );
-        ?>
+?>
     </p>
 
     <table class="form-table">
@@ -63,7 +63,7 @@
                             ),
                             '<span class="highlight" style="padding:3px;margin:0;">[ESPRESSO_CHECKOUT]</span>'
                         );
-                        ?>
+?>
                     </p>
                     <br /><br />
                 </td>
@@ -78,7 +78,7 @@
                         <?php echo EEH_Template::get_help_tab_link('notify_url_info'); // already escaped ?>
                         <br />
                         <span class="lt-grey-text">
-                        <?php esc_html_e( 'Notify URL (processes payments)', 'event_espresso' ); ?>
+                        <?php esc_html_e('Notify URL (processes payments)', 'event_espresso'); ?>
                     </span>
                         <br />
                         <?php echo General_Settings_Admin_Page::edit_view_links($txn_page_id); // already escaped ?>
@@ -106,7 +106,7 @@
                             ),
                             '<span class="highlight" style="padding:3px;margin:0;">[ESPRESSO_TXN_PAGE]</span>'
                         );
-                        ?>
+?>
                     </p>
                     <br /><br />
                 </td>
@@ -145,7 +145,7 @@
                             ),
                             '<span class="highlight" style="padding:3px;margin:0;">[ESPRESSO_THANK_YOU]</span>'
                         );
-                        ?>
+?>
                     </p>
                     <br /><br />
                 </td>
@@ -184,7 +184,7 @@
                             ),
                             '<span class="highlight" style="padding:3px;margin:0;">[ESPRESSO_CANCELLED]</span>'
                         );
-                        ?>
+?>
                     </p>
                     <br /><br />
                 </td>

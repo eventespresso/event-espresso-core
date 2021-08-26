@@ -510,8 +510,10 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         }
         ?>
         <p><strong><?php esc_html_e('Template', 'event_espresso') ?></strong></p>
-        <label class="screen-reader-text" for="page_template"><?php esc_html_e('Page Template',
-                                                                               'event_espresso') ?></label>
+        <label class="screen-reader-text" for="page_template"><?php esc_html_e(
+            'Page Template',
+            'event_espresso'
+        ) ?></label>
         <select
             name="page_template" id="page_template"
         >
@@ -1008,10 +1010,12 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
                 'default' != $this->_req_data['page_template']
                 && ! isset($page_templates[ $this->_req_data['page_template'] ])
             ) {
-                EE_Error::add_error(esc_html__('Invalid Page Template.', 'event_espresso'),
-                                    __FILE__,
-                                    __FUNCTION__,
-                                    __LINE__);
+                EE_Error::add_error(
+                    esc_html__('Invalid Page Template.', 'event_espresso'),
+                    __FILE__,
+                    __FUNCTION__,
+                    __LINE__
+                );
             } else {
                 update_post_meta($post_id, '_wp_page_template', $this->_req_data['page_template']);
             }
@@ -1499,9 +1503,9 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         $post    = ! empty($post_id) ? get_post($post_id, OBJECT, 'edit') : null;
         if (empty($post)) {
             wp_die(esc_html__(
-                       'You attempted to edit an item that doesn&#8217;t exist. Perhaps it was deleted?',
-                       'event_espresso'
-                   ));
+                'You attempted to edit an item that doesn&#8217;t exist. Perhaps it was deleted?',
+                'event_espresso'
+            ));
         }
 
         $post_lock = $this->request->getRequestParam('get-post-lock');

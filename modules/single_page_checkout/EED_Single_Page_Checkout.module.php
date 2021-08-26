@@ -1548,7 +1548,7 @@ class EED_Single_Page_Checkout extends EED_Module
             add_action('AHEE__SPCO__reg_form_footer', array('EED_Single_Page_Checkout', 'display_registration_footer'));
             $empty_cart = count(
                 $this->checkout->transaction->registrations($this->checkout->reg_cache_where_params)
-                          ) < 1;
+            ) < 1;
             EE_Registry::$i18n_js_strings['empty_cart'] = $empty_cart;
             $cookies_not_set_msg = '';
             if ($empty_cart) {

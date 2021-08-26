@@ -107,7 +107,6 @@ class EEH_Maps
             wp_enqueue_script('gmap_api');
             wp_enqueue_script('ee_gmap');
             add_action('wp_footer', ['EEH_Maps', 'footer_enqueue_script']);
-
         }
         return $html; // end auto map or static url map check
     }

@@ -636,7 +636,6 @@ class EEH_Template
         $content = '<ol style="display:none" id="' . esc_attr($id) . '">';
 
         foreach ($stops as $stop) {
-
             $data_id    = ! empty($stop['id'])
                 ? ' data-id="' . esc_attr($stop['id']) . '"'
                 : '';
@@ -1025,7 +1024,6 @@ class EEH_Template
     {
         return esc_url_raw(EE_GLOBAL_ASSETS_URL . 'images/screenshots/' . $image_name . '.jpg');
     }
-
 }
 
 

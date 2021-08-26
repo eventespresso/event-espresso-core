@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @type bool $empty_cart
  * @type bool $revisit
@@ -8,6 +9,7 @@
  * @type string $empty_msg
  * @type string $cookies_not_set_msg
  */
+
 ?>
 
 <div id="ee-single-page-checkout-dv" class="">
@@ -91,7 +93,7 @@
     } else {
         ?>
         <h3 id="spco-empty-cart-hdr" class="spco-step-title-hdr">
-            <?php esc_html_e( 'Nothing in your Event Queue', 'event_espresso' ); ?>
+            <?php esc_html_e('Nothing in your Event Queue', 'event_espresso'); ?>
         </h3>
         <p><?php echo $empty_msg; // already escaped ?></p>
         <?php echo $cookies_not_set_msg; // already escaped ?>

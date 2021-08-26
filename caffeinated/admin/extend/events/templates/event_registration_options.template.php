@@ -18,9 +18,9 @@ $settings_array                = [
     'max_registrants'                 => '<p>
         <label for="max-registrants">
         ' . esc_html__(
-            'Maximum number of tickets allowed per order for this event: ',
-            'event_espresso'
-        ) . '
+        'Maximum number of tickets allowed per order for this event: ',
+        'event_espresso'
+    ) . '
         </label>
         <input class="ee-numeric"
                 type="text" 

@@ -111,8 +111,7 @@ class EEW_Upcoming_Events extends EspressoWidget
         ];
         $sort_values   = [
             EE_Question_Option::new_instance(['QSO_value' => 'ASC', 'QSO_desc' => esc_html__('ASC', 'event_espresso')]),
-            EE_Question_Option::new_instance(['QSO_value' => 'DESC', 'QSO_desc' => esc_html__('DESC', 'event_espresso')]
-            ),
+            EE_Question_Option::new_instance(['QSO_value' => 'DESC', 'QSO_desc' => esc_html__('DESC', 'event_espresso')]),
         ];
 
         ?>
