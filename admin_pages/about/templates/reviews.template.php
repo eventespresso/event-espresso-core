@@ -2,17 +2,17 @@
 <p>
     <?php printf(
         esc_html__(
-                'Event Espresso is used by over 40,000 event organizers across the world. They host %sconferences%s, %sart classes%s, training courses, concerts, fundraisers, workshops, %sfilm festivals%s, %spaint and wine%s, and more.',
-                'event_espresso'
-            ),
-            '<a href="https://eventespresso.com/use-cases/conferences/?utm_source=wordpress_org&amp;utm_medium=link&amp;utm_campaign=decaf_about_page&amp;utm_content=Decaf+vs+Regular">',
-            '</a>',
-            '<a href="https://eventespresso.com/use-cases/art-classes/?utm_source=wordpress_org&amp;utm_medium=link&amp;utm_campaign=decaf_about_page&amp;utm_content=Decaf+vs+Regular">',
-            '</a>',
-            '<a href="https://eventespresso.com/use-cases/film-festival-ticketing-software/?utm_source=wordpress_org&amp;utm_medium=link&amp;utm_campaign=decaf_about_page&amp;utm_content=Decaf+vs+Regular">',
-            '</a>',
-            '<a href="https://eventespresso.com/use-cases/paint-wine-party-ticketing-software/?utm_source=wordpress_org&amp;utm_medium=link&amp;utm_campaign=decaf_about_page&amp;utm_content=Decaf+vs+Regular">',
-            '</a>'
+            'Event Espresso is used by over 40,000 event organizers across the world. They host %sconferences%s, %sart classes%s, training courses, concerts, fundraisers, workshops, %sfilm festivals%s, %spaint and wine%s, and more.',
+            'event_espresso'
+        ),
+        '<a href="https://eventespresso.com/use-cases/conferences/?utm_source=wordpress_org&amp;utm_medium=link&amp;utm_campaign=decaf_about_page&amp;utm_content=Decaf+vs+Regular">',
+        '</a>',
+        '<a href="https://eventespresso.com/use-cases/art-classes/?utm_source=wordpress_org&amp;utm_medium=link&amp;utm_campaign=decaf_about_page&amp;utm_content=Decaf+vs+Regular">',
+        '</a>',
+        '<a href="https://eventespresso.com/use-cases/film-festival-ticketing-software/?utm_source=wordpress_org&amp;utm_medium=link&amp;utm_campaign=decaf_about_page&amp;utm_content=Decaf+vs+Regular">',
+        '</a>',
+        '<a href="https://eventespresso.com/use-cases/paint-wine-party-ticketing-software/?utm_source=wordpress_org&amp;utm_medium=link&amp;utm_campaign=decaf_about_page&amp;utm_content=Decaf+vs+Regular">',
+        '</a>'
     ); ?>
 </p>
 
