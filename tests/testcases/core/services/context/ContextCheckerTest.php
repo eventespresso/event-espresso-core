@@ -4,10 +4,6 @@ use EventEspresso\core\domain\entities\contexts\Context;
 use EventEspresso\core\domain\entities\contexts\ContextInterface;
 use EventEspresso\tests\mocks\core\services\context\ContextCheckerMock;
 
-defined('EVENT_ESPRESSO_VERSION') || exit;
-
-
-
 /**
  * Class ContextCheckerTest
  * Description
@@ -45,13 +41,13 @@ class ContextCheckerTest extends EE_UnitTestCase
     {
         $this->assertEquals('this-is-a-test', $this->context_checker->getIdentifier());
         $this->assertEquals($this->acceptable_values, $this->context_checker->getAcceptableValues());
-        $this->assertInstanceOf('Closure', $this->context_checker->getEvaluationCallback());
+        $this->assertIsCallable($this->context_checker->getEvaluationCallback());
         $context_checker = new ContextCheckerMock(
             'This-is-a-Test',
             $this->acceptable_values,
             function() { return true; }
         );
-        $this->assertInstanceOf('Closure', $context_checker->getEvaluationCallback());
+        $this->assertIsCallable($context_checker->getEvaluationCallback());
     }
 
 

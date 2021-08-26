@@ -2,7 +2,6 @@
 
 namespace EventEspresso\core\services\context;
 
-use Closure;
 use EventEspresso\core\domain\entities\contexts\ContextInterface;
 
 /**
@@ -33,11 +32,11 @@ class ContextChecker
     private $acceptable_values;
 
     /**
-     * Closure that will be called to perform the evaluation within isAllowed().
+     * Closure (or callable) that will be called to perform the evaluation within isAllowed().
      * If none is provided, then a simple type sensitive in_array() check will be used
      * and return true if the incoming Context::slug() is found within the array of $acceptable_values.
      *
-     * @var Closure $evaluation_callback
+     * @var callable $evaluation_callback
      */
     private $evaluation_callback;
 
@@ -47,9 +46,9 @@ class ContextChecker
      *
      * @param string       $identifier
      * @param array        $acceptable_values
-     * @param Closure|null $evaluation_callback [optional]
+     * @param callable|null $evaluation_callback [optional]
      */
-    public function __construct($identifier, array $acceptable_values, Closure $evaluation_callback = null)
+    public function __construct($identifier, array $acceptable_values, callable $evaluation_callback = null)
     {
         $this->setIdentifier($identifier);
         $this->setAcceptableValues($acceptable_values);
@@ -76,11 +75,11 @@ class ContextChecker
 
 
     /**
-     * @param Closure $evaluation_callback
+     * @param callable $evaluation_callback
      */
-    private function setEvaluationCallback(Closure $evaluation_callback = null)
+    private function setEvaluationCallback(callable $evaluation_callback = null)
     {
-        $this->evaluation_callback = $evaluation_callback instanceof Closure
+        $this->evaluation_callback = is_callable($evaluation_callback)
             ? $evaluation_callback
             : [$this, 'evaluateContext'];
     }
@@ -122,7 +121,7 @@ class ContextChecker
 
 
     /**
-     * @return Closure
+     * @return callable
      */
     protected function evaluationCallback()
     {
