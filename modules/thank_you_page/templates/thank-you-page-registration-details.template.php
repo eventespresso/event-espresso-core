@@ -1,10 +1,12 @@
 <?php
+
 /**
  * @type EE_Transaction $transaction
  * @type boolean        $is_primary
  * @type string         $reg_url_link
  * @type string         $SPCO_attendee_information_url
  */
+
 ?>
 
 <h3 class="ee-registration-details-h3"><?php esc_html_e('Registration Details', 'event_espresso'); ?></h3>
@@ -68,7 +70,7 @@
                                title="<?php esc_attr_e(
                                    'Click here to edit Attendee Information',
                                    'event_espresso'
-                               ); ?>"
+                                      ); ?>"
                             >
                                 <span class="ee-icon ee-icon-user-edit"></span>
                                 <?php esc_html_e('edit info', 'event_espresso'); ?>
@@ -80,7 +82,7 @@
                                    ['token' => $registration->reg_url_link(), 'resend_reg_confirmation' => 'true'],
                                    EE_Registry::instance()->CFG->core->thank_you_page_url()
                                )
-                           ); ?>"
+                                 ); ?>"
                            title="<?php esc_attr_e(
                                'Click here to resend the Registration Confirmation email',
                                'event_espresso'
