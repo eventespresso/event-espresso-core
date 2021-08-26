@@ -8,9 +8,9 @@
  * @package EventEspresso\tests
  * @author  Darren Ethier
  * @since   4.9.39.rc.054
- * @group messages
- * @group messages_shortcodes
- * @group 10726
+ * @group   messages
+ * @group   messages_shortcodes
+ * @group   10726
  */
 class VenueShortcodesTest extends EE_UnitTestCase
 {
@@ -20,11 +20,13 @@ class VenueShortcodesTest extends EE_UnitTestCase
      */
     protected $parser;
 
+
     public function setUp()
     {
         parent::setUp();
         $this->parser = new EE_Venue_Shortcodes();
     }
+
 
     public function tearDown()
     {
@@ -39,30 +41,31 @@ class VenueShortcodesTest extends EE_UnitTestCase
      */
     protected function getVenueTestValues()
     {
-        return array(
-            'VNU_name' => 'Macadassy Hall',
-            'VNU_address' => '10th St. & Constitution Ave. NW',
-            'VNU_city' => 'Washington',
-            'STA_ID' => 10, //District of Columnbia
-            'CNT_ISO' => 'US', //United States
-            'VNU_zip' => '20560',
-            'VNU_desc' => 'test_description',
-            'VNU_url' => 'http://testvenue.com',
-            'VNU_phone' => '123-123-1234',
+        return [
+            'VNU_name'     => 'Macadassy Hall',
+            'VNU_address'  => '10th St. & Constitution Ave. NW',
+            'VNU_city'     => 'Washington',
+            'STA_ID'       => 10, //District of Columnbia
+            'CNT_ISO'      => 'US', //United States
+            'VNU_zip'      => '20560',
+            'VNU_desc'     => 'test_description',
+            'VNU_url'      => 'https://testvenue.com',
+            'VNU_phone'    => '123-123-1234',
             'VNU_address2' => '',
-        );
+        ];
     }
 
 
     /**
      *  Data provider for tests.
+     *
      * @return array
      */
     public function venueShortcodeValuesProvider()
     {
-        $testData = $this->getVenueTestValues();
+        $testData       = $this->getVenueTestValues();
         $google_map_url = htmlentities2(
-            'http://maps.google.com/maps?q=' . urlencode(
+            'https://maps.google.com/maps?q=' . urlencode(
                 $testData['VNU_address']
                 . ',' . $testData['VNU_city']
                 . ',' . 'District of Columbia'
@@ -70,30 +73,30 @@ class VenueShortcodesTest extends EE_UnitTestCase
                 . ',' . 'United States'
             )
         );
-        return array(
-            array('[VENUE_TITLE]', $testData['VNU_name']),
-            array('[VENUE_DESCRIPTION]', $testData['VNU_desc']),
-            array('[VENUE_URL]', $testData['VNU_url']),
-            array('[VENUE_PHONE]', $testData['VNU_phone']),
-            array('[VENUE_ADDRESS]', $testData['VNU_address']),
-            array('[VENUE_ADDRESS2]', $testData['VNU_address2']),
-            array('[VENUE_CITY]', $testData['VNU_city']),
-            array('[VENUE_COUNTRY]', 'United States'),
-            array('[VENUE_STATE]', 'District of Columbia'),
-            array('[VENUE_ZIP]', $testData['VNU_zip']),
-            array(
+        return [
+            ['[VENUE_TITLE]', $testData['VNU_name']],
+            ['[VENUE_DESCRIPTION]', $testData['VNU_desc']],
+            ['[VENUE_URL]', $testData['VNU_url']],
+            ['[VENUE_PHONE]', $testData['VNU_phone']],
+            ['[VENUE_ADDRESS]', $testData['VNU_address']],
+            ['[VENUE_ADDRESS2]', $testData['VNU_address2']],
+            ['[VENUE_CITY]', $testData['VNU_city']],
+            ['[VENUE_COUNTRY]', 'United States'],
+            ['[VENUE_STATE]', 'District of Columbia'],
+            ['[VENUE_ZIP]', $testData['VNU_zip']],
+            [
                 '[VENUE_FORMATTED_ADDRESS]',
-                '<div itemprop="address" itemscope itemtype="http://schema.org/PostalAddress"><span itemprop="streetAddress">10th St. & Constitution Ave. NW</span><br /><span itemprop="addressLocality">Washington</span><br /><span itemprop="addressRegion">District of Columbia</span><br /><span itemprop="postalCode">20560</span><br /><span itemprop="addressCountry">United States</span></div>'
-            ),
-            array('[GOOGLE_MAP_URL]', $google_map_url),
-            array(
+                '<div itemprop="address" itemscope itemtype="http://schema.org/PostalAddress"><span itemprop="streetAddress">10th St. & Constitution Ave. NW</span><br /><span itemprop="addressLocality">Washington</span><br /><span itemprop="addressRegion">District of Columbia</span><br /><span itemprop="postalCode">20560</span><br /><span itemprop="addressCountry">United States</span></div>',
+            ],
+            ['[GOOGLE_MAP_URL]', $google_map_url],
+            [
                 '[GOOGLE_MAP_LINK]',
                 '<a href="' . $google_map_url . '"'
                 . ' target="_blank" rel="noopener noreferrer">'
                 . $google_map_url
-                . '</a>'
-            )
-        );
+                . '</a>',
+            ],
+        ];
     }
 
 

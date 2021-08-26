@@ -169,7 +169,7 @@ abstract class EE_Shortcodes extends EE_Base
         $this->_shortcodes = $this->get_shortcodes();
 
         // we need to setup any dynamic shortcodes so that they work with the array_key_exists
-        $sc = preg_match_all('/(\[[A-Za-z0-9\_]+_\*)/', $shortcode, $matches);
+        preg_match_all('/(\[[A-Za-z0-9\_]+_\*)/', $shortcode, $matches);
         $sc_to_verify = ! empty($matches[0]) ? $matches[0][0] . ']' : $shortcode;
 
         // first we want to make sure this is a valid shortcode
@@ -189,8 +189,7 @@ abstract class EE_Shortcodes extends EE_Base
         );
 
         // note the below filter applies to ALL shortcode parsers... be careful!
-        $parsed = apply_filters('FHEE__EE_Shortcodes__parser_after', $parsed, $shortcode, $data, $extra_data, $this);
-        return $parsed;
+        return apply_filters('FHEE__EE_Shortcodes__parser_after', $parsed, $shortcode, $data, $extra_data, $this);
     }
 
 
