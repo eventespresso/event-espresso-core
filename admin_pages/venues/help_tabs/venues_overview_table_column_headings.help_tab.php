@@ -34,8 +34,10 @@ use EventEspresso\core\domain\Domain;
         <strong><?php esc_html_e('Capacity', 'event_espresso'); ?></strong>
         <br />
         <?php printf(
-            esc_html__('This is the capacity of the venue. If no limit is set, then the capacity will be set to infinity (%s).',
-                       'event_espresso'),
+            esc_html__(
+                'This is the capacity of the venue. If no limit is set, then the capacity will be set to infinity (%s).',
+                'event_espresso'
+            ),
             '&#8734'
         ); ?>
     </li>

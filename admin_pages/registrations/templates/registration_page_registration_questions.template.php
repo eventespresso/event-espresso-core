@@ -143,11 +143,8 @@
                                                         echo esc_html__('Attendee #', 'event_espresso')
                                                              . esc_html($attendee['att_nmbr']);
                                                         ?>
-                                                        <input class="spco-copy-attendee-chk <?php
-                                                        echo esc_attr($css_class);
-                                                        ?>"
-                                                               id="spco-copy-attendee-chk-<?php echo esc_attr
-                                                               ($attendee['input_id']);?>"
+                                                        <input class="spco-copy-attendee-chk <?php echo esc_attr($css_class); ?>"
+                                                               id="spco-copy-attendee-chk-<?php echo esc_attr($attendee['input_id']);?>"
                                                                type="checkbox"
                                                                value="<?php echo esc_attr($attendee['input_id']); ?>"
                                                         />
