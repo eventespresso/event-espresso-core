@@ -48,9 +48,9 @@
 <ul>
     <li>
         <strong><?php esc_html_e(
-                'Link to Event Espresso in your Registration Page?',
-                'event_espresso'
-            ); ?>
+            'Link to Event Espresso in your Registration Page?',
+            'event_espresso'
+        ); ?>
         </strong>
         <br />
         <?php esc_html_e(

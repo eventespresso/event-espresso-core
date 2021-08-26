@@ -2,7 +2,7 @@
 <p>
     <?php esc_html_e(
         'Views allow you to limit what is shown in the event overview table. The following views are available: View All Events, Draft, Trash, Today, and This Month. The number in parentheses next to each view represents the number of events that will be displayed with that view.',
-                     'event_espresso'
+        'event_espresso'
     ); ?>
     <br />
 </p>

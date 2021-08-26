@@ -450,11 +450,11 @@ class Transactions_Admin_Page extends EE_Admin_Page
              * @param Transactions_Admin_Page $this
              * @since 4.9.70.p
              */
-        apply_filters(
-            'FHEE__Transactions_Admin_Page___set_list_table_views_default__display_failed_txns_list',
-            false,
-            $this
-        )
+            apply_filters(
+                'FHEE__Transactions_Admin_Page___set_list_table_views_default__display_failed_txns_list',
+                false,
+                $this
+            )
         ) {
             $this->_views['failed'] = [
                 'slug'  => 'failed',
@@ -952,18 +952,18 @@ class Transactions_Admin_Page extends EE_Admin_Page
                 && $this->_transaction->status_ID() !== EEM_Transaction::complete_status_code
                 && $this->_transaction->status_ID() !== EEM_Transaction::overpaid_status_code
                     ? EEH_Template::get_button_or_link(
-                    EE_Admin_Page::add_query_args_and_nonce(
-                        [
+                        EE_Admin_Page::add_query_args_and_nonce(
+                            [
                             'action'      => 'send_payment_reminder',
                             'TXN_ID'      => $this->_transaction->ID(),
                             'redirect_to' => 'view_transaction',
-                        ],
-                        TXN_ADMIN_URL
-                    ),
-                    esc_html__(' Send Payment Reminder', 'event_espresso'),
-                    'button secondary-button',
-                    'dashicons dashicons-email-alt'
-                )
+                            ],
+                            TXN_ADMIN_URL
+                        ),
+                        esc_html__(' Send Payment Reminder', 'event_espresso'),
+                        'button secondary-button',
+                        'dashicons dashicons-email-alt'
+                    )
                     : '';
         }
 
@@ -1279,11 +1279,11 @@ class Transactions_Admin_Page extends EE_Admin_Page
             ],
         ];
         $registrations_to_apply_payment_to = EEH_HTML::br() . EEH_HTML::div(
-                '',
-                'txn-admin-apply-payment-to-registrations-dv',
-                '',
-                'clear: both; margin: 1.5em 0 0; display: none;'
-            );
+            '',
+            'txn-admin-apply-payment-to-registrations-dv',
+            '',
+            'clear: both; margin: 1.5em 0 0; display: none;'
+        );
         $registrations_to_apply_payment_to .= EEH_HTML::br() . EEH_HTML::div('', '', 'admin-primary-mbox-tbl-wrap');
         $registrations_to_apply_payment_to .= EEH_HTML::table('', '', 'admin-primary-mbox-tbl');
         $registrations_to_apply_payment_to .= EEH_HTML::thead(
@@ -2101,8 +2101,8 @@ class Transactions_Admin_Page extends EE_Admin_Page
      */
     protected function _update_registration_payments(
         EE_Transaction $transaction,
-        EE_Payment     $payment,
-                       $REG_IDs = []
+        EE_Payment $payment,
+        $REG_IDs = []
     ) {
         // we can pass our own custom set of registrations to EE_Payment_Processor::process_registration_payments()
         // so let's do that using our set of REG_IDs from the form
@@ -2177,8 +2177,8 @@ class Transactions_Admin_Page extends EE_Admin_Page
      */
     protected function _build_payment_json_response(
         EE_Payment $payment,
-                   $REG_IDs = [],
-                   $delete_txn_reg_status_change = null
+        $REG_IDs = [],
+        $delete_txn_reg_status_change = null
     ) {
         // was the payment deleted ?
         if (is_bool($delete_txn_reg_status_change)) {

@@ -80,8 +80,8 @@ if ($show_backup_db_text) { ?>
                     <a class="button-primary"
                        id='get-started-after-migrate'
                        href="<?php
-                       echo esc_url_raw(add_query_arg(['page' => 'espresso_about'], admin_url('admin.php')));
-                       ?>"
+                        echo esc_url_raw(add_query_arg(['page' => 'espresso_about'], admin_url('admin.php')));
+                        ?>"
                     >
                         <?php esc_html_e("Let's Get Started", "event_espresso"); ?>&nbsp;
                         <span class="dashicons dashicons-arrow-right ee-icon-size-22" style="margin:0;"></span>

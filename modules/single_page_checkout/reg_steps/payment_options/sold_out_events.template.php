@@ -4,6 +4,7 @@
  * @type string $sold_out_events
  * @type string $sold_out_events_msg
  */
+
 ?>
 
 <h4 class="ee-status sold-out"><b><?php esc_html_e('Sold Out', 'event_espresso'); ?></b></h4>

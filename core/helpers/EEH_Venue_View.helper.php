@@ -261,9 +261,9 @@ class EEH_Venue_View extends EEH_Base
         if ($venue instanceof EE_Venue) {
             $excerpt    = $venue->excerpt() != null && $venue->excerpt() ? $venue->excerpt() : $venue->description();
             $venue_link = ' ' . EEH_Venue_View::venue_details_link(
-                    $venue->ID(),
-                    esc_html__('more', 'event_espresso') . '&hellip;'
-                );
+                $venue->ID(),
+                esc_html__('more', 'event_espresso') . '&hellip;'
+            );
             return ! empty($excerpt) ? wp_trim_words($excerpt, 25, '') . $venue_link : '';
         }
         return '';
@@ -294,9 +294,9 @@ class EEH_Venue_View extends EEH_Base
                         ! is_wp_error($url)
                         && (($hide_uncategorized
                              && strtolower($term->name) != esc_html__(
-                                    'uncategorized',
-                                    'event_espresso'
-                                ))
+                                 'uncategorized',
+                                 'event_espresso'
+                             ))
                             || ! $hide_uncategorized)
                     ) {
                         $category_links[] = '<a href="' . esc_url($url) . '" rel="tag">' . $term->name . '</a> ';

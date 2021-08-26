@@ -251,17 +251,17 @@ class General_Settings_Admin_Page extends EE_Admin_Page
     public function admin_init()
     {
         EE_Registry::$i18n_js_strings['invalid_server_response'] = wp_strip_all_tags(__(
-                                                                                         'An error occurred! Your request may have been processed, but a valid response from the server was not received. Please refresh the page and try again.',
-                                                                                         'event_espresso'
-                                                                                     ));
+            'An error occurred! Your request may have been processed, but a valid response from the server was not received. Please refresh the page and try again.',
+            'event_espresso'
+        ));
         EE_Registry::$i18n_js_strings['error_occurred']          = wp_strip_all_tags(__(
-                                                                                         'An error occurred! Please refresh the page and try again.',
-                                                                                         'event_espresso'
-                                                                                     ));
+            'An error occurred! Please refresh the page and try again.',
+            'event_espresso'
+        ));
         EE_Registry::$i18n_js_strings['confirm_delete_state']    = wp_strip_all_tags(__(
-                                                                                         'Are you sure you want to delete this State / Province?',
-                                                                                         'event_espresso'
-                                                                                     ));
+            'Are you sure you want to delete this State / Province?',
+            'event_espresso'
+        ));
         $protocol                                                = is_ssl() ? 'https://' : 'http://';
         EE_Registry::$i18n_js_strings['ajax_url']                = admin_url(
             'admin-ajax.php?page=espresso_general_settings',

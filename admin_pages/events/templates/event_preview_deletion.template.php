@@ -20,7 +20,7 @@
             count($events)
         )
     );
-    ?>
+?>
 </h3>
 <ul>
     <?php
@@ -41,7 +41,7 @@
             count($datetimes)
         )
     );
-    ?>
+?>
 </h3>
 <ul>
     <?php
@@ -61,7 +61,7 @@
             $reg_count
         )
     );
-    ?>
+?>
 </h3>
 <?php
 if ($reg_count > count($registrations)) {

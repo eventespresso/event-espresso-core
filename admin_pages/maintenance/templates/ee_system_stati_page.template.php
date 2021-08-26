@@ -34,7 +34,8 @@ function ee_recurse_into_array_for_display($data, $depth = 0, $td = true)
                     <?php foreach ($data as $data_key => $data_value) {
                         // if the value is a single element array with no key,
                         // and the value is a primitive (not an array, object, etc.)
-                        if (is_array($data_value)
+                        if (
+                            is_array($data_value)
                             && count($data_value) === 1
                             && empty(key($data_value))
                             && is_scalar(reset($data_value))

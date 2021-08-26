@@ -60,8 +60,8 @@ class OpenSSLv1 extends OpenSSL
      * @param string                             $min_php_version defaults to 5.3.0 (when openssl added)
      */
     public function __construct(
-        Base64Encoder                 $base64_encoder,
-        CipherMethod                  $cipher_method = null,
+        Base64Encoder $base64_encoder,
+        CipherMethod $cipher_method = null,
         EncryptionKeyManagerInterface $encryption_key_manager = null,
         $min_php_version = '5.3.0'
     ) {

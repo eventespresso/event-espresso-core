@@ -285,8 +285,10 @@ class EE_Data_Migration_Manager implements ResettableInterface
         } else {
             // so the data doesn't specify a class. So it must either be a legacy array of info or some array (which we'll probably just ignore), or a class that no longer exists
             throw new EE_Error(
-                sprintf(esc_html__("The wp option  with key '%s' does not represent a DMS", 'event_espresso'),
-                        $dms_option_name)
+                sprintf(
+                    esc_html__("The wp option  with key '%s' does not represent a DMS", 'event_espresso'),
+                    $dms_option_name
+                )
             );
         }
     }
@@ -546,9 +548,11 @@ class EE_Data_Migration_Manager implements ResettableInterface
                             $migrates_to_version['version'];
                         unset($script_class_and_filepaths_available[ $classname ]);
                     }
-                } elseif ($scripts_ran[ $script_converts_plugin_slug ][ $script_converts_to_version ]
+                } elseif (
+                    $scripts_ran[ $script_converts_plugin_slug ][ $script_converts_to_version ]
                           instanceof
-                          EE_Data_Migration_Script_Base) {
+                          EE_Data_Migration_Script_Base
+                ) {
                     // this script has been run, or at least started
                     $script = $scripts_ran[ $script_converts_plugin_slug ][ $script_converts_to_version ];
                     if ($script->get_status() !== self::status_completed) {
@@ -992,9 +996,11 @@ class EE_Data_Migration_Manager implements ResettableInterface
 
         // check if it THINKS it's a data migration script and especially if it's one that HASN'T finished yet
         // because if it has finished, then it obviously couldn't be the cause of this error, right? (because it's all done)
-        if (isset($last_ran_migration_script_properties['class'])
+        if (
+            isset($last_ran_migration_script_properties['class'])
             && isset($last_ran_migration_script_properties['_status'])
-            && $last_ran_migration_script_properties['_status'] != self::status_completed) {
+            && $last_ran_migration_script_properties['_status'] != self::status_completed
+        ) {
             // ok then just add this error to its list of errors
             $last_ran_migration_script_properties['_errors'][] = $error_message;
             $last_ran_migration_script_properties['_status']   = self::status_fatal_error;
@@ -1091,15 +1097,19 @@ class EE_Data_Migration_Manager implements ResettableInterface
         }
         $class_name = $properties_array['class'];
         if (! class_exists($class_name)) {
-            throw new EE_Error(sprintf(esc_html__("There is no migration script named %s", "event_espresso"),
-                                       $class_name));
+            throw new EE_Error(sprintf(
+                esc_html__("There is no migration script named %s", "event_espresso"),
+                $class_name
+            ));
         }
         $class = new $class_name();
         if (! $class instanceof EE_Data_Migration_Script_Base) {
             throw new EE_Error(
                 sprintf(
-                    esc_html__("Class '%s' is supposed to be a migration script. Its not, its a '%s'",
-                               "event_espresso"),
+                    esc_html__(
+                        "Class '%s' is supposed to be a migration script. Its not, its a '%s'",
+                        "event_espresso"
+                    ),
                     $class_name,
                     get_class($class)
                 )

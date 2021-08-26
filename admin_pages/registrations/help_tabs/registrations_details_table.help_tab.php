@@ -46,13 +46,17 @@
     <li>
         <strong><?php esc_html_e('Line Total', 'event_espresso'); ?></strong>
         <br />
-        <?php esc_html_e('Shows the total based on the quantity of tickets multiplied by the price of each ticket.',
-                         'event_espresso'); ?>
+        <?php esc_html_e(
+            'Shows the total based on the quantity of tickets multiplied by the price of each ticket.',
+            'event_espresso'
+        ); ?>
     </li>
     <li>
         <strong><?php esc_html_e('Taxes', 'event_espresso'); ?></strong><br />
-        <?php esc_html_e('Shows any taxes that have been applied. May be listed as a sales tax or a federal tax.',
-                         'event_espresso'); ?>
+        <?php esc_html_e(
+            'Shows any taxes that have been applied. May be listed as a sales tax or a federal tax.',
+            'event_espresso'
+        ); ?>
     </li>
     <li>
         <strong><?php esc_html_e('Grand Total', 'event_espresso'); ?></strong><br />

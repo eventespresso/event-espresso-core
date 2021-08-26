@@ -52,7 +52,9 @@ $prime_reg_email = sanitize_email($prime_reg_email);
     </div> <!-- end #admin-side-mbox-primary-registrant-dv -->
 
     <?php
+
     /** only show if logged-in user has access */
+
     if (
         EE_Registry::instance()->CAP->current_user_can(
             'ee_edit_contact',

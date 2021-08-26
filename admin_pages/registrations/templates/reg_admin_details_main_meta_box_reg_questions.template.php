@@ -40,7 +40,7 @@
                        type="submit"
                        value="Update Registration Questions"
                 />
-            <?php
+                <?php
             endif;
         else :
             ?>

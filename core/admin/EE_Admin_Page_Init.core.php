@@ -51,7 +51,7 @@ abstract class EE_Admin_Page_Init extends EE_Base
 
     protected $_file_name;
 
-    public    $hook_file;
+    public $hook_file;
 
     protected $_wp_page_slug;
 

@@ -1842,8 +1842,8 @@ class Messages_Admin_Page extends EE_Admin_Page
      */
     protected function add_active_context_element(
         EE_Message_Template_Group $message_template_group,
-                                  $context,
-                                  $context_label
+        $context,
+        $context_label
     ) {
         $template_args = [
             'context'                   => $context,
@@ -3423,7 +3423,7 @@ class Messages_Admin_Page extends EE_Admin_Page
                 'type'  => 'hidden',
                 'value' => $messenger->name,
             ],
-            'message_type_settings[message_type]'. $message_type->name => [
+            'message_type_settings[message_type]' . $message_type->name => [
                 'type'  => 'hidden',
                 'value' => $message_type->name,
             ],
@@ -4243,17 +4243,17 @@ class Messages_Admin_Page extends EE_Admin_Page
                 EE_Error::add_error(
                     $message_type instanceof EE_message_type
                         ? sprintf(
-                        esc_html__(
-                            '%s message type was not successfully activated with the %s messenger',
-                            'event_espresso'
-                        ),
-                        ucwords($message_type->label['singular']),
-                        ucwords($messenger->label['singular'])
-                    )
+                            esc_html__(
+                                '%s message type was not successfully activated with the %s messenger',
+                                'event_espresso'
+                            ),
+                            ucwords($message_type->label['singular']),
+                            ucwords($messenger->label['singular'])
+                        )
                         : sprintf(
-                        esc_html__('%s messenger was not successfully activated', 'event_espresso'),
-                        ucwords($messenger->label['singular'])
-                    ),
+                            esc_html__('%s messenger was not successfully activated', 'event_espresso'),
+                            ucwords($messenger->label['singular'])
+                        ),
                     __FILE__,
                     __FUNCTION__,
                     __LINE__

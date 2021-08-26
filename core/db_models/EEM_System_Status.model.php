@@ -121,7 +121,7 @@ class EEM_System_Status
                 WP_MEMORY_LIMIT,
                 '<a href="http://codex.wordpress.org/Editing_wp-config.php#Increasing_memory_allocated_to_PHP">',
                 '</a>"'
-                );
+            );
             $wp_memory_to_display .= '</mark>';
         } else {
             $wp_memory_to_display = '<mark class="yes">' . size_format($wp_memory_int) . '</mark>';

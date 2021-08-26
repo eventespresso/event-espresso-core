@@ -75,7 +75,7 @@ $email = sanitize_email($email);
             <span class="ee-icon ee-icon-user-add-new"></span>
             <?php echo esc_html($create_label); ?>
         </a>
-    <?php endif; ?>
+        <?php endif; ?>
         <div style="clear:both"></div>
     <?php endif; ?>
 </div>

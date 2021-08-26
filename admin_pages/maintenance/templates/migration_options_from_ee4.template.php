@@ -36,7 +36,7 @@
                                 $next_db_state
                             )
                         );
-                        ?>
+?>
                         <a id="display-migration-details"
                            class="display-the-hidden lt-grey-text smaller-text hide-if-no-js"
                            rel="migration-details"
@@ -76,7 +76,7 @@
                                     "</a>",
                                     "<a target=\"_blank\" href='https://eventespresso.com/product/priority-support-tokens/'>"
                                 );
-                                ?>
+                            ?>
                             </p>
                             <?php do_action('AHEE__ee_migration_page__option_1_extra_details'); ?>
                         </div>

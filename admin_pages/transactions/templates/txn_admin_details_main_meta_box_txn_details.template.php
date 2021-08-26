@@ -113,8 +113,10 @@
                         <th class="jst-left"><?php esc_html_e('Gateway Response', 'event_espresso'); ?></th>
                         <th class="jst-left"><?php esc_html_e('TXN&nbsp;ID / CHQ&nbsp;#', 'event_espresso'); ?></th>
                         <th class="jst-left"><?php esc_html_e('P.O. / S.O.&nbsp;#', 'event_espresso'); ?></th>
-                        <th class="jst-left"><?php esc_html_e('Notes / Extra&nbsp;Accounting',
-                                                              'event_espresso'); ?></th>
+                        <th class="jst-left"><?php esc_html_e(
+                            'Notes / Extra&nbsp;Accounting',
+                            'event_espresso'
+                        ); ?></th>
                         <!--<th class="jst-left"><?php esc_html_e('Details', 'event_espresso'); ?></th>-->
                         <th class="jst-cntr"><?php esc_html_e('Amount', 'event_espresso'); ?></th>
                     </tr>
@@ -920,8 +922,10 @@
                         <tr>
                             <th class="jst-left"><?php esc_html_e('Date & Time', 'event_espresso'); ?></th>
                             <th class="jst-left"><?php esc_html_e('Message Type', 'event_espresso'); ?></th>
-                            <th class="jst-left"><?php esc_html_e('Payment Status Upon Sending',
-                                                                  'event_espresso'); ?></th>
+                            <th class="jst-left"><?php esc_html_e(
+                                'Payment Status Upon Sending',
+                                'event_espresso'
+                            ); ?></th>
                             <th class="jst-left"><?php esc_html_e('TXN Status Upon Sending', 'event_espresso'); ?></th>
                         </tr>
                     </thead>

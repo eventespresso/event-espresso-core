@@ -9,6 +9,7 @@
  * @type string $default_hidden_inputs
  * @type string $extra_hidden_inputs
  */
+
 ?>
 
 <h4 id="reg-page-totals-hdr" class="">

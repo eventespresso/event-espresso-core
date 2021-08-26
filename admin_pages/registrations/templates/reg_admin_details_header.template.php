@@ -15,10 +15,10 @@
 <div style="float:right">
     <?php echo sprintf(
         esc_html__('View %1$sRegistrations%4$s /  %2$sTransactions%4$s for this %3$sevent%4$s.', 'event_espresso'),
-            '<a href="' . esc_url_raw($filtered_registrations_link) . '">',
-            '<a href="' . esc_url_raw($filtered_registrations_link) . '">',
-            '<a href="' . esc_url_raw($event_link) . '">',
-            '</a>'
+        '<a href="' . esc_url_raw($filtered_registrations_link) . '">',
+        '<a href="' . esc_url_raw($filtered_registrations_link) . '">',
+        '<a href="' . esc_url_raw($event_link) . '">',
+        '</a>'
     ); ?>
 </div>
 <h3 id="reg-admin-reg-details-reg-nmbr-hdr">

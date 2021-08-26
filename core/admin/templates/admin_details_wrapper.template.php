@@ -4,7 +4,7 @@
  * @var string           $post_body_content
  * @var string|WP_Screen $current_page
  */
-$admin_page_wrapper_div_id= esc_attr($admin_page_wrapper_div_id);
+$admin_page_wrapper_div_id = esc_attr($admin_page_wrapper_div_id);
 
 global $post_type, $post;
 // action for registering metaboxes

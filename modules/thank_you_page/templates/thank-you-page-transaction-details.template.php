@@ -1,10 +1,12 @@
 <?php
+
 /**
  * @type EE_Transaction $transaction
  * @type string $primary_registrant_name
  * @type string $show_try_pay_again_link
  * @type string $SPCO_payment_options_url
  */
+
 ?>
 
 <h3><?php esc_html_e('Transaction Details', 'event_espresso'); ?></h3>

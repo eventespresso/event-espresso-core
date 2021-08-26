@@ -13,7 +13,7 @@
         ),
         EEH_Template::pretty_status(EEM_Registration::status_id_approved, false, 'sentence')
     );
-    ?>
+?>
 </p>
 <p>
     <strong>
@@ -29,7 +29,7 @@
         EEH_Template::pretty_status(EEM_Registration::status_id_pending_payment, false, 'sentence'),
         EEH_Template::pretty_status(EEM_Registration::status_id_approved, false, 'sentence')
     );
-    ?>
+?>
 </p>
 <p>
     <strong>

@@ -64,7 +64,7 @@ class EEH_Array extends EEH_Base
     {
         if (is_array($arr)) {
             foreach ($arr as $item) {
-                if(is_array($item)) {
+                if (is_array($item)) {
                     return true; // yep, there's at least 2 levels to this array
                 }
             }
