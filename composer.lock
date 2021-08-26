@@ -164,12 +164,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/eventespresso/ee-coding-standards.git",
-                "reference": "529988db7b1d682dff24c8143be2d067b3f9316f"
+                "reference": "4bbdbb4ed08aeb7ac719b19d8adbd0974c8b63ae"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/eventespresso/ee-coding-standards/zipball/529988db7b1d682dff24c8143be2d067b3f9316f",
-                "reference": "529988db7b1d682dff24c8143be2d067b3f9316f",
+                "url": "https://api.github.com/repos/eventespresso/ee-coding-standards/zipball/4bbdbb4ed08aeb7ac719b19d8adbd0974c8b63ae",
+                "reference": "4bbdbb4ed08aeb7ac719b19d8adbd0974c8b63ae",
                 "shasum": ""
             },
             "require": {
@@ -220,7 +220,7 @@
                 "issues": "https://github.com/eventespresso/ee-coding-standards/issues",
                 "source": "https://github.com/eventespresso/ee-coding-standards/tree/master"
             },
-            "time": "2021-07-12T18:29:36+00:00"
+            "time": "2021-08-26T20:32:27+00:00"
         },
         {
             "name": "phpcompatibility/php-compatibility",
