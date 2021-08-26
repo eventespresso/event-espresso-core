@@ -34,7 +34,6 @@
             foreach ($event_queue['items'] as $line_item => $item) {
                 $att_nmbr++;
                 if ($item['attendee_questions'] != '') { ?>
-
                     <div id="spco-attendee-panel-dv-<?php echo esc_attr($line_item); ?>" class="spco-attendee-panel-dv">
                         <?php
                         if ($item['ticket']->name() != $prev_event) { ?>
@@ -44,14 +43,13 @@
                                 echo esc_html(
                                     EEH_Template::format_currency($item['ticket']->price(), false, false)
                                 );
+                                $qty_price = $item['ticket']->price() * $ticket_count[ $item['ticket']->ID() ];
                                 echo $item['ticket']->qty()
                                     ? ' &nbsp; x &nbsp; '
                                       . absint($ticket_count[ $item['ticket']->ID() ])
                                       . esc_html__(' tickets', 'event_espresso')
                                       . ' &nbsp; = &nbsp; '
-                                      . EEH_Template::format_currency(
-                                        $item['ticket']->price() * $ticket_count[ $item['ticket']->ID() ]
-                                    )
+                                      . EEH_Template::format_currency($qty_price)
                                     : '';
                                 echo $item['ticket']->description()
                                     ? '<br/>'
@@ -148,9 +146,8 @@
                                                         <input class="spco-copy-attendee-chk <?php
                                                         echo esc_attr($css_class);
                                                         ?>"
-                                                               id="spco-copy-attendee-chk-<?php echo esc_attr(
-                                                                   $attendee['input_id']
-                                                               ); ?>"
+                                                               id="spco-copy-attendee-chk-<?php echo esc_attr
+                                                               ($attendee['input_id']);?>"
                                                                type="checkbox"
                                                                value="<?php echo esc_attr($attendee['input_id']); ?>"
                                                         />
