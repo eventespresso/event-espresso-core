@@ -550,7 +550,7 @@ if (! function_exists('espresso_list_of_event_dates')) {
                 if ($datetime instanceof EE_Datetime) {
 
                     $datetime_name        = $datetime->name();
-                    $datetime_name        = ! empty($datetime_name)
+                    $datetime_html        = ! empty($datetime_name)
                         ? '
                         <strong class="ee-event-datetimes-li-date-name">
                           ' . esc_html($datetime_name) . '
@@ -558,14 +558,14 @@ if (! function_exists('espresso_list_of_event_dates')) {
                         : '';
 
                     $datetime_description = $datetime->description();
-                    $datetime_description = ! empty($datetime_description)
+                    $datetime_html .= ! empty($datetime_description)
                         ? '
                         <span class="ee-event-datetimes-li-date-desc">
                             ' . wp_kses($datetime_description, $allowedtags) . '
                         </span>' . $newline
                         : '';
 
-                    $datetime_html = '
+                    $datetime_html .= '
                         <span class="dashicons dashicons-calendar"></span>
                         <span class="ee-event-datetimes-li-daterange">' . $datetime->date_range($date_format) . '</span>
                         <br/>
@@ -584,7 +584,7 @@ if (! function_exists('espresso_list_of_event_dates')) {
 
                     $html .= '
                     <li id="ee-event-datetimes-li-' . $DTD_ID . '" class="ee-event-datetimes-li' . $active_status . '">
-                        ' . $datetime_name . $datetime_description . $datetime_html . '
+                        ' . $datetime_html . '
                     </li>';
                 }
             }
