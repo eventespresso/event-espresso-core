@@ -8,7 +8,7 @@
     <tr>
         <td valign="top" class="use-ven-manager">
             <fieldset id="venue-manager">
-                <?php echo esc_html($no_venues_info); ?>
+                <?php echo $no_venues_info; // already escaped ?>
                 <p>
                     <a href="admin.php?page=espresso_venues" target="_blank">
                         <?php echo esc_html__('Add venues to the Venue Manager', 'event_espresso') ?>
