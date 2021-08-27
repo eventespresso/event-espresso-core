@@ -461,8 +461,10 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
         $pretty_label  = '';
         $label_parts   = array();
         foreach ($expected_vars as $request_key => $model_name) {
+            $model_name = strpos($model_name, 'EEM_', true) === 0 ? $model_name : "EEM_{$model_name}";
             $model = EEM_Base::$loader->getShared($model_name);
-            if ($model_field_value = $request->getRequestParam($request_key)) {
+            $model_field_value = $request->getRequestParam($request_key);
+            if ($model instanceof EEM_Base && $model_field_value !== '') {
                 switch ($request_key) {
                     case '_REG_ID':
                         $label_parts[] = sprintf(
