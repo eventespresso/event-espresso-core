@@ -881,10 +881,10 @@ class EE_Error extends Exception
         // check for error messages
         if (self::$_espresso_notices['errors'] && ! empty(self::$_espresso_notices['errors'])) {
             $error_messages .= count(self::$_espresso_notices['errors']) > 1
-                ? esc_html__('The following errors have occurred:<br />', 'event_espresso')
-                : esc_html__('An error has occurred:<br />', 'event_espresso');
+                ? esc_html__('The following errors have occurred:', 'event_espresso')
+                : esc_html__('An error has occurred:', 'event_espresso');
             // combine messages
-            $error_messages .= implode('<br />', self::$_espresso_notices['errors']);
+            $error_messages .= '<br />' . implode('<br />', self::$_espresso_notices['errors']);
             $print_scripts = true;
         }
         if ($format_output) {
