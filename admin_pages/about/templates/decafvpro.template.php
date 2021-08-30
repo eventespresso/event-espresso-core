@@ -1,12 +1,13 @@
-<p><?php
-    echo esc_html(sprintf(
-        __(
+<p>
+    <?php printf(
+        esc_html__(
             'We offer a free version of Event Espresso 4 called Decaf which is a good fit for basic events. Need more features like custom registration forms and advanced email notifications? %sUpgrade to Event Espresso 4 (Regular)%s.',
             'event_espresso'
         ),
         '<a href="https://eventespresso.com/pricing/?ee_ver=ee4&utm_source=wordpress_org&amp;utm_medium=link&amp;utm_campaign=decaf_about_page&amp;utm_content=Decaf+vs+Regular">',
         '</a>'
-    )); ?><br>
+    ); ?>
+    <br>
 
     <?php
     $features = array(
