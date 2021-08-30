@@ -936,8 +936,9 @@ label.error {
 }
 
 #ee-admin-caf-preview-container .button-large {
-    height: 50px;
     font-size: 1.5em;
+    line-height: 1.4;
+    height: 50px;
     padding: 10px 15px 0;
 }
 
