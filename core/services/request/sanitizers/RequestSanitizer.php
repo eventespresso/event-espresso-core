@@ -23,6 +23,8 @@ class RequestSanitizer
                 return filter_var($param, FILTER_VALIDATE_BOOLEAN);
             case 'float':
                 return (float) $param;
+            case 'fqcn':
+                return preg_replace('[^\\\w\d]', '', $param);
             case 'int':
                 return (int) $param;
             case 'key':

@@ -257,13 +257,14 @@ class EED_Batch extends EED_Module
             EVENT_ESPRESSO_VERSION,
             true
         );
-        $job_handler_classname = stripslashes($request->getRequestParam('job_handler'));
+        $job_handler_classname = $request->getRequestParam('job_handler', '', 'fqcn');
         $request_data          = $request->requestParams();
         $request_data          = array_diff_key(
             $request_data,
             array_flip(['action', 'page', 'ee', 'batch'])
         );
-        $batch_runner          = $this->getLoader()->getShared('EventEspressoBatchRequest\BatchRequestProcessor');
+        /** @var EventEspressoBatchRequest\BatchRequestProcessor $batch_runner */
+        $batch_runner = $this->getLoader()->getShared('EventEspressoBatchRequest\BatchRequestProcessor');
         // eg 'EventEspressoBatchRequest\JobHandlers\RegistrationsReport'
         $job_response = $batch_runner->create_job($job_handler_classname, $request_data);
         // remember the response for later. We need it to display the page body
