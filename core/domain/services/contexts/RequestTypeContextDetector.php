@@ -122,8 +122,8 @@ class RequestTypeContextDetector
     private function isAjaxRequest()
     {
         if (
-            $this->request->getRequestParam('ee_front_ajax', 0, 'int')
-            || $this->request->getRequestParam('data[ee_front_ajax]', 0, 'int')
+            $this->request->getRequestParam('ee_front_ajax', false, 'bool')
+            || $this->request->getRequestParam('data[ee_front_ajax]', false, 'bool')
         ) {
             if (! defined('EE_FRONT_AJAX')) {
                 define('EE_FRONT_AJAX', true);
@@ -131,8 +131,8 @@ class RequestTypeContextDetector
             return $this->factory->create(RequestTypeContext::AJAX_FRONT);
         }
         if (
-            $this->request->getRequestParam('ee_admin_ajax', 0, 'int')
-            || $this->request->getRequestParam('data[ee_admin_ajax]', 0, 'int')
+            $this->request->getRequestParam('ee_admin_ajax', false, 'bool')
+            || $this->request->getRequestParam('data[ee_admin_ajax]', false, 'bool')
         ) {
             if (! defined('EE_ADMIN_AJAX')) {
                 define('EE_ADMIN_AJAX', true);
