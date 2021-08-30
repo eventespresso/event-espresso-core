@@ -61,7 +61,9 @@
                 <br>
                 <?php
                 foreach ($reg_status_array as $status_code => $status_label) {
-                    echo esc_html("<strong>$status_code</strong>:&nbsp;$status_label<br>");
+                    $status_code = esc_html($status_code);
+                    $status_label = esc_html($status_label);
+                    echo "<strong>$status_code</strong>:&nbsp;$status_label<br>";
                 }
                 ?>
 
