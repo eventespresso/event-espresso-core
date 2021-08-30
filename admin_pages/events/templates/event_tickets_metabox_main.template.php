@@ -19,7 +19,7 @@
     <h4 class="event-tickets-datetimes-title">
         <?php esc_html_e('Event Datetime', 'event_espresso'); ?>
     </h4>
-    <?php echo esc_html($event_datetime_help_link); ?>
+    <?php echo $event_datetime_help_link; // already escaped ?>
     <div class="event-datetimes-container">
         <!-- these are the ids for the current displayed datetimes (on create new this is blank -->
         <input id='datetime-IDs'
@@ -99,7 +99,7 @@
         <h4 class="event-tickets-datetimes-title">
             <?php esc_html_e('Ticket Options', 'event_espresso'); ?>
         </h4>
-        <?php echo esc_html($ticket_options_help_link); ?>
+        <?php echo $ticket_options_help_link; // already escaped ?>
         <br />
         <table class="add-new-ticket-table">
             <thead>
@@ -116,7 +116,7 @@
                 </tr>
             </thead>
             <tbody id="all-ticket-rows">
-                <?php echo esc_html($ticket_rows); ?>
+                <?php echo $ticket_rows; // already escaped ?>
             </tbody>
         </table> <!-- end .add-new-ticket-table -->
 
@@ -124,7 +124,7 @@
         <input id='ticket-total-rows'
                name="ticket_total_rows"
                type="hidden"
-               value="<?php echo esc_attr($total_ticket_rows); ?>"
+               value="<?php echo $total_ticket_rows; // already escaped ?>"
         />
         <div class="save-cancel-button-container">
             <button class="button-secondary ee-create-button" data-context="ticket">
@@ -138,5 +138,5 @@
 <?php do_action('AHEE__event_tickets_metabox_main__after_content'); ?>
 
 <table id="new-ticket-row-form" class="hidden">
-    <tbody><?php echo esc_html($ticket_js_structure); ?></tbody>
+    <tbody><?php echo $ticket_js_structure; // already escaped ?></tbody>
 </table>

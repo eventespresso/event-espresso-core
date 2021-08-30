@@ -9,7 +9,7 @@
 ?>
 <p>
     <label><?php esc_html_e('Active Status: ', 'event_espresso'); ?></label>
-    <?php echo esc_html($active_status); ?>
+    <?php echo $active_status; // already escaped ?>
 </p>
 
 <p>
@@ -32,7 +32,7 @@
 
 <p>
     <label><?php esc_html_e('Display Ticket Selector', 'event_espresso'); ?></label>
-    <?php echo esc_html($display_ticket_selector); ?>
+    <?php echo $display_ticket_selector; // already escaped ?>
 </p>
 
 <p>
