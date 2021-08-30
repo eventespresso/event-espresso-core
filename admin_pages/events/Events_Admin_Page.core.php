@@ -1729,6 +1729,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         );
         // $template_args['is_active_select'] = EEH_Form_Fields::select_input('is_active', $yes_no_values, $this->_cpt_model_obj->is_active());
         $template_args['_event'] = $this->_cpt_model_obj;
+        $template_args['event'] = $this->_cpt_model_obj;
         $template_args['active_status'] = $this->_cpt_model_obj->pretty_active_status(false);
         $template_args['additional_limit'] = $this->_cpt_model_obj->additional_limit();
         $template_args['default_registration_status'] = EEH_Form_Fields::select_input(
