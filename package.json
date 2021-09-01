@@ -88,7 +88,7 @@
 		"@wordpress/date": "^4.1.1",
 		"@wordpress/dependency-extraction-webpack-plugin": "^3.1.4",
 		"@wordpress/editor": "^10.1.4",
-		"@wordpress/element": "^2.20.3",
+		"@wordpress/element": "^4.0.0",
 		"@wordpress/eslint-plugin": "^9.0.6",
 		"@wordpress/hooks": "^3.1.1",
 		"@wordpress/is-shallow-equal": "^4.1.1",
