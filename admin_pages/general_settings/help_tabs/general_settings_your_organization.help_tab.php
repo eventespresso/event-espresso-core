@@ -10,9 +10,9 @@
 <p>
     <?php printf(
         esc_html__(
-        'Enter your support license key in this field to benefit from one-click updates. To manage your support license key, please %1$slogin to your Event Espresso account%2$s. Then click on Edit Account Details which appears in the left sidebar menu.',
-        'event_espresso'
-    ),
+            'Enter your support license key in this field to benefit from one-click updates. To manage your support license key, please %1$slogin to your Event Espresso account%2$s. Then click on Edit Account Details which appears in the left sidebar menu.',
+            'event_espresso'
+        ),
         '<a href="https://eventespresso.com/wp-login.php">',
         '</a>'
     );?>
