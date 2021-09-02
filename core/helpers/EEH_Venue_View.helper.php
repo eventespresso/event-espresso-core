@@ -428,7 +428,7 @@ class EEH_Venue_View extends EEH_Base
         if ($venue instanceof EE_Venue) {
             $url  = $venue->venue_url();
             $text = ! empty($text) ? $text : $url;
-            return ! empty($url) ? EEH_Schema::url($url, $text) : '';
+            return ! empty($url) ? EEH_Schema::url($url, $text, ['target' => '_blank']) : '';
         }
         return '';
     }
