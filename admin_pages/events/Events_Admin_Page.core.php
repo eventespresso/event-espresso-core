@@ -1356,6 +1356,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             $id = absint($id);
             // get the ticket for this id
             $tkt_to_remove = EE_Registry::instance()->load_model('Ticket')->get_one_by_ID($id);
+            if ( ! $tkt_to_remove instanceof EE_Ticket) {
+                continue;
+            }
+
             // need to get all the related datetimes on this ticket and remove from every single one of them (remember this process can ONLY kick off if there are NO tkts_sold)
             $dtts = $tkt_to_remove->get_many_related('Datetime');
             foreach ($dtts as $dtt) {
