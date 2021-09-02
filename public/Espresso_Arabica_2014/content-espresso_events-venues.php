@@ -16,7 +16,7 @@ if (
 <div class="espresso-venue-dv<?php echo espresso_is_venue_private() ? ' espresso-private-venue-dv' : ''; ?>">
 	<h4>
         <strong><?php esc_html_e( 'Venue:', 'event_espresso' ); ?></strong>&nbsp;&nbsp;
-        <strong> <?php echo esc_html($venue_name); ?></strong>
+        <strong> <?php echo $venue_name; // already escaped ?></strong>
     </h4>
 	<p><span class="smaller-text tags-links"><?php echo espresso_venue_categories(); ?></span></p>
 <?php  if ( $venue_phone = espresso_venue_phone( $post->ID, FALSE )) : ?>
@@ -24,7 +24,7 @@ if (
 		<span class="small-text">
             <strong><?php esc_html_e( 'Venue Phone:', 'event_espresso' ); ?></strong>
         </span>
-        <?php echo esc_html($venue_phone); ?>
+        <?php echo $venue_phone; // already escaped ?>
 	</p>
 <?php endif;  ?>
 <?php if ( $venue_website = espresso_venue_website( $post->ID, FALSE )) : ?>
@@ -32,7 +32,7 @@ if (
 		<span class="small-text">
             <strong><?php esc_html_e( 'Venue Website:', 'event_espresso' ); ?></strong>
         </span>
-        <?php echo esc_url_raw($venue_website); ?>
+        <?php echo $venue_website; // already escaped ?>
 	</p>
 <?php endif; ?>
 <?php  if ( espresso_venue_has_address( $post->ID )) : ?>

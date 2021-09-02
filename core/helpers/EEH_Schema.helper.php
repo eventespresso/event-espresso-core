@@ -295,15 +295,15 @@ class EEH_Schema
         // Check the URL includes a scheme
         $parsed_url = parse_url($url);
         if (empty($parsed_url['scheme'])) {
-            $url = 'http://' . ltrim($url, '/');
+            $url = 'https://' . ltrim($url, '/');
         }
-
         $atts = '';
         foreach ($attributes as $attribute => $value) {
             $atts .= ' ' . $attribute . '="' . $value . '"';
         }
-        $text = $text !== null && $text !== '' ? $text : $url;
-        return $url !== null && $url !== '' ? '<a itemprop="url" href="' . $url . '"' . $atts . '>' . $text . '</a>'
+        $text = $text !== null && $text !== '' ? $text : esc_url($url);
+        return ! empty($url)
+            ? '<a itemprop="url" href="' . esc_url_raw($url) . '"' . $atts . '>' . $text . '</a>'
             : '';
     }
 }
