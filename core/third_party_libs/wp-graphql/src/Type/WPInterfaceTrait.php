@@ -1,7 +1,9 @@
 <?php
 namespace WPGraphQL\Type;
 
+use Exception;
 use GraphQL\Type\Definition\InterfaceType;
+use WPGraphQL\Registry\TypeRegistry;
 
 /**
  * Trait WPInterfaceTrait
