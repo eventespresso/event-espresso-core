@@ -53,7 +53,7 @@ class TicketConnectionQueriesTest extends BaseQueriesTest
          */
         wp_set_current_user($this->subscriber);
 
-        return do_graphql_request($query, 'ticketsQuery', $variables);
+        return graphql(compact('query', 'variables'));
     }
 
     public function testFirstTicket()
