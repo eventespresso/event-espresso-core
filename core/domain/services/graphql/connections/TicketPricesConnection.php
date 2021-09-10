@@ -130,10 +130,6 @@ class TicketPricesConnection extends ConnectionBase
                 'type'        => ['list_of' => 'Int'],
                 'description' => esc_html__('Price type IDs to get the prices for.', 'event_espresso'),
             ],
-            'priceBaseType'   => [
-                'type'        => 'PriceBaseTypeEnum',
-                'description' => esc_html__('Price Base type.', 'event_espresso'),
-            ],
             'priceBaseTypeIn' => [
                 'type'        => ['list_of' => 'PriceBaseTypeEnum'],
                 'description' => esc_html__('Price Base types.', 'event_espresso'),

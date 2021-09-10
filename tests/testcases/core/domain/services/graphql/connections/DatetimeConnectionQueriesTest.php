@@ -48,7 +48,7 @@ class DatetimeConnectionQueriesTest extends BaseQueriesTest
          */
         wp_set_current_user($this->subscriber);
 
-        return do_graphql_request($query, 'datetimesQuery', $variables);
+        return graphql(compact('query', 'variables'));
     }
 
     public function testFirstDatetime()

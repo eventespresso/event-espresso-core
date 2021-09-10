@@ -4,6 +4,7 @@ namespace EventEspresso\tests\testcases\core\domain\services\graphql\connections
 
 use EventEspresso\tests\testcases\core\domain\services\graphql\GraphQLUnitTestCase;
 use WPGraphQL\AppContext;
+use WPGraphQL;
 
 class BaseQueriesTest extends GraphQLUnitTestCase
 {
@@ -24,6 +25,7 @@ class BaseQueriesTest extends GraphQLUnitTestCase
         if (!$this->model_name) {
             return;
         }
+        WPGraphQL::clear_schema();
 
         $this->admin      = $this->factory()->user->create(
             [
