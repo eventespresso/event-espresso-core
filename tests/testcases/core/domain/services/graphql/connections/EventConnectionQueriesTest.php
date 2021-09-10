@@ -131,7 +131,7 @@ class EventConnectionQueriesTest extends BaseQueriesTest
          */
         wp_set_current_user($this->subscriber);
 
-        return do_graphql_request($query, 'eventsQuery', $variables);
+        return graphql(compact('query', 'variables'));
     }
 
     public function eventByQuery($variables)
@@ -150,7 +150,7 @@ class EventConnectionQueriesTest extends BaseQueriesTest
          */
         wp_set_current_user($this->subscriber);
 
-        return do_graphql_request($query, 'GET_EVENT', $variables);
+        return graphql(compact('query', 'variables'));
     }
 
     public function testFirstEvent()
