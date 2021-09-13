@@ -117,6 +117,7 @@ $generated_i18n_strings = array(
 
 	// Reference: domains/core/admin/blocks/src/event-attendees/index.tsx:14
 	// Reference: domains/core/admin/blocks/src/event/index.tsx:12
+	// Reference: packages/edtr-services/src/constants.ts:25
 	__( 'event', 'event_espresso' ),
 
 	// Reference: domains/core/admin/blocks/src/event-attendees/index.tsx:14
@@ -1114,6 +1115,33 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/constants/src/datetime.ts:9
 	__( 'Inactive', 'event_espresso' ),
 
+	// Reference: packages/data/src/mutations/useMutationWithFeedback.ts:26
+	__( 'error creating %s', 'event_espresso' ),
+
+	// Reference: packages/data/src/mutations/useMutationWithFeedback.ts:27
+	__( 'error deleting %s', 'event_espresso' ),
+
+	// Reference: packages/data/src/mutations/useMutationWithFeedback.ts:28
+	__( 'error updating %s', 'event_espresso' ),
+
+	// Reference: packages/data/src/mutations/useMutationWithFeedback.ts:29
+	__( 'creating %s', 'event_espresso' ),
+
+	// Reference: packages/data/src/mutations/useMutationWithFeedback.ts:30
+	__( 'deleting %s', 'event_espresso' ),
+
+	// Reference: packages/data/src/mutations/useMutationWithFeedback.ts:31
+	__( 'updating %s', 'event_espresso' ),
+
+	// Reference: packages/data/src/mutations/useMutationWithFeedback.ts:32
+	__( 'successfully created %s', 'event_espresso' ),
+
+	// Reference: packages/data/src/mutations/useMutationWithFeedback.ts:33
+	__( 'successfully deleted %s', 'event_espresso' ),
+
+	// Reference: packages/data/src/mutations/useMutationWithFeedback.ts:34
+	__( 'successfully updated %s', 'event_espresso' ),
+
 	// Reference: packages/dates/src/components/DateRangePicker/DateRangePickerLegend.tsx:13
 	__( 'day in range', 'event_espresso' ),
 
@@ -1161,6 +1189,19 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 
 	// Reference: packages/edtr-services/src/apollo/mutations/useReorderEntities.ts:72
 	__( 'reordering has been applied', 'event_espresso' ),
+
+	// Reference: packages/edtr-services/src/constants.ts:24
+	__( 'datetime', 'event_espresso' ),
+
+	// Reference: packages/edtr-services/src/constants.ts:26
+	__( 'ticket', 'event_espresso' ),
+
+	// Reference: packages/edtr-services/src/constants.ts:27
+	__( 'price', 'event_espresso' ),
+
+	// Reference: packages/edtr-services/src/constants.ts:28
+	// Reference: packages/tpc/src/inputs/PriceTypeInput.tsx:19
+	__( 'price type', 'event_espresso' ),
 
 	// Reference: packages/edtr-services/src/utils/dateAndTime.ts:38
 	// Reference: packages/ui-components/src/EditDateRangeButton/EditDateRangeButton.tsx:39
@@ -1561,6 +1602,12 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/form-builder/src/constants.ts:97
 	__( 'Password Confirmation', 'event_espresso' ),
 
+	// Reference: packages/form-builder/src/data/useElementMutator.ts:59
+	__( 'element', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/data/useSectionMutator.ts:59
+	__( 'section', 'event_espresso' ),
+
 	// Reference: packages/form-builder/src/state/utils.ts:360
 	__( 'click', 'event_espresso' ),
 
@@ -1918,9 +1965,6 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 
 	// Reference: packages/tpc/src/inputs/PriceOrderInput.tsx:14
 	__( 'price order', 'event_espresso' ),
-
-	// Reference: packages/tpc/src/inputs/PriceTypeInput.tsx:19
-	__( 'price type', 'event_espresso' ),
 
 	// Reference: packages/tpc/src/utils/constants.ts:8
 	__( 'Ticket price modifications are blocked for Tickets that have already been sold to registrants, because doing so would negatively affect internal accounting for the event. If you still need to modify ticket prices, then create a copy of those tickets, edit the prices for the new tickets, and then trash the old tickets.', 'event_espresso' ),
