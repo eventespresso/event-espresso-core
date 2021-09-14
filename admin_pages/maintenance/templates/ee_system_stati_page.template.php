@@ -70,7 +70,7 @@ function ee_recurse_into_array_for_display($data, $depth = 0, $td = true)
                                         array_filter(
                                             array_values($data_value),
                                             function ($v) {
-                                                return $v !== null && trim($v) !== '';
+                                                return $v !== null && (is_array($v) || trim($v) !== '');
                                             }
                                         )
                                     );
@@ -116,7 +116,7 @@ function ee_recurse_into_array_for_display($data, $depth = 0, $td = true)
     } else {
         echo $td ? '<td class="ee-system-stati-value">' : '';
         // simple value
-        echo esc_html($data);
+        echo $data;
         echo $td ? '</td>' : '';
     }
 }
