@@ -343,6 +343,24 @@ class General_Settings_Admin_Page extends EE_Admin_Page
      */
     protected function _espresso_page_settings()
     {
+        \EEH_Debug_Tools::printr(
+            EE_Registry::instance()->CFG->core->reg_page_id,
+            'EE_Registry::instance()->CFG->core->reg_page_id',
+            __FILE__,
+            __LINE__
+        );
+        \EEH_Debug_Tools::printr(
+            EE_Registry::instance()->CFG->core->txn_page_id,
+            'EE_Registry::instance()->CFG->core->txn_page_id',
+            __FILE__,
+            __LINE__
+        );
+        \EEH_Debug_Tools::printr(
+            EE_Registry::instance()->CFG->core->thank_you_page_id,
+            'EE_Registry::instance()->CFG->core->thank_you_page_id',
+            __FILE__,
+            __LINE__
+        );
         // Check to make sure all of the main pages are set up properly,
         // if not create the default pages and display an admin notice
         EEH_Activation::verify_default_pages_exist();
@@ -1363,14 +1381,17 @@ class General_Settings_Admin_Page extends EE_Admin_Page
         $output = '';
 
         if ($items) {
+            $level = absint($level);
             foreach ($items as $item) {
+                $ID = absint($item->ID);
+                $post_title = wp_strip_all_tags($item->post_title);
                 $pad    = str_repeat('&nbsp;', $level * 3);
                 $option = "\n\t";
                 $option .= '<option class="level-' . $level . '" ';
-                $option .= 'value="' . $item->ID . '" ';
-                $option .= absint($item->ID) === absint($default) ? ' selected="selected"' : '';
+                $option .= 'value="' . $ID . '" ';
+                $option .= $ID === absint($default) ? ' selected="selected"' : '';
                 $option .= '>';
-                $option .= "$pad {$item->post_title}";
+                $option .= "$pad {$post_title}";
                 $option .= '</option>';
                 $output .= $option;
                 ob_start();
@@ -1379,7 +1400,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
             }
         }
         if ($echo) {
-            echo esc_html($output);
+            echo $output;
             return '';
         }
         return $output;
