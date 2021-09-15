@@ -1300,11 +1300,11 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'type', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:23
-	// Reference: packages/form-builder/src/FormSection/Tabs/Settings.tsx:14
+	// Reference: packages/form-builder/src/FormSection/Tabs/Settings.tsx:33
 	__( 'public label', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:30
-	// Reference: packages/form-builder/src/FormSection/Tabs/Settings.tsx:19
+	// Reference: packages/form-builder/src/FormSection/Tabs/Settings.tsx:38
 	__( 'admin label', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:37
@@ -1427,8 +1427,23 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/form-builder/src/FormSection/SaveSection.tsx:60
 	__( 'a copy of this form section will be saved for use in other events but not loaded by default', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormSection/Tabs/Settings.tsx:24
+	// Reference: packages/form-builder/src/FormSection/Tabs/Settings.tsx:11
+	__( 'all', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/FormSection/Tabs/Settings.tsx:15
+	__( 'primary registrant', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/FormSection/Tabs/Settings.tsx:19
+	__( 'purchaser', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/FormSection/Tabs/Settings.tsx:23
+	__( 'registrants', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/FormSection/Tabs/Settings.tsx:43
 	__( 'show label', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/FormSection/Tabs/Settings.tsx:48
+	__( 'applies to', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/constants.ts:102
 	// Reference: packages/form-builder/src/state/utils.ts:436
