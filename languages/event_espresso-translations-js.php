@@ -1115,31 +1115,31 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/constants/src/datetime.ts:9
 	__( 'Inactive', 'event_espresso' ),
 
-	// Reference: packages/data/src/mutations/useMutationWithFeedback.ts:26
+	// Reference: packages/data/src/mutations/useMutationWithFeedback.ts:25
 	__( 'error creating %s', 'event_espresso' ),
 
-	// Reference: packages/data/src/mutations/useMutationWithFeedback.ts:27
+	// Reference: packages/data/src/mutations/useMutationWithFeedback.ts:26
 	__( 'error deleting %s', 'event_espresso' ),
 
-	// Reference: packages/data/src/mutations/useMutationWithFeedback.ts:28
+	// Reference: packages/data/src/mutations/useMutationWithFeedback.ts:27
 	__( 'error updating %s', 'event_espresso' ),
 
-	// Reference: packages/data/src/mutations/useMutationWithFeedback.ts:29
+	// Reference: packages/data/src/mutations/useMutationWithFeedback.ts:28
 	__( 'creating %s', 'event_espresso' ),
 
-	// Reference: packages/data/src/mutations/useMutationWithFeedback.ts:30
+	// Reference: packages/data/src/mutations/useMutationWithFeedback.ts:29
 	__( 'deleting %s', 'event_espresso' ),
 
-	// Reference: packages/data/src/mutations/useMutationWithFeedback.ts:31
+	// Reference: packages/data/src/mutations/useMutationWithFeedback.ts:30
 	__( 'updating %s', 'event_espresso' ),
 
-	// Reference: packages/data/src/mutations/useMutationWithFeedback.ts:32
+	// Reference: packages/data/src/mutations/useMutationWithFeedback.ts:31
 	__( 'successfully created %s', 'event_espresso' ),
 
-	// Reference: packages/data/src/mutations/useMutationWithFeedback.ts:33
+	// Reference: packages/data/src/mutations/useMutationWithFeedback.ts:32
 	__( 'successfully deleted %s', 'event_espresso' ),
 
-	// Reference: packages/data/src/mutations/useMutationWithFeedback.ts:34
+	// Reference: packages/data/src/mutations/useMutationWithFeedback.ts:33
 	__( 'successfully updated %s', 'event_espresso' ),
 
 	// Reference: packages/dates/src/components/DateRangePicker/DateRangePickerLegend.tsx:13
@@ -1617,10 +1617,10 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/form-builder/src/constants.ts:97
 	__( 'Password Confirmation', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/data/useElementMutator.ts:59
+	// Reference: packages/form-builder/src/data/useElementMutator.ts:54
 	__( 'element', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/data/useSectionMutator.ts:59
+	// Reference: packages/form-builder/src/data/useSectionMutator.ts:54
 	__( 'section', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/state/utils.ts:360
