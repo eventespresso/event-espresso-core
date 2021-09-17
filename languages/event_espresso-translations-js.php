@@ -618,8 +618,49 @@ $generated_i18n_strings = array(
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:98
 	__( 'Sold', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/registrationForm/RegistrationForm.tsx:9
+	// Reference: domains/core/admin/eventEditor/src/ui/registrationForm/ErrorMessage.tsx:33
+	// Reference: packages/form-builder/src/constants.ts:67
+	__( 'Text Input', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/registrationForm/ErrorMessage.tsx:34
+	// Reference: domains/core/admin/eventEditor/src/ui/registrationForm/constants.ts:32
+	__( 'Attendee First Name', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/registrationForm/ErrorMessage.tsx:39
+	/* translators: field name */
+	__( 'Registration form must have a field of type "%1$s" which maps to "%2$s"', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/registrationForm/ErrorMessage.tsx:40
+	// Reference: packages/form-builder/src/constants.ts:82
+	__( 'Email Address', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/registrationForm/ErrorMessage.tsx:41
+	// Reference: domains/core/admin/eventEditor/src/ui/registrationForm/constants.ts:40
+	__( 'Attendee Email Address', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/registrationForm/ErrorMessage.tsx:49
+	__( 'Please add the required fields', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/registrationForm/RegistrationForm.tsx:12
 	__( 'Registration Form', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/registrationForm/constants.ts:13
+	__( 'primary registrant', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/registrationForm/constants.ts:17
+	__( 'purchaser', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/registrationForm/constants.ts:21
+	__( 'registrants', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/registrationForm/constants.ts:36
+	__( 'Attendee Last Name', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/registrationForm/constants.ts:44
+	__( 'Attendee Address', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/registrationForm/constants.ts:9
+	__( 'all', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/ticketAssignmentsManager/components/ErrorMessage.tsx:18
 	__( 'Tickets must always have at least one date assigned to them but one or more of the tickets below does not have any. 
@@ -1299,28 +1340,31 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/form-builder/src/FormElement/Tabs/InputType.tsx:40
 	__( 'type', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:23
-	// Reference: packages/form-builder/src/FormSection/Tabs/Settings.tsx:33
+	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:26
+	// Reference: packages/form-builder/src/FormSection/Tabs/Settings.tsx:17
 	__( 'public label', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:30
-	// Reference: packages/form-builder/src/FormSection/Tabs/Settings.tsx:38
+	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:33
+	// Reference: packages/form-builder/src/FormSection/Tabs/Settings.tsx:22
 	__( 'admin label', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:37
+	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:40
 	__( 'content', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:45
+	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:48
 	__( 'options', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:48
+	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:51
 	__( 'placeholder', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:54
+	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:57
 	__( 'admin only', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:59
+	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:62
 	__( 'help text', 'event_espresso' ),
+
+	// Reference: packages/form-builder/src/FormElement/Tabs/Settings.tsx:71
+	__( 'maps to', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/FormElement/Tabs/Styles.tsx:15
 	// Reference: packages/form-builder/src/FormSection/Tabs/Styles.tsx:13
@@ -1409,40 +1453,28 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/form-builder/src/FormSection/FormSections.tsx:26
 	__( 'Add Form Section', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormSection/SaveSection.tsx:43
+	// Reference: packages/form-builder/src/FormSection/SaveSection.tsx:47
 	__( 'save form section for use in other forms', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormSection/SaveSection.tsx:47
+	// Reference: packages/form-builder/src/FormSection/SaveSection.tsx:51
 	__( 'save as', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormSection/SaveSection.tsx:51
+	// Reference: packages/form-builder/src/FormSection/SaveSection.tsx:55
 	__( 'default', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormSection/SaveSection.tsx:54
+	// Reference: packages/form-builder/src/FormSection/SaveSection.tsx:58
 	__( ' a copy of this form section will be automatically added to ALL new events', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormSection/SaveSection.tsx:57
+	// Reference: packages/form-builder/src/FormSection/SaveSection.tsx:61
 	__( 'shared', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormSection/SaveSection.tsx:60
+	// Reference: packages/form-builder/src/FormSection/SaveSection.tsx:64
 	__( 'a copy of this form section will be saved for use in other events but not loaded by default', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormSection/Tabs/Settings.tsx:11
-	__( 'all', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/FormSection/Tabs/Settings.tsx:15
-	__( 'primary registrant', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/FormSection/Tabs/Settings.tsx:19
-	__( 'purchaser', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/FormSection/Tabs/Settings.tsx:23
-	__( 'registrants', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/FormSection/Tabs/Settings.tsx:43
+	// Reference: packages/form-builder/src/FormSection/Tabs/Settings.tsx:27
 	__( 'show label', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormSection/Tabs/Settings.tsx:48
+	// Reference: packages/form-builder/src/FormSection/Tabs/Settings.tsx:33
 	__( 'applies to', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/constants.ts:102
@@ -1581,9 +1613,6 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/form-builder/src/constants.ts:64
 	__( 'allows you to add HTML like headings or text paragraphs to your form', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/constants.ts:67
-	__( 'Text Input', 'event_espresso' ),
-
 	// Reference: packages/form-builder/src/constants.ts:69
 	__( 'adds a text input that only accepts plain text', 'event_espresso' ),
 
@@ -1598,9 +1627,6 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/constants.ts:79
 	__( 'adds a textarea block that accepts text including simple HTML markup', 'event_espresso' ),
-
-	// Reference: packages/form-builder/src/constants.ts:82
-	__( 'Email Address', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/constants.ts:84
 	__( 'adds a text input that only accets a valid email address', 'event_espresso' ),
