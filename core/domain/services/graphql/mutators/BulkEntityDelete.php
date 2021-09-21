@@ -72,7 +72,7 @@ class BulkEntityDelete extends EntityMutator
             $deleted = [];
             $failed  = [];
 
-            foreach ($details['entityDbids'] as $key => $entityDbid) {
+            foreach ($details['entity_db_ids'] as $key => $entityDbid) {
                 $guid = $details['entityGuids'][ $key ];
                 $entity = $details['entities'][ $entityDbid ];
                 try {
