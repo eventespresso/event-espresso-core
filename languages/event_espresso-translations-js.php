@@ -1276,7 +1276,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/ee-components/src/bulkEdit/details/BulkEditDetails.tsx:20
 	__( 'any changes will be applied to ALL of the selected entities.', 'event_espresso' ),
 
-	// Reference: packages/ee-components/src/bulkEdit/details/BulkEditDetails.tsx:26
+	// Reference: packages/ee-components/src/bulkEdit/details/BulkEditDetails.tsx:27
 	__( 'Bulk edit details', 'event_espresso' ),
 
 	// Reference: packages/ee-components/src/bulkEdit/details/Submit.tsx:17
