@@ -54,7 +54,7 @@ class WordpressHeartbeat
     public function resolveRoutes()
     {
         $screenID = $this->request->getRequestParam('screen_id');
-        $heartbeat_data = $this->request->getRequestParam('data', []);
+        $heartbeat_data = $this->request->getRequestParam('data', [], 'arrayOf|string');
         if ($screenID === 'espresso_events') {
             $this->loader->getShared(
                 'EventEspresso\core\domain\services\admin\ajax\EventEditorHeartbeat'
