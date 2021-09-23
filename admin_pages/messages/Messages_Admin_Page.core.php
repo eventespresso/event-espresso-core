@@ -434,14 +434,14 @@ class Messages_Admin_Page extends EE_Admin_Page
             'insert_message_template'          => [
                 'func'       => '_insert_or_update_message_template',
                 'capability' => 'ee_edit_messages',
-                'args'       => ['new_template' => true],
+                'args'       => ['new' => true],
                 'noheader'   => true,
             ],
             'update_message_template'          => [
                 'func'       => '_insert_or_update_message_template',
                 'capability' => 'ee_edit_message',
                 'obj_id'     => $grp_id,
-                'args'       => ['new_template' => false],
+                'args'       => ['new' => false],
                 'noheader'   => true,
             ],
             'trash_message_template'           => [
