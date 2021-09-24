@@ -58,24 +58,22 @@ class Pricing_Admin_Page extends EE_Admin_Page
             ],
             'add_new_price'               => [
                 'func'       => '_edit_price_details',
-                'args'       => ['new_price' => true],
                 'capability' => 'ee_edit_default_prices',
             ],
             'edit_price'                  => [
                 'func'       => '_edit_price_details',
-                'args'       => ['new_price' => false],
                 'capability' => 'ee_edit_default_price',
                 'obj_id'     => $PRC_ID,
             ],
             'insert_price'                => [
                 'func'       => '_insert_or_update_price',
-                'args'       => ['new_price' => true],
+                'args'       => ['insert' => true],
                 'noheader'   => true,
                 'capability' => 'ee_edit_default_prices',
             ],
             'update_price'                => [
                 'func'       => '_insert_or_update_price',
-                'args'       => ['new_price' => false],
+                'args'       => ['insert' => false],
                 'noheader'   => true,
                 'capability' => 'ee_edit_default_price',
                 'obj_id'     => $PRC_ID,
