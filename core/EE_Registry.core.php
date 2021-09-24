@@ -1370,9 +1370,9 @@ class EE_Registry implements ResettableInterface
             $param_class = $this->class_cache->isAlias($param_class, $class_name)
                 ? $this->class_cache->getFqnForAlias($param_class, $class_name)
                 : $param_class;
+            // param is not even a class
             if (
-                // param is not even a class
-                $param_class === null
+                ! class_exists($param_class, false)
                 // and something already exists in the incoming arguments for this param
                 && array_key_exists($index, $argument_keys)
                 && array_key_exists($argument_keys[ $index ], $arguments)
@@ -1380,26 +1380,26 @@ class EE_Registry implements ResettableInterface
                 // so let's skip this argument and move on to the next
                 continue;
             }
-            if (
-                // parameter is type hinted as a class, exists as an incoming argument, AND it's the correct class
-                $param_class !== null
-                && isset($argument_keys[ $index ], $arguments[ $argument_keys[ $index ] ])
-                && $arguments[ $argument_keys[ $index ] ] instanceof $param_class
-            ) {
-                // skip this argument and move on to the next
-                continue;
-            }
-            if (
-                // parameter is type hinted as a class, and should be injected
-                $param_class !== null
-                && $this->_dependency_map->has_dependency_for_class($class_name, $param_class)
-            ) {
-                $arguments = $this->_resolve_dependency(
-                    $class_name,
-                    $param_class,
-                    $arguments,
-                    $index
-                );
+            // parameter is type hinted as a class
+            if ($param_class !== null) {
+                // parameter exists as an incoming argument, AND it's the correct class
+                if (
+                    array_key_exists($index, $argument_keys)
+                    && isset($arguments[ $argument_keys[ $index ] ])
+                    && $arguments[ $argument_keys[ $index ] ] instanceof $param_class
+                ) {
+                    // skip this argument and move on to the next
+                    continue;
+                }
+                // parameter should be injected
+                if ($this->_dependency_map->has_dependency_for_class($class_name, $param_class)) {
+                    $arguments = $this->_resolve_dependency(
+                        $class_name,
+                        $param_class,
+                        $arguments,
+                        $index
+                    );
+                }
             }
             if (empty($arguments[ $index ])) {
                 $default_value = $this->mirror->getParameterDefaultValue(
