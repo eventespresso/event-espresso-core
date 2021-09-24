@@ -1007,7 +1007,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
     protected static function release_reservations_for_tickets(
         array $tickets_with_reservations,
         array $valid_reserved_ticket_line_items = array(),
-        $source
+        $source = ''
     ) {
         $total_tickets_released = 0;
         $sold_out_events = array();
