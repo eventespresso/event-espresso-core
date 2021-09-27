@@ -5,11 +5,6 @@ namespace EventEspresso\tests;
 use EventEspresso\tests\includes\CoreLoader;
 
 /**
- * for PHP 8 compatibility
- */
-require '../vendor/yoast/phpunit-polyfills/phpunitpolyfills-autoload.php';
-
-/**
  * Bootstrap for EE Unit Tests
  */
 require __DIR__ . '/includes/CoreLoader.php';
