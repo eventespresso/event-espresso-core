@@ -197,10 +197,10 @@ class CoreLoader
 			$vendor = $this->findWordpressTestFolder(WP_TESTS_DIR, '/vendor/autoload.php');
 			if ( $vendor ) {
 				define('VENDOR_DIR',  "{$vendor}/vendor");
-				// define('EE_VENDOR_DIR', EE_PLUGIN_DIR . "vendor");
-				echo "\n\nVENDOR_DIR: " . VENDOR_DIR;
+			} else {
+				define('VENDOR_DIR', EE_PLUGIN_DIR . "vendor");
 			}
-				echo "\n\n";
+			echo "\n\nVENDOR_DIR: " . VENDOR_DIR . "\n\n";
         }
     }
 
