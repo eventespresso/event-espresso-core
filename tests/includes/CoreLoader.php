@@ -190,13 +190,9 @@ class CoreLoader
             echo "\nEE_TESTS_DIR: " . EE_TESTS_DIR . "\n\n";
             // define('EE_REST_API_DEBUG_MODE', true);
 
-            echo "\nWP_TESTS_DIR: " . WP_TESTS_DIR;
-            echo "\nEE_TESTS_DIR: " . EE_TESTS_DIR;
-
-            echo "\n\n Attempting to find WP_VENDOR_DIR ";
-            $vendor = $this->findWordpressTestFolder(WP_TESTS_DIR, '/vendor/autoload.php');
-            define('WP_VENDOR_DIR', "{$vendor}/vendor");
-            echo "\n\nWP_VENDOR_DIR: " . WP_VENDOR_DIR . "\n\n";
+            echo "\nWP_TESTS_DIR:  " . WP_TESTS_DIR;
+            echo "\nEE_TESTS_DIR:  " . EE_TESTS_DIR;
+            echo "\nEE_VENDOR_DIR: " . EE_VENDOR_DIR . "\n\n";
         }
     }
 
@@ -212,7 +208,7 @@ class CoreLoader
 
     protected function loadWP()
     {
-        require WP_VENDOR_DIR . '/yoast/phpunit-polyfills/phpunitpolyfills-autoload.php';
+        require EE_VENDOR_DIR . '/yoast/phpunit-polyfills/phpunitpolyfills-autoload.php';
         require WP_TESTS_DIR . '/includes/bootstrap.php';
         // Load the EE_specific testing tools
         require EE_TESTS_DIR . 'includes/EE_UnitTestCase.class.php';
