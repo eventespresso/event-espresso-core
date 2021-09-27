@@ -90,6 +90,9 @@ install_wp() {
 	fi
 
 	download https://raw.github.com/markoheijnen/wp-mysqli/master/db.php $WP_CORE_DIR/wp-content/db.php
+
+	cd $WP_CORE_DIR
+	composer install --optimize-autoloader --prefer-dist
 }
 
 install_test_suite() {

@@ -143,7 +143,7 @@ class CoreLoader
         if (is_readable($folder . $with_file)) {
             return $folder;
         }
-        if ($depth > 0) {
+        if ($depth > 0 && $folder !== '/') {
             $depth--;
             return $this->findFolderWithFile(dirname($folder), $with_file, $depth);
         }
@@ -192,7 +192,15 @@ class CoreLoader
 
             echo "\nWP_TESTS_DIR:  " . WP_TESTS_DIR;
             echo "\nEE_TESTS_DIR:  " . EE_TESTS_DIR;
-            echo "\nEE_VENDOR_DIR: " . EE_VENDOR_DIR . "\n\n";
+
+			echo "\n\n Attempting to find WP vendor DIR ";
+			$vendor = $this->findWordpressTestFolder(WP_TESTS_DIR, '/vendor/autoload.php');
+			if ( $vendor ) {
+				define('VENDOR_DIR',  "{$vendor}/vendor");
+				// define('EE_VENDOR_DIR', EE_PLUGIN_DIR . "vendor");
+				echo "\n\nVENDOR_DIR: " . VENDOR_DIR;
+			}
+				echo "\n\n";
         }
     }
 
@@ -208,7 +216,11 @@ class CoreLoader
 
     protected function loadWP()
     {
-        require EE_VENDOR_DIR . '/yoast/phpunit-polyfills/phpunitpolyfills-autoload.php';
+        if (defined('VENDOR_DIR')
+			&& is_readable(VENDOR_DIR . '/yoast/phpunit-polyfills/phpunitpolyfills-autoload.php')
+		) {
+        	require VENDOR_DIR . '/yoast/phpunit-polyfills/phpunitpolyfills-autoload.php';
+        }
         require WP_TESTS_DIR . '/includes/bootstrap.php';
         // Load the EE_specific testing tools
         require EE_TESTS_DIR . 'includes/EE_UnitTestCase.class.php';
