@@ -6,7 +6,6 @@ use DomainException;
 use EE_Dependency_Map;
 use EE_Error;
 use EE_Registry;
-use EEH_Activation;
 use EE_Psr4AutoloaderInit;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -190,6 +189,14 @@ class CoreLoader
             echo "\nWP_TESTS_DIR: " . WP_TESTS_DIR;
             echo "\nEE_TESTS_DIR: " . EE_TESTS_DIR . "\n\n";
             // define('EE_REST_API_DEBUG_MODE', true);
+
+            echo "\nWP_TESTS_DIR: " . WP_TESTS_DIR;
+            echo "\nEE_TESTS_DIR: " . EE_TESTS_DIR;
+
+            echo "\n\n Attempting to find WP_VENDOR_DIR ";
+            $vendor = $this->findWordpressTestFolder(WP_TESTS_DIR, '/vendor/autoload.php');
+            define('WP_VENDOR_DIR', "{$vendor}/vendor");
+            echo "\n\nWP_VENDOR_DIR: " . WP_VENDOR_DIR . "\n\n";
         }
     }
 
@@ -205,14 +212,18 @@ class CoreLoader
 
     protected function loadWP()
     {
+        require WP_VENDOR_DIR . '/yoast/phpunit-polyfills/phpunitpolyfills-autoload.php';
         require WP_TESTS_DIR . '/includes/bootstrap.php';
+        // Load the EE_specific testing tools
+        require EE_TESTS_DIR . 'includes/EE_UnitTestCase.class.php';
+        require EE_TESTS_DIR . 'includes/EE_REST_TestCase.php';
     }
 
 
     public function setupAndLoadEE()
     {
         tests_add_filter('FHEE__EE_System__detect_if_activation_or_upgrade__testsbypass', '__return_true');
-        //make sure EE_session does not load
+        // make sure EE_session does not load
         tests_add_filter('FHEE_load_EE_Session', '__return_false');
         // and don't set cookies
         tests_add_filter('FHEE__EE_Error__get_error__show_normal_exceptions', '__return_true');
@@ -275,28 +286,28 @@ class CoreLoader
         EE_Dependency_Map::register_class_loader('EE_Session_Mock');
         EE_Dependency_Map::register_dependencies(
             'EE_Session_Mock',
-            array(
-                'EventEspresso\core\services\cache\TransientCacheStorage'  => EE_Dependency_Map::load_from_cache,
+            [
+                'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\domain\values\session\SessionLifespan' => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\request\RequestInterface'     => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\session\SessionStartHandler'  => EE_Dependency_Map::load_from_cache,
                 'EE_Encryption'                                            => EE_Dependency_Map::load_from_cache,
-            )
+            ]
         );
         EE_Dependency_Map::register_dependencies(
             'EventEspresso\core\services\cache\BasicCacheManager',
-            array(
+            [
                 'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,
-                'EE_Session_Mock' => EE_Dependency_Map::load_from_cache
-            ),
+                'EE_Session_Mock'                                         => EE_Dependency_Map::load_from_cache,
+            ],
             true
         );
         EE_Dependency_Map::register_dependencies(
             'EventEspresso\core\services\cache\PostRelatedCacheManager',
-            array(
+            [
                 'EventEspresso\core\services\cache\TransientCacheStorage' => EE_Dependency_Map::load_from_cache,
-                'EE_Session_Mock' => EE_Dependency_Map::load_from_cache
-            ),
+                'EE_Session_Mock'                                         => EE_Dependency_Map::load_from_cache,
+            ],
             true
         );
     }
