@@ -51,6 +51,17 @@ jobs:
                   password: root
                   host: localhost
 
+              # run PHPUNIT from the vendor folder for PHP 8+
+            # - if: ${{ matrix.php-versions == '8.0' || matrix.php-versions == '8.1' }}
+            #   name: Run PHP Unit Tests
+            #   run: ./vendor/bin/phpunit --configuration tests/phpunit.xml
+
+            #   # run PHPUNIT normally for < PHP 8
+            # - if: ${{ matrix.php-versions == '7.1' || matrix.php-versions == '7.2' || matrix.php-versions == '7.3' || matrix.php-versions == '7.4' }}
+            #   name: Run PHP Unit Tests
+            #   run: phpunit --configuration tests/phpunit.xml
+
+              # run PHPUNIT from the vendor folder for PHP 8+
             - name: Run PHP Unit Tests
               run: phpunit --configuration tests/phpunit.xml
               # Allow failure for PHP 8.x
