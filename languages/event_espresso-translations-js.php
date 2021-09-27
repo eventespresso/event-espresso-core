@@ -393,7 +393,7 @@ $generated_i18n_strings = array(
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:96
 	__( 'later', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/DateCapacity.tsx:34
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/DateCapacity.tsx:31
 	/* translators: click to edit capacity<linebreak>(registration limit)… */
 	__( 'click to edit capacity%s(registration limit)…', 'event_espresso' ),
 
@@ -984,7 +984,11 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/TicketDetailsPanel.tsx:28
 	__( 'quantity', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/TicketQuantity.tsx:27
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/TicketQuantity.tsx:28
+	// Reference: packages/edtr-services/src/apollo/mutations/tickets/useUpdateTicketQtyByCapacity.ts:78
+	__( 'Ticket quantity has been adjusted because it cannot be more than the related event date capacity.', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/TicketQuantity.tsx:51
 	__( 'edit quantity of tickets available…', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/config.ts:10
