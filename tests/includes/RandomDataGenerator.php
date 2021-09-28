@@ -9,7 +9,7 @@ use stdClass;
  *
  * @author  Brent Christensen
  * @package EventEspresso\tests\includes
- * @since   $VID:$
+ * @since   4.10.14.p
  */
 class RandomDataGenerator
 {

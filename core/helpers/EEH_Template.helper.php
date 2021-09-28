@@ -1018,7 +1018,7 @@ class EEH_Template
     /**
      * @param string $image_name
      * @return string|null
-     * @since   $VID:$
+     * @since   4.10.14.p
      */
     public static function getScreenshotUrl($image_name)
     {

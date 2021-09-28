@@ -668,7 +668,7 @@ class EEH_Event_Query
 
     /**
      * @return RequestInterface
-     * @since   $VID:$
+     * @since   4.10.14.p
      */
     private static function getRequest()
     {

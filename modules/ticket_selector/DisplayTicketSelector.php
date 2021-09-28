@@ -843,7 +843,7 @@ class DisplayTicketSelector
 
     /**
      * @return EE_Tax_Config
-     * @since   $VID:$
+     * @since   4.10.14.p
      */
     protected function getTaxConfig()
     {

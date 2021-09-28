@@ -11,7 +11,7 @@ use EventEspresso\core\services\request\ResponseInterface;
  * @package     Event Espresso
  * @subpackage  /core/
  * @author      Brent Christensen
- * @deprecated  $VID:$
+ * @deprecated  4.10.14.p
  */
 final class EE_Request_Handler implements InterminableInterface
 {
@@ -65,7 +65,7 @@ final class EE_Request_Handler implements InterminableInterface
     /**
      * @param WP $WP
      * @return void
-     * @deprecated  $VID:$
+     * @deprecated  4.10.14.p
      */
     public function parse_request($WP = null)
     {
@@ -75,7 +75,7 @@ final class EE_Request_Handler implements InterminableInterface
     /**
      * @param WP $WP
      * @return void
-     * @deprecated  $VID:$
+     * @deprecated  4.10.14.p
      */
     public function set_request_vars($WP = null)
     {
@@ -86,7 +86,7 @@ final class EE_Request_Handler implements InterminableInterface
     /**
      * @param WP $WP
      * @return int
-     * @deprecated  $VID:$
+     * @deprecated  4.10.14.p
      */
     public function get_post_id_from_request($WP = null)
     {
@@ -97,7 +97,7 @@ final class EE_Request_Handler implements InterminableInterface
     /**
      * @param WP $WP
      * @return string
-     * @deprecated  $VID:$
+     * @deprecated  4.10.14.p
      */
     public function get_post_name_from_request($WP = null)
     {
@@ -108,7 +108,7 @@ final class EE_Request_Handler implements InterminableInterface
     /**
      * @param WP $WP
      * @return array
-     * @deprecated  $VID:$
+     * @deprecated  4.10.14.p
      */
     public function get_post_type_from_request($WP = null)
     {
@@ -121,7 +121,7 @@ final class EE_Request_Handler implements InterminableInterface
      *
      * @param WP $WP
      * @return string
-     * @deprecated  $VID:$
+     * @deprecated  4.10.14.p
      */
     public function get_current_page_permalink($WP = null)
     {
@@ -131,7 +131,7 @@ final class EE_Request_Handler implements InterminableInterface
 
     /**
      * @return bool
-     * @deprecated  $VID:$
+     * @deprecated  4.10.14.p
      */
     public function test_for_espresso_page()
     {
@@ -143,7 +143,7 @@ final class EE_Request_Handler implements InterminableInterface
      * @param $key
      * @param $value
      * @return void
-     * @deprecated  $VID:$
+     * @deprecated  4.10.14.p
      */
     public function set_notice($key, $value)
     {
@@ -154,7 +154,7 @@ final class EE_Request_Handler implements InterminableInterface
     /**
      * @param $key
      * @return mixed
-     * @deprecated  $VID:$
+     * @deprecated  4.10.14.p
      */
     public function get_notice($key)
     {
@@ -165,7 +165,7 @@ final class EE_Request_Handler implements InterminableInterface
     /**
      * @param $string
      * @return void
-     * @deprecated  $VID:$
+     * @deprecated  4.10.14.p
      */
     public function add_output($string)
     {
@@ -175,7 +175,7 @@ final class EE_Request_Handler implements InterminableInterface
 
     /**
      * @return string
-     * @deprecated  $VID:$
+     * @deprecated  4.10.14.p
      */
     public function get_output()
     {
@@ -186,7 +186,7 @@ final class EE_Request_Handler implements InterminableInterface
     /**
      * @param $item
      * @param $key
-     * @deprecated  $VID:$
+     * @deprecated  4.10.14.p
      */
     public function sanitize_text_field_for_array_walk(&$item, &$key)
     {
@@ -199,7 +199,7 @@ final class EE_Request_Handler implements InterminableInterface
     /**
      * @param null|bool $value
      * @return void
-     * @deprecated  $VID:$
+     * @deprecated  4.10.14.p
      */
     public function set_espresso_page($value = null)
     {
@@ -209,7 +209,7 @@ final class EE_Request_Handler implements InterminableInterface
 
     /**
      * @return bool
-     * @deprecated  $VID:$
+     * @deprecated  4.10.14.p
      */
     public function is_espresso_page()
     {
@@ -221,7 +221,7 @@ final class EE_Request_Handler implements InterminableInterface
      * returns sanitized contents of $_REQUEST
      *
      * @return array
-     * @deprecated  $VID:$
+     * @deprecated  4.10.14.p
      */
     public function params()
     {
@@ -234,7 +234,7 @@ final class EE_Request_Handler implements InterminableInterface
      * @param      $value
      * @param bool $override_ee
      * @return    void
-     * @deprecated  $VID:$
+     * @deprecated  4.10.14.p
      */
     public function set($key, $value, $override_ee = false)
     {
@@ -246,7 +246,7 @@ final class EE_Request_Handler implements InterminableInterface
      * @param      $key
      * @param null $default
      * @return    mixed
-     * @deprecated  $VID:$
+     * @deprecated  4.10.14.p
      */
     public function get($key, $default = null)
     {
@@ -259,7 +259,7 @@ final class EE_Request_Handler implements InterminableInterface
      *
      * @param $key
      * @return    boolean
-     * @deprecated  $VID:$
+     * @deprecated  4.10.14.p
      */
     public function is_set($key)
     {
@@ -272,7 +272,7 @@ final class EE_Request_Handler implements InterminableInterface
      *
      * @param $key
      * @return    void
-     * @deprecated  $VID:$
+     * @deprecated  4.10.14.p
      */
     public function un_set($key)
     {

@@ -9,7 +9,7 @@ use EventEspresso\core\services\request\sanitizers\RequestSanitizer;
  *
  * @author  Brent Christensen
  * @package EventEspresso\core\services\request
- * @since   $VID:$
+ * @since   4.10.14.p
  */
 class RequestParams
 {

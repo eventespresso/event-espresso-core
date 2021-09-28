@@ -77,7 +77,7 @@ class EED_Single_Page_Checkout extends EED_Module
 
     /**
      * @return RequestInterface
-     * @since   $VID:$
+     * @since   4.10.14.p
      */
     public static function getRequest()
     {
@@ -198,7 +198,7 @@ class EED_Single_Page_Checkout extends EED_Module
 
     /**
      * @return void
-     * @deprecated $VID:$
+     * @deprecated 4.10.14.p
      */
     public static function load_request_handler()
     {

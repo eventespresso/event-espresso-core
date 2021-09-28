@@ -280,7 +280,7 @@ class EEH_URL
 
     /**
      * @return RequestInterface
-     * @since   $VID:$
+     * @since   4.10.14.p
      */
     protected static function getRequest()
     {

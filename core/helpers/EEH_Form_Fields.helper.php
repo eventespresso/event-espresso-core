@@ -341,7 +341,7 @@ class EEH_Form_Fields
      * @param string $name
      * @param string $value
      * @return string
-     * @since   $VID:$
+     * @since   4.10.14.p
      */
     private static function adminHidden($class, $id, $name, $value)
     {
@@ -358,7 +358,7 @@ class EEH_Form_Fields
      * @param string $label
      * @param string $required
      * @return string
-     * @since   $VID:$
+     * @since   4.10.14.p
      */
     private static function adminLabel($id, $label, $required)
     {
@@ -380,7 +380,7 @@ class EEH_Form_Fields
      * @param string $value
      * @param string $label
      * @return string
-     * @since   $VID:$
+     * @since   4.10.14.p
      */
     private static function adminMulti($default, $class, $id, $name, $required, $tab_index, $type, $value, $label = '')
     {
@@ -413,7 +413,7 @@ class EEH_Form_Fields
      * @param int    $tab_index
      * @param array  $options
      * @return string
-     * @since   $VID:$
+     * @since   4.10.14.p
      */
     private static function adminSelect($default, $class, $id, $name, $required, $tab_index, $options = [])
     {
@@ -445,7 +445,7 @@ class EEH_Form_Fields
      * @param int    $tab_index
      * @param string $value
      * @return string
-     * @since   $VID:$
+     * @since   4.10.14.p
      */
     private static function adminText($class, $id, $name, $required, $tab_index, $value)
     {
@@ -469,7 +469,7 @@ class EEH_Form_Fields
      * @param int    $tab_index
      * @param string $value
      * @return string
-     * @since   $VID:$
+     * @since   4.10.14.p
      */
     private static function adminTextarea($class, $cols, $id, $name, $required, $rows, $tab_index, $value)
     {
@@ -497,7 +497,7 @@ class EEH_Form_Fields
      * @param string $value
      * @param array  $wp_editor_args
      * @return false|string
-     * @since   $VID:$
+     * @since   4.10.14.p
      */
     private static function adminWpEditor($class, $id, $name, $rows, $tab_index, $value, $wp_editor_args = [])
     {

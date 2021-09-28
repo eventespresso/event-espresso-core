@@ -14,7 +14,7 @@ use RuntimeException;
  *
  * @author  Brent Christensen
  * @package tests/testcases/core/services/encryption/EncryptionKeyManagerTest.php
- * @since   $VID:$
+ * @since   4.10.14.p
  * @group   encryption
  */
 class EncryptionKeyManagerTest extends TestCase

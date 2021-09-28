@@ -105,7 +105,7 @@ class Registrations_Admin_Page_Test extends EE_UnitTestCase
 
     /**
      * @param array $url_params
-     * @since   $VID:$
+     * @since   4.10.14.p
      */
     private function goToRegAdmin(array $url_params = [])
     {

@@ -13,7 +13,7 @@ use RuntimeException;
  * @package    Event Espresso
  * @subpackage core\services\encryption\openssl
  * @author     Brent Christensen
- * @since      $VID:$
+ * @since      4.10.14.p
  */
 abstract class OpenSSL implements EncryptionMethodInterface
 {

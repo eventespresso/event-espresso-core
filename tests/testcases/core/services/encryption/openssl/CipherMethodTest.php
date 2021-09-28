@@ -12,7 +12,7 @@ use RuntimeException;
  *
  * @author  Brent Christensen
  * @package EventEspresso\tests\testcases\core\services\encryption\openssl
- * @since   $VID:$
+ * @since   4.10.14.p
  * @group   encryption
  * @group   cipher-tests
  */

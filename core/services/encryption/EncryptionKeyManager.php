@@ -12,7 +12,7 @@ use RuntimeException;
  *
  * @author  Brent Christensen
  * @package EventEspresso\core\services\encryption
- * @since   $VID:$
+ * @since   4.10.14.p
  */
 class EncryptionKeyManager implements EncryptionKeyManagerInterface
 {

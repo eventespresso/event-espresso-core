@@ -14,7 +14,7 @@ class RequestSanitizer
      * @param string $delimiter if $param is a CSV like value (ex: 1,2,3,4,5...) then this is the value separator
      *                          (default: ",")
      * @return array|bool|float|int|string
-     * @since $VID:$
+     * @since 4.10.14.p
      */
     public function clean($param, $type = 'string', $delimiter = ',')
     {

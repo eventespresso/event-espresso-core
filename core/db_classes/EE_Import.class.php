@@ -39,7 +39,7 @@ class EE_Import implements ResettableInterface
 
     /**
      * @var EE_CSV
-     * @since $VID:$
+     * @since 4.10.14.p
      */
     private $EE_CSV;
 

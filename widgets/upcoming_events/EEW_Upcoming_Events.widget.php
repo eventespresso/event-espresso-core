@@ -353,7 +353,7 @@ class EEW_Upcoming_Events extends EspressoWidget
     /**
      * @param string $field_name
      * @return string
-     * @since   $VID:$
+     * @since   4.10.14.p
      */
     public function fieldID($field_name)
     {
@@ -364,7 +364,7 @@ class EEW_Upcoming_Events extends EspressoWidget
     /**
      * @param string $field_name
      * @return string
-     * @since   $VID:$
+     * @since   4.10.14.p
      */
     public function fieldName($field_name)
     {
@@ -376,7 +376,7 @@ class EEW_Upcoming_Events extends EspressoWidget
      * @param array $instance
      * @throws EE_Error
      * @throws ReflectionException
-     * @since   $VID:$
+     * @since   4.10.14.p
      */
     private function eventCategoriesSelector(array $instance)
     {
@@ -416,7 +416,7 @@ class EEW_Upcoming_Events extends EspressoWidget
 
     /**
      * @param array $instance
-     * @since   $VID:$
+     * @since   4.10.14.p
      */
     private function imageSizeSelector(array $instance)
     {
@@ -449,7 +449,7 @@ class EEW_Upcoming_Events extends EspressoWidget
 
     /**
      * @param array $instance
-     * @since   $VID:$
+     * @since   4.10.14.p
      */
     private function parseWidgetSettings(array $instance)
     {
@@ -482,7 +482,7 @@ class EEW_Upcoming_Events extends EspressoWidget
 
     /**
      * @return mixed|void
-     * @since   $VID:$
+     * @since   4.10.14.p
      */
     private function widgetTitle()
     {
@@ -501,7 +501,7 @@ class EEW_Upcoming_Events extends EspressoWidget
      * @return string
      * @throws EE_Error
      * @throws ReflectionException
-     * @since   $VID:$
+     * @since   4.10.14.p
      */
     private function widgetContent(WP_Post $post)
     {
@@ -538,7 +538,7 @@ class EEW_Upcoming_Events extends EspressoWidget
      * @param EE_Event $event
      * @return string|null
      * @throws EE_Error
-     * @since   $VID:$
+     * @since   4.10.14.p
      */
     private function eventUrl(EE_Event $event)
     {
@@ -573,7 +573,7 @@ class EEW_Upcoming_Events extends EspressoWidget
     /**
      * @return mixed|void
      * @throws EE_Error
-     * @since   $VID:$
+     * @since   4.10.14.p
      */
     private function queryWhereParams()
     {
@@ -611,7 +611,7 @@ class EEW_Upcoming_Events extends EspressoWidget
      * @return string
      * @throws EE_Error
      * @throws ReflectionException
-     * @since   $VID:$
+     * @since   4.10.14.p
      */
     private function linkClass(EE_Event $event)
     {
@@ -633,7 +633,7 @@ class EEW_Upcoming_Events extends EspressoWidget
      * @return mixed|string|void
      * @throws EE_Error
      * @throws ReflectionException
-     * @since   $VID:$
+     * @since   4.10.14.p
      */
     private function eventWidgetContent(EE_Event $event, $event_url = '')
     {
@@ -674,7 +674,7 @@ class EEW_Upcoming_Events extends EspressoWidget
      * @return string
      * @throws EE_Error
      * @throws ReflectionException
-     * @since   $VID:$
+     * @since   4.10.14.p
      */
     private function eventDates(EE_Event $event)
     {

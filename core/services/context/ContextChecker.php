@@ -91,7 +91,7 @@ class ContextChecker
      * @param ContextInterface $context
      * @param array            $acceptable_values
      * @return bool
-     * @since   $VID:$
+     * @since   4.10.14.p
      */
     public function evaluateContext(ContextInterface $context, array $acceptable_values = [])
     {

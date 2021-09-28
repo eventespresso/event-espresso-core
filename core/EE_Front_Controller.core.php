@@ -93,7 +93,7 @@ final class EE_Front_Controller
 
     /**
      * @return EE_Request_Handler
-     * @deprecated $VID:$
+     * @deprecated 4.10.14.p
      */
     public function Request_Handler()
     {
@@ -115,7 +115,7 @@ final class EE_Front_Controller
 
     /**
      * @return LegacyShortcodesManager
-     * @deprecated $VID:$
+     * @deprecated 4.10.14.p
      */
     public function getLegacyShortcodesManager()
     {

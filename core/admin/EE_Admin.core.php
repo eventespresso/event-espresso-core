@@ -162,7 +162,7 @@ final class EE_Admin implements InterminableInterface
 
 
     /**
-     * @deprecated $VID:$
+     * @deprecated 4.10.14.p
      */
     public function get_request()
     {

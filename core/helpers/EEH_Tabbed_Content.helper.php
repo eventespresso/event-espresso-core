@@ -132,7 +132,7 @@ class EEH_Tabbed_Content
     /**
      * @param string $tab_name
      * @return string
-     * @since   $VID:$
+     * @since   4.10.14.p
      */
     private static function generateTadID($tab_name)
     {
@@ -247,7 +247,7 @@ class EEH_Tabbed_Content
     /**
      * @param string $separator
      * @return string
-     * @since   $VID:$
+     * @since   4.10.14.p
      */
     private static function textLinkSeparator($separator)
     {

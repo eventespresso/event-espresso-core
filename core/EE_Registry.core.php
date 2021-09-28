@@ -77,7 +77,7 @@ class EE_Registry implements ResettableInterface
 
     /**
      * @var EE_Request_Handler $REQ
-     * @deprecated $VID:$
+     * @deprecated 4.10.14.p
      */
     public $REQ;
 

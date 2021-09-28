@@ -134,7 +134,7 @@ abstract class EE_Admin_Page_Init extends EE_Base
 
     /**
      * @return bool
-     * @since   $VID:$
+     * @since   4.10.14.p
      */
     private function verifyMenuMapSet()
     {
