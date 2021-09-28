@@ -1673,7 +1673,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         );
         $price = $ticket->ID() !== 0
             ? $ticket->get_first_related('Price', array('default_where_conditions' => 'none'))
-            : EE_Registry::instance()->load_model('Price')->create_default_object();
+            : null;
+        $price = $price instanceof EE_Price
+            ? $price
+            : EEM_Price::instance()->create_default_object();
         $price_args = array(
             'price_currency_symbol' => EE_Registry::instance()->CFG->currency->sign,
             'PRC_amount'            => $price->get('PRC_amount'),
