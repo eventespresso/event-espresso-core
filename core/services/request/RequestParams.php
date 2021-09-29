@@ -234,7 +234,7 @@ class RequestParams
      * @param        $key
      * @param null   $default
      * @param string $return
-     * @param array  $request_params
+     * @param mixed  $request_params
      * @return bool|mixed|null
      */
     private function parameterDrillDown(
@@ -242,7 +242,7 @@ class RequestParams
         $default = null,
         $callback = 'is_set',
         $return = 'value',
-        array $request_params = []
+        $request_params = []
     ) {
         $callback       = in_array($callback, ['is_set', 'get', 'match'], true)
             ? $callback
