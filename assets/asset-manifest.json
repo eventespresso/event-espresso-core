@@ -60,9 +60,9 @@
     "plugins.js": "/static/js/plugins.588fce28.js",
     "plugins.js.map": "/static/js/plugins.588fce28.js.map",
     "plugins.php": "/static/js/plugins.838213ef.asset.php",
-    "predicates.js": "/static/js/predicates.4f7315de.js",
-    "predicates.js.map": "/static/js/predicates.4f7315de.js.map",
-    "predicates.php": "/static/js/predicates.b2e7caf7.asset.php",
+    "predicates.js": "/static/js/predicates.7ef15e28.js",
+    "predicates.js.map": "/static/js/predicates.7ef15e28.js.map",
+    "predicates.php": "/static/js/predicates.5806e328.asset.php",
     "registry.js": "/static/js/registry.760b0382.js",
     "registry.js.map": "/static/js/registry.760b0382.js.map",
     "registry.php": "/static/js/registry.eca08021.asset.php",
@@ -204,8 +204,8 @@
       "static/js/plugins.838213ef.asset.php"
     ],
     "predicates": [
-      "static/js/predicates.4f7315de.js",
-      "static/js/predicates.b2e7caf7.asset.php"
+      "static/js/predicates.7ef15e28.js",
+      "static/js/predicates.5806e328.asset.php"
     ],
     "registry": [
       "static/js/registry.760b0382.js",
