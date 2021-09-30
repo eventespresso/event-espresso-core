@@ -43,5 +43,5 @@
     <?php echo absint($not_approved_regs); ?>
 </div>
 
-<?php echo esc_html($event_editor_overview_add); ?>
+<?php echo $event_editor_overview_add; ?>
 <br />
