@@ -1,1 +1,0 @@
-<?php return array('dependencies' => array('eventespresso-i18n', 'ramda', 'react', 'react-dom'), 'version' => 'b6dd914f1e3fc9544a1c4798944923fc');
