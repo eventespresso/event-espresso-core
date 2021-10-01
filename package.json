@@ -76,7 +76,7 @@
 		"@wordpress/api-fetch": "^5.1.1",
 		"@wordpress/autop": "^3.1.1",
 		"@wordpress/babel-plugin-makepot": "^4.1.4",
-		"@wordpress/babel-preset-default": "^6.2.0",
+		"@wordpress/babel-preset-default": "^6.3.2",
 		"@wordpress/block-editor": "^6.1.3",
 		"@wordpress/block-library": "^3.2.4",
 		"@wordpress/blocks": "^9.1.3",
