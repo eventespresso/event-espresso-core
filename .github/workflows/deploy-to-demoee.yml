@@ -12,7 +12,7 @@ jobs:
             - name: Deploy via ssh
               uses: garygrossgarten/github-action-ssh@release
               with:
-                  command: source deploy-scripts/deploy-to-demoee.sh "event-espresso-core"
+                  command: source ~/deploy-scripts/deploy-to-demoee.sh "event-espresso-core"
                   host: ${{ secrets.SERVER_EE_DEMO_SITES_HOST }}
                   username: ${{ secrets.SERVER_EE_DEVBOX_SITES_USERNAME }}
                   passphrase: ${{ secrets.SERVER_EE_DEVBOX_SITES_PASSPHRASE }}
