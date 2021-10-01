@@ -91,7 +91,7 @@
 		"@wordpress/element": "^2.20.3",
 		"@wordpress/eslint-plugin": "^9.0.6",
 		"@wordpress/hooks": "^3.1.1",
-		"@wordpress/is-shallow-equal": "^4.1.1",
+		"@wordpress/is-shallow-equal": "^4.2.0",
 		"@wordpress/jest-preset-default": "^7.0.5",
 		"@wordpress/keycodes": "^3.1.1",
 		"@wordpress/plugins": "^3.1.1",
