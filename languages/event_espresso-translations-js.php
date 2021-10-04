@@ -1603,7 +1603,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'Reset Button', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/constants.ts:209
-	__( 'adds a button that will reset the form back to its orginial state.', 'event_espresso' ),
+	__( 'adds a button that will reset the form back to its original state.', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/constants.ts:55
 	__( 'Form Section', 'event_espresso' ),
@@ -1633,7 +1633,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'adds a textarea block that accepts text including simple HTML markup', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/constants.ts:84
-	__( 'adds a text input that only accets a valid email address', 'event_espresso' ),
+	__( 'adds a text input that only accepts a valid email address', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/constants.ts:87
 	__( 'Email Confirmation', 'event_espresso' ),
