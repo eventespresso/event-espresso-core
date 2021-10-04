@@ -2,7 +2,7 @@ name: Deploy to demoee.org
 
 on:
     push:
-        branches: [master, deploy-to-demoee-org]
+        branches: [master]
 
 jobs:
     deploy-to-barista-site:
