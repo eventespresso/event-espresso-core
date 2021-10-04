@@ -1,0 +1,20 @@
+name: Automatic Rebase
+on:
+    issue_comment:
+        types: [created]
+jobs:
+    rebase:
+        name: Rebase
+        # Ensure it's run only by a member
+        if: ${{ github.event.comment.author_association == 'MEMBER' && github.event.issue.pull_request && contains(github.event.comment.body, '/rebase') }}
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout the latest commit
+              uses: actions/checkout@v2
+              with:
+                  token: ${{ secrets.GH_ACTIONS_ACCESS_TOKEN }}
+                  fetch-depth: 0 # otherwise, it will fail to push refs to repo
+            - name: Automatic Rebase
+              uses: cirrus-actions/rebase@1.4
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GH_ACTIONS_ACCESS_TOKEN }}
