@@ -15,8 +15,7 @@ jobs:
           github-token: ${{ secrets.GH_ACTIONS_ACCESS_TOKEN }}
           # Label used to mark issues as support requests
           support-label: 'category:support'
-          # Comment to post on issues marked as support requests. Add a link
-          # to a support page
+          # Comment to post on issues marked as support requests. Add a link to the support page
           issue-comment: >
             Hello @{issue-author}! We use the issue tracker exclusively for bug reports and feature requests.
             However, this issue appears to be a support request. Please use our [support forums](https://eventespresso/support/forums) to get help with the project.
