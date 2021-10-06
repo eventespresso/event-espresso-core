@@ -8,11 +8,11 @@ jQuery(document).ready(function($) {
 
 	if ($message.length ) {
         $message.remove();
-		if ($notices.size() ) {
+		if ($notices.length) {
 			target = $notices;
-		} else if ( $('#screen-meta-links').size() ) {
+		} else if ( $('#screen-meta-links').length ) {
 			target = $('#screen-meta-links');
-		} else if ( $('#wpbody-content').size() ) {
+		} else if ( $('#wpbody-content').length ) {
 			target = $('#wpbody-content');
 		} else {
 			target = $body;
@@ -43,7 +43,7 @@ jQuery(document).ready(function($) {
 
 	$('.dismiss-ee-nag-notice').click(function(event) {
 		var nag_notice = $(this).data('target');
-		if ( $('#'+nag_notice).size() ) {
+		if ( $('#'+nag_notice).length ) {
 			event.preventDefault();
 			$.ajax({
 				type: "POST",
