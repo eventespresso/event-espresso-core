@@ -2632,6 +2632,11 @@ class EE_Admin_Config extends EE_Config_Base
      */
     private $encode_session_data = false;
 
+    /**
+     * @var boolean
+     */
+    private $is_caffeinated;
+
 
     /**
      *    class constructor
@@ -2717,8 +2722,11 @@ class EE_Admin_Config extends EE_Config_Base
      */
     public function useAdvancedEditor()
     {
-        $domain = LoaderFactory::getLoader()->getShared('EventEspresso\core\domain\Domain');
-        return $this->useAdvancedEditor && $domain->isCaffeinated();
+        if ($this->is_caffeinated === null) {
+            $domain = LoaderFactory::getLoader()->getShared('EventEspresso\core\domain\Domain');
+            $this->is_caffeinated = $domain->isCaffeinated();
+        }
+        return $this->useAdvancedEditor && $this->is_caffeinated;
     }
 
     /**
