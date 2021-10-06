@@ -1,7 +1,6 @@
 <?php
 
 use EventEspresso\core\domain\services\admin\events\default_settings\AdvancedEditorAdminFormSection;
-use EventEspresso\core\domain\services\capabilities\FeatureFlags;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -108,18 +107,22 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
                 'capability' => 'manage_options',
                 'noheader'   => true,
             ],
-        ];        // don't load these meta boxes if using the advanced editor
+            'ticket_list_table' => [
+                'func'       => '_tickets_overview_list_table',
+                'capability' => 'ee_read_default_tickets',
+            ],
+        ];
         $this->_page_config['create_new']['metaboxes'][] = '_premium_event_editor_meta_boxes';
         $this->_page_config['edit']['metaboxes'][] = '_premium_event_editor_meta_boxes';
-        if (! $this->admin_config->useAdvancedEditor()) {
+        // don't load these meta boxes if using the advanced editor
+        if (
+            ! $this->admin_config->useAdvancedEditor()
+            || ! $this->feature->allowed('use_default_ticket_manager')
+        ) {
             $this->_page_config['create_new']['qtips'][] = 'EE_Event_Editor_Tips';
             $this->_page_config['edit']['qtips'][] = 'EE_Event_Editor_Tips';
 
             $legacy_editor_page_routes = [
-                'ticket_list_table' => [
-                    'func'       => '_tickets_overview_list_table',
-                    'capability' => 'ee_read_default_tickets',
-                ],
                 'trash_ticket'      => [
                     'func'       => '_trash_or_restore_ticket',
                     'capability' => 'ee_delete_default_ticket',
@@ -967,10 +970,11 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
     protected function _premium_event_editor_meta_boxes()
     {
         $this->verify_cpt_object();
-        /** @var FeatureFlags $flags */
-        $flags = $this->loader->getShared('EventEspresso\core\domain\services\capabilities\FeatureFlags');
         // check if the new EDTR reg options meta box is being used, and if so, don't load the legacy version
-        if (! $this->admin_config->useAdvancedEditor() || ! $flags->featureAllowed('use_reg_options_meta_box')) {
+        if (
+            ! $this->admin_config->useAdvancedEditor()
+            || ! $this->feature->allowed('use_reg_options_meta_box' )
+        ) {
             add_meta_box(
                 'espresso_event_editor_event_options',
                 esc_html__('Event Registration Options', 'event_espresso'),
@@ -1247,8 +1251,21 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
      */
     public function _tickets_overview_list_table()
     {
-        $this->_search_btn_label = esc_html__('Tickets', 'event_espresso');
-        $this->display_admin_list_table_page_with_no_sidebar();
+        if (
+            $this->admin_config->useAdvancedEditor()
+            && $this->feature->allowed('use_default_ticket_manager')
+        ) {
+            // check if the new EDTR reg options meta box is being used, and if so, don't load the legacy version
+            $this->_template_args['admin_page_content'] = EEH_Template::display_template(
+                EVENTS_CAF_TEMPLATE_PATH . 'default_tickets_moved_notice.template.php',
+                [],
+                true
+            );
+            $this->display_admin_page_with_no_sidebar();
+        } else {
+            $this->_search_btn_label = esc_html__('Tickets', 'event_espresso');
+            $this->display_admin_list_table_page_with_no_sidebar();
+        }
     }
 
 
