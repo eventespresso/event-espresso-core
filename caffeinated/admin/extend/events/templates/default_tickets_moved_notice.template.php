@@ -42,7 +42,7 @@
                 </p>
                 <img alt='event editor tickets list menu button'
                      class='ee-new-edtr-notice__img'
-                     src='<?php echo EE_IMAGES_URL . 'default-tickets-1.png'; ?>'
+                     src='<?php echo esc_url_raw(EE_IMAGES_URL . 'default-tickets-1.png'); ?>'
                 />
             </div>
         </li>
@@ -56,7 +56,7 @@
             </p>
             <img alt='event editor default tickets menu option'
                  class='ee-new-edtr-notice__img'
-                 src='<?php echo EE_IMAGES_URL . 'default-tickets-2.png'; ?>'
+                 src='<?php echo esc_url_raw(EE_IMAGES_URL . 'default-tickets-2.png'); ?>'
             />
             </div>
         </li>
@@ -70,7 +70,7 @@
             </p>
             <img alt='the default tickets editor'
                  class="ee-new-edtr-notice__img ee-new-edtr-notice__img--big"
-                 src='<?php echo EE_IMAGES_URL . 'default-tickets-3.png'; ?>'
+                 src='<?php echo esc_url_raw(EE_IMAGES_URL . 'default-tickets-3.png'); ?>'
             />
             </div>
         </li>
