@@ -102,18 +102,18 @@ class BlockRegistrationManager extends BlockManager
      * @since 4.9.71.p
      * @return array
      */
-    public function addEspressoBlockCategories(array $categories, $block_editor_context)
+    public function addEspressoBlockCategories(array $categories, $block_editor_context): array
     {
         // $block_editor_context can be either an object or a string
         // so checking it here, thus no type hinting in function params
-        if (! ( $block_editor_context instanceof WP_Block_Editor_Context )) {
+        if (! $block_editor_context instanceof WP_Block_Editor_Context) {
             return $categories;
         }
         return array_merge(
             $categories,
             [
                 [
-                    'slug' => 'event-espresso',
+                    'slug'  => 'event-espresso',
                     'title' => esc_html__('Event Espresso', 'event_espresso'),
                 ]
             ]
