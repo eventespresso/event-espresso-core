@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\domain\services\graphql\types;
 
+use EEM_Registration;
 use Exception;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -230,8 +231,10 @@ class Ticket extends TypeBase
             new GraphQLOutputField(
                 'registrationCount',
                 'Int',
-                'count_registrations',
-                esc_html__('Number of registrations for the ticket', 'event_espresso')
+                null,
+                esc_html__('Number of registrations for the ticket', 'event_espresso'),
+                null,
+                [$this, 'getRegistrationCount']
             ),
             new GraphQLField(
                 'reserved',
@@ -336,6 +339,35 @@ class Ticket extends TypeBase
     public function getIsSoldOut(EE_Ticket $source, array $args, AppContext $context, ResolveInfo $info): bool
     {
         return $source->ticket_status() === EE_Ticket::sold_out;
+    }
+
+
+    /**
+     * @param EE_Ticket   $source  The source that's passed down the GraphQL queries
+     * @param array       $args    The inputArgs on the field
+     * @param AppContext  $context The AppContext passed down the GraphQL tree
+     * @param ResolveInfo $info    The ResolveInfo passed down the GraphQL tree
+     * @return bool
+     * @throws Exception
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @throws UserError
+     * @throws UnexpectedEntityException
+     * @since $VID:$
+     */
+    public function getRegistrationCount(EE_Ticket $source, array $args, AppContext $context, ResolveInfo $info): int
+    {
+        $active_reg_statuses = EEM_Registration::active_reg_statuses();
+        return $source->count_registrations(
+            [
+                [
+                    'STS_ID' => ['IN', $active_reg_statuses],
+                    'REG_deleted' => 0,
+                ]
+            ]
+        );
     }
 
 
