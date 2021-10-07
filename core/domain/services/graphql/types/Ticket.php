@@ -357,16 +357,15 @@ class Ticket extends TypeBase
      * @throws UnexpectedEntityException
      * @since $VID:$
      */
-    public function getRegistrationCount(EE_Ticket $source, array $args, AppContext $context, ResolveInfo $info): bool
+    public function getRegistrationCount(EE_Ticket $source, array $args, AppContext $context, ResolveInfo $info): int
     {
         $active_reg_statuses = EEM_Registration::active_reg_statuses();
-        $reg_status_codes_csv = implode(',', $active_reg_statuses);
         return $source->count_registrations(
             [
                 [
-                    'STS_ID' => ['IN', $reg_status_codes_csv],
+                    'STS_ID' => ['IN', $active_reg_statuses],
                     'REG_deleted' => 0,
-                ],
+                ]
             ]
         );
     }
