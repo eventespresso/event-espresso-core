@@ -3,6 +3,8 @@ name: Deploy to demoee.org
 on:
     push:
         branches: [dev]
+    # Allow to run on demand
+    workflow_dispatch:
 
 jobs:
     deploy-to-barista-site:
