@@ -631,7 +631,7 @@ class EED_Messages extends EED_Module
         $request = self::getRequest();
         // first we check if we're in admin and not doing front ajax
         if ($request->isAdmin() && ! $request->isFrontAjax()) {
-            $status_change = $request->getRequestParam('txn_reg_status_change', [], 'arrayOf|int');
+            $status_change = $request->getRequestParam('txn_reg_status_change', [], 'int', true);
             // make sure appropriate admin params are set for sending messages
             if (! $status_change['send_notifications']) {
                 // no messages sent please.

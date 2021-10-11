@@ -303,7 +303,7 @@ class ProcessTicketSelector
                     // arrays of integers
                     case 'qty':
                         /** @var array $row_qty */
-                        $row_qty = $this->request->getRequestParam($input_to_clean . $id, [], 'arrayOf|int');
+                        $row_qty = $this->request->getRequestParam($input_to_clean . $id, [], 'int', true);
                         // if qty is coming from a radio button input, then we need to assemble an array of rows
                         if (! is_array($row_qty)) {
                             /** @var string $row_qty */
@@ -331,7 +331,7 @@ class ProcessTicketSelector
                         break;
                     // array of integers
                     case 'ticket_id':
-                        $ticket_ids = (array) $this->request->getRequestParam($input_to_clean . $id, [], 'arrayOf|int');
+                        $ticket_ids = (array) $this->request->getRequestParam($input_to_clean . $id, [], 'int', true);
                         // cycle thru values
                         foreach ($ticket_ids as $key => $value) {
                             // allow only integers
@@ -405,7 +405,6 @@ class ProcessTicketSelector
             // if the user is an admin that can edit registrations,
             // then we'll also allow them to add any tickets, even if they are expired
             $current_user_is_admin = current_user_can('ee_edit_registrations');
-            // \EEH_Debug_Tools::printr($current_user_is_admin, '$current_user_is_admin', __FILE__, __LINE__);
             // cycle thru the number of data rows sent from the event listing
             for ($x = 0; $x < $valid['rows']; $x++) {
                 // does this row actually contain a ticket quantity?
@@ -416,7 +415,6 @@ class ProcessTicketSelector
                     if (isset($valid['ticket_id'][ $x ])) {
                         // get ticket via the ticket id we put in the form
                         $ticket = $this->ticket_model->get_one_by_ID($valid['ticket_id'][ $x ]);
-                        // \EEH_Debug_Tools::printr($ticket->is_on_sale(), '$ticket->is_on_sale()', __FILE__, __LINE__);
                         if ($ticket instanceof EE_Ticket && ($ticket->is_on_sale() || $current_user_is_admin)) {
                             $valid_ticket = true;
                             $tickets_added += $this->addTicketToCart(
