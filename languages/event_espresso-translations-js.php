@@ -193,37 +193,40 @@ $generated_i18n_strings = array(
 	// Reference: domains/core/admin/eventEditor/src/ui/EventDescription.tsx:33
 	__( 'Event Description', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/EventRegistrationOptions/ActiveStatus.tsx:22
+	// Reference: domains/core/admin/eventEditor/src/ui/EventRegistrationOptions/ActiveStatus.tsx:29
 	__( 'Active status', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/EventRegistrationOptions/AltRegPage.tsx:14
+	// Reference: domains/core/admin/eventEditor/src/ui/EventRegistrationOptions/AltRegPage.tsx:12
 	__( 'Alternative Registration Page', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/EventRegistrationOptions/DefaultRegistrationStatus.tsx:15
+	// Reference: domains/core/admin/eventEditor/src/ui/EventRegistrationOptions/DefaultRegistrationStatus.tsx:26
 	__( 'Default Registration Status', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/EventRegistrationOptions/Donations.tsx:9
+	// Reference: domains/core/admin/eventEditor/src/ui/EventRegistrationOptions/Donations.tsx:8
 	__( 'Donations Enabled', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/EventRegistrationOptions/Donations.tsx:9
+	// Reference: domains/core/admin/eventEditor/src/ui/EventRegistrationOptions/Donations.tsx:8
 	__( 'Donations Disabled', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/EventRegistrationOptions/EventManager.tsx:16
 	__( 'Event Manager', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/EventRegistrationOptions/EventPhoneNumber.tsx:11
+	// Reference: domains/core/admin/eventEditor/src/ui/EventRegistrationOptions/EventPhoneNumber.tsx:15
 	__( 'Event Phone Number', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/EventRegistrationOptions/MaxRegistrations.tsx:12
+	// Reference: domains/core/admin/eventEditor/src/ui/EventRegistrationOptions/MaxRegistrations.tsx:13
 	__( 'Max Registrations per Transaction', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/EventRegistrationOptions/TicketSelector.tsx:9
+	// Reference: domains/core/admin/eventEditor/src/ui/EventRegistrationOptions/TicketSelector.tsx:8
 	__( 'Ticket Selector Enabled', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/EventRegistrationOptions/TicketSelector.tsx:9
+	// Reference: domains/core/admin/eventEditor/src/ui/EventRegistrationOptions/TicketSelector.tsx:8
 	__( 'Ticket Selector Disabled', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/EventRegistrationOptions/index.tsx:43
+	// Reference: domains/core/admin/eventEditor/src/ui/EventRegistrationOptions/index.tsx:41
+	__( 'Event Details', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/EventRegistrationOptions/index.tsx:47
 	__( 'Registration Options', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/DateRegistrationsLink.tsx:13
@@ -1154,7 +1157,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'SoldOut', 'event_espresso' ),
 
 	// Reference: packages/constants/src/datetime.ts:7
-	// Reference: packages/predicates/src/registration/statusOptions.ts:10
+	// Reference: packages/predicates/src/registration/statusOptions.ts:11
 	__( 'Cancelled', 'event_espresso' ),
 
 	// Reference: packages/constants/src/datetime.ts:9
@@ -1767,19 +1770,19 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/helpers/src/tickets/getStatusTextLabel.ts:23
 	__( 'on sale', 'event_espresso' ),
 
-	// Reference: packages/predicates/src/registration/statusOptions.ts:14
+	// Reference: packages/predicates/src/registration/statusOptions.ts:16
 	__( 'Declined', 'event_espresso' ),
 
-	// Reference: packages/predicates/src/registration/statusOptions.ts:18
+	// Reference: packages/predicates/src/registration/statusOptions.ts:21
 	__( 'Incomplete', 'event_espresso' ),
 
-	// Reference: packages/predicates/src/registration/statusOptions.ts:22
+	// Reference: packages/predicates/src/registration/statusOptions.ts:26
 	__( 'Not Approved', 'event_espresso' ),
 
-	// Reference: packages/predicates/src/registration/statusOptions.ts:26
+	// Reference: packages/predicates/src/registration/statusOptions.ts:31
 	__( 'Pending Payment', 'event_espresso' ),
 
-	// Reference: packages/predicates/src/registration/statusOptions.ts:30
+	// Reference: packages/predicates/src/registration/statusOptions.ts:36
 	__( 'Wait List', 'event_espresso' ),
 
 	// Reference: packages/predicates/src/registration/statusOptions.ts:6
