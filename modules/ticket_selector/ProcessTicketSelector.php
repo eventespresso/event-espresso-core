@@ -405,7 +405,7 @@ class ProcessTicketSelector
             // if the user is an admin that can edit registrations,
             // then we'll also allow them to add any tickets, even if they are expired
             $current_user_is_admin = current_user_can('ee_edit_registrations');
-            \EEH_Debug_Tools::printr($current_user_is_admin, '$current_user_is_admin', __FILE__, __LINE__);
+            // \EEH_Debug_Tools::printr($current_user_is_admin, '$current_user_is_admin', __FILE__, __LINE__);
             // cycle thru the number of data rows sent from the event listing
             for ($x = 0; $x < $valid['rows']; $x++) {
                 // does this row actually contain a ticket quantity?
@@ -416,7 +416,7 @@ class ProcessTicketSelector
                     if (isset($valid['ticket_id'][ $x ])) {
                         // get ticket via the ticket id we put in the form
                         $ticket = $this->ticket_model->get_one_by_ID($valid['ticket_id'][ $x ]);
-                        \EEH_Debug_Tools::printr($ticket->is_on_sale(), '$ticket->is_on_sale()', __FILE__, __LINE__);
+                        // \EEH_Debug_Tools::printr($ticket->is_on_sale(), '$ticket->is_on_sale()', __FILE__, __LINE__);
                         if ($ticket instanceof EE_Ticket && ($ticket->is_on_sale() || $current_user_is_admin)) {
                             $valid_ticket = true;
                             $tickets_added += $this->addTicketToCart(
