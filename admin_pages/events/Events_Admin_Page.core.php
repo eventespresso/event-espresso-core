@@ -1,6 +1,5 @@
 <?php
 
-use EventEspresso\core\domain\services\capabilities\FeatureFlags;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\orm\tree_traversal\NodeGroupDao;
@@ -1057,10 +1056,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 ? sanitize_text_field($this->_req_data['timezone_string'])
                 : null,
         ];
-        /** @var FeatureFlags $flags */
-        $flags = $this->loader->getShared('EventEspresso\core\domain\services\capabilities\FeatureFlags');
         // check if the new EDTR reg options meta box is being used, and if so, don't run updates for legacy version
-        if (! $this->admin_config->useAdvancedEditor() || ! $flags->featureAllowed('use_reg_options_meta_box')) {
+        if (! $this->admin_config->useAdvancedEditor() || ! $this->feature->allowed('use_reg_options_meta_box')) {
             $event_values['EVT_display_ticket_selector']     =
                 ! empty($this->_req_data['display_ticket_selector'])
                     ? 1
@@ -1648,10 +1645,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     {
         $this->verify_cpt_object();
         $use_advanced_editor = $this->admin_config->useAdvancedEditor();
-        /** @var FeatureFlags $flags */
-        $flags = $this->loader->getShared('EventEspresso\core\domain\services\capabilities\FeatureFlags');
         // check if the new EDTR reg options meta box is being used, and if so, don't load the legacy version
-        if (! $use_advanced_editor || ! $flags->featureAllowed('use_reg_options_meta_box')) {
+        if (! $use_advanced_editor || ! $this->feature->allowed('use_reg_options_meta_box')) {
             add_meta_box(
                 'espresso_event_editor_event_options',
                 esc_html__('Event Registration Options', 'event_espresso'),
@@ -1669,17 +1664,15 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 'normal',
                 'high'
             );
-        } else {
-            if ($flags->featureAllowed('use_reg_options_meta_box')) {
-                add_action(
-                    'add_meta_boxes_espresso_events',
-                    function () {
-                        global $current_screen;
-                        remove_meta_box('authordiv', $current_screen, 'normal');
-                    },
-                    99
-                );
-            }
+        } elseif ($this->feature->allowed('use_reg_options_meta_box')) {
+            add_action(
+                'add_meta_boxes_espresso_events',
+                function () {
+                    global $current_screen;
+                    remove_meta_box('authordiv', $current_screen, 'normal');
+                },
+                99
+            );
         }
         // NOTE: if you're looking for other metaboxes in here,
         // where a metabox has a related management page in the admin

@@ -1,7 +1,7 @@
 <?php
 
 use EventEspresso\core\domain\services\assets\EspressoLegacyAdminAssetManager;
-use EventEspresso\core\domain\services\assets\LegacyAccountingAssetManager;
+use EventEspresso\core\domain\services\capabilities\FeatureFlags;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\InterminableInterface;
@@ -186,6 +186,11 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      */
     protected $initialized = false;
 
+    /**
+     * @var FeatureFlags
+     */
+    protected $feature;
+
 
     /**
      * @Constructor
@@ -198,6 +203,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     public function __construct($routing = true)
     {
         $this->loader = LoaderFactory::getLoader();
+        $this->feature = $this->loader->getShared(FeatureFlags::class);
         $this->admin_config = $this->loader->getShared('EE_Admin_Config');
         if (strpos($this->_get_dir(), 'caffeinated') !== false) {
             $this->_is_caf = true;
@@ -1067,9 +1073,9 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         );
         if (! empty($func)) {
             if (is_array($func)) {
-                list($class, $method) = $func;
+                [$class, $method] = $func;
             } elseif (strpos($func, '::') !== false) {
-                list($class, $method) = explode('::', $func);
+                [$class, $method] = explode('::', $func);
             } else {
                 $class = $this;
                 $method = $func;
