@@ -184,12 +184,13 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
      * @param string     $key
      * @param mixed|null $default
      * @param string     $type      the expected data type for the parameter's value, ie: string, int, bool, etc
+     * @param bool       $is_array  if true, then parameter value will be treated as an array of $type
      * @param string     $delimiter for CSV type strings that should be returned as an array
      * @return array|bool|float|int|string
      */
-    public function getRequestParam($key, $default = null, $type = 'string', $delimiter = ',')
+    public function getRequestParam($key, $default = null, $type = 'string', $is_array = false, $delimiter = '')
     {
-        return $this->request_params->getRequestParam($key, $default, $type, $delimiter);
+        return $this->request_params->getRequestParam($key, $default, $type, $is_array, $delimiter);
     }
 
 
@@ -215,12 +216,13 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
      * @param string     $pattern
      * @param mixed|null $default
      * @param string     $type      the expected data type for the parameter's value, ie: string, int, bool, etc
+     * @param bool       $is_array  if true, then parameter value will be treated as an array of $type
      * @param string     $delimiter for CSV type strings that should be returned as an array
      * @return array|bool|float|int|string
      */
-    public function getMatch($pattern, $default = null, $type = 'string', $delimiter = ',')
+    public function getMatch($pattern, $default = null, $type = 'string', $is_array = false, $delimiter = '')
     {
-        return $this->request_params->getMatch($pattern, $default, $type, $delimiter);
+        return $this->request_params->getMatch($pattern, $default, $type, $is_array, $delimiter);
     }
 
 
