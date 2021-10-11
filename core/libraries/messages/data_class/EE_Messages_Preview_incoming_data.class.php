@@ -411,7 +411,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data
         $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
         // if we have an evt_id then we want to make sure we use that for the preview
         // (because a specific event template is being viewed);
-        $event_ids = $request->getRequestParam('evt_id', $event_ids, 'arrayOf|int');
+        $event_ids = $request->getRequestParam('evt_id', $event_ids, 'int', true);
         $limit     = ! empty($event_ids)
             ? null
             : apply_filters('FHEE__EE_Messages_Preview_incoming_data___get_some_events__limit', '0,1');

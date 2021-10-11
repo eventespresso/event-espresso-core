@@ -725,7 +725,7 @@ class EEH_Form_Fields
 
                             /** @var RequestInterface $request */
                             $request      = LoaderFactory::getLoader()->getShared(RequestInterface::class);
-                            $request_qstn = $request->getRequestParam('qstn', [], 'arrayOf|string');
+                            $request_qstn = $request->getRequestParam('qstn', [], 'string', true);
                             if (! empty($request_qstn) && isset($q_meta['input_id']) && isset($q_meta['att_nmbr'])) {
                                 // check for answer in $request_qstn in case we are reprocessing a form after an error
                                 if (isset($request_qstn[ $q_meta['input_id'] ][ $qstn_id ])) {
