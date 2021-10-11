@@ -26,7 +26,8 @@ class FrontendRequests extends PublicRoute
      */
     public function matchesCurrentRequest(): bool
     {
-        return ($this->request->isFrontend() || $this->request->isFrontAjax()) && ! $this->maintenance_mode->level();
+        return ($this->request->isFrontend() || $this->request->isFrontAjax() || $this->request->isIframe())
+               && ! $this->maintenance_mode->level();
     }
 
 
