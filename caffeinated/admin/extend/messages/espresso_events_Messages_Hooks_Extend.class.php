@@ -88,7 +88,7 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
 
     public function caf_updates($update_callbacks)
     {
-        $update_callbacks[] = array($this, 'attach_evt_message_templates');
+        $update_callbacks['attach_evt_message_templates'] = array($this, 'attach_evt_message_templates');
         return $update_callbacks;
     }
 
@@ -96,23 +96,35 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
     /**
      * Handles attaching Message Templates to the Event on save.
      *
-     * @param  EE_Event $event EE event object
-     * @param  array    $data  The request data from the form
+     * @param EE_Event $event EE event object
+     * @param array    $data  The request data from the form
      * @return bool success or fail
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function attach_evt_message_templates($event, $data)
+    public function attach_evt_message_templates(EE_Event $event, array $data): bool
     {
-        // first we remove all existing relations on the Event for message types.
-        $event->_remove_relations('Message_Template_Group');
-        // now let's just loop through the selected templates and add relations!
+        $success = true;
         if (isset($data['event_message_templates_relation'])) {
-            foreach ($data['event_message_templates_relation'] as $grp_ID) {
-                $event->_add_relation_to($grp_ID, 'Message_Template_Group');
+            // first get all existing relations on the Event for message types.
+            $existing_templates = EEM_Event_Message_Template::instance()->messageTemplateGroupIDsForEvent($event);
+            $current_templates  = $data['event_message_templates_relation'];
+            // new templates are those in the $current_templates array that don't exist in $existing_templates
+            $templates_to_add = array_diff($current_templates, $existing_templates);
+            foreach ($templates_to_add as $template_to_add) {
+                $added_template = $event->_add_relation_to($template_to_add, 'Message_Template_Group');
+                // toggle success to false if we don't get back a template group object
+                $success = $added_template instanceof EE_Message_Template_Group ? $success : false;
+            }
+            // templates to remove are those in the $existing_templates array that don't exist in $current_templates
+            $templates_to_remove = array_diff($existing_templates, $current_templates);
+            foreach ($templates_to_remove as $template_to_remove) {
+                $removed_template = $event->_remove_relation_to($template_to_remove, 'Message_Template_Group');
+                // toggle success to false if we don't get back a template group object
+                $success = $removed_template instanceof EE_Message_Template_Group ? $success : false;
             }
         }
-        // now save
-        return $event->save();
+        return $success;
     }
 
 
