@@ -139,7 +139,7 @@ class EEM_Event_Message_Template extends EEM_Base
      */
     public function messageTemplateGroupIDsForEvent(EE_Event $event): array
     {
-        $results = $this->get_col( [['EVT_ID' => $event->ID()]], 'GRP_ID' );
+        $results = $this->get_col([['EVT_ID' => $event->ID()]], 'GRP_ID');
         return $results !== false ? $results : [];
     }
 }

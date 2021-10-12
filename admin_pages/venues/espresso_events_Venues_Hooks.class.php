@@ -79,7 +79,7 @@ class espresso_events_Venues_Hooks extends EE_Admin_Hooks
     public function modify_callbacks($callbacks)
     {
         // first remove default venue callback
-        unset($callbacks['_default_venue_update' ]);
+        unset($callbacks['_default_venue_update']);
         // now let's add the caf version
         $callbacks['caf_venue_update'] = array($this, 'caf_venue_update');
         return $callbacks;
