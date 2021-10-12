@@ -23,7 +23,7 @@ class RequestSanitizer
         // check if we are getting an improperly typed array and correct
         $is_array = $is_array || is_array($param);
         if ($is_array) {
-            $values        = [];
+            $values = [];
             foreach ($param as $key => $value) {
                 $values[ $key ] = $this->clean($value, $type, is_array($value), $delimiter);
             }
