@@ -49,12 +49,14 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
         $this->_name = 'pricing';
         // capability check
         if (
-            EE_Registry::instance()->CFG->admin->useAdvancedEditor() ||
-            ! EE_Registry::instance()->CAP->current_user_can(
+            $this->_adminpage_obj->adminConfig()->useAdvancedEditor()
+            || ! EE_Registry::instance()->CAP->current_user_can(
                 'ee_read_default_prices',
                 'advanced_ticket_datetime_metabox'
             )
         ) {
+            $this->_metaboxes      = [];
+            $this->_scripts_styles = [];
             return;
         }
         $this->_setup_metaboxes();
