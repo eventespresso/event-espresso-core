@@ -58,7 +58,7 @@ class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks
     public function modify_callbacks($callbacks)
     {
         // now let's add the question group callback
-        $callbacks[] = array($this, 'primary_question_group_update');
+        $callbacks['primary_question_group_update'] = array($this, 'primary_question_group_update');
         return $callbacks;
     }
 

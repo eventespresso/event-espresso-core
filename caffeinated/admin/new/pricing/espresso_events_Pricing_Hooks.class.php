@@ -256,12 +256,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
      */
     public function caf_updates(array $update_callbacks)
     {
-        foreach ($update_callbacks as $key => $callback) {
-            if ($callback[1] === '_default_tickets_update') {
-                unset($update_callbacks[ $key ]);
-            }
-        }
-        $update_callbacks[] = array($this, 'datetime_and_tickets_caf_update');
+        unset($update_callbacks['_default_tickets_update']);
+        $update_callbacks['datetime_and_tickets_caf_update'] = array($this, 'datetime_and_tickets_caf_update');
         return $update_callbacks;
     }
 
