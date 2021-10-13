@@ -2,6 +2,7 @@
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderFactory;
 
 /**
  * EEH_Line_Item
@@ -966,6 +967,11 @@ class EEH_Line_Item
      */
     public static function apply_taxes(EE_Line_Item $total_line_item, $update_txn_status = false)
     {
+        /** @var EE_Admin_Config $admin_config */
+        $admin_config = LoaderFactory::getShared(EE_Admin_Config::class);
+        if ($admin_config->useAdvancedEditor()) {
+            return false;
+        }
         /** @type EEM_Price $EEM_Price */
         $EEM_Price = EE_Registry::instance()->load_model('Price');
         // get array of taxes via Price Model
