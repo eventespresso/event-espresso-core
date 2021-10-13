@@ -24,12 +24,11 @@
         </span>
         <div class="switch">
             <?php $checked = $on_off_status ? ' checked="checked"' : ''; ?>
-            <label for="ee-on-off-toggle-<?php echo esc_attr($messenger); ?>">
-                <input id="ee-on-off-toggle-<?php echo esc_attr($messenger); ?>" type="checkbox"
-                       class="ee-on-off-toggle ee-toggle-round-flat"<?php echo esc_attr($checked); ?>
-                       value="<?php echo esc_attr($on_off_action); ?>"
-                />
-            </label>
+            <input id="ee-on-off-toggle-<?php echo esc_attr($messenger); ?>" type="checkbox"
+                   class="ee-on-off-toggle ee-toggle-round-flat"<?php echo esc_attr($checked); ?>
+                   value="<?php echo esc_attr($on_off_action); ?>"
+            />
+            <label for="ee-on-off-toggle-<?php echo esc_attr($messenger); ?>"></label>
         </div>
     </div> <!-- end .activate_messages_on_off_toggle_container -->
     <div class="messenger-description">
