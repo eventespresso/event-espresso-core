@@ -170,7 +170,8 @@ class DefaultPrices implements DefaultEntityGeneratorInterface
                 $order = $default_price_clone->get('PRC_order');
 
                 // enforce base price order to be 1 and 5 if the order is not set for a modifier
-                $order = $is_base_price ? 1 : ($order ?? 5);
+                $order = $is_base_price ? 1 : $order;
+                $order = $order ?? 5;
 
                 $default_price_clone->set('PRC_order', $order);
 
