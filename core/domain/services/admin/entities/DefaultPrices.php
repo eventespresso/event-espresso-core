@@ -166,6 +166,15 @@ class DefaultPrices implements DefaultEntityGeneratorInterface
             if (! $is_base_price || ! $has_base_price) {
                 $default_price_clone->set('PRC_ID', null);
                 $default_price_clone->set('PRC_is_default', false);
+
+                $order = $default_price_clone->get('PRC_order');
+
+                // enforce base price order to be 1 and 5 if the order is not set for a modifier
+                $order = $is_base_price ? 1 : $order;
+                $order = $order ?? 5;
+
+                $default_price_clone->set('PRC_order', $order);
+
                 $default_price_clone->save();
                 $default_price_clone->_add_relation_to($ticket, 'Ticket');
                 $this->new_prices[ $default_price_clone->ID() ] = $default_price_clone;
@@ -202,6 +211,8 @@ class DefaultPrices implements DefaultEntityGeneratorInterface
             );
         }
         $new_base_price->set('PRT_ID', $base_price_type->ID());
+        // set base price order to 1
+        $new_base_price->set('PRC_order', 1);
         $new_base_price->set('PRC_is_default', false);
         $new_base_price->save();
         $new_base_price->_add_relation_to($ticket, 'Ticket');
