@@ -106,6 +106,9 @@ class EE_Taxes extends EE_Base
         $prices = $ticket->get_many_related(
             'Price',
             [
+                0 => [
+                    'Price_Type.PBT_ID' => ['NOT', EEM_Price_Type::base_type_tax],
+                ],
                 'default_where_conditions' => 'none',
                 'order_by'                 => ['PRC_order' => 'ASC'],
             ]
