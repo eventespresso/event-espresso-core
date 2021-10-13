@@ -24,6 +24,12 @@ class espresso_events_Registration_Form_Hooks_Extend extends espresso_events_Reg
      */
     protected function _extend_properties()
     {
+        if (
+            $this->_adminpage_obj->adminConfig()->useAdvancedEditor()
+            && $this->_adminpage_obj->feature()->allowed('use_reg_form_builder')
+        ) {
+            return;
+        }
         $this->_metaboxes = array_merge(
             $this->_metaboxes,
             array(

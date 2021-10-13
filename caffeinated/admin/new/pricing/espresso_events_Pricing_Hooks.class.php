@@ -49,12 +49,14 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
         $this->_name = 'pricing';
         // capability check
         if (
-            EE_Registry::instance()->CFG->admin->useAdvancedEditor() ||
-            ! EE_Registry::instance()->CAP->current_user_can(
+            $this->_adminpage_obj->adminConfig()->useAdvancedEditor()
+            || ! EE_Registry::instance()->CAP->current_user_can(
                 'ee_read_default_prices',
                 'advanced_ticket_datetime_metabox'
             )
         ) {
+            $this->_metaboxes      = [];
+            $this->_scripts_styles = [];
             return;
         }
         $this->_setup_metaboxes();
@@ -256,12 +258,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
      */
     public function caf_updates(array $update_callbacks)
     {
-        foreach ($update_callbacks as $key => $callback) {
-            if ($callback[1] === '_default_tickets_update') {
-                unset($update_callbacks[ $key ]);
-            }
-        }
-        $update_callbacks[] = array($this, 'datetime_and_tickets_caf_update');
+        unset($update_callbacks['_default_tickets_update']);
+        $update_callbacks['datetime_and_tickets_caf_update'] = array($this, 'datetime_and_tickets_caf_update');
         return $update_callbacks;
     }
 

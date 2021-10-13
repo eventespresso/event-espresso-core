@@ -1097,23 +1097,25 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         $event         = $this->_event_model()->get_one([$get_one_where]);
         // the following are default callbacks for event attachment updates
         // that can be overridden by caffeinated functionality and/or addons.
+        $event_update_callbacks = [];
+        if (! $this->admin_config->useAdvancedEditor()) {
+            $event_update_callbacks['_default_venue_update']   = [$this, '_default_venue_update'];
+            $event_update_callbacks['_default_tickets_update'] = [$this, '_default_tickets_update'];
+        }
         $event_update_callbacks = apply_filters(
             'FHEE__Events_Admin_Page___insert_update_cpt_item__event_update_callbacks',
-            [
-                [$this, '_default_venue_update'],
-                [$this, '_default_tickets_update'],
-            ]
+            $event_update_callbacks
         );
         $att_success            = true;
         foreach ($event_update_callbacks as $e_callback) {
-            $_success = is_callable($e_callback)
+            $results = is_callable($e_callback)
                 ? $e_callback($event, $this->_req_data)
                 : false;
             // if ANY of these updates fail then we want the appropriate global error message
-            $att_success = ! $att_success ? $att_success : $_success;
+            $att_success = $results !== false ? $att_success : false;
         }
         // any errors?
-        if ($success && false === $att_success) {
+        if ($success && $att_success === false) {
             EE_Error::add_error(
                 esc_html__(
                     'Event Details saved successfully but something went wrong with saving attachments.',

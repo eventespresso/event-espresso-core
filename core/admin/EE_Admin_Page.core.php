@@ -220,6 +220,24 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
 
 
     /**
+     * @return EE_Admin_Config
+     */
+    public function adminConfig(): EE_Admin_Config
+    {
+        return $this->admin_config;
+    }
+
+
+    /**
+     * @return FeatureFlags
+     */
+    public function feature(): FeatureFlags
+    {
+        return $this->feature;
+    }
+
+
+    /**
      * This logic used to be in the constructor, but that caused a chicken <--> egg scenario
      * for child classes that needed to set properties prior to these methods getting called,
      * but also needed the parent class to have its construction completed as well.

@@ -24,8 +24,15 @@ class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks
 
     protected function _set_hooks_properties()
     {
-
         $this->_name = 'registration_form';
+        if (
+            $this->_adminpage_obj->adminConfig()->useAdvancedEditor()
+            && $this->_adminpage_obj->feature()->allowed('use_reg_form_builder')
+        ) {
+            $this->_metaboxes      = [];
+            $this->_scripts_styles = [];
+            return;
+        }
         $this->_metaboxes = array(
             0 => array(
                 'page_route' => array('edit', 'create_new'),
@@ -58,7 +65,7 @@ class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks
     public function modify_callbacks($callbacks)
     {
         // now let's add the question group callback
-        $callbacks[] = array($this, 'primary_question_group_update');
+        $callbacks['primary_question_group_update'] = array($this, 'primary_question_group_update');
         return $callbacks;
     }
 
