@@ -3,6 +3,7 @@
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
+use EventEspresso\core\services\loaders\LoaderFactory;
 
 /**
  * EE_Ticket class
@@ -551,10 +552,13 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      *
      * @return EE_Price[]
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function get_ticket_taxes_for_admin()
+    public function get_ticket_taxes_for_admin(): array
     {
-        return EE_Taxes::get_taxes_for_admin();
+        /** @var EE_Admin_Config $admin_config */
+        $admin_config = LoaderFactory::getShared(EE_Admin_Config::class);
+        return $admin_config->useAdvancedEditor() ? $this->tax_price_modifiers() : EE_Taxes::get_taxes_for_admin();
     }
 
 
@@ -602,7 +606,11 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     public function get_ticket_total_with_taxes($no_cache = false)
     {
         if ($this->_ticket_total_with_taxes === null || $no_cache) {
-            $this->_ticket_total_with_taxes = $this->get_ticket_subtotal() + $this->get_ticket_taxes_total_for_admin();
+            /** @var EE_Admin_Config $admin_config */
+            $admin_config = LoaderFactory::getShared(EE_Admin_Config::class);
+            $this->_ticket_total_with_taxes = $admin_config->useAdvancedEditor()
+                ? $this->ticket_price()
+                : $this->get_ticket_subtotal() + $this->get_ticket_taxes_total_for_admin();
         }
         return (float) $this->_ticket_total_with_taxes;
     }
