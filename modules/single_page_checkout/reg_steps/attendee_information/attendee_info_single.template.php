@@ -31,7 +31,7 @@ if (count($registrations) > 0) {
     <div id="spco-attendee-panel-dv-<?php echo $ticketID; ?>"
         class="spco-attendee-panel-dv spco-attendee-ticket-<?php echo $ticketID; ?>">
 
-        <div class="spco-ticket-info-dv small-text">
+        <div class="spco-ticket-info-dv">
             <?php if (!is_admin()) : ?>
                 <h5><?php esc_html_e('Details', 'event_espresso'); ?></h5>
             <?php endif; ?>

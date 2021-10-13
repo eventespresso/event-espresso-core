@@ -289,9 +289,9 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
             $line_item->unit_price_no_code(),
             $line_item
         );
-        $html .= EEH_HTML::td($price, '', 'item_c jst-rght');
+        $html .= EEH_HTML::td($price, '', 'spco-nowrap item_c jst-rght');
         // quantity td
-        $html .= EEH_HTML::td($line_item->quantity(), '', 'item_l jst-rght');
+        $html .= EEH_HTML::td($line_item->quantity(), '', 'spco-nowrap item_l jst-rght');
         $this->_total_items += $line_item->quantity();
         // determine total for line item
         $total = apply_filters(
@@ -304,7 +304,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         $html .= EEH_HTML::td(
             EEH_Template::format_currency($total, false, false),
             '',
-            'item_r jst-rght'
+            'spco-nowrap item_r jst-rght'
         );
         // end of row
         $html .= EEH_HTML::trx();
@@ -355,12 +355,12 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         $html .= EEH_HTML::td($name_and_desc, '', 'item_l');
         // price td
         if ($line_item->is_percent()) {
-            $html .= EEH_HTML::td($line_item->percent() . '%', '', 'item_c jst-rght');
+            $html .= EEH_HTML::td($line_item->percent() . '%', '', 'spco-nowrap item_c jst-rght');
         } else {
-            $html .= EEH_HTML::td($line_item->unit_price_no_code(), '', 'item_c jst-rght');
+            $html .= EEH_HTML::td($line_item->unit_price_no_code(), '', 'spco-nowrap item_c jst-rght');
         }
         // quantity td
-        $html .= EEH_HTML::td($line_item->quantity(), '', 'item_l jst-rght');
+        $html .= EEH_HTML::td($line_item->quantity(), '', 'spco-nowrap item_l jst-rght');
         // $total = $line_item->total() * $line_item->quantity();
         $total = $line_item->total();
         if (isset($options['event_id'], $this->_events[ $options['event_id'] ])) {
@@ -370,7 +370,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         $html .= EEH_HTML::td(
             EEH_Template::format_currency($total, false, false),
             '',
-            'item_r jst-rght'
+            'spco-nowrap item_r jst-rght'
         );
         // end of row
         $html .= EEH_HTML::trx();
@@ -421,10 +421,10 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
                     false
                 ),
                 '',
-                'item_c jst-rght'
+                'spco-nowrap item_c jst-rght'
             );
         } else {
-            $html .= EEH_HTML::td($line_item->unit_price_no_code(), '', 'item_c jst-rght');
+            $html .= EEH_HTML::td($line_item->unit_price_no_code(), '', 'spco-nowrap item_c jst-rght');
         }
         // no quantity td
         $html .= EEH_HTML::td();
@@ -468,7 +468,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
             'item_l sub-item'
         );
         // percent td
-        $html .= EEH_HTML::td($line_item->percent() . '%', '', ' jst-rght', '');
+        $html .= EEH_HTML::td($line_item->percent() . '%', '', 'spco-nowrap jst-rght', '');
         // empty td (price)
         $html .= EEH_HTML::td(EEH_HTML::nbsp());
         // total td
@@ -479,7 +479,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
                 false
             ),
             '',
-            'item_r jst-rght'
+            'spco-nowrap item_r jst-rght'
         );
         // end of row
         $html .= EEH_HTML::trx();
@@ -516,7 +516,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
             $html .= EEH_HTML::td(
                 EEH_Template::format_currency($line_item->total(), false, false),
                 '',
-                'total jst-rght'
+                'spco-nowrap total jst-rght'
             );
             // end of row
             $html .= EEH_HTML::trx();
@@ -553,7 +553,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
             $html .= EEH_HTML::td(
                 EEH_Template::format_currency($options['sub_total'], false, false),
                 '',
-                'total jst-rght'
+                'spco-nowrap total jst-rght'
             );
             // end of row
             $html .= EEH_HTML::trx();
@@ -581,7 +581,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         $html .= EEH_HTML::td(
             EEH_Template::format_currency($line_item->total(), false, false),
             '',
-            'total jst-rght'
+            'spco-nowrap total jst-rght'
         );
         // end of row
         $html .= EEH_HTML::trx();
@@ -640,7 +640,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
                                 false
                             ),
                             '',
-                            'total jst-rght'
+                            'spco-nowrap total jst-rght'
                         );
                         // end of row
                         $html .= EEH_HTML::trx();
@@ -661,7 +661,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
                     $html .= EEH_HTML::td(
                         EEH_Template::format_currency($owing, false, false),
                         '',
-                        'total jst-rght'
+                        'spco-nowrap total jst-rght'
                     );
                     // end of row
                     $html .= EEH_HTML::trx();

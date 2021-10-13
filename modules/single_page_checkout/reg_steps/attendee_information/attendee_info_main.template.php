@@ -40,7 +40,7 @@ if (count($registrations) > 0) {
                 <?php } ?>
                 <?php if ($registration->ticket()->ID() !== $prev_ticket) { ?>
                     <?php if (! $revisit) { ?>
-                        <div class="spco-ticket-info-dv small-text">
+                        <div class="spco-ticket-info-dv">
                             <?php if (!is_admin()) : ?>
                                 <h5><?php _e('Details', 'event_espresso'); ?></h5>
                             <?php endif; ?>
