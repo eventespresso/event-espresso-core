@@ -775,12 +775,11 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'Save', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/defaultTickets/multiStep/Modal.tsx:22
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/multiStep/Modal.tsx:26
 	/* translators: %s ticket id */
 	__( 'Edit ticket %s', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/defaultTickets/multiStep/Modal.tsx:25
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/multiStep/Modal.tsx:29
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/multiStep/Modal.tsx:30
 	__( 'New Ticket Details', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/defaultTickets/multiStep/TicketFormSteps.tsx:10
@@ -808,6 +807,10 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/multiStep/FooterButtons.tsx:50
 	__( 'Save and assign dates', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/multiStep/Modal.tsx:26
+	/* translators: 1 ticket name, 2 ticket id */
+	__( 'Edit ticket "%1$s" - %2$s', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:111
 	__( 'Ticket Sales', 'event_espresso' ),
