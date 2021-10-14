@@ -8,6 +8,7 @@
     --ee-spco-grey: rgba(147, 148, 150, 0.75); /*#939496;*/
     --ee-spco-grey-high-constrast: rgba(111, 112, 115, 0.75); /*#6f7073;*/
     --ee-spco-grey-super-high-constrast: rgba(91, 92, 95, 0.75); /*#5b5c5f;*/
+    --ee-spco-charcoal: rgba(48, 48, 51, 0.75); /*#5b5c5f;*/
 }
 
 #ee-single-page-checkout-dv {
@@ -55,7 +56,7 @@
     border: none !important;
     display: flex;
     flex-wrap: nowrap;
-    font-size: 1.25rem;
+    font-size: clamp(1.5rem, 150%, 2rem);
     justify-content: flex-start;
     letter-spacing: 1px;
     margin: 0 !important;
@@ -147,13 +148,14 @@
 }
 
 .spco-attendee-panel-dv {
+    padding: 1px;
     width: 100% !important;
 }
 
 .spco-attendee-panel-dv .spco-ticket-info-dv {
     border-block-start: 2px solid rgba(128, 128, 128, .25);
-    font-size: 1rem;
-    line-height: 1.4rem;
+    font-size: clamp(1rem, 100%, 1.5rem);
+    line-height: clamp(1.5rem, 150%, 2.25rem);
     letter-spacing: 0;
     margin: 0;
     margin-block-start: 3rem;
@@ -164,6 +166,7 @@
 .spco-attendee-panel-dv:first-of-type .spco-ticket-info-dv {
     border: none;
     margin-block-start: 0;
+    padding-block-start: 0;
 }
 
 .ee-reg-form-attendee-dv {
@@ -186,6 +189,11 @@ div.ee-billing-qstn-input-dv,
 .ee-reg-form-attendee-dv .ee-reg-qstn + .ee-reg-qstn,
 .ee-reg-form-attendee-dv .ee-reg-qstn-input-dv + .ee-reg-qstn-input-dv {
     padding-top: .5em;
+}
+
+#new_state_micro_form {
+    margin-block-start: -.25rem;
+    margin-block-end: clamp(.5rem, 100%, 1rem);
 }
 
 .ee-reg-form-qstn-grp-dv {
@@ -315,9 +323,10 @@ div.ee-billing-qstn-input-dv,
 
 #ee-single-page-checkout-dv select,
 #ee-single-page-checkout-dv input:not([type=checkbox]):not([type=radio]):not([type=submit]):not([type=file]) {
+    border-color: rgba(128, 128, 128, .5);
     font-size: clamp(1rem, 100%, 2rem);
     max-width: 100%;
-    min-height: 2rem;
+    min-height: clamp(2rem, 100%, 4rem);
     min-width: 50%;
     padding-block: clamp(.25rem, 100%, .5rem);
     padding-inline: clamp(.375rem, 100%, .75rem);
@@ -594,10 +603,70 @@ div.ee-billing-qstn-input-dv,
     margin-right: auto;
 }
 
+.spco-step-dv .big-event-title-hdr {
+    font-size: clamp(2rem, 200%, 4rem);
+    margin-block-start: 1em;
+    margin-block-end: 0;
+}
+
+table.spco-ticket-details {
+    display: table;
+}
+
+table.spco-ticket-details,
+table.spco-ticket-details tr,
+table.spco-ticket-details thead,
+table.spco-ticket-details tbody,
+table.spco-ticket-details tfoot {
+    background-color: transparent;
+    border-color: transparent;
+    width: 100%;
+}
+
+table.spco-ticket-details tbody tr {
+    background: rgba(128, 128, 128, .05);
+}
+
 .spco-nowrap,
 #spco-payment-info-table .spco-table-qty,
 #spco-payment-info-table th:not(:first-child),
 table.spco-ticket-details th:not(:first-child) {
-    padding-inline: 1rem;
     white-space: nowrap;
+}
+
+table.spco-ticket-details th,
+#spco-payment-info-table .spco-table-qty,
+#spco-payment-info-table th:not(:first-child) {
+    opacity: .75;
+}
+
+table.spco-ticket-details th,
+table.spco-ticket-details td,
+table.spco-ticket-details tr {
+    background-color: transparent;
+    border-color: transparent;
+    padding: 0;
+}
+table.spco-ticket-details th,
+table.spco-ticket-details td {
+    padding-block: clamp(.25rem, 100%, .5rem);
+    padding-inline: clamp(.25rem, 100%, .5rem);
+}
+
+table.spco-ticket-details th.jst-left,
+table.spco-ticket-details td.jst-left {
+    padding-inline-start: clamp(.25rem, 100%, .5rem);
+    padding-inline-end: clamp(.375rem, 100%, .75rem);
+    text-align: start;
+}
+
+table.spco-ticket-details th.jst-rght,
+table.spco-ticket-details td.jst-rght {
+    padding-inline-start: clamp(.375rem, 100%, .75rem);
+    padding-inline-end: clamp(.25rem, 100%, .5rem);
+    text-align: end;
+}
+
+table.spco-ticket-details tbody td:first-child {
+    font-size: clamp(1.25rem, 125%, 1.5rem);
 }
