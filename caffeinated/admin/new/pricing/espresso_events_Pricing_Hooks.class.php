@@ -1940,14 +1940,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
             : 'edit_prices[' . $ticket_row . '][' . $price_row . '][PRT_ID]';
         /** @var EEM_Price_Type $price_type_model */
         $price_type_model = EE_Registry::instance()->load_model('Price_Type');
-        $price_types = $price_type_model->get_all(array(
-            array(
-                'OR' => array(
-                    'PBT_ID'  => '2',
-                    'PBT_ID*' => '3',
-                ),
-            ),
-        ));
+        $price_types = $price_type_model->get_all([['PBT_ID' => ['!=', 1]]]);
         $all_price_types = $default && ! $price instanceof EE_Price
             ? array(esc_html__('Select Modifier', 'event_espresso'))
             : array();
@@ -1958,7 +1951,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
             if (! $price_type instanceof EE_Price_Type) {
                 continue;
             }
-            $all_price_types[ $price_type->ID() ] = $price_type->get('PRT_name');
+            $all_price_types[ $price_type->ID() ] = $price_type->name();
             // while we're in the loop let's setup the option spans used by js
             $span_args = array(
                 'PRT_ID'         => $price_type->ID(),
