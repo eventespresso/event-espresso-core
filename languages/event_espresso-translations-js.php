@@ -131,7 +131,6 @@ $generated_i18n_strings = array(
 
 	// Reference: domains/core/admin/blocks/src/event/controls/SelectField.tsx:10
 	// Reference: domains/core/admin/blocks/src/services/utils.ts:24
-	// Reference: packages/ui-components/src/SimpleEntityList/EntityTemplate.tsx:16
 	// Reference: packages/utils/src/list/index.ts:14
 	__( 'Select…', 'event_espresso' ),
 
@@ -760,6 +759,10 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/actions/Actions.tsx:21
 	__( 'Default tickets', 'event_espresso' ),
 
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/defaultTickets/ModalBody.tsx:63
+	// Reference: packages/edtr-services/src/constants.ts:26
+	__( 'ticket', 'event_espresso' ),
+
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/defaultTickets/multiStep/FooterButtons.tsx:26
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/multiStep/FooterButtons.tsx:33
 	__( 'Set ticket prices', 'event_espresso' ),
@@ -1244,9 +1247,6 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/edtr-services/src/constants.ts:24
 	__( 'datetime', 'event_espresso' ),
 
-	// Reference: packages/edtr-services/src/constants.ts:26
-	__( 'ticket', 'event_espresso' ),
-
 	// Reference: packages/edtr-services/src/constants.ts:27
 	__( 'price', 'event_espresso' ),
 
@@ -1436,7 +1436,6 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/FormSection/AddFormElementPopover.tsx:117
 	// Reference: packages/form/src/renderers/RepeatableRenderer.tsx:52
-	// Reference: packages/ui-components/src/SimpleEntityList/EntityTemplate.tsx:27
 	__( 'Add', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/FormSection/AddFormElementPopover.tsx:76
@@ -1734,6 +1733,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/form/src/adapters/WPMediaImage.tsx:44
 	// Reference: packages/rich-text-editor/src/components/AdvancedTextEditor/toolbarButtons/WPMedia.tsx:11
 	// Reference: packages/rich-text-editor/src/rte-old/components/toolbarButtons/WPMedia.tsx:12
+	// Reference: packages/ui-components/src/SimpleEntityList/EntityTemplate.tsx:32
 	__( 'Select', 'event_espresso' ),
 
 	// Reference: packages/form/src/renderers/RepeatableRenderer.tsx:36
@@ -2202,16 +2202,18 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/ui-components/src/PercentSign/index.tsx:10
 	__( '%', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/SimpleEntityList/EntityOptionsRow/index.tsx:23
-	__( 'Select an existing one to use as a template.', 'event_espresso' ),
+	// Reference: packages/ui-components/src/SimpleEntityList/EntityOptionsRow/index.tsx:31
+	/* translators: entity type to select */
+	__( 'Select an existing %s to use as a template.', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/SimpleEntityList/EntityOptionsRow/index.tsx:27
+	// Reference: packages/ui-components/src/SimpleEntityList/EntityOptionsRow/index.tsx:38
 	__( 'or', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/SimpleEntityList/EntityOptionsRow/index.tsx:30
-	__( 'Add new and insert details manually', 'event_espresso' ),
+	// Reference: packages/ui-components/src/SimpleEntityList/EntityOptionsRow/index.tsx:43
+	/* translators: entity type to add */
+	__( 'Add a new %s and insert details manually', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/SimpleEntityList/EntityOptionsRow/index.tsx:34
+	// Reference: packages/ui-components/src/SimpleEntityList/EntityOptionsRow/index.tsx:48
 	__( 'Add New', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/Stepper/buttons/Next.tsx:8
