@@ -1,1 +1,0 @@
-<?php return array('dependencies' => array('eventespresso-constants', 'eventespresso-dates', 'eventespresso-i18n', 'eventespresso-utils', 'ramda'), 'version' => '7cf411f5bd50173beae3b27481ebccee');
