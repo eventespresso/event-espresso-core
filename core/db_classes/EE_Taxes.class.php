@@ -138,8 +138,8 @@ class EE_Taxes extends EE_Base
     public static function get_taxes_for_admin()
     {
         if (empty(self::$_default_taxes)) {
-            self::$_default_taxes = EE_Registry::instance()->load_model('Price')->get_all(
-                array(array('Price_Type.PBT_ID' => 4))
+            self::$_default_taxes = EEM_Price::instance()->get_all(
+                [['Price_Type.PBT_ID' => 4, 'PRC_is_default' => 1]]
             );
         }
         return self::$_default_taxes;
