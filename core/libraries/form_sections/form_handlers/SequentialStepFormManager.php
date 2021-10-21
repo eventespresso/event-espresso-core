@@ -3,6 +3,8 @@
 namespace EventEspresso\core\libraries\form_sections\form_handlers;
 
 use EE_Error;
+use EE_Request;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
@@ -91,12 +93,12 @@ abstract class SequentialStepFormManager
     /**
      * StepsManager constructor
      *
-     * @param string     $base_url
-     * @param string     $default_form_step
-     * @param string     $form_action
-     * @param string     $form_config
-     * @param RequestInterface $request
-     * @param string     $progress_step_style
+     * @param string                           $base_url
+     * @param string                           $default_form_step
+     * @param string                           $form_action
+     * @param string                           $form_config
+     * @param EE_Request|RequestInterface|null $request
+     * @param string                           $progress_step_style
      * @throws InvalidDataTypeException
      * @throws InvalidArgumentException
      */
@@ -106,14 +108,15 @@ abstract class SequentialStepFormManager
         $form_action = '',
         $form_config = FormHandler::ADD_FORM_TAGS_AND_SUBMIT,
         $progress_step_style = 'number_bubbles',
-        RequestInterface $request = null
+        $request = null
     ) {
         $this->setBaseUrl($base_url);
         $this->setDefaultFormStep($default_form_step);
         $this->setFormAction($form_action);
         $this->setFormConfig($form_config);
         $this->setProgressStepStyle($progress_step_style);
-        $this->request = $request;
+        $this->request = $request instanceof RequestInterface
+            ?: LoaderFactory::getLoader()->getShared('EventEspresso\core\services\request\RequestInterface');
     }
 
 
