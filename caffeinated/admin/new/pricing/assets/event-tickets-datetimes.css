@@ -83,7 +83,7 @@
 
 .datetime-edit-table .datetime-editing-dtts-tbody td:nth-child(5) {
     width: 5%;
-    text-align: right;
+    text-align: end;
 }
 
 .datetime-edit .datetime-edit-table .datetime-editing-dtts-tbody td:last-child {
@@ -347,63 +347,64 @@
 }
 
 
-.ticket-table tbody tr.ticket-row:first-child td {
+.ticket-table tbody tr.ticket-row:first-child > td {
     /*padding-top: .3em;*/
 }
 
-.ticket-table tbody tr.edit-ticket-row td {
+.ticket-table tbody tr.edit-ticket-row > td {
     height: auto;
 }
 
 /*ticket status strip */
-.ticket-table tbody .ticket-row td:first-child {
+.ticket-table tbody .ticket-row > td:first-child {
     position: relative;
     width: 1%;
     height: 100%;
     padding: 0;
     margin: 0;
 }
-.ticket-table tbody .ticket-row td:first-child span {
+.ticket-table tbody .ticket-row > td:first-child span {
     display: block;
     height:2.8em;
     padding:0;
 }/**/
 
 /*Ticket Title */
-.ticket-table tbody .ticket-row td:nth-child(2) {
+.ticket-table tbody .ticket-row > td:nth-child(2) {
     width: 28%;
 }
 
 /*datetime fields */
-.ticket-table tbody .ticket-row td:nth-child(3), .ticket-table tbody .ticket-row td:nth-child(4) {
+.ticket-table tbody .ticket-row > td:nth-child(3),
+.ticket-table tbody .ticket-row > td:nth-child(4) {
     width: 18%;
 }
 
 /* Price */
-.ticket-table tbody .ticket-row td:nth-child(5) {
+.ticket-table tbody .ticket-row > td:nth-child(5) {
     width: 5%;
 }
 
-.ticket-table tbody .ticket-row td:nth-child(5) input {
-    text-align: right;
+.ticket-table tbody .ticket-row > td:nth-child(5) input {
+    text-align: end;
 }
 
 /* Qty */
-.ticket-table tbody .ticket-row td:nth-child(6) {
+.ticket-table tbody .ticket-row > td:nth-child(6) {
     width: 5%;
 }
 
 /* Sold, REgs */
-.ticket-table tbody .ticket-row td:nth-child(7),
-.ticket-table tbody .ticket-row td:nth-child(8),
+.ticket-table tbody .ticket-row > td:nth-child(7),
+.ticket-table tbody .ticket-row > td:nth-child(8),
 .ticket-table tbody .ticket-row.ee-wp-debug td:nth-child(9) {
-    text-align: right;
+    text-align: end;
     padding-right: 1em;
     width: 4%;
 }
 
 /* Actions */
-.ticket-table tbody .ticket-row td:last-child {
+.ticket-table tbody .ticket-row > td:last-child {
     width: 20%;
     min-width: 120px;
 }
@@ -502,22 +503,25 @@
     margin-left: 10px;
 }
 
-.basic-ticket-info, .price-table {
-    width: 100%;
+.basic-ticket-info,
+.price-table {
     border-collapse: collapse;
+    table-layout: auto;
+    width: 100%;
 }
 
-.basic-ticket-info thead, .price-table thead {
+.basic-ticket-info thead,
+.price-table thead {
     font-weight: normal;
     border: none;
 }
 
-.basic-ticket-info tbody tr td, .price-table tbody tr td {
+.basic-ticket-info tbody tr td {
     padding: 0;
 }
 
 .basic-ticket-info input {
-    text-align: right;
+    text-align: end;
 }
 
 .basic-ticket-info tbody tr td {
@@ -526,26 +530,140 @@
 }
 
 
-.price-table thead tr td {
-    padding-bottom: 5px;
-    font-size: 1.1em;
+.price-table thead tr th {
+    font-size: .8rem;
+    font-weight: normal;
+    margin: 0 !important;
+    padding: 1px;
+    padding-block-end: .25rem;
+    text-align: start;
+    vertical-align: baseline;
 }
 
-.price-table thead tr td:first-child {
-    text-align: left;
-    width: 20%;
+.price-table tbody td:nth-child(4) {
+    text-align: end;
 }
 
-.price-table tbody td:first-child {
-    text-align: left;
+.price-table tbody td:nth-child(4) span,
+.price-table tbody td:nth-child(6) span {
+    align-items: center;
+    display: inline-flex;
+    font-size: 1.25rem;
+    height: 2rem;
 }
 
+.price-table tbody td span.ticket-price-info-display.ticket-price-dollar-sign-display,
+.price-table tbody td span.ticket-price-info-display.ticket-price-percentage-char-display {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.price-table tbody td,
+.price-table tfoot td {
+    margin: 0 !important;
+    padding: 1px;
+    padding-inline-end: .25rem;
+    width: fit-content;
+    vertical-align: top;
+}
+
+.price-table tbody td.ticket-price-col-micro {
+    min-width: 25px;
+    width: 1.25%;
+}
+.price-table tbody td.ticket-price-col-tiny {
+    min-width: 100px;
+    width: 2.5%;
+}
+.price-table tbody td.ticket-price-col-small {
+    min-width: 150px;
+    width: 10%;
+}
+.price-table tbody td.ticket-price-col-big {
+    width: auto;
+}
+
+.price-table tbody td input[type="text"],
+.price-table tbody td select,
+.price-table tbody td textarea {
+    box-shadow: none;
+    box-sizing: border-box;
+    font-size: .9rem;
+    height: 2rem;
+    line-height: 2;
+    margin: 0 !important;
+    min-height: 2rem;
+    padding: 0;
+    padding-block: .125rem;
+    padding-inline: .5rem;
+    width: 100%;
+}
+
+.price-table tbody td:nth-child(5) input {
+    width: 100%;
+    text-align: end;
+}
+
+
+.price-table tbody td .ticket-price-actions,
+.price-table tbody td .ticket-price-amount-decorators {
+    align-content: center;
+    align-items: baseline;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: flex-start;
+}
+
+.ticket-price-info-display {
+    margin: 0;
+    padding: 0;
+    text-align: end;
+}
+.ticket-price-info-display.ticket-price-percentage {
+    text-align: start;
+    margin-right: 0;
+}
+
+.price-table tbody {
+    border-block-end: 2px solid #ddd;
+}
 .price-table tbody tr:last-child td {
-    padding-bottom: 7px;
+    padding-block-end: .5rem;
+}
+.price-table tfoot tr.price-subtotal-row td {
+    padding-block-start: 1rem;
+}
+.price-table tfoot tr.price-total-row td {
+    font-size: 1rem;
+    font-weight: 600;
+    padding-block-start: .5rem;
 }
 
-.price-table tbody tr:last-child {
-    border-bottom: 2px solid #ddd;
+/*.price-table .price-total-row td,*/
+/*.price-table .price-subtotal-row td {*/
+/*    padding-top: 1rem;*/
+/*}*/
+.price-table button.button-secondary {
+    align-items: center;
+    display: inline-flex;
+    height: 2rem;
+    justify-content: center;
+    margin: 0;
+    margin-inline-end: .5rem;
+    width: 2rem;
+}
+
+#event-and-ticket-form-content .price-table button.button-secondary span.dashicons {
+    font-size: 1.2rem;
+    margin: 0;
+    top: unset;
+}
+
+#event-and-ticket-form-content .price-table button.button-secondary span.dashicons.dashicons-plus {
+    top: 2px;
+}
+#event-and-ticket-form-content .price-table button.button-secondary span.dashicons.dashicons-trash {
+    left: 1px;
 }
 
 .save-cancel-button-container {
@@ -634,46 +752,12 @@
     padding-top: 3px;
 }
 
-.ticket-price-info-display {
-    margin: 0;
-    padding: 0;
-    text-align: right;
-}
-
-.price-table tbody td:nth-child(4) {
-    padding: 0;
-    margin: 0;
-    text-align:right;
-}
-
-.price-table tbody td:nth-child(2) input, .price-table tbody:nth-child(3) input {
-    width: 90%
-}
-
-.price-table tbody td:nth-child(5) input {
-    width: 90%;
-    text-align: right;
-}
-
-.ticket-price-info-display.ticket-price-percentage {
-    text-align: left;
-    margin-right: 0;
-}
-
-.price-table .price-total-row td, .price-table .price-subtotal-row td {
-    padding-top: 10px;
-}
-
 .edit-ticket-row .edit-price-PRC_amount {
-    text-align: right;
+    text-align: end;
     margin: 0;
     margin-left: 4px;
     padding-right: 5px;
     width: 75px;
-}
-
-.ee-active-price .ee-create-button {
-    margin-left: 4px;
 }
 
 .ticket-fieldset .ee-price-create-button {
