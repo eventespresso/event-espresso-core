@@ -26,4 +26,5 @@
            class="ee-price-selected-operator" value="<?php echo $price_selected_operator; ?>">
     <input type="hidden" name="ee_price_selected[<?php echo $tkt_row; ?>][<?php echo $PRC_order; ?>]"
            class="ee-price-selected-is-percent" value="<?php echo $price_selected_is_percent; ?>">
+    <input type='hidden' id='prev-price-type-<?php echo $tkt_row; ?>-<?php echo $PRC_order; ?>' value='0'>
 

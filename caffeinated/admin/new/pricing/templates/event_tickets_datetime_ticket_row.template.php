@@ -285,7 +285,8 @@ if (WP_DEBUG) {
                                value="1"<?php echo $TKT_taxable; ?>>
                         <?php endif; ?>
                     <label for="edit-ticket-TKT_taxable-<?php echo $tkt_row; ?>"> <?php
-                        esc_html_e('This ticket is taxable.', 'event_espresso'); ?>
+                        esc_html_e('Use Global Taxes (those defined in the Pricing admin). If unchecked you can apply taxes below.',
+                                   'event_espresso'); ?>
                     <?php } //end tax_rows check ?>
                 </div>
             </div>
@@ -298,13 +299,13 @@ if (WP_DEBUG) {
                 <table class="price-table">
                     <thead class="price-table-info"<?php echo $show_price_modifier; ?>>
                     <tr>
-                        <td><?php esc_html_e('Price Type', 'event_espresso'); ?></td>
-                        <td><?php esc_html_e('Name', 'event_espresso'); ?></td>
-                        <td><?php esc_html_e('Description', 'event_espresso'); ?></td>
-                        <td></td>
-                        <td><?php esc_html_e('Amount', 'event_espresso'); ?></td>
-                        <td></td>
-                        <td></td>
+                        <th><?php esc_html_e('Price Type', 'event_espresso'); ?></th>
+                        <th><?php esc_html_e('Name', 'event_espresso'); ?></th>
+                        <th><?php esc_html_e('Description', 'event_espresso'); ?></th>
+                        <th></th>
+                        <th><?php esc_html_e('Amount', 'event_espresso'); ?></th>
+                        <th></th>
+                        <th></th>
                     </tr>
                     </thead>
                     <tbody class="ticket-price-rows price-table-info"<?php echo $show_price_modifier; ?>>

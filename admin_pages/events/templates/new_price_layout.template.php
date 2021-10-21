@@ -58,7 +58,11 @@
 					<td><span class="ticket-display-row-TKT_total_amount">$0.00</span></td>
 					<td><span class="ticket-display-row-TKT_qty"></span></td>
 					<td><span class="ticket-display-row-TKT_sold">0</span></td>
-					<td><span class="gear-icon clickable" data-ticket-row="1" data-context="ticket"></span><span class="clone-icon ee-icon ee-icon-clone clickable" data-ticket-row="1" data-context="ticket"><span class="trash-icon dashicons dashicons-post-trash clickable" data-ticket-row="1" data-context="ticket" style="display:none;"></span></span></td>
+					<td>
+                        <span class="gear-icon clickable" data-ticket-row="1" data-context="ticket"></span>
+                        <span class="clone-icon ee-icon ee-icon-clone clickable" data-ticket-row="1" data-context="ticket"></span>
+                        <span class="trash-icon dashicons dashicons-post-trash clickable" data-ticket-row="1" data-context="ticket" style="display:none;"></span>
+                    </td>
 				</tr>
 				<tr id="edit-ticketrow-1" class="edit-ticket-row">
 					<td colspan="9">
@@ -119,12 +123,12 @@
 									<tbody class="ticket-price-rows">
 										<tr id="price-row-1-1" class="ee-active-price">
 											<td>
-												<input type="hidden" name="edit_prices[1][1][PRT_ID]" class="edit-price-PRT_ID" value="1">
+												<input type="hidden" name="edit_prices[1][0][PRT_ID]" class="edit-price-PRT_ID" value="1">
 												<span class="price-type-text">Base Price</span>
-												<input type="hidden" name="ee_price_selected_operator[1][1]" class="ee-price-selected-operator" value="+">
-												<input type="hidden" name="ee_price_selected_operator[1][1]" class="ee-price-selected-is-percent" value="0">
+												<input type="hidden" name="ee_price_selected_operator[1][0]" class="ee-price-selected-operator" value="+">
+												<input type="hidden" name="ee_price_selected_operator[1][0]" class="ee-price-selected-is-percent" value="0">
 											</td>
-											<td><input type="hidden" name="edit_prices[1][1][PRC_ID]" class="edit-price-PRC_ID" value="1"><input type="text" class="edit-price-PRC_name ee-text-inp" name="edit_prices[1][1][PRC_name]" value="Free Admission"></td>
+											<td><input type="hidden" name="edit_prices[1][0][PRC_ID]" class="edit-price-PRC_ID" value="1"><input type="text" class="edit-price-PRC_name ee-text-inp" name="edit_prices[1][0][PRC_name]" value="Free Admission"></td>
 											<td>
 												<span class="ticket-price-info-display ticket-price-plus-minus" style="display:none">+/-</span>
 												<span class="ticket-price-info-display ticket-price-plus" style="display:none;">+</span>
@@ -132,7 +136,7 @@
 												<span class="ticket-price-info-display ticket-price-dollar-sign-display">$</span>
 											</td>
 											<td>
-												<input type="text" size="1" class="edit-price-PRC_amount ee-small-text-inp" name="edit_prices[1][1][PRC_amount]" value="0">
+												<input type="text" size="1" class="edit-price-PRC_amount ee-small-text-inp" name="edit_prices[1][0][PRC_amount]" value="0">
 												<span class="ticket-price-info-display ticket-price-percentage-char-display" style="display:none">%</span>
 											</td>
 											<td><span class="gear-icon clickable" data-ticket-row="1" data-context="price" data-price-row="1"></span><span class="trash-icon dashicons dashicons-post-trash clickable" data-ticket-row="1" data-context="price" data-price-row="1" style="display:none"></span><button data-ticket-row="1" data-price-row="1" data-context="price" class="ee-create-button"><strong>+</strong></button></td>
@@ -140,7 +144,13 @@
 										<tr id="extra-price-row-1-1">
 											<td colspan="5">
 												<section class="extra-price-row" style="display:none">
-													<textarea name="edit_prices[1][1][PRT_description]" class="edit-price-PRC_desc ee-full-textarea-inp" placeholder="Edit the description for the price here">This is a free admission ticket</textarea>
+													<textarea name="edit_prices[1][0][PRT_description]"
+                                                              class="edit-price-PRC_desc ee-large-textarea-inp"
+                                                              rows='1'
+                                                              placeholder="Edit the description for the price here"
+                                                    >
+                                                        This is a free admission ticket
+                                                    </textarea>
 												</section>
 											</td>
 										</tr>
@@ -360,7 +370,12 @@
 			<tr id="extra-price-row-TICKETNUM-PRICENUM">
 				<td colspan="5">
 					<section class="extra-price-row" style="display:none">
-						<textarea name="edit_prices[TICKETNUM][PRICENUM][PRT_description]" class="edit-price-PRC_desc ee-full-textarea-inp" placeholder="Edit the description for the price here"></textarea>
+						<textarea name="edit_prices[TICKETNUM][PRICENUM][PRT_description]"
+                                  class='edit-price-PRC_desc ee-large-textarea-inp'
+                                  rows='2'
+                                  placeholder="Edit the description for the price here"
+                        >
+                        </textarea>
 					</section>
 				</td>
 			</tr>
@@ -385,6 +400,7 @@
 		</div>
 		<input type="hidden" name="ee_price_selected[TICKETNUM][PRICENUM]" class="ee-price-selected-operator" value="-">
 		<input type="hidden" name="ee_price_selected[TICKETNUM][PRICENUM]" class="ee-price-selected-is-percent" value="0">
+        <input type='hidden' id="prev-price-type-TICKETNUM-PRICENUM" value="0">
 	</div>
 
 	<!-- available tickets for datetime html -->
