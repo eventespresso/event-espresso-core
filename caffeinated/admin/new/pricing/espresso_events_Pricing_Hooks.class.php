@@ -1643,7 +1643,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                 $datetime_row++;
             }
         }
-        $price_row = 1;
+        $price_row = 0;
         foreach ($prices as $price) {
             if (! $price instanceof EE_Price) {
                 continue;
@@ -1652,16 +1652,19 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                 $price_row++;
                 continue;
             }
-            $show_trash = ! ((count($prices) > 1 && $price_row === 1) || count($prices) === 1);
-            $show_create = ! (count($prices) > 1 && count($prices) !== $price_row);
             $template_args['ticket_price_rows'] .= $this->_get_ticket_price_row(
                 $ticket_row,
                 $price_row,
                 $price,
                 $default,
                 $ticket,
-                $show_trash,
-                $show_create
+                // base prices are never displayed, so always show the trash button
+                true,
+                // show the add button on the last row only...
+                // modifier count starts at 1, but the base price is still in the prices array,
+                // so if we have two modifiers, then the last one is 2 but there are 3 prices,
+                // so the following would work out to: 2 === 3 -1
+                $price_row === (count($prices) - 1)
             );
             $price_row++;
         }
@@ -1823,6 +1826,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                 ? ''
                 : $price->get('PRC_desc'),
             'disabled'              => ! empty($ticket) && $ticket->get('TKT_deleted'),
+            'current_price_type_id' => $price instanceof EE_Price ? $price->type() : 0,
         );
         $template_args = apply_filters(
             'FHEE__espresso_events_Pricing_Hooks___get_ticket_price_row__template_args',
@@ -1972,7 +1976,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                 'default'               => $selected_price_type_id,
                 'html_name'             => $select_name,
                 'html_class'            => 'edit-price-PRT_ID',
-                'other_html_attributes' => $disabled ? 'style="width:auto;" disabled' : 'style="width:auto;"',
+                'html_id'               => "edit-price-type-{$ticket_row}-{$price_row}",
+                'other_html_attributes' => $disabled ? 'disabled' : '',
             )
         );
         $price_selected_operator = $price instanceof EE_Price && $price->is_discount() ? '-' : '+';
@@ -2164,7 +2169,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
         /** @var EEM_Price $price_model */
         $price_model = EE_Registry::instance()->load_model('Price');
         $default_prices = $price_model->get_all_default_prices();
-        $price_row = 1;
+        $price_row = 0;
         foreach ($default_prices as $price) {
             if (! $price instanceof EE_Price) {
                 continue;
@@ -2179,19 +2184,19 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks
                 $price_row++;
                 continue;
             }
-            $show_trash = ! ((count($default_prices) > 1 && $price_row === 1)
-                             || count($default_prices) === 1);
-            $show_create = ! (count($default_prices) > 1
-                              && count($default_prices)
-                                 !== $price_row);
             $template_args['default_price_rows'] .= $this->_get_ticket_price_row(
                 'TICKETNUM',
                 $price_row,
                 $price,
                 true,
                 null,
-                $show_trash,
-                $show_create
+                // base prices are never displayed, so always show the trash button
+                true,
+                // show the add button on the last row only...
+                // modifier count starts at 1, but the base price is still in the prices array,
+                // so if we have two modifiers, then the last one is 2 but there are 3 prices,
+                // so the following would work out to: 2 === 3 -1
+                $price_row === (count($default_prices) - 1)
             );
             $price_row++;
         }
