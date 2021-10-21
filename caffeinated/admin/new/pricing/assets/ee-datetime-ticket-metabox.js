@@ -13,6 +13,7 @@ jQuery(document).ready(function($) {
 		offSet: 0, //used to hold the timezone offset.
 		event_and_ticket_form_content: $('#event-and-ticket-form-content'),
 		event_datetimes_container: $('.event-datetimes-container'),
+		taxableTicket: null,
 
 		/**
 		 * This can be one of three values:
@@ -1309,18 +1310,25 @@ jQuery(document).ready(function($) {
 		 * @return {tktHelper} this object for chaining.
 		 */
 		newPriceRow: function() {
+			console.log('');
+			console.log('%c newPriceRow()', 'color: Cyan; font-size: 14px;');
 			var curid, newid, curname, newname;
 			var row = this.itemdata.priceRow;
 			this.ticketRow = this.itemdata.ticketRow;
+			console.log('%c this.itemdata', 'color: Cyan;', this.itemdata);
+			console.log('%c this.ticketRow', 'color: Cyan;', this.ticketRow);
+			console.log('%c this.priceRow', 'color: Cyan;', this.priceRow);
+			console.log('%c row', 'color: Cyan;', row);
+
 
 			if ( this.context == 'price-create' ) {
 				$('.price-table-info', '#edit-ticketrow-' + this.ticketRow).toggle();
 				$('.ee-price-create-button', '#edit-ticketrow-' + this.ticketRow).hide();
+			} else {
+				// if not creating a new price for a new ticket, then increment the price row
+				this.context = 'price';
+				this.increaserowcount();
 			}
-
-			this.context = 'price';
-
-			this.increaserowcount();
 
 			var newPRCrow = $('tbody', '#ticket-edit-row-initial-price-row').clone().html().replace(/TICKETNUM/g,this.ticketRow).replace(/PRICENUM/g,this.priceRow).replace(/PRICENAMEATTR/g, 'edit_prices');
 
@@ -1634,8 +1642,11 @@ jQuery(document).ready(function($) {
 		 * @return {tktHelper} this object for chainability
 		 */
 		applyTotalPrice: function() {
+			console.log('%c applyTotalPrice()', 'color: LimeGreen; font-size: 14px;');
 			var TKTrow = $( '#edit-ticketrow-' + this.ticketRow );
 			var price_amount = this.getTotalPrice();
+			console.log('%c price_amount', 'color: YellowGreen;', price_amount);
+
 			TKTrow.find('#price-total-amount-' + this.ticketRow).text(accounting.formatMoney(price_amount.finalTotal));
 			TKTrow.find('.ticket-price-amount').text(accounting.formatMoney(price_amount.finalTotal));
 			TKTrow.find('.edit-ticket-TKT_price').val(accounting.toFixed(price_amount.subtotal));
@@ -1706,9 +1717,22 @@ jQuery(document).ready(function($) {
 		 * @param {bool} trash default is false This property combined with the value of the "creating" property determine whether we also trash the ticket item when toggled (typically by a "cancel" button trigger)
 		 */
 		TicketEditToggle: function( trash ) {
+			console.log('');
+			console.log('%c TicketEditToggle()', 'color: Cyan; font-size: 14px;');
+			console.log('%c this.ticketRow', 'color: Cyan;', this.ticketRow);
 			trash = typeof(trash) === 'undefined' ? false : trash;
 			this.setSelector();
 			this.slideToggler();
+
+			this.taxableTicket = $('#edit-ticket-TKT_taxable-' + this.ticketRow);
+			if (this.taxableTicket.length) {
+				// setup listener in case taxes are toggled
+				this.taxableTicket.change(function () {
+					tktHelper.disableTaxModifierOptions();
+				});
+				// but also trigger that logic right now
+				tktHelper.disableTaxModifierOptions();
+			}
 
 			/**
 			 * if creating is true (and trashing), then we need to remove the existing row and related items from the dom.
@@ -1727,7 +1751,7 @@ jQuery(document).ready(function($) {
 		 * @param  {int}    delay how long the toggle animation should take to complete in milliseconds
 		 * @return {tktHelper}       this object
 		 */
-		slideToggler: function( delay ) {
+		slideToggler: function( delay = 200 ) {
 			var edit_container;
 			switch ( this.context ) {
 				case 'ticket' :
@@ -1756,12 +1780,71 @@ jQuery(document).ready(function($) {
 		 * This toggles the display of the edit form for a Price Row.
 		 */
 		PriceEditToggle: function() {
+			console.log('');
+			console.log('%c PriceEditToggle()', 'color: Cyan; font-size: 14px;');
 			this.selector = $('.extra-price-row', '#extra-price-row-' + this.ticketRow + '-' + this.priceRow);
 			this.selector.slideToggle(200);
+			this.disableTaxModifierOptions();
+
 			return this;
 		},
 
 
+		disableTaxModifierOptions: function() {
+			console.log('');
+			console.log('%c disableTaxModifierOptions()', 'color: DeepSkyBlue; font-size: 14px;');
+			console.log('%c this.ticketRow', 'color: DodgerBlue;', this.ticketRow);
+			let useGlobalTaxes = tktHelper.taxableTicket.prop('checked');
+			console.log('%c useGlobalTaxes', 'color: Gold;', useGlobalTaxes);
+
+			let i = 1;
+			let priceTypeSelectorID = `#edit-price-type-${this.ticketRow}-`;
+			console.log('%c priceTypeSelectorID + i', 'color: SteelBlue;', priceTypeSelectorID + i);
+			let $priceTypeSelector = $(priceTypeSelectorID + i);
+			// check if selector exists
+			while ($priceTypeSelector.length) {
+				console.log('%c $priceTypeSelector', 'color: DodgerBlue;', $priceTypeSelector);
+				let currentPriceType = parseInt( $priceTypeSelector.val() );
+				let selectorID = $priceTypeSelector.attr('id');
+				let prevPriceTypeID = selectorID.replace('edit', 'prev');
+				console.log('%c currentPriceType', 'color: SkyBlue;', currentPriceType);
+				console.log('%c selectorID', 'color: SkyBlue;', selectorID);
+				console.log('%c prevPriceTypeID', 'color: SkyBlue;', prevPriceTypeID);
+
+				let $prevPriceType = $(`#${prevPriceTypeID}`);
+				console.log('%c $prevPriceType.length', 'color: MediumTurquoise;', $prevPriceType.length);
+				console.log('%c $prevPriceType', 'color: MediumTurquoise;', $prevPriceType);
+				if (!$prevPriceType.length) {
+					$prevPriceType = $("<input>")
+						.attr("id", prevPriceTypeID)
+						.attr("type", "hidden")
+						.val(currentPriceType)
+						.insertAfter(`#${selectorID}`);
+					console.log('%c $prevPriceType', 'color: Red; font-size: 14px;', $prevPriceType);
+				}
+				let previousPriceType = parseInt($prevPriceType.val());
+
+				$priceTypeSelector.find('option').filter(function () {
+					if ( parseInt(this.value) > 5 ) {
+						console.log('%c disable tax option', 'color: DarkSalmon;', this.value);
+					}
+					return parseInt(this.value) > 5;
+				}).prop("disabled", useGlobalTaxes);
+
+				if (useGlobalTaxes && currentPriceType > 5) {
+					console.log('%c set $prevPriceType to currentPriceType', 'color: Turquoise;', currentPriceType);
+					$prevPriceType.val(currentPriceType);
+					$priceTypeSelector.val(4);
+				} else if (previousPriceType) {
+					console.log('%c set $priceTypeSelector to previousPriceType', 'color: Turquoise;', previousPriceType);
+					$priceTypeSelector.val(previousPriceType);
+				}
+
+				i++;
+				// grab next selector
+				$priceTypeSelector = $(priceTypeSelectorID + i);
+			}
+		},
 
 
 		/**
@@ -2238,6 +2321,8 @@ jQuery(document).ready(function($) {
 	 * toggle price modifier selection
 	 */
 	tktHelper.event_and_ticket_form_content.on('change', '.edit-price-PRT_ID', function(e) {
+		console.log('');
+		console.log('%c price type change', 'color: SpringGreen; font-size: 14px;');
 		e.preventDefault();
 		e.stopPropagation();
 		var parent = $(this).parent(); //parent (td)
@@ -2252,7 +2337,7 @@ jQuery(document).ready(function($) {
 
 		//set display
 		$('.ticket-price-info-display', parentContainer).hide();
-		if ( operator == '+' ) {
+		if ( operator === '+' ) {
 			$('.ticket-price-plus', parentContainer).show();
 		} else {
 			$('.ticket-price-minus', parentContainer).show();
@@ -2265,7 +2350,9 @@ jQuery(document).ready(function($) {
 
 		//recalculate price
 		var data = $(this).parent().parent().find('.trash-icon').data();
-		tktHelper.setticketRow(data.ticketRow).applyTotalPrice();
+		if (data && data.ticketRow) {
+			tktHelper.setticketRow(data.ticketRow).applyTotalPrice();
+		}
 	});
 
 	/**
@@ -2275,7 +2362,9 @@ jQuery(document).ready(function($) {
 		e.preventDefault();
 		e.stopPropagation();
 		var data = $(this).parent().parent().find('.trash-icon').data();
-		tktHelper.setticketRow(data.ticketRow).applyTotalPrice();
+		if (data && data.ticketRow) {
+			tktHelper.setticketRow(data.ticketRow).applyTotalPrice();
+		}
 	});
 
 
@@ -2286,7 +2375,9 @@ jQuery(document).ready(function($) {
 		e.preventDefault();
 		e.stopPropagation();
 		var data = $(this).parent().parent().find('.gear-icon').data();
-		tktHelper.setticketRow(data.ticketRow).applyTKTtitleChange($(this));
+		if (data && data.ticketRow) {
+			tktHelper.setticketRow(data.ticketRow).applyTKTtitleChange($(this));
+		}
 	});
 
 
@@ -2294,6 +2385,8 @@ jQuery(document).ready(function($) {
 	 * toggling of TKT_taxable checkbox
 	 */
 	tktHelper.event_and_ticket_form_content.on('click', '.TKT-taxable-checkbox', function(e) {
+		console.log('');
+		console.log('%c toggle global taxes', 'color: Gold; font-size: 14px;');
 		var tktrow = $(this).attr('id').replace('edit-ticket-TKT_taxable-', '');
 		$('.TKT-taxes-display', '#edit-ticketrow-' + tktrow).slideToggle();
 		tktHelper.setticketRow(tktrow).applyTotalPrice();
