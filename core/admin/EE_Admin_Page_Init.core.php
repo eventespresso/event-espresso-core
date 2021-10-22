@@ -354,18 +354,19 @@ abstract class EE_Admin_Page_Init extends EE_Base
         }
         foreach ($hook_paths as $file) {
             // lets get the linked admin.
-            $this->hook_file = $extend
+            $hook_file = $extend
                 ? str_replace(EE_CORE_CAF_ADMIN_EXTEND . $this->_folder_name . '/', '', $file)
                 : str_replace($this->_folder_path, '', $file);
             $replace         = $extend
                 ? '_' . $this->_file_name . '_Hooks_Extend.class.php'
                 : '_' . $this->_file_name . '_Hooks.class.php';
-            $rel_admin       = str_replace($replace, '', $this->hook_file);
+            $rel_admin       = str_replace($replace, '', $hook_file);
             $rel_admin       = strtolower($rel_admin);
             // make sure we haven't already got a hook setup for this page path
             if (in_array($rel_admin, $this->_files_hooked)) {
                 continue;
             }
+            $this->hook_file = $hook_file;
             $rel_admin_hook = 'FHEE_do_other_page_hooks_' . $rel_admin;
             add_filter($rel_admin_hook, [$this, 'load_admin_hook']);
             $this->_files_hooked[] = $rel_admin;
