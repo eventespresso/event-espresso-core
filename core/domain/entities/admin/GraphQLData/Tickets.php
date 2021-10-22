@@ -37,7 +37,6 @@ class Tickets extends GraphQLData
                     isPending
                     isRequired
                     isSoldOut
-                    isTaxable
                     isTrashed
                     max
                     min
