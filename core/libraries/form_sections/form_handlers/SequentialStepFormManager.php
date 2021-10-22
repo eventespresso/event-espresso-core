@@ -116,7 +116,8 @@ abstract class SequentialStepFormManager
         $this->setFormConfig($form_config);
         $this->setProgressStepStyle($progress_step_style);
         $this->request = $request instanceof RequestInterface
-            ?: LoaderFactory::getLoader()->getShared('EventEspresso\core\services\request\RequestInterface');
+            ? $request
+            : LoaderFactory::getLoader()->getShared('EventEspresso\core\services\request\RequestInterface');
     }
 
 
