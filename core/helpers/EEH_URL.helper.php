@@ -204,8 +204,8 @@ class EEH_URL
         // whitelist INPUT_SERVER var
         if (isset($server_variables[ $server_variable ])) {
             $URL = filter_input(INPUT_SERVER, $server_variable, FILTER_SANITIZE_URL, FILTER_NULL_ON_FAILURE);
-            if (empty($URL)) {
-                // fallback sanitization if the above fails
+            if (empty($URL) || $URL !== $_SERVER[ $server_variable ]) {
+                // fallback sanitization if the above fails or URL has changed after filtering
                 $URL = wp_sanitize_redirect($_SERVER[ $server_variable ]);
             }
         }
