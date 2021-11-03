@@ -122,10 +122,12 @@ if ($display_ticket_price) { ?>
                     <?php } ?>
                     <tr>
                         <td colspan="2" class="jst-rght small-text ttl-lbl-td">
-                            <b><?php echo apply_filters(
+                            <b>
+                                <?php echo apply_filters(
                                     'FHEE__ticket_selector_chart_template__ticket_details_total_price',
                                     esc_html__('Total', 'event_espresso')
-                                ); ?></b>
+                                ); ?>
+                            </b>
                         </td>
                         <td data-th="<?php echo apply_filters(
                             'FHEE__ticket_selector_chart_template__ticket_details_total_price',

@@ -98,13 +98,12 @@ class LineItemCalculator
      */
     public function recalculateLineItemTotals(
         EE_Line_Item $line_item,
-        float        $total = 0,
-        float        $pretax = 0
+        float $total = 0,
+        float $pretax = 0
     ): array {
         $this->debug($line_item, null, __FUNCTION__, __FILE__, __LINE__, 1);
         $new_total = $new_pretax = 0;
         switch ($line_item->type()) {
-
             case EEM_Line_Item::type_total:
             case EEM_Line_Item::type_sub_total:
                 [$new_total, $new_pretax] = $this->recalculateSubTotal($line_item, $total, $pretax);
@@ -147,8 +146,8 @@ class LineItemCalculator
      */
     private function recalculateSubTotal(
         EE_Line_Item $line_item,
-        float        $total = 0,
-        float        $pretax = 0
+        float $total = 0,
+        float $pretax = 0
     ): array {
         $this->debug($line_item, null, __FUNCTION__, __FILE__, __LINE__, 4);
         if ($line_item->is_total()) {
@@ -184,8 +183,8 @@ class LineItemCalculator
      */
     private function recalculateLineItem(
         EE_Line_Item $line_item,
-        float        $total = 0,
-        float        $pretax = 0
+        float $total = 0,
+        float $pretax = 0
     ): array {
         $this->debug($line_item, null, __FUNCTION__, __FILE__, __LINE__, 4);
         if ($line_item->is_percent()) {
@@ -250,7 +249,6 @@ class LineItemCalculator
     {
         $count = 0;
         switch ($line_item->type()) {
-
             case EEM_Line_Item::type_total:
             case EEM_Line_Item::type_sub_total:
             case EEM_Line_Item::type_tax_sub_total:
@@ -575,8 +573,8 @@ class LineItemCalculator
      */
     private function calculateNonGlobalTaxes(
         EE_Line_Item $total_line_item,
-        array        $non_global_taxes = [],
-        float        $line_item_total = 0
+        array $non_global_taxes = [],
+        float $line_item_total = 0
     ): array {
         foreach ($total_line_item->children() as $line_item) {
             if ($this->validateLineItemAndType($line_item)) {
@@ -621,8 +619,8 @@ class LineItemCalculator
      */
     private function applyNonGlobalTaxes(
         EE_Line_Item $total_line_item,
-        float        $tax_total,
-        array        $non_global_taxes
+        float $tax_total,
+        array $non_global_taxes
     ): float {
         $this->debug($total_line_item, __FUNCTION__, EEH_Debug_Tools::shortClassName(__CLASS__), __FILE__, __LINE__, 1);
         $global_taxes   = $total_line_item->tax_descendants();

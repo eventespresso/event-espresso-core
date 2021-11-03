@@ -100,7 +100,6 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         $options = array_merge($default_options, (array) $options);
 
         switch ($line_item->type()) {
-
             case EEM_Line_Item::type_line_item:
                 $this->_show_taxes = $line_item->is_taxable() ? true : $this->_show_taxes;
                 if ($line_item->OBJ_type() === 'Ticket') {
@@ -230,7 +229,6 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
                 $html .= $this->_total_row($line_item, esc_html__('Total', 'event_espresso'));
                 $html .= $this->_payments_and_amount_owing_rows($line_item, $options);
                 break;
-
         }
         return $html;
     }

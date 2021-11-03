@@ -54,7 +54,7 @@ class TicketPriceModifiers
     private function filterModifiersForTicket(callable $filter): array
     {
         $ticket_modifiers = $this->ticket->get_all_from_cache('Price');
-        if (empty($ticket_modifiers)){
+        if (empty($ticket_modifiers)) {
             $ticket_modifiers = $this->ticket_prices;
         }
         return array_filter($ticket_modifiers, $filter);

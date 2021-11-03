@@ -187,7 +187,7 @@ class EE_Default_Line_Item_Display_Strategy implements EEI_Line_Item_Display
                 }
             }
             $tax_rate = 1 + $tax_rate / 100;
-        } else if ($is_taxable && $this->prices_include_taxes) {
+        } elseif ($is_taxable && $this->prices_include_taxes) {
             $tax_rate = 1 + ($this->_tax_rate / 100);
         }
 
