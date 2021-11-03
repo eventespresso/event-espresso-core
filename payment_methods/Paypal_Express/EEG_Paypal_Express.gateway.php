@@ -72,6 +72,13 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
     protected $_base_gateway_url = '';
 
 
+    /**
+     * number of decimal places to round numbers to when performing calculations
+     *
+     * @var integer
+     */
+    protected $decimal_precision = 6;
+
 
     /**
      * EEG_Paypal_Express constructor.
@@ -107,6 +114,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
             'INR',
         );
         parent::__construct();
+        $this->decimal_precision = EE_Registry::instance()->CFG->currency->dec_plc;
     }
 
 
@@ -476,7 +484,10 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
                         127
                     );
                     // Cost of individual item.
-                    $itemized_list[ 'L_PAYMENTREQUEST_0_AMT' . $item_num ] = $gateway_formatter->formatCurrency($unit_price);
+                    $itemized_list[ 'L_PAYMENTREQUEST_0_AMT' . $item_num ] = $gateway_formatter->formatCurrency(
+                        $unit_price,
+                        $this->decimal_precision
+                    );
                     // Item Number.
                     $itemized_list[ 'L_PAYMENTREQUEST_0_NUMBER' . $item_num ] = $item_num + 1;
                     // Item quantity.
@@ -494,7 +505,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
             $itemized_list['PAYMENTREQUEST_0_HANDLINGAMT'] = '0';
             $itemized_sum_diff_from_txn_total = round(
                 $transaction->total() - $itemized_sum - $total_line_items->get_total_tax(),
-                2
+                $this->decimal_precision
             );
             // If we were not able to recognize some item like promotion, surcharge or cancellation,
             // add the difference as an extra line item.
