@@ -15,6 +15,10 @@
 
 class EE_Default_Line_Item_Display_Strategy implements EEI_Line_Item_Display
 {
+    /**
+     * @var bool
+     */
+    protected $prices_include_taxes = false;
 
     /**
      * total amount of tax to apply
@@ -34,6 +38,11 @@ class EE_Default_Line_Item_Display_Strategy implements EEI_Line_Item_Display
      */
     private $_total_items = 0;
 
+
+    public function __construct()
+    {
+        $this->prices_include_taxes = EE_Registry::instance()->CFG->tax_settings->prices_displayed_including_taxes;
+    }
 
 
     /**
@@ -129,17 +138,21 @@ class EE_Default_Line_Item_Display_Strategy implements EEI_Line_Item_Display
     }
 
 
-
     /**
      *  _total_row
      *
      * @param EE_Line_Item $line_item
      * @param array        $options
-     * @return mixed
+     * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    private function _item_row(EE_Line_Item $line_item, $options = array())
+    private function _item_row(EE_Line_Item $line_item, array $options = array()): string
     {
-        // start of row
+        $sub_taxes = $line_item->getSubTaxes();
+        $has_sub_taxes = ! empty($sub_taxes);
+        $is_taxable = $line_item->is_taxable();
+
         $row_class = $options['odd'] ? 'item odd' : 'item';
         $html = EEH_HTML::tr('', '', $row_class);
         // name && desc
@@ -154,23 +167,30 @@ class EE_Default_Line_Item_Display_Strategy implements EEI_Line_Item_Display
             $line_item,
             $options
         );
-        if ($line_item->is_taxable()) {
-            $ticket_price_includes_taxes = EE_Registry::instance()->CFG->tax_settings->prices_displayed_including_taxes
+        if ($is_taxable || $has_sub_taxes) {
+            $includes_taxes = $this->prices_include_taxes
                 ? esc_html__('* price includes taxes', 'event_espresso')
                 : esc_html__('* price does not include taxes', 'event_espresso');
-            $name_and_desc .= '<span class="smaller-text lt-grey-text" style="margin:0 0 0 2em;">'
-                  . $ticket_price_includes_taxes
-                  . '</span>';
+            $name_and_desc .= '<br /><span class="smaller-text grey-text">' . $includes_taxes . '</span>';
         }
 
         // name td
         $html .= EEH_HTML::td($name_and_desc, '', 'item_l');
         // quantity td
         $html .= EEH_HTML::td($line_item->quantity(), '', 'item_l jst-rght');
-        $tax_rate = $line_item->is_taxable()
-                    && EE_Registry::instance()->CFG->tax_settings->prices_displayed_including_taxes
-            ? 1 + ( $this->_tax_rate / 100 )
-            : 1;
+        $tax_rate = 1;
+        if ($has_sub_taxes && ! $this->prices_include_taxes) {
+            $tax_rate = 0;
+            foreach ($sub_taxes as $sub_tax) {
+                if ($sub_tax instanceof EE_Line_Item && $sub_tax->isSubTax()) {
+                    $tax_rate += $sub_tax->percent();
+                }
+            }
+            $tax_rate = 1 + $tax_rate / 100;
+        } else if ($is_taxable && $this->prices_include_taxes) {
+            $tax_rate = 1 + ($this->_tax_rate / 100);
+        }
+
         // price td
         $unit_price = apply_filters(
             'FHEE__EE_Default_Line_Item_Display_Strategy___item_row__unit_price',
