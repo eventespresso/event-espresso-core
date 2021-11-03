@@ -614,6 +614,12 @@ class EEH_Debug_Tools
     }
 
 
+    public static function shortClassName(string $fqcn): string
+    {
+        return substr(strrchr($fqcn, '\\'), 1);
+    }
+
+
 
     /******************** deprecated ********************/
 
