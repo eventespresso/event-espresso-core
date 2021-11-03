@@ -5,24 +5,24 @@
  *
  * Abstract parent class for EE_Line_Item_Filters
  *
- * @see                   \EEI_Line_Item_Filter
+ * @see                   EE_Line_Item_Filter
  * @package               Event Espresso
  * @subpackage            core
  * @author                Brent Christensen
  * @since                 4.8.0
  *
  */
-abstract class EE_Line_Item_Filter_Base implements EEI_Line_Item_Filter
+abstract class EE_Line_Item_Filter_Base implements EE_Line_Item_Filter
 {
 
 
     /**
      * process
      *
-     * @param \EEI_Line_Item $line_item
-     * @return \EEI_Line_Item
+     * @param EE_Line_Item $line_item
+     * @return EE_Line_Item
      */
-    public function process(EEI_Line_Item $line_item)
+    public function process(EE_Line_Item $line_item): ?EE_Line_Item
     {
         return $line_item;
     }

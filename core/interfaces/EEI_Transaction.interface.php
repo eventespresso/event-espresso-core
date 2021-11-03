@@ -25,7 +25,7 @@ interface EEI_Transaction extends EEI_Base
     /**
      * Get the line item that represents the total for the transaction
      *
-     * @return EEI_Line_Item
+     * @return EE_Line_Item
      */
     public function total_line_item();
 

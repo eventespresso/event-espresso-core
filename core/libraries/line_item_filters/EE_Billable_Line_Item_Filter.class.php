@@ -22,6 +22,8 @@ class EE_Billable_Line_Item_Filter extends EE_Specific_Registrations_Line_Item_F
      * EE_Billable_Line_Item_Filter constructor.
      *
      * @param EE_Registration[] $registrations
+     * @throws EE_Error
+     * @throws EE_Error
      */
     public function __construct($registrations)
     {
@@ -35,9 +37,11 @@ class EE_Billable_Line_Item_Filter extends EE_Specific_Registrations_Line_Item_F
      *
      * @access protected
      * @param EE_Registration[] $registrations
-     * @return mixed
+     * @return EE_Registration[]
+     * @throws EE_Error
+     * @throws EE_Error
      */
-    protected function _remove_unbillable_registrations($registrations = array())
+    protected function _remove_unbillable_registrations(array $registrations = array()): array
     {
         if (! empty($registrations)) {
             // these reg statuses require payment (if event is not free)

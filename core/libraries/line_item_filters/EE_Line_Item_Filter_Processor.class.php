@@ -4,7 +4,7 @@
  * Class EE_Line_Item_Filter_Processor
  *
  * Receives an EE_Collection of EE_Line_Item_Filter objects
- * and an EEI_Line_Item grand total object upon construction
+ * and an EE_Line_Item grand total object upon construction
  * clones the entire grand total line item tree so that the original will not be affected
  * then process() applies each filter to the cloned grand total line item tree
  *
@@ -42,7 +42,7 @@ class EE_Line_Item_Filter_Processor
     protected $line_item_filters;
 
     /**
-     * @type EEI_Line_Item $grand_total_line_item
+     * @type EE_Line_Item $grand_total_line_item
      */
     protected $grand_total_line_item;
 
@@ -50,11 +50,12 @@ class EE_Line_Item_Filter_Processor
     /**
      * EE_Line_Item_Filter_Processor constructor.
      *
-     * @param \EE_Line_Item_Filter_Collection $line_item_filters
-     * @param \EEI_Line_Item                  $grand_total_line_item
-     * @throws \EE_Error
+     * @param EE_Line_Item_Filter_Collection $line_item_filters
+     * @param EE_Line_Item                   $grand_total_line_item
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function __construct(EE_Line_Item_Filter_Collection $line_item_filters, EEI_Line_Item $grand_total_line_item)
+    public function __construct(EE_Line_Item_Filter_Collection $line_item_filters, EE_Line_Item $grand_total_line_item)
     {
         $this->line_item_filters = $line_item_filters;
         if ($grand_total_line_item->type() !== EEM_Line_Item::type_total) {
@@ -67,10 +68,12 @@ class EE_Line_Item_Filter_Processor
     /**
      * clone_and_reset_line_item_tree
      *
-     * @param \EEI_Line_Item $line_item
-     * @return \EEI_Line_Item
+     * @param EE_Line_Item $line_item
+     * @return EE_Line_Item
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    protected function clone_and_reset_line_item_tree(EEI_Line_Item $line_item)
+    protected function clone_and_reset_line_item_tree(EE_Line_Item $line_item): EE_Line_Item
     {
         $cloned_line_item = $this->clone_and_reset_line_item($line_item);
         foreach ($line_item->children() as $child_line_item) {
@@ -87,10 +90,12 @@ class EE_Line_Item_Filter_Processor
      * resets any fields that represent database primary keys
      * resets total
      *
-     * @param \EEI_Line_Item $line_item
-     * @return \EEI_Line_Item
+     * @param EE_Line_Item $line_item
+     * @return EE_Line_Item
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    protected function clone_and_reset_line_item(EEI_Line_Item $line_item)
+    protected function clone_and_reset_line_item(EE_Line_Item $line_item): EE_Line_Item
     {
         // we don't actually want to work with the original line item, so clone it
         $cloned_line_item = clone $line_item;
@@ -108,9 +113,11 @@ class EE_Line_Item_Filter_Processor
     /**
      * process
      *
-     * @return EEI_Line_Item
+     * @return EE_Line_Item
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function process()
+    public function process(): ?EE_Line_Item
     {
         $this->line_item_filters->rewind();
         while ($this->line_item_filters->valid()) {
