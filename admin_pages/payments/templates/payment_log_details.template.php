@@ -3,19 +3,16 @@
 /**
  * payment_log_details
  *
- * @package               Event Espresso
+ * @package     Event Espresso
  * @subpackage
- * @author                Mike Nelson
- *
- * ------------------------------------------------------------------------
+ * @author      Mike Nelson
+ * @var EE_Change_Log     $payment_log
+ * @var EE_Payment_Method $payment_method
+ * @var EE_Transaction    $transaction
  */
-
-/*@var EE_Change_Log $payment_Log */
-/*@var EE_Payment_Method $payment_Method*/
-/*@var EE_Transaction $transaction*/
 ?>
     <div class="padding">
-        <table class="form-table">
+        <table class="ee-payment-log-details widefat">
             <tbody>
 
             <tr>
@@ -26,7 +23,6 @@
                 </th>
                 <td>
                     <?php echo $payment_log->ID() ?>
-
                 </td>
             </tr>
             <tr>
@@ -68,11 +64,11 @@
                         <?php esc_html_e('Content', 'event_espresso'); ?>
                     </label>
                 </th>
-                <td>
-                    <?php echo $payment_log->e(
-                        'LOG_message',
-                        'as_table'
-                    );// EEH_Template::layout_array_as_table($payment_log->content())?>
+                <td class='ee-payment-log-details__content'>
+                    <?php
+                    echo $payment_log->e('LOG_message', 'as_table');
+                    // EEH_Template::layout_array_as_table($payment_log->content())
+                    ?>
                 </td>
             </tr>
             </tbody>
