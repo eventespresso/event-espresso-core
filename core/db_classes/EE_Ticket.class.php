@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\entities\tickets\TicketPriceModifiers;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
@@ -16,11 +17,11 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
 {
 
     /**
-     * TicKet Sold out:
-     * constant used by ticket_status() to indicate that a ticket is sold out
-     * and no longer available for purchases
+     * TicKet Archived:
+     * constant used by ticket_status() to indicate that a ticket is archived
+     * and no longer available for purchase
      */
-    const sold_out = 'TKS';
+    const archived = 'TKA';
 
     /**
      * TicKet Expired:
@@ -30,11 +31,11 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     const expired = 'TKE';
 
     /**
-     * TicKet Archived:
-     * constant used by ticket_status() to indicate that a ticket is archived
-     * and no longer available for purchase
+     * TicKet On sale:
+     * constant used by ticket_status() to indicate that a ticket is On Sale
+     * and IS available for purchase
      */
-    const archived = 'TKA';
+    const onsale = 'TKO';
 
     /**
      * TicKet Pending:
@@ -44,11 +45,11 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     const pending = 'TKP';
 
     /**
-     * TicKet On sale:
-     * constant used by ticket_status() to indicate that a ticket is On Sale
-     * and IS available for purchase
+     * TicKet Sold out:
+     * constant used by ticket_status() to indicate that a ticket is sold out
+     * and no longer available for purchases
      */
-    const onsale = 'TKO';
+    const sold_out = 'TKS';
 
     /**
      * extra meta key for tracking ticket reservations
@@ -71,6 +72,11 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      */
     private $_ticket_total_with_taxes;
 
+    /**
+     * @var TicketPriceModifiers
+     */
+    protected $ticket_price_modifiers;
+
 
     /**
      * @param array  $props_n_values          incoming values
@@ -85,7 +91,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     public static function new_instance($props_n_values = [], $timezone = null, $date_formats = [])
     {
         $has_object = parent::_check_for_object($props_n_values, __CLASS__, $timezone, $date_formats);
-        return $has_object ? $has_object : new self($props_n_values, false, $timezone, $date_formats);
+        return $has_object ?: new self($props_n_values, false, $timezone, $date_formats);
     }
 
 
@@ -100,6 +106,21 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     public static function new_instance_from_db($props_n_values = [], $timezone = null)
     {
         return new self($props_n_values, true, $timezone);
+    }
+
+
+    /**
+     * @param array  $fieldValues
+     * @param false  $bydb
+     * @param string $timezone
+     * @param array  $date_formats
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function __construct($fieldValues = [], $bydb = false, $timezone = '', $date_formats = [])
+    {
+        parent::__construct($fieldValues, $bydb, $timezone, $date_formats);
+        $this->ticket_price_modifiers = LoaderFactory::getNew(TicketPriceModifiers::class, [$this]);
     }
 
 
@@ -175,7 +196,6 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * The purpose of this method is to simply return a boolean for whether there are any tickets remaining for sale
      * considering ALL the factors used for figuring that out.
      *
-     * @access public
      * @param int $DTT_ID if an int above 0 is included here then we get a specific dtt.
      * @return boolean         true = tickets remaining, false not.
      * @throws EE_Error
@@ -303,8 +323,8 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * Gets all the datetimes this ticket can be used for attending.
      * Unless otherwise specified, orders datetimes by start date.
      *
-     * @param array $query_params @see
-     *                            https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @param array $query_params
+     * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Datetime[]|EE_Base_Class[]
      * @throws EE_Error
      * @throws ReflectionException
@@ -353,7 +373,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
         switch ($what) {
             case 'ticket':
                 return $tickets_sold['ticket'];
-                break;
+
             case 'datetime':
                 if (empty($tickets_sold['datetime'])) {
                     return $total;
@@ -371,7 +391,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
                     return $total;
                 }
                 return empty($dtt_id) ? $tickets_sold['datetime'] : $tickets_sold['datetime'][ $dtt_id ];
-                break;
+
             default:
                 return $total;
         }
@@ -408,8 +428,12 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function base_price($return_array = false)
+    public function base_price(bool $return_array = false)
     {
+        $base_price = $this->ticket_price_modifiers->getBasePrice();
+        if (! empty($base_price)) {
+            return $return_array ? $base_price : reset($base_price);
+        }
         $_where = ['Price_Type.PBT_ID' => EEM_Price_Type::base_type_base_price];
         return $return_array
             ? $this->get_many_related('Price', [$_where])
@@ -420,55 +444,62 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     /**
      * This returns ONLY the price modifiers for the ticket (i.e. no taxes or base price)
      *
-     * @access public
      * @return EE_Price[]
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function price_modifiers()
+    public function price_modifiers(): array
     {
-        $query_params = [
-            0 => [
-                'Price_Type.PBT_ID' => [
-                    'NOT IN',
-                    [EEM_Price_Type::base_type_base_price, EEM_Price_Type::base_type_tax],
-                ],
-            ],
-        ];
-        return $this->prices($query_params);
+        $price_modifiers = $this->usesGlobalTaxes()
+            ? $this->ticket_price_modifiers->getAllDiscountAndSurchargeModifiersForTicket()
+            : $this->ticket_price_modifiers ->getAllModifiersForTicket();
+        if (! empty($price_modifiers)) {
+            return $price_modifiers;
+        }
+        return $this->prices(
+            [
+                [
+                    'Price_Type.PBT_ID' => [
+                        'NOT IN',
+                        [EEM_Price_Type::base_type_base_price, EEM_Price_Type::base_type_tax],
+                    ]
+                ]
+            ]
+        );
     }
 
 
     /**
-     * This returns ONLY the price modifiers for the ticket (i.e. no taxes or base price)
+     * This returns ONLY the TAX price modifiers for the ticket
      *
-     * @access public
      * @return EE_Price[]
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function tax_price_modifiers()
+    public function tax_price_modifiers(): array
     {
-        $query_params = [
-            0 => [
-                'Price_Type.PBT_ID' => EEM_Price_Type::base_type_tax,
-            ],
-        ];
-        return $this->prices($query_params);
+        $tax_price_modifiers = $this->ticket_price_modifiers->getAllTaxesForTicket();
+        if (! empty($tax_price_modifiers)) {
+            return $tax_price_modifiers;
+        }
+        return $this->prices([['Price_Type.PBT_ID' => EEM_Price_Type::base_type_tax]]);
     }
 
 
     /**
      * Gets all the prices that combine to form the final price of this ticket
      *
-     * @param array $query_params @see
-     *                            https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @param array $query_params
+     * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Price[]|EE_Base_Class[]
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function prices($query_params = [])
+    public function prices(array $query_params = []): array
     {
+        if (! isset($query_params['order_by'])) {
+            $query_params['order_by']['PRC_order'] = 'ASC';
+        }
         return $this->get_many_related('Price', $query_params);
     }
 
@@ -476,8 +507,8 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     /**
      * Gets all the ticket datetimes (ie, relations between datetimes and tickets)
      *
-     * @param array $query_params @see
-     *                            https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @param array $query_params
+     * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Datetime_Ticket|EE_Base_Class[]
      * @throws EE_Error
      * @throws ReflectionException
@@ -556,9 +587,22 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      */
     public function get_ticket_taxes_for_admin(): array
     {
-        /** @var EE_Admin_Config $admin_config */
-        $admin_config = LoaderFactory::getShared(EE_Admin_Config::class);
-        return $admin_config->useAdvancedEditor() ? $this->tax_price_modifiers() : EE_Taxes::get_taxes_for_admin();
+        return $this->usesGlobalTaxes() ? EE_Taxes::get_taxes_for_admin() : $this->tax_price_modifiers();
+    }
+
+
+    /**
+     * alias of taxable() to better indicate that ticket uses the legacy method of applying default "global" taxes
+     * as opposed to having tax price modifiers added directly to each ticket
+     *
+     * @return bool
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since   $VID:$
+     */
+    public function usesGlobalTaxes(): bool
+    {
+        return $this->taxable();
     }
 
 
@@ -606,11 +650,9 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     public function get_ticket_total_with_taxes($no_cache = false)
     {
         if ($this->_ticket_total_with_taxes === null || $no_cache) {
-            /** @var EE_Admin_Config $admin_config */
-            $admin_config = LoaderFactory::getShared(EE_Admin_Config::class);
-            $this->_ticket_total_with_taxes = $admin_config->useAdvancedEditor()
-                ? $this->ticket_price()
-                : $this->get_ticket_subtotal() + $this->get_ticket_taxes_total_for_admin();
+            $this->_ticket_total_with_taxes = $this->usesGlobalTaxes()
+                ? $this->get_ticket_subtotal() + $this->get_ticket_taxes_total_for_admin()
+                : $this->ticket_price();
         }
         return (float) $this->_ticket_total_with_taxes;
     }
@@ -1556,8 +1598,8 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     /**
      * Gets all the registrations for this ticket
      *
-     * @param array $query_params @see
-     *                            https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @param array $query_params
+     * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return EE_Registration[]|EE_Base_Class[]
      * @throws EE_Error
      * @throws ReflectionException
@@ -1594,8 +1636,8 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     /**
      * Counts the registrations for this ticket
      *
-     * @param array $query_params @see
-     *                            https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @param array $query_params
+     * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      * @return int
      * @throws EE_Error
      * @throws ReflectionException
