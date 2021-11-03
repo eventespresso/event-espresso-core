@@ -85,9 +85,7 @@ class EE_Taxes extends EE_Base
     public static function get_subtotal_for_admin(EE_Ticket $ticket)
     {
         $TKT_ID = $ticket->ID();
-        return isset(EE_Taxes::$_subtotal[ $TKT_ID ])
-            ? EE_Taxes::$_subtotal[ $TKT_ID ]
-            : EE_Taxes::_get_subtotal_for_admin($ticket);
+        return EE_Taxes::$_subtotal[ $TKT_ID ] ?? EE_Taxes::_get_subtotal_for_admin($ticket);
     }
 
 
@@ -107,7 +105,7 @@ class EE_Taxes extends EE_Base
             'Price',
             [
                 0 => [
-                    'Price_Type.PBT_ID' => ['NOT', EEM_Price_Type::base_type_tax],
+                    'Price_Type.PBT_ID' => ['!=', EEM_Price_Type::base_type_tax],
                 ],
                 'default_where_conditions' => 'none',
                 'order_by'                 => ['PRC_order' => 'ASC'],
@@ -146,13 +144,13 @@ class EE_Taxes extends EE_Base
      * @return EE_Price[] EE_Price objects that have PRT_ID == 4
      * @throws EE_Error
      */
-    public static function get_taxes_for_admin()
+    public static function get_taxes_for_admin(): array
     {
         if (empty(EE_Taxes::$_default_taxes)) {
             /** @var EEM_Price $price_model */
             $price_model = LoaderFactory::getLoader()->getShared('EEM_Price');
             EE_Taxes::$_default_taxes = $price_model->get_all(
-                [['Price_Type.PBT_ID' => 4]]
+                [['PRC_is_default' => 1, 'Price_Type.PBT_ID' => 4]]
             );
         }
         return EE_Taxes::$_default_taxes;
