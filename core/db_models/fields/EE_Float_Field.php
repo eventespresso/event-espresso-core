@@ -26,7 +26,7 @@ class EE_Float_Field extends EE_Model_Field_Base
      * So if you want to pass in a string that NEEDS to interpret periods as decimal marks, call floatval() on it first.
      * Returns a float
      *
-     * @param type $value_inputted_for_field_on_model_object
+     * @param float|string $value_inputted_for_field_on_model_object
      * @return float
      */
     public function prepare_for_set($value_inputted_for_field_on_model_object)

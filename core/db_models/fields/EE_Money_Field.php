@@ -7,6 +7,22 @@
 class EE_Money_Field extends EE_Float_Field
 {
 
+
+    /**
+     * number of decimal places to round numbers to when performing calculations
+     *
+     * @var integer
+     */
+    protected $decimal_precision = 6;
+
+    /**
+     * number of decimal places to round numbers to for display
+     *
+     * @var integer
+     */
+    protected $locale_precision = 6;
+
+
     /**
      * @param string $table_column
      * @param string $nicename
@@ -17,6 +33,7 @@ class EE_Money_Field extends EE_Float_Field
     {
         parent::__construct($table_column, $nicename, $nullable, $default_value);
         $this->setSchemaType('object');
+        $this->locale_precision = EE_Registry::instance()->CFG->currency->dec_plc;
     }
 
 
@@ -29,23 +46,18 @@ class EE_Money_Field extends EE_Float_Field
      * @param string $value_on_field_to_be_outputted
      * @param string $schema
      * @return string
+     * @throws EE_Error
      */
-    public function prepare_for_pretty_echoing($value_on_field_to_be_outputted, $schema = null)
+    public function prepare_for_pretty_echoing($value_on_field_to_be_outputted, $schema = null): string
     {
-        $pretty_float = parent::prepare_for_pretty_echoing($value_on_field_to_be_outputted);
-
         if ($schema == 'localized_float') {
-            return $pretty_float;
+            return parent::prepare_for_pretty_echoing($value_on_field_to_be_outputted);
         }
-        if ($schema == 'no_currency_code') {
-//          echo "schema no currency!";
-            $display_code = false;
-        } else {
-            $display_code = true;
-        }
+        $display_code = $schema !== 'no_currency_code';
         // we don't use the $pretty_float because format_currency will take care of it.
         return EEH_Template::format_currency($value_on_field_to_be_outputted, false, $display_code);
     }
+
 
     /**
      * If provided with a string, strips out money-related formatting to turn it into a proper float.
@@ -56,43 +68,68 @@ class EE_Money_Field extends EE_Float_Field
      * @param string $value_inputted_for_field_on_model_object
      * @return float
      */
-    public function prepare_for_set($value_inputted_for_field_on_model_object)
+    public function prepare_for_set($value_inputted_for_field_on_model_object): float
     {
-        // remove any currencies etc.
-//      if(is_string($value_inputted_for_field_on_model_object)){
-//          $value_inputted_for_field_on_model_object = preg_replace("/[^0-9,.]/", "", $value_inputted_for_field_on_model_object);
-//      }
         // now it's a float-style string or number
         $float_val = parent::prepare_for_set($value_inputted_for_field_on_model_object);
         // round to the correctly number of decimal places for this  currency
-        $rounded_value = round($float_val, EE_Registry::instance()->CFG->currency->dec_plc);
-        return $rounded_value;
+        return $this->roundNumericValue($float_val);
     }
 
-    public function prepare_for_get($value_of_field_on_model_object)
-    {
-        $c = EE_Registry::instance()->CFG->currency;
-        return round(parent::prepare_for_get($value_of_field_on_model_object), $c->dec_plc);
-    }
 
-    public function getSchemaProperties()
+    /**
+     * @return array[]
+     */
+    public function getSchemaProperties(): array
     {
-        return array(
-            'raw' => array(
-                'description' =>  sprintf(
+        return [
+            'raw'    => [
+                'description' => sprintf(
                     __('%s - the raw value as it exists in the database as a simple float.', 'event_espresso'),
                     $this->get_nicename()
                 ),
-                'type' => 'number',
-            ),
-            'pretty' => array(
-                'description' =>  sprintf(
+                'type'        => 'number',
+            ],
+            'pretty' => [
+                'description' => sprintf(
                     __('%s - formatted for display in the set currency and decimal places.', 'event_espresso'),
                     $this->get_nicename()
                 ),
-                'type' => 'string',
-                'format' => 'money'
-            )
+                'type'        => 'string',
+                'format'      => 'money',
+            ],
+        ];
+    }
+
+
+    /**
+     * strips formatting, rounds the provided number, and returns a float
+     * if $round is set to true, then the decimal precision for the site locale will be used,
+     * otherwise the default decimal precision of 6 will be used
+     *
+     * @param float|int|string $number unformatted number value, ex: 1234.5678956789
+     * @param bool             $round  whether to round the price off according to the locale settings
+     * @return float                      rounded value, ex: 1,234.567896
+     */
+    private function roundNumericValue($number, bool $round = false): float
+    {
+        $precision = $round ? $this->locale_precision : $this->decimal_precision;
+        return round(
+            $this->filterNumericValue($number),
+            $precision ?? $this->decimal_precision,
+            PHP_ROUND_HALF_UP
         );
+    }
+
+
+    /**
+     * Removes all characters except digits, +- and .
+     *
+     * @param float|int|string $number
+     * @return float
+     */
+    private function filterNumericValue($number): float
+    {
+        return (float) filter_var($number, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
     }
 }
