@@ -481,11 +481,11 @@ abstract class EE_Gateway
      * Gets the name to use for a line item when sending line items to the gateway
      *
      * @deprecated since 4.9.31 instead use $this->_get_gateway_formatter()->formatLineItemName($line_item,$payment)
-     * @param EEI_Line_Item $line_item
+     * @param EE_Line_Item $line_item
      * @param EEI_Payment   $payment
      * @return string
      */
-    protected function _format_line_item_name(EEI_Line_Item $line_item, EEI_Payment $payment)
+    protected function _format_line_item_name(EE_Line_Item $line_item, EEI_Payment $payment)
     {
         return $this->_get_gateway_formatter()->formatLineItemName($line_item, $payment);
     }
@@ -494,11 +494,11 @@ abstract class EE_Gateway
      * Gets the description to use for a line item when sending line items to the gateway
      *
      * @deprecated since 4.9.31 instead use $this->_get_gateway_formatter()->formatLineItemDesc($line_item, $payment))
-     * @param EEI_Line_Item $line_item
+     * @param EE_Line_Item $line_item
      * @param EEI_Payment   $payment
      * @return string
      */
-    protected function _format_line_item_desc(EEI_Line_Item $line_item, EEI_Payment $payment)
+    protected function _format_line_item_desc(EE_Line_Item $line_item, EEI_Payment $payment)
     {
         return $this->_get_gateway_formatter()->formatLineItemDesc($line_item, $payment);
     }

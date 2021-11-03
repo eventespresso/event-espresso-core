@@ -36,22 +36,22 @@ interface GatewayDataFormatterInterface
     /**
      * Gets the name to use for a line item when sending line items to the gateway
      *
-     * @param \EEI_Line_Item $line_item
+     * @param \EE_Line_Item $line_item
      * @param \EEI_Payment   $payment
      * @return string
      */
-    public function formatLineItemName(\EEI_Line_Item $line_item, \EEI_Payment $payment);
+    public function formatLineItemName(\EE_Line_Item $line_item, \EEI_Payment $payment);
 
 
 
     /**
      * Gets the description to use for a line item when sending line items to the gateway
      *
-     * @param \EEI_Line_Item $line_item
+     * @param \EE_Line_Item $line_item
      * @param \EEI_Payment   $payment
      * @return string
      */
-    public function formatLineItemDesc(\EEI_Line_Item $line_item, \EEI_Payment $payment);
+    public function formatLineItemDesc(\EE_Line_Item $line_item, \EEI_Payment $payment);
 
 
 
