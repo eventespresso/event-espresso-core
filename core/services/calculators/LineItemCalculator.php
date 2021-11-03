@@ -7,11 +7,9 @@ use EE_Currency_Config;
 use EE_Error;
 use EE_Line_Item;
 use EE_Transaction;
+use EEH_Debug_Tools;
 use EEH_Line_Item;
 use EEM_Line_Item;
-use EventEspresso\core\exceptions\InvalidDataTypeException;
-use EventEspresso\core\exceptions\InvalidInterfaceException;
-use InvalidArgumentException;
 use ReflectionException;
 
 /**
@@ -23,6 +21,12 @@ use ReflectionException;
  */
 class LineItemCalculator
 {
+
+    /**
+     * @var bool
+     */
+    private $debug = false;  // true  false
+
 
     /**
      * number of decimal places to round numbers to when performing calculations
@@ -63,20 +67,19 @@ class LineItemCalculator
      */
     public function recalculateTotalIncludingTaxes(EE_Line_Item $line_item, bool $update_txn_status = false): float
     {
-        $this->debug(null, __FUNCTION__, __CLASS__,__FILE__, __LINE__, 1);
+        $this->debug(null, __FUNCTION__, EEH_Debug_Tools::shortClassName(__CLASS__), __FILE__, __LINE__, 1);
         $this->validateLineItemAndType($line_item, EEM_Line_Item::type_total);
-        $this->debug($line_item, '', __FUNCTION__, __FILE__, __LINE__, 1);
         [$total, $pretax] = $this->recalculateLineItemTotals($line_item);
         $total_tax = $this->recalculateTaxesAndTaxTotal($line_item);
         // no negative totals plz
-        $total = max($total, 0);
+        $grand_total  = max($pretax + $total_tax, 0);
         $pretax = $this->updatePreTaxTotal($line_item, $pretax, true);
-        $total = $this->updateTotal($line_item, $total, true);
-        $this->debug($line_item, $pretax, '$pretax total', __FILE__, __LINE__, 1);
-        $this->debug($line_item, $total_tax, '$total_tax', __FILE__, __LINE__, 1);
-        $this->debug($line_item, $total, 'grand $total', __FILE__, __LINE__, 1);
-        $this->updateTransaction($line_item, $total, $update_txn_status);
-        return $total;
+        $grand_total  = $this->updateTotal($line_item, $grand_total, true);
+        $this->debug($line_item, $pretax, '$pretax total', __FILE__, __LINE__, 2);
+        $this->debug($line_item, $total_tax, '$total_tax', __FILE__, __LINE__, 2);
+        $this->debug($line_item, $grand_total, 'grand $total', __FILE__, __LINE__, 2);
+        $this->updateTransaction($line_item, $grand_total, $update_txn_status);
+        return $grand_total;
     }
 
 
@@ -98,8 +101,7 @@ class LineItemCalculator
         float        $total = 0,
         float        $pretax = 0
     ): array {
-        $this->debug($line_item, $total, '> TOTAL', __FILE__, __LINE__, 3);
-        $this->debug($line_item, $pretax, '> PRETAX', __FILE__, __LINE__, 3);
+        $this->debug($line_item, null, __FUNCTION__, __FILE__, __LINE__, 1);
         $new_total = $new_pretax = 0;
         switch ($line_item->type()) {
 
@@ -129,8 +131,8 @@ class LineItemCalculator
                 // when calculating the pre-tax-total
                 break;
         }
-        // $this->debug($line_item, $new_total, 'NEW TOTAL', __FILE__, __LINE__, 3);
-        // $this->debug($line_item, $new_pretax, 'NEW PRETAX TOTAL', __FILE__, __LINE__, 3);
+        $this->debug($line_item, $new_pretax, 'PRETAX', __FILE__, __LINE__, 4);
+        $this->debug($line_item, $new_total, '+++ TAX', __FILE__, __LINE__, 4);
         return [$total + $new_total, $pretax + $new_pretax];
     }
 
@@ -138,7 +140,7 @@ class LineItemCalculator
     /**
      * @param EE_Line_Item $line_item
      * @param float        $total
-     * @param float $pretax
+     * @param float        $pretax
      * @return array
      * @throws EE_Error
      * @throws ReflectionException
@@ -146,8 +148,9 @@ class LineItemCalculator
     private function recalculateSubTotal(
         EE_Line_Item $line_item,
         float        $total = 0,
-        float $pretax = 0
+        float        $pretax = 0
     ): array {
+        $this->debug($line_item, null, __FUNCTION__, __FILE__, __LINE__, 4);
         if ($line_item->is_total()) {
             // if this is the grand total line item
             // then first update ALL of the line item quantities (if need be)
@@ -157,17 +160,14 @@ class LineItemCalculator
         $children = $line_item->children();
         foreach ($children as $child_line_item) {
             [$total, $pretax] = $this->recalculateLineItemTotals($child_line_item, $total, $pretax);
-            $this->debug($child_line_item, $total, 'NEW TOTAL', __FILE__, __LINE__, 3);
-            $this->debug($child_line_item, $pretax, 'NEW PRETAX TOTAL', __FILE__, __LINE__, 3);
         }
-        $this->debug($line_item, __FUNCTION__, __FILE__, __LINE__, 3);
         // for the actual pre-tax sub total line item, we want to save the pretax value for everything
         if ($line_item->is_sub_total() && $line_item->name() === esc_html__('Pre-Tax Subtotal', 'event_espresso')) {
             $this->updateUnitPrice($line_item, $pretax);
             $this->updateTotal($line_item, $pretax, true);
         } else {
             $this->updateUnitPrice($line_item, $total);
-            $total  = $this->updateTotal($line_item, $total, true);
+            $total = $this->updateTotal($line_item, $total, true);
         }
         $pretax = $this->updatePreTaxTotal($line_item, $pretax, true);
         return [$total, $pretax];
@@ -181,13 +181,13 @@ class LineItemCalculator
      * @return array
      * @throws EE_Error
      * @throws ReflectionException
-     * @since   $VID:$
      */
     private function recalculateLineItem(
         EE_Line_Item $line_item,
         float        $total = 0,
         float        $pretax = 0
     ): array {
+        $this->debug($line_item, null, __FUNCTION__, __FILE__, __LINE__, 4);
         if ($line_item->is_percent()) {
             $total = $this->calculatePercentage($total, $line_item->percent());
         } else {
@@ -195,12 +195,9 @@ class LineItemCalculator
             $children = $line_item->children();
             foreach ($children as $child_line_item) {
                 [$total, $pretax] = $this->recalculateLineItemTotals($child_line_item, $total, $pretax);
-                $this->debug($child_line_item, $total, 'NEW TOTAL', __FILE__, __LINE__, 3);
-                $this->debug($child_line_item, $pretax, 'NEW PRETAX TOTAL', __FILE__, __LINE__, 3);
             }
         }
-        $this->debug($line_item, __FUNCTION__, __FILE__, __LINE__, 3);
-        $total = $this->updateTotal($line_item, $total, true);
+        $total  = $this->updateTotal($line_item, $total, true);
         $pretax = $this->updatePreTaxTotal($line_item, $pretax, true);
         return [$total, $pretax];
     }
@@ -212,14 +209,14 @@ class LineItemCalculator
      * @return float
      * @throws EE_Error
      * @throws ReflectionException
-     * @since   $VID:$
      */
     private function recalculateSubLineItem(EE_Line_Item $line_item, float $total = 0): float
     {
+        $this->debug($line_item, null, __FUNCTION__, __FILE__, __LINE__, 4);
         $total = $line_item->is_percent()
             ? $this->calculatePercentage($total, $line_item->percent())
             : $this->calculateTotal($line_item);
-        $this->debug($line_item, __FUNCTION__, __FILE__, __LINE__, 3);
+        $this->debug($line_item, $total, '$total', __FILE__, __LINE__, 4);
         return $this->updateTotal($line_item, $total);
     }
 
@@ -230,12 +227,11 @@ class LineItemCalculator
      * @return float
      * @throws EE_Error
      * @throws ReflectionException
-     * @since   $VID:$
      */
     private function recalculateSubTax(EE_Line_Item $line_item, float $total = 0): float
     {
+        $this->debug($line_item, null, __FUNCTION__, __FILE__, __LINE__, 4);
         $total = $this->calculatePercentage($total, $line_item->percent());
-        $this->debug($line_item, __FUNCTION__, __FILE__, __LINE__, 3);
         return $this->updateTotal($line_item, $total);
     }
 
@@ -263,7 +259,7 @@ class LineItemCalculator
                 foreach ($children as $child_line_item) {
                     $count += $this->updateLineItemQuantities($child_line_item);
                 }
-                // $this->debug($line_item, '', __FUNCTION__, __FILE__, __LINE__, 3);
+                // $this->debug($line_item, null, __FUNCTION__, __FILE__, __LINE__, 4);
                 // totals and subtotals should have a quantity of 1
                 // unless their children have all been removed, in which case we can set them to 0
                 $quantity = $count > 0 ? 1 : 0;
@@ -274,7 +270,7 @@ class LineItemCalculator
                 // line items should ALREADY have accurate quantities set, if not, then somebody done goofed!
                 // but if this is a percentage based line item, then ensure its quantity is 1
                 if ($line_item->is_percent()) {
-                    // $this->debug($line_item, '', __FUNCTION__, __FILE__, __LINE__, 3);
+                    // $this->debug($line_item, null, __FUNCTION__, __FILE__, __LINE__, 4);
                     $this->updateQuantity($line_item, 1);
                 }
                 // and we also need to loop through all of the sub items and ensure those quantities match this parent.
@@ -288,13 +284,13 @@ class LineItemCalculator
                 // percentage based items need their quantity set to 1,
                 // all others use the incoming value from the parent line item
                 $quantity = $line_item->is_percent() ? 1 : $quantity;
-                // $this->debug($line_item, '', __FUNCTION__, __FILE__, __LINE__, 3);
+                // $this->debug($line_item, null, __FUNCTION__, __FILE__, __LINE__, 4);
                 $this->updateQuantity($line_item, $quantity);
                 return $quantity;
 
             case EEM_Line_Item::type_tax:
             case EEM_Line_Item::type_sub_tax:
-                // $this->debug($line_item, '', __FUNCTION__, __FILE__, __LINE__, 3);
+                // $this->debug($line_item, null, __FUNCTION__, __FILE__, __LINE__, 4);
                 // taxes should have a quantity of 1
                 $this->updateQuantity($line_item, 1);
                 return $quantity;
@@ -344,7 +340,7 @@ class LineItemCalculator
     {
         // update and save new percent only if incoming value does not match existing value
         if ($line_item->percent() !== $percent) {
-            $this->debug($line_item, $percent, 'SET LINE ITEM %: ', __FILE__, __LINE__, 2);
+            $this->debug($line_item, $percent, 'SET LINE ITEM %: ', __FILE__, __LINE__, 3);
             $line_item->set_percent($percent);
             $line_item->maybe_save();
         }
@@ -361,7 +357,7 @@ class LineItemCalculator
     {
         // update and save new quantity only if incoming value does not match existing value
         if ($line_item->quantity() !== $quantity) {
-            $this->debug($line_item, $quantity, 'SET LINE ITEM QTY: ', __FILE__, __LINE__, 2);
+            $this->debug($line_item, $quantity, 'SET LINE ITEM QTY: ', __FILE__, __LINE__, 3);
             $line_item->set_quantity($quantity);
             $line_item->maybe_save();
         }
@@ -381,7 +377,7 @@ class LineItemCalculator
         $pretax_total = $this->roundNumericValue($pretax_total, $round);
         // update and save new total only if incoming value does not match existing value
         if ($line_item->preTaxTotal() !== $pretax_total) {
-            $this->debug($line_item, $pretax_total, 'SET LINE ITEM PRETAX TOTAL: ', __FILE__, __LINE__, 2);
+            $this->debug($line_item, $pretax_total, 'SET LINE ITEM PRETAX TOTAL: ', __FILE__, __LINE__, 3);
             $line_item->setPreTaxTotal($pretax_total);
             $line_item->maybe_save();
         }
@@ -402,7 +398,7 @@ class LineItemCalculator
         $total = $this->roundNumericValue($total, $round);
         // update and save new total only if incoming value does not match existing value
         if ($line_item->total() !== $total) {
-            $this->debug($line_item, $total, 'SET LINE ITEM TOTAL: ', __FILE__, __LINE__, 2);
+            $this->debug($line_item, $total, 'SET LINE ITEM TOTAL: ', __FILE__, __LINE__, 3);
             $line_item->set_total($total);
             $line_item->maybe_save();
         }
@@ -454,7 +450,7 @@ class LineItemCalculator
         $new_unit_price = $this->roundNumericValue($new_unit_price);
         // update and save new total only if incoming value does not match existing value
         if ($line_item->unit_price() !== $new_unit_price) {
-            $this->debug($line_item, $new_unit_price, 'SET LINE ITEM UNIT PRICE: ', __FILE__, __LINE__, 2);
+            $this->debug($line_item, $new_unit_price, 'SET LINE ITEM UNIT PRICE: ', __FILE__, __LINE__, 3);
             $line_item->set_unit_price($new_unit_price);
             $line_item->maybe_save();
         }
@@ -466,23 +462,24 @@ class LineItemCalculator
      * the totals on each tax calculated, and returns the final tax total. Re-saves tax line items
      * and tax sub-total if already in the DB
      *
-     * @param EE_Line_Item $line_item
+     * @param EE_Line_Item $total_line_item
      * @return float
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function recalculateTaxesAndTaxTotal(EE_Line_Item $line_item): float
+    public function recalculateTaxesAndTaxTotal(EE_Line_Item $total_line_item): float
     {
-        $this->debug(null, __FUNCTION__, __CLASS__, __FILE__, __LINE__, 1);
-        $this->debug($line_item, '', __FUNCTION__, __FILE__, __LINE__);
+        $this->debug($total_line_item, __FUNCTION__, EEH_Debug_Tools::shortClassName(__CLASS__), __FILE__, __LINE__, 1);
+        $this->validateLineItemAndType($total_line_item, EEM_Line_Item::type_total);
         // calculate the total taxable amount for globally applied taxes
-        $taxable_total = $this->taxableAmountForGlobalTaxes($line_item->children());
-        $tax_total     = $this->applyGlobalTaxes($line_item, $taxable_total);
-        $this->debug($line_item, "$tax_total", '$tax_total', __FILE__, __LINE__);
-        $non_global_taxes = $this->calculateNonGlobalTaxes($line_item);
-        $tax_total        = $this->applyNonGlobalTaxes($line_item, $tax_total, $non_global_taxes);
-        $this->debug($line_item, "$tax_total", 'FINAL $tax_total', __FILE__, __LINE__);
-        $this->recalculateTaxSubTotal($line_item);
+        $taxable_total = $this->taxableAmountForGlobalTaxes($total_line_item);
+        $this->debug($total_line_item, "$taxable_total", '$taxable_total', __FILE__, __LINE__);
+        $tax_total     = $this->applyGlobalTaxes($total_line_item, $taxable_total);
+        $this->debug($total_line_item, "$tax_total", '$tax_total', __FILE__, __LINE__);
+        $non_global_taxes = $this->calculateNonGlobalTaxes($total_line_item);
+        $tax_total        = $this->applyNonGlobalTaxes($total_line_item, $tax_total, $non_global_taxes);
+        $this->debug($total_line_item, "$tax_total", 'FINAL $tax_total', __FILE__, __LINE__);
+        $this->recalculateTaxSubTotal($total_line_item);
         return $tax_total;
     }
 
@@ -496,19 +493,21 @@ class LineItemCalculator
      */
     private function applyGlobalTaxes(EE_Line_Item $total_line_item, float $taxable_total): float
     {
-        $this->debug($total_line_item, '', __FUNCTION__, __FILE__, __LINE__);
+        $this->debug($total_line_item, __FUNCTION__, EEH_Debug_Tools::shortClassName(__CLASS__), __FILE__, __LINE__, 1);
         $this->validateLineItemAndType($total_line_item, EEM_Line_Item::type_total);
         $total_tax = 0;
         $this->debug($total_line_item, $taxable_total, '$taxable_total', __FILE__, __LINE__);
         // loop through all global taxes all taxes
         $taxes = $total_line_item->tax_descendants();
         foreach ($taxes as $tax) {
-            $this->debug($tax, '', 'TAX CHILD', __FILE__, __LINE__);
+            $this->debug($tax, $tax->percent(), 'GLOBAL', __FILE__, __LINE__);
             $tax_total = $this->calculatePercentage($taxable_total, $tax->percent());
+
+            $this->debug(null, $tax_total, '$tax_total', __FILE__, __LINE__);
             $tax_total = $this->updateTotal($tax, $tax_total, true);
             $total_tax += $tax_total;
         }
-        return $total_tax;
+        return $this->roundNumericValue($total_tax, true);
     }
 
 
@@ -523,7 +522,6 @@ class LineItemCalculator
     private function recalculateTaxSubTotal(EE_Line_Item $line_item)
     {
         $this->validateLineItemAndType($line_item, EEM_Line_Item::type_total);
-        $this->debug($line_item, '', __FUNCTION__, __FILE__, __LINE__);
         foreach ($line_item->children() as $maybe_tax_subtotal) {
             if (
                 $this->validateLineItemAndType($maybe_tax_subtotal)
@@ -532,24 +530,42 @@ class LineItemCalculator
                 $total         = 0;
                 $total_percent = 0;
                 // simply loop through all its children (which should be taxes) and sum their total
-                foreach ($line_item->children() as $child_tax) {
+                foreach ($maybe_tax_subtotal->children() as $child_tax) {
+                    $this->debug($child_tax, $child_tax->total(), '$child_tax->total()', __FILE__, __LINE__);
+                    $this->debug($child_tax, $child_tax->percent(), '$child_tax->percent()', __FILE__, __LINE__);
                     if ($this->validateLineItemAndType($child_tax) && $child_tax->isGlobalTax()) {
                         $total         += $child_tax->total();
                         $total_percent += $child_tax->percent();
                     }
                 }
-                $this->updateTotal($line_item, $total, true);
-                $this->updatePercent($line_item, $total_percent);
-                $this->debug(null, __FUNCTION__, __CLASS__, __FILE__, __LINE__, 1);
-                $this->debug($line_item, $total, 'TOTAL TAX', __FILE__, __LINE__);
-                $this->debug($line_item, $total_percent, 'TOTAL TAX %', __FILE__, __LINE__);
-                $this->debug($line_item, $total, $line_item->total() . ' === ', __FILE__, __LINE__, 1);
+                $this->updateTotal($maybe_tax_subtotal, $total, true);
+                $this->updatePercent($maybe_tax_subtotal, $total_percent);
+                $this->debug(
+                    $line_item,
+                    __FUNCTION__,
+                    EEH_Debug_Tools::shortClassName(__CLASS__),
+                    __FILE__,
+                    __LINE__,
+                    1
+                );
+                $this->debug($maybe_tax_subtotal, $total, 'TOTAL TAX', __FILE__, __LINE__);
+                $this->debug($maybe_tax_subtotal, $total_percent, 'TOTAL TAX %', __FILE__, __LINE__);
+                $this->debug($maybe_tax_subtotal, $total, $maybe_tax_subtotal->total() . ' === ', __FILE__, __LINE__, 1);
             }
         }
     }
 
 
     /**
+     * returns an array of tax details like:
+     *  [
+     *      'GST_7' => [
+     *          'name'  => 'GST',
+     *          'rate'  => float(7),
+     *          'total' => float(4.9),
+     *      ]
+     *  ]
+     *
      * @param EE_Line_Item $total_line_item
      * @param array        $non_global_taxes
      * @param float        $line_item_total
@@ -598,8 +614,8 @@ class LineItemCalculator
     /**
      * @param EE_Line_Item $total_line_item
      * @param float        $tax_total
-     * @param array        $non_global_taxes
-     * @return float|mixed
+     * @param array        $non_global_taxes array of tax details generated by calculateNonGlobalTaxes()
+     * @return float
      * @throws EE_Error
      * @throws ReflectionException
      */
@@ -607,24 +623,10 @@ class LineItemCalculator
         EE_Line_Item $total_line_item,
         float        $tax_total,
         array        $non_global_taxes
-    ) {
-        $this->debug($total_line_item, __FUNCTION__, __CLASS__, __FILE__, __LINE__, 1);
-        /*
-            array(1) {
-              ['GST_7']=>
-              array(3) {
-                ['name']=>
-                string(3) 'GST'
-                ['rate']=>
-                float(7)
-                ['total']=>
-                float(4.9)
-              }
-            }
-        */
+    ): float {
+        $this->debug($total_line_item, __FUNCTION__, EEH_Debug_Tools::shortClassName(__CLASS__), __FILE__, __LINE__, 1);
         $global_taxes   = $total_line_item->tax_descendants();
         $taxes_subtotal = EEH_Line_Item::get_taxes_subtotal($total_line_item);
-        // $order = count($global_taxes);
         foreach ($non_global_taxes as $non_global_tax) {
             $this->debug($total_line_item, $non_global_tax, '$non_global_tax', __FILE__, __LINE__);
             $found = false;
@@ -668,7 +670,7 @@ class LineItemCalculator
                 $this->debug($total_line_item, "$tax_total", ' +++ $tax_total', __FILE__, __LINE__, 2);
             }
         }
-        return $tax_total;
+        return $this->roundNumericValue($tax_total, true);
     }
 
 
@@ -681,7 +683,7 @@ class LineItemCalculator
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function getTotalTax(EE_Line_Item $line_item)
+    public function getTotalTax(EE_Line_Item $line_item): float
     {
         $this->validateLineItemAndType($line_item, EEM_Line_Item::type_total);
         $this->recalculateTaxSubTotal($line_item);
@@ -691,7 +693,7 @@ class LineItemCalculator
                 $total += $tax_line_item->total();
             }
         }
-        return $total;
+        return $this->roundNumericValue($total, true);
     }
 
 
@@ -701,28 +703,27 @@ class LineItemCalculator
      * If the taxable total is negative, (eg, if none of the tickets were taxable,
      * but there is a "Taxable" discount), returns 0.
      *
-     * @param EE_Line_Item[] $line_items
+     * @param EE_Line_Item|null $line_item
      * @return float
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function taxableAmountForGlobalTaxes(?array $line_items): float
+    public function taxableAmountForGlobalTaxes(?EE_Line_Item $line_item): float
     {
         $total      = 0;
-        $line_items = $line_items ?? [];
-        foreach ($line_items as $line_item) {
-            $this->validateLineItemAndType($line_item);
-            if ($line_item->is_sub_total()) {
-                $total += $this->taxableAmountForGlobalTaxes($line_item->children());
-            } elseif ($line_item->is_line_item() && $line_item->is_taxable()) {
+        $child_line_items = $line_item->children();
+        foreach ($child_line_items as $child_line_item) {
+            $this->validateLineItemAndType($child_line_item);
+            if ($child_line_item->is_sub_total()) {
+                $this->debug($child_line_item, $child_line_item->name(), 'ST', __FILE__, __LINE__);
+                $total += $this->taxableAmountForGlobalTaxes($child_line_item);
+            } elseif ($child_line_item->is_line_item() && $child_line_item->is_taxable()) {
+                $this->debug($child_line_item, $child_line_item->name(), 'LI', __FILE__, __LINE__);
                 // if it's a percent item, only take into account
                 // the percentage that's taxable (the taxable total so far)
-                $total += $line_item->is_percent()
-                    ? $this->calculatePercentage($total, $line_item->percent(), true)
-                    : $line_item->pretaxTotal();
+                $total += $child_line_item->is_percent()
+                    ? $this->calculatePercentage($total, $child_line_item->percent(), true)
+                    : $child_line_item->pretaxTotal();
             }
         }
         return max($total, 0);
@@ -730,7 +731,9 @@ class LineItemCalculator
 
 
     /**
-     * strips formatting using the site locale, then rounds the provided number to 6 decimal places and returns a float
+     * strips formatting, rounds the provided number, and returns a float
+     * if $round is set to true, then the decimal precision for the site locale will be used,
+     * otherwise the default decimal precision of 6 will be used
      *
      * @param float|int|string $number unformatted number value, ex: 1234.5678956789
      * @param bool             $round  whether to round the price off according to the locale settings
@@ -798,17 +801,16 @@ class LineItemCalculator
      * @param int               $heading
      * @throws EE_Error
      * @throws ReflectionException
-     * @since   $VID:$
      */
     private function debug(?EE_Line_Item $line_item, $value, string $msg, string $file, string $line, int $heading = 5)
     {
         if ($this->debug) {
-            $msg = $msg ? $msg . ' ' : '';
-            $msg .= $line_item ? $line_item->type() . ' ▹ ' . $line_item->name() : '';
-            \EEH_Debug_Tools::printr($value, $msg, $file, $line, $heading);
+            $type = $line_item ? $line_item->type() : '';
+            $name = $line_item ? $line_item->name() : '';
+            $val  = $value ?? $name;
+            $msg  = $msg ? "{$msg} : " : '';
+            $msg  = $value ? "{$msg}{$type} {$name}" : "{$msg}{$type}";
+            EEH_Debug_Tools::printr($val, $msg, $file, $line, $heading);
         }
     }
-
-
-    private $debug = true;  // true  false
 }
