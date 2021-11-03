@@ -251,7 +251,7 @@ class EEM_Price extends EEM_Soft_Delete_Base
         $taxes     = [];
         $all_taxes = $this->get_all(
             [
-                ['Price_Type.PBT_ID' => EEM_Price_Type::base_type_tax],
+                ['Price_Type.PBT_ID' => EEM_Price_Type::base_type_tax, 'PRC_is_default' => 1],
                 'order_by' => ['Price_Type.PRT_order' => 'ASC', 'PRC_order' => 'ASC'],
             ]
         );
