@@ -4,7 +4,6 @@ use EventEspresso\core\domain\entities\tickets\TicketPriceModifiers;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
-use EventEspresso\core\services\loaders\LoaderFactory;
 
 /**
  * EE_Ticket class
@@ -120,7 +119,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     public function __construct($fieldValues = [], $bydb = false, $timezone = '', $date_formats = [])
     {
         parent::__construct($fieldValues, $bydb, $timezone, $date_formats);
-        $this->ticket_price_modifiers = LoaderFactory::getNew(TicketPriceModifiers::class, [$this]);
+        $this->ticket_price_modifiers = new TicketPriceModifiers($this);
     }
 
 
