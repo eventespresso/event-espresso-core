@@ -26,6 +26,7 @@ class EEH_Line_Item
     */
     private static $global_taxes;
 
+
     /**
      * Adds a simple item (unrelated to any other model object) to the provided PARENT line item.
      * Does NOT automatically re-calculate the line item totals or update the related transaction.
@@ -39,42 +40,47 @@ class EEH_Line_Item
      * @param string       $description
      * @param int          $quantity
      * @param boolean      $taxable
-     * @param boolean      $code if set to a value, ensures there is only one line item with that code
-     * @return boolean success
+     * @param null         $code if set to a value, ensures there is only one line item with that code
+     * @param bool         $return_item
+     * @return boolean|EE_Line_Item success
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public static function add_unrelated_item(
         EE_Line_Item $parent_line_item,
-        $name,
-        $unit_price,
-        $description = '',
-        $quantity = 1,
-        $taxable = false,
-        $code = null
+                     $name,
+                     $unit_price,
+                     $description = '',
+                     $quantity = 1,
+                     $taxable = false,
+                     $code = null,
+                     $return_item = false,
+                     $recalculate_totals = true
     ) {
         $items_subtotal = self::get_pre_tax_subtotal($parent_line_item);
-        $line_item = EE_Line_Item::new_instance(array(
-            'LIN_name'       => $name,
-            'LIN_desc'       => $description,
-            'LIN_unit_price' => $unit_price,
-            'LIN_quantity'   => $quantity,
-            'LIN_percent'    => null,
-            'LIN_is_taxable' => $taxable,
-            'LIN_order'      => $items_subtotal instanceof EE_Line_Item ? count($items_subtotal->children()) : 0,
-            'LIN_total'      => (float) $unit_price * (int) $quantity,
-            'LIN_type'       => EEM_Line_Item::type_line_item,
-            'LIN_code'       => $code,
-        ));
-        $line_item = apply_filters(
+        $line_item      = EE_Line_Item::new_instance(
+            [
+                'LIN_name'       => $name,
+                'LIN_desc'       => $description,
+                'LIN_unit_price' => $unit_price,
+                'LIN_quantity'   => $quantity,
+                'LIN_percent'    => null,
+                'LIN_is_taxable' => $taxable,
+                'LIN_order'      => $items_subtotal instanceof EE_Line_Item
+                    ? count($items_subtotal->children())
+                    : 0,
+                'LIN_total'      => (float) $unit_price * (int) $quantity,
+                'LIN_type'       => EEM_Line_Item::type_line_item,
+                'LIN_code'       => $code,
+            ]
+        );
+        $line_item      = apply_filters(
             'FHEE__EEH_Line_Item__add_unrelated_item__line_item',
             $line_item,
             $parent_line_item
         );
-        return self::add_item($parent_line_item, $line_item);
+        $added          = self::add_item($parent_line_item, $line_item, $recalculate_totals);
+        return $return_item ? $line_item : $added;
     }
 
 
@@ -92,32 +98,42 @@ class EEH_Line_Item
      * @param float        $percentage_amount
      * @param string       $description
      * @param boolean      $taxable
-     * @return boolean success
+     * @param null         $code
+     * @param bool         $return_item
+     * @return boolean|EE_Line_Item success
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function add_percentage_based_item(
         EE_Line_Item $parent_line_item,
-        $name,
-        $percentage_amount,
-        $description = '',
-        $taxable = false
+                     $name,
+                     $percentage_amount,
+                     $description = '',
+                     $taxable = false,
+                     $code = null,
+                     $return_item = false
     ) {
-        $line_item = EE_Line_Item::new_instance(array(
-            'LIN_name'       => $name,
-            'LIN_desc'       => $description,
-            'LIN_unit_price' => 0,
-            'LIN_percent'    => $percentage_amount,
-            'LIN_quantity'   => 1,
-            'LIN_is_taxable' => $taxable,
-            'LIN_total'      => (float) ($percentage_amount * ($parent_line_item->total() / 100)),
-            'LIN_type'       => EEM_Line_Item::type_line_item,
-            'LIN_parent'     => $parent_line_item->ID(),
-        ));
+        $total = $percentage_amount * $parent_line_item->total() / 100;
+        $line_item = EE_Line_Item::new_instance(
+            [
+                'LIN_name'       => $name,
+                'LIN_desc'       => $description,
+                'LIN_unit_price' => 0,
+                'LIN_percent'    => $percentage_amount,
+                'LIN_quantity'   => 1,
+                'LIN_is_taxable' => $taxable,
+                'LIN_total'      => (float) $total,
+                'LIN_type'       => EEM_Line_Item::type_line_item,
+                'LIN_parent'     => $parent_line_item->ID(),
+                'LIN_code'       => $code,
+            ]
+        );
         $line_item = apply_filters(
             'FHEE__EEH_Line_Item__add_percentage_based_item__line_item',
             $line_item
         );
-        return $parent_line_item->add_child_line_item($line_item, false);
+        $added     = $parent_line_item->add_child_line_item($line_item, false);
+        return $return_item ? $line_item : $added;
     }
 
 
@@ -398,7 +414,7 @@ class EEH_Line_Item
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public static function add_item(EE_Line_Item $total_line_item, EE_Line_Item $item)
+    public static function add_item(EE_Line_Item $total_line_item, EE_Line_Item $item, $recalculate_totals = true)
     {
         $pre_tax_subtotal = self::get_pre_tax_subtotal($total_line_item);
         if ($pre_tax_subtotal instanceof EE_Line_Item) {
@@ -406,7 +422,9 @@ class EEH_Line_Item
         } else {
             return false;
         }
-        $total_line_item->recalculate_total_including_taxes();
+        if ($recalculate_totals) {
+            $total_line_item->recalculate_total_including_taxes();
+        }
         return $success;
     }
 
@@ -984,49 +1002,53 @@ class EEH_Line_Item
     public static function apply_taxes(EE_Line_Item $total_line_item, $update_txn_status = false)
     {
         $total_line_item = EEH_Line_Item::find_transaction_grand_total_for_line_item($total_line_item);
-        $ticket_line_items = EEH_Line_Item::get_ticket_line_items($total_line_item);
-        $apply_global_taxes = false;
-        foreach ($ticket_line_items as $ticket_line_item) {
-            if ($ticket_line_item instanceof EE_Line_Item && $ticket_line_item->is_taxable()) {
-                $apply_global_taxes = true;
-                break;
-            }
-        }
-        if (! $apply_global_taxes) {
-            return false;
-        }
         $taxes_line_item = self::get_taxes_subtotal($total_line_item);
-        // just to be safe, remove its old tax line items
-        $deleted = $taxes_line_item->delete_children_line_items();
+        $existing_global_taxes = $taxes_line_item->tax_descendants();
         $updates = false;
         // loop thru taxes
         $global_taxes = EEH_Line_Item::getGlobalTaxes();
         foreach ($global_taxes as $order => $taxes) {
             foreach ($taxes as $tax) {
                 if ($tax instanceof EE_Price) {
-                    $tax_line_item = EE_Line_Item::new_instance(
-                        array(
-                            'LIN_name'       => $tax->name(),
-                            'LIN_desc'       => $tax->desc(),
-                            'LIN_percent'    => $tax->amount(),
-                            'LIN_is_taxable' => false,
-                            'LIN_order'      => $order,
-                            'LIN_total'      => 0,
-                            'LIN_type'       => EEM_Line_Item::type_tax,
-                            'OBJ_type'       => EEM_Line_Item::OBJ_TYPE_PRICE,
-                            'OBJ_ID'         => $tax->ID(),
-                        )
-                    );
-                    $tax_line_item = apply_filters(
-                        'FHEE__EEH_Line_Item__apply_taxes__tax_line_item',
-                        $tax_line_item
-                    );
-                    $updates = $taxes_line_item->add_child_line_item($tax_line_item) ? true : $updates;
+                    $found = false;
+                    // check if this is already an existing tax
+                    foreach ($existing_global_taxes as $existing_global_tax) {
+                        if ($tax->ID() === $existing_global_tax->OBJ_ID()) {
+                            // maybe update the tax rate in case it has changed
+                            if ($existing_global_tax->percent() !== $tax->amount()) {
+                                $existing_global_tax->set_percent($tax->amount());
+                                $existing_global_tax->save();
+                                $updates = true;
+                            }
+                            $found = true;
+                            break;
+                        }
+                    }
+                    if (! $found) {
+                        // add a new line item for this global tax
+                        $tax_line_item = apply_filters(
+                            'FHEE__EEH_Line_Item__apply_taxes__tax_line_item',
+                            EE_Line_Item::new_instance(
+                                [
+                                    'LIN_name'       => $tax->name(),
+                                    'LIN_desc'       => $tax->desc(),
+                                    'LIN_percent'    => $tax->amount(),
+                                    'LIN_is_taxable' => false,
+                                    'LIN_order'      => $order,
+                                    'LIN_total'      => 0,
+                                    'LIN_type'       => EEM_Line_Item::type_tax,
+                                    'OBJ_type'       => EEM_Line_Item::OBJ_TYPE_PRICE,
+                                    'OBJ_ID'         => $tax->ID(),
+                                ]
+                            )
+                        );
+                        $updates = $taxes_line_item->add_child_line_item($tax_line_item) ? true : $updates;
+                    }
                 }
             }
         }
         // only recalculate totals if something changed
-        if ($deleted || $updates) {
+        if ($updates) {
             $total_line_item->recalculate_total_including_taxes($update_txn_status);
             return true;
         }
@@ -1181,8 +1203,8 @@ class EEH_Line_Item
             // no existing tax item. Create it
             $new_tax = EE_Line_Item::new_instance(array(
                 'TXN_ID'      => $total_line_item->TXN_ID(),
-                'LIN_name'    => $name ? $name : esc_html__('Tax', 'event_espresso'),
-                'LIN_desc'    => $description ? $description : '',
+                'LIN_name'    => $name ?: esc_html__('Tax', 'event_espresso'),
+                'LIN_desc'    => $description ?: '',
                 'LIN_percent' => $taxable_total ? ($amount / $taxable_total * 100) : 0,
                 'LIN_total'   => $amount,
                 'LIN_parent'  => $tax_subtotal->ID(),
@@ -1590,13 +1612,14 @@ class EEH_Line_Item
      */
     public static function visualize(EE_Line_Item $line_item, $indentation = 0)
     {
-        echo defined('EE_TESTS_DIR') ? "\n" : '<br />';
+        $new_line = defined('EE_TESTS_DIR') ? "\n" : '<br />';
+        echo $new_line;
         if (! $indentation) {
-            echo defined('EE_TESTS_DIR') ? "\n" : '<br />';
+            echo $new_line;
         }
         echo str_repeat('. ', $indentation);
         $breakdown = '';
-        if ($line_item->is_line_item()) {
+        if ($line_item->is_line_item() || $line_item->is_sub_line_item() || $line_item->isSubTax()) {
             if ($line_item->is_percent()) {
                 $breakdown = "{$line_item->percent()}%";
             } else {
@@ -1616,6 +1639,9 @@ class EEH_Line_Item
             foreach ($line_item->children() as $child) {
                 self::visualize($child, $indentation + 1);
             }
+        }
+        if (! $indentation) {
+            echo $new_line . $new_line;
         }
     }
 
@@ -1787,10 +1813,11 @@ class EEH_Line_Item
         }
         $message = sprintf(
             esc_html__(
-                'The final price for the ticket line item (ID:%1$d) could not be calculated.',
+                'The final price for the ticket line item (ID:%1$d) on the total line item (ID:%2$d) could not be calculated.',
                 'event_espresso'
             ),
-            $ticket_line_item->ID()
+            $ticket_line_item->ID(),
+            $total_line_item->ID()
         );
         if (WP_DEBUG) {
             $message .= '<br>' . print_r($final_prices_per_ticket_line_item, true);
