@@ -107,7 +107,7 @@ if ($reg_count > 0) {
     ?>
 </ul>
 <form action="<?php echo esc_url_raw($form_url); ?>" method="POST">
-    <?php echo esc_html($form->get_html_and_js()); ?>
+    <?php echo $form->get_html_and_js(); // already escaped ?>
     <input class='button button-primary'
            type="submit"
            value="<?php esc_attr_e('Confirm', 'event_espresso'); ?>"
