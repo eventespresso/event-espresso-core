@@ -638,22 +638,22 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
     /**
      * Gets ALL the children of this line item (ie, all the parts that contribute towards this total).
      *
-     * @return EE_Base_Class[]|EE_Line_Item[]
+     * @return EE_Line_Item[]
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function children()
+    public function children(array $query_params = []): array
     {
         if ($this->ID()) {
-            return $this->get_model()->get_all(
-                array(
-                    array('LIN_parent' => $this->ID()),
-                    'order_by' => array('LIN_order' => 'ASC'),
-                )
-            );
+            // ensure where params are an array
+            $query_params[0] = $query_params[0] ?? [];
+            // add defaults for line item parent and orderby
+            $query_params[0] += ['LIN_parent' => $this->ID()];
+            $query_params += ['order_by' => ['LIN_order' => 'ASC']];
+            return $this->get_model()->get_all($query_params);
         }
         if (! is_array($this->_children)) {
             $this->_children = array();
@@ -1507,7 +1507,6 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
      */
     public function get_cancellations()
     {
-        EE_Registry::instance()->load_helper('Line_Item');
         return EEH_Line_Item::get_descendants_of_type($this, EEM_Line_Item::type_cancellation);
     }
 
