@@ -40,22 +40,23 @@ class EEH_Line_Item
      * @param string       $description
      * @param int          $quantity
      * @param boolean      $taxable
-     * @param null         $code if set to a value, ensures there is only one line item with that code
+     * @param string|null  $code if set to a value, ensures there is only one line item with that code
      * @param bool         $return_item
+     * @param bool         $recalculate_totals
      * @return boolean|EE_Line_Item success
      * @throws EE_Error
      * @throws ReflectionException
      */
     public static function add_unrelated_item(
         EE_Line_Item $parent_line_item,
-                     $name,
-                     $unit_price,
-                     $description = '',
-                     $quantity = 1,
-                     $taxable = false,
-                     $code = null,
-                     $return_item = false,
-                     $recalculate_totals = true
+        string $name,
+        float $unit_price,
+        string $description = '',
+        int $quantity = 1,
+        bool $taxable = false,
+        ?string $code = null,
+        bool $return_item = false,
+        bool $recalculate_totals = true
     ) {
         $items_subtotal = self::get_pre_tax_subtotal($parent_line_item);
         $line_item      = EE_Line_Item::new_instance(
@@ -98,7 +99,7 @@ class EEH_Line_Item
      * @param float        $percentage_amount
      * @param string       $description
      * @param boolean      $taxable
-     * @param null         $code
+     * @param string|null  $code
      * @param bool         $return_item
      * @return boolean|EE_Line_Item success
      * @throws EE_Error
@@ -106,12 +107,12 @@ class EEH_Line_Item
      */
     public static function add_percentage_based_item(
         EE_Line_Item $parent_line_item,
-                     $name,
-                     $percentage_amount,
-                     $description = '',
-                     $taxable = false,
-                     $code = null,
-                     $return_item = false
+        string $name,
+        float $percentage_amount,
+        string $description = '',
+        bool $taxable = false,
+        ?string $code = null,
+        bool $return_item = false
     ) {
         $total = $percentage_amount * $parent_line_item->total() / 100;
         $line_item = EE_Line_Item::new_instance(
