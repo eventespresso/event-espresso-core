@@ -556,12 +556,12 @@ class EE_Datetime_Test extends EE_UnitTestCase{
             $this->assertEquals(
                 $expected_result['sold'],
                 $datetime->sold(),
-                "expected datetime sold results for the '{$test_name}' test were {$expected_result['sold']} not {$datetime->sold()}"
+                "expected datetime sold results for the '{$test_name}' test were {$datetime->sold()} not {$expected_result['sold']}"
             );
             $this->assertEquals(
                 $expected_result['reserved'],
                 $datetime->reserved(),
-                "expected datetime reserved results for the '{$test_name}' test were {$expected_result['reserved']} not {$datetime->reserved()}"
+                "expected datetime reserved results for the '{$test_name}' test were {$datetime->reserved()} not {$expected_result['reserved']}"
             );
         }
     }
