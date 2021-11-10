@@ -1815,6 +1815,66 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     }
 
 
+    /**
+     * @param EE_Base_Class|int|string $otherObjectModelObjectOrID
+     * @param string                   $relationName
+     * @param array                    $extra_join_model_fields_n_values
+     * @param string|null              $cache_id
+     * @return EE_Base_Class
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since   $VID:$
+     */
+    public function _add_relation_to(
+        $otherObjectModelObjectOrID,
+        $relationName,
+        $extra_join_model_fields_n_values = [],
+        $cache_id = null
+    ) {
+        if ($relationName === 'Datetime') {
+            /** @var EE_Datetime $datetime */
+            $datetime = EEM_Datetime::instance()->ensure_is_obj($otherObjectModelObjectOrID);
+            $datetime->increaseSold($this->sold());
+            $datetime->increaseReserved($this->reserved());
+            $datetime->save();
+            $otherObjectModelObjectOrID = $datetime;
+        }
+        return parent::_add_relation_to(
+            $otherObjectModelObjectOrID,
+            $relationName,
+            $extra_join_model_fields_n_values,
+            $cache_id
+        );
+    }
+
+
+    /**
+     * @param EE_Base_Class|int|string $otherObjectModelObjectOrID
+     * @param string                   $relationName
+     * @param array                    $where_query
+     * @return bool|EE_Base_Class|null
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since   $VID:$
+     */
+    public function _remove_relation_to($otherObjectModelObjectOrID, $relationName, $where_query = [])
+    {
+        if ($relationName === 'Datetime') {
+            /** @var EE_Datetime $datetime */
+            $datetime = EEM_Datetime::instance()->ensure_is_obj($otherObjectModelObjectOrID);
+            $datetime->decreaseSold($this->sold());
+            $datetime->decreaseReserved($this->reserved());
+            $datetime->save();
+            $otherObjectModelObjectOrID = $datetime;
+        }
+        return parent::_remove_relation_to(
+            $otherObjectModelObjectOrID,
+            $relationName,
+            $where_query
+        );
+    }
+
+
     /*******************************************************************
      ***********************  DEPRECATED METHODS  **********************
      *******************************************************************/
