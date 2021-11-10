@@ -50,7 +50,7 @@ jobs:
                   username: root
                   password: root
                   host: localhost
-                  wp-version: 5.8.2
+                  wp-version: 5.7.4
 
             - name: Run PHP Unit Tests
               run: phpunit --configuration tests/phpunit.xml
