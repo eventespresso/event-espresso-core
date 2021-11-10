@@ -162,7 +162,7 @@ abstract class EE_Base_Class
         }
         $this->_timezone = EEH_DTT_Helper::get_valid_timezone_string($timezone);
         if (! empty($date_formats) && is_array($date_formats)) {
-            list($this->_dt_frmt, $this->_tm_frmt) = $date_formats;
+            [$this->_dt_frmt, $this->_tm_frmt] = $date_formats;
         } else {
             // set default formats for date and time
             $this->_dt_frmt = (string) get_option('date_format', 'Y-m-d');
@@ -2247,6 +2247,27 @@ abstract class EE_Base_Class
             return $this->_fields[ $model->primary_key_name() ];
         }
         return $model->get_index_primary_key_string($this->_fields);
+    }
+
+
+    /**
+     * @param EE_Base_Class|int|string $otherModelObjectOrID
+     * @param string                   $relationName
+     * @return bool
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since   $VID:$
+     */
+    public function hasRelation($otherModelObjectOrID, string $relationName): bool
+    {
+        $other_model = self::_get_model_instance_with_name(
+            self::_get_model_classname($relationName),
+            $this->_timezone
+        );
+        $primary_key = $other_model->primary_key_name();
+        /** @var EE_Base_Class $otherModelObject */
+        $otherModelObject = $other_model->ensure_is_obj($otherModelObjectOrID, $relationName);
+        return $this->count_related($relationName, [[$primary_key => $otherModelObject->ID()]]) > 0;
     }
 
 
