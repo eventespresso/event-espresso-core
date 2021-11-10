@@ -42,11 +42,11 @@ class CoreLoader
 
 
     /**
-     * @param string $wp_test_dir
+     * @param string|null $wp_test_dir
      * @return string
      * @since $VID:$
      */
-    private function findWordpressVersion(string $wp_test_dir): string
+    private function findWordpressVersion(string $wp_test_dir): ?string
     {
             global $wp_version;
             if ( ! $wp_version ) {
