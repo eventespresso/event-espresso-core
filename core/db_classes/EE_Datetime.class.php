@@ -1397,10 +1397,11 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
         $extra_join_model_fields_n_values = [],
         $cache_id = null
     ) {
-        if ($relationName === 'Ticket') {
+        // if we're adding a new relation to a ticket
+        if ($relationName === 'Ticket' && ! $this->hasRelation($otherObjectModelObjectOrID, $relationName)) {
             /** @var EE_Ticket $ticket */
             $ticket = EEM_Ticket::instance()->ensure_is_obj($otherObjectModelObjectOrID);
-            $this->increaseSold($ticket->sold());
+            $this->increaseSold($ticket->sold(), false);
             $this->increaseReserved($ticket->reserved());
             $this->save();
             $otherObjectModelObjectOrID = $ticket;
@@ -1425,7 +1426,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      */
     public function _remove_relation_to($otherObjectModelObjectOrID, $relationName, $where_query = [])
     {
-        if ($relationName === 'Ticket') {
+        if ($relationName === 'Ticket' && $this->hasRelation($otherObjectModelObjectOrID, $relationName)) {
             /** @var EE_Ticket $ticket */
             $ticket = EEM_Ticket::instance()->ensure_is_obj($otherObjectModelObjectOrID);
             $this->decreaseSold($ticket->sold());

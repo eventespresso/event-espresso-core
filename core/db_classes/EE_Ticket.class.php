@@ -1831,10 +1831,10 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
         $extra_join_model_fields_n_values = [],
         $cache_id = null
     ) {
-        if ($relationName === 'Datetime') {
+        if ($relationName === 'Datetime' && ! $this->hasRelation($otherObjectModelObjectOrID, $relationName)) {
             /** @var EE_Datetime $datetime */
             $datetime = EEM_Datetime::instance()->ensure_is_obj($otherObjectModelObjectOrID);
-            $datetime->increaseSold($this->sold());
+            $datetime->increaseSold($this->sold(), false);
             $datetime->increaseReserved($this->reserved());
             $datetime->save();
             $otherObjectModelObjectOrID = $datetime;
@@ -1859,7 +1859,8 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
      */
     public function _remove_relation_to($otherObjectModelObjectOrID, $relationName, $where_query = [])
     {
-        if ($relationName === 'Datetime') {
+        // if we're adding a new relation to a datetime
+        if ($relationName === 'Datetime' && $this->hasRelation($otherObjectModelObjectOrID, $relationName)) {
             /** @var EE_Datetime $datetime */
             $datetime = EEM_Datetime::instance()->ensure_is_obj($otherObjectModelObjectOrID);
             $datetime->decreaseSold($this->sold());
