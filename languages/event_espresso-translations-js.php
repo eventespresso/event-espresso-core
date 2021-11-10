@@ -228,9 +228,6 @@ $generated_i18n_strings = array(
 	// Reference: domains/core/admin/eventEditor/src/ui/EventRegistrationOptions/index.tsx:47
 	__( 'Registration Options', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/DateRegistrationsLink.tsx:13
-	__( 'view ALL registrations for this date.', 'event_espresso' ),
-
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/multiStep/DateFormSteps.tsx:10
 	__( 'primary information about the date', 'event_espresso' ),
 
@@ -296,6 +293,12 @@ $generated_i18n_strings = array(
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:65
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:121
 	__( 'End Date', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/DateRegistrationsLink.tsx:13
+	__( 'view ALL registrations for this date.', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/DateSoldLink.tsx:13
+	__( 'view approved registrations for this date.', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/DatesList.tsx:35
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/TableView.tsx:33
@@ -421,27 +424,27 @@ $generated_i18n_strings = array(
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/DateCardSidebar.tsx:50
 	__( 'edit start and end dates', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/DateDetailsPanel.tsx:15
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/TicketDetailsPanel.tsx:15
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/DateDetailsPanel.tsx:16
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/TicketDetailsPanel.tsx:16
 	__( 'sold', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/DateDetailsPanel.tsx:28
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/DateDetailsPanel.tsx:21
 	__( 'capacity', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/DateDetailsPanel.tsx:34
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/TicketDetailsPanel.tsx:33
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/DateDetailsPanel.tsx:27
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/TicketDetailsPanel.tsx:26
 	__( 'reg list', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/Details.tsx:52
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/Details.tsx:44
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/Details.tsx:43
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/Details.tsx:35
 	__( 'add description…', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/Details.tsx:53
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/Details.tsx:45
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/Details.tsx:44
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/Details.tsx:36
 	__( 'Edit description', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/Details.tsx:54
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/Details.tsx:46
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/Details.tsx:45
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/Details.tsx:37
 	__( 'click to edit description…', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/config.ts:10
@@ -749,12 +752,6 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: domains/core/admin/eventEditor/src/ui/ticketAssignmentsManager/filters/controls/ShowTrashedTicketsControl.tsx:16
 	__( 'show trashed tickets', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/TicketRegistrationsLink.tsx:13
-	__( 'total registrations.', 'event_espresso' ),
-
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/TicketRegistrationsLink.tsx:14
-	__( 'view ALL registrations for this ticket.', 'event_espresso' ),
-
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/defaultTickets/Container.tsx:38
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/actions/Actions.tsx:21
 	__( 'Default tickets', 'event_espresso' ),
@@ -870,6 +867,15 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:217
 	__( 'Where the ticket can be viewed throughout the UI.', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/TicketRegistrationsLink.tsx:13
+	__( 'total registrations.', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/TicketRegistrationsLink.tsx:14
+	__( 'view ALL registrations for this ticket.', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/TicketSoldLink.tsx:13
+	__( 'view approved registrations for this ticket.', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/TicketsList.tsx:36
 	__( 'Available Tickets', 'event_espresso' ),
@@ -990,7 +996,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/TicketCardSidebar.tsx:54
 	__( 'edit ticket sales start and end dates', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/TicketDetailsPanel.tsx:28
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/TicketDetailsPanel.tsx:21
 	__( 'quantity', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/TicketQuantity.tsx:28
@@ -2134,12 +2140,6 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/EntityActionsMenu/entityMenuItems/Untrash.tsx:8
 	__( 'untrash', 'event_espresso' ),
-
-	// Reference: packages/ui-components/src/EntityDetailsPanel/EntityDetailsPanelSold.tsx:37
-	__( 'view approved registrations for this date.', 'event_espresso' ),
-
-	// Reference: packages/ui-components/src/EntityDetailsPanel/EntityDetailsPanelSold.tsx:38
-	__( 'view approved registrations for this ticket.', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/EntityList/filterBar/buttons/CardViewFilterButton.tsx:22
 	__( 'card view', 'event_espresso' ),
