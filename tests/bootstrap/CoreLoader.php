@@ -42,15 +42,16 @@ class CoreLoader
 
 
     /**
+     * @param string $wp_test_dir
      * @return string
      * @since $VID:$
      */
-    private function findWordpressVersion()
+    private function findWordpressVersion(string $wp_test_dir): string
     {
             global $wp_version;
             if ( ! $wp_version ) {
                 echo "\n\nAttempting to find WP version.php ";
-                $wp_version_file = $this->findFolderWithFile(__DIR__, '/wp-includes/version.php');
+                $wp_version_file = $this->findFolderWithFile($wp_test_dir, '/wp-includes/version.php');
                 if ($wp_version_file) {
                     include $wp_version_file . '/wp-includes/version.php';
                 }
@@ -64,7 +65,7 @@ class CoreLoader
      * @throw RuntimeException
      * @since $VID:$
      */
-    private function findWordpressTestsFolder()
+    private function findWordpressTestsFolder(): string
     {
             // potential base locations for WP tests folder
             $wp_test_dirs = [
@@ -93,7 +94,7 @@ class CoreLoader
      * @return string|null
      * @since 4.10.7.p
      */
-    private function findFolderWithFile($folder = '', $with_file = '')
+    private function findFolderWithFile(string $folder = '', string $with_file = ''): ?string
     {
         if (! $folder || $folder === '/') {
             return null;
@@ -128,7 +129,7 @@ class CoreLoader
             $wp_test_dir = $this->findWordpressTestsFolder();
             define('WP_TESTS_DIR', $wp_test_dir);
 
-            $wp_version = $this->findWordpressVersion();
+            $wp_version = $this->findWordpressVersion($wp_test_dir);
 
             echo "\n\nWP_VERSION: {$wp_version}";
             echo "\nWP_TESTS_DIR: " . WP_TESTS_DIR;
