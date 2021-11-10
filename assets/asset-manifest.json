@@ -1,9 +1,9 @@
 {
   "files": {
     "adapters.css": "/static/css/adapters.01bc2207.css",
-    "adapters.js": "/static/js/adapters.60d612ae.js",
-    "adapters.js.map": "/static/js/adapters.60d612ae.js.map",
-    "adapters.php": "/static/js/adapters.8f2f1108.asset.php",
+    "adapters.js": "/static/js/adapters.1655aa32.js",
+    "adapters.js.map": "/static/js/adapters.1655aa32.js.map",
+    "adapters.php": "/static/js/adapters.2bb01223.asset.php",
     "blocks.css": "/static/css/blocks.68197aab.css",
     "blocks.js": "/static/js/blocks.94b1afc2.js",
     "blocks.js.map": "/static/js/blocks.94b1afc2.js.map",
@@ -122,7 +122,7 @@
     "static/css/tpc.05952a12.css.map": "/static/css/tpc.05952a12.css.map",
     "static/css/uiComponents.ef36a59f.css.map": "/static/css/uiComponents.ef36a59f.css.map",
     "static/css/wpPluginsPage.b279b3dc.css.map": "/static/css/wpPluginsPage.b279b3dc.css.map",
-    "static/js/adapters.60d612ae.js.LICENSE.txt": "/static/js/adapters.60d612ae.js.LICENSE.txt",
+    "static/js/adapters.1655aa32.js.LICENSE.txt": "/static/js/adapters.1655aa32.js.LICENSE.txt",
     "static/js/blocks.94b1afc2.js.LICENSE.txt": "/static/js/blocks.94b1afc2.js.LICENSE.txt",
     "static/js/data.f404cabe.js.LICENSE.txt": "/static/js/data.f404cabe.js.LICENSE.txt",
     "static/js/dates.d3ecd578.js.LICENSE.txt": "/static/js/dates.d3ecd578.js.LICENSE.txt",
@@ -144,8 +144,8 @@
   "entrypoints": {
     "adapters": [
       "static/css/adapters.01bc2207.css",
-      "static/js/adapters.60d612ae.js",
-      "static/js/adapters.8f2f1108.asset.php"
+      "static/js/adapters.1655aa32.js",
+      "static/js/adapters.2bb01223.asset.php"
     ],
     "constants": [
       "static/js/constants.bd9818fe.js",
