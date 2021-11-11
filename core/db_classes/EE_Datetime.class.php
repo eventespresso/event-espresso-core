@@ -1442,6 +1442,33 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
     }
 
 
+    /**
+     * Removes ALL the related things for the $relationName.
+     *
+     * @param string $relationName
+     * @param array  $where_query_params
+     * @return EE_Base_Class
+     * @throws ReflectionException
+     * @throws InvalidArgumentException
+     * @throws InvalidInterfaceException
+     * @throws InvalidDataTypeException
+     * @throws EE_Error
+     * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
+     */
+    public function _remove_relations($relationName, $where_query_params = [])
+    {
+        if ($relationName === 'Ticket') {
+            $tickets = $this->tickets();
+            foreach ($tickets as $ticket) {
+                $this->decreaseSold($ticket->sold());
+                $this->decreaseReserved($ticket->reserved());
+                $this->save();
+            }
+        }
+        return parent::_remove_relations($relationName, $where_query_params);
+    }
+
+
     /*******************************************************************
      ***********************  DEPRECATED METHODS  **********************
      *******************************************************************/
