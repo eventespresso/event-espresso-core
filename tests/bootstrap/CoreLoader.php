@@ -74,7 +74,7 @@ class CoreLoader
      * @throw RuntimeException
      * @since $VID:$
      */
-    private function findWordpressTestsFolder(): string
+    private function findWordpressTestsFolder(): ?string
     {
             // potential base locations for WP tests folder
             $wp_test_dirs = [
@@ -101,7 +101,7 @@ class CoreLoader
      * @throw RuntimeException
      * @since $VID:$
      */
-    private function findPhpUnitPolyfillsFolder(): string
+    private function findPhpUnitPolyfillsFolder(): ?string
     {
             // potential base locations for WP tests folder
             $wp_dirs = [
@@ -117,7 +117,7 @@ class CoreLoader
                 }
                 echo "\nAttempting to find PHPUnit Polyfills: {$wp_dir}";
                 $wp_root = $this->findFolderWithFile($wp_dir, '/vendor/yoast/phpunit-polyfills');
-                if ($wp_root !== '') {
+                if ($wp_root) {
                     return $wp_root;
                 }
             }
@@ -161,7 +161,7 @@ class CoreLoader
             // load polyfills
             if (! defined('WP_TESTS_PHPUNIT_POLYFILLS_PATH')) {
                 $wp_root = $this->findPhpUnitPolyfillsFolder();
-                if($wp_root !== '') {
+                if($wp_root) {
                     define(
                         'WP_TESTS_PHPUNIT_POLYFILLS_PATH',
                         $wp_root . '/vendor/yoast/phpunit-polyfills'
