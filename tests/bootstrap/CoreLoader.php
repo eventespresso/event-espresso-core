@@ -125,16 +125,16 @@ class CoreLoader
     protected function setConstants()
     {
         if (! defined('EE_TESTS_DIR')) {
-            if (! defined('WP_TESTS_PHPUNIT_POLYFILLS_PATH')) {
-                // load polyfills before anything else
-                define('WP_TESTS_PHPUNIT_POLYFILLS_PATH', EE_PLUGIN_DIR . 'vendor/yoast/phpunit-polyfills');
-            }
             if (getenv('EE_TESTS_DIR')) {
                 define('EE_TESTS_DIR', getenv('EE_TESTS_DIR'));
                 define('EE_PLUGIN_DIR', dirname(dirname(EE_TESTS_DIR)) . '/');
             } else {
                 define('EE_PLUGIN_DIR', dirname(dirname(__DIR__)) . '/');
                 define('EE_TESTS_DIR', EE_PLUGIN_DIR . 'tests/');
+            }
+            if (! defined('WP_TESTS_PHPUNIT_POLYFILLS_PATH')) {
+                // load polyfills before anything else
+                define('WP_TESTS_PHPUNIT_POLYFILLS_PATH', EE_PLUGIN_DIR . 'vendor/yoast/phpunit-polyfills');
             }
 
             define('EE_MOCKS_DIR', EE_TESTS_DIR . 'mocks/');
