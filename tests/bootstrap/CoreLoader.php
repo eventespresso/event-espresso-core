@@ -96,6 +96,35 @@ class CoreLoader
             die("The WordPress PHPUnit test suite could not be found.");
     }
 
+    /**
+     * @return string
+     * @throw RuntimeException
+     * @since $VID:$
+     */
+    private function findPhpUnitPolyfillsFolder(): string
+    {
+            // potential base locations for WP tests folder
+            $wp_dirs = [
+                getenv('WP_TESTS_DIR'),
+                '/tmp/wordpress-tests-lib',
+                '/tmp/wordpress',
+                __DIR__,
+            ];
+            echo "\n";
+            foreach($wp_dirs as $wp_dir) {
+                if (! $wp_dir) {
+                    continue;
+                }
+                echo "\nAttempting to find PHPUnit Polyfills: {$wp_dir}";
+                $wp_root = $this->findFolderWithFile($wp_dir, '/vendor/yoast/phpunit-polyfills');
+                if ($wp_root !== '') {
+                    return $wp_root;
+                }
+            }
+        echo "The PHPUnit Polyfills could not be found.";
+        return '';
+    }
+
 
     /**
      * @param string $folder
@@ -131,13 +160,20 @@ class CoreLoader
 
             // load polyfills
             if (! defined('WP_TESTS_PHPUNIT_POLYFILLS_PATH')) {
-                $wp_tests_root = $this->findFolderWithFile($wp_test_dir, '/wp-tests-config.php');
-                define(
-                    'WP_TESTS_PHPUNIT_POLYFILLS_PATH',
-                    $wp_tests_root . '/vendor/yoast/phpunit-polyfills'
-                );
+                $wp_root = $this->findPhpUnitPolyfillsFolder();
+                if($wp_root !== '') {
+                    define(
+                        'WP_TESTS_PHPUNIT_POLYFILLS_PATH',
+                        $wp_root . '/vendor/yoast/phpunit-polyfills'
+                    );
+                }
             }
-            require_once WP_TESTS_PHPUNIT_POLYFILLS_PATH . '/phpunitpolyfills-autoload.php';
+            if (
+                defined('WP_TESTS_PHPUNIT_POLYFILLS_PATH')
+                && is_readable(WP_TESTS_PHPUNIT_POLYFILLS_PATH . '/phpunitpolyfills-autoload.php')
+            ) {
+                require_once WP_TESTS_PHPUNIT_POLYFILLS_PATH . '/phpunitpolyfills-autoload.php';
+            }
 
             if (getenv('EE_TESTS_DIR')) {
                 define('EE_TESTS_DIR', getenv('EE_TESTS_DIR'));
