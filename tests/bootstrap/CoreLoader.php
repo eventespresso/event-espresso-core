@@ -36,7 +36,8 @@ class CoreLoader
         $this->bootstrapMockAddon();
         $this->onShutdown();
         Benchmark::writeResultsAtShutdown(
-            EVENT_ESPRESSO_UPLOAD_DIR . 'logs/benchmarking-master.html', false
+            EVENT_ESPRESSO_UPLOAD_DIR . 'logs/benchmarking-master.html',
+            false
         );
     }
 
@@ -47,25 +48,25 @@ class CoreLoader
      */
     private function findWordpressVersion(): ?string
     {
-            global $wp_version;
-            if ( ! $wp_version ) {
-                $wp_dirs = [
-                    '/tmp/wordpress',
-                    __DIR__,
-                ];
-                echo "\n\nAttempting to find WP version.php ";
-                foreach ($wp_dirs as $wp_dir) {
-                    if (! $wp_dir) {
-                        continue;
-                    }
-                    $wp_version_file = $this->findFolderWithFile($wp_dir, '/wp-includes/version.php');
-                    if ($wp_version_file) {
-                        include $wp_version_file . '/wp-includes/version.php';
-                        break;
-                    }
+        global $wp_version;
+        if (! $wp_version) {
+            $wp_dirs = [
+                '/tmp/wordpress',
+                __DIR__,
+            ];
+            echo "\n\nAttempting to find WP version.php";
+            foreach ($wp_dirs as $wp_dir) {
+                if (! $wp_dir) {
+                    continue;
+                }
+                $wp_version_file = $this->findFolderWithFile($wp_dir, '/wp-includes/version.php');
+                if ($wp_version_file) {
+                    include $wp_version_file . '/wp-includes/version.php';
+                    return $wp_version;
                 }
             }
-            return $wp_version;
+        }
+        return null;
     }
 
 
@@ -76,25 +77,25 @@ class CoreLoader
      */
     private function findWordpressTestsFolder(): ?string
     {
-            // potential base locations for WP tests folder
-            $wp_test_dirs = [
-                getenv('WP_TESTS_DIR'),
-                '/tmp/wordpress-tests-lib',
-                __DIR__,
-            ];
-            echo "\n";
-            foreach($wp_test_dirs as $wp_test_dir) {
-                if (! $wp_test_dir) {
-                    continue;
-                }
-                echo "\nAttempting to find WP tests directory: {$wp_test_dir}";
-                if ($this->findFolderWithFile($wp_test_dir, '/includes/testcase.php')) {
-                    return $wp_test_dir;
-                }
+        // potential base locations for WP tests folder
+        $wp_test_dirs = [
+            getenv('WP_TESTS_DIR'),
+            '/tmp/wordpress-tests-lib',
+            __DIR__,
+        ];
+        echo "\n\nAttempting to find WP tests directory";
+        foreach ($wp_test_dirs as $wp_test_dir) {
+            if (! $wp_test_dir) {
+                continue;
             }
-            // if WordPress test suite isn't found then we can't do anything.
-            die("The WordPress PHPUnit test suite could not be found.");
+            if ($this->findFolderWithFile($wp_test_dir, '/includes/testcase.php')) {
+                return $wp_test_dir;
+            }
+        }
+        // if WordPress test suite isn't found then we can't do anything.
+        die("The WordPress PHPUnit test suite could not be found.");
     }
+
 
     /**
      * @return string
@@ -103,26 +104,25 @@ class CoreLoader
      */
     private function findPhpUnitPolyfillsFolder(): ?string
     {
-            // potential base locations for WP tests folder
-            $wp_dirs = [
-                getenv('WP_TESTS_DIR'),
-                '/tmp/wordpress-tests-lib',
-                '/tmp/wordpress',
-                __DIR__,
-            ];
-            echo "\n";
-            foreach($wp_dirs as $wp_dir) {
-                if (! $wp_dir) {
-                    continue;
-                }
-                echo "\nAttempting to find PHPUnit Polyfills: {$wp_dir}";
-                $wp_root = $this->findFolderWithFile($wp_dir, '/vendor/yoast/phpunit-polyfills');
-                if ($wp_root) {
-                    return $wp_root;
-                }
+        // potential base locations for WP tests folder
+        $wp_dirs = [
+            getenv('WP_TESTS_DIR'),
+            '/tmp/wordpress-tests-lib',
+            '/tmp/wordpress',
+            __DIR__,
+        ];
+        echo "\n\nAttempting to find PHPUnit Polyfills";
+        foreach ($wp_dirs as $wp_dir) {
+            if (! $wp_dir) {
+                continue;
             }
+            $wp_root = $this->findFolderWithFile($wp_dir, '/vendor/yoast/phpunit-polyfills');
+            if ($wp_root) {
+                return $wp_root;
+            }
+        }
         echo "The PHPUnit Polyfills could not be found.";
-        return '';
+        return null;
     }
 
 
@@ -138,7 +138,7 @@ class CoreLoader
             return null;
         }
         static $depth = 10;
-        $with_file = strpos($with_file, '/') !== 0 ?  '/' . $with_file : $with_file;
+        $with_file = strpos($with_file, '/') !== 0 ? '/' . $with_file : $with_file;
         echo "\n => {$folder}{$with_file}";
         if (is_readable($folder . $with_file)) {
             return $folder;
@@ -154,14 +154,14 @@ class CoreLoader
     protected function setConstants()
     {
         if (! defined('EE_TESTS_DIR')) {
-            $wp_version = $this->findWordpressVersion();
+            $wp_version  = $this->findWordpressVersion();
             $wp_test_dir = $this->findWordpressTestsFolder();
             define('WP_TESTS_DIR', $wp_test_dir);
 
             // load polyfills
             if (! defined('WP_TESTS_PHPUNIT_POLYFILLS_PATH')) {
                 $wp_root = $this->findPhpUnitPolyfillsFolder();
-                if($wp_root) {
+                if ($wp_root) {
                     define(
                         'WP_TESTS_PHPUNIT_POLYFILLS_PATH',
                         $wp_root . '/vendor/yoast/phpunit-polyfills'
@@ -260,7 +260,7 @@ class CoreLoader
                 $GQLRequestsMock->registerDependencies();
                 $GQLRequestsMock->requestHandler();
             },
-             5
+            5
         );
     }
 
