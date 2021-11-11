@@ -125,6 +125,10 @@ class CoreLoader
     protected function setConstants()
     {
         if (! defined('EE_TESTS_DIR')) {
+            if (! defined('WP_TESTS_PHPUNIT_POLYFILLS_PATH')) {
+                // load polyfills before anything else
+                define('WP_TESTS_PHPUNIT_POLYFILLS_PATH', EE_PLUGIN_DIR . 'vendor/yoast/phpunit-polyfills');
+            }
             if (getenv('EE_TESTS_DIR')) {
                 define('EE_TESTS_DIR', getenv('EE_TESTS_DIR'));
                 define('EE_PLUGIN_DIR', dirname(dirname(EE_TESTS_DIR)) . '/');
@@ -137,7 +141,6 @@ class CoreLoader
 
             $wp_test_dir = $this->findWordpressTestsFolder();
             define('WP_TESTS_DIR', $wp_test_dir);
-            define('WP_TESTS_PHPUNIT_POLYFILLS_PATH', EE_PLUGIN_DIR . 'vendor/yoast/phpunit-polyfills');
 
             $wp_version = $this->findWordpressVersion();
 
