@@ -4,6 +4,8 @@ Datetime object has connections with `RootQuery`, `EspressoEvent`, `EspressoTick
 
 ## Example with `RootQuery`
 
+### Get a list of datetimes
+
 ```gql
 query GET_DATETIMES(
 	$first: Int
@@ -28,7 +30,7 @@ query GET_DATETIMES(
 }
 ```
 
-### Query variables
+#### Query variables
 
 ```json
 {
@@ -48,6 +50,26 @@ or
 	"where": {
 		"eventId": 22
 	}
+}
+```
+
+### Get a single datetime
+
+```gql
+query GET_DATETIME($id: ID!) {
+	espressoDatetime(id: $id) {
+		id
+		name
+		description
+	}
+}
+```
+
+#### Query variables
+
+```json
+{
+	"id": "RGF0ZXRpbWU6MTQ="
 }
 ```
 
