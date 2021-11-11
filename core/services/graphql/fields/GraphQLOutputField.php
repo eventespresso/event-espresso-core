@@ -19,6 +19,7 @@ class GraphQLOutputField extends GraphQLField
      * @param callable|null   $formatter
      * @param callable|null   $resolver
      * @param array           $caps
+     * @param array           $args
      */
     public function __construct(
         $name,
@@ -27,7 +28,8 @@ class GraphQLOutputField extends GraphQLField
         $description = '',
         callable $formatter = null,
         callable $resolver = null,
-        array $caps = []
+        array $caps = [],
+        array $args = []
     ) {
         parent::__construct(
             $name,
@@ -36,7 +38,8 @@ class GraphQLOutputField extends GraphQLField
             $description,
             $formatter,
             $resolver,
-            $caps
+            $caps,
+            $args
         );
 
         $this->setUseForInput(false);

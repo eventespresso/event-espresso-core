@@ -56,6 +56,11 @@ class GraphQLField implements GraphQLFieldInterface
     protected $caps;
 
     /**
+     * @var array $args
+     */
+    protected $args;
+
+    /**
      * @var bool $use_for_input
      */
     protected $use_for_input = true;
@@ -75,6 +80,7 @@ class GraphQLField implements GraphQLFieldInterface
      * @param callable|null   $resolver
      * @param array           $args
      * @param array           $caps
+     * @param array           $args
      */
     public function __construct(
         $name,
@@ -83,7 +89,8 @@ class GraphQLField implements GraphQLFieldInterface
         $description = '',
         callable $formatter = null,
         callable $resolver = null,
-        array $caps = []
+        array $caps = [],
+        array $args = []
     ) {
         $this->name = $name;
         $this->type = $type;
@@ -92,6 +99,7 @@ class GraphQLField implements GraphQLFieldInterface
         $this->formatter = $formatter;
         $this->resolver = $resolver;
         $this->caps = $caps;
+        $this->args = $args;
     }
 
 
