@@ -13,7 +13,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * and creates 3 Datetimes and five Tickets, where each ticket is related to ALL datetimes
  * a total of 8 tickets have been sold, with sales spread across three of the tickets
  * Therefore there is a total of ONE space remaining for each datetime
- * and since each ticket will report that once space,
+ * and since each ticket will report that one space,
  * then there are a total of 5 tickets still "available"
  *
  * - Three Datetimes
@@ -64,21 +64,18 @@ class EE_Datetime_Scenario_B extends EE_Test_Scenario {
 					'fields' => array(
 						'DTT_name'      => 'Datetime 1',
 						'DTT_reg_limit' => 9,
-						'DTT_sold'      => 8,
 					)
 				),
 				2 => array(
 					'fields' => array(
 						'DTT_name'      => 'Datetime 2',
 						'DTT_reg_limit' => 9,
-						'DTT_sold'      => 8,
 					)
 				),
 				3 => array(
 					'fields' => array(
 						'DTT_name'      => 'Datetime 3',
 						'DTT_reg_limit' => 9,
-						'DTT_sold'      => 8,
 					)
 				)
 			),

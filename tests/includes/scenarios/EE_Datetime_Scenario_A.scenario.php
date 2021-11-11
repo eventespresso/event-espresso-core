@@ -46,21 +46,18 @@ class EE_Datetime_Scenario_A extends EE_Test_Scenario {
 					'fields' => array(
 						'DTT_name' => 'Datetime 1',
 						'DTT_reg_limit' => 5,
-						'DTT_sold' => 5,
 					)
 				),
 				2 => array(
 					'fields' => array(
 						'DTT_name' => 'Datetime 2',
 						'DTT_reg_limit' => 20,
-						'DTT_sold' => 3,
 					)
 				),
 				3 => array(
 					'fields' => array(
 						'DTT_name' => 'Datetime 3',
 						'DTT_reg_limit' => 3,
-						'DTT_sold' => 3,
 					)
 				)
 			),
