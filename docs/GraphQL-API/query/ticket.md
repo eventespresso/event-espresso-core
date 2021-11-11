@@ -4,6 +4,8 @@ Ticket object has connections with `RootQuery`, `Datetime` etc. and thus can be 
 
 ## Example with `RootQuery`
 
+### Get a list of tickets
+
 ```gql
 query GET_TICKETS($where: EspressoRootQueryTicketsConnectionWhereArgs) {
 	espressoTickets(where: $where) {
@@ -20,7 +22,7 @@ query GET_TICKETS($where: EspressoRootQueryTicketsConnectionWhereArgs) {
 }
 ```
 
-### Query variables
+#### Query variables
 
 ```json
 {
@@ -44,6 +46,26 @@ or
 	"where": {
 		"datetimeIn": ["RGF0ZXRpbWU6MTQ=", "RGF0ZXRpbWU6MTU="]
 	}
+}
+```
+
+### Get a single ticket
+
+```gql
+query GET_TICKET($id: ID!) {
+	espressoTicket(id: $id) {
+		id
+		name
+		description
+	}
+}
+```
+
+#### Query variables
+
+```json
+{
+	"id": "VGlja2V0OjQ1"
 }
 ```
 
