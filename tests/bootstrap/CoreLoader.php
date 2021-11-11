@@ -88,7 +88,7 @@ class CoreLoader
                     continue;
                 }
                 echo "\nAttempting to find WP tests directory: {$wp_test_dir}";
-                if ($this->findFolderWithFile($wp_test_dir, '/includes/functions.php')) {
+                if ($this->findFolderWithFile($wp_test_dir, '/includes/testcase.php')) {
                     return $wp_test_dir;
                 }
             }
@@ -125,24 +125,29 @@ class CoreLoader
     protected function setConstants()
     {
         if (! defined('EE_TESTS_DIR')) {
-            if (getenv('EE_TESTS_DIR')) {
-                define('EE_TESTS_DIR', getenv('EE_TESTS_DIR'));
-                define('EE_PLUGIN_DIR', dirname(dirname(EE_TESTS_DIR)) . '/');
-            } else {
-                define('EE_PLUGIN_DIR', dirname(dirname(__DIR__)) . '/');
-                define('EE_TESTS_DIR', EE_PLUGIN_DIR . 'tests/');
-            }
-            if (! defined('WP_TESTS_PHPUNIT_POLYFILLS_PATH')) {
-                // load polyfills before anything else
-                define('WP_TESTS_PHPUNIT_POLYFILLS_PATH', EE_PLUGIN_DIR . 'vendor/yoast/phpunit-polyfills');
-            }
-
-            define('EE_MOCKS_DIR', EE_TESTS_DIR . 'mocks/');
-
+            $wp_version = $this->findWordpressVersion();
             $wp_test_dir = $this->findWordpressTestsFolder();
             define('WP_TESTS_DIR', $wp_test_dir);
 
-            $wp_version = $this->findWordpressVersion();
+            // load polyfills
+            if (! defined('WP_TESTS_PHPUNIT_POLYFILLS_PATH')) {
+                $wp_tests_root = $this->findFolderWithFile($wp_test_dir, '/wp-tests-config.php');
+                define(
+                    'WP_TESTS_PHPUNIT_POLYFILLS_PATH',
+                    $wp_tests_root . '/vendor/yoast/phpunit-polyfills'
+                );
+            }
+            require_once WP_TESTS_PHPUNIT_POLYFILLS_PATH . '/phpunitpolyfills-autoload.php';
+
+            if (getenv('EE_TESTS_DIR')) {
+                define('EE_TESTS_DIR', getenv('EE_TESTS_DIR'));
+                define('EE_PLUGIN_DIR', dirname(EE_TESTS_DIR, 2) . '/');
+            } else {
+                define('EE_PLUGIN_DIR', dirname(__DIR__, 2) . '/');
+                define('EE_TESTS_DIR', EE_PLUGIN_DIR . 'tests/');
+            }
+
+            define('EE_MOCKS_DIR', EE_TESTS_DIR . 'mocks/');
 
             echo "\n\nWP_VERSION: {$wp_version}";
             echo "\nWP_TESTS_DIR: " . WP_TESTS_DIR;
