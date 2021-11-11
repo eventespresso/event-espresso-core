@@ -137,6 +137,7 @@ class CoreLoader
 
             $wp_test_dir = $this->findWordpressTestsFolder();
             define('WP_TESTS_DIR', $wp_test_dir);
+            define('WP_TESTS_PHPUNIT_POLYFILLS_PATH', EE_PLUGIN_DIR . 'vendor/yoast/phpunit-polyfills');
 
             $wp_version = $this->findWordpressVersion();
 
