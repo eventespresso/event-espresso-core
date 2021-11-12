@@ -487,16 +487,12 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
 
 
     /**
-     * Gets total
-     *
      * @return float
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
+     * @since  $VID:$
      */
-    public function total()
+    public function totalWithTax(): float
     {
         return $this->get('LIN_total');
     }
@@ -507,14 +503,40 @@ class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item
      *
      * @param float $total
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
+     * @since  $VID:$
+     */
+    public function setTotalWithTax(float $total)
+    {
+        $this->set('LIN_total', $total);
+    }
+
+
+    /**
+     * Gets total
+     *
+     * @return float
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @deprecatd $VID:$
+     */
+    public function total(): float
+    {
+        return $this->totalWithTax();
+    }
+
+
+    /**
+     * Sets total
+     *
+     * @param float $total
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @deprecatd $VID:$
      */
     public function set_total($total)
     {
-        $this->set('LIN_total', $total);
+        $this->setTotalWithTax($total);
     }
 
 
