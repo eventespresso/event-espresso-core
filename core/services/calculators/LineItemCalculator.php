@@ -184,8 +184,8 @@ class LineItemCalculator
         float $pretax = 0
     ): array {
         if ($line_item->is_percent()) {
-            $total = $this->calculatePercentage($total, $line_item->percent());
-            $pretax = $this->calculatePercentage($pretax, $line_item->percent());
+            $total += $this->calculatePercentage($total, $line_item->percent());
+            $pretax += $this->calculatePercentage($pretax, $line_item->percent());
         } else {
             // recursively loop through children and recalculate their totals
             $children = $line_item->children($this->default_query_params);
