@@ -179,16 +179,18 @@ class EE_Default_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         // quantity td
         $html .= EEH_HTML::td($line_item->quantity(), '', 'item_l jst-rght');
         $tax_rate = 1;
-        if ($has_sub_taxes && ! $this->prices_include_taxes) {
-            $tax_rate = 0;
-            foreach ($sub_taxes as $sub_tax) {
-                if ($sub_tax instanceof EE_Line_Item && $sub_tax->isSubTax()) {
-                    $tax_rate += $sub_tax->percent();
+        if ($this->prices_include_taxes) {
+            if ($has_sub_taxes) {
+                $tax_rate = 0;
+                foreach ($sub_taxes as $sub_tax) {
+                    if ($sub_tax instanceof EE_Line_Item && $sub_tax->isSubTax()) {
+                        $tax_rate += $sub_tax->percent();
+                    }
                 }
+                $tax_rate = 1 + $tax_rate / 100;
+            } elseif ($is_taxable && $this->prices_include_taxes) {
+                $tax_rate = 1 + ($this->_tax_rate / 100);
             }
-            $tax_rate = 1 + $tax_rate / 100;
-        } elseif ($is_taxable && $this->prices_include_taxes) {
-            $tax_rate = 1 + ($this->_tax_rate / 100);
         }
 
         // price td
