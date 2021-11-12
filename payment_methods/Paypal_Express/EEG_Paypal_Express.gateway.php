@@ -461,14 +461,14 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
             foreach ($total_line_items->get_items() as $line_item) {
                 if ($line_item instanceof EE_Line_Item) {
                     // PayPal doesn't like line items with 0.00 amount, so we may skip those.
-                    if (EEH_Money::compare_floats($line_item->total(), '0.00', '==')) {
+                    if (EEH_Money::compare_floats($line_item->pretaxTotal(), '0.00', '==')) {
                         continue;
                     }
                     $unit_price = $line_item->unit_price();
                     $line_item_quantity = $line_item->quantity();
                     // This is a discount.
                     if ($line_item->is_percent()) {
-                        $unit_price = $line_item->total();
+                        $unit_price = $line_item->pretaxTotal();
                         $line_item_quantity = 1;
                     }
                     // Item Name.
@@ -494,7 +494,7 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
                     $itemized_list[ 'L_PAYMENTREQUEST_0_QTY' . $item_num ] = $line_item_quantity;
                     // Digital item is sold.
                     $itemized_list[ 'L_PAYMENTREQUEST_0_ITEMCATEGORY' . $item_num ] = 'Physical';
-                    $itemized_sum += $line_item->total();
+                    $itemized_sum += $line_item->pretaxTotal();
                     ++$item_num;
                 }
             }
@@ -523,7 +523,8 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
                 $itemized_list[ 'L_PAYMENTREQUEST_0_DESC' . $item_num ] = '';
                 // Cost of individual item.
                 $itemized_list[ 'L_PAYMENTREQUEST_0_AMT' . $item_num ] = $gateway_formatter->formatCurrency(
-                    $itemized_sum_diff_from_txn_total
+                    $itemized_sum_diff_from_txn_total,
+                    $this->decimal_precision
                 );
                 // Item Number.
                 $itemized_list[ 'L_PAYMENTREQUEST_0_NUMBER' . $item_num ] = $item_num + 1;
@@ -548,7 +549,10 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
                 127
             );
             // Cost of individual item.
-            $itemized_list['L_PAYMENTREQUEST_0_AMT0'] = $gateway_formatter->formatCurrency($payment->amount());
+            $itemized_list['L_PAYMENTREQUEST_0_AMT0'] = $gateway_formatter->formatCurrency(
+                $payment->amount(),
+                $this->decimal_precision
+            );
             // Item Number.
             $itemized_list['L_PAYMENTREQUEST_0_NUMBER0'] = 1;
             // Item quantity.
@@ -556,7 +560,10 @@ class EEG_Paypal_Express extends EE_Offsite_Gateway
             // Digital item is sold.
             $itemized_list['L_PAYMENTREQUEST_0_ITEMCATEGORY0'] = 'Physical';
             // Item's sales S/H and tax amount.
-            $itemized_list['PAYMENTREQUEST_0_ITEMAMT'] = $gateway_formatter->formatCurrency($payment->amount());
+            $itemized_list['PAYMENTREQUEST_0_ITEMAMT'] = $gateway_formatter->formatCurrency(
+                $payment->amount(),
+                $this->decimal_precision
+            );
             $itemized_list['PAYMENTREQUEST_0_TAXAMT'] = '0';
             $itemized_list['PAYMENTREQUEST_0_SHIPPINGAMT'] = '0';
             $itemized_list['PAYMENTREQUEST_0_HANDLINGAMT'] = '0';

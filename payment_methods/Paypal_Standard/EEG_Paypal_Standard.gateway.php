@@ -127,14 +127,14 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway
             foreach ($total_line_item->get_items() as $line_item) {
                 if ($line_item instanceof EE_Line_Item) {
                     // it's some kind of discount
-                    if ($line_item->total() < 0) {
-                        $total_discounts_to_cart_total += abs($line_item->total());
-                        $itemized_sum += $line_item->total();
+                    if ($line_item->pretaxTotal() < 0) {
+                        $total_discounts_to_cart_total += abs($line_item->pretaxTotal());
+                        $itemized_sum += $line_item->pretaxTotal();
                         continue;
                     }
                     // dont include shipping again.
                     if (strpos($line_item->code(), 'paypal_shipping_') === 0) {
-                        $shipping_previously_added = $line_item->total();
+                        $shipping_previously_added = $line_item->pretaxTotal();
                         continue;
                     }
                     $redirect_args[ 'item_name_' . $item_num ] = substr(
@@ -150,7 +150,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway
                         $redirect_args[ 'shipping2_' . $item_num ] = '0';
                     }
                     $item_num++;
-                    $itemized_sum += $line_item->total();
+                    $itemized_sum += $line_item->pretaxTotal();
                 }
             }
             $taxes_li = $this->_line_item->get_taxes_subtotal($total_line_item);
