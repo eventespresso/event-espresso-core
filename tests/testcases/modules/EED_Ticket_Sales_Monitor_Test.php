@@ -331,35 +331,23 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
      */
     public function testValidateTicketSaleTrueNegative()
     {
-        $e = $this->new_model_obj_with_dependencies(
+        $e  = $this->new_model_obj_with_dependencies(
             'Event',
             [
-                'status' => EEM_Event::post_status_publish
+                'status' => EEM_Event::post_status_publish,
             ]
         );
-        $d1 = $this->new_model_obj_with_dependencies(
-            'Datetime',
-            array(
-                'EVT_ID' => $e->ID(),
-                'DTT_reserved' => 1,
-                'DTT_sold' => 0
-            ));
-        $d2 = $this->new_model_obj_with_dependencies(
-            'Datetime',
-            array(
-                'EVT_ID' => $e->ID(),
-                'DTT_reserved' => 0,
-                'DTT_sold' => 0
-            ));
-        $t = $this->new_model_obj_with_dependencies(
+        $d1 = $this->new_model_obj_with_dependencies('Datetime', ['EVT_ID' => $e->ID()]);
+        $d2 = $this->new_model_obj_with_dependencies('Datetime', ['EVT_ID' => $e->ID()]);
+        $t  = $this->new_model_obj_with_dependencies(
             'Ticket',
             [
-                'TKT_qty' => 1,
+                'TKT_qty'      => 1,
                 // this next line is important: that one ticket is reserved!
                 'TKT_reserved' => 1,
-                'TKT_sold' => 0,
-                'TKT_max' => 1,
-                'TKT_min' => 0
+                'TKT_sold'     => 0,
+                'TKT_max'      => 1,
+                'TKT_min'      => 0,
             ]
         );
         $d1->_add_relation_to($t, 'Ticket');
@@ -371,7 +359,7 @@ class EED_Ticket_Sales_Monitor_Test extends EE_UnitTestCase
         $t->refresh_from_db();
         // Validate the reserved counts were unchanged.
         $this->assertEquals(1, $d1->reserved());
-        $this->assertEquals(0, $d2->reserved());
+        $this->assertEquals(1, $d2->reserved());
         $this->assertEquals(1, $t->reserved());
     }
 

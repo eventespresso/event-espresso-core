@@ -246,6 +246,7 @@ class EE_Datetime_Test extends EE_UnitTestCase{
 				//echo "\n tickets_remaining: " . $tickets_remaining;
 				$tickets_expected = $datetime_id_to_tickets_map[ $datetime->ID() ];
 				//echo "\n tickets_expected: " . $tickets_expected;
+                $this->assertEquals($tickets_expected, $tickets_remaining);
                 $has_tickets_remaining = $tickets_remaining > 0;
 			}
 		}
@@ -253,6 +254,317 @@ class EE_Datetime_Test extends EE_UnitTestCase{
 	}
 
 
+    /**
+     * dates initially each have one related ticket
+     * ticket sold counts are twice their ordinal position
+     *  ie:
+     *      ticket 1 has 2 sold (1 x 2 = 2)
+     *      ticket 3 has 6 sold (3 x 2 = 6)
+     *
+     * reserved counts are equal to their ordinal position
+     * why? dunno... thought it might make it easy to calculate things dynamically
+     *
+     * @var   array
+     * @since $VID:$
+     */
+    private $sold_reserved_counts_data = [
+        'datetimes' => [
+            'D1' => [
+                'sold'      => 2,
+                'reserved'  => 1,
+                'relations' => ['T1'],
+            ],
+            'D2' => [
+                'sold'      => 4,
+                'reserved'  => 2,
+                'relations' => ['T2'],
+            ],
+        ],
+        'tickets'   => [
+            'T1' => [
+                'sold'     => 2,
+                'reserved' => 1,
+            ],
+            'T2' => [
+                'sold'     => 4,
+                'reserved' => 2,
+            ],
+            'T3' => [
+                'sold'     => 6,
+                'reserved' => 3,
+            ],
+            'T4' => [
+                'sold'     => 8,
+                'reserved' => 4,
+            ],
+        ],
+    ];
+
+
+    /**
+     * @return EE_Datetime[]
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since   $VID:$
+     */
+    private function initializeDatetimes(): array
+    {
+        $datetimes = [];
+        foreach ($this->sold_reserved_counts_data['datetimes'] as $datetime_name => $datetime_data) {
+            /** @var EE_Datetime $datetime */
+            $datetime = $this->new_model_obj_with_dependencies('Datetime');
+            $datetime->save();
+            // remove any tickets that got added automatically
+            $unwanted_tickets = $datetime->tickets();
+            foreach ($unwanted_tickets as $unwanted_ticket) {
+                $unwanted_ticket->delete_permanently();
+            }
+            $datetime->set_name($datetime_name);
+            $datetime->_remove_relations('Ticket');
+            // reset sold and reserved counts
+            $datetime->set('DTT_sold', 0);
+            $datetime->set('DTT_reserved', 0);
+            $datetime->save();
+            $this->assertEquals(0, $datetime->sold());
+            $this->assertEquals(0, $datetime->reserved());
+            $datetimes[ $datetime_name ] = $datetime;
+        }
+        return $datetimes;
+    }
+
+
+    /**
+     * @return EE_Ticket[]
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since   $VID:$
+     */
+    private function initializeTickets(): array
+    {
+        $tickets = [];
+        foreach ($this->sold_reserved_counts_data['tickets'] as $ticket_name => $ticket_data) {
+            /** @var EE_Ticket $ticket */
+            $ticket = $this->new_model_obj_with_dependencies('Ticket');
+            $ticket->save();
+            // remove any dates that got added automatically
+            $unwanted_datetimes = $ticket->datetimes();
+            foreach ($unwanted_datetimes as $unwanted_datetime) {
+                $unwanted_datetime->delete_permanently();
+            }
+            $ticket->set_name($ticket_name);
+            $ticket->_remove_relations('Datetime');
+            // reset sold and reserved counts
+            $ticket->set('TKT_sold', 0);
+            $ticket->set('TKT_reserved', 0);
+            $ticket->save();
+            $this->assertEquals(0, $ticket->sold());
+            $this->assertEquals(0, $ticket->reserved());
+            // BUT NOW... we need to set the sold and reserved quantities we want to use for the tests
+            $ticket->set('TKT_sold', $ticket_data['sold']);
+            $ticket->set('TKT_reserved', $ticket_data['reserved']);
+            $ticket->save();
+            $this->assertEquals($ticket_data['sold'], $ticket->sold());
+            $this->assertEquals($ticket_data['reserved'], $ticket->reserved());
+            $tickets[ $ticket_name ] = $ticket;
+        }
+        return $tickets;
+    }
+
+
+    /**
+     * @param EE_Datetime[] $datetimes
+     * @param EE_Ticket[]   $tickets
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since   $VID:$
+     */
+    private function setupSoldReservedCounts(array $datetimes, array $tickets)
+    {
+        foreach ($datetimes as $datetime_name => $datetime) {
+            $datetime_sold      = $this->sold_reserved_counts_data['datetimes'][ $datetime_name ]['sold'] ?? null;
+            $datetime_reserved  = $this->sold_reserved_counts_data['datetimes'][ $datetime_name ]['reserved'] ?? null;
+            $datetime_relations = $this->sold_reserved_counts_data['datetimes'][ $datetime_name ]['relations'] ?? [];
+            foreach ($datetime_relations as $ticket_to_add) {
+                $datetime_ticket = $tickets[ $ticket_to_add ] ?? null;
+                if ($datetime_ticket instanceof EE_Ticket) {
+                    $datetime->_add_relation_to($datetime_ticket, 'Ticket');
+                }
+            }
+            $this->assertEquals($datetime_sold, $datetime->sold());
+            $this->assertEquals($datetime_reserved, $datetime->reserved());
+        }
+    }
+
+
+    /**
+     * @return array[]
+     * @since   $VID:$
+     */
+    public function soldReservedCountsDataProvider(): array
+    {
+        return [
+            [
+                'test_name'        => 'Add T3 to D1',
+                'add_relations'    => [
+                    'D1' => ['T3'],
+                ],
+                'remove_relations' => [],
+                'expected_results' => [
+                    'D1' => [
+                        'sold'     => 8,
+                        'reserved' => 4,
+                    ],
+                ],
+            ],
+            [
+                'test_name'        => 'Add T3 & T4 to D1',
+                'add_relations'    => [
+                    'D1' => ['T3', 'T4'],
+                ],
+                'remove_relations' => [],
+                'expected_results' => [
+                    // need trick... because of how I set up the initial test data,
+                    // you can add up the ordinal values of the related tickets (T1=1, T2=2, etc)
+                    // to quickly determine the expected sold and reserved counts
+                    // ex: D1 should now have tickets 1, 3 & 4 added to it
+                    // so 1 + 3 + 4 = 8
+                    // therefore the reserved count = 8 and the sold count is twice that
+                    'D1' => [
+                        'sold'     => 16,
+                        'reserved' => 8,
+                    ],
+                ],
+            ],
+            [
+                'test_name'        => 'Add T3 & T4 to D1 & remove T1',
+                'add_relations'    => [
+                    'D1' => ['T3', 'T4'],
+                ],
+                'remove_relations' => [
+                    'D1' => ['T1'],
+                ],
+                'expected_results' => [
+                    // T3 + T4 = 3 + 4 = 7 = 14 sold & 7 reserved (T1 was removed)
+                    'D1' => [
+                        'sold'     => 14,
+                        'reserved' => 7,
+                    ],
+                ],
+            ],
+            [
+                'test_name'        => 'Add T3 to D1 & D2',
+                'add_relations'    => [
+                    'D1' => ['T3'],
+                    'D2' => ['T3'],
+                ],
+                'remove_relations' => [],
+                'expected_results' => [
+                    // T1 + T3 = 1 + 3 = 4 = 8 sold & 4 reserved
+                    'D1' => [
+                        'sold'     => 8,
+                        'reserved' => 4,
+                    ],
+                    // T2 + T3 = 2 + 3 = 5 = 10 sold & 5 reserved
+                    'D2' => [
+                        'sold'     => 10,
+                        'reserved' => 5,
+                    ],
+                ],
+            ],
+            [
+                'test_name'        => 'Add T3 & T4 to D1 & D2',
+                'add_relations'    => [
+                    'D1' => ['T3', 'T4'],
+                    'D2' => ['T3', 'T4'],
+                ],
+                'remove_relations' => [],
+                'expected_results' => [
+                    // T1 + T3 + T4 = 1 + 3 + 4 = 8 = 16 sold & 8 reserved
+                    'D1' => [
+                        'sold'     => 16,
+                        'reserved' => 8,
+                    ],
+                    // T2 + T3 + T4 = 2 + 3 + 4 = 9 = 18 sold & 9 reserved
+                    'D2' => [
+                        'sold'     => 18,
+                        'reserved' => 9,
+                    ],
+                ],
+            ],
+            [
+                'test_name'        => 'Add ALL tickets to ALL datetimes',
+                'add_relations'    => [
+                    'D1' => [ 'T2', 'T3', 'T4'],
+                    'D2' => ['T1', 'T3', 'T4'],
+                ],
+                'remove_relations' => [],
+                'expected_results' => [
+                    // T1 + T2 + T3 + T4 = 1 + 2 + 3 + 4 = 10 = 20 sold & 10 reserved
+                    'D1' => [
+                        'sold'     => 20,
+                        'reserved' => 10,
+                    ],
+                    // T1 + T2 + T3 + T4 = 1 + 2 + 3 + 4 = 10 = 20 sold & 10 reserved
+                    'D2' => [
+                        'sold'     => 20,
+                        'reserved' => 10,
+                    ],
+                ],
+            ],
+        ];
+    }
+
+
+    /**
+     * @dataProvider soldReservedCountsDataProvider
+     * @group        soldReservedCounts
+     * @since        $VID:$
+     */
+    public function testSoldReservedCountsAfterTicketRelationsChange(
+        string $test_name,
+        array  $add_relations,
+        array  $remove_relations,
+        array  $expected_results
+    ) {
+        $datetimes = $this->initializeDatetimes();
+        $tickets   = $this->initializeTickets();
+        $this->setupSoldReservedCounts($datetimes, $tickets);
+        // new relations to add
+        foreach ($add_relations as $datetime_name => $tickets_to_add) {
+            $datetime = $datetimes[ $datetime_name ] ?? null;
+            $this->assertInstanceOf('EE_Datetime', $datetime);
+            foreach ($tickets_to_add as $ticket_to_add) {
+                $ticket = $tickets[ $ticket_to_add ] ?? null;
+                $this->assertInstanceOf('EE_Ticket', $ticket);
+                $datetime->_add_relation_to($ticket, 'Ticket');
+            }
+        }
+        // relations to remove
+        foreach ($remove_relations as $datetime_name => $tickets_to_remove) {
+            $datetime = $datetimes[ $datetime_name ] ?? null;
+            $this->assertInstanceOf('EE_Datetime', $datetime);
+            foreach ($tickets_to_remove as $ticket_to_remove) {
+                $ticket = $tickets[ $ticket_to_remove ] ?? null;
+                $this->assertInstanceOf('EE_Ticket', $ticket);
+                $datetime->_remove_relation_to($ticket, 'Ticket');
+            }
+        }
+        // check the results
+        foreach ($expected_results as $datetime_name => $expected_result) {
+            $datetime = $datetimes[ $datetime_name ] ?? null;
+            $this->assertInstanceOf('EE_Datetime', $datetime);
+            $this->assertEquals(
+                $expected_result['sold'],
+                $datetime->sold(),
+                "expected datetime sold results for the '{$test_name}' test were {$datetime->sold()} not {$expected_result['sold']}"
+            );
+            $this->assertEquals(
+                $expected_result['reserved'],
+                $datetime->reserved(),
+                "expected datetime reserved results for the '{$test_name}' test were {$datetime->reserved()} not {$expected_result['reserved']}"
+            );
+        }
+    }
 }
 
 // End of file EE_Datetime_Test.php
