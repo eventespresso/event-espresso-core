@@ -11,6 +11,7 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @subpackage
  * @author				Mike Nelson
  * @group 				Line_Item_Filter
+ * @group                line-item-calculator
  */
 class EE_Specific_Registrations_Line_Item_Filter_Test extends EE_UnitTestCase{
 	function setUp(){

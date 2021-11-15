@@ -10,7 +10,7 @@ if ( !defined( 'EVENT_ESPRESSO_VERSION' ) ) {
  * @package			Event Espresso
  * @subpackage
  * @author				Mike Nelson
- *
+ * @group                 line-item-calculator
  */
 class EE_Line_Item__EE_Single_Registration_Line_Item_Filter__Integration_Test extends EE_UnitTestCase{
 	/**

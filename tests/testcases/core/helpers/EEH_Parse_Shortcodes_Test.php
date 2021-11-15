@@ -18,6 +18,7 @@
  * @subpackage     tests
  * @group          messages
  * @group          agg
+ * @group          line-item-calculator
  */
 class EEH_Parse_Shortcodes_Test extends EE_UnitTestCase
 {

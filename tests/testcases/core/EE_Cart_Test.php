@@ -10,10 +10,10 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
  *
  * EE_Cart_Test
  *
- * @package			Event Espresso
- * @subpackage
- * @author				Mike Nelson
- *
+ * @package     Event Espresso
+ * @subpackage  tests
+ * @author      Mike Nelson
+ * @group       line-item-calculator
  */
 class EE_Cart_Test extends EE_UnitTestCase{
 
@@ -105,6 +105,7 @@ class EE_Cart_Test extends EE_UnitTestCase{
 		$cart = EE_Cart::reset( null, $this->_session );
 		$cart->add_ticket_to_cart( $ticket, $quantity_purchased );
 		$total_line_item = $cart->get_grand_total();
+        // EEH_Line_Item::visualize($total_line_item);
 		$subtotals = $total_line_item->children();
 		$this->assertNotEmpty( $subtotals );
 		$items_purchased = $total_line_item->get_items();
@@ -192,9 +193,6 @@ class EE_Cart_Test extends EE_UnitTestCase{
 
 		$this->assertEquals( $this->_session->get_session_data( 'cart' ), $cart );
 	}
-
-
-
 }
 // End of file EE_Cart_Test.php
 // Location: /tests/testcases/core/EE_Cart_Test.php
