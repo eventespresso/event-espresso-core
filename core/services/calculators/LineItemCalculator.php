@@ -137,7 +137,8 @@ class LineItemCalculator
      * @throws EE_Error
      * @throws ReflectionException
      */
-    private function recalculateSubTotal(EE_Line_Item $line_item): array {
+    private function recalculateSubTotal(EE_Line_Item $line_item): array
+    {
         // echo "{$this->lb}  recalculate SubTotal: {$line_item->name()}";
         // reset the total and pretax total to zero since we are recalculating them
         $total = $pretax_total = 0;
