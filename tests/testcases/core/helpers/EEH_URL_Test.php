@@ -10,7 +10,7 @@ use PHPUnit_Framework_TestCase;
  *
  * @author  Brent Christensen
  * @package EventEspresso\tests\testcases\core\helpers
- * @since   $VID:$
+ * @since   4.10.15.p
  * @group   URL
  */
 class EEH_URL_Test extends PHPUnit_Framework_TestCase
