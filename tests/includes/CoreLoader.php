@@ -4,6 +4,7 @@ namespace EventEspresso\tests\includes;
 
 use DomainException;
 use EE_Dependency_Map;
+use EE_Error;
 use EE_Registry;
 use EEH_Activation;
 use EE_Psr4AutoloaderInit;
@@ -11,15 +12,19 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\Benchmark;
 use EventEspresso\core\services\loaders\LoaderFactory;
-use EventEspresso\core\services\request\RequestParams;
-use EventEspresso\core\services\request\sanitizers\RequestSanitizer;
-use EventEspresso\core\services\request\sanitizers\ServerSanitizer;
-use EventEspresso\core\services\request\ServerParams;
+use EventEspresso\tests\mocks\core\domain\entities\routing\handlers\shared\GQLRequestsMock;
 use EventEspresso\tests\mocks\core\services\request\RequestMock;
 use InvalidArgumentException;
+use ReflectionException;
 
 class CoreLoader
 {
+
+    /**
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since $VID:$
+     */
     public function init()
     {
         echo "\nINITIALIZING EVENT ESPRESSO UNIT TESTS";
@@ -31,27 +36,117 @@ class CoreLoader
         $this->requireTestCaseParents();
         $this->bootstrapMockAddon();
         $this->onShutdown();
-        // Benchmark::writeResultsAtShutdown(
-        //     EVENT_ESPRESSO_UPLOAD_DIR . 'logs/benchmarking-master.html',  false
-        // );
+        Benchmark::writeResultsAtShutdown(
+            EVENT_ESPRESSO_UPLOAD_DIR . 'logs/benchmarking-master.html',
+            false
+        );
+    }
+
+
+    /**
+     * @return string
+     * @since $VID:$
+     */
+    private function findWordpressVersion(): ?string
+    {
+        global $wp_version;
+        if (! $wp_version) {
+            $wp_dirs = [
+                '/tmp/wordpress',
+                __DIR__,
+            ];
+            echo "\n\nAttempting to find WP version.php";
+            foreach ($wp_dirs as $wp_dir) {
+                if (! $wp_dir) {
+                    continue;
+                }
+                $wp_version_file = $this->findFolderWithFile($wp_dir, '/wp-includes/version.php');
+                if ($wp_version_file) {
+                    include $wp_version_file . '/wp-includes/version.php';
+                    return $wp_version;
+                }
+            }
+        }
+        return null;
+    }
+
+
+    /**
+     * @return string
+     * @throw RuntimeException
+     * @since $VID:$
+     */
+    private function findWordpressTestsFolder(): ?string
+    {
+        // potential base locations for WP tests folder
+        $wp_test_dirs = [
+            getenv('WP_TESTS_DIR'),
+            '/tmp/wordpress-tests-lib',
+            __DIR__,
+        ];
+        echo "\n\nAttempting to find WP tests directory";
+        foreach ($wp_test_dirs as $wp_test_dir) {
+            if (! $wp_test_dir) {
+                continue;
+            }
+            if ($this->findFolderWithFile($wp_test_dir, '/includes/testcase.php')) {
+                return $wp_test_dir;
+            }
+        }
+        // if WordPress test suite isn't found then we can't do anything.
+        die("The WordPress PHPUnit test suite could not be found.");
+    }
+
+
+    /**
+     * @return string
+     * @throw RuntimeException
+     * @since $VID:$
+     */
+    private function findPhpUnitPolyfillsFolder(): ?string
+    {
+        // potential base locations for WP tests folder
+        $wp_dirs = [
+            getenv('WP_TESTS_DIR'),
+            '/tmp/wordpress-tests-lib',
+            '/tmp/wordpress',
+            __DIR__,
+        ];
+        echo "\n\nAttempting to find PHPUnit Polyfills";
+        foreach ($wp_dirs as $wp_dir) {
+            if (! $wp_dir) {
+                continue;
+            }
+            $wp_root = $this->findFolderWithFile($wp_dir, '/vendor/yoast/phpunit-polyfills');
+            if ($wp_root) {
+                return $wp_root;
+            }
+        }
+        echo "The PHPUnit Polyfills could not be found.";
+        return null;
     }
 
 
     /**
      * @param string $folder
+     * @param string $with_file
      * @return string|null
      * @since 4.10.7.p
      */
-    private function findWordpressTests($folder = '')
+    private function findFolderWithFile(string $folder = '', string $with_file = ''): ?string
     {
+        if (! $folder || $folder === '/') {
+            return null;
+        }
         static $depth = 10;
-        echo ".";
-        if (file_exists($folder . '/includes/functions.php')) {
+        $with_file = strpos($with_file, '/') !== 0 ? '/' . $with_file : $with_file;
+        echo "\n => {$folder}{$with_file}";
+        if (is_readable($folder . $with_file)) {
             return $folder;
         }
         if ($depth > 0) {
             $depth--;
-            return $this->findWordpressTests(dirname($folder));
+            return $this->findFolderWithFile(dirname($folder), $with_file);
         }
         return null;
     }
@@ -60,26 +155,38 @@ class CoreLoader
     protected function setConstants()
     {
         if (! defined('EE_TESTS_DIR')) {
+            $wp_version  = $this->findWordpressVersion();
+            $wp_test_dir = $this->findWordpressTestsFolder();
+            define('WP_TESTS_DIR', $wp_test_dir);
+
+            // load polyfills
+            if (! defined('WP_TESTS_PHPUNIT_POLYFILLS_PATH')) {
+                $wp_root = $this->findPhpUnitPolyfillsFolder();
+                if ($wp_root) {
+                    define(
+                        'WP_TESTS_PHPUNIT_POLYFILLS_PATH',
+                        $wp_root . '/vendor/yoast/phpunit-polyfills'
+                    );
+                }
+            }
+            if (
+                defined('WP_TESTS_PHPUNIT_POLYFILLS_PATH')
+                && is_readable(WP_TESTS_PHPUNIT_POLYFILLS_PATH . '/phpunitpolyfills-autoload.php')
+            ) {
+                require_once WP_TESTS_PHPUNIT_POLYFILLS_PATH . '/phpunitpolyfills-autoload.php';
+            }
+
             if (getenv('EE_TESTS_DIR')) {
                 define('EE_TESTS_DIR', getenv('EE_TESTS_DIR'));
-                define('EE_PLUGIN_DIR', dirname(dirname(EE_TESTS_DIR)) . '/');
+                define('EE_PLUGIN_DIR', dirname(EE_TESTS_DIR, 2) . '/');
             } else {
-                define('EE_PLUGIN_DIR', dirname(dirname(dirname(__FILE__))) . '/');
+                define('EE_PLUGIN_DIR', dirname(__DIR__, 2) . '/');
                 define('EE_TESTS_DIR', EE_PLUGIN_DIR . 'tests/');
             }
 
             define('EE_MOCKS_DIR', EE_TESTS_DIR . 'mocks/');
-            $_tests_dir = getenv('WP_TESTS_DIR');
-            if (! $_tests_dir) {
-                $_tests_dir = '/tmp/wordpress-tests-lib';
-            }
-            if (file_exists($_tests_dir . '/includes/functions.php')) {
-                define('WP_TESTS_DIR', $_tests_dir);
-            } else {
-                echo "\n\n Attempting to find WP_TESTS_DIR ";
-                $folder = $this->findWordpressTests(__DIR__);
-                define('WP_TESTS_DIR', $folder);
-            }
+
+            echo "\n\nWP_VERSION: {$wp_version}";
             echo "\nWP_TESTS_DIR: " . WP_TESTS_DIR;
             echo "\nEE_TESTS_DIR: " . EE_TESTS_DIR . "\n\n";
             // define('EE_REST_API_DEBUG_MODE', true);
@@ -89,14 +196,10 @@ class CoreLoader
 
     protected function preLoadWPandEE()
     {
-        //if WordPress test suite isn't found then we can't do anything.
-        if (! is_readable(WP_TESTS_DIR . '/includes/functions.php')) {
-            die("The WordPress PHPUnit test suite could not be found at: " . WP_TESTS_DIR);
-        }
         require_once WP_TESTS_DIR . '/includes/functions.php';
         require_once EE_PLUGIN_DIR . 'core/Psr4Autoloader.php';
         //set filter for bootstrapping EE which needs to happen BEFORE loading WP.
-        tests_add_filter('muplugins_loaded', array($this, 'setupAndLoadEE'));
+        tests_add_filter('muplugins_loaded', [$this, 'setupAndLoadEE']);
     }
 
 
@@ -116,14 +219,14 @@ class CoreLoader
         // we need to add these filters BEFORE the Registry is instantiated
         tests_add_filter(
             'FHEE__EE_Registry____construct___class_abbreviations',
-            function ($class_abbreviations = array()) {
+            static function ($class_abbreviations = []) {
                 $class_abbreviations['EE_Session_Mock'] = 'SSN';
                 return $class_abbreviations;
             }
         );
         tests_add_filter(
             'FHEE__EE_Registry__load_core__core_paths',
-            function ($core_paths = array()) {
+            static function ($core_paths = []) {
                 $core_paths[] = EE_TESTS_DIR . 'mocks/core/';
                 return $core_paths;
             }
@@ -131,7 +234,7 @@ class CoreLoader
         // and this stuff needs to happen just AFTER the Registry initializes
         tests_add_filter(
             'EE_EventEspresso_core_services_request_RequestStackCoreApp__handle_request__initialize_core_loading',
-            array($this, 'setupDependencyMap'),
+            [$this, 'setupDependencyMap'],
             15
         );
         // Bootstrap EE
@@ -140,6 +243,14 @@ class CoreLoader
         if (! defined('SAVEQUERIES')) {
             define('SAVEQUERIES', true);
         }
+        add_action(
+            'AHEE__EE_System__core_loaded_and_ready',
+            static function () {
+                LoaderFactory::getLoader()->getShared(
+                    'EventEspresso\core\services\notifications\PersistentAdminNoticeManager'
+                );
+            }
+        );
     }
 
 
@@ -191,6 +302,11 @@ class CoreLoader
     }
 
 
+    /**
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since $VID:$
+     */
     public function postLoadWPandEE()
     {
         // ensure date and time formats are set
@@ -202,7 +318,6 @@ class CoreLoader
         }
         EE_Registry::instance()->SSN = EE_Registry::instance()->load_core('EE_Session_Mock');
     }
-
 
 
     protected function requireTestCaseParents()
@@ -220,12 +335,11 @@ class CoreLoader
     }
 
 
-
     protected function onShutdown()
     {
         //nuke all EE4 data once the tests are done, so that it doesn't carry over to the next time we run tests
         register_shutdown_function(
-            function () {
+            static function () {
                 EEH_Activation::delete_all_espresso_tables_and_data();
             }
         );
