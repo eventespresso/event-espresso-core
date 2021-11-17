@@ -51,8 +51,8 @@ class RequestParams
     public function __construct(RequestSanitizer $sanitizer, array $get = [], array $post = [])
     {
         $this->sanitizer = $sanitizer;
-        $this->get       = ! empty($get) ? $get : (array) filter_input_array(INPUT_GET, FILTER_SANITIZE_STRING);
-        $this->post      = ! empty($post) ? $post : (array) filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+        $this->get       = ! empty($get) ? $get : $_GET;
+        $this->post      = ! empty($post) ? $post : $_POST;
         $this->request   = array_merge($this->get, $this->post);
     }
 
