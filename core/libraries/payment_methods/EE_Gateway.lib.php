@@ -117,7 +117,7 @@ abstract class EE_Gateway
     protected $_admin_name;
 
     /**
-     * @return EE_Gateway
+     * EE_Gateway constructor
      */
     public function __construct()
     {
@@ -514,4 +514,15 @@ abstract class EE_Gateway
     {
         return $this->_get_gateway_formatter()->formatOrderDescription($payment);
     }
+
+
+    /**
+     * @return bool
+     */
+    public function isInSandboxMode(): bool
+    {
+        return $this->_debug_mode;
+    }
+
+
 }
