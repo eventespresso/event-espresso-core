@@ -38,17 +38,6 @@
             <group>big_rest_tests</group>
         </exclude>
     </groups>
-	<listeners>
-        <listener class="SpeedTrapListener" file="includes/listener-loader.php">
-            <arguments>
-				<array>
-					<element key="slowThreshold">
-						<integer>2000</integer>
-					</element>
-				</array>
-			</arguments>
-		</listener>
-	</listeners>
 	<php>
 		<ini name="display_errors" value="1" />
 	</php>
