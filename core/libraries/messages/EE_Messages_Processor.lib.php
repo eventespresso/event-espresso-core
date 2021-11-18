@@ -569,7 +569,7 @@ class EE_Messages_Processor
         /** @var RequestInterface $request */
         $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
         $regs_to_send = array();
-        $regIDs = $request->getRequestParam($registration_ids_key, [], 'int', true);
+        $regIDs = $request->getRequestParam($registration_ids_key, [], 'int');
         if (empty($regIDs)) {
             EE_Error::add_error(esc_html__('Something went wrong because we\'re missing the registration ID', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__);
             return false;
