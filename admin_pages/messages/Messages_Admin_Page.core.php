@@ -2140,9 +2140,9 @@ class Messages_Admin_Page extends EE_Admin_Page
         // first make sure we've got the necessary parameters
         if (
             ! (
-                $this->request->requestParamIsSet('MTP_message_type')
-                && $this->request->requestParamIsSet('MTP_messenger')
-                && $this->request->requestParamIsSet('GRP_ID')
+                $this->_req_data['message_type']
+                && $this->_req_data['messenger']
+                && $this->_req_data['GRP_ID'] 
             )
         ) {
             EE_Error::add_error(
@@ -2153,22 +2153,28 @@ class Messages_Admin_Page extends EE_Admin_Page
             );
         }
 
-        $context      = $this->request->getRequestParam('MTP_context');
-        $messenger    = $this->request->getRequestParam('MTP_messenger');
-        $message_type = $this->request->getRequestParam('MTP_message_type');
-
         // get the preview!
-        $preview = EED_Messages::preview_message($message_type, $context, $messenger, $send);
+        $preview = EED_Messages::preview_message(
+            $this->_req_data['message_type'],
+            $this->_req_data['context'],
+            $this->_req_data['messenger'],
+            $send
+        );
 
         if ($send) {
             return $preview;
         }
 
+        // if we have an evt_id set on the request, use it.
+        $EVT_ID = isset($this->_req_data['evt_id']) && ! empty($this->_req_data['evt_id'])
+            ? absint($this->_req_data['evt_id'])
+            : false;
+
         // let's add a button to go back to the edit view
         $query_args             = [
-            'id'      => $this->request->getRequestParam('GRP_ID', 0, 'int'),
-            'evt_id'  => $this->request->getRequestParam('evt_id', 0, 'int'),
-            'context' => $context,
+            'id'      => $this->_req_data['GRP_ID'],
+            'evt_id'  => $EVT_ID,
+            'context' => $this->_req_data['context'],
             'action'  => 'edit_message_template',
         ];
         $go_back_url            = parent::add_query_args_and_nonce($query_args, $this->_admin_base_url);
@@ -2178,7 +2184,7 @@ class Messages_Admin_Page extends EE_Admin_Page
                                   . esc_html__('Go Back to Edit', 'event_espresso')
                                   . '</a>';
         $message_types          = $this->get_installed_message_types();
-        $active_messenger       = $this->_message_resource_manager->get_active_messenger($messenger);
+        $active_messenger       = $this->_message_resource_manager->get_active_messenger($this->_req_data['messenger']);
         $active_messenger_label = $active_messenger instanceof EE_messenger
             ? ucwords($active_messenger->label['singular'])
             : esc_html__('Unknown Messenger', 'event_espresso');
