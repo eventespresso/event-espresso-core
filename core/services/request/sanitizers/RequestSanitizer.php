@@ -24,7 +24,7 @@ class RequestSanitizer
         $is_array = $is_array || is_array($param);
         if ($is_array) {
             $values = [];
-            foreach ($param as $key => $value) {
+            foreach ((array) $param as $key => $value) {
                 $values[ $key ] = $this->clean($value, $type, is_array($value), $delimiter);
             }
             return $values;
