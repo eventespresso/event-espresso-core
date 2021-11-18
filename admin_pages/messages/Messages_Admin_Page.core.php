@@ -2192,7 +2192,7 @@ class Messages_Admin_Page extends EE_Admin_Page
         $preview_title = sprintf(
             esc_html__('Viewing Preview for %s %s Message Template', 'event_espresso'),
             $active_messenger_label,
-            ucwords($message_types[ $message_type ]->label['singular'])
+            ucwords($message_types[ $this->_req_data['message_type'] ]->label['singular'])
         );
         if (empty($preview)) {
             $this->noEventsErrorMessage();
