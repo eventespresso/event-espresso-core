@@ -92,8 +92,12 @@ class RequestTypeContextDetector
             return $this->isAjaxRequest();
         }
         // make sure these constants are defined
-        define('EE_ADMIN_AJAX', false);
-        define('EE_FRONT_AJAX', false);
+        if (! defined('EE_ADMIN_AJAX')) {
+            define('EE_ADMIN_AJAX', false);
+        }
+        if (! defined('EE_FRONT_AJAX')) {
+            define('EE_FRONT_AJAX', false);
+        }
         // Detect WP_Cron
         if ($this->isCronRequest()) {
             return $this->factory->create(RequestTypeContext::CRON);
@@ -131,7 +135,9 @@ class RequestTypeContextDetector
             if (! defined('EE_FRONT_AJAX')) {
                 define('EE_FRONT_AJAX', true);
             }
-            define('EE_ADMIN_AJAX', false);
+            if (! defined('EE_ADMIN_AJAX')) {
+                define('EE_ADMIN_AJAX', false);
+            }
             return $this->factory->create(RequestTypeContext::AJAX_FRONT);
         }
         if (
@@ -141,7 +147,9 @@ class RequestTypeContextDetector
             if (! defined('EE_ADMIN_AJAX')) {
                 define('EE_ADMIN_AJAX', true);
             }
-            define('EE_FRONT_AJAX', false);
+            if (! defined('EE_FRONT_AJAX')) {
+                define('EE_FRONT_AJAX', false);
+            }
             return $this->factory->create(RequestTypeContext::AJAX_ADMIN);
         }
         if ($this->request->getRequestParam('action') === 'heartbeat') {
