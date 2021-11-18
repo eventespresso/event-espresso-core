@@ -26,7 +26,7 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
   "description": <?php echo wp_json_encode($event_description); ?>,
   "url": "<?php echo esc_url_raw($event_permalink); ?>",
   "eventAttendanceMode": "<?php echo esc_url_raw('https://schema.org/' . $event_attendance_mode); ?>",
-  "eventStatus": [ <?php echo esc_html($event_status); ?> ],
+  "eventStatus": [ "<?php echo esc_html($event_status); ?>" ],
   "offers": [
     <?php
     $i = 0;
