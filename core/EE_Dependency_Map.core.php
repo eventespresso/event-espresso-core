@@ -1056,6 +1056,9 @@ class EE_Dependency_Map
             'EE_Environment_Config'                        => function () {
                 return EE_Config::instance()->environment;
             },
+            'EE_Ticket_Selector_Config'                    => function () {
+                return EE_Config::instance()->template_settings->EED_Ticket_Selector;
+            },
         ];
     }
 
