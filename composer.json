@@ -34,7 +34,8 @@
 	],
 	"require-dev": {
 		"eventespresso/ee-coding-standards": "dev-master",
-		"roave/security-advisories": "dev-master"
+		"roave/security-advisories": "dev-master",
+		"yoast/phpunit-polyfills": "^1.0"
 	},
 	"require": {
 		"composer/installers": "~1.0",
