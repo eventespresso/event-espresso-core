@@ -574,11 +574,10 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         $this->_set_page_config();
         // let's include any referrer data in our default_query_args for this route for "stickiness".
         if ($this->request->requestParamIsSet('wp_referer')) {
-            $this->_default_route_query_args['wp_referer'] = $this->request->getRequestParam(
-                'wp_referer',
-                null,
-                'url'
-            );
+            $wp_referer = $this->request->getRequestParam('wp_referer');
+            if ($wp_referer) {
+                $this->_default_route_query_args['wp_referer'] = $wp_referer;
+            }
         }
         // for caffeinated and other extended functionality.
         //  If there is a _extend_page_config method
@@ -1029,9 +1028,9 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         );
         if (! empty($func)) {
             if (is_array($func)) {
-                list($class, $method) = $func;
+                [$class, $method] = $func;
             } elseif (strpos($func, '::') !== false) {
-                list($class, $method) = explode('::', $func);
+                [$class, $method] = explode('::', $func);
             } else {
                 $class  = $this;
                 $method = $func;
