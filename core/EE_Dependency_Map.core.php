@@ -713,6 +713,10 @@ class EE_Dependency_Map
             'EventEspresso\caffeinated\modules\recaptcha_invisible\RecaptchaAdminSettings'                                => [
                 'EE_Registration_Config' => EE_Dependency_Map::load_from_cache,
             ],
+            'EventEspresso\modules\ticket_selector\DisplayTicketSelector' => [
+                'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
+                'EE_Ticket_Selector_Config'                   => EE_Dependency_Map::load_from_cache,
+            ],
             'EventEspresso\modules\ticket_selector\ProcessTicketSelector'                                                 => [
                 'EE_Core_Config'                                                          => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\request\Request'                             => EE_Dependency_Map::load_from_cache,
