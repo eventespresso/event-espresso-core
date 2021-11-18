@@ -2142,7 +2142,7 @@ class Messages_Admin_Page extends EE_Admin_Page
             ! (
                 $this->_req_data['message_type']
                 && $this->_req_data['messenger']
-                && $this->_req_data['GRP_ID'] 
+                && $this->_req_data['GRP_ID']
             )
         ) {
             EE_Error::add_error(
