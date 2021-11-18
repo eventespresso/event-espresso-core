@@ -23,7 +23,7 @@ class CoreLoader
     /**
      * @throws EE_Error
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 4.10.17.p
      */
     public function init()
     {
@@ -45,7 +45,7 @@ class CoreLoader
 
     /**
      * @return string
-     * @since $VID:$
+     * @since 4.10.17.p
      */
     private function findWordpressVersion(): ?string
     {
@@ -74,7 +74,7 @@ class CoreLoader
     /**
      * @return string
      * @throw RuntimeException
-     * @since $VID:$
+     * @since 4.10.17.p
      */
     private function findWordpressTestsFolder(): ?string
     {
@@ -101,7 +101,7 @@ class CoreLoader
     /**
      * @return string
      * @throw RuntimeException
-     * @since $VID:$
+     * @since 4.10.17.p
      */
     private function findPhpUnitPolyfillsFolder(): ?string
     {
@@ -305,7 +305,7 @@ class CoreLoader
     /**
      * @throws EE_Error
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 4.10.17.p
      */
     public function postLoadWPandEE()
     {
