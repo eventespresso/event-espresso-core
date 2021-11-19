@@ -291,19 +291,23 @@ class ProcessTicketSelector
         $valid_data['total_tickets'] = 0;
         // cycle through $inputs_to_clean array
         foreach ($inputs_to_clean as $what => $input_to_clean) {
+            $input_key = "{$input_to_clean}{$id}";
             // check for POST data
-            if ($this->request->requestParamIsSet($input_to_clean . $id)) {
+            if ($this->request->requestParamIsSet($input_key)) {
                 switch ($what) {
                     // integers
                     case 'event_id':
                     case 'rows':
                     case 'max_atndz':
-                        $valid_data[ $what ] = $this->request->getRequestParam($input_to_clean . $id, 0, 'int');
+                        $valid_data[ $what ] = $this->request->getRequestParam($input_key, 0, 'int');
                         break;
                     // arrays of integers
                     case 'qty':
+                        $max_atndz = $valid_data['max_atndz'] ?? $this->request->getRequestParam($input_key, 0, 'int');
                         /** @var array $row_qty */
-                        $row_qty = $this->request->getRequestParam($input_to_clean . $id, [], 'int', true);
+                        $row_qty = $max_atndz !== 1
+                            ? $this->request->getRequestParam($input_key, [], 'int', true, '-')
+                            : $this->request->getRequestParam($input_key);
                         // if qty is coming from a radio button input, then we need to assemble an array of rows
                         if (! is_array($row_qty)) {
                             /** @var string $row_qty */
@@ -331,7 +335,7 @@ class ProcessTicketSelector
                         break;
                     // array of integers
                     case 'ticket_id':
-                        $ticket_ids = (array) $this->request->getRequestParam($input_to_clean . $id, [], 'int', true);
+                        $ticket_ids = (array) $this->request->getRequestParam($input_key, [], 'int', true);
                         // cycle thru values
                         foreach ($ticket_ids as $key => $value) {
                             // allow only integers
@@ -340,7 +344,7 @@ class ProcessTicketSelector
                         break;
                     case 'return_url':
                         // grab and sanitize return-url
-                        $input_value = $this->request->getRequestParam($input_to_clean . $id, '', 'url');
+                        $input_value = $this->request->getRequestParam($input_key, '', 'url');
                         // was the request coming from an iframe ? if so, then:
                         if (strpos($input_value, 'event_list=iframe')) {
                             // get anchor fragment
