@@ -19,6 +19,8 @@ class RequestSanitizer
     {
         if ($delimiter !== '' && is_string($param)) {
             $param = explode($delimiter, $param);
+            // unset the delimiter else this function will recurse forever when we loop over the array of results
+            $delimiter = '';
         }
         // check if we are getting an improperly typed array and correct
         $is_array = $is_array || is_array($param);
