@@ -700,7 +700,8 @@ class EEW_Upcoming_Events extends EspressoWidget
                 $time_format,
                 $single_date_format,
                 $single_time_format,
-                $event->ID()
+                $event->ID(),
+                false
             );
         }
         return espresso_list_of_event_dates(
