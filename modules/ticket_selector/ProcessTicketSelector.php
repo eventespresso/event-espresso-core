@@ -304,12 +304,13 @@ class ProcessTicketSelector
                     // arrays of integers
                     case 'qty':
                         $max_atndz = $valid_data['max_atndz'] ?? $this->request->getRequestParam($input_key, 0, 'int');
+                        $raw_qty = $this->request->getRequestParam($input_key);
                         // explode integers by the dash if qty is a string
-                        $delimiter = $max_atndz === 1 ? '-' : '';
+                        $delimiter = is_string($raw_qty) && strpos($raw_qty, '-') ? '-' : '';
                         /** @var array $row_qty */
                         $row_qty = $this->request->getRequestParam($input_key, [], 'int', true, $delimiter);
                         // if qty is coming from a radio button input, then we need to assemble an array of rows
-                        if ($max_atndz === 1) {
+                        if ($delimiter === '-') {
                             // get number of rows
                             $rows = $this->request->getRequestParam('tkt-slctr-rows-' . $id, 1, 'int');
                             $row = isset($row_qty[0]) ? absint($row_qty[0]) : 1;
